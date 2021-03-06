@@ -1,0 +1,1769 @@
+---
+sr:
+  activemodel:
+    errors:
+      models:
+        spree/fulfilment_changer:
+          attributes:
+            current_shipment:
+              can_not_have_backordered_inventory_units: има наручене инвентарне јединице
+              has_already_been_shipped: већ је отпремљен
+            desired_shipment:
+              can_not_transfer_within_same_shipment: не може бити исто што и тренутна пошиљка
+              has_not_enough_stock_at_desired_location: нема довољно залиха на жељеном месту залиха
+  activerecord:
+    attributes:
+      spree/address:
+        address1: Адреса
+        address2: Адреса (наставак)
+        city: Град
+        company: Компанија
+        country: Цоунтри
+        firstname: Име
+        label: Име адресе
+        lastname: Презиме
+        phone: Телефон
+        state: Стање
+        zipcode: Поштански број
+      spree/calculator/tiered_flat_rate:
+        preferred_base_amount: Основни износ
+        preferred_tiers: Нивои
+      spree/calculator/tiered_percent:
+        preferred_base_percent: Основни проценат
+        preferred_tiers: Нивои
+      spree/country:
+        iso: ИСО
+        iso3: ИСО3
+        iso_name: ИСО назив
+        name: Име
+        numcode: ИСО код
+      spree/credit_card:
+        base: ''
+        cc_type: Тип
+        month: Месец дана
+        name: Име
+        number: Број
+        verification_value: Вредност верификације
+        year: Године
+      spree/inventory_unit:
+        state: Стање
+      spree/line_item:
+        price: Цена
+        quantity: Количина
+      spree/option_type:
+        filterable: Може се филтрирати
+        name: Име
+        presentation: Презентација
+      spree/order:
+        checkout_complete: Плаћање завршено
+        completed_at: Завршено у
+        considered_risky: Ризичан
+        coupon_code: Код купона
+        created_at: Датум поруџбине
+        email: Емаил
+        ip_address: ИП адреса
+        item_total: Ставка Укупно
+        number: Број
+        payment_state: Држава плаћања
+        shipment_state: Држава отпреме
+        special_instructions: Посебна упутства
+        state: Стање
+        total: Укупно
+      spree/order/bill_address:
+        address1: Адреса за обрачун улица
+        city: Адреса за наплату град
+        firstname: Име за обрачун
+        lastname: Презиме за обрачун
+        phone: Телефон за обрачун
+        state: Стање адресе за обрачун
+        zipcode: Поштански број адресе за обрачун
+      spree/order/ship_address:
+        address1: Адреса доставе улица
+        city: Адреса за доставу града
+        firstname: Име адресе за испоруку
+        lastname: Презиме адресе за испоруку
+        phone: Адреса за испоруку телефона
+        state: Адреса адресе за испоруку
+        zipcode: Поштански број адресе за испоруку
+      spree/payment:
+        amount: Износ
+        number: Број
+      spree/payment_method:
+        name: Име
+      spree/product:
+        available_on: Доступно на
+        cost_currency: Валута трошкова
+        cost_price: Цена коштања
+        description: Опис
+        discontinue_on: Прекини даље
+        less_than: Мање од
+        master_price: Мастер Прице
+        name: Име
+        on_hand: На руци, при руци
+        shipping_category: Категорија испоруке
+        tax_category: Категорија пореза
+      spree/promotion:
+        advertise: Оглашавајте се
+        code: Код
+        description: Опис
+        event_name: Назив догађаја
+        expires_at: Истиче у
+        generate_code: Генеришите код купона
+        name: Име
+        path: Пут
+        promotion_category: Категорија промоције
+        starts_at: Почиње у
+        usage_limit: Ограничење употребе
+      spree/promotion_category:
+        code: Код
+        name: Име
+      spree/property:
+        name: Име
+        presentation: Презентација
+      spree/prototype:
+        name: Име
+      spree/return_authorization:
+        amount: Износ
+      spree/role:
+        name: Име
+      spree/shipment:
+        number: Број
+      spree/state:
+        abbr: Скраћеница
+        name: Име
+      spree/state_change:
+        state_changes: Промене државе
+        state_from: Држава из
+        state_to: Држава да
+        timestamp: Временска ознака
+        type: Тип
+        updated: Ажуриран
+        user: Корисник
+      spree/store:
+        mail_from_address: Пошта са адресе
+        meta_description: Мета опис
+        meta_keywords: Мета Кључне речи
+        name: Назив сајт
+        seo_robots: СЕО роботи
+        seo_title: СЕО Титле
+        url: УРЛ странице
+      spree/store_credit:
+        amount_used: Количина која се користи
+      spree/store_credit_category:
+        name: Име
+      spree/tax_category:
+        description: Опис
+        name: Име
+      spree/tax_rate:
+        amount: Оцените
+        included_in_price: Укључено у цену
+        show_rate_in_label: Прикажи стопу у ознаци
+      spree/taxon:
+        name: Име
+        permalink: Пермалинк
+        position: Положај
+      spree/taxonomy:
+        name: Име
+      spree/user:
+        email: Емаил
+        password: Лозинка
+        password_confirmation: Потврда шифре
+      spree/variant:
+        cost_currency: Валута трошкова
+        cost_price: Цена коштања
+        depth: Дубина
+        height: Висина
+        price: Цена
+        sku: СКУ
+        weight: Тежина
+        width: Ширина
+      spree/zone:
+        description: Опис
+        name: Име
+    errors:
+      models:
+        spree/calculator/tiered_flat_rate:
+          attributes:
+            base:
+              keys_should_be_positive_number: Сви типови кључева требали би бити бројеви већи од 0
+            preferred_tiers:
+              should_be_hash: треба да буде хеш
+        spree/calculator/tiered_percent:
+          attributes:
+            base:
+              keys_should_be_positive_number: Сви типови кључева требали би бити бројеви већи од 0
+              values_should_be_percent: Вредности нивоа треба да буду у процентима између 0% и 100%
+            preferred_tiers:
+              should_be_hash: треба да буде хеш
+        spree/classification:
+          attributes:
+            taxon_id:
+              already_linked: је већ повезан са овим производом
+        spree/credit_card:
+          attributes:
+            base:
+              card_expired: Картица је истекла
+              expiry_invalid: Истек картице није важећи
+        spree/image:
+          attributes:
+            attachment:
+              attachment_must_be_present: мора бити присутан
+              not_allowed_content_type: није дозволио тип садржаја
+        spree/line_item:
+          attributes:
+            currency:
+              must_match_order_currency: Мора се подударати са валутом налога
+        spree/product:
+          attributes:
+            base:
+              cannot_destroy_if_attached_to_line_items: Не можете избрисати производе након што се прикаче ставкама поруџбина.
+            discontinue_on:
+              invalid_date_range: мора бити касније од расположивог датума
+        spree/promotion:
+          attributes:
+            expires_at:
+              invalid_date_range: мора бити касније од датума почетка
+        spree/refund:
+          attributes:
+            amount:
+              greater_than_allowed: је већи од дозвољеног износа.
+        spree/reimbursement:
+          attributes:
+            base:
+              return_items_order_id_does_not_match: Једна или више наведених ставки за враћање не припадају истом редоследу као и надокнада.
+        spree/return_item:
+          attributes:
+            inventory_unit:
+              other_completed_return_item_exists: зкзкзк0 је већ преузета ставком враћања зкзкзк1
+            reimbursement:
+              cannot_be_associated_unless_accepted: не може се повезати са враћеном ставком која није прихваћена.
+        spree/shipping_method:
+          attributes:
+            base:
+              required_shipping_category: Морате одабрати најмање једну категорију отпреме
+        spree/store:
+          attributes:
+            base:
+              cannot_destroy_default_store: Не можете уништити подразумевану продавницу.
+        spree/store_credit:
+          attributes:
+            amount_authorized:
+              exceeds_total_credits: Премашује укупне бодове.
+            amount_used:
+              cannot_be_greater_than_amount: Не може бити већи од износа.
+              greater_than_zero_restrict_delete: је веће од нуле. Не можете избрисати кредит у продавници.
+        spree/store_credit_category:
+          attributes:
+            base:
+              cannot_destroy_if_used_in_store_credit: Не можете избрисати категорије кредита у продавници након што се користе у кредиту у продавници.
+        spree/taxon_image:
+          attributes:
+            attachment:
+              not_allowed_content_type: није дозволио тип садржаја
+        spree/variant:
+          attributes:
+            base:
+              cannot_destroy_if_attached_to_line_items: Не можете избрисати варијанте након што се прикаче ставкама поруџбина.
+              must_supply_price_for_variant_or_master: Морате навести цену за варијанту или главну цену за производ.
+              no_master_variant_found_to_infer_price: Није пронађена ниједна главна варијанта која би могла одредити цену
+    models:
+      spree/address:
+        one: Адреса
+        other: Адресе
+      spree/country:
+        one: Цоунтри
+        other: Земље
+      spree/credit_card:
+        one: Кредитна картица
+        other: Кредитне картице
+      spree/customer_return:
+        one: Повратак купаца
+        other: Повратак купаца
+      spree/inventory_unit:
+        one: Јединица инвентара
+        other: Јединице залиха
+      spree/line_item:
+        one: Ставка
+        other: Ставке поруџбина
+      spree/option_type:
+        one: Тип опције
+        other: Врсте опција
+      spree/option_value:
+        one: Вредност опције
+        other: Опционе вредности
+      spree/order:
+        one: Наручи
+        other: Поруџбине
+      spree/payment:
+        one: Плаћање
+        other: Плаћања
+      spree/payment_method:
+        one: Начин плаћања
+        other: Начини плаћања
+      spree/product:
+        one: Производа
+        other: Производи
+      spree/promotion:
+        one: Промоција
+        other: Промоције
+      spree/promotion_category:
+        one: Категорија промоције
+        other: Промотион Цатегориес
+      spree/property:
+        one: Својство
+        other: Својства
+      spree/prototype:
+        one: Прототип
+        other: Прототипови
+      spree/refund_reason:
+        one: Разлог поврата
+        other: Разлози поврата
+      spree/reimbursement:
+        one: Накнада
+        other: Накнаде
+      spree/reimbursement_type:
+        one: Врста накнаде
+        other: Врсте накнаде
+      spree/return_authorization:
+        one: Одобрење за повратак
+        other: Врати овлашћења
+      spree/return_authorization_reason:
+        one: Разлог одобрења за повраћај
+        other: Разлози за одобрење за повратак
+      spree/role:
+        one: Улоге
+        other: Улоге
+      spree/shipment:
+        one: Пошиљка
+        other: Пошиљке
+      spree/shipping_category:
+        one: Категорија испоруке
+        other: Категорије испоруке
+      spree/shipping_method:
+        one: начин куповине
+        other: Начини испоруке
+      spree/state:
+        one: Стање
+        other: државе
+      spree/state_change:
+        one: Промена државе
+        other: Државне промене
+      spree/stock_location:
+        one: Локација залиха
+        other: Локације залиха
+      spree/stock_movement:
+        one: Кретање залиха
+        other: Кретање залиха
+      spree/stock_transfer:
+        one: Пренос залиха
+        other: Трансфери залиха
+      spree/store_credit:
+        one: Продавница кредит
+        other: Чувајте кредите
+      spree/store_credit_category:
+        one: Категорија кредита у продавници
+        other: Категорије кредита у продавници
+      spree/tax_category:
+        one: Категорија пореза
+        other: Пореске категорије
+      spree/tax_rate:
+        one: Пореска стопа
+        other: Пореске стопе
+      spree/taxon:
+        one: Такон
+        other: Таконс
+      spree/taxonomy:
+        one: Таксономија
+        other: Таксономије
+      spree/tracker:
+        one: Трацкер
+        other: Трацкерс
+      spree/user:
+        one: Корисник
+        other: Корисници
+      spree/variant:
+        one: Варијанта
+        other: Варијанте
+      spree/zone:
+        one: Зона
+        other: Зоне
+  address_book:
+    save: сачувати
+    successfully_created: Нова адреса је успешно креирана
+  devise:
+    confirmations:
+      confirmed: Ваш рачун је успешно потврђен. Сада сте пријављени.
+      send_instructions: За неколико минута добићете е-поруку са упутствима о томе како да потврдите свој налог.
+    failure:
+      inactive: Ваш рачун још увек није активиран.
+      invalid: Погрешна е или лозинка.
+      invalid_token: Неважећи токен за потврду идентитета.
+      locked: Ваш рачун је закључан.
+      timeout: Ваша сесија је истекла, пријавите се поново да бисте наставили.
+      unauthenticated: Пре него што наставите, морате се пријавити или пријавити.
+      unconfirmed: Морате да потврдите свој налог пре него што наставите.
+    mailer:
+      confirmation_instructions:
+        subject: Упутства за потврду
+      reset_password_instructions:
+        subject: Ресетујте упутства за лозинку
+      unlock_instructions:
+        subject: Откључајте упутства
+    oauth_callbacks:
+      failure: Не можемо да вас овластимо за зкзкзк0 јер „зкзкзк1“.
+      success: Овлаштено са налога зкзкзк0.
+    unlocks:
+      send_instructions: За неколико минута добићете е-пошту са упутствима о томе како да откључате свој налог.
+      unlocked: Ваш налог је успешно откључан. Сада сте пријављени.
+    user_passwords:
+      user:
+        cannot_be_blank: Ваша лозинка не може бити празна.
+        send_instructions: За неколико минута добићете е-пошту са упутствима о томе како ресетовати лозинку.
+        updated: Ваша лозинка је успешно промењена. Сада сте пријављени.
+    user_registrations:
+      destroyed: Здраво! Ваш налог је успешно отказан. Надамо се да ћемо се ускоро поново видети.
+      inactive_signed_up: Успешно сте се регистровали. Међутим, нисмо могли да вас пријавимо јер је ваш рачун зкзкзк0.
+      signed_up: Добродошли! Успешно сте се регистровали.
+      updated: Успешно сте ажурирали налог.
+    user_sessions:
+      signed_in: Пријављени сте успешно.
+      signed_out: Одјављени сте успешно.
+  errors:
+    messages:
+      already_confirmed: већ била потврђена
+      not_found: није пронађен
+      not_locked: није била закључана
+      not_saved:
+        one: '1 грешка је забранила чување овог зкзкзк0:'
+        other: 'зкзкзк0 грешке су забраниле чување овог зкзкзк1:'
+  spree:
+    abbreviation: Скраћеница
+    accept: Прихвати
+    acceptance_errors: Грешке у прихватању
+    acceptance_status: Статус прихватања
+    accepted: Прихваћено
+    account: Рачун
+    account_info: Информације о налогу
+    account_updated: Налог је ажуриран
+    action: поступак
+    actions:
+      cancel: Поништити, отказати
+      continue: Настави
+      create: Креирај
+      destroy: Уништити
+      edit: Уредити
+      list: Листа
+      listing: Списак
+      new: Нова
+      refund: Враћање новца
+      save: сачувати
+      update: ажурирање
+    activate: Активирати
+    active: Активно
+    add: Додати
+    add_action_of_type: Додајте акцију типа
+    add_country: Додај земљу
+    add_coupon_code: Додајте код купона
+    add_new_address: Додај нову адресу
+    add_new_credit_card: Додајте нову картицу
+    add_new_header: Додајте ново заглавље
+    add_new_style: Додајте нови стил
+    add_one: Додај један
+    add_option_value: Додајте вредност опције
+    add_product: Додајте производ
+    add_product_properties: Додајте својства производа
+    add_rule_of_type: Додајте правило типа
+    add_state: Додај државу
+    add_stock: Додајте залиху
+    add_store: Нова продавница
+    add_store_credit: Додајте кредит у продавници
+    add_to_cart: Додај у колица
+    add_variant: Додај варијанту
+    added_to_cart: Успешно додато у корпу!
+    additional_item: Додатна ставка
+    address: Адреса
+    address1: Адреса
+    address2: Адреса (наставак)
+    address_action_popup:
+      delete_button: да, избриши
+      delete_text: Да ли стварно желите да <бр /> избришете ову адресу?
+      delete_title: Да ли сте сигурни?
+    address_book:
+      add_new_shipping_address: Додај нову адресу
+      address_name_label: Име адресе
+      address_name_placeholder: Дајте овој адреси јединствено име (Посао, Кућа итд.)
+      addresses: Адресе
+      edit_address: Измени адресу
+      label: Име адресе
+      new_address: Нова адреса
+      no_shipping_addresses_on_file: Нема датотека у евиденцији
+      other_address: Друга адреса
+      remove_address: Уклони адресу
+      save: сачувати
+      successfully_created: Адреса је успешно креирана.
+      successfully_removed: Адреса је успешно уклоњена.
+      successfully_saved: Сачувано је успешно
+      successfully_updated: Ажуриран успешно
+      unsuccessfully_saved: Дошло је до грешке приликом покушаја чувања адресе.
+      unsuccessfully_updated: Дошло је до ажурирања приликом покушаја ажурирања адресе.
+    addresses: Адресе
+    adjustable: Подесива
+    adjustment: Прилагођавање
+    adjustment_amount: Износ
+    adjustment_labels:
+      tax_rates:
+        excluding_tax: зкзкзк0зкзкзк1
+        including_tax: зкзкзк0зкзкзк1 (Укључено у цену)
+    adjustment_successfully_closed: Прилагођавање је успешно затворено!
+    adjustment_successfully_opened: Прилагођавање је успешно отворено!
+    adjustment_total: Укупно прилагођавање
+    adjustments: Прилагођавања
+    admin:
+      order:
+        events:
+          approve: одобрити
+          cancel: поништити, отказати
+          resend: Поново послати
+          resume: Резиме
+      orders:
+        cart: Колица
+      return_authorization:
+        product: Производа
+      tab:
+        configuration: Конфигурација
+        customer_returns: Повратак купаца
+        option_types: Врсте опција
+        orders: Поруџбине
+        overview: Преглед
+        products: Производи
+        promotion_categories: Промотион Цатегориес
+        promotions: Промоције
+        properties: Својства
+        prototypes: Прототипови
+        reports: Извештаји
+        return_authorizations: Врати овлашћења
+        taxonomies: Таксономије
+        taxons: Таконс
+        users: Корисници
+      user:
+        account: Рачун
+        addresses: Адресе
+        available_store_credit: Корисник има на располагању зкзкзк0 у Сторе Цредит-у.
+        items: Предмети
+        items_purchased: Предмети купљени
+        no_store_credit: Корисник нема доступан кредит у трговини.
+        order_history: историја наруџбина
+        order_num: 'Наруџба #'
+        orders: Поруџбине
+        store_credits: Чувајте кредите
+        stores: Продавнице
+        user_information: Корисничке информације
+    administration: Администрација
+    advertise: Оглашавајте се
+    agree_to_privacy_policy: Пристаните на Политику приватности
+    agree_to_terms_of_service: Пристаните на Услове услуге
+    all: Све
+    all_adjustments_closed: Сва подешавања су успешно затворена!
+    all_adjustments_opened: Сва подешавања су успешно отворена!
+    all_departments: Сва одељења
+    all_items_have_been_returned: Сви предмети су враћени
+    all_rights_reserved: Сва права задржана
+    already_have_account: Већ имате налог?
+    alt_text: Алтернативни текст
+    alternative_phone: Алтернативни телефон
+    amount: Износ
+    and: и
+    approve: одобрити
+    approved_at: Одобрено у
+    approver: Одобравалац
+    are_you_sure: Да ли сте сигурни?
+    are_you_sure_delete: Да ли сте сигурни да желите избрисати овај запис?
+    associated_adjustment_closed: Повезано подешавање је затворено и неће се поново израчунати. Да ли желите да га отворите?
+    authorization_failure: Неуспех ауторизације
+    authorized: Овлашћени
+    auto_capture: Аутоматско снимање
+    availability: доступност
+    available: Доступан
+    available_on: Доступно на
+    average_order_value: Просечна вредност поруџбине
+    avs_response: Одговор АВС-а
+    back: Назад
+    back_end: Бацкенд
+    back_to_payment: Повратак на плаћање
+    back_to_resource_list: Назад на листу зкзкзк0
+    back_to_rma_reason_list: Повратак на листу разлога РМА
+    back_to_store: Повратак у продавницу
+    back_to_users_list: Назад на листу корисника
+    backorderable: Бацкордерабле
+    backorderable_default: Подразумевано уназадљиво
+    backordered: Бацкордеред
+    backordered_confirm_info: Изабрана ставка је наручена, па очекујте кашњења. Да ли сте сигурни да желите да га наручите?
+    backordered_info: Бацкордеред
+    backorders_allowed: дозвољени уназад
+    balance_due: Стање због
+    base_amount: Основни износ
+    base_percent: Основни проценат
+    basic_information: Основне информације
+    bill_address: Адреса рачуна
+    billing: Наплате
+    billing_address: Адреса за наплату
+    both: Обоје
+    breadcrumbs: Лебвице
+    calculated_reimbursements: Израчунате накнаде
+    calculator: Калкулатор
+    calculator_settings_warning: Ако мењате тип калкулатора, прво морате да сачувате да бисте могли да измените подешавања калкулатора
+    call_us_now: 'Позовите одмах:'
+    cancel: поништити, отказати
+    canceled: Отказано
+    canceled_at: Отказано у
+    canceler: Цанцелер
+    cannot_create_customer_returns: Није могуће створити поврат купаца јер ова наруџба нема испоручене јединице.
+    cannot_create_payment_without_payment_methods: Не можете да извршите уплату за поруџбину без дефинисања било каквих начина плаћања.
+    cannot_create_returns: Не може се створити поврат јер ова поруџбина нема испоручене јединице.
+    cannot_empty_completed_order: Поруџбина је већ обрађена, тако да је не можете испразнити
+    cannot_perform_operation: Није могуће извршити тражену операцију
+    cannot_return_more_than_bought_quantity: Не можете вратити више од купљене количине.
+    cannot_set_shipping_method_without_address: Није могуће поставити начин испоруке док се не наведу детаљи купца.
+    capture: Цаптуре
+    capture_events: Хватање догађаја
+    card_code: Код за варијацију картице (ЦВЦ)
+    card_number: Број картице
+    card_type: Марка
+    card_type_is: Тип картице је
+    cart: Колица
+    cart_page:
+      add_promo_code: ДОДАЈ ПРОМО КОД
+      change_quantity: Промените количину
+      checkout: проверити
+      empty_info: Ваша колица су празна.
+      header: Ваша корпа
+      product: производа
+      quantity: количина
+      remove_from_cart: Извадите из колица
+      title: Колица за куповину
+    cart_subtotal:
+      one: Међузбир (1 ставка)
+      other: Међузбир (зкзкзк0 ставки)
+    categories: Категорије
+    category: Категорија
+    category_nav_bar:
+      get_up_to_30_percent_off: ОСТВАРИТЕ ДО 30%
+      jackets_and_coats: ЈАКНА И ОБАЛА
+      new_collection: НОВА КОЛЕКЦИЈА
+      special_offers: ПОСЕБНЕ ПОНУДЕ
+    channel: Цханнел
+    charged: Напуњено
+    checkout: Проверити
+    checkout_page:
+      back_to_cart: назад у колица
+      checkout_navigation: Навигација за наплату
+      delivery_method: Начин доставе
+      header: Проверити
+      main_navigation: Главна навигација
+      product: Производа
+    choose_a_customer: Изаберите купца
+    choose_a_taxon_to_sort_products_for: Изаберите таксон за сортирање производа
+    choose_currency: Изаберите валуту
+    choose_dashboard_locale: Одаберите Локале контролне табле
+    choose_location: Изаберите локацију
+    city: Град
+    clear_cache: Обриши кеш
+    clear_cache_ok: Кеш меморија је испрана
+    clear_cache_warning: Брисање кеш меморије привремено ће смањити перформансе ваше продавнице.
+    click_and_drag_on_the_products_to_sort_them: Кликните и повуците производе да бисте их сортирали.
+    clone: Клонирај
+    close: Близу
+    close_all_adjustments: Затворите сва подешавања
+    code: Код
+    company: Компанија
+    compare_at_price: Упоредите по цени
+    complete: комплетан
+    configuration: Конфигурација
+    configurations: Конфигурације
+    confirm: Потврди
+    confirm_delete: Потврдите брисање
+    confirm_password: Потврда шифре
+    contact_phone: Контакт телефон
+    contact_us: Контактирајте нас
+    continue: Настави
+    continue_as_guest: Наставите као гост
+    continue_shopping: Наставите куповину
+    cost_currency: Валута трошкова
+    cost_price: Цена коштања
+    could_not_create_customer_return: Није могуће створити повратак купца
+    could_not_create_stock_movement: Дошло је до проблема при чувању овог кретања залиха. Молим вас, покушајте поново.
+    count_on_hand: Рачунајте на руку
+    countries: Земље
+    country: Цоунтри
+    country_based: Засновано на земљи
+    country_name: Име
+    country_rule:
+      label: Изаберите, морате послати у ову земљу
+    coupon: Купон
+    coupon_code: Код купона
+    coupon_code_already_applied: Код купона је већ примењен на ову поруџбину
+    coupon_code_applied: Код купона је успешно примењен на вашу поруџбину.
+    coupon_code_apply: Применити
+    coupon_code_better_exists: Раније примењени код купона резултира бољом погодбом
+    coupon_code_expired: Код купона је истекао
+    coupon_code_max_usage: Ограничење употребе кода купона премашено
+    coupon_code_not_eligible: Овај код купона не испуњава услове за ову поруџбину
+    coupon_code_not_found: Код купона који сте унели не постоји. Молим вас, покушајте поново.
+    coupon_code_removed: Код купона је успешно уклоњен из поруџбине.
+    coupon_code_unknown_error: Овај код купона тренутно није могуће применити на корпу.
+    create: Креирај
+    create_a_new_account: Направи нови налог
+    create_new_order: Направите нову поруџбину
+    create_reimbursement: Створите накнаду
+    created_at: Креирано
+    created_by: Цреатед би
+    credit: Кредит
+    credit_allowed: Кредит дозвољен
+    credit_card: Кредитна картица
+    credit_cards: Кредитне картице
+    credit_owed: Кредит дужан
+    credited: Цредитед
+    credits: Кредити
+    currencies: Валуте
+    currency: Валута
+    currency_settings: Подешавања валуте
+    current: Тренутни
+    current_promotion_usage: 'тренутна употреба: зкзкзк0'
+    customer: Купац
+    customer_details: детаљи о купцу
+    customer_details_updated: Подаци о купцу ажурирани
+    customer_return: Повратак купаца
+    customer_returns: Повратак купаца
+    customer_search: Претрага купаца
+    customer_support_email: Имејл за корисничку подршку
+    cut: Исеци
+    cvv: ЦВВ
+    cvv_response: ЦВВ одговор
+    date: Датум
+    date_completed: Датум завршено
+    date_range: Период
+    default: Уобичајено
+    default_country_cannot_be_deleted: Подразумевана држава не може се избрисати
+    default_currency: Задана валута
+    default_refund_amount: Подразумевани износ поврата
+    default_tax: Подразумевани порез
+    default_tax_zone: Подразумевана пореска зона
+    delete: Избриши
+    delete_from_taxon: Делете Фром Такон
+    deleted: Избрисан
+    delivery: Испорука
+    delivery_information: Информације о достави
+    depth: Дубина
+    description: Опис
+    destination: Одредиште
+    destroy: Уништити
+    details: Детаљи
+    discontinue_on: Прекини даље
+    discontinued: Укинута
+    discontinued_variants_present: Неке ставке поруџбине у овом редоследу имају производе који више нису доступни.
+    discount_amount: Износ попуста
+    dismiss_banner: Не хвала! Не занима ме, немој поново приказивати ову поруку
+    display: Приказ
+    doesnt_track_inventory: Не прати инвентар
+    dont_have_account: Нема налога?
+    edit: Уредити
+    edit_reimbursement: Измените накнаду
+    editing_resource: Уређивање зкзкзк0
+    editing_rma_reason: Уређивање разлога за РМА
+    editing_user: Измените свој налог
+    eligibility_errors:
+      messages:
+        has_excluded_product: Ваша кошарица садржи производ који спречава примену овог кода купона.
+        item_total_less_than: Овај код купона не може се применити на поруџбине мање од зкзкзк0.
+        item_total_less_than_or_equal: Овај код купона не може се применити на поруџбине мање или једнаке зкзкзк0.
+        item_total_more_than: Овај код купона не може се применити на поруџбине веће од зкзкзк0.
+        item_total_more_than_or_equal: Овај код купона не може се применити на поруџбине веће од зкзкзк0 или једнаке њима.
+        limit_once_per_user: Овај код купона може се користити само једном по кориснику.
+        missing_product: Овај код купона не може се применити јер у својој корпи немате све потребне производе.
+        missing_taxon: Пре примене овог кода купона морате да додате производ из свих применљивих категорија.
+        no_applicable_products: Пре примене овог кода купона морате да додате одговарајући производ.
+        no_matching_taxons: Пре примене овог кода купона морате да додате производ из одговарајуће категорије.
+        no_user_or_email_specified: Потребно је да се пријавите или наведете своју е-пошту пре примене овог кода купона.
+        no_user_specified: Морате се пријавити пре него што примените овај код купона.
+        not_first_order: Овај код купона се може применити само на вашу прву поруџбину.
+    email: Емаил
+    empty: Празно
+    empty_cart: Празна корпа
+    enable_mail_delivery: Омогући испоруку поште
+    end: Крај
+    ending_at: Завршава се у
+    ending_in: Завршава
+    ends_at: Завршава се у
+    error: грешка
+    error_user_destroy_with_orders: Корисник повезан са поруџбинама не може се уништити
+    errors:
+      messages:
+        blank: не може бити празно
+        cannot_remove_icon: Није могуће уклонити слику
+        could_not_create_taxon: Није могуће направити таксон
+        no_shipping_methods_available: За одабрану локацију нису доступни начини испоруке, промените адресу и покушајте поново.
+      services:
+        get_shipping_rates:
+          no_line_items: Да бисте генерисали стопе испоруке, морате додати неке ставке поруџбине у поруџбину
+          no_shipping_address: Да би се генерисале цене отпреме, поруџбина мора имати адресу за испоруку
+    errors_prohibited_this_record_from_being_saved:
+      one: 1 грешка је забранила чување овог записа
+      other: грешке зкзкзк0 забрањивале су чување овог записа
+    event: Догађај
+    events:
+      spree:
+        cart:
+          add: Додај у колица
+        checkout:
+          coupon_code_added: Код купона је додат
+        content:
+          visited: Посетите страницу са статичким садржајем
+        order:
+          contents_changed: Садржај поруџбине промењен
+        page_view: Прегледана статична страница
+        user:
+          signup: Регистрација корисника
+    exceptions:
+      count_on_hand_setter: 'Не може се ручно подесити цоунт_он_ханд, јер се аутоматски поставља повратним позивом реццулате_цоунт_он_ханд. Уместо тога користите `упдате_цолумн (: цоунт_он_ханд, валуе)`.'
+    exchange_for: Размена за
+    excl: без
+    existing_shipments: Постојеће пошиљке
+    expedited_exchanges_warning: Свака наведена размена испоручује се купцу одмах по уштеди. Купцу ће бити наплаћен пуни износ предмета ако оригинални предмет не врати у року од зкзкзк0 дана.
+    expiration: Истицање
+    expiration_date: Рок трајања
+    extension: Продужење
+    extensions_directory: Директоријум проширења
+    facebook: Фејсбук
+    failed_payment_attempts: Неуспели покушаји плаћања
+    filename: Назив документа
+    fill_in_customer_info: Молимо унесите податке о купцу
+    filter: Филтер
+    filter_results: Филтрирај резултате
+    filterable: Може се филтрирати
+    finalize: Довршити
+    finalized: Завршено
+    find_a_taxon: Нађи таксон
+    first_item: Прва ставка
+    first_name: Име
+    first_name_begins_with: Име почиње са
+    firstname: Име
+    flat_percent: Раван проценат
+    flat_rate_per_order: Паушал
+    flexible_rate: Флексибилна стопа
+    follow_us: Пратите нас
+    footer: Подножје
+    forgot_password: Заборавили сте лозинку?
+    free: бесплатно
+    free_shipping: Бесплатна достава
+    free_shipping_amount: "-"
+    front_end: Предњи крај
+    gateway: пролаз
+    gateway_error: Грешка мрежног пролаза
+    general: Генерал
+    general_settings: Генерал Сеттингс
+    generate_code: Генеришите код купона
+    get_back_to_the: Врати се на
+    go_to_category: Идите у категорију
+    go_to_facebook: Идите на фацебоок
+    go_to_homepage: Иди на почетну страницу
+    go_to_instagram: Идите на инстаграм
+    go_to_twitter: Идите на Твиттер
+    guest_checkout: Гуест Цхецкоут
+    guest_user_account: Одјава као гост
+    has_no_shipped_units: нема испоручене јединице
+    header_banner: Заглавље натписа
+    height: Висина
+    help_center: Центар за помоћ
+    hide_from_subcategories_nav: Сакриј се из поткатегорија навигације
+    home: Кућа
+    home_page: Почетна страница
+    i18n:
+      available_locales: Доступне локације
+      country: Цоунтри
+      default_country: Подразумевана држава
+      fields: Поља
+      language: Језик
+      localization_settings: Поставке локализације
+      only_complete: Само комплетно
+      only_incomplete: Само непотпуно
+      select_locale: Изаберите локалитет
+      show_only: Прикажи само
+      supported_locales: Подржани језици
+      translations: Преводи
+    icon: Икона
+    id: Ид
+    image: Слика
+    images: Слике
+    implement_eligible_for_return: 'Морате да примените #елигибле_фор_ретурн? за ваш ЕлигибилитиВалидатор.'
+    implement_requires_manual_intervention: 'Морате да примените #рекуирес_мануал_интервентион? за ваш ЕлигибилитиВалидатор.'
+    in_stock: На лагеру
+    inactive: Неактиван
+    incl: укљ.
+    included_in_price: Укључено у цену
+    included_price_validation: не може да се изабере уколико нисте поставили подразумевану пореску зону
+    incomplete: Непотпун
+    info_number_of_skus_not_shown:
+      one: и једно друго
+      other: и зкзкзк0 други
+    info_product_has_multiple_skus: 'Овај производ има зкзкзк0 варијанте:'
+    instagram: инстаграм
+    instructions_to_reset_password: Унесите своју е-пошту у образац испод
+    insufficient_stock: Доступно недовољно залиха, преостало је само зкзкзк0
+    insufficient_stock_item_quantity: Доступна недовољна количина залиха
+    insufficient_stock_lines_present: Неке ставке поруџбине у овом редоследу немају довољну количину.
+    intercept_email_address: Пресретање адресе е-поште
+    intercept_email_instructions: Замените примаоца е-поште и замените овом адресом.
+    internal_name: Интерно име
+    internationalization: Интернационализација
+    invalid_credit_card: Неважећа кредитна картица.
+    invalid_exchange_variant: Неважећа варијанта размене.
+    invalid_payment_provider: Неважећи добављач плаћања.
+    invalid_promotion_action: Неважећа промотивна акција.
+    invalid_promotion_rule: Неважеће правило за промоцију.
+    inventory: Инвентар
+    inventory_adjustment: Прилагођавање залиха
+    inventory_error_flash_for_insufficient_quantity: Предмет у вашој корпи је постао недоступан.
+    inventory_state: Стање залиха
+    is_not_available_to_shipment_address: није доступан на адреси пошиљке
+    iso: ИСО Алпха-2
+    iso3: ИСО Алпха-3
+    iso_name: ИСО назив
+    issued_on: Издата
+    item: Предмет
+    item_description: Опис предмета
+    item_total: Ставка Укупно
+    item_total_rule:
+      operators:
+        gt: веће од
+        gte: већи или једнак
+        lt: мање од
+        lte: мање или једнако
+    items_cannot_be_shipped: Не можемо да израчунамо стопе испоруке за одабране артикле.
+    items_in_rmas: Предмети у одобрењима за повраћај
+    items_reimbursed: Предмети надокнађени
+    items_to_be_reimbursed: Предмети за повраћај
+    join_slack: Придружите се Слацку
+    last_name: Презиме
+    last_name_begins_with: Презиме почиње са
+    lastname: Презиме
+    learn_more: Сазнајте више
+    lifetime_stats: Животна статистика
+    limit_usage_to: Ограничите употребу на
+    line_item_adjustments: Прилагођавање ставке поруџбине
+    list: Листа
+    loading: Лоадинг
+    loading_tree: Утоварно дрво. Сачекајте…
+    locale_changed: Језик промењен
+    location: Локација
+    lock: закључати
+    log_entries: Лог Ентриес
+    log_in: Пријавите се
+    log_in_to_continue: Пријавите се да бисте наставили
+    logged_in_as: пријављен као
+    logged_in_succesfully: Успешно пријављени
+    logged_out: Ви сте излоговани.
+    login: Пријавите се
+    login_as_existing: Пријавите се као постојећи купац
+    login_failed: Аутентификација пријаве није успела.
+    login_name: Пријавите се
+    logo: Лого
+    logo_alt: Лого бренда
+    logout: Одјавити се
+    logs: Трупци
+    look_for_similar_items: Потражите сличне предмете
+    mail_from_address: Пошта са адресе
+    mailer_logo: Логотип поштара (само ЈПГ или ПНГ слике)
+    make_refund: Поврат новца
+    make_sure_the_above_reimbursement_amount_is_correct: Уверите се да је горњи износ накнаде тачан
+    manage_promotion_categories: Управљајте категоријама промоције
+    manage_variants: Управљање варијантама
+    manual_intervention_required: Потребна је ручна интервенција
+    master: Учитељу
+    master_price: Мастер Прице
+    master_sku: Мастер СКУ
+    match_choices:
+      all: Све
+      none: Ниједан
+    max_items: Мак Итемс
+    member_since: Члан од
+    memo: Белешка
+    meta_description: Мета опис
+    meta_keywords: Мета Кључне речи
+    meta_title: Мета Титле
+    metadata: Метаподаци
+    minimal_amount: Минимални износ
+    missing_return_authorization: Недостаје одобрење за повратак за зкзкзк0.
+    month: Месец дана
+    more: Више
+    move_stock_between_locations: Померајте залихе између локација
+    move_variant_to: Премештање варијанте у
+    multiple_stores: Више продавница
+    mutable: Променљиво
+    my_account: Мој налог
+    my_orders: Моје наруџбине
+    name: Име
+    name_on_card: име на картици
+    name_or_sku: Назив или шифра (унесите најмање прва 3 знака имена производа)
+    nav_bar:
+      admin_panel: табла руководиоца
+      change_country: Промени земљу
+      close_menu: Затвори мени
+      desktop: Навигација на радној површини
+      go_to_previous_menu: Идите на претходни мени
+      log_in: ПРИЈАВИТЕ СЕ
+      log_out: ОДЈАВИТИ СЕ
+      mobile: Мобилна навигација
+      my_account: МОЈ НАЛОГ
+      my_orders: МОЈЕ НАРУЏБИНЕ
+      show_menu: Прикажи мени
+      show_search: Прикажи претрагу
+      show_user_menu: Прикажи кориснички мени
+      sign_up: ПРИЈАВИ СЕ
+    new: Нова
+    new_adjustment: Ново прилагођавање
+    new_country: Нова земља
+    new_customer: Направите нови налог
+    new_customer_return: Повратак новог купца
+    new_image: Нова слика
+    new_option_type: Нови тип опције
+    new_order: Нови поредак
+    new_order_completed: Нова поруџбина завршена
+    new_order_notifications_email: Е-пошта са обавештењима о новој поруџбини
+    new_payment: Нова уплата
+    new_payment_method: Нови начин плаћања
+    new_product: Нови производ
+    new_promotion: Нова промоција
+    new_promotion_category: Нова категорија промоције
+    new_property: Нова имовина
+    new_prototype: Нови прототип
+    new_refund: Нови поврат
+    new_refund_reason: Нови разлог поврата
+    new_reimbursement_type: Нова врста накнаде
+    new_return_authorization: Ново одобрење за повратак
+    new_rma_reason: Нови разлог РМА
+    new_role: Нова улога
+    new_shipment_at_location: Нова пошиљка на локацији
+    new_shipping_category: Нова категорија испоруке
+    new_shipping_method: Нови начин испоруке
+    new_state: Нова држава
+    new_stock_location: Нова локација залиха
+    new_stock_movement: Ново кретање залиха
+    new_stock_transfer: Нови пренос залиха
+    new_store_credit: Кредит за нову продавницу
+    new_store_credit_category: Нова категорија кредита у продавници
+    new_tax_category: Нова категорија пореза
+    new_tax_rate: Нова пореска стопа
+    new_taxon: Нев Такон
+    new_taxonomy: Нова таксономија
+    new_tracker: Нев Трацкер
+    new_user: Нови корисник
+    new_variant: Нова варијанта
+    new_zone: Нова зона
+    next: Следећи
+    no_actions_added: Није додата ниједна радња
+    no_address_given: Адреса није наведена
+    no_available_date_set: Није доступан ниједан датум
+    no_cc_type: Н / А
+    no_country: Није постављена ниједна земља
+    no_limits_zone: Без ограничења
+    no_payment_found: Није пронађена ниједна уплата
+    no_payment_provider_settings_message: Овај добављач плаћања нема доступна прилагођена подешавања
+    no_pending_payments: Нема плаћања на чекању
+    no_product_available:
+      for_this_quantity: Жао нам је, чини се да неки производи нису доступни у изабраној количини.
+      opps: Упс!
+    no_products_found: Није пронађен ниједан производ
+    no_resource_found: Није пронађен зкзкзк0
+    no_results: Нема резултата
+    no_returns_found: Повратак није пронађен
+    no_rules_added: Нису додата правила
+    no_shipping_method_selected: Није одабран ниједан начин испоруке.
+    no_state_changes: Још увек нема промена у држави.
+    no_tracking_present: Нису наведени детаљи праћења.
+    none: Ниједан
+    none_selected: Није одабрано
+    normal_amount: Нормални износ
+    not: не
+    not_available: Н / А
+    not_enough_stock: На локацији извора нема довољно инвентара да би се извршио овај пренос.
+    not_found: зкзкзк0 није пронађен
+    note: Белешка
+    notice_messages:
+      icon_removed: Слика је успешно уклоњена
+      prices_saved: Цене су успешно сачуване
+      product_cloned: Производ је клониран
+      product_deleted: Производ је избрисан
+      product_not_cloned: 'Није могуће клонирати производ. Разлог: зкзкзк0'
+      product_not_deleted: 'Производ није могуће избрисати. Разлог: зкзкзк0'
+      variant_deleted: Варијанта је избрисана
+      variant_not_deleted: 'Није могуће избрисати варијанту. Разлог: зкзкзк0'
+    num_orders: "# Поруџбине"
+    number: Број
+    ok: У реду
+    on_hand: На руци, при руци
+    open: Отвори
+    open_all_adjustments: Отворите Сва подешавања
+    option_type: Тип опције
+    option_type_placeholder: Изаберите тип опције
+    option_types: Врсте опција
+    option_value: Вредност опције
+    option_values: Опционе вредности
+    optional: Опционо
+    options: Опције
+    or: или
+    or_over_price: зкзкзк0 или више
+    order: Наручи
+    order_adjustments: Прилагођавања налога
+    order_already_updated: Наруџба је већ ажурирана.
+    order_approved: Поруџбина одобрена
+    order_canceled: Поруџбина отказана
+    order_details: Детаљи поруџбине
+    order_email_resent: Порука е-поште је поново послата
+    order_has_no_payments: Наруџба нема плаћања
+    order_information: Информације за наруџбу
+    order_line_items: Наручите ставке поруџбина
+    order_mailer:
+      cancel_email:
+        dear_customer: Поштовани зкзкзк0,
+        instructions: Ваша поруџбина је ОТКАЗАНА. Задржите ове информације о отказивању за своју евиденцију.
+        order_summary_canceled: Наруџба зкзкзк0 Резиме [ОТКАЗАНО]
+        subject: Отказивање налога
+        thanks: Хвала за ваш посао.
+      confirm_email:
+        dear_customer: Поштовани зкзкзк0,
+        instructions: Молимо вас да прегледате и сачувате следеће податке о поруџбини за своју евиденцију.
+        order_summary: Наруџба зкзкзк0 Резиме
+        subject: Потврда поруџбине
+        thanks: Хвала за ваш посао.
+      store_owner_notification_email:
+        heading: Примљена је нова поруџбина
+        instructions: Добили сте нову поруџбину.
+        order_summary: Наруџба зкзкзк0 Резиме
+        subject: зкзкзк0 је добио нову поруџбину
+        thanks: Хвала за ваш посао.
+      store_team: зкзкзк0 Теам
+      subtotal: 'Међузбир:'
+      total: 'Укупно наруџбина:'
+    order_not_found: Нисмо могли да нађемо вашу наруџбину. Покушајте поново са том акцијом.
+    order_number: Наручите зкзкзк0
+    order_processed_successfully: Ваша поруџбина је успешно обрађена
+    order_resumed: Поруџбина је настављена
+    order_state:
+      address: адреса
+      awaiting_return: чека повратак
+      canceled: отказан
+      cart: колица
+      complete: комплетан
+      confirm: Потврди
+      considered_risky: сматра ризичним
+      delivery: испорука
+      payment: плаћање
+      resumed: настављен
+      returned: вратио
+    order_success: Поруџбина је успешно постављена
+    order_success_explain: Подаци о поруџбини биће послати на вашу е-пошту
+    order_summary: Резиме реда
+    order_sure_want_to: Да ли сте сигурни да желите зкзкзк0 ову наруџбину?
+    order_total: Укупно наруџбина
+    order_updated: Наруџба ажурирана
+    orders: Поруџбине
+    out_of_stock: Нема на залихи
+    overview: Преглед
+    package_from: пакет од
+    page_not_found: Извињавам се! Није могуће пронаћи страницу коју тражите.
+    pagination:
+      next_page: следећа страница & ракуо;
+      previous_page: "& лакуо; Претходна страница"
+      truncate: "& хеллип;"
+    password: Лозинка
+    paste: Налепи
+    path: Пут
+    pay: платити
+    payment: Плаћање
+    payment_amount: Плаћање износ
+    payment_could_not_be_created: Није могуће извршити уплату.
+    payment_identifier: Идентификатор плаћања
+    payment_information: Информације о плаћању
+    payment_method: Начин плаћања
+    payment_method_not_supported: Тај начин плаћања није подржан. Молим вас одаберите другу.
+    payment_methods: Начини плаћања
+    payment_processing_failed: Уплата није обрађена. Проверите детаље које сте унели
+    payment_processor_choose_banner_text: Ако вам је потребна помоћ у одабиру процесора плаћања, посетите
+    payment_processor_choose_link: нашу страницу за плаћања
+    payment_provider_settings: Подешавања добављача плаћања
+    payment_state: Држава плаћања
+    payment_states:
+      balance_due: стање због
+      checkout: проверити
+      completed: завршен
+      credit_owed: дуговани кредит
+      failed: није успео
+      paid: плаћен
+      pending: нерешен
+      processing: обрада
+      void: празнина
+    payment_type: Врста плаћања
+    payment_updated: Уплата ажурирана
+    payments: Плаћања
+    pdp:
+      checkout: Проверити
+      description: Опис
+      details: Детаљи
+      products_included_in_promotion: Производи укључени у промоцију
+      quantity: Количина
+      view_cart: Виев царт
+      you_may_also_like: Можда ће ти се свидети и
+    pending: нерешен
+    pending_sale: На чекању продаје
+    percent: Проценат
+    percent_per_item: Проценат по ставци
+    permalink: Пермалинк
+    phone: Телефон
+    place_order: Наручите
+    please_define_payment_methods: Прво дефинишите неке начине плаћања.
+    please_enter_reasonable_quantity: Унесите разумну количину.
+    plp:
+      best_selling: НАЈПРОДАВАНИЈИ
+      clear_all: ИЗБРИШИ СВЕ
+      collection: ЗБИРКА
+      color: БОЈА
+      default: УОБИЧАЈЕНО
+      done: ГОТОВО
+      filter_by: ФИЛТЕР ОД
+      newest_first: НАЈНОВИЈИ ПРВИ
+      no_results: Нема резултата
+      no_results_found: Нема резултата
+      not_found_filters1: Нисмо успели да пронађемо подударање за ове филтере.
+      not_found_filters2: Покушајте да изаберете други.
+      not_found_text1: Нисмо могли да пронађемо производе за „зкзкзк0“.
+      not_found_text2: Покушајте са другом претрагом.
+      price: Цена
+      price_high_to_low: ЦЕНА (ВИСОКА - НИСКА)
+      price_low_to_high: ЦЕНА (НИСКА - ВИСОКА)
+      result: РЕЗУЛТАТ
+      results_for: РЕЗУЛТАТИ ЗА
+      size: ВЕЛИЧИНА
+      sort_by: СОРТИРАЈ ПО
+      top_sellers: НАЈПРОДАВАНИЈИ
+      type: ТИП
+    populate_get_error: Нешто је кренуло наопако. Покушајте поново да додате ставку.
+    powered_by: Покреће га
+    pre_tax_amount: Износ пре опорезивања
+    pre_tax_refund_amount: Износ поврата пре опорезивања
+    pre_tax_total: Укупно пре опорезивања
+    preferred_reimbursement_type: Пожељни тип накнаде
+    presentation: Презентација
+    preview_product: Преглед производа
+    preview_taxon: Преглед Такон
+    previous: Претходна
+    previous_state_missing: н / а
+    previously_used_card: Раније коришћене картице
+    price: Цена
+    price_range: Распон цена
+    price_sack: Прице Сацк
+    prices: Цене
+    process: Процес
+    product: Производа
+    product_details: детаљи о производу
+    product_has_no_description: Овај производ нема опис
+    product_not_available_in_this_currency: Овај производ није доступан у изабраној валути.
+    product_properties: Својства производа
+    product_rule:
+      choose_products: Изаберите производе
+      label: Поруџбина мора да садржи к количину ових производа
+      match_all: све
+      match_any: најмање један
+      match_none: ниједан
+      product_source:
+        group: Из групе производа
+        manual: Ручно одаберите
+    products: Производи
+    promotion: Промоција
+    promotion_action: Промоција
+    promotion_action_types:
+      create_adjustment:
+        description: На поруџбини креира прилагођавање за промотивни кредит
+        name: Направите прилагођавање целог налога
+      create_item_adjustments:
+        description: Ствара прилагођавање промотивног кредита за ставку поруџбине
+        name: Направите прилагођавање по ставци
+      create_line_items:
+        description: Попуњава корпу са наведеном количином варијанте
+        name: Направите ставке поруџбина
+      free_shipping:
+        description: Све пошиљке за поруџбину чини бесплатним
+        name: Бесплатна достава
+    promotion_actions: Акције
+    promotion_categories: Промотивне категорије
+    promotion_category: Категорија промоције
+    promotion_cloned: Промоција је клонирана
+    promotion_form:
+      match_policies:
+        all: Ускладите се са свим овим правилима
+        any: Ускладите се са било којим од ових правила
+    promotion_label: Промоција (зкзкзк0)
+    promotion_not_cloned: 'Промоција није клонирана. Разлог: зкзкзк0'
+    promotion_rule: Правило промоције
+    promotion_rule_types:
+      country:
+        description: Наруџба се испоручује у одговарајућу (или задану) земљу
+        name: Цоунтри
+      first_order:
+        description: Мора да је прва наруџба купца
+        name: Првог реда
+      item_total:
+        description: Укупна поруџбина испуњава ове критеријуме
+        name: Ставка укупно
+      one_use_per_user:
+        description: Само једна употреба по кориснику
+        name: Једна употреба по кориснику
+      option_value:
+        description: Поруџбина укључује наведене производе са одговарајућим вредностима опција
+        name: Вредност опције
+      product:
+        description: Поруџбина укључује наведене производе
+        name: Производи)
+      taxon:
+        description: Поруџбина укључује производе са наведеним таксонима
+        name: Такон (с)
+      user:
+        description: Доступно само наведеним корисницима
+        name: Корисник
+      user_logged_in:
+        description: Доступно само пријављеним корисницима
+        name: Корисник пријављен
+    promotion_uses: Промоција користи
+    promotionable: Промотабле
+    promotions: Промоције
+    propagate_all_variants: Проширите све варијанте
+    properties: Својства
+    property: Својство
+    prototype: Прототип
+    prototypes: Прототипови
+    provider: Провидер
+    provider_settings_warning: Ако мењате тип добављача, прво морате да сачувате да бисте могли да измените подешавања провајдера
+    purchased_quantity: Купљена количина
+    qty: Кти
+    quantity: Количина
+    quantity_returned: Количина враћена
+    quantity_shipped: Количина испоручена
+    quick_search: Брза претрага..
+    rate: Оцените
+    reason: Разлог
+    receive: примити
+    receive_stock: Примите залихе
+    received: Примљен
+    reception_status: Статус пријема
+    reference: Референца
+    reference_contains: Референца садржи
+    refund: Враћање новца
+    refund_amount_must_be_greater_than_zero: Износ поврата мора бити већи од нуле
+    refund_reasons: Разлози поврата
+    refunded_amount: Враћени износ
+    refunds: повраћај новца
+    register: Регистровати
+    registration: Регистрација
+    reimburse: Надокнадити
+    reimbursed: Надокнађено
+    reimbursement: Накнада
+    reimbursement_mailer:
+      reimbursement_email:
+        days_to_send: Имате зкзкзк0 дана да пошаљете све предмете који чекају на размену.
+        dear_customer: Поштовани зкзкзк0,
+        exchange_summary: Резиме размене
+        for: за
+        instructions: Ваша надокнада је обрађена.
+        refund_summary: Резиме поврата
+        store_team: зкзкзк0 Теам
+        subject: Обавештење о надокнади
+        thanks: Хвала за ваш посао.
+        total_refunded: 'Укупан повраћај средстава: зкзкзк0'
+    reimbursement_perform_failed: 'Накнада није могла да се изврши. Грешка: зкзкзк0'
+    reimbursement_status: Статус надокнаде
+    reimbursement_type: Врста накнаде
+    reimbursement_type_override: Замена типа накнаде
+    reimbursement_types: Врсте накнаде
+    reimbursements: Накнаде
+    reject: Одбити
+    rejected: Одбијен
+    remember_me: Сети ме се
+    remove: Уклоните
+    remove_image: Уклони слику
+    rename: Преименуј
+    report: Извештај
+    reports: Извештаји
+    required: "*"
+    required_fields: Обавезна поља
+    resellable: Може се препродати
+    resend: Поново послати
+    reset_password: Ресетуј моју лозинку
+    response_code: Код одговора
+    resume: Резиме
+    resumed: Настављено
+    return: повратак
+    return_authorization: Одобрење за повратак
+    return_authorization_canceled: Одобрење за повраћај отказано
+    return_authorization_reasons: Разлози за одобрење за повратак
+    return_authorization_states:
+      authorized: Овлашћени
+      canceled: Отказано
+    return_authorization_updated: Овлашћење за повратак је ажурирано
+    return_authorizations: Врати овлашћења
+    return_item_inventory_unit_ineligible: Јединица инвентара предмета за враћање мора бити испоручена
+    return_item_inventory_unit_reimbursed: Јединица инвентара предмета за враћање је већ надокнађена
+    return_item_order_not_completed: Наруџба за враћање предмета мора бити завршена
+    return_item_rma_ineligible: За враћање предмета потребан је РМА
+    return_item_time_period_ineligible: Предмет враћања је изван прихватљивог временског периода
+    return_items: Врате ствари
+    return_items_cannot_be_associated_with_multiple_orders: Враћене ставке не могу се повезати са више поруџбина.
+    return_number: Повратни број
+    return_quantity: Повратна количина
+    returned: Вратио се
+    returns: Повратак
+    review: Преглед
+    risk: Ризик
+    risk_analysis: Анализа ризика
+    risky: Ризичан
+    rma_credit: РМА Цредит
+    rma_number: РМА број
+    rma_value: РМА вредност
+    role_id: ИД улоге
+    roles: Улоге
+    rules: Правила
+    safe: На сигурном
+    sales_total: Укупна продаја
+    sales_total_description: Укупна продаја за све поруџбине
+    sales_totals: Укупно продаје
+    save_and_continue: Сачувај и настави
+    save_my_address: Сачувај моју адресу
+    saving: Уштеда
+    say_no: Не
+    say_yes: да
+    scope: Обим
+    search: Претрага
+    search_results: Резултати претраге за 'зкзкзк0'
+    searching: У потрази
+    secure_connection_type: Тип сигурне везе
+    security_settings: Безбедносне поставке
+    select: Изаберите
+    select_a_date: Изаберите датум
+    select_a_date_range: Изаберите период
+    select_a_return_authorization_reason: Изаберите разлог за одобрење за повраћај
+    select_a_stock_location: Изаберите локацију залиха
+    select_a_store_credit_reason: Изаберите разлог за кредит у трговини
+    select_an_option: Изаберите опцију
+    select_from_prototype: Изаберите Из прототипа
+    select_stock: Изаберите залиху
+    selected_quantity_not_available: изабрани од зкзкзк0 није доступан.
+    send_copy_of_all_mails_to: Пошаљите копију свих маилова на
+    send_mails_as: Пошаљите пошту као
+    seo: СЕО
+    seo_robots: СЕО роботи
+    seo_title: СЕО Титле
+    server: Сервер
+    server_error: Сервер је вратио грешку
+    settings: Подешавања
+    ship: Брод
+    ship_address: Адреса брода
+    ship_to: 'Достава у:'
+    ship_total: Брод укупно
+    shipment: Пошиљка
+    shipment_adjustments: Прилагођавање пошиљке
+    shipment_details: Од зкзкзк0 преко зкзкзк1
+    shipment_mailer:
+      shipped_email:
+        dear_customer: Поштовани зкзкзк0,
+        instructions: Ваша наруџба зкзкзк0 је послана
+        shipment_summary: Резиме пошиљке за поруџбину
+        shipping_method: 'Начин испоруке: зкзкзк0'
+        store_team: зкзкзк0 Теам
+        subject: Обавештење о пошиљци
+        thanks: Хвала за ваш посао.
+        track_information: 'Информације о праћењу: зкзкзк0'
+        track_link: 'Линк за праћење: зкзкзк0'
+    shipment_state: Држава отпреме
+    shipment_states:
+      backorder: бацкордер
+      canceled: отказан
+      partial: делимично
+      pending: нерешен
+      ready: спреман
+      shipped: испоручен
+    shipment_transfer_error: Дошло је до грешке при преносу верзија
+    shipment_transfer_success: Варијанте су успешно пренесене
+    shipments: Пошиљке
+    shipped: Испоручен
+    shipping: поштарина
+    shipping_address: Достава Адреса
+    shipping_categories: Категорије испоруке
+    shipping_category: Категорија испоруке
+    shipping_flat_rate_per_item: Паушална цена по пакету
+    shipping_flat_rate_per_order: Паушал
+    shipping_flexible_rate: Флексибилна цена по пакету
+    shipping_instructions: Инструкције за доставу
+    shipping_method: начин куповине
+    shipping_methods: Начини испоруке
+    shipping_price_sack: Врећа са ценама
+    shipping_rates:
+      display_price:
+        excluding_tax: зкзкзк0 (+ зкзкзк1 зкзкзк2)
+        including_tax: зкзкзк0 (укљ. зкзкзк1 зкзкзк2)
+    shipping_total: Укупна поштарина
+    shop_by_taxonomy: Купујте од зкзкзк0
+    shopping_cart: Колица за куповину
+    show: Прикажи
+    show_active: Схов Ацтиве
+    show_deleted: Прикажи избрисано
+    show_discontinued: Емисија укинута
+    show_only_complete_orders: Прикажите само комплетне поруџбине
+    show_only_considered_risky: Показујте само ризична наређења
+    show_property: Прикажи имовину
+    show_rate_in_label: Прикажи стопу у ознаци
+    show_store_selector:
+      long: Прикажите бирач Сторе на главној навигационој траци Сторефронт-а и омогућите корисницима да промене Сторе и Цурренци
+      short: Прикажи бирач продавнице
+    sign_up: Пријави се
+    sku: СКУ
+    skus: Шифре производа
+    slug: Слуг
+    social: Друштвени
+    source: Извор
+    special_instructions: Посебна упутства
+    split: Разделити
+    spree_gateway_error_flash_for_checkout: Дошло је до проблема са вашим подацима о плаћању. Проверите своје податке и покушајте поново.
+    ssl:
+      change_protocol: Пребаците се на употребу ХТТП-а (уместо ХТТПС-а) и покушајте поново са овим захтевом.
+    start: Почетак
+    starting_from: Почиње у
+    state: Стање
+    state_based: Заснован на држави
+    state_machine_states:
+      accepted: Прихваћено
+      address: Адреса
+      authorized: Овлашћени
+      awaiting: Чека се
+      awaiting_return: Чека се повратак
+      backordered: Назад поручено
+      canceled: Отказано
+      cart: Колица
+      checkout: Проверити
+      closed: Затворено
+      complete: комплетан
+      completed: Завршено
+      confirm: Потврди
+      delivery: Испорука
+      errored: Грешка
+      failed: Није успео
+      given_to_customer: Даје се купцу
+      invalid: Неважеће
+      manual_intervention_required: Потребна је ручна интервенција
+      on_hand: На руци, при руци
+      open: Отвори
+      order: Наручи
+      payment: Плаћање
+      pending: нерешен
+      processing: Обрада
+      ready: Спремни
+      reimbursed: Надокнађено
+      resumed: Настављено
+      returned: Вратио се
+      shipment: Пошиљка
+      shipped: Испоручен
+      void: Празнина
+    states: државе
+    states_required: Потребне државе
+    status: Статус
+    stock: акција
+    stock_item_id: Ставка залиха
+    stock_location: Локација залиха
+    stock_location_info: Информације о локацији залиха
+    stock_locations: Локације залиха
+    stock_locations_need_a_default_country: Морате створити подразумевану земљу пре него што направите локацију залиха.
+    stock_management: Управљање залихама
+    stock_management_requires_a_stock_location: Молимо направите локацију залиха да бисте управљали залихама.
+    stock_movements: Кретање залиха
+    stock_movements_for_stock_location: Кретање залиха за зкзкзк0
+    stock_successfully_transferred: Залиха је успешно пребачена између локација.
+    stock_transfer:
+      errors:
+        must_have_variant: Морате додати бар једну варијанту.
+        variants_unavailable: Неке варијанте нису доступне на зкзкзк0
+    stock_transfer_name: Пренос залиха
+    stock_transfers: Трансфери залиха
+    stop: Зауставити
+    store: Сторе
+    store_credit:
+      additional_payment_needed: Изаберите други начин плаћања за преосталих <стронг> зкзкзк0 </стронг>.
+      allocated: Додато
+      applicable_amount: На ову поруџбину ће се применити кредит <стронг> зкзкзк0 </стронг> у продавници.
+      apply: Применити
+      authorized: Овлашћени
+      available_amount: На располагању вам је <стронг> зкзкзк0 </стронг> у кредитној трговини!
+      captured: Користи се
+      credit: Кредит
+      errors:
+        cannot_change_used_store_credit: Не можете променити кредит који је већ коришћен
+        unable_to_create: Није могуће створити кредит за продавницу
+        unable_to_delete: Брисање кредита у продавници није успело
+        unable_to_fund: Није могуће платити наруџбину помоћу кредита у продавници
+        unable_to_update: Ажурирање кредита у продавници није успело
+      remaining_amount: Имате <стронг> зкзкзк0 </стронг> на кредитном списку продавнице на вашем налогу.
+      remove: Уклоните
+    store_credit_categories: Категорије кредита у продавници
+    store_credit_name: Продавница кредит
+    store_credit_payment_method:
+      currency_mismatch: Валута кредита у продавници не подудара се са валутом налога
+      insufficient_authorized_amount: Није могуће ухватити више од одобреног износа
+      insufficient_funds: Преостали износ кредита у продавници није довољан
+      select_one_store_credit: Изаберите кредит у продавници да бисте прешли на преостало стање
+      successful_action: Успешна кредитна радња зкзкзк0
+      unable_to_credit: 'Кредитни код није могуће: зкзкзк0'
+      unable_to_find: Није могуће пронаћи кредит у продавници
+      unable_to_find_for_action: 'Није могуће пронаћи кредит за продавницу за ауторизациони код: зкзкзк0 за акцију: зкзкзк1'
+      unable_to_void: 'Није могуће поништити код: зкзкзк0'
+      user_has_no_store_credits: Корисник нема доступан кредит у продавници
+    store_credits: Чувајте кредите
+    store_default: Подразумевана продавница
+    store_errors:
+      unable_to_create: Није могуће направити продавницу.
+      unable_to_delete: Брисање продавнице није успело.
+      unable_to_update: Ажурирање продавнице није успело.
+    store_form:
+      checkout_zone_help: Одабиром зоне ограничиће се до које се земље или државе испоручују производи. За више информација <а хреф='хттпс://гуидес.спреецоммерце.орг/усер/цонфигуратион/цонфигуринг_геограпхи.хтмл#зонес' таргет='_бланк' цласс='алерт-линк'> погледајте документацију </а>
+      code_help: Јединствени идентификатор продавнице, који је скраћена верзија назива продавнице (користи се као назив директорија изгледа, а такође је користан за раздвајање шаблона по продавници)
+      customer_support_email_help: Ова е-адреса је видљива посетиоцима ваше продавнице у одељку Подножје
+      default_country_help: Ово је земља која ће бити унапред изабрана на обрасцу Цхецкоут Аддресс
+      footer_help: Овај садржај је видљив у делу подножја ваше Продавнице
+      locales_help: Инсталирајте <а хреф='хттпс://гитхуб.цом/спрее-цонтриб/спрее_и18н таргет='_бланк' цласс='алерт-линк'> Спрее И18н додатак </а> да бисте додали још локализација
+      mail_from_address_help: Ово је адреса е-поште која ће бити пошиљалац свих е-адреса ваше продавнице (потврда поруџбине, обавештење о отпреми итд.)
+      new_order_notifications_email_help: Ако желите да примате обавештење е-поштом сваки пут када неко пошаље поруџбину, наведите адресу е-поште на коју ће се то обавештење послати
+      seo_robots: Погледајте <а хреф='хттпс://девелоперс.гоогле.цом/сеарцх/референце/роботс_мета_таг' таргет='_бланк'> ову страницу за додатну помоћ </а>
+      social_help: Ако желите да повежете своје друштвене налоге у подножју дела ваше веб странице, попуните поља испод
+    store_not_set_as_default: Није могуће поставити продавницу зкзкзк0 као подразумевану продавницу
+    store_set_as_default: Сторе зкзкзк0 је сада подразумевана продавница
+    store_set_default_button: Фабрички подешен
+    stores: Продавнице
+    street_address: Улица и број
+    street_address_2: Адреса улице (наставак)
+    subtotal: Међузбир
+    subtract: Одузми
+    success: Успех
+    successfully_created: зкзкзк0 је успешно креиран!
+    successfully_refunded: зкзкзк0 је успешно рефундиран!
+    successfully_removed: зкзкзк0 је успешно уклоњен!
+    successfully_updated: зкзкзк0 је успешно ажуриран!
+    summary: Резиме
+    supported_currencies: Подржане валуте
+    supported_currencies_long: Листа подржаних валута одвојена зарезима
+    supported_locales: Подржани језици
+    tags: Ознаке
+    tags_placeholder: Додај ознаке
+    tax: Порез
+    tax_categories: Пореске категорије
+    tax_category: Категорија пореза
+    tax_code: Порески закон
+    tax_included: Са ПДВ-ом.)
+    tax_rate_amount_explanation: Пореске стопе су децимални износ који помаже у прорачуну (тј. Ако је пореска стопа 5%, унесите 0,05)
+    tax_rates: Пореске стопе
+    taxon: Такон
+    taxon_edit: Уреди Такон
+    taxon_missing_alt: Опис банера категорије
+    taxon_placeholder: Додајте таксон
+    taxon_rule:
+      choose_taxons: Изаберите таксоне
+      label: Поруџбина мора да садржи к износ ових таксона
+      match_all: све
+      match_any: најмање један
+    taxonomies: Таксономије
+    taxonomy: Таксономија
+    taxonomy_brands_name: Брендови
+    taxonomy_categories_name: Категорије
+    taxonomy_edit: Уредите таксономију
+    taxonomy_tree_error: Тражена промена није прихваћена и дрво је враћено у претходно стање, покушајте поново.
+    taxonomy_tree_instruction: "* Десним тастером миша кликните (или двапут додирните иОС уређај) дете на дрвету да бисте приступили менију за додавање, брисање или сортирање детета."
+    taxons: Таконс
+    test: Тест
+    test_mailer:
+      test_email:
+        greeting: Честитам!
+        message: Ако сте добили ову е-пошту, онда су ваша подешавања е-поште тачна.
+        subject: Тест Маил
+    test_mode: Тест Моде
+    thank_you_for_your_order: Хвала за ваш посао. Одштампајте копију ове странице са потврдом за своју евиденцију.
+    there_are_no_items_for_this_order: Нема ставки за ову поруџбину. Молимо додајте ставку у поруџбину да бисте наставили.
+    there_were_problems_with_the_following_fields: Било је проблема са следећим пољима
+    this_order_has_already_received_a_refund: За ову поруџбину је већ враћен новац
+    thumbnail: Сличица
+    tiered_flat_rate: Тарирани паушал
+    tiered_percent: Тиеред Перцент
+    tiers: Нивои
+    time: време
+    to_add_variants_you_must_first_define: Да бисте додали варијанте, прво морате да дефинишете
+    total: Укупно
+    total_per_item: Укупно по ставци
+    total_pre_tax_refund: Укупан поврат пре опорезивања
+    total_price: Укупна цена
+    total_sales: Укупна продаја
+    track_inventory: Прати инвентар
+    tracking: Праћење
+    tracking_number: Број за праћење
+    tracking_url: УРЛ за праћење
+    tracking_url_placeholder: на пример. хттп://куицксхип.цом/пацкаге?нум=:трацкинг
+    transaction_id: ИД трансакције
+    transfer_from_location: Пренос из
+    transfer_stock: Трансфер Стоцк
+    transfer_to_location: Пребацити на
+    tree: Дрво
+    twitter: Твиттер
+    type: Тип
+    type_to_search: Откуцајте за претрагу
+    unable_to_connect_to_gateway: Повезивање са мрежним пролазом није успело.
+    unable_to_create_reimbursements: Није могуће створити надокнаду јер постоје ставке на чекању за ручну интервенцију.
+    under_price: Под зкзкзк0
+    unlock: Откључај
+    unrecognized_card_type: Непрепознат тип картице
+    unshippable_items: Предмети који се не могу испоручити
+    update: ажурирање
+    updating: Ажурирање
+    url: УРЛ
+    usage_limit: Ограничење употребе
+    use_app_default: Користите подразумевану апликацију
+    use_billing_address: Користите адресу за обрачун
+    use_existing_cc: Користите постојећу картицу у евиденцији
+    use_new_cc: Користите нову картицу
+    use_new_cc_or_payment_method: Користите нову картицу / начин плаћања
+    use_s3: Користите Амазон С3 за слике
+    used: Користи се
+    user: Корисник
+    user_not_found: Корисник није пронађен
+    user_rule:
+      choose_users: Изаберите кориснике
+    users: Корисници
+    validation:
+      cannot_be_less_than_shipped_units: не може бити мањи од броја отпремљених јединица.
+      cannot_destroy_line_item_as_inventory_units_have_shipped: Не може се уништити ставка поруџбине јер су испоручене неке јединице инвентара.
+      exceeds_available_stock: премашује расположиве залихе. Уверите се да ставке поруџбина имају важећу количину.
+      is_too_large: је превелика - залихе при руци не могу покрити тражену количину!
+      must_be_int: мора бити цео број
+      must_be_non_negative: мора бити негативна вредност
+      unpaid_amount_not_zero: 'Износ није враћен у потпуности. Још увек рок: зкзкзк0'
+    value: Вредност
+    variant: Варијанта
+    variant_placeholder: Изаберите варијанту
+    variant_prices_search_placeholder: Потражите СКУ или назив варијанте ...
+    variants: Варијанте
+    version: Верзија
+    void: Празнина
+    weight: Тежина
+    what_is_a_cvv: Шта је (ЦВВ) код кредитне картице?
+    what_is_this: Шта је ово?
+    width: Ширина
+    year: Године
+    you_have_no_orders_yet: Још немате наређења
+    your_cart_is_empty: Ваша колица су празна
+    your_order_is_empty_add_product: Ваша поруџбина је празна, потражите и додајте производ изнад
+    zip: Зип
+    zipcode: Поштански број
+    zipcode_required: Потребан поштански број
+    zone: Зона
+    zones: Зоне

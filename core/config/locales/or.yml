@@ -1,0 +1,1769 @@
+---
+or:
+  activemodel:
+    errors:
+      models:
+        spree/fulfilment_changer:
+          attributes:
+            current_shipment:
+              can_not_have_backordered_inventory_units: ଇନଭେଣ୍ଟୋରୀ ୟୁନିଟ୍ ଗୁଡିକ ବ୍ୟାକର୍ଡର୍ କରିଛନ୍ତି |
+              has_already_been_shipped: ପୂର୍ବରୁ ପଠାଯାଇଛି
+            desired_shipment:
+              can_not_transfer_within_same_shipment: ସାମ୍ପ୍ରତିକ ପଠାଣ ସହିତ ସମାନ ହୋଇପାରିବ ନାହିଁ |
+              has_not_enough_stock_at_desired_location: ଇଚ୍ଛିତ ଷ୍ଟକ୍ ଅବସ୍ଥାନରେ ପର୍ଯ୍ୟାପ୍ତ ଷ୍ଟକ୍ ନାହିଁ |
+  activerecord:
+    attributes:
+      spree/address:
+        address1: ଠିକଣା
+        address2: ଠିକଣା (ଅବ।)
+        city: ସହର
+        company: କମ୍ପାନୀ
+        country: ଦେଶ
+        firstname: ପ୍ରଥମ ନାମ
+        label: ଠିକଣା ନାମ
+        lastname: ଶେଷ ନାମ
+        phone: ଫୋନ୍ |
+        state: ରାଜ୍ୟ
+        zipcode: ଜିପ୍ କୋଡ୍
+      spree/calculator/tiered_flat_rate:
+        preferred_base_amount: ଆଧାର ପରିମାଣ
+        preferred_tiers: ସ୍ତରଗୁଡିକ
+      spree/calculator/tiered_percent:
+        preferred_base_percent: ବେସ୍ ଶତକଡା
+        preferred_tiers: ସ୍ତରଗୁଡିକ
+      spree/country:
+        iso: ISO
+        iso3: ISO3
+        iso_name: ISO ନାମ
+        name: ନାମ
+        numcode: ISO କୋଡ୍
+      spree/credit_card:
+        base: ''
+        cc_type: ଟାଇପ୍ କରନ୍ତୁ |
+        month: ମାସ
+        name: ନାମ
+        number: ସଂଖ୍ୟା
+        verification_value: ଯାଞ୍ଚ ମୂଲ୍ୟ
+        year: ବର୍ଷ
+      spree/inventory_unit:
+        state: ରାଜ୍ୟ
+      spree/line_item:
+        price: ମୂଲ୍ୟ
+        quantity: ପରିମାଣ
+      spree/option_type:
+        filterable: ଫିଲ୍ଟରେବଲ୍ |
+        name: ନାମ
+        presentation: ଉପସ୍ଥାପନା
+      spree/order:
+        checkout_complete: ଚେକଆଉଟ୍ ସମ୍ପୂର୍ଣ୍ଣ
+        completed_at: ସମାପ୍ତ
+        considered_risky: ବିପଦପୂର୍ଣ୍ଣ
+        coupon_code: କୁପନ୍ କୋଡ୍ |
+        created_at: ଅର୍ଡର ତାରିଖ |
+        email: ଇମେଲ୍ କରନ୍ତୁ |
+        ip_address: IP ଠିକଣା
+        item_total: ଆଇଟମ୍ ସମୁଦାୟ |
+        number: ସଂଖ୍ୟା
+        payment_state: ଦେୟ ରାଜ୍ୟ
+        shipment_state: ପଠାଇବା ରାଜ୍ୟ |
+        special_instructions: ବିଶେଷ ନିର୍ଦ୍ଦେଶ
+        state: ରାଜ୍ୟ
+        total: ସମୁଦାୟ
+      spree/order/bill_address:
+        address1: ବିଲିଂ ଠିକଣା ରାସ୍ତା
+        city: ବିଲିଂ ଠିକଣା ସହର |
+        firstname: ପ୍ରଥମ ନାମ ବିଲିଂ ଠିକଣା |
+        lastname: ବିଲିଂ ଠିକଣା ଶେଷ ନାମ |
+        phone: ବିଲିଂ ଠିକଣା ଫୋନ୍ |
+        state: ବିଲିଂ ଠିକଣା ସ୍ଥିତି |
+        zipcode: ବିଲିଂ ଠିକଣା ଜିପକୋଡ୍ |
+      spree/order/ship_address:
+        address1: ଠିକଣା ଠିକଣା ରାସ୍ତା
+        city: ସିପିଂ ଠିକଣା ସହର
+        firstname: ପ୍ରଥମ ନାମ ପଠାଇବା ଠିକଣା |
+        lastname: ଶେଷ ନାମ ପଠାଇବା ଠିକଣା |
+        phone: ଠିକଣା ଫୋନ୍ ପଠାଇବା |
+        state: ସିପିଂ ଠିକଣା ସ୍ଥିତି |
+        zipcode: ସିପିଂ ଠିକଣା ଜିପକୋଡ୍ |
+      spree/payment:
+        amount: ପରିମାଣ
+        number: ସଂଖ୍ୟା
+      spree/payment_method:
+        name: ନାମ
+      spree/product:
+        available_on: ଅନ୍ ଉପଲବ୍ଧ |
+        cost_currency: ମୂଲ୍ୟ ମୁଦ୍ରା
+        cost_price: ମୂଲ୍ୟ ମୂଲ୍ୟ
+        description: ବର୍ଣ୍ଣନା
+        discontinue_on: ବନ୍ଦ କରନ୍ତୁ
+        less_than: ରୁ କମ୍
+        master_price: ମାଷ୍ଟର ପ୍ରାଇସ୍ |
+        name: ନାମ
+        on_hand: ହାତରେ |
+        shipping_category: ସିପିଂ ବର୍ଗ
+        tax_category: କର ବର୍ଗ
+      spree/promotion:
+        advertise: ବିଜ୍ଞାପନ
+        code: କୋଡ୍
+        description: ବର୍ଣ୍ଣନା
+        event_name: ଇଭେଣ୍ଟ ନାମ
+        expires_at: ମିଆଦ ପୂର୍ଣ୍ଣ ହେବ
+        generate_code: କୁପନ୍ କୋଡ୍ ସୃଷ୍ଟି କରନ୍ତୁ |
+        name: ନାମ
+        path: ପଥ
+        promotion_category: ପଦୋନ୍ନତି ବର୍ଗ
+        starts_at: ଆରମ୍ଭ ହେବ
+        usage_limit: ବ୍ୟବହାର ସୀମା
+      spree/promotion_category:
+        code: କୋଡ୍
+        name: ନାମ
+      spree/property:
+        name: ନାମ
+        presentation: ଉପସ୍ଥାପନା
+      spree/prototype:
+        name: ନାମ
+      spree/return_authorization:
+        amount: ପରିମାଣ
+      spree/role:
+        name: ନାମ
+      spree/shipment:
+        number: ସଂଖ୍ୟା
+      spree/state:
+        abbr: ସଂକ୍ଷିପ୍ତକରଣ
+        name: ନାମ
+      spree/state_change:
+        state_changes: ରାଜ୍ୟ ପରିବର୍ତ୍ତନ |
+        state_from: ରାଜ୍ୟରୁ
+        state_to: ରାଜ୍ୟକୁ
+        timestamp: ଟାଇମଷ୍ଟ୍ୟାମ୍ପ |
+        type: ଟାଇପ୍ କରନ୍ତୁ |
+        updated: ଅଦ୍ୟତନ କରାଯାଇଛି
+        user: ଉପଯୋଗକର୍ତ୍ତା |
+      spree/store:
+        mail_from_address: ଠିକଣାରୁ ମେଲ୍ |
+        meta_description: ମେଟା ବର୍ଣ୍ଣନା |
+        meta_keywords: ମେଟା କୀ ଶବ୍ଦ |
+        name: ସାଇଟ୍ ନାମ
+        seo_robots: SEO ରୋବଟ୍ସ |
+        seo_title: SEO ଆଖ୍ୟା |
+        url: ସାଇଟ୍ URL
+      spree/store_credit:
+        amount_used: ବ୍ୟବହୃତ ପରିମାଣ
+      spree/store_credit_category:
+        name: ନାମ
+      spree/tax_category:
+        description: ବର୍ଣ୍ଣନା
+        name: ନାମ
+      spree/tax_rate:
+        amount: ହାର
+        included_in_price: ମୂଲ୍ୟରେ ଅନ୍ତର୍ଭୁକ୍ତ |
+        show_rate_in_label: ଲେବଲ୍ ରେ ରେଟ୍ ଦେଖାନ୍ତୁ |
+      spree/taxon:
+        name: ନାମ
+        permalink: ପର୍ମାଲିଙ୍କ୍ |
+        position: ଅବସ୍ଥାନ
+      spree/taxonomy:
+        name: ନାମ
+      spree/user:
+        email: ଇମେଲ୍ କରନ୍ତୁ |
+        password: ପାସୱାର୍ଡ
+        password_confirmation: ପାସୱାର୍ଡ ନିଶ୍ଚିତକରଣ
+      spree/variant:
+        cost_currency: ମୂଲ୍ୟ ମୁଦ୍ରା
+        cost_price: ମୂଲ୍ୟ ମୂଲ୍ୟ
+        depth: ଗଭୀରତା
+        height: ଉଚ୍ଚତା |
+        price: ମୂଲ୍ୟ
+        sku: SKU
+        weight: ଓଜନ
+        width: ମୋଟେଇ
+      spree/zone:
+        description: ବର୍ଣ୍ଣନା
+        name: ନାମ
+    errors:
+      models:
+        spree/calculator/tiered_flat_rate:
+          attributes:
+            base:
+              keys_should_be_positive_number: ପର୍ଯ୍ୟାୟ କିଗୁଡ଼ିକ ସମସ୍ତ ସଂଖ୍ୟା 0 ରୁ ବଡ ହେବା ଉଚିତ |
+            preferred_tiers:
+              should_be_hash: ଏକ ହ୍ୟାସ୍ ହେବା ଉଚିତ୍ |
+        spree/calculator/tiered_percent:
+          attributes:
+            base:
+              keys_should_be_positive_number: ପର୍ଯ୍ୟାୟ କିଗୁଡ଼ିକ ସମସ୍ତ ସଂଖ୍ୟା 0 ରୁ ବଡ ହେବା ଉଚିତ |
+              values_should_be_percent: ପର୍ଯ୍ୟାୟ ମୂଲ୍ୟଗୁଡିକ 0% ରୁ 100% ମଧ୍ୟରେ ଶତକଡ଼ା ହେବା ଉଚିତ୍ |
+            preferred_tiers:
+              should_be_hash: ଏକ ହ୍ୟାସ୍ ହେବା ଉଚିତ୍ |
+        spree/classification:
+          attributes:
+            taxon_id:
+              already_linked: ଏହି ଉତ୍ପାଦ ସହିତ ପୂର୍ବରୁ ଲିଙ୍କ୍ ହୋଇଛି |
+        spree/credit_card:
+          attributes:
+            base:
+              card_expired: କାର୍ଡର ସମୟ ସମାପ୍ତ ହୋଇଛି |
+              expiry_invalid: କାର୍ଡର ଅବଧି ଅବ inv ଧ ଅଟେ |
+        spree/image:
+          attributes:
+            attachment:
+              attachment_must_be_present: ଉପସ୍ଥିତ ରହିବା ଜରୁରୀ |
+              not_allowed_content_type: ବିଷୟବସ୍ତୁ ପ୍ରକାରକୁ ଅନୁମତି ଦେଇନାହିଁ |
+        spree/line_item:
+          attributes:
+            currency:
+              must_match_order_currency: ଅର୍ଡର ମୁଦ୍ରା ସହିତ ମେଳ ହେବା ଜରୁରୀ |
+        spree/product:
+          attributes:
+            base:
+              cannot_destroy_if_attached_to_line_items: ଉତ୍ପାଦଗୁଡିକ ଲାଇନ୍ ଆଇଟମ୍ ସହିତ ସଂଲଗ୍ନ ହେବା ପରେ ବିଲୋପ କରିପାରିବ ନାହିଁ |
+            discontinue_on:
+              invalid_date_range: ଉପଲବ୍ଧ ତାରିଖ ଠାରୁ ବିଳମ୍ବ ହେବା ଜରୁରୀ |
+        spree/promotion:
+          attributes:
+            expires_at:
+              invalid_date_range: ଆରମ୍ଭ ତାରିଖ ଠାରୁ ବିଳମ୍ବ ହେବା ଜରୁରୀ |
+        spree/refund:
+          attributes:
+            amount:
+              greater_than_allowed: ଅନୁମୋଦିତ ପରିମାଣଠାରୁ ଅଧିକ ଅଟେ |
+        spree/reimbursement:
+          attributes:
+            base:
+              return_items_order_id_does_not_match: ନିର୍ଦ୍ଦିଷ୍ଟ ହୋଇଥିବା ରିଟର୍ନ ଆଇଟମଗୁଡିକ ମଧ୍ୟରୁ ଗୋଟିଏ କିମ୍ବା ଅଧିକ ଫେରସ୍ତ ପରି ସମାନ କ୍ରମର ନୁହେଁ |
+        spree/return_item:
+          attributes:
+            inventory_unit:
+              other_completed_return_item_exists: "%{inventory_unit_id} ରିଟର୍ନ ଆଇଟମ୍ %{return_item_id} ଦ୍ୱାରା ନିଆଯାଇଛି |"
+            reimbursement:
+              cannot_be_associated_unless_accepted: ଏକ ରିଟର୍ନ ଆଇଟମ୍ ସହିତ ଜଡିତ ହୋଇପାରିବ ନାହିଁ ଯାହା ଗ୍ରହଣୀୟ ନୁହେଁ |
+        spree/shipping_method:
+          attributes:
+            base:
+              required_shipping_category: ଆପଣ ନିଶ୍ଚିତ ଭାବରେ ଅତିକମରେ ଗୋଟିଏ ସିପିଂ ବର୍ଗ ଚୟନ କରିବେ |
+        spree/store:
+          attributes:
+            base:
+              cannot_destroy_default_store: ଡିଫଲ୍ଟ ଷ୍ଟୋର୍‌କୁ ନଷ୍ଟ କରିପାରିବ ନାହିଁ |
+        spree/store_credit:
+          attributes:
+            amount_authorized:
+              exceeds_total_credits: ସମୁଦାୟ କ୍ରେଡିଟ୍ ଅତିକ୍ରମ କରେ |
+            amount_used:
+              cannot_be_greater_than_amount: ପରିମାଣଠାରୁ ଅଧିକ ହୋଇପାରିବ ନାହିଁ |
+              greater_than_zero_restrict_delete: ଶୂନଠାରୁ ବଡ ଅଟେ | ଷ୍ଟୋର କ୍ରେଡିଟ୍ ବିଲୋପ କରିପାରିବ ନାହିଁ |
+        spree/store_credit_category:
+          attributes:
+            base:
+              cannot_destroy_if_used_in_store_credit: ଷ୍ଟୋର କ୍ରେଡିଟରେ ବ୍ୟବହୃତ ହେବା ପରେ ଷ୍ଟୋର କ୍ରେଡିଟ୍ ବର୍ଗଗୁଡିକ ବିଲୋପ କରିପାରିବ ନାହିଁ |
+        spree/taxon_image:
+          attributes:
+            attachment:
+              not_allowed_content_type: ବିଷୟବସ୍ତୁ ପ୍ରକାରକୁ ଅନୁମତି ଦେଇନାହିଁ |
+        spree/variant:
+          attributes:
+            base:
+              cannot_destroy_if_attached_to_line_items: ଲାଇନ୍ ଆଇଟମ୍ ସହିତ ସଂଲଗ୍ନ ହେବା ପରେ ପ୍ରକାରଗୁଡିକ ବିଲୋପ କରିପାରିବ ନାହିଁ |
+              must_supply_price_for_variant_or_master: ଉତ୍ପାଦ ପାଇଁ ଭାରିଆଣ୍ଟ କିମ୍ବା ମାଷ୍ଟର ପ୍ରାଇସ୍ ମୂଲ୍ୟ ଯୋଗାଇବା ଜରୁରୀ |
+              no_master_variant_found_to_infer_price: ମୂଲ୍ୟ ନିର୍ଣ୍ଣୟ କରିବା ପାଇଁ କ master ଣସି ମାଷ୍ଟର ଭାରିଆଣ୍ଟ ମିଳିଲା ନାହିଁ |
+    models:
+      spree/address:
+        one: ଠିକଣା
+        other: ଠିକଣା
+      spree/country:
+        one: ଦେଶ
+        other: ଦେଶଗୁଡିକ |
+      spree/credit_card:
+        one: କ୍ରେଡିଟ୍ କାର୍ଡ଼
+        other: କ୍ରେଡିଟ୍ କାର୍ଡ
+      spree/customer_return:
+        one: ଗ୍ରାହକ ଫେରସ୍ତ
+        other: ଗ୍ରାହକ ଫେରସ୍ତ
+      spree/inventory_unit:
+        one: ଭଣ୍ଡାର ୟୁନିଟ୍ |
+        other: ଭଣ୍ଡାର ୟୁନିଟ୍ |
+      spree/line_item:
+        one: ରେଖା ଆଇଟମ୍ |
+        other: ରେଖା ଆଇଟମ୍ |
+      spree/option_type:
+        one: ବିକଳ୍ପ ପ୍ରକାର
+        other: ବିକଳ୍ପ ପ୍ରକାରଗୁଡିକ |
+      spree/option_value:
+        one: ବିକଳ୍ପ ମୂଲ୍ୟ
+        other: ବିକଳ୍ପ ମୂଲ୍ୟଗୁଡ଼ିକ
+      spree/order:
+        one: ଅର୍ଡର |
+        other: ଆଦେଶ
+      spree/payment:
+        one: ଦେୟ
+        other: ଦେୟ
+      spree/payment_method:
+        one: ଅର୍ଥ ପ୍ରଦାନ ପଦ୍ଧତି
+        other: ଦେୟ ପଦ୍ଧତି
+      spree/product:
+        one: ଉତ୍ପାଦ
+        other: ଉତ୍ପାଦଗୁଡିକ
+      spree/promotion:
+        one: ପଦୋନ୍ନତି
+        other: ପଦୋନ୍ନତି
+      spree/promotion_category:
+        one: ପଦୋନ୍ନତି ବର୍ଗ
+        other: ପଦୋନ୍ନତି ବର୍ଗଗୁଡିକ |
+      spree/property:
+        one: ସମ୍ପତ୍ତି
+        other: ଗୁଣଧର୍ମ
+      spree/prototype:
+        one: ପ୍ରୋଟୋଟାଇପ୍ |
+        other: ପ୍ରୋଟୋଟାଇପ୍ |
+      spree/refund_reason:
+        one: ଫେରସ୍ତ କାରଣ
+        other: ଫେରସ୍ତ କାରଣଗୁଡିକ
+      spree/reimbursement:
+        one: ପରିଶୋଧ
+        other: ପରିଶୋଧ
+      spree/reimbursement_type:
+        one: ପରିଶୋଧ ପ୍ରକାର
+        other: ପରିଶୋଧ ପ୍ରକାରଗୁଡିକ |
+      spree/return_authorization:
+        one: ପ୍ରାଧିକରଣ ଫେରସ୍ତ
+        other: ପ୍ରାଧିକରଣ ଫେରସ୍ତ କରନ୍ତୁ |
+      spree/return_authorization_reason:
+        one: ଫେରସ୍ତ ପ୍ରାଧିକରଣ କାରଣ |
+        other: ପ୍ରାଧିକରଣ କାରଣଗୁଡିକ ଫେରସ୍ତ କରନ୍ତୁ |
+      spree/role:
+        one: ଭୂମିକା
+        other: ଭୂମିକା
+      spree/shipment:
+        one: ପଠାଇବା
+        other: ପଠାଣ
+      spree/shipping_category:
+        one: ସିପିଂ ବର୍ଗ
+        other: ସିପିଂ ବର୍ଗଗୁଡିକ
+      spree/shipping_method:
+        one: ପଠାଇବା ପଦ୍ଧତି |
+        other: ପଠାଇବା ପଦ୍ଧତି |
+      spree/state:
+        one: ରାଜ୍ୟ
+        other: ରାଜ୍ୟଗୁଡିକ |
+      spree/state_change:
+        one: ରାଜ୍ୟ ପରିବର୍ତ୍ତନ |
+        other: ରାଜ୍ୟ ପରିବର୍ତ୍ତନ |
+      spree/stock_location:
+        one: ଷ୍ଟକ୍ ଅବସ୍ଥାନ
+        other: ଷ୍ଟକ୍ ଅବସ୍ଥାନ |
+      spree/stock_movement:
+        one: ଷ୍ଟକ୍ ମୁଭମେଣ୍ଟ |
+        other: ଷ୍ଟକ୍ ମୁଭମେଣ୍ଟସ୍ |
+      spree/stock_transfer:
+        one: ଷ୍ଟକ୍ ସ୍ଥାନାନ୍ତର |
+        other: ଷ୍ଟକ୍ ସ୍ଥାନାନ୍ତର |
+      spree/store_credit:
+        one: କ୍ରେଡିଟ୍ ଷ୍ଟୋର୍ କରନ୍ତୁ |
+        other: କ୍ରେଡିଟ୍ ଗଚ୍ଛିତ କରନ୍ତୁ |
+      spree/store_credit_category:
+        one: କ୍ରେଡିଟ୍ ବର୍ଗ ଷ୍ଟୋର କରନ୍ତୁ |
+        other: କ୍ରେଡିଟ୍ ବର୍ଗଗୁଡିକ ଷ୍ଟୋର୍ କରନ୍ତୁ |
+      spree/tax_category:
+        one: କର ବର୍ଗ
+        other: କର ବର୍ଗ
+      spree/tax_rate:
+        one: ଟିକସ ହାର
+        other: ଟିକସ ହାର
+      spree/taxon:
+        one: ଟ୍ୟାକ୍ସନ୍ |
+        other: ଟ୍ୟାକ୍ସନ୍ |
+      spree/taxonomy:
+        one: ଟ୍ୟାକ୍ସୋନୋମି
+        other: ଟ୍ୟାକ୍ସୋନୋମିଜ୍ |
+      spree/tracker:
+        one: ଟ୍ରାକର୍
+        other: ଟ୍ରାକର୍ସ
+      spree/user:
+        one: ଉପଯୋଗକର୍ତ୍ତା |
+        other: ଉପଯୋଗକର୍ତ୍ତାଗଣ |
+      spree/variant:
+        one: ପ୍ରକାର
+        other: ପ୍ରକାରଗୁଡିକ |
+      spree/zone:
+        one: ଜୋନ୍
+        other: ଜୋନ୍
+  address_book:
+    save: ସଞ୍ଚୟ କରନ୍ତୁ |
+    successfully_created: ନୂତନ ଠିକଣା ସଫଳତାର ସହିତ ସୃଷ୍ଟି ହୋଇଛି |
+  devise:
+    confirmations:
+      confirmed: ଆପଣଙ୍କର ଖାତା ସଫଳତାର ସହିତ ନିଶ୍ଚିତ ହୋଇଛି | ଆପଣ ବର୍ତ୍ତମାନ ସାଇନ୍ ଇନ୍ କରିଛନ୍ତି |
+      send_instructions: ତୁମ ଆକାଉଣ୍ଟକୁ କିଛି ମିନିଟରେ କିପରି ନିଶ୍ଚିତ କରାଯିବ ସେ ସମ୍ବନ୍ଧରେ ନିର୍ଦ୍ଦେଶନାମା ସହିତ ତୁମେ ଏକ ଇମେଲ ପାଇବ |
+    failure:
+      inactive: ଆପଣଙ୍କର ଖାତା ଏପର୍ଯ୍ୟନ୍ତ ସକ୍ରିୟ ହୋଇନାହିଁ |
+      invalid: ଅବ val ଧ ଇମେଲ କିମ୍ବା ପାସୱାର୍ଡ |
+      invalid_token: ଅବ val ଧ ପ୍ରାମାଣିକିକରଣ ଟୋକନ୍ |
+      locked: ଆପଣଙ୍କର ଖାତା ଲକ୍ ହୋଇଛି |
+      timeout: ଆପଣଙ୍କର ଅଧିବେଶନ ସମାପ୍ତ ହୋଇଛି, ଜାରି ରଖିବାକୁ ଦୟାକରି ପୁନର୍ବାର ସାଇନ୍ ଇନ୍ କରନ୍ତୁ |
+      unauthenticated: ଜାରି ରଖିବା ପୂର୍ବରୁ ଆପଣଙ୍କୁ ସାଇନ୍ ଇନ୍ କିମ୍ବା ସାଇନ୍ ଅପ୍ କରିବା ଆବଶ୍ୟକ |
+      unconfirmed: ଜାରି ରଖିବା ପୂର୍ବରୁ ତୁମ ଆକାଉଣ୍ଟକୁ ନିଶ୍ଚିତ କରିବାକୁ ପଡିବ |
+    mailer:
+      confirmation_instructions:
+        subject: ନିଶ୍ଚିତକରଣ ନିର୍ଦ୍ଦେଶାବଳୀ
+      reset_password_instructions:
+        subject: ପାସୱାର୍ଡ ନିର୍ଦ୍ଦେଶାବଳୀ ପୁନ Res ସେଟ୍ କରନ୍ତୁ |
+      unlock_instructions:
+        subject: ନିର୍ଦ୍ଦେଶଗୁଡ଼ିକୁ ଅନଲକ୍ କରନ୍ତୁ |
+    oauth_callbacks:
+      failure: '%{kind} ରୁ ଆପଣଙ୍କୁ ଅନୁମତି ଦେଇ ପାରିଲା ନାହିଁ କାରଣ "%{reason}" |'
+      success: "%{kind} ଆକାଉଣ୍ଟରୁ ସଫଳତାର ସହିତ ପ୍ରାଧିକୃତ |"
+    unlocks:
+      send_instructions: ତୁମ ଆକାଉଣ୍ଟକୁ କିଛି ମିନିଟରେ କିପରି ଅନଲକ୍ କରାଯିବ ସେ ସମ୍ବନ୍ଧରେ ନିର୍ଦ୍ଦେଶନାମା ସହିତ ତୁମେ ଏକ ଇମେଲ୍ ପାଇବ |
+      unlocked: ତୁମର ଖାତା ସଫଳତାର ସହିତ ଅନଲକ୍ ହେଲା | ଆପଣ ବର୍ତ୍ତମାନ ସାଇନ୍ ଇନ୍ କରିଛନ୍ତି |
+    user_passwords:
+      user:
+        cannot_be_blank: ଆପଣଙ୍କର ପାସୱାର୍ଡ ଖାଲି ହୋଇପାରିବ ନାହିଁ |
+        send_instructions: କିଛି ମିନିଟରେ କିପରି ଆପଣଙ୍କର ପାସୱାର୍ଡ ପୁନ res ସେଟ୍ କରିବେ ସେ ସମ୍ବନ୍ଧରେ ନିର୍ଦ୍ଦେଶନାମା ସହିତ ଆପଣ ଏକ ଇମେଲ୍ ଗ୍ରହଣ କରିବେ |
+        updated: ଆପଣଙ୍କର ପାସୱାର୍ଡ ସଫଳତାର ସହିତ ପରିବର୍ତ୍ତିତ ହେଲା | ଆପଣ ବର୍ତ୍ତମାନ ସାଇନ୍ ଇନ୍ କରିଛନ୍ତି |
+    user_registrations:
+      destroyed: ହାଏ! ଆପଣଙ୍କର ଖାତା ସଫଳତାର ସହିତ ବାତିଲ୍ ହେଲା | ଆମେ ଆଶା କରୁଛୁ ଶୀଘ୍ର ଆପଣଙ୍କୁ ପୁଣି ଦେଖିବା |
+      inactive_signed_up: ଆପଣ ସଫଳତାର ସହିତ ସାଇନ୍ ଅପ୍ କରିଛନ୍ତି | ତଥାପି, ଆମେ ଆପଣଙ୍କୁ ସାଇନ୍ ଇନ୍ କରିପାରିଲୁ ନାହିଁ କାରଣ ଆପଣଙ୍କର ଖାତା %{reason} ଅଟେ |
+      signed_up: ସ୍ Welcome ାଗତ! ଆପଣ ସଫଳତାର ସହିତ ସାଇନ୍ ଅପ୍ କରିଛନ୍ତି |
+      updated: ତୁମେ ତୁମର ଖାତାକୁ ସଫଳତାର ସହିତ ଅପଡେଟ୍ କରିଛ |
+    user_sessions:
+      signed_in: ସଫଳତାର ସହିତ ସାଇନ୍ ଇନ୍ |
+      signed_out: ସଫଳତାର ସହିତ ସାଇନ୍ ଆଉଟ୍ |
+  errors:
+    messages:
+      already_confirmed: ପୂର୍ବରୁ ନିଶ୍ଚିତ ହୋଇସାରିଛି |
+      not_found: ମିଳିଲା ନାହି
+      not_locked: ତାଲା ନଥିଲା |
+      not_saved:
+        one: '1 ତ୍ରୁଟି ଏହି %{resource} କୁ ସଞ୍ଚୟ କରିବାକୁ ବାରଣ କଲା:'
+        other: "%{count} ତ୍ରୁଟି ଏହି %{resource} କୁ ସଞ୍ଚୟ କରିବାକୁ ବାରଣ କଲା:"
+  spree:
+    abbreviation: ସଂକ୍ଷିପ୍ତକରଣ
+    accept: ଗ୍ରହଣ କରନ୍ତୁ
+    acceptance_errors: ଗ୍ରହଣ ତ୍ରୁଟି |
+    acceptance_status: ଗ୍ରହଣ ସ୍ଥିତି
+    accepted: ଗ୍ରହଣ କରାଯାଇଛି
+    account: ଖାତା
+    account_info: ଖାତା ସୂଚନା
+    account_updated: ଖାତା ଅଦ୍ୟତନ ହୋଇଛି |
+    action: କାର୍ଯ୍ୟ
+    actions:
+      cancel: ବାତିଲ୍ କରନ୍ତୁ |
+      continue: ଜାରି ରଖ |
+      create: ସୃଷ୍ଟି କରନ୍ତୁ |
+      destroy: ବିନାଶ କର |
+      edit: ସଂପାଦନା କରନ୍ତୁ |
+      list: ତାଲିକା |
+      listing: ତାଲିକାଭୁକ୍ତ |
+      new: ନୂତନ
+      refund: ଫେରସ୍ତ
+      save: ସଞ୍ଚୟ କରନ୍ତୁ |
+      update: ଅଦ୍ୟତନ କରନ୍ତୁ |
+    activate: ସକ୍ରିୟ କରନ୍ତୁ |
+    active: ସକ୍ରିୟ |
+    add: ଯୋଡନ୍ତୁ |
+    add_action_of_type: ପ୍ରକାରର କ୍ରିୟା ଯୋଗକର |
+    add_country: ଦେଶ ଯୋଡନ୍ତୁ |
+    add_coupon_code: କୁପନ୍ କୋଡ୍ ଯୋଡନ୍ତୁ |
+    add_new_address: ନୂତନ ଠିକଣା ଯୋଡନ୍ତୁ |
+    add_new_credit_card: ଏକ ନୂତନ କାର୍ଡ ଯୋଡନ୍ତୁ |
+    add_new_header: ନୂତନ ହେଡର୍ ଯୋଡନ୍ତୁ |
+    add_new_style: ନୂତନ ଶ Style ଳୀ ଯୋଡନ୍ତୁ |
+    add_one: ଗୋଟିଏ ଯୋଡନ୍ତୁ |
+    add_option_value: ବିକଳ୍ପ ମୂଲ୍ୟ ଯୋଡନ୍ତୁ |
+    add_product: ଉତ୍ପାଦ ଯୋଡନ୍ତୁ |
+    add_product_properties: ଉତ୍ପାଦ ଗୁଣଗୁଡିକ ଯୋଡନ୍ତୁ |
+    add_rule_of_type: ପ୍ରକାରର ନିୟମ ଯୋଡନ୍ତୁ |
+    add_state: ରାଜ୍ୟ ଯୋଡନ୍ତୁ |
+    add_stock: ଷ୍ଟକ୍ ଯୋଡନ୍ତୁ |
+    add_store: ନୂତନ ଷ୍ଟୋର୍‌ |
+    add_store_credit: ଷ୍ଟୋର କ୍ରେଡିଟ୍ ଯୋଡନ୍ତୁ |
+    add_to_cart: କାର୍ଟରେ ଯୋଗ କର
+    add_variant: ଭାରିଆଣ୍ଟ ଯୋଡନ୍ତୁ |
+    added_to_cart: ସଫଳତାର ସହିତ କାର୍ଟରେ ଯୋଡା ଯାଇଛି!
+    additional_item: ଅତିରିକ୍ତ ଆଇଟମ୍ |
+    address: ଠିକଣା
+    address1: ଠିକଣା
+    address2: ଠିକଣା (ଅବ।)
+    address_action_popup:
+      delete_button: ହଁ, ଡିଲିଟ୍ କରନ୍ତୁ |
+      delete_text: ଆପଣ ପ୍ରକୃତରେ ଏହି ଠିକଣା ବିଲୋପ କରିବାକୁ ଚାହୁଁଛନ୍ତି କି?
+      delete_title: ତମେ ନିଶ୍ଚିତ କି?
+    address_book:
+      add_new_shipping_address: ନୂତନ ଠିକଣା ଯୋଡନ୍ତୁ |
+      address_name_label: ଠିକଣା ନାମ
+      address_name_placeholder: ଏହି ଠିକଣାକୁ ଏକ ସ୍ୱତନ୍ତ୍ର ନାମ ଦିଅ (କାର୍ଯ୍ୟ, ଘର, ଇତ୍ୟାଦି) |
+      addresses: ଠିକଣା
+      edit_address: ଠିକଣା ସଂପାଦନ କରନ୍ତୁ |
+      label: ଠିକଣା ନାମ
+      new_address: ନୂତନ ଠିକଣା
+      no_shipping_addresses_on_file: ଫାଇଲରେ କ address ଣସି ଠିକଣା ନାହିଁ |
+      other_address: ଅନ୍ୟ ଠିକଣା
+      remove_address: ଠିକଣା ଅପସାରଣ କରନ୍ତୁ |
+      save: ସଞ୍ଚୟ କରନ୍ତୁ |
+      successfully_created: ଠିକଣା ସଫଳତାର ସହିତ ସୃଷ୍ଟି ହୋଇଛି |
+      successfully_removed: ଠିକଣା ସଫଳତାର ସହିତ ଅପସାରିତ ହୋଇଛି |
+      successfully_saved: ସଫଳତାର ସହିତ ସଞ୍ଚୟ ହୋଇଛି |
+      successfully_updated: ସଫଳତାର ସହିତ ଅଦ୍ୟତନ କରାଯାଇଛି |
+      unsuccessfully_saved: ଆପଣଙ୍କ ଠିକଣା ସଞ୍ଚୟ କରିବାକୁ ଚେଷ୍ଟା କରିବାବେଳେ ଏକ ତ୍ରୁଟି ଥିଲା |
+      unsuccessfully_updated: ଆପଣଙ୍କ ଠିକଣା ଅପଡେଟ୍ କରିବାକୁ ଚେଷ୍ଟା କରିବାବେଳେ ସେଠାରେ ଏକ ଅପଡେଟ୍ ଥିଲା |
+    addresses: ଠିକଣା
+    adjustable: ନିୟନ୍ତ୍ରିତ |
+    adjustment: ଆଡଜଷ୍ଟମେଣ୍ଟ
+    adjustment_amount: ପରିମାଣ
+    adjustment_labels:
+      tax_rates:
+        excluding_tax: "%{name}%{amount}"
+        including_tax: "%{name}%{amount} (ମୂଲ୍ୟରେ ଅନ୍ତର୍ଭୂକ୍ତ)"
+    adjustment_successfully_closed: ଆଡଜଷ୍ଟମେଣ୍ଟ ସଫଳତାର ସହିତ ବନ୍ଦ ହୋଇଯାଇଛି!
+    adjustment_successfully_opened: ଆଡଜଷ୍ଟମେଣ୍ଟ ସଫଳତାର ସହିତ ଖୋଲା ଯାଇଛି!
+    adjustment_total: ଆଡଜଷ୍ଟମେଣ୍ଟ ସମୁଦାୟ
+    adjustments: ସଂଶୋଧନ
+    admin:
+      order:
+        events:
+          approve: ଅନୁମୋଦନ
+          cancel: ବାତିଲ୍ କରନ୍ତୁ |
+          resend: ପଠାନ୍ତୁ
+          resume: ପୁଣି ଆରମ୍ଭ କରିବା
+      orders:
+        cart: କାର୍ଟ
+      return_authorization:
+        product: ଉତ୍ପାଦ
+      tab:
+        configuration: ବିନ୍ୟାସ
+        customer_returns: ଗ୍ରାହକ ଫେରସ୍ତ
+        option_types: ବିକଳ୍ପ ପ୍ରକାରଗୁଡିକ |
+        orders: ଆଦେଶ
+        overview: ସମୀକ୍ଷା
+        products: ଉତ୍ପାଦଗୁଡିକ
+        promotion_categories: ପଦୋନ୍ନତି ବର୍ଗଗୁଡିକ |
+        promotions: ପଦୋନ୍ନତି
+        properties: ଗୁଣଧର୍ମ
+        prototypes: ପ୍ରୋଟୋଟାଇପ୍ |
+        reports: ରିପୋର୍ଟଗୁଡିକ
+        return_authorizations: ପ୍ରାଧିକରଣ ଫେରସ୍ତ କରନ୍ତୁ |
+        taxonomies: ଟ୍ୟାକ୍ସୋନୋମିଜ୍ |
+        taxons: ଟ୍ୟାକ୍ସନ୍ |
+        users: ଉପଯୋଗକର୍ତ୍ତାଗଣ |
+      user:
+        account: ଖାତା
+        addresses: ଠିକଣା
+        available_store_credit: ଷ୍ଟୋର କ୍ରେଡିଟରେ ଉପଭୋକ୍ତାଙ୍କର %{amount} ଉପଲବ୍ଧ |
+        items: ଆଇଟମ୍
+        items_purchased: କିଣାଯାଇଥିବା ବସ୍ତୁଗୁଡ଼ିକ
+        no_store_credit: ଉପଭୋକ୍ତାଙ୍କର କ Store ଣସି ଷ୍ଟୋର କ୍ରେଡିଟ୍ ଉପଲବ୍ଧ ନାହିଁ |
+        order_history: ଅର୍ଡର ଇତିହାସ |
+        order_num: 'ଅର୍ଡର #'
+        orders: ଆଦେଶ
+        store_credits: କ୍ରେଡିଟ୍ ଗଚ୍ଛିତ କରନ୍ତୁ |
+        stores: ଷ୍ଟୋରଗୁଡିକ
+        user_information: ଉପଯୋଗକର୍ତ୍ତା ସୂଚନା
+    administration: ପ୍ରଶାସନ
+    advertise: ବିଜ୍ଞାପନ
+    agree_to_privacy_policy: ଗୋପନୀୟତା ନୀତିରେ ସହମତ |
+    agree_to_terms_of_service: ସେବା ସର୍ତ୍ତାବଳୀରେ ରାଜି ହୁଅନ୍ତୁ |
+    all: ସମସ୍ତ
+    all_adjustments_closed: ସମସ୍ତ ସଂଶୋଧନ ସଫଳତାର ସହିତ ବନ୍ଦ ହୋଇଗଲା!
+    all_adjustments_opened: ସମସ୍ତ ସଂଶୋଧନ ସଫଳତାର ସହିତ ଖୋଲିଲା!
+    all_departments: ସମସ୍ତ ବିଭାଗ |
+    all_items_have_been_returned: ସମସ୍ତ ଆଇଟମ୍ ଫେରସ୍ତ କରାଯାଇଛି |
+    all_rights_reserved: ସମସ୍ତ ଅଧିକାର ସଂରକ୍ଷିତ
+    already_have_account: ପୂର୍ବରୁ ଏକ ଖାତା ଅଛି କି?
+    alt_text: ବିକଳ୍ପ ପାଠ
+    alternative_phone: ବିକଳ୍ପ ଫୋନ୍ |
+    amount: ପରିମାଣ
+    and: ଏବଂ
+    approve: ଅନୁମୋଦନ
+    approved_at: ଅନୁମୋଦିତ
+    approver: ଅନୁମୋଦନକାରୀ |
+    are_you_sure: ତମେ ନିଶ୍ଚିତ କି?
+    are_you_sure_delete: ଆପଣ ନିଶ୍ଚିତ କି ଆପଣ ଏହି ରେକର୍ଡ ବିଲୋପ କରିବାକୁ ଚାହୁଁଛନ୍ତି?
+    associated_adjustment_closed: ସଂପୃକ୍ତ ଆଡଜଷ୍ଟମେଣ୍ଟ୍ ବନ୍ଦ ହୋଇଛି, ଏବଂ ପୁନ al ଗଣନା କରାଯିବ ନାହିଁ | ଆପଣ ଏହାକୁ ଖୋଲିବାକୁ ଚାହୁଁଛନ୍ତି କି?
+    authorization_failure: ପ୍ରାଧିକରଣ ବିଫଳତା |
+    authorized: ପ୍ରାଧିକୃତ
+    auto_capture: ଅଟୋ କ୍ୟାପଚର୍ |
+    availability: ଉପଲବ୍ଧତା |
+    available: ଉପଲବ୍ଧ |
+    available_on: ଅନ୍ ଉପଲବ୍ଧ |
+    average_order_value: ହାରାହାରି ଅର୍ଡର ମୂଲ୍ୟ |
+    avs_response: AVS ପ୍ରତିକ୍ରିୟା |
+    back: ପଛକୁ
+    back_end: ବ୍ୟାକେଣ୍ଡ୍ |
+    back_to_payment: ଦେୟକୁ ଫେରନ୍ତୁ |
+    back_to_resource_list: "%{resource} ତାଲିକାକୁ ଫେରନ୍ତୁ |"
+    back_to_rma_reason_list: RMA କାରଣ ତାଲିକାକୁ ଫେରନ୍ତୁ |
+    back_to_store: ଷ୍ଟୋରକୁ ଫେରନ୍ତୁ |
+    back_to_users_list: ଉପଭୋକ୍ତା ତାଲିକାକୁ ଫେରନ୍ତୁ |
+    backorderable: ପୃଷ୍ଠପୋଷକ
+    backorderable_default: ବ୍ୟାକଡେରେବଲ୍ ଡିଫଲ୍ଟ |
+    backordered: ପୃଷ୍ଠପୋଷକ |
+    backordered_confirm_info: ମନୋନୀତ ଆଇଟମ୍ ବ୍ୟାକର୍ଡ ହୋଇଛି ତେଣୁ ବିଳମ୍ବ ଆଶାକର | ଆପଣ ନିଶ୍ଚିତ କି ଆପଣ ଏହାକୁ ଅର୍ଡର କରିବାକୁ ଚାହୁଁଛନ୍ତି?
+    backordered_info: ପୃଷ୍ଠପୋଷକ |
+    backorders_allowed: ପୃଷ୍ଠପଟ ଅନୁମତିପ୍ରାପ୍ତ |
+    balance_due: ବାଲାନ୍ସ ଦେୟ
+    base_amount: ଆଧାର ପରିମାଣ
+    base_percent: ବେସ୍ ଶତକଡା
+    basic_information: ମ Basic ଳିକ ସୂଚନା
+    bill_address: ବିଲ୍ ଠିକଣା
+    billing: ବିଲିଂ
+    billing_address: ଦେୟ ଠିକଣା
+    both: ଉଭୟ
+    breadcrumbs: ରୁଟି ଖଣ୍ଡ |
+    calculated_reimbursements: ଗଣିତ ପରିଶୋଧ
+    calculator: କାଲକୁଲେଟର
+    calculator_settings_warning: ଯଦି ଆପଣ କାଲକୁଲେଟର ପ୍ରକାର ପରିବର୍ତ୍ତନ କରୁଛନ୍ତି, ଆପଣ କାଲକୁଲେଟର ସେଟିଂସମୂହ ସଂପାଦନ କରିବା ପୂର୍ବରୁ ପ୍ରଥମେ ସଞ୍ଚୟ କରିବା ଜରୁରୀ |
+    call_us_now: 'ବର୍ତ୍ତମାନ ଆମକୁ କଲ କରନ୍ତୁ:'
+    cancel: ବାତିଲ୍ କରନ୍ତୁ |
+    canceled: ବାତିଲ
+    canceled_at: ବାତିଲ
+    canceler: ବାତିଲ୍
+    cannot_create_customer_returns: ଗ୍ରାହକଙ୍କ ରିଟର୍ନ ସୃଷ୍ଟି କରିପାରିବ ନାହିଁ କାରଣ ଏହି କ୍ରମରେ କ sh ଣସି ପଠାଯାଇଥିବା ୟୁନିଟ୍ ନାହିଁ |
+    cannot_create_payment_without_payment_methods: କ payment ଣସି ଦେୟ ପଦ୍ଧତି ବ୍ୟାଖ୍ୟା ନକରି ଆପଣ ଏକ ଅର୍ଡର ପାଇଁ ଏକ ଦେୟ ସୃଷ୍ଟି କରିପାରିବେ ନାହିଁ |
+    cannot_create_returns: ଏହି କ୍ରମରେ କ sh ଣସି ପଠାଯାଇଥିବା ୟୁନିଟ୍ ନ ଥିବାରୁ ରିଟର୍ନ ସୃଷ୍ଟି କରିପାରିବ ନାହିଁ |
+    cannot_empty_completed_order: ଅର୍ଡର ପୂର୍ବରୁ ପ୍ରକ୍ରିୟାକରଣ ହୋଇସାରିଛି ତେଣୁ ଏହାକୁ ଖାଲି କରାଯାଇପାରିବ ନାହିଁ |
+    cannot_perform_operation: ଅନୁରୋଧ କରାଯାଇଥିବା ଅପରେସନ୍ କରିପାରିବ ନାହିଁ |
+    cannot_return_more_than_bought_quantity: କିଣାଯାଇଥିବା ପରିମାଣଠାରୁ ଅଧିକ ଫେରସ୍ତ କରିପାରିବ ନାହିଁ |
+    cannot_set_shipping_method_without_address: ଗ୍ରାହକଙ୍କ ବିବରଣୀ ପ୍ରଦାନ ନହେବା ପର୍ଯ୍ୟନ୍ତ ସିପିଂ ପଦ୍ଧତି ସେଟ୍ କରିପାରିବ ନାହିଁ |
+    capture: ଧରିବା |
+    capture_events: ଘଟଣାଗୁଡ଼ିକୁ କ୍ୟାପଚର କରନ୍ତୁ |
+    card_code: କାର୍ଡ ଭାରିଫିକେସନ୍ କୋଡ୍ (CVC)
+    card_number: କାର୍ଡ଼ ସଂଖ୍ୟା
+    card_type: ବ୍ରାଣ୍ଡ
+    card_type_is: କାର୍ଡ ପ୍ରକାର ହେଉଛି |
+    cart: କାର୍ଟ
+    cart_page:
+      add_promo_code: ପ୍ରୋମୋ କୋଡ୍ ଯୋଡନ୍ତୁ |
+      change_quantity: ପରିମାଣ ପରିବର୍ତ୍ତନ କରନ୍ତୁ |
+      checkout: ଚେକଆଉଟ୍
+      empty_info: ତୁମର କାର୍ଟ ଖାଲି ଅଛି |
+      header: ତୁମର ସପିଂ କାର୍ଟ |
+      product: ଉତ୍ପାଦ
+      quantity: ପରିମାଣ
+      remove_from_cart: କାର୍ଟରୁ ବାହାର କରନ୍ତୁ |
+      title: ସପିଂଗ କାର୍ଟ୍
+    cart_subtotal:
+      one: ଉପଟୋଟାଲ୍ (1 ଆଇଟମ୍)
+      other: ଉପଟୋଟାଲ୍ (%{count} ଆଇଟମ୍)
+    categories: ବର୍ଗଗୁଡିକ
+    category: ବର୍ଗ
+    category_nav_bar:
+      get_up_to_30_percent_off: 30% ବନ୍ଦ କରନ୍ତୁ |
+      jackets_and_coats: ଜ୍ୟାକେଟ୍ ଏବଂ କୋଷ୍ଟସ୍ |
+      new_collection: ନୂତନ ସଂଗ୍ରହ
+      special_offers: ବିଶେଷ ଅଫର୍
+    channel: ଚ୍ୟାନେଲ୍ |
+    charged: ଚାର୍ଜ ହୋଇଛି |
+    checkout: ଚେକଆଉଟ୍ |
+    checkout_page:
+      back_to_cart: କାର୍ଟକୁ ଫେରନ୍ତୁ |
+      checkout_navigation: ଚେକଆଉଟ୍ ନେଭିଗେସନ୍ |
+      delivery_method: ବିତରଣ ପଦ୍ଧତି |
+      header: ଚେକଆଉଟ୍ |
+      main_navigation: ମୁଖ୍ୟ ନାଭିଗେସନ୍ |
+      product: ଉତ୍ପାଦ
+    choose_a_customer: ଜଣେ ଗ୍ରାହକ ବାଛନ୍ତୁ |
+    choose_a_taxon_to_sort_products_for: ଉତ୍ପାଦଗୁଡିକ ସଜାଡ଼ିବା ପାଇଁ ଏକ ଟ୍ୟାକ୍ସନ୍ ବାଛନ୍ତୁ |
+    choose_currency: ମୁଦ୍ରା ବାଛନ୍ତୁ |
+    choose_dashboard_locale: ଡ୍ୟାସବୋର୍ଡ ଲୋକାଲ୍ ବାଛନ୍ତୁ |
+    choose_location: ଅବସ୍ଥାନ ବାଛନ୍ତୁ |
+    city: ସହର
+    clear_cache: କ୍ୟାଚ୍ ସଫା କରନ୍ତୁ |
+    clear_cache_ok: କ୍ୟାଚ୍ ଫ୍ଲାଶ୍ ହୋଇଥିଲା |
+    clear_cache_warning: କ୍ୟାଚ୍ ସଫା କରିବା ସାମୟିକ ଭାବରେ ଆପଣଙ୍କ ଷ୍ଟୋର୍‌ର କାର୍ଯ୍ୟଦକ୍ଷତା ହ୍ରାସ କରିବ |
+    click_and_drag_on_the_products_to_sort_them: ସେଗୁଡିକୁ ସଜାଡ଼ିବା ପାଇଁ ଉତ୍ପାଦଗୁଡିକ ଉପରେ କ୍ଲିକ୍ କରନ୍ତୁ ଏବଂ ଡ୍ରାଗ୍ କରନ୍ତୁ |
+    clone: କ୍ଲୋନ୍ |
+    close: ବନ୍ଦ
+    close_all_adjustments: ସମସ୍ତ ଆଡଜଷ୍ଟମେଣ୍ଟ୍ ବନ୍ଦ କରନ୍ତୁ |
+    code: କୋଡ୍
+    company: କମ୍ପାନୀ
+    compare_at_price: ମୂଲ୍ୟରେ ତୁଳନା କରନ୍ତୁ |
+    complete: ସଂପୂର୍ଣ୍ଣ
+    configuration: ବିନ୍ୟାସ
+    configurations: ବିନ୍ୟାସଗୁଡ଼ିକ
+    confirm: ନିଶ୍ଚିତ କରନ୍ତୁ |
+    confirm_delete: ବିଲୋପନ ନିଶ୍ଚିତ କରନ୍ତୁ |
+    confirm_password: ପାସୱାର୍ଡ ନିଶ୍ଚିତକରଣ
+    contact_phone: ଫୋନ୍ ଯୋଗାଯୋଗ କରନ୍ତୁ |
+    contact_us: ଆମ ସହିତ ଯୋଗାଯୋଗ କରନ୍ତୁ |
+    continue: ଜାରି ରଖ |
+    continue_as_guest: ଅତିଥି ଭାବରେ ଜାରି ରଖନ୍ତୁ |
+    continue_shopping: ସପିଂ ଜାରି ରଖନ୍ତୁ |
+    cost_currency: ମୂଲ୍ୟ ମୁଦ୍ରା
+    cost_price: ମୂଲ୍ୟ ମୂଲ୍ୟ
+    could_not_create_customer_return: ଗ୍ରାହକ ରିଟର୍ନ ସୃଷ୍ଟି କରିପାରିଲା ନାହିଁ |
+    could_not_create_stock_movement: ଏହି ଷ୍ଟକ୍ ଗତିବିଧିକୁ ସଂରକ୍ଷଣ କରିବାରେ ଏକ ସମସ୍ୟା ଥିଲା | ଦୟାକରି ପୁଣିଥରେ ଚେଷ୍ଟା କରନ୍ତୁ।
+    count_on_hand: ହାତରେ ଗଣନା କର |
+    countries: ଦେଶଗୁଡିକ |
+    country: ଦେଶ
+    country_based: ଦେଶ ଆଧାରିତ |
+    country_name: ନାମ
+    country_rule:
+      label: ବାଛନ୍ତୁ ନିଶ୍ଚିତ ଭାବରେ ଏହି ଦେଶକୁ ପଠାଯିବ |
+    coupon: କୁପନ୍ |
+    coupon_code: କୁପନ୍ କୋଡ୍ |
+    coupon_code_already_applied: ଏହି କ୍ରମରେ କୁପନ୍ କୋଡ୍ ପ୍ରୟୋଗ ହୋଇସାରିଛି |
+    coupon_code_applied: ତୁମର କ୍ରମରେ କୁପନ୍ କୋଡ୍ ସଫଳତାର ସହିତ ପ୍ରୟୋଗ ହେଲା |
+    coupon_code_apply: ପ୍ରୟୋଗ କରନ୍ତୁ |
+    coupon_code_better_exists: ପୂର୍ବରୁ ପ୍ରୟୋଗ ହୋଇଥିବା କୁପନ୍ କୋଡ୍ ଏକ ଭଲ ଡିଲରେ ଫଳାଫଳ ଦେଇଥାଏ |
+    coupon_code_expired: କୁପନ କୋଡ୍ ମିଆଦ ପୂର୍ଣ୍ଣ ହୋଇଛି |
+    coupon_code_max_usage: କୁପନ କୋଡ୍ ବ୍ୟବହାର ସୀମା ଅତିକ୍ରମ କଲା |
+    coupon_code_not_eligible: ଏହି କୁପନ କୋଡ୍ ଏହି କ୍ରମ ପାଇଁ ଯୋଗ୍ୟ ନୁହେଁ |
+    coupon_code_not_found: ଆପଣ ପ୍ରବେଶ କରିଥିବା କୁପନ୍ କୋଡ୍ ବିଦ୍ୟମାନ ନାହିଁ | ଦୟାକରି ପୁଣିଥରେ ଚେଷ୍ଟା କରନ୍ତୁ।
+    coupon_code_removed: ତୁମର ଅର୍ଡରରୁ କୁପନ୍ କୋଡ୍ ସଫଳତାର ସହିତ ଅପସାରିତ ହେଲା |
+    coupon_code_unknown_error: ଏହି କୁପନ କୋଡ୍ ଏହି ସମୟରେ କାର୍ଟରେ ପ୍ରୟୋଗ ହୋଇପାରିବ ନାହିଁ |
+    create: ସୃଷ୍ଟି କରନ୍ତୁ |
+    create_a_new_account: ଏକ ନୂତନ ଖାତା ସୃଷ୍ଟି କରନ୍ତୁ |
+    create_new_order: ନୂତନ କ୍ରମ ସୃଷ୍ଟି କରନ୍ତୁ |
+    create_reimbursement: ପରିଶୋଧ ସୃଷ୍ଟି କରନ୍ତୁ |
+    created_at: ସୃଷ୍ଟି ହୋଇଛି
+    created_by: ଦ୍ୱାରା ସୃଷ୍ଟି |
+    credit: କ୍ରେଡିଟ୍
+    credit_allowed: କ୍ରେଡିଟ୍ ଅନୁମୋଦିତ |
+    credit_card: କ୍ରେଡିଟ୍ କାର୍ଡ଼
+    credit_cards: କ୍ରେଡିଟ୍ କାର୍ଡ
+    credit_owed: କ୍ରେଡିଟ୍ ed ଣ
+    credited: ମାନ୍ୟତା
+    credits: କ୍ରେଡିଟ୍
+    currencies: ମୁଦ୍ରା
+    currency: ମୁଦ୍ରା
+    currency_settings: ମୁଦ୍ରା ସେଟିଂସମୂହ |
+    current: ସାମ୍ପ୍ରତିକ
+    current_promotion_usage: 'ସାମ୍ପ୍ରତିକ ବ୍ୟବହାର: %{count}'
+    customer: ଗ୍ରାହକ
+    customer_details: ଗ୍ରାହକ ବିବରଣୀ
+    customer_details_updated: ଗ୍ରାହକ ବିବରଣୀ ଅଦ୍ୟତନ କରାଯାଇଛି |
+    customer_return: ଗ୍ରାହକ ଫେରସ୍ତ
+    customer_returns: ଗ୍ରାହକ ଫେରସ୍ତ
+    customer_search: ଗ୍ରାହକ ସନ୍ଧାନ |
+    customer_support_email: ଗ୍ରାହକ ସମର୍ଥନ ଇମେଲ |
+    cut: କାଟ |
+    cvv: CVV
+    cvv_response: CVV ପ୍ରତିକ୍ରିୟା |
+    date: ତାରିଖ
+    date_completed: ତାରିଖ ସମାପ୍ତ
+    date_range: ତାରିଖ ପରିସର
+    default: ଡିଫଲ୍ଟ |
+    default_country_cannot_be_deleted: ଡିଫଲ୍ଟ ଦେଶ ବିଲୋପ ହୋଇପାରିବ ନାହିଁ |
+    default_currency: ଡିଫଲ୍ଟ ମୁଦ୍ରା
+    default_refund_amount: ଡିଫଲ୍ଟ ଫେରସ୍ତ ପରିମାଣ
+    default_tax: ଡିଫଲ୍ଟ ଟ୍ୟାକ୍ସ |
+    default_tax_zone: ଡିଫଲ୍ଟ ଟ୍ୟାକ୍ସ ଜୋନ୍ |
+    delete: ବିଲୋପ କରନ୍ତୁ |
+    delete_from_taxon: ଟ୍ୟାକ୍ସନ୍ ରୁ ଡିଲିଟ୍ କରନ୍ତୁ |
+    deleted: ବିଲୋପ
+    delivery: ବିତରଣ
+    delivery_information: ବିତରଣ ସୂଚନା
+    depth: ଗଭୀରତା
+    description: ବର୍ଣ୍ଣନା
+    destination: ଗନ୍ତବ୍ୟସ୍ଥଳ
+    destroy: ବିନାଶ କର |
+    details: ବିବରଣୀ
+    discontinue_on: ବନ୍ଦ କରନ୍ତୁ
+    discontinued: ବନ୍ଦ
+    discontinued_variants_present: ଏହି କ୍ରମରେ କିଛି ଲାଇନ୍ ଆଇଟମ୍ ଗୁଡିକରେ ଉତ୍ପାଦ ଅଛି ଯାହା ଆଉ ଉପଲବ୍ଧ ନାହିଁ |
+    discount_amount: ରିହାତି ପରିମାଣ
+    dismiss_banner: ନାହିଁ ଧନ୍ୟବାଦ! ମୁଁ ଆଗ୍ରହୀ ନୁହେଁ, ଏହି ବାର୍ତ୍ତା ଆଉ ପ୍ରଦର୍ଶନ କରନ୍ତୁ ନାହିଁ |
+    display: ପ୍ରଦର୍ଶନ
+    doesnt_track_inventory: ଏହା ଭଣ୍ଡାରକୁ ଟ୍ରାକ୍ କରେ ନାହିଁ |
+    dont_have_account: ଖାତା ନାହିଁ?
+    edit: ସଂପାଦନା କରନ୍ତୁ |
+    edit_reimbursement: ପରିଶୋଧ ସଂପାଦନ କରନ୍ତୁ |
+    editing_resource: "%{resource} ସମ୍ପାଦନା"
+    editing_rma_reason: RMA କାରଣ ସଂପାଦନ କରିବା |
+    editing_user: ଆପଣଙ୍କର ଖାତା ସଂପାଦନ କରନ୍ତୁ |
+    eligibility_errors:
+      messages:
+        has_excluded_product: ତୁମର କାର୍ଟରେ ଏକ ଉତ୍ପାଦ ଅଛି ଯାହା ଏହି କୁପନ କୋଡ୍ ପ୍ରୟୋଗକୁ ରୋକିଥାଏ |
+        item_total_less_than: ଏହି କୁପନ କୋଡ୍ %{amount} ରୁ କମ୍ ଅର୍ଡରରେ ପ୍ରୟୋଗ ହୋଇପାରିବ ନାହିଁ |
+        item_total_less_than_or_equal: ଏହି କୁପନ କୋଡ୍ %{amount} ଠାରୁ କମ୍ କିମ୍ବା ସମାନ ଅର୍ଡରରେ ପ୍ରୟୋଗ ହୋଇପାରିବ ନାହିଁ |
+        item_total_more_than: "%{amount} ଠାରୁ ଅଧିକ ଅର୍ଡରରେ ଏହି କୁପନ କୋଡ୍ ପ୍ରୟୋଗ ହୋଇପାରିବ ନାହିଁ |"
+        item_total_more_than_or_equal: ଏହି କୁପନ କୋଡ୍ %{amount} ଠାରୁ ଅଧିକ କିମ୍ବା ସମାନ ଅର୍ଡରରେ ପ୍ରୟୋଗ ହୋଇପାରିବ ନାହିଁ |
+        limit_once_per_user: ଏହି କୁପନ୍ କୋଡ୍ କେବଳ ବ୍ୟବହାରକାରୀଙ୍କ ପାଇଁ ଥରେ ବ୍ୟବହାର କରାଯାଇପାରିବ |
+        missing_product: ଏହି କୁପନ କୋଡ୍ ପ୍ରୟୋଗ ହୋଇପାରିବ ନାହିଁ କାରଣ ଆପଣଙ୍କର କାର୍ଟରେ ସମସ୍ତ ଆବଶ୍ୟକୀୟ ଉତ୍ପାଦ ନାହିଁ |
+        missing_taxon: ଏହି କୁପନ କୋଡ୍ ପ୍ରୟୋଗ କରିବା ପୂର୍ବରୁ ଆପଣଙ୍କୁ ସମସ୍ତ ପ୍ରଯୁଜ୍ୟ ବର୍ଗରୁ ଏକ ଉତ୍ପାଦ ଯୋଡିବା ଆବଶ୍ୟକ |
+        no_applicable_products: ଏହି କୁପନ କୋଡ୍ ପ୍ରୟୋଗ କରିବା ପୂର୍ବରୁ ଆପଣଙ୍କୁ ଏକ ପ୍ରଯୁଜ୍ୟ ଉତ୍ପାଦ ଯୋଡିବା ଆବଶ୍ୟକ |
+        no_matching_taxons: ଏହି କୁପନ କୋଡ୍ ପ୍ରୟୋଗ କରିବା ପୂର୍ବରୁ ଆପଣଙ୍କୁ ଏକ ପ୍ରଯୁଜ୍ୟ ବର୍ଗରୁ ଏକ ଉତ୍ପାଦ ଯୋଡିବା ଆବଶ୍ୟକ |
+        no_user_or_email_specified: ଏହି କୁପନ କୋଡ୍ ପ୍ରୟୋଗ କରିବା ପୂର୍ବରୁ ଆପଣଙ୍କୁ ଲଗଇନ୍ କିମ୍ବା ଆପଣଙ୍କର ଇମେଲ୍ ପ୍ରଦାନ କରିବା ଆବଶ୍ୟକ |
+        no_user_specified: ଏହି କୁପନ କୋଡ୍ ପ୍ରୟୋଗ କରିବା ପୂର୍ବରୁ ଆପଣଙ୍କୁ ଲଗଇନ୍ କରିବାକୁ ପଡିବ |
+        not_first_order: ଏହି କୁପନ୍ କୋଡ୍ କେବଳ ଆପଣଙ୍କର ପ୍ରଥମ କ୍ରମରେ ପ୍ରୟୋଗ ହୋଇପାରିବ |
+    email: ଇମେଲ୍ କରନ୍ତୁ |
+    empty: ଖାଲି
+    empty_cart: ଖାଲି କାର୍ଟ |
+    enable_mail_delivery: ମେଲ ବିତରଣକୁ ସକ୍ଷମ କରନ୍ତୁ |
+    end: ଶେଷ
+    ending_at: ରେ ସମାପ୍ତ
+    ending_in: ସମାପ୍ତ
+    ends_at: ଶେଷ ହୁଏ
+    error: ତ୍ରୁଟି
+    error_user_destroy_with_orders: ଅର୍ଡର ସହିତ ଜଡିତ ଉପଭୋକ୍ତା ନଷ୍ଟ ହୋଇପାରିବ ନାହିଁ |
+    errors:
+      messages:
+        blank: ଖାଲି ହୋଇପାରିବ ନାହିଁ |
+        cannot_remove_icon: ପ୍ରତିଛବି ଅପସାରଣ କରିପାରିବ ନାହିଁ |
+        could_not_create_taxon: ଟ୍ୟାକ୍ସନ୍ ସୃଷ୍ଟି କରିପାରିଲା ନାହିଁ |
+        no_shipping_methods_available: ମନୋନୀତ ସ୍ଥାନ ପାଇଁ କ sh ଣସି ସିପିଂ ପଦ୍ଧତି ଉପଲବ୍ଧ ନାହିଁ, ଦୟାକରି ଆପଣଙ୍କର ଠିକଣା ପରିବର୍ତ୍ତନ କରନ୍ତୁ ଏବଂ ପୁନର୍ବାର ଚେଷ୍ଟା କରନ୍ତୁ |
+      services:
+        get_shipping_rates:
+          no_line_items: ସିପିଂ ହାର ସୃଷ୍ଟି କରିବାକୁ ଆପଣଙ୍କୁ ଅର୍ଡରରେ କିଛି ଲାଇନ୍ ଆଇଟମ୍ ଯୋଡିବାକୁ ପଡିବ |
+          no_shipping_address: ସିପିଂ ରେଟ୍ ଅର୍ଡର ସୃଷ୍ଟି କରିବାକୁ ଏକ ସିପିଂ ଠିକଣା ରହିବା ଆବଶ୍ୟକ |
+    errors_prohibited_this_record_from_being_saved:
+      one: 1 ତ୍ରୁଟି ଏହି ରେକର୍ଡକୁ ସଞ୍ଚୟ କରିବାକୁ ବାରଣ କଲା |
+      other: "%{count} ତ୍ରୁଟି ଏହି ରେକର୍ଡକୁ ସଞ୍ଚୟ କରିବାକୁ ବାରଣ କରିଛି |"
+    event: ଘଟଣା
+    events:
+      spree:
+        cart:
+          add: କାର୍ଟରେ ଯୋଗ କର
+        checkout:
+          coupon_code_added: କୁପନ୍ କୋଡ୍ ଯୋଡା ଯାଇଛି |
+        content:
+          visited: ସ୍ଥିର ବିଷୟବସ୍ତୁ ପୃଷ୍ଠା ପରିଦର୍ଶନ କରନ୍ତୁ |
+        order:
+          contents_changed: ଅର୍ଡର ବିଷୟବସ୍ତୁ ବଦଳିଗଲା |
+        page_view: ଷ୍ଟାଟିକ୍ ପେଜ୍ ଦେଖାଗଲା |
+        user:
+          signup: ଉପଯୋଗକର୍ତ୍ତା ସାଇନ୍ ଅପ୍ |
+    exceptions:
+      count_on_hand_setter: 'ଗଣନା_ନ_ହାଣ୍ଡକୁ ହସ୍ତକୃତ ଭାବରେ ସେଟ୍ କରିପାରିବ ନାହିଁ, ଯେହେତୁ ଏହା ସ୍ୱୟଂଚାଳିତ ଭାବରେ ପୁନ al ଗଣନା_କାଉଣ୍ଟ_ନ_ହାଣ୍ଡ କଲବ୍ୟାକ୍ ଦ୍ୱାରା ସେଟ୍ ହୋଇଛି | ଦୟାକରି ଏହା ପରିବର୍ତ୍ତେ `update_column (: count_on_hand, value)` ବ୍ୟବହାର କରନ୍ତୁ |'
+    exchange_for: ପାଇଁ ବିନିମୟ
+    excl: ବହିଷ୍କାର
+    existing_shipments: ବିଦ୍ୟମାନ ପଠାଣ |
+    expedited_exchanges_warning: ଯେକ Any ଣସି ନିର୍ଦ୍ଦିଷ୍ଟ ବିନିମୟ ସଞ୍ଚୟ ପରେ ତୁରନ୍ତ ଗ୍ରାହକଙ୍କୁ ପଠାଇବ | ଗ୍ରାହକ ଯଦି %{days_window} ଦିନ ମଧ୍ୟରେ ମୂଳ ଆଇଟମ୍ ଫେରସ୍ତ ନକରନ୍ତି ତେବେ ଆଇଟମ୍ ର ସମ୍ପୂର୍ଣ୍ଣ ପରିମାଣ ଚାର୍ଜ କରାଯିବ |
+    expiration: ସମାପ୍ତି
+    expiration_date: ସମାପ୍ତି ତାରିଖ
+    extension: ସମ୍ପ୍ରସାରଣ
+    extensions_directory: ଏକ୍ସଟେନ୍ସନ୍ ଡିରେକ୍ଟୋରୀ |
+    facebook: ଫେସବୁକ୍
+    failed_payment_attempts: ବିଫଳ ପେମେଣ୍ଟ ପ୍ରୟାସ |
+    filename: ଦସ୍ତାବିଜ୍ ର ନାମ
+    fill_in_customer_info: ଦୟାକରି ଗ୍ରାହକ ସୂଚନା ପୁରଣ କରନ୍ତୁ |
+    filter: ଫିଲ୍ଟର୍ |
+    filter_results: ଫିଲ୍ଟର ଫଳାଫଳ
+    filterable: ଫିଲ୍ଟରେବଲ୍ |
+    finalize: ଚୂଡାନ୍ତ କର |
+    finalized: ଚୂଡାନ୍ତ
+    find_a_taxon: ଏକ ଟ୍ୟାକ୍ସନ୍ ଖୋଜ |
+    first_item: ପ୍ରଥମ ଆଇଟମ୍ |
+    first_name: ପ୍ରଥମ ନାମ
+    first_name_begins_with: ପ୍ରଥମ ନାମ ଆରମ୍ଭ ହୁଏ |
+    firstname: ପ୍ରଥମ ନାମ
+    flat_percent: ଫ୍ଲାଟ ଶତକଡା
+    flat_rate_per_order: ସମାନ ମୂଲ୍ୟ
+    flexible_rate: ନମନୀୟ ହାର
+    follow_us: ଆମକୁ ଅନୁସରଣ କର |
+    footer: ଫୁଟର୍ |
+    forgot_password: ପାସୱାର୍ଡ଼ ଭୁଲି ଗଲେ କି?
+    free: ମାଗଣା |
+    free_shipping: ମାଗଣା ପରିବହନ ଖର୍ଚ୍ଚ
+    free_shipping_amount: "-"
+    front_end: ସାମନା ପ। ଖ
+    gateway: ଗେଟୱେ
+    gateway_error: ଗେଟୱେ ତ୍ରୁଟି |
+    general: ଜେନେରାଲ୍ |
+    general_settings: ସାଧାରଣ ସେଟିଂସମୂହ |
+    generate_code: କୁପନ୍ କୋଡ୍ ସୃଷ୍ଟି କରନ୍ତୁ |
+    get_back_to_the: କୁ ଫେରିଯାଅ |
+    go_to_category: ବର୍ଗକୁ ଯାଆନ୍ତୁ |
+    go_to_facebook: ଫେସବୁକ୍ କୁ ଯାଆନ୍ତୁ |
+    go_to_homepage: ମୂଳପୃଷ୍ଠାକୁ ଯାଆନ୍ତୁ |
+    go_to_instagram: ଇନଷ୍ଟାଗ୍ରାମକୁ ଯାଆନ୍ତୁ |
+    go_to_twitter: ଟ୍ୱିଟରକୁ ଯାଆନ୍ତୁ |
+    guest_checkout: ଅତିଥି ଚେକଆଉଟ୍ |
+    guest_user_account: ଅତିଥି ଭାବରେ ଚେକଆଉଟ୍ |
+    has_no_shipped_units: କ no ଣସି ପଠାଯାଇଥିବା ୟୁନିଟ୍ ନାହିଁ |
+    header_banner: ହେଡର୍ ବ୍ୟାନର |
+    height: ଉଚ୍ଚତା |
+    help_center: ସହାୟତା କେନ୍ଦ୍ର
+    hide_from_subcategories_nav: ଉପ-ଶ୍ରେଣୀ ନାଭିଗେସନ୍ ରୁ ଲୁଚାନ୍ତୁ |
+    home: ଘର
+    home_page: ମୂଳପୃଷ୍ଠା
+    i18n:
+      available_locales: ଉପଲବ୍ଧ ଲୋକାଲ୍ |
+      country: ଦେଶ
+      default_country: ଡିଫଲ୍ଟ ଦେଶ
+      fields: କ୍ଷେତ୍ରଗୁଡିକ
+      language: ଭାଷା
+      localization_settings: ଲୋକାଲାଇଜେସନ୍ ସେଟିଂସମୂହ |
+      only_complete: କେବଳ ସଂପୂର୍ଣ୍ଣ |
+      only_incomplete: କେବଳ ଅସମ୍ପୂର୍ଣ୍ଣ |
+      select_locale: ଲୋକାଲ୍ ଚୟନ କରନ୍ତୁ |
+      show_only: କେବଳ ଦେଖାନ୍ତୁ |
+      supported_locales: ସମର୍ଥିତ ଲୋକାଲ୍ |
+      translations: ଅନୁବାଦଗୁଡିକ
+    icon: ଆଇକନ୍
+    id: Id
+    image: ପ୍ରତିଛବି |
+    images: ପ୍ରତିଛବିଗୁଡିକ
+    implement_eligible_for_return: 'ନିଶ୍ଚିତ ଭାବରେ # ଯୋଗ୍ୟ_ଫୋର୍_ଟର୍ନ କାର୍ଯ୍ୟକାରୀ କରିବେ କି? ଆପଣଙ୍କର ଯୋଗ୍ୟତା ଭ୍ୟାଲିଡେଟର୍ ପାଇଁ |'
+    implement_requires_manual_intervention: "#Requires_manual_intervention କୁ କାର୍ଯ୍ୟକାରୀ କରିବା ଜରୁରୀ? ଆପଣଙ୍କର ଯୋଗ୍ୟତା ଭ୍ୟାଲିଡେଟର୍ ପାଇଁ |"
+    in_stock: ମହଜୁଦ ଅଛି
+    inactive: ନିଷ୍କ୍ରିୟ |
+    incl: ଅନ୍ତର୍ଭୂକ୍ତ
+    included_in_price: ମୂଲ୍ୟରେ ଅନ୍ତର୍ଭୁକ୍ତ |
+    included_price_validation: ଯଦି ଆପଣ ଏକ ଡିଫଲ୍ଟ ଟ୍ୟାକ୍ସ ଜୋନ୍ ସେଟ୍ ନକରନ୍ତି ତେବେ ଚୟନ କରାଯାଇପାରିବ ନାହିଁ |
+    incomplete: ଅସମ୍ପୂର୍ଣ୍ଣ
+    info_number_of_skus_not_shown:
+      one: ଏବଂ ଅନ୍ୟ ଜଣେ |
+      other: ଏବଂ %{count} ଅନ୍ୟମାନେ |
+    info_product_has_multiple_skus: 'ଏହି ଉତ୍ପାଦରେ %{count} ପ୍ରକାର ଅଛି:'
+    instagram: ଇନଷ୍ଟାଗ୍ରାମ |
+    instructions_to_reset_password: ଦୟାକରି ନିମ୍ନ ଫର୍ମରେ ଆପଣଙ୍କର ଇମେଲ୍ ପ୍ରବେଶ କରନ୍ତୁ |
+    insufficient_stock: ପର୍ଯ୍ୟାପ୍ତ ଷ୍ଟକ୍ ଉପଲବ୍ଧ ନାହିଁ, କେବଳ %{on_hand} ବାକି ଅଛି |
+    insufficient_stock_item_quantity: ପର୍ଯ୍ୟାପ୍ତ ପରିମାଣର ଷ୍ଟକ୍ ପରିମାଣ ଉପଲବ୍ଧ |
+    insufficient_stock_lines_present: ଏହି କ୍ରମରେ କିଛି ରେଖା ଆଇଟମ୍ ଗୁଡିକ ପର୍ଯ୍ୟାପ୍ତ ପରିମାଣ ନାହିଁ |
+    intercept_email_address: ଇମେଲ ଠିକଣାକୁ ଅଟକାନ୍ତୁ |
+    intercept_email_instructions: ଇମେଲ୍ ପ୍ରାପ୍ତକର୍ତ୍ତାଙ୍କୁ ନବଲିଖନ କରନ୍ତୁ ଏବଂ ଏହି ଠିକଣା ସହିତ ବଦଳାନ୍ତୁ |
+    internal_name: ଆଭ୍ୟନ୍ତରୀଣ ନାମ
+    internationalization: ଆନ୍ତର୍ଜାତୀୟକରଣ
+    invalid_credit_card: ଅବ val ଧ କ୍ରେଡିଟ୍ କାର୍ଡ |
+    invalid_exchange_variant: ଅବ val ଧ ବିନିମୟ ପ୍ରକାର |
+    invalid_payment_provider: ଅବ val ଧ ଦେୟ ପ୍ରଦାନକାରୀ |
+    invalid_promotion_action: ଅବ promotion ଧ ପଦୋନ୍ନତି କାର୍ଯ୍ୟ |
+    invalid_promotion_rule: ଅବ promotion ଧ ପଦୋନ୍ନତି ନିୟମ |
+    inventory: ଭଣ୍ଡାର |
+    inventory_adjustment: ଭଣ୍ଡାର ଆଡଜଷ୍ଟମେଣ୍ଟ୍ |
+    inventory_error_flash_for_insufficient_quantity: ଆପଣଙ୍କ କାର୍ଟରେ ଥିବା ଏକ ଆଇଟମ୍ ଉପଲବ୍ଧ ହୋଇନାହିଁ |
+    inventory_state: ଭଣ୍ଡାର ରାଜ୍ୟ |
+    is_not_available_to_shipment_address: ପଠାଇବା ଠିକଣା ପାଇଁ ଉପଲବ୍ଧ ନୁହେଁ |
+    iso: ISO ଆଲଫା -2 |
+    iso3: ISO ଆଲଫା -3 |
+    iso_name: ISO ନାମ
+    issued_on: ଜାରି କରାଯାଇଛି
+    item: ଆଇଟମ୍ |
+    item_description: ଆଇଟମ୍ ବର୍ଣ୍ଣନା
+    item_total: ଆଇଟମ୍ ସମୁଦାୟ |
+    item_total_rule:
+      operators:
+        gt: ଠାରୁ ବଡ
+        gte: ଠାରୁ ବଡ କିମ୍ବା ସମାନ |
+        lt: ରୁ କମ୍
+        lte: ଠାରୁ କମ୍ କିମ୍ବା ସମାନ |
+    items_cannot_be_shipped: ମନୋନୀତ ଆଇଟମଗୁଡିକ ପାଇଁ ଆମେ ପରିବହନ ପରିବହନ ହାର ଗଣିବାକୁ ଅସମର୍ଥ |
+    items_in_rmas: ଫେରସ୍ତ ପ୍ରାଧିକରଣରେ ଆଇଟମ୍ |
+    items_reimbursed: ଆଇଟମଗୁଡିକ ଫେରସ୍ତ କରାଯାଇଛି |
+    items_to_be_reimbursed: ଫେରସ୍ତ ହେବାକୁ ଥିବା ଆଇଟମଗୁଡିକ |
+    join_slack: ସ୍ଲାକରେ ଯୋଗ ଦିଅନ୍ତୁ |
+    last_name: ଶେଷ ନାମ
+    last_name_begins_with: ଶେଷ ନାମ ଆରମ୍ଭ |
+    lastname: ଶେଷ ନାମ
+    learn_more: ଅଧିକ ସିଖନ୍ତୁ
+    lifetime_stats: ଆଜୀବନ ପରିସଂଖ୍ୟାନ |
+    limit_usage_to: ବ୍ୟବହାରକୁ ସୀମିତ କରନ୍ତୁ |
+    line_item_adjustments: ରେଖା ଆଇଟମ୍ ଆଡଜଷ୍ଟେସନ୍ |
+    list: ତାଲିକା |
+    loading: ଲୋଡିଂ
+    loading_tree: ଗଛ ଲୋଡିଙ୍ଗ୍ | ଦୟାକରି ଅପେକ୍ଷା କର…
+    locale_changed: ଲୋକାଲ୍ ପରିବର୍ତ୍ତିତ |
+    location: ଅବସ୍ଥାନ
+    lock: ଲକ୍ କରନ୍ତୁ |
+    log_entries: ଲଗ୍ ଏଣ୍ଟ୍ରିଗୁଡିକ |
+    log_in: ଭିତରକୁ ଯାଉ
+    log_in_to_continue: ଜାରି ରଖିବାକୁ ଲଗ୍ ଇନ୍ କରନ୍ତୁ |
+    logged_in_as: ଯେପରି ଲଗ୍ ଇନ୍ ହୋଇଛି |
+    logged_in_succesfully: ସଫଳତାର ସହିତ ଲଗ୍ ଇନ୍ କରନ୍ତୁ |
+    logged_out: ଆପଣ ଲଗ୍ ଆଉଟ୍ ହୋଇଛନ୍ତି |
+    login: ଭିତରକୁ ଯାଉ
+    login_as_existing: ବିଦ୍ୟମାନ ଗ୍ରାହକ ଭାବରେ ଲଗଇନ୍ କରନ୍ତୁ |
+    login_failed: ଲଗଇନ୍ ପ୍ରାମାଣିକିକରଣ ବିଫଳ ହେଲା |
+    login_name: ଭିତରକୁ ଯାଉ
+    logo: ଲୋଗୋ
+    logo_alt: ବ୍ରାଣ୍ଡ ଲୋଗୋ |
+    logout: ପ୍ରସ୍ଥାନ କର
+    logs: ଲଗ୍
+    look_for_similar_items: ସମାନ ଆଇଟମ୍ ଖୋଜ |
+    mail_from_address: ଠିକଣାରୁ ମେଲ୍ |
+    mailer_logo: ମେଲର୍ ଲୋଗୋ (କେବଳ JPG କିମ୍ବା PNG ପ୍ରତିଛବି)
+    make_refund: ଫେରସ୍ତ କର |
+    make_sure_the_above_reimbursement_amount_is_correct: ନିଶ୍ଚିତ କରନ୍ତୁ ଯେ ଉପରୋକ୍ତ ପରିଶୋଧ ପରିମାଣ ସଠିକ୍ ଅଟେ |
+    manage_promotion_categories: ପଦୋନ୍ନତି ବର୍ଗଗୁଡିକ ପରିଚାଳନା କରନ୍ତୁ |
+    manage_variants: ପ୍ରକାରଗୁଡିକ ପରିଚାଳନା କରନ୍ତୁ |
+    manual_intervention_required: ମାନୁଆଲ ହସ୍ତକ୍ଷେପ ଆବଶ୍ୟକ |
+    master: ଗୁରୁ
+    master_price: ମାଷ୍ଟର ପ୍ରାଇସ୍ |
+    master_sku: ଗୁରୁ SKU |
+    match_choices:
+      all: ସମସ୍ତ
+      none: କିଛି ନୁହେଁ |
+    max_items: ସର୍ବାଧିକ ଆଇଟମ୍ |
+    member_since: ସଦସ୍ୟ ପରଠାରୁ
+    memo: ମେମୋ
+    meta_description: ମେଟା ବର୍ଣ୍ଣନା |
+    meta_keywords: ମେଟା କୀ ଶବ୍ଦ |
+    meta_title: ମେଟା ଆଖ୍ୟା |
+    metadata: ମେଟାଡାଟା |
+    minimal_amount: ସର୍ବନିମ୍ନ ପରିମାଣ
+    missing_return_authorization: "%{item_name} ପାଇଁ ରିଟର୍ନ ପ୍ରାଧିକରଣ ହଜିଯାଇଛି |"
+    month: ମାସ
+    more: ଅଧିକ
+    move_stock_between_locations: ଅବସ୍ଥାନ ମଧ୍ୟରେ ଷ୍ଟକ୍ ଘୁଞ୍ଚାନ୍ତୁ |
+    move_variant_to: ଭାରିଆଣ୍ଟକୁ ଘୁଞ୍ଚାନ୍ତୁ |
+    multiple_stores: ଏକାଧିକ ଷ୍ଟୋର |
+    mutable: ପରିବର୍ତ୍ତନଶୀଳ |
+    my_account: ମୋ ଖାତା
+    my_orders: ମୋର ଆଦେଶ
+    name: ନାମ
+    name_on_card: ପତ୍ର ଉପରେ ଲିଖିତ ନାମ
+    name_or_sku: ନାମ କିମ୍ବା SKU (ଉତ୍ପାଦ ନାମର ଅତିକମରେ ପ୍ରଥମ 3 ଅକ୍ଷର ପ୍ରବେଶ କରନ୍ତୁ)
+    nav_bar:
+      admin_panel: ଆଡମିନି ପ୍ୟାନେଲ୍ |
+      change_country: ଦେଶ ପରିବର୍ତ୍ତନ କରନ୍ତୁ |
+      close_menu: ମେନୁ ବନ୍ଦ କରନ୍ତୁ |
+      desktop: ଡେସ୍କଟପ୍ ନେଭିଗେସନ୍
+      go_to_previous_menu: ପୂର୍ବ ମେନୁକୁ ଯାଆନ୍ତୁ |
+      log_in: ଭିତରକୁ ଯାଉ
+      log_out: ପ୍ରସ୍ଥାନ କର
+      mobile: ମୋବାଇଲ୍ ନେଭିଗେସନ୍ |
+      my_account: ମୋ ଖାତା
+      my_orders: ମୋର ଆଦେଶ
+      show_menu: ମେନୁ ଦେଖାନ୍ତୁ |
+      show_search: ସନ୍ଧାନ ଦେଖାନ୍ତୁ |
+      show_user_menu: ଉପଭୋକ୍ତା ମେନୁ ଦେଖାନ୍ତୁ |
+      sign_up: ସାଇନ୍ ଅପ୍ କରନ୍ତୁ
+    new: ନୂତନ
+    new_adjustment: ନୂତନ ଆଡଜଷ୍ଟମେଣ୍ଟ୍ |
+    new_country: ନୂତନ ଦେଶ |
+    new_customer: ନୂତନ ଖାତା ସୃଷ୍ଟି କରନ୍ତୁ |
+    new_customer_return: ନୂତନ ଗ୍ରାହକ ଫେରସ୍ତ
+    new_image: ନୂତନ ପ୍ରତିଛବି |
+    new_option_type: ନୂତନ ବିକଳ୍ପ ପ୍ରକାର |
+    new_order: ନୂତନ କ୍ରମ |
+    new_order_completed: ନୂତନ ଅର୍ଡର ସମାପ୍ତ ହୋଇଛି |
+    new_order_notifications_email: ନୂତନ ଅର୍ଡର ବିଜ୍ଞପ୍ତି ଇମେଲ |
+    new_payment: ନୂତନ ଦେୟ |
+    new_payment_method: ନୂତନ ଦେୟ ପଦ୍ଧତି |
+    new_product: ନୂତନ ଉତ୍ପାଦ |
+    new_promotion: ନୂତନ ପଦୋନ୍ନତି |
+    new_promotion_category: ନୂତନ ପଦୋନ୍ନତି ବର୍ଗ |
+    new_property: ନୂତନ ସମ୍ପତ୍ତି
+    new_prototype: ନୂତନ ପ୍ରୋଟୋଟାଇପ୍ |
+    new_refund: ନୂତନ ଫେରସ୍ତ
+    new_refund_reason: ନୂତନ ଫେରସ୍ତ କାରଣ |
+    new_reimbursement_type: ନୂତନ ପରିଶୋଧ ପ୍ରକାର |
+    new_return_authorization: ନୂତନ ଫେରସ୍ତ ପ୍ରାଧିକରଣ |
+    new_rma_reason: ନୂତନ RMA କାରଣ |
+    new_role: ନୂତନ ଭୂମିକା |
+    new_shipment_at_location: ଅବସ୍ଥାନରେ ନୂତନ ପଠାଣ |
+    new_shipping_category: ନୂତନ ସିପିଂ ବର୍ଗ |
+    new_shipping_method: ନୂତନ ସିପିଂ ପଦ୍ଧତି |
+    new_state: ନୂତନ ରାଜ୍ୟ |
+    new_stock_location: ନୂତନ ଷ୍ଟକ୍ ଅବସ୍ଥାନ |
+    new_stock_movement: ନୂତନ ଷ୍ଟକ୍ ଆନ୍ଦୋଳନ |
+    new_stock_transfer: ନୂତନ ଷ୍ଟକ୍ ସ୍ଥାନାନ୍ତର |
+    new_store_credit: ନୂତନ ଷ୍ଟୋର କ୍ରେଡିଟ୍ |
+    new_store_credit_category: ନୂତନ ଷ୍ଟୋର କ୍ରେଡିଟ୍ ବର୍ଗ |
+    new_tax_category: ନୂତନ କର ବର୍ଗ |
+    new_tax_rate: ନୂତନ ଟିକସ ହାର
+    new_taxon: ନୂଆ ଟ୍ୟାକ୍ସନ୍ |
+    new_taxonomy: ନୂତନ ଟ୍ୟାକ୍ସୋନୋମି
+    new_tracker: ନୂଆ ଟ୍ରାକର୍ |
+    new_user: ନୂତନ ବ୍ୟବହାରକାରୀ |
+    new_variant: ନୂତନ ପ୍ରକାର
+    new_zone: ନୂତନ ଜୋନ୍ |
+    next: ପରବର୍ତ୍ତୀ
+    no_actions_added: କ actions ଣସି କାର୍ଯ୍ୟ ଯୋଗ କରାଯାଇ ନାହିଁ |
+    no_address_given: କ address ଣସି ଠିକଣା ଦିଆଯାଇ ନାହିଁ |
+    no_available_date_set: କ date ଣସି ଉପଲବ୍ଧ ତାରିଖ ସେଟ୍ ନାହିଁ |
+    no_cc_type: N / A
+    no_country: କ country ଣସି ଦେଶ ସେଟ୍ ହୋଇନାହିଁ |
+    no_limits_zone: କ No ଣସି ସୀମା ନାହିଁ |
+    no_payment_found: କ payment ଣସି ଦେୟ ମିଳିଲା ନାହିଁ |
+    no_payment_provider_settings_message: ଏହି ଦେୟ ପ୍ରଦାନକାରୀଙ୍କର କ custom ଣସି କଷ୍ଟମ୍ ସେଟିଂ ଉପଲବ୍ଧ ନାହିଁ |
+    no_pending_payments: କ pending ଣସି ବିଚାରାଧୀନ ଦେୟ ନାହିଁ |
+    no_product_available:
+      for_this_quantity: ଦୁ Sorry ଖିତ, ଏହା ଦେଖାଯାଉଛି ଯେ କିଛି ଉତ୍ପାଦ ମନୋନୀତ ପରିମାଣରେ ଉପଲବ୍ଧ ନୁହେଁ |
+      opps: ଓହୋ!
+    no_products_found: କ products ଣସି ଉତ୍ପାଦ ମିଳିଲା ନାହିଁ |
+    no_resource_found: କ z ଣସି %{resource} ମିଳିଲା ନାହିଁ |
+    no_results: କ results ଣସି ଫଳାଫଳ ନାହିଁ |
+    no_returns_found: କ No ଣସି ରିଟର୍ନ ମିଳିଲା ନାହିଁ |
+    no_rules_added: କ rules ଣସି ନିୟମ ଯୋଡାଗଲା ନାହିଁ |
+    no_shipping_method_selected: କ sh ଣସି ସିପିଂ ପଦ୍ଧତି ଚୟନ ହୋଇନାହିଁ |
+    no_state_changes: ଏପର୍ଯ୍ୟନ୍ତ କ state ଣସି ରାଜ୍ୟ ପରିବର୍ତ୍ତନ ହୋଇନାହିଁ |
+    no_tracking_present: କ No ଣସି ଟ୍ରାକିଂ ବିବରଣୀ ପ୍ରଦାନ କରାଯାଇ ନାହିଁ |
+    none: କିଛି ନୁହେଁ |
+    none_selected: କିଛି ଚୟନ ହୋଇନାହିଁ |
+    normal_amount: ସାଧାରଣ ପରିମାଣ
+    not: ନୁହେଁ |
+    not_available: N / A
+    not_enough_stock: ଏହି ସ୍ଥାନାନ୍ତର ସମାପ୍ତ କରିବାକୁ ଉତ୍ସ ସ୍ଥାନରେ ପର୍ଯ୍ୟାପ୍ତ ପରିମାଣର ଭଣ୍ଡାର ନାହିଁ |
+    not_found: "%{resource} ମିଳିଲା ନାହିଁ |"
+    note: ଧ୍ୟାନ ଦିଅନ୍ତୁ
+    notice_messages:
+      icon_removed: ପ୍ରତିଛବି ସଫଳତାର ସହିତ ଅପସାରିତ ହୋଇଛି |
+      prices_saved: ମୂଲ୍ୟ ସଫଳତାର ସହିତ ସଞ୍ଚୟ ହେଲା |
+      product_cloned: ଉତ୍ପାଦକୁ କ୍ଲୋନ କରାଯାଇଛି |
+      product_deleted: ଉତ୍ପାଦ ବିଲୋପ ହୋଇଯାଇଛି |
+      product_not_cloned: 'ଉତ୍ପାଦ କ୍ଲୋନ ହୋଇପାରିବ ନାହିଁ | କାରଣ: %{error}'
+      product_not_deleted: 'ଉତ୍ପାଦ ବିଲୋପ ହୋଇପାରିଲା ନାହିଁ | କାରଣ: %{error}'
+      variant_deleted: ଭାରିଆଣ୍ଟ ଡିଲିଟ୍ ହୋଇଯାଇଛି |
+      variant_not_deleted: 'ଭାରିଆଣ୍ଟ ବିଲୋପ ହୋଇପାରିଲା ନାହିଁ | କାରଣ: %{error}'
+    num_orders: "# ଆଦେଶ"
+    number: ସଂଖ୍ୟା
+    ok: ଠିକ୍ ଅଛି
+    on_hand: ହାତରେ |
+    open: ଖୋଲନ୍ତୁ |
+    open_all_adjustments: ସମସ୍ତ ଆଡଜଷ୍ଟମେଣ୍ଟ୍ ଖୋଲନ୍ତୁ |
+    option_type: ବିକଳ୍ପ ପ୍ରକାର
+    option_type_placeholder: ଏକ ବିକଳ୍ପ ପ୍ରକାର ବାଛନ୍ତୁ |
+    option_types: ବିକଳ୍ପ ପ୍ରକାରଗୁଡିକ |
+    option_value: ବିକଳ୍ପ ମୂଲ୍ୟ
+    option_values: ବିକଳ୍ପ ମୂଲ୍ୟଗୁଡ଼ିକ
+    optional: ବ tion କଳ୍ପିକ
+    options: ବିକଳ୍ପଗୁଡ଼ିକ
+    or: କିମ୍ବା
+    or_over_price: "%{price} କିମ୍ବା ଅଧିକ"
+    order: ଅର୍ଡର |
+    order_adjustments: ଅର୍ଡର ଆଡଜଷ୍ଟମେଣ୍ଟ୍ |
+    order_already_updated: କ୍ରମଟି ଅଦ୍ୟତନ ହୋଇସାରିଛି |
+    order_approved: ଅର୍ଡର ଅନୁମୋଦିତ |
+    order_canceled: ଅର୍ଡର ବାତିଲ ହୋଇଛି |
+    order_details: ସବିଶେଷ ବିବରଣୀ ଅର୍ଡର କରନ୍ତୁ |
+    order_email_resent: ଇମେଲ୍ ବିରକ୍ତି ଅର୍ଡର କରନ୍ତୁ |
+    order_has_no_payments: ଅର୍ଡରର କ payments ଣସି ଦେୟ ନାହିଁ |
+    order_information: ଅର୍ଡର ସୂଚନା
+    order_line_items: ରେଖା ଆଇଟମ୍ ଅର୍ଡର କରନ୍ତୁ |
+    order_mailer:
+      cancel_email:
+        dear_customer: ପ୍ରିୟ %{name},
+        instructions: ତୁମର ଅର୍ଡର ବାତିଲ ହୋଇଛି | ଆପଣଙ୍କର ରେକର୍ଡଗୁଡିକ ପାଇଁ ଦୟାକରି ଏହି ବାତିଲ୍ ସୂଚନା ରଖନ୍ତୁ |
+        order_summary_canceled: "%{number} ସାରାଂଶ [CANCELED] ଅର୍ଡର କରନ୍ତୁ |"
+        subject: ଅର୍ଡର ବାତିଲ୍ |
+        thanks: ଆପଣଙ୍କ ବ୍ୟବସାୟ ପାଇଁ ଧନ୍ୟବାଦ |
+      confirm_email:
+        dear_customer: ପ୍ରିୟ %{name},
+        instructions: ଦୟାକରି ଆପଣଙ୍କର ରେକର୍ଡଗୁଡିକ ପାଇଁ ନିମ୍ନଲିଖିତ କ୍ରମ ସୂଚନା ସମୀକ୍ଷା କରନ୍ତୁ ଏବଂ ରଖନ୍ତୁ |
+        order_summary: "%{number} ସାରାଂଶ ଅର୍ଡର କରନ୍ତୁ |"
+        subject: ନିଶ୍ଚିତକରଣ ଅର୍ଡର |
+        thanks: ଆପଣଙ୍କ ବ୍ୟବସାୟ ପାଇଁ ଧନ୍ୟବାଦ |
+      store_owner_notification_email:
+        heading: ନୂତନ ଅର୍ଡର ପ୍ରାପ୍ତ ହେଲା |
+        instructions: ଆପଣ ଏକ ନୂତନ ଅର୍ଡର ପାଇଛନ୍ତି |
+        order_summary: "%{number} ସାରାଂଶ ଅର୍ଡର କରନ୍ତୁ |"
+        subject: "%{store_name} ଏକ ନୂତନ କ୍ରମ ଗ୍ରହଣ କଲା |"
+        thanks: ଆପଣଙ୍କ ବ୍ୟବସାୟ ପାଇଁ ଧନ୍ୟବାଦ |
+      store_team: "%{store_name} ଦଳ |"
+      subtotal: 'ଉପଟୋଟାଲ୍:'
+      total: 'ଅର୍ଡର ମୋଟ:'
+    order_not_found: ଆମେ ତୁମର ଅର୍ଡର ପାଇଲୁ ନାହିଁ | ଦୟାକରି ସେହି କାର୍ଯ୍ୟକୁ ପୁନର୍ବାର ଚେଷ୍ଟା କରନ୍ତୁ |
+    order_number: "%{number} ଅର୍ଡର କରନ୍ତୁ |"
+    order_processed_successfully: ତୁମର ଅର୍ଡର ସଫଳତାର ସହିତ ପ୍ରକ୍ରିୟାକରଣ ହୋଇଛି |
+    order_resumed: ଆଦେଶ ପୁନ umed ଆରମ୍ଭ ହେଲା |
+    order_state:
+      address: ଠିକଣା
+      awaiting_return: ପ୍ରତ୍ୟାବର୍ତ୍ତନକୁ ଅପେକ୍ଷା କରିଛି |
+      canceled: ବାତିଲ
+      cart: କାର୍ଟ
+      complete: ସଂପୂର୍ଣ୍ଣ
+      confirm: ନିଶ୍ଚିତ କର |
+      considered_risky: ବିପଦପୂର୍ଣ୍ଣ ବୋଲି ବିବେଚନା କରାଯାଏ |
+      delivery: ବିତରଣ
+      payment: ଦେୟ
+      resumed: ପୁନ umed ଆରମ୍ଭ ହେଲା |
+      returned: ଫେରିଗଲା |
+    order_success: ଅର୍ଡର ସଫଳତାର ସହିତ ସ୍ଥାନିତ |
+    order_success_explain: ତୁମର ଅର୍ଡର ସୂଚନା ତୁମ ଇମେଲକୁ ପଠାଯିବ |
+    order_summary: ଅର୍ଡର ସାରାଂଶ
+    order_sure_want_to: ଆପଣ ନିଶ୍ଚିତ କି ଆପଣ ଏହି କ୍ରମକୁ %{event} କରିବାକୁ ଚାହୁଁଛନ୍ତି କି?
+    order_total: ସମୁଦାୟ ଅର୍ଡର କରନ୍ତୁ |
+    order_updated: ଅର୍ଡର ଅଦ୍ୟତନ ହୋଇଛି |
+    orders: ଆଦେଶ
+    out_of_stock: ଷ୍ଟକ୍ ସେଶ
+    overview: ସମୀକ୍ଷା
+    package_from: ରୁ ପ୍ୟାକେଜ୍
+    page_not_found: ଦୁ Sorry ଖିତ! ଆପଣ ଖୋଜୁଥିବା ପୃଷ୍ଠା ମିଳିବ ନାହିଁ |
+    pagination:
+      next_page: ପରବର୍ତ୍ତୀ ପୃଷ୍ଠା & raquo;
+      previous_page: "& laquo; ପୂର୍ବ ପୃଷ୍ଠା |"
+      truncate: "& hellip;"
+    password: ପାସୱାର୍ଡ
+    paste: ଲେପନ କରନ୍ତୁ |
+    path: ପଥ
+    pay: ଦେୟ
+    payment: ଦେୟ
+    payment_amount: ଦେୟ ରାଶି
+    payment_could_not_be_created: ଦେୟ ସୃଷ୍ଟି ହୋଇପାରିବ ନାହିଁ |
+    payment_identifier: ଦେୟ ପରିଚାୟକ
+    payment_information: ଦେୟ ସୂଚନା
+    payment_method: ଅର୍ଥ ପ୍ରଦାନ ପଦ୍ଧତି
+    payment_method_not_supported: ସେହି ଦେୟ ପଦ୍ଧତି ଅସମର୍ଥିତ | ଦୟାକରି ଅନ୍ୟଟି ବାଛନ୍ତୁ |
+    payment_methods: ଦେୟ ପଦ୍ଧତି
+    payment_processing_failed: ଦେୟ ପ୍ରକ୍ରିୟାକରଣ ହୋଇପାରିବ ନାହିଁ, ଦୟାକରି ଆପଣ ପ୍ରବେଶ କରିଥିବା ବିବରଣୀ ଯାଞ୍ଚ କରନ୍ତୁ |
+    payment_processor_choose_banner_text: ଯଦି ଆପଣ ଏକ ଦେୟ ସଞ୍ଚାଳକ ବାଛିବାରେ ସାହାଯ୍ୟ ଆବଶ୍ୟକ କରନ୍ତି, ଦୟାକରି ପରିଦର୍ଶନ କରନ୍ତୁ |
+    payment_processor_choose_link: ଆମର ଦେୟ ପୃଷ୍ଠା |
+    payment_provider_settings: ଦେୟ ପ୍ରଦାନକାରୀ ସେଟିଂସମୂହ |
+    payment_state: ଦେୟ ରାଜ୍ୟ
+    payment_states:
+      balance_due: ବାଲାନ୍ସ ଦେୟ
+      checkout: ଚେକଆଉଟ୍
+      completed: ସମାପ୍ତ ହୋଇଛି
+      credit_owed: credit ଣ
+      failed: ବିଫଳ ହେଲା |
+      paid: ଦେୟ
+      pending: ବିଚାରାଧୀନ ଅଛି
+      processing: ପ୍ରକ୍ରିୟାକରଣ
+      void: ଶୂନ୍ୟ
+    payment_type: ଦେୟ ପ୍ରକାର
+    payment_updated: ଦେୟ ଅଦ୍ୟତନ ହୋଇଛି |
+    payments: ଦେୟ
+    pdp:
+      checkout: ଚେକଆଉଟ୍ |
+      description: ବର୍ଣ୍ଣନା
+      details: ବିବରଣୀ
+      products_included_in_promotion: ପଦୋନ୍ନତିରେ ଉତ୍ପାଦଗୁଡିକ ଅନ୍ତର୍ଭୁକ୍ତ |
+      quantity: ପରିମାଣ
+      view_cart: କାର୍ଟ ଦେଖନ୍ତୁ |
+      you_may_also_like: ଆପଣ ମଧ୍ୟ ପସନ୍ଦ କରିପାରନ୍ତି |
+    pending: ବିଚାରାଧୀନ ଅଛି
+    pending_sale: ବିକ୍ରୟ ବିଚାରାଧୀନ ଅଛି |
+    percent: ଶତକଡା
+    percent_per_item: ଆଇଟମ୍ ପ୍ରତି ଶତକଡା
+    permalink: ପର୍ମାଲିଙ୍କ୍ |
+    phone: ଫୋନ୍ |
+    place_order: ଆଦେଶ ପ୍ରଦାନ କର
+    please_define_payment_methods: ଦୟାକରି ପ୍ରଥମେ କିଛି ଦେୟ ପଦ୍ଧତିକୁ ବ୍ୟାଖ୍ୟା କରନ୍ତୁ |
+    please_enter_reasonable_quantity: ଦୟାକରି ଏକ ଯୁକ୍ତିଯୁକ୍ତ ପରିମାଣ ପ୍ରବେଶ କରନ୍ତୁ |
+    plp:
+      best_selling: ସର୍ବୋତ୍ତମ ବିକ୍ରୟ |
+      clear_all: ସମସ୍ତଙ୍କୁ ସଫା କର |
+      collection: ସଂଗ୍ରହ
+      color: ରଙ୍ଗ
+      default: DEFAULT
+      done: ସମାପ୍ତ
+      filter_by: ଫିଲ୍ଟର୍ ଦ୍ BY ାରା
+      newest_first: ନୂତନତମ
+      no_results: କ results ଣସି ଫଳାଫଳ ନାହିଁ |
+      no_results_found: କ results ଣସି ଫଳାଫଳ ମିଳିଲା ନାହିଁ |
+      not_found_filters1: ଏହି ଫିଲ୍ଟରଗୁଡିକ ପାଇଁ ଆମେ ଏକ ମେଳ ଖୋଜି ପାଇଲୁ ନାହିଁ |
+      not_found_filters2: ଦୟାକରି ଅନ୍ୟ ଏକ ଚେଷ୍ଟା କରନ୍ତୁ |
+      not_found_text1: "'%{keywords}' ପାଇଁ ଆମେ ଉତ୍ପାଦ ପାଇଲୁ ନାହିଁ |"
+      not_found_text2: ଦୟାକରି ଅନ୍ୟ ଏକ ସନ୍ଧାନ ଚେଷ୍ଟା କରନ୍ତୁ |
+      price: ମୂଲ୍ୟ
+      price_high_to_low: ମୂଲ୍ୟ (ଉଚ୍ଚ - ନିମ୍ନ)
+      price_low_to_high: ମୂଲ୍ୟ (ନିମ୍ନ - ଉଚ୍ଚ)
+      result: ଫଳାଫଳ |
+      results_for: ଫଳାଫଳ
+      size: SIZE
+      sort_by: SORT BY
+      top_sellers: ଶୀର୍ଷ ବିକ୍ରେତା |
+      type: TYPE
+    populate_get_error: କିଛି ଭୁଲ ହୋଇ ଗଲା। ଦୟାକରି ଆଇଟମ୍ ଯୋଡିବାକୁ ଚେଷ୍ଟା କରନ୍ତୁ |
+    powered_by: ଦ୍ଵାରା ନିର୍ମିତ
+    pre_tax_amount: ପ୍ରି-ଟ୍ୟାକ୍ସ ପରିମାଣ |
+    pre_tax_refund_amount: ପ୍ରି-ଟ୍ୟାକ୍ସ ଫେରସ୍ତ ପରିମାଣ |
+    pre_tax_total: ପ୍ରି-ଟ୍ୟାକ୍ସ ସମୁଦାୟ |
+    preferred_reimbursement_type: ପସନ୍ଦିତ ଫେରସ୍ତ ପ୍ରକାର |
+    presentation: ଉପସ୍ଥାପନା
+    preview_product: ଉତ୍ପାଦ ପୂର୍ବାବଲୋକନ |
+    preview_taxon: ଟ୍ୟାକ୍ସନ୍ ପୂର୍ବାବଲୋକନ |
+    previous: ପୂର୍ବ
+    previous_state_missing: n / a
+    previously_used_card: ପୂର୍ବରୁ ବ୍ୟବହୃତ କାର୍ଡଗୁଡ଼ିକ |
+    price: ମୂଲ୍ୟ
+    price_range: ମୂଲ୍ୟ ପରିସର
+    price_sack: ମୂଲ୍ୟ ଅଖା
+    prices: ମୂଲ୍ୟ
+    process: ପ୍ରକ୍ରିୟା
+    product: ଉତ୍ପାଦ
+    product_details: ଉତ୍ପାଦ ବିବରଣୀ
+    product_has_no_description: ଏହି ଉତ୍ପାଦର କ description ଣସି ବର୍ଣ୍ଣନା ନାହିଁ |
+    product_not_available_in_this_currency: ଏହି ଉତ୍ପାଦଟି ମନୋନୀତ ମୁଦ୍ରାରେ ଉପଲବ୍ଧ ନୁହେଁ |
+    product_properties: ଉତ୍ପାଦ ଗୁଣ |
+    product_rule:
+      choose_products: ଉତ୍ପାଦଗୁଡିକ ବାଛନ୍ତୁ |
+      label: ଅର୍ଡର ନିଶ୍ଚିତ ଭାବରେ ଏହି ଉତ୍ପାଦଗୁଡିକର x ପରିମାଣ ଧାରଣ କରିବ |
+      match_all: ସମସ୍ତ
+      match_any: ଅତିକମରେ ଗୋଟିଏ |
+      match_none: କିଛି ନୁହେଁ |
+      product_source:
+        group: ଉତ୍ପାଦ ଗୋଷ୍ଠୀରୁ |
+        manual: ମାନୁଆଲୀ ବାଛନ୍ତୁ |
+    products: ଉତ୍ପାଦଗୁଡିକ
+    promotion: ପଦୋନ୍ନତି
+    promotion_action: ପଦୋନ୍ନତି କାର୍ଯ୍ୟ
+    promotion_action_types:
+      create_adjustment:
+        description: କ୍ରମରେ ଏକ ପଦୋନ୍ନତି କ୍ରେଡିଟ୍ ଆଡଜଷ୍ଟମେଣ୍ଟ୍ ସୃଷ୍ଟି କରେ |
+        name: ପୁରା ଅର୍ଡର ଆଡଜଷ୍ଟମେଣ୍ଟ୍ ସୃଷ୍ଟି କରନ୍ତୁ |
+      create_item_adjustments:
+        description: ଏକ ରେଖା ଆଇଟମ୍ ଉପରେ ଏକ ପଦୋନ୍ନତି କ୍ରେଡିଟ୍ ଆଡଜଷ୍ଟମେଣ୍ଟ୍ ସୃଷ୍ଟି କରେ |
+        name: ପ୍ରତି ଧାଡି-ଆଇଟମ୍ ଆଡଜଷ୍ଟମେଣ୍ଟ୍ ସୃଷ୍ଟି କରନ୍ତୁ |
+      create_line_items:
+        description: ନିର୍ଦ୍ଦିଷ୍ଟ ପରିମାଣର ପ୍ରକାର ସହିତ କାର୍ଟକୁ ଜନସଂଖ୍ୟା କରେ |
+        name: ରେଖା ଆଇଟମ୍ ସୃଷ୍ଟି କରନ୍ତୁ |
+      free_shipping:
+        description: ଅର୍ଡର ପାଇଁ ସମସ୍ତ ପଠାଇବା ମାଗଣା କରେ |
+        name: ମାଗଣା ପରିବହନ ଖର୍ଚ୍ଚ
+    promotion_actions: କାର୍ଯ୍ୟ
+    promotion_categories: ପଦୋନ୍ନତି ବର୍ଗଗୁଡିକ |
+    promotion_category: ପଦୋନ୍ନତି ବର୍ଗ
+    promotion_cloned: ପଦୋନ୍ନତି କ୍ଲୋନ କରାଯାଇଛି |
+    promotion_form:
+      match_policies:
+        all: ଏହି ସମସ୍ତ ନିୟମ ସହିତ ମେଳ କରନ୍ତୁ |
+        any: ଏହି ନିୟମଗୁଡିକ ମଧ୍ୟରୁ ଯେକ match ଣସି ସହିତ ମେଳ କରନ୍ତୁ |
+    promotion_label: ପଦୋନ୍ନତି (%{name})
+    promotion_not_cloned: 'ପଦୋନ୍ନତି କ୍ଲୋନ ହୋଇନାହିଁ | କାରଣ: %{error}'
+    promotion_rule: ପଦୋନ୍ନତି ନିୟମ |
+    promotion_rule_types:
+      country:
+        description: ଅର୍ଡର ସଠିକ୍ (କିମ୍ବା ଡିଫଲ୍ଟ) ଦେଶକୁ ପଠାଯାଏ |
+        name: ଦେଶ
+      first_order:
+        description: ଗ୍ରାହକଙ୍କ ପ୍ରଥମ କ୍ରମ ହେବା ଜରୁରୀ |
+        name: ପ୍ରଥମ କ୍ରମ |
+      item_total:
+        description: ଅର୍ଡର ସମୁଦାୟ ଏହି ମାନଦଣ୍ଡକୁ ପୂରଣ କରେ |
+        name: ଆଇଟମ୍ ସମୁଦାୟ |
+      one_use_per_user:
+        description: ପ୍ରତି ବ୍ୟବହାରକାରୀଙ୍କ ପାଇଁ କେବଳ ଗୋଟିଏ ବ୍ୟବହାର |
+        name: ୟୁଜର୍ ପ୍ରତି ଗୋଟିଏ ବ୍ୟବହାର |
+      option_value:
+        description: କ୍ରମରେ ମେଳ ଖାଉଥିବା ବିକଳ୍ପ ମୂଲ୍ୟ (ଗୁଡିକ) ସହିତ ନିର୍ଦ୍ଦିଷ୍ଟ ଉତ୍ପାଦ (ଗୁଡିକ) ଅନ୍ତର୍ଭୁକ୍ତ |
+        name: ବିକଳ୍ପ ମୂଲ୍ୟ (ଗୁଡିକ)
+      product:
+        description: କ୍ରମରେ ନିର୍ଦ୍ଦିଷ୍ଟ ଉତ୍ପାଦ (ଗୁଡିକ) ଅନ୍ତର୍ଭୁକ୍ତ |
+        name: ଉତ୍ପାଦ (ଗୁଡିକ)
+      taxon:
+        description: ଅର୍ଡରରେ ନିର୍ଦ୍ଦିଷ୍ଟ ଟ୍ୟାକ୍ସନ୍ (ଗୁଡିକ) ସହିତ ଉତ୍ପାଦ ଅନ୍ତର୍ଭୁକ୍ତ |
+        name: ଟ୍ୟାକ୍ସନ୍ (ଗୁଡିକ)
+      user:
+        description: କେବଳ ନିର୍ଦ୍ଦିଷ୍ଟ ବ୍ୟବହାରକାରୀଙ୍କ ପାଇଁ ଉପଲବ୍ଧ |
+        name: ଉପଯୋଗକର୍ତ୍ତା |
+      user_logged_in:
+        description: କେବଳ ଲଗ୍ ଇନ୍ ବ୍ୟବହାରକାରୀଙ୍କ ପାଇଁ ଉପଲବ୍ଧ |
+        name: ଉପଯୋଗକର୍ତ୍ତା ଲଗ୍ ଇନ୍ କରିଛନ୍ତି |
+    promotion_uses: ପଦୋନ୍ନତି ବ୍ୟବହାର |
+    promotionable: ପ୍ରମୋଟେବଲ୍ |
+    promotions: ପଦୋନ୍ନତି
+    propagate_all_variants: ସମସ୍ତ ପ୍ରକାର ବିସ୍ତାର କରନ୍ତୁ |
+    properties: ଗୁଣଧର୍ମ
+    property: ସମ୍ପତ୍ତି
+    prototype: ପ୍ରୋଟୋଟାଇପ୍ |
+    prototypes: ପ୍ରୋଟୋଟାଇପ୍ |
+    provider: ପ୍ରଦାନକାରୀ |
+    provider_settings_warning: ଯଦି ଆପଣ ପ୍ରଦାନକାରୀ ପ୍ରକାର ପରିବର୍ତ୍ତନ କରୁଛନ୍ତି, ପ୍ରଦାନକାରୀ ସେଟିଂସମୂହ ସଂପାଦନ କରିବା ପୂର୍ବରୁ ଆପଣଙ୍କୁ ପ୍ରଥମେ ସଞ୍ଚୟ କରିବାକୁ ପଡିବ |
+    purchased_quantity: କ୍ରୟ ପରିମାଣ |
+    qty: Qty
+    quantity: ପରିମାଣ
+    quantity_returned: ପରିମାଣ ଫେରସ୍ତ
+    quantity_shipped: ପରିମାଣ ପଠାଯାଇଛି |
+    quick_search: ଶୀଘ୍ର ସନ୍ଧାନ ..
+    rate: ହାର
+    reason: କାରଣ
+    receive: ଗ୍ରହଣ କରନ୍ତୁ
+    receive_stock: ଷ୍ଟକ୍ ଗ୍ରହଣ କରନ୍ତୁ |
+    received: ପ୍ରାପ୍ତ
+    reception_status: ଗ୍ରହଣ ସ୍ଥିତି
+    reference: ସନ୍ଦର୍ଭ
+    reference_contains: ସନ୍ଦର୍ଭ ଧାରଣ କରେ |
+    refund: ଫେରସ୍ତ
+    refund_amount_must_be_greater_than_zero: ଫେରସ୍ତ ପରିମାଣ ଶୂନରୁ ଅଧିକ ହେବା ଜରୁରୀ |
+    refund_reasons: ଫେରସ୍ତ କାରଣଗୁଡିକ
+    refunded_amount: ଫେରସ୍ତ ପରିମାଣ
+    refunds: ଫେରସ୍ତ
+    register: ପଞ୍ଜିକରଣ କର |
+    registration: ପଞ୍ଜୀକରଣ
+    reimburse: ପରିଶୋଧ
+    reimbursed: ଫେରସ୍ତ
+    reimbursement: ପରିଶୋଧ
+    reimbursement_mailer:
+      reimbursement_email:
+        days_to_send: ବିନିମୟକୁ ଅପେକ୍ଷା କରିଥିବା ଯେକ items ଣସି ଆଇଟମ୍ ପଠାଇବାକୁ ଆପଣଙ୍କ ପାଖରେ %{days} ଦିନ ଅଛି |
+        dear_customer: ପ୍ରିୟ %{name},
+        exchange_summary: ବିନିମୟ ସାରାଂଶ
+        for: ପାଇଁ
+        instructions: ତୁମର ପରିଶୋଧ ପ୍ରକ୍ରିୟା କରାଯାଇଛି |
+        refund_summary: ଫେରସ୍ତ ସାରାଂଶ
+        store_team: "%{store_name} ଦଳ |"
+        subject: ପରିଶୋଧ ବିଜ୍ଞପ୍ତି
+        thanks: ଆପଣଙ୍କ ବ୍ୟବସାୟ ପାଇଁ ଧନ୍ୟବାଦ |
+        total_refunded: 'ସମୁଦାୟ ଫେରସ୍ତ: %{total}'
+    reimbursement_perform_failed: 'ପରିଶୋଧ କରାଯାଇପାରିବ ନାହିଁ | ତ୍ରୁଟି: %{error}'
+    reimbursement_status: ପରିଶୋଧ ସ୍ଥିତି
+    reimbursement_type: ପରିଶୋଧ ପ୍ରକାର
+    reimbursement_type_override: ପରିଶୋଧ ପ୍ରକାର ଓଭରବ୍ରିଡ୍ |
+    reimbursement_types: ପରିଶୋଧ ପ୍ରକାରଗୁଡିକ |
+    reimbursements: ପରିଶୋଧ
+    reject: ପ୍ରତ୍ୟାଖ୍ୟାନ କରନ୍ତୁ |
+    rejected: ପ୍ରତ୍ୟାଖ୍ୟାନ
+    remember_me: ମୋତେ ମନେ ରଖିବେ
+    remove: ଅପସାରଣ କରନ୍ତୁ |
+    remove_image: ପ୍ରତିଛବି ଅପସାରଣ କରନ୍ତୁ |
+    rename: ନାମ ପରିବର୍ତ୍ତନ କରନ୍ତୁ |
+    report: ରିପୋର୍ଟ କରନ୍ତୁ |
+    reports: ରିପୋର୍ଟଗୁଡିକ
+    required: "*"
+    required_fields: ଆବଶ୍ୟକ କ୍ଷେତ୍ରଗୁଡିକ |
+    resellable: ପୁନ ell ବିକ୍ରୟଯୋଗ୍ୟ |
+    resend: ପଠାନ୍ତୁ
+    reset_password: ମୋର ପାସୱାର୍ଡ ପୁନ Res ସେଟ୍ କରନ୍ତୁ |
+    response_code: ପ୍ରତିକ୍ରିୟା କୋଡ୍
+    resume: ପୁଣି ଆରମ୍ଭ କରିବା
+    resumed: ପୁନ umed ଆରମ୍ଭ ହେଲା |
+    return: ଫେରନ୍ତୁ
+    return_authorization: ପ୍ରାଧିକରଣ ଫେରସ୍ତ
+    return_authorization_canceled: ଫେରସ୍ତ ପ୍ରାଧିକରଣ ବାତିଲ ହୋଇଛି |
+    return_authorization_reasons: ପ୍ରାଧିକରଣ କାରଣଗୁଡିକ ଫେରସ୍ତ କରନ୍ତୁ |
+    return_authorization_states:
+      authorized: ପ୍ରାଧିକୃତ
+      canceled: ବାତିଲ
+    return_authorization_updated: ଫେରସ୍ତ ପ୍ରାଧିକରଣ ଅଦ୍ୟତନ ହୋଇଛି |
+    return_authorizations: ପ୍ରାଧିକରଣ ଫେରସ୍ତ କରନ୍ତୁ |
+    return_item_inventory_unit_ineligible: ରିଟର୍ନ ଆଇଟମ୍ ର ଭଣ୍ଡାର ୟୁନିଟ୍ ପଠାଯିବା ଜରୁରୀ |
+    return_item_inventory_unit_reimbursed: ରିଟର୍ନ ଆଇଟମ୍ ର ଇନଭେଣ୍ଟୋରୀ ୟୁନିଟ୍ ପୂର୍ବରୁ ଫେରସ୍ତ କରାଯାଇଛି |
+    return_item_order_not_completed: ଫେରସ୍ତ ଆଇଟମ୍ ର ଅର୍ଡର ସମ୍ପୂର୍ଣ୍ଣ ହେବା ଜରୁରୀ |
+    return_item_rma_ineligible: ଫେରସ୍ତ ଆଇଟମ୍ ଏକ RMA ଆବଶ୍ୟକ କରେ |
+    return_item_time_period_ineligible: ଫେରସ୍ତ ଆଇଟମ୍ ଯୋଗ୍ୟ ସମୟ ଅବଧି ବାହାରେ |
+    return_items: ଆଇଟମ୍ ଫେରସ୍ତ କରନ୍ତୁ |
+    return_items_cannot_be_associated_with_multiple_orders: ରିଟର୍ନ ଆଇଟମଗୁଡିକ ଏକାଧିକ ଅର୍ଡର ସହିତ ଜଡିତ ହୋଇପାରିବ ନାହିଁ |
+    return_number: ଫେରସ୍ତ ସଂଖ୍ୟା
+    return_quantity: ଫେରସ୍ତ ପରିମାଣ
+    returned: ପ୍ରତ୍ୟାବର୍ତ୍ତନ
+    returns: ଫେରସ୍ତ
+    review: ସମୀକ୍ଷା କରନ୍ତୁ |
+    risk: ବିପଦ
+    risk_analysis: ବିପଦ ବିଶ୍ଳେଷଣ |
+    risky: ବିପଦପୂର୍ଣ୍ଣ
+    rma_credit: RMA କ୍ରେଡିଟ୍
+    rma_number: RMA ସଂଖ୍ୟା
+    rma_value: RMA ମୂଲ୍ୟ
+    role_id: ଭୂମିକା ID
+    roles: ଭୂମିକା
+    rules: ନିୟମ
+    safe: ନିରାପଦ
+    sales_total: ବିକ୍ରୟ ମୋଟ
+    sales_total_description: ସମସ୍ତ ଅର୍ଡର ପାଇଁ ବିକ୍ରୟ ମୋଟ |
+    sales_totals: ବିକ୍ରୟ ସମୁଦାୟ |
+    save_and_continue: ସଞ୍ଚୟ ଏବଂ ଜାରି ରଖ |
+    save_my_address: ମୋର ଠିକଣା ସଞ୍ଚୟ କରନ୍ତୁ |
+    saving: ସଞ୍ଚୟ
+    say_no: ନା
+    say_yes: ହଁ
+    scope: ପରିସର
+    search: ସନ୍ଧାନ କର |
+    search_results: "'%{keywords}' ପାଇଁ ଫଳାଫଳ ଖୋଜ |"
+    searching: ଖୋଜୁଛି |
+    secure_connection_type: ସୁରକ୍ଷିତ ସଂଯୋଗ ପ୍ରକାର |
+    security_settings: ସୁରକ୍ଷା ସେଟିଂସମୂହ
+    select: ଚୟନ କରନ୍ତୁ |
+    select_a_date: ଏକ ତାରିଖ ବାଛନ୍ତୁ |
+    select_a_date_range: ଏକ ତାରିଖ ପରିସର ଚୟନ କରନ୍ତୁ |
+    select_a_return_authorization_reason: ଫେରସ୍ତ ପ୍ରାଧିକରଣ ପାଇଁ ଏକ କାରଣ ବାଛନ୍ତୁ |
+    select_a_stock_location: ଏକ ଷ୍ଟକ୍ ଅବସ୍ଥାନ ଚୟନ କରନ୍ତୁ |
+    select_a_store_credit_reason: ଷ୍ଟୋର କ୍ରେଡିଟ୍ ପାଇଁ ଏକ କାରଣ ବାଛନ୍ତୁ |
+    select_an_option: ଏକ ବିକଳ୍ପ ବାଛନ୍ତୁ |
+    select_from_prototype: ପ୍ରୋଟୋଟାଇପ୍ ରୁ ଚୟନ କରନ୍ତୁ |
+    select_stock: ଷ୍ଟକ୍ ଚୟନ କରନ୍ତୁ |
+    selected_quantity_not_available: "%{item} ର ଚୟନ ଉପଲବ୍ଧ ନାହିଁ |"
+    send_copy_of_all_mails_to: ସମସ୍ତ ମେଲଗୁଡିକର କପି ପଠାନ୍ତୁ |
+    send_mails_as: ଯେପରି ମେଲ୍ ପଠାନ୍ତୁ |
+    seo: SEO
+    seo_robots: SEO ରୋବଟ୍ସ |
+    seo_title: SEO ଆଖ୍ୟା |
+    server: ସର୍ଭର |
+    server_error: ସର୍ଭର ଏକ ତ୍ରୁଟି ଫେରସ୍ତ କଲା |
+    settings: ସେଟିଂସମୂହ
+    ship: ଜାହାଜ
+    ship_address: ଜାହାଜ ଠିକଣା
+    ship_to: 'ପଠାଇବା:'
+    ship_total: ଜାହାଜ ସମୁଦାୟ
+    shipment: ପଠାଇବା
+    shipment_adjustments: ପଠାଇବା ସଂଶୋଧନ |
+    shipment_details: "%{stock_location} ମାଧ୍ୟମରେ %{shipping_method} ମାଧ୍ୟମରେ |"
+    shipment_mailer:
+      shipped_email:
+        dear_customer: ପ୍ରିୟ %{name},
+        instructions: ତୁମର ଅର୍ଡର %{number} ପଠାଯାଇଛି |
+        shipment_summary: ଅର୍ଡର ପାଇଁ ପଠାଇବା ସାରାଂଶ |
+        shipping_method: 'ପଠାଇବା ପଦ୍ଧତି: %{shipping_method} |'
+        store_team: "%{store_name} ଦଳ |"
+        subject: ପଠାଇବା ବିଜ୍ଞପ୍ତି |
+        thanks: ଆପଣଙ୍କ ବ୍ୟବସାୟ ପାଇଁ ଧନ୍ୟବାଦ |
+        track_information: 'ଟ୍ରାକିଂ ସୂଚନା: %{tracking}'
+        track_link: 'ଟ୍ରାକିଂ ଲିଙ୍କ୍: %{url} |'
+    shipment_state: ପଠାଇବା ରାଜ୍ୟ |
+    shipment_states:
+      backorder: ପୃଷ୍ଠପଟ
+      canceled: ବାତିଲ
+      partial: ଆଂଶିକ
+      pending: ବିଚାରାଧୀନ ଅଛି
+      ready: ପ୍ରସ୍ତୁତ
+      shipped: ପଠାଯାଇଛି
+    shipment_transfer_error: ପ୍ରକାର ସ୍ଥାନାନ୍ତର କରିବାରେ ଏକ ତ୍ରୁଟି ଥିଲା |
+    shipment_transfer_success: ପ୍ରକାରଗୁଡିକ ସଫଳତାର ସହିତ ସ୍ଥାନାନ୍ତରିତ |
+    shipments: ପଠାଣ
+    shipped: ପଠାଯାଇଛି
+    shipping: ପରିବହନ
+    shipping_address: ପହଞ୍ଚାଇବା ସ୍ଥାନ
+    shipping_categories: ସିପିଂ ବର୍ଗଗୁଡିକ
+    shipping_category: ସିପିଂ ବର୍ଗ
+    shipping_flat_rate_per_item: ପ୍ୟାକେଜ୍ ଆଇଟମ୍ ପ୍ରତି ଫ୍ଲାଟ ହାର |
+    shipping_flat_rate_per_order: ସମାନ ମୂଲ୍ୟ
+    shipping_flexible_rate: ପ୍ୟାକେଜ୍ ଆଇଟମ୍ ପ୍ରତି ନମନୀୟ ହାର |
+    shipping_instructions: ପଠାଇବା ନିର୍ଦ୍ଦେଶାବଳୀ |
+    shipping_method: ପଠାଇବା ପଦ୍ଧତି |
+    shipping_methods: ପଠାଇବା ପଦ୍ଧତି |
+    shipping_price_sack: ମୂଲ୍ୟ ଅଖା
+    shipping_rates:
+      display_price:
+        excluding_tax: "%{price} (+ %{tax_amount} %{tax_rate_name})"
+        including_tax: "%{price} (ଅନ୍ତର୍ଭୂକ୍ତ। %{tax_amount} %{tax_rate_name})"
+    shipping_total: ସମୁଦାୟ ପରିବହନ
+    shop_by_taxonomy: "%{taxonomy} ଦ୍ୱାରା କିଣନ୍ତୁ |"
+    shopping_cart: ସପିଂଗ କାର୍ଟ୍
+    show: ଦେଖାନ୍ତୁ |
+    show_active: ସକ୍ରିୟ ଦେଖାନ୍ତୁ |
+    show_deleted: ବିଲୋପିତ ଦେଖାନ୍ତୁ |
+    show_discontinued: ବନ୍ଦ ଦେଖାନ୍ତୁ |
+    show_only_complete_orders: କେବଳ ସଂପୂର୍ଣ୍ଣ ଅର୍ଡର ଦେଖାନ୍ତୁ |
+    show_only_considered_risky: କେବଳ ବିପଦପୂର୍ଣ୍ଣ ଆଦେଶ ଦେଖାନ୍ତୁ |
+    show_property: ସମ୍ପତ୍ତି ଦେଖାନ୍ତୁ |
+    show_rate_in_label: ଲେବଲ୍ ରେ ରେଟ୍ ଦେଖାନ୍ତୁ |
+    show_store_selector:
+      long: ଷ୍ଟୋରଫ୍ରଣ୍ଟର ମୁଖ୍ୟ ନାଭ ବାରରେ ଷ୍ଟୋର ଚୟନକର୍ତ୍ତା ପ୍ରଦର୍ଶନ କରନ୍ତୁ ଏବଂ ଉପଭୋକ୍ତାମାନଙ୍କୁ ଷ୍ଟୋର ଏବଂ ମୁଦ୍ରା ପରିବର୍ତ୍ତନ କରିବାକୁ ଅନୁମତି ଦିଅନ୍ତୁ |
+      short: ଷ୍ଟୋର ଚୟନକର୍ତ୍ତା ଦେଖାନ୍ତୁ |
+    sign_up: ସାଇନ୍ ଅପ୍ କରନ୍ତୁ
+    sku: SKU
+    skus: SKUs
+    slug: ସ୍ଲଗ୍ |
+    social: ସାମାଜିକ |
+    source: ଉତ୍ସ
+    special_instructions: ବିଶେଷ ନିର୍ଦ୍ଦେଶ
+    split: ବିଭାଜନ
+    spree_gateway_error_flash_for_checkout: ଆପଣଙ୍କର ଦେୟ ସୂଚନା ସହିତ ଏକ ସମସ୍ୟା ଥିଲା | ଦୟାକରି ଆପଣଙ୍କର ସୂଚନା ଯାଞ୍ଚ କରନ୍ତୁ ଏବଂ ପୁନର୍ବାର ଚେଷ୍ଟା କରନ୍ତୁ |
+    ssl:
+      change_protocol: ଦୟାକରି HTTP ବ୍ୟବହାର କରିବାକୁ ସୁଇଚ୍ କରନ୍ତୁ (HTTPS ପରିବର୍ତ୍ତେ) ଏବଂ ଏହି ଅନୁରୋଧକୁ ପୁନ ry ଚେଷ୍ଟା କରନ୍ତୁ |
+    start: ଆରମ୍ଭ କରନ୍ତୁ |
+    starting_from: ଠାରୁ ଆରମ୍ଭ ହେବ
+    state: ରାଜ୍ୟ
+    state_based: ରାଜ୍ୟ ଆଧାରିତ |
+    state_machine_states:
+      accepted: ଗ୍ରହଣ କରାଯାଇଛି
+      address: ଠିକଣା
+      authorized: ପ୍ରାଧିକୃତ
+      awaiting: ଅପେକ୍ଷା
+      awaiting_return: ପ୍ରତ୍ୟାବର୍ତ୍ତନକୁ ଅପେକ୍ଷା କରିଛି |
+      backordered: ପଛକୁ ଅର୍ଡର |
+      canceled: ବାତିଲ
+      cart: କାର୍ଟ
+      checkout: ଚେକଆଉଟ୍ |
+      closed: ବନ୍ଦ |
+      complete: ସଂପୂର୍ଣ୍ଣ
+      completed: ସମାପ୍ତ
+      confirm: ନିଶ୍ଚିତ କରନ୍ତୁ |
+      delivery: ବିତରଣ
+      errored: ତ୍ରୁଟି
+      failed: ବିଫଳ
+      given_to_customer: ଗ୍ରାହକଙ୍କୁ ଦିଆଯାଇଛି |
+      invalid: ଅବ val ଧ |
+      manual_intervention_required: ମାନୁଆଲ ହସ୍ତକ୍ଷେପ ଆବଶ୍ୟକ |
+      on_hand: ହାତରେ |
+      open: ଖୋଲନ୍ତୁ |
+      order: ଅର୍ଡର |
+      payment: ଦେୟ
+      pending: ବିଚାରାଧୀନ ଅଛି
+      processing: ପ୍ରକ୍ରିୟାକରଣ
+      ready: ପ୍ରସ୍ତୁତ |
+      reimbursed: ଫେରସ୍ତ
+      resumed: ପୁନ umed ଆରମ୍ଭ ହେଲା |
+      returned: ପ୍ରତ୍ୟାବର୍ତ୍ତନ
+      shipment: ପଠାଇବା
+      shipped: ପଠାଯାଇଛି
+      void: ଶୂନ୍ୟ
+    states: ରାଜ୍ୟଗୁଡିକ |
+    states_required: ରାଜ୍ୟଗୁଡିକ ଆବଶ୍ୟକ |
+    status: ସ୍ଥିତି
+    stock: ଷ୍ଟକ୍ |
+    stock_item_id: ଷ୍ଟକ୍ ଆଇଟମ୍ |
+    stock_location: ଷ୍ଟକ୍ ଅବସ୍ଥାନ
+    stock_location_info: ଷ୍ଟକ୍ ଅବସ୍ଥାନ ସୂଚନା
+    stock_locations: ଷ୍ଟକ୍ ଅବସ୍ଥାନ |
+    stock_locations_need_a_default_country: ଏକ ଷ୍ଟକ୍ ଅବସ୍ଥାନ ସୃଷ୍ଟି କରିବା ପୂର୍ବରୁ ଆପଣ ନିଶ୍ଚିତ ଭାବରେ ଏକ ଡିଫଲ୍ଟ ଦେଶ ସୃଷ୍ଟି କରିବେ |
+    stock_management: ଷ୍ଟକ୍ ମ୍ୟାନେଜମେଣ୍ଟ |
+    stock_management_requires_a_stock_location: ଷ୍ଟକ୍ ପରିଚାଳନା କରିବାକୁ ଦୟାକରି ଏକ ଷ୍ଟକ୍ ଅବସ୍ଥାନ ସୃଷ୍ଟି କରନ୍ତୁ |
+    stock_movements: ଷ୍ଟକ୍ ମୁଭମେଣ୍ଟସ୍ |
+    stock_movements_for_stock_location: "%{stock_location_name} ପାଇଁ ଷ୍ଟକ୍ ମୁଭମେଣ୍ଟସ୍ |"
+    stock_successfully_transferred: ସ୍ଥାନଗୁଡିକ ମଧ୍ୟରେ ଷ୍ଟକ୍ ସଫଳତାର ସହିତ ସ୍ଥାନାନ୍ତରିତ ହେଲା |
+    stock_transfer:
+      errors:
+        must_have_variant: ଆପଣ ଅତିକମରେ ଗୋଟିଏ ପ୍ରକାର ଯୋଡିବା ଜରୁରୀ |
+        variants_unavailable: "%{stock} ରେ କିଛି ପ୍ରକାର ଉପଲବ୍ଧ ନାହିଁ |"
+    stock_transfer_name: ଷ୍ଟକ୍ ସ୍ଥାନାନ୍ତର |
+    stock_transfers: ଷ୍ଟକ୍ ସ୍ଥାନାନ୍ତର |
+    stop: ବନ୍ଦ କର |
+    store: ଗଚ୍ଛିତ କରନ୍ତୁ |
+    store_credit:
+      additional_payment_needed: ଅବଶିଷ୍ଟ <strong> %{amount} </strong> ପାଇଁ ଅନ୍ୟ ଏକ ଦେୟ ପଦ୍ଧତି ଚୟନ କରନ୍ତୁ |
+      allocated: ଯୋଡା ଯାଇଛି |
+      applicable_amount: ଏହି କ୍ରମରେ ଷ୍ଟୋର କ୍ରେଡିଟରେ <strong> %{amount} </strong> ପ୍ରୟୋଗ ହେବ |
+      apply: ପ୍ରୟୋଗ କରନ୍ତୁ |
+      authorized: ପ୍ରାଧିକୃତ
+      available_amount: ଷ୍ଟୋର କ୍ରେଡିଟରେ ଆପଣଙ୍କର <strong> %{amount} </strong> ଉପଲବ୍ଧ ଅଛି!
+      captured: ବ୍ୟବହୃତ |
+      credit: କ୍ରେଡିଟ୍
+      errors:
+        cannot_change_used_store_credit: ଆପଣ ପୂର୍ବରୁ ବ୍ୟବହାର ହୋଇସାରିଥିବା ଏକ ଷ୍ଟୋର କ୍ରେଡିଟ୍ ପରିବର୍ତ୍ତନ କରିପାରିବେ ନାହିଁ |
+        unable_to_create: ଷ୍ଟୋର କ୍ରେଡିଟ୍ ସୃଷ୍ଟି କରିବାରେ ଅସମର୍ଥ |
+        unable_to_delete: ଷ୍ଟୋର କ୍ରେଡିଟ୍ ବିଲୋପ କରିବାକୁ ଅସମର୍ଥ |
+        unable_to_fund: ଷ୍ଟୋର କ୍ରେଡିଟ୍ ବ୍ୟବହାର କରି ଅର୍ଡର ପାଇଁ ଦେୟ ଦେବାକୁ ଅସମର୍ଥ |
+        unable_to_update: ଷ୍ଟୋର କ୍ରେଡିଟ୍ ଅପଡେଟ୍ କରିବାକୁ ଅସମର୍ଥ |
+      remaining_amount: ଆପଣଙ୍କ ଖାତାର ଷ୍ଟୋର କ୍ରେଡିଟରେ ଆପଣଙ୍କର <strong> %{amount} </strong> ବାକି ଅଛି |
+      remove: ଅପସାରଣ କରନ୍ତୁ |
+    store_credit_categories: କ୍ରେଡିଟ୍ ବର୍ଗଗୁଡିକ ଷ୍ଟୋର୍ କରନ୍ତୁ |
+    store_credit_name: କ୍ରେଡିଟ୍ ଷ୍ଟୋର୍ କରନ୍ତୁ |
+    store_credit_payment_method:
+      currency_mismatch: ଷ୍ଟୋର କ୍ରେଡିଟ୍ ମୁଦ୍ରା ଅର୍ଡର ମୁଦ୍ରା ସହିତ ମେଳ ଖାଉ ନାହିଁ |
+      insufficient_authorized_amount: ପ୍ରାଧିକୃତ ପରିମାଣଠାରୁ ଅଧିକ କ୍ୟାପଚର୍ କରିବାକୁ ଅସମର୍ଥ |
+      insufficient_funds: ଅବଶିଷ୍ଟ କ୍ରେଡିଟ୍ ରାଶି ପର୍ଯ୍ୟାପ୍ତ ନୁହେଁ |
+      select_one_store_credit: ଅବଶିଷ୍ଟ ବାଲାନ୍ସ ଆଡକୁ ଯିବାକୁ ଷ୍ଟୋର କ୍ରେଡିଟ୍ ଚୟନ କରନ୍ତୁ |
+      successful_action: ସଫଳ ଷ୍ଟୋର କ୍ରେଡିଟ୍ %{action} |
+      unable_to_credit: 'କ୍ରେଡିଟ୍ କୋଡ୍ ପାଇଁ ଅସମର୍ଥ: %{auth_code} |'
+      unable_to_find: ଷ୍ଟୋର କ୍ରେଡିଟ୍ ପାଇପାରିଲା ନାହିଁ |
+      unable_to_find_for_action: 'Auth କୋଡ୍: %{auth_code} ପାଇଁ ଷ୍ଟୋର କ୍ରେଡିଟ୍ ଖୋଜି ପାଇଲା ନାହିଁ: %{action} |'
+      unable_to_void: 'କୋଡ୍ ଶୂନ୍ୟ କରିବାକୁ ଅସମର୍ଥ: %{auth_code} |'
+      user_has_no_store_credits: ଉପଭୋକ୍ତାଙ୍କର କ available ଣସି ଉପଲବ୍ଧ ଷ୍ଟୋର କ୍ରେଡିଟ୍ ନାହିଁ |
+    store_credits: କ୍ରେଡିଟ୍ ଗଚ୍ଛିତ କରନ୍ତୁ |
+    store_default: ଡିଫଲ୍ଟ ଷ୍ଟୋର୍‌ |
+    store_errors:
+      unable_to_create: ଷ୍ଟୋର ସୃଷ୍ଟି କରିବାରେ ଅସମର୍ଥ |
+      unable_to_delete: ଷ୍ଟୋର୍‌ ବିଲୋପ କରିବାକୁ ଅସମର୍ଥ |
+      unable_to_update: ଷ୍ଟୋର ଅପଡେଟ୍ କରିବାକୁ ଅସମର୍ଥ |
+    store_form:
+      checkout_zone_help: କେଉଁ ଦେଶ କିମ୍ବା ରାଜ୍ୟ ଉତ୍ପାଦ ପଠାଯିବ ସେଥିପାଇଁ ଜୋନ୍ ଚୟନ କରିବ | ଅଧିକ ସୂଚନା ପାଇଁ <a href='https://guides.spreecommerce.org/user/configuration/configuring_geography.html#zones' target='_blank' class='alert-link'> ଦୟାକରି ଡକ୍ୟୁମେଣ୍ଟେସନ୍ ଦେଖନ୍ତୁ </a>
+      code_help: ଅନନ୍ୟ ପରିଚାୟକ ସଂରକ୍ଷଣ କରନ୍ତୁ, ଯାହା ଷ୍ଟୋର୍‌ର ନାମର ସଂକ୍ଷିପ୍ତ ସଂସ୍କରଣ ଅଟେ (ଲେଆଉଟ୍ ଡିରେକ୍ଟୋରୀ ନାମ ଭାବରେ ବ୍ୟବହୃତ ହୁଏ, ଏବଂ ଷ୍ଟୋର୍‌ ଦ୍ୱାରା ଟେମ୍ପଲେଟ୍ ପୃଥକ କରିବାରେ ମଧ୍ୟ ସହାୟକ ହୁଏ) |
+      customer_support_email_help: ଏହି ଇମେଲ୍ ଫୁଟର୍ ବିଭାଗରେ ଆପଣଙ୍କର ଷ୍ଟୋର ପରିଦର୍ଶକମାନଙ୍କୁ ଦୃଶ୍ୟମାନ ହୁଏ |
+      default_country_help: ଏହା ହେଉଛି ସେହି ଦେଶ ଯାହା ଚେକଆଉଟ୍ ଠିକଣା ଫର୍ମରେ ପୂର୍ବରୁ ଚୟନ କରାଯିବ |
+      footer_help: ଏହି ବିଷୟବସ୍ତୁ ଆପଣଙ୍କ ଷ୍ଟୋର୍‌ର ଫୁଟର୍ ବିଭାଗରେ ଦୃଶ୍ୟମାନ ହେଉଛି |
+      locales_help: ଅଧିକ ଲୋକାଲ୍ ଯୋଡିବା ପାଇଁ <a href='https://github.com/spree-contrib/spree_i18n target='_blank' class='alert-link'> ସ୍ପ୍ରି I18n ଏକ୍ସଟେନ୍ସନ୍ </a> ସଂସ୍ଥାପନ କରନ୍ତୁ |
+      mail_from_address_help: ଏହା ହେଉଛି ଏକ ଇମେଲ୍ ଯାହା ଆପଣଙ୍କର ସମସ୍ତ ଷ୍ଟୋର ଇମେଲଗୁଡିକର ପ୍ରେରକ ହେବ (ଅର୍ଡର ନିଶ୍ଚିତକରଣ, ପଠାଇବା ବିଜ୍ଞପ୍ତି ଇତ୍ୟାଦି) |
+      new_order_notifications_email_help: ଯଦି ଆପଣ ପ୍ରତ୍ୟେକ ଥର କେହି ଜଣେ ଅର୍ଡର ରଖିବା ସମୟରେ ଏକ ଇମେଲ୍ ବିଜ୍ଞପ୍ତି ଗ୍ରହଣ କରିବାକୁ ଚାହାଁନ୍ତି ଦୟାକରି ସେହି ବିଜ୍ଞପ୍ତିକୁ ପଠାଯିବା ପାଇଁ ଏକ ଇମେଲ୍ ଠିକଣା ପ୍ରଦାନ କରନ୍ତୁ |
+      seo_robots: ଅଧିକ ସହାୟତା ପାଇଁ ଦୟାକରି <a href='https://developers.google.com/search/reference/robots_meta_tag' target='_blank'> ଯାଞ୍ଚ କରନ୍ତୁ </a>
+      social_help: ଯଦି ତୁମେ ତୁମର ୱେବସାଇଟ୍ ର ଫୁଟର୍ ଅଂଶରେ ତୁମର ସାମାଜିକ ଆକାଉଣ୍ଟ୍ ସହିତ ଲିଙ୍କ୍ କରିବାକୁ ଚାହୁଁଛ, ଦୟାକରି ନିମ୍ନ କ୍ଷେତ୍ରଗୁଡିକ ପୂରଣ କର |
+    store_not_set_as_default: "%{store} ଷ୍ଟୋର୍‌କୁ ଏକ ଡିଫଲ୍ଟ ଷ୍ଟୋର୍ ଭାବରେ ସେଟ୍ କରିପାରିଲା ନାହିଁ |"
+    store_set_as_default: "%{store} ଷ୍ଟୋର ବର୍ତ୍ତମାନ ଏକ ଡିଫଲ୍ଟ ଷ୍ଟୋର୍ ଅଟେ |"
+    store_set_default_button: ଡିଫଲ୍ଟ ଭାବରେ ସେଟ୍ କରନ୍ତୁ |
+    stores: ଷ୍ଟୋରଗୁଡିକ
+    street_address: ରାସ୍ତା ଠିକଣା
+    street_address_2: ଗଳି ଠିକଣା (cont'd)
+    subtotal: ସବଟୋଟାଲ୍ |
+    subtract: ବିତରଣ କରନ୍ତୁ |
+    success: ସଫଳତା
+    successfully_created: "%{resource} ସଫଳତାର ସହିତ ସୃଷ୍ଟି ହୋଇଛି!"
+    successfully_refunded: "%{resource} ସଫଳତାର ସହିତ ଫେରସ୍ତ କରାଯାଇଛି!"
+    successfully_removed: "%{resource} ସଫଳତାର ସହିତ ଅପସାରିତ ହୋଇଛି!"
+    successfully_updated: "%{resource} ସଫଳତାର ସହିତ ଅଦ୍ୟତନ ହୋଇଛି!"
+    summary: ସାରାଂଶ
+    supported_currencies: ସମର୍ଥିତ ମୁଦ୍ରା
+    supported_currencies_long: ସମର୍ଥିତ ମୁଦ୍ରାଗୁଡ଼ିକର ଏକ କମା ପୃଥକ ତାଲିକା |
+    supported_locales: ସମର୍ଥିତ ଲୋକାଲ୍ |
+    tags: ଟ୍ୟାଗ୍ସ
+    tags_placeholder: ଟ୍ୟାଗ୍ ଯୋଡନ୍ତୁ |
+    tax: କର
+    tax_categories: କର ବର୍ଗ
+    tax_category: କର ବର୍ଗ
+    tax_code: କର ସଂକେତ |
+    tax_included: କର (ଅନ୍ତର୍ଭୁକ୍ତ)
+    tax_rate_amount_explanation: ଗଣନାରେ ସାହାଯ୍ୟ କରିବା ପାଇଁ ଟିକସ ହାର ହେଉଛି ଏକ ଦଶମିକ ପରିମାଣ, (ଯଥା ଯଦି ଟିକସ ହାର 5% ତେବେ 0.05 ପ୍ରବେଶ କରନ୍ତୁ)
+    tax_rates: ଟିକସ ହାର
+    taxon: ଟ୍ୟାକ୍ସନ୍ |
+    taxon_edit: ଟ୍ୟାକ୍ସନ୍ ସଂପାଦନ କରନ୍ତୁ |
+    taxon_missing_alt: ବର୍ଗ ବ୍ୟାନର ବର୍ଣ୍ଣନା |
+    taxon_placeholder: ଏକ ଟ୍ୟାକ୍ସନ୍ ଯୋଡନ୍ତୁ |
+    taxon_rule:
+      choose_taxons: ଟ୍ୟାକ୍ସନ୍ ବାଛନ୍ତୁ |
+      label: ଅର୍ଡରରେ ଏହି ଟ୍ୟାକ୍ସନ୍ଗୁଡ଼ିକର x ପରିମାଣ ରହିବା ଜରୁରୀ |
+      match_all: ସମସ୍ତ
+      match_any: ଅତିକମରେ ଗୋଟିଏ |
+    taxonomies: ଟ୍ୟାକ୍ସୋନୋମିଜ୍ |
+    taxonomy: ଟ୍ୟାକ୍ସୋନୋମି
+    taxonomy_brands_name: ବ୍ରାଣ୍ଡଗୁଡିକ
+    taxonomy_categories_name: ବର୍ଗଗୁଡିକ
+    taxonomy_edit: ଟ୍ୟାକ୍ସୋନୋମି ସଂପାଦନ କରନ୍ତୁ |
+    taxonomy_tree_error: ଅନୁରୋଧ କରାଯାଇଥିବା ପରିବର୍ତ୍ତନ ଗ୍ରହଣ କରାଯାଇ ନାହିଁ ଏବଂ ଗଛଟି ପୂର୍ବ ଅବସ୍ଥାକୁ ଫେରି ଆସିଛି, ଦୟାକରି ପୁନର୍ବାର ଚେଷ୍ଟା କରନ୍ତୁ |
+    taxonomy_tree_instruction: "* ଏକ ଶିଶୁକୁ ଯୋଡିବା, ବିଲୋପ କରିବା କିମ୍ବା ସର୍ଟ କରିବା ପାଇଁ ମେନୁକୁ ପ୍ରବେଶ କରିବାକୁ ଗଛରେ ଥିବା ଏକ ଶିଶୁକୁ ଡାହାଣ କ୍ଲିକ୍ କରନ୍ତୁ (କିମ୍ବା iOS ଉପକରଣରେ ଦୁଇଥର ଟ୍ୟାପ୍ କରନ୍ତୁ) |"
+    taxons: ଟ୍ୟାକ୍ସନ୍ |
+    test: ପରୀକ୍ଷା
+    test_mailer:
+      test_email:
+        greeting: ଅଭିନନ୍ଦନ!
+        message: ଯଦି ଆପଣ ଏହି ଇମେଲ୍ ଗ୍ରହଣ କରିଛନ୍ତି, ତେବେ ଆପଣଙ୍କର ଇମେଲ୍ ସେଟିଂସମୂହ ସଠିକ୍ |
+        subject: ପରୀକ୍ଷା ମେଲ୍ |
+    test_mode: ପରୀକ୍ଷା ମୋଡ୍
+    thank_you_for_your_order: ଆପଣଙ୍କ ବ୍ୟବସାୟ ପାଇଁ ଧନ୍ୟବାଦ | ଆପଣଙ୍କର ରେକର୍ଡଗୁଡିକ ପାଇଁ ଦୟାକରି ଏହି ନିଶ୍ଚିତକରଣ ପୃଷ୍ଠାର ଏକ କପି ମୁଦ୍ରଣ କରନ୍ତୁ |
+    there_are_no_items_for_this_order: ଏହି କ୍ରମ ପାଇଁ କ items ଣସି ଆଇଟମ୍ ନାହିଁ | ଜାରି ରଖିବାକୁ ଦୟାକରି ଏକ ଆଇଟମ୍ ଯୋଡନ୍ତୁ |
+    there_were_problems_with_the_following_fields: ନିମ୍ନଲିଖିତ କ୍ଷେତ୍ରଗୁଡ଼ିକରେ ସମସ୍ୟା ଦେଖାଦେଇଥିଲା |
+    this_order_has_already_received_a_refund: ଏହି ଆଦେଶ ପୂର୍ବରୁ ଏକ ଫେରସ୍ତ ପାଇଛି |
+    thumbnail: ଥମ୍ବନେଲ୍ |
+    tiered_flat_rate: ସ୍ତରୀୟ ଫ୍ଲାଟ ହାର
+    tiered_percent: ପର୍ଯ୍ୟାୟ ଶତକଡା
+    tiers: ସ୍ତରଗୁଡିକ
+    time: ସମୟ
+    to_add_variants_you_must_first_define: ପ୍ରକାରଗୁଡିକ ଯୋଡିବାକୁ, ଆପଣଙ୍କୁ ପ୍ରଥମେ ବ୍ୟାଖ୍ୟା କରିବାକୁ ପଡିବ |
+    total: ସମୁଦାୟ
+    total_per_item: ଆଇଟମ୍ ପ୍ରତି ସମୁଦାୟ |
+    total_pre_tax_refund: ସମୁଦାୟ ପ୍ରି-ଟ୍ୟାକ୍ସ ଫେରସ୍ତ
+    total_price: ମୋଟ ମୂଲ୍ୟ
+    total_sales: ମୋଟ ବିକ୍ରୟ |
+    track_inventory: ଇନଭେଣ୍ଟୋରୀ ଟ୍ରାକ୍ କରନ୍ତୁ |
+    tracking: ଟ୍ରାକିଂ
+    tracking_number: ଟ୍ରାକିଂ ନମ୍ବର |
+    tracking_url: ଟ୍ରାକିଂ URL
+    tracking_url_placeholder: 'ଯଥା http://quickship.com/package?num=: ଟ୍ରାକିଂ |'
+    transaction_id: କାରବାର ID
+    transfer_from_location: ଠାରୁ ସ୍ଥାନାନ୍ତର
+    transfer_stock: ଷ୍ଟକ୍ ସ୍ଥାନାନ୍ତର କରନ୍ତୁ |
+    transfer_to_location: କୁ ସ୍ଥାନାନ୍ତର କରନ୍ତୁ |
+    tree: ବୃକ୍ଷ
+    twitter: ଟ୍ୱିଟର
+    type: ଟାଇପ୍ କରନ୍ତୁ |
+    type_to_search: ଖୋଜିବାକୁ ଟାଇପ୍ କରନ୍ତୁ |
+    unable_to_connect_to_gateway: ଗେଟୱେ ସହିତ ସଂଯୋଗ କରିବାକୁ ଅସମର୍ଥ |
+    unable_to_create_reimbursements: କ୍ଷତିପୂରଣ ସୃଷ୍ଟି କରିବାରେ ଅସମର୍ଥ କାରଣ ମାନୁଆଲ ହସ୍ତକ୍ଷେପ ବିଚାରାଧୀନ ଅଛି |
+    under_price: "%{price} ଅଧୀନରେ |"
+    unlock: ଅନଲକ୍ କରନ୍ତୁ |
+    unrecognized_card_type: ଅଜ୍ଞାତ କାର୍ଡ ପ୍ରକାର |
+    unshippable_items: ଅଣସଂରକ୍ଷିତ ଆଇଟମ୍ |
+    update: ଅଦ୍ୟତନ କରନ୍ତୁ |
+    updating: ଅଦ୍ୟତନ
+    url: URL
+    usage_limit: ବ୍ୟବହାର ସୀମା
+    use_app_default: ଆପ୍ ଡିଫଲ୍ଟ ବ୍ୟବହାର କରନ୍ତୁ |
+    use_billing_address: ବିଲିଂ ଠିକଣା ବ୍ୟବହାର କରନ୍ତୁ |
+    use_existing_cc: ଫାଇଲରେ ଏକ ବିଦ୍ୟମାନ କାର୍ଡ ବ୍ୟବହାର କରନ୍ତୁ |
+    use_new_cc: ଏକ ନୂତନ କାର୍ଡ ବ୍ୟବହାର କରନ୍ତୁ |
+    use_new_cc_or_payment_method: ଏକ ନୂତନ କାର୍ଡ / ଦେୟ ପଦ୍ଧତି ବ୍ୟବହାର କରନ୍ତୁ |
+    use_s3: ପ୍ରତିଛବି ପାଇଁ ଆମାଜନ S3 ବ୍ୟବହାର କରନ୍ତୁ |
+    used: ବ୍ୟବହୃତ |
+    user: ଉପଯୋଗକର୍ତ୍ତା |
+    user_not_found: ଉପଯୋଗକର୍ତ୍ତା ମିଳିଲା ନାହିଁ |
+    user_rule:
+      choose_users: ଉପଯୋଗକର୍ତ୍ତା ବାଛନ୍ତୁ |
+    users: ଉପଯୋଗକର୍ତ୍ତାଗଣ |
+    validation:
+      cannot_be_less_than_shipped_units: ପଠାଯାଇଥିବା ୟୁନିଟ୍ ସଂଖ୍ୟାଠାରୁ କମ୍ ହୋଇପାରିବ ନାହିଁ |
+      cannot_destroy_line_item_as_inventory_units_have_shipped: କିଛି ଭଣ୍ଡାର ୟୁନିଟ୍ ପଠାଯାଇଥିବା ହେତୁ ରେଖା ଆଇଟମ୍ ନଷ୍ଟ କରିପାରିବ ନାହିଁ |
+      exceeds_available_stock: ଉପଲବ୍ଧ ଷ୍ଟକ୍ ଅତିକ୍ରମ କରେ | ଦୟାକରି ନିଶ୍ଚିତ କରନ୍ତୁ ଯେ ରେଖା ଆଇଟମଗୁଡିକର ଏକ ବ valid ଧ ପରିମାଣ ଅଛି |
+      is_too_large: ବହୁତ ବଡ - ହାତରେ ଷ୍ଟକ୍ ଅନୁରୋଧ କରାଯାଇଥିବା ପରିମାଣକୁ ଆଚ୍ଛାଦନ କରିପାରିବ ନାହିଁ!
+      must_be_int: ଏକ ପୂର୍ଣ୍ଣ ସଂଖ୍ୟା ହେବା ଜରୁରୀ |
+      must_be_non_negative: ଏକ ଅଣ-ନକାରାତ୍ମକ ମୂଲ୍ୟ ହେବା ଜରୁରୀ |
+      unpaid_amount_not_zero: 'ପରିମାଣ ସମ୍ପୂର୍ଣ୍ଣ ରୂପେ ଫେରସ୍ତ କରାଯାଇ ନାହିଁ | ତଥାପି ଦେୟ: %{amount}'
+    value: ମୂଲ୍ୟ
+    variant: ପ୍ରକାର
+    variant_placeholder: ଏକ ପ୍ରକାର ବାଛନ୍ତୁ |
+    variant_prices_search_placeholder: SKU କିମ୍ବା ପ୍ରକାର ନାମ ଖୋଜ ...
+    variants: ପ୍ରକାରଗୁଡିକ |
+    version: ସଂସ୍କରଣ
+    void: ଶୂନ୍ୟ
+    weight: ଓଜନ
+    what_is_a_cvv: ଏକ (CVV) କ୍ରେଡିଟ୍ କାର୍ଡ କୋଡ୍ କ’ଣ?
+    what_is_this: ଏଇଟା କଣ?
+    width: ମୋଟେଇ
+    year: ବର୍ଷ
+    you_have_no_orders_yet: ଆପଣଙ୍କର ଏପର୍ଯ୍ୟନ୍ତ କ orders ଣସି ଆଦେଶ ନାହିଁ |
+    your_cart_is_empty: ତୁମର କାର୍ଟ ଖାଲି ଅଛି |
+    your_order_is_empty_add_product: ତୁମର ଅର୍ଡର ଖାଲି ଅଛି, ଦୟାକରି ଉପରେ ଏକ ଉତ୍ପାଦ ଖୋଜ ଏବଂ ଯୋଗ କର |
+    zip: ଜିପ୍
+    zipcode: ଜିପ୍ କୋଡ୍
+    zipcode_required: ଜିପ୍ କୋଡ୍ ଆବଶ୍ୟକ |
+    zone: ଜୋନ୍
+    zones: ଜୋନ୍

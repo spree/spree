@@ -1,0 +1,1769 @@
+---
+sq:
+  activemodel:
+    errors:
+      models:
+        spree/fulfilment_changer:
+          attributes:
+            current_shipment:
+              can_not_have_backordered_inventory_units: ka njësi inventari të parenditura
+              has_already_been_shipped: është dërguar tashmë
+            desired_shipment:
+              can_not_transfer_within_same_shipment: nuk mund të jetë e njëjtë me dërgesën aktuale
+              has_not_enough_stock_at_desired_location: nuk ka stok të mjaftueshëm në vendin e dëshiruar të aksioneve
+  activerecord:
+    attributes:
+      spree/address:
+        address1: Adresë
+        address2: Adresa (vazhduar)
+        city: Qyteti
+        company: Kompania
+        country: Vendi
+        firstname: Emri
+        label: Emri i adreses
+        lastname: Mbiemri
+        phone: Telefoni
+        state: Shtet
+        zipcode: Kodi Postal
+      spree/calculator/tiered_flat_rate:
+        preferred_base_amount: Shuma bazë
+        preferred_tiers: Nivelet
+      spree/calculator/tiered_percent:
+        preferred_base_percent: Përqindja e bazës
+        preferred_tiers: Nivelet
+      spree/country:
+        iso: ISO
+        iso3: ISO3
+        iso_name: Emri ISO
+        name: Emrin
+        numcode: Kodi ISO
+      spree/credit_card:
+        base: ''
+        cc_type: Lloji
+        month: Muaj
+        name: Emrin
+        number: Numrin
+        verification_value: Vlera e verifikimit
+        year: Viti
+      spree/inventory_unit:
+        state: Shtet
+      spree/line_item:
+        price: Çmimi
+        quantity: sasi
+      spree/option_type:
+        filterable: I filtrueshëm
+        name: Emrin
+        presentation: Prezantimi
+      spree/order:
+        checkout_complete: Blerja përfundoi
+        completed_at: Përfunduar në
+        considered_risky: I rrezikshëm
+        coupon_code: Kodi kupon
+        created_at: Data e porosisë
+        email: Email
+        ip_address: Adresa IP
+        item_total: Gjithsej artikulli
+        number: Numrin
+        payment_state: Shteti i Pagesës
+        shipment_state: Shteti i Dërgesës
+        special_instructions: Udhëzime të veçanta
+        state: Shtet
+        total: Total
+      spree/order/bill_address:
+        address1: Adresa e faturimit rruga
+        city: Adresa e faturimit qyteti
+        firstname: Emri i adresës së faturimit
+        lastname: Mbiemri i adresës së faturimit
+        phone: Telefoni i adresës së faturimit
+        state: Gjendja e adresës së faturimit
+        zipcode: Kodi zip i adresës së faturimit
+      spree/order/ship_address:
+        address1: Adresa e transportit rruga
+        city: Adresa e transportit qyteti
+        firstname: Emri i adresës së transportit
+        lastname: Mbiemri i adresës së transportit
+        phone: Telefoni i adresës së transportit
+        state: Gjendja e adresës së transportit
+        zipcode: Kodi postar i adresës së transportit
+      spree/payment:
+        amount: Shuma
+        number: Numrin
+      spree/payment_method:
+        name: Emrin
+      spree/product:
+        available_on: Në dispozicion në
+        cost_currency: Valuta e kostos
+        cost_price: Çmimi i kostos
+        description: Përshkrim
+        discontinue_on: Ndërpritni On
+        less_than: Më pak se
+        master_price: Çmimi Master
+        name: Emrin
+        on_hand: Në dorë
+        shipping_category: Kategoria e Transportit
+        tax_category: Kategoria e taksave
+      spree/promotion:
+        advertise: Reklamoni
+        code: Kodin
+        description: Përshkrim
+        event_name: Emri i ngjarjes
+        expires_at: Skadon në
+        generate_code: Gjeneroni kodin e kuponit
+        name: Emrin
+        path: Rrugë
+        promotion_category: Kategoria e promovimit
+        starts_at: Fillon në
+        usage_limit: Kufiri i përdorimit
+      spree/promotion_category:
+        code: Kodin
+        name: Emrin
+      spree/property:
+        name: Emrin
+        presentation: Prezantimi
+      spree/prototype:
+        name: Emrin
+      spree/return_authorization:
+        amount: Shuma
+      spree/role:
+        name: Emrin
+      spree/shipment:
+        number: Numrin
+      spree/state:
+        abbr: Shkurtimi
+        name: Emrin
+      spree/state_change:
+        state_changes: Ndryshimet e shtetit
+        state_from: Shteti nga
+        state_to: Shteti për të
+        timestamp: Vula kohore
+        type: Lloji
+        updated: Përditësuar
+        user: Përdorues
+      spree/store:
+        mail_from_address: Posta nga adresa
+        meta_description: Përshkrimi Meta
+        meta_keywords: Fjalë kyçe Meta
+        name: Emri i sitit
+        seo_robots: Robotët SEO
+        seo_title: Titulli i SEO-së
+        url: URL e faqes
+      spree/store_credit:
+        amount_used: Shuma e përdorur
+      spree/store_credit_category:
+        name: Emrin
+      spree/tax_category:
+        description: Përshkrim
+        name: Emrin
+      spree/tax_rate:
+        amount: Vlerësoni
+        included_in_price: Përfshihet në Çmim
+        show_rate_in_label: Shfaq normën në etiketë
+      spree/taxon:
+        name: Emrin
+        permalink: Lidhje e përhershme
+        position: Pozicioni
+      spree/taxonomy:
+        name: Emrin
+      spree/user:
+        email: Email
+        password: Fjalëkalimi
+        password_confirmation: Konfirmimi i fjalëkalimit
+      spree/variant:
+        cost_currency: Valuta e kostos
+        cost_price: Çmimi i kostos
+        depth: Thellesi
+        height: Lartësia
+        price: Çmimi
+        sku: SKU
+        weight: Pesha
+        width: Gjerësia
+      spree/zone:
+        description: Përshkrim
+        name: Emrin
+    errors:
+      models:
+        spree/calculator/tiered_flat_rate:
+          attributes:
+            base:
+              keys_should_be_positive_number: Çelësat e nivelit duhet të jenë të gjithë numra më të mëdhenj se 0
+            preferred_tiers:
+              should_be_hash: duhet të jetë një hash
+        spree/calculator/tiered_percent:
+          attributes:
+            base:
+              keys_should_be_positive_number: Çelësat e nivelit duhet të jenë të gjithë numra më të mëdhenj se 0
+              values_should_be_percent: Vlerat e nivelit duhet të jenë të gjitha përqindjet ndërmjet 0% dhe 100%
+            preferred_tiers:
+              should_be_hash: duhet të jetë një hash
+        spree/classification:
+          attributes:
+            taxon_id:
+              already_linked: është tashmë i lidhur me këtë produkt
+        spree/credit_card:
+          attributes:
+            base:
+              card_expired: Kartela ka skaduar
+              expiry_invalid: Skadimi i kartës është i pavlefshëm
+        spree/image:
+          attributes:
+            attachment:
+              attachment_must_be_present: duhet të jetë i pranishëm
+              not_allowed_content_type: nuk ka lejuar llojin e përmbajtjes
+        spree/line_item:
+          attributes:
+            currency:
+              must_match_order_currency: Duhet të përputhet me monedhën e porosisë
+        spree/product:
+          attributes:
+            base:
+              cannot_destroy_if_attached_to_line_items: Nuk mund të fshihen produktet pasi të jenë bashkangjitur në artikujt e linjës.
+            discontinue_on:
+              invalid_date_range: duhet të jetë më vonë se data e disponueshme
+        spree/promotion:
+          attributes:
+            expires_at:
+              invalid_date_range: duhet të jetë më vonë se data e fillimit
+        spree/refund:
+          attributes:
+            amount:
+              greater_than_allowed: është më e madhe se shuma e lejuar.
+        spree/reimbursement:
+          attributes:
+            base:
+              return_items_order_id_does_not_match: Një ose më shumë nga artikujt e kthimit të specifikuar nuk i përkasin të njëjtit urdhër si rimbursimi.
+        spree/return_item:
+          attributes:
+            inventory_unit:
+              other_completed_return_item_exists: "%{inventory_unit_id} është marrë tashmë nga artikulli i kthimit %{return_item_id}"
+            reimbursement:
+              cannot_be_associated_unless_accepted: nuk mund të shoqërohet me një artikull kthyes që nuk pranohet.
+        spree/shipping_method:
+          attributes:
+            base:
+              required_shipping_category: Duhet të zgjidhni të paktën një kategori transporti
+        spree/store:
+          attributes:
+            base:
+              cannot_destroy_default_store: Nuk mund të shkatërrojë Dyqanin e paracaktuar.
+        spree/store_credit:
+          attributes:
+            amount_authorized:
+              exceeds_total_credits: Tejkalon kreditë totale.
+            amount_used:
+              cannot_be_greater_than_amount: Nuk mund të jetë më e madhe se shuma.
+              greater_than_zero_restrict_delete: është më e madhe se zero. Kredia e dyqanit nuk mund të fshihet.
+        spree/store_credit_category:
+          attributes:
+            base:
+              cannot_destroy_if_used_in_store_credit: Nuk mund të fshihen kategoritë e kreditit të dyqanit pasi të përdoren në kredinë e dyqanit.
+        spree/taxon_image:
+          attributes:
+            attachment:
+              not_allowed_content_type: nuk ka lejuar llojin e përmbajtjes
+        spree/variant:
+          attributes:
+            base:
+              cannot_destroy_if_attached_to_line_items: Variantet nuk mund të fshihen pasi të jenë bashkangjitur në artikujt e linjës.
+              must_supply_price_for_variant_or_master: Duhet të furnizojë çmimin për variantin ose çmimin kryesor për produktin.
+              no_master_variant_found_to_infer_price: Asnjë variant kryesor nuk u gjet për të konkluduar çmimin
+    models:
+      spree/address:
+        one: Adresë
+        other: Adresat
+      spree/country:
+        one: Vendi
+        other: Vendet
+      spree/credit_card:
+        one: Kartë Krediti
+        other: Kartat e kreditit
+      spree/customer_return:
+        one: Kthimi i Klientit
+        other: Kthimi i Klientit
+      spree/inventory_unit:
+        one: Njësia e inventarit
+        other: Njësitë e Inventarit
+      spree/line_item:
+        one: Artikulli i linjës
+        other: Artikujt e linjës
+      spree/option_type:
+        one: Lloji i opsionit
+        other: Llojet e opsioneve
+      spree/option_value:
+        one: Vlera e opsionit
+        other: Vlerat e opsionit
+      spree/order:
+        one: Porosit
+        other: Porositë
+      spree/payment:
+        one: Pagesa
+        other: Pagesat
+      spree/payment_method:
+        one: Metoda e pagesës
+        other: menyra pagese
+      spree/product:
+        one: Produkt
+        other: Produktet
+      spree/promotion:
+        one: Promovimi
+        other: Promovime
+      spree/promotion_category:
+        one: Kategoria e promovimit
+        other: Kategoritë e Promovimit
+      spree/property:
+        one: Prona
+        other: Vetitë
+      spree/prototype:
+        one: Prototipi
+        other: Prototipet
+      spree/refund_reason:
+        one: Rimbursimi Arsyeja
+        other: Arsyet e rimbursimit
+      spree/reimbursement:
+        one: Rimbursimi
+        other: Rimbursimet
+      spree/reimbursement_type:
+        one: Lloji i rimbursimit
+        other: Llojet e rimbursimit
+      spree/return_authorization:
+        one: Autorizimi i Kthimit
+        other: Autorizimet e Kthimit
+      spree/return_authorization_reason:
+        one: Arsyeja e Autorizimit të Kthimit
+        other: Arsyet e Autorizimit të Kthimit
+      spree/role:
+        one: Rolet
+        other: Rolet
+      spree/shipment:
+        one: Dërgesa
+        other: Dërgesat
+      spree/shipping_category:
+        one: Kategoria e Transportit
+        other: Kategoritë e Transportit
+      spree/shipping_method:
+        one: Metoda e transportit
+        other: Metodat e Transportit
+      spree/state:
+        one: Shtet
+        other: Shtetet
+      spree/state_change:
+        one: Ndryshimi i Shtetit
+        other: Ndryshimet e Shtetit
+      spree/stock_location:
+        one: Vendndodhja e aksioneve
+        other: Vendndodhjet e aksioneve
+      spree/stock_movement:
+        one: Lëvizja e aksioneve
+        other: Lëvizjet e aksioneve
+      spree/stock_transfer:
+        one: Transferimi i aksioneve
+        other: Transfertat e aksioneve
+      spree/store_credit:
+        one: Kredia e dyqanit
+        other: Kreditë e dyqaneve
+      spree/store_credit_category:
+        one: Kategoria e Kredisë së Dyqanit
+        other: Kategoritë e Kredive të Dyqanit
+      spree/tax_category:
+        one: Kategoria e taksave
+        other: Kategoritë e taksave
+      spree/tax_rate:
+        one: Norma e tatimit
+        other: Tarifat e taksave
+      spree/taxon:
+        one: Takson
+        other: Taksonë
+      spree/taxonomy:
+        one: Taksonomia
+        other: Taksonomitë
+      spree/tracker:
+        one: Gjurmues
+        other: Gjurmues
+      spree/user:
+        one: Përdorues
+        other: Përdoruesit
+      spree/variant:
+        one: Variant
+        other: Variantet
+      spree/zone:
+        one: Zona
+        other: Zonat
+  address_book:
+    save: Ruaj
+    successfully_created: Adresa e re është krijuar me sukses
+  devise:
+    confirmations:
+      confirmed: Llogaria juaj u konfirmua me sukses. Tani jeni identifikuar
+      send_instructions: Ju do të merrni një email me udhëzime se si të konfirmoni llogarinë tuaj brenda pak minutash.
+    failure:
+      inactive: Llogaria juaj nuk është aktivizuar akoma.
+      invalid: Email ose fjalekalim i gabuar.
+      invalid_token: Shenjë e pavlefshme vërtetimi.
+      locked: Llogaria juaj është kyçur.
+      timeout: Seanca juaj ka skaduar, ju lutem identifikohuni përsëri për të vazhduar.
+      unauthenticated: Duhet të identifikoheni ose të regjistroheni para se të vazhdoni.
+      unconfirmed: Ju duhet të konfirmoni llogarinë tuaj para se të vazhdoni.
+    mailer:
+      confirmation_instructions:
+        subject: Udhëzime konfirmimi
+      reset_password_instructions:
+        subject: Rivendosni udhëzimet për fjalëkalimin
+      unlock_instructions:
+        subject: Zhbllokoni udhëzimet
+    oauth_callbacks:
+      failure: Nuk mund të ju autorizoj nga %{kind} sepse "%{reason}".
+      success: Autorizuar me sukses nga llogaria %{kind}.
+    unlocks:
+      send_instructions: Ju do të merrni një email me udhëzime se si të zhbllokoni llogarinë tuaj brenda pak minutash.
+      unlocked: Llogaria juaj u zhbllokua me sukses. Tani jeni identifikuar
+    user_passwords:
+      user:
+        cannot_be_blank: Fjalëkalimi juaj nuk mund të jetë bosh.
+        send_instructions: Ju do të merrni një email me udhëzime se si të rivendosni fjalëkalimin tuaj brenda pak minutash.
+        updated: Fjalëkalimi juaj u ndryshua me sukses. Tani jeni identifikuar
+    user_registrations:
+      destroyed: Mirupafshim! Llogaria juaj u anulua me sukses. Shpresojmë të shihemi së shpejti.
+      inactive_signed_up: Ju jeni regjistruar me sukses. Sidoqoftë, nuk mund të të identifikonim sepse llogaria jote është %{reason}.
+      signed_up: Mirësevini! Ju jeni regjistruar me sukses.
+      updated: Ju azhurnuat llogarinë tuaj me sukses.
+    user_sessions:
+      signed_in: U identifikua me sukses.
+      signed_out: Dilni me sukses.
+  errors:
+    messages:
+      already_confirmed: ishte konfirmuar tashmë
+      not_found: nuk u gjet
+      not_locked: nuk ishte mbyllur
+      not_saved:
+        one: '1 gabim e ndaloi këtë %{resource} të ruhej:'
+        other: 'gabimet e %{count} e ndaluan këtë %{resource} të ruhej:'
+  spree:
+    abbreviation: Shkurtimi
+    accept: Pranoj
+    acceptance_errors: Gabimet e pranimit
+    acceptance_status: Statusi i pranimit
+    accepted: Pranohet
+    account: Llogari
+    account_info: Informacioni i llogarisë
+    account_updated: Llogaria u azhurnua
+    action: Veprimi
+    actions:
+      cancel: Anulo
+      continue: Vazhdoni
+      create: Krijoni
+      destroy: Shkatërroni
+      edit: Redakto
+      list: Listë
+      listing: Listimi
+      new: I ri
+      refund: Rimbursimi
+      save: Ruaj
+      update: Azhurnoni
+    activate: Aktivizo
+    active: Aktiv
+    add: Shto
+    add_action_of_type: Shto veprim të llojit
+    add_country: Shto vendin
+    add_coupon_code: Shto kodin e kuponit
+    add_new_address: Shto adresë të re
+    add_new_credit_card: Shtoni një kartë të re
+    add_new_header: Shto një kokë të re
+    add_new_style: Shto stil të ri
+    add_one: Shto një
+    add_option_value: Shto vlerën e opsionit
+    add_product: Shtoni produktin
+    add_product_properties: Shtoni vetitë e produktit
+    add_rule_of_type: Shto rregull të llojit
+    add_state: Shtoni shtetin
+    add_stock: Shto aksione
+    add_store: Dyqan i ri
+    add_store_credit: Shto Kredinë e Dyqanit
+    add_to_cart: Shtoni në Shportë
+    add_variant: Shto variantin
+    added_to_cart: U shtua në shportë me sukses!
+    additional_item: Artikull shtesë
+    address: Adresë
+    address1: Adresë
+    address2: Adresa (vazhduar)
+    address_action_popup:
+      delete_button: po, fshi
+      delete_text: Dëshironi vërtet që <br /> ta fshini këtë adresë?
+      delete_title: A je i sigurt?
+    address_book:
+      add_new_shipping_address: Shto adresë të re
+      address_name_label: Emri i adreses
+      address_name_placeholder: Jepja kësaj adrese një emër unik (Puna, Shtëpia, etj.)
+      addresses: Adresat
+      edit_address: Redakto Adresën
+      label: Emri i adreses
+      new_address: Adresa e re
+      no_shipping_addresses_on_file: Asnjë adresë në skedar
+      other_address: Adresa tjetër
+      remove_address: Hiq adresën
+      save: Ruaj
+      successfully_created: Adresa është krijuar me sukses.
+      successfully_removed: Adresa është hequr me sukses.
+      successfully_saved: U ruajt me sukses
+      successfully_updated: Përditësuar me sukses
+      unsuccessfully_saved: Pati një gabim gjatë përpjekjes për të ruajtur adresën tuaj.
+      unsuccessfully_updated: Kishte një azhurnim ndërsa përpiqesh të azhurnosh adresën tënde.
+    addresses: Adresat
+    adjustable: I rregullueshëm
+    adjustment: Rregullimi
+    adjustment_amount: Shuma
+    adjustment_labels:
+      tax_rates:
+        excluding_tax: "%{name}%{amount}"
+        including_tax: "%{name}%{amount} (Përfshirë në Çmim)"
+    adjustment_successfully_closed: Rregullimi është mbyllur me sukses!
+    adjustment_successfully_opened: Rregullimi është hapur me sukses!
+    adjustment_total: Gjithsej rregullimi
+    adjustments: Rregullimet
+    admin:
+      order:
+        events:
+          approve: aprovoj
+          cancel: anuloj
+          resend: Ridërgoj
+          resume: vazhdoj
+      orders:
+        cart: Qerre
+      return_authorization:
+        product: Produkt
+      tab:
+        configuration: Konfigurimi
+        customer_returns: Kthimi i Klientit
+        option_types: Llojet e opsioneve
+        orders: Porositë
+        overview: Përmbledhje
+        products: Produktet
+        promotion_categories: Kategoritë e Promovimit
+        promotions: Promovime
+        properties: Vetitë
+        prototypes: Prototipet
+        reports: Raportet
+        return_authorizations: Autorizimet e Kthimit
+        taxonomies: Taksonomitë
+        taxons: Taksonë
+        users: Përdoruesit
+      user:
+        account: Llogari
+        addresses: Adresat
+        available_store_credit: Përdoruesi ka në dispozicion %{amount} në Kredinë e Dyqanit.
+        items: Sendet
+        items_purchased: Artikujt e Blerur
+        no_store_credit: Përdoruesi nuk ka asnjë kredi në dyqan.
+        order_history: Historia e Rendit
+        order_num: 'Porosia #'
+        orders: Porositë
+        store_credits: Kreditë e dyqaneve
+        stores: Dyqane
+        user_information: Informacioni i Përdoruesit
+    administration: Administrata
+    advertise: Reklamoni
+    agree_to_privacy_policy: Pajtohem me politikën e privatësisë
+    agree_to_terms_of_service: Pajtohem me Kushtet e Shërbimit
+    all: Të gjitha
+    all_adjustments_closed: Të gjitha rregullimet u mbyllën me sukses!
+    all_adjustments_opened: Të gjitha rregullimet u hapën me sukses!
+    all_departments: Të gjitha departamentet
+    all_items_have_been_returned: Të gjithë artikujt janë kthyer
+    all_rights_reserved: Të gjitha të drejtat e rezervuara
+    already_have_account: Posedoni një llogari?
+    alt_text: Tekst alternativ
+    alternative_phone: Telefon alternativ
+    amount: Shuma
+    and: dhe
+    approve: aprovoj
+    approved_at: Miratuar në
+    approver: Aprovues
+    are_you_sure: A je i sigurt?
+    are_you_sure_delete: Je i sigurt që dëshiron ta fshish këtë rekord?
+    associated_adjustment_closed: Rregullimi i lidhur është mbyllur dhe nuk do të rillogaritet. A doni ta hapni?
+    authorization_failure: Dështimi i Autorizimit
+    authorized: I autorizuar
+    auto_capture: Kapja automatike
+    availability: disponueshmëria
+    available: Në dispozicion
+    available_on: Në dispozicion në
+    average_order_value: Vlera mesatare e porosisë
+    avs_response: Përgjigja AVS
+    back: Mbrapa
+    back_end: Backend
+    back_to_payment: Kthehu te Pagesa
+    back_to_resource_list: Kthehu tek %{resource} Lista
+    back_to_rma_reason_list: Kthehu tek lista e arsyeve RMA
+    back_to_store: Kthehu te Dyqani
+    back_to_users_list: Kthehu tek Lista e Përdoruesve
+    backorderable: E parekordueshme
+    backorderable_default: Parazgjedhje e parekordueshme
+    backordered: I porositur
+    backordered_confirm_info: Artikulli i zgjedhur është porositur si rezultat, kështu që prisni vonesa. Je i sigurt që dëshiron ta porosisësh?
+    backordered_info: I porositur
+    backorders_allowed: porositësit e lejuar
+    balance_due: Bilanci i Detyrueshëm
+    base_amount: Shuma bazë
+    base_percent: Përqindja e bazës
+    basic_information: Informata themelore
+    bill_address: Adresa e faturës
+    billing: Faturimi
+    billing_address: Adresa e faturimit
+    both: Të dyja
+    breadcrumbs: Therrime buke
+    calculated_reimbursements: Rimbursimet e llogaritura
+    calculator: Llogaritësi
+    calculator_settings_warning: Nëse po ndryshoni llojin e llogaritësit, duhet të ruani së pari para se të mund të ndryshoni cilësimet e llogaritësit
+    call_us_now: 'Na telefononi tani:'
+    cancel: anuloj
+    canceled: Anulohet
+    canceled_at: Anuluar në
+    canceler: Anulues
+    cannot_create_customer_returns: Nuk mund të krijohen kthime të klientit pasi kjo porosi nuk ka njësi të dërguara.
+    cannot_create_payment_without_payment_methods: Ju nuk mund të krijoni një pagesë për një porosi pa përcaktuar ndonjë mënyrë pagese.
+    cannot_create_returns: Nuk mund të krijohen kthime pasi kjo porosi nuk ka njësi të dërguara.
+    cannot_empty_completed_order: Porosia tashmë është përpunuar kështu që nuk mund të zbrazet
+    cannot_perform_operation: Nuk mund të kryejë operacionin e kërkuar
+    cannot_return_more_than_bought_quantity: Nuk mund të kthehet më shumë sesa sasia e blerë.
+    cannot_set_shipping_method_without_address: Nuk mund të caktohet mënyra e dërgimit derisa të sigurohen detajet e klientit.
+    capture: Kapni
+    capture_events: Kap ngjarjet
+    card_code: Kodi i Ndryshimit të Kartës (CVC)
+    card_number: Numri i kartes
+    card_type: Markë
+    card_type_is: Lloji i kartelës është
+    cart: Qerre
+    cart_page:
+      add_promo_code: SHTO KODIN PROMO
+      change_quantity: Ndryshoni sasinë
+      checkout: arkë
+      empty_info: Karroca juaj është bosh.
+      header: Shporta juaj e blerjeve
+      product: produkt
+      quantity: sasi
+      remove_from_cart: Hiq nga karroca
+      title: Shporta
+    cart_subtotal:
+      one: Nëntotali (1 artikull)
+      other: Nëntotali (%{count} artikuj)
+    categories: Kategoritë
+    category: Kategoria
+    category_nav_bar:
+      get_up_to_30_percent_off: B GNI DO 30% zbritje
+      jackets_and_coats: Xhaketë & kostume
+      new_collection: KOLEKSION I RI
+      special_offers: OFERTA SPECIALE
+    channel: Kanali
+    charged: I akuzuar
+    checkout: Arka
+    checkout_page:
+      back_to_cart: përsëri në karrocë
+      checkout_navigation: Navigimi në arkë
+      delivery_method: metodat e dërgesës
+      header: Arka
+      main_navigation: Navigimi kryesor
+      product: Produkt
+    choose_a_customer: Zgjidhni një klient
+    choose_a_taxon_to_sort_products_for: Zgjidhni një takson për të renditur produktet
+    choose_currency: Zgjidhni monedhën
+    choose_dashboard_locale: Zgjidhni Vendndodhjen e Pultit
+    choose_location: Zgjidhni vendndodhjen
+    city: Qyteti
+    clear_cache: Pastroje memorien e përkohshme
+    clear_cache_ok: Cache u skuq
+    clear_cache_warning: Pastrimi i memorjes së përkohshme do të zvogëlojë përkohësisht performancën e dyqanit tuaj.
+    click_and_drag_on_the_products_to_sort_them: Klikoni dhe tërhiqni produktet për t'i renditur ato.
+    clone: Kloni
+    close: Mbylle
+    close_all_adjustments: Mbyllni të gjitha rregullimet
+    code: Kodin
+    company: Kompania
+    compare_at_price: Krahasoni me çmim
+    complete: i plotë
+    configuration: Konfigurimi
+    configurations: Konfigurimet
+    confirm: Konfirmo
+    confirm_delete: Konfirmo fshirjen
+    confirm_password: Konfirmimi i fjalëkalimit
+    contact_phone: Telefoni i kontaktit
+    contact_us: Na kontaktoni
+    continue: Vazhdoni
+    continue_as_guest: Vazhdoni si mysafir
+    continue_shopping: Vazhdoni blerjet
+    cost_currency: Valuta e kostos
+    cost_price: Çmimi i kostos
+    could_not_create_customer_return: Nuk mund të krijoj kthimin e klientit
+    could_not_create_stock_movement: Kishte një problem për të shpëtuar këtë lëvizje të aksioneve. Ju lutemi provoni përsëri.
+    count_on_hand: Mbështet në dorë
+    countries: Vendet
+    country: Vendi
+    country_based: Bazuar në Vend
+    country_name: Emrin
+    country_rule:
+      label: Zgjidhni duhet të dërgohen në këtë vend
+    coupon: Kupon
+    coupon_code: Kodi kupon
+    coupon_code_already_applied: Kodi i kuponit është aplikuar tashmë në këtë porosi
+    coupon_code_applied: Kodi i kuponit u aplikua me sukses në porosinë tuaj.
+    coupon_code_apply: Aplikoni
+    coupon_code_better_exists: Kodi i kuponit i aplikuar më parë rezulton në një marrëveshje më të mirë
+    coupon_code_expired: Kodi i kuponit ka skaduar
+    coupon_code_max_usage: Kufiri i përdorimit të kodit të kuponit është tejkaluar
+    coupon_code_not_eligible: Ky kod i kuponit nuk është i përshtatshëm për këtë porosi
+    coupon_code_not_found: Kodi i kuponit që futët nuk ekziston. Ju lutemi provoni përsëri.
+    coupon_code_removed: Kodi i kuponit u hoq me sukses nga porosia juaj.
+    coupon_code_unknown_error: Ky kod i kuponit nuk mund të zbatohej në karrocë në këtë kohë.
+    create: Krijoni
+    create_a_new_account: Krijo nje llogari te re
+    create_new_order: Krijoni një rend të ri
+    create_reimbursement: Krijoni rimbursim
+    created_at: Krijuar në
+    created_by: Krijuar nga
+    credit: Kredia
+    credit_allowed: Kredia lejohet
+    credit_card: Kartë Krediti
+    credit_cards: Kartat e kreditit
+    credit_owed: Kredia në pronësi
+    credited: Kredituar
+    credits: Kreditë
+    currencies: Monedhat
+    currency: Monedha
+    currency_settings: Cilësimet e valutave
+    current: Aktuale
+    current_promotion_usage: 'përdorimi aktual: %{count}'
+    customer: Konsumatori
+    customer_details: Detajet e Klientit
+    customer_details_updated: Detajet e Klientit Përditësuar
+    customer_return: Kthimi i Klientit
+    customer_returns: Kthimi i Klientit
+    customer_search: Kërkimi i Klientit
+    customer_support_email: Email për mbështetjen e klientit
+    cut: Prerje
+    cvv: CVV
+    cvv_response: Përgjigje CVV
+    date: Data
+    date_completed: Data e përfundimit
+    date_range: Diapazoni i datës
+    default: Parazgjedhur
+    default_country_cannot_be_deleted: Vendi i paracaktuar nuk mund të fshihet
+    default_currency: Monedha e paracaktuar
+    default_refund_amount: Shuma e parazgjedhur e rimbursimit
+    default_tax: Taksa e paracaktuar
+    default_tax_zone: Zona e Parazgjedhur e Taksave
+    delete: Fshij
+    delete_from_taxon: Fshi nga Taxon
+    deleted: Fshihet
+    delivery: Dorëzimi
+    delivery_information: Informacioni i dorëzimit
+    depth: Thellesi
+    description: Përshkrim
+    destination: Destinacioni
+    destroy: Shkatërroni
+    details: Detajet
+    discontinue_on: Ndërpritni On
+    discontinued: Ndërpritet
+    discontinued_variants_present: Disa artikuj të linjës në këtë porosi kanë produkte që nuk janë më të disponueshme.
+    discount_amount: Shuma e zbritjes
+    dismiss_banner: Jo faleminderit! Nuk jam i interesuar, mos e shfaq përsëri këtë mesazh
+    display: Ekran
+    doesnt_track_inventory: Nuk gjurmon inventarin
+    dont_have_account: Nuk ka llogari?
+    edit: Redakto
+    edit_reimbursement: Redakto rimbursimin
+    editing_resource: Redaktimi i %{resource}
+    editing_rma_reason: Redaktimi i arsyes RMA
+    editing_user: Redaktoni llogarinë tuaj
+    eligibility_errors:
+      messages:
+        has_excluded_product: Shporta juaj përmban një produkt që parandalon zbatimin e këtij kodi kuponi.
+        item_total_less_than: Ky kod i kuponit nuk mund të zbatohet për porosi më pak se %{amount}.
+        item_total_less_than_or_equal: Ky kod i kuponit nuk mund të zbatohet për porosi më të vogla ose të barabarta me %{amount}.
+        item_total_more_than: Ky kod i kuponit nuk mund të zbatohet për porosi më të larta se %{amount}.
+        item_total_more_than_or_equal: Ky kod i kuponit nuk mund të zbatohet për porosi më të larta ose të barabarta me %{amount}.
+        limit_once_per_user: Ky kod kuponi mund të përdoret vetëm një herë për përdorues.
+        missing_product: Ky kod i kuponit nuk mund të zbatohet sepse nuk keni të gjithë produktet e nevojshme në karrocën tuaj.
+        missing_taxon: Ju duhet të shtoni një produkt nga të gjitha kategoritë e zbatueshme përpara se të aplikoni këtë kod të kuponit.
+        no_applicable_products: Ju duhet të shtoni një produkt të zbatueshëm para se të aplikoni këtë kod të kuponit.
+        no_matching_taxons: Ju duhet të shtoni një produkt nga një kategori e zbatueshme përpara se të aplikoni këtë kod të kuponit.
+        no_user_or_email_specified: Ju duhet të identifikoheni ose të siguroni emailin tuaj përpara se të aplikoni këtë kod të kuponit.
+        no_user_specified: Ju duhet të identifikoheni përpara se të aplikoni këtë kod të kuponit.
+        not_first_order: Ky kod i kuponit mund të zbatohet vetëm në porosinë tuaj të parë.
+    email: Email
+    empty: Bosh
+    empty_cart: Qerre bosh
+    enable_mail_delivery: Aktivizo Dorëzimin me Postë
+    end: Fundi
+    ending_at: Përfundon në
+    ending_in: Përfundon në
+    ends_at: Përfundon në
+    error: gabim
+    error_user_destroy_with_orders: Përdoruesi i lidhur me porositë nuk mund të shkatërrohet
+    errors:
+      messages:
+        blank: nuk mund të jetë bosh
+        cannot_remove_icon: Imazhi nuk mund të hiqet
+        could_not_create_taxon: Nuk mund të krijohet takson
+        no_shipping_methods_available: Nuk ka metoda transporti të disponueshme për vendndodhjen e zgjedhur, ju lutemi ndryshoni adresën tuaj dhe provoni përsëri.
+      services:
+        get_shipping_rates:
+          no_line_items: Për të gjeneruar tarifat e transportit ju duhet të shtoni disa artikuj të linjës për të porositur
+          no_shipping_address: Për të gjeneruar Tarifat e Transportit Porosia duhet të ketë një Adresë Transporti
+    errors_prohibited_this_record_from_being_saved:
+      one: 1 gabim ndaloi që ky rekord të ruhej
+      other: gabimet %{count} ndaluan që ky rekord të ruhej
+    event: Ngjarja
+    events:
+      spree:
+        cart:
+          add: Shtoni në shportë
+        checkout:
+          coupon_code_added: Kodi i kuponit u shtua
+        content:
+          visited: Vizitoni faqen e përmbajtjes statike
+        order:
+          contents_changed: Përmbajtja e porosisë ndryshoi
+        page_view: Faqja statike e shikuar
+        user:
+          signup: Regjistrimi i përdoruesit
+    exceptions:
+      count_on_hand_setter: 'Nuk mund të vendoset count_on_ dorë manualisht, pasi vendoset automatikisht nga thirrja e rillogaritjes_ mbi_dorëz. Ju lutemi përdorni `kolonën_përditësim (: count_on_hand, vlera) në vend.'
+    exchange_for: Shkëmbim për
+    excl: përjashto
+    existing_shipments: Dërgesat ekzistuese
+    expedited_exchanges_warning: Çdo shkëmbim i specifikuar do t'i dërgohet klientit menjëherë pas kursimit. Konsumatori do të tarifohet në shumën e plotë të artikullit nëse nuk e kthen sendin origjinal brenda %{days_window} ditëve.
+    expiration: Skadimi
+    expiration_date: Data e skadencës
+    extension: Zgjerim
+    extensions_directory: Drejtoria e Zgjerimeve
+    facebook: Facebook
+    failed_payment_attempts: Përpjekjet e Pagesës së Dështuar
+    filename: Emri i skedarit
+    fill_in_customer_info: Ju lutemi plotësoni informacionin e klientit
+    filter: Filtri
+    filter_results: Rezultatet e filtrimit
+    filterable: I filtrueshëm
+    finalize: Finalizo
+    finalized: Finalizuar
+    find_a_taxon: Gjeni një Taxon
+    first_item: Artikulli i parë
+    first_name: Emri
+    first_name_begins_with: Emri Fillon Me
+    firstname: Emri
+    flat_percent: Përqindja e sheshtë
+    flat_rate_per_order: Tarifë e fiksuar
+    flexible_rate: Shkalla fleksibël
+    follow_us: Na ndiq
+    footer: Footer
+    forgot_password: keni harruar fjalëkalimin?
+    free: Falas
+    free_shipping: Transport falas
+    free_shipping_amount: "-"
+    front_end: Fundi i Frontit
+    gateway: Portë
+    gateway_error: Gabim në Portë
+    general: Gjeneral
+    general_settings: Cilësimet e Përgjithshme
+    generate_code: Gjeneroni kodin e kuponit
+    get_back_to_the: Kthehuni tek
+    go_to_category: Shko te kategoria
+    go_to_facebook: Shkoni në facebook
+    go_to_homepage: Shko tek Faqja Kryesore
+    go_to_instagram: Shkoni në instagram
+    go_to_twitter: Shkoni në Twitter
+    guest_checkout: Arka e Vizitorëve
+    guest_user_account: Arka si Vizitor
+    has_no_shipped_units: nuk ka njësi të transportuara
+    header_banner: Banderola e kokës
+    height: Lartësia
+    help_center: Qendra e ndihmes
+    hide_from_subcategories_nav: Fshih nga nënkategoritë e navigimit
+    home: Shtëpi
+    home_page: faqja kryesore
+    i18n:
+      available_locales: Vendndodhjet e disponueshme
+      country: Vendi
+      default_country: Vendi i paracaktuar
+      fields: Fushat
+      language: Gjuhe
+      localization_settings: Cilësimet e lokalizimit
+      only_complete: Vetëm i plotë
+      only_incomplete: Vetëm i paplotë
+      select_locale: Zgjidhni lokalin
+      show_only: Trego vetem
+      supported_locales: Vendndodhjet e mbështetura
+      translations: Përkthime
+    icon: Ikonë
+    id: Id
+    image: Imazh
+    images: Imazhe
+    implement_eligible_for_return: 'Duhet të zbatojë # të ligjshëm për_kthim? për Vlerësuesin tuaj të Kualifikimit.'
+    implement_requires_manual_intervention: 'Duhet të zbatohet # kërkesa_ndërhyrja_manuale? për Vlerësuesin tuaj të Kualifikimit.'
+    in_stock: Në magazinë
+    inactive: Joaktiv
+    incl: përfshirë
+    included_in_price: Përfshihet në Çmim
+    included_price_validation: nuk mund të zgjidhet nëse nuk keni vendosur një Zonë të Parazgjedhur të Taksave
+    incomplete: I paplote
+    info_number_of_skus_not_shown:
+      one: dhe një tjetër
+      other: dhe %{count} të tjerët
+    info_product_has_multiple_skus: 'Ky produkt ka variante %{count}:'
+    instagram: Instagram
+    instructions_to_reset_password: Ju lutemi shkruani emailin tuaj në formularin më poshtë
+    insufficient_stock: Stok i pamjaftueshëm në dispozicion, vetëm %{on_hand} e mbetur
+    insufficient_stock_item_quantity: Sasia e pamjaftueshme e aksioneve në dispozicion
+    insufficient_stock_lines_present: Disa artikuj të linjës në këtë renditje kanë sasi të pamjaftueshme.
+    intercept_email_address: Përgjoni adresën e postës elektronike
+    intercept_email_instructions: Anulo marrësin e emailit dhe zëvendësoje me këtë adresë.
+    internal_name: Emri i brendshëm
+    internationalization: Ndërkombëtarizimi
+    invalid_credit_card: Kartë krediti e pavlefshme.
+    invalid_exchange_variant: Varianti i pavlefshëm i shkëmbimit.
+    invalid_payment_provider: Ofrues pagese i pavlefshëm.
+    invalid_promotion_action: Veprim i pavlefshëm për promovim.
+    invalid_promotion_rule: Rregull i pavlefshëm i promovimit.
+    inventory: Inventari
+    inventory_adjustment: Rregullimi i inventarit
+    inventory_error_flash_for_insufficient_quantity: Një artikull në shportën tuaj është bërë i padisponueshëm.
+    inventory_state: Shteti i inventarit
+    is_not_available_to_shipment_address: nuk është në dispozicion në adresën e dërgesës
+    iso: ISO Alpha-2
+    iso3: ISO Alpha-3
+    iso_name: Emri ISO
+    issued_on: Lëshuar më
+    item: Artikulli
+    item_description: Përshkrimi i artikullit
+    item_total: Gjithsej artikulli
+    item_total_rule:
+      operators:
+        gt: më e madhe se
+        gte: më e madhe ose e barabartë me
+        lt: më pak se
+        lte: më pak se ose e barabartë me
+    items_cannot_be_shipped: Ne nuk jemi në gjendje të llogarisim tarifat e transportit për artikujt e zgjedhur.
+    items_in_rmas: Artikujt në Autorizimet e Kthimit
+    items_reimbursed: Artikujt e rimbursuar
+    items_to_be_reimbursed: Artikujt që do të rimbursohen
+    join_slack: Bashkohu me Slack
+    last_name: Mbiemri
+    last_name_begins_with: Mbiemri fillon me
+    lastname: Mbiemri
+    learn_more: Mëso më shumë
+    lifetime_stats: Statistikat e jetës
+    limit_usage_to: Kufizoni përdorimin në
+    line_item_adjustments: Rregullimet e artikullit të linjës
+    list: Listë
+    loading: Po ngarkohet
+    loading_tree: Pema që ngarkon. Te lutem prit…
+    locale_changed: Vendndodhja u ndryshua
+    location: Vendndodhja
+    lock: Bllokohet
+    log_entries: Regjistrimet e regjistrave
+    log_in: Hyni
+    log_in_to_continue: Identifikohu për të vazhduar
+    logged_in_as: Identifikuar si
+    logged_in_succesfully: Identifikohu me sukses
+    logged_out: Ju keni dalë nga llogaria.
+    login: Hyrja
+    login_as_existing: Identifikohu si Konsumator Ekzistues
+    login_failed: Verifikimi i hyrjes dështoi.
+    login_name: Hyrja
+    logo: Logoja
+    logo_alt: Logoja e markës
+    logout: Shkyç
+    logs: Shkrimet
+    look_for_similar_items: Shikoni për artikuj të ngjashëm
+    mail_from_address: Posta nga adresa
+    mailer_logo: Logoja e postuesit (vetëm imazhe JPG ose PNG)
+    make_refund: Bëni rimbursimin
+    make_sure_the_above_reimbursement_amount_is_correct: Sigurohuni që shuma e mësipërme e rimbursimit të jetë e saktë
+    manage_promotion_categories: Menaxho Kategoritë e Promovimit
+    manage_variants: Menaxho variantet
+    manual_intervention_required: Kërkohet ndërhyrje manuale
+    master: Mjeshtër
+    master_price: Çmimi Master
+    master_sku: Master SKU
+    match_choices:
+      all: Të gjitha
+      none: Asnje
+    max_items: Artikujt maksimalë
+    member_since: Anëtar që prej
+    memo: Memorandum
+    meta_description: Përshkrimi Meta
+    meta_keywords: Fjalë kyçe Meta
+    meta_title: Titulli Meta
+    metadata: Metadata
+    minimal_amount: Shuma minimale
+    missing_return_authorization: Mungon Autorizimi i Kthimit për %{item_name}.
+    month: Muaj
+    more: Më shumë
+    move_stock_between_locations: Lëviz aksionin midis vendndodhjeve
+    move_variant_to: Zhvendos variantin në
+    multiple_stores: Dyqane të shumta
+    mutable: I pandryshueshëm
+    my_account: Llogaria ime
+    my_orders: Porositë e mia
+    name: Emrin
+    name_on_card: Emri ne karte
+    name_or_sku: Emri ose SKU (shkruani të paktën 3 karakteret e para të emrit të produktit)
+    nav_bar:
+      admin_panel: Paneli i Administratorit
+      change_country: Ndrysho vendin
+      close_menu: Mbyll menunë
+      desktop: Navigimi në desktop
+      go_to_previous_menu: Shko tek menuja e mëparshme
+      log_in: LOG IN
+      log_out: SHKYÇ
+      mobile: Navigimi celular
+      my_account: LLOGARIA IME
+      my_orders: URDHRAT E Mia
+      show_menu: Shfaq menunë
+      show_search: Shfaq kërkimin
+      show_user_menu: Shfaq menunë e përdoruesit
+      sign_up: N SNSHKRUAR
+    new: I ri
+    new_adjustment: Rregullimi i ri
+    new_country: Vend i ri
+    new_customer: Hapni një llogari të re
+    new_customer_return: Kthimi i ri i klientit
+    new_image: Imazh i Ri
+    new_option_type: Lloji i ri i opsionit
+    new_order: Rregull i ri
+    new_order_completed: Urdhri i ri i përfunduar
+    new_order_notifications_email: Emaili i Njoftimeve të Rendit të Ri
+    new_payment: Pagesa e re
+    new_payment_method: Mënyra e re e pagesës
+    new_product: Produkt i ri
+    new_promotion: Promovim i ri
+    new_promotion_category: Kategoria e Re e Promovimit
+    new_property: Pronë e Re
+    new_prototype: Prototipi i ri
+    new_refund: Rimbursim i ri
+    new_refund_reason: Arsyeja e re e rimbursimit
+    new_reimbursement_type: Lloji i ri i rimbursimit
+    new_return_authorization: Autorizimi i ri i kthimit
+    new_rma_reason: Arsyeja e re RMA
+    new_role: Roli i ri
+    new_shipment_at_location: Dërgesë e re në vendndodhje
+    new_shipping_category: Kategoria e Re e Transportit
+    new_shipping_method: Metoda e re e transportit
+    new_state: Shteti i Ri
+    new_stock_location: Vendndodhja e re e aksioneve
+    new_stock_movement: Lëvizja e re e aksioneve
+    new_stock_transfer: Transferimi i ri i aksioneve
+    new_store_credit: Kredia e Dyqanit të Ri
+    new_store_credit_category: Kategoria e Kredive të Dyqanit të Ri
+    new_tax_category: Kategoria e Re e Taksave
+    new_tax_rate: Shkalla e Re e Taksave
+    new_taxon: Taxon i Ri
+    new_taxonomy: Taksonomia e re
+    new_tracker: Gjurmues i ri
+    new_user: Perdorues i ri
+    new_variant: Varianti i ri
+    new_zone: Zona e Re
+    next: Tjetra
+    no_actions_added: Asnjë veprim nuk u shtua
+    no_address_given: Nuk është dhënë asnjë adresë
+    no_available_date_set: Nuk është caktuar data e disponueshme
+    no_cc_type: N / A
+    no_country: Asnjë vend i caktuar
+    no_limits_zone: Pa kufi
+    no_payment_found: Nuk u gjet asnjë pagesë
+    no_payment_provider_settings_message: Ky ofrues pagese nuk ka ndonjë cilësim të personalizuar të disponueshëm
+    no_pending_payments: Nuk ka pagesa në pritje
+    no_product_available:
+      for_this_quantity: Na vjen keq, duket se disa produkte nuk janë në dispozicion në sasinë e zgjedhur.
+      opps: Oops!
+    no_products_found: Nuk u gjet asnjë produkt
+    no_resource_found: Asnjë %{resource} nuk u gjet
+    no_results: Nuk ka rezultate
+    no_returns_found: Nuk u gjet asnjë kthim
+    no_rules_added: Asnjë rregull nuk është shtuar
+    no_shipping_method_selected: Nuk është zgjedhur asnjë metodë transporti.
+    no_state_changes: Asnjë shtet nuk ndryshon akoma.
+    no_tracking_present: Nuk ofrohen detaje për gjurmimin.
+    none: Asnje
+    none_selected: Asnjë e zgjedhur
+    normal_amount: Shuma normale
+    not: jo
+    not_available: N / A
+    not_enough_stock: Nuk ka inventar të mjaftueshëm në vendin e burimit për të përfunduar këtë transferim.
+    not_found: "%{resource} nuk është gjetur"
+    note: shënim
+    notice_messages:
+      icon_removed: Imazhi është hequr me sukses
+      prices_saved: Çmimet u ruajtën me sukses
+      product_cloned: Produkti është klonuar
+      product_deleted: Produkti është fshirë
+      product_not_cloned: 'Produkti nuk mund të klonohej. Arsyeja: %{error}'
+      product_not_deleted: 'Produkti nuk mund të fshihej. Arsyeja: %{error}'
+      variant_deleted: Varianti është fshirë
+      variant_not_deleted: 'Varianti nuk mund të fshihet. Arsyeja: %{error}'
+    num_orders: "# Porositë"
+    number: Numrin
+    ok: Ne rregull
+    on_hand: Në dorë
+    open: E hapur
+    open_all_adjustments: Hapni Të gjitha Rregullimet
+    option_type: Lloji i opsionit
+    option_type_placeholder: Zgjidhni një lloj opsioni
+    option_types: Llojet e opsioneve
+    option_value: Vlera e opsionit
+    option_values: Vlerat e opsionit
+    optional: Opsionale
+    options: Opsione
+    or: ose
+    or_over_price: "%{price} ose më shumë"
+    order: Porosit
+    order_adjustments: Rregullimet e porosive
+    order_already_updated: Porosia tashmë është azhurnuar.
+    order_approved: Urdhri është aprovuar
+    order_canceled: Porosia u anulua
+    order_details: Detajet e Rendit
+    order_email_resent: Rendit emailin e porosisë
+    order_has_no_payments: Porosia nuk ka pagesa
+    order_information: Informacioni i Rendit
+    order_line_items: Artikujt e Rreshtit të Rendit
+    order_mailer:
+      cancel_email:
+        dear_customer: I dashur %{name},
+        instructions: Porosia juaj është ANANCETUAR. Ju lutemi mbani këtë informacion anulimi për të dhënat tuaja.
+        order_summary_canceled: Renditni përmbledhjen e %{number} [ANULUAR]
+        subject: Anulimi i Rendit
+        thanks: Faleminderit për biznesin tuaj
+      confirm_email:
+        dear_customer: I dashur %{name},
+        instructions: Ju lutemi rishikoni dhe mbani informacionin e mëposhtëm të porosisë për të dhënat tuaja.
+        order_summary: Rendit përmbledhjen e %{number}
+        subject: Konfirmimi i porosisë
+        thanks: Faleminderit për biznesin tuaj
+      store_owner_notification_email:
+        heading: Urdhri i ri i marrë
+        instructions: Ju keni marrë një porosi të re.
+        order_summary: Rendit përmbledhjen e %{number}
+        subject: "%{store_name} mori një urdhër të ri"
+        thanks: Faleminderit për biznesin tuaj
+      store_team: "%{store_name} Ekipi"
+      subtotal: 'Nëntotali:'
+      total: 'Totali i porosisë:'
+    order_not_found: Nuk mundëm ta gjenim porosinë tuaj. Ju lutemi provoni përsëri atë veprim.
+    order_number: Porosit %{number}
+    order_processed_successfully: Porosia juaj është përpunuar me sukses
+    order_resumed: Porosia rifilloi
+    order_state:
+      address: adresë
+      awaiting_return: në pritje të kthimit
+      canceled: anulohet
+      cart: karrocë
+      complete: i plotë
+      confirm: konfirmoj
+      considered_risky: konsiderohet e rrezikshme
+      delivery: dorëzimi
+      payment: pagesa
+      resumed: rifilloi
+      returned: u kthye
+    order_success: Porosia u vendos me sukses
+    order_success_explain: Informacioni i porosisë suaj do të dërgohet në emailin tuaj
+    order_summary: Përmbledhje e porosive
+    order_sure_want_to: Jeni i sigurt që doni ta %{event} këtë porosi?
+    order_total: Totali i porosisë
+    order_updated: Porosia u azhurnua
+    orders: Porositë
+    out_of_stock: Në stok
+    overview: Përmbledhje
+    package_from: pako nga
+    page_not_found: Me falni Faqja që po kërkoni nuk mund të gjendet.
+    pagination:
+      next_page: faqja tjetër & raquo;
+      previous_page: "& laquo; Faqja e meparshme"
+      truncate: "& hellip;"
+    password: Fjalëkalimi
+    paste: Ngjit
+    path: Rrugë
+    pay: paguaj
+    payment: Pagesa
+    payment_amount: Shuma e pagesës
+    payment_could_not_be_created: Pagesa nuk mund të krijohej.
+    payment_identifier: Identifikuesi i Pagesës
+    payment_information: informacioni i pageses
+    payment_method: Metoda e pagesës
+    payment_method_not_supported: Kjo mënyrë pagese nuk mbështetet. Ju lutemi zgjidhni një tjetër.
+    payment_methods: menyra pagese
+    payment_processing_failed: Pagesa nuk mund të përpunohej, ju lutemi kontrolloni detajet që keni futur
+    payment_processor_choose_banner_text: Nëse keni nevojë për ndihmë në zgjedhjen e një procesori pagese, ju lutemi vizitoni
+    payment_processor_choose_link: faqja jonë e pagesave
+    payment_provider_settings: Cilësimet e Ofruesit të Pagesave
+    payment_state: Shteti i Pagesës
+    payment_states:
+      balance_due: bilanci i duhur
+      checkout: arkë
+      completed: përfunduar
+      credit_owed: kredi borxh
+      failed: dështoi
+      paid: e paguar
+      pending: në pritje
+      processing: përpunimi
+      void: e pavlefshme
+    payment_type: Lloji i pageses
+    payment_updated: Pagesa u azhurnua
+    payments: Pagesat
+    pdp:
+      checkout: Arka
+      description: Përshkrim
+      details: Detajet
+      products_included_in_promotion: Produktet e përfshira në promovim
+      quantity: sasi
+      view_cart: Shikoni karrocën
+      you_may_also_like: Ju gjithashtu mund të pëlqeni
+    pending: Në pritje
+    pending_sale: Shitje në pritje
+    percent: Përqindja
+    percent_per_item: Përqindja për artikull
+    permalink: Lidhje e përhershme
+    phone: Telefoni
+    place_order: Vendosni Rendin
+    please_define_payment_methods: Ju lutemi përcaktoni më parë disa mënyra pagese.
+    please_enter_reasonable_quantity: Ju lutemi shkruani një sasi të arsyeshme.
+    plp:
+      best_selling: SHITJET ME TE MIRA
+      clear_all: PASTROJI TË GJITHA
+      collection: MBLEDHJE
+      color: NGJYRË
+      default: DEFULTI
+      done: BERE
+      filter_by: FILTRI NGA
+      newest_first: E PARA E RE
+      no_results: Nuk ka rezultate
+      no_results_found: Nuk u gjetën rezultate
+      not_found_filters1: Nuk mund të gjenim një përputhje për këto filtra.
+      not_found_filters2: Ju lutemi provoni një zgjedhje tjetër.
+      not_found_text1: Ne nuk mund të gjenim produkte për '%{keywords}'.
+      not_found_text2: Ju lutemi provoni një kërkim tjetër.
+      price: çmimi
+      price_high_to_low: ÇMIMI (I LART - I ULT)
+      price_low_to_high: ÇMIMI (I UL --T - I LART)
+      result: REZULTATI
+      results_for: REZULTATET PER
+      size: Madhësia
+      sort_by: NDAJ SIPAS
+      top_sellers: SHITESIT E PARE
+      type: LLOJI
+    populate_get_error: Dicka shkoi keq. Ju lutemi provoni ta shtoni artikullin përsëri.
+    powered_by: Mundësuar nga
+    pre_tax_amount: Shuma para-tatimore
+    pre_tax_refund_amount: Shuma e rimbursimit para tatimit
+    pre_tax_total: Totali para-taksave
+    preferred_reimbursement_type: Lloji i preferuar i rimbursimit
+    presentation: Prezantimi
+    preview_product: Shikoni produktin
+    preview_taxon: Shikoni Taxon
+    previous: E mëparshme
+    previous_state_missing: n / a
+    previously_used_card: Kartat e Përdorura më parë
+    price: Çmimi
+    price_range: Gamë të çmimeve
+    price_sack: Qese Çmimi
+    prices: Çmimet
+    process: Procesi
+    product: Produkt
+    product_details: detajet e produktit
+    product_has_no_description: Ky produkt nuk ka përshkrim
+    product_not_available_in_this_currency: Ky produkt nuk është i disponueshëm në monedhën e zgjedhur.
+    product_properties: Karakteristikat e produktit
+    product_rule:
+      choose_products: Zgjidhni produktet
+      label: Porosia duhet të përmbajë sasi x të këtyre produkteve
+      match_all: të gjitha
+      match_any: të paktën një
+      match_none: asnje
+      product_source:
+        group: Nga grupi i produkteve
+        manual: Zgjidhni manualisht
+    products: Produktet
+    promotion: Promovimi
+    promotion_action: Aksion promovimi
+    promotion_action_types:
+      create_adjustment:
+        description: Krijon një rregullim të kredisë promovuese për porosinë
+        name: Krijoni rregullimin e rendit të plotë
+      create_item_adjustments:
+        description: Krijon një rregullim të kredisë promovuese në një artikull linje
+        name: Krijoni rregullimin sipas artikullit
+      create_line_items:
+        description: Popullon karrocën me sasinë e specifikuar të variantit
+        name: Krijoni artikuj të linjës
+      free_shipping:
+        description: Bën të gjitha dërgesat për porosinë falas
+        name: Transport falas
+    promotion_actions: Veprimet
+    promotion_categories: Kategoritë e promovimit
+    promotion_category: Kategoria e promovimit
+    promotion_cloned: Promovimi është klonuar
+    promotion_form:
+      match_policies:
+        all: Përputhni të gjitha këto rregulla
+        any: Përputhni ndonjë nga këto rregulla
+    promotion_label: Promovimi (%{name})
+    promotion_not_cloned: 'Promovimi nuk është klonuar. Arsyeja: %{error}'
+    promotion_rule: Rregulla e Promovimit
+    promotion_rule_types:
+      country:
+        description: Porosia dërgohet në vendin e duhur (ose të paracaktuar)
+        name: Vendi
+      first_order:
+        description: Duhet të jetë porosia e parë e klientit
+        name: Porosia e pare
+      item_total:
+        description: Totali i porosive i plotëson këto kritere
+        name: Gjithsej artikulli
+      one_use_per_user:
+        description: Vetëm një përdorim për përdorues
+        name: Një përdorim për përdorues
+      option_value:
+        description: Porosia përfshin produktin (produktet) e specifikuar me vlerën (et) e opsionit që përputhet
+        name: Vlera (t) e opsionit
+      product:
+        description: Porosia përfshin produktin (produktet) e specifikuar
+        name: Produkt (et)
+      taxon:
+        description: Porosia përfshin produkte me taksonë (et) e specifikuar
+        name: Takson (a)
+      user:
+        description: Në dispozicion vetëm për përdoruesit e specifikuar
+        name: Përdorues
+      user_logged_in:
+        description: Në dispozicion vetëm për përdoruesit e regjistruar
+        name: Përdoruesi është identifikuar
+    promotion_uses: Përdor promovimi
+    promotionable: I promovueshëm
+    promotions: Promovime
+    propagate_all_variants: Përhapni të gjitha variantet
+    properties: Vetitë
+    property: Prona
+    prototype: Prototipi
+    prototypes: Prototipet
+    provider: Ofruesi
+    provider_settings_warning: Nëse po ndryshoni llojin e ofruesit, duhet së pari të kurseni para se të mund të ndryshoni cilësimet e ofruesit
+    purchased_quantity: Sasia e blere
+    qty: Sa
+    quantity: sasi
+    quantity_returned: Sasia e kthyer
+    quantity_shipped: Sasia e dërguar
+    quick_search: Kërkim i shpejtë ..
+    rate: Vlerësoni
+    reason: Arsyeja
+    receive: marrin
+    receive_stock: Merrni aksione
+    received: Marrë
+    reception_status: Statusi i Pritjes
+    reference: Referenca
+    reference_contains: Referenca Përmban
+    refund: Rimbursimi
+    refund_amount_must_be_greater_than_zero: Shuma e rimbursimit duhet të jetë më e madhe se zero
+    refund_reasons: Arsyet e rimbursimit
+    refunded_amount: Shuma e rimbursuar
+    refunds: Rimbursimet
+    register: Regjistrohuni
+    registration: Regjistrimi
+    reimburse: Rimburso
+    reimbursed: Rimbursohen
+    reimbursement: Rimbursimi
+    reimbursement_mailer:
+      reimbursement_email:
+        days_to_send: Ju keni %{days} ditë për të dërguar mbrapa çdo send në pritje të shkëmbimit.
+        dear_customer: I dashur %{name},
+        exchange_summary: Përmbledhje shkëmbimi
+        for: për
+        instructions: Rimbursimi juaj është përpunuar.
+        refund_summary: Përmbledhja e rimbursimit
+        store_team: "%{store_name} Ekipi"
+        subject: Njoftimi i rimbursimit
+        thanks: Faleminderit për biznesin tuaj
+        total_refunded: 'Rimbursimi total: %{total}'
+    reimbursement_perform_failed: 'Rimbursimi nuk mund të kryhej. Gabim: %{error}'
+    reimbursement_status: Statusi i rimbursimit
+    reimbursement_type: Lloji i rimbursimit
+    reimbursement_type_override: Mbivendosja e llojit të rimbursimit
+    reimbursement_types: Llojet e rimbursimit
+    reimbursements: Rimbursimet
+    reject: Refuzo
+    rejected: Refuzohet
+    remember_me: Më kujto mua
+    remove: Hiq
+    remove_image: Hiq imazhin
+    rename: Riemërto
+    report: Raporti
+    reports: Raportet
+    required: "*"
+    required_fields: Fushat e kërkuara
+    resellable: Ribëlueshme
+    resend: Ridërgoj
+    reset_password: Rivendos fjalëkalimin tim
+    response_code: Kodi i përgjigjes
+    resume: vazhdoj
+    resumed: Rifilloi
+    return: kthimi
+    return_authorization: Autorizimi i Kthimit
+    return_authorization_canceled: Autorizimi i kthimit është anuluar
+    return_authorization_reasons: Arsyet e Autorizimit të Kthimit
+    return_authorization_states:
+      authorized: I autorizuar
+      canceled: Anulohet
+    return_authorization_updated: Autorizimi i kthimit u azhurnua
+    return_authorizations: Autorizimet e Kthimit
+    return_item_inventory_unit_ineligible: Njësia e inventarit të artikullit të kthimit duhet të transportohet
+    return_item_inventory_unit_reimbursed: Njësia e inventarit të artikullit të kthimit është rimbursuar tashmë
+    return_item_order_not_completed: Porosia e artikullit të kthimit duhet të kompletohet
+    return_item_rma_ineligible: Artikulli i kthimit kërkon një RMA
+    return_item_time_period_ineligible: Artikulli i kthimit është jashtë periudhës kohore të pranueshme
+    return_items: Sendet e Kthimit
+    return_items_cannot_be_associated_with_multiple_orders: Artikujt e kthimit nuk mund të shoqërohen me porosi të shumta.
+    return_number: Numri i kthimit
+    return_quantity: Sasia e kthimit
+    returned: Kthyer
+    returns: Kthimet
+    review: Rishikimi
+    risk: Rreziku
+    risk_analysis: Analiza e rrezikut
+    risky: I rrezikshëm
+    rma_credit: Kredia RMA
+    rma_number: Numri RMA
+    rma_value: Vlera RMA
+    role_id: ID e rolit
+    roles: Rolet
+    rules: Rregullat
+    safe: I sigurt
+    sales_total: Shitjet totale
+    sales_total_description: Shitjet totale për të gjitha porositë
+    sales_totals: Totali i shitjeve
+    save_and_continue: Ruaj dhe Vazhdo
+    save_my_address: Ruaje adresen time
+    saving: Kursim
+    say_no: Jo
+    say_yes: po
+    scope: Fusha e veprimit
+    search: Kërko
+    search_results: Rezultatet e kërkimit për '%{keywords}'
+    searching: Duke kërkuar
+    secure_connection_type: Lloji i Sigurt i Lidhjes
+    security_settings: Cilësimet e Sigurisë
+    select: Zgjidhni
+    select_a_date: Zgjidhni një datë
+    select_a_date_range: Zgjidhni një interval data
+    select_a_return_authorization_reason: Zgjidhni një arsye për autorizimin e kthimit
+    select_a_stock_location: Zgjidhni një vendndodhje të aksioneve
+    select_a_store_credit_reason: Zgjidhni një arsye për kredinë e dyqanit
+    select_an_option: Zgjidhni një opsion
+    select_from_prototype: Zgjidhni Nga Prototipi
+    select_stock: Zgjidhni aksionet
+    selected_quantity_not_available: e zgjedhur nga %{item} nuk është në dispozicion.
+    send_copy_of_all_mails_to: Dërgoni një kopje të të gjitha postave te
+    send_mails_as: Dërgoni mesazhe si
+    seo: SEO
+    seo_robots: Robotët SEO
+    seo_title: Titulli i SEO-së
+    server: Serveri
+    server_error: Serveri ktheu një gabim
+    settings: Cilësimet
+    ship: Anije
+    ship_address: Adresa e Anijes
+    ship_to: 'Transporti në:'
+    ship_total: Dërgesa totale
+    shipment: Dërgesa
+    shipment_adjustments: Rregullimet e dërgesave
+    shipment_details: Nga %{stock_location} përmes %{shipping_method}
+    shipment_mailer:
+      shipped_email:
+        dear_customer: I dashur %{name},
+        instructions: Porosia juaj %{number} është dërguar
+        shipment_summary: Përmbledhje e Dërgesës për porosi
+        shipping_method: 'Metoda e transportit: %{shipping_method}'
+        store_team: "%{store_name} Ekipi"
+        subject: Njoftimi i Dërgesës
+        thanks: Faleminderit për biznesin tuaj
+        track_information: 'Informacioni Ndjekja: %{tracking}'
+        track_link: 'Lidhja Ndjekëse: %{url}'
+    shipment_state: Shteti i Dërgesës
+    shipment_states:
+      backorder: porositës
+      canceled: anulohet
+      partial: i pjesshëm
+      pending: në pritje
+      ready: gati
+      shipped: dërguar
+    shipment_transfer_error: Kishte një gabim në transferimin e varianteve
+    shipment_transfer_success: Variantet u transferuan me sukses
+    shipments: Dërgesat
+    shipped: Transportuar
+    shipping: Transporti detar
+    shipping_address: Adresa e Transportit
+    shipping_categories: Kategoritë e Transportit
+    shipping_category: Kategoria e Transportit
+    shipping_flat_rate_per_item: Shkalla e sheshtë për artikullin e paketës
+    shipping_flat_rate_per_order: Tarifë e fiksuar
+    shipping_flexible_rate: Vlerësimi fleksibël për artikullin e paketës
+    shipping_instructions: Udhëzimet e Transportit
+    shipping_method: Metoda e transportit
+    shipping_methods: Metodat e Transportit
+    shipping_price_sack: Qese çmimi
+    shipping_rates:
+      display_price:
+        excluding_tax: "%{price} (+ %{tax_amount} %{tax_rate_name})"
+        including_tax: "%{price} (përfshirë %{tax_amount} %{tax_rate_name})"
+    shipping_total: Totali i transportit
+    shop_by_taxonomy: Bleni nga %{taxonomy}
+    shopping_cart: Shporta
+    show: Shfaqje
+    show_active: Trego Aktive
+    show_deleted: Shfaqja u fshi
+    show_discontinued: Shfaq ndërprerë
+    show_only_complete_orders: Trego vetëm porosi të plota
+    show_only_considered_risky: Tregoni vetëm porosi të rrezikshme
+    show_property: Trego Pronë
+    show_rate_in_label: Shfaq normën në etiketë
+    show_store_selector:
+      long: Shfaqni përzgjedhësin e Dyqanit në shiritin kryesor të Storefront dhe lejoni përdoruesit të ndryshojnë Dyqanin dhe Monedhën
+      short: Shfaq përzgjedhësin e Dyqanit
+    sign_up: Regjistrohuni
+    sku: SKU
+    skus: SKU-të
+    slug: Slug
+    social: Sociale
+    source: Burimi
+    special_instructions: Udhëzime të veçanta
+    split: Split
+    spree_gateway_error_flash_for_checkout: Kishte një problem me informacionin tënd të pagesës. Ju lutemi kontrolloni informacionin tuaj dhe provoni përsëri.
+    ssl:
+      change_protocol: Ju lutemi kaloni në përdorimin e HTTP (në vend të HTTPS) dhe riprovoni këtë kërkesë.
+    start: Fillo
+    starting_from: Fillon në
+    state: Shtet
+    state_based: Bazuar në shtet
+    state_machine_states:
+      accepted: Pranohet
+      address: Adresë
+      authorized: I autorizuar
+      awaiting: Në pritje
+      awaiting_return: Në pritje të kthimit
+      backordered: Kthimi i porositur
+      canceled: Anulohet
+      cart: Qerre
+      checkout: Arka
+      closed: Mbyllur
+      complete: Të plotë
+      completed: Përfunduar
+      confirm: Konfirmo
+      delivery: Dorëzimi
+      errored: Gabuar
+      failed: Dështoi
+      given_to_customer: Jepet klientit
+      invalid: E pavlefshme
+      manual_intervention_required: Kërkohet ndërhyrje manuale
+      on_hand: Në dorë
+      open: E hapur
+      order: Porosit
+      payment: Pagesa
+      pending: Në pritje
+      processing: Përpunimi
+      ready: Gati
+      reimbursed: Rimbursohen
+      resumed: Rifilloi
+      returned: Kthyer
+      shipment: Dërgesa
+      shipped: Transportuar
+      void: E pavlefshme
+    states: Shtetet
+    states_required: Kërkohen shtetet
+    status: Statusi
+    stock: Aksioneve
+    stock_item_id: Artikulli i aksioneve
+    stock_location: Vendndodhja e aksioneve
+    stock_location_info: Informacioni i vendndodhjes së aksioneve
+    stock_locations: Vendndodhjet e aksioneve
+    stock_locations_need_a_default_country: Ju duhet të krijoni një vend të paracaktuar para se të krijoni një vendndodhje të aksioneve.
+    stock_management: Menaxhimi i aksioneve
+    stock_management_requires_a_stock_location: Ju lutemi krijoni një vendndodhje të aksioneve në mënyrë që të menaxhoni aksionet.
+    stock_movements: Lëvizjet e aksioneve
+    stock_movements_for_stock_location: Lëvizjet e aksioneve për %{stock_location_name}
+    stock_successfully_transferred: Stock u transferua me sukses midis vendndodhjeve.
+    stock_transfer:
+      errors:
+        must_have_variant: Duhet të shtoni të paktën një variant.
+        variants_unavailable: Disa variante nuk janë në dispozicion në %{stock}
+    stock_transfer_name: Transferimi i aksioneve
+    stock_transfers: Transfertat e aksioneve
+    stop: Ndal
+    store: Ruaj
+    store_credit:
+      additional_payment_needed: Zgjidhni një mënyrë tjetër pagese për <strong> %{amount} </strong> e mbetur.
+      allocated: Shtuar
+      applicable_amount: "<strong> %{amount} </strong> në kredinë e dyqanit do të zbatohet për këtë porosi."
+      apply: Aplikoni
+      authorized: I autorizuar
+      available_amount: Ju keni në dispozicion <strong> %{amount} </strong> në Kredinë e Dyqanit!
+      captured: Të përdorura
+      credit: Kredia
+      errors:
+        cannot_change_used_store_credit: Ju nuk mund të ndryshoni një kredi dyqan që është përdorur tashmë
+        unable_to_create: Nuk mund të krijohet kredia e dyqanit
+        unable_to_delete: Nuk mund të fshihet kredia e dyqanit
+        unable_to_fund: Në pamundësi për të paguar për porosinë duke përdorur kreditë e dyqanit
+        unable_to_update: Krediti i dyqanit nuk mund të përditësohet
+      remaining_amount: Ju keni <strong> %{amount} </strong> të mbetur në Kredinë e Dyqanit të llogarisë suaj.
+      remove: Hiq
+    store_credit_categories: Kategoritë e Kredive të Dyqanit
+    store_credit_name: Kredia e dyqanit
+    store_credit_payment_method:
+      currency_mismatch: Monedha e kredisë së dyqanit nuk përputhet me monedhën e porosisë
+      insufficient_authorized_amount: Nuk mund të kapet më shumë sesa shuma e autorizuar
+      insufficient_funds: Shuma e kredisë së ruajtur nuk është e mjaftueshme
+      select_one_store_credit: Zgjidhni kredinë e dyqanit për të shkuar drejt bilancit të mbetur
+      successful_action: Kredia e suksesshme e dyqanit %{action}
+      unable_to_credit: 'I paaftë për të kredituar kodin: %{auth_code}'
+      unable_to_find: Nuk mund të gjesh kredinë e dyqanit
+      unable_to_find_for_action: 'Nuk mund të gjesh kredinë e dyqanit për kodin auth: %{auth_code} për veprim: %{action}'
+      unable_to_void: 'Nuk mund të anulohet kodi: %{auth_code}'
+      user_has_no_store_credits: Përdoruesi nuk ka ndonjë kredi të disponueshme në dyqan
+    store_credits: Kreditë e dyqaneve
+    store_default: Dyqani i paracaktuar
+    store_errors:
+      unable_to_create: I pazoti të krijohet dyqani.
+      unable_to_delete: Dyqani nuk mund të fshihet.
+      unable_to_update: Dyqani nuk mund të azhurnohet.
+    store_form:
+      checkout_zone_help: Përzgjedhja e zonës do të kufizojë në të cilën transportohen produktet e vendeve ose shteteve. Për më shumë informacion <a href='https://guides.spreecommerce.org/user/configuration/configuring_geography.html#zones' target='_blank' class='alert-link'> ju lutemi shikoni dokumentacionin </a>
+      code_help: Ruani identifikues unik, i cili është një version i shkurtuar i emrit të dyqanit (përdoret si emër i faqosjes së faqosjes, dhe gjithashtu i dobishëm për ndarjen e shablloneve nga dyqani)
+      customer_support_email_help: Ky email është i dukshëm për vizitorët e Dyqanit tuaj në seksionin Footer
+      default_country_help: Ky është Shteti që do të zgjidhet paraprakisht në formën e Adresës së Arritjes
+      footer_help: Kjo përmbajtje është e dukshme në pjesën e poshtme të Dyqanit tuaj
+      locales_help: Instaloni <a href='https://github.com/spree-contrib/spree_i18n target='_blank' class='alert-link'> shtrirjen Spree I18n </a> për të shtuar më shumë lokale
+      mail_from_address_help: Ky është emaili që do të dërgojë të gjitha postat elektronike të Dyqanit tuaj (Konfirmimi i Rendit, Njoftimi i Dërgesës etj.)
+      new_order_notifications_email_help: Nëse dëshironi të merrni një njoftim me email çdo herë që dikush bën një Porosi, ju lutemi jepni një adresë emaili për t'iu dërguar këtij njoftimi
+      seo_robots: Kontrolloni <a href='https://developers.google.com/search/reference/robots_meta_tag' target='_blank'> këtë faqe për më shumë ndihmë </a>
+      social_help: Nëse dëshironi të lidheni me llogaritë tuaja sociale në pjesën e poshtme të faqes suaj të internetit, ju lutemi plotësoni më poshtë fushat
+    store_not_set_as_default: Dyqani %{store} nuk mund të vendoset si dyqan i paracaktuar
+    store_set_as_default: Dyqani %{store} tani është një dyqan i paracaktuar
+    store_set_default_button: Vendose si paresore
+    stores: Dyqane
+    street_address: Adresa e rrugës
+    street_address_2: Adresa e Rrugës (vazhduar)
+    subtotal: Nëntotali
+    subtract: Zbrit
+    success: Sukses
+    successfully_created: "%{resource} është krijuar me sukses!"
+    successfully_refunded: "%{resource} është rimbursuar me sukses!"
+    successfully_removed: "%{resource} është hequr me sukses!"
+    successfully_updated: "%{resource} është azhurnuar me sukses!"
+    summary: Përmbledhje
+    supported_currencies: Monedhat e mbështetura
+    supported_currencies_long: Një listë e monedhave të mbështetura të ndara me presje
+    supported_locales: Vendndodhjet e mbështetura
+    tags: Etiketat
+    tags_placeholder: Shto etiketat
+    tax: Taksa
+    tax_categories: Kategoritë e taksave
+    tax_category: Kategoria e taksave
+    tax_code: Kodin fiskal
+    tax_included: Taksa (përfshirë)
+    tax_rate_amount_explanation: Normat e taksave janë një shumë dhjetore për të ndihmuar në llogaritjet, (d.m.th. nëse shkalla e taksës është 5%, atëherë fut 0,05)
+    tax_rates: Tarifat e taksave
+    taxon: Takson
+    taxon_edit: Redakto Taxon
+    taxon_missing_alt: Përshkrimi i banderolës së kategorisë
+    taxon_placeholder: Shtoni një Taxon
+    taxon_rule:
+      choose_taxons: Zgjidhni taksonë
+      label: Porosia duhet të përmbajë shumën x të këtyre taksoneve
+      match_all: të gjitha
+      match_any: të paktën një
+    taxonomies: Taksonomitë
+    taxonomy: Taksonomia
+    taxonomy_brands_name: Marka
+    taxonomy_categories_name: Kategoritë
+    taxonomy_edit: Redakto taksonominë
+    taxonomy_tree_error: Ndryshimi i kërkuar nuk është pranuar dhe pema është kthyer në gjendjen e saj të mëparshme, ju lutemi provoni përsëri.
+    taxonomy_tree_instruction: "* Klikoni me të djathtën (ose prekni dy herë në pajisjen iOS) një fëmijë në pemë për të hyrë në menunë për shtimin, fshirjen ose renditjen e një fëmije."
+    taxons: Taksonë
+    test: Test
+    test_mailer:
+      test_email:
+        greeting: Urime!
+        message: Nëse e keni marrë këtë email, atëherë cilësimet e emailit tuaj janë të sakta.
+        subject: Posta e provës
+    test_mode: Modaliteti i provës
+    thank_you_for_your_order: Faleminderit për biznesin tuaj Ju lutemi shtypni një kopje të kësaj faqe konfirmimi për të dhënat tuaja.
+    there_are_no_items_for_this_order: Nuk ka artikuj për këtë porosi. Ju lutemi shtoni një artikull në porosi për të vazhduar.
+    there_were_problems_with_the_following_fields: Kishte probleme me fushat e mëposhtme
+    this_order_has_already_received_a_refund: Kjo porosi tashmë ka marrë një rimbursim
+    thumbnail: Miniaturë
+    tiered_flat_rate: Shkalla e sheshtë me nivele
+    tiered_percent: Përqindja me nivele
+    tiers: Nivelet
+    time: Koha
+    to_add_variants_you_must_first_define: Për të shtuar variante, së pari duhet të përcaktoni
+    total: Total
+    total_per_item: Gjithsej për artikull
+    total_pre_tax_refund: Rimbursimi i Përgjithshëm Para Taksave
+    total_price: Cmimi total
+    total_sales: Shitjet totale
+    track_inventory: Ndjek Inventarin
+    tracking: Ndjekja
+    tracking_number: Numri i gjurmimit
+    tracking_url: URL-ja e gjurmimit
+    tracking_url_placeholder: 'p.sh. http://quickship.com/package?num=: gjurmimi'
+    transaction_id: ID e transaksionit
+    transfer_from_location: Transfero Nga
+    transfer_stock: Stoku i transferimit
+    transfer_to_location: Transfero tek
+    tree: Pemë
+    twitter: Cicëroj
+    type: Lloji
+    type_to_search: Shkruaj për të kërkuar
+    unable_to_connect_to_gateway: Nuk mund të lidhet me portën.
+    unable_to_create_reimbursements: Në pamundësi të krijimit të rimbursimeve sepse ka artikuj në pritje të ndërhyrjes manuale.
+    under_price: Nën %{price}
+    unlock: Hap
+    unrecognized_card_type: Lloji i kartës së panjohur
+    unshippable_items: Sende të padepërtueshëm
+    update: Azhurnoni
+    updating: Përditësimi
+    url: URL-ja
+    usage_limit: Kufiri i përdorimit
+    use_app_default: Përdorni Parazgjedhjen e Aplikacionit
+    use_billing_address: Përdorni adresën e faturimit
+    use_existing_cc: Përdorni një kartë ekzistuese në skedar
+    use_new_cc: Përdorni një kartë të re
+    use_new_cc_or_payment_method: Përdorni një kartë të re / një mënyrë pagese
+    use_s3: Përdorni Amazon S3 për Imazhe
+    used: Të përdorura
+    user: Përdorues
+    user_not_found: Përdoruesi nuk u gjet
+    user_rule:
+      choose_users: Zgjidhni përdoruesit
+    users: Përdoruesit
+    validation:
+      cannot_be_less_than_shipped_units: nuk mund të jetë më i vogël se numri i njësive të dërguara.
+      cannot_destroy_line_item_as_inventory_units_have_shipped: Nuk mund të shkatërrojë artikullin e linjës pasi disa njësi të inventarit janë dërguar.
+      exceeds_available_stock: tejkalon aksionet e disponueshme. Ju lutemi sigurohuni që artikujt e linjës të kenë një sasi të vlefshme.
+      is_too_large: është shumë i madh - stoku në dispozicion nuk mund të mbulojë sasinë e kërkuar!
+      must_be_int: duhet të jetë një numër i plotë
+      must_be_non_negative: duhet të jetë një vlerë jo-negative
+      unpaid_amount_not_zero: 'Shuma nuk ishte rimbursuar plotësisht. Ende afati i fundit: %{amount}'
+    value: Vlera
+    variant: Variant
+    variant_placeholder: Zgjidhni një variant
+    variant_prices_search_placeholder: Kërkoni për SKU ose emrin e variantit ...
+    variants: Variantet
+    version: Version
+    void: E pavlefshme
+    weight: Pesha
+    what_is_a_cvv: Çfarë është kodi i kartës së kreditit (CVV)?
+    what_is_this: Cfare eshte kjo
+    width: Gjerësia
+    year: Viti
+    you_have_no_orders_yet: Nuk keni porosi akoma
+    your_cart_is_empty: Karroca juaj është bosh
+    your_order_is_empty_add_product: Porosia juaj është bosh, ju lutemi kërkoni dhe shtoni një produkt më sipër
+    zip: Zip
+    zipcode: Kodi Postal
+    zipcode_required: Kërkohet Kodi Zip
+    zone: Zona
+    zones: Zonat

@@ -1,0 +1,1769 @@
+---
+ug:
+  activemodel:
+    errors:
+      models:
+        spree/fulfilment_changer:
+          attributes:
+            current_shipment:
+              can_not_have_backordered_inventory_units: زاپاس مال بىرلىكى بار
+              has_already_been_shipped: ئاللىقاچان ئەۋەتىلگەن
+            desired_shipment:
+              can_not_transfer_within_same_shipment: ھازىرقى توشۇش بىلەن ئوخشاش بولمايدۇ
+              has_not_enough_stock_at_desired_location: لازىملىق پاي ئورنىدا يېتەرلىك پاي يوق
+  activerecord:
+    attributes:
+      spree/address:
+        address1: ئادرېس
+        address2: ئادرېس (داۋامى)
+        city: شەھەر
+        company: شىركەت
+        country: دۆلەت
+        firstname: بىرىنچى ئىسمى
+        label: ئادرېس ئىسمى
+        lastname: فامىلىسى
+        phone: تېلېفون
+        state: دۆلەت
+        zipcode: پوچتا نومۇرى
+      spree/calculator/tiered_flat_rate:
+        preferred_base_amount: ئاساسى سومما
+        preferred_tiers: Tiers
+      spree/calculator/tiered_percent:
+        preferred_base_percent: Base Percent
+        preferred_tiers: Tiers
+      spree/country:
+        iso: ISO
+        iso3: ISO3
+        iso_name: ISO ئىسمى
+        name: ئىسمى
+        numcode: ISO كودى
+      spree/credit_card:
+        base: ''
+        cc_type: تىپ
+        month: ئاي
+        name: ئىسمى
+        number: سان
+        verification_value: دەلىللەش قىممىتى
+        year: يىل
+      spree/inventory_unit:
+        state: دۆلەت
+      spree/line_item:
+        price: باھاسى
+        quantity: سانى
+      spree/option_type:
+        filterable: سۈزگىلى بولىدۇ
+        name: ئىسمى
+        presentation: Presentation
+      spree/order:
+        checkout_complete: چىقىمدان تولۇق
+        completed_at: تاماملاندى
+        considered_risky: Risky
+        coupon_code: Coupon Code
+        created_at: زاكاز ۋاقتى
+        email: ئېلخەت
+        ip_address: IP ئادرېس
+        item_total: تۈر ئومۇمىي
+        number: سان
+        payment_state: چىقىم قىلىش ھالىتى
+        shipment_state: توشۇش ھالىتى
+        special_instructions: ئالاھىدە كۆرسەتمە
+        state: دۆلەت
+        total: ئومۇمىي
+      spree/order/bill_address:
+        address1: ھېسابات ئادرېسى كوچىسى
+        city: ھېسابات ئادرېسى شەھەر
+        firstname: تالون ئادرېسى
+        lastname: ھېسابات ئادرېسى
+        phone: ھېسابات ئادرېسى تېلېفونى
+        state: ھېسابات ئادرېسى ھالىتى
+        zipcode: ھېسابات ئادرېسى پوچتا نومۇرى
+      spree/order/ship_address:
+        address1: توشۇش ئادرېسى كوچىسى
+        city: توشۇش ئادرېسى شەھەر
+        firstname: مال ئەۋەتىش ئادرېسى
+        lastname: مال ئەۋەتىش ئادرېسى
+        phone: مال ئەۋەتىش ئادرېسى
+        state: توشۇش ئادرېسى ھالىتى
+        zipcode: مال ئەۋەتىش ئادرېسى پوچتا نومۇرى
+      spree/payment:
+        amount: سومما
+        number: سان
+      spree/payment_method:
+        name: ئىسمى
+      spree/product:
+        available_on: ئىشلەتكىلى بولىدۇ
+        cost_currency: تەننەرخ پۇلى
+        cost_price: تەننەرخ باھاسى
+        description: چۈشەندۈرۈش
+        discontinue_on: توختىتىڭ
+        less_than: ئۇنىڭدىن تۆۋەن
+        master_price: Master Price
+        name: ئىسمى
+        on_hand: قولدا
+        shipping_category: توشۇش تۈرى
+        tax_category: باج تۈرى
+      spree/promotion:
+        advertise: ئېلان
+        code: كود
+        description: چۈشەندۈرۈش
+        event_name: پائالىيەت ئىسمى
+        expires_at: ۋاقتى توشىدۇ
+        generate_code: تالون كودى ھاسىل قىلىڭ
+        name: ئىسمى
+        path: Path
+        promotion_category: تەشۋىق تۈرى
+        starts_at: باشلىنىدۇ
+        usage_limit: ئىشلىتىش چەكلىمىسى
+      spree/promotion_category:
+        code: كود
+        name: ئىسمى
+      spree/property:
+        name: ئىسمى
+        presentation: Presentation
+      spree/prototype:
+        name: ئىسمى
+      spree/return_authorization:
+        amount: سومما
+      spree/role:
+        name: ئىسمى
+      spree/shipment:
+        number: سان
+      spree/state:
+        abbr: قىسقارتىش
+        name: ئىسمى
+      spree/state_change:
+        state_changes: دۆلەت ئۆزگىرىشى
+        state_from: State from
+        state_to: State to
+        timestamp: Timestamp
+        type: تىپ
+        updated: يېڭىلاندى
+        user: ئىشلەتكۈچى
+      spree/store:
+        mail_from_address: ئادرېستىن كەلگەن خەت
+        meta_description: Meta Description
+        meta_keywords: Meta ئاچقۇچلۇق سۆزلەر
+        name: بېكەت ئىسمى
+        seo_robots: SEO ماشىنا ئادەملىرى
+        seo_title: SEO Title
+        url: بېكەت ئادرېسى
+      spree/store_credit:
+        amount_used: ئىشلىتىلگەن سومما
+      spree/store_credit_category:
+        name: ئىسمى
+      spree/tax_category:
+        description: چۈشەندۈرۈش
+        name: ئىسمى
+      spree/tax_rate:
+        amount: باھا
+        included_in_price: باھاغا كىرگۈزۈلگەن
+        show_rate_in_label: بەلگىنى كۆرسەت
+      spree/taxon:
+        name: ئىسمى
+        permalink: Permalink
+        position: ئورنى
+      spree/taxonomy:
+        name: ئىسمى
+      spree/user:
+        email: ئېلخەت
+        password: پارول
+        password_confirmation: پارول جەزملەشتۈرۈش
+      spree/variant:
+        cost_currency: تەننەرخ پۇلى
+        cost_price: تەننەرخ باھاسى
+        depth: چوڭقۇرلۇق
+        height: ئېگىزلىكى
+        price: باھاسى
+        sku: SKU
+        weight: ئېغىرلىقى
+        width: كەڭلىك
+      spree/zone:
+        description: چۈشەندۈرۈش
+        name: ئىسمى
+    errors:
+      models:
+        spree/calculator/tiered_flat_rate:
+          attributes:
+            base:
+              keys_should_be_positive_number: دەرىجە كۇنۇپكىلىرىنىڭ ھەممىسى 0 دىن چوڭ سان بولۇشى كېرەك
+            preferred_tiers:
+              should_be_hash: چوقۇم hash بولۇشى كېرەك
+        spree/calculator/tiered_percent:
+          attributes:
+            base:
+              keys_should_be_positive_number: دەرىجە كۇنۇپكىلىرىنىڭ ھەممىسى 0 دىن چوڭ سان بولۇشى كېرەك
+              values_should_be_percent: قاتلاملىق قىممەتلەرنىڭ ھەممىسى% 0 دىن% 100 كىچە بولۇشى كېرەك
+            preferred_tiers:
+              should_be_hash: چوقۇم hash بولۇشى كېرەك
+        spree/classification:
+          attributes:
+            taxon_id:
+              already_linked: بۇ مەھسۇلاتقا ئۇلانغان
+        spree/credit_card:
+          attributes:
+            base:
+              card_expired: كارتىنىڭ ۋاقتى توشتى
+              expiry_invalid: كارتىنىڭ مۇددىتى ئىناۋەتسىز
+        spree/image:
+          attributes:
+            attachment:
+              attachment_must_be_present: چوقۇم ھازىر بولۇشى كېرەك
+              not_allowed_content_type: مەزمۇن تىپىغا يول قويمىدى
+        spree/line_item:
+          attributes:
+            currency:
+              must_match_order_currency: زاكاز پۇلىغا ماس كېلىشى كېرەك
+        spree/product:
+          attributes:
+            base:
+              cannot_destroy_if_attached_to_line_items: مەھسۇلاتلار قۇر تۈرلىرىگە ئۇلانغاندىن كېيىن ئۆچۈرەلمەيدۇ.
+            discontinue_on:
+              invalid_date_range: چوقۇم ۋاقتىدىن كېيىن بولۇشى كېرەك
+        spree/promotion:
+          attributes:
+            expires_at:
+              invalid_date_range: باشلىنىش ۋاقتىدىن كېيىن بولۇشى كېرەك
+        spree/refund:
+          attributes:
+            amount:
+              greater_than_allowed: رۇخسەت قىلىنغان سوممىدىن كۆپ.
+        spree/reimbursement:
+          attributes:
+            base:
+              return_items_order_id_does_not_match: كۆرسىتىلگەن قايتۇرۇش تۈرلىرىنىڭ بىر ياكى بىر قىسمى تۆلەم بىلەن ئوخشاش تەرتىپكە تەۋە ئەمەس.
+        spree/return_item:
+          attributes:
+            inventory_unit:
+              other_completed_return_item_exists: "%{inventory_unit_id} ئاللىقاچان %{return_item_id} ئارقىلىق قايتۇرۇلغان"
+            reimbursement:
+              cannot_be_associated_unless_accepted: قوبۇل قىلىنمىغان قايتۇرۇش بۇيۇمىغا باغلىنالمايدۇ.
+        spree/shipping_method:
+          attributes:
+            base:
+              required_shipping_category: كەم دېگەندە بىر توشۇش تۈرىنى تاللىشىڭىز كېرەك
+        spree/store:
+          attributes:
+            base:
+              cannot_destroy_default_store: سۈكۈتتىكى دۇكاننى ۋەيران قىلالمايدۇ.
+        spree/store_credit:
+          attributes:
+            amount_authorized:
+              exceeds_total_credits: ئومۇمىي قەرزدىن ئېشىپ كەتتى.
+            amount_used:
+              cannot_be_greater_than_amount: مىقداردىن ئېشىپ كەتمەيدۇ.
+              greater_than_zero_restrict_delete: نۆلدىن چوڭ. دۇكان ئىناۋىتىنى ئۆچۈرەلمەيدۇ.
+        spree/store_credit_category:
+          attributes:
+            base:
+              cannot_destroy_if_used_in_store_credit: دۇكان ئىناۋىتىگە ئىشلىتىلگەندىن كېيىن دۇكان ئىناۋەتلىك تۈرلىرىنى ئۆچۈرەلمەيدۇ.
+        spree/taxon_image:
+          attributes:
+            attachment:
+              not_allowed_content_type: مەزمۇن تىپىغا يول قويمىدى
+        spree/variant:
+          attributes:
+            base:
+              cannot_destroy_if_attached_to_line_items: ۋارىيانتلارنى قۇر تۈرلىرىگە ئۇلىغاندىن كېيىن ئۆچۈرگىلى بولمايدۇ.
+              must_supply_price_for_variant_or_master: چوقۇم مەھسۇلاتنىڭ باھاسى ياكى ئاساسلىق باھاسى بىلەن تەمىنلىشى كېرەك.
+              no_master_variant_found_to_infer_price: باھانى يەكۈنلەيدىغان ھېچقانداق ئاساسلىق ۋارىيانت تېپىلمىدى
+    models:
+      spree/address:
+        one: ئادرېس
+        other: ئادرېس
+      spree/country:
+        one: دۆلەت
+        other: دۆلەتلەر
+      spree/credit_card:
+        one: ئىناۋەتلىك كارتا
+        other: ئىناۋەتلىك كارتا
+      spree/customer_return:
+        one: خېرىدار قايتۇرۇش
+        other: خېرىدار قايتىدۇ
+      spree/inventory_unit:
+        one: كەشپىيات بىرلىكى
+        other: كەشپىيات ئورۇنلىرى
+      spree/line_item:
+        one: Line Item
+        other: قۇر تۈرلىرى
+      spree/option_type:
+        one: تاللاش تىپى
+        other: تاللاش تۈرلىرى
+      spree/option_value:
+        one: تاللاش قىممىتى
+        other: تاللاش قىممىتى
+      spree/order:
+        one: زاكاز
+        other: زاكاز
+      spree/payment:
+        one: چىقىم قىلىش
+        other: چىقىم
+      spree/payment_method:
+        one: چىقىم قىلىش ئۇسۇلى
+        other: چىقىم قىلىش ئۇسۇللىرى
+      spree/product:
+        one: مەھسۇلات
+        other: مەھسۇلاتلار
+      spree/promotion:
+        one: ئىلگىرى سۈرۈش
+        other: تەشۋىق
+      spree/promotion_category:
+        one: تەشۋىق تۈرى
+        other: تەشۋىق تۈرلىرى
+      spree/property:
+        one: مۈلۈك
+        other: خاسلىقى
+      spree/prototype:
+        one: Prototype
+        other: ئەسلى تىپ
+      spree/refund_reason:
+        one: پۇل قايتۇرۇش سەۋەبى
+        other: پۇل قايتۇرۇش سەۋەبى
+      spree/reimbursement:
+        one: تۆلەم
+        other: تۆلەم
+      spree/reimbursement_type:
+        one: تۆلەم تۈرى
+        other: تۆلەم تۈرلىرى
+      spree/return_authorization:
+        one: ھوقۇق بېرىش
+        other: ھوقۇق بېرىش
+      spree/return_authorization_reason:
+        one: ھوقۇق بېرىش سەۋەبى
+        other: ھوقۇق بېرىش سەۋەبى
+      spree/role:
+        one: رولى
+        other: رولى
+      spree/shipment:
+        one: مال ئەۋەتىش
+        other: مال ئەۋەتىش
+      spree/shipping_category:
+        one: توشۇش تۈرى
+        other: توشۇش تۈرلىرى
+      spree/shipping_method:
+        one: توشۇش ئۇسۇلى
+        other: توشۇش ئۇسۇلى
+      spree/state:
+        one: دۆلەت
+        other: States
+      spree/state_change:
+        one: دۆلەت ئۆزگىرىشى
+        other: دۆلەت ئۆزگىرىشى
+      spree/stock_location:
+        one: پاي چېكى ئورنى
+        other: پاي چېكى ئورنى
+      spree/stock_movement:
+        one: پاي ھەرىكىتى
+        other: پاي چېكى ھەرىكىتى
+      spree/stock_transfer:
+        one: پاي چېكى يۆتكەش
+        other: پاي چېكى يۆتكەش
+      spree/store_credit:
+        one: دۇكان ئىناۋىتى
+        other: دۇكان ئىناۋىتى
+      spree/store_credit_category:
+        one: دۇكان ئىناۋەت تۈرى
+        other: دۇكان ئىناۋەتلىك تۈرلىرى
+      spree/tax_category:
+        one: باج تۈرى
+        other: باج تۈرلىرى
+      spree/tax_rate:
+        one: باج نىسبىتى
+        other: باج نىسبىتى
+      spree/taxon:
+        one: تاكسون
+        other: Taxons
+      spree/taxonomy:
+        one: Taxonomy
+        other: Taxonomies
+      spree/tracker:
+        one: ئىزچى
+        other: ئىزچىلار
+      spree/user:
+        one: ئىشلەتكۈچى
+        other: ئىشلەتكۈچى
+      spree/variant:
+        one: Variant
+        other: Variants
+      spree/zone:
+        one: رايون
+        other: رايونلار
+  address_book:
+    save: ساقلاش
+    successfully_created: يېڭى ئادرېس مۇۋەپپەقىيەتلىك قۇرۇلدى
+  devise:
+    confirmations:
+      confirmed: ھېساباتىڭىز مۇۋەپپەقىيەتلىك جەزملەشتۈرۈلدى. سىز ھازىر تىزىملاتتىڭىز.
+      send_instructions: بىر نەچچە مىنۇتتا ھېساباتىڭىزنى قانداق جەزملەشتۈرۈش توغرىسىدا كۆرسەتمىلەر بار ئېلېكترونلۇق خەت تاپشۇرۇۋالىسىز.
+    failure:
+      inactive: ھېساباتىڭىز تېخى قوزغىتىلمىدى.
+      invalid: ئىناۋەتسىز ئېلېكترونلۇق خەت ياكى پارول.
+      invalid_token: ئىناۋەتلىك دەلىللەش بەلگىسى.
+      locked: ھېساباتىڭىز قۇلۇپلاندى.
+      timeout: سىزنىڭ ۋاقتىڭىز توشتى ، داۋاملاشتۇرۇش ئۈچۈن قايتا تىزىملىتىڭ.
+      unauthenticated: داۋاملاشتۇرۇشتىن بۇرۇن تىزىملىتىشىڭىز ياكى تىزىملىتىشىڭىز كېرەك.
+      unconfirmed: داۋاملاشتۇرۇشتىن بۇرۇن ھېساباتىڭىزنى جەزملەشتۈرۈشىڭىز كېرەك.
+    mailer:
+      confirmation_instructions:
+        subject: جەزملەشتۈرۈش كۆرسەتمىسى
+      reset_password_instructions:
+        subject: پارول كۆرسەتمىسىنى ئەسلىگە كەلتۈرۈڭ
+      unlock_instructions:
+        subject: قۇلۇپ ئېچىش
+    oauth_callbacks:
+      failure: '%{kind} دىن سىزگە ھوقۇق بېرەلمىدى ، چۈنكى "%{reason}".'
+      success: "%{kind} ھېساباتىدىن مۇۋەپپەقىيەتلىك ھوقۇق بېرىلگەن."
+    unlocks:
+      send_instructions: بىر نەچچە مىنۇتتا ھېساباتىڭىزنى قانداق ئېچىش توغرىسىدىكى كۆرسەتمىلەر بار ئېلېكترونلۇق خەت تاپشۇرۇۋالىسىز.
+      unlocked: ھېساباتىڭىز مۇۋەپپەقىيەتلىك قۇلۇپلاندى. سىز ھازىر تىزىملاتتىڭىز.
+    user_passwords:
+      user:
+        cannot_be_blank: پارولىڭىز بوش قالمايدۇ.
+        send_instructions: بىر نەچچە مىنۇتتا پارولىڭىزنى قانداق ئەسلىگە كەلتۈرۈش توغرىسىدا كۆرسەتمىلەر بار ئېلېكترونلۇق خەت تاپشۇرۇۋالىسىز.
+        updated: پارولىڭىز مۇۋەپپەقىيەتلىك ئۆزگەرتىلدى. سىز ھازىر تىزىملاتتىڭىز.
+    user_registrations:
+      destroyed: باي! ھېساباتىڭىز مۇۋەپپەقىيەتلىك ئەمەلدىن قالدۇرۇلدى. پات يېقىندا قايتا كۆرۈشىڭىزنى ئۈمىد قىلىمىز.
+      inactive_signed_up: مۇۋەپپەقىيەتلىك تىزىملاتتىڭىز. قانداقلا بولمىسۇن ، ھېساباتىڭىز %{reason} بولغانلىقى ئۈچۈن سىزگە كىرەلمىدۇق.
+      signed_up: خۇش كەپسىز! مۇۋەپپەقىيەتلىك تىزىملاتتىڭىز.
+      updated: ھېساباتىڭىزنى مۇۋەپپەقىيەتلىك يېڭىلىدىڭىز.
+    user_sessions:
+      signed_in: مۇۋەپپەقىيەتلىك تىزىملاتتى.
+      signed_out: مۇۋەپپەقىيەتلىك چىقتى.
+  errors:
+    messages:
+      already_confirmed: ئاللىقاچان جەزملەشتۈرۈلدى
+      not_found: تېپىلمىدى
+      not_locked: قۇلۇپلانمىدى
+      not_saved:
+        one: '1 خاتالىق بۇ %{resource} نىڭ ساقلىنىشىنى چەكلىدى:'
+        other: "%{count} خاتالىق بۇ %{resource} نىڭ ساقلىنىشىنى چەكلىدى:"
+  spree:
+    abbreviation: قىسقارتىش
+    accept: قوبۇل قىلىڭ
+    acceptance_errors: قوبۇل قىلىش خاتالىقى
+    acceptance_status: قوبۇل قىلىش ھالىتى
+    accepted: قوبۇل قىلىندى
+    account: ھېسابات
+    account_info: ھېسابات ئۇچۇرى
+    account_updated: ھېسابات يېڭىلاندى
+    action: ھەرىكەت
+    actions:
+      cancel: بىكار قىلىش
+      continue: داۋاملاشتۇر
+      create: قۇر
+      destroy: ھالاك قىلىش
+      edit: تەھرىر
+      list: تىزىملىك
+      listing: تىزىملىك
+      new: يېڭى
+      refund: پۇل قايتۇرۇش
+      save: ساقلاش
+      update: يېڭىلاش
+    activate: ئاكتىپلاش
+    active: ئاكتىپ
+    add: قوش
+    add_action_of_type: تىپ ھەرىكىتىنى قوشۇڭ
+    add_country: دۆلەت قوشۇڭ
+    add_coupon_code: Coupon Code نى قوشۇڭ
+    add_new_address: يېڭى ئادرېس قوشۇڭ
+    add_new_credit_card: يېڭى كارتا قوشۇڭ
+    add_new_header: يېڭى ماۋزۇ قوشۇڭ
+    add_new_style: يېڭى ئۇسلۇب قوشۇڭ
+    add_one: بىرنى قوشۇڭ
+    add_option_value: تاللاش قىممىتىنى قوشۇڭ
+    add_product: مەھسۇلات قوشۇڭ
+    add_product_properties: مەھسۇلات خاسلىقىنى قوشۇڭ
+    add_rule_of_type: تىپ قائىدىسىنى قوشۇڭ
+    add_state: دۆلەت قوشۇڭ
+    add_stock: پاي قوشۇڭ
+    add_store: يېڭى دۇكان
+    add_store_credit: دۇكان ئىناۋىتىنى قوشۇڭ
+    add_to_cart: ھارۋىغا قوشۇڭ
+    add_variant: Variant نى قوشۇڭ
+    added_to_cart: ھارۋىغا مۇۋەپپەقىيەتلىك قوشۇلدى!
+    additional_item: قوشۇمچە تۈر
+    address: ئادرېس
+    address1: ئادرېس
+    address2: ئادرېس (داۋامى)
+    address_action_popup:
+      delete_button: ھەئە ، ئۆچۈرۈڭ
+      delete_text: سىز <br /> بۇ ئادرېسنى ئۆچۈرمەكچىمۇ؟
+      delete_title: ئىشىنەمسىز؟
+    address_book:
+      add_new_shipping_address: يېڭى ئادرېس قوشۇڭ
+      address_name_label: ئادرېس ئىسمى
+      address_name_placeholder: بۇ ئادرېسقا ئۆزگىچە ئىسىم قويۇڭ (خىزمەت ، ئۆي قاتارلىقلار)
+      addresses: ئادرېس
+      edit_address: ئادرېسنى تەھرىرلەش
+      label: ئادرېس ئىسمى
+      new_address: يېڭى ئادرېس
+      no_shipping_addresses_on_file: ھۆججەتتە ئادرېس يوق
+      other_address: باشقا ئادرېس
+      remove_address: ئادرېسنى ئۆچۈرۈڭ
+      save: ساقلاش
+      successfully_created: ئادرېس مۇۋەپپەقىيەتلىك قۇرۇلدى.
+      successfully_removed: ئادرېس مۇۋەپپەقىيەتلىك ئۆچۈرۈلدى.
+      successfully_saved: مۇۋەپپەقىيەتلىك ساقلاندى
+      successfully_updated: مۇۋەپپەقىيەتلىك يېڭىلاندى
+      unsuccessfully_saved: ئادرېسىڭىزنى ساقلىماقچى بولغاندا خاتالىق كۆرۈلدى.
+      unsuccessfully_updated: ئادرېسىڭىزنى يېڭىلىماقچى بولغاندا يېڭىلاندى.
+    addresses: ئادرېس
+    adjustable: تەڭشىگىلى بولىدۇ
+    adjustment: تەڭشەش
+    adjustment_amount: سومما
+    adjustment_labels:
+      tax_rates:
+        excluding_tax: "%{name}%{amount}"
+        including_tax: "%{name}%{amount} (باھاغا كىرگۈزۈلگەن)"
+    adjustment_successfully_closed: تەڭشەش مۇۋەپپەقىيەتلىك تاقالدى!
+    adjustment_successfully_opened: تەڭشەش مۇۋەپپەقىيەتلىك ئېچىلدى!
+    adjustment_total: تەڭشەش ئومۇمىي
+    adjustments: تەڭشەش
+    admin:
+      order:
+        events:
+          approve: تەستىق
+          cancel: ئەمەلدىن قالدۇرۇڭ
+          resend: Resend
+          resume: ئەسلىگە كەلتۈرۈش
+      orders:
+        cart: ھارۋا
+      return_authorization:
+        product: مەھسۇلات
+      tab:
+        configuration: سەپلىمىسى
+        customer_returns: خېرىدار قايتىدۇ
+        option_types: تاللاش تۈرلىرى
+        orders: زاكاز
+        overview: ئومۇمىي چۈشەنچە
+        products: مەھسۇلاتلار
+        promotion_categories: تەشۋىق تۈرلىرى
+        promotions: تەشۋىق
+        properties: خاسلىقى
+        prototypes: ئەسلى تىپ
+        reports: دوكلات
+        return_authorizations: ھوقۇق بېرىش
+        taxonomies: Taxonomies
+        taxons: Taxons
+        users: ئىشلەتكۈچى
+      user:
+        account: ھېسابات
+        addresses: ئادرېس
+        available_store_credit: ئىشلەتكۈچىنىڭ ئىناۋەتلىك دۇكىنىدا %{amount} بار.
+        items: تۈرلەر
+        items_purchased: سېتىۋېلىنغان تۈرلەر
+        no_store_credit: ئىشلەتكۈچىنىڭ دۇكان ئىناۋىتى يوق.
+        order_history: زاكاز تارىخى
+        order_num: 'زاكاز #'
+        orders: زاكاز
+        store_credits: دۇكان ئىناۋىتى
+        stores: دۇكانلار
+        user_information: ئىشلەتكۈچى ئۇچۇرى
+    administration: Administration
+    advertise: ئېلان
+    agree_to_privacy_policy: مەخپىيەتلىك سىياسىتىگە قوشۇلۇڭ
+    agree_to_terms_of_service: مۇلازىمەت شەرتلىرىگە قوشۇلۇڭ
+    all: ھەممىسى
+    all_adjustments_closed: بارلىق تەڭشەشلەر مۇۋەپپەقىيەتلىك تاقالدى!
+    all_adjustments_opened: بارلىق تەڭشەشلەر مۇۋەپپەقىيەتلىك ئېچىلدى!
+    all_departments: بارلىق تارماقلار
+    all_items_have_been_returned: بارلىق بۇيۇملار قايتۇرۇلدى
+    all_rights_reserved: بارلىق ھوقۇق قوغدىلىدۇ
+    already_have_account: ھېساباتىڭىز بارمۇ؟
+    alt_text: Alternative Text
+    alternative_phone: باشقا تېلېفون
+    amount: سومما
+    and: ۋە
+    approve: تەستىق
+    approved_at: تەستىقلاندى
+    approver: تەستىقلىغۇچى
+    are_you_sure: ئىشىنەمسىز؟
+    are_you_sure_delete: بۇ خاتىرىنى ئۆچۈرمەكچىمۇ؟
+    associated_adjustment_closed: مۇناسىۋەتلىك تەڭشەش تاقالغان بولۇپ ، قايتا ھېسابلانمايدۇ. ئۇنى ئاچماقچىمۇ؟
+    authorization_failure: ھوقۇق بېرىش مەغلۇب بولدى
+    authorized: ھوقۇق بېرىلگەن
+    auto_capture: Auto Capture
+    availability: ئىشلەتكىلى بولىدۇ
+    available: ئىشلەتكىلى بولىدۇ
+    available_on: ئىشلەتكىلى بولىدۇ
+    average_order_value: ئوتتۇرىچە زاكاز قىممىتى
+    avs_response: AVS ئىنكاس
+    back: قايتىش
+    back_end: Backend
+    back_to_payment: پۇل تۆلەش
+    back_to_resource_list: "%{resource} تىزىملىكىگە قايتىش"
+    back_to_rma_reason_list: RMA سەۋەب تىزىملىكىگە قايتىش
+    back_to_store: دۇكانغا قايتىش
+    back_to_users_list: ئىشلەتكۈچى تىزىملىكىگە قايتىش
+    backorderable: Backorderable
+    backorderable_default: زاپاسلىغىلى بولىدىغان سۈكۈتتىكى
+    backordered: Backordered
+    backordered_confirm_info: تاللانغان تۈر ئارقا رەتلەنگەن ، شۇڭا كېچىكىشنى ئۈمىد قىلىڭ. زاكاز قىلغۇڭىز بارمۇ؟
+    backordered_info: Backordered
+    backorders_allowed: ئارقا بەت رۇخسەت قىلىندى
+    balance_due: تەڭپۇڭلۇق
+    base_amount: ئاساسى سومما
+    base_percent: Base Percent
+    basic_information: ئاساسىي ئۇچۇرلار
+    bill_address: Bill Address
+    billing: ھېسابات قىلىش
+    billing_address: ھېسابات ئادرېسى
+    both: ھەر ئىككىلىسى
+    breadcrumbs: نان
+    calculated_reimbursements: ھېسابلانغان تولۇقلىما
+    calculator: ھېسابلىغۇچ
+    calculator_settings_warning: ئەگەر ھېسابلىغۇچنىڭ تىپىنى ئۆزگەرتمەكچى بولسىڭىز ، ھېسابلىغۇچ تەڭشىكىنى تەھرىرلەشتىن بۇرۇن ئالدى بىلەن ساقلىشىڭىز كېرەك
+    call_us_now: 'ھازىر بىزگە تېلېفون قىلىڭ:'
+    cancel: ئەمەلدىن قالدۇرۇڭ
+    canceled: ئەمەلدىن قالدۇرۇلدى
+    canceled_at: ئەمەلدىن قالدۇرۇلدى
+    canceler: Canceler
+    cannot_create_customer_returns: بۇ زاكازنىڭ توشۇلغان ئورۇنلىرى بولمىغاچقا ، خېرىدارلارنىڭ قايتىشى مۇمكىن ئەمەس.
+    cannot_create_payment_without_payment_methods: ھېچقانداق ھەق تۆلەش ئۇسۇلى ئېنىقلانماي تۇرۇپ زاكاز ئۈچۈن پۇل تۆلىيەلمەيسىز.
+    cannot_create_returns: بۇ زاكازنىڭ توشۇلغان ئورۇنلىرى بولمىغاچقا ، پايدا يارىتالمايدۇ.
+    cannot_empty_completed_order: زاكاز ئاللىقاچان بىر تەرەپ قىلىنغان بولۇپ ، ئۇنى بوشاتقىلى بولمايدۇ
+    cannot_perform_operation: تەلەپ قىلىنغان مەشغۇلاتنى قىلالمايدۇ
+    cannot_return_more_than_bought_quantity: سېتىۋالغان مىقداردىن كۆپ قايتۇرغىلى بولمايدۇ.
+    cannot_set_shipping_method_without_address: خېرىدارلارنىڭ تەپسىلاتلىرى تەمىنلەنمىگۈچە توشۇش ئۇسۇلىنى بەلگىلىيەلمەيدۇ.
+    capture: Capture
+    capture_events: ۋەقەلەرنى تۇتۇش
+    card_code: كارتا پەرقلەندۈرۈش كودى (CVC)
+    card_number: كارتا نومۇرى
+    card_type: ماركا
+    card_type_is: كارتا تىپى
+    cart: ھارۋا
+    cart_page:
+      add_promo_code: ADD PROMO CODE
+      change_quantity: مىقدارنى ئۆزگەرتىش
+      checkout: چىقىمدان
+      empty_info: ھارۋىڭىز قۇرۇق.
+      header: مال ھارۋىڭىز
+      product: مەھسۇلات
+      quantity: مىقدارى
+      remove_from_cart: ھارۋىدىن چىقىرىۋېتىڭ
+      title: مال سېتىۋېلىش ھارۋىسى
+    cart_subtotal:
+      one: Subtotal (1 item)
+      other: Subtotal (%{count} تۈرلىرى)
+    categories: سەھىپىلەر
+    category: سەھىپە
+    category_nav_bar:
+      get_up_to_30_percent_off: 30% OFF گە ئېرىشىڭ
+      jackets_and_coats: JACKET & COASTS
+      new_collection: يېڭى كوللىكتىپ
+      special_offers: ئالاھىدە تەكلىپلەر
+    channel: Channel
+    charged: توك قاچىلانغان
+    checkout: چىقىمدان
+    checkout_page:
+      back_to_cart: ھارۋىغا قايتىش
+      checkout_navigation: چىقىمدان يول باشلاش
+      delivery_method: يەتكۈزۈش ئۇسۇلى
+      header: چىقىمدان
+      main_navigation: ئاساسلىق يول باشلاش
+      product: مەھسۇلات
+    choose_a_customer: خېرىدار تاللاڭ
+    choose_a_taxon_to_sort_products_for: مەھسۇلاتلارنى رەتلەش ئۈچۈن تاكسى تاللاڭ
+    choose_currency: پۇل تاللاڭ
+    choose_dashboard_locale: باش تاختا رايونىنى تاللاڭ
+    choose_location: ئورۇن تاللاڭ
+    city: شەھەر
+    clear_cache: Cache نى تازىلاش
+    clear_cache_ok: كەشى قىزاردى
+    clear_cache_warning: غەملەكنى تازىلاش دۇكىنىڭىزنىڭ ئىقتىدارىنى ۋاقىتلىق تۆۋەنلىتىدۇ.
+    click_and_drag_on_the_products_to_sort_them: ئۇلارنى چېكىپ مەھسۇلاتلارنى چېكىڭ.
+    clone: كلون
+    close: تاقاش
+    close_all_adjustments: بارلىق تەڭشەشنى تاقاڭ
+    code: كود
+    company: شىركەت
+    compare_at_price: باھا بىلەن سېلىشتۇرۇڭ
+    complete: تامام
+    configuration: سەپلىمىسى
+    configurations: سەپلىمىسى
+    confirm: جەزملەشتۈرۈڭ
+    confirm_delete: ئۆچۈرۈشنى جەزملەشتۈرۈڭ
+    confirm_password: پارول جەزملەشتۈرۈش
+    contact_phone: ئالاقىلىشىش تېلېفونى
+    contact_us: بىز بىلەن ئالاقىلىشىڭ
+    continue: داۋاملاشتۇر
+    continue_as_guest: مېھمان سۈپىتىدە داۋاملاشتۇرۇڭ
+    continue_shopping: مال سېتىۋېلىشنى داۋاملاشتۇرۇڭ
+    cost_currency: تەننەرخ پۇلى
+    cost_price: تەننەرخ باھاسى
+    could_not_create_customer_return: خېرىدار قايتۇرۇشنى قۇرالمىدى
+    could_not_create_stock_movement: بۇ پاي ھەرىكىتىنى تېجەشتە مەسىلە كۆرۈلدى. قايتا سىناڭ.
+    count_on_hand: ساناپ بېقىڭ
+    countries: دۆلەتلەر
+    country: دۆلەت
+    country_based: دۆلەت ئاساس قىلىنغان
+    country_name: ئىسمى
+    country_rule:
+      label: تاللاش چوقۇم بۇ دۆلەتكە ئەۋەتىلىشى كېرەك
+    coupon: Coupon
+    coupon_code: Coupon code
+    coupon_code_already_applied: بۇ بۇيرۇققا تالون كودى ئاللىقاچان قوللىنىلىپ بولغان
+    coupon_code_applied: تالون كودى سىزنىڭ بۇيرۇقىڭىزغا مۇۋەپپەقىيەتلىك قوللىنىلدى.
+    coupon_code_apply: ئىلتىماس قىلىڭ
+    coupon_code_better_exists: ئىلگىرى قوللىنىلغان تالون كودى تېخىمۇ ياخشى سودىغا ئېرىشىدۇ
+    coupon_code_expired: تالون كودىنىڭ ۋاقتى توشتى
+    coupon_code_max_usage: Coupon كودى ئىشلىتىش چېكىدىن ئېشىپ كەتتى
+    coupon_code_not_eligible: بۇ تالون كودى بۇ زاكازغا ماس كەلمەيدۇ
+    coupon_code_not_found: سىز كىرگۈزگەن تالون كودى مەۋجۇت ئەمەس. قايتا سىناڭ.
+    coupon_code_removed: تالون كودى سىزنىڭ بۇيرۇقىڭىزدىن مۇۋەپپەقىيەتلىك ئۆچۈرۈلدى.
+    coupon_code_unknown_error: بۇ تالون كودىنى ھازىرچە ھارۋىغا ئىشلىتىشكە بولمايدۇ.
+    create: قۇر
+    create_a_new_account: يېڭى ھېسابات قۇر
+    create_new_order: يېڭى تەرتىپ قۇر
+    create_reimbursement: تۆلەم تۆلەش
+    created_at: At At
+    created_by: ئىجاد قىلغان
+    credit: كرېدىت
+    credit_allowed: ئىناۋەتلىك
+    credit_card: ئىناۋەتلىك كارتا
+    credit_cards: ئىناۋەتلىك كارتا
+    credit_owed: Credit Owed
+    credited: ئىشەنچلىك
+    credits: Credits
+    currencies: پۇللار
+    currency: پۇل
+    currency_settings: پۇل تەڭشەكلىرى
+    current: نۆۋەتتىكى
+    current_promotion_usage: 'نۆۋەتتىكى ئىشلىتىلىشى: %{count}'
+    customer: خېرىدار
+    customer_details: خېرىدار تەپسىلاتلىرى
+    customer_details_updated: خېرىدارلارنىڭ تەپسىلاتلىرى يېڭىلاندى
+    customer_return: خېرىدار قايتۇرۇش
+    customer_returns: خېرىدار قايتىدۇ
+    customer_search: خېرىدار ئىزدەش
+    customer_support_email: خېرىدارلارنى قوللاش ئېلخېتى
+    cut: كېسىڭ
+    cvv: CVV
+    cvv_response: CVV ئىنكاس
+    date: چېسلا
+    date_completed: چېسلا تاماملاندى
+    date_range: چېسلا دائىرىسى
+    default: سۈكۈتتىكى
+    default_country_cannot_be_deleted: سۈكۈتتىكى دۆلەتنى ئۆچۈرگىلى بولمايدۇ
+    default_currency: كۆڭۈلدىكى پۇل
+    default_refund_amount: كۆڭۈلدىكى پۇل قايتۇرۇش سوممىسى
+    default_tax: سۈكۈتتىكى باج
+    default_tax_zone: سۈكۈتتىكى باج رايونى
+    delete: ئۆچۈرۈش
+    delete_from_taxon: تاكسوندىن ئۆچۈرۈڭ
+    deleted: ئۆچۈرۈلدى
+    delivery: يەتكۈزۈش
+    delivery_information: يەتكۈزۈش ئۇچۇرى
+    depth: چوڭقۇرلۇق
+    description: چۈشەندۈرۈش
+    destination: مەنزىل
+    destroy: ھالاك قىلىش
+    details: تەپسىلاتى
+    discontinue_on: توختىتىڭ
+    discontinued: توختىتىلدى
+    discontinued_variants_present: بۇ تەرتىپتىكى بەزى قۇر تۈرلەردە ئەمدى ئىشلەتكىلى بولمايدىغان مەھسۇلاتلار بار.
+    discount_amount: ئېتىبار سوممىسى
+    dismiss_banner: ياق. رەھمەت! مەن قىزىقمايمەن ، بۇ ئۇچۇرنى قايتا كۆرسەتمەڭ
+    display: كۆرسىتىش
+    doesnt_track_inventory: ئۇ ئامبار زاپىسىنى ئىز قوغلىمايدۇ
+    dont_have_account: ھېسابات يوق؟
+    edit: تەھرىر
+    edit_reimbursement: تۆلەمنى تەھرىرلەڭ
+    editing_resource: "%{resource} تەھرىرلەش"
+    editing_rma_reason: RMA سەۋەبىنى تەھرىرلەش
+    editing_user: ھېساباتىڭىزنى تەھرىرلەڭ
+    eligibility_errors:
+      messages:
+        has_excluded_product: ھارۋىڭىزدا بۇ تالون كودىنىڭ ئىشلىتىلىشىنىڭ ئالدىنى ئالىدىغان مەھسۇلات بار.
+        item_total_less_than: بۇ تالون كودىنى %{amount} دىن تۆۋەن زاكازلارغا ئىشلىتىشكە بولمايدۇ.
+        item_total_less_than_or_equal: بۇ تالون كودى %{amount} دىن تۆۋەن ياكى تەڭ بولغان زاكازلارغا قوللىنىلمايدۇ.
+        item_total_more_than: بۇ تالون كودىنى %{amount} دىن يۇقىرى زاكازلارغا ئىشلىتىشكە بولمايدۇ.
+        item_total_more_than_or_equal: بۇ تالون كودى %{amount} دىن يۇقىرى ياكى تەڭ بولغان زاكازلارغا قوللىنىلمايدۇ.
+        limit_once_per_user: بۇ تالون كودىنى ھەر بىر ئىشلەتكۈچىگە پەقەت بىرلا قېتىم ئىشلىتىشكە بولىدۇ.
+        missing_product: ھارۋىڭىزدا لازىملىق مەھسۇلاتلارنىڭ ھەممىسى بولمىغاچقا ، بۇ تالون كودىنى قوللىنىشقا بولمايدۇ.
+        missing_taxon: بۇ تالون كودىنى ئىشلىتىشتىن بۇرۇن بارلىق قوللىنىشچان تۈرلەردىن مەھسۇلات قوشۇشىڭىز كېرەك.
+        no_applicable_products: بۇ تالون كودىنى ئىشلىتىشتىن بۇرۇن مۇناسىۋەتلىك مەھسۇلات قوشۇشىڭىز كېرەك.
+        no_matching_taxons: بۇ تالون كودىنى ئىشلىتىشتىن بۇرۇن مۇناسىۋەتلىك تۈردىن مەھسۇلات قوشۇشىڭىز كېرەك.
+        no_user_or_email_specified: بۇ تالون كودىنى ئىشلىتىشتىن بۇرۇن تىزىملىتىشىڭىز ياكى ئېلېكترونلۇق خەتلىرىڭىزنى تەمىنلىشىڭىز كېرەك.
+        no_user_specified: بۇ تالون كودىنى ئىشلىتىشتىن بۇرۇن تىزىملىتىشىڭىز كېرەك.
+        not_first_order: بۇ تالون كودى پەقەت سىزنىڭ بىرىنچى تەرتىپىڭىزدىلا قوللىنىلىدۇ.
+    email: ئېلخەت
+    empty: قۇرۇق
+    empty_cart: قۇرۇق ھارۋا
+    enable_mail_delivery: خەت ئەۋەتىشنى قوزغىتىڭ
+    end: ئاخىر
+    ending_at: ئاخىرلاشتى
+    ending_in: ئاخىرلاشتى
+    ends_at: ئاخىرلىشىدۇ
+    error: خاتالىق
+    error_user_destroy_with_orders: زاكاز بىلەن مۇناسىۋەتلىك ئىشلەتكۈچىنى يوقىتىشقا بولمايدۇ
+    errors:
+      messages:
+        blank: بوش قالمايدۇ
+        cannot_remove_icon: رەسىمنى ئۆچۈرگىلى بولمايدۇ
+        could_not_create_taxon: تاكسى قۇرالمىدى
+        no_shipping_methods_available: تاللانغان ئورۇنغا توشۇش ئۇسۇلى يوق ، ئادرېسىڭىزنى ئۆزگەرتىپ قايتا سىناڭ.
+      services:
+        get_shipping_rates:
+          no_line_items: توشۇش نىسبىتىنى ھاسىل قىلىش ئۈچۈن زاكازغا بىر قىسىم قۇر تۈرلىرىنى قوشۇشىڭىز كېرەك
+          no_shipping_address: توشۇش نىسبىتى زاكاز ھاسىل قىلىش ئۈچۈن توشۇش ئادرېسى بولۇشى كېرەك
+    errors_prohibited_this_record_from_being_saved:
+      one: 1 خاتالىق بۇ خاتىرىنىڭ ساقلىنىشىنى چەكلىدى
+      other: "%{count} خاتالىق بۇ خاتىرىنىڭ ساقلىنىشىنى چەكلىدى"
+    event: Event
+    events:
+      spree:
+        cart:
+          add: ھارۋىغا قوشۇڭ
+        checkout:
+          coupon_code_added: Coupon كودى قوشۇلدى
+        content:
+          visited: تۇراقلىق مەزمۇن بېتىنى زىيارەت قىلىڭ
+        order:
+          contents_changed: زاكاز مەزمۇنى ئۆزگەرتىلدى
+        page_view: تۇراقلىق بەت كۆرۈلدى
+        user:
+          signup: ئىشلەتكۈچى تىزىملىتىشى
+    exceptions:
+      count_on_hand_setter: 'قايتا ھېسابلاش_ ھېسابلاش_ چاقىرىش ئارقىلىق ئاپتوماتىك تەڭشەلگەچكە ، سان_ قول_نى قولدا تەڭشىيەلمەيدۇ. ئۇنىڭ ئورنىغا `update_column (: count_on_hand, value)` نى ئىشلىتىڭ.'
+    exchange_for: ئالماشتۇرۇش
+    excl: excl.
+    existing_shipments: ھازىر بار بولغان ماللار
+    expedited_exchanges_warning: ھەر قانداق بەلگىلەنگەن ئالماشتۇرۇش تېجەپ بولغاندىن كېيىن دەرھال خېرىدارغا ئەۋەتىلىدۇ. ئەگەر خېرىدارلار %{days_window} كۈن ئىچىدە ئەسلىدىكى نەرسىنى قايتۇرمىسا ، مالنىڭ تولۇق سوممىسىنى ئالىدۇ.
+    expiration: ۋاقتى توشىدۇ
+    expiration_date: مۇددىتى توشقان ۋاقىت
+    extension: كېڭەيتىش
+    extensions_directory: كېڭەيتىلمە مۇندەرىجىسى
+    facebook: Facebook
+    failed_payment_attempts: مەغلۇب بولغان پۇل تۆلەش سىنىقى
+    filename: ھۆججەت ئىسمى
+    fill_in_customer_info: خېرىدارلارنىڭ ئۇچۇرلىرىنى تولدۇرۇڭ
+    filter: سۈزگۈچ
+    filter_results: سۈزگۈچ نەتىجىسى
+    filterable: سۈزگىلى بولىدۇ
+    finalize: ئاخىرلاشتۇرۇڭ
+    finalized: ئاخىرلاشتى
+    find_a_taxon: تاكسون تاپ
+    first_item: بىرىنچى تۈر
+    first_name: بىرىنچى ئىسمى
+    first_name_begins_with: ئىسمى بىلەن باشلىنىدۇ
+    firstname: بىرىنچى ئىسمى
+    flat_percent: تەكشى پىرسەنت
+    flat_rate_per_order: تەكشى باھا
+    flexible_rate: ئەۋرىشىم نىسبىتى
+    follow_us: بىزگە ئەگىشىڭ
+    footer: Footer
+    forgot_password: پارولنى ئۇنتۇپ قالدىڭىزمۇ؟
+    free: ھەقسىز
+    free_shipping: ھەقسىز توشۇش
+    free_shipping_amount: "-"
+    front_end: Front End
+    gateway: دەرۋازا
+    gateway_error: دەرۋازا خاتالىقى
+    general: General
+    general_settings: ئادەتتىكى تەڭشەكلەر
+    generate_code: تالون كودى ھاسىل قىلىڭ
+    get_back_to_the: قايتىڭ
+    go_to_category: كاتېگورىيەگە بېرىڭ
+    go_to_facebook: Facebook قا كىرىڭ
+    go_to_homepage: باش بەتكە بېرىڭ
+    go_to_instagram: Instagram غا كىرىڭ
+    go_to_twitter: Twitter غا كىرىڭ
+    guest_checkout: مېھمان كۈتۈش
+    guest_user_account: مېھمان سۈپىتىدە چىقىم قىلىش
+    has_no_shipped_units: توشۇلغان ئورۇن يوق
+    header_banner: بەت بېشى
+    height: ئېگىزلىكى
+    help_center: ياردەم مەركىزى
+    hide_from_subcategories_nav: تارماق سەھىپىلەردىن يوشۇرۇش
+    home: ئۆي
+    home_page: باش بەت
+    i18n:
+      available_locales: ئىشلەتكىلى بولىدىغان جايلار
+      country: دۆلەت
+      default_country: كۆڭۈلدىكى دۆلەت
+      fields: مەيدان
+      language: تىل
+      localization_settings: يەرلىكلەشتۈرۈش تەڭشەكلىرى
+      only_complete: پەقەت تامام
+      only_incomplete: پەقەت تولۇق ئەمەس
+      select_locale: يەرلىكنى تاللاڭ
+      show_only: پەقەت كۆرسەت
+      supported_locales: قوللايدىغان يەرلىكلەر
+      translations: تەرجىمە
+    icon: سىنبەلگە
+    id: Id
+    image: رەسىم
+    images: سۈرەتلەر
+    implement_eligible_for_return: 'چوقۇم # لاياقەتلىك_ قايتۇرۇش_ يولغا قويۇشى كېرەكمۇ؟ سىزنىڭ لاياقەتلىكلىكىڭىز ئۈچۈن.'
+    implement_requires_manual_intervention: "#Requires_manual_intervention نى ئىجرا قىلىشى كېرەكمۇ؟ سىزنىڭ لاياقەتلىكلىكىڭىز ئۈچۈن."
+    in_stock: پاي چېكىدە
+    inactive: ھەرىكەتسىز
+    incl: incl.
+    included_in_price: باھاغا كىرگۈزۈلگەن
+    included_price_validation: سۈكۈتتىكى باج رايونىنى بەلگىلىمىسىڭىز تاللىغىلى بولمايدۇ
+    incomplete: تولۇق ئەمەس
+    info_number_of_skus_not_shown:
+      one: يەنە بىرى
+      other: ۋە %{count} باشقىلار
+    info_product_has_multiple_skus: 'بۇ مەھسۇلاتنىڭ %{count} نۇسخىلىرى بار:'
+    instagram: Instagram
+    instructions_to_reset_password: ئېلېكترونلۇق خەتنى تۆۋەندىكى جەدۋەلگە كىرگۈزۈڭ
+    insufficient_stock: پاي چېكى يېتەرلىك ئەمەس ، پەقەت %{on_hand} قالدى
+    insufficient_stock_item_quantity: پاي چېكى يېتەرلىك ئەمەس
+    insufficient_stock_lines_present: بۇ تەرتىپتىكى بەزى قۇر تۈرلىرىنىڭ سانى يېتەرلىك ئەمەس.
+    intercept_email_address: ئېلېكترونلۇق خەت ئادرېسىنى توسۇش
+    intercept_email_instructions: ئېلېكترونلۇق خەت تاپشۇرۇۋالغۇچىنى قاپلاپ ، بۇ ئادرېسنى ئالماشتۇرۇڭ.
+    internal_name: ئىچكى ئىسمى
+    internationalization: خەلقئارالىشىش
+    invalid_credit_card: ئىناۋەت كارتىسى ئىناۋەتسىز.
+    invalid_exchange_variant: ئىناۋەتسىز ئالماشتۇرۇش ۋارىيانتى.
+    invalid_payment_provider: ئىناۋەتسىز پۇل تۆلىگۈچى.
+    invalid_promotion_action: ئىناۋەتسىز ھەرىكەت.
+    invalid_promotion_rule: ئىناۋەتسىز تەشۋىق قىلىش قائىدىسى.
+    inventory: كەشپىيات
+    inventory_adjustment: كەشپىياتنى تەڭشەش
+    inventory_error_flash_for_insufficient_quantity: ھارۋىڭىزدىكى بىر نەرسە تېپىلمىدى.
+    inventory_state: كەشپىيات دۆلىتى
+    is_not_available_to_shipment_address: توشۇش ئادرېسىنى ئىشلەتكىلى بولمايدۇ
+    iso: ISO Alpha-2
+    iso3: ISO Alpha-3
+    iso_name: ISO ئىسمى
+    issued_on: تارقىتىلغان
+    item: Item
+    item_description: تۈر چۈشەندۈرۈشى
+    item_total: تۈر ئومۇمىي
+    item_total_rule:
+      operators:
+        gt: ئۇنىڭدىنمۇ چوڭ
+        gte: ئۇنىڭدىن چوڭ ياكى تەڭ
+        lt: ئۇنىڭدىن تۆۋەن
+        lte: ئۇنىڭدىن تۆۋەن ياكى تەڭ
+    items_cannot_be_shipped: تاللانغان تۈرلەرنىڭ توشۇش نىسبىتىنى ھېسابلىيالمايمىز.
+    items_in_rmas: قايتۇرۇش ھوقۇقىدىكى تۈرلەر
+    items_reimbursed: تۈرلەر قايتۇرۇلدى
+    items_to_be_reimbursed: قايتۇرۇلىدىغان تۈرلەر
+    join_slack: Slack غا قوشۇلۇڭ
+    last_name: فامىلىسى
+    last_name_begins_with: فامىلىسى باشلىنىدۇ
+    lastname: فامىلىسى
+    learn_more: تەپسىلاتى
+    lifetime_stats: ئۆمۈرلۈك سانلىق مەلۇمات
+    limit_usage_to: ئىشلىتىشنى چەكلەڭ
+    line_item_adjustments: قۇر تۈرلىرىنى تەڭشەش
+    list: تىزىملىك
+    loading: يۈكلەۋاتىدۇ
+    loading_tree: دەرەخ يۈكلەۋاتىدۇ. ساقلاپ تۇرۇڭ…
+    locale_changed: يەرلىك ئۆزگەرتىلدى
+    location: ئورنى
+    lock: قۇلۇپ
+    log_entries: خاتىرە تۈرلىرى
+    log_in: كىرىڭ
+    log_in_to_continue: داۋاملاشتۇرۇش ئۈچۈن كىرىڭ
+    logged_in_as: تىزىمغا كىردى
+    logged_in_succesfully: مۇۋەپپەقىيەتلىك تىزىمغا كىردى
+    logged_out: سىز چىقىپ كەتتىڭىز.
+    login: كىرىش
+    login_as_existing: مەۋجۇت خېرىدار سۈپىتىدە كىرىڭ
+    login_failed: كىرىش دەلىللەش مەغلۇب بولدى.
+    login_name: كىرىش
+    logo: Logo
+    logo_alt: ماركا بەلگىسى
+    logout: Logout
+    logs: خاتىرە
+    look_for_similar_items: مۇشۇنىڭغا ئوخشاش تۈرلەرنى ئىزدەڭ
+    mail_from_address: ئادرېستىن كەلگەن خەت
+    mailer_logo: خەت ساندۇقى (پەقەت JPG ياكى PNG رەسىملىرى)
+    make_refund: پۇلنى قايتۇرۇڭ
+    make_sure_the_above_reimbursement_amount_is_correct: يۇقارقى تۆلەم سوممىسىنىڭ توغرا بولۇشىغا كاپالەتلىك قىلىڭ
+    manage_promotion_categories: تەشۋىق تۈرلىرىنى باشقۇرۇش
+    manage_variants: ۋارىيانتلارنى باشقۇرۇش
+    manual_intervention_required: قولدا ئارىلىشىش تەلەپ قىلىنىدۇ
+    master: ئۇستاز
+    master_price: Master Price
+    master_sku: Master SKU
+    match_choices:
+      all: ھەممىسى
+      none: ياق
+    max_items: Max Items
+    member_since: ئەزادىن باشلاپ
+    memo: Memo
+    meta_description: Meta Description
+    meta_keywords: Meta ئاچقۇچلۇق سۆزلەر
+    meta_title: Meta Title
+    metadata: Metadata
+    minimal_amount: ئەڭ تۆۋەن سومما
+    missing_return_authorization: "%{item_name} نىڭ قايتىش ھوقۇقى يوق."
+    month: ئاي
+    more: تېخىمۇ كۆپ
+    move_stock_between_locations: ئورۇننى يۆتكەڭ
+    move_variant_to: ئۆزگەرگۈچى مىقدارنى يۆتكەڭ
+    multiple_stores: كۆپ دۇكان
+    mutable: Mutable
+    my_account: ھېساباتىم
+    my_orders: مېنىڭ بۇيرۇقلىرىم
+    name: ئىسمى
+    name_on_card: كارتىدىكى ئىسىم
+    name_or_sku: ئىسىم ياكى SKU (مەھسۇلات نامىنىڭ كەم دېگەندە ئالدىنقى 3 ھەرپنى كىرگۈزۈڭ)
+    nav_bar:
+      admin_panel: باشقۇرۇش تاختىسى
+      change_country: دۆلەتنى ئۆزگەرتىش
+      close_menu: تىزىملىكنى تاقاش
+      desktop: ئۈستەل يۈزى يول باشلاش
+      go_to_previous_menu: ئالدىنقى تىزىملىككە كىرىڭ
+      log_in: LOG IN
+      log_out: LOG OUT
+      mobile: كۆچمە يول باشلاش
+      my_account: MY ACCOUNT
+      my_orders: MY ORDERS
+      show_menu: تىزىملىكنى كۆرسىتىش
+      show_search: ئىزدەشنى كۆرسەت
+      show_user_menu: ئىشلەتكۈچى تىزىملىكىنى كۆرسەت
+      sign_up: SIGN UP
+    new: يېڭى
+    new_adjustment: يېڭى تەڭشەش
+    new_country: يېڭى دۆلەت
+    new_customer: يېڭى ھېسابات قۇر
+    new_customer_return: يېڭى خېرىدار قايتىش
+    new_image: يېڭى رەسىم
+    new_option_type: يېڭى تاللاش تىپى
+    new_order: يېڭى تەرتىپ
+    new_order_completed: يېڭى زاكاز تاماملاندى
+    new_order_notifications_email: يېڭى زاكاز ئۇقتۇرۇشى ئېلېكترونلۇق خەت
+    new_payment: يېڭى ھەق
+    new_payment_method: يېڭى ھەق تۆلەش ئۇسۇلى
+    new_product: يېڭى مەھسۇلات
+    new_promotion: يېڭى تەشۋىق
+    new_promotion_category: يېڭى تەشۋىقات تۈرى
+    new_property: يېڭى مۈلۈك
+    new_prototype: يېڭى Prototype
+    new_refund: يېڭى پۇل قايتۇرۇش
+    new_refund_reason: يېڭى پۇل قايتۇرۇش سەۋەبى
+    new_reimbursement_type: يېڭى تۆلەم تۈرى
+    new_return_authorization: يېڭى قايتىش ھوقۇقى
+    new_rma_reason: يېڭى RMA سەۋەبى
+    new_role: يېڭى رول
+    new_shipment_at_location: جايىدا يېڭى مال ئەۋەتىش
+    new_shipping_category: يېڭى توشۇش تۈرى
+    new_shipping_method: يېڭى توشۇش ئۇسۇلى
+    new_state: يېڭى شىتات
+    new_stock_location: يېڭى پاي ئورنى
+    new_stock_movement: يېڭى پاي ھەرىكىتى
+    new_stock_transfer: يېڭى پاي يۆتكەش
+    new_store_credit: يېڭى دۇكان ئىناۋىتى
+    new_store_credit_category: يېڭى دۇكان ئىناۋەت تۈرى
+    new_tax_category: يېڭى باج تۈرى
+    new_tax_rate: يېڭى باج نىسبىتى
+    new_taxon: يېڭى تاكسون
+    new_taxonomy: New Taxonomy
+    new_tracker: يېڭى ئىزچى
+    new_user: يېڭى ئىشلەتكۈچى
+    new_variant: يېڭى ۋارىيانت
+    new_zone: يېڭى رايون
+    next: كېيىنكى
+    no_actions_added: ھېچقانداق ھەرىكەت قوشۇلمىدى
+    no_address_given: ئادرېس بېرىلمىدى
+    no_available_date_set: ئىشلەتكىلى بولىدىغان ۋاقىت بېكىتىلمىدى
+    no_cc_type: N / A.
+    no_country: ھېچقانداق دۆلەت قۇرۇلمىدى
+    no_limits_zone: چەكلىمىسى يوق
+    no_payment_found: ھېچقانداق پۇل تېپىلمىدى
+    no_payment_provider_settings_message: بۇ پۇل تۆلىگۈچىنىڭ ئىختىيارى تەڭشىكى يوق
+    no_pending_payments: ساقلىنىۋاتقان پۇل يوق
+    no_product_available:
+      for_this_quantity: كەچۈرۈڭ ، قارىماققا بەزى مەھسۇلاتلار تاللانغان مىقداردا تېپىلمىغاندەك قىلىدۇ.
+      opps: ئاپلا!
+    no_products_found: ھېچقانداق مەھسۇلات تېپىلمىدى
+    no_resource_found: "%{resource} تېپىلمىدى"
+    no_results: ھېچقانداق نەتىجە يوق
+    no_returns_found: ھېچقانداق جاۋاب تېپىلمىدى
+    no_rules_added: ھېچقانداق قائىدە قوشۇلمىدى
+    no_shipping_method_selected: توشۇش ئۇسۇلى تاللانمىدى.
+    no_state_changes: دۆلەت ئۆزگەرمىدى.
+    no_tracking_present: ئىز قوغلاش تەپسىلاتلىرى تەمىنلەنمىدى.
+    none: ياق
+    none_selected: ھېچكىم تاللانمىدى
+    normal_amount: نورمال سومما
+    not: ئەمەس
+    not_available: N / A.
+    not_enough_stock: بۇ يۆتكىلىشنى تاماملاش ئۈچۈن مەنبە ئورنىدا يېتەرلىك ئامبار يوق.
+    not_found: "%{resource} تېپىلمىدى"
+    note: دىققەت
+    notice_messages:
+      icon_removed: رەسىم مۇۋەپپەقىيەتلىك ئۆچۈرۈلدى
+      prices_saved: باھا مۇۋەپپەقىيەتلىك ساقلاندى
+      product_cloned: مەھسۇلات كلونلانغان
+      product_deleted: مەھسۇلات ئۆچۈرۈلدى
+      product_not_cloned: 'مەھسۇلاتنى كلونلاشقا بولمايدۇ. سەۋەبى: %{error}'
+      product_not_deleted: 'مەھسۇلاتنى ئۆچۈرگىلى بولمايدۇ. سەۋەبى: %{error}'
+      variant_deleted: ۋارىيانت ئۆچۈرۈلدى
+      variant_not_deleted: 'ئۆزگەرگۈچى مىقدارنى ئۆچۈرگىلى بولمايدۇ. سەۋەبى: %{error}'
+    num_orders: "# بۇيرۇق"
+    number: سان
+    ok: ماقۇل
+    on_hand: قولدا
+    open: ئېچىڭ
+    open_all_adjustments: بارلىق تەڭشەكلەرنى ئېچىڭ
+    option_type: تاللاش تىپى
+    option_type_placeholder: تاللاش تۈرىنى تاللاڭ
+    option_types: تاللاش تۈرلىرى
+    option_value: تاللاش قىممىتى
+    option_values: تاللاش قىممىتى
+    optional: ئىختىيارىي
+    options: تاللانما
+    or: ياكى
+    or_over_price: "%{price} ياكى ئۇنىڭدىن يۇقىرى"
+    order: زاكاز
+    order_adjustments: زاكاز تەڭشەش
+    order_already_updated: زاكاز ئاللىقاچان يېڭىلاندى.
+    order_approved: زاكاز تەستىقلاندى
+    order_canceled: زاكاز ئەمەلدىن قالدۇرۇلدى
+    order_details: زاكاز تەپسىلاتلىرى
+    order_email_resent: زاكاز ئېلخەت
+    order_has_no_payments: زاكازدا پۇل يوق
+    order_information: زاكاز ئۇچۇرى
+    order_line_items: زاكاز لىنىيىسى تۈرلىرى
+    order_mailer:
+      cancel_email:
+        dear_customer: ھۆرمەتلىك %{name},
+        instructions: زاكازڭىز بىكار قىلىندى. خاتىرىڭىز ئۈچۈن بۇ بىكار قىلىش ئۇچۇرىنى ساقلاپ قويۇڭ.
+        order_summary_canceled: زاكاز %{number} خۇلاسە [CANCELED]
+        subject: تەرتىپنى ئەمەلدىن قالدۇرۇش
+        thanks: سودىڭىزغا رەھمەت.
+      confirm_email:
+        dear_customer: ھۆرمەتلىك %{name},
+        instructions: خاتىرىلىرىڭىز ئۈچۈن تۆۋەندىكى زاكاز ئۇچۇرلىرىنى كۆرۈپ بېقىڭ.
+        order_summary: زاكاز %{number} خۇلاسە
+        subject: زاكاز جەزملەشتۈرۈش
+        thanks: سودىڭىزغا رەھمەت.
+      store_owner_notification_email:
+        heading: يېڭى زاكاز قوبۇل قىلىندى
+        instructions: يېڭى زاكاز تاپشۇرۇپ ئالدىڭىز.
+        order_summary: زاكاز %{number} خۇلاسە
+        subject: "%{store_name} يېڭى زاكاز قوبۇل قىلدى"
+        thanks: سودىڭىزغا رەھمەت.
+      store_team: "%{store_name} Team"
+      subtotal: 'Subtotal:'
+      total: 'زاكاز ئومۇمىي سانى:'
+    order_not_found: زاكازڭىزنى تاپالمىدۇق. بۇ ھەرىكەتنى قايتا سىناڭ.
+    order_number: زاكاز %{number}
+    order_processed_successfully: زاكازڭىز مۇۋەپپەقىيەتلىك بىر تەرەپ قىلىندى
+    order_resumed: زاكاز ئەسلىگە كەلدى
+    order_state:
+      address: ئادرېس
+      awaiting_return: قايتىشنى كۈتمەكتە
+      canceled: ئەمەلدىن قالدۇرۇلدى
+      cart: ھارۋا
+      complete: تامام
+      confirm: جەزملەشتۈرۈڭ
+      considered_risky: خەتەرلىك دەپ قارىلىدۇ
+      delivery: delivery
+      payment: پۇل تۆلەش
+      resumed: ئەسلىگە كەلدى
+      returned: قايتىپ كەلدى
+    order_success: زاكاز مۇۋەپپەقىيەتلىك ئورۇنلاشتۇرۇلدى
+    order_success_explain: زاكاز ئۇچۇرىڭىز ئېلېكترونلۇق خەتكە ئەۋەتىلىدۇ
+    order_summary: زاكاز خۇلاسىسى
+    order_sure_want_to: بۇ زاكازنى %{event} قىلماقچىمۇ؟
+    order_total: زاكاز ئومۇمىي
+    order_updated: زاكاز يېڭىلاندى
+    orders: زاكاز
+    out_of_stock: پاي چېكى يوق
+    overview: ئومۇمىي چۈشەنچە
+    package_from: بوغچا
+    page_not_found: كەچۈرۈڭ! سىز ئىزدەۋاتقان بەتنى تاپقىلى بولمايدۇ.
+    pagination:
+      next_page: كېيىنكى بەت & raquo;
+      previous_page: "& laquo; ئالدىنقى بەت"
+      truncate: "& hellip;"
+    password: پارول
+    paste: چاپلاش
+    path: Path
+    pay: مائاش
+    payment: چىقىم قىلىش
+    payment_amount: چىقىم سوممىسى
+    payment_could_not_be_created: پۇل تۆلىگىلى بولمايدۇ.
+    payment_identifier: ھەق تۆلىگۈچى
+    payment_information: چىقىم ئۇچۇرى
+    payment_method: چىقىم قىلىش ئۇسۇلى
+    payment_method_not_supported: ئۇ پۇل تۆلەش ئۇسۇلىنى قوللىمايدۇ. باشقا بىرىنى تاللاڭ.
+    payment_methods: چىقىم قىلىش ئۇسۇللىرى
+    payment_processing_failed: ھەقنى بىر تەرەپ قىلالمىدى ، كىرگۈزگەن تەپسىلاتلارنى تەكشۈرۈپ بېقىڭ
+    payment_processor_choose_banner_text: ھەق تۆلەش بىر تەرەپ قىلغۇچنى تاللاشقا ياردەمگە ئېھتىياجلىق بولسىڭىز ، زىيارەت قىلىڭ
+    payment_processor_choose_link: ھەق تۆلەش بېتىمىز
+    payment_provider_settings: چىقىم تەمىنلىگۈچى تەڭشەكلىرى
+    payment_state: چىقىم قىلىش ھالىتى
+    payment_states:
+      balance_due: تەڭپۇڭلۇق
+      checkout: چىقىمدان
+      completed: تاماملاندى
+      credit_owed: ئىناۋەتلىك قەرز
+      failed: مەغلۇپ بولدى
+      paid: ھەقلىق
+      pending: ساقلىنىۋاتىدۇ
+      processing: پىششىقلاپ ئىشلەش
+      void: void
+    payment_type: چىقىم تىپى
+    payment_updated: ھەق يېڭىلاندى
+    payments: چىقىم
+    pdp:
+      checkout: چىقىمدان
+      description: چۈشەندۈرۈش
+      details: تەپسىلاتى
+      products_included_in_promotion: تەشۋىقاتقا كىرگۈزۈلگەن مەھسۇلاتلار
+      quantity: سانى
+      view_cart: ھارۋىنى كۆرۈش
+      you_may_also_like: ياقتۇرۇشىڭىز مۇمكىن
+    pending: ساقلىنىۋاتىدۇ
+    pending_sale: ساقلىنىۋاتىدۇ
+    percent: پىرسەنت
+    percent_per_item: Percent Per Item
+    permalink: Permalink
+    phone: تېلېفون
+    place_order: ئورۇن تەرتىپى
+    please_define_payment_methods: ئالدى بىلەن بەزى پۇل تۆلەش ئۇسۇللىرىغا ئېنىقلىما بېرىڭ.
+    please_enter_reasonable_quantity: مۇۋاپىق مىقداردا كىرگۈزۈڭ.
+    plp:
+      best_selling: ئەڭ ياخشى سېتىش
+      clear_all: CLEAR ALL
+      collection: COLLECTION
+      color: COLOR
+      default: DEFAULT
+      done: DONE
+      filter_by: FILTER BY
+      newest_first: ئەڭ يېڭى بىرىنچى
+      no_results: ھېچقانداق نەتىجە يوق
+      no_results_found: ھېچقانداق نەتىجە تېپىلمىدى
+      not_found_filters1: بىز بۇ سۈزگۈچلەرگە ماس كېلىدىغان تاپالمىدۇق.
+      not_found_filters2: باشقا تاللاشنى سىناپ بېقىڭ.
+      not_found_text1: بىز '%{keywords}' ئۈچۈن مەھسۇلات تاپالمىدۇق.
+      not_found_text2: باشقا ئىزدەپ بېقىڭ.
+      price: باھاسى
+      price_high_to_low: PRICE (HIGH - LOW)
+      price_low_to_high: PRICE (LOW - HIGH)
+      result: RESULT
+      results_for: RESULTS FOR
+      size: SIZE
+      sort_by: SORT BY
+      top_sellers: TOP ساتقۇچىلار
+      type: TYPE
+    populate_get_error: چاتاق چىقتى. بۇ تۈرنى قايتا قوشۇپ سىناپ بېقىڭ.
+    powered_by: Powered by
+    pre_tax_amount: باجدىن بۇرۇنقى سومما
+    pre_tax_refund_amount: باجدىن بۇرۇنقى پۇل قايتۇرۇش سوممىسى
+    pre_tax_total: باجدىن بۇرۇنقى ئومۇمىي
+    preferred_reimbursement_type: ياقتۇرىدىغان تۆلەم تۈرى
+    presentation: Presentation
+    preview_product: مەھسۇلاتنى ئالدىن كۆرۈش
+    preview_taxon: باجنى ئالدىن كۆرۈش
+    previous: ئالدىنقى
+    previous_state_missing: n / a
+    previously_used_card: ئىلگىرى ئىشلىتىلگەن كارتا
+    price: باھاسى
+    price_range: باھا دائىرىسى
+    price_sack: باھا خالتىسى
+    prices: باھاسى
+    process: جەريان
+    product: مەھسۇلات
+    product_details: مەھسۇلات تەپسىلاتلىرى
+    product_has_no_description: بۇ مەھسۇلاتنىڭ چۈشەندۈرۈشى يوق
+    product_not_available_in_this_currency: بۇ مەھسۇلات تاللانغان پۇلدا يوق.
+    product_properties: مەھسۇلات خاسلىقى
+    product_rule:
+      choose_products: مەھسۇلاتلارنى تاللاڭ
+      label: زاكازدا چوقۇم بۇ مەھسۇلاتلارنىڭ x مىقدارى بولۇشى كېرەك
+      match_all: ھەممىسى
+      match_any: كەم دېگەندە بىر
+      match_none: none
+      product_source:
+        group: مەھسۇلات گۇرۇپپىسىدىن
+        manual: قولدا تاللاڭ
+    products: مەھسۇلاتلار
+    promotion: ئىلگىرى سۈرۈش
+    promotion_action: تەشۋىق قىلىش ھەرىكىتى
+    promotion_action_types:
+      create_adjustment:
+        description: زاكاز بويىچە تەشۋىقات ئىناۋىتىنى تەڭشەش ھاسىل قىلىدۇ
+        name: پۈتۈن تەرتىپلىك تەڭشەش ھاسىل قىلىڭ
+      create_item_adjustments:
+        description: قۇر تۈرىدە تەشۋىقات ئىناۋىتىنى تەڭشەش ھاسىل قىلىدۇ
+        name: ھەر بىر قۇرغا قارىتا تەڭشەش ئېلىپ بېرىڭ
+      create_line_items:
+        description: ھارۋىنى بەلگىلەنگەن مىقداردا ئۆزگەرتىدۇ
+        name: قۇر تۈرلىرىنى قۇر
+      free_shipping:
+        description: زاكاز ئۈچۈن بارلىق ماللارنى ھەقسىز قىلىدۇ
+        name: ھەقسىز توشۇش
+    promotion_actions: ھەرىكەتلەر
+    promotion_categories: تەشۋىق تۈرلىرى
+    promotion_category: تەشۋىق تۈرى
+    promotion_cloned: تەشۋىق كلونلانغان
+    promotion_form:
+      match_policies:
+        all: بۇ قائىدىلەرنىڭ ھەممىسىنى ماسلاشتۇرۇڭ
+        any: بۇ قائىدىلەرنىڭ خالىغان بىرىنى ماسلاشتۇرۇڭ
+    promotion_label: تەشۋىق (%{name})
+    promotion_not_cloned: 'تەشۋىق كلونلانمىدى. سەۋەبى: %{error}'
+    promotion_rule: تەشۋىق قائىدىسى
+    promotion_rule_types:
+      country:
+        description: زاكاز مۇۋاپىق (ياكى سۈكۈتتىكى) دۆلەتكە ئەۋەتىلىدۇ
+        name: دۆلەت
+      first_order:
+        description: چوقۇم خېرىدارنىڭ بىرىنچى بۇيرۇقى بولۇشى كېرەك
+        name: بىرىنچى تەرتىپ
+      item_total:
+        description: زاكاز ئومۇمىي مىقدارى بۇ ئۆلچەمگە ئۇيغۇن
+        name: تۈر ئومۇمىي
+      one_use_per_user:
+        description: ھەر بىر ئىشلەتكۈچىگە پەقەت بىرلا ئىشلىتىش
+        name: ھەر بىر ئىشلەتكۈچىگە بىر ئىشلىتىش
+      option_value:
+        description: زاكاز تاللانما قىممىتى (قىممىتى) ماس كېلىدىغان مەھسۇلات (مەھسۇلات) لارنى ئۆز ئىچىگە ئالىدۇ
+        name: تاللاش قىممىتى (لار)
+      product:
+        description: زاكاز بەلگىلەنگەن مەھسۇلات (لارنى) ئۆز ئىچىگە ئالىدۇ
+        name: مەھسۇلات (لار)
+      taxon:
+        description: زاكازدا بەلگىلەنگەن تاكسى (لار) بار مەھسۇلاتلار بار
+        name: تاكسون (لار)
+      user:
+        description: پەقەت كۆرسىتىلگەن ئىشلەتكۈچىلەرگىلا ئىشلىتىلىدۇ
+        name: ئىشلەتكۈچى
+      user_logged_in:
+        description: پەقەت تىزىملاتقان ئىشلەتكۈچىلەرگىلا ئىشلىتىلىدۇ
+        name: ئىشلەتكۈچى تىزىمغا كىردى
+    promotion_uses: تەشۋىق قىلىش ئىشلىتىلىدۇ
+    promotionable: ئىلگىرى سۈرگىلى بولىدۇ
+    promotions: تەشۋىق
+    propagate_all_variants: بارلىق ۋارىيانتلىرىنى تەشۋىق قىلىڭ
+    properties: خاسلىقى
+    property: مۈلۈك
+    prototype: Prototype
+    prototypes: ئەسلى تىپ
+    provider: تەمىنلىگۈچى
+    provider_settings_warning: ئەگەر تەمىنلىگۈچىنىڭ تىپىنى ئۆزگەرتمەكچى بولسىڭىز ، تەمىنلىگۈچىنىڭ تەڭشىكىنى تەھرىرلەشتىن بۇرۇن ئالدى بىلەن ساقلىشىڭىز كېرەك
+    purchased_quantity: سېتىۋالغان مىقدار
+    qty: Qty
+    quantity: سانى
+    quantity_returned: سانى قايتۇرۇلدى
+    quantity_shipped: توشۇلغان سان
+    quick_search: تېز ئىزدەش ..
+    rate: باھا
+    reason: سەۋەبى
+    receive: قوبۇل قىلىڭ
+    receive_stock: پاي چېكىگە ئېرىشىش
+    received: قوبۇل قىلىندى
+    reception_status: قوبۇل قىلىش ھالىتى
+    reference: پايدىلانما
+    reference_contains: پايدىلانما مەزمۇننى ئۆز ئىچىگە ئالىدۇ
+    refund: پۇل قايتۇرۇش
+    refund_amount_must_be_greater_than_zero: قايتۇرۇش سوممىسى نۆلدىن يۇقىرى بولۇشى كېرەك
+    refund_reasons: پۇل قايتۇرۇش سەۋەبى
+    refunded_amount: قايتۇرۇلغان سومما
+    refunds: پۇل قايتۇرۇش
+    register: تىزىملىتىڭ
+    registration: تىزىملىتىش
+    reimburse: تۆلەم
+    reimbursed: قايتۇرۇلغان
+    reimbursement: تۆلەم
+    reimbursement_mailer:
+      reimbursement_email:
+        days_to_send: ئالماشتۇرۇشنى ساقلاۋاتقان نەرسىلەرنى قايتۇرۇش ئۈچۈن %{days} كۈن بار.
+        dear_customer: ھۆرمەتلىك %{name},
+        exchange_summary: ئالماشتۇرۇش خۇلاسىسى
+        for: for
+        instructions: سىزنىڭ تولۇقلىما پۇلىڭىز بىر تەرەپ قىلىندى.
+        refund_summary: پۇل قايتۇرۇش
+        store_team: "%{store_name} Team"
+        subject: تۆلەم ئۇقتۇرۇشى
+        thanks: سودىڭىزغا رەھمەت.
+        total_refunded: 'قايتۇرۇلغان ئومۇمىي سومما: %{total}'
+    reimbursement_perform_failed: 'تۆلەمنى ئادا قىلغىلى بولمايدۇ. خاتالىق: %{error}'
+    reimbursement_status: تۆلەم ھالىتى
+    reimbursement_type: تۆلەم تۈرى
+    reimbursement_type_override: تۆلەم تۈرى قاپلاپ كەتتى
+    reimbursement_types: تۆلەم تۈرلىرى
+    reimbursements: تۆلەم
+    reject: رەت قىلىش
+    rejected: رەت قىلىندى
+    remember_me: مېنى ئېسىڭىزدە تۇتۇڭ
+    remove: ئۆچۈرۈڭ
+    remove_image: رەسىمنى ئۆچۈرۈڭ
+    rename: ئىسىمنى ئۆزگەرتىش
+    report: دوكلات
+    reports: دوكلات
+    required: "*"
+    required_fields: لازىملىق ساھە
+    resellable: قايتا ساتقىلى بولىدۇ
+    resend: Resend
+    reset_password: پارولىمنى ئەسلىگە كەلتۈرۈڭ
+    response_code: جاۋاب كودى
+    resume: ئەسلىگە كەلتۈرۈش
+    resumed: ئەسلىگە كەلدى
+    return: قايتىش
+    return_authorization: ھوقۇق بېرىش
+    return_authorization_canceled: قايتۇرۇش ھوقۇقى بىكار قىلىندى
+    return_authorization_reasons: ھوقۇق بېرىش سەۋەبى
+    return_authorization_states:
+      authorized: ھوقۇق بېرىلگەن
+      canceled: ئەمەلدىن قالدۇرۇلدى
+    return_authorization_updated: ھوقۇق بېرىش يېڭىلاندى
+    return_authorizations: ھوقۇق بېرىش
+    return_item_inventory_unit_ineligible: قايتۇرۇلغان بۇيۇمنىڭ ئامبار زاپىسى چوقۇم ئەۋەتىلىشى كېرەك
+    return_item_inventory_unit_reimbursed: قايتۇرۇلغان بۇيۇمنىڭ ئامبار زاپىسى ئاللىقاچان قايتۇرۇلغان
+    return_item_order_not_completed: مال قايتۇرۇش بۇيرۇقى چوقۇم تاماملىنىشى كېرەك
+    return_item_rma_ineligible: قايتۇرۇش تۈرى RMA تەلەپ قىلىدۇ
+    return_item_time_period_ineligible: قايتۇرۇش تۈرى لاياقەتلىك ۋاقىتنىڭ سىرتىدا
+    return_items: تۈرلەرنى قايتۇرۇش
+    return_items_cannot_be_associated_with_multiple_orders: قايتۇرۇش تۈرلىرىنى كۆپ زاكاز بىلەن باغلىغىلى بولمايدۇ.
+    return_number: قايتىش نومۇرى
+    return_quantity: قايتىش سانى
+    returned: قايتىپ كەلدى
+    returns: قايتىدۇ
+    review: Review
+    risk: خەتەر
+    risk_analysis: خەتەر ئانالىزى
+    risky: Risky
+    rma_credit: RMA Credit
+    rma_number: RMA نومۇرى
+    rma_value: RMA قىممىتى
+    role_id: رول كىملىكى
+    roles: رولى
+    rules: قائىدە
+    safe: بىخەتەر
+    sales_total: سېتىش ئومۇمىي سانى
+    sales_total_description: بارلىق زاكازلارنىڭ ئومۇمىي سېتىلىش مىقدارى
+    sales_totals: سېتىش ئومۇمىي سانى
+    save_and_continue: ساقلاش ۋە داۋاملاشتۇرۇش
+    save_my_address: ئادرېسىمنى ساقلىۋېلىڭ
+    saving: تېجەش
+    say_no: ياق
+    say_yes: ھەئە
+    scope: دائىرىسى
+    search: ئىزدەش
+    search_results: ئىزدەش نەتىجىسى '%{keywords}'
+    searching: ئىزدەش
+    secure_connection_type: بىخەتەر ئۇلىنىش تىپى
+    security_settings: بىخەتەرلىك تەڭشەكلىرى
+    select: تاللاڭ
+    select_a_date: چېسلانى تاللاڭ
+    select_a_date_range: چېسلا دائىرىسىنى تاللاڭ
+    select_a_return_authorization_reason: قايتۇرۇش ھوقۇقىنىڭ سەۋەبىنى تاللاڭ
+    select_a_stock_location: پاي ئورنىنى تاللاڭ
+    select_a_store_credit_reason: دۇكان ئىناۋىتىنىڭ سەۋەبىنى تاللاڭ
+    select_an_option: بىر تاللاشنى تاللاڭ
+    select_from_prototype: Prototype دىن تاللاڭ
+    select_stock: پاينى تاللاڭ
+    selected_quantity_not_available: "%{item} دىن تاللانغان."
+    send_copy_of_all_mails_to: بارلىق خەتلەرنىڭ كۆپەيتىلگەن نۇسخىسىنى ئەۋەتىڭ
+    send_mails_as: خەت ئەۋەتىش
+    seo: SEO
+    seo_robots: SEO ماشىنا ئادەملىرى
+    seo_title: SEO Title
+    server: مۇلازىمېتىر
+    server_error: مۇلازىمېتىر خاتالىق قايتۇردى
+    settings: تەڭشەك
+    ship: پاراخوت
+    ship_address: پاراخوت ئادرېسى
+    ship_to: 'توشۇش:'
+    ship_total: Ship Total
+    shipment: مال ئەۋەتىش
+    shipment_adjustments: مال ئەۋەتىشنى تەڭشەش
+    shipment_details: "%{stock_location} ئارقىلىق %{shipping_method} دىن"
+    shipment_mailer:
+      shipped_email:
+        dear_customer: ھۆرمەتلىك %{name},
+        instructions: زاكاز %{number} ئەۋەتىلدى
+        shipment_summary: زاكاز مال ئەۋەتىش خۇلاسىسى
+        shipping_method: 'توشۇش ئۇسۇلى: %{shipping_method}'
+        store_team: "%{store_name} Team"
+        subject: مال ئەۋەتىش ئۇقتۇرۇشى
+        thanks: سودىڭىزغا رەھمەت.
+        track_information: 'ئىز قوغلاش ئۇچۇرى: %{tracking}'
+        track_link: 'ئىز قوغلاش ئۇلىنىشى: %{url}'
+    shipment_state: توشۇش ھالىتى
+    shipment_states:
+      backorder: backorder
+      canceled: ئەمەلدىن قالدۇرۇلدى
+      partial: قىسمەن
+      pending: ساقلىنىۋاتىدۇ
+      ready: تەييار
+      shipped: توشۇلدى
+    shipment_transfer_error: ئۆزگەرگۈچى مىقدارنى يۆتكەشتە خاتالىق كۆرۈلدى
+    shipment_transfer_success: ۋارىيانتلار مۇۋەپپەقىيەتلىك يۆتكەلدى
+    shipments: مال ئەۋەتىش
+    shipped: ئەۋەتىلدى
+    shipping: توشۇش
+    shipping_address: توشۇش ئادرېسى
+    shipping_categories: توشۇش تۈرلىرى
+    shipping_category: توشۇش تۈرى
+    shipping_flat_rate_per_item: ھەر بىر بولاقنىڭ تەكشى نىسبىتى
+    shipping_flat_rate_per_order: تەكشىلىك نىسبىتى
+    shipping_flexible_rate: ھەر بىر بولاق تۈرىنىڭ ئەۋرىشىم نىسبىتى
+    shipping_instructions: توشۇش كۆرسەتمىسى
+    shipping_method: توشۇش ئۇسۇلى
+    shipping_methods: توشۇش ئۇسۇلى
+    shipping_price_sack: باھا خالتىسى
+    shipping_rates:
+      display_price:
+        excluding_tax: "%{price} (+ %{tax_amount} %{tax_rate_name})"
+        including_tax: "%{price} (%{tax_amount} %{tax_rate_name} نى ئۆز ئىچىگە ئالىدۇ)"
+    shipping_total: توشۇش ئومۇمىي سانى
+    shop_by_taxonomy: "%{taxonomy} تەرىپىدىن سېتىۋېلىڭ"
+    shopping_cart: مال سېتىۋېلىش ھارۋىسى
+    show: Show
+    show_active: ئاكتىپ كۆرسىتىش
+    show_deleted: ئۆچۈرۈلگەنلىكىنى كۆرسىتىش
+    show_discontinued: توختىتىلغانلىقىنى كۆرسىتىش
+    show_only_complete_orders: پەقەت تولۇق زاكازنىلا كۆرسىتىڭ
+    show_only_considered_risky: پەقەت خەتەرلىك زاكازلارنىلا كۆرسىتىڭ
+    show_property: مۈلۈكنى كۆرسىتىش
+    show_rate_in_label: بەلگىنى كۆرسەت
+    show_store_selector:
+      long: دۇكان تاللىغۇچنى Storefront نىڭ ئاساسلىق nav بالدىقىدا كۆرسىتىڭ ھەمدە ئىشلەتكۈچىلەرنىڭ دۇكان ۋە پۇلنى ئالماشتۇرۇشىغا يول قويۇڭ
+      short: دۇكان تاللىغۇچنى كۆرسىتىش
+    sign_up: تىزىملىتىڭ
+    sku: SKU
+    skus: SKUs
+    slug: Slug
+    social: ئىجتىمائىي
+    source: مەنبە
+    special_instructions: ئالاھىدە كۆرسەتمە
+    split: Split
+    spree_gateway_error_flash_for_checkout: ھەق تۆلەش ئۇچۇرلىرىڭىزدا مەسىلە كۆرۈلدى. ئۇچۇرلىرىڭىزنى تەكشۈرۈپ قايتا سىناڭ.
+    ssl:
+      change_protocol: HTTP (HTTPS ئەمەس) نى ئىشلىتىپ بۇ تەلەپنى قايتا سىناڭ.
+    start: باشلاش
+    starting_from: باشلىنىدۇ
+    state: دۆلەت
+    state_based: State based
+    state_machine_states:
+      accepted: قوبۇل قىلىندى
+      address: ئادرېس
+      authorized: ھوقۇق بېرىلگەن
+      awaiting: كۈتۈش
+      awaiting_return: قايتىشنى كۈتمەكتە
+      backordered: كەينىگە زاكاز قىلىندى
+      canceled: ئەمەلدىن قالدۇرۇلدى
+      cart: ھارۋا
+      checkout: چىقىمدان
+      closed: تاقالدى
+      complete: تامام
+      completed: تاماملاندى
+      confirm: جەزملەشتۈرۈڭ
+      delivery: يەتكۈزۈش
+      errored: خاتا
+      failed: مەغلۇب بولدى
+      given_to_customer: خېرىدارغا بېرىلگەن
+      invalid: ئىناۋەتسىز
+      manual_intervention_required: قولدا ئارىلىشىش تەلەپ قىلىنىدۇ
+      on_hand: قولىدا
+      open: ئېچىڭ
+      order: زاكاز
+      payment: چىقىم قىلىش
+      pending: ساقلىنىۋاتىدۇ
+      processing: بىر تەرەپ قىلىش
+      ready: تەييار
+      reimbursed: قايتۇرۇلغان
+      resumed: ئەسلىگە كەلدى
+      returned: قايتىپ كەلدى
+      shipment: مال ئەۋەتىش
+      shipped: ئەۋەتىلدى
+      void: Void
+    states: States
+    states_required: States Required
+    status: ھالەت
+    stock: پاي چېكى
+    stock_item_id: پاي چېكى
+    stock_location: پاي چېكى ئورنى
+    stock_location_info: زاپاس ئورۇن ئۇچۇرى
+    stock_locations: پاي چېكى ئورنى
+    stock_locations_need_a_default_country: پاي چېكى ئورنى قۇرۇشتىن بۇرۇن چوقۇم سۈكۈتتىكى دۆلەت قۇرۇشىڭىز كېرەك.
+    stock_management: پاي باشقۇرۇش
+    stock_management_requires_a_stock_location: پاينى باشقۇرۇش ئۈچۈن پاي ئورنى قۇرۇڭ.
+    stock_movements: پاي چېكى ھەرىكىتى
+    stock_movements_for_stock_location: "%{stock_location_name} نىڭ پاي ھەرىكىتى"
+    stock_successfully_transferred: پايلار ئورۇنلار ئارا مۇۋەپپەقىيەتلىك يۆتكەلدى.
+    stock_transfer:
+      errors:
+        must_have_variant: كەم دېگەندە بىر خىل ۋارىيانت قوشۇشىڭىز كېرەك.
+        variants_unavailable: "%{stock} دا بەزى ۋارىيانتلارنى ئىشلەتكىلى بولمايدۇ"
+    stock_transfer_name: پاي چېكى يۆتكەش
+    stock_transfers: پاي چېكى يۆتكەش
+    stop: توختاڭ
+    store: دۇكان
+    store_credit:
+      additional_payment_needed: قالغان <strong> %{amount} </strong> ئۈچۈن باشقا پۇل تۆلەش ئۇسۇلىنى تاللاڭ.
+      allocated: قوشۇلدى
+      applicable_amount: بۇ زاكازغا دۇكان ئىناۋىتىدىكى <strong> %{amount} </strong> قوللىنىلىدۇ.
+      apply: ئىلتىماس قىلىڭ
+      authorized: ھوقۇق بېرىلگەن
+      available_amount: دۇكان ئىناۋىتىڭىزدە <strong> %{amount} </strong> بار!
+      captured: ئىشلىتىلگەن
+      credit: كرېدىت
+      errors:
+        cannot_change_used_store_credit: ئاللىبۇرۇن ئىشلىتىلگەن دۇكان ئىناۋىتىنى ئۆزگەرتەلمەيسىز
+        unable_to_create: دۇكان ئىناۋىتىنى قۇرالمىدى
+        unable_to_delete: دۇكان ئىناۋىتىنى ئۆچۈرەلمىدى
+        unable_to_fund: دۇكان قەرزى ئارقىلىق زاكاز ئۈچۈن پۇل تۆلىيەلمىدى
+        unable_to_update: دۇكان ئىناۋىتىنى يېڭىلاشقا ئامالسىز
+      remaining_amount: ھېساباتىڭىزنىڭ دۇكان ئىناۋىتىدە <strong> %{amount} </strong> قالدى.
+      remove: ئۆچۈرۈڭ
+    store_credit_categories: دۇكان ئىناۋەتلىك تۈرلىرى
+    store_credit_name: دۇكان ئىناۋىتى
+    store_credit_payment_method:
+      currency_mismatch: دۇكان ئىناۋەتلىك پۇلى زاكاز پۇلىغا ماس كەلمەيدۇ
+      insufficient_authorized_amount: ھوقۇق بېرىلگەن سوممىدىن ئېشىپ كېتەلمىدى
+      insufficient_funds: دۇكاننىڭ كرېدىت سوممىسى يېتەرلىك ئەمەس
+      select_one_store_credit: قالغان قالدۇققا قاراپ دۇكان ئىناۋىتىنى تاللاڭ
+      successful_action: مۇۋەپپەقىيەتلىك دۇكان ئىناۋىتى %{action}
+      unable_to_credit: 'ئىناۋەتلىك كودقا ئامالسىز: %{auth_code}'
+      unable_to_find: دۇكان ئىناۋىتىنى تاپالمىدى
+      unable_to_find_for_action: 'ئاپتورنىڭ كودى ئۈچۈن دۇكان ئىناۋىتىنى تاپالمىدى: %{auth_code}: %{action}'
+      unable_to_void: 'كودنى بىكار قىلىشقا ئامالسىز: %{auth_code}'
+      user_has_no_store_credits: ئىشلەتكۈچىنىڭ دۇكان ئىناۋىتى يوق
+    store_credits: دۇكان ئىناۋىتى
+    store_default: كۆڭۈلدىكى دۇكان
+    store_errors:
+      unable_to_create: دۇكان قۇرالمىدى.
+      unable_to_delete: دۇكاننى ئۆچۈرەلمىدى.
+      unable_to_update: دۇكاننى يېڭىلاشقا ئامالسىز.
+    store_form:
+      checkout_zone_help: رايون تاللاش قايسى دۆلەت ياكى شىتات مەھسۇلاتلىرىنىڭ توشۇلۇشى بىلەن چەكلىنىدۇ. تېخىمۇ كۆپ ئۇچۇرغا ئېرىشىش ئۈچۈن <a href='https://guides.spreecommerce.org/user/configuration/configuring_geography.html#zones' target='_blank' class='alert-link'> ھۆججەتلەرنى كۆرۈڭ </a>
+      code_help: ئۆزگىچە خاسلاشتۇرغۇچنى ساقلاڭ ، بۇ دۇكان نامىنىڭ قىسقارتىلغان نۇسخىسى (ئورۇنلاشتۇرۇش مۇندەرىجىسى ئىسمى سۈپىتىدە ئىشلىتىلىدۇ ، قېلىپلارنى دۇكان ئارقىلىق ئايرىشقىمۇ پايدىلىق).
+      customer_support_email_help: بۇ ئېلېكترونلۇق خەتنى «بەت ئاستى» بۆلىكىدىكى دۇكان زىيارەتچىلىرىڭىزگە كۆرگىلى بولىدۇ
+      default_country_help: بۇ چىقىمدان ئادرېسى جەدۋىلىدە ئالدىن تاللىنىدىغان دۆلەت
+      footer_help: بۇ مەزمۇن دۇكىنىڭىزنىڭ ئاستى قىسمىدا كۆرۈنىدۇ
+      locales_help: تېخىمۇ كۆپ جايلارنى قوشۇش ئۈچۈن <a href='https://github.com/spree-contrib/spree_i18n target='_blank' class='alert-link'> Spree I18n كېڭەيتىش </a> نى قاچىلاڭ.
+      mail_from_address_help: بۇ ئېلېكترونلۇق خەت سىزنىڭ بارلىق ئېلېكترونلۇق خەتلىرىڭىزنى ئەۋەتكۈچى بولىدۇ (زاكاز جەزملەشتۈرۈش ، ئەۋەتىش ئۇقتۇرۇشى قاتارلىقلار)
+      new_order_notifications_email_help: ھەر قېتىم باشقىلار زاكاز قىلغاندا ئېلېكترونلۇق خەت ئۇقتۇرۇشىنى تاپشۇرۇۋالماقچى بولسىڭىز ، بۇ ئۇقتۇرۇشنىڭ ئەۋەتىلىشى ئۈچۈن ئېلېكترونلۇق خەت ئادرېسى بىلەن تەمىنلەڭ
+      seo_robots: تېخىمۇ كۆپ ياردەم ئۈچۈن بۇ بەتنى <a href='https://developers.google.com/search/reference/robots_meta_tag' target='_blank'> دىن كۆرۈڭ.
+      social_help: ئەگەر تور بېتىڭىزنىڭ ئاستى قىسمىدىكى ئىجتىمائىي ھېساباتىڭىزغا ئۇلانماقچى بولسىڭىز ، تۆۋەندىكى بۆلەكلەرنى تولدۇرۇڭ
+    store_not_set_as_default: دۇكاننى %{store} نى كۆڭۈلدىكى دۇكان قىلىپ تەڭشىيەلمىدى
+    store_set_as_default: دۇكان %{store} ھازىر سۈكۈتتىكى دۇكان
+    store_set_default_button: سۈكۈتتىكى قىلىپ تەڭشەڭ
+    stores: دۇكانلار
+    street_address: كوچا ئادرېسى
+    street_address_2: كوچا ئادرېسى (داۋامى)
+    subtotal: Subtotal
+    subtract: ئېلىش
+    success: مۇۋەپپەقىيەت
+    successfully_created: "%{resource} مۇۋەپپەقىيەتلىك قۇرۇلدى!"
+    successfully_refunded: "%{resource} مۇۋەپپەقىيەتلىك قايتۇرۇلدى!"
+    successfully_removed: "%{resource} مۇۋەپپەقىيەتلىك ئۆچۈرۈلدى!"
+    successfully_updated: "%{resource} مۇۋەپپەقىيەتلىك يېڭىلاندى!"
+    summary: خۇلاسە
+    supported_currencies: قوللايدىغان پۇللار
+    supported_currencies_long: پەش ئارقىلىق قوللىنىدىغان پۇللارنىڭ تىزىملىكى
+    supported_locales: قوللايدىغان يەرلىكلەر
+    tags: خەتكۈچ
+    tags_placeholder: خەتكۈچ قوشۇڭ
+    tax: باج
+    tax_categories: باج تۈرلىرى
+    tax_category: باج تۈرى
+    tax_code: باج كودى
+    tax_included: باج (ئۆز ئىچىگە ئالىدۇ)
+    tax_rate_amount_explanation: باج نىسبىتى ھېسابلاشقا ياردەم بېرىدىغان ئونلۇق سومما ، (يەنى باج نىسبىتى% 5 بولسا ئۇنداقتا 0.05 نى كىرگۈزۈڭ)
+    tax_rates: باج نىسبىتى
+    taxon: تاكسون
+    taxon_edit: تاكسوننى تەھرىرلەڭ
+    taxon_missing_alt: سەھىپە بايراق چۈشەندۈرۈشى
+    taxon_placeholder: تاكسى قوشۇڭ
+    taxon_rule:
+      choose_taxons: باجنى تاللاڭ
+      label: زاكازدا چوقۇم بۇ باجلارنىڭ x مىقدارى بولۇشى كېرەك
+      match_all: ھەممىسى
+      match_any: كەم دېگەندە بىر
+    taxonomies: Taxonomies
+    taxonomy: Taxonomy
+    taxonomy_brands_name: ماركا
+    taxonomy_categories_name: سەھىپىلەر
+    taxonomy_edit: باجنى تەھرىرلەش
+    taxonomy_tree_error: تەلەپ قىلىنغان ئۆزگەرتىش قوبۇل قىلىنمىدى ۋە دەرەخ ئىلگىرىكى ھالىتىگە قايتۇرۇلدى ، قايتا سىناڭ.
+    taxonomy_tree_instruction: "* دەرەختىكى بالىنى ئوڭ چېكىش (ياكى iOS ئۈسكۈنىسىگە قوش چېكىش) بالىنى قوشۇش ، ئۆچۈرۈش ياكى رەتلەش تىزىملىكىگە كىرىش."
+    taxons: Taxons
+    test: سىناق
+    test_mailer:
+      test_email:
+        greeting: مۇبارەك بولسۇن!
+        message: ئەگەر بۇ ئېلېكترونلۇق خەتنى تاپشۇرۇۋالغان بولسىڭىز ، ئېلېكترونلۇق خەت تەڭشىكىڭىز توغرا.
+        subject: سىناق خەت
+    test_mode: سىناق ھالىتى
+    thank_you_for_your_order: سودىڭىزغا رەھمەت. خاتىرىلىرىڭىز ئۈچۈن بۇ جەزملەشتۈرۈش بېتىنىڭ كۆپەيتىلگەن نۇسخىسىنى بېسىپ چىقىرىڭ.
+    there_are_no_items_for_this_order: بۇ زاكازنىڭ تۈرلىرى يوق. داۋاملاشتۇرۇش بۇيرۇقىغا بىر تۈر قوشۇڭ.
+    there_were_problems_with_the_following_fields: تۆۋەندىكى ساھەلەردە مەسىلە كۆرۈلدى
+    this_order_has_already_received_a_refund: بۇ زاكاز ئاللىبۇرۇن پۇلنى تاپشۇرۇۋالغان
+    thumbnail: Thumbnail
+    tiered_flat_rate: قاتلاملىق تەكشىلىك نىسبىتى
+    tiered_percent: Tiered Percent
+    tiers: Tiers
+    time: ۋاقىت
+    to_add_variants_you_must_first_define: ۋارىيانتلارنى قوشۇش ئۈچۈن ، ئالدى بىلەن ئېنىقلىما بېرىشىڭىز كېرەك
+    total: ئومۇمىي
+    total_per_item: ھەر بىر تۈرنىڭ ئومۇمىي سانى
+    total_pre_tax_refund: باجدىن بۇرۇنقى ئومۇمىي پۇل قايتۇرۇش
+    total_price: ئومۇمىي باھاسى
+    total_sales: ئومۇمىي سېتىش
+    track_inventory: ئىز قوغلاش
+    tracking: ئىز قوغلاش
+    tracking_number: ئىز قوغلاش نومۇرى
+    tracking_url: ئىز قوغلاش URL
+    tracking_url_placeholder: 'مەسىلەن http://quickship.com/package?num=: ئىز قوغلاش'
+    transaction_id: سودا كىملىكى
+    transfer_from_location: يۆتكەش
+    transfer_stock: پاي چېكىنى يۆتكەش
+    transfer_to_location: يۆتكىلىش
+    tree: دەرەخ
+    twitter: Twitter
+    type: تىپ
+    type_to_search: ئىزدەڭ
+    unable_to_connect_to_gateway: كىرىش ئېغىزىغا ئۇلىنالمىدى.
+    unable_to_create_reimbursements: قولدا ئارىلىشىشنى ساقلاۋاتقان تۈرلەر بولغاچقا ، تولۇقلىما بېرەلمەيدۇ.
+    under_price: "%{price} ئاستىدا"
+    unlock: قۇلۇپ ئېچىش
+    unrecognized_card_type: تونۇلمىغان كارتا تىپى
+    unshippable_items: تاپقىلى بولمايدىغان تۈرلەر
+    update: يېڭىلاش
+    updating: يېڭىلاش
+    url: URL
+    usage_limit: ئىشلىتىش چەكلىمىسى
+    use_app_default: ئەپ كۆڭۈلدىكىسىنى ئىشلىتىڭ
+    use_billing_address: ھېسابات ئادرېسىنى ئىشلىتىڭ
+    use_existing_cc: ھۆججەتتىكى مەۋجۇت كارتىنى ئىشلىتىڭ
+    use_new_cc: يېڭى كارتا ئىشلىتىڭ
+    use_new_cc_or_payment_method: يېڭى كارتا / پۇل تۆلەش ئۇسۇلىنى ئىشلىتىڭ
+    use_s3: رەسىملەر ئۈچۈن ئامازون S3 نى ئىشلىتىڭ
+    used: ئىشلىتىلگەن
+    user: ئىشلەتكۈچى
+    user_not_found: ئىشلەتكۈچى تېپىلمىدى
+    user_rule:
+      choose_users: ئىشلەتكۈچىنى تاللاڭ
+    users: ئىشلەتكۈچى
+    validation:
+      cannot_be_less_than_shipped_units: توشۇلغان ئورۇن سانىدىن كەم بولسا بولمايدۇ.
+      cannot_destroy_line_item_as_inventory_units_have_shipped: بەزى ئامبار زاپىسى توشۇغانلىقتىن قۇر تۈرنى يوقىتالمايدۇ.
+      exceeds_available_stock: پاي چېكىدىن ئېشىپ كەتتى. قۇر تۈرلىرىنىڭ ئۈنۈملۈك مىقداردا بولۇشىغا كاپالەتلىك قىلىڭ.
+      is_too_large: بەك چوڭ - قولىدىكى پاي تەلەپ قىلىنغان مىقدارنى قاپلىيالمايدۇ!
+      must_be_int: چوقۇم پۈتۈن سان بولۇشى كېرەك
+      must_be_non_negative: چوقۇم مەنپىي بولمىغان قىممەت بولۇشى كېرەك
+      unpaid_amount_not_zero: 'سومما تولۇق قايتۇرۇلمىدى. يەنىلا ۋاقتى: %{amount}'
+    value: قىممەت
+    variant: Variant
+    variant_placeholder: ئۆزگەرگۈچى مىقدارنى تاللاڭ
+    variant_prices_search_placeholder: SKU ياكى ئۆزگەرگۈچى ئىسىمنى ئىزدەڭ ...
+    variants: Variants
+    version: نەشرى
+    void: Void
+    weight: ئېغىرلىقى
+    what_is_a_cvv: "(CVV) ئىناۋەتلىك كارتا كودى دېگەن نېمە؟"
+    what_is_this: بۇ نېمە؟
+    width: كەڭلىك
+    year: يىل
+    you_have_no_orders_yet: ھازىرچە زاكاز يوق
+    your_cart_is_empty: ھارۋىڭىز قۇرۇق
+    your_order_is_empty_add_product: زاكازڭىز قۇرۇق ، ئۈستىدىكى مەھسۇلاتنى ئىزدەڭ ۋە قوشۇڭ
+    zip: Zip
+    zipcode: پوچتا نومۇرى
+    zipcode_required: پوچتا نومۇرى تەلەپ قىلىنىدۇ
+    zone: رايون
+    zones: رايونلار
