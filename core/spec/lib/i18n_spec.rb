@@ -18,28 +18,34 @@ describe 'i18n' do
                                     })
   end
 
+  # spree_i18n is not needed with this PR
+  # if this PR is going to be used, swing back and update this
+
   describe '#available_locales' do
-    context 'when SpreeI18n is defined' do
-      before do
-        class_double('SpreeI18n').
-          as_stubbed_const(transfer_nested_constants: true)
-        class_double('SpreeI18n::Locale', all: [:en, :de, :nl]).as_stubbed_const(transfer_nested_constants: true)
-      end
+  #   context 'when SpreeI18n is defined' do
+  #     before do
+  #       class_double('SpreeI18n').
+  #         as_stubbed_const(transfer_nested_constants: true)
+  #       class_double('SpreeI18n::Locale', all: [:en, :de, :nl]).as_stubbed_const(transfer_nested_constants: true)
+  #     end
 
-      it 'returns all locales from the SpreeI18n' do
-        locales = Spree.available_locales
+  #     it 'returns all locales from the SpreeI18n' do
+  #       locales = Spree.available_locales
 
-        expected_locales = (['en', 'de', 'nl'] + I18n.available_locales).uniq.compact
+  #       expected_locales = (['en', 'de', 'nl'] + I18n.available_locales).uniq.compact
 
-        expect(locales).to eq expected_locales
-      end
-    end
+  #       expect(locales).to eq expected_locales
+  #     end
+  #   end
 
+
+  # spree_i18n is not needed with this PR
+  # if this PR is going to be used, swing back and update this
     context 'when SpreeI18n is not defined' do
       it 'returns just default locales' do
         locales = Spree.available_locales
 
-        expected_locales = ([Rails.application.config.i18n.default_locale, I18n.locale, :en] + I18n.available_locales).uniq.compact
+        expected_locales = I18n.available_locales.uniq.compact
 
         expect(locales).to eq expected_locales
       end
