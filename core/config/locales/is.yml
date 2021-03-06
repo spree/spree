@@ -1,0 +1,1769 @@
+---
+is:
+  activemodel:
+    errors:
+      models:
+        spree/fulfilment_changer:
+          attributes:
+            current_shipment:
+              can_not_have_backordered_inventory_units: hefur endurpantað birgðaeiningar
+              has_already_been_shipped: hefur þegar verið sent
+            desired_shipment:
+              can_not_transfer_within_same_shipment: getur ekki verið það sama og núverandi sending
+              has_not_enough_stock_at_desired_location: hefur ekki nægilegt lager á viðkomandi lagerstað
+  activerecord:
+    attributes:
+      spree/address:
+        address1: Heimilisfang
+        address2: Heimilisfang (frh.)
+        city: Borg
+        company: Fyrirtæki
+        country: Land
+        firstname: Fyrsta nafn
+        label: Heimilisfang nafns
+        lastname: Eftirnafn
+        phone: Sími
+        state: Ríki
+        zipcode: Póstnúmer
+      spree/calculator/tiered_flat_rate:
+        preferred_base_amount: Grunnupphæð
+        preferred_tiers: Tiers
+      spree/calculator/tiered_percent:
+        preferred_base_percent: Grunnprósenta
+        preferred_tiers: Tiers
+      spree/country:
+        iso: ISO
+        iso3: ISO3
+        iso_name: ISO nafn
+        name: Nafn
+        numcode: ISO kóða
+      spree/credit_card:
+        base: ''
+        cc_type: Tegund
+        month: Mánuður
+        name: Nafn
+        number: Fjöldi
+        verification_value: Staðfestingargildi
+        year: Ár
+      spree/inventory_unit:
+        state: Ríki
+      spree/line_item:
+        price: Verð
+        quantity: Magn
+      spree/option_type:
+        filterable: Síanlegt
+        name: Nafn
+        presentation: Kynning
+      spree/order:
+        checkout_complete: Útritun lokið
+        completed_at: Lokið kl
+        considered_risky: Áhættusamt
+        coupon_code: afsláttarkóði
+        created_at: Pöntunardagur
+        email: Tölvupóstur
+        ip_address: IP tölu
+        item_total: Liður Samtals
+        number: Fjöldi
+        payment_state: Greiðsluríki
+        shipment_state: Sendingaríki
+        special_instructions: sérstakar leiðbeiningar
+        state: Ríki
+        total: Samtals
+      spree/order/bill_address:
+        address1: Heimilisfang götu
+        city: Heimilisfang borgar
+        firstname: Fornafn gjaldheimilis
+        lastname: Eftirnafn gjaldheimilis
+        phone: Heimilisfang sími
+        state: Heimilisfang reiknings
+        zipcode: Póstnúmer reikningsheimilis
+      spree/order/ship_address:
+        address1: Heimilisfang götu
+        city: Sendingarheimilisborg
+        firstname: Fornafn sendingarheimilis
+        lastname: Síðasta heimilisfang heimilisfangs
+        phone: Símsendingar heimilisfang
+        state: Sendingarástand ríkisins
+        zipcode: Póstnúmer póstfangs
+      spree/payment:
+        amount: Magn
+        number: Fjöldi
+      spree/payment_method:
+        name: Nafn
+      spree/product:
+        available_on: Laus á
+        cost_currency: Kostnaðargjaldmiðill
+        cost_price: Kostnaðarverð
+        description: Lýsing
+        discontinue_on: Hætta On
+        less_than: Minna en
+        master_price: Master verð
+        name: Nafn
+        on_hand: Á hendi
+        shipping_category: Sendingarflokkur
+        tax_category: Skattflokkur
+      spree/promotion:
+        advertise: Auglýstu
+        code: Kóði
+        description: Lýsing
+        event_name: Viðburðarheiti
+        expires_at: Rennur út kl
+        generate_code: Búðu til afsláttarmiða kóða
+        name: Nafn
+        path: Leið
+        promotion_category: Kynningarflokkur
+        starts_at: Byrjar kl
+        usage_limit: Notkunarmörk
+      spree/promotion_category:
+        code: Kóði
+        name: Nafn
+      spree/property:
+        name: Nafn
+        presentation: Kynning
+      spree/prototype:
+        name: Nafn
+      spree/return_authorization:
+        amount: Magn
+      spree/role:
+        name: Nafn
+      spree/shipment:
+        number: Fjöldi
+      spree/state:
+        abbr: Skammstöfun
+        name: Nafn
+      spree/state_change:
+        state_changes: Ríkisbreytingar
+        state_from: Ríki frá
+        state_to: Ríki til
+        timestamp: Tímastimpill
+        type: Tegund
+        updated: Uppfært
+        user: Notandi
+      spree/store:
+        mail_from_address: Póstur frá heimilisfangi
+        meta_description: Meta Lýsing
+        meta_keywords: Meta lykilorð
+        name: Heiti vefsvæðis
+        seo_robots: SEO vélmenni
+        seo_title: SEO titill
+        url: Vefslóð
+      spree/store_credit:
+        amount_used: Magn notað
+      spree/store_credit_category:
+        name: Nafn
+      spree/tax_category:
+        description: Lýsing
+        name: Nafn
+      spree/tax_rate:
+        amount: Gengi
+        included_in_price: Innifalið í verði
+        show_rate_in_label: Sýna hlutfall í merkimiða
+      spree/taxon:
+        name: Nafn
+        permalink: Permalink
+        position: Staða
+      spree/taxonomy:
+        name: Nafn
+      spree/user:
+        email: Tölvupóstur
+        password: Lykilorð
+        password_confirmation: Staðfesting lykilorðs
+      spree/variant:
+        cost_currency: Kostnaðargjaldmiðill
+        cost_price: Kostnaðarverð
+        depth: Dýpt
+        height: Hæð
+        price: Verð
+        sku: SKU
+        weight: Þyngd
+        width: Breidd
+      spree/zone:
+        description: Lýsing
+        name: Nafn
+    errors:
+      models:
+        spree/calculator/tiered_flat_rate:
+          attributes:
+            base:
+              keys_should_be_positive_number: Stigalyklar ættu allir að vera stærri en 0
+            preferred_tiers:
+              should_be_hash: ætti að vera kjötkássa
+        spree/calculator/tiered_percent:
+          attributes:
+            base:
+              keys_should_be_positive_number: Stigalyklar ættu allir að vera stærri en 0
+              values_should_be_percent: Stigagildi ættu öll að vera prósentur á bilinu 0% til 100%
+            preferred_tiers:
+              should_be_hash: ætti að vera kjötkássa
+        spree/classification:
+          attributes:
+            taxon_id:
+              already_linked: er þegar tengt þessari vöru
+        spree/credit_card:
+          attributes:
+            base:
+              card_expired: Kortið er útrunnið
+              expiry_invalid: Gildistími korts er ógildur
+        spree/image:
+          attributes:
+            attachment:
+              attachment_must_be_present: verður að vera til staðar
+              not_allowed_content_type: hefur ekki leyft innihaldsgerð
+        spree/line_item:
+          attributes:
+            currency:
+              must_match_order_currency: Verður að passa pöntunargjaldmiðil
+        spree/product:
+          attributes:
+            base:
+              cannot_destroy_if_attached_to_line_items: Ekki er hægt að eyða vörum þegar þær eru festar við línuatriði.
+            discontinue_on:
+              invalid_date_range: verður að vera seinna en tiltækt dagsetning
+        spree/promotion:
+          attributes:
+            expires_at:
+              invalid_date_range: verður að vera seinna en upphafsdagur
+        spree/refund:
+          attributes:
+            amount:
+              greater_than_allowed: er hærri en leyfileg upphæð.
+        spree/reimbursement:
+          attributes:
+            base:
+              return_items_order_id_does_not_match: Einn eða fleiri af skilagreinunum sem tilgreindir eru tilheyra ekki sömu röð og endurgreiðslan.
+        spree/return_item:
+          attributes:
+            inventory_unit:
+              other_completed_return_item_exists: "%{inventory_unit_id} hefur þegar verið tekið með skilavöru %{return_item_id}"
+            reimbursement:
+              cannot_be_associated_unless_accepted: ekki hægt að tengja við skilavöru sem ekki er samþykkt.
+        spree/shipping_method:
+          attributes:
+            base:
+              required_shipping_category: Þú verður að velja að minnsta kosti einn flutningsflokk
+        spree/store:
+          attributes:
+            base:
+              cannot_destroy_default_store: Get ekki eyðilagt sjálfgefna verslun.
+        spree/store_credit:
+          attributes:
+            amount_authorized:
+              exceeds_total_credits: Fer yfir heildareiningar.
+            amount_used:
+              cannot_be_greater_than_amount: Get ekki verið meira en magn.
+              greater_than_zero_restrict_delete: er meiri en núll. Get ekki eytt verslunarinneign.
+        spree/store_credit_category:
+          attributes:
+            base:
+              cannot_destroy_if_used_in_store_credit: Ekki er hægt að eyða lánaflokkum verslana þegar þeir eru notaðir í inneign verslana.
+        spree/taxon_image:
+          attributes:
+            attachment:
+              not_allowed_content_type: hefur ekki leyft innihaldsgerð
+        spree/variant:
+          attributes:
+            base:
+              cannot_destroy_if_attached_to_line_items: Ekki er hægt að eyða afbrigðum þegar þau eru tengd við línur.
+              must_supply_price_for_variant_or_master: Verður að afhenda verð fyrir afbrigði eða aðalverð fyrir vöru.
+              no_master_variant_found_to_infer_price: Ekkert aðalafbrigði fannst til að álykta um verð
+    models:
+      spree/address:
+        one: Heimilisfang
+        other: Heimilisföng
+      spree/country:
+        one: Land
+        other: Lönd
+      spree/credit_card:
+        one: Kreditkort
+        other: Kreditkort
+      spree/customer_return:
+        one: Skil viðskiptavina
+        other: Viðskiptavinur skilar sér
+      spree/inventory_unit:
+        one: Birgðiseining
+        other: Birgðiseiningar
+      spree/line_item:
+        one: Línuliður
+        other: Línuliðir
+      spree/option_type:
+        one: Valkostagerð
+        other: Valkostategundir
+      spree/option_value:
+        one: Valkostagildi
+        other: Valkostagildi
+      spree/order:
+        one: Panta
+        other: Pantanir
+      spree/payment:
+        one: Greiðsla
+        other: Greiðslur
+      spree/payment_method:
+        one: Greiðslumáti
+        other: Greiðsluaðferðir
+      spree/product:
+        one: Vara
+        other: Vörur
+      spree/promotion:
+        one: Kynning
+        other: Kynningar
+      spree/promotion_category:
+        one: Kynningarflokkur
+        other: Kynningarflokkar
+      spree/property:
+        one: Eign
+        other: Fasteignir
+      spree/prototype:
+        one: Frumgerð
+        other: Frumgerðir
+      spree/refund_reason:
+        one: Ástæða endurgreiðslu
+        other: Ástæður endurgreiðslu
+      spree/reimbursement:
+        one: Endurgreiðsla
+        other: Endurgreiðslur
+      spree/reimbursement_type:
+        one: Endurgreiðslugerð
+        other: Tegundir endurgreiðslna
+      spree/return_authorization:
+        one: Heimild til skila
+        other: Heimildir til skila
+      spree/return_authorization_reason:
+        one: Ástæða skilaheimildar
+        other: Ástæða skilaheimildar
+      spree/role:
+        one: Hlutverk
+        other: Hlutverk
+      spree/shipment:
+        one: Sending
+        other: Sendingar
+      spree/shipping_category:
+        one: Sendingarflokkur
+        other: Sendingarflokkar
+      spree/shipping_method:
+        one: Sendingar aðferð
+        other: Sendingaraðferðir
+      spree/state:
+        one: Ríki
+        other: Ríki
+      spree/state_change:
+        one: Ríkisbreyting
+        other: Ríkisbreytingar
+      spree/stock_location:
+        one: Staðsetning lager
+        other: Stöðvar hlutabréfa
+      spree/stock_movement:
+        one: Hreyfing hlutabréfa
+        other: Hreyfingar hlutabréfa
+      spree/stock_transfer:
+        one: Hlutaflutningur
+        other: Hlutaflutningar
+      spree/store_credit:
+        one: Verslunarinneign
+        other: Verslunareiningar
+      spree/store_credit_category:
+        one: Flokkur verslunarlána
+        other: Flokkar verslunarlána
+      spree/tax_category:
+        one: Skattflokkur
+        other: Skattflokkar
+      spree/tax_rate:
+        one: Skatthlutfall
+        other: Skattprósenta
+      spree/taxon:
+        one: Taxon
+        other: Taxons
+      spree/taxonomy:
+        one: Flokkunarfræði
+        other: Flokkunarhagkerfi
+      spree/tracker:
+        one: Rekja spor einhvers
+        other: Rekja spor einhvers
+      spree/user:
+        one: Notandi
+        other: Notendur
+      spree/variant:
+        one: Afbrigði
+        other: Afbrigði
+      spree/zone:
+        one: Svæði
+        other: Svæði
+  address_book:
+    save: Vista
+    successfully_created: Nýtt heimilisfang hefur verið búið til
+  devise:
+    confirmations:
+      confirmed: Reikningurinn þinn var staðfestur. Þú ert nú skráð inn.
+      send_instructions: Þú færð tölvupóst með leiðbeiningum um hvernig á að staðfesta reikninginn þinn á nokkrum mínútum.
+    failure:
+      inactive: Reikningurinn þinn var ekki virkur ennþá.
+      invalid: Rangt netfang eða lykilorð.
+      invalid_token: Ógilt auðkenningarmerki.
+      locked: Reikningurinn þinn er læstur.
+      timeout: Þingið þitt rann út. Vinsamlegast skráðu þig inn aftur til að halda áfram.
+      unauthenticated: Þú þarft að skrá þig inn eða skrá þig áður en þú heldur áfram.
+      unconfirmed: Þú verður að staðfesta reikninginn þinn áður en þú heldur áfram.
+    mailer:
+      confirmation_instructions:
+        subject: Staðfestingarleiðbeiningar
+      reset_password_instructions:
+        subject: Endurstilla leiðbeiningar um lykilorð
+      unlock_instructions:
+        subject: Opna leiðbeiningar
+    oauth_callbacks:
+      failure: Gat ekki heimilað þér frá %{kind} vegna þess að "%{reason}".
+      success: Heimilt hefur verið frá %{kind} reikningi.
+    unlocks:
+      send_instructions: Þú færð tölvupóst með leiðbeiningum um hvernig á að opna reikninginn þinn á nokkrum mínútum.
+      unlocked: Reikningurinn þinn var opnaður. Þú ert nú skráð inn.
+    user_passwords:
+      user:
+        cannot_be_blank: Lykilorðið þitt getur ekki verið autt.
+        send_instructions: Þú færð tölvupóst með leiðbeiningum um hvernig á að endurstilla lykilorðið þitt á nokkrum mínútum.
+        updated: Lykilorðinu þínu var breytt. Þú ert nú skráð inn.
+    user_registrations:
+      destroyed: Bless! Reikningi þínum var rift. Við vonumst til að sjá þig aftur fljótlega.
+      inactive_signed_up: Þú hefur skráð þig. Við gátum þó ekki skráð þig inn vegna þess að reikningurinn þinn er %{reason}.
+      signed_up: Velkominn! Þú hefur skráð þig.
+      updated: Þú uppfærðir reikninginn þinn með góðum árangri.
+    user_sessions:
+      signed_in: Skráði þig inn með góðum árangri.
+      signed_out: Skráði þig út með góðum árangri.
+  errors:
+    messages:
+      already_confirmed: var þegar staðfest
+      not_found: ekki fundið
+      not_locked: var ekki læst
+      not_saved:
+        one: '1 villa bannaði að vista þennan %{resource}:'
+        other: "%{count} villur bannaði að vista þennan %{resource}:"
+  spree:
+    abbreviation: Skammstöfun
+    accept: Taka
+    acceptance_errors: Samþykkisvillur
+    acceptance_status: Viðtökustaða
+    accepted: Samþykkt
+    account: Reikningur
+    account_info: Reikningsupplýsingar
+    account_updated: Reikningur uppfærður
+    action: Aðgerð
+    actions:
+      cancel: Hætta við
+      continue: Haltu áfram
+      create: Búa til
+      destroy: Eyðileggja
+      edit: Breyta
+      list: Listi
+      listing: Skráning
+      new: Nýtt
+      refund: Endurgreiðsla
+      save: Vista
+      update: Uppfærsla
+    activate: Virkja
+    active: Virkur
+    add: Bæta við
+    add_action_of_type: Bæta við aðgerð af gerðinni
+    add_country: Bæta við landi
+    add_coupon_code: Bættu við afsláttarmiða kóða
+    add_new_address: Bættu við nýju heimilisfangi
+    add_new_credit_card: Bættu við nýju korti
+    add_new_header: Bæta við nýjum haus
+    add_new_style: Bættu við nýjum stíl
+    add_one: Bættu við einum
+    add_option_value: Bæta við valkostagildi
+    add_product: Bæta við vöru
+    add_product_properties: Bæta við eiginleikum vöru
+    add_rule_of_type: Bættu við reglu af gerðinni
+    add_state: Bæta við ríki
+    add_stock: Bæta við lager
+    add_store: Ný verslun
+    add_store_credit: Bættu við verslunarinneign
+    add_to_cart: Bæta í körfu
+    add_variant: Bæta við afbrigði
+    added_to_cart: Bætt í körfu með góðum árangri!
+    additional_item: Viðbótarliður
+    address: Heimilisfang
+    address1: Heimilisfang
+    address2: Heimilisfang (frh.)
+    address_action_popup:
+      delete_button: já, eyttu
+      delete_text: Viltu virkilega <br /> eyða þessu netfangi?
+      delete_title: Ertu viss?
+    address_book:
+      add_new_shipping_address: Bættu við nýju heimilisfangi
+      address_name_label: Heimilisfang heimilisfangs
+      address_name_placeholder: Gefðu þessu heimilisfangi einstakt nafn (Vinna, heimili osfrv.)
+      addresses: Heimilisföng
+      edit_address: Breyttu heimilisfangi
+      label: Heimilisfang heimilisfangs
+      new_address: Nýtt heimilisfang
+      no_shipping_addresses_on_file: Engin heimilisföng skráð
+      other_address: Annað heimilisfang
+      remove_address: Fjarlægðu heimilisfang
+      save: Vista
+      successfully_created: Heimilisfang hefur verið stofnað.
+      successfully_removed: Heimilisfang hefur verið fjarlægt.
+      successfully_saved: Vistað með góðum árangri
+      successfully_updated: Uppfært með góðum árangri
+      unsuccessfully_saved: Villa kom upp þegar reynt var að vista heimilisfangið þitt.
+      unsuccessfully_updated: Uppfærsla var þegar reynt var að uppfæra heimilisfangið þitt.
+    addresses: Heimilisföng
+    adjustable: Stillanlegt
+    adjustment: Aðlögun
+    adjustment_amount: Magn
+    adjustment_labels:
+      tax_rates:
+        excluding_tax: "%{name}%{amount}"
+        including_tax: "%{name}%{amount} (Innifalið í verði)"
+    adjustment_successfully_closed: Aðlögun hefur verið lokað!
+    adjustment_successfully_opened: Aðlögun hefur verið opnuð!
+    adjustment_total: Aðlögun Samtals
+    adjustments: Aðlögun
+    admin:
+      order:
+        events:
+          approve: samþykkja
+          cancel: hætta við
+          resend: Sendu aftur
+          resume: halda áfram
+      orders:
+        cart: Karfa
+      return_authorization:
+        product: Vara
+      tab:
+        configuration: Stillingar
+        customer_returns: Viðskiptavinur skilar sér
+        option_types: Valkostategundir
+        orders: Pantanir
+        overview: Yfirlit
+        products: Vörur
+        promotion_categories: Kynningarflokkar
+        promotions: Kynningar
+        properties: Fasteignir
+        prototypes: Frumgerðir
+        reports: Skýrslur
+        return_authorizations: Heimildir til skila
+        taxonomies: Flokkunarhagkerfi
+        taxons: Taxons
+        users: Notendur
+      user:
+        account: Reikningur
+        addresses: Heimilisföng
+        available_store_credit: Notandi hefur %{amount} í verslunarinneign í boði.
+        items: Hlutir
+        items_purchased: Hlutir keyptir
+        no_store_credit: Notandi hefur ekkert verslunarinneign í boði.
+        order_history: Pöntunarsaga
+        order_num: 'Pöntun #'
+        orders: Pantanir
+        store_credits: Verslunareiningar
+        stores: Búðir
+        user_information: Upplýsingar um notendur
+    administration: Stjórnun
+    advertise: Auglýstu
+    agree_to_privacy_policy: Sammála persónuverndarstefnu
+    agree_to_terms_of_service: Sammála þjónustuskilmálum
+    all: Allt
+    all_adjustments_closed: Öllum leiðréttingum var lokað!
+    all_adjustments_opened: Allar lagfæringar teknar upp!
+    all_departments: Allar deildir
+    all_items_have_been_returned: Öllum hlutum hefur verið skilað
+    all_rights_reserved: Allur réttur áskilinn
+    already_have_account: Ertu þegar með reikning?
+    alt_text: Valtexti
+    alternative_phone: Varasími
+    amount: Magn
+    and: og
+    approve: samþykkja
+    approved_at: Samþykkt kl
+    approver: Samþykki
+    are_you_sure: Ertu viss?
+    are_you_sure_delete: Ertu viss um að þú viljir eyða þessari skrá?
+    associated_adjustment_closed: Tilheyrandi aðlögun er lokuð og verður ekki endurútreiknuð. Viltu opna það?
+    authorization_failure: Leyfisbrestur
+    authorized: Heimilt
+    auto_capture: Sjálfvirk handtaka
+    availability: framboð
+    available: Laus
+    available_on: Laus á
+    average_order_value: Meðaltal pöntunargildis
+    avs_response: Svar frá AVS
+    back: Aftur
+    back_end: Bakendi
+    back_to_payment: Aftur í greiðslu
+    back_to_resource_list: Aftur í %{resource} Listann
+    back_to_rma_reason_list: Aftur á röklista RMA
+    back_to_store: Aftur í verslun
+    back_to_users_list: Aftur í notendalista
+    backorderable: Endurpantanlegt
+    backorderable_default: Sjálfgefið er hægt að endurpanta
+    backordered: Endurpantað
+    backordered_confirm_info: Valið atriði er afturpantað svo búist er við töfum. Ertu viss um að þú viljir panta það?
+    backordered_info: Endurpantað
+    backorders_allowed: bakpöntun leyfð
+    balance_due: Eftirstöðvar
+    base_amount: Grunnupphæð
+    base_percent: Grunnprósenta
+    basic_information: Grunnupplýsingar
+    bill_address: Heimilisfang frumvarps
+    billing: Innheimta
+    billing_address: Heimilisfang innheimtu
+    both: Báðir
+    breadcrumbs: Brauðmylsna
+    calculated_reimbursements: Reiknaðar endurgreiðslur
+    calculator: Reiknivél
+    calculator_settings_warning: Ef þú ert að breyta gerð reiknivélarins verðurðu að vista fyrst áður en þú getur breytt stillingum reiknivélarinnar
+    call_us_now: 'Hringdu í okkur núna:'
+    cancel: hætta við
+    canceled: Hætt við
+    canceled_at: Hætt við kl
+    canceler: Krabbamein
+    cannot_create_customer_returns: Ekki er hægt að búa til ávöxtun viðskiptavina þar sem þessi pöntun hefur engar einingar sendar.
+    cannot_create_payment_without_payment_methods: Þú getur ekki búið til greiðslu fyrir pöntun án þess að neinir greiðslumátar séu skilgreindir.
+    cannot_create_returns: Get ekki búið til skil þar sem þessi pöntun hefur engar sendar einingar.
+    cannot_empty_completed_order: Pöntun hefur þegar verið afgreidd svo ekki er hægt að tæma hana
+    cannot_perform_operation: Get ekki framkvæmt beðið um aðgerð
+    cannot_return_more_than_bought_quantity: Get ekki skilað meira en keypt magn.
+    cannot_set_shipping_method_without_address: Ekki er hægt að stilla flutningsaðferð fyrr en upplýsingar um viðskiptavini eru gefnar upp.
+    capture: Handsama
+    capture_events: Handtaka atburði
+    card_code: Breytingarkóði korta (CVC)
+    card_number: Kortanúmer
+    card_type: Merki
+    card_type_is: Kortategund er
+    cart: Karfa
+    cart_page:
+      add_promo_code: BÆTTU UM PRÓMÓKODA
+      change_quantity: Breyttu magni
+      checkout: athuga
+      empty_info: Karfan þín er tóm.
+      header: Karfan þín
+      product: vara
+      quantity: magn
+      remove_from_cart: Fjarlægðu úr körfu
+      title: Innkaupakerra
+    cart_subtotal:
+      one: Samtals (1 hlutur)
+      other: Hlutafjöldi (%{count} hlutir)
+    categories: Flokkar
+    category: Flokkur
+    category_nav_bar:
+      get_up_to_30_percent_off: FÁÐU ÞIG Í 30% AFSLÁTT
+      jackets_and_coats: JAKKI & KUSTUR
+      new_collection: NÝTT SÖFN
+      special_offers: SÉRSTÖK TILBOÐ
+    channel: Rás
+    charged: Kærð
+    checkout: Athuga
+    checkout_page:
+      back_to_cart: aftur að körfunni
+      checkout_navigation: Kassaflakk
+      delivery_method: sendingaraðferð
+      header: Athuga
+      main_navigation: Helstu flakk
+      product: Vara
+    choose_a_customer: Veldu viðskiptavin
+    choose_a_taxon_to_sort_products_for: Veldu flokk til að flokka vörur fyrir
+    choose_currency: Veldu Gjaldmiðil
+    choose_dashboard_locale: Veldu Stjórnborð landsvæðis
+    choose_location: Veldu staðsetningu
+    city: Borg
+    clear_cache: Hreinsaðu skyndiminni
+    clear_cache_ok: Skyndiminni var skolað
+    clear_cache_warning: Að hreinsa skyndiminni mun tímabundið draga úr afköstum verslunarinnar þinnar.
+    click_and_drag_on_the_products_to_sort_them: Smelltu og dragðu á vörurnar til að raða þeim.
+    clone: Klón
+    close: Lokaðu
+    close_all_adjustments: Lokaðu öllum leiðréttingum
+    code: Kóði
+    company: Fyrirtæki
+    compare_at_price: Bera saman á verði
+    complete: heill
+    configuration: Stillingar
+    configurations: Stillingar
+    confirm: Staðfesta
+    confirm_delete: Staðfestu eyðingu
+    confirm_password: Staðfesting lykilorðs
+    contact_phone: Hafðu samband við símann
+    contact_us: Hafðu samband við okkur
+    continue: Haltu áfram
+    continue_as_guest: Haltu áfram sem gestur
+    continue_shopping: Halda áfram að versla
+    cost_currency: Kostnaðargjaldmiðill
+    cost_price: Kostnaðarverð
+    could_not_create_customer_return: Gat ekki búið til ávöxtun viðskiptavina
+    could_not_create_stock_movement: Vandamál kom upp við að bjarga þessari hlutafjárhreyfingu. Vinsamlegast reyndu aftur.
+    count_on_hand: Telja á hönd
+    countries: Lönd
+    country: Land
+    country_based: Land byggt
+    country_name: Nafn
+    country_rule:
+      label: Velja verður að senda til þessa lands
+    coupon: Afsláttarmiða
+    coupon_code: Afsláttarkóði
+    coupon_code_already_applied: Afsláttarkóðanum hefur þegar verið beitt á þessa pöntun
+    coupon_code_applied: Afsláttarkóðanum var beitt á pöntunina þína.
+    coupon_code_apply: Sækja um
+    coupon_code_better_exists: Áður notaður afsláttarmiða kóði skilar betri viðskiptum
+    coupon_code_expired: Afsláttarkóðinn er útrunninn
+    coupon_code_max_usage: Hámark afsláttarmiða á notkun afsláttarkóða
+    coupon_code_not_eligible: Þessi afsláttarmiða er ekki gjaldgengur fyrir þessa pöntun
+    coupon_code_not_found: Afsláttarkóðinn sem þú slóst inn er ekki til. Vinsamlegast reyndu aftur.
+    coupon_code_removed: Afsláttarmiða kóðinn var tekinn úr pöntuninni þinni.
+    coupon_code_unknown_error: Ekki var hægt að nota þennan afsláttarmiða á körfuna að svo stöddu.
+    create: Búa til
+    create_a_new_account: Búðu til nýjan reikning
+    create_new_order: Búðu til nýja pöntun
+    create_reimbursement: Búðu til endurgreiðslu
+    created_at: Búið til hjá
+    created_by: Búið til af
+    credit: Inneign
+    credit_allowed: Inneign leyfð
+    credit_card: Kreditkort
+    credit_cards: Kreditkort
+    credit_owed: Skuldsett lánstraust
+    credited: Fagnað
+    credits: Einingar
+    currencies: Gjaldmiðlar
+    currency: Gjaldmiðill
+    currency_settings: Gjaldeyrisstillingar
+    current: Núverandi
+    current_promotion_usage: 'núverandi notkun: %{count}'
+    customer: Viðskiptavinur
+    customer_details: Upplýsingar um viðskiptavini
+    customer_details_updated: Upplýsingar um viðskiptavini uppfærðar
+    customer_return: Skil viðskiptavina
+    customer_returns: Viðskiptavinur skilar sér
+    customer_search: Viðskiptavinaleit
+    customer_support_email: Netfang stuðnings viðskiptavina
+    cut: Skera
+    cvv: CVV
+    cvv_response: Svar við CVV
+    date: Dagsetning
+    date_completed: Dagsetningu lokið
+    date_range: Dagsetningarsvið
+    default: Sjálfgefið
+    default_country_cannot_be_deleted: Ekki er hægt að eyða sjálfgefnu landi
+    default_currency: Sjálfgefinn gjaldmiðill
+    default_refund_amount: Sjálfgefin endurgreiðsluupphæð
+    default_tax: Sjálfgefinn skattur
+    default_tax_zone: Sjálfgefið skattsvæði
+    delete: Eyða
+    delete_from_taxon: Eyða úr Taxon
+    deleted: Eytt
+    delivery: Afhending
+    delivery_information: Upplýsingar um afhendingu
+    depth: Dýpt
+    description: Lýsing
+    destination: Áfangastaður
+    destroy: Eyðileggja
+    details: Upplýsingar
+    discontinue_on: Hætta On
+    discontinued: Hætt
+    discontinued_variants_present: Sumar línur í þessari röð eru með vörur sem eru ekki lengur fáanlegar.
+    discount_amount: Afsláttarupphæð
+    dismiss_banner: Nei takk! Ég hef ekki áhuga, ekki sýna þessi skilaboð aftur
+    display: Sýna
+    doesnt_track_inventory: Það fylgist ekki með birgðum
+    dont_have_account: Enginn reikningur?
+    edit: Breyta
+    edit_reimbursement: Breyttu endurgreiðslu
+    editing_resource: Klippa %{resource}
+    editing_rma_reason: Klippa RMA ástæðu
+    editing_user: Breyttu reikningnum þínum
+    eligibility_errors:
+      messages:
+        has_excluded_product: Karfan þín inniheldur vöru sem kemur í veg fyrir að þessum afsláttarmiða kóða sé beitt.
+        item_total_less_than: Ekki er hægt að nota þennan afsláttarmiða á pantanir sem eru minni en %{amount}.
+        item_total_less_than_or_equal: Ekki er hægt að nota þennan afsláttarmiða kóða fyrir pantanir sem eru minni en eða jafnt og %{amount}.
+        item_total_more_than: Ekki er hægt að nota þennan afsláttarmiða á hærri pantanir en %{amount}.
+        item_total_more_than_or_equal: Ekki er hægt að beita þessum afsláttarmiða kóða fyrir pantanir hærri en eða jafnt og %{amount}.
+        limit_once_per_user: Þessi afsláttarmiða kóða er aðeins hægt að nota einu sinni á hvern notanda.
+        missing_product: Ekki er hægt að nota þennan afsláttarmiða þar sem þú ert ekki með allar nauðsynlegar vörur í körfunni þinni.
+        missing_taxon: Þú þarft að bæta við vöru úr öllum viðeigandi flokkum áður en þú notar þennan afsláttarmiða.
+        no_applicable_products: Þú þarft að bæta við viðeigandi vöru áður en þú notar þennan afsláttarmiða.
+        no_matching_taxons: Þú þarft að bæta við vöru úr viðeigandi flokki áður en þú notar þennan afsláttarmiða.
+        no_user_or_email_specified: Þú þarft að skrá þig inn eða gefa upp netfangið þitt áður en þú notar þennan afsláttarmiða.
+        no_user_specified: Þú þarft að skrá þig inn áður en þú notar þennan afsláttarmiða.
+        not_first_order: Þessum afsláttarmiða kóða er aðeins hægt að nota á fyrstu pöntunina þína.
+    email: Tölvupóstur
+    empty: Tómur
+    empty_cart: Tóm kerra
+    enable_mail_delivery: Virkja afhendingu pósts
+    end: Enda
+    ending_at: Lýkur kl
+    ending_in: Endar í
+    ends_at: Endar kl
+    error: villa
+    error_user_destroy_with_orders: Ekki er hægt að eyða notanda sem tengist pöntunum
+    errors:
+      messages:
+        blank: getur ekki verið autt
+        cannot_remove_icon: Ekki er hægt að fjarlægja mynd
+        could_not_create_taxon: Gat ekki búið til taxon
+        no_shipping_methods_available: Engir flutningsaðferðir í boði fyrir valda staðsetningu. Vinsamlegast breyttu heimilisfangi og reyndu aftur.
+      services:
+        get_shipping_rates:
+          no_line_items: Til að búa til sendingarverð þarftu að bæta við nokkrum línupóstum til að panta
+          no_shipping_address: Til að búa til sendingarverð þarf pöntunin að hafa heimilisfang
+    errors_prohibited_this_record_from_being_saved:
+      one: 1 villa bannaði að vista þessa skrá
+      other: "%{count} villur bannaði að vista þessa skrá"
+    event: Atburður
+    events:
+      spree:
+        cart:
+          add: Bæta í körfu
+        checkout:
+          coupon_code_added: Afsláttarkóða bætt við
+        content:
+          visited: Farðu á síðuna um truflanir
+        order:
+          contents_changed: Innihaldi pöntunar breytt
+        page_view: Stöðug síða skoðuð
+        user:
+          signup: Notendaskráning
+    exceptions:
+      count_on_hand_setter: 'Ekki er hægt að stilla count_on_hand handvirkt, þar sem það er stillt sjálfkrafa með endurútreikningi_count_on_hand svarhringingu. Vinsamlegast notaðu ''update_column (: count_on_hand, value)'' í staðinn.'
+    exchange_for: Skiptum fyrir
+    excl: undanskilið
+    existing_shipments: Sendingar sem fyrir eru
+    expedited_exchanges_warning: Allar tilgreindar kauphallir verða sendar til viðskiptavinarins strax eftir vistun. Viðskiptavinurinn mun rukka alla upphæð hlutarins ef hann skilar ekki upprunalega hlutnum innan %{days_window} daga.
+    expiration: Fyrningartími
+    expiration_date: Fyrningardagsetning
+    extension: Framlenging
+    extensions_directory: Viðbótaskrá
+    facebook: Facebook
+    failed_payment_attempts: Misheppnuð greiðslutilraun
+    filename: Skráarnafn
+    fill_in_customer_info: Vinsamlegast fylltu út upplýsingar um viðskiptavini
+    filter: Sía
+    filter_results: Sía niðurstöður
+    filterable: Síanlegt
+    finalize: Ljúktu við
+    finalized: Lokið
+    find_a_taxon: Finndu Taxon
+    first_item: Fyrsti liður
+    first_name: Fyrsta nafn
+    first_name_begins_with: Fornafn byrjar með
+    firstname: Fyrsta nafn
+    flat_percent: Flat prósent
+    flat_rate_per_order: Flattaxti
+    flexible_rate: Sveigjanlegt hlutfall
+    follow_us: Eltu okkur
+    footer: Fótur
+    forgot_password: Gleymt lykilorð?
+    free: Ókeypis
+    free_shipping: Ókeypis sending
+    free_shipping_amount: "-"
+    front_end: Að framanverðu
+    gateway: Gátt
+    gateway_error: Gateway Villa
+    general: Almennt
+    general_settings: Almennar stillingar
+    generate_code: Búðu til afsláttarmiða kóða
+    get_back_to_the: Komdu aftur að
+    go_to_category: Farðu í flokk
+    go_to_facebook: Farðu á facebook
+    go_to_homepage: Farðu á heimasíðu
+    go_to_instagram: Farðu á instagram
+    go_to_twitter: Farðu á twitter
+    guest_checkout: Gestakassa
+    guest_user_account: Útskráning sem gestur
+    has_no_shipped_units: hefur engar sendar einingar
+    header_banner: Hausa borði
+    height: Hæð
+    help_center: Hjálparmiðstöð
+    hide_from_subcategories_nav: Fela úr undirflokka leiðsögn
+    home: Heim
+    home_page: heimasíða
+    i18n:
+      available_locales: Fyrirliggjandi staðir
+      country: Land
+      default_country: Sjálfgefið land
+      fields: Reitir
+      language: Tungumál
+      localization_settings: Staðsetningarstillingar
+      only_complete: Aðeins lokið
+      only_incomplete: Aðeins ófullnægjandi
+      select_locale: Veldu landsvæði
+      show_only: Sýna aðeins
+      supported_locales: Stuðningsaðilar
+      translations: Þýðingar
+    icon: Táknmynd
+    id: Kt
+    image: Mynd
+    images: Myndir
+    implement_eligible_for_return: 'Verður þú að framkvæma #hæft_áföldun? fyrir þitt hæfiValidator.'
+    implement_requires_manual_intervention: 'Verður að framkvæma # krefst_aðferða_íhlutunar? fyrir þitt hæfiValidator.'
+    in_stock: Á lager
+    inactive: Óvirkt
+    incl: þ.m.t.
+    included_in_price: Innifalið í verði
+    included_price_validation: er ekki hægt að velja nema að þú hafir valið sjálfgefið skattsvæði
+    incomplete: Ófullkomið
+    info_number_of_skus_not_shown:
+      one: og einn annan
+      other: og %{count} aðrir
+    info_product_has_multiple_skus: 'Þessi vara hefur %{count} afbrigði:'
+    instagram: Instagram
+    instructions_to_reset_password: Vinsamlegast sláðu inn netfangið þitt á forminu hér að neðan
+    insufficient_stock: Ófullnægjandi birgðir í boði, aðeins %{on_hand} eftir
+    insufficient_stock_item_quantity: Ófullnægjandi birgðir í boði
+    insufficient_stock_lines_present: Sumar línur í þessari röð hafa ekki nægilegt magn.
+    intercept_email_address: Hleraðu netfang
+    intercept_email_instructions: Hnekkja viðtakanda tölvupósts og skipta um þetta netfang.
+    internal_name: Innra nafn
+    internationalization: Alþjóðavæðing
+    invalid_credit_card: Ógilt kreditkort.
+    invalid_exchange_variant: Ógilt skiptiafbrigði.
+    invalid_payment_provider: Ógildur greiðsluaðili.
+    invalid_promotion_action: Ógild kynningaraðgerð.
+    invalid_promotion_rule: Ógild kynningarregla.
+    inventory: Birgðir
+    inventory_adjustment: Birgðaleiðrétting
+    inventory_error_flash_for_insufficient_quantity: Hlutur í körfunni þinni er orðinn ófáanlegur.
+    inventory_state: Birgðaríki
+    is_not_available_to_shipment_address: er ekki aðgengilegt á heimilisfangi sendingar
+    iso: ISO Alpha-2
+    iso3: ISO Alpha-3
+    iso_name: ISO nafn
+    issued_on: Gefið út þann
+    item: Liður
+    item_description: Lýsing á hlut
+    item_total: Liður Samtals
+    item_total_rule:
+      operators:
+        gt: meiri en
+        gte: meiri en eða jafn
+        lt: minna en
+        lte: minna en eða jafnt og
+    items_cannot_be_shipped: Við getum ekki reiknað út flutningsverð fyrir valda hluti.
+    items_in_rmas: Hlutir í skilaheimildum
+    items_reimbursed: Hlutir endurgreiddir
+    items_to_be_reimbursed: Hlutir sem á að endurgreiða
+    join_slack: Vertu með Slack
+    last_name: Eftirnafn
+    last_name_begins_with: Eftirnafn byrjar með
+    lastname: Eftirnafn
+    learn_more: Læra meira
+    lifetime_stats: Lifetime tölfræði
+    limit_usage_to: Takmarkaðu notkun við
+    line_item_adjustments: Aðlögun línuatriða
+    list: Listi
+    loading: Hleðsla
+    loading_tree: Hleður tré. Vinsamlegast bíðið…
+    locale_changed: Staðar breytt
+    location: Staðsetning
+    lock: Læsa
+    log_entries: Skráðu færslur
+    log_in: Skrá inn
+    log_in_to_continue: Skráðu þig inn til að halda áfram
+    logged_in_as: Skráð inn sem
+    logged_in_succesfully: Innskráður með góðum árangri
+    logged_out: Þú hefur verið skráður út.
+    login: Skrá inn
+    login_as_existing: Skráðu þig inn sem núverandi viðskiptavinur
+    login_failed: Auðkenning innskráningar mistókst.
+    login_name: Skrá inn
+    logo: Merki
+    logo_alt: Merkimerki
+    logout: Að skrá þig út
+    logs: Logs
+    look_for_similar_items: Leitaðu að svipuðum hlutum
+    mail_from_address: Póstur frá heimilisfangi
+    mailer_logo: Mailer logo (eingöngu JPG eða PNG myndir)
+    make_refund: Endurgreiða
+    make_sure_the_above_reimbursement_amount_is_correct: Gakktu úr skugga um að ofangreind endurgreiðsluupphæð sé rétt
+    manage_promotion_categories: Stjórna kynningarflokkum
+    manage_variants: Stjórna afbrigðum
+    manual_intervention_required: Handvirk íhlutun krafist
+    master: Meistari
+    master_price: Master verð
+    master_sku: Master SKU
+    match_choices:
+      all: Allt
+      none: Enginn
+    max_items: Hámarks hlutir
+    member_since: Meðlimur síðan
+    memo: Minnisblað
+    meta_description: Meta Lýsing
+    meta_keywords: Meta lykilorð
+    meta_title: Meta titill
+    metadata: Lýsigögn
+    minimal_amount: Lágmarksupphæð
+    missing_return_authorization: Vantar skilaleyfi fyrir %{item_name}.
+    month: Mánuður
+    more: Meira
+    move_stock_between_locations: Færa lager milli staða
+    move_variant_to: Færa afbrigði til
+    multiple_stores: Margar verslanir
+    mutable: Breytileg
+    my_account: Minn reikningur
+    my_orders: Pantanir mínar
+    name: Nafn
+    name_on_card: Nafn á korti
+    name_or_sku: Nafn eða SKU (sláðu inn að minnsta kosti fyrstu 3 stafi vöruheitis)
+    nav_bar:
+      admin_panel: Stjórnandi
+      change_country: Skipta um land
+      close_menu: Loka matseðli
+      desktop: Skjáborðsleiðsögn
+      go_to_previous_menu: Farðu í fyrri valmynd
+      log_in: SKRÁ INN
+      log_out: AÐ SKRÁ ÞIG ÚT
+      mobile: Farsímaleiðsögn
+      my_account: MINN REIKNINGUR
+      my_orders: PÖTTIR MÍN
+      show_menu: Sýna matseðil
+      show_search: Sýna leit
+      show_user_menu: Sýna notendavalmynd
+      sign_up: SKRÁÐU ÞIG
+    new: Nýtt
+    new_adjustment: Ný aðlögun
+    new_country: Nýtt land
+    new_customer: Búðu til nýjan reikning
+    new_customer_return: Ný viðskiptavinur aftur
+    new_image: Ný mynd
+    new_option_type: Ný valkostategund
+    new_order: Ný pöntun
+    new_order_completed: Nýjum pöntun lokið
+    new_order_notifications_email: Tilkynningar tölvupóst um nýja pöntun
+    new_payment: Ný greiðsla
+    new_payment_method: Nýr greiðslumáti
+    new_product: Ný vara
+    new_promotion: Ný kynning
+    new_promotion_category: Nýr kynningarflokkur
+    new_property: Ný eign
+    new_prototype: Ný frumgerð
+    new_refund: Ný endurgreiðsla
+    new_refund_reason: Ný ástæða endurgreiðslu
+    new_reimbursement_type: Ný endurgreiðslugerð
+    new_return_authorization: Ný skilaheimild
+    new_rma_reason: Ný RMA ástæða
+    new_role: Ný hlutverk
+    new_shipment_at_location: Ný sending á staðnum
+    new_shipping_category: Nýr flutningaflokkur
+    new_shipping_method: Ný flutningsaðferð
+    new_state: Nýtt ríki
+    new_stock_location: Ný birgðir staðsetning
+    new_stock_movement: Ný hlutabréfahreyfing
+    new_stock_transfer: Nýr hlutaflutningur
+    new_store_credit: Nýtt verslunarinneign
+    new_store_credit_category: Nýr flokkaflokkur lánstrausts
+    new_tax_category: Nýr skattaflokkur
+    new_tax_rate: Nýtt skatthlutfall
+    new_taxon: Nýr Taxon
+    new_taxonomy: Ný flokkunarfræði
+    new_tracker: Nýr rekja spor einhvers
+    new_user: Nýr notandi
+    new_variant: Nýtt afbrigði
+    new_zone: Nýtt svæði
+    next: Næst
+    no_actions_added: Engum aðgerðum bætt við
+    no_address_given: Ekkert heimilisfang gefið
+    no_available_date_set: Engin tiltækt dagsetning sett
+    no_cc_type: N / A
+    no_country: Ekkert land sett
+    no_limits_zone: Engin takmörk
+    no_payment_found: Engin greiðsla fannst
+    no_payment_provider_settings_message: Þessi greiðsluaðili hefur engar sérsniðnar stillingar í boði
+    no_pending_payments: Engar greiðslur í bið
+    no_product_available:
+      for_this_quantity: Því miður lítur út fyrir að sumar vörur séu ekki fáanlegar í völdu magni.
+      opps: Úbbs!
+    no_products_found: Engar vörur fundust
+    no_resource_found: Engin %{resource} fannst
+    no_results: Engar niðurstöður
+    no_returns_found: Engin skil fundin
+    no_rules_added: Engum reglum bætt við
+    no_shipping_method_selected: Engin flutningsaðferð valin.
+    no_state_changes: Engin staða breytist ennþá.
+    no_tracking_present: Engar upplýsingar um rakningar gefnar.
+    none: Enginn
+    none_selected: Ekkert valið
+    normal_amount: Venjulegt magn
+    not: ekki
+    not_available: N / A
+    not_enough_stock: Ekki er nægilegt birgðir á upptökustað til að ljúka þessum flutningi.
+    not_found: "%{resource} finnst ekki"
+    note: Athugið
+    notice_messages:
+      icon_removed: Mynd hefur verið fjarlægð
+      prices_saved: Verð tókst að spara
+      product_cloned: Vara hefur verið klóna
+      product_deleted: Vöru hefur verið eytt
+      product_not_cloned: 'Ekki var hægt að klóna vöru. Ástæða: %{error}'
+      product_not_deleted: 'Ekki var hægt að eyða vöru. Ástæða: %{error}'
+      variant_deleted: Afbrigði hefur verið eytt
+      variant_not_deleted: 'Ekki var hægt að eyða afbrigði. Ástæða: %{error}'
+    num_orders: "# Pantanir"
+    number: Fjöldi
+    ok: Allt í lagi
+    on_hand: Á hendi
+    open: Opið
+    open_all_adjustments: Opnaðu allar leiðréttingar
+    option_type: Valkostagerð
+    option_type_placeholder: Veldu valkostategund
+    option_types: Valkostategundir
+    option_value: Valkostagildi
+    option_values: Valkostagildi
+    optional: Valfrjálst
+    options: Valkostir
+    or: eða
+    or_over_price: "%{price} eða yfir"
+    order: Panta
+    order_adjustments: Aðlögun pöntunar
+    order_already_updated: Pöntunin hefur þegar verið uppfærð.
+    order_approved: Pöntun samþykkt
+    order_canceled: Pöntun hætt
+    order_details: Upplýsingar um pöntun
+    order_email_resent: Panta tölvupóst endursent
+    order_has_no_payments: Pöntun hefur engar greiðslur
+    order_information: Upplýsingar um pöntun
+    order_line_items: Pöntunarlínur
+    order_mailer:
+      cancel_email:
+        dear_customer: Kæri %{name},
+        instructions: HÆTT var við pöntunina þína. Vinsamlegast hafðu þessar uppsagnarupplýsingar til að skrá þig.
+        order_summary_canceled: Panta %{number} Yfirlit [CANCELED]
+        subject: Hætt við pöntun
+        thanks: Takk fyrir viðskiptin.
+      confirm_email:
+        dear_customer: Kæri %{name},
+        instructions: Vinsamlegast skoðaðu og hafðu eftirfarandi upplýsingar um pöntunina til að skrá þig.
+        order_summary: Pantaðu %{number} Yfirlit
+        subject: Staðfesting á pöntun
+        thanks: Takk fyrir viðskiptin.
+      store_owner_notification_email:
+        heading: Ný pöntun móttekin
+        instructions: Þú hefur fengið nýja pöntun.
+        order_summary: Pantaðu %{number} Yfirlit
+        subject: "%{store_name} fékk nýja pöntun"
+        thanks: Takk fyrir viðskiptin.
+      store_team: "%{store_name} Lið"
+      subtotal: 'Samtals:'
+      total: 'Pöntun samtals:'
+    order_not_found: Við fundum ekki pöntunina þína. Reyndu þá aðgerð aftur.
+    order_number: Pantaðu %{number}
+    order_processed_successfully: Pöntunin þín hefur verið afgreidd með góðum árangri
+    order_resumed: Pöntunin hófst að nýju
+    order_state:
+      address: heimilisfang
+      awaiting_return: bíða endurkomu
+      canceled: hætt við
+      cart: kerra
+      complete: heill
+      confirm: staðfesta
+      considered_risky: talin áhættusöm
+      delivery: afhendingu
+      payment: greiðsla
+      resumed: hafið aftur
+      returned: skilað
+    order_success: Pöntun tókst
+    order_success_explain: Pöntunarupplýsingar þínar verða sendar á netfangið þitt
+    order_summary: Samantekt Pöntunar
+    order_sure_want_to: Ertu viss um að þú viljir %{event} þessa pöntun?
+    order_total: Pöntun samtals
+    order_updated: Pöntun uppfærð
+    orders: Pantanir
+    out_of_stock: Uppselt
+    overview: Yfirlit
+    package_from: pakki frá
+    page_not_found: Fyrirgefðu! Síðu sem þú ert að leita að er ekki að finna.
+    pagination:
+      next_page: næsta blaðsíða & raquo;
+      previous_page: "& laquo; fyrri síða"
+      truncate: "& hellip;"
+    password: Lykilorð
+    paste: Límdu
+    path: Leið
+    pay: borga
+    payment: Greiðsla
+    payment_amount: Greiðslu upphæð
+    payment_could_not_be_created: Ekki var hægt að búa til greiðslu.
+    payment_identifier: Greiningarauðkenni
+    payment_information: greiðslu upplýsingar
+    payment_method: Greiðslumáti
+    payment_method_not_supported: Sá greiðslumáti er ekki studdur. Vinsamlegast veldu annan.
+    payment_methods: Greiðsluaðferðir
+    payment_processing_failed: Ekki tókst að vinna að greiðslu, vinsamlegast athugaðu upplýsingarnar sem þú slóst inn
+    payment_processor_choose_banner_text: Ef þú þarft hjálp við að velja greiðsluvinnsluaðila skaltu fara á
+    payment_processor_choose_link: greiðslusíðuna okkar
+    payment_provider_settings: Stillingar greiðsluveitu
+    payment_state: Greiðsluríki
+    payment_states:
+      balance_due: jafnvægi vegna
+      checkout: athuga
+      completed: lokið
+      credit_owed: lánstraust
+      failed: mistókst
+      paid: greitt
+      pending: í bið
+      processing: vinnsla
+      void: ógilt
+    payment_type: Greiðslugerð
+    payment_updated: Greiðsla uppfærð
+    payments: Greiðslur
+    pdp:
+      checkout: Athuga
+      description: Lýsing
+      details: Upplýsingar
+      products_included_in_promotion: Vörur innifaldar í kynningunni
+      quantity: Magn
+      view_cart: Skoða körfu
+      you_may_also_like: þér gæti einnig líkað við
+    pending: Í bið
+    pending_sale: Sala í bið
+    percent: Hlutfall
+    percent_per_item: Hlutfall á hlut
+    permalink: Permalink
+    phone: Sími
+    place_order: Panta
+    please_define_payment_methods: Vinsamlegast skilgreindu nokkrar greiðslumáta fyrst.
+    please_enter_reasonable_quantity: Vinsamlegast sláðu inn hæfilegt magn.
+    plp:
+      best_selling: SÖLUHÆSTI
+      clear_all: HREINSA ALLT
+      collection: SÖFNUN
+      color: LITUR
+      default: STANDUR
+      done: GJÖRÐ
+      filter_by: SÍA BY
+      newest_first: NÝJASTA FYRSTA
+      no_results: Engar niðurstöður
+      no_results_found: Engar niðurstöður fundust
+      not_found_filters1: Við fundum ekki samsvörun fyrir þessar síur.
+      not_found_filters2: Vinsamlegast reyndu annað val.
+      not_found_text1: Við fundum ekki vörur fyrir '%{keywords}'.
+      not_found_text2: Vinsamlegast reyndu aðra leit.
+      price: verð
+      price_high_to_low: VERÐ (HÁTT - LÁGT)
+      price_low_to_high: VERÐ (LÁGT - HÁTT)
+      result: NIÐURSTAÐA
+      results_for: Niðurstöður fyrir
+      size: STÆRÐ
+      sort_by: RAÐA EFTIR
+      top_sellers: TOPPSELJENDUR
+      type: TEGUND
+    populate_get_error: Eitthvað fór úrskeiðis. Vinsamlegast reyndu að bæta hlutnum aftur.
+    powered_by: Knúið af
+    pre_tax_amount: Upphæð fyrir skatta
+    pre_tax_refund_amount: Upphæð endurgreiðslu fyrir skatta
+    pre_tax_total: Samtals fyrir skatta
+    preferred_reimbursement_type: Æskileg endurgreiðslutegund
+    presentation: Kynning
+    preview_product: Forskoða vöru
+    preview_taxon: Forskoða Taxon
+    previous: Fyrri
+    previous_state_missing: ekki til
+    previously_used_card: Áður notuð spil
+    price: Verð
+    price_range: Verðbil
+    price_sack: Verðpoki
+    prices: Verð
+    process: Ferli
+    product: Vara
+    product_details: Upplýsingar um vöru
+    product_has_no_description: Þessi vara hefur enga lýsingu
+    product_not_available_in_this_currency: Þessi vara er ekki fáanleg í völdum gjaldmiðli.
+    product_properties: Vörueiginleikar
+    product_rule:
+      choose_products: Veldu vörur
+      label: Pöntunin verður að innihalda x magn af þessum vörum
+      match_all: allt
+      match_any: að minnsta kosti einn
+      match_none: enginn
+      product_source:
+        group: Úr vöruflokki
+        manual: Veldu handvirkt
+    products: Vörur
+    promotion: Kynning
+    promotion_action: Kynningaraðgerð
+    promotion_action_types:
+      create_adjustment:
+        description: Býr til stöðuhækkun kreditaðlögunar á pöntuninni
+        name: Búðu til heildaraðlögun
+      create_item_adjustments:
+        description: Býr til aðlögunarleiðréttingu á línu
+        name: Búðu til aðlögun á hverja línu
+      create_line_items:
+        description: Fyllir vagninn með tilgreindu magni afbrigði
+        name: Búðu til línur
+      free_shipping:
+        description: Gerir allar sendingar ókeypis fyrir pöntunina
+        name: Ókeypis sending
+    promotion_actions: Aðgerðir
+    promotion_categories: Kynningarflokkar
+    promotion_category: Kynningarflokkur
+    promotion_cloned: Kynning hefur verið klónuð
+    promotion_form:
+      match_policies:
+        all: Passa allar þessar reglur
+        any: Passa einhverjar af þessum reglum
+    promotion_label: Kynning (%{name})
+    promotion_not_cloned: 'Kynning hefur ekki verið klónuð. Ástæða: %{error}'
+    promotion_rule: Kynningarregla
+    promotion_rule_types:
+      country:
+        description: Pöntun er send til rétts (eða sjálfgefins) lands
+        name: Land
+      first_order:
+        description: Verður að vera fyrsta pöntun viðskiptavinarins
+        name: Fyrsta pöntun
+      item_total:
+        description: Pöntunartölur uppfylla þessi skilyrði
+        name: Liður alls
+      one_use_per_user:
+        description: Aðeins ein notkun á hvern notanda
+        name: Ein notkun á hvern notanda
+      option_value:
+        description: Pöntunin inniheldur tilgreindar vörur með samsvarandi valkostagildi
+        name: Valkostagildi
+      product:
+        description: Pöntunin inniheldur tilgreindar vörur
+        name: Vörur
+      taxon:
+        description: Pöntunin inniheldur vörur með tilgreindum tollflokkum
+        name: Taxon (s)
+      user:
+        description: Aðeins í boði fyrir tilgreinda notendur
+        name: Notandi
+      user_logged_in:
+        description: Aðeins í boði fyrir innskráða notendur
+        name: Notandi skráður inn
+    promotion_uses: Kynning notar
+    promotionable: Stuðlað
+    promotions: Kynningar
+    propagate_all_variants: Fjölga öllum afbrigðum
+    properties: Fasteignir
+    property: Eign
+    prototype: Frumgerð
+    prototypes: Frumgerðir
+    provider: Útgefandi
+    provider_settings_warning: Ef þú ert að breyta tegund þjónustuveitanda verður þú fyrst að vista áður en þú getur breytt stillingum þjónustuveitunnar
+    purchased_quantity: Keypt magn
+    qty: Fjöldi
+    quantity: Magn
+    quantity_returned: Magni skilað
+    quantity_shipped: Magn sent
+    quick_search: Fljótleg leit ..
+    rate: Gengi
+    reason: Ástæða
+    receive: fá
+    receive_stock: Fá hlutabréf
+    received: Móttekið
+    reception_status: Móttökustaða
+    reference: Tilvísun
+    reference_contains: Tilvísun Inniheldur
+    refund: Endurgreiðsla
+    refund_amount_must_be_greater_than_zero: Endurgreiðsluupphæð verður að vera meiri en núll
+    refund_reasons: Ástæður endurgreiðslu
+    refunded_amount: Endurgreitt upphæð
+    refunds: Endurgreiðslur
+    register: Skráðu þig
+    registration: Skráning
+    reimburse: Endurgreiða
+    reimbursed: Endurgreitt
+    reimbursement: Endurgreiðsla
+    reimbursement_mailer:
+      reimbursement_email:
+        days_to_send: Þú hefur %{days} daga til að senda hluti sem bíða skipti.
+        dear_customer: Kæri %{name},
+        exchange_summary: Yfirlit yfir skipti
+        for: fyrir
+        instructions: Endurgreiðsla þín hefur verið afgreidd.
+        refund_summary: Yfirlit yfir endurgreiðslur
+        store_team: "%{store_name} Lið"
+        subject: Tilkynning um endurgreiðslu
+        thanks: Takk fyrir viðskiptin.
+        total_refunded: 'Samtals endurgreitt: %{total}'
+    reimbursement_perform_failed: 'Ekki var hægt að endurgreiða. Villa: %{error}'
+    reimbursement_status: Endurgreiðslustaða
+    reimbursement_type: Tegund endurgreiðslu
+    reimbursement_type_override: Endurgreiðsla tegund ofnáms
+    reimbursement_types: Tegundir endurgreiðslna
+    reimbursements: Endurgreiðslur
+    reject: Hafnaðu
+    rejected: Hafnað
+    remember_me: Mundu eftir mér
+    remove: Fjarlægðu
+    remove_image: Fjarlægðu mynd
+    rename: Endurnefna
+    report: Skýrsla
+    reports: Skýrslur
+    required: "*"
+    required_fields: nauðsynlegir reitir
+    resellable: Endurseljanlegur
+    resend: Sendu aftur
+    reset_password: Endurstilla lykilorðið mitt
+    response_code: Svarskóði
+    resume: halda áfram
+    resumed: Áfram
+    return: snúa aftur
+    return_authorization: Heimild til skila
+    return_authorization_canceled: Afturheimild afturkölluð
+    return_authorization_reasons: Ástæða skilaheimildar
+    return_authorization_states:
+      authorized: Heimilt
+      canceled: Hætt við
+    return_authorization_updated: Heimild til skila uppfærð
+    return_authorizations: Heimildir til skila
+    return_item_inventory_unit_ineligible: Senda þarf birgðareining skila hlutar
+    return_item_inventory_unit_reimbursed: Birgðareining skilahlutar er þegar endurgreidd
+    return_item_order_not_completed: Pöntun skila hlutar verður að vera lokið
+    return_item_rma_ineligible: Skilavara þarf RMA
+    return_item_time_period_ineligible: Skilavara er utan gjaldgengs tímabils
+    return_items: Skila hlutum
+    return_items_cannot_be_associated_with_multiple_orders: Ekki er hægt að tengja hlutir með mörgum pöntunum.
+    return_number: Skilanúmer
+    return_quantity: Skilamagn
+    returned: Skilaði
+    returns: Skilar
+    review: Yfirferð
+    risk: Áhætta
+    risk_analysis: Áhættugreining
+    risky: Áhættusamt
+    rma_credit: RMA inneign
+    rma_number: RMA númer
+    rma_value: RMA gildi
+    role_id: Hlutverkskilríki
+    roles: Hlutverk
+    rules: Reglur
+    safe: Öruggt
+    sales_total: Sala samtals
+    sales_total_description: Sala samtals fyrir allar pantanir
+    sales_totals: Sölutölur
+    save_and_continue: Vista og halda áfram
+    save_my_address: Vista heimilisfangið mitt
+    saving: Sparar
+    say_no: Nei
+    say_yes: Já
+    scope: Umfang
+    search: Leitaðu
+    search_results: Leitarniðurstöður fyrir '%{keywords}'
+    searching: Leita
+    secure_connection_type: Örugg tengitegund
+    security_settings: Öryggisstillingar
+    select: Veldu
+    select_a_date: Veldu dagsetningu
+    select_a_date_range: Veldu dagsetningu
+    select_a_return_authorization_reason: Veldu ástæðu skilaheimildarinnar
+    select_a_stock_location: Veldu staðsetningu hlutabréfa
+    select_a_store_credit_reason: Veldu ástæðu fyrir inneign verslunarinnar
+    select_an_option: Veldu valkost
+    select_from_prototype: Veldu úr frumgerð
+    select_stock: Veldu hlutabréf
+    selected_quantity_not_available: valinn af %{item} er ekki í boði.
+    send_copy_of_all_mails_to: Sendu afrit af öllum póstum til
+    send_mails_as: Sendu póst sem
+    seo: SEO
+    seo_robots: SEO vélmenni
+    seo_title: SEO titill
+    server: Netþjónn
+    server_error: Netþjónninn skilaði villu
+    settings: Stillingar
+    ship: Skip
+    ship_address: Heimilisfang skips
+    ship_to: 'Sending til:'
+    ship_total: Skip samtals
+    shipment: Sending
+    shipment_adjustments: Aðlögun sendingar
+    shipment_details: Frá %{stock_location} um %{shipping_method}
+    shipment_mailer:
+      shipped_email:
+        dear_customer: Kæri %{name},
+        instructions: Pöntunin þín %{number} hefur verið send
+        shipment_summary: Sendingaryfirlit fyrir pöntun
+        shipping_method: 'Sendingaraðferð: %{shipping_method}'
+        store_team: "%{store_name} Lið"
+        subject: Sendingartilkynning
+        thanks: Takk fyrir viðskiptin.
+        track_information: 'Upplýsingar um rakningu: %{tracking}'
+        track_link: 'Rakningartengill: %{url}'
+    shipment_state: Sendingaríki
+    shipment_states:
+      backorder: bakpöntun
+      canceled: hætt við
+      partial: að hluta
+      pending: í bið
+      ready: tilbúinn
+      shipped: sent
+    shipment_transfer_error: Villa kom upp við flutning afbrigða
+    shipment_transfer_success: Afbrigði flutt með góðum árangri
+    shipments: Sendingar
+    shipped: Sendur
+    shipping: Sendingar
+    shipping_address: Sendingar heimilisfang
+    shipping_categories: Sendingarflokkar
+    shipping_category: Sendingarflokkur
+    shipping_flat_rate_per_item: Flat hlutfall á pakkahlut
+    shipping_flat_rate_per_order: Flattaxti
+    shipping_flexible_rate: Sveigjanlegt hlutfall á pakkahlut
+    shipping_instructions: Leiðbeiningar um flutninga
+    shipping_method: Sendingar aðferð
+    shipping_methods: Sendingaraðferðir
+    shipping_price_sack: Verðpoki
+    shipping_rates:
+      display_price:
+        excluding_tax: "%{price} (+ %{tax_amount} %{tax_rate_name})"
+        including_tax: "%{price} (þ.m.t. %{tax_amount} %{tax_rate_name})"
+    shipping_total: Sending alls
+    shop_by_taxonomy: Verslaðu eftir %{taxonomy}
+    shopping_cart: Innkaupakerra
+    show: Sýna
+    show_active: Sýna virkt
+    show_deleted: Sýningu eytt
+    show_discontinued: Sýna hætt
+    show_only_complete_orders: Sýnið aðeins fullar pantanir
+    show_only_considered_risky: Sýnið aðeins áhættusamar pantanir
+    show_property: Sýna eign
+    show_rate_in_label: Sýna hlutfall í merkimiða
+    show_store_selector:
+      long: Sýndu verslunarkostinn í aðalbarstiku Storefront og leyfðu notendum að breyta verslun og gjaldmiðli
+      short: Sýna valkost fyrir verslun
+    sign_up: Skráðu þig
+    sku: SKU
+    skus: SKU
+    slug: Slug
+    social: Félagslegt
+    source: Heimild
+    special_instructions: sérstakar leiðbeiningar
+    split: Skipta
+    spree_gateway_error_flash_for_checkout: Vandamál kom upp með greiðsluupplýsingar þínar. Vinsamlegast athugaðu upplýsingar þínar og reyndu aftur.
+    ssl:
+      change_protocol: Skiptu yfir í að nota HTTP (frekar en HTTPS) og reyndu þessa beiðni aftur.
+    start: Byrjaðu
+    starting_from: Byrjar kl
+    state: Ríki
+    state_based: Ríkisbundið
+    state_machine_states:
+      accepted: Samþykkt
+      address: Heimilisfang
+      authorized: Heimilt
+      awaiting: Beðið
+      awaiting_return: Beðið eftir endurkomu
+      backordered: Aftur pantað
+      canceled: Hætt við
+      cart: Karfa
+      checkout: Athuga
+      closed: Lokað
+      complete: Heill
+      completed: Lokið
+      confirm: Staðfesta
+      delivery: Afhending
+      errored: Villa kom upp
+      failed: Mistókst
+      given_to_customer: Gefið viðskiptavini
+      invalid: Ógilt
+      manual_intervention_required: Handvirk íhlutun krafist
+      on_hand: Á hendi
+      open: Opið
+      order: Panta
+      payment: Greiðsla
+      pending: Í bið
+      processing: Vinnsla
+      ready: Tilbúinn
+      reimbursed: Endurgreitt
+      resumed: Áfram
+      returned: Skilaði
+      shipment: Sending
+      shipped: Sendur
+      void: Ógilt
+    states: Ríki
+    states_required: Ríki krafist
+    status: Staða
+    stock: Hlutabréf
+    stock_item_id: Lagerhlutur
+    stock_location: Staðsetning lager
+    stock_location_info: Upplýsingar um lagerstað
+    stock_locations: Stöðvar hlutabréfa
+    stock_locations_need_a_default_country: Þú verður að búa til sjálfgefið land áður en þú stofnar hlutabréfastaðsetningu.
+    stock_management: Hlutastjórnun
+    stock_management_requires_a_stock_location: Vinsamlegast stofnaðu lagerstað til að stjórna hlutabréfum.
+    stock_movements: Hreyfingar hlutabréfa
+    stock_movements_for_stock_location: Hreyfingar á lager fyrir %{stock_location_name}
+    stock_successfully_transferred: Hlutabréf voru flutt með góðum árangri milli staða.
+    stock_transfer:
+      errors:
+        must_have_variant: Þú verður að bæta við að minnsta kosti einu afbrigði.
+        variants_unavailable: Sum afbrigði eru ekki fáanleg á %{stock}
+    stock_transfer_name: Hlutaflutningur
+    stock_transfers: Hlutaflutningar
+    stop: Hættu
+    store: Geymið
+    store_credit:
+      additional_payment_needed: Veldu annan greiðslumáta fyrir eftirstöðvar <strong> %{amount} </strong>.
+      allocated: Bætt við
+      applicable_amount: "<strong> %{amount} </strong> í verslunarinneign verður beitt við þessa pöntun."
+      apply: Sækja um
+      authorized: Heimilt
+      available_amount: Þú ert með <strong> %{amount} </strong> í inneign verslunar í boði!
+      captured: Notað
+      credit: Inneign
+      errors:
+        cannot_change_used_store_credit: Þú getur ekki breytt verslunarinneign sem þegar hefur verið notuð
+        unable_to_create: Ekki er hægt að búa til verslunarinneign
+        unable_to_delete: Ekki er hægt að eyða inneign í verslun
+        unable_to_fund: Ekki er hægt að greiða fyrir pöntun með verslunareiningum
+        unable_to_update: Ekki er hægt að uppfæra inneign í verslun
+      remaining_amount: Þú ert <strong> %{amount} </strong> eftir í verslunarinneign reikningsins þíns.
+      remove: Fjarlægðu
+    store_credit_categories: Flokkar verslunarlána
+    store_credit_name: Verslunarinneign
+    store_credit_payment_method:
+      currency_mismatch: Verslunarinneignarmynt samsvarar ekki pöntunargjaldmiðli
+      insufficient_authorized_amount: Ekki er hægt að ná meira en heimild
+      insufficient_funds: Upphæð inneignar í verslun er ekki nægjanleg
+      select_one_store_credit: Veldu inneign á verslun til að fara í eftirstöðvar
+      successful_action: Vel heppnuð verslunarinneign %{action}
+      unable_to_credit: 'Ekki er hægt að kreditkóða: %{auth_code}'
+      unable_to_find: Gat ekki fundið verslunarinneign
+      unable_to_find_for_action: 'Gat ekki fundið verslunarinneign fyrir auth kóða: %{auth_code} fyrir aðgerð: %{action}'
+      unable_to_void: 'Ekki er hægt að ógilda kóða: %{auth_code}'
+      user_has_no_store_credits: Notandi hefur ekki tiltækt verslunarinneign
+    store_credits: Verslunareiningar
+    store_default: Sjálfgefin verslun
+    store_errors:
+      unable_to_create: Ekki er hægt að búa til verslun.
+      unable_to_delete: Ekki er hægt að eyða verslun.
+      unable_to_update: Ekki er hægt að uppfæra verslun.
+    store_form:
+      checkout_zone_help: Að velja svæði takmarkar við hvaða lönd eða vörur vörur eru sendar. Nánari upplýsingar <a href='https://guides.spreecommerce.org/user/configuration/configuring_geography.html#zones' target='_blank' class='alert-link'> vinsamlegast sjáðu skjöl </a>
+      code_help: Geymdu einstakt auðkenni, sem er stytt útgáfa af nafni verslunarinnar (notað sem heiti skráarsafnsins og einnig gagnlegt til að aðgreina sniðmát eftir verslun)
+      customer_support_email_help: Þessi tölvupóstur er sýnilegur gestum verslunarinnar í síðufæti
+      default_country_help: Þetta er landið sem verður fyrirfram valið á skjánum Heimilisfang
+      footer_help: Þetta efni er sýnilegt í fæti hluta verslunarinnar
+      locales_help: Settu upp <a href='https://github.com/spree-contrib/spree_i18n target='_blank' class='alert-link'> Spree I18n viðbót </a> til að bæta við fleiri stöðum
+      mail_from_address_help: Þetta er tölvupósturinn sem verður sendandi allra verslunarpóstanna þinna (Pöntunarstaðfesting, sendingartilkynning osfrv.)
+      new_order_notifications_email_help: Ef þú vilt fá tilkynningu í tölvupósti í hvert skipti sem einhver leggur inn pöntun, vinsamlegast gefðu upp netfang fyrir þá tilkynningu sem á að senda til
+      seo_robots: Vinsamlegast skoðaðu <a href='https://developers.google.com/search/reference/robots_meta_tag' target='_blank'> þessa síðu til að fá meiri hjálp </a>
+      social_help: Ef þú vilt tengja á samfélagsreikningana þína í fæti hluta vefsíðu þinnar skaltu fylla út reitina hér að neðan
+    store_not_set_as_default: Gat ekki stillt verslun %{store} sem sjálfgefna verslun
+    store_set_as_default: Verslun %{store} er nú sjálfgefin verslun
+    store_set_default_button: Stilltu sem sjálfgefið
+    stores: Búðir
+    street_address: Heimilisfang
+    street_address_2: Heimilisfang (frh.)
+    subtotal: Samtals
+    subtract: Dragðu frá
+    success: Árangur
+    successfully_created: vel hefur verið búið til %{resource}!
+    successfully_refunded: vel hefur verið endurgreitt %{resource}!
+    successfully_removed: tókst að fjarlægja %{resource}!
+    successfully_updated: hefur verið uppfært %{resource}!
+    summary: Yfirlit
+    supported_currencies: Stuðningur gjaldmiðla
+    supported_currencies_long: Aðskilinn komma með lista yfir studda gjaldmiðla
+    supported_locales: Stuðningsaðilar
+    tags: Merkimiðar
+    tags_placeholder: Bæta við merkjum
+    tax: Skattur
+    tax_categories: Skattflokkar
+    tax_category: Skattflokkur
+    tax_code: Skattalög
+    tax_included: Skattur (þ.m.t.)
+    tax_rate_amount_explanation: Skattprósenta er aukastaf til að hjálpa við útreikninga, (þ.e.a.s. ef skatthlutfallið er 5%, sláðu inn 0,05)
+    tax_rates: Skattprósenta
+    taxon: Taxon
+    taxon_edit: Breyttu Taxon
+    taxon_missing_alt: Lýsing á flokkaborða
+    taxon_placeholder: Bættu við Taxon
+    taxon_rule:
+      choose_taxons: Veldu taxons
+      label: Pöntunin verður að innihalda x upphæð af þessum gjaldtökum
+      match_all: allt
+      match_any: að minnsta kosti einn
+    taxonomies: Flokkunarhagkerfi
+    taxonomy: Flokkunarfræði
+    taxonomy_brands_name: Merki
+    taxonomy_categories_name: Flokkar
+    taxonomy_edit: Breyttu flokkunarfræði
+    taxonomy_tree_error: Umbeðin breyting hefur ekki verið samþykkt og tréð hefur verið komið í fyrra horf, vinsamlegast reyndu aftur.
+    taxonomy_tree_instruction: "* Hægri smelltu (eða tvísmelltu á iOS tæki) á barn í trénu til að fá aðgang að valmyndinni til að bæta við, eyða eða flokka barn."
+    taxons: Taxons
+    test: Próf
+    test_mailer:
+      test_email:
+        greeting: Til hamingju!
+        message: Ef þú hefur fengið þennan tölvupóst, þá eru netstillingar þínar réttar.
+        subject: Prófpóstur
+    test_mode: Prófunarstilling
+    thank_you_for_your_order: Takk fyrir viðskiptin. Vinsamlegast prentaðu út afrit af þessari staðfestingarsíðu til að skrá þig.
+    there_are_no_items_for_this_order: Það eru engir hlutir fyrir þessa pöntun. Vinsamlegast bættu hlut við pöntunina til að halda áfram.
+    there_were_problems_with_the_following_fields: Það voru vandamál með eftirfarandi reiti
+    this_order_has_already_received_a_refund: Þessi pöntun hefur þegar fengið endurgreiðslu
+    thumbnail: Smámynd
+    tiered_flat_rate: Niðurgreitt fast hlutfall
+    tiered_percent: Flokkað hlutfall
+    tiers: Tiers
+    time: Tími
+    to_add_variants_you_must_first_define: Til að bæta við afbrigðum verður þú fyrst að skilgreina
+    total: Samtals
+    total_per_item: Samtals á hlut
+    total_pre_tax_refund: Heildar endurgreiðsla fyrir skatta
+    total_price: Heildarverð
+    total_sales: Heildarsala
+    track_inventory: Brautarskrá
+    tracking: Rekja spor einhvers
+    tracking_number: Rakningarnúmer
+    tracking_url: Slóð rekja spor einhvers
+    tracking_url_placeholder: t.d. http://quickship.com/package?num=:tracking
+    transaction_id: Auðkenni viðskipta
+    transfer_from_location: Flytja frá
+    transfer_stock: Flytja lager
+    transfer_to_location: Flytja til
+    tree: Tré
+    twitter: Twitter
+    type: Tegund
+    type_to_search: Sláðu inn til að leita
+    unable_to_connect_to_gateway: Ekki er hægt að tengjast hliðinu.
+    unable_to_create_reimbursements: Ekki er hægt að búa til endurgreiðslur vegna þess að það eru hlutir sem bíða handvirkrar íhlutunar.
+    under_price: Undir %{price}
+    unlock: Opna
+    unrecognized_card_type: Óþekkt kortategund
+    unshippable_items: Ósendanlegir hlutir
+    update: Uppfærsla
+    updating: Uppfærir
+    url: Slóð
+    usage_limit: Notkunarmörk
+    use_app_default: Notaðu sjálfgefið forrit
+    use_billing_address: Notaðu gjaldheimilisfang
+    use_existing_cc: Notaðu núverandi kort á skrá
+    use_new_cc: Notaðu nýtt kort
+    use_new_cc_or_payment_method: Notaðu nýtt kort / greiðslumáta
+    use_s3: Notaðu Amazon S3 fyrir myndir
+    used: Notað
+    user: Notandi
+    user_not_found: Notandi finnst ekki
+    user_rule:
+      choose_users: Veldu notendur
+    users: Notendur
+    validation:
+      cannot_be_less_than_shipped_units: getur ekki verið minna en fjöldi sendra eininga.
+      cannot_destroy_line_item_as_inventory_units_have_shipped: Get ekki eyðilagt línu þar sem sumar birgðir einingar hafa verið sendar.
+      exceeds_available_stock: umfram tiltæka birgðir. Vinsamlegast vertu viss um að línur hafi gilt magn.
+      is_too_large: er of stór - birgðir á hendi geta ekki náð til umbeðins magns!
+      must_be_int: verður að vera heiltala
+      must_be_non_negative: verður að vera ekki neikvætt gildi
+      unpaid_amount_not_zero: 'Upphæðin var ekki endurgreidd að fullu. Enn vegna: %{amount}'
+    value: Gildi
+    variant: Afbrigði
+    variant_placeholder: Veldu afbrigði
+    variant_prices_search_placeholder: Leitaðu að SKU eða afbrigðisheiti ...
+    variants: Afbrigði
+    version: Útgáfa
+    void: Ógilt
+    weight: Þyngd
+    what_is_a_cvv: Hvað er (CVV) kreditkortakóði?
+    what_is_this: Hvað er þetta?
+    width: Breidd
+    year: Ár
+    you_have_no_orders_yet: Þú hefur engar pantanir ennþá
+    your_cart_is_empty: Karfan þín er tóm
+    your_order_is_empty_add_product: Pöntunin þín er tóm, vinsamlegast leitaðu að og bættu við vöru hér að ofan
+    zip: Rennilás
+    zipcode: Póstnúmer
+    zipcode_required: Póstnúmer krafist
+    zone: Svæði
+    zones: Svæði

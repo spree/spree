@@ -1,0 +1,1769 @@
+---
+cy:
+  activemodel:
+    errors:
+      models:
+        spree/fulfilment_changer:
+          attributes:
+            current_shipment:
+              can_not_have_backordered_inventory_units: mae ganddo unedau rhestr eiddo wedi'u had-drefnu
+              has_already_been_shipped: eisoes wedi'i gludo
+            desired_shipment:
+              can_not_transfer_within_same_shipment: ni all fod yr un peth â'r llwyth cyfredol
+              has_not_enough_stock_at_desired_location: nid oes ganddo ddigon o stoc yn y lleoliad stoc a ddymunir
+  activerecord:
+    attributes:
+      spree/address:
+        address1: Cyfeiriad
+        address2: Cyfeiriad (parhad.)
+        city: Dinas
+        company: Cwmni
+        country: Gwlad
+        firstname: Enw cyntaf
+        label: Enw'r cyfeiriad
+        lastname: Enw olaf
+        phone: Ffôn
+        state: Nodwch
+        zipcode: Côd post
+      spree/calculator/tiered_flat_rate:
+        preferred_base_amount: Swm Sylfaenol
+        preferred_tiers: Haenau
+      spree/calculator/tiered_percent:
+        preferred_base_percent: Canran Sylfaen
+        preferred_tiers: Haenau
+      spree/country:
+        iso: ISO
+        iso3: ISO3
+        iso_name: Enw ISO
+        name: Enw
+        numcode: Cod ISO
+      spree/credit_card:
+        base: ''
+        cc_type: Math
+        month: Mis
+        name: Enw
+        number: Rhif
+        verification_value: Gwerth Gwirio
+        year: Blwyddyn
+      spree/inventory_unit:
+        state: Nodwch
+      spree/line_item:
+        price: Pris
+        quantity: Nifer
+      spree/option_type:
+        filterable: Hylifadwy
+        name: Enw
+        presentation: Cyflwyniad
+      spree/order:
+        checkout_complete: Checkout Wedi'i gwblhau
+        completed_at: Wedi'i gwblhau yn
+        considered_risky: Peryglus
+        coupon_code: Cod Cwpon
+        created_at: Dyddiad Archebu
+        email: E-bost
+        ip_address: Cyfeiriad IP
+        item_total: Cyfanswm yr Eitem
+        number: Rhif
+        payment_state: Cyflwr Talu
+        shipment_state: Gwladwriaeth Cludo
+        special_instructions: Cyfarwyddiadau Arbennig
+        state: Nodwch
+        total: Cyfanswm
+      spree/order/bill_address:
+        address1: Cyfeiriad biliau stryd
+        city: Cyfeiriad biliau dinas
+        firstname: Cyfeiriad bilio enw cyntaf
+        lastname: Cyfeiriad bilio enw olaf
+        phone: Ffôn cyfeiriad bilio
+        state: Cyflwr cyfeiriadau biliau
+        zipcode: Cod zip cyfeiriad biliau
+      spree/order/ship_address:
+        address1: Cyfeiriad cludo stryd
+        city: Dinas cyfeiriad llongau
+        firstname: Cyfeiriad cludo enw cyntaf
+        lastname: Cyfeiriad cludo enw olaf
+        phone: Ffôn cyfeiriad cludo
+        state: Cyflwr cyfeiriadau llongau
+        zipcode: Cod zip cyfeiriad cludo
+      spree/payment:
+        amount: Swm
+        number: Rhif
+      spree/payment_method:
+        name: Enw
+      spree/product:
+        available_on: Ar gael Ar
+        cost_currency: Arian Cyfred Cost
+        cost_price: Pris Cost
+        description: Disgrifiad
+        discontinue_on: Terfynu ymlaen
+        less_than: Llai na
+        master_price: Meistr Pris
+        name: Enw
+        on_hand: Wrth Law
+        shipping_category: Categori Llongau
+        tax_category: Categori Treth
+      spree/promotion:
+        advertise: Hysbysebu
+        code: Côd
+        description: Disgrifiad
+        event_name: Enw'r Digwyddiad
+        expires_at: Yn dod i ben yn
+        generate_code: Cynhyrchu cod cwpon
+        name: Enw
+        path: Llwybr
+        promotion_category: Categori Hyrwyddo
+        starts_at: Yn Dechrau Yn
+        usage_limit: Terfyn Defnydd
+      spree/promotion_category:
+        code: Côd
+        name: Enw
+      spree/property:
+        name: Enw
+        presentation: Cyflwyniad
+      spree/prototype:
+        name: Enw
+      spree/return_authorization:
+        amount: Swm
+      spree/role:
+        name: Enw
+      spree/shipment:
+        number: Rhif
+      spree/state:
+        abbr: Talfyriad
+        name: Enw
+      spree/state_change:
+        state_changes: Newidiadau gwladwriaethol
+        state_from: Nodwch o
+        state_to: Nodwch i
+        timestamp: Timestamp
+        type: Math
+        updated: Wedi'i ddiweddaru
+        user: Defnyddiwr
+      spree/store:
+        mail_from_address: Post O'r Cyfeiriad
+        meta_description: Disgrifiad Meta
+        meta_keywords: Allweddeiriau Meta
+        name: Enw'r Safle
+        seo_robots: Robotiaid SEO
+        seo_title: Teitl SEO
+        url: URL y wefan
+      spree/store_credit:
+        amount_used: Swm a ddefnyddir
+      spree/store_credit_category:
+        name: Enw
+      spree/tax_category:
+        description: Disgrifiad
+        name: Enw
+      spree/tax_rate:
+        amount: Cyfradd
+        included_in_price: Wedi'i gynnwys yn y Pris
+        show_rate_in_label: Dangos cyfradd yn y label
+      spree/taxon:
+        name: Enw
+        permalink: Permalink
+        position: Swydd
+      spree/taxonomy:
+        name: Enw
+      spree/user:
+        email: E-bost
+        password: Cyfrinair
+        password_confirmation: Cadarnhad Cyfrinair
+      spree/variant:
+        cost_currency: Arian Cyfred Cost
+        cost_price: Pris Cost
+        depth: Dyfnder
+        height: Uchder
+        price: Pris
+        sku: SKU
+        weight: Pwysau
+        width: Lled
+      spree/zone:
+        description: Disgrifiad
+        name: Enw
+    errors:
+      models:
+        spree/calculator/tiered_flat_rate:
+          attributes:
+            base:
+              keys_should_be_positive_number: Dylai allweddi haen i gyd fod yn rhifau mwy na 0
+            preferred_tiers:
+              should_be_hash: dylai fod yn hash
+        spree/calculator/tiered_percent:
+          attributes:
+            base:
+              keys_should_be_positive_number: Dylai allweddi haen i gyd fod yn rhifau mwy na 0
+              values_should_be_percent: Dylai gwerthoedd haen i gyd fod yn ganrannau rhwng 0% a 100%
+            preferred_tiers:
+              should_be_hash: dylai fod yn hash
+        spree/classification:
+          attributes:
+            taxon_id:
+              already_linked: eisoes wedi'i gysylltu â'r cynnyrch hwn
+        spree/credit_card:
+          attributes:
+            base:
+              card_expired: Cerdyn wedi dod i ben
+              expiry_invalid: Mae dod i ben cardiau yn annilys
+        spree/image:
+          attributes:
+            attachment:
+              attachment_must_be_present: rhaid bod yn bresennol
+              not_allowed_content_type: heb ganiatáu math o gynnwys
+        spree/line_item:
+          attributes:
+            currency:
+              must_match_order_currency: Rhaid cyfateb arian cyfred archeb
+        spree/product:
+          attributes:
+            base:
+              cannot_destroy_if_attached_to_line_items: Ni all ddileu cynhyrchion unwaith y byddant ynghlwm wrth eitemau llinell.
+            discontinue_on:
+              invalid_date_range: rhaid iddo fod yn hwyrach na'r dyddiad sydd ar gael
+        spree/promotion:
+          attributes:
+            expires_at:
+              invalid_date_range: rhaid iddo fod yn hwyrach na'r dyddiad cychwyn
+        spree/refund:
+          attributes:
+            amount:
+              greater_than_allowed: yn fwy na'r swm a ganiateir.
+        spree/reimbursement:
+          attributes:
+            base:
+              return_items_order_id_does_not_match: Nid yw un neu fwy o'r eitemau dychwelyd a nodwyd yn perthyn i'r un drefn â'r ad-daliad.
+        spree/return_item:
+          attributes:
+            inventory_unit:
+              other_completed_return_item_exists: Mae %{inventory_unit_id} eisoes wedi'i gymryd gan eitem dychwelyd %{return_item_id}
+            reimbursement:
+              cannot_be_associated_unless_accepted: ni ellir ei gysylltu ag eitem ddychwelyd na dderbynnir.
+        spree/shipping_method:
+          attributes:
+            base:
+              required_shipping_category: Rhaid i chi ddewis o leiaf un categori cludo
+        spree/store:
+          attributes:
+            base:
+              cannot_destroy_default_store: Ni all ddinistrio'r Storfa ddiofyn.
+        spree/store_credit:
+          attributes:
+            amount_authorized:
+              exceeds_total_credits: Yn fwy na chyfanswm y credydau.
+            amount_used:
+              cannot_be_greater_than_amount: Ni all fod yn fwy na'r swm.
+              greater_than_zero_restrict_delete: yn fwy na sero. Methu dileu credyd siop.
+        spree/store_credit_category:
+          attributes:
+            base:
+              cannot_destroy_if_used_in_store_credit: Ni all ddileu categorïau credyd siop unwaith y cânt eu defnyddio mewn credyd siop.
+        spree/taxon_image:
+          attributes:
+            attachment:
+              not_allowed_content_type: heb ganiatáu math o gynnwys
+        spree/variant:
+          attributes:
+            base:
+              cannot_destroy_if_attached_to_line_items: Ni all ddileu amrywiadau ar ôl eu cysylltu ag eitemau llinell.
+              must_supply_price_for_variant_or_master: Rhaid cyflenwi pris am amrywiad neu brif bris ar gyfer cynnyrch.
+              no_master_variant_found_to_infer_price: Ni chanfuwyd bod unrhyw amrywiad meistr yn casglu pris
+    models:
+      spree/address:
+        one: Cyfeiriad
+        other: Cyfeiriadau
+      spree/country:
+        one: Gwlad
+        other: Gwledydd
+      spree/credit_card:
+        one: Cerdyn credyd
+        other: Cardiau Credyd
+      spree/customer_return:
+        one: Ffurflen Cwsmer
+        other: Ffurflenni Cwsmeriaid
+      spree/inventory_unit:
+        one: Uned Rhestr
+        other: Unedau Rhestr
+      spree/line_item:
+        one: Eitem Llinell
+        other: Eitemau Llinell
+      spree/option_type:
+        one: Math o Opsiwn
+        other: Mathau Opsiwn
+      spree/option_value:
+        one: Gwerth Opsiwn
+        other: Gwerthoedd Opsiwn
+      spree/order:
+        one: Gorchymyn
+        other: Gorchmynion
+      spree/payment:
+        one: Taliad
+        other: Taliadau
+      spree/payment_method:
+        one: Dull talu
+        other: Dulliau Talu
+      spree/product:
+        one: Cynnyrch
+        other: Cynhyrchion
+      spree/promotion:
+        one: Hyrwyddo
+        other: Hyrwyddiadau
+      spree/promotion_category:
+        one: Categori Hyrwyddo
+        other: Categorïau Hyrwyddo
+      spree/property:
+        one: Eiddo
+        other: Priodweddau
+      spree/prototype:
+        one: Prototeip
+        other: Prototeipiau
+      spree/refund_reason:
+        one: Rheswm Ad-daliad
+        other: Rhesymau Ad-daliad
+      spree/reimbursement:
+        one: Ad-daliad
+        other: Ad-daliadau
+      spree/reimbursement_type:
+        one: Math Ad-daliad
+        other: Mathau Ad-daliad
+      spree/return_authorization:
+        one: Awdurdodi Dychwelyd
+        other: Awdurdodiadau Dychwelyd
+      spree/return_authorization_reason:
+        one: Rheswm Awdurdodi Dychwelyd
+        other: Rhesymau Awdurdodi Dychwelyd
+      spree/role:
+        one: Rolau
+        other: Rolau
+      spree/shipment:
+        one: Cludo
+        other: Llongau
+      spree/shipping_category:
+        one: Categori Llongau
+        other: Categorïau Llongau
+      spree/shipping_method:
+        one: Dull Llongau
+        other: Dulliau Llongau
+      spree/state:
+        one: Nodwch
+        other: Gwladwriaethau
+      spree/state_change:
+        one: Newid y Wladwriaeth
+        other: Newidiadau Gwladwriaethol
+      spree/stock_location:
+        one: Lleoliad Stoc
+        other: Lleoliadau Stoc
+      spree/stock_movement:
+        one: Symud Stoc
+        other: Symudiadau Stoc
+      spree/stock_transfer:
+        one: Trosglwyddo Stoc
+        other: Trosglwyddiadau Stoc
+      spree/store_credit:
+        one: Credyd Siop
+        other: Credydau Siop
+      spree/store_credit_category:
+        one: Categori Credyd Siop
+        other: Categorïau Credyd Siop
+      spree/tax_category:
+        one: Categori Treth
+        other: Categorïau Treth
+      spree/tax_rate:
+        one: Gyfradd dreth
+        other: Cyfraddau Treth
+      spree/taxon:
+        one: Tacson
+        other: Tacsonau
+      spree/taxonomy:
+        one: Tacsonomeg
+        other: Tacsonomeg
+      spree/tracker:
+        one: Traciwr
+        other: Tracwyr
+      spree/user:
+        one: Defnyddiwr
+        other: Defnyddwyr
+      spree/variant:
+        one: Amrywiol
+        other: Amrywiadau
+      spree/zone:
+        one: Parth
+        other: Parthau
+  address_book:
+    save: Arbedwch
+    successfully_created: Mae cyfeiriad newydd wedi'i greu yn llwyddiannus
+  devise:
+    confirmations:
+      confirmed: Cadarnhawyd eich cyfrif yn llwyddiannus. Rydych chi bellach wedi mewngofnodi.
+      send_instructions: Byddwch yn derbyn e-bost gyda chyfarwyddiadau ar sut i gadarnhau eich cyfrif mewn ychydig funudau.
+    failure:
+      inactive: Ni weithredwyd eich cyfrif eto.
+      invalid: E-bost neu gyfrinair annilys.
+      invalid_token: Tocyn dilysu annilys.
+      locked: Mae'ch cyfrif wedi'i gloi.
+      timeout: Daeth eich sesiwn i ben, mewngofnodwch eto i barhau.
+      unauthenticated: Mae angen i chi fewngofnodi neu arwyddo cyn parhau.
+      unconfirmed: Mae'n rhaid i chi gadarnhau eich cyfrif cyn parhau.
+    mailer:
+      confirmation_instructions:
+        subject: Cyfarwyddiadau cadarnhau
+      reset_password_instructions:
+        subject: Ailosod cyfarwyddiadau cyfrinair
+      unlock_instructions:
+        subject: Datgloi Cyfarwyddiadau
+    oauth_callbacks:
+      failure: Ni allai eich awdurdodi rhag %{kind} oherwydd "%{reason}".
+      success: Wedi'i awdurdodi'n llwyddiannus o gyfrif %{kind}.
+    unlocks:
+      send_instructions: Byddwch yn derbyn e-bost gyda chyfarwyddiadau ar sut i ddatgloi eich cyfrif mewn ychydig funudau.
+      unlocked: Datglowyd eich cyfrif yn llwyddiannus. Rydych chi bellach wedi mewngofnodi.
+    user_passwords:
+      user:
+        cannot_be_blank: Ni all eich cyfrinair fod yn wag.
+        send_instructions: Byddwch yn derbyn e-bost gyda chyfarwyddiadau ar sut i ailosod eich cyfrinair mewn ychydig funudau.
+        updated: Newidiwyd eich cyfrinair yn llwyddiannus. Rydych chi bellach wedi mewngofnodi.
+    user_registrations:
+      destroyed: Hwyl! Cafodd eich cyfrif ei ganslo'n llwyddiannus. Gobeithiwn eich gweld eto yn fuan.
+      inactive_signed_up: Rydych wedi cofrestru'n llwyddiannus. Fodd bynnag, ni allem eich llofnodi i mewn oherwydd bod eich cyfrif yn %{reason}.
+      signed_up: Croeso! Rydych wedi cofrestru'n llwyddiannus.
+      updated: Fe wnaethoch chi ddiweddaru'ch cyfrif yn llwyddiannus.
+    user_sessions:
+      signed_in: Llofnodwyd i mewn yn llwyddiannus.
+      signed_out: Llofnodwyd yn llwyddiannus.
+  errors:
+    messages:
+      already_confirmed: cadarnhawyd eisoes
+      not_found: heb ei ddarganfod
+      not_locked: ni chafodd ei gloi
+      not_saved:
+        one: 'Roedd 1 gwall yn gwahardd arbed y %{resource} hwn:'
+        other: 'Roedd gwallau %{count} yn gwahardd arbed y %{resource} hwn:'
+  spree:
+    abbreviation: Talfyriad
+    accept: Derbyn
+    acceptance_errors: Gwallau derbyn
+    acceptance_status: Statws derbyn
+    accepted: Derbyniwyd
+    account: Cyfrif
+    account_info: Gwybodaeth am y cyfrif
+    account_updated: Diweddarwyd y cyfrif
+    action: Gweithredu
+    actions:
+      cancel: Canslo
+      continue: Parhewch
+      create: Creu
+      destroy: Dinistrio
+      edit: Golygu
+      list: Rhestr
+      listing: Rhestru
+      new: Newydd
+      refund: Ad-daliad
+      save: Arbedwch
+      update: Diweddariad
+    activate: Activate
+    active: Egnïol
+    add: Ychwanegu
+    add_action_of_type: Ychwanegwch weithred o fath
+    add_country: Ychwanegu Gwlad
+    add_coupon_code: Ychwanegu Cod Cwpon
+    add_new_address: Ychwanegu cyfeiriad newydd
+    add_new_credit_card: Ychwanegwch gerdyn newydd
+    add_new_header: Ychwanegu Pennawd Newydd
+    add_new_style: Ychwanegu Arddull Newydd
+    add_one: Ychwanegwch Un
+    add_option_value: Ychwanegu Gwerth Opsiwn
+    add_product: Ychwanegu Cynnyrch
+    add_product_properties: Ychwanegu Priodweddau Cynnyrch
+    add_rule_of_type: Ychwanegu rheol math
+    add_state: Ychwanegu Gwladwriaeth
+    add_stock: Ychwanegu Stoc
+    add_store: Siop Newydd
+    add_store_credit: Ychwanegu Credyd Store
+    add_to_cart: Ychwanegu at y drol
+    add_variant: Ychwanegu Amrywiad
+    added_to_cart: Ychwanegwyd at y drol yn llwyddiannus!
+    additional_item: Eitem Ychwanegol
+    address: Cyfeiriad
+    address1: Cyfeiriad
+    address2: Cyfeiriad (parhad.)
+    address_action_popup:
+      delete_button: ie, dileu
+      delete_text: Ydych chi wir eisiau i <br /> ddileu'r cyfeiriad hwn?
+      delete_title: Wyt ti'n siwr?
+    address_book:
+      add_new_shipping_address: Ychwanegu cyfeiriad newydd
+      address_name_label: Enw'r Cyfeiriad
+      address_name_placeholder: Rhowch enw unigryw i'r cyfeiriad hwn (Gwaith, Cartref, ac ati)
+      addresses: Cyfeiriadau
+      edit_address: Golygu Cyfeiriad
+      label: Enw'r Cyfeiriad
+      new_address: Cyfeiriad Newydd
+      no_shipping_addresses_on_file: Dim cyfeiriadau ar ffeil
+      other_address: Cyfeiriad arall
+      remove_address: Dileu Cyfeiriad
+      save: Arbedwch
+      successfully_created: Mae'r cyfeiriad wedi'i greu'n llwyddiannus.
+      successfully_removed: Mae'r cyfeiriad wedi'i dynnu'n llwyddiannus.
+      successfully_saved: Wedi'i arbed yn llwyddiannus
+      successfully_updated: Wedi'i ddiweddaru'n llwyddiannus
+      unsuccessfully_saved: Bu gwall wrth geisio arbed eich cyfeiriad.
+      unsuccessfully_updated: Cafwyd diweddariad wrth geisio diweddaru eich cyfeiriad.
+    addresses: Cyfeiriadau
+    adjustable: Addasadwy
+    adjustment: Addasiad
+    adjustment_amount: Swm
+    adjustment_labels:
+      tax_rates:
+        excluding_tax: "%{name}%{amount}"
+        including_tax: "%{name}%{amount} (Wedi'i gynnwys yn y Pris)"
+    adjustment_successfully_closed: Mae'r addasiad wedi'i gau yn llwyddiannus!
+    adjustment_successfully_opened: Mae'r addasiad wedi'i agor yn llwyddiannus!
+    adjustment_total: Cyfanswm yr Addasiad
+    adjustments: Addasiadau
+    admin:
+      order:
+        events:
+          approve: cymeradwyo
+          cancel: canslo
+          resend: Resend
+          resume: ailddechrau
+      orders:
+        cart: Cart
+      return_authorization:
+        product: Cynnyrch
+      tab:
+        configuration: Ffurfweddiad
+        customer_returns: Ffurflenni Cwsmeriaid
+        option_types: Mathau Opsiwn
+        orders: Gorchmynion
+        overview: Trosolwg
+        products: Cynhyrchion
+        promotion_categories: Categorïau Hyrwyddo
+        promotions: Hyrwyddiadau
+        properties: Priodweddau
+        prototypes: Prototeipiau
+        reports: Adroddiadau
+        return_authorizations: Awdurdodiadau Dychwelyd
+        taxonomies: Tacsonomeg
+        taxons: Tacsonau
+        users: Defnyddwyr
+      user:
+        account: Cyfrif
+        addresses: Cyfeiriadau
+        available_store_credit: Mae gan y defnyddiwr %{amount} mewn Credyd Siop ar gael.
+        items: Eitemau
+        items_purchased: Eitemau a Brynwyd
+        no_store_credit: Nid oes gan y Defnyddiwr Gredyd Siop ar gael.
+        order_history: Hanes Trefn
+        order_num: 'Gorchymyn #'
+        orders: Gorchmynion
+        store_credits: Credydau Siop
+        stores: Storfeydd
+        user_information: Gwybodaeth Defnyddiwr
+    administration: Gweinyddiaeth
+    advertise: Hysbysebu
+    agree_to_privacy_policy: Cytuno i'r Polisi Preifatrwydd
+    agree_to_terms_of_service: Cytuno i'r Telerau Gwasanaeth
+    all: I gyd
+    all_adjustments_closed: Caewyd yr holl addasiadau yn llwyddiannus!
+    all_adjustments_opened: Agorwyd pob addasiad yn llwyddiannus!
+    all_departments: Pob adran
+    all_items_have_been_returned: Mae'r holl eitemau wedi'u dychwelyd
+    all_rights_reserved: Cedwir pob hawl
+    already_have_account: Eisoes â chyfrif?
+    alt_text: Testun Amgen
+    alternative_phone: Ffôn Amgen
+    amount: Swm
+    and: a
+    approve: cymeradwyo
+    approved_at: Cymeradwywyd yn
+    approver: Cymeradwywr
+    are_you_sure: Wyt ti'n siwr?
+    are_you_sure_delete: Ydych chi'n siŵr eich bod chi am ddileu'r cofnod hwn?
+    associated_adjustment_closed: Mae'r addasiad cysylltiedig ar gau, ac ni fydd yn cael ei ailgyfrifo. Ydych chi am ei agor?
+    authorization_failure: Methiant Awdurdodi
+    authorized: Awdurdodedig
+    auto_capture: Dal Auto
+    availability: argaeledd
+    available: Ar gael
+    available_on: Ar gael Ar
+    average_order_value: Gwerth Gorchymyn Cyfartalog
+    avs_response: Ymateb AVS
+    back: Yn ôl
+    back_end: Penwythnos
+    back_to_payment: Yn ôl i'r Taliad
+    back_to_resource_list: Yn ôl I Restr %{resource}
+    back_to_rma_reason_list: Yn ôl i Restr Rhesymau RMA
+    back_to_store: Yn ôl i'r Storfa
+    back_to_users_list: Yn ôl i'r Rhestr Defnyddwyr
+    backorderable: Backorderable
+    backorderable_default: Rhagosodiad y gellir ei adfer
+    backordered: Aildrefnu
+    backordered_confirm_info: Mae eitem ddethol yn cael ei had-drefnu felly disgwyliwch oedi. Ydych chi'n siŵr eich bod chi am ei archebu?
+    backordered_info: Aildrefnu
+    backorders_allowed: caniateir backorders
+    balance_due: Balans sy'n ddyledus
+    base_amount: Swm Sylfaenol
+    base_percent: Canran Sylfaen
+    basic_information: Gwybodaeth Sylfaenol
+    bill_address: Cyfeiriad Bil
+    billing: Bilio
+    billing_address: Cyfeiriad bilio
+    both: Y ddau
+    breadcrumbs: Briwsion bara
+    calculated_reimbursements: Ad-daliadau wedi'u Cyfrifo
+    calculator: Cyfrifiannell
+    calculator_settings_warning: Os ydych chi'n newid y math cyfrifiannell, rhaid i chi gynilo gyntaf cyn y gallwch chi olygu gosodiadau'r gyfrifiannell
+    call_us_now: 'Ffoniwch ni nawr:'
+    cancel: canslo
+    canceled: Wedi'i ganslo
+    canceled_at: Wedi'i ganslo yn
+    canceler: Canser
+    cannot_create_customer_returns: Ni all greu ffurflenni cwsmeriaid gan nad oes gan y gorchymyn hwn unrhyw unedau wedi'u cludo.
+    cannot_create_payment_without_payment_methods: Ni allwch greu taliad am orchymyn heb ddiffinio unrhyw ddulliau talu.
+    cannot_create_returns: Ni all greu ffurflenni gan nad oes gan y gorchymyn hwn unrhyw unedau wedi'u cludo.
+    cannot_empty_completed_order: Mae'r gorchymyn eisoes wedi'i brosesu felly ni ellir ei wagio
+    cannot_perform_operation: Ni all gyflawni'r gweithrediad y gofynnwyd amdano
+    cannot_return_more_than_bought_quantity: Ni all ddychwelyd mwy na maint a brynwyd.
+    cannot_set_shipping_method_without_address: Ni ellir gosod dull cludo nes bod manylion y cwsmer yn cael eu darparu.
+    capture: Dal
+    capture_events: Dal digwyddiadau
+    card_code: Cod Amrywio Cerdyn (CGS)
+    card_number: Rhif cerdyn
+    card_type: Brand
+    card_type_is: Math o gerdyn yw
+    cart: Cart
+    cart_page:
+      add_promo_code: YCHWANEGU CÔD PROMO
+      change_quantity: Newid maint
+      checkout: til
+      empty_info: Mae'ch trol yn wag.
+      header: Eich trol siopa
+      product: cynnyrch
+      quantity: maint
+      remove_from_cart: Tynnwch o'r drol
+      title: Cart Siopa
+    cart_subtotal:
+      one: Is-gyfanswm (1 eitem)
+      other: Is-gyfanswm (eitemau %{count})
+    categories: Categorïau
+    category: Categori
+    category_nav_bar:
+      get_up_to_30_percent_off: CAEL I 30% I ffwrdd
+      jackets_and_coats: JACKET & COASTS
+      new_collection: CASGLU NEWYDD
+      special_offers: SWYDDOGION ARBENNIG
+    channel: Sianel
+    charged: Cyhuddo
+    checkout: Til
+    checkout_page:
+      back_to_cart: yn ôl i'r drol
+      checkout_navigation: Llywio til
+      delivery_method: dull cyflwyno
+      header: Til
+      main_navigation: Prif lywio
+      product: Cynnyrch
+    choose_a_customer: Dewiswch gwsmer
+    choose_a_taxon_to_sort_products_for: Dewiswch dacson i ddidoli cynhyrchion ar ei gyfer
+    choose_currency: Dewiswch Arian Cyfred
+    choose_dashboard_locale: Dewiswch Dangosfwrdd Locale
+    choose_location: Dewiswch leoliad
+    city: Dinas
+    clear_cache: Cache Clir
+    clear_cache_ok: Fflysiwyd Cache
+    clear_cache_warning: Bydd clirio storfa yn lleihau perfformiad eich siop dros dro.
+    click_and_drag_on_the_products_to_sort_them: Cliciwch a llusgwch y cynhyrchion i'w didoli.
+    clone: Clôn
+    close: Caewch
+    close_all_adjustments: Caewch Pob Addasiad
+    code: Côd
+    company: Cwmni
+    compare_at_price: Cymharwch am bris
+    complete: cyflawn
+    configuration: Ffurfweddiad
+    configurations: Cyfluniadau
+    confirm: Cadarnhau
+    confirm_delete: Cadarnhau Dileu
+    confirm_password: Cadarnhad Cyfrinair
+    contact_phone: Ffôn cyswllt
+    contact_us: Cysylltwch â ni
+    continue: Parhewch
+    continue_as_guest: Parhewch fel gwestai
+    continue_shopping: Parhewch i siopa
+    cost_currency: Arian Cyfred Cost
+    cost_price: Pris Cost
+    could_not_create_customer_return: Methu creu dychweliad cwsmer
+    could_not_create_stock_movement: Roedd problem yn arbed y symudiad stoc hwn. Trio eto os gwelwch yn dda.
+    count_on_hand: Cyfrif Wrth Law
+    countries: Gwledydd
+    country: Gwlad
+    country_based: Seiliedig ar Wlad
+    country_name: Enw
+    country_rule:
+      label: Rhaid cludo Dewis i'r wlad hon
+    coupon: Cwpon
+    coupon_code: Cod cwpon
+    coupon_code_already_applied: Mae'r cod cwpon eisoes wedi'i gymhwyso i'r gorchymyn hwn
+    coupon_code_applied: Cymhwyswyd y cod cwpon yn llwyddiannus i'ch archeb.
+    coupon_code_apply: Ymgeisiwch
+    coupon_code_better_exists: Mae'r cod cwpon a gymhwyswyd yn flaenorol yn arwain at fargen well
+    coupon_code_expired: Mae'r cod cwpon wedi dod i ben
+    coupon_code_max_usage: Rhagorwyd ar y terfyn defnyddio cod cwpon
+    coupon_code_not_eligible: Nid yw'r cod cwpon hwn yn gymwys ar gyfer y gorchymyn hwn
+    coupon_code_not_found: Nid yw'r cod cwpon a nodoch yn bodoli. Trio eto os gwelwch yn dda.
+    coupon_code_removed: Cafodd y cod cwpon ei dynnu o'ch archeb yn llwyddiannus.
+    coupon_code_unknown_error: Ni ellid cymhwyso'r cod cwpon hwn i'r drol ar yr adeg hon.
+    create: Creu
+    create_a_new_account: Creu cyfrif newydd
+    create_new_order: Creu trefn newydd
+    create_reimbursement: Creu ad-daliad
+    created_at: Wedi'i greu yn
+    created_by: Crëwyd Gan
+    credit: Credyd
+    credit_allowed: Credyd wedi'i ganiatáu
+    credit_card: Cerdyn credyd
+    credit_cards: Cardiau Credyd
+    credit_owed: Credyd yn Berchennog
+    credited: Wedi'i gredydu
+    credits: Credydau
+    currencies: Arian cyfred
+    currency: Arian cyfred
+    currency_settings: Gosodiadau Arian Parod
+    current: Cyfredol
+    current_promotion_usage: 'defnydd cyfredol: %{count}'
+    customer: Cwsmer
+    customer_details: Manylion Cwsmer
+    customer_details_updated: Diweddarwyd Manylion Cwsmer
+    customer_return: Ffurflen Cwsmer
+    customer_returns: Ffurflenni Cwsmeriaid
+    customer_search: Chwilio Cwsmer
+    customer_support_email: E-bost Cymorth Cwsmer
+    cut: Torri
+    cvv: CVV
+    cvv_response: Ymateb CVV
+    date: Dyddiad
+    date_completed: Dyddiad Cwblhau
+    date_range: Ystod Dyddiad
+    default: Yn ddiofyn
+    default_country_cannot_be_deleted: Ni ellir dileu gwlad ddiofyn
+    default_currency: Arian cyfred diofyn
+    default_refund_amount: Swm Ad-daliad Rhagosodedig
+    default_tax: Treth Ddiofyn
+    default_tax_zone: Parth Trethi Rhagosodedig
+    delete: Dileu
+    delete_from_taxon: Dileu O Dacson
+    deleted: Wedi'i ddileu
+    delivery: Dosbarthu
+    delivery_information: Gwybodaeth Gyflenwi
+    depth: Dyfnder
+    description: Disgrifiad
+    destination: Cyrchfan
+    destroy: Dinistrio
+    details: Manylion
+    discontinue_on: Terfynu ymlaen
+    discontinued: Wedi dod i ben
+    discontinued_variants_present: Mae gan rai eitemau llinell yn y drefn hon gynhyrchion nad ydynt ar gael mwyach.
+    discount_amount: Swm Gostyngiad
+    dismiss_banner: Dim Diolch! Nid oes gen i ddiddordeb, peidiwch ag arddangos y neges hon eto
+    display: Arddangos
+    doesnt_track_inventory: Nid yw'n olrhain rhestr eiddo
+    dont_have_account: Dim cyfrif?
+    edit: Golygu
+    edit_reimbursement: Golygu ad-daliad
+    editing_resource: Golygu %{resource}
+    editing_rma_reason: Golygu RMA Rheswm
+    editing_user: Golygu Eich cyfrif
+    eligibility_errors:
+      messages:
+        has_excluded_product: Mae eich trol yn cynnwys cynnyrch sy'n atal y cod cwpon hwn rhag cael ei gymhwyso.
+        item_total_less_than: Ni ellir cymhwyso'r cod cwpon hwn i archebion llai na %{amount}.
+        item_total_less_than_or_equal: Ni ellir cymhwyso'r cod cwpon hwn i orchmynion sy'n llai na neu'n hafal i %{amount}.
+        item_total_more_than: Ni ellir cymhwyso'r cod cwpon hwn i orchmynion sy'n uwch na %{amount}.
+        item_total_more_than_or_equal: Ni ellir cymhwyso'r cod cwpon hwn i orchmynion sy'n uwch na neu'n hafal i %{amount}.
+        limit_once_per_user: Dim ond unwaith y defnyddiwr y gellir defnyddio'r cod cwpon hwn.
+        missing_product: Ni ellir defnyddio'r cod cwpon hwn oherwydd nad oes gennych yr holl gynhyrchion angenrheidiol yn eich trol.
+        missing_taxon: Mae angen i chi ychwanegu cynnyrch o'r holl gategorïau cymwys cyn defnyddio'r cod cwpon hwn.
+        no_applicable_products: Mae angen i chi ychwanegu cynnyrch cymwys cyn defnyddio'r cod cwpon hwn.
+        no_matching_taxons: Mae angen i chi ychwanegu cynnyrch o gategori cymwys cyn defnyddio'r cod cwpon hwn.
+        no_user_or_email_specified: Mae angen i chi fewngofnodi neu ddarparu'ch e-bost cyn defnyddio'r cod cwpon hwn.
+        no_user_specified: Mae angen i chi fewngofnodi cyn defnyddio'r cod cwpon hwn.
+        not_first_order: Dim ond i'ch archeb gyntaf y gellir cymhwyso'r cod cwpon hwn.
+    email: E-bost
+    empty: Gwag
+    empty_cart: Cart Gwag
+    enable_mail_delivery: Galluogi Dosbarthu Post
+    end: Diwedd
+    ending_at: Yn dod i ben yn
+    ending_in: Yn dod i ben
+    ends_at: Diwedd ar
+    error: gwall
+    error_user_destroy_with_orders: Ni ellir dinistrio defnyddiwr sy'n gysylltiedig ag archebion
+    errors:
+      messages:
+        blank: ni all fod yn wag
+        cannot_remove_icon: Methu tynnu delwedd
+        could_not_create_taxon: Methu creu tacson
+        no_shipping_methods_available: Nid oes unrhyw ddulliau cludo ar gael ar gyfer lleoliad dethol, newidiwch eich cyfeiriad a rhoi cynnig arall arni.
+      services:
+        get_shipping_rates:
+          no_line_items: I gynhyrchu Cyfraddau Llongau mae angen i chi ychwanegu rhai Eitemau Llinell i'w Archebu
+          no_shipping_address: Er mwyn cynhyrchu Gorchymyn Cyfraddau Llongau mae angen Cyfeiriad Llongau
+    errors_prohibited_this_record_from_being_saved:
+      one: Roedd 1 gwall yn gwahardd y cofnod hwn rhag cael ei gadw
+      other: Roedd gwallau %{count} yn gwahardd y cofnod hwn rhag cael ei gadw
+    event: Digwyddiad
+    events:
+      spree:
+        cart:
+          add: Ychwanegu at y drol
+        checkout:
+          coupon_code_added: Ychwanegwyd cod cwpon
+        content:
+          visited: Ewch i'r dudalen cynnwys statig
+        order:
+          contents_changed: Newid cynnwys y gorchymyn
+        page_view: Tudalen statig wedi'i gweld
+        user:
+          signup: Signup defnyddiwr
+    exceptions:
+      count_on_hand_setter: 'Ni ellir gosod count_on_hand â llaw, gan ei fod wedi''i osod yn awtomatig gan yr alwad yn ôl recalculate_count_on_hand. Defnyddiwch `update_column (: count_on_hand, value)` yn lle.'
+    exchange_for: Cyfnewid am
+    excl: ac eithrio.
+    existing_shipments: Llongau presennol
+    expedited_exchanges_warning: Bydd unrhyw gyfnewidiadau penodol yn anfon at y cwsmer yn syth ar ôl cynilo. Codir swm llawn yr eitem ar y cwsmer os na fydd yn dychwelyd yr eitem wreiddiol o fewn diwrnodau %{days_window}.
+    expiration: Dod i ben
+    expiration_date: Dyddiad Dod i Ben
+    extension: Estyniad
+    extensions_directory: Cyfeiriadur Estyniadau
+    facebook: Facebook
+    failed_payment_attempts: Ymdrechion Taliad Methu
+    filename: Enw ffeil
+    fill_in_customer_info: Llenwch wybodaeth i gwsmeriaid
+    filter: Hidlo
+    filter_results: Canlyniadau Hidlo
+    filterable: Hylifadwy
+    finalize: Cwblhau
+    finalized: Wedi'i gwblhau
+    find_a_taxon: Dewch o Hyd i Dacson
+    first_item: Eitem Gyntaf
+    first_name: Enw cyntaf
+    first_name_begins_with: Enw Cyntaf yn Dechrau Gyda
+    firstname: Enw cyntaf
+    flat_percent: Canran Fflat
+    flat_rate_per_order: Cyfradd Fflat
+    flexible_rate: Cyfradd Hyblyg
+    follow_us: Dilynwch ni
+    footer: Troedyn
+    forgot_password: Wedi anghofio cyfrinair?
+    free: Am ddim
+    free_shipping: Llongau Am Ddim
+    free_shipping_amount: "-"
+    front_end: Pen blaen
+    gateway: Porth
+    gateway_error: Gwall Porth
+    general: Cyffredinol
+    general_settings: Gosodiadau Cyffredinol
+    generate_code: Cynhyrchu cod cwpon
+    get_back_to_the: Ewch yn ôl at y
+    go_to_category: Ewch i'r categori
+    go_to_facebook: Ewch i facebook
+    go_to_homepage: Ewch i'r Dudalen Gartref
+    go_to_instagram: Ewch i instagram
+    go_to_twitter: Ewch i twitter
+    guest_checkout: Talu Gwesteion
+    guest_user_account: Checkout fel Gwestai
+    has_no_shipped_units: heb unedau wedi'u cludo
+    header_banner: Baner pennawd
+    height: Uchder
+    help_center: Canolfan Gymorth
+    hide_from_subcategories_nav: Cuddio rhag llywio is-gategorïau
+    home: Hafan
+    home_page: hafan
+    i18n:
+      available_locales: Lleol ar gael
+      country: Gwlad
+      default_country: Gwlad ddiofyn
+      fields: Meysydd
+      language: Iaith
+      localization_settings: Gosodiadau Lleoleiddio
+      only_complete: Dim ond yn gyflawn
+      only_incomplete: Dim ond anghyflawn
+      select_locale: Dewiswch locale
+      show_only: Dangos yn unig
+      supported_locales: Locales â Chefnogaeth
+      translations: Cyfieithiadau
+    icon: Eicon
+    id: Id
+    image: Delwedd
+    images: Delweddau
+    implement_eligible_for_return: 'Rhaid gweithredu #eligible_for_return? ar gyfer eich CymhwysterValidator.'
+    implement_requires_manual_intervention: 'Rhaid gweithredu #requires_manual_intervention? ar gyfer eich CymhwysterValidator.'
+    in_stock: Mewn Stoc
+    inactive: Anactif
+    incl: gan gynnwys
+    included_in_price: Wedi'i gynnwys yn y Pris
+    included_price_validation: ni ellir eich dewis oni bai eich bod wedi gosod Parth Trethi Rhagosodedig
+    incomplete: Anghyflawn
+    info_number_of_skus_not_shown:
+      one: ac un arall
+      other: a %{count} eraill
+    info_product_has_multiple_skus: 'Mae gan y cynnyrch hwn amrywiadau %{count}:'
+    instagram: Instagram
+    instructions_to_reset_password: Rhowch eich e-bost ar y ffurflen isod
+    insufficient_stock: Stoc annigonol ar gael, dim ond %{on_hand} ar ôl
+    insufficient_stock_item_quantity: Meintiau stoc annigonol ar gael
+    insufficient_stock_lines_present: Nid oes digon o faint mewn rhai eitemau llinell yn y drefn hon.
+    intercept_email_address: Intercept Cyfeiriad E-bost
+    intercept_email_instructions: Diystyru derbynnydd e-bost a rhoi cyfeiriad arall yn ei le.
+    internal_name: Enw Mewnol
+    internationalization: Rhyngwladoli
+    invalid_credit_card: Cerdyn credyd annilys.
+    invalid_exchange_variant: Amrywiad cyfnewid annilys.
+    invalid_payment_provider: Darparwr taliadau annilys.
+    invalid_promotion_action: Camau hyrwyddo annilys.
+    invalid_promotion_rule: Rheol hyrwyddo annilys.
+    inventory: Rhestr
+    inventory_adjustment: Addasiad Rhestr
+    inventory_error_flash_for_insufficient_quantity: Nid yw eitem yn eich trol ar gael.
+    inventory_state: Gwladwriaeth y Rhestr
+    is_not_available_to_shipment_address: ddim ar gael i gyfeiriad cludo
+    iso: ISO Alpha-2
+    iso3: ISO Alpha-3
+    iso_name: Enw ISO
+    issued_on: Cyhoeddwyd Ar
+    item: Eitem
+    item_description: Disgrifiad o'r Eitem
+    item_total: Cyfanswm yr Eitem
+    item_total_rule:
+      operators:
+        gt: yn fwy na
+        gte: yn fwy na neu'n hafal i
+        lt: llai na
+        lte: llai na neu'n hafal i
+    items_cannot_be_shipped: Ni allwn gyfrifo cyfraddau cludo ar gyfer yr eitemau a ddewiswyd.
+    items_in_rmas: Eitemau mewn Awdurdodiadau Dychwelyd
+    items_reimbursed: Ad-dalwyd eitemau
+    items_to_be_reimbursed: Eitemau i'w had-dalu
+    join_slack: Ymunwch â Slack
+    last_name: Enw olaf
+    last_name_begins_with: Mae'r enw olaf yn dechrau gyda
+    lastname: Enw olaf
+    learn_more: Dysgu mwy
+    lifetime_stats: Ystadegau Oes
+    limit_usage_to: Cyfyngu'r defnydd i
+    line_item_adjustments: Addasiadau eitem llinell
+    list: Rhestr
+    loading: Llwytho
+    loading_tree: Llwytho coeden. Arhoswch os gwelwch yn dda…
+    locale_changed: Newidiodd Locale
+    location: Lleoliad
+    lock: Clo
+    log_entries: Cofrestriadau Log
+    log_in: Mewngofnodi
+    log_in_to_continue: Mewngofnodi i barhau
+    logged_in_as: Mewngofnodi fel
+    logged_in_succesfully: Mewngofnodi yn llwyddiannus
+    logged_out: Rydych chi wedi allgofnodi.
+    login: Mewngofnodi
+    login_as_existing: Mewngofnodi fel Cwsmer Presennol
+    login_failed: Methodd dilysu mewngofnodi.
+    login_name: Mewngofnodi
+    logo: Logo
+    logo_alt: Logo brand
+    logout: Allgofnodi
+    logs: Logiau
+    look_for_similar_items: Chwiliwch am eitemau tebyg
+    mail_from_address: Post o'r cyfeiriad
+    mailer_logo: Logo Mailer (delweddau JPG neu PNG yn unig)
+    make_refund: Ad-dalu
+    make_sure_the_above_reimbursement_amount_is_correct: Sicrhewch fod y swm ad-daliad uchod yn gywir
+    manage_promotion_categories: Rheoli Categorïau Hyrwyddo
+    manage_variants: Rheoli Amrywiadau
+    manual_intervention_required: Angen ymyrraeth â llaw
+    master: Meistr
+    master_price: Meistr Pris
+    master_sku: Meistr SKU
+    match_choices:
+      all: I gyd
+      none: Dim
+    max_items: Eitemau Uchaf
+    member_since: Aelod ers
+    memo: Memo
+    meta_description: Disgrifiad Meta
+    meta_keywords: Allweddeiriau Meta
+    meta_title: Teitl Meta
+    metadata: Metadata
+    minimal_amount: Swm Lleiaf
+    missing_return_authorization: Awdurdodi Dychwelyd ar Goll ar gyfer %{item_name}.
+    month: Mis
+    more: Mwy
+    move_stock_between_locations: Symud Stoc Rhwng Lleoliadau
+    move_variant_to: Symud amrywiad i
+    multiple_stores: Siopau lluosog
+    mutable: Mutable
+    my_account: Fy nghyfrif
+    my_orders: Fy Gorchmynion
+    name: Enw
+    name_on_card: enw ar Carden
+    name_or_sku: Enw neu SKU (nodwch o leiaf 3 nod cyntaf enw'r cynnyrch)
+    nav_bar:
+      admin_panel: Panel Gweinyddol
+      change_country: Newid gwlad
+      close_menu: Caewch y ddewislen
+      desktop: Llywio bwrdd gwaith
+      go_to_previous_menu: Ewch i'r ddewislen flaenorol
+      log_in: MEWNGOFNODI
+      log_out: ALLGOFNODI
+      mobile: Llywio symudol
+      my_account: FY NGHYFRIF
+      my_orders: FY GORCHMYNION
+      show_menu: Dangos y ddewislen
+      show_search: Dangos chwiliad
+      show_user_menu: Dangos dewislen defnyddiwr
+      sign_up: COFRESTRU
+    new: Newydd
+    new_adjustment: Addasiad Newydd
+    new_country: Gwlad Newydd
+    new_customer: Creu cyfrif newydd
+    new_customer_return: Ffurflen Cwsmer Newydd
+    new_image: Delwedd Newydd
+    new_option_type: Math o Opsiwn Newydd
+    new_order: Gorchymyn Newydd
+    new_order_completed: Gorchymyn Newydd wedi'i Gwblhau
+    new_order_notifications_email: Hysbysiadau Archeb Newydd E-bost
+    new_payment: Taliad Newydd
+    new_payment_method: Dull Talu Newydd
+    new_product: Cynnyrch Newydd
+    new_promotion: Hyrwyddiad Newydd
+    new_promotion_category: Categori Hyrwyddo Newydd
+    new_property: Eiddo Newydd
+    new_prototype: Prototeip Newydd
+    new_refund: Ad-daliad Newydd
+    new_refund_reason: Rheswm Ad-daliad Newydd
+    new_reimbursement_type: Math Ad-daliad Newydd
+    new_return_authorization: Awdurdodi Dychwelyd Newydd
+    new_rma_reason: Rheswm RMA newydd
+    new_role: Rôl Newydd
+    new_shipment_at_location: Cludo newydd yn y lleoliad
+    new_shipping_category: Categori Llongau Newydd
+    new_shipping_method: Dull Llongau Newydd
+    new_state: Gwladwriaeth Newydd
+    new_stock_location: Lleoliad Stoc Newydd
+    new_stock_movement: Symud Stoc Newydd
+    new_stock_transfer: Trosglwyddo Stoc Newydd
+    new_store_credit: Credyd Siop Newydd
+    new_store_credit_category: Categori Credyd Siop Newydd
+    new_tax_category: Categori Treth Newydd
+    new_tax_rate: Cyfradd Trethi Newydd
+    new_taxon: Tacson Newydd
+    new_taxonomy: Tacsonomeg Newydd
+    new_tracker: Traciwr Newydd
+    new_user: Defnyddiwr Newydd
+    new_variant: Amrywiad Newydd
+    new_zone: Parth Newydd
+    next: Nesaf
+    no_actions_added: Ni ychwanegwyd unrhyw gamau
+    no_address_given: Ni roddwyd cyfeiriad
+    no_available_date_set: Nid oes dyddiad wedi'i bennu
+    no_cc_type: Amherthnasol
+    no_country: Dim set o wlad
+    no_limits_zone: Dim Terfynau
+    no_payment_found: Ni ddarganfuwyd taliad
+    no_payment_provider_settings_message: Nid oes gan y darparwr talu hwn unrhyw osodiadau arfer ar gael
+    no_pending_payments: Dim taliadau yn yr arfaeth
+    no_product_available:
+      for_this_quantity: Mae'n ddrwg gennym, mae'n edrych fel nad yw rhai cynhyrchion ar gael mewn maint dethol.
+      opps: Wps!
+    no_products_found: Ni ddarganfuwyd unrhyw gynhyrchion
+    no_resource_found: Ni ddarganfuwyd %{resource}
+    no_results: Dim canlyniadau
+    no_returns_found: Ni chafwyd hyd i ffurflenni
+    no_rules_added: Ni ychwanegwyd unrhyw reolau
+    no_shipping_method_selected: Dim dull cludo wedi'i ddewis.
+    no_state_changes: Dim newid gwladwriaeth eto.
+    no_tracking_present: Ni ddarparwyd unrhyw fanylion olrhain.
+    none: Dim
+    none_selected: Dim Wedi'i ddewis
+    normal_amount: Swm Arferol
+    not: ddim
+    not_available: Amherthnasol
+    not_enough_stock: Nid oes digon o stocrestr yn y lleoliad ffynhonnell i gyflawni'r trosglwyddiad hwn.
+    not_found: ni cheir %{resource}
+    note: Nodyn
+    notice_messages:
+      icon_removed: Mae'r ddelwedd wedi'i thynnu'n llwyddiannus
+      prices_saved: Prisiau wedi'u harbed yn llwyddiannus
+      product_cloned: Mae'r cynnyrch wedi'i glonio
+      product_deleted: Mae'r cynnyrch wedi'i ddileu
+      product_not_cloned: 'Ni ellid clonio cynnyrch. Rheswm: %{error}'
+      product_not_deleted: 'Ni ellid dileu cynnyrch. Rheswm: %{error}'
+      variant_deleted: Mae Variant wedi'i ddileu
+      variant_not_deleted: 'Ni ellid dileu Amrywiad. Rheswm: %{error}'
+    num_orders: "# Gorchmynion"
+    number: Rhif
+    ok: iawn
+    on_hand: Wrth Law
+    open: Ar agor
+    open_all_adjustments: Agor Pob Addasiad
+    option_type: Math o Opsiwn
+    option_type_placeholder: Dewiswch fath o opsiwn
+    option_types: Mathau Opsiwn
+    option_value: Gwerth Opsiwn
+    option_values: Gwerthoedd Opsiwn
+    optional: Dewisol
+    options: Opsiynau
+    or: neu
+    or_over_price: "%{price} neu drosodd"
+    order: Gorchymyn
+    order_adjustments: Archebu addasiadau
+    order_already_updated: Mae'r gorchymyn eisoes wedi'i ddiweddaru.
+    order_approved: Gorchymyn wedi'i gymeradwyo
+    order_canceled: Gorchymyn wedi'i ganslo
+    order_details: Manylion y Gorchymyn
+    order_email_resent: Archebu Gwrthwynebiad E-bost
+    order_has_no_payments: Nid oes gan y Gorchymyn unrhyw daliadau
+    order_information: Gwybodaeth Archebu
+    order_line_items: Archebu Eitemau Llinell
+    order_mailer:
+      cancel_email:
+        dear_customer: Annwyl %{name},
+        instructions: Mae eich archeb wedi'i GANSLO. Cadwch y wybodaeth ganslo hon ar gyfer eich cofnodion.
+        order_summary_canceled: Archebwch %{number} Crynodeb [CANCELED]
+        subject: Canslo Gorchymyn
+        thanks: Diolch am eich busnes.
+      confirm_email:
+        dear_customer: Annwyl %{name},
+        instructions: Adolygwch a chadwch y wybodaeth archebu ganlynol ar gyfer eich cofnodion.
+        order_summary: Archebwch %{number} Crynodeb
+        subject: Cadarnhad Gorchymyn
+        thanks: Diolch am eich busnes.
+      store_owner_notification_email:
+        heading: Derbyniwyd Gorchymyn Newydd
+        instructions: Rydych wedi derbyn archeb newydd.
+        order_summary: Archebwch %{number} Crynodeb
+        subject: derbyniodd %{store_name} orchymyn newydd
+        thanks: Diolch am eich busnes.
+      store_team: Tîm %{store_name}
+      subtotal: 'Is-gyfanswm:'
+      total: 'Cyfanswm y Gorchymyn:'
+    order_not_found: Ni allem ddod o hyd i'ch archeb. Rhowch gynnig ar y weithred honno eto.
+    order_number: Archebwch %{number}
+    order_processed_successfully: Mae eich archeb wedi'i phrosesu'n llwyddiannus
+    order_resumed: Ailddechreuodd y gorchymyn
+    order_state:
+      address: cyfeiriad
+      awaiting_return: yn aros yn ôl
+      canceled: wedi'i ganslo
+      cart: trol
+      complete: cyflawn
+      confirm: cadarnhau
+      considered_risky: ystyried risg
+      delivery: danfon
+      payment: taliad
+      resumed: ailddechrau
+      returned: dychwelodd
+    order_success: Gorchymyn wedi'i osod yn llwyddiannus
+    order_success_explain: Anfonir eich gwybodaeth archebu i'ch e-bost
+    order_summary: Crynodeb o'r Gorchymyn
+    order_sure_want_to: Ydych chi'n siŵr eich bod chi eisiau %{event} y gorchymyn hwn?
+    order_total: Cyfanswm y Gorchymyn
+    order_updated: Diweddarwyd y Gorchymyn
+    orders: Gorchmynion
+    out_of_stock: Allan o stoc
+    overview: Trosolwg
+    package_from: pecyn o
+    page_not_found: Sori! Ni ellir dod o hyd i'r dudalen rydych chi'n edrych arni.
+    pagination:
+      next_page: tudalen nesaf & raquo;
+      previous_page: "& laquo; tudalen flaenorol"
+      truncate: "& hellip;"
+    password: Cyfrinair
+    paste: Gludo
+    path: Llwybr
+    pay: talu
+    payment: Taliad
+    payment_amount: Swm y taliad
+    payment_could_not_be_created: Ni ellid creu taliad.
+    payment_identifier: Dynodwr Taliad
+    payment_information: Gwybodaeth Talu
+    payment_method: Dull talu
+    payment_method_not_supported: Nid oes cefnogaeth i'r dull talu hwnnw. Dewiswch un arall.
+    payment_methods: Dulliau Talu
+    payment_processing_failed: Ni ellid prosesu taliad, gwiriwch y manylion a nodwyd gennych
+    payment_processor_choose_banner_text: Os oes angen help arnoch i ddewis prosesydd talu, ewch i
+    payment_processor_choose_link: ein tudalen taliadau
+    payment_provider_settings: Gosodiadau Darparwr Taliadau
+    payment_state: Cyflwr Talu
+    payment_states:
+      balance_due: cydbwysedd yn ddyledus
+      checkout: til
+      completed: wedi'i gwblhau
+      credit_owed: credyd yn ddyledus
+      failed: wedi methu
+      paid: taledig
+      pending: yn yr arfaeth
+      processing: prosesu
+      void: gwagle
+    payment_type: Math o daliad
+    payment_updated: Diweddariad o'r Taliad
+    payments: Taliadau
+    pdp:
+      checkout: Til
+      description: Disgrifiad
+      details: Manylion
+      products_included_in_promotion: Cynhyrchion wedi'u cynnwys yn yr hyrwyddiad
+      quantity: Nifer
+      view_cart: Gweld y drol
+      you_may_also_like: Efallai yr hoffech chi hefyd
+    pending: Yn yr arfaeth
+    pending_sale: Arwerthiant i ddod
+    percent: Canran
+    percent_per_item: Canran Fesul yr Eitem
+    permalink: Permalink
+    phone: Ffôn
+    place_order: Gorchymyn Lle
+    please_define_payment_methods: Diffiniwch rai dulliau talu yn gyntaf.
+    please_enter_reasonable_quantity: Rhowch swm rhesymol.
+    plp:
+      best_selling: GWERTHU GORAU
+      clear_all: GLANHAU POB UN
+      collection: CASGLU
+      color: LLIW
+      default: DIFFYG
+      done: A WNAED
+      filter_by: FILTER GAN
+      newest_first: CYNTAF NEWYDD
+      no_results: Dim canlyniadau
+      no_results_found: Ni ddarganfuwyd unrhyw ganlyniadau
+      not_found_filters1: Ni allem ddod o hyd i ornest ar gyfer yr hidlwyr hyn.
+      not_found_filters2: Rhowch gynnig ar ddewis arall.
+      not_found_text1: Ni allem ddod o hyd i gynhyrchion ar gyfer '%{keywords}'.
+      not_found_text2: Rhowch gynnig ar chwiliad arall.
+      price: pris
+      price_high_to_low: PRIS (UCHEL - ISEL)
+      price_low_to_high: PRIS (ISEL - UCHEL)
+      result: CANLYNIAD
+      results_for: CANLYNIADAU AM
+      size: MAINT
+      sort_by: SORT GAN
+      top_sellers: GWERTHWYR TOP
+      type: MATH
+    populate_get_error: Aeth rhywbeth o'i le. Ceisiwch ychwanegu'r eitem eto.
+    powered_by: Wedi ei bweru gan
+    pre_tax_amount: Swm Cyn Treth
+    pre_tax_refund_amount: Swm Ad-daliad Cyn Treth
+    pre_tax_total: Cyfanswm Cyn Treth
+    preferred_reimbursement_type: Y Math o Ad-daliad a Ffefrir
+    presentation: Cyflwyniad
+    preview_product: Cynnyrch Rhagolwg
+    preview_taxon: Rhagolwg Tacson
+    previous: Blaenorol
+    previous_state_missing: amherthnasol
+    previously_used_card: Cardiau a Ddefnyddiwyd yn flaenorol
+    price: Pris
+    price_range: Amrediad prisiau
+    price_sack: Sach Pris
+    prices: Prisiau
+    process: Proses
+    product: Cynnyrch
+    product_details: Manylion Cynnyrch
+    product_has_no_description: Nid oes gan y cynnyrch hwn unrhyw ddisgrifiad
+    product_not_available_in_this_currency: Nid yw'r cynnyrch hwn ar gael yn yr arian cyfred a ddewiswyd.
+    product_properties: Priodweddau Cynnyrch
+    product_rule:
+      choose_products: Dewiswch gynhyrchion
+      label: Rhaid i'r gorchymyn gynnwys x swm o'r cynhyrchion hyn
+      match_all: I gyd
+      match_any: o leiaf un
+      match_none: dim
+      product_source:
+        group: O'r grŵp cynnyrch
+        manual: Dewis â llaw
+    products: Cynhyrchion
+    promotion: Hyrwyddo
+    promotion_action: Camau Hyrwyddo
+    promotion_action_types:
+      create_adjustment:
+        description: Yn creu addasiad credyd hyrwyddo ar yr archeb
+        name: Creu addasiad gorchymyn cyfan
+      create_item_adjustments:
+        description: Yn creu addasiad credyd hyrwyddo ar eitem llinell
+        name: Creu addasiad fesul llinell
+      create_line_items:
+        description: Poblogi'r cart gyda'r maint penodol o amrywiad
+        name: Creu eitemau llinell
+      free_shipping:
+        description: Yn gwneud pob llwyth am ddim
+        name: Llongau am ddim
+    promotion_actions: Camau gweithredu
+    promotion_categories: Categorïau hyrwyddo
+    promotion_category: Categori Hyrwyddo
+    promotion_cloned: Mae'r dyrchafiad wedi'i glonio
+    promotion_form:
+      match_policies:
+        all: Cydweddwch yr holl reolau hyn
+        any: Cydweddwch unrhyw un o'r rheolau hyn
+    promotion_label: Hyrwyddo (%{name})
+    promotion_not_cloned: 'Nid yw dyrchafiad wedi''i glonio. Rheswm: %{error}'
+    promotion_rule: Rheol Hyrwyddo
+    promotion_rule_types:
+      country:
+        description: Mae'r archeb yn cael ei chludo i wlad briodol (neu ddiofyn)
+        name: Gwlad
+      first_order:
+        description: Rhaid mai hwn yw archeb gyntaf y cwsmer
+        name: Gorchymyn cyntaf
+      item_total:
+        description: Mae cyfanswm archeb yn cwrdd â'r meini prawf hyn
+        name: Cyfanswm yr eitem
+      one_use_per_user:
+        description: Dim ond Un Defnydd i Bob Defnyddiwr
+        name: Un Defnydd Fesul Defnyddiwr
+      option_value:
+        description: Mae'r gorchymyn yn cynnwys cynnyrch (au) penodedig gyda gwerth (au) opsiwn cyfatebol
+        name: Gwerth (au) Opsiwn
+      product:
+        description: Mae'r gorchymyn yn cynnwys cynnyrch (cynhyrchion) penodedig
+        name: Cynnyrch (au)
+      taxon:
+        description: Mae'r gorchymyn yn cynnwys cynhyrchion sydd â thacson (au) penodedig
+        name: Tacson (au)
+      user:
+        description: Ar gael i'r defnyddwyr penodedig yn unig
+        name: Defnyddiwr
+      user_logged_in:
+        description: Ar gael i ddefnyddwyr sydd wedi mewngofnodi yn unig
+        name: Defnyddiwr wedi Mewngofnodi
+    promotion_uses: Defnyddiau hyrwyddo
+    promotionable: Hyrwyddadwy
+    promotions: Hyrwyddiadau
+    propagate_all_variants: Lluosogi pob amrywiad
+    properties: Priodweddau
+    property: Eiddo
+    prototype: Prototeip
+    prototypes: Prototeipiau
+    provider: Darparwr
+    provider_settings_warning: Os ydych chi'n newid y math o ddarparwr, rhaid i chi gynilo gyntaf cyn y gallwch chi olygu gosodiadau'r darparwr
+    purchased_quantity: Nifer a Brynwyd
+    qty: Qty
+    quantity: Nifer
+    quantity_returned: Dychwelwyd Meintiau
+    quantity_shipped: Nifer wedi'i Llongau
+    quick_search: Chwilio cyflym ..
+    rate: Cyfradd
+    reason: Rheswm
+    receive: derbyn
+    receive_stock: Derbyn Stoc
+    received: Derbyniwyd
+    reception_status: Statws Derbyn
+    reference: Cyfeirnod
+    reference_contains: Cyfeirio Yn Cynnwys
+    refund: Ad-daliad
+    refund_amount_must_be_greater_than_zero: Rhaid i'r swm ad-daliad fod yn fwy na sero
+    refund_reasons: Rhesymau Ad-daliad
+    refunded_amount: Swm wedi'i Ad-dalu
+    refunds: Ad-daliadau
+    register: Cofrestrwch
+    registration: Cofrestru
+    reimburse: Ad-daliad
+    reimbursed: Ad-dalwyd
+    reimbursement: Ad-daliad
+    reimbursement_mailer:
+      reimbursement_email:
+        days_to_send: Mae gennych ddiwrnodau %{days} i anfon unrhyw eitemau sy'n aros i'w cyfnewid yn ôl.
+        dear_customer: Annwyl %{name},
+        exchange_summary: Crynodeb Cyfnewid
+        for: canys
+        instructions: Mae eich ad-daliad wedi'i brosesu.
+        refund_summary: Crynodeb Ad-daliad
+        store_team: Tîm %{store_name}
+        subject: Hysbysiad Ad-daliad
+        thanks: Diolch am eich busnes.
+        total_refunded: 'Cyfanswm wedi''i ad-dalu: %{total}'
+    reimbursement_perform_failed: 'Ni ellid ad-dalu. Gwall: %{error}'
+    reimbursement_status: Statws ad-daliad
+    reimbursement_type: Math o ad-daliad
+    reimbursement_type_override: Diystyru Math Ad-daliad
+    reimbursement_types: Mathau Ad-daliad
+    reimbursements: Ad-daliadau
+    reject: Gwrthod
+    rejected: Gwrthodwyd
+    remember_me: Cofiwch fi
+    remove: Tynnu
+    remove_image: Tynnu Delwedd
+    rename: Ail-enwi
+    report: Adroddiad
+    reports: Adroddiadau
+    required: "*"
+    required_fields: meysydd gofynnol
+    resellable: Ailosodadwy
+    resend: Resend
+    reset_password: Ailosod fy nghyfrinair
+    response_code: Cod Ymateb
+    resume: ailddechrau
+    resumed: Ailddechreuwyd
+    return: dychwelyd
+    return_authorization: Awdurdodi Dychwelyd
+    return_authorization_canceled: Canslo awdurdodiad dychwelyd
+    return_authorization_reasons: Rhesymau Awdurdodi Dychwelyd
+    return_authorization_states:
+      authorized: Awdurdodedig
+      canceled: Wedi'i ganslo
+    return_authorization_updated: Diweddarwyd yr awdurdodiad dychwelyd
+    return_authorizations: Awdurdodiadau Dychwelyd
+    return_item_inventory_unit_ineligible: Rhaid cludo uned stocrestr yr eitem ddychwelyd
+    return_item_inventory_unit_reimbursed: Mae uned rhestr eiddo eitem yn cael ei had-dalu eisoes
+    return_item_order_not_completed: Rhaid cwblhau archeb eitem ddychwelyd
+    return_item_rma_ineligible: Mae angen RMA ar gyfer yr eitem ddychwelyd
+    return_item_time_period_ineligible: Mae'r eitem ddychwelyd y tu allan i'r cyfnod amser cymwys
+    return_items: Eitemau Dychwelyd
+    return_items_cannot_be_associated_with_multiple_orders: Ni all eitemau dychwelyd fod yn gysylltiedig â gorchmynion lluosog.
+    return_number: Rhif Dychwelyd
+    return_quantity: Nifer Dychwelyd
+    returned: Dychwelwyd
+    returns: Dychweliadau
+    review: Adolygiad
+    risk: Risg
+    risk_analysis: Dadansoddiad Risg
+    risky: Peryglus
+    rma_credit: Credyd RMA
+    rma_number: Rhif RMA
+    rma_value: Gwerth RMA
+    role_id: ID Rôl
+    roles: Rolau
+    rules: Rheolau
+    safe: Yn ddiogel
+    sales_total: Cyfanswm Gwerthu
+    sales_total_description: Cyfanswm Gwerthu Ar Gyfer Pob Gorchymyn
+    sales_totals: Cyfanswm Gwerthiannau
+    save_and_continue: Arbed a Parhau
+    save_my_address: Arbedwch fy nghyfeiriad
+    saving: Arbed
+    say_no: Na
+    say_yes: Ydw
+    scope: Cwmpas
+    search: Chwilio
+    search_results: Canlyniadau chwilio am '%{keywords}'
+    searching: Chwilio
+    secure_connection_type: Math o Gysylltiad Diogel
+    security_settings: Gosodiadau Diogelwch
+    select: Dewiswch
+    select_a_date: Dewiswch ddyddiad
+    select_a_date_range: Dewiswch ystod dyddiad
+    select_a_return_authorization_reason: Dewiswch reswm dros yr awdurdodiad dychwelyd
+    select_a_stock_location: Dewiswch leoliad stoc
+    select_a_store_credit_reason: Dewiswch reswm dros y credyd siop
+    select_an_option: Dewiswch opsiwn
+    select_from_prototype: Dewiswch O Brototeip
+    select_stock: Dewiswch stoc
+    selected_quantity_not_available: nid yw dewis o %{item} ar gael.
+    send_copy_of_all_mails_to: Anfonwch Gopi o'r Holl Bostiau at
+    send_mails_as: Anfon Postiau Fel
+    seo: SEO
+    seo_robots: Robotiaid SEO
+    seo_title: Teitl SEO
+    server: Gweinydd
+    server_error: Dychwelodd y gweinydd wall
+    settings: Gosodiadau
+    ship: Llong
+    ship_address: Cyfeiriad Llong
+    ship_to: 'Llongau i:'
+    ship_total: Cyfanswm Llong
+    shipment: Cludo
+    shipment_adjustments: Addasiadau cludo
+    shipment_details: O %{stock_location} trwy %{shipping_method}
+    shipment_mailer:
+      shipped_email:
+        dear_customer: Annwyl %{name},
+        instructions: Mae eich archeb %{number} wedi'i gludo
+        shipment_summary: Crynodeb Cludo ar gyfer archeb
+        shipping_method: 'Dull cludo: %{shipping_method}'
+        store_team: Tîm %{store_name}
+        subject: Hysbysiad Cludo
+        thanks: Diolch am eich busnes.
+        track_information: 'Gwybodaeth Olrhain: %{tracking}'
+        track_link: 'Dolen Olrhain: %{url}'
+    shipment_state: Gwladwriaeth Cludo
+    shipment_states:
+      backorder: backorder
+      canceled: wedi'i ganslo
+      partial: rhannol
+      pending: yn yr arfaeth
+      ready: yn barod
+      shipped: cludo
+    shipment_transfer_error: Roedd gwall yn trosglwyddo amrywiadau
+    shipment_transfer_success: Trosglwyddwyd amrywiadau yn llwyddiannus
+    shipments: Llongau
+    shipped: Wedi'i gludo
+    shipping: Llongau
+    shipping_address: Cyfeiriad Llongau
+    shipping_categories: Categorïau Llongau
+    shipping_category: Categori Llongau
+    shipping_flat_rate_per_item: Cyfradd unffurf fesul eitem pecyn
+    shipping_flat_rate_per_order: Cyfradd unffurf
+    shipping_flexible_rate: Cyfradd Hyblyg fesul eitem pecyn
+    shipping_instructions: Cyfarwyddiadau Llongau
+    shipping_method: Dull Llongau
+    shipping_methods: Dulliau Llongau
+    shipping_price_sack: Sach pris
+    shipping_rates:
+      display_price:
+        excluding_tax: "%{price} (+ %{tax_amount} %{tax_rate_name})"
+        including_tax: "%{price} (gan gynnwys %{tax_amount} %{tax_rate_name})"
+    shipping_total: Cyfanswm cludo
+    shop_by_taxonomy: Siopa gan %{taxonomy}
+    shopping_cart: Cart Siopa
+    show: Sioe
+    show_active: Dangos Egnïol
+    show_deleted: Dangos Wedi'i ddileu
+    show_discontinued: Dangos Wedi'i Dod i ben
+    show_only_complete_orders: Dim ond dangos archebion cyflawn
+    show_only_considered_risky: Dim ond dangos archebion peryglus
+    show_property: Dangos Eiddo
+    show_rate_in_label: Dangos cyfradd yn y label
+    show_store_selector:
+      long: Arddangoswch y dewisydd Store ym mhrif far nav Storefront a chaniatáu i ddefnyddwyr newid Store and Currency
+      short: Dangos dewisydd Store
+    sign_up: Cofrestru
+    sku: SKU
+    skus: SKUs
+    slug: Gwlithen
+    social: Cymdeithasol
+    source: Ffynhonnell
+    special_instructions: Cyfarwyddiadau Arbennig
+    split: Hollti
+    spree_gateway_error_flash_for_checkout: Roedd problem gyda'ch gwybodaeth dalu. Gwiriwch eich gwybodaeth a rhoi cynnig arall arni.
+    ssl:
+      change_protocol: Newid i ddefnyddio HTTP (yn hytrach na HTTPS) a rhoi cynnig arall ar y cais hwn.
+    start: Dechrau
+    starting_from: Yn dechrau am
+    state: Nodwch
+    state_based: Seiliedig ar y Wladwriaeth
+    state_machine_states:
+      accepted: Derbyniwyd
+      address: Cyfeiriad
+      authorized: Awdurdodedig
+      awaiting: Yn disgwyl
+      awaiting_return: Yn disgwyl dychwelyd
+      backordered: Archebwyd yn ôl
+      canceled: Wedi'i ganslo
+      cart: Cart
+      checkout: Til
+      closed: Ar gau
+      complete: Wedi'i gwblhau
+      completed: Wedi'i gwblhau
+      confirm: Cadarnhau
+      delivery: Dosbarthu
+      errored: Wedi'i gyfeiliorni
+      failed: Wedi methu
+      given_to_customer: Wedi'i roi i'r cwsmer
+      invalid: Annilys
+      manual_intervention_required: Angen ymyrraeth â llaw
+      on_hand: Wrth law
+      open: Ar agor
+      order: Gorchymyn
+      payment: Taliad
+      pending: Yn yr arfaeth
+      processing: Prosesu
+      ready: Yn barod
+      reimbursed: Ad-dalwyd
+      resumed: Ailddechreuwyd
+      returned: Dychwelwyd
+      shipment: Cludo
+      shipped: Wedi'i gludo
+      void: Yn ddi-rym
+    states: Gwladwriaethau
+    states_required: Gwladwriaethau Angenrheidiol
+    status: Statws
+    stock: Stoc
+    stock_item_id: Eitem stoc
+    stock_location: Lleoliad Stoc
+    stock_location_info: Gwybodaeth am leoliad stoc
+    stock_locations: Lleoliadau Stoc
+    stock_locations_need_a_default_country: Rhaid i chi greu gwlad ddiofyn cyn creu lleoliad stoc.
+    stock_management: Rheoli Stoc
+    stock_management_requires_a_stock_location: Os gwelwch yn dda creu lleoliad stoc er mwyn rheoli stoc.
+    stock_movements: Symudiadau Stoc
+    stock_movements_for_stock_location: Symudiadau Stoc ar gyfer %{stock_location_name}
+    stock_successfully_transferred: Trosglwyddwyd stoc yn llwyddiannus rhwng lleoliadau.
+    stock_transfer:
+      errors:
+        must_have_variant: Rhaid i chi ychwanegu o leiaf un amrywiad.
+        variants_unavailable: Nid yw rhai amrywiadau ar gael ar %{stock}
+    stock_transfer_name: Trosglwyddo Stoc
+    stock_transfers: Trosglwyddiadau Stoc
+    stop: Stopiwch
+    store: Storfa
+    store_credit:
+      additional_payment_needed: Dewiswch ddull talu arall ar gyfer y <strong> %{amount} </strong> sy'n weddill.
+      allocated: Wedi adio
+      applicable_amount: Bydd <strong> %{amount} </strong> mewn credyd siop yn cael ei gymhwyso i'r gorchymyn hwn.
+      apply: Ymgeisiwch
+      authorized: Awdurdodedig
+      available_amount: Mae gennych chi <strong> %{amount} </strong> mewn Credyd Siop ar gael!
+      captured: Defnyddir
+      credit: Credyd
+      errors:
+        cannot_change_used_store_credit: Ni allwch newid credyd siop sydd eisoes wedi'i ddefnyddio
+        unable_to_create: Methu creu credyd siop
+        unable_to_delete: Methu dileu credyd siop
+        unable_to_fund: Methu talu am archeb gan ddefnyddio credydau siop
+        unable_to_update: Methu diweddaru credyd siop
+      remaining_amount: Mae gennych <strong> %{amount} </strong> yn weddill yng Nghredyd Storfa eich cyfrif.
+      remove: Tynnu
+    store_credit_categories: Categorïau Credyd Siop
+    store_credit_name: Credyd Siop
+    store_credit_payment_method:
+      currency_mismatch: Nid yw arian cyfred credyd siop yn cyfateb i arian cyfred archeb
+      insufficient_authorized_amount: Methu dal mwy na swm awdurdodedig
+      insufficient_funds: Nid yw'r swm credyd siop sy'n weddill yn ddigonol
+      select_one_store_credit: Dewiswch gredyd siop i fynd tuag at weddill y balans
+      successful_action: Credyd siop llwyddiannus %{action}
+      unable_to_credit: 'Methu cod credyd: %{auth_code}'
+      unable_to_find: Methu dod o hyd i gredyd siop
+      unable_to_find_for_action: 'Methu dod o hyd i gredyd siop ar gyfer cod auth: %{auth_code} ar gyfer gweithredu: %{action}'
+      unable_to_void: 'Methu cod gwag: %{auth_code}'
+      user_has_no_store_credits: Nid oes gan y defnyddiwr unrhyw gredyd siop ar gael
+    store_credits: Credydau Siop
+    store_default: Siop ddiofyn
+    store_errors:
+      unable_to_create: Methu creu storfa.
+      unable_to_delete: Methu dileu storfa.
+      unable_to_update: Methu diweddaru'r siop.
+    store_form:
+      checkout_zone_help: Bydd y parth dethol yn cyfyngu ar ba gynhyrchion Gwledydd neu Wladwriaethau sy'n cael eu cludo. Am fwy o wybodaeth <a href='https://guides.spreecommerce.org/user/configuration/configuring_geography.html#zones' target='_blank' class='alert-link'> gweler y ddogfennaeth </a>
+      code_help: Storiwch ddynodwr unigryw, sy'n fersiwn gryno o enw'r siop (a ddefnyddir fel enw'r cyfeiriadur cynllun, a hefyd yn ddefnyddiol ar gyfer gwahanu templedi yn ôl siop)
+      customer_support_email_help: Mae'r e-bost hwn yn weladwy i'ch ymwelwyr Store yn yr adran Footer
+      default_country_help: Dyma'r Wlad a fydd yn cael ei dewis ymlaen llaw ar y ffurflen Cyfeiriad Checkout
+      footer_help: Mae'r cynnwys hwn i'w weld yn adran troedyn eich Storfa
+      locales_help: Gosod <a href='https://github.com/spree-contrib/spree_i18n target='_blank' class='alert-link'> Estyniad Spree I18n </a> i ychwanegu mwy o locales
+      mail_from_address_help: Dyma'r e-bost a fydd yn anfon eich holl e-byst Store (Cadarnhad Archeb, Hysbysiad Cludo ac ati)
+      new_order_notifications_email_help: Os ydych chi am dderbyn hysbysiad e-bost bob tro mae rhywun yn gosod Gorchymyn, rhowch gyfeiriad e-bost er mwyn i'r hysbysiad hwnnw gael ei anfon ato
+      seo_robots: Gwiriwch <a href='https://developers.google.com/search/reference/robots_meta_tag' target='_blank'> y dudalen hon i gael mwy o help </a>
+      social_help: Os ydych chi am gysylltu â'ch cyfrifon cymdeithasol yn rhan troedyn eich gwefan, llenwch y meysydd isod
+    store_not_set_as_default: Methu gosod storfa %{store} fel storfa ddiofyn
+    store_set_as_default: Mae Store %{store} bellach yn siop ddiofyn
+    store_set_default_button: Osod fel ddiofyn
+    stores: Storfeydd
+    street_address: Cyfeiriad stryd
+    street_address_2: Cyfeiriad Stryd (parhad)
+    subtotal: Is-gyfanswm
+    subtract: Tynnu
+    success: Llwyddiant
+    successfully_created: mae %{resource} wedi'i greu'n llwyddiannus!
+    successfully_refunded: mae %{resource} wedi'i ad-dalu'n llwyddiannus!
+    successfully_removed: Mae %{resource} wedi'i dynnu'n llwyddiannus!
+    successfully_updated: mae %{resource} wedi'i ddiweddaru'n llwyddiannus!
+    summary: Crynodeb
+    supported_currencies: Arian Cyfred â Chefnogaeth
+    supported_currencies_long: Rhestr wedi'i gwahanu gan goma o arian cyfred a gefnogir
+    supported_locales: Locales â Chefnogaeth
+    tags: Tagiau
+    tags_placeholder: Ychwanegu Tagiau
+    tax: Treth
+    tax_categories: Categorïau Treth
+    tax_category: Categori Treth
+    tax_code: Cod Treth
+    tax_included: Treth (gan gynnwys)
+    tax_rate_amount_explanation: Mae cyfraddau treth yn swm degol i gynorthwyo gyda chyfrifiadau, (h.y. os yw'r gyfradd dreth yn 5% yna nodwch 0.05)
+    tax_rates: Cyfraddau Treth
+    taxon: Tacson
+    taxon_edit: Golygu Tacson
+    taxon_missing_alt: Disgrifiad baner categori
+    taxon_placeholder: Ychwanegwch Dacson
+    taxon_rule:
+      choose_taxons: Dewiswch dacsonau
+      label: Rhaid i'r gorchymyn gynnwys x swm o'r tacsonau hyn
+      match_all: I gyd
+      match_any: o leiaf un
+    taxonomies: Tacsonomeg
+    taxonomy: Tacsonomeg
+    taxonomy_brands_name: Brandiau
+    taxonomy_categories_name: Categorïau
+    taxonomy_edit: Golygu tacsonomeg
+    taxonomy_tree_error: Nid yw'r newid y gofynnwyd amdano wedi'i dderbyn ac mae'r goeden wedi'i dychwelyd i'w chyflwr blaenorol, ceisiwch eto.
+    taxonomy_tree_instruction: "* Cliciwch ar y dde (neu dap dwbl ar ddyfais iOS) plentyn yn y goeden i gael mynediad i'r ddewislen ar gyfer ychwanegu, dileu neu ddidoli plentyn."
+    taxons: Tacsonau
+    test: Prawf
+    test_mailer:
+      test_email:
+        greeting: Llongyfarchiadau!
+        message: Os ydych wedi derbyn yr e-bost hwn, yna mae eich gosodiadau e-bost yn gywir.
+        subject: Post Prawf
+    test_mode: Modd Prawf
+    thank_you_for_your_order: Diolch am eich busnes. Argraffwch gopi o'r dudalen gadarnhau hon ar gyfer eich cofnodion.
+    there_are_no_items_for_this_order: Nid oes unrhyw eitemau ar gyfer y gorchymyn hwn. Ychwanegwch eitem at y gorchymyn i barhau.
+    there_were_problems_with_the_following_fields: Roedd problemau gyda'r meysydd canlynol
+    this_order_has_already_received_a_refund: Mae'r gorchymyn hwn eisoes wedi derbyn ad-daliad
+    thumbnail: Bawd
+    tiered_flat_rate: Cyfradd Fflat Clymu
+    tiered_percent: Canran Clymu
+    tiers: Haenau
+    time: Amser
+    to_add_variants_you_must_first_define: I ychwanegu amrywiadau, rhaid i chi ddiffinio yn gyntaf
+    total: Cyfanswm
+    total_per_item: Cyfanswm yr eitem
+    total_pre_tax_refund: Cyfanswm yr Ad-daliad Cyn Treth
+    total_price: Cyfanswm
+    total_sales: Cyfanswm Gwerthiannau
+    track_inventory: Rhestr Trac
+    tracking: Olrhain
+    tracking_number: Rhif tracio
+    tracking_url: URL Olrhain
+    tracking_url_placeholder: e.e. http://quickship.com/package?num=:tracking
+    transaction_id: ID y Trafodiad
+    transfer_from_location: Trosglwyddo O
+    transfer_stock: Stoc Drosglwyddo
+    transfer_to_location: Trosglwyddo i
+    tree: Coeden
+    twitter: Twitter
+    type: Math
+    type_to_search: Teipiwch i chwilio
+    unable_to_connect_to_gateway: Methu cysylltu â'r porth.
+    unable_to_create_reimbursements: Methu creu ad-daliadau oherwydd bod yna eitemau sy'n aros am ymyrraeth â llaw.
+    under_price: O dan %{price}
+    unlock: Datgloi
+    unrecognized_card_type: Math o gerdyn heb ei gydnabod
+    unshippable_items: Eitemau Anorchfygol
+    update: Diweddariad
+    updating: Diweddaru
+    url: URL
+    usage_limit: Terfyn Defnydd
+    use_app_default: Defnyddiwch App Default
+    use_billing_address: Defnyddiwch Cyfeiriad Bilio
+    use_existing_cc: Defnyddiwch gerdyn sy'n bodoli ar ffeil
+    use_new_cc: Defnyddiwch gerdyn newydd
+    use_new_cc_or_payment_method: Defnyddiwch gerdyn / dull talu newydd
+    use_s3: Defnyddiwch Amazon S3 ar gyfer Delweddau
+    used: Defnyddir
+    user: Defnyddiwr
+    user_not_found: Ni ddaethpwyd o hyd i'r defnyddiwr
+    user_rule:
+      choose_users: Dewiswch ddefnyddwyr
+    users: Defnyddwyr
+    validation:
+      cannot_be_less_than_shipped_units: ni all fod yn llai na nifer yr unedau sy'n cael eu cludo.
+      cannot_destroy_line_item_as_inventory_units_have_shipped: Ni all ddinistrio eitem llinell gan fod rhai unedau rhestr eiddo wedi cludo.
+      exceeds_available_stock: yn fwy na'r stoc sydd ar gael. Sicrhewch fod gan eitemau llinell swm dilys.
+      is_too_large: yn rhy fawr - ni all stoc wrth law gwmpasu'r maint y gofynnwyd amdano!
+      must_be_int: rhaid iddo fod yn gyfanrif
+      must_be_non_negative: rhaid iddo fod yn werth nad yw'n negyddol
+      unpaid_amount_not_zero: 'Ni ad-dalwyd y swm yn llawn. Yn ddyledus o hyd: %{amount}'
+    value: Gwerth
+    variant: Amrywiol
+    variant_placeholder: Dewiswch amrywiad
+    variant_prices_search_placeholder: Chwilio am SKU neu enw amrywiol ...
+    variants: Amrywiadau
+    version: Fersiwn
+    void: Yn ddi-rym
+    weight: Pwysau
+    what_is_a_cvv: Beth yw Cod Cerdyn Credyd (CVV)?
+    what_is_this: Beth ydy hyn?
+    width: Lled
+    year: Blwyddyn
+    you_have_no_orders_yet: Nid oes gennych unrhyw archebion eto
+    your_cart_is_empty: Mae'ch trol yn wag
+    your_order_is_empty_add_product: Mae eich archeb yn wag, chwiliwch am ac ychwanegwch gynnyrch uchod
+    zip: Zip
+    zipcode: Côd post
+    zipcode_required: Cod Zip Angenrheidiol
+    zone: Parth
+    zones: Parthau

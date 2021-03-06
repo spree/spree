@@ -1,0 +1,1769 @@
+---
+hi-IN:
+  activemodel:
+    errors:
+      models:
+        spree/fulfilment_changer:
+          attributes:
+            current_shipment:
+              can_not_have_backordered_inventory_units: में इन्वेंट्री इकाइयाँ हैं
+              has_already_been_shipped: पहले ही भेज दिया गया है
+            desired_shipment:
+              can_not_transfer_within_same_shipment: वर्तमान शिपमेंट के समान नहीं हो सकता है
+              has_not_enough_stock_at_desired_location: वांछित स्टॉक स्थान में पर्याप्त स्टॉक नहीं है
+  activerecord:
+    attributes:
+      spree/address:
+        address1: पता
+        address2: पता (contd)
+        city: Faridabad
+        company: कंपनी
+        country: देश
+        firstname: नाम
+        label: नाम पता
+        lastname: उपनाम
+        phone: फ़ोन
+        state: राज्य
+        zipcode: ज़िप कोड
+      spree/calculator/tiered_flat_rate:
+        preferred_base_amount: मूल
+        preferred_tiers: स्तरों
+      spree/calculator/tiered_percent:
+        preferred_base_percent: आधार प्रतिशत
+        preferred_tiers: स्तरों
+      spree/country:
+        iso: आईएसओ
+        iso3: आईएसओ 3
+        iso_name: आईएसओ नाम
+        name: नाम
+        numcode: आईएसओ कोड
+      spree/credit_card:
+        base: ''
+        cc_type: प्रकार
+        month: महीना
+        name: नाम
+        number: संख्या
+        verification_value: सत्यापन मूल्य
+        year: साल
+      spree/inventory_unit:
+        state: राज्य
+      spree/line_item:
+        price: कीमत
+        quantity: मात्रा
+      spree/option_type:
+        filterable: फिल्टर किया
+        name: नाम
+        presentation: प्रस्तुतीकरण
+      spree/order:
+        checkout_complete: चेकआउट पूरा
+        completed_at: पर पूर्ण हुआ
+        considered_risky: जोखिम भरा
+        coupon_code: कूपन कोड
+        created_at: आदेश की तारीख
+        email: ईमेल
+        ip_address: आईपी पता
+        item_total: कुल वस्तुएँ
+        number: संख्या
+        payment_state: भुगतान की स्थिति
+        shipment_state: शिपमेंट राज्य
+        special_instructions: विशेष निर्देश
+        state: राज्य
+        total: संपूर्ण
+      spree/order/bill_address:
+        address1: बिलिंग पता सड़क
+        city: बिलिंग पता शहर
+        firstname: बिलिंग पता पहला नाम
+        lastname: बिलिंग पता अंतिम नाम
+        phone: बिलिंग पता फ़ोन
+        state: बिलिंग पता राज्य
+        zipcode: बिलिंग पता ज़िपकोड
+      spree/order/ship_address:
+        address1: शिपिंग पता सड़क
+        city: शिपिंग पता शहर
+        firstname: शिपिंग नाम पहला नाम
+        lastname: शिपिंग पता अंतिम नाम
+        phone: शिपिंग पता फोन
+        state: शिपिंग पता राज्य
+        zipcode: शिपिंग पता ज़िपकोड
+      spree/payment:
+        amount: रकम
+        number: संख्या
+      spree/payment_method:
+        name: नाम
+      spree/product:
+        available_on: पर उपलब्ध
+        cost_currency: लागत मुद्रा
+        cost_price: लागत मूल्य
+        description: विवरण
+        discontinue_on: पर बंद करो
+        less_than: से कम
+        master_price: मास्टर मूल्य
+        name: नाम
+        on_hand: हाथ पर
+        shipping_category: शिपिंग श्रेणी
+        tax_category: कर श्रेणी
+      spree/promotion:
+        advertise: विज्ञापित
+        code: कोड
+        description: विवरण
+        event_name: कार्यक्रम नाम
+        expires_at: पर समाप्त होता है
+        generate_code: कूपन कोड जनरेट करें
+        name: नाम
+        path: पथ
+        promotion_category: पदोन्नति श्रेणी
+        starts_at: पर आरंभ होती है
+        usage_limit: उपयोग की सीमा
+      spree/promotion_category:
+        code: कोड
+        name: नाम
+      spree/property:
+        name: नाम
+        presentation: प्रस्तुतीकरण
+      spree/prototype:
+        name: नाम
+      spree/return_authorization:
+        amount: रकम
+      spree/role:
+        name: नाम
+      spree/shipment:
+        number: संख्या
+      spree/state:
+        abbr: संक्षिप्त
+        name: नाम
+      spree/state_change:
+        state_changes: राज्य परिवर्तन
+        state_from: से राज्य
+        state_to: राज्य को
+        timestamp: समय-चिह्न
+        type: प्रकार
+        updated: अद्यतन
+        user: उपयोगकर्ता
+      spree/store:
+        mail_from_address: पते से मेल
+        meta_description: मेटा विवरण
+        meta_keywords: मेटा खोजशब्दों
+        name: जगह का नाम
+        seo_robots: एसईओ रोबोट
+        seo_title: एसईओ शीर्षक
+        url: साईट यूआरएल
+      spree/store_credit:
+        amount_used: उपयोग की गई राशि
+      spree/store_credit_category:
+        name: नाम
+      spree/tax_category:
+        description: विवरण
+        name: नाम
+      spree/tax_rate:
+        amount: मूल्यांकन करें
+        included_in_price: मूल्य में शामिल
+        show_rate_in_label: लेबल में दर दिखाएं
+      spree/taxon:
+        name: नाम
+        permalink: स्थायी लिंक
+        position: पद
+      spree/taxonomy:
+        name: नाम
+      spree/user:
+        email: ईमेल
+        password: कुंजिका
+        password_confirmation: पासवर्ड पुष्टि
+      spree/variant:
+        cost_currency: लागत मुद्रा
+        cost_price: लागत मूल्य
+        depth: गहराई
+        height: ऊंचाई
+        price: कीमत
+        sku: SKU
+        weight: वजन
+        width: चौड़ाई
+      spree/zone:
+        description: विवरण
+        name: नाम
+    errors:
+      models:
+        spree/calculator/tiered_flat_rate:
+          attributes:
+            base:
+              keys_should_be_positive_number: टियर कीज़ सभी की संख्या 0 से बड़ी होनी चाहिए
+            preferred_tiers:
+              should_be_hash: एक हैश होना चाहिए
+        spree/calculator/tiered_percent:
+          attributes:
+            base:
+              keys_should_be_positive_number: टियर कीज़ सभी की संख्या 0 से बड़ी होनी चाहिए
+              values_should_be_percent: सभी मान 0% और 100% के बीच होने चाहिए
+            preferred_tiers:
+              should_be_hash: एक हैश होना चाहिए
+        spree/classification:
+          attributes:
+            taxon_id:
+              already_linked: पहले से ही इस उत्पाद से जुड़ा हुआ है
+        spree/credit_card:
+          attributes:
+            base:
+              card_expired: कार्ड की समय सीमा समाप्त हो गई है
+              expiry_invalid: कार्ड की समाप्ति अमान्य है
+        spree/image:
+          attributes:
+            attachment:
+              attachment_must_be_present: अनिवार्य उपस्थिति
+              not_allowed_content_type: सामग्री प्रकार की अनुमति नहीं है
+        spree/line_item:
+          attributes:
+            currency:
+              must_match_order_currency: आदेश मुद्रा से मेल खाना चाहिए
+        spree/product:
+          attributes:
+            base:
+              cannot_destroy_if_attached_to_line_items: एक बार लाइन आइटम से जुड़ने के बाद वे उत्पादों को हटा नहीं सकते।
+            discontinue_on:
+              invalid_date_range: उपलब्ध तारीख से बाद में होना चाहिए
+        spree/promotion:
+          attributes:
+            expires_at:
+              invalid_date_range: बाद में प्रारंभ दिनांक से होना चाहिए
+        spree/refund:
+          attributes:
+            amount:
+              greater_than_allowed: अनुमत राशि से अधिक है।
+        spree/reimbursement:
+          attributes:
+            base:
+              return_items_order_id_does_not_match: निर्दिष्ट वस्तुओं में से एक या अधिक प्रतिपूर्ति के समान आदेश से संबंधित नहीं हैं।
+        spree/return_item:
+          attributes:
+            inventory_unit:
+              other_completed_return_item_exists: "%{inventory_unit_id} रिटर्न आइटम %{return_item_id} द्वारा पहले ही ले लिया गया है"
+            reimbursement:
+              cannot_be_associated_unless_accepted: स्वीकार किए जाने वाले रिटर्न आइटम से जुड़ा नहीं हो सकता।
+        spree/shipping_method:
+          attributes:
+            base:
+              required_shipping_category: आपको कम से कम एक शिपिंग श्रेणी का चयन करना होगा
+        spree/store:
+          attributes:
+            base:
+              cannot_destroy_default_store: डिफ़ॉल्ट स्टोर को नष्ट नहीं कर सकता।
+        spree/store_credit:
+          attributes:
+            amount_authorized:
+              exceeds_total_credits: कुल क्रेडिट से अधिक है।
+            amount_used:
+              cannot_be_greater_than_amount: राशि से अधिक नहीं हो सकता।
+              greater_than_zero_restrict_delete: शून्य से अधिक है। स्टोर क्रेडिट को हटा नहीं सकते।
+        spree/store_credit_category:
+          attributes:
+            base:
+              cannot_destroy_if_used_in_store_credit: स्टोर क्रेडिट में उपयोग होने के बाद वे स्टोर क्रेडिट श्रेणियों को हटा नहीं सकते।
+        spree/taxon_image:
+          attributes:
+            attachment:
+              not_allowed_content_type: सामग्री प्रकार की अनुमति नहीं है
+        spree/variant:
+          attributes:
+            base:
+              cannot_destroy_if_attached_to_line_items: एक बार लाइन आइटम से जुड़ने के बाद वे वेरिएंट को हटा नहीं सकते।
+              must_supply_price_for_variant_or_master: उत्पाद के लिए वैरिएंट या मास्टर मूल्य के लिए मूल्य की आपूर्ति करना चाहिए।
+              no_master_variant_found_to_infer_price: कोई भी मास्टर संस्करण नहीं मिला जो अनुमानित मूल्य पर हो
+    models:
+      spree/address:
+        one: पता
+        other: पतों
+      spree/country:
+        one: देश
+        other: देशों
+      spree/credit_card:
+        one: क्रेडिट कार्ड
+        other: क्रेडिट कार्ड
+      spree/customer_return:
+        one: ग्राहक वापसी
+        other: ग्राहकों की वापसी
+      spree/inventory_unit:
+        one: इन्वेंटरी यूनिट
+        other: इन्वेंटरी इकाइयाँ
+      spree/line_item:
+        one: लाइन आइटम
+        other: लाइन आइटम
+      spree/option_type:
+        one: विकल्प का प्रकार
+        other: विकल्प के प्रकार
+      spree/option_value:
+        one: विकल्प मान
+        other: विकल्प मान
+      spree/order:
+        one: गण
+        other: आदेश
+      spree/payment:
+        one: भुगतान
+        other: भुगतान
+      spree/payment_method:
+        one: भुगतान का तरीका
+        other: भुगतान की विधि
+      spree/product:
+        one: उत्पाद
+        other: उत्पादों
+      spree/promotion:
+        one: पदोन्नति
+        other: प्रोन्नति
+      spree/promotion_category:
+        one: पदोन्नति श्रेणी
+        other: पदोन्नति श्रेणियाँ
+      spree/property:
+        one: संपत्ति
+        other: गुण
+      spree/prototype:
+        one: प्रोटोटाइप
+        other: प्रोटोटाइप
+      spree/refund_reason:
+        one: वापसी का कारण
+        other: वापसी के कारण
+      spree/reimbursement:
+        one: अदायगी
+        other: पैसे की वापसी
+      spree/reimbursement_type:
+        one: प्रतिपूर्ति प्रकार
+        other: प्रतिपूर्ति प्रकार
+      spree/return_authorization:
+        one: वापसी प्राधिकरण
+        other: वापसी प्राधिकरण
+      spree/return_authorization_reason:
+        one: वापसी प्राधिकरण कारण
+        other: वापसी प्राधिकरण कारण
+      spree/role:
+        one: भूमिकाएँ
+        other: भूमिकाएँ
+      spree/shipment:
+        one: लदान
+        other: लदान
+      spree/shipping_category:
+        one: शिपिंग श्रेणी
+        other: शिपिंग श्रेणियाँ
+      spree/shipping_method:
+        one: शिपिंग का तरीका
+        other: शिपिंग विधियां
+      spree/state:
+        one: राज्य
+        other: राज्य अमेरिका
+      spree/state_change:
+        one: राज्य परिवर्तन
+        other: राज्य परिवर्तन
+      spree/stock_location:
+        one: स्टॉक स्थान
+        other: स्टॉक स्थान
+      spree/stock_movement:
+        one: स्टॉक की चाल
+        other: स्टॉक मूवमेंट
+      spree/stock_transfer:
+        one: स्टाक ट्रान्स्फ़र
+        other: स्टॉक ट्रांसफर
+      spree/store_credit:
+        one: स्टोर क्रेडिट
+        other: स्टोर क्रेडिट
+      spree/store_credit_category:
+        one: स्टोर क्रेडिट श्रेणी
+        other: स्टोर क्रेडिट श्रेणियाँ
+      spree/tax_category:
+        one: कर श्रेणी
+        other: कर श्रेणियाँ
+      spree/tax_rate:
+        one: कर की दर
+        other: कर की दरें
+      spree/taxon:
+        one: टैक्सोन
+        other: टैक्सों
+      spree/taxonomy:
+        one: वर्गीकरण
+        other: taxonomies
+      spree/tracker:
+        one: ट्रैकर
+        other: ट्रैकर्स
+      spree/user:
+        one: उपयोगकर्ता
+        other: उपयोगकर्ताओं
+      spree/variant:
+        one: प्रकार
+        other: वेरिएंट
+      spree/zone:
+        one: क्षेत्र
+        other: क्षेत्र
+  address_book:
+    save: सहेजें
+    successfully_created: नया पता सफलतापूर्वक बनाया गया है
+  devise:
+    confirmations:
+      confirmed: आपके खाते की सफलतापूर्वक पुष्टि हो गई। अब आप साइन इन हैं
+      send_instructions: आपको कुछ मिनटों में अपने खाते की पुष्टि करने के निर्देशों के साथ एक ईमेल प्राप्त होगा।
+    failure:
+      inactive: आपका खाता अभी तक सक्रिय नहीं हुआ था।
+      invalid: अमान्य ईमेल या पासवर्ड।
+      invalid_token: अमान्य प्रमाणीकरण टोकन।
+      locked: आपका खाता लॉक है।
+      timeout: आपका सत्र समाप्त हो गया है, कृपया जारी रखने के लिए फिर से साइन इन करें।
+      unauthenticated: जारी रखने से पहले आपको साइन इन या साइन अप करने की आवश्यकता है।
+      unconfirmed: जारी रखने से पहले आपको अपने खाते की पुष्टि करनी होगी।
+    mailer:
+      confirmation_instructions:
+        subject: पुष्टि निर्देश
+      reset_password_instructions:
+        subject: पासवर्ड निर्देश रीसेट करें
+      unlock_instructions:
+        subject: निर्देश अनलॉक करें
+    oauth_callbacks:
+      failure: आपको %{kind} से अधिकृत नहीं किया जा सकता क्योंकि "%{reason}"।
+      success: "%{kind} खाते से सफलतापूर्वक अधिकृत।"
+    unlocks:
+      send_instructions: आपको कुछ ही मिनटों में अपना खाता अनलॉक करने के बारे में निर्देशों के साथ एक ईमेल प्राप्त होगा।
+      unlocked: आपका खाता सफलतापूर्वक अनलॉक कर दिया गया था। अब आप साइन इन हैं
+    user_passwords:
+      user:
+        cannot_be_blank: आपका पासवर्ड रिक्त नहीं हो सकता।
+        send_instructions: आपको कुछ मिनटों में अपना पासवर्ड रीसेट करने के निर्देशों के साथ एक ईमेल प्राप्त होगा।
+        updated: आपका पासवर्ड सफलतापूर्वक बदल गया था। अब आप साइन इन हैं
+    user_registrations:
+      destroyed: अलविदा! आपका खाता सफलतापूर्वक रद्द कर दिया गया था। हम जल्द ही फिर से मिलने की उम्मीद करते है।
+      inactive_signed_up: आपने सफलतापूर्वक साइन अप कर लिया है। हालाँकि, हम आपको साइन नहीं कर सकते क्योंकि आपका खाता %{reason} है।
+      signed_up: स्वागत हे! आपने सफलतापूर्वक साइन अप कर लिया है।
+      updated: आपने अपना खाता सफलतापूर्वक अपडेट कर दिया है।
+    user_sessions:
+      signed_in: सफलतापूर्वक हस्ताक्षर किए गए।
+      signed_out: सफलतापूर्वक हस्ताक्षर किए गए।
+  errors:
+    messages:
+      already_confirmed: पहले से ही पुष्टि की गई थी
+      not_found: पता नहीं चला
+      not_locked: बंद नहीं था
+      not_saved:
+        one: '1 त्रुटि ने इस %{resource} को सहेजने से प्रतिबंधित कर दिया:'
+        other: "%{count} त्रुटियों ने इस %{resource} को सहेजे जाने से प्रतिबंधित किया है:"
+  spree:
+    abbreviation: संक्षिप्त
+    accept: स्वीकार करना
+    acceptance_errors: स्वीकृति त्रुटियों
+    acceptance_status: स्वीकृति की स्थिति
+    accepted: को स्वीकृत
+    account: लेखा
+    account_info: खाता जानकारी
+    account_updated: खाता अपडेट किया गया
+    action: कार्य
+    actions:
+      cancel: रद्द करना
+      continue: जारी रखें
+      create: सृजन करना
+      destroy: नष्ट
+      edit: संपादित करें
+      list: सूची
+      listing: लिस्टिंग
+      new: नवीन व
+      refund: धन की वापसी
+      save: सहेजें
+      update: अपडेट करें
+    activate: सक्रिय
+    active: सक्रिय
+    add: जोड़ना
+    add_action_of_type: प्रकार की क्रिया जोड़ें
+    add_country: देश जोड़ें
+    add_coupon_code: कूपन कोड जोड़ें
+    add_new_address: नया पता जोड़ें
+    add_new_credit_card: एक नया कार्ड जोड़ें
+    add_new_header: नया हैडर जोड़ें
+    add_new_style: नई शैली जोड़ें
+    add_one: एक जोड़ें
+    add_option_value: विकल्प मान जोड़ें
+    add_product: उत्पाद जोड़ें
+    add_product_properties: उत्पाद गुण जोड़ें
+    add_rule_of_type: प्रकार का नियम जोड़ें
+    add_state: राज्य जोड़ें
+    add_stock: स्टॉक जोड़ें
+    add_store: नया गोदाम
+    add_store_credit: स्टोर क्रेडिट जोड़ें
+    add_to_cart: कार्ट में जोड़ें
+    add_variant: वेरिएंट जोड़ें
+    added_to_cart: कार्ट में सफलतापूर्वक जोड़ा गया!
+    additional_item: अतिरिक्त आइटम
+    address: पता
+    address1: पता
+    address2: पता (contd)
+    address_action_popup:
+      delete_button: हाँ, हटाओ
+      delete_text: क्या आप वास्तव में <br /> इस पते को हटाना चाहते हैं?
+      delete_title: क्या आपको यकीन है?
+    address_book:
+      add_new_shipping_address: नया पता जोड़ें
+      address_name_label: नाम पता
+      address_name_placeholder: इस पते को एक विशिष्ट नाम (कार्य, गृह, आदि) दें
+      addresses: पतों
+      edit_address: पता संपादित करें
+      label: नाम पता
+      new_address: नया पता
+      no_shipping_addresses_on_file: फ़ाइल पर कोई पता नहीं
+      other_address: अन्य पता
+      remove_address: पता निकालें
+      save: सहेजें
+      successfully_created: पता सफलतापूर्वक बनाया गया है।
+      successfully_removed: पता सफलतापूर्वक हटा दिया गया है।
+      successfully_saved: सफलतापूर्वक बचाया
+      successfully_updated: अद्यतन सफलतापूर्ण हो गया
+      unsuccessfully_saved: आपका पता सहेजने का प्रयास करते समय एक त्रुटि हुई।
+      unsuccessfully_updated: आपका पता अपडेट करने का प्रयास करते समय एक अद्यतन था।
+    addresses: पतों
+    adjustable: एडजस्टेबल
+    adjustment: समायोजन
+    adjustment_amount: रकम
+    adjustment_labels:
+      tax_rates:
+        excluding_tax: "%{name}%{amount}"
+        including_tax: "%{name}%{amount} (मूल्य में शामिल)"
+    adjustment_successfully_closed: समायोजन सफलतापूर्वक बंद कर दिया गया है!
+    adjustment_successfully_opened: समायोजन सफलतापूर्वक खोला गया है!
+    adjustment_total: समायोजन कुल
+    adjustments: समायोजन
+    admin:
+      order:
+        events:
+          approve: मंजूर
+          cancel: रद्द करना
+          resend: 'पुन: भेजें'
+          resume: बायोडाटा
+      orders:
+        cart: कार्ट
+      return_authorization:
+        product: उत्पाद
+      tab:
+        configuration: विन्यास
+        customer_returns: ग्राहकों की वापसी
+        option_types: विकल्प के प्रकार
+        orders: आदेश
+        overview: अवलोकन
+        products: उत्पादों
+        promotion_categories: पदोन्नति श्रेणियाँ
+        promotions: प्रोन्नति
+        properties: गुण
+        prototypes: प्रोटोटाइप
+        reports: रिपोर्टों
+        return_authorizations: वापसी प्राधिकरण
+        taxonomies: taxonomies
+        taxons: टैक्सों
+        users: उपयोगकर्ताओं
+      user:
+        account: लेखा
+        addresses: पतों
+        available_store_credit: उपयोगकर्ता के पास स्टोर क्रेडिट में %{amount} उपलब्ध है।
+        items: आइटम
+        items_purchased: आइटम खरीदे गए
+        no_store_credit: उपयोगकर्ता के पास कोई स्टोर क्रेडिट उपलब्ध नहीं है।
+        order_history: आदेश इतिहास
+        order_num: 'गण #'
+        orders: आदेश
+        store_credits: स्टोर क्रेडिट
+        stores: स्टोर
+        user_information: यूजर जानकारी
+    administration: शासन प्रबंध
+    advertise: विज्ञापित
+    agree_to_privacy_policy: गोपनीयता नीति से सहमत
+    agree_to_terms_of_service: सेवा की शर्तों से सहमत हैं
+    all: सब
+    all_adjustments_closed: सभी समायोजन सफलतापूर्वक बंद हो गए!
+    all_adjustments_opened: सभी समायोजन सफलतापूर्वक खुल गए!
+    all_departments: सभी विभाग
+    all_items_have_been_returned: सभी आइटम वापस कर दिए गए हैं
+    all_rights_reserved: सर्वाधिकार सुरक्षित
+    already_have_account: क्या आपके पास पहले से एक खाता मौजूद है?
+    alt_text: वैकल्पिक लेख
+    alternative_phone: वैकल्पिक फ़ोन
+    amount: रकम
+    and: तथा
+    approve: मंजूर
+    approved_at: पर स्वीकृत किया गया
+    approver: स्वीकृति प्रदान करने वाले
+    are_you_sure: क्या आपको यकीन है?
+    are_you_sure_delete: क्या आप वाकई इस रिकॉर्ड को हटाना चाहते हैं?
+    associated_adjustment_closed: संबंधित समायोजन बंद है, और पुनर्गणना नहीं की जाएगी। क्या आप इसे खोलना चाहते हैं?
+    authorization_failure: प्राधिकरण विफलता
+    authorized: अधिकार दिया गया
+    auto_capture: ऑटो कैप्चर
+    availability: उपलब्धता
+    available: उपलब्ध
+    available_on: पर उपलब्ध
+    average_order_value: औसत ऑर्डर मूल्य
+    avs_response: एवीएस प्रतिक्रिया
+    back: वापस
+    back_end: बैकएंड
+    back_to_payment: भुगतान करने के लिए वापस
+    back_to_resource_list: वापस करने के लिए %{resource} सूची
+    back_to_rma_reason_list: वापस करने के लिए आरएमए कारण सूची
+    back_to_store: वापस स्टोर करने के लिए
+    back_to_users_list: उपयोगकर्ता सूची में वापस
+    backorderable: पीछे करने योग्य
+    backorderable_default: बैकऑर्डर करने योग्य डिफ़ॉल्ट
+    backordered: आदेश वापस लिया गया
+    backordered_confirm_info: चयनित आइटम बैकऑर्डर किया गया है इसलिए देरी की उम्मीद है। क्या आप वाकई इसे ऑर्डर करना चाहते हैं?
+    backordered_info: आदेश वापस लिया गया
+    backorders_allowed: सीमाओं की अनुमति दी
+    balance_due: शेष राशि
+    base_amount: मूल
+    base_percent: आधार प्रतिशत
+    basic_information: मूलभूत जानकारी
+    bill_address: बिल का पता
+    billing: बिलिंग
+    billing_address: बिल भेजने का पता
+    both: दोनों
+    breadcrumbs: ब्रेडक्रम्ब्स
+    calculated_reimbursements: परिकलित प्रतिपूर्ति
+    calculator: कैलकुलेटर
+    calculator_settings_warning: यदि आप कैलकुलेटर प्रकार बदल रहे हैं, तो पहले आपको कैलकुलेटर सेटिंग्स को संपादित करने से पहले बचाना होगा
+    call_us_now: 'हमें अभी फ़ोन करें:'
+    cancel: रद्द करना
+    canceled: रद्द
+    canceled_at: पर रद्द कर दिया
+    canceler: रद्द करनेवाला
+    cannot_create_customer_returns: ग्राहक रिटर्न नहीं बना सकते क्योंकि इस आदेश में कोई शिप की गई यूनिट नहीं है।
+    cannot_create_payment_without_payment_methods: आप किसी भी भुगतान के तरीके को परिभाषित किए बिना एक आदेश के लिए भुगतान नहीं कर सकते।
+    cannot_create_returns: यह रिटर्न नहीं बना सकता क्योंकि इस आदेश में कोई शिप की गई यूनिट नहीं है।
+    cannot_empty_completed_order: आदेश पहले ही संसाधित हो चुका है इसलिए इसे खाली नहीं किया जा सकता है
+    cannot_perform_operation: अनुरोधित कार्रवाई नहीं कर सकता
+    cannot_return_more_than_bought_quantity: खरीदी गई मात्रा से अधिक नहीं लौट सकते।
+    cannot_set_shipping_method_without_address: ग्राहक विवरण प्रदान करने तक शिपिंग विधि सेट नहीं कर सकते।
+    capture: कब्जा
+    capture_events: घटनाओं पर कब्जा
+    card_code: कार्ड वेरिफिकेशन कोड (CVC)
+    card_number: कार्ड संख्या
+    card_type: ब्रांड
+    card_type_is: कार्ड का प्रकार है
+    cart: कार्ट
+    cart_page:
+      add_promo_code: ADD PROMO CODE
+      change_quantity: मात्रा बदलें
+      checkout: चेक आउट
+      empty_info: आपकी गाड़ी खाली है।
+      header: आपका शॉपिंग कार्ट
+      product: उत्पाद
+      quantity: मात्रा
+      remove_from_cart: गाड़ी से निकालें
+      title: शॉपिंग कार्ट
+    cart_subtotal:
+      one: सबटोटल (1 आइटम)
+      other: सबटोटल (%{count} आइटम)
+    categories: श्रेणियाँ
+    category: वर्ग
+    category_nav_bar:
+      get_up_to_30_percent_off: 30% की छूट प्राप्त करें
+      jackets_and_coats: जेट एंड कोट्स
+      new_collection: नया संग्रह
+      special_offers: खास पेशकश
+    channel: चैनल
+    charged: आरोपी
+    checkout: चेक आउट
+    checkout_page:
+      back_to_cart: वापस गाड़ी में
+      checkout_navigation: चेकआउट नेविगेशन
+      delivery_method: डिलिवरी विधि
+      header: चेक आउट
+      main_navigation: मुख्य नेविगेशन
+      product: उत्पाद
+    choose_a_customer: एक ग्राहक चुनें
+    choose_a_taxon_to_sort_products_for: के लिए उत्पादों को सॉर्ट करने के लिए एक टैक्सोन चुनें
+    choose_currency: मुद्रा चुनिये
+    choose_dashboard_locale: डैशबोर्ड लोकेल चुनें
+    choose_location: स्थान का चयन
+    city: Faridabad
+    clear_cache: कैश को साफ़ करें
+    clear_cache_ok: कैश बह गया
+    clear_cache_warning: समाशोधन कैश आपके स्टोर के प्रदर्शन को अस्थायी रूप से कम कर देगा।
+    click_and_drag_on_the_products_to_sort_them: उन्हें सॉर्ट करने के लिए उत्पादों पर क्लिक करें और खींचें।
+    clone: क्लोन
+    close: बंद करे
+    close_all_adjustments: सभी समायोजन बंद करें
+    code: कोड
+    company: कंपनी
+    compare_at_price: मूल्य पर तुलना करें
+    complete: पूर्ण
+    configuration: विन्यास
+    configurations: विन्यास
+    confirm: पुष्टि करें
+    confirm_delete: मिटाने की पुष्टि
+    confirm_password: पासवर्ड पुष्टि
+    contact_phone: संपर्क फ़ोन
+    contact_us: संपर्क करें
+    continue: जारी रखें
+    continue_as_guest: अतिथि के रूप में जारी रखें
+    continue_shopping: खरीदारी जारी रखें
+    cost_currency: लागत मुद्रा
+    cost_price: लागत मूल्य
+    could_not_create_customer_return: ग्राहक वापसी नहीं बना सका
+    could_not_create_stock_movement: 'इस स्टॉक आंदोलन को सहेजने में समस्या थी। कृपया पुन: प्रयास करें।'
+    count_on_hand: हाथ पर गिनती
+    countries: देशों
+    country: देश
+    country_based: देश आधारित
+    country_name: नाम
+    country_rule:
+      label: चुनें इस देश को भेज दिया जाना चाहिए
+    coupon: कूपन
+    coupon_code: कूपन कोड
+    coupon_code_already_applied: इस आदेश पर कूपन कोड पहले ही लागू हो चुका है
+    coupon_code_applied: कूपन कोड आपके आदेश पर सफलतापूर्वक लागू किया गया था।
+    coupon_code_apply: लागू
+    coupon_code_better_exists: पहले से लागू कूपन कोड एक बेहतर सौदे का परिणाम है
+    coupon_code_expired: कूपन कोड समाप्त हो गया है
+    coupon_code_max_usage: कूपन कोड उपयोग सीमा पार हो गई
+    coupon_code_not_eligible: यह कूपन कोड इस आदेश के लिए योग्य नहीं है
+    coupon_code_not_found: 'आपके द्वारा दर्ज किया गया कूपन कोड मौजूद नहीं है। कृपया पुन: प्रयास करें।'
+    coupon_code_removed: कूपन कोड आपके आदेश से सफलतापूर्वक हटा दिया गया था।
+    coupon_code_unknown_error: यह कूपन कोड इस समय कार्ट पर लागू नहीं किया जा सकता था।
+    create: सृजन करना
+    create_a_new_account: एक नया खाता बनाएं
+    create_new_order: नया आदेश बनाएँ
+    create_reimbursement: प्रतिपूर्ति बनाएँ
+    created_at: पर बनाया गया
+    created_by: के द्वारा बनाई गई
+    credit: श्रेय
+    credit_allowed: क्रेडिट की अनुमति दी
+    credit_card: क्रेडिट कार्ड
+    credit_cards: क्रेडिट कार्ड
+    credit_owed: क्रेडिट का स्वामित्व
+    credited: श्रेय
+    credits: क्रेडिट
+    currencies: मुद्राओं
+    currency: मुद्रा
+    currency_settings: मुद्रा सेटिंग्स
+    current: वर्तमान
+    current_promotion_usage: 'वर्तमान उपयोग: %{count}'
+    customer: ग्राहक
+    customer_details: उपभोक्ता विवरण
+    customer_details_updated: ग्राहक विवरण अपडेट किया गया
+    customer_return: ग्राहक वापसी
+    customer_returns: ग्राहकों की वापसी
+    customer_search: ग्राहक खोज
+    customer_support_email: ग्राहक सहायता ईमेल
+    cut: कट गया
+    cvv: सीवीवी
+    cvv_response: CVV प्रतिक्रिया
+    date: तारीख
+    date_completed: दिनांक संपन्न
+    date_range: तिथि सीमा
+    default: चूक
+    default_country_cannot_be_deleted: डिफ़ॉल्ट देश हटाया नहीं जा सकता
+    default_currency: डिफ़ॉल्ट मुद्रा
+    default_refund_amount: डिफ़ॉल्ट रिफंड राशि
+    default_tax: डिफ़ॉल्ट कर
+    default_tax_zone: डिफ़ॉल्ट कर क्षेत्र
+    delete: हटाएं
+    delete_from_taxon: टैक्सोन से हटाएँ
+    deleted: हटाए गए
+    delivery: वितरण
+    delivery_information: वितरण की जानकारी
+    depth: गहराई
+    description: विवरण
+    destination: गंतव्य
+    destroy: नष्ट
+    details: विवरण
+    discontinue_on: पर बंद करो
+    discontinued: बंद
+    discontinued_variants_present: इस क्रम में कुछ पंक्ति वस्तुओं में ऐसे उत्पाद हैं जो अब उपलब्ध नहीं हैं।
+    discount_amount: छूट राशि
+    dismiss_banner: जी नहीं, धन्यवाद! मुझे कोई दिलचस्पी नहीं है, इस संदेश को फिर से प्रदर्शित न करें
+    display: प्रदर्शन
+    doesnt_track_inventory: यह इन्वेंट्री को ट्रैक नहीं करता है
+    dont_have_account: कोई खाता नहीं?
+    edit: संपादित करें
+    edit_reimbursement: प्रतिपूर्ति संपादित करें
+    editing_resource: संपादन %{resource}
+    editing_rma_reason: RMA कारण का संपादन
+    editing_user: अपना खाता संपादित करें
+    eligibility_errors:
+      messages:
+        has_excluded_product: आपके कार्ट में एक उत्पाद है जो इस कूपन कोड को लागू होने से रोकता है।
+        item_total_less_than: यह कूपन कोड %{amount} से कम के आदेशों पर लागू नहीं किया जा सकता है।
+        item_total_less_than_or_equal: इस कूपन कोड को %{amount} से कम या बराबर के आदेशों पर लागू नहीं किया जा सकता है।
+        item_total_more_than: इस कूपन कोड को %{amount} से अधिक ऑर्डर पर लागू नहीं किया जा सकता है।
+        item_total_more_than_or_equal: इस कूपन कोड को %{amount} से अधिक या बराबर के आदेशों पर लागू नहीं किया जा सकता है।
+        limit_once_per_user: यह कूपन कोड प्रति उपयोगकर्ता केवल एक बार उपयोग किया जा सकता है।
+        missing_product: यह कूपन कोड लागू नहीं किया जा सकता क्योंकि आपके पास अपनी गाड़ी में सभी आवश्यक उत्पाद नहीं हैं।
+        missing_taxon: इस कूपन कोड को लागू करने से पहले आपको सभी लागू श्रेणियों से एक उत्पाद जोड़ना होगा।
+        no_applicable_products: इस कूपन कोड को लागू करने से पहले आपको एक लागू उत्पाद जोड़ना होगा।
+        no_matching_taxons: इस कूपन कोड को लागू करने से पहले आपको एक लागू श्रेणी से उत्पाद जोड़ना होगा।
+        no_user_or_email_specified: इस कूपन कोड को लागू करने से पहले आपको अपना ईमेल लॉगिन या प्रदान करना होगा।
+        no_user_specified: इस कूपन कोड को लागू करने से पहले आपको लॉगिन करना होगा।
+        not_first_order: यह कूपन कोड केवल आपके पहले आदेश पर लागू किया जा सकता है।
+    email: ईमेल
+    empty: खाली
+    empty_cart: खाली गाड़ी
+    enable_mail_delivery: मेल वितरण सक्षम करें
+    end: समाप्त
+    ending_at: पर समाप्त हो रहा है
+    ending_in: समाप्त हो रहा है
+    ends_at: खतम होता है
+    error: त्रुटि
+    error_user_destroy_with_orders: आदेशों से जुड़े उपयोगकर्ता को नष्ट नहीं किया जा सकता है
+    errors:
+      messages:
+        blank: खाली नहीं हो सकता
+        cannot_remove_icon: छवि को नहीं निकाला जा सकता
+        could_not_create_taxon: टैक्सोन नहीं बना सके
+        no_shipping_methods_available: चयनित स्थान के लिए कोई शिपिंग तरीके उपलब्ध नहीं हैं, कृपया अपना पता बदलें और पुनः प्रयास करें।
+      services:
+        get_shipping_rates:
+          no_line_items: शिपिंग दर उत्पन्न करने के लिए आपको ऑर्डर करने के लिए कुछ लाइन आइटम जोड़ना होगा
+          no_shipping_address: शिपिंग दर उत्पन्न करने के लिए ऑर्डर का शिपिंग पता होना आवश्यक है
+    errors_prohibited_this_record_from_being_saved:
+      one: 1 त्रुटि ने इस रिकॉर्ड को सहेजने से प्रतिबंधित कर दिया
+      other: "%{count} त्रुटियों ने इस रिकॉर्ड को सहेजने से प्रतिबंधित कर दिया"
+    event: प्रतिस्पर्धा
+    events:
+      spree:
+        cart:
+          add: कार्ट में जोड़ें
+        checkout:
+          coupon_code_added: कूपन कोड जोड़ा गया
+        content:
+          visited: स्थैतिक सामग्री पृष्ठ पर जाएं
+        order:
+          contents_changed: ऑर्डर की सामग्री बदल गई
+        page_view: स्टेटिक पेज देखा
+        user:
+          signup: उपयोगकर्ता साइनअप
+    exceptions:
+      count_on_hand_setter: 'काउंट_ऑन_हैंड को मैन्युअल रूप से सेट नहीं किया जा सकता है, क्योंकि यह रिकॉलकुलेट_कोाउंट_ऑन_हैंड कॉलबैक द्वारा स्वचालित रूप से सेट किया गया है। कृपया इसके बजाय `update_column (: count_on_hand, value) का उपयोग करें।'
+    exchange_for: के लिए विनिमय
+    excl: बहाना करना।
+    existing_shipments: मौजूदा लदान
+    expedited_exchanges_warning: कोई भी निर्दिष्ट एक्सचेंज बचत करने पर ग्राहक को तुरंत भेज देगा। यदि वे मूल आइटम को %{days_window} दिनों के भीतर वापस नहीं करते हैं, तो ग्राहक से पूरी राशि का शुल्क लिया जाएगा।
+    expiration: समय सीमा समाप्ति
+    expiration_date: समाप्ति तिथि
+    extension: एक्सटेंशन
+    extensions_directory: एक्सटेंशन निर्देशिका
+    facebook: फेसबुक
+    failed_payment_attempts: विफल भुगतान प्रयास
+    filename: फ़ाइल का नाम
+    fill_in_customer_info: कृपया ग्राहक जानकारी भरें
+    filter: फ़िल्टर
+    filter_results: फ़िल्टर परिणाम
+    filterable: फिल्टर किया
+    finalize: अंतिम रूप
+    finalized: अंतिम रूप दिया
+    find_a_taxon: एक टैक्सी खोजें
+    first_item: पहला आइटम
+    first_name: नाम
+    first_name_begins_with: पहले नाम के साथ शुरू होता है
+    firstname: नाम
+    flat_percent: सपाट प्रतिशत
+    flat_rate_per_order: फ्लैट रेट
+    flexible_rate: लचीली दर
+    follow_us: हमारा अनुसरण करें
+    footer: फ़ुटबाल
+    forgot_password: पासवर्ड भूल गए?
+    free: 'नि: शुल्क'
+    free_shipping: मुफ़्त शिपिंग
+    free_shipping_amount: "-"
+    front_end: फ़्रंट एंड
+    gateway: द्वार
+    gateway_error: गेटवे त्रुटि
+    general: आम
+    general_settings: सामान्य सेटिंग्स
+    generate_code: कूपन कोड जनरेट करें
+    get_back_to_the: पर वापस जाओ
+    go_to_category: श्रेणी पर जाएं
+    go_to_facebook: फेसबुक पर जाएं
+    go_to_homepage: मुखपृष्ठ प्र जाएं
+    go_to_instagram: इंस्टाग्राम पर जाएं
+    go_to_twitter: ट्विटर पर जाएं
+    guest_checkout: अतिथि के होटल छोड़ने का समय
+    guest_user_account: एक अतिथि के रूप में चेकआउट
+    has_no_shipped_units: कोई शिप यूनिट नहीं है
+    header_banner: हैडर बैनर
+    height: ऊंचाई
+    help_center: सहायता केंद्र
+    hide_from_subcategories_nav: उपश्रेणियाँ नेविगेशन से छिपाएँ
+    home: घर
+    home_page: होमपेज
+    i18n:
+      available_locales: उपलब्ध स्थान
+      country: देश
+      default_country: डिफ़ॉल्ट देश
+      fields: खेत
+      language: 'भाषा: हिन्दी'
+      localization_settings: स्थानीयकरण सेटिंग्स
+      only_complete: केवल पूर्ण
+      only_incomplete: केवल अधूरा
+      select_locale: स्थान का चयन करें
+      show_only: केवल दिखाअो
+      supported_locales: समर्थित लोकल
+      translations: अनुवाद
+    icon: आइकन
+    id: ईद
+    image: छवि
+    images: इमेजिस
+    implement_eligible_for_return: "# पात्र_प्रवर्तक को लागू करना चाहिए? अपने पात्रता प्रतिनिधि के लिए।"
+    implement_requires_manual_intervention: "#Requires_manual_interference को लागू करना चाहिए? अपने पात्रता प्रतिनिधि के लिए।"
+    in_stock: स्टॉक में
+    inactive: निष्क्रिय
+    incl: incl।
+    included_in_price: मूल्य में शामिल
+    included_price_validation: जब तक आपने डिफ़ॉल्ट कर क्षेत्र निर्धारित नहीं किया है, तब तक चयनित नहीं किया जा सकता
+    incomplete: अधूरा
+    info_number_of_skus_not_shown:
+      one: और एक दूसरे को
+      other: और %{count} अन्य
+    info_product_has_multiple_skus: 'इस उत्पाद का %{count} संस्करण है:'
+    instagram: instagram
+    instructions_to_reset_password: कृपया नीचे दिए गए फॉर्म पर अपना ईमेल दर्ज करें
+    insufficient_stock: उपलब्ध अपर्याप्त स्टॉक, केवल %{on_hand} शेष
+    insufficient_stock_item_quantity: अपर्याप्त स्टॉक मात्रा उपलब्ध है
+    insufficient_stock_lines_present: इस क्रम में कुछ पंक्ति वस्तुओं में अपर्याप्त मात्रा है।
+    intercept_email_address: अवरोधक ईमेल पता
+    intercept_email_instructions: ईमेल प्राप्तकर्ता को ओवरराइड करें और इस पते से बदल दें।
+    internal_name: आंतरिक नाम
+    internationalization: अंतर्राष्ट्रीयकरण
+    invalid_credit_card: अवैध क्रेडिट कार्ड।
+    invalid_exchange_variant: अमान्य विनिमय संस्करण।
+    invalid_payment_provider: अमान्य भुगतान प्रदाता।
+    invalid_promotion_action: अवैध पदोन्नति कार्रवाई।
+    invalid_promotion_rule: अमान्य प्रचार नियम।
+    inventory: इन्वेंटरी
+    inventory_adjustment: माल - सूची का समायोजन
+    inventory_error_flash_for_insufficient_quantity: आपकी कार्ट में कोई आइटम अनुपलब्ध हो गया है।
+    inventory_state: इन्वेंटरी राज्य
+    is_not_available_to_shipment_address: शिपमेंट पते के लिए उपलब्ध नहीं है
+    iso: आईएसओ अल्फा -2
+    iso3: आईएसओ अल्फा -3
+    iso_name: आईएसओ नाम
+    issued_on: पर जारी
+    item: मद
+    item_description: आइटम विवरण
+    item_total: कुल वस्तुएँ
+    item_total_rule:
+      operators:
+        gt: से अधिक
+        gte: इससे बड़ा या इसके बराबर
+        lt: से कम
+        lte: से कम या बराबर
+    items_cannot_be_shipped: हम चयनित वस्तुओं के लिए शिपिंग दरों की गणना करने में असमर्थ हैं।
+    items_in_rmas: वापसी प्राधिकरण में आइटम
+    items_reimbursed: आइटम प्रतिपूर्ति की गई
+    items_to_be_reimbursed: प्रतिपूर्ति की जाने वाली वस्तुएँ
+    join_slack: स्लैक में शामिल हों
+    last_name: उपनाम
+    last_name_begins_with: अंतिम नाम के साथ शुरू होता है
+    lastname: उपनाम
+    learn_more: और अधिक जानें
+    lifetime_stats: लाइफटाइम आँकड़े
+    limit_usage_to: के लिए उपयोग सीमित करें
+    line_item_adjustments: लाइन आइटम समायोजन
+    list: सूची
+    loading: लोड हो रहा है
+    loading_tree: पेड़ लोड हो रहा है। कृपया प्रतीक्षा करें…
+    locale_changed: स्थान बदल गया
+    location: स्थान
+    lock: लॉक
+    log_entries: प्रविष्टियां दर्ज करें
+    log_in: लॉग इन करें
+    log_in_to_continue: जारी रखने के लिए लॉग इन करें
+    logged_in_as: के रूप में लॉग इन किया
+    logged_in_succesfully: सफलतापूर्वक लॉग इन हो चुका है
+    logged_out: आप लॉग आउट हो चुके हैं।
+    login: लॉग इन करें
+    login_as_existing: मौजूदा ग्राहक के रूप में लॉगिन करें
+    login_failed: लॉगिन अधिप्रमाणन विफल।
+    login_name: लॉग इन करें
+    logo: प्रतीक चिन्ह
+    logo_alt: ब्रांड लोगो
+    logout: लॉग आउट
+    logs: लॉग्स
+    look_for_similar_items: समान वस्तुओं के लिए देखें
+    mail_from_address: पते से मेल करें
+    mailer_logo: मेलर लोगो (केवल JPG या PNG चित्र)
+    make_refund: धन वापसी करें
+    make_sure_the_above_reimbursement_amount_is_correct: सुनिश्चित करें कि उपरोक्त प्रतिपूर्ति राशि सही है
+    manage_promotion_categories: पदोन्नति श्रेणियाँ प्रबंधित करें
+    manage_variants: वेरिएंट की व्यवस्था करें
+    manual_intervention_required: मैनुअल हस्तक्षेप की आवश्यकता है
+    master: गुरुजी
+    master_price: मास्टर मूल्य
+    master_sku: मास्टर SKU
+    match_choices:
+      all: सब
+      none: कोई नहीं
+    max_items: अधिकतम आइटम
+    member_since: से सदस्य
+    memo: ज्ञापन
+    meta_description: मेटा विवरण
+    meta_keywords: मेटा खोजशब्दों
+    meta_title: मेटा शीर्षक
+    metadata: मेटाडाटा
+    minimal_amount: न्यूनतम राशि
+    missing_return_authorization: "%{item_name} के लिए गुम रिटर्न प्राधिकरण।"
+    month: महीना
+    more: अधिक
+    move_stock_between_locations: स्थान के बीच स्टॉक ले जाएँ
+    move_variant_to: करने के लिए संस्करण ले जाएँ
+    multiple_stores: कई दुकानों
+    mutable: परिवर्तनशील
+    my_account: मेरा खाता
+    my_orders: मेरे आदेश
+    name: नाम
+    name_on_card: कार्ड पर नाम
+    name_or_sku: नाम या SKU (उत्पाद नाम के कम से कम पहले 3 अक्षर दर्ज करें)
+    nav_bar:
+      admin_panel: प्रशासनिक समिति
+      change_country: देश बदलें
+      close_menu: मेनू बंद करें
+      desktop: डेस्कटॉप नेविगेशन
+      go_to_previous_menu: पिछले मेनू पर जाएं
+      log_in: लॉग इन करें
+      log_out: लॉग आउट
+      mobile: मोबाइल नेविगेशन
+      my_account: मेरा खाता
+      my_orders: मेरे आदेश
+      show_menu: मेनू दिखाओ
+      show_search: खोज दिखाएं
+      show_user_menu: उपयोगकर्ता मेनू दिखाएँ
+      sign_up: साइन अप करें
+    new: नवीन व
+    new_adjustment: नया समायोजन
+    new_country: नया देश
+    new_customer: नया खाता बनाएँ
+    new_customer_return: नया ग्राहक वापसी
+    new_image: नया चित्र
+    new_option_type: नया विकल्प प्रकार
+    new_order: नए आदेश
+    new_order_completed: नया आदेश पूरा हुआ
+    new_order_notifications_email: नया आदेश अधिसूचना ईमेल
+    new_payment: नया भुगतान
+    new_payment_method: नई भुगतान विधि
+    new_product: नए उत्पाद
+    new_promotion: नया प्रचार
+    new_promotion_category: नई पदोन्नति श्रेणी
+    new_property: नई संपत्ति
+    new_prototype: नया प्रोटोटाइप
+    new_refund: नया रिफंड
+    new_refund_reason: नया रिफंड कारण
+    new_reimbursement_type: नई प्रतिपूर्ति प्रकार
+    new_return_authorization: नया रिटर्न प्राधिकरण
+    new_rma_reason: नई आरएमए कारण
+    new_role: नयी भूमिका
+    new_shipment_at_location: स्थान पर नया शिपमेंट
+    new_shipping_category: नई शिपिंग श्रेणी
+    new_shipping_method: नई शिपिंग विधि
+    new_state: नया राज्य
+    new_stock_location: नया स्टॉक स्थान
+    new_stock_movement: नया स्टॉक आंदोलन
+    new_stock_transfer: नया स्टॉक ट्रांसफर
+    new_store_credit: नया स्टोर क्रेडिट
+    new_store_credit_category: नई स्टोर क्रेडिट श्रेणी
+    new_tax_category: नई कर श्रेणी
+    new_tax_rate: नई कर दर
+    new_taxon: न्यू टैक्सन
+    new_taxonomy: नई वर्गीकरण
+    new_tracker: नया ट्रैकर
+    new_user: नए उपयोगकर्ता
+    new_variant: नई वैरिएंट
+    new_zone: नया क्षेत्र
+    next: अगला
+    no_actions_added: कोई क्रिया नहीं जोड़ी गई
+    no_address_given: कोई पता नहीं दिया गया
+    no_available_date_set: कोई उपलब्ध दिनांक सेट नहीं
+    no_cc_type: एन / ए
+    no_country: कोई देश निर्धारित नहीं
+    no_limits_zone: कोई सीमा नहीं
+    no_payment_found: कोई भुगतान नहीं मिला
+    no_payment_provider_settings_message: इस भुगतान प्रदाता के पास कोई कस्टम सेटिंग उपलब्ध नहीं है
+    no_pending_payments: कोई लंबित भुगतान नहीं
+    no_product_available:
+      for_this_quantity: क्षमा करें, ऐसा लगता है कि कुछ उत्पाद चयनित मात्रा में उपलब्ध नहीं हैं।
+      opps: उफ़!
+    no_products_found: कोई उत्पाद नहीं मिला
+    no_resource_found: कोई %{resource} नहीं मिला
+    no_results: कोई परिणाम नहीं
+    no_returns_found: कोई रिटर्न नहीं मिला
+    no_rules_added: कोई नियम नहीं जोड़े गए
+    no_shipping_method_selected: कोई शिपिंग विधि चयनित नहीं है।
+    no_state_changes: कोई भी राज्य अभी तक नहीं बदलता है।
+    no_tracking_present: कोई ट्रैकिंग विवरण नहीं दिया गया है।
+    none: कोई नहीं
+    none_selected: कोई भी नहीं चुना गया
+    normal_amount: सामान्य राशि
+    not: नहीं
+    not_available: एन / ए
+    not_enough_stock: इस हस्तांतरण को पूरा करने के लिए स्रोत स्थान पर पर्याप्त सूची नहीं है।
+    not_found: "%{resource} नहीं मिला है"
+    note: ध्यान दें
+    notice_messages:
+      icon_removed: छवि को सफलतापूर्वक निकाल दिया गया है
+      prices_saved: कीमतें सफलतापूर्वक बच गईं
+      product_cloned: उत्पाद क्लोन किया गया है
+      product_deleted: उत्पाद हटा दिया गया है
+      product_not_cloned: 'उत्पाद क्लोन नहीं किया जा सका। कारण: %{error}'
+      product_not_deleted: 'उत्पाद हटाया नहीं जा सका। कारण: %{error}'
+      variant_deleted: वेरिएंट को हटा दिया गया है
+      variant_not_deleted: 'वेरिएंट को हटाया नहीं जा सका। कारण: %{error}'
+    num_orders: "# ओरल"
+    number: संख्या
+    ok: ठीक है
+    on_hand: हाथ पर
+    open: खुला हुआ
+    open_all_adjustments: सभी समायोजन खोलें
+    option_type: विकल्प का प्रकार
+    option_type_placeholder: एक विकल्प प्रकार चुनें
+    option_types: विकल्प के प्रकार
+    option_value: विकल्प मान
+    option_values: विकल्प मान
+    optional: ऐच्छिक
+    options: विकल्प
+    or: या
+    or_over_price: "%{price} या अधिक"
+    order: गण
+    order_adjustments: समायोजन का आदेश दें
+    order_already_updated: आदेश पहले ही अपडेट किया जा चुका है।
+    order_approved: आदेश मंजूर
+    order_canceled: आदेश रद्द
+    order_details: ऑर्डर का विवरण
+    order_email_resent: ई-मेल आदेश
+    order_has_no_payments: ऑर्डर का कोई भुगतान नहीं है
+    order_information: आदेश की जानकारी
+    order_line_items: ऑर्डर लाइन आइटम
+    order_mailer:
+      cancel_email:
+        dear_customer: प्रिय %{name},
+        instructions: आपका आदेश रद्द कर दिया गया है। कृपया अपने रिकॉर्ड के लिए इस रद्द करने की जानकारी को बनाए रखें।
+        order_summary_canceled: आदेश %{number} सारांश [रद्द]
+        subject: आदेश रद्द करना
+        thanks: आपके व्यापार के लिए धन्यवाद।
+      confirm_email:
+        dear_customer: प्रिय %{name},
+        instructions: कृपया अपने रिकॉर्ड के लिए निम्न आदेश की जानकारी की समीक्षा करें और उसे बनाए रखें।
+        order_summary: आदेश %{number} सारांश
+        subject: आदेश की पुष्टि
+        thanks: आपके व्यापार के लिए धन्यवाद।
+      store_owner_notification_email:
+        heading: नया आदेश प्राप्त हुआ
+        instructions: आपको एक नया आदेश मिला है।
+        order_summary: आदेश %{number} सारांश
+        subject: "%{store_name} को एक नया आदेश मिला"
+        thanks: आपके व्यापार के लिए धन्यवाद।
+      store_team: "%{store_name} टीम"
+      subtotal: 'उप-योग:'
+      total: 'कुल आर्डर:'
+    order_not_found: हमें आपका आदेश नहीं मिला। कृपया वह क्रिया फिर से करें।
+    order_number: आदेश %{number}
+    order_processed_successfully: आपके आदेश को सफलतापूर्वक संसाधित कर दिया गया है
+    order_resumed: आदेश फिर से शुरू हुआ
+    order_state:
+      address: पता
+      awaiting_return: वापसी का इंतजार
+      canceled: रद्द
+      cart: कार्ट
+      complete: पूर्ण
+      confirm: पुष्टि करें
+      considered_risky: जोखिम भरा माना जाता है
+      delivery: वितरण
+      payment: भुगतान
+      resumed: फिर से शुरू
+      returned: लौटाया हुआ
+    order_success: आदेश सफलतापूर्वक रखा गया
+    order_success_explain: आपके आदेश की जानकारी आपके ईमेल पर भेजी जाएगी
+    order_summary: आदेश सारांश
+    order_sure_want_to: क्या आप वाकई इस आदेश को प्राप्त करना चाहते हैं?
+    order_total: कुल आर्डर
+    order_updated: आदेश अद्यतन
+    orders: आदेश
+    out_of_stock: स्टॉक ख़त्म
+    overview: अवलोकन
+    package_from: से पैकेज
+    page_not_found: माफ़ करना! वह पृष्ठ जिसे आप देख रहे हैं वह नहीं मिल सकता है
+    pagination:
+      next_page: अगला पृष्ठ & raquo;
+      previous_page: "& laquo; पिछला पृष्ठ"
+      truncate: "& नरक;"
+    password: कुंजिका
+    paste: पेस्ट करें
+    path: पथ
+    pay: भुगतान कर
+    payment: भुगतान
+    payment_amount: भुगतान राशि
+    payment_could_not_be_created: भुगतान नहीं किया जा सका।
+    payment_identifier: भुगतान पहचानकर्ता
+    payment_information: भुगतान जानकारी
+    payment_method: भुगतान का तरीका
+    payment_method_not_supported: वह भुगतान विधि असमर्थित है। कृपया कोई और चुनें।
+    payment_methods: भुगतान की विधि
+    payment_processing_failed: भुगतान संसाधित नहीं किया जा सका, कृपया आपके द्वारा दर्ज विवरण की जाँच करें
+    payment_processor_choose_banner_text: यदि आपको भुगतान प्रोसेसर चुनने में सहायता की आवश्यकता है, तो कृपया देखें
+    payment_processor_choose_link: हमारे भुगतान पृष्ठ
+    payment_provider_settings: भुगतान प्रदाता सेटिंग्स
+    payment_state: भुगतान की स्थिति
+    payment_states:
+      balance_due: शेष राशि
+      checkout: चेक आउट
+      completed: पूरा किया हुआ
+      credit_owed: क्रेडिट बकाया है
+      failed: अनुत्तीर्ण होना
+      paid: भुगतान किया है
+      pending: अपूर्ण
+      processing: प्रसंस्करण
+      void: शून्य
+    payment_type: भुगतान प्रकार
+    payment_updated: भुगतान अपडेट किया गया
+    payments: भुगतान
+    pdp:
+      checkout: चेक आउट
+      description: विवरण
+      details: विवरण
+      products_included_in_promotion: प्रचार में शामिल उत्पाद
+      quantity: मात्रा
+      view_cart: गाडी देंखे
+      you_may_also_like: आपको यह भी पसंद आ सकता हैं
+    pending: विचाराधीन
+    pending_sale: विचाराधीन विक्रय
+    percent: प्रतिशत
+    percent_per_item: प्रति आइटम प्रतिशत
+    permalink: स्थायी लिंक
+    phone: फ़ोन
+    place_order: आदेश देना
+    please_define_payment_methods: कृपया पहले कुछ भुगतान विधियों को परिभाषित करें।
+    please_enter_reasonable_quantity: कृपया एक उचित मात्रा दर्ज करें।
+    plp:
+      best_selling: सर्वश्रेष्ठ बिक्री
+      clear_all: सभी साफ करें
+      collection: संग्रह
+      color: रंग
+      default: चूक
+      done: किया हुआ
+      filter_by: के द्वारा छनित
+      newest_first: नवीनतम पहले
+      no_results: कोई परिणाम नहीं
+      no_results_found: कोई परिणाम नहीं मिला
+      not_found_filters1: हम इन फिल्टर के लिए एक मैच नहीं खोज सके।
+      not_found_filters2: कृपया कोई अन्य चयन करने का प्रयास करें।
+      not_found_text1: हम '%{keywords}' के लिए उत्पाद नहीं खोज सके।
+      not_found_text2: कृपया अन्य खोज का प्रयास करें।
+      price: कीमत
+      price_high_to_low: मूल्य (उच्च - कम)
+      price_low_to_high: मूल्य (कम - उच्च)
+      result: परिणाम
+      results_for: का परिणाम
+      size: आकार
+      sort_by: इसके अनुसार क्रमबद्ध करें
+      top_sellers: शीर्ष विक्रेता
+      type: प्रकार
+    populate_get_error: कुछ गलत हो गया। कृपया आइटम को फिर से जोड़ने का प्रयास करें।
+    powered_by: द्वारा संचालित
+    pre_tax_amount: पूर्व कर राशि
+    pre_tax_refund_amount: प्री-टैक्स रिफंड राशि
+    pre_tax_total: पूर्व कर कुल
+    preferred_reimbursement_type: पसंदीदा प्रतिपूर्ति प्रकार
+    presentation: प्रस्तुतीकरण
+    preview_product: उत्पाद का पूर्वावलोकन करें
+    preview_taxon: टैक्सोन का पूर्वावलोकन करें
+    previous: पहले का
+    previous_state_missing: एन / ए
+    previously_used_card: पहले इस्तेमाल किए गए कार्ड
+    price: कीमत
+    price_range: मूल्य सीमा
+    price_sack: मूल्य बोरी
+    prices: कीमतों
+    process: प्रोसेस
+    product: उत्पाद
+    product_details: उत्पाद विवरण
+    product_has_no_description: इस उत्पाद का कोई विवरण नहीं है
+    product_not_available_in_this_currency: यह उत्पाद चयनित मुद्रा में उपलब्ध नहीं है।
+    product_properties: उत्पाद के गुण
+    product_rule:
+      choose_products: उत्पादों का चयन करें
+      label: आदेश में इन उत्पादों की x राशि होनी चाहिए
+      match_all: सब
+      match_any: कम से कम एक
+      match_none: कोई नहीं
+      product_source:
+        group: उत्पाद समूह से
+        manual: मैन्युअल रूप से चुनें
+    products: उत्पादों
+    promotion: पदोन्नति
+    promotion_action: पदोन्नति की कार्रवाई
+    promotion_action_types:
+      create_adjustment:
+        description: आदेश पर एक पदोन्नति क्रेडिट समायोजन बनाता है
+        name: संपूर्ण-क्रम समायोजन बनाएँ
+      create_item_adjustments:
+        description: एक लाइन आइटम पर एक पदोन्नति क्रेडिट समायोजन बनाता है
+        name: प्रति-पंक्ति-आइटम समायोजन बनाएँ
+      create_line_items:
+        description: वेरिएंट की निर्दिष्ट मात्रा के साथ गाड़ी को पॉप्युलेट करता है
+        name: लाइन आइटम बनाएं
+      free_shipping:
+        description: आदेश मुक्त करने के लिए सभी शिपमेंट बनाता है
+        name: मुफ़्त शिपिंग
+    promotion_actions: कार्रवाई
+    promotion_categories: पदोन्नति श्रेणियां
+    promotion_category: पदोन्नति श्रेणी
+    promotion_cloned: प्रमोशन का क्लोन बनाया गया है
+    promotion_form:
+      match_policies:
+        all: इन सभी नियमों का मिलान करें
+        any: इनमें से किसी भी नियम का मिलान करें
+    promotion_label: पदोन्नति (%{name})
+    promotion_not_cloned: 'प्रमोशन का क्लोन नहीं बनाया गया है। कारण: %{error}'
+    promotion_rule: पदोन्नति नियम
+    promotion_rule_types:
+      country:
+        description: आदेश को उचित (या डिफ़ॉल्ट) देश में भेज दिया जाता है
+        name: देश
+      first_order:
+        description: ग्राहक का पहला आदेश होना चाहिए
+        name: पहले के आदेश
+      item_total:
+        description: आदेश कुल इन मानदंडों को पूरा करता है
+        name: कुल वस्तुएँ
+      one_use_per_user:
+        description: प्रति उपयोगकर्ता केवल एक उपयोग
+        name: प्रति उपयोगकर्ता एक का उपयोग करें
+      option_value:
+        description: ऑर्डर में मिलान विकल्प के साथ निर्दिष्ट उत्पाद शामिल हैं
+        name: विकल्प मान
+      product:
+        description: आदेश में निर्दिष्ट उत्पाद शामिल हैं
+        name: उत्पाद
+      taxon:
+        description: आदेश में निर्दिष्ट कर के साथ उत्पाद शामिल हैं
+        name: टैक्सन
+      user:
+        description: केवल निर्दिष्ट उपयोगकर्ताओं के लिए उपलब्ध है
+        name: उपयोगकर्ता
+      user_logged_in:
+        description: केवल उपयोगकर्ताओं में लॉग इन करने के लिए उपलब्ध है
+        name: उपयोगकर्ता लॉग इन करें
+    promotion_uses: पदोन्नति का उपयोग करता है
+    promotionable: प्रचार करने योग्य
+    promotions: प्रोन्नति
+    propagate_all_variants: सभी वेरिएंट का प्रचार करें
+    properties: गुण
+    property: संपत्ति
+    prototype: प्रोटोटाइप
+    prototypes: प्रोटोटाइप
+    provider: प्रदाता
+    provider_settings_warning: यदि आप प्रदाता प्रकार बदल रहे हैं, तो प्रदाता सेटिंग संपादित करने से पहले आपको पहले बचत करनी होगी
+    purchased_quantity: खरीदी गई मात्रा
+    qty: मात्रा
+    quantity: मात्रा
+    quantity_returned: मात्रा लौटाया गया
+    quantity_shipped: भेजी गई मात्रा
+    quick_search: त्वरित खोज..
+    rate: मूल्यांकन करें
+    reason: कारण
+    receive: प्राप्त करें
+    receive_stock: स्टॉक प्राप्त करें
+    received: प्राप्त किया
+    reception_status: रिसेप्शन की स्थिति
+    reference: संदर्भ
+    reference_contains: संदर्भ शामिल हैं
+    refund: धन की वापसी
+    refund_amount_must_be_greater_than_zero: रिफंड राशि शून्य से अधिक होनी चाहिए
+    refund_reasons: वापसी के कारण
+    refunded_amount: रिफंड की गई राशि
+    refunds: रिफंड
+    register: रजिस्टर करें
+    registration: पंजीकरण
+    reimburse: प्रतिपूर्ति करना
+    reimbursed: प्रतिपूर्ति
+    reimbursement: अदायगी
+    reimbursement_mailer:
+      reimbursement_email:
+        days_to_send: आपके पास एक्सचेंज का इंतजार करने वाले किसी भी आइटम को वापस भेजने के लिए %{days} दिन हैं।
+        dear_customer: प्रिय %{name},
+        exchange_summary: एक्सचेंज सारांश
+        for: के लिये
+        instructions: आपकी प्रतिपूर्ति संसाधित कर दी गई है।
+        refund_summary: वापसी सारांश
+        store_team: "%{store_name} टीम"
+        subject: प्रतिपूर्ति अधिसूचना
+        thanks: आपके व्यापार के लिए धन्यवाद।
+        total_refunded: 'कुल वापसी: %{total}'
+    reimbursement_perform_failed: 'प्रतिपूर्ति नहीं की जा सकी। त्रुटि: %{error}'
+    reimbursement_status: प्रतिपूर्ति की स्थिति
+    reimbursement_type: प्रतिपूर्ति प्रकार
+    reimbursement_type_override: प्रतिपूर्ति प्रकार ओवरराइड
+    reimbursement_types: प्रतिपूर्ति प्रकार
+    reimbursements: पैसे की वापसी
+    reject: अस्वीकार
+    rejected: ठुकरा दिया
+    remember_me: पहचाना की नहीं
+    remove: हटाना
+    remove_image: छवि निकालें
+    rename: नाम बदलें
+    report: रिपोर्ट good
+    reports: रिपोर्टों
+    required: "*"
+    required_fields: आवश्यक फील्ड्स
+    resellable: पुनर्जीवन
+    resend: 'पुन: भेजें'
+    reset_password: अपना पासवर्ड रीसेट करें
+    response_code: प्रतिसाद कोड
+    resume: बायोडाटा
+    resumed: फिर से शुरू
+    return: वापसी
+    return_authorization: वापसी प्राधिकरण
+    return_authorization_canceled: वापसी प्राधिकरण रद्द
+    return_authorization_reasons: वापसी प्राधिकरण कारण
+    return_authorization_states:
+      authorized: अधिकार दिया गया
+      canceled: रद्द
+    return_authorization_updated: वापसी प्राधिकरण अपडेट किया गया
+    return_authorizations: वापसी प्राधिकरण
+    return_item_inventory_unit_ineligible: रिटर्न आइटम की इन्वेंट्री यूनिट को भेजना होगा
+    return_item_inventory_unit_reimbursed: रिटर्न आइटम की इन्वेंट्री यूनिट पहले से ही प्रतिपूर्ति की गई है
+    return_item_order_not_completed: रिटर्न आइटम का ऑर्डर पूरा होना चाहिए
+    return_item_rma_ineligible: रिटर्न आइटम के लिए आरएमए की आवश्यकता होती है
+    return_item_time_period_ineligible: पात्र समय अवधि के बाहर रिटर्न आइटम है
+    return_items: सामान वापस करे
+    return_items_cannot_be_associated_with_multiple_orders: वापसी आइटम कई आदेशों से संबद्ध नहीं हो सकते।
+    return_number: वापसी संख्या
+    return_quantity: वापसी की मात्रा
+    returned: लौटाया हुआ
+    returns: रिटर्न
+    review: समीक्षा
+    risk: जोखिम
+    risk_analysis: संकट विश्लेषण
+    risky: जोखिम भरा
+    rma_credit: आरएमए क्रेडिट
+    rma_number: आरएमए संख्या
+    rma_value: RMA मान
+    role_id: भूमिका आईडी
+    roles: भूमिकाएँ
+    rules: नियमों
+    safe: सुरक्षित
+    sales_total: बिक्री कुल
+    sales_total_description: सभी आदेशों के लिए कुल बिक्री
+    sales_totals: सेल्स टोटल
+    save_and_continue: सहेजें और जारी रखें
+    save_my_address: मेरा पता सहेजें
+    saving: सहेजा जा रहा है
+    say_no: नहीं न
+    say_yes: हाँ
+    scope: क्षेत्र
+    search: खोज
+    search_results: "'%{keywords}' के लिए खोज परिणाम"
+    searching: खोज कर
+    secure_connection_type: सुरक्षित कनेक्शन प्रकार
+    security_settings: सुरक्षा सेटिंग
+    select: चुनते हैं
+    select_a_date: एक तारीख चुनें
+    select_a_date_range: एक तिथि सीमा चुनें
+    select_a_return_authorization_reason: वापसी प्राधिकरण के लिए एक कारण का चयन करें
+    select_a_stock_location: एक स्टॉक स्थान का चयन करें
+    select_a_store_credit_reason: स्टोर क्रेडिट के लिए एक कारण चुनें
+    select_an_option: कोई विकल्प चुनें
+    select_from_prototype: प्रोटोटाइप से चयन करें
+    select_stock: स्टॉक का चयन करें
+    selected_quantity_not_available: "%{item} का चयन उपलब्ध नहीं है।"
+    send_copy_of_all_mails_to: सभी मेल की कॉपी भेजें
+    send_mails_as: के रूप में मेल भेजें
+    seo: एसईओ
+    seo_robots: एसईओ रोबोट
+    seo_title: एसईओ शीर्षक
+    server: सर्वर
+    server_error: सर्वर ने एक त्रुटि लौटा दी
+    settings: समायोजन
+    ship: समुंद्री जहाज
+    ship_address: जहाज का पता
+    ship_to: 'तक जलयात्रा:'
+    ship_total: जहाज का कुल
+    shipment: लदान
+    shipment_adjustments: शिपमेंट समायोजन
+    shipment_details: "%{shipping_method} के माध्यम से %{stock_location} से"
+    shipment_mailer:
+      shipped_email:
+        dear_customer: प्रिय %{name},
+        instructions: आपका आदेश %{number} भेज दिया गया है
+        shipment_summary: आदेश के लिए शिपमेंट सारांश
+        shipping_method: 'शिपिंग विधि: %{shipping_method}'
+        store_team: "%{store_name} टीम"
+        subject: माल लादने संबंधी सूचना
+        thanks: आपके व्यापार के लिए धन्यवाद।
+        track_information: 'ट्रैकिंग जानकारी: %{tracking}'
+        track_link: 'ट्रैकिंग लिंक: %{url}'
+    shipment_state: शिपमेंट राज्य
+    shipment_states:
+      backorder: आदेश वापस
+      canceled: रद्द
+      partial: आंशिक
+      pending: अपूर्ण
+      ready: तैयार
+      shipped: SHIPPED
+    shipment_transfer_error: वेरिएंट ट्रांसफर करने में एक त्रुटि हुई
+    shipment_transfer_success: वेरिएंट को सफलतापूर्वक स्थानांतरित कर दिया गया
+    shipments: लदान
+    shipped: SHIPPED
+    shipping: शिपिंग
+    shipping_address: शिपिंग पता
+    shipping_categories: शिपिंग श्रेणियाँ
+    shipping_category: शिपिंग श्रेणी
+    shipping_flat_rate_per_item: पैकेज आइटम प्रति फ्लैट दर
+    shipping_flat_rate_per_order: फ्लैट रेट
+    shipping_flexible_rate: प्रति पैकेज आइटम की लचीली दर
+    shipping_instructions: शिपिंग के लिए निर्देश
+    shipping_method: शिपिंग का तरीका
+    shipping_methods: शिपिंग विधियां
+    shipping_price_sack: मूल्य बोरी
+    shipping_rates:
+      display_price:
+        excluding_tax: "%{price} (+ %{tax_amount} %{tax_rate_name})"
+        including_tax: "%{price} (incl। %{tax_amount} %{tax_rate_name})"
+    shipping_total: कुल शिपिंग
+    shop_by_taxonomy: "%{taxonomy} द्वारा खरीदारी करें"
+    shopping_cart: शॉपिंग कार्ट
+    show: प्रदर्शन
+    show_active: सक्रिय दिखाएं
+    show_deleted: हटाए गए को दिखाएँ
+    show_discontinued: दिखावा बंद हो गया
+    show_only_complete_orders: केवल पूर्ण आदेश दिखाएं
+    show_only_considered_risky: केवल जोखिम भरे आदेश दिखाएं
+    show_property: संपत्ति दिखाएं
+    show_rate_in_label: लेबल में दर दिखाएं
+    show_store_selector:
+      long: स्टोरफ्रंट के मुख्य नेव बार में स्टोर चयनकर्ता को प्रदर्शित करें और उपयोगकर्ताओं को स्टोर और करेंसी को बदलने की अनुमति दें
+      short: स्टोर चयनकर्ता दिखाएँ
+    sign_up: साइन अप करें
+    sku: SKU
+    skus: SKUs
+    slug: काउंटर
+    social: सामाजिक
+    source: स्रोत
+    special_instructions: विशेष निर्देश
+    split: विभाजित करें
+    spree_gateway_error_flash_for_checkout: आपकी भुगतान जानकारी में कोई समस्या थी। कृपया अपनी जानकारी जांचें और पुनः प्रयास करें।
+    ssl:
+      change_protocol: कृपया HTTP (HTTPS के बजाय) का उपयोग करें और इस अनुरोध को पुनः प्रयास करें।
+    start: शुरू
+    starting_from: पर आरंभ होती है
+    state: राज्य
+    state_based: राज्य आधारित
+    state_machine_states:
+      accepted: को स्वीकृत
+      address: पता
+      authorized: अधिकार दिया गया
+      awaiting: प्रतीक्षा कर रहा है
+      awaiting_return: वापसी का इंतजार
+      backordered: वापस आदेश दिया
+      canceled: रद्द
+      cart: कार्ट
+      checkout: चेक आउट
+      closed: बंद किया हुआ
+      complete: पूर्ण
+      completed: पूरा हुआ
+      confirm: पुष्टि करें
+      delivery: वितरण
+      errored: मिटा दिया
+      failed: अनुत्तीर्ण होना
+      given_to_customer: ग्राहक को दिया
+      invalid: अमान्य
+      manual_intervention_required: मैनुअल हस्तक्षेप की आवश्यकता है
+      on_hand: हाथ पर
+      open: खुला हुआ
+      order: गण
+      payment: भुगतान
+      pending: विचाराधीन
+      processing: प्रसंस्करण
+      ready: तैयार
+      reimbursed: प्रतिपूर्ति
+      resumed: फिर से शुरू
+      returned: लौटाया हुआ
+      shipment: लदान
+      shipped: SHIPPED
+      void: शून्य
+    states: राज्य अमेरिका
+    states_required: राज्यों की आवश्यकता है
+    status: स्थिति
+    stock: भण्डार
+    stock_item_id: शेयर मद
+    stock_location: स्टॉक स्थान
+    stock_location_info: स्टॉक स्थान की जानकारी
+    stock_locations: स्टॉक स्थान
+    stock_locations_need_a_default_country: स्टॉक स्थान बनाने से पहले आपको एक डिफ़ॉल्ट देश बनाना होगा।
+    stock_management: स्टाक प्रबंधन
+    stock_management_requires_a_stock_location: स्टॉक प्रबंधित करने के लिए कृपया एक स्टॉक स्थान बनाएं।
+    stock_movements: स्टॉक मूवमेंट
+    stock_movements_for_stock_location: "%{stock_location_name} के लिए स्टॉक मूवमेंट्स"
+    stock_successfully_transferred: स्टॉक को स्थानों के बीच सफलतापूर्वक स्थानांतरित कर दिया गया था।
+    stock_transfer:
+      errors:
+        must_have_variant: आपको कम से कम एक संस्करण जोड़ना होगा।
+        variants_unavailable: कुछ वेरिएंट %{stock} पर उपलब्ध नहीं हैं
+    stock_transfer_name: स्टाक ट्रान्स्फ़र
+    stock_transfers: स्टॉक ट्रांसफर
+    stop: रुकें
+    store: दुकान
+    store_credit:
+      additional_payment_needed: शेष <strong> %{amount} </ strong> के लिए किसी अन्य भुगतान विधि का चयन करें।
+      allocated: जोड़ा
+      applicable_amount: स्टोर क्रेडिट में <strong> %{amount} </ strong> इस आदेश पर लागू किया जाएगा।
+      apply: लागू
+      authorized: अधिकार दिया गया
+      available_amount: आपके पास स्टोर क्रेडिट में <strong> %{amount} </ strong> उपलब्ध है!
+      captured: उपयोग किया गया
+      credit: श्रेय
+      errors:
+        cannot_change_used_store_credit: आप पहले से उपयोग किए जा चुके स्टोर क्रेडिट को नहीं बदल सकते
+        unable_to_create: स्टोर क्रेडिट बनाने में असमर्थ
+        unable_to_delete: स्टोर क्रेडिट को हटाने में असमर्थ
+        unable_to_fund: स्टोर क्रेडिट का उपयोग करके ऑर्डर के लिए भुगतान करने में असमर्थ
+        unable_to_update: स्टोर क्रेडिट अपडेट करने में असमर्थ
+      remaining_amount: आपके खाते के स्टोर क्रेडिट में <strong> %{amount} </ strong> शेष है।
+      remove: हटाना
+    store_credit_categories: स्टोर क्रेडिट श्रेणियाँ
+    store_credit_name: स्टोर क्रेडिट
+    store_credit_payment_method:
+      currency_mismatch: स्टोर क्रेडिट मुद्रा ऑर्डर मुद्रा से मेल नहीं खाती है
+      insufficient_authorized_amount: अधिकृत राशि से अधिक पर कब्जा करने में असमर्थ
+      insufficient_funds: स्टोर शेष राशि पर्याप्त नहीं है
+      select_one_store_credit: शेष राशि की ओर जाने के लिए स्टोर क्रेडिट का चयन करें
+      successful_action: सफल स्टोर क्रेडिट %{action}
+      unable_to_credit: 'क्रेडिट कोड में असमर्थ: %{auth_code}'
+      unable_to_find: स्टोर क्रेडिट नहीं मिल सका
+      unable_to_find_for_action: 'स्रोत कोड: %{auth_code} कार्रवाई के लिए: %{action} के लिए स्टोर क्रेडिट नहीं मिल सका'
+      unable_to_void: 'शून्य कोड में असमर्थ: %{auth_code}'
+      user_has_no_store_credits: उपयोगकर्ता के पास कोई भी उपलब्ध स्टोर क्रेडिट नहीं है
+    store_credits: स्टोर क्रेडिट
+    store_default: डिफ़ॉल्ट स्टोर
+    store_errors:
+      unable_to_create: स्टोर बनाने में असमर्थ।
+      unable_to_delete: स्टोर हटाने में असमर्थ।
+      unable_to_update: स्टोर अपडेट करने में असमर्थ।
+    store_form:
+      checkout_zone_help: ज़ोन का चयन उन देशों तक सीमित होगा जहां देशों या राज्यों के उत्पादों को भेजा जाता है। अधिक जानकारी के लिए <a href='https://guides.spreecommerce.org/user/configuration/configuring_geography.html#zones 'target='_blank' class='alert-link.com> कृपया दस्तावेज़ देखें </a>
+      code_help: विशिष्ट पहचानकर्ता को संग्रहीत करें, जो स्टोर के नाम का संक्षिप्त रूप है (इसका उपयोग लेआउट निर्देशिका नाम के रूप में किया जाता है, और स्टोर से टेम्पलेट अलग करने के लिए भी उपयोगी है)
+      customer_support_email_help: यह ईमेल आपके स्टोर आगंतुकों को पाद लेख अनुभाग में दिखाई देता है
+      default_country_help: यह वह देश है जो चेकआउट एड्रेस फॉर्म पर पहले से चयनित होगा
+      footer_help: यह सामग्री आपके स्टोर के पाद लेख अनुभाग में दिखाई देती है
+      locales_help: अधिक स्थान जोड़ने के लिए <a href='https://github.com/spree-contrib/spree_i18n target='_blank' class='alert-link'> होड़ I18n एक्सटेंशन </a> स्थापित करें
+      mail_from_address_help: यह वह ईमेल है जो आपके सभी स्टोर ईमेल (ऑर्डर पुष्टि, शिपमेंट अधिसूचना आदि) का प्रेषक होगा
+      new_order_notifications_email_help: यदि आप हर बार किसी व्यक्ति को कोई ईमेल सूचना प्राप्त करना चाहते हैं, तो ऑर्डर भेजने के लिए कृपया एक ईमेल पता प्रदान करें
+      seo_robots: कृपया <a href='https://developers.google.com/search/reference/robots_meta_tag' target='_blank'> इस पृष्ठ को और अधिक सहायता के लिए देखें </a>
+      social_help: यदि आप अपनी वेबसाइट के पाद लेख भाग में अपने सामाजिक खातों से लिंक करना चाहते हैं, तो कृपया नीचे दिए गए फ़ील्ड भरें
+    store_not_set_as_default: "%{store} को एक डिफ़ॉल्ट स्टोर के रूप में संग्रहीत नहीं किया जा सका"
+    store_set_as_default: स्टोर %{store} अब एक डिफ़ॉल्ट स्टोर है
+    store_set_default_button: डिफाल्ट के रूप में सेट
+    stores: स्टोर
+    street_address: गली का पता
+    street_address_2: सड़क का पता (cont'd)
+    subtotal: उप-योग
+    subtract: घटाना
+    success: सफलता
+    successfully_created: "%{resource} को सफलतापूर्वक बनाया गया है!"
+    successfully_refunded: "%{resource} को सफलतापूर्वक वापस कर दिया गया है!"
+    successfully_removed: "%{resource} को सफलतापूर्वक हटा दिया गया है!"
+    successfully_updated: "%{resource} को सफलतापूर्वक अपडेट कर दिया गया है!"
+    summary: सारांश
+    supported_currencies: समर्थित मुद्राओं
+    supported_currencies_long: एक अल्पविराम ने समर्थित मुद्राओं की सूची अलग कर दी
+    supported_locales: समर्थित लोकल
+    tags: टैग
+    tags_placeholder: तागे मिलाना
+    tax: कर
+    tax_categories: कर श्रेणियाँ
+    tax_category: कर श्रेणी
+    tax_code: कर कोड
+    tax_included: कर सहित।)
+    tax_rate_amount_explanation: कर दरों में गणना में सहायता के लिए एक दशमलव राशि है, (यानी यदि कर की दर 5% है तो 0.05 दर्ज करें)
+    tax_rates: कर की दरें
+    taxon: टैक्सोन
+    taxon_edit: टैक्सोन संपादित करें
+    taxon_missing_alt: श्रेणी बैनर विवरण
+    taxon_placeholder: एक टैक्सोन जोड़ें
+    taxon_rule:
+      choose_taxons: कर का चयन करें
+      label: आदेश में इन करों की x राशि होनी चाहिए
+      match_all: सब
+      match_any: कम से कम एक
+    taxonomies: taxonomies
+    taxonomy: वर्गीकरण
+    taxonomy_brands_name: ब्रांड्स
+    taxonomy_categories_name: श्रेणियाँ
+    taxonomy_edit: संपादित करें वर्गीकरण
+    taxonomy_tree_error: अनुरोधित परिवर्तन को स्वीकार नहीं किया गया है और पेड़ को उसकी पिछली स्थिति में वापस कर दिया गया है, कृपया पुनः प्रयास करें।
+    taxonomy_tree_instruction: "* बच्चे को जोड़ने, हटाने या छाँटने के लिए मेनू का उपयोग करने के लिए पेड़ में एक बच्चा राइट (या iOS डिवाइस पर डबल टैप)।"
+    taxons: टैक्सों
+    test: परीक्षा
+    test_mailer:
+      test_email:
+        greeting: बधाई हो!
+        message: यदि आपको यह ईमेल मिला है, तो आपकी ईमेल सेटिंग्स सही हैं।
+        subject: टेस्ट मेल
+    test_mode: परीक्षण विधि
+    thank_you_for_your_order: आपके व्यापार के लिए धन्यवाद। कृपया अपने रिकॉर्ड के लिए इस पुष्टिकरण पृष्ठ की एक प्रति प्रिंट करें।
+    there_are_no_items_for_this_order: इस आदेश के लिए कोई आइटम नहीं हैं। जारी रखने के लिए कृपया एक आइटम जोड़ें।
+    there_were_problems_with_the_following_fields: निम्नलिखित क्षेत्रों के साथ समस्याएं थीं
+    this_order_has_already_received_a_refund: इस आदेश को पहले ही धनवापसी मिल चुकी है
+    thumbnail: थंबनेल
+    tiered_flat_rate: टायर्ड फ्लैट रेट
+    tiered_percent: तिवारी प्रतिशत
+    tiers: स्तरों
+    time: समय
+    to_add_variants_you_must_first_define: वेरिएंट जोड़ने के लिए, आपको पहले परिभाषित करना होगा
+    total: संपूर्ण
+    total_per_item: कुल प्रति आइटम
+    total_pre_tax_refund: कुल प्री-टैक्स रिफंड
+    total_price: कुल कीमत
+    total_sales: संपूर्ण बिक्री
+    track_inventory: ट्रैक इन्वेंटरी
+    tracking: नज़र रखना
+    tracking_number: खोज संख्या
+    tracking_url: ट्रैकिंग URL
+    tracking_url_placeholder: जैसे http://quickship.com/package?num=:tracking
+    transaction_id: लेनदेन आईडी
+    transfer_from_location: इससे स्थानांतरित करें
+    transfer_stock: स्टॉक ट्रांसफर करें
+    transfer_to_location: के लिए स्थानांतरण
+    tree: पेड़
+    twitter: ट्विटर
+    type: प्रकार
+    type_to_search: खोजने के लिए लिखें
+    unable_to_connect_to_gateway: गेटवे से कनेक्ट करने में असमर्थ।
+    unable_to_create_reimbursements: प्रतिपूर्ति बनाने में असमर्थ क्योंकि मैन्युअल हस्तक्षेप के मद लंबित हैं।
+    under_price: "%{price} के तहत"
+    unlock: अनलॉक
+    unrecognized_card_type: अपरिचित कार्ड प्रकार
+    unshippable_items: अवर्णनीय वस्तुएँ
+    update: अपडेट करें
+    updating: अद्यतन करने
+    url: यूआरएल
+    usage_limit: उपयोग की सीमा
+    use_app_default: ऐप डिफॉल्ट का इस्तेमाल करें
+    use_billing_address: बिलिंग पते का उपयोग करें
+    use_existing_cc: फ़ाइल पर मौजूदा कार्ड का उपयोग करें
+    use_new_cc: एक नए कार्ड का उपयोग करें
+    use_new_cc_or_payment_method: नए कार्ड / भुगतान पद्धति का उपयोग करें
+    use_s3: छवियों के लिए अमेज़ॅन एस 3 का उपयोग करें
+    used: उपयोग किया गया
+    user: उपयोगकर्ता
+    user_not_found: उपयोगकर्ता नहीं मिला
+    user_rule:
+      choose_users: उपयोगकर्ता चुनें
+    users: उपयोगकर्ताओं
+    validation:
+      cannot_be_less_than_shipped_units: शिप की गई इकाइयों की संख्या से कम नहीं हो सकती।
+      cannot_destroy_line_item_as_inventory_units_have_shipped: लाइन आइटम को नष्ट नहीं कर सकता क्योंकि कुछ इन्वेंट्री इकाइयों ने शिप किया है।
+      exceeds_available_stock: उपलब्ध स्टॉक से अधिक है। कृपया सुनिश्चित करें कि लाइन आइटम में एक मान्य मात्रा है।
+      is_too_large: बहुत बड़ा है - हाथ पर स्टॉक अनुरोधित मात्रा को कवर नहीं कर सकता है!
+      must_be_int: पूर्णांक होना चाहिए
+      must_be_non_negative: एक गैर-नकारात्मक मूल्य होना चाहिए
+      unpaid_amount_not_zero: 'राशि की पूरी तरह से प्रतिपूर्ति नहीं की गई थी। अभी भी कारण: %{amount}'
+    value: मूल्य
+    variant: प्रकार
+    variant_placeholder: एक संस्करण चुनें
+    variant_prices_search_placeholder: SKU या भिन्न नाम खोजें ...
+    variants: वेरिएंट
+    version: संस्करण
+    void: शून्य
+    weight: वजन
+    what_is_a_cvv: "(CVV) क्रेडिट कार्ड कोड क्या है?"
+    what_is_this: यह क्या है?
+    width: चौड़ाई
+    year: साल
+    you_have_no_orders_yet: आपके पास अभी तक कोई आदेश नहीं है
+    your_cart_is_empty: आपकी गाड़ी खाली है
+    your_order_is_empty_add_product: आपका आदेश खाली है, कृपया ऊपर एक उत्पाद खोजें और जोड़ें
+    zip: ज़िप
+    zipcode: ज़िप कोड
+    zipcode_required: ज़िप कोड आवश्यक
+    zone: क्षेत्र
+    zones: क्षेत्र

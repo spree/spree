@@ -1,0 +1,1769 @@
+---
+az:
+  activemodel:
+    errors:
+      models:
+        spree/fulfilment_changer:
+          attributes:
+            current_shipment:
+              can_not_have_backordered_inventory_units: arxa plana keçirilmiş inventar vahidlərinə malikdir
+              has_already_been_shipped: artıq göndərilib
+            desired_shipment:
+              can_not_transfer_within_same_shipment: cari göndərmə ilə eyni ola bilməz
+              has_not_enough_stock_at_desired_location: İstədiyiniz stok yerində kifayət qədər stok yoxdur
+  activerecord:
+    attributes:
+      spree/address:
+        address1: Ünvan
+        address2: Ünvan (davam)
+        city: Şəhər
+        company: Şirkət
+        country: Ölkə
+        firstname: Ad
+        label: Ünvan adı
+        lastname: Soyad
+        phone: Telefon
+        state: Dövlət
+        zipcode: Poçt kodu
+      spree/calculator/tiered_flat_rate:
+        preferred_base_amount: Əsas məbləğ
+        preferred_tiers: Yarlıqlar
+      spree/calculator/tiered_percent:
+        preferred_base_percent: Əsas faiz
+        preferred_tiers: Yarlıqlar
+      spree/country:
+        iso: ISO
+        iso3: ISO3
+        iso_name: ISO adı
+        name: Ad
+        numcode: ISO kodu
+      spree/credit_card:
+        base: ''
+        cc_type: Yazın
+        month: Ay
+        name: Ad
+        number: Sayı
+        verification_value: Doğrulama dəyəri
+        year: İl
+      spree/inventory_unit:
+        state: Dövlət
+      spree/line_item:
+        price: Qiymət
+        quantity: Miqdarı
+      spree/option_type:
+        filterable: Süzgəclidir
+        name: Ad
+        presentation: Təqdimat
+      spree/order:
+        checkout_complete: Ödəmə tamamlandı
+        completed_at: Tamamlandı
+        considered_risky: Riskli
+        coupon_code: Kupon Kodu
+        created_at: Sifariş tarixi
+        email: Elektron poçt
+        ip_address: IP ünvanı
+        item_total: Maddə cəmi
+        number: Sayı
+        payment_state: Ödəniş dövləti
+        shipment_state: Göndərmə Dövləti
+        special_instructions: Xüsusi Təlimatlar
+        state: Dövlət
+        total: Ümumi
+      spree/order/bill_address:
+        address1: Faturalandırma ünvanı küçəsi
+        city: Faturalandırma ünvanı şəhər
+        firstname: Faktura ünvanı ilk adı
+        lastname: Faktura ünvanı soyadı
+        phone: Faktura ünvanı telefonu
+        state: Faktura ünvanı vəziyyəti
+        zipcode: Faktura ünvanı poçt kodu
+      spree/order/ship_address:
+        address1: Göndərmə ünvanı küçə
+        city: Göndərmə ünvanı şəhər
+        firstname: Göndərmə ünvanı ad
+        lastname: Göndərmə ünvanı soyadı
+        phone: Göndərmə ünvanı telefon
+        state: Göndərmə ünvanı dövlət
+        zipcode: Göndərmə ünvanı poçt kodu
+      spree/payment:
+        amount: Məbləğ
+        number: Sayı
+      spree/payment_method:
+        name: Ad
+      spree/product:
+        available_on: Mövcuddur
+        cost_currency: Maliyyət Valyutası
+        cost_price: Maliyet qiyməti
+        description: Təsvir
+        discontinue_on: Dayandırın
+        less_than: Daha az
+        master_price: Master Qiymət
+        name: Ad
+        on_hand: Əldə
+        shipping_category: Göndərmə kateqoriyası
+        tax_category: Vergi kateqoriyası
+      spree/promotion:
+        advertise: Reklam verin
+        code: Kod
+        description: Təsvir
+        event_name: Tədbirin adı
+        expires_at: Bitmə vaxtı
+        generate_code: Kupon kodu yaradın
+        name: Ad
+        path: Yol
+        promotion_category: Təqdimat kateqoriyası
+        starts_at: Başlayır
+        usage_limit: İstifadə limiti
+      spree/promotion_category:
+        code: Kod
+        name: Ad
+      spree/property:
+        name: Ad
+        presentation: Təqdimat
+      spree/prototype:
+        name: Ad
+      spree/return_authorization:
+        amount: Məbləğ
+      spree/role:
+        name: Ad
+      spree/shipment:
+        number: Sayı
+      spree/state:
+        abbr: Qısaltma
+        name: Ad
+      spree/state_change:
+        state_changes: Dövlət dəyişir
+        state_from: Dövlət
+        state_to: Dövlətə
+        timestamp: Zaman damgası
+        type: Yazın
+        updated: Yenilənib
+        user: İstifadəçi
+      spree/store:
+        mail_from_address: Ünvandan poçt
+        meta_description: Meta Təsviri
+        meta_keywords: Meta açar sözlər
+        name: Saytın adı
+        seo_robots: SEO robotları
+        seo_title: SEO adı
+        url: Saytın URL
+      spree/store_credit:
+        amount_used: İstifadə olunan məbləğ
+      spree/store_credit_category:
+        name: Ad
+      spree/tax_category:
+        description: Təsvir
+        name: Ad
+      spree/tax_rate:
+        amount: Dərəcəsi
+        included_in_price: Qiymətə daxildir
+        show_rate_in_label: Etiketdə dərəcəni göstərin
+      spree/taxon:
+        name: Ad
+        permalink: Daimi bağlantı
+        position: Vəzifə
+      spree/taxonomy:
+        name: Ad
+      spree/user:
+        email: Elektron poçt
+        password: Şifrə
+        password_confirmation: Şifrə təsdiqlənməsi
+      spree/variant:
+        cost_currency: Maliyyət Valyutası
+        cost_price: Maliyet qiyməti
+        depth: Dərinlik
+        height: Hündürlük
+        price: Qiymət
+        sku: SKU
+        weight: Çəki
+        width: Eni
+      spree/zone:
+        description: Təsvir
+        name: Ad
+    errors:
+      models:
+        spree/calculator/tiered_flat_rate:
+          attributes:
+            base:
+              keys_should_be_positive_number: Yarım düymələrin hamısı 0-dan böyük rəqəmlər olmalıdır
+            preferred_tiers:
+              should_be_hash: bir hash olmalıdır
+        spree/calculator/tiered_percent:
+          attributes:
+            base:
+              keys_should_be_positive_number: Yarım düymələrin hamısı 0-dan böyük rəqəmlər olmalıdır
+              values_should_be_percent: Səviyyə dəyərləri hamısı% 0 ilə 100% arasında olmalıdır
+            preferred_tiers:
+              should_be_hash: bir hash olmalıdır
+        spree/classification:
+          attributes:
+            taxon_id:
+              already_linked: artıq bu məhsula bağlıdır
+        spree/credit_card:
+          attributes:
+            base:
+              card_expired: Kartın müddəti bitib
+              expiry_invalid: Kartın müddəti etibarsızdır
+        spree/image:
+          attributes:
+            attachment:
+              attachment_must_be_present: hazır olmalıdır
+              not_allowed_content_type: məzmun növünə icazə verilməyib
+        spree/line_item:
+          attributes:
+            currency:
+              must_match_order_currency: Sifariş valyutası ilə uyğun olmalıdır
+        spree/product:
+          attributes:
+            base:
+              cannot_destroy_if_attached_to_line_items: Məhsullar sətir elementlərinə əlavə olunduqdan sonra silinə bilməz.
+            discontinue_on:
+              invalid_date_range: mövcud tarixdən gec olmalıdır
+        spree/promotion:
+          attributes:
+            expires_at:
+              invalid_date_range: başlanğıc tarixindən gec olmalıdır
+        spree/refund:
+          attributes:
+            amount:
+              greater_than_allowed: icazə verilən məbləğdən çoxdur.
+        spree/reimbursement:
+          attributes:
+            base:
+              return_items_order_id_does_not_match: Göstərilən geri qaytarma maddələrindən bir və ya bir neçəsi, geri ödəmə ilə eyni sıraya aid deyil.
+        spree/return_item:
+          attributes:
+            inventory_unit:
+              other_completed_return_item_exists: "%{inventory_unit_id} qaytarma maddəsi %{return_item_id} tərəfindən artıq alınmışdır"
+            reimbursement:
+              cannot_be_associated_unless_accepted: qəbul edilməyən bir qaytarma maddəsi ilə əlaqələndirilə bilməz.
+        spree/shipping_method:
+          attributes:
+            base:
+              required_shipping_category: Ən az bir göndərmə kateqoriyası seçməlisiniz
+        spree/store:
+          attributes:
+            base:
+              cannot_destroy_default_store: Varsayılan Mağazanı məhv etmək olmur.
+        spree/store_credit:
+          attributes:
+            amount_authorized:
+              exceeds_total_credits: Cəmi kreditdən çoxdur.
+            amount_used:
+              cannot_be_greater_than_amount: Məbləğdən böyük ola bilməz.
+              greater_than_zero_restrict_delete: sıfırdan böyükdür. Mağaza krediti silinə bilmir.
+        spree/store_credit_category:
+          attributes:
+            base:
+              cannot_destroy_if_used_in_store_credit: Mağaza krediti istifadə edildikdən sonra mağaza krediti kateqoriyalarını silmək olmur.
+        spree/taxon_image:
+          attributes:
+            attachment:
+              not_allowed_content_type: məzmun növünə icazə verilməyib
+        spree/variant:
+          attributes:
+            base:
+              cannot_destroy_if_attached_to_line_items: Variantları sətir elementlərinə əlavə etdikdən sonra silmək olmur.
+              must_supply_price_for_variant_or_master: Variant üçün qiymət və ya məhsul üçün əsas qiymət təmin etməlidir.
+              no_master_variant_found_to_infer_price: Qiymət çıxarmaq üçün master variant tapılmadı
+    models:
+      spree/address:
+        one: Ünvan
+        other: Ünvanlar
+      spree/country:
+        one: Ölkə
+        other: Ölkələr
+      spree/credit_card:
+        one: Kredit kartı
+        other: Kredit kartları
+      spree/customer_return:
+        one: Müştəri qayıt
+        other: Müştəri qayıdır
+      spree/inventory_unit:
+        one: İnventarlaşdırma vahidi
+        other: İnventarlaşdırma vahidləri
+      spree/line_item:
+        one: Sətir
+        other: Xətt əşyaları
+      spree/option_type:
+        one: Seçim növü
+        other: Seçim növləri
+      spree/option_value:
+        one: Seçim dəyəri
+        other: Seçim dəyərləri
+      spree/order:
+        one: Sifariş
+        other: Sifarişlər
+      spree/payment:
+        one: Ödəniş
+        other: Ödənişlər
+      spree/payment_method:
+        one: Ödəniş üsulu
+        other: Ödəmə üsulları
+      spree/product:
+        one: Məhsul
+        other: Məhsullar
+      spree/promotion:
+        one: Təqdimat
+        other: Tanıtımlar
+      spree/promotion_category:
+        one: Təqdimat kateqoriyası
+        other: Təqdimat kateqoriyaları
+      spree/property:
+        one: Əmlak
+        other: Xüsusiyyətlər
+      spree/prototype:
+        one: Prototip
+        other: Prototiplər
+      spree/refund_reason:
+        one: Geri Səbəb
+        other: Geri qaytarma səbəbləri
+      spree/reimbursement:
+        one: Kompensasiya
+        other: Ödənişlər
+      spree/reimbursement_type:
+        one: Ödəniş növü
+        other: Ödəniş növləri
+      spree/return_authorization:
+        one: Qaytarma Avtorizasiyası
+        other: Qaytarma Səlahiyyətləri
+      spree/return_authorization_reason:
+        one: İcazə Səbəbini qaytarın
+        other: Qaytarma Səlahiyyət Səbəbləri
+      spree/role:
+        one: Rollar
+        other: Rollar
+      spree/shipment:
+        one: Göndərmə
+        other: Göndərmə
+      spree/shipping_category:
+        one: Göndərmə kateqoriyası
+        other: Göndərmə növləri
+      spree/shipping_method:
+        one: Göndərmə üsulu
+        other: Göndərmə metodları
+      spree/state:
+        one: Dövlət
+        other: Ştatlar
+      spree/state_change:
+        one: Dövlət dəyişikliyi
+        other: Dövlət dəyişiklikləri
+      spree/stock_location:
+        one: Səhm yeri
+        other: Səhm yerləri
+      spree/stock_movement:
+        one: Səhmdar Hərəkat
+        other: Səhm Hərəkatları
+      spree/stock_transfer:
+        one: Səhmdar köçürmə
+        other: Səhmdar köçürmələri
+      spree/store_credit:
+        one: Mağaza krediti
+        other: Mağaza kreditləri
+      spree/store_credit_category:
+        one: Mağaza kredit kateqoriyası
+        other: Mağaza kreditləri kateqoriyası
+      spree/tax_category:
+        one: Vergi kateqoriyası
+        other: Vergi kateqoriyaları
+      spree/tax_rate:
+        one: Vergi dərəcəsi
+        other: Vergi dərəcələri
+      spree/taxon:
+        one: Taxon
+        other: Taxonlar
+      spree/taxonomy:
+        one: Taksonomiya
+        other: Taksonomiyalar
+      spree/tracker:
+        one: İzləyici
+        other: İzləyicilər
+      spree/user:
+        one: İstifadəçi
+        other: İstifadəçilər
+      spree/variant:
+        one: Variant
+        other: Variantlar
+      spree/zone:
+        one: Zona
+        other: Bölgələr
+  address_book:
+    save: Yadda saxla
+    successfully_created: Yeni ünvan uğurla yaradıldı
+  devise:
+    confirmations:
+      confirmed: Hesabınız uğurla təsdiqləndi. İndi daxil olmusunuz.
+      send_instructions: Bir neçə dəqiqə ərzində hesabınızı necə təsdiqləməyinə dair təlimatları əks etdirən bir e-poçt alacaqsınız.
+    failure:
+      inactive: Hesabınız hələ aktivləşdirilməyib.
+      invalid: Yanlış e-poçt və ya parol.
+      invalid_token: Yanlış identifikasiya işarəsi.
+      locked: Hesabınız kilidlənib.
+      timeout: Sessiyanızın müddəti bitdi, davam etmək üçün yenidən daxil olun.
+      unauthenticated: Davam etmədən əvvəl daxil olmalı və ya qeydiyyatdan keçməlisiniz.
+      unconfirmed: Davam etmədən əvvəl hesabınızı təsdiqləməlisiniz.
+    mailer:
+      confirmation_instructions:
+        subject: Təsdiq təlimatları
+      reset_password_instructions:
+        subject: Parol təlimatlarını yenidən qurun
+      unlock_instructions:
+        subject: Təlimatları kiliddən çıxarın
+    oauth_callbacks:
+      failure: '"%{reason}" olduğu üçün sizə %{kind}-dan icazə verilmədi.'
+      success: "%{kind} hesabından müvəffəqiyyətlə icazə verildi."
+    unlocks:
+      send_instructions: Bir neçə dəqiqə ərzində hesabınızın kilidini necə açacağınıza dair təlimatları əks etdirən bir e-poçt alacaqsınız.
+      unlocked: Hesabınız uğurla kiliddən çıxarıldı. İndi daxil olmusunuz.
+    user_passwords:
+      user:
+        cannot_be_blank: Parolunuz boş ola bilməz.
+        send_instructions: Şifrənizi bir neçə dəqiqə ərzində necə sıfırlayacağınıza dair təlimatları əks etdirən bir e-poçt alacaqsınız.
+        updated: Parolunuz uğurla dəyişdirildi. İndi daxil olmusunuz.
+    user_registrations:
+      destroyed: Əlvida! Hesabınız uğurla ləğv edildi. Ümid edirik tezliklə yenidən görüşəcəyik.
+      inactive_signed_up: Uğurla qeydiyyatdan keçdiniz. Lakin hesabınız %{reason} olduğundan sizi daxil edə bilmədik.
+      signed_up: Xoş gəlmisiniz! Uğurla qeydiyyatdan keçdiniz.
+      updated: Hesabınızı uğurla yeniləmisiniz.
+    user_sessions:
+      signed_in: Uğurla daxil oldunuz.
+      signed_out: Uğurla çıxıldı.
+  errors:
+    messages:
+      already_confirmed: artıq təsdiqləndi
+      not_found: tapılmadı
+      not_locked: kilidli deyildi
+      not_saved:
+        one: '1 %{resource}-un qeyd olunmasına qadağa qoyuldu:'
+        other: "%{count} səhvləri bu %{resource} qeyd edilməsini qadağan etdi:"
+  spree:
+    abbreviation: Qısaltma
+    accept: Qəbul et
+    acceptance_errors: Qəbul səhvləri
+    acceptance_status: Qəbul statusu
+    accepted: Qəbul edildi
+    account: Hesab
+    account_info: Hesab məlumatı
+    account_updated: Hesab yeniləndi
+    action: Fəaliyyət
+    actions:
+      cancel: Ləğv et
+      continue: Davam edin
+      create: Yaradın
+      destroy: Məhv et
+      edit: Redaktə edin
+      list: Siyahı
+      listing: Siyahı
+      new: Yeni
+      refund: Geri qaytarma
+      save: Yadda saxla
+      update: Yeniləyin
+    activate: Aktivləşdirin
+    active: Aktivdir
+    add: Əlavə et
+    add_action_of_type: Növü fəaliyyət əlavə edin
+    add_country: Ölkə əlavə edin
+    add_coupon_code: Kupon kodu əlavə edin
+    add_new_address: Yeni ünvan əlavə edin
+    add_new_credit_card: Yeni bir kart əlavə edin
+    add_new_header: Yeni başlıq əlavə edin
+    add_new_style: Yeni Stil əlavə edin
+    add_one: Bir əlavə edin
+    add_option_value: Seçim dəyəri əlavə edin
+    add_product: Məhsul əlavə edin
+    add_product_properties: Məhsul xüsusiyyətləri əlavə edin
+    add_rule_of_type: Tip qayda əlavə edin
+    add_state: Dövlət əlavə edin
+    add_stock: Səhm əlavə et
+    add_store: Yeni Mağaza
+    add_store_credit: Mağaza krediti əlavə edin
+    add_to_cart: Səbətə əlavə et
+    add_variant: Variant əlavə edin
+    added_to_cart: Səbətə uğurla əlavə edildi!
+    additional_item: Əlavə maddə
+    address: Ünvan
+    address1: Ünvan
+    address2: Ünvan (davam)
+    address_action_popup:
+      delete_button: bəli silin
+      delete_text: "<br /> bu ünvanı silməsini həqiqətən istəyirsiniz?"
+      delete_title: Sən əminsən?
+    address_book:
+      add_new_shipping_address: Yeni ünvan əlavə edin
+      address_name_label: Ünvan Adı
+      address_name_placeholder: Bu ünvana unikal bir ad verin (İş, Ev və s.)
+      addresses: Ünvanlar
+      edit_address: Ünvanı redaktə edin
+      label: Ünvan Adı
+      new_address: Yeni Ünvan
+      no_shipping_addresses_on_file: Faylda ünvan yoxdur
+      other_address: Digər ünvan
+      remove_address: Ünvanı silin
+      save: Yadda saxla
+      successfully_created: Ünvan uğurla yaradıldı.
+      successfully_removed: Ünvan uğurla silindi.
+      successfully_saved: Uğurla qeyd edildi
+      successfully_updated: Uğurla yeniləndi
+      unsuccessfully_saved: Ünvanınızı saxlamağa çalışarkən xəta baş verdi.
+      unsuccessfully_updated: Ünvanınızı yeniləməyə çalışarkən bir yeniləmə oldu.
+    addresses: Ünvanlar
+    adjustable: Tənzimlənə bilər
+    adjustment: Tənzimləmə
+    adjustment_amount: Məbləğ
+    adjustment_labels:
+      tax_rates:
+        excluding_tax: "%{name}%{amount}"
+        including_tax: "%{name}%{amount} (Qiymətə daxildir)"
+    adjustment_successfully_closed: Tənzimləmə uğurla bağlandı!
+    adjustment_successfully_opened: Tənzimləmə uğurla açıldı!
+    adjustment_total: Ayarlama cəmi
+    adjustments: Düzəlişlər
+    admin:
+      order:
+        events:
+          approve: təsdiq
+          cancel: ləğv et
+          resend: Yenidən göndərmək
+          resume: xülasə
+      orders:
+        cart: Səbət
+      return_authorization:
+        product: Məhsul
+      tab:
+        configuration: Konfiqurasiya
+        customer_returns: Müştəri qayıdır
+        option_types: Seçim növləri
+        orders: Sifarişlər
+        overview: Baxış
+        products: Məhsullar
+        promotion_categories: Təqdimat kateqoriyaları
+        promotions: Tanıtımlar
+        properties: Xüsusiyyətlər
+        prototypes: Prototiplər
+        reports: Hesabatlar
+        return_authorizations: Qaytarma Səlahiyyətləri
+        taxonomies: Taksonomiyalar
+        taxons: Taxonlar
+        users: İstifadəçilər
+      user:
+        account: Hesab
+        addresses: Ünvanlar
+        available_store_credit: İstifadəçinin Mağaza Kredisində %{amount} var.
+        items: Məhsullar
+        items_purchased: Alınan məhsullar
+        no_store_credit: İstifadəçinin Mağaza Krediti mövcud deyil.
+        order_history: Sifariş tarixi
+        order_num: 'Sifariş #'
+        orders: Sifarişlər
+        store_credits: Mağaza kreditləri
+        stores: Mağazalar
+        user_information: İstifadəçi məlumatları
+    administration: İdarəetmə
+    advertise: Reklam verin
+    agree_to_privacy_policy: Məxfilik Siyasəti ilə razılaşın
+    agree_to_terms_of_service: Xidmət Şərtləri ilə razılaşın
+    all: Hamısı
+    all_adjustments_closed: Bütün düzəlişlər uğurla bağlandı!
+    all_adjustments_opened: Bütün düzəlişlər uğurla açıldı!
+    all_departments: Bütün şöbələr
+    all_items_have_been_returned: Bütün əşyalar geri qaytarıldı
+    all_rights_reserved: Bütün hüquqlar qorunur
+    already_have_account: Artıq bir hesabınız var mı?
+    alt_text: Alternativ mətn
+    alternative_phone: Alternativ Telefon
+    amount: Məbləğ
+    and: və
+    approve: təsdiq
+    approved_at: Təsdiqləndi
+    approver: Təsdiqləyici
+    are_you_sure: Sən əminsən?
+    are_you_sure_delete: Bu qeydi silmək istədiyinizə əminsiniz?
+    associated_adjustment_closed: Əlaqədar tənzimləmə bağlıdır və yenidən hesablanmayacaq. Açmaq istəyirsən?
+    authorization_failure: İcazə verilməməsi
+    authorized: Səlahiyyətlidir
+    auto_capture: Avtomatik çəkmə
+    availability: mövcudluq
+    available: Mövcuddur
+    available_on: Mövcuddur
+    average_order_value: Orta Sifariş Dəyəri
+    avs_response: AVS cavab
+    back: Geri
+    back_end: Backend
+    back_to_payment: Ödənişə qayıdın
+    back_to_resource_list: "%{resource} Siyahısına qayıt"
+    back_to_rma_reason_list: RMA Səbəblər siyahısına qayıt
+    back_to_store: Mağazaya qayıt
+    back_to_users_list: İstifadəçilər siyahısına qayıt
+    backorderable: Geri sifariş
+    backorderable_default: Geri sifariş edilə bilən standart
+    backordered: Sərhədsiz
+    backordered_confirm_info: Seçilmiş maddənin arxa tərəfi var, buna görə gecikmələri gözləyin. Sifariş vermək istədiyinizə əminsiniz?
+    backordered_info: Sərhədsiz
+    backorders_allowed: geri sifariş icazə verilir
+    balance_due: Qalıq balans
+    base_amount: Əsas məbləğ
+    base_percent: Əsas faiz
+    basic_information: Əsas məlumat
+    bill_address: Bill ünvanı
+    billing: Faturalandırma
+    billing_address: Faktura ünvanı
+    both: Hər ikisi də
+    breadcrumbs: Çörək qırıntıları
+    calculated_reimbursements: Hesablanmış ödənişlər
+    calculator: Kalkulyator
+    calculator_settings_warning: Kalkulyator tipini dəyişdirirsinizsə, kalkulyator parametrlərini redaktə etmək üçün əvvəlcə qeyd etməlisiniz
+    call_us_now: 'İndi bizə zəng edin:'
+    cancel: ləğv et
+    canceled: Ləğv edildi
+    canceled_at: Ləğv edildi
+    canceler: Ləğv edin
+    cannot_create_customer_returns: Bu sifarişin göndərilən vahidi olmadığı üçün müştəri yekunları yarana bilməz.
+    cannot_create_payment_without_payment_methods: Sifariş üçün heç bir ödəmə üsulu təyin olunmadan bir ödəmə yarada bilməzsiniz.
+    cannot_create_returns: Bu sifarişin göndərilən vahidi olmadığı üçün yekunları yaratmaq olmur.
+    cannot_empty_completed_order: Sifariş artıq işlənib, ona görə boşalmaq olmur
+    cannot_perform_operation: Tələb olunan əməliyyat həyata keçirilə bilmir
+    cannot_return_more_than_bought_quantity: Alınan miqdardan çoxunu qaytara bilmir.
+    cannot_set_shipping_method_without_address: Müştəri məlumatları verilənə qədər göndərmə metodunu təyin etmək olmur.
+    capture: Tutmaq
+    capture_events: Hadisələri çəkin
+    card_code: Kartın Təsdiqləmə Kodu (CVC)
+    card_number: Kartı nömrəsi
+    card_type: Marka
+    card_type_is: Kart növüdür
+    cart: Səbət
+    cart_page:
+      add_promo_code: PROMO KODUNU ƏLAVƏ EDİN
+      change_quantity: Miqdarı dəyişdirin
+      checkout: yoxla
+      empty_info: Sizin kartınız boşdur.
+      header: Səbətiniz
+      product: məhsul
+      quantity: kəmiyyət
+      remove_from_cart: Səbətdən çıxarın
+      title: Alış-veriş kartı
+    cart_subtotal:
+      one: Cəmi (1 maddə)
+      other: Alt cəmi (%{count} maddə)
+    categories: Kateqoriyalar
+    category: Kateqoriya
+    category_nav_bar:
+      get_up_to_30_percent_off: 30% -ə qədər endirin
+      jackets_and_coats: CEKET & SAHILLAR
+      new_collection: YENİ KOLLEKSİYA
+      special_offers: XÜSUSİ TƏKLİFLƏR
+    channel: Kanal
+    charged: Şarj edildi
+    checkout: Yoxla
+    checkout_page:
+      back_to_cart: arabaya qayıt
+      checkout_navigation: Check naviqasiya
+      delivery_method: çatdırılma üsulu
+      header: Yoxla
+      main_navigation: Əsas naviqasiya
+      product: Məhsul
+    choose_a_customer: Müştəri seçin
+    choose_a_taxon_to_sort_products_for: Məhsulları çeşidləmək üçün bir takson seçin
+    choose_currency: Valyuta seçin
+    choose_dashboard_locale: Panel panelini seçin
+    choose_location: Yer seçin
+    city: Şəhər
+    clear_cache: Keşi təmizləmək
+    clear_cache_ok: Cache qızardıldı
+    clear_cache_warning: Önbelleği təmizləmək mağazanızın performansını müvəqqəti azaldır.
+    click_and_drag_on_the_products_to_sort_them: Məhsulları çeşidləmək üçün basın və sürükləyin.
+    clone: Klon
+    close: Yaxın
+    close_all_adjustments: Bütün düzəlişləri bağlayın
+    code: Kod
+    company: Şirkət
+    compare_at_price: Qiymətlə müqayisə edin
+    complete: tamamlandı
+    configuration: Konfiqurasiya
+    configurations: Konfiqurasiyalar
+    confirm: Təsdiqləyin
+    confirm_delete: Silinməsini təsdiq edin
+    confirm_password: Şifrə təsdiqlənməsi
+    contact_phone: Əlaqə telefonu
+    contact_us: Bizimlə əlaqə saxlayın
+    continue: Davam edin
+    continue_as_guest: Qonaq kimi davam edin
+    continue_shopping: Alış-verişə davam edin
+    cost_currency: Maliyyət Valyutası
+    cost_price: Maliyet qiyməti
+    could_not_create_customer_return: Müştəri geri dönüşü yarana bilmədi
+    could_not_create_stock_movement: Bu səhmdar hərəkəti qeyd edilərkən bir problem yaşandı. Zəhmət olmasa bir daha cəhd edin.
+    count_on_hand: Əllə hesablayın
+    countries: Ölkələr
+    country: Ölkə
+    country_based: Ölkə əsaslı
+    country_name: Ad
+    country_rule:
+      label: Seçim bu ölkəyə göndərilməlidir
+    coupon: Kupon
+    coupon_code: Kupon Kodu
+    coupon_code_already_applied: Kupon kodu artıq bu sifarişə tətbiq edilmişdir
+    coupon_code_applied: Kupon kodu sifarişinizə uğurla tətbiq edildi.
+    coupon_code_apply: Müraciət edin
+    coupon_code_better_exists: Daha əvvəl tətbiq olunan kupon kodu daha yaxşı bir anlaşma ilə nəticələnir
+    coupon_code_expired: Kupon kodu bitib
+    coupon_code_max_usage: Kupon kodu istifadə həddi aşıldı
+    coupon_code_not_eligible: Bu kupon kodu bu sifariş üçün uyğun deyil
+    coupon_code_not_found: Girdiyiniz kupon kodu mövcud deyil. Zəhmət olmasa bir daha cəhd edin.
+    coupon_code_removed: Kupon kodu sifarişinizdən uğurla silindi.
+    coupon_code_unknown_error: Bu kupon kodu hazırda səbətə tətbiq edilə bilmədi.
+    create: Yaradın
+    create_a_new_account: Yeni hesab yarat
+    create_new_order: Yeni sifariş yaradın
+    create_reimbursement: Ödəniş yaradın
+    created_at: At yaradıldı
+    created_by: Yaradılıb
+    credit: Kredit
+    credit_allowed: Kredit icazə verilir
+    credit_card: Kredit kartı
+    credit_cards: Kredit kartları
+    credit_owed: Kredit borcu
+    credited: Kredit
+    credits: Kreditlər
+    currencies: Valyutalar
+    currency: Valyuta
+    currency_settings: Valyuta parametrləri
+    current: Cari
+    current_promotion_usage: 'cari istifadə: %{count}'
+    customer: Müştəri
+    customer_details: Müştəri məlumatları
+    customer_details_updated: Müştəri Məlumatları Yeniləndi
+    customer_return: Müştəri qayıt
+    customer_returns: Müştəri qayıdır
+    customer_search: Müştəri axtarışı
+    customer_support_email: Müştəri dəstəyi e-poçtu
+    cut: Kəsin
+    cvv: CVV
+    cvv_response: CVV cavab
+    date: Tarix
+    date_completed: Tamamlandığı tarix
+    date_range: Tarix Aralığı
+    default: Defolt
+    default_country_cannot_be_deleted: Varsayılan ölkə silinə bilməz
+    default_currency: Varsayılan valyuta
+    default_refund_amount: Varsayılan Geri Məbləğ
+    default_tax: Mənfəət vergisi
+    default_tax_zone: Varsayılan vergi zonası
+    delete: Sil
+    delete_from_taxon: Taxondan silin
+    deleted: Silindi
+    delivery: Çatdırılma
+    delivery_information: Çatdırılma haqqında məlumat
+    depth: Dərinlik
+    description: Təsvir
+    destination: Hedef
+    destroy: Məhv et
+    details: Ətraflı məlumat
+    discontinue_on: Dayandırın
+    discontinued: İstifadəsi dayandırılıb
+    discontinued_variants_present: Bu sıradakı bəzi satır maddələrində artıq mövcud olmayan məhsullar var.
+    discount_amount: Endirim məbləği
+    dismiss_banner: Xeyr, təşəkkürlər! Məni maraqlandırmır, bu mesajı bir daha göstərməyin
+    display: Ekran
+    doesnt_track_inventory: Envanteri izləmir
+    dont_have_account: Hesab yoxdur?
+    edit: Redaktə edin
+    edit_reimbursement: Ödənişi redaktə edin
+    editing_resource: "%{resource} redaktə olunur"
+    editing_rma_reason: RMA Səbəbini redaktə edin
+    editing_user: Hesabınızı redaktə edin
+    eligibility_errors:
+      messages:
+        has_excluded_product: Səbətinizdə bu kupon kodunun tətbiq edilməsinə mane olan bir məhsul var.
+        item_total_less_than: Bu kupon kodu %{amount}-dan az sifarişlərə tətbiq edilə bilməz.
+        item_total_less_than_or_equal: Bu kupon kodu %{amount}-dan az və ya bərabər olan sifarişlərə tətbiq edilə bilməz.
+        item_total_more_than: Bu kupon kodu %{amount}-dan yüksək sifarişlərə tətbiq edilə bilməz.
+        item_total_more_than_or_equal: Bu kupon kodu %{amount}-dan yüksək və ya ona bərabər olan sifarişlərə tətbiq edilə bilməz.
+        limit_once_per_user: Bu kupon kodu istifadəçi başına yalnız bir dəfə istifadə edilə bilər.
+        missing_product: Bu kupon kodu tətbiq oluna bilməz, çünki səbətinizdə bütün lazımi məhsullar yoxdur.
+        missing_taxon: Bu kupon kodunu tətbiq etməzdən əvvəl tətbiq olunan bütün kateqoriyalardan bir məhsul əlavə etməlisiniz.
+        no_applicable_products: Bu kupon kodunu tətbiq etməzdən əvvəl uyğun bir məhsul əlavə etməlisiniz.
+        no_matching_taxons: Bu kupon kodunu tətbiq etməzdən əvvəl müvafiq kateqoriyadan bir məhsul əlavə etməlisiniz.
+        no_user_or_email_specified: Bu kupon kodunu tətbiq etməzdən əvvəl giriş etməlisiniz və ya e-poçtunuzu təqdim etməlisiniz.
+        no_user_specified: Bu kupon kodunu tətbiq etməzdən əvvəl giriş etməlisiniz.
+        not_first_order: Bu kupon kodu yalnız ilk sifarişinizə tətbiq oluna bilər.
+    email: Elektron poçt
+    empty: Boş
+    empty_cart: Boş səbət
+    enable_mail_delivery: Poçt Çatdırılmasını aktivləşdirin
+    end: Son
+    ending_at: Bitir
+    ending_in: Bitir
+    ends_at: Bitər
+    error: səhv
+    error_user_destroy_with_orders: Sifarişlərlə əlaqəli istifadəçi məhv edilə bilməz
+    errors:
+      messages:
+        blank: boş ola bilməz
+        cannot_remove_icon: Şəkil silinə bilmir
+        could_not_create_taxon: Takson yarada bilmədi
+        no_shipping_methods_available: Seçilmiş yer üçün göndərmə üsulları yoxdur, xahiş edirəm ünvanınızı dəyişdirin və yenidən cəhd edin.
+      services:
+        get_shipping_rates:
+          no_line_items: Göndərmə dərəcələrini yaratmaq üçün Sifariş üçün bir sıra Satıcılar əlavə etməlisiniz
+          no_shipping_address: Göndərmə dərəcələrini yaratmaq üçün bir Göndərmə Ünvanı olmalıdır
+    errors_prohibited_this_record_from_being_saved:
+      one: 1 səhv bu qeydin qeyd edilməsini qadağan etdi
+      other: "%{count} səhvləri bu qeydin qeyd edilməsini qadağan etdi"
+    event: Tədbir
+    events:
+      spree:
+        cart:
+          add: Səbətə əlavə et
+        checkout:
+          coupon_code_added: Kupon kodu əlavə edildi
+        content:
+          visited: Statik məzmun səhifəsini ziyarət edin
+        order:
+          contents_changed: Sifariş məzmunu dəyişdirildi
+        page_view: Statik səhifə baxıldı
+        user:
+          signup: İstifadəçi qeydiyyatı
+    exceptions:
+      count_on_hand_setter: 'Rec_cal_count_on_hand geri çağırış tərəfindən avtomatik olaraq təyin olunduğundan, count_on_hand əl ilə qurula bilmir. Zəhmət olmasa bunun yerinə `update_column (: count_on_hand, value)" istifadə edin.'
+    exchange_for: Üçün dəyişdirin
+    excl: istisna olmaqla
+    existing_shipments: Mövcud daşınmalar
+    expedited_exchanges_warning: Müəyyən edilmiş mübadilə, qənaət edildikdən dərhal sonra müştəriyə göndəriləcəkdir. Müştəridən orijinal məhsulu %{days_window} gün ərzində qaytarmaması halında məhsulun tam məbləği tutulacaqdır.
+    expiration: Bitmə müddəti
+    expiration_date: Son istifadə tarixi
+    extension: Genişləndirmə
+    extensions_directory: Əlavələr kataloqu
+    facebook: Facebook
+    failed_payment_attempts: Uğursuz Ödəniş cəhdləri
+    filename: Fayl adı
+    fill_in_customer_info: Zəhmət olmasa müştəri məlumatlarını doldurun
+    filter: Filtr
+    filter_results: Nəticələri süzün
+    filterable: Süzgəclidir
+    finalize: Sonlandırın
+    finalized: Yekunlaşdı
+    find_a_taxon: Taxon tapın
+    first_item: Birinci maddə
+    first_name: Ad
+    first_name_begins_with: Ad Başlayır
+    firstname: Ad
+    flat_percent: Düz faiz
+    flat_rate_per_order: Düz dərəcə
+    flexible_rate: Çevik dərəcə
+    follow_us: Bizi izlə
+    footer: Altbilgi
+    forgot_password: Şifrəni unutmusunuz?
+    free: Pulsuz
+    free_shipping: Pulsuz çatdırılma
+    free_shipping_amount: "-"
+    front_end: Ön uc
+    gateway: Gateway
+    gateway_error: Gateway Error
+    general: Ümumi
+    general_settings: Ümumi parametrlər
+    generate_code: Kupon kodu yaradın
+    get_back_to_the: Geri qayıdın
+    go_to_category: Kateqoriyaya keçin
+    go_to_facebook: Facebook'a gedin
+    go_to_homepage: Əsas səhifəyə keçin
+    go_to_instagram: İnstagrama gedin
+    go_to_twitter: Twitter-ə gedin
+    guest_checkout: Qonaq ödəmə
+    guest_user_account: Qonaq kimi ödəmə
+    has_no_shipped_units: göndərilən bölmə yoxdur
+    header_banner: Başlıq pankartı
+    height: Hündürlük
+    help_center: Yardım Mərkəzi
+    hide_from_subcategories_nav: Alt kateqoriyalardan naviqasiyadan gizlədin
+    home: Ev
+    home_page: ana səhifə
+    i18n:
+      available_locales: Mövcud yerli yerlər
+      country: Ölkə
+      default_country: Varsayılan ölkə
+      fields: Sahələr
+      language: Dil
+      localization_settings: Lokallaşdırma parametrləri
+      only_complete: Yalnız tamamlandı
+      only_incomplete: Yalnız natamam
+      select_locale: Yerli seçin
+      show_only: Yalnız göstərin
+      supported_locales: Yerli dəstəklənir
+      translations: Tərcümə
+    icon: Nişan
+    id: Id
+    image: Şəkil
+    images: Şəkillər
+    implement_eligible_for_return: 'Geri qayıtmaq üçün # uyğun_u tətbiq etməlisiniz? EligibilityValidator üçün.'
+    implement_requires_manual_intervention: "# Dərslik_müdaxiləsi tələb olunur? EligibilityValidator üçün."
+    in_stock: Səhmdardır
+    inactive: Fəal deyil
+    incl: daxil olmaqla
+    included_in_price: Qiymətə daxildir
+    included_price_validation: Bir Varsayılan Vergi Bölgəsi təyin etmədiyiniz təqdirdə seçilə bilməz
+    incomplete: Yarımçıq
+    info_number_of_skus_not_shown:
+      one: və bir başqası
+      other: və %{count} digərləri
+    info_product_has_multiple_skus: 'Bu məhsulun %{count} variantları var:'
+    instagram: Instagram
+    instructions_to_reset_password: Zəhmət olmasa elektron poçtunuzu aşağıdakı formaya daxil edin
+    insufficient_stock: Ehtiyat yoxdur, yalnız %{on_hand} qalıb
+    insufficient_stock_item_quantity: Mövcud stok miqdarı yetərli deyil
+    insufficient_stock_lines_present: Bu sıradakı bəzi satır elementlərinin miqdarı kifayət deyil.
+    intercept_email_address: E-poçt ünvanını kəsin
+    intercept_email_instructions: E-poçt alıcısını ləğv edin və bu ünvanla əvəz edin.
+    internal_name: Daxili ad
+    internationalization: Beynəlmiləlləşmə
+    invalid_credit_card: Yanlış kredit kartı.
+    invalid_exchange_variant: Yanlış mübadilə variantı.
+    invalid_payment_provider: Yanlış ödəniş təminatçısı.
+    invalid_promotion_action: Yanlış təbliğat əməliyyatı.
+    invalid_promotion_rule: Yanlış promosyon qaydası.
+    inventory: İnventarlaşdırma
+    inventory_adjustment: İnventarlaşdırma
+    inventory_error_flash_for_insufficient_quantity: Səbətinizdəki bir maddə əlçatmaz oldu.
+    inventory_state: Envanter vəziyyəti
+    is_not_available_to_shipment_address: göndərmə ünvanı mövcud deyil
+    iso: ISO Alpha-2
+    iso3: ISO Alpha-3
+    iso_name: ISO adı
+    issued_on: Dərc edilib
+    item: Maddə
+    item_description: Məhsul təsviri
+    item_total: Maddə cəmi
+    item_total_rule:
+      operators:
+        gt: daha böyük
+        gte: daha böyük və ya bərabərdir
+        lt: daha az
+        lte: az və ya bərabərdir
+    items_cannot_be_shipped: Seçilmiş məhsullar üçün göndərmə dərəcələrini hesablaya bilmirik.
+    items_in_rmas: Qaytarma Səlahiyyətlərindəki maddələr
+    items_reimbursed: Maddələr ödənilib
+    items_to_be_reimbursed: Ödəniləcək əşyalar
+    join_slack: Slack'a qoşulun
+    last_name: Soyad
+    last_name_begins_with: Soyad Başlayır
+    lastname: Soyad
+    learn_more: Daha ətraflı
+    lifetime_stats: Ömür Boyu Statistikalar
+    limit_usage_to: İstifadəni məhdudlaşdırın
+    line_item_adjustments: Sətir elementi düzəlişləri
+    list: Siyahı
+    loading: Yüklənir
+    loading_tree: Ağac yüklənir. Zəhmət olmasa, gözləyin…
+    locale_changed: Yer dəyişdirildi
+    location: Yer
+    lock: Bağlamaq
+    log_entries: Giriş qeydləri
+    log_in: Daxil ol
+    log_in_to_continue: Davam etmək üçün daxil olun
+    logged_in_as: Kimi daxil oldu
+    logged_in_succesfully: Uğurla daxil oldunuz
+    logged_out: Girişdən çıxmısınız
+    login: Daxil ol
+    login_as_existing: Mövcud Müştəri olaraq daxil olun
+    login_failed: Giriş identifikasiyası alınmadı.
+    login_name: Daxil ol
+    logo: Logo
+    logo_alt: Marka loqosu
+    logout: Çıxış
+    logs: Qeydlər
+    look_for_similar_items: Oxşar əşyalara baxın
+    mail_from_address: Ünvandan poçt
+    mailer_logo: Posta loqosu (yalnız JPG və ya PNG şəkilləri)
+    make_refund: Geri pul verin
+    make_sure_the_above_reimbursement_amount_is_correct: Yuxarıda göstərilən kompensasiya məbləğinin düzgün olduğundan əmin olun
+    manage_promotion_categories: Təqdimat kateqoriyalarını idarə edin
+    manage_variants: Variantları idarə edin
+    manual_intervention_required: Əl müdaxiləsi tələb olunur
+    master: Ustad
+    master_price: Master Qiymət
+    master_sku: Master SKU
+    match_choices:
+      all: Hamısı
+      none: Yoxdur
+    max_items: Maksimum məhsul
+    member_since: Üzvlük bəri
+    memo: Memo
+    meta_description: Meta Təsviri
+    meta_keywords: Meta açar sözlər
+    meta_title: Meta başlığı
+    metadata: Metadata
+    minimal_amount: Minimum məbləğ
+    missing_return_authorization: "%{item_name} üçün Qaytarış Qaytarılması Əməliyyatı."
+    month: Ay
+    more: Daha çox
+    move_stock_between_locations: Səhmləri yerlər arasında hərəkət etdirin
+    move_variant_to: Variantı köçürün
+    multiple_stores: Birdən çox mağaza
+    mutable: Dəyişkəndir
+    my_account: Mənim Hesabım
+    my_orders: Sifarişlərim
+    name: Ad
+    name_on_card: Kart üzərindəki ad
+    name_or_sku: Ad və ya SKU (məhsul adının ən azı ilk 3 simvolunu daxil edin)
+    nav_bar:
+      admin_panel: Admin Panel
+      change_country: Ölkəni dəyişdirin
+      close_menu: Menyunu bağlayın
+      desktop: Masaüstü naviqasiya
+      go_to_previous_menu: Əvvəlki menyuya gedin
+      log_in: DAXİL OL
+      log_out: ÇIXIŞ
+      mobile: Mobil naviqasiya
+      my_account: MƏNİM HESABIM
+      my_orders: SİFARİŞLƏRİM
+      show_menu: Menyunu göstər
+      show_search: Axtarışı göstər
+      show_user_menu: İstifadəçi menyusunu göstərin
+      sign_up: QEYDİYYATDAN KEÇMƏK
+    new: Yeni
+    new_adjustment: Yeni tənzimləmə
+    new_country: Yeni Ölkə
+    new_customer: Yeni hesab yaratmaq
+    new_customer_return: Yeni Müştəri qayıtması
+    new_image: Yeni şəkil
+    new_option_type: Yeni Seçim Növü
+    new_order: Yeni Sifariş
+    new_order_completed: Yeni Sifariş Tamamlandı
+    new_order_notifications_email: Yeni Sifariş Bildirişləri E-poçtu
+    new_payment: Yeni Ödəniş
+    new_payment_method: Yeni Ödəniş Metodu
+    new_product: Yeni məhsul
+    new_promotion: Yeni Təqdimat
+    new_promotion_category: Yeni Təqdimat kateqoriyası
+    new_property: Yeni əmlak
+    new_prototype: Yeni Prototip
+    new_refund: Yeni geri qaytarma
+    new_refund_reason: Yeni Geri Səbəb
+    new_reimbursement_type: Yeni ödəniş növü
+    new_return_authorization: Yeni qayıdış icazəsi
+    new_rma_reason: Yeni RMA Səbəbi
+    new_role: Yeni rol
+    new_shipment_at_location: Yerdə yeni göndərmə
+    new_shipping_category: Yeni Göndərmə kateqoriyası
+    new_shipping_method: Yeni Göndərmə Metodu
+    new_state: Yeni Dövlət
+    new_stock_location: Yeni fond yeri
+    new_stock_movement: Yeni Səhmlər Hərəkatı
+    new_stock_transfer: Yeni Səhm Transferi
+    new_store_credit: Yeni Mağaza Krediti
+    new_store_credit_category: Yeni Mağaza Kredit kateqoriyası
+    new_tax_category: Yeni Vergi kateqoriyası
+    new_tax_rate: Yeni vergi dərəcəsi
+    new_taxon: Yeni Taxon
+    new_taxonomy: Yeni taksonomiya
+    new_tracker: Yeni İzləyici
+    new_user: Yeni istifadəçi
+    new_variant: Yeni Variant
+    new_zone: Yeni Zona
+    next: Növbəti
+    no_actions_added: Heç bir əməliyyat əlavə edilmədi
+    no_address_given: Ünvan verilməyib
+    no_available_date_set: Mövcud tarix təyin edilməyib
+    no_cc_type: Yoxdur
+    no_country: Heç bir ölkə təyin edilməyib
+    no_limits_zone: Limit yoxdur
+    no_payment_found: Ödəniş tapılmadı
+    no_payment_provider_settings_message: Bu ödəmə təminatçının xüsusi ayarı yoxdur
+    no_pending_payments: Gözlənilən ödəniş yoxdur
+    no_product_available:
+      for_this_quantity: Üzr istəyirik, görünür, bəzi məhsullar seçilmiş miqdarda mövcud deyil.
+      opps: Vay!
+    no_products_found: Məhsul tapılmadı
+    no_resource_found: "%{resource} tapılmadı"
+    no_results: Nəticə yoxdur
+    no_returns_found: Heç bir nəticə tapılmadı
+    no_rules_added: Qaydalar əlavə edilməyib
+    no_shipping_method_selected: Göndərmə metodu seçilməyib.
+    no_state_changes: Hələ dövlət dəyişikliyi yoxdur.
+    no_tracking_present: İzləmə məlumatları verilmir.
+    none: Yoxdur
+    none_selected: Heç biri seçilməyib
+    normal_amount: Normal Məbləğ
+    not: yox
+    not_available: Yoxdur
+    not_enough_stock: Mənbə yerində bu köçürməni başa çatdırmaq üçün kifayət qədər inventar yoxdur.
+    not_found: "%{resource} tapılmadı"
+    note: Qeyd
+    notice_messages:
+      icon_removed: Şəkil uğurla silindi
+      prices_saved: Qiymətlər uğurla qeyd edildi
+      product_cloned: Məhsul klonlandı
+      product_deleted: Məhsul silindi
+      product_not_cloned: 'Məhsul klonlaşdırıla bilmədi. Səbəb: %{error}'
+      product_not_deleted: 'Məhsul silinə bilmədi. Səbəb: %{error}'
+      variant_deleted: Variant silindi
+      variant_not_deleted: 'Variant silinə bilmədi. Səbəb: %{error}'
+    num_orders: "# Sifarişlər"
+    number: Sayı
+    ok: tamam
+    on_hand: Əldə
+    open: Açıq
+    open_all_adjustments: Bütün düzəlişləri açın
+    option_type: Seçim növü
+    option_type_placeholder: Seçim növü seçin
+    option_types: Seçim növləri
+    option_value: Seçim dəyəri
+    option_values: Seçim dəyərləri
+    optional: İstəyə görə
+    options: Seçimlər
+    or: və ya
+    or_over_price: "%{price} və ya daha çox"
+    order: Sifariş
+    order_adjustments: Sifariş düzəlişləri
+    order_already_updated: Sifariş artıq yeniləndi.
+    order_approved: Sifariş təsdiqləndi
+    order_canceled: Sifariş ləğv edildi
+    order_details: Sifariş detalları
+    order_email_resent: E-poçt Yenidən sifariş edin
+    order_has_no_payments: Sifarişdə ödəniş yoxdur
+    order_information: Sifariş məlumatı
+    order_line_items: Sətir məhsullarını sifariş edin
+    order_mailer:
+      cancel_email:
+        dear_customer: Hörmətli %{name},
+        instructions: Sifarişiniz Ləğv edildi. Xahiş edirəm qeydləriniz üçün bu ləğv məlumatlarını saxlayın.
+        order_summary_canceled: Sifariş %{number} Xülasə [Ləğv edildi]
+        subject: Sifarişin ləğvi
+        thanks: Biznesiniz üçün çox sağolun.
+      confirm_email:
+        dear_customer: Hörmətli %{name},
+        instructions: Xahiş edirəm qeydləriniz üçün aşağıdakı sifariş məlumatlarını nəzərdən keçirin və saxlayın.
+        order_summary: Sifariş %{number} Xülasə
+        subject: Sifarişin təsdiqi
+        thanks: Biznesiniz üçün çox sağolun.
+      store_owner_notification_email:
+        heading: Yeni Sifariş Alındı
+        instructions: Yeni bir sifariş aldınız.
+        order_summary: Sifariş %{number} Xülasə
+        subject: "%{store_name} yeni bir sifariş aldı"
+        thanks: Biznesiniz üçün çox sağolun.
+      store_team: "%{store_name} Komandası"
+      subtotal: 'Cəmi:'
+      total: 'Sifariş cəmi:'
+    order_not_found: Sifarişinizi tapa bilmədik. Xahiş edirəm həmin əməliyyatı yenidən sınayın.
+    order_number: Sifariş %{number}
+    order_processed_successfully: Sifarişiniz uğurla işləndi
+    order_resumed: Sifariş bərpa edildi
+    order_state:
+      address: ünvan
+      awaiting_return: qayıtmağı gözləyir
+      canceled: ləğv edildi
+      cart: araba
+      complete: tamamlandı
+      confirm: təsdiq edin
+      considered_risky: riskli hesab olunur
+      delivery: çatdırılma
+      payment: ödəniş
+      resumed: davam etdirildi
+      returned: geri döndü
+    order_success: Sifariş uğurla verildi
+    order_success_explain: Sifariş məlumatlarınız e-poçtunuza göndəriləcək
+    order_summary: Sifariş Xülasə
+    order_sure_want_to: Bu əmri %{event} etmək istədiyinizə əminsiniz?
+    order_total: Sifariş cəmi
+    order_updated: Sifariş Yeniləndi
+    orders: Sifarişlər
+    out_of_stock: Satışda deyil
+    overview: Baxış
+    package_from: paket
+    page_not_found: Bağışlayın! Axtardığınız səhifə tapılmadı.
+    pagination:
+      next_page: növbəti səhifə & raquo;
+      previous_page: "& laquo; əvvəlki səhifə"
+      truncate: "& hellip;"
+    password: Şifrə
+    paste: Yapışdır
+    path: Yol
+    pay: ödəmək
+    payment: Ödəniş
+    payment_amount: Ödəniş məbləği
+    payment_could_not_be_created: Ödəniş yaradıla bilmədi.
+    payment_identifier: Ödəniş identifikatoru
+    payment_information: Ödəniş məlumatları
+    payment_method: Ödəniş üsulu
+    payment_method_not_supported: Bu ödəmə üsulu dəstəklənmir. Xahiş edirəm başqa birini seçin.
+    payment_methods: Ödəmə üsulları
+    payment_processing_failed: Ödəniş işlənə bilmədi, daxil etdiyiniz məlumatları yoxlayın
+    payment_processor_choose_banner_text: Ödəniş prosessorunu seçmək üçün köməyə ehtiyacınız varsa, müraciət edin
+    payment_processor_choose_link: ödənişlər səhifəmiz
+    payment_provider_settings: Ödəniş Təchizatçısı Ayarları
+    payment_state: Ödəniş dövləti
+    payment_states:
+      balance_due: balans lazımdır
+      checkout: yoxla
+      completed: tamamlandı
+      credit_owed: kredit borcu var
+      failed: uğursuz oldu
+      paid: pullu
+      pending: gözləyən
+      processing: emal
+      void: boşluq
+    payment_type: Ödəniş növü
+    payment_updated: Ödəmə Yeniləndi
+    payments: Ödənişlər
+    pdp:
+      checkout: Yoxla
+      description: Təsvir
+      details: Ətraflı məlumat
+      products_included_in_promotion: Təqdimata daxil olan məhsullar
+      quantity: Miqdarı
+      view_cart: Səbətə bax
+      you_may_also_like: Siz həmçinin bəyənə bilərsiniz
+    pending: gözləyən
+    pending_sale: Gözlənən Satış
+    percent: Faiz
+    percent_per_item: Maddə başına faiz
+    permalink: Daimi bağlantı
+    phone: Telefon
+    place_order: Sifariş verin
+    please_define_payment_methods: Xahiş edirəm əvvəlcə bəzi ödəniş metodlarını müəyyənləşdirin.
+    please_enter_reasonable_quantity: Xahiş edirəm uyğun bir miqdar daxil edin.
+    plp:
+      best_selling: Ən yaxşı satış
+      clear_all: HAMISINI SİL, HAMISINI TƏMİZLƏ
+      collection: KOLLEKSİYA
+      color: RENK
+      default: XƏSTƏLİK
+      done: Bitdi
+      filter_by: FİLTRE
+      newest_first: YENİ İLK
+      no_results: Nəticə yoxdur
+      no_results_found: Heç bir nəticə tapılmadı
+      not_found_filters1: Bu filtrlər üçün uyğunluq tapa bilmədik.
+      not_found_filters2: Xahiş edirəm başqa birini seçin.
+      not_found_text1: "'%{keywords}' üçün məhsul tapa bilmədik."
+      not_found_text2: Xahiş edirəm başqa bir axtarış keçir.
+      price: qiymət
+      price_high_to_low: QİYMƏT (YÜKSƏK - DÜŞÜK)
+      price_low_to_high: QİYMƏT (DÜŞÜK - YÜKSƏK)
+      result: NƏTİCƏ
+      results_for: NƏTİCƏLƏR
+      size: BOYUT
+      sort_by: SIRALAMA
+      top_sellers: Ən yaxşı satıcılar
+      type: NÖV
+    populate_get_error: Bir şey səhv oldu. Xahiş edirəm elementi yenidən əlavə edin.
+    powered_by: Powered by
+    pre_tax_amount: Vergi öncəsi məbləğ
+    pre_tax_refund_amount: Vergi öncəsi geri ödəmə məbləği
+    pre_tax_total: Vergi öncəsi cəmi
+    preferred_reimbursement_type: Tercih olunan ödəniş növü
+    presentation: Təqdimat
+    preview_product: Məhsulu önizləyin
+    preview_taxon: Ön baxış Taxon
+    previous: Əvvəlki
+    previous_state_missing: yox
+    previously_used_card: Əvvəllər istifadə edilmiş kartlar
+    price: Qiymət
+    price_range: Qiymət aralığı
+    price_sack: Qiymət kisəsi
+    prices: Qiymətlər
+    process: Proses
+    product: Məhsul
+    product_details: Məhsul detalları
+    product_has_no_description: Bu məhsulun təsviri yoxdur
+    product_not_available_in_this_currency: Bu məhsul seçilmiş valyutada mövcud deyil.
+    product_properties: Məhsul xüsusiyyətləri
+    product_rule:
+      choose_products: Məhsulları seçin
+      label: Sifarişdə bu məhsulların x miqdarı olmalıdır
+      match_all: hamısı
+      match_any: ən azı bir
+      match_none: yox
+      product_source:
+        group: Məhsul qrupundan
+        manual: Əl ilə seçin
+    products: Məhsullar
+    promotion: Təqdimat
+    promotion_action: Təqdimat Fəaliyyəti
+    promotion_action_types:
+      create_adjustment:
+        description: Sifarişdə bir promosyon krediti düzəlişi yaradır
+        name: Bütün sifariş tənzimləməsini yaradın
+      create_item_adjustments:
+        description: Bir sətirdə bir promosyon krediti düzəlişi yaradır
+        name: Sətir başına maddə düzəlişi yaradın
+      create_line_items:
+        description: Səbəti göstərilən variant miqdarı ilə doldurur
+        name: Xətt elementləri yaradın
+      free_shipping:
+        description: Sifariş üçün bütün göndərmələri pulsuz edir
+        name: Pulsuz çatdırılma
+    promotion_actions: Tədbirlər
+    promotion_categories: Təqdimat kateqoriyası
+    promotion_category: Təqdimat kateqoriyası
+    promotion_cloned: Təqdimat klonlandı
+    promotion_form:
+      match_policies:
+        all: Bu qaydaların hamısına uyğun gəlin
+        any: Bu qaydalardan hər hansı birini uyğunlaşdırın
+    promotion_label: Təqdimat (%{name})
+    promotion_not_cloned: 'Təqdimat klonlanmamışdır. Səbəb: %{error}'
+    promotion_rule: Təqdimat qaydası
+    promotion_rule_types:
+      country:
+        description: Sifariş müvafiq (və ya standart) ölkəyə göndərilir
+        name: Ölkə
+      first_order:
+        description: Müştərinin ilk sifarişi olmalıdır
+        name: Birinci sifariş
+      item_total:
+        description: Sifariş cəmi bu meyarlara cavab verir
+        name: Maddə cəmi
+      one_use_per_user:
+        description: İstifadəçi başına yalnız bir istifadə
+        name: İstifadəçi başına bir istifadə
+      option_value:
+        description: Sifarişə uyğun qiymət (lər) lə müəyyən məhsul (lər) daxildir
+        name: Seçim Dəyəri (lər)
+      product:
+        description: Sifarişə müəyyən məhsul (lər) daxildir
+        name: Məhsullar)
+      taxon:
+        description: Sifarişə müəyyən takson (lar) la məhsullar daxildir
+        name: Taxon (lar)
+      user:
+        description: Yalnız göstərilən istifadəçilər üçün mövcuddur
+        name: İstifadəçi
+      user_logged_in:
+        description: Yalnız daxil olmuş istifadəçilər üçün mövcuddur
+        name: İstifadəçi daxil oldu
+    promotion_uses: Təqdimat istifadə edir
+    promotionable: Tanıtımlıdır
+    promotions: Tanıtımlar
+    propagate_all_variants: Bütün variantları təbliğ edin
+    properties: Xüsusiyyətlər
+    property: Əmlak
+    prototype: Prototip
+    prototypes: Prototiplər
+    provider: Təchizatçı
+    provider_settings_warning: Təchizatçı növünü dəyişdirirsinizsə, provayder parametrlərini redaktə etmək üçün əvvəlcə qeyd etməlisiniz
+    purchased_quantity: Satın alınan miqdar
+    qty: Miqdarı
+    quantity: Miqdarı
+    quantity_returned: Miqdarı qaytarıldı
+    quantity_shipped: Göndərilən miqdar
+    quick_search: Cəld axtarış..
+    rate: Dərəcəsi
+    reason: Səbəb
+    receive: almaq
+    receive_stock: Səhm al
+    received: Alındı
+    reception_status: Qəbul vəziyyəti
+    reference: İstinad
+    reference_contains: İstinad var
+    refund: Geri qaytarma
+    refund_amount_must_be_greater_than_zero: Geri ödəmə məbləği sıfırdan çox olmalıdır
+    refund_reasons: Geri qaytarma səbəbləri
+    refunded_amount: Geri qaytarılmış məbləğ
+    refunds: Geri ödənişlər
+    register: Qeydiyyatdan keçin
+    registration: Qeydiyyat
+    reimburse: Kompensasiya edin
+    reimbursed: Ödənilir
+    reimbursement: Kompensasiya
+    reimbursement_mailer:
+      reimbursement_email:
+        days_to_send: Mübadilə gözləyən hər hansı bir məhsulu geri göndərmək üçün %{days} gününüz var.
+        dear_customer: Hörmətli %{name},
+        exchange_summary: Mübadilə xülasəsi
+        for: üçün
+        instructions: Ödənişiniz işlənib.
+        refund_summary: Geri Xülasə
+        store_team: "%{store_name} Komandası"
+        subject: Geri ödəmə bildirişi
+        thanks: Biznesiniz üçün çox sağolun.
+        total_refunded: 'Cəmi geri qaytarıldı: %{total}'
+    reimbursement_perform_failed: 'Ödəniş həyata keçirilə bilmədi. Xəta: %{error}'
+    reimbursement_status: Ödəniş statusu
+    reimbursement_type: Ödəniş növü
+    reimbursement_type_override: Ödəniş növünü ləğv et
+    reimbursement_types: Ödəniş növləri
+    reimbursements: Ödənişlər
+    reject: Rədd et
+    rejected: Rədd edildi
+    remember_me: Məni xatırla
+    remove: Sil
+    remove_image: Şəkli silin
+    rename: Yenidən adlandırın
+    report: Hesabat
+    reports: Hesabatlar
+    required: "*"
+    required_fields: tələb olunan Bölmələr
+    resellable: Yenidən satıla bilər
+    resend: Yenidən göndərmək
+    reset_password: Şifrəmi yenidən qurun
+    response_code: Cavab kodu
+    resume: xülasə
+    resumed: Yenidən davam etdirildi
+    return: qayıt
+    return_authorization: Qaytarma Avtorizasiyası
+    return_authorization_canceled: Qaytarma icazəsi ləğv edildi
+    return_authorization_reasons: Qaytarma Səlahiyyət Səbəbləri
+    return_authorization_states:
+      authorized: Səlahiyyətlidir
+      canceled: Ləğv edildi
+    return_authorization_updated: Qaytarma icazəsi güncəlləşdi
+    return_authorizations: Qaytarma Səlahiyyətləri
+    return_item_inventory_unit_ineligible: Qaytarma maddəsinin inventar vahidi göndərilməlidir
+    return_item_inventory_unit_reimbursed: Qaytarma maddəsinin inventar vahidi artıq ödənilir
+    return_item_order_not_completed: Qaytarma maddəsinin sifarişi tamamlanmalıdır
+    return_item_rma_ineligible: Qaytarma maddəsi bir RMA tələb edir
+    return_item_time_period_ineligible: Qaytarma maddəsi uyğun müddətin xaricindədir
+    return_items: Məhsulları qaytarın
+    return_items_cannot_be_associated_with_multiple_orders: Qaytarma maddələri birdən çox sifarişlə əlaqələndirilə bilməz.
+    return_number: Qaytarma Nömrəsi
+    return_quantity: Qaytarma Miqdarı
+    returned: Geri qaytarıldı
+    returns: Qayıdır
+    review: Baxış-icmal
+    risk: Risk
+    risk_analysis: Risk təhlili
+    risky: Riskli
+    rma_credit: RMA Krediti
+    rma_number: RMA nömrəsi
+    rma_value: RMA dəyəri
+    role_id: Rol kimliyi
+    roles: Rollar
+    rules: Qaydalar
+    safe: Təhlükəsiz
+    sales_total: Satış cəmi
+    sales_total_description: Bütün sifarişlər üçün cəmi satış
+    sales_totals: Satış cəmi
+    save_and_continue: Saxla və davam edin
+    save_my_address: Ünvanımı saxla
+    saving: Qənaət
+    say_no: Yox
+    say_yes: Bəli
+    scope: Əhatə dairəsi
+    search: Axtarış
+    search_results: "'%{keywords}' üçün axtarış nəticələri"
+    searching: Axtarıram
+    secure_connection_type: Təhlükəsiz əlaqə növü
+    security_settings: Təhlükəsizlik Ayarları
+    select: Seçin
+    select_a_date: Bir tarix seçin
+    select_a_date_range: Bir tarix aralığı seçin
+    select_a_return_authorization_reason: Geri qayıtmaq üçün bir səbəb seçin
+    select_a_stock_location: Bir stok yeri seçin
+    select_a_store_credit_reason: Mağaza krediti üçün bir səbəb seçin
+    select_an_option: Bir seçim seçin
+    select_from_prototype: Prototipdən seçin
+    select_stock: Səhm seçin
+    selected_quantity_not_available: "%{item} seçilmiş deyil."
+    send_copy_of_all_mails_to: Bütün poçtların surətini göndərin
+    send_mails_as: Poçtları əvvəlki kimi göndərin
+    seo: SEO
+    seo_robots: SEO robotları
+    seo_title: SEO adı
+    server: Server
+    server_error: Server bir səhv qaytardı
+    settings: Parametrlər
+    ship: Gəmi
+    ship_address: Gəmi Ünvanı
+    ship_to: 'Göndərmə:'
+    ship_total: Gəmi cəmi
+    shipment: Göndərmə
+    shipment_adjustments: Göndərmə düzəlişləri
+    shipment_details: "%{shipping_method}-dən %{shipping_method} vasitəsilə"
+    shipment_mailer:
+      shipped_email:
+        dear_customer: Hörmətli %{name},
+        instructions: Sifarişiniz %{number} göndərildi
+        shipment_summary: Sifariş üçün göndərmə xülasəsi
+        shipping_method: 'Göndərmə metodu: %{shipping_method}'
+        store_team: "%{store_name} Komandası"
+        subject: Göndərmə Bildirişi
+        thanks: Biznesiniz üçün çox sağolun.
+        track_information: 'İzləmə məlumatları: %{tracking}'
+        track_link: 'İzləmə Linki: %{url}'
+    shipment_state: Göndərmə Dövləti
+    shipment_states:
+      backorder: arxa sifariş
+      canceled: ləğv edildi
+      partial: qismən
+      pending: gözləyən
+      ready: hazırdır
+      shipped: sövq edildi
+    shipment_transfer_error: Variantların ötürülməsi zamanı xəta baş verdi
+    shipment_transfer_success: Variantlar uğurla köçürüldü
+    shipments: Göndərmə
+    shipped: Göndərilib
+    shipping: Göndərmə
+    shipping_address: Çatdırılma ünvanı
+    shipping_categories: Göndərmə növləri
+    shipping_category: Göndərmə kateqoriyası
+    shipping_flat_rate_per_item: Paket məhsulu başına sabit nisbət
+    shipping_flat_rate_per_order: Düz dərəcə
+    shipping_flexible_rate: Paket maddəsi başına çevik nisbət
+    shipping_instructions: Göndərmə təlimatları
+    shipping_method: Göndərmə üsulu
+    shipping_methods: Göndərmə metodları
+    shipping_price_sack: Qiymət kisəsi
+    shipping_rates:
+      display_price:
+        excluding_tax: "%{price} (+ %{tax_amount} %{tax_rate_name})"
+        including_tax: "%{price} (%{tax_amount} %{tax_rate_name} daxil olmaqla)"
+    shipping_total: Göndərmə cəmi
+    shop_by_taxonomy: Mağazadan %{taxonomy}
+    shopping_cart: Alış-veriş kartı
+    show: Göstər
+    show_active: Aktiv göstərin
+    show_deleted: Şou silindi
+    show_discontinued: Göstərmək dayandırılıb
+    show_only_complete_orders: Yalnız tam sifarişləri göstərin
+    show_only_considered_risky: Yalnız riskli sifarişlər göstərin
+    show_property: Əmlak göstərin
+    show_rate_in_label: Etiketdə dərəcəni göstərin
+    show_store_selector:
+      long: Mağaza seçicisini Storefront-un əsas nav barında göstərin və istifadəçilərə Mağaza və Valyuta dəyişməsinə icazə verin
+      short: Mağaza seçicisini göstərin
+    sign_up: Qeydiyyatdan keçmək
+    sku: SKU
+    skus: SKU
+    slug: Slug
+    social: Sosial
+    source: Mənbə
+    special_instructions: Xüsusi Təlimatlar
+    split: Bölün
+    spree_gateway_error_flash_for_checkout: Ödəniş məlumatlarınızla bağlı bir problem oldu. Xahiş edirəm məlumatlarınızı yoxlayın və yenidən cəhd edin.
+    ssl:
+      change_protocol: Xahiş edirəm HTTP istifadə etməyə keçin (HTTPS əvəzinə) və bu sorğunu yenidən sınayın.
+    start: Başlamaq
+    starting_from: Başlayır
+    state: Dövlət
+    state_based: Dövlət əsaslı
+    state_machine_states:
+      accepted: Qəbul edildi
+      address: Ünvan
+      authorized: Səlahiyyətlidir
+      awaiting: Gözləyirəm
+      awaiting_return: Geri qayıtmağı gözləyirəm
+      backordered: Geri sifariş verildi
+      canceled: Ləğv edildi
+      cart: Səbət
+      checkout: Yoxla
+      closed: Bağlı
+      complete: Tamamlandı
+      completed: Tamamlandı
+      confirm: Təsdiqləyin
+      delivery: Çatdırılma
+      errored: Səhv edildi
+      failed: Uğursuz oldu
+      given_to_customer: Müştəriyə verilir
+      invalid: Yanlış
+      manual_intervention_required: Əl müdaxiləsi tələb olunur
+      on_hand: Əldə
+      open: Açıq
+      order: Sifariş
+      payment: Ödəniş
+      pending: gözləyən
+      processing: Qenerasiya olunur
+      ready: Hazır
+      reimbursed: Ödənilir
+      resumed: Yenidən davam etdirildi
+      returned: Geri qaytarıldı
+      shipment: Göndərmə
+      shipped: Göndərilib
+      void: Boş
+    states: Ştatlar
+    states_required: Dövlətlər tələb olunur
+    status: Status
+    stock: Səhm
+    stock_item_id: Səhm maddəsi
+    stock_location: Səhm yeri
+    stock_location_info: Səhm yeri məlumatı
+    stock_locations: Səhm yerləri
+    stock_locations_need_a_default_country: Bir stok yeri yaratmadan əvvəl standart bir ölkə yaratmalısınız.
+    stock_management: Səhmdar İdarəetmə
+    stock_management_requires_a_stock_location: Zəhmət olmasa stoku idarə etmək üçün bir stok yeri yaradın.
+    stock_movements: Səhm Hərəkatları
+    stock_movements_for_stock_location: "%{stock_location_name} üçün stok hərəkətləri"
+    stock_successfully_transferred: Səhmlər yerlər arasında uğurla köçürüldü.
+    stock_transfer:
+      errors:
+        must_have_variant: Ən azı bir variant əlavə etməlisiniz.
+        variants_unavailable: Bəzi variantlar %{stock}-da mövcud deyil
+    stock_transfer_name: Səhmdar köçürmə
+    stock_transfers: Səhmdar köçürmələri
+    stop: Dayan
+    store: Mağaza
+    store_credit:
+      additional_payment_needed: Qalan <strong> %{amount} </strong> üçün başqa bir ödəniş metodu seçin.
+      allocated: Əlavə edildi
+      applicable_amount: Mağaza krediti olan <strong> %{amount} </strong> bu sifarişə tətbiq olunacaq.
+      apply: Müraciət edin
+      authorized: Səlahiyyətlidir
+      available_amount: Mağaza Kredisində <strong> %{amount} </strong> mövcuddur!
+      captured: İstifadə olunmuşdur
+      credit: Kredit
+      errors:
+        cannot_change_used_store_credit: Artıq istifadə edilmiş bir mağaza krediti dəyişdirə bilməzsiniz
+        unable_to_create: Mağaza krediti yarana bilmir
+        unable_to_delete: Mağaza krediti silinmədi
+        unable_to_fund: Mağaza kreditlərindən istifadə edərək sifariş üçün ödəniş etmək mümkün deyil
+        unable_to_update: Mağaza krediti yenilənə bilmir
+      remaining_amount: Hesabınızın Mağaza Kreditində <strong> %{amount} </strong> qalıb.
+      remove: Sil
+    store_credit_categories: Mağaza kreditləri kateqoriyası
+    store_credit_name: Mağaza krediti
+    store_credit_payment_method:
+      currency_mismatch: Mağaza kredit valyutası sifariş valyutası ilə uyğun gəlmir
+      insufficient_authorized_amount: Səlahiyyətli məbləğdən çoxunu əldə etmək mümkün deyil
+      insufficient_funds: Mağaza krediti məbləği kifayət deyil
+      select_one_store_credit: Qalan qalığa getmək üçün mağaza krediti seçin
+      successful_action: Uğurlu mağaza krediti %{action}
+      unable_to_credit: 'Kod verilə bilmir: %{auth_code}'
+      unable_to_find: Mağaza krediti tapılmadı
+      unable_to_find_for_action: 'Müəllif kodu üçün mağaza krediti tapılmadı: fəaliyyət üçün %{auth_code}: %{action}'
+      unable_to_void: 'Kodu ləğv etmək mümkün deyil: %{auth_code}'
+      user_has_no_store_credits: İstifadəçinin hər hansı bir mağaza krediti yoxdur
+    store_credits: Mağaza kreditləri
+    store_default: Varsayılan mağaza
+    store_errors:
+      unable_to_create: Mağaza yaratmaq olmur.
+      unable_to_delete: Mağaza silinmədi.
+      unable_to_update: Mağaza güncəllənə bilmir.
+    store_form:
+      checkout_zone_help: Zona seçmək, ölkələrin və ya dövlətlərin məhsullarının göndərilməsinə məhdudiyyət qoyacaqdır. Daha çox məlumat üçün <a href='https://guides.spreecommerce.org/user/configuration/configuring_geography.html#zones' target='_blank' class='alert-link'> lütfən sənədlərə baxın </a>
+      code_help: Mağaza adının qısaldılmış bir versiyası olan mağaza unikal identifikatoru (düzəliş qovluğu adı kimi istifadə olunur, həmçinin şablonları mağazaya görə ayırmaq üçün faydalıdır)
+      customer_support_email_help: Bu e-poçt, Footer hissəsində Mağaza ziyarətçilərinizə görünə bilər
+      default_country_help: Bu, Ödəmə Ünvanı formasında əvvəlcədən seçiləcək ölkədir
+      footer_help: Bu məzmun Mağazanızın altbilgi hissəsində görünür
+      locales_help: Daha çox dil əlavə etmək üçün <a href='https://github.com/spree-contrib/spree_i18n target='_blank' class='alert-link'> Spree I18n uzantısını </a> quraşdırın.
+      mail_from_address_help: Bu, bütün Mağaza e-poçtlarınızın göndəricisi olacaq e-poçtdur (Sifariş Təsdiqi, Göndərmə bildirişi və s.)
+      new_order_notifications_email_help: Hər dəfə kimsə Sifariş verəndə bir e-poçt bildirişi almaq istəyirsinizsə, xahiş edirəm bu bildirişin göndərilməsi üçün bir e-poçt ünvanı verin
+      seo_robots: Xahiş edirəm daha çox yardım üçün <a href='https://developers.google.com/search/reference/robots_meta_tag' target='_blank'> bu səhifəni yoxlayın </a>
+      social_help: Veb saytınızın alt hissəsindəki sosial hesablarınıza keçid etmək istəyirsinizsə, aşağıdakı sahələri doldurun
+    store_not_set_as_default: Mağaza %{store}'ı defolt bir mağaza olaraq təyin etmək mümkün olmadı
+    store_set_as_default: Mağaza %{store} artıq standart bir mağazadır
+    store_set_default_button: Varsayılan olaraq seçin
+    stores: Mağazalar
+    street_address: Küçə ünvanı
+    street_address_2: Küçə Ünvanı (davam edir)
+    subtotal: Cəmi
+    subtract: Çıxarın
+    success: Uğur
+    successfully_created: "%{resource} uğurla yaradıldı!"
+    successfully_refunded: "%{resource} uğurla geri qaytarıldı!"
+    successfully_removed: "%{resource} uğurla silindi!"
+    successfully_updated: "%{resource} uğurla yeniləndi!"
+    summary: Xülasə
+    supported_currencies: Dəstəklənən valyutalar
+    supported_currencies_long: Dəstəklənən valyutaların vergüllə ayrılmış siyahısı
+    supported_locales: Yerli dəstəklənir
+    tags: Teqlər
+    tags_placeholder: Teqlər əlavə edin
+    tax: Vergi
+    tax_categories: Vergi kateqoriyaları
+    tax_category: Vergi kateqoriyası
+    tax_code: Vergi Məcəlləsi
+    tax_included: Vergi (daxil olmaqla)
+    tax_rate_amount_explanation: Vergi dərəcələri hesablamalara kömək etmək üçün ondalık bir məbləğdir (yəni vergi dərəcəsi 5% -dirsə, onda 0,05 daxil edin)
+    tax_rates: Vergi dərəcələri
+    taxon: Taxon
+    taxon_edit: Taxon redaktə edin
+    taxon_missing_alt: Kateqoriya banner təsviri
+    taxon_placeholder: Taxon əlavə edin
+    taxon_rule:
+      choose_taxons: Taksonlar seçin
+      label: Sifarişdə bu taksonların x miqdarı olmalıdır
+      match_all: hamısı
+      match_any: ən azı bir
+    taxonomies: Taksonomiyalar
+    taxonomy: Taksonomiya
+    taxonomy_brands_name: Markalar
+    taxonomy_categories_name: Kateqoriyalar
+    taxonomy_edit: Taksonomiyə düzəliş edin
+    taxonomy_tree_error: Tələb olunan dəyişiklik qəbul edilmədi və ağac əvvəlki vəziyyətinə qaytarıldı, xahiş edirəm yenidən cəhd edin.
+    taxonomy_tree_instruction: "* Bir uşaq əlavə etmək, silmək və ya sıralamaq üçün menyudan istifadə etmək üçün ağacdakı bir uşağa sağ vurun (və ya iOS cihazında iki dəfə vurun)."
+    taxons: Taxonlar
+    test: Test
+    test_mailer:
+      test_email:
+        greeting: Təbrik edirik!
+        message: Bu e-poçtu almısınızsa, e-poçt parametrləriniz düzgündür.
+        subject: Test poçtu
+    test_mode: Test rejimi
+    thank_you_for_your_order: Biznesiniz üçün çox sağolun. Xahiş edirəm qeydləriniz üçün bu təsdiq səhifəsinin bir nüsxəsini çap edin.
+    there_are_no_items_for_this_order: Bu sifariş üçün məhsul yoxdur. Xahiş edirəm davam etmək üçün sifarişə bir maddə əlavə edin.
+    there_were_problems_with_the_following_fields: Aşağıdakı sahələrdə problem var idi
+    this_order_has_already_received_a_refund: Bu sifariş artıq geri qaytarıldı
+    thumbnail: Kiçik şəkil
+    tiered_flat_rate: Mərhələ dərəcəsi
+    tiered_percent: Katmanlı faiz
+    tiers: Yarlıqlar
+    time: Vaxt
+    to_add_variants_you_must_first_define: Variantları əlavə etmək üçün əvvəlcə müəyyənləşdirməlisiniz
+    total: Ümumi
+    total_per_item: Maddə başına cəmi
+    total_pre_tax_refund: Vergi öncəsi ümumi geri ödəmə
+    total_price: Ümumi qiymət
+    total_sales: Cəmi satış
+    track_inventory: Envanteri izləyin
+    tracking: İzləmə
+    tracking_number: İzleme nömrəsi
+    tracking_url: İzləmə URL
+    tracking_url_placeholder: məs. http://quickship.com/package?num=:tracking
+    transaction_id: əməlliyyatın kodu
+    transfer_from_location: Köçürmə
+    transfer_stock: Səhmini köçürün
+    transfer_to_location: Transfer
+    tree: Ağac
+    twitter: Twitter
+    type: Yazın
+    type_to_search: Axtarış üçün yazın
+    unable_to_connect_to_gateway: Şlüzə qoşula bilmir.
+    unable_to_create_reimbursements: Əl müdaxiləsini gözləyən əşyalar olduğu üçün ödənişlər yaratmaq mümkün deyil.
+    under_price: "%{price} altında"
+    unlock: Kiliddən çıxarın
+    unrecognized_card_type: Tanınmamış kart növü
+    unshippable_items: Göndərilməyən əşyalar
+    update: Yeniləyin
+    updating: Yenilənir
+    url: URL
+    usage_limit: İstifadə limiti
+    use_app_default: App Default istifadə edin
+    use_billing_address: Faktura Ünvanından istifadə edin
+    use_existing_cc: Faylda mövcud bir kartı istifadə edin
+    use_new_cc: Yeni bir kart istifadə edin
+    use_new_cc_or_payment_method: Yeni bir kart / ödəniş metodundan istifadə edin
+    use_s3: Şəkillər üçün Amazon S3 istifadə edin
+    used: İstifadə olunmuşdur
+    user: İstifadəçi
+    user_not_found: İstifadəçi tapılmadı
+    user_rule:
+      choose_users: İstifadəçiləri seçin
+    users: İstifadəçilər
+    validation:
+      cannot_be_less_than_shipped_units: göndərilən vahidlərin sayından az ola bilməz.
+      cannot_destroy_line_item_as_inventory_units_have_shipped: Bəzi inventar vahidləri göndərildiyi üçün sətir elementi məhv edilə bilməz.
+      exceeds_available_stock: mövcud ehtiyatı aşıb. Xahiş edirəm sətir elementlərinin etibarlı miqdarda olmasını təmin edin.
+      is_too_large: çox böyükdür - əldəki stok istənilən miqdarı əhatə edə bilməz!
+      must_be_int: bir tam olmalıdır
+      must_be_non_negative: mənfi olmayan bir dəyər olmalıdır
+      unpaid_amount_not_zero: 'Məbləğ tam ödənilməyib. Hələ də var: %{amount}'
+    value: Dəyər
+    variant: Variant
+    variant_placeholder: Bir variant seçin
+    variant_prices_search_placeholder: SKU və ya variant adını axtarın ...
+    variants: Variantlar
+    version: Versiya
+    void: Boş
+    weight: Çəki
+    what_is_a_cvv: "(CVV) Kredit Kartı Kodu nədir?"
+    what_is_this: Bu nədir?
+    width: Eni
+    year: İl
+    you_have_no_orders_yet: Hələ sifarişiniz yoxdur
+    your_cart_is_empty: Sizin kartınız boşdur
+    your_order_is_empty_add_product: Sifarişiniz boşdur, yuxarıda bir məhsul axtarın və əlavə edin
+    zip: Zip
+    zipcode: Poçt kodu
+    zipcode_required: Poçt kodu tələb olunur
+    zone: Zona
+    zones: Bölgələr

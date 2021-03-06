@@ -1,0 +1,1769 @@
+---
+hr:
+  activemodel:
+    errors:
+      models:
+        spree/fulfilment_changer:
+          attributes:
+            current_shipment:
+              can_not_have_backordered_inventory_units: ima naručene jedinice inventara
+              has_already_been_shipped: već je otpremljen
+            desired_shipment:
+              can_not_transfer_within_same_shipment: ne može biti isto što i trenutna pošiljka
+              has_not_enough_stock_at_desired_location: nema dovoljno zaliha na željenom mjestu zaliha
+  activerecord:
+    attributes:
+      spree/address:
+        address1: Adresa
+        address2: Adresa (nastavak)
+        city: Grad
+        company: Društvo
+        country: Zemlja
+        firstname: Ime
+        label: Ime adrese
+        lastname: Prezime
+        phone: Telefon
+        state: država
+        zipcode: Poštanski broj
+      spree/calculator/tiered_flat_rate:
+        preferred_base_amount: Osnovni iznos
+        preferred_tiers: Razine
+      spree/calculator/tiered_percent:
+        preferred_base_percent: Osnovni postotak
+        preferred_tiers: Razine
+      spree/country:
+        iso: ISO
+        iso3: ISO3
+        iso_name: ISO naziv
+        name: Ime
+        numcode: ISO kod
+      spree/credit_card:
+        base: ''
+        cc_type: Tip
+        month: Mjesec
+        name: Ime
+        number: Broj
+        verification_value: Vrijednost provjere
+        year: Godina
+      spree/inventory_unit:
+        state: država
+      spree/line_item:
+        price: Cijena
+        quantity: Količina
+      spree/option_type:
+        filterable: Može se filtrirati
+        name: Ime
+        presentation: Prezentacija
+      spree/order:
+        checkout_complete: Plaćanje završeno
+        completed_at: Završeno u
+        considered_risky: Rizično
+        coupon_code: Šifra kupona
+        created_at: Datum narudžbe
+        email: E-mail
+        ip_address: IP adresa
+        item_total: Stavka Ukupno
+        number: Broj
+        payment_state: Država plaćanja
+        shipment_state: Država otpreme
+        special_instructions: posebne upute
+        state: država
+        total: Ukupno
+      spree/order/bill_address:
+        address1: Adresa za naplatu
+        city: Adresa za naplatu grad
+        firstname: Ime adrese za naplatu
+        lastname: Prezime za naplatu
+        phone: Telefon za naplatu
+        state: Stanje adrese za naplatu
+        zipcode: Poštanski broj adrese za naplatu
+      spree/order/ship_address:
+        address1: Adresa dostave ulica
+        city: Adresa za dostavu grada
+        firstname: Ime adrese za dostavu
+        lastname: Prezime adrese za dostavu
+        phone: Adresa za dostavu telefona
+        state: Država adrese za dostavu
+        zipcode: Poštanski broj adrese za dostavu
+      spree/payment:
+        amount: Iznos
+        number: Broj
+      spree/payment_method:
+        name: Ime
+      spree/product:
+        available_on: Dostupno na
+        cost_currency: Valuta troškova
+        cost_price: Cijena
+        description: Opis
+        discontinue_on: Prekini Uključeno
+        less_than: Manje od
+        master_price: Master Price
+        name: Ime
+        on_hand: Na ruku
+        shipping_category: Kategorija otpreme
+        tax_category: Kategorija poreza
+      spree/promotion:
+        advertise: Oglašavati
+        code: Kodirati
+        description: Opis
+        event_name: Naziv događaja
+        expires_at: Istječe u
+        generate_code: Generirajte kod kupona
+        name: Ime
+        path: Staza
+        promotion_category: Kategorija promocije
+        starts_at: Počinje u
+        usage_limit: Ograničenje upotrebe
+      spree/promotion_category:
+        code: Kodirati
+        name: Ime
+      spree/property:
+        name: Ime
+        presentation: Prezentacija
+      spree/prototype:
+        name: Ime
+      spree/return_authorization:
+        amount: Iznos
+      spree/role:
+        name: Ime
+      spree/shipment:
+        number: Broj
+      spree/state:
+        abbr: Skraćenica
+        name: Ime
+      spree/state_change:
+        state_changes: Promjene države
+        state_from: Država iz
+        state_to: Država do
+        timestamp: Vremenska oznaka
+        type: Tip
+        updated: Ažurirano
+        user: Korisnik
+      spree/store:
+        mail_from_address: Pošta s adrese
+        meta_description: Meta opis
+        meta_keywords: Meta Ključne riječi
+        name: Ime stranice
+        seo_robots: SEO roboti
+        seo_title: SEO naslov
+        url: URL web lokacije
+      spree/store_credit:
+        amount_used: Upotrijebljeni iznos
+      spree/store_credit_category:
+        name: Ime
+      spree/tax_category:
+        description: Opis
+        name: Ime
+      spree/tax_rate:
+        amount: Stopa
+        included_in_price: Uključeno u cijenu
+        show_rate_in_label: Prikaži stopu u oznaci
+      spree/taxon:
+        name: Ime
+        permalink: Permalink
+        position: Položaj
+      spree/taxonomy:
+        name: Ime
+      spree/user:
+        email: E-mail
+        password: Zaporka
+        password_confirmation: Potvrda lozinke
+      spree/variant:
+        cost_currency: Valuta troškova
+        cost_price: Cijena
+        depth: Dubina
+        height: Visina
+        price: Cijena
+        sku: SKU
+        weight: Težina
+        width: Širina
+      spree/zone:
+        description: Opis
+        name: Ime
+    errors:
+      models:
+        spree/calculator/tiered_flat_rate:
+          attributes:
+            base:
+              keys_should_be_positive_number: Tipke razine trebaju biti brojevi veći od 0
+            preferred_tiers:
+              should_be_hash: treba biti hash
+        spree/calculator/tiered_percent:
+          attributes:
+            base:
+              keys_should_be_positive_number: Tipke razine trebaju biti brojevi veći od 0
+              values_should_be_percent: Vrijednosti razine trebaju biti postoci između 0% i 100%
+            preferred_tiers:
+              should_be_hash: treba biti hash
+        spree/classification:
+          attributes:
+            taxon_id:
+              already_linked: je već povezan s ovim proizvodom
+        spree/credit_card:
+          attributes:
+            base:
+              card_expired: Kartica je istekla
+              expiry_invalid: Istek kartice nije važeći
+        spree/image:
+          attributes:
+            attachment:
+              attachment_must_be_present: mora biti prisutan
+              not_allowed_content_type: nema dopuštenu vrstu sadržaja
+        spree/line_item:
+          attributes:
+            currency:
+              must_match_order_currency: Mora odgovarati valuti narudžbe
+        spree/product:
+          attributes:
+            base:
+              cannot_destroy_if_attached_to_line_items: Ne možete izbrisati proizvode nakon što se prikače stavkama retka.
+            discontinue_on:
+              invalid_date_range: mora biti kasnije od dostupnog datuma
+        spree/promotion:
+          attributes:
+            expires_at:
+              invalid_date_range: mora biti kasnije od datuma početka
+        spree/refund:
+          attributes:
+            amount:
+              greater_than_allowed: je veći od dopuštenog iznosa.
+        spree/reimbursement:
+          attributes:
+            base:
+              return_items_order_id_does_not_match: Jedna ili više navedenih stavki za vraćanje ne pripadaju istom redoslijedu kao povrat.
+        spree/return_item:
+          attributes:
+            inventory_unit:
+              other_completed_return_item_exists: "%{inventory_unit_id} je već preuzeta stavkom vraćanja %{return_item_id}"
+            reimbursement:
+              cannot_be_associated_unless_accepted: ne može se povezati s povratnom stavkom koja nije prihvaćena.
+        spree/shipping_method:
+          attributes:
+            base:
+              required_shipping_category: Morate odabrati barem jednu kategoriju otpreme
+        spree/store:
+          attributes:
+            base:
+              cannot_destroy_default_store: Ne možete uništiti zadanu trgovinu.
+        spree/store_credit:
+          attributes:
+            amount_authorized:
+              exceeds_total_credits: Premašuje ukupne bodove.
+            amount_used:
+              cannot_be_greater_than_amount: Ne može biti veći od iznosa.
+              greater_than_zero_restrict_delete: je veće od nule. Nije moguće izbrisati kredit u trgovini.
+        spree/store_credit_category:
+          attributes:
+            base:
+              cannot_destroy_if_used_in_store_credit: Ne možete izbrisati kategorije kredita za trgovinu nakon što se koriste u kreditu za trgovinu.
+        spree/taxon_image:
+          attributes:
+            attachment:
+              not_allowed_content_type: nema dopuštenu vrstu sadržaja
+        spree/variant:
+          attributes:
+            base:
+              cannot_destroy_if_attached_to_line_items: Ne možete izbrisati inačice nakon što se prikače stavkama retka.
+              must_supply_price_for_variant_or_master: Morate navesti cijenu varijante ili glavnu cijenu proizvoda.
+              no_master_variant_found_to_infer_price: Nije pronađena nijedna glavna varijanta koja bi mogla odrediti cijenu
+    models:
+      spree/address:
+        one: Adresa
+        other: Adrese
+      spree/country:
+        one: Zemlja
+        other: Zemlje
+      spree/credit_card:
+        one: Kreditna kartica
+        other: Kreditne kartice
+      spree/customer_return:
+        one: Povratak kupca
+        other: Povratak kupaca
+      spree/inventory_unit:
+        one: Jedinica zaliha
+        other: Jedinice zaliha
+      spree/line_item:
+        one: Stavka
+        other: Stavke
+      spree/option_type:
+        one: Vrsta opcije
+        other: Vrste opcija
+      spree/option_value:
+        one: Vrijednost opcije
+        other: Opcijske vrijednosti
+      spree/order:
+        one: Narudžba
+        other: Narudžbe
+      spree/payment:
+        one: Plaćanje
+        other: Plaćanja
+      spree/payment_method:
+        one: Način plaćanja
+        other: Metode Plačanja
+      spree/product:
+        one: Proizvod
+        other: Proizvodi
+      spree/promotion:
+        one: Promocija
+        other: Promocije
+      spree/promotion_category:
+        one: Kategorija promocije
+        other: Kategorije promocije
+      spree/property:
+        one: Vlasništvo
+        other: Svojstva
+      spree/prototype:
+        one: Prototip
+        other: Prototipovi
+      spree/refund_reason:
+        one: Razlog povrata
+        other: Razlozi povrata
+      spree/reimbursement:
+        one: Naknada
+        other: Naknade
+      spree/reimbursement_type:
+        one: Vrsta naknade
+        other: Vrste naknade
+      spree/return_authorization:
+        one: Odobrenje za povratak
+        other: Povratak odobrenja
+      spree/return_authorization_reason:
+        one: Razlog odobrenja za povratak
+        other: Vratite razloge odobrenja
+      spree/role:
+        one: Uloge
+        other: Uloge
+      spree/shipment:
+        one: Pošiljka
+        other: Pošiljke
+      spree/shipping_category:
+        one: Kategorija otpreme
+        other: Kategorije otpreme
+      spree/shipping_method:
+        one: Metoda slanja
+        other: Načini otpreme
+      spree/state:
+        one: država
+        other: Države
+      spree/state_change:
+        one: Promjena države
+        other: Promjene države
+      spree/stock_location:
+        one: Mjesto zaliha
+        other: Lokacije dionica
+      spree/stock_movement:
+        one: Kretanje dionica
+        other: Kretanje dionica
+      spree/stock_transfer:
+        one: Prijenos dionica
+        other: Prijenosi dionica
+      spree/store_credit:
+        one: Kredit za trgovinu
+        other: Pohranite kredite
+      spree/store_credit_category:
+        one: Kategorija kredita za trgovinu
+        other: Kategorije kredita u trgovini
+      spree/tax_category:
+        one: Kategorija poreza
+        other: Porezne kategorije
+      spree/tax_rate:
+        one: Porezna stopa
+        other: Porezne stope
+      spree/taxon:
+        one: Taxon
+        other: Taksoni
+      spree/taxonomy:
+        one: Taksonomija
+        other: Taksonomije
+      spree/tracker:
+        one: Tragač
+        other: Tragači
+      spree/user:
+        one: Korisnik
+        other: Korisnici
+      spree/variant:
+        one: Varijanta
+        other: Varijante
+      spree/zone:
+        one: Zona
+        other: Zone
+  address_book:
+    save: Uštedjeti
+    successfully_created: Nova adresa uspješno je stvorena
+  devise:
+    confirmations:
+      confirmed: Vaš račun je uspješno potvrđen. Sada ste prijavljeni.
+      send_instructions: Za nekoliko minuta dobit ćete e-poštu s uputama o tome kako potvrditi račun.
+    failure:
+      inactive: Vaš račun još nije aktiviran.
+      invalid: Nevažeća e-adresa ili lozinka.
+      invalid_token: Nevažeći token za provjeru autentičnosti.
+      locked: Vaš je račun zaključan.
+      timeout: Vaša je sesija istekla, prijavite se ponovo da biste nastavili.
+      unauthenticated: Prije nastavka morate se prijaviti ili prijaviti.
+      unconfirmed: Prije nastavka morate potvrditi svoj račun.
+    mailer:
+      confirmation_instructions:
+        subject: Upute za potvrdu
+      reset_password_instructions:
+        subject: Poništite upute za lozinku
+      unlock_instructions:
+        subject: Upute za otključavanje
+    oauth_callbacks:
+      failure: Ne možemo vas ovlastiti za %{kind} jer "%{reason}".
+      success: Uspješno odobreno s računa %{kind}.
+    unlocks:
+      send_instructions: Za nekoliko minuta primit ćete e-poštu s uputama o tome kako otključati račun.
+      unlocked: Vaš je račun uspješno otključan. Sada ste prijavljeni.
+    user_passwords:
+      user:
+        cannot_be_blank: Vaša lozinka ne može biti prazna.
+        send_instructions: Za nekoliko minuta dobit ćete e-poštu s uputama o tome kako resetirati lozinku.
+        updated: Vaša je lozinka uspješno promijenjena. Sada ste prijavljeni.
+    user_registrations:
+      destroyed: Zbogom! Vaš račun je uspješno otkazan. Nadamo se da ćemo se uskoro opet vidjeti.
+      inactive_signed_up: Uspješno ste se prijavili. Međutim, nismo vas mogli prijaviti jer je vaš račun %{reason}.
+      signed_up: Dobrodošli! Uspješno ste se prijavili.
+      updated: Uspješno ste ažurirali račun.
+    user_sessions:
+      signed_in: Uspješno ste se prijavili.
+      signed_out: Odjava uspješno.
+  errors:
+    messages:
+      already_confirmed: već bila potvrđena
+      not_found: nije pronađeno
+      not_locked: nije bila zaključana
+      not_saved:
+        one: '1 pogreška zabranila je spremanje ovog %{resource}:'
+        other: 'pogreške %{count} zabranile su spremanje ovog %{resource}:'
+  spree:
+    abbreviation: Skraćenica
+    accept: Prihvatiti
+    acceptance_errors: Pogreške prihvaćanja
+    acceptance_status: Status prihvaćanja
+    accepted: Prihvaćen
+    account: Račun
+    account_info: Informacije računa
+    account_updated: Račun ažuriran
+    action: Akcijski
+    actions:
+      cancel: Otkazati
+      continue: Nastaviti
+      create: Stvoriti
+      destroy: Uništiti
+      edit: Uredi
+      list: Popis
+      listing: Popis
+      new: Novi
+      refund: Povrat novca
+      save: Uštedjeti
+      update: Ažuriraj
+    activate: Aktivirati
+    active: Aktivan
+    add: Dodati
+    add_action_of_type: Dodajte radnju tipa
+    add_country: Dodaj zemlju
+    add_coupon_code: Dodajte kod kupona
+    add_new_address: Dodajte novu adresu
+    add_new_credit_card: Dodajte novu karticu
+    add_new_header: Dodajte novo zaglavlje
+    add_new_style: Dodajte novi stil
+    add_one: Dodaj jedan
+    add_option_value: Dodaj vrijednost opcije
+    add_product: Dodajte proizvod
+    add_product_properties: Dodajte svojstva proizvoda
+    add_rule_of_type: Dodajte pravilo tipa
+    add_state: Dodaj državu
+    add_stock: Dodajte dionicu
+    add_store: Nova trgovina
+    add_store_credit: Dodajte kredit u trgovini
+    add_to_cart: Dodaj u košaricu
+    add_variant: Dodaj varijantu
+    added_to_cart: Uspješno dodano u košaricu!
+    additional_item: Dodatna stavka
+    address: Adresa
+    address1: Adresa
+    address2: Adresa (nastavak)
+    address_action_popup:
+      delete_button: da, izbriši
+      delete_text: Želite li zaista <br /> izbrisati ovu adresu?
+      delete_title: Jesi li siguran?
+    address_book:
+      add_new_shipping_address: Dodajte novu adresu
+      address_name_label: Ime adrese
+      address_name_placeholder: Dajte ovoj adresi jedinstveni naziv (Posao, Kuća itd.)
+      addresses: Adrese
+      edit_address: Uredi adresu
+      label: Ime adrese
+      new_address: Nova adresa
+      no_shipping_addresses_on_file: U datoteci nema adresa
+      other_address: Druga adresa
+      remove_address: Uklonite adresu
+      save: Uštedjeti
+      successfully_created: Adresa je uspješno kreirana.
+      successfully_removed: Adresa je uspješno uklonjena.
+      successfully_saved: Spremljeno uspješno
+      successfully_updated: Ažurirano uspješno
+      unsuccessfully_saved: Došlo je do pogreške prilikom pokušaja spremanja adrese.
+      unsuccessfully_updated: Došlo je do ažuriranja prilikom pokušaja ažuriranja adrese.
+    addresses: Adrese
+    adjustable: Podesiva
+    adjustment: Podešavanje
+    adjustment_amount: Iznos
+    adjustment_labels:
+      tax_rates:
+        excluding_tax: "%{name}%{amount}"
+        including_tax: "%{name}%{amount} (uključeno u cijenu)"
+    adjustment_successfully_closed: Prilagodba je uspješno zatvorena!
+    adjustment_successfully_opened: Prilagodba je uspješno otvorena!
+    adjustment_total: Ukupna prilagodba
+    adjustments: Prilagođavanja
+    admin:
+      order:
+        events:
+          approve: odobriti
+          cancel: otkazati
+          resend: Ponovo pošalji
+          resume: nastaviti
+      orders:
+        cart: Košarica
+      return_authorization:
+        product: Proizvod
+      tab:
+        configuration: Konfiguracija
+        customer_returns: Povratak kupaca
+        option_types: Vrste opcija
+        orders: Narudžbe
+        overview: Pregled
+        products: Proizvodi
+        promotion_categories: Kategorije promocije
+        promotions: Promocije
+        properties: Svojstva
+        prototypes: Prototipovi
+        reports: Izvještaji
+        return_authorizations: Povratak odobrenja
+        taxonomies: Taksonomije
+        taxons: Taksoni
+        users: Korisnici
+      user:
+        account: Račun
+        addresses: Adrese
+        available_store_credit: Korisnik ima na raspolaganju %{amount} u trgovini Credit Credit.
+        items: Predmeti
+        items_purchased: Predmeti kupljeni
+        no_store_credit: Korisnik nema dostupnog kredita za trgovinu.
+        order_history: Povijest Reda
+        order_num: 'Narudžba #'
+        orders: Narudžbe
+        store_credits: Pohranite kredite
+        stores: Trgovine
+        user_information: informacije o korisniku
+    administration: Uprava
+    advertise: Oglašavati
+    agree_to_privacy_policy: Pristanite na Pravila o privatnosti
+    agree_to_terms_of_service: Pristanite na Uvjete pružanja usluge
+    all: svi
+    all_adjustments_closed: Sve prilagodbe uspješno zatvorene!
+    all_adjustments_opened: Sve su prilagodbe uspješno otvorene!
+    all_departments: Svi odjeli
+    all_items_have_been_returned: Svi predmeti su vraćeni
+    all_rights_reserved: Sva prava pridržana
+    already_have_account: Već imate račun?
+    alt_text: Alternativni tekst
+    alternative_phone: Alternativni telefon
+    amount: Iznos
+    and: i
+    approve: odobriti
+    approved_at: Odobreno u
+    approver: Odobravatelj
+    are_you_sure: Jesi li siguran?
+    are_you_sure_delete: Jeste li sigurni da želite izbrisati ovaj zapis?
+    associated_adjustment_closed: Povezana prilagodba je zatvorena i neće se ponovno izračunati. Želite li ga otvoriti?
+    authorization_failure: Neuspjeh autorizacije
+    authorized: Ovlašteno
+    auto_capture: Automatsko snimanje
+    availability: dostupnost
+    available: Dostupno
+    available_on: Dostupno na
+    average_order_value: Prosječna vrijednost narudžbe
+    avs_response: Odgovor AVS-a
+    back: leđa
+    back_end: Backend
+    back_to_payment: Natrag na plaćanje
+    back_to_resource_list: Natrag na %{resource} popis
+    back_to_rma_reason_list: Povratak na RMA popis razloga
+    back_to_store: Povratak u trgovinu
+    back_to_users_list: Natrag na popis korisnika
+    backorderable: Može se naručiti
+    backorderable_default: Zadana zadaća koja se može poručiti
+    backordered: Unatrag
+    backordered_confirm_info: Odabrana je stavka naručena pa očekujte kašnjenja. Jeste li sigurni da ga želite naručiti?
+    backordered_info: Unatrag
+    backorders_allowed: dopušteni unatrag
+    balance_due: Balans
+    base_amount: Osnovni iznos
+    base_percent: Osnovni postotak
+    basic_information: Osnovne informacije
+    bill_address: Adresa za račune
+    billing: Naplata
+    billing_address: Adresa za naplatu
+    both: Oba
+    breadcrumbs: Krušne mrvice
+    calculated_reimbursements: Izračunate naknade
+    calculator: Kalkulator
+    calculator_settings_warning: Ako mijenjate vrstu kalkulatora, najprije morate spremiti prije uređivanja postavki kalkulatora
+    call_us_now: 'Nazovite nas odmah:'
+    cancel: otkazati
+    canceled: Otkazano
+    canceled_at: Otkazano u
+    canceler: Poništavač
+    cannot_create_customer_returns: Nije moguće stvoriti povrat kupaca jer ova narudžba nema isporučene jedinice.
+    cannot_create_payment_without_payment_methods: Ne možete izvršiti plaćanje za narudžbu bez definiranih načina plaćanja.
+    cannot_create_returns: Nije moguće stvoriti povrat jer ova narudžba nema isporučene jedinice.
+    cannot_empty_completed_order: Narudžba je već obrađena pa se ne može isprazniti
+    cannot_perform_operation: Nije moguće izvršiti traženu operaciju
+    cannot_return_more_than_bought_quantity: Ne možete vratiti više od kupljene količine.
+    cannot_set_shipping_method_without_address: Nije moguće postaviti način dostave dok se ne navedu detalji kupca.
+    capture: Uhvatiti
+    capture_events: Hvatanje događaja
+    card_code: Kôd za izmjenu kartice (CVC)
+    card_number: Broj kartice
+    card_type: Marka
+    card_type_is: Vrsta kartice je
+    cart: Košarica
+    cart_page:
+      add_promo_code: DODAJ PROMO KOD
+      change_quantity: Promijenite količinu
+      checkout: provjeri
+      empty_info: Vaša košarica je prazna.
+      header: Vaša košarica
+      product: proizvod
+      quantity: količina
+      remove_from_cart: Izvadite iz košarice
+      title: Košarica
+    cart_subtotal:
+      one: Međuzbir (1 stavka)
+      other: Međuzbir (%{count} stavki)
+    categories: Kategorije
+    category: Kategorija
+    category_nav_bar:
+      get_up_to_30_percent_off: OSTVARITE DO 30%
+      jackets_and_coats: JAKNA & OBALA
+      new_collection: NOVA KOLEKCIJA
+      special_offers: POSEBNE PONUDE
+    channel: Kanal
+    charged: Napunjeno
+    checkout: Provjeri
+    checkout_page:
+      back_to_cart: natrag u kolica
+      checkout_navigation: Navigacija za naplatu
+      delivery_method: način isporuke
+      header: Provjeri
+      main_navigation: Glavna navigacija
+      product: Proizvod
+    choose_a_customer: Odaberite kupca
+    choose_a_taxon_to_sort_products_for: Odaberite takson za sortiranje proizvoda
+    choose_currency: Odaberite valutu
+    choose_dashboard_locale: Odaberite Lokale nadzorne ploče
+    choose_location: Odaberite mjesto
+    city: Grad
+    clear_cache: Očisti predmemoriju
+    clear_cache_ok: Predmemorija je isprana
+    clear_cache_warning: Brisanjem predmemorije privremeno će se smanjiti performanse vaše trgovine.
+    click_and_drag_on_the_products_to_sort_them: Kliknite i povucite proizvode da biste ih razvrstali.
+    clone: Klon
+    close: Zatvoriti
+    close_all_adjustments: Zatvorite sve prilagodbe
+    code: Kodirati
+    company: Društvo
+    compare_at_price: Usporedite po cijeni
+    complete: dovršen
+    configuration: Konfiguracija
+    configurations: Konfiguracije
+    confirm: Potvrdite
+    confirm_delete: Potvrdite brisanje
+    confirm_password: Potvrda lozinke
+    contact_phone: Kontakt telefon
+    contact_us: Kontaktirajte nas
+    continue: Nastaviti
+    continue_as_guest: Nastavite kao gost
+    continue_shopping: Nastaviti s kupovinom
+    cost_currency: Valuta troškova
+    cost_price: Cijena
+    could_not_create_customer_return: Nije moguće stvoriti povrat kupaca
+    could_not_create_stock_movement: Pojavio se problem prilikom spremanja ovog kretanja dionica. Molim te pokušaj ponovno.
+    count_on_hand: Broji na ruku
+    countries: Zemlje
+    country: Zemlja
+    country_based: Na temelju zemlje
+    country_name: Ime
+    country_rule:
+      label: Odaberite mora biti isporučen u ovu zemlju
+    coupon: Kupon
+    coupon_code: Šifra kupona
+    coupon_code_already_applied: Kôd kupona već je primijenjen na ovu narudžbu
+    coupon_code_applied: Kôd kupona uspješno je primijenjen na vašu narudžbu.
+    coupon_code_apply: Prijavite se
+    coupon_code_better_exists: Ranije primijenjeni kôd kupona rezultira boljom pogodbom
+    coupon_code_expired: Kôd kupona je istekao
+    coupon_code_max_usage: Premašeno je ograničenje upotrebe koda kupona
+    coupon_code_not_eligible: Ovaj kôd kupona ne ispunjava uvjete za ovu narudžbu
+    coupon_code_not_found: Kôd kupona koji ste unijeli ne postoji. Molim te pokušaj ponovno.
+    coupon_code_removed: Kôd kupona uspješno je uklonjen iz vaše narudžbe.
+    coupon_code_unknown_error: Trenutno se ovaj kôd kupona ne može primijeniti na košaricu.
+    create: Stvoriti
+    create_a_new_account: Izraditi novi račun
+    create_new_order: Stvorite novu narudžbu
+    create_reimbursement: Stvorite naknadu
+    created_at: Stvoreno u
+    created_by: Napravio
+    credit: Kreditna
+    credit_allowed: Kredit dozvoljen
+    credit_card: Kreditna kartica
+    credit_cards: Kreditne kartice
+    credit_owed: Kredit zaslužen
+    credited: Priznato
+    credits: Zasluge
+    currencies: Valute
+    currency: Valuta
+    currency_settings: Postavke valuta
+    current: Trenutno
+    current_promotion_usage: 'trenutna upotreba: %{count}'
+    customer: Kupac
+    customer_details: Podaci o kupcu
+    customer_details_updated: Podaci o kupcu ažurirani
+    customer_return: Povratak kupca
+    customer_returns: Povratak kupaca
+    customer_search: Pretraga kupaca
+    customer_support_email: E-pošta korisničke podrške
+    cut: Izrezati
+    cvv: CVV
+    cvv_response: CVV odgovor
+    date: Datum
+    date_completed: Datum završetka
+    date_range: Raspon datuma
+    default: Zadano
+    default_country_cannot_be_deleted: Zadana zemlja ne može se izbrisati
+    default_currency: Zadana valuta
+    default_refund_amount: Zadani iznos povrata
+    default_tax: Zadani porez
+    default_tax_zone: Zadana porezna zona
+    delete: Izbrisati
+    delete_from_taxon: Izbriši iz Taxona
+    deleted: Izbrisano
+    delivery: Dostava
+    delivery_information: Informacije o dostavi
+    depth: Dubina
+    description: Opis
+    destination: Odredište
+    destroy: Uništiti
+    details: Pojedinosti
+    discontinue_on: Prekini Uključeno
+    discontinued: Prekinuta
+    discontinued_variants_present: Neke stavke u ovom redoslijedu imaju proizvode koji više nisu dostupni.
+    discount_amount: Iznos popusta
+    dismiss_banner: Ne hvala! Ne zanima me, nemoj više prikazivati ovu poruku
+    display: Prikaz
+    doesnt_track_inventory: Ne prati inventar
+    dont_have_account: Nemate račun?
+    edit: Uredi
+    edit_reimbursement: Uredite povrat
+    editing_resource: Uređivanje %{resource}
+    editing_rma_reason: Uređivanje RMA razloga
+    editing_user: Uredite svoj račun
+    eligibility_errors:
+      messages:
+        has_excluded_product: Vaša košarica sadrži proizvod koji sprječava primjenu ovog koda kupona.
+        item_total_less_than: Ovaj kôd kupona ne može se primijeniti na narudžbe manje od %{amount}.
+        item_total_less_than_or_equal: Ovaj kôd kupona ne može se primijeniti na narudžbe manje ili jednake %{amount}.
+        item_total_more_than: Ovaj kôd kupona ne može se primijeniti na narudžbe veće od %{amount}.
+        item_total_more_than_or_equal: Ovaj kôd kupona ne može se primijeniti na narudžbe veće ili jednake %{amount}.
+        limit_once_per_user: Ovaj kôd kupona može se koristiti samo jednom po korisniku.
+        missing_product: Ovaj kôd kupona ne može se primijeniti jer u svojoj košarici nemate svih potrebnih proizvoda.
+        missing_taxon: Prije primjene ovog koda kupona morate dodati proizvod iz svih primjenjivih kategorija.
+        no_applicable_products: Prije primjene ovog koda kupona morate dodati odgovarajući proizvod.
+        no_matching_taxons: Prije primjene ovog koda kupona morate dodati proizvod iz primjenjive kategorije.
+        no_user_or_email_specified: Prije primjene ovog koda kupona morate se prijaviti ili navesti svoj e-mail.
+        no_user_specified: Morate se prijaviti prije primjene ovog koda kupona.
+        not_first_order: Ovaj kôd kupona može se primijeniti samo na vašu prvu narudžbu.
+    email: E-mail
+    empty: Prazan
+    empty_cart: Prazna košara
+    enable_mail_delivery: Omogući isporuku pošte
+    end: Kraj
+    ending_at: Završava u
+    ending_in: Završavajući u
+    ends_at: Završava u
+    error: pogreška
+    error_user_destroy_with_orders: Korisnik povezan s narudžbama ne može se uništiti
+    errors:
+      messages:
+        blank: ne može biti prazno
+        cannot_remove_icon: Nije moguće ukloniti sliku
+        could_not_create_taxon: Nije moguće stvoriti takson
+        no_shipping_methods_available: Za odabranu lokaciju nisu dostupni načini dostave, promijenite adresu i pokušajte ponovo.
+      services:
+        get_shipping_rates:
+          no_line_items: Da biste generirali cijene otpreme, u narudžbu morate dodati neke stavke
+          no_shipping_address: Za generiranje cijena otpreme Narudžba mora imati adresu za otpremu
+    errors_prohibited_this_record_from_being_saved:
+      one: 1 pogreška zabranila je spremanje ovog zapisa
+      other: pogreške %{count} zabranjivale su spremanje ovog zapisa
+    event: Događaj
+    events:
+      spree:
+        cart:
+          add: Dodaj u košaricu
+        checkout:
+          coupon_code_added: Dodan je kôd kupona
+        content:
+          visited: Posjetite stranicu sa statičkim sadržajem
+        order:
+          contents_changed: Sadržaj narudžbe promijenjen
+        page_view: Pregledana statična stranica
+        user:
+          signup: Prijava korisnika
+    exceptions:
+      count_on_hand_setter: 'Ne može se ručno postaviti count_on_hand, jer se automatski postavlja povratnim pozivom recculate_count_on_hand. Umjesto toga upotrijebite `update_column (: count_on_hand, value)`.'
+    exchange_for: Razmjena za
+    excl: bez
+    existing_shipments: Postojeće pošiljke
+    expedited_exchanges_warning: Svaka navedena razmjena isporučuje se kupcu odmah po spremanju. Kupcu će se naplatiti puni iznos predmeta ako izvorni predmet ne vrati u roku od %{days_window} dana.
+    expiration: Istek
+    expiration_date: Rok trajanja
+    extension: Proširenje
+    extensions_directory: Katalog proširenja
+    facebook: Facebook
+    failed_payment_attempts: Neuspjeli pokušaji plaćanja
+    filename: Naziv datoteke
+    fill_in_customer_info: Molimo unesite podatke o kupcu
+    filter: filtar
+    filter_results: Filtriraj rezultate
+    filterable: Može se filtrirati
+    finalize: Dovršiti
+    finalized: Dovršeno
+    find_a_taxon: Pronađite takson
+    first_item: Prva stavka
+    first_name: Ime
+    first_name_begins_with: Ime započinje sa
+    firstname: Ime
+    flat_percent: Ravan postotak
+    flat_rate_per_order: Paušalna stopa
+    flexible_rate: Fleksibilna stopa
+    follow_us: Prati nas
+    footer: Podnožje
+    forgot_password: Zaboravili ste lozinku?
+    free: Besplatno
+    free_shipping: Besplatna dostava
+    free_shipping_amount: "-"
+    front_end: Prednji kraj
+    gateway: Gateway
+    gateway_error: Pogreška pristupnika
+    general: Općenito
+    general_settings: Opće postavke
+    generate_code: Generirajte kod kupona
+    get_back_to_the: Vratite se na
+    go_to_category: Idite u kategoriju
+    go_to_facebook: Idite na facebook
+    go_to_homepage: Idi na početnu stranicu
+    go_to_instagram: Idite na instagram
+    go_to_twitter: Idite na twitter
+    guest_checkout: odjava gosta
+    guest_user_account: Odjava kao gost
+    has_no_shipped_units: nema isporučenih jedinica
+    header_banner: Natpis zaglavlja
+    height: Visina
+    help_center: Centar za pomoć
+    hide_from_subcategories_nav: Sakrij se iz potkategorija navigacije
+    home: Dom
+    home_page: početna stranica
+    i18n:
+      available_locales: Dostupni jezici
+      country: Zemlja
+      default_country: Zadana država
+      fields: Polja
+      language: Jezik
+      localization_settings: Postavke lokalizacije
+      only_complete: Samo kompletno
+      only_incomplete: Samo nepotpuno
+      select_locale: Odaberite lokalitet
+      show_only: Prikaži samo
+      supported_locales: Podržani jezici
+      translations: Prijevodi
+    icon: Ikona
+    id: Iskaznica
+    image: Slika
+    images: Slike
+    implement_eligible_for_return: 'Morate implementirati #eligible_for_return? za vaš EligibilityValidator.'
+    implement_requires_manual_intervention: 'Morate implementirati #requires_manual_intervention? za vaš EligibilityValidator.'
+    in_stock: Na lageru
+    inactive: Neaktivan
+    incl: uklj.
+    included_in_price: Uključeno u cijenu
+    included_price_validation: ne može se odabrati ako niste postavili zadanu poreznu zonu
+    incomplete: Nepotpun
+    info_number_of_skus_not_shown:
+      one: i jedno drugo
+      other: i %{count} drugi
+    info_product_has_multiple_skus: 'Ovaj proizvod ima %{count} varijante:'
+    instagram: Instagram
+    instructions_to_reset_password: Unesite svoju e-adresu u obrazac ispod
+    insufficient_stock: Nema dovoljno zaliha, preostalo je samo %{on_hand}
+    insufficient_stock_item_quantity: Dostupna je nedovoljna količina zaliha
+    insufficient_stock_lines_present: Neke stavke u ovom redoslijedu nemaju dovoljnu količinu.
+    intercept_email_address: Presretnite e-adresu
+    intercept_email_instructions: Nadjačajte primatelja e-pošte i zamijenite ovom adresom.
+    internal_name: Interno ime
+    internationalization: Internacionalizacija
+    invalid_credit_card: Nevažeća kreditna kartica.
+    invalid_exchange_variant: Nevažeća varijanta zamjene.
+    invalid_payment_provider: Nevažeći davatelj usluga plaćanja.
+    invalid_promotion_action: Nevažeća akcija promocije.
+    invalid_promotion_rule: Nevažeće pravilo promocije.
+    inventory: Inventar
+    inventory_adjustment: Prilagodba zaliha
+    inventory_error_flash_for_insufficient_quantity: Predmet u vašoj košarici postao je nedostupan.
+    inventory_state: Stanje zaliha
+    is_not_available_to_shipment_address: nije dostupna na adresu pošiljke
+    iso: ISO Alpha-2
+    iso3: ISO Alpha-3
+    iso_name: ISO naziv
+    issued_on: Izdano na
+    item: Artikal
+    item_description: Opis Predmeta
+    item_total: Stavka Ukupno
+    item_total_rule:
+      operators:
+        gt: veći od
+        gte: veći ili jednak
+        lt: manje od
+        lte: manje ili jednako
+    items_cannot_be_shipped: Ne možemo izračunati cijene otpreme za odabrane artikle.
+    items_in_rmas: Predmeti u odobrenjima za povrat
+    items_reimbursed: Predmeti nadoknađeni
+    items_to_be_reimbursed: Predmeti za naknadu
+    join_slack: Pridružite se Slacku
+    last_name: Prezime
+    last_name_begins_with: Prezime započinje sa
+    lastname: Prezime
+    learn_more: Saznajte više
+    lifetime_stats: Životna statistika
+    limit_usage_to: Ograničite upotrebu na
+    line_item_adjustments: Prilagodbe stavke retka
+    list: Popis
+    loading: Učitavam
+    loading_tree: Stablo za utovar. Molimo pričekajte ...
+    locale_changed: Jezik promijenjen
+    location: Mjesto
+    lock: Zaključaj
+    log_entries: Unosi u zapisnik
+    log_in: Prijaviti se
+    log_in_to_continue: Prijavite se za nastavak
+    logged_in_as: prijavljen kao
+    logged_in_succesfully: Uspješno prijavljeni
+    logged_out: Odjavljeni ste.
+    login: Prijaviti se
+    login_as_existing: Prijavite se kao postojeći kupac
+    login_failed: Autentifikacija prijave nije uspjela.
+    login_name: Prijaviti se
+    logo: Logo
+    logo_alt: Logotip marke
+    logout: Odjavite se
+    logs: Trupci
+    look_for_similar_items: Potražite slične predmete
+    mail_from_address: Pošta s adrese
+    mailer_logo: Logotip poštara (samo JPG ili PNG slike)
+    make_refund: Povrat novca
+    make_sure_the_above_reimbursement_amount_is_correct: Provjerite je li gornji iznos naknade točan
+    manage_promotion_categories: Upravljanje kategorijama promocije
+    manage_variants: Upravljanje varijantama
+    manual_intervention_required: Potrebna ručna intervencija
+    master: Ovladati; majstorski
+    master_price: Master Price
+    master_sku: Master SKU
+    match_choices:
+      all: svi
+      none: Nijedna
+    max_items: Maks. Stavki
+    member_since: Član od
+    memo: Dopis
+    meta_description: Meta opis
+    meta_keywords: Meta Ključne riječi
+    meta_title: Meta naslov
+    metadata: Metapodaci
+    minimal_amount: Minimalni iznos
+    missing_return_authorization: Nedostaje odobrenje za povrat za %{item_name}.
+    month: Mjesec
+    more: Više
+    move_stock_between_locations: Pomicanje zaliha između lokacija
+    move_variant_to: Premjesti varijantu u
+    multiple_stores: Više trgovina
+    mutable: Promjenjivo
+    my_account: Moj račun
+    my_orders: Moje narudžbe
+    name: Ime
+    name_on_card: Ime na kartici
+    name_or_sku: Naziv ili SKU (unesite najmanje prva 3 znaka naziva proizvoda)
+    nav_bar:
+      admin_panel: upravljačka ploča
+      change_country: promijeni državu
+      close_menu: Zatvori izbornik
+      desktop: Navigacija radnom površinom
+      go_to_previous_menu: Idite na prethodni izbornik
+      log_in: PRIJAVITI SE
+      log_out: ODJAVITE SE
+      mobile: Mobilna navigacija
+      my_account: MOJ RAČUN
+      my_orders: MOJE NARUDŽBE
+      show_menu: Prikaži izbornik
+      show_search: Prikaži pretragu
+      show_user_menu: Prikaži izbornik korisnika
+      sign_up: PRIJAVITE SE
+    new: Novi
+    new_adjustment: Nova prilagodba
+    new_country: Nova zemlja
+    new_customer: Otvori novi račun
+    new_customer_return: Povratak novog kupca
+    new_image: Nova slika
+    new_option_type: Nova opcija
+    new_order: Novi poredak
+    new_order_completed: Nova narudžba dovršena
+    new_order_notifications_email: E-pošta s obavijestima o novoj narudžbi
+    new_payment: Novo plaćanje
+    new_payment_method: Novi način plaćanja
+    new_product: Novi proizvod
+    new_promotion: Nova promocija
+    new_promotion_category: Nova kategorija promocije
+    new_property: Nova nekretnina
+    new_prototype: Novi prototip
+    new_refund: Novi povrat
+    new_refund_reason: Novi razlog povrata
+    new_reimbursement_type: Nova vrsta naknade
+    new_return_authorization: Novo odobrenje za povratak
+    new_rma_reason: Novi RMA razlog
+    new_role: Nova uloga
+    new_shipment_at_location: Nova pošiljka na mjestu
+    new_shipping_category: Nova kategorija otpreme
+    new_shipping_method: Nova metoda otpreme
+    new_state: Nova država
+    new_stock_location: Nova lokacija dionica
+    new_stock_movement: Novo kretanje dionica
+    new_stock_transfer: Novi prijenos dionica
+    new_store_credit: Kredit za novu trgovinu
+    new_store_credit_category: Nova kategorija kredita za trgovinu
+    new_tax_category: Nova porezna kategorija
+    new_tax_rate: Nova porezna stopa
+    new_taxon: Novi Taxon
+    new_taxonomy: Nova taksonomija
+    new_tracker: Novi Tracker
+    new_user: Novi korisnik
+    new_variant: Nova varijanta
+    new_zone: Nova zona
+    next: Sljedeći
+    no_actions_added: Nije dodana nijedna radnja
+    no_address_given: Adresa nije navedena
+    no_available_date_set: Nije dostupan nijedan datum
+    no_cc_type: N / A
+    no_country: Nije postavljena nijedna zemlja
+    no_limits_zone: Bez granica
+    no_payment_found: Nije pronađena nijedna uplata
+    no_payment_provider_settings_message: Ovaj pružatelj usluga plaćanja nema dostupnih prilagođenih postavki
+    no_pending_payments: Nema plaćanja na čekanju
+    no_product_available:
+      for_this_quantity: Žao nam je, čini se da neki proizvodi nisu dostupni u odabranoj količini.
+      opps: Ups!
+    no_products_found: Nije pronađen nijedan proizvod
+    no_resource_found: Nije pronađen %{resource}
+    no_results: Nema rezultata
+    no_returns_found: Povratak nije pronađen
+    no_rules_added: Nisu dodana pravila
+    no_shipping_method_selected: Nije odabran nijedan način dostave.
+    no_state_changes: Još nema promjena u državi.
+    no_tracking_present: Nisu navedeni detalji praćenja.
+    none: Nijedna
+    none_selected: Nije odabrano
+    normal_amount: Uobičajeni iznos
+    not: ne
+    not_available: N / A
+    not_enough_stock: Na izvornom mjestu nema dovoljno inventara za dovršetak ovog prijenosa.
+    not_found: "%{resource} nije pronađen"
+    note: Bilješka
+    notice_messages:
+      icon_removed: Slika je uspješno uklonjena
+      prices_saved: Cijene su uspješno spremljene
+      product_cloned: Proizvod je kloniran
+      product_deleted: Proizvod je izbrisan
+      product_not_cloned: 'Proizvod se nije mogao klonirati. Razlog: %{error}'
+      product_not_deleted: 'Proizvod nije moguće izbrisati. Razlog: %{error}'
+      variant_deleted: Varijanta je izbrisana
+      variant_not_deleted: 'Varijanta se ne može izbrisati. Razlog: %{error}'
+    num_orders: "# Narudžbe"
+    number: Broj
+    ok: u redu
+    on_hand: Na ruku
+    open: Otvoren
+    open_all_adjustments: Otvorite Sve prilagodbe
+    option_type: Vrsta opcije
+    option_type_placeholder: Odaberite vrstu opcije
+    option_types: Vrste opcija
+    option_value: Vrijednost opcije
+    option_values: Opcijske vrijednosti
+    optional: Neobvezno
+    options: Opcije
+    or: ili
+    or_over_price: "%{price} ili više"
+    order: Narudžba
+    order_adjustments: Prilagodbe narudžbe
+    order_already_updated: Narudžba je već ažurirana.
+    order_approved: Narudžba odobrena
+    order_canceled: Narudžba otkazana
+    order_details: Detalji narudžbe
+    order_email_resent: Narudžba e-pošte ponovno je poslana
+    order_has_no_payments: Narudžba nema plaćanja
+    order_information: Informacije o narudžbi
+    order_line_items: Stavke narudžbe
+    order_mailer:
+      cancel_email:
+        dear_customer: Poštovani %{name},
+        instructions: Vaša je narudžba OTKAZANA. Zadržite ove podatke o otkazivanju za svoju evidenciju.
+        order_summary_canceled: Narudžba %{number} Sažetak [OTKAZANO]
+        subject: Otkazivanje narudžbe
+        thanks: Hvala vam na poslovanju.
+      confirm_email:
+        dear_customer: Poštovani %{name},
+        instructions: Molimo pregledajte i sačuvajte sljedeće podatke o narudžbi za svoju evidenciju.
+        order_summary: Narudžba %{number} Sažetak
+        subject: Potvrda narudžbe
+        thanks: Hvala vam na poslovanju.
+      store_owner_notification_email:
+        heading: Primljena nova narudžba
+        instructions: Primili ste novu narudžbu.
+        order_summary: Narudžba %{number} Sažetak
+        subject: "%{store_name} je dobio novu narudžbu"
+        thanks: Hvala vam na poslovanju.
+      store_team: "%{store_name} tim"
+      subtotal: 'Međuzbroj:'
+      total: 'Ukupno narudžbe:'
+    order_not_found: Nismo mogli pronaći vašu narudžbu. Pokušajte ponovo s tom radnjom.
+    order_number: Naručite %{number}
+    order_processed_successfully: Vaša je narudžba uspješno obrađena
+    order_resumed: Redoslijed nastavljen
+    order_state:
+      address: adresa
+      awaiting_return: čeka povratak
+      canceled: otkazan
+      cart: kolica
+      complete: dovršen
+      confirm: potvrdi
+      considered_risky: smatra rizičnim
+      delivery: dostava
+      payment: plaćanje
+      resumed: nastavljen
+      returned: vratio
+    order_success: Narudžba je uspješno poslana
+    order_success_explain: Podaci o vašoj narudžbi bit će poslani na vašu e-poštu
+    order_summary: Sažetak narudžbe
+    order_sure_want_to: Jeste li sigurni da želite %{event} ovu narudžbu?
+    order_total: Ukupno narudžbe
+    order_updated: Narudžba ažurirana
+    orders: Narudžbe
+    out_of_stock: Nema na skladištu
+    overview: Pregled
+    package_from: paket od
+    page_not_found: Oprosti! Stranicu koju tražite nije moguće pronaći.
+    pagination:
+      next_page: sljedeća stranica & raquo;
+      previous_page: "& laquo; Prethodna stranica"
+      truncate: "& hellip;"
+    password: Zaporka
+    paste: Zalijepiti
+    path: Staza
+    pay: platiti
+    payment: Plaćanje
+    payment_amount: Iznos uplate
+    payment_could_not_be_created: Nije moguće izvršiti plaćanje.
+    payment_identifier: Identifikator plaćanja
+    payment_information: Informacije o plaćanju
+    payment_method: Način plaćanja
+    payment_method_not_supported: Taj način plaćanja nije podržan. Molimo odaberite drugu.
+    payment_methods: Metode Plačanja
+    payment_processing_failed: Uplata nije obrađena, provjerite podatke koje ste unijeli
+    payment_processor_choose_banner_text: Ako trebate pomoć u odabiru procesora plaćanja, posjetite
+    payment_processor_choose_link: našu stranicu za plaćanja
+    payment_provider_settings: Postavke davatelja plaćanja
+    payment_state: Država plaćanja
+    payment_states:
+      balance_due: balans
+      checkout: provjeri
+      completed: dovršen
+      credit_owed: dugovani kredit
+      failed: neuspjeh
+      paid: plaćen
+      pending: u tijeku
+      processing: obrada
+      void: poništiti
+    payment_type: Način plaćanja
+    payment_updated: Plaćanje ažurirano
+    payments: Plaćanja
+    pdp:
+      checkout: Provjeri
+      description: Opis
+      details: Pojedinosti
+      products_included_in_promotion: Proizvodi uključeni u promociju
+      quantity: Količina
+      view_cart: Pogledaj košaricu
+      you_may_also_like: Možda ti se također svidi
+    pending: U tijeku
+    pending_sale: Na prodaju
+    percent: Postotak
+    percent_per_item: Postotak po stavci
+    permalink: Permalink
+    phone: Telefon
+    place_order: Naručiti
+    please_define_payment_methods: Prvo definirajte neke načine plaćanja.
+    please_enter_reasonable_quantity: Unesite razumnu količinu.
+    plp:
+      best_selling: NAJPRODAJA
+      clear_all: OČISTITI SVE
+      collection: KOLEKCIJA
+      color: BOJA
+      default: ZADANO
+      done: GOTOVO
+      filter_by: FILTRIRATI PO
+      newest_first: NAJNOVIJE PRVO
+      no_results: Nema rezultata
+      no_results_found: Nema rezultata
+      not_found_filters1: Nismo uspjeli pronaći podudaranje za ove filtre.
+      not_found_filters2: Pokušajte s drugim odabirom.
+      not_found_text1: Nismo mogli pronaći proizvode za "%{keywords}".
+      not_found_text2: Pokušajte s drugim pretraživanjem.
+      price: cijena
+      price_high_to_low: CIJENA (VISOKA - NISKA)
+      price_low_to_high: CIJENA (NISKA - VISOKA)
+      result: PROIZLAZITI
+      results_for: REZULTATI ZA
+      size: VELIČINA
+      sort_by: REZERVIRAJ PO
+      top_sellers: VRHUNSKI PRODAJACI
+      type: TIP
+    populate_get_error: Nešto je pošlo po zlu. Pokušajte ponovo dodati stavku.
+    powered_by: Pokreće
+    pre_tax_amount: Iznos prije oporezivanja
+    pre_tax_refund_amount: Iznos povrata prije oporezivanja
+    pre_tax_total: Ukupno prije oporezivanja
+    preferred_reimbursement_type: Poželjna vrsta naknade
+    presentation: Prezentacija
+    preview_product: Pregled proizvoda
+    preview_taxon: Pregled Taxon
+    previous: Prethodni
+    previous_state_missing: n / a
+    previously_used_card: Ranije korištene kartice
+    price: Cijena
+    price_range: Raspon cijena
+    price_sack: Cijena vreće
+    prices: Cijene
+    process: Postupak
+    product: Proizvod
+    product_details: detalji o proizvodu
+    product_has_no_description: Ovaj proizvod nema opis
+    product_not_available_in_this_currency: Ovaj proizvod nije dostupan u odabranoj valuti.
+    product_properties: Svojstva proizvoda
+    product_rule:
+      choose_products: Odaberite proizvode
+      label: Narudžba mora sadržavati x količinu ovih proizvoda
+      match_all: svi
+      match_any: najmanje jedan
+      match_none: nijedna
+      product_source:
+        group: Iz grupe proizvoda
+        manual: Ručno odaberite
+    products: Proizvodi
+    promotion: Promocija
+    promotion_action: Promocija
+    promotion_action_types:
+      create_adjustment:
+        description: Na narudžbi stvara prilagodbu za promotivni kredit
+        name: Stvorite prilagodbu cijelog poretka
+      create_item_adjustments:
+        description: Stvara prilagodbu bonusa za promociju na stavci retka
+        name: Izradite prilagodbu po stavci
+      create_line_items:
+        description: Popunjava košaricu s navedenom količinom varijante
+        name: Izradite stavke retka
+      free_shipping:
+        description: Sve pošiljke za narudžbu čini besplatnima
+        name: Besplatna dostava
+    promotion_actions: Akcije
+    promotion_categories: Kategorije promocije
+    promotion_category: Kategorija promocije
+    promotion_cloned: Promocija je klonirana
+    promotion_form:
+      match_policies:
+        all: Uskladite sva ova pravila
+        any: Uskladite se s bilo kojim od ovih pravila
+    promotion_label: Promocija (%{name})
+    promotion_not_cloned: 'Promocija nije klonirana. Razlog: %{error}'
+    promotion_rule: Pravilo promocije
+    promotion_rule_types:
+      country:
+        description: Narudžba se šalje u odgovarajuću (ili zadanu) zemlju
+        name: Zemlja
+      first_order:
+        description: To mora biti prva narudžba kupca
+        name: Prva narudžba
+      item_total:
+        description: Ukupno narudžba ispunjava ove kriterije
+        name: Ukupno stavka
+      one_use_per_user:
+        description: Samo jedna upotreba po korisniku
+        name: Jedna upotreba po korisniku
+      option_value:
+        description: Narudžba uključuje određene proizvode s odgovarajućim vrijednostima opcija
+        name: Vrijednost (i) opcije
+      product:
+        description: Narudžba uključuje određene proizvode
+        name: Proizvoda
+      taxon:
+        description: Narudžba uključuje proizvode s navedenim taksonima
+        name: Takson (i)
+      user:
+        description: Dostupno samo navedenim korisnicima
+        name: Korisnik
+      user_logged_in:
+        description: Dostupno samo prijavljenim korisnicima
+        name: Korisnik prijavljen
+    promotion_uses: Promocija koristi
+    promotionable: Promovirano
+    promotions: Promocije
+    propagate_all_variants: Proširite sve varijante
+    properties: Svojstva
+    property: Vlasništvo
+    prototype: Prototip
+    prototypes: Prototipovi
+    provider: Pružatelj usluga
+    provider_settings_warning: Ako mijenjate vrstu davatelja usluge, najprije morate spremiti prije uređivanja postavki davatelja usluge
+    purchased_quantity: Kupljena količina
+    qty: Količina
+    quantity: Količina
+    quantity_returned: Količina vraćena
+    quantity_shipped: Količina isporučena
+    quick_search: Brza pretraga..
+    rate: Stopa
+    reason: Razlog
+    receive: primiti
+    receive_stock: Primanje dionica
+    received: Primljeno
+    reception_status: Status prijema
+    reference: Referenca
+    reference_contains: Referenca sadrži
+    refund: Povrat novca
+    refund_amount_must_be_greater_than_zero: Iznos povrata mora biti veći od nule
+    refund_reasons: Razlozi povrata
+    refunded_amount: Povratni iznos
+    refunds: Povrat novca
+    register: Registar
+    registration: Registracija
+    reimburse: Nadoknaditi
+    reimbursed: Naknadeno
+    reimbursement: Naknada
+    reimbursement_mailer:
+      reimbursement_email:
+        days_to_send: Imate %{days} dana da pošaljete natrag sve stavke koje čekaju na razmjenu.
+        dear_customer: Poštovani %{name},
+        exchange_summary: Sažetak razmjene
+        for: za
+        instructions: Vaša je naknada obrađena.
+        refund_summary: Sažetak povrata
+        store_team: "%{store_name} tim"
+        subject: Obavijest o povratu
+        thanks: Hvala vam na poslovanju.
+        total_refunded: 'Ukupni povrat: %{total}'
+    reimbursement_perform_failed: 'Naknada se nije mogla izvršiti. Pogreška: %{error}'
+    reimbursement_status: Status naknade
+    reimbursement_type: Vrsta naknade
+    reimbursement_type_override: Poništavanje vrste naknade
+    reimbursement_types: Vrste naknade
+    reimbursements: Naknade
+    reject: Odbiti
+    rejected: Odbijen
+    remember_me: Zapamti me
+    remove: Ukloniti
+    remove_image: Ukloni sliku
+    rename: Preimenovati
+    report: izvješće
+    reports: Izvještaji
+    required: "*"
+    required_fields: Obavezna polja
+    resellable: Može se preprodati
+    resend: Ponovo pošalji
+    reset_password: Resetirati moju lozinku
+    response_code: Šifra odgovora
+    resume: nastaviti
+    resumed: Nastavljeno
+    return: povratak
+    return_authorization: Odobrenje za povratak
+    return_authorization_canceled: Odobrenje povratka otkazano
+    return_authorization_reasons: Vratite razloge odobrenja
+    return_authorization_states:
+      authorized: Ovlašteno
+      canceled: Otkazano
+    return_authorization_updated: Ovlaštenje za povratak ažurirano
+    return_authorizations: Povratak odobrenja
+    return_item_inventory_unit_ineligible: Jedinica inventara predmeta vraćanja mora biti isporučena
+    return_item_inventory_unit_reimbursed: Jedinica zalihe predmeta vraćanja već je nadoknađena
+    return_item_order_not_completed: Narudžba povrata predmeta mora biti dovršena
+    return_item_rma_ineligible: Za povrat stavke potreban je RMA
+    return_item_time_period_ineligible: Predmet povrata izvan je prihvatljivog vremenskog razdoblja
+    return_items: Vrati predmete
+    return_items_cannot_be_associated_with_multiple_orders: Predmeti za vraćanje ne mogu se povezati s više narudžbi.
+    return_number: Povratni broj
+    return_quantity: Povratna količina
+    returned: Vratio se
+    returns: Povrat
+    review: Pregled
+    risk: Rizik
+    risk_analysis: Analiza rizika
+    risky: Rizično
+    rma_credit: RMA kredit
+    rma_number: RMA broj
+    rma_value: RMA vrijednost
+    role_id: ID uloge
+    roles: Uloge
+    rules: Pravila
+    safe: Sef
+    sales_total: Ukupna prodaja
+    sales_total_description: Ukupna prodaja za sve narudžbe
+    sales_totals: Ukupno prodaje
+    save_and_continue: Spremi i nastavi
+    save_my_address: Spremi moju adresu
+    saving: Spremanje
+    say_no: Ne
+    say_yes: Da
+    scope: Opseg
+    search: traži
+    search_results: Rezultati pretraživanja za '%{keywords}'
+    searching: Traženje
+    secure_connection_type: Vrsta sigurne veze
+    security_settings: Sigurnosne postavke
+    select: Izaberi
+    select_a_date: Odaberite datum
+    select_a_date_range: Odaberite datumski raspon
+    select_a_return_authorization_reason: Odaberite razlog za autorizaciju povrata
+    select_a_stock_location: Odaberite mjesto zaliha
+    select_a_store_credit_reason: Odaberite razlog za kredit u trgovini
+    select_an_option: Odaberite opciju
+    select_from_prototype: Odaberite Iz prototipa
+    select_stock: Odaberite dionice
+    selected_quantity_not_available: odabrani od %{item} nije dostupan.
+    send_copy_of_all_mails_to: Pošaljite kopiju sve pošte na
+    send_mails_as: Pošaljite poštu kao
+    seo: SEO
+    seo_robots: SEO roboti
+    seo_title: SEO naslov
+    server: Poslužitelj
+    server_error: Poslužitelj je vratio pogrešku
+    settings: Postavke
+    ship: Brod
+    ship_address: Adresa broda
+    ship_to: 'Dostava na:'
+    ship_total: Ukupno broda
+    shipment: Pošiljka
+    shipment_adjustments: Prilagođavanje pošiljke
+    shipment_details: Od %{stock_location} preko %{shipping_method}
+    shipment_mailer:
+      shipped_email:
+        dear_customer: Poštovani %{name},
+        instructions: Vaša narudžba %{number} je poslana
+        shipment_summary: Sažetak pošiljke za narudžbu
+        shipping_method: 'Način otpreme: %{shipping_method}'
+        store_team: "%{store_name} tim"
+        subject: Obavijest o pošiljci
+        thanks: Hvala vam na poslovanju.
+        track_information: 'Informacije o praćenju: %{tracking}'
+        track_link: 'Link za praćenje: %{url}'
+    shipment_state: Država otpreme
+    shipment_states:
+      backorder: backorder
+      canceled: otkazan
+      partial: djelomično
+      pending: u tijeku
+      ready: spreman
+      shipped: otpremljen
+    shipment_transfer_error: Došlo je do pogreške pri prijenosu inačica
+    shipment_transfer_success: Varijante su uspješno prenesene
+    shipments: Pošiljke
+    shipped: Otpremljeno
+    shipping: dostava
+    shipping_address: dostavna adresa
+    shipping_categories: Kategorije otpreme
+    shipping_category: Kategorija otpreme
+    shipping_flat_rate_per_item: Paušalna cijena po paketu
+    shipping_flat_rate_per_order: Paušal
+    shipping_flexible_rate: Fleksibilna cijena po paketu
+    shipping_instructions: Upute za otpremu
+    shipping_method: Metoda slanja
+    shipping_methods: Načini otpreme
+    shipping_price_sack: Vreća s cijenama
+    shipping_rates:
+      display_price:
+        excluding_tax: "%{price} (+ %{tax_amount} %{tax_rate_name})"
+        including_tax: "%{price} (uklj. %{tax_amount} %{tax_rate_name})"
+    shipping_total: Ukupna poštarina
+    shop_by_taxonomy: Kupujte od %{taxonomy}
+    shopping_cart: Košarica
+    show: Pokazati
+    show_active: Prikaži aktivno
+    show_deleted: Prikaži izbrisano
+    show_discontinued: Emisija ukinuta
+    show_only_complete_orders: Prikažite samo kompletne narudžbe
+    show_only_considered_risky: Pokazujte samo rizične narudžbe
+    show_property: Prikaži imovinu
+    show_rate_in_label: Prikaži stopu u oznaci
+    show_store_selector:
+      long: Prikažite odabir Trgovina na glavnoj navigacijskoj traci Storefronta i dopustite korisnicima da mijenjaju Trgovinu i valutu
+      short: Prikaži odabir trgovine
+    sign_up: Prijavite se
+    sku: SKU
+    skus: SKU-ovi
+    slug: Puž
+    social: Društveni
+    source: Izvor
+    special_instructions: posebne upute
+    split: Podjela
+    spree_gateway_error_flash_for_checkout: Došlo je do problema s vašim podacima o plaćanju. Provjerite svoje podatke i pokušajte ponovo.
+    ssl:
+      change_protocol: Prebacite se na upotrebu HTTP-a (umjesto HTTPS-a) i pokušajte ponovo s ovim zahtjevom.
+    start: Početak
+    starting_from: Počinje u
+    state: država
+    state_based: Državno utemeljeno
+    state_machine_states:
+      accepted: Prihvaćen
+      address: Adresa
+      authorized: Ovlašteno
+      awaiting: Čekajući
+      awaiting_return: Čeka povratak
+      backordered: Natrag naručeno
+      canceled: Otkazano
+      cart: Košarica
+      checkout: Provjeri
+      closed: Zatvoreno
+      complete: Kompletna
+      completed: Dovršeno
+      confirm: Potvrdite
+      delivery: Dostava
+      errored: Pogrešno
+      failed: Neuspjeh
+      given_to_customer: Daje se kupcu
+      invalid: Nevaljano
+      manual_intervention_required: Potrebna ručna intervencija
+      on_hand: Pri ruci
+      open: Otvoren
+      order: Narudžba
+      payment: Plaćanje
+      pending: U tijeku
+      processing: Obrada
+      ready: Spreman
+      reimbursed: Naknadeno
+      resumed: Nastavljeno
+      returned: Vratio se
+      shipment: Pošiljka
+      shipped: Otpremljeno
+      void: Poništiti
+    states: Države
+    states_required: Potrebne države
+    status: Status
+    stock: Zaliha
+    stock_item_id: Stavka zaliha
+    stock_location: Mjesto zaliha
+    stock_location_info: Informacije o dionici
+    stock_locations: Lokacije dionica
+    stock_locations_need_a_default_country: Morate stvoriti zadanu zemlju prije stvaranja mjesta zaliha.
+    stock_management: Upravljanje dionicama
+    stock_management_requires_a_stock_location: Molimo stvorite mjesto zaliha kako biste upravljali zalihama.
+    stock_movements: Kretanje dionica
+    stock_movements_for_stock_location: Kretanje dionica za %{stock_location_name}
+    stock_successfully_transferred: Zaliha je uspješno prenesena između lokacija.
+    stock_transfer:
+      errors:
+        must_have_variant: Morate dodati barem jednu varijantu.
+        variants_unavailable: Neke varijante nisu dostupne na %{stock}
+    stock_transfer_name: Prijenos dionica
+    stock_transfers: Prijenosi dionica
+    stop: Stop
+    store: Spremi
+    store_credit:
+      additional_payment_needed: Odaberite drugi način plaćanja za preostali <strong> %{amount} </strong>.
+      allocated: Dodano
+      applicable_amount: Na ovu će se narudžbu primijeniti <strong> %{amount} </strong> u trgovini.
+      apply: Prijavite se
+      authorized: Ovlašteno
+      available_amount: Na raspolaganju vam je <strong> %{amount} </strong> u trgovini.
+      captured: Korišteno
+      credit: Kreditna
+      errors:
+        cannot_change_used_store_credit: Ne možete promijeniti kredit koji ste već koristili
+        unable_to_create: Nije moguće stvoriti kredit za trgovinu
+        unable_to_delete: Nije moguće izbrisati kredit u trgovini
+        unable_to_fund: Nije moguće platiti narudžbu putem kredita u trgovini
+        unable_to_update: Nije moguće ažurirati kredit u trgovini
+      remaining_amount: Imate <strong> %{amount} </strong> na kreditnom računu Trgovine na vašem računu.
+      remove: Ukloniti
+    store_credit_categories: Kategorije kredita u trgovini
+    store_credit_name: Kredit za trgovinu
+    store_credit_payment_method:
+      currency_mismatch: Valuta kredita u trgovini ne podudara se s valutom narudžbe
+      insufficient_authorized_amount: Nije moguće prikupiti više od odobrenog iznosa
+      insufficient_funds: Preostali iznos kredita u trgovini nije dovoljan
+      select_one_store_credit: Odaberite kredit u trgovini da biste krenuli prema preostalom saldu
+      successful_action: Uspješna kreditna trgovina %{action}
+      unable_to_credit: 'Kreditni kod nije moguće: %{auth_code}'
+      unable_to_find: Nije moguće pronaći kredit u trgovini
+      unable_to_find_for_action: 'Nije moguće pronaći kredit za autentifikacijski kôd: %{auth_code} za akciju: %{action}'
+      unable_to_void: 'Nije moguće poništiti kôd: %{auth_code}'
+      user_has_no_store_credits: Korisnik nema dostupan kredit u trgovini
+    store_credits: Pohranite kredite
+    store_default: Zadana trgovina
+    store_errors:
+      unable_to_create: Nije moguće stvoriti trgovinu.
+      unable_to_delete: Nije moguće izbrisati trgovinu.
+      unable_to_update: Ažuriranje trgovine nije moguće.
+    store_form:
+      checkout_zone_help: Odabir zone ograničit će do koje se države ili države isporučuju proizvodi. Za više informacija <a href='https://guides.spreecommerce.org/user/configuration/configuring_geography.html#zones' target='_blank' class='alert-link'> pogledajte dokumentaciju </a>
+      code_help: Pohranite jedinstveni identifikator, koji je skraćena verzija naziva trgovine (koristi se kao naziv direktorija izgleda, a također je koristan za odvajanje predložaka prema trgovini)
+      customer_support_email_help: Ova je e-pošta posjetiteljima vaše trgovine vidljiva u odjeljku Podnožje
+      default_country_help: Ovo je država koja će biti unaprijed odabrana na obrascu adrese za naplatu
+      footer_help: Ovaj je sadržaj vidljiv u podnožju vaše trgovine
+      locales_help: Instalirajte <a href='https://github.com/spree-contrib/spree_i18n target='_blank' class='alert-link'> Proširenje Spree I18n </a> da biste dodali više jezika
+      mail_from_address_help: Ovo je e-adresa koja će biti pošiljatelj svih vaših e-adresa u Trgovini (potvrda narudžbe, obavijest o otpremi itd.)
+      new_order_notifications_email_help: Ako želite primati obavijesti e-poštom svaki put kad netko naruči, navedite e-adresu na koju će se poslati ta obavijest
+      seo_robots: Pogledajte <a href='https://developers.google.com/search/reference/robots_meta_tag' target='_blank'> ovu stranicu za dodatnu pomoć </a>
+      social_help: Ako se želite povezati sa svojim društvenim računima u podnožju vašeg web mjesta, ispunite donja polja
+    store_not_set_as_default: Nije moguće postaviti trgovinu %{store} kao zadanu trgovinu
+    store_set_as_default: Trgovina %{store} sada je zadana trgovina
+    store_set_default_button: Postavi kao zadano
+    stores: Trgovine
+    street_address: Adresa ulice
+    street_address_2: Adresa (nastavak)
+    subtotal: Međuzbir
+    subtract: Oduzeti
+    success: Uspjeh
+    successfully_created: "%{resource} je uspješno stvoren!"
+    successfully_refunded: "%{resource} je uspješno vraćen!"
+    successfully_removed: "%{resource} je uspješno uklonjen!"
+    successfully_updated: "%{resource} je uspješno ažuriran!"
+    summary: Sažetak
+    supported_currencies: Podržane valute
+    supported_currencies_long: Popis podržanih valuta odvojenih zarezom
+    supported_locales: Podržani jezici
+    tags: Oznake
+    tags_placeholder: Dodaj oznake
+    tax: Porez
+    tax_categories: Porezne kategorije
+    tax_category: Kategorija poreza
+    tax_code: Porezni broj
+    tax_included: Porez (uklj.)
+    tax_rate_amount_explanation: Porezne stope decimalni su iznos za pomoć u izračunima (tj. Ako je porezna stopa 5%, unesite 0,05)
+    tax_rates: Porezne stope
+    taxon: Taxon
+    taxon_edit: Uredi Taxon
+    taxon_missing_alt: Opis natpisa kategorije
+    taxon_placeholder: Dodajte takson
+    taxon_rule:
+      choose_taxons: Odaberite taksone
+      label: Narudžba mora sadržavati x iznos ovih taksona
+      match_all: svi
+      match_any: najmanje jedan
+    taxonomies: Taksonomije
+    taxonomy: Taksonomija
+    taxonomy_brands_name: Brendovi
+    taxonomy_categories_name: Kategorije
+    taxonomy_edit: Uredi taksonomiju
+    taxonomy_tree_error: Zatražena promjena nije prihvaćena i stablo je vraćeno u prethodno stanje, pokušajte ponovo.
+    taxonomy_tree_instruction: "* Desnom tipkom miša kliknite (ili dvaput dodirnite iOS uređaj) dijete na stablu da biste pristupili izborniku za dodavanje, brisanje ili sortiranje djeteta."
+    taxons: Taksoni
+    test: Test
+    test_mailer:
+      test_email:
+        greeting: Čestitamo!
+        message: Ako ste dobili ovu e-poštu, tada su postavke e-pošte ispravne.
+        subject: Probna pošta
+    test_mode: Test Mode
+    thank_you_for_your_order: Hvala vam na poslovanju. Za vašu evidenciju ispišite kopiju ove stranice s potvrdom.
+    there_are_no_items_for_this_order: Nema predmeta za ovu narudžbu. Molimo dodajte stavku u narudžbu da biste nastavili.
+    there_were_problems_with_the_following_fields: Bilo je problema sa sljedećim poljima
+    this_order_has_already_received_a_refund: Za ovu je narudžbu već vraćen novac
+    thumbnail: Sličica
+    tiered_flat_rate: Tarirani paušal
+    tiered_percent: Složeni postotak
+    tiers: Razine
+    time: Vrijeme
+    to_add_variants_you_must_first_define: Da biste dodali inačice, prvo morate definirati
+    total: Ukupno
+    total_per_item: Ukupno po stavci
+    total_pre_tax_refund: Ukupni povrat prije oporezivanja
+    total_price: Ukupna cijena
+    total_sales: Totalna rasprodaja
+    track_inventory: Popis inventara
+    tracking: Praćenje
+    tracking_number: Broj za pračenje
+    tracking_url: URL za praćenje
+    tracking_url_placeholder: npr. http://quickship.com/package?num=:praćenje
+    transaction_id: ID transakcije
+    transfer_from_location: Prijenos iz
+    transfer_stock: Prijenos dionica
+    transfer_to_location: Prijenos u
+    tree: Drvo
+    twitter: Cvrkut
+    type: Tip
+    type_to_search: Upišite za pretraživanje
+    unable_to_connect_to_gateway: Povezivanje s pristupnikom nije moguće.
+    unable_to_create_reimbursements: Nije moguće stvoriti povrat jer postoje stavke na čekanju za ručnu intervenciju.
+    under_price: Pod %{price}
+    unlock: Otključati
+    unrecognized_card_type: Neprepoznat tip kartice
+    unshippable_items: Predmeti koji se ne mogu isporučiti
+    update: Ažuriraj
+    updating: Ažuriranje
+    url: URL
+    usage_limit: Ograničenje upotrebe
+    use_app_default: Upotrijebi zadanu aplikaciju
+    use_billing_address: Upotrijebite adresu za naplatu
+    use_existing_cc: Upotrijebite postojeću karticu u evidenciji
+    use_new_cc: Upotrijebite novu karticu
+    use_new_cc_or_payment_method: Upotrijebite novu karticu / način plaćanja
+    use_s3: Koristite Amazon S3 za slike
+    used: Korišteno
+    user: Korisnik
+    user_not_found: Korisnik nije pronađen
+    user_rule:
+      choose_users: Odaberite korisnike
+    users: Korisnici
+    validation:
+      cannot_be_less_than_shipped_units: ne može biti manji od broja isporučenih jedinica.
+      cannot_destroy_line_item_as_inventory_units_have_shipped: Stavku retka nije moguće uništiti jer su isporučene neke jedinice inventara.
+      exceeds_available_stock: premašuje raspoložive zalihe. Molimo osigurajte da stavke retka imaju valjanu količinu.
+      is_too_large: je prevelika - zalihe pri ruci ne mogu pokriti traženu količinu!
+      must_be_int: mora biti cijeli broj
+      must_be_non_negative: mora biti negativna vrijednost
+      unpaid_amount_not_zero: 'Iznos nije u potpunosti nadoknađen. Još uvijek zbog: %{amount}'
+    value: Vrijednost
+    variant: Varijanta
+    variant_placeholder: Odaberite varijantu
+    variant_prices_search_placeholder: Potražite naziv SKU-a ili varijante ...
+    variants: Varijante
+    version: Verzija
+    void: Poništiti
+    weight: Težina
+    what_is_a_cvv: Što je (CVV) kod kreditne kartice?
+    what_is_this: Što je ovo?
+    width: Širina
+    year: Godina
+    you_have_no_orders_yet: Još nemate narudžbi
+    your_cart_is_empty: Vaša košarica je prazna
+    your_order_is_empty_add_product: Vaša je narudžba prazna, potražite i dodajte proizvod iznad
+    zip: Zip
+    zipcode: Poštanski broj
+    zipcode_required: Potreban poštanski broj
+    zone: Zona
+    zones: Zone
