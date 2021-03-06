@@ -697,11 +697,6 @@ en:
     country: Country
     country_based: Country Based
     country_name: Name
-    country_names:
-      CA: Canada
-      FRA: France
-      ITA: Italy
-      US: United States of America
     country_rule:
       label: Choose must be shipped to this country
     coupon: Coupon
