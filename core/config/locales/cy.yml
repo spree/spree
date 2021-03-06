@@ -268,125 +268,285 @@ cy:
               no_master_variant_found_to_infer_price: Ni chanfuwyd bod unrhyw amrywiad meistr yn casglu pris
     models:
       spree/address:
+        few: Cyfeiriad
+        many: Cyfeiriadau
         one: Cyfeiriad
         other: Cyfeiriadau
+        two: Cyfeiriadau
+        zero: Dim Cyfeiriad
       spree/country:
+        few: Gwlad
+        many: Gwledydd
         one: Gwlad
         other: Gwledydd
+        two: Gwledydd
+        zero: Dim Gwlad
       spree/credit_card:
+        few: Cerdyn credyd
+        many: Cardiau Credyd
         one: Cerdyn credyd
         other: Cardiau Credyd
+        two: Cardiau Credyd
+        zero: Dim Cerdyn credyd
       spree/customer_return:
+        few: Ffurflen Cwsmer
+        many: Ffurflenni Cwsmeriaid
         one: Ffurflen Cwsmer
         other: Ffurflenni Cwsmeriaid
+        two: Ffurflenni Cwsmeriaid
+        zero: Dim Ffurflen Cwsmer
       spree/inventory_unit:
+        few: Unedau Rhestr
+        many: Unedau Rhestr
         one: Uned Rhestr
         other: Unedau Rhestr
+        two: Unedau Rhestr
+        zero: Dim Uned Rhestr
       spree/line_item:
+        few: Eitemau Llinell
+        many: Eitemau Llinell
         one: Eitem Llinell
         other: Eitemau Llinell
+        two: Eitemau Llinell
+        zero: Dim Eitem Llinell
       spree/option_type:
+        few: Math o Opsiwn
+        many: Mathau Opsiwn
         one: Math o Opsiwn
         other: Mathau Opsiwn
+        two: Mathau Opsiwn
+        zero: Dim Math o Opsiwn
       spree/option_value:
+        few: Gwerth Opsiwn
+        many: Gwerthoedd Opsiwn
         one: Gwerth Opsiwn
         other: Gwerthoedd Opsiwn
+        two: Gwerthoedd Opsiwn
+        zero: Dim Gwerth Opsiwn
       spree/order:
+        few: Gorchmynion
+        many: Gorchmynion
         one: Gorchymyn
         other: Gorchmynion
+        two: Gorchmynion
+        zero: Dim Gorchymyn
       spree/payment:
+        few: Taliad
+        many: Taliadau
         one: Taliad
         other: Taliadau
+        two: Taliadau
+        zero: Dim Taliad
       spree/payment_method:
+        few: Dull talu
+        many: Dulliau Talu
         one: Dull talu
         other: Dulliau Talu
+        two: Dulliau Talu
+        zero: Dim Dull talu
       spree/product:
+        few: Cynnyrch
+        many: Cynhyrchion
         one: Cynnyrch
         other: Cynhyrchion
+        two: Cynhyrchion
+        zero: Dim Cynnyrch
       spree/promotion:
+        few: Hyrwyddo
+        many: Hyrwyddiadau
         one: Hyrwyddo
         other: Hyrwyddiadau
+        two: Hyrwyddiadau
+        zero: Dim Hyrwyddo
       spree/promotion_category:
+        few: Categori Hyrwyddo
+        many: Categorïau Hyrwyddo
         one: Categori Hyrwyddo
         other: Categorïau Hyrwyddo
+        two: Categorïau Hyrwyddo
+        zero: Dim Categori Hyrwyddo
       spree/property:
+        few: Priodweddau
+        many: Priodweddau
         one: Eiddo
         other: Priodweddau
+        two: Priodweddau
+        zero: Dim Eiddo
       spree/prototype:
+        few: Prototeip
+        many: Prototeipiau
         one: Prototeip
         other: Prototeipiau
+        two: Prototeipiau
+        zero: Dim Prototeip
       spree/refund_reason:
+        few: Rheswm Ad-daliad
+        many: Rhesymau Ad-daliad
         one: Rheswm Ad-daliad
         other: Rhesymau Ad-daliad
+        two: Rhesymau Ad-daliad
+        zero: Dim Rheswm Ad-daliad
       spree/reimbursement:
+        few: Ad-daliad
+        many: Ad-daliadau
         one: Ad-daliad
         other: Ad-daliadau
+        two: Ad-daliadau
+        zero: Dim Ad-daliad
       spree/reimbursement_type:
+        few: Math Ad-daliad
+        many: Mathau Ad-daliad
         one: Math Ad-daliad
         other: Mathau Ad-daliad
+        two: Mathau Ad-daliad
+        zero: Dim Math Ad-daliad
       spree/return_authorization:
+        few: Awdurdodi Dychwelyd
+        many: Awdurdodiadau Dychwelyd
         one: Awdurdodi Dychwelyd
         other: Awdurdodiadau Dychwelyd
+        two: Awdurdodiadau Dychwelyd
+        zero: Dim Awdurdodi Dychwelyd
       spree/return_authorization_reason:
+        few: Rheswm Awdurdodi Dychwelyd
+        many: Rhesymau Awdurdodi Dychwelyd
         one: Rheswm Awdurdodi Dychwelyd
         other: Rhesymau Awdurdodi Dychwelyd
+        two: Rhesymau Awdurdodi Dychwelyd
+        zero: Dim Rheswm Awdurdodi Dychwelyd
       spree/role:
+        few: Rolau
+        many: Rolau
         one: Rolau
         other: Rolau
+        two: Rolau
+        zero: Dim Rolau
       spree/shipment:
+        few: Cludo
+        many: Llongau
         one: Cludo
         other: Llongau
+        two: Llongau
+        zero: Dim Cludo
       spree/shipping_category:
+        few: Categori Llongau
+        many: Categorïau Llongau
         one: Categori Llongau
         other: Categorïau Llongau
+        two: Categorïau Llongau
+        zero: Dim Categori Llongau
       spree/shipping_method:
+        few: Dull Llongau
+        many: Dulliau Llongau
         one: Dull Llongau
         other: Dulliau Llongau
+        two: Dulliau Llongau
+        zero: Dim Dull Llongau
       spree/state:
+        few: Nodwch
+        many: Gwladwriaethau
         one: Nodwch
         other: Gwladwriaethau
+        two: Gwladwriaethau
+        zero: Dim Nodwch
       spree/state_change:
+        few: Newid y Wladwriaeth
+        many: Newidiadau Gwladwriaethol
         one: Newid y Wladwriaeth
         other: Newidiadau Gwladwriaethol
+        two: Newidiadau Gwladwriaethol
+        zero: Dim Newid y Wladwriaeth
       spree/stock_location:
+        few: Lleoliad Stoc
+        many: Lleoliadau Stoc
         one: Lleoliad Stoc
         other: Lleoliadau Stoc
+        two: Lleoliadau Stoc
+        zero: Dim Lleoliad Stoc
       spree/stock_movement:
+        few: Symud Stoc
+        many: Symudiadau Stoc
         one: Symud Stoc
         other: Symudiadau Stoc
+        two: Symudiadau Stoc
+        zero: Dim Symud Stoc
       spree/stock_transfer:
+        few: Trosglwyddo Stoc
+        many: Trosglwyddiadau Stoc
         one: Trosglwyddo Stoc
         other: Trosglwyddiadau Stoc
+        two: Trosglwyddiadau Stoc
+        zero: Dim Trosglwyddo Stoc
       spree/store_credit:
+        few: Credyd Siop
+        many: Credydau Siop
         one: Credyd Siop
         other: Credydau Siop
+        two: Credydau Siop
+        zero: Dim Credyd Siop
       spree/store_credit_category:
+        few: Categori Credyd Siop
+        many: Categorïau Credyd Siop
         one: Categori Credyd Siop
         other: Categorïau Credyd Siop
+        two: Categorïau Credyd Siop
+        zero: Dim Categori Credyd Siop
       spree/tax_category:
+        few: Categori Treth
+        many: Categorïau Treth
         one: Categori Treth
         other: Categorïau Treth
+        two: Categorïau Treth
+        zero: Dim Categori Treth
       spree/tax_rate:
+        few: Gyfradd dreth
+        many: Cyfraddau Treth
         one: Gyfradd dreth
         other: Cyfraddau Treth
+        two: Cyfraddau Treth
+        zero: Dim Gyfradd dreth
       spree/taxon:
+        few: Tacson
+        many: Tacsonau
         one: Tacson
         other: Tacsonau
+        two: Tacsonau
+        zero: Dim Tacson
       spree/taxonomy:
+        few: Tacsonomeg
+        many: Tacsonomeg
         one: Tacsonomeg
         other: Tacsonomeg
+        two: Tacsonomeg
+        zero: Dim Tacsonomeg
       spree/tracker:
+        few: Traciwr
+        many: Tracwyr
         one: Traciwr
         other: Tracwyr
+        two: Tracwyr
+        zero: Dim Traciwr
       spree/user:
+        few: Defnyddiwr
+        many: Defnyddwyr
         one: Defnyddiwr
         other: Defnyddwyr
+        two: Defnyddwyr
+        zero: Dim Defnyddiwr
       spree/variant:
+        few: Amrywiol
+        many: Amrywiadau
         one: Amrywiol
         other: Amrywiadau
+        two: Amrywiadau
+        zero: Dim Amrywiol
       spree/zone:
+        few: Parth
+        many: Parthau
         one: Parth
         other: Parthau
+        two: Parthau
+        zero: Dim Parth
   address_book:
     save: Arbedwch
     successfully_created: Mae cyfeiriad newydd wedi'i greu yn llwyddiannus
@@ -434,8 +594,12 @@ cy:
       not_found: heb ei ddarganfod
       not_locked: ni chafodd ei gloi
       not_saved:
+        few: 'Roedd 1 gwall yn gwahardd arbed y %{resource} hwn:'
+        many: 'Roedd gwallau %{count} yn gwahardd arbed y %{resource} hwn:'
         one: 'Roedd 1 gwall yn gwahardd arbed y %{resource} hwn:'
         other: 'Roedd gwallau %{count} yn gwahardd arbed y %{resource} hwn:'
+        two: 'Roedd gwallau %{count} yn gwahardd arbed y %{resource} hwn:'
+        zero: Dim
   spree:
     abbreviation: Talfyriad
     accept: Derbyn
@@ -642,8 +806,12 @@ cy:
       remove_from_cart: Tynnwch o'r drol
       title: Cart Siopa
     cart_subtotal:
+      few: Is-gyfanswm (1 eitem)
+      many: Is-gyfanswm (eitemau %{count})
       one: Is-gyfanswm (1 eitem)
       other: Is-gyfanswm (eitemau %{count})
+      two: Is-gyfanswm (eitemau %{count})
+      zero: Dim
     categories: Categorïau
     category: Categori
     category_nav_bar:
@@ -807,8 +975,12 @@ cy:
           no_line_items: I gynhyrchu Cyfraddau Llongau mae angen i chi ychwanegu rhai Eitemau Llinell i'w Archebu
           no_shipping_address: Er mwyn cynhyrchu Gorchymyn Cyfraddau Llongau mae angen Cyfeiriad Llongau
     errors_prohibited_this_record_from_being_saved:
+      few: Roedd 1 gwall yn gwahardd y cofnod hwn rhag cael ei gadw
+      many: Roedd gwallau %{count} yn gwahardd y cofnod hwn rhag cael ei gadw
       one: Roedd 1 gwall yn gwahardd y cofnod hwn rhag cael ei gadw
       other: Roedd gwallau %{count} yn gwahardd y cofnod hwn rhag cael ei gadw
+      two: Roedd gwallau %{count} yn gwahardd y cofnod hwn rhag cael ei gadw
+      zero: Dim
     event: Digwyddiad
     events:
       spree:
@@ -903,8 +1075,12 @@ cy:
     included_price_validation: ni ellir eich dewis oni bai eich bod wedi gosod Parth Trethi Rhagosodedig
     incomplete: Anghyflawn
     info_number_of_skus_not_shown:
+      few: ac un arall
+      many: a %{count} eraill
       one: ac un arall
       other: a %{count} eraill
+      two: a %{count} eraill
+      zero: Dim
     info_product_has_multiple_skus: 'Mae gan y cynnyrch hwn amrywiadau %{count}:'
     instagram: Instagram
     instructions_to_reset_password: Rhowch eich e-bost ar y ffurflen isod
