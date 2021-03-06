@@ -723,6 +723,7 @@ en:
     created_at: Created At
     created_by: Created By
     credit: Credit
+    credit_allowed: Credit allowed
     credit_card: Credit Card
     credit_cards: Credit Cards
     credit_owed: Credit Owed
@@ -771,6 +772,7 @@ en:
     doesnt_track_inventory: It doesn't track inventory
     dont_have_account: No account?
     edit: Edit
+    edit_reimbursement: Edit reimbursement
     editing_resource: Editing %{resource}
     editing_rma_reason: Editing RMA Reason
     editing_user: Edit Your account
@@ -894,6 +896,7 @@ en:
       supported_locales: Supported Locales
       translations: Translations
     icon: Icon
+    id: Id
     image: Image
     images: Images
     implement_eligible_for_return: 'Must implement #eligible_for_return? for your EligibilityValidator.'
@@ -998,6 +1001,8 @@ en:
     month: Month
     more: More
     move_stock_between_locations: Move Stock Between Locations
+    move_variant_to: Move variant to
+    multiple_stores: Multiple stores
     mutable: Mutable
     my_account: My Account
     my_orders: My Orders
@@ -1119,6 +1124,7 @@ en:
     order_canceled: Order canceled
     order_details: Order Details
     order_email_resent: Order Email Resent
+    order_has_no_payments: Order has no payments
     order_information: Order Information
     order_line_items: Order Line Items
     order_mailer:
@@ -1179,6 +1185,7 @@ en:
     path: Path
     pay: pay
     payment: Payment
+    payment_amount: Payment amount
     payment_could_not_be_created: Payment could not be created.
     payment_identifier: Payment Identifier
     payment_information: Payment Information
@@ -1292,6 +1299,7 @@ en:
         description: Makes all shipments for the order free
         name: Free shipping
     promotion_actions: Actions
+    promotion_categories: Promotion categories
     promotion_category: Promotion Category
     promotion_cloned: Promotion has been cloned
     promotion_form:
@@ -1571,6 +1579,7 @@ en:
     states_required: States Required
     status: Status
     stock: Stock
+    stock_item_id: Stock item
     stock_location: Stock Location
     stock_location_info: Stock location info
     stock_locations: Stock Locations
