@@ -268,125 +268,205 @@ sl:
               no_master_variant_found_to_infer_price: Za glavno različico ni mogoče ugotoviti cene
     models:
       spree/address:
+        few: Naslov
         one: Naslov
         other: Naslovi
+        two: Naslovi
       spree/country:
+        few: Država
         one: Država
         other: Države
+        two: Države
       spree/credit_card:
+        few: Kreditna kartica
         one: Kreditna kartica
         other: Kreditne kartice
+        two: Kreditne kartice
       spree/customer_return:
+        few: Vrnitev kupca
         one: Vrnitev kupca
         other: Vračilo kupca
+        two: Vračilo kupca
       spree/inventory_unit:
+        few: Enota zaloge
         one: Enota zaloge
         other: Enote zaloge
+        two: Enote zaloge
       spree/line_item:
+        few: Vrstica
         one: Vrstica
         other: Vrstice
+        two: Vrstice
       spree/option_type:
+        few: Vrsta možnosti
         one: Vrsta možnosti
         other: Vrste možnosti
+        two: Vrste možnosti
       spree/option_value:
+        few: Vrednost možnosti
         one: Vrednost možnosti
         other: Možnosti
+        two: Možnosti
       spree/order:
+        few: Naročilo
         one: Naročilo
         other: Naročila
+        two: Naročila
       spree/payment:
+        few: Plačilo
         one: Plačilo
         other: Plačila
+        two: Plačila
       spree/payment_method:
+        few: Način plačila
         one: Način plačila
         other: načini plačila
+        two: načini plačila
       spree/product:
+        few: Izdelka
         one: Izdelka
         other: Izdelki
+        two: Izdelki
       spree/promotion:
+        few: Promocija
         one: Promocija
         other: Promocije
+        two: Promocije
       spree/promotion_category:
+        few: Kategorija promocije
         one: Kategorija promocije
         other: Promocijske kategorije
+        two: Promocijske kategorije
       spree/property:
+        few: Nepremičnina
         one: Nepremičnina
         other: Lastnosti
+        two: Lastnosti
       spree/prototype:
+        few: Prototip
         one: Prototip
         other: Prototipi
+        two: Prototipi
       spree/refund_reason:
+        few: Razlog vračila
         one: Razlog vračila
         other: Razlogi za vračilo kupnine
+        two: Razlogi za vračilo kupnine
       spree/reimbursement:
+        few: Povračilo
         one: Povračilo
         other: Povračila
+        two: Povračila
       spree/reimbursement_type:
+        few: Vrsta povračila
         one: Vrsta povračila
         other: Vrste povračil
+        two: Vrste povračil
       spree/return_authorization:
+        few: Vrnite dovoljenje
         one: Vrnite dovoljenje
         other: Vrnite pooblastila
+        two: Vrnite pooblastila
       spree/return_authorization_reason:
+        few: Razlog za odobritev vrnitve
         one: Razlog za odobritev vrnitve
         other: Razlogi za odobritev vrnitve
+        two: Razlogi za odobritev vrnitve
       spree/role:
+        few: Vloge
         one: Vloge
         other: Vloge
+        two: Vloge
       spree/shipment:
+        few: Pošiljka
         one: Pošiljka
         other: Pošiljke
+        two: Pošiljke
       spree/shipping_category:
+        few: Kategorija pošiljanja
         one: Kategorija pošiljanja
         other: Kategorije pošiljanja
+        two: Kategorije pošiljanja
       spree/shipping_method:
+        few: Način pošiljanja
         one: Način pošiljanja
         other: Načini pošiljanja
+        two: Načini pošiljanja
       spree/state:
+        few: Država
         one: Država
         other: Državah
+        two: Državah
       spree/state_change:
+        few: Sprememba države
         one: Sprememba države
         other: Spremembe države
+        two: Spremembe države
       spree/stock_location:
+        few: Lokacija zaloge
         one: Lokacija zaloge
         other: Lokacije delnic
+        two: Lokacije delnic
       spree/stock_movement:
+        few: Gibanje delnic
         one: Gibanje delnic
         other: Gibanje delnic
+        two: Gibanje delnic
       spree/stock_transfer:
+        few: Prenos zalog
         one: Prenos zalog
         other: Prenosi zalog
+        two: Prenosi zalog
       spree/store_credit:
+        few: Trgovina Credit
         one: Trgovina Credit
         other: Shranite dobropise
+        two: Shranite dobropise
       spree/store_credit_category:
+        few: Kategorija kredita v trgovini
         one: Kategorija kredita v trgovini
         other: Trgovinske kreditne kategorije
+        two: Trgovinske kreditne kategorije
       spree/tax_category:
+        few: Kategorija davka
         one: Kategorija davka
         other: Davčne kategorije
+        two: Davčne kategorije
       spree/tax_rate:
+        few: Davčna stopnja
         one: Davčna stopnja
         other: Davčne stopnje
+        two: Davčne stopnje
       spree/taxon:
+        few: Takson
         one: Takson
         other: Taksoni
+        two: Taksoni
       spree/taxonomy:
+        few: Taksonomija
         one: Taksonomija
         other: Taksonomije
+        two: Taksonomije
       spree/tracker:
+        few: Sledilnik
         one: Sledilnik
         other: Sledilci
+        two: Sledilci
       spree/user:
+        few: Uporabnik
         one: Uporabnik
         other: Uporabniki
+        two: Uporabniki
       spree/variant:
+        few: Varianta
         one: Varianta
         other: Variante
+        two: Variante
       spree/zone:
+        few: Cona
         one: Cona
         other: Območja
+        two: Območja
   address_book:
     save: Shrani
     successfully_created: Nov naslov je bil uspešno ustvarjen
@@ -434,8 +514,10 @@ sl:
       not_found: ni najdeno
       not_locked: ni bil zaklenjen
       not_saved:
+        few: '1 napaka je prepovedala shranjevanje tega %{resource}:'
         one: '1 napaka je prepovedala shranjevanje tega %{resource}:'
         other: 'napake %{count} so prepovedale shranjevanje tega %{resource}:'
+        two: 'napake %{count} so prepovedale shranjevanje tega %{resource}:'
   spree:
     abbreviation: Okrajšava
     accept: Sprejmi
@@ -642,8 +724,10 @@ sl:
       remove_from_cart: Odstrani iz vozička
       title: Nakupovalni voziček
     cart_subtotal:
+      few: Vmesni seštevek (1 postavka)
       one: Vmesni seštevek (1 postavka)
       other: Vmesni seštevek (%{count} elementov)
+      two: Vmesni seštevek (%{count} elementov)
     categories: Kategorije
     category: Kategorija
     category_nav_bar:
@@ -807,8 +891,10 @@ sl:
           no_line_items: Če želite ustvariti cene pošiljanja, morate naročiti nekaj postavk
           no_shipping_address: Za ustvarjanje stroškov pošiljanja mora imeti naročilo naslov za pošiljanje
     errors_prohibited_this_record_from_being_saved:
+      few: 1 napaka je prepovedala shranjevanje tega zapisa
       one: 1 napaka je prepovedala shranjevanje tega zapisa
       other: Napake %{count} so prepovedale shranjevanje tega zapisa
+      two: Napake %{count} so prepovedale shranjevanje tega zapisa
     event: Dogodek
     events:
       spree:
@@ -903,8 +989,10 @@ sl:
     included_price_validation: ni mogoče izbrati, če niste nastavili privzete davčne cone
     incomplete: Nepopolna
     info_number_of_skus_not_shown:
+      few: in eno drugo
       one: in eno drugo
       other: in %{count} drugih
+      two: in %{count} drugih
     info_product_has_multiple_skus: 'Ta izdelek ima različice %{count}:'
     instagram: Instagram
     instructions_to_reset_password: V spodnji obrazec vnesite svoj e-naslov
