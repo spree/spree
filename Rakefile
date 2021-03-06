@@ -12,31 +12,24 @@ SPREE_GEMS = %w(core api cmd backend frontend sample).freeze
 task default: :test
 
 namespace :i18n do
-  desc 'Gives a health report pertaining to the locale files in core/config/locales'
+  desc 'Generates a health report for the locale files in core/config/locales.'
   task :health do
     Dir.chdir("#{File.dirname(__FILE__)}/core") do
       sh 'i18n-tasks health'
     end
   end
 
-  desc 'Adds translations to en.yml and removes unused'
+  desc 'Adds new translations to the base locale file (en.yml), then removes unused locales from all files.'
   task :sync do
     Dir.chdir("#{File.dirname(__FILE__)}/core") do
       sh 'i18n-tasks add-missing --locales en && i18n-tasks remove-unused'
     end
   end
 
-  desc 'Finds translations in the view files that are not present as keys in en.yml'
-  task :add_missing_translations_to_base_file do
-    Dir.chdir("#{File.dirname(__FILE__)}/core") do
-      sh 'i18n-tasks add-missing --locales en en-GB en-AU en-US en-IN en-NZ'
-    end
-  end
-
-  desc 'Translates all locales from en.yml to all other none English files in core/config/locales'
+  desc 'Translates keys found in the base file (en.yml) to all other languages.'
   task :translate do
     Dir.chdir("#{File.dirname(__FILE__)}/core") do
-      sh 'i18n-tasks translate-missing'
+      sh 'i18n-tasks translate-missing && i18n-tasks normalize '
     end
   end
 end
