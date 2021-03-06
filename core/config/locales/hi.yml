@@ -1163,7 +1163,7 @@ hi:
     order_success: आदेश सफलतापूर्वक रखा गया
     order_success_explain: आपके आदेश की जानकारी आपके ईमेल पर भेजी जाएगी
     order_summary: आदेश सारांश
-    order_sure_want_to: क्या आप वाकई इस आदेश को प्राप्त करना चाहते हैं?
+    order_sure_want_to: क्या आप वाकई इस %{event} आदेश को प्राप्त करना चाहते हैं?
     order_total: कुल आर्डर
     order_updated: आदेश अद्यतन
     orders: आदेश

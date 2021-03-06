@@ -234,7 +234,7 @@ kn:
         spree/return_item:
           attributes:
             inventory_unit:
-              other_completed_return_item_exists: ರಿಟರ್ನ್ ಐಟಂ %{return_item_id} ನಿಂದ %{inventory_unit_id} ಅನ್ನು ಈಗಾಗಲೇ ತೆಗೆದುಕೊಳ್ಳಲಾಗಿದೆ
+              other_completed_return_item_exists: ರಿಟರ್ನ್ ಐಟಂ %{return_item_id} ನಿಂದ ಅನ್ನು ಈಗಾಗಲೇ ತೆಗೆದುಕೊಳ್ಳಲಾಗಿದೆ %{inventory_unit_id}
             reimbursement:
               cannot_be_associated_unless_accepted: ಸ್ವೀಕರಿಸದ ರಿಟರ್ನ್ ಐಟಂಗೆ ಸಂಯೋಜಿಸಲಾಗುವುದಿಲ್ಲ.
         spree/shipping_method:
@@ -774,10 +774,10 @@ kn:
     eligibility_errors:
       messages:
         has_excluded_product: ನಿಮ್ಮ ಕಾರ್ಟ್ ಈ ಕೂಪನ್ ಕೋಡ್ ಅನ್ನು ಅನ್ವಯಿಸುವುದನ್ನು ತಡೆಯುವ ಉತ್ಪನ್ನವನ್ನು ಒಳಗೊಂಡಿದೆ.
-        item_total_less_than: ಈ ಕೂಪನ್ ಕೋಡ್ ಅನ್ನು xxzxzx0 ಗಿಂತ ಕಡಿಮೆ ಆದೇಶಗಳಿಗೆ ಅನ್ವಯಿಸಲಾಗುವುದಿಲ್ಲ.
+        item_total_less_than: ಈ ಕೂಪನ್ ಕೋಡ್ ಅನ್ನು %{amount} ಗಿಂತ ಕಡಿಮೆ ಆದೇಶಗಳಿಗೆ ಅನ್ವಯಿಸಲಾಗುವುದಿಲ್ಲ.
         item_total_less_than_or_equal: ಈ ಕೂಪನ್ ಕೋಡ್ ಅನ್ನು %{amount} ಗಿಂತ ಕಡಿಮೆ ಅಥವಾ ಸಮನಾದ ಆದೇಶಗಳಿಗೆ ಅನ್ವಯಿಸಲಾಗುವುದಿಲ್ಲ.
-        item_total_more_than: ಈ ಕೂಪನ್ ಕೋಡ್ ಅನ್ನು xxzxzx0 ಗಿಂತ ಹೆಚ್ಚಿನ ಆದೇಶಗಳಿಗೆ ಅನ್ವಯಿಸಲಾಗುವುದಿಲ್ಲ.
-        item_total_more_than_or_equal: ಈ ಕೂಪನ್ ಕೋಡ್ ಅನ್ನು xxzxzx0 ಗಿಂತ ಹೆಚ್ಚಿನ ಅಥವಾ ಸಮನಾದ ಆದೇಶಗಳಿಗೆ ಅನ್ವಯಿಸಲಾಗುವುದಿಲ್ಲ.
+        item_total_more_than: ಈ ಕೂಪನ್ ಕೋಡ್ ಅನ್ನು %{amount} ಗಿಂತ ಹೆಚ್ಚಿನ ಆದೇಶಗಳಿಗೆ ಅನ್ವಯಿಸಲಾಗುವುದಿಲ್ಲ.
+        item_total_more_than_or_equal: ಈ ಕೂಪನ್ ಕೋಡ್ ಅನ್ನು %{amount} ಗಿಂತ ಹೆಚ್ಚಿನ ಅಥವಾ ಸಮನಾದ ಆದೇಶಗಳಿಗೆ ಅನ್ವಯಿಸಲಾಗುವುದಿಲ್ಲ.
         limit_once_per_user: ಈ ಕೂಪನ್ ಕೋಡ್ ಅನ್ನು ಪ್ರತಿ ಬಳಕೆದಾರರಿಗೆ ಒಮ್ಮೆ ಮಾತ್ರ ಬಳಸಬಹುದಾಗಿದೆ.
         missing_product: ಈ ಕೂಪನ್ ಕೋಡ್ ಅನ್ನು ಅನ್ವಯಿಸಲಾಗುವುದಿಲ್ಲ ಏಕೆಂದರೆ ನಿಮ್ಮ ಕಾರ್ಟ್‌ನಲ್ಲಿ ಅಗತ್ಯವಿರುವ ಎಲ್ಲಾ ಉತ್ಪನ್ನಗಳನ್ನು ನೀವು ಹೊಂದಿಲ್ಲ.
         missing_taxon: ಈ ಕೂಪನ್ ಕೋಡ್ ಅನ್ನು ಅನ್ವಯಿಸುವ ಮೊದಲು ನೀವು ಅನ್ವಯವಾಗುವ ಎಲ್ಲಾ ವರ್ಗಗಳಿಂದ ಉತ್ಪನ್ನವನ್ನು ಸೇರಿಸುವ ಅಗತ್ಯವಿದೆ.
@@ -828,7 +828,7 @@ kn:
     exchange_for: ವಿನಿಮಯ
     excl: excl.
     existing_shipments: ಅಸ್ತಿತ್ವದಲ್ಲಿರುವ ಸಾಗಣೆಗಳು
-    expedited_exchanges_warning: ಯಾವುದೇ ನಿರ್ದಿಷ್ಟ ವಿನಿಮಯ ಕೇಂದ್ರಗಳು ಉಳಿಸಿದ ಕೂಡಲೇ ಗ್ರಾಹಕರಿಗೆ ರವಾನೆಯಾಗುತ್ತದೆ. Xxzxzx0 ದಿನಗಳಲ್ಲಿ ಮೂಲ ವಸ್ತುವನ್ನು ಹಿಂತಿರುಗಿಸದಿದ್ದರೆ ಗ್ರಾಹಕರಿಗೆ ವಸ್ತುವಿನ ಸಂಪೂರ್ಣ ಮೊತ್ತವನ್ನು ವಿಧಿಸಲಾಗುತ್ತದೆ.
+    expedited_exchanges_warning: ಯಾವುದೇ ನಿರ್ದಿಷ್ಟ ವಿನಿಮಯ ಕೇಂದ್ರಗಳು ಉಳಿಸಿದ ಕೂಡಲೇ ಗ್ರಾಹಕರಿಗೆ ರವಾನೆಯಾಗುತ್ತದೆ. %{days_window} ದಿನಗಳಲ್ಲಿ ಮೂಲ ವಸ್ತುವನ್ನು ಹಿಂತಿರುಗಿಸದಿದ್ದರೆ ಗ್ರಾಹಕರಿಗೆ ವಸ್ತುವಿನ ಸಂಪೂರ್ಣ ಮೊತ್ತವನ್ನು ವಿಧಿಸಲಾಗುತ್ತದೆ.
     expiration: ಮುಕ್ತಾಯ
     expiration_date: ಮುಕ್ತಾಯ ದಿನಾಂಕ
     extension: ವಿಸ್ತರಣೆ

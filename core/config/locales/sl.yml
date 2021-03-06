@@ -1507,7 +1507,7 @@ sl:
     shipping_rates:
       display_price:
         excluding_tax: "%{price} (+ %{tax_amount} %{tax_rate_name})"
-        including_tax: "%{price} (vključno zxxxxx1 %{tax_rate_name})"
+        including_tax: "%{price} (vključno %{tax_amount} %{tax_rate_name})"
     shipping_total: Dostava skupaj
     shop_by_taxonomy: Nakupujte %{taxonomy}
     shopping_cart: Nakupovalni voziček

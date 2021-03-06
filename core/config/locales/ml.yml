@@ -234,7 +234,7 @@ ml:
         spree/return_item:
           attributes:
             inventory_unit:
-              other_completed_return_item_exists: റിട്ടേൺ ഇനം %{return_item_id} ഇതിനകം തന്നെ എടുത്തിട്ടുണ്ട്
+              other_completed_return_item_exists: റിട്ടേൺ ഇനം %{return_item_id} ഇതിനകം തന്നെ എടുത്തിട്ടുണ്ട് %{inventory_unit_id}
             reimbursement:
               cannot_be_associated_unless_accepted: സ്വീകരിക്കാത്ത ഒരു മടക്ക ഇനവുമായി ബന്ധപ്പെടുത്താൻ കഴിയില്ല.
         spree/shipping_method:

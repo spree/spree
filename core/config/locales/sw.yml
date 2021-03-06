@@ -512,7 +512,7 @@ sw:
     adjustment_amount: Kiasi
     adjustment_labels:
       tax_rates:
-        excluding_tax: mkundu
+        excluding_tax: "%{name}%{amount}"
         including_tax: "%{name}%{amount} (Imejumuishwa katika Bei)"
     adjustment_successfully_closed: Marekebisho yamefungwa kwa mafanikio!
     adjustment_successfully_opened: Marekebisho yamefunguliwa kwa mafanikio!

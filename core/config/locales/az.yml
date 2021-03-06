@@ -1469,7 +1469,7 @@ az:
     ship_total: Gəmi cəmi
     shipment: Göndərmə
     shipment_adjustments: Göndərmə düzəlişləri
-    shipment_details: "%{shipping_method}-dən %{shipping_method} vasitəsilə"
+    shipment_details: "%{stock_location}-dən %{shipping_method} vasitəsilə"
     shipment_mailer:
       shipped_email:
         dear_customer: Hörmətli %{name},

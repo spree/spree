@@ -1124,13 +1124,13 @@ ur:
     order_line_items: آرڈر لائن آئٹمز
     order_mailer:
       cancel_email:
-        dear_customer: پیارے زیڈز ایکس ایکس ایکس ایکس ،
+        dear_customer: دیر سے مریں %{name}
         instructions: آپ کا آرڈر منسوخ کردیا گیا ہے۔ براہ کرم اپنے ریکارڈوں کے لئے اس منسوخی کی معلومات کو برقرار رکھیں۔
         order_summary_canceled: آرڈر %{number} خلاصہ [منسوخ]
         subject: آرڈر کی منسوخی
         thanks: آپ کے کاروبار کے لئے آپ کا شکریہ.
       confirm_email:
-        dear_customer: پیارے زیڈز ایکس ایکس ایکس ایکس ،
+        dear_customer: دیر سے مریں %{name}
         instructions: براہ کرم اپنے ریکارڈوں کیلئے درج ذیل آرڈر کی معلومات کا جائزہ لیں اور اسے برقرار رکھیں۔
         order_summary: "%{number} خلاصہ آرڈر کریں"
         subject: آرڈر کی تصدیق
@@ -1369,7 +1369,7 @@ ur:
     reimbursement_mailer:
       reimbursement_email:
         days_to_send: تبادلے کے منتظر کسی بھی اشیاء کو واپس بھیجنے کے لئے آپ کے پاس %{days} دن ہیں۔
-        dear_customer: پیارے زیڈز ایکس ایکس ایکس ایکس ،
+        dear_customer: دیر سے مریں %{name}
         exchange_summary: تبادلہ کا خلاصہ
         for: کے لئے
         instructions: آپ کی واپسی پر کارروائی کی گئی ہے۔
@@ -1472,7 +1472,7 @@ ur:
     shipment_details: "%{stock_location} سے %{shipping_method} کے ذریعے"
     shipment_mailer:
       shipped_email:
-        dear_customer: پیارے زیڈز ایکس ایکس ایکس ایکس ،
+        dear_customer: دیر سے مریں %{name}
         instructions: آپ کا آرڈر %{number} بھیج دیا گیا ہے
         shipment_summary: آرڈر کے لئے شپمنٹ کا خلاصہ
         shipping_method: 'شپنگ کا طریقہ: %{shipping_method}'
