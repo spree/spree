@@ -437,7 +437,6 @@ eo:
     abbreviation: Mallongigo
     accept: Akceptu
     acceptance_errors: Akcepteraroj
-    acceptance_status: Akcepta stato
     accepted: Akceptita
     account: Konto
     account_info: Informoj pri konto
@@ -455,32 +454,24 @@ eo:
       refund: Repago
       save: Savi
       update: Ĝisdatigu
-    activate: Aktivigi
     active: Aktiva
     add: Aldoni
     add_action_of_type: Aldoni agon de tipo
-    add_country: Aldonu landon
     add_coupon_code: Aldoni Kuponan Kodon
     add_new_address: Aldonu novan adreson
     add_new_credit_card: Aldonu novan karton
-    add_new_header: Aldoni Novan Titolon
-    add_new_style: Aldoni Novan Stilon
     add_one: Aldonu Unu
     add_option_value: Aldonu Opcia Valoro
     add_product: Aldoni Produkton
     add_product_properties: Aldoni Produktajn Propraĵojn
     add_rule_of_type: Aldoni tipan regulon
-    add_state: Aldoni ŝtaton
     add_stock: Aldonu Stokon
     add_store: Nova Butiko
     add_store_credit: Aldoni Butikan Krediton
     add_to_cart: Aldonu al la korbo
     add_variant: Aldoni Varianton
     added_to_cart: Aldonita al ĉaro sukcese!
-    additional_item: Kroma Artikolo
     address: Adreso
-    address1: Adreso
-    address2: Adreso (daŭr.)
     address_action_popup:
       delete_button: jes, forigu
       delete_text: Ĉu vi vere volas <br /> forigi ĉi tiun adreson?
@@ -499,13 +490,10 @@ eo:
     addresses: Adresoj
     adjustable: Agordebla
     adjustment: Alĝustigo
-    adjustment_amount: Kvanto
     adjustment_labels:
       tax_rates:
         excluding_tax: "%{name}%{amount}"
         including_tax: "%{name}%{amount} (Inkludita en Prezo)"
-    adjustment_successfully_closed: Alĝustigo estis sukcese fermita!
-    adjustment_successfully_opened: Alĝustigo sukcese malfermiĝis!
     adjustment_total: Ĝustiga Sumo
     adjustments: Alĝustigoj
     adjustments_deleted: Ĝustigoj forigitaj
@@ -549,26 +537,19 @@ eo:
         user_information: Uzantinformoj
     administration: Administracio
     advertise: Reklamu
-    agree_to_privacy_policy: Konsentu pri Privateca Politiko
-    agree_to_terms_of_service: Konsentu pri Kondiĉoj pri Servo
     all: Ĉiuj
     all_adjustments_closed: Ĉiuj ĝustigoj sukcese fermiĝis!
     all_adjustments_opened: Ĉiuj ĝustigoj sukcese malfermiĝis!
-    all_departments: Ĉiuj fakoj
     all_items_have_been_returned: Ĉiuj aĵoj estis resenditaj
     all_rights_reserved: Ĉiuj rajtoj rezervitaj
-    already_have_account: Ĉu vi jam havas konton?
     alt_text: Alternativa Teksto
     alternative_phone: Alternativa Telefono
     amount: Kvanto
     and: kaj
-    approve: aprobi
     approved_at: Aprobita ĉe
     approver: Aprobanto
     are_you_sure: Ĉu vi certas?
     are_you_sure_delete: Ĉu vi certas, ke vi volas forigi ĉi tiun diskon?
-    associated_adjustment_closed: La asociita ĝustigo estas fermita, kaj ne estos rekalkulita. Ĉu vi volas malfermi ĝin?
-    authorization_failure: Rajtigo Malsukcesa
     authorized: Rajtigita
     auto_capture: Aŭtomata Kapto
     availability: havebleco
@@ -577,16 +558,10 @@ eo:
     average_order_value: Meza Ordo-Valoro
     avs_response: Respondo de AVS
     back: Reen
-    back_end: Backend
-    back_to_payment: Reen Al Pago
     back_to_resource_list: Reen Al %{resource}-Listo
-    back_to_rma_reason_list: Reen Al RMA-Kialo-Listo
     back_to_store: Reen al Butiko
-    back_to_users_list: Reen Al Listo de Uzantoj
     backorderable: Reordigebla
     backorderable_default: Malordigebla defaŭlte
-    backordered: Malordigita
-    backordered_confirm_info: Elektita ero estas mendita, do atendu malfruojn. Ĉu vi certas, ke vi volas mendi ĝin?
     backordered_info: Malordigita
     backorders_allowed: malakceptitaj ordonoj
     balance_due: Ekvilibro
@@ -594,9 +569,7 @@ eo:
     base_percent: Baza Procento
     basic_information: Bazaj informoj
     bill_address: Bill-Adreso
-    billing: Fakturado
     billing_address: Faktura Adreso
-    both: Ambaŭ
     breadcrumbs: Paneroj
     calculated_reimbursements: Kalkulitaj Repagoj
     calculator: Kalkulilo
@@ -612,8 +585,6 @@ eo:
     cannot_empty_completed_order: Mendo jam estis prilaborita do ĝi ne povas esti malplenigita
     cannot_perform_operation: Ne povas plenumi petitan operacion
     cannot_return_more_than_bought_quantity: Ne povas redoni pli ol aĉetita kvanto.
-    cannot_set_shipping_method_without_address: Ne povas agordi sendmetodon antaŭ ol klientaj detaloj estos donitaj.
-    capture: Kapti
     capture_events: Kaptu eventojn
     card_code: Karta Varia Kodo (CVC)
     card_number: Karta Numero
@@ -630,19 +601,9 @@ eo:
       quantity: kvanto
       remove_from_cart: Forigu el ĉaro
       title: Aĉetoĉaro
-    cart_subtotal:
-      one: Subtotalo (1 ero)
-      other: Subtotalo (%{count} eroj)
-    categories: Kategorioj
     category: Kategorio
-    category_nav_bar:
-      get_up_to_30_percent_off: GETU ĜIS 30% -DONO
-      jackets_and_coats: JAKO & KOSTOJ
-      new_collection: NOVA KOLEKTO
-      special_offers: SPECIALAJ OFERTOJ
     channel: Kanalo
     charged: Ŝargita
-    checkout: Kaso
     checkout_page:
       back_to_cart: reen al la ĉaro
       checkout_navigation: Kaso navigado
@@ -651,25 +612,18 @@ eo:
       main_navigation: Ĉefa navigado
       product: Produkto
     choose_a_customer: Elektu klienton
-    choose_a_taxon_to_sort_products_for: Elektu taksonon por ordigi produktojn
     choose_currency: Elektu Moneron
-    choose_dashboard_locale: Elektu Dashboard Locale
     choose_location: Elektu lokon
     city: Urbo
     clear_cache: Klara Kaŝmemoro
-    clear_cache_ok: Kaŝmemoro estis ruĝigita
     clear_cache_warning: Forigi kaŝmemoron provizore reduktos la rendimenton de via butiko.
-    click_and_drag_on_the_products_to_sort_them: Alklaku kaj trenu la produktojn por ordigi ilin.
     clone: Klono
     close: Fermu
     close_all_adjustments: Fermu Ĉiujn Agordojn
     code: Kodo
     company: Kompanio
     compare_at_price: Komparu ĉe prezo
-    complete: kompleta
-    configuration: Agordo
     configurations: Agordoj
-    confirm: Konfirmu
     confirm_delete: Konfirmu Forigon
     confirm_password: Pasvorta Konfirmo
     contact_phone: Kontakta telefono
@@ -679,7 +633,6 @@ eo:
     continue_shopping: Daŭrigu aĉetadon
     cost_currency: Kosta Monero
     cost_price: Kostoprezo
-    could_not_create_customer_return: Ne povis krei klientan revenon
     could_not_create_stock_movement: Estis problemo konservi ĉi tiun akcian movadon. Bonvolu reprovi.
     count_on_hand: Kalkulu On Hand
     countries: Landoj
@@ -688,7 +641,6 @@ eo:
     country_name: Nomo
     country_rule:
       label: Elektu devas esti sendita al ĉi tiu lando
-    coupon: Kupono
     coupon_code: Kupona kodo
     coupon_code_already_applied: La kupona kodo jam estis aplikita al ĉi tiu ordo
     coupon_code_applied: La kupona kodo sukcese aplikiĝis al via mendo.
@@ -700,22 +652,17 @@ eo:
     coupon_code_removed: La kupona kodo estis sukcese forigita de via mendo.
     coupon_code_unknown_error: Ĉi tiu kupona kodo ne povis esti aplikita al la ĉaro nuntempe.
     create: Kreu
-    create_a_new_account: Kreu novan konton
     create_new_order: Kreu novan mendon
     create_reimbursement: Kreu repagon
     created_at: Kreita Ĉe
     created_by: Kreita de
-    credit: Kredito
     credit_allowed: Kredito permesita
     credit_card: Kreditkarto
-    credit_cards: Kreditkartoj
     credit_owed: Kredito Ŝuldita
     credited: Akreditita
     credits: Kreditoj
-    currencies: Moneroj
     currency: Monero
     currency_settings: Valuto-Agordoj
-    current: Aktuala
     current_promotion_usage: 'nuna uzado: %{count}'
     customer: Kliento
     customer_details: Klientaj Detaloj
@@ -814,7 +761,6 @@ eo:
     exceptions:
       count_on_hand_setter: 'Ne eblas agordi count_on_hand permane, ĉar ĝi estas agordita aŭtomate per la revokado recalculate_count_on_hand. Bonvolu uzi ''update_column (: count_on_hand, value) `anstataŭe.'
     exchange_for: Interŝanĝo por
-    excl: ekskl.
     existing_shipments: Ekzistantaj sendoj
     expedited_exchanges_warning: Ĉiuj specifaj interŝanĝoj sendos al la kliento tuj post la ŝparado. La kliento pagos la tutan sumon de la aĵo se ili ne redonos la originalan aĵon ene de %{days_window} tagoj.
     expiration: Eksvalidiĝo
@@ -1551,7 +1497,6 @@ eo:
     stock_location_info: Stokaj lokaj informoj
     stock_locations: Stokaj Lokoj
     stock_locations_need_a_default_country: Vi devas krei defaŭltan landon antaŭ krei stokan lokon.
-    stock_management: Akcia Administrado
     stock_management_requires_a_stock_location: Bonvolu krei stokan lokon por administri stokon.
     stock_movements: Akciaj Movadoj
     stock_movements_for_stock_location: Akciaj Movadoj por %{stock_location_name}
@@ -1562,7 +1507,6 @@ eo:
         variants_unavailable: Iuj variantoj ne haveblas ĉe %{stock}
     stock_transfer_name: Akcia Transdono
     stock_transfers: Akciaj Translokigoj
-    stop: Haltu
     store: Butiko
     store_credit:
       additional_payment_needed: Elektu alian pagmanieron por la restanta <strong> %{amount} </strong>.
@@ -1628,7 +1572,6 @@ eo:
     supported_currencies: Subtenitaj Moneroj
     supported_currencies_long: Komo apartigita listo de subtenataj moneroj
     supported_locales: Subtenitaj Lokaj Lokoj
-    tags: Etikedoj
     tags_placeholder: Aldoni Etikedojn
     tax: Imposto
     tax_categories: Impostaj Kategorioj
@@ -1723,12 +1666,9 @@ eo:
     variant_placeholder: Elektu varianton
     variant_prices_search_placeholder: Serĉu SKU aŭ variantan nomon ...
     variants: Variantoj
-    version: Versio
-    void: Malpleno
     weight: Pezo
     what_is_a_cvv: Kio estas Kreditkarta Kodo (CVV)?
     width: Larĝo
-    year: Jaro
     you_have_no_orders_yet: Vi ankoraŭ ne havas mendojn
     your_order_is_empty_add_product: Via mendo estas malplena, bonvolu serĉi kaj aldoni produkton supre
     zip: Zip

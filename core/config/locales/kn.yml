@@ -437,7 +437,6 @@ kn:
     abbreviation: ಸಂಕ್ಷೇಪಣ
     accept: ಒಪ್ಪಿಕೊಳ್ಳಿ
     acceptance_errors: ಸ್ವೀಕಾರ ದೋಷಗಳು
-    acceptance_status: ಸ್ವೀಕಾರ ಸ್ಥಿತಿ
     accepted: ಸ್ವೀಕರಿಸಲಾಗಿದೆ
     account: ಖಾತೆ
     account_info: ಖಾತೆ ಮಾಹಿತಿ
@@ -455,32 +454,24 @@ kn:
       refund: ಮರುಪಾವತಿ
       save: ಉಳಿಸಿ
       update: ನವೀಕರಿಸಿ
-    activate: ಸಕ್ರಿಯಗೊಳಿಸಿ
     active: ಸಕ್ರಿಯ
     add: ಸೇರಿಸಿ
     add_action_of_type: ಪ್ರಕಾರದ ಕ್ರಿಯೆಯನ್ನು ಸೇರಿಸಿ
-    add_country: ದೇಶವನ್ನು ಸೇರಿಸಿ
     add_coupon_code: ಕೂಪನ್ ಕೋಡ್ ಸೇರಿಸಿ
     add_new_address: ಹೊಸ ವಿಳಾಸವನ್ನು ಸೇರಿಸಿ
     add_new_credit_card: ಹೊಸ ಕಾರ್ಡ್ ಸೇರಿಸಿ
-    add_new_header: ಹೊಸ ಹೆಡರ್ ಸೇರಿಸಿ
-    add_new_style: ಹೊಸ ಶೈಲಿಯನ್ನು ಸೇರಿಸಿ
     add_one: ಒಂದನ್ನು ಸೇರಿಸಿ
     add_option_value: ಆಯ್ಕೆ ಮೌಲ್ಯವನ್ನು ಸೇರಿಸಿ
     add_product: ಉತ್ಪನ್ನವನ್ನು ಸೇರಿಸಿ
     add_product_properties: ಉತ್ಪನ್ನ ಗುಣಲಕ್ಷಣಗಳನ್ನು ಸೇರಿಸಿ
     add_rule_of_type: ಪ್ರಕಾರದ ನಿಯಮವನ್ನು ಸೇರಿಸಿ
-    add_state: ರಾಜ್ಯವನ್ನು ಸೇರಿಸಿ
     add_stock: ಸ್ಟಾಕ್ ಸೇರಿಸಿ
     add_store: ಹೊಸ ಅಂಗಡಿ
     add_store_credit: ಸ್ಟೋರ್ ಕ್ರೆಡಿಟ್ ಸೇರಿಸಿ
     add_to_cart: ಕಾರ್ಟ್‌ಗೆ ಸೇರಿಸಿ
     add_variant: ರೂಪಾಂತರವನ್ನು ಸೇರಿಸಿ
     added_to_cart: ಕಾರ್ಟ್‌ಗೆ ಯಶಸ್ವಿಯಾಗಿ ಸೇರಿಸಲಾಗಿದೆ!
-    additional_item: ಹೆಚ್ಚುವರಿ ಐಟಂ
     address: ವಿಳಾಸ
-    address1: ವಿಳಾಸ
-    address2: ವಿಳಾಸ (ಸ್ಪರ್ಧೆ)
     address_action_popup:
       delete_button: ಹೌದು, ಅಳಿಸಿ
       delete_text: "<br /> ಈ ವಿಳಾಸವನ್ನು ಅಳಿಸಲು ನೀವು ನಿಜವಾಗಿಯೂ ಬಯಸುವಿರಾ?"
@@ -499,13 +490,10 @@ kn:
     addresses: ವಿಳಾಸಗಳು
     adjustable: ಹೊಂದಾಣಿಕೆ
     adjustment: ಹೊಂದಾಣಿಕೆ
-    adjustment_amount: ಮೊತ್ತ
     adjustment_labels:
       tax_rates:
         excluding_tax: "%{name}%{amount}"
         including_tax: "%{name}%{amount} (ಬೆಲೆಯಲ್ಲಿ ಸೇರಿಸಲಾಗಿದೆ)"
-    adjustment_successfully_closed: ಹೊಂದಾಣಿಕೆ ಯಶಸ್ವಿಯಾಗಿ ಮುಚ್ಚಲ್ಪಟ್ಟಿದೆ!
-    adjustment_successfully_opened: ಹೊಂದಾಣಿಕೆ ಯಶಸ್ವಿಯಾಗಿ ತೆರೆಯಲ್ಪಟ್ಟಿದೆ!
     adjustment_total: ಹೊಂದಾಣಿಕೆ ಒಟ್ಟು
     adjustments: ಹೊಂದಾಣಿಕೆಗಳು
     adjustments_deleted: ಹೊಂದಾಣಿಕೆಗಳನ್ನು ಅಳಿಸಲಾಗಿದೆ
@@ -549,26 +537,19 @@ kn:
         user_information: ಬಳಕೆದಾರ ಮಾಹಿತಿ
     administration: ಆಡಳಿತ
     advertise: ಜಾಹೀರಾತು ನೀಡಿ
-    agree_to_privacy_policy: ಗೌಪ್ಯತೆ ನೀತಿಯನ್ನು ಒಪ್ಪುತ್ತೇನೆ
-    agree_to_terms_of_service: ಸೇವಾ ನಿಯಮಗಳಿಗೆ ಒಪ್ಪುತ್ತೇನೆ
     all: ಎಲ್ಲಾ
     all_adjustments_closed: ಎಲ್ಲಾ ಹೊಂದಾಣಿಕೆಗಳನ್ನು ಯಶಸ್ವಿಯಾಗಿ ಮುಚ್ಚಲಾಗಿದೆ!
     all_adjustments_opened: ಎಲ್ಲಾ ಹೊಂದಾಣಿಕೆಗಳನ್ನು ಯಶಸ್ವಿಯಾಗಿ ತೆರೆಯಲಾಗಿದೆ!
-    all_departments: ಎಲ್ಲಾ ಇಲಾಖೆಗಳು
     all_items_have_been_returned: ಎಲ್ಲಾ ವಸ್ತುಗಳನ್ನು ಹಿಂತಿರುಗಿಸಲಾಗಿದೆ
     all_rights_reserved: ಎಲ್ಲ ಹಕ್ಕುಗಳನ್ನು ಕಾಯ್ದಿರಿಸಲಾಗಿದೆ
-    already_have_account: ಈಗಾಗಲೇ ಖಾತೆ ಹೊಂದಿದ್ದೀರ?
     alt_text: ಪರ್ಯಾಯ ಪಠ್ಯ
     alternative_phone: ಪರ್ಯಾಯ ಫೋನ್
     amount: ಮೊತ್ತ
     and: ಮತ್ತು
-    approve: ಅನುಮೋದಿಸಿ
     approved_at: ನಲ್ಲಿ ಅನುಮೋದಿಸಲಾಗಿದೆ
     approver: ಅನುಮೋದನೆ
     are_you_sure: ನೀವು ಖಚಿತವಾಗಿರುವಿರಾ?
     are_you_sure_delete: ಈ ದಾಖಲೆಯನ್ನು ಅಳಿಸಲು ನೀವು ಖಚಿತವಾಗಿ ಬಯಸುವಿರಾ?
-    associated_adjustment_closed: ಸಂಬಂಧಿತ ಹೊಂದಾಣಿಕೆ ಮುಚ್ಚಲಾಗಿದೆ, ಮತ್ತು ಅದನ್ನು ಮರು ಲೆಕ್ಕಾಚಾರ ಮಾಡಲಾಗುವುದಿಲ್ಲ. ನೀವು ಅದನ್ನು ತೆರೆಯಲು ಬಯಸುವಿರಾ?
-    authorization_failure: ದೃ ization ೀಕರಣ ವಿಫಲತೆ
     authorized: ಅಧಿಕೃತ
     auto_capture: ಸ್ವಯಂ ಕ್ಯಾಪ್ಚರ್
     availability: ಲಭ್ಯತೆ
@@ -577,16 +558,10 @@ kn:
     average_order_value: ಸರಾಸರಿ ಆದೇಶ ಮೌಲ್ಯ
     avs_response: ಎವಿಎಸ್ ಪ್ರತಿಕ್ರಿಯೆ
     back: ಹಿಂದೆ
-    back_end: ಬ್ಯಾಕೆಂಡ್
-    back_to_payment: ಪಾವತಿಗೆ ಹಿಂತಿರುಗಿ
     back_to_resource_list: "%{resource} ಪಟ್ಟಿಗೆ ಹಿಂತಿರುಗಿ"
-    back_to_rma_reason_list: ಆರ್ಎಂಎ ಕಾರಣ ಪಟ್ಟಿಗೆ ಹಿಂತಿರುಗಿ
     back_to_store: ಅಂಗಡಿಗೆ ಹಿಂತಿರುಗಿ
-    back_to_users_list: ಬಳಕೆದಾರರ ಪಟ್ಟಿಗೆ ಹಿಂತಿರುಗಿ
     backorderable: ಬ್ಯಾಕೋರ್ಡರಬಲ್
     backorderable_default: ಬ್ಯಾಕ್‌ಡೋರ್ಡಬಲ್ ಡೀಫಾಲ್ಟ್
-    backordered: ಬ್ಯಾಕೋರ್ಡರ್ಡ್
-    backordered_confirm_info: ಆಯ್ದ ಐಟಂ ಅನ್ನು ಬ್ಯಾಕ್‌ಡೋರ್ಡರ್ ಮಾಡಲಾಗಿದೆ ಆದ್ದರಿಂದ ವಿಳಂಬವನ್ನು ನಿರೀಕ್ಷಿಸಿ. ನೀವು ಅದನ್ನು ಆದೇಶಿಸಲು ಖಚಿತವಾಗಿ ಬಯಸುವಿರಾ?
     backordered_info: ಬ್ಯಾಕೋರ್ಡರ್ಡ್
     backorders_allowed: ಬ್ಯಾಕ್‌ಡೋರ್ಡರ್‌ಗಳನ್ನು ಅನುಮತಿಸಲಾಗಿದೆ
     balance_due: ಉಳಿದಿರುವ ಬಾಕಿ
@@ -594,9 +569,7 @@ kn:
     base_percent: ಮೂಲ ಶೇಕಡಾ
     basic_information: ಮೂಲ ಮಾಹಿತಿ
     bill_address: ಬಿಲ್ ವಿಳಾಸ
-    billing: ಬಿಲ್ಲಿಂಗ್
     billing_address: ಬಿಲ್ಲಿಂಗ್ ವಿಳಾಸ
-    both: ಎರಡೂ
     breadcrumbs: ಬ್ರೆಡ್ ತುಂಡುಗಳು
     calculated_reimbursements: ಲೆಕ್ಕಹಾಕಿದ ಮರುಪಾವತಿಗಳು
     calculator: ಕ್ಯಾಲ್ಕುಲೇಟರ್
@@ -612,8 +585,6 @@ kn:
     cannot_empty_completed_order: ಆದೇಶವನ್ನು ಈಗಾಗಲೇ ಪ್ರಕ್ರಿಯೆಗೊಳಿಸಲಾಗಿದೆ ಆದ್ದರಿಂದ ಅದನ್ನು ಖಾಲಿ ಮಾಡಲಾಗುವುದಿಲ್ಲ
     cannot_perform_operation: ವಿನಂತಿಸಿದ ಕಾರ್ಯಾಚರಣೆಯನ್ನು ನಿರ್ವಹಿಸಲು ಸಾಧ್ಯವಿಲ್ಲ
     cannot_return_more_than_bought_quantity: ಖರೀದಿಸಿದ ಪ್ರಮಾಣಕ್ಕಿಂತ ಹೆಚ್ಚಿನದನ್ನು ಹಿಂತಿರುಗಿಸಲು ಸಾಧ್ಯವಿಲ್ಲ.
-    cannot_set_shipping_method_without_address: ಗ್ರಾಹಕರ ವಿವರಗಳನ್ನು ಒದಗಿಸುವವರೆಗೆ ಹಡಗು ವಿಧಾನವನ್ನು ಹೊಂದಿಸಲು ಸಾಧ್ಯವಿಲ್ಲ.
-    capture: ಸೆರೆಹಿಡಿಯಿರಿ
     capture_events: ಈವೆಂಟ್‌ಗಳನ್ನು ಸೆರೆಹಿಡಿಯಿರಿ
     card_code: ಕಾರ್ಡ್ ವರ್ಫಿಕೇಶನ್ ಕೋಡ್ (ಸಿವಿಸಿ)
     card_number: ಕಾರ್ಡ್ ಸಂಖ್ಯೆ
@@ -630,19 +601,9 @@ kn:
       quantity: ಪ್ರಮಾಣ
       remove_from_cart: ಕಾರ್ಟ್‌ನಿಂದ ತೆಗೆದುಹಾಕಿ
       title: ಶಾಪಿಂಗ್ ಕಾರ್ಟ್
-    cart_subtotal:
-      one: ಒಟ್ಟು ಮೊತ್ತ (1 ಐಟಂ)
-      other: ಒಟ್ಟು ಮೊತ್ತ (%{count} ಐಟಂಗಳು)
-    categories: ವರ್ಗಗಳು
     category: ವರ್ಗ
-    category_nav_bar:
-      get_up_to_30_percent_off: 30% ಆಫ್ ಮಾಡಿ
-      jackets_and_coats: ಜಾಕೆಟ್ ಮತ್ತು ಕೋಸ್ಟ್ಸ್
-      new_collection: ಹೊಸ ಸಂಗ್ರಹ
-      special_offers: ವಿಶೇಷ ಕೊಡುಗೆಗಳು
     channel: ಚಾನೆಲ್
     charged: ಚಾರ್ಜ್ ಮಾಡಲಾಗಿದೆ
-    checkout: ಚೆಕ್ out ಟ್
     checkout_page:
       back_to_cart: ಕಾರ್ಟ್‌ಗೆ ಹಿಂತಿರುಗಿ
       checkout_navigation: ಚೆಕ್ out ಟ್ ನ್ಯಾವಿಗೇಷನ್
@@ -651,25 +612,18 @@ kn:
       main_navigation: ಮುಖ್ಯ ಸಂಚರಣೆ
       product: ಉತ್ಪನ್ನ
     choose_a_customer: ಗ್ರಾಹಕರನ್ನು ಆರಿಸಿ
-    choose_a_taxon_to_sort_products_for: ಉತ್ಪನ್ನಗಳನ್ನು ವಿಂಗಡಿಸಲು ಟ್ಯಾಕ್ಸನ್ ಆಯ್ಕೆಮಾಡಿ
     choose_currency: ಕರೆನ್ಸಿಯನ್ನು ಆರಿಸಿ
-    choose_dashboard_locale: ಡ್ಯಾಶ್‌ಬೋರ್ಡ್ ಲೊಕೇಲ್ ಆಯ್ಕೆಮಾಡಿ
     choose_location: ಸ್ಥಳವನ್ನು ಆರಿಸಿ
     city: ನಗರ
     clear_cache: ಸಂಗ್ರಹವನ್ನು ತೆರವುಗೊಳಿಸಿ
-    clear_cache_ok: ಸಂಗ್ರಹವನ್ನು ಚದುರಿಸಲಾಯಿತು
     clear_cache_warning: ಸಂಗ್ರಹವನ್ನು ತೆರವುಗೊಳಿಸುವುದರಿಂದ ನಿಮ್ಮ ಅಂಗಡಿಯ ಕಾರ್ಯಕ್ಷಮತೆಯನ್ನು ತಾತ್ಕಾಲಿಕವಾಗಿ ಕಡಿಮೆ ಮಾಡುತ್ತದೆ.
-    click_and_drag_on_the_products_to_sort_them: ಉತ್ಪನ್ನಗಳನ್ನು ವಿಂಗಡಿಸಲು ಅವುಗಳನ್ನು ಕ್ಲಿಕ್ ಮಾಡಿ ಮತ್ತು ಎಳೆಯಿರಿ.
     clone: ಕ್ಲೋನ್
     close: ಮುಚ್ಚಿ
     close_all_adjustments: ಎಲ್ಲಾ ಹೊಂದಾಣಿಕೆಗಳನ್ನು ಮುಚ್ಚಿ
     code: ಕೋಡ್
     company: ಕಂಪನಿ
     compare_at_price: ಬೆಲೆಗೆ ಹೋಲಿಕೆ ಮಾಡಿ
-    complete: ಪೂರ್ಣಗೊಂಡಿದೆ
-    configuration: ಸಂರಚನೆ
     configurations: ಸಂರಚನೆಗಳು
-    confirm: ದೃ irm ೀಕರಿಸಿ
     confirm_delete: ಅಳಿಸುವಿಕೆಯನ್ನು ದೃ irm ೀಕರಿಸಿ
     confirm_password: ಪಾಸ್ವರ್ಡ್ ದೃ ir ೀಕರಣ
     contact_phone: ಫೋನ್ ಸಂಪರ್ಕಿಸಿ
@@ -679,7 +633,6 @@ kn:
     continue_shopping: ಕೊಳ್ಳುವಿಕೆಯನ್ನು ಮುಂದುವರೆಸಿರಿ
     cost_currency: ವೆಚ್ಚ ಕರೆನ್ಸಿ
     cost_price: ಅಸಲಿನ ಬೆಲೆ
-    could_not_create_customer_return: ಗ್ರಾಹಕರ ಲಾಭವನ್ನು ರಚಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ
     could_not_create_stock_movement: ಈ ಸ್ಟಾಕ್ ಚಲನೆಯನ್ನು ಉಳಿಸುವಲ್ಲಿ ಸಮಸ್ಯೆ ಇದೆ. ದಯವಿಟ್ಟು ಪುನಃ ಪ್ರಯತ್ನಿಸಿ.
     count_on_hand: ಕೈಯಲ್ಲಿ ಎಣಿಸಿ
     countries: ದೇಶಗಳು
@@ -688,7 +641,6 @@ kn:
     country_name: ಹೆಸರು
     country_rule:
       label: ಆಯ್ಕೆ ಈ ದೇಶಕ್ಕೆ ರವಾನಿಸಬೇಕು
-    coupon: ಕೂಪನ್
     coupon_code: ಕೂಪನ್ ಕೋಡ್
     coupon_code_already_applied: ಈ ಆದೇಶಕ್ಕೆ ಕೂಪನ್ ಕೋಡ್ ಅನ್ನು ಈಗಾಗಲೇ ಅನ್ವಯಿಸಲಾಗಿದೆ
     coupon_code_applied: ನಿಮ್ಮ ಆದೇಶಕ್ಕೆ ಕೂಪನ್ ಕೋಡ್ ಅನ್ನು ಯಶಸ್ವಿಯಾಗಿ ಅನ್ವಯಿಸಲಾಗಿದೆ.
@@ -700,22 +652,17 @@ kn:
     coupon_code_removed: ನಿಮ್ಮ ಆದೇಶದಿಂದ ಕೂಪನ್ ಕೋಡ್ ಅನ್ನು ಯಶಸ್ವಿಯಾಗಿ ತೆಗೆದುಹಾಕಲಾಗಿದೆ.
     coupon_code_unknown_error: ಈ ಸಮಯದಲ್ಲಿ ಈ ಕೂಪನ್ ಕೋಡ್ ಅನ್ನು ಕಾರ್ಟ್‌ಗೆ ಅನ್ವಯಿಸಲಾಗುವುದಿಲ್ಲ.
     create: ರಚಿಸಿ
-    create_a_new_account: ಹೊಸ ಖಾತೆಯನ್ನು ತೆರೆ
     create_new_order: ಹೊಸ ಆದೇಶವನ್ನು ರಚಿಸಿ
     create_reimbursement: ಮರುಪಾವತಿ ರಚಿಸಿ
     created_at: ನಲ್ಲಿ ರಚಿಸಲಾಗಿದೆ
     created_by: ರಚಿಸಿದವರು
-    credit: ಕ್ರೆಡಿಟ್
     credit_allowed: ಕ್ರೆಡಿಟ್ ಅನುಮತಿಸಲಾಗಿದೆ
     credit_card: ಕ್ರೆಡಿಟ್ ಕಾರ್ಡ್
-    credit_cards: ಕ್ರೆಡಿಟ್ ಕಾರ್ಡ್‌ಗಳು
     credit_owed: ಕ್ರೆಡಿಟ್ ಒಡೆತನದಲ್ಲಿದೆ
     credited: ಮನ್ನಣೆ
     credits: ಸಾಲಗಳು
-    currencies: ಕರೆನ್ಸಿಗಳು
     currency: ಕರೆನ್ಸಿ
     currency_settings: ಕರೆನ್ಸಿ ಸೆಟ್ಟಿಂಗ್‌ಗಳು
-    current: ಪ್ರಸ್ತುತ
     current_promotion_usage: 'ಪ್ರಸ್ತುತ ಬಳಕೆ: %{count}'
     customer: ಗ್ರಾಹಕ
     customer_details: ಗ್ರಾಹಕರ ವಿವರಗಳು
@@ -814,7 +761,6 @@ kn:
     exceptions:
       count_on_hand_setter: 'ಕೌಂಟ್_ಒನ್_ಹ್ಯಾಂಡ್ ಅನ್ನು ಹಸ್ತಚಾಲಿತವಾಗಿ ಹೊಂದಿಸಲು ಸಾಧ್ಯವಿಲ್ಲ, ಏಕೆಂದರೆ ಇದನ್ನು ಮರುಸೃಷ್ಟಿ_ಕೌಂಟ್_ಒನ್_ಹ್ಯಾಂಡ್ ಕಾಲ್ಬ್ಯಾಕ್ ಮೂಲಕ ಸ್ವಯಂಚಾಲಿತವಾಗಿ ಹೊಂದಿಸಲಾಗಿದೆ. ಬದಲಿಗೆ ದಯವಿಟ್ಟು `update_column (: count_on_hand, value)` ಅನ್ನು ಬಳಸಿ.'
     exchange_for: ವಿನಿಮಯ
-    excl: excl.
     existing_shipments: ಅಸ್ತಿತ್ವದಲ್ಲಿರುವ ಸಾಗಣೆಗಳು
     expedited_exchanges_warning: ಯಾವುದೇ ನಿರ್ದಿಷ್ಟ ವಿನಿಮಯ ಕೇಂದ್ರಗಳು ಉಳಿಸಿದ ಕೂಡಲೇ ಗ್ರಾಹಕರಿಗೆ ರವಾನೆಯಾಗುತ್ತದೆ. %{days_window} ದಿನಗಳಲ್ಲಿ ಮೂಲ ವಸ್ತುವನ್ನು ಹಿಂತಿರುಗಿಸದಿದ್ದರೆ ಗ್ರಾಹಕರಿಗೆ ವಸ್ತುವಿನ ಸಂಪೂರ್ಣ ಮೊತ್ತವನ್ನು ವಿಧಿಸಲಾಗುತ್ತದೆ.
     expiration: ಮುಕ್ತಾಯ
@@ -1551,7 +1497,6 @@ kn:
     stock_location_info: ಸ್ಟಾಕ್ ಸ್ಥಳ ಮಾಹಿತಿ
     stock_locations: ಸ್ಟಾಕ್ ಸ್ಥಳಗಳು
     stock_locations_need_a_default_country: ಸ್ಟಾಕ್ ಸ್ಥಳವನ್ನು ರಚಿಸುವ ಮೊದಲು ನೀವು ಡೀಫಾಲ್ಟ್ ದೇಶವನ್ನು ರಚಿಸಬೇಕು.
-    stock_management: ಸ್ಟಾಕ್ ನಿರ್ವಹಣೆ
     stock_management_requires_a_stock_location: ಸ್ಟಾಕ್ ಅನ್ನು ನಿರ್ವಹಿಸಲು ದಯವಿಟ್ಟು ಸ್ಟಾಕ್ ಸ್ಥಳವನ್ನು ರಚಿಸಿ.
     stock_movements: ಸ್ಟಾಕ್ ಚಳುವಳಿಗಳು
     stock_movements_for_stock_location: "%{stock_location_name} ಗಾಗಿ ಸ್ಟಾಕ್ ಚಲನೆಗಳು"
@@ -1562,7 +1507,6 @@ kn:
         variants_unavailable: ಕೆಲವು ರೂಪಾಂತರಗಳು %{stock} ನಲ್ಲಿ ಲಭ್ಯವಿಲ್ಲ
     stock_transfer_name: ಸ್ಟಾಕ್ ವರ್ಗಾವಣೆ
     stock_transfers: ಸ್ಟಾಕ್ ವರ್ಗಾವಣೆಗಳು
-    stop: ನಿಲ್ಲಿಸು
     store: ಅಂಗಡಿ
     store_credit:
       additional_payment_needed: ಉಳಿದ <strong> %{amount} </strong> ಗಾಗಿ ಮತ್ತೊಂದು ಪಾವತಿ ವಿಧಾನವನ್ನು ಆಯ್ಕೆಮಾಡಿ.
@@ -1628,7 +1572,6 @@ kn:
     supported_currencies: ಬೆಂಬಲಿತ ಕರೆನ್ಸಿಗಳು
     supported_currencies_long: ಬೆಂಬಲಿತ ಕರೆನ್ಸಿಗಳ ಅಲ್ಪವಿರಾಮದಿಂದ ಬೇರ್ಪಟ್ಟ ಪಟ್ಟಿ
     supported_locales: ಬೆಂಬಲಿತ ಲೊಕೇಲ್ಸ್
-    tags: ಟ್ಯಾಗ್ಗಳು
     tags_placeholder: ಟ್ಯಾಗ್‌ಗಳನ್ನು ಸೇರಿಸಿ
     tax: ತೆರಿಗೆ
     tax_categories: ತೆರಿಗೆ ವರ್ಗಗಳು
@@ -1723,12 +1666,9 @@ kn:
     variant_placeholder: ರೂಪಾಂತರವನ್ನು ಆರಿಸಿ
     variant_prices_search_placeholder: SKU ಅಥವಾ ರೂಪಾಂತರದ ಹೆಸರನ್ನು ಹುಡುಕಿ ...
     variants: ರೂಪಾಂತರಗಳು
-    version: ಆವೃತ್ತಿ
-    void: ಅನೂರ್ಜಿತ
     weight: ತೂಕ
     what_is_a_cvv: "(ಸಿವಿವಿ) ಕ್ರೆಡಿಟ್ ಕಾರ್ಡ್ ಕೋಡ್ ಎಂದರೇನು?"
     width: ಅಗಲ
-    year: ವರ್ಷ
     you_have_no_orders_yet: ನಿಮಗೆ ಇನ್ನೂ ಯಾವುದೇ ಆದೇಶಗಳಿಲ್ಲ
     your_order_is_empty_add_product: ನಿಮ್ಮ ಆದೇಶ ಖಾಲಿಯಾಗಿದೆ, ದಯವಿಟ್ಟು ಮೇಲಿನ ಉತ್ಪನ್ನವನ್ನು ಹುಡುಕಿ ಮತ್ತು ಸೇರಿಸಿ
     zip: ಜಿಪ್

@@ -437,7 +437,6 @@ ms:
     abbreviation: Singkatan
     accept: Terima
     acceptance_errors: Kesalahan penerimaan
-    acceptance_status: Status penerimaan
     accepted: Diterima
     account: Akaun
     account_info: Maklumat akaun
@@ -455,32 +454,24 @@ ms:
       refund: Bayaran balik
       save: Jimat
       update: Kemas kini
-    activate: Aktifkan
     active: Aktif
     add: Tambah
     add_action_of_type: Tambah tindakan jenis
-    add_country: Tambah Negara
     add_coupon_code: Tambah Kod Kupon
     add_new_address: Tambahkan alamat baru
     add_new_credit_card: Tambahkan kad baru
-    add_new_header: Tambah Pengepala Baru
-    add_new_style: Tambah Gaya Baru
     add_one: Tambah Satu
     add_option_value: Tambah Nilai Opsyen
     add_product: Tambah Produk
     add_product_properties: Tambah Sifat Produk
     add_rule_of_type: Tambah peraturan jenis
-    add_state: Tambah Negeri
     add_stock: Tambah Stok
     add_store: Kedai Baru
     add_store_credit: Tambah Kredit Kedai
     add_to_cart: Tambah ke Troli
     add_variant: Tambah Varian
     added_to_cart: Berjaya ditambahkan ke troli!
-    additional_item: Item Tambahan
     address: Alamat
-    address1: Alamat
-    address2: Alamat (samb.)
     address_action_popup:
       delete_button: ya, padam
       delete_text: Adakah anda benar-benar mahu <br /> memadamkan alamat ini?
@@ -499,13 +490,10 @@ ms:
     addresses: Alamat
     adjustable: Boleh laras
     adjustment: Penyesuaian
-    adjustment_amount: Jumlah
     adjustment_labels:
       tax_rates:
         excluding_tax: "%{name}%{amount}"
         including_tax: "%{name}%{amount} (Termasuk dalam Harga)"
-    adjustment_successfully_closed: Penyesuaian berjaya ditutup!
-    adjustment_successfully_opened: Penyesuaian telah berjaya dibuka!
     adjustment_total: Jumlah Pelarasan
     adjustments: Pelarasan
     adjustments_deleted: Pelarasan dipadamkan
@@ -549,26 +537,19 @@ ms:
         user_information: Maklumat Pengguna
     administration: Pentadbiran
     advertise: Iklankan
-    agree_to_privacy_policy: Setuju dengan Dasar Privasi
-    agree_to_terms_of_service: Setuju dengan Syarat Perkhidmatan
     all: Semua
     all_adjustments_closed: Semua penyesuaian berjaya ditutup!
     all_adjustments_opened: Semua penyesuaian berjaya dibuka!
-    all_departments: Semua jabatan
     all_items_have_been_returned: Semua barang telah dikembalikan
     all_rights_reserved: Hak cipta terpelihara
-    already_have_account: Sudah mempunyai akaun?
     alt_text: Teks Alternatif
     alternative_phone: Telefon Alternatif
     amount: Jumlah
     and: dan
-    approve: terima
     approved_at: Diluluskan pada
     approver: Meluluskan
     are_you_sure: Adakah anda pasti?
     are_you_sure_delete: Adakah anda pasti mahu memadamkan rekod ini?
-    associated_adjustment_closed: Penyesuaian yang berkaitan ditutup, dan tidak akan dikira semula. Adakah anda mahu membukanya?
-    authorization_failure: Kegagalan Kebenaran
     authorized: Dibenar
     auto_capture: Tangkap Auto
     availability: ketersediaan
@@ -577,16 +558,10 @@ ms:
     average_order_value: Nilai Pesanan Purata
     avs_response: Respons AVS
     back: Belakang
-    back_end: Latar Belakang
-    back_to_payment: Kembali Ke Pembayaran
     back_to_resource_list: Kembali Ke Senarai %{resource}
-    back_to_rma_reason_list: Kembali Ke Senarai Sebab RMA
     back_to_store: Kembali ke Kedai
-    back_to_users_list: Kembali ke Senarai Pengguna
     backorderable: Boleh dipatah balik
     backorderable_default: Lalai boleh disusun semula
-    backordered: Berundur ke belakang
-    backordered_confirm_info: Item yang dipilih disusun semula sehingga menjangkakan kelewatan. Adakah anda pasti mahu memesannya?
     backordered_info: Berundur ke belakang
     backorders_allowed: backorder dibenarkan
     balance_due: Hutang Baki
@@ -594,9 +569,7 @@ ms:
     base_percent: Peratusan Asas
     basic_information: Maklumat asas
     bill_address: Alamat Bil
-    billing: Pengebilan
     billing_address: Alamat Pengebilan
-    both: Kedua-duanya
     breadcrumbs: Serbuk Roti
     calculated_reimbursements: Bayaran Balik yang Dikira
     calculator: Kalkulator
@@ -612,8 +585,6 @@ ms:
     cannot_empty_completed_order: Pesanan telah diproses sehingga tidak dapat dikosongkan
     cannot_perform_operation: Tidak dapat menjalankan operasi yang diminta
     cannot_return_more_than_bought_quantity: Tidak dapat mengembalikan lebih daripada kuantiti yang dibeli.
-    cannot_set_shipping_method_without_address: Tidak dapat menetapkan kaedah penghantaran sehingga maklumat pelanggan diberikan.
-    capture: Menangkap
     capture_events: Tangkap peristiwa
     card_code: Kod Penjelasan Kad (CVC)
     card_number: Nombor kad
@@ -630,19 +601,9 @@ ms:
       quantity: kuantiti
       remove_from_cart: Keluarkan dari troli
       title: Keranjang Belanja
-    cart_subtotal:
-      one: Subtotal (1 item)
-      other: Subtotal (%{count} item)
-    categories: Kategori
     category: Kategori
-    category_nav_bar:
-      get_up_to_30_percent_off: DAPATKAN DISKAUN SEHINGGA 30%
-      jackets_and_coats: JAKET & PAKAIAN
-      new_collection: KOLEKSI BARU
-      special_offers: TAWARAN ISTIMEWA
     channel: Saluran
     charged: Dibebankan
-    checkout: Daftar keluar
     checkout_page:
       back_to_cart: kembali ke troli
       checkout_navigation: Navigasi pembayaran
@@ -651,25 +612,18 @@ ms:
       main_navigation: Pelayaran utama
       product: Produk
     choose_a_customer: Pilih pelanggan
-    choose_a_taxon_to_sort_products_for: Pilih teksi untuk mengisih produk
     choose_currency: Pilih Mata Wang
-    choose_dashboard_locale: Pilih Dashboard Locale
     choose_location: Pilih lokasi
     city: Bandar
     clear_cache: Kosongkan cache
-    clear_cache_ok: Cache memerah
     clear_cache_warning: Mengosongkan cache akan mengurangkan prestasi kedai anda buat sementara waktu.
-    click_and_drag_on_the_products_to_sort_them: Klik dan seret produk untuk menyusunnya.
     clone: Klon
     close: Tutup
     close_all_adjustments: Tutup Semua Pelarasan
     code: Kod
     company: Syarikat
     compare_at_price: Bandingkan dengan harga
-    complete: lengkap
-    configuration: Konfigurasi
     configurations: Konfigurasi
-    confirm: Sahkan
     confirm_delete: Sahkan Penghapusan
     confirm_password: Pengesahan kata laluan
     contact_phone: Telefon kenalan
@@ -679,7 +633,6 @@ ms:
     continue_shopping: Terus membeli-belah
     cost_currency: Mata Wang Kos
     cost_price: Harga Kos
-    could_not_create_customer_return: Tidak dapat membuat pulangan pelanggan
     could_not_create_stock_movement: Terdapat masalah semasa menyimpan pergerakan saham ini. Sila cuba lagi.
     count_on_hand: Kira Di Tangan
     countries: Negara
@@ -688,7 +641,6 @@ ms:
     country_name: Nama
     country_rule:
       label: Pilih mesti dihantar ke negara ini
-    coupon: Kupon
     coupon_code: Kod Kupon
     coupon_code_already_applied: Kod kupon telah digunakan untuk pesanan ini
     coupon_code_applied: Kod kupon berjaya digunakan untuk pesanan anda.
@@ -700,22 +652,17 @@ ms:
     coupon_code_removed: Kod kupon berjaya dikeluarkan dari pesanan anda.
     coupon_code_unknown_error: Kod kupon ini tidak dapat digunakan pada troli pada masa ini.
     create: Buat
-    create_a_new_account: Buat akaun baru
     create_new_order: Buat pesanan baru
     create_reimbursement: Buat pembayaran balik
     created_at: Dibuat pada
     created_by: Dicipta oleh
-    credit: Kredit
     credit_allowed: Kredit dibenarkan
     credit_card: Kad kredit
-    credit_cards: Kad kredit
     credit_owed: Kredit Berhutang
     credited: Dikreditkan
     credits: Kredit
-    currencies: Mata Wang
     currency: Mata Wang
     currency_settings: Tetapan Mata Wang
-    current: Semasa
     current_promotion_usage: 'penggunaan semasa: %{count}'
     customer: Pelanggan
     customer_details: butiran pelanggan
@@ -814,7 +761,6 @@ ms:
     exceptions:
       count_on_hand_setter: 'Tidak dapat menetapkan count_on_hand secara manual, kerana ia ditetapkan secara automatik oleh callback recalculate_count_on_hand. Sila gunakan `update_column (: count_on_hand, value)` sebagai gantinya.'
     exchange_for: Tukar dengan
-    excl: tidak termasuk
     existing_shipments: Penghantaran sedia ada
     expedited_exchanges_warning: Sebarang pertukaran yang ditentukan akan dihantar kepada pelanggan sebaik sahaja disimpan. Pelanggan akan dikenakan jumlah keseluruhan barang sekiranya mereka tidak mengembalikan barang asal dalam masa %{days_window} hari.
     expiration: Tamat tempoh
@@ -1551,7 +1497,6 @@ ms:
     stock_location_info: Maklumat lokasi stok
     stock_locations: Lokasi Stok
     stock_locations_need_a_default_country: Anda mesti membuat negara lalai sebelum membuat lokasi stok.
-    stock_management: Pengurusan stok
     stock_management_requires_a_stock_location: Sila buat lokasi stok untuk menguruskan stok.
     stock_movements: Pergerakan Saham
     stock_movements_for_stock_location: Pergerakan Stok untuk %{stock_location_name}
@@ -1562,7 +1507,6 @@ ms:
         variants_unavailable: Beberapa varian tidak tersedia di %{stock}
     stock_transfer_name: Pemindahan Stok
     stock_transfers: Pemindahan Saham
-    stop: Berhenti
     store: Kedai
     store_credit:
       additional_payment_needed: Pilih kaedah pembayaran lain untuk baki <strong> %{amount} </strong>.
@@ -1628,7 +1572,6 @@ ms:
     supported_currencies: Mata Wang yang Disokong
     supported_currencies_long: Senarai mata wang yang disokong koma
     supported_locales: Lokasi yang Disokong
-    tags: Teg
     tags_placeholder: Tambah Teg
     tax: Cukai
     tax_categories: Kategori Cukai
@@ -1723,12 +1666,9 @@ ms:
     variant_placeholder: Pilih varian
     variant_prices_search_placeholder: Cari SKU atau nama varian ...
     variants: Varian
-    version: Versi
-    void: Tidak sah
     weight: Berat
     what_is_a_cvv: Apakah Kod Kad Kredit (CVV)?
     width: Lebar
-    year: Tahun
     you_have_no_orders_yet: Anda belum mempunyai pesanan
     your_order_is_empty_add_product: Pesanan anda kosong, sila cari dan tambahkan produk di atas
     zip: Zip

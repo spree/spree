@@ -437,7 +437,6 @@ eu:
     abbreviation: Laburdura
     accept: Onartu
     acceptance_errors: Onarpen akatsak
-    acceptance_status: Onarpen egoera
     accepted: Onartua
     account: Kontua
     account_info: Kontuaren informazioa
@@ -455,32 +454,24 @@ eu:
       refund: Itzulketa
       save: Gorde
       update: Eguneratu
-    activate: Aktibatu
     active: Aktiboa
     add: Gehitu
     add_action_of_type: Gehitu motako ekintza
-    add_country: Gehitu Herrialdea
     add_coupon_code: Gehitu kupoi kodea
     add_new_address: Gehitu helbide berria
     add_new_credit_card: Gehitu txartel berria
-    add_new_header: Gehitu goiburu berria
-    add_new_style: Gehitu estilo berria
     add_one: Gehitu bat
     add_option_value: Gehitu Aukeraren balioa
     add_product: Gehitu produktua
     add_product_properties: Gehitu produktuaren propietateak
     add_rule_of_type: Gehitu mota araua
-    add_state: Gehitu estatua
     add_stock: Gehitu Stock
     add_store: Denda berria
     add_store_credit: Gehitu dendako kreditua
     add_to_cart: Gehitu saskira
     add_variant: Gehitu aldaera
     added_to_cart: Saskira gehitu da!
-    additional_item: Elementu osagarria
     address: Helbidea
-    address1: Helbidea
-    address2: Helbidea (jarraipena)
     address_action_popup:
       delete_button: bai, ezabatu
       delete_text: Ziur zaude <br /> helbide hau ezabatzea nahi duzula?
@@ -499,13 +490,10 @@ eu:
     addresses: Helbideak
     adjustable: Erregulagarria
     adjustment: Doikuntza
-    adjustment_amount: Zenbatekoa
     adjustment_labels:
       tax_rates:
         excluding_tax: "%{name}%{amount}"
         including_tax: "%{name}%{amount} (Prezioaren barne)"
-    adjustment_successfully_closed: Doikuntza ondo itxi da!
-    adjustment_successfully_opened: Doikuntza ongi ireki da!
     adjustment_total: Doikuntza totala
     adjustments: Doikuntzak
     adjustments_deleted: Ezarpenak ezabatu dira
@@ -549,26 +537,19 @@ eu:
         user_information: Erabiltzailearen informazioa
     administration: Administrazioa
     advertise: Iragarri
-    agree_to_privacy_policy: Onartu Pribatutasun Politika
-    agree_to_terms_of_service: Onartu Zerbitzu Baldintzak
     all: Guztiak
     all_adjustments_closed: Egokitzapen guztiak ondo itxi dira!
     all_adjustments_opened: Egokitzapen guztiak ongi ireki dira!
-    all_departments: Sail guztiak
     all_items_have_been_returned: Artikulu guztiak itzuli dira
     all_rights_reserved: Eskubide guztiak erreserbatuak
-    already_have_account: Baduzu kontua?
     alt_text: Testu alternatiboa
     alternative_phone: Telefono alternatiboa
     amount: Zenbatekoa
     and: eta
-    approve: ontzat eman
     approved_at: Hemen onartua
     approver: Onartzailea
     are_you_sure: Ziur zaude?
     are_you_sure_delete: Ziur zaude erregistro hau ezabatu nahi duzula?
-    associated_adjustment_closed: Lotutako doikuntza itxita dago eta ez da berriro kalkulatuko. Ireki nahi duzu?
-    authorization_failure: Baimenaren porrota
     authorized: Baimendua
     auto_capture: Auto Capture
     availability: erabilgarritasuna
@@ -577,16 +558,10 @@ eu:
     average_order_value: Eskaeraren batez besteko balioa
     avs_response: AVS erantzuna
     back: Itzuli
-    back_end: Backend
-    back_to_payment: Itzuli Ordainketara
     back_to_resource_list: Itzuli %{resource} zerrendara
-    back_to_rma_reason_list: Itzuli RMA Arrazoiaren Zerrendara
     back_to_store: Itzuli dendara
-    back_to_users_list: Erabiltzaileen zerrendara itzuli
     backorderable: Itzuli daiteke
     backorderable_default: Backordenable lehenetsia
-    backordered: Backordered
-    backordered_confirm_info: Aukeratutako elementua atzeratuta dago, beraz atzerapenak espero dituzu. Ziur zaude agindu nahi duzula?
     backordered_info: Backordered
     backorders_allowed: atzeraeraginak onartzen dira
     balance_due: Oreka Zorduna
@@ -594,9 +569,7 @@ eu:
     base_percent: Oinarrizko ehunekoa
     basic_information: Oinarrizko informazioa
     bill_address: Fakturaren helbidea
-    billing: Fakturazioa
     billing_address: Faktura helbidea
-    both: Biak
     breadcrumbs: Ogia
     calculated_reimbursements: Kalkulatutako itzulketak
     calculator: Kalkulagailua
@@ -612,8 +585,6 @@ eu:
     cannot_empty_completed_order: Eskaera dagoeneko prozesatu da, beraz ezin da hustu
     cannot_perform_operation: Ezin da eskatutako eragiketa burutu
     cannot_return_more_than_bought_quantity: Ezin da erositako kantitatea baino gehiago itzuli.
-    cannot_set_shipping_method_without_address: Ezin da bidalketa metodoa ezarri bezeroaren datuak eman arte.
-    capture: Harrapatu
     capture_events: Gertaerak harrapatu
     card_code: Txartela Aldatzeko Kodea (CVC)
     card_number: Txartel zenbakia
@@ -630,19 +601,9 @@ eu:
       quantity: kantitatea
       remove_from_cart: Kendu saskitik
       title: Erosketa saskia
-    cart_subtotal:
-      one: Subtotala (1 elementu)
-      other: Subtotala (%{count} elementuak)
-    categories: Kategoriak
     category: Kategoria
-    category_nav_bar:
-      get_up_to_30_percent_off: Lortu% 30 arte
-      jackets_and_coats: JAKA ETA KOSTUAK
-      new_collection: BILDUMA BERRIA
-      special_offers: ESKAINTZA BEREZIAK
     channel: Kanala
     charged: Kobratua
-    checkout: Errebisatu
     checkout_page:
       back_to_cart: berriro gurdira
       checkout_navigation: Checkout nabigazioa
@@ -651,25 +612,18 @@ eu:
       main_navigation: Nabigazio nagusia
       product: Produktua
     choose_a_customer: Aukeratu bezero bat
-    choose_a_taxon_to_sort_products_for: Aukeratu taxoi bat produktuak ordenatzeko
     choose_currency: Aukeratu Moneta
-    choose_dashboard_locale: Aukeratu Arbel lokala
     choose_location: Aukeratu kokapena
     city: Hiria
     clear_cache: Garbitu cachea
-    clear_cache_ok: Cachea hustu egin zen
     clear_cache_warning: Cachea garbitzeak aldi baterako zure dendaren errendimendua murriztuko du.
-    click_and_drag_on_the_products_to_sort_them: Egin klik eta arrastatu produktuak ordenatzeko.
     clone: Klona
     close: Itxi
     close_all_adjustments: Itxi doikuntza guztiak
     code: Kodea
     company: Enpresa
     compare_at_price: Konparatu prezioan
-    complete: osoa
-    configuration: Konfigurazioa
     configurations: Konfigurazioak
-    confirm: Berretsi
     confirm_delete: Berretsi ezabatzea
     confirm_password: Pasahitz berrespena
     contact_phone: Harremanetarako telefonoa
@@ -679,7 +633,6 @@ eu:
     continue_shopping: Jarraitu erosketak egiten
     cost_currency: Kostuen moneta
     cost_price: Kostuaren prezioa
-    could_not_create_customer_return: Ezin izan da bezeroaren itzulera sortu
     could_not_create_stock_movement: Arazo bat izan da akzioen mugimendu hau gordetzeko. Saiatu berriro mesedez.
     count_on_hand: Zenbatu Alde
     countries: Herrialdeak
@@ -688,7 +641,6 @@ eu:
     country_name: Izena
     country_rule:
       label: Aukeratu herrialde honetara bidali behar da
-    coupon: Kupoia
     coupon_code: Kupoi kodea
     coupon_code_already_applied: Kupoi kodea dagoeneko aplikatu zaio eskaera honi
     coupon_code_applied: Kupoi kodea zure eskaerari ondo aplikatu zaio.
@@ -700,22 +652,17 @@ eu:
     coupon_code_removed: Kupoi kodea behar bezala kendu da zure eskaeratik.
     coupon_code_unknown_error: Une honetan ezin izan da kupoiaren kodea aplikatu saskian.
     create: Sortu
-    create_a_new_account: Sortu kontu berria
     create_new_order: Sortu eskaera berria
     create_reimbursement: Itzulketa sortu
     created_at: At sortua
     created_by: Honek sortua
-    credit: Kreditua
     credit_allowed: Kreditua onartzen da
     credit_card: Kreditu txartela
-    credit_cards: Kreditu txartelak
     credit_owed: Kreditua Zor
     credited: Kreditua
     credits: Kredituak
-    currencies: Monetak
     currency: Moneta
     currency_settings: Moneta ezarpenak
-    current: Oraingoa
     current_promotion_usage: 'uneko erabilera: %{count}'
     customer: Bezeroa
     customer_details: Bezeroaren datuak
@@ -814,7 +761,6 @@ eu:
     exceptions:
       count_on_hand_setter: 'Ezin da count_on_hand eskuz ezarri, automatikoki ezartzen baitu recalculate_count_on_hand callback-ek. Mesedez, erabili `update_column (: count_on_hand, value)`.'
     exchange_for: Trukatu
-    excl: salbu.
     existing_shipments: Dauden bidalketak
     expedited_exchanges_warning: Zehaztutako truke guztiak gorde eta berehala bidaliko zaizkio bezeroari. Bezeroari artikuluaren zenbateko osoa kobratuko zaio jatorrizko artikulua %{days_window} egunetan itzultzen ez badu.
     expiration: Iraungipena
@@ -1551,7 +1497,6 @@ eu:
     stock_location_info: Stockaren kokapenari buruzko informazioa
     stock_locations: Izakinen kokapenak
     stock_locations_need_a_default_country: Herrialde lehenetsi bat sortu behar duzu stock kokapena sortu aurretik.
-    stock_management: Izakinen kudeaketa
     stock_management_requires_a_stock_location: Sortu stockaren kokapena, stocka kudeatzeko.
     stock_movements: Izakinen Mugimenduak
     stock_movements_for_stock_location: Stock mugimenduak %{stock_location_name}rako
@@ -1562,7 +1507,6 @@ eu:
         variants_unavailable: Zenbait aldaera ez daude erabilgarri %{stock}-n
     stock_transfer_name: Izakinen Transferentzia
     stock_transfers: Izakinen Transferentziak
-    stop: Gelditu
     store: Denda
     store_credit:
       additional_payment_needed: Aukeratu gainerako ordainketa-metodoa gainerako <strong> %{amount} </strong> rako.
@@ -1628,7 +1572,6 @@ eu:
     supported_currencies: Onartutako monetak
     supported_currencies_long: Onartutako moneten zerrenda komaz bereizita
     supported_locales: Onartutako lokalak
-    tags: Etiketak
     tags_placeholder: Gehitu etiketak
     tax: Zerga
     tax_categories: Zerga Kategoriak
@@ -1723,12 +1666,9 @@ eu:
     variant_placeholder: Aukeratu aldaera bat
     variant_prices_search_placeholder: Bilatu SKU edo aldaeraren izena ...
     variants: Aldaerak
-    version: Bertsioa
-    void: Hutsik
     weight: Pisua
     what_is_a_cvv: Zer da (CVV) kreditu txartelaren kodea?
     width: Zabalera
-    year: Urtea
     you_have_no_orders_yet: Oraindik ez duzu agindurik
     your_order_is_empty_add_product: Zure eskaera hutsik dago, bilatu eta gehitu produktu bat goian
     zip: Zip

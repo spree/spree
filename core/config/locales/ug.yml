@@ -437,7 +437,6 @@ ug:
     abbreviation: قىسقارتىش
     accept: قوبۇل قىلىڭ
     acceptance_errors: قوبۇل قىلىش خاتالىقى
-    acceptance_status: قوبۇل قىلىش ھالىتى
     accepted: قوبۇل قىلىندى
     account: ھېسابات
     account_info: ھېسابات ئۇچۇرى
@@ -455,32 +454,24 @@ ug:
       refund: پۇل قايتۇرۇش
       save: ساقلاش
       update: يېڭىلاش
-    activate: ئاكتىپلاش
     active: ئاكتىپ
     add: قوش
     add_action_of_type: تىپ ھەرىكىتىنى قوشۇڭ
-    add_country: دۆلەت قوشۇڭ
     add_coupon_code: Coupon Code نى قوشۇڭ
     add_new_address: يېڭى ئادرېس قوشۇڭ
     add_new_credit_card: يېڭى كارتا قوشۇڭ
-    add_new_header: يېڭى ماۋزۇ قوشۇڭ
-    add_new_style: يېڭى ئۇسلۇب قوشۇڭ
     add_one: بىرنى قوشۇڭ
     add_option_value: تاللاش قىممىتىنى قوشۇڭ
     add_product: مەھسۇلات قوشۇڭ
     add_product_properties: مەھسۇلات خاسلىقىنى قوشۇڭ
     add_rule_of_type: تىپ قائىدىسىنى قوشۇڭ
-    add_state: دۆلەت قوشۇڭ
     add_stock: پاي قوشۇڭ
     add_store: يېڭى دۇكان
     add_store_credit: دۇكان ئىناۋىتىنى قوشۇڭ
     add_to_cart: ھارۋىغا قوشۇڭ
     add_variant: Variant نى قوشۇڭ
     added_to_cart: ھارۋىغا مۇۋەپپەقىيەتلىك قوشۇلدى!
-    additional_item: قوشۇمچە تۈر
     address: ئادرېس
-    address1: ئادرېس
-    address2: ئادرېس (داۋامى)
     address_action_popup:
       delete_button: ھەئە ، ئۆچۈرۈڭ
       delete_text: سىز <br /> بۇ ئادرېسنى ئۆچۈرمەكچىمۇ؟
@@ -499,13 +490,10 @@ ug:
     addresses: ئادرېس
     adjustable: تەڭشىگىلى بولىدۇ
     adjustment: تەڭشەش
-    adjustment_amount: سومما
     adjustment_labels:
       tax_rates:
         excluding_tax: "%{name}%{amount}"
         including_tax: "%{name}%{amount} (باھاغا كىرگۈزۈلگەن)"
-    adjustment_successfully_closed: تەڭشەش مۇۋەپپەقىيەتلىك تاقالدى!
-    adjustment_successfully_opened: تەڭشەش مۇۋەپپەقىيەتلىك ئېچىلدى!
     adjustment_total: تەڭشەش ئومۇمىي
     adjustments: تەڭشەش
     adjustments_deleted: تەڭشەش ئۆچۈرۈلدى
@@ -549,26 +537,19 @@ ug:
         user_information: ئىشلەتكۈچى ئۇچۇرى
     administration: Administration
     advertise: ئېلان
-    agree_to_privacy_policy: مەخپىيەتلىك سىياسىتىگە قوشۇلۇڭ
-    agree_to_terms_of_service: مۇلازىمەت شەرتلىرىگە قوشۇلۇڭ
     all: ھەممىسى
     all_adjustments_closed: بارلىق تەڭشەشلەر مۇۋەپپەقىيەتلىك تاقالدى!
     all_adjustments_opened: بارلىق تەڭشەشلەر مۇۋەپپەقىيەتلىك ئېچىلدى!
-    all_departments: بارلىق تارماقلار
     all_items_have_been_returned: بارلىق بۇيۇملار قايتۇرۇلدى
     all_rights_reserved: بارلىق ھوقۇق قوغدىلىدۇ
-    already_have_account: ھېساباتىڭىز بارمۇ؟
     alt_text: Alternative Text
     alternative_phone: باشقا تېلېفون
     amount: سومما
     and: ۋە
-    approve: تەستىق
     approved_at: تەستىقلاندى
     approver: تەستىقلىغۇچى
     are_you_sure: ئىشىنەمسىز؟
     are_you_sure_delete: بۇ خاتىرىنى ئۆچۈرمەكچىمۇ؟
-    associated_adjustment_closed: مۇناسىۋەتلىك تەڭشەش تاقالغان بولۇپ ، قايتا ھېسابلانمايدۇ. ئۇنى ئاچماقچىمۇ؟
-    authorization_failure: ھوقۇق بېرىش مەغلۇب بولدى
     authorized: ھوقۇق بېرىلگەن
     auto_capture: Auto Capture
     availability: ئىشلەتكىلى بولىدۇ
@@ -577,16 +558,10 @@ ug:
     average_order_value: ئوتتۇرىچە زاكاز قىممىتى
     avs_response: AVS ئىنكاس
     back: قايتىش
-    back_end: Backend
-    back_to_payment: پۇل تۆلەش
     back_to_resource_list: "%{resource} تىزىملىكىگە قايتىش"
-    back_to_rma_reason_list: RMA سەۋەب تىزىملىكىگە قايتىش
     back_to_store: دۇكانغا قايتىش
-    back_to_users_list: ئىشلەتكۈچى تىزىملىكىگە قايتىش
     backorderable: Backorderable
     backorderable_default: زاپاسلىغىلى بولىدىغان سۈكۈتتىكى
-    backordered: Backordered
-    backordered_confirm_info: تاللانغان تۈر ئارقا رەتلەنگەن ، شۇڭا كېچىكىشنى ئۈمىد قىلىڭ. زاكاز قىلغۇڭىز بارمۇ؟
     backordered_info: Backordered
     backorders_allowed: ئارقا بەت رۇخسەت قىلىندى
     balance_due: تەڭپۇڭلۇق
@@ -594,9 +569,7 @@ ug:
     base_percent: Base Percent
     basic_information: ئاساسىي ئۇچۇرلار
     bill_address: Bill Address
-    billing: ھېسابات قىلىش
     billing_address: ھېسابات ئادرېسى
-    both: ھەر ئىككىلىسى
     breadcrumbs: نان
     calculated_reimbursements: ھېسابلانغان تولۇقلىما
     calculator: ھېسابلىغۇچ
@@ -612,8 +585,6 @@ ug:
     cannot_empty_completed_order: زاكاز ئاللىقاچان بىر تەرەپ قىلىنغان بولۇپ ، ئۇنى بوشاتقىلى بولمايدۇ
     cannot_perform_operation: تەلەپ قىلىنغان مەشغۇلاتنى قىلالمايدۇ
     cannot_return_more_than_bought_quantity: سېتىۋالغان مىقداردىن كۆپ قايتۇرغىلى بولمايدۇ.
-    cannot_set_shipping_method_without_address: خېرىدارلارنىڭ تەپسىلاتلىرى تەمىنلەنمىگۈچە توشۇش ئۇسۇلىنى بەلگىلىيەلمەيدۇ.
-    capture: Capture
     capture_events: ۋەقەلەرنى تۇتۇش
     card_code: كارتا پەرقلەندۈرۈش كودى (CVC)
     card_number: كارتا نومۇرى
@@ -630,19 +601,9 @@ ug:
       quantity: مىقدارى
       remove_from_cart: ھارۋىدىن چىقىرىۋېتىڭ
       title: مال سېتىۋېلىش ھارۋىسى
-    cart_subtotal:
-      one: Subtotal (1 item)
-      other: Subtotal (%{count} تۈرلىرى)
-    categories: سەھىپىلەر
     category: سەھىپە
-    category_nav_bar:
-      get_up_to_30_percent_off: 30% OFF گە ئېرىشىڭ
-      jackets_and_coats: JACKET & COASTS
-      new_collection: يېڭى كوللىكتىپ
-      special_offers: ئالاھىدە تەكلىپلەر
     channel: Channel
     charged: توك قاچىلانغان
-    checkout: چىقىمدان
     checkout_page:
       back_to_cart: ھارۋىغا قايتىش
       checkout_navigation: چىقىمدان يول باشلاش
@@ -651,25 +612,18 @@ ug:
       main_navigation: ئاساسلىق يول باشلاش
       product: مەھسۇلات
     choose_a_customer: خېرىدار تاللاڭ
-    choose_a_taxon_to_sort_products_for: مەھسۇلاتلارنى رەتلەش ئۈچۈن تاكسى تاللاڭ
     choose_currency: پۇل تاللاڭ
-    choose_dashboard_locale: باش تاختا رايونىنى تاللاڭ
     choose_location: ئورۇن تاللاڭ
     city: شەھەر
     clear_cache: Cache نى تازىلاش
-    clear_cache_ok: كەشى قىزاردى
     clear_cache_warning: غەملەكنى تازىلاش دۇكىنىڭىزنىڭ ئىقتىدارىنى ۋاقىتلىق تۆۋەنلىتىدۇ.
-    click_and_drag_on_the_products_to_sort_them: ئۇلارنى چېكىپ مەھسۇلاتلارنى چېكىڭ.
     clone: كلون
     close: تاقاش
     close_all_adjustments: بارلىق تەڭشەشنى تاقاڭ
     code: كود
     company: شىركەت
     compare_at_price: باھا بىلەن سېلىشتۇرۇڭ
-    complete: تامام
-    configuration: سەپلىمىسى
     configurations: سەپلىمىسى
-    confirm: جەزملەشتۈرۈڭ
     confirm_delete: ئۆچۈرۈشنى جەزملەشتۈرۈڭ
     confirm_password: پارول جەزملەشتۈرۈش
     contact_phone: ئالاقىلىشىش تېلېفونى
@@ -679,7 +633,6 @@ ug:
     continue_shopping: مال سېتىۋېلىشنى داۋاملاشتۇرۇڭ
     cost_currency: تەننەرخ پۇلى
     cost_price: تەننەرخ باھاسى
-    could_not_create_customer_return: خېرىدار قايتۇرۇشنى قۇرالمىدى
     could_not_create_stock_movement: بۇ پاي ھەرىكىتىنى تېجەشتە مەسىلە كۆرۈلدى. قايتا سىناڭ.
     count_on_hand: ساناپ بېقىڭ
     countries: دۆلەتلەر
@@ -688,7 +641,6 @@ ug:
     country_name: ئىسمى
     country_rule:
       label: تاللاش چوقۇم بۇ دۆلەتكە ئەۋەتىلىشى كېرەك
-    coupon: Coupon
     coupon_code: Coupon code
     coupon_code_already_applied: بۇ بۇيرۇققا تالون كودى ئاللىقاچان قوللىنىلىپ بولغان
     coupon_code_applied: تالون كودى سىزنىڭ بۇيرۇقىڭىزغا مۇۋەپپەقىيەتلىك قوللىنىلدى.
@@ -700,22 +652,17 @@ ug:
     coupon_code_removed: تالون كودى سىزنىڭ بۇيرۇقىڭىزدىن مۇۋەپپەقىيەتلىك ئۆچۈرۈلدى.
     coupon_code_unknown_error: بۇ تالون كودىنى ھازىرچە ھارۋىغا ئىشلىتىشكە بولمايدۇ.
     create: قۇر
-    create_a_new_account: يېڭى ھېسابات قۇر
     create_new_order: يېڭى تەرتىپ قۇر
     create_reimbursement: تۆلەم تۆلەش
     created_at: At At
     created_by: ئىجاد قىلغان
-    credit: كرېدىت
     credit_allowed: ئىناۋەتلىك
     credit_card: ئىناۋەتلىك كارتا
-    credit_cards: ئىناۋەتلىك كارتا
     credit_owed: Credit Owed
     credited: ئىشەنچلىك
     credits: Credits
-    currencies: پۇللار
     currency: پۇل
     currency_settings: پۇل تەڭشەكلىرى
-    current: نۆۋەتتىكى
     current_promotion_usage: 'نۆۋەتتىكى ئىشلىتىلىشى: %{count}'
     customer: خېرىدار
     customer_details: خېرىدار تەپسىلاتلىرى
@@ -814,7 +761,6 @@ ug:
     exceptions:
       count_on_hand_setter: 'قايتا ھېسابلاش_ ھېسابلاش_ چاقىرىش ئارقىلىق ئاپتوماتىك تەڭشەلگەچكە ، سان_ قول_نى قولدا تەڭشىيەلمەيدۇ. ئۇنىڭ ئورنىغا `update_column (: count_on_hand, value)` نى ئىشلىتىڭ.'
     exchange_for: ئالماشتۇرۇش
-    excl: excl.
     existing_shipments: ھازىر بار بولغان ماللار
     expedited_exchanges_warning: ھەر قانداق بەلگىلەنگەن ئالماشتۇرۇش تېجەپ بولغاندىن كېيىن دەرھال خېرىدارغا ئەۋەتىلىدۇ. ئەگەر خېرىدارلار %{days_window} كۈن ئىچىدە ئەسلىدىكى نەرسىنى قايتۇرمىسا ، مالنىڭ تولۇق سوممىسىنى ئالىدۇ.
     expiration: ۋاقتى توشىدۇ
@@ -1551,7 +1497,6 @@ ug:
     stock_location_info: زاپاس ئورۇن ئۇچۇرى
     stock_locations: پاي چېكى ئورنى
     stock_locations_need_a_default_country: پاي چېكى ئورنى قۇرۇشتىن بۇرۇن چوقۇم سۈكۈتتىكى دۆلەت قۇرۇشىڭىز كېرەك.
-    stock_management: پاي باشقۇرۇش
     stock_management_requires_a_stock_location: پاينى باشقۇرۇش ئۈچۈن پاي ئورنى قۇرۇڭ.
     stock_movements: پاي چېكى ھەرىكىتى
     stock_movements_for_stock_location: "%{stock_location_name} نىڭ پاي ھەرىكىتى"
@@ -1562,7 +1507,6 @@ ug:
         variants_unavailable: "%{stock} دا بەزى ۋارىيانتلارنى ئىشلەتكىلى بولمايدۇ"
     stock_transfer_name: پاي چېكى يۆتكەش
     stock_transfers: پاي چېكى يۆتكەش
-    stop: توختاڭ
     store: دۇكان
     store_credit:
       additional_payment_needed: قالغان <strong> %{amount} </strong> ئۈچۈن باشقا پۇل تۆلەش ئۇسۇلىنى تاللاڭ.
@@ -1628,7 +1572,6 @@ ug:
     supported_currencies: قوللايدىغان پۇللار
     supported_currencies_long: پەش ئارقىلىق قوللىنىدىغان پۇللارنىڭ تىزىملىكى
     supported_locales: قوللايدىغان يەرلىكلەر
-    tags: خەتكۈچ
     tags_placeholder: خەتكۈچ قوشۇڭ
     tax: باج
     tax_categories: باج تۈرلىرى
@@ -1723,12 +1666,9 @@ ug:
     variant_placeholder: ئۆزگەرگۈچى مىقدارنى تاللاڭ
     variant_prices_search_placeholder: SKU ياكى ئۆزگەرگۈچى ئىسىمنى ئىزدەڭ ...
     variants: Variants
-    version: نەشرى
-    void: Void
     weight: ئېغىرلىقى
     what_is_a_cvv: "(CVV) ئىناۋەتلىك كارتا كودى دېگەن نېمە؟"
     width: كەڭلىك
-    year: يىل
     you_have_no_orders_yet: ھازىرچە زاكاز يوق
     your_order_is_empty_add_product: زاكازڭىز قۇرۇق ، ئۈستىدىكى مەھسۇلاتنى ئىزدەڭ ۋە قوشۇڭ
     zip: Zip

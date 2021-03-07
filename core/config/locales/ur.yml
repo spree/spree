@@ -437,7 +437,6 @@ ur:
     abbreviation: مخفف
     accept: قبول کریں
     acceptance_errors: قبولیت کی غلطیاں
-    acceptance_status: قبولیت کی حیثیت
     accepted: قبول کر لیا
     account: کھاتہ
     account_info: اکاونٹ کی معلومات
@@ -455,32 +454,24 @@ ur:
       refund: واپس کرنا
       save: محفوظ کریں
       update: اپ ڈیٹ
-    activate: محرک کریں
     active: فعال
     add: شامل کریں
     add_action_of_type: قسم کی کارروائی شامل کریں
-    add_country: ملک شامل کریں
     add_coupon_code: کوپن کوڈ شامل کریں
     add_new_address: نیا پتہ شامل کریں
     add_new_credit_card: ایک نیا کارڈ شامل کریں
-    add_new_header: نیا ہیڈر شامل کریں
-    add_new_style: نیا انداز شامل کریں
     add_one: ایک شامل کریں
     add_option_value: آپشن ویلیو کو شامل کریں
     add_product: پروڈکٹ شامل کریں
     add_product_properties: مصنوعات کی پراپرٹیز شامل کریں
     add_rule_of_type: قسم کا اصول شامل کریں
-    add_state: ریاست شامل کریں
     add_stock: اسٹاک شامل کریں
     add_store: نیا اسٹور
     add_store_credit: اسٹور کریڈٹ شامل کریں
     add_to_cart: ٹوکری میں شامل کریں
     add_variant: متغیر شامل کریں
     added_to_cart: کامیابی کے ساتھ ٹوکری میں شامل کیا گیا!
-    additional_item: اضافی آئٹم
     address: پتہ
-    address1: پتہ
-    address2: پتہ (جاری)
     address_action_popup:
       delete_button: ہاں ، حذف کریں
       delete_text: کیا آپ واقعی میں چاہتے ہیں کہ <br /> یہ پتہ حذف کریں؟
@@ -499,13 +490,10 @@ ur:
     addresses: پتے
     adjustable: سایڈست
     adjustment: ایڈجسٹمنٹ
-    adjustment_amount: رقم
     adjustment_labels:
       tax_rates:
         excluding_tax: "%{name}%{amount}"
         including_tax: "%{name}%{amount} (قیمت میں شامل)"
-    adjustment_successfully_closed: ایڈجسٹمنٹ کامیابی کے ساتھ بند کردی گئی ہے!
-    adjustment_successfully_opened: ایڈجسٹمنٹ کامیابی کے ساتھ کھول دی گئی ہے!
     adjustment_total: ایڈجسٹمنٹ کل
     adjustments: ایڈجسٹمنٹ
     adjustments_deleted: ایڈجسٹمنٹ حذف ہوگئیں
@@ -549,26 +537,19 @@ ur:
         user_information: صارف کی معلومات
     administration: انتظامیہ
     advertise: اشتہار دیں
-    agree_to_privacy_policy: رازداری کی پالیسی سے اتفاق کریں
-    agree_to_terms_of_service: سروس کی شرائط سے اتفاق کریں
     all: سب
     all_adjustments_closed: تمام ایڈجسٹمنٹ کامیابی کے ساتھ بند ہوگئی!
     all_adjustments_opened: تمام ایڈجسٹمنٹ کامیابی کے ساتھ کھل گئیں!
-    all_departments: تمام محکمے
     all_items_have_been_returned: تمام اشیاء واپس کردی گئیں
     all_rights_reserved: جملہ حقوق محفوظ ہیں
-    already_have_account: پہلے سے ہی ایک اکاؤنٹ ہے؟
     alt_text: متبادل متن
     alternative_phone: متبادل فون
     amount: رقم
     and: اور
-    approve: منظور کریں
     approved_at: پر منظور
     approver: منظور
     are_you_sure: کیا تمہیں یقین ہے؟
     are_you_sure_delete: کیا آپ واقعی یہ ریکارڈ حذف کرنا چاہتے ہیں؟
-    associated_adjustment_closed: متعلقہ ایڈجسٹمنٹ بند ہے ، اور دوبارہ گنتی نہیں کی جائے گی۔ کیا آپ اسے کھولنا چاہتے ہیں؟
-    authorization_failure: اجازت میں ناکامی
     authorized: مجاز
     auto_capture: آٹو کیپچر
     availability: دستیابی
@@ -577,16 +558,10 @@ ur:
     average_order_value: اوسط ترتیب قیمت
     avs_response: اے وی ایس رسپانس
     back: پیچھے
-    back_end: پسدید
-    back_to_payment: واپس ادائیگی
     back_to_resource_list: "%{resource} فہرست پر واپس جائیں"
-    back_to_rma_reason_list: RMA وجہ کی فہرست پر واپس جائیں
     back_to_store: واپس اسٹور پر
-    back_to_users_list: صارفین کی فہرست میں واپس جائیں
     backorderable: پسماندہ
     backorderable_default: بیک ڈور ڈیفالٹ
-    backordered: بیک آرڈرڈ
-    backordered_confirm_info: منتخب کردہ آئٹم کو دوبارہ ترتیب دیا گیا ہے لہذا تاخیر کی توقع کریں۔ کیا آپ واقعی اس کا آرڈر دینا چاہتے ہیں؟
     backordered_info: بیک آرڈرڈ
     backorders_allowed: backouts کی اجازت ہے
     balance_due: بیلنس کی وجہ سے
@@ -594,9 +569,7 @@ ur:
     base_percent: بیس فیصد
     basic_information: بنیادی معلومات
     bill_address: بل ایڈریس
-    billing: بلنگ
     billing_address: بل کا پتہ
-    both: دونوں
     breadcrumbs: بریڈ کرمبس
     calculated_reimbursements: گنتی معاوضے
     calculator: کیلکولیٹر
@@ -612,8 +585,6 @@ ur:
     cannot_empty_completed_order: آرڈر پر پہلے ہی کارروائی ہوچکی ہے لہذا اسے خالی نہیں کیا جاسکتا
     cannot_perform_operation: درخواست کردہ آپریشن انجام نہیں دے سکتا
     cannot_return_more_than_bought_quantity: خریدی مقدار سے زیادہ واپس نہیں کر سکتے ہیں۔
-    cannot_set_shipping_method_without_address: جب تک گاہک کی تفصیلات فراہم نہیں کی جاتی ہیں تب تک شپنگ کا طریقہ متعین نہیں کیا جاسکتا۔
-    capture: گرفت
     capture_events: واقعات پر گرفت
     card_code: کارڈ میں تبدیلی کا کوڈ (CVC)
     card_number: کارڈ نمبر
@@ -630,19 +601,9 @@ ur:
       quantity: مقدار
       remove_from_cart: ٹوکری سے ہٹا دیں
       title: خریداری کی ٹوکری
-    cart_subtotal:
-      one: کل (1 آئٹم)
-      other: کل (%{count} آئٹمز)
-    categories: اقسام
     category: قسم
-    category_nav_bar:
-      get_up_to_30_percent_off: 30 OF آف حاصل کریں
-      jackets_and_coats: جیکٹ اور کوسٹس
-      new_collection: نئی کلیکشن
-      special_offers: خصوصی پیشکش
     channel: چینل
     charged: الزام عائد کیا
-    checkout: اس کو دیکھو
     checkout_page:
       back_to_cart: واپس ٹوکری پر
       checkout_navigation: چیک آؤٹ نیویگیشن
@@ -651,25 +612,18 @@ ur:
       main_navigation: مین نیویگیشن
       product: پروڈکٹ
     choose_a_customer: ایک گاہک کا انتخاب کریں
-    choose_a_taxon_to_sort_products_for: مصنوعات کو ترتیب دینے کے لئے ایک ٹیکس کا انتخاب کریں
     choose_currency: کرنسی کا انتخاب کریں
-    choose_dashboard_locale: ڈیش بورڈ لوکل کا انتخاب کریں
     choose_location: مقام کا انتخاب کریں
     city: شہر
     clear_cache: کیشے صاف کریں
-    clear_cache_ok: کیشے کو فلش کردیا گیا
     clear_cache_warning: کیش کو صاف کرنا آپ کے اسٹور کی کارکردگی کو عارضی طور پر کم کردے گا۔
-    click_and_drag_on_the_products_to_sort_them: پروڈکٹ کو ترتیب دینے کیلئے ان پر کلک اور ڈریگ کریں۔
     clone: کلون
     close: بند کریں
     close_all_adjustments: تمام ایڈجسٹمنٹ بند کریں
     code: کوڈ
     company: کمپنی
     compare_at_price: قیمت پر موازنہ کریں
-    complete: مکمل
-    configuration: تشکیل
     configurations: تشکیلات
-    confirm: تصدیق کریں
     confirm_delete: حذف ہونے کی تصدیق کریں
     confirm_password: پاسورڈ کی تو ثیق
     contact_phone: رابطے کا فون
@@ -679,7 +633,6 @@ ur:
     continue_shopping: خریداری جاری
     cost_currency: لاگت کی کرنسی
     cost_price: لاگت کی قیمت
-    could_not_create_customer_return: کسٹمر ریٹرن نہیں بناسکے
     could_not_create_stock_movement: اس اسٹاک کی نقل و حرکت کو بچانے میں ایک دشواری تھی۔ دوبارہ کوشش کریں.
     count_on_hand: ہاتھ پر گنیں
     countries: ممالک
@@ -688,7 +641,6 @@ ur:
     country_name: نام
     country_rule:
       label: اس ملک کو بھیجنا لازمی ہے
-    coupon: کوپن
     coupon_code: کوپن کوڈ
     coupon_code_already_applied: کوپن کوڈ پہلے ہی اس آرڈر پر لاگو ہوچکا ہے
     coupon_code_applied: کوپن کوڈ کامیابی کے ساتھ آپ کے آرڈر پر لاگو ہوا۔
@@ -700,22 +652,17 @@ ur:
     coupon_code_removed: کوپن کوڈ کامیابی کے ساتھ آپ کے آرڈر سے ہٹا دیا گیا۔
     coupon_code_unknown_error: اس کوپن کوڈ کو اس وقت کارٹ پر لاگو نہیں کیا جاسکا۔
     create: بنانا
-    create_a_new_account: نیا اکاؤنٹ بنائیں
     create_new_order: نیا آرڈر بنائیں
     create_reimbursement: معاوضہ بنائیں
     created_at: ایٹ تیار کیا گیا
     created_by: بنائی گئی
-    credit: کریڈٹ
     credit_allowed: کریڈٹ کی اجازت ہے
     credit_card: کریڈٹ کارڈ
-    credit_cards: کریڈٹ کارڈ
     credit_owed: کریڈٹ کی ملکیت ہے
     credited: کریڈٹ
     credits: کریڈٹ
-    currencies: کرنسیوں
     currency: کرنسی
     currency_settings: کرنسی کی ترتیبات
-    current: موجودہ
     current_promotion_usage: 'موجودہ استعمال: %{count}'
     customer: صارف
     customer_details: گاہک کی تفصیلات
@@ -814,7 +761,6 @@ ur:
     exceptions:
       count_on_hand_setter: 'گنتی_حیثتی طور پر دستی طور پر سیٹ نہیں کی جاسکتی ہے ، کیونکہ یہ حساب کتاب_کونٹ_حسن_کینڈ بیک کے ذریعہ خود بخود سیٹ ہوجاتا ہے۔ براہ کرم اس کے بجائے `اپ ڈیٹ_کالم (: count_on_ اور قدر) use استعمال کریں۔'
     exchange_for: کے لئے تبادلہ
-    excl: excl.
     existing_shipments: موجودہ کھیپ
     expedited_exchanges_warning: کسی بھی مخصوص تبادلے کی بچت کے بعد فوری طور پر گاہک کو بھیج دیا جائے گا۔ اگر صارف %{days_window} دن کے اندر اصل شے کو واپس نہیں کرتا ہے تو صارف سے اس شے کی پوری رقم وصول کی جائے گی۔
     expiration: میعاد ختم ہونا
@@ -1551,7 +1497,6 @@ ur:
     stock_location_info: اسٹاک کی معلومات
     stock_locations: اسٹاک کے مقامات
     stock_locations_need_a_default_country: اسٹاک کی جگہ بنانے سے پہلے آپ کو پہلے سے طے شدہ ملک بنانا ہوگا۔
-    stock_management: اسٹاک مینجمنٹ
     stock_management_requires_a_stock_location: اسٹاک کو منظم کرنے کے لئے براہ کرم اسٹاک کا مقام بنائیں۔
     stock_movements: اسٹاک کی نقل و حرکت
     stock_movements_for_stock_location: "%{stock_location_name} کیلئے اسٹاک کی نقل و حرکت"
@@ -1562,7 +1507,6 @@ ur:
         variants_unavailable: کچھ قسمیں %{stock} پر دستیاب نہیں ہیں
     stock_transfer_name: اسٹاک کی منتقلی
     stock_transfers: اسٹاک کی منتقلی
-    stop: رک جاؤ
     store: اسٹور
     store_credit:
       additional_payment_needed: بقیہ <strong> %{amount} </strong> کے لئے ادائیگی کا دوسرا طریقہ منتخب کریں۔
@@ -1628,7 +1572,6 @@ ur:
     supported_currencies: تائید شدہ کرنسی
     supported_currencies_long: معاون کرنسیوں کی کوما سے الگ کردہ فہرست
     supported_locales: تائید شدہ لوکلز
-    tags: ٹیگز
     tags_placeholder: ٹیگز شامل کریں
     tax: ٹیکس
     tax_categories: ٹیکس زمرے
@@ -1723,12 +1666,9 @@ ur:
     variant_placeholder: ایک مختلف حالت کا انتخاب کریں
     variant_prices_search_placeholder: ایس کیو یا متغیر نام کی تلاش کریں…
     variants: متغیرات
-    version: ورژن
-    void: باطل
     weight: وزن
     what_is_a_cvv: "(CVV) کریڈٹ کارڈ کوڈ کیا ہے؟"
     width: چوڑائی
-    year: سال
     you_have_no_orders_yet: ابھی آپ کے پاس کوئی آرڈر نہیں ہیں
     your_order_is_empty_add_product: آپ کا آرڈر خالی ہے ، براہ کرم اوپر کی مصنوعات کو تلاش کریں اور شامل کریں
     zip: زپ

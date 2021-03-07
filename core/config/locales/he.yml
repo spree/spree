@@ -437,7 +437,6 @@ he:
     abbreviation: נוֹטָרִיקוֹן
     accept: לְקַבֵּל
     acceptance_errors: שגיאות קבלה
-    acceptance_status: מצב קבלה
     accepted: מְקוּבָּל
     account: חֶשְׁבּוֹן
     account_info: פרטי חשבון
@@ -455,32 +454,24 @@ he:
       refund: הֶחזֵר
       save: להציל
       update: עדכון
-    activate: לְהַפְעִיל
     active: פָּעִיל
     add: לְהוֹסִיף
     add_action_of_type: הוסף פעולה מהסוג
-    add_country: הוסף מדינה
     add_coupon_code: הוסף קוד קופון
     add_new_address: הוסף כתובת חדשה
     add_new_credit_card: הוסף כרטיס חדש
-    add_new_header: הוסף כותרת חדשה
-    add_new_style: הוסף סגנון חדש
     add_one: הוסף אחד
     add_option_value: הוסף ערך אפשרות
     add_product: הוסף מוצר
     add_product_properties: הוסף מאפייני מוצר
     add_rule_of_type: הוסף כלל מסוג
-    add_state: הוסף מדינה
     add_stock: הוסף מלאי
     add_store: חנות חדשה
     add_store_credit: הוסף אשראי בחנות
     add_to_cart: הוסף לעגלה
     add_variant: הוסף וריאנט
     added_to_cart: נוסף לעגלה בהצלחה!
-    additional_item: פריט נוסף
     address: כתובת
-    address1: כתובת
-    address2: כתובת (המשך)
     address_action_popup:
       delete_button: כן, מחק
       delete_text: האם אתה באמת רוצה ש <br /> ימחק כתובת זו?
@@ -499,13 +490,10 @@ he:
     addresses: כתובות
     adjustable: מתכוונן
     adjustment: התאמה
-    adjustment_amount: כמות
     adjustment_labels:
       tax_rates:
         excluding_tax: "%{name}%{amount}"
         including_tax: "%{name}%{amount} (כלול במחיר)"
-    adjustment_successfully_closed: ההתאמה נסגרה בהצלחה!
-    adjustment_successfully_opened: ההתאמה נפתחה בהצלחה!
     adjustment_total: סה"כ התאמה
     adjustments: התאמות
     adjustments_deleted: ההתאמות נמחקו
@@ -549,26 +537,19 @@ he:
         user_information: מידע משתמש
     administration: מִנהָל
     advertise: לְפַרְסֵם
-    agree_to_privacy_policy: מסכים למדיניות הפרטיות
-    agree_to_terms_of_service: מסכים לתנאי השירות
     all: את כל
     all_adjustments_closed: כל ההתאמות נסגרו בהצלחה!
     all_adjustments_opened: כל ההתאמות נפתחו בהצלחה!
-    all_departments: כל המחלקות
     all_items_have_been_returned: כל הפריטים הוחזרו
     all_rights_reserved: כל הזכויות שמורות
-    already_have_account: כבר יש לך חשבון?
     alt_text: טקסט חלופי
     alternative_phone: טלפון חלופי
     amount: כמות
     and: ו
-    approve: לְאַשֵׁר
     approved_at: אושר בשעה
     approver: מאשר
     are_you_sure: האם אתה בטוח?
     are_you_sure_delete: האם אתה בטוח שברצונך למחוק רשומה זו?
-    associated_adjustment_closed: ההתאמה הנלווית נסגרת ולא תחושב מחדש. האם אתה רוצה לפתוח אותו?
-    authorization_failure: כישלון ההרשאה
     authorized: מורשה
     auto_capture: לכידה אוטומטית
     availability: זמינות
@@ -577,16 +558,10 @@ he:
     average_order_value: ערך הזמנה ממוצע
     avs_response: תגובת AVS
     back: חזור
-    back_end: אחורי
-    back_to_payment: חזרה לתשלום
     back_to_resource_list: חזרה לרשימת %{resource}
-    back_to_rma_reason_list: חזרה לרשימת הסיבות של RMA
     back_to_store: חזרה לחנות
-    back_to_users_list: חזרה לרשימת משתמשים
     backorderable: ניתן להזמנה מראש
     backorderable_default: ברירת מחדל להזמנה מראש
-    backordered: הוזמן מחדש
-    backordered_confirm_info: הפריט שנבחר מסודר מחדש, אז צפו לעיכובים. האם אתה בטוח שברצונך להזמין אותו?
     backordered_info: הוזמן מחדש
     backorders_allowed: מותר להזמין גב
     balance_due: יתרה לתשלום
@@ -594,9 +569,7 @@ he:
     base_percent: אחוז בסיס
     basic_information: מידע בסיסי
     bill_address: כתובת ביל
-    billing: חיוב
     billing_address: כתובת לחיוב
-    both: שניהם
     breadcrumbs: פרורי לחם
     calculated_reimbursements: החזרים מחושבים
     calculator: מַחשְׁבוֹן
@@ -612,8 +585,6 @@ he:
     cannot_empty_completed_order: ההזמנה כבר עובדה ולכן לא ניתן לרוקן אותה
     cannot_perform_operation: לא ניתן לבצע פעולה מבוקשת
     cannot_return_more_than_bought_quantity: לא ניתן להחזיר יותר מהכמות שנקנתה.
-    cannot_set_shipping_method_without_address: לא ניתן להגדיר שיטת משלוח עד למסירת פרטי הלקוח.
-    capture: לִלְכּוֹד
     capture_events: לכידת אירועים
     card_code: קוד שינוי כרטיס (CVC)
     card_number: מספר כרטיס
@@ -630,19 +601,9 @@ he:
       quantity: כַּמוּת
       remove_from_cart: מוציאים מהעגלה
       title: עגלת קניות
-    cart_subtotal:
-      one: סכום המשנה (פריט אחד)
-      other: סכום משנה (פריטים %{count})
-    categories: קטגוריות
     category: קטגוריה
-    category_nav_bar:
-      get_up_to_30_percent_off: קבל עד 30% הנחה
-      jackets_and_coats: ז'קט וחוף
-      new_collection: קולקציה חדשה
-      special_offers: הצעות מיוחדות
     channel: עָרוּץ
     charged: טעונה
-    checkout: לבדוק
     checkout_page:
       back_to_cart: בחזרה לעגלה
       checkout_navigation: ניווט בקופה
@@ -651,25 +612,18 @@ he:
       main_navigation: ניווט ראשי
       product: מוצר
     choose_a_customer: בחר לקוח
-    choose_a_taxon_to_sort_products_for: בחר טקסון למיון מוצרים עבורו
     choose_currency: בחר מטבע
-    choose_dashboard_locale: בחר אזור לוח המחוונים
     choose_location: בחר מיקום
     city: עִיר
     clear_cache: נקה מטמון
-    clear_cache_ok: המטמון נשטף
     clear_cache_warning: ניקוי מטמון יפחית באופן זמני את ביצועי החנות שלך.
-    click_and_drag_on_the_products_to_sort_them: לחץ וגרור על המוצרים כדי למיין אותם.
     clone: שיבוט
     close: סגור
     close_all_adjustments: סגור את כל ההתאמות
     code: קוד
     company: חֶברָה
     compare_at_price: השווה במחיר
-    complete: לְהַשְׁלִים
-    configuration: תְצוּרָה
     configurations: תצורות
-    confirm: לְאַשֵׁר
     confirm_delete: אשר את המחיקה
     confirm_password: אימות סיסמה
     contact_phone: טלפון ליצירת קשר
@@ -679,7 +633,6 @@ he:
     continue_shopping: המשך בקניות
     cost_currency: מטבע עלות
     cost_price: מחיר עלות
-    could_not_create_customer_return: אין אפשרות ליצור החזר לקוח
     could_not_create_stock_movement: הייתה בעיה לשמור את תנועת המניות הזו. בבקשה נסה שוב.
     count_on_hand: לספור על היד
     countries: מדינות
@@ -688,7 +641,6 @@ he:
     country_name: שֵׁם
     country_rule:
       label: יש לשלוח את הבחירה למדינה זו
-    coupon: קוּפּוֹן
     coupon_code: קוד קופון
     coupon_code_already_applied: קוד הקופון כבר הוחל על הזמנה זו
     coupon_code_applied: קוד הקופון הוחל בהצלחה על הזמנתך.
@@ -700,22 +652,17 @@ he:
     coupon_code_removed: קוד הקופון הוסר בהצלחה מההזמנה שלך.
     coupon_code_unknown_error: בשלב זה לא ניתן היה להחיל קוד קופון זה על העגלה.
     create: לִיצוֹר
-    create_a_new_account: צור חשבון חדש
     create_new_order: צור הזמנה חדשה
     create_reimbursement: צור החזר
     created_at: נוצר ב
     created_by: נוצר על ידי
-    credit: אַשׁרַאי
     credit_allowed: אשראי מותר
     credit_card: כרטיס אשראי
-    credit_cards: כרטיסי אשראי
     credit_owed: אשראי חייב
     credited: זוכה
     credits: נקודות זכות
-    currencies: מטבעות
     currency: מַטְבֵּעַ
     currency_settings: הגדרות מטבע
-    current: נוֹכְחִי
     current_promotion_usage: 'השימוש הנוכחי: %{count}'
     customer: צרכן
     customer_details: פרטי לקוח
@@ -814,7 +761,6 @@ he:
     exceptions:
       count_on_hand_setter: 'לא ניתן להגדיר ספירה_על יד באופן ידני, מכיוון שהיא מוגדרת באופן אוטומטי על ידי השיבה החוזרת מחדש. אנא השתמש ב- ''update_column (: count_on_hand, value)'' במקום זאת.'
     exchange_for: החלף עבור
-    excl: לא כולל
     existing_shipments: משלוחים קיימים
     expedited_exchanges_warning: כל חילופי רכב שצוינו יישלחו ללקוח מיד עם החיסכון. הלקוח יחויב בסכום מלא של הפריט אם הוא לא יחזיר את הפריט המקורי בתוך %{days_window} ימים.
     expiration: תפוגה
@@ -1551,7 +1497,6 @@ he:
     stock_location_info: מידע על מיקום המניה
     stock_locations: מיקומי מניות
     stock_locations_need_a_default_country: עליך ליצור מדינה ברירת מחדל לפני שתיצור מיקום מניות.
-    stock_management: ניהול מניות
     stock_management_requires_a_stock_location: אנא צור מיקום מניות על מנת לנהל את המניה.
     stock_movements: תנועות מניות
     stock_movements_for_stock_location: תנועות מניות עבור %{stock_location_name}
@@ -1562,7 +1507,6 @@ he:
         variants_unavailable: גרסאות מסוימות אינן זמינות ב- %{stock}
     stock_transfer_name: העברת מניות
     stock_transfers: העברות מניות
-    stop: תפסיק
     store: חנות
     store_credit:
       additional_payment_needed: בחר אמצעי תשלום אחר עבור ה <strong> %{amount} </strong>.
@@ -1628,7 +1572,6 @@ he:
     supported_currencies: מטבעות נתמכים
     supported_currencies_long: רשימה מופרדת בפסיקים של מטבעות נתמכים
     supported_locales: מקומות נתמכים
-    tags: תגים
     tags_placeholder: הוסף תגיות
     tax: מַס
     tax_categories: קטגוריות מס
@@ -1723,12 +1666,9 @@ he:
     variant_placeholder: בחר גרסה
     variant_prices_search_placeholder: חפש SKU או שם גרסה ...
     variants: וריאנטים
-    version: גִרְסָה
-    void: בָּטֵל
     weight: מִשׁקָל
     what_is_a_cvv: מהו קוד כרטיס אשראי (CVV)?
     width: רוֹחַב
-    year: שָׁנָה
     you_have_no_orders_yet: אין לך עדיין הזמנות
     your_order_is_empty_add_product: ההזמנה שלך ריקה, אנא חפש והוסף מוצר למעלה
     zip: רוכסן

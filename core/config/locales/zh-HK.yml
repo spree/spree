@@ -437,7 +437,6 @@ zh-HK:
     abbreviation: 缩写
     accept: 接受
     acceptance_errors: 验收错误
-    acceptance_status: 接受状态
     accepted: 公认
     account: 帐户
     account_info: 帐户信息
@@ -455,32 +454,24 @@ zh-HK:
       refund: 退款
       save: 救
       update: 更新
-    activate: 启用
     active: 积极的
     add: 添加
     add_action_of_type: 添加动作类型
-    add_country: 添加国家
     add_coupon_code: 添加优惠券代码
     add_new_address: 添加新地址
     add_new_credit_card: 添加新卡
-    add_new_header: 添加新标题
-    add_new_style: 新增样式
     add_one: 加一
     add_option_value: 添加期权价值
     add_product: 添加产品
     add_product_properties: 添加产品属性
     add_rule_of_type: 添加类型规则
-    add_state: 添加状态
     add_stock: 添加库存
     add_store: 新店
     add_store_credit: 添加商店信用
     add_to_cart: 添加到购物车
     add_variant: 添加变体
     added_to_cart: 已成功添加到购物车！
-    additional_item: 附加项目
     address: 地址
-    address1: 地址
-    address2: 地址（续）
     address_action_popup:
       delete_button: 是的，删除
       delete_text: 您真的要<br />删除此地址吗？
@@ -499,13 +490,10 @@ zh-HK:
     addresses: 地址
     adjustable: 可调节的
     adjustment: 调整
-    adjustment_amount: 数量
     adjustment_labels:
       tax_rates:
         excluding_tax: "%{name}%{amount}"
         including_tax: "%{name}%{amount}（包含在价格中）"
-    adjustment_successfully_closed: 调整已成功完成！
-    adjustment_successfully_opened: 调整已成功打开！
     adjustment_total: 调整合计
     adjustments: 调整项
     adjustments_deleted: 调整已删除
@@ -549,26 +537,19 @@ zh-HK:
         user_information: 用户信息
     administration: 行政
     advertise: 广告
-    agree_to_privacy_policy: 同意隐私政策
-    agree_to_terms_of_service: 同意服务条款
     all: 全部
     all_adjustments_closed: 所有调整均已成功完成！
     all_adjustments_opened: 所有调整均已成功打开！
-    all_departments: 所有部门
     all_items_have_been_returned: 所有物品已退回
     all_rights_reserved: 版权所有
-    already_have_account: 已经有帐号了？
     alt_text: 替代文字
     alternative_phone: 备用电话
     amount: 数量
     and: 和
-    approve: 批准
     approved_at: 批准于
     approver: 批准人
     are_you_sure: 你确定吗？
     are_you_sure_delete: 您确定要删除此记录吗？
-    associated_adjustment_closed: 关联的调整已关闭，不会重新计算。您要打开吗？
-    authorization_failure: 授权失败
     authorized: 已授权
     auto_capture: 自动捕捉
     availability: 可用性
@@ -577,16 +558,10 @@ zh-HK:
     average_order_value: 平均订单价值
     avs_response: AVS回应
     back: 后退
-    back_end: 后端
-    back_to_payment: 返回付款
     back_to_resource_list: 返回%{resource}列表
-    back_to_rma_reason_list: 返回RMA原因列表
     back_to_store: 返回商店
-    back_to_users_list: 返回用户列表
     backorderable: 可延期交货
     backorderable_default: 可延期交货的默认
-    backordered: 缺货
-    backordered_confirm_info: 所选商品有缺货，因此预计会延迟。您确定要订购吗？
     backordered_info: 缺货
     backorders_allowed: 允许缺货
     balance_due: 余额到期
@@ -594,9 +569,7 @@ zh-HK:
     base_percent: 基本百分比
     basic_information: 基本信息
     bill_address: 帐单地址
-    billing: 开票
     billing_address: 帐单地址
-    both: 两个都
     breadcrumbs: 面包屑
     calculated_reimbursements: 计算的报销
     calculator: 计算器
@@ -612,8 +585,6 @@ zh-HK:
     cannot_empty_completed_order: 订单已被处理，因此无法清空
     cannot_perform_operation: 无法执行请求的操作
     cannot_return_more_than_bought_quantity: 退货不能超过购买的数量。
-    cannot_set_shipping_method_without_address: 在提供客户详细信息之前，无法设置运输方式。
-    capture: 捕获
     capture_events: 捕捉事件
     card_code: 卡修改代码（CVC）
     card_number: 卡号
@@ -630,19 +601,9 @@ zh-HK:
       quantity: 数量
       remove_from_cart: 从购物车中删除
       title: 购物车
-    cart_subtotal:
-      one: 小计（1件）
-      other: 小计（%{count}项）
-    categories: 分类目录
     category: 类别
-    category_nav_bar:
-      get_up_to_30_percent_off: 立享高达30％的折扣
-      jackets_and_coats: 夹克和海岸
-      new_collection: 新系列
-      special_offers: 特别优惠
     channel: 渠道
     charged: 带电
-    checkout: 退房
     checkout_page:
       back_to_cart: 回到购物车
       checkout_navigation: 结帐导航
@@ -651,25 +612,18 @@ zh-HK:
       main_navigation: 主导航
       product: 产品
     choose_a_customer: 选择一个客户
-    choose_a_taxon_to_sort_products_for: 选择一个分类单元以对产品进行分类
     choose_currency: 选择货币
-    choose_dashboard_locale: 选择仪表板语言环境
     choose_location: 选择位置
     city: 城市
     clear_cache: 清除缓存
-    clear_cache_ok: 缓存已刷新
     clear_cache_warning: 清除缓存会暂时降低商店的性能。
-    click_and_drag_on_the_products_to_sort_them: 单击并拖动产品以对其进行排序。
     clone: 克隆
     close: 关闭
     close_all_adjustments: 关闭所有调整
     code: 代码
     company: 公司
     compare_at_price: 价格比较
-    complete: 完全的
-    configuration: 配置
     configurations: 构型
-    confirm: 确认
     confirm_delete: 确认删除
     confirm_password: 确认密码
     contact_phone: 联系电话
@@ -679,7 +633,6 @@ zh-HK:
     continue_shopping: 继续购物
     cost_currency: 成本货币
     cost_price: 成本价
-    could_not_create_customer_return: 无法创建客户退货
     could_not_create_stock_movement: 保存此库存变动存在问题。请再试一遍。
     count_on_hand: 数数手头
     countries: 国别
@@ -688,7 +641,6 @@ zh-HK:
     country_name: 姓名
     country_rule:
       label: 选择必须运到这个国家
-    coupon: 优惠券
     coupon_code: 优惠卷号码
     coupon_code_already_applied: 优惠券代码已应用于此订单
     coupon_code_applied: 优惠券代码已成功应用于您的订单。
@@ -700,22 +652,17 @@ zh-HK:
     coupon_code_removed: 优惠券代码已成功从您的订单中删除。
     coupon_code_unknown_error: 该优惠券代码目前无法应用于购物车。
     create: 创建
-    create_a_new_account: 创建一个新账户
     create_new_order: 建立新订单
     create_reimbursement: 创建报销
     created_at: 创建于
     created_by: 由...制作
-    credit: 信用
     credit_allowed: 允许信用
     credit_card: 信用卡
-    credit_cards: 信用卡
     credit_owed: 欠债
     credited: 记入
     credits: 学分
-    currencies: 货币
     currency: 货币
     currency_settings: 货币设定
-    current: 当前的
     current_promotion_usage: 当前用法：%{count}
     customer: 顾客
     customer_details: 顾客信息
@@ -814,7 +761,6 @@ zh-HK:
     exceptions:
       count_on_hand_setter: 无法手动设置count_on_hand，因为它是由recalculate_count_on_hand回调自动设置的。请改用`update_column（：count_on_hand，value）`。
     exchange_for: 换
-    excl: 不包括
     existing_shipments: 现有货件
     expedited_exchanges_warning: 保存后，所有指定的交易所将立即发货给客户。如果客户在%{days_window}天内未退回原始商品，则将向其收取全部商品费用。
     expiration: 期满
@@ -1551,7 +1497,6 @@ zh-HK:
     stock_location_info: 库存位置信息
     stock_locations: 库存地点
     stock_locations_need_a_default_country: 您必须在创建库存位置之前创建默认国家/地区。
-    stock_management: 库存管理
     stock_management_requires_a_stock_location: 请创建库存位置以管理库存。
     stock_movements: 股票走势
     stock_movements_for_stock_location: "%{stock_location_name}的库存移动"
@@ -1562,7 +1507,6 @@ zh-HK:
         variants_unavailable: 某些变体在%{stock}上不可用
     stock_transfer_name: 库存转移
     stock_transfers: 股票转移
-    stop: 停止
     store: 店铺
     store_credit:
       additional_payment_needed: 为剩余的<strong> %{amount} </ strong>选择另一种付款方式。
@@ -1628,7 +1572,6 @@ zh-HK:
     supported_currencies: 支持的货币
     supported_currencies_long: 以逗号分隔的受支持货币列表
     supported_locales: 支持的语言环境
-    tags: 标签
     tags_placeholder: 添加标签
     tax: 税
     tax_categories: 税种
@@ -1723,12 +1666,9 @@ zh-HK:
     variant_placeholder: 选择一个变体
     variant_prices_search_placeholder: 搜索SKU或变体名称...
     variants: 变体
-    version: 版本
-    void: 空白
     weight: 重量
     what_is_a_cvv: 什么是（CVV）信用卡代码？
     width: 宽度
-    year: 年
     you_have_no_orders_yet: 您还没有订单
     your_order_is_empty_add_product: 您的订单为空，请在上方搜索并添加产品
     zip: 压缩

@@ -437,7 +437,6 @@ pa:
     abbreviation: ਸੰਖੇਪ
     accept: ਸਵੀਕਾਰ ਕਰੋ
     acceptance_errors: ਸਵੀਕ੍ਰਿਤੀ ਦੀਆਂ ਗਲਤੀਆਂ
-    acceptance_status: ਸਵੀਕ੍ਰਿਤੀ ਸਥਿਤੀ
     accepted: ਸਵੀਕਾਰਿਆ
     account: ਖਾਤਾ
     account_info: ਖਾਤਾ ਜਾਣਕਾਰੀ
@@ -455,32 +454,24 @@ pa:
       refund: ਰਿਫੰਡ
       save: ਸੇਵ
       update: ਅਪਡੇਟ
-    activate: ਸਰਗਰਮ ਕਰੋ
     active: ਕਿਰਿਆਸ਼ੀਲ
     add: ਸ਼ਾਮਲ ਕਰੋ
     add_action_of_type: ਕਿਸਮ ਦੀ ਕਿਰਿਆ ਸ਼ਾਮਲ ਕਰੋ
-    add_country: ਦੇਸ਼ ਸ਼ਾਮਲ ਕਰੋ
     add_coupon_code: ਕੂਪਨ ਕੋਡ ਸ਼ਾਮਲ ਕਰੋ
     add_new_address: ਨਵਾਂ ਪਤਾ ਸ਼ਾਮਲ ਕਰੋ
     add_new_credit_card: ਇੱਕ ਨਵਾਂ ਕਾਰਡ ਸ਼ਾਮਲ ਕਰੋ
-    add_new_header: ਨਵਾਂ ਸਿਰਲੇਖ ਸ਼ਾਮਲ ਕਰੋ
-    add_new_style: ਨਵੀਂ ਸ਼ੈਲੀ ਸ਼ਾਮਲ ਕਰੋ
     add_one: ਇੱਕ ਸ਼ਾਮਲ ਕਰੋ
     add_option_value: ਵਿਕਲਪ ਮੁੱਲ ਸ਼ਾਮਲ ਕਰੋ
     add_product: ਉਤਪਾਦ ਸ਼ਾਮਲ ਕਰੋ
     add_product_properties: ਉਤਪਾਦ ਵਿਸ਼ੇਸ਼ਤਾਵਾਂ ਸ਼ਾਮਲ ਕਰੋ
     add_rule_of_type: ਕਿਸਮ ਦਾ ਨਿਯਮ ਸ਼ਾਮਲ ਕਰੋ
-    add_state: ਰਾਜ ਸ਼ਾਮਲ ਕਰੋ
     add_stock: ਸਟਾਕ ਸ਼ਾਮਲ ਕਰੋ
     add_store: ਨਵਾਂ ਸਟੋਰ
     add_store_credit: ਸਟੋਰ ਕ੍ਰੈਡਿਟ ਸ਼ਾਮਲ ਕਰੋ
     add_to_cart: ਠੇਲ੍ਹੇ ਵਿੱਚ ਪਾਓ
     add_variant: ਵੇਰੀਐਂਟ ਸ਼ਾਮਲ ਕਰੋ
     added_to_cart: ਸਫਲਤਾਪੂਰਕ ਕਾਰਟ ਵਿੱਚ ਜੋੜਿਆ ਗਿਆ!
-    additional_item: ਅਤਿਰਿਕਤ ਵਸਤੂ
     address: ਪਤਾ
-    address1: ਪਤਾ
-    address2: ਪਤਾ (ਜਾਰੀ)
     address_action_popup:
       delete_button: ਹਾਂ, ਮਿਟਾਓ
       delete_text: ਕੀ ਤੁਸੀਂ ਸੱਚਮੁੱਚ ਇਸ ਪਤੇ ਨੂੰ ਮਿਟਾਉਣਾ ਚਾਹੁੰਦੇ ਹੋ?
@@ -499,13 +490,10 @@ pa:
     addresses: ਪਤੇ
     adjustable: ਵਿਵਸਥਤ
     adjustment: ਵਿਵਸਥਾ
-    adjustment_amount: ਦੀ ਰਕਮ
     adjustment_labels:
       tax_rates:
         excluding_tax: "%{name}%{amount}"
         including_tax: "%{name}%{amount} (ਕੀਮਤ ਵਿੱਚ ਸ਼ਾਮਲ)"
-    adjustment_successfully_closed: ਵਿਵਸਥਾ ਸਫਲਤਾਪੂਰਵਕ ਬੰਦ ਹੋ ਗਈ ਹੈ!
-    adjustment_successfully_opened: ਵਿਵਸਥਾ ਸਫਲਤਾਪੂਰਵਕ ਖੋਲ੍ਹ ਦਿੱਤੀ ਗਈ ਹੈ!
     adjustment_total: ਐਡਜਸਟਮੈਂਟ ਕੁੱਲ
     adjustments: ਵਿਵਸਥਾ
     adjustments_deleted: ਵਿਵਸਥਾਪਨ ਮਿਟਾਏ ਗਏ
@@ -549,26 +537,19 @@ pa:
         user_information: ਉਪਭੋਗਤਾ ਜਾਣਕਾਰੀ
     administration: ਪ੍ਰਸ਼ਾਸਨ
     advertise: ਇਸ਼ਤਿਹਾਰ ਦਿਓ
-    agree_to_privacy_policy: ਗੋਪਨੀਯਤਾ ਨੀਤੀ ਨਾਲ ਸਹਿਮਤ
-    agree_to_terms_of_service: ਸੇਵਾ ਦੀਆਂ ਸ਼ਰਤਾਂ ਨਾਲ ਸਹਿਮਤ
     all: ਸਾਰੇ
     all_adjustments_closed: ਸਾਰੇ ਵਿਵਸਥਾਂ ਨੂੰ ਸਫਲਤਾਪੂਰਵਕ ਬੰਦ ਕੀਤਾ ਗਿਆ!
     all_adjustments_opened: ਸਾਰੇ ਵਿਵਸਥਾਂ ਨੂੰ ਸਫਲਤਾਪੂਰਵਕ ਖੋਲ੍ਹਿਆ ਗਿਆ!
-    all_departments: ਸਾਰੇ ਵਿਭਾਗ
     all_items_have_been_returned: ਸਾਰੀਆਂ ਚੀਜ਼ਾਂ ਵਾਪਸ ਕਰ ਦਿੱਤੀਆਂ ਗਈਆਂ ਹਨ
     all_rights_reserved: ਸਾਰੇ ਹੱਕ ਰਾਖਵੇਂ ਹਨ
-    already_have_account: ਪਹਿਲਾਂ ਤੋਂ ਹੀ ਕੋਈ ਖਾਤਾ ਹੈ?
     alt_text: ਵਿਕਲਪਿਕ ਪਾਠ
     alternative_phone: ਵਿਕਲਪਿਕ ਫੋਨ
     amount: ਦੀ ਰਕਮ
     and: ਅਤੇ
-    approve: ਮਨਜ਼ੂਰ
     approved_at: "'ਤੇ ਮਨਜ਼ੂਰੀ ਦਿੱਤੀ ਗਈ"
     approver: ਮਨਜ਼ੂਰ
     are_you_sure: ਤੁਹਾਨੂੰ ਪੂਰਾ ਵਿਸ਼ਵਾਸ ਹੈ?
     are_you_sure_delete: ਕੀ ਤੁਸੀਂ ਪੱਕਾ ਇਸ ਰਿਕਾਰਡ ਨੂੰ ਮਿਟਾਉਣਾ ਚਾਹੁੰਦੇ ਹੋ?
-    associated_adjustment_closed: ਸੰਬੰਧਿਤ ਐਡਜਸਟਮੈਂਟ ਬੰਦ ਹੈ, ਅਤੇ ਮੁੜ ਗਣਨਾ ਨਹੀਂ ਕੀਤੀ ਜਾਏਗੀ. ਕੀ ਤੁਸੀਂ ਇਸਨੂੰ ਖੋਲ੍ਹਣਾ ਚਾਹੁੰਦੇ ਹੋ?
-    authorization_failure: ਅਧਿਕਾਰ ਅਸਫਲ
     authorized: ਅਧਿਕਾਰਤ
     auto_capture: ਆਟੋ ਕੈਪਚਰ
     availability: ਉਪਲੱਬਧਤਾ
@@ -577,16 +558,10 @@ pa:
     average_order_value: Orderਸਤਨ ਆਰਡਰ ਮੁੱਲ
     avs_response: ਏਵੀਐਸ ਜਵਾਬ
     back: ਵਾਪਸ
-    back_end: ਬੈਕਐਂਡ
-    back_to_payment: ਭੁਗਤਾਨ ਤੇ ਵਾਪਸ
     back_to_resource_list: "%{resource} ਸੂਚੀ ਵੱਲ ਵਾਪਸ ਜਾਓ"
-    back_to_rma_reason_list: RMA ਕਾਰਨ ਸੂਚੀ ਤੇ ਵਾਪਸ ਜਾਓ
     back_to_store: ਸਟੋਰ ਤੇ ਵਾਪਸ
-    back_to_users_list: ਉਪਭੋਗਤਾ ਸੂਚੀ ਵਿੱਚ ਵਾਪਸ
     backorderable: ਪਿਛਲਾ
     backorderable_default: ਬੈਕਆਰਡਰਬਲ ਮੂਲ
-    backordered: ਬੈਕਆਰਡਰਡ
-    backordered_confirm_info: ਚੁਣੀ ਆਈਟਮ ਬੈਕਆਰਡਰ ਕੀਤੀ ਗਈ ਹੈ ਇਸ ਲਈ ਦੇਰੀ ਦੀ ਉਮੀਦ ਕਰੋ. ਕੀ ਤੁਸੀਂ ਇਸ ਨੂੰ ਆਰਡਰ ਕਰਨਾ ਚਾਹੁੰਦੇ ਹੋ?
     backordered_info: ਬੈਕਆਰਡਰਡ
     backorders_allowed: ਬੈਕਓਡਰਸ ਦੀ ਆਗਿਆ ਹੈ
     balance_due: ਬਕਾਇਆ ਬਕਾਇਆ
@@ -594,9 +569,7 @@ pa:
     base_percent: ਬੇਸ ਪ੍ਰਤੀਸ਼ਤ
     basic_information: ਮੁੱ Informationਲੀ ਜਾਣਕਾਰੀ
     bill_address: ਬਿਲ ਦਾ ਪਤਾ
-    billing: ਬਿਲਿੰਗ
     billing_address: ਬਿਲਿੰਗ ਪਤਾ
-    both: ਦੋਵੇਂ
     breadcrumbs: ਬ੍ਰੈਡਰਕ੍ਰਮਜ਼
     calculated_reimbursements: ਗਣਿਤ ਕੀਤੀ ਗਈ ਅਦਾਇਗੀ
     calculator: ਕੈਲਕੁਲੇਟਰ
@@ -612,8 +585,6 @@ pa:
     cannot_empty_completed_order: ਆਰਡਰ 'ਤੇ ਪਹਿਲਾਂ ਹੀ ਕਾਰਵਾਈ ਹੋ ਚੁੱਕੀ ਹੈ ਇਸ ਲਈ ਇਸ ਨੂੰ ਖਾਲੀ ਨਹੀਂ ਕੀਤਾ ਜਾ ਸਕਦਾ
     cannot_perform_operation: ਬੇਨਤੀ ਕੀਤੀ ਕਾਰਵਾਈ ਨਹੀਂ ਕਰ ਸਕਦਾ
     cannot_return_more_than_bought_quantity: ਖਰੀਦੀ ਮਾਤਰਾ ਤੋਂ ਵੱਧ ਵਾਪਸ ਨਹੀਂ ਕਰ ਸਕਦਾ.
-    cannot_set_shipping_method_without_address: ਉਦੋਂ ਤੱਕ ਸ਼ਿਪਿੰਗ ਵਿਧੀ ਨਿਰਧਾਰਤ ਨਹੀਂ ਕੀਤੀ ਜਾ ਸਕਦੀ ਜਦੋਂ ਤਕ ਗਾਹਕ ਵੇਰਵੇ ਪ੍ਰਦਾਨ ਨਹੀਂ ਕੀਤੇ ਜਾਂਦੇ.
-    capture: ਕੈਪਚਰ
     capture_events: ਇਵੈਂਟਾਂ ਨੂੰ ਕੈਪਚਰ ਕਰੋ
     card_code: ਕਾਰਡ ਵੈਰੀਫਿਕੇਸ਼ਨ ਕੋਡ (ਸੀਵੀਸੀ)
     card_number: ਕਾਰਡ ਨੰਬਰ
@@ -630,19 +601,9 @@ pa:
       quantity: ਮਾਤਰਾ
       remove_from_cart: ਕਾਰਟ ਤੋਂ ਹਟਾਓ
       title: ਖਰੀਦਾਰੀ ਠੇਲ੍ਹਾ
-    cart_subtotal:
-      one: ਕੁੱਲ ਮਿਲਾ ਕੇ (1 ਆਈਟਮ)
-      other: ਉਪ-ਕੁਲ (%{count} ਆਈਟਮਾਂ)
-    categories: ਵਰਗ
     category: ਸ਼੍ਰੇਣੀ
-    category_nav_bar:
-      get_up_to_30_percent_off: 30% ਬੰਦ ਕਰੋ
-      jackets_and_coats: ਜੈਕੇਟ ਅਤੇ ਕਾਸਟ
-      new_collection: ਨਵਾਂ ਸੰਗ੍ਰਹਿ
-      special_offers: ਵਿਸ਼ੇਸ਼ ਪੇਸ਼ਕਸ਼
     channel: ਚੈਨਲ
     charged: ਚਾਰਜ ਕੀਤਾ
-    checkout: ਕਮਰਾ ਛੱਡ ਦਿਓ
     checkout_page:
       back_to_cart: ਵਾਪਸ ਕਾਰਟ ਤੇ
       checkout_navigation: ਚੈੱਕਆਉਟ ਨੇਵੀਗੇਸ਼ਨ
@@ -651,25 +612,18 @@ pa:
       main_navigation: ਮੁੱਖ ਨੈਵੀਗੇਸ਼ਨ
       product: ਉਤਪਾਦ
     choose_a_customer: ਇੱਕ ਗਾਹਕ ਚੁਣੋ
-    choose_a_taxon_to_sort_products_for: ਉਤਪਾਦਾਂ ਨੂੰ ਕ੍ਰਮਬੱਧ ਕਰਨ ਲਈ ਇੱਕ ਟੈਕਸਨ ਦੀ ਚੋਣ ਕਰੋ
     choose_currency: ਕਰੰਸੀ ਚੁਣੋ
-    choose_dashboard_locale: ਡੈਸ਼ਬੋਰਡ ਲੋਕੇਲ ਚੁਣੋ
     choose_location: ਟਿਕਾਣਾ ਚੁਣੋ
     city: ਸ਼ਹਿਰ
     clear_cache: ਕੈਸ਼ ਸਾਫ ਕਰੋ
-    clear_cache_ok: ਕੈਚੇ ਭਜਾ ਦਿੱਤਾ ਗਿਆ ਸੀ
     clear_cache_warning: ਕੈਸ਼ ਕਲੀਅਰ ਕਰਨਾ ਅਸਥਾਈ ਤੌਰ ਤੇ ਤੁਹਾਡੇ ਸਟੋਰ ਦੀ ਕਾਰਗੁਜ਼ਾਰੀ ਨੂੰ ਘਟਾ ਦੇਵੇਗਾ.
-    click_and_drag_on_the_products_to_sort_them: ਉਤਪਾਦਾਂ ਨੂੰ ਕ੍ਰਮਬੱਧ ਕਰਨ ਲਈ ਕਲਿਕ ਅਤੇ ਖਿੱਚੋ.
     clone: ਕਲੋਨ
     close: ਬੰਦ ਕਰੋ
     close_all_adjustments: ਸਾਰੇ ਵਿਵਸਥਾਵਾਂ ਬੰਦ ਕਰੋ
     code: ਕੋਡ
     company: ਕੰਪਨੀ
     compare_at_price: ਕੀਮਤ ਤੇ ਤੁਲਨਾ ਕਰੋ
-    complete: ਮੁਕੰਮਲ
-    configuration: ਸੰਰਚਨਾ
     configurations: ਕੌਨਫਿਗਰੇਸ਼ਨ
-    confirm: ਪੁਸ਼ਟੀ ਕਰੋ
     confirm_delete: ਹਟਾਉਣ ਦੀ ਪੁਸ਼ਟੀ ਕਰੋ
     confirm_password: ਪਾਸਵਰਡ ਦੀ ਪੁਸ਼ਟੀ
     contact_phone: ਸੰਪਰਕ ਫੋਨ
@@ -679,7 +633,6 @@ pa:
     continue_shopping: ਖਰੀਦਦਾਰੀ ਜਾਰੀ ਰੱਖੋ
     cost_currency: ਖਰਚਾ
     cost_price: ਲਾਗਤ ਮੁੱਲ
-    could_not_create_customer_return: ਗਾਹਕ ਵਾਪਸੀ ਨਹੀਂ ਬਣਾ ਸਕਿਆ
     could_not_create_stock_movement: ਇਸ ਸਟਾਕ ਅੰਦੋਲਨ ਨੂੰ ਸੁਰੱਖਿਅਤ ਕਰਨ ਵਿੱਚ ਇੱਕ ਸਮੱਸਿਆ ਹੋਈ ਸੀ. ਮੁੜ ਕੋਸ਼ਿਸ ਕਰੋ ਜੀ.
     count_on_hand: ਕਾਉਂਟ ਆਨ ਹੈਂਡ
     countries: ਦੇਸ਼
@@ -688,7 +641,6 @@ pa:
     country_name: ਨਾਮ
     country_rule:
       label: ਇਸ ਦੇਸ਼ ਨੂੰ ਭੇਜਣਾ ਲਾਜ਼ਮੀ ਹੈ
-    coupon: ਕੂਪਨ
     coupon_code: ਕੂਪਨ ਕੋਡ
     coupon_code_already_applied: ਇਸ ਆਰਡਰ 'ਤੇ ਕੂਪਨ ਕੋਡ ਪਹਿਲਾਂ ਹੀ ਲਾਗੂ ਕੀਤਾ ਗਿਆ ਹੈ
     coupon_code_applied: ਕੂਪਨ ਕੋਡ ਸਫਲਤਾਪੂਰਵਕ ਤੁਹਾਡੇ ਆਰਡਰ ਤੇ ਲਾਗੂ ਕੀਤਾ ਗਿਆ ਸੀ.
@@ -700,22 +652,17 @@ pa:
     coupon_code_removed: ਕੂਪਨ ਕੋਡ ਨੂੰ ਸਫਲਤਾਪੂਰਵਕ ਤੁਹਾਡੇ ਆਰਡਰ ਤੋਂ ਹਟਾ ਦਿੱਤਾ ਗਿਆ ਸੀ.
     coupon_code_unknown_error: ਇਹ ਕੂਪਨ ਕੋਡ ਇਸ ਸਮੇਂ ਕਾਰਟ ਤੇ ਲਾਗੂ ਨਹੀਂ ਕੀਤਾ ਜਾ ਸਕਿਆ.
     create: ਬਣਾਓ
-    create_a_new_account: ਨਵਾਂ ਖਾਤਾ ਬਣਾਉ
     create_new_order: ਨਵਾਂ ਆਰਡਰ ਬਣਾਓ
     create_reimbursement: ਅਦਾਇਗੀ ਬਣਾਓ
     created_at: ਵਿਖੇ ਬਣਾਇਆ ਗਿਆ
     created_by: ਦੁਆਰਾ ਬਣਾਇਆ ਗਿਆ
-    credit: ਕ੍ਰੈਡਿਟ
     credit_allowed: ਕ੍ਰੈਡਿਟ ਦੀ ਆਗਿਆ ਹੈ
     credit_card: ਕਰੇਡਿਟ ਕਾਰਡ
-    credit_cards: ਕ੍ਰੈਡਿਟ ਕਾਰਡ
     credit_owed: ਕ੍ਰੈਡਿਟ ਮਾਲਕੀਅਤ
     credited: ਕ੍ਰੈਡਿਟ
     credits: ਕ੍ਰੈਡਿਟ
-    currencies: ਕਰੰਸੀ
     currency: ਮੁਦਰਾ
     currency_settings: ਕਰੰਸੀ ਸੈਟਿੰਗਜ਼
-    current: ਮੌਜੂਦਾ
     current_promotion_usage: 'ਮੌਜੂਦਾ ਵਰਤੋਂ: %{count}'
     customer: ਗਾਹਕ
     customer_details: ਗਾਹਕ ਵੇਰਵਾ
@@ -814,7 +761,6 @@ pa:
     exceptions:
       count_on_hand_setter: ਕਾ countਂਟੀ_ਨ_ਹੈਂਡ ਨੂੰ ਦਸਤੀ ਸੈੱਟ ਨਹੀਂ ਕੀਤਾ ਜਾ ਸਕਦਾ, ਕਿਉਂਕਿ ਇਹ ਰੀ - ਕੈਲਕੁਲੇਟ_ਕਾਉਂਟ_ ਆਨ_ਕੈਂਡਬੈਕ ਦੁਆਰਾ ਆਪਣੇ ਆਪ ਸੈਟ ਕੀਤਾ ਜਾਂਦਾ ਹੈ. ਇਸ ਦੀ ਬਜਾਏ `update_column(:count_on_hand, value)` ਦੀ ਵਰਤੋਂ ਕਰੋ.
     exchange_for: ਲਈ ਐਕਸਚੇਜ਼
-    excl: ਬਾਹਰ ਕੱ .ੋ.
     existing_shipments: ਮੌਜੂਦਾ ਬਰਾਮਦ
     expedited_exchanges_warning: ਕੋਈ ਵੀ ਨਿਰਧਾਰਤ ਐਕਸਚੇਂਜ ਬਚਤ ਦੇ ਤੁਰੰਤ ਬਾਅਦ ਗਾਹਕ ਨੂੰ ਭੇਜਿਆ ਜਾਂਦਾ ਹੈ. ਜੇ ਉਹ %{days_window} ਦਿਨਾਂ ਦੇ ਅੰਦਰ ਅਸਲੀ ਚੀਜ਼ ਨੂੰ ਵਾਪਸ ਨਹੀਂ ਕਰਦੇ ਹਨ ਤਾਂ ਗਾਹਕ ਨੂੰ ਵਸਤੂ ਦੀ ਪੂਰੀ ਰਕਮ ਵਸੂਲ ਕੀਤੀ ਜਾਏਗੀ.
     expiration: ਮਿਆਦ
@@ -1551,7 +1497,6 @@ pa:
     stock_location_info: ਸਟੌਕ ਸਥਾਨ ਦੀ ਜਾਣਕਾਰੀ
     stock_locations: ਭੰਡਾਰ ਸਥਾਨ
     stock_locations_need_a_default_country: ਸਟਾਕ ਦੀ ਸਥਿਤੀ ਬਣਾਉਣ ਤੋਂ ਪਹਿਲਾਂ ਤੁਹਾਨੂੰ ਇੱਕ ਮੂਲ ਦੇਸ਼ ਬਣਾਉਣਾ ਚਾਹੀਦਾ ਹੈ.
-    stock_management: ਸਟਾਕ ਪ੍ਰਬੰਧਨ
     stock_management_requires_a_stock_location: ਕਿਰਪਾ ਕਰਕੇ ਸਟਾਕ ਦਾ ਪ੍ਰਬੰਧਨ ਕਰਨ ਲਈ ਸਟਾਕ ਦੀ ਜਗ੍ਹਾ ਬਣਾਓ.
     stock_movements: ਭੰਡਾਰ
     stock_movements_for_stock_location: "%{stock_location_name} ਲਈ ਸਟਾਕ ਅੰਦੋਲਨ"
@@ -1562,7 +1507,6 @@ pa:
         variants_unavailable: ਕੁਝ ਰੁਪਾਂਤਰ %{stock} ਤੇ ਉਪਲਬਧ ਨਹੀਂ ਹਨ
     stock_transfer_name: ਸਟਾਕ ਟ੍ਰਾਂਸਫਰ
     stock_transfers: ਸਟਾਕ ਟ੍ਰਾਂਸਫਰ
-    stop: ਰੂਕੋ
     store: ਸਟੋਰ
     store_credit:
       additional_payment_needed: ਬਾਕੀ <strong> %{amount} </strong> ਲਈ ਹੋਰ ਭੁਗਤਾਨ ਵਿਧੀ ਦੀ ਚੋਣ ਕਰੋ.
@@ -1628,7 +1572,6 @@ pa:
     supported_currencies: ਸਮਰਥਿਤ ਕਰੰਸੀ
     supported_currencies_long: ਸਹਿਯੋਗੀ ਮੁਦਰਾ ਦੀ ਇੱਕ ਕਾਮੇ ਨਾਲ ਵੱਖ ਕੀਤੀ ਸੂਚੀ
     supported_locales: ਸਮਰਥਿਤ ਸਥਾਨ
-    tags: ਟੈਗਸ
     tags_placeholder: ਟੈਗਸ ਸ਼ਾਮਲ ਕਰੋ
     tax: ਟੈਕਸ
     tax_categories: ਟੈਕਸ ਸ਼੍ਰੇਣੀਆਂ
@@ -1723,12 +1666,9 @@ pa:
     variant_placeholder: ਇੱਕ ਰੂਪ ਚੁਣੋ
     variant_prices_search_placeholder: ਐਸ ਕੇਯੂ ਜਾਂ ਪਰਿਵਰਤਨ ਨਾਮ ਦੀ ਖੋਜ ਕਰੋ ...
     variants: ਪਰਿਵਰਤਨ
-    version: ਵਰਜਨ
-    void: ਰੱਦ
     weight: ਭਾਰ
     what_is_a_cvv: ਇੱਕ (ਸੀਵੀਵੀ) ਕ੍ਰੈਡਿਟ ਕਾਰਡ ਕੋਡ ਕੀ ਹੈ?
     width: ਚੌੜਾਈ
-    year: ਸਾਲ
     you_have_no_orders_yet: ਤੁਹਾਡੇ ਕੋਲ ਅਜੇ ਕੋਈ ਆਰਡਰ ਨਹੀਂ ਹਨ
     your_order_is_empty_add_product: ਤੁਹਾਡਾ ਆਰਡਰ ਖਾਲੀ ਹੈ, ਕਿਰਪਾ ਕਰਕੇ ਉੱਪਰ ਦਿੱਤੇ ਉਤਪਾਦ ਨੂੰ ਲੱਭੋ ਅਤੇ ਸ਼ਾਮਲ ਕਰੋ
     zip: ਜ਼ਿਪ

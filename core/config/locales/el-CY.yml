@@ -437,7 +437,6 @@ el-CY:
     abbreviation: Συντομογραφία
     accept: Αποδέχομαι
     acceptance_errors: Σφάλματα αποδοχής
-    acceptance_status: Κατάσταση αποδοχής
     accepted: Δεκτός
     account: λογαριασμός
     account_info: Πληροφορίες λογαριασμού
@@ -455,32 +454,24 @@ el-CY:
       refund: Επιστροφή χρημάτων
       save: Αποθηκεύσετε
       update: Εκσυγχρονίζω
-    activate: Θέτω εις ενέργειαν
     active: Ενεργός
     add: Προσθήκη
     add_action_of_type: Προσθήκη ενέργειας τύπου
-    add_country: Προσθήκη χώρας
     add_coupon_code: Προσθήκη κωδικού κουπονιού
     add_new_address: Προσθήκη νέας διεύθυνσης
     add_new_credit_card: Προσθέστε μια νέα κάρτα
-    add_new_header: Προσθήκη νέας κεφαλίδας
-    add_new_style: Προσθήκη νέου στυλ
     add_one: Προσθήκη ενός
     add_option_value: Προσθήκη τιμής επιλογής
     add_product: Προσθήκη προϊόντος
     add_product_properties: Προσθέστε ιδιότητες προϊόντος
     add_rule_of_type: Προσθήκη κανόνα τύπου
-    add_state: Προσθήκη κατάστασης
     add_stock: Προσθήκη αποθεμάτων
     add_store: Νέο κατάστημα
     add_store_credit: Προσθήκη πίστωσης στο κατάστημα
     add_to_cart: Προσθήκη στο καλάθι
     add_variant: Προσθήκη παραλλαγής
     added_to_cart: Προστέθηκε με επιτυχία στο καλάθι!
-    additional_item: Πρόσθετο στοιχείο
     address: Διεύθυνση
-    address1: Διεύθυνση
-    address2: Διεύθυνση (συνέχεια)
     address_action_popup:
       delete_button: ναι, διαγράψτε
       delete_text: Θέλετε πραγματικά να διαγράψετε αυτήν τη διεύθυνση;
@@ -499,13 +490,10 @@ el-CY:
     addresses: Διευθύνσεις
     adjustable: Ευκανόνιστος
     adjustment: Προσαρμογή
-    adjustment_amount: Ποσό
     adjustment_labels:
       tax_rates:
         excluding_tax: "%{name}%{amount}"
         including_tax: "%{name}%{amount} (Περιλαμβάνεται στην τιμή)"
-    adjustment_successfully_closed: Η προσαρμογή έκλεισε με επιτυχία!
-    adjustment_successfully_opened: Η προσαρμογή άνοιξε με επιτυχία!
     adjustment_total: Σύνολο προσαρμογής
     adjustments: Προσαρμογές
     adjustments_deleted: Οι προσαρμογές διαγράφηκαν
@@ -549,26 +537,19 @@ el-CY:
         user_information: Πληροφορίες χρήστη
     administration: Διαχείριση
     advertise: Διαφημίζω
-    agree_to_privacy_policy: Συμφωνείτε με την Πολιτική απορρήτου
-    agree_to_terms_of_service: Συμφωνείτε με τους Όρους Παροχής Υπηρεσιών
     all: Ολα
     all_adjustments_closed: Όλες οι προσαρμογές έκλεισαν με επιτυχία!
     all_adjustments_opened: Όλες οι προσαρμογές άνοιξαν με επιτυχία!
-    all_departments: Όλα τα τμήματα
     all_items_have_been_returned: Όλα τα αντικείμενα έχουν επιστραφεί
     all_rights_reserved: Ολα τα δικαιώματα διατηρούνται
-    already_have_account: Έχετε ήδη λογαριασμό?
     alt_text: Εναλλακτικό κείμενο
     alternative_phone: Εναλλακτικό τηλέφωνο
     amount: Ποσό
     and: και
-    approve: εγκρίνω
     approved_at: Εγκρίθηκε στις
     approver: Έγκριση
     are_you_sure: Είσαι σίγουρος?
     are_you_sure_delete: Είστε βέβαιοι ότι θέλετε να διαγράψετε αυτήν την εγγραφή;
-    associated_adjustment_closed: Η σχετική προσαρμογή έχει κλείσει και δεν θα υπολογιστεί εκ νέου. Θέλετε να το ανοίξετε;
-    authorization_failure: Αποτυχία εξουσιοδότησης
     authorized: Εξουσιοδοτημένο
     auto_capture: Αυτόματη λήψη
     availability: διαθεσιμότητα
@@ -577,16 +558,10 @@ el-CY:
     average_order_value: Μέση τιμή παραγγελίας
     avs_response: Απόκριση AVS
     back: Πίσω
-    back_end: Backend
-    back_to_payment: Επιστροφή στην πληρωμή
     back_to_resource_list: Επιστροφή στη λίστα %{resource}
-    back_to_rma_reason_list: Επιστροφή στη λίστα λόγων RMA
     back_to_store: Επιστροφή στο Κατάστημα
-    back_to_users_list: Επιστροφή στη λίστα χρηστών
     backorderable: Με δυνατότητα παραγγελίας
     backorderable_default: Προεπιλογή με δυνατότητα παραγγελίας
-    backordered: Παρακολούθηση
-    backordered_confirm_info: Το επιλεγμένο στοιχείο έχει παραγγελία σε σειρά, οπότε αναμένετε καθυστερήσεις. Είστε βέβαιοι ότι θέλετε να το παραγγείλετε;
     backordered_info: Παρακολούθηση
     backorders_allowed: επιτρέπονται οι παραγγελίες
     balance_due: Οφειλόμενο υπόλοιπο
@@ -594,9 +569,7 @@ el-CY:
     base_percent: Βασικό ποσοστό
     basic_information: Βασικές πληροφορίες
     bill_address: Διεύθυνση λογαριασμού
-    billing: Χρέωση
     billing_address: διεύθυνση χρέωσης
-    both: Και τα δυο
     breadcrumbs: Τριμμένη φρυγανιά
     calculated_reimbursements: Υπολογισμένες αποδόσεις
     calculator: Αριθμομηχανή
@@ -612,8 +585,6 @@ el-CY:
     cannot_empty_completed_order: Η παραγγελία έχει ήδη υποβληθεί σε επεξεργασία, οπότε δεν μπορεί να αδειάσει
     cannot_perform_operation: Δεν είναι δυνατή η εκτέλεση της ζητούμενης λειτουργίας
     cannot_return_more_than_bought_quantity: Δεν είναι δυνατή η επιστροφή περισσότερο από την ποσότητα που αγοράσατε.
-    cannot_set_shipping_method_without_address: Δεν είναι δυνατή η ρύθμιση της μεθόδου αποστολής έως ότου παρέχονται τα στοιχεία του πελάτη.
-    capture: Πιάνω
     capture_events: Καταγραφή συμβάντων
     card_code: Κωδικός διευκρίνισης κάρτας (CVC)
     card_number: Αριθμός κάρτας
@@ -630,19 +601,9 @@ el-CY:
       quantity: ποσότητα
       remove_from_cart: Αφαίρεση από το καλάθι
       title: Καλάθι αγορών
-    cart_subtotal:
-      one: Μερικό σύνολο (1 στοιχείο)
-      other: Μερικό σύνολο (αντικείμενα %{count})
-    categories: Κατηγορίες
     category: Κατηγορία
-    category_nav_bar:
-      get_up_to_30_percent_off: ΕΚΠΤΩΣΗ ΣΤΟ 30%
-      jackets_and_coats: ΤΖΑΚΕΤ & ΜΑΝΤΕΣ
-      new_collection: ΝΕΑ ΣΥΛΛΟΓΗ
-      special_offers: ΕΙΔΙΚΕΣ ΠΡΟΣΦΟΡΕΣ
     channel: Κανάλι
     charged: Φορτισμένη
-    checkout: ολοκλήρωση παραγγελίας
     checkout_page:
       back_to_cart: πίσω στο καλάθι
       checkout_navigation: Πλοήγηση στο Ταμείο
@@ -651,25 +612,18 @@ el-CY:
       main_navigation: Κύρια πλοήγηση
       product: Προϊόν
     choose_a_customer: Επιλέξτε έναν πελάτη
-    choose_a_taxon_to_sort_products_for: Επιλέξτε ένα ταξί για να ταξινομήσετε τα προϊόντα
     choose_currency: Επιλέξτε Νόμισμα
-    choose_dashboard_locale: Επιλέξτε Τοπική ρύθμιση πίνακα ελέγχου
     choose_location: Επιλέξτε τοποθεσία
     city: Πόλη
     clear_cache: Εκκαθάριση προσωρινής μνήμης
-    clear_cache_ok: Η κρυφή μνήμη ξεπλύθηκε
     clear_cache_warning: Η εκκαθάριση της προσωρινής μνήμης θα μειώσει προσωρινά την απόδοση του καταστήματός σας.
-    click_and_drag_on_the_products_to_sort_them: Κάντε κλικ και σύρετε τα προϊόντα για να τα ταξινομήσετε.
     clone: Κλώνος
     close: Κλείσε
     close_all_adjustments: Κλείσιμο όλων των προσαρμογών
     code: Κώδικας
     company: Εταιρία
     compare_at_price: Συγκρίνετε στην τιμή
-    complete: πλήρης
-    configuration: Διαμόρφωση
     configurations: Διαμορφώσεις
-    confirm: Επιβεβαιώνω
     confirm_delete: Επιβεβαίωση διαγραφής
     confirm_password: Επιβεβαίωση κωδικού πρόσβασης
     contact_phone: Τηλέφωνο επικοινωνίας
@@ -679,7 +633,6 @@ el-CY:
     continue_shopping: Συνεχίστε τις αγορές
     cost_currency: Νόμισμα κόστους
     cost_price: ΚΟΣΤΟΣ
-    could_not_create_customer_return: Δεν ήταν δυνατή η δημιουργία επιστροφής πελατών
     could_not_create_stock_movement: Παρουσιάστηκε πρόβλημα κατά την αποθήκευση αυτής της κίνησης των αποθεμάτων. ΠΑΡΑΚΑΛΩ προσπαθησε ξανα.
     count_on_hand: Υπολογίστε στο χέρι
     countries: Χώρες
@@ -688,7 +641,6 @@ el-CY:
     country_name: Ονομα
     country_rule:
       label: Η επιλογή πρέπει να αποσταλεί σε αυτήν τη χώρα
-    coupon: Κουπόνι
     coupon_code: Κωδικός κουπονιού
     coupon_code_already_applied: Ο κωδικός κουπονιού έχει ήδη εφαρμοστεί σε αυτήν την παραγγελία
     coupon_code_applied: Ο κωδικός κουπονιού εφαρμόστηκε με επιτυχία στην παραγγελία σας.
@@ -700,22 +652,17 @@ el-CY:
     coupon_code_removed: Ο κωδικός κουπονιού καταργήθηκε με επιτυχία από την παραγγελία σας.
     coupon_code_unknown_error: Αυτός ο κωδικός κουπονιού δεν ήταν δυνατό να εφαρμοστεί στο καλάθι αυτήν τη στιγμή.
     create: Δημιουργώ
-    create_a_new_account: Δημιούργησε νέο λογαριασμό
     create_new_order: Δημιουργήστε νέα παραγγελία
     create_reimbursement: Δημιουργία αποζημίωσης
     created_at: Δημιουργήθηκε στις
     created_by: Δημιουργήθηκε από
-    credit: Πίστωση
     credit_allowed: Επιτρέπεται πίστωση
     credit_card: Πιστωτική κάρτα
-    credit_cards: Πιστωτικές κάρτες
     credit_owed: Πίστωση οφειλόμενη
     credited: Πιστωμένο
     credits: Πιστώσεις
-    currencies: Νομίσματα
     currency: Νόμισμα
     currency_settings: Ρυθμίσεις νομίσματος
-    current: Ρεύμα
     current_promotion_usage: 'τρέχουσα χρήση: %{count}'
     customer: Πελάτης
     customer_details: Πληροφορίες Πελάτη
@@ -814,7 +761,6 @@ el-CY:
     exceptions:
       count_on_hand_setter: 'Δεν είναι δυνατή η μη αυτόματη ρύθμιση count_on_hand, καθώς ορίζεται αυτόματα από την επανάληψη_εκλογής_εκλογής_εκκίνησης Χρησιμοποιήστε το "update_column (: count_on_hand, value)".'
     exchange_for: Ανταλλαγή για
-    excl: εκτός
     existing_shipments: Υφιστάμενες αποστολές
     expedited_exchanges_warning: Τυχόν καθορισμένες ανταλλαγές θα αποσταλούν στον πελάτη αμέσως μετά την αποθήκευση. Ο πελάτης θα χρεωθεί το πλήρες ποσό του αντικειμένου εάν δεν επιστρέψει το αρχικό αντικείμενο εντός %{days_window} ημερών.
     expiration: Λήξη
@@ -1551,7 +1497,6 @@ el-CY:
     stock_location_info: Πληροφορίες τοποθεσίας αποθεμάτων
     stock_locations: Τοποθεσίες μετοχών
     stock_locations_need_a_default_country: Πρέπει να δημιουργήσετε μια προεπιλεγμένη χώρα προτού δημιουργήσετε μια τοποθεσία μετοχής.
-    stock_management: ΔΙΑΧΕΙΡΙΣΗ ΑΠΟΘΕΜΑΤΩΝ
     stock_management_requires_a_stock_location: Δημιουργήστε μια τοποθεσία μετοχών για να διαχειριστείτε το απόθεμα.
     stock_movements: Κινήσεις μετοχών
     stock_movements_for_stock_location: Κινήσεις μετοχών για %{stock_location_name}
@@ -1562,7 +1507,6 @@ el-CY:
         variants_unavailable: Ορισμένες παραλλαγές δεν είναι διαθέσιμες στο %{stock}
     stock_transfer_name: Μεταφορά μετοχών
     stock_transfers: Μεταφορές μετοχών
-    stop: Να σταματήσει
     store: Κατάστημα
     store_credit:
       additional_payment_needed: Επιλέξτε έναν άλλο τρόπο πληρωμής για το υπόλοιπο <strong> %{amount} </strong>.
@@ -1628,7 +1572,6 @@ el-CY:
     supported_currencies: Υποστηριζόμενα νομίσματα
     supported_currencies_long: Μια λίστα υποστηριζόμενων νομισμάτων διαχωρισμένων με κόμμα
     supported_locales: Υποστηριζόμενες τοπικές ρυθμίσεις
-    tags: Ετικέτες
     tags_placeholder: Προσθέστε ετικέτες
     tax: Φόρος
     tax_categories: Κατηγορίες φόρου
@@ -1723,12 +1666,9 @@ el-CY:
     variant_placeholder: Επιλέξτε μια παραλλαγή
     variant_prices_search_placeholder: Αναζήτηση για SKU ή όνομα παραλλαγής ...
     variants: Παραλλαγές
-    version: Εκδοχή
-    void: Κενός
     weight: Βάρος
     what_is_a_cvv: Τι είναι ο κωδικός πιστωτικής κάρτας (CVV);
     width: Πλάτος
-    year: Ετος
     you_have_no_orders_yet: Δεν έχετε παραγγελίες ακόμη
     your_order_is_empty_add_product: Η παραγγελία σας είναι κενή, αναζητήστε και προσθέστε ένα παραπάνω προϊόν
     zip: Φερμουάρ

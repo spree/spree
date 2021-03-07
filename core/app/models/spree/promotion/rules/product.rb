@@ -32,7 +32,7 @@ module Spree
             end
           elsif preferred_match_policy == 'any'
             unless order.products.any? { |p| eligible_products.include?(p) }
-               # i18n-tasks-use I18n.t('spree.eligibility_errors.messages.no_applicable_products')
+              # i18n-tasks-use I18n.t('spree.eligibility_errors.messages.no_applicable_products')
               eligibility_errors.add(:base, eligibility_error_message(:no_applicable_products))
             end
           else

@@ -437,7 +437,6 @@ ka:
     abbreviation: შემოკლებით
     accept: მიღება
     acceptance_errors: მიღების შეცდომები
-    acceptance_status: მიღების სტატუსი
     accepted: მიღებულია
     account: ანგარიში
     account_info: Პროფილის ინფორმაცია
@@ -455,32 +454,24 @@ ka:
       refund: თანხის დაბრუნება
       save: Გადარჩენა
       update: განახლება
-    activate: გააქტიურება
     active: აქტიური
     add: დამატება
     add_action_of_type: ტიპის მოქმედების დამატება
-    add_country: დაამატე ქვეყანა
     add_coupon_code: კუპონის კოდის დამატება
     add_new_address: ახალი მისამართის დამატება
     add_new_credit_card: დაამატე ახალი ბარათი
-    add_new_header: ახალი სათაურის დამატება
-    add_new_style: ახალი სტილის დამატება
     add_one: დაამატე ერთი
     add_option_value: ოფციონის მნიშვნელობის დამატება
     add_product: პროდუქტის დამატება
     add_product_properties: დაამატეთ პროდუქტის თვისებები
     add_rule_of_type: ტიპის წესის დამატება
-    add_state: დაამატე სახელმწიფო
     add_stock: საფონდო დამატება
     add_store: ახალი მაღაზია
     add_store_credit: დაამატეთ მაღაზიის კრედიტი
     add_to_cart: Კალათაში დამატება
     add_variant: ვარიანტის დამატება
     added_to_cart: კალათაში წარმატებით დაემატა!
-    additional_item: დამატებითი ნივთი
     address: მისამართი
-    address1: მისამართი
-    address2: მისამართი (კონტაქტი)
     address_action_popup:
       delete_button: დიახ, წაშლა
       delete_text: ნამდვილად გსურთ <br /> ამ მისამართის წაშლა?
@@ -499,13 +490,10 @@ ka:
     addresses: მისამართები
     adjustable: რეგულირებადი
     adjustment: რეგულირება
-    adjustment_amount: თანხა
     adjustment_labels:
       tax_rates:
         excluding_tax: "%{name}%{amount}"
         including_tax: "%{name}%{amount} (ფასში შედის)"
-    adjustment_successfully_closed: რეგულირება წარმატებით დაიხურა!
-    adjustment_successfully_opened: რეგულირება წარმატებით გაიხსნა!
     adjustment_total: რეგულირება სულ
     adjustments: შესწორებები
     adjustments_deleted: კორექტირებები წაიშალა
@@ -549,26 +537,19 @@ ka:
         user_information: მომხმარებლის ინფორმაცია
     administration: ადმინისტრაცია
     advertise: რეკლამა
-    agree_to_privacy_policy: ვეთანხმები კონფიდენციალურობის დებულებას
-    agree_to_terms_of_service: ვეთანხმები მომსახურების პირობებს
     all: ყველა
     all_adjustments_closed: ყველა კორექტირება წარმატებით დაიხურა!
     all_adjustments_opened: ყველა კორექტირება წარმატებით გაიხსნა!
-    all_departments: ყველა განყოფილება
     all_items_have_been_returned: ყველა ნივთი დაუბრუნდა
     all_rights_reserved: Ყველა უფლება დაცულია
-    already_have_account: უკვე გაქვთ ანგარიში?
     alt_text: ალტერნატიული ტექსტი
     alternative_phone: ალტერნატიული ტელეფონი
     amount: თანხა
     and: და
-    approve: დამტკიცება
     approved_at: დამტკიცებულია
     approver: დამამტკიცებელი
     are_you_sure: Დარწმუნებული ხარ?
     are_you_sure_delete: დარწმუნებული ხართ, რომ გსურთ ამ ჩანაწერის წაშლა?
-    associated_adjustment_closed: ასოცირებული კორექტირება დახურულია და არ მოხდება მისი ხელახლა გაანგარიშება. გსურთ გახსნათ?
-    authorization_failure: ავტორიზაციის შეუსრულებლობა
     authorized: უფლებამოსილი
     auto_capture: ავტომატური აღება
     availability: ხელმისაწვდომობა
@@ -577,16 +558,10 @@ ka:
     average_order_value: შეკვეთის საშუალო ღირებულება
     avs_response: AVS რეაგირება
     back: უკან
-    back_end: ზურგი
-    back_to_payment: გადახდაზე დაბრუნება
     back_to_resource_list: "%{resource} სიაში დაბრუნება"
-    back_to_rma_reason_list: RMA მიზეზების სიაში დაბრუნება
     back_to_store: მაღაზიაში დაბრუნება
-    back_to_users_list: მომხმარებელთა სიაში დაბრუნება
     backorderable: უკონტროლო
     backorderable_default: უკონტროლო ნაგულისხმევი
-    backordered: შეკვეთით
-    backordered_confirm_info: არჩეული ერთეულის შეკვეთა შეკვეთით, ასე რომ მოსალოდნელია შეფერხებები. დარწმუნებული ხართ, რომ გსურთ მისი შეკვეთა?
     backordered_info: შეკვეთით
     backorders_allowed: დაშვებული ბრძანებები
     balance_due: გადასახდელი ბალანსი
@@ -594,9 +569,7 @@ ka:
     base_percent: ბაზის პროცენტი
     basic_information: Ძირითადი ინფორმაცია
     bill_address: ბილის მისამართი
-    billing: ბილინგი
     billing_address: ბილინგის მისამართი
-    both: ორივე
     breadcrumbs: პურის ნამცხვრები
     calculated_reimbursements: გათვლილი ანაზღაურება
     calculator: კალკულატორი
@@ -612,8 +585,6 @@ ka:
     cannot_empty_completed_order: შეკვეთა უკვე დამუშავებულია, ამიტომ მისი დაცლა შეუძლებელია
     cannot_perform_operation: მოთხოვნილი ოპერაციის შესრულება შეუძლებელია
     cannot_return_more_than_bought_quantity: შეუძლებელია შეძენილი რაოდენობის მეტის დაბრუნება.
-    cannot_set_shipping_method_without_address: გადაზიდვის მეთოდის დაყენება შეუძლებელია, სანამ მომხმარებლის დეტალები არ მივაწვდით.
-    capture: ხელში ჩაგდება
     capture_events: მოვლენების გადაღება
     card_code: ბარათის ცვლილების კოდი (CVC)
     card_number: Ბარათის ნომერი
@@ -630,19 +601,9 @@ ka:
       quantity: რაოდენობა
       remove_from_cart: კალათიდან ამოღება
       title: Საყიდლების კალათი
-    cart_subtotal:
-      one: ჯამი (1 ელემენტი)
-      other: ქვეტოტალი (%{count} ერთეული)
-    categories: კატეგორიები
     category: კატეგორია
-    category_nav_bar:
-      get_up_to_30_percent_off: მიიღეთ 30% ფასდაკლებით
-      jackets_and_coats: ჟაკეტი და პლიაჟები
-      new_collection: ᲐᲮᲐᲚᲘ ᲙᲝᲚᲔᲥᲪᲘᲐ
-      special_offers: ᲡᲞᲔᲪᲘᲐᲚᲣᲠᲘ ᲨᲔᲗᲐᲕᲐᲖᲔᲑᲔᲑᲘ
     channel: არხი
     charged: დამუხტული
-    checkout: გადახდა
     checkout_page:
       back_to_cart: კალათაში დაბრუნება
       checkout_navigation: სალაროს ნავიგაცია
@@ -651,25 +612,18 @@ ka:
       main_navigation: მთავარი ნავიგაცია
       product: პროდუქტი
     choose_a_customer: აირჩიე მომხმარებელი
-    choose_a_taxon_to_sort_products_for: აირჩიეთ ტაქსონი პროდუქციის დასალაგებლად
     choose_currency: აირჩიეთ ვალუტა
-    choose_dashboard_locale: აირჩიეთ დაფის ლოკალი
     choose_location: აირჩიეთ ადგილმდებარეობა
     city: ქალაქი
     clear_cache: Ქეშის გაწმენდა
-    clear_cache_ok: ქეში გაწითლდა
     clear_cache_warning: ქეშის გაწმენდა დროებით შეამცირებს თქვენი მაღაზიის მუშაობას.
-    click_and_drag_on_the_products_to_sort_them: დააჭირეთ და გადაიტანეთ პროდუქტები მათი დასალაგებლად.
     clone: კლონი
     close: დახურვა
     close_all_adjustments: ყველა რეგულირების დახურვა
     code: კოდი
     company: კომპანია
     compare_at_price: შეადარე ფასად
-    complete: სრული
-    configuration: კონფიგურაცია
     configurations: კონფიგურაციები
-    confirm: დაადასტურო
     confirm_delete: დაადასტურეთ წაშლა
     confirm_password: Პაროლის დადასტურება
     contact_phone: საკონტაქტო ტელეფონი
@@ -679,7 +633,6 @@ ka:
     continue_shopping: გააგრძელეთ საყიდლები
     cost_currency: ღირებულების ვალუტა
     cost_price: Ღირებულება
-    could_not_create_customer_return: კლიენტის დაბრუნება ვერ შეიქმნა
     could_not_create_stock_movement: ამ საფონდო მოძრაობის შენახვისას პრობლემა წარმოიშვა. Გთხოვთ კიდევ სცადეთ.
     count_on_hand: იმედი ხელზე
     countries: ქვეყნები
@@ -688,7 +641,6 @@ ka:
     country_name: სახელი
     country_rule:
       label: არჩევა უნდა გაიგზავნოს ამ ქვეყანაში
-    coupon: კუპონი
     coupon_code: Კუპონის კოდი
     coupon_code_already_applied: კუპონის კოდი უკვე გამოყენებულია ამ შეკვეთისთვის
     coupon_code_applied: კუპონის კოდი წარმატებით იქნა გამოყენებული თქვენს შეკვეთასთან დაკავშირებით.
@@ -700,22 +652,17 @@ ka:
     coupon_code_removed: კუპონის კოდი წარმატებით წაიშალა თქვენი შეკვეთიდან.
     coupon_code_unknown_error: ამ კუპონის კოდი ამჯერად ვერ გამოიყენებოდა კალათას.
     create: Შექმნა
-    create_a_new_account: Ახალი ანგარიშის გახსნა
     create_new_order: შექმენით ახალი წესრიგი
     create_reimbursement: ანაზღაურების შექმნა
     created_at: შექმნილია ატ
     created_by: Შექმნილია მიერ
-    credit: საკრედიტო
     credit_allowed: კრედიტი დაშვებულია
     credit_card: Საკრედიტო ბარათი
-    credit_cards: Საკრედიტო ბარათები
     credit_owed: საკრედიტო საკუთრება
     credited: კრედიტირებული
     credits: კრედიტები
-    currencies: ვალუტა
     currency: ვალუტა
     currency_settings: ვალუტის პარამეტრები
-    current: მიმდინარე
     current_promotion_usage: 'მიმდინარე გამოყენება: %{count}'
     customer: მომხმარებელი
     customer_details: კლიენტის დეტალები
@@ -814,7 +761,6 @@ ka:
     exceptions:
       count_on_hand_setter: 'ხელით არ შეიძლება დაითვალოს count_on_, რადგან ის ავტომატურად დაყენებულია ხელმეორედ გამოანგარიშებული_ანგარიშით. ამის ნაცვლად, გამოიყენეთ `განახლების_სვეტი (: count_on_hand, მნიშვნელობა).'
     exchange_for: გაცვლა
-    excl: გამონაკლისი
     existing_shipments: არსებული გადაზიდვები
     expedited_exchanges_warning: ნებისმიერი მითითებული ბირჟა დაზოგვისთანავე გადაეგზავნება მომხმარებელს. მომხმარებელს დაეკისრება ნივთის სრული თანხა, თუ იგი არ დააბრუნებს ორიგინალ ნივთს %{days_window} დღის განმავლობაში.
     expiration: ვადის გასვლა
@@ -1551,7 +1497,6 @@ ka:
     stock_location_info: საფონდო მდებარეობის ინფორმაცია
     stock_locations: საფონდო ადგილები
     stock_locations_need_a_default_country: თქვენ უნდა შექმნათ ნაგულისხმევი ქვეყანა საფონდო მდებარეობის შექმნამდე.
-    stock_management: საფონდო მენეჯმენტი
     stock_management_requires_a_stock_location: გთხოვთ, შექმნათ საფონდო ადგილმდებარეობა საფონდო მარაგის მართვის მიზნით.
     stock_movements: საფონდო მოძრაობები
     stock_movements_for_stock_location: საფონდო მოძრაობები %{stock_location_name}- სთვის
@@ -1562,7 +1507,6 @@ ka:
         variants_unavailable: ზოგიერთი ვარიანტი მიუწვდომელია %{stock}- ზე
     stock_transfer_name: საფონდო გადაცემა
     stock_transfers: საფონდო გადარიცხვები
-    stop: გაჩერდი
     store: მაღაზია
     store_credit:
       additional_payment_needed: აირჩიეთ დარჩენილი გადახდის მეთოდი დარჩენილი <strong> %{amount} </strong>.
@@ -1628,7 +1572,6 @@ ka:
     supported_currencies: მხარდაჭერილი ვალუტები
     supported_currencies_long: მხარდაჭერილი ვალუტების გამოყოფა მძიმით
     supported_locales: მხარდაჭერილი ლოკალები
-    tags: წარწერები
     tags_placeholder: დაამატეთ წარწერები
     tax: გადასახადი
     tax_categories: საგადასახადო კატეგორიები
@@ -1723,12 +1666,9 @@ ka:
     variant_placeholder: აირჩიეთ ვარიანტი
     variant_prices_search_placeholder: მოძებნეთ SKU ან ვარიანტის სახელი ...
     variants: ვარიანტები
-    version: ვერსია
-    void: ბათილია
     weight: წონა
     what_is_a_cvv: რა არის (CVV) საკრედიტო ბარათის კოდი?
     width: სიგანე
-    year: წელი
     you_have_no_orders_yet: ჯერ შეკვეთები არ გაქვთ
     your_order_is_empty_add_product: თქვენი შეკვეთა ცარიელია, გთხოვთ მოიძიოთ და დაამატოთ ზემოთ პროდუქტი
     zip: Zip

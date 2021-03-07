@@ -437,7 +437,6 @@ te:
     abbreviation: సంక్షిప్తీకరణ
     accept: అంగీకరించు
     acceptance_errors: అంగీకార లోపాలు
-    acceptance_status: అంగీకార స్థితి
     accepted: ఆమోదించబడిన
     account: ఖాతా
     account_info: ఖాతా సమాచారం
@@ -455,32 +454,24 @@ te:
       refund: వాపసు
       save: సేవ్ చేయండి
       update: నవీకరణ
-    activate: సక్రియం చేయండి
     active: యాక్టివ్
     add: జోడించు
     add_action_of_type: రకం చర్యను జోడించండి
-    add_country: దేశాన్ని జోడించండి
     add_coupon_code: కూపన్ కోడ్‌ను జోడించండి
     add_new_address: క్రొత్త చిరునామాను జోడించండి
     add_new_credit_card: క్రొత్త కార్డును జోడించండి
-    add_new_header: క్రొత్త శీర్షికను జోడించండి
-    add_new_style: క్రొత్త శైలిని జోడించండి
     add_one: ఒకటి జోడించండి
     add_option_value: ఎంపిక విలువను జోడించండి
     add_product: ఉత్పత్తిని జోడించండి
     add_product_properties: ఉత్పత్తి లక్షణాలను జోడించండి
     add_rule_of_type: రకం నియమాన్ని జోడించండి
-    add_state: రాష్ట్రాన్ని జోడించండి
     add_stock: స్టాక్ జోడించండి
     add_store: క్రొత్త స్టోర్
     add_store_credit: స్టోర్ క్రెడిట్‌ను జోడించండి
     add_to_cart: బండికి జోడించు
     add_variant: వేరియంట్‌ను జోడించండి
     added_to_cart: కార్ట్‌కు విజయవంతంగా జోడించబడింది!
-    additional_item: అదనపు అంశం
     address: చిరునామా
-    address1: చిరునామా
-    address2: చిరునామా (వివాదం)
     address_action_popup:
       delete_button: అవును, తొలగించండి
       delete_text: "<br /> ఈ చిరునామాను తొలగించాలని మీరు నిజంగా కోరుకుంటున్నారా?"
@@ -499,13 +490,10 @@ te:
     addresses: చిరునామాలు
     adjustable: సర్దుబాటు
     adjustment: సర్దుబాటు
-    adjustment_amount: మొత్తం
     adjustment_labels:
       tax_rates:
         excluding_tax: "%{name}%{amount}"
         including_tax: "%{name}%{amount} (ధరలో చేర్చబడింది)"
-    adjustment_successfully_closed: సర్దుబాటు విజయవంతంగా మూసివేయబడింది!
-    adjustment_successfully_opened: సర్దుబాటు విజయవంతంగా తెరవబడింది!
     adjustment_total: సర్దుబాటు మొత్తం
     adjustments: సర్దుబాట్లు
     adjustments_deleted: సర్దుబాట్లు తొలగించబడ్డాయి
@@ -549,26 +537,19 @@ te:
         user_information: వినియోగదారు సమాచారం
     administration: పరిపాలన
     advertise: ప్రకటన చేయండి
-    agree_to_privacy_policy: గోప్యతా విధానానికి అంగీకరిస్తున్నారు
-    agree_to_terms_of_service: సేవా నిబంధనలను అంగీకరిస్తున్నారు
     all: అన్నీ
     all_adjustments_closed: అన్ని సర్దుబాట్లు విజయవంతంగా మూసివేయబడ్డాయి!
     all_adjustments_opened: అన్ని సర్దుబాట్లు విజయవంతంగా తెరవబడ్డాయి!
-    all_departments: అన్ని విభాగాలు
     all_items_have_been_returned: అన్ని అంశాలు తిరిగి ఇవ్వబడ్డాయి
     all_rights_reserved: అన్ని హక్కులూ ప్రత్యేకించుకోవడమైనది
-    already_have_account: ఖాతా కలిగి ఉన్నారా?
     alt_text: ప్రత్యామ్నాయ వచనం
     alternative_phone: ప్రత్యామ్నాయ ఫోన్
     amount: మొత్తం
     and: మరియు
-    approve: ఆమోదించడానికి
     approved_at: వద్ద ఆమోదించబడింది
     approver: ఆమోదం
     are_you_sure: మీరు చెప్పేది నిజమా?
     are_you_sure_delete: మీరు ఖచ్చితంగా ఈ రికార్డ్‌ను తొలగించాలనుకుంటున్నారా?
-    associated_adjustment_closed: అనుబంధ సర్దుబాటు మూసివేయబడింది మరియు తిరిగి లెక్కించబడదు. మీరు దీన్ని తెరవాలనుకుంటున్నారా?
-    authorization_failure: ప్రామాణీకరణ వైఫల్యం
     authorized: అధీకృత
     auto_capture: ఆటో క్యాప్చర్
     availability: లభ్యత
@@ -577,16 +558,10 @@ te:
     average_order_value: సగటు ఆర్డర్ విలువ
     avs_response: AVS ప్రతిస్పందన
     back: తిరిగి
-    back_end: బ్యాకెండ్
-    back_to_payment: చెల్లింపుకు తిరిగి వెళ్ళు
     back_to_resource_list: "%{resource} జాబితాకు తిరిగి వెళ్ళు"
-    back_to_rma_reason_list: RMA కారణ జాబితాకు తిరిగి వెళ్ళు
     back_to_store: తిరిగి దుకాణానికి
-    back_to_users_list: వినియోగదారుల జాబితాకు తిరిగి వెళ్ళు
     backorderable: బ్యాకార్డరబుల్
     backorderable_default: బ్యాకార్డరబుల్ డిఫాల్ట్
-    backordered: బ్యాక్‌ఆర్డర్‌డ్
-    backordered_confirm_info: ఎంచుకున్న అంశం బ్యాక్‌ఆర్డర్ చేయబడింది కాబట్టి ఆలస్యాన్ని ఆశించండి. మీరు దీన్ని ఖచ్చితంగా ఆర్డర్ చేయాలనుకుంటున్నారా?
     backordered_info: బ్యాక్‌ఆర్డర్‌డ్
     backorders_allowed: బ్యాక్‌డార్డర్‌లు అనుమతించబడ్డాయి
     balance_due: బాకీ
@@ -594,9 +569,7 @@ te:
     base_percent: బేస్ శాతం
     basic_information: ప్రాథమిక సమాచారం
     bill_address: బిల్ చిరునామా
-    billing: బిల్లింగ్
     billing_address: రశీదు చిరునామా
-    both: రెండు
     breadcrumbs: బ్రెడ్‌క్రంబ్స్
     calculated_reimbursements: లెక్కించిన రీయింబర్స్‌మెంట్
     calculator: కాలిక్యులేటర్
@@ -612,8 +585,6 @@ te:
     cannot_empty_completed_order: ఆర్డర్ ఇప్పటికే ప్రాసెస్ చేయబడింది కాబట్టి ఇది ఖాళీ చేయబడదు
     cannot_perform_operation: అభ్యర్థించిన ఆపరేషన్ చేయలేము
     cannot_return_more_than_bought_quantity: కొనుగోలు చేసిన పరిమాణం కంటే ఎక్కువ తిరిగి ఇవ్వలేరు.
-    cannot_set_shipping_method_without_address: కస్టమర్ వివరాలు అందించే వరకు షిప్పింగ్ పద్ధతిని సెట్ చేయలేరు.
-    capture: క్యాప్చర్
     capture_events: సంఘటనలను సంగ్రహించండి
     card_code: కార్డ్ వేరియేషన్ కోడ్ (సివిసి)
     card_number: కార్డు సంఖ్య
@@ -630,19 +601,9 @@ te:
       quantity: పరిమాణం
       remove_from_cart: బండి నుండి తీసివేయండి
       title: షాపింగ్ కార్ట్
-    cart_subtotal:
-      one: మొత్తం (1 అంశం)
-      other: మొత్తం (%{count} అంశాలు)
-    categories: కేటగిరీలు
     category: వర్గం
-    category_nav_bar:
-      get_up_to_30_percent_off: 30% ఆఫ్ పొందండి
-      jackets_and_coats: జాకెట్ & కోస్ట్స్
-      new_collection: సరికొత్త సేకరణ
-      special_offers: ప్రత్యేక ఆఫర్లు
     channel: ఛానల్
     charged: ఛార్జ్ చేయబడింది
-    checkout: చెక్అవుట్
     checkout_page:
       back_to_cart: తిరిగి బండికి
       checkout_navigation: చెక్అవుట్ నావిగేషన్
@@ -651,25 +612,18 @@ te:
       main_navigation: ప్రధాన నావిగేషన్
       product: ఉత్పత్తి
     choose_a_customer: కస్టమర్‌ను ఎంచుకోండి
-    choose_a_taxon_to_sort_products_for: ఉత్పత్తులను క్రమబద్ధీకరించడానికి టాక్సన్‌ను ఎంచుకోండి
     choose_currency: కరెన్సీని ఎంచుకోండి
-    choose_dashboard_locale: డాష్‌బోర్డ్ లొకేల్‌ని ఎంచుకోండి
     choose_location: స్థానాన్ని ఎంచుకోండి
     city: నగరం
     clear_cache: కాష్ క్లియర్
-    clear_cache_ok: కాష్ ఫ్లష్ చేయబడింది
     clear_cache_warning: కాష్ క్లియర్ చేయడం వల్ల మీ స్టోర్ పనితీరు తాత్కాలికంగా తగ్గుతుంది.
-    click_and_drag_on_the_products_to_sort_them: ఉత్పత్తులను క్రమబద్ధీకరించడానికి వాటిని క్లిక్ చేసి లాగండి.
     clone: క్లోన్
     close: దగ్గరగా
     close_all_adjustments: అన్ని సర్దుబాట్లను మూసివేయండి
     code: కోడ్
     company: కంపెనీ
     compare_at_price: ధర వద్ద పోల్చండి
-    complete: పూర్తయింది
-    configuration: ఆకృతీకరణ
     configurations: ఆకృతీకరణలు
-    confirm: నిర్ధారించండి
     confirm_delete: తొలగింపును నిర్ధారించండి
     confirm_password: పాస్వర్డ్ నిర్ధారణ
     contact_phone: ఫోన్‌ను సంప్రదించండి
@@ -679,7 +633,6 @@ te:
     continue_shopping: షాపింగ్ కొనసాగించడానికి
     cost_currency: ఖర్చు కరెన్సీ
     cost_price: ఖర్చు ధర
-    could_not_create_customer_return: కస్టమర్ రాబడిని సృష్టించడం సాధ్యం కాలేదు
     could_not_create_stock_movement: ఈ స్టాక్ కదలికను ఆదా చేయడంలో సమస్య ఉంది. దయచేసి మళ్ళీ ప్రయత్నించండి.
     count_on_hand: చేతితో లెక్కించండి
     countries: దేశాలు
@@ -688,7 +641,6 @@ te:
     country_name: పేరు
     country_rule:
       label: ఎంచుకోవడం తప్పనిసరిగా ఈ దేశానికి రవాణా చేయబడాలి
-    coupon: కూపన్
     coupon_code: కూపన్ కోడ్
     coupon_code_already_applied: ఈ ఆర్డర్‌కు కూపన్ కోడ్ ఇప్పటికే వర్తింపజేయబడింది
     coupon_code_applied: మీ ఆర్డర్‌కు కూపన్ కోడ్ విజయవంతంగా వర్తించబడింది.
@@ -700,22 +652,17 @@ te:
     coupon_code_removed: మీ ఆర్డర్ నుండి కూపన్ కోడ్ విజయవంతంగా తొలగించబడింది.
     coupon_code_unknown_error: ఈ కూపన్ కోడ్ ఈ సమయంలో బండికి వర్తించబడలేదు.
     create: సృష్టించండి
-    create_a_new_account: క్రొత్త ఖాతాను సృష్టించండి
     create_new_order: క్రొత్త క్రమాన్ని సృష్టించండి
     create_reimbursement: రీయింబర్స్‌మెంట్ సృష్టించండి
     created_at: వద్ద సృష్టించబడింది
     created_by: సృష్టికర్త
-    credit: క్రెడిట్
     credit_allowed: క్రెడిట్ అనుమతించబడింది
     credit_card: క్రెడిట్ కార్డ్
-    credit_cards: క్రెడిట్ కార్డులు
     credit_owed: క్రెడిట్ స్వంతం
     credited: ఘనత
     credits: క్రెడిట్స్
-    currencies: కరెన్సీలు
     currency: కరెన్సీ
     currency_settings: కరెన్సీ సెట్టింగులు
-    current: ప్రస్తుత
     current_promotion_usage: 'ప్రస్తుత వినియోగం: %{count}'
     customer: కస్టమర్
     customer_details: వినియోగదారుని వివరాలు
@@ -814,7 +761,6 @@ te:
     exceptions:
       count_on_hand_setter: 'కౌంట్_ఒన్_హ్యాండ్‌ను మాన్యువల్‌గా సెట్ చేయలేరు, ఎందుకంటే ఇది స్వయంచాలకంగా రీకాల్యులేట్_కౌంట్_ఒన్_హ్యాండ్ బ్యాక్‌బ్యాక్ ద్వారా సెట్ చేయబడుతుంది. బదులుగా `update_column (: count_on_hand, value)` ఉపయోగించండి.'
     exchange_for: కోసం మార్పిడి
-    excl: excl.
     existing_shipments: ఇప్పటికే ఉన్న సరుకులు
     expedited_exchanges_warning: ఏదైనా పేర్కొన్న ఎక్స్ఛేంజీలు సేవ్ చేసిన వెంటనే కస్టమర్‌కు రవాణా చేయబడతాయి. కస్టమర్ అసలు వస్తువును %{days_window} రోజుల్లో తిరిగి ఇవ్వకపోతే వస్తువు యొక్క పూర్తి మొత్తాన్ని వసూలు చేస్తారు.
     expiration: గడువు
@@ -1551,7 +1497,6 @@ te:
     stock_location_info: స్టాక్ స్థాన సమాచారం
     stock_locations: స్టాక్ స్థానాలు
     stock_locations_need_a_default_country: స్టాక్ స్థానాన్ని సృష్టించే ముందు మీరు తప్పక డిఫాల్ట్ దేశాన్ని సృష్టించాలి.
-    stock_management: స్టాక్ నిర్వహణ
     stock_management_requires_a_stock_location: స్టాక్‌ను నిర్వహించడానికి దయచేసి స్టాక్ స్థానాన్ని సృష్టించండి.
     stock_movements: స్టాక్ ఉద్యమాలు
     stock_movements_for_stock_location: "%{stock_location_name} కోసం స్టాక్ కదలికలు"
@@ -1562,7 +1507,6 @@ te:
         variants_unavailable: కొన్ని రకాలు %{stock} లో అందుబాటులో లేవు
     stock_transfer_name: స్టాక్ బదిలీ
     stock_transfers: స్టాక్ బదిలీలు
-    stop: ఆపు
     store: స్టోర్
     store_credit:
       additional_payment_needed: మిగిలిన <strong> %{amount} </strong> కోసం మరొక చెల్లింపు పద్ధతిని ఎంచుకోండి.
@@ -1628,7 +1572,6 @@ te:
     supported_currencies: మద్దతు ఉన్న కరెన్సీలు
     supported_currencies_long: మద్దతు ఉన్న కరెన్సీల కామాతో వేరు చేయబడిన జాబితా
     supported_locales: మద్దతు ఉన్న లొకేల్స్
-    tags: టాగ్లు
     tags_placeholder: ట్యాగ్లను అనుసంధించు
     tax: పన్ను
     tax_categories: పన్ను వర్గాలు
@@ -1723,12 +1666,9 @@ te:
     variant_placeholder: వేరియంట్‌ను ఎంచుకోండి
     variant_prices_search_placeholder: SKU లేదా వేరియంట్ పేరు కోసం శోధించండి ...
     variants: వైవిధ్యాలు
-    version: 'సంస్కరణ: Telugu'
-    void: రద్దు
     weight: బరువు
     what_is_a_cvv: "(సివివి) క్రెడిట్ కార్డ్ కోడ్ అంటే ఏమిటి?"
     width: వెడల్పు
-    year: సంవత్సరం
     you_have_no_orders_yet: మీకు ఇంకా ఆర్డర్లు లేవు
     your_order_is_empty_add_product: మీ ఆర్డర్ ఖాళీగా ఉంది, దయచేసి పైన ఉత్పత్తిని శోధించండి మరియు జోడించండి
     zip: జిప్

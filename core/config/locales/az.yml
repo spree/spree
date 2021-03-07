@@ -437,7 +437,6 @@ az:
     abbreviation: Qısaltma
     accept: Qəbul et
     acceptance_errors: Qəbul səhvləri
-    acceptance_status: Qəbul statusu
     accepted: Qəbul edildi
     account: Hesab
     account_info: Hesab məlumatı
@@ -455,32 +454,24 @@ az:
       refund: Geri qaytarma
       save: Yadda saxla
       update: Yeniləyin
-    activate: Aktivləşdirin
     active: Aktivdir
     add: Əlavə et
     add_action_of_type: Növü fəaliyyət əlavə edin
-    add_country: Ölkə əlavə edin
     add_coupon_code: Kupon kodu əlavə edin
     add_new_address: Yeni ünvan əlavə edin
     add_new_credit_card: Yeni bir kart əlavə edin
-    add_new_header: Yeni başlıq əlavə edin
-    add_new_style: Yeni Stil əlavə edin
     add_one: Bir əlavə edin
     add_option_value: Seçim dəyəri əlavə edin
     add_product: Məhsul əlavə edin
     add_product_properties: Məhsul xüsusiyyətləri əlavə edin
     add_rule_of_type: Tip qayda əlavə edin
-    add_state: Dövlət əlavə edin
     add_stock: Səhm əlavə et
     add_store: Yeni Mağaza
     add_store_credit: Mağaza krediti əlavə edin
     add_to_cart: Səbətə əlavə et
     add_variant: Variant əlavə edin
     added_to_cart: Səbətə uğurla əlavə edildi!
-    additional_item: Əlavə maddə
     address: Ünvan
-    address1: Ünvan
-    address2: Ünvan (davam)
     address_action_popup:
       delete_button: bəli silin
       delete_text: "<br /> bu ünvanı silməsini həqiqətən istəyirsiniz?"
@@ -499,13 +490,10 @@ az:
     addresses: Ünvanlar
     adjustable: Tənzimlənə bilər
     adjustment: Tənzimləmə
-    adjustment_amount: Məbləğ
     adjustment_labels:
       tax_rates:
         excluding_tax: "%{name}%{amount}"
         including_tax: "%{name}%{amount} (Qiymətə daxildir)"
-    adjustment_successfully_closed: Tənzimləmə uğurla bağlandı!
-    adjustment_successfully_opened: Tənzimləmə uğurla açıldı!
     adjustment_total: Ayarlama cəmi
     adjustments: Düzəlişlər
     adjustments_deleted: Düzəlişlər silindi
@@ -549,26 +537,19 @@ az:
         user_information: İstifadəçi məlumatları
     administration: İdarəetmə
     advertise: Reklam verin
-    agree_to_privacy_policy: Məxfilik Siyasəti ilə razılaşın
-    agree_to_terms_of_service: Xidmət Şərtləri ilə razılaşın
     all: Hamısı
     all_adjustments_closed: Bütün düzəlişlər uğurla bağlandı!
     all_adjustments_opened: Bütün düzəlişlər uğurla açıldı!
-    all_departments: Bütün şöbələr
     all_items_have_been_returned: Bütün əşyalar geri qaytarıldı
     all_rights_reserved: Bütün hüquqlar qorunur
-    already_have_account: Artıq bir hesabınız var mı?
     alt_text: Alternativ mətn
     alternative_phone: Alternativ Telefon
     amount: Məbləğ
     and: və
-    approve: təsdiq
     approved_at: Təsdiqləndi
     approver: Təsdiqləyici
     are_you_sure: Sən əminsən?
     are_you_sure_delete: Bu qeydi silmək istədiyinizə əminsiniz?
-    associated_adjustment_closed: Əlaqədar tənzimləmə bağlıdır və yenidən hesablanmayacaq. Açmaq istəyirsən?
-    authorization_failure: İcazə verilməməsi
     authorized: Səlahiyyətlidir
     auto_capture: Avtomatik çəkmə
     availability: mövcudluq
@@ -577,16 +558,10 @@ az:
     average_order_value: Orta Sifariş Dəyəri
     avs_response: AVS cavab
     back: Geri
-    back_end: Backend
-    back_to_payment: Ödənişə qayıdın
     back_to_resource_list: "%{resource} Siyahısına qayıt"
-    back_to_rma_reason_list: RMA Səbəblər siyahısına qayıt
     back_to_store: Mağazaya qayıt
-    back_to_users_list: İstifadəçilər siyahısına qayıt
     backorderable: Geri sifariş
     backorderable_default: Geri sifariş edilə bilən standart
-    backordered: Sərhədsiz
-    backordered_confirm_info: Seçilmiş maddənin arxa tərəfi var, buna görə gecikmələri gözləyin. Sifariş vermək istədiyinizə əminsiniz?
     backordered_info: Sərhədsiz
     backorders_allowed: geri sifariş icazə verilir
     balance_due: Qalıq balans
@@ -594,9 +569,7 @@ az:
     base_percent: Əsas faiz
     basic_information: Əsas məlumat
     bill_address: Bill ünvanı
-    billing: Faturalandırma
     billing_address: Faktura ünvanı
-    both: Hər ikisi də
     breadcrumbs: Çörək qırıntıları
     calculated_reimbursements: Hesablanmış ödənişlər
     calculator: Kalkulyator
@@ -612,8 +585,6 @@ az:
     cannot_empty_completed_order: Sifariş artıq işlənib, ona görə boşalmaq olmur
     cannot_perform_operation: Tələb olunan əməliyyat həyata keçirilə bilmir
     cannot_return_more_than_bought_quantity: Alınan miqdardan çoxunu qaytara bilmir.
-    cannot_set_shipping_method_without_address: Müştəri məlumatları verilənə qədər göndərmə metodunu təyin etmək olmur.
-    capture: Tutmaq
     capture_events: Hadisələri çəkin
     card_code: Kartın Təsdiqləmə Kodu (CVC)
     card_number: Kartı nömrəsi
@@ -630,19 +601,9 @@ az:
       quantity: kəmiyyət
       remove_from_cart: Səbətdən çıxarın
       title: Alış-veriş kartı
-    cart_subtotal:
-      one: Cəmi (1 maddə)
-      other: Alt cəmi (%{count} maddə)
-    categories: Kateqoriyalar
     category: Kateqoriya
-    category_nav_bar:
-      get_up_to_30_percent_off: 30% -ə qədər endirin
-      jackets_and_coats: CEKET & SAHILLAR
-      new_collection: YENİ KOLLEKSİYA
-      special_offers: XÜSUSİ TƏKLİFLƏR
     channel: Kanal
     charged: Şarj edildi
-    checkout: Yoxla
     checkout_page:
       back_to_cart: arabaya qayıt
       checkout_navigation: Check naviqasiya
@@ -651,25 +612,18 @@ az:
       main_navigation: Əsas naviqasiya
       product: Məhsul
     choose_a_customer: Müştəri seçin
-    choose_a_taxon_to_sort_products_for: Məhsulları çeşidləmək üçün bir takson seçin
     choose_currency: Valyuta seçin
-    choose_dashboard_locale: Panel panelini seçin
     choose_location: Yer seçin
     city: Şəhər
     clear_cache: Keşi təmizləmək
-    clear_cache_ok: Cache qızardıldı
     clear_cache_warning: Önbelleği təmizləmək mağazanızın performansını müvəqqəti azaldır.
-    click_and_drag_on_the_products_to_sort_them: Məhsulları çeşidləmək üçün basın və sürükləyin.
     clone: Klon
     close: Yaxın
     close_all_adjustments: Bütün düzəlişləri bağlayın
     code: Kod
     company: Şirkət
     compare_at_price: Qiymətlə müqayisə edin
-    complete: tamamlandı
-    configuration: Konfiqurasiya
     configurations: Konfiqurasiyalar
-    confirm: Təsdiqləyin
     confirm_delete: Silinməsini təsdiq edin
     confirm_password: Şifrə təsdiqlənməsi
     contact_phone: Əlaqə telefonu
@@ -679,7 +633,6 @@ az:
     continue_shopping: Alış-verişə davam edin
     cost_currency: Maliyyət Valyutası
     cost_price: Maliyet qiyməti
-    could_not_create_customer_return: Müştəri geri dönüşü yarana bilmədi
     could_not_create_stock_movement: Bu səhmdar hərəkəti qeyd edilərkən bir problem yaşandı. Zəhmət olmasa bir daha cəhd edin.
     count_on_hand: Əllə hesablayın
     countries: Ölkələr
@@ -688,7 +641,6 @@ az:
     country_name: Ad
     country_rule:
       label: Seçim bu ölkəyə göndərilməlidir
-    coupon: Kupon
     coupon_code: Kupon Kodu
     coupon_code_already_applied: Kupon kodu artıq bu sifarişə tətbiq edilmişdir
     coupon_code_applied: Kupon kodu sifarişinizə uğurla tətbiq edildi.
@@ -700,22 +652,17 @@ az:
     coupon_code_removed: Kupon kodu sifarişinizdən uğurla silindi.
     coupon_code_unknown_error: Bu kupon kodu hazırda səbətə tətbiq edilə bilmədi.
     create: Yaradın
-    create_a_new_account: Yeni hesab yarat
     create_new_order: Yeni sifariş yaradın
     create_reimbursement: Ödəniş yaradın
     created_at: At yaradıldı
     created_by: Yaradılıb
-    credit: Kredit
     credit_allowed: Kredit icazə verilir
     credit_card: Kredit kartı
-    credit_cards: Kredit kartları
     credit_owed: Kredit borcu
     credited: Kredit
     credits: Kreditlər
-    currencies: Valyutalar
     currency: Valyuta
     currency_settings: Valyuta parametrləri
-    current: Cari
     current_promotion_usage: 'cari istifadə: %{count}'
     customer: Müştəri
     customer_details: Müştəri məlumatları
@@ -814,7 +761,6 @@ az:
     exceptions:
       count_on_hand_setter: 'Rec_cal_count_on_hand geri çağırış tərəfindən avtomatik olaraq təyin olunduğundan, count_on_hand əl ilə qurula bilmir. Zəhmət olmasa bunun yerinə `update_column (: count_on_hand, value)" istifadə edin.'
     exchange_for: Üçün dəyişdirin
-    excl: istisna olmaqla
     existing_shipments: Mövcud daşınmalar
     expedited_exchanges_warning: Müəyyən edilmiş mübadilə, qənaət edildikdən dərhal sonra müştəriyə göndəriləcəkdir. Müştəridən orijinal məhsulu %{days_window} gün ərzində qaytarmaması halında məhsulun tam məbləği tutulacaqdır.
     expiration: Bitmə müddəti
@@ -1551,7 +1497,6 @@ az:
     stock_location_info: Səhm yeri məlumatı
     stock_locations: Səhm yerləri
     stock_locations_need_a_default_country: Bir stok yeri yaratmadan əvvəl standart bir ölkə yaratmalısınız.
-    stock_management: Səhmdar İdarəetmə
     stock_management_requires_a_stock_location: Zəhmət olmasa stoku idarə etmək üçün bir stok yeri yaradın.
     stock_movements: Səhm Hərəkatları
     stock_movements_for_stock_location: "%{stock_location_name} üçün stok hərəkətləri"
@@ -1562,7 +1507,6 @@ az:
         variants_unavailable: Bəzi variantlar %{stock}-da mövcud deyil
     stock_transfer_name: Səhmdar köçürmə
     stock_transfers: Səhmdar köçürmələri
-    stop: Dayan
     store: Mağaza
     store_credit:
       additional_payment_needed: Qalan <strong> %{amount} </strong> üçün başqa bir ödəniş metodu seçin.
@@ -1628,7 +1572,6 @@ az:
     supported_currencies: Dəstəklənən valyutalar
     supported_currencies_long: Dəstəklənən valyutaların vergüllə ayrılmış siyahısı
     supported_locales: Yerli dəstəklənir
-    tags: Teqlər
     tags_placeholder: Teqlər əlavə edin
     tax: Vergi
     tax_categories: Vergi kateqoriyaları
@@ -1723,12 +1666,9 @@ az:
     variant_placeholder: Bir variant seçin
     variant_prices_search_placeholder: SKU və ya variant adını axtarın ...
     variants: Variantlar
-    version: Versiya
-    void: Boş
     weight: Çəki
     what_is_a_cvv: "(CVV) Kredit Kartı Kodu nədir?"
     width: Eni
-    year: İl
     you_have_no_orders_yet: Hələ sifarişiniz yoxdur
     your_order_is_empty_add_product: Sifarişiniz boşdur, yuxarıda bir məhsul axtarın və əlavə edin
     zip: Zip

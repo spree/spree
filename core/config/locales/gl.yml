@@ -437,7 +437,6 @@ gl:
     abbreviation: Abreviatura
     accept: Aceptar
     acceptance_errors: Erros de aceptación
-    acceptance_status: Estado de aceptación
     accepted: Aceptado
     account: Conta
     account_info: Información da conta
@@ -455,32 +454,24 @@ gl:
       refund: Reembolso
       save: Gardar
       update: Actualización
-    activate: Activar
     active: Activo
     add: Engadir
     add_action_of_type: Engadir acción de tipo
-    add_country: Engadir país
     add_coupon_code: Engade código de cupón
     add_new_address: Engadir novo enderezo
     add_new_credit_card: Engade unha nova tarxeta
-    add_new_header: Engadir nova cabeceira
-    add_new_style: Engadir novo estilo
     add_one: Engade un
     add_option_value: Engadir valor de opción
     add_product: Engadir produto
     add_product_properties: Engade propiedades do produto
     add_rule_of_type: Engade regra de tipo
-    add_state: Engadir Estado
     add_stock: Engadir accións
     add_store: Nova tenda
     add_store_credit: Engadir crédito na tenda
     add_to_cart: Engadir á cesta
     add_variant: Engadir variante
     added_to_cart: Engadiuse ao carro correctamente.
-    additional_item: Elemento adicional
     address: Enderezo
-    address1: Enderezo
-    address2: Enderezo (cont.)
     address_action_popup:
       delete_button: si, elimina
       delete_text: Desexa realmente <br /> eliminar este enderezo?
@@ -499,13 +490,10 @@ gl:
     addresses: Enderezos
     adjustable: Axustable
     adjustment: Axuste
-    adjustment_amount: Cantidade
     adjustment_labels:
       tax_rates:
         excluding_tax: "%{name}%{amount}"
         including_tax: "%{name}%{amount} (incluído no prezo)"
-    adjustment_successfully_closed: O axuste pechouse correctamente.
-    adjustment_successfully_opened: O axuste abriuse correctamente.
     adjustment_total: Axuste total
     adjustments: Axustes
     adjustments_deleted: Elimináronse os axustes
@@ -549,26 +537,19 @@ gl:
         user_information: Información do usuario
     administration: Administración
     advertise: Anunciar
-    agree_to_privacy_policy: Acepta a política de privacidade
-    agree_to_terms_of_service: Acepta as Condicións de servizo
     all: Todo
     all_adjustments_closed: Todos os axustes pecháronse correctamente.
     all_adjustments_opened: Todos os axustes abríronse correctamente.
-    all_departments: Todos os departamentos
     all_items_have_been_returned: Todos os artigos foron devoltos
     all_rights_reserved: Todos os dereitos reservados
-    already_have_account: Xa ten unha conta?
     alt_text: Texto alternativo
     alternative_phone: Teléfono alternativo
     amount: Cantidade
     and: e
-    approve: aprobar
     approved_at: Aprobado en
     approver: Aprobador
     are_you_sure: Estás seguro?
     are_you_sure_delete: Seguro que queres eliminar este rexistro?
-    associated_adjustment_closed: O axuste asociado está pechado e non se recalculará. ¿Queres abrilo?
-    authorization_failure: Fallo de autorización
     authorized: Autorizado
     auto_capture: Captura automática
     availability: dispoñibilidade
@@ -577,16 +558,10 @@ gl:
     average_order_value: Valor medio do pedido
     avs_response: Resposta AVS
     back: De volta
-    back_end: Backend
-    back_to_payment: Volver ao pago
     back_to_resource_list: Volver á lista %{resource}
-    back_to_rma_reason_list: Volver á lista de motivos de RMA
     back_to_store: Volver á tenda
-    back_to_users_list: Volver á lista de usuarios
     backorderable: Pódese ordenar de novo
     backorderable_default: Predeterminado
-    backordered: Backordered
-    backordered_confirm_info: O elemento seleccionado está atrasado, así que espera retrasos. Seguro que queres encargalo?
     backordered_info: Backordered
     backorders_allowed: permítense os atrasos
     balance_due: Saldo pendente
@@ -594,9 +569,7 @@ gl:
     base_percent: Porcentaxe base
     basic_information: Información básica
     bill_address: Enderezo da factura
-    billing: Facturación
     billing_address: enderezo de facturación
-    both: Ambos
     breadcrumbs: Pan relado
     calculated_reimbursements: Reembolsos calculados
     calculator: Calculadora
@@ -612,8 +585,6 @@ gl:
     cannot_empty_completed_order: A orde xa se procesou polo que non se pode baleirar
     cannot_perform_operation: Non se pode realizar a operación solicitada
     cannot_return_more_than_bought_quantity: Non se pode devolver máis da cantidade comprada.
-    cannot_set_shipping_method_without_address: Non se pode establecer o método de envío ata que se faciliten os datos do cliente.
-    capture: Capturar
     capture_events: Capturar eventos
     card_code: Código de variación de tarxeta (CVC)
     card_number: Número de tarxeta
@@ -630,19 +601,9 @@ gl:
       quantity: cantidade
       remove_from_cart: Retirar do carro
       title: Carriño da compra
-    cart_subtotal:
-      one: Subtotal (1 elemento)
-      other: Subtotal (%{count} elementos)
-    categories: Categorías
     category: Categoría
-    category_nav_bar:
-      get_up_to_30_percent_off: ACHEGA ATA O 30%
-      jackets_and_coats: CHAQUETA E COSTAS
-      new_collection: NOVA COLECCIÓN
-      special_offers: OFERTAS ESPECIAIS
     channel: Canle
     charged: Cargado
-    checkout: Comprobar
     checkout_page:
       back_to_cart: volta ao carro
       checkout_navigation: Navegación de saída
@@ -651,25 +612,18 @@ gl:
       main_navigation: Navegación principal
       product: Produto
     choose_a_customer: Elixe un cliente
-    choose_a_taxon_to_sort_products_for: Escolla un taxón para ordenar os produtos
     choose_currency: Escolla moeda
-    choose_dashboard_locale: Elixe o panel de configuración local
     choose_location: Escolla a localización
     city: Cidade
     clear_cache: Borrar caché
-    clear_cache_ok: A caché foi arroxada
     clear_cache_warning: Se borras a caché, reducirase temporalmente o rendemento da túa tenda.
-    click_and_drag_on_the_products_to_sort_them: Fai clic e arrastra os produtos para ordenalos.
     clone: Clonar
     close: Pechar
     close_all_adjustments: Pecha todos os axustes
     code: Código
     company: Compañía
     compare_at_price: Comparar a prezo
-    complete: completo
-    configuration: Configuración
     configurations: Configuracións
-    confirm: Confirmar
     confirm_delete: Confirma a eliminación
     confirm_password: Confirmación do contrasinal
     contact_phone: Teléfono de contacto
@@ -679,7 +633,6 @@ gl:
     continue_shopping: Segue mercando
     cost_currency: Moeda de custo
     cost_price: Prezo de custo
-    could_not_create_customer_return: Non se puido crear a devolución do cliente
     could_not_create_stock_movement: Houbo un problema ao gardar este movemento de accións. Por favor intentao de novo.
     count_on_hand: Conta coa man
     countries: Países
@@ -688,7 +641,6 @@ gl:
     country_name: Nome
     country_rule:
       label: Escolla debe enviarse a este país
-    coupon: Cupón
     coupon_code: Código de cupón
     coupon_code_already_applied: O código do cupón xa se aplicou a esta orde
     coupon_code_applied: O código do cupón aplicouse correctamente ao seu pedido.
@@ -700,22 +652,17 @@ gl:
     coupon_code_removed: O código do cupón eliminouse correctamente do seu pedido.
     coupon_code_unknown_error: Este código de cupón non se puido aplicar ao carro neste momento.
     create: Crear
-    create_a_new_account: Crea unha nova conta
     create_new_order: Crear nova orde
     create_reimbursement: Crear reembolso
     created_at: Creado en
     created_by: Creado por
-    credit: Crédito
     credit_allowed: Crédito permitido
     credit_card: Tarxeta de crédito
-    credit_cards: Tarxetas de crédito
     credit_owed: Crédito debido
     credited: Acreditado
     credits: Créditos
-    currencies: Moedas
     currency: Moeda
     currency_settings: Configuración de moeda
-    current: Actual
     current_promotion_usage: 'uso actual: %{count}'
     customer: Cliente
     customer_details: Datos do cliente
@@ -814,7 +761,6 @@ gl:
     exceptions:
       count_on_hand_setter: 'Non se pode establecer count_on_hand manualmente, xa que o establece automaticamente a devolución de chamada recalculate_count_on_hand. No seu lugar, use `update_column (: count_on_hand, value)`.'
     exchange_for: Cambiar por
-    excl: excl.
     existing_shipments: Envíos existentes
     expedited_exchanges_warning: Calquera cambio especificado enviarase ao cliente inmediatamente despois de gardalo. O cliente cobrará o importe total do artigo se non devolve o artigo orixinal nun prazo de %{days_window} días.
     expiration: Caducidade
@@ -1551,7 +1497,6 @@ gl:
     stock_location_info: Información de localización de existencias
     stock_locations: Localizacións de accións
     stock_locations_need_a_default_country: Debe crear un país predeterminado antes de crear unha situación de stock.
-    stock_management: Xestión de accións
     stock_management_requires_a_stock_location: Crea unha situación de stock para xestionar o stock.
     stock_movements: Movementos de accións
     stock_movements_for_stock_location: Movementos de accións para %{stock_location_name}
@@ -1562,7 +1507,6 @@ gl:
         variants_unavailable: Algunhas variantes non están dispoñibles en %{stock}
     stock_transfer_name: Transferencia de accións
     stock_transfers: Transferencias de accións
-    stop: Pare
     store: Tenda
     store_credit:
       additional_payment_needed: Selecciona outro método de pago para o <strong> %{amount} </strong> restante.
@@ -1628,7 +1572,6 @@ gl:
     supported_currencies: Moedas admitidas
     supported_currencies_long: Unha lista separada por comas das moedas admitidas
     supported_locales: Locais compatibles
-    tags: Etiquetas
     tags_placeholder: Engadir etiquetas
     tax: Imposto
     tax_categories: Categorías fiscais
@@ -1723,12 +1666,9 @@ gl:
     variant_placeholder: Elixe unha variante
     variant_prices_search_placeholder: Buscar SKU ou nome da variante ...
     variants: Variantes
-    version: Versión
-    void: Baleiro
     weight: Peso
     what_is_a_cvv: Que é un código de tarxeta de crédito (CVV)?
     width: Ancho
-    year: Ano
     you_have_no_orders_yet: Aínda non tes pedidos
     your_order_is_empty_add_product: O seu pedido está baleiro, busque e engada un produto anterior
     zip: Zip

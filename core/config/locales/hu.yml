@@ -437,7 +437,6 @@ hu:
     abbreviation: Rövidítés
     accept: Elfogad
     acceptance_errors: Elfogadási hibák
-    acceptance_status: Elfogadási állapot
     accepted: Elfogadott
     account: Számla
     account_info: Számlainformáció
@@ -455,32 +454,24 @@ hu:
       refund: Visszatérítés
       save: Mentés
       update: Frissítés
-    activate: Aktiválja
     active: Aktív
     add: Hozzáadás
     add_action_of_type: Típusú művelet hozzáadása
-    add_country: Ország hozzáadása
     add_coupon_code: Adja hozzá a kuponkódot
     add_new_address: Új cím hozzáadása
     add_new_credit_card: Új kártya hozzáadása
-    add_new_header: Új fejléc hozzáadása
-    add_new_style: Új stílus hozzáadása
     add_one: Hozzáadni egyet
     add_option_value: Add Option Value
     add_product: Termék hozzáadása
     add_product_properties: Adja meg a termék tulajdonságait
     add_rule_of_type: Típusszabály hozzáadása
-    add_state: Add State
     add_stock: Készlet hozzáadása
     add_store: Új áruház
     add_store_credit: Adjon hozzá bolti hitelt
     add_to_cart: Kosárba
     add_variant: Változat hozzáadása
     added_to_cart: Sikeresen hozzáadva a kosárhoz!
-    additional_item: További elem
     address: Cím
-    address1: Cím
-    address2: Cím (folytatás)
     address_action_popup:
       delete_button: igen, törölni
       delete_text: Tényleg szeretné <br /> törölni ezt a címet?
@@ -499,13 +490,10 @@ hu:
     addresses: Címek
     adjustable: Állítható
     adjustment: Beállítás
-    adjustment_amount: Összeg
     adjustment_labels:
       tax_rates:
         excluding_tax: "%{name}%{amount}"
         including_tax: "%{name}%{amount} (Az ár tartalmazza)"
-    adjustment_successfully_closed: A kiigazítás sikeresen lezárult!
-    adjustment_successfully_opened: A kiigazítás sikeresen megnyílt!
     adjustment_total: Kiigazítás összesen
     adjustments: Kiigazítások
     adjustments_deleted: A kiigazítások törölve
@@ -549,26 +537,19 @@ hu:
         user_information: Felhasználói információ
     administration: Adminisztráció
     advertise: Hirdet
-    agree_to_privacy_policy: Egyetért az adatvédelmi irányelvekkel
-    agree_to_terms_of_service: Fogadja el az Általános Szerződési Feltételeket
     all: Összes
     all_adjustments_closed: Minden beállítás sikeresen lezárult!
     all_adjustments_opened: Minden beállítás sikeresen megnyílt!
-    all_departments: Minden osztály
     all_items_have_been_returned: Minden elem visszakerült
     all_rights_reserved: Minden jog fenntartva
-    already_have_account: Már van fiókja?
     alt_text: Alternatív szöveg
     alternative_phone: Alternatív telefon
     amount: Összeg
     and: és
-    approve: jóváhagy
     approved_at: Jóváhagyva
     approver: Jóváhagyó
     are_you_sure: biztos vagy ebben?
     are_you_sure_delete: Biztosan törli ezt a rekordot?
-    associated_adjustment_closed: A kapcsolódó kiigazítás lezárult, és nem kerül újraszámításra. Meg akarja nyitni?
-    authorization_failure: Engedélyezési hiba
     authorized: Felhatalmazott
     auto_capture: Automatikus rögzítés
     availability: elérhetőség
@@ -577,16 +558,10 @@ hu:
     average_order_value: Átlagos rendelési érték
     avs_response: AVS válasz
     back: Vissza
-    back_end: Háttér
-    back_to_payment: Vissza a fizetéshez
     back_to_resource_list: Vissza a %{resource} listához
-    back_to_rma_reason_list: Vissza az RMA oklistájához
     back_to_store: Vissza a boltba
-    back_to_users_list: Vissza a felhasználók listájához
     backorderable: Rendelhető utólag
     backorderable_default: Rendelhető alapértelmezés
-    backordered: Utánrendelt
-    backordered_confirm_info: A kiválasztott elemet utólag rendezik, ezért késésekre kell számítani. Biztosan megrendeli?
     backordered_info: Utánrendelt
     backorders_allowed: utólagos megrendelések megengedettek
     balance_due: Esedékes egyenleg
@@ -594,9 +569,7 @@ hu:
     base_percent: Bázis százalék
     basic_information: Alapinformációk
     bill_address: Számla címe
-    billing: Számlázás
     billing_address: számlázási cím
-    both: Mindkét
     breadcrumbs: Zsemlemorzsa
     calculated_reimbursements: Számított visszatérítések
     calculator: Számológép
@@ -612,8 +585,6 @@ hu:
     cannot_empty_completed_order: A megrendelést már feldolgoztuk, így azt nem lehet kiüríteni
     cannot_perform_operation: A kért műveletet nem lehet végrehajtani
     cannot_return_more_than_bought_quantity: A vásárolt mennyiségnél többet nem lehet visszaadni.
-    cannot_set_shipping_method_without_address: Nem lehet beállítani a szállítási módot, amíg meg nem adják az ügyfél adatait.
-    capture: Elfog
     capture_events: Rögzítse az eseményeket
     card_code: Kártya módosítási kód (CVC)
     card_number: Kártyaszám
@@ -630,19 +601,9 @@ hu:
       quantity: Mennyiség
       remove_from_cart: Távolítsa el a kosárból
       title: Bevásárlókocsi
-    cart_subtotal:
-      one: Részösszeg (1 elem)
-      other: Részösszeg (%{count} elem)
-    categories: Kategóriák
     category: Kategória
-    category_nav_bar:
-      get_up_to_30_percent_off: 30% KEDVEZMÉNY
-      jackets_and_coats: KABÁT ÉS KASTÉR
-      new_collection: ÚJ KOLLEKCIÓ
-      special_offers: KÜLÖNLEGES AJÁNLATOK
     channel: Csatorna
     charged: Töltött
-    checkout: Pénztár
     checkout_page:
       back_to_cart: vissza a szekérhez
       checkout_navigation: Pénztár navigáció
@@ -651,25 +612,18 @@ hu:
       main_navigation: Fő navigáció
       product: Termék
     choose_a_customer: Válasszon vevőt
-    choose_a_taxon_to_sort_products_for: Válasszon egy taxont, amelyhez termékeket kíván rendezni
     choose_currency: válasszon pénznemet
-    choose_dashboard_locale: Válassza az Irányítópult területi beállítás lehetőséget
     choose_location: Válassza ki a helyet
     city: Város
     clear_cache: Cache törlése
-    clear_cache_ok: A gyorsítótár ki volt öblítve
     clear_cache_warning: A gyorsítótár törlése ideiglenesen csökkenti az áruház teljesítményét.
-    click_and_drag_on_the_products_to_sort_them: Kattintson és húzza a termékeket a rendezéshez.
     clone: Klón
     close: Bezárás
     close_all_adjustments: Zárja be az összes beállítást
     code: Kód
     company: Vállalat
     compare_at_price: Összehasonlítás áron
-    complete: teljes
-    configuration: Konfiguráció
     configurations: Konfigurációk
-    confirm: megerősít
     confirm_delete: A törlés megerősítésére
     confirm_password: Jelszó megerősítése
     contact_phone: Kapcsolattartó telefon
@@ -679,7 +633,6 @@ hu:
     continue_shopping: Folytatni a vásárlást
     cost_currency: Költség pénzneme
     cost_price: Kiadás
-    could_not_create_customer_return: Nem sikerült létrehozni az ügyfél visszaküldését
     could_not_create_stock_movement: Probléma merült fel a részvénymozgás mentése során. Kérlek próbáld újra.
     count_on_hand: Gróf a kezén
     countries: Országok
@@ -688,7 +641,6 @@ hu:
     country_name: Név
     country_rule:
       label: A választást ebbe az országba kell szállítani
-    coupon: Kupon
     coupon_code: Kupon kód
     coupon_code_already_applied: A kuponkódot már alkalmazták erre a megrendelésre
     coupon_code_applied: A kuponkódot sikeresen alkalmaztuk megrendelésére.
@@ -700,22 +652,17 @@ hu:
     coupon_code_removed: A kuponkód sikeresen eltávolítva a megrendelésből.
     coupon_code_unknown_error: Ez a kuponkód jelenleg nem alkalmazható a kosárban.
     create: Teremt
-    create_a_new_account: Új felhasználó létrehozása
     create_new_order: Hozzon létre új megrendelést
     create_reimbursement: Hozzon létre visszatérítést
     created_at: 'Létrehozva:'
     created_by: Készítette
-    credit: Hitel
     credit_allowed: Hitel megengedett
     credit_card: Hitelkártya
-    credit_cards: Bankkártyák
     credit_owed: Hitel tulajdonosa
     credited: Hiteles
     credits: Hitelek
-    currencies: Pénznemek
     currency: Valuta
     currency_settings: Pénznem beállítások
-    current: Jelenlegi
     current_promotion_usage: 'jelenlegi használat: %{count}'
     customer: Vevő
     customer_details: Vásárló adatai
@@ -814,7 +761,6 @@ hu:
     exceptions:
       count_on_hand_setter: 'Nem lehet manuálisan beállítani a count_on_hand értéket, mivel a recalculate_count_on_hand visszahívás automatikusan beállítja. Használja helyette az „update_column (: count_on_hand, value)” mezőt.'
     exchange_for: Csere
-    excl: kivéve
     existing_shipments: Meglévő szállítmányok
     expedited_exchanges_warning: A megadott cserék azonnal megmentésre kerülnek az ügyfél számára. Az ügyfél a cikk teljes összegét felszámolja, ha %{days_window} napon belül nem adja vissza az eredeti terméket.
     expiration: Lejárat
@@ -1551,7 +1497,6 @@ hu:
     stock_location_info: Tőzsdei információk
     stock_locations: Tőzsdei helyszínek
     stock_locations_need_a_default_country: Készlethely létrehozása előtt létre kell hoznia egy alapértelmezett országot.
-    stock_management: Készletkezelés
     stock_management_requires_a_stock_location: Kérjük, hozzon létre egy készlet helyét a készlet kezeléséhez.
     stock_movements: Stock mozgások
     stock_movements_for_stock_location: Stock mozgások a %{stock_location_name} számára
@@ -1562,7 +1507,6 @@ hu:
         variants_unavailable: Néhány változat nem érhető el a %{stock} eszközön
     stock_transfer_name: Készletátadás
     stock_transfers: Részvényátadások
-    stop: Álljon meg
     store: Bolt
     store_credit:
       additional_payment_needed: Válasszon másik fizetési módot a fennmaradó <strong> %{amount} </strong> számára.
@@ -1628,7 +1572,6 @@ hu:
     supported_currencies: Támogatott pénznemek
     supported_currencies_long: A támogatott pénznemek vesszővel elválasztott listája
     supported_locales: Támogatott nyelvek
-    tags: Címkék
     tags_placeholder: Címkék hozzáadása
     tax: Adó
     tax_categories: Adókategóriák
@@ -1723,12 +1666,9 @@ hu:
     variant_placeholder: Válasszon változatot
     variant_prices_search_placeholder: Cikkszám vagy változat neve keresése ...
     variants: Változatok
-    version: Változat
-    void: Üres
     weight: Súly
     what_is_a_cvv: Mi az a (CVV) hitelkártya-kód?
     width: Szélesség
-    year: Év
     you_have_no_orders_yet: Még nincs megrendelése
     your_order_is_empty_add_product: Megrendelése üres, kérjük, keressen és adjon hozzá egy terméket
     zip: Postai irányítószám

@@ -437,7 +437,6 @@ mr-IN:
     abbreviation: संक्षिप्त
     accept: स्वीकारा
     acceptance_errors: स्वीकृती त्रुटी
-    acceptance_status: स्वीकृती स्थिती
     accepted: स्वीकारले
     account: खाते
     account_info: खात्याची माहिती
@@ -455,32 +454,24 @@ mr-IN:
       refund: परतावा
       save: जतन करा
       update: अद्यतनित करा
-    activate: सक्रिय करा
     active: सक्रिय
     add: जोडा
     add_action_of_type: प्रकारची क्रिया जोडा
-    add_country: देश जोडा
     add_coupon_code: कूपन कोड जोडा
     add_new_address: नवीन पत्ता जोडा
     add_new_credit_card: नवीन कार्ड जोडा
-    add_new_header: नवीन शीर्षलेख जोडा
-    add_new_style: नवीन शैली जोडा
     add_one: एक जोडा
     add_option_value: पर्याय मूल्य जोडा
     add_product: उत्पादन जोडा
     add_product_properties: उत्पादन गुणधर्म जोडा
     add_rule_of_type: प्रकाराचा नियम जोडा
-    add_state: राज्य जोडा
     add_stock: स्टॉक जोडा
     add_store: नवीन स्टोअर
     add_store_credit: स्टोअर क्रेडिट जोडा
     add_to_cart: कार्टमध्ये जोडा
     add_variant: व्हेरिएंट जोडा
     added_to_cart: यशस्वीरित्या कार्टमध्ये जोडले!
-    additional_item: अतिरिक्त आयटम
     address: पत्ता
-    address1: पत्ता
-    address2: पत्ता (जारी)
     address_action_popup:
       delete_button: होय, हटवा
       delete_text: तुम्हाला हा पत्ता हटवायचा आहे का?
@@ -499,13 +490,10 @@ mr-IN:
     addresses: पत्ते
     adjustable: समायोज्य
     adjustment: समायोजन
-    adjustment_amount: रक्कम
     adjustment_labels:
       tax_rates:
         excluding_tax: "%{name}%{amount}"
         including_tax: "%{name}%{amount} (किंमतीमध्ये समाविष्ट)"
-    adjustment_successfully_closed: समायोजन यशस्वीरित्या बंद केले गेले आहे!
-    adjustment_successfully_opened: समायोजन यशस्वीरित्या उघडले गेले आहे!
     adjustment_total: एकूण समायोजन
     adjustments: समायोजन
     adjustments_deleted: समायोजने हटविली
@@ -549,26 +537,19 @@ mr-IN:
         user_information: वापरकर्त्याची माहिती
     administration: प्रशासन
     advertise: जाहिरात करा
-    agree_to_privacy_policy: गोपनीयता धोरणास सहमती द्या
-    agree_to_terms_of_service: सेवा अटींना सहमती द्या
     all: सर्व
     all_adjustments_closed: सर्व समायोजन यशस्वीरित्या बंद!
     all_adjustments_opened: सर्व समायोजन यशस्वीरित्या उघडले!
-    all_departments: सर्व विभाग
     all_items_have_been_returned: सर्व वस्तू परत केल्या आहेत
     all_rights_reserved: सर्व हक्क राखीव
-    already_have_account: आधीपासूनच एक खाते आहे?
     alt_text: वैकल्पिक मजकूर
     alternative_phone: वैकल्पिक फोन
     amount: रक्कम
     and: आणि
-    approve: मंजूर
     approved_at: येथे मंजूर
     approver: मंजूर
     are_you_sure: तुला खात्री आहे?
     are_you_sure_delete: आपली खात्री आहे की आपण हे रेकॉर्ड हटवू इच्छिता?
-    associated_adjustment_closed: संबंधित समायोजन बंद आहे आणि त्याचे पुन्हा गणना केले जाणार नाही. तुम्हाला ते उघडायचे आहे का?
-    authorization_failure: अधिकृतता अयशस्वी
     authorized: अधिकृत
     auto_capture: ऑटो कॅप्चर
     availability: उपलब्धता
@@ -577,16 +558,10 @@ mr-IN:
     average_order_value: सरासरी ऑर्डर मूल्य
     avs_response: एव्हीएस प्रतिसाद
     back: मागे
-    back_end: बॅकएंड
-    back_to_payment: परत देय
     back_to_resource_list: "%{resource} यादीकडे परत"
-    back_to_rma_reason_list: आरएमए कारण यादीकडे परत
     back_to_store: परत स्टोअर
-    back_to_users_list: वापरकर्त्यांच्या सूचीकडे परत
     backorderable: बॅकऑर्डरेबल
     backorderable_default: बॅकऑर्डर करण्यायोग्य डीफॉल्ट
-    backordered: बॅकऑर्डर्ड
-    backordered_confirm_info: निवडलेला आयटम बॅकऑर्डर केला आहे म्हणून विलंब अपेक्षित आहे. आपली खात्री आहे की आपण ऑर्डर देऊ इच्छिता?
     backordered_info: बॅकऑर्डर्ड
     backorders_allowed: बॅकऑर्डरला परवानगी आहे
     balance_due: शिल्लक बाकी
@@ -594,9 +569,7 @@ mr-IN:
     base_percent: बेस टक्केवारी
     basic_information: मुलभूत माहिती
     bill_address: बिल पत्ता
-    billing: बिलिंग
     billing_address: बिलाचा पत्ता
-    both: दोघेही
     breadcrumbs: ब्रेडक्रंब
     calculated_reimbursements: गणित भरपाई
     calculator: कॅल्क्युलेटर
@@ -612,8 +585,6 @@ mr-IN:
     cannot_empty_completed_order: ऑर्डरवर आधीपासून प्रक्रिया केली गेली आहे म्हणून ती रिक्त केली जाऊ शकत नाही
     cannot_perform_operation: विनंती केलेले ऑपरेशन करू शकत नाही
     cannot_return_more_than_bought_quantity: खरेदी केलेल्या प्रमाणापेक्षा जास्त परत येऊ शकत नाही.
-    cannot_set_shipping_method_without_address: जोपर्यंत ग्राहक तपशील प्रदान केला जात नाही तोपर्यंत शिपिंग पद्धत सेट करू शकत नाही.
-    capture: कॅप्चर करा
     capture_events: कार्यक्रम कॅप्चर करा
     card_code: कार्ड विविधता कोड (सीव्हीसी)
     card_number: कार्ड क्रमांक
@@ -630,19 +601,9 @@ mr-IN:
       quantity: प्रमाण
       remove_from_cart: कार्टमधून काढा
       title: खरेदी सूचीत
-    cart_subtotal:
-      one: एकूण (1 आयटम)
-      other: उप-एकूण (%{count} आयटम)
-    categories: कॅटेगरीज
     category: वर्ग
-    category_nav_bar:
-      get_up_to_30_percent_off: 30% पर्यंत बंद मिळवा
-      jackets_and_coats: जॅकेट आणि कॉस्ट
-      new_collection: नविन संग्रह
-      special_offers: विशेष ऑफर
     channel: चॅनल
     charged: शुल्क आकारले
-    checkout: तपासा
     checkout_page:
       back_to_cart: परत कार्ट मध्ये
       checkout_navigation: चेकआउट नेव्हिगेशन
@@ -651,25 +612,18 @@ mr-IN:
       main_navigation: मुख्य नेव्हिगेशन
       product: उत्पादन
     choose_a_customer: ग्राहक निवडा
-    choose_a_taxon_to_sort_products_for: यासाठी उत्पादनांची क्रमवारी लावण्यासाठी एक टॅक्सॉन निवडा
     choose_currency: चलन निवडा
-    choose_dashboard_locale: डॅशबोर्ड लोकॅल निवडा
     choose_location: स्थान निवडा
     city: शहर
     clear_cache: कॅशे साफ करा
-    clear_cache_ok: कॅशे फ्लश करण्यात आला
     clear_cache_warning: कॅशे साफ करणे आपल्या स्टोअरचे कामकाज तात्पुरते कमी करेल.
-    click_and_drag_on_the_products_to_sort_them: उत्पादनांची क्रमवारी लावण्यासाठी क्लिक आणि ड्रॅग करा.
     clone: क्लोन
     close: बंद
     close_all_adjustments: सर्व समायोजने बंद करा
     code: कोड
     company: कंपनी
     compare_at_price: किंमतीशी तुलना करा
-    complete: पूर्ण
-    configuration: कॉन्फिगरेशन
     configurations: कॉन्फिगरेशन
-    confirm: पुष्टी
     confirm_delete: हटविण्याची पुष्टी करा
     confirm_password: संकेतशब्द पुष्टीकरण
     contact_phone: संपर्क फोन
@@ -679,7 +633,6 @@ mr-IN:
     continue_shopping: खरेदी चालू ठेवा
     cost_currency: किंमत चलन
     cost_price: किंमत किंमत
-    could_not_create_customer_return: ग्राहक रिटर्न तयार करू शकलो नाही
     could_not_create_stock_movement: ही स्टॉक चलन वाचविण्यात एक समस्या आली. कृपया पुन्हा प्रयत्न करा.
     count_on_hand: हातावर मोजा
     countries: देश
@@ -688,7 +641,6 @@ mr-IN:
     country_name: नाव
     country_rule:
       label: या देशात पाठविणे आवश्यक आहे निवडा
-    coupon: कूपन
     coupon_code: कूपन कोड
     coupon_code_already_applied: या ऑर्डरवर कूपन कोड आधीपासून लागू केला गेला आहे
     coupon_code_applied: आपल्या ऑर्डरवर कूपन कोड यशस्वीरित्या लागू झाला.
@@ -700,22 +652,17 @@ mr-IN:
     coupon_code_removed: आपल्या ऑर्डरवरून कूपन कोड यशस्वीरित्या काढला गेला.
     coupon_code_unknown_error: यावेळी कार्टवर हा कूपन कोड लागू होऊ शकला नाही.
     create: तयार करा
-    create_a_new_account: नवीन खाते तयार करा
     create_new_order: नवीन ऑर्डर तयार करा
     create_reimbursement: प्रतिपूर्ती तयार करा
     created_at: येथे तयार केले
     created_by: ने निर्मित
-    credit: जमा
     credit_allowed: पत परवानगी
     credit_card: क्रेडीट कार्ड
-    credit_cards: क्रेडिट कार्डे
     credit_owed: क्रेडिट मालकीचे
     credited: जमा
     credits: जमा
-    currencies: चलने
     currency: चलन
     currency_settings: चलन सेटिंग्ज
-    current: करंट
     current_promotion_usage: 'सद्य वापर: %{count}'
     customer: ग्राहक
     customer_details: ग्राहक तपशील
@@ -814,7 +761,6 @@ mr-IN:
     exceptions:
       count_on_hand_setter: 'गणना_अन_हॅन्ड व्यक्तिचलितपणे सेट करणे शक्य नाही, कारण ते स्वयंचलितपणे रीकॅलक्युलेट_काउंट_ऑन_हँडबॅकद्वारे सेट केले आहे. कृपया त्याऐवजी `अद्यतन_कॉलोम (: गणना_अन_हंद, मूल्य) use वापरा.'
     exchange_for: साठी एक्सचेंज
-    excl: उत्साही
     existing_shipments: विद्यमान शिपमेंट
     expedited_exchanges_warning: कोणतेही निर्दिष्ट एक्सचेंजेस बचत केल्यावर त्वरित ग्राहकांकडे पाठविले जातील. जर ग्राहक त्यांनी %{days_window} दिवसात मूळ वस्तू परत न केल्यास आयटमची संपूर्ण रक्कम आकारली जाईल.
     expiration: कालबाह्यता
@@ -1551,7 +1497,6 @@ mr-IN:
     stock_location_info: स्टॉक स्थान माहिती
     stock_locations: स्टॉक स्थाने
     stock_locations_need_a_default_country: स्टॉक स्थान तयार करण्यापूर्वी आपण डीफॉल्ट देश तयार करणे आवश्यक आहे.
-    stock_management: स्टॉक व्यवस्थापन
     stock_management_requires_a_stock_location: कृपया स्टॉक व्यवस्थापित करण्यासाठी स्टॉक स्थान तयार करा.
     stock_movements: साठा हालचाली
     stock_movements_for_stock_location: "%{stock_location_name} साठी स्टॉक हालचाली"
@@ -1562,7 +1507,6 @@ mr-IN:
         variants_unavailable: काही रूपे %{stock} वर उपलब्ध नाहीत
     stock_transfer_name: स्टॉक ट्रान्सफर
     stock_transfers: स्टॉक ट्रान्सफर
-    stop: थांबा
     store: स्टोअर
     store_credit:
       additional_payment_needed: उर्वरित <strong> %{amount} </strong> साठी आणखी एक देयक पद्धत निवडा.
@@ -1628,7 +1572,6 @@ mr-IN:
     supported_currencies: समर्थित चलने
     supported_currencies_long: समर्थित चलनांची स्वल्पविरामाने विभक्त केलेली सूची
     supported_locales: समर्थित लोकॅले
-    tags: टॅग्ज
     tags_placeholder: टॅग जोडा
     tax: कर
     tax_categories: कर श्रेणी
@@ -1723,12 +1666,9 @@ mr-IN:
     variant_placeholder: एक प्रकार निवडा
     variant_prices_search_placeholder: एसकेयू किंवा प्रकार नावासाठी शोधा ...
     variants: रूपे
-    version: आवृत्ती
-    void: शून्य
     weight: वजन
     what_is_a_cvv: "(सीव्हीव्ही) क्रेडिट कार्ड कोड म्हणजे काय?"
     width: रुंदी
-    year: वर्ष
     you_have_no_orders_yet: आपल्याकडे अद्याप ऑर्डर नाहीत
     your_order_is_empty_add_product: आपली ऑर्डर रिक्त आहे, कृपया वरील उत्पादन शोधा आणि जोडा
     zip: जि.प.

@@ -437,7 +437,6 @@ mg:
     abbreviation: fanafohezana
     accept: MANAIKY
     acceptance_errors: Hadisoana amin'ny fanekena
-    acceptance_status: Toetran'ny fanekena
     accepted: nanaiky
     account: TANTARA
     account_info: Momba ny kaonty
@@ -455,32 +454,24 @@ mg:
       refund: Refund
       save: afa-tsy
       update: vaovao farany
-    activate: hampavitrika
     active: Mavitrika
     add: hametraka
     add_action_of_type: Manampia hetsika karazana
-    add_country: Add Country
     add_coupon_code: Manampia kaody coupon
     add_new_address: Manampia adiresy vaovao
     add_new_credit_card: Manampia karatra vaovao
-    add_new_header: Manampia lohateny vaovao
-    add_new_style: Manampia New Style
     add_one: Manampia Iray
     add_option_value: Manampy ny sandan'ny safidy
     add_product: Add Product
     add_product_properties: Ampio fananana momba ny vokatra
     add_rule_of_type: Manampy fitsipi-karazana
-    add_state: Add State
     add_stock: Add Stock
     add_store: Fivarotana vaovao
     add_store_credit: Manampia trosa fivarotana
     add_to_cart: Atao anaty harona
     add_variant: Manampy Variant
     added_to_cart: Nampidirina anaty sarety soa aman-tsara!
-    additional_item: Item fanampiny
     address: Adiresy
-    address1: Adiresy
-    address2: Adiresy (tohiny.)
     address_action_popup:
       delete_button: eny, fafao
       delete_text: Tena tianao hofafana ity adiresy ity?
@@ -499,13 +490,10 @@ mg:
     addresses: adiresy
     adjustable: Azo ovaina
     adjustment: fanitsiana
-    adjustment_amount: vola
     adjustment_labels:
       tax_rates:
         excluding_tax: "%{name}%{amount}"
         including_tax: "%{name}%{amount} (Tafiditra amin'ny vidiny)"
-    adjustment_successfully_closed: Nahomby ny fanitsiana!
-    adjustment_successfully_opened: Vaky soa aman-tsara ny fanitsiana!
     adjustment_total: Fanitsiana
     adjustments: fanitsiana
     adjustments_deleted: Voafafa ny fanitsiana
@@ -549,26 +537,19 @@ mg:
         user_information: Fampahalalana momba ny mpampiasa
     administration: fitantanan-draharaha
     advertise: hanambara
-    agree_to_privacy_policy: Manaiky ny politika momba ny fiainana manokana
-    agree_to_terms_of_service: Manaiky ny fepetra momba ny serivisy
     all: rehetra
     all_adjustments_closed: Nihidy tamim-pahombiazana ny fanitsiana rehetra!
     all_adjustments_opened: Vokatra soa aman-tsara ny fanitsiana rehetra!
-    all_departments: Sampana rehetra
     all_items_have_been_returned: Naverina daholo ny entana rehetra
     all_rights_reserved: Zo rehetra voatokana
-    already_have_account: Efa manana kaonty?
     alt_text: Lahatsoratra hafa
     alternative_phone: Telefaona hafa
     amount: vola
     and: SY
-    approve: hanaiky
     approved_at: Nankatoavina tamin'ny
     approver: Fankatoavana
     are_you_sure: Azonao antoka ve izany?
     are_you_sure_delete: Tena te hamafa an'ity firaketana ity tokoa ve ianao?
-    associated_adjustment_closed: Mihidy ny fanitsiana mifandraika ary tsy ho voaisa indray. Te hanokatra azy ve ianao?
-    authorization_failure: Tsy fahombiazan'ny fanomezan-dàlana
     authorized: alalana
     auto_capture: Auto Capture
     availability: fisian'ny
@@ -577,16 +558,10 @@ mg:
     average_order_value: Sanda salanisan'ny lamina
     avs_response: Valin'ny AVS
     back: indray
-    back_end: Backend
-    back_to_payment: Miverina amin'ny fandoavana
     back_to_resource_list: Miverina amin'ny lisitra %{resource}
-    back_to_rma_reason_list: Miverina amin'ny lisitry ny antony RMA
     back_to_store: Miverina any amin'ny magazay
-    back_to_users_list: Miverina amin'ny lisitry ny mpampiasa
     backorderable: Backorderable
     backorderable_default: Default amin'ny endrika tsy voafetra
-    backordered: Backordered
-    backordered_confirm_info: Voafantina ny entana voafantina ka manantena fanemorana. Tena te hanafatra azy ve ianao?
     backordered_info: Backordered
     backorders_allowed: avela backorder
     balance_due: Tokony handanjalanja
@@ -594,9 +569,7 @@ mg:
     base_percent: Base isan-jato
     basic_information: Fampahalalana fototra
     bill_address: Adiresin'i Bill
-    billing: Billing
     billing_address: Adiresin'ny faktiora
-    both: na
     breadcrumbs: Mofomamy
     calculated_reimbursements: Fandoavana vola voaisa
     calculator: Calculator
@@ -612,8 +585,6 @@ mg:
     cannot_empty_completed_order: Efa voahodina ny kaomandy ka tsy afaka hofoanana izany
     cannot_perform_operation: Tsy afaka manao fandidiana nangatahina
     cannot_return_more_than_bought_quantity: Tsy afaka mamerina mihoatra ny habetsaky ny novidiana.
-    cannot_set_shipping_method_without_address: Tsy afaka mametraka fomba fandefasana mandra-pahatonga ny antsipirian'ny mpanjifa.
-    capture: hisambotra
     capture_events: Hetsika hisambotra
     card_code: Kaody fanamarihana karatra (CVC)
     card_number: Nomeraon-karatra
@@ -630,19 +601,9 @@ mg:
       quantity: habetsahana
       remove_from_cart: Esory amin'ny sarety
       title: Harona fiantsenana
-    cart_subtotal:
-      one: Subtotal (singa 1)
-      other: Subtotal (%{count} entana)
-    categories: Sokajy
     category: Sokajy
-    category_nav_bar:
-      get_up_to_30_percent_off: METY HETRA 30%
-      jackets_and_coats: JACKET & COASTS
-      new_collection: Fanangonana vaovao
-      special_offers: MPANASITRANA MANOKANA
     channel: fantsona
     charged: nandidy
-    checkout: Zahao hoe
     checkout_page:
       back_to_cart: miverina amin'ny sarety
       checkout_navigation: Fikarohana fizahana
@@ -651,25 +612,18 @@ mg:
       main_navigation: Fikarohana lehibe
       product: Vokatra
     choose_a_customer: Misafidiana mpanjifa
-    choose_a_taxon_to_sort_products_for: Misafidiana taxibe handaminana vokatra
     choose_currency: Safidio ny vola
-    choose_dashboard_locale: Safidio ny toerana misy ny Dashboard
     choose_location: Misafidiana toerana
     city: Tanàna
     clear_cache: Clear Cache
-    clear_cache_ok: Navoaka ny cache
     clear_cache_warning: Ny fanadiovana cache dia hampihena vonjimaika ny fahombiazan'ny fivarotana anao.
-    click_and_drag_on_the_products_to_sort_them: Tsindrio ary sintomy ireo vokatra handaminana azy ireo.
     clone: Klone
     close: AKAIKY
     close_all_adjustments: Akatona ny fanitsiana rehetra
     code: fehezan-dalàna
     company: Orinasa
     compare_at_price: Ampitahao amin'ny vidiny
-    complete: feno
-    configuration: fanahafana
     configurations: Fanamafisana
-    confirm: Manamarina
     confirm_delete: Hamafiso ny famafana
     confirm_password: Fanamafisana ny teny miafina
     contact_phone: Mifandray telefaona
@@ -679,7 +633,6 @@ mg:
     continue_shopping: Manohiza miantsena
     cost_currency: Vola vola
     cost_price: Vidiny vidiny
-    could_not_create_customer_return: Tsy afaka namorona ny fiverenan'ny mpanjifa
     could_not_create_stock_movement: Nisy olana iray nitahiry an'ity hetsika stock ity. Manandrama indray azafady.
     count_on_hand: Count On Hand
     countries: firenena
@@ -688,7 +641,6 @@ mg:
     country_name: Anarana
     country_rule:
       label: Safidio tsy maintsy halefa amin'ity firenena ity
-    coupon: tapakila
     coupon_code: Kaody kaody
     coupon_code_already_applied: Ny kaody coupon dia efa nampiharina tamin'ity baiko ity
     coupon_code_applied: Ny code coupon dia nampiharina tamim-pahombiazana tamin'ny baikonao.
@@ -700,22 +652,17 @@ mg:
     coupon_code_removed: Ny code coupon dia nesorina tamim-pahombiazana tamin'ny kaomandinao.
     coupon_code_unknown_error: Ity kaody coupon ity dia tsy azo ampiharina amin'ny sarety amin'izao fotoana izao.
     create: MANANGANA
-    create_a_new_account: Mamorona kaonty vaovao
     create_new_order: Mamorona lamina vaovao
     create_reimbursement: Mamorona famerenam-bola
     created_at: Noforonina tamin'ny
     created_by: Noforonin'i
-    credit: Sary nahazoan-
     credit_allowed: Avela ny trosa
     credit_card: Carte de crédit
-    credit_cards: Kara-trosa
     credit_owed: Manana trosa
     credited: voalaza
     credits: nahazoan-dalana
-    currencies: vola
     currency: Sandam-bola
     currency_settings: Famaritana vola
-    current: amin'izao fotoana izao
     current_promotion_usage: 'fampiasana ankehitriny: %{count}'
     customer: mpanjifa
     customer_details: Antsipirian'ny mpanjifa
@@ -814,7 +761,6 @@ mg:
     exceptions:
       count_on_hand_setter: 'Tsy afaka mametra count_on_hand amin''ny tanana, satria apetraka amin''ny alàlan''ny antso miverina recalculate_count_on_hand. Azafady mba ampiasao ny `update_column (: count_on_hand, value)`.'
     exchange_for: Takalo ho an'ny
-    excl: excl
     existing_shipments: Fandefasana efa misy
     expedited_exchanges_warning: Ny fifanakalozana voafaritra dia halefa any amin'ny mpanjifa avy hatrany aorian'ny fitehirizana. Ny mpanjifa dia homena vola ny habetsaky ny entana raha tsy averin'izy ireo ao anatin'ny %{days_window} andro ny entana tany am-boalohany.
     expiration: lany
@@ -1551,7 +1497,6 @@ mg:
     stock_location_info: Fampahalalana momba ny toeran'ny stock
     stock_locations: Toerana misy ny stock
     stock_locations_need_a_default_country: Tsy maintsy mamorona firenena default ianao alohan'ny hamoronana toerana stock.
-    stock_management: Fitantanana stock
     stock_management_requires_a_stock_location: Azafady mba mamorona toerana misy stock raha te hitantana stock.
     stock_movements: Hetsika stock
     stock_movements_for_stock_location: Fihetseham-po ho an'ny %{stock_location_name}
@@ -1562,7 +1507,6 @@ mg:
         variants_unavailable: Ny variants sasany dia tsy misy amin'ny %{stock}
     stock_transfer_name: Famindrana stock
     stock_transfers: Famindrana stock
-    stop: Mijanòna
     store: Fivarotana
     store_credit:
       additional_payment_needed: Misafidiana fomba fandoavam-bola hafa momba ny sisa <strong> %{amount} </strong>.
@@ -1628,7 +1572,6 @@ mg:
     supported_currencies: Vola tohanana
     supported_currencies_long: Lisitr'ireo vola nanohana
     supported_locales: Fandraisana an-tanana
-    tags: Tags
     tags_placeholder: Manampia Tags
     tax: HETRA
     tax_categories: Sokajy hetra
@@ -1723,12 +1666,9 @@ mg:
     variant_placeholder: Misafidiana variant
     variant_prices_search_placeholder: Mikaroha SKU na anarana miovaova ...
     variants: Variants
-    version: Malagasy Bible
-    void: foana
     weight: Lanja
     what_is_a_cvv: Inona ny kaody carte de crédit (CVV)?
     width: sakany
-    year: TAOM-
     you_have_no_orders_yet: Tsy mbola manana baiko ianao
     your_order_is_empty_add_product: Foana ny kaomandinao, mba mitady sy manampy vokatra etsy ambony
     zip: Zip

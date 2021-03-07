@@ -437,7 +437,6 @@ mn:
     abbreviation: Товчлол
     accept: Хүлээн зөвшөөр
     acceptance_errors: Хүлээн авах алдаа
-    acceptance_status: Хүлээн авах байдал
     accepted: Хүлээн зөвшөөрсөн
     account: Данс
     account_info: Дансны мэдээлэл
@@ -455,32 +454,24 @@ mn:
       refund: Буцаан олголт
       save: Хадгалах
       update: Шинэчлэх
-    activate: Идэвхжүүлэх
     active: Идэвхтэй
     add: Нэмэх
     add_action_of_type: Төрлийн үйлдлийг нэмэх
-    add_country: Улс нэмэх
     add_coupon_code: Купоны код нэмэх
     add_new_address: Шинэ хаяг нэмэх
     add_new_credit_card: Шинэ карт нэмэх
-    add_new_header: Шинэ толгой нэмэх
-    add_new_style: Шинэ хэв маяг нэмэх
     add_one: Нэг нэмэх
     add_option_value: Сонголтын утга нэмэх
     add_product: Бүтээгдэхүүн нэмэх
     add_product_properties: Бүтээгдэхүүний шинж чанарыг нэмэх
     add_rule_of_type: Төрлийн дүрмийг нэмэх
-    add_state: Муж нэмэх
     add_stock: Хувьцаа нэмэх
     add_store: Шинэ дэлгүүр
     add_store_credit: Дэлгүүрийн зээл нэмэх
     add_to_cart: Картанд нэмэх
     add_variant: Хувилбар нэмэх
     added_to_cart: Сагсанд амжилттай нэмлээ!
-    additional_item: Нэмэлт зүйл
     address: Хаяг
-    address1: Хаяг
-    address2: Хаяг (үргэлжлэл)
     address_action_popup:
       delete_button: Тийм ээ, устга
       delete_text: Та энэ хаягийг устгахыг <br /> үнэхээр хүсч байна уу?
@@ -499,13 +490,10 @@ mn:
     addresses: Хаяг
     adjustable: Тохируулах боломжтой
     adjustment: Тохируулга
-    adjustment_amount: Хэмжээ
     adjustment_labels:
       tax_rates:
         excluding_tax: "%{name}%{amount}"
         including_tax: "%{name}%{amount} (Үнэ багтсан)"
-    adjustment_successfully_closed: Тохируулгыг амжилттай хаасан!
-    adjustment_successfully_opened: Тохируулга амжилттай нээгдлээ!
     adjustment_total: Нийт тохируулга
     adjustments: Тохируулга
     adjustments_deleted: Тохируулгыг устгасан
@@ -549,26 +537,19 @@ mn:
         user_information: Хэрэглэгчийн мэдээлэл
     administration: Захиргаа
     advertise: Зар сурталчилгаа
-    agree_to_privacy_policy: Нууцлалын бодлогыг зөвшөөрч байна
-    agree_to_terms_of_service: Үйлчилгээний нөхцлийг зөвшөөрч байна
     all: Бүгд
     all_adjustments_closed: Бүх тохиргоог амжилттай хаасан!
     all_adjustments_opened: Бүх тохиргоог амжилттай нээлээ!
-    all_departments: Бүх хэлтэс
     all_items_have_been_returned: Бүх зүйлийг буцааж өгсөн
     all_rights_reserved: Бүх эрх хуулиар хамгаалагдсан
-    already_have_account: Данстай юу?
     alt_text: Альтернатив текст
     alternative_phone: Өөр утас
     amount: Хэмжээ
     and: болон
-    approve: зөвшөөрөх
     approved_at: Батлагдсан
     approver: Зөвшөөрөл
     are_you_sure: Чи итгэлтэй байна уу?
     are_you_sure_delete: Та энэ бичлэгийг устгахдаа итгэлтэй байна уу?
-    associated_adjustment_closed: Холбогдох тохируулга хаалттай тул дахин тооцоолохгүй болно. Та нээхийг хүсч байна уу?
-    authorization_failure: Зөвшөөрлийн алдаа
     authorized: Эрх бүхий
     auto_capture: Автоматаар барих
     availability: бэлэн байдал
@@ -577,16 +558,10 @@ mn:
     average_order_value: Захиалгын дундаж үнэ
     avs_response: AVS хариу арга хэмжээ
     back: Буцах
-    back_end: Backend
-    back_to_payment: Төлбөр рүү буцах
     back_to_resource_list: "%{resource} жагсаалт руу буцах"
-    back_to_rma_reason_list: RMA-ийн шалтгаануудын жагсаалт руу буцах
     back_to_store: Дэлгүүр рүү буцах
-    back_to_users_list: Хэрэглэгчийн жагсаалт руу буцах
     backorderable: Дахин захиалах боломжтой
     backorderable_default: Дахин захиалах боломжтой
-    backordered: Буцах
-    backordered_confirm_info: Сонгосон зүйлийг буцааж оруулсан тул хойшлуулалтыг хүлээх хэрэгтэй. Та үүнийг захиалахдаа итгэлтэй байна уу?
     backordered_info: Буцах
     backorders_allowed: арын захиалгыг зөвшөөрсөн
     balance_due: Үлдэгдэл
@@ -594,9 +569,7 @@ mn:
     base_percent: Үндсэн хувь
     basic_information: Үндсэн мэдээлэл
     bill_address: Билл хаяг
-    billing: Нэхэмжлэх
     billing_address: Тооцооны хаяг
-    both: Хоёулаа
     breadcrumbs: Талхны үйрмэг
     calculated_reimbursements: Тооцоолсон нөхөн төлбөр
     calculator: Тооцоологч
@@ -612,8 +585,6 @@ mn:
     cannot_empty_completed_order: Захиалга аль хэдийн боловсруулагдсан тул хоослох боломжгүй
     cannot_perform_operation: Хүссэн үйлдлийг гүйцэтгэх боломжгүй
     cannot_return_more_than_bought_quantity: Худалдан авсан хэмжээнээс илүүг буцааж өгөх боломжгүй.
-    cannot_set_shipping_method_without_address: Үйлчлүүлэгчийн дэлгэрэнгүй мэдээллийг өгөх хүртэл тээврийн аргыг тохируулах боломжгүй.
-    capture: Барих
     capture_events: Үйл явдлыг авах
     card_code: Картын төрөлжүүлэлтийн код (CVC)
     card_number: Картны дугаар
@@ -630,19 +601,9 @@ mn:
       quantity: тоо хэмжээ
       remove_from_cart: Тэрэгнээс хасах
       title: Дэлгүүрийн түрдэг тэрэг
-    cart_subtotal:
-      one: Дэд дүн (1 зүйл)
-      other: Дэд дүн (%{count} зүйл)
-    categories: Ангилалууд
     category: Ангилал
-    category_nav_bar:
-      get_up_to_30_percent_off: 30% ХЯМДРАЛТАЙ БОЛ
-      jackets_and_coats: JACKET & COASTS
-      new_collection: ШИНЭ ЦУГЛУУЛГА
-      special_offers: ТУСГАЙ САНАЛ
     channel: Суваг
     charged: Цэнэглэгдсэн
-    checkout: Тооцоо хийх
     checkout_page:
       back_to_cart: тэрэг рүүгээ буцах
       checkout_navigation: Тээврийн навигацийг шалгах
@@ -651,25 +612,18 @@ mn:
       main_navigation: Үндсэн навигаци
       product: Бүтээгдэхүүн
     choose_a_customer: Үйлчлүүлэгчээ сонго
-    choose_a_taxon_to_sort_products_for: Бүтээгдэхүүнийг ангилах таксоныг сонгоно уу
     choose_currency: Валютыг сонгоно уу
-    choose_dashboard_locale: Хяналтын самбарын байршлыг сонгоно уу
     choose_location: Байршлыг сонгоно уу
     city: Хот
     clear_cache: Кэшийг арилгах
-    clear_cache_ok: Кэшийг угаав
     clear_cache_warning: Кэшийг арилгах нь таны дэлгүүрийн ажиллагааг түр зуур бууруулна.
-    click_and_drag_on_the_products_to_sort_them: Бүтээгдэхүүнийг ангилахын тулд товшоод чирнэ үү.
     clone: Клон
     close: Хаах
     close_all_adjustments: Бүх тохируулгыг хаах
     code: Код
     company: Компани
     compare_at_price: Үнийн хувьд харьцуул
-    complete: бүрэн
-    configuration: Тохиргоо
     configurations: Тохиргоо
-    confirm: Баталгаажуулах
     confirm_delete: Устгалтыг баталгаажуулна уу
     confirm_password: Нууц үгээ баталгаажуулах
     contact_phone: Холбоо барих утас
@@ -679,7 +633,6 @@ mn:
     continue_shopping: Худалдан авалтыг үргэлжлүүлэх
     cost_currency: Зардлын валют
     cost_price: Зардлын үнэ
-    could_not_create_customer_return: Хэрэглэгчийн өгөөжийг бий болгож чадсангүй
     could_not_create_stock_movement: Энэхүү хувьцааны хөдөлгөөнийг хадгалахад асуудал гарсан. Дахин оролдоно уу.
     count_on_hand: Гар дээр тоол
     countries: Улс орнууд
@@ -688,7 +641,6 @@ mn:
     country_name: Нэр
     country_rule:
       label: Сонголтыг энэ улс руу ачуулах ёстой
-    coupon: Купон
     coupon_code: Купоны код
     coupon_code_already_applied: Энэ захиалгад купоны кодыг аль хэдийн ашигласан болно
     coupon_code_applied: Купоны кодыг таны захиалгад амжилттай хэрэгжүүлэв.
@@ -700,22 +652,17 @@ mn:
     coupon_code_removed: Купоны кодыг таны захиалгаас амжилттай арилгасан.
     coupon_code_unknown_error: Энэ купоны кодыг одоогоор тэрэг дээр ашиглах боломжгүй байна.
     create: Үүсгэх
-    create_a_new_account: Шинэ данс үүсгэх
     create_new_order: Шинэ захиалга үүсгэх
     create_reimbursement: Нөхөн төлбөрийг бий болгох
     created_at: Үүсгэсэн
     created_by: Бүтээсэн байгуулсан зохион бүтээсэн
-    credit: Зээл
     credit_allowed: Зээлийг зөвшөөрсөн
     credit_card: Зээлийн карт
-    credit_cards: Зээлийн карт
     credit_owed: Зээлийн өр
     credited: Итгэмжлэгдсэн
     credits: Зээл
-    currencies: Валют
     currency: Валют
     currency_settings: Валютын тохиргоо
-    current: Одоогийн
     current_promotion_usage: 'одоогийн хэрэглээ: %{count}'
     customer: Үйлчлүүлэгч
     customer_details: Үйлчлүүлэгчийн дэлгэрэнгүй мэдээлэл
@@ -814,7 +761,6 @@ mn:
     exceptions:
       count_on_hand_setter: 'Гараар буцааж дахин тооцоолох замаар автоматаар тохируулдаг тул гараар count_on_hand тохируулах боломжгүй. Үүний оронд `update_column (: count_on_hand, value)" ашиглана уу.'
     exchange_for: Солих
-    excl: онцгой.
     existing_shipments: Одоо байгаа ачилтууд
     expedited_exchanges_warning: Аливаа заасан биржүүд хадгаламж хийсний дараа үйлчлүүлэгчид шууд хүргэгдэх болно. Худалдан авагчаас %{days_window} хоногийн дотор анхны бараагаа буцааж өгөхгүй бол барааны төлбөрийг бүрэн хэмжээгээр төлөх болно.
     expiration: Дуусах хугацаа
@@ -1551,7 +1497,6 @@ mn:
     stock_location_info: Хувьцааны байршлын мэдээлэл
     stock_locations: Хувьцааны байршил
     stock_locations_need_a_default_country: Хувьцааны байршил үүсгэхээсээ өмнө та анхдагч улсыг үүсгэх ёстой.
-    stock_management: Хувьцааны менежмент
     stock_management_requires_a_stock_location: Хувьцааг удирдахын тулд хувьцааны байршлыг бий болгоно уу.
     stock_movements: Хувьцааны хөдөлгөөн
     stock_movements_for_stock_location: "%{stock_location_name}-ийн хувьцааны хөдөлгөөн"
@@ -1562,7 +1507,6 @@ mn:
         variants_unavailable: Зарим хувилбарууд %{stock} дээр байхгүй байна
     stock_transfer_name: Хувьцаа шилжүүлэх
     stock_transfers: Хөрөнгийн шилжүүлэг
-    stop: Зогс
     store: Дэлгүүр
     store_credit:
       additional_payment_needed: Үлдсэн <strong> %{amount} </strong> төлбөрийн өөр аргыг сонгоно уу.
@@ -1628,7 +1572,6 @@ mn:
     supported_currencies: Дэмжигдсэн валютууд
     supported_currencies_long: Таслалаар тусгаарлагдсан жагсаалтыг дэмжиж буй валютууд
     supported_locales: Дэмжигдсэн нутгийн иргэд
-    tags: Шошго
     tags_placeholder: Шошго нэмэх
     tax: Татвар
     tax_categories: Татварын ангилал
@@ -1723,12 +1666,9 @@ mn:
     variant_placeholder: Хувилбарыг сонгоно уу
     variant_prices_search_placeholder: SKU эсвэл хувилбарын нэрийг хайх ...
     variants: Хувилбарууд
-    version: Хувилбар
-    void: Хүчингүй
     weight: Жин
     what_is_a_cvv: "(CVV) зээлийн картын код гэж юу вэ?"
     width: Өргөн
-    year: Он
     you_have_no_orders_yet: Танд одоогоор захиалга алга байна
     your_order_is_empty_add_product: Таны захиалга хоосон байна. Дээрх бүтээгдэхүүнийг хайж олоод нэмнэ үү
     zip: Зип

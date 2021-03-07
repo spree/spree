@@ -437,7 +437,6 @@ af:
     abbreviation: Afkorting
     accept: Aanvaar
     acceptance_errors: Aanvaardingsfoute
-    acceptance_status: Aanvaardingstatus
     accepted: Aanvaar
     account: Rekening
     account_info: Rekening informasie
@@ -455,32 +454,24 @@ af:
       refund: Terugbetaling
       save: Stoor
       update: Opdateer
-    activate: Aktiveer
     active: Aktief
     add: Voeg by
     add_action_of_type: Voeg aksie van die tipe by
-    add_country: Land byvoeg
     add_coupon_code: Voeg koeponkode by
     add_new_address: Voeg nuwe adres by
     add_new_credit_card: Voeg 'n nuwe kaart by
-    add_new_header: Voeg nuwe opskrif by
-    add_new_style: Voeg nuwe styl by
     add_one: Voeg een by
     add_option_value: Voeg opsiewaarde by
     add_product: Voeg produk by
     add_product_properties: Voeg produk-eienskappe by
     add_rule_of_type: Voeg reël van tipe by
-    add_state: Voeg staat by
     add_stock: Voeg voorraad by
     add_store: Nuwe winkel
     add_store_credit: Voeg winkelkrediet by
     add_to_cart: Voeg in mandjie
     add_variant: Voeg Variant by
     added_to_cart: Suksesvol by die mandjie gevoeg!
-    additional_item: Bykomende item
     address: Adres
-    address1: Adres
-    address2: Adres (vervolg)
     address_action_popup:
       delete_button: ja, verwyder
       delete_text: Wil u regtig <br /> hierdie adres verwyder?
@@ -499,13 +490,10 @@ af:
     addresses: Adresse
     adjustable: Verstelbaar
     adjustment: Aanpassing
-    adjustment_amount: Bedrag
     adjustment_labels:
       tax_rates:
         excluding_tax: "%{name}%{amount}"
         including_tax: "%{name}%{amount} (Ingesluit by die prys)"
-    adjustment_successfully_closed: Aanpassing is suksesvol gesluit!
-    adjustment_successfully_opened: Aanpassing is suksesvol geopen!
     adjustment_total: Aanpassing Totaal
     adjustments: Aanpassings
     adjustments_deleted: Aanpassings is uitgevee
@@ -549,26 +537,19 @@ af:
         user_information: Gebruikersinligting
     administration: Administrasie
     advertise: Adverteer
-    agree_to_privacy_policy: Stem in met die privaatheidsbeleid
-    agree_to_terms_of_service: Stem saam met die diensvoorwaardes
     all: Almal
     all_adjustments_closed: Alle verstellings suksesvol gesluit!
     all_adjustments_opened: Alle aanpassings is suksesvol oopgemaak!
-    all_departments: Alle afdelings
     all_items_have_been_returned: Alle items is terugbesorg
     all_rights_reserved: Alle regte voorbehou
-    already_have_account: Reeds 'n rekening?
     alt_text: Alternatiewe teks
     alternative_phone: Alternatiewe telefoon
     amount: Bedrag
     and: en
-    approve: goedkeur
     approved_at: Goedgekeur op
     approver: Goedkeuring
     are_you_sure: Is jy seker?
     are_you_sure_delete: Is jy seker jy wil hierdie rekord verwyder?
-    associated_adjustment_closed: Die gepaardgaande aanpassing is gesluit en sal nie herbereken word nie. Wil u dit oopmaak?
-    authorization_failure: Magtigingsmislukking
     authorized: Gemagtig
     auto_capture: Outovaslegging
     availability: beskikbaarheid
@@ -577,16 +558,10 @@ af:
     average_order_value: Gemiddelde bestelwaarde
     avs_response: AVS-antwoord
     back: Terug
-    back_end: Agterkant
-    back_to_payment: Terug na betaling
     back_to_resource_list: Terug na %{resource} Lys
-    back_to_rma_reason_list: Terug na RMA-redeslys
     back_to_store: Terug na winkel
-    back_to_users_list: Terug na gebruikerslys
     backorderable: Terugbestelbaar
     backorderable_default: Terugbestelbare verstek
-    backordered: Terugbestel
-    backordered_confirm_info: Die geselekteerde item is herbestel, dus verwag vertragings. Is u seker dat u dit wil bestel?
     backordered_info: Terugbestel
     backorders_allowed: agterordes toegelaat
     balance_due: Balans verskuldig
@@ -594,9 +569,7 @@ af:
     base_percent: Basispersentasie
     basic_information: Basiese inligting
     bill_address: Wysigingsadres
-    billing: Fakturering
     billing_address: Rekeningadres
-    both: Albei
     breadcrumbs: Broodkrummels
     calculated_reimbursements: Berekende vergoedings
     calculator: Sakrekenaar
@@ -612,8 +585,6 @@ af:
     cannot_empty_completed_order: Bestelling is reeds verwerk sodat dit nie leeggemaak kan word nie
     cannot_perform_operation: Kan nie die gevraagde bewerking uitvoer nie
     cannot_return_more_than_bought_quantity: Kan nie meer as gekoopte hoeveelheid terugbesorg nie.
-    cannot_set_shipping_method_without_address: Kan nie die afleweringsmetode instel voordat die klantbesonderhede verstrek word nie.
-    capture: Vang
     capture_events: Vang gebeure vas
     card_code: Kaartverskillende kode (CVC)
     card_number: Kaart nommer
@@ -630,19 +601,9 @@ af:
       quantity: hoeveelheid
       remove_from_cart: Haal dit uit die wa
       title: Winkelmandjie
-    cart_subtotal:
-      one: Subtotaal (1 item)
-      other: Subtotaal (%{count} items)
-    categories: Kategorieë
     category: Kategorie
-    category_nav_bar:
-      get_up_to_30_percent_off: KRY TOT 30% AFSLAG
-      jackets_and_coats: BAADJIE & KUSSE
-      new_collection: NUWE VERSAMELING
-      special_offers: SPESIALE AANBIEDINGE
     channel: Kanaal
     charged: Aangekla
-    checkout: Uitteken
     checkout_page:
       back_to_cart: terug kar toe
       checkout_navigation: Checkout navigasie
@@ -651,25 +612,18 @@ af:
       main_navigation: Hoofnavigasie
       product: Produk
     choose_a_customer: Kies 'n klant
-    choose_a_taxon_to_sort_products_for: Kies 'n taksone waarvoor produkte gesorteer moet word
     choose_currency: Kies Geldeenheid
-    choose_dashboard_locale: Kies Dashboard Locale
     choose_location: Kies plek
     city: Stad
     clear_cache: Vee kas uit
-    clear_cache_ok: Die kas is gespoel
     clear_cache_warning: As u die kas verwyder, sal die prestasie van u winkel tydelik verminder.
-    click_and_drag_on_the_products_to_sort_them: Klik en sleep die produkte om dit te sorteer.
     clone: Kloon
     close: Naby
     close_all_adjustments: Sluit alle verstellings
     code: Kode
     company: Maatskappy
     compare_at_price: Vergelyk teen prys
-    complete: voltooi
-    configuration: Konfigurasie
     configurations: Konfigurasies
-    confirm: Bevestig
     confirm_delete: Bevestig die uitvee
     confirm_password: Wagwoord bevestiging
     contact_phone: Kontak telefoon
@@ -679,7 +633,6 @@ af:
     continue_shopping: Gaan voort met inkopies
     cost_currency: Koste-geldeenheid
     cost_price: Kosprys
-    could_not_create_customer_return: Kon nie klanteopbrengste skep nie
     could_not_create_stock_movement: Daar was 'n probleem om hierdie voorraadbeweging te red. Probeer asseblief weer.
     count_on_hand: Tel byderhand
     countries: Lande
@@ -688,7 +641,6 @@ af:
     country_name: Naam
     country_rule:
       label: Kies moet na hierdie land gestuur word
-    coupon: Koepon
     coupon_code: Koeponkode
     coupon_code_already_applied: Die koeponkode is reeds op hierdie bestelling toegepas
     coupon_code_applied: Die koeponkode is suksesvol op u bestelling toegepas.
@@ -700,22 +652,17 @@ af:
     coupon_code_removed: Die koeponkode is suksesvol uit u bestelling verwyder.
     coupon_code_unknown_error: Hierdie koeponkode kon op die oomblik nie op die wa toegepas word nie.
     create: Skep
-    create_a_new_account: Skep 'n nuwe rekening
     create_new_order: Skep 'n nuwe bestelling
     create_reimbursement: Skep terugbetaling
     created_at: Geskep by
     created_by: Gemaak deur
-    credit: Krediet
     credit_allowed: Krediet toegelaat
     credit_card: Kredietkaart
-    credit_cards: Kredietkaarte
     credit_owed: Krediet verskuldig
     credited: Gekrediteer
     credits: Krediete
-    currencies: Geldeenhede
     currency: Geldeenheid
     currency_settings: Valuta-instellings
-    current: Huidig
     current_promotion_usage: 'huidige gebruik: %{count}'
     customer: Kliënt
     customer_details: Kliëntbesonderhede
@@ -814,7 +761,6 @@ af:
     exceptions:
       count_on_hand_setter: 'Kan count_on_hand nie handmatig instel nie, aangesien dit outomaties ingestel word deur die terugberekening_count_on_hand terugbel. Gebruik eerder ''update_column (: count_on_hand, value)''.'
     exchange_for: Ruil vir
-    excl: uitgesluit
     existing_shipments: Bestaande besendings
     expedited_exchanges_warning: Enige gespesifiseerde omruilings sal onmiddellik na besparing aan die klant gestuur word. Die kliënt sal die volle bedrag van die item gehef word as hy nie die oorspronklike artikel binne %{days_window} dae terugbesorg het nie.
     expiration: Verstryking
@@ -1551,7 +1497,6 @@ af:
     stock_location_info: Voorraadligginginligting
     stock_locations: Voorraadliggings
     stock_locations_need_a_default_country: U moet 'n standaardland skep voordat u 'n voorraadlokasie skep.
-    stock_management: Voorraadbestuur
     stock_management_requires_a_stock_location: Skep asseblief 'n voorraadlokasie om voorraad te bestuur.
     stock_movements: Voorraadbewegings
     stock_movements_for_stock_location: Voorraadbewegings vir %{stock_location_name}
@@ -1562,7 +1507,6 @@ af:
         variants_unavailable: Sommige variante is nie op %{stock} beskikbaar nie
     stock_transfer_name: Voorraadoordrag
     stock_transfers: Voorraadoordragte
-    stop: Stop
     store: Stoor
     store_credit:
       additional_payment_needed: Kies 'n ander betaalmetode vir die oorblywende <strong> %{amount} </strong>.
@@ -1628,7 +1572,6 @@ af:
     supported_currencies: Ondersteunde geldeenhede
     supported_currencies_long: "'N Kommaskeide lys van ondersteunde geldeenhede"
     supported_locales: Ondersteunde lokale
-    tags: Merkers
     tags_placeholder: Voeg etikette by
     tax: Belasting
     tax_categories: Belastingkategorieë
@@ -1723,12 +1666,9 @@ af:
     variant_placeholder: Kies 'n variant
     variant_prices_search_placeholder: Soek vir SKU of variantnaam ...
     variants: Variante
-    version: Weergawe
-    void: Nietig
     weight: Gewig
     what_is_a_cvv: Wat is 'n (CVV) kredietkaartkode?
     width: Breedte
-    year: Jaar
     you_have_no_orders_yet: U het nog geen bestellings nie
     your_order_is_empty_add_product: U bestelling is leeg, soek en voeg 'n produk hierbo by
     zip: Rits

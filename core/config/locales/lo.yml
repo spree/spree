@@ -437,7 +437,6 @@ lo:
     abbreviation: ຕົວຫຍໍ້
     accept: ຍອມ​ຮັບ
     acceptance_errors: ຂໍ້ຜິດພາດໃນການຍອມຮັບ
-    acceptance_status: ສະຖານະພາບການຍອມຮັບ
     accepted: ຍອມຮັບ
     account: ບັນຊີ
     account_info: ຂໍ້ມູນບັນຊີ
@@ -455,32 +454,24 @@ lo:
       refund: ຈ່າຍຄືນ
       save: ບັນທຶກ
       update: ປັບປຸງໃຫ້ທັນ
-    activate: ກະຕຸ້ນ
     active: ຫ້າວຫັນ
     add: ຕື່ມ
     add_action_of_type: ເພີ່ມການກະ ທຳ ຂອງປະເພດ
-    add_country: ຕື່ມປະເທດ
     add_coupon_code: ເພີ່ມລະຫັດຄູປອງ
     add_new_address: ເພີ່ມທີ່ຢູ່ ໃໝ່
     add_new_credit_card: ຕື່ມບັດ ໃໝ່
-    add_new_header: ເພີ່ມ Header ໃໝ່
-    add_new_style: ຕື່ມແບບ ໃໝ່
     add_one: ຕື່ມການຫນຶ່ງ
     add_option_value: ເພີ່ມຄ່າທາງເລືອກ
     add_product: ເພີ່ມຜະລິດຕະພັນ
     add_product_properties: ເພີ່ມຄຸນສົມບັດສິນຄ້າ
     add_rule_of_type: ເພີ່ມກົດລະບຽບຂອງປະເພດ
-    add_state: ເພີ່ມລັດ
     add_stock: ເພີ່ມຫຸ້ນ
     add_store: ຮ້ານ ໃໝ່
     add_store_credit: ເພີ່ມເຄດິດຮ້ານ
     add_to_cart: ຕື່ມການເພື່ອໂຄງຮ່າງການ
     add_variant: ຕື່ມ Variant
     added_to_cart: ເພີ່ມເຂົ້າກະຕ່າ ສຳ ເລັດແລ້ວ!
-    additional_item: ລາຍການເພີ່ມເຕີມ
     address: ທີ່ຢູ່
-    address1: ທີ່ຢູ່
-    address2: ທີ່ຢູ່ (ຕໍ່)
     address_action_popup:
       delete_button: ແມ່ນແລ້ວ, ລົບລ້າງ
       delete_text: ທ່ານຕ້ອງການ <br /> ລຶບທີ່ຢູ່ນີ້ບໍ?
@@ -499,13 +490,10 @@ lo:
     addresses: ທີ່ຢູ່
     adjustable: ປັບໄດ້
     adjustment: ການປັບຕົວ
-    adjustment_amount: ຈໍາ​ນວນ
     adjustment_labels:
       tax_rates:
         excluding_tax: "%{name}%{amount}"
         including_tax: "%{name}%{amount} (ລວມໃນລາຄາ)"
-    adjustment_successfully_closed: ການປັບໄດ້ປິດແລ້ວ!
-    adjustment_successfully_opened: ການປັບໄດ້ເປີດໃຫ້ ສຳ ເລັດແລ້ວ!
     adjustment_total: ການປັບຕົວທັງ ໝົດ
     adjustments: ການປັບຕົວ
     adjustments_deleted: ການດັດປັບການລຶບ
@@ -549,26 +537,19 @@ lo:
         user_information: ຂໍ້ມູນຜູ້ໃຊ້
     administration: ການບໍລິຫານ
     advertise: ໂຄສະນາ
-    agree_to_privacy_policy: ຕົກລົງເຫັນດີກັບນະໂຍບາຍຄວາມເປັນສ່ວນຕົວ
-    agree_to_terms_of_service: ຕົກລົງເຫັນດີກັບເງື່ອນໄຂການໃຫ້ບໍລິການ
     all: ທັງ ໝົດ
     all_adjustments_closed: ການດັດປັບທຸກຢ່າງປິດປະສົບຜົນ ສຳ ເລັດ!
     all_adjustments_opened: ການດັດປັບທຸກຢ່າງເປີດປະສົບຜົນ ສຳ ເລັດ!
-    all_departments: ທຸກໆພະແນກການ
     all_items_have_been_returned: ສິນຄ້າທຸກຢ່າງໄດ້ສົ່ງຄືນແລ້ວ
     all_rights_reserved: ທິການ
-    already_have_account: ມີບັນຊີຢູ່ແລ້ວບໍ?
     alt_text: ຕົວ ໜັງ ສືທາງເລືອກ
     alternative_phone: ໂທລະສັບທາງເລືອກ
     amount: ຈໍາ​ນວນ
     and: ແລະ
-    approve: ອະນຸມັດ
     approved_at: ອະນຸມັດທີ່
     approver: ວິທີການ
     are_you_sure: ເຈົ້າ​ແນ່​ໃຈ​ບໍ່?
     are_you_sure_delete: ທ່ານແນ່ໃຈບໍ່ວ່າທ່ານຕ້ອງການລຶບບັນທຶກນີ້?
-    associated_adjustment_closed: ການປັບຕົວທີ່ກ່ຽວຂ້ອງຖືກປິດ, ແລະຈະບໍ່ຖືກຄິດໄລ່ອີກເທື່ອ ໜຶ່ງ. ທ່ານຕ້ອງການເປີດມັນບໍ?
-    authorization_failure: ຄວາມລົ້ມເຫຼວຂອງການອະນຸຍາດ
     authorized: ໄດ້ຮັບອະນຸຍາດ
     auto_capture: ຈັບອັດຕະໂນມັດ
     availability: ມີ
@@ -577,16 +558,10 @@ lo:
     average_order_value: ມູນຄ່າການສັ່ງຊື້ສະເລ່ຍ
     avs_response: ການຕອບໂຕ້ AVS
     back: ກັບໄປ
-    back_end: Backend
-    back_to_payment: Back To Payment
     back_to_resource_list: Back To %{resource} ລາຍຊື່
-    back_to_rma_reason_list: Back To RMA ລາຍຊື່ເຫດຜົນ
     back_to_store: ກັບໄປທີ່ຮ້ານ
-    back_to_users_list: ກັບໄປຫາລາຍຊື່ຜູ້ໃຊ້
     backorderable: Backorderable
     backorderable_default: ຄ່າເລີ່ມຕົ້ນ Backorderable
-    backordered: ມີເສັ້ນທາງຫລັງ
-    backordered_confirm_info: ສິນຄ້າທີ່ຖືກເລືອກແມ່ນ backordered ດັ່ງນັ້ນຄາດວ່າຈະມີຄວາມຊັກຊ້າ. ທ່ານແນ່ໃຈບໍ່ວ່າທ່ານຕ້ອງການສັ່ງຊື້?
     backordered_info: ມີເສັ້ນທາງຫລັງ
     backorders_allowed: ຂອບເຂດອະນຸຍາດ
     balance_due: ຍອດຍັງເຫຼືອ
@@ -594,9 +569,7 @@ lo:
     base_percent: ເປີເຊັນເປີເຊັນ
     basic_information: ຂໍ້ມູນພື້ນຖານ
     bill_address: ທີ່ຢູ່ໃບບິນ
-    billing: ໃບບິນ
     billing_address: ທີ່ຢູ່ໃບເກັບເງິນ
-    both: ທັງສອງ
     breadcrumbs: ຂະ ໜົມ ປັງ
     calculated_reimbursements: ການຄິດໄລ່ຄ່າຕອບແທນຄືນ
     calculator: ເຄື່ອງຄິດໄລ່
@@ -612,8 +585,6 @@ lo:
     cannot_empty_completed_order: ການສັ່ງຊື້ໄດ້ຖືກປະມວນຜົນແລ້ວເພື່ອບໍ່ສາມາດເຮັດໃຫ້ ໝົດ ໄດ້
     cannot_perform_operation: ບໍ່ສາມາດ ດຳ ເນີນການທີ່ຕ້ອງການໄດ້
     cannot_return_more_than_bought_quantity: ບໍ່ສາມາດສົ່ງຄືນໄດ້ຫຼາຍກວ່າ ຈຳ ນວນທີ່ຊື້.
-    cannot_set_shipping_method_without_address: ບໍ່ສາມາດ ກຳ ນົດວິທີການຂົນສົ່ງຈົນກວ່າລາຍລະອຽດຂອງລູກຄ້າຈະຖືກສະ ໜອງ.
-    capture: ຈັບໄດ້
     capture_events: ຈັບພາບເຫດການ
     card_code: ລະຫັດການປ່ຽນບັດ (CVC)
     card_number: ເລກບັດ
@@ -630,19 +601,9 @@ lo:
       quantity: ປະລິມານ
       remove_from_cart: ເອົາອອກຈາກລົດເຂັນ
       title: ລົດເຂັນ
-    cart_subtotal:
-      one: ລວມ (1 ລາຍການ)
-      other: ລາຍຍ່ອຍ (%{count} ລາຍການ)
-    categories: ໝວດ
     category: ໝວດ
-    category_nav_bar:
-      get_up_to_30_percent_off: ຮັບໄປ 30% ເບີ
-      jackets_and_coats: JACKET & COASTS
-      new_collection: ການຮວບຮວມ ໃໝ່
-      special_offers: ຂໍ້​ສະ​ເຫນີ​ພິ​ເສດ
     channel: ຊ່ອງທາງ
     charged: ຄິດຄ່າ ທຳ ນຽມ
-    checkout: ເຊັກເອົາ
     checkout_page:
       back_to_cart: ກັບຄືນໄປບ່ອນໂຄງຮ່າງການ
       checkout_navigation: ການ ນຳ ທາງ Checkout
@@ -651,25 +612,18 @@ lo:
       main_navigation: ການ ນຳ ທາງຫລັກ
       product: ຜະລິດຕະພັນ
     choose_a_customer: ເລືອກລູກຄ້າ
-    choose_a_taxon_to_sort_products_for: ເລືອກພາສີເພື່ອຈັດຮຽງຜະລິດຕະພັນ
     choose_currency: ເລືອກສະກຸນເງິນ
-    choose_dashboard_locale: ເລືອກ Local Dashboard
     choose_location: ເລືອກສະຖານທີ່
     city: ເມືອງ
     clear_cache: ລ້າງແຄດ
-    clear_cache_ok: Cache ຖືກລ່ອງໄປ
     clear_cache_warning: ການລ້າງແຄດຈະເຮັດໃຫ້ການປະຕິບັດຂອງຮ້ານຂອງທ່ານຊົ່ວຄາວ.
-    click_and_drag_on_the_products_to_sort_them: ກົດແລະລາກໃສ່ຜະລິດຕະພັນເພື່ອຈັດຮຽງພວກມັນ.
     clone: Clone
     close: ປິດ
     close_all_adjustments: ປິດປັບທຸກຮູບແບບ
     code: ລະຫັດ
     company: ບໍລິສັດ
     compare_at_price: ປຽບທຽບໃນລາຄາ
-    complete: ສົມບູນ
-    configuration: ການຕັ້ງຄ່າ
     configurations: ການຕັ້ງຄ່າ
-    confirm: ຢືນຢັນ
     confirm_delete: ຢືນຢັນການລຶບ
     confirm_password: ການຢືນຢັນລະຫັດຜ່ານ
     contact_phone: ໂທລະສັບຕິດຕໍ່
@@ -679,7 +633,6 @@ lo:
     continue_shopping: ສືບຕໍ່ຊື້ເຄື່ອງ
     cost_currency: ສະກຸນເງິນຕົ້ນທຶນ
     cost_price: ລາຄາຕົ້ນທຶນ
-    could_not_create_customer_return: ບໍ່ສາມາດສ້າງການຕອບແທນຂອງລູກຄ້າ
     could_not_create_stock_movement: ມີປັນຫາໃນການປະຫຍັດການເຄື່ອນໄຫວຂອງຮຸ້ນນີ້. ກະລຸນາລອງ ໃໝ່ ອີກຄັ້ງ.
     count_on_hand: ຈົ່ງນັບມື
     countries: ປະເທດຕ່າງໆ
@@ -688,7 +641,6 @@ lo:
     country_name: ຊື່
     country_rule:
       label: ການເລືອກຕ້ອງຖືກສົ່ງໄປປະເທດນີ້
-    coupon: ຄູປອງ
     coupon_code: ລະຫັດຄູປອງ
     coupon_code_already_applied: ລະຫັດຄູປອງໄດ້ຖືກ ນຳ ໃຊ້ກັບ ຄຳ ສັ່ງນີ້ແລ້ວ
     coupon_code_applied: ລະຫັດຄູປອງຖືກປະສົບຜົນ ສຳ ເລັດໃນການສັ່ງຊື້ຂອງທ່ານ.
@@ -700,22 +652,17 @@ lo:
     coupon_code_removed: ລະຫັດຄູປອງຖືກລຶບອອກຈາກການສັ່ງຊື້ຂອງທ່ານແລ້ວ.
     coupon_code_unknown_error: ລະຫັດຄູປອງນີ້ບໍ່ສາມາດ ນຳ ໃຊ້ກັບລົດເຂັນໄດ້ໃນເວລານີ້.
     create: ສ້າງ
-    create_a_new_account: ສ້າງບັນຊີ ໃໝ່
     create_new_order: ສ້າງໃບສັ່ງຊື້ ໃໝ່
     create_reimbursement: ສ້າງການຊົດເຊີຍຄືນ
     created_at: ສ້າງຂື້ນທີ່
     created_by: ສ້າງ​ໂດຍ
-    credit: ການປ່ອຍສິນເຊື່ອ
     credit_allowed: ອະນຸຍາດໃຫ້ປ່ອຍສິນເຊື່ອ
     credit_card: ບັດ​ເຄຣ​ດິດ
-    credit_cards: ບັດເຄດິດ
     credit_owed: ເປັນເຈົ້າຂອງສິນເຊື່ອ
     credited: ອ້າງອີງ
     credits: ສິນເຊື່ອ
-    currencies: ສະກຸນເງິນຕາ
     currency: ເງິນຕາ
     currency_settings: ການຕັ້ງຄ່າເງິນຕາ
-    current: ປະຈຸບັນ
     current_promotion_usage: 'ການ ນຳ ໃຊ້ປັດຈຸບັນ: %{count}'
     customer: ລູກຄ້າ
     customer_details: ລາຍລະອຽດຂອງລູກຄ້າ
@@ -814,7 +761,6 @@ lo:
     exceptions:
       count_on_hand_setter: 'ບໍ່ສາມາດຕັ້ງຄ່າ count_on_hand ດ້ວຍຕົນເອງໄດ້, ຍ້ອນວ່າມັນຖືກ ກຳ ນົດໂດຍອັດຕະໂນມັດໂດຍການເອີ້ນຄືນການໂທຄືນ. ກະລຸນາໃຊ້ `update_column (: count_on_hand, value)` ແທນ.'
     exchange_for: ແລກປ່ຽນ ສຳ ລັບ
-    excl: excl.
     existing_shipments: ການຂົນສົ່ງທີ່ມີຢູ່ແລ້ວ
     expedited_exchanges_warning: ການແລກປ່ຽນໃດ ໜຶ່ງ ທີ່ລະບຸຈະສົ່ງໃຫ້ລູກຄ້າທັນທີເມື່ອປະຢັດ. ລູກຄ້າຈະໄດ້ຮັບການຄິດຄ່າ ທຳ ນຽມເຕັມຂອງສິນຄ້າຖ້າພວກເຂົາບໍ່ສົ່ງສິນຄ້າເດີມພາຍໃນ %{days_window} ມື້.
     expiration: ໝົດ ອາຍຸ
@@ -1551,7 +1497,6 @@ lo:
     stock_location_info: ຂໍ້ມູນສະຖານທີ່ຫຼັກຊັບ
     stock_locations: ສະຖານທີ່ຫຸ້ນ
     stock_locations_need_a_default_country: ທ່ານຕ້ອງສ້າງປະເທດເລີ່ມຕົ້ນກ່ອນທີ່ຈະສ້າງສະຖານທີ່ຫຼັກຊັບ.
-    stock_management: ການຄຸ້ມຄອງຫຼັກຊັບ
     stock_management_requires_a_stock_location: ກະລຸນາສ້າງທີ່ຕັ້ງຫຼັກຊັບເພື່ອຈັດການຫຼັກຊັບ.
     stock_movements: ການເຄື່ອນໄຫວຂອງຫຸ້ນ
     stock_movements_for_stock_location: ການເຄື່ອນຍ້າຍຫຸ້ນ ສຳ ລັບ %{stock_location_name}
@@ -1562,7 +1507,6 @@ lo:
         variants_unavailable: ບາງຕົວແປບໍ່ມີຢູ່ໃນ %{stock}
     stock_transfer_name: ການໂອນຫຸ້ນ
     stock_transfers: ການໂອນຫຸ້ນ
-    stop: ຢຸດ
     store: ຮ້ານ
     store_credit:
       additional_payment_needed: ເລືອກວິທີການຈ່າຍເງິນອື່ນ ສຳ ລັບ <strong> %{amount} </strong> ທີ່ເຫລືອ.
@@ -1628,7 +1572,6 @@ lo:
     supported_currencies: ສະກຸນເງິນທີ່ຮອງຮັບ
     supported_currencies_long: ເຄື່ອງ ໝາຍ ຈຸດແຍກອອກຈາກສະກຸນເງິນທີ່ຮອງຮັບ
     supported_locales: ສະຖານທີ່ທີ່ຮອງຮັບ
-    tags: ປ້າຍ
     tags_placeholder: ເພີ່ມປ້າຍ
     tax: ພາສີ
     tax_categories: ໝວດ ພາສີ
@@ -1723,12 +1666,9 @@ lo:
     variant_placeholder: ເລືອກຕົວແປ
     variant_prices_search_placeholder: ຊອກຫາ SKU ຫຼືຊື່ຕົວແປ ...
     variants: ຕົວແປ
-    version: ຮຸ່ນ
-    void: Void
     weight: ນໍ້າ ໜັກ
     what_is_a_cvv: ລະຫັດບັດເຄດິດ (CVV) ແມ່ນຫຍັງ?
     width: ກວ້າງ
-    year: ປີ
     you_have_no_orders_yet: ທ່ານຍັງບໍ່ທັນມີ ຄຳ ສັ່ງເທື່ອ
     your_order_is_empty_add_product: ການສັ່ງຊື້ຂອງທ່ານຫວ່າງແລ້ວ, ກະລຸນາຄົ້ນຫາແລະເພີ່ມຜະລິດຕະພັນຂ້າງເທິງ
     zip: ຫັດໄປສະນີ

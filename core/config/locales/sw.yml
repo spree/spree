@@ -437,7 +437,6 @@ sw:
     abbreviation: Kifupisho
     accept: Kubali
     acceptance_errors: Makosa ya kukubali
-    acceptance_status: Hali ya kukubalika
     accepted: Imekubaliwa
     account: Akaunti
     account_info: Maelezo ya akaunti
@@ -455,32 +454,24 @@ sw:
       refund: Marejesho
       save: Okoa
       update: Sasisha
-    activate: Amilisha
     active: Inatumika
     add: Ongeza
     add_action_of_type: Ongeza kitendo cha aina
-    add_country: Ongeza Nchi
     add_coupon_code: Ongeza Nambari ya Kuponi
     add_new_address: Ongeza anwani mpya
     add_new_credit_card: Ongeza kadi mpya
-    add_new_header: Ongeza Kichwa kipya
-    add_new_style: Ongeza Mtindo Mpya
     add_one: Ongeza Moja
     add_option_value: Ongeza Thamani ya Chaguo
     add_product: Ongeza Bidhaa
     add_product_properties: Ongeza Sifa za Bidhaa
     add_rule_of_type: Ongeza kanuni ya aina
-    add_state: Ongeza Jimbo
     add_stock: Ongeza Hisa
     add_store: Duka Jipya
     add_store_credit: Ongeza Salio la Duka
     add_to_cart: Ongeza kwenye Kikapu
     add_variant: Ongeza lahaja
     added_to_cart: Imeongezwa kwenye mkokoteni kwa mafanikio!
-    additional_item: Kipengee cha ziada
     address: Anwani
-    address1: Anwani
-    address2: Anwani (contd.)
     address_action_popup:
       delete_button: ndio, futa
       delete_text: Je! Kweli unataka <br /> kufuta anwani hii?
@@ -499,13 +490,10 @@ sw:
     addresses: Anwani
     adjustable: Adjustable
     adjustment: Marekebisho
-    adjustment_amount: Kiasi
     adjustment_labels:
       tax_rates:
         excluding_tax: "%{name}%{amount}"
         including_tax: "%{name}%{amount} (Imejumuishwa katika Bei)"
-    adjustment_successfully_closed: Marekebisho yamefungwa kwa mafanikio!
-    adjustment_successfully_opened: Marekebisho yamefunguliwa kwa mafanikio!
     adjustment_total: Marekebisho Jumla
     adjustments: Marekebisho
     adjustments_deleted: Marekebisho yamefutwa
@@ -549,26 +537,19 @@ sw:
         user_information: Maelezo ya Mtumiaji
     administration: Utawala
     advertise: Tangaza
-    agree_to_privacy_policy: Kukubaliana na Sera ya Faragha
-    agree_to_terms_of_service: Kukubaliana na Masharti ya Huduma
     all: Wote
     all_adjustments_closed: Marekebisho yote yamefungwa!
     all_adjustments_opened: Marekebisho yote yamefunguliwa kwa mafanikio!
-    all_departments: Idara zote
     all_items_have_been_returned: Vitu vyote vimerudishwa
     all_rights_reserved: Haki zote zimehifadhiwa
-    already_have_account: Tayari una akaunti?
     alt_text: Nakala mbadala
     alternative_phone: Simu Mbadala
     amount: Kiasi
     and: na
-    approve: idhinisha
     approved_at: Imeidhinishwa saa
     approver: Mtangazaji
     are_you_sure: Una uhakika?
     are_you_sure_delete: Je! Una uhakika unataka kufuta rekodi hii?
-    associated_adjustment_closed: Marekebisho yanayohusiana imefungwa, na hayatahesabiwa tena. Je! Unataka kufungua?
-    authorization_failure: Idhini Kushindwa
     authorized: Imeidhinishwa
     auto_capture: Kukamata Kiotomatiki
     availability: upatikanaji
@@ -577,16 +558,10 @@ sw:
     average_order_value: Thamani ya Agizo la Wastani
     avs_response: Jibu la AVS
     back: Nyuma
-    back_end: Nyuma
-    back_to_payment: Rudi kwa Malipo
     back_to_resource_list: Rudi kwenye Orodha ya %{resource}
-    back_to_rma_reason_list: Rudi kwenye Orodha ya Sababu ya RMA
     back_to_store: Rudi kwenye Duka
-    back_to_users_list: Rudi kwa Orodha ya Watumiaji
     backorderable: Iliyodhibitiwa tena
     backorderable_default: Chaguo-msingi inayoweza kupangwa tena
-    backordered: Iliyopangwa nyuma
-    backordered_confirm_info: Bidhaa iliyochaguliwa imerudi nyuma kwa hivyo tarajia ucheleweshaji Je! Una uhakika unataka kuagiza?
     backordered_info: Iliyopangwa nyuma
     backorders_allowed: mipaka ya nyuma inaruhusiwa
     balance_due: Usawa Unastahili
@@ -594,9 +569,7 @@ sw:
     base_percent: Asilimia ya Msingi
     basic_information: Habari ya Msingi
     bill_address: Hotuba ya Muswada
-    billing: Kutoza
     billing_address: Mahali deni litakapotumwa
-    both: Wote wawili
     breadcrumbs: Mikate ya mkate
     calculated_reimbursements: Malipo ya mahesabu
     calculator: Kikokotoo
@@ -612,8 +585,6 @@ sw:
     cannot_empty_completed_order: Agizo tayari limeshughulikiwa kwa hivyo haliwezi kumwagwa
     cannot_perform_operation: Haiwezi kutekeleza operesheni iliyoombwa
     cannot_return_more_than_bought_quantity: Haiwezi kurudisha zaidi ya kiasi kilichonunuliwa.
-    cannot_set_shipping_method_without_address: Haiwezi kuweka njia ya usafirishaji hadi maelezo ya mteja yatolewe.
-    capture: Piga picha
     capture_events: Nasa hafla
     card_code: Nambari ya Kuboresha Kadi (CVC)
     card_number: Namba ya kadi
@@ -630,19 +601,9 @@ sw:
       quantity: wingi
       remove_from_cart: Ondoa kwenye gari
       title: Kikapu cha ununuzi
-    cart_subtotal:
-      one: Jumla ndogo (kipengee 1)
-      other: Jumla ndogo (vipengee vya %{count})
-    categories: Jamii
     category: Jamii
-    category_nav_bar:
-      get_up_to_30_percent_off: PANDA KWA 30%
-      jackets_and_coats: BACKET & PODA
-      new_collection: UKUSANYAJI MPYA
-      special_offers: OFA MAALUM
     channel: Kituo
     charged: Imeshtakiwa
-    checkout: Angalia
     checkout_page:
       back_to_cart: kurudi mkokoteni
       checkout_navigation: Urambazaji wa Checkout
@@ -651,25 +612,18 @@ sw:
       main_navigation: Urambazaji kuu
       product: Bidhaa
     choose_a_customer: Chagua mteja
-    choose_a_taxon_to_sort_products_for: Chagua tekoni kupanga bidhaa
     choose_currency: Chagua Sarafu
-    choose_dashboard_locale: Chagua Eneo la Dashibodi
     choose_location: Chagua mahali
     city: Jiji
     clear_cache: Ondoa Cache
-    clear_cache_ok: Cache ilifutwa
     clear_cache_warning: Kufuta akiba kutapunguza utendaji wa duka lako kwa muda.
-    click_and_drag_on_the_products_to_sort_them: Bonyeza na buruta kwenye bidhaa ili kuzipanga.
     clone: Clone
     close: Funga
     close_all_adjustments: Funga Marekebisho Yote
     code: Kanuni
     company: Kampuni
     compare_at_price: Linganisha kwa bei
-    complete: kamili
-    configuration: Usanidi
     configurations: Mipangilio
-    confirm: Thibitisha
     confirm_delete: Thibitisha Kufutwa
     confirm_password: Uthibitishaji wa Nenosiri
     contact_phone: Wasiliana na simu
@@ -679,7 +633,6 @@ sw:
     continue_shopping: Endelea kununua
     cost_currency: Sarafu ya Gharama
     cost_price: Bei ya gharama
-    could_not_create_customer_return: Haikuweza kuunda kurudi kwa mteja
     could_not_create_stock_movement: Kulikuwa na tatizo wakati wa kuhifadhi harakati hizi za hisa. Tafadhali jaribu tena.
     count_on_hand: Hesabu kwa mkono
     countries: Nchi
@@ -688,7 +641,6 @@ sw:
     country_name: Jina
     country_rule:
       label: Chagua lazima zisafirishwe kwa nchi hii
-    coupon: Kuponi
     coupon_code: Nambari ya kuponi
     coupon_code_already_applied: Nambari ya kuponi tayari imetumika kwa agizo hili
     coupon_code_applied: Nambari ya kuponi ilitekelezwa vizuri kwa agizo lako.
@@ -700,22 +652,17 @@ sw:
     coupon_code_removed: Nambari ya kuponi imeondolewa kwenye agizo lako.
     coupon_code_unknown_error: Nambari hii ya kuponi haikuweza kutumika kwenye mkokoteni kwa wakati huu.
     create: Unda
-    create_a_new_account: Unda akaunti mpya
     create_new_order: Unda mpangilio mpya
     create_reimbursement: Unda ulipaji
     created_at: Iliundwa saa
     created_by: Imetengenezwa na
-    credit: Mikopo
     credit_allowed: Mikopo inaruhusiwa
     credit_card: Kadi ya Mkopo
-    credit_cards: Kadi za Mkopo
     credit_owed: Mikopo Imezidiwa
     credited: Imepatiwa sifa
     credits: Mikopo
-    currencies: Sarafu
     currency: Sarafu
     currency_settings: Mipangilio ya Sarafu
-    current: Sasa
     current_promotion_usage: 'matumizi ya sasa: %{count}'
     customer: Mteja
     customer_details: Maelezo ya Mteja
@@ -814,7 +761,6 @@ sw:
     exceptions:
       count_on_hand_setter: 'Haiwezi kuweka count_on_hand kwa mikono, kwani imewekwa kiatomati na hesabu_ya_kuhesabu_ya mikono. Tafadhali tumia safu ya `update_column (: count_on_hand, value)` badala yake.'
     exchange_for: Kubadilishana kwa
-    excl: isipokuwa.
     existing_shipments: Usafirishaji uliopo
     expedited_exchanges_warning: Kubadilishana yoyote maalum itatuma kwa mteja mara tu baada ya kuokoa. Mteja atatozwa jumla ya bidhaa ikiwa hatarudisha kipengee asili ndani ya siku %{days_window}.
     expiration: Kumalizika muda
@@ -1551,7 +1497,6 @@ sw:
     stock_location_info: Maelezo ya eneo la hisa
     stock_locations: Maeneo ya Hisa
     stock_locations_need_a_default_country: Lazima uunda nchi chaguomsingi kabla ya kuunda eneo la hisa.
-    stock_management: Usimamizi wa Hisa
     stock_management_requires_a_stock_location: Tafadhali tengeneza eneo la hisa ili kudhibiti hisa.
     stock_movements: Harakati za Hisa
     stock_movements_for_stock_location: Harakati za hisa za %{stock_location_name}
@@ -1562,7 +1507,6 @@ sw:
         variants_unavailable: Aina zingine hazipatikani kwenye %{stock}
     stock_transfer_name: Uhamisho wa Hisa
     stock_transfers: Uhamisho wa Hisa
-    stop: Acha
     store: Hifadhi
     store_credit:
       additional_payment_needed: Chagua njia nyingine ya kulipa ya <strong> %{amount} </strong> iliyobaki.
@@ -1628,7 +1572,6 @@ sw:
     supported_currencies: Sarafu Zinazoungwa mkono
     supported_currencies_long: Orodha iliyotenganishwa kwa koma ya sarafu zinazoungwa mkono
     supported_locales: Maeneo yanayoungwa mkono
-    tags: Vitambulisho
     tags_placeholder: Ongeza Vitambulisho
     tax: Kodi
     tax_categories: Jamii za Ushuru
@@ -1723,12 +1666,9 @@ sw:
     variant_placeholder: Chagua lahaja
     variant_prices_search_placeholder: Tafuta SKU au jina tofauti ...
     variants: Variants
-    version: Toleo
-    void: Utupu
     weight: Uzito
     what_is_a_cvv: Je! Ni (CVV) Nambari ya Kadi ya Mkopo?
     width: Upana
-    year: Mwaka
     you_have_no_orders_yet: Bado huna maagizo
     your_order_is_empty_add_product: Agizo lako ni tupu, tafadhali tafuta na uongeze bidhaa hapo juu
     zip: Zip

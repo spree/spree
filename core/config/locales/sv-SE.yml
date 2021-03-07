@@ -437,7 +437,6 @@ sv-SE:
     abbreviation: Förkortning
     accept: Acceptera
     acceptance_errors: Acceptfel
-    acceptance_status: Godkännandestatus
     accepted: Accepterad
     account: konto
     account_info: Konto information
@@ -455,32 +454,24 @@ sv-SE:
       refund: Återbetalning
       save: Spara
       update: Uppdatering
-    activate: Aktivera
     active: Aktiva
     add: Lägg till
     add_action_of_type: Lägg till åtgärd av typen
-    add_country: Lägg till land
     add_coupon_code: Lägg till kupongkod
     add_new_address: Lägg till ny adress
     add_new_credit_card: Lägg till ett nytt kort
-    add_new_header: Lägg till ny rubrik
-    add_new_style: Lägg till ny stil
     add_one: Lägg till ett
     add_option_value: Lägg till alternativvärde
     add_product: Lägg till produkt
     add_product_properties: Lägg till produktegenskaper
     add_rule_of_type: Lägg till typ av regel
-    add_state: Lägg till stat
     add_stock: Lägg till lager
     add_store: Ny butik
     add_store_credit: Lägg till butikskredit
     add_to_cart: Lägg till i kundvagn
     add_variant: Lägg till variant
     added_to_cart: Tillagd i kundvagnen framgångsrikt!
-    additional_item: Ytterligare artikel
     address: Adress
-    address1: Adress
-    address2: Adress (forts.)
     address_action_popup:
       delete_button: ja, ta bort
       delete_text: Vill du verkligen <br /> ta bort den här adressen?
@@ -499,13 +490,10 @@ sv-SE:
     addresses: Adresser
     adjustable: Justerbar
     adjustment: Justering
-    adjustment_amount: Belopp
     adjustment_labels:
       tax_rates:
         excluding_tax: "%{name}%{amount}"
         including_tax: "%{name}%{amount} (ingår i priset)"
-    adjustment_successfully_closed: Justeringen har avslutats!
-    adjustment_successfully_opened: Justeringen har öppnats framgångsrikt!
     adjustment_total: Justering totalt
     adjustments: Justeringar
     adjustments_deleted: Justeringar raderade
@@ -549,26 +537,19 @@ sv-SE:
         user_information: användar information
     administration: Administrering
     advertise: Annonsera
-    agree_to_privacy_policy: Godkänn integritetspolicyn
-    agree_to_terms_of_service: Håller med användarvillkoren
     all: Allt
     all_adjustments_closed: Alla justeringar har avslutats!
     all_adjustments_opened: Alla justeringar har lyckats öppnas!
-    all_departments: Alla avdelningar
     all_items_have_been_returned: Alla artiklar har returnerats
     all_rights_reserved: Alla rättigheter förbehållna
-    already_have_account: Har du redan ett konto?
     alt_text: Alternativ text
     alternative_phone: alternativ telefon
     amount: Belopp
     and: och
-    approve: godkänna
     approved_at: Godkänd kl
     approver: Godkännare
     are_you_sure: Är du säker?
     are_you_sure_delete: Är du säker på att du vill ta bort den här posten?
-    associated_adjustment_closed: Den tillhörande justeringen är stängd och kommer inte att beräknas om. Vill du öppna den?
-    authorization_failure: Auktoriseringsfel
     authorized: Auktoriserad
     auto_capture: Auto Capture
     availability: tillgänglighet
@@ -577,16 +558,10 @@ sv-SE:
     average_order_value: Genomsnittligt ordervärde
     avs_response: AVS-svar
     back: Tillbaka
-    back_end: Backend
-    back_to_payment: Tillbaka till betalning
     back_to_resource_list: Tillbaka till %{resource}-listan
-    back_to_rma_reason_list: Tillbaka till RMA-orsakslistan
     back_to_store: Tillbaka till Store
-    back_to_users_list: Tillbaka till användarlistan
     backorderable: Kan beställas
     backorderable_default: Kan beställas som standard
-    backordered: Ombeställt
-    backordered_confirm_info: Det valda objektet ordnas om så förvänta dig förseningar. Är du säker på att du vill beställa den?
     backordered_info: Ombeställt
     backorders_allowed: restorder tillåtna
     balance_due: Resterande belopp
@@ -594,9 +569,7 @@ sv-SE:
     base_percent: Basprocent
     basic_information: Grundläggande information
     bill_address: Räkningsadress
-    billing: Fakturering
     billing_address: Fakturaadress
-    both: Både
     breadcrumbs: Ströbröd
     calculated_reimbursements: Beräknade ersättningar
     calculator: Kalkylator
@@ -612,8 +585,6 @@ sv-SE:
     cannot_empty_completed_order: Beställningen har redan behandlats så att den inte kan tömmas
     cannot_perform_operation: Det går inte att utföra den begärda åtgärden
     cannot_return_more_than_bought_quantity: Kan inte returnera mer än köpt kvantitet.
-    cannot_set_shipping_method_without_address: Det går inte att ställa in leveransmetod förrän kunduppgifterna anges.
-    capture: Fånga
     capture_events: Fånga händelser
     card_code: Kortvariationskod (CVC)
     card_number: Kortnummer
@@ -630,19 +601,9 @@ sv-SE:
       quantity: kvantitet
       remove_from_cart: Ta bort från vagnen
       title: Kundvagn
-    cart_subtotal:
-      one: Delsumma (1 artikel)
-      other: Delsumma (%{count} artiklar)
-    categories: Kategorier
     category: Kategori
-    category_nav_bar:
-      get_up_to_30_percent_off: FÅ UPP TILL 30% RABATT
-      jackets_and_coats: JACKA & KUST
-      new_collection: NY KOLLEKTION
-      special_offers: SPECIALERBJUDANDEN
     channel: Kanal
     charged: Laddad
-    checkout: Kolla upp
     checkout_page:
       back_to_cart: tillbaka till vagnen
       checkout_navigation: Kassanavigering
@@ -651,25 +612,18 @@ sv-SE:
       main_navigation: Huvudnavigering
       product: Produkt
     choose_a_customer: Välj en kund
-    choose_a_taxon_to_sort_products_for: Välj en taxon att sortera produkter för
     choose_currency: Välj valuta
-    choose_dashboard_locale: Välj språk för instrumentpanelen
     choose_location: Välj plats
     city: Stad
     clear_cache: Rensa cache
-    clear_cache_ok: Cachen spolades
     clear_cache_warning: Om du rensar cacheminnet minskar din butiks prestanda tillfälligt.
-    click_and_drag_on_the_products_to_sort_them: Klicka och dra på produkterna för att sortera dem.
     clone: Klona
     close: Stänga
     close_all_adjustments: Stäng alla justeringar
     code: Koda
     company: Företag
     compare_at_price: Jämför till pris
-    complete: komplett
-    configuration: Konfiguration
     configurations: Konfigurationer
-    confirm: Bekräfta
     confirm_delete: Bekräfta radering
     confirm_password: Lösenordsbekräftelse
     contact_phone: Kontakt Telefon
@@ -679,7 +633,6 @@ sv-SE:
     continue_shopping: Fortsätt handla
     cost_currency: Kostnadsvaluta
     cost_price: Kostnad
-    could_not_create_customer_return: Det gick inte att skapa kundretur
     could_not_create_stock_movement: Det gick inte att spara denna lagerrörelse. Var god försök igen.
     count_on_hand: Räkna till hands
     countries: Länder
@@ -688,7 +641,6 @@ sv-SE:
     country_name: namn
     country_rule:
       label: Välj måste skickas till detta land
-    coupon: Kupong
     coupon_code: Kupongskod
     coupon_code_already_applied: Kupongkoden har redan tillämpats på denna beställning
     coupon_code_applied: Kupongkoden tillämpades framgångsrikt på din beställning.
@@ -700,22 +652,17 @@ sv-SE:
     coupon_code_removed: Kupongkoden togs bort från din beställning.
     coupon_code_unknown_error: Den här kupongkoden kunde inte tillämpas på kundvagnen just nu.
     create: Skapa
-    create_a_new_account: Skapa ett nytt konto
     create_new_order: Skapa ny order
     create_reimbursement: Skapa ersättning
     created_at: Skapad vid
     created_by: Skapad av
-    credit: Kreditera
     credit_allowed: Kredit tillåten
     credit_card: Kreditkort
-    credit_cards: Kreditkort
     credit_owed: Kredit skyldig
     credited: Krediterad
     credits: Krediter
-    currencies: Valutor
     currency: Valuta
     currency_settings: Valutainställningar
-    current: Nuvarande
     current_promotion_usage: 'aktuell användning: %{count}'
     customer: Kund
     customer_details: Kunddetaljer
@@ -814,7 +761,6 @@ sv-SE:
     exceptions:
       count_on_hand_setter: 'Det går inte att ställa in count_on_hand manuellt, eftersom det ställs in automatiskt av återuppringning_count_on_hand. Använd istället ''update_column (: count_on_hand, value)''.'
     exchange_for: I utbyte mot
-    excl: exkl.
     existing_shipments: Befintliga transporter
     expedited_exchanges_warning: Eventuella specifika börser skickas till kunden omedelbart efter sparandet. Kunden kommer att debiteras hela beloppet för varan om de inte returnerar originalvaran inom %{days_window} dagar.
     expiration: Utgång
@@ -1551,7 +1497,6 @@ sv-SE:
     stock_location_info: Lagerinformation
     stock_locations: Lagerplatser
     stock_locations_need_a_default_country: Du måste skapa ett standardland innan du skapar en lagerplats.
-    stock_management: Lagerhantering
     stock_management_requires_a_stock_location: Vänligen skapa en lagerplats för att hantera lager.
     stock_movements: Lagerrörelser
     stock_movements_for_stock_location: Lagerrörelser för %{stock_location_name}
@@ -1562,7 +1507,6 @@ sv-SE:
         variants_unavailable: Vissa varianter är inte tillgängliga på %{stock}
     stock_transfer_name: Lageröverföring
     stock_transfers: Lageröverföringar
-    stop: Sluta
     store: Lagra
     store_credit:
       additional_payment_needed: Välj en annan betalningsmetod för återstående <strong> %{amount} </strong>.
@@ -1628,7 +1572,6 @@ sv-SE:
     supported_currencies: Valutor som stöds
     supported_currencies_long: En kommaseparerad lista över valutor som stöds
     supported_locales: Stödda språk
-    tags: Taggar
     tags_placeholder: Lägg till taggar
     tax: Beskatta
     tax_categories: Skattekategorier
@@ -1723,12 +1666,9 @@ sv-SE:
     variant_placeholder: Välj en variant
     variant_prices_search_placeholder: Sök efter SKU eller variantnamn ...
     variants: Varianter
-    version: Version
-    void: Tomhet
     weight: Vikt
     what_is_a_cvv: Vad är en (CVV) kreditkortskod?
     width: Bredd
-    year: År
     you_have_no_orders_yet: Du har inga beställningar än
     your_order_is_empty_add_product: Din beställning är tom, sök efter och lägg till en produkt ovan
     zip: Blixtlås

@@ -601,7 +601,6 @@ cy:
     abbreviation: Talfyriad
     accept: Derbyn
     acceptance_errors: Gwallau derbyn
-    acceptance_status: Statws derbyn
     accepted: Derbyniwyd
     account: Cyfrif
     account_info: Gwybodaeth am y cyfrif
@@ -619,32 +618,24 @@ cy:
       refund: Ad-daliad
       save: Arbedwch
       update: Diweddariad
-    activate: Activate
     active: Egnïol
     add: Ychwanegu
     add_action_of_type: Ychwanegwch weithred o fath
-    add_country: Ychwanegu Gwlad
     add_coupon_code: Ychwanegu Cod Cwpon
     add_new_address: Ychwanegu cyfeiriad newydd
     add_new_credit_card: Ychwanegwch gerdyn newydd
-    add_new_header: Ychwanegu Pennawd Newydd
-    add_new_style: Ychwanegu Arddull Newydd
     add_one: Ychwanegwch Un
     add_option_value: Ychwanegu Gwerth Opsiwn
     add_product: Ychwanegu Cynnyrch
     add_product_properties: Ychwanegu Priodweddau Cynnyrch
     add_rule_of_type: Ychwanegu rheol math
-    add_state: Ychwanegu Gwladwriaeth
     add_stock: Ychwanegu Stoc
     add_store: Siop Newydd
     add_store_credit: Ychwanegu Credyd Store
     add_to_cart: Ychwanegu at y drol
     add_variant: Ychwanegu Amrywiad
     added_to_cart: Ychwanegwyd at y drol yn llwyddiannus!
-    additional_item: Eitem Ychwanegol
     address: Cyfeiriad
-    address1: Cyfeiriad
-    address2: Cyfeiriad (parhad.)
     address_action_popup:
       delete_button: ie, dileu
       delete_text: Ydych chi wir eisiau i <br /> ddileu'r cyfeiriad hwn?
@@ -663,13 +654,10 @@ cy:
     addresses: Cyfeiriadau
     adjustable: Addasadwy
     adjustment: Addasiad
-    adjustment_amount: Swm
     adjustment_labels:
       tax_rates:
         excluding_tax: "%{name}%{amount}"
         including_tax: "%{name}%{amount} (Wedi'i gynnwys yn y Pris)"
-    adjustment_successfully_closed: Mae'r addasiad wedi'i gau yn llwyddiannus!
-    adjustment_successfully_opened: Mae'r addasiad wedi'i agor yn llwyddiannus!
     adjustment_total: Cyfanswm yr Addasiad
     adjustments: Addasiadau
     adjustments_deleted: Addasiadau wedi'u dileu
@@ -713,26 +701,19 @@ cy:
         user_information: Gwybodaeth Defnyddiwr
     administration: Gweinyddiaeth
     advertise: Hysbysebu
-    agree_to_privacy_policy: Cytuno i'r Polisi Preifatrwydd
-    agree_to_terms_of_service: Cytuno i'r Telerau Gwasanaeth
     all: I gyd
     all_adjustments_closed: Caewyd yr holl addasiadau yn llwyddiannus!
     all_adjustments_opened: Agorwyd pob addasiad yn llwyddiannus!
-    all_departments: Pob adran
     all_items_have_been_returned: Mae'r holl eitemau wedi'u dychwelyd
     all_rights_reserved: Cedwir pob hawl
-    already_have_account: Eisoes â chyfrif?
     alt_text: Testun Amgen
     alternative_phone: Ffôn Amgen
     amount: Swm
     and: a
-    approve: cymeradwyo
     approved_at: Cymeradwywyd yn
     approver: Cymeradwywr
     are_you_sure: Wyt ti'n siwr?
     are_you_sure_delete: Ydych chi'n siŵr eich bod chi am ddileu'r cofnod hwn?
-    associated_adjustment_closed: Mae'r addasiad cysylltiedig ar gau, ac ni fydd yn cael ei ailgyfrifo. Ydych chi am ei agor?
-    authorization_failure: Methiant Awdurdodi
     authorized: Awdurdodedig
     auto_capture: Dal Auto
     availability: argaeledd
@@ -741,16 +722,10 @@ cy:
     average_order_value: Gwerth Gorchymyn Cyfartalog
     avs_response: Ymateb AVS
     back: Yn ôl
-    back_end: Penwythnos
-    back_to_payment: Yn ôl i'r Taliad
     back_to_resource_list: Yn ôl I Restr %{resource}
-    back_to_rma_reason_list: Yn ôl i Restr Rhesymau RMA
     back_to_store: Yn ôl i'r Storfa
-    back_to_users_list: Yn ôl i'r Rhestr Defnyddwyr
     backorderable: Backorderable
     backorderable_default: Rhagosodiad y gellir ei adfer
-    backordered: Aildrefnu
-    backordered_confirm_info: Mae eitem ddethol yn cael ei had-drefnu felly disgwyliwch oedi. Ydych chi'n siŵr eich bod chi am ei archebu?
     backordered_info: Aildrefnu
     backorders_allowed: caniateir backorders
     balance_due: Balans sy'n ddyledus
@@ -758,9 +733,7 @@ cy:
     base_percent: Canran Sylfaen
     basic_information: Gwybodaeth Sylfaenol
     bill_address: Cyfeiriad Bil
-    billing: Bilio
     billing_address: Cyfeiriad bilio
-    both: Y ddau
     breadcrumbs: Briwsion bara
     calculated_reimbursements: Ad-daliadau wedi'u Cyfrifo
     calculator: Cyfrifiannell
@@ -776,8 +749,6 @@ cy:
     cannot_empty_completed_order: Mae'r gorchymyn eisoes wedi'i brosesu felly ni ellir ei wagio
     cannot_perform_operation: Ni all gyflawni'r gweithrediad y gofynnwyd amdano
     cannot_return_more_than_bought_quantity: Ni all ddychwelyd mwy na maint a brynwyd.
-    cannot_set_shipping_method_without_address: Ni ellir gosod dull cludo nes bod manylion y cwsmer yn cael eu darparu.
-    capture: Dal
     capture_events: Dal digwyddiadau
     card_code: Cod Amrywio Cerdyn (CGS)
     card_number: Rhif cerdyn
@@ -794,23 +765,9 @@ cy:
       quantity: maint
       remove_from_cart: Tynnwch o'r drol
       title: Cart Siopa
-    cart_subtotal:
-      few: Is-gyfanswm (1 eitem)
-      many: Is-gyfanswm (eitemau %{count})
-      one: Is-gyfanswm (1 eitem)
-      other: Is-gyfanswm (eitemau %{count})
-      two: Is-gyfanswm (eitemau %{count})
-      zero: Dim
-    categories: Categorïau
     category: Categori
-    category_nav_bar:
-      get_up_to_30_percent_off: CAEL I 30% I ffwrdd
-      jackets_and_coats: JACKET & COASTS
-      new_collection: CASGLU NEWYDD
-      special_offers: SWYDDOGION ARBENNIG
     channel: Sianel
     charged: Cyhuddo
-    checkout: Til
     checkout_page:
       back_to_cart: yn ôl i'r drol
       checkout_navigation: Llywio til
@@ -819,25 +776,18 @@ cy:
       main_navigation: Prif lywio
       product: Cynnyrch
     choose_a_customer: Dewiswch gwsmer
-    choose_a_taxon_to_sort_products_for: Dewiswch dacson i ddidoli cynhyrchion ar ei gyfer
     choose_currency: Dewiswch Arian Cyfred
-    choose_dashboard_locale: Dewiswch Dangosfwrdd Locale
     choose_location: Dewiswch leoliad
     city: Dinas
     clear_cache: Cache Clir
-    clear_cache_ok: Fflysiwyd Cache
     clear_cache_warning: Bydd clirio storfa yn lleihau perfformiad eich siop dros dro.
-    click_and_drag_on_the_products_to_sort_them: Cliciwch a llusgwch y cynhyrchion i'w didoli.
     clone: Clôn
     close: Caewch
     close_all_adjustments: Caewch Pob Addasiad
     code: Côd
     company: Cwmni
     compare_at_price: Cymharwch am bris
-    complete: cyflawn
-    configuration: Ffurfweddiad
     configurations: Cyfluniadau
-    confirm: Cadarnhau
     confirm_delete: Cadarnhau Dileu
     confirm_password: Cadarnhad Cyfrinair
     contact_phone: Ffôn cyswllt
@@ -847,7 +797,6 @@ cy:
     continue_shopping: Parhewch i siopa
     cost_currency: Arian Cyfred Cost
     cost_price: Pris Cost
-    could_not_create_customer_return: Methu creu dychweliad cwsmer
     could_not_create_stock_movement: Roedd problem yn arbed y symudiad stoc hwn. Trio eto os gwelwch yn dda.
     count_on_hand: Cyfrif Wrth Law
     countries: Gwledydd
@@ -856,7 +805,6 @@ cy:
     country_name: Enw
     country_rule:
       label: Rhaid cludo Dewis i'r wlad hon
-    coupon: Cwpon
     coupon_code: Cod cwpon
     coupon_code_already_applied: Mae'r cod cwpon eisoes wedi'i gymhwyso i'r gorchymyn hwn
     coupon_code_applied: Cymhwyswyd y cod cwpon yn llwyddiannus i'ch archeb.
@@ -868,22 +816,17 @@ cy:
     coupon_code_removed: Cafodd y cod cwpon ei dynnu o'ch archeb yn llwyddiannus.
     coupon_code_unknown_error: Ni ellid cymhwyso'r cod cwpon hwn i'r drol ar yr adeg hon.
     create: Creu
-    create_a_new_account: Creu cyfrif newydd
     create_new_order: Creu trefn newydd
     create_reimbursement: Creu ad-daliad
     created_at: Wedi'i greu yn
     created_by: Crëwyd Gan
-    credit: Credyd
     credit_allowed: Credyd wedi'i ganiatáu
     credit_card: Cerdyn credyd
-    credit_cards: Cardiau Credyd
     credit_owed: Credyd yn Berchennog
     credited: Wedi'i gredydu
     credits: Credydau
-    currencies: Arian cyfred
     currency: Arian cyfred
     currency_settings: Gosodiadau Arian Parod
-    current: Cyfredol
     current_promotion_usage: 'defnydd cyfredol: %{count}'
     customer: Cwsmer
     customer_details: Manylion Cwsmer
@@ -986,7 +929,6 @@ cy:
     exceptions:
       count_on_hand_setter: 'Ni ellir gosod count_on_hand â llaw, gan ei fod wedi''i osod yn awtomatig gan yr alwad yn ôl recalculate_count_on_hand. Defnyddiwch `update_column (: count_on_hand, value)` yn lle.'
     exchange_for: Cyfnewid am
-    excl: ac eithrio.
     existing_shipments: Llongau presennol
     expedited_exchanges_warning: Bydd unrhyw gyfnewidiadau penodol yn anfon at y cwsmer yn syth ar ôl cynilo. Codir swm llawn yr eitem ar y cwsmer os na fydd yn dychwelyd yr eitem wreiddiol o fewn diwrnodau %{days_window}.
     expiration: Dod i ben
@@ -1727,7 +1669,6 @@ cy:
     stock_location_info: Gwybodaeth am leoliad stoc
     stock_locations: Lleoliadau Stoc
     stock_locations_need_a_default_country: Rhaid i chi greu gwlad ddiofyn cyn creu lleoliad stoc.
-    stock_management: Rheoli Stoc
     stock_management_requires_a_stock_location: Os gwelwch yn dda creu lleoliad stoc er mwyn rheoli stoc.
     stock_movements: Symudiadau Stoc
     stock_movements_for_stock_location: Symudiadau Stoc ar gyfer %{stock_location_name}
@@ -1738,7 +1679,6 @@ cy:
         variants_unavailable: Nid yw rhai amrywiadau ar gael ar %{stock}
     stock_transfer_name: Trosglwyddo Stoc
     stock_transfers: Trosglwyddiadau Stoc
-    stop: Stopiwch
     store: Storfa
     store_credit:
       additional_payment_needed: Dewiswch ddull talu arall ar gyfer y <strong> %{amount} </strong> sy'n weddill.
@@ -1804,7 +1744,6 @@ cy:
     supported_currencies: Arian Cyfred â Chefnogaeth
     supported_currencies_long: Rhestr wedi'i gwahanu gan goma o arian cyfred a gefnogir
     supported_locales: Locales â Chefnogaeth
-    tags: Tagiau
     tags_placeholder: Ychwanegu Tagiau
     tax: Treth
     tax_categories: Categorïau Treth
@@ -1899,12 +1838,9 @@ cy:
     variant_placeholder: Dewiswch amrywiad
     variant_prices_search_placeholder: Chwilio am SKU neu enw amrywiol ...
     variants: Amrywiadau
-    version: Fersiwn
-    void: Yn ddi-rym
     weight: Pwysau
     what_is_a_cvv: Beth yw Cod Cerdyn Credyd (CVV)?
     width: Lled
-    year: Blwyddyn
     you_have_no_orders_yet: Nid oes gennych unrhyw archebion eto
     your_order_is_empty_add_product: Mae eich archeb yn wag, chwiliwch am ac ychwanegwch gynnyrch uchod
     zip: Zip

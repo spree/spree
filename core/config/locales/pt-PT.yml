@@ -437,7 +437,6 @@ pt-PT:
     abbreviation: Abreviação
     accept: Aceitar
     acceptance_errors: Erros de aceitação
-    acceptance_status: Status de aceitação
     accepted: Aceitaram
     account: Conta
     account_info: Informações da Conta
@@ -455,32 +454,24 @@ pt-PT:
       refund: Reembolso
       save: Salve 
       update: Atualizar
-    activate: Ativar
     active: Ativo
     add: Adicionar
     add_action_of_type: Adicionar ação do tipo
-    add_country: Adicionar País
     add_coupon_code: Adicionar código de cupom
     add_new_address: adicionar novo endereço
     add_new_credit_card: Adicionar um novo cartão
-    add_new_header: Adicionar Novo Cabeçalho
-    add_new_style: Adicionar Novo Estilo
     add_one: Adicione um
     add_option_value: Adicionar valor de opção
     add_product: Adicionar Produto
     add_product_properties: Adicionar propriedades do produto
     add_rule_of_type: Adicionar regra de tipo
-    add_state: Adicionar Estado
     add_stock: Adicionar estoque
     add_store: Nova Loja
     add_store_credit: Adicionar crédito da loja
     add_to_cart: Adicionar ao carrinho
     add_variant: Adicionar variante
     added_to_cart: Adicionado ao carrinho com sucesso!
-    additional_item: Item adicional
     address: Endereço
-    address1: Endereço
-    address2: Endereço (continuação)
     address_action_popup:
       delete_button: sim deleta
       delete_text: Você realmente deseja <br /> deletar este endereço?
@@ -499,13 +490,10 @@ pt-PT:
     addresses: Endereços
     adjustable: Ajustável
     adjustment: Ajustamento
-    adjustment_amount: Quantia
     adjustment_labels:
       tax_rates:
         excluding_tax: "%{name}%{amount}"
         including_tax: "%{name}%{amount} (incluído no preço)"
-    adjustment_successfully_closed: O ajuste foi fechado com sucesso!
-    adjustment_successfully_opened: O ajuste foi aberto com sucesso!
     adjustment_total: Total de ajuste
     adjustments: Ajustes
     adjustments_deleted: Ajustes excluídos
@@ -549,26 +537,19 @@ pt-PT:
         user_information: Informação do usuário
     administration: Administração
     advertise: Anunciar
-    agree_to_privacy_policy: Concordo com a Política de Privacidade
-    agree_to_terms_of_service: Concorde com os Termos de Serviço
     all: Todo
     all_adjustments_closed: Todos os ajustes foram fechados com sucesso!
     all_adjustments_opened: Todos os ajustes foram abertos com sucesso!
-    all_departments: Todos os departamentos
     all_items_have_been_returned: Todos os itens foram devolvidos
     all_rights_reserved: Todos os direitos reservados
-    already_have_account: já tem uma conta?
     alt_text: Texto Alternativo
     alternative_phone: Telefone alternativo
     amount: Quantia
     and: e
-    approve: aprovar
     approved_at: Aprovado em
     approver: Aprovador
     are_you_sure: Tem certeza?
     are_you_sure_delete: Tem certeza que deseja excluir este registro?
-    associated_adjustment_closed: O ajuste associado está fechado e não será recalculado. Você quer abri-lo?
-    authorization_failure: Falha de autorização
     authorized: Autorizado
     auto_capture: Captura Automática
     availability: disponibilidade
@@ -577,16 +558,10 @@ pt-PT:
     average_order_value: Valor médio do pedido
     avs_response: Resposta AVS
     back: Voltar
-    back_end: Processo interno
-    back_to_payment: Voltar ao pagamento
     back_to_resource_list: Voltar à lista %{resource}
-    back_to_rma_reason_list: Voltar à lista de motivos de RMA
     back_to_store: Voltar para a loja
-    back_to_users_list: Voltar para a lista de usuários
     backorderable: Pedidos em espera
     backorderable_default: Padrão para pedidos em espera
-    backordered: Pedidos em espera
-    backordered_confirm_info: O item selecionado está em espera, portanto, espere atrasos. Tem certeza de que deseja fazer o pedido?
     backordered_info: Pedidos em espera
     backorders_allowed: pedidos pendentes permitidos
     balance_due: Saldo devedor
@@ -594,9 +569,7 @@ pt-PT:
     base_percent: Porcentagem Base
     basic_information: Informação básica
     bill_address: Endereço de cobrança
-    billing: Cobrança
     billing_address: endereço de cobrança
-    both: Ambos
     breadcrumbs: Migalhas de pão
     calculated_reimbursements: Reembolsos calculados
     calculator: Calculadora
@@ -612,8 +585,6 @@ pt-PT:
     cannot_empty_completed_order: O pedido já foi processado, por isso não pode ser esvaziado
     cannot_perform_operation: Não é possível realizar a operação solicitada
     cannot_return_more_than_bought_quantity: Não pode devolver mais do que a quantidade comprada.
-    cannot_set_shipping_method_without_address: Não é possível definir o método de envio até que os detalhes do cliente sejam fornecidos.
-    capture: Capturar
     capture_events: Captura de eventos
     card_code: Código de Varificação do Cartão (CVC)
     card_number: Número do cartão
@@ -630,19 +601,9 @@ pt-PT:
       quantity: quantidade
       remove_from_cart: Remover do carrinho
       title: Carrinho de compras
-    cart_subtotal:
-      one: Subtotal (1 item)
-      other: Subtotal (itens %{count})
-    categories: Categorias
     category: Categoria
-    category_nav_bar:
-      get_up_to_30_percent_off: GANHE ATÉ 30% DE DESCONTO
-      jackets_and_coats: JAQUETA E COSTA
-      new_collection: NOVA COLEÇÃO
-      special_offers: OFERTAS ESPECIAIS
     channel: Canal
     charged: Carregada
-    checkout: Confira
     checkout_page:
       back_to_cart: de volta ao carrinho
       checkout_navigation: Navegação no checkout
@@ -651,25 +612,18 @@ pt-PT:
       main_navigation: Navegação Principal
       product: produtos
     choose_a_customer: Escolha um cliente
-    choose_a_taxon_to_sort_products_for: Escolha um táxon para o qual classificar os produtos
     choose_currency: escolha a moeda
-    choose_dashboard_locale: Escolha o local do painel
     choose_location: Escolha a localização
     city: Cidade
     clear_cache: Limpar cache
-    clear_cache_ok: Cache foi liberado
     clear_cache_warning: Limpar o cache reduzirá temporariamente o desempenho de sua loja.
-    click_and_drag_on_the_products_to_sort_them: Clique e arraste os produtos para classificá-los.
     clone: Clone
     close: Fechar
     close_all_adjustments: Fechar todos os ajustes
     code: Código
     company: Companhia
     compare_at_price: Compare pelo preço
-    complete: completo
-    configuration: Configuração
     configurations: Configurações
-    confirm: confirme
     confirm_delete: Confirmar exclusão
     confirm_password: ConfirmaÇão Da Senha
     contact_phone: Telefone de contato
@@ -679,7 +633,6 @@ pt-PT:
     continue_shopping: Continue comprando
     cost_currency: Moeda de custo
     cost_price: Preço de custo
-    could_not_create_customer_return: Não foi possível criar devolução do cliente
     could_not_create_stock_movement: Ocorreu um problema ao salvar este movimento de estoque. Por favor, tente novamente.
     count_on_hand: Contagem disponível
     countries: Países
@@ -688,7 +641,6 @@ pt-PT:
     country_name: Nome
     country_rule:
       label: Escolha deve ser enviado para este país
-    coupon: Cupom
     coupon_code: Código do cupom
     coupon_code_already_applied: O código do cupom já foi aplicado a este pedido
     coupon_code_applied: O código do cupom foi aplicado com sucesso ao seu pedido.
@@ -700,22 +652,17 @@ pt-PT:
     coupon_code_removed: O código do cupom foi removido com sucesso do seu pedido.
     coupon_code_unknown_error: Este código de cupom não pôde ser aplicado ao carrinho no momento.
     create: Crio
-    create_a_new_account: Criar uma nova conta
     create_new_order: Criar novo pedido
     create_reimbursement: Criar reembolso
     created_at: Criado em
     created_by: Criado por
-    credit: Crédito
     credit_allowed: Crédito permitido
     credit_card: Cartão de crédito
-    credit_cards: Cartões de crédito
     credit_owed: Crédito devido
     credited: Creditado
     credits: Créditos
-    currencies: Moedas
     currency: Moeda
     currency_settings: Configurações de moeda
-    current: Atual
     current_promotion_usage: 'uso atual: %{count}'
     customer: Cliente
     customer_details: Detalhes do cliente
@@ -814,7 +761,6 @@ pt-PT:
     exceptions:
       count_on_hand_setter: 'Não é possível definir count_on_hand manualmente, pois é definido automaticamente pelo retorno de chamada recalculate_count_on_hand. Use `update_column (: count_on_hand, value)` ao invés.'
     exchange_for: Troca por
-    excl: excl.
     existing_shipments: Remessas existentes
     expedited_exchanges_warning: Todas as trocas especificadas serão enviadas ao cliente imediatamente após o salvamento. O cliente será cobrado pelo valor total do item se não devolver o item original dentro de %{days_window} dias.
     expiration: Vencimento
@@ -1551,7 +1497,6 @@ pt-PT:
     stock_location_info: Informação de localização de estoque
     stock_locations: Locais de estoque
     stock_locations_need_a_default_country: Você deve criar um país padrão antes de criar um local de estoque.
-    stock_management: Gestão de stocks
     stock_management_requires_a_stock_location: Crie um local de estoque para gerenciar o estoque.
     stock_movements: Movimentos de estoque
     stock_movements_for_stock_location: Movimentos de estoque para %{stock_location_name}
@@ -1562,7 +1507,6 @@ pt-PT:
         variants_unavailable: Algumas variantes não estão disponíveis em %{stock}
     stock_transfer_name: Transferência de estoque
     stock_transfers: Transferências de estoque
-    stop: Pare
     store: Armazenar
     store_credit:
       additional_payment_needed: Selecione outro método de pagamento para o <strong> %{amount} </strong> restante.
@@ -1628,7 +1572,6 @@ pt-PT:
     supported_currencies: Moedas Suportadas
     supported_currencies_long: Uma lista separada por vírgulas de moedas suportadas
     supported_locales: Localidades com suporte
-    tags: Tag
     tags_placeholder: Adicionar Tags
     tax: Imposto
     tax_categories: Categorias de impostos
@@ -1723,12 +1666,9 @@ pt-PT:
     variant_placeholder: Escolha uma variante
     variant_prices_search_placeholder: Pesquise SKU ou nome de variante ...
     variants: Variantes
-    version: Versão
-    void: Vazio
     weight: Peso
     what_is_a_cvv: O que é um código de cartão de crédito (CVV)?
     width: Largura
-    year: Ano
     you_have_no_orders_yet: Você ainda não tem pedidos
     your_order_is_empty_add_product: Seu pedido está vazio, por favor, pesquise e adicione um produto acima
     zip: Fecho eclair

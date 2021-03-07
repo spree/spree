@@ -437,7 +437,6 @@ fr-FR:
     abbreviation: Abréviation
     accept: J'accepte
     acceptance_errors: Erreurs d'acceptation
-    acceptance_status: Statut d'acceptation
     accepted: Accepté
     account: Compte
     account_info: Informations de compte
@@ -455,32 +454,24 @@ fr-FR:
       refund: Rembourser
       save: Sauvegarder
       update: Mettre à jour
-    activate: Activer
     active: actif
     add: Ajouter
     add_action_of_type: Ajouter une action de type
-    add_country: Ajouter un pays
     add_coupon_code: Ajouter un code de coupon
     add_new_address: Ajouter une nouvelle adresse
     add_new_credit_card: Ajouter une nouvelle carte
-    add_new_header: Ajouter un nouvel en-tête
-    add_new_style: Ajouter un nouveau style
     add_one: Ajoute un
     add_option_value: Ajouter une valeur d'option
     add_product: Ajouter un produit
     add_product_properties: Ajouter des propriétés de produit
     add_rule_of_type: Ajouter une règle de type
-    add_state: Ajouter un état
     add_stock: Ajouter un stock
     add_store: Nouveau magasin
     add_store_credit: Ajouter un crédit en magasin
     add_to_cart: Ajouter au panier
     add_variant: Ajouter une variante
     added_to_cart: Ajouté au panier avec succès!
-    additional_item: Article supplémentaire
     address: Adresse
-    address1: Adresse
-    address2: Adresse (suite)
     address_action_popup:
       delete_button: oui, supprimer
       delete_text: Voulez-vous vraiment <br /> supprimer cette adresse?
@@ -499,13 +490,10 @@ fr-FR:
     addresses: Adresses
     adjustable: Ajustable
     adjustment: Ajustement
-    adjustment_amount: Quantité
     adjustment_labels:
       tax_rates:
         excluding_tax: "%{name}%{amount}"
         including_tax: "%{name}%{amount} (inclus dans le prix)"
-    adjustment_successfully_closed: L'ajustement a été clôturé avec succès!
-    adjustment_successfully_opened: L'ajustement a été ouvert avec succès!
     adjustment_total: Total de l'ajustement
     adjustments: Ajustements
     adjustments_deleted: Ajustements supprimés
@@ -549,26 +537,19 @@ fr-FR:
         user_information: informations de l'utilisateur
     administration: Administration
     advertise: Afficher
-    agree_to_privacy_policy: Accepter la politique de confidentialité
-    agree_to_terms_of_service: Accepter les conditions d'utilisation
     all: Tout
     all_adjustments_closed: Tous les ajustements ont été clôturés avec succès!
     all_adjustments_opened: Tous les ajustements ont été ouverts avec succès!
-    all_departments: Tous les départements
     all_items_have_been_returned: Tous les articles ont été retournés
     all_rights_reserved: Tous les droits sont réservés
-    already_have_account: Vous avez déjà un compte?
     alt_text: Texte alternatif
     alternative_phone: Téléphone alternatif
     amount: Quantité
     and: et
-    approve: approuver
     approved_at: Approuvé à
     approver: Approbateur
     are_you_sure: Êtes-vous sûr?
     are_you_sure_delete: Voulez-vous vraiment supprimer cet enregistrement?
-    associated_adjustment_closed: L'ajustement associé est fermé et ne sera pas recalculé. Voulez-vous l'ouvrir?
-    authorization_failure: Échec de l'autorisation
     authorized: Autorisé
     auto_capture: Capture automatique
     availability: disponibilité
@@ -577,16 +558,10 @@ fr-FR:
     average_order_value: Valeur moyenne de la commande
     avs_response: Réponse d'AVS
     back: Retour
-    back_end: Backend
-    back_to_payment: Retour au paiement
     back_to_resource_list: Retour à la liste %{resource}
-    back_to_rma_reason_list: Retour à la liste des raisons RMA
     back_to_store: Retour au magasin
-    back_to_users_list: Retour à la liste des utilisateurs
     backorderable: Réorganisable
     backorderable_default: Réorganisable par défaut
-    backordered: En rupture de stock
-    backordered_confirm_info: L'élément sélectionné est en rupture de stock, alors attendez-vous à des retards. Êtes-vous sûr de vouloir le commander?
     backordered_info: En rupture de stock
     backorders_allowed: commandes en souffrance autorisées
     balance_due: Solde dû
@@ -594,9 +569,7 @@ fr-FR:
     base_percent: Pourcentage de base
     basic_information: Informations de base
     bill_address: Adresse de facturation
-    billing: Facturation
     billing_address: Adresse de facturation
-    both: Tous les deux
     breadcrumbs: Chapelure
     calculated_reimbursements: Remboursements calculés
     calculator: Calculatrice
@@ -612,8 +585,6 @@ fr-FR:
     cannot_empty_completed_order: La commande a déjà été traitée et ne peut donc pas être vidée
     cannot_perform_operation: Impossible d'exécuter l'opération demandée
     cannot_return_more_than_bought_quantity: Impossible de retourner plus que la quantité achetée.
-    cannot_set_shipping_method_without_address: Impossible de définir la méthode d'expédition tant que les détails du client ne sont pas fournis.
-    capture: Capturer
     capture_events: Capturer des événements
     card_code: Code de modification de la carte (CVC)
     card_number: Numéro de carte
@@ -630,19 +601,9 @@ fr-FR:
       quantity: quantité
       remove_from_cart: Retirer du panier
       title: Panier
-    cart_subtotal:
-      one: Sous-total (1 article)
-      other: Sous-total (%{count} éléments)
-    categories: Catégories
     category: Catégorie
-    category_nav_bar:
-      get_up_to_30_percent_off: OBTENEZ JUSQU'À 30% DE RÉDUCTION
-      jackets_and_coats: VESTE & COAST
-      new_collection: NOUVELLE COLLECTION
-      special_offers: OFFRES SPÉCIALES
     channel: Canaliser
     charged: Accusé
-    checkout: Vérifier
     checkout_page:
       back_to_cart: retour au panier
       checkout_navigation: Navigation de paiement
@@ -651,25 +612,18 @@ fr-FR:
       main_navigation: Navigation principale
       product: Produit
     choose_a_customer: Choisissez un client
-    choose_a_taxon_to_sort_products_for: Choisissez un taxon pour lequel trier les produits
     choose_currency: Choisir la devise
-    choose_dashboard_locale: Choisissez les paramètres régionaux du tableau de bord
     choose_location: Choisissez un emplacement
     city: Ville
     clear_cache: Vider le cache
-    clear_cache_ok: Le cache a été vidé
     clear_cache_warning: La suppression du cache réduira temporairement les performances de votre boutique.
-    click_and_drag_on_the_products_to_sort_them: Cliquez et faites glisser sur les produits pour les trier.
     clone: Cloner
     close: Fermer
     close_all_adjustments: Fermer tous les ajustements
     code: Code
     company: Entreprise
     compare_at_price: Comparer au prix
-    complete: Achevée
-    configuration: Configuration
     configurations: Configurations
-    confirm: Confirmer
     confirm_delete: Confirmer la suppression
     confirm_password: Confirmation mot de passe
     contact_phone: Numéro du contact
@@ -679,7 +633,6 @@ fr-FR:
     continue_shopping: Continuer vos achats
     cost_currency: Devise de coût
     cost_price: Prix de revient
-    could_not_create_customer_return: Impossible de créer le retour client
     could_not_create_stock_movement: Un problème est survenu lors de l'enregistrement de ce mouvement de stock. Veuillez réessayer.
     count_on_hand: Comptez sur place
     countries: Des pays
@@ -688,7 +641,6 @@ fr-FR:
     country_name: Nom
     country_rule:
       label: Choisir doit être expédié dans ce pays
-    coupon: Coupon
     coupon_code: Code de coupon
     coupon_code_already_applied: Le code promo a déjà été appliqué à cette commande
     coupon_code_applied: Le code de réduction a été appliqué avec succès à votre commande.
@@ -700,22 +652,17 @@ fr-FR:
     coupon_code_removed: Le code de réduction a bien été supprimé de votre commande.
     coupon_code_unknown_error: Ce code de réduction n'a pas pu être appliqué au panier pour le moment.
     create: Créer
-    create_a_new_account: Créer un nouveau compte
     create_new_order: Créer une nouvelle commande
     create_reimbursement: Créer un remboursement
     created_at: Créé à
     created_by: Créé par
-    credit: Crédit
     credit_allowed: Crédit autorisé
     credit_card: Carte de crédit
-    credit_cards: Cartes de crédit
     credit_owed: Crédit dû
     credited: Crédité
     credits: Crédits
-    currencies: Devises
     currency: Devise
     currency_settings: Paramètres de devise
-    current: Actuel
     current_promotion_usage: 'utilisation actuelle: %{count}'
     customer: Client
     customer_details: Détails du client
@@ -814,7 +761,6 @@ fr-FR:
     exceptions:
       count_on_hand_setter: 'Impossible de définir count_on_hand manuellement, car il est défini automatiquement par le rappel recalculate_count_on_hand. Veuillez utiliser `update_column (: count_on_hand, value)` à la place.'
     exchange_for: Échange contre
-    excl: excl.
     existing_shipments: Expéditions existantes
     expedited_exchanges_warning: Tout échange spécifié sera expédié au client immédiatement après l'enregistrement. Le client sera facturé le montant total de l'article s'il ne retourne pas l'article d'origine dans les %{days_window} jours.
     expiration: Expiration
@@ -1551,7 +1497,6 @@ fr-FR:
     stock_location_info: Informations sur l'emplacement du stock
     stock_locations: Emplacements des stocks
     stock_locations_need_a_default_country: Vous devez créer un pays par défaut avant de créer un magasin.
-    stock_management: Gestion de stock
     stock_management_requires_a_stock_location: Veuillez créer un emplacement de stock afin de gérer le stock.
     stock_movements: Mouvements de stock
     stock_movements_for_stock_location: Mouvements de stock pour %{stock_location_name}
@@ -1562,7 +1507,6 @@ fr-FR:
         variants_unavailable: Certaines variantes ne sont pas disponibles sur %{stock}
     stock_transfer_name: Transfert de stock
     stock_transfers: Transferts de stock
-    stop: Arrêter
     store: Magasin
     store_credit:
       additional_payment_needed: Sélectionnez un autre mode de paiement pour le <strong> %{amount} </strong> restant.
@@ -1628,7 +1572,6 @@ fr-FR:
     supported_currencies: Devises prises en charge
     supported_currencies_long: Une liste séparée par des virgules des devises prises en charge
     supported_locales: Paramètres régionaux pris en charge
-    tags: Mots clés
     tags_placeholder: Ajouter des balises
     tax: Impôt
     tax_categories: Catégories de taxes
@@ -1723,12 +1666,9 @@ fr-FR:
     variant_placeholder: Choisissez une variante
     variant_prices_search_placeholder: Rechercher un SKU ou un nom de variante ...
     variants: Variantes
-    version: Version
-    void: Annuler
     weight: Poids
     what_is_a_cvv: Qu'est-ce qu'un code de carte de crédit (CVV)?
     width: Largeur
-    year: An
     you_have_no_orders_yet: Vous n'avez pas encore de commandes
     your_order_is_empty_add_product: Votre commande est vide, veuillez rechercher et ajouter un produit ci-dessus
     zip: Zipper

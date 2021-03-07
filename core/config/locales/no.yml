@@ -437,7 +437,6 @@
     abbreviation: Forkortelse
     accept: Aksepterer
     acceptance_errors: Akseptfeil
-    acceptance_status: Akseptstatus
     accepted: Akseptert
     account: Regnskap
     account_info: Kontoinformasjon
@@ -455,32 +454,24 @@
       refund: Refusjon
       save: Lagre
       update: Oppdater
-    activate: Aktiver
     active: Aktiv
     add: Legg til
     add_action_of_type: Legg til handling av typen
-    add_country: Legg til land
     add_coupon_code: Legg til kupongkode
     add_new_address: Legg til ny adresse
     add_new_credit_card: Legg til et nytt kort
-    add_new_header: Legg til ny overskrift
-    add_new_style: Legg til ny stil
     add_one: Legg til en
     add_option_value: Legg til tilleggsverdi
     add_product: Legg til produkt
     add_product_properties: Legg til produktegenskaper
     add_rule_of_type: Legg til regel av typen
-    add_state: Legg til stat
     add_stock: Legg til lager
     add_store: Ny butikk
     add_store_credit: Legg til butikkreditt
     add_to_cart: Legg i handlekurv
     add_variant: Legg til variant
     added_to_cart: Lagt til i handlekurven vellykket!
-    additional_item: Tilleggsvare
     address: Adresse
-    address1: Adresse
-    address2: Adresse (forts.)
     address_action_popup:
       delete_button: ja, slett
       delete_text: Vil du virkelig <br /> slette denne adressen?
@@ -499,13 +490,10 @@
     addresses: Adresser
     adjustable: Regulerbar
     adjustment: Justering
-    adjustment_amount: Beløp
     adjustment_labels:
       tax_rates:
         excluding_tax: "%{name}%{amount}"
         including_tax: "%{name}%{amount} (Inkludert i prisen)"
-    adjustment_successfully_closed: Justeringen er avsluttet!
-    adjustment_successfully_opened: Justeringen er vellykket åpnet!
     adjustment_total: Justering totalt
     adjustments: Justeringer
     adjustments_deleted: Justeringer slettet
@@ -549,26 +537,19 @@
         user_information: brukerinformasjon
     administration: Administrasjon
     advertise: Reklamere
-    agree_to_privacy_policy: Godta retningslinjene for personvern
-    agree_to_terms_of_service: Godta vilkårene for bruk
     all: Alle
     all_adjustments_closed: Alle justeringer er avsluttet!
     all_adjustments_opened: Alle justeringer er vellykket åpnet!
-    all_departments: Alle avdelinger
     all_items_have_been_returned: Alle varene er returnert
     all_rights_reserved: Alle rettigheter forbeholdes
-    already_have_account: Har du allerede en konto?
     alt_text: Alternativ tekst
     alternative_phone: Alternativ telefon
     amount: Beløp
     and: og
-    approve: vedta
     approved_at: Godkjent kl
     approver: Godkjenner
     are_you_sure: Er du sikker?
     are_you_sure_delete: Er du sikker på at du vil slette denne posten?
-    associated_adjustment_closed: Den tilhørende justeringen er lukket og vil ikke beregnes på nytt. Vil du åpne den?
-    authorization_failure: Autorisasjonsfeil
     authorized: Autorisert
     auto_capture: Automatisk fangst
     availability: tilgjengelighet
@@ -577,16 +558,10 @@
     average_order_value: Gjennomsnittlig ordreverdi
     avs_response: AVS-svar
     back: Tilbake
-    back_end: Baksiden
-    back_to_payment: Tilbake til betaling
     back_to_resource_list: Tilbake til %{resource}-listen
-    back_to_rma_reason_list: Tilbake til RMA årsaksliste
     back_to_store: Tilbake til butikken
-    back_to_users_list: Tilbake til brukerliste
     backorderable: Kan bestilles
     backorderable_default: Kan bestilles som standard
-    backordered: Restordrer
-    backordered_confirm_info: Valgt element er omorganisert, så forvent forsinkelser. Er du sikker på at du vil bestille den?
     backordered_info: Restordrer
     backorders_allowed: restordrer tillatt
     balance_due: Forfall av saldo
@@ -594,9 +569,7 @@
     base_percent: Basisprosent
     basic_information: Grunnleggende informasjon
     bill_address: Regningsadresse
-    billing: Fakturering
     billing_address: fakturaadresse
-    both: Både
     breadcrumbs: Brødsmuler
     calculated_reimbursements: Beregnede refusjoner
     calculator: Kalkulator
@@ -612,8 +585,6 @@
     cannot_empty_completed_order: Bestillingen er allerede behandlet, så den kan ikke tømmes
     cannot_perform_operation: Kan ikke utføre ønsket operasjon
     cannot_return_more_than_bought_quantity: Kan ikke returnere mer enn kjøpt antall.
-    cannot_set_shipping_method_without_address: Kan ikke angi fraktmetode før kundedetaljer er oppgitt.
-    capture: Fange
     capture_events: Fang hendelser
     card_code: Kortvarifiseringskode (CVC)
     card_number: Kortnummer
@@ -630,19 +601,9 @@
       quantity: mengde
       remove_from_cart: Fjern fra vognen
       title: Handlevogn
-    cart_subtotal:
-      one: Delsum (1 vare)
-      other: Delsum (%{count} elementer)
-    categories: Kategorier
     category: Kategori
-    category_nav_bar:
-      get_up_to_30_percent_off: FÅ OPP TIL 30% AVSLAG
-      jackets_and_coats: JAKKE & KYST
-      new_collection: NY KOLLEKSJON
-      special_offers: SPESIALTILBUD
     channel: Kanal
     charged: Ladet
-    checkout: Sjekk ut
     checkout_page:
       back_to_cart: tilbake til handlekurven
       checkout_navigation: Kasse navigasjon
@@ -651,25 +612,18 @@
       main_navigation: Hovednavigasjon
       product: Produkt
     choose_a_customer: Velg en kunde
-    choose_a_taxon_to_sort_products_for: Velg en taxon å sortere produkter for
     choose_currency: Velg Valuta
-    choose_dashboard_locale: Velg Dashboard Locale
     choose_location: Velg sted
     city: By
     clear_cache: Tøm cache
-    clear_cache_ok: Cache ble spylt
     clear_cache_warning: Hvis du tømmer hurtigbufferen, reduseres ytelsen til butikken din midlertidig.
-    click_and_drag_on_the_products_to_sort_them: Klikk og dra på produktene for å sortere dem.
     clone: Klon
     close: Lukk
     close_all_adjustments: Lukk alle justeringer
     code: Kode
     company: Selskap
     compare_at_price: Sammenlign til pris
-    complete: fullstendig
-    configuration: Konfigurasjon
     configurations: Konfigurasjoner
-    confirm: Bekrefte
     confirm_delete: Bekreft sletting
     confirm_password: Passord bekreftelse
     contact_phone: Kontakt telefon
@@ -679,7 +633,6 @@
     continue_shopping: Fortsette å handle
     cost_currency: Kostnadsvaluta
     cost_price: Innkjøpspris
-    could_not_create_customer_return: Kunne ikke opprette kunderetur
     could_not_create_stock_movement: Det oppsto et problem med å lagre denne aksjebevegelsen. Vær så snill, prøv på nytt.
     count_on_hand: Tell On Hand
     countries: Land
@@ -688,7 +641,6 @@
     country_name: Navn
     country_rule:
       label: Velg må sendes til dette landet
-    coupon: Kupong
     coupon_code: Kupongkode
     coupon_code_already_applied: Kupongkoden er allerede brukt på denne bestillingen
     coupon_code_applied: Kupongkoden ble brukt på bestillingen din.
@@ -700,22 +652,17 @@
     coupon_code_removed: Kupongkoden ble fjernet fra bestillingen din.
     coupon_code_unknown_error: Denne kupongkoden kunne ikke brukes på handlekurven på dette tidspunktet.
     create: Skape
-    create_a_new_account: Lag en ny bruker
     create_new_order: Opprett ny ordre
     create_reimbursement: Opprett refusjon
     created_at: Laget på
     created_by: Laget av
-    credit: Kreditt
     credit_allowed: Kreditt tillatt
     credit_card: Kredittkort
-    credit_cards: Kredittkort
     credit_owed: Kreditt skyldig
     credited: Kreditt
     credits: Studiepoeng
-    currencies: Valutaer
     currency: Valuta
     currency_settings: Valutainnstillinger
-    current: Strøm
     current_promotion_usage: 'nåværende bruk: %{count}'
     customer: Kunde
     customer_details: kundedetaljer
@@ -814,7 +761,6 @@
     exceptions:
       count_on_hand_setter: 'Kan ikke angi count_on_hand manuelt, da det blir satt automatisk av tilbakekallingen recalculate_count_on_hand. Bruk `update_column (: count_on_hand, value)` i stedet.'
     exchange_for: Bytt mot
-    excl: ekskl.
     existing_shipments: Eksisterende forsendelser
     expedited_exchanges_warning: Eventuelle spesifiserte børser sendes til kunden umiddelbart etter lagring. Kunden vil bli belastet hele varen hvis de ikke returnerer den originale varen innen %{days_window} dager.
     expiration: Utløp
@@ -1551,7 +1497,6 @@
     stock_location_info: Lagerinformasjon
     stock_locations: Aksjeplasser
     stock_locations_need_a_default_country: Du må opprette et standardland før du lager en aksjeplassering.
-    stock_management: Lagerstyring
     stock_management_requires_a_stock_location: Opprett en aksjeplassering for å administrere aksjen.
     stock_movements: Lagerbevegelser
     stock_movements_for_stock_location: Lagerbevegelser for %{stock_location_name}
@@ -1562,7 +1507,6 @@
         variants_unavailable: Noen varianter er ikke tilgjengelige på %{stock}
     stock_transfer_name: Lageroverføring
     stock_transfers: Lageroverføringer
-    stop: Stoppe
     store: butikk
     store_credit:
       additional_payment_needed: Velg en annen betalingsmåte for de resterende <strong> %{amount} </strong>.
@@ -1628,7 +1572,6 @@
     supported_currencies: Støttede valutaer
     supported_currencies_long: En kommaseparert liste over støttede valutaer
     supported_locales: Støttede lokaliteter
-    tags: Merker
     tags_placeholder: Legg til merkelapper
     tax: Avgift
     tax_categories: Skattekategorier
@@ -1723,12 +1666,9 @@
     variant_placeholder: Velg en variant
     variant_prices_search_placeholder: Søk etter SKU eller variantnavn ...
     variants: Varianter
-    version: Versjon
-    void: Tomrom
     weight: Vekt
     what_is_a_cvv: Hva er en (CVV) kredittkortkode?
     width: Bredde
-    year: År
     you_have_no_orders_yet: Du har ingen bestillinger ennå
     your_order_is_empty_add_product: Bestillingen din er tom, vennligst søk etter og legg til et produkt ovenfor
     zip: Glidelås

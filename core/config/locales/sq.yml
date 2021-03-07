@@ -437,7 +437,6 @@ sq:
     abbreviation: Shkurtimi
     accept: Pranoj
     acceptance_errors: Gabimet e pranimit
-    acceptance_status: Statusi i pranimit
     accepted: Pranohet
     account: Llogari
     account_info: Informacioni i llogarisë
@@ -455,32 +454,24 @@ sq:
       refund: Rimbursimi
       save: Ruaj
       update: Azhurnoni
-    activate: Aktivizo
     active: Aktiv
     add: Shto
     add_action_of_type: Shto veprim të llojit
-    add_country: Shto vendin
     add_coupon_code: Shto kodin e kuponit
     add_new_address: Shto adresë të re
     add_new_credit_card: Shtoni një kartë të re
-    add_new_header: Shto një kokë të re
-    add_new_style: Shto stil të ri
     add_one: Shto një
     add_option_value: Shto vlerën e opsionit
     add_product: Shtoni produktin
     add_product_properties: Shtoni vetitë e produktit
     add_rule_of_type: Shto rregull të llojit
-    add_state: Shtoni shtetin
     add_stock: Shto aksione
     add_store: Dyqan i ri
     add_store_credit: Shto Kredinë e Dyqanit
     add_to_cart: Shtoni në Shportë
     add_variant: Shto variantin
     added_to_cart: U shtua në shportë me sukses!
-    additional_item: Artikull shtesë
     address: Adresë
-    address1: Adresë
-    address2: Adresa (vazhduar)
     address_action_popup:
       delete_button: po, fshi
       delete_text: Dëshironi vërtet që <br /> ta fshini këtë adresë?
@@ -499,13 +490,10 @@ sq:
     addresses: Adresat
     adjustable: I rregullueshëm
     adjustment: Rregullimi
-    adjustment_amount: Shuma
     adjustment_labels:
       tax_rates:
         excluding_tax: "%{name}%{amount}"
         including_tax: "%{name}%{amount} (Përfshirë në Çmim)"
-    adjustment_successfully_closed: Rregullimi është mbyllur me sukses!
-    adjustment_successfully_opened: Rregullimi është hapur me sukses!
     adjustment_total: Gjithsej rregullimi
     adjustments: Rregullimet
     adjustments_deleted: Rregullimet u fshinë
@@ -549,26 +537,19 @@ sq:
         user_information: Informacioni i Përdoruesit
     administration: Administrata
     advertise: Reklamoni
-    agree_to_privacy_policy: Pajtohem me politikën e privatësisë
-    agree_to_terms_of_service: Pajtohem me Kushtet e Shërbimit
     all: Të gjitha
     all_adjustments_closed: Të gjitha rregullimet u mbyllën me sukses!
     all_adjustments_opened: Të gjitha rregullimet u hapën me sukses!
-    all_departments: Të gjitha departamentet
     all_items_have_been_returned: Të gjithë artikujt janë kthyer
     all_rights_reserved: Të gjitha të drejtat e rezervuara
-    already_have_account: Posedoni një llogari?
     alt_text: Tekst alternativ
     alternative_phone: Telefon alternativ
     amount: Shuma
     and: dhe
-    approve: aprovoj
     approved_at: Miratuar në
     approver: Aprovues
     are_you_sure: A je i sigurt?
     are_you_sure_delete: Je i sigurt që dëshiron ta fshish këtë rekord?
-    associated_adjustment_closed: Rregullimi i lidhur është mbyllur dhe nuk do të rillogaritet. A doni ta hapni?
-    authorization_failure: Dështimi i Autorizimit
     authorized: I autorizuar
     auto_capture: Kapja automatike
     availability: disponueshmëria
@@ -577,16 +558,10 @@ sq:
     average_order_value: Vlera mesatare e porosisë
     avs_response: Përgjigja AVS
     back: Mbrapa
-    back_end: Backend
-    back_to_payment: Kthehu te Pagesa
     back_to_resource_list: Kthehu tek %{resource} Lista
-    back_to_rma_reason_list: Kthehu tek lista e arsyeve RMA
     back_to_store: Kthehu te Dyqani
-    back_to_users_list: Kthehu tek Lista e Përdoruesve
     backorderable: E parekordueshme
     backorderable_default: Parazgjedhje e parekordueshme
-    backordered: I porositur
-    backordered_confirm_info: Artikulli i zgjedhur është porositur si rezultat, kështu që prisni vonesa. Je i sigurt që dëshiron ta porosisësh?
     backordered_info: I porositur
     backorders_allowed: porositësit e lejuar
     balance_due: Bilanci i Detyrueshëm
@@ -594,9 +569,7 @@ sq:
     base_percent: Përqindja e bazës
     basic_information: Informata themelore
     bill_address: Adresa e faturës
-    billing: Faturimi
     billing_address: Adresa e faturimit
-    both: Të dyja
     breadcrumbs: Therrime buke
     calculated_reimbursements: Rimbursimet e llogaritura
     calculator: Llogaritësi
@@ -612,8 +585,6 @@ sq:
     cannot_empty_completed_order: Porosia tashmë është përpunuar kështu që nuk mund të zbrazet
     cannot_perform_operation: Nuk mund të kryejë operacionin e kërkuar
     cannot_return_more_than_bought_quantity: Nuk mund të kthehet më shumë sesa sasia e blerë.
-    cannot_set_shipping_method_without_address: Nuk mund të caktohet mënyra e dërgimit derisa të sigurohen detajet e klientit.
-    capture: Kapni
     capture_events: Kap ngjarjet
     card_code: Kodi i Ndryshimit të Kartës (CVC)
     card_number: Numri i kartes
@@ -630,19 +601,9 @@ sq:
       quantity: sasi
       remove_from_cart: Hiq nga karroca
       title: Shporta
-    cart_subtotal:
-      one: Nëntotali (1 artikull)
-      other: Nëntotali (%{count} artikuj)
-    categories: Kategoritë
     category: Kategoria
-    category_nav_bar:
-      get_up_to_30_percent_off: B GNI DO 30% zbritje
-      jackets_and_coats: Xhaketë & kostume
-      new_collection: KOLEKSION I RI
-      special_offers: OFERTA SPECIALE
     channel: Kanali
     charged: I akuzuar
-    checkout: Arka
     checkout_page:
       back_to_cart: përsëri në karrocë
       checkout_navigation: Navigimi në arkë
@@ -651,25 +612,18 @@ sq:
       main_navigation: Navigimi kryesor
       product: Produkt
     choose_a_customer: Zgjidhni një klient
-    choose_a_taxon_to_sort_products_for: Zgjidhni një takson për të renditur produktet
     choose_currency: Zgjidhni monedhën
-    choose_dashboard_locale: Zgjidhni Vendndodhjen e Pultit
     choose_location: Zgjidhni vendndodhjen
     city: Qyteti
     clear_cache: Pastroje memorien e përkohshme
-    clear_cache_ok: Cache u skuq
     clear_cache_warning: Pastrimi i memorjes së përkohshme do të zvogëlojë përkohësisht performancën e dyqanit tuaj.
-    click_and_drag_on_the_products_to_sort_them: Klikoni dhe tërhiqni produktet për t'i renditur ato.
     clone: Kloni
     close: Mbylle
     close_all_adjustments: Mbyllni të gjitha rregullimet
     code: Kodin
     company: Kompania
     compare_at_price: Krahasoni me çmim
-    complete: i plotë
-    configuration: Konfigurimi
     configurations: Konfigurimet
-    confirm: Konfirmo
     confirm_delete: Konfirmo fshirjen
     confirm_password: Konfirmimi i fjalëkalimit
     contact_phone: Telefoni i kontaktit
@@ -679,7 +633,6 @@ sq:
     continue_shopping: Vazhdoni blerjet
     cost_currency: Valuta e kostos
     cost_price: Çmimi i kostos
-    could_not_create_customer_return: Nuk mund të krijoj kthimin e klientit
     could_not_create_stock_movement: Kishte një problem për të shpëtuar këtë lëvizje të aksioneve. Ju lutemi provoni përsëri.
     count_on_hand: Mbështet në dorë
     countries: Vendet
@@ -688,7 +641,6 @@ sq:
     country_name: Emrin
     country_rule:
       label: Zgjidhni duhet të dërgohen në këtë vend
-    coupon: Kupon
     coupon_code: Kodi kupon
     coupon_code_already_applied: Kodi i kuponit është aplikuar tashmë në këtë porosi
     coupon_code_applied: Kodi i kuponit u aplikua me sukses në porosinë tuaj.
@@ -700,22 +652,17 @@ sq:
     coupon_code_removed: Kodi i kuponit u hoq me sukses nga porosia juaj.
     coupon_code_unknown_error: Ky kod i kuponit nuk mund të zbatohej në karrocë në këtë kohë.
     create: Krijoni
-    create_a_new_account: Krijo nje llogari te re
     create_new_order: Krijoni një rend të ri
     create_reimbursement: Krijoni rimbursim
     created_at: Krijuar në
     created_by: Krijuar nga
-    credit: Kredia
     credit_allowed: Kredia lejohet
     credit_card: Kartë Krediti
-    credit_cards: Kartat e kreditit
     credit_owed: Kredia në pronësi
     credited: Kredituar
     credits: Kreditë
-    currencies: Monedhat
     currency: Monedha
     currency_settings: Cilësimet e valutave
-    current: Aktuale
     current_promotion_usage: 'përdorimi aktual: %{count}'
     customer: Konsumatori
     customer_details: Detajet e Klientit
@@ -814,7 +761,6 @@ sq:
     exceptions:
       count_on_hand_setter: 'Nuk mund të vendoset count_on_ dorë manualisht, pasi vendoset automatikisht nga thirrja e rillogaritjes_ mbi_dorëz. Ju lutemi përdorni `kolonën_përditësim (: count_on_hand, vlera) në vend.'
     exchange_for: Shkëmbim për
-    excl: përjashto
     existing_shipments: Dërgesat ekzistuese
     expedited_exchanges_warning: Çdo shkëmbim i specifikuar do t'i dërgohet klientit menjëherë pas kursimit. Konsumatori do të tarifohet në shumën e plotë të artikullit nëse nuk e kthen sendin origjinal brenda %{days_window} ditëve.
     expiration: Skadimi
@@ -1551,7 +1497,6 @@ sq:
     stock_location_info: Informacioni i vendndodhjes së aksioneve
     stock_locations: Vendndodhjet e aksioneve
     stock_locations_need_a_default_country: Ju duhet të krijoni një vend të paracaktuar para se të krijoni një vendndodhje të aksioneve.
-    stock_management: Menaxhimi i aksioneve
     stock_management_requires_a_stock_location: Ju lutemi krijoni një vendndodhje të aksioneve në mënyrë që të menaxhoni aksionet.
     stock_movements: Lëvizjet e aksioneve
     stock_movements_for_stock_location: Lëvizjet e aksioneve për %{stock_location_name}
@@ -1562,7 +1507,6 @@ sq:
         variants_unavailable: Disa variante nuk janë në dispozicion në %{stock}
     stock_transfer_name: Transferimi i aksioneve
     stock_transfers: Transfertat e aksioneve
-    stop: Ndal
     store: Ruaj
     store_credit:
       additional_payment_needed: Zgjidhni një mënyrë tjetër pagese për <strong> %{amount} </strong> e mbetur.
@@ -1628,7 +1572,6 @@ sq:
     supported_currencies: Monedhat e mbështetura
     supported_currencies_long: Një listë e monedhave të mbështetura të ndara me presje
     supported_locales: Vendndodhjet e mbështetura
-    tags: Etiketat
     tags_placeholder: Shto etiketat
     tax: Taksa
     tax_categories: Kategoritë e taksave
@@ -1723,12 +1666,9 @@ sq:
     variant_placeholder: Zgjidhni një variant
     variant_prices_search_placeholder: Kërkoni për SKU ose emrin e variantit ...
     variants: Variantet
-    version: Version
-    void: E pavlefshme
     weight: Pesha
     what_is_a_cvv: Çfarë është kodi i kartës së kreditit (CVV)?
     width: Gjerësia
-    year: Viti
     you_have_no_orders_yet: Nuk keni porosi akoma
     your_order_is_empty_add_product: Porosia juaj është bosh, ju lutemi kërkoni dhe shtoni një produkt më sipër
     zip: Zip

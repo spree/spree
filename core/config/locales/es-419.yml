@@ -437,7 +437,6 @@ es-419:
     abbreviation: Abreviatura
     accept: Aceptar
     acceptance_errors: Errores de aceptación
-    acceptance_status: Estado de aceptación
     accepted: Aceptado
     account: Cuenta
     account_info: Informacion de cuenta
@@ -455,32 +454,24 @@ es-419:
       refund: Reembolso
       save: Salvar
       update: Actualizar
-    activate: Activar
     active: Activo
     add: Agregar
     add_action_of_type: Agregar acción de tipo
-    add_country: Agregar país
     add_coupon_code: Agregar código de cupón
     add_new_address: agregar nueva dirección
     add_new_credit_card: Agregar una nueva tarjeta
-    add_new_header: Agregar nuevo encabezado
-    add_new_style: Agregar nuevo estilo
     add_one: Agrega uno
     add_option_value: Agregar valor de opción
     add_product: Agregar producto
     add_product_properties: Agregar propiedades de producto
     add_rule_of_type: Agregar regla de tipo
-    add_state: Agregar estado
     add_stock: Agregar stock
     add_store: Nueva tienda
     add_store_credit: Agregar crédito de la tienda
     add_to_cart: Añadir al carrito
     add_variant: Agregar variante
     added_to_cart: "¡Agregado al carrito con éxito!"
-    additional_item: Artículo adicional
     address: Dirección
-    address1: Dirección
-    address2: Dirección (continuación.)
     address_action_popup:
       delete_button: si, borra
       delete_text: "¿Realmente desea <br /> eliminar esta dirección?"
@@ -499,13 +490,10 @@ es-419:
     addresses: Direcciones
     adjustable: Ajustable
     adjustment: Ajustamiento
-    adjustment_amount: Cantidad
     adjustment_labels:
       tax_rates:
         excluding_tax: "%{name}%{amount}"
         including_tax: "%{name}%{amount} (incluido en el precio)"
-    adjustment_successfully_closed: "¡El ajuste se ha cerrado con éxito!"
-    adjustment_successfully_opened: "¡El ajuste se ha abierto con éxito!"
     adjustment_total: Total de ajuste
     adjustments: Ajustes
     adjustments_deleted: Ajustes eliminados
@@ -549,26 +537,19 @@ es-419:
         user_information: informacion del usuario
     administration: Administración
     advertise: Anunciar
-    agree_to_privacy_policy: Aceptar la política de privacidad
-    agree_to_terms_of_service: Aceptar los términos de servicio
     all: Todos
     all_adjustments_closed: "¡Todos los ajustes se cerraron correctamente!"
     all_adjustments_opened: "¡Todos los ajustes se abrieron correctamente!"
-    all_departments: Todos los departamentos
     all_items_have_been_returned: Todos los artículos han sido devueltos.
     all_rights_reserved: Reservados todos los derechos
-    already_have_account: "¿Ya tienes una cuenta?"
     alt_text: Texto alternativo
     alternative_phone: Telefono alternativo
     amount: Cantidad
     and: y
-    approve: aprobar
     approved_at: Aprobado en
     approver: Aprobador
     are_you_sure: "¿Está seguro?"
     are_you_sure_delete: "¿Está seguro de que desea eliminar este registro?"
-    associated_adjustment_closed: El ajuste asociado está cerrado y no se volverá a calcular. ¿Quieres abrirlo?
-    authorization_failure: Fallo de autorización
     authorized: Autorizado
     auto_capture: Captura automática
     availability: disponibilidad
@@ -577,16 +558,10 @@ es-419:
     average_order_value: Valor medio de la orden
     avs_response: Respuesta AVS
     back: atrás
-    back_end: Backend
-    back_to_payment: Volver al pago
     back_to_resource_list: Volver a la lista %{resource}
-    back_to_rma_reason_list: Volver a la lista de motivos de RMA
     back_to_store: De vuelta a la tienda
-    back_to_users_list: Volver a la lista de usuarios
     backorderable: Pendiente
     backorderable_default: Predeterminado pendiente
-    backordered: Pendiente
-    backordered_confirm_info: El artículo seleccionado está pendiente, así que espere retrasos. ¿Estás seguro de que quieres pedirlo?
     backordered_info: Pendiente
     backorders_allowed: pedidos pendientes permitidos
     balance_due: Saldo adeudado
@@ -594,9 +569,7 @@ es-419:
     base_percent: Porcentaje base
     basic_information: Información básica
     bill_address: Dirección de factura
-    billing: Facturación
     billing_address: Dirección de Envio
-    both: Ambos
     breadcrumbs: Migas de pan
     calculated_reimbursements: Reembolsos calculados
     calculator: Calculadora
@@ -612,8 +585,6 @@ es-419:
     cannot_empty_completed_order: El pedido ya se ha procesado, por lo que no se puede vaciar.
     cannot_perform_operation: No se puede realizar la operación solicitada
     cannot_return_more_than_bought_quantity: No se puede devolver más de la cantidad comprada.
-    cannot_set_shipping_method_without_address: No se puede establecer el método de envío hasta que se proporcionen los detalles del cliente.
-    capture: Capturar
     capture_events: Capturar eventos
     card_code: Código de variación de tarjeta (CVC)
     card_number: Número de tarjeta
@@ -630,19 +601,9 @@ es-419:
       quantity: cantidad
       remove_from_cart: Quitar del carrito
       title: Carrito de compras
-    cart_subtotal:
-      one: Subtotal (1 artículo)
-      other: Subtotal (%{count} elementos)
-    categories: Categorias
     category: Categoría
-    category_nav_bar:
-      get_up_to_30_percent_off: CONSIGUE HASTA UN 30% DE DESCUENTO
-      jackets_and_coats: CHAQUETA Y COSTAS
-      new_collection: NUEVA COLECCIÓN
-      special_offers: OFERTAS ESPECIALES
     channel: Canal
     charged: Cargado
-    checkout: Revisa
     checkout_page:
       back_to_cart: de vuelta al carro
       checkout_navigation: Navegación de pago
@@ -651,25 +612,18 @@ es-419:
       main_navigation: Navegación Principal
       product: Producto
     choose_a_customer: Elija un cliente
-    choose_a_taxon_to_sort_products_for: Elija un taxón para clasificar los productos
     choose_currency: Elegir Moneda
-    choose_dashboard_locale: Elija la configuración regional del panel
     choose_location: Elegir la ubicación
     city: Ciudad
     clear_cache: Limpiar cache
-    clear_cache_ok: Caché se vació
     clear_cache_warning: Limpiar la caché reducirá temporalmente el rendimiento de su tienda.
-    click_and_drag_on_the_products_to_sort_them: Haga clic y arrastre sobre los productos para ordenarlos.
     clone: Clon
     close: Cerrar
     close_all_adjustments: Cerrar todos los ajustes
     code: Código
     company: Compañía
     compare_at_price: Comparar a precio
-    complete: completo
-    configuration: Configuración
     configurations: Configuraciones
-    confirm: Confirmar
     confirm_delete: Confirmar la eliminación
     confirm_password: Confirmación de contraseña
     contact_phone: Teléfono de contacto
@@ -679,7 +633,6 @@ es-419:
     continue_shopping: Seguir comprando
     cost_currency: Moneda de costo
     cost_price: Precio de coste
-    could_not_create_customer_return: No se pudo crear la devolución del cliente
     could_not_create_stock_movement: Hubo un problema al guardar este movimiento de stock. Inténtalo de nuevo.
     count_on_hand: Cuente a mano
     countries: Los paises
@@ -688,7 +641,6 @@ es-419:
     country_name: Nombre
     country_rule:
       label: Elija debe enviarse a este país
-    coupon: Cupón
     coupon_code: Código promocional
     coupon_code_already_applied: El código de cupón ya se aplicó a este pedido.
     coupon_code_applied: El código de cupón se aplicó correctamente a su pedido.
@@ -700,22 +652,17 @@ es-419:
     coupon_code_removed: El código de cupón se eliminó correctamente de su pedido.
     coupon_code_unknown_error: Este código de cupón no se pudo aplicar al carrito en este momento.
     create: Crear
-    create_a_new_account: Crea una cuenta nueva
     create_new_order: Crear nuevo pedido
     create_reimbursement: Crear reembolso
     created_at: Creado en
     created_by: Creado por
-    credit: Crédito
     credit_allowed: Crédito permitido
     credit_card: Tarjeta de crédito
-    credit_cards: Tarjetas de crédito
     credit_owed: Crédito adeudado
     credited: Acreditado
     credits: Créditos
-    currencies: Monedas
     currency: Divisa
     currency_settings: Configuración de moneda
-    current: Actual
     current_promotion_usage: 'uso actual: %{count}'
     customer: Cliente
     customer_details: Detalles del cliente
@@ -814,7 +761,6 @@ es-419:
     exceptions:
       count_on_hand_setter: 'No se puede establecer count_on_hand manualmente, ya que lo establece automáticamente la devolución de llamada recalculate_count_on_hand. En su lugar, utilice `update_column (: count_on_hand, value)`.'
     exchange_for: Intercambiar por
-    excl: excl.
     existing_shipments: Envíos existentes
     expedited_exchanges_warning: Cualquier cambio especificado se enviará al cliente inmediatamente después de guardarlo. Al cliente se le cobrará el monto total del artículo si no devuelve el artículo original dentro de %{days_window} días.
     expiration: Vencimiento
@@ -1551,7 +1497,6 @@ es-419:
     stock_location_info: Información de ubicación de stock
     stock_locations: Ubicaciones de stock
     stock_locations_need_a_default_country: Debe crear un país predeterminado antes de crear una ubicación de stock.
-    stock_management: Gestion de Stocks
     stock_management_requires_a_stock_location: Cree una ubicación de stock para gestionar el stock.
     stock_movements: Movimientos de stock
     stock_movements_for_stock_location: Movimientos de stock para %{stock_location_name}
@@ -1562,7 +1507,6 @@ es-419:
         variants_unavailable: Algunas variantes no están disponibles en %{stock}
     stock_transfer_name: Transferencia de acciones
     stock_transfers: Transferencias de acciones
-    stop: Detener
     store: Tienda
     store_credit:
       additional_payment_needed: Seleccione otra forma de pago para los <strong> %{amount} </strong> restantes.
@@ -1628,7 +1572,6 @@ es-419:
     supported_currencies: Monedas admitidas
     supported_currencies_long: Una lista separada por comas de las monedas admitidas
     supported_locales: Locales admitidos
-    tags: Etiquetas
     tags_placeholder: Agregar etiquetas
     tax: Impuesto
     tax_categories: Categorías de impuestos
@@ -1723,12 +1666,9 @@ es-419:
     variant_placeholder: Elige una variante
     variant_prices_search_placeholder: Buscar SKU o nombre de variante ...
     variants: Variantes
-    version: Versión
-    void: Vacío
     weight: Peso
     what_is_a_cvv: "¿Qué es un código de tarjeta de crédito (CVV)?"
     width: Ancho
-    year: Año
     you_have_no_orders_yet: Aún no tienes pedidos
     your_order_is_empty_add_product: Su pedido está vacío, busque y agregue un producto arriba
     zip: Cremallera

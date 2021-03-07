@@ -519,7 +519,6 @@ hr:
     abbreviation: Skraćenica
     accept: Prihvatiti
     acceptance_errors: Pogreške prihvaćanja
-    acceptance_status: Status prihvaćanja
     accepted: Prihvaćen
     account: Račun
     account_info: Informacije računa
@@ -537,32 +536,24 @@ hr:
       refund: Povrat novca
       save: Uštedjeti
       update: Ažuriraj
-    activate: Aktivirati
     active: Aktivan
     add: Dodati
     add_action_of_type: Dodajte radnju tipa
-    add_country: Dodaj zemlju
     add_coupon_code: Dodajte kod kupona
     add_new_address: Dodajte novu adresu
     add_new_credit_card: Dodajte novu karticu
-    add_new_header: Dodajte novo zaglavlje
-    add_new_style: Dodajte novi stil
     add_one: Dodaj jedan
     add_option_value: Dodaj vrijednost opcije
     add_product: Dodajte proizvod
     add_product_properties: Dodajte svojstva proizvoda
     add_rule_of_type: Dodajte pravilo tipa
-    add_state: Dodaj državu
     add_stock: Dodajte dionicu
     add_store: Nova trgovina
     add_store_credit: Dodajte kredit u trgovini
     add_to_cart: Dodaj u košaricu
     add_variant: Dodaj varijantu
     added_to_cart: Uspješno dodano u košaricu!
-    additional_item: Dodatna stavka
     address: Adresa
-    address1: Adresa
-    address2: Adresa (nastavak)
     address_action_popup:
       delete_button: da, izbriši
       delete_text: Želite li zaista <br /> izbrisati ovu adresu?
@@ -581,13 +572,10 @@ hr:
     addresses: Adrese
     adjustable: Podesiva
     adjustment: Podešavanje
-    adjustment_amount: Iznos
     adjustment_labels:
       tax_rates:
         excluding_tax: "%{name}%{amount}"
         including_tax: "%{name}%{amount} (uključeno u cijenu)"
-    adjustment_successfully_closed: Prilagodba je uspješno zatvorena!
-    adjustment_successfully_opened: Prilagodba je uspješno otvorena!
     adjustment_total: Ukupna prilagodba
     adjustments: Prilagođavanja
     adjustments_deleted: Prilagodbe izbrisane
@@ -631,26 +619,19 @@ hr:
         user_information: informacije o korisniku
     administration: Uprava
     advertise: Oglašavati
-    agree_to_privacy_policy: Pristanite na Pravila o privatnosti
-    agree_to_terms_of_service: Pristanite na Uvjete pružanja usluge
     all: svi
     all_adjustments_closed: Sve prilagodbe uspješno zatvorene!
     all_adjustments_opened: Sve su prilagodbe uspješno otvorene!
-    all_departments: Svi odjeli
     all_items_have_been_returned: Svi predmeti su vraćeni
     all_rights_reserved: Sva prava pridržana
-    already_have_account: Već imate račun?
     alt_text: Alternativni tekst
     alternative_phone: Alternativni telefon
     amount: Iznos
     and: i
-    approve: odobriti
     approved_at: Odobreno u
     approver: Odobravatelj
     are_you_sure: Jesi li siguran?
     are_you_sure_delete: Jeste li sigurni da želite izbrisati ovaj zapis?
-    associated_adjustment_closed: Povezana prilagodba je zatvorena i neće se ponovno izračunati. Želite li ga otvoriti?
-    authorization_failure: Neuspjeh autorizacije
     authorized: Ovlašteno
     auto_capture: Automatsko snimanje
     availability: dostupnost
@@ -659,16 +640,10 @@ hr:
     average_order_value: Prosječna vrijednost narudžbe
     avs_response: Odgovor AVS-a
     back: leđa
-    back_end: Backend
-    back_to_payment: Natrag na plaćanje
     back_to_resource_list: Natrag na %{resource} popis
-    back_to_rma_reason_list: Povratak na RMA popis razloga
     back_to_store: Povratak u trgovinu
-    back_to_users_list: Natrag na popis korisnika
     backorderable: Može se naručiti
     backorderable_default: Zadana zadaća koja se može poručiti
-    backordered: Unatrag
-    backordered_confirm_info: Odabrana je stavka naručena pa očekujte kašnjenja. Jeste li sigurni da ga želite naručiti?
     backordered_info: Unatrag
     backorders_allowed: dopušteni unatrag
     balance_due: Balans
@@ -676,9 +651,7 @@ hr:
     base_percent: Osnovni postotak
     basic_information: Osnovne informacije
     bill_address: Adresa za račune
-    billing: Naplata
     billing_address: Adresa za naplatu
-    both: Oba
     breadcrumbs: Krušne mrvice
     calculated_reimbursements: Izračunate naknade
     calculator: Kalkulator
@@ -694,8 +667,6 @@ hr:
     cannot_empty_completed_order: Narudžba je već obrađena pa se ne može isprazniti
     cannot_perform_operation: Nije moguće izvršiti traženu operaciju
     cannot_return_more_than_bought_quantity: Ne možete vratiti više od kupljene količine.
-    cannot_set_shipping_method_without_address: Nije moguće postaviti način dostave dok se ne navedu detalji kupca.
-    capture: Uhvatiti
     capture_events: Hvatanje događaja
     card_code: Kôd za izmjenu kartice (CVC)
     card_number: Broj kartice
@@ -712,21 +683,9 @@ hr:
       quantity: količina
       remove_from_cart: Izvadite iz košarice
       title: Košarica
-    cart_subtotal:
-      few: Međuzbir (1 stavka)
-      many: Međuzbir (%{count} stavki)
-      one: Međuzbir (1 stavka)
-      other: Međuzbir (%{count} stavki)
-    categories: Kategorije
     category: Kategorija
-    category_nav_bar:
-      get_up_to_30_percent_off: OSTVARITE DO 30%
-      jackets_and_coats: JAKNA & OBALA
-      new_collection: NOVA KOLEKCIJA
-      special_offers: POSEBNE PONUDE
     channel: Kanal
     charged: Napunjeno
-    checkout: Provjeri
     checkout_page:
       back_to_cart: natrag u kolica
       checkout_navigation: Navigacija za naplatu
@@ -735,25 +694,18 @@ hr:
       main_navigation: Glavna navigacija
       product: Proizvod
     choose_a_customer: Odaberite kupca
-    choose_a_taxon_to_sort_products_for: Odaberite takson za sortiranje proizvoda
     choose_currency: Odaberite valutu
-    choose_dashboard_locale: Odaberite Lokale nadzorne ploče
     choose_location: Odaberite mjesto
     city: Grad
     clear_cache: Očisti predmemoriju
-    clear_cache_ok: Predmemorija je isprana
     clear_cache_warning: Brisanjem predmemorije privremeno će se smanjiti performanse vaše trgovine.
-    click_and_drag_on_the_products_to_sort_them: Kliknite i povucite proizvode da biste ih razvrstali.
     clone: Klon
     close: Zatvoriti
     close_all_adjustments: Zatvorite sve prilagodbe
     code: Kodirati
     company: Društvo
     compare_at_price: Usporedite po cijeni
-    complete: dovršen
-    configuration: Konfiguracija
     configurations: Konfiguracije
-    confirm: Potvrdite
     confirm_delete: Potvrdite brisanje
     confirm_password: Potvrda lozinke
     contact_phone: Kontakt telefon
@@ -763,7 +715,6 @@ hr:
     continue_shopping: Nastaviti s kupovinom
     cost_currency: Valuta troškova
     cost_price: Cijena
-    could_not_create_customer_return: Nije moguće stvoriti povrat kupaca
     could_not_create_stock_movement: Pojavio se problem prilikom spremanja ovog kretanja dionica. Molim te pokušaj ponovno.
     count_on_hand: Broji na ruku
     countries: Zemlje
@@ -772,7 +723,6 @@ hr:
     country_name: Ime
     country_rule:
       label: Odaberite mora biti isporučen u ovu zemlju
-    coupon: Kupon
     coupon_code: Šifra kupona
     coupon_code_already_applied: Kôd kupona već je primijenjen na ovu narudžbu
     coupon_code_applied: Kôd kupona uspješno je primijenjen na vašu narudžbu.
@@ -784,22 +734,17 @@ hr:
     coupon_code_removed: Kôd kupona uspješno je uklonjen iz vaše narudžbe.
     coupon_code_unknown_error: Trenutno se ovaj kôd kupona ne može primijeniti na košaricu.
     create: Stvoriti
-    create_a_new_account: Izraditi novi račun
     create_new_order: Stvorite novu narudžbu
     create_reimbursement: Stvorite naknadu
     created_at: Stvoreno u
     created_by: Napravio
-    credit: Kreditna
     credit_allowed: Kredit dozvoljen
     credit_card: Kreditna kartica
-    credit_cards: Kreditne kartice
     credit_owed: Kredit zaslužen
     credited: Priznato
     credits: Zasluge
-    currencies: Valute
     currency: Valuta
     currency_settings: Postavke valuta
-    current: Trenutno
     current_promotion_usage: 'trenutna upotreba: %{count}'
     customer: Kupac
     customer_details: Podaci o kupcu
@@ -900,7 +845,6 @@ hr:
     exceptions:
       count_on_hand_setter: 'Ne može se ručno postaviti count_on_hand, jer se automatski postavlja povratnim pozivom recculate_count_on_hand. Umjesto toga upotrijebite `update_column (: count_on_hand, value)`.'
     exchange_for: Razmjena za
-    excl: bez
     existing_shipments: Postojeće pošiljke
     expedited_exchanges_warning: Svaka navedena razmjena isporučuje se kupcu odmah po spremanju. Kupcu će se naplatiti puni iznos predmeta ako izvorni predmet ne vrati u roku od %{days_window} dana.
     expiration: Istek
@@ -1639,7 +1583,6 @@ hr:
     stock_location_info: Informacije o dionici
     stock_locations: Lokacije dionica
     stock_locations_need_a_default_country: Morate stvoriti zadanu zemlju prije stvaranja mjesta zaliha.
-    stock_management: Upravljanje dionicama
     stock_management_requires_a_stock_location: Molimo stvorite mjesto zaliha kako biste upravljali zalihama.
     stock_movements: Kretanje dionica
     stock_movements_for_stock_location: Kretanje dionica za %{stock_location_name}
@@ -1650,7 +1593,6 @@ hr:
         variants_unavailable: Neke varijante nisu dostupne na %{stock}
     stock_transfer_name: Prijenos dionica
     stock_transfers: Prijenosi dionica
-    stop: Stop
     store: Spremi
     store_credit:
       additional_payment_needed: Odaberite drugi način plaćanja za preostali <strong> %{amount} </strong>.
@@ -1716,7 +1658,6 @@ hr:
     supported_currencies: Podržane valute
     supported_currencies_long: Popis podržanih valuta odvojenih zarezom
     supported_locales: Podržani jezici
-    tags: Oznake
     tags_placeholder: Dodaj oznake
     tax: Porez
     tax_categories: Porezne kategorije
@@ -1811,12 +1752,9 @@ hr:
     variant_placeholder: Odaberite varijantu
     variant_prices_search_placeholder: Potražite naziv SKU-a ili varijante ...
     variants: Varijante
-    version: Verzija
-    void: Poništiti
     weight: Težina
     what_is_a_cvv: Što je (CVV) kod kreditne kartice?
     width: Širina
-    year: Godina
     you_have_no_orders_yet: Još nemate narudžbi
     your_order_is_empty_add_product: Vaša je narudžba prazna, potražite i dodajte proizvod iznad
     zip: Zip

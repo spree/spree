@@ -437,7 +437,6 @@ bn:
     abbreviation: সংক্ষিপ্তসার
     accept: গ্রহণ করুন
     acceptance_errors: স্বীকৃতি ত্রুটি
-    acceptance_status: স্বীকৃতি স্থিতি
     accepted: স্বীকৃত
     account: হিসাব
     account_info: অ্যাকাউন্ট তথ্য
@@ -455,32 +454,24 @@ bn:
       refund: ফেরত দেওয়া
       save: সংরক্ষণ
       update: হালনাগাদ
-    activate: সক্রিয় করুন
     active: সক্রিয়
     add: অ্যাড
     add_action_of_type: প্রকারের ক্রিয়া যুক্ত করুন
-    add_country: দেশ যোগ করুন
     add_coupon_code: কুপন কোড যুক্ত করুন
     add_new_address: নতুন ঠিকানা যোগ করুন
     add_new_credit_card: একটি নতুন কার্ড যুক্ত করুন
-    add_new_header: নতুন শিরোনাম যুক্ত করুন
-    add_new_style: নতুন স্টাইল যুক্ত করুন
     add_one: এক যোগ কর
     add_option_value: বিকল্প মান যোগ করুন
     add_product: পণ্য যুক্ত করুন
     add_product_properties: পণ্য বৈশিষ্ট্য যুক্ত করুন
     add_rule_of_type: প্রকারের বিধি যুক্ত করুন
-    add_state: রাজ্য যুক্ত করুন
     add_stock: স্টক যুক্ত করুন
     add_store: নতুন দোকান
     add_store_credit: স্টোর ক্রেডিট যুক্ত করুন
     add_to_cart: কার্ট যোগ করুন
     add_variant: ভেরিয়েন্ট যুক্ত করুন
     added_to_cart: সফলভাবে কার্টে যুক্ত!
-    additional_item: অতিরিক্ত জিনিস
     address: ঠিকানা
-    address1: ঠিকানা
-    address2: ঠিকানা (নিয়ন্ত্রিত)
     address_action_popup:
       delete_button: হ্যাঁ, মুছুন
       delete_text: আপনি কি এই ঠিকানাটি মুছে ফেলতে চান?
@@ -499,13 +490,10 @@ bn:
     addresses: ঠিকানা
     adjustable: সামঞ্জস্যযোগ্য
     adjustment: সামঞ্জস্য
-    adjustment_amount: পরিমাণ
     adjustment_labels:
       tax_rates:
         excluding_tax: "%{name}%{amount}"
         including_tax: "%{name}%{amount} (দাম অন্তর্ভুক্ত)"
-    adjustment_successfully_closed: সমন্বয় সফলভাবে বন্ধ করা হয়েছে!
-    adjustment_successfully_opened: সমন্বয় সফলভাবে খোলা হয়েছে!
     adjustment_total: সমন্বয় মোট
     adjustments: সামঞ্জস্য
     adjustments_deleted: সমন্বয় মোছা হয়েছে
@@ -549,26 +537,19 @@ bn:
         user_information: ব্যবহারকারীর তথ্য
     administration: প্রশাসন
     advertise: বিজ্ঞাপন দিন
-    agree_to_privacy_policy: গোপনীয়তা নীতিতে সম্মত হন
-    agree_to_terms_of_service: পরিষেবার শর্তাদিতে সম্মত হন
     all: সব
     all_adjustments_closed: সমস্ত সমন্বয় সফলভাবে বন্ধ!
     all_adjustments_opened: সমস্ত সমন্বয় সফলভাবে খোলা!
-    all_departments: সমস্ত বিভাগ
     all_items_have_been_returned: সমস্ত আইটেম ফিরিয়ে দেওয়া হয়েছে
     all_rights_reserved: সমস্ত অধিকার সংরক্ষিত
-    already_have_account: ইতিমধ্যে একটি সদস্যপদ আছে?
     alt_text: বিকল্প পাঠ্য
     alternative_phone: অন্য ফোন
     amount: পরিমাণ
     and: এবং
-    approve: অনুমোদন
     approved_at: এ অনুমোদিত
     approver: অনুমোদিত
     are_you_sure: তুমি কি নিশ্চিত?
     are_you_sure_delete: আপনি কি নিশ্চিত যে আপনি এই রেকর্ডটি মুছতে চান?
-    associated_adjustment_closed: সম্পর্কিত সমন্বয় বন্ধ আছে, এবং পুনরায় গণনা করা হবে না। আপনি এটি খুলতে চান?
-    authorization_failure: অনুমোদন ব্যর্থতা
     authorized: অনুমোদিত
     auto_capture: অটো ক্যাপচার
     availability: উপস্থিতি
@@ -577,16 +558,10 @@ bn:
     average_order_value: গড় অর্ডার মান
     avs_response: এভিএস প্রতিক্রিয়া
     back: পেছনে
-    back_end: ব্যাকএন্ড
-    back_to_payment: পেমেন্ট টু
     back_to_resource_list: "%{resource} তালিকায় ফিরে যান"
-    back_to_rma_reason_list: আরএমএ যুক্তির তালিকায় ফিরে যান
     back_to_store: দোকানে ফিরে আসুন
-    back_to_users_list: ব্যবহারকারীদের তালিকায় ফিরে যান
     backorderable: ব্যাকর্ডেবল
     backorderable_default: ব্যাকর্ডেবল ডিফল্ট
-    backordered: ব্যাকর্ডার্ড
-    backordered_confirm_info: নির্বাচিত আইটেমটি ব্যাকর্ডার্ড তাই বিলম্ব আশা করে। আপনি কি নিশ্চিত যে আপনি এটি অর্ডার করতে চান?
     backordered_info: ব্যাকর্ডার্ড
     backorders_allowed: ব্যাকর্ডার অনুমোদিত allowed
     balance_due: টাকা বাকী আছে
@@ -594,9 +569,7 @@ bn:
     base_percent: বেস শতাংশ
     basic_information: মৌলিক তথ্য
     bill_address: বিল ঠিকানা
-    billing: বিলিং
     billing_address: বিলিংয়ের ঠিকানা
-    both: দুটোই
     breadcrumbs: ব্রেডক্রাম্বস
     calculated_reimbursements: গণনা করা প্রতিদান
     calculator: ক্যালকুলেটর
@@ -612,8 +585,6 @@ bn:
     cannot_empty_completed_order: অর্ডার ইতিমধ্যে প্রক্রিয়া করা হয়েছে তাই এটি খালি করা যায় না
     cannot_perform_operation: অনুরোধ করা অপারেশন করতে পারবেন না
     cannot_return_more_than_bought_quantity: কেনা পরিমাণের চেয়ে বেশি ফিরতে পারবেন না।
-    cannot_set_shipping_method_without_address: গ্রাহকের বিশদ সরবরাহ না করা পর্যন্ত শিপিং পদ্ধতি সেট করা যায় না।
-    capture: ক্যাপচার
     capture_events: ইভেন্টগুলি ক্যাপচার করুন
     card_code: কার্ড ভেরিফিকেশন কোড (সিভিসি)
     card_number: কার্ড নম্বর
@@ -630,19 +601,9 @@ bn:
       quantity: পরিমাণ
       remove_from_cart: কার্ট থেকে সরান
       title: বাজারের ব্যাগ
-    cart_subtotal:
-      one: উপ-মোট (1 টি আইটেম)
-      other: উপমোটাল (%{count} আইটেম)
-    categories: বিভাগসমূহ
     category: বিভাগ
-    category_nav_bar:
-      get_up_to_30_percent_off: 30% অফ করুন
-      jackets_and_coats: জ্যাকেট এবং কাস্টস
-      new_collection: নতুন সংগ্রহ
-      special_offers: বিশেষ অফার
     channel: চ্যানেল
     charged: চার্জড
-    checkout: চেকআউট
     checkout_page:
       back_to_cart: গাড়িতে ফিরে
       checkout_navigation: চেকআউট নেভিগেশন
@@ -651,25 +612,18 @@ bn:
       main_navigation: প্রধান নেভিগেশান
       product: পণ্য
     choose_a_customer: একটি গ্রাহক চয়ন করুন
-    choose_a_taxon_to_sort_products_for: পণ্যগুলির জন্য বাছাই করতে একটি ট্যাক্সন চয়ন করুন
     choose_currency: মুদ্রা পছন্দ করুন
-    choose_dashboard_locale: ড্যাশবোর্ড লোকাল চয়ন করুন
     choose_location: অবস্থান চয়ন করুন
     city: শহর
     clear_cache: ক্যাশে সাফ করুন
-    clear_cache_ok: ক্যাশে ফ্লাশ করা হয়েছিল
     clear_cache_warning: ক্যাশে ক্লিয়ারিং অস্থায়ীভাবে আপনার স্টোরের কার্যকারিতা হ্রাস করবে।
-    click_and_drag_on_the_products_to_sort_them: পণ্যগুলি বাছাই করতে ক্লিক করুন এবং টেনে আনুন।
     clone: ক্লোন
     close: বন্ধ
     close_all_adjustments: সমস্ত সমন্বয় বন্ধ করুন
     code: কোড
     company: প্রতিষ্ঠান
     compare_at_price: দামের সাথে তুলনা করুন
-    complete: সম্পূর্ণ
-    configuration: কনফিগারেশন
     configurations: কনফিগারেশন
-    confirm: কনফার্ম
     confirm_delete: মোছার বিষয়টি নিশ্চিত করুন
     confirm_password: পাসওয়ার্ড নিশ্চিতকরণ
     contact_phone: ফোনে যোগাযোগ
@@ -679,7 +633,6 @@ bn:
     continue_shopping: কেনাকাটা চালিয়ে যান
     cost_currency: মূল্য মুদ্রা
     cost_price: কেনা দাম
-    could_not_create_customer_return: গ্রাহক রিটার্ন তৈরি করতে পারেনি
     could_not_create_stock_movement: এই স্টক মুভমেন্টটি সংরক্ষণ করতে সমস্যা হয়েছিল। অনুগ্রহপূর্বক আবার চেষ্টা করুন.
     count_on_hand: গণনা অন হাত
     countries: দেশ
@@ -688,7 +641,6 @@ bn:
     country_name: নাম
     country_rule:
       label: চয়ন এই দেশে প্রেরণ করা আবশ্যক
-    coupon: কুপন
     coupon_code: কুপন কোড
     coupon_code_already_applied: এই আদেশে ইতিমধ্যে কুপন কোড প্রয়োগ করা হয়েছে
     coupon_code_applied: কুপন কোডটি সফলভাবে আপনার আদেশে প্রয়োগ হয়েছিল।
@@ -700,22 +652,17 @@ bn:
     coupon_code_removed: কুপন কোডটি সফলভাবে আপনার আদেশ থেকে সরানো হয়েছে।
     coupon_code_unknown_error: এই কুপন কোডটি এই সময়ে কার্টে প্রয়োগ করা যায়নি।
     create: সৃষ্টি
-    create_a_new_account: একটি নতুন অ্যাকাউন্ট তৈরি করুন
     create_new_order: নতুন অর্ডার তৈরি করুন
     create_reimbursement: ক্ষতিপূরণ তৈরি করুন
     created_at: এ নির্মিত
     created_by: দ্বারা সৃষ্টি
-    credit: ক্রেডিট
     credit_allowed: Creditণ অনুমোদিত
     credit_card: ক্রেডিট কার্ড
-    credit_cards: ক্রেডিট কার্ড
     credit_owed: ক্রেডিট মালিকানাধীন
     credited: জমা দেওয়া
     credits: ক্রেডিট
-    currencies: মুদ্রা
     currency: মুদ্রা
     currency_settings: মুদ্রার সেটিংস
-    current: কারেন্ট
     current_promotion_usage: 'বর্তমান ব্যবহার: %{count}'
     customer: ক্রেতা
     customer_details: গ্রাহক বিবরণ
@@ -814,7 +761,6 @@ bn:
     exceptions:
       count_on_hand_setter: গণনা_অন_হস্তাকে ম্যানুয়ালি সেট করা যায় না, কারণ এটি পুনরায় গণনা_কাউন্ট_অন_হ্যান্ড কলব্যাকের মাধ্যমে স্বয়ংক্রিয়ভাবে সেট করা আছে। পরিবর্তে দয়া করে `update_column(:count_on_hand, value)` ব্যবহার করুন।
     exchange_for: বিনিময়ে
-    excl: excl।
     existing_shipments: বিদ্যমান চালনা
     expedited_exchanges_warning: যে কোনও নির্দিষ্ট এক্সচেঞ্জগুলি সংরক্ষণের সাথে সাথে গ্রাহকের কাছে পাঠানো হবে। গ্রাহকরা যদি %{days_window} দিনের মধ্যে মূল আইটেমটি না ফেরান তবে আইটেমটির পুরো পরিমাণটি নেওয়া হবে।
     expiration: মেয়াদোত্তীর্ণতা
@@ -1551,7 +1497,6 @@ bn:
     stock_location_info: স্টক অবস্থানের তথ্য
     stock_locations: স্টক অবস্থান
     stock_locations_need_a_default_country: স্টকের অবস্থান তৈরির আগে আপনাকে অবশ্যই একটি ডিফল্ট দেশ তৈরি করতে হবে।
-    stock_management: স্টক ব্যবস্থাপনা
     stock_management_requires_a_stock_location: স্টক পরিচালনা করতে দয়া করে একটি স্টকের অবস্থান তৈরি করুন।
     stock_movements: স্টক মুভমেন্টস
     stock_movements_for_stock_location: "%{stock_location_name} এর জন্য স্টক মুভমেন্টস"
@@ -1562,7 +1507,6 @@ bn:
         variants_unavailable: কিছু ভেরিয়েন্ট %{stock} এ উপলব্ধ নয়
     stock_transfer_name: স্টক স্থানান্তর
     stock_transfers: স্টক স্থানান্তর
-    stop: থামো
     store: স্টোর
     store_credit:
       additional_payment_needed: অবশিষ্ট <strong> %{amount} </strong> এর জন্য অন্য অর্থপ্রদানের পদ্ধতিটি নির্বাচন করুন।
@@ -1628,7 +1572,6 @@ bn:
     supported_currencies: সমর্থিত মুদ্রা
     supported_currencies_long: সমর্থিত মুদ্রার একটি কমা দ্বারা পৃথক করা তালিকা
     supported_locales: সমর্থিত লোকেলস
-    tags: ট্যাগ
     tags_placeholder: ট্যাগ যুক্ত
     tax: কর
     tax_categories: ট্যাক্স বিভাগ
@@ -1723,12 +1666,9 @@ bn:
     variant_placeholder: একটি বৈকল্পিক চয়ন করুন
     variant_prices_search_placeholder: এসকিউ বা বৈকল্পিক নামের জন্য অনুসন্ধান করুন ...
     variants: রূপগুলি
-    version: সংস্করণ
-    void: শূন্য
     weight: ওজন
     what_is_a_cvv: "(সিভিভি) ক্রেডিট কার্ড কোড কী?"
     width: প্রস্থ
-    year: বছর
     you_have_no_orders_yet: আপনার এখনও কোনও আদেশ নেই
     your_order_is_empty_add_product: আপনার অর্ডার খালি, দয়া করে উপরের পণ্যটি অনুসন্ধান করুন এবং যুক্ত করুন
     zip: জিপ

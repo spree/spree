@@ -437,7 +437,6 @@ ml:
     abbreviation: ചുരുക്കെഴുത്ത്
     accept: അംഗീകരിക്കുക
     acceptance_errors: സ്വീകാര്യത പിശകുകൾ
-    acceptance_status: സ്വീകാര്യത നില
     accepted: സ്വീകരിച്ചു
     account: അക്കൗണ്ട്
     account_info: അക്കൗണ്ട് വിവരങ്ങൾ
@@ -455,32 +454,24 @@ ml:
       refund: റീഫണ്ട്
       save: രക്ഷിക്കും
       update: അപ്ഡേറ്റ് ചെയ്യുക
-    activate: സജീവമാക്കുക
     active: സജീവമാണ്
     add: ചേർക്കുക
     add_action_of_type: തരത്തിന്റെ പ്രവർത്തനം ചേർക്കുക
-    add_country: രാജ്യം ചേർക്കുക
     add_coupon_code: കൂപ്പൺ കോഡ് ചേർക്കുക
     add_new_address: പുതിയ വിലാസം ചേർക്കുക
     add_new_credit_card: ഒരു പുതിയ കാർഡ് ചേർക്കുക
-    add_new_header: പുതിയ തലക്കെട്ട് ചേർക്കുക
-    add_new_style: പുതിയ ശൈലി ചേർക്കുക
     add_one: ഒന്ന് ചേർക്കുക
     add_option_value: ഓപ്ഷൻ മൂല്യം ചേർക്കുക
     add_product: ഉൽപ്പന്നം ചേർക്കുക
     add_product_properties: ഉൽപ്പന്ന സവിശേഷതകൾ ചേർക്കുക
     add_rule_of_type: തരം റൂൾ ചേർക്കുക
-    add_state: സംസ്ഥാനം ചേർക്കുക
     add_stock: സ്റ്റോക്ക് ചേർക്കുക
     add_store: പുതിയ സ്റ്റോർ
     add_store_credit: സ്റ്റോർ ക്രെഡിറ്റ് ചേർക്കുക
     add_to_cart: കാർട്ടിലേക്ക് ചേർക്കുക
     add_variant: വേരിയൻറ് ചേർക്കുക
     added_to_cart: കാർട്ടിലേക്ക് വിജയകരമായി ചേർത്തു!
-    additional_item: അധിക ഇനം
     address: വിലാസം
-    address1: വിലാസം
-    address2: വിലാസം (തുടരുന്നു)
     address_action_popup:
       delete_button: അതെ, ഇല്ലാതാക്കുക
       delete_text: "<br /> ഈ വിലാസം ഇല്ലാതാക്കാൻ നിങ്ങൾ ആഗ്രഹിക്കുന്നുണ്ടോ?"
@@ -499,13 +490,10 @@ ml:
     addresses: വിലാസങ്ങൾ
     adjustable: ക്രമീകരിക്കാവുന്ന
     adjustment: ക്രമീകരണം
-    adjustment_amount: തുക
     adjustment_labels:
       tax_rates:
         excluding_tax: "%{name}%{amount}"
         including_tax: "%{name}%{amount} (വിലയിൽ ഉൾപ്പെടുത്തിയിരിക്കുന്നു)"
-    adjustment_successfully_closed: ക്രമീകരണം വിജയകരമായി അടച്ചു!
-    adjustment_successfully_opened: ക്രമീകരണം വിജയകരമായി തുറന്നു!
     adjustment_total: ക്രമീകരണം ആകെ
     adjustments: ക്രമീകരണങ്ങൾ
     adjustments_deleted: ക്രമീകരണങ്ങൾ ഇല്ലാതാക്കി
@@ -549,26 +537,19 @@ ml:
         user_information: ഉപയോക്തൃ വിവരങ്ങൾ
     administration: ഭരണകൂടം
     advertise: പരസ്യം ചെയ്യുക
-    agree_to_privacy_policy: സ്വകാര്യതാ നയത്തോട് യോജിക്കുന്നു
-    agree_to_terms_of_service: സേവന നിബന്ധനകൾ അംഗീകരിക്കുക
     all: എല്ലാം
     all_adjustments_closed: എല്ലാ ക്രമീകരണങ്ങളും വിജയകരമായി അടച്ചു!
     all_adjustments_opened: എല്ലാ ക്രമീകരണങ്ങളും വിജയകരമായി തുറന്നു!
-    all_departments: എല്ലാ വകുപ്പുകളും
     all_items_have_been_returned: എല്ലാ ഇനങ്ങളും മടക്കിനൽകി
     all_rights_reserved: എല്ലാ അവകാശങ്ങളും നിക്ഷിപ്തം
-    already_have_account: ഇതിനകം ഒരു അക്കൗണ്ട് ഉണ്ടോ?
     alt_text: ഇതര വാചകം
     alternative_phone: ഇതര ഫോൺ
     amount: തുക
     and: ഒപ്പം
-    approve: അംഗീകരിക്കുക
     approved_at: ൽ അംഗീകരിച്ചു
     approver: അംഗീകാരം
     are_you_sure: നിങ്ങള്ക്ക് ഉറപ്പാണോ?
     are_you_sure_delete: ഈ റെക്കോർഡ് ഇല്ലാതാക്കാൻ നിങ്ങൾ ആഗ്രഹിക്കുന്നുണ്ടോ?
-    associated_adjustment_closed: ബന്ധപ്പെട്ട ക്രമീകരണം അടച്ചു, വീണ്ടും കണക്കാക്കില്ല. നിങ്ങൾക്ക് ഇത് തുറക്കണോ?
-    authorization_failure: അംഗീകാര പരാജയം
     authorized: അംഗീകാരം
     auto_capture: യാന്ത്രിക ക്യാപ്‌ചർ
     availability: ലഭ്യത
@@ -577,16 +558,10 @@ ml:
     average_order_value: ശരാശരി ഓർഡർ മൂല്യം
     avs_response: AVS പ്രതികരണം
     back: തിരികെ
-    back_end: ബാക്കെൻഡ്
-    back_to_payment: പേയ്‌മെന്റിലേക്ക് മടങ്ങുക
     back_to_resource_list: "%{resource} ലിസ്റ്റിലേക്ക് മടങ്ങുക"
-    back_to_rma_reason_list: ആർ‌എം‌എ കാരണ പട്ടികയിലേക്ക് മടങ്ങുക
     back_to_store: സ്റ്റോറിലേക്ക് മടങ്ങുക
-    back_to_users_list: ഉപയോക്താക്കളുടെ പട്ടികയിലേക്ക് മടങ്ങുക
     backorderable: ബാക്ക്ഓർഡറബിൾ
     backorderable_default: ബാക്ക്ഓർഡറബിൾ സ്ഥിരസ്ഥിതി
-    backordered: ബാക്ക്‌ഓർഡർ ചെയ്‌തു
-    backordered_confirm_info: തിരഞ്ഞെടുത്ത ഇനം ബാക്ക്‌ഓർഡർ ചെയ്‌തിരിക്കുന്നതിനാൽ കാലതാമസം പ്രതീക്ഷിക്കുക. ഇത് ഓർഡർ ചെയ്യണമെന്ന് നിങ്ങൾക്ക് ഉറപ്പാണോ?
     backordered_info: ബാക്ക്‌ഓർഡർ ചെയ്‌തു
     backorders_allowed: ബാക്ക്‌ഡോർഡറുകൾ അനുവദനീയമാണ്
     balance_due: മിച്ച കടം
@@ -594,9 +569,7 @@ ml:
     base_percent: അടിസ്ഥാന ശതമാനം
     basic_information: അടിസ്ഥാന വിവരങ്ങൾ
     bill_address: ബിൽ വിലാസം
-    billing: ബില്ലിംഗ്
     billing_address: ബില്ലിംഗ് വിലാസം
-    both: രണ്ടും
     breadcrumbs: ബ്രെഡ്ക്രംബ്സ്
     calculated_reimbursements: കണക്കാക്കിയ റീഇംബേഴ്സ്മെൻറുകൾ
     calculator: കാൽക്കുലേറ്റർ
@@ -612,8 +585,6 @@ ml:
     cannot_empty_completed_order: ഓർഡർ ഇതിനകം പ്രോസസ്സ് ചെയ്തതിനാൽ ഇത് ശൂന്യമാക്കാൻ കഴിയില്ല
     cannot_perform_operation: അഭ്യർത്ഥിച്ച പ്രവർത്തനം നടത്താൻ കഴിയില്ല
     cannot_return_more_than_bought_quantity: വാങ്ങിയ അളവിനേക്കാൾ കൂടുതൽ മടക്കിനൽകാനാവില്ല.
-    cannot_set_shipping_method_without_address: ഉപഭോക്തൃ വിശദാംശങ്ങൾ നൽകുന്നതുവരെ ഷിപ്പിംഗ് രീതി സജ്ജമാക്കാൻ കഴിയില്ല.
-    capture: ക്യാപ്‌ചർ
     capture_events: ഇവന്റുകൾ ക്യാപ്‌ചർ ചെയ്യുക
     card_code: കാർഡ് വേരിയേഷൻ കോഡ് (സിവിസി)
     card_number: കാർഡ് നമ്പർ
@@ -630,19 +601,9 @@ ml:
       quantity: അളവ്
       remove_from_cart: വണ്ടിയിൽ നിന്ന് നീക്കംചെയ്യുക
       title: ഷോപ്പിംഗ് കാർട്ട്
-    cart_subtotal:
-      one: ആകെത്തുക (1 ഇനം)
-      other: ആകെത്തുക (%{count} ഇനങ്ങൾ)
-    categories: വിഭാഗങ്ങൾ
     category: വിഭാഗം
-    category_nav_bar:
-      get_up_to_30_percent_off: 30% ഓഫാക്കുക
-      jackets_and_coats: ജാക്കറ്റും കോസ്റ്റുകളും
-      new_collection: പുതിയ ശേഖരം
-      special_offers: പ്രത്യേക ഇളവു
     channel: ചാനൽ
     charged: ചാർജ്ജ് ചെയ്തു
-    checkout: ചെക്ക് ഔട്ട്
     checkout_page:
       back_to_cart: തിരികെ വണ്ടിയിലേക്ക്
       checkout_navigation: ചെക്ക് out ട്ട് നാവിഗേഷൻ
@@ -651,25 +612,18 @@ ml:
       main_navigation: പ്രധാന നാവിഗേഷൻ
       product: ഉൽപ്പന്നം
     choose_a_customer: ഒരു ഉപഭോക്താവിനെ തിരഞ്ഞെടുക്കുക
-    choose_a_taxon_to_sort_products_for: ഉൽപ്പന്നങ്ങൾ അടുക്കുന്നതിന് ഒരു ടാക്സൺ തിരഞ്ഞെടുക്കുക
     choose_currency: കറൻസി തിരഞ്ഞെടുക്കുക
-    choose_dashboard_locale: ഡാഷ്‌ബോർഡ് ലൊക്കേഷൻ തിരഞ്ഞെടുക്കുക
     choose_location: ലൊക്കേഷൻ തിരഞ്ഞെടുക്കുക
     city: നഗരം
     clear_cache: കാഷെ മായ്‌ക്കുക
-    clear_cache_ok: കാഷെ ഫ്ലഷ് ചെയ്തു
     clear_cache_warning: കാഷെ മായ്‌ക്കുന്നത് നിങ്ങളുടെ സ്റ്റോറിന്റെ പ്രകടനം താൽക്കാലികമായി കുറയ്‌ക്കും.
-    click_and_drag_on_the_products_to_sort_them: ഉൽപ്പന്നങ്ങൾ അടുക്കുന്നതിന് അവയിൽ ക്ലിക്കുചെയ്‌ത് വലിച്ചിടുക.
     clone: ക്ലോൺ
     close: അടയ്‌ക്കുക
     close_all_adjustments: എല്ലാ ക്രമീകരണങ്ങളും അടയ്‌ക്കുക
     code: കോഡ്
     company: കമ്പനി
     compare_at_price: വിലയുമായി താരതമ്യം ചെയ്യുക
-    complete: പൂർത്തിയായി
-    configuration: കോൺഫിഗറേഷൻ
     configurations: കോൺഫിഗറേഷനുകൾ
-    confirm: സ്ഥിരീകരിക്കുക
     confirm_delete: ഇല്ലാതാക്കൽ സ്ഥിരീകരിക്കുക
     confirm_password: പാസ്‌വേഡ് സ്ഥിരീകരണം
     contact_phone: ഫോണുമായി ബന്ധപ്പെടുക
@@ -679,7 +633,6 @@ ml:
     continue_shopping: ഷോപ്പിംഗ് തുടരും
     cost_currency: കോസ്റ്റ് കറൻസി
     cost_price: വില വില
-    could_not_create_customer_return: ഉപഭോക്തൃ വരുമാനം സൃഷ്ടിക്കാൻ കഴിഞ്ഞില്ല
     could_not_create_stock_movement: ഈ സ്റ്റോക്ക് പ്രസ്ഥാനം സംരക്ഷിക്കുന്നതിൽ ഒരു പ്രശ്നമുണ്ടായിരുന്നു. ദയവായി വീണ്ടും ശ്രമിക്കുക.
     count_on_hand: കയ്യിൽ എണ്ണുക
     countries: രാജ്യങ്ങൾ
@@ -688,7 +641,6 @@ ml:
     country_name: പേര്
     country_rule:
       label: തിരഞ്ഞെടുക്കൽ ഈ രാജ്യത്തേക്ക് അയച്ചിരിക്കണം
-    coupon: കൂപ്പൺ
     coupon_code: കൂപ്പൺ കോഡ്
     coupon_code_already_applied: ഈ ഓർഡറിലേക്ക് കൂപ്പൺ കോഡ് ഇതിനകം പ്രയോഗിച്ചു
     coupon_code_applied: നിങ്ങളുടെ ഓർഡറിൽ കൂപ്പൺ കോഡ് വിജയകരമായി പ്രയോഗിച്ചു.
@@ -700,22 +652,17 @@ ml:
     coupon_code_removed: നിങ്ങളുടെ ഓർഡറിൽ നിന്ന് കൂപ്പൺ കോഡ് വിജയകരമായി നീക്കംചെയ്‌തു.
     coupon_code_unknown_error: ഈ കൂപ്പൺ കോഡ് ഇപ്പോൾ കാർട്ടിൽ പ്രയോഗിക്കാൻ കഴിഞ്ഞില്ല.
     create: സൃഷ്ടിക്കാൻ
-    create_a_new_account: ഒരു പുതിയ അക്കൌണ്ട് ഉണ്ടാക്കുക
     create_new_order: പുതിയ ഓർഡർ സൃഷ്ടിക്കുക
     create_reimbursement: റീഇംബേഴ്സ്മെന്റ് സൃഷ്ടിക്കുക
     created_at: ൽ സൃഷ്ടിച്ചു
     created_by: ഉണ്ടാക്കിയത്
-    credit: ക്രെഡിറ്റ്
     credit_allowed: ക്രെഡിറ്റ് അനുവദനീയമാണ്
     credit_card: ക്രെഡിറ്റ് കാർഡ്
-    credit_cards: ക്രെഡിറ്റ് കാർഡുകൾ
     credit_owed: ക്രെഡിറ്റ് സ്വന്തമാക്കി
     credited: ക്രെഡിറ്റ്
     credits: ക്രെഡിറ്റുകൾ
-    currencies: കറൻസികൾ
     currency: കറൻസി
     currency_settings: കറൻസി ക്രമീകരണങ്ങൾ
-    current: നിലവിലുള്ളത്
     current_promotion_usage: 'നിലവിലെ ഉപയോഗം: %{count}'
     customer: ഉപഭോക്താവ്
     customer_details: ഉപഭോക്തൃ വിശദാംശങ്ങൾ
@@ -814,7 +761,6 @@ ml:
     exceptions:
       count_on_hand_setter: 'Count_on_hand സ്വമേധയാ സജ്ജീകരിക്കാൻ കഴിയില്ല, കാരണം ഇത് വീണ്ടും കണക്കുകൂട്ടൽ_കൗണ്ട്_ഒരു കോൾബാക്ക് സ്വപ്രേരിതമായി സജ്ജമാക്കുന്നു. പകരം `update_column (: count_on_hand, value)` ഉപയോഗിക്കുക.'
     exchange_for: ഇതിനായുള്ള കൈമാറ്റം
-    excl: excl.
     existing_shipments: നിലവിലുള്ള കയറ്റുമതി
     expedited_exchanges_warning: ഏതെങ്കിലും നിർദ്ദിഷ്ട എക്സ്ചേഞ്ചുകൾ സംരക്ഷിച്ച ഉടനെ ഉപഭോക്താവിന് അയയ്ക്കും. %{days_window} ദിവസത്തിനുള്ളിൽ യഥാർത്ഥ ഇനം തിരികെ നൽകിയില്ലെങ്കിൽ ഉപഭോക്താവിന് ഇനത്തിന്റെ മുഴുവൻ തുകയും ഈടാക്കും.
     expiration: കാലഹരണപ്പെടൽ
@@ -1551,7 +1497,6 @@ ml:
     stock_location_info: സ്റ്റോക്ക് ലൊക്കേഷൻ വിവരം
     stock_locations: സ്റ്റോക്ക് ലൊക്കേഷനുകൾ
     stock_locations_need_a_default_country: ഒരു സ്റ്റോക്ക് ലൊക്കേഷൻ സൃഷ്ടിക്കുന്നതിന് മുമ്പ് നിങ്ങൾ ഒരു സ്ഥിരസ്ഥിതി രാജ്യം സൃഷ്ടിക്കണം.
-    stock_management: സ്റ്റോക്ക് മാനേജ്മെന്റ്
     stock_management_requires_a_stock_location: സ്റ്റോക്ക് മാനേജുചെയ്യുന്നതിന് ദയവായി ഒരു സ്റ്റോക്ക് സ്ഥാനം സൃഷ്ടിക്കുക.
     stock_movements: സ്റ്റോക്ക് പ്രസ്ഥാനങ്ങൾ
     stock_movements_for_stock_location: "%{stock_location_name} നായുള്ള സ്റ്റോക്ക് പ്രസ്ഥാനങ്ങൾ"
@@ -1562,7 +1507,6 @@ ml:
         variants_unavailable: ചില വേരിയന്റുകൾ %{stock} ൽ ലഭ്യമല്ല
     stock_transfer_name: സ്റ്റോക്ക് ട്രാൻസ്ഫർ
     stock_transfers: സ്റ്റോക്ക് കൈമാറ്റങ്ങൾ
-    stop: നിർത്തുക
     store: സ്റ്റോർ
     store_credit:
       additional_payment_needed: ശേഷിക്കുന്ന <strong> %{amount} </strong> നായി മറ്റൊരു പേയ്‌മെന്റ് രീതി തിരഞ്ഞെടുക്കുക.
@@ -1628,7 +1572,6 @@ ml:
     supported_currencies: പിന്തുണയ്ക്കുന്ന കറൻസികൾ
     supported_currencies_long: പിന്തുണയ്‌ക്കുന്ന കറൻസികളുടെ കോമയാൽ വേർതിരിച്ച ലിസ്റ്റ്
     supported_locales: പിന്തുണയ്‌ക്കുന്ന ലോക്കലുകൾ
-    tags: ടാഗുകൾ
     tags_placeholder: ടാഗ് ചേർക്കുക
     tax: നികുതി
     tax_categories: നികുതി വിഭാഗങ്ങൾ
@@ -1723,12 +1666,9 @@ ml:
     variant_placeholder: ഒരു വേരിയൻറ് തിരഞ്ഞെടുക്കുക
     variant_prices_search_placeholder: എസ്‌കെ‌യു അല്ലെങ്കിൽ‌ വേരിയൻറ് നാമത്തിനായി തിരയുക ...
     variants: വേരിയന്റുകൾ
-    version: പതിപ്പ്
-    void: അസാധുവാണ്
     weight: ഭാരം
     what_is_a_cvv: എന്താണ് (സിവി‌വി) ക്രെഡിറ്റ് കാർഡ് കോഡ്?
     width: വീതി
-    year: വർഷം
     you_have_no_orders_yet: നിങ്ങൾക്ക് ഇതുവരെ ഓർഡറുകളൊന്നുമില്ല
     your_order_is_empty_add_product: നിങ്ങളുടെ ഓർഡർ ശൂന്യമാണ്, ദയവായി മുകളിൽ ഒരു ഉൽപ്പന്നം തിരയുക, ചേർക്കുക
     zip: സിപ്പ്

@@ -437,7 +437,6 @@ is:
     abbreviation: Skammstöfun
     accept: Taka
     acceptance_errors: Samþykkisvillur
-    acceptance_status: Viðtökustaða
     accepted: Samþykkt
     account: Reikningur
     account_info: Reikningsupplýsingar
@@ -455,32 +454,24 @@ is:
       refund: Endurgreiðsla
       save: Vista
       update: Uppfærsla
-    activate: Virkja
     active: Virkur
     add: Bæta við
     add_action_of_type: Bæta við aðgerð af gerðinni
-    add_country: Bæta við landi
     add_coupon_code: Bættu við afsláttarmiða kóða
     add_new_address: Bættu við nýju heimilisfangi
     add_new_credit_card: Bættu við nýju korti
-    add_new_header: Bæta við nýjum haus
-    add_new_style: Bættu við nýjum stíl
     add_one: Bættu við einum
     add_option_value: Bæta við valkostagildi
     add_product: Bæta við vöru
     add_product_properties: Bæta við eiginleikum vöru
     add_rule_of_type: Bættu við reglu af gerðinni
-    add_state: Bæta við ríki
     add_stock: Bæta við lager
     add_store: Ný verslun
     add_store_credit: Bættu við verslunarinneign
     add_to_cart: Bæta í körfu
     add_variant: Bæta við afbrigði
     added_to_cart: Bætt í körfu með góðum árangri!
-    additional_item: Viðbótarliður
     address: Heimilisfang
-    address1: Heimilisfang
-    address2: Heimilisfang (frh.)
     address_action_popup:
       delete_button: já, eyttu
       delete_text: Viltu virkilega <br /> eyða þessu netfangi?
@@ -499,13 +490,10 @@ is:
     addresses: Heimilisföng
     adjustable: Stillanlegt
     adjustment: Aðlögun
-    adjustment_amount: Magn
     adjustment_labels:
       tax_rates:
         excluding_tax: "%{name}%{amount}"
         including_tax: "%{name}%{amount} (Innifalið í verði)"
-    adjustment_successfully_closed: Aðlögun hefur verið lokað!
-    adjustment_successfully_opened: Aðlögun hefur verið opnuð!
     adjustment_total: Aðlögun Samtals
     adjustments: Aðlögun
     adjustments_deleted: Leiðréttingum eytt
@@ -549,26 +537,19 @@ is:
         user_information: Upplýsingar um notendur
     administration: Stjórnun
     advertise: Auglýstu
-    agree_to_privacy_policy: Sammála persónuverndarstefnu
-    agree_to_terms_of_service: Sammála þjónustuskilmálum
     all: Allt
     all_adjustments_closed: Öllum leiðréttingum var lokað!
     all_adjustments_opened: Allar lagfæringar teknar upp!
-    all_departments: Allar deildir
     all_items_have_been_returned: Öllum hlutum hefur verið skilað
     all_rights_reserved: Allur réttur áskilinn
-    already_have_account: Ertu þegar með reikning?
     alt_text: Valtexti
     alternative_phone: Varasími
     amount: Magn
     and: og
-    approve: samþykkja
     approved_at: Samþykkt kl
     approver: Samþykki
     are_you_sure: Ertu viss?
     are_you_sure_delete: Ertu viss um að þú viljir eyða þessari skrá?
-    associated_adjustment_closed: Tilheyrandi aðlögun er lokuð og verður ekki endurútreiknuð. Viltu opna það?
-    authorization_failure: Leyfisbrestur
     authorized: Heimilt
     auto_capture: Sjálfvirk handtaka
     availability: framboð
@@ -577,16 +558,10 @@ is:
     average_order_value: Meðaltal pöntunargildis
     avs_response: Svar frá AVS
     back: Aftur
-    back_end: Bakendi
-    back_to_payment: Aftur í greiðslu
     back_to_resource_list: Aftur í %{resource} Listann
-    back_to_rma_reason_list: Aftur á röklista RMA
     back_to_store: Aftur í verslun
-    back_to_users_list: Aftur í notendalista
     backorderable: Endurpantanlegt
     backorderable_default: Sjálfgefið er hægt að endurpanta
-    backordered: Endurpantað
-    backordered_confirm_info: Valið atriði er afturpantað svo búist er við töfum. Ertu viss um að þú viljir panta það?
     backordered_info: Endurpantað
     backorders_allowed: bakpöntun leyfð
     balance_due: Eftirstöðvar
@@ -594,9 +569,7 @@ is:
     base_percent: Grunnprósenta
     basic_information: Grunnupplýsingar
     bill_address: Heimilisfang frumvarps
-    billing: Innheimta
     billing_address: Heimilisfang innheimtu
-    both: Báðir
     breadcrumbs: Brauðmylsna
     calculated_reimbursements: Reiknaðar endurgreiðslur
     calculator: Reiknivél
@@ -612,8 +585,6 @@ is:
     cannot_empty_completed_order: Pöntun hefur þegar verið afgreidd svo ekki er hægt að tæma hana
     cannot_perform_operation: Get ekki framkvæmt beðið um aðgerð
     cannot_return_more_than_bought_quantity: Get ekki skilað meira en keypt magn.
-    cannot_set_shipping_method_without_address: Ekki er hægt að stilla flutningsaðferð fyrr en upplýsingar um viðskiptavini eru gefnar upp.
-    capture: Handsama
     capture_events: Handtaka atburði
     card_code: Breytingarkóði korta (CVC)
     card_number: Kortanúmer
@@ -630,19 +601,9 @@ is:
       quantity: magn
       remove_from_cart: Fjarlægðu úr körfu
       title: Innkaupakerra
-    cart_subtotal:
-      one: Samtals (1 hlutur)
-      other: Hlutafjöldi (%{count} hlutir)
-    categories: Flokkar
     category: Flokkur
-    category_nav_bar:
-      get_up_to_30_percent_off: FÁÐU ÞIG Í 30% AFSLÁTT
-      jackets_and_coats: JAKKI & KUSTUR
-      new_collection: NÝTT SÖFN
-      special_offers: SÉRSTÖK TILBOÐ
     channel: Rás
     charged: Kærð
-    checkout: Athuga
     checkout_page:
       back_to_cart: aftur að körfunni
       checkout_navigation: Kassaflakk
@@ -651,25 +612,18 @@ is:
       main_navigation: Helstu flakk
       product: Vara
     choose_a_customer: Veldu viðskiptavin
-    choose_a_taxon_to_sort_products_for: Veldu flokk til að flokka vörur fyrir
     choose_currency: Veldu Gjaldmiðil
-    choose_dashboard_locale: Veldu Stjórnborð landsvæðis
     choose_location: Veldu staðsetningu
     city: Borg
     clear_cache: Hreinsaðu skyndiminni
-    clear_cache_ok: Skyndiminni var skolað
     clear_cache_warning: Að hreinsa skyndiminni mun tímabundið draga úr afköstum verslunarinnar þinnar.
-    click_and_drag_on_the_products_to_sort_them: Smelltu og dragðu á vörurnar til að raða þeim.
     clone: Klón
     close: Lokaðu
     close_all_adjustments: Lokaðu öllum leiðréttingum
     code: Kóði
     company: Fyrirtæki
     compare_at_price: Bera saman á verði
-    complete: heill
-    configuration: Stillingar
     configurations: Stillingar
-    confirm: Staðfesta
     confirm_delete: Staðfestu eyðingu
     confirm_password: Staðfesting lykilorðs
     contact_phone: Hafðu samband við símann
@@ -679,7 +633,6 @@ is:
     continue_shopping: Halda áfram að versla
     cost_currency: Kostnaðargjaldmiðill
     cost_price: Kostnaðarverð
-    could_not_create_customer_return: Gat ekki búið til ávöxtun viðskiptavina
     could_not_create_stock_movement: Vandamál kom upp við að bjarga þessari hlutafjárhreyfingu. Vinsamlegast reyndu aftur.
     count_on_hand: Telja á hönd
     countries: Lönd
@@ -688,7 +641,6 @@ is:
     country_name: Nafn
     country_rule:
       label: Velja verður að senda til þessa lands
-    coupon: Afsláttarmiða
     coupon_code: Afsláttarkóði
     coupon_code_already_applied: Afsláttarkóðanum hefur þegar verið beitt á þessa pöntun
     coupon_code_applied: Afsláttarkóðanum var beitt á pöntunina þína.
@@ -700,22 +652,17 @@ is:
     coupon_code_removed: Afsláttarmiða kóðinn var tekinn úr pöntuninni þinni.
     coupon_code_unknown_error: Ekki var hægt að nota þennan afsláttarmiða á körfuna að svo stöddu.
     create: Búa til
-    create_a_new_account: Búðu til nýjan reikning
     create_new_order: Búðu til nýja pöntun
     create_reimbursement: Búðu til endurgreiðslu
     created_at: Búið til hjá
     created_by: Búið til af
-    credit: Inneign
     credit_allowed: Inneign leyfð
     credit_card: Kreditkort
-    credit_cards: Kreditkort
     credit_owed: Skuldsett lánstraust
     credited: Fagnað
     credits: Einingar
-    currencies: Gjaldmiðlar
     currency: Gjaldmiðill
     currency_settings: Gjaldeyrisstillingar
-    current: Núverandi
     current_promotion_usage: 'núverandi notkun: %{count}'
     customer: Viðskiptavinur
     customer_details: Upplýsingar um viðskiptavini
@@ -814,7 +761,6 @@ is:
     exceptions:
       count_on_hand_setter: 'Ekki er hægt að stilla count_on_hand handvirkt, þar sem það er stillt sjálfkrafa með endurútreikningi_count_on_hand svarhringingu. Vinsamlegast notaðu ''update_column (: count_on_hand, value)'' í staðinn.'
     exchange_for: Skiptum fyrir
-    excl: undanskilið
     existing_shipments: Sendingar sem fyrir eru
     expedited_exchanges_warning: Allar tilgreindar kauphallir verða sendar til viðskiptavinarins strax eftir vistun. Viðskiptavinurinn mun rukka alla upphæð hlutarins ef hann skilar ekki upprunalega hlutnum innan %{days_window} daga.
     expiration: Fyrningartími
@@ -1551,7 +1497,6 @@ is:
     stock_location_info: Upplýsingar um lagerstað
     stock_locations: Stöðvar hlutabréfa
     stock_locations_need_a_default_country: Þú verður að búa til sjálfgefið land áður en þú stofnar hlutabréfastaðsetningu.
-    stock_management: Hlutastjórnun
     stock_management_requires_a_stock_location: Vinsamlegast stofnaðu lagerstað til að stjórna hlutabréfum.
     stock_movements: Hreyfingar hlutabréfa
     stock_movements_for_stock_location: Hreyfingar á lager fyrir %{stock_location_name}
@@ -1562,7 +1507,6 @@ is:
         variants_unavailable: Sum afbrigði eru ekki fáanleg á %{stock}
     stock_transfer_name: Hlutaflutningur
     stock_transfers: Hlutaflutningar
-    stop: Hættu
     store: Geymið
     store_credit:
       additional_payment_needed: Veldu annan greiðslumáta fyrir eftirstöðvar <strong> %{amount} </strong>.
@@ -1628,7 +1572,6 @@ is:
     supported_currencies: Stuðningur gjaldmiðla
     supported_currencies_long: Aðskilinn komma með lista yfir studda gjaldmiðla
     supported_locales: Stuðningsaðilar
-    tags: Merkimiðar
     tags_placeholder: Bæta við merkjum
     tax: Skattur
     tax_categories: Skattflokkar
@@ -1723,12 +1666,9 @@ is:
     variant_placeholder: Veldu afbrigði
     variant_prices_search_placeholder: Leitaðu að SKU eða afbrigðisheiti ...
     variants: Afbrigði
-    version: Útgáfa
-    void: Ógilt
     weight: Þyngd
     what_is_a_cvv: Hvað er (CVV) kreditkortakóði?
     width: Breidd
-    year: Ár
     you_have_no_orders_yet: Þú hefur engar pantanir ennþá
     your_order_is_empty_add_product: Pöntunin þín er tóm, vinsamlegast leitaðu að og bættu við vöru hér að ofan
     zip: Rennilás

@@ -437,7 +437,6 @@ mk:
     abbreviation: Кратенка
     accept: Прифати
     acceptance_errors: Грешки при прифаќање
-    acceptance_status: Статус на прифаќање
     accepted: Прифатено
     account: Сметка
     account_info: Информации за сметката
@@ -455,32 +454,24 @@ mk:
       refund: Наплата
       save: Зачувај
       update: Ажурирање
-    activate: Активирај
     active: Активни
     add: Додади
     add_action_of_type: Додадете дејство од тип
-    add_country: Додадете земја
     add_coupon_code: Додадете код за купон
     add_new_address: Додадете нова адреса
     add_new_credit_card: Додадете нова картичка
-    add_new_header: Додадете нов заглавие
-    add_new_style: Додадете нов стил
     add_one: Додадете еден
     add_option_value: Додадете вредност на опцијата
     add_product: Додадете производ
     add_product_properties: Додадете својства на производот
     add_rule_of_type: Додадете правило од типот
-    add_state: Додај држава
     add_stock: Додадете акции
     add_store: Нова продавница
     add_store_credit: Додадете кредит на продавницата
     add_to_cart: Додади го во кошничка
     add_variant: Додадете варијанта
     added_to_cart: Успешно додаден во кошничката!
-    additional_item: Дополнителна ставка
     address: Адреса
-    address1: Адреса
-    address2: Адреса (продолжение)
     address_action_popup:
       delete_button: да, избриши
       delete_text: Дали навистина сакате <br /> да ја избришете оваа адреса?
@@ -499,13 +490,10 @@ mk:
     addresses: Адреси
     adjustable: Прилагодлив
     adjustment: Прилагодување
-    adjustment_amount: износ
     adjustment_labels:
       tax_rates:
         excluding_tax: "%{name}%{amount}"
         including_tax: "%{name}%{amount} (Вклучено во цена)"
-    adjustment_successfully_closed: Прилагодувањето е успешно затворено!
-    adjustment_successfully_opened: Прилагодувањето е успешно отворено!
     adjustment_total: Вкупно прилагодување
     adjustments: Прилагодувања
     adjustments_deleted: Прилагодувањата се избришани
@@ -549,26 +537,19 @@ mk:
         user_information: Информации за корисникот
     administration: Администрација
     advertise: Рекламирај
-    agree_to_privacy_policy: Се согласувам со Политиката за приватност
-    agree_to_terms_of_service: Се согласувам со условите за користење
     all: Сите
     all_adjustments_closed: Сите прилагодувања се успешно затворени!
     all_adjustments_opened: Сите прилагодувања се успешно отворени!
-    all_departments: Сите оддели
     all_items_have_been_returned: Сите предмети се вратени
     all_rights_reserved: Сите права се задржани
-    already_have_account: Веќе имате профил?
     alt_text: Алтернативен текст
     alternative_phone: Алтернативен телефон
     amount: износ
     and: и
-    approve: одобри
     approved_at: Одобрено на
     approver: Одобрувач
     are_you_sure: Дали си сигурен?
     are_you_sure_delete: Дали сте сигурни дека сакате да го избришете овој запис?
-    associated_adjustment_closed: Поврзаното прилагодување е затворено и нема да се пресметува повторно. Дали сакате да го отворите?
-    authorization_failure: Неуспех на овластување
     authorized: Овластен
     auto_capture: Автоматско снимање
     availability: достапност
@@ -577,16 +558,10 @@ mk:
     average_order_value: Просечна вредност на нарачката
     avs_response: AVS одговор
     back: Назад
-    back_end: Заднина
-    back_to_payment: Назад на плаќање
     back_to_resource_list: Назад на списокот %{resource}
-    back_to_rma_reason_list: Назад на списокот со причини на RMA
     back_to_store: Назад во продавницата
-    back_to_users_list: Назад кон списокот со корисници
     backorderable: Безредлив
     backorderable_default: Безредно стандардно
-    backordered: Нарачана по нарачка
-    backordered_confirm_info: Избраната ставка е нарачана порано, затоа очекувајте одложувања. Дали сте сигурни дека сакате да го нарачате?
     backordered_info: Нарачана по нарачка
     backorders_allowed: нарачателите се дозволени
     balance_due: Доспеан биланс
@@ -594,9 +569,7 @@ mk:
     base_percent: Основен процент
     basic_information: Основни информации
     bill_address: Адреса на Бил
-    billing: Наплата
     billing_address: Адреса за фактурирање
-    both: Обајцата
     breadcrumbs: Трошки од леб
     calculated_reimbursements: Пресметани надоместоци
     calculator: Калкулатор
@@ -612,8 +585,6 @@ mk:
     cannot_empty_completed_order: Нарачката е веќе обработена, така што не може да се испразни
     cannot_perform_operation: Не може да се изврши бараната операција
     cannot_return_more_than_bought_quantity: Не може да се врати повеќе од купената количина.
-    cannot_set_shipping_method_without_address: Не може да се постави методот на испорака додека не се дадат деталите за клиентот
-    capture: Фати
     capture_events: Снимете настани
     card_code: Код за варијација на картичката (CVC)
     card_number: Број на картичка
@@ -630,19 +601,9 @@ mk:
       quantity: квантитет
       remove_from_cart: Отстрани од количката
       title: Купувачка кошничка
-    cart_subtotal:
-      one: Субтотал (1 ставка)
-      other: Субтотал (%{count} ставки)
-    categories: Категории
     category: Категорија
-    category_nav_bar:
-      get_up_to_30_percent_off: ИСКЛУЧЕТЕ СЕ 30%
-      jackets_and_coats: ЈАКНЕТ И БРАБОВИ
-      new_collection: НОВА КОЛЕКЦИЈА
-      special_offers: СПЕЦИЈАЛНИ ПОНУДИ
     channel: Канал
     charged: Обвинет
-    checkout: Одјавување
     checkout_page:
       back_to_cart: назад во количката
       checkout_navigation: Навигација за исходот
@@ -651,25 +612,18 @@ mk:
       main_navigation: Главна навигација
       product: Производ
     choose_a_customer: Изберете клиент
-    choose_a_taxon_to_sort_products_for: Изберете таксон за сортирање производи
     choose_currency: Изберете валута
-    choose_dashboard_locale: Изберете локација на таблата
     choose_location: Изберете локација
     city: Град
     clear_cache: Исчистете ја меморијата
-    clear_cache_ok: Кешот беше испукнат
     clear_cache_warning: Чистењето на мемориската меморија привремено ќе ги намали перформансите на вашата продавница.
-    click_and_drag_on_the_products_to_sort_them: Кликнете и повлечете ги производите за да ги сортирате.
     clone: Клон
     close: Затвори
     close_all_adjustments: Затворете ги сите прилагодувања
     code: Код
     company: Компанија
     compare_at_price: Споредете по цена
-    complete: заврши
-    configuration: Конфигурација
     configurations: Конфигурации
-    confirm: Потврди
     confirm_delete: Потврдете го бришењето
     confirm_password: Потврда на лозинка
     contact_phone: Телефон за контакт
@@ -679,7 +633,6 @@ mk:
     continue_shopping: Да продолжите со купување
     cost_currency: Валута на трошоците
     cost_price: Цена на чинење
-    could_not_create_customer_return: Не може да се создаде враќање на клиентот
     could_not_create_stock_movement: Имаше проблем при зачувување на ова движење на акциите. Ве молиме обидете се повторно.
     count_on_hand: Сметајте на рака
     countries: Земји
@@ -688,7 +641,6 @@ mk:
     country_name: Име
     country_rule:
       label: Изберете мора да се испраќаат во оваа земја
-    coupon: Купон
     coupon_code: Шифра на купон
     coupon_code_already_applied: Купонскиот код веќе е применет на оваа нарачка
     coupon_code_applied: Купонскиот код беше успешно применет на вашата нарачка.
@@ -700,22 +652,17 @@ mk:
     coupon_code_removed: Купонскиот код е успешно отстранет од вашата нарачка.
     coupon_code_unknown_error: Овој код за купон не може да се примени на количката во овој момент.
     create: Креирај
-    create_a_new_account: Создадете нова сметка
     create_new_order: Создадете нов поредок
     create_reimbursement: Создадете надомест
     created_at: Создадено на
     created_by: Направено од
-    credit: Кредит
     credit_allowed: Кредит е дозволено
     credit_card: Кредитна картичка
-    credit_cards: Кредитни картички
     credit_owed: Кредит како сопственик
     credited: Кредитирани
     credits: Кредити
-    currencies: Валути
     currency: Валута
     currency_settings: Поставки за валута
-    current: Струја
     current_promotion_usage: 'тековна употреба: %{count}'
     customer: Клиент
     customer_details: Детали за клиентите
@@ -814,7 +761,6 @@ mk:
     exceptions:
       count_on_hand_setter: 'Не може рачно да се постави count_on_hand, бидејќи е поставено автоматски со повторено пресметување_број_на_рачна повратна врска. Наместо тоа, користете `update_column (: count_on_hand, вредност)`.'
     exchange_for: Размена за
-    excl: исклучи
     existing_shipments: Постоечки пратки
     expedited_exchanges_warning: Било која одредена размена ќе му се испрати на клиентот веднаш по заштедата. Од клиентот ќе се наплати целиот износ на предметот доколку не ја врати оригиналната ставка во рок од %{days_window} дена.
     expiration: Истек
@@ -1551,7 +1497,6 @@ mk:
     stock_location_info: Информации за локацијата на акциите
     stock_locations: Локации на акции
     stock_locations_need_a_default_country: Мора да создадете стандардна земја пред да креирате локација за залихи.
-    stock_management: Управување со акции
     stock_management_requires_a_stock_location: Ве молиме, креирајте локација за залихи за да управувате со акциите.
     stock_movements: Движења на акции
     stock_movements_for_stock_location: Движења на акциите за %{stock_location_name}
@@ -1562,7 +1507,6 @@ mk:
         variants_unavailable: Некои варијанти не се достапни на %{stock}
     stock_transfer_name: Трансфер на акции
     stock_transfers: Трансфери на акции
-    stop: Застани
     store: Чувај
     store_credit:
       additional_payment_needed: Изберете друг начин на плаќање за преостанатиот <strong> %{amount} </strong>.
@@ -1628,7 +1572,6 @@ mk:
     supported_currencies: Поддржани валути
     supported_currencies_long: Листа на поддржани валути одделена со запирка
     supported_locales: Поддржани локации
-    tags: Ознаки
     tags_placeholder: Додадете ознаки
     tax: Данок
     tax_categories: Категории на даноци
@@ -1723,12 +1666,9 @@ mk:
     variant_placeholder: Изберете варијанта
     variant_prices_search_placeholder: Пребарувајте SKU или име на варијанта ...
     variants: Варијанти
-    version: Верзија
-    void: Празнина
     weight: Тежина
     what_is_a_cvv: Што е код за кредитна картичка (CVV)?
     width: Ширина
-    year: Година
     you_have_no_orders_yet: Сè уште немате нарачки
     your_order_is_empty_add_product: Вашата нарачка е празна, ве молиме, побарајте и додадете производ погоре
     zip: Поштенски

@@ -437,7 +437,6 @@ lb:
     abbreviation: Ofkierzung
     accept: Akzeptéieren
     acceptance_errors: Akzeptanz Feeler
-    acceptance_status: Akzeptanzstatus
     accepted: Akzeptéiert
     account: Kont
     account_info: Kont Info
@@ -455,32 +454,24 @@ lb:
       refund: Remboursement
       save: Späicheren
       update: Aktualiséierung
-    activate: Aktivéieren
     active: Aktiv
     add: Dobäizemaachen
     add_action_of_type: Füügt Handlung vum Typ bäi
-    add_country: Land bäifügen
     add_coupon_code: Gëff Coupon Code derbäi
     add_new_address: Füügt eng nei Adress bäi
     add_new_credit_card: Füügt eng nei Kaart derbäi
-    add_new_header: Neie Header derbäi
-    add_new_style: Neie Style derbäi
     add_one: Füügt eng bäi
     add_option_value: Optiounswäert bäisetzen
     add_product: Produkt derbäi
     add_product_properties: Produkt Eegeschafte bäifügen
     add_rule_of_type: Regel vum Typ derbäisetzen
-    add_state: Dobäizemaachen Staat
     add_stock: Lager derbäi
     add_store: Neie Store
     add_store_credit: Füügt Store Kreditt derbäi
     add_to_cart: An de Weenche leeën
     add_variant: Add Variant
     added_to_cart: Erfolleg an de Wuerekuerf bäigefüügt!
-    additional_item: Zousätzlecht Element
     address: Adress
-    address1: Adress
-    address2: Adress (weider.)
     address_action_popup:
       delete_button: jo, läschen
       delete_text: Wëllt Dir wierklech <br /> dës Adress läschen?
@@ -499,13 +490,10 @@ lb:
     addresses: Adressen
     adjustable: Verännerbar
     adjustment: Upassung
-    adjustment_amount: Betrag
     adjustment_labels:
       tax_rates:
         excluding_tax: "%{name}%{amount}"
         including_tax: "%{name}%{amount} (Abegraff am Präis)"
-    adjustment_successfully_closed: Upassung gouf erfollegräich zougemaach!
-    adjustment_successfully_opened: Upassung gouf erfollegräich opgemaach!
     adjustment_total: Upassung Total
     adjustments: Upassungen
     adjustments_deleted: Upassunge geläscht
@@ -549,26 +537,19 @@ lb:
         user_information: Benotzerinformatioun
     administration: Administratioun
     advertise: Annoncéieren
-    agree_to_privacy_policy: Averstanen mat Privatsphär Politik
-    agree_to_terms_of_service: Averstanen mat Konditioune vum Service
     all: Alles
     all_adjustments_closed: All Upassungen erfollegräich zou!
     all_adjustments_opened: All Upassungen erfollegräich opgemaach!
-    all_departments: All Departementer
     all_items_have_been_returned: All Elementer goufen zréckginn
     all_rights_reserved: All Rechter reservéiert
-    already_have_account: Hutt Dir schonn e Kont?
     alt_text: Alternativ Text
     alternative_phone: Alternativ Telefon
     amount: Betrag
     and: an
-    approve: stëmmen
     approved_at: Genehmegt am
     approver: Approver
     are_you_sure: Bass du secher?
     are_you_sure_delete: Sidd Dir sécher datt Dir dëse Rekord läsche wëllt?
-    associated_adjustment_closed: Déi assoziéiert Upassung ass zou, a gëtt net nei gerechent. Wëllt Dir et opmaachen?
-    authorization_failure: Autorisatioun Feeler
     authorized: Autoriséiert
     auto_capture: Auto Capture
     availability: Disponibilitéit
@@ -577,16 +558,10 @@ lb:
     average_order_value: Duerchschnëttleche Bestellwert
     avs_response: AVS Äntwert
     back: Zréck
-    back_end: Backend
-    back_to_payment: Zréck Op Bezuelen
     back_to_resource_list: Zréck Op %{resource} Lëscht
-    back_to_rma_reason_list: Zréck op RMA Grënn Lëscht
     back_to_store: Zréck op Store
-    back_to_users_list: Zréck op d'Benotzer Lëscht
     backorderable: Zréckbestellen
     backorderable_default: Backorderbar Standard
-    backordered: Réckbestallt
-    backordered_confirm_info: Ausgewielt Element ass zréckbestallt sou datt Dir Verspéidunge erwaart. Sidd Dir sécher datt Dir et bestelle wëllt?
     backordered_info: Réckbestallt
     backorders_allowed: Réckreschter erlaabt
     balance_due: Balance Wéinst
@@ -594,9 +569,7 @@ lb:
     base_percent: Basis Prozent
     basic_information: Basis Informatiounen
     bill_address: Bill Adress
-    billing: Rechnung
     billing_address: Rechnungsadress
-    both: Béid
     breadcrumbs: Bréidercher
     calculated_reimbursements: Berechent Remboursementer
     calculator: Rechner
@@ -612,8 +585,6 @@ lb:
     cannot_empty_completed_order: Bestellung gouf scho veraarbecht sou datt et net eidel ka ginn
     cannot_perform_operation: Kann net gefrote Operatioun ausféieren
     cannot_return_more_than_bought_quantity: Kann net méi wéi kaaft Quantitéit zréckginn.
-    cannot_set_shipping_method_without_address: Kann d'Versandmethod net astellen bis d'Clientdetailer geliwwert ginn.
-    capture: Erfaassen
     capture_events: Erfaassen Evenementer
     card_code: Card Varification Code (CVC)
     card_number: Kaart Zuel
@@ -630,19 +601,9 @@ lb:
       quantity: Quantitéit
       remove_from_cart: Ewechzehuelen aus Won
       title: Akaafsweenschen
-    cart_subtotal:
-      one: Subtotal (1 Element)
-      other: Subtotal (%{count} Artikelen)
-    categories: Kategorien
     category: Kategorie
-    category_nav_bar:
-      get_up_to_30_percent_off: BIS EROP BIS 30% OFF
-      jackets_and_coats: JACKET & KËSTEN
-      new_collection: NEW KOLLEKTIOUN
-      special_offers: SPECIAL OFFEREN
     channel: Kanal
     charged: Belaascht
-    checkout: Ofmellen
     checkout_page:
       back_to_cart: zréck an de Won
       checkout_navigation: Kasse Navigatioun
@@ -651,25 +612,18 @@ lb:
       main_navigation: Haaptnavigatioun
       product: Produkt
     choose_a_customer: Wielt e Client
-    choose_a_taxon_to_sort_products_for: Wielt e Taxon fir Produkter ze sortéieren
     choose_currency: Wielt Währung
-    choose_dashboard_locale: Wielt Dashboard Lokal
     choose_location: Wielt Standuert
     city: Stad
     clear_cache: Läschen Cache
-    clear_cache_ok: Cache gouf gespullt
     clear_cache_warning: De Cache läschen wäert d'Performance vun Ärem Geschäft temporär reduzéieren.
-    click_and_drag_on_the_products_to_sort_them: Klickt an zitt op d'Produkter fir se ze sortéieren.
     clone: Klon
     close: Zoumaachen
     close_all_adjustments: All Upassunge zoumaachen
     code: Code
     company: Firma
     compare_at_price: Am Präis vergläichen
-    complete: komplett
-    configuration: Konfiguratioun
     configurations: Konfiguratiounen
-    confirm: Confirméieren
     confirm_delete: Bestätegt Läschen
     confirm_password: Passwuert Bestätegung
     contact_phone: Kontakt Telefon
@@ -679,7 +633,6 @@ lb:
     continue_shopping: Weider akafen
     cost_currency: Käschte Währung
     cost_price: Käschte Präis
-    could_not_create_customer_return: Konnt kee Client zréck kreéieren
     could_not_create_stock_movement: Et war e Problem fir dës Aktiebewegung ze spueren. Probéiert w.e.g. nach eng Kéier.
     count_on_hand: Grof Op Hand
     countries: Länner
@@ -688,7 +641,6 @@ lb:
     country_name: Numm
     country_rule:
       label: Wielt muss an dëst Land verschéckt ginn
-    coupon: Coupon
     coupon_code: Coupon Code
     coupon_code_already_applied: De Coupon Code gouf scho fir dës Bestellung ugewannt
     coupon_code_applied: De Coupon Code gouf erfollegräich op Är Bestellung applizéiert.
@@ -700,22 +652,17 @@ lb:
     coupon_code_removed: De Coupon Code gouf erfollegräich vun Ärer Bestellung erofgeholl.
     coupon_code_unknown_error: Dëse Coupon Code konnt de Moment net op de Won applizéiert ginn.
     create: Erstelle
-    create_a_new_account: Erstellt en neie Kont
     create_new_order: Neie Bestellung erstellen
     create_reimbursement: Erstellt Remboursement
     created_at: Erstallt Am
     created_by: Erstallt Vun
-    credit: Kredit
     credit_allowed: Kredit erlaabt
     credit_card: Kreditkaart
-    credit_cards: Kreditkaarten
     credit_owed: Kredit verdanken
     credited: Kredittéiert
     credits: Credits
-    currencies: Währungen
     currency: Währung
     currency_settings: Währungsastellungen
-    current: Aktuell
     current_promotion_usage: 'aktuell Benotzung: %{count}'
     customer: Client
     customer_details: Client Detailer
@@ -814,7 +761,6 @@ lb:
     exceptions:
       count_on_hand_setter: 'Kann net count_on_hand manuell setzen, well et automatesch vum recalculate_count_on_hand Réckruff gesat gëtt. Benotzt w.e.g. ''update_column (: count_on_hand, value) `.'
     exchange_for: Austausch fir
-    excl: exkl.
     existing_shipments: Bestehend Sendungen
     expedited_exchanges_warning: All spezifizéiert Austausch gëtt direkt beim Spueren un de Client verschéckt. De Client gëtt de ganze Betrag vum Artikel verrechent wa se den originale Punkt net bannent %{days_window} Deeg zréckginn.
     expiration: Oflaf
@@ -1551,7 +1497,6 @@ lb:
     stock_location_info: Aktie Standuert Info
     stock_locations: Stock Locations
     stock_locations_need_a_default_country: Dir musst e Standardland erstellen ier Dir eng Aktieplaz erstellt.
-    stock_management: Aktienmanagement
     stock_management_requires_a_stock_location: Maacht w.e.g. eng Aktieplaz fir Aktien ze managen.
     stock_movements: Aktiounsbewegungen
     stock_movements_for_stock_location: Stock Mouvementer fir %{stock_location_name}
@@ -1562,7 +1507,6 @@ lb:
         variants_unavailable: E puer Varianten sinn net verfügbar op %{stock}
     stock_transfer_name: Stock Transfer
     stock_transfers: Stock Transfere
-    stop: Stop
     store: Store
     store_credit:
       additional_payment_needed: Wielt eng aner Bezuelmethod fir déi reschtlech <strong> %{amount} </strong>.
@@ -1628,7 +1572,6 @@ lb:
     supported_currencies: Ënnerstëtzte Währungen
     supported_currencies_long: Eng komma getrennte Lëscht vun ënnerstëtzte Währungen
     supported_locales: Ënnerstëtzte Lokaler
-    tags: Tags
     tags_placeholder: Tags derbäi
     tax: Steier
     tax_categories: Steier Kategorien
@@ -1723,12 +1666,9 @@ lb:
     variant_placeholder: Wielt eng Variant
     variant_prices_search_placeholder: Sich no SKU oder Variant Numm ...
     variants: Varianten
-    version: Versioun
-    void: Void
     weight: Gewiicht
     what_is_a_cvv: Wat ass e (CVV) Kreditkaart Code?
     width: Breet
-    year: Joer
     you_have_no_orders_yet: Dir hutt nach keng Commanden
     your_order_is_empty_add_product: Är Bestellung ass eidel, sicht w.e.g. no a füügt e Produkt uewen derbäi
     zip: Zip

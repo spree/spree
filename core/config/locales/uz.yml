@@ -437,7 +437,6 @@ uz:
     abbreviation: Qisqartirish
     accept: Qabul qiling
     acceptance_errors: Qabul qilishda xatolar
-    acceptance_status: Qabul qilish holati
     accepted: Qabul qilindi
     account: Hisob qaydnomasi
     account_info: Hisob haqida ma'lumot
@@ -455,32 +454,24 @@ uz:
       refund: Pulni qaytarish
       save: Saqlash
       update: Yangilash
-    activate: Faollashtirish
     active: Faol
     add: Qo'shish
     add_action_of_type: Turidagi amalni qo'shing
-    add_country: Mamlakatni qo'shish
     add_coupon_code: Kupon kodini qo'shing
     add_new_address: Yangi manzil qo'shing
     add_new_credit_card: Yangi karta qo'shing
-    add_new_header: Yangi sarlavha qo'shing
-    add_new_style: Yangi uslub qo'shish
     add_one: Bittasini qo'shish
     add_option_value: Variant qiymatini qo'shing
     add_product: Mahsulot qo'shing
     add_product_properties: Mahsulot xususiyatlarini qo'shing
     add_rule_of_type: Turning qoidasini qo'shing
-    add_state: Shtatni qo'shish
     add_stock: Stok qo'shish
     add_store: Yangi do'kon
     add_store_credit: Do'kon kreditini qo'shing
     add_to_cart: Savatchaga qo'shish
     add_variant: Variant qo'shish
     added_to_cart: Savatga muvaffaqiyatli qo'shildi!
-    additional_item: Qo'shimcha element
     address: Manzil
-    address1: Manzil
-    address2: Manzil (davomi)
     address_action_popup:
       delete_button: ha, o'chirish
       delete_text: Siz haqiqatan ham ushbu manzilni o'chirishni xohlaysizmi <br />?
@@ -499,13 +490,10 @@ uz:
     addresses: Manzillar
     adjustable: Sozlanishi mumkin
     adjustment: Moslashish
-    adjustment_amount: Miqdor
     adjustment_labels:
       tax_rates:
         excluding_tax: "%{name}%{amount}"
         including_tax: "%{name}%{amount} (narxiga kiritilgan)"
-    adjustment_successfully_closed: Sozlash muvaffaqiyatli yopildi!
-    adjustment_successfully_opened: Sozlash muvaffaqiyatli ochildi!
     adjustment_total: Jami sozlash
     adjustments: Tuzatishlar
     adjustments_deleted: Sozlamalar o'chirildi
@@ -549,26 +537,19 @@ uz:
         user_information: Foydalanuvchi haqida ma'lumot
     administration: Ma'muriyat
     advertise: Reklama
-    agree_to_privacy_policy: Maxfiylik siyosatiga rozi bo'ling
-    agree_to_terms_of_service: Xizmat ko'rsatish shartlariga rozi bo'ling
     all: Hammasi
     all_adjustments_closed: Barcha sozlamalar muvaffaqiyatli yopildi!
     all_adjustments_opened: Barcha sozlamalar muvaffaqiyatli ochildi!
-    all_departments: Barcha bo'limlar
     all_items_have_been_returned: Barcha narsalar qaytarib berildi
     all_rights_reserved: Barcha huquqlar himoyalangan
-    already_have_account: Hisobingiz bormi?
     alt_text: Muqobil matn
     alternative_phone: Muqobil telefon
     amount: Miqdor
     and: va
-    approve: tasdiqlash
     approved_at: Da tasdiqlangan
     approver: Tasdiqlovchi
     are_you_sure: Ishonchingiz komilmi?
     are_you_sure_delete: Ushbu yozuvni o'chirishni xohlaysizmi?
-    associated_adjustment_closed: Bilan bog'liq sozlash yopiq va qayta hisoblanmaydi. Siz uni ochmoqchimisiz?
-    authorization_failure: Avtorizatsiya ishlamay qoldi
     authorized: Vakolatli
     auto_capture: Avtomatik suratga olish
     availability: mavjudlik
@@ -577,16 +558,10 @@ uz:
     average_order_value: Buyurtmaning o'rtacha qiymati
     avs_response: AVS javobi
     back: Orqaga
-    back_end: Orqa tomon
-    back_to_payment: To'lovga qaytish
     back_to_resource_list: "%{resource} ro'yxatiga qaytish"
-    back_to_rma_reason_list: RMA sabablari ro'yxatiga qaytish
     back_to_store: Do'konga qaytish
-    back_to_users_list: Foydalanuvchilar ro'yxatiga qaytish
     backorderable: Orqaga buyurtma berish mumkin
     backorderable_default: Orqaga buyurtma beriladigan sukut
-    backordered: Orqaga olingan
-    backordered_confirm_info: Tanlangan element orqa tomonda joylashgan, shuning uchun kechikishni kuting. Haqiqatan ham buyurtma berishni xohlaysizmi?
     backordered_info: Orqaga olingan
     backorders_allowed: orqa chegaralarga ruxsat berilgan
     balance_due: Balans muddati
@@ -594,9 +569,7 @@ uz:
     base_percent: Asosiy foiz
     basic_information: Asosiy ma'lumotlar
     bill_address: Hisob-kitob manzili
-    billing: Hisob-kitob
     billing_address: Murojaat manzili
-    both: Ikkalasi ham
     breadcrumbs: Non pishiriqlari
     calculated_reimbursements: Hisoblangan qoplamalar
     calculator: Kalkulyator
@@ -612,8 +585,6 @@ uz:
     cannot_empty_completed_order: Buyurtma allaqachon ishlangan, shuning uchun uni bo'shatish mumkin emas
     cannot_perform_operation: So'ralgan operatsiyani amalga oshirib bo'lmaydi
     cannot_return_more_than_bought_quantity: Sotib olingan miqdordan ko'proq narsani qaytarib berolmaydi.
-    cannot_set_shipping_method_without_address: Mijozlar tafsilotlari berilmaguncha etkazib berish usulini o'rnatib bo'lmaydi.
-    capture: Qo'lga olish
     capture_events: Hodisalarni suratga olish
     card_code: Kartani tasdiqlash kodi (CVC)
     card_number: Karta raqami
@@ -630,19 +601,9 @@ uz:
       quantity: miqdor
       remove_from_cart: Savatdan olib tashlang
       title: Xarid savati
-    cart_subtotal:
-      one: Jami (1 ta)
-      other: Jami (%{count} element)
-    categories: Kategoriyalar
     category: Turkum
-    category_nav_bar:
-      get_up_to_30_percent_off: 30% gacha chegirmaga ega bo'ling
-      jackets_and_coats: JEKET & KO'YLAR
-      new_collection: YANGI TO'PLAM
-      special_offers: MAXSUS TAKLIFLAR
     channel: Kanal
     charged: Zaryadlangan
-    checkout: Tekshirib ko'rmoq
     checkout_page:
       back_to_cart: aravaga qaytib
       checkout_navigation: Kirish navigatsiyasi
@@ -651,25 +612,18 @@ uz:
       main_navigation: Asosiy navigatsiya
       product: Mahsulot
     choose_a_customer: Xaridorni tanlang
-    choose_a_taxon_to_sort_products_for: Mahsulotlarni saralash uchun taksoni tanlang
     choose_currency: Valyutani tanlang
-    choose_dashboard_locale: Boshqarish panelini tanlang
     choose_location: Joyni tanlang
     city: Shahar
     clear_cache: Keshni tozalash
-    clear_cache_ok: Kesh qizarib ketdi
     clear_cache_warning: Keshni tozalash sizning do'koningiz ishini vaqtincha pasaytiradi.
-    click_and_drag_on_the_products_to_sort_them: Mahsulotlarni saralash uchun ularni bosing va torting.
     clone: Klon
     close: Yoping
     close_all_adjustments: Barcha sozlamalarni yoping
     code: Kod
     company: Kompaniya
     compare_at_price: Narxiga solishtiring
-    complete: to'liq
-    configuration: Konfiguratsiya
     configurations: Konfiguratsiyalar
-    confirm: Tasdiqlang
     confirm_delete: O'chirishni tasdiqlang
     confirm_password: Parolni tasdiqlash
     contact_phone: Aloqa uchun telefon
@@ -679,7 +633,6 @@ uz:
     continue_shopping: Xarid qilishni davom eting
     cost_currency: Xarajatlar valyutasi
     cost_price: Narxlari narxi
-    could_not_create_customer_return: Mijozlarning qaytishini yaratib bo'lmadi
     could_not_create_stock_movement: Ushbu aksiyalarni saqlashda muammo yuz berdi. Iltimos, yana bir bor urinib ko'ring.
     count_on_hand: Qo'lda hisoblash
     countries: Mamlakatlar
@@ -688,7 +641,6 @@ uz:
     country_name: Ism
     country_rule:
       label: Tanlov ushbu mamlakatga jo'natilishi kerak
-    coupon: Kupon
     coupon_code: Kupon kodi
     coupon_code_already_applied: Ushbu buyurtma uchun kupon kodi allaqachon qo'llanilgan
     coupon_code_applied: Kupon kodi sizning buyurtmangizga muvaffaqiyatli tatbiq etildi.
@@ -700,22 +652,17 @@ uz:
     coupon_code_removed: Kupon kodi sizning buyurtmangizdan muvaffaqiyatli olib tashlandi.
     coupon_code_unknown_error: Ayni paytda ushbu kupon kodini aravaga tatbiq etib bo‘lmadi.
     create: Yaratmoq
-    create_a_new_account: Yangi hisob yarating
     create_new_order: Yangi buyurtma yarating
     create_reimbursement: To'lovni yarating
     created_at: At yaratilgan
     created_by: Tomonidan yaratilgan
-    credit: Kredit
     credit_allowed: Kreditga ruxsat berilgan
     credit_card: Kredit karta
-    credit_cards: Kredit kartalar
     credit_owed: Kredit qarzi
     credited: Kreditlangan
     credits: Kreditlar
-    currencies: Valyutalar
     currency: Valyuta
     currency_settings: Valyuta sozlamalari
-    current: Joriy
     current_promotion_usage: 'joriy foydalanish: %{count}'
     customer: Mijoz
     customer_details: Mijozlar haqida ma'lumot
@@ -814,7 +761,6 @@ uz:
     exceptions:
       count_on_hand_setter: 'Count_on_hand-ni qo''l bilan o''rnatib bo''lmaydi, chunki u avtomatik ravishda qayta hisoblash orqali o''rnatiladi. Buning o''rniga "update_column (: count_on_hand, value)" dan foydalaning.'
     exchange_for: Uchun almashish
-    excl: istisno.
     existing_shipments: Mavjud jo'natmalar
     expedited_exchanges_warning: Belgilangan birjalar xaridorga tejashdan so'ng darhol jo'natiladi. Xaridor asl nusxasini %{days_window} kun ichida qaytarmasa, mahsulotning to'liq miqdori olinadi.
     expiration: Muddati tugaydi
@@ -1551,7 +1497,6 @@ uz:
     stock_location_info: Qimmatli qog'ozlar joylashuvi haqida ma'lumot
     stock_locations: Qimmatli qog'ozlar joylashuvi
     stock_locations_need_a_default_country: Qimmatbaho joyni yaratishdan oldin siz standart mamlakatni yaratishingiz kerak.
-    stock_management: Aktsiyalarni boshqarish
     stock_management_requires_a_stock_location: Iltimos, aktsiyalarni boshqarish uchun aktsiyalarni joylashishini yarating.
     stock_movements: Qimmatli qog'ozlar harakati
     stock_movements_for_stock_location: "%{stock_location_name} uchun aktsiyalar harakatlari"
@@ -1562,7 +1507,6 @@ uz:
         variants_unavailable: Ba'zi variantlar %{stock}-da mavjud emas
     stock_transfer_name: Qimmatli qog'ozlarni o'tkazish
     stock_transfers: Qimmatli qog'ozlar o'tkazmalari
-    stop: To'xta
     store: Do'kon
     store_credit:
       additional_payment_needed: Qolgan <strong> %{amount} </strong> uchun boshqa to'lov usulini tanlang.
@@ -1628,7 +1572,6 @@ uz:
     supported_currencies: Qo'llab-quvvatlanadigan valyutalar
     supported_currencies_long: Qo'llab-quvvatlanadigan valyutalarning vergul bilan ajratilgan ro'yxati
     supported_locales: Qo'llab-quvvatlanadigan mahalliy aholi
-    tags: Teglar
     tags_placeholder: Teglar qo'shish
     tax: Soliq
     tax_categories: Soliq toifalari
@@ -1723,12 +1666,9 @@ uz:
     variant_placeholder: Variantni tanlang
     variant_prices_search_placeholder: SKU yoki variant nomini qidiring ...
     variants: Variantlar
-    version: Versiya
-    void: Bekor
     weight: Og'irligi
     what_is_a_cvv: "(CVV) kredit karta kodi nima?"
     width: Kengligi
-    year: Yil
     you_have_no_orders_yet: Sizda hali buyurtmalar yo'q
     your_order_is_empty_add_product: Sizning buyurtmangiz bo'sh, iltimos, yuqoridagi mahsulotni qidirib toping
     zip: Zip

@@ -437,7 +437,6 @@ it-CH:
     abbreviation: Abbreviazione
     accept: Accettare
     acceptance_errors: Errori di accettazione
-    acceptance_status: Stato di accettazione
     accepted: Accettato
     account: account
     account_info: Informazioni sull'account
@@ -455,32 +454,24 @@ it-CH:
       refund: Rimborso
       save: Salva
       update: Aggiornare
-    activate: Attivare
     active: Attivo
     add: Inserisci
     add_action_of_type: Aggiungi azione di tipo
-    add_country: Aggiungi paese
     add_coupon_code: Aggiungi codice coupon
     add_new_address: Aggiungi un nuovo indirizzo
     add_new_credit_card: Aggiungi una nuova carta
-    add_new_header: Aggiungi nuova intestazione
-    add_new_style: Aggiungi nuovo stile
     add_one: Aggiungi uno
     add_option_value: Aggiungi valore opzione
     add_product: Aggiungi prodotto
     add_product_properties: Aggiungi proprietà del prodotto
     add_rule_of_type: Aggiungi regola di tipo
-    add_state: Aggiungi stato
     add_stock: Aggiungi stock
     add_store: Nuovo negozio
     add_store_credit: Aggiungi credito negozio
     add_to_cart: Aggiungi al carrello
     add_variant: Aggiungi variante
     added_to_cart: Aggiunto al carrello con successo!
-    additional_item: Elemento aggiuntivo
     address: Indirizzo
-    address1: Indirizzo
-    address2: Indirizzo (segue)
     address_action_popup:
       delete_button: si, cancella
       delete_text: Vuoi davvero <br /> eliminare questo indirizzo?
@@ -499,13 +490,10 @@ it-CH:
     addresses: Indirizzi
     adjustable: Regolabile
     adjustment: Regolazione
-    adjustment_amount: Quantità
     adjustment_labels:
       tax_rates:
         excluding_tax: "%{name}%{amount}"
         including_tax: "%{name}%{amount} (incluso nel prezzo)"
-    adjustment_successfully_closed: La regolazione è stata chiusa con successo!
-    adjustment_successfully_opened: La regolazione è stata aperta con successo!
     adjustment_total: Totale rettifica
     adjustments: Adeguamenti
     adjustments_deleted: Aggiustamenti eliminati
@@ -549,26 +537,19 @@ it-CH:
         user_information: informazioni utente
     administration: Amministrazione
     advertise: Pubblicizza
-    agree_to_privacy_policy: Accetta l'informativa sulla privacy
-    agree_to_terms_of_service: Accetta i Termini di servizio
     all: Tutti
     all_adjustments_closed: Tutti gli aggiustamenti sono stati chiusi con successo!
     all_adjustments_opened: Tutte le regolazioni sono state aperte con successo!
-    all_departments: Tutti i reparti
     all_items_have_been_returned: Tutti gli articoli sono stati restituiti
     all_rights_reserved: Tutti i diritti riservati
-    already_have_account: Hai già un account?
     alt_text: Testo alternativo
     alternative_phone: telefono alternativo
     amount: Quantità
     and: e
-    approve: approvare
     approved_at: Approvato a
     approver: Approvatore
     are_you_sure: Sei sicuro?
     are_you_sure_delete: Sei sicuro di voler eliminare questo record?
-    associated_adjustment_closed: La regolazione associata viene chiusa e non verrà ricalcolata. Vuoi aprirlo?
-    authorization_failure: Errore di autorizzazione
     authorized: Autorizzato
     auto_capture: Acquisizione automatica
     availability: disponibilità
@@ -577,16 +558,10 @@ it-CH:
     average_order_value: Valore medio dell'ordine
     avs_response: Risposta AVS
     back: Indietro
-    back_end: Backend
-    back_to_payment: Torna al pagamento
     back_to_resource_list: Torna all'elenco %{resource}
-    back_to_rma_reason_list: Torna all'elenco dei motivi RMA
     back_to_store: Torna al negozio
-    back_to_users_list: Torna all'elenco degli utenti
     backorderable: Disponibile in arretrato
     backorderable_default: Impostazione predefinita arretrata
-    backordered: In arretrato
-    backordered_confirm_info: L'articolo selezionato è in arretrato, quindi aspettati ritardi. Sei sicuro di volerlo ordinare?
     backordered_info: In arretrato
     backorders_allowed: ordini arretrati consentiti
     balance_due: Saldo dovuto
@@ -594,9 +569,7 @@ it-CH:
     base_percent: Percentuale di base
     basic_information: Informazioni di base
     bill_address: Bill Address
-    billing: Fatturazione
     billing_address: Indirizzo Di Fatturazione
-    both: Entrambi
     breadcrumbs: Briciole di pane
     calculated_reimbursements: Rimborsi calcolati
     calculator: Calcolatrice
@@ -612,8 +585,6 @@ it-CH:
     cannot_empty_completed_order: L'ordine è già stato elaborato, quindi non può essere svuotato
     cannot_perform_operation: Impossibile eseguire l'operazione richiesta
     cannot_return_more_than_bought_quantity: Non è possibile restituire più della quantità acquistata.
-    cannot_set_shipping_method_without_address: Impossibile impostare il metodo di spedizione finché non vengono forniti i dettagli del cliente.
-    capture: Catturare
     capture_events: Cattura eventi
     card_code: Codice di variazione della carta (CVC)
     card_number: Numero di carta
@@ -630,19 +601,9 @@ it-CH:
       quantity: quantità
       remove_from_cart: Rimuovi dal carrello
       title: Carrello della spesa
-    cart_subtotal:
-      one: Totale parziale (1 elemento)
-      other: Totale parziale (%{count} elementi)
-    categories: Categorie
     category: Categoria
-    category_nav_bar:
-      get_up_to_30_percent_off: OTTIENI FINO AL 30% DI SCONTO
-      jackets_and_coats: GIACCA E COSTE
-      new_collection: NUOVA COLLEZIONE
-      special_offers: OFFERTE SPECIALI
     channel: Canale
     charged: Addebitato
-    checkout: Check-out
     checkout_page:
       back_to_cart: torna al carrello
       checkout_navigation: Navigazione alla cassa
@@ -651,25 +612,18 @@ it-CH:
       main_navigation: Navigazione principale
       product: Prodotto
     choose_a_customer: Scegli un cliente
-    choose_a_taxon_to_sort_products_for: Scegli un taxon per cui ordinare i prodotti
     choose_currency: Scegli Valuta
-    choose_dashboard_locale: Scegli Impostazioni internazionali dashboard
     choose_location: Scegli la posizione
     city: Città
     clear_cache: Cancella cache
-    clear_cache_ok: La cache è stata svuotata
     clear_cache_warning: La cancellazione della cache ridurrà temporaneamente le prestazioni del tuo negozio.
-    click_and_drag_on_the_products_to_sort_them: Fare clic e trascinare sui prodotti per ordinarli.
     clone: Clone
     close: Vicino
     close_all_adjustments: Chiudi tutte le regolazioni
     code: Codice
     company: Azienda
     compare_at_price: Confronta al prezzo
-    complete: completare
-    configuration: Configurazione
     configurations: Configurazioni
-    confirm: Confermare
     confirm_delete: Confermare la cancellazione
     confirm_password: Conferma password
     contact_phone: Contatto telefonico
@@ -679,7 +633,6 @@ it-CH:
     continue_shopping: Continua a fare acquisti
     cost_currency: Valuta dei costi
     cost_price: Prezzo di costo
-    could_not_create_customer_return: Impossibile creare il reso del cliente
     could_not_create_stock_movement: Si è verificato un problema durante il salvataggio di questo movimento azionario. Per favore riprova.
     count_on_hand: Conta a portata di mano
     countries: Paesi
@@ -688,7 +641,6 @@ it-CH:
     country_name: Nome
     country_rule:
       label: Scegli deve essere spedito in questo paese
-    coupon: Coupon
     coupon_code: Codice coupon
     coupon_code_already_applied: Il codice coupon è già stato applicato a questo ordine
     coupon_code_applied: Il codice coupon è stato applicato con successo al tuo ordine.
@@ -700,22 +652,17 @@ it-CH:
     coupon_code_removed: Il codice coupon è stato rimosso con successo dal tuo ordine.
     coupon_code_unknown_error: Questo codice coupon non può essere applicato al carrello in questo momento.
     create: Creare
-    create_a_new_account: Creare un nuovo account
     create_new_order: Crea nuovo ordine
     create_reimbursement: Crea rimborso
     created_at: Creato a
     created_by: Creato da
-    credit: Credito
     credit_allowed: Credito consentito
     credit_card: Carta di credito
-    credit_cards: Carte di credito
     credit_owed: Credito dovuto
     credited: Accreditato
     credits: Titoli di coda
-    currencies: Valute
     currency: Moneta
     currency_settings: Impostazioni valuta
-    current: attuale
     current_promotion_usage: 'utilizzo corrente: %{count}'
     customer: Cliente
     customer_details: Dettagli cliente
@@ -814,7 +761,6 @@ it-CH:
     exceptions:
       count_on_hand_setter: 'Impossibile impostare manualmente count_on_hand, poiché viene impostato automaticamente dalla richiamata recalculate_count_on_hand. Si prega di utilizzare "update_column (: count_on_hand, value)" invece.'
     exchange_for: Scambio di
-    excl: escl.
     existing_shipments: Spedizioni esistenti
     expedited_exchanges_warning: Eventuali scambi specificati verranno spediti al cliente immediatamente dopo il salvataggio. Al cliente verrà addebitato l'intero importo dell'articolo se non restituisce l'articolo originale entro %{days_window} giorni.
     expiration: Scadenza
@@ -1551,7 +1497,6 @@ it-CH:
     stock_location_info: Informazioni sulla posizione delle scorte
     stock_locations: Posizioni delle scorte
     stock_locations_need_a_default_country: È necessario creare un paese predefinito prima di creare un'ubicazione di magazzino.
-    stock_management: Gestione delle scorte
     stock_management_requires_a_stock_location: Si prega di creare un'ubicazione dello stock per gestire lo stock.
     stock_movements: Movimenti azionari
     stock_movements_for_stock_location: Movimenti stock per %{stock_location_name}
@@ -1562,7 +1507,6 @@ it-CH:
         variants_unavailable: Alcune varianti non sono disponibili su %{stock}
     stock_transfer_name: Trasferimento di stock
     stock_transfers: Trasferimenti di azioni
-    stop: Fermare
     store: Negozio
     store_credit:
       additional_payment_needed: Seleziona un altro metodo di pagamento per i restanti <strong> %{amount} </strong>.
@@ -1628,7 +1572,6 @@ it-CH:
     supported_currencies: Valute supportate
     supported_currencies_long: Un elenco separato da virgole delle valute supportate
     supported_locales: Impostazioni locali supportate
-    tags: Tag
     tags_placeholder: Aggiungere etichette
     tax: Imposta
     tax_categories: Categorie fiscali
@@ -1723,12 +1666,9 @@ it-CH:
     variant_placeholder: Scegli una variante
     variant_prices_search_placeholder: Cerca SKU o nome variante ...
     variants: Varianti
-    version: Versione
-    void: Void
     weight: Peso
     what_is_a_cvv: Cos'è un codice di carta di credito (CVV)?
     width: Larghezza
-    year: Anno
     you_have_no_orders_yet: Non hai ancora ordini
     your_order_is_empty_add_product: Il tuo ordine è vuoto, cerca e aggiungi un prodotto sopra
     zip: Cerniera lampo

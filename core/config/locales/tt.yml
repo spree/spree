@@ -437,7 +437,6 @@ tt:
     abbreviation: Кыскарту
     accept: Кабул ит
     acceptance_errors: Кабул итү хаталары
-    acceptance_status: Кабул итү статусы
     accepted: Кабул ителде
     account: Хисап
     account_info: Хисап турында мәгълүмат
@@ -455,32 +454,24 @@ tt:
       refund: Кире кайтару
       save: Саклагыз
       update: Яңарту
-    activate: Активлаштыру
     active: Актив
     add: Кушу
     add_action_of_type: Тип төрен өстәгез
-    add_country: Ил өстәргә
     add_coupon_code: Купон коды өстәргә
     add_new_address: Яңа адрес өстәгез
     add_new_credit_card: Яңа картаны өстәгез
-    add_new_header: Яңа башлам өстәргә
-    add_new_style: Яңа стиль өстәгез
     add_one: Берсен өстәгез
     add_option_value: Вариант кыйммәтен өстәгез
     add_product: Продукция өстәү
     add_product_properties: Продукциянең үзенчәлекләрен өстәгез
     add_rule_of_type: Тип кагыйдәсен өстәгез
-    add_state: Дәүләт өстәү
     add_stock: Акция өстәгез
     add_store: Яңа кибет
     add_store_credit: Кибет кредитын өстәгез
     add_to_cart: Кәрзингә өстә
     add_variant: Вариантны өстәгез
     added_to_cart: Арбага уңышлы кушылды!
-    additional_item: Өстәмә пункт
     address: Адрес
-    address1: Адрес
-    address2: Адрес (дәвамы)
     address_action_popup:
       delete_button: әйе, бетерегез
       delete_text: Сез чыннан да <br /> бу адресны бетерергә телисезме?
@@ -499,13 +490,10 @@ tt:
     addresses: Адреслар
     adjustable: Көйләнә торган
     adjustment: Көйләү
-    adjustment_amount: Күләм
     adjustment_labels:
       tax_rates:
         excluding_tax: "%{name}%{amount}"
         including_tax: "%{name}%{amount} (бәягә кертелгән)"
-    adjustment_successfully_closed: Көйләү уңышлы ябылды!
-    adjustment_successfully_opened: Көйләү уңышлы ачылды!
     adjustment_total: Барлык көйләү
     adjustments: Көйләүләр
     adjustments_deleted: Көйләүләр бетерелде
@@ -549,26 +537,19 @@ tt:
         user_information: Кулланучы турында мәгълүмат
     administration: Администрация
     advertise: Реклама
-    agree_to_privacy_policy: Хосусыйлык политикасы белән килешегез
-    agree_to_terms_of_service: Хезмәт шартларына риза
     all: Барысы да
     all_adjustments_closed: Барлык төзәтмәләр дә уңышлы ябылды!
     all_adjustments_opened: Барлык төзәтмәләр дә уңышлы ачылды!
-    all_departments: Барлык бүлекләр
     all_items_have_been_returned: Барлык әйберләр дә кайтарылды
     all_rights_reserved: Барлык хокуклар якланган
-    already_have_account: Сезнең хисап бармы?
     alt_text: Альтернатив текст
     alternative_phone: Альтернатив телефон
     amount: Күләм
     and: һәм
-    approve: раслау
     approved_at: Расланган
     approver: Кушымта
     are_you_sure: Ышанасыңмы?
     are_you_sure_delete: Сез бу язманы бетерергә телисезме?
-    associated_adjustment_closed: Бәйләнешле көйләү ябык, һәм яңадан исәпләнмәячәк. Аны ачасыгыз киләме?
-    authorization_failure: Рөхсәт уңышсызлыгы
     authorized: Рөхсәтле
     auto_capture: Авто тарту
     availability: барлыгы
@@ -577,16 +558,10 @@ tt:
     average_order_value: Орденның уртача бәясе
     avs_response: AVS җавап
     back: Кире
-    back_end: Арткы план
-    back_to_payment: Түләүгә кире кайту
     back_to_resource_list: "%{resource} исемлегенә кире кайту"
-    back_to_rma_reason_list: RMA сәбәпләр исемлегенә кире кайту
     back_to_store: Кибеткә кире кайту
-    back_to_users_list: Кулланучылар исемлегенә кире кайту
     backorderable: Арткы
     backorderable_default: Килешү
-    backordered: Аркада
-    backordered_confirm_info: Сайланган әйбер чикләнгән, шуңа күрә тоткарлануны көтегез. Сез заказ бирергә телисезме?
     backordered_info: Аркада
     backorders_allowed: чикләр рөхсәт ителә
     balance_due: Баланс
@@ -594,9 +569,7 @@ tt:
     base_percent: Төп процент
     basic_information: Төп мәгълүмат
     bill_address: Хисап адресы
-    billing: Хисап
     billing_address: Хисап адресы
-    both: Икесе дә
     breadcrumbs: Икмәк кисәкләре
     calculated_reimbursements: Хисапланган түләүләр
     calculator: Калькулятор
@@ -612,8 +585,6 @@ tt:
     cannot_empty_completed_order: Заказ эшкәртелгән инде, бушатып булмый
     cannot_perform_operation: Соралган операцияне башкара алмый
     cannot_return_more_than_bought_quantity: Сатып алынган саннан күбрәк кайта алмый.
-    cannot_set_shipping_method_without_address: Клиент реквизитлары китерелгәнче җибәрү ысулын куя алмыйлар.
-    capture: Кулга алу
     capture_events: Вакыйгаларны төшерү
     card_code: Картаны раслау коды (CVC)
     card_number: Карта саны
@@ -630,19 +601,9 @@ tt:
       quantity: саны
       remove_from_cart: Арбадан чыгар
       title: Кәрҗин
-    cart_subtotal:
-      one: Субтотал (1 пункт)
-      other: Субтоталь (%{count} әйберләр)
-    categories: Төркемнәр
     category: Төркем
-    category_nav_bar:
-      get_up_to_30_percent_off: 30% ӨЧЕН
-      jackets_and_coats: Джекет һәм күлләр
-      new_collection: Я NEWА КОЛЛЕКTIONИЯ
-      special_offers: Махсус тәкъдимнәр
     channel: Канал
     charged: Түләү
-    checkout: Тишерү
     checkout_page:
       back_to_cart: арбага
       checkout_navigation: Чыгыш навигациясе
@@ -651,25 +612,18 @@ tt:
       main_navigation: Төп навигация
       product: Продукция
     choose_a_customer: Клиентны сайлагыз
-    choose_a_taxon_to_sort_products_for: Продукцияне тәртипкә китерү өчен таксон сайлагыз
     choose_currency: Валюта сайлагыз
-    choose_dashboard_locale: Такталар җирлеген сайлагыз
     choose_location: Урынны сайлагыз
     city: Шәһәр
     clear_cache: Кэшны чистарту
-    clear_cache_ok: Кэш юылды
     clear_cache_warning: Кэшны чистарту кибетегезнең эшләвен вакытлыча киметәчәк.
-    click_and_drag_on_the_products_to_sort_them: Сортлау өчен продуктларга басыгыз һәм сузыгыз.
     clone: Клон
     close: Ябу
     close_all_adjustments: Барлык көйләүләрне ябу
     code: Код
     company: Компания
     compare_at_price: Бәя белән чагыштырыгыз
-    complete: тулы
-    configuration: Конфигурация
     configurations: Конфигурацияләр
-    confirm: Ышандыр
     confirm_delete: Бетерүне раслагыз
     confirm_password: Серсүзне раслау
     contact_phone: Контакт телефоны
@@ -679,7 +633,6 @@ tt:
     continue_shopping: Кибетне дәвам итегез
     cost_currency: Валюта бәясе
     cost_price: Бәясе
-    could_not_create_customer_return: Клиентларның кире кайтуын булдыра алмыйм
     could_not_create_stock_movement: Бу акция хәрәкәтен саклап калуда проблема бар. Зинһар, кабатлап карагыз.
     count_on_hand: Кулга санагыз
     countries: Илләр
@@ -688,7 +641,6 @@ tt:
     country_name: Исем
     country_rule:
       label: Сайлау бу илгә җибәрелергә тиеш
-    coupon: Купон
     coupon_code: Купон коды
     coupon_code_already_applied: Купон коды бу заказга кулланылган инде
     coupon_code_applied: Купон коды сезнең заказга уңышлы кулланылды.
@@ -700,22 +652,17 @@ tt:
     coupon_code_removed: Купон коды сезнең заказдан уңышлы алынды.
     coupon_code_unknown_error: Бу талон коды бу вакытта арбага кулланыла алмый.
     create: Ярат
-    create_a_new_account: Яңа хисап язмасы төзегез
     create_new_order: Яңа тәртип булдыру
     create_reimbursement: Компенсация булдыру
     created_at: Atәр сүзнең
     created_by: Ясалган
-    credit: Кредит
     credit_allowed: Кредит рөхсәт ителә
     credit_card: Кредит картас
-    credit_cards: Кредит карталары
     credit_owed: Кредит
     credited: Кредит
     credits: Кредитлар
-    currencies: Валюта
     currency: Валюта
     currency_settings: Валюта көйләүләре
-    current: Ток
     current_promotion_usage: 'хәзерге куллану: %{count}'
     customer: Клиент
     customer_details: Клиент турында мәгълүмат
@@ -814,7 +761,6 @@ tt:
     exceptions:
       count_on_hand_setter: 'Count_on_hand кул белән куя алмый, чөнки ул автоматик рәвештә recalculate_count_on_hand шалтыраты белән куелган. Зинһар, аның урынына "update_column (: count_on_hand, value)" кулланыгыз.'
     exchange_for: Алмаштыру
-    excl: excl.
     existing_shipments: Хәзерге җибәрү
     expedited_exchanges_warning: Anyәрбер күрсәтелгән алыш-биреш саклаганнан соң клиентка җибәреләчәк. Клиент әйбернең тулы күләмен %{days_window} көн эчендә кире кайтармасалар.
     expiration: Срогы
@@ -1551,7 +1497,6 @@ tt:
     stock_location_info: Акциянең урнашуы турында мәгълүмат
     stock_locations: Акция урнашуы
     stock_locations_need_a_default_country: Акция урнашканчы, сез демократик ил булдырырга тиеш.
-    stock_management: Акция белән идарә итү
     stock_management_requires_a_stock_location: Зинһар, акция белән идарә итү өчен запас урыны булдырыгыз.
     stock_movements: Акция хәрәкәтләре
     stock_movements_for_stock_location: "%{stock_location_name} өчен акцияләр"
@@ -1562,7 +1507,6 @@ tt:
         variants_unavailable: Кайбер вариантлар %{stock}да юк
     stock_transfer_name: Акция күчерү
     stock_transfers: Акция трансфертлары
-    stop: Тукта
     store: Кибет
     store_credit:
       additional_payment_needed: Калган <strong> %{amount} </strong> өчен бүтән түләү ысулын сайлагыз.
@@ -1628,7 +1572,6 @@ tt:
     supported_currencies: Ярдәмле валюта
     supported_currencies_long: Ярдәмле валюталарның үтемле аерылган исемлеге
     supported_locales: Ярдәмле җирлекләр
-    tags: Теги
     tags_placeholder: Тэглар өстәгез
     tax: Салым
     tax_categories: Салым категорияләре
@@ -1723,12 +1666,9 @@ tt:
     variant_placeholder: Вариантны сайлагыз
     variant_prices_search_placeholder: SKU яки вариант исемен эзләгез ...
     variants: Вариантлар
-    version: Вариант
-    void: Буш
     weight: Авырлык
     what_is_a_cvv: Нәрсә ул (CVV) Кредит картасы коды?
     width: Киңлек
-    year: Ел
     you_have_no_orders_yet: Сездә әле заказ юк
     your_order_is_empty_add_product: Сезнең заказ буш, өстә продукт эзләгез һәм өстәгез
     zip: Почта
