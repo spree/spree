@@ -552,6 +552,7 @@ sw:
     approver: Mtangazaji
     are_you_sure: Una uhakika?
     are_you_sure_delete: Je! Una uhakika unataka kufuta rekodi hii?
+    authorization_failure: Imeshindwa kuidhinisha
     authorized: Imeidhinishwa
     auto_capture: Kukamata Kiotomatiki
     availability: upatikanaji
@@ -974,6 +975,7 @@ sw:
     optional: Hiari
     options: Chaguzi
     or: au
+    or_over_price: "%{price} au zaidi"
     order: Agizo
     order_adjustments: Marekebisho ya agizo
     order_already_updated: Agizo tayari limesasishwa.
@@ -1098,6 +1100,7 @@ sw:
     previous_state_missing: n / a
     previously_used_card: Kadi zilizotumiwa hapo awali
     price: Bei
+    price_range: Kiwango cha bei
     price_sack: Gunia la Bei
     prices: Bei
     product: Bidhaa
@@ -1496,6 +1499,7 @@ sw:
     type_to_search: Andika ili utafute
     unable_to_connect_to_gateway: Imeshindwa kuunganisha kwenye lango.
     unable_to_create_reimbursements: Imeshindwa kuunda malipo kwa sababu kuna vitu vinasubiri uingiliaji wa mwongozo.
+    under_price: Chini ya %{price}
     unrecognized_card_type: Aina ya kadi isiyotambuliwa
     update: Sasisha
     url: URL

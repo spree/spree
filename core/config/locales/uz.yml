@@ -552,6 +552,7 @@ uz:
     approver: Tasdiqlovchi
     are_you_sure: Ishonchingiz komilmi?
     are_you_sure_delete: Ushbu yozuvni o'chirishni xohlaysizmi?
+    authorization_failure: Avtorizatsiya qilinmadi
     authorized: Vakolatli
     auto_capture: Avtomatik suratga olish
     availability: mavjudlik
@@ -974,6 +975,7 @@ uz:
     optional: Ixtiyoriy
     options: Tanlovlar
     or: yoki
+    or_over_price: "%{price} yoki undan yuqori"
     order: Buyurtma
     order_adjustments: Buyurtmani sozlash
     order_already_updated: Buyurtma allaqachon yangilangan.
@@ -1098,6 +1100,7 @@ uz:
     previous_state_missing: n / a
     previously_used_card: Ilgari ishlatilgan kartalar
     price: Narx
+    price_range: Narxlar oralig'i
     price_sack: Narx qopi
     prices: Narxlar
     product: Mahsulot
@@ -1496,6 +1499,7 @@ uz:
     type_to_search: Qidirish uchun kiriting
     unable_to_connect_to_gateway: Shlyuzga ulanib bo'lmadi.
     unable_to_create_reimbursements: To'lovlarni amalga oshirib bo'lmadi, chunki qo'lda aralashuvni kutayotgan narsalar mavjud.
+    under_price: "%{price} ostida"
     unrecognized_card_type: Notanish karta turi
     update: Yangilash
     url: URL manzili

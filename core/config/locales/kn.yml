@@ -552,6 +552,7 @@ kn:
     approver: ಅನುಮೋದನೆ
     are_you_sure: ನೀವು ಖಚಿತವಾಗಿರುವಿರಾ?
     are_you_sure_delete: ಈ ದಾಖಲೆಯನ್ನು ಅಳಿಸಲು ನೀವು ಖಚಿತವಾಗಿ ಬಯಸುವಿರಾ?
+    authorization_failure: ಅಧಿಕಾರ ವೈಫಲ್ಯ
     authorized: ಅಧಿಕೃತ
     auto_capture: ಸ್ವಯಂ ಕ್ಯಾಪ್ಚರ್
     availability: ಲಭ್ಯತೆ
@@ -974,6 +975,7 @@ kn:
     optional: ಐಚ್ al ಿಕ
     options: ಆಯ್ಕೆಗಳು
     or: ಅಥವಾ
+    or_over_price: "%{price} ಅಥವಾ ಹೆಚ್ಚಿನದು"
     order: ಆದೇಶ
     order_adjustments: ಆದೇಶ ಹೊಂದಾಣಿಕೆಗಳು
     order_already_updated: ಆದೇಶವನ್ನು ಈಗಾಗಲೇ ನವೀಕರಿಸಲಾಗಿದೆ.
@@ -1098,6 +1100,7 @@ kn:
     previous_state_missing: ಎನ್ / ಎ
     previously_used_card: ಹಿಂದೆ ಬಳಸಿದ ಕಾರ್ಡ್‌ಗಳು
     price: ಬೆಲೆ
+    price_range: ಬೆಲೆ ಶ್ರೇಣಿ
     price_sack: ಬೆಲೆ ಸ್ಯಾಕ್
     prices: ಬೆಲೆಗಳು
     product: ಉತ್ಪನ್ನ
@@ -1496,6 +1499,7 @@ kn:
     type_to_search: ಹುಡುಕಲು ಟೈಪ್ ಮಾಡಿ
     unable_to_connect_to_gateway: ಗೇಟ್‌ವೇಗೆ ಸಂಪರ್ಕಿಸಲು ಸಾಧ್ಯವಿಲ್ಲ.
     unable_to_create_reimbursements: ಹಸ್ತಚಾಲಿತ ಹಸ್ತಕ್ಷೇಪ ಬಾಕಿ ಉಳಿದಿರುವ ಕಾರಣ ಮರುಪಾವತಿಗಳನ್ನು ರಚಿಸಲು ಸಾಧ್ಯವಿಲ್ಲ.
+    under_price: "%{price} ಅಡಿಯಲ್ಲಿ"
     unrecognized_card_type: ಗುರುತಿಸಲಾಗದ ಕಾರ್ಡ್ ಪ್ರಕಾರ
     update: ನವೀಕರಿಸಿ
     url: URL

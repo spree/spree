@@ -552,6 +552,7 @@ eu:
     approver: Onartzailea
     are_you_sure: Ziur zaude?
     are_you_sure_delete: Ziur zaude erregistro hau ezabatu nahi duzula?
+    authorization_failure: Baimenaren porrota
     authorized: Baimendua
     auto_capture: Auto Capture
     availability: erabilgarritasuna
@@ -974,6 +975,7 @@ eu:
     optional: Aukerakoa
     options: Aukerak
     or: edo
+    or_over_price: "%{price} edo gehiago"
     order: Agindua
     order_adjustments: Aginduen doikuntzak
     order_already_updated: Eskaera dagoeneko eguneratu da.
@@ -1098,6 +1100,7 @@ eu:
     previous_state_missing: n / a
     previously_used_card: Aurretik erabilitako txartelak
     price: Prezioa
+    price_range: Prezio-tartea
     price_sack: Prezio zakua
     prices: Prezioak
     product: Produktua
@@ -1496,6 +1499,7 @@ eu:
     type_to_search: Idatzi bilatzeko
     unable_to_connect_to_gateway: Ezin da atebidera konektatu.
     unable_to_create_reimbursements: Ezin dira itzulketak sortu eskuz esku hartzeko elementuak daudelako.
+    under_price: "%{price} azpian"
     unrecognized_card_type: Aitortu gabeko txartel mota
     update: Eguneratu
     url: URLa

@@ -552,6 +552,7 @@ de-AT:
     approver: Genehmiger
     are_you_sure: Bist du sicher?
     are_you_sure_delete: Möchten Sie diesen Datensatz wirklich löschen?
+    authorization_failure: Autorisierungsfehler
     authorized: Autorisiert
     auto_capture: Automatische Erfassung
     availability: Verfügbarkeit
@@ -974,6 +975,7 @@ de-AT:
     optional: Optional
     options: Optionen
     or: oder
+    or_over_price: "%{price} oder höher"
     order: Bestellen
     order_adjustments: Auftragsanpassungen
     order_already_updated: Die Bestellung wurde bereits aktualisiert.
@@ -1098,6 +1100,7 @@ de-AT:
     previous_state_missing: n / A
     previously_used_card: Zuvor verwendete Karten
     price: Preis
+    price_range: Preisklasse
     price_sack: Preis Sack
     prices: Preise
     product: Produkt
@@ -1496,6 +1499,7 @@ de-AT:
     type_to_search: Tippe um zu suchen
     unable_to_connect_to_gateway: Es kann keine Verbindung zum Gateway hergestellt werden.
     unable_to_create_reimbursements: Erstattungen können nicht erstellt werden, da noch manuelle Eingriffe erforderlich sind.
+    under_price: Unter %{price}
     unrecognized_card_type: Nicht erkannter Kartentyp
     update: Aktualisieren
     url: URL

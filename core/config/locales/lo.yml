@@ -552,6 +552,7 @@ lo:
     approver: ວິທີການ
     are_you_sure: ເຈົ້າ​ແນ່​ໃຈ​ບໍ່?
     are_you_sure_delete: ທ່ານແນ່ໃຈບໍ່ວ່າທ່ານຕ້ອງການລຶບບັນທຶກນີ້?
+    authorization_failure: ຄວາມລົ້ມເຫຼວຂອງການອະນຸຍາດ
     authorized: ໄດ້ຮັບອະນຸຍາດ
     auto_capture: ຈັບອັດຕະໂນມັດ
     availability: ມີ
@@ -974,6 +975,7 @@ lo:
     optional: ທາງເລືອກ
     options: ທາງເລືອກ
     or: ຫຼື
+    or_over_price: "%{price} ຫຼືຫຼາຍກວ່ານັ້ນ"
     order: ສັ່ງ
     order_adjustments: ການປັບແຕ່ງການສັ່ງຊື້
     order_already_updated: ການສັ່ງຊື້ໄດ້ຖືກປັບປຸງແລ້ວ.
@@ -1098,6 +1100,7 @@ lo:
     previous_state_missing: n / a
     previously_used_card: ບັດທີ່ເຄີຍໃຊ້ມາກ່ອນ
     price: ລາຄາ
+    price_range: ລະ​ດັບ​ລາ​ຄາ
     price_sack: ກະເປົາລາຄາ
     prices: ລາຄາ
     product: ຜະລິດຕະພັນ
@@ -1496,6 +1499,7 @@ lo:
     type_to_search: ພິມເພື່ອຄົ້ນຫາ
     unable_to_connect_to_gateway: ບໍ່ສາມາດເຊື່ອມຕໍ່ກັບປະຕູໄດ້.
     unable_to_create_reimbursements: ບໍ່ສາມາດສ້າງເງີນຄືນໄດ້ເພາະວ່າມີບາງລາຍການທີ່ຍັງລໍຖ້າການແຊກແຊງດ້ວຍມື
+    under_price: ພາຍໃຕ້ %{price}
     unrecognized_card_type: ປະເພດບັດທີ່ບໍ່ໄດ້ຮັບການຍອມຮັບ
     update: ປັບປຸງໃຫ້ທັນ
     url: URL

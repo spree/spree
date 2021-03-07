@@ -552,6 +552,7 @@ eo:
     approver: Aprobanto
     are_you_sure: Ĉu vi certas?
     are_you_sure_delete: Ĉu vi certas, ke vi volas forigi ĉi tiun diskon?
+    authorization_failure: Rajtigo malsukcesis
     authorized: Rajtigita
     auto_capture: Aŭtomata Kapto
     availability: havebleco
@@ -974,6 +975,7 @@ eo:
     optional: Laŭvola
     options: Opcioj
     or: aŭ
+    or_over_price: "%{price} aŭ pli"
     order: Ordo
     order_adjustments: Ordigu ĝustigojn
     order_already_updated: La ordo jam estas ĝisdatigita.
@@ -1098,6 +1100,7 @@ eo:
     previous_state_missing: n / a
     previously_used_card: Antaŭe Uzitaj Kartoj
     price: Prezo
+    price_range: Prezaro
     price_sack: Prezo-Sako
     prices: Prezoj
     product: Produkto
@@ -1496,6 +1499,7 @@ eo:
     type_to_search: Tajpu por serĉi
     unable_to_connect_to_gateway: Ne eblas konekti al enirejo.
     unable_to_create_reimbursements: Ne eblas krei repagojn, ĉar estas eroj atendantaj manan intervenon.
+    under_price: Sub %{price}
     unrecognized_card_type: Nekonata kartospeco
     update: Ĝisdatigu
     url: URL

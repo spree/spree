@@ -552,6 +552,7 @@ te:
     approver: ఆమోదం
     are_you_sure: మీరు చెప్పేది నిజమా?
     are_you_sure_delete: మీరు ఖచ్చితంగా ఈ రికార్డ్‌ను తొలగించాలనుకుంటున్నారా?
+    authorization_failure: ప్రామాణీకరణ వైఫల్యం
     authorized: అధీకృత
     auto_capture: ఆటో క్యాప్చర్
     availability: లభ్యత
@@ -974,6 +975,7 @@ te:
     optional: ఐచ్ఛికం
     options: ఎంపికలు
     or: లేదా
+    or_over_price: "%{price} లేదా అంతకంటే ఎక్కువ"
     order: ఆర్డర్
     order_adjustments: ఆర్డర్ సర్దుబాట్లు
     order_already_updated: ఆర్డర్ ఇప్పటికే నవీకరించబడింది.
@@ -1098,6 +1100,7 @@ te:
     previous_state_missing: n / ఎ
     previously_used_card: గతంలో ఉపయోగించిన కార్డులు
     price: ధర
+    price_range: ధర పరిధి
     price_sack: ధర సాక్
     prices: ధరలు
     product: ఉత్పత్తి
@@ -1496,6 +1499,7 @@ te:
     type_to_search: శోధించడానికి టైప్ చేయండి
     unable_to_connect_to_gateway: గేట్‌వేకి కనెక్ట్ చేయడం సాధ్యం కాలేదు.
     unable_to_create_reimbursements: మాన్యువల్ జోక్యానికి పెండింగ్‌లో ఉన్న అంశాలు ఉన్నందున రీయింబర్స్‌మెంట్‌లను సృష్టించడం సాధ్యం కాలేదు.
+    under_price: "%{price} కింద"
     unrecognized_card_type: గుర్తించబడని కార్డ్ రకం
     update: నవీకరణ
     url: URL

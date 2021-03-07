@@ -552,6 +552,7 @@ ms:
     approver: Meluluskan
     are_you_sure: Adakah anda pasti?
     are_you_sure_delete: Adakah anda pasti mahu memadamkan rekod ini?
+    authorization_failure: Kegagalan pemberian kuasa
     authorized: Dibenar
     auto_capture: Tangkap Auto
     availability: ketersediaan
@@ -974,6 +975,7 @@ ms:
     optional: Pilihan
     options: Pilihan
     or: atau
+    or_over_price: "%{price} atau lebih"
     order: Pesanan
     order_adjustments: Penyesuaian pesanan
     order_already_updated: Pesanan sudah dikemas kini.
@@ -1098,6 +1100,7 @@ ms:
     previous_state_missing: n / a
     previously_used_card: Kad Yang Digunakan Sebelum Ini
     price: Harga
+    price_range: Julat harga
     price_sack: Harga Karung
     prices: Harga
     product: Produk
@@ -1496,6 +1499,7 @@ ms:
     type_to_search: Taip untuk mencari
     unable_to_connect_to_gateway: Tidak dapat menyambung ke pintu masuk.
     unable_to_create_reimbursements: Tidak dapat membuat pembayaran balik kerana terdapat item yang menunggu intervensi manual.
+    under_price: Di bawah %{price}
     unrecognized_card_type: Jenis kad yang tidak dikenali
     update: Kemas kini
     url: URL

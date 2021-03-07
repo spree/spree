@@ -552,6 +552,7 @@ tt:
     approver: Кушымта
     are_you_sure: Ышанасыңмы?
     are_you_sure_delete: Сез бу язманы бетерергә телисезме?
+    authorization_failure: Рөхсәт уңышсызлыгы
     authorized: Рөхсәтле
     auto_capture: Авто тарту
     availability: барлыгы
@@ -974,6 +975,7 @@ tt:
     optional: Ихтимал
     options: Вариантлар
     or: яки
+    or_over_price: "%{price} яки аннан да күбрәк"
     order: Заказ
     order_adjustments: Заказны көйләү
     order_already_updated: Заказ яңартылды.
@@ -1098,6 +1100,7 @@ tt:
     previous_state_missing: м / Ю
     previously_used_card: Элек кулланылган карточкалар
     price: Бәя
+    price_range: Бәяләр диапазоны
     price_sack: Бәяләр сумкасы
     prices: Бәяләр
     product: Продукция
@@ -1496,6 +1499,7 @@ tt:
     type_to_search: Эзләү өчен языгыз
     unable_to_connect_to_gateway: Шлюзка тоташа алмый.
     unable_to_create_reimbursements: Түләү булдыра алмый, чөнки кул белән интервенция көткән әйберләр бар.
+    under_price: "%{price} астында"
     unrecognized_card_type: Танылмаган карточка тибы
     update: Яңарту
     url: URL

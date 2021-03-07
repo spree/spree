@@ -552,6 +552,7 @@ it-CH:
     approver: Approvatore
     are_you_sure: Sei sicuro?
     are_you_sure_delete: Sei sicuro di voler eliminare questo record?
+    authorization_failure: Errore di autorizzazione
     authorized: Autorizzato
     auto_capture: Acquisizione automatica
     availability: disponibilità
@@ -974,6 +975,7 @@ it-CH:
     optional: Opzionale
     options: Opzioni
     or: o
+    or_over_price: "%{price} o superiore"
     order: Ordine
     order_adjustments: Adeguamenti dell'ordine
     order_already_updated: L'ordine è già stato aggiornato.
@@ -1098,6 +1100,7 @@ it-CH:
     previous_state_missing: n / A
     previously_used_card: Carte usate in precedenza
     price: Prezzo
+    price_range: Fascia di prezzo
     price_sack: Sacco di prezzo
     prices: Prezzi
     product: Prodotto
@@ -1496,6 +1499,7 @@ it-CH:
     type_to_search: Digita per cercare
     unable_to_connect_to_gateway: Impossibile connettersi al gateway.
     unable_to_create_reimbursements: Impossibile creare rimborsi perché ci sono articoli in attesa di intervento manuale.
+    under_price: Sotto %{price}
     unrecognized_card_type: Tipo di carta non riconosciuto
     update: Aggiornare
     url: URL

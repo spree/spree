@@ -552,6 +552,7 @@ ne:
     approver: स्वीकृत
     are_you_sure: साच्चै हो?
     are_you_sure_delete: के तपाई पक्का यो रेकर्ड मेट्न चाहानुहुन्छ?
+    authorization_failure: प्राधिकरण असफलता
     authorized: अधिकृत
     auto_capture: अटो क्याप्चर
     availability: उपलब्धता
@@ -974,6 +975,7 @@ ne:
     optional: वैकल्पिक
     options: विकल्पहरू
     or: वा
+    or_over_price: "%{price} वा माथि"
     order: अर्डर
     order_adjustments: अर्डर समायोजन
     order_already_updated: अर्डर पहिले नै अपडेट गरिएको छ।
@@ -1098,6 +1100,7 @@ ne:
     previous_state_missing: n / a
     previously_used_card: पहिले प्रयोग गरिएको कार्डहरू
     price: मूल्य
+    price_range: मूल्य दायरा
     price_sack: मूल्य बोरा
     prices: मूल्यहरु
     product: उत्पादन
@@ -1496,6 +1499,7 @@ ne:
     type_to_search: खोजी गर्न टाइप गर्नुहोस्
     unable_to_connect_to_gateway: गेटवेमा जडान गर्न असमर्थ।
     unable_to_create_reimbursements: प्रतिपूर्तिहरू सिर्जना गर्न असक्षम किनभने त्यहाँ म्यानुअल हस्तक्षेपको लागि बाँकी रहेका वस्तुहरू छन्।
+    under_price: "%{price} मुनि"
     unrecognized_card_type: अपरिचित कार्ड प्रकार
     update: अद्यावधिक गर्नुहोस्
     url: URL

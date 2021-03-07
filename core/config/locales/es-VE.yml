@@ -552,6 +552,7 @@ es-VE:
     approver: Aprobador
     are_you_sure: "¿Está seguro?"
     are_you_sure_delete: "¿Está seguro de que desea eliminar este registro?"
+    authorization_failure: Fallo de autorización
     authorized: Autorizado
     auto_capture: Captura automática
     availability: disponibilidad
@@ -974,6 +975,7 @@ es-VE:
     optional: Opcional
     options: Opciones
     or: o
+    or_over_price: "%{price} o más"
     order: Orden
     order_adjustments: Ajustes de orden
     order_already_updated: El pedido ya se ha actualizado.
@@ -1098,6 +1100,7 @@ es-VE:
     previous_state_missing: n / A
     previously_used_card: Tarjetas usadas previamente
     price: Precio
+    price_range: Rango de precios
     price_sack: Saco de precios
     prices: Precios
     product: Producto
@@ -1496,6 +1499,7 @@ es-VE:
     type_to_search: Escribe para buscar
     unable_to_connect_to_gateway: No se puede conectar a la puerta de enlace.
     unable_to_create_reimbursements: No se pueden crear reembolsos porque hay elementos pendientes de intervención manual.
+    under_price: Bajo %{price}
     unrecognized_card_type: Tipo de tarjeta no reconocido
     update: Actualizar
     url: URL

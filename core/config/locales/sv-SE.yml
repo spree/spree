@@ -552,6 +552,7 @@ sv-SE:
     approver: Godkännare
     are_you_sure: Är du säker?
     are_you_sure_delete: Är du säker på att du vill ta bort den här posten?
+    authorization_failure: Auktoriseringsfel
     authorized: Auktoriserad
     auto_capture: Auto Capture
     availability: tillgänglighet
@@ -974,6 +975,7 @@ sv-SE:
     optional: Frivillig
     options: alternativ
     or: eller
+    or_over_price: "%{price} eller över"
     order: Ordning
     order_adjustments: Beställ justeringar
     order_already_updated: Beställningen har redan uppdaterats.
@@ -1098,6 +1100,7 @@ sv-SE:
     previous_state_missing: ej tillämpligt
     previously_used_card: Tidigare använda kort
     price: Pris
+    price_range: Prisklass
     price_sack: Pris säck
     prices: Priser
     product: Produkt
@@ -1496,6 +1499,7 @@ sv-SE:
     type_to_search: Skriv för att söka
     unable_to_connect_to_gateway: Det gick inte att ansluta till gateway.
     unable_to_create_reimbursements: Det går inte att skapa ersättningar eftersom det finns objekt som väntar manuellt ingripande.
+    under_price: Under %{price}
     unrecognized_card_type: Okänd korttyp
     update: Uppdatering
     url: URL

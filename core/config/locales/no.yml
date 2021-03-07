@@ -552,6 +552,7 @@
     approver: Godkjenner
     are_you_sure: Er du sikker?
     are_you_sure_delete: Er du sikker på at du vil slette denne posten?
+    authorization_failure: Autorisasjonsfeil
     authorized: Autorisert
     auto_capture: Automatisk fangst
     availability: tilgjengelighet
@@ -974,6 +975,7 @@
     optional: Valgfri
     options: Alternativer
     or: eller
+    or_over_price: "%{price} eller over"
     order: Rekkefølge
     order_adjustments: Bestill justeringer
     order_already_updated: Bestillingen er allerede oppdatert.
@@ -1098,6 +1100,7 @@
     previous_state_missing: ikke relevant
     previously_used_card: Tidligere brukte kort
     price: Pris
+    price_range: Prisklasse
     price_sack: Prissekk
     prices: Priser
     product: Produkt
@@ -1496,6 +1499,7 @@
     type_to_search: Skriv for å søke
     unable_to_connect_to_gateway: Kan ikke koble til gateway.
     unable_to_create_reimbursements: Kunne ikke opprette refusjoner fordi det er varer som venter på manuell inngrep.
+    under_price: Under %{price}
     unrecognized_card_type: Ukjent korttype
     update: Oppdater
     url: URL

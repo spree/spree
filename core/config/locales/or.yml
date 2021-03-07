@@ -552,6 +552,7 @@ or:
     approver: ଅନୁମୋଦନକାରୀ |
     are_you_sure: ତମେ ନିଶ୍ଚିତ କି?
     are_you_sure_delete: ଆପଣ ନିଶ୍ଚିତ କି ଆପଣ ଏହି ରେକର୍ଡ ବିଲୋପ କରିବାକୁ ଚାହୁଁଛନ୍ତି?
+    authorization_failure: ପ୍ରାଧିକରଣ ବିଫଳତା |
     authorized: ପ୍ରାଧିକୃତ
     auto_capture: ଅଟୋ କ୍ୟାପଚର୍ |
     availability: ଉପଲବ୍ଧତା |
@@ -974,6 +975,7 @@ or:
     optional: ବ tion କଳ୍ପିକ
     options: ବିକଳ୍ପଗୁଡ଼ିକ
     or: କିମ୍ବା
+    or_over_price: "%{price} କିମ୍ବା ଅଧିକ"
     order: ଅର୍ଡର |
     order_adjustments: ଅର୍ଡର ଆଡଜଷ୍ଟମେଣ୍ଟ୍ |
     order_already_updated: କ୍ରମଟି ଅଦ୍ୟତନ ହୋଇସାରିଛି |
@@ -1098,6 +1100,7 @@ or:
     previous_state_missing: n / a
     previously_used_card: ପୂର୍ବରୁ ବ୍ୟବହୃତ କାର୍ଡଗୁଡ଼ିକ |
     price: ମୂଲ୍ୟ
+    price_range: ମୂଲ୍ୟ ପରିସର
     price_sack: ମୂଲ୍ୟ ଅଖା
     prices: ମୂଲ୍ୟ
     product: ଉତ୍ପାଦ
@@ -1496,6 +1499,7 @@ or:
     type_to_search: ଖୋଜିବାକୁ ଟାଇପ୍ କରନ୍ତୁ |
     unable_to_connect_to_gateway: ଗେଟୱେ ସହିତ ସଂଯୋଗ କରିବାକୁ ଅସମର୍ଥ |
     unable_to_create_reimbursements: କ୍ଷତିପୂରଣ ସୃଷ୍ଟି କରିବାରେ ଅସମର୍ଥ କାରଣ ମାନୁଆଲ ହସ୍ତକ୍ଷେପ ବିଚାରାଧୀନ ଅଛି |
+    under_price: "%{price} ଅଧୀନରେ |"
     unrecognized_card_type: ଅଜ୍ଞାତ କାର୍ଡ ପ୍ରକାର |
     update: ଅଦ୍ୟତନ କରନ୍ତୁ |
     url: URL

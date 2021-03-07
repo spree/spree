@@ -552,6 +552,7 @@ el-CY:
     approver: Έγκριση
     are_you_sure: Είσαι σίγουρος?
     are_you_sure_delete: Είστε βέβαιοι ότι θέλετε να διαγράψετε αυτήν την εγγραφή;
+    authorization_failure: Αποτυχία εξουσιοδότησης
     authorized: Εξουσιοδοτημένο
     auto_capture: Αυτόματη λήψη
     availability: διαθεσιμότητα
@@ -974,6 +975,7 @@ el-CY:
     optional: Προαιρετικός
     options: Επιλογές
     or: ή
+    or_over_price: "%{price} ή παραπάνω"
     order: Σειρά
     order_adjustments: Προσαρμογές παραγγελιών
     order_already_updated: Η παραγγελία έχει ήδη ενημερωθεί.
@@ -1098,6 +1100,7 @@ el-CY:
     previous_state_missing: α / α
     previously_used_card: Κάρτες που χρησιμοποιήθηκαν στο παρελθόν
     price: Τιμή
+    price_range: Εύρος τιμών
     price_sack: Τιμή σάκος
     prices: Τιμές
     product: Προϊόν
@@ -1496,6 +1499,7 @@ el-CY:
     type_to_search: Πληκτρολογήστε για αναζήτηση
     unable_to_connect_to_gateway: Δεν είναι δυνατή η σύνδεση στην πύλη.
     unable_to_create_reimbursements: Δεν είναι δυνατή η δημιουργία αποζημιώσεων επειδή υπάρχουν στοιχεία σε εκκρεμότητα μη αυτόματης παρέμβασης.
+    under_price: Στην περιοχή %{price}
     unrecognized_card_type: Μη αναγνωρισμένος τύπος κάρτας
     update: Εκσυγχρονίζω
     url: Διεύθυνση URL

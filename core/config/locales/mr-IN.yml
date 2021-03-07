@@ -552,6 +552,7 @@ mr-IN:
     approver: मंजूर
     are_you_sure: तुला खात्री आहे?
     are_you_sure_delete: आपली खात्री आहे की आपण हे रेकॉर्ड हटवू इच्छिता?
+    authorization_failure: अधिकृतता अयशस्वी
     authorized: अधिकृत
     auto_capture: ऑटो कॅप्चर
     availability: उपलब्धता
@@ -974,6 +975,7 @@ mr-IN:
     optional: पर्यायी
     options: पर्याय
     or: किंवा
+    or_over_price: "%{price} किंवा त्याहून अधिक"
     order: ऑर्डर
     order_adjustments: ऑर्डर समायोजन
     order_already_updated: ऑर्डर आधीपासून अद्यतनित केली गेली आहे.
@@ -1098,6 +1100,7 @@ mr-IN:
     previous_state_missing: एन / ए
     previously_used_card: पूर्वी वापरलेली कार्डे
     price: किंमत
+    price_range: मुल्य श्रेणी
     price_sack: किंमतीची पोती
     prices: किंमती
     product: उत्पादन
@@ -1496,6 +1499,7 @@ mr-IN:
     type_to_search: शोधण्यासाठी टाइप करा
     unable_to_connect_to_gateway: गेटवेशी कनेक्ट करण्यात अक्षम.
     unable_to_create_reimbursements: प्रतिपूर्ती तयार करण्यात अक्षम कारण मॅन्युअल हस्तक्षेपासाठी प्रलंबित आयटम आहेत.
+    under_price: "%{price} अंतर्गत"
     unrecognized_card_type: अपरिचित कार्ड प्रकार
     update: अद्यतनित करा
     url: यूआरएल

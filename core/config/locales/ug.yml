@@ -552,6 +552,7 @@ ug:
     approver: تەستىقلىغۇچى
     are_you_sure: ئىشىنەمسىز؟
     are_you_sure_delete: بۇ خاتىرىنى ئۆچۈرمەكچىمۇ؟
+    authorization_failure: ھوقۇق مەغلۇب بولدى
     authorized: ھوقۇق بېرىلگەن
     auto_capture: Auto Capture
     availability: ئىشلەتكىلى بولىدۇ
@@ -974,6 +975,7 @@ ug:
     optional: ئىختىيارىي
     options: تاللانما
     or: ياكى
+    or_over_price: "%{price} ياكى ئۇنىڭدىن يۇقىرى"
     order: زاكاز
     order_adjustments: زاكاز تەڭشەش
     order_already_updated: زاكاز ئاللىقاچان يېڭىلاندى.
@@ -1098,6 +1100,7 @@ ug:
     previous_state_missing: n / a
     previously_used_card: ئىلگىرى ئىشلىتىلگەن كارتا
     price: باھاسى
+    price_range: باھا دائىرىسى
     price_sack: باھا خالتىسى
     prices: باھاسى
     product: مەھسۇلات
@@ -1496,6 +1499,7 @@ ug:
     type_to_search: ئىزدەڭ
     unable_to_connect_to_gateway: كىرىش ئېغىزىغا ئۇلىنالمىدى.
     unable_to_create_reimbursements: قولدا ئارىلىشىشنى ساقلاۋاتقان تۈرلەر بولغاچقا ، تولۇقلىما بېرەلمەيدۇ.
+    under_price: "%{price} ئاستىدا"
     unrecognized_card_type: تونۇلمىغان كارتا تىپى
     update: يېڭىلاش
     url: URL

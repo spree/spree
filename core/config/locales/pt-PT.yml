@@ -552,6 +552,7 @@ pt-PT:
     approver: Aprovador
     are_you_sure: Tem certeza?
     are_you_sure_delete: Tem certeza que deseja excluir este registro?
+    authorization_failure: Falha de autorização
     authorized: Autorizado
     auto_capture: Captura Automática
     availability: disponibilidade
@@ -974,6 +975,7 @@ pt-PT:
     optional: Opcional
     options: Opções
     or: ou
+    or_over_price: "%{price} ou superior"
     order: Ordem
     order_adjustments: Ajustes de pedido
     order_already_updated: O pedido já foi atualizado.
@@ -1098,6 +1100,7 @@ pt-PT:
     previous_state_missing: n / D
     previously_used_card: Cartões usados anteriormente
     price: Preço
+    price_range: Faixa de preço
     price_sack: Saco de preço
     prices: Preços
     product: produtos
@@ -1496,6 +1499,7 @@ pt-PT:
     type_to_search: Escreva para pesquisar
     unable_to_connect_to_gateway: Incapaz de conectar ao gateway.
     unable_to_create_reimbursements: Não foi possível criar reembolsos porque existem itens com intervenção manual pendente.
+    under_price: Sob %{price}
     unrecognized_card_type: Tipo de cartão não reconhecido
     update: Atualizar
     url: URL

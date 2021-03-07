@@ -552,6 +552,7 @@ fr-FR:
     approver: Approbateur
     are_you_sure: Êtes-vous sûr?
     are_you_sure_delete: Voulez-vous vraiment supprimer cet enregistrement?
+    authorization_failure: Échec de l'autorisation
     authorized: Autorisé
     auto_capture: Capture automatique
     availability: disponibilité
@@ -974,6 +975,7 @@ fr-FR:
     optional: Optionnel
     options: Options
     or: ou
+    or_over_price: "%{price} ou supérieur"
     order: Commander
     order_adjustments: Ajustements de commande
     order_already_updated: La commande a déjà été mise à jour.
@@ -1098,6 +1100,7 @@ fr-FR:
     previous_state_missing: n / A
     previously_used_card: Cartes précédemment utilisées
     price: Prix
+    price_range: Échelle des prix
     price_sack: Sac de prix
     prices: Des prix
     product: Produit
@@ -1496,6 +1499,7 @@ fr-FR:
     type_to_search: Tapez pour rechercher
     unable_to_connect_to_gateway: Impossible de se connecter à la passerelle.
     unable_to_create_reimbursements: Impossible de créer des remboursements car il y a des articles en attente d'une intervention manuelle.
+    under_price: Sous %{price}
     unrecognized_card_type: Type de carte non reconnu
     update: Mettre à jour
     url: URL

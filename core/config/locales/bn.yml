@@ -552,6 +552,7 @@ bn:
     approver: অনুমোদিত
     are_you_sure: তুমি কি নিশ্চিত?
     are_you_sure_delete: আপনি কি নিশ্চিত যে আপনি এই রেকর্ডটি মুছতে চান?
+    authorization_failure: অনুমোদন ব্যর্থতা
     authorized: অনুমোদিত
     auto_capture: অটো ক্যাপচার
     availability: উপস্থিতি
@@ -974,6 +975,7 @@ bn:
     optional: ".চ্ছিক"
     options: বিকল্পগুলি
     or: বা
+    or_over_price: "%{price} বা তার বেশি"
     order: অর্ডার
     order_adjustments: অর্ডার সমন্বয়
     order_already_updated: অর্ডার ইতিমধ্যে আপডেট করা হয়েছে।
@@ -1098,6 +1100,7 @@ bn:
     previous_state_missing: n / a
     previously_used_card: পূর্বে ব্যবহৃত কার্ড
     price: দাম
+    price_range: মূল্য পরিসীমা
     price_sack: দাম ব্যাগ
     prices: দাম
     product: পণ্য
@@ -1496,6 +1499,7 @@ bn:
     type_to_search: অনুসন্ধান করতে টাইপ করুন
     unable_to_connect_to_gateway: গেটওয়েতে সংযোগ করতে অক্ষম।
     unable_to_create_reimbursements: ক্ষতিপূরণ তৈরি করতে অক্ষম কারণ ম্যানুয়াল হস্তক্ষেপের জন্য মুলতুবি থাকা আইটেম রয়েছে।
+    under_price: "%{price} এর অধীনে"
     unrecognized_card_type: অজানা কার্ডের ধরণ
     update: হালনাগাদ
     url: ইউআরএল

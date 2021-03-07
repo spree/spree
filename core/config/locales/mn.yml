@@ -552,6 +552,7 @@ mn:
     approver: Зөвшөөрөл
     are_you_sure: Чи итгэлтэй байна уу?
     are_you_sure_delete: Та энэ бичлэгийг устгахдаа итгэлтэй байна уу?
+    authorization_failure: Зөвшөөрлийн алдаа гарлаа
     authorized: Эрх бүхий
     auto_capture: Автоматаар барих
     availability: бэлэн байдал
@@ -974,6 +975,7 @@ mn:
     optional: Нэмэлт
     options: Сонголтууд
     or: эсвэл
+    or_over_price: "%{price} эсвэл түүнээс дээш"
     order: Захиалга
     order_adjustments: Захиалгын тохируулга
     order_already_updated: Захиалга аль хэдийн шинэчлэгдсэн байна.
@@ -1098,6 +1100,7 @@ mn:
     previous_state_missing: үгүй
     previously_used_card: Өмнө нь ашиглаж байсан картууд
     price: Үнэ
+    price_range: Үнийн хүрээ
     price_sack: Үнэ шуудай
     prices: Үнэ
     product: Бүтээгдэхүүн
@@ -1496,6 +1499,7 @@ mn:
     type_to_search: Хайхын тулд бичнэ үү
     unable_to_connect_to_gateway: Гарцтай холбогдох боломжгүй байна.
     unable_to_create_reimbursements: Гар аргаар хөндлөнгөөс оролцохоор хүлээгдэж буй зүйл байгаа тул нөхөн төлбөр үүсгэх боломжгүй байна.
+    under_price: "%{price} дор"
     unrecognized_card_type: Танигдаагүй картын төрөл
     update: Шинэчлэх
     url: URL

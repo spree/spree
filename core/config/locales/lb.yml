@@ -552,6 +552,7 @@ lb:
     approver: Approver
     are_you_sure: Bass du secher?
     are_you_sure_delete: Sidd Dir sécher datt Dir dëse Rekord läsche wëllt?
+    authorization_failure: Autorisatioun Feeler
     authorized: Autoriséiert
     auto_capture: Auto Capture
     availability: Disponibilitéit
@@ -974,6 +975,7 @@ lb:
     optional: Optional
     options: Optiounen
     or: oder
+    or_over_price: "%{price} oder méi"
     order: Uerdnung
     order_adjustments: Upassunge bestellen
     order_already_updated: D'Bestellung gouf scho aktualiséiert.
@@ -1098,6 +1100,7 @@ lb:
     previous_state_missing: n / a
     previously_used_card: Virdrun benotzt Kaarte
     price: Präis
+    price_range: Präis Rei
     price_sack: Präis Sak
     prices: Präisser
     product: Produkt
@@ -1496,6 +1499,7 @@ lb:
     type_to_search: Typ fir ze sichen
     unable_to_connect_to_gateway: Kann net mam Gateway verbannen.
     unable_to_create_reimbursements: Kann net Remboursementer kreéieren well et Saache sinn déi op manuell Interventioun waarden.
+    under_price: Ënner %{price}
     unrecognized_card_type: Unerkannte Kaartentyp
     update: Aktualiséierung
     url: URL

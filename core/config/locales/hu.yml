@@ -552,6 +552,7 @@ hu:
     approver: Jóváhagyó
     are_you_sure: biztos vagy ebben?
     are_you_sure_delete: Biztosan törli ezt a rekordot?
+    authorization_failure: Engedélyezési hiba
     authorized: Felhatalmazott
     auto_capture: Automatikus rögzítés
     availability: elérhetőség
@@ -974,6 +975,7 @@ hu:
     optional: Választható
     options: Lehetőségek
     or: vagy
+    or_over_price: "%{price} vagy több"
     order: Rendelés
     order_adjustments: Rendelési kiigazítások
     order_already_updated: A sorrendet már frissítettük.
@@ -1098,6 +1100,7 @@ hu:
     previous_state_missing: n / a
     previously_used_card: Korábban használt kártyák
     price: Ár
+    price_range: Árkategória
     price_sack: Árzsák
     prices: Árak
     product: Termék
@@ -1496,6 +1499,7 @@ hu:
     type_to_search: Írja be a kereséshez
     unable_to_connect_to_gateway: Nem sikerült csatlakozni az átjáróhoz.
     unable_to_create_reimbursements: Nem sikerült visszatérítéseket létrehozni, mert vannak olyan elemek, amelyek kézi beavatkozásra várnak.
+    under_price: "%{price} alatt"
     unrecognized_card_type: Felismeretlen kártya típusa
     update: Frissítés
     url: URL

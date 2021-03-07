@@ -552,6 +552,7 @@ ka:
     approver: დამამტკიცებელი
     are_you_sure: Დარწმუნებული ხარ?
     are_you_sure_delete: დარწმუნებული ხართ, რომ გსურთ ამ ჩანაწერის წაშლა?
+    authorization_failure: ავტორიზაცია ვერ მოხერხდა
     authorized: უფლებამოსილი
     auto_capture: ავტომატური აღება
     availability: ხელმისაწვდომობა
@@ -974,6 +975,7 @@ ka:
     optional: სურვილისამებრ
     options: Პარამეტრები
     or: ან
+    or_over_price: "%{price} ან მეტი"
     order: შეკვეთა
     order_adjustments: შეკვეთის კორექტირება
     order_already_updated: შეკვეთა უკვე განახლებულია.
@@ -1098,6 +1100,7 @@ ka:
     previous_state_missing: N / A
     previously_used_card: ადრე გამოყენებული ბარათები
     price: ფასი
+    price_range: Ფასების დიაპაზონი
     price_sack: ფასი ტომარა
     prices: ფასები
     product: პროდუქტი
@@ -1496,6 +1499,7 @@ ka:
     type_to_search: აკრიფეთ ძებნა
     unable_to_connect_to_gateway: კარიბჭესთან დაკავშირება შეუძლებელია.
     unable_to_create_reimbursements: ანაზღაურების შექმნა შეუძლებელია, რადგან არსებობს საგნები, რომლებსაც ხელი ელოდებათ.
+    under_price: ქვეშ %{price}
     unrecognized_card_type: ბარათის ამოუცნობი ტიპი
     update: განახლება
     url: URL

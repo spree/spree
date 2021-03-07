@@ -552,6 +552,7 @@ mg:
     approver: Fankatoavana
     are_you_sure: Azonao antoka ve izany?
     are_you_sure_delete: Tena te hamafa an'ity firaketana ity tokoa ve ianao?
+    authorization_failure: Tsy fahombiazan'ny fanomezan-dàlana
     authorized: alalana
     auto_capture: Auto Capture
     availability: fisian'ny
@@ -974,6 +975,7 @@ mg:
     optional: tsy voatery
     options: FANDIKANA
     or: na
+    or_over_price: "%{price} na mihoatra"
     order: mba
     order_adjustments: Fanitsiana kaomandy
     order_already_updated: Ny baiko dia efa navaozina.
@@ -1098,6 +1100,7 @@ mg:
     previous_state_missing: n / A
     previously_used_card: Karatra efa niasa teo aloha
     price: Vidiny
+    price_range: Lanjan'ny vidiny
     price_sack: Sack vidiny
     prices: vidin'ny
     product: Vokatra
@@ -1496,6 +1499,7 @@ mg:
     type_to_search: Soraty raha hikarohanao
     unable_to_connect_to_gateway: Tsy afaka mifandray amin'ny vavahady.
     unable_to_create_reimbursements: Tsy afaka mamorona fanonerana satria misy entana miandry ny fidiran'ny tanana.
+    under_price: Eo ambanin'ny %{price}
     unrecognized_card_type: Karazana karatra tsy fantatra
     update: vaovao farany
     url: URL

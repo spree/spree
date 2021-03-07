@@ -552,6 +552,7 @@ mk:
     approver: Одобрувач
     are_you_sure: Дали си сигурен?
     are_you_sure_delete: Дали сте сигурни дека сакате да го избришете овој запис?
+    authorization_failure: Неуспешно овластување
     authorized: Овластен
     auto_capture: Автоматско снимање
     availability: достапност
@@ -974,6 +975,7 @@ mk:
     optional: Изборен
     options: Опции
     or: или
+    or_over_price: "%{price} или повеќе"
     order: Со цел
     order_adjustments: Прилагодувања за нарачки
     order_already_updated: Нарачката е веќе ажурирана.
@@ -1098,6 +1100,7 @@ mk:
     previous_state_missing: n / a
     previously_used_card: Претходно користени картички
     price: Цена
+    price_range: Опсег на цени
     price_sack: Вреќа вреќа
     prices: Цени
     product: Производ
@@ -1496,6 +1499,7 @@ mk:
     type_to_search: Напишете за пребарување
     unable_to_connect_to_gateway: Не може да се поврзе со портата.
     unable_to_create_reimbursements: Не може да се создадат надоместоци бидејќи има предмети што чекаат рачна интервенција.
+    under_price: Под %{price}
     unrecognized_card_type: Непризнаен тип на картичка
     update: Ажурирање
     url: URL-адреса

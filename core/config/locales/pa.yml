@@ -552,6 +552,7 @@ pa:
     approver: ਮਨਜ਼ੂਰ
     are_you_sure: ਤੁਹਾਨੂੰ ਪੂਰਾ ਵਿਸ਼ਵਾਸ ਹੈ?
     are_you_sure_delete: ਕੀ ਤੁਸੀਂ ਪੱਕਾ ਇਸ ਰਿਕਾਰਡ ਨੂੰ ਮਿਟਾਉਣਾ ਚਾਹੁੰਦੇ ਹੋ?
+    authorization_failure: ਅਧਿਕਾਰ ਅਸਫਲ
     authorized: ਅਧਿਕਾਰਤ
     auto_capture: ਆਟੋ ਕੈਪਚਰ
     availability: ਉਪਲੱਬਧਤਾ
@@ -974,6 +975,7 @@ pa:
     optional: ਵਿਕਲਪਿਕ
     options: ਚੋਣਾਂ
     or: ਜਾਂ
+    or_over_price: "%{price} ਜਾਂ ਵੱਧ"
     order: ਆਰਡਰ
     order_adjustments: ਵਿਵਸਥਾ ਵਿਵਸਥਾ ਕਰੋ
     order_already_updated: ਆਰਡਰ ਪਹਿਲਾਂ ਹੀ ਅਪਡੇਟ ਕੀਤਾ ਗਿਆ ਹੈ.
@@ -1098,6 +1100,7 @@ pa:
     previous_state_missing: n / a
     previously_used_card: ਪਹਿਲਾਂ ਵਰਤੇ ਗਏ ਕਾਰਡ
     price: ਮੁੱਲ
+    price_range: ਕੀਮਤ ਸੀਮਾ
     price_sack: ਮੁੱਲ ਦੀ ਬੋਰੀ
     prices: ਭਾਅ
     product: ਉਤਪਾਦ
@@ -1496,6 +1499,7 @@ pa:
     type_to_search: ਖੋਜ ਕਰਨ ਲਈ ਟਾਈਪ ਕਰੋ
     unable_to_connect_to_gateway: ਗੇਟਵੇ ਨਾਲ ਜੁੜਨ ਵਿੱਚ ਅਸਮਰੱਥ.
     unable_to_create_reimbursements: ਮੁਆਵਜ਼ੇ ਤਿਆਰ ਕਰਨ ਵਿੱਚ ਅਸਮਰੱਥ ਕਿਉਂਕਿ ਇੱਥੇ ਦਸਤਾਵੇਜ਼ ਦਖਲਅੰਦਾਜ਼ੀ ਦੀਆਂ ਚੀਜ਼ਾਂ ਬਕਾਇਆ ਹਨ.
+    under_price: "%{price} ਦੇ ਅਧੀਨ"
     unrecognized_card_type: ਅਣਜਾਣ ਕਾਰਡ ਦੀ ਕਿਸਮ
     update: ਅਪਡੇਟ
     url: ਯੂਆਰਐਲ

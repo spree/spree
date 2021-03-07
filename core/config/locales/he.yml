@@ -552,6 +552,7 @@ he:
     approver: מאשר
     are_you_sure: האם אתה בטוח?
     are_you_sure_delete: האם אתה בטוח שברצונך למחוק רשומה זו?
+    authorization_failure: כישלון ההרשאה
     authorized: מורשה
     auto_capture: לכידה אוטומטית
     availability: זמינות
@@ -974,6 +975,7 @@ he:
     optional: אופציונאלי
     options: אפשרויות
     or: אוֹ
+    or_over_price: "%{price} ומעלה"
     order: להזמין
     order_adjustments: הזמנת התאמות
     order_already_updated: ההזמנה כבר עודכנה.
@@ -1098,6 +1100,7 @@ he:
     previous_state_missing: לא
     previously_used_card: בעבר השתמשו בכרטיסים
     price: מחיר
+    price_range: טווח מחירים
     price_sack: שק מחירים
     prices: מחירים
     product: מוצר
@@ -1496,6 +1499,7 @@ he:
     type_to_search: הקלד לחיפוש
     unable_to_connect_to_gateway: לא ניתן להתחבר לשער.
     unable_to_create_reimbursements: לא ניתן ליצור החזרים מכיוון שיש פריטים הממתינים להתערבות ידנית.
+    under_price: תחת %{price}
     unrecognized_card_type: סוג כרטיס לא מזוהה
     update: עדכון
     url: כתובת אתר

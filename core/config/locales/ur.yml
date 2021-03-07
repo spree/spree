@@ -552,6 +552,7 @@ ur:
     approver: منظور
     are_you_sure: کیا تمہیں یقین ہے؟
     are_you_sure_delete: کیا آپ واقعی یہ ریکارڈ حذف کرنا چاہتے ہیں؟
+    authorization_failure: اجازت میں ناکامی
     authorized: مجاز
     auto_capture: آٹو کیپچر
     availability: دستیابی
@@ -974,6 +975,7 @@ ur:
     optional: اختیاری
     options: اختیارات
     or: یا
+    or_over_price: "%{price} یا اس سے زیادہ"
     order: ترتیب
     order_adjustments: آرڈر ایڈجسٹمنٹ
     order_already_updated: آرڈر پہلے ہی اپ ڈیٹ ہوچکا ہے۔
@@ -1098,6 +1100,7 @@ ur:
     previous_state_missing: n / A
     previously_used_card: پہلے استعمال شدہ کارڈز
     price: قیمت
+    price_range: قیمت کی حد
     price_sack: قیمت کا بوری
     prices: قیمتیں
     product: پروڈکٹ
@@ -1496,6 +1499,7 @@ ur:
     type_to_search: تلاش کرنے کے لئے ٹائپ کریں
     unable_to_connect_to_gateway: گیٹ وے سے رابطہ قائم کرنے سے قاصر۔
     unable_to_create_reimbursements: معاوضے پیدا کرنے سے قاصر ہے کیونکہ دستی مداخلت کے التواء میں آئٹمز باقی ہیں۔
+    under_price: "%{price} کے تحت"
     unrecognized_card_type: شناخت شدہ کارڈ کی قسم
     update: اپ ڈیٹ
     url: یو آر ایل

@@ -552,6 +552,7 @@ zh-HK:
     approver: 批准人
     are_you_sure: 你确定吗？
     are_you_sure_delete: 您确定要删除此记录吗？
+    authorization_failure: 授权失败
     authorized: 已授权
     auto_capture: 自动捕捉
     availability: 可用性
@@ -974,6 +975,7 @@ zh-HK:
     optional: 选修的
     options: 选项
     or: 或者
+    or_over_price: "%{price}或以上"
     order: 命令
     order_adjustments: 订单调整
     order_already_updated: 订单已更新。
@@ -1098,6 +1100,7 @@ zh-HK:
     previous_state_missing: 不适用
     previously_used_card: 以前使用过的卡
     price: 价格
+    price_range: 价格范围
     price_sack: 价格袋
     prices: 价格
     product: 产品
@@ -1496,6 +1499,7 @@ zh-HK:
     type_to_search: 输入要搜索的内容
     unable_to_connect_to_gateway: 无法连接到网关。
     unable_to_create_reimbursements: 由于存在尚待人工干预的项目，因此无法创建报销。
+    under_price: 在%{price}下
     unrecognized_card_type: 无法识别的卡类型
     update: 更新
     url: 网址

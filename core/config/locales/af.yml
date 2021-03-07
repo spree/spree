@@ -552,6 +552,7 @@ af:
     approver: Goedkeuring
     are_you_sure: Is jy seker?
     are_you_sure_delete: Is jy seker jy wil hierdie rekord verwyder?
+    authorization_failure: Magtigingsmislukking
     authorized: Gemagtig
     auto_capture: Outovaslegging
     availability: beskikbaarheid
@@ -974,6 +975,7 @@ af:
     optional: Opsioneel
     options: Opsies
     or: of
+    or_over_price: "%{price} of meer"
     order: Orde
     order_adjustments: Bestel aanpassings
     order_already_updated: Die bestelling is reeds opgedateer.
@@ -1098,6 +1100,7 @@ af:
     previous_state_missing: nvt
     previously_used_card: Voorheen gebruikte kaarte
     price: Prys
+    price_range: Prysklas
     price_sack: Prys sak
     prices: Pryse
     product: Produk
@@ -1496,6 +1499,7 @@ af:
     type_to_search: Tik om te soek
     unable_to_connect_to_gateway: Kan nie aan gateway koppel nie.
     unable_to_create_reimbursements: Kan nie terugbetalings maak nie, want daar is items wat hang af met die hand.
+    under_price: Onder %{price}
     unrecognized_card_type: Onherkenbare kaarttipe
     update: Opdateer
     url: URL

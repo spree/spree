@@ -552,6 +552,7 @@ tl:
     approver: Pag-apruba
     are_you_sure: Sigurado ka ba?
     are_you_sure_delete: Sigurado ka bang nais mong tanggalin ang talaang ito?
+    authorization_failure: Nabigo ang pahintulot
     authorized: Pinahintulutan
     auto_capture: Auto Capture
     availability: kakayahang magamit
@@ -974,6 +975,7 @@ tl:
     optional: Opsyonal
     options: Mga pagpipilian
     or: o
+    or_over_price: "%{price} o higit pa"
     order: Umorder
     order_adjustments: Mga pagsasaayos ng order
     order_already_updated: Na-update na ang order.
@@ -1098,6 +1100,7 @@ tl:
     previous_state_missing: n / a
     previously_used_card: Mga Naunang Ginamit na Card
     price: Presyo
+    price_range: Saklaw ng presyo
     price_sack: Sack ng Presyo
     prices: Mga presyo
     product: Produkto
@@ -1496,6 +1499,7 @@ tl:
     type_to_search: I-type upang maghanap
     unable_to_connect_to_gateway: Hindi makakonekta sa gateway.
     unable_to_create_reimbursements: Hindi makalikha ng mga reimbursement dahil may mga item na nakabinbin ang manu-manong interbensyon.
+    under_price: Sa ilalim ng %{price}
     unrecognized_card_type: Hindi kilalang uri ng card
     update: Update
     url: URL

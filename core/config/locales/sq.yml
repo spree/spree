@@ -552,6 +552,7 @@ sq:
     approver: Aprovues
     are_you_sure: A je i sigurt?
     are_you_sure_delete: Je i sigurt që dëshiron ta fshish këtë rekord?
+    authorization_failure: Dështimi i autorizimit
     authorized: I autorizuar
     auto_capture: Kapja automatike
     availability: disponueshmëria
@@ -974,6 +975,7 @@ sq:
     optional: Opsionale
     options: Opsione
     or: ose
+    or_over_price: "%{price} ose më shumë"
     order: Porosit
     order_adjustments: Rregullimet e porosive
     order_already_updated: Porosia tashmë është azhurnuar.
@@ -1098,6 +1100,7 @@ sq:
     previous_state_missing: n / a
     previously_used_card: Kartat e Përdorura më parë
     price: Çmimi
+    price_range: Gamë të çmimeve
     price_sack: Qese Çmimi
     prices: Çmimet
     product: Produkt
@@ -1496,6 +1499,7 @@ sq:
     type_to_search: Shkruaj për të kërkuar
     unable_to_connect_to_gateway: Nuk mund të lidhet me portën.
     unable_to_create_reimbursements: Në pamundësi të krijimit të rimbursimeve sepse ka artikuj në pritje të ndërhyrjes manuale.
+    under_price: Nën %{price}
     unrecognized_card_type: Lloji i kartës së panjohur
     update: Azhurnoni
     url: URL-ja

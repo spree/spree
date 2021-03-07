@@ -552,6 +552,7 @@ hi:
     approver: स्वीकृति प्रदान करने वाले
     are_you_sure: क्या आपको यकीन है?
     are_you_sure_delete: क्या आप वाकई इस रिकॉर्ड को हटाना चाहते हैं?
+    authorization_failure: प्राधिकरण की विफलता
     authorized: अधिकार दिया गया
     auto_capture: ऑटो कैप्चर
     availability: उपलब्धता
@@ -974,6 +975,7 @@ hi:
     optional: ऐच्छिक
     options: विकल्प
     or: या
+    or_over_price: "%{price} या अधिक"
     order: गण
     order_adjustments: समायोजन का आदेश दें
     order_already_updated: आदेश पहले ही अपडेट किया जा चुका है।
@@ -1098,6 +1100,7 @@ hi:
     previous_state_missing: एन / ए
     previously_used_card: पहले इस्तेमाल किए गए कार्ड
     price: कीमत
+    price_range: मूल्य सीमा
     price_sack: मूल्य बोरी
     prices: कीमतों
     product: उत्पाद
@@ -1496,6 +1499,7 @@ hi:
     type_to_search: खोजने के लिए लिखें
     unable_to_connect_to_gateway: गेटवे से कनेक्ट करने में असमर्थ।
     unable_to_create_reimbursements: प्रतिपूर्ति बनाने में असमर्थ क्योंकि मैन्युअल हस्तक्षेप के मद लंबित हैं।
+    under_price: "%{price} के तहत"
     unrecognized_card_type: अपरिचित कार्ड प्रकार
     update: अपडेट करें
     url: यूआरएल

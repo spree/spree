@@ -716,6 +716,7 @@ cy:
     approver: Cymeradwywr
     are_you_sure: Wyt ti'n siwr?
     are_you_sure_delete: Ydych chi'n siŵr eich bod chi am ddileu'r cofnod hwn?
+    authorization_failure: Methiant awdurdodi
     authorized: Awdurdodedig
     auto_capture: Dal Auto
     availability: argaeledd
@@ -1146,6 +1147,7 @@ cy:
     optional: Dewisol
     options: Opsiynau
     or: neu
+    or_over_price: "%{price} neu drosodd"
     order: Gorchymyn
     order_adjustments: Archebu addasiadau
     order_already_updated: Mae'r gorchymyn eisoes wedi'i ddiweddaru.
@@ -1270,6 +1272,7 @@ cy:
     previous_state_missing: amherthnasol
     previously_used_card: Cardiau a Ddefnyddiwyd yn flaenorol
     price: Pris
+    price_range: Amrediad prisiau
     price_sack: Sach Pris
     prices: Prisiau
     product: Cynnyrch
@@ -1668,6 +1671,7 @@ cy:
     type_to_search: Teipiwch i chwilio
     unable_to_connect_to_gateway: Methu cysylltu â'r porth.
     unable_to_create_reimbursements: Methu creu ad-daliadau oherwydd bod yna eitemau sy'n aros am ymyrraeth â llaw.
+    under_price: O dan %{price}
     unrecognized_card_type: Math o gerdyn heb ei gydnabod
     update: Diweddariad
     url: URL

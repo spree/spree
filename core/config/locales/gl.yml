@@ -552,6 +552,7 @@ gl:
     approver: Aprobador
     are_you_sure: Estás seguro?
     are_you_sure_delete: Seguro que queres eliminar este rexistro?
+    authorization_failure: Fallou a autorización
     authorized: Autorizado
     auto_capture: Captura automática
     availability: dispoñibilidade
@@ -974,6 +975,7 @@ gl:
     optional: Opcional
     options: Opcións
     or: ou
+    or_over_price: "%{price} ou máis"
     order: Orde
     order_adjustments: Axustes de pedidos
     order_already_updated: A orde xa se actualizou.
@@ -1098,6 +1100,7 @@ gl:
     previous_state_missing: N / A
     previously_used_card: Tarxetas usadas anteriormente
     price: Prezo
+    price_range: Franxa de prezo
     price_sack: Saco de prezos
     prices: Prezos
     product: Produto
@@ -1496,6 +1499,7 @@ gl:
     type_to_search: Escribe para buscar
     unable_to_connect_to_gateway: Non se puido conectar á pasarela.
     unable_to_create_reimbursements: Non se poden crear reembolsos porque hai elementos pendentes de intervención manual.
+    under_price: Baixo %{price}
     unrecognized_card_type: Tipo de tarxeta non recoñecida
     update: Actualización
     url: URL

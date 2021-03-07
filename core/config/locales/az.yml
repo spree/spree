@@ -552,6 +552,7 @@ az:
     approver: Təsdiqləyici
     are_you_sure: Sən əminsən?
     are_you_sure_delete: Bu qeydi silmək istədiyinizə əminsiniz?
+    authorization_failure: Avtorizasiya xətası
     authorized: Səlahiyyətlidir
     auto_capture: Avtomatik çəkmə
     availability: mövcudluq
@@ -974,6 +975,7 @@ az:
     optional: İstəyə görə
     options: Seçimlər
     or: və ya
+    or_over_price: "%{price} və ya daha çox"
     order: Sifariş
     order_adjustments: Sifariş düzəlişləri
     order_already_updated: Sifariş artıq yeniləndi.
@@ -1098,6 +1100,7 @@ az:
     previous_state_missing: yox
     previously_used_card: Əvvəllər istifadə edilmiş kartlar
     price: Qiymət
+    price_range: Qiymət aralığı
     price_sack: Qiymət kisəsi
     prices: Qiymətlər
     product: Məhsul
@@ -1496,6 +1499,7 @@ az:
     type_to_search: Axtarış üçün yazın
     unable_to_connect_to_gateway: Şlüzə qoşula bilmir.
     unable_to_create_reimbursements: Əl müdaxiləsini gözləyən əşyalar olduğu üçün ödənişlər yaratmaq mümkün deyil.
+    under_price: "%{price} altında"
     unrecognized_card_type: Tanınmamış kart növü
     update: Yeniləyin
     url: URL

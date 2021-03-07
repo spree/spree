@@ -634,6 +634,7 @@ bs:
     approver: Approver
     are_you_sure: Jesi li siguran?
     are_you_sure_delete: Jeste li sigurni da želite izbrisati ovaj zapis?
+    authorization_failure: Neuspjeh autorizacije
     authorized: Ovlašteno
     auto_capture: Automatsko snimanje
     availability: dostupnost
@@ -1060,6 +1061,7 @@ bs:
     optional: Neobvezno
     options: Opcije
     or: ili
+    or_over_price: "%{price} ili više"
     order: Naruči
     order_adjustments: Podešavanja naloga
     order_already_updated: Narudžba je već ažurirana.
@@ -1184,6 +1186,7 @@ bs:
     previous_state_missing: N / A
     previously_used_card: Ranije korištene karte
     price: Cijena
+    price_range: Raspon cijena
     price_sack: Price Sack
     prices: Cijene
     product: Proizvoda
@@ -1582,6 +1585,7 @@ bs:
     type_to_search: Upišite za pretraživanje
     unable_to_connect_to_gateway: Nije moguće povezati se s mrežnim prolazom.
     unable_to_create_reimbursements: Nije moguće stvoriti povrat jer postoje stavke na čekanju za ručnu intervenciju.
+    under_price: Pod %{price}
     unrecognized_card_type: Neprepoznat tip kartice
     update: Ažuriraj
     url: URL

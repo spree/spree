@@ -552,6 +552,7 @@ is:
     approver: Samþykki
     are_you_sure: Ertu viss?
     are_you_sure_delete: Ertu viss um að þú viljir eyða þessari skrá?
+    authorization_failure: Leyfisbrestur
     authorized: Heimilt
     auto_capture: Sjálfvirk handtaka
     availability: framboð
@@ -974,6 +975,7 @@ is:
     optional: Valfrjálst
     options: Valkostir
     or: eða
+    or_over_price: "%{price} eða yfir"
     order: Panta
     order_adjustments: Aðlögun pöntunar
     order_already_updated: Pöntunin hefur þegar verið uppfærð.
@@ -1098,6 +1100,7 @@ is:
     previous_state_missing: ekki til
     previously_used_card: Áður notuð spil
     price: Verð
+    price_range: Verðbil
     price_sack: Verðpoki
     prices: Verð
     product: Vara
@@ -1496,6 +1499,7 @@ is:
     type_to_search: Sláðu inn til að leita
     unable_to_connect_to_gateway: Ekki er hægt að tengjast hliðinu.
     unable_to_create_reimbursements: Ekki er hægt að búa til endurgreiðslur vegna þess að það eru hlutir sem bíða handvirkrar íhlutunar.
+    under_price: Undir %{price}
     unrecognized_card_type: Óþekkt kortategund
     update: Uppfærsla
     url: Slóð

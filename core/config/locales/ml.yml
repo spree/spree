@@ -552,6 +552,7 @@ ml:
     approver: അംഗീകാരം
     are_you_sure: നിങ്ങള്ക്ക് ഉറപ്പാണോ?
     are_you_sure_delete: ഈ റെക്കോർഡ് ഇല്ലാതാക്കാൻ നിങ്ങൾ ആഗ്രഹിക്കുന്നുണ്ടോ?
+    authorization_failure: അംഗീകാര പരാജയം
     authorized: അംഗീകാരം
     auto_capture: യാന്ത്രിക ക്യാപ്‌ചർ
     availability: ലഭ്യത
@@ -974,6 +975,7 @@ ml:
     optional: ഓപ്ഷണൽ
     options: ഓപ്ഷനുകൾ
     or: അഥവാ
+    or_over_price: "%{price} അല്ലെങ്കിൽ അതിൽ കൂടുതൽ"
     order: ഓർഡർ
     order_adjustments: ഓർഡർ ക്രമീകരണം
     order_already_updated: ഓർഡർ ഇതിനകം അപ്‌ഡേറ്റുചെയ്‌തു.
@@ -1098,6 +1100,7 @@ ml:
     previous_state_missing: n / a
     previously_used_card: മുമ്പ് ഉപയോഗിച്ച കാർഡുകൾ
     price: വില
+    price_range: വില പരിധി
     price_sack: വില ചാക്ക്
     prices: വിലകൾ
     product: ഉൽപ്പന്നം
@@ -1496,6 +1499,7 @@ ml:
     type_to_search: തിരയാൻ ടൈപ്പുചെയ്യുക
     unable_to_connect_to_gateway: ഗേറ്റ്‌വേയിലേക്ക് കണക്റ്റുചെയ്യാനായില്ല.
     unable_to_create_reimbursements: സ്വമേധയാലുള്ള ഇടപെടൽ ശേഷിക്കുന്ന ഇനങ്ങൾ ഉള്ളതിനാൽ റീഇംബേഴ്സ്മെൻറുകൾ സൃഷ്ടിക്കാൻ കഴിയില്ല.
+    under_price: "%{price} ന് കീഴിൽ"
     unrecognized_card_type: തിരിച്ചറിയാത്ത കാർഡ് തരം
     update: അപ്ഡേറ്റ് ചെയ്യുക
     url: URL
