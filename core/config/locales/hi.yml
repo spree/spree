@@ -1266,12 +1266,10 @@ hi:
     server_error: सर्वर ने एक त्रुटि लौटा दी
     settings: समायोजन
     ship: समुंद्री जहाज
-    ship_address: जहाज का पता
     ship_to: 'तक जलयात्रा:'
     ship_total: जहाज का कुल
     shipment: लदान
     shipment_adjustments: शिपमेंट समायोजन
-    shipment_details: "%{shipping_method} के माध्यम से %{stock_location} से"
     shipment_mailer:
       shipped_email:
         dear_customer: प्रिय %{name},
@@ -1291,10 +1289,7 @@ hi:
       pending: अपूर्ण
       ready: तैयार
       shipped: SHIPPED
-    shipment_transfer_error: वेरिएंट ट्रांसफर करने में एक त्रुटि हुई
-    shipment_transfer_success: वेरिएंट को सफलतापूर्वक स्थानांतरित कर दिया गया
     shipments: लदान
-    shipped: SHIPPED
     shipping: शिपिंग
     shipping_address: शिपिंग पता
     shipping_categories: शिपिंग श्रेणियाँ
@@ -1310,7 +1305,6 @@ hi:
       display_price:
         excluding_tax: "%{price} (+ %{tax_amount} %{tax_rate_name})"
         including_tax: "%{price} (incl। %{tax_amount} %{tax_rate_name})"
-    shipping_total: कुल शिपिंग
     shop_by_taxonomy: "%{taxonomy} द्वारा खरीदारी करें"
     shopping_cart: शॉपिंग कार्ट
     show: प्रदर्शन
@@ -1326,14 +1320,12 @@ hi:
       short: स्टोर चयनकर्ता दिखाएँ
     sign_up: साइन अप करें
     sku: SKU
-    skus: SKUs
     slug: काउंटर
     social: सामाजिक
     source: स्रोत
     special_instructions: विशेष निर्देश
     split: विभाजित करें
     spree_gateway_error_flash_for_checkout: आपकी भुगतान जानकारी में कोई समस्या थी। कृपया अपनी जानकारी जांचें और पुनः प्रयास करें।
-    start: शुरू
     starting_from: पर आरंभ होती है
     state: राज्य
     state_based: राज्य आधारित
@@ -1420,8 +1412,6 @@ hi:
       unable_to_find_for_action: 'स्रोत कोड: %{auth_code} कार्रवाई के लिए: %{action} के लिए स्टोर क्रेडिट नहीं मिल सका'
       unable_to_void: 'शून्य कोड में असमर्थ: %{auth_code}'
       user_has_no_store_credits: उपयोगकर्ता के पास कोई भी उपलब्ध स्टोर क्रेडिट नहीं है
-    store_credits: स्टोर क्रेडिट
-    store_default: डिफ़ॉल्ट स्टोर
     store_errors:
       unable_to_create: स्टोर बनाने में असमर्थ।
       unable_to_delete: स्टोर हटाने में असमर्थ।
@@ -1444,15 +1434,12 @@ hi:
     street_address: गली का पता
     street_address_2: सड़क का पता (cont'd)
     subtotal: उप-योग
-    subtract: घटाना
     success: सफलता
     successfully_created: "%{resource} को सफलतापूर्वक बनाया गया है!"
-    successfully_refunded: "%{resource} को सफलतापूर्वक वापस कर दिया गया है!"
     successfully_removed: "%{resource} को सफलतापूर्वक हटा दिया गया है!"
     successfully_updated: "%{resource} को सफलतापूर्वक अपडेट कर दिया गया है!"
     summary: सारांश
     supported_currencies: समर्थित मुद्राओं
-    supported_currencies_long: एक अल्पविराम ने समर्थित मुद्राओं की सूची अलग कर दी
     supported_locales: समर्थित लोकल
     tags_placeholder: तागे मिलाना
     tax: कर
@@ -1462,8 +1449,6 @@ hi:
     tax_included: कर सहित।)
     tax_rate_amount_explanation: कर दरों में गणना में सहायता के लिए एक दशमलव राशि है, (यानी यदि कर की दर 5% है तो 0.05 दर्ज करें)
     tax_rates: कर की दरें
-    taxon: टैक्सोन
-    taxon_edit: टैक्सोन संपादित करें
     taxon_missing_alt: श्रेणी बैनर विवरण
     taxon_placeholder: एक टैक्सोन जोड़ें
     taxon_rule:
@@ -1472,21 +1457,16 @@ hi:
       match_all: सब
       match_any: कम से कम एक
     taxonomies: taxonomies
-    taxonomy: वर्गीकरण
     taxonomy_brands_name: ब्रांड्स
     taxonomy_categories_name: श्रेणियाँ
-    taxonomy_edit: संपादित करें वर्गीकरण
     taxonomy_tree_error: अनुरोधित परिवर्तन को स्वीकार नहीं किया गया है और पेड़ को उसकी पिछली स्थिति में वापस कर दिया गया है, कृपया पुनः प्रयास करें।
     taxonomy_tree_instruction: "* बच्चे को जोड़ने, हटाने या छाँटने के लिए मेनू का उपयोग करने के लिए पेड़ में एक बच्चा राइट (या iOS डिवाइस पर डबल टैप)।"
     taxons: टैक्सों
-    test: परीक्षा
     test_mailer:
       test_email:
         greeting: बधाई हो!
         message: यदि आपको यह ईमेल मिला है, तो आपकी ईमेल सेटिंग्स सही हैं।
         subject: टेस्ट मेल
-    test_mode: परीक्षण विधि
-    thank_you_for_your_order: आपके व्यापार के लिए धन्यवाद। कृपया अपने रिकॉर्ड के लिए इस पुष्टिकरण पृष्ठ की एक प्रति प्रिंट करें।
     there_are_no_items_for_this_order: इस आदेश के लिए कोई आइटम नहीं हैं। जारी रखने के लिए कृपया एक आइटम जोड़ें।
     there_were_problems_with_the_following_fields: निम्नलिखित क्षेत्रों के साथ समस्याएं थीं
     this_order_has_already_received_a_refund: इस आदेश को पहले ही धनवापसी मिल चुकी है
@@ -1497,7 +1477,6 @@ hi:
     time: समय
     to_add_variants_you_must_first_define: वेरिएंट जोड़ने के लिए, आपको पहले परिभाषित करना होगा
     total: संपूर्ण
-    total_per_item: कुल प्रति आइटम
     total_pre_tax_refund: कुल प्री-टैक्स रिफंड
     total_price: कुल कीमत
     total_sales: संपूर्ण बिक्री
@@ -1516,19 +1495,13 @@ hi:
     type_to_search: खोजने के लिए लिखें
     unable_to_connect_to_gateway: गेटवे से कनेक्ट करने में असमर्थ।
     unable_to_create_reimbursements: प्रतिपूर्ति बनाने में असमर्थ क्योंकि मैन्युअल हस्तक्षेप के मद लंबित हैं।
-    under_price: "%{price} के तहत"
-    unlock: अनलॉक
     unrecognized_card_type: अपरिचित कार्ड प्रकार
-    unshippable_items: अवर्णनीय वस्तुएँ
     update: अपडेट करें
-    updating: अद्यतन करने
     url: यूआरएल
     usage_limit: उपयोग की सीमा
     use_app_default: ऐप डिफॉल्ट का इस्तेमाल करें
     use_billing_address: बिलिंग पते का उपयोग करें
-    use_existing_cc: फ़ाइल पर मौजूदा कार्ड का उपयोग करें
     use_new_cc: एक नए कार्ड का उपयोग करें
-    use_new_cc_or_payment_method: नए कार्ड / भुगतान पद्धति का उपयोग करें
     used: उपयोग किया गया
     user: उपयोगकर्ता
     user_not_found: उपयोगकर्ता नहीं मिला

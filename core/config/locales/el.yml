@@ -1266,12 +1266,10 @@ el:
     server_error: Ο διακομιστής επέστρεψε ένα σφάλμα
     settings: Ρυθμίσεις
     ship: Πλοίο
-    ship_address: Διεύθυνση αποστολής
     ship_to: 'Αποστολή σε:'
     ship_total: Σύνολο πλοίου
     shipment: Αποστολή
     shipment_adjustments: Προσαρμογές αποστολών
-    shipment_details: Από %{stock_location} μέσω %{shipping_method}
     shipment_mailer:
       shipped_email:
         dear_customer: Αγαπητέ %{name},
@@ -1291,10 +1289,7 @@ el:
       pending: εκκρεμής
       ready: έτοιμος
       shipped: εστάλη
-    shipment_transfer_error: Παρουσιάστηκε σφάλμα κατά τη μεταφορά παραλλαγών
-    shipment_transfer_success: Οι παραλλαγές μεταφέρθηκαν με επιτυχία
     shipments: Αποστολές
-    shipped: Εστάλη
     shipping: Αποστολή
     shipping_address: Διεύθυνση αποστολής
     shipping_categories: Κατηγορίες αποστολής
@@ -1310,7 +1305,6 @@ el:
       display_price:
         excluding_tax: "%{price} (+ %{tax_amount} %{tax_rate_name})"
         including_tax: "%{price} (συμπ. %{tax_amount} %{tax_rate_name})"
-    shipping_total: Σύνολο αποστολής
     shop_by_taxonomy: Αγορά από %{taxonomy}
     shopping_cart: Καλάθι αγορών
     show: προβολή
@@ -1326,14 +1320,12 @@ el:
       short: Εμφάνιση επιλογέα καταστήματος
     sign_up: Εγγραφείτε
     sku: ΚΜ
-    skus: SKU
     slug: Γυμνοσάλιαγκας
     social: Κοινωνικός
     source: Πηγή
     special_instructions: Ειδικές Οδηγίες
     split: Διαίρεση
     spree_gateway_error_flash_for_checkout: Παρουσιάστηκε πρόβλημα με τα στοιχεία πληρωμής σας. Ελέγξτε τις πληροφορίες σας και δοκιμάστε ξανά.
-    start: Αρχή
     starting_from: Αρχίζει στις
     state: κατάσταση
     state_based: Με βάση το κράτος
@@ -1420,8 +1412,6 @@ el:
       unable_to_find_for_action: 'Δεν ήταν δυνατή η εύρεση πίστωσης καταστήματος για τον κωδικό autent: %{auth_code} for action: %{action}'
       unable_to_void: 'Δεν είναι δυνατή η ακύρωση του κωδικού: %{auth_code}'
       user_has_no_store_credits: Ο χρήστης δεν διαθέτει διαθέσιμη πίστωση στο κατάστημα
-    store_credits: Αποθήκευση μονάδων
-    store_default: Προεπιλεγμένο κατάστημα
     store_errors:
       unable_to_create: Δεν είναι δυνατή η δημιουργία καταστήματος.
       unable_to_delete: Δεν είναι δυνατή η διαγραφή του καταστήματος.
@@ -1444,15 +1434,12 @@ el:
     street_address: Διεύθυνση
     street_address_2: Οδός (συνέχεια)
     subtotal: ΜΕΡΙΚΟ ΣΥΝΟΛΟ
-    subtract: Αφαιρώ
     success: Επιτυχία
     successfully_created: Το %{resource} δημιουργήθηκε με επιτυχία!
-    successfully_refunded: Επιστράφηκε επιτυχώς το %{resource}!
     successfully_removed: Το %{resource} καταργήθηκε με επιτυχία!
     successfully_updated: Το %{resource} ενημερώθηκε με επιτυχία!
     summary: Περίληψη
     supported_currencies: Υποστηριζόμενα νομίσματα
-    supported_currencies_long: Μια λίστα υποστηριζόμενων νομισμάτων διαχωρισμένων με κόμμα
     supported_locales: Υποστηριζόμενες τοπικές ρυθμίσεις
     tags_placeholder: Προσθέστε ετικέτες
     tax: Φόρος
@@ -1462,8 +1449,6 @@ el:
     tax_included: Φόρος (συμπ.)
     tax_rate_amount_explanation: Οι φορολογικοί συντελεστές είναι ένα δεκαδικό ποσό για την ενίσχυση στους υπολογισμούς, (δηλαδή εάν ο φορολογικός συντελεστής είναι 5%, εισαγάγετε 0,05)
     tax_rates: Φορολογικοί δείκτες
-    taxon: Ταξί
-    taxon_edit: Επεξεργασία ταξί
     taxon_missing_alt: Περιγραφή banner κατηγορίας
     taxon_placeholder: Προσθέστε ένα ταξί
     taxon_rule:
@@ -1472,21 +1457,16 @@ el:
       match_all: όλα
       match_any: τουλάχιστον ένα
     taxonomies: Ταξινομίες
-    taxonomy: Ταξινόμηση
     taxonomy_brands_name: Μάρκες
     taxonomy_categories_name: Κατηγορίες
-    taxonomy_edit: Επεξεργασία ταξινόμησης
     taxonomy_tree_error: Η ζητούμενη αλλαγή δεν έγινε αποδεκτή και το δέντρο επιστράφηκε στην προηγούμενη κατάσταση, δοκιμάστε ξανά.
     taxonomy_tree_instruction: "* Κάντε δεξί κλικ (ή πατήστε δύο φορές στη συσκευή iOS) ένα παιδί στο δέντρο για πρόσβαση στο μενού για προσθήκη, διαγραφή ή ταξινόμηση ενός παιδιού."
     taxons: Ταξί
-    test: Δοκιμή
     test_mailer:
       test_email:
         greeting: Συγχαρητήρια!
         message: Εάν έχετε λάβει αυτό το email, τότε οι ρυθμίσεις email σας είναι σωστές.
         subject: Δοκιμή αλληλογραφίας
-    test_mode: Λειτουργία δοκιμής
-    thank_you_for_your_order: Ευχαριστούμε για την επιχείρησή σας. Εκτυπώστε ένα αντίγραφο αυτής της σελίδας επιβεβαίωσης για τα αρχεία σας.
     there_are_no_items_for_this_order: Δεν υπάρχουν αντικείμενα για αυτήν την παραγγελία. Προσθέστε ένα στοιχείο στην παραγγελία για να συνεχίσετε.
     there_were_problems_with_the_following_fields: Παρουσιάστηκαν προβλήματα με τα ακόλουθα πεδία
     this_order_has_already_received_a_refund: Αυτή η παραγγελία έχει ήδη λάβει επιστροφή χρημάτων
@@ -1497,7 +1477,6 @@ el:
     time: χρόνος
     to_add_variants_you_must_first_define: Για να προσθέσετε παραλλαγές, πρέπει πρώτα να ορίσετε
     total: Σύνολο
-    total_per_item: Σύνολο ανά είδος
     total_pre_tax_refund: Συνολική επιστροφή προ φόρων
     total_price: Συνολικό ποσό
     total_sales: Συνολικές πωλήσεις
@@ -1516,19 +1495,13 @@ el:
     type_to_search: Πληκτρολογήστε για αναζήτηση
     unable_to_connect_to_gateway: Δεν είναι δυνατή η σύνδεση στην πύλη.
     unable_to_create_reimbursements: Δεν είναι δυνατή η δημιουργία αποζημιώσεων επειδή υπάρχουν στοιχεία σε εκκρεμότητα μη αυτόματης παρέμβασης.
-    under_price: Στην περιοχή %{price}
-    unlock: Ξεκλείδωμα
     unrecognized_card_type: Μη αναγνωρισμένος τύπος κάρτας
-    unshippable_items: Ανίκαρα είδη
     update: Εκσυγχρονίζω
-    updating: Ενημέρωση
     url: Διεύθυνση URL
     usage_limit: Όριο χρήσης
     use_app_default: Χρησιμοποιήστε την προεπιλογή εφαρμογής
     use_billing_address: Χρήση διεύθυνσης χρέωσης
-    use_existing_cc: Χρησιμοποιήστε μια υπάρχουσα κάρτα στο αρχείο
     use_new_cc: Χρησιμοποιήστε μια νέα κάρτα
-    use_new_cc_or_payment_method: Χρησιμοποιήστε μια νέα κάρτα / μέθοδο πληρωμής
     used: Μεταχειρισμένος
     user: Χρήστης
     user_not_found: Ο χρήστης δεν βρέθηκε

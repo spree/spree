@@ -1266,12 +1266,10 @@ ka:
     server_error: სერვერმა შეცდომა დააბრუნა
     settings: პარამეტრები
     ship: გემი
-    ship_address: გემის მისამართი
     ship_to: 'გადაზიდვა:'
     ship_total: გემი სულ
     shipment: გადაზიდვა
     shipment_adjustments: ტვირთის კორექტირება
-    shipment_details: "%{stock_location}– დან %{shipping_method}– ის საშუალებით"
     shipment_mailer:
       shipped_email:
         dear_customer: ძვირფასო %{name},
@@ -1291,10 +1289,7 @@ ka:
       pending: ელოდება
       ready: მზად არის
       shipped: გაიგზავნა
-    shipment_transfer_error: მოხდა შეცდომა ვარიანტების გადაცემისას
-    shipment_transfer_success: ვარიანტები წარმატებით გადაიტანეს
     shipments: გადაზიდვები
-    shipped: გაიგზავნა
     shipping: ტრანსპორტირება
     shipping_address: მიწოდების მისამართი
     shipping_categories: ტრანსპორტირების კატეგორიები
@@ -1310,7 +1305,6 @@ ka:
       display_price:
         excluding_tax: "%{price} (+ %{tax_amount} %{tax_rate_name})"
         including_tax: "%{price} (ჩათვლით. %{tax_amount} %{tax_rate_name})"
-    shipping_total: ტრანსპორტირება სულ
     shop_by_taxonomy: მაღაზია %{taxonomy}- ს მიერ
     shopping_cart: Საყიდლების კალათი
     show: შოუ
@@ -1326,14 +1320,12 @@ ka:
       short: მაღაზიის ამორჩევის ჩვენება
     sign_up: დარეგისტრირება
     sku: SKU
-    skus: SKU- ები
     slug: Slug
     social: სოციალური
     source: წყარო
     special_instructions: სპეციალური ინსტრუქციები
     split: გაყოფილი
     spree_gateway_error_flash_for_checkout: თქვენს გადახდის ინფორმაციასთან დაკავშირებით პრობლემა წარმოიშვა. გთხოვთ, შეამოწმოთ თქვენი ინფორმაცია და სცადოთ ხელახლა.
-    start: დაწყება
     starting_from: Იწყება
     state: სახელმწიფო
     state_based: სახელმწიფოზე დაფუძნებული
@@ -1420,8 +1412,6 @@ ka:
       unable_to_find_for_action: 'ვერ იპოვნეს მაღაზიის კრედიტი ავტორი კოდისთვის: %{auth_code} მოქმედებისათვის: %{action}'
       unable_to_void: 'შეუძლებელია კოდის გაუქმება: %{auth_code}'
       user_has_no_store_credits: მომხმარებელს არ აქვს ხელმისაწვდომი მაღაზიის კრედიტი
-    store_credits: ინახავს კრედიტებს
-    store_default: ნაგულისხმევი მაღაზია
     store_errors:
       unable_to_create: მაღაზიის შექმნა შეუძლებელია.
       unable_to_delete: მაღაზიის წაშლა შეუძლებელია.
@@ -1444,15 +1434,12 @@ ka:
     street_address: Ქუჩის მისამართი
     street_address_2: ქუჩის მისამართი (გაგრძელება)
     subtotal: ქვეტოტალი
-    subtract: გამოკლება
     success: წარმატება
     successfully_created: "%{resource} წარმატებით შეიქმნა!"
-    successfully_refunded: "%{resource} წარმატებით დაუბრუნდა!"
     successfully_removed: "%{resource} წარმატებით მოიხსნა!"
     successfully_updated: "%{resource} წარმატებით განახლდა!"
     summary: Შემაჯამებელი
     supported_currencies: მხარდაჭერილი ვალუტები
-    supported_currencies_long: მხარდაჭერილი ვალუტების გამოყოფა მძიმით
     supported_locales: მხარდაჭერილი ლოკალები
     tags_placeholder: დაამატეთ წარწერები
     tax: გადასახადი
@@ -1462,8 +1449,6 @@ ka:
     tax_included: გადასახადი (ჩათვლით)
     tax_rate_amount_explanation: საგადასახადო განაკვეთები არის ათობითი თანხა, რომელიც დაგეხმარებათ გაანგარიშებისას (მაგ., თუ გადასახადის განაკვეთი 5% -ს შეადგენს, ჩაწერეთ 0,05)
     tax_rates: საგადასახადო განაკვეთები
-    taxon: ტაქსონი
-    taxon_edit: ტაქსონის რედაქტირება
     taxon_missing_alt: კატეგორიის ბანერის აღწერა
     taxon_placeholder: დაამატეთ ტაქსონი
     taxon_rule:
@@ -1472,21 +1457,16 @@ ka:
       match_all: ყველა
       match_any: ერთი მაინც
     taxonomies: ტაქსონომიები
-    taxonomy: ტაქსონომია
     taxonomy_brands_name: Ბრენდები
     taxonomy_categories_name: კატეგორიები
-    taxonomy_edit: ტაქსონომიის რედაქტირება
     taxonomy_tree_error: მოთხოვნილი ცვლილება არ მიღებულა და ხე დაუბრუნდა წინა მდგომარეობას, გთხოვთ სცადოთ ხელახლა.
     taxonomy_tree_instruction: "* დააჭირეთ ღილაკს მარჯვენა ღილაკით (ან ორმაგად შეეხეთ iOS მოწყობილობაზე) ბავშვს ხეზე, რომ შეძლოთ ბავშვის დამატების, წაშლის ან დალაგების მენიუ."
     taxons: ტაქსონები
-    test: ტესტი
     test_mailer:
       test_email:
         greeting: გილოცავთ!
         message: თუ ეს ელ.წერილი მიიღეთ, თქვენი ელ.ფოსტის პარამეტრები სწორია.
         subject: სატესტო ფოსტა
-    test_mode: Ტესტური რეჟიმი
-    thank_you_for_your_order: Მადლობა თქვენი საქმიანობისთვის. გთხოვთ, ამობეჭდოთ ამ დადასტურების გვერდის ასლი თქვენი ჩანაწერებისათვის.
     there_are_no_items_for_this_order: ამ შეკვეთისთვის არ არის საქონელი. გასაგრძელებლად გთხოვთ დაამატოთ ნივთი.
     there_were_problems_with_the_following_fields: პრობლემები იყო შემდეგ სფეროებში
     this_order_has_already_received_a_refund: ამ შეკვეთას უკვე დაუბრუნეს თანხა
@@ -1497,7 +1477,6 @@ ka:
     time: დრო
     to_add_variants_you_must_first_define: ვარიანტების დასამატებლად ჯერ უნდა განსაზღვროთ
     total: სულ
-    total_per_item: სულ თითო ერთეულზე
     total_pre_tax_refund: მთლიანი გადასახადის დაბრუნება
     total_price: Ჯამური ღირებულება
     total_sales: მთლიანი გაყიდვები
@@ -1516,19 +1495,13 @@ ka:
     type_to_search: აკრიფეთ ძებნა
     unable_to_connect_to_gateway: კარიბჭესთან დაკავშირება შეუძლებელია.
     unable_to_create_reimbursements: ანაზღაურების შექმნა შეუძლებელია, რადგან არსებობს საგნები, რომლებსაც ხელი ელოდებათ.
-    under_price: ქვეშ %{price}
-    unlock: განბლოკვა
     unrecognized_card_type: ბარათის ამოუცნობი ტიპი
-    unshippable_items: შეუსაბამო ნივთები
     update: განახლება
-    updating: მიმდინარეობს განახლება
     url: URL
     usage_limit: გამოყენების ლიმიტი
     use_app_default: გამოიყენეთ აპის ნაგულისხმევი
     use_billing_address: გამოიყენეთ ბილინგის მისამართი
-    use_existing_cc: გამოიყენეთ არსებული ბარათი
     use_new_cc: გამოიყენეთ ახალი ბარათი
-    use_new_cc_or_payment_method: გამოიყენეთ ახალი ბარათი / გადახდის მეთოდი
     used: Გამოყენებული
     user: მომხმარებელი
     user_not_found: Მომხმარებელი არ მოიძებნა

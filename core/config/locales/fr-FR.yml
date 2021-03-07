@@ -1266,12 +1266,10 @@ fr-FR:
     server_error: Le serveur a renvoyé une erreur
     settings: Réglages
     ship: Bateau
-    ship_address: Adresse de livraison
     ship_to: 'Expédition à:'
     ship_total: Total du navire
     shipment: Expédition
     shipment_adjustments: Ajustements d'expédition
-    shipment_details: De %{stock_location} via %{shipping_method}
     shipment_mailer:
       shipped_email:
         dear_customer: Cher %{name},
@@ -1291,10 +1289,7 @@ fr-FR:
       pending: en attendant
       ready: prêt
       shipped: Expédié
-    shipment_transfer_error: Une erreur s'est produite lors du transfert des variantes
-    shipment_transfer_success: Variantes transférées avec succès
     shipments: Les expéditions
-    shipped: Expédié
     shipping: Expédition
     shipping_address: adresse de livraison
     shipping_categories: Catégories d'expédition
@@ -1310,7 +1305,6 @@ fr-FR:
       display_price:
         excluding_tax: "%{price} (+ %{tax_amount} %{tax_rate_name})"
         including_tax: "%{price} (y compris %{tax_amount} %{tax_rate_name})"
-    shipping_total: Total d'expédition
     shop_by_taxonomy: Magasiner par %{taxonomy}
     shopping_cart: Panier
     show: Montrer
@@ -1326,14 +1320,12 @@ fr-FR:
       short: Afficher le sélecteur de magasin
     sign_up: S'inscrire
     sku: SKU
-    skus: SKU
     slug: Limace
     social: Social
     source: La source
     special_instructions: instructions spéciales
     split: Diviser
     spree_gateway_error_flash_for_checkout: Un problème est survenu avec vos informations de paiement. Veuillez vérifier vos informations et réessayer.
-    start: Début
     starting_from: Commence à
     state: État
     state_based: Basé sur l'état
@@ -1420,8 +1412,6 @@ fr-FR:
       unable_to_find_for_action: 'Impossible de trouver le crédit de magasin pour le code d''authentification: %{auth_code} pour l''action: %{action}'
       unable_to_void: 'Impossible d''annuler le code: %{auth_code}'
       user_has_no_store_credits: L'utilisateur n'a pas de crédit de magasin disponible
-    store_credits: Crédits de magasin
-    store_default: Magasin par défaut
     store_errors:
       unable_to_create: Impossible de créer un magasin.
       unable_to_delete: Impossible de supprimer le magasin.
@@ -1444,15 +1434,12 @@ fr-FR:
     street_address: Adresse de rue
     street_address_2: Adresse postale (suite)
     subtotal: Total
-    subtract: Soustraire
     success: Succès
     successfully_created: "%{resource} a été créé avec succès!"
-    successfully_refunded: "%{resource} a été remboursé avec succès!"
     successfully_removed: "%{resource} a été supprimé avec succès!"
     successfully_updated: "%{resource} a été mis à jour avec succès!"
     summary: Résumé
     supported_currencies: Devises prises en charge
-    supported_currencies_long: Une liste séparée par des virgules des devises prises en charge
     supported_locales: Paramètres régionaux pris en charge
     tags_placeholder: Ajouter des balises
     tax: Impôt
@@ -1462,8 +1449,6 @@ fr-FR:
     tax_included: Taxe (incl.)
     tax_rate_amount_explanation: Les taux d'imposition sont un montant décimal pour faciliter les calculs (c'est-à-dire si le taux d'imposition est de 5%, entrez 0,05)
     tax_rates: Les taux d'imposition
-    taxon: Taxon
-    taxon_edit: Modifier le taxon
     taxon_missing_alt: Description de la bannière de catégorie
     taxon_placeholder: Ajouter un taxon
     taxon_rule:
@@ -1472,21 +1457,16 @@ fr-FR:
       match_all: tout
       match_any: au moins un
     taxonomies: Taxonomies
-    taxonomy: Taxonomie
     taxonomy_brands_name: Marques
     taxonomy_categories_name: Catégories
-    taxonomy_edit: Modifier la taxonomie
     taxonomy_tree_error: La modification demandée n'a pas été acceptée et l'arborescence est revenue à son état précédent, veuillez réessayer.
     taxonomy_tree_instruction: "* Cliquez avec le bouton droit (ou appuyez deux fois sur un appareil iOS) sur un enfant dans l'arborescence pour accéder au menu permettant d'ajouter, de supprimer ou de trier un enfant."
     taxons: Taxons
-    test: Test
     test_mailer:
       test_email:
         greeting: Toutes nos félicitations!
         message: Si vous avez reçu cet e-mail, vos paramètres de messagerie sont corrects.
         subject: E-mail test
-    test_mode: Mode d'essai
-    thank_you_for_your_order: Merci pour votre entreprise. Veuillez imprimer une copie de cette page de confirmation pour vos dossiers.
     there_are_no_items_for_this_order: Il n'y a aucun article pour cette commande. Veuillez ajouter un article à la commande pour continuer.
     there_were_problems_with_the_following_fields: Il y a eu des problèmes avec les champs suivants
     this_order_has_already_received_a_refund: Cette commande a déjà reçu un remboursement
@@ -1497,7 +1477,6 @@ fr-FR:
     time: Temps
     to_add_variants_you_must_first_define: Pour ajouter des variantes, vous devez d'abord définir
     total: Total
-    total_per_item: Total par article
     total_pre_tax_refund: Remboursement total avant impôt
     total_price: Prix total
     total_sales: Ventes totales
@@ -1516,19 +1495,13 @@ fr-FR:
     type_to_search: Tapez pour rechercher
     unable_to_connect_to_gateway: Impossible de se connecter à la passerelle.
     unable_to_create_reimbursements: Impossible de créer des remboursements car il y a des articles en attente d'une intervention manuelle.
-    under_price: Sous %{price}
-    unlock: Ouvrir
     unrecognized_card_type: Type de carte non reconnu
-    unshippable_items: Articles non expédiables
     update: Mettre à jour
-    updating: Mise à jour
     url: URL
     usage_limit: Limite d'utilisation
     use_app_default: Utiliser la valeur par défaut de l'application
     use_billing_address: Utiliser l'adresse de facturation
-    use_existing_cc: Utiliser une carte existante dans le fichier
     use_new_cc: Utiliser une nouvelle carte
-    use_new_cc_or_payment_method: Utiliser une nouvelle carte / mode de paiement
     used: Utilisé
     user: Utilisateur
     user_not_found: Utilisateur non trouvé

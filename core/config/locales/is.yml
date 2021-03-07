@@ -1266,12 +1266,10 @@ is:
     server_error: Netþjónninn skilaði villu
     settings: Stillingar
     ship: Skip
-    ship_address: Heimilisfang skips
     ship_to: 'Sending til:'
     ship_total: Skip samtals
     shipment: Sending
     shipment_adjustments: Aðlögun sendingar
-    shipment_details: Frá %{stock_location} um %{shipping_method}
     shipment_mailer:
       shipped_email:
         dear_customer: Kæri %{name},
@@ -1291,10 +1289,7 @@ is:
       pending: í bið
       ready: tilbúinn
       shipped: sent
-    shipment_transfer_error: Villa kom upp við flutning afbrigða
-    shipment_transfer_success: Afbrigði flutt með góðum árangri
     shipments: Sendingar
-    shipped: Sendur
     shipping: Sendingar
     shipping_address: Sendingar heimilisfang
     shipping_categories: Sendingarflokkar
@@ -1310,7 +1305,6 @@ is:
       display_price:
         excluding_tax: "%{price} (+ %{tax_amount} %{tax_rate_name})"
         including_tax: "%{price} (þ.m.t. %{tax_amount} %{tax_rate_name})"
-    shipping_total: Sending alls
     shop_by_taxonomy: Verslaðu eftir %{taxonomy}
     shopping_cart: Innkaupakerra
     show: Sýna
@@ -1326,14 +1320,12 @@ is:
       short: Sýna valkost fyrir verslun
     sign_up: Skráðu þig
     sku: SKU
-    skus: SKU
     slug: Slug
     social: Félagslegt
     source: Heimild
     special_instructions: sérstakar leiðbeiningar
     split: Skipta
     spree_gateway_error_flash_for_checkout: Vandamál kom upp með greiðsluupplýsingar þínar. Vinsamlegast athugaðu upplýsingar þínar og reyndu aftur.
-    start: Byrjaðu
     starting_from: Byrjar kl
     state: Ríki
     state_based: Ríkisbundið
@@ -1420,8 +1412,6 @@ is:
       unable_to_find_for_action: 'Gat ekki fundið verslunarinneign fyrir auth kóða: %{auth_code} fyrir aðgerð: %{action}'
       unable_to_void: 'Ekki er hægt að ógilda kóða: %{auth_code}'
       user_has_no_store_credits: Notandi hefur ekki tiltækt verslunarinneign
-    store_credits: Verslunareiningar
-    store_default: Sjálfgefin verslun
     store_errors:
       unable_to_create: Ekki er hægt að búa til verslun.
       unable_to_delete: Ekki er hægt að eyða verslun.
@@ -1444,15 +1434,12 @@ is:
     street_address: Heimilisfang
     street_address_2: Heimilisfang (frh.)
     subtotal: Samtals
-    subtract: Dragðu frá
     success: Árangur
     successfully_created: vel hefur verið búið til %{resource}!
-    successfully_refunded: vel hefur verið endurgreitt %{resource}!
     successfully_removed: tókst að fjarlægja %{resource}!
     successfully_updated: hefur verið uppfært %{resource}!
     summary: Yfirlit
     supported_currencies: Stuðningur gjaldmiðla
-    supported_currencies_long: Aðskilinn komma með lista yfir studda gjaldmiðla
     supported_locales: Stuðningsaðilar
     tags_placeholder: Bæta við merkjum
     tax: Skattur
@@ -1462,8 +1449,6 @@ is:
     tax_included: Skattur (þ.m.t.)
     tax_rate_amount_explanation: Skattprósenta er aukastaf til að hjálpa við útreikninga, (þ.e.a.s. ef skatthlutfallið er 5%, sláðu inn 0,05)
     tax_rates: Skattprósenta
-    taxon: Taxon
-    taxon_edit: Breyttu Taxon
     taxon_missing_alt: Lýsing á flokkaborða
     taxon_placeholder: Bættu við Taxon
     taxon_rule:
@@ -1472,21 +1457,16 @@ is:
       match_all: allt
       match_any: að minnsta kosti einn
     taxonomies: Flokkunarhagkerfi
-    taxonomy: Flokkunarfræði
     taxonomy_brands_name: Merki
     taxonomy_categories_name: Flokkar
-    taxonomy_edit: Breyttu flokkunarfræði
     taxonomy_tree_error: Umbeðin breyting hefur ekki verið samþykkt og tréð hefur verið komið í fyrra horf, vinsamlegast reyndu aftur.
     taxonomy_tree_instruction: "* Hægri smelltu (eða tvísmelltu á iOS tæki) á barn í trénu til að fá aðgang að valmyndinni til að bæta við, eyða eða flokka barn."
     taxons: Taxons
-    test: Próf
     test_mailer:
       test_email:
         greeting: Til hamingju!
         message: Ef þú hefur fengið þennan tölvupóst, þá eru netstillingar þínar réttar.
         subject: Prófpóstur
-    test_mode: Prófunarstilling
-    thank_you_for_your_order: Takk fyrir viðskiptin. Vinsamlegast prentaðu út afrit af þessari staðfestingarsíðu til að skrá þig.
     there_are_no_items_for_this_order: Það eru engir hlutir fyrir þessa pöntun. Vinsamlegast bættu hlut við pöntunina til að halda áfram.
     there_were_problems_with_the_following_fields: Það voru vandamál með eftirfarandi reiti
     this_order_has_already_received_a_refund: Þessi pöntun hefur þegar fengið endurgreiðslu
@@ -1497,7 +1477,6 @@ is:
     time: Tími
     to_add_variants_you_must_first_define: Til að bæta við afbrigðum verður þú fyrst að skilgreina
     total: Samtals
-    total_per_item: Samtals á hlut
     total_pre_tax_refund: Heildar endurgreiðsla fyrir skatta
     total_price: Heildarverð
     total_sales: Heildarsala
@@ -1516,19 +1495,13 @@ is:
     type_to_search: Sláðu inn til að leita
     unable_to_connect_to_gateway: Ekki er hægt að tengjast hliðinu.
     unable_to_create_reimbursements: Ekki er hægt að búa til endurgreiðslur vegna þess að það eru hlutir sem bíða handvirkrar íhlutunar.
-    under_price: Undir %{price}
-    unlock: Opna
     unrecognized_card_type: Óþekkt kortategund
-    unshippable_items: Ósendanlegir hlutir
     update: Uppfærsla
-    updating: Uppfærir
     url: Slóð
     usage_limit: Notkunarmörk
     use_app_default: Notaðu sjálfgefið forrit
     use_billing_address: Notaðu gjaldheimilisfang
-    use_existing_cc: Notaðu núverandi kort á skrá
     use_new_cc: Notaðu nýtt kort
-    use_new_cc_or_payment_method: Notaðu nýtt kort / greiðslumáta
     used: Notað
     user: Notandi
     user_not_found: Notandi finnst ekki

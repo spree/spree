@@ -1438,12 +1438,10 @@ cy:
     server_error: Dychwelodd y gweinydd wall
     settings: Gosodiadau
     ship: Llong
-    ship_address: Cyfeiriad Llong
     ship_to: 'Llongau i:'
     ship_total: Cyfanswm Llong
     shipment: Cludo
     shipment_adjustments: Addasiadau cludo
-    shipment_details: O %{stock_location} trwy %{shipping_method}
     shipment_mailer:
       shipped_email:
         dear_customer: Annwyl %{name},
@@ -1463,10 +1461,7 @@ cy:
       pending: yn yr arfaeth
       ready: yn barod
       shipped: cludo
-    shipment_transfer_error: Roedd gwall yn trosglwyddo amrywiadau
-    shipment_transfer_success: Trosglwyddwyd amrywiadau yn llwyddiannus
     shipments: Llongau
-    shipped: Wedi'i gludo
     shipping: Llongau
     shipping_address: Cyfeiriad Llongau
     shipping_categories: Categorïau Llongau
@@ -1482,7 +1477,6 @@ cy:
       display_price:
         excluding_tax: "%{price} (+ %{tax_amount} %{tax_rate_name})"
         including_tax: "%{price} (gan gynnwys %{tax_amount} %{tax_rate_name})"
-    shipping_total: Cyfanswm cludo
     shop_by_taxonomy: Siopa gan %{taxonomy}
     shopping_cart: Cart Siopa
     show: Sioe
@@ -1498,14 +1492,12 @@ cy:
       short: Dangos dewisydd Store
     sign_up: Cofrestru
     sku: SKU
-    skus: SKUs
     slug: Gwlithen
     social: Cymdeithasol
     source: Ffynhonnell
     special_instructions: Cyfarwyddiadau Arbennig
     split: Hollti
     spree_gateway_error_flash_for_checkout: Roedd problem gyda'ch gwybodaeth dalu. Gwiriwch eich gwybodaeth a rhoi cynnig arall arni.
-    start: Dechrau
     starting_from: Yn dechrau am
     state: Nodwch
     state_based: Seiliedig ar y Wladwriaeth
@@ -1592,8 +1584,6 @@ cy:
       unable_to_find_for_action: 'Methu dod o hyd i gredyd siop ar gyfer cod auth: %{auth_code} ar gyfer gweithredu: %{action}'
       unable_to_void: 'Methu cod gwag: %{auth_code}'
       user_has_no_store_credits: Nid oes gan y defnyddiwr unrhyw gredyd siop ar gael
-    store_credits: Credydau Siop
-    store_default: Siop ddiofyn
     store_errors:
       unable_to_create: Methu creu storfa.
       unable_to_delete: Methu dileu storfa.
@@ -1616,15 +1606,12 @@ cy:
     street_address: Cyfeiriad stryd
     street_address_2: Cyfeiriad Stryd (parhad)
     subtotal: Is-gyfanswm
-    subtract: Tynnu
     success: Llwyddiant
     successfully_created: mae %{resource} wedi'i greu'n llwyddiannus!
-    successfully_refunded: mae %{resource} wedi'i ad-dalu'n llwyddiannus!
     successfully_removed: Mae %{resource} wedi'i dynnu'n llwyddiannus!
     successfully_updated: mae %{resource} wedi'i ddiweddaru'n llwyddiannus!
     summary: Crynodeb
     supported_currencies: Arian Cyfred â Chefnogaeth
-    supported_currencies_long: Rhestr wedi'i gwahanu gan goma o arian cyfred a gefnogir
     supported_locales: Locales â Chefnogaeth
     tags_placeholder: Ychwanegu Tagiau
     tax: Treth
@@ -1634,8 +1621,6 @@ cy:
     tax_included: Treth (gan gynnwys)
     tax_rate_amount_explanation: Mae cyfraddau treth yn swm degol i gynorthwyo gyda chyfrifiadau, (h.y. os yw'r gyfradd dreth yn 5% yna nodwch 0.05)
     tax_rates: Cyfraddau Treth
-    taxon: Tacson
-    taxon_edit: Golygu Tacson
     taxon_missing_alt: Disgrifiad baner categori
     taxon_placeholder: Ychwanegwch Dacson
     taxon_rule:
@@ -1644,21 +1629,16 @@ cy:
       match_all: I gyd
       match_any: o leiaf un
     taxonomies: Tacsonomeg
-    taxonomy: Tacsonomeg
     taxonomy_brands_name: Brandiau
     taxonomy_categories_name: Categorïau
-    taxonomy_edit: Golygu tacsonomeg
     taxonomy_tree_error: Nid yw'r newid y gofynnwyd amdano wedi'i dderbyn ac mae'r goeden wedi'i dychwelyd i'w chyflwr blaenorol, ceisiwch eto.
     taxonomy_tree_instruction: "* Cliciwch ar y dde (neu dap dwbl ar ddyfais iOS) plentyn yn y goeden i gael mynediad i'r ddewislen ar gyfer ychwanegu, dileu neu ddidoli plentyn."
     taxons: Tacsonau
-    test: Prawf
     test_mailer:
       test_email:
         greeting: Llongyfarchiadau!
         message: Os ydych wedi derbyn yr e-bost hwn, yna mae eich gosodiadau e-bost yn gywir.
         subject: Post Prawf
-    test_mode: Modd Prawf
-    thank_you_for_your_order: Diolch am eich busnes. Argraffwch gopi o'r dudalen gadarnhau hon ar gyfer eich cofnodion.
     there_are_no_items_for_this_order: Nid oes unrhyw eitemau ar gyfer y gorchymyn hwn. Ychwanegwch eitem at y gorchymyn i barhau.
     there_were_problems_with_the_following_fields: Roedd problemau gyda'r meysydd canlynol
     this_order_has_already_received_a_refund: Mae'r gorchymyn hwn eisoes wedi derbyn ad-daliad
@@ -1669,7 +1649,6 @@ cy:
     time: Amser
     to_add_variants_you_must_first_define: I ychwanegu amrywiadau, rhaid i chi ddiffinio yn gyntaf
     total: Cyfanswm
-    total_per_item: Cyfanswm yr eitem
     total_pre_tax_refund: Cyfanswm yr Ad-daliad Cyn Treth
     total_price: Cyfanswm
     total_sales: Cyfanswm Gwerthiannau
@@ -1688,19 +1667,13 @@ cy:
     type_to_search: Teipiwch i chwilio
     unable_to_connect_to_gateway: Methu cysylltu â'r porth.
     unable_to_create_reimbursements: Methu creu ad-daliadau oherwydd bod yna eitemau sy'n aros am ymyrraeth â llaw.
-    under_price: O dan %{price}
-    unlock: Datgloi
     unrecognized_card_type: Math o gerdyn heb ei gydnabod
-    unshippable_items: Eitemau Anorchfygol
     update: Diweddariad
-    updating: Diweddaru
     url: URL
     usage_limit: Terfyn Defnydd
     use_app_default: Defnyddiwch App Default
     use_billing_address: Defnyddiwch Cyfeiriad Bilio
-    use_existing_cc: Defnyddiwch gerdyn sy'n bodoli ar ffeil
     use_new_cc: Defnyddiwch gerdyn newydd
-    use_new_cc_or_payment_method: Defnyddiwch gerdyn / dull talu newydd
     used: Defnyddir
     user: Defnyddiwr
     user_not_found: Ni ddaethpwyd o hyd i'r defnyddiwr

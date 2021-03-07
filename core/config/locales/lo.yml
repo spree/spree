@@ -1266,12 +1266,10 @@ lo:
     server_error: ເຊີບເວີສົ່ງຄືນຂໍ້ຜິດພາດ
     settings: ການຕັ້ງຄ່າ
     ship: ເຮືອ
-    ship_address: ທີ່ຢູ່ເຮືອ
     ship_to: 'ສົ່ງເຖິງ:'
     ship_total: ກຳ ປັ່ນທັງ ໝົດ
     shipment: ຂົນສົ່ງ
     shipment_adjustments: ການປັບຕົວຂົນສົ່ງ
-    shipment_details: ຈາກ %{stock_location} ຜ່ານ %{shipping_method}
     shipment_mailer:
       shipped_email:
         dear_customer: ຮັກແພງ %{name},
@@ -1291,10 +1289,7 @@ lo:
       pending: ທີ່ຍັງຄ້າງ
       ready: ກຽມພ້ອມ
       shipped: ສົ່ງ
-    shipment_transfer_error: ມີຂໍ້ຜິດພາດໃນການໂອນຕົວປ່ຽນແປງ
-    shipment_transfer_success: ການໂອນຍ້າຍສົບຜົນສໍາເລັດ
     shipments: ຂົນສົ່ງ
-    shipped: ຂົນສົ່ງ
     shipping: ການ​ຂົນ​ສົ່ງ
     shipping_address: ທີ່ຢູ່ສົ່ງສິນຄ້າ
     shipping_categories: ປະເພດການຂົນສົ່ງ
@@ -1310,7 +1305,6 @@ lo:
       display_price:
         excluding_tax: "%{price} (+ %{tax_amount} %{tax_rate_name})"
         including_tax: "%{price} (incl. %{tax_amount} %{tax_rate_name})"
-    shipping_total: ການຂົນສົ່ງທັງ ໝົດ
     shop_by_taxonomy: ຮ້ານໂດຍ %{taxonomy}
     shopping_cart: ລົດເຂັນ
     show: ສະແດງ
@@ -1326,14 +1320,12 @@ lo:
       short: ຕົວເລືອກ Show Show
     sign_up: ລົງ​ທະ​ບຽນ
     sku: ສ
-    skus: SKUs
     slug: Slug
     social: ສັງຄົມ
     source: ແຫຼ່ງຂໍ້ມູນ
     special_instructions: ຄຳ ແນະ ນຳ ພິເສດ
     split: ແບ່ງປັນ
     spree_gateway_error_flash_for_checkout: ມີປັນຫາກ່ຽວກັບຂໍ້ມູນການຈ່າຍເງິນຂອງທ່ານ. ກະລຸນາກວດເບິ່ງຂໍ້ມູນຂອງທ່ານແລະລອງ ໃໝ່ ອີກຄັ້ງ.
-    start: ເລີ່ມຕົ້ນ
     starting_from: ເລີ່ມຕົ້ນທີ່
     state: ລັດ
     state_based: ອີງໃສ່ລັດ
@@ -1420,8 +1412,6 @@ lo:
       unable_to_find_for_action: 'ບໍ່ສາມາດຊອກຫາເຄຣດິດຂອງຮ້ານ ສຳ ລັບລະຫັດ auth: %{auth_code} ສຳ ລັບການກະ ທຳ: %{action}'
       unable_to_void: 'ບໍ່ສາມາດຍົກເລີກລະຫັດ: %{auth_code}'
       user_has_no_store_credits: ຜູ້ໃຊ້ບໍ່ມີເຄດິດຮ້ານທີ່ມີຢູ່
-    store_credits: ເກັບສິນເຊື່ອ
-    store_default: ຮ້ານເລີ່ມຕົ້ນ
     store_errors:
       unable_to_create: ບໍ່ສາມາດສ້າງຮ້ານໄດ້.
       unable_to_delete: ບໍ່ສາມາດລຶບຮ້ານໄດ້.
@@ -1444,15 +1434,12 @@ lo:
     street_address: ທີ່​ຢູ່​ຖະ​ຫນົນ
     street_address_2: ທີ່ຢູ່ຖະ ໜົນ (ຕໍ່ເນື່ອງ)
     subtotal: Subtotal
-    subtract: ການຫັກລົບ
     success: ຄວາມ​ສໍາ​ເລັດ
     successfully_created: "%{resource} ໄດ້ສ້າງ ສຳ ເລັດແລ້ວ!"
-    successfully_refunded: "%{resource} ໄດ້ຖືກສົ່ງຄືນ ສຳ ເລັດແລ້ວ!"
     successfully_removed: "%{resource} ຖືກລຶບອອກແລ້ວ!"
     successfully_updated: "%{resource} ໄດ້ຖືກປັບປຸງແລ້ວ!"
     summary: ບົດສະຫຼຸບ
     supported_currencies: ສະກຸນເງິນທີ່ຮອງຮັບ
-    supported_currencies_long: ເຄື່ອງ ໝາຍ ຈຸດແຍກອອກຈາກສະກຸນເງິນທີ່ຮອງຮັບ
     supported_locales: ສະຖານທີ່ທີ່ຮອງຮັບ
     tags_placeholder: ເພີ່ມປ້າຍ
     tax: ພາສີ
@@ -1462,8 +1449,6 @@ lo:
     tax_included: ພາສີ (ລວມທັງ)
     tax_rate_amount_explanation: ອັດຕາພາສີແມ່ນ ຈຳ ນວນທົດສະນິຍົມທີ່ຈະຊ່ວຍໃນການຄິດໄລ່, (ເຊັ່ນວ່າອັດຕາພາສີແມ່ນ 5% ຫຼັງຈາກນັ້ນໃສ່ 0.05)
     tax_rates: ອັດຕາອາກອນ
-    taxon: ລົດແທັກຊີ
-    taxon_edit: ແກ້ໄຂພາສີ
     taxon_missing_alt: ລາຍລະອຽດປ້າຍໂຄສະນາປະເພດ
     taxon_placeholder: ຕື່ມ Taxon
     taxon_rule:
@@ -1472,21 +1457,16 @@ lo:
       match_all: ທັງ ໝົດ
       match_any: ຢ່າງຫນ້ອຍຫນຶ່ງ
     taxonomies: ພາສີອາກອນ
-    taxonomy: ພາສີ
     taxonomy_brands_name: ຍີ່ຫໍ້
     taxonomy_categories_name: ໝວດ
-    taxonomy_edit: ແກ້ໄຂພາສີ
     taxonomy_tree_error: ການປ່ຽນແປງທີ່ຮ້ອງຂໍບໍ່ໄດ້ຖືກຍອມຮັບແລະຕົ້ນໄມ້ໄດ້ຖືກສົ່ງກັບຄືນສູ່ສະພາບເດີມຂອງມັນ, ກະລຸນາລອງ ໃໝ່ ອີກຄັ້ງ.
     taxonomy_tree_instruction: "* ກົດປຸ່ມຂວາ (ຫລືແຕະສອງຄັ້ງໃນອຸປະກອນ iOS) ເດັກຢູ່ໃນຕົ້ນໄມ້ເພື່ອເຂົ້າຫາເມນູ ສຳ ລັບເພີ່ມ, ລຶບຫລືຄັດເລືອກເດັກ."
     taxons: ພາສີ
-    test: ທົດສອບ
     test_mailer:
       test_email:
         greeting: ຊົມເຊີຍ!
         message: ຖ້າທ່ານໄດ້ຮັບອີເມວນີ້, ການຕັ້ງຄ່າອີເມວຂອງທ່ານແມ່ນຖືກຕ້ອງ.
         subject: ອີເມລທົດສອບ
-    test_mode: ຮູບແບບການທົດສອບ
-    thank_you_for_your_order: ຂອບໃຈ ສຳ ລັບທຸລະກິດຂອງທ່ານ. ກະລຸນາພິມ ສຳ ເນົາຂອງ ໜ້າ ຢືນຢັນນີ້ ສຳ ລັບບັນທຶກຂອງທ່ານ.
     there_are_no_items_for_this_order: ສິນຄ້າສັ່ງຊື້ສິນຄ້ານີ້ບໍ່ມີສິນຄ້າຫຍັງເລີຍ. ກະລຸນາຕື່ມລາຍການໃສ່ ຄຳ ສັ່ງເພື່ອ ດຳ ເນີນການຕໍ່ໄປ.
     there_were_problems_with_the_following_fields: ມີປັນຫາໃນຂົງເຂດຕໍ່ໄປນີ້
     this_order_has_already_received_a_refund: ຄຳ ສັ່ງນີ້ໄດ້ຮັບເງິນຄືນແລ້ວ
@@ -1497,7 +1477,6 @@ lo:
     time: ເວລາ
     to_add_variants_you_must_first_define: ເພື່ອເພີ່ມຕົວແປ, ທ່ານຕ້ອງໄດ້ ກຳ ນົດກ່ອນ
     total: ລວມ
-    total_per_item: ລວມທັງ ໝົດ ຕໍ່ລາຍການ
     total_pre_tax_refund: ຈຳ ນວນເງິນຈ່າຍຄືນ ສຳ ລັບພາສີລ່ວງ ໜ້າ
     total_price: ລາ​ຄາ​ລວມ
     total_sales: ຍອດຂາຍທັງ ໝົດ
@@ -1516,19 +1495,13 @@ lo:
     type_to_search: ພິມເພື່ອຄົ້ນຫາ
     unable_to_connect_to_gateway: ບໍ່ສາມາດເຊື່ອມຕໍ່ກັບປະຕູໄດ້.
     unable_to_create_reimbursements: ບໍ່ສາມາດສ້າງເງີນຄືນໄດ້ເພາະວ່າມີບາງລາຍການທີ່ຍັງລໍຖ້າການແຊກແຊງດ້ວຍມື
-    under_price: ພາຍໃຕ້ %{price}
-    unlock: ປົດລັອກ
     unrecognized_card_type: ປະເພດບັດທີ່ບໍ່ໄດ້ຮັບການຍອມຮັບ
-    unshippable_items: ລາຍການທີ່ບໍ່ ສຳ ເລັດຜົນ
     update: ປັບປຸງໃຫ້ທັນ
-    updating: ການປັບປຸງ
     url: URL
     usage_limit: ຂໍ້ ຈຳ ກັດການ ນຳ ໃຊ້
     use_app_default: ໃຊ້ App Default
     use_billing_address: ໃຊ້ທີ່ຢູ່ໃບບິນ
-    use_existing_cc: ໃຊ້ບັດທີ່ມີຢູ່ໃນເອກະສານ
     use_new_cc: ໃຊ້ບັດ ໃໝ່
-    use_new_cc_or_payment_method: ໃຊ້ວິທີການບັດ / ວິທີການຈ່າຍເງິນ ໃໝ່
     used: ໃຊ້ແລ້ວ
     user: ຜູ້ໃຊ້
     user_not_found: ບໍ່ພົບຜູ້ໃຊ້

@@ -1352,12 +1352,10 @@ sl:
     server_error: Strežnik je vrnil napako
     settings: Nastavitve
     ship: Ladja
-    ship_address: Naslov ladje
     ship_to: 'Dostava do:'
     ship_total: Skupno število ladij
     shipment: Pošiljka
     shipment_adjustments: Prilagoditve pošiljke
-    shipment_details: Od %{stock_location} preko %{shipping_method}
     shipment_mailer:
       shipped_email:
         dear_customer: Spoštovani %{name},
@@ -1377,10 +1375,7 @@ sl:
       pending: v teku
       ready: pripravljen
       shipped: odpremljeno
-    shipment_transfer_error: Pri prenosu različic je prišlo do napake
-    shipment_transfer_success: Variante so bile uspešno prenesene
     shipments: Pošiljke
-    shipped: Odposlano
     shipping: Dostava
     shipping_address: naslov za pošiljanje
     shipping_categories: Kategorije pošiljanja
@@ -1396,7 +1391,6 @@ sl:
       display_price:
         excluding_tax: "%{price} (+ %{tax_amount} %{tax_rate_name})"
         including_tax: "%{price} (vključno %{tax_amount} %{tax_rate_name})"
-    shipping_total: Dostava skupaj
     shop_by_taxonomy: Nakupujte %{taxonomy}
     shopping_cart: Nakupovalni voziček
     show: Pokaži
@@ -1412,14 +1406,12 @@ sl:
       short: Pokaži izbirnik trgovine
     sign_up: Prijavite se
     sku: SKU
-    skus: SKU-ji
     slug: Slug
     social: Socialni
     source: Vir
     special_instructions: Posebna navodila
     split: Split
     spree_gateway_error_flash_for_checkout: Prišlo je do težave s podatki o plačilu. Preverite svoje podatke in poskusite znova.
-    start: Začni
     starting_from: Začne se ob
     state: Država
     state_based: Državni
@@ -1506,8 +1498,6 @@ sl:
       unable_to_find_for_action: 'Nisem mogel najti dobroimetja v trgovini za kodo auth: %{auth_code} za dejanje: %{action}'
       unable_to_void: 'Kode ni mogoče razveljaviti: %{auth_code}'
       user_has_no_store_credits: Uporabnik nima na voljo nobenega dobroimetja v trgovini
-    store_credits: Shranite dobropise
-    store_default: Privzeta trgovina
     store_errors:
       unable_to_create: Trgovine ni mogoče ustvariti.
       unable_to_delete: Trgovine ni mogoče izbrisati.
@@ -1530,15 +1520,12 @@ sl:
     street_address: Naslov ceste
     street_address_2: Ulični naslov (nadaljevanje)
     subtotal: Vmesni seštevek
-    subtract: Odštej
     success: Uspeh
     successfully_created: "%{resource} je bil uspešno ustvarjen!"
-    successfully_refunded: "%{resource} je bil uspešno povrnjen!"
     successfully_removed: "%{resource} je bil uspešno odstranjen!"
     successfully_updated: "%{resource} je bil uspešno posodobljen!"
     summary: Povzetek
     supported_currencies: Podprte valute
-    supported_currencies_long: Seznam podprtih valut, ločenih z vejico
     supported_locales: Podprti jeziki
     tags_placeholder: Dodaj oznake
     tax: Davek
@@ -1548,8 +1535,6 @@ sl:
     tax_included: Davek (vklj.)
     tax_rate_amount_explanation: Davčne stopnje so decimalni znesek za pomoč pri izračunih (tj. Če je davčna stopnja 5%, vnesite 0,05)
     tax_rates: Davčne stopnje
-    taxon: Takson
-    taxon_edit: Uredi Taxon
     taxon_missing_alt: Opis pasice kategorije
     taxon_placeholder: Dodajte takson
     taxon_rule:
@@ -1558,21 +1543,16 @@ sl:
       match_all: vse
       match_any: vsaj en
     taxonomies: Taksonomije
-    taxonomy: Taksonomija
     taxonomy_brands_name: Blagovne znamke
     taxonomy_categories_name: Kategorije
-    taxonomy_edit: Uredi taksonomijo
     taxonomy_tree_error: Zahtevana sprememba ni bila sprejeta in drevo je bilo vrnjeno v prejšnje stanje, poskusite znova.
     taxonomy_tree_instruction: "* Z desno miškino tipko kliknite (ali dvakrat tapnite napravo iOS) otroka v drevesu, da odprete meni za dodajanje, brisanje ali razvrščanje otroka."
     taxons: Taksoni
-    test: Preizkus
     test_mailer:
       test_email:
         greeting: Čestitamo!
         message: Če ste prejeli to e-poštno sporočilo, so vaše nastavitve e-pošte pravilne.
         subject: Preizkusite pošto
-    test_mode: Testni način
-    thank_you_for_your_order: Hvala za vaš posel. Za svoje zapise natisnite kopijo te potrditvene strani.
     there_are_no_items_for_this_order: Za to naročilo ni elementov. Za nadaljevanje dodajte element naročilu.
     there_were_problems_with_the_following_fields: Težave so bile z naslednjimi polji
     this_order_has_already_received_a_refund: Za to naročilo smo že prejeli vračilo
@@ -1583,7 +1563,6 @@ sl:
     time: Čas
     to_add_variants_you_must_first_define: Če želite dodati različice, morate najprej definirati
     total: Skupaj
-    total_per_item: Skupaj na kos
     total_pre_tax_refund: Skupno vračilo pred obdavčitvijo
     total_price: Skupna cena
     total_sales: Skupna prodaja
@@ -1602,19 +1581,13 @@ sl:
     type_to_search: Vnesite za iskanje
     unable_to_connect_to_gateway: Povezave s prehodom ni mogoče.
     unable_to_create_reimbursements: Povračil ni bilo mogoče ustvariti, ker obstajajo predmeti, ki čakajo na ročni poseg.
-    under_price: Pod %{price}
-    unlock: Odkleni
     unrecognized_card_type: Neprepoznana vrsta kartice
-    unshippable_items: Predmeti, ki jih ni mogoče odpremati
     update: Nadgradnja
-    updating: Posodabljanje
     url: URL
     usage_limit: Omejitev uporabe
     use_app_default: Uporabi privzeto aplikacijo
     use_billing_address: Uporabite naslov za izstavitev računa
-    use_existing_cc: Uporabite obstoječo kartico v datoteki
     use_new_cc: Uporabite novo kartico
-    use_new_cc_or_payment_method: Uporabite novo kartico / plačilno sredstvo
     used: Uporabljeno
     user: Uporabnik
     user_not_found: Uporabnik ni najden

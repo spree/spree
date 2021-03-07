@@ -1266,12 +1266,10 @@ ml:
     server_error: സെർവർ ഒരു പിശക് നൽകി
     settings: ക്രമീകരണങ്ങൾ
     ship: കപ്പൽ
-    ship_address: കപ്പൽ വിലാസം
     ship_to: 'ഇതിലേക്ക് ഷിപ്പിംഗ്:'
     ship_total: കപ്പൽ ആകെ
     shipment: കയറ്റുമതി
     shipment_adjustments: കയറ്റുമതി ക്രമീകരണം
-    shipment_details: "%{stock_location} മുതൽ %{shipping_method} വഴി"
     shipment_mailer:
       shipped_email:
         dear_customer: പ്രിയ %{name},
@@ -1291,10 +1289,7 @@ ml:
       pending: തീർപ്പുകൽപ്പിച്ചിട്ടില്ല
       ready: തയ്യാറാണ്
       shipped: അയച്ചു
-    shipment_transfer_error: വേരിയന്റുകൾ കൈമാറുന്നതിൽ ഒരു പിശക് ഉണ്ടായിരുന്നു
-    shipment_transfer_success: വേരിയന്റുകൾ വിജയകരമായി കൈമാറി
     shipments: കയറ്റുമതി
-    shipped: അയച്ചു
     shipping: ഷിപ്പിംഗ്
     shipping_address: ഷിപ്പിംഗ് വിലാസം
     shipping_categories: ഷിപ്പിംഗ് വിഭാഗങ്ങൾ
@@ -1310,7 +1305,6 @@ ml:
       display_price:
         excluding_tax: "%{price} (+ %{tax_amount} %{tax_rate_name})"
         including_tax: "%{price} (ഉൾപ്പെടെ. %{tax_amount} %{tax_rate_name})"
-    shipping_total: മൊത്തം ഷിപ്പിംഗ്
     shop_by_taxonomy: "%{taxonomy} പ്രകാരം ഷോപ്പുചെയ്യുക"
     shopping_cart: ഷോപ്പിംഗ് കാർട്ട്
     show: കാണിക്കുക
@@ -1326,14 +1320,12 @@ ml:
       short: സ്റ്റോർ സെലക്ടർ കാണിക്കുക
     sign_up: സൈൻ അപ്പ് ചെയ്യുക
     sku: എസ്.കെ.യു.
-    skus: എസ്.കെ.യു.
     slug: സ്ലഗ്
     social: സാമൂഹിക
     source: ഉറവിടം
     special_instructions: പ്രത്യേക നിർദ്ദേശങ്ങൾ
     split: രണ്ടായി പിരിയുക
     spree_gateway_error_flash_for_checkout: നിങ്ങളുടെ പേയ്‌മെന്റ് വിവരങ്ങളിൽ ഒരു പ്രശ്‌നമുണ്ടായിരുന്നു. നിങ്ങളുടെ വിവരങ്ങൾ പരിശോധിച്ച് വീണ്ടും ശ്രമിക്കുക.
-    start: ആരംഭിക്കുക
     starting_from: ആരംഭിക്കുന്നു
     state: സംസ്ഥാനം
     state_based: സംസ്ഥാന അടിസ്ഥാനത്തിൽ
@@ -1420,8 +1412,6 @@ ml:
       unable_to_find_for_action: 'ഓത്ത് കോഡിനായി സ്റ്റോർ ക്രെഡിറ്റ് കണ്ടെത്താൻ കഴിഞ്ഞില്ല: പ്രവർത്തനത്തിനായി %{auth_code}: %{action}'
       unable_to_void: 'കോഡ് അസാധുവാക്കാൻ കഴിയില്ല: %{auth_code}'
       user_has_no_store_credits: ഉപയോക്താവിന് ലഭ്യമായ സ്റ്റോർ ക്രെഡിറ്റ് ഇല്ല
-    store_credits: ക്രെഡിറ്റുകൾ സംഭരിക്കുക
-    store_default: സ്ഥിരസ്ഥിതി സ്റ്റോർ
     store_errors:
       unable_to_create: സ്റ്റോർ സൃഷ്ടിക്കാൻ കഴിയില്ല.
       unable_to_delete: സ്റ്റോർ ഇല്ലാതാക്കാൻ കഴിയില്ല.
@@ -1444,15 +1434,12 @@ ml:
     street_address: സ്ട്രീറ്റ് വിലാസം
     street_address_2: തെരുവ് വിലാസം (cont'd)
     subtotal: ആകെത്തുക
-    subtract: കുറയ്ക്കുക
     success: വിജയം
     successfully_created: "%{resource} വിജയകരമായി സൃഷ്ടിച്ചു!"
-    successfully_refunded: "%{resource} വിജയകരമായി മടക്കിനൽകി!"
     successfully_removed: "%{resource} വിജയകരമായി നീക്കംചെയ്‌തു!"
     successfully_updated: "%{resource} വിജയകരമായി അപ്‌ഡേറ്റുചെയ്‌തു!"
     summary: സംഗ്രഹം
     supported_currencies: പിന്തുണയ്ക്കുന്ന കറൻസികൾ
-    supported_currencies_long: പിന്തുണയ്‌ക്കുന്ന കറൻസികളുടെ കോമയാൽ വേർതിരിച്ച ലിസ്റ്റ്
     supported_locales: പിന്തുണയ്‌ക്കുന്ന ലോക്കലുകൾ
     tags_placeholder: ടാഗ് ചേർക്കുക
     tax: നികുതി
@@ -1462,8 +1449,6 @@ ml:
     tax_included: നികുതി (ഉൾപ്പെടെ)
     tax_rate_amount_explanation: നികുതി നിരക്കുകൾ കണക്കുകൂട്ടലുകളെ സഹായിക്കുന്നതിനുള്ള ഒരു ദശാംശ തുകയാണ്, (അതായത് നികുതി നിരക്ക് 5% ആണെങ്കിൽ 0.05 നൽകുക)
     tax_rates: നികുതി നിരക്കുകൾ
-    taxon: ടാക്സൺ
-    taxon_edit: ടാക്സൺ എഡിറ്റുചെയ്യുക
     taxon_missing_alt: വിഭാഗം ബാനർ വിവരണം
     taxon_placeholder: ഒരു ടാക്സൺ ചേർക്കുക
     taxon_rule:
@@ -1472,21 +1457,16 @@ ml:
       match_all: എല്ലാം
       match_any: ഒരെണ്ണമെങ്കിലും
     taxonomies: ടാക്സോണമി
-    taxonomy: ടാക്സോണമി
     taxonomy_brands_name: ബ്രാൻഡുകൾ
     taxonomy_categories_name: വിഭാഗങ്ങൾ
-    taxonomy_edit: ടാക്സോണമി എഡിറ്റുചെയ്യുക
     taxonomy_tree_error: അഭ്യർത്ഥിച്ച മാറ്റം അംഗീകരിച്ചിട്ടില്ല, മരം പഴയ അവസ്ഥയിലേക്ക് മടക്കി നൽകി, ദയവായി വീണ്ടും ശ്രമിക്കുക.
     taxonomy_tree_instruction: "* ഒരു കുട്ടിയെ ചേർക്കുന്നതിനോ ഇല്ലാതാക്കുന്നതിനോ തരംതിരിക്കുന്നതിനോ മെനുവിലേക്ക് പ്രവേശിക്കാൻ ട്രീയിലുള്ള ഒരു കുട്ടി വലത് ക്ലിക്കുചെയ്യുക (അല്ലെങ്കിൽ iOS ഉപകരണത്തിൽ ഇരട്ട ടാപ്പുചെയ്യുക)."
     taxons: ടാക്സോണുകൾ
-    test: ടെസ്റ്റ്
     test_mailer:
       test_email:
         greeting: അഭിനന്ദനങ്ങൾ!
         message: നിങ്ങൾക്ക് ഈ ഇമെയിൽ ലഭിച്ചിട്ടുണ്ടെങ്കിൽ, നിങ്ങളുടെ ഇമെയിൽ ക്രമീകരണങ്ങൾ ശരിയാണ്.
         subject: ടെസ്റ്റ് മെയിൽ
-    test_mode: ടെസ്റ്റ് മോഡ്
-    thank_you_for_your_order: നിങ്ങളുടെ ബിസിനസ്സിന് നന്ദി. നിങ്ങളുടെ റെക്കോർഡുകൾക്കായി ഈ സ്ഥിരീകരണ പേജിന്റെ ഒരു പകർപ്പ് പ്രിന്റുചെയ്യുക.
     there_are_no_items_for_this_order: ഈ ഓർഡറിനായി ഇനങ്ങളൊന്നുമില്ല. തുടരുന്നതിന് ഓർഡറിലേക്ക് ഒരു ഇനം ചേർക്കുക.
     there_were_problems_with_the_following_fields: ഇനിപ്പറയുന്ന ഫീൽഡുകളിൽ പ്രശ്‌നങ്ങളുണ്ടായിരുന്നു
     this_order_has_already_received_a_refund: ഈ ഓർഡറിന് ഇതിനകം ഒരു റീഫണ്ട് ലഭിച്ചു
@@ -1497,7 +1477,6 @@ ml:
     time: സമയം
     to_add_variants_you_must_first_define: വകഭേദങ്ങൾ ചേർക്കാൻ, നിങ്ങൾ ആദ്യം നിർവചിക്കേണ്ടതുണ്ട്
     total: ആകെ
-    total_per_item: ഓരോ ഇനത്തിനും ആകെ
     total_pre_tax_refund: ആകെ നികുതിക്കു മുമ്പുള്ള റീഫണ്ട്
     total_price: മൊത്തവില
     total_sales: ആകെ വിൽപ്പന
@@ -1516,19 +1495,13 @@ ml:
     type_to_search: തിരയാൻ ടൈപ്പുചെയ്യുക
     unable_to_connect_to_gateway: ഗേറ്റ്‌വേയിലേക്ക് കണക്റ്റുചെയ്യാനായില്ല.
     unable_to_create_reimbursements: സ്വമേധയാലുള്ള ഇടപെടൽ ശേഷിക്കുന്ന ഇനങ്ങൾ ഉള്ളതിനാൽ റീഇംബേഴ്സ്മെൻറുകൾ സൃഷ്ടിക്കാൻ കഴിയില്ല.
-    under_price: "%{price} ന് കീഴിൽ"
-    unlock: അൺലോക്കുചെയ്യുക
     unrecognized_card_type: തിരിച്ചറിയാത്ത കാർഡ് തരം
-    unshippable_items: സഹായിക്കാനാവാത്ത ഇനങ്ങൾ
     update: അപ്ഡേറ്റ് ചെയ്യുക
-    updating: അപ്‌ഡേറ്റുചെയ്യുന്നു
     url: URL
     usage_limit: ഉപയോഗ പരിധി
     use_app_default: അപ്ലിക്കേഷൻ സ്ഥിരസ്ഥിതി ഉപയോഗിക്കുക
     use_billing_address: ബില്ലിംഗ് വിലാസം ഉപയോഗിക്കുക
-    use_existing_cc: ഫയലിൽ നിലവിലുള്ള ഒരു കാർഡ് ഉപയോഗിക്കുക
     use_new_cc: ഒരു പുതിയ കാർഡ് ഉപയോഗിക്കുക
-    use_new_cc_or_payment_method: ഒരു പുതിയ കാർഡ് / പേയ്‌മെന്റ് രീതി ഉപയോഗിക്കുക
     used: ഉപയോഗിച്ചു
     user: ഉപയോക്താവ്
     user_not_found: ഉപയോക്താവിനെ കണ്ടെത്തിയില്ല

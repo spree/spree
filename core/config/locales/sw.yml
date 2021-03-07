@@ -1266,12 +1266,10 @@ sw:
     server_error: Seva ilileta hitilafu
     settings: Mipangilio
     ship: Meli
-    ship_address: Anwani ya Usafirishaji
     ship_to: 'Usafirishaji kwa:'
     ship_total: Jumla ya Usafirishaji
     shipment: Usafirishaji
     shipment_adjustments: Marekebisho ya usafirishaji
-    shipment_details: Kutoka kwa %{stock_location} kupitia %{shipping_method}
     shipment_mailer:
       shipped_email:
         dear_customer: Mpendwa %{name},
@@ -1291,10 +1289,7 @@ sw:
       pending: inasubiri
       ready: tayari
       shipped: kusafirishwa
-    shipment_transfer_error: Kulikuwa na hitilafu wakati wa kuhamisha anuwai
-    shipment_transfer_success: Variants imefanikiwa kuhamishwa
     shipments: Usafirishaji
-    shipped: Imesafirishwa
     shipping: Usafirishaji
     shipping_address: Anwani ya kusafirishia
     shipping_categories: Jamii za Usafirishaji
@@ -1310,7 +1305,6 @@ sw:
       display_price:
         excluding_tax: "%{price} (+ %{tax_amount} %{tax_rate_name})"
         including_tax: "%{price} (ikiwa ni pamoja na %{tax_amount} %{tax_rate_name})"
-    shipping_total: Jumla ya usafirishaji
     shop_by_taxonomy: Nunua na %{taxonomy}
     shopping_cart: Kikapu cha ununuzi
     show: Onyesha
@@ -1326,14 +1320,12 @@ sw:
       short: Onyesha kiteuzi cha Duka
     sign_up: Jisajili
     sku: SKU
-    skus: SKU
     slug: Konokono
     social: Kijamii
     source: Chanzo
     special_instructions: Maagizo Maalum
     split: Kugawanyika
     spree_gateway_error_flash_for_checkout: Kulikuwa na tatizo na maelezo yako ya malipo. Tafadhali angalia habari yako na ujaribu tena.
-    start: Anza
     starting_from: Huanza saa
     state: Hali
     state_based: Kulingana na Serikali
@@ -1420,8 +1412,6 @@ sw:
       unable_to_find_for_action: 'Haikuweza kupata mkopo wa duka kwa nambari ya auth: %{auth_code} kwa hatua: %{action}'
       unable_to_void: 'Imeshindwa kubatilisha nambari: %{auth_code}'
       user_has_no_store_credits: Mtumiaji hana mkopo wowote wa duka
-    store_credits: Salio la Hifadhi
-    store_default: Duka chaguomsingi
     store_errors:
       unable_to_create: Imeshindwa kuunda duka.
       unable_to_delete: Imeshindwa kufuta duka.
@@ -1444,15 +1434,12 @@ sw:
     street_address: Anuani ya mtaa
     street_address_2: Anwani ya Mtaa (imeendelea)
     subtotal: jumla ndogo
-    subtract: Ondoa
     success: Mafanikio
     successfully_created: "%{resource} imeundwa kwa mafanikio!"
-    successfully_refunded: "%{resource} imerejeshwa kwa mafanikio!"
     successfully_removed: "%{resource} imeondolewa kwa mafanikio!"
     successfully_updated: "%{resource} imesasishwa kwa mafanikio!"
     summary: Muhtasari
     supported_currencies: Sarafu Zinazoungwa mkono
-    supported_currencies_long: Orodha iliyotenganishwa kwa koma ya sarafu zinazoungwa mkono
     supported_locales: Maeneo yanayoungwa mkono
     tags_placeholder: Ongeza Vitambulisho
     tax: Kodi
@@ -1462,8 +1449,6 @@ sw:
     tax_included: Ushuru (incl.)
     tax_rate_amount_explanation: Viwango vya ushuru ni kiwango cha desimali kusaidia mahesabu, (i.e. ikiwa kiwango cha ushuru ni 5% kisha ingiza 0.05)
     tax_rates: Viwango vya Ushuru
-    taxon: Taxon
-    taxon_edit: Hariri Taxon
     taxon_missing_alt: Maelezo ya kategoria
     taxon_placeholder: Ongeza Taxon
     taxon_rule:
@@ -1472,21 +1457,16 @@ sw:
       match_all: yote
       match_any: hata moja
     taxonomies: Ushuru
-    taxonomy: Ushuru
     taxonomy_brands_name: Bidhaa
     taxonomy_categories_name: Jamii
-    taxonomy_edit: Hariri ushuru
     taxonomy_tree_error: Mabadiliko yaliyoombwa hayajakubaliwa na mti umerudishwa katika hali yake ya awali, tafadhali jaribu tena.
     taxonomy_tree_instruction: "* Bonyeza kulia (au gonga mara mbili kwenye kifaa cha iOS) mtoto kwenye mti kupata menyu ya kuongeza, kufuta au kuchagua mtoto."
     taxons: Kodi
-    test: Jaribu
     test_mailer:
       test_email:
         greeting: Hongera!
         message: Ikiwa umepokea barua pepe hii, basi mipangilio yako ya barua pepe ni sahihi.
         subject: Jaribu Barua
-    test_mode: Njia ya Mtihani
-    thank_you_for_your_order: Asante kwa biashara yako. Tafadhali chapisha nakala ya ukurasa huu wa uthibitisho kwa rekodi zako.
     there_are_no_items_for_this_order: Hakuna vitu kwa agizo hili. Tafadhali ongeza kipengee kwenye agizo ili uendelee.
     there_were_problems_with_the_following_fields: Kulikuwa na shida na sehemu zifuatazo
     this_order_has_already_received_a_refund: Agizo hili tayari limepokea marejesho ya pesa
@@ -1497,7 +1477,6 @@ sw:
     time: Wakati
     to_add_variants_you_must_first_define: Ili kuongeza anuwai, lazima kwanza ufafanue
     total: Jumla
-    total_per_item: Jumla kwa kila kitu
     total_pre_tax_refund: Jumla ya Kurejeshewa Ushuru
     total_price: Bei jumla
     total_sales: Jumla ya Mauzo
@@ -1516,19 +1495,13 @@ sw:
     type_to_search: Andika ili utafute
     unable_to_connect_to_gateway: Imeshindwa kuunganisha kwenye lango.
     unable_to_create_reimbursements: Imeshindwa kuunda malipo kwa sababu kuna vitu vinasubiri uingiliaji wa mwongozo.
-    under_price: Chini ya %{price}
-    unlock: Kufungua
     unrecognized_card_type: Aina ya kadi isiyotambuliwa
-    unshippable_items: Vitu visivyoweza kushikamana
     update: Sasisha
-    updating: Inasasisha
     url: URL
     usage_limit: Kikomo cha Matumizi
     use_app_default: Tumia Chaguomsingi ya Programu
     use_billing_address: Tumia Anwani ya Kulipa
-    use_existing_cc: Tumia kadi iliyopo kwenye faili
     use_new_cc: Tumia kadi mpya
-    use_new_cc_or_payment_method: Tumia njia mpya ya kadi / malipo
     used: Imetumika
     user: Mtumiaji
     user_not_found: Mtumiaji hajapatikana

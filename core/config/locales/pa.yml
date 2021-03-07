@@ -1266,12 +1266,10 @@ pa:
     server_error: ਸਰਵਰ ਨੇ ਇੱਕ ਅਸ਼ੁੱਧੀ ਵਾਪਸ ਕੀਤੀ
     settings: ਸੈਟਿੰਗਜ਼
     ship: ਜਹਾਜ਼
-    ship_address: ਜਹਾਜ਼ ਦਾ ਪਤਾ
     ship_to: 'ਨੂੰ ਭੇਜਣਾ:'
     ship_total: ਸਮੁੰਦਰੀ ਜਹਾਜ਼
     shipment: ਮਾਲ
     shipment_adjustments: ਮਾਲ ਦੇ ਅਨੁਕੂਲਣ
-    shipment_details: "%{stock_location} ਦੁਆਰਾ %{shipping_method} ਦੁਆਰਾ"
     shipment_mailer:
       shipped_email:
         dear_customer: ਪਿਆਰੇ %{name},
@@ -1291,10 +1289,7 @@ pa:
       pending: ਬਕਾਇਆ
       ready: ਤਿਆਰ ਹੈ
       shipped: ਭੇਜਿਆ
-    shipment_transfer_error: ਵੇਰੀਐਂਟਸ ਨੂੰ ਟ੍ਰਾਂਸਫਰ ਕਰਨ ਵੇਲੇ ਇੱਕ ਤਰੁੱਟੀ ਪੈਦਾ ਹੋਈ
-    shipment_transfer_success: ਪਰਿਵਰਤਨ ਸਫਲਤਾਪੂਰਵਕ ਟ੍ਰਾਂਸਫਰ ਕੀਤੇ ਗਏ
     shipments: ਜਹਾਜ਼
-    shipped: ਭੇਜਿਆ ਗਿਆ
     shipping: ਸ਼ਿਪਿੰਗ
     shipping_address: ਸ਼ਿਪਿੰਗ ਪਤਾ
     shipping_categories: ਸ਼ਿਪਿੰਗ ਵਰਗ
@@ -1310,7 +1305,6 @@ pa:
       display_price:
         excluding_tax: "%{price} (+ %{tax_amount} %{tax_rate_name})"
         including_tax: "%{price} (ਸਮੇਤ %{tax_amount} %{tax_rate_name})"
-    shipping_total: ਸ਼ਿਪਿੰਗ ਕੁੱਲ
     shop_by_taxonomy: "%{taxonomy} ਦੁਆਰਾ ਖਰੀਦੋ"
     shopping_cart: ਖਰੀਦਾਰੀ ਠੇਲ੍ਹਾ
     show: ਦਿਖਾਓ
@@ -1326,14 +1320,12 @@ pa:
       short: ਸਟੋਰ ਚੋਣਕਾਰ ਦਿਖਾਓ
     sign_up: ਸਾਇਨ ਅਪ
     sku: ਐਸ ਕੇਯੂ
-    skus: ਐਸ.ਕੇ.ਯੂਜ਼
     slug: ਸਲਗ
     social: ਸੋਸ਼ਲ
     source: ਸਰੋਤ
     special_instructions: ਵਿਸ਼ੇਸ਼ ਨਿਰਦੇਸ਼
     split: ਵੰਡ
     spree_gateway_error_flash_for_checkout: ਤੁਹਾਡੀ ਭੁਗਤਾਨ ਦੀ ਜਾਣਕਾਰੀ ਵਿੱਚ ਇੱਕ ਸਮੱਸਿਆ ਸੀ. ਕਿਰਪਾ ਕਰਕੇ ਆਪਣੀ ਜਾਣਕਾਰੀ ਦੀ ਜਾਂਚ ਕਰੋ ਅਤੇ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ.
-    start: ਸ਼ੁਰੂ ਕਰੋ
     starting_from: ਤੋਂ ਸ਼ੁਰੂ ਹੁੰਦਾ ਹੈ
     state: ਰਾਜ
     state_based: ਰਾਜ ਅਧਾਰਤ
@@ -1420,8 +1412,6 @@ pa:
       unable_to_find_for_action: 'ਪ੍ਰਮਾਣਿਕ ਕੋਡ ਲਈ ਸਟੋਰ ਕ੍ਰੈਡਿਟ ਨਹੀਂ ਲੱਭ ਸਕਿਆ: ਐਕਸ਼ਨ ਲਈ %{auth_code}: %{action}'
       unable_to_void: 'ਕੋਡ ਰੱਦ ਕਰਨ ਵਿੱਚ ਅਸਮਰੱਥ: %{auth_code}'
       user_has_no_store_credits: ਉਪਭੋਗਤਾ ਕੋਲ ਕੋਈ ਉਪਲਬਧ ਸਟੋਰ ਕ੍ਰੈਡਿਟ ਨਹੀਂ ਹੈ
-    store_credits: ਸਟੋਰ ਕ੍ਰੈਡਿਟ
-    store_default: ਡਿਫੌਲਟ ਸਟੋਰ
     store_errors:
       unable_to_create: ਸਟੋਰ ਬਣਾਉਣ ਵਿੱਚ ਅਸਮਰੱਥ.
       unable_to_delete: ਸਟੋਰ ਮਿਟਾਉਣ ਵਿੱਚ ਅਸਮਰੱਥ.
@@ -1444,15 +1434,12 @@ pa:
     street_address: ਸੜਕ ਦਾ ਪਤਾ
     street_address_2: ਗਲੀ ਦਾ ਪਤਾ (ਜਾਰੀ)
     subtotal: ਕੁਲ
-    subtract: ਘਟਾਓ
     success: ਸਫਲਤਾ
     successfully_created: "%{resource} ਸਫਲਤਾਪੂਰਵਕ ਬਣਾਇਆ ਗਿਆ ਹੈ!"
-    successfully_refunded: "%{resource} ਨੂੰ ਸਫਲਤਾਪੂਰਵਕ ਵਾਪਸ ਕਰ ਦਿੱਤਾ ਗਿਆ ਹੈ!"
     successfully_removed: "%{resource} ਸਫਲਤਾਪੂਰਕ ਹਟਾ ਦਿੱਤਾ ਗਿਆ ਹੈ!"
     successfully_updated: "%{resource} ਨੂੰ ਸਫਲਤਾਪੂਰਵਕ ਅਪਡੇਟ ਕੀਤਾ ਗਿਆ ਹੈ!"
     summary: ਸਾਰ
     supported_currencies: ਸਮਰਥਿਤ ਕਰੰਸੀ
-    supported_currencies_long: ਸਹਿਯੋਗੀ ਮੁਦਰਾ ਦੀ ਇੱਕ ਕਾਮੇ ਨਾਲ ਵੱਖ ਕੀਤੀ ਸੂਚੀ
     supported_locales: ਸਮਰਥਿਤ ਸਥਾਨ
     tags_placeholder: ਟੈਗਸ ਸ਼ਾਮਲ ਕਰੋ
     tax: ਟੈਕਸ
@@ -1462,8 +1449,6 @@ pa:
     tax_included: ਟੈਕਸ (ਸਮੇਤ)
     tax_rate_amount_explanation: ਟੈਕਸ ਦੀਆਂ ਦਰਾਂ ਗਿਣਤੀਆਂ-ਮਿਣਤੀਆਂ ਵਿਚ ਸਹਾਇਤਾ ਲਈ ਇਕ ਦਸ਼ਮਲਵ ਮਾਤਰਾ ਹਨ, (ਅਰਥਾਤ ਜੇ ਟੈਕਸ ਦੀ ਦਰ 5% ਹੈ ਤਾਂ 0.05 ਦਰਜ ਕਰੋ)
     tax_rates: ਟੈਕਸ ਦੀਆਂ ਦਰਾਂ
-    taxon: ਟੈਕਸਨ
-    taxon_edit: ਟੈਕਸਨ ਸੋਧੋ
     taxon_missing_alt: ਸ਼੍ਰੇਣੀ ਬੈਨਰ ਵੇਰਵਾ
     taxon_placeholder: ਇੱਕ ਟੈਕਸਸ ਸ਼ਾਮਲ ਕਰੋ
     taxon_rule:
@@ -1472,21 +1457,16 @@ pa:
       match_all: ਸਭ
       match_any: ਘੱਟੋ ਘੱਟ ਇਕ
     taxonomies: ਟੈਕਸੋਮੀਸੀਆਂ
-    taxonomy: ਸ਼੍ਰੇਣੀ
     taxonomy_brands_name: ਬ੍ਰਾਂਡ
     taxonomy_categories_name: ਵਰਗ
-    taxonomy_edit: ਸ਼੍ਰੇਣੀ ਸੋਧੋ
     taxonomy_tree_error: ਬੇਨਤੀ ਕੀਤੀ ਤਬਦੀਲੀ ਨੂੰ ਸਵੀਕਾਰ ਨਹੀਂ ਕੀਤਾ ਗਿਆ ਹੈ ਅਤੇ ਰੁੱਖ ਇਸ ਦੀ ਪਿਛਲੀ ਸਥਿਤੀ ਵਿੱਚ ਵਾਪਸ ਕਰ ਦਿੱਤਾ ਗਿਆ ਹੈ, ਕਿਰਪਾ ਕਰਕੇ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ.
     taxonomy_tree_instruction: "* ਕਿਸੇ ਬੱਚੇ ਨੂੰ ਜੋੜਨ, ਮਿਟਾਉਣ ਜਾਂ ਛਾਂਟਣ ਲਈ ਮੀਨੂ ਤੱਕ ਪਹੁੰਚਣ ਲਈ ਰੁੱਖ ਵਿੱਚ ਇੱਕ ਬੱਚੇ ਨੂੰ ਸੱਜਾ ਕਲਿੱਕ ਕਰੋ (ਜਾਂ ਆਈਓਐਸ ਡਿਵਾਈਸ ਤੇ ਡਬਲ ਟੈਪ ਕਰੋ)."
     taxons: ਟੈਕਸਾਂ
-    test: ਟੈਸਟ
     test_mailer:
       test_email:
         greeting: ਵਧਾਈਆਂ!
         message: ਜੇ ਤੁਸੀਂ ਇਹ ਈਮੇਲ ਪ੍ਰਾਪਤ ਕੀਤਾ ਹੈ, ਤਾਂ ਤੁਹਾਡੀਆਂ ਈਮੇਲ ਸੈਟਿੰਗਾਂ ਸਹੀ ਹਨ.
         subject: ਟੈਸਟ ਮੇਲ
-    test_mode: ਟੈਸਟ ਮੋਡ
-    thank_you_for_your_order: ਤੁਹਾਡੇ ਕਾਰੋਬਾਰ ਲਈ ਧੰਨਵਾਦ. ਕਿਰਪਾ ਕਰਕੇ ਆਪਣੇ ਰਿਕਾਰਡਾਂ ਲਈ ਇਸ ਪੁਸ਼ਟੀਕਰਣ ਪੰਨੇ ਦੀ ਇੱਕ ਕਾਪੀ ਛਾਪੋ.
     there_are_no_items_for_this_order: ਇਸ ਆਰਡਰ ਲਈ ਕੋਈ ਆਈਟਮਾਂ ਨਹੀਂ ਹਨ. ਜਾਰੀ ਰੱਖਣ ਲਈ ਕਿਰਪਾ ਕਰਕੇ ਇਕ ਆਈਟਮ ਸ਼ਾਮਲ ਕਰੋ.
     there_were_problems_with_the_following_fields: ਹੇਠ ਦਿੱਤੇ ਖੇਤਰਾਂ ਨਾਲ ਸਮੱਸਿਆਵਾਂ ਸਨ
     this_order_has_already_received_a_refund: ਇਸ ਆਰਡਰ ਨੂੰ ਪਹਿਲਾਂ ਹੀ ਰਿਫੰਡ ਮਿਲ ਗਿਆ ਹੈ
@@ -1497,7 +1477,6 @@ pa:
     time: ਸਮਾਂ
     to_add_variants_you_must_first_define: ਵੇਰੀਐਂਟ ਜੋੜਨ ਲਈ, ਤੁਹਾਨੂੰ ਪਹਿਲਾਂ ਪ੍ਰਭਾਸ਼ਿਤ ਕਰਨਾ ਪਵੇਗਾ
     total: ਕੁੱਲ
-    total_per_item: ਕੁਲ ਪ੍ਰਤੀ ਵਸਤੂ
     total_pre_tax_refund: ਟੈਕਸ ਤੋਂ ਪਹਿਲਾਂ ਦਾ ਪੂਰਾ ਰਿਫੰਡ
     total_price: ਕੁੱਲ ਕੀਮਤ
     total_sales: ਕੁੱਲ ਵਿਕਰੀ
@@ -1516,19 +1495,13 @@ pa:
     type_to_search: ਖੋਜ ਕਰਨ ਲਈ ਟਾਈਪ ਕਰੋ
     unable_to_connect_to_gateway: ਗੇਟਵੇ ਨਾਲ ਜੁੜਨ ਵਿੱਚ ਅਸਮਰੱਥ.
     unable_to_create_reimbursements: ਮੁਆਵਜ਼ੇ ਤਿਆਰ ਕਰਨ ਵਿੱਚ ਅਸਮਰੱਥ ਕਿਉਂਕਿ ਇੱਥੇ ਦਸਤਾਵੇਜ਼ ਦਖਲਅੰਦਾਜ਼ੀ ਦੀਆਂ ਚੀਜ਼ਾਂ ਬਕਾਇਆ ਹਨ.
-    under_price: "%{price} ਦੇ ਅਧੀਨ"
-    unlock: ਅਨਲੌਕ ਕਰੋ
     unrecognized_card_type: ਅਣਜਾਣ ਕਾਰਡ ਦੀ ਕਿਸਮ
-    unshippable_items: ਨਾ ਰੋਕਣਯੋਗ ਚੀਜ਼ਾਂ
     update: ਅਪਡੇਟ
-    updating: ਅਪਡੇਟ ਕਰ ਰਿਹਾ ਹੈ
     url: ਯੂਆਰਐਲ
     usage_limit: ਵਰਤੋਂ ਦੀ ਸੀਮਾ
     use_app_default: ਐਪ ਡਿਫੌਲਟ ਵਰਤੋ
     use_billing_address: ਬਿਲਿੰਗ ਪਤਾ ਵਰਤੋ
-    use_existing_cc: ਫਾਈਲ ਤੇ ਇੱਕ ਮੌਜੂਦਾ ਕਾਰਡ ਦੀ ਵਰਤੋਂ ਕਰੋ
     use_new_cc: ਇੱਕ ਨਵਾਂ ਕਾਰਡ ਵਰਤੋਂ
-    use_new_cc_or_payment_method: ਇੱਕ ਨਵਾਂ ਕਾਰਡ / ਭੁਗਤਾਨ ਵਿਧੀ ਦੀ ਵਰਤੋਂ ਕਰੋ
     used: ਵਰਤਿਆ
     user: ਉਪਭੋਗਤਾ
     user_not_found: ਉਪਭੋਗਤਾ ਨਹੀਂ ਮਿਲਿਆ

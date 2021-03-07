@@ -1266,12 +1266,10 @@ sv-SE:
     server_error: Servern returnerade ett fel
     settings: inställningar
     ship: Fartyg
-    ship_address: Fartygsadress
     ship_to: 'Skickas till:'
     ship_total: Fartyg totalt
     shipment: Sändning
     shipment_adjustments: Leveransjusteringar
-    shipment_details: Från %{stock_location} via %{shipping_method}
     shipment_mailer:
       shipped_email:
         dear_customer: Kära %{name},
@@ -1291,10 +1289,7 @@ sv-SE:
       pending: i väntan på
       ready: redo
       shipped: levereras
-    shipment_transfer_error: Det uppstod ett fel vid överföring av varianter
-    shipment_transfer_success: Varianter lyckades överföras
     shipments: Sändningar
-    shipped: Levereras
     shipping: Frakt
     shipping_address: leveransadress
     shipping_categories: Fraktkategorier
@@ -1310,7 +1305,6 @@ sv-SE:
       display_price:
         excluding_tax: "%{price} (+ %{tax_amount} %{tax_rate_name})"
         including_tax: "%{price} (inkl. %{tax_amount} %{tax_rate_name})"
-    shipping_total: Frakt totalt
     shop_by_taxonomy: Handla av %{taxonomy}
     shopping_cart: Kundvagn
     show: Show
@@ -1326,14 +1320,12 @@ sv-SE:
       short: Visa butiksväljaren
     sign_up: Bli Medlem
     sku: SKU
-    skus: 'SKU: er'
     slug: Snigel
     social: Social
     source: Källa
     special_instructions: speciella instruktioner
     split: Dela
     spree_gateway_error_flash_for_checkout: Det uppstod ett problem med din betalningsinformation. Kontrollera din information och försök igen.
-    start: Start
     starting_from: Börjar kl
     state: stat
     state_based: Statligt baserat
@@ -1420,8 +1412,6 @@ sv-SE:
       unable_to_find_for_action: 'Det gick inte att hitta butikskredit för auth-kod: %{auth_code} för åtgärd: %{action}'
       unable_to_void: 'Det går inte att ogiltigförklara koden: %{auth_code}'
       user_has_no_store_credits: Användaren har ingen tillgänglig butikskredit
-    store_credits: Lagra poäng
-    store_default: Standardbutik
     store_errors:
       unable_to_create: Det gick inte att skapa butik.
       unable_to_delete: Det gick inte att ta bort butiken.
@@ -1444,15 +1434,12 @@ sv-SE:
     street_address: Gatuadress
     street_address_2: Gatuadress (forts.)
     subtotal: Delsumma
-    subtract: Subtrahera
     success: Framgång
     successfully_created: "%{resource} har skapats!"
-    successfully_refunded: "%{resource} har återbetalats!"
     successfully_removed: "%{resource} har tagits bort!"
     successfully_updated: "%{resource} har uppdaterats!"
     summary: Sammanfattning
     supported_currencies: Valutor som stöds
-    supported_currencies_long: En kommaseparerad lista över valutor som stöds
     supported_locales: Stödda språk
     tags_placeholder: Lägg till taggar
     tax: Beskatta
@@ -1462,8 +1449,6 @@ sv-SE:
     tax_included: Inkl skatt.)
     tax_rate_amount_explanation: Skattesatser är ett decimalbelopp för att hjälpa till vid beräkningar (dvs. om skattesatsen är 5% anger du 0,05)
     tax_rates: Skattesatser
-    taxon: Taxon
-    taxon_edit: Redigera Taxon
     taxon_missing_alt: Beskrivning av kategoribanner
     taxon_placeholder: Lägg till en taxon
     taxon_rule:
@@ -1472,21 +1457,16 @@ sv-SE:
       match_all: Allt
       match_any: åtminstone ett
     taxonomies: Taxonomier
-    taxonomy: Taxonomi
     taxonomy_brands_name: Märken
     taxonomy_categories_name: Kategorier
-    taxonomy_edit: Redigera taxonomi
     taxonomy_tree_error: Den begärda ändringen har inte accepterats och trädet har återgått till sitt tidigare tillstånd. Försök igen.
     taxonomy_tree_instruction: "* Högerklicka (eller dubbelklicka på iOS-enheten) på ett barn i trädet för att komma till menyn för att lägga till, radera eller sortera ett barn."
     taxons: Taxoner
-    test: Testa
     test_mailer:
       test_email:
         greeting: Grattis!
         message: Om du har fått det här e-postmeddelandet är dina e-postinställningar korrekta.
         subject: Testa mail
-    test_mode: Övningsläge
-    thank_you_for_your_order: Tack för din verksamhet. Skriv ut en kopia av denna bekräftelsessida för dina uppgifter.
     there_are_no_items_for_this_order: Det finns inga artiklar för denna beställning. Lägg till ett objekt i beställningen för att fortsätta.
     there_were_problems_with_the_following_fields: Det fanns problem med följande fält
     this_order_has_already_received_a_refund: Denna order har redan fått en återbetalning
@@ -1497,7 +1477,6 @@ sv-SE:
     time: Tid
     to_add_variants_you_must_first_define: För att lägga till varianter måste du först definiera
     total: Total
-    total_per_item: Totalt per artikel
     total_pre_tax_refund: Total återbetalning före skatt
     total_price: Totalbelopp
     total_sales: Total rea
@@ -1516,19 +1495,13 @@ sv-SE:
     type_to_search: Skriv för att söka
     unable_to_connect_to_gateway: Det gick inte att ansluta till gateway.
     unable_to_create_reimbursements: Det går inte att skapa ersättningar eftersom det finns objekt som väntar manuellt ingripande.
-    under_price: Under %{price}
-    unlock: Låsa upp
     unrecognized_card_type: Okänd korttyp
-    unshippable_items: Objekt som inte kan skickas
     update: Uppdatering
-    updating: Uppdaterar
     url: URL
     usage_limit: Användningsgräns
     use_app_default: Använd appens standard
     use_billing_address: Använd faktureringsadress
-    use_existing_cc: Använd ett befintligt kort
     use_new_cc: Använd ett nytt kort
-    use_new_cc_or_payment_method: Använd ett nytt kort / betalningsmetod
     used: Begagnade
     user: Användare
     user_not_found: Användaren hittades inte

@@ -1266,12 +1266,10 @@ hu:
     server_error: A szerver hibát adott
     settings: Beállítások
     ship: Hajó
-    ship_address: Hajó címe
     ship_to: 'Szállítás:'
     ship_total: Hajó összesen
     shipment: Szállítás
     shipment_adjustments: A szállítás kiigazításai
-    shipment_details: A %{stock_location}-tól %{shipping_method}-en keresztül
     shipment_mailer:
       shipped_email:
         dear_customer: Kedves %{name}!
@@ -1291,10 +1289,7 @@ hu:
       pending: függőben levő
       ready: kész
       shipped: kiszállított
-    shipment_transfer_error: Hiba történt a változatok átvitele során
-    shipment_transfer_success: Változatok sikeresen áthelyezve
     shipments: Szállítmányok
-    shipped: Kiszállított
     shipping: Szállítás
     shipping_address: szállítási cím
     shipping_categories: Szállítási kategóriák
@@ -1310,7 +1305,6 @@ hu:
       display_price:
         excluding_tax: "%{price} (+ %{tax_amount} %{tax_rate_name})"
         including_tax: "%{price} (beleértve %{tax_amount} %{tax_rate_name})"
-    shipping_total: Szállítás összesen
     shop_by_taxonomy: 'Vásárlás: %{taxonomy}'
     shopping_cart: Bevásárlókocsi
     show: Előadás
@@ -1326,14 +1320,12 @@ hu:
       short: A boltválasztó megjelenítése
     sign_up: Regisztrálj
     sku: SKU
-    skus: SKU-k
     slug: Meztelen csiga
     social: Társadalmi
     source: Forrás
     special_instructions: Különleges utasítások
     split: Hasított
     spree_gateway_error_flash_for_checkout: Hiba történt a fizetési adatokkal kapcsolatban. Kérjük, ellenőrizze adatait, és próbálkozzon újra.
-    start: Rajt
     starting_from: Kezdődik
     state: Állapot
     state_based: Államalapú
@@ -1420,8 +1412,6 @@ hu:
       unable_to_find_for_action: 'A (%{auth_code}) hitelesítési kód áruházi jóváírása nem található a művelethez: %{action}'
       unable_to_void: 'Nem lehet érvényteleníteni a kódot: %{auth_code}'
       user_has_no_store_credits: A felhasználónak nincs elérhető bolthitele
-    store_credits: Store Credits
-    store_default: Alapértelmezett áruház
     store_errors:
       unable_to_create: Nem sikerült létrehozni az áruházat.
       unable_to_delete: Nem sikerült törölni az áruházat.
@@ -1444,15 +1434,12 @@ hu:
     street_address: Cím
     street_address_2: Utca címe (folytatás)
     subtotal: Részösszeg
-    subtract: Kivonás
     success: Siker
     successfully_created: A %{resource} sikeresen létrehozva!
-    successfully_refunded: A %{resource} visszatérítése sikeresen megtörtént!
     successfully_removed: "%{resource} sikeresen eltávolítva!"
     successfully_updated: A %{resource} sikeresen frissítve!
     summary: Összegzés
     supported_currencies: Támogatott pénznemek
-    supported_currencies_long: A támogatott pénznemek vesszővel elválasztott listája
     supported_locales: Támogatott nyelvek
     tags_placeholder: Címkék hozzáadása
     tax: Adó
@@ -1462,8 +1449,6 @@ hu:
     tax_included: Adó (beleértve)
     tax_rate_amount_explanation: Az adókulcsok a tizedesjegyek a számításokhoz nyújtott támogatások (azaz ha az adókulcs 5%, akkor adja meg a 0,05 értéket)
     tax_rates: Adókulcsok
-    taxon: Taxon
-    taxon_edit: Taxon szerkesztése
     taxon_missing_alt: Kategória szalaghirdetés leírása
     taxon_placeholder: Adjon hozzá egy taxont
     taxon_rule:
@@ -1472,21 +1457,16 @@ hu:
       match_all: összes
       match_any: legalább egy
     taxonomies: Rendszertanok
-    taxonomy: Rendszertan
     taxonomy_brands_name: Márkák
     taxonomy_categories_name: Kategóriák
-    taxonomy_edit: Rendszertan szerkesztése
     taxonomy_tree_error: A kért módosítást nem fogadtuk el, és a fa visszaállt korábbi állapotába. Kérjük, próbálkozzon újra.
     taxonomy_tree_instruction: "* Kattintson a jobb egérgombbal (vagy koppintson duplán iOS-eszközön) egy gyermekre a fán, hogy elérje a gyermek hozzáadásához, törléséhez vagy rendezéséhez szükséges menüt."
     taxons: Taxonok
-    test: Teszt
     test_mailer:
       test_email:
         greeting: Gratulálunk!
         message: Ha ezt az e-mailt kapta, akkor az e-mail beállításai helyesek.
         subject: Test Mail
-    test_mode: Teszt üzemmódban
-    thank_you_for_your_order: Köszönjük vállalkozását. Kérjük, nyomtassa ki a megerősítő oldal másolatát a nyilvántartáshoz.
     there_are_no_items_for_this_order: Ehhez a megrendeléshez nincsenek elemek. Kérjük, a folytatáshoz adjon hozzá egy elemet a megrendeléshez.
     there_were_problems_with_the_following_fields: A következő mezőkkel voltak problémák
     this_order_has_already_received_a_refund: Ez a megrendelés már visszatérítést kapott
@@ -1497,7 +1477,6 @@ hu:
     time: Idő
     to_add_variants_you_must_first_define: Változatok hozzáadásához először meg kell határoznia
     total: Teljes
-    total_per_item: Tételenként összesen
     total_pre_tax_refund: Adó előtti visszatérítés összesen
     total_price: Teljes ár
     total_sales: Összes értékesítés
@@ -1516,19 +1495,13 @@ hu:
     type_to_search: Írja be a kereséshez
     unable_to_connect_to_gateway: Nem sikerült csatlakozni az átjáróhoz.
     unable_to_create_reimbursements: Nem sikerült visszatérítéseket létrehozni, mert vannak olyan elemek, amelyek kézi beavatkozásra várnak.
-    under_price: "%{price} alatt"
-    unlock: Kinyit
     unrecognized_card_type: Felismeretlen kártya típusa
-    unshippable_items: Kihordhatatlan tételek
     update: Frissítés
-    updating: Frissítés
     url: URL
     usage_limit: Használati korlát
     use_app_default: Használja az Alapértelmezett alkalmazást
     use_billing_address: használja a számlázási címet
-    use_existing_cc: Használjon meglévő kártyát a fájlban
     use_new_cc: Használjon új kártyát
-    use_new_cc_or_payment_method: Használjon új kártyát / fizetési módot
     used: Használt
     user: Felhasználó
     user_not_found: Felhasználó nem található

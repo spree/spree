@@ -1266,12 +1266,10 @@ ug:
     server_error: مۇلازىمېتىر خاتالىق قايتۇردى
     settings: تەڭشەك
     ship: پاراخوت
-    ship_address: پاراخوت ئادرېسى
     ship_to: 'توشۇش:'
     ship_total: Ship Total
     shipment: مال ئەۋەتىش
     shipment_adjustments: مال ئەۋەتىشنى تەڭشەش
-    shipment_details: "%{stock_location} ئارقىلىق %{shipping_method} دىن"
     shipment_mailer:
       shipped_email:
         dear_customer: ھۆرمەتلىك %{name},
@@ -1291,10 +1289,7 @@ ug:
       pending: ساقلىنىۋاتىدۇ
       ready: تەييار
       shipped: توشۇلدى
-    shipment_transfer_error: ئۆزگەرگۈچى مىقدارنى يۆتكەشتە خاتالىق كۆرۈلدى
-    shipment_transfer_success: ۋارىيانتلار مۇۋەپپەقىيەتلىك يۆتكەلدى
     shipments: مال ئەۋەتىش
-    shipped: ئەۋەتىلدى
     shipping: توشۇش
     shipping_address: توشۇش ئادرېسى
     shipping_categories: توشۇش تۈرلىرى
@@ -1310,7 +1305,6 @@ ug:
       display_price:
         excluding_tax: "%{price} (+ %{tax_amount} %{tax_rate_name})"
         including_tax: "%{price} (%{tax_amount} %{tax_rate_name} نى ئۆز ئىچىگە ئالىدۇ)"
-    shipping_total: توشۇش ئومۇمىي سانى
     shop_by_taxonomy: "%{taxonomy} تەرىپىدىن سېتىۋېلىڭ"
     shopping_cart: مال سېتىۋېلىش ھارۋىسى
     show: Show
@@ -1326,14 +1320,12 @@ ug:
       short: دۇكان تاللىغۇچنى كۆرسىتىش
     sign_up: تىزىملىتىڭ
     sku: SKU
-    skus: SKUs
     slug: Slug
     social: ئىجتىمائىي
     source: مەنبە
     special_instructions: ئالاھىدە كۆرسەتمە
     split: Split
     spree_gateway_error_flash_for_checkout: ھەق تۆلەش ئۇچۇرلىرىڭىزدا مەسىلە كۆرۈلدى. ئۇچۇرلىرىڭىزنى تەكشۈرۈپ قايتا سىناڭ.
-    start: باشلاش
     starting_from: باشلىنىدۇ
     state: دۆلەت
     state_based: State based
@@ -1420,8 +1412,6 @@ ug:
       unable_to_find_for_action: 'ئاپتورنىڭ كودى ئۈچۈن دۇكان ئىناۋىتىنى تاپالمىدى: %{auth_code}: %{action}'
       unable_to_void: 'كودنى بىكار قىلىشقا ئامالسىز: %{auth_code}'
       user_has_no_store_credits: ئىشلەتكۈچىنىڭ دۇكان ئىناۋىتى يوق
-    store_credits: دۇكان ئىناۋىتى
-    store_default: كۆڭۈلدىكى دۇكان
     store_errors:
       unable_to_create: دۇكان قۇرالمىدى.
       unable_to_delete: دۇكاننى ئۆچۈرەلمىدى.
@@ -1444,15 +1434,12 @@ ug:
     street_address: كوچا ئادرېسى
     street_address_2: كوچا ئادرېسى (داۋامى)
     subtotal: Subtotal
-    subtract: ئېلىش
     success: مۇۋەپپەقىيەت
     successfully_created: "%{resource} مۇۋەپپەقىيەتلىك قۇرۇلدى!"
-    successfully_refunded: "%{resource} مۇۋەپپەقىيەتلىك قايتۇرۇلدى!"
     successfully_removed: "%{resource} مۇۋەپپەقىيەتلىك ئۆچۈرۈلدى!"
     successfully_updated: "%{resource} مۇۋەپپەقىيەتلىك يېڭىلاندى!"
     summary: خۇلاسە
     supported_currencies: قوللايدىغان پۇللار
-    supported_currencies_long: پەش ئارقىلىق قوللىنىدىغان پۇللارنىڭ تىزىملىكى
     supported_locales: قوللايدىغان يەرلىكلەر
     tags_placeholder: خەتكۈچ قوشۇڭ
     tax: باج
@@ -1462,8 +1449,6 @@ ug:
     tax_included: باج (ئۆز ئىچىگە ئالىدۇ)
     tax_rate_amount_explanation: باج نىسبىتى ھېسابلاشقا ياردەم بېرىدىغان ئونلۇق سومما ، (يەنى باج نىسبىتى% 5 بولسا ئۇنداقتا 0.05 نى كىرگۈزۈڭ)
     tax_rates: باج نىسبىتى
-    taxon: تاكسون
-    taxon_edit: تاكسوننى تەھرىرلەڭ
     taxon_missing_alt: سەھىپە بايراق چۈشەندۈرۈشى
     taxon_placeholder: تاكسى قوشۇڭ
     taxon_rule:
@@ -1472,21 +1457,16 @@ ug:
       match_all: ھەممىسى
       match_any: كەم دېگەندە بىر
     taxonomies: Taxonomies
-    taxonomy: Taxonomy
     taxonomy_brands_name: ماركا
     taxonomy_categories_name: سەھىپىلەر
-    taxonomy_edit: باجنى تەھرىرلەش
     taxonomy_tree_error: تەلەپ قىلىنغان ئۆزگەرتىش قوبۇل قىلىنمىدى ۋە دەرەخ ئىلگىرىكى ھالىتىگە قايتۇرۇلدى ، قايتا سىناڭ.
     taxonomy_tree_instruction: "* دەرەختىكى بالىنى ئوڭ چېكىش (ياكى iOS ئۈسكۈنىسىگە قوش چېكىش) بالىنى قوشۇش ، ئۆچۈرۈش ياكى رەتلەش تىزىملىكىگە كىرىش."
     taxons: Taxons
-    test: سىناق
     test_mailer:
       test_email:
         greeting: مۇبارەك بولسۇن!
         message: ئەگەر بۇ ئېلېكترونلۇق خەتنى تاپشۇرۇۋالغان بولسىڭىز ، ئېلېكترونلۇق خەت تەڭشىكىڭىز توغرا.
         subject: سىناق خەت
-    test_mode: سىناق ھالىتى
-    thank_you_for_your_order: سودىڭىزغا رەھمەت. خاتىرىلىرىڭىز ئۈچۈن بۇ جەزملەشتۈرۈش بېتىنىڭ كۆپەيتىلگەن نۇسخىسىنى بېسىپ چىقىرىڭ.
     there_are_no_items_for_this_order: بۇ زاكازنىڭ تۈرلىرى يوق. داۋاملاشتۇرۇش بۇيرۇقىغا بىر تۈر قوشۇڭ.
     there_were_problems_with_the_following_fields: تۆۋەندىكى ساھەلەردە مەسىلە كۆرۈلدى
     this_order_has_already_received_a_refund: بۇ زاكاز ئاللىبۇرۇن پۇلنى تاپشۇرۇۋالغان
@@ -1497,7 +1477,6 @@ ug:
     time: ۋاقىت
     to_add_variants_you_must_first_define: ۋارىيانتلارنى قوشۇش ئۈچۈن ، ئالدى بىلەن ئېنىقلىما بېرىشىڭىز كېرەك
     total: ئومۇمىي
-    total_per_item: ھەر بىر تۈرنىڭ ئومۇمىي سانى
     total_pre_tax_refund: باجدىن بۇرۇنقى ئومۇمىي پۇل قايتۇرۇش
     total_price: ئومۇمىي باھاسى
     total_sales: ئومۇمىي سېتىش
@@ -1516,19 +1495,13 @@ ug:
     type_to_search: ئىزدەڭ
     unable_to_connect_to_gateway: كىرىش ئېغىزىغا ئۇلىنالمىدى.
     unable_to_create_reimbursements: قولدا ئارىلىشىشنى ساقلاۋاتقان تۈرلەر بولغاچقا ، تولۇقلىما بېرەلمەيدۇ.
-    under_price: "%{price} ئاستىدا"
-    unlock: قۇلۇپ ئېچىش
     unrecognized_card_type: تونۇلمىغان كارتا تىپى
-    unshippable_items: تاپقىلى بولمايدىغان تۈرلەر
     update: يېڭىلاش
-    updating: يېڭىلاش
     url: URL
     usage_limit: ئىشلىتىش چەكلىمىسى
     use_app_default: ئەپ كۆڭۈلدىكىسىنى ئىشلىتىڭ
     use_billing_address: ھېسابات ئادرېسىنى ئىشلىتىڭ
-    use_existing_cc: ھۆججەتتىكى مەۋجۇت كارتىنى ئىشلىتىڭ
     use_new_cc: يېڭى كارتا ئىشلىتىڭ
-    use_new_cc_or_payment_method: يېڭى كارتا / پۇل تۆلەش ئۇسۇلىنى ئىشلىتىڭ
     used: ئىشلىتىلگەن
     user: ئىشلەتكۈچى
     user_not_found: ئىشلەتكۈچى تېپىلمىدى

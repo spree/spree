@@ -1266,12 +1266,10 @@ ur:
     server_error: سرور نے ایک خامی واپس کردی
     settings: ترتیبات
     ship: جہاز
-    ship_address: جہاز کا پتہ
     ship_to: 'بھیجنا:'
     ship_total: جہاز کُل
     shipment: کھیپ
     shipment_adjustments: شپمنٹ ایڈجسٹمنٹ
-    shipment_details: "%{stock_location} سے %{shipping_method} کے ذریعے"
     shipment_mailer:
       shipped_email:
         dear_customer: دیر سے مریں %{name}
@@ -1291,10 +1289,7 @@ ur:
       pending: زیر التواء
       ready: تیار
       shipped: بھیج دیا
-    shipment_transfer_error: مختلف حالتوں کی منتقلی میں ایک خامی تھی
-    shipment_transfer_success: مختلف حالتوں کو کامیابی کے ساتھ منتقل کردیا گیا
     shipments: شپمنٹ
-    shipped: بھیج دیا گیا
     shipping: شپنگ
     shipping_address: شپنگ ایڈریس
     shipping_categories: شپنگ زمرے
@@ -1310,7 +1305,6 @@ ur:
       display_price:
         excluding_tax: "%{price} (+ %{tax_amount} %{tax_rate_name})"
         including_tax: "%{price} (بشمول %{tax_amount} %{tax_rate_name})"
-    shipping_total: شپنگ کل
     shop_by_taxonomy: "%{taxonomy} کے ذریعہ خریداری کریں"
     shopping_cart: خریداری کی ٹوکری
     show: دکھائیں
@@ -1326,14 +1320,12 @@ ur:
       short: اسٹور سلیکٹر دکھائیں
     sign_up: سائن اپ
     sku: ایس کیو
-    skus: SKUs
     slug: سلگ
     social: سماجی
     source: ذریعہ
     special_instructions: خصوصی ہدایات
     split: سپلٹ
     spree_gateway_error_flash_for_checkout: آپ کی ادائیگی کی معلومات میں ایک دشواری تھی۔ براہ کرم اپنی معلومات دیکھیں اور دوبارہ کوشش کریں۔
-    start: شروع کریں
     starting_from: سے شروع ہوتا ہے
     state: حالت
     state_based: ریاست کی بنیاد پر
@@ -1420,8 +1412,6 @@ ur:
       unable_to_find_for_action: 'ایتھ کوڈ کیلئے اسٹور کریڈٹ نہیں مل سکا: کارروائی کے لئے %{auth_code}: %{action}'
       unable_to_void: 'کوڈ کو باطل کرنے سے قاصر: %{auth_code}'
       user_has_no_store_credits: صارف کے پاس دستیاب اسٹور کریڈٹ نہیں ہے
-    store_credits: اسٹور کریڈٹ
-    store_default: ڈیفالٹ اسٹور
     store_errors:
       unable_to_create: اسٹور بنانے سے قاصر۔
       unable_to_delete: اسٹور کو حذف کرنے سے قاصر۔
@@ -1444,15 +1434,12 @@ ur:
     street_address: گلی کا پتہ
     street_address_2: گلی کا پتہ (جاری ہے)
     subtotal: کل
-    subtract: منہا کرنا
     success: کامیابی
     successfully_created: "%{resource} کامیابی کے ساتھ تشکیل دے دیا گیا ہے!"
-    successfully_refunded: "%{resource} کامیابی کے ساتھ واپس کر دیا گیا ہے!"
     successfully_removed: "%{resource} کامیابی کے ساتھ ہٹا دیا گیا ہے!"
     successfully_updated: "%{resource} کامیابی کے ساتھ اپ ڈیٹ کر دیا گیا ہے!"
     summary: خلاصہ
     supported_currencies: تائید شدہ کرنسی
-    supported_currencies_long: معاون کرنسیوں کی کوما سے الگ کردہ فہرست
     supported_locales: تائید شدہ لوکلز
     tags_placeholder: ٹیگز شامل کریں
     tax: ٹیکس
@@ -1462,8 +1449,6 @@ ur:
     tax_included: ٹیکس (بشمول)
     tax_rate_amount_explanation: ٹیکس کی شرح حساب میں اعانت کے ل a ایک اعشاریہ رقم ہے ، (جیسے ٹیکس کی شرح 5٪ ہے تو 0.05 داخل کریں)
     tax_rates: ٹیکس کی شرح
-    taxon: ٹیکسن
-    taxon_edit: ٹیکسن میں ترمیم کریں
     taxon_missing_alt: زمرہ بینر کی تفصیل
     taxon_placeholder: ایک ٹیکس شامل کریں
     taxon_rule:
@@ -1472,21 +1457,16 @@ ur:
       match_all: سب
       match_any: کم از کم ایک
     taxonomies: محصولات
-    taxonomy: درجہ بندی
     taxonomy_brands_name: برانڈز
     taxonomy_categories_name: اقسام
-    taxonomy_edit: درجہ بندی میں ترمیم کریں
     taxonomy_tree_error: مطلوبہ تبدیلی قبول نہیں کی گئی ہے اور درخت کو اپنی سابقہ حالت میں واپس کردیا گیا ہے ، براہ کرم دوبارہ کوشش کریں۔
     taxonomy_tree_instruction: "* درخت میں موجود کسی بچے کو دائیں کلک پر (یا iOS آلہ پر ڈبل تھپتھپائیں) کسی بچے کو شامل کرنے ، حذف کرنے اور ترتیب دینے کیلئے مینو تک رسائی حاصل کرنے کے لئے۔"
     taxons: ٹیکس
-    test: پرکھ
     test_mailer:
       test_email:
         greeting: مبارک ہو!
         message: اگر آپ کو یہ ای میل موصول ہوا ہے ، تو آپ کی ای میل کی ترتیبات درست ہیں۔
         subject: ٹیسٹ میل
-    test_mode: ٹیسٹ کا طریقہ
-    thank_you_for_your_order: آپ کے کاروبار کے لئے آپ کا شکریہ. براہ کرم اپنے ریکارڈوں کے لئے اس تصدیقی صفحے کی ایک کاپی پرنٹ کریں۔
     there_are_no_items_for_this_order: اس آرڈر کے لئے کوئی آئٹمز نہیں ہیں۔ جاری رکھنے کے لئے براہ کرم ایک آئٹم شامل کریں۔
     there_were_problems_with_the_following_fields: مندرجہ ذیل فیلڈز میں دشواری تھی
     this_order_has_already_received_a_refund: اس آرڈر سے پہلے ہی رقم کی واپسی مل گئی ہے
@@ -1497,7 +1477,6 @@ ur:
     time: وقت
     to_add_variants_you_must_first_define: مختلف حالتوں کو شامل کرنے کے ل you ، آپ کو پہلے وضاحت کرنی ہوگی
     total: کل
-    total_per_item: کل فی آئٹم
     total_pre_tax_refund: ٹیکس سے پہلے کی واپسی
     total_price: کل قیمت
     total_sales: کل فروخت
@@ -1516,19 +1495,13 @@ ur:
     type_to_search: تلاش کرنے کے لئے ٹائپ کریں
     unable_to_connect_to_gateway: گیٹ وے سے رابطہ قائم کرنے سے قاصر۔
     unable_to_create_reimbursements: معاوضے پیدا کرنے سے قاصر ہے کیونکہ دستی مداخلت کے التواء میں آئٹمز باقی ہیں۔
-    under_price: "%{price} کے تحت"
-    unlock: انلاک کریں
     unrecognized_card_type: شناخت شدہ کارڈ کی قسم
-    unshippable_items: ناقابل برداشت اشیا
     update: اپ ڈیٹ
-    updating: اپ ڈیٹ ہو رہا ہے
     url: یو آر ایل
     usage_limit: استعمال کی حد
     use_app_default: ایپ ڈیفالٹ کا استعمال کریں
     use_billing_address: بلنگ ایڈریس استعمال کریں
-    use_existing_cc: فائل پر موجود کارڈ استعمال کریں
     use_new_cc: نیا کارڈ استعمال کریں
-    use_new_cc_or_payment_method: نیا کارڈ / ادائیگی کا طریقہ استعمال کریں
     used: استعمال کیا جاتا ہے
     user: صارف
     user_not_found: صارف نہیں ملا

@@ -1266,12 +1266,10 @@ mr-IN:
     server_error: सर्व्हरने त्रुटी परत केली
     settings: सेटिंग्ज
     ship: जहाज
-    ship_address: शिप पत्ता
     ship_to: 'यावर शिपिंग:'
     ship_total: एकूण जहाज
     shipment: शिपमेंट
     shipment_adjustments: शिपमेंट समायोजन
-    shipment_details: "%{stock_location} मार्गे %{shipping_method} मार्गे"
     shipment_mailer:
       shipped_email:
         dear_customer: प्रिय %{name},
@@ -1291,10 +1289,7 @@ mr-IN:
       pending: प्रलंबित
       ready: तयार
       shipped: पाठवले
-    shipment_transfer_error: रूपे हस्तांतरित करताना त्रुटी आली
-    shipment_transfer_success: रूपे यशस्वीरित्या हस्तांतरित केली
     shipments: शिपमेंट्स
-    shipped: पाठविले
     shipping: शिपिंग
     shipping_address: शिपिंग पत्ता
     shipping_categories: शिपिंग श्रेणी
@@ -1310,7 +1305,6 @@ mr-IN:
       display_price:
         excluding_tax: "%{price} (+ %{tax_amount} %{tax_rate_name})"
         including_tax: "%{price} (समावेश %{tax_amount} %{tax_rate_name})"
-    shipping_total: एकूण शिपिंग
     shop_by_taxonomy: "%{taxonomy} द्वारे खरेदी करा"
     shopping_cart: खरेदी सूचीत
     show: दाखवा
@@ -1326,14 +1320,12 @@ mr-IN:
       short: स्टोअर निवडकर्ता दर्शवा
     sign_up: साइन अप करा
     sku: एसकेयू
-    skus: एसकेयू
     slug: स्लग
     social: सामाजिक
     source: स्रोत
     special_instructions: विशेष सूचना
     split: स्प्लिट
     spree_gateway_error_flash_for_checkout: आपल्या देय माहितीसह एक समस्या होती. कृपया आपली माहिती तपासा आणि पुन्हा प्रयत्न करा.
-    start: प्रारंभ करा
     starting_from: पासून सुरू होते
     state: राज्य
     state_based: राज्य आधारित
@@ -1420,8 +1412,6 @@ mr-IN:
       unable_to_find_for_action: 'ऑथ कोडसाठी स्टोअर क्रेडिट सापडू शकला नाही: क्रियेसाठी %{auth_code}: %{action}'
       unable_to_void: 'कोड रद्द करण्यास अक्षम: %{auth_code}'
       user_has_no_store_credits: वापरकर्त्याकडे कोणतेही स्टोअर क्रेडिट उपलब्ध नाही
-    store_credits: स्टोअर क्रेडिट्स
-    store_default: डीफॉल्ट स्टोअर
     store_errors:
       unable_to_create: स्टोअर तयार करण्यात अक्षम.
       unable_to_delete: स्टोअर हटविण्यात अक्षम.
@@ -1444,15 +1434,12 @@ mr-IN:
     street_address: रस्त्याचा पत्ता
     street_address_2: रस्त्याचा पत्ता (चालू)
     subtotal: एकूण
-    subtract: वजा करा
     success: यश
     successfully_created: "%{resource} यशस्वीरित्या तयार केले गेले आहे!"
-    successfully_refunded: "%{resource} यशस्वीरित्या परत केले गेले!"
     successfully_removed: "%{resource} यशस्वीरित्या काढला गेला आहे!"
     successfully_updated: "%{resource} यशस्वीरित्या अद्यतनित केले गेले आहे!"
     summary: सारांश
     supported_currencies: समर्थित चलने
-    supported_currencies_long: समर्थित चलनांची स्वल्पविरामाने विभक्त केलेली सूची
     supported_locales: समर्थित लोकॅले
     tags_placeholder: टॅग जोडा
     tax: कर
@@ -1462,8 +1449,6 @@ mr-IN:
     tax_included: कर (समावेश)
     tax_rate_amount_explanation: कर दर मोजण्यात मदत करण्यासाठी दशांश रक्कम (उदा. जर कर दर 5% असेल तर 0.05 प्रविष्ट करा)
     tax_rates: कर दर
-    taxon: टॅक्सन
-    taxon_edit: टॅक्सन संपादित करा
     taxon_missing_alt: श्रेणी बॅनर वर्णन
     taxon_placeholder: एक कर जोडा
     taxon_rule:
@@ -1472,21 +1457,16 @@ mr-IN:
       match_all: सर्व
       match_any: कमीत कमी एक
     taxonomies: वर्गीकरण
-    taxonomy: वर्गीकरण
     taxonomy_brands_name: ब्रँड
     taxonomy_categories_name: कॅटेगरीज
-    taxonomy_edit: वर्गीकरण संपादित करा
     taxonomy_tree_error: विनंती केलेला बदल स्वीकारला गेला नाही आणि झाड त्याच्या पूर्वीच्या स्थितीत परत आले आहे, कृपया पुन्हा प्रयत्न करा.
     taxonomy_tree_instruction: "* मुलास जोडणे, हटविणे किंवा क्रमवारी लावण्यासाठी मेनूमध्ये प्रवेश करण्यासाठी झाडावरील मुलावर राइट क्लिक करा (किंवा iOS डिव्हाइसवर डबल टॅप करा)."
     taxons: कर
-    test: चाचणी
     test_mailer:
       test_email:
         greeting: अभिनंदन!
         message: जर आपल्याला हा ईमेल प्राप्त झाला असेल तर आपली ईमेल सेटिंग्ज योग्य आहेत.
         subject: चाचणी मेल
-    test_mode: चाचणी मोड
-    thank_you_for_your_order: आपल्या व्यवसायाबद्दल धन्यवाद. कृपया आपल्या रेकॉर्डसाठी या पुष्टीकरण पृष्ठाची एक प्रत प्रिंट करा.
     there_are_no_items_for_this_order: या ऑर्डरसाठी कोणतेही आयटम नाहीत. कृपया सुरू ठेवण्यासाठी ऑर्डरमध्ये आयटम जोडा.
     there_were_problems_with_the_following_fields: खालील फील्डमध्ये समस्या होती
     this_order_has_already_received_a_refund: या ऑर्डरचा आधीच परतावा प्राप्त झाला आहे
@@ -1497,7 +1477,6 @@ mr-IN:
     time: वेळ
     to_add_variants_you_must_first_define: रूपे जोडण्यासाठी, आपण प्रथम परिभाषित करणे आवश्यक आहे
     total: एकूण
-    total_per_item: एकूण प्रति आयटम
     total_pre_tax_refund: करपूर्व परतावा
     total_price: एकूण किंमत
     total_sales: एकूण विक्री
@@ -1516,19 +1495,13 @@ mr-IN:
     type_to_search: शोधण्यासाठी टाइप करा
     unable_to_connect_to_gateway: गेटवेशी कनेक्ट करण्यात अक्षम.
     unable_to_create_reimbursements: प्रतिपूर्ती तयार करण्यात अक्षम कारण मॅन्युअल हस्तक्षेपासाठी प्रलंबित आयटम आहेत.
-    under_price: "%{price} अंतर्गत"
-    unlock: अनलॉक करा
     unrecognized_card_type: अपरिचित कार्ड प्रकार
-    unshippable_items: अस्वीकार्य वस्तू
     update: अद्यतनित करा
-    updating: अद्यतनित करीत आहे
     url: यूआरएल
     usage_limit: वापर मर्यादा
     use_app_default: अ‍ॅप डीफॉल्ट वापरा
     use_billing_address: बिलिंग पत्ता वापरा
-    use_existing_cc: फाईलवर विद्यमान कार्ड वापरा
     use_new_cc: नवीन कार्ड वापरा
-    use_new_cc_or_payment_method: नवीन कार्ड / पेमेंट पद्धत वापरा
     used: वापरलेले
     user: वापरकर्ता
     user_not_found: वापरकर्ता आढळला नाही

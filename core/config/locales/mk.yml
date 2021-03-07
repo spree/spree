@@ -1266,12 +1266,10 @@ mk:
     server_error: Серверот врати грешка
     settings: Поставки
     ship: Брод
-    ship_address: Адреса на брод
     ship_to: 'Испорака до:'
     ship_total: Брод вкупно
     shipment: Пратка
     shipment_adjustments: Прилагодувања на пратката
-    shipment_details: Од %{stock_location} преку %{shipping_method}
     shipment_mailer:
       shipped_email:
         dear_customer: Драги %{name},
@@ -1291,10 +1289,7 @@ mk:
       pending: во очекување
       ready: готов
       shipped: испорачани
-    shipment_transfer_error: Имаше грешка при пренесување варијанти
-    shipment_transfer_success: Варијантите успешно се префрлија
     shipments: Пратки
-    shipped: Испратено
     shipping: Испорака
     shipping_address: адреса за достава
     shipping_categories: Категории на испорака
@@ -1310,7 +1305,6 @@ mk:
       display_price:
         excluding_tax: "%{price} (+ %{tax_amount} %{tax_rate_name})"
         including_tax: "%{price} (вкл. %{tax_amount} %{tax_rate_name})"
-    shipping_total: Вкупно испорака
     shop_by_taxonomy: Купувајте од %{taxonomy}
     shopping_cart: Купувачка кошничка
     show: Покажи
@@ -1326,14 +1320,12 @@ mk:
       short: Покажи избирач на продавница
     sign_up: Регистрирај се
     sku: SKU
-    skus: SKU
     slug: Голтка
     social: Социјално
     source: Извор
     special_instructions: Специјални инструкции
     split: Подели
     spree_gateway_error_flash_for_checkout: Имаше проблем со вашите информации за плаќање. Проверете ги вашите информации и обидете се повторно.
-    start: Започнете
     starting_from: Започнува во
     state: Држава
     state_based: Државно засновано
@@ -1420,8 +1412,6 @@ mk:
       unable_to_find_for_action: 'Не може да се најде кредитна продавница за автентичен код: %{auth_code} за акција: %{action}'
       unable_to_void: 'Не може да се поништи кодот: %{auth_code}'
       user_has_no_store_credits: Корисникот нема достапен кредит за продавница
-    store_credits: Продавница за кредити
-    store_default: Стандардна продавница
     store_errors:
       unable_to_create: Не може да се создаде продавница.
       unable_to_delete: Не може да се избрише продавницата.
@@ -1444,15 +1434,12 @@ mk:
     street_address: Улична адреса
     street_address_2: Улична адреса (продолжение)
     subtotal: Субтотал
-    subtract: Одземи
     success: Успех
     successfully_created: "%{resource} е успешно создаден!"
-    successfully_refunded: "%{resource} е успешно вратен!"
     successfully_removed: "%{resource} е успешно отстранет!"
     successfully_updated: "%{resource} е успешно ажуриран!"
     summary: Резиме
     supported_currencies: Поддржани валути
-    supported_currencies_long: Листа на поддржани валути одделена со запирка
     supported_locales: Поддржани локации
     tags_placeholder: Додадете ознаки
     tax: Данок
@@ -1462,8 +1449,6 @@ mk:
     tax_included: Данок (вкл.)
     tax_rate_amount_explanation: Даночните стапки се децимална сума за помош при пресметките (т.е. ако даночната стапка е 5%, тогаш внесете 0,05)
     tax_rates: Даночни стапки
-    taxon: Таксон
-    taxon_edit: Уредете го Таксон
     taxon_missing_alt: Опис на банерот за категорија
     taxon_placeholder: Додадете Таксон
     taxon_rule:
@@ -1472,21 +1457,16 @@ mk:
       match_all: сите
       match_any: барем еден
     taxonomies: Таксономии
-    taxonomy: Таксономија
     taxonomy_brands_name: Брендови
     taxonomy_categories_name: Категории
-    taxonomy_edit: Уредете ја таксономијата
     taxonomy_tree_error: Бараната промена не е прифатена и дрвото е вратено во претходната состојба, обидете се повторно.
     taxonomy_tree_instruction: "* Десен клик (или двапати допрете на iOS уред) дете во дрвото за да пристапите до менито за додавање, бришење или сортирање на дете."
     taxons: Такси
-    test: Тест
     test_mailer:
       test_email:
         greeting: Честитки
         message: Ако сте ја примиле оваа е-пошта, тогаш поставките за е-пошта се точни.
         subject: Тест-пошта
-    test_mode: Режим на тестирање
-    thank_you_for_your_order: Ви благодариме за вашата деловна активност. Ве молиме отпечатете копија од оваа страница за потврда за вашите записи.
     there_are_no_items_for_this_order: Нема ставки за оваа нарачка. Ве молиме додадете ставка во нарачката за да продолжите.
     there_were_problems_with_the_following_fields: Имаше проблеми со следниве полиња
     this_order_has_already_received_a_refund: Оваа нарачка веќе доби наплата
@@ -1497,7 +1477,6 @@ mk:
     time: Време
     to_add_variants_you_must_first_define: За да додадете варијанти, прво мора да дефинирате
     total: Вкупно
-    total_per_item: Вкупно по артикл
     total_pre_tax_refund: Вкупно враќање пред данок
     total_price: Вкупна цена
     total_sales: Вкупна продажба
@@ -1516,19 +1495,13 @@ mk:
     type_to_search: Напишете за пребарување
     unable_to_connect_to_gateway: Не може да се поврзе со портата.
     unable_to_create_reimbursements: Не може да се создадат надоместоци бидејќи има предмети што чекаат рачна интервенција.
-    under_price: Под %{price}
-    unlock: Отклучи
     unrecognized_card_type: Непризнаен тип на картичка
-    unshippable_items: Предмети што не можат да се соберат
     update: Ажурирање
-    updating: Ажурирање
     url: URL-адреса
     usage_limit: Ограничување на употребата
     use_app_default: Користете Стандардно за апликацијата
     use_billing_address: Користете адреса за наплата
-    use_existing_cc: Користете постоечка картичка во датотеката
     use_new_cc: Користете нова картичка
-    use_new_cc_or_payment_method: Користете нова картичка / начин на плаќање
     used: Користени
     user: Корисник
     user_not_found: Корисникот не е пронајден

@@ -1266,12 +1266,10 @@ mg:
     server_error: Namerina lesoka ny mpizara
     settings: Fikirana
     ship: sambo
-    ship_address: Adiresin'ny sambo
     ship_to: 'Fandefasana any:'
     ship_total: Total sambo
     shipment: Fandefasana
     shipment_adjustments: Fanitsiana fandefasana
-    shipment_details: Avy amin'ny %{stock_location} via %{shipping_method}
     shipment_mailer:
       shipped_email:
         dear_customer: Ry %{name} malala,
@@ -1291,10 +1289,7 @@ mg:
       pending: mbola miandry
       ready: vonona
       shipped: nalefa
-    shipment_transfer_error: Nisy lesoka tamin'ny famindrana ireo variants
-    shipment_transfer_success: Vita soa aman-tsara ny variants
     shipments: entana
-    shipped: nalefa
     shipping: Fandefasana
     shipping_address: Adiresy handefasana
     shipping_categories: Sokajy fandefasana
@@ -1310,7 +1305,6 @@ mg:
       display_price:
         excluding_tax: "%{price} (+ %{tax_amount} %{tax_rate_name})"
         including_tax: "%{price} (incl. %{tax_amount} %{tax_rate_name})"
-    shipping_total: Ny totalin'ny fandefasana
     shop_by_taxonomy: Miantsena by %{taxonomy}
     shopping_cart: Harona fiantsenana
     show: FAMPISEHOANA
@@ -1326,14 +1320,12 @@ mg:
       short: Asehoy ny mpifidy Store
     sign_up: Hiditra Mpikambana
     sku: SKU
-    skus: SKUs
     slug: Slug
     social: ara-tsosialy
     source: Source
     special_instructions: Torolàlana manokana
     split: Saraho
     spree_gateway_error_flash_for_checkout: Nisy olana tamin'ny fampahalalana momba ny fandoavanao. Azafady mba jereo ny mombamomba anao ary manandrama indray.
-    start: fanombohana
     starting_from: Manomboka amin'ny
     state: FANJAKANA
     state_based: Miorina amin'ny fanjakana
@@ -1420,8 +1412,6 @@ mg:
       unable_to_find_for_action: 'Tsy nahita trosa fivarotana momba ny kaody auth: %{auth_code} ho an''ny hetsika: %{action}'
       unable_to_void: 'Tsy afaka manafoana kaody: %{auth_code}'
       user_has_no_store_credits: Ny mpampiasa dia tsy manana trosa fivarotana misy
-    store_credits: Credits amin'ny fivarotana
-    store_default: Fivarotana default
     store_errors:
       unable_to_create: Tsy afaka mamorona magazay.
       unable_to_delete: Tsy afaka mamafa ny fivarotana.
@@ -1444,15 +1434,12 @@ mg:
     street_address: Adiresin'ny Làlana
     street_address_2: Adiresin'ny arabe (tohiny)
     subtotal: Subtotal
-    subtract: analana
     success: FETY
     successfully_created: "%{resource} vita soa aman-tsara!"
-    successfully_refunded: "%{resource} tafaverina soa aman-tsara!"
     successfully_removed: "%{resource} nesorina soa aman-tsara!"
     successfully_updated: "%{resource} dia navaozina soa aman-tsara!"
     summary: FAMINTINANA
     supported_currencies: Vola tohanana
-    supported_currencies_long: Lisitr'ireo vola nanohana
     supported_locales: Fandraisana an-tanana
     tags_placeholder: Manampia Tags
     tax: HETRA
@@ -1462,8 +1449,6 @@ mg:
     tax_included: Haba (incl.)
     tax_rate_amount_explanation: Ny tahan'ny hetra dia isa decimal mba hanampiana amin'ny kajy, (izany hoe raha 5% ny tahan'ny hetra dia miditra 0,05)
     tax_rates: Saran'ny haba
-    taxon: Taxon
-    taxon_edit: Hanova Taxon
     taxon_missing_alt: Fanoritsoritana sorabaventy amin'ny sokajy
     taxon_placeholder: Manampia Taxon
     taxon_rule:
@@ -1472,21 +1457,16 @@ mg:
       match_all: rehetra
       match_any: farafaharatsiny iray
     taxonomies: Taxonomies
-    taxonomy: panasokajiana
     taxonomy_brands_name: marika
     taxonomy_categories_name: Sokajy
-    taxonomy_edit: Hanova taxonomy
     taxonomy_tree_error: Tsy nekena ny fanovana nangatahina ary naverina tamin'ny toetrany teo aloha ilay hazo, andramo indray.
     taxonomy_tree_instruction: "* Tsindrio havanana (na tsindrio indroa amin'ny fitaovana iOS) zaza iray ao amin'ilay hazo mba hiditra amin'ny menio hanampiana, hamafana na handaminana zaza."
     taxons: Taxons
-    test: Fitsapana
     test_mailer:
       test_email:
         greeting: Miarahaba anao!
         message: Raha efa nahazo ity mailaka ity ianao dia marina ny fikirakirana mailakao.
         subject: Mail Mail
-    test_mode: Fomba fitsapana
-    thank_you_for_your_order: Misaotra anao tamin'ny asa nataonao. Alefaso azafady ny kopian'ity pejy fanamafisana ity ho an'ny firaketanao.
     there_are_no_items_for_this_order: Tsy misy entana ho an'ity baiko ity. Azafady mba ampio entana amin'ny baiko hanohizana.
     there_were_problems_with_the_following_fields: Misy olana amin'ireto sehatra ireto
     this_order_has_already_received_a_refund: Ity kaomandy ity dia efa nahazo famerenam-bola
@@ -1497,7 +1477,6 @@ mg:
     time: Time
     to_add_variants_you_must_first_define: Mba hanampiana variants dia tsy maintsy mamaritra aloha ianao
     total: sokajy
-    total_per_item: Total isaky ny entana
     total_pre_tax_refund: Fandoavan-ketra talohan'ny hetra
     total_price: Vidiny tanteraka
     total_sales: Varotra tanteraka
@@ -1516,19 +1495,13 @@ mg:
     type_to_search: Soraty raha hikarohanao
     unable_to_connect_to_gateway: Tsy afaka mifandray amin'ny vavahady.
     unable_to_create_reimbursements: Tsy afaka mamorona fanonerana satria misy entana miandry ny fidiran'ny tanana.
-    under_price: Eo ambanin'ny %{price}
-    unlock: hamaha
     unrecognized_card_type: Karazana karatra tsy fantatra
-    unshippable_items: Zavatra tsy azo zahana
     update: vaovao farany
-    updating: Fanavaozana
     url: URL
     usage_limit: Fepetra fampiasana
     use_app_default: Mampiasà Default App
     use_billing_address: Ampiasao ny adiresy faktiora
-    use_existing_cc: Mampiasà karatra efa misy ao anaty rakitra
     use_new_cc: Mampiasà karatra vaovao
-    use_new_cc_or_payment_method: Mampiasà karatra / fomba fandoavam-bola vaovao
     used: ampiasaina
     user: Mpampiasa
     user_not_found: Tsy hita ny mpampiasa

@@ -1266,12 +1266,10 @@ gl:
     server_error: O servidor devolveu un erro
     settings: Configuración
     ship: Barco
-    ship_address: Enderezo do buque
     ship_to: 'Envío a:'
     ship_total: Total do buque
     shipment: Envío
     shipment_adjustments: Axustes do envío
-    shipment_details: De %{stock_location} a través de %{shipping_method}
     shipment_mailer:
       shipped_email:
         dear_customer: Querido %{name},
@@ -1291,10 +1289,7 @@ gl:
       pending: pendente
       ready: listo
       shipped: enviado
-    shipment_transfer_error: Produciuse un erro ao transferir variantes
-    shipment_transfer_success: Variantes transferidas con éxito
     shipments: Envíos
-    shipped: Enviado
     shipping: Envío
     shipping_address: Dirección de envío
     shipping_categories: Categorías de envío
@@ -1310,7 +1305,6 @@ gl:
       display_price:
         excluding_tax: "%{price} (+ %{tax_amount} %{tax_rate_name})"
         including_tax: "%{price} (incl. %{tax_amount} %{tax_rate_name})"
-    shipping_total: Envío total
     shop_by_taxonomy: Compra por %{taxonomy}
     shopping_cart: Carriño da compra
     show: Amosar
@@ -1326,14 +1320,12 @@ gl:
       short: Mostrar o selector da tenda
     sign_up: Incribirse
     sku: SKU
-    skus: SKU
     slug: Lesma
     social: Social
     source: Fonte
     special_instructions: Instrucións especiais
     split: Partir
     spree_gateway_error_flash_for_checkout: Produciuse un problema coa túa información de pago. Comprobe a súa información e ténteo de novo.
-    start: Comezar
     starting_from: Comeza ás
     state: Estado
     state_based: Baseado no Estado
@@ -1420,8 +1412,6 @@ gl:
       unable_to_find_for_action: 'Non se puido atopar o crédito da tenda para o código de autenticación: %{auth_code} para a acción: %{action}'
       unable_to_void: 'Non se pode anular o código: %{auth_code}'
       user_has_no_store_credits: O usuario non ten crédito de tenda dispoñible
-    store_credits: Créditos da tenda
-    store_default: Tenda predeterminada
     store_errors:
       unable_to_create: Non se puido crear a tenda.
       unable_to_delete: Non se puido eliminar a tenda.
@@ -1444,15 +1434,12 @@ gl:
     street_address: Enderezo
     street_address_2: Enderezo postal (continuación)
     subtotal: Subtotal
-    subtract: Restar
     success: Éxito
     successfully_created: "%{resource} creouse correctamente."
-    successfully_refunded: "%{resource} foi reembolsado con éxito!"
     successfully_removed: "%{resource} eliminouse correctamente."
     successfully_updated: "%{resource} actualizouse correctamente."
     summary: Resumo
     supported_currencies: Moedas admitidas
-    supported_currencies_long: Unha lista separada por comas das moedas admitidas
     supported_locales: Locais compatibles
     tags_placeholder: Engadir etiquetas
     tax: Imposto
@@ -1462,8 +1449,6 @@ gl:
     tax_included: Imposto (incl.)
     tax_rate_amount_explanation: As taxas tributarias son unha cantidade decimal para axudar nos cálculos (é dicir, se o tipo impositivo é do 5%, introduza 0,05)
     tax_rates: Tipos de impostos
-    taxon: Taxón
-    taxon_edit: Editar Taxon
     taxon_missing_alt: Descrición da pancarta da categoría
     taxon_placeholder: Engade un taxón
     taxon_rule:
@@ -1472,21 +1457,16 @@ gl:
       match_all: todo
       match_any: polo menos un
     taxonomies: Taxonomías
-    taxonomy: Taxonomía
     taxonomy_brands_name: Marcas
     taxonomy_categories_name: Categorías
-    taxonomy_edit: Editar taxonomía
     taxonomy_tree_error: Non se aceptou o cambio solicitado e a árbore volveu ao seu estado anterior. Ténteo de novo.
     taxonomy_tree_instruction: "* Fai clic co botón dereito (ou toca dúas veces no dispositivo iOS) un neno na árbore para acceder ao menú para engadir, eliminar ou ordenar un neno."
     taxons: Taxóns
-    test: Proba
     test_mailer:
       test_email:
         greeting: Parabéns!
         message: Se recibiu este correo electrónico, a súa configuración de correo electrónico é correcta.
         subject: Correo de proba
-    test_mode: Modo de proba
-    thank_you_for_your_order: Grazas polo teu negocio. Imprima unha copia desta páxina de confirmación para os seus rexistros.
     there_are_no_items_for_this_order: Non hai artigos para este pedido. Engade un elemento ao pedido para continuar.
     there_were_problems_with_the_following_fields: Houbo problemas cos seguintes campos
     this_order_has_already_received_a_refund: Este pedido xa recibiu un reembolso
@@ -1497,7 +1477,6 @@ gl:
     time: Tempo
     to_add_variants_you_must_first_define: Para engadir variantes, primeiro debes definir
     total: Total
-    total_per_item: Total por elemento
     total_pre_tax_refund: Reembolso total antes do imposto
     total_price: Prezo total
     total_sales: Vendas totais
@@ -1516,19 +1495,13 @@ gl:
     type_to_search: Escribe para buscar
     unable_to_connect_to_gateway: Non se puido conectar á pasarela.
     unable_to_create_reimbursements: Non se poden crear reembolsos porque hai elementos pendentes de intervención manual.
-    under_price: Baixo %{price}
-    unlock: Desbloquear
     unrecognized_card_type: Tipo de tarxeta non recoñecida
-    unshippable_items: Artigos non enviables
     update: Actualización
-    updating: Actualizando
     url: URL
     usage_limit: Límite de uso
     use_app_default: Usar aplicación predeterminada
     use_billing_address: Usar o enderezo de facturación
-    use_existing_cc: Usa unha tarxeta existente no ficheiro
     use_new_cc: Usa unha nova tarxeta
-    use_new_cc_or_payment_method: Usa unha nova tarxeta / método de pago
     used: Usado
     user: Usuario
     user_not_found: Non se atopou o usuario

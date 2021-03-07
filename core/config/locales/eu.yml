@@ -1266,12 +1266,10 @@ eu:
     server_error: Zerbitzariak errore bat itzuli du
     settings: Ezarpenak
     ship: Ontzia
-    ship_address: Ontziaren helbidea
     ship_to: 'Bidalketa honetara:'
     ship_total: Ontzia Guztira
     shipment: Bidalketa
     shipment_adjustments: Bidalketa doikuntzak
-    shipment_details: "%{stock_location}tik %{shipping_method} bidez"
     shipment_mailer:
       shipped_email:
         dear_customer: "%{name} maitea,"
@@ -1291,10 +1289,7 @@ eu:
       pending: zain
       ready: prest
       shipped: bidalita
-    shipment_transfer_error: Errore bat gertatu da aldaerak transferitzean
-    shipment_transfer_success: Aldaerak behar bezala transferitu dira
     shipments: Bidalketak
-    shipped: Bidalita
     shipping: Bidalketa
     shipping_address: Bidaltzeko Helbidea
     shipping_categories: Bidalketa Kategoriak
@@ -1310,7 +1305,6 @@ eu:
       display_price:
         excluding_tax: "%{price} (+ %{tax_amount} %{tax_rate_name})"
         including_tax: "%{price} (%{tax_amount} barne %{tax_rate_name})"
-    shipping_total: Bidalketa guztira
     shop_by_taxonomy: Shop by %{taxonomy}
     shopping_cart: Erosketa saskia
     show: Ikuskizuna
@@ -1326,14 +1320,12 @@ eu:
       short: Erakutsi denda hautatzailea
     sign_up: Izena eman
     sku: SKU
-    skus: SKUak
     slug: Bareak
     social: Soziala
     source: Iturria
     special_instructions: Argibide bereziak
     split: Zatitu
     spree_gateway_error_flash_for_checkout: Arazo bat izan da ordainketa informazioarekin. Mesedez, egiaztatu zure informazioa eta saiatu berriro.
-    start: Hasi
     starting_from: Hasten da
     state: Estatu
     state_based: Estatuan oinarrituta
@@ -1420,8 +1412,6 @@ eu:
       unable_to_find_for_action: 'Ezin izan da dendaren krediturik aurkitu autentifikazio kodearentzat: %{auth_code} ekintzarako: %{action}'
       unable_to_void: 'Ezin da kodea baliogabetu: %{auth_code}'
       user_has_no_store_credits: Erabiltzaileak ez du dendako kreditu erabilgarririk
-    store_credits: Gorde kredituak
-    store_default: Denda lehenetsia
     store_errors:
       unable_to_create: Ezin da denda sortu.
       unable_to_delete: Ezin da denda ezabatu.
@@ -1444,15 +1434,12 @@ eu:
     street_address: Helbidea
     street_address_2: Helbidea (jarraian)
     subtotal: Subtotala
-    subtract: Kendu
     success: Arrakasta
     successfully_created: "%{resource} ongi sortu da!"
-    successfully_refunded: "%{resource} behar bezala itzuli da!"
     successfully_removed: "%{resource} behar bezala kendu da!"
     successfully_updated: "%{resource} behar bezala eguneratu da!"
     summary: Laburpen
     supported_currencies: Onartutako monetak
-    supported_currencies_long: Onartutako moneten zerrenda komaz bereizita
     supported_locales: Onartutako lokalak
     tags_placeholder: Gehitu etiketak
     tax: Zerga
@@ -1462,8 +1449,6 @@ eu:
     tax_included: Zerga (barne)
     tax_rate_amount_explanation: Zerga tasak kalkuluetan laguntzeko zenbateko hamartarra dira (hau da, zerga tasa% 5 bada, sartu 0,05)
     tax_rates: Zerga tasak
-    taxon: Taxoia
-    taxon_edit: Editatu Taxoia
     taxon_missing_alt: Kategoriaren banderaren deskribapena
     taxon_placeholder: Gehitu Taxoia
     taxon_rule:
@@ -1472,21 +1457,16 @@ eu:
       match_all: guztiak
       match_any: bat gutxienez
     taxonomies: Taxonomiak
-    taxonomy: Taxonomia
     taxonomy_brands_name: Markak
     taxonomy_categories_name: Kategoriak
-    taxonomy_edit: Editatu taxonomia
     taxonomy_tree_error: Eskatutako aldaketa ez da onartu eta zuhaitza aurreko egoerara itzuli da. Saiatu berriro.
     taxonomy_tree_instruction: "* Egin klik eskuineko botoiarekin (edo sakatu birritan iOS gailuan) zuhaitzean dagoen haur bat haurra gehitu, ezabatu edo ordenatzeko menuan sartzeko."
     taxons: Taxoiak
-    test: Proba
     test_mailer:
       test_email:
         greeting: Zorionak!
         message: Mezu elektroniko hau jaso baduzu, posta elektronikoaren ezarpenak zuzenak dira.
         subject: Probatu posta
-    test_mode: Proba modua
-    thank_you_for_your_order: Eskerrik asko zure negozioagatik. Mesedez, inprimatu berrespen orrialde honen kopia zure erregistroetarako.
     there_are_no_items_for_this_order: Ez dago eskaerarako elementurik. Mesedez, gehitu elementu bat eskaeran jarraitzeko.
     there_were_problems_with_the_following_fields: Arazoak izan dira ondoko eremuekin
     this_order_has_already_received_a_refund: Agindu honek dagoeneko itzulketa jaso du
@@ -1497,7 +1477,6 @@ eu:
     time: Denbora
     to_add_variants_you_must_first_define: Aldaerak gehitzeko, lehenik eta behin definitu behar duzu
     total: Guztira
-    total_per_item: Elementu bakoitzeko
     total_pre_tax_refund: Zerga baino lehen itzultzea
     total_price: Prezio totala
     total_sales: Salmentak guztira
@@ -1516,19 +1495,13 @@ eu:
     type_to_search: Idatzi bilatzeko
     unable_to_connect_to_gateway: Ezin da atebidera konektatu.
     unable_to_create_reimbursements: Ezin dira itzulketak sortu eskuz esku hartzeko elementuak daudelako.
-    under_price: "%{price} azpian"
-    unlock: Desblokeatu
     unrecognized_card_type: Aitortu gabeko txartel mota
-    unshippable_items: Bidali ezin diren elementuak
     update: Eguneratu
-    updating: Eguneratzen
     url: URLa
     usage_limit: Erabilera muga
     use_app_default: Erabili aplikazioaren lehenetsia
     use_billing_address: Erabili fakturazio helbidea
-    use_existing_cc: Erabili lehendik dagoen txartela fitxategian
     use_new_cc: Erabili txartel berria
-    use_new_cc_or_payment_method: Erabili txartel / ordainketa metodo berria
     used: Erabilitakoa
     user: Erabiltzailea
     user_not_found: Erabiltzailea ez da aurkitu

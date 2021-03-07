@@ -1352,12 +1352,10 @@ hr:
     server_error: Poslužitelj je vratio pogrešku
     settings: Postavke
     ship: Brod
-    ship_address: Adresa broda
     ship_to: 'Dostava na:'
     ship_total: Ukupno broda
     shipment: Pošiljka
     shipment_adjustments: Prilagođavanje pošiljke
-    shipment_details: Od %{stock_location} preko %{shipping_method}
     shipment_mailer:
       shipped_email:
         dear_customer: Poštovani %{name},
@@ -1377,10 +1375,7 @@ hr:
       pending: u tijeku
       ready: spreman
       shipped: otpremljen
-    shipment_transfer_error: Došlo je do pogreške pri prijenosu inačica
-    shipment_transfer_success: Varijante su uspješno prenesene
     shipments: Pošiljke
-    shipped: Otpremljeno
     shipping: dostava
     shipping_address: dostavna adresa
     shipping_categories: Kategorije otpreme
@@ -1396,7 +1391,6 @@ hr:
       display_price:
         excluding_tax: "%{price} (+ %{tax_amount} %{tax_rate_name})"
         including_tax: "%{price} (uklj. %{tax_amount} %{tax_rate_name})"
-    shipping_total: Ukupna poštarina
     shop_by_taxonomy: Kupujte od %{taxonomy}
     shopping_cart: Košarica
     show: Pokazati
@@ -1412,14 +1406,12 @@ hr:
       short: Prikaži odabir trgovine
     sign_up: Prijavite se
     sku: SKU
-    skus: SKU-ovi
     slug: Puž
     social: Društveni
     source: Izvor
     special_instructions: posebne upute
     split: Podjela
     spree_gateway_error_flash_for_checkout: Došlo je do problema s vašim podacima o plaćanju. Provjerite svoje podatke i pokušajte ponovo.
-    start: Početak
     starting_from: Počinje u
     state: država
     state_based: Državno utemeljeno
@@ -1506,8 +1498,6 @@ hr:
       unable_to_find_for_action: 'Nije moguće pronaći kredit za autentifikacijski kôd: %{auth_code} za akciju: %{action}'
       unable_to_void: 'Nije moguće poništiti kôd: %{auth_code}'
       user_has_no_store_credits: Korisnik nema dostupan kredit u trgovini
-    store_credits: Pohranite kredite
-    store_default: Zadana trgovina
     store_errors:
       unable_to_create: Nije moguće stvoriti trgovinu.
       unable_to_delete: Nije moguće izbrisati trgovinu.
@@ -1530,15 +1520,12 @@ hr:
     street_address: Adresa ulice
     street_address_2: Adresa (nastavak)
     subtotal: Međuzbir
-    subtract: Oduzeti
     success: Uspjeh
     successfully_created: "%{resource} je uspješno stvoren!"
-    successfully_refunded: "%{resource} je uspješno vraćen!"
     successfully_removed: "%{resource} je uspješno uklonjen!"
     successfully_updated: "%{resource} je uspješno ažuriran!"
     summary: Sažetak
     supported_currencies: Podržane valute
-    supported_currencies_long: Popis podržanih valuta odvojenih zarezom
     supported_locales: Podržani jezici
     tags_placeholder: Dodaj oznake
     tax: Porez
@@ -1548,8 +1535,6 @@ hr:
     tax_included: Porez (uklj.)
     tax_rate_amount_explanation: Porezne stope decimalni su iznos za pomoć u izračunima (tj. Ako je porezna stopa 5%, unesite 0,05)
     tax_rates: Porezne stope
-    taxon: Taxon
-    taxon_edit: Uredi Taxon
     taxon_missing_alt: Opis natpisa kategorije
     taxon_placeholder: Dodajte takson
     taxon_rule:
@@ -1558,21 +1543,16 @@ hr:
       match_all: svi
       match_any: najmanje jedan
     taxonomies: Taksonomije
-    taxonomy: Taksonomija
     taxonomy_brands_name: Brendovi
     taxonomy_categories_name: Kategorije
-    taxonomy_edit: Uredi taksonomiju
     taxonomy_tree_error: Zatražena promjena nije prihvaćena i stablo je vraćeno u prethodno stanje, pokušajte ponovo.
     taxonomy_tree_instruction: "* Desnom tipkom miša kliknite (ili dvaput dodirnite iOS uređaj) dijete na stablu da biste pristupili izborniku za dodavanje, brisanje ili sortiranje djeteta."
     taxons: Taksoni
-    test: Test
     test_mailer:
       test_email:
         greeting: Čestitamo!
         message: Ako ste dobili ovu e-poštu, tada su postavke e-pošte ispravne.
         subject: Probna pošta
-    test_mode: Test Mode
-    thank_you_for_your_order: Hvala vam na poslovanju. Za vašu evidenciju ispišite kopiju ove stranice s potvrdom.
     there_are_no_items_for_this_order: Nema predmeta za ovu narudžbu. Molimo dodajte stavku u narudžbu da biste nastavili.
     there_were_problems_with_the_following_fields: Bilo je problema sa sljedećim poljima
     this_order_has_already_received_a_refund: Za ovu je narudžbu već vraćen novac
@@ -1583,7 +1563,6 @@ hr:
     time: Vrijeme
     to_add_variants_you_must_first_define: Da biste dodali inačice, prvo morate definirati
     total: Ukupno
-    total_per_item: Ukupno po stavci
     total_pre_tax_refund: Ukupni povrat prije oporezivanja
     total_price: Ukupna cijena
     total_sales: Totalna rasprodaja
@@ -1602,19 +1581,13 @@ hr:
     type_to_search: Upišite za pretraživanje
     unable_to_connect_to_gateway: Povezivanje s pristupnikom nije moguće.
     unable_to_create_reimbursements: Nije moguće stvoriti povrat jer postoje stavke na čekanju za ručnu intervenciju.
-    under_price: Pod %{price}
-    unlock: Otključati
     unrecognized_card_type: Neprepoznat tip kartice
-    unshippable_items: Predmeti koji se ne mogu isporučiti
     update: Ažuriraj
-    updating: Ažuriranje
     url: URL
     usage_limit: Ograničenje upotrebe
     use_app_default: Upotrijebi zadanu aplikaciju
     use_billing_address: Upotrijebite adresu za naplatu
-    use_existing_cc: Upotrijebite postojeću karticu u evidenciji
     use_new_cc: Upotrijebite novu karticu
-    use_new_cc_or_payment_method: Upotrijebite novu karticu / način plaćanja
     used: Korišteno
     user: Korisnik
     user_not_found: Korisnik nije pronađen

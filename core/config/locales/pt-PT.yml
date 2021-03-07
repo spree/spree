@@ -1266,12 +1266,10 @@ pt-PT:
     server_error: O servidor retornou um erro
     settings: Configurações
     ship: Enviar
-    ship_address: Endereço de embarque
     ship_to: 'Enviando para:'
     ship_total: Total do navio
     shipment: envio
     shipment_adjustments: Ajustes de remessa
-    shipment_details: De %{stock_location} via %{shipping_method}
     shipment_mailer:
       shipped_email:
         dear_customer: Caro %{name},
@@ -1291,10 +1289,7 @@ pt-PT:
       pending: pendente
       ready: pronto
       shipped: enviado
-    shipment_transfer_error: Ocorreu um erro ao transferir variantes
-    shipment_transfer_success: Variantes transferidas com sucesso
     shipments: Remessas
-    shipped: Enviado
     shipping: Envio
     shipping_address: endereço de entrega
     shipping_categories: Categorias de envio
@@ -1310,7 +1305,6 @@ pt-PT:
       display_price:
         excluding_tax: "%{price} (+ %{tax_amount} %{tax_rate_name})"
         including_tax: "%{price} (incl. %{tax_amount} %{tax_rate_name})"
-    shipping_total: Frete total
     shop_by_taxonomy: Compre por %{taxonomy}
     shopping_cart: Carrinho de compras
     show: mostrar
@@ -1326,14 +1320,12 @@ pt-PT:
       short: Mostrar seletor de loja
     sign_up: Inscrever-se
     sku: SKU
-    skus: SKUs
     slug: Lesma
     social: Social
     source: Fonte
     special_instructions: Instruções Especiais
     split: Dividir
     spree_gateway_error_flash_for_checkout: Ocorreu um problema com suas informações de pagamento. Por favor, verifique suas informações e tente novamente.
-    start: Começar
     starting_from: Começa em
     state: Estado
     state_based: Com base no estado
@@ -1420,8 +1412,6 @@ pt-PT:
       unable_to_find_for_action: 'Não foi possível encontrar o crédito da loja para o código de autenticação: %{auth_code} para a ação: %{action}'
       unable_to_void: 'Incapaz de anular o código: %{auth_code}'
       user_has_no_store_credits: O usuário não tem nenhum crédito disponível na loja
-    store_credits: Créditos da loja
-    store_default: Loja padrão
     store_errors:
       unable_to_create: Incapaz de criar loja.
       unable_to_delete: Não foi possível excluir a loja.
@@ -1444,15 +1434,12 @@ pt-PT:
     street_address: Endereço
     street_address_2: Endereço (continuação)
     subtotal: Subtotal
-    subtract: Subtrair
     success: Sucesso
     successfully_created: "%{resource} foi criado com sucesso!"
-    successfully_refunded: "%{resource} foi reembolsado com sucesso!"
     successfully_removed: "%{resource} foi removido com sucesso!"
     successfully_updated: "%{resource} foi atualizado com sucesso!"
     summary: Resumo
     supported_currencies: Moedas Suportadas
-    supported_currencies_long: Uma lista separada por vírgulas de moedas suportadas
     supported_locales: Localidades com suporte
     tags_placeholder: Adicionar Tags
     tax: Imposto
@@ -1462,8 +1449,6 @@ pt-PT:
     tax_included: Imposto (incl.)
     tax_rate_amount_explanation: As taxas de imposto são uma quantia decimal para ajudar nos cálculos, (ou seja, se a taxa de imposto for 5%, insira 0,05)
     tax_rates: Taxas de imposto
-    taxon: Taxon
-    taxon_edit: Editar táxon
     taxon_missing_alt: Descrição do banner da categoria
     taxon_placeholder: Adicionar um táxon
     taxon_rule:
@@ -1472,21 +1457,16 @@ pt-PT:
       match_all: todo
       match_any: pelo menos um
     taxonomies: Taxonomias
-    taxonomy: Taxonomia
     taxonomy_brands_name: Marcas
     taxonomy_categories_name: Categorias
-    taxonomy_edit: Editar taxonomia
     taxonomy_tree_error: A alteração solicitada não foi aceita e a árvore voltou ao estado anterior, tente novamente.
     taxonomy_tree_instruction: "* Clique com o botão direito (ou toque duas vezes no dispositivo iOS) em uma criança na árvore para acessar o menu para adicionar, excluir ou classificar uma criança."
     taxons: Táxons
-    test: Teste
     test_mailer:
       test_email:
         greeting: Parabéns!
         message: Se você recebeu este e-mail, suas configurações de e-mail estão corretas.
         subject: Correio de Teste
-    test_mode: Modo de teste
-    thank_you_for_your_order: Agradeço pelos seus serviços. Por favor, imprima uma cópia desta página de confirmação para seus registros.
     there_are_no_items_for_this_order: Não há itens para este pedido. Adicione um item ao pedido para continuar.
     there_were_problems_with_the_following_fields: Ocorreram problemas com os seguintes campos
     this_order_has_already_received_a_refund: Este pedido já recebeu um reembolso
@@ -1497,7 +1477,6 @@ pt-PT:
     time: Tempo
     to_add_variants_you_must_first_define: Para adicionar variantes, você deve primeiro definir
     total: Total
-    total_per_item: Total por item
     total_pre_tax_refund: Reembolso total antes de impostos
     total_price: Preço total
     total_sales: Vendas totais
@@ -1516,19 +1495,13 @@ pt-PT:
     type_to_search: Escreva para pesquisar
     unable_to_connect_to_gateway: Incapaz de conectar ao gateway.
     unable_to_create_reimbursements: Não foi possível criar reembolsos porque existem itens com intervenção manual pendente.
-    under_price: Sob %{price}
-    unlock: Desbloquear
     unrecognized_card_type: Tipo de cartão não reconhecido
-    unshippable_items: Itens que não podem ser enviados
     update: Atualizar
-    updating: Atualizando
     url: URL
     usage_limit: Limite de uso
     use_app_default: Usar aplicativo padrão
     use_billing_address: Use o endereço de cobrança
-    use_existing_cc: Use um cartão existente no arquivo
     use_new_cc: Use um novo cartão
-    use_new_cc_or_payment_method: Use um novo cartão / método de pagamento
     used: Usava
     user: Do utilizador
     user_not_found: Usuário não encontrado

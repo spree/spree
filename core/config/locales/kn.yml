@@ -1266,12 +1266,10 @@ kn:
     server_error: ಸರ್ವರ್ ದೋಷವನ್ನು ಹಿಂತಿರುಗಿಸಿದೆ
     settings: ಸಂಯೋಜನೆಗಳು
     ship: ಹಡಗು
-    ship_address: ಹಡಗು ವಿಳಾಸ
     ship_to: 'ಇದಕ್ಕೆ ಸಾಗಿಸಲಾಗುತ್ತಿದೆ:'
     ship_total: ಹಡಗು ಒಟ್ಟು
     shipment: ಸಾಗಣೆ
     shipment_adjustments: ಸಾಗಣೆ ಹೊಂದಾಣಿಕೆಗಳು
-    shipment_details: "%{stock_location} ನಿಂದ %{shipping_method} ಮೂಲಕ"
     shipment_mailer:
       shipped_email:
         dear_customer: ಆತ್ಮೀಯ %{name},
@@ -1291,10 +1289,7 @@ kn:
       pending: ಬಾಕಿ ಉಳಿದಿದೆ
       ready: ಸಿದ್ಧ
       shipped: ರವಾನಿಸಲಾಗಿದೆ
-    shipment_transfer_error: ರೂಪಾಂತರಗಳನ್ನು ವರ್ಗಾಯಿಸುವಲ್ಲಿ ದೋಷ ಕಂಡುಬಂದಿದೆ
-    shipment_transfer_success: ರೂಪಾಂತರಗಳನ್ನು ಯಶಸ್ವಿಯಾಗಿ ವರ್ಗಾಯಿಸಲಾಗಿದೆ
     shipments: ಸಾಗಣೆಗಳು
-    shipped: ರವಾನಿಸಲಾಗಿದೆ
     shipping: ಶಿಪ್ಪಿಂಗ್
     shipping_address: ಶಿಪ್ಪಿಂಗ್ ವಿಳಾಸ
     shipping_categories: ಶಿಪ್ಪಿಂಗ್ ವರ್ಗಗಳು
@@ -1310,7 +1305,6 @@ kn:
       display_price:
         excluding_tax: "%{price} (+ %{tax_amount} %{tax_rate_name})"
         including_tax: "%{price} (incl. %{tax_amount} %{tax_rate_name})"
-    shipping_total: ಶಿಪ್ಪಿಂಗ್ ಒಟ್ಟು
     shop_by_taxonomy: "%{taxonomy} ನಿಂದ ಶಾಪಿಂಗ್ ಮಾಡಿ"
     shopping_cart: ಶಾಪಿಂಗ್ ಕಾರ್ಟ್
     show: ತೋರಿಸು
@@ -1326,14 +1320,12 @@ kn:
       short: ಅಂಗಡಿ ಆಯ್ಕೆಗಾರನನ್ನು ತೋರಿಸಿ
     sign_up: ಸೈನ್ ಅಪ್ ಮಾಡಿ
     sku: ಎಸ್‌ಕೆಯು
-    skus: ಎಸ್‌ಕೆಯುಗಳು
     slug: ಸ್ಲಗ್
     social: ಸಾಮಾಜಿಕ
     source: ಮೂಲ
     special_instructions: ವಿಶೇಷ ಸೂಚನೆಗಳು
     split: ವಿಭಜನೆ
     spree_gateway_error_flash_for_checkout: ನಿಮ್ಮ ಪಾವತಿ ಮಾಹಿತಿಯೊಂದಿಗೆ ಸಮಸ್ಯೆ ಇದೆ. ದಯವಿಟ್ಟು ನಿಮ್ಮ ಮಾಹಿತಿಯನ್ನು ಪರಿಶೀಲಿಸಿ ಮತ್ತು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.
-    start: ಪ್ರಾರಂಭಿಸಿ
     starting_from: ನಲ್ಲಿ ಪ್ರಾರಂಭವಾಗುತ್ತದೆ
     state: ರಾಜ್ಯ
     state_based: ರಾಜ್ಯ ಆಧಾರಿತ
@@ -1420,8 +1412,6 @@ kn:
       unable_to_find_for_action: 'ದೃ uth ೀಕರಣ ಕೋಡ್‌ಗಾಗಿ ಸ್ಟೋರ್ ಕ್ರೆಡಿಟ್ ಸಿಗಲಿಲ್ಲ: ಕ್ರಿಯೆಗೆ %{auth_code}: %{action}'
       unable_to_void: 'ಕೋಡ್ ಅನ್ನು ಅನೂರ್ಜಿತಗೊಳಿಸಲು ಸಾಧ್ಯವಿಲ್ಲ: %{auth_code}'
       user_has_no_store_credits: ಬಳಕೆದಾರರಿಗೆ ಲಭ್ಯವಿರುವ ಯಾವುದೇ ಅಂಗಡಿ ಕ್ರೆಡಿಟ್ ಇಲ್ಲ
-    store_credits: ಕ್ರೆಡಿಟ್‌ಗಳನ್ನು ಸಂಗ್ರಹಿಸಿ
-    store_default: ಡೀಫಾಲ್ಟ್ ಅಂಗಡಿ
     store_errors:
       unable_to_create: ಅಂಗಡಿಯನ್ನು ರಚಿಸಲು ಸಾಧ್ಯವಿಲ್ಲ.
       unable_to_delete: ಅಂಗಡಿಯನ್ನು ಅಳಿಸಲು ಸಾಧ್ಯವಿಲ್ಲ.
@@ -1444,15 +1434,12 @@ kn:
     street_address: ರಸ್ತೆ ವಿಳಾಸ
     street_address_2: ರಸ್ತೆ ವಿಳಾಸ (cont'd)
     subtotal: ಒಟ್ಟು ಮೊತ್ತ
-    subtract: ಕಳೆಯಿರಿ
     success: ಯಶಸ್ಸು
     successfully_created: "%{resource} ಅನ್ನು ಯಶಸ್ವಿಯಾಗಿ ರಚಿಸಲಾಗಿದೆ!"
-    successfully_refunded: "%{resource} ಅನ್ನು ಯಶಸ್ವಿಯಾಗಿ ಮರುಪಾವತಿಸಲಾಗಿದೆ!"
     successfully_removed: "%{resource} ಅನ್ನು ಯಶಸ್ವಿಯಾಗಿ ತೆಗೆದುಹಾಕಲಾಗಿದೆ!"
     successfully_updated: "%{resource} ಅನ್ನು ಯಶಸ್ವಿಯಾಗಿ ನವೀಕರಿಸಲಾಗಿದೆ!"
     summary: ಸಾರಾಂಶ
     supported_currencies: ಬೆಂಬಲಿತ ಕರೆನ್ಸಿಗಳು
-    supported_currencies_long: ಬೆಂಬಲಿತ ಕರೆನ್ಸಿಗಳ ಅಲ್ಪವಿರಾಮದಿಂದ ಬೇರ್ಪಟ್ಟ ಪಟ್ಟಿ
     supported_locales: ಬೆಂಬಲಿತ ಲೊಕೇಲ್ಸ್
     tags_placeholder: ಟ್ಯಾಗ್‌ಗಳನ್ನು ಸೇರಿಸಿ
     tax: ತೆರಿಗೆ
@@ -1462,8 +1449,6 @@ kn:
     tax_included: ತೆರಿಗೆ (incl.)
     tax_rate_amount_explanation: ತೆರಿಗೆ ದರಗಳು ಲೆಕ್ಕಾಚಾರದಲ್ಲಿ ನೆರವಾಗಲು ದಶಮಾಂಶ ಮೊತ್ತವಾಗಿದೆ, (ಅಂದರೆ ತೆರಿಗೆ ದರ 5% ಆಗಿದ್ದರೆ 0.05 ಅನ್ನು ನಮೂದಿಸಿ)
     tax_rates: ತೆರಿಗೆ ದರಗಳು
-    taxon: ಟ್ಯಾಕ್ಸನ್
-    taxon_edit: ಟ್ಯಾಕ್ಸನ್ ಸಂಪಾದಿಸಿ
     taxon_missing_alt: ವರ್ಗ ಬ್ಯಾನರ್ ವಿವರಣೆ
     taxon_placeholder: ಟ್ಯಾಕ್ಸನ್ ಸೇರಿಸಿ
     taxon_rule:
@@ -1472,21 +1457,16 @@ kn:
       match_all: ಎಲ್ಲಾ
       match_any: ಕನಿಷ್ಠ ಒಂದು
     taxonomies: ಜೀವಿವರ್ಗೀಕರಣ ಶಾಸ್ತ್ರಗಳು
-    taxonomy: ಟ್ಯಾಕ್ಸಾನಮಿ
     taxonomy_brands_name: ಬ್ರಾಂಡ್ಸ್
     taxonomy_categories_name: ವರ್ಗಗಳು
-    taxonomy_edit: ಟ್ಯಾಕ್ಸಾನಮಿ ಸಂಪಾದಿಸಿ
     taxonomy_tree_error: ವಿನಂತಿಸಿದ ಬದಲಾವಣೆಯನ್ನು ಸ್ವೀಕರಿಸಲಾಗಿಲ್ಲ ಮತ್ತು ಮರವನ್ನು ಅದರ ಹಿಂದಿನ ಸ್ಥಿತಿಗೆ ಹಿಂತಿರುಗಿಸಲಾಗಿದೆ, ದಯವಿಟ್ಟು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.
     taxonomy_tree_instruction: "* ಮಗುವನ್ನು ಸೇರಿಸಲು, ಅಳಿಸಲು ಅಥವಾ ವಿಂಗಡಿಸಲು ಮೆನುವನ್ನು ಪ್ರವೇಶಿಸಲು ಮರದ ಮಗುವನ್ನು ಬಲ ಕ್ಲಿಕ್ ಮಾಡಿ (ಅಥವಾ ಐಒಎಸ್ ಸಾಧನದಲ್ಲಿ ಡಬಲ್ ಟ್ಯಾಪ್ ಮಾಡಿ)."
     taxons: ಟ್ಯಾಕ್ಸನ್‌ಗಳು
-    test: ಪರೀಕ್ಷೆ
     test_mailer:
       test_email:
         greeting: ಅಭಿನಂದನೆಗಳು!
         message: ನೀವು ಈ ಇಮೇಲ್ ಅನ್ನು ಸ್ವೀಕರಿಸಿದ್ದರೆ, ನಿಮ್ಮ ಇಮೇಲ್ ಸೆಟ್ಟಿಂಗ್‌ಗಳು ಸರಿಯಾಗಿವೆ.
         subject: ಪರೀಕ್ಷಾ ಮೇಲ್
-    test_mode: ಪರೀಕ್ಷಾ ಮೋಡ್
-    thank_you_for_your_order: ನಿಮ್ಮ ವ್ಯವಹಾರಕ್ಕೆ ಧನ್ಯವಾದಗಳು. ನಿಮ್ಮ ದಾಖಲೆಗಳಿಗಾಗಿ ದಯವಿಟ್ಟು ಈ ದೃ mation ೀಕರಣ ಪುಟದ ನಕಲನ್ನು ಮುದ್ರಿಸಿ.
     there_are_no_items_for_this_order: ಈ ಆದೇಶಕ್ಕಾಗಿ ಯಾವುದೇ ಐಟಂಗಳಿಲ್ಲ. ಮುಂದುವರಿಸಲು ದಯವಿಟ್ಟು ಐಟಂ ಅನ್ನು ಸೇರಿಸಿ.
     there_were_problems_with_the_following_fields: ಕೆಳಗಿನ ಕ್ಷೇತ್ರಗಳಲ್ಲಿ ಸಮಸ್ಯೆಗಳಿವೆ
     this_order_has_already_received_a_refund: ಈ ಆದೇಶವನ್ನು ಈಗಾಗಲೇ ಮರುಪಾವತಿ ಸ್ವೀಕರಿಸಲಾಗಿದೆ
@@ -1497,7 +1477,6 @@ kn:
     time: ಸಮಯ
     to_add_variants_you_must_first_define: ರೂಪಾಂತರಗಳನ್ನು ಸೇರಿಸಲು, ನೀವು ಮೊದಲು ವ್ಯಾಖ್ಯಾನಿಸಬೇಕು
     total: ಒಟ್ಟು
-    total_per_item: ಪ್ರತಿ ಐಟಂಗೆ ಒಟ್ಟು
     total_pre_tax_refund: ಒಟ್ಟು ತೆರಿಗೆ ಪೂರ್ವ ಮರುಪಾವತಿ
     total_price: ಒಟ್ಟು ಬೆಲೆ
     total_sales: ಒಟ್ಟು ಮಾರಾಟ
@@ -1516,19 +1495,13 @@ kn:
     type_to_search: ಹುಡುಕಲು ಟೈಪ್ ಮಾಡಿ
     unable_to_connect_to_gateway: ಗೇಟ್‌ವೇಗೆ ಸಂಪರ್ಕಿಸಲು ಸಾಧ್ಯವಿಲ್ಲ.
     unable_to_create_reimbursements: ಹಸ್ತಚಾಲಿತ ಹಸ್ತಕ್ಷೇಪ ಬಾಕಿ ಉಳಿದಿರುವ ಕಾರಣ ಮರುಪಾವತಿಗಳನ್ನು ರಚಿಸಲು ಸಾಧ್ಯವಿಲ್ಲ.
-    under_price: "%{price} ಅಡಿಯಲ್ಲಿ"
-    unlock: ಅನ್ಲಾಕ್ ಮಾಡಿ
     unrecognized_card_type: ಗುರುತಿಸಲಾಗದ ಕಾರ್ಡ್ ಪ್ರಕಾರ
-    unshippable_items: ಬೆಂಬಲಿಸಲಾಗದ ವಸ್ತುಗಳು
     update: ನವೀಕರಿಸಿ
-    updating: ನವೀಕರಿಸಲಾಗುತ್ತಿದೆ
     url: URL
     usage_limit: ಬಳಕೆಯ ಮಿತಿ
     use_app_default: ಅಪ್ಲಿಕೇಶನ್ ಡೀಫಾಲ್ಟ್ ಬಳಸಿ
     use_billing_address: ಬಿಲ್ಲಿಂಗ್ ವಿಳಾಸವನ್ನು ಬಳಸಿ
-    use_existing_cc: ಫೈಲ್‌ನಲ್ಲಿ ಅಸ್ತಿತ್ವದಲ್ಲಿರುವ ಕಾರ್ಡ್ ಬಳಸಿ
     use_new_cc: ಹೊಸ ಕಾರ್ಡ್ ಬಳಸಿ
-    use_new_cc_or_payment_method: ಹೊಸ ಕಾರ್ಡ್ / ಪಾವತಿ ವಿಧಾನವನ್ನು ಬಳಸಿ
     used: ಬಳಸಲಾಗುತ್ತದೆ
     user: ಬಳಕೆದಾರ
     user_not_found: ಬಳಕೆದಾರರು ಕಂಡುಬಂದಿಲ್ಲ

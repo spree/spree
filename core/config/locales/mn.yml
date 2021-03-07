@@ -1266,12 +1266,10 @@ mn:
     server_error: Сервер алдаа гаргалаа
     settings: Тохиргоо
     ship: Хөлөг онгоц
-    ship_address: Хүргэлтийн хаяг
     ship_to: 'Илгээх:'
     ship_total: Нийт хөлөг онгоц
     shipment: Ачаа
     shipment_adjustments: Тээвэрлэлтийн тохируулга
-    shipment_details: "%{stock_location}-ээс %{shipping_method}-р дамжуулан"
     shipment_mailer:
       shipped_email:
         dear_customer: Эрхэм хүндэт %{name},
@@ -1291,10 +1289,7 @@ mn:
       pending: хүлээгдэж байна
       ready: бэлэн
       shipped: ачуулсан
-    shipment_transfer_error: Хувилбарыг дамжуулахад алдаа гарав
-    shipment_transfer_success: Хувилбарууд амжилттай шилжсэн
     shipments: Ачаа
-    shipped: Ачуулсан
     shipping: Хүргэлт
     shipping_address: Хүргэлтийн хаяг
     shipping_categories: Тээврийн ангилал
@@ -1310,7 +1305,6 @@ mn:
       display_price:
         excluding_tax: "%{price} (+ %{tax_amount} %{tax_rate_name})"
         including_tax: "%{price} (%{tax_amount} %{tax_rate_name} орно)"
-    shipping_total: Хүргэлтийн нийт дүн
     shop_by_taxonomy: "%{taxonomy} дэлгүүр"
     shopping_cart: Дэлгүүрийн түрдэг тэрэг
     show: Үзүүлэх
@@ -1326,14 +1320,12 @@ mn:
       short: Дэлгүүр сонгогчийг харуулах
     sign_up: Бүртгүүлэх
     sku: SKU
-    skus: Барааны дугаар
     slug: Зөөлөн
     social: Нийгмийн
     source: Эх сурвалж
     special_instructions: Тусгай заавар
     split: салгах
     spree_gateway_error_flash_for_checkout: Таны төлбөрийн мэдээлэлд асуудал гарлаа. Мэдээллээ шалгаад дахин оролдоно уу.
-    start: Эхлэ
     starting_from: Эхлэх
     state: Муж
     state_based: Мужид суурилсан
@@ -1420,8 +1412,6 @@ mn:
       unable_to_find_for_action: 'Auth кодын дэлгүүрийн кредитийг олж чадсангүй: %{auth_code} үйлдлийн хувьд: %{action}'
       unable_to_void: 'Кодыг хүчингүй болгох боломжгүй: %{auth_code}'
       user_has_no_store_credits: Хэрэглэгчид боломжтой дэлгүүрийн кредит байхгүй байна
-    store_credits: Дэлгүүрийн зээл
-    store_default: Анхдагч дэлгүүр
     store_errors:
       unable_to_create: Дэлгүүр үүсгэх боломжгүй байна.
       unable_to_delete: Дэлгүүрийг устгах боломжгүй.
@@ -1444,15 +1434,12 @@ mn:
     street_address: Гудамжны хаяг
     street_address_2: Гудамжны хаяг (үргэлжлэл)
     subtotal: Нийт дүн
-    subtract: Хасах
     success: Амжилт
     successfully_created: "%{resource} амжилттай бүтээгдсэн!"
-    successfully_refunded: "%{resource}-ийг амжилттай буцаан олголоо!"
     successfully_removed: "%{resource} амжилттай устгагдлаа!"
     successfully_updated: "%{resource} амжилттай шинэчлэгдсэн!"
     summary: Хураангуй
     supported_currencies: Дэмжигдсэн валютууд
-    supported_currencies_long: Таслалаар тусгаарлагдсан жагсаалтыг дэмжиж буй валютууд
     supported_locales: Дэмжигдсэн нутгийн иргэд
     tags_placeholder: Шошго нэмэх
     tax: Татвар
@@ -1462,8 +1449,6 @@ mn:
     tax_included: Татвар (орно)
     tax_rate_amount_explanation: Татварын хувь хэмжээ нь тооцоололд тус болох аравтын бутархай хэмжээ юм (өөрөөр хэлбэл татварын хэмжээ 5% байвал 0.05 гэж оруулна уу).
     tax_rates: Татварын хувь хэмжээ
-    taxon: Таксон
-    taxon_edit: Таксоныг засах
     taxon_missing_alt: Ангиллын баннерын тодорхойлолт
     taxon_placeholder: Таксон нэмэх
     taxon_rule:
@@ -1472,21 +1457,16 @@ mn:
       match_all: бүгд
       match_any: ядаж нэг
     taxonomies: Таксономи
-    taxonomy: Таксономи
     taxonomy_brands_name: Брэндүүд
     taxonomy_categories_name: Ангилалууд
-    taxonomy_edit: Таксономийг засах
     taxonomy_tree_error: Хүссэн өөрчлөлтийг хүлээн аваагүй тул модыг өмнөх төлөвт нь буцааж оруулсан тул дахин оролдоно уу.
     taxonomy_tree_instruction: "* Хүүхдийг нэмэх, устгах эсвэл ангилах цэс рүү нэвтрэхийн тулд модонд байгаа хүүхдийг баруун товчлуур дээр дарж (эсвэл iOS төхөөрөмж дээр давхар товшино уу)."
     taxons: Таксон
-    test: Туршилт
     test_mailer:
       test_email:
         greeting: Баяр хүргэе!
         message: Хэрэв та энэ имэйлийг хүлээн авсан бол таны имэйлийн тохиргоо зөв байна гэсэн үг юм.
         subject: Туршилтын шуудан
-    test_mode: Туршилтын горим
-    thank_you_for_your_order: Бизнес эрхэлж байгаад баярлалаа. Энэ баталгаажуулалтын хуудасны хуулбарыг өөрийн бүртгэлд хэвлүүлнэ үү.
     there_are_no_items_for_this_order: Энэ захиалгад зориулсан зүйл алга. Үргэлжлүүлэхийн тулд захиалгад нэг зүйл нэмж оруулна уу.
     there_were_problems_with_the_following_fields: Дараах талбаруудад асуудал гарсан
     this_order_has_already_received_a_refund: Энэ захиалга буцаан олголтыг аль хэдийн авсан болно
@@ -1497,7 +1477,6 @@ mn:
     time: Цаг хугацаа
     to_add_variants_you_must_first_define: Хувилбаруудыг нэмэхийн тулд эхлээд тодорхойлох хэрэгтэй
     total: Нийт
-    total_per_item: Нэг зүйлийн нийт дүн
     total_pre_tax_refund: Татварын өмнөх нийт буцаан олголт
     total_price: Нийт үнэ
     total_sales: Нийт борлуулалт
@@ -1516,19 +1495,13 @@ mn:
     type_to_search: Хайхын тулд бичнэ үү
     unable_to_connect_to_gateway: Гарцтай холбогдох боломжгүй байна.
     unable_to_create_reimbursements: Гар аргаар хөндлөнгөөс оролцохоор хүлээгдэж буй зүйл байгаа тул нөхөн төлбөр үүсгэх боломжгүй байна.
-    under_price: "%{price} дор"
-    unlock: Түгжээг тайлах
     unrecognized_card_type: Танигдаагүй картын төрөл
-    unshippable_items: Хадгалагдах боломжгүй зүйлүүд
     update: Шинэчлэх
-    updating: Шинэчилж байна
     url: URL
     usage_limit: Хэрэглээний хязгаар
     use_app_default: App Default-г ашиглах
     use_billing_address: Тооцооны хаягийг ашиглана уу
-    use_existing_cc: Файл дээрх байгаа картыг ашиглана уу
     use_new_cc: Шинэ карт ашиглана уу
-    use_new_cc_or_payment_method: Шинэ карт / төлбөрийн хэрэгсэл ашиглана уу
     used: Ашигласан
     user: Хэрэглэгч
     user_not_found: Хэрэглэгч олдсонгүй

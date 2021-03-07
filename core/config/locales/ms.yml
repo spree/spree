@@ -1266,12 +1266,10 @@ ms:
     server_error: Pelayan mengembalikan ralat
     settings: Tetapan
     ship: Kapal
-    ship_address: Alamat Penghantaran
     ship_to: 'Penghantaran ke:'
     ship_total: Jumlah Penghantaran
     shipment: Penghantaran
     shipment_adjustments: Penyesuaian penghantaran
-    shipment_details: Dari %{stock_location} melalui %{shipping_method}
     shipment_mailer:
       shipped_email:
         dear_customer: "%{name} yang dihormati,"
@@ -1291,10 +1289,7 @@ ms:
       pending: yang belum selesai
       ready: siap
       shipped: dihantar
-    shipment_transfer_error: Terdapat ralat semasa memindahkan varian
-    shipment_transfer_success: Varian berjaya dipindahkan
     shipments: Penghantaran
-    shipped: Dihantar
     shipping: penghantaran
     shipping_address: Alamat Penghantaran
     shipping_categories: Kategori Penghantaran
@@ -1310,7 +1305,6 @@ ms:
       display_price:
         excluding_tax: "%{price} (+ %{tax_amount} %{tax_rate_name})"
         including_tax: "%{price} (termasuk %{tax_amount} %{tax_rate_name})"
-    shipping_total: Jumlah penghantaran
     shop_by_taxonomy: Beli mengikut %{taxonomy}
     shopping_cart: Keranjang Belanja
     show: Tunjuk
@@ -1326,14 +1320,12 @@ ms:
       short: Tunjukkan pemilih Kedai
     sign_up: Mendaftar
     sku: SKU
-    skus: SKU
     slug: Slug
     social: Sosial
     source: Sumber
     special_instructions: Arahan Khas
     split: Berpisah
     spree_gateway_error_flash_for_checkout: Terdapat masalah dengan maklumat pembayaran anda. Sila periksa maklumat anda dan cuba lagi.
-    start: Mulakan
     starting_from: Bermula pada
     state: Nyatakan
     state_based: Berasaskan Negeri
@@ -1420,8 +1412,6 @@ ms:
       unable_to_find_for_action: 'Tidak dapat mencari kredit kedai untuk kod autentikasi: %{auth_code} untuk tindakan: %{action}'
       unable_to_void: 'Tidak dapat membatalkan kod: %{auth_code}'
       user_has_no_store_credits: Pengguna tidak mempunyai kredit kedai yang tersedia
-    store_credits: Kedai Kredit
-    store_default: Kedai lalai
     store_errors:
       unable_to_create: Tidak dapat membuat kedai.
       unable_to_delete: Tidak dapat memadam kedai.
@@ -1444,15 +1434,12 @@ ms:
     street_address: Alamat Jalan
     street_address_2: Alamat Jalan (samb)
     subtotal: jumlah kecil
-    subtract: Kurangkan
     success: Kejayaan
     successfully_created: "%{resource} telah berjaya dibuat!"
-    successfully_refunded: "%{resource} telah berjaya dikembalikan!"
     successfully_removed: "%{resource} telah berjaya dikeluarkan!"
     successfully_updated: "%{resource} telah berjaya dikemas kini!"
     summary: Ringkasan
     supported_currencies: Mata Wang yang Disokong
-    supported_currencies_long: Senarai mata wang yang disokong koma
     supported_locales: Lokasi yang Disokong
     tags_placeholder: Tambah Teg
     tax: Cukai
@@ -1462,8 +1449,6 @@ ms:
     tax_included: Cukai (termasuk)
     tax_rate_amount_explanation: Kadar cukai adalah jumlah perpuluhan untuk membantu pengiraan, (iaitu jika kadar cukai adalah 5%, kemudian masukkan 0,05)
     tax_rates: Kadar cukai
-    taxon: Teksi
-    taxon_edit: Edit Takson
     taxon_missing_alt: Huraian sepanduk kategori
     taxon_placeholder: Tambah Teksi
     taxon_rule:
@@ -1472,21 +1457,16 @@ ms:
       match_all: semua
       match_any: sekurang-kurangnya satu
     taxonomies: Taksonomi
-    taxonomy: Taksonomi
     taxonomy_brands_name: Jenama
     taxonomy_categories_name: Kategori
-    taxonomy_edit: Edit taksonomi
     taxonomy_tree_error: Perubahan yang diminta belum diterima dan pohon tersebut telah dikembalikan ke keadaan sebelumnya, sila cuba lagi.
     taxonomy_tree_instruction: "* Klik kanan (atau ketuk dua kali pada perangkat iOS) anak di pohon untuk mengakses menu untuk menambah, menghapus atau menyusun anak."
     taxons: Teksi
-    test: Uji
     test_mailer:
       test_email:
         greeting: Tahniah!
         message: Sekiranya anda telah menerima e-mel ini, maka tetapan e-mel anda betul.
         subject: Surat Ujian
-    test_mode: Mod percubaan
-    thank_you_for_your_order: Terima kasih atas urusan awak. Sila cetak salinan halaman pengesahan ini untuk rekod anda.
     there_are_no_items_for_this_order: Tidak ada item untuk pesanan ini. Sila tambahkan item ke pesanan untuk meneruskan.
     there_were_problems_with_the_following_fields: Terdapat masalah dengan bidang berikut
     this_order_has_already_received_a_refund: Pesanan ini telah menerima bayaran balik
@@ -1497,7 +1477,6 @@ ms:
     time: Masa
     to_add_variants_you_must_first_define: Untuk menambahkan varian, anda mesti menentukan terlebih dahulu
     total: Jumlah
-    total_per_item: Jumlah setiap item
     total_pre_tax_refund: Jumlah Bayaran Balik Sebelum Cukai
     total_price: Harga keseluruhan
     total_sales: Jumlah jualan
@@ -1516,19 +1495,13 @@ ms:
     type_to_search: Taip untuk mencari
     unable_to_connect_to_gateway: Tidak dapat menyambung ke pintu masuk.
     unable_to_create_reimbursements: Tidak dapat membuat pembayaran balik kerana terdapat item yang menunggu intervensi manual.
-    under_price: Di bawah %{price}
-    unlock: Buka kunci
     unrecognized_card_type: Jenis kad yang tidak dikenali
-    unshippable_items: Item Tidak Berpatutan
     update: Kemas kini
-    updating: Mengemas kini
     url: URL
     usage_limit: Had Penggunaan
     use_app_default: Gunakan Lalai Aplikasi
     use_billing_address: Gunakan Alamat Pengebilan
-    use_existing_cc: Gunakan kad yang ada pada fail
     use_new_cc: Gunakan kad baru
-    use_new_cc_or_payment_method: Gunakan kad / kaedah pembayaran baru
     used: Terpakai
     user: Pengguna
     user_not_found: Pengguna tidak dijumpai

@@ -1266,12 +1266,10 @@ en:
     server_error: The server returned an error
     settings: Settings
     ship: Ship
-    ship_address: Ship Address
     ship_to: 'Shipping to:'
     ship_total: Ship Total
     shipment: Shipment
     shipment_adjustments: Shipment adjustments
-    shipment_details: From %{stock_location} via %{shipping_method}
     shipment_mailer:
       shipped_email:
         dear_customer: Dear %{name},
@@ -1291,10 +1289,7 @@ en:
       pending: pending
       ready: ready
       shipped: shipped
-    shipment_transfer_error: There was an error transferring variants
-    shipment_transfer_success: Variants successfully transferred
     shipments: Shipments
-    shipped: Shipped
     shipping: Shipping
     shipping_address: Shipping Address
     shipping_categories: Shipping Categories
@@ -1310,7 +1305,6 @@ en:
       display_price:
         excluding_tax: "%{price} (+ %{tax_amount} %{tax_rate_name})"
         including_tax: "%{price} (incl. %{tax_amount} %{tax_rate_name})"
-    shipping_total: Shipping total
     shop_by_taxonomy: Shop by %{taxonomy}
     shopping_cart: Shopping Cart
     show: Show
@@ -1326,14 +1320,12 @@ en:
       short: Show Store selector
     sign_up: Sign Up
     sku: SKU
-    skus: SKUs
     slug: Slug
     social: Social
     source: Source
     special_instructions: Special Instructions
     split: Split
     spree_gateway_error_flash_for_checkout: There was a problem with your payment information. Please check your information and try again.
-    start: Start
     starting_from: Starts at
     state: State
     state_based: State Based
@@ -1420,8 +1412,6 @@ en:
       unable_to_find_for_action: 'Could not find store credit for auth code: %{auth_code} for action: %{action}'
       unable_to_void: 'Unable to void code: %{auth_code}'
       user_has_no_store_credits: User does not have any available store credit
-    store_credits: Store Credits
-    store_default: Default store
     store_errors:
       unable_to_create: Unable to create store.
       unable_to_delete: Unable to delete store.
@@ -1444,15 +1434,12 @@ en:
     street_address: Street Address
     street_address_2: Street Address (cont'd)
     subtotal: Subtotal
-    subtract: Subtract
     success: Success
     successfully_created: "%{resource} has been successfully created!"
-    successfully_refunded: "%{resource} has been successfully refunded!"
     successfully_removed: "%{resource} has been successfully removed!"
     successfully_updated: "%{resource} has been successfully updated!"
     summary: Summary
     supported_currencies: Supported Currencies
-    supported_currencies_long: A comma separated list of supported currencies
     supported_locales: Supported Locales
     tags_placeholder: Add Tags
     tax: Tax
@@ -1462,8 +1449,6 @@ en:
     tax_included: Tax (incl.)
     tax_rate_amount_explanation: Tax rates are a decimal amount to aid in calculations, (i.e. if the tax rate is 5% then enter 0.05)
     tax_rates: Tax Rates
-    taxon: Taxon
-    taxon_edit: Edit Taxon
     taxon_missing_alt: Category banner description
     taxon_placeholder: Add a Taxon
     taxon_rule:
@@ -1472,21 +1457,16 @@ en:
       match_all: all
       match_any: at least one
     taxonomies: Taxonomies
-    taxonomy: Taxonomy
     taxonomy_brands_name: Brands
     taxonomy_categories_name: Categories
-    taxonomy_edit: Edit taxonomy
     taxonomy_tree_error: The requested change has not been accepted and the tree has been returned to its previous state, please try again.
     taxonomy_tree_instruction: "* Right click (or double tap on iOS device) a child in the tree to access the menu for adding, deleting or sorting a child."
     taxons: Taxons
-    test: Test
     test_mailer:
       test_email:
         greeting: Congratulations!
         message: If you have received this email, then your email settings are correct.
         subject: Test Mail
-    test_mode: Test Mode
-    thank_you_for_your_order: Thank you for your business.  Please print out a copy of this confirmation page for your records.
     there_are_no_items_for_this_order: There are no items for this order. Please add an item to the order to continue.
     there_were_problems_with_the_following_fields: There were problems with the following fields
     this_order_has_already_received_a_refund: This order has already received a refund
@@ -1497,7 +1477,6 @@ en:
     time: Time
     to_add_variants_you_must_first_define: To add variants, you must first define
     total: Total
-    total_per_item: Total per item
     total_pre_tax_refund: Total Pre-Tax Refund
     total_price: Total price
     total_sales: Total Sales
@@ -1516,19 +1495,13 @@ en:
     type_to_search: Type to search
     unable_to_connect_to_gateway: Unable to connect to gateway.
     unable_to_create_reimbursements: Unable to create reimbursements because there are items pending manual intervention.
-    under_price: Under %{price}
-    unlock: Unlock
     unrecognized_card_type: Unrecognized card type
-    unshippable_items: Unshippable Items
     update: Update
-    updating: Updating
     url: URL
     usage_limit: Usage Limit
     use_app_default: Use App Default
     use_billing_address: Use Billing Address
-    use_existing_cc: Use an existing card on file
     use_new_cc: Use a new card
-    use_new_cc_or_payment_method: Use a new card / payment method
     used: Used
     user: User
     user_not_found: User not found

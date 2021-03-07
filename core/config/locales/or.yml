@@ -1266,12 +1266,10 @@ or:
     server_error: ସର୍ଭର ଏକ ତ୍ରୁଟି ଫେରସ୍ତ କଲା |
     settings: ସେଟିଂସମୂହ
     ship: ଜାହାଜ
-    ship_address: ଜାହାଜ ଠିକଣା
     ship_to: 'ପଠାଇବା:'
     ship_total: ଜାହାଜ ସମୁଦାୟ
     shipment: ପଠାଇବା
     shipment_adjustments: ପଠାଇବା ସଂଶୋଧନ |
-    shipment_details: "%{stock_location} ମାଧ୍ୟମରେ %{shipping_method} ମାଧ୍ୟମରେ |"
     shipment_mailer:
       shipped_email:
         dear_customer: ପ୍ରିୟ %{name},
@@ -1291,10 +1289,7 @@ or:
       pending: ବିଚାରାଧୀନ ଅଛି
       ready: ପ୍ରସ୍ତୁତ
       shipped: ପଠାଯାଇଛି
-    shipment_transfer_error: ପ୍ରକାର ସ୍ଥାନାନ୍ତର କରିବାରେ ଏକ ତ୍ରୁଟି ଥିଲା |
-    shipment_transfer_success: ପ୍ରକାରଗୁଡିକ ସଫଳତାର ସହିତ ସ୍ଥାନାନ୍ତରିତ |
     shipments: ପଠାଣ
-    shipped: ପଠାଯାଇଛି
     shipping: ପରିବହନ
     shipping_address: ପହଞ୍ଚାଇବା ସ୍ଥାନ
     shipping_categories: ସିପିଂ ବର୍ଗଗୁଡିକ
@@ -1310,7 +1305,6 @@ or:
       display_price:
         excluding_tax: "%{price} (+ %{tax_amount} %{tax_rate_name})"
         including_tax: "%{price} (ଅନ୍ତର୍ଭୂକ୍ତ। %{tax_amount} %{tax_rate_name})"
-    shipping_total: ସମୁଦାୟ ପରିବହନ
     shop_by_taxonomy: "%{taxonomy} ଦ୍ୱାରା କିଣନ୍ତୁ |"
     shopping_cart: ସପିଂଗ କାର୍ଟ୍
     show: ଦେଖାନ୍ତୁ |
@@ -1326,14 +1320,12 @@ or:
       short: ଷ୍ଟୋର ଚୟନକର୍ତ୍ତା ଦେଖାନ୍ତୁ |
     sign_up: ସାଇନ୍ ଅପ୍ କରନ୍ତୁ
     sku: SKU
-    skus: SKUs
     slug: ସ୍ଲଗ୍ |
     social: ସାମାଜିକ |
     source: ଉତ୍ସ
     special_instructions: ବିଶେଷ ନିର୍ଦ୍ଦେଶ
     split: ବିଭାଜନ
     spree_gateway_error_flash_for_checkout: ଆପଣଙ୍କର ଦେୟ ସୂଚନା ସହିତ ଏକ ସମସ୍ୟା ଥିଲା | ଦୟାକରି ଆପଣଙ୍କର ସୂଚନା ଯାଞ୍ଚ କରନ୍ତୁ ଏବଂ ପୁନର୍ବାର ଚେଷ୍ଟା କରନ୍ତୁ |
-    start: ଆରମ୍ଭ କରନ୍ତୁ |
     starting_from: ଠାରୁ ଆରମ୍ଭ ହେବ
     state: ରାଜ୍ୟ
     state_based: ରାଜ୍ୟ ଆଧାରିତ |
@@ -1420,8 +1412,6 @@ or:
       unable_to_find_for_action: 'Auth କୋଡ୍: %{auth_code} ପାଇଁ ଷ୍ଟୋର କ୍ରେଡିଟ୍ ଖୋଜି ପାଇଲା ନାହିଁ: %{action} |'
       unable_to_void: 'କୋଡ୍ ଶୂନ୍ୟ କରିବାକୁ ଅସମର୍ଥ: %{auth_code} |'
       user_has_no_store_credits: ଉପଭୋକ୍ତାଙ୍କର କ available ଣସି ଉପଲବ୍ଧ ଷ୍ଟୋର କ୍ରେଡିଟ୍ ନାହିଁ |
-    store_credits: କ୍ରେଡିଟ୍ ଗଚ୍ଛିତ କରନ୍ତୁ |
-    store_default: ଡିଫଲ୍ଟ ଷ୍ଟୋର୍‌ |
     store_errors:
       unable_to_create: ଷ୍ଟୋର ସୃଷ୍ଟି କରିବାରେ ଅସମର୍ଥ |
       unable_to_delete: ଷ୍ଟୋର୍‌ ବିଲୋପ କରିବାକୁ ଅସମର୍ଥ |
@@ -1444,15 +1434,12 @@ or:
     street_address: ରାସ୍ତା ଠିକଣା
     street_address_2: ଗଳି ଠିକଣା (cont'd)
     subtotal: ସବଟୋଟାଲ୍ |
-    subtract: ବିତରଣ କରନ୍ତୁ |
     success: ସଫଳତା
     successfully_created: "%{resource} ସଫଳତାର ସହିତ ସୃଷ୍ଟି ହୋଇଛି!"
-    successfully_refunded: "%{resource} ସଫଳତାର ସହିତ ଫେରସ୍ତ କରାଯାଇଛି!"
     successfully_removed: "%{resource} ସଫଳତାର ସହିତ ଅପସାରିତ ହୋଇଛି!"
     successfully_updated: "%{resource} ସଫଳତାର ସହିତ ଅଦ୍ୟତନ ହୋଇଛି!"
     summary: ସାରାଂଶ
     supported_currencies: ସମର୍ଥିତ ମୁଦ୍ରା
-    supported_currencies_long: ସମର୍ଥିତ ମୁଦ୍ରାଗୁଡ଼ିକର ଏକ କମା ପୃଥକ ତାଲିକା |
     supported_locales: ସମର୍ଥିତ ଲୋକାଲ୍ |
     tags_placeholder: ଟ୍ୟାଗ୍ ଯୋଡନ୍ତୁ |
     tax: କର
@@ -1462,8 +1449,6 @@ or:
     tax_included: କର (ଅନ୍ତର୍ଭୁକ୍ତ)
     tax_rate_amount_explanation: ଗଣନାରେ ସାହାଯ୍ୟ କରିବା ପାଇଁ ଟିକସ ହାର ହେଉଛି ଏକ ଦଶମିକ ପରିମାଣ, (ଯଥା ଯଦି ଟିକସ ହାର 5% ତେବେ 0.05 ପ୍ରବେଶ କରନ୍ତୁ)
     tax_rates: ଟିକସ ହାର
-    taxon: ଟ୍ୟାକ୍ସନ୍ |
-    taxon_edit: ଟ୍ୟାକ୍ସନ୍ ସଂପାଦନ କରନ୍ତୁ |
     taxon_missing_alt: ବର୍ଗ ବ୍ୟାନର ବର୍ଣ୍ଣନା |
     taxon_placeholder: ଏକ ଟ୍ୟାକ୍ସନ୍ ଯୋଡନ୍ତୁ |
     taxon_rule:
@@ -1472,21 +1457,16 @@ or:
       match_all: ସମସ୍ତ
       match_any: ଅତିକମରେ ଗୋଟିଏ |
     taxonomies: ଟ୍ୟାକ୍ସୋନୋମିଜ୍ |
-    taxonomy: ଟ୍ୟାକ୍ସୋନୋମି
     taxonomy_brands_name: ବ୍ରାଣ୍ଡଗୁଡିକ
     taxonomy_categories_name: ବର୍ଗଗୁଡିକ
-    taxonomy_edit: ଟ୍ୟାକ୍ସୋନୋମି ସଂପାଦନ କରନ୍ତୁ |
     taxonomy_tree_error: ଅନୁରୋଧ କରାଯାଇଥିବା ପରିବର୍ତ୍ତନ ଗ୍ରହଣ କରାଯାଇ ନାହିଁ ଏବଂ ଗଛଟି ପୂର୍ବ ଅବସ୍ଥାକୁ ଫେରି ଆସିଛି, ଦୟାକରି ପୁନର୍ବାର ଚେଷ୍ଟା କରନ୍ତୁ |
     taxonomy_tree_instruction: "* ଏକ ଶିଶୁକୁ ଯୋଡିବା, ବିଲୋପ କରିବା କିମ୍ବା ସର୍ଟ କରିବା ପାଇଁ ମେନୁକୁ ପ୍ରବେଶ କରିବାକୁ ଗଛରେ ଥିବା ଏକ ଶିଶୁକୁ ଡାହାଣ କ୍ଲିକ୍ କରନ୍ତୁ (କିମ୍ବା iOS ଉପକରଣରେ ଦୁଇଥର ଟ୍ୟାପ୍ କରନ୍ତୁ) |"
     taxons: ଟ୍ୟାକ୍ସନ୍ |
-    test: ପରୀକ୍ଷା
     test_mailer:
       test_email:
         greeting: ଅଭିନନ୍ଦନ!
         message: ଯଦି ଆପଣ ଏହି ଇମେଲ୍ ଗ୍ରହଣ କରିଛନ୍ତି, ତେବେ ଆପଣଙ୍କର ଇମେଲ୍ ସେଟିଂସମୂହ ସଠିକ୍ |
         subject: ପରୀକ୍ଷା ମେଲ୍ |
-    test_mode: ପରୀକ୍ଷା ମୋଡ୍
-    thank_you_for_your_order: ଆପଣଙ୍କ ବ୍ୟବସାୟ ପାଇଁ ଧନ୍ୟବାଦ | ଆପଣଙ୍କର ରେକର୍ଡଗୁଡିକ ପାଇଁ ଦୟାକରି ଏହି ନିଶ୍ଚିତକରଣ ପୃଷ୍ଠାର ଏକ କପି ମୁଦ୍ରଣ କରନ୍ତୁ |
     there_are_no_items_for_this_order: ଏହି କ୍ରମ ପାଇଁ କ items ଣସି ଆଇଟମ୍ ନାହିଁ | ଜାରି ରଖିବାକୁ ଦୟାକରି ଏକ ଆଇଟମ୍ ଯୋଡନ୍ତୁ |
     there_were_problems_with_the_following_fields: ନିମ୍ନଲିଖିତ କ୍ଷେତ୍ରଗୁଡ଼ିକରେ ସମସ୍ୟା ଦେଖାଦେଇଥିଲା |
     this_order_has_already_received_a_refund: ଏହି ଆଦେଶ ପୂର୍ବରୁ ଏକ ଫେରସ୍ତ ପାଇଛି |
@@ -1497,7 +1477,6 @@ or:
     time: ସମୟ
     to_add_variants_you_must_first_define: ପ୍ରକାରଗୁଡିକ ଯୋଡିବାକୁ, ଆପଣଙ୍କୁ ପ୍ରଥମେ ବ୍ୟାଖ୍ୟା କରିବାକୁ ପଡିବ |
     total: ସମୁଦାୟ
-    total_per_item: ଆଇଟମ୍ ପ୍ରତି ସମୁଦାୟ |
     total_pre_tax_refund: ସମୁଦାୟ ପ୍ରି-ଟ୍ୟାକ୍ସ ଫେରସ୍ତ
     total_price: ମୋଟ ମୂଲ୍ୟ
     total_sales: ମୋଟ ବିକ୍ରୟ |
@@ -1516,19 +1495,13 @@ or:
     type_to_search: ଖୋଜିବାକୁ ଟାଇପ୍ କରନ୍ତୁ |
     unable_to_connect_to_gateway: ଗେଟୱେ ସହିତ ସଂଯୋଗ କରିବାକୁ ଅସମର୍ଥ |
     unable_to_create_reimbursements: କ୍ଷତିପୂରଣ ସୃଷ୍ଟି କରିବାରେ ଅସମର୍ଥ କାରଣ ମାନୁଆଲ ହସ୍ତକ୍ଷେପ ବିଚାରାଧୀନ ଅଛି |
-    under_price: "%{price} ଅଧୀନରେ |"
-    unlock: ଅନଲକ୍ କରନ୍ତୁ |
     unrecognized_card_type: ଅଜ୍ଞାତ କାର୍ଡ ପ୍ରକାର |
-    unshippable_items: ଅଣସଂରକ୍ଷିତ ଆଇଟମ୍ |
     update: ଅଦ୍ୟତନ କରନ୍ତୁ |
-    updating: ଅଦ୍ୟତନ
     url: URL
     usage_limit: ବ୍ୟବହାର ସୀମା
     use_app_default: ଆପ୍ ଡିଫଲ୍ଟ ବ୍ୟବହାର କରନ୍ତୁ |
     use_billing_address: ବିଲିଂ ଠିକଣା ବ୍ୟବହାର କରନ୍ତୁ |
-    use_existing_cc: ଫାଇଲରେ ଏକ ବିଦ୍ୟମାନ କାର୍ଡ ବ୍ୟବହାର କରନ୍ତୁ |
     use_new_cc: ଏକ ନୂତନ କାର୍ଡ ବ୍ୟବହାର କରନ୍ତୁ |
-    use_new_cc_or_payment_method: ଏକ ନୂତନ କାର୍ଡ / ଦେୟ ପଦ୍ଧତି ବ୍ୟବହାର କରନ୍ତୁ |
     used: ବ୍ୟବହୃତ |
     user: ଉପଯୋଗକର୍ତ୍ତା |
     user_not_found: ଉପଯୋଗକର୍ତ୍ତା ମିଳିଲା ନାହିଁ |

@@ -1266,12 +1266,10 @@ eo:
     server_error: La servilo redonis eraron
     settings: Agordoj
     ship: Ŝipo
-    ship_address: Ŝipa Adreso
     ship_to: 'Sendado al:'
     ship_total: Sumo Sumo
     shipment: Sendo
     shipment_adjustments: Sendaj ĝustigoj
-    shipment_details: De %{stock_location} per %{shipping_method}
     shipment_mailer:
       shipped_email:
         dear_customer: Kara %{name},
@@ -1291,10 +1289,7 @@ eo:
       pending: decidota
       ready: preta
       shipped: ekspedita
-    shipment_transfer_error: Estis eraro dum translokigo de variantoj
-    shipment_transfer_success: Variaĵoj sukcese transdonitaj
     shipments: Sendoj
-    shipped: Sendita
     shipping: Sendo
     shipping_address: Sendadreso
     shipping_categories: Sendokategorioj
@@ -1310,7 +1305,6 @@ eo:
       display_price:
         excluding_tax: "%{price} (+ %{tax_amount} %{tax_rate_name})"
         including_tax: "%{price} (inkluzive %{tax_amount} %{tax_rate_name})"
-    shipping_total: Senda sumo
     shop_by_taxonomy: Butikumi per %{taxonomy}
     shopping_cart: Aĉetoĉaro
     show: Spektaklo
@@ -1326,14 +1320,12 @@ eo:
       short: Montri Buton-elektilon
     sign_up: Registriĝi
     sku: SKU
-    skus: SKU-oj
     slug: Limako
     social: Socia
     source: Fonto
     special_instructions: Specialaj Instrukcioj
     split: Disigi
     spree_gateway_error_flash_for_checkout: Estis problemo kun viaj pagaj informoj. Bonvolu kontroli viajn informojn kaj reprovi.
-    start: Komencu
     starting_from: Komencas ĉe
     state: Ŝtato
     state_based: Ŝtata Bazita
@@ -1420,8 +1412,6 @@ eo:
       unable_to_find_for_action: 'Ne povis trovi butikan krediton por aŭtokodo: %{auth_code} por ago: %{action}'
       unable_to_void: 'Ne eblas nuligi kodon: %{auth_code}'
       user_has_no_store_credits: Uzanto ne havas disponeblan butikan krediton
-    store_credits: Butikaj Kreditoj
-    store_default: Defaŭlta vendejo
     store_errors:
       unable_to_create: Ne eblas krei butikon.
       unable_to_delete: Ne eblas forigi butikon.
@@ -1444,15 +1434,12 @@ eo:
     street_address: Strata Adreso
     street_address_2: Strata Adreso (daŭrigita)
     subtotal: Subtotalo
-    subtract: Subtrahi
     success: Sukceso
     successfully_created: "%{resource} sukcese kreiĝis!"
-    successfully_refunded: "%{resource} estis sukcese repagita!"
     successfully_removed: "%{resource} estis sukcese forigita!"
     successfully_updated: "%{resource} estis sukcese ĝisdatigita!"
     summary: Resumo
     supported_currencies: Subtenitaj Moneroj
-    supported_currencies_long: Komo apartigita listo de subtenataj moneroj
     supported_locales: Subtenitaj Lokaj Lokoj
     tags_placeholder: Aldoni Etikedojn
     tax: Imposto
@@ -1462,8 +1449,6 @@ eo:
     tax_included: Imposto (inkl.)
     tax_rate_amount_explanation: Impostaj impostoj estas dekuma kvanto por helpi en kalkuloj, (t.e. se la imposttarifo estas 5% tiam enigu 0,05)
     tax_rates: Impostaj Impostoj
-    taxon: Taksono
-    taxon_edit: Redaktu Taksonon
     taxon_missing_alt: Kategoria standardo priskribo
     taxon_placeholder: Aldonu Taksonon
     taxon_rule:
@@ -1472,21 +1457,16 @@ eo:
       match_all: ĉiuj
       match_any: almenaŭ unu
     taxonomies: Taksonomioj
-    taxonomy: Taksonomio
     taxonomy_brands_name: Markoj
     taxonomy_categories_name: Kategorioj
-    taxonomy_edit: Redaktu taksonomion
     taxonomy_tree_error: La petita ŝanĝo ne estis akceptita kaj la arbo revenis al sia antaŭa stato, bonvolu reprovi.
     taxonomy_tree_instruction: "* Dekstre alklaku (aŭ duoble frapu sur iOS-aparato) infanon en la arbo por aliri la menuon por aldoni, forigi aŭ ordigi infanon."
     taxons: Taksonoj
-    test: Testo
     test_mailer:
       test_email:
         greeting: Gratulon!
         message: Se vi ricevis ĉi tiun retpoŝton, tiam viaj retpoŝtaj agordoj ĝustas.
         subject: Prova Poŝto
-    test_mode: Testreĝimo
-    thank_you_for_your_order: Dankon pro via komerco. Bonvolu presi kopion de ĉi tiu konfirmpaĝo por viaj diskoj.
     there_are_no_items_for_this_order: Ne estas artikoloj por ĉi tiu mendo. Bonvolu aldoni eron al la mendo por daŭrigi.
     there_were_problems_with_the_following_fields: Estis problemoj kun la jenaj kampoj
     this_order_has_already_received_a_refund: Ĉi tiu mendo jam ricevis repagon
@@ -1497,7 +1477,6 @@ eo:
     time: Tempo
     to_add_variants_you_must_first_define: Por aldoni variantojn, vi devas unue difini
     total: Entute
-    total_per_item: Entute po ero
     total_pre_tax_refund: Totala Antaŭimposta Repago
     total_price: Totala prezo
     total_sales: Totalaj Vendoj
@@ -1516,19 +1495,13 @@ eo:
     type_to_search: Tajpu por serĉi
     unable_to_connect_to_gateway: Ne eblas konekti al enirejo.
     unable_to_create_reimbursements: Ne eblas krei repagojn, ĉar estas eroj atendantaj manan intervenon.
-    under_price: Sub %{price}
-    unlock: Malŝlosu
     unrecognized_card_type: Nekonata kartospeco
-    unshippable_items: Neŝipeblaj Eroj
     update: Ĝisdatigu
-    updating: Ĝisdatigante
     url: URL
     usage_limit: Uzokutimo
     use_app_default: Uzu Defaŭltan Programon
     use_billing_address: Uzu Fakturan Adreson
-    use_existing_cc: Uzu ekzistantan karton en dosiero
     use_new_cc: Uzu novan karton
-    use_new_cc_or_payment_method: Uzu novan karton / pagmanieron
     used: Uzita
     user: Uzanto
     user_not_found: Uzanto ne trovita

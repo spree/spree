@@ -1266,12 +1266,10 @@ he:
     server_error: השרת החזיר שגיאה
     settings: הגדרות
     ship: ספינה
-    ship_address: כתובת הספינה
     ship_to: 'משלוח ל:'
     ship_total: ספינה כוללת
     shipment: מִשׁלוֹחַ
     shipment_adjustments: התאמות משלוח
-    shipment_details: מ %{stock_location} דרך %{shipping_method}
     shipment_mailer:
       shipped_email:
         dear_customer: יקירי %{name},
@@ -1291,10 +1289,7 @@ he:
       pending: ממתין ל
       ready: מוּכָן
       shipped: נשלח
-    shipment_transfer_error: אירעה שגיאה בהעברת גרסאות
-    shipment_transfer_success: גרסאות הועברו בהצלחה
     shipments: משלוחים
-    shipped: נשלח
     shipping: משלוח
     shipping_address: כתובת למשלוח
     shipping_categories: קטגוריות משלוח
@@ -1310,7 +1305,6 @@ he:
       display_price:
         excluding_tax: "%{price} (+ %{tax_amount} %{tax_rate_name})"
         including_tax: "%{price} (כולל %{tax_amount} %{tax_rate_name})"
-    shipping_total: סה"כ משלוח
     shop_by_taxonomy: חנות מאת %{taxonomy}
     shopping_cart: עגלת קניות
     show: הופעה
@@ -1326,14 +1320,12 @@ he:
       short: הצג בורר חנויות
     sign_up: הירשם
     sku: מק"ט
-    skus: מק"ט
     slug: שבלול
     social: חֶברָתִי
     source: מָקוֹר
     special_instructions: הוראות מיוחדות
     split: לְפַצֵל
     spree_gateway_error_flash_for_checkout: הייתה בעיה במידע התשלום שלך. אנא בדוק את המידע שלך ונסה שוב.
-    start: הַתחָלָה
     starting_from: מתחיל ב
     state: מדינה
     state_based: מבוסס מדינה
@@ -1420,8 +1412,6 @@ he:
       unable_to_find_for_action: 'לא נמצא זיכוי בחנות עבור קוד אימות: %{auth_code} לפעולה: %{action}'
       unable_to_void: 'לא ניתן לבטל את הקוד: %{auth_code}'
       user_has_no_store_credits: למשתמש אין אשראי זמין בחנות
-    store_credits: זיכויים בחנות
-    store_default: חנות ברירת מחדל
     store_errors:
       unable_to_create: לא ניתן ליצור חנות.
       unable_to_delete: לא ניתן למחוק את החנות.
@@ -1444,15 +1434,12 @@ he:
     street_address: כתובת רחוב
     street_address_2: כתובת רחוב (המשך)
     subtotal: סך הכל
-    subtract: להחסיר
     success: הַצלָחָה
     successfully_created: "%{resource} נוצר בהצלחה!"
-    successfully_refunded: "%{resource} הוחזר בהצלחה!"
     successfully_removed: "%{resource} הוסר בהצלחה!"
     successfully_updated: "%{resource} עודכן בהצלחה!"
     summary: סיכום
     supported_currencies: מטבעות נתמכים
-    supported_currencies_long: רשימה מופרדת בפסיקים של מטבעות נתמכים
     supported_locales: מקומות נתמכים
     tags_placeholder: הוסף תגיות
     tax: מַס
@@ -1462,8 +1449,6 @@ he:
     tax_included: כולל מיסים.)
     tax_rate_amount_explanation: שיעורי המס הם סכום עשרוני לסיוע בחישובים, (כלומר אם שיעור המס הוא 5%, הזן 0.05)
     tax_rates: שיעורי המס
-    taxon: טקסון
-    taxon_edit: ערוך את Taxon
     taxon_missing_alt: תיאור הבאנר של הקטגוריה
     taxon_placeholder: הוסף טקסון
     taxon_rule:
@@ -1472,21 +1457,16 @@ he:
       match_all: את כל
       match_any: לפחות אחד
     taxonomies: טקסונומיות
-    taxonomy: טקסונומיה
     taxonomy_brands_name: מותגים
     taxonomy_categories_name: קטגוריות
-    taxonomy_edit: ערוך טקסונומיה
     taxonomy_tree_error: השינוי המבוקש לא התקבל והעץ הוחזר לקדמותו, אנא נסה שוב.
     taxonomy_tree_instruction: "* לחץ לחיצה ימנית (או הקש פעמיים במכשיר iOS) על ילד בעץ כדי לגשת לתפריט להוספה, מחיקה או מיון של ילד."
     taxons: טקסונים
-    test: מִבְחָן
     test_mailer:
       test_email:
         greeting: מזל טוב!
         message: אם קיבלת דוא"ל זה, הגדרות הדוא"ל שלך נכונות.
         subject: בדוק דואר
-    test_mode: מצב מבחן
-    thank_you_for_your_order: תודה על העסק שלך. אנא הדפס עותק של דף אישור זה לרישומיך.
     there_are_no_items_for_this_order: אין פריטים להזמנה זו. אנא הוסף פריט להזמנה כדי להמשיך.
     there_were_problems_with_the_following_fields: היו בעיות בשדות הבאים
     this_order_has_already_received_a_refund: הזמנה זו כבר קיבלה החזר כספי
@@ -1497,7 +1477,6 @@ he:
     time: זְמַן
     to_add_variants_you_must_first_define: כדי להוסיף גרסאות, ראשית עליך להגדיר
     total: סך הכל
-    total_per_item: סה"כ לפריט
     total_pre_tax_refund: סה"כ החזר כספי לפני מס
     total_price: מחיר סופי
     total_sales: סך המכירות
@@ -1516,19 +1495,13 @@ he:
     type_to_search: הקלד לחיפוש
     unable_to_connect_to_gateway: לא ניתן להתחבר לשער.
     unable_to_create_reimbursements: לא ניתן ליצור החזרים מכיוון שיש פריטים הממתינים להתערבות ידנית.
-    under_price: תחת %{price}
-    unlock: לבטל נעילה
     unrecognized_card_type: סוג כרטיס לא מזוהה
-    unshippable_items: פריטים שלא ניתנים לשליחה
     update: עדכון
-    updating: עִדכּוּן
     url: כתובת אתר
     usage_limit: מגבלת שימוש
     use_app_default: השתמש בברירת מחדל של האפליקציה
     use_billing_address: השתמש בכתובת חיוב
-    use_existing_cc: השתמש בכרטיס קיים בתיק
     use_new_cc: השתמש בכרטיס חדש
-    use_new_cc_or_payment_method: השתמש בכרטיס / אמצעי תשלום חדש
     used: בשימוש
     user: מִשׁתַמֵשׁ
     user_not_found: המשתמש לא נמצא

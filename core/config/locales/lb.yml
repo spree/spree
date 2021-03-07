@@ -1266,12 +1266,10 @@ lb:
     server_error: De Server huet e Feeler zréckginn
     settings: Astellungen
     ship: Schëff
-    ship_address: Schëffer Adress
     ship_to: 'Versand un:'
     ship_total: Schëff Total
     shipment: Liwwerung
     shipment_adjustments: Versandanpassungen
-    shipment_details: Vun %{stock_location} iwwer %{shipping_method}
     shipment_mailer:
       shipped_email:
         dear_customer: Léif %{name},
@@ -1291,10 +1289,7 @@ lb:
       pending: waarden
       ready: prett
       shipped: verschéckt
-    shipment_transfer_error: Et war e Feeler beim Iwwerdroe vu Varianten
-    shipment_transfer_success: Varianten erfollegräich transferéiert
     shipments: Liwwerunge
-    shipped: Verschéckt
     shipping: Liwwerung
     shipping_address: Liwweradress
     shipping_categories: Versandkategorien
@@ -1310,7 +1305,6 @@ lb:
       display_price:
         excluding_tax: "%{price} (+ %{tax_amount} %{tax_rate_name})"
         including_tax: "%{price} (inkl. %{tax_amount} %{tax_rate_name})"
-    shipping_total: Versand total
     shop_by_taxonomy: Shop vun %{taxonomy}
     shopping_cart: Akaafsweenschen
     show: Weisen
@@ -1326,14 +1320,12 @@ lb:
       short: Show Store Selector
     sign_up: Sech umellen
     sku: SKU
-    skus: SKUen
     slug: Slug
     social: Sozial
     source: Quell
     special_instructions: Spezial Instruktiounen
     split: Split
     spree_gateway_error_flash_for_checkout: Et war e Problem mat Ärer Bezuelungsinformatioun. Kuckt w.e.g. Är Informatioun a probéiert nach eng Kéier.
-    start: Start
     starting_from: Fänkt un
     state: Staat
     state_based: Staat Opgrond
@@ -1420,8 +1412,6 @@ lb:
       unable_to_find_for_action: 'Konnt kee Geschäftskreditt fir auth code fannen: %{auth_code} fir Aktioun: %{action}'
       unable_to_void: 'Kann de Code net ongëlteg maachen: %{auth_code}'
       user_has_no_store_credits: Benotzer huet kee verfügbare Geschäftskreditt
-    store_credits: Store Credits
-    store_default: Standardgeschäft
     store_errors:
       unable_to_create: Kann net Buttek schafen.
       unable_to_delete: Kann de Buttek net läschen.
@@ -1444,15 +1434,12 @@ lb:
     street_address: Strooss Adress
     street_address_2: Strooss Adress (weider)
     subtotal: Subtotal
-    subtract: Ofzéien
     success: Erfolleg
     successfully_created: "%{resource} gouf erfollegräich erstallt!"
-    successfully_refunded: "%{resource} gouf erfollegräich rembourséiert!"
     successfully_removed: "%{resource} gouf erfollegräich geläscht!"
     successfully_updated: "%{resource} gouf erfollegräich aktualiséiert!"
     summary: Resumé
     supported_currencies: Ënnerstëtzte Währungen
-    supported_currencies_long: Eng komma getrennte Lëscht vun ënnerstëtzte Währungen
     supported_locales: Ënnerstëtzte Lokaler
     tags_placeholder: Tags derbäi
     tax: Steier
@@ -1462,8 +1449,6 @@ lb:
     tax_included: Steier (inkl.)
     tax_rate_amount_explanation: Steiersätz sinn en Dezimalzomm fir bei Berechnungen ze hëllefen, (dh wann de Steiersaz 5% ass da gitt 0.05)
     tax_rates: Steier Präisser
-    taxon: Taxon
-    taxon_edit: Edit Taxon
     taxon_missing_alt: Kategorie Banner Beschreiwung
     taxon_placeholder: Füügt e Taxon derbäi
     taxon_rule:
@@ -1472,21 +1457,16 @@ lb:
       match_all: all
       match_any: op d'mannst een
     taxonomies: Taxonomien
-    taxonomy: Taxonomie
     taxonomy_brands_name: Marken
     taxonomy_categories_name: Kategorien
-    taxonomy_edit: Ännerung Taxonomie
     taxonomy_tree_error: Déi gefrote Ännerung gouf net akzeptéiert an de Bam gouf a säi fréiere Staat zréckginn, probéiert nach eng Kéier.
     taxonomy_tree_instruction: "* Riets Klickt (oder zweemol op iOS Apparat) e Kand am Bam fir Zougang zum Menü ze kréien fir e Kand bäizefügen, ze läschen oder ze sortéieren."
     taxons: Taxoen
-    test: Test
     test_mailer:
       test_email:
         greeting: Gratulatioun!
         message: Wann Dir dësen E-Mail kritt hutt, da sinn Är E-Mail-Astellunge richteg.
         subject: Test Mail
-    test_mode: Testmodus
-    thank_you_for_your_order: Merci fir Äert Geschäft. Dréckt w.e.g. eng Kopie vun dëser Bestätegungssäit fir Är records.
     there_are_no_items_for_this_order: Et gi keng Artikele fir dës Bestellung. Füügt w.e.g. en Element an d'Bestellung fir weiderzefueren.
     there_were_problems_with_the_following_fields: Et goufe Probleemer mat de folgende Felder
     this_order_has_already_received_a_refund: Dës Bestellung huet scho Remboursement kritt
@@ -1497,7 +1477,6 @@ lb:
     time: Zäit
     to_add_variants_you_must_first_define: Fir Varianten bäizefügen, musst Dir als éischt definéieren
     total: Total
-    total_per_item: Total pro Artikel
     total_pre_tax_refund: Total Virbezuelte Remboursement
     total_price: Gesamtpräis
     total_sales: Ganzen Ofsaz
@@ -1516,19 +1495,13 @@ lb:
     type_to_search: Typ fir ze sichen
     unable_to_connect_to_gateway: Kann net mam Gateway verbannen.
     unable_to_create_reimbursements: Kann net Remboursementer kreéieren well et Saache sinn déi op manuell Interventioun waarden.
-    under_price: Ënner %{price}
-    unlock: Entloossen
     unrecognized_card_type: Unerkannte Kaartentyp
-    unshippable_items: Net verschéckbar Artikelen
     update: Aktualiséierung
-    updating: Aktualiséierung
     url: URL
     usage_limit: Benotzungslimit
     use_app_default: Benotzt App Standard
     use_billing_address: Benotzt Rechnungsadress
-    use_existing_cc: Benotzt eng existent Kaart op der Datei
     use_new_cc: Benotzt eng nei Kaart
-    use_new_cc_or_payment_method: Benotzt eng nei Kaart / Bezuelmethod
     used: Benotzt
     user: Benotzer
     user_not_found: Benotzer net fonnt

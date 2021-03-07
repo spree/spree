@@ -1266,12 +1266,10 @@ sq:
     server_error: Serveri ktheu një gabim
     settings: Cilësimet
     ship: Anije
-    ship_address: Adresa e Anijes
     ship_to: 'Transporti në:'
     ship_total: Dërgesa totale
     shipment: Dërgesa
     shipment_adjustments: Rregullimet e dërgesave
-    shipment_details: Nga %{stock_location} përmes %{shipping_method}
     shipment_mailer:
       shipped_email:
         dear_customer: I dashur %{name},
@@ -1291,10 +1289,7 @@ sq:
       pending: në pritje
       ready: gati
       shipped: dërguar
-    shipment_transfer_error: Kishte një gabim në transferimin e varianteve
-    shipment_transfer_success: Variantet u transferuan me sukses
     shipments: Dërgesat
-    shipped: Transportuar
     shipping: Transporti detar
     shipping_address: Adresa e Transportit
     shipping_categories: Kategoritë e Transportit
@@ -1310,7 +1305,6 @@ sq:
       display_price:
         excluding_tax: "%{price} (+ %{tax_amount} %{tax_rate_name})"
         including_tax: "%{price} (përfshirë %{tax_amount} %{tax_rate_name})"
-    shipping_total: Totali i transportit
     shop_by_taxonomy: Bleni nga %{taxonomy}
     shopping_cart: Shporta
     show: Shfaqje
@@ -1326,14 +1320,12 @@ sq:
       short: Shfaq përzgjedhësin e Dyqanit
     sign_up: Regjistrohuni
     sku: SKU
-    skus: SKU-të
     slug: Slug
     social: Sociale
     source: Burimi
     special_instructions: Udhëzime të veçanta
     split: Split
     spree_gateway_error_flash_for_checkout: Kishte një problem me informacionin tënd të pagesës. Ju lutemi kontrolloni informacionin tuaj dhe provoni përsëri.
-    start: Fillo
     starting_from: Fillon në
     state: Shtet
     state_based: Bazuar në shtet
@@ -1420,8 +1412,6 @@ sq:
       unable_to_find_for_action: 'Nuk mund të gjesh kredinë e dyqanit për kodin auth: %{auth_code} për veprim: %{action}'
       unable_to_void: 'Nuk mund të anulohet kodi: %{auth_code}'
       user_has_no_store_credits: Përdoruesi nuk ka ndonjë kredi të disponueshme në dyqan
-    store_credits: Kreditë e dyqaneve
-    store_default: Dyqani i paracaktuar
     store_errors:
       unable_to_create: I pazoti të krijohet dyqani.
       unable_to_delete: Dyqani nuk mund të fshihet.
@@ -1444,15 +1434,12 @@ sq:
     street_address: Adresa e rrugës
     street_address_2: Adresa e Rrugës (vazhduar)
     subtotal: Nëntotali
-    subtract: Zbrit
     success: Sukses
     successfully_created: "%{resource} është krijuar me sukses!"
-    successfully_refunded: "%{resource} është rimbursuar me sukses!"
     successfully_removed: "%{resource} është hequr me sukses!"
     successfully_updated: "%{resource} është azhurnuar me sukses!"
     summary: Përmbledhje
     supported_currencies: Monedhat e mbështetura
-    supported_currencies_long: Një listë e monedhave të mbështetura të ndara me presje
     supported_locales: Vendndodhjet e mbështetura
     tags_placeholder: Shto etiketat
     tax: Taksa
@@ -1462,8 +1449,6 @@ sq:
     tax_included: Taksa (përfshirë)
     tax_rate_amount_explanation: Normat e taksave janë një shumë dhjetore për të ndihmuar në llogaritjet, (d.m.th. nëse shkalla e taksës është 5%, atëherë fut 0,05)
     tax_rates: Tarifat e taksave
-    taxon: Takson
-    taxon_edit: Redakto Taxon
     taxon_missing_alt: Përshkrimi i banderolës së kategorisë
     taxon_placeholder: Shtoni një Taxon
     taxon_rule:
@@ -1472,21 +1457,16 @@ sq:
       match_all: të gjitha
       match_any: të paktën një
     taxonomies: Taksonomitë
-    taxonomy: Taksonomia
     taxonomy_brands_name: Marka
     taxonomy_categories_name: Kategoritë
-    taxonomy_edit: Redakto taksonominë
     taxonomy_tree_error: Ndryshimi i kërkuar nuk është pranuar dhe pema është kthyer në gjendjen e saj të mëparshme, ju lutemi provoni përsëri.
     taxonomy_tree_instruction: "* Klikoni me të djathtën (ose prekni dy herë në pajisjen iOS) një fëmijë në pemë për të hyrë në menunë për shtimin, fshirjen ose renditjen e një fëmije."
     taxons: Taksonë
-    test: Test
     test_mailer:
       test_email:
         greeting: Urime!
         message: Nëse e keni marrë këtë email, atëherë cilësimet e emailit tuaj janë të sakta.
         subject: Posta e provës
-    test_mode: Modaliteti i provës
-    thank_you_for_your_order: Faleminderit për biznesin tuaj Ju lutemi shtypni një kopje të kësaj faqe konfirmimi për të dhënat tuaja.
     there_are_no_items_for_this_order: Nuk ka artikuj për këtë porosi. Ju lutemi shtoni një artikull në porosi për të vazhduar.
     there_were_problems_with_the_following_fields: Kishte probleme me fushat e mëposhtme
     this_order_has_already_received_a_refund: Kjo porosi tashmë ka marrë një rimbursim
@@ -1497,7 +1477,6 @@ sq:
     time: Koha
     to_add_variants_you_must_first_define: Për të shtuar variante, së pari duhet të përcaktoni
     total: Total
-    total_per_item: Gjithsej për artikull
     total_pre_tax_refund: Rimbursimi i Përgjithshëm Para Taksave
     total_price: Cmimi total
     total_sales: Shitjet totale
@@ -1516,19 +1495,13 @@ sq:
     type_to_search: Shkruaj për të kërkuar
     unable_to_connect_to_gateway: Nuk mund të lidhet me portën.
     unable_to_create_reimbursements: Në pamundësi të krijimit të rimbursimeve sepse ka artikuj në pritje të ndërhyrjes manuale.
-    under_price: Nën %{price}
-    unlock: Hap
     unrecognized_card_type: Lloji i kartës së panjohur
-    unshippable_items: Sende të padepërtueshëm
     update: Azhurnoni
-    updating: Përditësimi
     url: URL-ja
     usage_limit: Kufiri i përdorimit
     use_app_default: Përdorni Parazgjedhjen e Aplikacionit
     use_billing_address: Përdorni adresën e faturimit
-    use_existing_cc: Përdorni një kartë ekzistuese në skedar
     use_new_cc: Përdorni një kartë të re
-    use_new_cc_or_payment_method: Përdorni një kartë të re / një mënyrë pagese
     used: Të përdorura
     user: Përdorues
     user_not_found: Përdoruesi nuk u gjet

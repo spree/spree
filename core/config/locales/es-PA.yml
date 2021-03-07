@@ -1266,12 +1266,10 @@ es-PA:
     server_error: El servidor devolvió un error
     settings: Ajustes
     ship: Barco
-    ship_address: Dirección de envío
     ship_to: 'Embarcar hacia:'
     ship_total: Total del envío
     shipment: Envío
     shipment_adjustments: Ajustes de envío
-    shipment_details: Desde %{stock_location} vía %{shipping_method}
     shipment_mailer:
       shipped_email:
         dear_customer: Estimado %{name},
@@ -1291,10 +1289,7 @@ es-PA:
       pending: pendiente
       ready: Listo
       shipped: Enviado
-    shipment_transfer_error: Se produjo un error al transferir variantes.
-    shipment_transfer_success: Variantes transferidas con éxito
     shipments: Envíos
-    shipped: Enviado
     shipping: Transporte
     shipping_address: Dirección de Envío
     shipping_categories: Categorías de envío
@@ -1310,7 +1305,6 @@ es-PA:
       display_price:
         excluding_tax: "%{price} (+ %{tax_amount} %{tax_rate_name})"
         including_tax: "%{price} (incluido %{tax_amount} %{tax_rate_name})"
-    shipping_total: Total de envío
     shop_by_taxonomy: Comprar por %{taxonomy}
     shopping_cart: Carrito de compras
     show: mostrar
@@ -1326,14 +1320,12 @@ es-PA:
       short: Mostrar selector de tienda
     sign_up: Inscribirse
     sku: SKU
-    skus: SKU
     slug: Babosa
     social: Social
     source: Fuente
     special_instructions: instrucciones especiales
     split: Separar
     spree_gateway_error_flash_for_checkout: Hubo un problema con su información de pago. Verifique su información y vuelva a intentarlo.
-    start: Comienzo
     starting_from: Empieza a
     state: Expresar
     state_based: Basado en el estado
@@ -1420,8 +1412,6 @@ es-PA:
       unable_to_find_for_action: 'No se pudo encontrar el crédito de la tienda para el código de autenticación: %{auth_code} para la acción: %{action}'
       unable_to_void: 'No se puede anular el código: %{auth_code}'
       user_has_no_store_credits: El usuario no tiene ningún crédito de tienda disponible
-    store_credits: Créditos de la tienda
-    store_default: Tienda predeterminada
     store_errors:
       unable_to_create: No se puede crear una tienda.
       unable_to_delete: No se pudo borrar la tienda.
@@ -1444,15 +1434,12 @@ es-PA:
     street_address: Dirección
     street_address_2: Dirección postal (continuación)
     subtotal: Total parcial
-    subtract: Sustraer
     success: Éxito
     successfully_created: "¡%{resource} se ha creado correctamente!"
-    successfully_refunded: "¡%{resource} ha sido reembolsado correctamente!"
     successfully_removed: "¡%{resource} se ha eliminado correctamente!"
     successfully_updated: "¡%{resource} se ha actualizado correctamente!"
     summary: Resumen
     supported_currencies: Monedas admitidas
-    supported_currencies_long: Una lista separada por comas de las monedas admitidas
     supported_locales: Locales admitidos
     tags_placeholder: Agregar etiquetas
     tax: Impuesto
@@ -1462,8 +1449,6 @@ es-PA:
     tax_included: Impuestos incluidos.)
     tax_rate_amount_explanation: Las tasas impositivas son una cantidad decimal para ayudar en los cálculos (es decir, si la tasa impositiva es del 5%, ingrese 0.05).
     tax_rates: Las tasas de impuestos
-    taxon: Taxón
-    taxon_edit: Editar taxón
     taxon_missing_alt: Descripción del banner de categoría
     taxon_placeholder: Agregar un taxón
     taxon_rule:
@@ -1472,21 +1457,16 @@ es-PA:
       match_all: todos
       match_any: al menos uno
     taxonomies: Taxonomías
-    taxonomy: Taxonomía
     taxonomy_brands_name: Marcas
     taxonomy_categories_name: Categorias
-    taxonomy_edit: Editar taxonomía
     taxonomy_tree_error: El cambio solicitado no ha sido aceptado y el árbol ha vuelto a su estado anterior. Vuelva a intentarlo.
     taxonomy_tree_instruction: "* Haga clic derecho (o toque dos veces en el dispositivo iOS) en un niño en el árbol para acceder al menú para agregar, eliminar u ordenar un niño."
     taxons: Taxones
-    test: Prueba
     test_mailer:
       test_email:
         greeting: "¡Felicidades!"
         message: Si ha recibido este correo electrónico, su configuración de correo electrónico es correcta.
         subject: Correo de prueba
-    test_mode: Modo de prueba
-    thank_you_for_your_order: Gracias por hacer negocios. Imprima una copia de esta página de confirmación para sus registros.
     there_are_no_items_for_this_order: No hay artículos para este pedido. Agregue un artículo al pedido para continuar.
     there_were_problems_with_the_following_fields: Hubo problemas con los siguientes campos
     this_order_has_already_received_a_refund: Este pedido ya ha recibido un reembolso.
@@ -1497,7 +1477,6 @@ es-PA:
     time: Hora
     to_add_variants_you_must_first_define: Para agregar variantes, primero debe definir
     total: Total
-    total_per_item: Total por artículo
     total_pre_tax_refund: Reembolso total antes de impuestos
     total_price: Precio total
     total_sales: Ventas totales
@@ -1516,19 +1495,13 @@ es-PA:
     type_to_search: Escribe para buscar
     unable_to_connect_to_gateway: No se puede conectar a la puerta de enlace.
     unable_to_create_reimbursements: No se pueden crear reembolsos porque hay elementos pendientes de intervención manual.
-    under_price: Bajo %{price}
-    unlock: desbloquear
     unrecognized_card_type: Tipo de tarjeta no reconocido
-    unshippable_items: Artículos que no se pueden enviar
     update: Actualizar
-    updating: Actualizando
     url: URL
     usage_limit: Límite de uso
     use_app_default: Usar aplicación predeterminada
     use_billing_address: Utilice la dirección de facturación
-    use_existing_cc: Utilice una tarjeta existente en el archivo
     use_new_cc: Usa una nueva tarjeta
-    use_new_cc_or_payment_method: Utilice una nueva tarjeta / método de pago
     used: Usado
     user: Usuario
     user_not_found: Usuario no encontrado

@@ -1266,12 +1266,10 @@ bn:
     server_error: সার্ভার একটি ত্রুটি ফিরিয়ে দিয়েছে
     settings: সেটিংস
     ship: জাহাজ
-    ship_address: শিপ ঠিকানা
     ship_to: 'এতে শিপিং:'
     ship_total: শিপ টোটাল
     shipment: জাহাজে প্রেরিত কাজ
     shipment_adjustments: চালানের সামঞ্জস্য
-    shipment_details: "%{stock_location} থেকে %{shipping_method} এর মাধ্যমে"
     shipment_mailer:
       shipped_email:
         dear_customer: প্রিয় %{name},
@@ -1291,10 +1289,7 @@ bn:
       pending: বিচারাধীন
       ready: প্রস্তুত
       shipped: পাঠানো
-    shipment_transfer_error: রূপগুলি স্থানান্তর করার সময় একটি ত্রুটি হয়েছিল
-    shipment_transfer_success: রূপগুলি সফলভাবে স্থানান্তরিত হয়েছে
     shipments: শিপমেন্টস
-    shipped: শিপড
     shipping: পাঠানো
     shipping_address: প্রেরণের ঠিকানা
     shipping_categories: গ্রেপ্তার বিভাগ
@@ -1310,7 +1305,6 @@ bn:
       display_price:
         excluding_tax: "%{price} (+ %{tax_amount} %{tax_rate_name})"
         including_tax: "%{price} (সহ %{tax_amount} %{tax_rate_name})"
-    shipping_total: মোট শিপিং
     shop_by_taxonomy: "%{taxonomy} দ্বারা কেনাকাটা করুন"
     shopping_cart: বাজারের ব্যাগ
     show: দেখান
@@ -1326,14 +1320,12 @@ bn:
       short: স্টোর নির্বাচক দেখান
     sign_up: নিবন্ধন করুন
     sku: এসকিউ
-    skus: এসকিউগুলি
     slug: স্লাগ
     social: সামাজিক
     source: উৎস
     special_instructions: বিশেষ নির্দেশনা
     split: বিভক্ত
     spree_gateway_error_flash_for_checkout: আপনার প্রদানের তথ্য নিয়ে একটি সমস্যা ছিল। আপনার তথ্য পরীক্ষা করে দেখুন এবং আবার চেষ্টা করুন।
-    start: শুরু করুন
     starting_from: আরম্ভ করা হয়
     state: রাষ্ট্র
     state_based: রাজ্য ভিত্তিক
@@ -1420,8 +1412,6 @@ bn:
       unable_to_find_for_action: 'প্রমাণীকরণের কোডের জন্য স্টোর ক্রেডিটটি খুঁজে পাওয়া যায়নি: ক্রয়ের জন্য %{auth_code}: %{action}'
       unable_to_void: 'কোডটি বাতিল করতে অক্ষম: %{auth_code} 0'
       user_has_no_store_credits: ব্যবহারকারীর কাছে কোনও উপলভ্য স্টোর ক্রেডিট নেই
-    store_credits: স্টোর ক্রেডিট
-    store_default: ডিফল্ট দোকান
     store_errors:
       unable_to_create: স্টোর তৈরি করতে অক্ষম।
       unable_to_delete: স্টোর মুছতে অক্ষম।
@@ -1444,15 +1434,12 @@ bn:
     street_address: রাস্তার ঠিকানা
     street_address_2: রাস্তার ঠিকানা (অবিরত)
     subtotal: উপমোটাল
-    subtract: বিয়োগ
     success: সাফল্য
     successfully_created: "%{resource} সফলভাবে তৈরি করা হয়েছে!"
-    successfully_refunded: "%{resource} সফলভাবে ফেরত দেওয়া হয়েছে!"
     successfully_removed: "%{resource} সফলভাবে সরানো হয়েছে!"
     successfully_updated: "%{resource} সফলভাবে আপডেট করা হয়েছে!"
     summary: সারসংক্ষেপ
     supported_currencies: সমর্থিত মুদ্রা
-    supported_currencies_long: সমর্থিত মুদ্রার একটি কমা দ্বারা পৃথক করা তালিকা
     supported_locales: সমর্থিত লোকেলস
     tags_placeholder: ট্যাগ যুক্ত
     tax: কর
@@ -1462,8 +1449,6 @@ bn:
     tax_included: কর (সহ)
     tax_rate_amount_explanation: করের হার গণনার ক্ষেত্রে সহায়তার জন্য দশমিক পরিমাণ, (যেমন, যদি করের হার 5% হয় তবে 0.05 লিখুন)
     tax_rates: করের হার
-    taxon: ট্যাক্সন
-    taxon_edit: ট্যাক্সন সম্পাদনা করুন
     taxon_missing_alt: বিভাগ ব্যানার বিবরণ
     taxon_placeholder: একটি ট্যাক্সন যুক্ত করুন
     taxon_rule:
@@ -1472,21 +1457,16 @@ bn:
       match_all: সব
       match_any: অন্তত একটা
     taxonomies: করশালা
-    taxonomy: টেকনোমি
     taxonomy_brands_name: ব্র্যান্ডগুলি
     taxonomy_categories_name: বিভাগসমূহ
-    taxonomy_edit: বিভাগে সম্পাদনা করুন
     taxonomy_tree_error: অনুরোধকৃত পরিবর্তন গৃহীত হয়নি এবং গাছটি তার আগের অবস্থায় ফিরে এসেছে, দয়া করে আবার চেষ্টা করুন।
     taxonomy_tree_instruction: "* বাচ্চাকে যুক্ত করতে, মুছতে বা বাছাই করার জন্য মেনুতে অ্যাক্সেস পেতে গাছের একটি শিশুকে ডান ক্লিক করুন (বা আইওএস ডিভাইসে ডাবল ট্যাপ করুন)।"
     taxons: ট্যাক্সস
-    test: পরীক্ষা
     test_mailer:
       test_email:
         greeting: অভিনন্দন!
         message: আপনি যদি এই ইমেলটি পেয়ে থাকেন তবে আপনার ইমেল সেটিংসটি সঠিক।
         subject: টেস্ট মেল
-    test_mode: পরীক্ষা মোড
-    thank_you_for_your_order: আপনার ব্যবসার জন্য আপনাকে ধন্যবাদ। আপনার রেকর্ডগুলির জন্য এই নিশ্চিতকরণ পৃষ্ঠার একটি অনুলিপি মুদ্রণ করুন।
     there_are_no_items_for_this_order: এই আদেশের জন্য কোনও আইটেম নেই। ক্রম অবিরত করার জন্য একটি আইটেম যুক্ত করুন।
     there_were_problems_with_the_following_fields: নিম্নলিখিত ক্ষেত্রগুলির সাথে সমস্যা ছিল
     this_order_has_already_received_a_refund: এই অর্ডার ইতিমধ্যে একটি ফেরত পেয়েছে
@@ -1497,7 +1477,6 @@ bn:
     time: সময়
     to_add_variants_you_must_first_define: রূপগুলি যুক্ত করতে, আপনাকে প্রথমে সংজ্ঞা দিতে হবে
     total: মোট
-    total_per_item: প্রতি আইটেম মোট
     total_pre_tax_refund: মোট প্রাক-করের ফেরত
     total_price: মোট দাম
     total_sales: ক্সতদ
@@ -1516,19 +1495,13 @@ bn:
     type_to_search: অনুসন্ধান করতে টাইপ করুন
     unable_to_connect_to_gateway: গেটওয়েতে সংযোগ করতে অক্ষম।
     unable_to_create_reimbursements: ক্ষতিপূরণ তৈরি করতে অক্ষম কারণ ম্যানুয়াল হস্তক্ষেপের জন্য মুলতুবি থাকা আইটেম রয়েছে।
-    under_price: "%{price} এর অধীনে"
-    unlock: আনলক করুন
     unrecognized_card_type: অজানা কার্ডের ধরণ
-    unshippable_items: অপ্রকাশ্য আইটেম
     update: হালনাগাদ
-    updating: আপডেট হচ্ছে
     url: ইউআরএল
     usage_limit: ব্যবহারের সীমা
     use_app_default: অ্যাপ ডিফল্ট ব্যবহার করুন
     use_billing_address: বিলিং ঠিকানা ব্যবহার করুন
-    use_existing_cc: ফাইলটিতে বিদ্যমান কার্ড ব্যবহার করুন
     use_new_cc: একটি নতুন কার্ড ব্যবহার করুন
-    use_new_cc_or_payment_method: একটি নতুন কার্ড / পেমেন্ট পদ্ধতি ব্যবহার করুন
     used: ব্যবহৃত
     user: ব্যবহারকারী
     user_not_found: ব্যবহারকারী খুঁজে পাওয়া যায় না

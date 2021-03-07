@@ -1266,12 +1266,10 @@
     server_error: Serveren returnerte en feil
     settings: Innstillinger
     ship: Skip
-    ship_address: Skipsadresse
     ship_to: 'Sender til:'
     ship_total: Skip totalt
     shipment: Forsendelse
     shipment_adjustments: Forsendelsesjusteringer
-    shipment_details: Fra %{stock_location} via %{shipping_method}
     shipment_mailer:
       shipped_email:
         dear_customer: Kjære %{name},
@@ -1291,10 +1289,7 @@
       pending: Avventer
       ready: klar
       shipped: sendt
-    shipment_transfer_error: Det oppsto en feil under overføring av varianter
-    shipment_transfer_success: Varianter ble overført
     shipments: Forsendelser
-    shipped: Sendes
     shipping: Shipping
     shipping_address: Sendingsadresse
     shipping_categories: Fraktkategorier
@@ -1310,7 +1305,6 @@
       display_price:
         excluding_tax: "%{price} (+ %{tax_amount} %{tax_rate_name})"
         including_tax: "%{price} (inkl. %{tax_amount} %{tax_rate_name})"
-    shipping_total: Frakt totalt
     shop_by_taxonomy: Handle av %{taxonomy}
     shopping_cart: Handlevogn
     show: Vise fram
@@ -1326,14 +1320,12 @@
       short: Vis butikkvelger
     sign_up: Melde deg på
     sku: SKU
-    skus: SKU
     slug: Mordersnegle
     social: Sosial
     source: Kilde
     special_instructions: Spesielle instruksjoner
     split: Dele
     spree_gateway_error_flash_for_checkout: Det oppsto et problem med betalingsinformasjonen din. Sjekk informasjonen din og prøv på nytt.
-    start: Start
     starting_from: Begynner kl
     state: Stat
     state_based: Statlig basert
@@ -1420,8 +1412,6 @@
       unable_to_find_for_action: 'Finner ikke butikkreditt for auth-kode: %{auth_code} for handling: %{action}'
       unable_to_void: 'Kan ikke annullere koden: %{auth_code}'
       user_has_no_store_credits: Brukeren har ingen tilgjengelig butikkreditt
-    store_credits: Lagre studiepoeng
-    store_default: Standard butikk
     store_errors:
       unable_to_create: Kan ikke opprette butikk.
       unable_to_delete: Kan ikke slette butikken.
@@ -1444,15 +1434,12 @@
     street_address: Gateadresse
     street_address_2: Gateadresse (forts.)
     subtotal: Delsum
-    subtract: Trekke fra
     success: Suksess
     successfully_created: "%{resource} har blitt opprettet!"
-    successfully_refunded: "%{resource} har blitt refundert!"
     successfully_removed: "%{resource} er fjernet!"
     successfully_updated: "%{resource} er oppdatert!"
     summary: Sammendrag
     supported_currencies: Støttede valutaer
-    supported_currencies_long: En kommaseparert liste over støttede valutaer
     supported_locales: Støttede lokaliteter
     tags_placeholder: Legg til merkelapper
     tax: Avgift
@@ -1462,8 +1449,6 @@
     tax_included: MVA (inkl. Mva)
     tax_rate_amount_explanation: Skattesatser er et desimalbeløp for å støtte i beregninger, (dvs. hvis skattesatsen er 5%, skriv deretter inn 0,05)
     tax_rates: Skattesatser
-    taxon: Taxon
-    taxon_edit: Rediger Taxon
     taxon_missing_alt: Kategoribannerbeskrivelse
     taxon_placeholder: Legg til en taxon
     taxon_rule:
@@ -1472,21 +1457,16 @@
       match_all: alle
       match_any: minst en
     taxonomies: Taksonomier
-    taxonomy: Taksonomi
     taxonomy_brands_name: Merker
     taxonomy_categories_name: Kategorier
-    taxonomy_edit: Rediger taksonomi
     taxonomy_tree_error: Den forespurte endringen er ikke godtatt, og treet er tilbake i sin forrige tilstand. Prøv på nytt.
     taxonomy_tree_instruction: "* Høyreklikk (eller dobbeltklikk på iOS-enheten) et barn i treet for å få tilgang til menyen for å legge til, slette eller sortere et barn."
     taxons: Taxons
-    test: Test
     test_mailer:
       test_email:
         greeting: Gratulerer!
         message: Hvis du har mottatt denne e-posten, er e-postinnstillingene dine riktige.
         subject: Test e-post
-    test_mode: Testmodus
-    thank_you_for_your_order: Takk for handelen. Vennligst skriv ut en kopi av denne bekreftelsessiden for å registrere deg.
     there_are_no_items_for_this_order: Det er ingen varer for denne bestillingen. Legg til et element i bestillingen for å fortsette.
     there_were_problems_with_the_following_fields: Det var problemer med følgende felt
     this_order_has_already_received_a_refund: Denne bestillingen har allerede fått refusjon
@@ -1497,7 +1477,6 @@
     time: Tid
     to_add_variants_you_must_first_define: For å legge til varianter, må du først definere
     total: Total
-    total_per_item: Totalt per vare
     total_pre_tax_refund: Total refusjon før skatt
     total_price: Totalpris
     total_sales: Totale salg
@@ -1516,19 +1495,13 @@
     type_to_search: Skriv for å søke
     unable_to_connect_to_gateway: Kan ikke koble til gateway.
     unable_to_create_reimbursements: Kunne ikke opprette refusjoner fordi det er varer som venter på manuell inngrep.
-    under_price: Under %{price}
-    unlock: Låse opp
     unrecognized_card_type: Ukjent korttype
-    unshippable_items: Kan ikke sendes
     update: Oppdater
-    updating: Oppdaterer
     url: URL
     usage_limit: Bruksgrense
     use_app_default: Bruk App Standard
     use_billing_address: Bruk fakturaadresse
-    use_existing_cc: Bruk et eksisterende kort
     use_new_cc: Bruk et nytt kort
-    use_new_cc_or_payment_method: Bruk et nytt kort / betalingsmåte
     used: Brukt
     user: Bruker
     user_not_found: Bruker ikke funnet

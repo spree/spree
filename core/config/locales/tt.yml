@@ -1266,12 +1266,10 @@ tt:
     server_error: Сервер хата җибәрде
     settings: Көйләүләр
     ship: Кораб
-    ship_address: Кораб адресы
     ship_to: 'Тапшыру:'
     ship_total: Барлык суднолар
     shipment: Җибәрү
     shipment_adjustments: Тапшыруны көйләү
-    shipment_details: "%{stock_location} аша %{shipping_method} аша"
     shipment_mailer:
       shipped_email:
         dear_customer: Хөрмәтле %{name},
@@ -1291,10 +1289,7 @@ tt:
       pending: көтелә
       ready: әзер
       shipped: җибәрелгән
-    shipment_transfer_error: Вариантларны күчерүдә хата бар
-    shipment_transfer_success: Вариантлар уңышлы күчерелде
     shipments: Тапшырулар
-    shipped: Тапшырылды
     shipping: Юллау
     shipping_address: Тапшыру адресы
     shipping_categories: Тапшыру категорияләре
@@ -1310,7 +1305,6 @@ tt:
       display_price:
         excluding_tax: "%{price} (+ %{tax_amount} %{tax_rate_name})"
         including_tax: "%{price} (кер. %{tax_amount} %{tax_rate_name})"
-    shipping_total: Барлыгы җибәрү
     shop_by_taxonomy: "%{taxonomy} кибете"
     shopping_cart: Кәрҗин
     show: Шоу
@@ -1326,14 +1320,12 @@ tt:
       short: Кибет селекторын күрсәт
     sign_up: Теркәлергә
     sku: СКУ
-    skus: СКУлар
     slug: Слаг
     social: Социаль
     source: Чыганак
     special_instructions: Махсус күрсәтмәләр
     split: Бүленү
     spree_gateway_error_flash_for_checkout: Сезнең түләү мәгълүматыгыз белән проблема килеп чыкты. Зинһар, мәгълүматыгызны тикшерегез һәм кабатлап карагыз.
-    start: Башлау
     starting_from: Башлана
     state: Дәүләт
     state_based: Дәүләт нигезендә
@@ -1420,8 +1412,6 @@ tt:
       unable_to_find_for_action: 'Авт коды өчен кибет кредитын таба алмадым: эш өчен %{auth_code}: %{action}'
       unable_to_void: 'Кодны юкка чыгара алмый: %{auth_code}'
       user_has_no_store_credits: Кулланучының кибет кредиты юк
-    store_credits: Кредит кредитлары
-    store_default: Кибет
     store_errors:
       unable_to_create: Кибет булдыра алмый.
       unable_to_delete: Кибетне бетерә алмый.
@@ -1444,15 +1434,12 @@ tt:
     street_address: Урам адресы
     street_address_2: Урам адресы (дәвамы)
     subtotal: Субтотал
-    subtract: Алыну
     success: Уңыш
     successfully_created: "%{resource} уңышлы булдырылды!"
-    successfully_refunded: "%{resource} уңышлы кайтарылды!"
     successfully_removed: "%{resource} уңышлы бетерелде!"
     successfully_updated: "%{resource} уңышлы яңартылды!"
     summary: Аннотация
     supported_currencies: Ярдәмле валюта
-    supported_currencies_long: Ярдәмле валюталарның үтемле аерылган исемлеге
     supported_locales: Ярдәмле җирлекләр
     tags_placeholder: Тэглар өстәгез
     tax: Салым
@@ -1462,8 +1449,6 @@ tt:
     tax_included: Салым.
     tax_rate_amount_explanation: Салым ставкалары - исәпләүләрдә булышу өчен дистә сумма, (ягъни салым ставкасы 5% булса, 0,05 кертегез)
     tax_rates: Салым ставкалары
-    taxon: Таксон
-    taxon_edit: Таксонны үзгәртү
     taxon_missing_alt: Төркем баннеры тасвирламасы
     taxon_placeholder: Таксон өстәргә
     taxon_rule:
@@ -1472,21 +1457,16 @@ tt:
       match_all: Барысы да
       match_any: ким дигәндә бер
     taxonomies: Таксономия
-    taxonomy: Таксономия
     taxonomy_brands_name: Брендлар
     taxonomy_categories_name: Төркемнәр
-    taxonomy_edit: Таксономияне үзгәртү
     taxonomy_tree_error: Соралган үзгәртү кабул ителмәде һәм агач элекке хәленә кайтарылды, зинһар, кабатлап карагыз.
     taxonomy_tree_instruction: "* Бала өстәү, бетерү яки сортлау өчен менюга керү өчен агачтагы бала уң төймәгә басыгыз (яки iOS җайланмасына икеләтә басыгыз)."
     taxons: Таксоннар
-    test: Тест
     test_mailer:
       test_email:
         greeting: Котлыйбыз!
         message: Әгәр сез бу электрон почтаны алган булсагыз, сезнең электрон почта көйләүләре дөрес.
         subject: Тест почтасы
-    test_mode: Тест режимы
-    thank_you_for_your_order: Эшегез өчен рәхмәт. Зинһар, сезнең язмалар өчен бу раслау битенең күчермәсен бастырыгыз.
     there_are_no_items_for_this_order: Бу заказ өчен әйберләр юк. Зинһар, дәвам итү тәртибенә бер әйбер өстәгез.
     there_were_problems_with_the_following_fields: Түбәндәге кырларда проблемалар бар иде
     this_order_has_already_received_a_refund: Бу заказ кире кайтарылган
@@ -1497,7 +1477,6 @@ tt:
     time: Вакыт
     to_add_variants_you_must_first_define: Вариантларны өстәр өчен, сез башта билгеләргә тиеш
     total: Барлыгы
-    total_per_item: Бер әйбергә барлыгы
     total_pre_tax_refund: Салым алдыннан кире кайтару
     total_price: Гомуми бәя
     total_sales: Барлык сатулар
@@ -1516,19 +1495,13 @@ tt:
     type_to_search: Эзләү өчен языгыз
     unable_to_connect_to_gateway: Шлюзка тоташа алмый.
     unable_to_create_reimbursements: Түләү булдыра алмый, чөнки кул белән интервенция көткән әйберләр бар.
-    under_price: "%{price} астында"
-    unlock: Блокны ачу
     unrecognized_card_type: Танылмаган карточка тибы
-    unshippable_items: Күчереп булмый торган әйберләр
     update: Яңарту
-    updating: Яңарту
     url: URL
     usage_limit: Куллану чикләре
     use_app_default: Килешү кушымтасын кулланыгыз
     use_billing_address: Хисап адресын кулланыгыз
-    use_existing_cc: Файлда булган картаны кулланыгыз
     use_new_cc: Яңа картаны кулланыгыз
-    use_new_cc_or_payment_method: Яңа картаны / түләү ысулын кулланыгыз
     used: Кулланыла
     user: Кулланучы
     user_not_found: Кулланучы табылмады

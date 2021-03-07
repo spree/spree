@@ -1266,12 +1266,10 @@ tl:
     server_error: Bumalik ang server ng isang error
     settings: Mga setting
     ship: Barko
-    ship_address: Address ng Barko
     ship_to: 'Ipapadala sa:'
     ship_total: Kabuuan sa Barko
     shipment: Kargamento
     shipment_adjustments: Mga pagsasaayos ng kargamento
-    shipment_details: Mula sa %{stock_location} sa pamamagitan ng %{shipping_method}
     shipment_mailer:
       shipped_email:
         dear_customer: Minamahal na %{name},
@@ -1291,10 +1289,7 @@ tl:
       pending: nakabinbin
       ready: handa na
       shipped: naipadala
-    shipment_transfer_error: Nagkaroon ng error sa paglilipat ng mga variant
-    shipment_transfer_success: Matagumpay na nailipat ang mga variant
     shipments: Mga padala
-    shipped: Naipadala
     shipping: Pagpapadala
     shipping_address: Address sa Pagpapadala
     shipping_categories: Mga Kategoryang Pagpapadala
@@ -1310,7 +1305,6 @@ tl:
       display_price:
         excluding_tax: "%{price} (+ %{tax_amount} %{tax_rate_name})"
         including_tax: "%{price} (kasama. %{tax_amount} %{tax_rate_name})"
-    shipping_total: Kabuuan sa pagpapadala
     shop_by_taxonomy: Mamili sa pamamagitan ng %{taxonomy}
     shopping_cart: Shopping Cart
     show: Ipakita
@@ -1326,14 +1320,12 @@ tl:
       short: Ipakita ang taga-pili ng Store
     sign_up: Mag-sign Up
     sku: SKU
-    skus: Mga SKU
     slug: Slug
     social: Panlipunan
     source: Pinagmulan
     special_instructions: Mga Espesyal na Tagubilin
     split: Hatiin
     spree_gateway_error_flash_for_checkout: Mayroong problema sa iyong impormasyon sa pagbabayad. Mangyaring suriin ang iyong impormasyon at subukang muli.
-    start: Magsimula
     starting_from: Nagsisimula sa
     state: Estado
     state_based: Batay sa Estado
@@ -1420,8 +1412,6 @@ tl:
       unable_to_find_for_action: 'Hindi mahanap ang credit sa tindahan para sa auth code: %{auth_code} para sa aksyon: %{action}'
       unable_to_void: 'Hindi ma-void ang code: %{auth_code}'
       user_has_no_store_credits: Ang gumagamit ay walang anumang magagamit na credit sa tindahan
-    store_credits: Mga Kredito sa Tindahan
-    store_default: Default na tindahan
     store_errors:
       unable_to_create: Hindi makalikha ng tindahan.
       unable_to_delete: Hindi matanggal ang tindahan.
@@ -1444,15 +1434,12 @@ tl:
     street_address: Address ng kalye
     street_address_2: Address ng Kalye (karagdagan)
     subtotal: Subtotal
-    subtract: Ibawas
     success: Tagumpay
     successfully_created: matagumpay na nilikha ang %{resource}!
-    successfully_refunded: matagumpay na na-refund ang %{resource}!
     successfully_removed: matagumpay na naalis ang %{resource}!
     successfully_updated: matagumpay na na-update ang %{resource}!
     summary: Buod
     supported_currencies: Mga sinusuportahang Pera
-    supported_currencies_long: Isang listahan ng pinaghiwalay na kuwit ng mga sinusuportahang pera
     supported_locales: Mga Sinusuportahang Lokal
     tags_placeholder: Magdagdag ng Mga Tag
     tax: Buwis
@@ -1462,8 +1449,6 @@ tl:
     tax_included: Kasama ang buwis.)
     tax_rate_amount_explanation: Ang mga rate ng buwis ay isang decimal na halaga upang makatulong sa mga kalkulasyon, (ibig sabihin kung ang rate ng buwis ay 5% pagkatapos ay ipasok ang 0.05)
     tax_rates: Mga Buwis sa Buwis
-    taxon: Buwis
-    taxon_edit: I-edit ang Taxon
     taxon_missing_alt: Paglalarawan ng kategorya ng banner
     taxon_placeholder: Magdagdag ng isang Taxon
     taxon_rule:
@@ -1472,21 +1457,16 @@ tl:
       match_all: lahat
       match_any: kahit isa
     taxonomies: Mga taxonomiya
-    taxonomy: Taxonomy
     taxonomy_brands_name: Mga tatak
     taxonomy_categories_name: Mga kategorya
-    taxonomy_edit: I-edit ang taxonomy
     taxonomy_tree_error: Ang hiniling na pagbabago ay hindi tinanggap at ang puno ay naibalik sa dati nitong estado, mangyaring subukang muli.
     taxonomy_tree_instruction: "* Pag-right click (o pag-double tap sa iOS aparato) isang bata sa puno upang ma-access ang menu para sa pagdaragdag, pagtanggal o pag-uuri ng isang bata."
     taxons: Mga buwis
-    test: Pagsusulit
     test_mailer:
       test_email:
         greeting: Binabati kita!
         message: Kung natanggap mo ang email na ito, ang iyong mga setting ng email ay tama.
         subject: Mail sa Pagsubok
-    test_mode: Mode ng Pagsubok
-    thank_you_for_your_order: Salamat sa iyong negosyo. Mangyaring mag-print ng isang kopya ng pahina ng kumpirmasyon na ito para sa iyong mga talaan.
     there_are_no_items_for_this_order: Walang mga item para sa order na ito. Mangyaring magdagdag ng isang item sa order upang magpatuloy.
     there_were_problems_with_the_following_fields: Mayroong mga problema sa mga sumusunod na larangan
     this_order_has_already_received_a_refund: Ang order na ito ay nakatanggap na ng isang refund
@@ -1497,7 +1477,6 @@ tl:
     time: Oras
     to_add_variants_you_must_first_define: Upang magdagdag ng mga variant, dapat mo munang tukuyin
     total: Kabuuan
-    total_per_item: Kabuuan bawat item
     total_pre_tax_refund: Kabuuang Pre-Tax Refund
     total_price: Kabuuang presyo
     total_sales: Kabuuang Benta
@@ -1516,19 +1495,13 @@ tl:
     type_to_search: I-type upang maghanap
     unable_to_connect_to_gateway: Hindi makakonekta sa gateway.
     unable_to_create_reimbursements: Hindi makalikha ng mga reimbursement dahil may mga item na nakabinbin ang manu-manong interbensyon.
-    under_price: Sa ilalim ng %{price}
-    unlock: I-unlock
     unrecognized_card_type: Hindi kilalang uri ng card
-    unshippable_items: Hindi Mababahaging Mga Item
     update: Update
-    updating: Nag-a-update
     url: URL
     usage_limit: Limitasyon sa Paggamit
     use_app_default: Gumamit ng Default ng App
     use_billing_address: gamitin ang billing address
-    use_existing_cc: Gumamit ng isang mayroon nang card sa file
     use_new_cc: Gumamit ng bagong card
-    use_new_cc_or_payment_method: Gumamit ng bagong paraan ng card / pagbabayad
     used: Ginamit na
     user: Gumagamit
     user_not_found: Hindi nahanap ang gumagamit

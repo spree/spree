@@ -1266,12 +1266,10 @@ uz:
     server_error: Server xato qildi
     settings: Sozlamalar
     ship: Kema
-    ship_address: Kema manzili
     ship_to: 'Yetkazib berish:'
     ship_total: Jami jo'natma
     shipment: Jo'natma
     shipment_adjustments: Yuklarni sozlash
-    shipment_details: "%{stock_location} dan %{shipping_method} orqali"
     shipment_mailer:
       shipped_email:
         dear_customer: Hurmatli %{name},
@@ -1291,10 +1289,7 @@ uz:
       pending: kutilmoqda
       ready: tayyor
       shipped: jo'natildi
-    shipment_transfer_error: Variantlarni uzatishda xatolik yuz berdi
-    shipment_transfer_success: Variantlar muvaffaqiyatli o'tkazildi
     shipments: Yuklar
-    shipped: Jo'natildi
     shipping: yuk tashish; yetkazib berish
     shipping_address: Yetkazish manzili
     shipping_categories: Yuk tashish toifalari
@@ -1310,7 +1305,6 @@ uz:
       display_price:
         excluding_tax: "%{price} (+ %{tax_amount} %{tax_rate_name})"
         including_tax: "%{price} (shu jumladan %{tax_amount} %{tax_rate_name})"
-    shipping_total: Jami etkazib berish
     shop_by_taxonomy: "%{taxonomy} tomonidan xarid qiling"
     shopping_cart: Xarid savati
     show: Ko'rsatish
@@ -1326,14 +1320,12 @@ uz:
       short: Show Store selector
     sign_up: Ro'yxatdan o'tish
     sku: SKU
-    skus: SKUlar
     slug: Slug
     social: Ijtimoiy
     source: Manba
     special_instructions: Maxsus ko'rsatmalar
     split: Split
     spree_gateway_error_flash_for_checkout: To‘lov ma’lumotlaringizda muammo yuz berdi. Ma'lumotlaringizni tekshiring va qayta urinib ko'ring.
-    start: Boshlang
     starting_from: Boshlanishi
     state: Shtat
     state_based: Davlatga asoslangan
@@ -1420,8 +1412,6 @@ uz:
       unable_to_find_for_action: 'Mualliflik kodi uchun do''kon krediti topilmadi: harakat uchun %{auth_code}: %{action}'
       unable_to_void: 'Kod bekor qilinmadi: %{auth_code}'
       user_has_no_store_credits: Foydalanuvchida mavjud do'kon krediti yo'q
-    store_credits: Do'kon kreditlari
-    store_default: Standart do'kon
     store_errors:
       unable_to_create: Do'kon yaratib bo'lmadi.
       unable_to_delete: Do‘konni o‘chirib bo‘lmadi.
@@ -1444,15 +1434,12 @@ uz:
     street_address: Ko'cha manzili
     street_address_2: Ko'cha manzili (davom etmoqda)
     subtotal: Jami
-    subtract: Chiqaring
     success: Muvaffaqiyat
     successfully_created: "%{resource} muvaffaqiyatli yaratildi!"
-    successfully_refunded: "%{resource} muvaffaqiyatli qaytarildi!"
     successfully_removed: "%{resource} muvaffaqiyatli olib tashlandi!"
     successfully_updated: "%{resource} muvaffaqiyatli yangilandi!"
     summary: Xulosa
     supported_currencies: Qo'llab-quvvatlanadigan valyutalar
-    supported_currencies_long: Qo'llab-quvvatlanadigan valyutalarning vergul bilan ajratilgan ro'yxati
     supported_locales: Qo'llab-quvvatlanadigan mahalliy aholi
     tags_placeholder: Teglar qo'shish
     tax: Soliq
@@ -1462,8 +1449,6 @@ uz:
     tax_included: Soliq (shu jumladan)
     tax_rate_amount_explanation: Soliq stavkalari - bu hisob-kitoblarga yordam beradigan o'nlik miqdor (ya'ni soliq stavkasi 5% bo'lsa, unda 0,05 raqamini kiriting)
     tax_rates: Soliq stavkalari
-    taxon: Takson
-    taxon_edit: Taxonni tahrirlash
     taxon_missing_alt: Turkum bannerining tavsifi
     taxon_placeholder: Taxon qo'shing
     taxon_rule:
@@ -1472,21 +1457,16 @@ uz:
       match_all: barchasi
       match_any: kamida bitta
     taxonomies: Taksonomiyalar
-    taxonomy: Taksonomiya
     taxonomy_brands_name: Brendlar
     taxonomy_categories_name: Kategoriyalar
-    taxonomy_edit: Taksonomiyani tahrirlash
     taxonomy_tree_error: So'ralgan o'zgartirish qabul qilinmadi va daraxt avvalgi holatiga qaytarildi, iltimos, qaytadan urining.
     taxonomy_tree_instruction: "* Bolani qo'shish, o'chirish yoki saralash menyusiga kirish uchun daraxtdagi bolani o'ng tugmasini bosing (yoki iOS qurilmasiga ikki marta bosing)."
     taxons: Soliqlar
-    test: Sinov
     test_mailer:
       test_email:
         greeting: Tabriklaymiz!
         message: Agar siz ushbu xatni olgan bo'lsangiz, unda elektron pochta sozlamalari to'g'ri.
         subject: Sinov xati
-    test_mode: Sinov rejimi
-    thank_you_for_your_order: Biznesingiz uchun tashakkur. Iltimos, yozuvlaringiz uchun ushbu tasdiqlash sahifasining nusxasini chop eting.
     there_are_no_items_for_this_order: Ushbu buyurtma uchun narsalar yo'q. Davom etish uchun buyurtmaga biron bir narsani qo'shing.
     there_were_problems_with_the_following_fields: Quyidagi maydonlar bilan bog'liq muammolar mavjud edi
     this_order_has_already_received_a_refund: Ushbu buyurtma allaqachon qaytarib berildi
@@ -1497,7 +1477,6 @@ uz:
     time: Vaqt
     to_add_variants_you_must_first_define: Variantlarni qo'shish uchun avval belgilashingiz kerak
     total: Jami
-    total_per_item: Bir element uchun jami
     total_pre_tax_refund: Soliqdan oldin qaytarilgan mablag '
     total_price: Umumiy narx
     total_sales: Jami sotuvlar
@@ -1516,19 +1495,13 @@ uz:
     type_to_search: Qidirish uchun kiriting
     unable_to_connect_to_gateway: Shlyuzga ulanib bo'lmadi.
     unable_to_create_reimbursements: To'lovlarni amalga oshirib bo'lmadi, chunki qo'lda aralashuvni kutayotgan narsalar mavjud.
-    under_price: "%{price} ostida"
-    unlock: Qulfni ochish
     unrecognized_card_type: Notanish karta turi
-    unshippable_items: Yuborib bo'lmaydigan narsalar
     update: Yangilash
-    updating: Yangilanmoqda
     url: URL manzili
     usage_limit: Foydalanish chegarasi
     use_app_default: Ilova standartidan foydalaning
     use_billing_address: Hisob-kitob manzilidan foydalaning
-    use_existing_cc: Fayldagi mavjud kartadan foydalaning
     use_new_cc: Yangi kartadan foydalaning
-    use_new_cc_or_payment_method: Yangi karta / to'lov usulidan foydalaning
     used: Ishlatilgan
     user: Foydalanuvchi
     user_not_found: Foydalanuvchi topilmadi

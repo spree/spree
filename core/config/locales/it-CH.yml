@@ -1266,12 +1266,10 @@ it-CH:
     server_error: Il server ha restituito un errore
     settings: impostazioni
     ship: Nave
-    ship_address: Indirizzo di spedizione
     ship_to: 'Spedire a:'
     ship_total: Totale spedizione
     shipment: Spedizione
     shipment_adjustments: Adeguamenti della spedizione
-    shipment_details: Da %{stock_location} tramite %{shipping_method}
     shipment_mailer:
       shipped_email:
         dear_customer: Gentile %{name},
@@ -1291,10 +1289,7 @@ it-CH:
       pending: in attesa di
       ready: pronto
       shipped: spedito
-    shipment_transfer_error: Si è verificato un errore durante il trasferimento delle varianti
-    shipment_transfer_success: Varianti trasferite con successo
     shipments: Spedizioni
-    shipped: Spedito
     shipping: spedizione
     shipping_address: indirizzo di spedizione
     shipping_categories: Categorie di spedizione
@@ -1310,7 +1305,6 @@ it-CH:
       display_price:
         excluding_tax: "%{price} (+ %{tax_amount} %{tax_rate_name})"
         including_tax: "%{price} (incl. %{tax_amount} %{tax_rate_name})"
-    shipping_total: Totale spedizione
     shop_by_taxonomy: Acquista da %{taxonomy}
     shopping_cart: Carrello della spesa
     show: Spettacolo
@@ -1326,14 +1320,12 @@ it-CH:
       short: Mostra il selettore del negozio
     sign_up: Iscriviti
     sku: SKU
-    skus: SKU
     slug: Lumaca
     social: Sociale
     source: fonte
     special_instructions: istruzioni speciali
     split: Diviso
     spree_gateway_error_flash_for_checkout: Si è verificato un problema con i tuoi dati di pagamento. Controlla le tue informazioni e riprova.
-    start: Inizio
     starting_from: Inizia a
     state: Stato
     state_based: Basato sullo stato
@@ -1420,8 +1412,6 @@ it-CH:
       unable_to_find_for_action: 'Impossibile trovare il credito del negozio per il codice di autorizzazione: %{auth_code} per l''azione: %{action}'
       unable_to_void: 'Impossibile annullare il codice: %{auth_code}'
       user_has_no_store_credits: L'utente non dispone di alcun credito disponibile in negozio
-    store_credits: Crediti negozio
-    store_default: Negozio predefinito
     store_errors:
       unable_to_create: Impossibile creare il negozio.
       unable_to_delete: Impossibile eliminare il negozio.
@@ -1444,15 +1434,12 @@ it-CH:
     street_address: Indirizzo
     street_address_2: Indirizzo stradale (continua)
     subtotal: totale parziale
-    subtract: Sottrarre
     success: Successo
     successfully_created: "%{resource} è stato creato con successo!"
-    successfully_refunded: "%{resource} è stato rimborsato con successo!"
     successfully_removed: "%{resource} è stato rimosso con successo!"
     successfully_updated: "%{resource} è stato aggiornato con successo!"
     summary: Sommario
     supported_currencies: Valute supportate
-    supported_currencies_long: Un elenco separato da virgole delle valute supportate
     supported_locales: Impostazioni locali supportate
     tags_placeholder: Aggiungere etichette
     tax: Imposta
@@ -1462,8 +1449,6 @@ it-CH:
     tax_included: Tasse incluse.)
     tax_rate_amount_explanation: Le aliquote fiscali sono un importo decimale per aiutare nei calcoli, (cioè se l'aliquota fiscale è del 5%, inserisci 0,05)
     tax_rates: Aliquote fiscali
-    taxon: Taxon
-    taxon_edit: Modifica Taxon
     taxon_missing_alt: Descrizione del banner di categoria
     taxon_placeholder: Aggiungi un taxon
     taxon_rule:
@@ -1472,21 +1457,16 @@ it-CH:
       match_all: tutti
       match_any: almeno uno
     taxonomies: Tassonomie
-    taxonomy: Tassonomia
     taxonomy_brands_name: Marche
     taxonomy_categories_name: Categorie
-    taxonomy_edit: Modifica tassonomia
     taxonomy_tree_error: La modifica richiesta non è stata accettata e l'albero è stato riportato allo stato precedente, riprova.
     taxonomy_tree_instruction: "* Fare clic con il pulsante destro del mouse (o toccare due volte sul dispositivo iOS) su un bambino nell'albero per accedere al menu per l'aggiunta, l'eliminazione o l'ordinamento di un bambino."
     taxons: Taxons
-    test: Test
     test_mailer:
       test_email:
         greeting: Congratulazioni!
         message: Se hai ricevuto questa e-mail, le tue impostazioni e-mail sono corrette.
         subject: Posta di prova
-    test_mode: Modalità di prova
-    thank_you_for_your_order: Grazie per il tuo business. Si prega di stampare una copia di questa pagina di conferma per i propri archivi.
     there_are_no_items_for_this_order: Non ci sono articoli per questo ordine. Aggiungi un articolo all'ordine per continuare.
     there_were_problems_with_the_following_fields: Si sono verificati problemi con i seguenti campi
     this_order_has_already_received_a_refund: Questo ordine ha già ricevuto un rimborso
@@ -1497,7 +1477,6 @@ it-CH:
     time: Tempo
     to_add_variants_you_must_first_define: Per aggiungere varianti, devi prima definire
     total: Totale
-    total_per_item: Totale per articolo
     total_pre_tax_refund: Rimborso totale ante imposte
     total_price: Prezzo totale
     total_sales: Vendite totali
@@ -1516,19 +1495,13 @@ it-CH:
     type_to_search: Digita per cercare
     unable_to_connect_to_gateway: Impossibile connettersi al gateway.
     unable_to_create_reimbursements: Impossibile creare rimborsi perché ci sono articoli in attesa di intervento manuale.
-    under_price: Sotto %{price}
-    unlock: Sbloccare
     unrecognized_card_type: Tipo di carta non riconosciuto
-    unshippable_items: Articoli non spedibili
     update: Aggiornare
-    updating: In aggiornamento
     url: URL
     usage_limit: Limite di utilizzo
     use_app_default: Usa impostazione predefinita app
     use_billing_address: utilizzare l'indirizzo di fatturazione
-    use_existing_cc: Usa una carta esistente in archivio
     use_new_cc: Usa una nuova carta
-    use_new_cc_or_payment_method: Usa una nuova carta / metodo di pagamento
     used: Usato
     user: Utente
     user_not_found: Utente non trovato

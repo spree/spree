@@ -1266,12 +1266,10 @@ zh-YUE:
     server_error: 服务器返回错误
     settings: 设定值
     ship: 船
-    ship_address: 收货地址
     ship_to: 运到：
     ship_total: 船舶总数
     shipment: 运输
     shipment_adjustments: 出货调整
-    shipment_details: 从%{stock_location}通过%{shipping_method}
     shipment_mailer:
       shipped_email:
         dear_customer: 亲爱的%{name}，
@@ -1291,10 +1289,7 @@ zh-YUE:
       pending: 待办的
       ready: 准备好
       shipped: 已运送
-    shipment_transfer_error: 传输变体时出错
-    shipment_transfer_success: 变体成功转移
     shipments: 出货量
-    shipped: 已出货
     shipping: 船运
     shipping_address: 收件地址
     shipping_categories: 运送类别
@@ -1310,7 +1305,6 @@ zh-YUE:
       display_price:
         excluding_tax: "%{price}（+ %{tax_amount} %{tax_rate_name}）"
         including_tax: "%{price}（包括%{tax_amount} %{tax_rate_name}）"
-    shipping_total: 总出货量
     shop_by_taxonomy: 依%{taxonomy}选购
     shopping_cart: 购物车
     show: 展示
@@ -1326,14 +1320,12 @@ zh-YUE:
       short: 显示商店选择器
     sign_up: 报名
     sku: 存货单位
-    skus: 存货单位
     slug: ug
     social: 社会的
     source: 来源
     special_instructions: 特别说明
     split: 分裂
     spree_gateway_error_flash_for_checkout: 您的付款信息有问题。请检查您的信息，然后重试。
-    start: 开始
     starting_from: 开始于
     state: 状态
     state_based: 基于状态
@@ -1420,8 +1412,6 @@ zh-YUE:
       unable_to_find_for_action: 找不到用于操作：%{action}的身份验证码：%{auth_code}的商店信用
       unable_to_void: 无法使代码无效：%{auth_code}
       user_has_no_store_credits: 用户没有任何可用的商店信用额度
-    store_credits: 商店积分
-    store_default: 默认商店
     store_errors:
       unable_to_create: 无法创建商店。
       unable_to_delete: 无法删除商店。
@@ -1444,15 +1434,12 @@ zh-YUE:
     street_address: 街道地址
     street_address_2: 街道地址（续）
     subtotal: 小计
-    subtract: 减去
     success: 成功
     successfully_created: "%{resource}已成功创建！"
-    successfully_refunded: "%{resource}已成功退款！"
     successfully_removed: "%{resource}已成功删除！"
     successfully_updated: "%{resource}已成功更新！"
     summary: 概括
     supported_currencies: 支持的货币
-    supported_currencies_long: 以逗号分隔的受支持货币列表
     supported_locales: 支持的语言环境
     tags_placeholder: 添加标签
     tax: 税
@@ -1462,8 +1449,6 @@ zh-YUE:
     tax_included: 税（含）
     tax_rate_amount_explanation: 税率是用于计算的十进制数（即，如果税率为5％，则输入0.05）
     tax_rates: 税率
-    taxon: 分类单元
-    taxon_edit: 编辑分类单元
     taxon_missing_alt: 类别横幅说明
     taxon_placeholder: 添加分类单元
     taxon_rule:
@@ -1472,21 +1457,16 @@ zh-YUE:
       match_all: 全部
       match_any: 最后一个
     taxonomies: 分类法
-    taxonomy: 分类
     taxonomy_brands_name: 品牌品牌
     taxonomy_categories_name: 分类目录
-    taxonomy_edit: 编辑分类法
     taxonomy_tree_error: 请求的更改尚未被接受，并且树已返回到其先前的状态，请重试。
     taxonomy_tree_instruction: "*右键单击（或在iOS设备上双击）树中的一个孩子，以访问用于添加，删除或排序孩子的菜单。"
     taxons: 分类单元
-    test: 测试
     test_mailer:
       test_email:
         greeting: 恭喜你！
         message: 如果您已收到此电子邮件，则您的电子邮件设置正确。
         subject: 测试邮件
-    test_mode: 测试模式
-    thank_you_for_your_order: 感谢您的业务。请打印出此确认页面的副本以供您记录。
     there_are_no_items_for_this_order: 该订单没有任何物品。请在订单中添加一个项目以继续。
     there_were_problems_with_the_following_fields: 以下领域存在问题
     this_order_has_already_received_a_refund: 此订单已退款
@@ -1497,7 +1477,6 @@ zh-YUE:
     time: 时间
     to_add_variants_you_must_first_define: 要添加变体，必须首先定义
     total: 全部的
-    total_per_item: 每项总计
     total_pre_tax_refund: 税前退款总额
     total_price: 总价
     total_sales: 总销售额
@@ -1516,19 +1495,13 @@ zh-YUE:
     type_to_search: 输入要搜索的内容
     unable_to_connect_to_gateway: 无法连接到网关。
     unable_to_create_reimbursements: 由于存在尚待人工干预的项目，因此无法创建报销。
-    under_price: 在%{price}下
-    unlock: 开锁
     unrecognized_card_type: 无法识别的卡类型
-    unshippable_items: 无法运送的物品
     update: 更新
-    updating: 更新中
     url: 网址
     usage_limit: 使用限制
     use_app_default: 使用应用默认
     use_billing_address: 使用帐单地址
-    use_existing_cc: 使用文件上的现有卡
     use_new_cc: 使用新卡
-    use_new_cc_or_payment_method: 使用新卡/付款方式
     used: 用过的
     user: 用户
     user_not_found: 找不到使用者
