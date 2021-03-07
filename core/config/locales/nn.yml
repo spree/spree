@@ -387,9 +387,6 @@ nn:
       spree/zone:
         one: sone
         other: Soner
-  address_book:
-    save: Lagre
-    successfully_created: Ny adresse er opprettet
   devise:
     confirmations:
       confirmed: Kontoen din ble bekreftet. Du er nå logget på.
@@ -489,23 +486,16 @@ nn:
       delete_text: Vil du virkelig <br /> slette denne adressen?
       delete_title: Er du sikker?
     address_book:
-      add_new_shipping_address: Legg til ny adresse
-      address_name_label: Adressenavn
       address_name_placeholder: Gi denne adressen et unikt navn (arbeid, hjem osv.)
-      addresses: Adresser
       edit_address: Rediger adresse
       label: Adressenavn
       new_address: Ny adresse
-      no_shipping_addresses_on_file: Ingen adresser registrert
       other_address: Annen adresse
       remove_address: Fjern adresse
       save: Lagre
       successfully_created: Adressen ble opprettet.
       successfully_removed: Adressen er fjernet.
-      successfully_saved: Lagret
       successfully_updated: Oppdatert
-      unsuccessfully_saved: Det oppsto en feil da du prøvde å lagre adressen din.
-      unsuccessfully_updated: Det var en oppdatering mens du prøvde å oppdatere adressen din.
     addresses: Adresser
     adjustable: Regulerbar
     adjustment: Justering
@@ -1751,7 +1741,6 @@ nn:
     void: Tomrom
     weight: Vekt
     what_is_a_cvv: Hva er en (CVV) kredittkortkode?
-    what_is_this: Hva er dette?
     width: Bredde
     year: År
     you_have_no_orders_yet: Du har ingen bestillinger ennå

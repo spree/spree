@@ -387,9 +387,6 @@ sw:
       spree/zone:
         one: Eneo
         other: Kanda
-  address_book:
-    save: Okoa
-    successfully_created: Anwani mpya imeundwa kwa mafanikio
   devise:
     confirmations:
       confirmed: Akaunti yako ilithibitishwa vyema. Umeingia katika akaunti sasa.
@@ -489,23 +486,16 @@ sw:
       delete_text: Je! Kweli unataka <br /> kufuta anwani hii?
       delete_title: Una uhakika?
     address_book:
-      add_new_shipping_address: Ongeza anwani mpya
-      address_name_label: Jina la Anwani
       address_name_placeholder: Ipe anwani hii jina la kipekee (Kazini, Nyumbani, n.k.)
-      addresses: Anwani
       edit_address: Hariri Anwani
       label: Jina la Anwani
       new_address: Anwani mpya
-      no_shipping_addresses_on_file: Hakuna anwani kwenye faili
       other_address: Anwani nyingine
       remove_address: Ondoa Anwani
       save: Okoa
       successfully_created: Anwani imeundwa kwa mafanikio.
       successfully_removed: Anwani imeondolewa kwa mafanikio.
-      successfully_saved: Imehifadhiwa kwa mafanikio
       successfully_updated: Imesasishwa kwa mafanikio
-      unsuccessfully_saved: Kulikuwa na hitilafu wakati wa kujaribu kuhifadhi anwani yako.
-      unsuccessfully_updated: Kulikuwa na sasisho wakati wa kujaribu kusasisha anwani yako.
     addresses: Anwani
     adjustable: Adjustable
     adjustment: Marekebisho
@@ -1751,7 +1741,6 @@ sw:
     void: Utupu
     weight: Uzito
     what_is_a_cvv: Je! Ni (CVV) Nambari ya Kadi ya Mkopo?
-    what_is_this: Hii ni nini?
     width: Upana
     year: Mwaka
     you_have_no_orders_yet: Bado huna maagizo

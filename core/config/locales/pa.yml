@@ -387,9 +387,6 @@ pa:
       spree/zone:
         one: ਜ਼ੋਨ
         other: ਜ਼ੋਨ
-  address_book:
-    save: ਸੇਵ
-    successfully_created: ਨਵਾਂ ਪਤਾ ਸਫਲਤਾਪੂਰਵਕ ਬਣਾਇਆ ਗਿਆ ਹੈ
   devise:
     confirmations:
       confirmed: ਤੁਹਾਡੇ ਖਾਤੇ ਦੀ ਸਫਲਤਾਪੂਰਵਕ ਪੁਸ਼ਟੀ ਕੀਤੀ ਗਈ. ਤੁਸੀਂ ਹੁਣ ਸਾਈਨ ਇਨ ਹੋ ਗਏ ਹੋ.
@@ -489,23 +486,16 @@ pa:
       delete_text: ਕੀ ਤੁਸੀਂ ਸੱਚਮੁੱਚ ਇਸ ਪਤੇ ਨੂੰ ਮਿਟਾਉਣਾ ਚਾਹੁੰਦੇ ਹੋ?
       delete_title: ਤੁਹਾਨੂੰ ਪੂਰਾ ਵਿਸ਼ਵਾਸ ਹੈ?
     address_book:
-      add_new_shipping_address: ਨਵਾਂ ਪਤਾ ਸ਼ਾਮਲ ਕਰੋ
-      address_name_label: ਪਤਾ ਦਾ ਨਾਮ
       address_name_placeholder: ਇਸ ਪਤੇ ਨੂੰ ਵਿਲੱਖਣ ਨਾਮ ਦਿਓ (ਕੰਮ, ਘਰ, ਆਦਿ)
-      addresses: ਪਤੇ
       edit_address: ਪਤਾ ਸੋਧੋ
       label: ਪਤਾ ਦਾ ਨਾਮ
       new_address: ਨਵਾਂ ਪਤਾ
-      no_shipping_addresses_on_file: ਫਾਈਲ 'ਤੇ ਕੋਈ ਐਡਰੈਸ ਨਹੀਂ
       other_address: ਹੋਰ ਪਤਾ
       remove_address: ਪਤਾ ਹਟਾਓ
       save: ਸੇਵ
       successfully_created: ਪਤਾ ਸਫਲਤਾਪੂਰਵਕ ਬਣਾਇਆ ਗਿਆ ਹੈ.
       successfully_removed: ਪਤਾ ਸਫਲਤਾਪੂਰਕ ਹਟਾ ਦਿੱਤਾ ਗਿਆ ਹੈ.
-      successfully_saved: ਸਫਲਤਾਪੂਰਵਕ ਸੁਰੱਖਿਅਤ ਕੀਤਾ ਗਿਆ
       successfully_updated: ਸਫਲਤਾਪੂਰਵਕ ਅਪਡੇਟ ਕੀਤਾ ਗਿਆ
-      unsuccessfully_saved: ਤੁਹਾਡੇ ਪਤੇ ਨੂੰ ਬਚਾਉਣ ਦੀ ਕੋਸ਼ਿਸ਼ ਕਰਦਿਆਂ ਇੱਕ ਗਲਤੀ ਹੋਈ ਹੈ.
-      unsuccessfully_updated: ਤੁਹਾਡੇ ਪਤੇ ਨੂੰ ਅਪਡੇਟ ਕਰਨ ਦੀ ਕੋਸ਼ਿਸ਼ ਕਰਦਿਆਂ ਇੱਕ ਅਪਡੇਟ ਹੋਇਆ ਸੀ.
     addresses: ਪਤੇ
     adjustable: ਵਿਵਸਥਤ
     adjustment: ਵਿਵਸਥਾ
@@ -1751,7 +1741,6 @@ pa:
     void: ਰੱਦ
     weight: ਭਾਰ
     what_is_a_cvv: ਇੱਕ (ਸੀਵੀਵੀ) ਕ੍ਰੈਡਿਟ ਕਾਰਡ ਕੋਡ ਕੀ ਹੈ?
-    what_is_this: ਇਹ ਕੀ ਹੈ?
     width: ਚੌੜਾਈ
     year: ਸਾਲ
     you_have_no_orders_yet: ਤੁਹਾਡੇ ਕੋਲ ਅਜੇ ਕੋਈ ਆਰਡਰ ਨਹੀਂ ਹਨ

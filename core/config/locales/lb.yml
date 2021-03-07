@@ -387,9 +387,6 @@ lb:
       spree/zone:
         one: Zone
         other: Zonen
-  address_book:
-    save: Späicheren
-    successfully_created: Nei Adress gouf erfollegräich erstallt
   devise:
     confirmations:
       confirmed: Äre Kont gouf erfollegräich bestätegt. Dir sidd elo ugemellt.
@@ -489,23 +486,16 @@ lb:
       delete_text: Wëllt Dir wierklech <br /> dës Adress läschen?
       delete_title: Bass du secher?
     address_book:
-      add_new_shipping_address: Füügt eng nei Adress bäi
-      address_name_label: Adress Numm
       address_name_placeholder: Gitt dës Adress en eenzegaartegen Numm (Aarbecht, Heem, asw.)
-      addresses: Adressen
       edit_address: Adress änneren
       label: Adress Numm
       new_address: Nei Adress
-      no_shipping_addresses_on_file: Keng Adressen op der Datei
       other_address: Aner Adress
       remove_address: Ewechzehuelen Adress
       save: Späicheren
       successfully_created: Adress gouf erfollegräich erstallt.
       successfully_removed: Adress gouf erfollegräich geläscht.
-      successfully_saved: Erfollegräich gespäichert
       successfully_updated: Erfollegräich aktualiséiert
-      unsuccessfully_saved: Et war e Feeler beim Versichen Är Adress ze späicheren.
-      unsuccessfully_updated: Et gouf en Update beim Versichen Är Adress ze aktualiséieren.
     addresses: Adressen
     adjustable: Verännerbar
     adjustment: Upassung
@@ -1751,7 +1741,6 @@ lb:
     void: Void
     weight: Gewiicht
     what_is_a_cvv: Wat ass e (CVV) Kreditkaart Code?
-    what_is_this: Wat ass dat?
     width: Breet
     year: Joer
     you_have_no_orders_yet: Dir hutt nach keng Commanden

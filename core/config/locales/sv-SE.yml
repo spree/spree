@@ -387,9 +387,6 @@ sv-SE:
       spree/zone:
         one: Zon
         other: Zoner
-  address_book:
-    save: Spara
-    successfully_created: Ny adress har skapats
   devise:
     confirmations:
       confirmed: Ditt konto har bekräftats. Du är nu inloggad.
@@ -489,23 +486,16 @@ sv-SE:
       delete_text: Vill du verkligen <br /> ta bort den här adressen?
       delete_title: Är du säker?
     address_book:
-      add_new_shipping_address: Lägg till ny adress
-      address_name_label: Adressnamn
       address_name_placeholder: Ge denna adress ett unikt namn (arbete, hem, etc.)
-      addresses: Adresser
       edit_address: Redigera adress
       label: Adressnamn
       new_address: Ny adress
-      no_shipping_addresses_on_file: Inga adresser registrerade
       other_address: Annan adress
       remove_address: Ta bort adress
       save: Spara
       successfully_created: Adress har skapats.
       successfully_removed: Adressen har tagits bort.
-      successfully_saved: sparad
       successfully_updated: Uppdateringen lyckades
-      unsuccessfully_saved: Det uppstod ett fel när du försökte spara din adress.
-      unsuccessfully_updated: Det gjordes en uppdatering när du försökte uppdatera din adress.
     addresses: Adresser
     adjustable: Justerbar
     adjustment: Justering
@@ -1751,7 +1741,6 @@ sv-SE:
     void: Tomhet
     weight: Vikt
     what_is_a_cvv: Vad är en (CVV) kreditkortskod?
-    what_is_this: Vad är det här?
     width: Bredd
     year: År
     you_have_no_orders_yet: Du har inga beställningar än

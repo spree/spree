@@ -387,9 +387,6 @@ af:
       spree/zone:
         one: Sone
         other: Sones
-  address_book:
-    save: Stoor
-    successfully_created: Nuwe adres is suksesvol geskep
   devise:
     confirmations:
       confirmed: U rekening is suksesvol bevestig. U is nou aangemeld.
@@ -489,23 +486,16 @@ af:
       delete_text: Wil u regtig <br /> hierdie adres verwyder?
       delete_title: Is jy seker?
     address_book:
-      add_new_shipping_address: Voeg nuwe adres by
-      address_name_label: Adresnaam
       address_name_placeholder: Gee hierdie adres 'n unieke naam (werk, huis, ens.)
-      addresses: Adresse
       edit_address: Adres wysig
       label: Adresnaam
       new_address: Nuwe adres
-      no_shipping_addresses_on_file: Geen adresse op lêer nie
       other_address: Ander adres
       remove_address: Verwyder adres
       save: Stoor
       successfully_created: Adres is suksesvol geskep.
       successfully_removed: Adres is suksesvol verwyder.
-      successfully_saved: Suksesvol gestoor
       successfully_updated: Suksesvol opgedateer
-      unsuccessfully_saved: Kon nie u adres stoor nie.
-      unsuccessfully_updated: Daar was 'n opdatering terwyl u adres probeer opdateer is.
     addresses: Adresse
     adjustable: Verstelbaar
     adjustment: Aanpassing
@@ -1751,7 +1741,6 @@ af:
     void: Nietig
     weight: Gewig
     what_is_a_cvv: Wat is 'n (CVV) kredietkaartkode?
-    what_is_this: Wat is dit?
     width: Breedte
     year: Jaar
     you_have_no_orders_yet: U het nog geen bestellings nie

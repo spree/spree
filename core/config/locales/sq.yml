@@ -387,9 +387,6 @@ sq:
       spree/zone:
         one: Zona
         other: Zonat
-  address_book:
-    save: Ruaj
-    successfully_created: Adresa e re është krijuar me sukses
   devise:
     confirmations:
       confirmed: Llogaria juaj u konfirmua me sukses. Tani jeni identifikuar
@@ -489,23 +486,16 @@ sq:
       delete_text: Dëshironi vërtet që <br /> ta fshini këtë adresë?
       delete_title: A je i sigurt?
     address_book:
-      add_new_shipping_address: Shto adresë të re
-      address_name_label: Emri i adreses
       address_name_placeholder: Jepja kësaj adrese një emër unik (Puna, Shtëpia, etj.)
-      addresses: Adresat
       edit_address: Redakto Adresën
       label: Emri i adreses
       new_address: Adresa e re
-      no_shipping_addresses_on_file: Asnjë adresë në skedar
       other_address: Adresa tjetër
       remove_address: Hiq adresën
       save: Ruaj
       successfully_created: Adresa është krijuar me sukses.
       successfully_removed: Adresa është hequr me sukses.
-      successfully_saved: U ruajt me sukses
       successfully_updated: Përditësuar me sukses
-      unsuccessfully_saved: Pati një gabim gjatë përpjekjes për të ruajtur adresën tuaj.
-      unsuccessfully_updated: Kishte një azhurnim ndërsa përpiqesh të azhurnosh adresën tënde.
     addresses: Adresat
     adjustable: I rregullueshëm
     adjustment: Rregullimi
@@ -1751,7 +1741,6 @@ sq:
     void: E pavlefshme
     weight: Pesha
     what_is_a_cvv: Çfarë është kodi i kartës së kreditit (CVV)?
-    what_is_this: Cfare eshte kjo
     width: Gjerësia
     year: Viti
     you_have_no_orders_yet: Nuk keni porosi akoma

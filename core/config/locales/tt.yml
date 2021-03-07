@@ -387,9 +387,6 @@ tt:
       spree/zone:
         one: Зона
         other: Зоналар
-  address_book:
-    save: Саклагыз
-    successfully_created: Яңа адрес уңышлы ясалды
   devise:
     confirmations:
       confirmed: Сезнең хисап уңышлы расланды. Сез хәзер кердегез.
@@ -489,23 +486,16 @@ tt:
       delete_text: Сез чыннан да <br /> бу адресны бетерергә телисезме?
       delete_title: Ышанасыңмы?
     address_book:
-      add_new_shipping_address: Яңа адрес өстәгез
-      address_name_label: Адрес исеме
       address_name_placeholder: Бу адреска уникаль исем бирегез (Эш, өй һ.б.)
-      addresses: Адреслар
       edit_address: Адресны үзгәртү
       label: Адрес исеме
       new_address: Яңа адрес
-      no_shipping_addresses_on_file: Файлда адреслар юк
       other_address: Башка адрес
       remove_address: Адресны бетерегез
       save: Саклагыз
       successfully_created: Адрес уңышлы ясалган.
       successfully_removed: Адрес уңышлы бетерелде.
-      successfully_saved: Уңышлы сакланган
       successfully_updated: Уңышлы яңартылды
-      unsuccessfully_saved: Сезнең адресны сакларга тырышканда хата килеп чыкты.
-      unsuccessfully_updated: Сезнең адресны яңартырга тырышканда яңарту булды.
     addresses: Адреслар
     adjustable: Көйләнә торган
     adjustment: Көйләү
@@ -1751,7 +1741,6 @@ tt:
     void: Буш
     weight: Авырлык
     what_is_a_cvv: Нәрсә ул (CVV) Кредит картасы коды?
-    what_is_this: Нәрсә бу?
     width: Киңлек
     year: Ел
     you_have_no_orders_yet: Сездә әле заказ юк

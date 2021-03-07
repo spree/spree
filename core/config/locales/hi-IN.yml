@@ -387,9 +387,6 @@ hi-IN:
       spree/zone:
         one: क्षेत्र
         other: क्षेत्र
-  address_book:
-    save: सहेजें
-    successfully_created: नया पता सफलतापूर्वक बनाया गया है
   devise:
     confirmations:
       confirmed: आपके खाते की सफलतापूर्वक पुष्टि हो गई। अब आप साइन इन हैं
@@ -489,23 +486,16 @@ hi-IN:
       delete_text: क्या आप वास्तव में <br /> इस पते को हटाना चाहते हैं?
       delete_title: क्या आपको यकीन है?
     address_book:
-      add_new_shipping_address: नया पता जोड़ें
-      address_name_label: नाम पता
       address_name_placeholder: इस पते को एक विशिष्ट नाम (कार्य, गृह, आदि) दें
-      addresses: पतों
       edit_address: पता संपादित करें
       label: नाम पता
       new_address: नया पता
-      no_shipping_addresses_on_file: फ़ाइल पर कोई पता नहीं
       other_address: अन्य पता
       remove_address: पता निकालें
       save: सहेजें
       successfully_created: पता सफलतापूर्वक बनाया गया है।
       successfully_removed: पता सफलतापूर्वक हटा दिया गया है।
-      successfully_saved: सफलतापूर्वक बचाया
       successfully_updated: अद्यतन सफलतापूर्ण हो गया
-      unsuccessfully_saved: आपका पता सहेजने का प्रयास करते समय एक त्रुटि हुई।
-      unsuccessfully_updated: आपका पता अपडेट करने का प्रयास करते समय एक अद्यतन था।
     addresses: पतों
     adjustable: एडजस्टेबल
     adjustment: समायोजन
@@ -1751,7 +1741,6 @@ hi-IN:
     void: शून्य
     weight: वजन
     what_is_a_cvv: "(CVV) क्रेडिट कार्ड कोड क्या है?"
-    what_is_this: यह क्या है?
     width: चौड़ाई
     year: साल
     you_have_no_orders_yet: आपके पास अभी तक कोई आदेश नहीं है

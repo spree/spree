@@ -387,9 +387,6 @@ uz:
       spree/zone:
         one: Mintaqa
         other: Mintaqalar
-  address_book:
-    save: Saqlash
-    successfully_created: Yangi manzil muvaffaqiyatli yaratildi
   devise:
     confirmations:
       confirmed: Sizning hisobingiz muvaffaqiyatli tasdiqlandi. Siz tizimga kirdingiz.
@@ -489,23 +486,16 @@ uz:
       delete_text: Siz haqiqatan ham ushbu manzilni o'chirishni xohlaysizmi <br />?
       delete_title: Ishonchingiz komilmi?
     address_book:
-      add_new_shipping_address: Yangi manzil qo'shing
-      address_name_label: Manzil nomi
       address_name_placeholder: Ushbu manzilga noyob nom bering (Ish, Uy va hk).
-      addresses: Manzillar
       edit_address: Manzilni tahrirlash
       label: Manzil nomi
       new_address: Yangi manzil
-      no_shipping_addresses_on_file: Faylda manzillar yo'q
       other_address: Boshqa manzil
       remove_address: Manzilni olib tashlash
       save: Saqlash
       successfully_created: Manzil muvaffaqiyatli yaratildi.
       successfully_removed: Manzil muvaffaqiyatli olib tashlandi.
-      successfully_saved: Muvaffaqiyatli saqlandi
       successfully_updated: Muvaffaqiyatli yangilandi
-      unsuccessfully_saved: Manzilingizni saqlashda xatolik yuz berdi.
-      unsuccessfully_updated: Manzilingizni yangilamoqchi bo'lganingizda yangilanish yuz berdi.
     addresses: Manzillar
     adjustable: Sozlanishi mumkin
     adjustment: Moslashish
@@ -1751,7 +1741,6 @@ uz:
     void: Bekor
     weight: Og'irligi
     what_is_a_cvv: "(CVV) kredit karta kodi nima?"
-    what_is_this: Bu nima?
     width: Kengligi
     year: Yil
     you_have_no_orders_yet: Sizda hali buyurtmalar yo'q

@@ -387,9 +387,6 @@ ka:
       spree/zone:
         one: ზონა
         other: ზონები
-  address_book:
-    save: Გადარჩენა
-    successfully_created: ახალი მისამართი წარმატებით შეიქმნა
   devise:
     confirmations:
       confirmed: თქვენი ანგარიში წარმატებით დადასტურდა. თქვენ ახლა შესული ხართ.
@@ -489,23 +486,16 @@ ka:
       delete_text: ნამდვილად გსურთ <br /> ამ მისამართის წაშლა?
       delete_title: Დარწმუნებული ხარ?
     address_book:
-      add_new_shipping_address: ახალი მისამართის დამატება
-      address_name_label: Მისამართი
       address_name_placeholder: მიანიჭეთ ამ მისამართს უნიკალური სახელი (სამუშაო, სახლი და ა.შ.)
-      addresses: მისამართები
       edit_address: მისამართის რედაქტირება
       label: Მისამართი
       new_address: Ახალი მისამართი
-      no_shipping_addresses_on_file: ფაილში მისამართები არ არის
       other_address: სხვა მისამართი
       remove_address: მისამართის ამოღება
       save: Გადარჩენა
       successfully_created: მისამართი წარმატებით შეიქმნა.
       successfully_removed: მისამართი წარმატებით წაიშალა.
-      successfully_saved: წარმატებით შეინახა
       successfully_updated: წარმატებით განახლდა
-      unsuccessfully_saved: თქვენი მისამართის შენახვისას მოხდა შეცდომა.
-      unsuccessfully_updated: თქვენი მისამართის განახლებისას მოხდა განახლება.
     addresses: მისამართები
     adjustable: რეგულირებადი
     adjustment: რეგულირება
@@ -1751,7 +1741,6 @@ ka:
     void: ბათილია
     weight: წონა
     what_is_a_cvv: რა არის (CVV) საკრედიტო ბარათის კოდი?
-    what_is_this: Რა არის ეს?
     width: სიგანე
     year: წელი
     you_have_no_orders_yet: ჯერ შეკვეთები არ გაქვთ

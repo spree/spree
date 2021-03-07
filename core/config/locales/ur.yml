@@ -387,9 +387,6 @@ ur:
       spree/zone:
         one: زون
         other: زون
-  address_book:
-    save: محفوظ کریں
-    successfully_created: نیا پتہ کامیابی کے ساتھ تشکیل دے دیا گیا ہے
   devise:
     confirmations:
       confirmed: آپ کے اکاؤنٹ کی کامیابی کے ساتھ تصدیق ہوگئی۔ اب آپ سائن ان ہوچکے ہیں۔
@@ -489,23 +486,16 @@ ur:
       delete_text: کیا آپ واقعی میں چاہتے ہیں کہ <br /> یہ پتہ حذف کریں؟
       delete_title: کیا تمہیں یقین ہے؟
     address_book:
-      add_new_shipping_address: نیا پتہ شامل کریں
-      address_name_label: پتہ کا نام
       address_name_placeholder: اس پتے کو ایک انوکھا نام (کام ، گھر ، وغیرہ) دیں۔
-      addresses: پتے
       edit_address: ایڈریس میں ترمیم کریں
       label: پتہ کا نام
       new_address: نیا پتہ
-      no_shipping_addresses_on_file: فائل پر کوئی پتے نہیں
       other_address: دوسرا پتہ
       remove_address: پتہ ہٹا دیں
       save: محفوظ کریں
       successfully_created: ایڈریس کامیابی کے ساتھ تشکیل دے دیا گیا ہے۔
       successfully_removed: پتہ کامیابی کے ساتھ ہٹا دیا گیا ہے۔
-      successfully_saved: کامیابی کے ساتھ محفوظ کیا گیا
       successfully_updated: کامیابی کے ساتھ اپ ڈیٹ ہوا
-      unsuccessfully_saved: آپ کا پتہ بچانے کی کوشش کرتے وقت ایک خرابی پیش آگئی۔
-      unsuccessfully_updated: آپ کے پتے کو اپ ڈیٹ کرنے کی کوشش کے دوران ایک تازہ کاری ہوئی۔
     addresses: پتے
     adjustable: سایڈست
     adjustment: ایڈجسٹمنٹ
@@ -1751,7 +1741,6 @@ ur:
     void: باطل
     weight: وزن
     what_is_a_cvv: "(CVV) کریڈٹ کارڈ کوڈ کیا ہے؟"
-    what_is_this: یہ کیا ہے؟
     width: چوڑائی
     year: سال
     you_have_no_orders_yet: ابھی آپ کے پاس کوئی آرڈر نہیں ہیں

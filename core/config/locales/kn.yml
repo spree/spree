@@ -387,9 +387,6 @@ kn:
       spree/zone:
         one: ವಲಯ
         other: ವಲಯಗಳು
-  address_book:
-    save: ಉಳಿಸಿ
-    successfully_created: ಹೊಸ ವಿಳಾಸವನ್ನು ಯಶಸ್ವಿಯಾಗಿ ರಚಿಸಲಾಗಿದೆ
   devise:
     confirmations:
       confirmed: ನಿಮ್ಮ ಖಾತೆಯನ್ನು ಯಶಸ್ವಿಯಾಗಿ ದೃ was ಪಡಿಸಲಾಗಿದೆ. ನೀವು ಈಗ ಸೈನ್ ಇನ್ ಆಗಿದ್ದೀರಿ.
@@ -489,23 +486,16 @@ kn:
       delete_text: "<br /> ಈ ವಿಳಾಸವನ್ನು ಅಳಿಸಲು ನೀವು ನಿಜವಾಗಿಯೂ ಬಯಸುವಿರಾ?"
       delete_title: ನೀವು ಖಚಿತವಾಗಿರುವಿರಾ?
     address_book:
-      add_new_shipping_address: ಹೊಸ ವಿಳಾಸವನ್ನು ಸೇರಿಸಿ
-      address_name_label: ವಿಳಾಸದ ಹೆಸರು
       address_name_placeholder: ಈ ವಿಳಾಸಕ್ಕೆ ವಿಶಿಷ್ಟ ಹೆಸರನ್ನು ನೀಡಿ (ಕೆಲಸ, ಮನೆ, ಇತ್ಯಾದಿ)
-      addresses: ವಿಳಾಸಗಳು
       edit_address: ವಿಳಾಸವನ್ನು ಸಂಪಾದಿಸಿ
       label: ವಿಳಾಸದ ಹೆಸರು
       new_address: ಹೊಸ ವಿಳಾಸ
-      no_shipping_addresses_on_file: ಫೈಲ್‌ನಲ್ಲಿ ವಿಳಾಸಗಳಿಲ್ಲ
       other_address: ಇತರ ವಿಳಾಸ
       remove_address: ವಿಳಾಸವನ್ನು ತೆಗೆದುಹಾಕಿ
       save: ಉಳಿಸಿ
       successfully_created: ವಿಳಾಸವನ್ನು ಯಶಸ್ವಿಯಾಗಿ ರಚಿಸಲಾಗಿದೆ.
       successfully_removed: ವಿಳಾಸವನ್ನು ಯಶಸ್ವಿಯಾಗಿ ತೆಗೆದುಹಾಕಲಾಗಿದೆ.
-      successfully_saved: ಯಶಸ್ವಿಯಾಗಿ ಉಳಿಸಲಾಗಿದೆ
       successfully_updated: ಯಶಸ್ವಿಯಾಗಿ ನವೀಕರಿಸಲಾಗಿದೆ
-      unsuccessfully_saved: ನಿಮ್ಮ ವಿಳಾಸವನ್ನು ಉಳಿಸಲು ಪ್ರಯತ್ನಿಸುವಾಗ ದೋಷ ಕಂಡುಬಂದಿದೆ.
-      unsuccessfully_updated: ನಿಮ್ಮ ವಿಳಾಸವನ್ನು ನವೀಕರಿಸಲು ಪ್ರಯತ್ನಿಸುವಾಗ ನವೀಕರಣವಿದೆ.
     addresses: ವಿಳಾಸಗಳು
     adjustable: ಹೊಂದಾಣಿಕೆ
     adjustment: ಹೊಂದಾಣಿಕೆ
@@ -1751,7 +1741,6 @@ kn:
     void: ಅನೂರ್ಜಿತ
     weight: ತೂಕ
     what_is_a_cvv: "(ಸಿವಿವಿ) ಕ್ರೆಡಿಟ್ ಕಾರ್ಡ್ ಕೋಡ್ ಎಂದರೇನು?"
-    what_is_this: ಇದೇನು?
     width: ಅಗಲ
     year: ವರ್ಷ
     you_have_no_orders_yet: ನಿಮಗೆ ಇನ್ನೂ ಯಾವುದೇ ಆದೇಶಗಳಿಲ್ಲ

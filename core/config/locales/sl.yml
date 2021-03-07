@@ -467,9 +467,6 @@ sl:
         one: Cona
         other: Območja
         two: Območja
-  address_book:
-    save: Shrani
-    successfully_created: Nov naslov je bil uspešno ustvarjen
   devise:
     confirmations:
       confirmed: Vaš račun je bil uspešno potrjen. Zdaj ste prijavljeni.
@@ -571,23 +568,16 @@ sl:
       delete_text: Ali res želite <br /> izbrisati ta naslov?
       delete_title: Ali si prepričan?
     address_book:
-      add_new_shipping_address: Dodajte nov naslov
-      address_name_label: Ime naslova
       address_name_placeholder: Temu naslovu dajte edinstveno ime (služba, dom itd.)
-      addresses: Naslovi
       edit_address: Uredi naslov
       label: Ime naslova
       new_address: Nov naslov
-      no_shipping_addresses_on_file: V datoteki ni naslovov
       other_address: Drugi naslov
       remove_address: Odstrani naslov
       save: Shrani
       successfully_created: Naslov je bil uspešno ustvarjen.
       successfully_removed: Naslov je bil uspešno odstranjen.
-      successfully_saved: Shranjeno uspešno
       successfully_updated: Posodobljeno uspešno
-      unsuccessfully_saved: Pri poskusu shranjevanja naslova je prišlo do napake.
-      unsuccessfully_updated: Med poskusom posodobitve vašega naslova je prišlo do posodobitve.
     addresses: Naslovi
     adjustable: Nastavljiv
     adjustment: Prilagoditev
@@ -1839,7 +1829,6 @@ sl:
     void: Prazno
     weight: Utež
     what_is_a_cvv: Kaj je koda kreditne kartice (CVV)?
-    what_is_this: Kaj je to?
     width: Premer
     year: Leto
     you_have_no_orders_yet: Nimate še naročil

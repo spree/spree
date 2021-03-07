@@ -387,9 +387,6 @@ mg:
       spree/zone:
         one: ara-potoana
         other: faritra
-  address_book:
-    save: afa-tsy
-    successfully_created: Nahomby ny famoronana adiresy vaovao
   devise:
     confirmations:
       confirmed: Voamarina tsara ny kaontinao. Miditra ianao izao.
@@ -489,23 +486,16 @@ mg:
       delete_text: Tena tianao hofafana ity adiresy ity?
       delete_title: Azonao antoka ve izany?
     address_book:
-      add_new_shipping_address: Manampia adiresy vaovao
-      address_name_label: Anaran'ny adiresy
       address_name_placeholder: Omeo anarana tokana ity adiresy ity (Asa, Trano, sns.)
-      addresses: adiresy
       edit_address: Amboary ny adiresy
       label: Anaran'ny adiresy
       new_address: Adiresy vaovao
-      no_shipping_addresses_on_file: Tsy misy adiresy amin'ny rakitra
       other_address: Adiresy hafa
       remove_address: Esory ny adiresy
       save: afa-tsy
       successfully_created: Nahomby ny famoronana adiresy.
       successfully_removed: Nesorina soa aman-tsara ny adiresy.
-      successfully_saved: Tafita soa aman-tsara
       successfully_updated: Vita soa aman-tsara
-      unsuccessfully_saved: Nisy lesoka teo am-piezahanao hitahiry ny adiresinao.
-      unsuccessfully_updated: Nisy ny fanavaozana teo am-piezahanao hanavao ny adiresinao.
     addresses: adiresy
     adjustable: Azo ovaina
     adjustment: fanitsiana
@@ -1751,7 +1741,6 @@ mg:
     void: foana
     weight: Lanja
     what_is_a_cvv: Inona ny kaody carte de crédit (CVV)?
-    what_is_this: Inona ity?
     width: sakany
     year: TAOM-
     you_have_no_orders_yet: Tsy mbola manana baiko ianao

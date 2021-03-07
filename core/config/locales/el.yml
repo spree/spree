@@ -387,9 +387,6 @@ el:
       spree/zone:
         one: Ζώνη
         other: Ζώνες
-  address_book:
-    save: Αποθηκεύσετε
-    successfully_created: Η νέα διεύθυνση δημιουργήθηκε με επιτυχία
   devise:
     confirmations:
       confirmed: Ο λογαριασμός σας επιβεβαιώθηκε με επιτυχία. Είστε πλέον συνδεδεμένοι.
@@ -489,23 +486,16 @@ el:
       delete_text: Θέλετε πραγματικά να διαγράψετε αυτήν τη διεύθυνση;
       delete_title: Είσαι σίγουρος?
     address_book:
-      add_new_shipping_address: Προσθήκη νέας διεύθυνσης
-      address_name_label: Διεύθυνση
       address_name_placeholder: Δώστε σε αυτήν τη διεύθυνση ένα μοναδικό όνομα (Εργασία, σπίτι, κ.λπ.)
-      addresses: Διευθύνσεις
       edit_address: Επεξεργασία διεύθυνσης
       label: Διεύθυνση
       new_address: Νέα διεύθυνση
-      no_shipping_addresses_on_file: Δεν υπάρχουν διευθύνσεις στο αρχείο
       other_address: Άλλη διεύθυνση
       remove_address: Κατάργηση διεύθυνσης
       save: Αποθηκεύσετε
       successfully_created: Η διεύθυνση δημιουργήθηκε με επιτυχία.
       successfully_removed: Η διεύθυνση καταργήθηκε με επιτυχία.
-      successfully_saved: Αποθηκεύτηκε επιτυχώς
       successfully_updated: Ενημερώθηκε με επιτυχία
-      unsuccessfully_saved: Παρουσιάστηκε σφάλμα κατά την προσπάθεια αποθήκευσης της διεύθυνσής σας.
-      unsuccessfully_updated: Παρουσιάστηκε ενημέρωση κατά την προσπάθεια ενημέρωσης της διεύθυνσής σας.
     addresses: Διευθύνσεις
     adjustable: Ευκανόνιστος
     adjustment: Προσαρμογή
@@ -1751,7 +1741,6 @@ el:
     void: Κενός
     weight: Βάρος
     what_is_a_cvv: Τι είναι ο κωδικός πιστωτικής κάρτας (CVV);
-    what_is_this: Τι είναι αυτό?
     width: Πλάτος
     year: Ετος
     you_have_no_orders_yet: Δεν έχετε παραγγελίες ακόμη

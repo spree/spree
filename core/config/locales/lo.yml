@@ -387,9 +387,6 @@ lo:
       spree/zone:
         one: ເຂດ
         other: ເຂດຕ່າງໆ
-  address_book:
-    save: ບັນທຶກ
-    successfully_created: ທີ່ຢູ່ ໃໝ່ ໄດ້ຖືກສ້າງ ສຳ ເລັດແລ້ວ
   devise:
     confirmations:
       confirmed: ບັນຊີຂອງທ່ານຖືກຢືນຢັນຢ່າງ ສຳ ເລັດຜົນ. ດຽວນີ້ທ່ານໄດ້ເຂົ້າສູ່ລະບົບແລ້ວ.
@@ -489,23 +486,16 @@ lo:
       delete_text: ທ່ານຕ້ອງການ <br /> ລຶບທີ່ຢູ່ນີ້ບໍ?
       delete_title: ເຈົ້າ​ແນ່​ໃຈ​ບໍ່?
     address_book:
-      add_new_shipping_address: ເພີ່ມທີ່ຢູ່ ໃໝ່
-      address_name_label: ຊື່ທີ່ຢູ່
       address_name_placeholder: ຕັ້ງຊື່ທີ່ຢູ່ນີ້ໃຫ້ກັບທີ່ຢູ່ (ບ່ອນເຮັດວຽກ, ເຮືອນ, ແລະອື່ນໆ)
-      addresses: ທີ່ຢູ່
       edit_address: ແກ້ໄຂທີ່ຢູ່
       label: ຊື່ທີ່ຢູ່
       new_address: ທີ່ຢູ່ ໃໝ່
-      no_shipping_addresses_on_file: ບໍ່ມີທີ່ຢູ່ໃນແຟ້ມ
       other_address: ທີ່ຢູ່ອື່ນໆ
       remove_address: ເອົາທີ່ຢູ່
       save: ບັນທຶກ
       successfully_created: ທີ່ຢູ່ຖືກສ້າງ ສຳ ເລັດແລ້ວ.
       successfully_removed: ທີ່ຢູ່ຖືກລຶບອອກແລ້ວ.
-      successfully_saved: ບັນທຶກປະສົບຜົນ ສຳ ເລັດ
       successfully_updated: ອັບເດດ ສຳ ເລັດແລ້ວ
-      unsuccessfully_saved: ມີຂໍ້ຜິດພາດໃນຂະນະທີ່ພະຍາຍາມບັນທຶກທີ່ຢູ່ຂອງທ່ານ.
-      unsuccessfully_updated: ມີການປັບປຸງໃນຂະນະທີ່ພະຍາຍາມປັບປຸງທີ່ຢູ່ຂອງທ່ານ.
     addresses: ທີ່ຢູ່
     adjustable: ປັບໄດ້
     adjustment: ການປັບຕົວ
@@ -1751,7 +1741,6 @@ lo:
     void: Void
     weight: ນໍ້າ ໜັກ
     what_is_a_cvv: ລະຫັດບັດເຄດິດ (CVV) ແມ່ນຫຍັງ?
-    what_is_this: ນີ້​ແມ່ນ​ຫຍັງ?
     width: ກວ້າງ
     year: ປີ
     you_have_no_orders_yet: ທ່ານຍັງບໍ່ທັນມີ ຄຳ ສັ່ງເທື່ອ

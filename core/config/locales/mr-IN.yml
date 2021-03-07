@@ -387,9 +387,6 @@ mr-IN:
       spree/zone:
         one: झोन
         other: झोन
-  address_book:
-    save: जतन करा
-    successfully_created: नवीन पत्ता यशस्वीरित्या तयार केला गेला आहे
   devise:
     confirmations:
       confirmed: आपल्या खात्याची यशस्वीपणे पुष्टी झाली. आपण आता साइन इन केले आहे.
@@ -489,23 +486,16 @@ mr-IN:
       delete_text: तुम्हाला हा पत्ता हटवायचा आहे का?
       delete_title: तुला खात्री आहे?
     address_book:
-      add_new_shipping_address: नवीन पत्ता जोडा
-      address_name_label: पत्त्याचे नाव
       address_name_placeholder: या पत्त्यास एक अद्वितीय नाव द्या (कार्य, निवास इ.)
-      addresses: पत्ते
       edit_address: पत्ता संपादित करा
       label: पत्त्याचे नाव
       new_address: नवीन पत्ता
-      no_shipping_addresses_on_file: फाइलवर कोणतेही पत्ता नाहीत
       other_address: इतर पत्ता
       remove_address: पत्ता काढा
       save: जतन करा
       successfully_created: पत्ता यशस्वीरित्या तयार केला गेला आहे.
       successfully_removed: पत्ता यशस्वीरित्या काढला गेला आहे.
-      successfully_saved: यशस्वीरित्या जतन केले
       successfully_updated: यशस्वीरित्या अद्यतनित केले
-      unsuccessfully_saved: आपला पत्ता जतन करण्याचा प्रयत्न करताना एक त्रुटी आली.
-      unsuccessfully_updated: आपला पत्ता अद्यतनित करण्याचा प्रयत्न करताना एक अद्यतनित झाले.
     addresses: पत्ते
     adjustable: समायोज्य
     adjustment: समायोजन
@@ -1751,7 +1741,6 @@ mr-IN:
     void: शून्य
     weight: वजन
     what_is_a_cvv: "(सीव्हीव्ही) क्रेडिट कार्ड कोड म्हणजे काय?"
-    what_is_this: हे काय आहे?
     width: रुंदी
     year: वर्ष
     you_have_no_orders_yet: आपल्याकडे अद्याप ऑर्डर नाहीत

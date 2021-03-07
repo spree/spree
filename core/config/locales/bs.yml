@@ -467,9 +467,6 @@ bs:
         many: Zones
         one: Zona
         other: Zones
-  address_book:
-    save: Save
-    successfully_created: Nova adresa je uspješno kreirana
   devise:
     confirmations:
       confirmed: Vaš račun je uspješno potvrđen. Sada ste prijavljeni.
@@ -571,23 +568,16 @@ bs:
       delete_text: Da li stvarno želite <br /> izbrisati ovu adresu?
       delete_title: Jesi li siguran?
     address_book:
-      add_new_shipping_address: Dodajte novu adresu
-      address_name_label: Ime adrese
       address_name_placeholder: Dajte ovoj adresi jedinstveno ime (Posao, Kuća itd.)
-      addresses: Adrese
       edit_address: Uredi adresu
       label: Ime adrese
       new_address: Nova adresa
-      no_shipping_addresses_on_file: Nema evidencije adresa
       other_address: Druga adresa
       remove_address: Ukloni adresu
       save: Save
       successfully_created: Adresa je uspješno kreirana.
       successfully_removed: Adresa je uspješno uklonjena.
-      successfully_saved: Spremljeno uspješno
       successfully_updated: Ažurirano uspješno
-      unsuccessfully_saved: Došlo je do greške prilikom pokušaja spremanja adrese.
-      unsuccessfully_updated: Došlo je do ažuriranja prilikom pokušaja ažuriranja adrese.
     addresses: Adrese
     adjustable: Podesiva
     adjustment: Prilagođavanje
@@ -1839,7 +1829,6 @@ bs:
     void: Prazno
     weight: Težina
     what_is_a_cvv: Šta je (CVV) kod kreditne kartice?
-    what_is_this: Šta je ovo?
     width: Širina
     year: Godina
     you_have_no_orders_yet: Još nemate narudžbe

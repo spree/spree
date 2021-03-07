@@ -387,9 +387,6 @@ pt-PT:
       spree/zone:
         one: Zona
         other: Zonas
-  address_book:
-    save: Salve 
-    successfully_created: Novo endereço foi criado com sucesso
   devise:
     confirmations:
       confirmed: Sua conta foi confirmada com sucesso. Agora você está conectado.
@@ -489,23 +486,16 @@ pt-PT:
       delete_text: Você realmente deseja <br /> deletar este endereço?
       delete_title: Tem certeza?
     address_book:
-      add_new_shipping_address: adicionar novo endereço
-      address_name_label: Nome do Endereço
       address_name_placeholder: Dê a este endereço um nome exclusivo (Trabalho, Casa, etc.)
-      addresses: Endereços
       edit_address: Editar Endereço
       label: Nome do Endereço
       new_address: Novo endereço
-      no_shipping_addresses_on_file: Nenhum endereço no arquivo
       other_address: Outro endereço
       remove_address: Remover endereço
       save: Salve 
       successfully_created: O endereço foi criado com sucesso.
       successfully_removed: O endereço foi removido com sucesso.
-      successfully_saved: Salvo com sucesso
       successfully_updated: Atualizado com sucesso
-      unsuccessfully_saved: Ocorreu um erro ao tentar salvar seu endereço.
-      unsuccessfully_updated: Houve uma atualização ao tentar atualizar seu endereço.
     addresses: Endereços
     adjustable: Ajustável
     adjustment: Ajustamento
@@ -1751,7 +1741,6 @@ pt-PT:
     void: Vazio
     weight: Peso
     what_is_a_cvv: O que é um código de cartão de crédito (CVV)?
-    what_is_this: O que é isso?
     width: Largura
     year: Ano
     you_have_no_orders_yet: Você ainda não tem pedidos

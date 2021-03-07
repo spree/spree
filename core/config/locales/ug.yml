@@ -387,9 +387,6 @@ ug:
       spree/zone:
         one: رايون
         other: رايونلار
-  address_book:
-    save: ساقلاش
-    successfully_created: يېڭى ئادرېس مۇۋەپپەقىيەتلىك قۇرۇلدى
   devise:
     confirmations:
       confirmed: ھېساباتىڭىز مۇۋەپپەقىيەتلىك جەزملەشتۈرۈلدى. سىز ھازىر تىزىملاتتىڭىز.
@@ -489,23 +486,16 @@ ug:
       delete_text: سىز <br /> بۇ ئادرېسنى ئۆچۈرمەكچىمۇ؟
       delete_title: ئىشىنەمسىز؟
     address_book:
-      add_new_shipping_address: يېڭى ئادرېس قوشۇڭ
-      address_name_label: ئادرېس ئىسمى
       address_name_placeholder: بۇ ئادرېسقا ئۆزگىچە ئىسىم قويۇڭ (خىزمەت ، ئۆي قاتارلىقلار)
-      addresses: ئادرېس
       edit_address: ئادرېسنى تەھرىرلەش
       label: ئادرېس ئىسمى
       new_address: يېڭى ئادرېس
-      no_shipping_addresses_on_file: ھۆججەتتە ئادرېس يوق
       other_address: باشقا ئادرېس
       remove_address: ئادرېسنى ئۆچۈرۈڭ
       save: ساقلاش
       successfully_created: ئادرېس مۇۋەپپەقىيەتلىك قۇرۇلدى.
       successfully_removed: ئادرېس مۇۋەپپەقىيەتلىك ئۆچۈرۈلدى.
-      successfully_saved: مۇۋەپپەقىيەتلىك ساقلاندى
       successfully_updated: مۇۋەپپەقىيەتلىك يېڭىلاندى
-      unsuccessfully_saved: ئادرېسىڭىزنى ساقلىماقچى بولغاندا خاتالىق كۆرۈلدى.
-      unsuccessfully_updated: ئادرېسىڭىزنى يېڭىلىماقچى بولغاندا يېڭىلاندى.
     addresses: ئادرېس
     adjustable: تەڭشىگىلى بولىدۇ
     adjustment: تەڭشەش
@@ -1751,7 +1741,6 @@ ug:
     void: Void
     weight: ئېغىرلىقى
     what_is_a_cvv: "(CVV) ئىناۋەتلىك كارتا كودى دېگەن نېمە؟"
-    what_is_this: بۇ نېمە؟
     width: كەڭلىك
     year: يىل
     you_have_no_orders_yet: ھازىرچە زاكاز يوق

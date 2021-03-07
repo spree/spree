@@ -387,9 +387,6 @@ tl:
       spree/zone:
         one: Zone
         other: Mga Zone
-  address_book:
-    save: Magtipid
-    successfully_created: Ang bagong address ay matagumpay na nalikha
   devise:
     confirmations:
       confirmed: Ang iyong account ay matagumpay na nakumpirma. Naka-sign in ka na
@@ -489,23 +486,16 @@ tl:
       delete_text: Nais mo bang i-delete ng address na ito ang <br />?
       delete_title: Sigurado ka ba?
     address_book:
-      add_new_shipping_address: Magdagdag ng bagong address
-      address_name_label: Pangalan ng Address
       address_name_placeholder: Bigyan ang address na ito ng isang natatanging pangalan (Trabaho, Bahay, atbp.)
-      addresses: Mga Address
       edit_address: I-edit ang Address
       label: Pangalan ng Address
       new_address: Bagong tirahan
-      no_shipping_addresses_on_file: Walang mga address sa file
       other_address: Iba pang address
       remove_address: Alisin ang Address
       save: Magtipid
       successfully_created: Matagumpay na nilikha ang address.
       successfully_removed: Matagumpay na natanggal ang address.
-      successfully_saved: Matagumpay na nai-save
       successfully_updated: Naupdate ng matagumpay
-      unsuccessfully_saved: Mayroong isang error habang sinusubukang i-save ang iyong address.
-      unsuccessfully_updated: Nagkaroon ng pag-update habang sinusubukang i-update ang iyong address.
     addresses: Mga Address
     adjustable: Naaayos
     adjustment: Pagsasaayos
@@ -1751,7 +1741,6 @@ tl:
     void: Walang bisa
     weight: Bigat
     what_is_a_cvv: Ano ang isang (CVV) Credit Card Code?
-    what_is_this: Ano ito?
     width: Lapad
     year: Taon
     you_have_no_orders_yet: Wala ka pang order

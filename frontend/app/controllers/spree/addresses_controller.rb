@@ -11,7 +11,7 @@ module Spree
     def create
       @address = try_spree_current_user.addresses.build(address_params)
       if @address.save
-        flash[:notice] = I18n.t(:successfully_created, scope: :address_book)
+        flash[:notice] = I18n.t(:successfully_created, scope: 'spree.address_book')
         redirect_to spree.account_path
       else
         render action: 'new'
@@ -29,7 +29,7 @@ module Spree
     def update
       if @address.editable?
         if @address.update(address_params)
-          flash[:notice] = Spree.t(:successfully_updated, scope: :address_book)
+          flash[:notice] = I18n.t(:successfully_updated, scope: 'spree.address_book')
           redirect_back_or_default(addresses_path)
         else
           render :edit
@@ -40,7 +40,7 @@ module Spree
         new_address.user_id = @address.user_id
         @address.update_attribute(:deleted_at, Time.current)
         if new_address.save
-          flash[:notice] = Spree.t(:successfully_updated, scope: :address_book)
+          flash[:notice] = I18n.t(:successfully_updated, scope: 'spree.address_book')
           redirect_back_or_default(addresses_path)
         else
           render :edit
@@ -51,7 +51,7 @@ module Spree
     def destroy
       @address.destroy
 
-      flash[:notice] = Spree.t(:successfully_removed, scope: :address_book)
+      flash[:notice] = I18n.t(:successfully_removed, scope: 'spree.address_book')
       redirect_to(request.env['HTTP_REFERER'] || addresses_path) unless request.xhr?
     end
 

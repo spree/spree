@@ -387,9 +387,6 @@ ml:
       spree/zone:
         one: സോൺ
         other: സോണുകൾ
-  address_book:
-    save: രക്ഷിക്കും
-    successfully_created: പുതിയ വിലാസം വിജയകരമായി സൃഷ്ടിച്ചു
   devise:
     confirmations:
       confirmed: നിങ്ങളുടെ അക്കൗണ്ട് വിജയകരമായി സ്ഥിരീകരിച്ചു. നിങ്ങൾ ഇപ്പോൾ സൈൻ ഇൻ ചെയ്‌തു.
@@ -489,23 +486,16 @@ ml:
       delete_text: "<br /> ഈ വിലാസം ഇല്ലാതാക്കാൻ നിങ്ങൾ ആഗ്രഹിക്കുന്നുണ്ടോ?"
       delete_title: നിങ്ങള്ക്ക് ഉറപ്പാണോ?
     address_book:
-      add_new_shipping_address: പുതിയ വിലാസം ചേർക്കുക
-      address_name_label: വിലാസത്തിന്റെ പേര്
       address_name_placeholder: ഈ വിലാസത്തിന് ഒരു അദ്വിതീയ നാമം നൽകുക (ജോലി, വീട് മുതലായവ)
-      addresses: വിലാസങ്ങൾ
       edit_address: വിലാസം എഡിറ്റുചെയ്യുക
       label: വിലാസത്തിന്റെ പേര്
       new_address: പുതിയ വിലാസം
-      no_shipping_addresses_on_file: ഫയലിൽ വിലാസങ്ങളൊന്നുമില്ല
       other_address: മറ്റ് വിലാസം
       remove_address: വിലാസം നീക്കംചെയ്യുക
       save: രക്ഷിക്കും
       successfully_created: വിലാസം വിജയകരമായി സൃഷ്ടിച്ചു.
       successfully_removed: വിലാസം വിജയകരമായി നീക്കംചെയ്തു.
-      successfully_saved: വിജയകരമായി സംരക്ഷിച്ചു
       successfully_updated: വിജയകരമായി അപ്‌ഡേറ്റുചെയ്‌തു
-      unsuccessfully_saved: നിങ്ങളുടെ വിലാസം സംരക്ഷിക്കാൻ ശ്രമിക്കുമ്പോൾ ഒരു പിശക് ഉണ്ടായിരുന്നു.
-      unsuccessfully_updated: നിങ്ങളുടെ വിലാസം അപ്‌ഡേറ്റ് ചെയ്യാൻ ശ്രമിക്കുമ്പോൾ ഒരു അപ്‌ഡേറ്റ് ഉണ്ടായിരുന്നു.
     addresses: വിലാസങ്ങൾ
     adjustable: ക്രമീകരിക്കാവുന്ന
     adjustment: ക്രമീകരണം
@@ -1751,7 +1741,6 @@ ml:
     void: അസാധുവാണ്
     weight: ഭാരം
     what_is_a_cvv: എന്താണ് (സിവി‌വി) ക്രെഡിറ്റ് കാർഡ് കോഡ്?
-    what_is_this: എന്താണിത്?
     width: വീതി
     year: വർഷം
     you_have_no_orders_yet: നിങ്ങൾക്ക് ഇതുവരെ ഓർഡറുകളൊന്നുമില്ല

@@ -387,9 +387,6 @@ zh-YUE:
       spree/zone:
         one: 区
         other: 区域
-  address_book:
-    save: 救
-    successfully_created: 新地址已成功创建
   devise:
     confirmations:
       confirmed: 您的帐户已成功确认。您现在已登录。
@@ -489,23 +486,16 @@ zh-YUE:
       delete_text: 您真的要<br />删除此地址吗？
       delete_title: 你确定吗？
     address_book:
-      add_new_shipping_address: 添加新地址
-      address_name_label: 地址名称
       address_name_placeholder: 为该地址指定一个唯一的名称（公司，家庭等）
-      addresses: 地址
       edit_address: 修改地址
       label: 地址名称
       new_address: 新地址
-      no_shipping_addresses_on_file: 没有档案地址
       other_address: 其他地址
       remove_address: 删除地址
       save: 救
       successfully_created: 地址已成功创建。
       successfully_removed: 地址已成功删除。
-      successfully_saved: 保存成功
       successfully_updated: 更新成功
-      unsuccessfully_saved: 尝试保存您的地址时出错。
-      unsuccessfully_updated: 尝试更新您的地址时发生了更新。
     addresses: 地址
     adjustable: 可调节的
     adjustment: 调整
@@ -1751,7 +1741,6 @@ zh-YUE:
     void: 空白
     weight: 重量
     what_is_a_cvv: 什么是（CVV）信用卡代码？
-    what_is_this: 这是什么？
     width: 宽度
     year: 年
     you_have_no_orders_yet: 您还没有订单

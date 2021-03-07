@@ -387,9 +387,6 @@ gl:
       spree/zone:
         one: Zona
         other: Zonas
-  address_book:
-    save: Gardar
-    successfully_created: O novo enderezo creouse correctamente
   devise:
     confirmations:
       confirmed: A túa conta confirmouse correctamente. Agora iniciaches sesión.
@@ -489,23 +486,16 @@ gl:
       delete_text: Desexa realmente <br /> eliminar este enderezo?
       delete_title: Estás seguro?
     address_book:
-      add_new_shipping_address: Engadir novo enderezo
-      address_name_label: Nome do enderezo
       address_name_placeholder: Dálle a este enderezo un nome único (traballo, casa, etc.)
-      addresses: Enderezos
       edit_address: Editar enderezo
       label: Nome do enderezo
       new_address: Novo enderezo
-      no_shipping_addresses_on_file: Non hai enderezos rexistrados
       other_address: Outro enderezo
       remove_address: Eliminar enderezo
       save: Gardar
       successfully_created: O enderezo creouse correctamente.
       successfully_removed: O enderezo eliminouse correctamente.
-      successfully_saved: Gardouse correctamente
       successfully_updated: Actualizouse correctamente
-      unsuccessfully_saved: Produciuse un erro ao tentar gardar o seu enderezo.
-      unsuccessfully_updated: Houbo unha actualización ao tentar actualizar o seu enderezo.
     addresses: Enderezos
     adjustable: Axustable
     adjustment: Axuste
@@ -1751,7 +1741,6 @@ gl:
     void: Baleiro
     weight: Peso
     what_is_a_cvv: Que é un código de tarxeta de crédito (CVV)?
-    what_is_this: Que é isto?
     width: Ancho
     year: Ano
     you_have_no_orders_yet: Aínda non tes pedidos

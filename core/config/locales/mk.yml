@@ -387,9 +387,6 @@ mk:
       spree/zone:
         one: Зона
         other: Зони
-  address_book:
-    save: Зачувај
-    successfully_created: Новата адреса е успешно креирана
   devise:
     confirmations:
       confirmed: Вашата сметка е успешно потврдена. Сега сте најавени
@@ -489,23 +486,16 @@ mk:
       delete_text: Дали навистина сакате <br /> да ја избришете оваа адреса?
       delete_title: Дали си сигурен?
     address_book:
-      add_new_shipping_address: Додадете нова адреса
-      address_name_label: Име на адреса
       address_name_placeholder: Дајте this единствено име на оваа адреса (Работа, Дом и сл.)
-      addresses: Адреси
       edit_address: Уредете ја адресата
       label: Име на адреса
       new_address: Нова адреса
-      no_shipping_addresses_on_file: Нема адреси на датотеката
       other_address: Друга адреса
       remove_address: Отстранете ја адресата
       save: Зачувај
       successfully_created: Адресата е успешно креирана.
       successfully_removed: Адресата е успешно отстранета.
-      successfully_saved: Успешно зачувано
       successfully_updated: Успешно ажурирано
-      unsuccessfully_saved: Настана грешка при обидот да се зачува вашата адреса.
-      unsuccessfully_updated: Имаше ажурирање при обидот да се ажурира вашата адреса.
     addresses: Адреси
     adjustable: Прилагодлив
     adjustment: Прилагодување
@@ -1751,7 +1741,6 @@ mk:
     void: Празнина
     weight: Тежина
     what_is_a_cvv: Што е код за кредитна картичка (CVV)?
-    what_is_this: Што е ова?
     width: Ширина
     year: Година
     you_have_no_orders_yet: Сè уште немате нарачки

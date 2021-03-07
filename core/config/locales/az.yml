@@ -387,9 +387,6 @@ az:
       spree/zone:
         one: Zona
         other: Bölgələr
-  address_book:
-    save: Yadda saxla
-    successfully_created: Yeni ünvan uğurla yaradıldı
   devise:
     confirmations:
       confirmed: Hesabınız uğurla təsdiqləndi. İndi daxil olmusunuz.
@@ -489,23 +486,16 @@ az:
       delete_text: "<br /> bu ünvanı silməsini həqiqətən istəyirsiniz?"
       delete_title: Sən əminsən?
     address_book:
-      add_new_shipping_address: Yeni ünvan əlavə edin
-      address_name_label: Ünvan Adı
       address_name_placeholder: Bu ünvana unikal bir ad verin (İş, Ev və s.)
-      addresses: Ünvanlar
       edit_address: Ünvanı redaktə edin
       label: Ünvan Adı
       new_address: Yeni Ünvan
-      no_shipping_addresses_on_file: Faylda ünvan yoxdur
       other_address: Digər ünvan
       remove_address: Ünvanı silin
       save: Yadda saxla
       successfully_created: Ünvan uğurla yaradıldı.
       successfully_removed: Ünvan uğurla silindi.
-      successfully_saved: Uğurla qeyd edildi
       successfully_updated: Uğurla yeniləndi
-      unsuccessfully_saved: Ünvanınızı saxlamağa çalışarkən xəta baş verdi.
-      unsuccessfully_updated: Ünvanınızı yeniləməyə çalışarkən bir yeniləmə oldu.
     addresses: Ünvanlar
     adjustable: Tənzimlənə bilər
     adjustment: Tənzimləmə
@@ -1751,7 +1741,6 @@ az:
     void: Boş
     weight: Çəki
     what_is_a_cvv: "(CVV) Kredit Kartı Kodu nədir?"
-    what_is_this: Bu nədir?
     width: Eni
     year: İl
     you_have_no_orders_yet: Hələ sifarişiniz yoxdur

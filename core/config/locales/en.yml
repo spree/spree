@@ -387,9 +387,6 @@ en:
       spree/zone:
         one: Zone
         other: Zones
-  address_book:
-    save: Save
-    successfully_created: New address has been successfully created
   devise:
     confirmations:
       confirmed: Your account was successfully confirmed. You are now signed in.
@@ -489,23 +486,16 @@ en:
       delete_text: Do you really want <br /> to delete this address?
       delete_title: Are you sure?
     address_book:
-      add_new_shipping_address: Add new address
-      address_name_label: Address Name
       address_name_placeholder: Give this address a unique name (Work, Home, etc.)
-      addresses: Addresses
       edit_address: Edit Address
       label: Address Name
       new_address: New Address
-      no_shipping_addresses_on_file: No addresses on file
       other_address: Other address
       remove_address: Remove Address
       save: Save
       successfully_created: Address has been successfully created.
       successfully_removed: Address has been successfully removed.
-      successfully_saved: Saved successfully
       successfully_updated: Updated successfully
-      unsuccessfully_saved: There was an error while trying to save your address.
-      unsuccessfully_updated: There was an update while trying to update your address.
     addresses: Addresses
     adjustable: Adjustable
     adjustment: Adjustment
@@ -1751,7 +1741,6 @@ en:
     void: Void
     weight: Weight
     what_is_a_cvv: What is a (CVV) Credit Card Code?
-    what_is_this: What's This?
     width: Width
     year: Year
     you_have_no_orders_yet: You have no orders yet

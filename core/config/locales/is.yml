@@ -387,9 +387,6 @@ is:
       spree/zone:
         one: Svæði
         other: Svæði
-  address_book:
-    save: Vista
-    successfully_created: Nýtt heimilisfang hefur verið búið til
   devise:
     confirmations:
       confirmed: Reikningurinn þinn var staðfestur. Þú ert nú skráð inn.
@@ -489,23 +486,16 @@ is:
       delete_text: Viltu virkilega <br /> eyða þessu netfangi?
       delete_title: Ertu viss?
     address_book:
-      add_new_shipping_address: Bættu við nýju heimilisfangi
-      address_name_label: Heimilisfang heimilisfangs
       address_name_placeholder: Gefðu þessu heimilisfangi einstakt nafn (Vinna, heimili osfrv.)
-      addresses: Heimilisföng
       edit_address: Breyttu heimilisfangi
       label: Heimilisfang heimilisfangs
       new_address: Nýtt heimilisfang
-      no_shipping_addresses_on_file: Engin heimilisföng skráð
       other_address: Annað heimilisfang
       remove_address: Fjarlægðu heimilisfang
       save: Vista
       successfully_created: Heimilisfang hefur verið stofnað.
       successfully_removed: Heimilisfang hefur verið fjarlægt.
-      successfully_saved: Vistað með góðum árangri
       successfully_updated: Uppfært með góðum árangri
-      unsuccessfully_saved: Villa kom upp þegar reynt var að vista heimilisfangið þitt.
-      unsuccessfully_updated: Uppfærsla var þegar reynt var að uppfæra heimilisfangið þitt.
     addresses: Heimilisföng
     adjustable: Stillanlegt
     adjustment: Aðlögun
@@ -1751,7 +1741,6 @@ is:
     void: Ógilt
     weight: Þyngd
     what_is_a_cvv: Hvað er (CVV) kreditkortakóði?
-    what_is_this: Hvað er þetta?
     width: Breidd
     year: Ár
     you_have_no_orders_yet: Þú hefur engar pantanir ennþá

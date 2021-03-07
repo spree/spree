@@ -387,9 +387,6 @@ hu:
       spree/zone:
         one: Zóna
         other: Zónák
-  address_book:
-    save: Mentés
-    successfully_created: Az új cím sikeresen létrehozva
   devise:
     confirmations:
       confirmed: Fiókját sikeresen megerősítettük. Most be van jelentkezve.
@@ -489,23 +486,16 @@ hu:
       delete_text: Tényleg szeretné <br /> törölni ezt a címet?
       delete_title: biztos vagy ebben?
     address_book:
-      add_new_shipping_address: Új cím hozzáadása
-      address_name_label: Cím Név
       address_name_placeholder: Adjon ennek a címnek egyedi nevet (Munkahely, Otthon stb.)
-      addresses: Címek
       edit_address: Cím szerkesztése
       label: Cím Név
       new_address: Új cím
-      no_shipping_addresses_on_file: Nincsenek címek a fájlban
       other_address: Egyéb cím
       remove_address: Cím eltávolítása
       save: Mentés
       successfully_created: A cím sikeresen létrehozva.
       successfully_removed: A címet sikeresen eltávolítottuk.
-      successfully_saved: sikeresen elmentve
       successfully_updated: Sikeresen frissítve
-      unsuccessfully_saved: Hiba történt a cím mentése közben.
-      unsuccessfully_updated: Frissítés történt, amikor megpróbálta frissíteni a címét.
     addresses: Címek
     adjustable: Állítható
     adjustment: Beállítás
@@ -1751,7 +1741,6 @@ hu:
     void: Üres
     weight: Súly
     what_is_a_cvv: Mi az a (CVV) hitelkártya-kód?
-    what_is_this: Mi ez?
     width: Szélesség
     year: Év
     you_have_no_orders_yet: Még nincs megrendelése

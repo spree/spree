@@ -387,9 +387,6 @@ bn:
       spree/zone:
         one: মণ্ডল
         other: অঞ্চলগুলি
-  address_book:
-    save: সংরক্ষণ
-    successfully_created: নতুন ঠিকানা সফলভাবে তৈরি করা হয়েছে
   devise:
     confirmations:
       confirmed: আপনার অ্যাকাউন্টটি সফলভাবে নিশ্চিত হয়ে গেছে। আপনি এখন সাইন ইন করেছেন।
@@ -489,23 +486,16 @@ bn:
       delete_text: আপনি কি এই ঠিকানাটি মুছে ফেলতে চান?
       delete_title: তুমি কি নিশ্চিত?
     address_book:
-      add_new_shipping_address: নতুন ঠিকানা যোগ করুন
-      address_name_label: ঠিকানা নাম
       address_name_placeholder: এই ঠিকানাটিকে একটি অনন্য নাম দিন (কাজের, বাড়ি ইত্যাদি)
-      addresses: ঠিকানা
       edit_address: ঠিকানা সম্পাদনা করুন
       label: ঠিকানা নাম
       new_address: নতুন ঠিকানা
-      no_shipping_addresses_on_file: ফাইলের কোনও ঠিকানা নেই
       other_address: অন্য ঠিকানা
       remove_address: ঠিকানা সরান
       save: সংরক্ষণ
       successfully_created: ঠিকানা সফলভাবে তৈরি করা হয়েছে।
       successfully_removed: ঠিকানা সফলভাবে সরানো হয়েছে।
-      successfully_saved: সফলভাবে সংরক্ষিত
       successfully_updated: সফলভাবে আপডেট হয়েছে Updated
-      unsuccessfully_saved: আপনার ঠিকানাটি সংরক্ষণ করার চেষ্টা করার সময় একটি ত্রুটি হয়েছিল।
-      unsuccessfully_updated: আপনার ঠিকানা আপডেট করার চেষ্টা করার সময় একটি আপডেট হয়েছিল।
     addresses: ঠিকানা
     adjustable: সামঞ্জস্যযোগ্য
     adjustment: সামঞ্জস্য
@@ -1751,7 +1741,6 @@ bn:
     void: শূন্য
     weight: ওজন
     what_is_a_cvv: "(সিভিভি) ক্রেডিট কার্ড কোড কী?"
-    what_is_this: এটা কী?
     width: প্রস্থ
     year: বছর
     you_have_no_orders_yet: আপনার এখনও কোনও আদেশ নেই

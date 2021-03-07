@@ -387,9 +387,6 @@ or:
       spree/zone:
         one: ଜୋନ୍
         other: ଜୋନ୍
-  address_book:
-    save: ସଞ୍ଚୟ କରନ୍ତୁ |
-    successfully_created: ନୂତନ ଠିକଣା ସଫଳତାର ସହିତ ସୃଷ୍ଟି ହୋଇଛି |
   devise:
     confirmations:
       confirmed: ଆପଣଙ୍କର ଖାତା ସଫଳତାର ସହିତ ନିଶ୍ଚିତ ହୋଇଛି | ଆପଣ ବର୍ତ୍ତମାନ ସାଇନ୍ ଇନ୍ କରିଛନ୍ତି |
@@ -489,23 +486,16 @@ or:
       delete_text: ଆପଣ ପ୍ରକୃତରେ ଏହି ଠିକଣା ବିଲୋପ କରିବାକୁ ଚାହୁଁଛନ୍ତି କି?
       delete_title: ତମେ ନିଶ୍ଚିତ କି?
     address_book:
-      add_new_shipping_address: ନୂତନ ଠିକଣା ଯୋଡନ୍ତୁ |
-      address_name_label: ଠିକଣା ନାମ
       address_name_placeholder: ଏହି ଠିକଣାକୁ ଏକ ସ୍ୱତନ୍ତ୍ର ନାମ ଦିଅ (କାର୍ଯ୍ୟ, ଘର, ଇତ୍ୟାଦି) |
-      addresses: ଠିକଣା
       edit_address: ଠିକଣା ସଂପାଦନ କରନ୍ତୁ |
       label: ଠିକଣା ନାମ
       new_address: ନୂତନ ଠିକଣା
-      no_shipping_addresses_on_file: ଫାଇଲରେ କ address ଣସି ଠିକଣା ନାହିଁ |
       other_address: ଅନ୍ୟ ଠିକଣା
       remove_address: ଠିକଣା ଅପସାରଣ କରନ୍ତୁ |
       save: ସଞ୍ଚୟ କରନ୍ତୁ |
       successfully_created: ଠିକଣା ସଫଳତାର ସହିତ ସୃଷ୍ଟି ହୋଇଛି |
       successfully_removed: ଠିକଣା ସଫଳତାର ସହିତ ଅପସାରିତ ହୋଇଛି |
-      successfully_saved: ସଫଳତାର ସହିତ ସଞ୍ଚୟ ହୋଇଛି |
       successfully_updated: ସଫଳତାର ସହିତ ଅଦ୍ୟତନ କରାଯାଇଛି |
-      unsuccessfully_saved: ଆପଣଙ୍କ ଠିକଣା ସଞ୍ଚୟ କରିବାକୁ ଚେଷ୍ଟା କରିବାବେଳେ ଏକ ତ୍ରୁଟି ଥିଲା |
-      unsuccessfully_updated: ଆପଣଙ୍କ ଠିକଣା ଅପଡେଟ୍ କରିବାକୁ ଚେଷ୍ଟା କରିବାବେଳେ ସେଠାରେ ଏକ ଅପଡେଟ୍ ଥିଲା |
     addresses: ଠିକଣା
     adjustable: ନିୟନ୍ତ୍ରିତ |
     adjustment: ଆଡଜଷ୍ଟମେଣ୍ଟ
@@ -1751,7 +1741,6 @@ or:
     void: ଶୂନ୍ୟ
     weight: ଓଜନ
     what_is_a_cvv: ଏକ (CVV) କ୍ରେଡିଟ୍ କାର୍ଡ କୋଡ୍ କ’ଣ?
-    what_is_this: ଏଇଟା କଣ?
     width: ମୋଟେଇ
     year: ବର୍ଷ
     you_have_no_orders_yet: ଆପଣଙ୍କର ଏପର୍ଯ୍ୟନ୍ତ କ orders ଣସି ଆଦେଶ ନାହିଁ |

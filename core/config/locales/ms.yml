@@ -387,9 +387,6 @@ ms:
       spree/zone:
         one: Zon
         other: Zon
-  address_book:
-    save: Jimat
-    successfully_created: Alamat baru berjaya dibuat
   devise:
     confirmations:
       confirmed: Akaun anda berjaya disahkan. Anda kini melog masuk.
@@ -489,23 +486,16 @@ ms:
       delete_text: Adakah anda benar-benar mahu <br /> memadamkan alamat ini?
       delete_title: Adakah anda pasti?
     address_book:
-      add_new_shipping_address: Tambahkan alamat baru
-      address_name_label: Nama Alamat
       address_name_placeholder: Berikan nama unik alamat ini (Tempat Kerja, Rumah, dll.)
-      addresses: Alamat
       edit_address: Edit Alamat
       label: Nama Alamat
       new_address: Alamat Baru
-      no_shipping_addresses_on_file: Tiada alamat dalam fail
       other_address: Alamat lain
       remove_address: Alih keluar Alamat
       save: Jimat
       successfully_created: Alamat berjaya dibuat.
       successfully_removed: Alamat berjaya dikeluarkan.
-      successfully_saved: Berjaya disimpan
       successfully_updated: Dikemas kini dengan jayanya
-      unsuccessfully_saved: Terdapat ralat semasa cuba menyimpan alamat anda.
-      unsuccessfully_updated: Terdapat kemas kini semasa cuba mengemas kini alamat anda.
     addresses: Alamat
     adjustable: Boleh laras
     adjustment: Penyesuaian
@@ -1751,7 +1741,6 @@ ms:
     void: Tidak sah
     weight: Berat
     what_is_a_cvv: Apakah Kod Kad Kredit (CVV)?
-    what_is_this: Apakah ini?
     width: Lebar
     year: Tahun
     you_have_no_orders_yet: Anda belum mempunyai pesanan

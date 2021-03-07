@@ -387,9 +387,6 @@ he:
       spree/zone:
         one: אֵזוֹר
         other: אזורים
-  address_book:
-    save: להציל
-    successfully_created: כתובת חדשה נוצרה בהצלחה
   devise:
     confirmations:
       confirmed: חשבונך אושר בהצלחה. אתה מחובר כעת.
@@ -489,23 +486,16 @@ he:
       delete_text: האם אתה באמת רוצה ש <br /> ימחק כתובת זו?
       delete_title: האם אתה בטוח?
     address_book:
-      add_new_shipping_address: הוסף כתובת חדשה
-      address_name_label: כתובת
       address_name_placeholder: תן לכתובת זו שם ייחודי (עבודה, בית וכו ')
-      addresses: כתובות
       edit_address: ערוך כתובת
       label: כתובת
       new_address: כתובת חדשה
-      no_shipping_addresses_on_file: אין כתובות בתיק
       other_address: כתובת אחרת
       remove_address: הסר כתובת
       save: להציל
       successfully_created: הכתובת נוצרה בהצלחה.
       successfully_removed: הכתובת הוסרה בהצלחה.
-      successfully_saved: נשמר בהצלחה
       successfully_updated: עודכן בהצלחה
-      unsuccessfully_saved: אירעה שגיאה בניסיון לשמור את הכתובת שלך.
-      unsuccessfully_updated: היה עדכון בזמן שניסה לעדכן את הכתובת שלך.
     addresses: כתובות
     adjustable: מתכוונן
     adjustment: התאמה
@@ -1751,7 +1741,6 @@ he:
     void: בָּטֵל
     weight: מִשׁקָל
     what_is_a_cvv: מהו קוד כרטיס אשראי (CVV)?
-    what_is_this: מה זה?
     width: רוֹחַב
     year: שָׁנָה
     you_have_no_orders_yet: אין לך עדיין הזמנות

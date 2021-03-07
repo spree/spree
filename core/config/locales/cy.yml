@@ -547,9 +547,6 @@ cy:
         other: Parthau
         two: Parthau
         zero: Dim Parth
-  address_book:
-    save: Arbedwch
-    successfully_created: Mae cyfeiriad newydd wedi'i greu yn llwyddiannus
   devise:
     confirmations:
       confirmed: Cadarnhawyd eich cyfrif yn llwyddiannus. Rydych chi bellach wedi mewngofnodi.
@@ -653,23 +650,16 @@ cy:
       delete_text: Ydych chi wir eisiau i <br /> ddileu'r cyfeiriad hwn?
       delete_title: Wyt ti'n siwr?
     address_book:
-      add_new_shipping_address: Ychwanegu cyfeiriad newydd
-      address_name_label: Enw'r Cyfeiriad
       address_name_placeholder: Rhowch enw unigryw i'r cyfeiriad hwn (Gwaith, Cartref, ac ati)
-      addresses: Cyfeiriadau
       edit_address: Golygu Cyfeiriad
       label: Enw'r Cyfeiriad
       new_address: Cyfeiriad Newydd
-      no_shipping_addresses_on_file: Dim cyfeiriadau ar ffeil
       other_address: Cyfeiriad arall
       remove_address: Dileu Cyfeiriad
       save: Arbedwch
       successfully_created: Mae'r cyfeiriad wedi'i greu'n llwyddiannus.
       successfully_removed: Mae'r cyfeiriad wedi'i dynnu'n llwyddiannus.
-      successfully_saved: Wedi'i arbed yn llwyddiannus
       successfully_updated: Wedi'i ddiweddaru'n llwyddiannus
-      unsuccessfully_saved: Bu gwall wrth geisio arbed eich cyfeiriad.
-      unsuccessfully_updated: Cafwyd diweddariad wrth geisio diweddaru eich cyfeiriad.
     addresses: Cyfeiriadau
     adjustable: Addasadwy
     adjustment: Addasiad
@@ -1927,7 +1917,6 @@ cy:
     void: Yn ddi-rym
     weight: Pwysau
     what_is_a_cvv: Beth yw Cod Cerdyn Credyd (CVV)?
-    what_is_this: Beth ydy hyn?
     width: Lled
     year: Blwyddyn
     you_have_no_orders_yet: Nid oes gennych unrhyw archebion eto

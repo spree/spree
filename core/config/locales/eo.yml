@@ -387,9 +387,6 @@ eo:
       spree/zone:
         one: Zono
         other: Zonoj
-  address_book:
-    save: Savi
-    successfully_created: Nova adreso sukcese kreiĝis
   devise:
     confirmations:
       confirmed: Via konto estis sukcese konfirmita. Vi nun estas ensalutita.
@@ -489,23 +486,16 @@ eo:
       delete_text: Ĉu vi vere volas <br /> forigi ĉi tiun adreson?
       delete_title: Ĉu vi certas?
     address_book:
-      add_new_shipping_address: Aldonu novan adreson
-      address_name_label: Adresa Nomo
       address_name_placeholder: Donu al ĉi tiu adreso unikan nomon (Laboro, Hejmo, ktp.)
-      addresses: Adresoj
       edit_address: Redaktu adreson
       label: Adresa Nomo
       new_address: Nova Adreso
-      no_shipping_addresses_on_file: Neniuj adresoj en dosiero
       other_address: Alia adreso
       remove_address: Forigi adreson
       save: Savi
       successfully_created: Adreso sukcese kreiĝis.
       successfully_removed: Adreso estis sukcese forigita.
-      successfully_saved: Konservita sukcese
       successfully_updated: Ĝisdatigita sukcese
-      unsuccessfully_saved: Estis eraro dum mi provis konservi vian adreson.
-      unsuccessfully_updated: Estis ĝisdatigo provante ĝisdatigi vian adreson.
     addresses: Adresoj
     adjustable: Agordebla
     adjustment: Alĝustigo
@@ -1751,7 +1741,6 @@ eo:
     void: Malpleno
     weight: Pezo
     what_is_a_cvv: Kio estas Kreditkarta Kodo (CVV)?
-    what_is_this: Kio estas tio?
     width: Larĝo
     year: Jaro
     you_have_no_orders_yet: Vi ankoraŭ ne havas mendojn

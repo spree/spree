@@ -387,9 +387,6 @@ de-DE:
       spree/zone:
         one: Zone
         other: Zonen
-  address_book:
-    save: speichern
-    successfully_created: Neue Adresse wurde erfolgreich erstellt
   devise:
     confirmations:
       confirmed: Ihr Konto wurde erfolgreich bestätigt. Sie sind jetzt angemeldet.
@@ -489,23 +486,16 @@ de-DE:
       delete_text: Möchten Sie wirklich, dass <br /> diese Adresse löscht?
       delete_title: Bist du sicher?
     address_book:
-      add_new_shipping_address: Neue Adresse hinzufügen
-      address_name_label: Adressname
       address_name_placeholder: Geben Sie dieser Adresse einen eindeutigen Namen (Arbeit, Zuhause usw.)
-      addresses: Adressen
       edit_address: Adresse bearbeiten
       label: Adressname
       new_address: Neue Adresse
-      no_shipping_addresses_on_file: Keine Adressen in der Datei
       other_address: Andere Adresse
       remove_address: Adresse entfernen
       save: speichern
       successfully_created: Die Adresse wurde erfolgreich erstellt.
       successfully_removed: Die Adresse wurde erfolgreich entfernt.
-      successfully_saved: Erfolgreich gespeichert
       successfully_updated: Erfolgreich geupdated
-      unsuccessfully_saved: Beim Versuch, Ihre Adresse zu speichern, ist ein Fehler aufgetreten.
-      unsuccessfully_updated: Beim Versuch, Ihre Adresse zu aktualisieren, wurde ein Update durchgeführt.
     addresses: Adressen
     adjustable: Einstellbar
     adjustment: Einstellung
@@ -1751,7 +1741,6 @@ de-DE:
     void: Leere
     weight: Gewicht
     what_is_a_cvv: Was ist ein (CVV) Kreditkartencode?
-    what_is_this: Was ist das?
     width: Breite
     year: Jahr
     you_have_no_orders_yet: Sie haben noch keine Bestellungen

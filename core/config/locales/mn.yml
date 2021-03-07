@@ -387,9 +387,6 @@ mn:
       spree/zone:
         one: Бүс
         other: Бүсүүд
-  address_book:
-    save: Хадгалах
-    successfully_created: Шинэ хаяг амжилттай үүслээ
   devise:
     confirmations:
       confirmed: Таны данс амжилттай баталгаажлаа. Та одоо нэвтэрсэн байна.
@@ -489,23 +486,16 @@ mn:
       delete_text: Та энэ хаягийг устгахыг <br /> үнэхээр хүсч байна уу?
       delete_title: Чи итгэлтэй байна уу?
     address_book:
-      add_new_shipping_address: Шинэ хаяг нэмэх
-      address_name_label: Хаягийн нэр
       address_name_placeholder: Энэ хаягийг өвөрмөц нэрээр нэрлэнэ үү (Ажил, Гэр гэх мэт)
-      addresses: Хаяг
       edit_address: Хаяг засах
       label: Хаягийн нэр
       new_address: Шинэ хаяг
-      no_shipping_addresses_on_file: Файл дээр хаяг байхгүй байна
       other_address: Бусад хаяг
       remove_address: Хаяг устгах
       save: Хадгалах
       successfully_created: Хаяг амжилттай үүсгэсэн.
       successfully_removed: Хаягийг амжилттай устгалаа.
-      successfully_saved: Амжилттай хадгалагдсан
       successfully_updated: Амжилттай шинэчлэгдсэн
-      unsuccessfully_saved: Таны хаягийг хадгалах гэж байхад алдаа гарав.
-      unsuccessfully_updated: Таны хаягийг шинэчлэхийг оролдож байх үед шинэчлэлт гарсан.
     addresses: Хаяг
     adjustable: Тохируулах боломжтой
     adjustment: Тохируулга
@@ -1751,7 +1741,6 @@ mn:
     void: Хүчингүй
     weight: Жин
     what_is_a_cvv: "(CVV) зээлийн картын код гэж юу вэ?"
-    what_is_this: Энэ юу вэ?
     width: Өргөн
     year: Он
     you_have_no_orders_yet: Танд одоогоор захиалга алга байна

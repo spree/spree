@@ -387,9 +387,6 @@ eu:
       spree/zone:
         one: Zona
         other: Zonaldeak
-  address_book:
-    save: Gorde
-    successfully_created: Helbide berria behar bezala sortu da
   devise:
     confirmations:
       confirmed: Zure kontua behar bezala baieztatu da. Saioa hasi duzu.
@@ -489,23 +486,16 @@ eu:
       delete_text: Ziur zaude <br /> helbide hau ezabatzea nahi duzula?
       delete_title: Ziur zaude?
     address_book:
-      add_new_shipping_address: Gehitu helbide berria
-      address_name_label: Helbidearen izena
       address_name_placeholder: Eman helbide honi izen berezia (Lana, Etxea, etab.)
-      addresses: Helbideak
       edit_address: Editatu helbidea
       label: Helbidearen izena
       new_address: Helbide berria
-      no_shipping_addresses_on_file: Ez dago helbiderik artxibatuta
       other_address: Beste helbidea
       remove_address: Kendu helbidea
       save: Gorde
       successfully_created: Helbidea ondo sortu da.
       successfully_removed: Helbidea behar bezala ezabatu da.
-      successfully_saved: Behar bezala gorde da
       successfully_updated: Eguneratu da
-      unsuccessfully_saved: Errore bat gertatu da zure helbidea gordetzen saiatzean.
-      unsuccessfully_updated: Eguneratze bat gertatu da zure helbidea eguneratzen saiatzean.
     addresses: Helbideak
     adjustable: Erregulagarria
     adjustment: Doikuntza
@@ -1751,7 +1741,6 @@ eu:
     void: Hutsik
     weight: Pisua
     what_is_a_cvv: Zer da (CVV) kreditu txartelaren kodea?
-    what_is_this: Zer da hau?
     width: Zabalera
     year: Urtea
     you_have_no_orders_yet: Oraindik ez duzu agindurik

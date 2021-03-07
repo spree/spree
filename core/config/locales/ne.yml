@@ -387,9 +387,6 @@ ne:
       spree/zone:
         one: क्षेत्र
         other: क्षेत्रहरू
-  address_book:
-    save: बचत गर्नुहोस्
-    successfully_created: नयाँ ठेगाना सफलतापूर्वक सिर्जना गरिएको छ
   devise:
     confirmations:
       confirmed: तपाईंको खाता सफलतापूर्वक पुष्टि भयो। तपाईं अब साईन ईन हुनुहुन्छ।
@@ -489,23 +486,16 @@ ne:
       delete_text: के तपाई वास्तवमै चाहानुहुन्छ <br /> यो ठेगाना मेटाउनको लागि?
       delete_title: साच्चै हो?
     address_book:
-      add_new_shipping_address: नयाँ ठेगाना थप्नुहोस्
-      address_name_label: ठेगाना नाम
       address_name_placeholder: यस ठेगानालाई एक अद्वितीय नाम दिनुहोस् (कार्य, घर, आदि)।
-      addresses: ठेगानाहरू
       edit_address: ठेगाना सम्पादन गर्नुहोस्
       label: ठेगाना नाम
       new_address: नयाँ ठेगाना
-      no_shipping_addresses_on_file: फाईलमा कुनै ठेगानाहरू छैनन्
       other_address: अन्य ठेगाना
       remove_address: ठेगाना हटाउनुहोस्
       save: बचत गर्नुहोस्
       successfully_created: ठेगाना सफलतापूर्वक सिर्जना गरिएको छ।
       successfully_removed: ठेगाना सफलतापूर्वक हटाइएको छ।
-      successfully_saved: सफलतापूर्वक बचत गरियो
       successfully_updated: सफलतापूर्वक अपडेट गरियो
-      unsuccessfully_saved: तपाईंको ठेगाना बचत गर्ने क्रममा त्रुटि भयो।
-      unsuccessfully_updated: तपाईंको ठेगाना अपडेट गर्ने प्रयास गर्दा त्यहाँ अपडेटहरू थिए।
     addresses: ठेगानाहरू
     adjustable: समायोज्य
     adjustment: समायोजन
@@ -1751,7 +1741,6 @@ ne:
     void: शून्य
     weight: तौल
     what_is_a_cvv: "(CVV) क्रेडिट कार्ड कोड के हो?"
-    what_is_this: यो के हो?
     width: चौड़ाई
     year: बर्ष
     you_have_no_orders_yet: तपाईंसँग अहिलेसम्म कुनै अर्डर छैन

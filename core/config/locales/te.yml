@@ -387,9 +387,6 @@ te:
       spree/zone:
         one: జోన్
         other: మండలాలు
-  address_book:
-    save: సేవ్ చేయండి
-    successfully_created: క్రొత్త చిరునామా విజయవంతంగా సృష్టించబడింది
   devise:
     confirmations:
       confirmed: మీ ఖాతా విజయవంతంగా నిర్ధారించబడింది. మీరు ఇప్పుడు సైన్ ఇన్ చేసారు.
@@ -489,23 +486,16 @@ te:
       delete_text: "<br /> ఈ చిరునామాను తొలగించాలని మీరు నిజంగా కోరుకుంటున్నారా?"
       delete_title: మీరు చెప్పేది నిజమా?
     address_book:
-      add_new_shipping_address: క్రొత్త చిరునామాను జోడించండి
-      address_name_label: చిరునామా పేరు
       address_name_placeholder: ఈ చిరునామాకు ప్రత్యేకమైన పేరు ఇవ్వండి (పని, ఇల్లు మొదలైనవి)
-      addresses: చిరునామాలు
       edit_address: చిరునామాను సవరించండి
       label: చిరునామా పేరు
       new_address: క్రొత్త చిరునామా
-      no_shipping_addresses_on_file: ఫైల్‌లో చిరునామాలు లేవు
       other_address: ఇతర చిరునామా
       remove_address: చిరునామాను తొలగించండి
       save: సేవ్ చేయండి
       successfully_created: చిరునామా విజయవంతంగా సృష్టించబడింది.
       successfully_removed: చిరునామా విజయవంతంగా తొలగించబడింది.
-      successfully_saved: విజయవంతంగా సేవ్ చేయబడింది
       successfully_updated: విజయవంతంగా నవీకరించబడింది
-      unsuccessfully_saved: మీ చిరునామాను సేవ్ చేయడానికి ప్రయత్నిస్తున్నప్పుడు లోపం ఉంది.
-      unsuccessfully_updated: మీ చిరునామాను నవీకరించడానికి ప్రయత్నిస్తున్నప్పుడు నవీకరణ ఉంది.
     addresses: చిరునామాలు
     adjustable: సర్దుబాటు
     adjustment: సర్దుబాటు
@@ -1751,7 +1741,6 @@ te:
     void: రద్దు
     weight: బరువు
     what_is_a_cvv: "(సివివి) క్రెడిట్ కార్డ్ కోడ్ అంటే ఏమిటి?"
-    what_is_this: ఇది ఏమిటి?
     width: వెడల్పు
     year: సంవత్సరం
     you_have_no_orders_yet: మీకు ఇంకా ఆర్డర్లు లేవు
