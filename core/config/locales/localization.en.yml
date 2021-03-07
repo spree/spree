@@ -20,3 +20,5 @@ en:
       fpr_human_friendly_date_time_format: M j, Y at H:i
     i18n:
       this_file_language: English (en)
+    under_price: Under %{price}
+    or_over_price: "%{price} or over"
