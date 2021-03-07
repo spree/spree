@@ -953,6 +953,7 @@ bn:
     none: কিছুই না
     not: না
     not_available: এন / এ
+    not_found: "%{resource} পাওয়া যায় নি"
     note: বিঃদ্রঃ
     notice_messages:
       icon_removed: চিত্রটি সফলভাবে সরানো হয়েছে
@@ -1240,7 +1241,9 @@ bn:
     rules: বিধি
     safe: নিরাপদ
     sales_total: বিক্রয় মোট
+    sales_total_description: সমস্ত অর্ডার জন্য মোট বিক্রয়
     sales_totals: বিক্রয় মোট
+    save_and_continue: সংরক্ষণ করুন এবং অবিরত থাকুন
     saving: সংরক্ষণ করা হচ্ছে
     say_no: না
     say_yes: হ্যাঁ

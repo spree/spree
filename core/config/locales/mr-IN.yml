@@ -953,6 +953,7 @@ mr-IN:
     none: काहीही नाही
     not: नाही
     not_available: एन / ए
+    not_found: "%{resource} आढळले नाही"
     note: टीप
     notice_messages:
       icon_removed: प्रतिमा यशस्वीरित्या काढली गेली आहे
@@ -1240,7 +1241,9 @@ mr-IN:
     rules: नियम
     safe: सुरक्षित
     sales_total: एकूण विक्री
+    sales_total_description: सर्व आदेश विक्री एकूण
     sales_totals: विक्री एकूण
+    save_and_continue: जतन करा आणि सुरू ठेवा
     saving: बचत
     say_no: नाही
     say_yes: होय

@@ -953,6 +953,7 @@ ms:
     none: Tiada
     not: tidak
     not_available: N / A
+    not_found: "%{resource} tidak dijumpai"
     note: Catatan
     notice_messages:
       icon_removed: Gambar berjaya dikeluarkan
@@ -1240,7 +1241,9 @@ ms:
     rules: Peraturan
     safe: Selamat
     sales_total: Jumlah Jualan
+    sales_total_description: Jumlah Jualan Untuk Semua Pesanan
     sales_totals: Jumlah Jualan
+    save_and_continue: Simpan dan Teruskan
     saving: Menyimpan
     say_no: Tidak
     say_yes: Ya

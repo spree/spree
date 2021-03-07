@@ -953,6 +953,7 @@ pt-PT:
     none: Nenhum
     not: não
     not_available: N / D
+    not_found: "%{resource} não foi encontrado"
     note: Observação
     notice_messages:
       icon_removed: A imagem foi removida com sucesso
@@ -1240,7 +1241,9 @@ pt-PT:
     rules: Regras
     safe: Seguro
     sales_total: Total de Vendas
+    sales_total_description: Total de vendas para todos os pedidos
     sales_totals: Total de vendas
+    save_and_continue: Salve e continue
     saving: Salvando
     say_no: Não
     say_yes: sim

@@ -953,6 +953,7 @@ is:
     none: Enginn
     not: ekki
     not_available: N / A
+    not_found: "%{resource} finnst ekki"
     note: Athugið
     notice_messages:
       icon_removed: Mynd hefur verið fjarlægð
@@ -1240,7 +1241,9 @@ is:
     rules: Reglur
     safe: Öruggt
     sales_total: Sala samtals
+    sales_total_description: Sala samtals fyrir allar pantanir
     sales_totals: Sölutölur
+    save_and_continue: Vista og halda áfram
     saving: Sparar
     say_no: Nei
     say_yes: Já

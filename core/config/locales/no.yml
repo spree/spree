@@ -953,6 +953,7 @@
     none: Ingen
     not: ikke
     not_available: Ikke relevant
+    not_found: "%{resource} ble ikke funnet"
     note: Merk
     notice_messages:
       icon_removed: Bildet er fjernet
@@ -1240,7 +1241,9 @@
     rules: Regler
     safe: Sikker
     sales_total: Salg totalt
+    sales_total_description: Salg totalt for alle bestillinger
     sales_totals: Salg Totaler
+    save_and_continue: Lagre og fortsett
     saving: Sparer
     say_no: Nei
     say_yes: Ja

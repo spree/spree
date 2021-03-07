@@ -953,6 +953,7 @@ fr-FR:
     none: Aucun
     not: ne pas
     not_available: N / A
+    not_found: "%{resource} est introuvable"
     note: Noter
     notice_messages:
       icon_removed: L'image a été supprimée avec succès
@@ -1240,7 +1241,9 @@ fr-FR:
     rules: Des règles
     safe: En sécurité
     sales_total: Total des ventes
+    sales_total_description: Total des ventes pour toutes les commandes
     sales_totals: Totaux des ventes
+    save_and_continue: Sauvegarder et continuer
     saving: Économie
     say_no: Non
     say_yes: Oui

@@ -953,6 +953,7 @@ mk:
     none: Ништо
     not: не
     not_available: N / A
+    not_found: "%{resource} не е пронајден"
     note: Забелешка
     notice_messages:
       icon_removed: Сликата е успешно отстранета
@@ -1240,7 +1241,9 @@ mk:
     rules: Правила
     safe: Безбедно
     sales_total: Вкупно продажба
+    sales_total_description: Вкупно продажба за сите нарачки
     sales_totals: Вкупни продажби
+    save_and_continue: Зачувајте и продолжете
     saving: Зачувува
     say_no: Не
     say_yes: Да

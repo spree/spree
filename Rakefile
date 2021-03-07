@@ -29,7 +29,7 @@ namespace :i18n do
   desc 'Translates keys found in the base file (en.yml) to all other languages.'
   task :translate do
     Dir.chdir("#{File.dirname(__FILE__)}/core") do
-      sh 'i18n-tasks translate-missing && i18n-tasks normalize '
+      sh 'i18n-tasks normalize && i18n-tasks translate-missing'
     end
   end
 end

@@ -953,6 +953,7 @@ kn:
     none: ಯಾವುದೂ
     not: ಅಲ್ಲ
     not_available: ಎನ್ / ಎ
+    not_found: "%{resource} ಕಂಡುಬಂದಿಲ್ಲ"
     note: ಸೂಚನೆ
     notice_messages:
       icon_removed: ಚಿತ್ರವನ್ನು ಯಶಸ್ವಿಯಾಗಿ ತೆಗೆದುಹಾಕಲಾಗಿದೆ
@@ -1240,7 +1241,9 @@ kn:
     rules: ನಿಯಮಗಳು
     safe: ಸುರಕ್ಷಿತ
     sales_total: ಮಾರಾಟ ಒಟ್ಟು
+    sales_total_description: ಎಲ್ಲಾ ಆದೇಶಗಳಿಗೆ ಮಾರಾಟ ಒಟ್ಟು
     sales_totals: ಮಾರಾಟದ ಮೊತ್ತ
+    save_and_continue: ಉಳಿಸಿ ಮತ್ತು ಮುಂದುವರಿಸಿ
     saving: ಉಳಿಸಲಾಗುತ್ತಿದೆ
     say_no: ಇಲ್ಲ
     say_yes: ಹೌದು

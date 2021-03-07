@@ -953,6 +953,7 @@ lo:
     none: ບໍ່ມີ
     not: ບໍ່
     not_available: N / A
+    not_found: "%{resource} ບໍ່ພົບ"
     note: ຫມາຍ​ເຫດ​
     notice_messages:
       icon_removed: ຮູບພາບຖືກລຶບອອກແລ້ວ
@@ -1240,7 +1241,9 @@ lo:
     rules: ກົດລະບຽບ
     safe: ປອດໄພ
     sales_total: ຍອດຂາຍທັງ ໝົດ
+    sales_total_description: ຍອດຂາຍທັງ ໝົດ ສຳ ລັບທຸກ ຄຳ ສັ່ງ
     sales_totals: ຍອດຂາຍ
+    save_and_continue: ບັນທຶກແລະສືບຕໍ່
     saving: ປະຢັດ
     say_no: ບໍ່
     say_yes: ແມ່ນແລ້ວ

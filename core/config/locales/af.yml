@@ -953,6 +953,7 @@ af:
     none: Geen
     not: nie
     not_available: Nvt
+    not_found: "%{resource} word nie gevind nie"
     note: Let wel
     notice_messages:
       icon_removed: Prent is suksesvol verwyder
@@ -1240,7 +1241,9 @@ af:
     rules: Reëls
     safe: Veilig
     sales_total: Verkope totaal
+    sales_total_description: Verkooptotaal vir alle bestellings
     sales_totals: Verkooptotale
+    save_and_continue: Stoor en gaan voort
     saving: Besparing
     say_no: Geen
     say_yes: Ja

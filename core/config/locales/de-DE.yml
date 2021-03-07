@@ -953,6 +953,7 @@ de-DE:
     none: Keiner
     not: nicht
     not_available: N / A
+    not_found: "%{resource} wurde nicht gefunden"
     note: Hinweis
     notice_messages:
       icon_removed: Bild wurde erfolgreich entfernt
@@ -1240,7 +1241,9 @@ de-DE:
     rules: Regeln
     safe: Sicher
     sales_total: Umsatz insgesamt
+    sales_total_description: Verkaufssumme für alle Bestellungen
     sales_totals: Verkaufssummen
+    save_and_continue: Speichern und fortfahren
     saving: Sparen
     say_no: Nein
     say_yes: Ja

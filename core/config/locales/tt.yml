@@ -953,6 +953,7 @@ tt:
     none: Беркем дә юк
     not: түгел
     not_available: М / Ю
+    not_found: "%{resource} табылмады"
     note: Тамга
     notice_messages:
       icon_removed: Рәсем уңышлы бетерелде
@@ -1240,7 +1241,9 @@ tt:
     rules: Кагыйдәләр
     safe: Куркынычсыз
     sales_total: Сатуның гомуми
+    sales_total_description: Барлык заказлар өчен сату гомуми
     sales_totals: Сату барлыгы
+    save_and_continue: Саклагыз һәм дәвам итегез
     saving: Саклау
     say_no: ".К"
     say_yes: Әйе

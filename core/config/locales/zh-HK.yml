@@ -953,6 +953,7 @@ zh-HK:
     none: 没有
     not: 不是
     not_available: 不适用
+    not_found: 找不到%{resource}
     note: 笔记
     notice_messages:
       icon_removed: 图像已成功删除
@@ -1240,7 +1241,9 @@ zh-HK:
     rules: 规则
     safe: 安全的
     sales_total: 总销量
+    sales_total_description: 所有订单的销售总额
     sales_totals: 销售总额
+    save_and_continue: 保存并继续
     saving: 保存
     say_no: 不
     say_yes: 是的

@@ -953,6 +953,7 @@ en:
     none: None
     not: not
     not_available: N/A
+    not_found: "%{resource} is not found"
     note: Note
     notice_messages:
       icon_removed: Image has been successfully removed
@@ -1240,7 +1241,9 @@ en:
     rules: Rules
     safe: Safe
     sales_total: Sales Total
+    sales_total_description: Sales Total For All Orders
     sales_totals: Sales Totals
+    save_and_continue: Save and Continue
     saving: Saving
     say_no: 'No'
     say_yes: 'Yes'

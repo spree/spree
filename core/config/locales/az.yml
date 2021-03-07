@@ -953,6 +953,7 @@ az:
     none: Yoxdur
     not: yox
     not_available: Yoxdur
+    not_found: "%{resource} tapılmadı"
     note: Qeyd
     notice_messages:
       icon_removed: Şəkil uğurla silindi
@@ -1240,7 +1241,9 @@ az:
     rules: Qaydalar
     safe: Təhlükəsiz
     sales_total: Satış cəmi
+    sales_total_description: Bütün sifarişlər üçün cəmi satış
     sales_totals: Satış cəmi
+    save_and_continue: Saxla və davam edin
     saving: Qənaət
     say_no: Yox
     say_yes: Bəli

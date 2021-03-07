@@ -953,6 +953,7 @@ eo:
     none: Neniu
     not: ne
     not_available: N / A
+    not_found: "%{resource} ne troviĝas"
     note: Notu
     notice_messages:
       icon_removed: Bildo estis sukcese forigita
@@ -1240,7 +1241,9 @@ eo:
     rules: Reguloj
     safe: Sekura
     sales_total: Vendototalo
+    sales_total_description: Vendototalo Por Ĉiuj Mendoj
     sales_totals: Vendototaloj
+    save_and_continue: Konservu kaj Daŭrigu
     saving: Ŝparante
     say_no: Ne
     say_yes: Jes

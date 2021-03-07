@@ -1125,6 +1125,7 @@ cy:
     none: Dim
     not: ddim
     not_available: Amherthnasol
+    not_found: ni cheir %{resource}
     note: Nodyn
     notice_messages:
       icon_removed: Mae'r ddelwedd wedi'i thynnu'n llwyddiannus
@@ -1412,7 +1413,9 @@ cy:
     rules: Rheolau
     safe: Yn ddiogel
     sales_total: Cyfanswm Gwerthu
+    sales_total_description: Cyfanswm Gwerthu Ar Gyfer Pob Gorchymyn
     sales_totals: Cyfanswm Gwerthiannau
+    save_and_continue: Arbed a Parhau
     saving: Arbed
     say_no: Na
     say_yes: Ydw

@@ -1039,6 +1039,7 @@ sl:
     none: Nobenega
     not: ne
     not_available: N / A
+    not_found: "%{resource} ni mogoče najti"
     note: Opomba
     notice_messages:
       icon_removed: Slika je bila uspešno odstranjena
@@ -1326,7 +1327,9 @@ sl:
     rules: Pravila
     safe: Varno
     sales_total: Prodaja skupaj
+    sales_total_description: Skupna prodaja za vsa naročila
     sales_totals: Vsote prodaje
+    save_and_continue: Shrani in nadaljuj
     saving: Shranjevanje
     say_no: Ne
     say_yes: Da

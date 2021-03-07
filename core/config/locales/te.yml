@@ -953,6 +953,7 @@ te:
     none: ఏదీ లేదు
     not: కాదు
     not_available: ఎన్ / ఎ
+    not_found: "%{resource} కనుగొనబడలేదు"
     note: గమనిక
     notice_messages:
       icon_removed: చిత్రం విజయవంతంగా తొలగించబడింది
@@ -1240,7 +1241,9 @@ te:
     rules: నియమాలు
     safe: సురక్షితం
     sales_total: అమ్మకాలు మొత్తం
+    sales_total_description: అన్ని ఆర్డర్ల కోసం అమ్మకాలు మొత్తం
     sales_totals: మొత్తం అమ్మకాలు
+    save_and_continue: సేవ్ చేసి కొనసాగించండి
     saving: సేవ్ చేస్తోంది
     say_no: లేదు
     say_yes: అవును

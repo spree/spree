@@ -953,6 +953,7 @@ uz:
     none: Yo'q
     not: emas
     not_available: Yo'q
+    not_found: "%{resource} topilmadi"
     note: Eslatma
     notice_messages:
       icon_removed: Rasm muvaffaqiyatli olib tashlandi
@@ -1240,7 +1241,9 @@ uz:
     rules: Qoidalar
     safe: Xavfsiz
     sales_total: Savdo jami
+    sales_total_description: Barcha buyurtmalar uchun savdo hajmi
     sales_totals: Sotish natijalari
+    save_and_continue: Saqlang va davom eting
     saving: Saqlash
     say_no: Yo'q
     say_yes: Ha

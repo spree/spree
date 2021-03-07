@@ -953,6 +953,7 @@ ne:
     none: कुनै पनि होईन
     not: हैन
     not_available: N / A
+    not_found: "%{resource} भेटिएन"
     note: नोट
     notice_messages:
       icon_removed: छवि सफलतापूर्वक हटाइएको छ
@@ -1240,7 +1241,9 @@ ne:
     rules: नियमहरू
     safe: सुरक्षित
     sales_total: बिक्री कुल
+    sales_total_description: सबै अर्डरहरूको लागि बिक्री कुल
     sales_totals: बिक्री Totals
+    save_and_continue: बचत गर्नुहोस् र जारी राख्नुहोस्
     saving: बचत गर्दै
     say_no: होईन
     say_yes: हो

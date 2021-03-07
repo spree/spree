@@ -953,6 +953,7 @@ tl:
     none: Wala
     not: hindi
     not_available: N / A
+    not_found: "%{resource} ay hindi natagpuan"
     note: Tandaan
     notice_messages:
       icon_removed: Matagumpay na naalis ang imahe
@@ -1240,7 +1241,9 @@ tl:
     rules: Panuntunan
     safe: Ligtas
     sales_total: Kabuuan sa Pagbebenta
+    sales_total_description: Kabuuang Benta Para sa Lahat ng Order
     sales_totals: Mga Kabuuang Benta
+    save_and_continue: I-save at magpatuloy
     saving: Nagse-save
     say_no: Hindi
     say_yes: Oo

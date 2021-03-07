@@ -953,6 +953,7 @@ hu:
     none: Egyik sem
     not: nem
     not_available: N / A
+    not_found: A %{resource} nem található
     note: jegyzet
     notice_messages:
       icon_removed: A kép sikeresen eltávolítva
@@ -1240,7 +1241,9 @@ hu:
     rules: Szabályok
     safe: Biztonságos
     sales_total: Értékesítés összesen
+    sales_total_description: Értékesítés az összes megrendeléshez
     sales_totals: Értékesítési összegek
+    save_and_continue: Mentés és folytatás
     saving: Megtakarítás
     say_no: Nem
     say_yes: Igen

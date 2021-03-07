@@ -953,6 +953,7 @@ ka:
     none: არცერთი
     not: არა
     not_available: N / A
+    not_found: "%{resource} არ არის ნაპოვნი"
     note: შენიშვნა
     notice_messages:
       icon_removed: სურათი წარმატებით წაიშალა
@@ -1240,7 +1241,9 @@ ka:
     rules: წესები
     safe: Უსაფრთხო
     sales_total: გაყიდვების სულ
+    sales_total_description: გაყიდვების ჯამი ყველა შეკვეთისთვის
     sales_totals: გაყიდვების სულ
+    save_and_continue: შენახვა და გაგრძელება
     saving: Შენახვა
     say_no: არა
     say_yes: დიახ

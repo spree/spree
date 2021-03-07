@@ -953,6 +953,7 @@ mn:
     none: Аль нь ч биш
     not: үгүй
     not_available: Үгүй
+    not_found: "%{resource} олдсонгүй"
     note: Тэмдэглэл
     notice_messages:
       icon_removed: Зургийг амжилттай устгалаа
@@ -1240,7 +1241,9 @@ mn:
     rules: Дүрэм
     safe: Аюулгүй
     sales_total: Нийт борлуулалт
+    sales_total_description: Бүх захиалгын нийт борлуулалт
     sales_totals: Борлуулалтын дүн
+    save_and_continue: Хадгалж үргэлжлүүлээрэй
     saving: Хадгалах
     say_no: Үгүй
     say_yes: Тийм ээ

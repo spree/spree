@@ -107,6 +107,7 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
   end
 
   def resource_not_found
+    # i18n-tasks-use I18n.t('spree.not_found')
     flash[:error] = flash_message_for(model_class.new, :not_found)
     redirect_to collection_url
   end

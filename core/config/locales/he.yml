@@ -953,6 +953,7 @@ he:
     none: אף אחד
     not: לֹא
     not_available: לא
+    not_found: "%{resource} לא נמצא"
     note: פתק
     notice_messages:
       icon_removed: התמונה הוסרה בהצלחה
@@ -1240,7 +1241,9 @@ he:
     rules: כללים
     safe: בטוח
     sales_total: סך מכירות
+    sales_total_description: סה"כ מכירות לכל ההזמנות
     sales_totals: סך מכירות
+    save_and_continue: שמור והמשך
     saving: חִסָכוֹן
     say_no: לא
     say_yes: כן

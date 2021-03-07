@@ -953,6 +953,7 @@ el:
     none: Κανένας
     not: δεν
     not_available: ΟΧΙ
+    not_found: "%{resource} δεν βρέθηκε"
     note: Σημείωση
     notice_messages:
       icon_removed: Η εικόνα καταργήθηκε με επιτυχία
@@ -1240,7 +1241,9 @@ el:
     rules: Κανόνες
     safe: Ασφαλής
     sales_total: Σύνολο πωλήσεων
+    sales_total_description: Σύνολο πωλήσεων για όλες τις παραγγελίες
     sales_totals: Σύνολο πωλήσεων
+    save_and_continue: Αποθήκευση και συνέχεια
     saving: Οικονομία
     say_no: Οχι
     say_yes: Ναί

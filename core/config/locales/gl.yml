@@ -953,6 +953,7 @@ gl:
     none: Ningunha
     not: non
     not_available: N / A
+    not_found: "%{resource} non se atopou"
     note: Nota
     notice_messages:
       icon_removed: A imaxe eliminouse correctamente
@@ -1240,7 +1241,9 @@ gl:
     rules: Regras
     safe: Seguro
     sales_total: Total de vendas
+    sales_total_description: Total de vendas para todos os pedidos
     sales_totals: Total de vendas
+    save_and_continue: Gardar e continuar
     saving: Aforrando
     say_no: Non
     say_yes: Si

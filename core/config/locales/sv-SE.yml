@@ -953,6 +953,7 @@ sv-SE:
     none: Ingen
     not: inte
     not_available: Ej tillämpligt
+    not_found: "%{resource} hittades inte"
     note: Notera
     notice_messages:
       icon_removed: Bilden har tagits bort
@@ -1240,7 +1241,9 @@ sv-SE:
     rules: Regler
     safe: Säker
     sales_total: Försäljning totalt
+    sales_total_description: Försäljning totalt för alla beställningar
     sales_totals: Försäljning totalt
+    save_and_continue: Spara och fortsätt
     saving: Sparande
     say_no: Nej
     say_yes: Ja

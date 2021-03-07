@@ -953,6 +953,7 @@ lb:
     none: Keen
     not: net
     not_available: N / A
+    not_found: "%{resource} gëtt net fonnt"
     note: Notiz
     notice_messages:
       icon_removed: Bild gouf erfollegräich ewechgeholl
@@ -1240,7 +1241,9 @@ lb:
     rules: Regelen
     safe: Sécher
     sales_total: Verkaf Total
+    sales_total_description: Sales Total Fir All Bestellungen
     sales_totals: Sales Total
+    save_and_continue: Späichert a weider
     saving: Spueren
     say_no: Nee
     say_yes: jo

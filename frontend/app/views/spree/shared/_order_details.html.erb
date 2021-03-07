@@ -119,6 +119,7 @@
     <%= render partial: 'spree/checkout/summary', locals: { order: @order } %>
     <% unless @order.complete? %>
       <div data-hook="buttons">
+        <%# i18n-tasks-use I18n.t('spree.save_and_continue') %>
         <% submit_label_key = @order.confirm? ? :place_order : :save_and_continue %>
         <%= submit_tag Spree.t(submit_label_key), class: 'btn btn-primary text-uppercase font-weight-bold w-100 checkout-content-save-continue-button' %>
       </div>

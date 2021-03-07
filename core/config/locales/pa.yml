@@ -953,6 +953,7 @@ pa:
     none: ਕੋਈ ਨਹੀਂ
     not: ਨਹੀਂ
     not_available: ਐਨ / ਏ
+    not_found: "%{resource} ਨਹੀਂ ਮਿਲਿਆ ਹੈ"
     note: ਨੋਟ
     notice_messages:
       icon_removed: ਚਿੱਤਰ ਸਫਲਤਾਪੂਰਕ ਹਟਾ ਦਿੱਤਾ ਗਿਆ ਹੈ
@@ -1240,7 +1241,9 @@ pa:
     rules: ਨਿਯਮ
     safe: ਸੁਰੱਖਿਅਤ
     sales_total: ਵਿਕਰੀ ਕੁਲ
+    sales_total_description: ਸਾਰੇ ਆਦੇਸ਼ਾਂ ਲਈ ਕੁਲ ਵਿਕਰੀ
     sales_totals: ਵਿਕਰੀ
+    save_and_continue: ਸੇਵ ਅਤੇ ਜਾਰੀ ਰੱਖੋ
     saving: ਬਚਤ
     say_no: ਨਹੀਂ
     say_yes: ਹਾਂ

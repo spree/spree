@@ -953,6 +953,7 @@ eu:
     none: Bat ere ez
     not: ez
     not_available: N / A
+    not_found: "%{resource} ez da aurkitu"
     note: Ohar
     notice_messages:
       icon_removed: Irudia behar bezala kendu da
@@ -1240,7 +1241,9 @@ eu:
     rules: Arauak
     safe: Seguru
     sales_total: Salmentak guztira
+    sales_total_description: Salmentak guztira eskaera guztietarako
     sales_totals: Salmenten guztirakoak
+    save_and_continue: Gorde eta jarraitu
     saving: Aurrezten
     say_no: Ez
     say_yes: Bai

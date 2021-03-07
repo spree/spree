@@ -953,6 +953,7 @@ ug:
     none: ياق
     not: ئەمەس
     not_available: N / A.
+    not_found: "%{resource} تېپىلمىدى"
     note: دىققەت
     notice_messages:
       icon_removed: رەسىم مۇۋەپپەقىيەتلىك ئۆچۈرۈلدى
@@ -1240,7 +1241,9 @@ ug:
     rules: قائىدە
     safe: بىخەتەر
     sales_total: سېتىش ئومۇمىي سانى
+    sales_total_description: بارلىق زاكازلارنىڭ ئومۇمىي سېتىلىش مىقدارى
     sales_totals: سېتىش ئومۇمىي سانى
+    save_and_continue: ساقلاش ۋە داۋاملاشتۇرۇش
     saving: تېجەش
     say_no: ياق
     say_yes: ھەئە

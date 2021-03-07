@@ -953,6 +953,7 @@ or:
     none: କିଛି ନୁହେଁ |
     not: ନୁହେଁ |
     not_available: N / A
+    not_found: "%{resource} ମିଳିଲା ନାହିଁ |"
     note: ଧ୍ୟାନ ଦିଅନ୍ତୁ
     notice_messages:
       icon_removed: ପ୍ରତିଛବି ସଫଳତାର ସହିତ ଅପସାରିତ ହୋଇଛି |
@@ -1240,7 +1241,9 @@ or:
     rules: ନିୟମ
     safe: ନିରାପଦ
     sales_total: ବିକ୍ରୟ ମୋଟ
+    sales_total_description: ସମସ୍ତ ଅର୍ଡର ପାଇଁ ସମୁଦାୟ ବିକ୍ରି |
     sales_totals: ବିକ୍ରୟ ସମୁଦାୟ |
+    save_and_continue: ସଞ୍ଚୟ ଏବଂ ଜାରି ରଖ |
     saving: ସଞ୍ଚୟ
     say_no: ନା
     say_yes: ହଁ

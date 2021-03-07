@@ -1039,6 +1039,7 @@ bs:
     none: Nijedna
     not: ne
     not_available: N / A
+    not_found: "%{resource} nije pronađen"
     note: Bilješka
     notice_messages:
       icon_removed: Slika je uspješno uklonjena
@@ -1326,7 +1327,9 @@ bs:
     rules: Pravila
     safe: Sigurno
     sales_total: Ukupna prodaja
+    sales_total_description: Ukupna prodaja za sve narudžbe
     sales_totals: Ukupni prihodi od prodaje
+    save_and_continue: Spremi i nastavi
     saving: Spremanje
     say_no: Ne
     say_yes: Da

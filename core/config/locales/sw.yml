@@ -953,6 +953,7 @@ sw:
     none: Hakuna
     not: la
     not_available: N / A
+    not_found: "%{resource} haipatikani"
     note: Kumbuka
     notice_messages:
       icon_removed: Picha imeondolewa kwa mafanikio
@@ -1240,7 +1241,9 @@ sw:
     rules: Kanuni
     safe: Salama
     sales_total: Jumla ya Mauzo
+    sales_total_description: Jumla ya Mauzo kwa Daraja Zote
     sales_totals: Jumla ya Mauzo
+    save_and_continue: Okoa na Endelea
     saving: Inahifadhi
     say_no: Hapana
     say_yes: Ndio

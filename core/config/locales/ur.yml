@@ -953,6 +953,7 @@ ur:
     none: کوئی نہیں
     not: نہیں
     not_available: N / A
+    not_found: "%{resource} نہیں ملا ہے"
     note: نوٹ
     notice_messages:
       icon_removed: تصویر کامیابی کے ساتھ ہٹا دی گئی ہے
@@ -1240,7 +1241,9 @@ ur:
     rules: قواعد
     safe: محفوظ
     sales_total: کل فروخت
+    sales_total_description: تمام احکامات کے لئے کل فروخت
     sales_totals: فروخت مجموعی
+    save_and_continue: محفوظ کریں اور جاری رکھیں
     saving: بچت
     say_no: نہیں
     say_yes: جی ہاں

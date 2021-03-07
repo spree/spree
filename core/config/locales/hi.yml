@@ -953,6 +953,7 @@ hi:
     none: कोई नहीं
     not: नहीं
     not_available: एन / ए
+    not_found: "%{resource} नहीं मिला है"
     note: ध्यान दें
     notice_messages:
       icon_removed: छवि को सफलतापूर्वक निकाल दिया गया है
@@ -1240,7 +1241,9 @@ hi:
     rules: नियमों
     safe: सुरक्षित
     sales_total: बिक्री कुल
+    sales_total_description: सभी आदेशों के लिए कुल बिक्री
     sales_totals: सेल्स टोटल
+    save_and_continue: सहेजें और जारी रखें
     saving: सहेजा जा रहा है
     say_no: नहीं न
     say_yes: हाँ

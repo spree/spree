@@ -953,6 +953,7 @@ es-PA:
     none: Ninguno
     not: 'no'
     not_available: N / A
+    not_found: "%{resource} no se encuentra"
     note: Nota
     notice_messages:
       icon_removed: La imagen se ha eliminado correctamente
@@ -1240,7 +1241,9 @@ es-PA:
     rules: Normas
     safe: A salvo
     sales_total: Total de ventas
+    sales_total_description: Total de ventas para todos los pedidos
     sales_totals: Totales de ventas
+    save_and_continue: Guardar y continuar
     saving: Ahorro
     say_no: 'No'
     say_yes: sí

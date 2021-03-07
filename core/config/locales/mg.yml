@@ -953,6 +953,7 @@ mg:
     none: tsy misy
     not: tsy
     not_available: N / A
+    not_found: "%{resource} tsy hita"
     note: Fanamarihana
     notice_messages:
       icon_removed: Nesorina soa aman-tsara ny sary
@@ -1240,7 +1241,9 @@ mg:
     rules: Fitsipika
     safe: MAMPIDI-DOZA
     sales_total: Total fivarotana
+    sales_total_description: Fivarotana tanteraka ho an'ny baiko rehetra
     sales_totals: Vola feno
+    save_and_continue: Tehirizo ary tohizo
     saving: famonjena
     say_no: tsy misy
     say_yes: ENY

@@ -953,6 +953,7 @@ sq:
     none: Asnje
     not: jo
     not_available: N / A
+    not_found: "%{resource} nuk është gjetur"
     note: shënim
     notice_messages:
       icon_removed: Imazhi është hequr me sukses
@@ -1240,7 +1241,9 @@ sq:
     rules: Rregullat
     safe: I sigurt
     sales_total: Shitjet totale
+    sales_total_description: Shitjet totale për të gjitha porositë
     sales_totals: Totali i shitjeve
+    save_and_continue: Ruaj dhe Vazhdo
     saving: Kursim
     say_no: Jo
     say_yes: po

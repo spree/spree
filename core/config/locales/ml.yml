@@ -953,6 +953,7 @@ ml:
     none: ഒന്നുമില്ല
     not: അല്ല
     not_available: N / A.
+    not_found: "%{resource} കണ്ടെത്തിയില്ല"
     note: കുറിപ്പ്
     notice_messages:
       icon_removed: ചിത്രം വിജയകരമായി നീക്കംചെയ്തു
@@ -1240,7 +1241,9 @@ ml:
     rules: നിയമങ്ങൾ
     safe: സുരക്ഷിതം
     sales_total: വിൽപ്പന ആകെ
+    sales_total_description: എല്ലാ ഓർഡറുകൾക്കുമായുള്ള വിൽപ്പന ആകെ
     sales_totals: വിൽപ്പന ആകെ
+    save_and_continue: സംരക്ഷിച്ച് തുടരുക
     saving: സംരക്ഷിക്കുന്നത്
     say_no: ഇല്ല
     say_yes: അതെ
