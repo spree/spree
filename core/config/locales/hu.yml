@@ -686,27 +686,21 @@ hu:
     default_tax: Alapértelmezett adó
     default_tax_zone: Alapértelmezett adózóna
     delete: Töröl
-    delete_from_taxon: Törlés a Taxonból
     deleted: Törölve
-    delivery: Szállítás
     delivery_information: Kézbesítési információ
     depth: Mélység
     description: Leírás
     destination: Rendeltetési hely
-    destroy: Elpusztítani
     details: Részletek
     discontinue_on: Folytassa a Be gombot
     discontinued: Megszakított
     discontinued_variants_present: Ebben a sorrendben egyes sorokban vannak olyan termékek, amelyek már nem érhetők el.
-    discount_amount: Kedvezmény mértéke
-    dismiss_banner: Nem köszönöm! Nem érdekel, ne jelenítsd meg újra ezt az üzenetet
     display: Kijelző
     doesnt_track_inventory: Nem követi a készletet
     dont_have_account: Nincs fiókja?
     edit: Szerkesztés
     edit_reimbursement: A visszatérítés szerkesztése
     editing_resource: A %{resource} szerkesztése
-    editing_rma_reason: Az RMA okának szerkesztése
     editing_user: Szerkessze a fiókját
     eligibility_errors:
       messages:
@@ -725,9 +719,6 @@ hu:
         not_first_order: Ez a kuponkód csak az első megrendelésére alkalmazható.
     email: Email
     empty: Üres
-    empty_cart: Üres Kosár
-    enable_mail_delivery: Engedélyezze a levél kézbesítését
-    end: Vége
     ending_at: 'Vége:'
     ending_in: Befejeződik
     ends_at: 'Vége:'
@@ -746,7 +737,6 @@ hu:
     errors_prohibited_this_record_from_being_saved:
       one: 1 hiba tiltotta a rekord mentését
       other: A %{count} hibák megakadályozták a rekord mentését
-    event: Esemény
     events:
       spree:
         cart:
@@ -766,8 +756,6 @@ hu:
     existing_shipments: Meglévő szállítmányok
     expedited_exchanges_warning: A megadott cserék azonnal megmentésre kerülnek az ügyfél számára. Az ügyfél a cikk teljes összegét felszámolja, ha %{days_window} napon belül nem adja vissza az eredeti terméket.
     expiration: Lejárat
-    expiration_date: Lejárati dátum
-    extension: Kiterjesztés
     extensions_directory: Bővítmények Directory
     facebook: Facebook
     failed_payment_attempts: Sikertelen fizetési kísérletek
@@ -776,10 +764,7 @@ hu:
     filter: Szűrő
     filter_results: Eredmények szűrése
     filterable: Szűrhető
-    finalize: Véglegesítse
-    finalized: Véglegesítve
     find_a_taxon: Keressen egy taxont
-    first_item: Első tétel
     first_name: Keresztnév
     first_name_begins_with: Keresztnév kezdődik
     firstname: Keresztnév
@@ -790,18 +775,12 @@ hu:
     footer: Lábléc
     forgot_password: Elfelejtette a jelszavát?
     free: Ingyenes
-    free_shipping: Ingyenes szállítás
-    free_shipping_amount: "-"
-    front_end: Front End
-    gateway: Gateway
     gateway_error: Átjáró hiba
-    general: Tábornok
     general_settings: Általános beállítások
     generate_code: Kuponkód generálása
     get_back_to_the: Térjen vissza a
     go_to_category: Ugrás a kategóriába
     guest_checkout: vendég kijelentkezés
-    guest_user_account: Pénztár vendégként
     has_no_shipped_units: nincs szállított egysége
     header_banner: Fejléc szalaghirdetés
     height: Magasság
@@ -822,29 +801,19 @@ hu:
       show_only: Csak show
       supported_locales: Támogatott nyelvek
       translations: Fordítások
-    icon: Ikon
     id: Id
-    image: Kép
     images: Képek
     implement_eligible_for_return: 'Meg kell valósítani a #eligible_for_return fájlt? az Ön EligibilityValidator-jához.'
     implement_requires_manual_intervention: 'Meg kell valósítani a #requires_manual_intervention programot? az Ön EligibilityValidator-jához.'
     in_stock: Raktáron
-    inactive: Inaktív
-    incl: beleértve
     included_in_price: Az ár tartalmazza
-    included_price_validation: csak akkor választható ki, ha beállított egy alapértelmezett adózónát
     incomplete: Befejezetlen
     info_number_of_skus_not_shown:
       one: és még egy
       other: és %{count} mások
     info_product_has_multiple_skus: 'Ennek a terméknek %{count} változata van:'
     instagram: Instagram
-    instructions_to_reset_password: Kérjük, adja meg e-mail címét az alábbi űrlapon
-    insufficient_stock: Nincs elegendő készlet, csak %{on_hand} van hátra
-    insufficient_stock_item_quantity: Elégtelen készletmennyiség áll rendelkezésre
     insufficient_stock_lines_present: Ebben a sorrendben egyes sorok mennyisége nem elegendő.
-    intercept_email_address: Elfogó e-mail cím
-    intercept_email_instructions: Az e-mail címzettjének felülírása és cseréje ezzel a címmel.
     internal_name: Belső név
     internationalization: Nemzetközivé válás
     invalid_credit_card: Érvénytelen hitelkártya.
@@ -852,16 +821,11 @@ hu:
     invalid_payment_provider: Érvénytelen fizetési szolgáltató.
     invalid_promotion_action: Érvénytelen promóciós művelet.
     invalid_promotion_rule: Érvénytelen promóciós szabály.
-    inventory: Leltár
-    inventory_adjustment: Készletkiigazítás
     inventory_error_flash_for_insufficient_quantity: A kosárban lévő elemek már nem érhetők el.
-    inventory_state: Készletállapot
-    is_not_available_to_shipment_address: nem áll rendelkezésre a szállítási címre
     iso: ISO Alpha-2
     iso3: ISO Alpha-3
     iso_name: ISO név
     issued_on: Kiadott
-    item: Tétel
     item_description: Elem Leírás
     item_total: Tétel összesen
     item_total_rule:
@@ -878,28 +842,16 @@ hu:
     last_name: Vezetéknév
     last_name_begins_with: A vezetéknév kezdődik
     lastname: Vezetéknév
-    learn_more: Tudj meg többet
     lifetime_stats: Élettartam statisztikák
     limit_usage_to: 'A használat korlátozása a következőre:'
     line_item_adjustments: Sorbeállítások
-    list: Lista
     loading: Betöltés
     loading_tree: Fa betöltése. Kérlek várj…
-    locale_changed: A területi beállítás megváltozott
     location: Elhelyezkedés
-    lock: Zár
     log_entries: Naplóbejegyzések
-    log_in: Belépés
     log_in_to_continue: Jelentkezzen be a folytatáshoz
-    logged_in_as: bejelentkezve mint
-    logged_in_succesfully: Sikeresen bejelentkezett
-    logged_out: Kijelentkeztél.
     login: Belépés
-    login_as_existing: Bejelentkezés meglévő ügyfélként
-    login_failed: A bejelentkezés hitelesítése nem sikerült.
-    login_name: Belépés
     logo: Logó
-    logo_alt: Márka logó
     logout: Kijelentkezés
     logs: Naplók
     look_for_similar_items: Keressen hasonló elemeket
@@ -907,7 +859,6 @@ hu:
     mailer_logo: Mailer logó (csak JPG vagy PNG képek)
     make_refund: Visszatérítés
     make_sure_the_above_reimbursement_amount_is_correct: Ellenőrizze, hogy a fenti visszatérítési összeg helyes-e
-    manage_promotion_categories: A promóciós kategóriák kezelése
     manage_variants: Változatok kezelése
     manual_intervention_required: Kézi beavatkozás szükséges
     master: Fő
@@ -916,16 +867,12 @@ hu:
     match_choices:
       all: Összes
       none: Egyik sem
-    max_items: Max Tételek
     member_since: Tag ...-óta
     memo: Memo
     meta_description: Meta Leírás
     meta_keywords: meta kulcsszavak
     meta_title: Meta cím
-    metadata: Metaadatok
-    minimal_amount: Minimális mennyiség
     missing_return_authorization: Hiányzik a %{item_name} visszatérési engedélye.
-    month: Hónap
     more: Több
     move_stock_between_locations: Készlet áthelyezése a helyek között
     move_variant_to: Változat áthelyezése ide
@@ -951,15 +898,12 @@ hu:
       show_search: Keresés megjelenítése
       show_user_menu: Felhasználó menü megjelenítése
       sign_up: REGISZTRÁLJ
-    new: Új
     new_adjustment: Új kiigazítás
     new_country: Új Ország
-    new_customer: Új fiók létrehozása
     new_customer_return: Új vevői visszaküldés
     new_image: Új kép
     new_option_type: Új opció típusa
     new_order: Új rend
-    new_order_completed: Új megrendelés elkészült
     new_order_notifications_email: Új rendelési értesítések e-mail
     new_payment: Új fizetés
     new_payment_method: Új fizetési mód
@@ -981,44 +925,34 @@ hu:
     new_stock_location: Új készlet helye
     new_stock_movement: Új részvénymozgás
     new_stock_transfer: Új részvényátadás
-    new_store_credit: Új bolti hitel
     new_store_credit_category: Új áruházi hitelkategória
     new_tax_category: Új adókategória
     new_tax_rate: Új adókulcs
     new_taxon: Új Taxon
     new_taxonomy: Új rendszertan
-    new_tracker: Új Tracker
     new_user: Új felhasználó
     new_variant: Új változat
     new_zone: Új Zóna
     next: Következő
     no_actions_added: Nincs hozzáadva művelet
-    no_address_given: Nincs megadva cím
     no_available_date_set: Nincs beállítva elérhető dátum
     no_cc_type: N / A
     no_country: Nincs beállítva ország
     no_limits_zone: Határok nélkül
     no_payment_found: Nem található fizetés
     no_payment_provider_settings_message: Ennek a fizetési szolgáltatónak nincsenek egyéni beállításai
-    no_pending_payments: Nincs függőben lévő fizetés
     no_product_available:
       for_this_quantity: Sajnáljuk, úgy tűnik, hogy egyes termékek nem állnak rendelkezésre kiválasztott mennyiségben.
       opps: Hoppá!
-    no_products_found: Nem található termék
     no_resource_found: Nem található %{resource}
     no_results: Nincs eredmény
-    no_returns_found: Nincs találat
     no_rules_added: Nincs hozzáadott szabály
     no_shipping_method_selected: Nincs kiválasztva szállítási mód.
     no_state_changes: Az állapot még nem változott.
     no_tracking_present: Nincsenek követési részletek megadva.
     none: Egyik sem
-    none_selected: Egy sincs kiválasztva
-    normal_amount: Normál mennyiség
     not: nem
     not_available: N / A
-    not_enough_stock: A forrás helyén nincs elegendő készlet az átadás befejezéséhez.
-    not_found: A %{resource} nem található
     note: jegyzet
     notice_messages:
       icon_removed: A kép sikeresen eltávolítva
@@ -1032,27 +966,20 @@ hu:
     num_orders: "# Rendelések"
     number: Szám
     ok: rendben
-    on_hand: Kézen
-    open: Nyisd ki
     open_all_adjustments: Nyissa meg az összes kiigazítást
-    option_type: Opció típusa
     option_type_placeholder: Válasszon egy opciótípust
     option_types: Opciótípusok
-    option_value: Opció értéke
     option_values: Opcióértékek
     optional: Választható
     options: Lehetőségek
     or: vagy
-    or_over_price: "%{price} vagy több"
     order: Rendelés
     order_adjustments: Rendelési kiigazítások
     order_already_updated: A sorrendet már frissítettük.
     order_approved: A megrendelés jóváhagyva
     order_canceled: Rendelés törölve
-    order_details: Rendelés részletei
     order_email_resent: Rendelés e-mailben elküldve
     order_has_no_payments: A megrendelésnek nincs kifizetése
-    order_information: Rendelési információ
     order_line_items: Rendeljen sorokat
     order_mailer:
       cancel_email:
@@ -1078,7 +1005,6 @@ hu:
       total: 'Rendelés Összesen:'
     order_not_found: Nem találtuk meg a megrendelését. Kérjük, próbálkozzon újra.
     order_number: Rendelje meg %{number}
-    order_processed_successfully: Megrendelését sikeresen feldolgoztuk
     order_resumed: A megrendelés folytatódott
     order_state:
       address: cím
@@ -1097,10 +1023,8 @@ hu:
     order_summary: megrendelés-összesítő
     order_sure_want_to: Biztosan %{event} ezt a megrendelést?
     order_total: Rendelés Összesen
-    order_updated: Rendelés frissítve
     orders: Rendelések
     out_of_stock: Nincs raktáron
-    overview: Áttekintés
     package_from: csomag tól
     page_not_found: Sajnálom! A keresett oldal nem található.
     pagination:
@@ -1110,18 +1034,14 @@ hu:
     password: Jelszó
     paste: Paszta
     path: Pálya
-    pay: fizetés
     payment: Fizetés
     payment_amount: Végösszeg
     payment_could_not_be_created: A fizetést nem sikerült létrehozni.
     payment_identifier: Fizetési azonosító
-    payment_information: Fizetési információ
     payment_method: Fizetési mód
     payment_method_not_supported: Ez a fizetési mód nem támogatott. Válasszon egyet.
     payment_methods: fizetési módok
     payment_processing_failed: A befizetést nem sikerült feldolgozni. Kérjük, ellenőrizze a megadott adatokat
-    payment_processor_choose_banner_text: Ha segítségre van szüksége a fizetési processzor kiválasztásában, kérjük, látogasson el
-    payment_processor_choose_link: fizetési oldalunk
     payment_provider_settings: Fizetési szolgáltató beállításai
     payment_state: Fizetési állam
     payment_states:
@@ -1144,13 +1064,10 @@ hu:
       view_cart: Kosár megtekintése
     pending: Függőben levő
     pending_sale: Függőben lévő eladás
-    percent: Százalék
     percent_per_item: Százalékos tétel
     permalink: Permalink
     phone: Telefon
-    place_order: Rendelés leadása
     please_define_payment_methods: Kérjük, először adjon meg néhány fizetési módot.
-    please_enter_reasonable_quantity: Kérjük, adjon meg egy ésszerű mennyiséget.
     plp:
       clear_all: MINDENT KITÖRÖL
       default: ALAPÉRTÉK
@@ -1168,8 +1085,6 @@ hu:
       price_low_to_high: ÁR (LOW - HIGH)
       results_for: EREDMÉNYEK
       sort_by: RENDEZÉS
-    populate_get_error: Valami elromlott. Kérjük, próbálja újra hozzáadni az elemet.
-    powered_by: Powered by
     pre_tax_amount: Adózás előtti összeg
     pre_tax_refund_amount: Adózás előtti visszatérítés összege
     pre_tax_total: Adózás előtti összesítés
@@ -1181,15 +1096,11 @@ hu:
     previous_state_missing: n / a
     previously_used_card: Korábban használt kártyák
     price: Ár
-    price_range: Árkategória
     price_sack: Árzsák
     prices: Árak
-    process: Folyamat
     product: Termék
-    product_details: termék leírás
     product_has_no_description: Ennek a terméknek nincs leírása
     product_not_available_in_this_currency: Ez a termék nem érhető el a kiválasztott pénznemben.
-    product_properties: Termék tulajdonságai
     product_rule:
       choose_products: Válasszon termékeket
       label: A megrendelésnek x mennyiségben tartalmaznia kell ezeket a termékeket
@@ -1265,26 +1176,16 @@ hu:
     provider: Szolgáltató
     provider_settings_warning: Ha a szolgáltató típusát módosítja, akkor a szolgáltató beállításainak szerkesztése előtt először el kell mentenie
     purchased_quantity: Vásárolt mennyiség
-    qty: Mennyiség
     quantity: Mennyiség
-    quantity_returned: Visszatért mennyiség
-    quantity_shipped: Szállított mennyiség
     quick_search: Gyors keresés..
     rate: Mérték
     reason: Ok
-    receive: kap
     receive_stock: Készlet fogadása
-    received: Megkapta
-    reception_status: Recepció állapota
     reference: Referencia
     reference_contains: Referencia tartalmazza
     refund: Visszatérítés
-    refund_amount_must_be_greater_than_zero: A visszatérítés összegének nullánál nagyobbnak kell lennie
     refund_reasons: Visszatérítés okai
-    refunded_amount: Visszatérített összeg
     refunds: Visszatérítések
-    register: Regisztráció
-    registration: Bejegyzés
     reimburse: Visszatérítés
     reimbursed: Megtérült
     reimbursement: Visszafizetés
@@ -1300,76 +1201,54 @@ hu:
         subject: Visszatérítési értesítés
         thanks: Köszönjük vállalkozását.
         total_refunded: 'Visszatérített összeg: %{total}'
-    reimbursement_perform_failed: 'A költségtérítés nem hajtható végre. Hiba: %{error}'
     reimbursement_status: Visszatérítés állapota
     reimbursement_type: Visszatérítés típusa
     reimbursement_type_override: Visszatérítés típusának felülírása
     reimbursement_types: Visszatérítés típusai
-    reimbursements: Visszatérítések
     reject: Elutasít
     rejected: Elutasítva
     remember_me: Emlékezz rám
     remove: Eltávolítás
     remove_image: Kép eltávolítása
     rename: Átnevezés
-    report: Jelentés
     reports: Jelentések
     required: "*"
     required_fields: Szükséges Mezők
     resellable: Újra eladható
     resend: Újraküldés
-    reset_password: Jelszavam visszaállítása
-    response_code: Válaszkód
-    resume: önéletrajz
-    resumed: Folytatódik
-    return: Visszatérés
-    return_authorization: Visszatérési engedély
     return_authorization_canceled: Visszatérési engedély törölve
     return_authorization_reasons: A visszatérési engedély oka
     return_authorization_states:
       authorized: Felhatalmazott
       canceled: Törölve
-    return_authorization_updated: A visszatérési engedély frissítve
     return_authorizations: Visszatérési engedélyek
     return_item_inventory_unit_ineligible: A visszaküldött termék készletegységét le kell szállítani
     return_item_inventory_unit_reimbursed: A visszaküldött tétel készletegysége már megtérült
     return_item_order_not_completed: A visszaküldött termék megrendelését ki kell tölteni
     return_item_rma_ineligible: A visszaküldéshez RMA szükséges
     return_item_time_period_ineligible: A visszaküldött tétel kívül esik a támogatható időszakon
-    return_items: Vissza elemek
     return_items_cannot_be_associated_with_multiple_orders: A visszaküldendő tételek nem rendelhetők több megrendeléshez.
     return_number: Visszatérési szám
     return_quantity: Visszatérési mennyiség
-    returned: Visszatért
     returns: Visszatér
-    review: Felülvizsgálat
     risk: Kockázat
     risk_analysis: Kockázatelemzés
     risky: Kockázatos
-    rma_credit: RMA Hitel
     rma_number: RMA szám
-    rma_value: RMA érték
     role_id: Szerep azonosítója
     roles: Szerepek
     rules: Szabályok
     safe: Biztonságos
     sales_total: Értékesítés összesen
-    sales_total_description: Értékesítés az összes megrendeléshez
     sales_totals: Értékesítési összegek
-    save_and_continue: Mentés és folytatás
-    save_my_address: Mentsd el a címemet
     saving: Megtakarítás
     say_no: Nem
     say_yes: Igen
-    scope: Hatály
     search: Keresés
-    search_results: 'Keresési eredmények erre: ''%{keywords}'''
     searching: Keresés
-    secure_connection_type: Biztonságos kapcsolat típusa
     security_settings: Biztonsági beállítások
     select: Válassza a lehetőséget
     select_a_date: Válasszon dátumot
-    select_a_date_range: Válasszon dátumtartományt
     select_a_return_authorization_reason: Válassza ki a visszatérési engedély okát
     select_a_stock_location: Válassza ki a részvény helyét
     select_a_store_credit_reason: Válassza ki az áruházi jóváírás okát
@@ -1377,12 +1256,9 @@ hu:
     select_from_prototype: Válassza a Prototípusból lehetőséget
     select_stock: Válassza ki a részvényt
     selected_quantity_not_available: a %{item} közül kiválasztva nem érhető el.
-    send_copy_of_all_mails_to: 'Az összes levél másolatának küldése a következő címre:'
-    send_mails_as: Üzenetek küldése másként
     seo: SEO
     seo_robots: SEO robotok
     seo_title: SEO cím
-    server: szerver
     server_error: A szerver hibát adott
     settings: Beállítások
     ship: Hajó

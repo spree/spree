@@ -686,27 +686,21 @@ he:
     default_tax: מס ברירת מחדל
     default_tax_zone: אזור מס ברירת מחדל
     delete: לִמְחוֹק
-    delete_from_taxon: מחק מטקסון
     deleted: נמחק
-    delivery: מְסִירָה
     delivery_information: מידע על המשלוח
     depth: עוֹמֶק
     description: תיאור
     destination: יַעַד
-    destroy: להרוס
     details: פרטים
     discontinue_on: הפסק את ההפעלה
     discontinued: הופסק
     discontinued_variants_present: בחלק מהפריטים בסדר זה יש מוצרים שכבר אינם זמינים.
-    discount_amount: כמות ההנחה
-    dismiss_banner: לא תודה! אני לא מעוניין, אל תציג את ההודעה הזו שוב
     display: לְהַצִיג
     doesnt_track_inventory: זה לא עוקב אחר המלאי
     dont_have_account: אין חשבון?
     edit: לַעֲרוֹך
     edit_reimbursement: ערוך החזר
     editing_resource: עריכת %{resource}
-    editing_rma_reason: עריכת סיבה RMA
     editing_user: ערוך את חשבונך
     eligibility_errors:
       messages:
@@ -725,9 +719,6 @@ he:
         not_first_order: ניתן להחיל קוד קופון זה רק על ההזמנה הראשונה שלך.
     email: אימייל
     empty: ריק
-    empty_cart: עגלה ריקה
-    enable_mail_delivery: אפשר משלוח דואר
-    end: סוֹף
     ending_at: מסתיים בשעה
     ending_in: מסתיים ב
     ends_at: מסתיים בשעה
@@ -746,7 +737,6 @@ he:
     errors_prohibited_this_record_from_being_saved:
       one: שגיאה אחת אסרה על שמירת רשומה זו
       other: שגיאות %{count} אסרו על שמירת רשומה זו
-    event: מִקרֶה
     events:
       spree:
         cart:
@@ -766,8 +756,6 @@ he:
     existing_shipments: משלוחים קיימים
     expedited_exchanges_warning: כל חילופי רכב שצוינו יישלחו ללקוח מיד עם החיסכון. הלקוח יחויב בסכום מלא של הפריט אם הוא לא יחזיר את הפריט המקורי בתוך %{days_window} ימים.
     expiration: תפוגה
-    expiration_date: תאריך תפוגה
-    extension: סיומת
     extensions_directory: מדריך הרחבות
     facebook: פייסבוק
     failed_payment_attempts: ניסיונות התשלום נכשלו
@@ -776,10 +764,7 @@ he:
     filter: לְסַנֵן
     filter_results: סינון תוצאות
     filterable: ניתן לסינון
-    finalize: לְסַכֵּם
-    finalized: הושלם
     find_a_taxon: מצא טקסון
-    first_item: פריט ראשון
     first_name: שם פרטי
     first_name_begins_with: השם הפרטי מתחיל ב
     firstname: שם פרטי
@@ -790,18 +775,12 @@ he:
     footer: כותרת תחתונה
     forgot_password: שכחת ססמא?
     free: חינם
-    free_shipping: משלוח חינם
-    free_shipping_amount: "-"
-    front_end: חזיתי
-    gateway: כְּנִיסָה
     gateway_error: שגיאת שער
-    general: כללי
     general_settings: הגדרות כלליות
     generate_code: צור קוד קופון
     get_back_to_the: חזור אל
     go_to_category: עבור לקטגוריה
     guest_checkout: קופת אורחים
-    guest_user_account: הסדר חשבון כאורח
     has_no_shipped_units: אין יחידות שנשלחו
     header_banner: מודעת כותרת עליונה
     height: גוֹבַה
@@ -822,29 +801,19 @@ he:
       show_only: להראות רק
       supported_locales: מקומות נתמכים
       translations: תרגומים
-    icon: אייקון
     id: תְעוּדַת זֶהוּת
-    image: תמונה
     images: תמונות
     implement_eligible_for_return: 'חייבים ליישם # זכאים_ לחזור? לאישור הזכאות שלך.'
     implement_requires_manual_intervention: חייבים ליישם התערבות ידנית_ידנית? לאישור הזכאות שלך.
     in_stock: במלאי
-    inactive: לֹא פָּעִיל
-    incl: כולל
     included_in_price: כלול במחיר
-    included_price_validation: לא ניתן לבחור אלא אם הגדרת אזור מס ברירת מחדל
     incomplete: לא שלם
     info_number_of_skus_not_shown:
       one: ועוד אחד
       other: ו- %{count} אחרים
     info_product_has_multiple_skus: 'מוצר זה כולל גרסאות %{count}:'
     instagram: אינסטגרם
-    instructions_to_reset_password: אנא הכנס את הדוא"ל שלך בטופס למטה
-    insufficient_stock: מלאי לא מספיק זמין, נותר רק %{on_hand}
-    insufficient_stock_item_quantity: כמות מלאי לא מספקת
     insufficient_stock_lines_present: לכמה פריטי שורה בהזמנה זו אין כמות מספקת.
-    intercept_email_address: יירט כתובת דוא"ל
-    intercept_email_instructions: עקוף את מקבל הדוא"ל והחלף בכתובת זו.
     internal_name: שם פנימי
     internationalization: בִּנאוּם
     invalid_credit_card: כרטיס אשראי לא תקין.
@@ -852,16 +821,11 @@ he:
     invalid_payment_provider: ספק תשלומים לא חוקי.
     invalid_promotion_action: פעולת קידום לא חוקית.
     invalid_promotion_rule: כלל קידום לא חוקי.
-    inventory: מְלַאי
-    inventory_adjustment: התאמת מלאי
     inventory_error_flash_for_insufficient_quantity: פריט בעגלתך הפך להיות לא זמין.
-    inventory_state: מדינת מלאי
-    is_not_available_to_shipment_address: אינו זמין לכתובת המשלוח
     iso: ISO אלפא -2
     iso3: ISO אלפא -3
     iso_name: שם ISO
     issued_on: הונפק ב
-    item: פריט
     item_description: תיאור פריט
     item_total: פריט כולל
     item_total_rule:
@@ -878,28 +842,16 @@ he:
     last_name: שם משפחה
     last_name_begins_with: שם המשפחה מתחיל ב
     lastname: שם משפחה
-    learn_more: למד עוד
     lifetime_stats: סטטיסטיקות לכל החיים
     limit_usage_to: הגבל את השימוש ל
     line_item_adjustments: התאמות פריטים
-    list: רשימה
     loading: טוען
     loading_tree: טוען עץ. המתן בבקשה…
-    locale_changed: האזור השתנה
     location: מקום
-    lock: לנעול
     log_entries: רישום רשומות
-    log_in: התחברות
     log_in_to_continue: התחבר כדי להמשיך
-    logged_in_as: מחובר כ
-    logged_in_succesfully: התחברת בהצלחה
-    logged_out: נותקת מהמערכת.
     login: התחברות
-    login_as_existing: התחבר כלקוח קיים
-    login_failed: אימות הכניסה נכשל.
-    login_name: התחברות
     logo: סֵמֶל
-    logo_alt: לוגו מותג
     logout: להתנתק
     logs: יומנים
     look_for_similar_items: חפש פריטים דומים
@@ -907,7 +859,6 @@ he:
     mailer_logo: לוגו של דואר (תמונות JPG או PNG בלבד)
     make_refund: בצע החזר כספי
     make_sure_the_above_reimbursement_amount_is_correct: וודא כי סכום ההחזר הנ"ל נכון
-    manage_promotion_categories: נהל קטגוריות קידום
     manage_variants: נהל גרסאות
     manual_intervention_required: נדרשת התערבות ידנית
     master: לִשְׁלוֹט
@@ -916,16 +867,12 @@ he:
     match_choices:
       all: את כל
       none: אף אחד
-    max_items: פריטים מקסימליים
     member_since: חבר מאז
     memo: תַזכִּיר
     meta_description: תיאור מטא
     meta_keywords: מטה מילות מפתח
     meta_title: מטא כותרת
-    metadata: מטא נתונים
-    minimal_amount: כמות מינימלית
     missing_return_authorization: אישור החזרה חסר עבור %{item_name}.
-    month: חוֹדֶשׁ
     more: יותר
     move_stock_between_locations: העבר מלאי בין מיקומים
     move_variant_to: העבר גרסה אל
@@ -951,15 +898,12 @@ he:
       show_search: הראה חיפוש
       show_user_menu: הצג את תפריט המשתמש
       sign_up: הירשם
-    new: חָדָשׁ
     new_adjustment: התאמה חדשה
     new_country: מדינה חדשה
-    new_customer: ליצור חשבון חדש
     new_customer_return: החזרת לקוח חדש
     new_image: תמונה חדשה
     new_option_type: סוג אפשרות חדש
     new_order: הזמנה חדשה
-    new_order_completed: ההזמנה החדשה הושלמה
     new_order_notifications_email: הודעות אימייל על הודעות הזמנה חדשה
     new_payment: תשלום חדש
     new_payment_method: אמצעי תשלום חדש
@@ -981,44 +925,34 @@ he:
     new_stock_location: מיקום מלאי חדש
     new_stock_movement: תנועת מניות חדשה
     new_stock_transfer: העברת מניות חדשה
-    new_store_credit: אשראי בחנות חדשה
     new_store_credit_category: קטגוריית אשראי חנות חדשה
     new_tax_category: קטגוריית מיסים חדשה
     new_tax_rate: שיעור מס חדש
     new_taxon: טקסון חדש
     new_taxonomy: טקסונומיה חדשה
-    new_tracker: גשש חדש
     new_user: משתמש חדש
     new_variant: וריאנט חדש
     new_zone: אזור חדש
     next: הַבָּא
     no_actions_added: לא הוסיפו פעולות
-    no_address_given: אין כתובת
     no_available_date_set: לא נקבע תאריך זמין
     no_cc_type: לא
     no_country: אין מדינה מוגדרת
     no_limits_zone: ללא גבולות
     no_payment_found: לא נמצא תשלום
     no_payment_provider_settings_message: לספק תשלומים זה אין הגדרות מותאמות אישית
-    no_pending_payments: אין תשלומים ממתינים
     no_product_available:
       for_this_quantity: מצטערים, נראה שחלק מהמוצרים אינם זמינים בכמות שנבחרה.
       opps: אופס!
-    no_products_found: לא נמצאו מוצרים
     no_resource_found: לא נמצא %{resource}
     no_results: אין תוצאות
-    no_returns_found: לא נמצאו תשואות
     no_rules_added: לא הוסיפו כללים
     no_shipping_method_selected: לא נבחרה שיטת משלוח.
     no_state_changes: עדיין אין שינויים במדינה.
     no_tracking_present: לא סופקו פרטי מעקב.
     none: אף אחד
-    none_selected: לא נבחר
-    normal_amount: כמות רגילה
     not: לֹא
     not_available: לא
-    not_enough_stock: אין מספיק מלאי במקום המקור להשלמת העברה זו.
-    not_found: "%{resource} לא נמצא"
     note: פתק
     notice_messages:
       icon_removed: התמונה הוסרה בהצלחה
@@ -1032,27 +966,20 @@ he:
     num_orders: "# הזמנות"
     number: מספר
     ok: בסדר
-    on_hand: ביד
-    open: לִפְתוֹחַ
     open_all_adjustments: פתח את כל ההתאמות
-    option_type: סוג אפשרות
     option_type_placeholder: בחר סוג אפשרות
     option_types: סוגי אפשרויות
-    option_value: ערך אפשרות
     option_values: ערכי אפשרות
     optional: אופציונאלי
     options: אפשרויות
     or: אוֹ
-    or_over_price: "%{price} ומעלה"
     order: להזמין
     order_adjustments: הזמנת התאמות
     order_already_updated: ההזמנה כבר עודכנה.
     order_approved: ההזמנה אושרה
     order_canceled: ההזמנה בוטלה
-    order_details: פרטי הזמנה
     order_email_resent: הזמנה נשלחה בדוא"ל
     order_has_no_payments: להזמנה אין תשלומים
-    order_information: מידע על ההזמנה
     order_line_items: פריטי שורה
     order_mailer:
       cancel_email:
@@ -1078,7 +1005,6 @@ he:
       total: 'סך כל ההזמנה:'
     order_not_found: לא הצלחנו למצוא את ההזמנה שלך. נסה את הפעולה שוב.
     order_number: הזמינו %{number}
-    order_processed_successfully: הזמנתך עובדה בהצלחה
     order_resumed: ההזמנה חודשה
     order_state:
       address: כתובת
@@ -1097,10 +1023,8 @@ he:
     order_summary: סיכום הזמנה
     order_sure_want_to: האם אתה בטוח שברצונך %{event} להזמנה זו?
     order_total: סך כל ההזמנה
-    order_updated: ההזמנה עודכנה
     orders: הזמנות
     out_of_stock: נגמר המלאי
-    overview: סקירה כללית
     package_from: חבילה מ
     page_not_found: מצטער! לא ניתן למצוא דף שאתה מחפש.
     pagination:
@@ -1110,18 +1034,14 @@ he:
     password: סיסמה
     paste: לְהַדבִּיק
     path: נָתִיב
-    pay: לְשַׁלֵם
     payment: תַשְׁלוּם
     payment_amount: סכום לתשלום
     payment_could_not_be_created: לא ניתן ליצור תשלום.
     payment_identifier: מזהה תשלום
-    payment_information: פרטי תשלום
     payment_method: אמצעי תשלום
     payment_method_not_supported: אמצעי תשלום זה אינו נתמך. אנא בחר אחד אחר.
     payment_methods: שיטות תשלום
     payment_processing_failed: לא ניתן היה לעבד את התשלום, אנא בדוק את הפרטים שהזנת
-    payment_processor_choose_banner_text: אם אתה זקוק לעזרה בבחירת מעבד תשלומים, בקר בכתובת
-    payment_processor_choose_link: דף התשלומים שלנו
     payment_provider_settings: הגדרות ספק תשלום
     payment_state: מדינת תשלום
     payment_states:
@@ -1144,13 +1064,10 @@ he:
       view_cart: צפה בסל
     pending: ממתין ל
     pending_sale: מכירה בהמתנה
-    percent: אָחוּז
     percent_per_item: אחוז לכל פריט
     permalink: קישור Permal
     phone: מכשיר טלפון
-    place_order: בצע הזמנה
     please_define_payment_methods: אנא הגדר תחילה כמה אמצעי תשלום.
-    please_enter_reasonable_quantity: אנא הכנס כמות סבירה.
     plp:
       clear_all: נקה הכל
       default: בְּרִירַת מֶחדָל
@@ -1168,8 +1085,6 @@ he:
       price_low_to_high: מחיר (נמוך - גבוה)
       results_for: תוצאות עבור
       sort_by: מיין לפי
-    populate_get_error: משהו השתבש. נסה להוסיף את הפריט שוב.
-    powered_by: נתמך על ידי
     pre_tax_amount: סכום לפני מס
     pre_tax_refund_amount: סכום החזר לפני מס
     pre_tax_total: סה"כ לפני מס
@@ -1181,15 +1096,11 @@ he:
     previous_state_missing: לא
     previously_used_card: בעבר השתמשו בכרטיסים
     price: מחיר
-    price_range: טווח מחירים
     price_sack: שק מחירים
     prices: מחירים
-    process: תהליך
     product: מוצר
-    product_details: פרטי מוצר
     product_has_no_description: למוצר זה אין תיאור
     product_not_available_in_this_currency: מוצר זה אינו זמין במטבע שנבחר.
-    product_properties: מאפייני מוצר
     product_rule:
       choose_products: בחר מוצרים
       label: ההזמנה חייבת להכיל כמות אחת של מוצרים אלה
@@ -1265,26 +1176,16 @@ he:
     provider: ספק
     provider_settings_warning: אם אתה משנה את סוג הספק, עליך לשמור תחילה לפני שתוכל לערוך את הגדרות הספק
     purchased_quantity: כמות שנרכשה
-    qty: כמות
     quantity: כַּמוּת
-    quantity_returned: כמות שהוחזרה
-    quantity_shipped: כמות שנשלחה
     quick_search: חיפוש מהיר..
     rate: ציון
     reason: סיבה
-    receive: לְקַבֵּל
     receive_stock: קבל מלאי
-    received: קיבלו
-    reception_status: מצב קבלה
     reference: התייחסות
     reference_contains: הפניה מכילה
     refund: הֶחזֵר
-    refund_amount_must_be_greater_than_zero: סכום ההחזר חייב להיות גדול מאפס
     refund_reasons: סיבות להחזר
-    refunded_amount: סכום מוחזר
     refunds: החזרים
-    register: להירשם
-    registration: הַרשָׁמָה
     reimburse: להחזיר
     reimbursed: מוחזר
     reimbursement: החזר
@@ -1300,76 +1201,54 @@ he:
         subject: הודעת החזר
         thanks: תודה על העסק שלך.
         total_refunded: 'סה"כ שהוחזר: %{total}'
-    reimbursement_perform_failed: 'לא ניתן היה לבצע החזר כספי. שגיאה: %{error}'
     reimbursement_status: מצב החזר
     reimbursement_type: סוג ההחזר
     reimbursement_type_override: ביטול סוג ההחזר
     reimbursement_types: סוגי החזר
-    reimbursements: החזרים
     reject: לִדחוֹת
     rejected: נִדחֶה
     remember_me: זכור אותי
     remove: לְהַסִיר
     remove_image: הסר תמונה
     rename: שנה שם
-    report: להגיש תלונה
     reports: דיווחים
     required: "*"
     required_fields: שדות חובה
     resellable: ניתן למכור מחדש
     resend: שלח שוב
-    reset_password: אפס את הסיסמה שלי
-    response_code: קוד תגובה
-    resume: קורות חיים
-    resumed: התחדש
-    return: לַחֲזוֹר
-    return_authorization: אישור החזרה
     return_authorization_canceled: אישור ההחזרה בוטל
     return_authorization_reasons: סיבות לאישור החזרה
     return_authorization_states:
       authorized: מורשה
       canceled: מבוטל
-    return_authorization_updated: הרשאת ההחזרה עודכנה
     return_authorizations: הרשאות החזרה
     return_item_inventory_unit_ineligible: יש לשלוח את יחידת המלאי של פריט החזר
     return_item_inventory_unit_reimbursed: יחידת המלאי של פריט החזר כבר מוחזרת
     return_item_order_not_completed: יש להשלים את הזמנת פריט ההחזר
     return_item_rma_ineligible: פריט החזרה דורש RMA
     return_item_time_period_ineligible: פריט החזר הוא מחוץ לתקופת הזמן המתאימה
-    return_items: פריטי החזרה
     return_items_cannot_be_associated_with_multiple_orders: לא ניתן לשייך פריטי החזרה למספר הזמנות.
     return_number: מספר החזרה
     return_quantity: כמות החזר
-    returned: הוחזר
     returns: החזרות
-    review: סקירה
     risk: לְהִסְתָכֵּן
     risk_analysis: ניתוח סיכונים
     risky: מְסוּכָּן
-    rma_credit: אשראי RMA
     rma_number: מספר RMA
-    rma_value: ערך RMA
     role_id: תעודת זהות
     roles: תפקידים
     rules: כללים
     safe: בטוח
     sales_total: סך מכירות
-    sales_total_description: סה"כ מכירות לכל ההזמנות
     sales_totals: סך מכירות
-    save_and_continue: שמור והמשך
-    save_my_address: שמור את הכתובת שלי
     saving: חִסָכוֹן
     say_no: לא
     say_yes: כן
-    scope: תְחוּם
     search: לחפש
-    search_results: תוצאות חיפוש עבור '%{keywords}'
     searching: מחפש
-    secure_connection_type: סוג חיבור מאובטח
     security_settings: הגדרות אבטחה
     select: בחר
     select_a_date: בחר תאריך
-    select_a_date_range: בחר טווח תאריכים
     select_a_return_authorization_reason: בחר סיבה לאישור ההחזרה
     select_a_stock_location: בחר מיקום מניות
     select_a_store_credit_reason: בחר סיבה לזיכוי החנות
@@ -1377,12 +1256,9 @@ he:
     select_from_prototype: בחר מתוך אב טיפוס
     select_stock: בחר מלאי
     selected_quantity_not_available: נבחר מ %{item} אינו זמין.
-    send_copy_of_all_mails_to: שלח עותק של כל הדוא"ל אל
-    send_mails_as: שלח הודעות כמו
     seo: קידום אתרים
     seo_robots: רובוטים לקידום אתרים
     seo_title: כותרת SEO
-    server: שרת
     server_error: השרת החזיר שגיאה
     settings: הגדרות
     ship: ספינה

@@ -686,27 +686,21 @@ ne:
     default_tax: पूर्वनिर्धारित कर
     default_tax_zone: पूर्वनिर्धारित कर क्षेत्र
     delete: मेटाउन
-    delete_from_taxon: ट्याक्सनबाट हटाउनुहोस्
     deleted: मेटाइयो
-    delivery: डेलिभरी
     delivery_information: डेलिभरी जानकारी
     depth: गहिराई
     description: वर्णन
     destination: गन्तव्य
-    destroy: नष्ट
     details: विवरण
     discontinue_on: बन्द गर्नुहोस्
     discontinued: बन्द गरियो
     discontinued_variants_present: यस अर्डरमा केहि लाइन आईटमहरूमा उत्पादनहरू छन् जुन अब उपलब्ध छैनन्।
-    discount_amount: छुट रकम
-    dismiss_banner: होइन। धन्यवाद! मलाई रुचि छैन, यो सन्देश फेरि प्रदर्शन नगर्नुहोस्
     display: प्रदर्शन
     doesnt_track_inventory: यसले सूची ट्र्याक गर्दैन
     dont_have_account: कुनै खाता छैन?
     edit: सम्पादन गर्नुहोस्
     edit_reimbursement: प्रतिपूर्ति सम्पादन गर्नुहोस्
     editing_resource: "%{resource} सम्पादन गर्दै"
-    editing_rma_reason: RMA कारण सम्पादन गर्दै
     editing_user: तपाईको खाता सम्पादन गर्नुहोस्
     eligibility_errors:
       messages:
@@ -725,9 +719,6 @@ ne:
         not_first_order: यो कुपन कोड केवल तपाईंको पहिलो अर्डरमा लागू गर्न सकिन्छ।
     email: ईमेल
     empty: खाली
-    empty_cart: खाली कार्ट
-    enable_mail_delivery: मेल डेलिभरी सक्षम गर्नुहोस्
-    end: अन्त्य
     ending_at: मा अन्त हुँदैछ
     ending_in: अन्तमा
     ends_at: मा समाप्त हुन्छ
@@ -746,7 +737,6 @@ ne:
     errors_prohibited_this_record_from_being_saved:
       one: १ त्रुटिले यस रेकर्डलाई बचत हुनबाट रोक्‍यो
       other: "%{count} त्रुटिहरूले यस रेकर्डलाई बचत गर्नबाट रोक्‍यो"
-    event: घटना
     events:
       spree:
         cart:
@@ -766,8 +756,6 @@ ne:
     existing_shipments: अवस्थित शिपमेंटहरू
     expedited_exchanges_warning: कुनै निर्दिष्ट एक्सचेन्जहरू बचतमा तुरुन्त ग्राहकलाई पठाउँछन्। ग्राहकले %{days_window} दिन भित्र मूल आईटम फिर्ता गर्दैनन् भने, आइटम को पूरा रकम चार्ज हुनेछ।
     expiration: समाप्ति
-    expiration_date: म्याद समाप्त हुने मिति
-    extension: विस्तार
     extensions_directory: विस्तार निर्देशिका
     facebook: फेसबुक
     failed_payment_attempts: असफल भुक्तानी प्रयास
@@ -776,10 +764,7 @@ ne:
     filter: फिल्टर
     filter_results: फिल्टर परिणामहरू
     filterable: फिल्टर गर्न योग्य
-    finalize: अन्तिम गर्नु
-    finalized: अन्तिम
     find_a_taxon: एक ट्याक्सन खोज्नुहोस्
-    first_item: पहिलो वस्तु
     first_name: पहिलो नाम
     first_name_begins_with: पहिलो नामको साथ सुरू हुन्छ
     firstname: पहिलो नाम
@@ -790,18 +775,12 @@ ne:
     footer: फुटर
     forgot_password: पासवर्ड भुल्नु भयो?
     free: सित्तैमा
-    free_shipping: निशुल्क ढुवानी
-    free_shipping_amount: "-"
-    front_end: फ्रन्ट एन्ड
-    gateway: गेटवे
     gateway_error: गेटवे त्रुटि
-    general: सामान्य
     general_settings: सामान्य सेटिंग्स
     generate_code: कुपन कोड उत्पन्न गर्नुहोस्
     get_back_to_the: फिर्ता जानुहोस्
     go_to_category: कोटीमा जानुहोस्
     guest_checkout: अतिथि चेकआउट
-    guest_user_account: अतिथिको रूपमा चेकआउट गर्नुहोस्
     has_no_shipped_units: कुनै पठाइएको इकाई छैन
     header_banner: हेडर ब्यानर
     height: उचाई
@@ -822,29 +801,19 @@ ne:
       show_only: मात्र देखाउनुहोस्
       supported_locales: समर्थित लोकेल
       translations: अनुवाद
-    icon: आइकन
     id: आईडी
-    image: छवि
     images: छविहरू
     implement_eligible_for_return: 'लागू गर्नु पर्छ #el पात्र_for_return? तपाईको एलिजिबिलिभिडिएटरका लागि।'
     implement_requires_manual_intervention: "#Requires_manual_interration कार्यान्वयन गर्नु पर्छ? तपाईको एलिजिबिलिभिडिएटरका लागि।"
     in_stock: स्टक मा
-    inactive: निस्क्रिय
-    incl: incl
     included_in_price: मूल्यमा समावेश छ
-    included_price_validation: तपाईले पूर्वनिर्धारित कर क्षेत्र सेट नगरेसम्म चयन गर्न सकिदैन
     incomplete: अपूर्ण
     info_number_of_skus_not_shown:
       one: र एक अन्य
       other: र %{count} अन्य
     info_product_has_multiple_skus: 'यस उत्पादसँग %{count} भेरियन्टहरू छन्:'
     instagram: इन्स्टाग्राम
-    instructions_to_reset_password: कृपया तलको फारममा तपाईंको ईमेल प्रविष्ट गर्नुहोस्
-    insufficient_stock: अपर्याप्त स्टक उपलब्ध छ, मात्र %{on_hand} बाँकी
-    insufficient_stock_item_quantity: अपर्याप्त स्टक मात्रा उपलब्ध छ
     insufficient_stock_lines_present: यस क्रममा केहि लाइन आईटमहरूको अपर्याप्त मात्रा छ।
-    intercept_email_address: ईमेल ठेगाना रोक्नुहोस्
-    intercept_email_instructions: ओभरराइड ईमेल प्राप्तकर्ता र यस ठेगानाको साथ बदल्नुहोस्।
     internal_name: आन्तरिक नाम
     internationalization: अन्तर्राष्ट्रियकरण
     invalid_credit_card: अवैध क्रेडिट कार्ड।
@@ -852,16 +821,11 @@ ne:
     invalid_payment_provider: अवैध भुक्तानी प्रदायक।
     invalid_promotion_action: अवैध पदोन्नति कार्य।
     invalid_promotion_rule: अवैध पदोन्नति नियम।
-    inventory: सूची
-    inventory_adjustment: सूची समायोजन
     inventory_error_flash_for_insufficient_quantity: तपाईंको कार्टमा आईटम अनुपलब्ध भएको छ।
-    inventory_state: सूची राज्य
-    is_not_available_to_shipment_address: ढुवानी ठेगानामा उपलब्ध छैन
     iso: आईएसओ अल्फा -२
     iso3: ISO अल्फा-3
     iso_name: आईएसओ नाम
     issued_on: मा जारी गरियो
-    item: वस्तु
     item_description: वस्तु विवरण
     item_total: कुल कुल
     item_total_rule:
@@ -878,28 +842,16 @@ ne:
     last_name: थर
     last_name_begins_with: अन्तिम नामको साथ सुरू हुन्छ
     lastname: थर
-    learn_more: थप सिक
     lifetime_stats: लाइफटाइम तथ्या .्क
     limit_usage_to: को उपयोग सीमित गर्नुहोस्
     line_item_adjustments: लाइन आइटम समायोजन
-    list: सूची
     loading: लोड हुँदै
     loading_tree: रूख लोड हुँदै। कृपया पर्खनुहोस्…
-    locale_changed: स्थान परिवर्तन गरियो
     location: स्थान
-    lock: लक गर्नुहोस्
     log_entries: लग प्रविष्टिहरू
-    log_in: लग - इन
     log_in_to_continue: जारी राख्न लग इन गर्नुहोस्
-    logged_in_as: यस रूपमा लग इन भयो
-    logged_in_succesfully: सफलतापूर्वक लग इन भयो
-    logged_out: तपाईं लग आउट हुनुभयो।
     login: लग - इन
-    login_as_existing: अवस्थित ग्राहकको रूपमा लगइन गर्नुहोस्
-    login_failed: लगइन प्रमाणीकरण असफल भयो।
-    login_name: लग - इन
     logo: लोगो
-    logo_alt: ब्राण्ड लोगो
     logout: बाहिर निस्कनु
     logs: लगहरू
     look_for_similar_items: समान आईटमहरूका लागि हेर्नुहोस्
@@ -907,7 +859,6 @@ ne:
     mailer_logo: मेलर लोगो (JPG वा PNG छविहरू मात्र)
     make_refund: फिर्ती गर्नुहोस्
     make_sure_the_above_reimbursement_amount_is_correct: निश्चित गर्नुहोस् माथिको पुनःपूर्ति रकम सहि छ
-    manage_promotion_categories: पदोन्नति कोटिहरु प्रबन्ध गर्नुहोस्
     manage_variants: भेरियन्टहरू प्रबन्ध गर्नुहोस्
     manual_intervention_required: मैन्युअल हस्तक्षेप आवश्यक छ
     master: मास्टर
@@ -916,16 +867,12 @@ ne:
     match_choices:
       all: सबै
       none: कुनै पनि होईन
-    max_items: अधिकतम वस्तुहरू
     member_since: देखि सदस्य
     memo: मेमो
     meta_description: मेटा विवरण
     meta_keywords: मेटा किवर्डहरू
     meta_title: मेटा शीर्षक
-    metadata: मेटाडाटा
-    minimal_amount: न्यूनतम रकम
     missing_return_authorization: "%{item_name} का लागि फिर्ती प्राधिकरण हराइरहेको छ।"
-    month: महिना
     more: अधिक
     move_stock_between_locations: स्थान बीच स्टक सार्नुहोस्
     move_variant_to: भेरियन्टमा सार्नुहोस्
@@ -951,15 +898,12 @@ ne:
       show_search: खोजी देखाउनुहोस्
       show_user_menu: प्रयोगकर्ता मेनू देखाउनुहोस्
       sign_up: साइन अप
-    new: नयाँ
     new_adjustment: नयाँ समायोजन
     new_country: नयाँ देश
-    new_customer: नयाँ खाता बनाउनुहोस्
     new_customer_return: नयाँ ग्राहक रिटर्न
     new_image: नयाँ छवि
     new_option_type: नयाँ विकल्प प्रकार
     new_order: नया ओर्देर
-    new_order_completed: नयाँ अर्डर पूरा भयो
     new_order_notifications_email: नयाँ अर्डर सूचना ईमेल
     new_payment: नयाँ भुक्तानी
     new_payment_method: नयाँ भुक्तानी विधि
@@ -981,44 +925,34 @@ ne:
     new_stock_location: नयाँ स्टक स्थान
     new_stock_movement: नयाँ स्टक आन्दोलन
     new_stock_transfer: नयाँ स्टक ट्रान्सफर
-    new_store_credit: नयाँ स्टोर क्रेडिट
     new_store_credit_category: नयाँ स्टोर क्रेडिट कोटी
     new_tax_category: नयाँ कर कोटी
     new_tax_rate: नयाँ कर दर
     new_taxon: नयाँ ट्याक्सन
     new_taxonomy: नयाँ वर्गीकरण
-    new_tracker: नयाँ ट्र्याकर
     new_user: नयाँ प्रयोगकर्ता
     new_variant: नयाँ भेरियन्ट
     new_zone: नयाँ क्षेत्र
     next: अर्को
     no_actions_added: कुनै कार्यहरू थपिएनन्
-    no_address_given: कुनै ठेगाना दिइएन
     no_available_date_set: कुनै उपलब्ध मिति सेट छैन
     no_cc_type: N / A
     no_country: कुनै देश सेट छैन
     no_limits_zone: कुनै सीमा छैन
     no_payment_found: कुनै भुक्तान भेटिएन
     no_payment_provider_settings_message: यस भुक्तानी प्रदायकसँग कस्टम सेटिंग्स उपलब्ध छैन
-    no_pending_payments: कुनै पेन्डि No भुक्तान छैन
     no_product_available:
       for_this_quantity: माफ गर्नुहोस्, यस्तो देखिन्छ कि केहि उत्पादनहरू चयन गरिएको मात्रामा उपलब्ध छैनन्।
       opps: उफ्!
-    no_products_found: कुनै उत्पादनहरू फेला परेनन्
     no_resource_found: कुनै %{resource} फेला परेन
     no_results: कुनै परिणामहरू छैनन्
-    no_returns_found: कुनै प्रतिफल फेला परेन
     no_rules_added: कुनै नियम जोडियो
     no_shipping_method_selected: कुनै शिपिंग विधि चयन गरिएको छैन।
     no_state_changes: कुनै राज्य परिवर्तन गरिएको छैन।
     no_tracking_present: कुनै ट्र्याकिंग विवरण प्रदान गरिएको छैन।
     none: कुनै पनि होईन
-    none_selected: कुनै पनि चयन गरिएको छैन
-    normal_amount: सामान्य रकम
     not: हैन
     not_available: N / A
-    not_enough_stock: यस स्थानान्तरण पूरा गर्न स्रोत स्थानमा पर्याप्त सूची छैन।
-    not_found: "%{resource} भेटिएन"
     note: नोट
     notice_messages:
       icon_removed: छवि सफलतापूर्वक हटाइएको छ
@@ -1032,27 +966,20 @@ ne:
     num_orders: "# अर्डरहरू"
     number: संख्या
     ok: ठिक छ
-    on_hand: हातमा
-    open: खोल्नुहोस्
     open_all_adjustments: सबै समायोजनहरू खोल्नुहोस्
-    option_type: विकल्प प्रकार
     option_type_placeholder: एक विकल्प प्रकार छनौट गर्नुहोस्
     option_types: विकल्प प्रकारहरू
-    option_value: विकल्प मान
     option_values: विकल्प मान
     optional: वैकल्पिक
     options: विकल्पहरू
     or: वा
-    or_over_price: "%{price} वा माथि"
     order: अर्डर
     order_adjustments: अर्डर समायोजन
     order_already_updated: अर्डर पहिले नै अपडेट गरिएको छ।
     order_approved: अर्डर स्वीकृत भयो
     order_canceled: अर्डर रद्द गरियो
-    order_details: आदेश विवरण
     order_email_resent: अर्डर ईमेल प्रेषण
     order_has_no_payments: अर्डरको कुनै भुक्तान छैन
-    order_information: अर्डर जानकारी
     order_line_items: अर्डर लाइन आईटमहरू
     order_mailer:
       cancel_email:
@@ -1078,7 +1005,6 @@ ne:
       total: 'आदेश कुल:'
     order_not_found: 'हामी तपाईंको अर्डर फेला पार्न सकेनौं। कृपया त्यो कार्य पुन: प्रयास गर्नुहोस्।'
     order_number: "%{number} अर्डर गर्नुहोस्"
-    order_processed_successfully: तपाईको अर्डर सफलतापूर्वक प्रक्रिया गरीएको छ
     order_resumed: अर्डर पुनः सुरु भयो
     order_state:
       address: ठेगाना
@@ -1097,10 +1023,8 @@ ne:
     order_summary: आदेश सारांश
     order_sure_want_to: के तपाईं पक्का यो अर्डर %{event} गर्न चाहानुहुन्छ?
     order_total: कुल आदेश
-    order_updated: अर्डर अपडेट गरियो
     orders: अर्डर
     out_of_stock: स्टक बाहिर
-    overview: अवलोकन
     package_from: बाट प्याकेज
     page_not_found: माफ गर्नुहोस्! तपाईले खोज्नु भएको पृष्ठ फेला पार्न सकिदैन।
     pagination:
@@ -1110,18 +1034,14 @@ ne:
     password: पासवर्ड
     paste: टाँस्नुहोस्
     path: पथ
-    pay: तिर्नु
     payment: भुक्तानी
     payment_amount: भुक्तानी रकम
     payment_could_not_be_created: भुक्तानी सिर्जना गर्न सकिएन।
     payment_identifier: भुक्तानी परिचयकर्ता
-    payment_information: भुक्तान जानकारी
     payment_method: भुक्तानी विधि
     payment_method_not_supported: त्यो भुक्तानी विधि असमर्थित छ। कृपया अर्को छनौट गर्नुहोस्।
     payment_methods: भुक्तानी विधिहरू
     payment_processing_failed: भुक्तानी प्रशोधन गर्न सकिदैन, कृपया तपाईंले प्रविष्ट गर्नुभएको विवरणहरू जाँच गर्नुहोस्
-    payment_processor_choose_banner_text: यदि तपाईंलाई भुक्तानी प्रोसेसर छनौट गर्न मद्दत चाहिएमा, कृपया भ्रमण गर्नुहोस्
-    payment_processor_choose_link: हाम्रो भुक्तानी पृष्ठ
     payment_provider_settings: भुक्तानी प्रदायक सेटिंग्स
     payment_state: भुक्तानी राज्य
     payment_states:
@@ -1144,13 +1064,10 @@ ne:
       view_cart: कार्ट हेर्नुहोस्
     pending: पेन्डि।
     pending_sale: पेन्डि Sale बिक्री
-    percent: प्रतिशत
     percent_per_item: प्रति वस्तु प्रतिशत
     permalink: Permalink
     phone: फोन
-    place_order: प्लेस अर्डर
     please_define_payment_methods: कृपया पहिले केहि भुक्तानी विधिहरू परिभाषित गर्नुहोस्।
-    please_enter_reasonable_quantity: कृपया एक उचित मात्रा प्रविष्ट गर्नुहोस्।
     plp:
       clear_all: सबै खाली गर्नुहोस्
       default: डिफॉल्ट
@@ -1168,8 +1085,6 @@ ne:
       price_low_to_high: मूल्य (LOW - HIGH)
       results_for: परिणामहरूको लागि
       sort_by: द्वारा क्रमबद्ध
-    populate_get_error: केहि गलत भयो। फेरि वस्तु थप्ने प्रयास गर्नुहोस्।
-    powered_by: द्वारा संचालित
     pre_tax_amount: पूर्व कर रकम
     pre_tax_refund_amount: पूर्व कर फिर्ताको रकम
     pre_tax_total: पूर्व कर कुल
@@ -1181,15 +1096,11 @@ ne:
     previous_state_missing: n / a
     previously_used_card: पहिले प्रयोग गरिएको कार्डहरू
     price: मूल्य
-    price_range: मूल्य दायरा
     price_sack: मूल्य बोरा
     prices: मूल्यहरु
-    process: प्रक्रिया
     product: उत्पादन
-    product_details: उत्पाद विवरण
     product_has_no_description: यस उत्पादको कुनै विवरण छैन
     product_not_available_in_this_currency: यो उत्पादन चयनित मुद्रामा उपलब्ध छैन।
-    product_properties: उत्पाद गुणहरू
     product_rule:
       choose_products: उत्पादनहरू छनौट गर्नुहोस्
       label: अर्डरमा यी उत्पादनहरूको x मात्रा हुनुपर्दछ
@@ -1265,26 +1176,16 @@ ne:
     provider: प्रदायक
     provider_settings_warning: यदि तपाईं प्रदायक प्रकार परिवर्तन गर्दै हुनुहुन्छ भने, तपाईंले प्रदायक सेटि editहरू सम्पादन गर्नु अघि पहिले बचत गर्नुपर्नेछ
     purchased_quantity: खरिद परिमाण
-    qty: Qty
     quantity: मात्रा
-    quantity_returned: मात्रा फिर्ता भयो
-    quantity_shipped: मात्रा ढुवानी गरियो
     quick_search: द्रुत खोज ..
     rate: दर
     reason: कारण
-    receive: प्राप्त गर्नुहोस्
     receive_stock: स्टक प्राप्त गर्नुहोस्
-    received: प्राप्त भयो
-    reception_status: स्वागत स्थिति
     reference: सन्दर्भ
     reference_contains: सन्दर्भ समावेश
     refund: फिर्ती
-    refund_amount_must_be_greater_than_zero: फिर्ती रकम शून्य भन्दा ठूलो हुनुपर्दछ
     refund_reasons: फिर्ती कारणहरू
-    refunded_amount: फिर्ता रकम
     refunds: फिर्ती
-    register: रेजिष्टर गर्नुहोस्
-    registration: पञ्जीकरण
     reimburse: प्रतिपूर्ति
     reimbursed: प्रतिपूर्ति
     reimbursement: प्रतिपूर्ति
@@ -1300,76 +1201,54 @@ ne:
         subject: प्रतिपूर्ति सूचना
         thanks: तपाईको व्यवसायका लागि धन्यबाद।
         total_refunded: 'कुल फिर्ता गरियो: %{total}'
-    reimbursement_perform_failed: 'प्रतिपूर्ति गर्न सकेन। त्रुटि: %{error}'
     reimbursement_status: प्रतिपूर्ति स्थिति
     reimbursement_type: प्रतिपूर्ति प्रकार
     reimbursement_type_override: प्रतिपूर्ति प्रकार ओभरराइड
     reimbursement_types: प्रतिपूर्ति प्रकारहरू
-    reimbursements: प्रतिपूर्ति
     reject: अस्वीकार
     rejected: अस्वीकृत
     remember_me: मलाई सम्झनुहोस्
     remove: हटाउनुहोस्
     remove_image: छवि हटाउनुहोस्
     rename: 'पुन: नामाकरण गर्नुहोस्'
-    report: रिपोर्ट
     reports: रिपोर्टहरू
     required: "*"
     required_fields: आवश्यक क्षेत्रहरू
     resellable: पुनर्विक्रेता
     resend: पुनः पठाउनुहोस्
-    reset_password: मेरो पासवर्ड रिसेट गर्नुहोस्
-    response_code: प्रतिक्रिया कोड
-    resume: पुनःसुरु गर्नुहोस्
-    resumed: पुनःसुरु गरियो
-    return: फर्किनु
-    return_authorization: प्राधिकरण फिर्ता गर्नुहोस्
     return_authorization_canceled: फिर्ता प्राधिकरण रद्द गरियो
     return_authorization_reasons: प्राधिकरण कारणहरू फिर्ता गर्नुहोस्
     return_authorization_states:
       authorized: अधिकृत
       canceled: रद्द गरियो
-    return_authorization_updated: फिर्ता प्राधिकरण अपडेट भयो
     return_authorizations: प्राधिकरण फिर्ता गर्नुहोस्
     return_item_inventory_unit_ineligible: रिटर्न आईटमको सूची एकाई पठाइनु पर्छ
     return_item_inventory_unit_reimbursed: रिटर्न आईटमको इन्वेंटरी एकाई पहिले नै फिर्ता गरीएको छ
     return_item_order_not_completed: फिर्ता वस्तुको अर्डर पूरा गर्नु पर्छ
     return_item_rma_ineligible: फिर्ता वस्तुलाई एक RMA आवश्यक छ
     return_item_time_period_ineligible: फिर्ता आइटम योग्य समय अवधि बाहिर छ
-    return_items: आईटमहरू फिर्ता गर्नुहोस्
     return_items_cannot_be_associated_with_multiple_orders: फिर्ती आईटमहरू बहु अर्डरहरूसँग सम्बन्धित हुन सक्दैन।
     return_number: फिर्ता नम्बर
     return_quantity: रिटर्न मात्रा
-    returned: फिर्ता
     returns: फिर्ता
-    review: समीक्षा
     risk: जोखिम
     risk_analysis: जोखिम विश्लेषण
     risky: जोखिमपूर्ण
-    rma_credit: आरएमए क्रेडिट
     rma_number: RMA नम्बर
-    rma_value: आरएमए मान
     role_id: रोल आईडी
     roles: भूमिकाहरू
     rules: नियमहरू
     safe: सुरक्षित
     sales_total: बिक्री कुल
-    sales_total_description: सबै अर्डरहरूको लागि बिक्री कुल
     sales_totals: बिक्री Totals
-    save_and_continue: बचत गर्नुहोस् र जारी राख्नुहोस्
-    save_my_address: मेरो ठेगाना बचत गर्नुहोस्
     saving: बचत गर्दै
     say_no: होईन
     say_yes: हो
-    scope: स्कोप
     search: खोज्नुहोस्
-    search_results: "'%{keywords}' को लागी खोज परिणामहरू"
     searching: खोजी गर्दै
-    secure_connection_type: सुरक्षित कनेक्शन प्रकार
     security_settings: सुरक्षा सेटिंग्स
     select: चयन गर्नुहोस्
     select_a_date: मिति चयन गर्नुहोस्
-    select_a_date_range: मिति दायरा चयन गर्नुहोस्
     select_a_return_authorization_reason: फिर्ता प्राधिकरण को लागी एक कारण छान्नुहोस्
     select_a_stock_location: स्टक स्थान छान्नुहोस्
     select_a_store_credit_reason: स्टोर क्रेडिट को लागी एक कारण छान्नुहोस्
@@ -1377,12 +1256,9 @@ ne:
     select_from_prototype: प्रोटोटाइपबाट चयन गर्नुहोस्
     select_stock: स्टक चयन गर्नुहोस्
     selected_quantity_not_available: "%{item} को चयन उपलब्ध छैन।"
-    send_copy_of_all_mails_to: सबै मेलहरूको प्रतिलिपि पठाउनुहोस् लाई
-    send_mails_as: मेल पठाउनुहोस् को रूपमा
     seo: SEO
     seo_robots: SEO रोबोटहरू
     seo_title: SEO शीर्षक
-    server: सर्भर
     server_error: सर्भरले त्रुटि फिर्ता गर्‍यो
     settings: सेटिंग्स
     ship: जहाज

@@ -686,27 +686,21 @@ eo:
     default_tax: Defaŭlta Imposto
     default_tax_zone: Defaŭlta Imposta Zono
     delete: Forigi
-    delete_from_taxon: Forigi El Taksono
     deleted: Forigita
-    delivery: Transdono
     delivery_information: Transdona Informo
     depth: Profundo
     description: Priskribo
     destination: Celo
-    destroy: Detruu
     details: Detaloj
     discontinue_on: Ĉesu
     discontinued: Nuligita
     discontinued_variants_present: Iuj liniaj eroj en ĉi tiu ordo havas produktojn ne plu haveblajn.
-    discount_amount: Rabata Kvanto
-    dismiss_banner: Ne, dankon! Mi ne interesiĝas, ne aperigu ĉi tiun mesaĝon denove
     display: Vidigu
     doesnt_track_inventory: Ĝi ne spuras stokregistron
     dont_have_account: Neniu konto?
     edit: Redaktu
     edit_reimbursement: Redaktu repagon
     editing_resource: Redaktante %{resource}
-    editing_rma_reason: Redaktado de RMA-Kialo
     editing_user: Redaktu Vian konton
     eligibility_errors:
       messages:
@@ -725,9 +719,6 @@ eo:
         not_first_order: Ĉi tiu kupona kodo aplikeblas nur al via unua mendo.
     email: Retpoŝto
     empty: Malplena
-    empty_cart: Malplena Ĉaro
-    enable_mail_delivery: Ebligu Retpoŝtan Liveradon
-    end: Fino
     ending_at: Finiĝante ĉe
     ending_in: Finiĝante en
     ends_at: Finiĝas je
@@ -746,7 +737,6 @@ eo:
     errors_prohibited_this_record_from_being_saved:
       one: 1 eraro malpermesis konservi ĉi tiun rekordon
       other: "%{count}-eraroj malpermesis konservi ĉi tiun rekordon"
-    event: Evento
     events:
       spree:
         cart:
@@ -766,8 +756,6 @@ eo:
     existing_shipments: Ekzistantaj sendoj
     expedited_exchanges_warning: Ĉiuj specifaj interŝanĝoj sendos al la kliento tuj post la ŝparado. La kliento pagos la tutan sumon de la aĵo se ili ne redonos la originalan aĵon ene de %{days_window} tagoj.
     expiration: Eksvalidiĝo
-    expiration_date: Findato
-    extension: Etendaĵo
     extensions_directory: Dosierujo pri Etendaĵoj
     facebook: Fejsbuko
     failed_payment_attempts: Malsukcesaj Pagaj Provoj
@@ -776,10 +764,7 @@ eo:
     filter: Filtrilo
     filter_results: Filtri Rezultojn
     filterable: Filtrebla
-    finalize: Fini
-    finalized: Finita
     find_a_taxon: Trovu Taksonon
-    first_item: Unua Artikolo
     first_name: Antaŭnomo
     first_name_begins_with: Antaŭnomo Komencas Kun
     firstname: Antaŭnomo
@@ -790,18 +775,12 @@ eo:
     footer: Piedlinio
     forgot_password: Ĉu vi forgesis la pasvorton?
     free: Senpaga
-    free_shipping: Senpaga Sendado
-    free_shipping_amount: "-"
-    front_end: Antaŭa finaĵo
-    gateway: Enirejo
     gateway_error: Enireja Eraro
-    general: Ĝenerala
     general_settings: Ĝeneralaj Agordoj
     generate_code: Generi kuponan kodon
     get_back_to_the: Reiru al la
     go_to_category: Iru al kategorio
     guest_checkout: Gasta Kaso
-    guest_user_account: Kaso kiel Gasto
     has_no_shipped_units: ne havas senditajn unuojn
     header_banner: Header standardo
     height: Alteco
@@ -822,29 +801,19 @@ eo:
       show_only: Montri nur
       supported_locales: Subtenitaj Lokaj Lokoj
       translations: Tradukoj
-    icon: Ikono
     id: Id
-    image: Bildo
     images: Bildoj
     implement_eligible_for_return: 'Ĉu efektivigi # elektebla_por_reveno? por via Kvalifiko.'
     implement_requires_manual_intervention: 'Ĉu efektivigi # postulas_manan_intervenon? por via Kvalifiko.'
     in_stock: En Stoko
-    inactive: Neaktiva
-    incl: inkl.
     included_in_price: Inkludita en Prezo
-    included_price_validation: ne povas esti elektita krom se vi starigis Defaŭltan Impostan Zonon
     incomplete: Nekompleta
     info_number_of_skus_not_shown:
       one: kaj unu alia
       other: kaj %{count} aliaj
     info_product_has_multiple_skus: 'Ĉi tiu produkto havas %{count}-variantojn:'
     instagram: Instagram
-    instructions_to_reset_password: Bonvolu enigi vian retpoŝton en la suba formularo
-    insufficient_stock: Nesufiĉa stoko disponebla, nur %{on_hand} restanta
-    insufficient_stock_item_quantity: Disponebla nesufiĉa stoko
     insufficient_stock_lines_present: Iuj liniaj eroj en ĉi tiu ordo havas nesufiĉan kvanton.
-    intercept_email_address: Interkapti Retpoŝtan Adreson
-    intercept_email_instructions: Anstataŭigu retpoŝtan ricevanton kaj anstataŭigu ĝin per ĉi tiu adreso.
     internal_name: Interna Nomo
     internationalization: Internaciigo
     invalid_credit_card: Nevalida kreditkarto.
@@ -852,16 +821,11 @@ eo:
     invalid_payment_provider: Nevalida paga provizanto.
     invalid_promotion_action: Nevalida reklama ago.
     invalid_promotion_rule: Nevalida reklamregulo.
-    inventory: Inventaro
-    inventory_adjustment: Stokregistro
     inventory_error_flash_for_insufficient_quantity: Artikolo en via ĉaro fariĝis neatingebla.
-    inventory_state: Inventara ŝtato
-    is_not_available_to_shipment_address: ne disponeblas por sendadreso
     iso: ISO Alfa-2
     iso3: ISO Alfa-3
     iso_name: ISO-Nomo
     issued_on: Eldonita Je
-    item: Ero
     item_description: Artikola Priskribo
     item_total: Artikolo Entute
     item_total_rule:
@@ -878,28 +842,16 @@ eo:
     last_name: Familia nomo
     last_name_begins_with: Lasta Nomo Komencas Kun
     lastname: Familia nomo
-    learn_more: Lernu pli
     lifetime_stats: Vivdaŭraj Statistikoj
     limit_usage_to: Limigi uzadon al
     line_item_adjustments: Liniaj agordoj
-    list: Listo
     loading: Ŝarĝante
     loading_tree: Ŝarĝanta arbo. Bonvolu atendi…
-    locale_changed: Loka Ŝanĝita
     location: Loko
-    lock: Ŝlosu
     log_entries: Ensaluti Enskribojn
-    log_in: Ensaluti
     log_in_to_continue: Ensalutu por daŭrigi
-    logged_in_as: Ensalutis kiel
-    logged_in_succesfully: Ensalutis sukcese
-    logged_out: Vi estis elsalutita.
     login: Ensaluti
-    login_as_existing: Ensalutu kiel Ekzistanta Kliento
-    login_failed: Ensaluta aŭtentikigo malsukcesis.
-    login_name: Ensaluti
     logo: Logo
-    logo_alt: Logo de marko
     logout: Elsaluti
     logs: Registroj
     look_for_similar_items: Serĉu similajn erojn
@@ -907,7 +859,6 @@ eo:
     mailer_logo: Poŝta poŝta emblemo (nur JPG aŭ PNG-bildoj)
     make_refund: Faru repagon
     make_sure_the_above_reimbursement_amount_is_correct: Certigu, ke la supre repaga sumo estas ĝusta
-    manage_promotion_categories: Administri Reklamajn Kategoriojn
     manage_variants: Administri Variantojn
     manual_intervention_required: Mana interveno necesas
     master: Majstro
@@ -916,16 +867,12 @@ eo:
     match_choices:
       all: Ĉiuj
       none: Neniu
-    max_items: Maksimumaj Eroj
     member_since: Membro Ekde
     memo: Memo
     meta_description: Meta-Priskribo
     meta_keywords: Meta Ŝlosilvortoj
     meta_title: Meta Titolo
-    metadata: Metadatenoj
-    minimal_amount: Minimuma Kvanto
     missing_return_authorization: Mankas Revena Rajtigo por %{item_name}.
-    month: Monato
     more: Pli
     move_stock_between_locations: Movu Provizon Inter Lokoj
     move_variant_to: Movu varianton al
@@ -951,15 +898,12 @@ eo:
       show_search: Montri serĉon
       show_user_menu: Montri uzantan menuon
       sign_up: ALIĜU
-    new: Nova
     new_adjustment: Nova Alĝustigo
     new_country: Nova Lando
-    new_customer: Krei novan konton
     new_customer_return: Reveno de Nova Kliento
     new_image: Nova Bildo
     new_option_type: Nova Opcio-Tipo
     new_order: Nova Ordo
-    new_order_completed: Nova Ordo Kompletigita
     new_order_notifications_email: Retpoŝta Novaĵa Sciigo
     new_payment: Nova Pago
     new_payment_method: Nova Pagmaniero
@@ -981,44 +925,34 @@ eo:
     new_stock_location: Nova Proviza Loko
     new_stock_movement: Nova Akcia Movado
     new_stock_transfer: Nova Akcia Translokigo
-    new_store_credit: Nova Butika Kredito
     new_store_credit_category: Nova Butika Kredita Kategorio
     new_tax_category: Nova Imposta Kategorio
     new_tax_rate: Nova Imposta Imposto
     new_taxon: Nova Taksono
     new_taxonomy: Nova Taksonomio
-    new_tracker: Nova Spuristo
     new_user: Nova uzanto
     new_variant: Nova Varianto
     new_zone: Nova Zono
     next: Poste
     no_actions_added: Neniuj agoj aldonis
-    no_address_given: Neniu adreso donita
     no_available_date_set: Neniu disponebla dato fiksita
     no_cc_type: N / A
     no_country: Neniu lando starigis
     no_limits_zone: Sen Limoj
     no_payment_found: Neniu pago trovita
     no_payment_provider_settings_message: Ĉi tiu paga provizanto ne havas proprajn agordojn
-    no_pending_payments: Neniuj pritraktataj pagoj
     no_product_available:
       for_this_quantity: Pardonu, ŝajnas, ke iuj produktoj ne haveblas en elektita kvanto.
       opps: Ho!
-    no_products_found: Neniuj produktoj trovitaj
     no_resource_found: Neniu %{resource} trovita
     no_results: Neniuj rezultoj
-    no_returns_found: Neniu reveno trovita
     no_rules_added: Neniuj reguloj aldonitaj
     no_shipping_method_selected: Neniu sendmetodo elektita.
     no_state_changes: Ankoraŭ neniu stato ŝanĝiĝas.
     no_tracking_present: Neniuj spuraj detaloj provizitaj.
     none: Neniu
-    none_selected: Neniu Elektita
-    normal_amount: Normala Kvanto
     not: ne
     not_available: N / A
-    not_enough_stock: Ne estas sufiĉe da stokregistro ĉe la fonta loko por kompletigi ĉi tiun translokigon.
-    not_found: "%{resource} ne troviĝas"
     note: Notu
     notice_messages:
       icon_removed: Bildo estis sukcese forigita
@@ -1032,27 +966,20 @@ eo:
     num_orders: "# Ordoj"
     number: Numero
     ok: bone
-    on_hand: Surmane
-    open: Malfermu
     open_all_adjustments: Malfermu Ĉiuj Agordoj
-    option_type: Opcia Tipo
     option_type_placeholder: Elektu eblan tipon
     option_types: Opcio-Tipoj
-    option_value: Opcia Valoro
     option_values: Opciaj Valoroj
     optional: Laŭvola
     options: Opcioj
     or: aŭ
-    or_over_price: "%{price} aŭ pli"
     order: Ordo
     order_adjustments: Ordigu ĝustigojn
     order_already_updated: La ordo jam estas ĝisdatigita.
     order_approved: Ordo aprobita
     order_canceled: Mendo nuligita
-    order_details: Ordonaj Detaloj
     order_email_resent: Mendu Retpoŝton Resent
     order_has_no_payments: Ordo havas neniujn pagojn
-    order_information: Ordonaj Informoj
     order_line_items: Mendu Liniajn Erojn
     order_mailer:
       cancel_email:
@@ -1078,7 +1005,6 @@ eo:
       total: 'Ordo Sumo:'
     order_not_found: Ni ne povis trovi vian mendon. Bonvolu provi tiun agon denove.
     order_number: Ordo %{number}
-    order_processed_successfully: Via mendo estis sukcese prilaborita
     order_resumed: Ordo rekomenciĝis
     order_state:
       address: adreso
@@ -1097,10 +1023,8 @@ eo:
     order_summary: Orda Resumo
     order_sure_want_to: Ĉu vi certas, ke vi volas %{event} ĉi tiun mendon?
     order_total: Ordo Sumo
-    order_updated: Ordo Ĝisdatigita
     orders: Ordoj
     out_of_stock: Elĉerpita
-    overview: Superrigardo
     package_from: pakaĵo de
     page_not_found: Pardonu! Paĝo, kiun vi serĉas, ne troveblas.
     pagination:
@@ -1110,18 +1034,14 @@ eo:
     password: Pasvorto
     paste: Alglui
     path: Vojo
-    pay: pagi
     payment: Pago
     payment_amount: Pagokvanto
     payment_could_not_be_created: Pago ne povis esti kreita.
     payment_identifier: Paga Identigilo
-    payment_information: Paga Informo
     payment_method: Pagmaniero
     payment_method_not_supported: Tiu pagmaniero ne subtenas. Bonvolu elekti alian.
     payment_methods: Pagmanieroj
     payment_processing_failed: Pago ne povis esti prilaborita, bonvolu kontroli la enigitajn detalojn
-    payment_processor_choose_banner_text: Se vi bezonas helpon por elekti pagprocesoron, bonvolu viziti
-    payment_processor_choose_link: nia pagopaĝo
     payment_provider_settings: Agordoj pri Paga Provizanto
     payment_state: Pagŝtato
     payment_states:
@@ -1144,13 +1064,10 @@ eo:
       view_cart: Vidi ĉaron
     pending: Decidota
     pending_sale: Atendanta Vendo
-    percent: Procento
     percent_per_item: Procento Por Artikolo
     permalink: Permaligo
     phone: Telefono
-    place_order: Mendu
     please_define_payment_methods: Bonvolu unue difini iujn pagmanierojn.
-    please_enter_reasonable_quantity: Bonvolu enigi akcepteblan kvanton.
     plp:
       clear_all: KLARU ĈIUJN
       default: DEFAULTO
@@ -1168,8 +1085,6 @@ eo:
       price_low_to_high: PREZO (MALALTA - ALTA)
       results_for: REZULTOJ POR
       sort_by: ORDIGI LAŬ
-    populate_get_error: Io fuŝiĝis. Bonvolu provi aldoni la eron denove.
-    powered_by: Funkciigita de
     pre_tax_amount: Antaŭimposta Kvanto
     pre_tax_refund_amount: Antaŭ-Imposta Repago-Kvanto
     pre_tax_total: Antaŭimposta Sumo
@@ -1181,15 +1096,11 @@ eo:
     previous_state_missing: n / a
     previously_used_card: Antaŭe Uzitaj Kartoj
     price: Prezo
-    price_range: Prezo
     price_sack: Prezo-Sako
     prices: Prezoj
-    process: Procezo
     product: Produkto
-    product_details: Produktaj Detaloj
     product_has_no_description: Ĉi tiu produkto havas neniun priskribon
     product_not_available_in_this_currency: Ĉi tiu produkto ne haveblas en la elektita valuto.
-    product_properties: Produktaj Ecoj
     product_rule:
       choose_products: Elektu produktojn
       label: Mendo devas enhavi x kvanton de ĉi tiuj produktoj
@@ -1265,26 +1176,16 @@ eo:
     provider: Provizanto
     provider_settings_warning: Se vi ŝanĝas la provizantan tipon, vi devas unue ŝpari antaŭ ol vi povas redakti la agordojn de la provizanto
     purchased_quantity: Aĉetita Kvanto
-    qty: Kv
     quantity: Kvanto
-    quantity_returned: Kvanto Revenita
-    quantity_shipped: Kvanto Sendita
     quick_search: Rapida serĉo ..
     rate: Imposto
     reason: Kialo
-    receive: ricevi
     receive_stock: Ricevu Stokon
-    received: Ricevita
-    reception_status: Riceva Stato
     reference: Referenco
     reference_contains: Referenco Enhavas
     refund: Repago
-    refund_amount_must_be_greater_than_zero: Repaga kvanto devas esti pli granda ol nulo
     refund_reasons: Rekompencaj Kialoj
-    refunded_amount: Repagita Kvanto
     refunds: Repagoj
-    register: Registriĝi
-    registration: Aliĝo
     reimburse: Rekompencu
     reimbursed: Repagita
     reimbursement: Repago
@@ -1300,76 +1201,54 @@ eo:
         subject: Informo pri Repago
         thanks: Dankon pro via komerco.
         total_refunded: 'Sumo repagita: %{total}'
-    reimbursement_perform_failed: 'Repago ne povis esti plenumita. Eraro: %{error}'
     reimbursement_status: Repaga stato
     reimbursement_type: Repaga tipo
     reimbursement_type_override: Repaga Tipo-Anstataŭigo
     reimbursement_types: Repagaj Tipoj
-    reimbursements: Repagoj
     reject: Malakcepti
     rejected: Malakceptita
     remember_me: Memoru min
     remove: Forigi
     remove_image: Forigi Bildon
     rename: Alinomi
-    report: Raporto
     reports: Raportoj
     required: "*"
     required_fields: postulataj kampoj
     resellable: Revendebla
     resend: Resendi
-    reset_password: Restarigu mian pasvorton
-    response_code: Responda Kodo
-    resume: rekomenci
-    resumed: Rekomencita
-    return: reveni
-    return_authorization: Revena Rajtigo
     return_authorization_canceled: Revena rajtigo nuligita
     return_authorization_reasons: Revenaj Rajtigaj Kialoj
     return_authorization_states:
       authorized: Rajtigita
       canceled: Nuligita
-    return_authorization_updated: Revena rajtigo ĝisdatigita
     return_authorizations: Reveni Rajtigojn
     return_item_inventory_unit_ineligible: La stokregistro de la reveno devas esti sendita
     return_item_inventory_unit_reimbursed: La stokregistro de la reveno de ero jam estas repagita
     return_item_order_not_completed: La mendo de redono devas esti plenumita
     return_item_rma_ineligible: Reveni eron postulas RMA
     return_item_time_period_ineligible: Revena ero estas ekster la elektebla tempoperiodo
-    return_items: Revenu Erojn
     return_items_cannot_be_associated_with_multiple_orders: Revenaj eroj ne povas esti asociitaj kun pluraj mendoj.
     return_number: Revena Numero
     return_quantity: Revenu Kvanton
-    returned: Revenita
     returns: Revenas
-    review: Recenzo
     risk: Risko
     risk_analysis: Riskanalizo
     risky: Riska
-    rma_credit: RMA-Kredito
     rma_number: RMA-Numero
-    rma_value: RMA-Valoro
     role_id: Rolo-ID
     roles: Roloj
     rules: Reguloj
     safe: Sekura
     sales_total: Vendototalo
-    sales_total_description: Vendototalo Por Ĉiuj Mendoj
     sales_totals: Vendototaloj
-    save_and_continue: Konservu kaj Daŭrigu
-    save_my_address: Konservu mian adreson
     saving: Ŝparante
     say_no: Ne
     say_yes: Jes
-    scope: Medio
     search: Serĉu
-    search_results: Serĉrezultoj por '%{keywords}'
     searching: Serĉante
-    secure_connection_type: Sekura Konekta Tipo
     security_settings: Sekurecaj Agordoj
     select: Elektu
     select_a_date: Elektu daton
-    select_a_date_range: Elektu datintervalon
     select_a_return_authorization_reason: Elektu kialon por la redona rajtigo
     select_a_stock_location: Elektu stokan lokon
     select_a_store_credit_reason: Elektu kialon por la butika kredito
@@ -1377,12 +1256,9 @@ eo:
     select_from_prototype: Elektu El Prototipo
     select_stock: Elektu stokon
     selected_quantity_not_available: elektita de %{item} ne haveblas.
-    send_copy_of_all_mails_to: Sendu Kopion de Ĉiuj Retpoŝtoj al
-    send_mails_as: Sendu Retpoŝtojn Kiel
     seo: SEO
     seo_robots: SEO-Robotoj
     seo_title: SEO-titolo
-    server: Servilo
     server_error: La servilo redonis eraron
     settings: Agordoj
     ship: Ŝipo

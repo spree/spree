@@ -686,27 +686,21 @@ af:
     default_tax: Verstekbelasting
     default_tax_zone: Verstekbelasting sone
     delete: Vee uit
-    delete_from_taxon: Skrap uit Taxon
     deleted: Uitgevee
-    delivery: Aflewering
     delivery_information: Afleweringsinligting
     depth: Diepte
     description: Beskrywing
     destination: Bestemming
-    destroy: Vernietig
     details: Besonderhede
     discontinue_on: Staak Aan
     discontinued: Gestaak
     discontinued_variants_present: Sommige lynitems in hierdie volgorde bevat produkte wat nie meer beskikbaar is nie.
-    discount_amount: Afslagbedrag
-    dismiss_banner: Nee dankie! Ek stel nie belang nie, moet hierdie boodskap nie weer vertoon nie
     display: Vertoon
     doesnt_track_inventory: Dit hou geen voorraad dop nie
     dont_have_account: Geen rekening nie?
     edit: Wysig
     edit_reimbursement: Wysig vergoeding
     editing_resource: Redigering van %{resource}
-    editing_rma_reason: Redigeer RMA Rede
     editing_user: Wysig u rekening
     eligibility_errors:
       messages:
@@ -725,9 +719,6 @@ af:
         not_first_order: Hierdie koeponkode kan slegs op u eerste bestelling toegepas word.
     email: E-pos
     empty: Leeg
-    empty_cart: Leë waentjie
-    enable_mail_delivery: Aktiveer posaflewering
-    end: Einde
     ending_at: Eindig by
     ending_in: Eindig in
     ends_at: Eindig om
@@ -746,7 +737,6 @@ af:
     errors_prohibited_this_record_from_being_saved:
       one: 1 fout het verbied dat hierdie rekord gestoor kon word
       other: "%{count}-foute het verbied dat hierdie rekord gestoor kan word"
-    event: Gebeurtenis
     events:
       spree:
         cart:
@@ -766,8 +756,6 @@ af:
     existing_shipments: Bestaande besendings
     expedited_exchanges_warning: Enige gespesifiseerde omruilings sal onmiddellik na besparing aan die klant gestuur word. Die kliënt sal die volle bedrag van die item gehef word as hy nie die oorspronklike artikel binne %{days_window} dae terugbesorg het nie.
     expiration: Verstryking
-    expiration_date: Vervaldatum
-    extension: Uitbreiding
     extensions_directory: Uitbreidingsgids
     facebook: Facebook
     failed_payment_attempts: Mislukte betalingspogings
@@ -776,10 +764,7 @@ af:
     filter: Filtreer
     filter_results: Filter uitslae
     filterable: Filtreerbaar
-    finalize: Finaliseer
-    finalized: Afgehandel
     find_a_taxon: Soek 'n taxon
-    first_item: Eerste item
     first_name: Eerste naam
     first_name_begins_with: Voornaam begin met
     firstname: Eerste naam
@@ -790,18 +775,12 @@ af:
     footer: Voetskrif
     forgot_password: Wagwoord vergeet?
     free: Vry
-    free_shipping: Gratis aflewering
-    free_shipping_amount: "-"
-    front_end: Voorkant
-    gateway: Gateway
     gateway_error: Gatewayfout
-    general: Generaal
     general_settings: Algemene instellings
     generate_code: Genereer koeponkode
     get_back_to_the: Gaan terug na die
     go_to_category: Gaan na kategorie
     guest_checkout: Gaste-afhandeling
-    guest_user_account: Betaal as gas
     has_no_shipped_units: het geen eenhede gestuur nie
     header_banner: Opskrifbanner
     height: Hoogte
@@ -822,29 +801,19 @@ af:
       show_only: Wys slegs
       supported_locales: Ondersteunde lokale
       translations: Vertalings
-    icon: Ikoon
     id: Id
-    image: Beeld
     images: Beelde
     implement_eligible_for_return: 'Moet # kwalifiseer_vir_return implementeer? vir u Kwalifiseerder.'
     implement_requires_manual_intervention: 'Moet u #requires_manual_intervention implementeer? vir u Kwalifiseerder.'
     in_stock: Op voorraad
-    inactive: Onaktief
-    incl: inkl.
     included_in_price: Ingesluit by prys
-    included_price_validation: kan slegs gekies word tensy u 'n verstekbelasting-sone ingestel het
     incomplete: Onvolledig
     info_number_of_skus_not_shown:
       one: en een ander
       other: en %{count} ander
     info_product_has_multiple_skus: 'Hierdie produk het %{count}-variante:'
     instagram: Instagram
-    instructions_to_reset_password: Vul asseblief u e-posadres in op die onderstaande vorm
-    insufficient_stock: Onvoldoende voorraad beskikbaar, slegs %{on_hand} oor
-    insufficient_stock_item_quantity: Onvoldoende voorraad hoeveelheid beskikbaar
     insufficient_stock_lines_present: Sommige lynitems in hierdie volgorde het onvoldoende hoeveelheid.
-    intercept_email_address: Onderskep e-posadres
-    intercept_email_instructions: Ignoreer die e-posontvanger en vervang dit met hierdie adres.
     internal_name: Interne naam
     internationalization: Internasionalisering
     invalid_credit_card: Ongeldige kredietkaart.
@@ -852,16 +821,11 @@ af:
     invalid_payment_provider: Ongeldige betalingsverskaffer.
     invalid_promotion_action: Ongeldige promosie-aksie.
     invalid_promotion_rule: Ongeldige promosiereël.
-    inventory: Voorraad
-    inventory_adjustment: Voorraadaanpassing
     inventory_error_flash_for_insufficient_quantity: "'N Item in u mandjie het onbeskikbaar geraak."
-    inventory_state: Voorraadstaat
-    is_not_available_to_shipment_address: is nie beskikbaar vir afleweringsadres nie
     iso: ISO Alpha-2
     iso3: ISO Alpha-3
     iso_name: ISO Naam
     issued_on: Uitgereik op
-    item: Item
     item_description: Itembeskrywing
     item_total: Item Totaal
     item_total_rule:
@@ -878,28 +842,16 @@ af:
     last_name: Van
     last_name_begins_with: Van begin met
     lastname: Van
-    learn_more: Leer meer
     lifetime_stats: Lewenslange statistieke
     limit_usage_to: Gebruik beperk tot
     line_item_adjustments: Aanpassings van lynitems
-    list: Lys
     loading: Laai tans
     loading_tree: Laai boom. Wag asseblief…
-    locale_changed: Locale verander
     location: Ligging
-    lock: Sluit
     log_entries: Teken inskrywings aan
-    log_in: Teken aan
     log_in_to_continue: Meld aan om voort te gaan
-    logged_in_as: ingeteken as
-    logged_in_succesfully: Suksesvol aangemeld
-    logged_out: U is afgemeld.
     login: Teken aan
-    login_as_existing: Teken in as bestaande klant
-    login_failed: Aanmeldverifikasie het misluk.
-    login_name: Teken aan
     logo: Logo
-    logo_alt: Handelsmerk-logo
     logout: Teken uit
     logs: Logs
     look_for_similar_items: Soek soortgelyke items
@@ -907,7 +859,6 @@ af:
     mailer_logo: Mailer-logo (slegs JPG- of PNG-beelde)
     make_refund: Maak terugbetaling
     make_sure_the_above_reimbursement_amount_is_correct: Maak seker dat die bogenoemde vergoedingsbedrag korrek is
-    manage_promotion_categories: Bestuur bevorderingskategorieë
     manage_variants: Bestuur variante
     manual_intervention_required: Handmatige ingryping benodig
     master: Meester
@@ -916,16 +867,12 @@ af:
     match_choices:
       all: Almal
       none: Geen
-    max_items: Maksimum items
     member_since: Lid sedert
     memo: Memo
     meta_description: Meta Beskrywing
     meta_keywords: Meta sleutelwoorde
     meta_title: Meta titel
-    metadata: Metadata
-    minimal_amount: Minimale bedrag
     missing_return_authorization: Ontbrekingsmagtiging ontbreek vir %{item_name}.
-    month: Maand
     more: Meer
     move_stock_between_locations: Skuif voorraad tussen plekke
     move_variant_to: Skuif variant na
@@ -951,15 +898,12 @@ af:
       show_search: Wys soektog
       show_user_menu: Wys gebruikersmenu
       sign_up: TEKEN AAN
-    new: Nuut
     new_adjustment: Nuwe aanpassing
     new_country: Nuwe land
-    new_customer: Skep nuwe rekening
     new_customer_return: Opbrengs van nuwe klant
     new_image: Nuwe beeld
     new_option_type: Nuwe opsie tipe
     new_order: Nuwe bestelling
-    new_order_completed: Nuwe bestelling voltooi
     new_order_notifications_email: Nuwe bestelling kennisgewings e-pos
     new_payment: Nuwe betaling
     new_payment_method: Nuwe betaalmetode
@@ -981,44 +925,34 @@ af:
     new_stock_location: Nuwe voorraad ligging
     new_stock_movement: Nuwe Voorraadbeweging
     new_stock_transfer: Nuwe aandele-oordrag
-    new_store_credit: Nuwe winkelkrediet
     new_store_credit_category: Nuwe winkelkredietkategorie
     new_tax_category: Nuwe belastingkategorie
     new_tax_rate: Nuwe belastingkoers
     new_taxon: Nuwe Taxon
     new_taxonomy: Nuwe taksonomie
-    new_tracker: Nuwe Tracker
     new_user: Nuwe gebruiker
     new_variant: Nuwe variant
     new_zone: Nuwe sone
     next: Volgende
     no_actions_added: Geen handelinge bygevoeg nie
-    no_address_given: Geen adres gegee nie
     no_available_date_set: Geen beskikbare datum vasgestel nie
     no_cc_type: Nvt
     no_country: Geen land gestel nie
     no_limits_zone: Geen perke
     no_payment_found: Geen betaling gevind nie
     no_payment_provider_settings_message: Hierdie betaalverskaffer het geen gepasmaakte instellings beskikbaar nie
-    no_pending_payments: Geen hangende betalings nie
     no_product_available:
       for_this_quantity: Jammer, dit lyk asof sommige produkte nie in die gekose hoeveelheid beskikbaar is nie.
       opps: Oeps!
-    no_products_found: Geen produkte gevind nie
     no_resource_found: Geen %{resource} gevind nie
     no_results: Geen resultate
-    no_returns_found: Geen opgawes gevind nie
     no_rules_added: Geen reëls bygevoeg nie
     no_shipping_method_selected: Geen versendingsmetode is gekies nie.
     no_state_changes: Geen toestand verander nog nie.
     no_tracking_present: Geen opsporingbesonderhede verskaf nie.
     none: Geen
-    none_selected: Geen gekies nie
-    normal_amount: Normale hoeveelheid
     not: nie
     not_available: Nvt
-    not_enough_stock: Daar is nie genoeg voorraad by die bron om hierdie oordrag te voltooi nie.
-    not_found: "%{resource} word nie gevind nie"
     note: Let wel
     notice_messages:
       icon_removed: Prent is suksesvol verwyder
@@ -1032,27 +966,20 @@ af:
     num_orders: "# Bestellings"
     number: Nommer
     ok: OK
-    on_hand: Byderhand
-    open: Maak oop
     open_all_adjustments: Maak alle verstellings oop
-    option_type: Soort opsie
     option_type_placeholder: Kies 'n tipe opsie
     option_types: Opsie tipes
-    option_value: Opsiewaarde
     option_values: Opsiewaardes
     optional: Opsioneel
     options: Opsies
     or: of
-    or_over_price: "%{price} of meer"
     order: Orde
     order_adjustments: Bestel aanpassings
     order_already_updated: Die bestelling is reeds opgedateer.
     order_approved: Bestelling goedgekeur
     order_canceled: Bestelling gekanselleer
-    order_details: Bestelbesonderhede
     order_email_resent: Bestel e-pos aanstuur
     order_has_no_payments: Bestelling het geen betalings nie
-    order_information: Bestel inligting
     order_line_items: Bestel lynitems
     order_mailer:
       cancel_email:
@@ -1078,7 +1005,6 @@ af:
       total: 'Bestelling totaal:'
     order_not_found: Ons kon nie u bestelling vind nie. Probeer die aksie weer.
     order_number: Bestel %{number}
-    order_processed_successfully: U bestelling is suksesvol verwerk
     order_resumed: Bestelling hervat
     order_state:
       address: adres
@@ -1097,10 +1023,8 @@ af:
     order_summary: bestelling opsomming
     order_sure_want_to: Is u seker dat u hierdie bestelling wil %{event}?
     order_total: Bestelling totaal
-    order_updated: Bestelling opgedateer
     orders: Bestellings
     out_of_stock: Uit voorraad uit
-    overview: Oorsig
     package_from: pakket vanaf
     page_not_found: Jammer! Bladsy wat u soek, kan nie gevind word nie.
     pagination:
@@ -1110,18 +1034,14 @@ af:
     password: Wagwoord
     paste: Plak
     path: Pad
-    pay: betaal
     payment: Betaling
     payment_amount: Betalingsbedrag
     payment_could_not_be_created: Betaling kon nie geskep word nie.
     payment_identifier: Betalingsidentifiseerder
-    payment_information: Betaling Inligting
     payment_method: Betalings metode
     payment_method_not_supported: Daardie betaalmetode word nie ondersteun nie. Kies 'n ander een.
     payment_methods: Betalingsmetodes
     payment_processing_failed: Betaling kon nie verwerk word nie. Gaan asseblief die besonderhede na wat u ingevoer het
-    payment_processor_choose_banner_text: Besoek gerus as u hulp nodig het om 'n betalingsverwerker te kies
-    payment_processor_choose_link: ons betalingsbladsy
     payment_provider_settings: Betalingsverskaffer-instellings
     payment_state: Betalingstaat
     payment_states:
@@ -1144,13 +1064,10 @@ af:
       view_cart: Besigtig wa
     pending: Hangende
     pending_sale: Hangende uitverkoping
-    percent: Persent
     percent_per_item: Persent per item
     permalink: Permalink
     phone: Foon
-    place_order: Plaas bestelling
     please_define_payment_methods: Definieer eers 'n paar betaalmetodes.
-    please_enter_reasonable_quantity: Voer asseblief 'n redelike hoeveelheid in.
     plp:
       clear_all: WYS ALMAL
       default: STAAL
@@ -1168,8 +1085,6 @@ af:
       price_low_to_high: PRYS (LAAG - HOOG)
       results_for: RESULTATE VIR
       sort_by: SORTEER VOLGENS
-    populate_get_error: Iets het verkeerd geloop. Probeer om die item weer by te voeg.
-    powered_by: Aangedryf deur
     pre_tax_amount: Bedrag voor belasting
     pre_tax_refund_amount: Terugbetaalbedrag voor belasting
     pre_tax_total: Totaal voor belasting
@@ -1181,15 +1096,11 @@ af:
     previous_state_missing: nvt
     previously_used_card: Voorheen gebruikte kaarte
     price: Prys
-    price_range: Prysklas
     price_sack: Prys sak
     prices: Pryse
-    process: Proses
     product: Produk
-    product_details: Produk besonderhede
     product_has_no_description: Hierdie produk het geen beskrywing nie
     product_not_available_in_this_currency: Hierdie produk is nie in die gekose geldeenheid beskikbaar nie.
-    product_properties: Produk eienskappe
     product_rule:
       choose_products: Kies produkte
       label: Bestelling moet x hoeveelheid van hierdie produkte bevat
@@ -1265,26 +1176,16 @@ af:
     provider: Verskaffer
     provider_settings_warning: As u die verskaffersoort verander, moet u eers stoor voordat u die verskafferinstellings kan wysig
     purchased_quantity: Gekoopte hoeveelheid
-    qty: Aantal
     quantity: Hoeveelheid
-    quantity_returned: Hoeveelheid teruggestuur
-    quantity_shipped: Hoeveelheid gestuur
     quick_search: Vinnige soektog..
     rate: Koers
     reason: Rede
-    receive: ontvang
     receive_stock: Ontvang voorraad
-    received: Ontvang
-    reception_status: Ontvangsstatus
     reference: Verwysing
     reference_contains: Verwysing bevat
     refund: Terugbetaling
-    refund_amount_must_be_greater_than_zero: Terugbetalingsbedrag moet groter as nul wees
     refund_reasons: Redes vir terugbetaling
-    refunded_amount: Terugbetaalde bedrag
     refunds: Terugbetalings
-    register: Registreer
-    registration: Registrasie
     reimburse: Vergoed
     reimbursed: Vergoed
     reimbursement: Vergoeding
@@ -1300,76 +1201,54 @@ af:
         subject: Kennisgewing oor vergoeding
         thanks: Dankie vir u besigheid.
         total_refunded: 'Totaal terugbetaal: %{total}'
-    reimbursement_perform_failed: 'Terugbetaling kon nie uitgevoer word nie. Fout: %{error}'
     reimbursement_status: Vergoedingstatus
     reimbursement_type: Soort vergoeding
     reimbursement_type_override: Verbetering van tipe vergoeding
     reimbursement_types: Tipes vergoeding
-    reimbursements: Terugbetalings
     reject: Verwerp
     rejected: Verwerp
     remember_me: Onthou my
     remove: Verwyder
     remove_image: Verwyder prent
     rename: Hernoem
-    report: Verslag
     reports: Berigte
     required: "*"
     required_fields: Vereiste velde
     resellable: Herverkoopbaar
     resend: Stuur weer
-    reset_password: Herstel my wagwoord
-    response_code: Reaksiekode
-    resume: hervat
-    resumed: Hervat
-    return: terugkeer
-    return_authorization: Terugkeermagtiging
     return_authorization_canceled: Terugkeermagtiging gekanselleer
     return_authorization_reasons: Redes vir magtiging vir terugkeer
     return_authorization_states:
       authorized: Gemagtig
       canceled: Gekanselleer
-    return_authorization_updated: Terugstuurmagtiging opgedateer
     return_authorizations: Terug magtigings
     return_item_inventory_unit_ineligible: Retouritem se voorraadeenheid moet versend word
     return_item_inventory_unit_reimbursed: Retouritem se voorraadeenheid word reeds vergoed
     return_item_order_not_completed: Die bestelling van die retouritem moet voltooi word
     return_item_rma_ineligible: Opgawe-item vereis 'n RMA
     return_item_time_period_ineligible: Retouritem is buite die geskikte tydperk
-    return_items: Retouritems
     return_items_cannot_be_associated_with_multiple_orders: Retouritems kan nie met verskeie bestellings geassosieer word nie.
     return_number: Retoernommer
     return_quantity: Opgawehoeveelheid
-    returned: Teruggekeer
     returns: Opbrengste
-    review: Resensie
     risk: Risiko
     risk_analysis: Risiko-analise
     risky: Riskant
-    rma_credit: RMA-krediet
     rma_number: RMA-nommer
-    rma_value: RMA Waarde
     role_id: Rol-ID
     roles: Rolle
     rules: Reëls
     safe: Veilig
     sales_total: Verkope totaal
-    sales_total_description: Verkooptotaal vir alle bestellings
     sales_totals: Verkooptotale
-    save_and_continue: Stoor en gaan voort
-    save_my_address: Stoor my adres
     saving: Besparing
     say_no: Geen
     say_yes: Ja
-    scope: Omvang
     search: Soek
-    search_results: Soekresultate vir '%{keywords}'
     searching: Soek
-    secure_connection_type: Veilige verbindingstipe
     security_settings: Veiligheidsinstellings
     select: Kies
     select_a_date: Kies 'n datum
-    select_a_date_range: Kies 'n datumreeks
     select_a_return_authorization_reason: Kies 'n rede vir die retourmagtiging
     select_a_stock_location: Kies 'n voorraadlokasie
     select_a_store_credit_reason: Kies 'n rede vir die winkelkrediet
@@ -1377,12 +1256,9 @@ af:
     select_from_prototype: Kies uit prototipe
     select_stock: Kies voorraad
     selected_quantity_not_available: gekies uit %{item} is nie beskikbaar nie.
-    send_copy_of_all_mails_to: Stuur afskrif van alle e - posse na
-    send_mails_as: Stuur posse soos
     seo: SEO
     seo_robots: SEO robotte
     seo_title: SEO titel
-    server: Bediener
     server_error: Die bediener het 'n fout opgelewer
     settings: Instellings
     ship: Skip

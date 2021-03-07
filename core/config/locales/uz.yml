@@ -686,27 +686,21 @@ uz:
     default_tax: Odatiy soliq
     default_tax_zone: Odatiy soliq zonasi
     delete: O'chirish
-    delete_from_taxon: Taxon-dan o'chirish
     deleted: O'chirildi
-    delivery: Yetkazib berish
     delivery_information: Yetkazib berish haqida ma'lumot
     depth: Chuqurlik
     description: Tavsif
     destination: Belgilangan joy
-    destroy: Yo'q qilish
     details: Tafsilotlar
     discontinue_on: To'xtatish yoqilgan
     discontinued: To'xtatildi
     discontinued_variants_present: Ushbu tartibdagi ba'zi qatorlar endi mavjud bo'lmagan mahsulotlarga ega.
-    discount_amount: Chegirma miqdori
-    dismiss_banner: Yo'q, rahmat! Menga qiziq emas, bu xabarni boshqa ko'rsatma
     display: Displey
     doesnt_track_inventory: Bu inventarizatsiyani kuzatmaydi
     dont_have_account: Hisob yo'qmi?
     edit: Tahrirlash
     edit_reimbursement: To'lovni tahrirlash
     editing_resource: "%{resource}-ni tahrirlash"
-    editing_rma_reason: RMA sababini tahrirlash
     editing_user: Hisobingizni tahrirlash
     eligibility_errors:
       messages:
@@ -725,9 +719,6 @@ uz:
         not_first_order: Ushbu kupon kodi faqat birinchi buyurtmangizda qo'llanilishi mumkin.
     email: Elektron pochta
     empty: Bo'sh
-    empty_cart: Bo'sh savat
-    enable_mail_delivery: Pochta etkazib berishni yoqish
-    end: Oxiri
     ending_at: 'Tugash vaqti:'
     ending_in: Tugatish
     ends_at: 'Tugash vaqti:'
@@ -746,7 +737,6 @@ uz:
     errors_prohibited_this_record_from_being_saved:
       one: 1 xato ushbu yozuvni saqlashni taqiqladi
       other: "%{count} xatolari ushbu yozuvni saqlashni taqiqladi"
-    event: Tadbir
     events:
       spree:
         cart:
@@ -766,8 +756,6 @@ uz:
     existing_shipments: Mavjud jo'natmalar
     expedited_exchanges_warning: Belgilangan birjalar xaridorga tejashdan so'ng darhol jo'natiladi. Xaridor asl nusxasini %{days_window} kun ichida qaytarmasa, mahsulotning to'liq miqdori olinadi.
     expiration: Muddati tugaydi
-    expiration_date: Muddati
-    extension: Kengaytma
     extensions_directory: Kengaytmalar katalogi
     facebook: Facebook
     failed_payment_attempts: Muvaffaqiyatsiz to'lov urinishlari
@@ -776,10 +764,7 @@ uz:
     filter: Filtr
     filter_results: Natijalarni filtrlash
     filterable: Filtrlangan
-    finalize: Yakunlash
-    finalized: Yakunlandi
     find_a_taxon: Taksonni toping
-    first_item: Birinchi band
     first_name: Ism
     first_name_begins_with: Ism bilan boshlanadi
     firstname: Ism
@@ -790,18 +775,12 @@ uz:
     footer: Altbilgi
     forgot_password: Parolni unutdingizmi?
     free: Ozod
-    free_shipping: Yetkazib berish bepul
-    free_shipping_amount: "-"
-    front_end: Foydalanuvchi interfeysi
-    gateway: Shlyuz
     gateway_error: Shlyuz xatosi
-    general: Umumiy
     general_settings: Umumiy sozlamalar
     generate_code: Kupon kodini yarating
     get_back_to_the: Ga qaytib boring
     go_to_category: Toifaga o'ting
     guest_checkout: Mehmonlarni ro'yxatdan o'tkazish
-    guest_user_account: Mehmon sifatida to'lov
     has_no_shipped_units: jo'natilgan bo'linmalari yo'q
     header_banner: Sarlavha banner
     height: Balandligi
@@ -822,29 +801,19 @@ uz:
       show_only: Faqat ko'rsatish
       supported_locales: Qo'llab-quvvatlanadigan mahalliy aholi
       translations: Tarjimalar
-    icon: Belgisi
     id: Id
-    image: Rasm
     images: Tasvirlar
     implement_eligible_for_return: 'Qaytish uchun #eligible_ni amalga oshirish kerakmi? sizning EligibilityValidator uchun.'
     implement_requires_manual_intervention: 'Amalga oshirilishi kerakmi # qo''llanma_ aralashuvi? sizning EligibilityValidator uchun.'
     in_stock: Omborda mavjud; sotuvda mavjud
-    inactive: Faol emas
-    incl: shu jumladan.
     included_in_price: Narxga kiritilgan
-    included_price_validation: Agar siz standart soliq zonasini o'rnatmagan bo'lsangiz, tanlab bo'lmaydi
     incomplete: Tugallanmagan
     info_number_of_skus_not_shown:
       one: va boshqa
       other: va boshqalar %{count}
     info_product_has_multiple_skus: 'Ushbu mahsulotda %{count} variantlari mavjud:'
     instagram: Instagram
-    instructions_to_reset_password: Iltimos, quyidagi shaklga elektron pochtangizni kiriting
-    insufficient_stock: Zaxira yetarli emas, faqat %{on_hand} qoldi
-    insufficient_stock_item_quantity: Birja miqdori yetarli emas
     insufficient_stock_lines_present: Ushbu tartibdagi ba'zi satr elementlari miqdori etarli emas.
-    intercept_email_address: Elektron pochta manzilini to'sib qo'ying
-    intercept_email_instructions: Elektron pochta qabul qiluvchisini bekor qiling va ushbu manzil bilan almashtiring.
     internal_name: Ichki ism
     internationalization: Xalqarolashtirish
     invalid_credit_card: Kredit karta yaroqsiz.
@@ -852,16 +821,11 @@ uz:
     invalid_payment_provider: To‘lov provayderi noto‘g‘ri.
     invalid_promotion_action: Notanish reklama aktsiyasi.
     invalid_promotion_rule: Reklama qoidasi yaroqsiz.
-    inventory: Inventarizatsiya
-    inventory_adjustment: Zaxiralarni sozlash
     inventory_error_flash_for_insufficient_quantity: Savatdagi narsa mavjud emas.
-    inventory_state: Inventarizatsiya holati
-    is_not_available_to_shipment_address: etkazib berish manzili mavjud emas
     iso: ISO Alpha-2
     iso3: ISO Alpha-3
     iso_name: ISO nomi
     issued_on: Chiqarilgan
-    item: Mahsulot
     item_description: Mahsulot tavsifi
     item_total: Jami mahsulot
     item_total_rule:
@@ -878,28 +842,16 @@ uz:
     last_name: Familiya
     last_name_begins_with: Familiya bilan boshlanadi
     lastname: Familiya
-    learn_more: Ko'proq ma'lumot olish
     lifetime_stats: Hayotiy statistika
     limit_usage_to: Foydalanishni cheklash
     line_item_adjustments: Satr elementlarini sozlash
-    list: Ro'yxat
     loading: Yuklanmoqda
     loading_tree: Daraxt yuklanmoqda. Iltimos kuting…
-    locale_changed: Mahalliy til o'zgartirildi
     location: Manzil
-    lock: Qulflash
     log_entries: Jurnal yozuvlari
-    log_in: Tizimga kirish
     log_in_to_continue: Davom etish uchun tizimga kiring
-    logged_in_as: Sifatida tizimga kirgan
-    logged_in_succesfully: Muvaffaqiyatli tizimga kirdingiz
-    logged_out: Siz tizimdan chiqdingiz.
     login: Tizimga kirish
-    login_as_existing: Mavjud mijoz sifatida kirish
-    login_failed: Kirish autentifikatsiyasi amalga oshmadi.
-    login_name: Tizimga kirish
     logo: Logotip
-    logo_alt: Brend logotipi
     logout: Chiqish
     logs: Jurnallar
     look_for_similar_items: Shunga o'xshash narsalarni qidirib toping
@@ -907,7 +859,6 @@ uz:
     mailer_logo: Pochta logotipi (faqat JPG yoki PNG rasmlarda)
     make_refund: Pulni qaytaring
     make_sure_the_above_reimbursement_amount_is_correct: Yuqoridagi qoplama miqdori to'g'ri ekanligiga ishonch hosil qiling
-    manage_promotion_categories: Reklama toifalarini boshqarish
     manage_variants: Variantlarni boshqarish
     manual_intervention_required: Qo'l aralashuvi talab qilinadi
     master: Ustoz
@@ -916,16 +867,12 @@ uz:
     match_choices:
       all: Hammasi
       none: Yo'q
-    max_items: Maksimal buyumlar
     member_since: Ro'yxatdan beri
     memo: Memo
     meta_description: Meta tavsifi
     meta_keywords: Meta kalit so'zlari
     meta_title: Meta nomi
-    metadata: Metadata
-    minimal_amount: Minimal miqdor
     missing_return_authorization: "%{item_name} uchun qaytish avtorizatsiyasi yo'qolgan."
-    month: Oy
     more: Ko'proq
     move_stock_between_locations: Qimmatli qog'ozlarni joylar orasida ko'chiring
     move_variant_to: Variantni ko'chirish
@@ -951,15 +898,12 @@ uz:
       show_search: Qidiruvni ko'rsatish
       show_user_menu: Foydalanuvchi menyusini ko'rsatish
       sign_up: RO'YXATDAN O'TISH
-    new: Yangi
     new_adjustment: Yangi sozlash
     new_country: Yangi mamlakat
-    new_customer: Yangi hisob yarating
     new_customer_return: Mijozlarning yangi qaytishi
     new_image: Yangi rasm
     new_option_type: Yangi variant turi
     new_order: Yangi buyurtma
-    new_order_completed: Yangi buyurtma bajarildi
     new_order_notifications_email: Yangi buyurtma haqida xabarnomalar elektron pochta
     new_payment: Yangi to'lov
     new_payment_method: Yangi to'lov usuli
@@ -981,44 +925,34 @@ uz:
     new_stock_location: Yangi aktsiyalar joylashuvi
     new_stock_movement: Yangi aktsiyalar harakati
     new_stock_transfer: Yangi aktsiyalarni o'tkazish
-    new_store_credit: Do'konning yangi krediti
     new_store_credit_category: Yangi do'kon kreditlari toifasi
     new_tax_category: Yangi soliq toifasi
     new_tax_rate: Yangi soliq stavkasi
     new_taxon: Yangi takson
     new_taxonomy: Yangi taksonomiya
-    new_tracker: Yangi Tracker
     new_user: Yangi foydalanuvchi
     new_variant: Yangi Variant
     new_zone: Yangi zona
     next: Keyingisi
     no_actions_added: Hech qanday amal qo'shilmagan
-    no_address_given: Manzil berilmagan
     no_available_date_set: Mavjud sana belgilanmagan
     no_cc_type: Yo'q
     no_country: Hech qanday mamlakat o'rnatilmagan
     no_limits_zone: Cheklovlar yo'q
     no_payment_found: To'lov topilmadi
     no_payment_provider_settings_message: Ushbu to'lov provayderida maxsus sozlamalar mavjud emas
-    no_pending_payments: Kutilayotgan to‘lovlar yo‘q
     no_product_available:
       for_this_quantity: Kechirasiz, ba'zi mahsulotlar tanlangan miqdorda mavjud emasga o'xshaydi.
       opps: Afsus!
-    no_products_found: Hech qanday mahsulot topilmadi
     no_resource_found: "%{resource} topilmadi"
     no_results: Natija yo'q
-    no_returns_found: Qaytish topilmadi
     no_rules_added: Hech qanday qoidalar qo'shilmagan
     no_shipping_method_selected: Yuk tashish usuli tanlanmagan.
     no_state_changes: Hech qanday holat o'zgargani yo'q.
     no_tracking_present: Kuzatuv ma'lumotlari berilmagan.
     none: Yo'q
-    none_selected: Hech kim tanlanmadi
-    normal_amount: Oddiy miqdor
     not: emas
     not_available: Yo'q
-    not_enough_stock: Ushbu uzatishni amalga oshirish uchun manba joylashgan joyda zaxira etarli emas.
-    not_found: "%{resource} topilmadi"
     note: Eslatma
     notice_messages:
       icon_removed: Rasm muvaffaqiyatli olib tashlandi
@@ -1032,27 +966,20 @@ uz:
     num_orders: "# Buyurtmalar"
     number: Raqam
     ok: OK
-    on_hand: Qo'lda
-    open: Ochiq
     open_all_adjustments: Barcha sozlamalarni oching
-    option_type: Variant turi
     option_type_placeholder: Variant turini tanlang
     option_types: Variant turlari
-    option_value: Tanlov qiymati
     option_values: Variant qiymatlari
     optional: Ixtiyoriy
     options: Tanlovlar
     or: yoki
-    or_over_price: "%{price} yoki undan yuqori"
     order: Buyurtma
     order_adjustments: Buyurtmani sozlash
     order_already_updated: Buyurtma allaqachon yangilangan.
     order_approved: Buyurtma tasdiqlandi
     order_canceled: Buyurtma bekor qilindi
-    order_details: Buyurtma tafsilotlari
     order_email_resent: Elektron pochta orqali qayta yuborishni buyurtma qiling
     order_has_no_payments: Buyurtmada to'lovlar yo'q
-    order_information: Buyurtma haqida ma'lumot
     order_line_items: Chiziqli narsalarni buyurtma qilish
     order_mailer:
       cancel_email:
@@ -1078,7 +1005,6 @@ uz:
       total: 'Buyurtma jami:'
     order_not_found: Sizning buyurtmangizni topa olmadik. Iltimos, ushbu amalni qayta urining.
     order_number: "%{number} buyurtmasi"
-    order_processed_successfully: Sizning buyurtmangiz muvaffaqiyatli bajarildi
     order_resumed: Buyurtma qayta tiklandi
     order_state:
       address: manzil
@@ -1097,10 +1023,8 @@ uz:
     order_summary: Buyurtma haqida qisqacha ma'lumot
     order_sure_want_to: Ushbu buyurtmani %{event} qilmoqchi ekanligingizga aminmisiz?
     order_total: Jami buyurtma
-    order_updated: Buyurtma yangilandi
     orders: Buyurtmalar
     out_of_stock: Sotuvda yo'q
-    overview: Umumiy nuqtai
     package_from: to'plami
     page_not_found: Kechirasiz! Siz izlayotgan sahifa topilmadi.
     pagination:
@@ -1110,18 +1034,14 @@ uz:
     password: Parol
     paste: Yapıştır
     path: Yo'l
-    pay: to'lash
     payment: To'lov
     payment_amount: To'lov miqdori
     payment_could_not_be_created: To'lovni yaratib bo'lmadi.
     payment_identifier: To'lov identifikatori
-    payment_information: To'lov haqida ma'lumot
     payment_method: To'lov uslubi
     payment_method_not_supported: Ushbu to'lov usuli qo'llab-quvvatlanmaydi. Iltimos, boshqasini tanlang.
     payment_methods: To'lov usullari
     payment_processing_failed: To'lov amalga oshirilmadi, iltimos, kiritilgan ma'lumotlarni tekshirib ko'ring
-    payment_processor_choose_banner_text: Agar sizga to'lov protsessorini tanlashda yordam kerak bo'lsa, iltimos, tashrif buyuring
-    payment_processor_choose_link: bizning to'lovlar sahifamiz
     payment_provider_settings: To'lov etkazib beruvchisi sozlamalari
     payment_state: To'lov davlati
     payment_states:
@@ -1144,13 +1064,10 @@ uz:
       view_cart: Savatni ko'rish
     pending: Kutilmoqda
     pending_sale: Sotish kutilmoqda
-    percent: Foiz
     percent_per_item: Ob'ekt uchun foiz
     permalink: Doimiy aloqa
     phone: Telefon
-    place_order: Buyurtmani joylashtiring
     please_define_payment_methods: Avval ba'zi to'lov usullarini aniqlang.
-    please_enter_reasonable_quantity: Iltimos, o'rtacha miqdorni kiriting.
     plp:
       clear_all: HAMMASINI TOZALAMOQ
       default: Xato
@@ -1168,8 +1085,6 @@ uz:
       price_low_to_high: NARX (past - baland)
       results_for: Natija
       sort_by: SARALASH TURI
-    populate_get_error: Nimadir noto'g'ri bajarildi. Iltimos, elementni yana qo'shib ko'ring.
-    powered_by: Tomonidan qo'llab-quvvatlanadi
     pre_tax_amount: Soliqqa qadar bo'lgan miqdor
     pre_tax_refund_amount: Soliqqa qadar qaytarilgan summa
     pre_tax_total: Soliqdan oldingi jami
@@ -1181,15 +1096,11 @@ uz:
     previous_state_missing: n / a
     previously_used_card: Ilgari ishlatilgan kartalar
     price: Narx
-    price_range: Narxlar oralig'i
     price_sack: Narx qopi
     prices: Narxlar
-    process: Jarayon
     product: Mahsulot
-    product_details: Mahsulot tafsilotlari
     product_has_no_description: Ushbu mahsulotda tavsif yo'q
     product_not_available_in_this_currency: Ushbu mahsulot tanlangan valyutada mavjud emas.
-    product_properties: Mahsulot xususiyatlari
     product_rule:
       choose_products: Mahsulotlarni tanlang
       label: Buyurtmada ushbu mahsulotlarning x miqdori bo'lishi kerak
@@ -1265,26 +1176,16 @@ uz:
     provider: Provayder
     provider_settings_warning: Agar siz provayder turini o'zgartirsangiz, provayder parametrlarini tahrirlashdan oldin avval saqlashingiz kerak
     purchased_quantity: Xarid qilingan miqdor
-    qty: Miqdor
     quantity: Miqdor
-    quantity_returned: Qaytgan miqdor
-    quantity_shipped: Jo'natilgan miqdor
     quick_search: Tezkor izlash ..
     rate: Tezlik
     reason: Sabab
-    receive: qabul qilish
     receive_stock: Aksiyani oling
-    received: Qabul qildi
-    reception_status: Qabul qilish holati
     reference: Malumot
     reference_contains: Malumot o'z ichiga oladi
     refund: Pulni qaytarish
-    refund_amount_must_be_greater_than_zero: Pulni qaytarish miqdori noldan katta bo'lishi kerak
     refund_reasons: Pulni qaytarish sabablari
-    refunded_amount: Qaytarilgan summa
     refunds: Pulni qaytarish
-    register: Ro'yxatdan o'tish
-    registration: Ro'yxatdan o'tish
     reimburse: Qaytaring
     reimbursed: Qaytarildi
     reimbursement: To'lovni qoplash
@@ -1300,76 +1201,54 @@ uz:
         subject: Pulni qoplash to'g'risida xabarnoma
         thanks: Biznesingiz uchun tashakkur.
         total_refunded: 'Jami qaytarib berildi: %{total}'
-    reimbursement_perform_failed: 'To''lovni amalga oshirib bo''lmadi. Xato: %{error}'
     reimbursement_status: To'lovni to'lash holati
     reimbursement_type: To'lov turi
     reimbursement_type_override: To'lov turini bekor qilish
     reimbursement_types: Pulni qoplash turlari
-    reimbursements: To'lovlar
     reject: Rad etish
     rejected: Rad etildi
     remember_me: Meni eslaysizmi
     remove: Olib tashlash
     remove_image: Rasmni olib tashlash
     rename: Nomini o'zgartirish
-    report: Hisobot
     reports: Hisobotlar
     required: "*"
     required_fields: majburiy maydonlar
     resellable: Qayta sotish mumkin
     resend: Qayta yuboring
-    reset_password: Parolimni tiklang
-    response_code: Javob kodi
-    resume: Rezyume; qayta boshlash
-    resumed: Qayta tiklandi
-    return: qaytish
-    return_authorization: Qaytish avtorizatsiyasi
     return_authorization_canceled: Qaytish avtorizatsiyasi bekor qilindi
     return_authorization_reasons: Avtorizatsiya sabablarini qaytarish
     return_authorization_states:
       authorized: Vakolatli
       canceled: Bekor qilindi
-    return_authorization_updated: Qaytish avtorizatsiyasi yangilandi
     return_authorizations: Qaytish uchun avtorizatsiya
     return_item_inventory_unit_ineligible: Qaytgan buyumning inventarizatsiyasi jo'natilishi kerak
     return_item_inventory_unit_reimbursed: Qaytgan buyumning inventarizatsiya birligi allaqachon qoplangan
     return_item_order_not_completed: Qaytgan narsaning buyurtmasi bajarilishi kerak
     return_item_rma_ineligible: Qaytgan narsaga RMA kerak
     return_item_time_period_ineligible: Qaytish moslamasi tegishli muddatdan tashqarida
-    return_items: Qaytgan narsalar
     return_items_cannot_be_associated_with_multiple_orders: Qaytgan narsalarni bir nechta buyurtma bilan bog'lab bo'lmaydi.
     return_number: Qaytish raqami
     return_quantity: Qaytish miqdori
-    returned: Qaytdi
     returns: Qaytish
-    review: Ko'rib chiqish
     risk: Xavf
     risk_analysis: Xatarlarni tahlil qilish
     risky: Xavfli
-    rma_credit: RMA krediti
     rma_number: RMA raqami
-    rma_value: RMA qiymati
     role_id: Rol identifikatori
     roles: Rollar
     rules: Qoidalar
     safe: Xavfsiz
     sales_total: Savdo jami
-    sales_total_description: Barcha buyurtmalar uchun savdo hajmi
     sales_totals: Sotish natijalari
-    save_and_continue: Saqlang va davom eting
-    save_my_address: Mening manzilimni saqlang
     saving: Saqlash
     say_no: Yo'q
     say_yes: Ha
-    scope: Qo'llash sohasi
     search: Qidirmoq
-    search_results: "'%{keywords}' uchun qidiruv natijalari"
     searching: Qidirilmoqda
-    secure_connection_type: Xavfsiz ulanish turi
     security_settings: Xavfsizlik sozlamalari
     select: Tanlang
     select_a_date: Sana tanlang
-    select_a_date_range: Sana oralig'ini tanlang
     select_a_return_authorization_reason: Qaytish avtorizatsiyasi uchun sababni tanlang
     select_a_stock_location: Birjaning joylashishini tanlang
     select_a_store_credit_reason: Do'kon kreditining sababini tanlang
@@ -1377,12 +1256,9 @@ uz:
     select_from_prototype: Prototype dan tanlang
     select_stock: Birjani tanlang
     selected_quantity_not_available: tanlangan %{item} mavjud emas.
-    send_copy_of_all_mails_to: Barcha pochta xabarlarining nusxasini yuboring
-    send_mails_as: Pochta xabarlarini quyidagicha yuboring
     seo: SEO
     seo_robots: SEO robotlari
     seo_title: SEO sarlavhasi
-    server: Server
     server_error: Server xato qildi
     settings: Sozlamalar
     ship: Kema

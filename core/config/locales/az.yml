@@ -686,27 +686,21 @@ az:
     default_tax: Mənfəət vergisi
     default_tax_zone: Varsayılan vergi zonası
     delete: Sil
-    delete_from_taxon: Taxondan silin
     deleted: Silindi
-    delivery: Çatdırılma
     delivery_information: Çatdırılma haqqında məlumat
     depth: Dərinlik
     description: Təsvir
     destination: Hedef
-    destroy: Məhv et
     details: Ətraflı məlumat
     discontinue_on: Dayandırın
     discontinued: İstifadəsi dayandırılıb
     discontinued_variants_present: Bu sıradakı bəzi satır maddələrində artıq mövcud olmayan məhsullar var.
-    discount_amount: Endirim məbləği
-    dismiss_banner: Xeyr, təşəkkürlər! Məni maraqlandırmır, bu mesajı bir daha göstərməyin
     display: Ekran
     doesnt_track_inventory: Envanteri izləmir
     dont_have_account: Hesab yoxdur?
     edit: Redaktə edin
     edit_reimbursement: Ödənişi redaktə edin
     editing_resource: "%{resource} redaktə olunur"
-    editing_rma_reason: RMA Səbəbini redaktə edin
     editing_user: Hesabınızı redaktə edin
     eligibility_errors:
       messages:
@@ -725,9 +719,6 @@ az:
         not_first_order: Bu kupon kodu yalnız ilk sifarişinizə tətbiq oluna bilər.
     email: Elektron poçt
     empty: Boş
-    empty_cart: Boş səbət
-    enable_mail_delivery: Poçt Çatdırılmasını aktivləşdirin
-    end: Son
     ending_at: Bitir
     ending_in: Bitir
     ends_at: Bitər
@@ -746,7 +737,6 @@ az:
     errors_prohibited_this_record_from_being_saved:
       one: 1 səhv bu qeydin qeyd edilməsini qadağan etdi
       other: "%{count} səhvləri bu qeydin qeyd edilməsini qadağan etdi"
-    event: Tədbir
     events:
       spree:
         cart:
@@ -766,8 +756,6 @@ az:
     existing_shipments: Mövcud daşınmalar
     expedited_exchanges_warning: Müəyyən edilmiş mübadilə, qənaət edildikdən dərhal sonra müştəriyə göndəriləcəkdir. Müştəridən orijinal məhsulu %{days_window} gün ərzində qaytarmaması halında məhsulun tam məbləği tutulacaqdır.
     expiration: Bitmə müddəti
-    expiration_date: Son istifadə tarixi
-    extension: Genişləndirmə
     extensions_directory: Əlavələr kataloqu
     facebook: Facebook
     failed_payment_attempts: Uğursuz Ödəniş cəhdləri
@@ -776,10 +764,7 @@ az:
     filter: Filtr
     filter_results: Nəticələri süzün
     filterable: Süzgəclidir
-    finalize: Sonlandırın
-    finalized: Yekunlaşdı
     find_a_taxon: Taxon tapın
-    first_item: Birinci maddə
     first_name: Ad
     first_name_begins_with: Ad Başlayır
     firstname: Ad
@@ -790,18 +775,12 @@ az:
     footer: Altbilgi
     forgot_password: Şifrəni unutmusunuz?
     free: Pulsuz
-    free_shipping: Pulsuz çatdırılma
-    free_shipping_amount: "-"
-    front_end: Ön uc
-    gateway: Gateway
     gateway_error: Gateway Error
-    general: Ümumi
     general_settings: Ümumi parametrlər
     generate_code: Kupon kodu yaradın
     get_back_to_the: Geri qayıdın
     go_to_category: Kateqoriyaya keçin
     guest_checkout: Qonaq ödəmə
-    guest_user_account: Qonaq kimi ödəmə
     has_no_shipped_units: göndərilən bölmə yoxdur
     header_banner: Başlıq pankartı
     height: Hündürlük
@@ -822,29 +801,19 @@ az:
       show_only: Yalnız göstərin
       supported_locales: Yerli dəstəklənir
       translations: Tərcümə
-    icon: Nişan
     id: Id
-    image: Şəkil
     images: Şəkillər
     implement_eligible_for_return: 'Geri qayıtmaq üçün # uyğun_u tətbiq etməlisiniz? EligibilityValidator üçün.'
     implement_requires_manual_intervention: "# Dərslik_müdaxiləsi tələb olunur? EligibilityValidator üçün."
     in_stock: Səhmdardır
-    inactive: Fəal deyil
-    incl: daxil olmaqla
     included_in_price: Qiymətə daxildir
-    included_price_validation: Bir Varsayılan Vergi Bölgəsi təyin etmədiyiniz təqdirdə seçilə bilməz
     incomplete: Yarımçıq
     info_number_of_skus_not_shown:
       one: və bir başqası
       other: və %{count} digərləri
     info_product_has_multiple_skus: 'Bu məhsulun %{count} variantları var:'
     instagram: Instagram
-    instructions_to_reset_password: Zəhmət olmasa elektron poçtunuzu aşağıdakı formaya daxil edin
-    insufficient_stock: Ehtiyat yoxdur, yalnız %{on_hand} qalıb
-    insufficient_stock_item_quantity: Mövcud stok miqdarı yetərli deyil
     insufficient_stock_lines_present: Bu sıradakı bəzi satır elementlərinin miqdarı kifayət deyil.
-    intercept_email_address: E-poçt ünvanını kəsin
-    intercept_email_instructions: E-poçt alıcısını ləğv edin və bu ünvanla əvəz edin.
     internal_name: Daxili ad
     internationalization: Beynəlmiləlləşmə
     invalid_credit_card: Yanlış kredit kartı.
@@ -852,16 +821,11 @@ az:
     invalid_payment_provider: Yanlış ödəniş təminatçısı.
     invalid_promotion_action: Yanlış təbliğat əməliyyatı.
     invalid_promotion_rule: Yanlış promosyon qaydası.
-    inventory: İnventarlaşdırma
-    inventory_adjustment: İnventarlaşdırma
     inventory_error_flash_for_insufficient_quantity: Səbətinizdəki bir maddə əlçatmaz oldu.
-    inventory_state: Envanter vəziyyəti
-    is_not_available_to_shipment_address: göndərmə ünvanı mövcud deyil
     iso: ISO Alpha-2
     iso3: ISO Alpha-3
     iso_name: ISO adı
     issued_on: Dərc edilib
-    item: Maddə
     item_description: Məhsul təsviri
     item_total: Maddə cəmi
     item_total_rule:
@@ -878,28 +842,16 @@ az:
     last_name: Soyad
     last_name_begins_with: Soyad Başlayır
     lastname: Soyad
-    learn_more: Daha ətraflı
     lifetime_stats: Ömür Boyu Statistikalar
     limit_usage_to: İstifadəni məhdudlaşdırın
     line_item_adjustments: Sətir elementi düzəlişləri
-    list: Siyahı
     loading: Yüklənir
     loading_tree: Ağac yüklənir. Zəhmət olmasa, gözləyin…
-    locale_changed: Yer dəyişdirildi
     location: Yer
-    lock: Bağlamaq
     log_entries: Giriş qeydləri
-    log_in: Daxil ol
     log_in_to_continue: Davam etmək üçün daxil olun
-    logged_in_as: Kimi daxil oldu
-    logged_in_succesfully: Uğurla daxil oldunuz
-    logged_out: Girişdən çıxmısınız
     login: Daxil ol
-    login_as_existing: Mövcud Müştəri olaraq daxil olun
-    login_failed: Giriş identifikasiyası alınmadı.
-    login_name: Daxil ol
     logo: Logo
-    logo_alt: Marka loqosu
     logout: Çıxış
     logs: Qeydlər
     look_for_similar_items: Oxşar əşyalara baxın
@@ -907,7 +859,6 @@ az:
     mailer_logo: Posta loqosu (yalnız JPG və ya PNG şəkilləri)
     make_refund: Geri pul verin
     make_sure_the_above_reimbursement_amount_is_correct: Yuxarıda göstərilən kompensasiya məbləğinin düzgün olduğundan əmin olun
-    manage_promotion_categories: Təqdimat kateqoriyalarını idarə edin
     manage_variants: Variantları idarə edin
     manual_intervention_required: Əl müdaxiləsi tələb olunur
     master: Ustad
@@ -916,16 +867,12 @@ az:
     match_choices:
       all: Hamısı
       none: Yoxdur
-    max_items: Maksimum məhsul
     member_since: Üzvlük bəri
     memo: Memo
     meta_description: Meta Təsviri
     meta_keywords: Meta açar sözlər
     meta_title: Meta başlığı
-    metadata: Metadata
-    minimal_amount: Minimum məbləğ
     missing_return_authorization: "%{item_name} üçün Qaytarış Qaytarılması Əməliyyatı."
-    month: Ay
     more: Daha çox
     move_stock_between_locations: Səhmləri yerlər arasında hərəkət etdirin
     move_variant_to: Variantı köçürün
@@ -951,15 +898,12 @@ az:
       show_search: Axtarışı göstər
       show_user_menu: İstifadəçi menyusunu göstərin
       sign_up: QEYDİYYATDAN KEÇMƏK
-    new: Yeni
     new_adjustment: Yeni tənzimləmə
     new_country: Yeni Ölkə
-    new_customer: Yeni hesab yaratmaq
     new_customer_return: Yeni Müştəri qayıtması
     new_image: Yeni şəkil
     new_option_type: Yeni Seçim Növü
     new_order: Yeni Sifariş
-    new_order_completed: Yeni Sifariş Tamamlandı
     new_order_notifications_email: Yeni Sifariş Bildirişləri E-poçtu
     new_payment: Yeni Ödəniş
     new_payment_method: Yeni Ödəniş Metodu
@@ -981,44 +925,34 @@ az:
     new_stock_location: Yeni fond yeri
     new_stock_movement: Yeni Səhmlər Hərəkatı
     new_stock_transfer: Yeni Səhm Transferi
-    new_store_credit: Yeni Mağaza Krediti
     new_store_credit_category: Yeni Mağaza Kredit kateqoriyası
     new_tax_category: Yeni Vergi kateqoriyası
     new_tax_rate: Yeni vergi dərəcəsi
     new_taxon: Yeni Taxon
     new_taxonomy: Yeni taksonomiya
-    new_tracker: Yeni İzləyici
     new_user: Yeni istifadəçi
     new_variant: Yeni Variant
     new_zone: Yeni Zona
     next: Növbəti
     no_actions_added: Heç bir əməliyyat əlavə edilmədi
-    no_address_given: Ünvan verilməyib
     no_available_date_set: Mövcud tarix təyin edilməyib
     no_cc_type: Yoxdur
     no_country: Heç bir ölkə təyin edilməyib
     no_limits_zone: Limit yoxdur
     no_payment_found: Ödəniş tapılmadı
     no_payment_provider_settings_message: Bu ödəmə təminatçının xüsusi ayarı yoxdur
-    no_pending_payments: Gözlənilən ödəniş yoxdur
     no_product_available:
       for_this_quantity: Üzr istəyirik, görünür, bəzi məhsullar seçilmiş miqdarda mövcud deyil.
       opps: Vay!
-    no_products_found: Məhsul tapılmadı
     no_resource_found: "%{resource} tapılmadı"
     no_results: Nəticə yoxdur
-    no_returns_found: Heç bir nəticə tapılmadı
     no_rules_added: Qaydalar əlavə edilməyib
     no_shipping_method_selected: Göndərmə metodu seçilməyib.
     no_state_changes: Hələ dövlət dəyişikliyi yoxdur.
     no_tracking_present: İzləmə məlumatları verilmir.
     none: Yoxdur
-    none_selected: Heç biri seçilməyib
-    normal_amount: Normal Məbləğ
     not: yox
     not_available: Yoxdur
-    not_enough_stock: Mənbə yerində bu köçürməni başa çatdırmaq üçün kifayət qədər inventar yoxdur.
-    not_found: "%{resource} tapılmadı"
     note: Qeyd
     notice_messages:
       icon_removed: Şəkil uğurla silindi
@@ -1032,27 +966,20 @@ az:
     num_orders: "# Sifarişlər"
     number: Sayı
     ok: tamam
-    on_hand: Əldə
-    open: Açıq
     open_all_adjustments: Bütün düzəlişləri açın
-    option_type: Seçim növü
     option_type_placeholder: Seçim növü seçin
     option_types: Seçim növləri
-    option_value: Seçim dəyəri
     option_values: Seçim dəyərləri
     optional: İstəyə görə
     options: Seçimlər
     or: və ya
-    or_over_price: "%{price} və ya daha çox"
     order: Sifariş
     order_adjustments: Sifariş düzəlişləri
     order_already_updated: Sifariş artıq yeniləndi.
     order_approved: Sifariş təsdiqləndi
     order_canceled: Sifariş ləğv edildi
-    order_details: Sifariş detalları
     order_email_resent: E-poçt Yenidən sifariş edin
     order_has_no_payments: Sifarişdə ödəniş yoxdur
-    order_information: Sifariş məlumatı
     order_line_items: Sətir məhsullarını sifariş edin
     order_mailer:
       cancel_email:
@@ -1078,7 +1005,6 @@ az:
       total: 'Sifariş cəmi:'
     order_not_found: Sifarişinizi tapa bilmədik. Xahiş edirəm həmin əməliyyatı yenidən sınayın.
     order_number: Sifariş %{number}
-    order_processed_successfully: Sifarişiniz uğurla işləndi
     order_resumed: Sifariş bərpa edildi
     order_state:
       address: ünvan
@@ -1097,10 +1023,8 @@ az:
     order_summary: Sifariş Xülasə
     order_sure_want_to: Bu əmri %{event} etmək istədiyinizə əminsiniz?
     order_total: Sifariş cəmi
-    order_updated: Sifariş Yeniləndi
     orders: Sifarişlər
     out_of_stock: Satışda deyil
-    overview: Baxış
     package_from: paket
     page_not_found: Bağışlayın! Axtardığınız səhifə tapılmadı.
     pagination:
@@ -1110,18 +1034,14 @@ az:
     password: Şifrə
     paste: Yapışdır
     path: Yol
-    pay: ödəmək
     payment: Ödəniş
     payment_amount: Ödəniş məbləği
     payment_could_not_be_created: Ödəniş yaradıla bilmədi.
     payment_identifier: Ödəniş identifikatoru
-    payment_information: Ödəniş məlumatları
     payment_method: Ödəniş üsulu
     payment_method_not_supported: Bu ödəmə üsulu dəstəklənmir. Xahiş edirəm başqa birini seçin.
     payment_methods: Ödəmə üsulları
     payment_processing_failed: Ödəniş işlənə bilmədi, daxil etdiyiniz məlumatları yoxlayın
-    payment_processor_choose_banner_text: Ödəniş prosessorunu seçmək üçün köməyə ehtiyacınız varsa, müraciət edin
-    payment_processor_choose_link: ödənişlər səhifəmiz
     payment_provider_settings: Ödəniş Təchizatçısı Ayarları
     payment_state: Ödəniş dövləti
     payment_states:
@@ -1144,13 +1064,10 @@ az:
       view_cart: Səbətə bax
     pending: gözləyən
     pending_sale: Gözlənən Satış
-    percent: Faiz
     percent_per_item: Maddə başına faiz
     permalink: Daimi bağlantı
     phone: Telefon
-    place_order: Sifariş verin
     please_define_payment_methods: Xahiş edirəm əvvəlcə bəzi ödəniş metodlarını müəyyənləşdirin.
-    please_enter_reasonable_quantity: Xahiş edirəm uyğun bir miqdar daxil edin.
     plp:
       clear_all: HAMISINI SİL, HAMISINI TƏMİZLƏ
       default: XƏSTƏLİK
@@ -1168,8 +1085,6 @@ az:
       price_low_to_high: QİYMƏT (DÜŞÜK - YÜKSƏK)
       results_for: NƏTİCƏLƏR
       sort_by: SIRALAMA
-    populate_get_error: Bir şey səhv oldu. Xahiş edirəm elementi yenidən əlavə edin.
-    powered_by: Powered by
     pre_tax_amount: Vergi öncəsi məbləğ
     pre_tax_refund_amount: Vergi öncəsi geri ödəmə məbləği
     pre_tax_total: Vergi öncəsi cəmi
@@ -1181,15 +1096,11 @@ az:
     previous_state_missing: yox
     previously_used_card: Əvvəllər istifadə edilmiş kartlar
     price: Qiymət
-    price_range: Qiymət aralığı
     price_sack: Qiymət kisəsi
     prices: Qiymətlər
-    process: Proses
     product: Məhsul
-    product_details: Məhsul detalları
     product_has_no_description: Bu məhsulun təsviri yoxdur
     product_not_available_in_this_currency: Bu məhsul seçilmiş valyutada mövcud deyil.
-    product_properties: Məhsul xüsusiyyətləri
     product_rule:
       choose_products: Məhsulları seçin
       label: Sifarişdə bu məhsulların x miqdarı olmalıdır
@@ -1265,26 +1176,16 @@ az:
     provider: Təchizatçı
     provider_settings_warning: Təchizatçı növünü dəyişdirirsinizsə, provayder parametrlərini redaktə etmək üçün əvvəlcə qeyd etməlisiniz
     purchased_quantity: Satın alınan miqdar
-    qty: Miqdarı
     quantity: Miqdarı
-    quantity_returned: Miqdarı qaytarıldı
-    quantity_shipped: Göndərilən miqdar
     quick_search: Cəld axtarış..
     rate: Dərəcəsi
     reason: Səbəb
-    receive: almaq
     receive_stock: Səhm al
-    received: Alındı
-    reception_status: Qəbul vəziyyəti
     reference: İstinad
     reference_contains: İstinad var
     refund: Geri qaytarma
-    refund_amount_must_be_greater_than_zero: Geri ödəmə məbləği sıfırdan çox olmalıdır
     refund_reasons: Geri qaytarma səbəbləri
-    refunded_amount: Geri qaytarılmış məbləğ
     refunds: Geri ödənişlər
-    register: Qeydiyyatdan keçin
-    registration: Qeydiyyat
     reimburse: Kompensasiya edin
     reimbursed: Ödənilir
     reimbursement: Kompensasiya
@@ -1300,76 +1201,54 @@ az:
         subject: Geri ödəmə bildirişi
         thanks: Biznesiniz üçün çox sağolun.
         total_refunded: 'Cəmi geri qaytarıldı: %{total}'
-    reimbursement_perform_failed: 'Ödəniş həyata keçirilə bilmədi. Xəta: %{error}'
     reimbursement_status: Ödəniş statusu
     reimbursement_type: Ödəniş növü
     reimbursement_type_override: Ödəniş növünü ləğv et
     reimbursement_types: Ödəniş növləri
-    reimbursements: Ödənişlər
     reject: Rədd et
     rejected: Rədd edildi
     remember_me: Məni xatırla
     remove: Sil
     remove_image: Şəkli silin
     rename: Yenidən adlandırın
-    report: Hesabat
     reports: Hesabatlar
     required: "*"
     required_fields: tələb olunan Bölmələr
     resellable: Yenidən satıla bilər
     resend: Yenidən göndərmək
-    reset_password: Şifrəmi yenidən qurun
-    response_code: Cavab kodu
-    resume: xülasə
-    resumed: Yenidən davam etdirildi
-    return: qayıt
-    return_authorization: Qaytarma Avtorizasiyası
     return_authorization_canceled: Qaytarma icazəsi ləğv edildi
     return_authorization_reasons: Qaytarma Səlahiyyət Səbəbləri
     return_authorization_states:
       authorized: Səlahiyyətlidir
       canceled: Ləğv edildi
-    return_authorization_updated: Qaytarma icazəsi güncəlləşdi
     return_authorizations: Qaytarma Səlahiyyətləri
     return_item_inventory_unit_ineligible: Qaytarma maddəsinin inventar vahidi göndərilməlidir
     return_item_inventory_unit_reimbursed: Qaytarma maddəsinin inventar vahidi artıq ödənilir
     return_item_order_not_completed: Qaytarma maddəsinin sifarişi tamamlanmalıdır
     return_item_rma_ineligible: Qaytarma maddəsi bir RMA tələb edir
     return_item_time_period_ineligible: Qaytarma maddəsi uyğun müddətin xaricindədir
-    return_items: Məhsulları qaytarın
     return_items_cannot_be_associated_with_multiple_orders: Qaytarma maddələri birdən çox sifarişlə əlaqələndirilə bilməz.
     return_number: Qaytarma Nömrəsi
     return_quantity: Qaytarma Miqdarı
-    returned: Geri qaytarıldı
     returns: Qayıdır
-    review: Baxış-icmal
     risk: Risk
     risk_analysis: Risk təhlili
     risky: Riskli
-    rma_credit: RMA Krediti
     rma_number: RMA nömrəsi
-    rma_value: RMA dəyəri
     role_id: Rol kimliyi
     roles: Rollar
     rules: Qaydalar
     safe: Təhlükəsiz
     sales_total: Satış cəmi
-    sales_total_description: Bütün sifarişlər üçün cəmi satış
     sales_totals: Satış cəmi
-    save_and_continue: Saxla və davam edin
-    save_my_address: Ünvanımı saxla
     saving: Qənaət
     say_no: Yox
     say_yes: Bəli
-    scope: Əhatə dairəsi
     search: Axtarış
-    search_results: "'%{keywords}' üçün axtarış nəticələri"
     searching: Axtarıram
-    secure_connection_type: Təhlükəsiz əlaqə növü
     security_settings: Təhlükəsizlik Ayarları
     select: Seçin
     select_a_date: Bir tarix seçin
-    select_a_date_range: Bir tarix aralığı seçin
     select_a_return_authorization_reason: Geri qayıtmaq üçün bir səbəb seçin
     select_a_stock_location: Bir stok yeri seçin
     select_a_store_credit_reason: Mağaza krediti üçün bir səbəb seçin
@@ -1377,12 +1256,9 @@ az:
     select_from_prototype: Prototipdən seçin
     select_stock: Səhm seçin
     selected_quantity_not_available: "%{item} seçilmiş deyil."
-    send_copy_of_all_mails_to: Bütün poçtların surətini göndərin
-    send_mails_as: Poçtları əvvəlki kimi göndərin
     seo: SEO
     seo_robots: SEO robotları
     seo_title: SEO adı
-    server: Server
     server_error: Server bir səhv qaytardı
     settings: Parametrlər
     ship: Gəmi

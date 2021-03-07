@@ -686,27 +686,21 @@ bn:
     default_tax: ডিফল্ট ট্যাক্স
     default_tax_zone: ডিফল্ট কর অঞ্চল
     delete: মুছে ফেলা
-    delete_from_taxon: ট্যাক্সন থেকে মুছুন
     deleted: মোছা হয়েছে
-    delivery: বিতরণ
     delivery_information: ডেলিভারি তথ্য
     depth: গভীরতা
     description: বর্ণনা
     destination: গন্তব্য
-    destroy: ধ্বংস
     details: বিশদ
     discontinue_on: চালু করুন
     discontinued: বন্ধ আছে
     discontinued_variants_present: এই ক্রমের কয়েকটি লাইন আইটেমের এমন পণ্য রয়েছে যা আর উপলব্ধ নেই।
-    discount_amount: হ্রাসকৃত মুল্য
-    dismiss_banner: না ধন্যবাদ! আমি আগ্রহী নই, এই বার্তাটি আর প্রদর্শন করবেন না
     display: প্রদর্শন
     doesnt_track_inventory: এটি তালিকা ট্র্যাক করে না
     dont_have_account: কোন অ্যাকাউন্ট নেই?
     edit: সম্পাদনা করুন
     edit_reimbursement: অর্থ প্রদান সম্পাদনা করুন
     editing_resource: "%{resource} সম্পাদনা করা হচ্ছে"
-    editing_rma_reason: আরএমএ কারণ সম্পাদনা করা হচ্ছে
     editing_user: আপনার অ্যাকাউন্ট সম্পাদনা করুন
     eligibility_errors:
       messages:
@@ -725,9 +719,6 @@ bn:
         not_first_order: এই কুপন কোডটি কেবল আপনার প্রথম আদেশে প্রয়োগ করা যেতে পারে।
     email: ইমেল
     empty: খালি
-    empty_cart: খালি ট্রলি
-    enable_mail_delivery: মেল বিতরণ সক্ষম করুন
-    end: শেষ
     ending_at: এ শেষ হচ্ছে
     ending_in: শেষ
     ends_at: শেষ হয়
@@ -746,7 +737,6 @@ bn:
     errors_prohibited_this_record_from_being_saved:
       one: 1 ত্রুটি এই রেকর্ডটি সংরক্ষণ থেকে নিষিদ্ধ করেছে
       other: "%{count} ত্রুটিগুলি এই রেকর্ডটি সংরক্ষণ থেকে নিষিদ্ধ করেছে"
-    event: ইভেন্ট
     events:
       spree:
         cart:
@@ -766,8 +756,6 @@ bn:
     existing_shipments: বিদ্যমান চালনা
     expedited_exchanges_warning: যে কোনও নির্দিষ্ট এক্সচেঞ্জগুলি সংরক্ষণের সাথে সাথে গ্রাহকের কাছে পাঠানো হবে। গ্রাহকরা যদি %{days_window} দিনের মধ্যে মূল আইটেমটি না ফেরান তবে আইটেমটির পুরো পরিমাণটি নেওয়া হবে।
     expiration: মেয়াদোত্তীর্ণতা
-    expiration_date: মেয়াদ শেষ হওয়ার তারিখ
-    extension: এক্সটেনশন
     extensions_directory: এক্সটেনশন ডিরেক্টরি
     facebook: ফেসবুক
     failed_payment_attempts: ব্যর্থ অর্থ প্রদানের প্রচেষ্টা
@@ -776,10 +764,7 @@ bn:
     filter: ছাঁকনি
     filter_results: ফিল্টার ফল
     filterable: ফিল্টারযোগ্য
-    finalize: চূড়ান্ত করা
-    finalized: চূড়ান্ত হয়েছে
     find_a_taxon: একটি ট্যাক্সন খুঁজুন
-    first_item: প্রথম আইটেম
     first_name: নামের প্রথম অংশ
     first_name_begins_with: প্রথম নামটি শুরু হয়
     firstname: নামের প্রথম অংশ
@@ -790,18 +775,12 @@ bn:
     footer: পাদচরণ
     forgot_password: পাসওয়ার্ড ভুলে গেছেন?
     free: ফ্রি
-    free_shipping: বিনামূল্যে পরিবহন
-    free_shipping_amount: "-"
-    front_end: সামনের অংশ
-    gateway: প্রবেশপথ
     gateway_error: গেটওয়ে ত্রুটি
-    general: সাধারণ
     general_settings: সাধারণ সেটিংস
     generate_code: কুপন কোড উত্পন্ন করুন
     get_back_to_the: ফিরে যান
     go_to_category: বিভাগে যান
     guest_checkout: অতিথি পাস
-    guest_user_account: অতিথি হিসাবে চেকআউট করুন
     has_no_shipped_units: কোনও শিপড ইউনিট নেই
     header_banner: শিরোনাম ব্যানার
     height: উচ্চতা
@@ -822,29 +801,19 @@ bn:
       show_only: শুধু দেখাও
       supported_locales: সমর্থিত লোকেলস
       translations: অনুবাদ
-    icon: আইকন
     id: আইডি
-    image: চিত্র
     images: ছবি
     implement_eligible_for_return: "# যোগ্য_পরে_প্রসূতকে অবশ্যই প্রয়োগ করতে হবে? আপনার যোগ্যতাভ্যালিডেটর জন্য।"
     implement_requires_manual_intervention: "# প্রয়োজনীয়তা_মানু_ইন্টারভেনশন অবশ্যই প্রয়োগ করতে হবে? আপনার যোগ্যতাভ্যালিডেটর জন্য।"
     in_stock: স্টক ইন
-    inactive: নিষ্ক্রিয়
-    incl: incl।
     included_in_price: দাম অন্তর্ভুক্ত
-    included_price_validation: আপনি একটি ডিফল্ট কর অঞ্চল নির্ধারণ না করে নির্বাচন করা যাবে না
     incomplete: অসম্পূর্ণ
     info_number_of_skus_not_shown:
       one: এবং অন্য এক
       other: এবং অন্যদের %{count}
     info_product_has_multiple_skus: 'এই পণ্যটিতে %{count} রূপ রয়েছে:'
     instagram: ইনস্টাগ্রাম
-    instructions_to_reset_password: নীচের ফর্মটিতে আপনার ইমেল লিখুন
-    insufficient_stock: অপর্যাপ্ত স্টক উপলব্ধ, কেবলমাত্র %{on_hand} বাকি
-    insufficient_stock_item_quantity: অপ্রতুল স্টক পরিমাণ উপলব্ধ
     insufficient_stock_lines_present: এই ক্রমের কয়েকটি লাইন আইটেমের অপর্যাপ্ত পরিমাণ রয়েছে।
-    intercept_email_address: ইন্সেপ্ট ইমেইল ঠিকানা
-    intercept_email_instructions: ইমেল প্রাপককে ওভাররাইড করুন এবং এই ঠিকানাটি দিয়ে প্রতিস্থাপন করুন।
     internal_name: অভ্যন্তরীণ নাম
     internationalization: আন্তর্জাতিকীকরণ
     invalid_credit_card: অবৈধ ক্রেডিট কার্ড।
@@ -852,16 +821,11 @@ bn:
     invalid_payment_provider: অবৈধ প্রদান প্রদানকারী।
     invalid_promotion_action: অবৈধ প্রচারের ক্রিয়া।
     invalid_promotion_rule: অবৈধ প্রচারের নিয়ম।
-    inventory: ইনভেন্টরি
-    inventory_adjustment: ইনভেন্টরি সামঞ্জস্য
     inventory_error_flash_for_insufficient_quantity: আপনার কার্টের একটি আইটেম অনুপলব্ধ হয়ে গেছে।
-    inventory_state: ইনভেন্টরি স্টেট
-    is_not_available_to_shipment_address: চালানের ঠিকানায় পাওয়া যায় না
     iso: আইএসও আলফা -২
     iso3: আইএসও আলফা -৩
     iso_name: আইএসও নাম
     issued_on: ইস্যুকৃত
-    item: আইটেম
     item_description: বস্তুর বর্ণনা
     item_total: আইটেম মোট
     item_total_rule:
@@ -878,28 +842,16 @@ bn:
     last_name: নামের শেষাংশ
     last_name_begins_with: শেষ নামটি দিয়ে শুরু হয়
     lastname: নামের শেষাংশ
-    learn_more: আরও জানুন
     lifetime_stats: লাইফটাইম পরিসংখ্যান
     limit_usage_to: এর ব্যবহার সীমাবদ্ধ করুন
     line_item_adjustments: লাইন আইটেম সামঞ্জস্য
-    list: তালিকা
     loading: লোড হচ্ছে
     loading_tree: গাছ লোড হচ্ছে। অনুগ্রহপূর্বক অপেক্ষা করুন…
-    locale_changed: লোকেল পরিবর্তিত হয়েছে
     location: অবস্থান
-    lock: লক
     log_entries: লগ এন্ট্রি
-    log_in: প্রবেশ করুন
     log_in_to_continue: চালিয়ে যেতে লগ ইন করুন
-    logged_in_as: লগ ইন করুন
-    logged_in_succesfully: সফলভাবে লগ ইন হয়েছে
-    logged_out: আপনি লগ আউট করেছেন.
     login: প্রবেশ করুন
-    login_as_existing: বিদ্যমান গ্রাহক হিসাবে লগইন করুন
-    login_failed: লগইন প্রমাণীকরণ ব্যর্থ হয়েছে।
-    login_name: প্রবেশ করুন
     logo: লোগো
-    logo_alt: ব্র্যান্ড লোগো
     logout: প্রস্থান
     logs: লগস
     look_for_similar_items: অনুরূপ আইটেম সন্ধান করুন
@@ -907,7 +859,6 @@ bn:
     mailer_logo: মেলার লোগো (কেবল জেপিজি বা পিএনজি চিত্রগুলি)
     make_refund: টাকা ফেরত দিন
     make_sure_the_above_reimbursement_amount_is_correct: উপরের ক্ষতিপূরণ পরিমাণ সঠিক কিনা তা নিশ্চিত করুন
-    manage_promotion_categories: প্রচার বিভাগ পরিচালনা করুন
     manage_variants: বৈকল্পিকগুলি পরিচালনা করুন
     manual_intervention_required: ম্যানুয়াল হস্তক্ষেপ প্রয়োজন
     master: মাস্টার
@@ -916,16 +867,12 @@ bn:
     match_choices:
       all: সব
       none: কিছুই না
-    max_items: সর্বোচ্চ আইটেম
     member_since: সদস্য যেহেতু
     memo: মেমো
     meta_description: মেটা বর্ণনা
     meta_keywords: মেটা কীওয়ার্ড
     meta_title: মেটা শিরোনাম
-    metadata: মেটাডেটা
-    minimal_amount: ন্যূনতম পরিমাণ
     missing_return_authorization: "%{item_name} এর জন্য রিটার্ন অনুমোদন হারিয়েছে।"
-    month: মাস
     more: আরও
     move_stock_between_locations: অবস্থানের মধ্যে স্টক সরান
     move_variant_to: ভেরিয়েন্ট এ সরান
@@ -951,15 +898,12 @@ bn:
       show_search: অনুসন্ধান অনুসন্ধান করুন
       show_user_menu: ব্যবহারকারীর মেনু প্রদর্শন করুন
       sign_up: নিবন্ধন করুন
-    new: নতুন
     new_adjustment: নতুন সামঞ্জস্য
     new_country: নতুন দেশ
-    new_customer: নতুন অ্যাকাউন্ট তৈরি
     new_customer_return: নতুন গ্রাহক রিটার্ন
     new_image: নতুন চিত্র
     new_option_type: নতুন অপশন প্রকার
     new_order: নতুন আদেশ
-    new_order_completed: নতুন অর্ডার সম্পন্ন হয়েছে
     new_order_notifications_email: নতুন অর্ডার বিজ্ঞপ্তি ইমেল
     new_payment: নতুন পেমেন্ট
     new_payment_method: নতুন অর্থ প্রদানের পদ্ধতি
@@ -981,44 +925,34 @@ bn:
     new_stock_location: নতুন স্টকের অবস্থান
     new_stock_movement: নতুন স্টক মুভমেন্ট
     new_stock_transfer: নতুন স্টক স্থানান্তর
-    new_store_credit: নতুন স্টোর ক্রেডিট
     new_store_credit_category: নতুন স্টোর ক্রেডিট বিভাগ
     new_tax_category: নতুন ট্যাক্স বিভাগ
     new_tax_rate: নতুন করের হার
     new_taxon: নতুন ট্যাক্সন
     new_taxonomy: নতুন টেকনোমি
-    new_tracker: নতুন ট্র্যাকার
     new_user: নতুন ব্যবহারকারী
     new_variant: নতুন ভেরিয়েন্ট
     new_zone: নতুন অঞ্চল
     next: পরবর্তী
     no_actions_added: কোনও ক্রিয়া যুক্ত করা হয়নি
-    no_address_given: কোনও ঠিকানা দেওয়া হয়নি
     no_available_date_set: কোনও উপলভ্য তারিখ সেট নেই
     no_cc_type: এন / এ
     no_country: কোনও দেশ সেট করা হয়নি
     no_limits_zone: সীমাহীন
     no_payment_found: কোন অর্থ প্রদান পাওয়া যায় নি
     no_payment_provider_settings_message: এই অর্থ প্রদানের কোনও কাস্টম সেটিংস উপলব্ধ নেই
-    no_pending_payments: মুলতুবি পরিশোধ নেই
     no_product_available:
       for_this_quantity: দুঃখিত, দেখে মনে হচ্ছে কিছু পণ্য নির্বাচিত পরিমাণে উপলভ্য নয়।
       opps: উফফফফ!
-    no_products_found: কোন পণ্য পাওয়া যায় নি
     no_resource_found: কোনও %{resource} পাওয়া যায় নি
     no_results: কোন ফলাফল নেই
-    no_returns_found: কোন রিটার্ন পাওয়া যায় নি
     no_rules_added: কোনও বিধি যুক্ত করা হয়নি
     no_shipping_method_selected: কোনও শিপিং পদ্ধতি নির্বাচন করা হয়নি।
     no_state_changes: এখনও কোনও রাষ্ট্র পরিবর্তন হয়নি।
     no_tracking_present: কোনও ট্র্যাকিংয়ের বিশদ সরবরাহ করা হয়নি।
     none: কিছুই না
-    none_selected: এবং কিন্তুএবং কিন্তুএবং কিন্তুএবং কিন্তুএবং কিন্তু
-    normal_amount: সাধারণ পরিমাণ
     not: না
     not_available: এন / এ
-    not_enough_stock: এই স্থানান্তরটি সম্পূর্ণ করার জন্য উত্সের স্থানে পর্যাপ্ত পরিমাণ জায় নেই।
-    not_found: "%{resource} পাওয়া যায় নি"
     note: বিঃদ্রঃ
     notice_messages:
       icon_removed: চিত্রটি সফলভাবে সরানো হয়েছে
@@ -1032,27 +966,20 @@ bn:
     num_orders: "# অর্ডার"
     number: সংখ্যা
     ok: ঠিক আছে
-    on_hand: হাতে
-    open: খোলা
     open_all_adjustments: সমস্ত সামঞ্জস্য খুলুন
-    option_type: অপশন টাইপ
     option_type_placeholder: একটি বিকল্প ধরণ চয়ন করুন
     option_types: বিকল্প প্রকার
-    option_value: বিকল্প মান
     option_values: বিকল্প মান
     optional: ".চ্ছিক"
     options: বিকল্পগুলি
     or: বা
-    or_over_price: "%{price} বা তার বেশি"
     order: অর্ডার
     order_adjustments: অর্ডার সমন্বয়
     order_already_updated: অর্ডার ইতিমধ্যে আপডেট করা হয়েছে।
     order_approved: আদেশ অনুমোদিত
     order_canceled: অর্ডার বাতিল
-    order_details: আদেশ বিবরণী
     order_email_resent: অর্ডার ইমেল প্রেরণ
     order_has_no_payments: অর্ডারের কোনও অর্থ প্রদান নেই
-    order_information: আদেশ তথ্য
     order_line_items: অর্ডার লাইন আইটেম
     order_mailer:
       cancel_email:
@@ -1078,7 +1005,6 @@ bn:
       total: 'আদেশ মোট:'
     order_not_found: আমরা আপনার অর্ডারটি খুঁজে পাইনি। দয়া করে সেই ক্রিয়াটি আবার চেষ্টা করুন।
     order_number: অর্ডার %{number}
-    order_processed_successfully: আপনার অর্ডার সফলভাবে প্রক্রিয়া করা হয়েছে
     order_resumed: অর্ডার পুনরায় শুরু হয়েছে
     order_state:
       address: ঠিকানা
@@ -1097,10 +1023,8 @@ bn:
     order_summary: অর্ডার সংক্ষিপ্তসার
     order_sure_want_to: আপনি কি নিশ্চিত যে আপনি এই অর্ডারটি %{event} করতে চান?
     order_total: আদেশ মোট
-    order_updated: অর্ডার আপডেট হয়েছে
     orders: অর্ডার
     out_of_stock: স্টক আউট
-    overview: ওভারভিউ
     package_from: থেকে প্যাকেজ
     page_not_found: দুঃখিত! আপনি যে পৃষ্ঠাটি সন্ধান করছেন তা পাওয়া যাবে না।
     pagination:
@@ -1110,18 +1034,14 @@ bn:
     password: পাসওয়ার্ড
     paste: আটকান
     path: পথ
-    pay: প্রদান
     payment: পেমেন্ট
     payment_amount: পরিশোধিত অর্থ
     payment_could_not_be_created: অর্থ প্রদান করা যায়নি।
     payment_identifier: পেমেন্ট আইডেন্টিফায়ার
-    payment_information: পেমেন্ট তথ্য
     payment_method: মূল্যপরিশোধ পদ্ধতি
     payment_method_not_supported: এই অর্থপ্রদানের পদ্ধতিটি অসমর্থিত। অন্য একটি চয়ন করুন।
     payment_methods: মুল্য পরিশোধ পদ্ধতি
     payment_processing_failed: অর্থপ্রদান প্রক্রিয়া করা যায়নি, দয়া করে আপনার প্রবেশের বিবরণটি পরীক্ষা করে দেখুন
-    payment_processor_choose_banner_text: আপনার যদি পেমেন্ট প্রসেসর চয়ন করতে সহায়তা প্রয়োজন হয়, দয়া করে দেখুন visit
-    payment_processor_choose_link: আমাদের পেমেন্ট পৃষ্ঠা
     payment_provider_settings: প্রদান সরবরাহকারীর সেটিংস
     payment_state: পেমেন্ট স্টেট
     payment_states:
@@ -1144,13 +1064,10 @@ bn:
       view_cart: কার্ট দেখুন
     pending: বিচারাধীন
     pending_sale: মুলতুবি বিক্রয়
-    percent: শতাংশ
     percent_per_item: প্রতি আইটেম শতাংশ
     permalink: পারমালিঙ্ক
     phone: ফোন
-    place_order: স্থান অর্ডার
     please_define_payment_methods: দয়া করে প্রথমে কিছু অর্থ প্রদানের পদ্ধতি নির্ধারণ করুন।
-    please_enter_reasonable_quantity: একটি যুক্তিসঙ্গত পরিমাণ লিখুন।
     plp:
       clear_all: সব পরিষ্কার করে দাও
       default: ডিফল্ট
@@ -1168,8 +1085,6 @@ bn:
       price_low_to_high: মূল্য (নিম্ন - উচ্চ)
       results_for: ফলাফল
       sort_by: ক্রমানুসার
-    populate_get_error: কিছু ভুল হয়েছে. আবার আইটেম যুক্ত করার চেষ্টা করুন।
-    powered_by: দ্বারা চালিত
     pre_tax_amount: প্রাক করের পরিমাণ
     pre_tax_refund_amount: প্রাক করের ফেরতের পরিমাণ
     pre_tax_total: প্রাক-কর মোট
@@ -1181,15 +1096,11 @@ bn:
     previous_state_missing: n / a
     previously_used_card: পূর্বে ব্যবহৃত কার্ড
     price: দাম
-    price_range: মূল্য পরিসীমা
     price_sack: দাম ব্যাগ
     prices: দাম
-    process: প্রক্রিয়া
     product: পণ্য
-    product_details: পণ্যের বিবরণ
     product_has_no_description: এই পণ্যটির কোন বিবরণ নেই
     product_not_available_in_this_currency: এই পণ্যটি নির্বাচিত মুদ্রায় উপলভ্য নয়।
-    product_properties: পণ্য সম্পত্তি
     product_rule:
       choose_products: পণ্য চয়ন করুন
       label: অর্ডারে এই পণ্যগুলির x পরিমাণ থাকতে হবে
@@ -1265,26 +1176,16 @@ bn:
     provider: প্রদানকারী
     provider_settings_warning: আপনি যদি সরবরাহকারীর ধরন পরিবর্তন করে থাকেন তবে সরবরাহকারীর সেটিংস সম্পাদনা করার আগে আপনাকে অবশ্যই প্রথমে সংরক্ষণ করতে হবে
     purchased_quantity: পরিমাণ কিনেছেন
-    qty: পরিমাণ
     quantity: পরিমাণ
-    quantity_returned: পরিমাণ ফিরে এসেছে
-    quantity_shipped: প্রেরিত সংখ্যা
     quick_search: দ্রুত অনুসন্ধান ..
     rate: হার
     reason: কারণ
-    receive: গ্রহণ
     receive_stock: স্টক গ্রহণ করুন
-    received: পেয়েছি
-    reception_status: অভ্যর্থনা স্থিতি
     reference: রেফারেন্স
     reference_contains: রেফারেন্স ধারণ করে
     refund: ফেরত দেওয়া
-    refund_amount_must_be_greater_than_zero: ফেরতের পরিমাণ অবশ্যই শূন্যের চেয়ে বেশি হতে হবে
     refund_reasons: ফেরত দেওয়ার কারণগুলি
-    refunded_amount: ফেরত পরিমাণ
     refunds: টাকা ফেরত
-    register: নিবন্ধন
-    registration: নিবন্ধন
     reimburse: প্রতিদান
     reimbursed: প্রতিদান
     reimbursement: প্রতিদান
@@ -1300,76 +1201,54 @@ bn:
         subject: প্রতিদানের বিজ্ঞপ্তি
         thanks: আপনার ব্যবসার জন্য আপনাকে ধন্যবাদ।
         total_refunded: 'মোট ফেরত দেওয়া হয়েছে: %{total}'
-    reimbursement_perform_failed: 'প্রতিদান প্রদান করা যায়নি। ত্রুটি: %{error}'
     reimbursement_status: প্রতিদান স্থিতি
     reimbursement_type: প্রতিদানের ধরণ
     reimbursement_type_override: প্রতিদানের ধরণের ওভাররাইড
     reimbursement_types: প্রতিদানের প্রকারগুলি
-    reimbursements: প্রতিদান
     reject: প্রত্যাখ্যান
     rejected: প্রত্যাখ্যাত
     remember_me: আমাকে মনে কর
     remove: অপসারণ
     remove_image: চিত্র সরান
     rename: নতুন নামকরণ করুন
-    report: রিপোর্ট
     reports: রিপোর্ট
     required: "*"
     required_fields: প্রয়োজনীয় ক্ষেত্র
     resellable: পুনরায় বিক্রয়যোগ্য
     resend: পুনরায় পাঠান
-    reset_password: আমার পাসওয়ার্ড পুনরায় সেট করুন
-    response_code: প্রতিক্রিয়া কোড
-    resume: জীবনবৃত্তান্ত
-    resumed: পুনরায় শুরু হয়েছে
-    return: প্রত্যাবর্তন
-    return_authorization: রিটার্ন অনুমোদন
     return_authorization_canceled: রিটার্ন অনুমোদন বাতিল হয়েছে
     return_authorization_reasons: অনুমোদনের কারণগুলি রিটার্ন করুন
     return_authorization_states:
       authorized: অনুমোদিত
       canceled: বাতিল হয়েছে
-    return_authorization_updated: রিটার্ন অনুমোদন আপডেট হয়েছে
     return_authorizations: রিটার্ন অনুমোদন
     return_item_inventory_unit_ineligible: রিটার্ন আইটেমের ইনভেন্টরি ইউনিট অবশ্যই প্রেরণ করা উচিত
     return_item_inventory_unit_reimbursed: রিটার্ন আইটেমের জায় ইউনিট ইতিমধ্যে প্রদান করা হয়েছে imb
     return_item_order_not_completed: রিটার্ন আইটেমের অর্ডার সম্পূর্ণ করতে হবে
     return_item_rma_ineligible: রিটার্ন আইটেমের একটি আরএমএ প্রয়োজন
     return_item_time_period_ineligible: রিটার্ন আইটেমটি যোগ্য সময়সীমার বাইরে
-    return_items: ফেরত মালামাল
     return_items_cannot_be_associated_with_multiple_orders: রিটার্ন আইটেম একাধিক আদেশের সাথে যুক্ত করা যাবে না।
     return_number: রিটার্ন নম্বর
     return_quantity: রিটার্ন পরিমাণ
-    returned: ফিরে এসেছে
     returns: ফিরে আসে
-    review: পুনঃমূল্যায়ন
     risk: ঝুঁকি
     risk_analysis: ঝুঁকি বিশ্লেষণ
     risky: ঝুঁকিপূর্ণ
-    rma_credit: আরএমএ ক্রেডিট
     rma_number: আরএমএ নম্বর
-    rma_value: আরএমএ মান
     role_id: ভূমিকা আইডি
     roles: ভূমিকা
     rules: বিধি
     safe: নিরাপদ
     sales_total: বিক্রয় মোট
-    sales_total_description: সমস্ত অর্ডার জন্য মোট বিক্রয়
     sales_totals: বিক্রয় মোট
-    save_and_continue: সংরক্ষণ করুন এবং অবিরত থাকুন
-    save_my_address: আমার ঠিকানা সংরক্ষণ করুন
     saving: সংরক্ষণ করা হচ্ছে
     say_no: না
     say_yes: হ্যাঁ
-    scope: ব্যাপ্তি
     search: অনুসন্ধান করুন
-    search_results: "'%{keywords}' এর জন্য অনুসন্ধান ফলাফল"
     searching: অনুসন্ধান করা হচ্ছে
-    secure_connection_type: সুরক্ষিত সংযোগ প্রকার
     security_settings: নিরাপত্তা বিন্যাস
     select: নির্বাচন করুন
     select_a_date: একটি তারিখ নির্বাচন করুন
-    select_a_date_range: একটি তারিখের সীমা নির্বাচন করুন
     select_a_return_authorization_reason: রিটার্ন অনুমোদনের জন্য একটি কারণ নির্বাচন করুন
     select_a_stock_location: একটি স্টক অবস্থান নির্বাচন করুন
     select_a_store_credit_reason: স্টোর ক্রেডিটের জন্য একটি কারণ নির্বাচন করুন
@@ -1377,12 +1256,9 @@ bn:
     select_from_prototype: প্রোটোটাইপ থেকে নির্বাচন করুন
     select_stock: স্টক নির্বাচন করুন
     selected_quantity_not_available: নির্বাচিত %{item} উপলভ্য নয়।
-    send_copy_of_all_mails_to: সমস্ত মেইল এর অনুলিপি পাঠান
-    send_mails_as: মেলকে যেমন পাঠান
     seo: এসইও
     seo_robots: এসইও রোবট
     seo_title: এসইও শিরোনাম
-    server: সার্ভার
     server_error: সার্ভার একটি ত্রুটি ফিরিয়ে দিয়েছে
     settings: সেটিংস
     ship: জাহাজ

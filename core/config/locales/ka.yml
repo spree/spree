@@ -686,27 +686,21 @@ ka:
     default_tax: ნაგულისხმევი გადასახადი
     default_tax_zone: ნაგულისხმევი საგადასახადო ზონა
     delete: წაშლა
-    delete_from_taxon: წაშალეთ ტაქსონიდან
     deleted: წაიშალა
-    delivery: მიტანა
     delivery_information: მიწოდების ინფორმაცია
     depth: სიღრმე
     description: აღწერა
     destination: დანიშნულების ადგილი
-    destroy: განადგურება
     details: დეტალები
     discontinue_on: შეწყვიტე ჩართვა
     discontinued: შეწყდა
     discontinued_variants_present: ამ შეკვეთის ხაზის ზოგიერთ ელემენტს აქვს პროდუქტები, რომლებიც აღარ არის ხელმისაწვდომი.
-    discount_amount: Ფასდაკლების რაოდენობა
-    dismiss_banner: Არა გმადლობთ! მე არ ვარ დაინტერესებული, აღარ აჩვენო ეს შეტყობინება
     display: ჩვენება
     doesnt_track_inventory: ეს არ აკონტროლებს ინვენტარს
     dont_have_account: არ გაქვთ ანგარიში?
     edit: რედაქტირება
     edit_reimbursement: ანაზღაურების რედაქტირება
     editing_resource: "%{resource} რედაქტირება"
-    editing_rma_reason: RMA მიზეზის რედაქტირება
     editing_user: შეცვალეთ თქვენი ანგარიში
     eligibility_errors:
       messages:
@@ -725,9 +719,6 @@ ka:
         not_first_order: ამ კუპონის კოდი შეიძლება გამოყენებულ იქნას მხოლოდ თქვენს პირველ შეკვეთაზე.
     email: ელ.წერილი
     empty: ცარიელი
-    empty_cart: Ცარიელია კალათა
-    enable_mail_delivery: ფოსტის მიწოდების ჩართვა
-    end: Დასასრული
     ending_at: მთავრდება
     ending_in: მთავრდება
     ends_at: მთავრდება
@@ -746,7 +737,6 @@ ka:
     errors_prohibited_this_record_from_being_saved:
       one: 1 შეცდომამ აკრძალა ამ ჩანაწერის შენახვა
       other: "%{count} შეცდომებმა აკრძალა ამ ჩანაწერის შენახვა"
-    event: ღონისძიება
     events:
       spree:
         cart:
@@ -766,8 +756,6 @@ ka:
     existing_shipments: არსებული გადაზიდვები
     expedited_exchanges_warning: ნებისმიერი მითითებული ბირჟა დაზოგვისთანავე გადაეგზავნება მომხმარებელს. მომხმარებელს დაეკისრება ნივთის სრული თანხა, თუ იგი არ დააბრუნებს ორიგინალ ნივთს %{days_window} დღის განმავლობაში.
     expiration: ვადის გასვლა
-    expiration_date: Ვადის გასვლის თარიღი
-    extension: გაფართოება
     extensions_directory: გაფართოებების დირექტორია
     facebook: ფეისბუქი
     failed_payment_attempts: წარუმატებელი გადახდის მცდელობები
@@ -776,10 +764,7 @@ ka:
     filter: ფილტრი
     filter_results: ფილტრის შედეგები
     filterable: გაფილტრული
-    finalize: დაასრულე
-    finalized: დასრულებულია
     find_a_taxon: იპოვნეთ ტაქსონი
-    first_item: პირველი პუნქტი
     first_name: Სახელი
     first_name_begins_with: სახელი იწყება
     firstname: Სახელი
@@ -790,18 +775,12 @@ ka:
     footer: ქვედა კოლონტიტული
     forgot_password: პაროლი დაგავიწყდა?
     free: უფასო
-    free_shipping: Უფასო გზავნილი
-    free_shipping_amount: "-"
-    front_end: წინა ბოლო
-    gateway: კარიბჭე
     gateway_error: კარიბჭის შეცდომა
-    general: გენერალი
     general_settings: ძირითადი პარამეტრები
     generate_code: კუპონის კოდის გენერირება
     get_back_to_the: დაბრუნდით
     go_to_category: კატეგორიაში გადასვლა
     guest_checkout: სტუმრების გადახდა
-    guest_user_account: სასტუმროში გადახდა
     has_no_shipped_units: არ აქვს გაგზავნილი დანადგარები
     header_banner: ჰედერის ბანერი
     height: სიმაღლე
@@ -822,29 +801,19 @@ ka:
       show_only: Აჩვენეთ მხოლოდ
       supported_locales: მხარდაჭერილი ლოკალები
       translations: თარგმანები
-    icon: Ხატი
     id: პირადობის მოწმობა
-    image: სურათი
     images: სურათები
     implement_eligible_for_return: 'უნდა განახორციელოთ # დასაბრუნებელი_საკუთარი? თქვენი EligibilityValidator- ისთვის.'
     implement_requires_manual_intervention: 'უნდა განხორციელდეს # მოთხოვნები_ სახელმძღვანელო_ინტერვენცია? თქვენი EligibilityValidator- ისთვის.'
     in_stock: Საწყობში
-    inactive: არააქტიური
-    incl: ჩათვლით
     included_in_price: ფასში შედის
-    included_price_validation: შეუძლებელია არჩევა, თუ არ დააყენე ნაგულისხმევი საგადასახადო ზონა
     incomplete: არასრული
     info_number_of_skus_not_shown:
       one: და ერთი სხვა
       other: და %{count} სხვები
     info_product_has_multiple_skus: 'ამ პროდუქტს აქვს %{count} ვარიანტი:'
     instagram: ინსტაგრამი
-    instructions_to_reset_password: გთხოვთ, შეიყვანოთ თქვენი ელ.წერილი ქვემოთ მოცემულ ფორმაში
-    insufficient_stock: მარაგი არასაკმარისია, მხოლოდ %{on_hand} დარჩენილია
-    insufficient_stock_item_quantity: მარაგის არასაკმარისი რაოდენობა
     insufficient_stock_lines_present: ამ რიგის ზოგიერთი სტრიქონის ელემენტი არასაკმარისია.
-    intercept_email_address: ჩაწერეთ ელ.ფოსტის მისამართი
-    intercept_email_instructions: შეცვალეთ ელ.ფოსტის ადრესატი და შეცვალეთ ამ მისამართით.
     internal_name: შიდა სახელი
     internationalization: ინტერნაციონალიზაცია
     invalid_credit_card: არასწორი საკრედიტო ბარათი.
@@ -852,16 +821,11 @@ ka:
     invalid_payment_provider: გადახდის არასწორი მიმწოდებელი.
     invalid_promotion_action: არასწორი აქცია.
     invalid_promotion_rule: დაწინაურების არასწორი წესი.
-    inventory: ინვენტარი
-    inventory_adjustment: ინვენტარის რეგულირება
     inventory_error_flash_for_insufficient_quantity: თქვენს კალათაში საქონელი მიუწვდომელი გახდა.
-    inventory_state: ინვენტარი სახელმწიფო
-    is_not_available_to_shipment_address: მიუწვდომელია გადაზიდვის მისამართზე
     iso: ISO ალფა -2
     iso3: ISO Alpha-3
     iso_name: ISO სახელი
     issued_on: გაცემულია
-    item: ნივთი
     item_description: ნივთის აღწერა
     item_total: საქონელი სულ
     item_total_rule:
@@ -878,28 +842,16 @@ ka:
     last_name: Გვარი
     last_name_begins_with: გვარი იწყება
     lastname: Გვარი
-    learn_more: Გაიგე მეტი
     lifetime_stats: ცხოვრების სტატიები
     limit_usage_to: გამოყენების შეზღუდვა აქამდე
     line_item_adjustments: ხაზის ელემენტის კორექტირება
-    list: სია
     loading: Ჩატვირთვა
     loading_tree: იტვირთება ხე. Გთხოვთ მოიცადოთ…
-    locale_changed: ლოკალი შეიცვალა
     location: ადგილმდებარეობა
-    lock: ჩაკეტვა
     log_entries: შესვლის მასალები
-    log_in: Შესვლა
     log_in_to_continue: შედით სისტემაში გასაგრძელებლად
-    logged_in_as: შესული როგორც
-    logged_in_succesfully: წარმატებით შეხვედით
-    logged_out: თქვენ გამოხვედით
     login: Შესვლა
-    login_as_existing: შესვლა როგორც არსებული მომხმარებელი
-    login_failed: შესვლის ავტორიზაცია ვერ მოხერხდა.
-    login_name: Შესვლა
     logo: ლოგო
-    logo_alt: ბრენდის ლოგო
     logout: გასვლა
     logs: ჟურნალები
     look_for_similar_items: მოძებნეთ მსგავსი საგნები
@@ -907,7 +859,6 @@ ka:
     mailer_logo: გამგზავნის ლოგო (მხოლოდ JPG ან PNG სურათები)
     make_refund: თანხის დაბრუნება
     make_sure_the_above_reimbursement_amount_is_correct: დარწმუნდით, რომ ზემოთ ჩამოთვლილი თანხის ოდენობა სწორია
-    manage_promotion_categories: მართეთ დაწინაურების კატეგორიები
     manage_variants: ვარიანტების მართვა
     manual_intervention_required: საჭიროა ხელით ჩარევა
     master: ოსტატი
@@ -916,16 +867,12 @@ ka:
     match_choices:
       all: ყველა
       none: არცერთი
-    max_items: მაქს ელემენტები
     member_since: Წევრი წლიდან
     memo: მემო
     meta_description: მეტა აღწერა
     meta_keywords: მეტა საკვანძო სიტყვები
     meta_title: მეტა სათაური
-    metadata: მეტამონაცემები
-    minimal_amount: მინიმალური თანხა
     missing_return_authorization: დაკარგული %{item_name} დაბრუნების ავტორიზაცია.
-    month: თვე
     more: მეტი
     move_stock_between_locations: გადაადგილება საფონდო მდებარეობებს შორის
     move_variant_to: ვარიანტის გადატანა აქ
@@ -951,15 +898,12 @@ ka:
       show_search: ძებნის ჩვენება
       show_user_menu: მომხმარებლის მენიუს ჩვენება
       sign_up: დარეგისტრირება
-    new: ახალი
     new_adjustment: ახალი რეგულირება
     new_country: ახალი ქვეყანა
-    new_customer: შექმენით ახალი ანგარიში
     new_customer_return: ახალი მომხმარებლის დაბრუნება
     new_image: ახალი სურათი
     new_option_type: ახალი ვარიანტის ტიპი
     new_order: Ახალი შეკვეთა
-    new_order_completed: ახალი შეკვეთა დასრულებულია
     new_order_notifications_email: ახალი შეკვეთის შეტყობინებების ელ. ფოსტა
     new_payment: ახალი გადახდა
     new_payment_method: გადახდის ახალი მეთოდი
@@ -981,44 +925,34 @@ ka:
     new_stock_location: ახალი საფონდო ადგილმდებარეობა
     new_stock_movement: ახალი საფონდო მოძრაობა
     new_stock_transfer: ახალი საფონდო გადარიცხვა
-    new_store_credit: ახალი მაღაზიის კრედიტი
     new_store_credit_category: ახალი მაღაზიის საკრედიტო კატეგორია
     new_tax_category: ახალი საგადასახადო კატეგორია
     new_tax_rate: ახალი საგადასახადო განაკვეთი
     new_taxon: ახალი ტაქსონი
     new_taxonomy: ახალი ტაქსონომია
-    new_tracker: ახალი ტრეკერი
     new_user: Ახალი მომხმარებელი
     new_variant: ახალი ვარიანტი
     new_zone: ახალი ზონა
     next: შემდეგი
     no_actions_added: მოქმედებები არ დამატებულა
-    no_address_given: მისამართი არ არის მოცემული
     no_available_date_set: თარიღი მიუწვდომელია
     no_cc_type: N / A
     no_country: ქვეყანა დადგენილი არ არის
     no_limits_zone: Უსაზღვრო
     no_payment_found: გადახდა ვერ მოიძებნა
     no_payment_provider_settings_message: გადახდის ამ პროვაიდერს არ აქვს ხელმისაწვდომი პარამეტრები
-    no_pending_payments: დაუსრულებელი გადახდები არ არის
     no_product_available:
       for_this_quantity: უკაცრავად, როგორც ჩანს, ზოგიერთი პროდუქტი არ არის ხელმისაწვდომი შერჩეული რაოდენობით.
       opps: უი!
-    no_products_found: პროდუქტი ვერ მოიძებნა
     no_resource_found: "%{resource} ვერ მოიძებნა"
     no_results: შედეგი არ არის
-    no_returns_found: დაბრუნება არ მოიძებნა
     no_rules_added: წესები არ დამატებულა
     no_shipping_method_selected: გადაზიდვის მეთოდი არ არის არჩეული.
     no_state_changes: სახელმწიფო ჯერ არ შეცვლილა.
     no_tracking_present: თვალთვალის დეტალები არ არის მოწოდებული.
     none: არცერთი
-    none_selected: არცერთია არჩეული
-    normal_amount: ნორმალური თანხა
     not: არა
     not_available: N / A
-    not_enough_stock: წყაროში საკმარისი ინვენტარი არ არის ამ გადატანის შესასრულებლად.
-    not_found: "%{resource} არ არის ნაპოვნი"
     note: შენიშვნა
     notice_messages:
       icon_removed: სურათი წარმატებით წაიშალა
@@ -1032,27 +966,20 @@ ka:
     num_orders: "# შეკვეთები"
     number: ნომერი
     ok: კარგი
-    on_hand: Ხელში
-    open: ღია
     open_all_adjustments: გახსენით ყველა შესწორება
-    option_type: ვარიანტის ტიპი
     option_type_placeholder: აირჩიეთ ოფციის ტიპი
     option_types: ვარიანტის ტიპები
-    option_value: ვარიანტის მნიშვნელობა
     option_values: ვარიანტის მნიშვნელობები
     optional: სურვილისამებრ
     options: Პარამეტრები
     or: ან
-    or_over_price: "%{price} ან მეტი"
     order: შეკვეთა
     order_adjustments: შეკვეთის კორექტირება
     order_already_updated: შეკვეთა უკვე განახლებულია.
     order_approved: შეკვეთა დამტკიცებულია
     order_canceled: შეკვეთა გაუქმებულია
-    order_details: შეკვეთის დეტალები
     order_email_resent: შეკვეთა ელ.ფოსტით გაგზავნა
     order_has_no_payments: შეკვეთას გადახდა არ აქვს
-    order_information: შეკვეთის ინფორმაცია
     order_line_items: შეკვეთის ხაზის ერთეულები
     order_mailer:
       cancel_email:
@@ -1078,7 +1005,6 @@ ka:
       total: 'შეკვეთის ჯამური რაოდენობა:'
     order_not_found: თქვენი შეკვეთა ვერ ვიპოვნეთ. გთხოვთ, ისევ სცადოთ ეს მოქმედება.
     order_number: შეუკვეთეთ %{number}
-    order_processed_successfully: თქვენი შეკვეთა წარმატებით დამუშავდა
     order_resumed: შეკვეთა განახლდა
     order_state:
       address: მისამართი
@@ -1097,10 +1023,8 @@ ka:
     order_summary: შეკვეთის შედეგი
     order_sure_want_to: დარწმუნებული ხართ, რომ გსურთ %{event} ამ შეკვეთის მიღება?
     order_total: შეკვეთა სულ
-    order_updated: შეკვეთა განახლდა
     orders: შეკვეთები
     out_of_stock: Აღარ არის გაყიდვაში
-    overview: მიმოხილვა
     package_from: პაკეტი დან
     page_not_found: Ბოდიში! გვერდი, რომელსაც ეძებთ, ვერ მოიძებნა.
     pagination:
@@ -1110,18 +1034,14 @@ ka:
     password: პაროლი
     paste: ჩასვით
     path: გზა
-    pay: გადახდა
     payment: გადახდა
     payment_amount: გადახდის თანხა
     payment_could_not_be_created: გადახდა ვერ შეიქმნა.
     payment_identifier: გადახდის იდენტიფიკატორი
-    payment_information: გადახდის ინფორმაცია
     payment_method: Გადახდის საშუალება
     payment_method_not_supported: გადახდის ეს მეთოდი არ არის მხარდაჭერილი. გთხოვთ აირჩიოთ სხვა.
     payment_methods: გადახდის მეთოდები
     payment_processing_failed: გადახდა ვერ დამუშავდა, გთხოვთ შეამოწმოთ თქვენი შეყვანილი დეტალები
-    payment_processor_choose_banner_text: თუ დახმარება გჭირდებათ გადახდის პროცესორის არჩევაში, ეწვიეთ
-    payment_processor_choose_link: ჩვენი გადახდების გვერდი
     payment_provider_settings: გადახდის პროვაიდერის პარამეტრები
     payment_state: გადახდის სახელმწიფო
     payment_states:
@@ -1144,13 +1064,10 @@ ka:
       view_cart: Კალათის ნახვა
     pending: ელოდება
     pending_sale: გაყიდვის მოლოდინი
-    percent: პროცენტი
     percent_per_item: პროცენტული ერთეულზე
     permalink: მუდმივი ბმული
     phone: ტელეფონი
-    place_order: Შეკვეთის განთავსება
     please_define_payment_methods: გთხოვთ, ჯერ განსაზღვროთ გადახდის რამდენიმე მეთოდი.
-    please_enter_reasonable_quantity: გთხოვთ, შეიყვანოთ გონივრული რაოდენობა.
     plp:
       clear_all: ᲧᲕᲔᲚᲐᲤᲠᲘᲡ ᲒᲐᲡᲣᲤᲗᲐᲕᲔᲑᲐ
       default: დეფოლტი
@@ -1168,8 +1085,6 @@ ka:
       price_low_to_high: ფასი (დაბალი - მაღალი)
       results_for: შედეგები
       sort_by: ᲓᲐᲚᲐᲒᲔᲑᲐ
-    populate_get_error: Რაღაც არასწორად წავიდა. გთხოვთ, ისევ სცადოთ ნივთის დამატება.
-    powered_by: იკვებება
     pre_tax_amount: წინასწარი გადასახადის თანხა
     pre_tax_refund_amount: გადასახადამდე დაბრუნების თანხა
     pre_tax_total: წინასწარი გადასახადი სულ
@@ -1181,15 +1096,11 @@ ka:
     previous_state_missing: N / A
     previously_used_card: ადრე გამოყენებული ბარათები
     price: ფასი
-    price_range: Ფასების დიაპაზონი
     price_sack: ფასი ტომარა
     prices: ფასები
-    process: პროცესი
     product: პროდუქტი
-    product_details: პროდუქტის აღწერილობა
     product_has_no_description: ამ პროდუქტს აღწერილობა არ აქვს
     product_not_available_in_this_currency: ეს პროდუქტი არ არის ხელმისაწვდომი არჩეულ ვალუტაში.
-    product_properties: პროდუქტის თვისებები
     product_rule:
       choose_products: აირჩიეთ პროდუქტები
       label: შეკვეთა უნდა შეიცავდეს ამ პროდუქტების x რაოდენობას
@@ -1265,26 +1176,16 @@ ka:
     provider: პროვაიდერი
     provider_settings_warning: თუ პროვაიდერის ტიპს შეცვლით, ჯერ უნდა შეინახოთ, სანამ პროვაიდერის პარამეტრებს შეცვლით
     purchased_quantity: შეძენილი რაოდენობა
-    qty: რამდენი
     quantity: რაოდენობა
-    quantity_returned: რაოდენობა დაბრუნდა
-    quantity_shipped: რაოდენობა გაიგზავნა
     quick_search: Სწრაფი ძებნა..
     rate: შეფასება
     reason: მიზეზი
-    receive: მიიღებს
     receive_stock: მიიღეთ საფონდო
-    received: მიღებულია
-    reception_status: მიღების სტატუსი
     reference: ცნობარი
     reference_contains: მითითება შეიცავს
     refund: თანხის დაბრუნება
-    refund_amount_must_be_greater_than_zero: თანხის დაბრუნების თანხა ნულზე მეტი უნდა იყოს
     refund_reasons: თანხის დაბრუნების მიზეზები
-    refunded_amount: დაბრუნებული თანხა
     refunds: თანხის დაბრუნება
-    register: დარეგისტრირება
-    registration: რეგისტრაცია
     reimburse: Ანაზღაურება
     reimbursed: ანაზღაურდება
     reimbursement: Ანაზღაურება
@@ -1300,76 +1201,54 @@ ka:
         subject: ანაზღაურების შესახებ შეტყობინება
         thanks: Მადლობა თქვენი საქმიანობისთვის.
         total_refunded: 'სულ თანხის დაბრუნება: %{total}'
-    reimbursement_perform_failed: 'ანაზღაურება ვერ განხორციელდა. შეცდომა: %{error}'
     reimbursement_status: ანაზღაურების სტატუსი
     reimbursement_type: ანაზღაურების ტიპი
     reimbursement_type_override: ანაზღაურების ტიპის შეცვლა
     reimbursement_types: ანაზღაურების ტიპები
-    reimbursements: ანაზღაურება
     reject: Უარყოს
     rejected: უარყოფილია
     remember_me: Დამიმახსოვრე
     remove: ამოღება
     remove_image: სურათის წაშლა
     rename: გადარქმევა
-    report: ანგარიში
     reports: რეპორტები
     required: "*"
     required_fields: აუცილებლად შესავსები ველები
     resellable: გასაყიდი
     resend: Ხელახლა გაგზავნა
-    reset_password: აღადგინე ჩემი პაროლი
-    response_code: რეაგირების კოდი
-    resume: გაგრძელება
-    resumed: განახლდა
-    return: დაბრუნების
-    return_authorization: დაბრუნების ავტორიზაცია
     return_authorization_canceled: დაბრუნების ავტორიზაცია გაუქმებულია
     return_authorization_reasons: დაბრუნების ავტორიზაციის მიზეზები
     return_authorization_states:
       authorized: უფლებამოსილი
       canceled: გაუქმებულია
-    return_authorization_updated: დაბრუნების ავტორიზაცია განახლებულია
     return_authorizations: დაბრუნების ავტორიზაცია
     return_item_inventory_unit_ineligible: დაბრუნებული ნივთის ინვენტარი უნდა გაიგზავნოს
     return_item_inventory_unit_reimbursed: დაბრუნებული ნივთის ინვენტარი უკვე ანაზღაურებულია
     return_item_order_not_completed: დაბრუნებული ნივთის შეკვეთა უნდა დასრულდეს
     return_item_rma_ineligible: დასაბრუნებელ ნივთს RMA სჭირდება
     return_item_time_period_ineligible: დასაბრუნებელი ელემენტი არ არის დაშვებული დროის პერიოდი
-    return_items: Ნივთების დაბრუნება
     return_items_cannot_be_associated_with_multiple_orders: დაბრუნებული საგნები ვერ ასოცირდება მრავალჯერად შეკვეთასთან
     return_number: დაბრუნების ნომერი
     return_quantity: დაბრუნების რაოდენობა
-    returned: დაბრუნდა
     returns: ბრუნდება
-    review: Მიმოხილვა
     risk: რისკი
     risk_analysis: რისკის ანალიზი
     risky: სარისკო
-    rma_credit: RMA კრედიტი
     rma_number: RMA ნომერი
-    rma_value: RMA მნიშვნელობა
     role_id: როლის პირადობის მოწმობა
     roles: როლები
     rules: წესები
     safe: Უსაფრთხო
     sales_total: გაყიდვების სულ
-    sales_total_description: გაყიდვების ჯამი ყველა შეკვეთისთვის
     sales_totals: გაყიდვების სულ
-    save_and_continue: შენახვა და გაგრძელება
-    save_my_address: შეინახეთ ჩემი მისამართი
     saving: Შენახვა
     say_no: არა
     say_yes: დიახ
-    scope: მოქმედების სფერო
     search: ძებნა
-    search_results: "'%{keywords}' - ის ძიების შედეგები"
     searching: ეძებს
-    secure_connection_type: უსაფრთხო კავშირის ტიპი
     security_settings: Უსაფრთხოების პარამეტრები
     select: აირჩიეთ
     select_a_date: აირჩიეთ თარიღი
-    select_a_date_range: აირჩიეთ თარიღის დიაპაზონი
     select_a_return_authorization_reason: შეარჩიეთ დაბრუნების ავტორიზაციის მიზეზი
     select_a_stock_location: აირჩიეთ საფონდო ადგილმდებარეობა
     select_a_store_credit_reason: შეარჩიეთ მაღაზიის კრედიტის მიზეზი
@@ -1377,12 +1256,9 @@ ka:
     select_from_prototype: აირჩიეთ პროტოტიპიდან
     select_stock: აირჩიეთ მარაგი
     selected_quantity_not_available: "%{item}– დან არჩეული არ არის."
-    send_copy_of_all_mails_to: გაგზავნეთ ყველა წერილის ასლი
-    send_mails_as: გაგზავნეთ წერილები, როგორც
     seo: SEO
     seo_robots: SEO რობოტები
     seo_title: SEO სათაური
-    server: სერვერი
     server_error: სერვერმა შეცდომა დააბრუნა
     settings: პარამეტრები
     ship: გემი

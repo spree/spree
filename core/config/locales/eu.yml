@@ -686,27 +686,21 @@ eu:
     default_tax: Zerga lehenetsia
     default_tax_zone: Zerga Zonalde Lehenetsia
     delete: Ezabatu
-    delete_from_taxon: Ezabatu Taxonetik
     deleted: Ezabatu da
-    delivery: Entrega
     delivery_information: Bidalketa informazioa
     depth: Sakonera
     description: Deskribapena
     destination: Helmuga
-    destroy: Suntsitu
     details: Xehetasunak
     discontinue_on: Utzi Aktibatuta
     discontinued: Etenda
     discontinued_variants_present: Eskaera honetako lerro-elementu batzuek jada erabilgarri ez dauden produktuak dituzte.
-    discount_amount: Deskontu kopurua
-    dismiss_banner: Ez eskerrik asko! Ez zait interesatzen, ez erakutsi mezu hau berriro
     display: Erakutsi
     doesnt_track_inventory: Ez du inbentarioaren jarraipena egiten
     dont_have_account: Ez dago konturik?
     edit: Editatu
     edit_reimbursement: Editatu itzulketa
     editing_resource: "%{resource} editatzen"
-    editing_rma_reason: RMA arrazoia editatzen
     editing_user: Editatu zure kontua
     eligibility_errors:
       messages:
@@ -725,9 +719,6 @@ eu:
         not_first_order: Kupoi kode hau zure lehen eskaerari soilik aplika dakioke.
     email: Posta elektronikoa
     empty: Hutsik
-    empty_cart: Saskia hutsik
-    enable_mail_delivery: Gaitu posta bidaltzea
-    end: Amaiera
     ending_at: Amaitzen
     ending_in: Amaitzen
     ends_at: Amaitzen da
@@ -746,7 +737,6 @@ eu:
     errors_prohibited_this_record_from_being_saved:
       one: Akats 1 batek erregistro hau gordetzea debekatu du
       other: "%{count} akatsek erregistro hau gordetzea debekatu zuten"
-    event: Ekitaldia
     events:
       spree:
         cart:
@@ -766,8 +756,6 @@ eu:
     existing_shipments: Dauden bidalketak
     expedited_exchanges_warning: Zehaztutako truke guztiak gorde eta berehala bidaliko zaizkio bezeroari. Bezeroari artikuluaren zenbateko osoa kobratuko zaio jatorrizko artikulua %{days_window} egunetan itzultzen ez badu.
     expiration: Iraungipena
-    expiration_date: Iraungitze Data
-    extension: Luzapena
     extensions_directory: Luzapenen direktorioa
     facebook: Facebook
     failed_payment_attempts: Huts egindako ordainketa saiakerak
@@ -776,10 +764,7 @@ eu:
     filter: Iragazi
     filter_results: Iragazi emaitzak
     filterable: Iragazkorra
-    finalize: Azkenean
-    finalized: Azkenean
     find_a_taxon: Bilatu Taxoia
-    first_item: Lehenengo elementua
     first_name: Izena
     first_name_begins_with: Izena hasten da
     firstname: Izena
@@ -790,18 +775,12 @@ eu:
     footer: Oina
     forgot_password: Pasahitza ahaztua?
     free: Doakoa
-    free_shipping: Doako bidalketa
-    free_shipping_amount: "-"
-    front_end: Front End
-    gateway: Pasabidea
     gateway_error: Pasabidearen errorea
-    general: Orokorra
     general_settings: Ezarpen orokorrak
     generate_code: Sortu kupoi kodea
     get_back_to_the: Itzuli
     go_to_category: Joan kategoriara
     guest_checkout: Gonbidatuen ordainketa
-    guest_user_account: Erosi gonbidatu gisa
     has_no_shipped_units: ez ditu bidalitako unitateak
     header_banner: Goiburuko pankarta
     height: Altuera
@@ -822,29 +801,19 @@ eu:
       show_only: Erakutsi soilik
       supported_locales: Onartutako lokalak
       translations: Itzulpenak
-    icon: Ikonoa
     id: Id
-    image: Irudia
     images: Irudiak
     implement_eligible_for_return: 'Inplementatu behar duzu # itzulgarria_rako? zure EligibilityValidator.'
     implement_requires_manual_intervention: "# Eskakizunak_eskuliburu_interbentzioa ezarri behar al duzu? zure EligibilityValidator."
     in_stock: Stockan
-    inactive: Inaktiboa
-    incl: barne
     included_in_price: Prezioaren barne
-    included_price_validation: ezin da hautatu Zerga Zonalde Lehenetsia ezarri ezean
     incomplete: Osatu gabea
     info_number_of_skus_not_shown:
       one: eta beste bat
       other: eta %{count} beste
     info_product_has_multiple_skus: 'Produktu honek %{count} aldaerak ditu:'
     instagram: Instagram
-    instructions_to_reset_password: Mesedez, idatzi zure posta elektronikoa beheko formularioan
-    insufficient_stock: Stock eskas nahikoa, %{on_hand} bakarrik geratzen da
-    insufficient_stock_item_quantity: Eskuragarri ez den kopuru kantitatea
     insufficient_stock_lines_present: Ordena honetako lerro-elementu batzuek ez dute kopuru nahikorik.
-    intercept_email_address: Atzeratu helbide elektronikoa
-    intercept_email_instructions: Gainidatzi helbide elektronikoa eta ordezkatu helbide honekin.
     internal_name: Barne izena
     internationalization: Nazioartekotzea
     invalid_credit_card: Kreditu txartel baliogabea.
@@ -852,16 +821,11 @@ eu:
     invalid_payment_provider: Ordainketa hornitzaile baliogabea.
     invalid_promotion_action: Sustapen ekintza baliogabea.
     invalid_promotion_rule: Promozio arau baliogabea.
-    inventory: Inbentarioa
-    inventory_adjustment: Inbentarioaren doikuntza
     inventory_error_flash_for_insufficient_quantity: Zure saskiko elementu bat ez dago erabilgarri.
-    inventory_state: Inbentarioaren egoera
-    is_not_available_to_shipment_address: ez dago erabilgarri bidalketa helbidean
     iso: ISO Alpha-2
     iso3: ISO Alpha-3
     iso_name: ISO izena
     issued_on: Jaulkitakoan
-    item: Item
     item_description: Elementuaren deskribapena
     item_total: Elementua guztira
     item_total_rule:
@@ -878,28 +842,16 @@ eu:
     last_name: Abizena
     last_name_begins_with: Abizena hasten da
     lastname: Abizena
-    learn_more: Gehiago ikasi
     lifetime_stats: Bizitzako estatistikak
     limit_usage_to: Erabilera mugatu
     line_item_adjustments: Lerro-elementuen doikuntzak
-    list: Zerrenda
     loading: Kargatzen
     loading_tree: Zuhaitza kargatzen. Itxaron mesedez…
-    locale_changed: Lokala aldatu da
     location: Kokapena
-    lock: Blokeoa
     log_entries: Erregistratu sarrerak
-    log_in: Saioa hasi
     log_in_to_continue: Jarraitzeko saioa hasi
-    logged_in_as: Saioa hasi gisa gisa
-    logged_in_succesfully: Saioa hasita ongi egin da
-    logged_out: Saioa amaitu duzu.
     login: Saioa hasi
-    login_as_existing: Sartu lehendik dagoen bezero gisa
-    login_failed: Saioa hasteko autentifikazioak huts egin du.
-    login_name: Saioa hasi
     logo: Logotipoa
-    logo_alt: Markaren logotipoa
     logout: Saioa amaitu
     logs: Erregistroak
     look_for_similar_items: Bilatu antzeko elementuak
@@ -907,7 +859,6 @@ eu:
     mailer_logo: Mailer logotipoa (JPG edo PNG irudiak soilik)
     make_refund: Egin itzultzea
     make_sure_the_above_reimbursement_amount_is_correct: Ziurtatu goiko itzulketaren zenbatekoa zuzena dela
-    manage_promotion_categories: Kudeatu Sustapen Kategoriak
     manage_variants: Kudeatu aldaerak
     manual_intervention_required: Eskuzko esku-hartzea beharrezkoa da
     master: Maisu
@@ -916,16 +867,12 @@ eu:
     match_choices:
       all: Guztiak
       none: Bat ere ez
-    max_items: Gehienezko elementuak
     member_since: Kidea geroztik
     memo: Oharra
     meta_description: Meta deskribapena
     meta_keywords: Meta Hitz Gakoak
     meta_title: Meta Izenburua
-    metadata: Metadatuak
-    minimal_amount: Kopuru minimoa
     missing_return_authorization: "%{item_name}rako itzultzeko baimena falta da."
-    month: Hilabetea
     more: Gehiago
     move_stock_between_locations: Mugitu izakinak kokapenen artean
     move_variant_to: Mugitu aldaera
@@ -951,15 +898,12 @@ eu:
       show_search: Erakutsi bilaketa
       show_user_menu: Erakutsi erabiltzailearen menua
       sign_up: IZENA EMAN
-    new: Berria
     new_adjustment: Doikuntza berria
     new_country: Herrialde berria
-    new_customer: Sortu kontu berria
     new_customer_return: Bezero berriaren itzulera
     new_image: Irudi berria
     new_option_type: Aukera mota berria
     new_order: Agindu berria
-    new_order_completed: Agindu berria amaitu da
     new_order_notifications_email: Eskaera berrien posta elektroniko berria
     new_payment: Ordainketa berria
     new_payment_method: Ordainketa modu berria
@@ -981,44 +925,34 @@ eu:
     new_stock_location: Izakinen kokapen berria
     new_stock_movement: Stock Mugimendu Berria
     new_stock_transfer: Izakinen transferentzia berria
-    new_store_credit: Denda berriaren kreditua
     new_store_credit_category: Denda Kreditu Kategoria Berria
     new_tax_category: Zerga Kategoria Berria
     new_tax_rate: Zerga tasa berria
     new_taxon: Taxoi berria
     new_taxonomy: Taxonomia berria
-    new_tracker: Jarraitzaile berria
     new_user: Erabiltzaile berria
     new_variant: Aldaera berria
     new_zone: Zona Berria
     next: Hurrengoa
     no_actions_added: Ez da ekintza gehitu
-    no_address_given: Ez da helbiderik eman
     no_available_date_set: Ez dago data erabilgarririk zehaztuta
     no_cc_type: N / A
     no_country: Ez dago herrialderik
     no_limits_zone: Mugarik gabe
     no_payment_found: Ez da ordainketarik aurkitu
     no_payment_provider_settings_message: Ordainketa hornitzaile honek ez du ezarpen pertsonalizaturik erabilgarri
-    no_pending_payments: Ez dago zain dauden ordainketarik
     no_product_available:
       for_this_quantity: Badirudi produktu batzuk ez daudela hautatutako kantitatean.
       opps: Aupa!
-    no_products_found: Ez da produkturik aurkitu
     no_resource_found: Ez da %{resource} aurkitu
     no_results: Emaitzarik ez
-    no_returns_found: Ez da itzulketarik aurkitu
     no_rules_added: Ez da araurik gehitu
     no_shipping_method_selected: Ez da bidalketa metodorik hautatu.
     no_state_changes: Oraindik ez da egoera aldaketarik.
     no_tracking_present: Ez da jarraipen xehetasunik eman.
     none: Bat ere ez
-    none_selected: Bat ere ez hautatua
-    normal_amount: Kopuru normala
     not: ez
     not_available: N / A
-    not_enough_stock: Iturburuko kokapenean ez dago inbentario nahikorik transferentzia hau burutzeko.
-    not_found: "%{resource} ez da aurkitu"
     note: Ohar
     notice_messages:
       icon_removed: Irudia behar bezala kendu da
@@ -1032,27 +966,20 @@ eu:
     num_orders: "# Eskaerak"
     number: Zenbakia
     ok: Ados
-    on_hand: Eskuartean
-    open: Irekia
     open_all_adjustments: Ireki doikuntza guztiak
-    option_type: Aukera mota
     option_type_placeholder: Aukeratu aukera mota bat
     option_types: Aukera motak
-    option_value: Aukeraren balioa
     option_values: Aukera Balioak
     optional: Aukerakoa
     options: Aukerak
     or: edo
-    or_over_price: "%{price} edo gehiago"
     order: Agindua
     order_adjustments: Aginduen doikuntzak
     order_already_updated: Eskaera dagoeneko eguneratu da.
     order_approved: Agindua onartu da
     order_canceled: Eskaera bertan behera utzi da
-    order_details: Eskaeraren xehetasunak
     order_email_resent: Eskatu mezu elektronikoa berriro bidaltzeko
     order_has_no_payments: Aginduak ez du ordainketarik
-    order_information: Eskaeraren informazioa
     order_line_items: Eskaera lerro elementuak
     order_mailer:
       cancel_email:
@@ -1078,7 +1005,6 @@ eu:
       total: 'Eskaeraren guztizko kopurua:'
     order_not_found: Ezin izan dugu zure eskaera aurkitu. Saiatu berriro ekintza hori egiten.
     order_number: Ordena %{number}
-    order_processed_successfully: Zure eskaera behar bezala prozesatu da
     order_resumed: Agindua berriro hasi zen
     order_state:
       address: helbidea
@@ -1097,10 +1023,8 @@ eu:
     order_summary: Aginduen laburpena
     order_sure_want_to: Ziur zaude %{event} eskaera hau egin nahi duzula?
     order_total: Eskaera Guztira
-    order_updated: Ordena eguneratua
     orders: Eskaerak
     out_of_stock: Agortuta
-    overview: Ikuspegi orokorra
     package_from: paketea
     page_not_found: Barkatu! Bilatzen ari zaren orria ezin da aurkitu.
     pagination:
@@ -1110,18 +1034,14 @@ eu:
     password: Pasahitza
     paste: Itsatsi
     path: Bidea
-    pay: ordaindu
     payment: Ordainketa
     payment_amount: Ordainketaren zenbatekoa
     payment_could_not_be_created: Ezin izan da ordainketa sortu.
     payment_identifier: Ordainketa identifikatzailea
-    payment_information: ordainketa informazioa
     payment_method: Ordainketa modua
     payment_method_not_supported: Ordainketa modu hori ez da onartzen. Mesedez, aukeratu beste bat.
     payment_methods: Ordainketa moduak
     payment_processing_failed: Ezin izan da ordainketa prozesatu. Egiaztatu sartu dituzun datuak
-    payment_processor_choose_banner_text: Ordainketa prozesadorea aukeratzeko laguntza behar baduzu, bisitatu
-    payment_processor_choose_link: gure ordainketen orria
     payment_provider_settings: Ordainketa hornitzailearen ezarpenak
     payment_state: Ordainketa Estatua
     payment_states:
@@ -1144,13 +1064,10 @@ eu:
       view_cart: Ikusi saskia
     pending: Zain
     pending_sale: Salmenta zain
-    percent: Ehunekoa
     percent_per_item: Elementu bakoitzeko ehunekoa
     permalink: Permalink
     phone: Mugikorra
-    place_order: Leku ordena
     please_define_payment_methods: Mesedez, lehenik eta behin zehaztu ordainketa metodo batzuk.
-    please_enter_reasonable_quantity: Mesedez, sartu zentzuzko kantitatea.
     plp:
       clear_all: GARBITU GUZTIAK
       default: AURRETIKOA
@@ -1168,8 +1085,6 @@ eu:
       price_low_to_high: PREZIOA (BAXUA - ALTUA)
       results_for: EMAITZAK
       sort_by: ORDENATU
-    populate_get_error: Arazoren bat izan da. Saiatu berriro elementua gehitzen.
-    powered_by: Egilea
     pre_tax_amount: Zerga Aurretiko Zenbatekoa
     pre_tax_refund_amount: Zerga baino lehen itzultzeko zenbatekoa
     pre_tax_total: Zerga Aurretik Guztira
@@ -1181,15 +1096,11 @@ eu:
     previous_state_missing: n / a
     previously_used_card: Aurretik erabilitako txartelak
     price: Prezioa
-    price_range: Prezio-tartea
     price_sack: Prezio zakua
     prices: Prezioak
-    process: Prozesua
     product: Produktua
-    product_details: Produktuaren xehetasunak
     product_has_no_description: Produktu honek ez du deskribapenik
     product_not_available_in_this_currency: Produktu hau ez dago eskuragarri hautatutako monetan.
-    product_properties: Produktuaren propietateak
     product_rule:
       choose_products: Aukeratu produktuak
       label: Eskaerak produktu horien x kopurua izan behar du
@@ -1265,26 +1176,16 @@ eu:
     provider: Hornitzailea
     provider_settings_warning: Hornitzaile mota aldatzen ari bazara, hornitzailearen ezarpenak editatu aurretik aurreztu behar duzu
     purchased_quantity: Erositako Kopurua
-    qty: Kop
     quantity: Kopurua
-    quantity_returned: Itzulitako kantitatea
-    quantity_shipped: Bidalitako kantitatea
     quick_search: Bilaketa azkarra ..
     rate: Tarifa
     reason: Arrazoia
-    receive: jaso
     receive_stock: Jaso Stock
-    received: Jaso
-    reception_status: Harrera egoera
     reference: Erreferentzia
     reference_contains: Erreferentziazko edukia du
     refund: Itzulketa
-    refund_amount_must_be_greater_than_zero: Itzulketaren zenbatekoak zero baino handiagoa izan behar du
     refund_reasons: Dirua itzultzeko arrazoiak
-    refunded_amount: Itzulitako zenbatekoa
     refunds: Itzulketak
-    register: Izena eman
-    registration: Izena ematea
     reimburse: Itzuli
     reimbursed: Dirua itzultzea
     reimbursement: Itzulketa
@@ -1300,76 +1201,54 @@ eu:
         subject: Dirua itzultzeko jakinarazpena
         thanks: Eskerrik asko zure negozioagatik.
         total_refunded: 'Itzuli den guztia: %{total}'
-    reimbursement_perform_failed: 'Ezin izan da itzulketa egin. Errorea: %{error}'
     reimbursement_status: Itzulketaren egoera
     reimbursement_type: Itzulketa mota
     reimbursement_type_override: Itzulketa motaren gainidazketa
     reimbursement_types: Itzulketa motak
-    reimbursements: Itzulketak
     reject: Baztertu
     rejected: Baztertua
     remember_me: Gogora nazazu
     remove: Kendu
     remove_image: Kendu irudia
     rename: Aldatu izena
-    report: Txostena
     reports: Txostenak
     required: "*"
     required_fields: beharrezko eremuak
     resellable: Saldu daiteke
     resend: Birbidali
-    reset_password: Berrezarri nire pasahitza
-    response_code: Erantzunaren kodea
-    resume: jarraitu
-    resumed: Berriz
-    return: itzuli
-    return_authorization: Itzultzeko baimena
     return_authorization_canceled: Itzultzeko baimena bertan behera utzi da
     return_authorization_reasons: Itzultzeko baimenaren arrazoiak
     return_authorization_states:
       authorized: Baimendua
       canceled: Bertan behera utzi da
-    return_authorization_updated: Itzulketa baimena eguneratu da
     return_authorizations: Itzultzeko baimenak
     return_item_inventory_unit_ineligible: Itzultzeko artikuluaren inbentario unitatea bidali behar da
     return_item_inventory_unit_reimbursed: Itzultzeko artikuluaren inbentario unitatea dagoeneko itzulita dago
     return_item_order_not_completed: Itzultzeko artikuluaren eskaera bete behar da
     return_item_rma_ineligible: Itzultzeko artikuluak RMA bat behar du
     return_item_time_period_ineligible: Itzultzeko elementua onargarria den epetik kanpo dago
-    return_items: Itzultzeko elementuak
     return_items_cannot_be_associated_with_multiple_orders: Itzultzeko elementuak ezin dira eskaera anitzekin lotu.
     return_number: Itzuli Zenbakia
     return_quantity: Itzuli Kopurua
-    returned: Itzuli
     returns: Itzultzeak
-    review: Berrikuspena
     risk: Arriskua
     risk_analysis: Arriskuen analisia
     risky: Arriskutsua
-    rma_credit: RMA Kreditua
     rma_number: RMA zenbakia
-    rma_value: RMA balioa
     role_id: Rol IDa
     roles: Rolak
     rules: Arauak
     safe: Seguru
     sales_total: Salmentak guztira
-    sales_total_description: Salmentak guztira eskaera guztietarako
     sales_totals: Salmenten guztirakoak
-    save_and_continue: Gorde eta jarraitu
-    save_my_address: Gorde nire helbidea
     saving: Aurrezten
     say_no: Ez
     say_yes: Bai
-    scope: Esparrua
     search: Bilatu
-    search_results: "'%{keywords}' bilaketaren emaitzak"
     searching: Bilatzen
-    secure_connection_type: Konexio mota segurua
     security_settings: Segurtasun ezarpenak
     select: Aukeratu
     select_a_date: Aukeratu data
-    select_a_date_range: Aukeratu data tartea
     select_a_return_authorization_reason: Aukeratu itzultzeko baimenaren arrazoia
     select_a_stock_location: Aukeratu stock kokalekua
     select_a_store_credit_reason: Aukeratu dendako kredituaren arrazoia
@@ -1377,12 +1256,9 @@ eu:
     select_from_prototype: Aukeratu Prototipotik
     select_stock: Aukeratu stocka
     selected_quantity_not_available: "%{item} aukeratutakoa ez dago erabilgarri."
-    send_copy_of_all_mails_to: Bidali mezu elektronikoen kopia honi
-    send_mails_as: Bidali mezuak honela
     seo: SEO
     seo_robots: SEO robotak
     seo_title: SEO Izenburua
-    server: Zerbitzaria
     server_error: Zerbitzariak errore bat itzuli du
     settings: Ezarpenak
     ship: Ontzia

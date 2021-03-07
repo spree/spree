@@ -686,27 +686,21 @@ sw:
     default_tax: Kodi chaguomsingi
     default_tax_zone: Eneo la Kodi chaguomsingi
     delete: Futa
-    delete_from_taxon: Futa Kutoka kwa Taxon
     deleted: Imefutwa
-    delivery: Uwasilishaji
     delivery_information: Habari ya Uwasilishaji
     depth: Kina
     description: Maelezo
     destination: Marudio
-    destroy: Kuharibu
     details: Maelezo
     discontinue_on: Acha Kuendelea
     discontinued: Imekoma
     discontinued_variants_present: Vitu vingine vya laini kwa mpangilio huu vina bidhaa ambazo hazipatikani tena.
-    discount_amount: Kiasi cha Punguzo
-    dismiss_banner: Hapana Asante! Sina hamu, usionyeshe ujumbe huu tena
     display: Onyesha
     doesnt_track_inventory: Haifuati hesabu
     dont_have_account: Hakuna akaunti?
     edit: Hariri
     edit_reimbursement: Hariri ulipaji
     editing_resource: Kuhariri %{resource}
-    editing_rma_reason: Kuhariri Sababu ya RMA
     editing_user: Hariri Akaunti yako
     eligibility_errors:
       messages:
@@ -725,9 +719,6 @@ sw:
         not_first_order: Nambari hii ya kuponi inaweza kutumika tu kwa agizo lako la kwanza.
     email: Barua pepe
     empty: Tupu
-    empty_cart: Kikapu tupu
-    enable_mail_delivery: Wezesha Uwasilishaji wa Barua
-    end: Mwisho
     ending_at: Kuishia saa
     ending_in: Kuishia
     ends_at: Inaisha saa
@@ -746,7 +737,6 @@ sw:
     errors_prohibited_this_record_from_being_saved:
       one: Kosa 1 limekataza rekodi hii kuokolewa
       other: makosa ya %{count} yalizuia rekodi hii kuokolewa
-    event: Tukio
     events:
       spree:
         cart:
@@ -766,8 +756,6 @@ sw:
     existing_shipments: Usafirishaji uliopo
     expedited_exchanges_warning: Kubadilishana yoyote maalum itatuma kwa mteja mara tu baada ya kuokoa. Mteja atatozwa jumla ya bidhaa ikiwa hatarudisha kipengee asili ndani ya siku %{days_window}.
     expiration: Kumalizika muda
-    expiration_date: Tarehe ya kumalizika muda
-    extension: Ugani
     extensions_directory: Saraka ya Viendelezi
     facebook: Picha za
     failed_payment_attempts: Majaribio ya Malipo yaliyoshindwa
@@ -776,10 +764,7 @@ sw:
     filter: Kichujio
     filter_results: Matokeo ya Kichujio
     filterable: Kuchuja
-    finalize: Kamilisha
-    finalized: Imekamilika
     find_a_taxon: Pata Taxon
-    first_item: Bidhaa ya kwanza
     first_name: Jina la kwanza
     first_name_begins_with: Jina la kwanza linaanza na
     firstname: Jina la kwanza
@@ -790,18 +775,12 @@ sw:
     footer: Kijachini
     forgot_password: Umesahau nywila?
     free: Bure
-    free_shipping: Usafirishaji wa Bure
-    free_shipping_amount: "-"
-    front_end: Mwisho wa Mbele
-    gateway: Lango
     gateway_error: Hitilafu ya lango
-    general: Mkuu
     general_settings: Mipangilio ya Jumla
     generate_code: Tengeneza nambari ya kuponi
     get_back_to_the: Rudi kwenye faili ya
     go_to_category: Nenda kwenye kitengo
     guest_checkout: Malipo ya Wageni
-    guest_user_account: Checkout kama Mgeni
     has_no_shipped_units: haina vitengo vilivyosafirishwa
     header_banner: Bango la kichwa
     height: Urefu
@@ -822,29 +801,19 @@ sw:
       show_only: Onyesha tu
       supported_locales: Maeneo yanayoungwa mkono
       translations: Tafsiri
-    icon: Aikoni
     id: Kitambulisho
-    image: Picha
     images: Picha
     implement_eligible_for_return: 'Lazima utekeleze #nastahiki_kwa_kurejea? kwa EligibilityValidator yako.'
     implement_requires_manual_intervention: 'Lazima utekeleze #inahitaji_kuingilia kati kwa mikono? kwa EligibilityValidator yako.'
     in_stock: Katika Hisa
-    inactive: Haifanyi kazi
-    incl: incl.
     included_in_price: Imejumuishwa katika Bei
-    included_price_validation: haiwezi kuchaguliwa isipokuwa uwe umeweka eneo la Kodi chaguomsingi
     incomplete: Haijakamilika
     info_number_of_skus_not_shown:
       one: na mtu mwingine
       other: na wengine %{count}
     info_product_has_multiple_skus: 'Bidhaa hii ina anuwai za %{count}:'
     instagram: Instagram
-    instructions_to_reset_password: Tafadhali ingiza barua pepe yako kwenye fomu hapa chini
-    insufficient_stock: Hifadhi haitoshi, %{on_hand} tu zimesalia
-    insufficient_stock_item_quantity: Idadi ya hisa haitoshi
     insufficient_stock_lines_present: Vitu vingine vya laini kwa mpangilio huu havina idadi ya kutosha.
-    intercept_email_address: Pinga Anwani ya Barua pepe
-    intercept_email_instructions: Batilisha mpokeaji wa barua pepe na ubadilishe na anwani hii.
     internal_name: Jina la ndani
     internationalization: Utandawazi
     invalid_credit_card: Kadi batili ya mkopo.
@@ -852,16 +821,11 @@ sw:
     invalid_payment_provider: Mtoa malipo batili.
     invalid_promotion_action: Kitendo batili cha ukuzaji.
     invalid_promotion_rule: Kanuni batili ya ukuzaji.
-    inventory: Hesabu
-    inventory_adjustment: Marekebisho ya Mali
     inventory_error_flash_for_insufficient_quantity: Bidhaa kwenye gari lako haipatikani.
-    inventory_state: Jimbo la Hesabu
-    is_not_available_to_shipment_address: haipatikani kwa anwani ya usafirishaji
     iso: ISO Alpha-2
     iso3: ISO Alpha-3
     iso_name: Jina la ISO
     issued_on: Imetolewa Juu
-    item: Bidhaa
     item_description: Maelezo ya Bidhaa
     item_total: Bidhaa Jumla
     item_total_rule:
@@ -878,28 +842,16 @@ sw:
     last_name: Jina la familia
     last_name_begins_with: Jina la Mwisho Linaanza Na
     lastname: Jina la familia
-    learn_more: Jifunze zaidi
     lifetime_stats: Takwimu za Maisha
     limit_usage_to: Punguza matumizi kwa
     line_item_adjustments: Marekebisho ya kipengee cha laini
-    list: Orodha
     loading: Inapakia
     loading_tree: Inapakia mti. Tafadhali subiri…
-    locale_changed: Eneo Limebadilishwa
     location: Mahali
-    lock: Kufuli
     log_entries: Ingizo za Ingia
-    log_in: Ingia
     log_in_to_continue: Ingia ili uendelee
-    logged_in_as: Umeingia kama
-    logged_in_succesfully: Umeingia kwa mafanikio
-    logged_out: Umeondolewa nje.
     login: Ingia
-    login_as_existing: Ingia kama Wateja Waliopo
-    login_failed: Uthibitishaji wa kuingia katika akaunti umeshindwa.
-    login_name: Ingia
     logo: Nembo
-    logo_alt: Nembo ya chapa
     logout: Kuondoka
     logs: Magogo
     look_for_similar_items: Tafuta vitu sawa
@@ -907,7 +859,6 @@ sw:
     mailer_logo: Nembo ya barua (picha za JPG au PNG pekee)
     make_refund: Rudisha pesa
     make_sure_the_above_reimbursement_amount_is_correct: Hakikisha kiwango cha ulipaji hapo juu ni sahihi
-    manage_promotion_categories: Dhibiti Jamii za Matangazo
     manage_variants: Dhibiti anuwai
     manual_intervention_required: Uingiliaji wa mwongozo unahitajika
     master: Mwalimu
@@ -916,16 +867,12 @@ sw:
     match_choices:
       all: Wote
       none: Hakuna
-    max_items: Vitu Vingi
     member_since: Mwanachama Tangu
     memo: Kumbukumbu
     meta_description: Maelezo ya Meta
     meta_keywords: Maneno muhimu ya Meta
     meta_title: Kichwa cha Meta
-    metadata: Metadata
-    minimal_amount: Kiasi kidogo
     missing_return_authorization: Idhini ya Kukosa Kurudisha kwa %{item_name}.
-    month: Mwezi
     more: Zaidi
     move_stock_between_locations: Sogeza Hisa Kati ya Maeneo
     move_variant_to: Sogeza lahaja kwa
@@ -951,15 +898,12 @@ sw:
       show_search: Onyesha utaftaji
       show_user_menu: Onyesha menyu ya mtumiaji
       sign_up: JIANDIKISHE
-    new: Mpya
     new_adjustment: Marekebisho mapya
     new_country: Nchi Mpya
-    new_customer: Unda akaunti mpya
     new_customer_return: Kurudisha Wateja Mpya
     new_image: Picha mpya
     new_option_type: Aina mpya ya Chaguo
     new_order: Agizo Jipya
-    new_order_completed: Agizo Jipya Limekamilika
     new_order_notifications_email: Barua pepe ya Arifa Mpya za Barua Pepe
     new_payment: Malipo mapya
     new_payment_method: Njia mpya ya Malipo
@@ -981,44 +925,34 @@ sw:
     new_stock_location: Mahali Pya Hisa
     new_stock_movement: Harakati Mpya ya Hisa
     new_stock_transfer: Uhamisho Mpya wa Hisa
-    new_store_credit: Mkopo Mpya wa Duka
     new_store_credit_category: Jamii mpya ya Mkopo wa Duka
     new_tax_category: Jamii mpya ya Ushuru
     new_tax_rate: Kiwango kipya cha Ushuru
     new_taxon: Kodi mpya
     new_taxonomy: Ushuru mpya
-    new_tracker: Tracker mpya
     new_user: Mtumiaji Mpya
     new_variant: Tofauti mpya
     new_zone: Eneo Jipya
     next: Ifuatayo
     no_actions_added: Hakuna vitendo vilivyoongezwa
-    no_address_given: Hakuna anwani iliyotolewa
     no_available_date_set: Hakuna tarehe inayopatikana iliyowekwa
     no_cc_type: N / A
     no_country: Hakuna nchi iliyowekwa
     no_limits_zone: Hakuna Mipaka
     no_payment_found: Hakuna malipo yaliyopatikana
     no_payment_provider_settings_message: Mtoa huduma huyu wa malipo hana mipangilio maalum inayopatikana
-    no_pending_payments: Hakuna malipo yanayosubiri
     no_product_available:
       for_this_quantity: Samahani, inaonekana kama bidhaa zingine hazipatikani kwa idadi iliyochaguliwa.
       opps: Lo!
-    no_products_found: Hakuna bidhaa zilizopatikana
     no_resource_found: Hakuna %{resource} iliyopatikana
     no_results: Hakuna matokeo
-    no_returns_found: Hakuna mapato yaliyopatikana
     no_rules_added: Hakuna sheria zilizoongezwa
     no_shipping_method_selected: Hakuna njia ya usafirishaji iliyochaguliwa.
     no_state_changes: Hakuna mabadiliko ya hali bado.
     no_tracking_present: Hakuna maelezo ya ufuatiliaji yaliyotolewa.
     none: Hakuna
-    none_selected: Hakuna Iliyochaguliwa
-    normal_amount: Kiasi cha Kawaida
     not: la
     not_available: N / A
-    not_enough_stock: Hakuna hesabu ya kutosha katika eneo la chanzo kukamilisha uhamisho huu.
-    not_found: "%{resource} haipatikani"
     note: Kumbuka
     notice_messages:
       icon_removed: Picha imeondolewa kwa mafanikio
@@ -1032,27 +966,20 @@ sw:
     num_orders: "# Amri"
     number: Nambari
     ok: sawa
-    on_hand: Mkononi
-    open: Fungua
     open_all_adjustments: Fungua Marekebisho Yote
-    option_type: Aina ya Chaguo
     option_type_placeholder: Chagua aina ya chaguo
     option_types: Aina za Chaguo
-    option_value: Thamani ya Chaguo
     option_values: Maadili ya Chaguo
     optional: Hiari
     options: Chaguzi
     or: au
-    or_over_price: "%{price} au zaidi"
     order: Agizo
     order_adjustments: Marekebisho ya agizo
     order_already_updated: Agizo tayari limesasishwa.
     order_approved: Agizo limeidhinishwa
     order_canceled: Agizo limeghairiwa
-    order_details: Maelezo ya Agizo
     order_email_resent: Agiza Barua Pepe
     order_has_no_payments: Agizo halina malipo
-    order_information: Habari ya Agizo
     order_line_items: Vitu vya Amri ya Agizo
     order_mailer:
       cancel_email:
@@ -1078,7 +1005,6 @@ sw:
       total: 'Jumla ya Agizo:'
     order_not_found: Hatukuweza kupata agizo lako. Tafadhali jaribu kitendo hicho tena.
     order_number: Agiza %{number}
-    order_processed_successfully: Agizo lako limefanikiwa
     order_resumed: Agizo limeanza tena
     order_state:
       address: anwani
@@ -1097,10 +1023,8 @@ sw:
     order_summary: Muhtasari wa Agizo
     order_sure_want_to: Je! Una uhakika unataka %{event} agizo hili?
     order_total: Jumla ya Agizo
-    order_updated: Agizo Limesasishwa
     orders: Maagizo
     out_of_stock: Kati ya Hisa
-    overview: Maelezo ya jumla
     package_from: kifurushi kutoka
     page_not_found: Samahani! Ukurasa unaotafuta hauwezi kupatikana.
     pagination:
@@ -1110,18 +1034,14 @@ sw:
     password: Nenosiri
     paste: Bandika
     path: Njia
-    pay: lipa
     payment: Malipo
     payment_amount: Kiasi cha malipo
     payment_could_not_be_created: Malipo hayakuweza kuundwa.
     payment_identifier: Kitambulisho cha Malipo
-    payment_information: Habari ya Malipo
     payment_method: Njia ya malipo
     payment_method_not_supported: Njia hiyo ya kulipa haitumiki. Tafadhali chagua nyingine.
     payment_methods: Njia za Malipo
     payment_processing_failed: Malipo hayakuweza kuchakatwa, tafadhali angalia maelezo uliyoandika
-    payment_processor_choose_banner_text: Ikiwa unahitaji msaada kuchagua processor ya malipo, tafadhali tembelea
-    payment_processor_choose_link: ukurasa wetu wa malipo
     payment_provider_settings: Mipangilio ya Mtoaji wa Malipo
     payment_state: Hali ya Malipo
     payment_states:
@@ -1144,13 +1064,10 @@ sw:
       view_cart: Angalia gari
     pending: Inasubiri
     pending_sale: Inasubiri Kuuzwa
-    percent: Asilimia
     percent_per_item: Asilimia kwa Kipengee
     permalink: Permalink
     phone: Simu
-    place_order: Agiza
     please_define_payment_methods: Tafadhali fafanua njia kadhaa za malipo kwanza.
-    please_enter_reasonable_quantity: Tafadhali ingiza idadi inayofaa.
     plp:
       clear_all: WAZI WOTE
       default: UDHARA
@@ -1168,8 +1085,6 @@ sw:
       price_low_to_high: BEI (CHINI - JUU)
       results_for: MATOKEO YA
       sort_by: PANGA KWA
-    populate_get_error: Hitilafu imetokea. Tafadhali jaribu kuongeza kipengee tena.
-    powered_by: Kinatumia
     pre_tax_amount: Kiasi cha Ushuru wa Kabla
     pre_tax_refund_amount: Kiasi cha Marejesho ya Ushuru wa Kabla
     pre_tax_total: Jumla ya Ushuru wa Kabla
@@ -1181,15 +1096,11 @@ sw:
     previous_state_missing: n / a
     previously_used_card: Kadi zilizotumiwa hapo awali
     price: Bei
-    price_range: Kiwango cha Bei
     price_sack: Gunia la Bei
     prices: Bei
-    process: Mchakato
     product: Bidhaa
-    product_details: maelezo ya bidhaa
     product_has_no_description: Bidhaa hii haina maelezo
     product_not_available_in_this_currency: Bidhaa hii haipatikani kwa sarafu iliyochaguliwa.
-    product_properties: Sifa za Bidhaa
     product_rule:
       choose_products: Chagua bidhaa
       label: Agizo lazima iwe na kiwango cha x cha bidhaa hizi
@@ -1265,26 +1176,16 @@ sw:
     provider: Mtoaji
     provider_settings_warning: Ikiwa unabadilisha aina ya mtoa huduma, lazima uhifadhi kwanza kabla ya kuhariri mipangilio ya mtoa huduma
     purchased_quantity: Kiasi Kilichonunuliwa
-    qty: Qty
     quantity: Wingi
-    quantity_returned: Kiasi Kilirudishwa
-    quantity_shipped: Kiasi kilichosafirishwa
     quick_search: Utafutaji wa haraka ..
     rate: Kiwango
     reason: Sababu
-    receive: pokea
     receive_stock: Pokea Hisa
-    received: Imepokelewa
-    reception_status: Hali ya Mapokezi
     reference: Rejea
     reference_contains: Rejea Ina
     refund: Marejesho
-    refund_amount_must_be_greater_than_zero: Kiasi cha kurejesha pesa lazima kiwe kikubwa kuliko sifuri
     refund_reasons: Refund Sababu
-    refunded_amount: Kiasi Kilichorejeshwa
     refunds: Marejesho
-    register: Jisajili
-    registration: Usajili
     reimburse: Kulipa
     reimbursed: Imerejeshwa
     reimbursement: Kulipa
@@ -1300,76 +1201,54 @@ sw:
         subject: Arifa ya Kulipa
         thanks: Asante kwa biashara yako.
         total_refunded: 'Jumla imerejeshwa: %{total}'
-    reimbursement_perform_failed: 'Ulipaji haungeweza kutekelezwa. Kosa: %{error}'
     reimbursement_status: Hali ya ulipaji
     reimbursement_type: Aina ya ulipaji
     reimbursement_type_override: Ubatilishaji wa Aina ya Kulipa
     reimbursement_types: Aina za Kulipa
-    reimbursements: Kulipia
     reject: Kataa
     rejected: Imekataliwa
     remember_me: Nikumbuke
     remove: Ondoa
     remove_image: Ondoa Picha
     rename: Badili jina
-    report: Ripoti
     reports: Ripoti
     required: "*"
     required_fields: uwanja unaohitajika
     resellable: Inaweza kuuzwa tena
     resend: Tuma tena
-    reset_password: Weka upya nenosiri langu
-    response_code: Msimbo wa Majibu
-    resume: rejea
-    resumed: Ilianza tena
-    return: kurudi
-    return_authorization: Rudisha Uidhinishaji
     return_authorization_canceled: Idhini ya kurudisha imeghairiwa
     return_authorization_reasons: Rejea Sababu za Idhini
     return_authorization_states:
       authorized: Imeidhinishwa
       canceled: Imeghairiwa
-    return_authorization_updated: Idhini ya kurudisha imesasishwa
     return_authorizations: Rudisha Mamlaka
     return_item_inventory_unit_ineligible: Kitengo cha hesabu cha kurudisha lazima kusafirishwe
     return_item_inventory_unit_reimbursed: Kitengo cha hesabu cha kurudisha tayari kimesharipwa
     return_item_order_not_completed: Agizo la kipengee cha kurudisha lazima likamilishwe
     return_item_rma_ineligible: Kipengee cha kurudisha kinahitaji RMA
     return_item_time_period_ineligible: Kipengee cha kurudisha kiko nje ya muda unaostahiki
-    return_items: Rudisha Vitu
     return_items_cannot_be_associated_with_multiple_orders: Vipengee vya kurudisha haviwezi kuhusishwa na maagizo mengi.
     return_number: Nambari ya Kurudisha
     return_quantity: Kurudisha Wingi
-    returned: Imerejeshwa
     returns: Anarudi
-    review: Pitia
     risk: Hatari
     risk_analysis: Uchambuzi wa Hatari
     risky: Hatari
-    rma_credit: Mkopo wa RMA
     rma_number: Nambari ya RMA
-    rma_value: Thamani ya RMA
     role_id: Kitambulisho cha jukumu
     roles: Majukumu
     rules: Kanuni
     safe: Salama
     sales_total: Jumla ya Mauzo
-    sales_total_description: Jumla ya Mauzo kwa Daraja Zote
     sales_totals: Jumla ya Mauzo
-    save_and_continue: Okoa na Endelea
-    save_my_address: Hifadhi anwani yangu
     saving: Inahifadhi
     say_no: Hapana
     say_yes: Ndio
-    scope: Upeo
     search: Tafuta
-    search_results: Matokeo ya utafutaji wa '%{keywords}'
     searching: Inatafuta
-    secure_connection_type: Aina salama ya Uunganisho
     security_settings: Mipangilio ya Usalama
     select: Chagua
     select_a_date: Chagua tarehe
-    select_a_date_range: Chagua kiwango cha tarehe
     select_a_return_authorization_reason: Chagua sababu ya idhini ya kurudi
     select_a_stock_location: Chagua eneo la hisa
     select_a_store_credit_reason: Chagua sababu ya mkopo wa duka
@@ -1377,12 +1256,9 @@ sw:
     select_from_prototype: Chagua Kutoka Mfano
     select_stock: Chagua hisa
     selected_quantity_not_available: iliyochaguliwa ya %{item} haipatikani.
-    send_copy_of_all_mails_to: Tuma Nakala ya Barua Zote Kwa
-    send_mails_as: Tuma Barua Kama
     seo: SEO
     seo_robots: Robots za SEO
     seo_title: Kichwa cha SEO
-    server: Seva
     server_error: Seva ilileta hitilafu
     settings: Mipangilio
     ship: Meli

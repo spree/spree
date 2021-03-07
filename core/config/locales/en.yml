@@ -686,27 +686,21 @@ en:
     default_tax: Default Tax
     default_tax_zone: Default Tax Zone
     delete: Delete
-    delete_from_taxon: Delete From Taxon
     deleted: Deleted
-    delivery: Delivery
     delivery_information: Delivery Information
     depth: Depth
     description: Description
     destination: Destination
-    destroy: Destroy
     details: Details
     discontinue_on: Discontinue On
     discontinued: Discontinued
     discontinued_variants_present: Some line items in this order have products that are no longer available.
-    discount_amount: Discount Amount
-    dismiss_banner: No. Thanks! I'm not interested, do not display this message again
     display: Display
     doesnt_track_inventory: It doesn't track inventory
     dont_have_account: No account?
     edit: Edit
     edit_reimbursement: Edit reimbursement
     editing_resource: Editing %{resource}
-    editing_rma_reason: Editing RMA Reason
     editing_user: Edit Your account
     eligibility_errors:
       messages:
@@ -725,9 +719,6 @@ en:
         not_first_order: This coupon code can only be applied to your first order.
     email: Email
     empty: Empty
-    empty_cart: Empty Cart
-    enable_mail_delivery: Enable Mail Delivery
-    end: End
     ending_at: Ending at
     ending_in: Ending in
     ends_at: Ends at
@@ -746,7 +737,6 @@ en:
     errors_prohibited_this_record_from_being_saved:
       one: 1 error prohibited this record from being saved
       other: "%{count} errors prohibited this record from being saved"
-    event: Event
     events:
       spree:
         cart:
@@ -766,8 +756,6 @@ en:
     existing_shipments: Existing shipments
     expedited_exchanges_warning: Any specified exchanges will ship to the customer immediately upon saving. The customer will be charged the full amount of the item if they do not return the original item within %{days_window} days.
     expiration: Expiration
-    expiration_date: Expiration Date
-    extension: Extension
     extensions_directory: Extensions Directory
     facebook: Facebook
     failed_payment_attempts: Failed Payment Attempts
@@ -776,10 +764,7 @@ en:
     filter: Filter
     filter_results: Filter Results
     filterable: Filterable
-    finalize: Finalize
-    finalized: Finalized
     find_a_taxon: Find a Taxon
-    first_item: First Item
     first_name: First Name
     first_name_begins_with: First Name Begins With
     firstname: First Name
@@ -790,18 +775,12 @@ en:
     footer: Footer
     forgot_password: Forgot password?
     free: Free
-    free_shipping: Free Shipping
-    free_shipping_amount: "-"
-    front_end: Front End
-    gateway: Gateway
     gateway_error: Gateway Error
-    general: General
     general_settings: General Settings
     generate_code: Generate coupon code
     get_back_to_the: Get back to the
     go_to_category: Go to category
     guest_checkout: Guest Checkout
-    guest_user_account: Checkout as a Guest
     has_no_shipped_units: has no shipped units
     header_banner: Header banner
     height: Height
@@ -822,29 +801,19 @@ en:
       show_only: Show only
       supported_locales: Supported Locales
       translations: Translations
-    icon: Icon
     id: Id
-    image: Image
     images: Images
     implement_eligible_for_return: 'Must implement #eligible_for_return? for your EligibilityValidator.'
     implement_requires_manual_intervention: 'Must implement #requires_manual_intervention? for your EligibilityValidator.'
     in_stock: In Stock
-    inactive: Inactive
-    incl: incl.
     included_in_price: Included in Price
-    included_price_validation: cannot be selected unless you have set a Default Tax Zone
     incomplete: Incomplete
     info_number_of_skus_not_shown:
       one: and one other
       other: and %{count} others
     info_product_has_multiple_skus: 'This product has %{count} variants:'
     instagram: Instagram
-    instructions_to_reset_password: Please enter your email on the form below
-    insufficient_stock: Insufficient stock available, only %{on_hand} remaining
-    insufficient_stock_item_quantity: Insufficient stock quantity available
     insufficient_stock_lines_present: Some line items in this order have insufficient quantity.
-    intercept_email_address: Intercept Email Address
-    intercept_email_instructions: Override email recipient and replace with this address.
     internal_name: Internal Name
     internationalization: Internationalization
     invalid_credit_card: Invalid credit card.
@@ -852,16 +821,11 @@ en:
     invalid_payment_provider: Invalid payment provider.
     invalid_promotion_action: Invalid promotion action.
     invalid_promotion_rule: Invalid promotion rule.
-    inventory: Inventory
-    inventory_adjustment: Inventory Adjustment
     inventory_error_flash_for_insufficient_quantity: An item in your cart has become unavailable.
-    inventory_state: Inventory State
-    is_not_available_to_shipment_address: is not available to shipment address
     iso: ISO Alpha-2
     iso3: ISO Alpha-3
     iso_name: ISO Name
     issued_on: Issued On
-    item: Item
     item_description: Item Description
     item_total: Item Total
     item_total_rule:
@@ -878,28 +842,16 @@ en:
     last_name: Last Name
     last_name_begins_with: Last Name Begins With
     lastname: Last Name
-    learn_more: Learn More
     lifetime_stats: Lifetime Stats
     limit_usage_to: Limit usage to
     line_item_adjustments: Line item adjustments
-    list: List
     loading: Loading
     loading_tree: Loading tree. Please wait…
-    locale_changed: Locale Changed
     location: Location
-    lock: Lock
     log_entries: Log Entries
-    log_in: Log in
     log_in_to_continue: Log in to continue
-    logged_in_as: Logged in as
-    logged_in_succesfully: Logged in successfully
-    logged_out: You have been logged out.
     login: Login
-    login_as_existing: Login as Existing Customer
-    login_failed: Login authentication failed.
-    login_name: Login
     logo: Logo
-    logo_alt: Brand logo
     logout: Logout
     logs: Logs
     look_for_similar_items: Look for similar items
@@ -907,7 +859,6 @@ en:
     mailer_logo: Mailer logo (JPG or PNG images only)
     make_refund: Make refund
     make_sure_the_above_reimbursement_amount_is_correct: Make sure the above reimbursement amount is correct
-    manage_promotion_categories: Manage Promotion Categories
     manage_variants: Manage Variants
     manual_intervention_required: Manual intervention required
     master: Master
@@ -916,16 +867,12 @@ en:
     match_choices:
       all: All
       none: None
-    max_items: Max Items
     member_since: Member Since
     memo: Memo
     meta_description: Meta Description
     meta_keywords: Meta Keywords
     meta_title: Meta Title
-    metadata: Metadata
-    minimal_amount: Minimal Amount
     missing_return_authorization: Missing Return Authorization for %{item_name}.
-    month: Month
     more: More
     move_stock_between_locations: Move Stock Between Locations
     move_variant_to: Move variant to
@@ -951,15 +898,12 @@ en:
       show_search: Show search
       show_user_menu: Show user menu
       sign_up: SIGN UP
-    new: New
     new_adjustment: New Adjustment
     new_country: New Country
-    new_customer: Create new account
     new_customer_return: New Customer Return
     new_image: New Image
     new_option_type: New Option Type
     new_order: New Order
-    new_order_completed: New Order Completed
     new_order_notifications_email: New Order Notifications Email
     new_payment: New Payment
     new_payment_method: New Payment Method
@@ -981,44 +925,34 @@ en:
     new_stock_location: New Stock Location
     new_stock_movement: New Stock Movement
     new_stock_transfer: New Stock Transfer
-    new_store_credit: New Store Credit
     new_store_credit_category: New Store Credit Category
     new_tax_category: New Tax Category
     new_tax_rate: New Tax Rate
     new_taxon: New Taxon
     new_taxonomy: New Taxonomy
-    new_tracker: New Tracker
     new_user: New User
     new_variant: New Variant
     new_zone: New Zone
     next: Next
     no_actions_added: No actions added
-    no_address_given: No address given
     no_available_date_set: No available date set
     no_cc_type: N/A
     no_country: No country set
     no_limits_zone: No Limits
     no_payment_found: No payment found
     no_payment_provider_settings_message: This payment provider has no custom settings available
-    no_pending_payments: No pending payments
     no_product_available:
       for_this_quantity: Sorry, it looks like some products are not available in selected quantity.
       opps: Oops!
-    no_products_found: No products found
     no_resource_found: No %{resource} found
     no_results: No results
-    no_returns_found: No returns found
     no_rules_added: No rules added
     no_shipping_method_selected: No shipping method selected.
     no_state_changes: No state changes yet.
     no_tracking_present: No tracking details provided.
     none: None
-    none_selected: None Selected
-    normal_amount: Normal Amount
     not: not
     not_available: N/A
-    not_enough_stock: There is not enough inventory at the source location to complete this transfer.
-    not_found: "%{resource} is not found"
     note: Note
     notice_messages:
       icon_removed: Image has been successfully removed
@@ -1032,27 +966,20 @@ en:
     num_orders: "# Orders"
     number: Number
     ok: OK
-    on_hand: On Hand
-    open: Open
     open_all_adjustments: Open All Adjustments
-    option_type: Option Type
     option_type_placeholder: Choose an option type
     option_types: Option Types
-    option_value: Option Value
     option_values: Option Values
     optional: Optional
     options: Options
     or: or
-    or_over_price: "%{price} or over"
     order: Order
     order_adjustments: Order adjustments
     order_already_updated: The order has already been updated.
     order_approved: Order approved
     order_canceled: Order canceled
-    order_details: Order Details
     order_email_resent: Order Email Resent
     order_has_no_payments: Order has no payments
-    order_information: Order Information
     order_line_items: Order Line Items
     order_mailer:
       cancel_email:
@@ -1078,7 +1005,6 @@ en:
       total: 'Order Total:'
     order_not_found: We couldn't find your order. Please try that action again.
     order_number: Order %{number}
-    order_processed_successfully: Your order has been processed successfully
     order_resumed: Order resumed
     order_state:
       address: address
@@ -1097,10 +1023,8 @@ en:
     order_summary: Order Summary
     order_sure_want_to: Are you sure you want to %{event} this order?
     order_total: Order Total
-    order_updated: Order Updated
     orders: Orders
     out_of_stock: Out of Stock
-    overview: Overview
     package_from: package from
     page_not_found: Sorry! Page you are looking can’t be found.
     pagination:
@@ -1110,18 +1034,14 @@ en:
     password: Password
     paste: Paste
     path: Path
-    pay: pay
     payment: Payment
     payment_amount: Payment amount
     payment_could_not_be_created: Payment could not be created.
     payment_identifier: Payment Identifier
-    payment_information: Payment Information
     payment_method: Payment Method
     payment_method_not_supported: That payment method is unsupported. Please choose another one.
     payment_methods: Payment Methods
     payment_processing_failed: Payment could not be processed, please check the details you entered
-    payment_processor_choose_banner_text: If you need help choosing a payment processor, please visit
-    payment_processor_choose_link: our payments page
     payment_provider_settings: Payment Provider Settings
     payment_state: Payment State
     payment_states:
@@ -1144,13 +1064,10 @@ en:
       view_cart: View cart
     pending: Pending
     pending_sale: Pending Sale
-    percent: Percent
     percent_per_item: Percent Per Item
     permalink: Permalink
     phone: Phone
-    place_order: Place Order
     please_define_payment_methods: Please define some payment methods first.
-    please_enter_reasonable_quantity: Please enter a reasonable quantity.
     plp:
       clear_all: CLEAR ALL
       default: DEFAULT
@@ -1168,8 +1085,6 @@ en:
       price_low_to_high: PRICE (LOW - HIGH)
       results_for: RESULTS FOR
       sort_by: SORT BY
-    populate_get_error: Something went wrong. Please try adding the item again.
-    powered_by: Powered by
     pre_tax_amount: Pre-Tax Amount
     pre_tax_refund_amount: Pre-Tax Refund Amount
     pre_tax_total: Pre-Tax Total
@@ -1181,15 +1096,11 @@ en:
     previous_state_missing: n/a
     previously_used_card: Previously Used Cards
     price: Price
-    price_range: Price Range
     price_sack: Price Sack
     prices: Prices
-    process: Process
     product: Product
-    product_details: Product Details
     product_has_no_description: This product has no description
     product_not_available_in_this_currency: This product is not available in the selected currency.
-    product_properties: Product Properties
     product_rule:
       choose_products: Choose products
       label: Order must contain x amount of these products
@@ -1265,26 +1176,16 @@ en:
     provider: Provider
     provider_settings_warning: If you are changing the provider type, you must save first before you can edit the provider settings
     purchased_quantity: Purchased Quantity
-    qty: Qty
     quantity: Quantity
-    quantity_returned: Quantity Returned
-    quantity_shipped: Quantity Shipped
     quick_search: Quick search..
     rate: Rate
     reason: Reason
-    receive: receive
     receive_stock: Receive Stock
-    received: Received
-    reception_status: Reception Status
     reference: Reference
     reference_contains: Reference Contains
     refund: Refund
-    refund_amount_must_be_greater_than_zero: Refund amount must be greater than zero
     refund_reasons: Refund Reasons
-    refunded_amount: Refunded Amount
     refunds: Refunds
-    register: Register
-    registration: Registration
     reimburse: Reimburse
     reimbursed: Reimbursed
     reimbursement: Reimbursement
@@ -1300,76 +1201,54 @@ en:
         subject: Reimbursement Notification
         thanks: Thank you for your business.
         total_refunded: 'Total refunded: %{total}'
-    reimbursement_perform_failed: 'Reimbursement could not be performed.  Error: %{error}'
     reimbursement_status: Reimbursement status
     reimbursement_type: Reimbursement type
     reimbursement_type_override: Reimbursement Type Override
     reimbursement_types: Reimbursement Types
-    reimbursements: Reimbursements
     reject: Reject
     rejected: Rejected
     remember_me: Remember me
     remove: Remove
     remove_image: Remove Image
     rename: Rename
-    report: Report
     reports: Reports
     required: "*"
     required_fields: required fields
     resellable: Resellable
     resend: Resend
-    reset_password: Reset my password
-    response_code: Response Code
-    resume: resume
-    resumed: Resumed
-    return: return
-    return_authorization: Return Authorization
     return_authorization_canceled: Return authorization canceled
     return_authorization_reasons: Return Authorization Reasons
     return_authorization_states:
       authorized: Authorized
       canceled: Canceled
-    return_authorization_updated: Return authorization updated
     return_authorizations: Return Authorizations
     return_item_inventory_unit_ineligible: Return item's inventory unit must be shipped
     return_item_inventory_unit_reimbursed: Return item's inventory unit is already reimbursed
     return_item_order_not_completed: Return item's order must be completed
     return_item_rma_ineligible: Return item requires an RMA
     return_item_time_period_ineligible: Return item is outside the eligible time period
-    return_items: Return Items
     return_items_cannot_be_associated_with_multiple_orders: Return items cannot be associated with multiple orders.
     return_number: Return Number
     return_quantity: Return Quantity
-    returned: Returned
     returns: Returns
-    review: Review
     risk: Risk
     risk_analysis: Risk Analysis
     risky: Risky
-    rma_credit: RMA Credit
     rma_number: RMA Number
-    rma_value: RMA Value
     role_id: Role ID
     roles: Roles
     rules: Rules
     safe: Safe
     sales_total: Sales Total
-    sales_total_description: Sales Total For All Orders
     sales_totals: Sales Totals
-    save_and_continue: Save and Continue
-    save_my_address: Save my address
     saving: Saving
     say_no: 'No'
     say_yes: 'Yes'
-    scope: Scope
     search: Search
-    search_results: Search results for '%{keywords}'
     searching: Searching
-    secure_connection_type: Secure Connection Type
     security_settings: Security Settings
     select: Select
     select_a_date: Select a date
-    select_a_date_range: Select a date range
     select_a_return_authorization_reason: Select a reason for the return authorization
     select_a_stock_location: Select a stock location
     select_a_store_credit_reason: Select a reason for the store credit
@@ -1377,12 +1256,9 @@ en:
     select_from_prototype: Select From Prototype
     select_stock: Select stock
     selected_quantity_not_available: selected of %{item} is not available.
-    send_copy_of_all_mails_to: Send Copy of All Mails To
-    send_mails_as: Send Mails As
     seo: SEO
     seo_robots: SEO Robots
     seo_title: SEO Title
-    server: Server
     server_error: The server returned an error
     settings: Settings
     ship: Ship

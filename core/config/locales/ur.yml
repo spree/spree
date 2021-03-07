@@ -686,27 +686,21 @@ ur:
     default_tax: ڈیفالٹ ٹیکس
     default_tax_zone: ڈیفالٹ ٹیکس زون
     delete: حذف کریں
-    delete_from_taxon: ٹیکسن سے حذف کریں
     deleted: حذف ہوگیا
-    delivery: ترسیل
     delivery_information: حوالگی کی معلومات
     depth: گہرائی
     description: تفصیل
     destination: منزل مقصود
-    destroy: تباہ کریں
     details: تفصیلات
     discontinue_on: بند کرو
     discontinued: بند
     discontinued_variants_present: اس آرڈر میں کچھ لائن آئٹموں میں وہ پروڈکٹ موجود ہیں جو اب دستیاب نہیں ہیں۔
-    discount_amount: چھوٹ کی رقم
-    dismiss_banner: نہیں شکریہ! مجھے دلچسپی نہیں ہے ، اس پیغام کو دوبارہ ظاہر نہ کریں
     display: ڈسپلے کریں
     doesnt_track_inventory: یہ انوینٹری کو ٹریک نہیں کرتا ہے
     dont_have_account: کوئی اکاؤنٹ نہیں ہے؟
     edit: ترمیم
     edit_reimbursement: ادائیگی میں ترمیم کریں
     editing_resource: "%{resource} میں ترمیم کرنا"
-    editing_rma_reason: ترمیم آر ایم اے وجہ
     editing_user: اپنے اکاؤنٹ میں ترمیم کریں
     eligibility_errors:
       messages:
@@ -725,9 +719,6 @@ ur:
         not_first_order: اس کوپن کوڈ کو صرف آپ کے پہلے آرڈر پر لاگو کیا جاسکتا ہے۔
     email: ای میل
     empty: خالی
-    empty_cart: خالی ٹوکری
-    enable_mail_delivery: میل کی فراہمی کو قابل بنائیں
-    end: ختم
     ending_at: پر ختم ہو رہا ہے
     ending_in: میں ختم ہو رہا ہے
     ends_at: پر ختم ہوتا ہے
@@ -746,7 +737,6 @@ ur:
     errors_prohibited_this_record_from_being_saved:
       one: 1 غلطی نے اس ریکارڈ کو محفوظ ہونے سے منع کیا ہے
       other: "%{count} غلطیوں نے اس ریکارڈ کو محفوظ ہونے سے منع کیا ہے"
-    event: تقریب
     events:
       spree:
         cart:
@@ -766,8 +756,6 @@ ur:
     existing_shipments: موجودہ کھیپ
     expedited_exchanges_warning: کسی بھی مخصوص تبادلے کی بچت کے بعد فوری طور پر گاہک کو بھیج دیا جائے گا۔ اگر صارف %{days_window} دن کے اندر اصل شے کو واپس نہیں کرتا ہے تو صارف سے اس شے کی پوری رقم وصول کی جائے گی۔
     expiration: میعاد ختم ہونا
-    expiration_date: میعاد ختم ہونے کی تاریخ
-    extension: توسیع
     extensions_directory: ایکسٹینشنس ڈائرکٹری
     facebook: فیس بک
     failed_payment_attempts: ادائیگی کی ناکام کوشش
@@ -776,10 +764,7 @@ ur:
     filter: فلٹر کریں
     filter_results: فلٹر نتائج
     filterable: فلٹر
-    finalize: حتمی شکل دینا
-    finalized: حتمی شکل دی گئی
     find_a_taxon: ایک ٹیکس تلاش کریں
-    first_item: پہلا آئٹم
     first_name: پہلا نام
     first_name_begins_with: پہلا نام شروع ہوتا ہے
     firstname: پہلا نام
@@ -790,18 +775,12 @@ ur:
     footer: فوٹر
     forgot_password: پاسورڈ بھول گے؟
     free: مفت
-    free_shipping: مفت ترسیل
-    free_shipping_amount: "-"
-    front_end: فرنٹ اینڈ
-    gateway: گیٹ وے
     gateway_error: گیٹ وے میں خرابی
-    general: جنرل
     general_settings: عام ترتیبات
     generate_code: کوپن کوڈ تیار کریں
     get_back_to_the: واپس جاؤ
     go_to_category: زمرہ میں جائیں
     guest_checkout: مہمان چیک آؤٹ
-    guest_user_account: مہمان کی حیثیت سے چیک آؤٹ کریں
     has_no_shipped_units: کوئی بھیجے ہوئے یونٹ نہیں ہیں
     header_banner: ہیڈر بینر
     height: اونچائی
@@ -822,29 +801,19 @@ ur:
       show_only: صرف دکھائیں
       supported_locales: تائید شدہ لوکلز
       translations: ترجمہ
-    icon: شبیہہ
     id: شناخت
-    image: تصویر
     images: تصاویر
     implement_eligible_for_return: 'لازمی طور پر # قابل_کے_پھر واپس لاگو کریں؟ آپ کی اہلیت وایلیڈیٹر کے لئے۔'
     implement_requires_manual_intervention: 'لازمی طور پر # تقاضوں_ مینول_فاصل کو نافذ کریں؟ آپ کی اہلیت وایلیڈیٹر کے لئے۔'
     in_stock: اسٹاک میں
-    inactive: غیر فعال
-    incl: incl.
     included_in_price: قیمت میں شامل
-    included_price_validation: منتخب نہیں کیا جاسکتا جب تک کہ آپ ڈیفالٹ ٹیکس زون متعین نہ کردیں
     incomplete: نامکمل
     info_number_of_skus_not_shown:
       one: اور ایک دوسرا
       other: اور %{count} دوسرے
     info_product_has_multiple_skus: 'اس پروڈکٹ میں %{count} مختلف حالتیں ہیں:'
     instagram: انسٹاگرام
-    instructions_to_reset_password: براہ کرم نیچے دیئے گئے فارم پر اپنا ای میل درج کریں
-    insufficient_stock: ناکافی اسٹاک دستیاب ، صرف %{on_hand} باقی ہے
-    insufficient_stock_item_quantity: ناکافی اسٹاک کی مقدار دستیاب ہے
     insufficient_stock_lines_present: اس ترتیب میں کچھ لائن آئٹموں میں ناکافی مقدار ہے۔
-    intercept_email_address: انٹرپیسٹ ای میل ایڈریس
-    intercept_email_instructions: ای میل وصول کنندہ کو اوور رائڈ کریں اور اس پتے کے ساتھ تبدیل کریں۔
     internal_name: داخلی نام
     internationalization: عالمگیریت
     invalid_credit_card: غلط کریڈٹ کارڈ
@@ -852,16 +821,11 @@ ur:
     invalid_payment_provider: غلط ادائیگی فراہم کنندہ
     invalid_promotion_action: غلط پروموشن ایکشن۔
     invalid_promotion_rule: غلط پروموشن رول
-    inventory: انوینٹری
-    inventory_adjustment: انوینٹری ایڈجسٹمنٹ
     inventory_error_flash_for_insufficient_quantity: آپ کی ٹوکری میں موجود کوئی چیز دستیاب نہیں ہے۔
-    inventory_state: انوینٹری اسٹیٹ
-    is_not_available_to_shipment_address: شپمنٹ ایڈریس پر دستیاب نہیں ہے
     iso: آئی ایس او الفا -2
     iso3: آئی ایس او الفا -3
     iso_name: آئی ایس او کا نام
     issued_on: جاری ہوا
-    item: آئٹم
     item_description: آئٹم کی تفصیل
     item_total: آئٹم ٹوٹل
     item_total_rule:
@@ -878,28 +842,16 @@ ur:
     last_name: آخری نام
     last_name_begins_with: آخری نام کے ساتھ شروع ہوتا ہے
     lastname: آخری نام
-    learn_more: اورجانیے
     lifetime_stats: زندگی بھر کے اعدادوشمار
     limit_usage_to: تک محدود استعمال کریں
     line_item_adjustments: لائن آئٹم ایڈجسٹمنٹ
-    list: فہرست
     loading: لوڈ ہو رہا ہے
     loading_tree: درخت لوڈ ہو رہا ہے۔ برائے مہربانی انتظار کریں…
-    locale_changed: لوکل بدل گیا
     location: مقام
-    lock: لاک
     log_entries: لاگ انٹریس
-    log_in: لاگ ان کریں
     log_in_to_continue: جاری رکھنے کے لئے لاگ ان کریں
-    logged_in_as: لاگ ان کے طور پر
-    logged_in_succesfully: کامیابی کے ساتھ لاگ ان ہوا
-    logged_out: آپ لاگ آؤٹ ہوچکے ہیں۔
     login: لاگ ان کریں
-    login_as_existing: موجودہ گاہک کے طور پر لاگ ان کریں
-    login_failed: لاگ ان کی توثیق ناکام ہوگئی۔
-    login_name: لاگ ان کریں
     logo: لوگو
-    logo_alt: برانڈ لوگو
     logout: لاگ آوٹ
     logs: نوشتہ جات
     look_for_similar_items: اسی طرح کی اشیاء کو تلاش کریں
@@ -907,7 +859,6 @@ ur:
     mailer_logo: میلر لوگو (صرف JPG یا PNG تصاویر)
     make_refund: رقم کی واپسی کریں
     make_sure_the_above_reimbursement_amount_is_correct: یقینی بنائیں کہ مذکورہ بالا معاوضہ کی رقم درست ہے
-    manage_promotion_categories: پروموشن کیٹیگریز کا انتظام کریں
     manage_variants: مختلف حالتوں کا نظم کریں
     manual_intervention_required: دستی مداخلت کی ضرورت ہے
     master: ماسٹر
@@ -916,16 +867,12 @@ ur:
     match_choices:
       all: سب
       none: کوئی نہیں
-    max_items: زیادہ سے زیادہ اشیا
     member_since: چونکہ اراکین
     memo: میمو
     meta_description: میٹا تفصیل
     meta_keywords: میٹا کی ورڈز
     meta_title: میٹا ٹائٹل
-    metadata: میٹا ڈیٹا
-    minimal_amount: کم سے کم رقم
     missing_return_authorization: "%{item_name} کیلئے ریٹرن اتھارٹی غائب ہے۔"
-    month: مہینہ
     more: مزید
     move_stock_between_locations: مقامات کے درمیان اسٹاک منتقل کریں
     move_variant_to: مختلف حالت میں منتقل کریں
@@ -951,15 +898,12 @@ ur:
       show_search: تلاش دکھائیں
       show_user_menu: صارف کا مینو دکھائیں
       sign_up: سائن اپ
-    new: نئی
     new_adjustment: نیا ایڈجسٹمنٹ
     new_country: نیا ملک
-    new_customer: نیا اکاؤنٹ بنانے
     new_customer_return: نیا کسٹمر ریٹرن
     new_image: نئی تصویر
     new_option_type: نئی آپشن ٹائپ
     new_order: نیا حکم
-    new_order_completed: نیا آرڈر مکمل ہوا
     new_order_notifications_email: نیا آرڈر نوٹیفیکیشن ای میل
     new_payment: نئی ادائیگی
     new_payment_method: ادائیگی کا نیا طریقہ
@@ -981,44 +925,34 @@ ur:
     new_stock_location: اسٹاک کی نئی جگہ
     new_stock_movement: اسٹاک کی نئی تحریک
     new_stock_transfer: اسٹاک کی نئی منتقلی
-    new_store_credit: نیا اسٹور کریڈٹ
     new_store_credit_category: نیا اسٹور کریڈٹ زمرہ
     new_tax_category: ٹیکس کی نئی قسم
     new_tax_rate: ٹیکس کی نئی شرح
     new_taxon: نیا ٹیکسن
     new_taxonomy: نیا درجہ بندی
-    new_tracker: نیا ٹریکر
     new_user: نیا صارف
     new_variant: نیا متغیر
     new_zone: نیا زون
     next: اگلے
     no_actions_added: کوئی عمل شامل نہیں کیا گیا
-    no_address_given: کوئی پتہ نہیں دیا گیا
     no_available_date_set: تاریخ دستیاب نہیں ہے
     no_cc_type: N / A
     no_country: کوئی ملک سیٹ نہیں
     no_limits_zone: کوئی حد نہیں
     no_payment_found: ادائیگی نہیں ملی
     no_payment_provider_settings_message: اس ادائیگی فراہم کنندہ کے پاس کوئی کسٹم سیٹنگ دستیاب نہیں ہے
-    no_pending_payments: ادائیگیوں کا التوا نہیں ہے
     no_product_available:
       for_this_quantity: معذرت ، ایسا لگتا ہے کہ کچھ مصنوعات منتخب مقدار میں دستیاب نہیں ہیں۔
       opps: افوہ!
-    no_products_found: کوئی مصنوعہ نہیں ملا
     no_resource_found: کوئی %{resource} نہیں ملا
     no_results: کوئی نتیجہ نہیں
-    no_returns_found: واپسی نہیں ملی
     no_rules_added: کوئی اصول شامل نہیں
     no_shipping_method_selected: کوئی شپنگ کا طریقہ منتخب نہیں کیا گیا ہے۔
     no_state_changes: ابھی کوئی ریاست نہیں بدلی۔
     no_tracking_present: معلومات سے باخبر رہنے کی کوئی معلومات فراہم نہیں کی گئیں۔
     none: کوئی نہیں
-    none_selected: کوئی بھی منتخب نہیں
-    normal_amount: عام رقم
     not: نہیں
     not_available: N / A
-    not_enough_stock: اس منتقلی کو مکمل کرنے کے لئے ذریعہ کے مقام پر کافی تعداد میں انوینٹری موجود نہیں ہے۔
-    not_found: "%{resource} نہیں ملا ہے"
     note: نوٹ
     notice_messages:
       icon_removed: تصویر کامیابی کے ساتھ ہٹا دی گئی ہے
@@ -1032,27 +966,20 @@ ur:
     num_orders: "# احکامات"
     number: نمبر
     ok: ٹھیک ہے
-    on_hand: ہاتھ پہ
-    open: کھولو
     open_all_adjustments: تمام ایڈجسٹمنٹ کھولیں
-    option_type: آپشن کی قسم
     option_type_placeholder: آپشن کی قسم منتخب کریں
     option_types: آپشن کی قسمیں
-    option_value: آپشن ویلیو
     option_values: آپشن ویلیوز
     optional: اختیاری
     options: اختیارات
     or: یا
-    or_over_price: "%{price} یا اس سے زیادہ"
     order: ترتیب
     order_adjustments: آرڈر ایڈجسٹمنٹ
     order_already_updated: آرڈر پہلے ہی اپ ڈیٹ ہوچکا ہے۔
     order_approved: آرڈر منظور ہوگیا
     order_canceled: آرڈر منسوخ ہوگیا
-    order_details: آرڈر کی تفصیلات
     order_email_resent: آرڈر ای میل بھیجیں
     order_has_no_payments: آرڈر کی کوئی ادائیگی نہیں ہے
-    order_information: آرڈر کی معلومات
     order_line_items: آرڈر لائن آئٹمز
     order_mailer:
       cancel_email:
@@ -1078,7 +1005,6 @@ ur:
       total: 'ٹوٹل آرڈر:'
     order_not_found: ہمیں آپ کا آرڈر نہیں مل سکا۔ براہ کرم یہ عمل دوبارہ آزمائیں۔
     order_number: "%{number} آرڈر کریں"
-    order_processed_successfully: آپ کے آرڈر پر کامیابی سے عملدرآمد ہوچکا ہے
     order_resumed: آرڈر دوبارہ شروع ہوا
     order_state:
       address: پتہ
@@ -1097,10 +1023,8 @@ ur:
     order_summary: حکم کا خلاصہ
     order_sure_want_to: کیا آپ واقعی اس آرڈر کو %{event} کرنا چاہتے ہیں؟
     order_total: ٹوٹل آرڈر
-    order_updated: آرڈر تازہ کاری
     orders: احکامات
     out_of_stock: زخیرے سے باہر
-    overview: جائزہ
     package_from: سے پیکیج
     page_not_found: معذرت! آپ جس صفحے کو تلاش کر رہے ہیں وہ نہیں مل سکتا ہے۔
     pagination:
@@ -1110,18 +1034,14 @@ ur:
     password: پاس ورڈ
     paste: چسپاں کریں
     path: راہ
-    pay: ادا کرنا
     payment: ادائیگی
     payment_amount: ادائیگی کی رقم
     payment_could_not_be_created: ادائیگی نہیں کی جاسکتی ہے۔
     payment_identifier: ادائیگی کا شناخت کنندہ
-    payment_information: ادائیگی کی معلومات
     payment_method: ادائیگی کا طریقہ
     payment_method_not_supported: ادائیگی کا یہ طریقہ غیر تعاون یافتہ ہے۔ براہ کرم کوئی دوسرا انتخاب کریں۔
     payment_methods: ادائیگی کے طریقے
     payment_processing_failed: ادائیگی پر کارروائی نہیں ہوسکی ، براہ کرم آپ نے جو تفصیلات داخل کی ہیں وہ چیک کریں
-    payment_processor_choose_banner_text: اگر آپ کو ادائیگی کے پروسیسر کا انتخاب کرنے میں مدد کی ضرورت ہو تو ، براہ کرم ملاحظہ کریں
-    payment_processor_choose_link: ہمارے ادائیگی کا صفحہ
     payment_provider_settings: ادائیگی فراہم کنندہ کی ترتیبات
     payment_state: ادائیگی کی حالت
     payment_states:
@@ -1144,13 +1064,10 @@ ur:
       view_cart: ٹوکری دیکھیں
     pending: زیر التواء
     pending_sale: زیر التواء فروخت
-    percent: فیصد
     percent_per_item: فی آئٹم فی صد
     permalink: پرمیل لنک
     phone: فون
-    place_order: حکم صادر کریں
     please_define_payment_methods: براہ کرم پہلے ادائیگی کے کچھ طریقے بتائیں۔
-    please_enter_reasonable_quantity: براہ کرم معقول مقدار درج کریں۔
     plp:
       clear_all: تمام کو صاف کریں
       default: ہار
@@ -1168,8 +1085,6 @@ ur:
       price_low_to_high: قیمت (کم - اعلی)
       results_for: کے لئے نتائج
       sort_by: بہ ترتیب
-    populate_get_error: کچھ غلط ہو گیا. براہ کرم آئٹم کو دوبارہ شامل کرنے کی کوشش کریں۔
-    powered_by: 'از: وی بلیٹن'
     pre_tax_amount: ٹیکس سے پہلے کی رقم
     pre_tax_refund_amount: ٹیکس سے قبل رقم کی واپسی کی رقم
     pre_tax_total: قبل از ٹیکس کل
@@ -1181,15 +1096,11 @@ ur:
     previous_state_missing: n / A
     previously_used_card: پہلے استعمال شدہ کارڈز
     price: قیمت
-    price_range: قیمت کی حد
     price_sack: قیمت کا بوری
     prices: قیمتیں
-    process: عمل
     product: پروڈکٹ
-    product_details: مصنوعات کی تفصیلات
     product_has_no_description: اس مصنوع کی کوئی تفصیل نہیں ہے
     product_not_available_in_this_currency: یہ مصنوعہ منتخب کرنسی میں دستیاب نہیں ہے۔
-    product_properties: مصنوع کی خصوصیات
     product_rule:
       choose_products: مصنوعات کا انتخاب کریں
       label: آرڈر میں ان مصنوعات کی X مقدار ہونی چاہئے
@@ -1265,26 +1176,16 @@ ur:
     provider: فراہم کرنے والا
     provider_settings_warning: اگر آپ فراہم کنندہ کی قسم کو تبدیل کر رہے ہیں تو ، فراہم کنندہ کی ترتیبات میں ترمیم کرنے سے پہلے آپ کو پہلے بچت کرنا ہوگی
     purchased_quantity: مقدار خریدی
-    qty: مقدار
     quantity: مقدار
-    quantity_returned: مقدار لوٹ گئی
-    quantity_shipped: مقدار بھیج دیا گیا
     quick_search: فوری تلاش..
     rate: شرح
     reason: وجہ
-    receive: وصول کریں
     receive_stock: اسٹاک وصول کریں
-    received: موصول ہوا
-    reception_status: استقبال کی حیثیت
     reference: حوالہ
     reference_contains: حوالہ پر مشتمل ہے
     refund: واپس کرنا
-    refund_amount_must_be_greater_than_zero: رقم کی واپسی کی رقم صفر سے زیادہ ہونی چاہئے
     refund_reasons: رقم کی واپسی کی وجوہات
-    refunded_amount: رقم کی واپسی
     refunds: رقم کی واپسی
-    register: رجسٹر کریں
-    registration: اندراج
     reimburse: معاوضہ
     reimbursed: معاوضہ دیا گیا
     reimbursement: باز ادائیگی
@@ -1300,76 +1201,54 @@ ur:
         subject: معاوضے کی اطلاع
         thanks: آپ کے کاروبار کے لئے آپ کا شکریہ.
         total_refunded: 'کل رقم کی واپسی: %{total}'
-    reimbursement_perform_failed: 'معاوضہ ادا نہیں کیا جاسکا۔ خرابی: %{error}'
     reimbursement_status: معاوضہ کی حیثیت
     reimbursement_type: معاوضہ کی قسم
     reimbursement_type_override: معاوضہ کی قسم کو ختم کرنا
     reimbursement_types: معاوضہ کی اقسام
-    reimbursements: معاوضے
     reject: مسترد کریں
     rejected: مسترد
     remember_me: مجھے پہچانتے ہو
     remove: دور
     remove_image: تصویر ہٹائیں
     rename: نام تبدیل کریں
-    report: رپورٹ کریں
     reports: رپورٹیں
     required: "*"
     required_fields: مطلوبہ فیلڈز
     resellable: بیچنے والا
     resend: دوبارہ بھیجیں
-    reset_password: میرا پاس ورڈ دوبارہ ترتیب دیں
-    response_code: رسپانس کوڈ
-    resume: دوبارہ شروع کریں
-    resumed: دوبارہ شروع کیا
-    return: واپسی
-    return_authorization: واپسی کی اجازت
     return_authorization_canceled: واپسی کی اجازت منسوخ کردی گئی
     return_authorization_reasons: اجازت کی وجوہات واپس کریں
     return_authorization_states:
       authorized: مجاز
       canceled: منسوخ
-    return_authorization_updated: واپسی کی اجازت تازہ ہوگئی
     return_authorizations: اجازت واپس کریں
     return_item_inventory_unit_ineligible: ریٹرن آئٹم کی انوینٹری یونٹ بھیجنا ضروری ہے
     return_item_inventory_unit_reimbursed: ریٹرن آئٹم کی انوینٹری یونٹ کی پہلے ہی ادائیگی کردی گئی ہے
     return_item_order_not_completed: ریٹرن آئٹم کا آرڈر مکمل ہونا ضروری ہے
     return_item_rma_ineligible: ریٹرن آئٹم کے لئے ایک RMA درکار ہے
     return_item_time_period_ineligible: ریٹرن آئٹم اہل وقت کی مدت سے باہر ہے
-    return_items: اشیا واپس کریں
     return_items_cannot_be_associated_with_multiple_orders: ریٹرن آئٹمز متعدد آرڈرز کے ساتھ وابستہ نہیں ہوسکتے ہیں۔
     return_number: واپسی نمبر
     return_quantity: مقدار کی واپسی
-    returned: لوٹا
     returns: واپسی
-    review: جائزہ
     risk: رسک
     risk_analysis: خطرے کو بھانپنا
     risky: خطرہ
-    rma_credit: آر ایم اے کریڈٹ
     rma_number: آر ایم اے نمبر
-    rma_value: آر ایم اے ویلیو
     role_id: رول ID
     roles: کردار
     rules: قواعد
     safe: محفوظ
     sales_total: کل فروخت
-    sales_total_description: تمام احکامات کے لئے کل فروخت
     sales_totals: فروخت مجموعی
-    save_and_continue: محفوظ کریں اور جاری رکھیں
-    save_my_address: میرا پتہ بچائیں
     saving: بچت
     say_no: نہیں
     say_yes: جی ہاں
-    scope: دائرہ کار
     search: تلاش کریں
-    search_results: "'%{keywords}' کے نتائج تلاش کریں"
     searching: تلاش کر رہا ہے
-    secure_connection_type: محفوظ کنکشن کی قسم
     security_settings: سیکورٹی کی ترتیبات
     select: منتخب کریں
     select_a_date: ایک تاریخ منتخب کریں
-    select_a_date_range: تاریخ کی حد منتخب کریں
     select_a_return_authorization_reason: واپسی کی اجازت کی کوئی وجہ منتخب کریں
     select_a_stock_location: اسٹاک کا مقام منتخب کریں
     select_a_store_credit_reason: اسٹور کریڈٹ کی کوئی وجہ منتخب کریں
@@ -1377,12 +1256,9 @@ ur:
     select_from_prototype: پروٹو ٹائپ سے منتخب کریں
     select_stock: اسٹاک کو منتخب کریں
     selected_quantity_not_available: "%{item} کا منتخب کردہ دستیاب نہیں ہے۔"
-    send_copy_of_all_mails_to: تمام میلوں کی کاپی بھیجیں
-    send_mails_as: بطور میل بھیجیں
     seo: SEO
     seo_robots: SEO روبوٹ
     seo_title: SEO عنوان
-    server: سرور
     server_error: سرور نے ایک خامی واپس کردی
     settings: ترتیبات
     ship: جہاز

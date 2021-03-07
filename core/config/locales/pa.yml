@@ -686,27 +686,21 @@ pa:
     default_tax: ਮੂਲ ਟੈਕਸ
     default_tax_zone: ਮੂਲ ਟੈਕਸ ਜ਼ੋਨ
     delete: ਮਿਟਾਓ
-    delete_from_taxon: ਟੈਕਸਨ ਤੋਂ ਮਿਟਾਓ
     deleted: ਮਿਟਾਇਆ ਗਿਆ
-    delivery: ਡਿਲਿਵਰੀ
     delivery_information: ਸਪੁਰਦਗੀ ਦੀ ਜਾਣਕਾਰੀ
     depth: ਡੂੰਘਾਈ
     description: ਵੇਰਵਾ
     destination: ਮੰਜ਼ਿਲ
-    destroy: ਨਸ਼ਟ ਕਰੋ
     details: ਵੇਰਵਾ
     discontinue_on: ਬੰਦ ਕਰੋ
     discontinued: ਬੰਦ
     discontinued_variants_present: ਇਸ ਆਰਡਰ ਵਿੱਚ ਕੁਝ ਲਾਈਨ ਆਈਟਮਾਂ ਵਿੱਚ ਉਤਪਾਦ ਹਨ ਜੋ ਹੁਣ ਉਪਲਬਧ ਨਹੀਂ ਹਨ.
-    discount_amount: ਛੂਟ ਦੀ ਰਕਮ
-    dismiss_banner: ਨਹੀਂ ਧੰਨਵਾਦ! ਮੈਨੂੰ ਦਿਲਚਸਪੀ ਨਹੀਂ ਹੈ, ਇਸ ਸੰਦੇਸ਼ ਨੂੰ ਦੁਬਾਰਾ ਪ੍ਰਦਰਸ਼ਿਤ ਨਾ ਕਰੋ
     display: ਡਿਸਪਲੇਅ
     doesnt_track_inventory: ਇਹ ਵਸਤੂਆਂ ਨੂੰ ਟਰੈਕ ਨਹੀਂ ਕਰਦਾ
     dont_have_account: ਕੋਈ ਖਾਤਾ ਨਹੀਂ?
     edit: ਸੰਪਾਦਿਤ ਕਰੋ
     edit_reimbursement: ਅਦਾਇਗੀ ਸੰਪਾਦਿਤ ਕਰੋ
     editing_resource: "%{resource} ਸੰਪਾਦਿਤ ਕਰਨਾ"
-    editing_rma_reason: RMA ਕਾਰਨ ਨੂੰ ਸੋਧਣਾ
     editing_user: ਆਪਣੇ ਖਾਤੇ ਵਿੱਚ ਸੋਧ ਕਰੋ
     eligibility_errors:
       messages:
@@ -725,9 +719,6 @@ pa:
         not_first_order: ਇਹ ਕੂਪਨ ਕੋਡ ਸਿਰਫ ਤੁਹਾਡੇ ਪਹਿਲੇ ਆਰਡਰ ਤੇ ਲਾਗੂ ਕੀਤਾ ਜਾ ਸਕਦਾ ਹੈ.
     email: ਈ - ਮੇਲ
     empty: ਖਾਲੀ
-    empty_cart: ਖਾਲੀ ਕਾਰਟ
-    enable_mail_delivery: ਮੇਲ ਸਪੁਰਦਗੀ ਨੂੰ ਸਮਰੱਥ ਕਰੋ
-    end: ਅੰਤ
     ending_at: "'ਤੇ ਖ਼ਤਮ ਹੋ ਰਿਹਾ ਹੈ"
     ending_in: ਵਿਚ ਖ਼ਤਮ ਹੋ ਰਿਹਾ ਹੈ
     ends_at: ਤੇ ਖਤਮ ਹੁੰਦਾ ਹੈ
@@ -746,7 +737,6 @@ pa:
     errors_prohibited_this_record_from_being_saved:
       one: 1 ਗਲਤੀ ਨੇ ਇਸ ਰਿਕਾਰਡ ਨੂੰ ਬਚਾਉਣ ਤੋਂ ਵਰਜਿਆ ਹੈ
       other: "%{count} ਗਲਤੀਆਂ ਨੇ ਇਸ ਰਿਕਾਰਡ ਨੂੰ ਸੁਰੱਖਿਅਤ ਕਰਨ ਤੋਂ ਵਰਜਿਆ ਹੈ"
-    event: ਘਟਨਾ
     events:
       spree:
         cart:
@@ -766,8 +756,6 @@ pa:
     existing_shipments: ਮੌਜੂਦਾ ਬਰਾਮਦ
     expedited_exchanges_warning: ਕੋਈ ਵੀ ਨਿਰਧਾਰਤ ਐਕਸਚੇਂਜ ਬਚਤ ਦੇ ਤੁਰੰਤ ਬਾਅਦ ਗਾਹਕ ਨੂੰ ਭੇਜਿਆ ਜਾਂਦਾ ਹੈ. ਜੇ ਉਹ %{days_window} ਦਿਨਾਂ ਦੇ ਅੰਦਰ ਅਸਲੀ ਚੀਜ਼ ਨੂੰ ਵਾਪਸ ਨਹੀਂ ਕਰਦੇ ਹਨ ਤਾਂ ਗਾਹਕ ਨੂੰ ਵਸਤੂ ਦੀ ਪੂਰੀ ਰਕਮ ਵਸੂਲ ਕੀਤੀ ਜਾਏਗੀ.
     expiration: ਮਿਆਦ
-    expiration_date: ਅੰਤ ਦੀ ਤਾਰੀਖ
-    extension: ਵਿਸਥਾਰ
     extensions_directory: ਐਕਸਟੈਂਸ਼ਨਜ਼ ਡਾਇਰੈਕਟਰੀ
     facebook: ਫੇਸਬੁੱਕ
     failed_payment_attempts: ਭੁਗਤਾਨ ਦੀ ਕੋਸ਼ਿਸ਼ ਵਿਚ ਅਸਫਲ
@@ -776,10 +764,7 @@ pa:
     filter: ਫਿਲਟਰ
     filter_results: ਫਿਲਟਰ ਨਤੀਜੇ
     filterable: ਫਿਲਟਰ
-    finalize: ਅੰਤਮ ਰੂਪ ਦੇਣਾ
-    finalized: ਅੰਤਮ ਰੂਪ ਦਿੱਤਾ ਗਿਆ
     find_a_taxon: ਇੱਕ ਟੈਕਸਸਨ ਲੱਭੋ
-    first_item: ਪਹਿਲੀ ਆਈਟਮ
     first_name: ਪਹਿਲਾ ਨਾਂ
     first_name_begins_with: ਪਹਿਲਾ ਨਾਮ ਨਾਲ ਸ਼ੁਰੂ ਹੁੰਦਾ ਹੈ
     firstname: ਪਹਿਲਾ ਨਾਂ
@@ -790,18 +775,12 @@ pa:
     footer: ਫੁੱਟਰ
     forgot_password: ਪਾਸਵਰਡ ਭੁੱਲ ਗਏ?
     free: ਮੁਫਤ
-    free_shipping: ਮੁਫਤ ਸ਼ਿਪਿੰਗ
-    free_shipping_amount: "-"
-    front_end: ਅਗਰਾਂਤ
-    gateway: ਗੇਟਵੇ
     gateway_error: ਗੇਟਵੇ ਗਲਤੀ
-    general: ਜਨਰਲ
     general_settings: ਆਮ ਸੈਟਿੰਗ
     generate_code: ਕੂਪਨ ਕੋਡ ਤਿਆਰ ਕਰੋ
     get_back_to_the: ਵਾਪਸ ਜਾਓ
     go_to_category: ਸ਼੍ਰੇਣੀ 'ਤੇ ਜਾਓ
     guest_checkout: ਗੈਸਟ ਚੈਕਆਉਟ
-    guest_user_account: ਇੱਕ ਮਹਿਮਾਨ ਵਜੋਂ ਚੈਕਆਉਟ ਕਰੋ
     has_no_shipped_units: ਦੀਆਂ ਕੋਈ ਭੇਜੀਆਂ ਇਕਾਈਆਂ ਨਹੀਂ ਹਨ
     header_banner: ਸਿਰਲੇਖ ਬੈਨਰ
     height: ਕੱਦ
@@ -822,29 +801,19 @@ pa:
       show_only: ਸਿਰਫ ਦਿਖਾਓ
       supported_locales: ਸਮਰਥਿਤ ਸਥਾਨ
       translations: ਅਨੁਵਾਦ
-    icon: ਆਈਕਾਨ
     id: ਆਈ.ਡੀ.
-    image: ਚਿੱਤਰ
     images: ਚਿੱਤਰ
     implement_eligible_for_return: 'ਲਾਜ਼ਮੀ ਤੌਰ ''ਤੇ # ਯੋਗਤਾ_ ਲਈ_ਪ੍ਰਾਪਤ ਕਰਨਾ ਹੈ? ਤੁਹਾਡੇ ਯੋਗਤਾ ਵੈਲੀਡੇਟਰ ਲਈ.'
     implement_requires_manual_intervention: 'ਲਾਜ਼ਮੀ ਤੌਰ ''ਤੇ # ਜਰੂਰਤ_ ਮੈਨੁਅਲ_ਇੰਟਰਵੇਸ਼ਨ ਲਾਗੂ ਕਰਨਾ ਹੈ? ਤੁਹਾਡੇ ਯੋਗਤਾ ਵੈਲੀਡੇਟਰ ਲਈ.'
     in_stock: ਭੰਡਾਰ ਵਿੱਚ
-    inactive: ਨਾ-ਸਰਗਰਮ
-    incl: incl.
     included_in_price: ਕੀਮਤ ਵਿੱਚ ਸ਼ਾਮਲ
-    included_price_validation: ਨਹੀਂ ਚੁਣਿਆ ਜਾ ਸਕਦਾ ਜਦੋਂ ਤੱਕ ਤੁਸੀਂ ਡਿਫੌਲਟ ਟੈਕਸ ਜ਼ੋਨ ਸੈਟ ਨਹੀਂ ਕਰਦੇ
     incomplete: ਅਧੂਰਾ
     info_number_of_skus_not_shown:
       one: ਅਤੇ ਇਕ ਹੋਰ
       other: ਅਤੇ %{count} ਹੋਰ
     info_product_has_multiple_skus: 'ਇਸ ਉਤਪਾਦ ਦੇ %{count} ਰੂਪ ਹਨ:'
     instagram: ਇੰਸਟਾਗ੍ਰਾਮ
-    instructions_to_reset_password: ਕਿਰਪਾ ਕਰਕੇ ਹੇਠਾਂ ਦਿੱਤੇ ਫਾਰਮ ਤੇ ਆਪਣੀ ਈਮੇਲ ਦਰਜ ਕਰੋ
-    insufficient_stock: ਨਾਕਾਫੀ ਸਟਾਕ ਉਪਲਬਧ, ਸਿਰਫ %{on_hand} ਬਾਕੀ
-    insufficient_stock_item_quantity: ਸਟਾਕ ਦੀ ਨਾਕਾਫ਼ੀ ਮਾਤਰਾ ਉਪਲਬਧ ਹੈ
     insufficient_stock_lines_present: ਇਸ ਕ੍ਰਮ ਵਿੱਚ ਕੁਝ ਲਾਈਨ ਆਈਟਮਾਂ ਵਿੱਚ ਨਾਕਾਫ਼ੀ ਮਾਤਰਾ ਹੈ.
-    intercept_email_address: ਇੰਟਰਸੇਟ ਈਮੇਲ ਪਤਾ
-    intercept_email_instructions: ਈਮੇਲ ਪ੍ਰਾਪਤਕਰਤਾ ਨੂੰ ਓਵਰਰਾਈਡ ਕਰੋ ਅਤੇ ਇਸ ਪਤੇ ਨਾਲ ਤਬਦੀਲ ਕਰੋ.
     internal_name: ਅੰਦਰੂਨੀ ਨਾਮ
     internationalization: ਅੰਤਰਰਾਸ਼ਟਰੀਕਰਨ
     invalid_credit_card: ਅਵੈਧ ਕ੍ਰੈਡਿਟ ਕਾਰਡ
@@ -852,16 +821,11 @@ pa:
     invalid_payment_provider: ਅਵੈਧ ਭੁਗਤਾਨ ਪ੍ਰਦਾਤਾ.
     invalid_promotion_action: ਅਵੈਧ ਤਰੱਕੀ ਕਿਰਿਆ
     invalid_promotion_rule: ਅਵੈਧ ਪ੍ਰਚਾਰ ਨਿਯਮ
-    inventory: ਵਸਤੂ ਸੂਚੀ
-    inventory_adjustment: ਵਸਤੂ ਵਿਵਸਥਾ
     inventory_error_flash_for_insufficient_quantity: ਤੁਹਾਡੀ ਕਾਰਟ ਵਿਚ ਇਕ ਚੀਜ਼ ਉਪਲਬਧ ਨਹੀਂ ਹੈ.
-    inventory_state: ਵਸਤੂ ਸੂਚੀ
-    is_not_available_to_shipment_address: ਸਮਾਪਨ ਪਤੇ ਤੇ ਉਪਲਬਧ ਨਹੀਂ ਹੈ
     iso: ਆਈਐਸਓ ਅਲਫ਼ਾ -2
     iso3: ਆਈਐਸਓ ਅਲਫ਼ਾ -3
     iso_name: ISO ਨਾਮ
     issued_on: ਜਾਰੀ ਕੀਤਾ
-    item: ਆਈਟਮ
     item_description: ਆਈਟਮ ਵੇਰਵਾ
     item_total: ਆਈਟਮ ਕੁੱਲ
     item_total_rule:
@@ -878,28 +842,16 @@ pa:
     last_name: ਆਖਰੀ ਨਾਂਮ
     last_name_begins_with: ਆਖਰੀ ਨਾਮ ਨਾਲ ਸ਼ੁਰੂ ਹੁੰਦਾ ਹੈ
     lastname: ਆਖਰੀ ਨਾਂਮ
-    learn_more: ਜਿਆਦਾ ਜਾਣੋ
     lifetime_stats: ਲਾਈਫਟਾਈਮ ਸਟੇਟਸ
     limit_usage_to: ਦੀ ਵਰਤੋਂ ਸੀਮਿਤ ਕਰੋ
     line_item_adjustments: ਲਾਈਨ ਆਈਟਮ ਐਡਜਸਟਮੈਂਟ
-    list: ਸੂਚੀ
     loading: ਲੋਡ ਹੋ ਰਿਹਾ ਹੈ
     loading_tree: ਰੁੱਖ ਲੋਡ ਹੋ ਰਿਹਾ ਹੈ. ਕ੍ਰਿਪਾ ਕਰਕੇ ਉਡੀਕ ਕਰੋ…
-    locale_changed: ਸਥਾਨ ਬਦਲਿਆ
     location: ਟਿਕਾਣਾ
-    lock: ਲਾਕ
     log_entries: ਲਾਗ ਇੰਦਰਾਜ਼
-    log_in: ਲਾਗਿਨ
     log_in_to_continue: ਜਾਰੀ ਰੱਖਣ ਲਈ ਲੌਗ ਇਨ ਕਰੋ
-    logged_in_as: ਦੇ ਤੌਰ ਤੇ ਲਾਗਇਨ
-    logged_in_succesfully: ਸਫਲਤਾਪੂਰਵਕ ਲੌਗਇਨ ਕੀਤਾ
-    logged_out: ਤੁਸੀਂ ਲਾਗ ਆਉਟ ਹੋ ਗਏ ਹੋ.
     login: ਲਾਗਿਨ
-    login_as_existing: ਮੌਜੂਦਾ ਗ੍ਰਾਹਕ ਵਜੋਂ ਲੌਗਇਨ ਕਰੋ
-    login_failed: ਲੌਗਇਨ ਪ੍ਰਮਾਣਿਕਤਾ ਅਸਫਲ
-    login_name: ਲਾਗਿਨ
     logo: ਲੋਗੋ
-    logo_alt: ਬ੍ਰਾਂਡ ਦਾ ਲੋਗੋ
     logout: ਲਾੱਗ ਆਊਟ, ਬਾਹਰ ਆਉਣਾ
     logs: ਲਾਗ
     look_for_similar_items: ਸਮਾਨ ਚੀਜ਼ਾਂ ਦੀ ਭਾਲ ਕਰੋ
@@ -907,7 +859,6 @@ pa:
     mailer_logo: ਮੇਲਰ ਲੋਗੋ (ਜੇਪੀਜੀ ਜਾਂ ਸਿਰਫ ਪੀ ਐਨ ਜੀ ਚਿੱਤਰ)
     make_refund: ਰਿਫੰਡ ਬਣਾਓ
     make_sure_the_above_reimbursement_amount_is_correct: ਇਹ ਸੁਨਿਸ਼ਚਿਤ ਕਰੋ ਕਿ ਉਪਰੋਕਤ ਅਦਾਇਗੀ ਦੀ ਰਕਮ ਸਹੀ ਹੈ
-    manage_promotion_categories: ਪ੍ਰਚਾਰ ਦੀਆਂ ਸ਼੍ਰੇਣੀਆਂ ਦਾ ਪ੍ਰਬੰਧ ਕਰੋ
     manage_variants: ਪਰਿਵਰਤਨ ਪ੍ਰਬੰਧਿਤ ਕਰੋ
     manual_intervention_required: ਮੈਨੂਅਲ ਦਖਲ ਦੀ ਲੋੜ ਹੈ
     master: ਸਤਿਗੁਰੂ ਜੀ
@@ -916,16 +867,12 @@ pa:
     match_choices:
       all: ਸਾਰੇ
       none: ਕੋਈ ਨਹੀਂ
-    max_items: ਵੱਧ ਤੋਂ ਵੱਧ ਚੀਜ਼ਾਂ
     member_since: ਸਦੱਸ
     memo: ਮੀਮੋ
     meta_description: ਮੈਟਾ ਵੇਰਵਾ
     meta_keywords: ਮੈਟਾ ਕੀਵਰਡਸ
     meta_title: ਮੈਟਾ ਟਾਈਟਲ
-    metadata: ਮੈਟਾਡੇਟਾ
-    minimal_amount: ਘੱਟ ਮਾਤਰਾ
     missing_return_authorization: "%{item_name} ਲਈ ਰਿਟਰਨ ਪ੍ਰਮਾਣਿਕਤਾ ਗੁੰਮ ਹੈ."
-    month: ਮਹੀਨਾ
     more: ਹੋਰ
     move_stock_between_locations: ਸਥਾਨ ਦੇ ਵਿਚਕਾਰ ਸਟਾਕ ਨੂੰ ਭੇਜੋ
     move_variant_to: ਰੂਪ ਨੂੰ ਮੂਵ ਕਰੋ
@@ -951,15 +898,12 @@ pa:
       show_search: ਖੋਜ ਵੇਖੋ
       show_user_menu: ਯੂਜ਼ਰ ਮੇਨੂ ਵੇਖੋ
       sign_up: ਸਾਇਨ ਅਪ
-    new: ਨਵਾਂ
     new_adjustment: ਨਵੀਂ ਵਿਵਸਥਾ
     new_country: ਨਵਾਂ ਦੇਸ਼
-    new_customer: ਨਵਾਂ ਖਾਤਾ ਬਣਾਓ
     new_customer_return: ਨਵਾਂ ਗਾਹਕ ਰਿਟਰਨ
     new_image: ਨਵੀਂ ਤਸਵੀਰ
     new_option_type: ਨਵੀਂ ਵਿਕਲਪ ਕਿਸਮ
     new_order: ਨਵਾਂ ਆਰਡਰ
-    new_order_completed: ਨਵਾਂ ਆਰਡਰ ਪੂਰਾ ਹੋਇਆ
     new_order_notifications_email: ਨਵੀਂ ਆਰਡਰ ਨੋਟੀਫਿਕੇਸ਼ਨ ਈਮੇਲ
     new_payment: ਨਵੀਂ ਭੁਗਤਾਨ
     new_payment_method: ਭੁਗਤਾਨ ਕਰਨ ਦਾ ਨਵਾਂ ਤਰੀਕਾ
@@ -981,44 +925,34 @@ pa:
     new_stock_location: ਸਟਾਕ ਦੀ ਨਵੀਂ ਜਗ੍ਹਾ
     new_stock_movement: ਨਵੀਂ ਸਟਾਕ ਲਹਿਰ
     new_stock_transfer: ਨਵਾਂ ਸਟਾਕ ਟ੍ਰਾਂਸਫਰ
-    new_store_credit: ਨਵਾਂ ਸਟੋਰ ਕ੍ਰੈਡਿਟ
     new_store_credit_category: ਨਵੀਂ ਸਟੋਰ ਕ੍ਰੈਡਿਟ ਸ਼੍ਰੇਣੀ
     new_tax_category: ਨਵੀਂ ਟੈਕਸ ਸ਼੍ਰੇਣੀ
     new_tax_rate: ਨਵੀਂ ਟੈਕਸ ਦਰ
     new_taxon: ਨਵਾਂ ਟੈਕਸਨ
     new_taxonomy: ਨਵਾਂ ਟੈਕਸੋਮੀ
-    new_tracker: ਨਵਾਂ ਟਰੈਕਰ
     new_user: ਨਵਾਂ ਯੂਜ਼ਰ
     new_variant: ਨਵਾਂ ਰੂਪ
     new_zone: ਨਵਾਂ ਜ਼ੋਨ
     next: ਅਗਲਾ
     no_actions_added: ਕੋਈ ਕਾਰਵਾਈ ਸ਼ਾਮਲ ਨਹੀਂ ਕੀਤੀ ਗਈ
-    no_address_given: ਕੋਈ ਪਤਾ ਨਹੀਂ ਦਿੱਤਾ
     no_available_date_set: ਕੋਈ ਉਪਲਬਧ ਤਾਰੀਖ ਨਿਰਧਾਰਤ ਨਹੀਂ
     no_cc_type: ਐਨ / ਏ
     no_country: ਕੋਈ ਦੇਸ਼ ਨਿਰਧਾਰਤ ਨਹੀਂ
     no_limits_zone: ਕੋਈ ਸੀਮਾ ਨਹੀਂ
     no_payment_found: ਕੋਈ ਭੁਗਤਾਨ ਨਹੀਂ ਮਿਲਿਆ
     no_payment_provider_settings_message: ਇਸ ਭੁਗਤਾਨ ਪ੍ਰਦਾਤਾ ਕੋਲ ਕੋਈ ਕਸਟਮ ਸੈਟਿੰਗਜ਼ ਉਪਲਬਧ ਨਹੀਂ ਹਨ
-    no_pending_payments: ਕੋਈ ਬਕਾਇਆ ਭੁਗਤਾਨ ਨਹੀਂ
     no_product_available:
       for_this_quantity: ਮੁਆਫ ਕਰਨਾ, ਅਜਿਹਾ ਲਗਦਾ ਹੈ ਕਿ ਕੁਝ ਉਤਪਾਦ ਚੁਣੀ ਹੋਈ ਮਾਤਰਾ ਵਿੱਚ ਉਪਲਬਧ ਨਹੀਂ ਹਨ.
       opps: ਓਹ ਹੋ!
-    no_products_found: ਕੋਈ ਉਤਪਾਦ ਨਹੀਂ ਮਿਲਿਆ
     no_resource_found: ਕੋਈ %{resource} ਨਹੀਂ ਮਿਲਿਆ
     no_results: ਕੋਈ ਨਤੀਜੇ ਨਹੀਂ
-    no_returns_found: ਕੋਈ ਰਿਟਰਨ ਨਹੀਂ ਮਿਲਿਆ
     no_rules_added: ਕੋਈ ਨਿਯਮ ਸ਼ਾਮਲ ਨਹੀਂ ਕੀਤੇ ਗਏ
     no_shipping_method_selected: ਕੋਈ ਸ਼ਿਪਿੰਗ methodੰਗ ਨਹੀਂ ਚੁਣਿਆ ਗਿਆ.
     no_state_changes: ਹਾਲੇ ਕੋਈ ਰਾਜ ਨਹੀਂ ਬਦਲਿਆ.
     no_tracking_present: ਕੋਈ ਟਰੈਕਿੰਗ ਵੇਰਵਾ ਪ੍ਰਦਾਨ ਨਹੀਂ ਕੀਤਾ ਗਿਆ.
     none: ਕੋਈ ਨਹੀਂ
-    none_selected: ਕੋਈ ਨਹੀਂ ਚੁਣਿਆ
-    normal_amount: ਸਧਾਰਣ ਰਕਮ
     not: ਨਹੀਂ
     not_available: ਐਨ / ਏ
-    not_enough_stock: ਇਸ ਟ੍ਰਾਂਸਫਰ ਨੂੰ ਪੂਰਾ ਕਰਨ ਲਈ ਸਰੋਤ ਸਥਾਨ 'ਤੇ ਕਾਫ਼ੀ ਵਸਤੂ ਸੂਚੀ ਨਹੀਂ ਹੈ.
-    not_found: "%{resource} ਨਹੀਂ ਮਿਲਿਆ ਹੈ"
     note: ਨੋਟ
     notice_messages:
       icon_removed: ਚਿੱਤਰ ਸਫਲਤਾਪੂਰਕ ਹਟਾ ਦਿੱਤਾ ਗਿਆ ਹੈ
@@ -1032,27 +966,20 @@ pa:
     num_orders: "# ਆਰਡਰ"
     number: ਗਿਣਤੀ
     ok: ਠੀਕ ਹੈ
-    on_hand: ਹੱਥ ਵਿਚ
-    open: ਖੁੱਲਾ
     open_all_adjustments: ਸਾਰੇ ਵਿਵਸਥਾਪਨ ਖੋਲ੍ਹੋ
-    option_type: ਵਿਕਲਪ ਦੀ ਕਿਸਮ
     option_type_placeholder: ਇੱਕ ਵਿਕਲਪ ਕਿਸਮ ਚੁਣੋ
     option_types: ਵਿਕਲਪ ਦੀਆਂ ਕਿਸਮਾਂ
-    option_value: ਵਿਕਲਪ ਮੁੱਲ
     option_values: ਵਿਕਲਪ ਮੁੱਲ
     optional: ਵਿਕਲਪਿਕ
     options: ਚੋਣਾਂ
     or: ਜਾਂ
-    or_over_price: "%{price} ਜਾਂ ਵੱਧ"
     order: ਆਰਡਰ
     order_adjustments: ਵਿਵਸਥਾ ਵਿਵਸਥਾ ਕਰੋ
     order_already_updated: ਆਰਡਰ ਪਹਿਲਾਂ ਹੀ ਅਪਡੇਟ ਕੀਤਾ ਗਿਆ ਹੈ.
     order_approved: ਆਰਡਰ ਨੂੰ ਪ੍ਰਵਾਨਗੀ ਦਿੱਤੀ ਗਈ
     order_canceled: ਆਰਡਰ ਰੱਦ ਕੀਤਾ
-    order_details: ਆਰਡਰ ਵੇਰਵਾ
     order_email_resent: ਆਰਡਰ ਈ-ਮੇਲ ਭੇਜੋ
     order_has_no_payments: ਆਰਡਰ ਦਾ ਕੋਈ ਭੁਗਤਾਨ ਨਹੀਂ ਹੁੰਦਾ
-    order_information: ਆਰਡਰ ਜਾਣਕਾਰੀ
     order_line_items: ਆਰਡਰ ਲਾਈਨ ਆਈਟਮਾਂ
     order_mailer:
       cancel_email:
@@ -1078,7 +1005,6 @@ pa:
       total: 'ਆਰਡਰ ਕੁੱਲ:'
     order_not_found: ਅਸੀਂ ਤੁਹਾਡਾ ਆਰਡਰ ਨਹੀਂ ਲੱਭ ਸਕੇ. ਕਿਰਪਾ ਕਰਕੇ ਉਸ ਕਿਰਿਆ ਨੂੰ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ.
     order_number: ਆਰਡਰ %{number}
-    order_processed_successfully: ਤੁਹਾਡੇ ਆਰਡਰ ਤੇ ਸਫਲਤਾਪੂਰਵਕ ਕਾਰਵਾਈ ਕੀਤੀ ਗਈ ਹੈ
     order_resumed: ਆਰਡਰ ਦੁਬਾਰਾ ਸ਼ੁਰੂ ਹੋਇਆ
     order_state:
       address: ਪਤਾ
@@ -1097,10 +1023,8 @@ pa:
     order_summary: ਆਰਡਰ ਸੰਖੇਪ
     order_sure_want_to: ਕੀ ਤੁਸੀਂ ਯਕੀਨੀ ਤੌਰ ਤੇ ਇਸ ਆਰਡਰ ਨੂੰ %{event} ਕਰਨਾ ਚਾਹੁੰਦੇ ਹੋ?
     order_total: ਆਰਡਰ ਕੁੱਲ
-    order_updated: ਆਰਡਰ ਅਪਡੇਟ ਕੀਤਾ ਗਿਆ
     orders: ਆਰਡਰ
     out_of_stock: ਖਤਮ ਹੈ
-    overview: ਸੰਖੇਪ ਜਾਣਕਾਰੀ
     package_from: ਤੋਂ ਪੈਕੇਜ
     page_not_found: ਮਾਫ ਕਰਨਾ! ਉਹ ਪੇਜ ਨਹੀਂ ਲੱਭਿਆ ਜਿਸਦੀ ਤੁਸੀਂ ਭਾਲ ਕਰ ਰਹੇ ਹੋ.
     pagination:
@@ -1110,18 +1034,14 @@ pa:
     password: ਪਾਸਵਰਡ
     paste: ਚਿਪਕਾਓ
     path: ਮਾਰਗ
-    pay: ਭੁਗਤਾਨ ਕਰੋ
     payment: ਭੁਗਤਾਨ
     payment_amount: ਭੁਗਤਾਨ ਦੀ ਰਕਮ
     payment_could_not_be_created: ਭੁਗਤਾਨ ਨਹੀਂ ਬਣਾਇਆ ਜਾ ਸਕਿਆ.
     payment_identifier: ਭੁਗਤਾਨ ਪਛਾਣਕਰਤਾ
-    payment_information: ਭੁਗਤਾਨ ਦੀ ਜਾਣਕਾਰੀ
     payment_method: ਭੁਗਤਾਨੇ ਦੇ ਢੰਗ
     payment_method_not_supported: ਉਹ ਭੁਗਤਾਨ ਵਿਧੀ ਅਸਮਰਥਿਤ ਹੈ. ਕਿਰਪਾ ਕਰਕੇ ਕੋਈ ਹੋਰ ਚੁਣੋ.
     payment_methods: ਭੁਗਤਾਨ ਕਰਨ ਦੇ .ੰਗ
     payment_processing_failed: ਭੁਗਤਾਨ ਦੀ ਪ੍ਰਕਿਰਿਆ ਨਹੀਂ ਕੀਤੀ ਜਾ ਸਕਦੀ, ਕਿਰਪਾ ਕਰਕੇ ਆਪਣੇ ਦਾਖਲ ਕੀਤੇ ਵੇਰਵਿਆਂ ਦੀ ਜਾਂਚ ਕਰੋ
-    payment_processor_choose_banner_text: ਜੇ ਤੁਹਾਨੂੰ ਕਿਸੇ ਭੁਗਤਾਨ ਪ੍ਰੋਸੈਸਰ ਦੀ ਚੋਣ ਕਰਨ ਵਿੱਚ ਸਹਾਇਤਾ ਦੀ ਲੋੜ ਹੈ, ਤਾਂ ਕਿਰਪਾ ਕਰਕੇ ਵੇਖੋ
-    payment_processor_choose_link: ਸਾਡੇ ਭੁਗਤਾਨ ਪੇਜ
     payment_provider_settings: ਭੁਗਤਾਨ ਪ੍ਰਦਾਤਾ ਸੈਟਿੰਗਜ਼
     payment_state: ਭੁਗਤਾਨ ਦੀ ਸਥਿਤੀ
     payment_states:
@@ -1144,13 +1064,10 @@ pa:
       view_cart: ਕਾਰਟ ਦੇਖੋ
     pending: ਬਕਾਇਆ
     pending_sale: ਬਕਾਇਆ ਵਿਕਰੀ
-    percent: ਪ੍ਰਤੀਸ਼ਤ
     percent_per_item: ਪ੍ਰਤੀ ਵਸਤੂ ਪ੍ਰਤੀਸ਼ਤ
     permalink: Permalink
     phone: ਫੋਨ
-    place_order: ਹੁਕਮ ਕਰੋ
     please_define_payment_methods: ਕਿਰਪਾ ਕਰਕੇ ਪਹਿਲਾਂ ਕੁਝ ਭੁਗਤਾਨ ਵਿਧੀਆਂ ਨੂੰ ਪ੍ਰਭਾਸ਼ਿਤ ਕਰੋ.
-    please_enter_reasonable_quantity: ਕਿਰਪਾ ਕਰਕੇ ਉਚਿਤ ਮਾਤਰਾ ਦਾਖਲ ਕਰੋ.
     plp:
       clear_all: ਸਾਰਾ ਸਾਫ ਕਰੋ
       default: ਨਿਰਾਸ਼
@@ -1168,8 +1085,6 @@ pa:
       price_low_to_high: ਮੁੱਲ (ਘੱਟ - ਉੱਚਾ)
       results_for: ਲਈ ਨਤੀਜੇ
       sort_by: ਦੇ ਨਾਲ ਕ੍ਰਮਬੱਧ
-    populate_get_error: ਕੁਝ ਗਲਤ ਹੋ ਗਿਆ. ਕਿਰਪਾ ਕਰਕੇ ਇਕਾਈ ਨੂੰ ਮੁੜ ਜੋੜਨ ਦੀ ਕੋਸ਼ਿਸ਼ ਕਰੋ.
-    powered_by: ਦੁਆਰਾ ਸੰਚਾਲਿਤ
     pre_tax_amount: ਟੈਕਸ ਤੋਂ ਪਹਿਲਾਂ ਦੀ ਰਕਮ
     pre_tax_refund_amount: ਟੈਕਸ ਤੋਂ ਪਹਿਲਾਂ ਦੀ ਵਾਪਸੀ ਦੀ ਰਕਮ
     pre_tax_total: ਪੂਰਵ-ਟੈਕਸ ਕੁੱਲ
@@ -1181,15 +1096,11 @@ pa:
     previous_state_missing: n / a
     previously_used_card: ਪਹਿਲਾਂ ਵਰਤੇ ਗਏ ਕਾਰਡ
     price: ਮੁੱਲ
-    price_range: ਕੀਮਤ ਸੀਮਾ
     price_sack: ਮੁੱਲ ਦੀ ਬੋਰੀ
     prices: ਭਾਅ
-    process: ਪ੍ਰਕਿਰਿਆ
     product: ਉਤਪਾਦ
-    product_details: ਉਤਪਾਦ ਵੇਰਵਾ
     product_has_no_description: ਇਸ ਉਤਪਾਦ ਦਾ ਕੋਈ ਵੇਰਵਾ ਨਹੀਂ ਹੈ
     product_not_available_in_this_currency: ਇਹ ਉਤਪਾਦ ਚੁਣੀ ਹੋਈ ਮੁਦਰਾ ਵਿੱਚ ਉਪਲਬਧ ਨਹੀਂ ਹੈ.
-    product_properties: ਉਤਪਾਦ ਵਿਸ਼ੇਸ਼ਤਾ
     product_rule:
       choose_products: ਉਤਪਾਦਾਂ ਦੀ ਚੋਣ ਕਰੋ
       label: ਆਰਡਰ ਵਿੱਚ ਇਹਨਾਂ ਉਤਪਾਦਾਂ ਦੀ x ਮਾਤਰਾ ਹੋਣੀ ਚਾਹੀਦੀ ਹੈ
@@ -1265,26 +1176,16 @@ pa:
     provider: ਦੇਣ ਵਾਲੇ
     provider_settings_warning: ਜੇ ਤੁਸੀਂ ਪ੍ਰਦਾਤਾ ਦੀ ਕਿਸਮ ਨੂੰ ਬਦਲ ਰਹੇ ਹੋ, ਤਾਂ ਪ੍ਰਦਾਤਾ ਦੀਆਂ ਸੈਟਿੰਗਾਂ ਨੂੰ ਸੰਪਾਦਿਤ ਕਰਨ ਤੋਂ ਪਹਿਲਾਂ ਤੁਹਾਨੂੰ ਪਹਿਲਾਂ ਬਚਤ ਕਰਨੀ ਪਏਗੀ
     purchased_quantity: ਖਰੀਦੀ ਮਾਤਰਾ
-    qty: ਕਿtyਟੀ
     quantity: ਮਾਤਰਾ
-    quantity_returned: ਮਾਤਰਾ ਵਾਪਸ ਕੀਤੀ ਗਈ
-    quantity_shipped: ਮਾਤਰਾ ਭੇਜ ਦਿੱਤੀ ਗਈ
     quick_search: ਤੇਜ਼ ਖੋਜ ..
     rate: ਰੇਟ
     reason: ਕਾਰਨ
-    receive: ਪ੍ਰਾਪਤ ਕਰੋ
     receive_stock: ਸਟਾਕ ਪ੍ਰਾਪਤ ਕਰੋ
-    received: ਪ੍ਰਾਪਤ ਹੋਇਆ
-    reception_status: ਰਿਸੈਪਸ਼ਨ ਸਥਿਤੀ
     reference: ਹਵਾਲਾ
     reference_contains: ਹਵਾਲਾ ਸ਼ਾਮਲ ਕਰਦਾ ਹੈ
     refund: ਰਿਫੰਡ
-    refund_amount_must_be_greater_than_zero: ਵਾਪਸੀ ਦੀ ਰਕਮ ਜ਼ੀਰੋ ਤੋਂ ਵੱਧ ਹੋਣੀ ਚਾਹੀਦੀ ਹੈ
     refund_reasons: ਵਾਪਸੀ ਦੇ ਕਾਰਨ
-    refunded_amount: ਵਾਪਸੀ ਕੀਤੀ ਰਕਮ
     refunds: ਰਿਫੰਡ
-    register: ਰਜਿਸਟਰ
-    registration: ਰਜਿਸਟ੍ਰੇਸ਼ਨ
     reimburse: ਭੁਗਤਾਨ ਕਰੋ
     reimbursed: ਭੁਗਤਾਨ ਕੀਤਾ ਗਿਆ
     reimbursement: ਭੁਗਤਾਨ
@@ -1300,76 +1201,54 @@ pa:
         subject: ਵਾਪਸੀ ਦੀ ਸੂਚਨਾ
         thanks: ਤੁਹਾਡੇ ਕਾਰੋਬਾਰ ਲਈ ਧੰਨਵਾਦ.
         total_refunded: 'ਕੁੱਲ ਵਾਪਸੀ ਕੀਤੀ ਗਈ: %{total}'
-    reimbursement_perform_failed: 'ਅਦਾਇਗੀ ਨਹੀਂ ਕੀਤੀ ਜਾ ਸਕੀ. ਗਲਤੀ: %{error}'
     reimbursement_status: ਭੁਗਤਾਨ ਦੀ ਸਥਿਤੀ
     reimbursement_type: ਵਾਪਸੀ ਦੀ ਕਿਸਮ
     reimbursement_type_override: ਵਾਪਸੀ ਦੀ ਕਿਸਮ ਓਵਰਰਾਈਡ
     reimbursement_types: ਭੁਗਤਾਨ ਦੀਆਂ ਕਿਸਮਾਂ
-    reimbursements: ਭੁਗਤਾਨ
     reject: ਰੱਦ ਕਰੋ
     rejected: ਅਸਵੀਕਾਰ ਕਰ ਦਿੱਤਾ
     remember_me: ਮੇਰੀ ਯਾਦ ਹੈ
     remove: ਹਟਾਓ
     remove_image: ਚਿੱਤਰ ਹਟਾਓ
     rename: ਨਾਮ ਬਦਲੋ
-    report: ਰਿਪੋਰਟ
     reports: ਰਿਪੋਰਟ
     required: "*"
     required_fields: ਲੋੜੀਂਦੇ ਖੇਤਰ
     resellable: ਦੁਬਾਰਾ ਵੇਚਣਯੋਗ
     resend: ਦੁਬਾਰਾ ਭੇਜੋ
-    reset_password: ਮੇਰਾ ਪਾਸਵਰਡ ਰੀਸੈਟ ਕਰੋ
-    response_code: ਜਵਾਬ ਕੋਡ
-    resume: ਮੁੜ ਚਾਲੂ
-    resumed: ਦੁਬਾਰਾ ਸ਼ੁਰੂ ਹੋਇਆ
-    return: ਵਾਪਸੀ
-    return_authorization: ਵਾਪਸ ਪ੍ਰਮਾਣਿਕਤਾ
     return_authorization_canceled: ਵਾਪਸੀ ਦਾ ਅਧਿਕਾਰ ਰੱਦ ਕੀਤਾ ਗਿਆ
     return_authorization_reasons: ਪ੍ਰਮਾਣਿਕਤਾ ਦੇ ਕਾਰਨ ਵਾਪਸ
     return_authorization_states:
       authorized: ਅਧਿਕਾਰਤ
       canceled: ਰੱਦ
-    return_authorization_updated: ਵਾਪਸੀ ਦਾ ਅਧਿਕਾਰ ਅਪਡੇਟ ਕੀਤਾ ਗਿਆ
     return_authorizations: ਵਾਪਸ ਪ੍ਰਵਾਨਗੀ
     return_item_inventory_unit_ineligible: ਰਿਟਰਨ ਆਈਟਮ ਦੀ ਵਸਤੂ ਸੂਚੀ ਨੂੰ ਭੇਜਿਆ ਜਾਣਾ ਲਾਜ਼ਮੀ ਹੈ
     return_item_inventory_unit_reimbursed: ਰਿਟਰਨ ਆਈਟਮ ਦੀ ਵਸਤੂ ਇਕਾਈ ਪਹਿਲਾਂ ਹੀ ਭੁਗਤਾਨ ਕੀਤੀ ਜਾ ਚੁੱਕੀ ਹੈ
     return_item_order_not_completed: ਰਿਟਰਨ ਆਈਟਮ ਦਾ ਆਰਡਰ ਪੂਰਾ ਹੋਣਾ ਲਾਜ਼ਮੀ ਹੈ
     return_item_rma_ineligible: ਵਾਪਸੀ ਵਾਲੀ ਵਸਤੂ ਲਈ ਇੱਕ ਆਰਐਮਏ ਦੀ ਲੋੜ ਹੁੰਦੀ ਹੈ
     return_item_time_period_ineligible: ਰਿਟਰਨ ਆਈਟਮ ਯੋਗ ਸਮੇਂ ਦੀ ਮਿਆਦ ਤੋਂ ਬਾਹਰ ਹੈ
-    return_items: ਵਾਪਸੀ ਦੀਆਂ ਚੀਜ਼ਾਂ
     return_items_cannot_be_associated_with_multiple_orders: ਵਾਪਸੀ ਵਾਲੀਆਂ ਚੀਜ਼ਾਂ ਨੂੰ ਮਲਟੀਪਲ ਆਰਡਰ ਨਾਲ ਜੋੜਿਆ ਨਹੀਂ ਜਾ ਸਕਦਾ.
     return_number: ਰਿਟਰਨ ਨੰਬਰ
     return_quantity: ਵਾਪਸੀ ਦੀ ਮਾਤਰਾ
-    returned: ਵਾਪਸ ਆ
     returns: ਵਾਪਸੀ
-    review: ਸਮੀਖਿਆ
     risk: ਜੋਖਮ
     risk_analysis: ਜੋਖਮ ਵਿਸ਼ਲੇਸ਼ਣ
     risky: ਜੋਖਮ ਵਾਲਾ
-    rma_credit: RMA ਕ੍ਰੈਡਿਟ
     rma_number: RMA ਨੰਬਰ
-    rma_value: RMA ਮੁੱਲ
     role_id: ਰੋਲ ਆਈਡੀ
     roles: ਰੋਲ
     rules: ਨਿਯਮ
     safe: ਸੁਰੱਖਿਅਤ
     sales_total: ਵਿਕਰੀ ਕੁਲ
-    sales_total_description: ਸਾਰੇ ਆਦੇਸ਼ਾਂ ਲਈ ਕੁਲ ਵਿਕਰੀ
     sales_totals: ਵਿਕਰੀ
-    save_and_continue: ਸੇਵ ਅਤੇ ਜਾਰੀ ਰੱਖੋ
-    save_my_address: ਮੇਰਾ ਪਤਾ ਬਚਾਓ
     saving: ਬਚਤ
     say_no: ਨਹੀਂ
     say_yes: ਹਾਂ
-    scope: ਸਕੋਪ
     search: ਖੋਜ
-    search_results: "'%{keywords}' ਲਈ ਖੋਜ ਨਤੀਜੇ"
     searching: ਲੱਭ ਰਿਹਾ ਹੈ
-    secure_connection_type: ਸੁਰੱਖਿਅਤ ਕੁਨੈਕਸ਼ਨ ਕਿਸਮ
     security_settings: ਸੁਰੱਖਿਆ ਸੈਟਿੰਗਜ਼
     select: ਚੁਣੋ
     select_a_date: ਇੱਕ ਮਿਤੀ ਦੀ ਚੋਣ ਕਰੋ
-    select_a_date_range: ਇੱਕ ਤਾਰੀਖ ਸੀਮਾ ਚੁਣੋ
     select_a_return_authorization_reason: ਵਾਪਸੀ ਦੇ ਅਧਿਕਾਰ ਲਈ ਕੋਈ ਕਾਰਨ ਚੁਣੋ
     select_a_stock_location: ਸਟਾਕ ਦੀ ਜਗ੍ਹਾ ਦੀ ਚੋਣ ਕਰੋ
     select_a_store_credit_reason: ਸਟੋਰ ਕ੍ਰੈਡਿਟ ਲਈ ਕੋਈ ਕਾਰਨ ਚੁਣੋ
@@ -1377,12 +1256,9 @@ pa:
     select_from_prototype: ਪ੍ਰੋਟੋਟਾਈਪ ਤੋਂ ਚੁਣੋ
     select_stock: ਸਟਾਕ ਦੀ ਚੋਣ ਕਰੋ
     selected_quantity_not_available: "%{item} ਦਾ ਚੁਣਿਆ ਹੋਇਆ ਉਪਲੱਬਧ ਨਹੀਂ ਹੈ."
-    send_copy_of_all_mails_to: ਨੂੰ ਸਾਰੇ ਮੇਲ ਦੀ ਨਕਲ ਭੇਜੋ
-    send_mails_as: ਮੇਲ ਭੇਜੋ ਜਿਵੇਂ
     seo: ਐਸਈਓ
     seo_robots: ਐਸਈਓ ਰੋਬੋਟਸ
     seo_title: SEO ਸਿਰਲੇਖ
-    server: ਸਰਵਰ
     server_error: ਸਰਵਰ ਨੇ ਇੱਕ ਅਸ਼ੁੱਧੀ ਵਾਪਸ ਕੀਤੀ
     settings: ਸੈਟਿੰਗਜ਼
     ship: ਜਹਾਜ਼

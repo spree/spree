@@ -686,27 +686,21 @@ lo:
     default_tax: ພາສີເລີ່ມຕົ້ນ
     default_tax_zone: ເຂດອາກອນເລີ່ມຕົ້ນ
     delete: ລົບ
-    delete_from_taxon: ລົບຈາກພາສີ
     deleted: ລຶບແລ້ວ
-    delivery: ຈັດສົ່ງ
     delivery_information: ຂໍ້ມູນການຈັດສົ່ງ
     depth: ຄວາມເລິກ
     description: ລາຍລະອຽດ
     destination: ຈຸດ ໝາຍ ປາຍທາງ
-    destroy: ທຳ ລາຍ
     details: ລາຍລະອຽດ
     discontinue_on: ຢຸດເຊົາການກ່ຽວກັບ
     discontinued: ຢຸດເຊົາ
     discontinued_variants_present: ບາງລາຍການສິນຄ້າຕາມ ລຳ ດັບໃນ ລຳ ດັບນີ້ມີຜະລິດຕະພັນທີ່ບໍ່ມີອີກແລ້ວ.
-    discount_amount: ຈຳ ນວນຫຼຸດລາຄາ
-    dismiss_banner: ບໍ່​ຂອບ​ໃຈ! ຂ້ອຍບໍ່ສົນໃຈ, ຢ່າສະແດງຂໍ້ຄວາມນີ້ອີກ
     display: ສະແດງ
     doesnt_track_inventory: ມັນບໍ່ຕິດຕາມສິນຄ້າຄົງຄັງ
     dont_have_account: ບໍ່ມີບັນຊີບໍ?
     edit: ແກ້ໄຂ
     edit_reimbursement: ແກ້ໄຂການຊົດເຊີຍຄືນ
     editing_resource: ການດັດແກ້ %{resource}
-    editing_rma_reason: ການແກ້ໄຂເຫດຜົນ RMA
     editing_user: ດັດແກ້ບັນຊີຂອງທ່ານ
     eligibility_errors:
       messages:
@@ -725,9 +719,6 @@ lo:
         not_first_order: ລະຫັດຄູປອງນີ້ສາມາດ ນຳ ໃຊ້ກັບ ຄຳ ສັ່ງ ທຳ ອິດຂອງທ່ານເທົ່ານັ້ນ.
     email: ອີເມວ
     empty: ຫວ່າງເປົ່າ
-    empty_cart: ໂຄງຮ່າງເປົ່າ
-    enable_mail_delivery: ເປີດໃຊ້ການສົ່ງຈົດ ໝາຍ
-    end: ສິ້ນສຸດ
     ending_at: ສິ້ນສຸດທີ່
     ending_in: ສິ້ນສຸດລົງໃນ
     ends_at: ສິ້ນສຸດທີ່
@@ -746,7 +737,6 @@ lo:
     errors_prohibited_this_record_from_being_saved:
       one: ຂໍ້ຜິດພາດ 1 ຂໍ້ຫ້າມການບັນທຶກນີ້ຈາກການບັນທຶກ
       other: ຂໍ້ຜິດພາດ %{count} ຫ້າມຂໍ້ມູນນີ້ບັນທຶກ
-    event: ເຫດການ
     events:
       spree:
         cart:
@@ -766,8 +756,6 @@ lo:
     existing_shipments: ການຂົນສົ່ງທີ່ມີຢູ່ແລ້ວ
     expedited_exchanges_warning: ການແລກປ່ຽນໃດ ໜຶ່ງ ທີ່ລະບຸຈະສົ່ງໃຫ້ລູກຄ້າທັນທີເມື່ອປະຢັດ. ລູກຄ້າຈະໄດ້ຮັບການຄິດຄ່າ ທຳ ນຽມເຕັມຂອງສິນຄ້າຖ້າພວກເຂົາບໍ່ສົ່ງສິນຄ້າເດີມພາຍໃນ %{days_window} ມື້.
     expiration: ໝົດ ອາຍຸ
-    expiration_date: ວັນ​ຫມົດ​ອາ​ຍຸ
-    extension: ການຂະຫຍາຍ
     extensions_directory: ລາຍຊື່ການຂະຫຍາຍ
     facebook: ເຟສບຸກ
     failed_payment_attempts: ການພະຍາຍາມຈ່າຍເງິນລົ້ມເຫລວ
@@ -776,10 +764,7 @@ lo:
     filter: ການກັ່ນຕອງ
     filter_results: ຜົນໄດ້ຮັບການກັ່ນຕອງ
     filterable: ກັ່ນຕອງ
-    finalize: ສຸດທ້າຍ
-    finalized: ສະຫຼຸບແລ້ວ
     find_a_taxon: ຊອກຫາພາສີ
-    first_item: ລາຍການ ທຳ ອິດ
     first_name: ຊື່​ແທ້
     first_name_begins_with: ຊື່ ທຳ ອິດເລີ່ມຕົ້ນດ້ວຍ
     firstname: ຊື່​ແທ້
@@ -790,18 +775,12 @@ lo:
     footer: ຝາຕີນ
     forgot_password: ລືມລະຫັດຜ່ານ?
     free: ບໍ່ເສຍຄ່າ
-    free_shipping: ສົ່ງຟຣີ
-    free_shipping_amount: "-"
-    front_end: ທາງຫນ້າ
-    gateway: ປະຕູໄຊ
     gateway_error: ຂໍ້ຜິດພາດຂອງຄ່າຜ່ານປະຕູ
-    general: ທົ່ວໄປ
     general_settings: ການ​ຕັ້ງ​ຄ່າ​ທົ່ວ​ໄປ
     generate_code: ສ້າງລະຫັດຄູປອງ
     get_back_to_the: ກັບໄປທີ່
     go_to_category: ໄປທີ່ ໝວດ ໝູ່
     guest_checkout: ເຊັກເອົາແຂກ
-    guest_user_account: ເຊັກອິນເປັນແຂກ
     has_no_shipped_units: ບໍ່ມີຫົວ ໜ່ວຍ ຂົນສົ່ງ
     header_banner: ປ້າຍໂຄສະນາຫົວ
     height: ລວງສູງ
@@ -822,29 +801,19 @@ lo:
       show_only: ສະແດງໃຫ້ເຫັນເທົ່ານັ້ນ
       supported_locales: ສະຖານທີ່ທີ່ຮອງຮັບ
       translations: ການແປ
-    icon: ໄອຄອນ
     id: id
-    image: ຮູບພາບ
     images: ຮູບພາບຕ່າງໆ
     implement_eligible_for_return: 'ຕ້ອງປະຕິບັດ #eligible_for_return ບໍ? ສຳ ລັບການມີສິດໄດ້ຮັບຂອງທ່ານ.'
     implement_requires_manual_intervention: 'ຕ້ອງປະຕິບັດ #requires_manual_intervention? ສຳ ລັບການມີສິດໄດ້ຮັບຂອງທ່ານ.'
     in_stock: ໃນ​ສາງ
-    inactive: ບໍ່ເຮັດວຽກ
-    incl: incl.
     included_in_price: ລວມຢູ່ໃນລາຄາ
-    included_price_validation: ບໍ່ສາມາດເລືອກໄດ້ເວັ້ນເສຍແຕ່ວ່າທ່ານໄດ້ຕັ້ງເຂດພາສີໄວ້ໃນຕອນຕົ້ນ
     incomplete: ບໍ່ຄົບຖ້ວນ
     info_number_of_skus_not_shown:
       one: ແລະອື່ນໆ
       other: ແລະ %{count} ອື່ນໆ
     info_product_has_multiple_skus: 'ຜະລິດຕະພັນນີ້ມີຕົວແປ %{count}:'
     instagram: Instagram
-    instructions_to_reset_password: ກະລຸນາຂຽນອີເມວຂອງທ່ານໃສ່ໃນແບບຟອມລຸ່ມນີ້
-    insufficient_stock: ມີຮຸ້ນບໍ່ພຽງພໍ, ມີພຽງແຕ່ %{on_hand} ເທົ່ານັ້ນ
-    insufficient_stock_item_quantity: ປະລິມານຫຸ້ນບໍ່ພຽງພໍ
     insufficient_stock_lines_present: ບາງລາຍການສິນຄ້າຕາມ ລຳ ດັບໃນ ລຳ ດັບນີ້ມີ ຈຳ ນວນບໍ່ພຽງພໍ.
-    intercept_email_address: ຂັດຂວາງທີ່ຢູ່ອີເມວ
-    intercept_email_instructions: ປະຕິເສດຜູ້ຮັບອີເມວແລະປ່ຽນແທນທີ່ຢູ່ນີ້.
     internal_name: ຊື່ພາຍໃນ
     internationalization: ການສາກົນ
     invalid_credit_card: ບັດເຄດິດບໍ່ຖືກຕ້ອງ.
@@ -852,16 +821,11 @@ lo:
     invalid_payment_provider: ຜູ້ໃຫ້ບໍລິການຈ່າຍເງິນບໍ່ຖືກຕ້ອງ.
     invalid_promotion_action: ການປະຕິບັດການສົ່ງເສີມທີ່ບໍ່ຖືກຕ້ອງ.
     invalid_promotion_rule: ກົດລະບຽບການສົ່ງເສີມທີ່ບໍ່ຖືກຕ້ອງ.
-    inventory: ສິນຄ້າຄົງຄັງ
-    inventory_adjustment: ການປັບສິນຄ້າຄົງຄັງ
     inventory_error_flash_for_insufficient_quantity: ລາຍການທີ່ຢູ່ໃນກະຕ່າຂອງທ່ານບໍ່ມີຢູ່ແລ້ວ.
-    inventory_state: ລັດສິນຄ້າຄົງຄັງ
-    is_not_available_to_shipment_address: ບໍ່ມີທີ່ຢູ່ຂົນສົ່ງ
     iso: ISO Alpha-2
     iso3: ISO Alpha-3
     iso_name: ຊື່ ISO
     issued_on: ອອກໃນວັນທີ
-    item: ລາຍການ
     item_description: ລາຍລະອຽດຂອງລາຍການ
     item_total: ລາຍການທັງ ໝົດ
     item_total_rule:
@@ -878,28 +842,16 @@ lo:
     last_name: ນາມ​ສະ​ກຸນ
     last_name_begins_with: ຊື່ສຸດທ້າຍເລີ່ມຕົ້ນດ້ວຍ
     lastname: ນາມ​ສະ​ກຸນ
-    learn_more: ຮຽນຮູ້ເພີ່ມເຕີມ
     lifetime_stats: ສະຖິຕິຕະຫຼອດຊີວິດ
     limit_usage_to: ຈຳ ກັດການ ນຳ ໃຊ້
     line_item_adjustments: ການປັບລາຍການເສັ້ນ
-    list: ລາຍຊື່
     loading: ກຳ ລັງໂຫລດ
     loading_tree: ກຳ ລັງໂຫລດຕົ້ນໄມ້. ກະ​ລຸ​ນາ​ລໍ​ຖ້າ…
-    locale_changed: ທ້ອງຖິ່ນປ່ຽນແປງ
     location: ສະຖານທີ່
-    lock: ລັອກ
     log_entries: ການອອກສຽງເຂົ້າ
-    log_in: ເຂົ້າ​ສູ່​ລະ​ບົບ
     log_in_to_continue: ເຂົ້າສູ່ລະບົບເພື່ອ ດຳ ເນີນການຕໍ່
-    logged_in_as: ເຂົ້າສູ່ລະບົບເປັນ
-    logged_in_succesfully: ເຂົ້າສູ່ລະບົບສົບຜົນສໍາເລັດ
-    logged_out: ທ່ານໄດ້ອອກຈາກລະບົບແລ້ວ.
     login: ເຂົ້າ​ສູ່​ລະ​ບົບ
-    login_as_existing: ເຂົ້າເປັນລູກຄ້າທີ່ມີຢູ່ແລ້ວ
-    login_failed: ການກວດສອບການເຂົ້າລະບົບລົ້ມເຫລວ.
-    login_name: ເຂົ້າ​ສູ່​ລະ​ບົບ
     logo: ໂລໂກ້
-    logo_alt: ໂລໂກ້ຍີ່ຫໍ້
     logout: ອອກ​ຈາກ​ລະ​ບົບ
     logs: ບັນທຶກ
     look_for_similar_items: ຊອກຫາລາຍການທີ່ຄ້າຍຄືກັນ
@@ -907,7 +859,6 @@ lo:
     mailer_logo: ໂລໂກ້ Mailer (ຮູບພາບ JPG ຫຼື PNG ເທົ່ານັ້ນ)
     make_refund: ຈ່າຍຄືນ
     make_sure_the_above_reimbursement_amount_is_correct: ຮັບປະກັນວ່າ ຈຳ ນວນເງິນຊົດເຊີຍຂ້າງເທິງແມ່ນຖືກຕ້ອງ
-    manage_promotion_categories: ຈັດການປະເພດການສົ່ງເສີມ
     manage_variants: ຈັດການ Variants
     manual_intervention_required: ຕ້ອງມີການແຊກແຊງດ້ວຍມື
     master: ພຣະອາຈານ
@@ -916,16 +867,12 @@ lo:
     match_choices:
       all: ທັງ ໝົດ
       none: ບໍ່ມີ
-    max_items: ສິນຄ້າສູງສຸດ
     member_since: ສະມາຊິກນັບຕັ້ງແຕ່
     memo: Memo
     meta_description: ຄໍາອະທິບາຍ Meta
     meta_keywords: ຄໍາແປ້ນ Meta
     meta_title: ຫົວຂໍ້ Meta
-    metadata: Metadata
-    minimal_amount: ຈຳ ນວນຫນ້ອຍ
     missing_return_authorization: ການອະນຸຍາດກັບຄືນທີ່ຂາດຫາຍໄປ ສຳ ລັບ %{item_name}.
-    month: ເດືອນ
     more: ຫຼາຍ
     move_stock_between_locations: ຍ້າຍຫຸ້ນລະຫວ່າງສະຖານທີ່ຕ່າງໆ
     move_variant_to: ຍ້າຍຕົວແປໄປ
@@ -951,15 +898,12 @@ lo:
       show_search: ສະແດງການຄົ້ນຫາ
       show_user_menu: ສະແດງເມນູຜູ້ໃຊ້
       sign_up: ລົງ​ທະ​ບຽນ
-    new: ໃຫມ່
     new_adjustment: ການປັບຕົວ ໃໝ່
     new_country: ປະເທດ ໃໝ່
-    new_customer: ສ້າງບັນຊີ ໃໝ່
     new_customer_return: ການກັບຄືນຂອງລູກຄ້າໃຫມ່
     new_image: ຮູບພາບ ໃໝ່
     new_option_type: ປະເພດຕົວເລືອກ ໃໝ່
     new_order: ຄຳ ສັ່ງ ໃໝ່
-    new_order_completed: ຄຳ ສັ່ງ ໃໝ່ ສຳ ເລັດແລ້ວ
     new_order_notifications_email: ແຈ້ງການສັ່ງຊື້ ໃໝ່ ທາງອີເມວ
     new_payment: ການຈ່າຍເງິນ ໃໝ່
     new_payment_method: ວິທີການຈ່າຍເງິນ ໃໝ່
@@ -981,44 +925,34 @@ lo:
     new_stock_location: ສະຖານທີ່ຫຸ້ນໃຫມ່
     new_stock_movement: ການເຄື່ອນໄຫວຂອງຫຸ້ນ ໃໝ່
     new_stock_transfer: ການໂອນຫຸ້ນ ໃໝ່
-    new_store_credit: ສິນເຊື່ອຮ້ານ ໃໝ່
     new_store_credit_category: ປະເພດສິນເຊື່ອຮ້ານ ໃໝ່
     new_tax_category: ໝວດ ພາສີ ໃໝ່
     new_tax_rate: ອັດຕາພາສີ ໃໝ່
     new_taxon: ລົດແທັກຊີ ໃໝ່
     new_taxonomy: ພາສີ ໃໝ່
-    new_tracker: ຜູ້ຕິດຕາມ ໃໝ່
     new_user: ຜູ້ໃຊ້ ໃໝ່
     new_variant: New Variant
     new_zone: ເຂດ ໃໝ່
     next: ຕໍ່ໄປ
     no_actions_added: ບໍ່ມີການເພີ່ມການກະ ທຳ ໃດໆ
-    no_address_given: ບໍ່ມີທີ່ຢູ່
     no_available_date_set: ບໍ່ມີການ ກຳ ນົດວັນທີ່ມີ
     no_cc_type: N / A
     no_country: ບໍ່ມີປະເທດ ກຳ ນົດ
     no_limits_zone: ບໍ່ ຈຳ ກັດ
     no_payment_found: ບໍ່ພົບການຈ່າຍເງິນ
     no_payment_provider_settings_message: ຜູ້ໃຫ້ບໍລິການຈ່າຍເງິນນີ້ບໍ່ມີການຕັ້ງຄ່າທີ່ ກຳ ນົດເອງ
-    no_pending_payments: ບໍ່ມີການຈ່າຍເງິນທີ່ຍັງຄ້າງ
     no_product_available:
       for_this_quantity: ຂໍໂທດ, ເບິ່ງຄືວ່າຜະລິດຕະພັນບາງຢ່າງບໍ່ມີໃນປະລິມານທີ່ເລືອກ.
       opps: ໂອຍ!
-    no_products_found: ບໍ່ພົບຜະລິດຕະພັນ
     no_resource_found: ບໍ່ພົບ %{resource}
     no_results: ບໍ່ມີຜົນໄດ້ຮັບ
-    no_returns_found: ບໍ່ພົບຜົນຕອບແທນ
     no_rules_added: ບໍ່ມີຂໍ້ ກຳ ນົດເພີ່ມ
     no_shipping_method_selected: ບໍ່ມີວິທີການຂົນສົ່ງໃດເລືອກ.
     no_state_changes: ຍັງບໍ່ມີການປ່ຽນແປງໃດໆຂອງລັດເທື່ອ.
     no_tracking_present: ບໍ່ມີລາຍລະອຽດຕິດຕາມໃຫ້.
     none: ບໍ່ມີ
-    none_selected: ບໍ່ມີການເລືອກ
-    normal_amount: ຈຳ ນວນເງິນປົກກະຕິ
     not: ບໍ່
     not_available: N / A
-    not_enough_stock: ບໍ່ມີສາງພຽງພໍຢູ່ທີ່ສະຖານທີ່ແຫຼ່ງເພື່ອເຮັດ ສຳ ເລັດການໂອນຍ້າຍນີ້.
-    not_found: "%{resource} ບໍ່ພົບ"
     note: ຫມາຍ​ເຫດ​
     notice_messages:
       icon_removed: ຮູບພາບຖືກລຶບອອກແລ້ວ
@@ -1032,27 +966,20 @@ lo:
     num_orders: "# ສັ່ງໄດ້"
     number: ເລກ
     ok: ຕົກ​ລົງ
-    on_hand: ໃນ​ມື
-    open: ເປີດ
     open_all_adjustments: ເປີດທຸກການປັບປ່ຽນ
-    option_type: ປະເພດຕົວເລືອກ
     option_type_placeholder: ເລືອກປະເພດຕົວເລືອກ
     option_types: ປະເພດທາງເລືອກ
-    option_value: ມູນຄ່າທາງເລືອກ
     option_values: ຄຸນຄ່າທາງເລືອກ
     optional: ທາງເລືອກ
     options: ທາງເລືອກ
     or: ຫຼື
-    or_over_price: "%{price} ຫຼືຫຼາຍກວ່ານັ້ນ"
     order: ສັ່ງ
     order_adjustments: ການປັບແຕ່ງການສັ່ງຊື້
     order_already_updated: ການສັ່ງຊື້ໄດ້ຖືກປັບປຸງແລ້ວ.
     order_approved: ການອະນຸມັດຖືກອະນຸມັດແລ້ວ
     order_canceled: ຍົກເລີກການສັ່ງຊື້ແລ້ວ
-    order_details: ລາຍລະອຽດການສັ່ງຊື້
     order_email_resent: ສັ່ງຈອງ Email
     order_has_no_payments: ຄໍາສັ່ງບໍ່ມີການຈ່າຍເງິນ
-    order_information: ຂໍ້ມູນການສັ່ງຊື້
     order_line_items: ລາຍການສິນຄ້າຕາມ ລຳ ດັບ
     order_mailer:
       cancel_email:
@@ -1078,7 +1005,6 @@ lo:
       total: 'ການສັ່ງຊື້ລວມ:'
     order_not_found: ພວກເຮົາບໍ່ພົບການສັ່ງຊື້ຂອງທ່ານ. ກະລຸນາລອງການກະ ທຳ ດັ່ງກ່າວອີກຄັ້ງ.
     order_number: ສັ່ງຊື້ %{number}
-    order_processed_successfully: ການສັ່ງຊື້ຂອງທ່ານໄດ້ຖືກປະມວນຜົນ ສຳ ເລັດແລ້ວ
     order_resumed: ການສັ່ງຊື້ໄດ້ເລີ່ມຕົ້ນແລ້ວ
     order_state:
       address: ທີ່ຢູ່
@@ -1097,10 +1023,8 @@ lo:
     order_summary: ບົດສະຫຼຸບການສັ່ງຊື້
     order_sure_want_to: ທ່ານແນ່ໃຈບໍ່ວ່າທ່ານຕ້ອງການສັ່ງຊື້ສິນຄ້າ %{event} ນີ້?
     order_total: ການສັ່ງຊື້ລວມ
-    order_updated: ການປັບປຸງຄໍາສັ່ງ
     orders: ຄຳ ສັ່ງ
     out_of_stock: ອອກຈາກຫຸ້ນ
-    overview: ພາບລວມ
     package_from: ຊຸດຈາກ
     page_not_found: ຂໍ​ໂທດ! ໜ້າ ທີ່ທ່ານ ກຳ ລັງຊອກຫາບໍ່ສາມາດຊອກຫາໄດ້.
     pagination:
@@ -1110,18 +1034,14 @@ lo:
     password: ລະຫັດຜ່ານ
     paste: ວາງ
     path: ເສັ້ນທາງ
-    pay: ຈ່າຍ
     payment: ການຈ່າຍເງິນ
     payment_amount: ຈຳ ນວນການຈ່າຍເງິນ
     payment_could_not_be_created: ການຈ່າຍເງິນບໍ່ສາມາດສ້າງໄດ້.
     payment_identifier: ຕົວລະບຸການຈ່າຍເງິນ
-    payment_information: ຂໍ້ມູນການຈ່າຍເງິນ
     payment_method: ວິທີການຈ່າຍເງິນ
     payment_method_not_supported: ວິທີການຈ່າຍເງິນນັ້ນບໍ່ໄດ້ຮັບການສະ ໜັບ ສະ ໜູນ. ກະລຸນາເລືອກອັນອື່ນ.
     payment_methods: ວິທີການຊໍາລະເງິນ
     payment_processing_failed: ການຈ່າຍເງິນບໍ່ສາມາດ ດຳ ເນີນການໄດ້, ກະລຸນາກວດເບິ່ງລາຍລະອຽດທີ່ທ່ານໄດ້ໃສ່
-    payment_processor_choose_banner_text: ຖ້າທ່ານຕ້ອງການຄວາມຊ່ວຍເຫຼືອໃນການເລືອກໂປເຊດເຊີການຈ່າຍເງິນ, ກະລຸນາເຂົ້າເບິ່ງ
-    payment_processor_choose_link: ໜ້າ ການຈ່າຍເງິນຂອງພວກເຮົາ
     payment_provider_settings: ການຕັ້ງຄ່າຜູ້ໃຫ້ບໍລິການ ຊຳ ລະເງິນ
     payment_state: ລັດການຈ່າຍເງິນ
     payment_states:
@@ -1144,13 +1064,10 @@ lo:
       view_cart: ເບິ່ງລົດເຂັນ
     pending: ທີ່ຍັງຄ້າງ
     pending_sale: ການຂາຍທີ່ຍັງຄ້າງ
-    percent: ເປີເຊັນ
     percent_per_item: ເປີເຊັນຕໍ່ລາຍການ
     permalink: Permalink
     phone: ໂທລະສັບ
-    place_order: ຈັດວາງ ຄຳ ສັ່ງ
     please_define_payment_methods: ກະລຸນາ ກຳ ນົດບາງວິທີການຈ່າຍເງິນກ່ອນ.
-    please_enter_reasonable_quantity: ກະລຸນາໃສ່ປະລິມານທີ່ ເໝາະ ສົມ.
     plp:
       clear_all: ລ້າງທຸກຢ່າງ
       default: DEFAULT
@@ -1168,8 +1085,6 @@ lo:
       price_low_to_high: ລາຄາ (ຕ່ ຳ - ສູງ)
       results_for: ຜົນໄດ້ຮັບ
       sort_by: ສົ່ງໂດຍ
-    populate_get_error: ມີບາງຢ່າງຜິດປົກກະຕິ. ກະລຸນາລອງເພີ່ມລາຍການອີກຄັ້ງ.
-    powered_by: ສະ​ຫນັບ​ສະ​ຫນູນ​ໂດຍ
     pre_tax_amount: ຈຳ ນວນເງີນກ່ອນອາກອນ
     pre_tax_refund_amount: ຈຳ ນວນເງິນຈ່າຍຄືນ ສຳ ລັບພາສີ
     pre_tax_total: ຈຳ ນວນພາສີລ່ວງ ໜ້າ
@@ -1181,15 +1096,11 @@ lo:
     previous_state_missing: n / a
     previously_used_card: ບັດທີ່ເຄີຍໃຊ້ມາກ່ອນ
     price: ລາຄາ
-    price_range: ລະ​ດັບ​ລາ​ຄາ
     price_sack: ກະເປົາລາຄາ
     prices: ລາຄາ
-    process: ຂະບວນການ
     product: ຜະລິດຕະພັນ
-    product_details: ລາຍລະອຽດຂອງສິນຄ້າ
     product_has_no_description: ຜະລິດຕະພັນນີ້ບໍ່ມີ ຄຳ ອະທິບາຍ
     product_not_available_in_this_currency: ຜະລິດຕະພັນນີ້ບໍ່ມີຢູ່ໃນສະກຸນເງິນທີ່ເລືອກ.
-    product_properties: ຄຸນສົມບັດສິນຄ້າ
     product_rule:
       choose_products: ເລືອກຜະລິດຕະພັນ
       label: ຄໍາສັ່ງຕ້ອງມີຈໍານວນ x ຂອງຜະລິດຕະພັນເຫຼົ່ານີ້
@@ -1265,26 +1176,16 @@ lo:
     provider: ຜູ້ສະ ໜອງ
     provider_settings_warning: ຖ້າທ່ານ ກຳ ລັງປ່ຽນປະເພດຜູ້ໃຫ້ບໍລິການ, ທ່ານຕ້ອງເກັບກ່ອນທີ່ທ່ານຈະສາມາດແກ້ໄຂການຕັ້ງຄ່າຂອງຜູ້ໃຫ້ບໍລິການ
     purchased_quantity: ປະລິມານຊື້
-    qty: Qty
     quantity: ຈຳ ນວນ
-    quantity_returned: ຈຳ ນວນທີ່ສົ່ງຄືນ
-    quantity_shipped: ຈຳ ນວນຂົນສົ່ງ
     quick_search: ຄົ້ນຫາດ່ວນ ..
     rate: ອັດຕາ
     reason: ເຫດ​ຜົນ
-    receive: ໄດ້ຮັບ
     receive_stock: ຮັບຫຸ້ນ
-    received: ໄດ້ຮັບ
-    reception_status: ສະຖານະຕ້ອນຮັບ
     reference: ເອກະສານອ້າງອີງ
     reference_contains: ເອກະສານອ້າງອີງມີ
     refund: ຈ່າຍຄືນ
-    refund_amount_must_be_greater_than_zero: ຈຳ ນວນເງິນຈ່າຍຄືນຕ້ອງມີຫຼາຍກ່ວາສູນ
     refund_reasons: ເຫດຜົນຄືນເງິນ
-    refunded_amount: ຈຳ ນວນເງິນຈ່າຍຄືນ
     refunds: ການສົ່ງເງິນຄືນ
-    register: ລົງທະບຽນ
-    registration: ການລົງທະບຽນ
     reimburse: Reimburse
     reimbursed: ໄດ້ຮັບເງິນຄືນ
     reimbursement: ການຊົດເຊີຍຄືນ
@@ -1300,76 +1201,54 @@ lo:
         subject: ແຈ້ງການຈ່າຍຄືນ
         thanks: ຂອບໃຈ ສຳ ລັບທຸລະກິດຂອງທ່ານ.
         total_refunded: 'ຈ່າຍຄືນທັງ ໝົດ: %{total}'
-    reimbursement_perform_failed: 'ບໍ່ສາມາດ ດຳ ເນີນການທົດແທນຄືນ. ຂໍ້ຜິດພາດ: %{error}'
     reimbursement_status: ສະຖານະພາບການຊົດເຊີຍຄືນ
     reimbursement_type: ປະເພດການຊົດເຊີຍຄືນ
     reimbursement_type_override: ປະເພດການຊົດເຊີຍຄືນ
     reimbursement_types: ປະເພດການຊົດເຊີຍຄືນ
-    reimbursements: ການຊົດເຊີຍຄືນ
     reject: ປະຕິເສດ
     rejected: ຖືກປະຕິເສດ
     remember_me: ຈື່​ຂ້ອຍ
     remove: ເອົາອອກ
     remove_image: ເອົາຮູບພາບອອກ
     rename: ປ່ຽນຊື່
-    report: ບົດລາຍງານ
     reports: ບົດລາຍງານ
     required: "*"
     required_fields: ສາ​ຂາ​ທີ່​ຕ້ອງ​ການ
     resellable: ຂາຍຄືນໄດ້
     resend: ສົ່ງຄືນ
-    reset_password: ຕັ້ງລະຫັດຜ່ານຂອງຂ້ອຍຄືນ
-    response_code: ລະຫັດຕອບໂຕ້
-    resume: ຊີວະປະຫວັດ
-    resumed: ສືບຕໍ່
-    return: ກັບຄືນ
-    return_authorization: ໃບອະນຸຍາດສົ່ງຄືນ
     return_authorization_canceled: ຍົກເລີກການອະນຸຍາດແລ້ວ
     return_authorization_reasons: ເຫດຜົນການອະນຸຍາດກັບຄືນ
     return_authorization_states:
       authorized: ໄດ້ຮັບອະນຸຍາດ
       canceled: ຍົກເລີກ
-    return_authorization_updated: ການສົ່ງຄືນການອະນຸຍາດຖືກປັບປຸງແລ້ວ
     return_authorizations: ໃບອະນຸຍາດສົ່ງຄືນ
     return_item_inventory_unit_ineligible: ເຄື່ອງສົ່ງສິນຄ້າຄົງຄັງຂອງສິນຄ້າຕ້ອງສົ່ງຄືນ
     return_item_inventory_unit_reimbursed: ຫົວ ໜ່ວຍ ສິນຄ້າຄົງຄັງຂອງສິນຄ້າກັບຄືນແມ່ນຖືກສົ່ງຄືນແລ້ວ
     return_item_order_not_completed: ຄຳ ສັ່ງຂອງສິນຄ້າກັບຄືນຕ້ອງໄດ້ເຮັດ ສຳ ເລັດ
     return_item_rma_ineligible: ສິນຄ້າກັບຄືນຕ້ອງໃຊ້ RMA
     return_item_time_period_ineligible: ສິນຄ້າສົ່ງຄືນແມ່ນຢູ່ນອກໄລຍະເວລາທີ່ ເໝາະ ສົມ
-    return_items: ສົ່ງຄືນສິນຄ້າ
     return_items_cannot_be_associated_with_multiple_orders: ສິນຄ້າທີ່ສົ່ງຄືນບໍ່ສາມາດພົວພັນກັບການສັ່ງຊື້ໄດ້ຫຼາຍຄັ້ງ.
     return_number: ເລກທີ່ສົ່ງຄືນ
     return_quantity: ຈຳ ນວນຜົນຕອບແທນ
-    returned: ກັບມາແລ້ວ
     returns: ກັບມາ
-    review: ການທົບທວນຄືນ
     risk: ຄວາມສ່ຽງ
     risk_analysis: ການວິເຄາະຄວາມສ່ຽງ
     risky: ຄວາມສ່ຽງ
-    rma_credit: ເຄດິດ RMA
     rma_number: ໝາຍ ເລກ RMA
-    rma_value: ມູນຄ່າ RMA
     role_id: ບັດປະ ຈຳ ຕົວ
     roles: ພາລະບົດບາດ
     rules: ກົດລະບຽບ
     safe: ປອດໄພ
     sales_total: ຍອດຂາຍທັງ ໝົດ
-    sales_total_description: ຍອດຂາຍທັງ ໝົດ ສຳ ລັບທຸກ ຄຳ ສັ່ງ
     sales_totals: ຍອດຂາຍ
-    save_and_continue: ບັນທຶກແລະສືບຕໍ່
-    save_my_address: ບັນທຶກທີ່ຢູ່ຂອງຂ້ອຍ
     saving: ປະຢັດ
     say_no: ບໍ່
     say_yes: ແມ່ນແລ້ວ
-    scope: ຂອບເຂດ
     search: ຄົ້ນຫາ
-    search_results: ຜົນການຄົ້ນຫາ ສຳ ລັບ '%{keywords}'
     searching: ການຄົ້ນຫາ
-    secure_connection_type: ປະເພດການເຊື່ອມຕໍ່ທີ່ປອດໄພ
     security_settings: ການຕັ້ງຄ່າຄວາມປອດໄພ
     select: ເລືອກ
     select_a_date: ເລືອກວັນທີ
-    select_a_date_range: ເລືອກຊ່ວງວັນທີ
     select_a_return_authorization_reason: ເລືອກເຫດຜົນ ສຳ ລັບການອະນຸຍາດກັບຄືນ
     select_a_stock_location: ເລືອກສະຖານທີ່ຫຸ້ນ
     select_a_store_credit_reason: ເລືອກເຫດຜົນ ສຳ ລັບສິນເຊື່ອຂອງຮ້ານ
@@ -1377,12 +1256,9 @@ lo:
     select_from_prototype: ເລືອກຈາກ Prototype
     select_stock: ເລືອກຫຼັກຊັບ
     selected_quantity_not_available: ເລືອກຂອງ %{item} ແມ່ນບໍ່ມີ.
-    send_copy_of_all_mails_to: ສົ່ງ ສຳ ເນົາຈົດ ໝາຍ ທັງ ໝົດ ໄປຫາ
-    send_mails_as: ສົ່ງ Mails As
     seo: SEO
     seo_robots: SEO ຫຸ່ນຍົນ
     seo_title: ຫົວຂໍ້ SEO
-    server: ເຊີບເວີ
     server_error: ເຊີບເວີສົ່ງຄືນຂໍ້ຜິດພາດ
     settings: ການຕັ້ງຄ່າ
     ship: ເຮືອ

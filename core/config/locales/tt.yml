@@ -686,27 +686,21 @@ tt:
     default_tax: Килешенгән салым
     default_tax_zone: Килешү салым зонасы
     delete: Бетерү
-    delete_from_taxon: Таксоннан бетерү
     deleted: Бетерелгән
-    delivery: Тапшыру
     delivery_information: Тапшыру турында мәгълүмат
     depth: Тирәнлек
     description: Тасвирлау
     destination: Максат
-    destroy: Destимерү
     details: Детальләр
     discontinue_on: Туктатыгыз
     discontinued: Туктатылды
     discontinued_variants_present: Бу тәртиптә кайбер линия әйберләре инде булмаган продуктларга ия.
-    discount_amount: Ташлама күләме
-    dismiss_banner: Юк, рәхмәт! Мин кызыксынмыйм, бу хәбәрне бүтән күрсәтмәгез
     display: Күрсәтү
     doesnt_track_inventory: Бу инвентаризацияне күзәтми
     dont_have_account: Хисап юк?
     edit: Редакцияләү
     edit_reimbursement: Түләүне үзгәртү
     editing_resource: "%{resource} редакцияләү"
-    editing_rma_reason: RMA сәбәбен редакцияләү
     editing_user: Сезнең хисапны үзгәртү
     eligibility_errors:
       messages:
@@ -725,9 +719,6 @@ tt:
         not_first_order: Бу талон коды сезнең беренче заказ өчен генә кулланыла ала.
     email: Электрон почта
     empty: Буш
-    empty_cart: Буш арба
-    enable_mail_delivery: Почта җибәрүне рөхсәт итегез
-    end: Ахыр
     ending_at: Ахырда
     ending_in: Ахырда
     ends_at: Ахырда
@@ -746,7 +737,6 @@ tt:
     errors_prohibited_this_record_from_being_saved:
       one: 1 хата бу язуны сакларга тыелды
       other: "%{count} хаталары бу язманы сакларга тыйды"
-    event: Вакыйга
     events:
       spree:
         cart:
@@ -766,8 +756,6 @@ tt:
     existing_shipments: Хәзерге җибәрү
     expedited_exchanges_warning: Anyәрбер күрсәтелгән алыш-биреш саклаганнан соң клиентка җибәреләчәк. Клиент әйбернең тулы күләмен %{days_window} көн эчендә кире кайтармасалар.
     expiration: Срогы
-    expiration_date: Яраклык вакыты
-    extension: Киңәйтү
     extensions_directory: Киңәйтү белешмәсе
     facebook: Facebook
     failed_payment_attempts: Түләү омтылышы
@@ -776,10 +764,7 @@ tt:
     filter: Фильтр
     filter_results: Фильтр нәтиҗәләре
     filterable: Фильтрлы
-    finalize: Ахыр
-    finalized: Ахыр
     find_a_taxon: Таксон табыгыз
-    first_item: Беренче пункт
     first_name: Исем
     first_name_begins_with: Фамилия башлана
     firstname: Исем
@@ -790,18 +775,12 @@ tt:
     footer: Аяк асты
     forgot_password: Серсүзне оныттыгызмы?
     free: Бушлай
-    free_shipping: Бушлай җибәрү
-    free_shipping_amount: "-"
-    front_end: Ал ягы
-    gateway: Шлюз
     gateway_error: Шлюз хата
-    general: Генерал
     general_settings: Гомуми көйләүләр
     generate_code: Купон коды ясагыз
     get_back_to_the: Кайту
     go_to_category: Төркемгә керегез
     guest_checkout: Кунаклар
-    guest_user_account: Кунак буларак теркәлү
     has_no_shipped_units: җибәрелмәгән агрегатлар юк
     header_banner: Баш баннер
     height: Биеклек
@@ -822,29 +801,19 @@ tt:
       show_only: Бары тик күрсәт
       supported_locales: Ярдәмле җирлекләр
       translations: Тәрҗемәләр
-    icon: Икона
     id: Ид
-    image: Рәсем
     images: Рәсемнәр
     implement_eligible_for_return: "#Ligible_for_return кулланырга тиешме? Сезнең EligibilityValidator өчен."
     implement_requires_manual_intervention: "#Rquires_manual_intervention кертергә тиешме? Сезнең EligibilityValidator өчен."
     in_stock: Барлыкта
-    inactive: Актив түгел
-    incl: incl.
     included_in_price: Бәягә кертелгән
-    included_price_validation: Килешү салым зонасын куймасагыз, сайлап булмый
     incomplete: Тулы түгел
     info_number_of_skus_not_shown:
       one: һәм бер-берсе
       other: һәм %{count} башкалар
     info_product_has_multiple_skus: 'Бу продуктның %{count} вариантлары бар:'
     instagram: Инстаграм
-    instructions_to_reset_password: Зинһар, электрон почтагызны түбәндәге формага кертегез
-    insufficient_stock: Акция җитми, %{on_hand} гына калды
-    insufficient_stock_item_quantity: Акция күләме җитми
     insufficient_stock_lines_present: Бу тәртиптәге кайбер линия әйберләре җитәрлек түгел.
-    intercept_email_address: Электрон почта адресын алыгыз
-    intercept_email_instructions: Электрон почта алучыны кире кагарга һәм бу адрес белән алыштырырга.
     internal_name: Эчке исем
     internationalization: Интернационализация
     invalid_credit_card: Кредит картасы дөрес түгел.
@@ -852,16 +821,11 @@ tt:
     invalid_payment_provider: Ярак түләү провайдеры.
     invalid_promotion_action: Яраксыз акция.
     invalid_promotion_rule: Дөрес булмаган реклама кагыйдәсе.
-    inventory: Инвентаризация
-    inventory_adjustment: Инвентаризацияне көйләү
     inventory_error_flash_for_insufficient_quantity: Арбагыздагы әйбер мөмкин түгел.
-    inventory_state: Инвентаризация торышы
-    is_not_available_to_shipment_address: җибәрү адресына мөмкин түгел
     iso: ISO Альфа-2
     iso3: ISO Альфа-3
     iso_name: ISO исеме
     issued_on: Чыгарылган
-    item: Предмет
     item_description: Предмет тасвирламасы
     item_total: Барлык пункт
     item_total_rule:
@@ -878,28 +842,16 @@ tt:
     last_name: Фамилия
     last_name_begins_with: Фамилия башлана
     lastname: Фамилия
-    learn_more: Тулырак
     lifetime_stats: Гомер статистикасы
     limit_usage_to: Куллануны чикләгез
     line_item_adjustments: Сызык элементларын көйләү
-    list: Исемлек
     loading: Йөкләү
     loading_tree: Агачны йөкләү. Зинһар, көтегез…
-    locale_changed: Район үзгәртелде
     location: Урын
-    lock: Блок
     log_entries: Керү язмалары
-    log_in: Керергә
     log_in_to_continue: Дәвам итәр өчен керегез
-    logged_in_as: Кергән кебек
-    logged_in_succesfully: Уңышлы кердегез
-    logged_out: Сез чыгарылдыгыз.
     login: Керергә
-    login_as_existing: Хәзерге клиент буларак керегез
-    login_failed: Керү аутентификациясе уңышсыз.
-    login_name: Керергә
     logo: Логотип
-    logo_alt: Бренд логотибы
     logout: Чыгарга
     logs: Бүрәнәләр
     look_for_similar_items: Охшаш әйберләрне эзләгез
@@ -907,7 +859,6 @@ tt:
     mailer_logo: Почта логотибы (JPG яки PNG рәсемнәре генә)
     make_refund: Кире кайтар
     make_sure_the_above_reimbursement_amount_is_correct: Aboveгарыдагы түләү күләменең дөреслеген тикшерегез
-    manage_promotion_categories: Реклама категорияләре белән идарә итү
     manage_variants: Вариантлар белән идарә итү
     manual_intervention_required: Кул белән интервенция кирәк
     master: Остаз
@@ -916,16 +867,12 @@ tt:
     match_choices:
       all: Барысы да
       none: Беркем дә юк
-    max_items: Макс әйберләр
     member_since: Шуннан әгъза
     memo: Хәтер
     meta_description: Мета тасвирламасы
     meta_keywords: Мета ачкыч сүзләр
     meta_title: Мета исеме
-    metadata: Мета мәгълүматлар
-    minimal_amount: Минималь сумма
     missing_return_authorization: "%{item_name} өчен кире кайту рөхсәте."
-    month: Ай
     more: Тулырак
     move_stock_between_locations: Акцияне урыннар арасында күчерегез
     move_variant_to: Вариантны күчерегез
@@ -951,15 +898,12 @@ tt:
       show_search: Эзләүне күрсәт
       show_user_menu: Кулланучының менюсын күрсәт
       sign_up: ТЕРКӘЛЕРГӘ
-    new: Яңа
     new_adjustment: Яңа көйләү
     new_country: Яңа ил
-    new_customer: Яңа хисап язмасы төзегез
     new_customer_return: Яңа клиент кайтуы
     new_image: Яңа рәсем
     new_option_type: Яңа вариант тибы
     new_order: Яңа тәртип
-    new_order_completed: Яңа заказ тәмамланды
     new_order_notifications_email: Яңа заказ хәбәрләре
     new_payment: Яңа түләү
     new_payment_method: Яңа түләү ысулы
@@ -981,44 +925,34 @@ tt:
     new_stock_location: Яңа акция урыны
     new_stock_movement: Яңа акция хәрәкәте
     new_stock_transfer: Яңа акция күчерү
-    new_store_credit: Яңа кибет кредиты
     new_store_credit_category: Яңа кибет кредит категориясе
     new_tax_category: Яңа салым категориясе
     new_tax_rate: Яңа салым ставкасы
     new_taxon: Яңа Таксон
     new_taxonomy: Яңа таксономия
-    new_tracker: Яңа Трекер
     new_user: Яңа кулланучы
     new_variant: Яңа вариант
     new_zone: Яңа зона
     next: Чираттагы
     no_actions_added: Бернинди гамәл дә өстәлмәде
-    no_address_given: Адрес юк
     no_available_date_set: Мөмкин булган дата юк
     no_cc_type: М / Ю
     no_country: Бер ил дә куелмады
     no_limits_zone: Чик юк
     no_payment_found: Түләү табылмады
     no_payment_provider_settings_message: Бу түләү провайдерының махсус көйләүләре юк
-    no_pending_payments: Көтелгән түләүләр юк
     no_product_available:
       for_this_quantity: Гафу итегез, кайбер продуктлар сайланган күләмдә булмаган кебек.
       opps: Ой!
-    no_products_found: Продукция табылмады
     no_resource_found: "%{resource} табылмады"
     no_results: Нәтиҗә юк
-    no_returns_found: Кире кайтарылмады
     no_rules_added: Кагыйдәләр өстәлмәде
     no_shipping_method_selected: Тапшыру ысулы сайланмаган.
     no_state_changes: Әлегә дәүләт үзгәрми.
     no_tracking_present: Күзәтү детальләре юк.
     none: Беркем дә юк
-    none_selected: Беркем дә сайланмаган
-    normal_amount: Нормаль сумма
     not: түгел
     not_available: М / Ю
-    not_enough_stock: Бу күчерүне тәмамлау өчен чыганак урында инвентаризация җитми.
-    not_found: "%{resource} табылмады"
     note: Тамга
     notice_messages:
       icon_removed: Рәсем уңышлы бетерелде
@@ -1032,27 +966,20 @@ tt:
     num_orders: "# Заказлар"
     number: Сан
     ok: Ярар
-    on_hand: Кул астында
-    open: Ачык
     open_all_adjustments: Барлык көйләүләрне ачыгыз
-    option_type: Вариант төре
     option_type_placeholder: Вариант төрен сайлагыз
     option_types: Вариант төрләре
-    option_value: Вариант бәясе
     option_values: Вариант кыйммәтләре
     optional: Ихтимал
     options: Вариантлар
     or: яки
-    or_over_price: "%{price} яки аннан да күбрәк"
     order: Заказ
     order_adjustments: Заказны көйләү
     order_already_updated: Заказ яңартылды.
     order_approved: Заказ расланды
     order_canceled: Заказ юкка чыгарылды
-    order_details: Заказ детальләре
     order_email_resent: Электрон почтага рәнҗетү
     order_has_no_payments: Заказның түләүләре юк
-    order_information: Заказ турында мәгълүмат
     order_line_items: Заказ линиясе әйберләре
     order_mailer:
       cancel_email:
@@ -1078,7 +1005,6 @@ tt:
       total: 'Барлык заказ:'
     order_not_found: Без сезнең заказны таба алмадык. Зинһар, бу эшне кабатлап карагыз.
     order_number: "%{number} заказы"
-    order_processed_successfully: Сезнең заказ уңышлы эшкәртелде
     order_resumed: Заказ яңадан башланды
     order_state:
       address: адрес
@@ -1097,10 +1023,8 @@ tt:
     order_summary: Заказ турында кыскача мәгълүмат
     order_sure_want_to: Сез бу заказны %{event} телисезме?
     order_total: Барлык заказ
-    order_updated: Заказ яңартылды
     orders: Заказлар
     out_of_stock: Складта юк
-    overview: Гомуми күзәтү
     package_from: пакет
     page_not_found: Гафу итегез! Сез эзләгән битне табып булмый.
     pagination:
@@ -1110,18 +1034,14 @@ tt:
     password: Серсүз
     paste: Паста
     path: ".Л"
-    pay: түләү
     payment: Түләү
     payment_amount: Түләү күләме
     payment_could_not_be_created: Түләү булдырып булмады.
     payment_identifier: Түләү идентификаторы
-    payment_information: Түләү турында мәгълүмат
     payment_method: Түләү ысулы
     payment_method_not_supported: Бу түләү ысулы ярдәм итми. Зинһар, бүтәнне сайлагыз.
     payment_methods: Түләү ысуллары
     payment_processing_failed: Түләү эшкәртелә алмый, зинһар, кертелгән детальләрне тикшерегез
-    payment_processor_choose_banner_text: Әгәр сезгә түләү процессорын сайлауда ярдәм кирәк булса, зинһар керегез
-    payment_processor_choose_link: безнең түләү бите
     payment_provider_settings: Түләү тәэмин итүчесе көйләүләре
     payment_state: Түләү дәүләте
     payment_states:
@@ -1144,13 +1064,10 @@ tt:
       view_cart: Арбаны карау
     pending: Көтелгән
     pending_sale: Сату көтелә
-    percent: Процент
     percent_per_item: Предметка процент
     permalink: Пермалинк
     phone: Телефон
-    place_order: Заказ урнаштыру
     please_define_payment_methods: Зинһар, башта түләү ысулларын билгеләгез.
-    please_enter_reasonable_quantity: Зинһар, тиешле күләмдә кертегез.
     plp:
       clear_all: Барысын да чистарт
       default: DEFAULT
@@ -1168,8 +1085,6 @@ tt:
       price_low_to_high: Бәясе (түбән - югары)
       results_for: Нәтиҗә
       sort_by: КАРАТА ТӨРЛӘ
-    populate_get_error: Нәрсәдер дөрес булмаган. Зинһар, әйберне кабат өстәргә тырышыгыз.
-    powered_by: Туклана
     pre_tax_amount: Салым алдыннан сумма
     pre_tax_refund_amount: Салым алдыннан кире кайтару күләме
     pre_tax_total: Салым алдыннан
@@ -1181,15 +1096,11 @@ tt:
     previous_state_missing: м / Ю
     previously_used_card: Элек кулланылган карточкалар
     price: Бәя
-    price_range: Бәяләр диапазоны
     price_sack: Бәяләр сумкасы
     prices: Бәяләр
-    process: Процесс
     product: Продукция
-    product_details: Продукция турында мәгълүмат
     product_has_no_description: Бу продуктның тасвирламасы юк
     product_not_available_in_this_currency: Бу продукт сайланган валютада юк.
-    product_properties: Продукциянең үзенчәлекләре
     product_rule:
       choose_products: Продукцияне сайлагыз
       label: Заказда бу продуктларның х күләме булырга тиеш
@@ -1265,26 +1176,16 @@ tt:
     provider: Провайдер
     provider_settings_warning: Әгәр дә сез провайдер төрен үзгәртәсез икән, провайдер көйләнмәләрен үзгәртә алыр алдыннан башта сакларга тиеш
     purchased_quantity: Сатып алынган сан
-    qty: Qty
     quantity: Сан
-    quantity_returned: Сан кайтты
-    quantity_shipped: Сан җибәрелгән
     quick_search: Тиз эзләү ..
     rate: Ставка
     reason: Сәбәп
-    receive: алу
     receive_stock: Акция алыгыз
-    received: Кабул ителде
-    reception_status: Кабул итү торышы
     reference: Сылтама
     reference_contains: Белешмә
     refund: Кире кайтару
-    refund_amount_must_be_greater_than_zero: Кире кайтару күләме нульдән зуррак булырга тиеш
     refund_reasons: Кире кайтару сәбәпләре
-    refunded_amount: Кире кайтарылган сумма
     refunds: Кире кайтару
-    register: Регистрация
-    registration: Теркәлү
     reimburse: Түләү
     reimbursed: Компенсация
     reimbursement: Компенсация
@@ -1300,76 +1201,54 @@ tt:
         subject: Түләү турында хәбәр итү
         thanks: Эшегез өчен рәхмәт.
         total_refunded: 'Барлык кире кайтарылган: %{total}'
-    reimbursement_perform_failed: 'Түләү башкарылмады. Хата: %{error}'
     reimbursement_status: Түләү статусы
     reimbursement_type: Түләү төре
     reimbursement_type_override: Түләү төре өстәмә
     reimbursement_types: Түләү төрләре
-    reimbursements: Түләү
     reject: Баш тарт
     rejected: Кире кагылды
     remember_me: Мине истә калдыр
     remove: Чыгар
     remove_image: Рәсемне бетерегез
     rename: Исемнең исемен үзгәртү
-    report: Доклад
     reports: Докладлар
     required: "*"
     required_fields: Мәҗбүри кырлар
     resellable: Сату
     resend: Кайту
-    reset_password: Минем серсүзне кире кайтару
-    response_code: Codeавап коды
-    resume: дәвам итү
-    resumed: Яңартылды
-    return: кайту
-    return_authorization: Кайту рөхсәте
     return_authorization_canceled: Кайту рөхсәте юкка чыгарылды
     return_authorization_reasons: Рөхсәт сәбәпләрен кайтару
     return_authorization_states:
       authorized: Рөхсәтле
       canceled: Беркетелде
-    return_authorization_updated: Кайту рөхсәте яңартылды
     return_authorizations: Рөхсәтне кайтару
     return_item_inventory_unit_ineligible: Кайту әйберенең инвентаризация бүлеге җибәрелергә тиеш
     return_item_inventory_unit_reimbursed: Кире әйбернең инвентаризация берәмлеге кире кайтарылган
     return_item_order_not_completed: Кайту пункты заказы тәмамланырга тиеш
     return_item_rma_ineligible: Кайту пункты RMA таләп итә
     return_item_time_period_ineligible: Кайту пункты тиешле вакыт эчендә
-    return_items: Кире әйберләр
     return_items_cannot_be_associated_with_multiple_orders: Кайту әйберләре берничә заказ белән бәйләнештә була алмый.
     return_number: Кайту номеры
     return_quantity: Кайту саны
-    returned: Кайтты
     returns: Кайта
-    review: Кабатлау
     risk: Тәвәккәллек
     risk_analysis: Риск анализы
     risky: Риск
-    rma_credit: RMA Кредит
     rma_number: RMA номеры
-    rma_value: RMA кыйммәте
     role_id: Роль таныклыгы
     roles: Рольләр
     rules: Кагыйдәләр
     safe: Куркынычсыз
     sales_total: Сатуның гомуми
-    sales_total_description: Барлык заказлар өчен сату гомуми
     sales_totals: Сату барлыгы
-    save_and_continue: Саклагыз һәм дәвам итегез
-    save_my_address: Минем адресны саклагыз
     saving: Саклау
     say_no: ".К"
     say_yes: Әйе
-    scope: Масштаб
     search: Эзләү
-    search_results: "'%{keywords}' өчен эзләү нәтиҗәләре"
     searching: Эзләү
-    secure_connection_type: Куркынычсыз тоташу төре
     security_settings: Куркынычсызлык көйләүләре
     select: Сайлагыз
     select_a_date: Датаны сайлагыз
-    select_a_date_range: Дата диапазонын сайлагыз
     select_a_return_authorization_reason: Кайту рөхсәтенең сәбәбен сайлагыз
     select_a_stock_location: Акция урнашкан урынны сайлагыз
     select_a_store_credit_reason: Кибет кредитының сәбәбен сайлагыз
@@ -1377,12 +1256,9 @@ tt:
     select_from_prototype: Прототиптан сайлагыз
     select_stock: Акцияне сайлагыз
     selected_quantity_not_available: "%{item} сайланган."
-    send_copy_of_all_mails_to: Барлык хатларның күчермәсен җибәрегез
-    send_mails_as: Хатлар җибәрегез
     seo: SEO
     seo_robots: SEO роботлары
     seo_title: SEO Титул
-    server: Сервер
     server_error: Сервер хата җибәрде
     settings: Көйләүләр
     ship: Кораб

@@ -686,27 +686,21 @@ it-CH:
     default_tax: Imposta predefinita
     default_tax_zone: Zona fiscale predefinita
     delete: Elimina
-    delete_from_taxon: Elimina da Taxon
     deleted: Eliminato
-    delivery: Consegna
     delivery_information: Informazioni di consegna
     depth: Profondità
     description: Descrizione
     destination: Destinazione
-    destroy: Distruggere
     details: Dettagli
     discontinue_on: Interrompi il
     discontinued: Interrotto
     discontinued_variants_present: Alcuni elementi pubblicitari in questo ordine contengono prodotti che non sono più disponibili.
-    discount_amount: Totale sconto
-    dismiss_banner: No grazie! Non sono interessato, non visualizzare più questo messaggio
     display: Schermo
     doesnt_track_inventory: Non tiene traccia dell'inventario
     dont_have_account: Nessun account?
     edit: modificare
     edit_reimbursement: Modifica rimborso
     editing_resource: Modifica %{resource}
-    editing_rma_reason: Modifica motivo RMA
     editing_user: Modifica il tuo account
     eligibility_errors:
       messages:
@@ -725,9 +719,6 @@ it-CH:
         not_first_order: Questo codice coupon può essere applicato solo al tuo primo ordine.
     email: E-mail
     empty: Vuoto
-    empty_cart: Carrello vuoto
-    enable_mail_delivery: Abilita il recapito della posta
-    end: Fine
     ending_at: Termina alle
     ending_in: Finendo in
     ends_at: Finisce alle
@@ -746,7 +737,6 @@ it-CH:
     errors_prohibited_this_record_from_being_saved:
       one: 1 errore ha impedito il salvataggio di questo record
       other: Gli errori %{count} impedivano il salvataggio di questo record
-    event: Evento
     events:
       spree:
         cart:
@@ -766,8 +756,6 @@ it-CH:
     existing_shipments: Spedizioni esistenti
     expedited_exchanges_warning: Eventuali scambi specificati verranno spediti al cliente immediatamente dopo il salvataggio. Al cliente verrà addebitato l'intero importo dell'articolo se non restituisce l'articolo originale entro %{days_window} giorni.
     expiration: Scadenza
-    expiration_date: Data di scadenza
-    extension: Estensione
     extensions_directory: Directory delle estensioni
     facebook: Facebook
     failed_payment_attempts: Tentativi di pagamento non riusciti
@@ -776,10 +764,7 @@ it-CH:
     filter: Filtro
     filter_results: Risultati del filtro
     filterable: Filtrabile
-    finalize: Finalizza
-    finalized: Finalizzato
     find_a_taxon: Trova un taxon
-    first_item: Primo oggetto
     first_name: Nome di battesimo
     first_name_begins_with: Il nome inizia con
     firstname: Nome di battesimo
@@ -790,18 +775,12 @@ it-CH:
     footer: Piè di pagina
     forgot_password: Ha dimenticato la password?
     free: Gratuito
-    free_shipping: Spedizione gratuita
-    free_shipping_amount: "-"
-    front_end: Fine frontale
-    gateway: Gateway
     gateway_error: Errore gateway
-    general: Generale
     general_settings: impostazioni generali
     generate_code: Genera codice coupon
     get_back_to_the: Torna al
     go_to_category: Vai alla categoria
     guest_checkout: Checkout ospite
-    guest_user_account: Effettua il pagamento come ospite
     has_no_shipped_units: non ha unità spedite
     header_banner: Banner di intestazione
     height: Altezza
@@ -822,29 +801,19 @@ it-CH:
       show_only: Mostra solo
       supported_locales: Impostazioni locali supportate
       translations: Traduzioni
-    icon: Icona
     id: Id
-    image: Immagine
     images: immagini
     implement_eligible_for_return: 'Devi implementare #eligible_for_return? per il tuo EligibilityValidator.'
     implement_requires_manual_intervention: 'Devi implementare #requires_manual_intervention? per il tuo EligibilityValidator.'
     in_stock: Disponibile
-    inactive: Non attivo
-    incl: incl.
     included_in_price: Incluso nel prezzo
-    included_price_validation: non può essere selezionato a meno che non sia stata impostata una zona fiscale predefinita
     incomplete: Incompleto
     info_number_of_skus_not_shown:
       one: e un altro
       other: e altri %{count}
     info_product_has_multiple_skus: 'Questo prodotto ha varianti %{count}:'
     instagram: Instagram
-    instructions_to_reset_password: Inserisci la tua email nel modulo sottostante
-    insufficient_stock: Stock insufficiente, rimanenti solo %{on_hand}
-    insufficient_stock_item_quantity: Quantità di stock disponibile insufficiente
     insufficient_stock_lines_present: Alcuni elementi pubblicitari in questo ordine hanno una quantità insufficiente.
-    intercept_email_address: Intercetta indirizzo e-mail
-    intercept_email_instructions: Sostituisci il destinatario dell'e-mail e sostituiscilo con questo indirizzo.
     internal_name: Nome interno
     internationalization: Internazionalizzazione
     invalid_credit_card: Carta di credito non valida.
@@ -852,16 +821,11 @@ it-CH:
     invalid_payment_provider: Fornitore di servizi di pagamento non valido.
     invalid_promotion_action: Azione di promozione non valida.
     invalid_promotion_rule: Regola di promozione non valida.
-    inventory: Inventario
-    inventory_adjustment: Adeguamento dell'inventario
     inventory_error_flash_for_insufficient_quantity: Un articolo nel carrello non è più disponibile.
-    inventory_state: Stato inventario
-    is_not_available_to_shipment_address: non è disponibile all'indirizzo di spedizione
     iso: ISO Alpha-2
     iso3: ISO Alpha-3
     iso_name: Nome ISO
     issued_on: Rilasciato il
-    item: Articolo
     item_description: descrizione dell'articolo
     item_total: Totale articolo
     item_total_rule:
@@ -878,28 +842,16 @@ it-CH:
     last_name: Cognome
     last_name_begins_with: Il cognome inizia con
     lastname: Cognome
-    learn_more: Per saperne di più
     lifetime_stats: Statistiche a vita
     limit_usage_to: Limita l'utilizzo a
     line_item_adjustments: Aggiustamenti degli elementi pubblicitari
-    list: Elenco
     loading: Caricamento in corso
     loading_tree: Caricamento albero. Attendere prego…
-    locale_changed: Impostazioni locali modificate
     location: Posizione
-    lock: Serratura
     log_entries: Voci di registro
-    log_in: Accesso
     log_in_to_continue: Accedi per continuare
-    logged_in_as: Collegato come
-    logged_in_succesfully: Accesso eseguito con successo
-    logged_out: Sei stato disconnesso.
     login: Login
-    login_as_existing: Accedi come cliente esistente
-    login_failed: Autenticazione di accesso non riuscita.
-    login_name: Login
     logo: Logo
-    logo_alt: Logo del marchio
     logout: Disconnettersi
     logs: Registri
     look_for_similar_items: Cerca oggetti simili
@@ -907,7 +859,6 @@ it-CH:
     mailer_logo: Logo del bollettino (solo immagini JPG o PNG)
     make_refund: Effettua il rimborso
     make_sure_the_above_reimbursement_amount_is_correct: Assicurati che l'importo del rimborso di cui sopra sia corretto
-    manage_promotion_categories: Gestisci categorie di promozione
     manage_variants: Gestisci varianti
     manual_intervention_required: Necessario intervento manuale
     master: Maestro
@@ -916,16 +867,12 @@ it-CH:
     match_choices:
       all: Tutti
       none: Nessuna
-    max_items: Numero massimo di elementi
     member_since: Membro da
     memo: Memo
     meta_description: Meta Description
     meta_keywords: Meta parole chiave
     meta_title: Meta Title
-    metadata: Metadati
-    minimal_amount: Importo minimo
     missing_return_authorization: Autorizzazione al reso mancante per %{item_name}.
-    month: Mese
     more: Di più
     move_stock_between_locations: Spostare le scorte tra le posizioni
     move_variant_to: Sposta la variante in
@@ -951,15 +898,12 @@ it-CH:
       show_search: Mostra ricerca
       show_user_menu: Mostra menu utente
       sign_up: ISCRIVITI
-    new: Nuovo
     new_adjustment: Nuova regolazione
     new_country: Nuovo Paese
-    new_customer: Crea un nuovo account
     new_customer_return: Restituzione di un nuovo cliente
     new_image: Nuova immagine
     new_option_type: Nuovo tipo di opzione
     new_order: Nuovo ordine
-    new_order_completed: Nuovo ordine completato
     new_order_notifications_email: Email di notifica del nuovo ordine
     new_payment: Nuovo pagamento
     new_payment_method: Nuovo metodo di pagamento
@@ -981,44 +925,34 @@ it-CH:
     new_stock_location: Nuova posizione di magazzino
     new_stock_movement: Nuovo movimento azionario
     new_stock_transfer: Nuovo trasferimento stock
-    new_store_credit: Nuovo credito negozio
     new_store_credit_category: Nuova categoria di credito in negozio
     new_tax_category: Nuova categoria fiscale
     new_tax_rate: Nuova aliquota fiscale
     new_taxon: Nuovo Taxon
     new_taxonomy: Nuova tassonomia
-    new_tracker: Nuovo tracker
     new_user: Nuovo utente
     new_variant: Nuova variante
     new_zone: Nuova zona
     next: Il prossimo
     no_actions_added: Nessuna azione aggiunta
-    no_address_given: Nessun indirizzo fornito
     no_available_date_set: Nessuna data disponibile impostata
     no_cc_type: N / A
     no_country: Nessun paese impostato
     no_limits_zone: Senza limiti
     no_payment_found: Nessun pagamento trovato
     no_payment_provider_settings_message: Questo fornitore di servizi di pagamento non ha impostazioni personalizzate disponibili
-    no_pending_payments: Nessun pagamento in sospeso
     no_product_available:
       for_this_quantity: Siamo spiacenti, sembra che alcuni prodotti non siano disponibili nella quantità selezionata.
       opps: Ops!
-    no_products_found: Nessun prodotto trovato
     no_resource_found: Nessun %{resource} trovato
     no_results: Nessun risultato
-    no_returns_found: Nessun reso trovato
     no_rules_added: Nessuna regola aggiunta
     no_shipping_method_selected: Nessun metodo di spedizione selezionato.
     no_state_changes: Nessun cambiamento di stato ancora.
     no_tracking_present: Nessun dettaglio di tracciamento fornito.
     none: Nessuna
-    none_selected: Nessuno selezionato
-    normal_amount: Importo normale
     not: non
     not_available: N / A
-    not_enough_stock: L'inventario non è sufficiente nella posizione di origine per completare questo trasferimento.
-    not_found: "%{resource} non è stato trovato"
     note: Nota
     notice_messages:
       icon_removed: L'immagine è stata rimossa con successo
@@ -1032,27 +966,20 @@ it-CH:
     num_orders: "# Ordini"
     number: Numero
     ok: ok
-    on_hand: In mano
-    open: Aperto
     open_all_adjustments: Apri tutte le regolazioni
-    option_type: Tipo di opzione
     option_type_placeholder: Scegli un tipo di opzione
     option_types: Tipi di opzione
-    option_value: Valore dell'opzione
     option_values: Valori delle opzioni
     optional: Opzionale
     options: Opzioni
     or: o
-    or_over_price: "%{price} o superiore"
     order: Ordine
     order_adjustments: Adeguamenti dell'ordine
     order_already_updated: L'ordine è già stato aggiornato.
     order_approved: Ordine approvato
     order_canceled: Ordine annullato
-    order_details: Dettagli dell'ordine
     order_email_resent: Ordina e-mail reinviata
     order_has_no_payments: L'ordine non ha pagamenti
-    order_information: Informazioni sull'ordine
     order_line_items: Voci di riga dell'ordine
     order_mailer:
       cancel_email:
@@ -1078,7 +1005,6 @@ it-CH:
       total: 'Ordine totale:'
     order_not_found: Non siamo riusciti a trovare il tuo ordine. Per favore prova di nuovo l'azione.
     order_number: Ordina %{number}
-    order_processed_successfully: Il tuo ordine è stato elaborato con successo
     order_resumed: Ordine ripreso
     order_state:
       address: indirizzo
@@ -1097,10 +1023,8 @@ it-CH:
     order_summary: Riepilogo dell'ordine
     order_sure_want_to: Sei sicuro di voler %{event} questo ordine?
     order_total: Ordine totale
-    order_updated: Ordine aggiornato
     orders: Ordini
     out_of_stock: Esaurito
-    overview: Panoramica
     package_from: pacchetto da
     page_not_found: Scusate! Impossibile trovare la pagina che stai cercando.
     pagination:
@@ -1110,18 +1034,14 @@ it-CH:
     password: Parola d'ordine
     paste: Incolla
     path: Sentiero
-    pay: pagare
     payment: Pagamento
     payment_amount: Importo del pagamento
     payment_could_not_be_created: Impossibile creare il pagamento.
     payment_identifier: Identificatore di pagamento
-    payment_information: Informazioni sul pagamento
     payment_method: Metodo di pagamento
     payment_method_not_supported: Questo metodo di pagamento non è supportato. Per favore scegline un altro.
     payment_methods: Modalità di pagamento
     payment_processing_failed: Non è stato possibile elaborare il pagamento, controlla i dettagli inseriti
-    payment_processor_choose_banner_text: Se hai bisogno di aiuto per scegliere un processore di pagamento, visita
-    payment_processor_choose_link: la nostra pagina dei pagamenti
     payment_provider_settings: Impostazioni del fornitore di servizi di pagamento
     payment_state: Stato del pagamento
     payment_states:
@@ -1144,13 +1064,10 @@ it-CH:
       view_cart: Visualizza il carrello
     pending: in attesa di
     pending_sale: In attesa di vendita
-    percent: Per cento
     percent_per_item: Percentuale per articolo
     permalink: Permalink
     phone: Telefono
-    place_order: Invia ordine
     please_define_payment_methods: Si prega di definire prima alcuni metodi di pagamento.
-    please_enter_reasonable_quantity: Inserisci una quantità ragionevole.
     plp:
       clear_all: CANCELLA TUTTO
       default: PREDEFINITO
@@ -1168,8 +1085,6 @@ it-CH:
       price_low_to_high: PREZZO (BASSO - ALTO)
       results_for: RISULTATI PER
       sort_by: ORDINA PER
-    populate_get_error: Qualcosa è andato storto. Prova ad aggiungere di nuovo l'articolo.
-    powered_by: Offerto da
     pre_tax_amount: Importo ante imposte
     pre_tax_refund_amount: Importo del rimborso al lordo delle imposte
     pre_tax_total: Totale ante imposte
@@ -1181,15 +1096,11 @@ it-CH:
     previous_state_missing: n / A
     previously_used_card: Carte usate in precedenza
     price: Prezzo
-    price_range: Fascia di prezzo
     price_sack: Sacco di prezzo
     prices: Prezzi
-    process: Processi
     product: Prodotto
-    product_details: Dettagli del prodotto
     product_has_no_description: Questo prodotto non ha descrizione
     product_not_available_in_this_currency: Questo prodotto non è disponibile nella valuta selezionata.
-    product_properties: Proprietà del prodotto
     product_rule:
       choose_products: Scegli i prodotti
       label: L'ordine deve contenere x quantità di questi prodotti
@@ -1265,26 +1176,16 @@ it-CH:
     provider: Provider
     provider_settings_warning: Se stai modificando il tipo di provider, devi prima salvare prima di poter modificare le impostazioni del provider
     purchased_quantity: Quantità acquistata
-    qty: Qtà
     quantity: Quantità
-    quantity_returned: Quantità restituita
-    quantity_shipped: Quantità spedita
     quick_search: Ricerca rapida..
     rate: Vota
     reason: Motivo
-    receive: ricevere
     receive_stock: Ricevi azioni
-    received: Ricevuto
-    reception_status: Stato di ricezione
     reference: Riferimento
     reference_contains: Riferimento contiene
     refund: Rimborso
-    refund_amount_must_be_greater_than_zero: L'importo del rimborso deve essere maggiore di zero
     refund_reasons: Motivi di rimborso
-    refunded_amount: Importo rimborsato
     refunds: Rimborsi
-    register: Registrati
-    registration: Registrazione
     reimburse: Rimborsare
     reimbursed: Rimborsato
     reimbursement: Rimborso
@@ -1300,76 +1201,54 @@ it-CH:
         subject: Notifica di rimborso
         thanks: Grazie per il tuo business.
         total_refunded: 'Totale rimborsato: %{total}'
-    reimbursement_perform_failed: 'Non è stato possibile eseguire il rimborso. Errore: %{error}'
     reimbursement_status: Stato del rimborso
     reimbursement_type: Tipo di rimborso
     reimbursement_type_override: Sostituzione del tipo di rimborso
     reimbursement_types: Tipi di rimborso
-    reimbursements: Rimborsi
     reject: Rifiutare
     rejected: Respinto
     remember_me: Ricordati di me
     remove: Rimuovere
     remove_image: Rimuovi immagine
     rename: Rinominare
-    report: rapporto
     reports: Rapporti
     required: "*"
     required_fields: campi richiesti
     resellable: Rivendibile
     resend: Invia di nuovo
-    reset_password: Reimposta la mia password
-    response_code: Codice di risposta
-    resume: curriculum vitae
-    resumed: Ripresa
-    return: ritorno
-    return_authorization: Autorizzazione alla restituzione
     return_authorization_canceled: Autorizzazione al reso annullata
     return_authorization_reasons: Motivi dell'autorizzazione alla restituzione
     return_authorization_states:
       authorized: Autorizzato
       canceled: Annullato
-    return_authorization_updated: Autorizzazione al reso aggiornata
     return_authorizations: Autorizzazioni al reso
     return_item_inventory_unit_ineligible: L'unità di inventario dell'articolo da restituire deve essere spedita
     return_item_inventory_unit_reimbursed: L'unità di inventario dell'articolo reso è già rimborsata
     return_item_order_not_completed: L'ordine dell'articolo di reso deve essere completato
     return_item_rma_ineligible: L'articolo di reso richiede un RMA
     return_item_time_period_ineligible: L'articolo reso non rientra nel periodo di tempo idoneo
-    return_items: Restituire articoli
     return_items_cannot_be_associated_with_multiple_orders: Gli articoli di reso non possono essere associati a più ordini.
     return_number: Numero di ritorno
     return_quantity: Quantità restituita
-    returned: Restituito
     returns: ritorna
-    review: Revisione
     risk: Rischio
     risk_analysis: Analisi del rischio
     risky: Rischioso
-    rma_credit: Credito RMA
     rma_number: Numero RMA
-    rma_value: Valore RMA
     role_id: ID ruolo
     roles: Ruoli
     rules: Regole
     safe: Sicuro
     sales_total: Totale vendite
-    sales_total_description: Totale vendite per tutti gli ordini
     sales_totals: Totali vendite
-    save_and_continue: Salva e continua
-    save_my_address: Salva il mio indirizzo
     saving: Salvataggio
     say_no: 'No'
     say_yes: sì
-    scope: Scopo
     search: Ricerca
-    search_results: Risultati ricerca per "%{keywords}"
     searching: Ricerca
-    secure_connection_type: Tipo di connessione protetta
     security_settings: Impostazioni di sicurezza
     select: Selezionare
     select_a_date: Seleziona una data
-    select_a_date_range: Seleziona un intervallo di date
     select_a_return_authorization_reason: Seleziona un motivo per l'autorizzazione al reso
     select_a_stock_location: Seleziona una posizione di magazzino
     select_a_store_credit_reason: Seleziona un motivo per il credito del negozio
@@ -1377,12 +1256,9 @@ it-CH:
     select_from_prototype: Seleziona Da prototipo
     select_stock: Seleziona stock
     selected_quantity_not_available: selezionato di %{item} non è disponibile.
-    send_copy_of_all_mails_to: Invia copia di tutti i messaggi a
-    send_mails_as: Invia messaggi come
     seo: SEO
     seo_robots: Robot SEO
     seo_title: Titolo SEO
-    server: server
     server_error: Il server ha restituito un errore
     settings: impostazioni
     ship: Nave

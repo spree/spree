@@ -686,27 +686,21 @@ mn:
     default_tax: Анхдагч татвар
     default_tax_zone: Анхдагч татварын бүс
     delete: Устгах
-    delete_from_taxon: Таксоноос устгах
     deleted: Устгасан
-    delivery: Хүргэлт
     delivery_information: хүргэлтийн мэдээлэл
     depth: Гүн
     description: Тодорхойлолт
     destination: Очих газар
-    destroy: Устгах
     details: Дэлгэрэнгүй мэдээлэл
     discontinue_on: Цуцлах
     discontinued: Зогсоосон
     discontinued_variants_present: Энэ дарааллын зарим мөрийн зүйлд боломжгүй бүтээгдэхүүн байна.
-    discount_amount: Хөнгөлөлтийн хэмжээ
-    dismiss_banner: Үгүй ээ баярлалаа! Би сонирхохгүй байна, энэ мессежийг дахин битгий харуулаарай
     display: Дэлгэц
     doesnt_track_inventory: Энэ нь бараа материалыг хянахгүй
     dont_have_account: Бүртгэл байхгүй юу?
     edit: Засах
     edit_reimbursement: Нөхөн төлбөрийг засах
     editing_resource: "%{resource}-г засах"
-    editing_rma_reason: RMA-ийн шалтгааныг засах
     editing_user: Бүртгэлээ засах
     eligibility_errors:
       messages:
@@ -725,9 +719,6 @@ mn:
         not_first_order: Энэхүү купоны кодыг зөвхөн таны анхны захиалгад ашиглах боломжтой.
     email: Имэйл
     empty: Хоосон
-    empty_cart: Хоосон сагс
-    enable_mail_delivery: Захидал хүргэлтийг идэвхжүүлэх
-    end: Төгсгөл
     ending_at: Дуусах
     ending_in: Дуусах
     ends_at: Дуусах
@@ -746,7 +737,6 @@ mn:
     errors_prohibited_this_record_from_being_saved:
       one: 1 алдаа энэ бичлэгийг хадгалахыг хориглосон
       other: "%{count} алдаа нь энэ бичлэгийг хадгалахыг хориглосон"
-    event: Үйл явдал
     events:
       spree:
         cart:
@@ -766,8 +756,6 @@ mn:
     existing_shipments: Одоо байгаа ачилтууд
     expedited_exchanges_warning: Аливаа заасан биржүүд хадгаламж хийсний дараа үйлчлүүлэгчид шууд хүргэгдэх болно. Худалдан авагчаас %{days_window} хоногийн дотор анхны бараагаа буцааж өгөхгүй бол барааны төлбөрийг бүрэн хэмжээгээр төлөх болно.
     expiration: Дуусах хугацаа
-    expiration_date: Дуусах огноо
-    extension: Өргөтгөл
     extensions_directory: Өргөтгөлийн лавлах
     facebook: Facebook
     failed_payment_attempts: Төлбөр хийх оролдлого бүтэлгүйтсэн
@@ -776,10 +764,7 @@ mn:
     filter: Шүүлтүүр
     filter_results: Үр дүнг шүүх
     filterable: Шүүлтүүртэй
-    finalize: Дуусгах
-    finalized: Төгссөн
     find_a_taxon: Таксон хайж олох
-    first_item: Эхний зүйл
     first_name: Нэр
     first_name_begins_with: Нэр нь эхэлнэ
     firstname: Нэр
@@ -790,18 +775,12 @@ mn:
     footer: Хөл
     forgot_password: Нууц үгээ мартсан?
     free: Үнэгүй
-    free_shipping: Үнэгүй хүргэлт
-    free_shipping_amount: "-"
-    front_end: Урд төгсгөл
-    gateway: Гарц
     gateway_error: Гарцын алдаа
-    general: Ерөнхий
     general_settings: Ерөнхий Тохиргоо
     generate_code: Купоны код үүсгэх
     get_back_to_the: Буцах
     go_to_category: Ангилал руу очих
     guest_checkout: Зочин Тооцоо хийх
-    guest_user_account: Зочиноор тооцоо хийх
     has_no_shipped_units: ачуулсан нэгж байхгүй
     header_banner: Толгой хошуу
     height: Өндөр
@@ -822,29 +801,19 @@ mn:
       show_only: Зөвхөн харуулах
       supported_locales: Дэмжигдсэн нутгийн иргэд
       translations: Орчуулга
-    icon: Дүрс
     id: Id
-    image: Зураг
     images: Зураг
     implement_eligible_for_return: "# Буцах_тохиромжтой_г хэрэгжүүлэх ёстой юу? Таны EligibilityValidator-т зориулсан."
     implement_requires_manual_intervention: 'Заавал # гарын авлагын_хөтөлбөрийг хэрэгжүүлэх шаардлагатай юу? Таны EligibilityValidator-т зориулсан.'
     in_stock: Нөөцөд байна
-    inactive: Идэвхгүй
-    incl: орно.
     included_in_price: Үнэ багтсан
-    included_price_validation: Хэрэв та анхдагч татварын бүс тогтоогоогүй бол сонгох боломжгүй
     incomplete: Дутуу
     info_number_of_skus_not_shown:
       one: болон бусад
       other: болон %{count} бусад
     info_product_has_multiple_skus: 'Энэ бүтээгдэхүүн нь %{count} хувилбаруудтай:'
     instagram: Instagram
-    instructions_to_reset_password: Доорх маягтанд имэйлээ оруулна уу
-    insufficient_stock: Нөөц хангалттай биш байна, зөвхөн %{on_hand} үлдсэн байна
-    insufficient_stock_item_quantity: Хувьцааны тоо хэмжээ хангалтгүй байна
     insufficient_stock_lines_present: Энэ дарааллын зарим мөрийн тоо хэмжээ хангалтгүй байна.
-    intercept_email_address: Имэйлийн хаягийг таслах
-    intercept_email_instructions: Имэйл хүлээн авагчийг хүчингүй болгож, энэ хаягаар солино уу.
     internal_name: Дотоод нэр
     internationalization: Олон улсын
     invalid_credit_card: Зээлийн карт буруу байна.
@@ -852,16 +821,11 @@ mn:
     invalid_payment_provider: Төлбөрийн үйлчилгээ үзүүлэгч буруу байна.
     invalid_promotion_action: Хүчингүй сурталчилгааны арга хэмжээ.
     invalid_promotion_rule: Сурталчилгааны дүрэм буруу байна.
-    inventory: Бараа материал
-    inventory_adjustment: Бараа материалын тохируулга
     inventory_error_flash_for_insufficient_quantity: Таны сагсанд байгаа зүйл боломжгүй болсон.
-    inventory_state: Бараа материалын байдал
-    is_not_available_to_shipment_address: ачилтын хаягаар авах боломжгүй байна
     iso: ISO Альфа-2
     iso3: ISO Alpha-3
     iso_name: ISO нэр
     issued_on: Гаргасан
-    item: Зүйл
     item_description: Барааны тайлбар
     item_total: Нийт зүйл
     item_total_rule:
@@ -878,28 +842,16 @@ mn:
     last_name: Овог
     last_name_begins_with: Овог нь эхэлнэ
     lastname: Овог
-    learn_more: Илүү их судла
     lifetime_stats: Насан туршийн статистик
     limit_usage_to: Ашиглалтыг хязгаарлах
     line_item_adjustments: Шугамын зүйлийн тохируулга
-    list: Жагсаалт
     loading: Ачаалж байна
     loading_tree: Модыг ачаалж байна. Түр хүлээнэ үү ...
-    locale_changed: Байршлыг өөрчилсөн
     location: Байршил
-    lock: Түгжих
     log_entries: Бүртгэлийн бүртгэл
-    log_in: Нэвтрэх
     log_in_to_continue: Үргэлжлүүлэхийн тулд нэвтэрнэ үү
-    logged_in_as: Байдлаар нэвтэрсэн
-    logged_in_succesfully: Амжилттай нэвтэрлээ
-    logged_out: Та гарсан байна.
     login: Нэвтрэх
-    login_as_existing: Одоо байгаа үйлчлүүлэгчээр нэвтрэх
-    login_failed: Нэвтрэлтийг баталгаажуулж чадсангүй.
-    login_name: Нэвтрэх
     logo: Лого
-    logo_alt: Брэндийн лого
     logout: Гарах
     logs: Бүртгэл
     look_for_similar_items: Үүнтэй ижил төстэй зүйлийг хайж олох
@@ -907,7 +859,6 @@ mn:
     mailer_logo: Захидлын лого (зөвхөн JPG эсвэл PNG зураг)
     make_refund: Буцаан олголт хийх
     make_sure_the_above_reimbursement_amount_is_correct: Дээрх нөхөн төлбөрийн хэмжээ зөв эсэхийг шалгаарай
-    manage_promotion_categories: Сурталчилгааны ангиллыг удирдах
     manage_variants: Хувилбаруудыг удирдах
     manual_intervention_required: Гарын авлагын оролцоо шаардлагатай
     master: Багш аа
@@ -916,16 +867,12 @@ mn:
     match_choices:
       all: Бүгд
       none: Аль нь ч биш
-    max_items: Макс зүйл
     member_since: Гишүүн оноос хойш
     memo: Тэмдэглэл
     meta_description: Мета тайлбар
     meta_keywords: Мета түлхүүр үгс
     meta_title: Мета гарчиг
-    metadata: Мета өгөгдөл
-    minimal_amount: Хамгийн бага хэмжээ
     missing_return_authorization: "%{item_name}-ийн буцах зөвшөөрөл алга байна."
-    month: Сар
     more: Дэлгэрэнгүй
     move_stock_between_locations: Хувьцааг байршлын хооронд шилжүүлэх
     move_variant_to: Хувилбарыг шилжүүл
@@ -951,15 +898,12 @@ mn:
       show_search: Хайлтыг харуулах
       show_user_menu: Хэрэглэгчийн цэсийг харуулах
       sign_up: БҮРТГҮҮЛЭХ
-    new: Шинэ
     new_adjustment: Шинэ тохируулга
     new_country: Шинэ улс
-    new_customer: Шинэ данс үүсгэх
     new_customer_return: Хэрэглэгчийн шинэ өгөөж
     new_image: Шинэ зураг
     new_option_type: Шинэ сонголтын төрөл
     new_order: Шинэ захиалга
-    new_order_completed: Шинэ захиалга дууссан
     new_order_notifications_email: Шинэ захиалгын мэдэгдлийн имэйл
     new_payment: Шинэ төлбөр
     new_payment_method: Төлбөрийн шинэ арга
@@ -981,44 +925,34 @@ mn:
     new_stock_location: Шинэ хувьцааны байршил
     new_stock_movement: Шинэ хувьцааны хөдөлгөөн
     new_stock_transfer: Шинэ хувьцааны шилжүүлэг
-    new_store_credit: Шинэ дэлгүүрийн зээл
     new_store_credit_category: Шинэ дэлгүүрийн зээлийн ангилал
     new_tax_category: Татварын шинэ ангилал
     new_tax_rate: Татварын шинэ хувь хэмжээ
     new_taxon: Шинэ таксон
     new_taxonomy: Шинэ ангилал зүй
-    new_tracker: Шинэ Tracker
     new_user: Шинэ хэрэглэгч
     new_variant: Шинэ хувилбар
     new_zone: Шинэ бүс
     next: Дараачийн
     no_actions_added: Үйлдэл нэмсэнгүй
-    no_address_given: Хаяг өгөөгүй
     no_available_date_set: Боломжтой огноо тохируулаагүй байна
     no_cc_type: Үгүй
     no_country: Улс тохируулаагүй байна
     no_limits_zone: Хязгааргүй
     no_payment_found: Төлбөр олдсонгүй
     no_payment_provider_settings_message: Энэ төлбөрийн үйлчилгээ үзүүлэгч захиалгат тохиргоо хийх боломжгүй байна
-    no_pending_payments: Хүлээгдэж буй төлбөр байхгүй
     no_product_available:
       for_this_quantity: Уучлаарай, зарим бүтээгдэхүүнийг сонгосон хэмжээгээр авах боломжгүй байна.
       opps: Өө!
-    no_products_found: Бүтээгдэхүүн олдсонгүй
     no_resource_found: "%{resource} олдсонгүй"
     no_results: Үр дүнгүй
-    no_returns_found: Буцааж олдсонгүй
     no_rules_added: Дүрэм нэмэгдээгүй
     no_shipping_method_selected: Тээвэрлэлтийн аргыг сонгоогүй байна.
     no_state_changes: Одоогийн байдлаар муж улсын өөрчлөлт ороогүй байна.
     no_tracking_present: Хяналтын дэлгэрэнгүй мэдээлэл өгөөгүй болно.
     none: Аль нь ч биш
-    none_selected: Аль нь ч сонгогдоогүй
-    normal_amount: Хэвийн хэмжээ
     not: үгүй
     not_available: Үгүй
-    not_enough_stock: Энэ шилжүүлгийг дуусгахад эх үүсвэрийн байршилд бараа материал хангалтгүй байна.
-    not_found: "%{resource} олдсонгүй"
     note: Тэмдэглэл
     notice_messages:
       icon_removed: Зургийг амжилттай устгалаа
@@ -1032,27 +966,20 @@ mn:
     num_orders: "# Захиалга"
     number: Дугаар
     ok: БОЛЖ БАЙНА УУ
-    on_hand: Гарт
-    open: Нээлттэй
     open_all_adjustments: Бүх тохируулгыг нээнэ үү
-    option_type: Сонголтын төрөл
     option_type_placeholder: Опционы төрлийг сонгоно уу
     option_types: Сонголтын төрлүүд
-    option_value: Сонголтын утга
     option_values: Сонголтын утга
     optional: Нэмэлт
     options: Сонголтууд
     or: эсвэл
-    or_over_price: "%{price} эсвэл түүнээс дээш"
     order: Захиалга
     order_adjustments: Захиалгын тохируулга
     order_already_updated: Захиалга аль хэдийн шинэчлэгдсэн байна.
     order_approved: Захиалга батлав
     order_canceled: Захиалга цуцлагдсан
-    order_details: захиалгын мэдээлэл
     order_email_resent: Имэйлийг дахин илгээж захиалах
     order_has_no_payments: Захиалгад төлбөр байхгүй
-    order_information: Захиалгын мэдээлэл
     order_line_items: Шугамын зүйлийг захиалах
     order_mailer:
       cancel_email:
@@ -1078,7 +1005,6 @@ mn:
       total: 'Захиалгын нийт дүн:'
     order_not_found: Бид таны захиалгыг олж чадсангүй. Энэ үйлдлийг дахин хийж үзнэ үү.
     order_number: "%{number} захиалах"
-    order_processed_successfully: Таны захиалгыг амжилттай боловсрууллаа
     order_resumed: Захиалга үргэлжлэв
     order_state:
       address: хаяг
@@ -1097,10 +1023,8 @@ mn:
     order_summary: Захиалгын тойм
     order_sure_want_to: Та энэ захиалгыг %{event} хүсэж байгаадаа итгэлтэй байна уу?
     order_total: Захиалгын нийт дүн
-    order_updated: Захиалга шинэчлэгдсэн
     orders: Захиалга
     out_of_stock: Зарагдаж дууссан
-    overview: Тойм
     package_from: багц
     page_not_found: Уучлаарай! Таны хайж буй хуудас олдсонгүй.
     pagination:
@@ -1110,18 +1034,14 @@ mn:
     password: Нууц үг
     paste: Оо
     path: Зам
-    pay: төлөх
     payment: Төлбөр
     payment_amount: Төлбөрийн хэмжээ
     payment_could_not_be_created: Төлбөрийг үүсгэх боломжгүй байна.
     payment_identifier: Төлбөрийн тодорхойлогч
-    payment_information: Төлбөрийн мэдээлэл
     payment_method: Төлбөрийн нөхцөл
     payment_method_not_supported: Энэ төлбөрийн хэрэгслийг дэмждэггүй. Өөрийг нь сонгоно уу.
     payment_methods: Төлбөрийн арга
     payment_processing_failed: Төлбөрийг боловсруулж чадсангүй, оруулсан мэдээллээ шалгана уу
-    payment_processor_choose_banner_text: Хэрэв танд төлбөрийн процессор сонгоход тусламж хэрэгтэй бол зочилно уу
-    payment_processor_choose_link: манай төлбөрийн хуудас
     payment_provider_settings: Төлбөрийн үйлчилгээ үзүүлэгчийн тохиргоо
     payment_state: Төлбөрийн төлөв
     payment_states:
@@ -1144,13 +1064,10 @@ mn:
       view_cart: Сагсыг үзэх
     pending: Хүлээгдэж байна
     pending_sale: Хүлээгдэж буй хямдрал
-    percent: Хувь
     percent_per_item: Зүйлийн хувь
     permalink: Permalink
     phone: Утас
-    place_order: Захиалга өгөх
     please_define_payment_methods: Эхлээд төлбөрийн зарим аргыг тодорхойлно уу.
-    please_enter_reasonable_quantity: Боломжийн хэмжээг оруулна уу.
     plp:
       clear_all: БҮГДИЙГ ЦЭВЭРЛЭ
       default: ДУУСГАЛ
@@ -1168,8 +1085,6 @@ mn:
       price_low_to_high: ҮНЭ (Бага - өндөр)
       results_for: ҮР ДҮН
       sort_by: НЭГЭЭРЭЙ
-    populate_get_error: Ямар нэгэн зүйл буруугаар эргэсэн. Энэ зүйлийг дахин нэмж оруулна уу.
-    powered_by: Powered by
     pre_tax_amount: Татварын өмнөх хэмжээ
     pre_tax_refund_amount: Татварын өмнөх буцаан олголтын хэмжээ
     pre_tax_total: Татварын өмнөх нийт дүн
@@ -1181,15 +1096,11 @@ mn:
     previous_state_missing: үгүй
     previously_used_card: Өмнө нь ашиглаж байсан картууд
     price: Үнэ
-    price_range: Үнийн хүрээ
     price_sack: Үнэ шуудай
     prices: Үнэ
-    process: Процесс
     product: Бүтээгдэхүүн
-    product_details: Бүтээгдэхүүний дэлгэрэнгүй
     product_has_no_description: Энэ бүтээгдэхүүн нь тайлбаргүй байна
     product_not_available_in_this_currency: Энэ бүтээгдэхүүнийг сонгосон валютаар авах боломжгүй.
-    product_properties: Бүтээгдэхүүний шинж чанар
     product_rule:
       choose_products: Бүтээгдэхүүн сонгох
       label: Захиалга нь эдгээр бүтээгдэхүүний x хэмжээг агуулсан байх ёстой
@@ -1265,26 +1176,16 @@ mn:
     provider: Нийлүүлэгч
     provider_settings_warning: Хэрэв та үйлчилгээ үзүүлэгчийн төрлийг өөрчилж байгаа бол үйлчилгээ үзүүлэгчийн тохиргоог засахаасаа өмнө эхлээд хадгалах хэрэгтэй
     purchased_quantity: Худалдан авсан тоо хэмжээ
-    qty: Тоо
     quantity: Тоо хэмжээ
-    quantity_returned: Тоо хэмжээг буцааж өгсөн
-    quantity_shipped: Ачуулсан тоо
     quick_search: Түргэн хайлт..
     rate: Үнэлгээ
     reason: Шалтгаан
-    receive: хүлээн авах
     receive_stock: Хувьцаа авах
-    received: Хүлээн авсан
-    reception_status: Хүлээн авах статус
     reference: Лавлагаа
     reference_contains: Лавлагаа агуулна
     refund: Буцаан олголт
-    refund_amount_must_be_greater_than_zero: Буцаан олголтын хэмжээ тэгээс их байх ёстой
     refund_reasons: Буцаан олголтын шалтгаан
-    refunded_amount: Буцаан олгосон дүн
     refunds: Буцаан олголт
-    register: Бүртгүүлэх
-    registration: Бүртгэл
     reimburse: Нөхөн төлбөр
     reimbursed: Нөхөн олгов
     reimbursement: Нөхөн төлбөр
@@ -1300,76 +1201,54 @@ mn:
         subject: Нөхөн төлбөрийн мэдэгдэл
         thanks: Бизнес эрхэлж байгаад баярлалаа.
         total_refunded: 'Нийт буцаан олголт: %{total}'
-    reimbursement_perform_failed: 'Нөхөн төлбөрийг гүйцэтгэх боломжгүй байна. Алдаа: %{error}'
     reimbursement_status: Нөхөн төлбөрийн байдал
     reimbursement_type: Нөхөн төлбөрийн төрөл
     reimbursement_type_override: Нөхөн төлбөрийн төрлийг хүчингүй болгох
     reimbursement_types: Нөхөн төлбөрийн төрөл
-    reimbursements: Нөхөн төлбөр
     reject: Татгалзах
     rejected: Татгалзсан
     remember_me: Намайг санаарай
     remove: Устгах
     remove_image: Зургийг устгах
     rename: Нэрийг нь өөрчлөх
-    report: Тайлан
     reports: Тайлан
     required: "*"
     required_fields: шаардлагатай талбарт
     resellable: Борлуулах боломжтой
     resend: Дахин илгээх
-    reset_password: Нууц үгээ шинэчлэх
-    response_code: Хариултын код
-    resume: үргэлжлүүлэх
-    resumed: Үргэлжлүүлэв
-    return: буцах
-    return_authorization: Буцах зөвшөөрөл
     return_authorization_canceled: Буцах зөвшөөрөл цуцлагдсан
     return_authorization_reasons: Буцах зөвшөөрөл олгох шалтгаан
     return_authorization_states:
       authorized: Эрх бүхий
       canceled: Цуцлагдсан
-    return_authorization_updated: Буцах зөвшөөрлийг шинэчилсэн
     return_authorizations: Буцах зөвшөөрөл
     return_item_inventory_unit_ineligible: Буцах зүйлийн бараа материалын нэгжийг ачуулах ёстой
     return_item_inventory_unit_reimbursed: Буцаах зүйлийн бараа материалын нэгжийг буцааж төлсөн болно
     return_item_order_not_completed: Буцах зүйлийн захиалгыг бөглөсөн байх ёстой
     return_item_rma_ineligible: Буцаах зүйл нь RMA шаарддаг
     return_item_time_period_ineligible: Буцаах зүйл нь зөвшөөрөгдсөн хугацааны гадна байна
-    return_items: Буцаах зүйл
     return_items_cannot_be_associated_with_multiple_orders: Буцах зүйлийг олон захиалгатай холбох боломжгүй.
     return_number: Буцах дугаар
     return_quantity: Буцах хэмжээ
-    returned: Буцсан
     returns: Буцах
-    review: Тойм
     risk: Эрсдэл
     risk_analysis: Эрсдлийн шинжилгээ
     risky: Эрсдэлтэй
-    rma_credit: RMA зээл
     rma_number: RMA дугаар
-    rma_value: RMA утга
     role_id: Үүргийн дугаар
     roles: Үүрэг
     rules: Дүрэм
     safe: Аюулгүй
     sales_total: Нийт борлуулалт
-    sales_total_description: Бүх захиалгын нийт борлуулалт
     sales_totals: Борлуулалтын дүн
-    save_and_continue: Хадгалж үргэлжлүүлээрэй
-    save_my_address: Миний хаягийг хадгал
     saving: Хадгалах
     say_no: Үгүй
     say_yes: Тийм ээ
-    scope: Хамрах хүрээ
     search: Хайх
-    search_results: "'%{keywords}' хайлтын үр дүн"
     searching: Хайж байна
-    secure_connection_type: Аюулгүй холболтын төрөл
     security_settings: Аюулгүй байдлын тохиргоо
     select: Сонгох
     select_a_date: Огноо сонгоно уу
-    select_a_date_range: Огнооны хязгаарыг сонгоно уу
     select_a_return_authorization_reason: Буцах зөвшөөрөл олгох шалтгааныг сонго
     select_a_stock_location: Хувьцааны байршлыг сонгоно уу
     select_a_store_credit_reason: Дэлгүүрийн зээлийн шалтгааныг сонгоно уу
@@ -1377,12 +1256,9 @@ mn:
     select_from_prototype: Эх загвараас сонгох
     select_stock: Хувьцаа сонгох
     selected_quantity_not_available: "%{item}-с сонгосон боломжгүй байна."
-    send_copy_of_all_mails_to: Бүх шуудангийн хуулбарыг илгээнэ үү
-    send_mails_as: Шуудангаа дараах байдлаар илгээх
     seo: SEO
     seo_robots: SEO роботууд
     seo_title: SEO гарчиг
-    server: Сервер
     server_error: Сервер алдаа гаргалаа
     settings: Тохиргоо
     ship: Хөлөг онгоц

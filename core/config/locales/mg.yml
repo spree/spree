@@ -686,27 +686,21 @@ mg:
     default_tax: Haba hetra
     default_tax_zone: Faritra haba hetra
     delete: Mamafa
-    delete_from_taxon: Delete avy ao amin'ny Taxon
     deleted: nofafana
-    delivery: Delivery
     delivery_information: Fampahalalana momba ny fandefasana
     depth: lalina
     description: Description
     destination: toerana halehany
-    destroy: handringana
     details: tsipiriany
     discontinue_on: Atsaharo ny
     discontinued: nitohy intsony
     discontinued_variants_present: Ny entana andalana amin'ity baiko ity dia misy vokatra izay tsy misy intsony.
-    discount_amount: Isan'ny fihenam-bidy
-    dismiss_banner: Tsia fa misaotra! Tsy liana aho, aza asehoy ity hafatra ity indray
     display: miseho
     doesnt_track_inventory: Tsy manara-maso ny lisitra
     dont_have_account: Tsy misy kaonty?
     edit: Ovay
     edit_reimbursement: Amboary ny famerenam-bola
     editing_resource: Fanovana %{resource}
-    editing_rma_reason: Fanovana antony RMA
     editing_user: Amboary ny kaontinao
     eligibility_errors:
       messages:
@@ -725,9 +719,6 @@ mg:
         not_first_order: Ity kaody coupon ity dia tsy azo ampiharina amin'ny baikonao voalohany ihany.
     email: Mailaka
     empty: hanaisotra
-    empty_cart: Sarety foana
-    enable_mail_delivery: Alefaso ny fandefasana mailaka
-    end: Tapitra
     ending_at: Mifarana amin'ny
     ending_in: Mifarana amin'ny
     ends_at: Mifarana amin'ny
@@ -746,7 +737,6 @@ mg:
     errors_prohibited_this_record_from_being_saved:
       one: Hadisoana 1 no nandrara tsy hitahiry an'ity firaketana ity
       other: ny lesoka %{count} dia nandrara tsy ho voatahiry ity firaketana ity
-    event: Hetsika
     events:
       spree:
         cart:
@@ -766,8 +756,6 @@ mg:
     existing_shipments: Fandefasana efa misy
     expedited_exchanges_warning: Ny fifanakalozana voafaritra dia halefa any amin'ny mpanjifa avy hatrany aorian'ny fitehirizana. Ny mpanjifa dia homena vola ny habetsaky ny entana raha tsy averin'izy ireo ao anatin'ny %{days_window} andro ny entana tany am-boalohany.
     expiration: lany
-    expiration_date: Daty farany
-    extension: Fanitarana
     extensions_directory: Directory Directory
     facebook: Facebook
     failed_payment_attempts: Fanandramana fandoavam-bola tsy nahomby
@@ -776,10 +764,7 @@ mg:
     filter: Sivana
     filter_results: Valin'ny sivana
     filterable: Sivana
-    finalize: hamita ny fanomanana ny
-    finalized: nomanina
     find_a_taxon: Mitadiava Taxon
-    first_item: Item voalohany
     first_name: Fanampin'anarana
     first_name_begins_with: Manomboka ny anarana voalohany
     firstname: Fanampin'anarana
@@ -790,18 +775,12 @@ mg:
     footer: Footer
     forgot_password: Hadino ny tenimiafina?
     free: maimaim-poana
-    free_shipping: Maimaim-poana ny fandefasana
-    free_shipping_amount: "-"
-    front_end: Ny tendrony aloha
-    gateway: Gateway
     gateway_error: Fahadisoana amin'ny vavahady
-    general: General
     general_settings: Fikirana ankapobeny
     generate_code: Miteraha kaody coupon
     get_back_to_the: Miverena any amin'ny
     go_to_category: Mandehana amin'ny sokajy
     guest_checkout: Fitsidihan'ny vahiny
-    guest_user_account: Checkout amin'ny maha-vahiny anao
     has_no_shipped_units: Tsy manana andiana nalefa
     header_banner: Fanevan-doha
     height: hahavony
@@ -822,29 +801,19 @@ mg:
       show_only: Asehoy fotsiny
       supported_locales: Fandraisana an-tanana
       translations: Anarana iombonana
-    icon: matoanteny
     id: Id
-    image: SARY
     images: Sary
     implement_eligible_for_return: 'Tokony hampihatra ny #eligible_for_return? ho an''ny EligibilityValidator anao.'
     implement_requires_manual_intervention: 'Tokony hampihatra ny #requires_manual_intervention? ho an''ny EligibilityValidator anao.'
     in_stock: Ao amin'ny staoky
-    inactive: tsy mavitrika
-    incl: incl
     included_in_price: Tafiditra amin'ny vidiny
-    included_price_validation: Tsy azo fidiana raha tsy nametraka faritra faritany haba
     incomplete: teny
     info_number_of_skus_not_shown:
       one: ary ny iray hafa
       other: ary %{count} hafa
     info_product_has_multiple_skus: 'Ity vokatra ity dia manana %{count} variants:'
     instagram: Instagram
-    instructions_to_reset_password: Ampidiro azafady amin'ny mailaka etsy ambany ny mailakao
-    insufficient_stock: Tsy ampy ny tahiry hita, %{on_hand} sisa
-    insufficient_stock_item_quantity: Tsy ampy ny tahiry hita
     insufficient_stock_lines_present: Ny singa andalana amin'ity baiko ity dia tsy ampy.
-    intercept_email_address: Adiresy mailaka fanakanana
-    intercept_email_instructions: Mandresy ny mpandray mailaka ary solooy ity adiresy ity.
     internal_name: Anaran'ny anatiny
     internationalization: Fanatontoloana
     invalid_credit_card: Kara-trosa tsy mety.
@@ -852,16 +821,11 @@ mg:
     invalid_payment_provider: Mpamatsy fandoavam-bola tsy mety.
     invalid_promotion_action: Hetsika fampiroboroboana tsy mety.
     invalid_promotion_rule: Fitsipika fampiroboroboana tsy mety.
-    inventory: lisitra
-    inventory_adjustment: Fanitsiana inventory
     inventory_error_flash_for_insufficient_quantity: Nanjary tsy misy ny entana iray ao anaty sarinao.
-    inventory_state: State Inventory
-    is_not_available_to_shipment_address: Tsy misy amin'ny adiresy fandefasana
     iso: ISO Alpha-2
     iso3: ISO Alpha-3
     iso_name: ISO anarana
     issued_on: Navoaka tamin'ny
-    item: zavatra
     item_description: Famaritana ny entana
     item_total: Item Total
     item_total_rule:
@@ -878,28 +842,16 @@ mg:
     last_name: Anarana
     last_name_begins_with: Nanomboka niaraka ny anarana farany
     lastname: Anarana
-    learn_more: Hamantatra bebe kokoa
     lifetime_stats: Statin'ny fiainana manontolo
     limit_usage_to: Fero ny fampiasana
     line_item_adjustments: Fanitsiana ny entana andalana
-    list: Lisitra
     loading: Fampidinana
     loading_tree: Mamaky hazo. Andraso azafady…
-    locale_changed: Niova toerana
     location: Toerana
-    lock: Hidin-trano
     log_entries: Log Entries
-    log_in: Hiditra
     log_in_to_continue: Midira raha hanohy
-    logged_in_as: Midira ho
-    logged_in_succesfully: Tafiditra soa aman-tsara
-    logged_out: Navoaka ianao.
     login: Hiditra
-    login_as_existing: Midira amin'ny maha mpanjifa efa misy anao
-    login_failed: Tsy nahomby ny fanamarinana fidirana.
-    login_name: Hiditra
     logo: Famantarana
-    logo_alt: Marika marika
     logout: Miala
     logs: hazo
     look_for_similar_items: Mitadiava zavatra mitovy amin'izany
@@ -907,7 +859,6 @@ mg:
     mailer_logo: Logo an'ny mailer (sary JPG na PNG fotsiny)
     make_refund: Manaova famerenam-bola
     make_sure_the_above_reimbursement_amount_is_correct: Hamarino tsara fa marina ny vola onitra etsy ambony
-    manage_promotion_categories: Tantano ny sokajy fampiroboroboana
     manage_variants: Mitantana Variants
     manual_intervention_required: Ilaina ny fitsabahan'ny tanana
     master: tompony
@@ -916,16 +867,12 @@ mg:
     match_choices:
       all: rehetra
       none: tsy misy
-    max_items: Max Item
     member_since: Mpikambana nanomboka
     memo: fanamarihana
     meta_description: Meta Famaritana
     meta_keywords: Keywords Meta
     meta_title: Meta Lohateny
-    metadata: Metadata
-    minimal_amount: Isa kely
     missing_return_authorization: Fahazoan-dàlana tsy hita miverina ho an'ny %{item_name}.
-    month: VOLANA
     more: Bebe kokoa
     move_stock_between_locations: Mifindra tahiry eo anelanelan'ny toerana
     move_variant_to: Mifindra variant mankany
@@ -951,15 +898,12 @@ mg:
       show_search: Asehoy ny fikarohana
       show_user_menu: Asehoy ny menan'ny mpampiasa
       sign_up: HIDITRA MPIKAMBANA
-    new: Vaovao
     new_adjustment: Fanitsiana vaovao
     new_country: Firenena Vaovao
-    new_customer: Mamorona kaonty vaovao
     new_customer_return: Fiverenan'ny mpanjifa vaovao
     new_image: Sary Vaovao
     new_option_type: Karazana safidy vaovao
     new_order: Baiko vaovao
-    new_order_completed: Vita ny baiko vaovao
     new_order_notifications_email: Mailaka fampandrenesana kaomandy vaovao
     new_payment: Karama vaovao
     new_payment_method: Fomba fandoavam-bola vaovao
@@ -981,44 +925,34 @@ mg:
     new_stock_location: Toerana vaovao
     new_stock_movement: Hetsika stock vaovao
     new_stock_transfer: Famindrana stock vaovao
-    new_store_credit: Fampindram-bola amin'ny magazay vaovao
     new_store_credit_category: Sokajy Credit Store vaovao
     new_tax_category: Sokajy vaovao momba ny hetra
     new_tax_rate: Taham-ketra vaovao
     new_taxon: Taxon vaovao
     new_taxonomy: Taxonomy vaovao
-    new_tracker: New Tracker
     new_user: Mpampiasa vaovao
     new_variant: Variant vaovao
     new_zone: Faritra vaovao
     next: Manaraka
     no_actions_added: Tsy nasiana fihetsika
-    no_address_given: Tsy nomena adiresy
     no_available_date_set: Tsy misy daty voatondro
     no_cc_type: N / A
     no_country: Tsy misy firenena napetraka
     no_limits_zone: Tsy misy fetra
     no_payment_found: Tsy misy fandoavam-bola
     no_payment_provider_settings_message: Ity mpamatsy fandoavambola ity dia tsy misy fampiasa mahazatra
-    no_pending_payments: Tsy misy fandoavam-bola miandry
     no_product_available:
       for_this_quantity: Miala tsiny, toa tsy misy amin'ny vokatra voafantina ny vokatra sasany.
       opps: Oad!
-    no_products_found: Tsy misy vokatra
     no_resource_found: Tsy hita %{resource}
     no_results: Tsy misy valiny
-    no_returns_found: Tsy hita ny fiverenana
     no_rules_added: Tsy misy lalàna nampiana
     no_shipping_method_selected: Tsy misy fomba fandefasana voafantina.
     no_state_changes: Tsy mbola misy fanovana fanjakana.
     no_tracking_present: Tsy misy tsipiriany momba ny fanarahana.
     none: tsy misy
-    none_selected: Tsy voafantina
-    normal_amount: Isa ara-dalàna
     not: tsy
     not_available: N / A
-    not_enough_stock: Tsy ampy ny lisitra ao amin'ny toerana misy ny loharano hamitana an'ity famindrana ity.
-    not_found: "%{resource} tsy hita"
     note: Fanamarihana
     notice_messages:
       icon_removed: Nesorina soa aman-tsara ny sary
@@ -1032,27 +966,20 @@ mg:
     num_orders: "# Didiana"
     number: isa
     ok: ok
-    on_hand: On Hand
-    open: Misokatra
     open_all_adjustments: Sokafy ny fanitsiana rehetra
-    option_type: Karazana safidy
     option_type_placeholder: Misafidiana karazana safidy
     option_types: Karazana safidy
-    option_value: Tombam-bidin'ny safidy
     option_values: Soatoavina safidy
     optional: tsy voatery
     options: FANDIKANA
     or: na
-    or_over_price: "%{price} na mihoatra"
     order: mba
     order_adjustments: Fanitsiana kaomandy
     order_already_updated: Ny baiko dia efa navaozina.
     order_approved: Nekena ny kaomandy
     order_canceled: Nofoanana ny kaomandy
-    order_details: Antsipirian'ny kaomandy
     order_email_resent: Manafatra email resent
     order_has_no_payments: Tsy misy fandoavam-bola ny kaomandy
-    order_information: Fampahalalana momba ny kaomandy
     order_line_items: Entana andiana baiko
     order_mailer:
       cancel_email:
@@ -1078,7 +1005,6 @@ mg:
       total: 'Order total:'
     order_not_found: Tsy hitanay ny kaomandinao. Andramo indray ity hetsika ity.
     order_number: Manafatra %{number}
-    order_processed_successfully: Efa vita soa aman-tsara ny kaomandinao
     order_resumed: Natomboka indray ny filaminana
     order_state:
       address: adiresy
@@ -1097,10 +1023,8 @@ mg:
     order_summary: Famintinana ny kaomandy
     order_sure_want_to: Azonao antoka ve fa te-%{event} an'ity baiko ity ianao?
     order_total: Order total
-    order_updated: Nohavaozina ny kaomandy
     orders: Filaharana
     out_of_stock: Ritra
-    overview: Topimaso
     package_from: fonosana avy
     page_not_found: Miala tsiny! Pejy tadiavinao tsy hita.
     pagination:
@@ -1110,18 +1034,14 @@ mg:
     password: Password
     paste: Mametaka
     path: LALANA
-    pay: vola
     payment: FANOMEZANA
     payment_amount: Vola fandoavana
     payment_could_not_be_created: Tsy afaka natao ny fandoavana.
     payment_identifier: Famantaran-karama
-    payment_information: Fampahalalana momba ny fandoavam-bola
     payment_method: Fomba fandoavam-bola
     payment_method_not_supported: Tsy manohana izany fomba fandoavambola izany. Misafidiana iray hafa azafady.
     payment_methods: Fomba fandoavam-bola
     payment_processing_failed: Tsy afaka namboarina ny fandoavam-bola, azafady mba jereo ny antsipiriany nampidirinao
-    payment_processor_choose_banner_text: Raha mila fanampiana ianao amin'ny fisafidianana processeur fandoavam-bola dia tsidiho azafady
-    payment_processor_choose_link: ny pejy fandoavam-bola
     payment_provider_settings: Fikirana mpamatsy vola
     payment_state: Fanjakana fandoavambola
     payment_states:
@@ -1144,13 +1064,10 @@ mg:
       view_cart: Hijery sarety
     pending: mbola miandry
     pending_sale: Fivarotana miandry
-    percent: isan-jato
     percent_per_item: Isan-jato isan-jato
     permalink: Permalink
     phone: Phone
-    place_order: Filaharambe
     please_define_payment_methods: Azafady mba farito aloha ny fomba fandoavam-bola.
-    please_enter_reasonable_quantity: Ampidiro amina habetsahana mety.
     plp:
       clear_all: MAZAVA REHETRA
       default: toerana misy anao
@@ -1168,8 +1085,6 @@ mg:
       price_low_to_high: PRICE (ambany - avo)
       results_for: VOKATRA HO AN'NY
       sort_by: SIVANINA ARAKA
-    populate_get_error: Nisy zavatra tsy nety. Andramo ampiana indray ity entana ity.
-    powered_by: Ampandehanin'i
     pre_tax_amount: Isa mialoha ny hetra
     pre_tax_refund_amount: Taham-bola aloa alohan'ny haba
     pre_tax_total: Total alohan'ny hetra
@@ -1181,15 +1096,11 @@ mg:
     previous_state_missing: n / A
     previously_used_card: Karatra efa niasa teo aloha
     price: Vidiny
-    price_range: Lanjan'ny vidiny
     price_sack: Sack vidiny
     prices: vidin'ny
-    process: DINGANA
     product: Vokatra
-    product_details: Antsipirian'ny vokatra
     product_has_no_description: Ity vokatra ity dia tsy misy famaritana
     product_not_available_in_this_currency: Ity vokatra ity dia tsy misy amin'ny vola voafantina.
-    product_properties: Fananan'ny vokatra
     product_rule:
       choose_products: Misafidiana vokatra
       label: Ny kaomandy dia tsy maintsy ahitana ny habetsahan'ny x amin'ireo vokatra ireo
@@ -1265,26 +1176,16 @@ mg:
     provider: Mpanome
     provider_settings_warning: Raha manova ny karazana mpamatsy ianao dia tsy maintsy manangona aloha vao afaka manova ny toe-tsain'ny mpamatsy
     purchased_quantity: Quantity nividy
-    qty: Qty
     quantity: Quantity
-    quantity_returned: Niverina ny habetsany
-    quantity_shipped: Habetsahana nalefa
     quick_search: Fikarohana haingana ..
     rate: taha
     reason: antony
-    receive: Raiso
     receive_stock: Raiso ny stock
-    received: nahazo
-    reception_status: Sata-fandraisana
     reference: Reference
     reference_contains: Reference Contains
     refund: Refund
-    refund_amount_must_be_greater_than_zero: Ny vola aloa dia tokony ho lehibe mihoatra ny aotra
     refund_reasons: Antony famerenam-bola
-    refunded_amount: Vola naverina
     refunds: Famerenam-bola
-    register: hisoratra anarana
-    registration: fisoratana anarana
     reimburse: hanomezana vola
     reimbursed: Reimbursed
     reimbursement: fanonerana
@@ -1300,76 +1201,54 @@ mg:
         subject: Fampandrenesana momba ny vola
         thanks: Misaotra anao tamin'ny asa nataonao.
         total_refunded: 'Naverina tamin''ny laoniny: %{total}'
-    reimbursement_perform_failed: 'Tsy azo notanterahina ny vola. Hadisoana: %{error}'
     reimbursement_status: Toe-bola
     reimbursement_type: Karazan-bola
     reimbursement_type_override: Fanonganana ny karazana famerenam-bola
     reimbursement_types: Karazana famerenam-bola
-    reimbursements: Famerenam-bola
     reject: mandà
     rejected: TSY
     remember_me: Tsarovy aho
     remove: esory
     remove_image: Esory ny sary
     rename: Hanova anarana
-    report: TATITRA
     reports: tatitra
     required: "*"
     required_fields: saha ilaina
     resellable: Azo amidy indray
     resend: Avereno
-    reset_password: Avereno ny teny miafiko
-    response_code: Kaody famaliana
-    resume: CV
-    resumed: indray
-    return: Miverena
-    return_authorization: Fahazoan-dàlana hiverina
     return_authorization_canceled: Nofoanana ny fanomezan-dàlana hiverina
     return_authorization_reasons: Antony fanomezan-dàlana hiverina
     return_authorization_states:
       authorized: alalana
       canceled: nofoanana ny
-    return_authorization_updated: Nohavaozina ny fanomezan-dàlana hiverina
     return_authorizations: Fahazoan-dàlana miverina
     return_item_inventory_unit_ineligible: Ny entana ao amin'ny lisitra dia tsy maintsy halefa
     return_item_inventory_unit_reimbursed: Ny tambajotram-bokatra momba ny entana naverina dia efa voaverina
     return_item_order_not_completed: Ny kaonteneran'ny entana dia tsy maintsy vitaina
     return_item_rma_ineligible: Ny entana miverina dia mila RMA
     return_item_time_period_ineligible: Ny entana miverina dia ivelan'ny fe-potoana mety
-    return_items: Avereno ny entana
     return_items_cannot_be_associated_with_multiple_orders: Ny entana miverina dia tsy azo ampifandraisina amin'ny baiko marobe.
     return_number: Isa isa
     return_quantity: Fiverenana Quantity
-    returned: Niverina
     returns: Miverina
-    review: FAMERENANA
     risk: mety
     risk_analysis: Fanadihadiana loza
     risky: Loza
-    rma_credit: Trosa RMA
     rma_number: Isa RMA
-    rma_value: RMA Sarobidy
     role_id: ID andraikitra
     roles: andraikitra
     rules: Fitsipika
     safe: MAMPIDI-DOZA
     sales_total: Total fivarotana
-    sales_total_description: Fivarotana tanteraka ho an'ny baiko rehetra
     sales_totals: Vola feno
-    save_and_continue: Tehirizo ary tohizo
-    save_my_address: Tehirizo ny adiresiko
     saving: famonjena
     say_no: tsy misy
     say_yes: ENY
-    scope: sehatra
     search: karohy
-    search_results: Valin'ny fikarohana ny '%{keywords}'
     searching: mitady
-    secure_connection_type: Karazana fifandraisana azo antoka
     security_settings: Fikirana fiarovana
     select: Safidio
     select_a_date: Misafidiana daty
-    select_a_date_range: Safidio ny datin'ny daty iray
     select_a_return_authorization_reason: Misafidiana antony ahazoan-dàlana hiverina
     select_a_stock_location: Misafidiana toerana misy ny stock
     select_a_store_credit_reason: Safidio ny anton'ilay trosan'ny fivarotana
@@ -1377,12 +1256,9 @@ mg:
     select_from_prototype: Safidio avy amin'ny Prototype
     select_stock: Misafidiana tahiry
     selected_quantity_not_available: voafantina ny %{item} dia tsy misy.
-    send_copy_of_all_mails_to: Mandefasa kopian'ny mailaka rehetra mankany
-    send_mails_as: Handefa ny mailaka ho
     seo: SEO
     seo_robots: Robot SEO
     seo_title: Lohateny SEO
-    server: Server
     server_error: Namerina lesoka ny mpizara
     settings: Fikirana
     ship: sambo

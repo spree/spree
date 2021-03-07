@@ -686,27 +686,21 @@ te:
     default_tax: డిఫాల్ట్ పన్ను
     default_tax_zone: డిఫాల్ట్ టాక్స్ జోన్
     delete: తొలగించు
-    delete_from_taxon: టాక్సన్ నుండి తొలగించండి
     deleted: తొలగించబడింది
-    delivery: డెలివరీ
     delivery_information: డెలివరీ సమాచారం
     depth: లోతు
     description: వివరణ
     destination: గమ్యం
-    destroy: నాశనం
     details: వివరాలు
     discontinue_on: నిలిపివేయండి
     discontinued: నిలిపివేయబడింది
     discontinued_variants_present: ఈ క్రమంలో కొన్ని లైన్ అంశాలు ఇకపై అందుబాటులో లేని ఉత్పత్తులను కలిగి ఉంటాయి.
-    discount_amount: డిస్కౌంట్ మొత్తం
-    dismiss_banner: ధన్యవాదాలు! నాకు ఆసక్తి లేదు, ఈ సందేశాన్ని మళ్లీ ప్రదర్శించవద్దు
     display: ప్రదర్శన
     doesnt_track_inventory: ఇది జాబితాను ట్రాక్ చేయదు
     dont_have_account: ఖాతా లేదా?
     edit: సవరించండి
     edit_reimbursement: రీయింబర్స్‌మెంట్‌ను సవరించండి
     editing_resource: "%{resource} ను సవరించడం"
-    editing_rma_reason: RMA కారణాన్ని సవరించడం
     editing_user: మీ ఖాతాను సవరించండి
     eligibility_errors:
       messages:
@@ -725,9 +719,6 @@ te:
         not_first_order: ఈ కూపన్ కోడ్ మీ మొదటి ఆర్డర్‌కు మాత్రమే వర్తించబడుతుంది.
     email: ఇమెయిల్
     empty: ఖాళీ
-    empty_cart: ఖాళీ బండి
-    enable_mail_delivery: మెయిల్ డెలివరీని ప్రారంభించండి
-    end: ముగింపు
     ending_at: వద్ద ముగుస్తుంది
     ending_in: లో ముగుస్తుంది
     ends_at: వద్ద ముగుస్తుంది
@@ -746,7 +737,6 @@ te:
     errors_prohibited_this_record_from_being_saved:
       one: 1 లోపం ఈ రికార్డ్ సేవ్ చేయకుండా నిషేధించబడింది
       other: "%{count} లోపాలు ఈ రికార్డ్ సేవ్ చేయకుండా నిషేధించబడ్డాయి"
-    event: ఈవెంట్
     events:
       spree:
         cart:
@@ -766,8 +756,6 @@ te:
     existing_shipments: ఇప్పటికే ఉన్న సరుకులు
     expedited_exchanges_warning: ఏదైనా పేర్కొన్న ఎక్స్ఛేంజీలు సేవ్ చేసిన వెంటనే కస్టమర్‌కు రవాణా చేయబడతాయి. కస్టమర్ అసలు వస్తువును %{days_window} రోజుల్లో తిరిగి ఇవ్వకపోతే వస్తువు యొక్క పూర్తి మొత్తాన్ని వసూలు చేస్తారు.
     expiration: గడువు
-    expiration_date: గడువు తేదీ
-    extension: పొడిగింపు
     extensions_directory: పొడిగింపుల డైరెక్టరీ
     facebook: ఫేస్బుక్
     failed_payment_attempts: చెల్లింపు ప్రయత్నాలు విఫలమయ్యాయి
@@ -776,10 +764,7 @@ te:
     filter: ఫిల్టర్
     filter_results: ఫలితాలను ఫిల్టర్ చేయండి
     filterable: ఫిల్టరబుల్
-    finalize: ఖరారు
-    finalized: ఖరారు చేయబడింది
     find_a_taxon: టాక్సన్‌ను కనుగొనండి
-    first_item: మొదటి అంశం
     first_name: మొదటి పేరు
     first_name_begins_with: మొదటి పేరు ప్రారంభమవుతుంది
     firstname: మొదటి పేరు
@@ -790,18 +775,12 @@ te:
     footer: ఫుటరు
     forgot_password: పాస్‌వర్డ్ మర్చిపోయారా?
     free: ఉచితం
-    free_shipping: ఉచిత షిప్పింగ్
-    free_shipping_amount: "-"
-    front_end: ఫ్రంట్ ఎండ్
-    gateway: గేట్వే
     gateway_error: గేట్‌వే లోపం
-    general: జనరల్
     general_settings: సాధారణ సెట్టింగులు
     generate_code: కూపన్ కోడ్‌ను రూపొందించండి
     get_back_to_the: తిరిగి పొందండి
     go_to_category: వర్గానికి వెళ్ళండి
     guest_checkout: అతిథి చెక్అవుట్
-    guest_user_account: అతిథిగా చెక్అవుట్
     has_no_shipped_units: రవాణా చేయబడిన యూనిట్లు లేవు
     header_banner: హెడర్ బ్యానర్
     height: ఎత్తు
@@ -822,29 +801,19 @@ te:
       show_only: మాత్రమే చూపించు
       supported_locales: మద్దతు ఉన్న లొకేల్స్
       translations: అనువాదాలు
-    icon: ఐకాన్
     id: ఐడి
-    image: చిత్రం
     images: చిత్రాలు
     implement_eligible_for_return: "# అర్హత_ కోసం_ తిరిగి రావాలా? మీ ఎలిజిబిలిటీవాలిడేటర్ కోసం."
     implement_requires_manual_intervention: "#Requires_manual_intervention ని తప్పనిసరిగా అమలు చేయాలా? మీ ఎలిజిబిలిటీవాలిడేటర్ కోసం."
     in_stock: అందుబాటులో ఉంది
-    inactive: క్రియారహితం
-    incl: incl.
     included_in_price: ధరలో చేర్చబడింది
-    included_price_validation: మీరు డిఫాల్ట్ టాక్స్ జోన్ సెట్ చేయకపోతే ఎంచుకోలేరు
     incomplete: అసంపూర్ణం
     info_number_of_skus_not_shown:
       one: మరియు మరొకటి
       other: మరియు %{count} ఇతరులు
     info_product_has_multiple_skus: 'ఈ ఉత్పత్తికి %{count} వేరియంట్లు ఉన్నాయి:'
     instagram: ఇన్స్టాగ్రామ్
-    instructions_to_reset_password: దయచేసి దిగువ ఫారమ్‌లో మీ ఇమెయిల్‌ను నమోదు చేయండి
-    insufficient_stock: తగినంత స్టాక్ అందుబాటులో లేదు, %{on_hand} మాత్రమే మిగిలి ఉంది
-    insufficient_stock_item_quantity: తగినంత స్టాక్ పరిమాణం అందుబాటులో లేదు
     insufficient_stock_lines_present: ఈ క్రమంలో కొన్ని లైన్ అంశాలు తగినంత పరిమాణాన్ని కలిగి లేవు.
-    intercept_email_address: ఇమెయిల్ చిరునామాను అడ్డగించండి
-    intercept_email_instructions: ఇమెయిల్ గ్రహీతను భర్తీ చేయండి మరియు ఈ చిరునామాతో భర్తీ చేయండి.
     internal_name: అంతర్గత పేరు
     internationalization: అంతర్జాతీయకరణ
     invalid_credit_card: చెల్లని క్రెడిట్ కార్డ్.
@@ -852,16 +821,11 @@ te:
     invalid_payment_provider: చెల్లని చెల్లింపు ప్రొవైడర్.
     invalid_promotion_action: ప్రమోషన్ చర్య చెల్లదు.
     invalid_promotion_rule: ప్రమోషన్ నియమం చెల్లదు.
-    inventory: జాబితా
-    inventory_adjustment: ఇన్వెంటరీ సర్దుబాటు
     inventory_error_flash_for_insufficient_quantity: మీ కార్ట్‌లోని అంశం అందుబాటులో లేదు.
-    inventory_state: ఇన్వెంటరీ స్టేట్
-    is_not_available_to_shipment_address: రవాణా చిరునామాకు అందుబాటులో లేదు
     iso: ISO ఆల్ఫా -2
     iso3: ISO ఆల్ఫా -3
     iso_name: ISO పేరు
     issued_on: జారీ చేయబడింది
-    item: అంశం
     item_description: వస్తువు వివరణ
     item_total: అంశం మొత్తం
     item_total_rule:
@@ -878,28 +842,16 @@ te:
     last_name: చివరి పేరు
     last_name_begins_with: చివరి పేరు ప్రారంభమైంది
     lastname: చివరి పేరు
-    learn_more: ఇంకా నేర్చుకో
     lifetime_stats: జీవితకాల గణాంకాలు
     limit_usage_to: వాడకాన్ని పరిమితం చేయండి
     line_item_adjustments: పంక్తి అంశం సర్దుబాట్లు
-    list: జాబితా
     loading: లోడ్
     loading_tree: చెట్టును లోడ్ చేస్తోంది. దయచేసి వేచి ఉండండి…
-    locale_changed: లొకేల్ మార్చబడింది
     location: స్థానం
-    lock: లాక్
     log_entries: లాగ్ ఎంట్రీలు
-    log_in: ప్రవేశించండి
     log_in_to_continue: కొనసాగించడానికి లాగిన్ అవ్వండి
-    logged_in_as: ఇలా లాగిన్ అయ్యారు
-    logged_in_succesfully: విజయవంతంగా లాగిన్ అయ్యారు
-    logged_out: మీరు లాగ్ అవుట్ అయ్యారు.
     login: ప్రవేశించండి
-    login_as_existing: ఇప్పటికే ఉన్న కస్టమర్‌గా లాగిన్ అవ్వండి
-    login_failed: లాగిన్ ప్రామాణీకరణ విఫలమైంది.
-    login_name: ప్రవేశించండి
     logo: లోగో
-    logo_alt: బ్రాండ్ లోగో
     logout: లాగ్ అవుట్
     logs: లాగ్‌లు
     look_for_similar_items: ఇలాంటి వస్తువుల కోసం చూడండి
@@ -907,7 +859,6 @@ te:
     mailer_logo: మెయిలర్ లోగో (JPG లేదా PNG చిత్రాలు మాత్రమే)
     make_refund: వాపసు చేయండి
     make_sure_the_above_reimbursement_amount_is_correct: పై రీయింబర్స్‌మెంట్ మొత్తం సరైనదని నిర్ధారించుకోండి
-    manage_promotion_categories: ప్రమోషన్ వర్గాలను నిర్వహించండి
     manage_variants: వైవిధ్యాలను నిర్వహించండి
     manual_intervention_required: మాన్యువల్ జోక్యం అవసరం
     master: మాస్టర్
@@ -916,16 +867,12 @@ te:
     match_choices:
       all: అన్నీ
       none: ఏదీ లేదు
-    max_items: గరిష్ట అంశాలు
     member_since: సభ్యుడు నుండి
     memo: మెమో
     meta_description: మెటా వివరణ
     meta_keywords: మెటా కీవర్డ్లు
     meta_title: మెటా శీర్షిక
-    metadata: మెటాడేటా
-    minimal_amount: కనిష్ట మొత్తం
     missing_return_authorization: "%{item_name} కోసం రిటర్న్ ఆథరైజేషన్ లేదు."
-    month: నెల
     more: మరింత
     move_stock_between_locations: స్థానాల మధ్య స్టాక్‌ను తరలించండి
     move_variant_to: వేరియంట్‌కు తరలించండి
@@ -951,15 +898,12 @@ te:
       show_search: శోధనను చూపించు
       show_user_menu: వినియోగదారు మెనుని చూపించు
       sign_up: చేరడం
-    new: క్రొత్తది
     new_adjustment: కొత్త సర్దుబాటు
     new_country: కొత్త దేశం
-    new_customer: క్రొత్త ఖాతా తెరువుము
     new_customer_return: కొత్త కస్టమర్ రిటర్న్
     new_image: క్రొత్త చిత్రం
     new_option_type: క్రొత్త ఎంపిక రకం
     new_order: కొత్త ఆజ్ఞ
-    new_order_completed: కొత్త ఆర్డర్ పూర్తయింది
     new_order_notifications_email: క్రొత్త ఆర్డర్ నోటిఫికేషన్ల ఇమెయిల్
     new_payment: కొత్త చెల్లింపు
     new_payment_method: కొత్త చెల్లింపు విధానం
@@ -981,44 +925,34 @@ te:
     new_stock_location: క్రొత్త స్టాక్ స్థానం
     new_stock_movement: కొత్త స్టాక్ ఉద్యమం
     new_stock_transfer: కొత్త స్టాక్ బదిలీ
-    new_store_credit: క్రొత్త స్టోర్ క్రెడిట్
     new_store_credit_category: క్రొత్త స్టోర్ క్రెడిట్ వర్గం
     new_tax_category: కొత్త పన్ను వర్గం
     new_tax_rate: కొత్త పన్ను రేటు
     new_taxon: కొత్త టాక్సన్
     new_taxonomy: కొత్త వర్గీకరణ
-    new_tracker: క్రొత్త ట్రాకర్
     new_user: క్రొత్త వినియోగదారు
     new_variant: కొత్త వేరియంట్
     new_zone: న్యూ జోన్
     next: తరువాత
     no_actions_added: చర్యలు జోడించబడలేదు
-    no_address_given: చిరునామా ఇవ్వలేదు
     no_available_date_set: అందుబాటులో తేదీ నిర్ణయించబడలేదు
     no_cc_type: ఎన్ / ఎ
     no_country: ఏ దేశం సెట్ చేయలేదు
     no_limits_zone: అవధులు లేవు
     no_payment_found: చెల్లింపు కనుగొనబడలేదు
     no_payment_provider_settings_message: ఈ చెల్లింపు ప్రొవైడర్‌కు అనుకూల సెట్టింగ్‌లు అందుబాటులో లేవు
-    no_pending_payments: చెల్లింపులు పెండింగ్‌లో లేవు
     no_product_available:
       for_this_quantity: క్షమించండి, ఎంచుకున్న పరిమాణంలో కొన్ని ఉత్పత్తులు అందుబాటులో లేనట్లు కనిపిస్తోంది.
       opps: అయ్యో!
-    no_products_found: ఉత్పత్తులు కనుగొనబడలేదు
     no_resource_found: "%{resource} కనుగొనబడలేదు"
     no_results: ఫలితాలు లేవు
-    no_returns_found: రాబడి ఏదీ కనుగొనబడలేదు
     no_rules_added: నియమాలు జోడించబడలేదు
     no_shipping_method_selected: షిప్పింగ్ పద్ధతి ఎంచుకోబడలేదు.
     no_state_changes: ఇంకా రాష్ట్ర మార్పులు లేవు.
     no_tracking_present: ట్రాకింగ్ వివరాలు అందించబడలేదు.
     none: ఏదీ లేదు
-    none_selected: ఏదీ ఎంచుకోబడలేదు
-    normal_amount: సాధారణ మొత్తం
     not: కాదు
     not_available: ఎన్ / ఎ
-    not_enough_stock: ఈ బదిలీని పూర్తి చేయడానికి మూలం వద్ద తగినంత జాబితా లేదు.
-    not_found: "%{resource} కనుగొనబడలేదు"
     note: గమనిక
     notice_messages:
       icon_removed: చిత్రం విజయవంతంగా తొలగించబడింది
@@ -1032,27 +966,20 @@ te:
     num_orders: "# ఆదేశాలు"
     number: సంఖ్య
     ok: అలాగే
-    on_hand: చేతిలో
-    open: తెరవండి
     open_all_adjustments: అన్ని సర్దుబాట్లను తెరవండి
-    option_type: ఎంపిక రకం
     option_type_placeholder: ఎంపిక రకాన్ని ఎంచుకోండి
     option_types: ఎంపిక రకాలు
-    option_value: ఎంపిక విలువ
     option_values: ఎంపిక విలువలు
     optional: ఐచ్ఛికం
     options: ఎంపికలు
     or: లేదా
-    or_over_price: "%{price} లేదా అంతకంటే ఎక్కువ"
     order: ఆర్డర్
     order_adjustments: ఆర్డర్ సర్దుబాట్లు
     order_already_updated: ఆర్డర్ ఇప్పటికే నవీకరించబడింది.
     order_approved: ఆర్డర్ ఆమోదించబడింది
     order_canceled: ఆర్డర్ రద్దు చేయబడింది
-    order_details: ఆర్డర్ వివరాలు
     order_email_resent: ఆర్డర్ ఇమెయిల్ పంపండి
     order_has_no_payments: ఆర్డర్‌కు చెల్లింపులు లేవు
-    order_information: ఆర్డర్ సమాచారం
     order_line_items: ఆర్డర్ లైన్ అంశాలు
     order_mailer:
       cancel_email:
@@ -1078,7 +1005,6 @@ te:
       total: 'ఆర్డర్ మొత్తం:'
     order_not_found: మేము మీ ఆర్డర్‌ను కనుగొనలేకపోయాము. దయచేసి ఆ చర్యను మళ్ళీ ప్రయత్నించండి.
     order_number: ఆర్డర్ %{number}
-    order_processed_successfully: మీ ఆర్డర్ విజయవంతంగా ప్రాసెస్ చేయబడింది
     order_resumed: ఆర్డర్ తిరిగి ప్రారంభమైంది
     order_state:
       address: చిరునామా
@@ -1097,10 +1023,8 @@ te:
     order_summary: కొనుగోలు వివరణ
     order_sure_want_to: మీరు ఖచ్చితంగా ఈ ఆర్డర్‌ను %{event} చేయాలనుకుంటున్నారా?
     order_total: ఆర్డర్ మొత్తం
-    order_updated: ఆర్డర్ నవీకరించబడింది
     orders: ఆదేశాలు
     out_of_stock: స్టాక్ లేదు
-    overview: అవలోకనం
     package_from: నుండి ప్యాకేజీ
     page_not_found: క్షమించండి! మీరు చూస్తున్న పేజీ కనుగొనబడలేదు.
     pagination:
@@ -1110,18 +1034,14 @@ te:
     password: పాస్వర్డ్
     paste: అతికించండి
     path: మార్గం
-    pay: చెల్లించండి
     payment: చెల్లింపు
     payment_amount: చెల్లింపు మొత్తం
     payment_could_not_be_created: చెల్లింపు సృష్టించబడలేదు.
     payment_identifier: చెల్లింపు ఐడెంటిఫైయర్
-    payment_information: చెల్లింపు సమాచారం
     payment_method: పైకము చెల్లించు విదానం
     payment_method_not_supported: ఆ చెల్లింపు పద్ధతి మద్దతు లేదు. దయచేసి మరొకదాన్ని ఎంచుకోండి.
     payment_methods: చెల్లింపు పద్ధతులు
     payment_processing_failed: చెల్లింపు ప్రాసెస్ చేయబడలేదు, దయచేసి మీరు నమోదు చేసిన వివరాలను తనిఖీ చేయండి
-    payment_processor_choose_banner_text: చెల్లింపు ప్రాసెసర్‌ను ఎంచుకోవడానికి మీకు సహాయం అవసరమైతే, దయచేసి సందర్శించండి
-    payment_processor_choose_link: మా చెల్లింపుల పేజీ
     payment_provider_settings: చెల్లింపు ప్రొవైడర్ సెట్టింగులు
     payment_state: చెల్లింపు రాష్ట్రం
     payment_states:
@@ -1144,13 +1064,10 @@ te:
       view_cart: కార్ట్ చూడండి
     pending: పెండింగ్‌లో ఉంది
     pending_sale: అమ్మకం పెండింగ్‌లో ఉంది
-    percent: శాతం
     percent_per_item: అంశానికి శాతం
     permalink: పెర్మాలింక్
     phone: ఫోన్
-    place_order: ప్లేస్ ఆర్డర్
     please_define_payment_methods: దయచేసి మొదట కొన్ని చెల్లింపు పద్ధతులను నిర్వచించండి.
-    please_enter_reasonable_quantity: దయచేసి సహేతుకమైన పరిమాణాన్ని నమోదు చేయండి.
     plp:
       clear_all: అన్నింటినీ క్లియర్ చేయండి
       default: డిఫాల్ట్
@@ -1168,8 +1085,6 @@ te:
       price_low_to_high: ధర (తక్కువ - అధికం)
       results_for: ఫలితాలు
       sort_by: ఆమరిక
-    populate_get_error: ఏదో తప్పు జరిగింది. దయచేసి అంశాన్ని మళ్ళీ జోడించడానికి ప్రయత్నించండి.
-    powered_by: ద్వారా ఆధారితం
     pre_tax_amount: ప్రీ-టాక్స్ మొత్తం
     pre_tax_refund_amount: ప్రీ-టాక్స్ వాపసు మొత్తం
     pre_tax_total: ప్రీ-టాక్స్ మొత్తం
@@ -1181,15 +1096,11 @@ te:
     previous_state_missing: n / ఎ
     previously_used_card: గతంలో ఉపయోగించిన కార్డులు
     price: ధర
-    price_range: ధర పరిధి
     price_sack: ధర సాక్
     prices: ధరలు
-    process: ప్రక్రియ
     product: ఉత్పత్తి
-    product_details: వస్తువు యొక్క వివరాలు
     product_has_no_description: ఈ ఉత్పత్తికి వివరణ లేదు
     product_not_available_in_this_currency: ఈ ఉత్పత్తి ఎంచుకున్న కరెన్సీలో అందుబాటులో లేదు.
-    product_properties: ఉత్పత్తి లక్షణాలు
     product_rule:
       choose_products: ఉత్పత్తులను ఎంచుకోండి
       label: ఆర్డర్ ఈ ఉత్పత్తుల యొక్క x మొత్తాన్ని కలిగి ఉండాలి
@@ -1265,26 +1176,16 @@ te:
     provider: ప్రొవైడర్
     provider_settings_warning: మీరు ప్రొవైడర్ రకాన్ని మారుస్తుంటే, మీరు ప్రొవైడర్ సెట్టింగులను సవరించడానికి ముందు మొదట సేవ్ చేయాలి
     purchased_quantity: కొనుగోలు పరిమాణం
-    qty: Qty
     quantity: పరిమాణం
-    quantity_returned: పరిమాణం తిరిగి వచ్చింది
-    quantity_shipped: పరిమాణం రవాణా చేయబడింది
     quick_search: శీఘ్ర శోధన ..
     rate: రేటు
     reason: కారణం
-    receive: స్వీకరించండి
     receive_stock: స్టాక్ స్వీకరించండి
-    received: పొందింది
-    reception_status: రిసెప్షన్ స్థితి
     reference: సూచన
     reference_contains: సూచన కలిగి ఉంది
     refund: వాపసు
-    refund_amount_must_be_greater_than_zero: వాపసు మొత్తం సున్నా కంటే ఎక్కువగా ఉండాలి
     refund_reasons: వాపసు కారణాలు
-    refunded_amount: వాపసు చేసిన మొత్తం
     refunds: వాపసు
-    register: నమోదు చేయండి
-    registration: నమోదు
     reimburse: రీయింబర్స్‌
     reimbursed: రీయింబర్స్‌డ్
     reimbursement: రీయింబర్స్‌మెంట్
@@ -1300,76 +1201,54 @@ te:
         subject: రీయింబర్స్‌మెంట్ నోటిఫికేషన్
         thanks: మీ వ్యాపారానికి ధన్యవాదాలు.
         total_refunded: 'మొత్తం వాపసు: %{total}'
-    reimbursement_perform_failed: 'రీయింబర్స్‌మెంట్ చేయలేము. లోపం: %{error}'
     reimbursement_status: రీయింబర్స్‌మెంట్ స్థితి
     reimbursement_type: రీయింబర్స్‌మెంట్ రకం
     reimbursement_type_override: రీయింబర్స్‌మెంట్ రకం ఓవర్రైడ్
     reimbursement_types: రీయింబర్స్‌మెంట్ రకాలు
-    reimbursements: రీయింబర్స్‌మెంట్
     reject: తిరస్కరించండి
     rejected: తిరస్కరించబడింది
     remember_me: నన్ను గుర్తు పెట్టుకో
     remove: తొలగించండి
     remove_image: చిత్రాన్ని తొలగించండి
     rename: పేరు మార్చండి
-    report: నివేదిక
     reports: నివేదికలు
     required: "*"
     required_fields: అవసరమైన ఫీల్డ్‌లు
     resellable: పున el విక్రయం
     resend: తిరిగి పంపండి
-    reset_password: నా పాస్‌వర్డ్‌ను రీసెట్ చేయండి
-    response_code: ప్రతిస్పందన కోడ్
-    resume: పునఃప్రారంభం
-    resumed: తిరిగి ప్రారంభమైంది
-    return: తిరిగి
-    return_authorization: రిటర్న్ ఆథరైజేషన్
     return_authorization_canceled: రిటర్న్ అధికారం రద్దు చేయబడింది
     return_authorization_reasons: రిటర్న్ ఆథరైజేషన్ కారణాలు
     return_authorization_states:
       authorized: అధీకృత
       canceled: రద్దు
-    return_authorization_updated: రిటర్న్ అధికారం నవీకరించబడింది
     return_authorizations: రిటర్న్ ఆథరైజేషన్స్
     return_item_inventory_unit_ineligible: రిటర్న్ ఐటెమ్ యొక్క జాబితా యూనిట్ తప్పనిసరిగా రవాణా చేయబడాలి
     return_item_inventory_unit_reimbursed: రిటర్న్ ఐటెమ్ యొక్క ఇన్వెంటరీ యూనిట్ ఇప్పటికే తిరిగి చెల్లించబడింది
     return_item_order_not_completed: రిటర్న్ ఐటెమ్ యొక్క ఆర్డర్ పూర్తి చేయాలి
     return_item_rma_ineligible: తిరిగి వచ్చే అంశానికి RMA అవసరం
     return_item_time_period_ineligible: రిటర్న్ అంశం అర్హత కాల వ్యవధికి వెలుపల ఉంది
-    return_items: తిరిగి వస్తువులు
     return_items_cannot_be_associated_with_multiple_orders: రిటర్న్ అంశాలు బహుళ ఆర్డర్‌లతో అనుబంధించబడవు.
     return_number: రిటర్న్ నంబర్
     return_quantity: రిటర్న్ పరిమాణం
-    returned: తిరిగి వచ్చింది
     returns: రిటర్న్స్
-    review: సమీక్ష
     risk: ప్రమాదం
     risk_analysis: ప్రమాద విశ్లేషణ
     risky: రిస్కీ
-    rma_credit: RMA క్రెడిట్
     rma_number: RMA సంఖ్య
-    rma_value: RMA విలువ
     role_id: పాత్ర ID
     roles: పాత్రలు
     rules: నియమాలు
     safe: సురక్షితం
     sales_total: అమ్మకాలు మొత్తం
-    sales_total_description: అన్ని ఆర్డర్ల కోసం అమ్మకాలు మొత్తం
     sales_totals: మొత్తం అమ్మకాలు
-    save_and_continue: సేవ్ చేసి కొనసాగించండి
-    save_my_address: నా చిరునామాను సేవ్ చేయండి
     saving: సేవ్ చేస్తోంది
     say_no: లేదు
     say_yes: అవును
-    scope: పరిధి
     search: వెతకండి
-    search_results: "'%{keywords}' కోసం శోధన ఫలితాలు"
     searching: శోధిస్తోంది
-    secure_connection_type: సురక్షిత కనెక్షన్ రకం
     security_settings: భద్రతా అమర్పులు
     select: ఎంచుకోండి
     select_a_date: తేదీని ఎంచుకోండి
-    select_a_date_range: తేదీ పరిధిని ఎంచుకోండి
     select_a_return_authorization_reason: తిరిగి అధికారం కోసం ఒక కారణాన్ని ఎంచుకోండి
     select_a_stock_location: స్టాక్ స్థానాన్ని ఎంచుకోండి
     select_a_store_credit_reason: స్టోర్ క్రెడిట్ కోసం ఒక కారణాన్ని ఎంచుకోండి
@@ -1377,12 +1256,9 @@ te:
     select_from_prototype: ప్రోటోటైప్ నుండి ఎంచుకోండి
     select_stock: స్టాక్ ఎంచుకోండి
     selected_quantity_not_available: "%{item} యొక్క ఎంపిక అందుబాటులో లేదు."
-    send_copy_of_all_mails_to: అన్ని మెయిల్స్ కాపీని పంపండి
-    send_mails_as: మెయిల్స్ పంపండి
     seo: SEO
     seo_robots: SEO రోబోట్లు
     seo_title: SEO శీర్షిక
-    server: సర్వర్
     server_error: సర్వర్ లోపం ఇచ్చింది
     settings: సెట్టింగులు
     ship: ఓడ

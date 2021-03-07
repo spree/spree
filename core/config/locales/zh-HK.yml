@@ -686,27 +686,21 @@ zh-HK:
     default_tax: 违约税
     default_tax_zone: 默认税区
     delete: 删除
-    delete_from_taxon: 从分类单元中删除
     deleted: 已删除
-    delivery: 交货
     delivery_information: 配送信息
     depth: 深度
     description: 描述
     destination: 目的地
-    destroy: 破坏
     details: 细节
     discontinue_on: 停产
     discontinued: 已停产
     discontinued_variants_present: 此订单中的某些订单项的产品不再可用。
-    discount_amount: 优惠金额
-    dismiss_banner: 不用了，谢谢！我不感兴趣，不再显示此消息
     display: 展示
     doesnt_track_inventory: 它不跟踪库存
     dont_have_account: 没有账号？
     edit: 编辑
     edit_reimbursement: 编辑报销
     editing_resource: 编辑%{resource}
-    editing_rma_reason: 编辑RMA原因
     editing_user: 编辑您的帐户
     eligibility_errors:
       messages:
@@ -725,9 +719,6 @@ zh-HK:
         not_first_order: 此优惠券代码仅适用于您的第一笔订单。
     email: 电子邮件
     empty: 空的
-    empty_cart: 空购物车
-    enable_mail_delivery: 启用邮件传递
-    end: 结尾
     ending_at: 结束于
     ending_in: 结束于
     ends_at: 结束于
@@ -746,7 +737,6 @@ zh-HK:
     errors_prohibited_this_record_from_being_saved:
       one: 1个错误禁止保存该记录
       other: "%{count}错误禁止保存该记录"
-    event: 事件
     events:
       spree:
         cart:
@@ -766,8 +756,6 @@ zh-HK:
     existing_shipments: 现有货件
     expedited_exchanges_warning: 保存后，所有指定的交易所将立即发货给客户。如果客户在%{days_window}天内未退回原始商品，则将向其收取全部商品费用。
     expiration: 期满
-    expiration_date: 截止日期
-    extension: 扩大
     extensions_directory: 扩展目录
     facebook: Facebook
     failed_payment_attempts: 尝试付款失败
@@ -776,10 +764,7 @@ zh-HK:
     filter: 筛选
     filter_results: 筛选结果
     filterable: 可过滤
-    finalize: 完成
-    finalized: 已完成
     find_a_taxon: 查找一个分类单元
-    first_item: 第一项
     first_name: 名
     first_name_begins_with: 名字开头
     firstname: 名
@@ -790,18 +775,12 @@ zh-HK:
     footer: 页脚
     forgot_password: 忘记密码？
     free: 自由
-    free_shipping: 免运费
-    free_shipping_amount: "--"
-    front_end: 前端
-    gateway: 闸道
     gateway_error: 网关错误
-    general: 一般的
     general_settings: 常规设置
     generate_code: 生成优惠券代码
     get_back_to_the: 回到
     go_to_category: 转到类别
     guest_checkout: 访客结帐
-    guest_user_account: 以访客身份结帐
     has_no_shipped_units: 没有已发货的单位
     header_banner: 标头横幅
     height: 高度
@@ -822,29 +801,19 @@ zh-HK:
       show_only: 只显示
       supported_locales: 支持的语言环境
       translations: 笔译
-    icon: 图标
     id: ID
-    image: 图像
     images: 图片
     implement_eligible_for_return: 必须实施#eligible_for_return吗？为您的EligibilityValidator。
     implement_requires_manual_intervention: 必须实施#requires_manual_intervention吗？为您的EligibilityValidator。
     in_stock: 有存货
-    inactive: 不活跃
-    incl: 含税
     included_in_price: 价格包含
-    included_price_validation: 除非已设置默认税区，否则无法选择
     incomplete: 不完整
     info_number_of_skus_not_shown:
       one: 和另一个
       other: 和%{count}个其他
     info_product_has_multiple_skus: 该产品具有%{count}变体：
     instagram: Instagram的
-    instructions_to_reset_password: 请在下面的表格中输入您的电子邮件
-    insufficient_stock: 库存不足，仅剩%{on_hand}
-    insufficient_stock_item_quantity: 库存数量不足
     insufficient_stock_lines_present: 此订单中的某些订单项数量不足。
-    intercept_email_address: 拦截电子邮件地址
-    intercept_email_instructions: 覆盖电子邮件收件人，并替换为此地址。
     internal_name: 内部名称
     internationalization: 国际化
     invalid_credit_card: 无效的信用卡。
@@ -852,16 +821,11 @@ zh-HK:
     invalid_payment_provider: 无效的付款提供商。
     invalid_promotion_action: 无效的升级操作。
     invalid_promotion_rule: 无效的升级规则。
-    inventory: 存货
-    inventory_adjustment: 库存调整
     inventory_error_flash_for_insufficient_quantity: 您的购物车中的物品已不可用。
-    inventory_state: 库存状态
-    is_not_available_to_shipment_address: 不可用于收货地址
     iso: ISO Alpha-2
     iso3: ISO Alpha-3
     iso_name: ISO名称
     issued_on: 发布
-    item: 物品
     item_description: 商品描述
     item_total: 项目总计
     item_total_rule:
@@ -878,28 +842,16 @@ zh-HK:
     last_name: 姓
     last_name_begins_with: 姓氏开头
     lastname: 姓
-    learn_more: 了解更多
     lifetime_stats: 终身统计
     limit_usage_to: 将使用限制为
     line_item_adjustments: 订单项调整
-    list: 列表
     loading: 载入中
     loading_tree: 正在加载树。请稍等…
-    locale_changed: 语言环境已更改
     location: 地点
-    lock: 锁
     log_entries: 日志条目
-    log_in: 登录
     log_in_to_continue: 登录以继续
-    logged_in_as: 登录为
-    logged_in_succesfully: 登录成功
-    logged_out: 您已注销。
     login: 登录
-    login_as_existing: 以现有客户身份登录
-    login_failed: 登录身份验证失败。
-    login_name: 登录
     logo: 标识
-    logo_alt: 品牌标志
     logout: 登出
     logs: 日志
     look_for_similar_items: 寻找类似的物品
@@ -907,7 +859,6 @@ zh-HK:
     mailer_logo: Mailer徽标（仅JPG或PNG图像）
     make_refund: 退款
     make_sure_the_above_reimbursement_amount_is_correct: 确保上述报销金额正确无误
-    manage_promotion_categories: 管理促销类别
     manage_variants: 管理变体
     manual_intervention_required: 需要人工干预
     master: 掌握
@@ -916,16 +867,12 @@ zh-HK:
     match_choices:
       all: 全部
       none: 没有
-    max_items: 最多物品
     member_since: 会员自
     memo: 备忘录
     meta_description: 元描述
     meta_keywords: 元关键字
     meta_title: 元标题
-    metadata: 元数据
-    minimal_amount: 最低金额
     missing_return_authorization: 缺少%{item_name}的退货授权。
-    month: 月
     more: 更多的
     move_stock_between_locations: 在位置之间移动库存
     move_variant_to: 将变体移至
@@ -951,15 +898,12 @@ zh-HK:
       show_search: 显示搜寻
       show_user_menu: 显示用户菜单
       sign_up: 报名
-    new: 新的
     new_adjustment: 新调整
     new_country: 新国家
-    new_customer: 建立新帐户
     new_customer_return: 新客户退货
     new_image: 新图片
     new_option_type: 新期权类型
     new_order: 新命令
-    new_order_completed: 新订单完成
     new_order_notifications_email: 新订单通知电子邮件
     new_payment: 新付款
     new_payment_method: 新的付款方式
@@ -981,44 +925,34 @@ zh-HK:
     new_stock_location: 新库存位置
     new_stock_movement: 新股运动
     new_stock_transfer: 新库存转移
-    new_store_credit: 新店信用
     new_store_credit_category: 新店信用类别
     new_tax_category: 新税种
     new_tax_rate: 新税率
     new_taxon: 新分类单元
     new_taxonomy: 新分类法
-    new_tracker: 新追踪器
     new_user: 新的用户
     new_variant: 新变体
     new_zone: 新区
     next: 下一个
     no_actions_added: 未添加任何操作
-    no_address_given: 没有给出地址
     no_available_date_set: 没有可用的日期
     no_cc_type: 不适用
     no_country: 没有国家设定
     no_limits_zone: 无限
     no_payment_found: 找不到付款
     no_payment_provider_settings_message: 该付款提供商没有可用的自定义设置
-    no_pending_payments: 无待付款
     no_product_available:
       for_this_quantity: 抱歉，似乎某些产品不能提供一定数量的数量。
       opps: 糟糕！
-    no_products_found: 找不到产品
     no_resource_found: 找不到%{resource}
     no_results: 没结果
-    no_returns_found: 找不到退货
     no_rules_added: 未添加规则
     no_shipping_method_selected: 未选择运送方式。
     no_state_changes: 状态尚未改变。
     no_tracking_present: 没有提供跟踪详细信息。
     none: 没有
-    none_selected: 未选择
-    normal_amount: 正常金额
     not: 不是
     not_available: 不适用
-    not_enough_stock: 源位置没有足够的库存来完成此转移。
-    not_found: 找不到%{resource}
     note: 笔记
     notice_messages:
       icon_removed: 图像已成功删除
@@ -1032,27 +966,20 @@ zh-HK:
     num_orders: "＃ 命令"
     number: 数字
     ok: 好的
-    on_hand: 手上
-    open: 打开
     open_all_adjustments: 打开所有调整
-    option_type: 期权类型
     option_type_placeholder: 选择一个选项类型
     option_types: 期权类型
-    option_value: 期权价值
     option_values: 期权价值
     optional: 选修的
     options: 选项
     or: 或者
-    or_over_price: "%{price}或以上"
     order: 命令
     order_adjustments: 订单调整
     order_already_updated: 订单已更新。
     order_approved: 订单已批准
     order_canceled: 订单已取消
-    order_details: 订单详细信息
     order_email_resent: 订单已重新发送电子邮件
     order_has_no_payments: 订单没有付款
-    order_information: 订单信息
     order_line_items: 订单项
     order_mailer:
       cancel_email:
@@ -1078,7 +1005,6 @@ zh-HK:
       total: 合计订单：
     order_not_found: 我们找不到您的订单。请重试该操作。
     order_number: 订单%{number}
-    order_processed_successfully: 您的订单已成功处理
     order_resumed: 订单已恢复
     order_state:
       address: 地址
@@ -1097,10 +1023,8 @@ zh-HK:
     order_summary: 订单摘要
     order_sure_want_to: 您确定要%{event}此命令吗？
     order_total: 合计订单
-    order_updated: 订单已更新
     orders: 命令
     out_of_stock: 缺货
-    overview: 概述
     package_from: 包来自
     page_not_found: 对不起！找不到您要查找的页面。
     pagination:
@@ -1110,18 +1034,14 @@ zh-HK:
     password: 密码
     paste: 粘贴
     path: 小路
-    pay: 支付
     payment: 支付
     payment_amount: 支付金额
     payment_could_not_be_created: 无法创建付款。
     payment_identifier: 付款标识符
-    payment_information: 支付信息
     payment_method: 付款方法
     payment_method_not_supported: 该付款方式不受支持。请选择另一个。
     payment_methods: 支付方式
     payment_processing_failed: 无法处理付款，请检查您输入的详细信息
-    payment_processor_choose_banner_text: 如果您需要选择付款处理程序的帮助，请访问
-    payment_processor_choose_link: 我们的付款页面
     payment_provider_settings: 付款提供商设置
     payment_state: 付款状态
     payment_states:
@@ -1144,13 +1064,10 @@ zh-HK:
       view_cart: 查看购物车
     pending: 待办的
     pending_sale: 待售中
-    percent: 百分
     percent_per_item: 每个项目的百分比
     permalink: 固定链接
     phone: 电话
-    place_order: 下订单
     please_define_payment_methods: 请先定义一些付款方式。
-    please_enter_reasonable_quantity: 请输入合理的数量。
     plp:
       clear_all: 全部清除
       default: 默认
@@ -1168,8 +1085,6 @@ zh-HK:
       price_low_to_high: 价格（低-高）
       results_for: 结果
       sort_by: 排序方式
-    populate_get_error: 出了些问题。请尝试再次添加该项目。
-    powered_by: 供电
     pre_tax_amount: 税前金额
     pre_tax_refund_amount: 税前退款金额
     pre_tax_total: 税前总计
@@ -1181,15 +1096,11 @@ zh-HK:
     previous_state_missing: 不适用
     previously_used_card: 以前使用过的卡
     price: 价格
-    price_range: 价格范围
     price_sack: 价格袋
     prices: 价格
-    process: 过程
     product: 产品
-    product_details: 产品详情
     product_has_no_description: 该产品暂无描述
     product_not_available_in_this_currency: 该产品无法以所选币种提供。
-    product_properties: 产品特性
     product_rule:
       choose_products: 选择产品
       label: 订单必须包含x数量的这些产品
@@ -1265,26 +1176,16 @@ zh-HK:
     provider: 提供者
     provider_settings_warning: 如果要更改提供者类型，则必须先保存，然后才能编辑提供者设置
     purchased_quantity: 采购数量
-    qty: 数量
     quantity: 数量
-    quantity_returned: 退货数量
-    quantity_shipped: 出货数量
     quick_search: 快速搜索..
     rate: 速度
     reason: 原因
-    receive: 收到
     receive_stock: 接收库存
-    received: 已收到
-    reception_status: 接待状态
     reference: 参考
     reference_contains: 参考包含
     refund: 退款
-    refund_amount_must_be_greater_than_zero: 退款金额必须大于零
     refund_reasons: 退款原因
-    refunded_amount: 退款金额
     refunds: 退款额
-    register: 登记
-    registration: 登记
     reimburse: 补偿
     reimbursed: 已报销
     reimbursement: 报销
@@ -1300,76 +1201,54 @@ zh-HK:
         subject: 报销通知
         thanks: 感谢您的业务。
         total_refunded: 退款总额：%{total}
-    reimbursement_perform_failed: 无法执行报销。错误：%{error}
     reimbursement_status: 报销状况
     reimbursement_type: 报销类型
     reimbursement_type_override: 报销类型替代
     reimbursement_types: 报销类型
-    reimbursements: 报销
     reject: 拒绝
     rejected: 拒绝了
     remember_me: 记住账号
     remove: 消除
     remove_image: 移除图片
     rename: 改名
-    report: 报告
     reports: 报告书
     required: "*"
     required_fields: 必填项
     resellable: 可转售
     resend: 重发
-    reset_password: 重置我的密码
-    response_code: 响应码
-    resume: 恢复
-    resumed: 已恢复
-    return: 返回
-    return_authorization: 退货授权
     return_authorization_canceled: 退货授权已取消
     return_authorization_reasons: 退货授权原因
     return_authorization_states:
       authorized: 已授权
       canceled: 取消
-    return_authorization_updated: 退货授权已更新
     return_authorizations: 退货授权
     return_item_inventory_unit_ineligible: 退货的库存单位必须已发货
     return_item_inventory_unit_reimbursed: 退货项目的库存单位已报销
     return_item_order_not_completed: 退货订单必须完成
     return_item_rma_ineligible: 退货项目需要RMA
     return_item_time_period_ineligible: 退货项目不在合格时间段内
-    return_items: 退换货品
     return_items_cannot_be_associated_with_multiple_orders: 退货项目不能与多个订单关联。
     return_number: 退货编号
     return_quantity: 退货数量
-    returned: 回来
     returns: 退货
-    review: 审查
     risk: 风险
     risk_analysis: 风险分析
     risky: 有风险
-    rma_credit: RMA抵免额
     rma_number: RMA编号
-    rma_value: RMA值
     role_id: 角色编号
     roles: 的角色
     rules: 规则
     safe: 安全的
     sales_total: 总销量
-    sales_total_description: 所有订单的销售总额
     sales_totals: 销售总额
-    save_and_continue: 保存并继续
-    save_my_address: 保存我的地址
     saving: 保存
     say_no: 不
     say_yes: 是的
-    scope: 范围
     search: 搜索
-    search_results: "“ %{keywords}”的搜索结果"
     searching: 搜寻中
-    secure_connection_type: 安全连接类型
     security_settings: 安全设定
     select: 选择
     select_a_date: 选择一个日期
-    select_a_date_range: 选择日期范围
     select_a_return_authorization_reason: 选择退货授权的原因
     select_a_stock_location: 选择库存地点
     select_a_store_credit_reason: 选择商店信用的原因
@@ -1377,12 +1256,9 @@ zh-HK:
     select_from_prototype: 从原型中选择
     select_stock: 选择股票
     selected_quantity_not_available: "%{item}中选择的不可用。"
-    send_copy_of_all_mails_to: 将所有邮件的副本发送到
-    send_mails_as: 发送邮件为
     seo: 搜索引擎优化
     seo_robots: SEO机器人
     seo_title: SEO标题
-    server: 服务器
     server_error: 服务器返回错误
     settings: 设定值
     ship: 船

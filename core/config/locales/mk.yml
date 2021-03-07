@@ -686,27 +686,21 @@ mk:
     default_tax: Стандарден данок
     default_tax_zone: Стандардна даночна зона
     delete: Избриши
-    delete_from_taxon: Избриши од Таксон
     deleted: Избришано
-    delivery: Испорака
     delivery_information: Информации за испорака
     depth: Длабочина
     description: Опис
     destination: Дестинација
-    destroy: Уништи
     details: Детали
     discontinue_on: Престанете со вклучено
     discontinued: Прекинато
     discontinued_variants_present: Некои ставки во оваа нарачка имаат производи што веќе не се достапни.
-    discount_amount: Износ на попуст
-    dismiss_banner: Не, благодарам! Не ме интересира, не прикажувај ја пораката повторно
     display: Екран
     doesnt_track_inventory: Не го следи инвентарот
     dont_have_account: Нема сметка?
     edit: Уредување
     edit_reimbursement: Уредете ја надоместокот
     editing_resource: Уредување на %{resource}
-    editing_rma_reason: Уредување на RMA причина
     editing_user: Уредете ја вашата сметка
     eligibility_errors:
       messages:
@@ -725,9 +719,6 @@ mk:
         not_first_order: Овој код за купон може да се примени само за вашата прва нарачка.
     email: Е-пошта
     empty: Празно
-    empty_cart: Празна количка
-    enable_mail_delivery: Овозможете испорака по пошта
-    end: Крај
     ending_at: Завршува на
     ending_in: Завршувајќи во
     ends_at: Завршува во
@@ -746,7 +737,6 @@ mk:
     errors_prohibited_this_record_from_being_saved:
       one: 1 грешка забрани зачувување на овој запис
       other: "%{count} грешките забранија зачувување на овој запис"
-    event: Настан
     events:
       spree:
         cart:
@@ -766,8 +756,6 @@ mk:
     existing_shipments: Постоечки пратки
     expedited_exchanges_warning: Било која одредена размена ќе му се испрати на клиентот веднаш по заштедата. Од клиентот ќе се наплати целиот износ на предметот доколку не ја врати оригиналната ставка во рок од %{days_window} дена.
     expiration: Истек
-    expiration_date: Дата на истекување
-    extension: Продолжување
     extensions_directory: Директориум за екстензии
     facebook: Фејсбук
     failed_payment_attempts: Неуспешни обиди за плаќање
@@ -776,10 +764,7 @@ mk:
     filter: Филтер
     filter_results: Резултати од филтерот
     filterable: Може да се филтрира
-    finalize: Финализирај
-    finalized: Финализирано
     find_a_taxon: Пронајдете Таксон
-    first_item: Прва ставка
     first_name: Име
     first_name_begins_with: Името започнува со
     firstname: Име
@@ -790,18 +775,12 @@ mk:
     footer: Подножје
     forgot_password: Ја заборави лозинката?
     free: Бесплатно
-    free_shipping: Бесплатна испорака
-    free_shipping_amount: "-"
-    front_end: Предниот крај
-    gateway: Портал
     gateway_error: Грешка во портата
-    general: Генерал
     general_settings: Општи поставувања
     generate_code: Генерирајте го кодот за купон
     get_back_to_the: Врати се на
     go_to_category: Одете во категоријата
     guest_checkout: Наплата за гости
-    guest_user_account: Плаќање како гостин
     has_no_shipped_units: нема испорачани единици
     header_banner: Банер за заглавие
     height: Висина
@@ -822,29 +801,19 @@ mk:
       show_only: Прикажи само
       supported_locales: Поддржани локации
       translations: Преводи
-    icon: Икона
     id: ИД
-    image: Слика
     images: Слики
     implement_eligible_for_return: 'Мора да се спроведе # подобен_за_враќање? за вашиот квалификуван валидатор.'
     implement_requires_manual_intervention: 'Мора да се спроведе # бара_рачнo_интервенција? за вашиот квалификуван валидатор.'
     in_stock: На залиха
-    inactive: Неактивен
-    incl: вклучително
     included_in_price: Вклучено во цената
-    included_price_validation: не може да се избере освен ако не поставите Стандардна даночна зона
     incomplete: Нецелосно
     info_number_of_skus_not_shown:
       one: и еден друг
       other: и %{count} други
     info_product_has_multiple_skus: 'Овој производ има варијанти на %{count}:'
     instagram: Инстаграм
-    instructions_to_reset_password: Внесете ја вашата е-пошта на образецот подолу
-    insufficient_stock: Нема доволно количество акции, останува само %{on_hand}
-    insufficient_stock_item_quantity: Достапно недоволно количество на акции
     insufficient_stock_lines_present: Некои ставки од редот по овој редослед немаат доволно количество.
-    intercept_email_address: Пресретнете ја адресата за е-пошта
-    intercept_email_instructions: Заменете го примачот на е-пошта и заменете ја со оваа адреса.
     internal_name: Внатрешно име
     internationalization: Интернационализација
     invalid_credit_card: Невалидна кредитна картичка.
@@ -852,16 +821,11 @@ mk:
     invalid_payment_provider: Невалиден давател на плаќање.
     invalid_promotion_action: Неважечка акција за промоција.
     invalid_promotion_rule: Неважечко правило за унапредување.
-    inventory: Инвентар
-    inventory_adjustment: Прилагодување на залихите
     inventory_error_flash_for_insufficient_quantity: Ставка во вашата кошничка стана недостапна.
-    inventory_state: Држава за залихи
-    is_not_available_to_shipment_address: не е достапна на адресата на пратката
     iso: ISO Алфа-2
     iso3: ISO Алфа-3
     iso_name: ИСО Име
     issued_on: Издадено на
-    item: Предмет
     item_description: Опис
     item_total: Вкупно ставка
     item_total_rule:
@@ -878,28 +842,16 @@ mk:
     last_name: Презиме
     last_name_begins_with: Презимето започнува со
     lastname: Презиме
-    learn_more: Научи повеќе
     lifetime_stats: Статистика за цел живот
     limit_usage_to: Ограничете ја употребата на
     line_item_adjustments: Прилагодувања на линиските ставки
-    list: Список
     loading: Се вчитува
     loading_tree: Вчитува дрво. Ве молам почекајте…
-    locale_changed: Локалитетот е променет
     location: Локација
-    lock: Заклучување
     log_entries: Записи за дневник
-    log_in: Логирај Се
     log_in_to_continue: Пријавете се за да продолжите
-    logged_in_as: логиран како
-    logged_in_succesfully: Успешно најавено
-    logged_out: Одјавени сте
     login: Логирај Се
-    login_as_existing: Најавете се како постоечки клиент
-    login_failed: Автентикацијата за најавување не успеа.
-    login_name: Логирај Се
     logo: Лого
-    logo_alt: Лого на брендот
     logout: Одјавување
     logs: Дневници
     look_for_similar_items: Побарајте слични предмети
@@ -907,7 +859,6 @@ mk:
     mailer_logo: Лого на поштарот (само JPG или PNG слики)
     make_refund: Направете наплата
     make_sure_the_above_reimbursement_amount_is_correct: Проверете дали горенаведениот износ на надомест е точен
-    manage_promotion_categories: Управувајте со категориите за промоција
     manage_variants: Управувајте со варијанти
     manual_intervention_required: Потребна е рачна интервенција
     master: Господар
@@ -916,16 +867,12 @@ mk:
     match_choices:
       all: Сите
       none: Ништо
-    max_items: Макс
     member_since: Член од
     memo: Меморандум
     meta_description: Мета опис
     meta_keywords: Мета клучни зборови
     meta_title: Мета Наслов
-    metadata: Метаподатоци
-    minimal_amount: Минимален износ
     missing_return_authorization: Недостасува овластување за враќање на %{item_name}.
-    month: Месец
     more: Повеќе
     move_stock_between_locations: Движете акции помеѓу локациите
     move_variant_to: Премести варијанта во
@@ -951,15 +898,12 @@ mk:
       show_search: Покажи пребарување
       show_user_menu: Покажи корисничко мени
       sign_up: ПРИЈАВЕТЕ се
-    new: Ново
     new_adjustment: Ново прилагодување
     new_country: Нова земја
-    new_customer: Создадете нова сметка
     new_customer_return: Враќање на нов клиент
     new_image: Нова слика
     new_option_type: Нов тип на опција
     new_order: Нов поредок
-    new_order_completed: Новата нарачка е завршена
     new_order_notifications_email: Е-пошта за известувања за нова нарачка
     new_payment: Ново плаќање
     new_payment_method: Нов начин на плаќање
@@ -981,44 +925,34 @@ mk:
     new_stock_location: Нова локација на акции
     new_stock_movement: Ново движење на акции
     new_stock_transfer: Нов трансфер на акции
-    new_store_credit: Кредит за нова продавница
     new_store_credit_category: Кредитна категорија на нови продавници
     new_tax_category: Нова даночна категорија
     new_tax_rate: Нова даночна стапка
     new_taxon: Нов Таксон
     new_taxonomy: Нова таксономија
-    new_tracker: Нов трагач
     new_user: Нов корисник
     new_variant: Нова варијанта
     new_zone: Нова зона
     next: Следно
     no_actions_added: Не се додадени дејства
-    no_address_given: Не е дадена адреса
     no_available_date_set: Не е поставен достапен датум
     no_cc_type: N / A
     no_country: Нема поставено земја
     no_limits_zone: Нема лимит
     no_payment_found: Не е пронајдена исплата
     no_payment_provider_settings_message: Овој давател на плаќања нема достапни прилагодени поставки
-    no_pending_payments: Нема исплата на чекање
     no_product_available:
       for_this_quantity: Извинете, се чини дека некои производи не се достапни во избраната количина.
       opps: Упс!
-    no_products_found: Не се пронајдени производи
     no_resource_found: Не е пронајден %{resource}
     no_results: Нема резултати
-    no_returns_found: Не се пронајдени враќања
     no_rules_added: Не се додадени правила
     no_shipping_method_selected: Не е избран метод за испорака.
     no_state_changes: Сè уште нема промени во државата.
     no_tracking_present: Не се дадени детали за следење.
     none: Ништо
-    none_selected: Нема избрано
-    normal_amount: Нормален износ
     not: не
     not_available: N / A
-    not_enough_stock: Нема доволно попис на локацијата на изворот за да се заврши овој трансфер.
-    not_found: "%{resource} не е пронајден"
     note: Забелешка
     notice_messages:
       icon_removed: Сликата е успешно отстранета
@@ -1032,27 +966,20 @@ mk:
     num_orders: "# Нарачки"
     number: Број
     ok: добро
-    on_hand: На рака
-    open: Отворено
     open_all_adjustments: Отворете ги сите прилагодувања
-    option_type: Тип на опција
     option_type_placeholder: Изберете тип на опција
     option_types: Видови на опции
-    option_value: Вредност на опцијата
     option_values: Вредности на опции
     optional: Изборен
     options: Опции
     or: или
-    or_over_price: "%{price} или повеќе"
     order: Со цел
     order_adjustments: Прилагодувања за нарачки
     order_already_updated: Нарачката е веќе ажурирана.
     order_approved: Нарачката е одобрена
     order_canceled: Нарачката е откажана
-    order_details: детали за НАРАЧКА
     order_email_resent: Нарачајте е-пошта повторно
     order_has_no_payments: Нарачката нема плаќања
-    order_information: Информации за нарачката
     order_line_items: Предмети на линијата за нарачки
     order_mailer:
       cancel_email:
@@ -1078,7 +1005,6 @@ mk:
       total: 'Вкупно нарачки:'
     order_not_found: Не можевме да ја најдеме вашата нарачка. Ве молиме, обидете се со таа акција повторно.
     order_number: Нарачајте %{number}
-    order_processed_successfully: Вашата нарачка е успешно обработена
     order_resumed: Нарачката продолжи
     order_state:
       address: адреса
@@ -1097,10 +1023,8 @@ mk:
     order_summary: Резиме на нарачки
     order_sure_want_to: Дали сте сигурни дека сакате да ја %{event} оваа нарачка?
     order_total: Нарачка Вкупно
-    order_updated: Нарачката е ажурирана
     orders: Нарачки
     out_of_stock: Нема на залиха
-    overview: Преглед
     package_from: пакет од
     page_not_found: Извинете! Страницата што ја барате не може да се најде.
     pagination:
@@ -1110,18 +1034,14 @@ mk:
     password: Лозинка
     paste: Залепи
     path: Патека
-    pay: плати
     payment: Плаќање
     payment_amount: Износ на плаќање
     payment_could_not_be_created: Плаќањето не може да се создаде.
     payment_identifier: Идентификатор на плаќање
-    payment_information: Информации за исплата
     payment_method: Метод за плаќање
     payment_method_not_supported: Тој начин на плаќање не е поддржан. Ве молиме изберете друга.
     payment_methods: начини за плаќање
     payment_processing_failed: Плаќањето не може да се обработи, проверете ги деталите што ги внесовте
-    payment_processor_choose_banner_text: Ако ви треба помош при избор на процесор за плаќање, посетете ја
-    payment_processor_choose_link: нашата страница за плаќања
     payment_provider_settings: Поставки за давателот на плаќање
     payment_state: Држава на плаќање
     payment_states:
@@ -1144,13 +1064,10 @@ mk:
       view_cart: Погледнете ја количката
     pending: Во очекување
     pending_sale: Во очекување на продажба
-    percent: Процент
     percent_per_item: Процент по ставка
     permalink: Пермалинк
     phone: Телефон
-    place_order: Место нарачка
     please_define_payment_methods: Прво, дефинирајте неколку начини на плаќање.
-    please_enter_reasonable_quantity: Внесете разумна количина.
     plp:
       clear_all: ИСЧИСТИ СЕ
       default: ДЕФОЛТ
@@ -1168,8 +1085,6 @@ mk:
       price_low_to_high: ЦЕНА (НИСКО - ВИСОК)
       results_for: РЕЗУЛТАТИ ЗА
       sort_by: СОРТИРАЈ ПО
-    populate_get_error: Нешто тргна наопаку. Ве молиме, обидете се повторно да ја додадете ставката.
-    powered_by: Поддржано од
     pre_tax_amount: Износ пред оданочување
     pre_tax_refund_amount: Износ на поврат на данок пред данок
     pre_tax_total: Вкупно пред оданочување
@@ -1181,15 +1096,11 @@ mk:
     previous_state_missing: n / a
     previously_used_card: Претходно користени картички
     price: Цена
-    price_range: Опсег на цени
     price_sack: Вреќа вреќа
     prices: Цени
-    process: Процес
     product: Производ
-    product_details: Детали за производот
     product_has_no_description: Овој производ нема опис
     product_not_available_in_this_currency: Овој производ не е достапен во избраната валута.
-    product_properties: Карактеристики на производот
     product_rule:
       choose_products: Изберете производи
       label: Нарачката мора да содржи x количина на овие производи
@@ -1265,26 +1176,16 @@ mk:
     provider: Давател
     provider_settings_warning: Ако го менувате типот на давателот, мора прво да заштедите пред да можете да ги уредувате поставките на давателот
     purchased_quantity: Купена количина
-    qty: Колку
     quantity: Квантитет
-    quantity_returned: Количина вратена
-    quantity_shipped: Количината е испратена
     quick_search: Брзо пребарување..
     rate: Оцени
     reason: Причина
-    receive: примаат
     receive_stock: Добијте акции
-    received: Добиени
-    reception_status: Статус на прием
     reference: Референца
     reference_contains: Референца содржи
     refund: Наплата
-    refund_amount_must_be_greater_than_zero: Износот на повратот мора да биде поголем од нула
     refund_reasons: Причини за враќање на средствата
-    refunded_amount: Рефундиран износ
     refunds: Наплата
-    register: Регистрирај се
-    registration: Регистрација
     reimburse: Надомести
     reimbursed: Надоместок
     reimbursement: Надоместок
@@ -1300,76 +1201,54 @@ mk:
         subject: Известување за надомест
         thanks: Ви благодариме за вашата деловна активност.
         total_refunded: 'Вкупно рефундиран: %{total}'
-    reimbursement_perform_failed: 'Надоместокот не може да се изврши. Грешка: %{error}'
     reimbursement_status: Статус на надомест
     reimbursement_type: Вид на надомест
     reimbursement_type_override: Заменување на типот на надомест
     reimbursement_types: Видови на надомест
-    reimbursements: Надоместоци
     reject: Одбиј
     rejected: Одбиено
     remember_me: Запомни ме
     remove: Отстрани
     remove_image: Отстранете ја сликата
     rename: Преименување
-    report: Извештај
     reports: Извештаи
     required: "*"
     required_fields: задолжителни полиња
     resellable: Препродавачки
     resend: Повторно испратете
-    reset_password: Ресетирај ја мојата лозинка
-    response_code: Код за одговор
-    resume: продолжи
-    resumed: Продолжи
-    return: враќање
-    return_authorization: Овластување за враќање
     return_authorization_canceled: Овластувањето за враќање е откажано
     return_authorization_reasons: Причини за овластување за враќање
     return_authorization_states:
       authorized: Овластен
       canceled: Откажано
-    return_authorization_updated: Овластувањето за враќање е ажурирано
     return_authorizations: Овластувања за враќање
     return_item_inventory_unit_ineligible: Инвентарната единица на повратната ставка мора да биде испратена
     return_item_inventory_unit_reimbursed: Инвентарната единица на вратената ставка е веќе надоместена
     return_item_order_not_completed: Нарачката на повратната ставка мора да биде завршена
     return_item_rma_ineligible: За враќање на предметот е потребна RMA
     return_item_time_period_ineligible: Вратената ставка е надвор од квалификуваниот временски период
-    return_items: Вратете ги предметите
     return_items_cannot_be_associated_with_multiple_orders: Вратените предмети не можат да бидат поврзани со повеќе нарачки.
     return_number: Вратен број
     return_quantity: Количина на враќање
-    returned: Вратени
     returns: Се враќа
-    review: Преглед
     risk: Ризик
     risk_analysis: Анализа на ризик
     risky: Ризично
-    rma_credit: Кредитен РМА
     rma_number: Број на РМА
-    rma_value: Вредност на РМА
     role_id: Лична карта
     roles: Улоги
     rules: Правила
     safe: Безбедно
     sales_total: Вкупно продажба
-    sales_total_description: Вкупно продажба за сите нарачки
     sales_totals: Вкупни продажби
-    save_and_continue: Зачувајте и продолжете
-    save_my_address: Зачувај ја мојата адреса
     saving: Зачувува
     say_no: Не
     say_yes: Да
-    scope: Опсег
     search: Пребарување
-    search_results: Резултати од пребарувањето за '%{keywords}'
     searching: Пребарување
-    secure_connection_type: Тип на безбедна врска
     security_settings: Безбедносни поставки
     select: Изберете
     select_a_date: Изберете датум
-    select_a_date_range: Изберете опсег на датуми
     select_a_return_authorization_reason: Изберете причина за одобрението за враќање
     select_a_stock_location: Изберете локација на залиха
     select_a_store_credit_reason: Изберете причина за кредит на продавницата
@@ -1377,12 +1256,9 @@ mk:
     select_from_prototype: Изберете Од прототип
     select_stock: Изберете залиха
     selected_quantity_not_available: избраниот од %{item} не е достапен.
-    send_copy_of_all_mails_to: Испратете копија од сите пораки до
-    send_mails_as: Испратете пошта како
     seo: SEO
     seo_robots: Роботи за оптимизација
     seo_title: Наслов на оптимизација
-    server: Сервер
     server_error: Серверот врати грешка
     settings: Поставки
     ship: Брод

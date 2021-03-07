@@ -686,27 +686,21 @@ ml:
     default_tax: സ്ഥിര നികുതി
     default_tax_zone: സ്ഥിര നികുതി മേഖല
     delete: ഇല്ലാതാക്കുക
-    delete_from_taxon: ടാക്സണിൽ നിന്ന് ഇല്ലാതാക്കുക
     deleted: ഇല്ലാതാക്കി
-    delivery: ഡെലിവറി
     delivery_information: ഡെലിവറി വിവരങ്ങൾ
     depth: ആഴം
     description: വിവരണം
     destination: ലക്ഷ്യസ്ഥാനം
-    destroy: നശിപ്പിക്കുക
     details: വിശദാംശങ്ങൾ
     discontinue_on: ഓണാക്കുക
     discontinued: നിർത്തലാക്കി
     discontinued_variants_present: ഈ ഓർഡറിലെ ചില ലൈൻ ഇനങ്ങൾക്ക് ഇനി ലഭ്യമല്ലാത്ത ഉൽപ്പന്നങ്ങളുണ്ട്.
-    discount_amount: കിഴിവ് തുക
-    dismiss_banner: വേണ്ട, നന്ദി! എനിക്ക് താൽപ്പര്യമില്ല, ഈ സന്ദേശം വീണ്ടും പ്രദർശിപ്പിക്കരുത്
     display: പ്രദർശിപ്പിക്കുക
     doesnt_track_inventory: ഇത് സാധന സാമഗ്രികൾ ട്രാക്കുചെയ്യുന്നില്ല
     dont_have_account: അക്കൗണ്ടില്ലേ?
     edit: എഡിറ്റുചെയ്യുക
     edit_reimbursement: റീഇംബേഴ്സ്മെന്റ് എഡിറ്റുചെയ്യുക
     editing_resource: "%{resource} എഡിറ്റുചെയ്യുന്നു"
-    editing_rma_reason: ആർ‌എം‌എ കാരണം എഡിറ്റുചെയ്യുന്നു
     editing_user: നിങ്ങളുടെ അക്കൗണ്ട് എഡിറ്റുചെയ്യുക
     eligibility_errors:
       messages:
@@ -725,9 +719,6 @@ ml:
         not_first_order: നിങ്ങളുടെ ആദ്യ ഓർഡറിൽ മാത്രമേ ഈ കൂപ്പൺ കോഡ് പ്രയോഗിക്കാൻ കഴിയൂ.
     email: ഇമെയിൽ
     empty: ശൂന്യമാണ്
-    empty_cart: ശൂന്യമായ വണ്ടി
-    enable_mail_delivery: മെയിൽ ഡെലിവറി പ്രാപ്തമാക്കുക
-    end: അവസാനിക്കുന്നു
     ending_at: അവസാനിക്കുന്നു
     ending_in: അവസാനിക്കുന്നു
     ends_at: അവസാനിക്കുന്നു
@@ -746,7 +737,6 @@ ml:
     errors_prohibited_this_record_from_being_saved:
       one: 1 പിശക് ഈ റെക്കോർഡ് സംരക്ഷിക്കുന്നതിൽ നിന്ന് വിലക്കി
       other: "%{count} പിശകുകൾ ഈ റെക്കോർഡ് സംരക്ഷിക്കുന്നതിൽ നിന്ന് വിലക്കി"
-    event: ഇവന്റ്
     events:
       spree:
         cart:
@@ -766,8 +756,6 @@ ml:
     existing_shipments: നിലവിലുള്ള കയറ്റുമതി
     expedited_exchanges_warning: ഏതെങ്കിലും നിർദ്ദിഷ്ട എക്സ്ചേഞ്ചുകൾ സംരക്ഷിച്ച ഉടനെ ഉപഭോക്താവിന് അയയ്ക്കും. %{days_window} ദിവസത്തിനുള്ളിൽ യഥാർത്ഥ ഇനം തിരികെ നൽകിയില്ലെങ്കിൽ ഉപഭോക്താവിന് ഇനത്തിന്റെ മുഴുവൻ തുകയും ഈടാക്കും.
     expiration: കാലഹരണപ്പെടൽ
-    expiration_date: കാലഹരണപ്പെടുന്ന തീയതി
-    extension: വിപുലീകരണം
     extensions_directory: വിപുലീകരണ ഡയറക്‌ടറി
     facebook: ഫേസ്ബുക്ക്
     failed_payment_attempts: പേയ്‌മെന്റ് ശ്രമങ്ങൾ പരാജയപ്പെട്ടു
@@ -776,10 +764,7 @@ ml:
     filter: ഫിൽട്ടർ ചെയ്യുക
     filter_results: ഫലങ്ങൾ ഫിൽട്ടർ ചെയ്യുക
     filterable: ഫിൽട്ടറബിൾ
-    finalize: അന്തിമമാക്കുക
-    finalized: അന്തിമമാക്കി
     find_a_taxon: ഒരു ടാക്സൺ കണ്ടെത്തുക
-    first_item: ആദ്യ ഇനം
     first_name: പേരിന്റെ ആദ്യഭാഗം
     first_name_begins_with: ആദ്യ നാമം ആരംഭിക്കുന്നു
     firstname: പേരിന്റെ ആദ്യഭാഗം
@@ -790,18 +775,12 @@ ml:
     footer: അടിക്കുറിപ്പ്
     forgot_password: പാസ്വേഡ് മറന്നോ?
     free: സൗ ജന്യം
-    free_shipping: ഫ്രീ ഷിപ്പിംഗ്
-    free_shipping_amount: "-"
-    front_end: ഫ്രണ്ട് എൻഡ്
-    gateway: ഗേറ്റ്‌വേ
     gateway_error: ഗേറ്റ്‌വേ പിശക്
-    general: ജനറൽ
     general_settings: പൊതുവായ ക്രമീകരണങ്ങൾ
     generate_code: കൂപ്പൺ കോഡ് സൃഷ്‌ടിക്കുക
     get_back_to_the: എന്നതിലേക്ക് മടങ്ങുക
     go_to_category: വിഭാഗത്തിലേക്ക് പോകുക
     guest_checkout: അതിഥി ചെക്ക് out ട്ട്
-    guest_user_account: അതിഥിയായി ചെക്ക് out ട്ട് ചെയ്യുക
     has_no_shipped_units: ഷിപ്പുചെയ്‌ത യൂണിറ്റുകളൊന്നുമില്ല
     header_banner: തലക്കെട്ട് ബാനർ
     height: ഉയരം
@@ -822,29 +801,19 @@ ml:
       show_only: കാണിക്കുക മാത്രം
       supported_locales: പിന്തുണയ്‌ക്കുന്ന ലോക്കലുകൾ
       translations: വിവർത്തനങ്ങൾ
-    icon: ഐക്കൺ
     id: ഐഡി
-    image: ചിത്രം
     images: ചിത്രങ്ങൾ
     implement_eligible_for_return: "# യോഗ്യതയുള്ള_പ്രവര്ത്തനം നടപ്പിലാക്കേണ്ടതുണ്ടോ? നിങ്ങളുടെ യോഗ്യത വാലിഡേറ്ററിനായി."
     implement_requires_manual_intervention: "# Requires_manual_intervention നടപ്പിലാക്കേണ്ടതുണ്ടോ? നിങ്ങളുടെ യോഗ്യത വാലിഡേറ്ററിനായി."
     in_stock: സ്റ്റോക്കുണ്ട്
-    inactive: നിഷ്‌ക്രിയം
-    incl: incl.
     included_in_price: വിലയിൽ ഉൾപ്പെടുത്തിയിരിക്കുന്നു
-    included_price_validation: നിങ്ങൾ ഒരു സ്ഥിര നികുതി മേഖല സജ്ജമാക്കിയിട്ടില്ലെങ്കിൽ തിരഞ്ഞെടുക്കാനാവില്ല
     incomplete: അപൂർണ്ണമാണ്
     info_number_of_skus_not_shown:
       one: മറ്റൊന്ന്
       other: കൂടാതെ %{count} മറ്റുള്ളവരും
     info_product_has_multiple_skus: 'ഈ ഉൽപ്പന്നത്തിന് %{count} വേരിയന്റുകൾ ഉണ്ട്:'
     instagram: ഇൻസ്റ്റാഗ്രാം
-    instructions_to_reset_password: ചുവടെയുള്ള ഫോമിൽ നിങ്ങളുടെ ഇമെയിൽ നൽകുക
-    insufficient_stock: അപര്യാപ്തമായ സ്റ്റോക്ക് ലഭ്യമാണ്, %{on_hand} മാത്രം ശേഷിക്കുന്നു
-    insufficient_stock_item_quantity: അപര്യാപ്തമായ സ്റ്റോക്ക് അളവ് ലഭ്യമാണ്
     insufficient_stock_lines_present: ഈ ഓർ‌ഡറിലെ ചില ലൈൻ‌ ഇനങ്ങൾ‌ക്ക് മതിയായ അളവില്ല.
-    intercept_email_address: ഇമെയിൽ വിലാസം തടസ്സപ്പെടുത്തുക
-    intercept_email_instructions: ഇമെയിൽ സ്വീകർത്താവിനെ അസാധുവാക്കി ഈ വിലാസം ഉപയോഗിച്ച് മാറ്റിസ്ഥാപിക്കുക.
     internal_name: ആന്തരിക നാമം
     internationalization: അന്താരാഷ്ട്രവൽക്കരണം
     invalid_credit_card: ക്രെഡിറ്റ് കാർഡ് അസാധുവാണ്.
@@ -852,16 +821,11 @@ ml:
     invalid_payment_provider: പേയ്‌മെന്റ് ദാതാവ് അസാധുവാണ്.
     invalid_promotion_action: പ്രമോഷൻ നടപടി അസാധുവാണ്.
     invalid_promotion_rule: പ്രമോഷൻ നിയമം അസാധുവാണ്.
-    inventory: ഇൻവെന്ററി
-    inventory_adjustment: ഇൻവെന്ററി ക്രമീകരണം
     inventory_error_flash_for_insufficient_quantity: നിങ്ങളുടെ കാർട്ടിലെ ഒരു ഇനം ലഭ്യമല്ല.
-    inventory_state: ഇൻവെന്ററി സ്റ്റേറ്റ്
-    is_not_available_to_shipment_address: കയറ്റുമതി വിലാസത്തിൽ ലഭ്യമല്ല
     iso: ഐ‌എസ്ഒ ആൽഫ -2
     iso3: ഐ‌എസ്ഒ ആൽഫ -3
     iso_name: ഐ‌എസ്ഒ നാമം
     issued_on: പ്രസിദ്ധീകരിച്ചത്
-    item: ഇനം
     item_description: വസ്തുവിന്ടെ വിവരണം
     item_total: ഇനം ആകെ
     item_total_rule:
@@ -878,28 +842,16 @@ ml:
     last_name: പേരിന്റെ അവസാന ഭാഗം
     last_name_begins_with: അവസാന നാമം ആരംഭിക്കുന്നു
     lastname: പേരിന്റെ അവസാന ഭാഗം
-    learn_more: കൂടുതലറിവ് നേടുക
     lifetime_stats: ആജീവനാന്ത സ്ഥിതിവിവരക്കണക്കുകൾ
     limit_usage_to: ഉപയോഗം പരിമിതപ്പെടുത്തുക
     line_item_adjustments: ലൈൻ ഇന ക്രമീകരണങ്ങൾ
-    list: പട്ടിക
     loading: ലോഡിംഗ്
     loading_tree: മരം ലോഡുചെയ്യുന്നു. കാത്തിരിക്കൂ…
-    locale_changed: ലൊക്കേഷൻ മാറ്റി
     location: സ്ഥാനം
-    lock: ലോക്ക് ചെയ്യുക
     log_entries: ലോഗ് എൻ‌ട്രികൾ
-    log_in: ലോഗിൻ
     log_in_to_continue: തുടരാൻ ലോഗിൻ ചെയ്യുക
-    logged_in_as: ഇതായി പ്രവേശിച്ചു
-    logged_in_succesfully: വിജയകരമായി പ്രവേശിച്ചു
-    logged_out: നിങ്ങൾ ലോഗ് out ട്ട് ചെയ്‌തു.
     login: ലോഗിൻ
-    login_as_existing: നിലവിലുള്ള ഉപഭോക്താവായി പ്രവേശിക്കുക
-    login_failed: ലോഗിൻ പ്രാമാണീകരണം പരാജയപ്പെട്ടു.
-    login_name: ലോഗിൻ
     logo: ലോഗോ
-    logo_alt: ബ്രാൻഡ് ലോഗോ
     logout: ലോഗൗട്ട്
     logs: ലോഗുകൾ
     look_for_similar_items: സമാന ഇനങ്ങൾക്കായി തിരയുക
@@ -907,7 +859,6 @@ ml:
     mailer_logo: മെയിലർ ലോഗോ (JPG അല്ലെങ്കിൽ PNG ഇമേജുകൾ മാത്രം)
     make_refund: റീഫണ്ട് നൽകുക
     make_sure_the_above_reimbursement_amount_is_correct: മുകളിലുള്ള റീഇംബേഴ്സ്മെന്റ് തുക ശരിയാണെന്ന് ഉറപ്പാക്കുക
-    manage_promotion_categories: പ്രമോഷൻ വിഭാഗങ്ങൾ നിയന്ത്രിക്കുക
     manage_variants: വേരിയന്റുകൾ നിയന്ത്രിക്കുക
     manual_intervention_required: സ്വമേധയാലുള്ള ഇടപെടൽ ആവശ്യമാണ്
     master: മാസ്റ്റർ
@@ -916,16 +867,12 @@ ml:
     match_choices:
       all: എല്ലാം
       none: ഒന്നുമില്ല
-    max_items: പരമാവധി ഇനങ്ങൾ
     member_since: അംഗം മുതൽ
     memo: മെമ്മോ
     meta_description: മെറ്റാ വിവരണം
     meta_keywords: മെറ്റാ കീവേഡുകൾ
     meta_title: മെറ്റാ ശീർഷകം
-    metadata: മെറ്റാഡാറ്റ
-    minimal_amount: കുറഞ്ഞ തുക
     missing_return_authorization: "%{item_name} നായുള്ള റിട്ടേൺ അംഗീകാരം നഷ്‌ടമായി."
-    month: മാസം
     more: കൂടുതൽ
     move_stock_between_locations: ലൊക്കേഷനുകൾക്കിടയിൽ സ്റ്റോക്ക് നീക്കുക
     move_variant_to: വേരിയൻറ് ഇതിലേക്ക് നീക്കുക
@@ -951,15 +898,12 @@ ml:
       show_search: തിരയൽ കാണിക്കുക
       show_user_menu: ഉപയോക്തൃ മെനു കാണിക്കുക
       sign_up: സൈൻ അപ്പ് ചെയ്യുക
-    new: പുതിയത്
     new_adjustment: പുതിയ ക്രമീകരണം
     new_country: പുതിയ രാജ്യം
-    new_customer: പുതിയ അക്കൗണ്ട് സൃഷ്ടിക്കുക
     new_customer_return: പുതിയ ഉപഭോക്തൃ വരുമാനം
     new_image: പുതിയ ചിത്രം
     new_option_type: പുതിയ ഓപ്ഷൻ തരം
     new_order: പുതിയ ഉത്തരവ്
-    new_order_completed: പുതിയ ഓർഡർ പൂർത്തിയായി
     new_order_notifications_email: പുതിയ ഓർഡർ അറിയിപ്പുകൾ ഇമെയിൽ
     new_payment: പുതിയ പേയ്‌മെന്റ്
     new_payment_method: പുതിയ പേയ്‌മെന്റ് രീതി
@@ -981,44 +925,34 @@ ml:
     new_stock_location: പുതിയ സ്റ്റോക്ക് സ്ഥാനം
     new_stock_movement: പുതിയ സ്റ്റോക്ക് പ്രസ്ഥാനം
     new_stock_transfer: പുതിയ സ്റ്റോക്ക് കൈമാറ്റം
-    new_store_credit: പുതിയ സ്റ്റോർ ക്രെഡിറ്റ്
     new_store_credit_category: പുതിയ സ്റ്റോർ ക്രെഡിറ്റ് വിഭാഗം
     new_tax_category: പുതിയ നികുതി വിഭാഗം
     new_tax_rate: പുതിയ നികുതി നിരക്ക്
     new_taxon: പുതിയ ടാക്സൺ
     new_taxonomy: പുതിയ ടാക്സോണമി
-    new_tracker: പുതിയ ട്രാക്കർ
     new_user: പുതിയ ഉപയോക്താവ്
     new_variant: പുതിയ വേരിയൻറ്
     new_zone: പുതിയ സോൺ
     next: അടുത്തത്
     no_actions_added: പ്രവർത്തനങ്ങളൊന്നും ചേർത്തിട്ടില്ല
-    no_address_given: വിലാസമൊന്നും നൽകിയിട്ടില്ല
     no_available_date_set: ലഭ്യമായ തീയതി സജ്ജമാക്കിയിട്ടില്ല
     no_cc_type: N / A.
     no_country: ഒരു രാജ്യവും സജ്ജമാക്കിയിട്ടില്ല
     no_limits_zone: പരിധി ഇല്ല
     no_payment_found: പേയ്‌മെന്റുകളൊന്നും കണ്ടെത്തിയില്ല
     no_payment_provider_settings_message: ഈ പേയ്‌മെന്റ് ദാതാവിന് ഇഷ്‌ടാനുസൃത ക്രമീകരണങ്ങളൊന്നും ലഭ്യമല്ല
-    no_pending_payments: തീർപ്പാക്കാത്ത പേയ്‌മെന്റുകളൊന്നുമില്ല
     no_product_available:
       for_this_quantity: ക്ഷമിക്കണം, തിരഞ്ഞെടുത്ത അളവിൽ ചില ഉൽപ്പന്നങ്ങൾ ലഭ്യമല്ലെന്ന് തോന്നുന്നു.
       opps: ക്ഷമിക്കണം!
-    no_products_found: ഉൽപ്പന്നങ്ങളൊന്നും കണ്ടെത്തിയില്ല
     no_resource_found: "%{resource} ഒന്നും കണ്ടെത്തിയില്ല"
     no_results: ഫലങ്ങളൊന്നുമില്ല
-    no_returns_found: വരുമാനമൊന്നും കണ്ടെത്തിയില്ല
     no_rules_added: നിയമങ്ങളൊന്നും ചേർത്തിട്ടില്ല
     no_shipping_method_selected: ഷിപ്പിംഗ് രീതികളൊന്നും തിരഞ്ഞെടുത്തിട്ടില്ല.
     no_state_changes: ഇതുവരെ സംസ്ഥാന മാറ്റങ്ങളൊന്നുമില്ല.
     no_tracking_present: ട്രാക്കിംഗ് വിശദാംശങ്ങളൊന്നും നൽകിയിട്ടില്ല.
     none: ഒന്നുമില്ല
-    none_selected: ഒന്നും തിരഞ്ഞെടുത്തിട്ടില്ല
-    normal_amount: സാധാരണ തുക
     not: അല്ല
     not_available: N / A.
-    not_enough_stock: ഈ കൈമാറ്റം പൂർത്തിയാക്കുന്നതിന് ഉറവിട സ്ഥാനത്ത് മതിയായ പട്ടികയില്ല.
-    not_found: "%{resource} കണ്ടെത്തിയില്ല"
     note: കുറിപ്പ്
     notice_messages:
       icon_removed: ചിത്രം വിജയകരമായി നീക്കംചെയ്തു
@@ -1032,27 +966,20 @@ ml:
     num_orders: "# ഓർഡറുകൾ"
     number: നമ്പർ
     ok: ശരി
-    on_hand: കയ്യിൽ
-    open: തുറക്കുക
     open_all_adjustments: എല്ലാ ക്രമീകരണങ്ങളും തുറക്കുക
-    option_type: ഓപ്ഷൻ തരം
     option_type_placeholder: ഒരു ഓപ്ഷൻ തരം തിരഞ്ഞെടുക്കുക
     option_types: ഓപ്ഷൻ തരങ്ങൾ
-    option_value: ഓപ്ഷൻ മൂല്യം
     option_values: ഓപ്ഷൻ മൂല്യങ്ങൾ
     optional: ഓപ്ഷണൽ
     options: ഓപ്ഷനുകൾ
     or: അഥവാ
-    or_over_price: "%{price} അല്ലെങ്കിൽ അതിൽ കൂടുതൽ"
     order: ഓർഡർ
     order_adjustments: ഓർഡർ ക്രമീകരണം
     order_already_updated: ഓർഡർ ഇതിനകം അപ്‌ഡേറ്റുചെയ്‌തു.
     order_approved: ഓർഡർ അംഗീകരിച്ചു
     order_canceled: ഓർഡർ റദ്ദാക്കി
-    order_details: ഓർഡർ വിശദാംശങ്ങൾ
     order_email_resent: ഓർഡർ ഇമെയിൽ അയയ്ക്കുക
     order_has_no_payments: ഓർഡറിന് പേയ്‌മെന്റുകളൊന്നുമില്ല
-    order_information: ഓർഡർ വിവരം
     order_line_items: ഓർഡർ ലൈൻ ഇനങ്ങൾ
     order_mailer:
       cancel_email:
@@ -1078,7 +1005,6 @@ ml:
       total: 'ഓർഡർ ആകെ:'
     order_not_found: ഞങ്ങൾക്ക് നിങ്ങളുടെ ഓർഡർ കണ്ടെത്താൻ കഴിഞ്ഞില്ല. ആ പ്രവർത്തനം വീണ്ടും ശ്രമിക്കുക.
     order_number: "%{number} ഓർഡർ ചെയ്യുക"
-    order_processed_successfully: നിങ്ങളുടെ ഓർഡർ വിജയകരമായി പ്രോസസ്സ് ചെയ്തു
     order_resumed: ഓർഡർ പുനരാരംഭിച്ചു
     order_state:
       address: വിലാസം
@@ -1097,10 +1023,8 @@ ml:
     order_summary: ഓർഡർ സംഗ്രഹം
     order_sure_want_to: ഈ ഓർഡർ %{event} ചെയ്യണമെന്ന് നിങ്ങൾക്ക് ഉറപ്പാണോ?
     order_total: ഓർഡർ ആകെ
-    order_updated: ഓർഡർ അപ്‌ഡേറ്റുചെയ്‌തു
     orders: ഓർഡറുകൾ
     out_of_stock: ശേഖരം തീർന്നു പോയി
-    overview: അവലോകനം
     package_from: എന്നതിൽ നിന്നുള്ള പാക്കേജ്
     page_not_found: ക്ഷമിക്കണം! നിങ്ങൾ തിരയുന്ന പേജ് കണ്ടെത്താൻ കഴിയില്ല.
     pagination:
@@ -1110,18 +1034,14 @@ ml:
     password: Password
     paste: പേസ്റ്റ്
     path: പാത
-    pay: അടയ്ക്കുക
     payment: പേയ്മെന്റ്
     payment_amount: അടക്കേണ്ട തുക
     payment_could_not_be_created: പേയ്‌മെന്റ് സൃഷ്‌ടിക്കാനായില്ല.
     payment_identifier: പേയ്‌മെന്റ് ഐഡന്റിഫയർ
-    payment_information: പേയ്‌മെന്റ് വിവരങ്ങൾ
     payment_method: പണംകൊടുക്കൽരീതി
     payment_method_not_supported: ആ പേയ്‌മെന്റ് രീതി പിന്തുണയ്‌ക്കുന്നില്ല. മറ്റൊന്ന് തിരഞ്ഞെടുക്കുക.
     payment_methods: പേയ്‌മെന്റ് രീതികൾ
     payment_processing_failed: പേയ്‌മെന്റ് പ്രോസസ്സ് ചെയ്യാൻ കഴിഞ്ഞില്ല, നിങ്ങൾ നൽകിയ വിശദാംശങ്ങൾ പരിശോധിക്കുക
-    payment_processor_choose_banner_text: ഒരു പേയ്‌മെന്റ് പ്രോസസർ തിരഞ്ഞെടുക്കാൻ നിങ്ങൾക്ക് സഹായം ആവശ്യമുണ്ടെങ്കിൽ, സന്ദർശിക്കുക
-    payment_processor_choose_link: ഞങ്ങളുടെ പേയ്‌മെന്റ് പേജ്
     payment_provider_settings: പേയ്‌മെന്റ് ദാതാവിന്റെ ക്രമീകരണങ്ങൾ
     payment_state: പേയ്‌മെന്റ് നില
     payment_states:
@@ -1144,13 +1064,10 @@ ml:
       view_cart: സഞ്ചി കാണുക
     pending: ശേഷിക്കുന്നു
     pending_sale: വിൽപ്പന തീർപ്പുകൽപ്പിച്ചിട്ടില്ല
-    percent: ശതമാനം
     percent_per_item: ഓരോ ഇനത്തിനും ശതമാനം
     permalink: പെർമാലിങ്ക്
     phone: ഫോൺ
-    place_order: സ്ഥല ഓർഡർ
     please_define_payment_methods: ആദ്യം ചില പേയ്‌മെന്റ് രീതികൾ നിർവചിക്കുക.
-    please_enter_reasonable_quantity: ന്യായമായ അളവ് നൽകുക.
     plp:
       clear_all: എല്ലാം മായ്ക്കുക
       default: പരാജയം
@@ -1168,8 +1085,6 @@ ml:
       price_low_to_high: വില (കുറഞ്ഞത് - ഉയർന്നത്)
       results_for: ഫലങ്ങൾ
       sort_by: ഇങ്ങനെ അടുക്കുക
-    populate_get_error: എന്തോ കുഴപ്പം സംഭവിച്ചു. ഇനം വീണ്ടും ചേർക്കാൻ ശ്രമിക്കുക.
-    powered_by: പ്രായോജകർ
     pre_tax_amount: നികുതിക്കു മുമ്പുള്ള തുക
     pre_tax_refund_amount: നികുതിക്കു മുമ്പുള്ള റീഫണ്ട് തുക
     pre_tax_total: നികുതിക്കു മുമ്പുള്ള ആകെ
@@ -1181,15 +1096,11 @@ ml:
     previous_state_missing: n / a
     previously_used_card: മുമ്പ് ഉപയോഗിച്ച കാർഡുകൾ
     price: വില
-    price_range: വില പരിധി
     price_sack: വില ചാക്ക്
     prices: വിലകൾ
-    process: പ്രോസസ്സ്
     product: ഉൽപ്പന്നം
-    product_details: ഉൽപ്പന്നത്തിന്റെ വിവരം
     product_has_no_description: ഈ ഉൽപ്പന്നത്തിന് വിവരണമൊന്നുമില്ല
     product_not_available_in_this_currency: തിരഞ്ഞെടുത്ത കറൻസിയിൽ ഈ ഉൽപ്പന്നം ലഭ്യമല്ല.
-    product_properties: ഉൽപ്പന്ന സവിശേഷതകൾ
     product_rule:
       choose_products: ഉൽപ്പന്നങ്ങൾ തിരഞ്ഞെടുക്കുക
       label: ഓർഡറിൽ ഈ ഉൽപ്പന്നങ്ങളുടെ x തുക അടങ്ങിയിരിക്കണം
@@ -1265,26 +1176,16 @@ ml:
     provider: ദാതാവ്
     provider_settings_warning: നിങ്ങൾ ദാതാവിന്റെ തരം മാറ്റുകയാണെങ്കിൽ, ദാതാവിന്റെ ക്രമീകരണങ്ങൾ എഡിറ്റുചെയ്യുന്നതിന് മുമ്പ് നിങ്ങൾ ആദ്യം സംരക്ഷിക്കണം
     purchased_quantity: വാങ്ങിയ അളവ്
-    qty: ക്യൂട്ടി
     quantity: അളവ്
-    quantity_returned: അളവ് മടക്കി
-    quantity_shipped: അയച്ച അളവ്
     quick_search: ദ്രുത തിരയൽ ..
     rate: നിരക്ക്
     reason: കാരണം
-    receive: സ്വീകരിക്കുക
     receive_stock: സ്റ്റോക്ക് സ്വീകരിക്കുക
-    received: ലഭിച്ചു
-    reception_status: സ്വീകരണ നില
     reference: റഫറൻസ്
     reference_contains: റഫറൻസ് അടങ്ങിയിരിക്കുന്നു
     refund: റീഫണ്ട്
-    refund_amount_must_be_greater_than_zero: റീഫണ്ട് തുക പൂജ്യത്തേക്കാൾ കൂടുതലായിരിക്കണം
     refund_reasons: റീഫണ്ട് കാരണങ്ങൾ
-    refunded_amount: റീഫണ്ട് തുക
     refunds: റീഫണ്ടുകൾ
-    register: രജിസ്റ്റർ ചെയ്യുക
-    registration: രജിസ്ട്രേഷൻ
     reimburse: പരിഹാരം കൊടുക്കുക
     reimbursed: തിരിച്ചടച്ചു
     reimbursement: റീഇംബേഴ്സ്മെന്റ്
@@ -1300,76 +1201,54 @@ ml:
         subject: റീഇംബേഴ്സ്മെന്റ് അറിയിപ്പ്
         thanks: നിങ്ങളുടെ ബിസിനസ്സിന് നന്ദി.
         total_refunded: 'മൊത്തം റീഫണ്ട്: %{total}'
-    reimbursement_perform_failed: 'റീഇംബേഴ്സ്മെന്റ് നടത്താൻ കഴിഞ്ഞില്ല. പിശക്: %{error}'
     reimbursement_status: റീഇംബേഴ്സ്മെന്റ് നില
     reimbursement_type: റീഇംബേഴ്സ്മെന്റ് തരം
     reimbursement_type_override: റീഇംബേഴ്സ്മെന്റ് തരം ഓവർറൈഡ്
     reimbursement_types: റീഇംബേഴ്സ്മെന്റ് തരങ്ങൾ
-    reimbursements: റീഇംബേഴ്സ്മെൻറുകൾ
     reject: നിരസിക്കുക
     rejected: നിരസിച്ചു
     remember_me: എന്നെ ഓർമ്മിക്കുക
     remove: നീക്കംചെയ്യുക
     remove_image: ചിത്രം നീക്കംചെയ്യുക
     rename: പേരുമാറ്റുക
-    report: റിപ്പോർട്ട് ചെയ്യുക
     reports: റിപ്പോർട്ടുകൾ
     required: "*"
     required_fields: ആവശ്യമായ ഫീൽഡുകൾ
     resellable: പുനർവിൽപ്പന
     resend: വീണ്ടും അയയ്‌ക്കുക
-    reset_password: എന്റെ പാസ്സ്വേർഡ് റീസെറ്റ് ചെയ്യുക
-    response_code: പ്രതികരണ കോഡ്
-    resume: പുനരാരംഭിക്കുക
-    resumed: പുനരാരംഭിച്ചു
-    return: മടങ്ങുക
-    return_authorization: റിട്ടേൺ അംഗീകാരം
     return_authorization_canceled: റിട്ടേൺ അംഗീകാരം റദ്ദാക്കി
     return_authorization_reasons: റിട്ടേൺ അംഗീകാര കാരണങ്ങൾ
     return_authorization_states:
       authorized: അംഗീകാരം
       canceled: റദ്ദാക്കി
-    return_authorization_updated: റിട്ടേൺ അംഗീകാരം അപ്‌ഡേറ്റുചെയ്‌തു
     return_authorizations: റിട്ടേൺ അംഗീകാരങ്ങൾ
     return_item_inventory_unit_ineligible: റിട്ടേൺ ഇനത്തിന്റെ ഇൻവെന്ററി യൂണിറ്റ് ഷിപ്പുചെയ്യണം
     return_item_inventory_unit_reimbursed: റിട്ടേൺ ഇനത്തിന്റെ ഇൻവെന്ററി യൂണിറ്റ് ഇതിനകം തന്നെ തിരിച്ചടച്ചു
     return_item_order_not_completed: റിട്ടേൺ ഇനത്തിന്റെ ഓർഡർ പൂർത്തിയാക്കിയിരിക്കണം
     return_item_rma_ineligible: മടക്ക ഇനത്തിന് ഒരു ആർ‌എം‌എ ആവശ്യമാണ്
     return_item_time_period_ineligible: മടക്ക ഇനം യോഗ്യതയുള്ള സമയപരിധിക്ക് പുറത്താണ്
-    return_items: ഇനങ്ങൾ മടങ്ങുക
     return_items_cannot_be_associated_with_multiple_orders: മടങ്ങിവരുന്ന ഇനങ്ങൾ ഒന്നിലധികം ഓർഡറുകളുമായി ബന്ധപ്പെടുത്താൻ കഴിയില്ല.
     return_number: റിട്ടേൺ നമ്പർ
     return_quantity: റിട്ടേൺ അളവ്
-    returned: മടങ്ങി
     returns: റിട്ടേൺസ്
-    review: അവലോകനം
     risk: അപകടസാധ്യത
     risk_analysis: അപകടസാധ്യത വിശകലനം
     risky: അപകടസാധ്യത
-    rma_credit: ആർ‌എം‌എ ക്രെഡിറ്റ്
     rma_number: RMA നമ്പർ
-    rma_value: RMA മൂല്യം
     role_id: റോൾ ഐഡി
     roles: റോളുകൾ
     rules: നിയമങ്ങൾ
     safe: സുരക്ഷിതം
     sales_total: വിൽപ്പന ആകെ
-    sales_total_description: എല്ലാ ഓർഡറുകൾക്കുമായുള്ള വിൽപ്പന ആകെ
     sales_totals: വിൽപ്പന ആകെ
-    save_and_continue: സംരക്ഷിച്ച് തുടരുക
-    save_my_address: എന്റെ വിലാസം സംരക്ഷിക്കുക
     saving: സംരക്ഷിക്കുന്നത്
     say_no: ഇല്ല
     say_yes: അതെ
-    scope: ഭാവിയുളള
     search: തിരയുക
-    search_results: "'%{keywords}' എന്നതിനായുള്ള തിരയൽ ഫലങ്ങൾ"
     searching: തിരയുന്നു
-    secure_connection_type: സുരക്ഷിത കണക്ഷൻ തരം
     security_settings: സുരക്ഷാ ക്രമീകരണങ്ങൾ
     select: തിരഞ്ഞെടുക്കുക
     select_a_date: ഒരു തീയതി തിരഞ്ഞെടുക്കുക
-    select_a_date_range: ഒരു തീയതി ശ്രേണി തിരഞ്ഞെടുക്കുക
     select_a_return_authorization_reason: റിട്ടേൺ അംഗീകാരത്തിനായി ഒരു കാരണം തിരഞ്ഞെടുക്കുക
     select_a_stock_location: ഒരു സ്റ്റോക്ക് ലൊക്കേഷൻ തിരഞ്ഞെടുക്കുക
     select_a_store_credit_reason: സ്റ്റോർ ക്രെഡിറ്റിനായി ഒരു കാരണം തിരഞ്ഞെടുക്കുക
@@ -1377,12 +1256,9 @@ ml:
     select_from_prototype: പ്രോട്ടോടൈപ്പിൽ നിന്ന് തിരഞ്ഞെടുക്കുക
     select_stock: സ്റ്റോക്ക് തിരഞ്ഞെടുക്കുക
     selected_quantity_not_available: തിരഞ്ഞെടുത്ത %{item} ലഭ്യമല്ല.
-    send_copy_of_all_mails_to: എല്ലാ മെയിലുകളുടെയും പകർപ്പ് അയയ്‌ക്കുക
-    send_mails_as: ഇതുപോലെ മെയിലുകൾ അയയ്ക്കുക
     seo: എസ്.ഇ.ഒ.
     seo_robots: എസ്.ഇ.ഒ റോബോട്ടുകൾ
     seo_title: എസ്.ഇ.ഒ ശീർഷകം
-    server: സെർവർ
     server_error: സെർവർ ഒരു പിശക് നൽകി
     settings: ക്രമീകരണങ്ങൾ
     ship: കപ്പൽ

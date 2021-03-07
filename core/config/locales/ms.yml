@@ -686,27 +686,21 @@ ms:
     default_tax: Cukai Lalai
     default_tax_zone: Zon Cukai Lalai
     delete: Padam
-    delete_from_taxon: Padam Dari Teksi
     deleted: Dipadamkan
-    delivery: Penghantaran
     delivery_information: maklumat penghantaran
     depth: Kedalaman
     description: Penerangan
     destination: Destinasi
-    destroy: Hancurkan
     details: Perincian
     discontinue_on: Hentikan Hidup
     discontinued: Dihentikan
     discontinued_variants_present: Beberapa item baris dalam pesanan ini mempunyai produk yang tidak lagi tersedia.
-    discount_amount: Jumlah diskaun
-    dismiss_banner: Tidak, Terima kasih! Saya tidak berminat, jangan paparkan lagi mesej ini
     display: Paparan
     doesnt_track_inventory: Ia tidak menjejaki inventori
     dont_have_account: Tiada akaun?
     edit: Edit
     edit_reimbursement: Edit penggantian
     editing_resource: Mengedit %{resource}
-    editing_rma_reason: Sebab Penyuntingan RMA
     editing_user: Edit akaun anda
     eligibility_errors:
       messages:
@@ -725,9 +719,6 @@ ms:
         not_first_order: Kod kupon ini hanya boleh digunakan untuk pesanan pertama anda.
     email: E-mel
     empty: Kosong
-    empty_cart: Troli kosong
-    enable_mail_delivery: Dayakan Penghantaran Mel
-    end: Tamat
     ending_at: Berakhir pada
     ending_in: Berakhir di
     ends_at: Berakhir pada
@@ -746,7 +737,6 @@ ms:
     errors_prohibited_this_record_from_being_saved:
       one: 1 ralat melarang rekod ini disimpan
       other: Kesalahan %{count} melarang rekod ini disimpan
-    event: Acara
     events:
       spree:
         cart:
@@ -766,8 +756,6 @@ ms:
     existing_shipments: Penghantaran sedia ada
     expedited_exchanges_warning: Sebarang pertukaran yang ditentukan akan dihantar kepada pelanggan sebaik sahaja disimpan. Pelanggan akan dikenakan jumlah keseluruhan barang sekiranya mereka tidak mengembalikan barang asal dalam masa %{days_window} hari.
     expiration: Tamat tempoh
-    expiration_date: Tarikh luput
-    extension: Sambungan
     extensions_directory: Direktori Sambungan
     facebook: Facebook
     failed_payment_attempts: Percubaan Pembayaran Gagal
@@ -776,10 +764,7 @@ ms:
     filter: Tapis
     filter_results: Tapis Hasil
     filterable: Boleh ditapis
-    finalize: Selesaikan
-    finalized: Dimuktamadkan
     find_a_taxon: Cari Teksi
-    first_item: Item Pertama
     first_name: Nama pertama
     first_name_begins_with: Nama Pertama Bermula Dengan
     firstname: Nama pertama
@@ -790,18 +775,12 @@ ms:
     footer: Kaki
     forgot_password: lupa kata laluan?
     free: Percuma
-    free_shipping: Penghantaran percuma
-    free_shipping_amount: "-"
-    front_end: Bahagian Depan
-    gateway: Pintu Gerbang
     gateway_error: Ralat Gerbang
-    general: Am
     general_settings: Tetapan umum
     generate_code: Hasilkan kod kupon
     get_back_to_the: Kembali ke
     go_to_category: Pergi ke kategori
     guest_checkout: Daftar Keluar Tetamu
-    guest_user_account: Checkout sebagai Tetamu
     has_no_shipped_units: tidak mempunyai unit yang dihantar
     header_banner: Sepanduk tajuk
     height: Ketinggian
@@ -822,29 +801,19 @@ ms:
       show_only: Tunjukkan sahaja
       supported_locales: Lokasi yang Disokong
       translations: Terjemahan
-    icon: Ikon
     id: ID
-    image: Imej
     images: Gambar
     implement_eligible_for_return: 'Mesti melaksanakan #eligible_for_return? untuk EligibilityValidator anda.'
     implement_requires_manual_intervention: 'Mesti melaksanakan #revires_manual_intervention? untuk EligibilityValidator anda.'
     in_stock: Dalam stok
-    inactive: Tidak aktif
-    incl: termasuk
     included_in_price: Termasuk dalam Harga
-    included_price_validation: tidak dapat dipilih melainkan anda telah menetapkan Zon Pajak Lalai
     incomplete: Tidak lengkap
     info_number_of_skus_not_shown:
       one: dan satu sama lain
       other: dan %{count} yang lain
     info_product_has_multiple_skus: 'Produk ini mempunyai varian %{count}:'
     instagram: Instagram
-    instructions_to_reset_password: Sila masukkan e-mel anda pada borang di bawah
-    insufficient_stock: Stok tidak mencukupi, hanya tinggal baki %{on_hand}
-    insufficient_stock_item_quantity: Kuantiti stok tidak mencukupi
     insufficient_stock_lines_present: Sebilangan item baris dalam pesanan ini tidak mencukupi.
-    intercept_email_address: Memintas Alamat E-mel
-    intercept_email_instructions: Ganti penerima e-mel dan ganti dengan alamat ini.
     internal_name: Nama Dalaman
     internationalization: Pengantarabangsaan
     invalid_credit_card: Kad kredit tidak sah.
@@ -852,16 +821,11 @@ ms:
     invalid_payment_provider: Pembekal pembayaran tidak sah.
     invalid_promotion_action: Tindakan promosi tidak sah.
     invalid_promotion_rule: Peraturan promosi tidak sah.
-    inventory: Persediaan
-    inventory_adjustment: Penyesuaian Inventori
     inventory_error_flash_for_insufficient_quantity: Item dalam troli anda sudah tidak tersedia.
-    inventory_state: Keadaan Inventori
-    is_not_available_to_shipment_address: tidak tersedia untuk alamat penghantaran
     iso: ISO Alpha-2
     iso3: ISO Alpha-3
     iso_name: Nama ISO
     issued_on: Dikeluarkan Pada
-    item: Item
     item_description: Penerangan Item
     item_total: Jumlah Item
     item_total_rule:
@@ -878,28 +842,16 @@ ms:
     last_name: Nama terakhir
     last_name_begins_with: Nama Akhir Bermula Dengan
     lastname: Nama terakhir
-    learn_more: Ketahui Lebih Lanjut
     lifetime_stats: Statistik Sepanjang Hayat
     limit_usage_to: Hadkan penggunaan untuk
     line_item_adjustments: Pelarasan item baris
-    list: Senaraikan
     loading: Memuatkan
     loading_tree: Memuatkan pokok. Sila tunggu…
-    locale_changed: Lokasi Berubah
     location: Lokasi
-    lock: Kunci
     log_entries: Log Masuk
-    log_in: Log masuk
     log_in_to_continue: Log masuk untuk meneruskan
-    logged_in_as: Log masuk sebagai
-    logged_in_succesfully: Log masuk berjaya
-    logged_out: Anda telah log keluar.
     login: Log masuk
-    login_as_existing: Log masuk sebagai Pelanggan Sedia Ada
-    login_failed: Pengesahan log masuk gagal.
-    login_name: Log masuk
     logo: Logo
-    logo_alt: Logo jenama
     logout: Log keluar
     logs: Log
     look_for_similar_items: Cari barang serupa
@@ -907,7 +859,6 @@ ms:
     mailer_logo: Logo surat (gambar JPG atau PNG sahaja)
     make_refund: Buat bayaran balik
     make_sure_the_above_reimbursement_amount_is_correct: Pastikan jumlah pembayaran balik di atas betul
-    manage_promotion_categories: Urus Kategori Promosi
     manage_variants: Urus Varian
     manual_intervention_required: Perlu campur tangan manual
     master: Tuan
@@ -916,16 +867,12 @@ ms:
     match_choices:
       all: Semua
       none: Tiada
-    max_items: Item Maks
     member_since: Ahli sejak
     memo: Memo
     meta_description: Penerangan Meta
     meta_keywords: Kata Kunci Meta
     meta_title: Tajuk Meta
-    metadata: Metadata
-    minimal_amount: Jumlah Minimum
     missing_return_authorization: Kehilangan Kebenaran Pulangan untuk %{item_name}.
-    month: Sebulan
     more: Lebih banyak lagi
     move_stock_between_locations: Pindahkan Stok Antara Lokasi
     move_variant_to: Alihkan varian ke
@@ -951,15 +898,12 @@ ms:
       show_search: Tunjukkan carian
       show_user_menu: Tunjukkan menu pengguna
       sign_up: DAFTAR
-    new: Baru
     new_adjustment: Penyesuaian Baru
     new_country: Negara Baru
-    new_customer: Buat akaun baru
     new_customer_return: Pulangan Pelanggan Baru
     new_image: Imej Baru
     new_option_type: Jenis Opsyen Baru
     new_order: Pesanan Baru
-    new_order_completed: Pesanan Baru Selesai
     new_order_notifications_email: E-mel Pemberitahuan Pesanan Baru
     new_payment: Pembayaran Baru
     new_payment_method: Kaedah Pembayaran Baru
@@ -981,44 +925,34 @@ ms:
     new_stock_location: Lokasi Stok Baru
     new_stock_movement: Pergerakan Saham Baru
     new_stock_transfer: Pindahan Saham Baru
-    new_store_credit: Kredit Kedai Baru
     new_store_credit_category: Kategori Kredit Kedai Baru
     new_tax_category: Kategori Cukai Baru
     new_tax_rate: Kadar Cukai Baru
     new_taxon: Teksi Baru
     new_taxonomy: Taksonomi Baru
-    new_tracker: Penjejak Baru
     new_user: Pengguna baru
     new_variant: Varian Baru
     new_zone: Zon Baru
     next: Seterusnya
     no_actions_added: Tiada tindakan ditambah
-    no_address_given: Tidak ada alamat yang diberikan
     no_available_date_set: Tidak ada tarikh yang ditetapkan
     no_cc_type: N / A
     no_country: Tiada set negara
     no_limits_zone: Tiada had
     no_payment_found: Tiada pembayaran dijumpai
     no_payment_provider_settings_message: Penyedia pembayaran ini tidak mempunyai tetapan khusus
-    no_pending_payments: Tiada pembayaran belum selesai
     no_product_available:
       for_this_quantity: Maaf, nampaknya beberapa produk tidak tersedia dalam kuantiti yang dipilih.
       opps: Alamak!
-    no_products_found: Produk tidak dijumpai
     no_resource_found: Tidak dijumpai %{resource}
     no_results: Tiada keputusan
-    no_returns_found: Tiada pulangan dijumpai
     no_rules_added: Tiada peraturan ditambahkan
     no_shipping_method_selected: Tiada kaedah penghantaran dipilih.
     no_state_changes: Belum ada keadaan yang berubah.
     no_tracking_present: Tidak ada maklumat penjejakan.
     none: Tiada
-    none_selected: Tidak Dipilih
-    normal_amount: Jumlah Biasa
     not: tidak
     not_available: N / A
-    not_enough_stock: Tidak ada cukup inventori di lokasi sumber untuk menyelesaikan pemindahan ini.
-    not_found: "%{resource} tidak dijumpai"
     note: Catatan
     notice_messages:
       icon_removed: Gambar berjaya dikeluarkan
@@ -1032,27 +966,20 @@ ms:
     num_orders: "# Pesanan"
     number: Nombor
     ok: okey
-    on_hand: Dalam tangan
-    open: Buka
     open_all_adjustments: Buka Semua Pelarasan
-    option_type: Jenis Opsyen
     option_type_placeholder: Pilih jenis pilihan
     option_types: Jenis Pilihan
-    option_value: Nilai Opsyen
     option_values: Nilai Opsyen
     optional: Pilihan
     options: Pilihan
     or: atau
-    or_over_price: "%{price} atau lebih"
     order: Pesanan
     order_adjustments: Penyesuaian pesanan
     order_already_updated: Pesanan sudah dikemas kini.
     order_approved: Pesanan diluluskan
     order_canceled: Pesanan dibatalkan
-    order_details: maklumat pesanan
     order_email_resent: Pesanan E-mel Dihantarkan
     order_has_no_payments: Pesanan tidak mempunyai pembayaran
-    order_information: Maklumat Pesanan
     order_line_items: Baris Pesanan
     order_mailer:
       cancel_email:
@@ -1078,7 +1005,6 @@ ms:
       total: 'Jumlah pesanan:'
     order_not_found: Kami tidak menemui pesanan anda. Sila cuba lagi.
     order_number: Pesan %{number}
-    order_processed_successfully: Pesanan anda berjaya diproses
     order_resumed: Pesanan disambung semula
     order_state:
       address: alamat
@@ -1097,10 +1023,8 @@ ms:
     order_summary: Ringkasan Pesanan
     order_sure_want_to: Adakah anda pasti mahu %{event} pesanan ini?
     order_total: jumlah pesanan
-    order_updated: Pesanan Dikemas kini
     orders: Pesanan
     out_of_stock: Kehabisan Stok
-    overview: Gambaran keseluruhan
     package_from: pakej dari
     page_not_found: Maaf! Halaman yang anda cari tidak dapat dijumpai.
     pagination:
@@ -1110,18 +1034,14 @@ ms:
     password: Kata Laluan
     paste: Tampal
     path: Jalan
-    pay: bayar
     payment: Pembayaran
     payment_amount: Jumlah pembayaran
     payment_could_not_be_created: Pembayaran tidak dapat dibuat.
     payment_identifier: Pengecam Pembayaran
-    payment_information: Maklumat Pembayaran
     payment_method: Kaedah Pembayaran
     payment_method_not_supported: Kaedah pembayaran itu tidak disokong. Sila pilih yang lain.
     payment_methods: cara bayaran
     payment_processing_failed: Pembayaran tidak dapat diproses, sila periksa maklumat yang anda masukkan
-    payment_processor_choose_banner_text: Sekiranya anda memerlukan bantuan memilih pemproses pembayaran, sila lawati
-    payment_processor_choose_link: halaman pembayaran kami
     payment_provider_settings: Tetapan Pembekal Pembayaran
     payment_state: Negeri Pembayaran
     payment_states:
@@ -1144,13 +1064,10 @@ ms:
       view_cart: Lihat troli
     pending: Yang belum selesai
     pending_sale: Jualan Tertunda
-    percent: Peratus
     percent_per_item: Peratus Per Item
     permalink: Permalink
     phone: Telefon
-    place_order: Pesanan Tempat
     please_define_payment_methods: Tentukan dahulu beberapa kaedah pembayaran.
-    please_enter_reasonable_quantity: Sila masukkan kuantiti yang berpatutan.
     plp:
       clear_all: KOSONGKAN SEMUA
       default: DEFAULT
@@ -1168,8 +1085,6 @@ ms:
       price_low_to_high: HARGA (RENDAH - TINGGI)
       results_for: KEPUTUSAN UNTUK
       sort_by: DISUSUN MENGIKUT
-    populate_get_error: Ada yang tidak kena Cuba tambah item lagi.
-    powered_by: Dikuasai oleh
     pre_tax_amount: Amaun sebelum cukai
     pre_tax_refund_amount: Amaun Bayaran Balik Sebelum Cukai
     pre_tax_total: Jumlah Pra-Cukai
@@ -1181,15 +1096,11 @@ ms:
     previous_state_missing: n / a
     previously_used_card: Kad Yang Digunakan Sebelum Ini
     price: Harga
-    price_range: Julat harga
     price_sack: Harga Karung
     prices: Harga
-    process: Proses
     product: Produk
-    product_details: Maklumat produk
     product_has_no_description: Produk ini tidak mempunyai keterangan
     product_not_available_in_this_currency: Produk ini tidak terdapat dalam mata wang yang dipilih.
-    product_properties: Sifat Produk
     product_rule:
       choose_products: Pilih produk
       label: Pesanan mesti mengandungi x jumlah produk ini
@@ -1265,26 +1176,16 @@ ms:
     provider: Penyedia
     provider_settings_warning: Sekiranya anda menukar jenis penyedia, anda mesti menyimpan terlebih dahulu sebelum anda dapat mengedit tetapan penyedia
     purchased_quantity: Kuantiti yang Dibeli
-    qty: Kuantiti
     quantity: Kuantiti
-    quantity_returned: Kuantiti Dikembalikan
-    quantity_shipped: Kuantiti Dihantar
     quick_search: Pencarian segera..
     rate: Nilaikan
     reason: Sebab
-    receive: terima
     receive_stock: Terima Stok
-    received: Menerima
-    reception_status: Status Penerimaan
     reference: Rujukan
     reference_contains: Rujukan Mengandungi
     refund: Bayaran balik
-    refund_amount_must_be_greater_than_zero: Jumlah bayaran balik mestilah lebih besar daripada sifar
     refund_reasons: Sebab Bayaran Balik
-    refunded_amount: Jumlah yang Dikembalikan
     refunds: Bayaran Balik
-    register: Daftar
-    registration: Pendaftaran
     reimburse: Membayar balik
     reimbursed: Dibayar balik
     reimbursement: Bayaran Balik
@@ -1300,76 +1201,54 @@ ms:
         subject: Pemberitahuan Bayaran Balik
         thanks: Terima kasih atas urusan awak.
         total_refunded: 'Jumlah dikembalikan: %{total}'
-    reimbursement_perform_failed: 'Pembayaran balik tidak dapat dilakukan. Ralat: %{error}'
     reimbursement_status: Status pembayaran balik
     reimbursement_type: Jenis pembayaran balik
     reimbursement_type_override: Penggantian Jenis Bayaran Balik
     reimbursement_types: Jenis Bayaran Balik
-    reimbursements: Bayaran Balik
     reject: Tolak
     rejected: Ditolak
     remember_me: Ingat saya
     remove: Keluarkan
     remove_image: Keluarkan Imej
     rename: Namakan semula
-    report: Lapor
     reports: Laporan
     required: "*"
     required_fields: Ruangan wajib
     resellable: Boleh Dijual Semula
     resend: Hantar semula
-    reset_password: Tetapkan semula kata laluan saya
-    response_code: Kod Respons
-    resume: menyambung semula
-    resumed: Sambung semula
-    return: kembali
-    return_authorization: Kebenaran Pulangan
     return_authorization_canceled: Kebenaran kembali dibatalkan
     return_authorization_reasons: Sebab Kebenaran Kembali
     return_authorization_states:
       authorized: Dibenar
       canceled: Dibatalkan
-    return_authorization_updated: Kebenaran kembali dikemas kini
     return_authorizations: Kebenaran Pulangan
     return_item_inventory_unit_ineligible: Unit inventori item pemulangan mesti dihantar
     return_item_inventory_unit_reimbursed: Unit inventori item pengembalian sudah dibayar
     return_item_order_not_completed: Pesanan item kembali mesti dilengkapkan
     return_item_rma_ineligible: Item pemulangan memerlukan RMA
     return_item_time_period_ineligible: Item pengembalian adalah di luar jangka masa yang layak
-    return_items: Kembalikan Item
     return_items_cannot_be_associated_with_multiple_orders: Item pengembalian tidak boleh dikaitkan dengan banyak pesanan.
     return_number: Nombor Pulangan
     return_quantity: Pulangan Kuantiti
-    returned: Dikembalikan
     returns: Pulang
-    review: Kaji semula
     risk: Risiko
     risk_analysis: Analisis Risiko
     risky: Berisiko
-    rma_credit: Kredit RMA
     rma_number: Nombor RMA
-    rma_value: Nilai RMA
     role_id: ID Peranan
     roles: Peranan
     rules: Peraturan
     safe: Selamat
     sales_total: Jumlah Jualan
-    sales_total_description: Jumlah Jualan Untuk Semua Pesanan
     sales_totals: Jumlah Jualan
-    save_and_continue: Simpan dan Teruskan
-    save_my_address: Simpan alamat saya
     saving: Menyimpan
     say_no: Tidak
     say_yes: Ya
-    scope: Skop
     search: Cari
-    search_results: Hasil carian untuk '%{keywords}'
     searching: Mencari
-    secure_connection_type: Jenis Sambungan Selamat
     security_settings: Tetapan keselamatan
     select: Pilih
     select_a_date: Pilih tarikh
-    select_a_date_range: Pilih julat tarikh
     select_a_return_authorization_reason: Pilih alasan untuk kebenaran pengembalian
     select_a_stock_location: Pilih lokasi stok
     select_a_store_credit_reason: Pilih alasan untuk kredit kedai
@@ -1377,12 +1256,9 @@ ms:
     select_from_prototype: Pilih Daripada Prototaip
     select_stock: Pilih stok
     selected_quantity_not_available: "%{item} terpilih tidak tersedia."
-    send_copy_of_all_mails_to: Hantarkan Salinan Semua Surat Ke
-    send_mails_as: Hantar Mel Sebagai
     seo: SEO
     seo_robots: Robot SEO
     seo_title: Tajuk SEO
-    server: Pelayan
     server_error: Pelayan mengembalikan ralat
     settings: Tetapan
     ship: Kapal

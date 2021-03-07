@@ -686,27 +686,21 @@ lb:
     default_tax: Standardsteier
     default_tax_zone: Standard Steierzon
     delete: Läschen
-    delete_from_taxon: Läscht Vun Taxon
     deleted: Geläscht
-    delivery: Liwwerung
     delivery_information: Liwwerung Informatiounen
     depth: Déift
     description: Beschreiwung
     destination: Destinatioun
-    destroy: Zerstéiert
     details: Detailer
     discontinue_on: Stop On
     discontinued: Gestoppt
     discontinued_variants_present: E puer Zeilen an dëser Bestellung hunn Produkter déi net méi verfügbar sinn.
-    discount_amount: Remise Betrag
-    dismiss_banner: Nee Merci! Ech sinn net interesséiert, weisen dës Noriicht net nach eng Kéier
     display: Affichage
     doesnt_track_inventory: Et verfollegt keen Inventaire
     dont_have_account: Kee Kont?
     edit: Änneren
     edit_reimbursement: Remboursement änneren
     editing_resource: Redaktioun %{resource}
-    editing_rma_reason: Redaktioun RMA Grond
     editing_user: Ännert Äre Kont
     eligibility_errors:
       messages:
@@ -725,9 +719,6 @@ lb:
         not_first_order: Dëse Coupon Code kann nëmme fir Är éischt Bestellung applizéiert ginn.
     email: E-Mail
     empty: Eidel
-    empty_cart: Eidel Wuerekuerf
-    enable_mail_delivery: Aktivéiert Mail Liwwerung
-    end: Enn
     ending_at: Schluss um
     ending_in: Enn an
     ends_at: Schluss um
@@ -746,7 +737,6 @@ lb:
     errors_prohibited_this_record_from_being_saved:
       one: 1 Feeler verbueden datt dëse Rekord gespäichert gëtt
       other: "%{count} Feeler verbidden dëse Rekord ze späicheren"
-    event: Event
     events:
       spree:
         cart:
@@ -766,8 +756,6 @@ lb:
     existing_shipments: Bestehend Sendungen
     expedited_exchanges_warning: All spezifizéiert Austausch gëtt direkt beim Spueren un de Client verschéckt. De Client gëtt de ganze Betrag vum Artikel verrechent wa se den originale Punkt net bannent %{days_window} Deeg zréckginn.
     expiration: Oflaf
-    expiration_date: Oflaafsdatum
-    extension: Extensioun
     extensions_directory: Extensiounsverzeechnes
     facebook: Facebook
     failed_payment_attempts: Ausgefall Bezuelungsversich
@@ -776,10 +764,7 @@ lb:
     filter: Filter
     filter_results: Resultater filteren
     filterable: Filterbar
-    finalize: Finaliséieren
-    finalized: Finaliséiert
     find_a_taxon: Fannt e Taxon
-    first_item: Éischten Artikel
     first_name: Virnumm
     first_name_begins_with: Virnumm fänkt mat
     firstname: Virnumm
@@ -790,18 +775,12 @@ lb:
     footer: Fousszeilen
     forgot_password: Passwuert vergiess?
     free: Gratis
-    free_shipping: Versand fräi
-    free_shipping_amount: "-"
-    front_end: Front End
-    gateway: Paart
     gateway_error: Gateway Feeler
-    general: Allgemeng
     general_settings: Allgemeng Astellungen
     generate_code: Generéiere Coupon Code
     get_back_to_the: Zréck op den
     go_to_category: Gitt an d'Kategorie
     guest_checkout: Gaascht Kees
-    guest_user_account: Kees als Gaascht
     has_no_shipped_units: huet keng verschéckt Eenheeten
     header_banner: Header Banner
     height: Héicht
@@ -822,29 +801,19 @@ lb:
       show_only: Show nëmmen
       supported_locales: Ënnerstëtzte Lokaler
       translations: Iwwersetzungen
-    icon: Ikon
     id: Id
-    image: Bild
     images: Biller
     implement_eligible_for_return: 'Muss #berechtegt_zréck_ëmsetzen? fir Ären EligibilityValidator.'
     implement_requires_manual_intervention: 'Muss Dir #requires_manual_intervention implementéieren? fir Ären EligibilityValidator.'
     in_stock: Op Lager
-    inactive: Inaktiv
-    incl: inkl.
     included_in_price: Abegraff am Präis
-    included_price_validation: kann net ausgewielt ginn ausser Dir hutt eng Standardsteierzon agestallt
     incomplete: Onkomplett
     info_number_of_skus_not_shown:
       one: an een aneren
       other: an %{count} anerer
     info_product_has_multiple_skus: 'Dëst Produkt huet %{count} Varianten:'
     instagram: Instagram
-    instructions_to_reset_password: Gitt w.e.g. Är E-Mail an de Formulaire hei ënnen
-    insufficient_stock: Net genuch Lager verfügbar, just nach %{on_hand}
-    insufficient_stock_item_quantity: Net genuch Lagerquantitéit verfügbar
     insufficient_stock_lines_present: E puer Zeilartikelen an dëser Bestellung hunn net genuch Quantitéit.
-    intercept_email_address: Intercept Email Adress
-    intercept_email_instructions: Iwwerdribblen E-Mail Empfänger an ersetzt mat dëser Adress.
     internal_name: Internen Numm
     internationalization: Internationaliséierung
     invalid_credit_card: Ongülteg Kreditkaart.
@@ -852,16 +821,11 @@ lb:
     invalid_payment_provider: Ongültege Bezuelungsanbieter.
     invalid_promotion_action: Ongülteg Promotiounsaktioun.
     invalid_promotion_rule: Ongülteg Promotiounsregel.
-    inventory: Inventaire
-    inventory_adjustment: Inventaire Upassung
     inventory_error_flash_for_insufficient_quantity: En Element an Ärem Won ass net verfügbar.
-    inventory_state: Inventaire Staat
-    is_not_available_to_shipment_address: ass net zur Versandadress verfügbar
     iso: ISO Alpha-2
     iso3: ISO Alpha-3
     iso_name: ISO Numm
     issued_on: Ausgestallt Op
-    item: Artikel
     item_description: Element Beschreiwung
     item_total: Artikel Total
     item_total_rule:
@@ -878,28 +842,16 @@ lb:
     last_name: Familljennumm
     last_name_begins_with: Familljennumm fänkt mat
     lastname: Familljennumm
-    learn_more: Léier méi
     lifetime_stats: Liewensdauer Statistiken
     limit_usage_to: Limitéiert d'Benotzung op
     line_item_adjustments: Linn Element Upassung
-    list: Lëscht
     loading: Luede
     loading_tree: Luede Bam. Waart w.e.g. ...
-    locale_changed: Lokal geännert
     location: Standuert
-    lock: Spär
     log_entries: Aloggen Entréen
-    log_in: Mellt Iech un
     log_in_to_continue: Mellt Iech un fir weiderzemaachen
-    logged_in_as: Ageloggt als
-    logged_in_succesfully: Erfolleg ageloggt
-    logged_out: Dir sidd ofgemellt.
     login: Login
-    login_as_existing: Login als bestehende Client
-    login_failed: D'Authentifikatioun vum Login ass feelgeschloen.
-    login_name: Login
     logo: Logo
-    logo_alt: Mark Logo
     logout: Ausloggen
     logs: Logbicher
     look_for_similar_items: Sicht ähnlech Saachen
@@ -907,7 +859,6 @@ lb:
     mailer_logo: Mailer Logo (nëmme JPG oder PNG Biller)
     make_refund: Maacht Remboursement
     make_sure_the_above_reimbursement_amount_is_correct: Gitt sécher datt den uewe genannte Remboursementsbetrag richteg ass
-    manage_promotion_categories: Managen Promotiounskategorien
     manage_variants: Managen Varianten
     manual_intervention_required: Manuell Interventioun erfuerderlech
     master: Meeschter
@@ -916,16 +867,12 @@ lb:
     match_choices:
       all: Alles
       none: Keen
-    max_items: Max Artikelen
     member_since: Member säit
     memo: Memo
     meta_description: Meta Beschreiwung
     meta_keywords: Meta Schlësselwierder
     meta_title: Meta Titel
-    metadata: Metadaten
-    minimal_amount: Minimal Betrag
     missing_return_authorization: Vermësste Retour Autorisatioun fir %{item_name}.
-    month: Mount
     more: Méi
     move_stock_between_locations: Plënneren Stock Tëscht Locations
     move_variant_to: Plënneren Variant ze
@@ -951,15 +898,12 @@ lb:
       show_search: Show Sich
       show_user_menu: Benotzermenü weisen
       sign_up: SECH UMELLEN
-    new: Nei
     new_adjustment: Nei Upassung
     new_country: Neit Land
-    new_customer: Neie Kont erstellen
     new_customer_return: Neie Client zréck
     new_image: Neit Bild
     new_option_type: Nei Optiounstyp
     new_order: Nei Uerdnung
-    new_order_completed: Nei Uerdnung ofgeschloss
     new_order_notifications_email: Nei Bestellung Notifikatiounen E-Mail
     new_payment: Nei Bezuelung
     new_payment_method: Nei Bezuelmethod
@@ -981,44 +925,34 @@ lb:
     new_stock_location: New Stock Location
     new_stock_movement: Nei Aktiounsbewegung
     new_stock_transfer: Neie Stock Transfer
-    new_store_credit: Neie Store Kreditt
     new_store_credit_category: Neie Store Kreditt Kategorie
     new_tax_category: Nei Steier Kategorie
     new_tax_rate: Neie Steiersaz
     new_taxon: Nei Taxon
     new_taxonomy: Nei Taxonomie
-    new_tracker: Neien Tracker
     new_user: Neie Benotzer
     new_variant: Nei Variant
     new_zone: Nei Zone
     next: Nächst
     no_actions_added: Keng Aktiounen derbäi
-    no_address_given: Keng Adress uginn
     no_available_date_set: Keen verfügbaren Datum festgeluecht
     no_cc_type: N / A
     no_country: Kee Land gesat
     no_limits_zone: Keng Grenzen
     no_payment_found: Keng Bezuelung fonnt
     no_payment_provider_settings_message: Dëse Bezuelungsanbieter huet keng personaliséiert Astellunge verfügbar
-    no_pending_payments: Keng ofhängeg Bezuelungen
     no_product_available:
       for_this_quantity: Entschëllegt, et gesäit aus wéi verschidde Produkter net a gewielter Quantitéit verfügbar sinn.
       opps: Ups!
-    no_products_found: Keng Produkter fonnt
     no_resource_found: Keen %{resource} fonnt
     no_results: Keng Resultater
-    no_returns_found: Kee Retour fonnt
     no_rules_added: Keng Regele bäigefüügt
     no_shipping_method_selected: Kee Versandmethod ausgewielt.
     no_state_changes: Keen Zoustand ännert sech nach.
     no_tracking_present: Keng Verfollegungsdetailer geliwwert.
     none: Keen
-    none_selected: Keen Ausgewielt
-    normal_amount: Normal Betrag
     not: net
     not_available: N / A
-    not_enough_stock: Et gëtt net genuch Inventar op der Quellestand fir dësen Transfert fäerdeg ze maachen.
-    not_found: "%{resource} gëtt net fonnt"
     note: Notiz
     notice_messages:
       icon_removed: Bild gouf erfollegräich ewechgeholl
@@ -1032,27 +966,20 @@ lb:
     num_orders: "# Bestellungen"
     number: Zuel
     ok: ok
-    on_hand: Op Hand
-    open: Opmaachen
     open_all_adjustments: Öffnen All Upassungen
-    option_type: Optiounstyp
     option_type_placeholder: Wielt eng Optiounstyp
     option_types: Optiounen Typen
-    option_value: Optioun Wäert
     option_values: Optioun Wäerter
     optional: Optional
     options: Optiounen
     or: oder
-    or_over_price: "%{price} oder méi"
     order: Uerdnung
     order_adjustments: Upassunge bestellen
     order_already_updated: D'Bestellung gouf scho aktualiséiert.
     order_approved: Uerdnung guttgeheescht
     order_canceled: Bestellung annuléiert
-    order_details: Bestelldetailer
     order_email_resent: Bestellt E-Mail Nees
     order_has_no_payments: Bestellung huet keng Bezuelungen
-    order_information: Bestellinformatioun
     order_line_items: Bestellungslinn
     order_mailer:
       cancel_email:
@@ -1078,7 +1005,6 @@ lb:
       total: 'Uerdnung Total:'
     order_not_found: Mir konnten Är Bestellung net fannen. Probéiert déi Aktioun nach eng Kéier.
     order_number: Bestellt %{number}
-    order_processed_successfully: Är Bestellung gouf erfollegräich veraarbecht
     order_resumed: Uerder erëm opgeholl
     order_state:
       address: Adress
@@ -1097,10 +1023,8 @@ lb:
     order_summary: Uerdnung Resumé
     order_sure_want_to: Sidd Dir sécher datt Dir dës Bestellung %{event} wëllt?
     order_total: Uerdnung Total
-    order_updated: Uerdnung aktualiséiert
     orders: Commanden
     out_of_stock: Net op Lager
-    overview: Iwwersiicht
     package_from: Package vun
     page_not_found: Entschëllegt! Säit déi Dir sicht kann net fonnt ginn.
     pagination:
@@ -1110,18 +1034,14 @@ lb:
     password: Passwuert
     paste: Paste
     path: Wee
-    pay: bezuelen
     payment: Bezuelen
     payment_amount: Bezuelungsbetrag
     payment_could_not_be_created: Bezuelung konnt net erstallt ginn.
     payment_identifier: Bezuelen Identifizéierer
-    payment_information: Bezuelungsinformatioun
     payment_method: Bezuelmethod
     payment_method_not_supported: Déi Bezuelmethod gëtt net ënnerstëtzt. Wielt w.e.g. eng aner.
     payment_methods: Bezuelmethoden
     payment_processing_failed: Bezuelung konnt net veraarbecht ginn, préift w.e.g. d'Detailer déi Dir aginn hutt
-    payment_processor_choose_banner_text: Wann Dir Hëllef braucht fir e Bezuelprozessor ze wielen, gitt weg
-    payment_processor_choose_link: eis Bezuelungssäit
     payment_provider_settings: Bezuelen Provider Astellunge
     payment_state: Bezuelungsstaat
     payment_states:
@@ -1144,13 +1064,10 @@ lb:
       view_cart: Kuerf kucken
     pending: Waarden
     pending_sale: Waarden Verkaf
-    percent: Prozentsaz
     percent_per_item: Prozentsaz pro Artikel
     permalink: Permalink
     phone: Telefon
-    place_order: Bestellung maachen
     please_define_payment_methods: Definéiert w.e.g. fir d'éischt e puer Bezuelmethoden.
-    please_enter_reasonable_quantity: Gitt w.e.g. eng raisonnabel Quantitéit an.
     plp:
       clear_all: ALLEGUER KLOER
       default: DEFAULT
@@ -1168,8 +1085,6 @@ lb:
       price_low_to_high: PRÄIS (LOW - HIGH)
       results_for: RESULTATER FIR
       sort_by: SORTERT VUN
-    populate_get_error: Eppes ass falsch gaang. Probéiert w.e.g. nach eng Kéier den Artikel bäizefügen.
-    powered_by: Bereetgestallt vun
     pre_tax_amount: Pre-Tax Betrag
     pre_tax_refund_amount: Pre-Tax Remboursement Betrag
     pre_tax_total: Pre-Tax Total
@@ -1181,15 +1096,11 @@ lb:
     previous_state_missing: n / a
     previously_used_card: Virdrun benotzt Kaarte
     price: Präis
-    price_range: Präis Range
     price_sack: Präis Sak
     prices: Präisser
-    process: Prozess
     product: Produkt
-    product_details: Produkt Detailer
     product_has_no_description: Dëst Produkt huet keng Beschreiwung
     product_not_available_in_this_currency: Dëst Produkt ass net verfügbar an der gewielter Währung.
-    product_properties: Produkt Properties
     product_rule:
       choose_products: Wielt Produkter
       label: Bestellung muss x Betrag vun dëse Produkter enthalen
@@ -1265,26 +1176,16 @@ lb:
     provider: Fournisseur
     provider_settings_warning: Wann Dir de Providerentyp ännert, musst Dir als éischt späicheren ier Dir d'Provider-Astellunge ännere kënnt
     purchased_quantity: Kaaft Quantitéit
-    qty: Zuel
     quantity: Quantitéit
-    quantity_returned: Quantitéit zréck
-    quantity_shipped: Quantitéit verschéckt
     quick_search: Schnell sichen ..
     rate: Taux
     reason: Grond
-    receive: kréien
     receive_stock: Kritt Stock
-    received: Krut
-    reception_status: Empfangsstatus
     reference: Referenz
     reference_contains: Referenz Enthält
     refund: Remboursement
-    refund_amount_must_be_greater_than_zero: Zréckbezuelende Betrag muss méi grouss wéi Null sinn
     refund_reasons: Remboursement Grënn
-    refunded_amount: Rembourséiert Betrag
     refunds: Remboursementer
-    register: Registréiert
-    registration: Umeldung
     reimburse: Rembourséieren
     reimbursed: Rembourséiert
     reimbursement: Remboursement
@@ -1300,76 +1201,54 @@ lb:
         subject: Remboursement Notifikatioun
         thanks: Merci fir Äert Geschäft.
         total_refunded: 'Total rembourséiert: %{total}'
-    reimbursement_perform_failed: 'De Remboursement konnt net ausgefouert ginn. Feeler: %{error}'
     reimbursement_status: Remboursement Status
     reimbursement_type: Remboursementstyp
     reimbursement_type_override: Remboursementstyp Iwwerschreiwen
     reimbursement_types: Remboursement Zorte
-    reimbursements: Remboursementer
     reject: Oflehnung
     rejected: Ofgeleent
     remember_me: Erënner dech u mech
     remove: Ewechzehuelen
     remove_image: Ewechzehuelen Bild
     rename: Ëmbenennen
-    report: Bericht
     reports: Rapporten
     required: "*"
     required_fields: erfuerderlech Felder
     resellable: Wiederverkafbar
     resend: Nees schécken
-    reset_password: Setzt mäi Passwuert zréck
-    response_code: Äntwert Code
-    resume: Liewenslaf
-    resumed: Opgeholl
-    return: zréckginn
-    return_authorization: Retour Autorisatioun
     return_authorization_canceled: Retour Autorisatioun annuléiert
     return_authorization_reasons: Retour Autorisatioun Grënn
     return_authorization_states:
       authorized: Autoriséiert
       canceled: Annuléiert
-    return_authorization_updated: Retour Autorisatioun aktualiséiert
     return_authorizations: Retour Autorisatiounen
     return_item_inventory_unit_ineligible: Inventar Eenheet vum Retourartikel muss verschéckt ginn
     return_item_inventory_unit_reimbursed: Inventar Eenheet vum Retourartikel ass scho rembourséiert
     return_item_order_not_completed: Bestellung vum Retourartikel muss ofgeschloss sinn
     return_item_rma_ineligible: Retourartikel erfuerdert en RMA
     return_item_time_period_ineligible: Retourartikel ass ausserhalb vun der qualifizéierter Zäitperiod
-    return_items: Retour Artikelen
     return_items_cannot_be_associated_with_multiple_orders: Retour Elementer kënnen net mat méi Bestellungen assoziéiert ginn.
     return_number: Retour Zuel
     return_quantity: Retour Quantitéit
-    returned: Zréckgesat
     returns: Returns
-    review: Iwwerpréiwung
     risk: Risiko
     risk_analysis: Risiko Analyse
     risky: Riskant
-    rma_credit: RMA Kreditt
     rma_number: RMA Zuel
-    rma_value: RMA Wäert
     role_id: Roll ID
     roles: Rollen
     rules: Regelen
     safe: Sécher
     sales_total: Verkaf Total
-    sales_total_description: Sales Total Fir All Bestellungen
     sales_totals: Sales Total
-    save_and_continue: Späichert a weider
-    save_my_address: Späichert meng Adress
     saving: Spueren
     say_no: Nee
     say_yes: jo
-    scope: Ëmfang
     search: Sichen
-    search_results: Sichresultater fir '%{keywords}'
     searching: Sichen
-    secure_connection_type: Sécher Connexiounstyp
     security_settings: Sécherheetsastellungen
     select: Wielt
     select_a_date: Wielt en Datum
-    select_a_date_range: Wielt en Datumberäich
     select_a_return_authorization_reason: Wielt e Grond fir d'Retourautorisatioun
     select_a_stock_location: Wielt eng Aktieplaz
     select_a_store_credit_reason: Wielt e Grond fir de Buttek Kreditt
@@ -1377,12 +1256,9 @@ lb:
     select_from_prototype: Wielt Vun Prototyp
     select_stock: Wielt Stock
     selected_quantity_not_available: ausgewielt vun %{item} ass net verfügbar.
-    send_copy_of_all_mails_to: Schéckt Kopie vun alle Mailen un
-    send_mails_as: Schéckt Mails Wéi
     seo: SEO
     seo_robots: SEO Roboter
     seo_title: SEO Titel
-    server: Server
     server_error: De Server huet e Feeler zréckginn
     settings: Astellungen
     ship: Schëff

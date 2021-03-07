@@ -686,27 +686,21 @@ kn:
     default_tax: ಡೀಫಾಲ್ಟ್ ತೆರಿಗೆ
     default_tax_zone: ಡೀಫಾಲ್ಟ್ ತೆರಿಗೆ ವಲಯ
     delete: ಅಳಿಸಿ
-    delete_from_taxon: ಟ್ಯಾಕ್ಸನ್‌ನಿಂದ ಅಳಿಸಿ
     deleted: ಅಳಿಸಲಾಗಿದೆ
-    delivery: ವಿತರಣೆ
     delivery_information: ವಿತರಣಾ ಮಾಹಿತಿ
     depth: ಆಳ
     description: ವಿವರಣೆ
     destination: ತಲುಪುವ ದಾರಿ
-    destroy: ನಾಶ
     details: ವಿವರಗಳು
     discontinue_on: ಆನ್ ಮಾಡಿ
     discontinued: ನಿಲ್ಲಿಸಲಾಗಿದೆ
     discontinued_variants_present: ಈ ಆದೇಶದಲ್ಲಿನ ಕೆಲವು ಸಾಲಿನ ವಸ್ತುಗಳು ಇನ್ನು ಮುಂದೆ ಲಭ್ಯವಿಲ್ಲದ ಉತ್ಪನ್ನಗಳನ್ನು ಹೊಂದಿವೆ.
-    discount_amount: ರಿಯಾಯಿತಿ ಮೊತ್ತ
-    dismiss_banner: ಬೇಡ ಧನ್ಯವಾದಗಳು! ನನಗೆ ಆಸಕ್ತಿ ಇಲ್ಲ, ಈ ಸಂದೇಶವನ್ನು ಮತ್ತೆ ಪ್ರದರ್ಶಿಸಬೇಡಿ
     display: ಪ್ರದರ್ಶನ
     doesnt_track_inventory: ಇದು ದಾಸ್ತಾನು ಟ್ರ್ಯಾಕ್ ಮಾಡುವುದಿಲ್ಲ
     dont_have_account: ಖಾತೆ ಇಲ್ಲವೇ?
     edit: ತಿದ್ದು
     edit_reimbursement: ಮರುಪಾವತಿಯನ್ನು ಸಂಪಾದಿಸಿ
     editing_resource: "%{resource} ಅನ್ನು ಸಂಪಾದಿಸಲಾಗುತ್ತಿದೆ"
-    editing_rma_reason: ಆರ್ಎಂಎ ಕಾರಣವನ್ನು ಸಂಪಾದಿಸಲಾಗುತ್ತಿದೆ
     editing_user: ನಿಮ್ಮ ಖಾತೆಯನ್ನು ಸಂಪಾದಿಸಿ
     eligibility_errors:
       messages:
@@ -725,9 +719,6 @@ kn:
         not_first_order: ಈ ಕೂಪನ್ ಕೋಡ್ ಅನ್ನು ನಿಮ್ಮ ಮೊದಲ ಆದೇಶಕ್ಕೆ ಮಾತ್ರ ಅನ್ವಯಿಸಬಹುದು.
     email: ಇಮೇಲ್
     empty: ಖಾಲಿ
-    empty_cart: ಖಾಲಿ ಬಂಡಿ
-    enable_mail_delivery: ಮೇಲ್ ವಿತರಣೆಯನ್ನು ಸಕ್ರಿಯಗೊಳಿಸಿ
-    end: ಅಂತ್ಯ
     ending_at: ನಲ್ಲಿ ಕೊನೆಗೊಳ್ಳುತ್ತದೆ
     ending_in: ರಲ್ಲಿ ಕೊನೆಗೊಳ್ಳುತ್ತಿದೆ
     ends_at: ನಲ್ಲಿ ಕೊನೆಗೊಳ್ಳುತ್ತದೆ
@@ -746,7 +737,6 @@ kn:
     errors_prohibited_this_record_from_being_saved:
       one: 1 ದೋಷವು ಈ ದಾಖಲೆಯನ್ನು ಉಳಿಸುವುದನ್ನು ನಿಷೇಧಿಸಿದೆ
       other: "%{count} ದೋಷಗಳು ಈ ದಾಖಲೆಯನ್ನು ಉಳಿಸುವುದನ್ನು ನಿಷೇಧಿಸಿವೆ"
-    event: ಈವೆಂಟ್
     events:
       spree:
         cart:
@@ -766,8 +756,6 @@ kn:
     existing_shipments: ಅಸ್ತಿತ್ವದಲ್ಲಿರುವ ಸಾಗಣೆಗಳು
     expedited_exchanges_warning: ಯಾವುದೇ ನಿರ್ದಿಷ್ಟ ವಿನಿಮಯ ಕೇಂದ್ರಗಳು ಉಳಿಸಿದ ಕೂಡಲೇ ಗ್ರಾಹಕರಿಗೆ ರವಾನೆಯಾಗುತ್ತದೆ. %{days_window} ದಿನಗಳಲ್ಲಿ ಮೂಲ ವಸ್ತುವನ್ನು ಹಿಂತಿರುಗಿಸದಿದ್ದರೆ ಗ್ರಾಹಕರಿಗೆ ವಸ್ತುವಿನ ಸಂಪೂರ್ಣ ಮೊತ್ತವನ್ನು ವಿಧಿಸಲಾಗುತ್ತದೆ.
     expiration: ಮುಕ್ತಾಯ
-    expiration_date: ಮುಕ್ತಾಯ ದಿನಾಂಕ
-    extension: ವಿಸ್ತರಣೆ
     extensions_directory: ವಿಸ್ತರಣೆಗಳ ಡೈರೆಕ್ಟರಿ
     facebook: ಫೇಸ್ಬುಕ್
     failed_payment_attempts: ಪಾವತಿ ಪ್ರಯತ್ನಗಳು ವಿಫಲವಾಗಿವೆ
@@ -776,10 +764,7 @@ kn:
     filter: ಫಿಲ್ಟರ್ ಮಾಡಿ
     filter_results: ಫಲಿತಾಂಶಗಳನ್ನು ಫಿಲ್ಟರ್ ಮಾಡಿ
     filterable: ಫಿಲ್ಟರಬಲ್
-    finalize: ಅಂತಿಮಗೊಳಿಸಿ
-    finalized: ಅಂತಿಮಗೊಳಿಸಲಾಗಿದೆ
     find_a_taxon: ಟ್ಯಾಕ್ಸನ್ ಹುಡುಕಿ
-    first_item: ಮೊದಲ ಐಟಂ
     first_name: ಮೊದಲ ಹೆಸರು
     first_name_begins_with: ಮೊದಲ ಹೆಸರು ಪ್ರಾರಂಭವಾಗುತ್ತದೆ
     firstname: ಮೊದಲ ಹೆಸರು
@@ -790,18 +775,12 @@ kn:
     footer: ಅಡಿಟಿಪ್ಪಣಿ
     forgot_password: ಪಾಸ್ವರ್ಡ್ ಮರೆತಿರಾ?
     free: ಉಚಿತ
-    free_shipping: ಉಚಿತ ಸಾಗಾಟ
-    free_shipping_amount: "-"
-    front_end: ಫ್ರಂಟ್ ಎಂಡ್
-    gateway: ಗೇಟ್‌ವೇ
     gateway_error: ಗೇಟ್‌ವೇ ದೋಷ
-    general: ಜನರಲ್
     general_settings: ಸಾಮಾನ್ಯ ಸೆಟ್ಟಿಂಗ್ಗಳು
     generate_code: ಕೂಪನ್ ಕೋಡ್ ರಚಿಸಿ
     get_back_to_the: ಗೆ ಹಿಂತಿರುಗಿ
     go_to_category: ವರ್ಗಕ್ಕೆ ಹೋಗಿ
     guest_checkout: ಅತಿಥಿ ಚೆಕ್ out ಟ್
-    guest_user_account: ಅತಿಥಿಯಾಗಿ ಚೆಕ್ out ಟ್
     has_no_shipped_units: ಯಾವುದೇ ಸಾಗಿಸಲಾದ ಘಟಕಗಳನ್ನು ಹೊಂದಿಲ್ಲ
     header_banner: ಹೆಡರ್ ಬ್ಯಾನರ್
     height: ಎತ್ತರ
@@ -822,29 +801,19 @@ kn:
       show_only: ತೋರಿಸು ಮಾತ್ರ
       supported_locales: ಬೆಂಬಲಿತ ಲೊಕೇಲ್ಸ್
       translations: ಅನುವಾದಗಳು
-    icon: ಐಕಾನ್
     id: ಐಡಿ
-    image: ಚಿತ್ರ
     images: ಚಿತ್ರಗಳು
     implement_eligible_for_return: "# ಅನರ್ಹ_ ಫಾರ್_ ರಿಟರ್ನ್ ಅನ್ನು ಕಾರ್ಯಗತಗೊಳಿಸಬೇಕೇ? ನಿಮ್ಮ ಅರ್ಹತಾ ವ್ಯಾಲಿಡೇಟರ್ಗಾಗಿ."
     implement_requires_manual_intervention: "# Requires_manual_intervention ಅನ್ನು ಕಾರ್ಯಗತಗೊಳಿಸಬೇಕೇ? ನಿಮ್ಮ ಅರ್ಹತಾ ವ್ಯಾಲಿಡೇಟರ್ಗಾಗಿ."
     in_stock: ಉಪಲಬ್ದವಿದೆ
-    inactive: ನಿಷ್ಕ್ರಿಯ
-    incl: incl.
     included_in_price: ಬೆಲೆಯಲ್ಲಿ ಸೇರಿಸಲಾಗಿದೆ
-    included_price_validation: ನೀವು ಡೀಫಾಲ್ಟ್ ತೆರಿಗೆ ವಲಯವನ್ನು ಹೊಂದಿಸದ ಹೊರತು ಆಯ್ಕೆ ಮಾಡಲಾಗುವುದಿಲ್ಲ
     incomplete: ಅಪೂರ್ಣ
     info_number_of_skus_not_shown:
       one: ಮತ್ತು ಇನ್ನೊಬ್ಬರು
       other: ಮತ್ತು %{count} ಇತರರು
     info_product_has_multiple_skus: 'ಈ ಉತ್ಪನ್ನವು %{count} ರೂಪಾಂತರಗಳನ್ನು ಹೊಂದಿದೆ:'
     instagram: Instagram
-    instructions_to_reset_password: ಕೆಳಗಿನ ಫಾರ್ಮ್‌ನಲ್ಲಿ ದಯವಿಟ್ಟು ನಿಮ್ಮ ಇಮೇಲ್ ಅನ್ನು ನಮೂದಿಸಿ
-    insufficient_stock: ಸಾಕಷ್ಟು ಸ್ಟಾಕ್ ಲಭ್ಯವಿಲ್ಲ, ಕೇವಲ %{on_hand} ಮಾತ್ರ ಉಳಿದಿದೆ
-    insufficient_stock_item_quantity: ಸಾಕಷ್ಟು ಸ್ಟಾಕ್ ಪ್ರಮಾಣ ಲಭ್ಯವಿದೆ
     insufficient_stock_lines_present: ಈ ಕ್ರಮದಲ್ಲಿ ಕೆಲವು ಸಾಲಿನ ಐಟಂಗಳು ಸಾಕಷ್ಟು ಪ್ರಮಾಣವನ್ನು ಹೊಂದಿಲ್ಲ.
-    intercept_email_address: ಇಮೇಲ್ ವಿಳಾಸವನ್ನು ಪ್ರತಿಬಂಧಿಸಿ
-    intercept_email_instructions: ಇಮೇಲ್ ಸ್ವೀಕರಿಸುವವರನ್ನು ಅತಿಕ್ರಮಿಸಿ ಮತ್ತು ಈ ವಿಳಾಸದೊಂದಿಗೆ ಬದಲಾಯಿಸಿ.
     internal_name: ಆಂತರಿಕ ಹೆಸರು
     internationalization: ಅಂತರರಾಷ್ಟ್ರೀಕರಣ
     invalid_credit_card: ಅಮಾನ್ಯ ಕ್ರೆಡಿಟ್ ಕಾರ್ಡ್.
@@ -852,16 +821,11 @@ kn:
     invalid_payment_provider: ಪಾವತಿ ಒದಗಿಸುವವರು ಅಮಾನ್ಯವಾಗಿದೆ.
     invalid_promotion_action: ಅಮಾನ್ಯ ಪ್ರಚಾರ ಕ್ರಮ.
     invalid_promotion_rule: ಅಮಾನ್ಯ ಪ್ರಚಾರ ನಿಯಮ.
-    inventory: ದಾಸ್ತಾನು
-    inventory_adjustment: ದಾಸ್ತಾನು ಹೊಂದಾಣಿಕೆ
     inventory_error_flash_for_insufficient_quantity: ನಿಮ್ಮ ಕಾರ್ಟ್‌ನಲ್ಲಿರುವ ಐಟಂ ಲಭ್ಯವಿಲ್ಲ.
-    inventory_state: ದಾಸ್ತಾನು ರಾಜ್ಯ
-    is_not_available_to_shipment_address: ಸಾಗಣೆ ವಿಳಾಸಕ್ಕೆ ಲಭ್ಯವಿಲ್ಲ
     iso: ಐಎಸ್ಒ ಆಲ್ಫಾ -2
     iso3: ಐಎಸ್ಒ ಆಲ್ಫಾ -3
     iso_name: ಐಎಸ್ಒ ಹೆಸರು
     issued_on: ನೀಡಲಾಗಿದೆ
-    item: ಐಟಂ
     item_description: ಐಟಂ ವಿವರಣೆ
     item_total: ಐಟಂ ಒಟ್ಟು
     item_total_rule:
@@ -878,28 +842,16 @@ kn:
     last_name: ಕೊನೆಯ ಹೆಸರು
     last_name_begins_with: ಕೊನೆಯ ಹೆಸರು ಪ್ರಾರಂಭವಾಗುತ್ತದೆ
     lastname: ಕೊನೆಯ ಹೆಸರು
-    learn_more: ಇನ್ನಷ್ಟು ತಿಳಿಯಿರಿ
     lifetime_stats: ಜೀವಮಾನದ ಅಂಕಿಅಂಶಗಳು
     limit_usage_to: ಬಳಕೆಯನ್ನು ಮಿತಿಗೊಳಿಸಿ
     line_item_adjustments: ಲೈನ್ ಐಟಂ ಹೊಂದಾಣಿಕೆಗಳು
-    list: ಪಟ್ಟಿ
     loading: ಲೋಡ್ ಆಗುತ್ತಿದೆ
     loading_tree: ಮರವನ್ನು ಲೋಡ್ ಮಾಡಲಾಗುತ್ತಿದೆ. ದಯಮಾಡಿ ನಿರೀಕ್ಷಿಸಿ…
-    locale_changed: ಲೊಕೇಲ್ ಬದಲಾಯಿಸಲಾಗಿದೆ
     location: ಸ್ಥಳ
-    lock: ಲಾಕ್ ಮಾಡಿ
     log_entries: ಲಾಗ್ ನಮೂದುಗಳು
-    log_in: ಲಾಗ್ ಇನ್ ಮಾಡಿ
     log_in_to_continue: ಮುಂದುವರಿಸಲು ಲಾಗ್ ಇನ್ ಮಾಡಿ
-    logged_in_as: ಎಂದು ಲಾಗ್ ಇನ್ ಮಾಡಲಾಗಿದೆ
-    logged_in_succesfully: ಯಶಸ್ವಿಯಾಗಿ ಲಾಗ್ ಇನ್ ಮಾಡಲಾಗಿದೆ
-    logged_out: ನಿಮ್ಮನ್ನು ಲಾಗ್ out ಟ್ ಮಾಡಲಾಗಿದೆ.
     login: ಲಾಗಿನ್ ಮಾಡಿ
-    login_as_existing: ಅಸ್ತಿತ್ವದಲ್ಲಿರುವ ಗ್ರಾಹಕರಾಗಿ ಲಾಗಿನ್ ಮಾಡಿ
-    login_failed: ಲಾಗಿನ್ ದೃ hentic ೀಕರಣ ವಿಫಲವಾಗಿದೆ.
-    login_name: ಲಾಗಿನ್ ಮಾಡಿ
     logo: ಲೋಗೋ
-    logo_alt: ಬ್ರಾಂಡ್ ಲೋಗೋ
     logout: ಲಾಗ್ ಔಟ್
     logs: ದಾಖಲೆಗಳು
     look_for_similar_items: ಇದೇ ರೀತಿಯ ವಸ್ತುಗಳನ್ನು ನೋಡಿ
@@ -907,7 +859,6 @@ kn:
     mailer_logo: ಮೈಲೇರ್ ಲೋಗೊ (ಜೆಪಿಜಿ ಅಥವಾ ಪಿಎನ್‌ಜಿ ಚಿತ್ರಗಳು ಮಾತ್ರ)
     make_refund: ಮರುಪಾವತಿ ಮಾಡಿ
     make_sure_the_above_reimbursement_amount_is_correct: ಮೇಲಿನ ಮರುಪಾವತಿ ಮೊತ್ತ ಸರಿಯಾಗಿದೆಯೆ ಎಂದು ಖಚಿತಪಡಿಸಿಕೊಳ್ಳಿ
-    manage_promotion_categories: ಪ್ರಚಾರ ವರ್ಗಗಳನ್ನು ನಿರ್ವಹಿಸಿ
     manage_variants: ರೂಪಾಂತರಗಳನ್ನು ನಿರ್ವಹಿಸಿ
     manual_intervention_required: ಹಸ್ತಚಾಲಿತ ಹಸ್ತಕ್ಷೇಪ ಅಗತ್ಯವಿದೆ
     master: ಮಾಸ್ಟರ್
@@ -916,16 +867,12 @@ kn:
     match_choices:
       all: ಎಲ್ಲಾ
       none: ಯಾವುದೂ
-    max_items: ಗರಿಷ್ಠ ವಸ್ತುಗಳು
     member_since: ರಿಂದ ಸದಸ್ಯ
     memo: ಮೆಮೊ
     meta_description: ಮೆಟಾ ವಿವರಣೆ
     meta_keywords: ಮೆಟಾ ಕೀವರ್ಡ್ಗಳು
     meta_title: ಮೆಟಾ ಶೀರ್ಷಿಕೆ
-    metadata: ಮೆಟಾಡೇಟಾ
-    minimal_amount: ಕನಿಷ್ಠ ಮೊತ್ತ
     missing_return_authorization: "%{item_name} ಗಾಗಿ ರಿಟರ್ನ್ ದೃ ization ೀಕರಣ ಕಾಣೆಯಾಗಿದೆ."
-    month: ತಿಂಗಳು
     more: ಇನ್ನಷ್ಟು
     move_stock_between_locations: ಸ್ಥಳಗಳ ನಡುವೆ ಸ್ಟಾಕ್ ಅನ್ನು ಸರಿಸಿ
     move_variant_to: ರೂಪಾಂತರವನ್ನು ಸರಿಸಿ
@@ -951,15 +898,12 @@ kn:
       show_search: ಹುಡುಕಾಟವನ್ನು ತೋರಿಸಿ
       show_user_menu: ಬಳಕೆದಾರ ಮೆನು ತೋರಿಸಿ
       sign_up: ಸೈನ್ ಅಪ್ ಮಾಡಿ
-    new: ಹೊಸದು
     new_adjustment: ಹೊಸ ಹೊಂದಾಣಿಕೆ
     new_country: ಹೊಸ ದೇಶ
-    new_customer: ಹೊಸ ಖಾತೆಯನ್ನು ರಚಿಸಿ
     new_customer_return: ಹೊಸ ಗ್ರಾಹಕ ರಿಟರ್ನ್
     new_image: ಹೊಸ ಚಿತ್ರ
     new_option_type: ಹೊಸ ಆಯ್ಕೆ ಪ್ರಕಾರ
     new_order: ಹೊಸ ಆದೇಶ
-    new_order_completed: ಹೊಸ ಆದೇಶ ಪೂರ್ಣಗೊಂಡಿದೆ
     new_order_notifications_email: ಹೊಸ ಆದೇಶ ಅಧಿಸೂಚನೆಗಳ ಇಮೇಲ್
     new_payment: ಹೊಸ ಪಾವತಿ
     new_payment_method: ಹೊಸ ಪಾವತಿ ವಿಧಾನ
@@ -981,44 +925,34 @@ kn:
     new_stock_location: ಹೊಸ ಸ್ಟಾಕ್ ಸ್ಥಳ
     new_stock_movement: ಹೊಸ ಸ್ಟಾಕ್ ಚಳುವಳಿ
     new_stock_transfer: ಹೊಸ ಸ್ಟಾಕ್ ವರ್ಗಾವಣೆ
-    new_store_credit: ಹೊಸ ಅಂಗಡಿ ಕ್ರೆಡಿಟ್
     new_store_credit_category: ಹೊಸ ಅಂಗಡಿ ಕ್ರೆಡಿಟ್ ವರ್ಗ
     new_tax_category: ಹೊಸ ತೆರಿಗೆ ವರ್ಗ
     new_tax_rate: ಹೊಸ ತೆರಿಗೆ ದರ
     new_taxon: ಹೊಸ ಟ್ಯಾಕ್ಸನ್
     new_taxonomy: ಹೊಸ ಟ್ಯಾಕ್ಸಾನಮಿ
-    new_tracker: ಹೊಸ ಟ್ರ್ಯಾಕರ್
     new_user: ಹೊಸ ಬಳಕೆದಾರ
     new_variant: ಹೊಸ ರೂಪಾಂತರ
     new_zone: ಹೊಸ ವಲಯ
     next: ಮುಂದೆ
     no_actions_added: ಯಾವುದೇ ಕ್ರಿಯೆಗಳನ್ನು ಸೇರಿಸಲಾಗಿಲ್ಲ
-    no_address_given: ಯಾವುದೇ ವಿಳಾಸವನ್ನು ನೀಡಿಲ್ಲ
     no_available_date_set: ಲಭ್ಯವಿರುವ ದಿನಾಂಕವನ್ನು ಹೊಂದಿಸಿಲ್ಲ
     no_cc_type: ಎನ್ / ಎ
     no_country: ಯಾವುದೇ ದೇಶವನ್ನು ಹೊಂದಿಸಿಲ್ಲ
     no_limits_zone: ಮಿತಿಯಿಲ್ಲ
     no_payment_found: ಯಾವುದೇ ಪಾವತಿ ಕಂಡುಬಂದಿಲ್ಲ
     no_payment_provider_settings_message: ಈ ಪಾವತಿ ಒದಗಿಸುವವರಿಗೆ ಯಾವುದೇ ಕಸ್ಟಮ್ ಸೆಟ್ಟಿಂಗ್‌ಗಳು ಲಭ್ಯವಿಲ್ಲ
-    no_pending_payments: ಪಾವತಿಗಳು ಬಾಕಿ ಉಳಿದಿಲ್ಲ
     no_product_available:
       for_this_quantity: ಕ್ಷಮಿಸಿ, ಆಯ್ದ ಪ್ರಮಾಣದಲ್ಲಿ ಕೆಲವು ಉತ್ಪನ್ನಗಳು ಲಭ್ಯವಿಲ್ಲ ಎಂದು ತೋರುತ್ತಿದೆ.
       opps: ಅಯ್ಯೋ!
-    no_products_found: ಯಾವುದೇ ಉತ್ಪನ್ನಗಳು ಕಂಡುಬಂದಿಲ್ಲ
     no_resource_found: ಯಾವುದೇ %{resource} ಕಂಡುಬಂದಿಲ್ಲ
     no_results: ಫಲಿತಾಂಶಗಳಿಲ್ಲ
-    no_returns_found: ಯಾವುದೇ ಆದಾಯ ಕಂಡುಬಂದಿಲ್ಲ
     no_rules_added: ಯಾವುದೇ ನಿಯಮಗಳನ್ನು ಸೇರಿಸಲಾಗಿಲ್ಲ
     no_shipping_method_selected: ಯಾವುದೇ ಶಿಪ್ಪಿಂಗ್ ವಿಧಾನವನ್ನು ಆಯ್ಕೆ ಮಾಡಿಲ್ಲ.
     no_state_changes: ಇನ್ನೂ ಯಾವುದೇ ರಾಜ್ಯ ಬದಲಾವಣೆಗಳಿಲ್ಲ.
     no_tracking_present: ಯಾವುದೇ ಟ್ರ್ಯಾಕಿಂಗ್ ವಿವರಗಳನ್ನು ಒದಗಿಸಿಲ್ಲ.
     none: ಯಾವುದೂ
-    none_selected: ಯಾವುದನ್ನೂ ಆಯ್ಕೆ ಮಾಡಿಲ್ಲ
-    normal_amount: ಸಾಮಾನ್ಯ ಮೊತ್ತ
     not: ಅಲ್ಲ
     not_available: ಎನ್ / ಎ
-    not_enough_stock: ಈ ವರ್ಗಾವಣೆಯನ್ನು ಪೂರ್ಣಗೊಳಿಸಲು ಮೂಲ ಸ್ಥಳದಲ್ಲಿ ಸಾಕಷ್ಟು ದಾಸ್ತಾನು ಇಲ್ಲ.
-    not_found: "%{resource} ಕಂಡುಬಂದಿಲ್ಲ"
     note: ಸೂಚನೆ
     notice_messages:
       icon_removed: ಚಿತ್ರವನ್ನು ಯಶಸ್ವಿಯಾಗಿ ತೆಗೆದುಹಾಕಲಾಗಿದೆ
@@ -1032,27 +966,20 @@ kn:
     num_orders: "# ಆದೇಶಗಳು"
     number: ಸಂಖ್ಯೆ
     ok: ಸರಿ
-    on_hand: ಕೈಯಲ್ಲಿ
-    open: ತೆರೆಯಿರಿ
     open_all_adjustments: ಎಲ್ಲಾ ಹೊಂದಾಣಿಕೆಗಳನ್ನು ತೆರೆಯಿರಿ
-    option_type: ಆಯ್ಕೆ ಪ್ರಕಾರ
     option_type_placeholder: ಆಯ್ಕೆ ಪ್ರಕಾರವನ್ನು ಆರಿಸಿ
     option_types: ಆಯ್ಕೆ ಪ್ರಕಾರಗಳು
-    option_value: ಆಯ್ಕೆ ಮೌಲ್ಯ
     option_values: ಆಯ್ಕೆ ಮೌಲ್ಯಗಳು
     optional: ಐಚ್ al ಿಕ
     options: ಆಯ್ಕೆಗಳು
     or: ಅಥವಾ
-    or_over_price: "%{price} ಅಥವಾ ಹೆಚ್ಚಿನದು"
     order: ಆದೇಶ
     order_adjustments: ಆದೇಶ ಹೊಂದಾಣಿಕೆಗಳು
     order_already_updated: ಆದೇಶವನ್ನು ಈಗಾಗಲೇ ನವೀಕರಿಸಲಾಗಿದೆ.
     order_approved: ಆದೇಶವನ್ನು ಅನುಮೋದಿಸಲಾಗಿದೆ
     order_canceled: ಆದೇಶ ರದ್ದುಗೊಂಡಿದೆ
-    order_details: ಆದೇಶದ ವಿವರಗಳು
     order_email_resent: ಇಮೇಲ್ ಅಸಮಾಧಾನವನ್ನು ಆದೇಶಿಸಿ
     order_has_no_payments: ಆದೇಶಕ್ಕೆ ಯಾವುದೇ ಪಾವತಿಗಳಿಲ್ಲ
-    order_information: ಆದೇಶ ಮಾಹಿತಿ
     order_line_items: ಆರ್ಡರ್ ಲೈನ್ ಐಟಂಗಳು
     order_mailer:
       cancel_email:
@@ -1078,7 +1005,6 @@ kn:
       total: 'ಆದೇಶ ಒಟ್ಟು:'
     order_not_found: ನಿಮ್ಮ ಆದೇಶವನ್ನು ನಾವು ಕಂಡುಹಿಡಿಯಲಾಗಲಿಲ್ಲ. ದಯವಿಟ್ಟು ಆ ಕ್ರಿಯೆಯನ್ನು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.
     order_number: "%{number} ಆದೇಶಿಸಿ"
-    order_processed_successfully: ನಿಮ್ಮ ಆದೇಶವನ್ನು ಯಶಸ್ವಿಯಾಗಿ ಪ್ರಕ್ರಿಯೆಗೊಳಿಸಲಾಗಿದೆ
     order_resumed: ಆದೇಶ ಪುನರಾರಂಭವಾಯಿತು
     order_state:
       address: ವಿಳಾಸ
@@ -1097,10 +1023,8 @@ kn:
     order_summary: ಆದೇಶ ಸಾರಾಂಶ
     order_sure_want_to: ಈ ಆದೇಶವನ್ನು ನೀವು %{event} ಮಾಡಲು ಖಚಿತವಾಗಿ ಬಯಸುವಿರಾ?
     order_total: ಆದೇಶ ಒಟ್ಟು
-    order_updated: ಆದೇಶವನ್ನು ನವೀಕರಿಸಲಾಗಿದೆ
     orders: ಆದೇಶಗಳು
     out_of_stock: ಸ್ಟಾಕ್ ಮೀರಿದೆ
-    overview: ಅವಲೋಕನ
     package_from: ನಿಂದ ಪ್ಯಾಕೇಜ್
     page_not_found: ಕ್ಷಮಿಸಿ! ನೀವು ಹುಡುಕುತ್ತಿರುವ ಪುಟವನ್ನು ಕಂಡುಹಿಡಿಯಲಾಗುವುದಿಲ್ಲ.
     pagination:
@@ -1110,18 +1034,14 @@ kn:
     password: ಗುಪ್ತಪದ
     paste: ಅಂಟಿಸಿ
     path: ಹಾದಿ
-    pay: ಪಾವತಿ
     payment: ಪಾವತಿ
     payment_amount: ಪಾವತಿಸಬೇಕಾದ ಹಣ
     payment_could_not_be_created: ಪಾವತಿಯನ್ನು ರಚಿಸಲಾಗಲಿಲ್ಲ.
     payment_identifier: ಪಾವತಿ ಗುರುತಿಸುವಿಕೆ
-    payment_information: ಪಾವತಿ ಮಾಹಿತಿ
     payment_method: ಪಾವತಿ ವಿಧಾನ
     payment_method_not_supported: ಆ ಪಾವತಿ ವಿಧಾನವು ಬೆಂಬಲಿತವಾಗಿಲ್ಲ. ದಯವಿಟ್ಟು ಇನ್ನೊಂದನ್ನು ಆರಿಸಿ.
     payment_methods: ಪಾವತಿ ವಿಧಾನಗಳು
     payment_processing_failed: ಪಾವತಿಯನ್ನು ಪ್ರಕ್ರಿಯೆಗೊಳಿಸಲು ಸಾಧ್ಯವಿಲ್ಲ, ದಯವಿಟ್ಟು ನೀವು ನಮೂದಿಸಿದ ವಿವರಗಳನ್ನು ಪರಿಶೀಲಿಸಿ
-    payment_processor_choose_banner_text: ಪಾವತಿ ಪ್ರೊಸೆಸರ್ ಆಯ್ಕೆ ಮಾಡಲು ನಿಮಗೆ ಸಹಾಯ ಬೇಕಾದರೆ, ದಯವಿಟ್ಟು ಭೇಟಿ ನೀಡಿ
-    payment_processor_choose_link: ನಮ್ಮ ಪಾವತಿ ಪುಟ
     payment_provider_settings: ಪಾವತಿ ಪೂರೈಕೆದಾರ ಸೆಟ್ಟಿಂಗ್‌ಗಳು
     payment_state: ಪಾವತಿ ಸ್ಥಿತಿ
     payment_states:
@@ -1144,13 +1064,10 @@ kn:
       view_cart: ಕಾರ್ಟ್ ವೀಕ್ಷಿಸಿ
     pending: ಬಾಕಿ ಉಳಿದಿದೆ
     pending_sale: ಮಾರಾಟ ಬಾಕಿ ಇದೆ
-    percent: ಶೇಕಡಾ
     percent_per_item: ಪ್ರತಿ ಐಟಂಗೆ ಶೇಕಡಾ
     permalink: ಪರ್ಮಾಲಿಂಕ್
     phone: ದೂರವಾಣಿ
-    place_order: ಸ್ಥಳ ಆದೇಶ
     please_define_payment_methods: ದಯವಿಟ್ಟು ಮೊದಲು ಕೆಲವು ಪಾವತಿ ವಿಧಾನಗಳನ್ನು ವ್ಯಾಖ್ಯಾನಿಸಿ.
-    please_enter_reasonable_quantity: ದಯವಿಟ್ಟು ಸಮಂಜಸವಾದ ಪ್ರಮಾಣವನ್ನು ನಮೂದಿಸಿ.
     plp:
       clear_all: ಎಲ್ಲವನ್ನೂ ತೆಗೆ
       default: ಡೀಫಾಲ್ಟ್
@@ -1168,8 +1085,6 @@ kn:
       price_low_to_high: ಬೆಲೆ (ಕಡಿಮೆ - ಹೆಚ್ಚು)
       results_for: ಫಲಿತಾಂಶಗಳು
       sort_by: ವಿಂಗಡಿಸು
-    populate_get_error: ಏನೋ ತಪ್ಪಾಗಿದೆ. ದಯವಿಟ್ಟು ಐಟಂ ಅನ್ನು ಮತ್ತೆ ಸೇರಿಸಲು ಪ್ರಯತ್ನಿಸಿ.
-    powered_by: ನಡೆಸುತ್ತಿದೆ
     pre_tax_amount: ತೆರಿಗೆ ಪೂರ್ವದ ಮೊತ್ತ
     pre_tax_refund_amount: ತೆರಿಗೆ ಪೂರ್ವ ಮರುಪಾವತಿ ಮೊತ್ತ
     pre_tax_total: ತೆರಿಗೆ ಪೂರ್ವ ಒಟ್ಟು
@@ -1181,15 +1096,11 @@ kn:
     previous_state_missing: ಎನ್ / ಎ
     previously_used_card: ಹಿಂದೆ ಬಳಸಿದ ಕಾರ್ಡ್‌ಗಳು
     price: ಬೆಲೆ
-    price_range: ಬೆಲೆ ಶ್ರೇಣಿ
     price_sack: ಬೆಲೆ ಸ್ಯಾಕ್
     prices: ಬೆಲೆಗಳು
-    process: ಪ್ರಕ್ರಿಯೆ
     product: ಉತ್ಪನ್ನ
-    product_details: ಉತ್ಪನ್ನ ವಿವರಗಳು
     product_has_no_description: ಈ ಉತ್ಪನ್ನಕ್ಕೆ ಯಾವುದೇ ವಿವರಣೆಯಿಲ್ಲ
     product_not_available_in_this_currency: ಆಯ್ದ ಕರೆನ್ಸಿಯಲ್ಲಿ ಈ ಉತ್ಪನ್ನ ಲಭ್ಯವಿಲ್ಲ.
-    product_properties: ಉತ್ಪನ್ನ ಗುಣಲಕ್ಷಣಗಳು
     product_rule:
       choose_products: ಉತ್ಪನ್ನಗಳನ್ನು ಆರಿಸಿ
       label: ಆದೇಶವು ಈ ಉತ್ಪನ್ನಗಳ x ಪ್ರಮಾಣವನ್ನು ಹೊಂದಿರಬೇಕು
@@ -1265,26 +1176,16 @@ kn:
     provider: ಒದಗಿಸುವವರು
     provider_settings_warning: ನೀವು ಒದಗಿಸುವವರ ಪ್ರಕಾರವನ್ನು ಬದಲಾಯಿಸುತ್ತಿದ್ದರೆ, ನೀವು ಒದಗಿಸುವವರ ಸೆಟ್ಟಿಂಗ್‌ಗಳನ್ನು ಸಂಪಾದಿಸುವ ಮೊದಲು ನೀವು ಮೊದಲು ಉಳಿಸಬೇಕು
     purchased_quantity: ಖರೀದಿಸಿದ ಪ್ರಮಾಣ
-    qty: ಕ್ಯೂಟಿ
     quantity: ಪ್ರಮಾಣ
-    quantity_returned: ಪ್ರಮಾಣ ಮರಳಿದೆ
-    quantity_shipped: ಪ್ರಮಾಣ ರವಾನಿಸಲಾಗಿದೆ
     quick_search: ತ್ವರಿತ ಹುಡುಕಾಟ ..
     rate: ದರ
     reason: ಕಾರಣ
-    receive: ಸ್ವೀಕರಿಸಿ
     receive_stock: ಸ್ಟಾಕ್ ಸ್ವೀಕರಿಸಿ
-    received: ಸ್ವೀಕರಿಸಲಾಗಿದೆ
-    reception_status: ಪುರಸ್ಕಾರ ಸ್ಥಿತಿ
     reference: ಉಲ್ಲೇಖ
     reference_contains: ಉಲ್ಲೇಖ ಒಳಗೊಂಡಿದೆ
     refund: ಮರುಪಾವತಿ
-    refund_amount_must_be_greater_than_zero: ಮರುಪಾವತಿ ಮೊತ್ತವು ಶೂನ್ಯಕ್ಕಿಂತ ಹೆಚ್ಚಿರಬೇಕು
     refund_reasons: ಮರುಪಾವತಿ ಕಾರಣಗಳು
-    refunded_amount: ಮರುಪಾವತಿಸಿದ ಮೊತ್ತ
     refunds: ಮರುಪಾವತಿ
-    register: ನೋಂದಣಿ
-    registration: ನೋಂದಣಿ
     reimburse: ಮರುಪಾವತಿ
     reimbursed: ಮರುಪಾವತಿ ಮಾಡಲಾಗಿದೆ
     reimbursement: ಮರುಪಾವತಿ
@@ -1300,76 +1201,54 @@ kn:
         subject: ಮರುಪಾವತಿ ಅಧಿಸೂಚನೆ
         thanks: ನಿಮ್ಮ ವ್ಯವಹಾರಕ್ಕೆ ಧನ್ಯವಾದಗಳು.
         total_refunded: 'ಒಟ್ಟು ಮರುಪಾವತಿ: %{total}'
-    reimbursement_perform_failed: 'ಮರುಪಾವತಿ ಮಾಡಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ದೋಷ: %{error}'
     reimbursement_status: ಮರುಪಾವತಿ ಸ್ಥಿತಿ
     reimbursement_type: ಮರುಪಾವತಿ ಪ್ರಕಾರ
     reimbursement_type_override: ಮರುಪಾವತಿ ಪ್ರಕಾರ ಅತಿಕ್ರಮಿಸುತ್ತದೆ
     reimbursement_types: ಮರುಪಾವತಿ ಪ್ರಕಾರಗಳು
-    reimbursements: ಮರುಪಾವತಿ
     reject: ತಿರಸ್ಕರಿಸಿ
     rejected: ತಿರಸ್ಕರಿಸಿದ
     remember_me: ನನ್ನನ್ನು ನೆನಪಿನಲ್ಲಿ ಇಡು
     remove: ತೆಗೆದುಹಾಕಿ
     remove_image: ಚಿತ್ರವನ್ನು ತೆಗೆದುಹಾಕಿ
     rename: ಮರುಹೆಸರಿಸಿ
-    report: ವರದಿ
     reports: ವರದಿಗಳು
     required: "*"
     required_fields: ಬೇಕಾದ ಕ್ಷೇತ್ರಗಳು
     resellable: ಮರುಮಾರಾಟ ಮಾಡಬಹುದಾದ
     resend: ಮರುಹೊಂದಿಸಿ
-    reset_password: ನನ್ನ ಪಾಸ್‌ವರ್ಡ್ ಅನ್ನು ಮರುಹೊಂದಿಸಿ
-    response_code: ಪ್ರತಿಕ್ರಿಯೆ ಕೋಡ್
-    resume: ಪುನರಾರಂಭ
-    resumed: ಪುನರಾರಂಭಿಸಲಾಗಿದೆ
-    return: ಹಿಂತಿರುಗಿ
-    return_authorization: ರಿಟರ್ನ್ ದೃ ization ೀಕರಣ
     return_authorization_canceled: ರಿಟರ್ನ್ ದೃ ization ೀಕರಣವನ್ನು ರದ್ದುಗೊಳಿಸಲಾಗಿದೆ
     return_authorization_reasons: ರಿಟರ್ನ್ ದೃ ization ೀಕರಣ ಕಾರಣಗಳು
     return_authorization_states:
       authorized: ಅಧಿಕೃತ
       canceled: ರದ್ದುಗೊಳಿಸಲಾಗಿದೆ
-    return_authorization_updated: ರಿಟರ್ನ್ ದೃ ization ೀಕರಣವನ್ನು ನವೀಕರಿಸಲಾಗಿದೆ
     return_authorizations: ರಿಟರ್ನ್ ಅಧಿಕೃತತೆಗಳು
     return_item_inventory_unit_ineligible: ರಿಟರ್ನ್ ಐಟಂನ ದಾಸ್ತಾನು ಘಟಕವನ್ನು ರವಾನಿಸಬೇಕು
     return_item_inventory_unit_reimbursed: ರಿಟರ್ನ್ ಐಟಂನ ದಾಸ್ತಾನು ಘಟಕವನ್ನು ಈಗಾಗಲೇ ಮರುಪಾವತಿ ಮಾಡಲಾಗಿದೆ
     return_item_order_not_completed: ರಿಟರ್ನ್ ಐಟಂನ ಆದೇಶವನ್ನು ಪೂರ್ಣಗೊಳಿಸಬೇಕು
     return_item_rma_ineligible: ರಿಟರ್ನ್ ಐಟಂಗೆ RMA ಅಗತ್ಯವಿದೆ
     return_item_time_period_ineligible: ರಿಟರ್ನ್ ಐಟಂ ಅರ್ಹ ಸಮಯದ ಹೊರಗಿದೆ
-    return_items: ಹಿಂತಿರುಗುವ ವಸ್ತುಗಳು
     return_items_cannot_be_associated_with_multiple_orders: ಹಿಂತಿರುಗುವ ವಸ್ತುಗಳನ್ನು ಬಹು ಆದೇಶಗಳೊಂದಿಗೆ ಸಂಯೋಜಿಸಲಾಗುವುದಿಲ್ಲ.
     return_number: ರಿಟರ್ನ್ ಸಂಖ್ಯೆ
     return_quantity: ರಿಟರ್ನ್ ಪ್ರಮಾಣ
-    returned: ಹಿಂತಿರುಗಿದೆ
     returns: ಹಿಂತಿರುಗಿಸುತ್ತದೆ
-    review: ಸಮೀಕ್ಷೆ
     risk: ಅಪಾಯ
     risk_analysis: ಅಪಾಯದ ವಿಶ್ಲೇಷಣೆ
     risky: ಅಪಾಯಕಾರಿ
-    rma_credit: ಆರ್ಎಂಎ ಕ್ರೆಡಿಟ್
     rma_number: ಆರ್ಎಂಎ ಸಂಖ್ಯೆ
-    rma_value: ಆರ್ಎಂಎ ಮೌಲ್ಯ
     role_id: ಪಾತ್ರ ID
     roles: ಪಾತ್ರಗಳು
     rules: ನಿಯಮಗಳು
     safe: ಸುರಕ್ಷಿತ
     sales_total: ಮಾರಾಟ ಒಟ್ಟು
-    sales_total_description: ಎಲ್ಲಾ ಆದೇಶಗಳಿಗೆ ಮಾರಾಟ ಒಟ್ಟು
     sales_totals: ಮಾರಾಟದ ಮೊತ್ತ
-    save_and_continue: ಉಳಿಸಿ ಮತ್ತು ಮುಂದುವರಿಸಿ
-    save_my_address: ನನ್ನ ವಿಳಾಸವನ್ನು ಉಳಿಸಿ
     saving: ಉಳಿಸಲಾಗುತ್ತಿದೆ
     say_no: ಇಲ್ಲ
     say_yes: ಹೌದು
-    scope: ವ್ಯಾಪ್ತಿ
     search: ಹುಡುಕಿ Kannada
-    search_results: "'%{keywords}' ಗಾಗಿ ಹುಡುಕಾಟ ಫಲಿತಾಂಶಗಳು"
     searching: ಹುಡುಕಲಾಗುತ್ತಿದೆ
-    secure_connection_type: ಸುರಕ್ಷಿತ ಸಂಪರ್ಕ ಪ್ರಕಾರ
     security_settings: ಭದ್ರತಾ ಸೆಟ್ಟಿಂಗ್‌ಗಳು
     select: ಆಯ್ಕೆ ಮಾಡಿ
     select_a_date: ದಿನಾಂಕವನ್ನು ಆಯ್ಕೆಮಾಡಿ
-    select_a_date_range: ದಿನಾಂಕ ಶ್ರೇಣಿಯನ್ನು ಆಯ್ಕೆಮಾಡಿ
     select_a_return_authorization_reason: ರಿಟರ್ನ್ ದೃ ization ೀಕರಣಕ್ಕಾಗಿ ಒಂದು ಕಾರಣವನ್ನು ಆರಿಸಿ
     select_a_stock_location: ಸ್ಟಾಕ್ ಸ್ಥಳವನ್ನು ಆಯ್ಕೆಮಾಡಿ
     select_a_store_credit_reason: ಅಂಗಡಿ ಕ್ರೆಡಿಟ್‌ಗೆ ಒಂದು ಕಾರಣವನ್ನು ಆರಿಸಿ
@@ -1377,12 +1256,9 @@ kn:
     select_from_prototype: ಮೂಲಮಾದರಿಯಿಂದ ಆಯ್ಕೆಮಾಡಿ
     select_stock: ಸ್ಟಾಕ್ ಆಯ್ಕೆಮಾಡಿ
     selected_quantity_not_available: "%{item} ಅನ್ನು ಆಯ್ಕೆ ಮಾಡಿಲ್ಲ."
-    send_copy_of_all_mails_to: ಎಲ್ಲಾ ಮೇಲ್ಗಳ ನಕಲನ್ನು ಕಳುಹಿಸಿ
-    send_mails_as: ಮೇಲ್ಗಳನ್ನು ಕಳುಹಿಸಿ
     seo: ಎಸ್‌ಇಒ
     seo_robots: ಎಸ್‌ಇಒ ರೋಬೋಟ್‌ಗಳು
     seo_title: ಎಸ್‌ಇಒ ಶೀರ್ಷಿಕೆ
-    server: ಸರ್ವರ್
     server_error: ಸರ್ವರ್ ದೋಷವನ್ನು ಹಿಂತಿರುಗಿಸಿದೆ
     settings: ಸಂಯೋಜನೆಗಳು
     ship: ಹಡಗು

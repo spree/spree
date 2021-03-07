@@ -686,27 +686,21 @@ tl:
     default_tax: Default na Buwis
     default_tax_zone: Default na Zone ng Buwis
     delete: Tanggalin
-    delete_from_taxon: Tanggalin Mula sa Taxon
     deleted: Tinanggal
-    delivery: Paghahatid
     delivery_information: Impormasyon sa Paghahatid
     depth: Lalim
     description: Paglalarawan
     destination: Patutunguhan
-    destroy: Sirain
     details: Mga Detalye
     discontinue_on: Huwag Magpatuloy Sa
     discontinued: Hindi na ipinagpatuloy
     discontinued_variants_present: Ang ilang mga item sa linya sa pagkakasunud-sunod na ito ay may mga produkto na hindi na magagamit.
-    discount_amount: Halaga ng Diskwento
-    dismiss_banner: Salamat nalang! Hindi ako interesado, huwag ipakita muli ang mensaheng ito
     display: Ipakita
     doesnt_track_inventory: Hindi nito sinusubaybayan ang imbentaryo
     dont_have_account: Walang account?
     edit: I-edit
     edit_reimbursement: I-edit ang muling pagbabayad
     editing_resource: Ang pag-edit ng %{resource}
-    editing_rma_reason: Pag-edit ng RMA Dahilan
     editing_user: I-edit ang Iyong account
     eligibility_errors:
       messages:
@@ -725,9 +719,6 @@ tl:
         not_first_order: Maaari lamang mailapat ang coupon code na ito sa iyong unang order.
     email: Email
     empty: Walang laman
-    empty_cart: Walang laman na Cart
-    enable_mail_delivery: Paganahin ang Paghahatid ng Mail
-    end: Tapusin
     ending_at: Nagtatapos sa
     ending_in: Nagtatapos sa
     ends_at: Nagtatapos sa
@@ -746,7 +737,6 @@ tl:
     errors_prohibited_this_record_from_being_saved:
       one: 1 error ang nagbawal sa record na ito na mai-save
       other: Ang mga error sa %{count} ay nagbawal sa talaang ito mula sa nai-save
-    event: Kaganapan
     events:
       spree:
         cart:
@@ -766,8 +756,6 @@ tl:
     existing_shipments: Mga mayroon nang padala
     expedited_exchanges_warning: Anumang tinukoy na palitan ay ipapadala sa customer kaagad sa pag-save. Sisingilin ang customer ng buong halaga ng item kung hindi nila ibabalik ang orihinal na item sa loob ng %{days_window} araw.
     expiration: Pag-expire
-    expiration_date: Petsa ng pagkawalang bisa
-    extension: Extension
     extensions_directory: Direktoryo ng Mga Extension
     facebook: Facebook
     failed_payment_attempts: Nabigo ang Mga Pagtatangka sa Pagbabayad
@@ -776,10 +764,7 @@ tl:
     filter: Salain
     filter_results: Mga Resulta sa Pag-filter
     filterable: Nasasala
-    finalize: Tapusin
-    finalized: Natapos na
     find_a_taxon: Humanap ng isang Taxon
-    first_item: Unang Item
     first_name: Pangalan
     first_name_begins_with: Nagsisimula Na ang Pangalan
     firstname: Pangalan
@@ -790,18 +775,12 @@ tl:
     footer: Footer
     forgot_password: Nakalimutan ang password?
     free: Libre
-    free_shipping: Libreng Pagpapadala
-    free_shipping_amount: "-"
-    front_end: Pagtatapos sa Harap
-    gateway: Gateway
     gateway_error: Error sa Gateway
-    general: Pangkalahatan
     general_settings: Pangkalahatang mga Setting
     generate_code: Bumuo ng coupon code
     get_back_to_the: Bumalik sa
     go_to_category: Pumunta sa kategorya
     guest_checkout: Pag-checkout ng Bisita
-    guest_user_account: Pag-checkout bilang isang panauhin
     has_no_shipped_units: walang ipinadala na mga yunit
     header_banner: Header banner
     height: Taas
@@ -822,29 +801,19 @@ tl:
       show_only: Ipakita lamang
       supported_locales: Mga Sinusuportahang Lokal
       translations: Mga Pagsasalin
-    icon: Icon
     id: Id
-    image: Larawan
     images: Mga imahe
     implement_eligible_for_return: 'Kailangang ipatupad #eligible_for_return? para sa iyong EligibilityValidator.'
     implement_requires_manual_intervention: 'Kailangang ipatupad ang #requires_manual_intervention? para sa iyong EligibilityValidator.'
     in_stock: Sa Stock
-    inactive: Hindi aktibo
-    incl: kasama
     included_in_price: Kasama sa Presyo
-    included_price_validation: hindi mapipili maliban kung nagtakda ka ng isang Default na Tax Zone
     incomplete: Hindi kumpleto
     info_number_of_skus_not_shown:
       one: at isa pa
       other: at %{count} iba pa
     info_product_has_multiple_skus: 'Ang produktong ito ay may mga variant na %{count}:'
     instagram: Instagram
-    instructions_to_reset_password: Mangyaring ipasok ang iyong email sa form sa ibaba
-    insufficient_stock: Hindi sapat ang magagamit na stock, %{on_hand} lang ang natitira
-    insufficient_stock_item_quantity: Hindi sapat ang dami ng magagamit na stock
     insufficient_stock_lines_present: Ang ilang mga item sa linya sa pagkakasunud-sunod na ito ay may hindi sapat na dami.
-    intercept_email_address: Maharang Email Address
-    intercept_email_instructions: I-override ang tatanggap ng email at palitan ng address na ito.
     internal_name: Panloob na Pangalan
     internationalization: Internalisasyon
     invalid_credit_card: Di-wastong credit card.
@@ -852,16 +821,11 @@ tl:
     invalid_payment_provider: Di-wastong provider ng pagbabayad.
     invalid_promotion_action: Di-wastong pagkilos sa promosyon.
     invalid_promotion_rule: Di-wastong panuntunan sa promosyon.
-    inventory: Imbentaryo
-    inventory_adjustment: Pagsasaayos ng Imbentaryo
     inventory_error_flash_for_insufficient_quantity: Ang isang item sa iyong cart ay naging hindi magagamit.
-    inventory_state: Estado ng Imbentaryo
-    is_not_available_to_shipment_address: ay hindi magagamit sa address ng pagpapadala
     iso: ISO Alpha-2
     iso3: ISO Alpha-3
     iso_name: Pangalan ng ISO
     issued_on: Inilabas Noong
-    item: Item
     item_description: Paglalarawan ng Item
     item_total: Kabuuang Item
     item_total_rule:
@@ -878,28 +842,16 @@ tl:
     last_name: Huling pangalan
     last_name_begins_with: Nagsisimula Na ang Huling Pangalan
     lastname: Huling pangalan
-    learn_more: Dagdagan ang nalalaman
     lifetime_stats: Mga Pang-buhay na Istatistika
     limit_usage_to: Limitahan ang paggamit sa
     line_item_adjustments: Mga pagsasaayos ng item sa linya
-    list: Listahan
     loading: Naglo-load
     loading_tree: Naglo-load ng puno. Mangyaring maghintay…
-    locale_changed: Nagbago ang Lokal
     location: Lokasyon
-    lock: Magkandado
     log_entries: Mga Entry sa Pag-log
-    log_in: Mag log in
     log_in_to_continue: Mag-log in upang magpatuloy
-    logged_in_as: Naka-log in bilang
-    logged_in_succesfully: Matagumpay na naka-log in
-    logged_out: Na-log out ka.
     login: Mag log in
-    login_as_existing: Pag-login bilang Umiiral na Customer
-    login_failed: Nabigo ang pagpapatotoo sa pag-login.
-    login_name: Mag log in
     logo: Logo
-    logo_alt: Logo ng tatak
     logout: Pag-logout
     logs: Mga troso
     look_for_similar_items: Maghanap para sa mga katulad na item
@@ -907,7 +859,6 @@ tl:
     mailer_logo: Logo ng mailer (mga larawan lamang ng JPG o PNG)
     make_refund: Gumawa ng refund
     make_sure_the_above_reimbursement_amount_is_correct: Tiyaking tama ang halagang pagbabayad sa itaas
-    manage_promotion_categories: Pamahalaan ang Mga Kategoryang Pang-promosyon
     manage_variants: Pamahalaan ang Mga Variant
     manual_intervention_required: Kinakailangan ang manu-manong interbensyon
     master: Master
@@ -916,16 +867,12 @@ tl:
     match_choices:
       all: Lahat
       none: Wala
-    max_items: Max na Item
     member_since: Miyembro mula noong
     memo: Memo
     meta_description: Paglalarawan ng Meta
     meta_keywords: Meta Keywords
     meta_title: Pamagat ng Meta
-    metadata: Metadata
-    minimal_amount: Minimal na Halaga
     missing_return_authorization: Nawawalang Pahintulot sa Pagbabalik para sa %{item_name}.
-    month: Buwan
     more: Dagdag pa
     move_stock_between_locations: Ilipat ang Stock Sa Pagitan ng Mga Lokasyon
     move_variant_to: Ilipat ang variant sa
@@ -951,15 +898,12 @@ tl:
       show_search: Ipakita ang paghahanap
       show_user_menu: Ipakita ang menu ng gumagamit
       sign_up: MAG-SIGN UP
-    new: Bago
     new_adjustment: Bagong Pagsasaayos
     new_country: Bagong Bansa
-    new_customer: Lumikha ng Bagong Account
     new_customer_return: Bagong Pagbabalik ng Customer
     new_image: Bagong larawan
     new_option_type: Bagong Uri ng Pagpipilian
     new_order: Bagong Order
-    new_order_completed: Nakumpleto ang Bagong Order
     new_order_notifications_email: Bagong Email sa Mga Abiso sa Order
     new_payment: Bagong Bayad
     new_payment_method: Bagong Paraan ng Pagbabayad
@@ -981,44 +925,34 @@ tl:
     new_stock_location: Bagong Lokasyon ng Stock
     new_stock_movement: Bagong Kilusan ng Stock
     new_stock_transfer: Bagong Stock Transfer
-    new_store_credit: Bagong Credit sa Store
     new_store_credit_category: Bagong Kategoryang Credit sa Store
     new_tax_category: Bagong Kategoryang Buwis
     new_tax_rate: Bagong Rate ng Buwis
     new_taxon: Bagong Taxon
     new_taxonomy: Bagong Taxonomy
-    new_tracker: Bagong Tracker
     new_user: Bagong Gumagamit
     new_variant: Bagong Variant
     new_zone: Bagong Zone
     next: Susunod
     no_actions_added: Walang idinagdag na mga pagkilos
-    no_address_given: Walang ibinigay na address
     no_available_date_set: Walang itinakdang petsa na magagamit
     no_cc_type: N / A
     no_country: Walang itinakdang bansa
     no_limits_zone: Walang limitasyon
     no_payment_found: Walang nahanap na bayad
     no_payment_provider_settings_message: Ang provider ng pagbabayad na ito ay walang magagamit na mga pasadyang setting
-    no_pending_payments: Walang nakabinbing pagbabayad
     no_product_available:
       for_this_quantity: Paumanhin, mukhang ang ilang mga produkto ay hindi magagamit sa napiling dami.
       opps: Naku!
-    no_products_found: Walang nahanap na mga produkto
     no_resource_found: Walang nahanap na %{resource}
     no_results: Walang resulta
-    no_returns_found: Walang nahanap na pagbalik
     no_rules_added: Walang idinagdag na mga patakaran
     no_shipping_method_selected: Walang napiling paraan ng pagpapadala.
     no_state_changes: Wala pang pagbabago sa estado.
     no_tracking_present: Walang ibinigay na mga detalye sa pagsubaybay.
     none: Wala
-    none_selected: Walang napili
-    normal_amount: Karaniwang Halaga
     not: hindi
     not_available: N / A
-    not_enough_stock: Walang sapat na imbentaryo sa pinagmulang lokasyon upang makumpleto ang paglipat na ito.
-    not_found: "%{resource} ay hindi natagpuan"
     note: Tandaan
     notice_messages:
       icon_removed: Matagumpay na naalis ang imahe
@@ -1032,27 +966,20 @@ tl:
     num_orders: "# Mga Order"
     number: Bilang
     ok: OK lang
-    on_hand: Sa kamay
-    open: Buksan
     open_all_adjustments: Buksan ang Lahat ng Pagsasaayos
-    option_type: Uri ng Pagpipilian
     option_type_placeholder: Pumili ng uri ng pagpipilian
     option_types: Mga Uri ng Pagpipilian
-    option_value: Halaga ng Pagpipilian
     option_values: Mga Halaga ng Pagpipilian
     optional: Opsyonal
     options: Mga pagpipilian
     or: o
-    or_over_price: "%{price} o higit pa"
     order: Umorder
     order_adjustments: Mga pagsasaayos ng order
     order_already_updated: Na-update na ang order.
     order_approved: Naaprubahan ang order
     order_canceled: Kinansela ang order
-    order_details: Mga Detalye ng Order
     order_email_resent: Mag-order ng Email Resent
     order_has_no_payments: Walang bayad ang order
-    order_information: Impormasyon sa Order
     order_line_items: Mga Item sa Linya ng Order
     order_mailer:
       cancel_email:
@@ -1078,7 +1005,6 @@ tl:
       total: 'Kabuuan ng Order:'
     order_not_found: Hindi namin mahanap ang iyong order. Pakisubukang muli ang aksyong iyon.
     order_number: Mag-order ng %{number}
-    order_processed_successfully: Matagumpay na naproseso ang iyong order
     order_resumed: Ipinagpatuloy ang order
     order_state:
       address: address
@@ -1097,10 +1023,8 @@ tl:
     order_summary: Buod ng Order
     order_sure_want_to: Sigurado ka bang nais mong %{event} ang order na ito?
     order_total: Kabuuan ng Order
-    order_updated: Nai-update ang Order
     orders: Mga order
     out_of_stock: Wala nang Stock
-    overview: Pangkalahatang-ideya
     package_from: package mula sa
     page_not_found: Pasensya na! Ang pahina na hinahanap mo ay hindi mahanap.
     pagination:
@@ -1110,18 +1034,14 @@ tl:
     password: Password
     paste: I-paste
     path: Landas
-    pay: magbayad
     payment: Pagbabayad
     payment_amount: Halaga ng pagbabayad
     payment_could_not_be_created: Hindi magawa ang pagbabayad.
     payment_identifier: Identifier ng Pagbabayad
-    payment_information: Impormasyon sa Pagbabayad
     payment_method: Paraan ng Pagbayad
     payment_method_not_supported: Hindi sinusuportahan ang paraan ng pagbabayad na iyon. Mangyaring pumili ng isa pa.
     payment_methods: Pamamaraan sa Pagbabayad
     payment_processing_failed: Hindi maproseso ang pagbabayad, mangyaring suriin ang mga detalye na iyong ipinasok
-    payment_processor_choose_banner_text: Kung kailangan mo ng tulong sa pagpili ng isang processor ng pagbabayad, mangyaring bisitahin ang
-    payment_processor_choose_link: ang aming pahina ng mga pagbabayad
     payment_provider_settings: Mga Setting ng Nagbibigay ng Bayad
     payment_state: Estado ng Pagbabayad
     payment_states:
@@ -1144,13 +1064,10 @@ tl:
       view_cart: Tingnan ang cart
     pending: Nakabinbin
     pending_sale: Nakabinbing Pagbebenta
-    percent: Porsyento
     percent_per_item: Porsyento Per Per Item
     permalink: Permalink
     phone: Telepono
-    place_order: Order ng Lugar
     please_define_payment_methods: Mangyaring tukuyin muna ang ilang mga paraan ng pagbabayad.
-    please_enter_reasonable_quantity: Mangyaring ipasok ang isang makatwirang dami.
     plp:
       clear_all: ALISIN LAHAT
       default: DEFAULT
@@ -1168,8 +1085,6 @@ tl:
       price_low_to_high: PRICE (mababa - mataas)
       results_for: MGA RESULTA PARA SA
       sort_by: PINAGSUSURI NG
-    populate_get_error: May nangyaring mali. Pakisubukang idagdag muli ang item.
-    powered_by: Pinatatakbo ng
     pre_tax_amount: Halaga ng Paunang Buwis
     pre_tax_refund_amount: Halaga ng Pagbabalik ng Paunang Buwis
     pre_tax_total: Kabuuan bago ang Buwis
@@ -1181,15 +1096,11 @@ tl:
     previous_state_missing: n / a
     previously_used_card: Mga Naunang Ginamit na Card
     price: Presyo
-    price_range: Saklaw ng Presyo
     price_sack: Sack ng Presyo
     prices: Mga presyo
-    process: Proseso
     product: Produkto
-    product_details: detalye ng Produkto
     product_has_no_description: Walang paglalarawan ang produktong ito
     product_not_available_in_this_currency: Ang produktong ito ay hindi magagamit sa napiling pera.
-    product_properties: Mga Katangian ng Produkto
     product_rule:
       choose_products: Pumili ng mga produkto
       label: Dapat maglaman ang order ng x halaga ng mga produktong ito
@@ -1265,26 +1176,16 @@ tl:
     provider: Tagabigay
     provider_settings_warning: Kung binabago mo ang uri ng provider, dapat mo munang i-save bago mo mai-edit ang mga setting ng provider
     purchased_quantity: Nabili ang Dami
-    qty: Qty
     quantity: Dami
-    quantity_returned: Dami Naibalik
-    quantity_shipped: Dami naipadala
     quick_search: Mabilis na paghahanap ..
     rate: Rate
     reason: Dahilan
-    receive: tumanggap
     receive_stock: Tumanggap ng Stock
-    received: Natanggap
-    reception_status: Katayuan sa Pagtanggap
     reference: Sanggunian
     reference_contains: Naglalaman ng Sanggunian
     refund: Refund
-    refund_amount_must_be_greater_than_zero: Ang halaga ng Refund ay dapat na mas malaki sa zero
     refund_reasons: Mga Dahilan sa Refund
-    refunded_amount: Na-refund na Halaga
     refunds: Mga Refunds
-    register: Magparehistro
-    registration: Pagpaparehistro
     reimburse: Gumanti
     reimbursed: Binayaran
     reimbursement: Pagbabayad
@@ -1300,76 +1201,54 @@ tl:
         subject: Pag-abiso sa Pagbabayad
         thanks: Salamat sa iyong negosyo.
         total_refunded: 'Kabuuang na-refund: %{total}'
-    reimbursement_perform_failed: 'Hindi maisagawa ang muling pagbabayad. Error: %{error}'
     reimbursement_status: Katayuan sa pagbabayad
     reimbursement_type: Uri ng bayad
     reimbursement_type_override: Pag-override ng Uri ng Reimbursement
     reimbursement_types: Mga Uri ng Pagbabayad
-    reimbursements: Pagbabayad
     reject: Tanggihan
     rejected: Tinanggihan
     remember_me: Tandaan mo ako
     remove: Tanggalin
     remove_image: Alisin ang Larawan
     rename: Palitan ang pangalan
-    report: Iulat
     reports: Mga ulat
     required: "*"
     required_fields: Mga kailangang punan
     resellable: Resellable
     resend: Ipadala muli
-    reset_password: I-reset ang aking password
-    response_code: Code ng Tugon
-    resume: ipagpatuloy
-    resumed: Ipinagpatuloy
-    return: bumalik ka
-    return_authorization: Pahintulot sa Pagbabalik
     return_authorization_canceled: Nakansela ang pahintulot sa pagbabalik
     return_authorization_reasons: Mga Dahilan ng Pahintulot sa Pagbabalik
     return_authorization_states:
       authorized: Pinahintulutan
       canceled: Kinansela
-    return_authorization_updated: Nai-update ang pahintulot sa pagbabalik
     return_authorizations: Mga Pahintulot sa Pagbabalik
     return_item_inventory_unit_ineligible: Ang yunit ng imbentaryo ng item na bumalik ay dapat na ipadala
     return_item_inventory_unit_reimbursed: Ang unit ng imbentaryo ng item na ibalik ay binayaran na
     return_item_order_not_completed: Dapat na nakumpleto ang order ng item na bumalik
     return_item_rma_ineligible: Ang item sa pagbabalik ay nangangailangan ng isang RMA
     return_item_time_period_ineligible: Ang item sa pagbabalik ay nasa labas ng karapat-dapat na tagal ng panahon
-    return_items: Ibalik ang Mga Item
     return_items_cannot_be_associated_with_multiple_orders: Ang mga item na bumalik ay hindi maiugnay sa maraming mga order.
     return_number: Numero ng Pagbabalik
     return_quantity: Bumalik Dami
-    returned: Nagbalik
     returns: Nagbabalik
-    review: Pagsusuri
     risk: Panganib
     risk_analysis: Pagsusuri sa Panganib
     risky: Mapanganib
-    rma_credit: Kredito sa RMA
     rma_number: Bilang ng RMA
-    rma_value: Halaga ng RMA
     role_id: Role ID
     roles: Mga Tungkulin
     rules: Panuntunan
     safe: Ligtas
     sales_total: Kabuuan sa Pagbebenta
-    sales_total_description: Kabuuang Benta Para sa Lahat ng Mga Order
     sales_totals: Mga Kabuuang Benta
-    save_and_continue: I-save at magpatuloy
-    save_my_address: I-save ang aking address
     saving: Nagse-save
     say_no: Hindi
     say_yes: Oo
-    scope: Saklaw
     search: Maghanap
-    search_results: Mga resulta sa paghahanap para sa '%{keywords}'
     searching: Naghahanap
-    secure_connection_type: Secure na Uri ng Koneksyon
     security_settings: Mga setting ng seguridad
     select: Pumili
     select_a_date: Pumili ng isang petsa
-    select_a_date_range: Pumili ng isang saklaw ng petsa
     select_a_return_authorization_reason: Pumili ng isang dahilan para sa pahintulot sa pagbabalik
     select_a_stock_location: Pumili ng isang lokasyon ng stock
     select_a_store_credit_reason: Pumili ng isang dahilan para sa credit sa tindahan
@@ -1377,12 +1256,9 @@ tl:
     select_from_prototype: Piliin Mula sa Prototype
     select_stock: Piliin ang stock
     selected_quantity_not_available: napili ng %{item} ay hindi magagamit.
-    send_copy_of_all_mails_to: Magpadala ng Kopya ng Lahat ng Mga Mail Sa
-    send_mails_as: Magpadala ng Mails Bilang
     seo: SEO
     seo_robots: Mga Robot ng SEO
     seo_title: Pamagat ng SEO
-    server: Server
     server_error: Bumalik ang server ng isang error
     settings: Mga setting
     ship: Barko

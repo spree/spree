@@ -686,27 +686,21 @@ el-CY:
     default_tax: Προεπιλεγμένος φόρος
     default_tax_zone: Προεπιλεγμένη φορολογική ζώνη
     delete: Διαγράφω
-    delete_from_taxon: Διαγραφή από το Taxon
     deleted: Διαγράφηκε
-    delivery: Διανομή
     delivery_information: πληροφορίες αποστολής
     depth: Βάθος
     description: Περιγραφή
     destination: Προορισμός
-    destroy: Καταστρέφω
     details: Λεπτομέριες
     discontinue_on: Διακοπή ενεργοποίησης
     discontinued: Διακόπηκε
     discontinued_variants_present: Ορισμένα στοιχεία γραμμής σε αυτήν την παραγγελία έχουν προϊόντα που δεν είναι πλέον διαθέσιμα.
-    discount_amount: Ποσό έκπτωσης
-    dismiss_banner: Οχι ευχαριστώ! Δεν με ενδιαφέρει, μην προβάλλετε ξανά αυτό το μήνυμα
     display: Απεικόνιση
     doesnt_track_inventory: Δεν παρακολουθεί το απόθεμα
     dont_have_account: Χωρίς λογαριασμό;
     edit: Επεξεργασία
     edit_reimbursement: Επεξεργασία αποζημίωσης
     editing_resource: Επεξεργασία %{resource}
-    editing_rma_reason: Επεξεργασία λόγου RMA
     editing_user: Επεξεργασία του λογαριασμού σας
     eligibility_errors:
       messages:
@@ -725,9 +719,6 @@ el-CY:
         not_first_order: Αυτός ο κωδικός κουπονιού μπορεί να εφαρμοστεί μόνο στην πρώτη παραγγελία σας.
     email: ΗΛΕΚΤΡΟΝΙΚΗ ΔΙΕΥΘΥΝΣΗ
     empty: Αδειάζω
-    empty_cart: Αδειο καλάθι
-    enable_mail_delivery: Ενεργοποίηση παράδοσης αλληλογραφίας
-    end: Τέλος
     ending_at: Λήξη στις
     ending_in: Τελειωνει σε
     ends_at: Λήγει στις
@@ -746,7 +737,6 @@ el-CY:
     errors_prohibited_this_record_from_being_saved:
       one: 1 σφάλμα απαγόρευσε την αποθήκευση αυτής της εγγραφής
       other: Τα σφάλματα %{count} απαγόρευαν την αποθήκευση αυτής της εγγραφής
-    event: Εκδήλωση
     events:
       spree:
         cart:
@@ -766,8 +756,6 @@ el-CY:
     existing_shipments: Υφιστάμενες αποστολές
     expedited_exchanges_warning: Τυχόν καθορισμένες ανταλλαγές θα αποσταλούν στον πελάτη αμέσως μετά την αποθήκευση. Ο πελάτης θα χρεωθεί το πλήρες ποσό του αντικειμένου εάν δεν επιστρέψει το αρχικό αντικείμενο εντός %{days_window} ημερών.
     expiration: Λήξη
-    expiration_date: Ημερομηνία λήξης
-    extension: Επέκταση
     extensions_directory: Κατάλογος επεκτάσεων
     facebook: Facebook
     failed_payment_attempts: Αποτυχημένες προσπάθειες πληρωμής
@@ -776,10 +764,7 @@ el-CY:
     filter: Φίλτρο
     filter_results: Φιλτράρισμα αποτελεσμάτων
     filterable: Φιλτράρισμα
-    finalize: Οριστικοποιώ
-    finalized: Οριστικοποιήθηκε
     find_a_taxon: Βρείτε ένα ταξί
-    first_item: Πρώτο αντικείμενο
     first_name: Ονομα
     first_name_begins_with: Το όνομα αρχίζει με
     firstname: Ονομα
@@ -790,18 +775,12 @@ el-CY:
     footer: Υποσέλιδο
     forgot_password: Ξεχάσατε τον κωδικό?
     free: Ελεύθερος
-    free_shipping: Δωρεάν αποστολή
-    free_shipping_amount: "-"
-    front_end: Πρόσοψη
-    gateway: πύλη
     gateway_error: Σφάλμα πύλης
-    general: Γενικός
     general_settings: Γενικές Ρυθμίσεις
     generate_code: Δημιουργία κωδικού κουπονιού
     get_back_to_the: Επιστρέψτε στο
     go_to_category: Μετάβαση στην κατηγορία
     guest_checkout: Ταμείο επισκεπτών
-    guest_user_account: Ταμείο ως επισκέπτης
     has_no_shipped_units: δεν έχει αποσταλεί μονάδες
     header_banner: Πανό κεφαλίδας
     height: Υψος
@@ -822,29 +801,19 @@ el-CY:
       show_only: Μόνο προβολή
       supported_locales: Υποστηριζόμενες τοπικές ρυθμίσεις
       translations: Μεταφράσεις
-    icon: Εικόνισμα
     id: Ταυτότητα
-    image: Εικόνα
     images: Εικόνες
     implement_eligible_for_return: 'Πρέπει να εφαρμόσετε το #eligible_for_return; για το EligibilityValidator.'
     implement_requires_manual_intervention: 'Πρέπει να εφαρμόσετε #requires_manual_intervention; για το EligibilityValidator.'
     in_stock: Σε απόθεμα
-    inactive: Αδρανής
-    incl: συμπ.
     included_in_price: Περιλαμβάνεται στην τιμή
-    included_price_validation: δεν μπορεί να επιλεγεί εκτός εάν έχετε ορίσει μια προεπιλεγμένη φορολογική ζώνη
     incomplete: Ατελής
     info_number_of_skus_not_shown:
       one: και ένα άλλο
       other: και %{count} ακόμη
     info_product_has_multiple_skus: 'Αυτό το προϊόν έχει παραλλαγές %{count}:'
     instagram: Ίνσταγκραμ
-    instructions_to_reset_password: Εισαγάγετε το email σας στην παρακάτω φόρμα
-    insufficient_stock: Ανεπαρκές διαθέσιμο απόθεμα, απομένει μόνο %{on_hand}
-    insufficient_stock_item_quantity: Ανεπαρκής διαθέσιμη ποσότητα αποθέματος
     insufficient_stock_lines_present: Ορισμένα στοιχεία γραμμής σε αυτήν την παραγγελία έχουν ανεπαρκή ποσότητα.
-    intercept_email_address: Διεύθυνση ηλεκτρονικού ταχυδρομείου Intercept
-    intercept_email_instructions: Παράκαμψη παραλήπτη email και αντικατάσταση με αυτήν τη διεύθυνση.
     internal_name: Εσωτερικό όνομα
     internationalization: Διεθνοποίηση
     invalid_credit_card: Μη έγκυρη πιστωτική κάρτα.
@@ -852,16 +821,11 @@ el-CY:
     invalid_payment_provider: Μη έγκυρος πάροχος πληρωμών.
     invalid_promotion_action: Μη έγκυρη ενέργεια προώθησης.
     invalid_promotion_rule: Μη έγκυρος κανόνας προώθησης.
-    inventory: Καταγραφή εμπορευμάτων
-    inventory_adjustment: Προσαρμογή αποθέματος
     inventory_error_flash_for_insufficient_quantity: Ένα στοιχείο στο καλάθι σας δεν είναι διαθέσιμο.
-    inventory_state: Κατάσταση αποθέματος
-    is_not_available_to_shipment_address: δεν είναι διαθέσιμο στη διεύθυνση αποστολής
     iso: ISO Alpha-2
     iso3: ISO Alpha-3
     iso_name: Όνομα ISO
     issued_on: Που εκδόθηκε στις
-    item: Είδος
     item_description: περιγραφή αντικειμένου
     item_total: Σύνολο αντικειμένου
     item_total_rule:
@@ -878,28 +842,16 @@ el-CY:
     last_name: Επίθετο
     last_name_begins_with: Το επώνυμο ξεκινά με
     lastname: Επίθετο
-    learn_more: Μάθε περισσότερα
     lifetime_stats: Στατιστικά διάρκειας ζωής
     limit_usage_to: Περιορίστε τη χρήση σε
     line_item_adjustments: Προσαρμογές στοιχείων γραμμής
-    list: Λίστα
     loading: Φόρτωση
     loading_tree: Φόρτωση δέντρου. Παρακαλώ περιμένετε…
-    locale_changed: Η τοπική αλλαγή
     location: Τοποθεσία
-    lock: Κλειδαριά
     log_entries: Καταχωρήσεις καταγραφής
-    log_in: Σύνδεση
     log_in_to_continue: Συνδεθείτε για να συνεχίσετε
-    logged_in_as: Συνδεδεμένος ως
-    logged_in_succesfully: Συνδεθήκατε με επιτυχία
-    logged_out: Έχετε αποσυνδεθεί.
     login: Σύνδεση
-    login_as_existing: Συνδεθείτε ως υφιστάμενος πελάτης
-    login_failed: Η πιστοποίηση σύνδεσης απέτυχε.
-    login_name: Σύνδεση
     logo: Λογότυπο
-    logo_alt: Λογότυπο μάρκας
     logout: Αποσύνδεση
     logs: Κούτσουρα
     look_for_similar_items: Αναζητήστε παρόμοια αντικείμενα
@@ -907,7 +859,6 @@ el-CY:
     mailer_logo: Λογότυπο αλληλογραφίας (μόνο εικόνες JPG ή PNG)
     make_refund: Κάντε επιστροφή χρημάτων
     make_sure_the_above_reimbursement_amount_is_correct: Βεβαιωθείτε ότι το παραπάνω ποσό επιστροφής είναι σωστό
-    manage_promotion_categories: Διαχείριση κατηγοριών προώθησης
     manage_variants: Διαχείριση παραλλαγών
     manual_intervention_required: Απαιτείται χειροκίνητη παρέμβαση
     master: Κύριος
@@ -916,16 +867,12 @@ el-CY:
     match_choices:
       all: Ολα
       none: Κανένας
-    max_items: Μέγιστα αντικείμενα
     member_since: Μέλος από
     memo: Σημείωμα
     meta_description: Μετα-περιγραφή
     meta_keywords: Μετα-λέξεις-κλειδιά
     meta_title: Μετα τίτλος
-    metadata: Μεταδεδομένα
-    minimal_amount: Ελάχιστο ποσό
     missing_return_authorization: Λείπει η εξουσιοδότηση επιστροφής για %{item_name}.
-    month: Μήνας
     more: Περισσότερο
     move_stock_between_locations: Μετακίνηση αποθεμάτων μεταξύ τοποθεσιών
     move_variant_to: Μετακίνηση παραλλαγής σε
@@ -951,15 +898,12 @@ el-CY:
       show_search: Εμφάνιση αναζήτησης
       show_user_menu: Εμφάνιση μενού χρήστη
       sign_up: ΕΓΓΡΑΦΕΙΤΕ
-    new: Νέος
     new_adjustment: Νέα προσαρμογή
     new_country: Νέα χώρα
-    new_customer: Δημιουργία νέου λογαριασμού
     new_customer_return: Επιστροφή νέου πελάτη
     new_image: Νέα εικόνα
     new_option_type: Νέος τύπος επιλογής
     new_order: Νέα παραγγελία
-    new_order_completed: Η νέα παραγγελία ολοκληρώθηκε
     new_order_notifications_email: Email ειδοποιήσεων νέας παραγγελίας
     new_payment: Νέα πληρωμή
     new_payment_method: Νέα μέθοδος πληρωμής
@@ -981,44 +925,34 @@ el-CY:
     new_stock_location: Νέα τοποθεσία μετοχών
     new_stock_movement: Νέα κίνηση των αποθεμάτων
     new_stock_transfer: Νέα μεταφορά μετοχών
-    new_store_credit: Νέα πίστωση καταστήματος
     new_store_credit_category: Νέα κατηγορία πίστωσης καταστήματος
     new_tax_category: Νέα κατηγορία φόρου
     new_tax_rate: Νέος φορολογικός συντελεστής
     new_taxon: Νέο ταξί
     new_taxonomy: Νέα ταξονομία
-    new_tracker: Νέο Tracker
     new_user: Νέος χρήστης
     new_variant: Νέα παραλλαγή
     new_zone: Νέα ζώνη
     next: Επόμενο
     no_actions_added: Δεν προστέθηκαν ενέργειες
-    no_address_given: Δεν έχει δοθεί διεύθυνση
     no_available_date_set: Δεν έχει οριστεί διαθέσιμη ημερομηνία
     no_cc_type: ΟΧΙ
     no_country: Δεν έχει οριστεί χώρα
     no_limits_zone: Χωρίς όρια
     no_payment_found: Δεν βρέθηκε πληρωμή
     no_payment_provider_settings_message: Αυτός ο πάροχος πληρωμών δεν διαθέτει προσαρμοσμένες ρυθμίσεις
-    no_pending_payments: Δεν υπάρχουν εκκρεμείς πληρωμές
     no_product_available:
       for_this_quantity: Δυστυχώς, φαίνεται ότι ορισμένα προϊόντα δεν είναι διαθέσιμα σε επιλεγμένη ποσότητα.
       opps: Ωχ!
-    no_products_found: Δεν βρέθηκαν προϊόντα
     no_resource_found: Δεν βρέθηκε %{resource}
     no_results: Χωρίς αποτέλεσμα
-    no_returns_found: Δεν βρέθηκαν επιστροφές
     no_rules_added: Δεν προστέθηκαν κανόνες
     no_shipping_method_selected: Δεν έχει επιλεγεί μέθοδος αποστολής.
     no_state_changes: Δεν έχει αλλάξει ακόμη κατάσταση.
     no_tracking_present: Δεν παρέχονται λεπτομέρειες παρακολούθησης.
     none: Κανένας
-    none_selected: Κανένα επιλεγμένο
-    normal_amount: Κανονικό ποσό
     not: δεν
     not_available: ΟΧΙ
-    not_enough_stock: Δεν υπάρχει αρκετό απόθεμα στην τοποθεσία προέλευσης για την ολοκλήρωση αυτής της μεταφοράς.
-    not_found: "%{resource} δεν βρέθηκε"
     note: Σημείωση
     notice_messages:
       icon_removed: Η εικόνα καταργήθηκε με επιτυχία
@@ -1032,27 +966,20 @@ el-CY:
     num_orders: "# Παραγγελίες"
     number: Αριθμός
     ok: Εντάξει
-    on_hand: Σε ετοιμότητα
-    open: Ανοιξε
     open_all_adjustments: Ανοίξτε όλες τις προσαρμογές
-    option_type: Τύπος επιλογής
     option_type_placeholder: Επιλέξτε έναν τύπο επιλογής
     option_types: Τύποι επιλογών
-    option_value: Αξία επιλογής
     option_values: Τιμές επιλογών
     optional: Προαιρετικός
     options: Επιλογές
     or: ή
-    or_over_price: "%{price} ή παραπάνω"
     order: Σειρά
     order_adjustments: Προσαρμογές παραγγελιών
     order_already_updated: Η παραγγελία έχει ήδη ενημερωθεί.
     order_approved: Η παραγγελία εγκρίθηκε
     order_canceled: Η παραγγελία ακυρώθηκε
-    order_details: Λεπτομέρειες Παραγγελίας
     order_email_resent: Αποστολή παραγγελίας μέσω email
     order_has_no_payments: Η παραγγελία δεν έχει πληρωμές
-    order_information: Πληροφορίες Παραγγελίας
     order_line_items: Παραγγελία στοιχείων γραμμής
     order_mailer:
       cancel_email:
@@ -1078,7 +1005,6 @@ el-CY:
       total: 'Σύνολο παραγγελίας:'
     order_not_found: Δεν ήταν δυνατή η εύρεση της παραγγελίας σας. Δοκιμάστε ξανά αυτήν την ενέργεια.
     order_number: Παραγγελία %{number}
-    order_processed_successfully: Η παραγγελία σας υποβλήθηκε σε επεξεργασία με επιτυχία
     order_resumed: Η παραγγελία συνεχίστηκε
     order_state:
       address: διεύθυνση
@@ -1097,10 +1023,8 @@ el-CY:
     order_summary: περίληψη παραγγελίας
     order_sure_want_to: Είστε βέβαιοι ότι θέλετε να %{event} αυτήν την παραγγελία;
     order_total: Σύνολο παραγγελίας
-    order_updated: Η παραγγελία ενημερώθηκε
     orders: Παραγγελίες
     out_of_stock: Μη διαθέσιμο
-    overview: ΣΦΑΙΡΙΚΗ ΕΙΚΟΝΑ
     package_from: πακέτο από
     page_not_found: Συγνώμη! Η σελίδα που αναζητάτε δεν μπορεί να βρεθεί.
     pagination:
@@ -1110,18 +1034,14 @@ el-CY:
     password: Κωδικός πρόσβασης
     paste: Επικόλληση
     path: Μονοπάτι
-    pay: πληρωμή
     payment: Πληρωμή
     payment_amount: Ποσό ΠΛΗΡΩΜΗΣ
     payment_could_not_be_created: Δεν ήταν δυνατή η δημιουργία πληρωμής.
     payment_identifier: Αναγνωριστικό πληρωμής
-    payment_information: Πληροφορίες Πληρωμής
     payment_method: Μέθοδος πληρωμής
     payment_method_not_supported: Αυτός ο τρόπος πληρωμής δεν υποστηρίζεται. Επιλέξτε άλλο.
     payment_methods: μέθοδοι πληρωμής
     payment_processing_failed: Δεν ήταν δυνατή η επεξεργασία της πληρωμής, ελέγξτε τα στοιχεία που εισαγάγατε
-    payment_processor_choose_banner_text: Εάν χρειάζεστε βοήθεια για την επιλογή ενός επεξεργαστή πληρωμών, επισκεφτείτε το
-    payment_processor_choose_link: τη σελίδα πληρωμών μας
     payment_provider_settings: Ρυθμίσεις παρόχου πληρωμών
     payment_state: Κατάσταση πληρωμής
     payment_states:
@@ -1144,13 +1064,10 @@ el-CY:
       view_cart: Προβολή καλαθιού
     pending: εκκρεμής
     pending_sale: Εκκρεμεί πώληση
-    percent: Τοις εκατό
     percent_per_item: Ποσοστό ανά στοιχείο
     permalink: Μόνιμος σύνδεσμος
     phone: Τηλέφωνο
-    place_order: Παραγγέλνω
     please_define_payment_methods: Καθορίστε πρώτα κάποιους τρόπους πληρωμής.
-    please_enter_reasonable_quantity: Εισαγάγετε μια εύλογη ποσότητα.
     plp:
       clear_all: ΤΑ ΚΑΘΑΡΙΖΩ ΟΛΑ
       default: ΠΡΟΚΑΘΟΡΙΣΜΕΝΟ
@@ -1168,8 +1085,6 @@ el-CY:
       price_low_to_high: ΤΙΜΗ (ΧΑΜΗΛΗ - ΥΨΗΛΗ)
       results_for: ΑΠΟΤΕΛΕΣΜΑΤΑ ΓΙΑ
       sort_by: ΤΑΞΙΝΟΜΗΣΗ ΚΑΤΑ
-    populate_get_error: Κάτι πήγε στραβά. Δοκιμάστε να προσθέσετε ξανά το στοιχείο.
-    powered_by: Υποστηρίζεται από
     pre_tax_amount: Ποσό προ φόρων
     pre_tax_refund_amount: Ποσό επιστροφής προ φόρων
     pre_tax_total: Σύνολο προ φόρων
@@ -1181,15 +1096,11 @@ el-CY:
     previous_state_missing: α / α
     previously_used_card: Κάρτες που χρησιμοποιήθηκαν στο παρελθόν
     price: Τιμή
-    price_range: Εύρος τιμών
     price_sack: Τιμή σάκος
     prices: Τιμές
-    process: Επεξεργάζομαι, διαδικασία
     product: Προϊόν
-    product_details: λεπτομέρειες προιόντος
     product_has_no_description: Αυτό το προϊόν δεν έχει περιγραφή
     product_not_available_in_this_currency: Αυτό το προϊόν δεν είναι διαθέσιμο στο επιλεγμένο νόμισμα.
-    product_properties: Ιδιότητες προϊόντος
     product_rule:
       choose_products: Επιλέξτε προϊόντα
       label: Η παραγγελία πρέπει να περιέχει x ποσότητα αυτών των προϊόντων
@@ -1265,26 +1176,16 @@ el-CY:
     provider: Προμηθευτής
     provider_settings_warning: Εάν αλλάζετε τον τύπο παρόχου, πρέπει πρώτα να αποθηκεύσετε για να μπορέσετε να επεξεργαστείτε τις ρυθμίσεις του παρόχου
     purchased_quantity: Ποσότητα που αγοράστηκε
-    qty: Ποτ
     quantity: Ποσότητα
-    quantity_returned: Η ποσότητα επιστράφηκε
-    quantity_shipped: Ποσότητα που εστάλη
     quick_search: Γρήγορη αναζήτηση..
     rate: Τιμή
     reason: Λόγος
-    receive: λαμβάνω
     receive_stock: Λήψη αποθεμάτων
-    received: Λήφθηκε
-    reception_status: Κατάσταση υποδοχής
     reference: Αναφορά
     reference_contains: Η αναφορά περιέχει
     refund: Επιστροφή χρημάτων
-    refund_amount_must_be_greater_than_zero: Το ποσό επιστροφής χρημάτων πρέπει να είναι μεγαλύτερο από το μηδέν
     refund_reasons: Λόγοι επιστροφής χρημάτων
-    refunded_amount: Ποσό που επιστράφηκε
     refunds: Επιστροφές χρημάτων
-    register: Κανω ΕΓΓΡΑΦΗ
-    registration: Εγγραφή
     reimburse: Αποζημιώ
     reimbursed: Αποζημίωση
     reimbursement: Αποζημίωση
@@ -1300,76 +1201,54 @@ el-CY:
         subject: Ειδοποίηση επιστροφής χρημάτων
         thanks: Ευχαριστούμε για την επιχείρησή σας.
         total_refunded: 'Σύνολο επιστροφής χρημάτων: %{total}'
-    reimbursement_perform_failed: 'Δεν ήταν δυνατή η εκτέλεση αποζημίωσης. Σφάλμα: %{error}'
     reimbursement_status: Κατάσταση επιστροφής
     reimbursement_type: Τύπος αποζημίωσης
     reimbursement_type_override: Παράκαμψη τύπου επιστροφής
     reimbursement_types: Τύποι αποζημίωσης
-    reimbursements: Επιστροφές
     reject: Απορρίπτω
     rejected: Απορρίφθηκε
     remember_me: Θυμήσου με
     remove: Αφαιρώ
     remove_image: Κατάργηση εικόνας
     rename: Μετονομάζω
-    report: Κανω ΑΝΑΦΟΡΑ
     reports: Αναφορές
     required: "*"
     required_fields: απαιτούμενα πεδία
     resellable: Μεταπώληση
     resend: Στείλτε ξανά
-    reset_password: Επαναφέρετε τον κωδικό πρόσβασής μου
-    response_code: Κωδικός απόκρισης
-    resume: ΒΙΟΓΡΑΦΙΚΟ
-    resumed: Συνέχισε
-    return: ΕΠΙΣΤΡΟΦΗ
-    return_authorization: Εξουσιοδότηση επιστροφής
     return_authorization_canceled: Η εξουσιοδότηση επιστροφής ακυρώθηκε
     return_authorization_reasons: Λόγοι εξουσιοδότησης επιστροφής
     return_authorization_states:
       authorized: Εξουσιοδοτημένο
       canceled: Ακυρώθηκε
-    return_authorization_updated: Η εξουσιοδότηση επιστροφής ενημερώθηκε
     return_authorizations: Επιστροφές εξουσιοδότησης
     return_item_inventory_unit_ineligible: Η μονάδα αποθέματος του αντικειμένου επιστροφής πρέπει να αποσταλεί
     return_item_inventory_unit_reimbursed: Η μονάδα αποθέματος του στοιχείου επιστροφής έχει ήδη επιστραφεί
     return_item_order_not_completed: Η παραγγελία του αντικειμένου επιστροφής πρέπει να ολοκληρωθεί
     return_item_rma_ineligible: Το στοιχείο επιστροφής απαιτεί RMA
     return_item_time_period_ineligible: Το στοιχείο επιστροφής είναι εκτός της κατάλληλης χρονικής περιόδου
-    return_items: Επιστροφή προϊόντων
     return_items_cannot_be_associated_with_multiple_orders: Τα στοιχεία επιστροφής δεν μπορούν να συσχετιστούν με πολλές παραγγελίες.
     return_number: Αριθμός επιστροφής
     return_quantity: Ποσότητα επιστροφής
-    returned: Επέστρεψαν
     returns: Επιστρέφει
-    review: Ανασκόπηση
     risk: Κίνδυνος
     risk_analysis: Ανάλυση κινδύνου
     risky: Επικίνδυνος
-    rma_credit: Πίστωση RMA
     rma_number: Αριθμός RMA
-    rma_value: Τιμή RMA
     role_id: Αναγνωριστικό ρόλου
     roles: Ρόλοι
     rules: Κανόνες
     safe: Ασφαλής
     sales_total: Σύνολο πωλήσεων
-    sales_total_description: Σύνολο πωλήσεων για όλες τις παραγγελίες
     sales_totals: Σύνολο πωλήσεων
-    save_and_continue: Αποθήκευση και συνέχεια
-    save_my_address: Αποθηκεύστε τη διεύθυνσή μου
     saving: Οικονομία
     say_no: Οχι
     say_yes: Ναί
-    scope: Πεδίο εφαρμογής
     search: Αναζήτηση
-    search_results: Αποτελέσματα αναζήτησης για '%{keywords}'
     searching: Ερευνητικός
-    secure_connection_type: Τύπος ασφαλούς σύνδεσης
     security_settings: Ρυθμίσεις ασφαλείας
     select: Επιλέγω
     select_a_date: Επιλέξτε μια ημερομηνία
-    select_a_date_range: Επιλέξτε ένα εύρος ημερομηνιών
     select_a_return_authorization_reason: Επιλέξτε έναν λόγο για την εξουσιοδότηση επιστροφής
     select_a_stock_location: Επιλέξτε μια τοποθεσία μετοχής
     select_a_store_credit_reason: Επιλέξτε έναν λόγο για την πίστωση στο κατάστημα
@@ -1377,12 +1256,9 @@ el-CY:
     select_from_prototype: Επιλέξτε Από πρωτότυπο
     select_stock: Επιλέξτε απόθεμα
     selected_quantity_not_available: Το επιλεγμένο %{item} δεν είναι διαθέσιμο.
-    send_copy_of_all_mails_to: Αποστολή αντιγράφου όλων των μηνυμάτων προς
-    send_mails_as: Αποστολή μηνυμάτων ως
     seo: SEO
     seo_robots: Ρομπότ SEO
     seo_title: Τίτλος SEO
-    server: Υπηρέτης
     server_error: Ο διακομιστής επέστρεψε ένα σφάλμα
     settings: Ρυθμίσεις
     ship: Πλοίο
