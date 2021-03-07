@@ -1211,10 +1211,7 @@ it-CH:
     please_define_payment_methods: Si prega di definire prima alcuni metodi di pagamento.
     please_enter_reasonable_quantity: Inserisci una quantità ragionevole.
     plp:
-      best_selling: MIGLIORE VENDITA
       clear_all: CANCELLA TUTTO
-      collection: COLLEZIONE
-      color: COLORE
       default: PREDEFINITO
       done: FATTO
       filter_by: FILTRA PER
@@ -1228,12 +1225,8 @@ it-CH:
       price: prezzo
       price_high_to_low: PREZZO (ALTO - BASSO)
       price_low_to_high: PREZZO (BASSO - ALTO)
-      result: RISULTATO
       results_for: RISULTATI PER
-      size: TAGLIA
       sort_by: ORDINA PER
-      top_sellers: I PIÙ VENDUTI
-      type: GENERE
     populate_get_error: Qualcosa è andato storto. Prova ad aggiungere di nuovo l'articolo.
     powered_by: Offerto da
     pre_tax_amount: Importo ante imposte

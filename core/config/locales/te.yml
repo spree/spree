@@ -1211,10 +1211,7 @@ te:
     please_define_payment_methods: దయచేసి మొదట కొన్ని చెల్లింపు పద్ధతులను నిర్వచించండి.
     please_enter_reasonable_quantity: దయచేసి సహేతుకమైన పరిమాణాన్ని నమోదు చేయండి.
     plp:
-      best_selling: ఉత్తమ అమ్మకం
       clear_all: అన్నింటినీ క్లియర్ చేయండి
-      collection: సేకరణ
-      color: COLOR
       default: డిఫాల్ట్
       done: పూర్తి
       filter_by: ద్వారా వడపోత
@@ -1228,12 +1225,8 @@ te:
       price: ధర
       price_high_to_low: ధర (అధిక - తక్కువ)
       price_low_to_high: ధర (తక్కువ - అధికం)
-      result: ఫలితం
       results_for: ఫలితాలు
-      size: పరిమాణం
       sort_by: ఆమరిక
-      top_sellers: టాప్ సెల్లెర్స్
-      type: రకం
     populate_get_error: ఏదో తప్పు జరిగింది. దయచేసి అంశాన్ని మళ్ళీ జోడించడానికి ప్రయత్నించండి.
     powered_by: ద్వారా ఆధారితం
     pre_tax_amount: ప్రీ-టాక్స్ మొత్తం

@@ -1211,10 +1211,7 @@ lb:
     please_define_payment_methods: Definéiert w.e.g. fir d'éischt e puer Bezuelmethoden.
     please_enter_reasonable_quantity: Gitt w.e.g. eng raisonnabel Quantitéit an.
     plp:
-      best_selling: BESCHT VERKAAFT
       clear_all: ALLEGUER KLOER
-      collection: KOLLEKTIOUN
-      color: FARW
       default: DEFAULT
       done: GEMAACH
       filter_by: FILTER VUN
@@ -1228,12 +1225,8 @@ lb:
       price: Präis
       price_high_to_low: PRÄIS (Héich - Niddereg)
       price_low_to_high: PRÄIS (LOW - HIGH)
-      result: RESULTAT
       results_for: RESULTATER FIR
-      size: GRÉISST
       sort_by: SORTERT VUN
-      top_sellers: TOP VERKEFER
-      type: TYPE
     populate_get_error: Eppes ass falsch gaang. Probéiert w.e.g. nach eng Kéier den Artikel bäizefügen.
     powered_by: Bereetgestallt vun
     pre_tax_amount: Pre-Tax Betrag

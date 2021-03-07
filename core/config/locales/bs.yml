@@ -1299,10 +1299,7 @@ bs:
     please_define_payment_methods: Prvo definirajte neke načine plaćanja.
     please_enter_reasonable_quantity: Unesite razumnu količinu.
     plp:
-      best_selling: NAJPRODAJA
       clear_all: POČISTI SVE
-      collection: ZBIRKA
-      color: BOJA
       default: DEFAULT
       done: GOTOVO
       filter_by: FILTER BY
@@ -1316,12 +1313,8 @@ bs:
       price: Cijena
       price_high_to_low: CIJENA (VISOKA - NISKA)
       price_low_to_high: CIJENA (NISKA - VISOKA)
-      result: REZULTAT
       results_for: REZULTATI ZA
-      size: VELIČINA
       sort_by: SORTIRAJ PO
-      top_sellers: TOP PRODAVACI
-      type: TIP
     populate_get_error: Nešto je pošlo po zlu. Pokušajte ponovo dodati stavku.
     powered_by: Pokreće
     pre_tax_amount: Iznos prije oporezivanja

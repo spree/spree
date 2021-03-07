@@ -1211,10 +1211,7 @@ ne:
     please_define_payment_methods: कृपया पहिले केहि भुक्तानी विधिहरू परिभाषित गर्नुहोस्।
     please_enter_reasonable_quantity: कृपया एक उचित मात्रा प्रविष्ट गर्नुहोस्।
     plp:
-      best_selling: उत्तम बेच्नुहोस्
       clear_all: सबै खाली गर्नुहोस्
-      collection: संग्रह
-      color: COLOR
       default: डिफॉल्ट
       done: सम्पन्न भयो
       filter_by: फिल्ट द्वारा
@@ -1228,12 +1225,8 @@ ne:
       price: मूल्य
       price_high_to_low: मूल्य (उच्च - कम)
       price_low_to_high: मूल्य (LOW - HIGH)
-      result: परिणाम
       results_for: परिणामहरूको लागि
-      size: SIZE
       sort_by: द्वारा क्रमबद्ध
-      top_sellers: शीर्ष विक्रेताहरू
-      type: TYPE
     populate_get_error: केहि गलत भयो। फेरि वस्तु थप्ने प्रयास गर्नुहोस्।
     powered_by: द्वारा संचालित
     pre_tax_amount: पूर्व कर रकम

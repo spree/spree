@@ -1211,10 +1211,7 @@ eu:
     please_define_payment_methods: Mesedez, lehenik eta behin zehaztu ordainketa metodo batzuk.
     please_enter_reasonable_quantity: Mesedez, sartu zentzuzko kantitatea.
     plp:
-      best_selling: SALMENTA ONENA
       clear_all: GARBITU GUZTIAK
-      collection: BILDUMA
-      color: KOLORE
       default: AURRETIKOA
       done: EGIN
       filter_by: FILTRAZIOA
@@ -1228,12 +1225,8 @@ eu:
       price: prezioa
       price_high_to_low: PREZIOA (ALTUA - BAXUA)
       price_low_to_high: PREZIOA (BAXUA - ALTUA)
-      result: EMAITZA
       results_for: EMAITZAK
-      size: TAMAINA
       sort_by: ORDENATU
-      top_sellers: SALDU GORENAK
-      type: MOTA
     populate_get_error: Arazoren bat izan da. Saiatu berriro elementua gehitzen.
     powered_by: Egilea
     pre_tax_amount: Zerga Aurretiko Zenbatekoa

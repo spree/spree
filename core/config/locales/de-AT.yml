@@ -1211,10 +1211,7 @@ de-AT:
     please_define_payment_methods: Bitte definieren Sie zuerst einige Zahlungsmethoden.
     please_enter_reasonable_quantity: Bitte geben Sie eine angemessene Menge ein.
     plp:
-      best_selling: MEISTVERKAUFT
       clear_all: ALLES LÖSCHEN
-      collection: SAMMLUNG
-      color: FARBE
       default: STANDARD
       done: GETAN
       filter_by: FILTERN NACH
@@ -1228,12 +1225,8 @@ de-AT:
       price: Preis
       price_high_to_low: PREIS (HOCH-NIEDRIG)
       price_low_to_high: PREIS (NIEDRIG - HOCH)
-      result: ERGEBNIS
       results_for: Ergebnisse für
-      size: GRÖSSE
       sort_by: SORTIEREN NACH
-      top_sellers: VERKAUFSRENNER
-      type: ART
     populate_get_error: Etwas ist schief gelaufen. Bitte versuchen Sie erneut, den Artikel hinzuzufügen.
     powered_by: Unterstützt von
     pre_tax_amount: Betrag vor Steuern

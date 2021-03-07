@@ -1211,10 +1211,7 @@ sw:
     please_define_payment_methods: Tafadhali fafanua njia kadhaa za malipo kwanza.
     please_enter_reasonable_quantity: Tafadhali ingiza idadi inayofaa.
     plp:
-      best_selling: MAUZO MAZURI
       clear_all: WAZI WOTE
-      collection: Mkusanyiko
-      color: RANGI
       default: UDHARA
       done: UMEFANYA
       filter_by: FILTER KWA
@@ -1228,12 +1225,8 @@ sw:
       price: bei
       price_high_to_low: BEI (JUU - CHINI)
       price_low_to_high: BEI (CHINI - JUU)
-      result: MATOKEO
       results_for: MATOKEO YA
-      size: UKUBWA
       sort_by: PANGA KWA
-      top_sellers: WAUZAJI WA JUU
-      type: AINA
     populate_get_error: Hitilafu imetokea. Tafadhali jaribu kuongeza kipengee tena.
     powered_by: Kinatumia
     pre_tax_amount: Kiasi cha Ushuru wa Kabla

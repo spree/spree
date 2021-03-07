@@ -1211,10 +1211,7 @@ ka:
     please_define_payment_methods: გთხოვთ, ჯერ განსაზღვროთ გადახდის რამდენიმე მეთოდი.
     please_enter_reasonable_quantity: გთხოვთ, შეიყვანოთ გონივრული რაოდენობა.
     plp:
-      best_selling: საუკეთესო გაყიდვები
       clear_all: ᲧᲕᲔᲚᲐᲤᲠᲘᲡ ᲒᲐᲡᲣᲤᲗᲐᲕᲔᲑᲐ
-      collection: კრებული
-      color: ფერი
       default: დეფოლტი
       done: ᲨᲔᲡᲠᲣᲚᲔᲑᲣᲚᲘᲐ
       filter_by: ᲒᲐᲤᲘᲚᲢᲠᲕᲐ
@@ -1228,12 +1225,8 @@ ka:
       price: ფასი
       price_high_to_low: ფასი (მაღალი - დაბალი)
       price_low_to_high: ფასი (დაბალი - მაღალი)
-      result: შედეგი
       results_for: შედეგები
-      size: ზომა
       sort_by: ᲓᲐᲚᲐᲒᲔᲑᲐ
-      top_sellers: TOP გამყიდველები
-      type: ტიპი
     populate_get_error: Რაღაც არასწორად წავიდა. გთხოვთ, ისევ სცადოთ ნივთის დამატება.
     powered_by: იკვებება
     pre_tax_amount: წინასწარი გადასახადის თანხა

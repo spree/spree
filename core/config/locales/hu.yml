@@ -1211,10 +1211,7 @@ hu:
     please_define_payment_methods: Kérjük, először adjon meg néhány fizetési módot.
     please_enter_reasonable_quantity: Kérjük, adjon meg egy ésszerű mennyiséget.
     plp:
-      best_selling: LEGKELENDŐBB
       clear_all: MINDENT KITÖRÖL
-      collection: GYŰJTEMÉNY
-      color: SZÍN
       default: ALAPÉRTÉK
       done: KÉSZ
       filter_by: SZŰRÉS VLAMI ALAPJÁN
@@ -1228,12 +1225,8 @@ hu:
       price: ár
       price_high_to_low: ÁR (HIGH - LOW)
       price_low_to_high: ÁR (LOW - HIGH)
-      result: EREDMÉNY
       results_for: EREDMÉNYEK
-      size: MÉRET
       sort_by: RENDEZÉS
-      top_sellers: TOP ELADÓK
-      type: TÍPUS
     populate_get_error: Valami elromlott. Kérjük, próbálja újra hozzáadni az elemet.
     powered_by: Powered by
     pre_tax_amount: Adózás előtti összeg

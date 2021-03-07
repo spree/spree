@@ -1211,10 +1211,7 @@ bn:
     please_define_payment_methods: দয়া করে প্রথমে কিছু অর্থ প্রদানের পদ্ধতি নির্ধারণ করুন।
     please_enter_reasonable_quantity: একটি যুক্তিসঙ্গত পরিমাণ লিখুন।
     plp:
-      best_selling: সেরা বিক্রয়
       clear_all: সব পরিষ্কার করে দাও
-      collection: সংগ্রহ
-      color: রঙ
       default: ডিফল্ট
       done: সম্পন্ন
       filter_by: দ্বারা ফিল্টার করুন
@@ -1228,12 +1225,8 @@ bn:
       price: দাম
       price_high_to_low: মূল্য (উচ্চ - নিম্ন)
       price_low_to_high: মূল্য (নিম্ন - উচ্চ)
-      result: ফলাফল
       results_for: ফলাফল
-      size: সাইজ
       sort_by: ক্রমানুসার
-      top_sellers: শীর্ষ বিক্রেতা
-      type: টাইপ
     populate_get_error: কিছু ভুল হয়েছে. আবার আইটেম যুক্ত করার চেষ্টা করুন।
     powered_by: দ্বারা চালিত
     pre_tax_amount: প্রাক করের পরিমাণ

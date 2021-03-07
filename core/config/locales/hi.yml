@@ -1211,10 +1211,7 @@ hi:
     please_define_payment_methods: कृपया पहले कुछ भुगतान विधियों को परिभाषित करें।
     please_enter_reasonable_quantity: कृपया एक उचित मात्रा दर्ज करें।
     plp:
-      best_selling: सर्वश्रेष्ठ बिक्री
       clear_all: सभी साफ करें
-      collection: संग्रह
-      color: रंग
       default: चूक
       done: किया हुआ
       filter_by: के द्वारा छनित
@@ -1228,12 +1225,8 @@ hi:
       price: कीमत
       price_high_to_low: मूल्य (उच्च - कम)
       price_low_to_high: मूल्य (कम - उच्च)
-      result: परिणाम
       results_for: का परिणाम
-      size: आकार
       sort_by: इसके अनुसार क्रमबद्ध करें
-      top_sellers: शीर्ष विक्रेता
-      type: प्रकार
     populate_get_error: कुछ गलत हो गया। कृपया आइटम को फिर से जोड़ने का प्रयास करें।
     powered_by: द्वारा संचालित
     pre_tax_amount: पूर्व कर राशि

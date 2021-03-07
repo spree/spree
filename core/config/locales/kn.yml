@@ -1211,10 +1211,7 @@ kn:
     please_define_payment_methods: ದಯವಿಟ್ಟು ಮೊದಲು ಕೆಲವು ಪಾವತಿ ವಿಧಾನಗಳನ್ನು ವ್ಯಾಖ್ಯಾನಿಸಿ.
     please_enter_reasonable_quantity: ದಯವಿಟ್ಟು ಸಮಂಜಸವಾದ ಪ್ರಮಾಣವನ್ನು ನಮೂದಿಸಿ.
     plp:
-      best_selling: ಅತಿ ಹೆಚ್ಚು ಮಾರಾಟವಾಗುವ
       clear_all: ಎಲ್ಲವನ್ನೂ ತೆಗೆ
-      collection: ಸಂಗ್ರಹ
-      color: ಬಣ್ಣ
       default: ಡೀಫಾಲ್ಟ್
       done: ಮುಗಿದಿದೆ
       filter_by: ಮೂಲಕ ಫಿಲ್ಟರ್ ಮಾಡಿ
@@ -1228,12 +1225,8 @@ kn:
       price: ಬೆಲೆ
       price_high_to_low: ಬೆಲೆ (ಹೆಚ್ಚು - ಕಡಿಮೆ)
       price_low_to_high: ಬೆಲೆ (ಕಡಿಮೆ - ಹೆಚ್ಚು)
-      result: ಫಲಿತಾಂಶ
       results_for: ಫಲಿತಾಂಶಗಳು
-      size: ಗಾತ್ರ
       sort_by: ವಿಂಗಡಿಸು
-      top_sellers: ಉನ್ನತ ಮಾರಾಟಗಾರರು
-      type: ಮಾದರಿ
     populate_get_error: ಏನೋ ತಪ್ಪಾಗಿದೆ. ದಯವಿಟ್ಟು ಐಟಂ ಅನ್ನು ಮತ್ತೆ ಸೇರಿಸಲು ಪ್ರಯತ್ನಿಸಿ.
     powered_by: ನಡೆಸುತ್ತಿದೆ
     pre_tax_amount: ತೆರಿಗೆ ಪೂರ್ವದ ಮೊತ್ತ

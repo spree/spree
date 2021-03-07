@@ -1211,10 +1211,7 @@ mg:
     please_define_payment_methods: Azafady mba farito aloha ny fomba fandoavam-bola.
     please_enter_reasonable_quantity: Ampidiro amina habetsahana mety.
     plp:
-      best_selling: VAROTRA TSARA
       clear_all: MAZAVA REHETRA
-      collection: famoriam-bola
-      color: COLOR
       default: toerana misy anao
       done: NATAON'I
       filter_by: Sivan'i BY
@@ -1228,12 +1225,8 @@ mg:
       price: vidiny
       price_high_to_low: PRICE (Avo - ambany)
       price_low_to_high: PRICE (ambany - avo)
-      result: vokany
       results_for: VOKATRA HO AN'NY
-      size: Size
       sort_by: SIVANINA ARAKA
-      top_sellers: Mpivarotra ambony
-      type: TYPE
     populate_get_error: Nisy zavatra tsy nety. Andramo ampiana indray ity entana ity.
     powered_by: Ampandehanin'i
     pre_tax_amount: Isa mialoha ny hetra

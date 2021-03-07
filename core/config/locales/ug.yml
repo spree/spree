@@ -1211,10 +1211,7 @@ ug:
     please_define_payment_methods: ئالدى بىلەن بەزى پۇل تۆلەش ئۇسۇللىرىغا ئېنىقلىما بېرىڭ.
     please_enter_reasonable_quantity: مۇۋاپىق مىقداردا كىرگۈزۈڭ.
     plp:
-      best_selling: ئەڭ ياخشى سېتىش
       clear_all: CLEAR ALL
-      collection: COLLECTION
-      color: COLOR
       default: DEFAULT
       done: DONE
       filter_by: FILTER BY
@@ -1228,12 +1225,8 @@ ug:
       price: باھاسى
       price_high_to_low: PRICE (HIGH - LOW)
       price_low_to_high: PRICE (LOW - HIGH)
-      result: RESULT
       results_for: RESULTS FOR
-      size: SIZE
       sort_by: SORT BY
-      top_sellers: TOP ساتقۇچىلار
-      type: TYPE
     populate_get_error: چاتاق چىقتى. بۇ تۈرنى قايتا قوشۇپ سىناپ بېقىڭ.
     powered_by: Powered by
     pre_tax_amount: باجدىن بۇرۇنقى سومما

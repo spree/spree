@@ -1211,10 +1211,7 @@ tl:
     please_define_payment_methods: Mangyaring tukuyin muna ang ilang mga paraan ng pagbabayad.
     please_enter_reasonable_quantity: Mangyaring ipasok ang isang makatwirang dami.
     plp:
-      best_selling: PINAKA SINDING Benta
       clear_all: ALISIN LAHAT
-      collection: KOLEKSYON
-      color: KULAY
       default: DEFAULT
       done: TAPOS NA
       filter_by: Saringan ni
@@ -1228,12 +1225,8 @@ tl:
       price: presyo
       price_high_to_low: PRESYO (TAAS - MABABA)
       price_low_to_high: PRICE (mababa - mataas)
-      result: RESULTA
       results_for: MGA RESULTA PARA SA
-      size: SIZE
       sort_by: PINAGSUSURI NG
-      top_sellers: TOP SELLERS
-      type: URI
     populate_get_error: May nangyaring mali. Pakisubukang idagdag muli ang item.
     powered_by: Pinatatakbo ng
     pre_tax_amount: Halaga ng Paunang Buwis

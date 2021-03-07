@@ -1211,10 +1211,7 @@ or:
     please_define_payment_methods: ଦୟାକରି ପ୍ରଥମେ କିଛି ଦେୟ ପଦ୍ଧତିକୁ ବ୍ୟାଖ୍ୟା କରନ୍ତୁ |
     please_enter_reasonable_quantity: ଦୟାକରି ଏକ ଯୁକ୍ତିଯୁକ୍ତ ପରିମାଣ ପ୍ରବେଶ କରନ୍ତୁ |
     plp:
-      best_selling: ସର୍ବୋତ୍ତମ ବିକ୍ରୟ |
       clear_all: ସମସ୍ତଙ୍କୁ ସଫା କର |
-      collection: ସଂଗ୍ରହ
-      color: ରଙ୍ଗ
       default: DEFAULT
       done: ସମାପ୍ତ
       filter_by: ଫିଲ୍ଟର୍ ଦ୍ BY ାରା
@@ -1228,12 +1225,8 @@ or:
       price: ମୂଲ୍ୟ
       price_high_to_low: ମୂଲ୍ୟ (ଉଚ୍ଚ - ନିମ୍ନ)
       price_low_to_high: ମୂଲ୍ୟ (ନିମ୍ନ - ଉଚ୍ଚ)
-      result: ଫଳାଫଳ |
       results_for: ଫଳାଫଳ
-      size: SIZE
       sort_by: SORT BY
-      top_sellers: ଶୀର୍ଷ ବିକ୍ରେତା |
-      type: TYPE
     populate_get_error: କିଛି ଭୁଲ ହୋଇ ଗଲା। ଦୟାକରି ଆଇଟମ୍ ଯୋଡିବାକୁ ଚେଷ୍ଟା କରନ୍ତୁ |
     powered_by: ଦ୍ଵାରା ନିର୍ମିତ
     pre_tax_amount: ପ୍ରି-ଟ୍ୟାକ୍ସ ପରିମାଣ |

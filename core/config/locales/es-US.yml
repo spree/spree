@@ -1211,10 +1211,7 @@ es-US:
     please_define_payment_methods: Primero, defina algunos métodos de pago.
     please_enter_reasonable_quantity: Ingrese una cantidad razonable.
     plp:
-      best_selling: MÁS VENDIDO
       clear_all: LIMPIAR TODO
-      collection: COLECCIÓN
-      color: COLOR
       default: DEFECTO
       done: HECHO
       filter_by: FILTRADO POR
@@ -1228,12 +1225,8 @@ es-US:
       price: precio
       price_high_to_low: PRECIO (ALTO - BAJO)
       price_low_to_high: PRECIO (BAJO - ALTO)
-      result: RESULTADO
       results_for: RESULTADOS PARA
-      size: TALLA
       sort_by: ORDENAR POR
-      top_sellers: MÁS VENDIDOS
-      type: ESCRIBE
     populate_get_error: Algo salió mal. Intente agregar el artículo nuevamente.
     powered_by: Energizado por
     pre_tax_amount: Monto antes de impuestos

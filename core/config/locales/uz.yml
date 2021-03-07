@@ -1211,10 +1211,7 @@ uz:
     please_define_payment_methods: Avval ba'zi to'lov usullarini aniqlang.
     please_enter_reasonable_quantity: Iltimos, o'rtacha miqdorni kiriting.
     plp:
-      best_selling: ENG SOTISH
       clear_all: HAMMASINI TOZALAMOQ
-      collection: TO'PLAMA
-      color: Rang
       default: Xato
       done: Bajarildi
       filter_by: Filtrni
@@ -1228,12 +1225,8 @@ uz:
       price: narx
       price_high_to_low: NARX (OLIY - past)
       price_low_to_high: NARX (past - baland)
-      result: Natija
       results_for: Natija
-      size: OLcham
       sort_by: SARALASH TURI
-      top_sellers: Eng yaxshi sotuvchilar
-      type: TURI
     populate_get_error: Nimadir noto'g'ri bajarildi. Iltimos, elementni yana qo'shib ko'ring.
     powered_by: Tomonidan qo'llab-quvvatlanadi
     pre_tax_amount: Soliqqa qadar bo'lgan miqdor

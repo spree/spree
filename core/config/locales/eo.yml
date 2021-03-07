@@ -1211,10 +1211,7 @@ eo:
     please_define_payment_methods: Bonvolu unue difini iujn pagmanierojn.
     please_enter_reasonable_quantity: Bonvolu enigi akcepteblan kvanton.
     plp:
-      best_selling: PLEJ BONA VENDO
       clear_all: KLARU ĈIUJN
-      collection: KOLEKTO
-      color: KOLORO
       default: DEFAULTO
       done: FARITA
       filter_by: FILTRADO DE
@@ -1228,12 +1225,8 @@ eo:
       price: prezo
       price_high_to_low: PREZO (ALTA - MALALTA)
       price_low_to_high: PREZO (MALALTA - ALTA)
-      result: REZULTO
       results_for: REZULTOJ POR
-      size: GRANDO
       sort_by: ORDIGI LAŬ
-      top_sellers: PLEJ VENDISTOJ
-      type: TIPO
     populate_get_error: Io fuŝiĝis. Bonvolu provi aldoni la eron denove.
     powered_by: Funkciigita de
     pre_tax_amount: Antaŭimposta Kvanto

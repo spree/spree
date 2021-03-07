@@ -1211,10 +1211,7 @@ en:
     please_define_payment_methods: Please define some payment methods first.
     please_enter_reasonable_quantity: Please enter a reasonable quantity.
     plp:
-      best_selling: BEST SELLING
       clear_all: CLEAR ALL
-      collection: COLLECTION
-      color: COLOR
       default: DEFAULT
       done: DONE
       filter_by: FILTER BY
@@ -1228,12 +1225,8 @@ en:
       price: price
       price_high_to_low: PRICE (HIGH - LOW)
       price_low_to_high: PRICE (LOW - HIGH)
-      result: RESULT
       results_for: RESULTS FOR
-      size: SIZE
       sort_by: SORT BY
-      top_sellers: TOP SELLERS
-      type: TYPE
     populate_get_error: Something went wrong. Please try adding the item again.
     powered_by: Powered by
     pre_tax_amount: Pre-Tax Amount

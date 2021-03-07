@@ -1211,10 +1211,7 @@ ml:
     please_define_payment_methods: ആദ്യം ചില പേയ്‌മെന്റ് രീതികൾ നിർവചിക്കുക.
     please_enter_reasonable_quantity: ന്യായമായ അളവ് നൽകുക.
     plp:
-      best_selling: മികച്ച വിൽപ്പന
       clear_all: എല്ലാം മായ്ക്കുക
-      collection: സമാഹാരം
-      color: നിറം
       default: പരാജയം
       done: ചെയ്‌തു
       filter_by: ഫിൽട്ടർ
@@ -1228,12 +1225,8 @@ ml:
       price: വില
       price_high_to_low: വില (ഉയർന്നത് - കുറഞ്ഞത്)
       price_low_to_high: വില (കുറഞ്ഞത് - ഉയർന്നത്)
-      result: ഫലമായി
       results_for: ഫലങ്ങൾ
-      size: വലുപ്പം
       sort_by: ഇങ്ങനെ അടുക്കുക
-      top_sellers: മികച്ച വിൽപ്പനക്കാർ
-      type: തരം
     populate_get_error: എന്തോ കുഴപ്പം സംഭവിച്ചു. ഇനം വീണ്ടും ചേർക്കാൻ ശ്രമിക്കുക.
     powered_by: പ്രായോജകർ
     pre_tax_amount: നികുതിക്കു മുമ്പുള്ള തുക

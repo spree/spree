@@ -1387,10 +1387,7 @@ cy:
     please_define_payment_methods: Diffiniwch rai dulliau talu yn gyntaf.
     please_enter_reasonable_quantity: Rhowch swm rhesymol.
     plp:
-      best_selling: GWERTHU GORAU
       clear_all: GLANHAU POB UN
-      collection: CASGLU
-      color: LLIW
       default: DIFFYG
       done: A WNAED
       filter_by: FILTER GAN
@@ -1404,12 +1401,8 @@ cy:
       price: pris
       price_high_to_low: PRIS (UCHEL - ISEL)
       price_low_to_high: PRIS (ISEL - UCHEL)
-      result: CANLYNIAD
       results_for: CANLYNIADAU AM
-      size: MAINT
       sort_by: SORT GAN
-      top_sellers: GWERTHWYR TOP
-      type: MATH
     populate_get_error: Aeth rhywbeth o'i le. Ceisiwch ychwanegu'r eitem eto.
     powered_by: Wedi ei bweru gan
     pre_tax_amount: Swm Cyn Treth

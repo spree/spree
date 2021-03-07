@@ -1211,10 +1211,7 @@ ur:
     please_define_payment_methods: براہ کرم پہلے ادائیگی کے کچھ طریقے بتائیں۔
     please_enter_reasonable_quantity: براہ کرم معقول مقدار درج کریں۔
     plp:
-      best_selling: بہترین فروخت ہونے والا
       clear_all: تمام کو صاف کریں
-      collection: جمع
-      color: رنگ
       default: ہار
       done: کیا
       filter_by: کی طرف سے فلٹر
@@ -1228,12 +1225,8 @@ ur:
       price: قیمت
       price_high_to_low: قیمت (اعلی - کم)
       price_low_to_high: قیمت (کم - اعلی)
-      result: نتیجہ
       results_for: کے لئے نتائج
-      size: سائز
       sort_by: بہ ترتیب
-      top_sellers: سب سے بڑے فروخت کنندہ
-      type: قسم
     populate_get_error: کچھ غلط ہو گیا. براہ کرم آئٹم کو دوبارہ شامل کرنے کی کوشش کریں۔
     powered_by: 'از: وی بلیٹن'
     pre_tax_amount: ٹیکس سے پہلے کی رقم

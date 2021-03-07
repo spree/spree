@@ -1211,10 +1211,7 @@ mn:
     please_define_payment_methods: Эхлээд төлбөрийн зарим аргыг тодорхойлно уу.
     please_enter_reasonable_quantity: Боломжийн хэмжээг оруулна уу.
     plp:
-      best_selling: ХАМГИЙН САЙН БОРЛУУЛАЛТТАЙ
       clear_all: БҮГДИЙГ ЦЭВЭРЛЭ
-      collection: ЦУГЛУУЛГА
-      color: Өнгө
       default: ДУУСГАЛ
       done: ХИЙСЭН
       filter_by: ШҮҮЛТҮҮР
@@ -1228,12 +1225,8 @@ mn:
       price: Үнэ
       price_high_to_low: ҮНЭ (өндөр - бага)
       price_low_to_high: ҮНЭ (Бага - өндөр)
-      result: ҮР ДҮН
       results_for: ҮР ДҮН
-      size: Хэмжээ
       sort_by: НЭГЭЭРЭЙ
-      top_sellers: Шилдэг борлуулагчид
-      type: ТӨРӨЛ
     populate_get_error: Ямар нэгэн зүйл буруугаар эргэсэн. Энэ зүйлийг дахин нэмж оруулна уу.
     powered_by: Powered by
     pre_tax_amount: Татварын өмнөх хэмжээ

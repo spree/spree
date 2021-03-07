@@ -1211,10 +1211,7 @@ gl:
     please_define_payment_methods: Primeiro defina algúns métodos de pago.
     please_enter_reasonable_quantity: Insira unha cantidade razoable.
     plp:
-      best_selling: MAIS VENDIDO
       clear_all: CLARO TODO
-      collection: COLECCIÓN
-      color: COR
       default: IMPORTE
       done: FEITO
       filter_by: FILTRAR POR
@@ -1228,12 +1225,8 @@ gl:
       price: prezo
       price_high_to_low: PREZO (ALTO - BAIXO)
       price_low_to_high: PREZO (BAIXO - ALTO)
-      result: RESULTADO
       results_for: RESULTADOS PARA
-      size: TAMAÑO
       sort_by: ORDENAR
-      top_sellers: MÁIS VENDEDORES
-      type: TIPO
     populate_get_error: Algo fallou. Tenta engadir o elemento de novo.
     powered_by: Impulsado por
     pre_tax_amount: Importe antes do imposto

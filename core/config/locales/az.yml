@@ -1211,10 +1211,7 @@ az:
     please_define_payment_methods: Xahiş edirəm əvvəlcə bəzi ödəniş metodlarını müəyyənləşdirin.
     please_enter_reasonable_quantity: Xahiş edirəm uyğun bir miqdar daxil edin.
     plp:
-      best_selling: Ən yaxşı satış
       clear_all: HAMISINI SİL, HAMISINI TƏMİZLƏ
-      collection: KOLLEKSİYA
-      color: RENK
       default: XƏSTƏLİK
       done: Bitdi
       filter_by: FİLTRE
@@ -1228,12 +1225,8 @@ az:
       price: qiymət
       price_high_to_low: QİYMƏT (YÜKSƏK - DÜŞÜK)
       price_low_to_high: QİYMƏT (DÜŞÜK - YÜKSƏK)
-      result: NƏTİCƏ
       results_for: NƏTİCƏLƏR
-      size: BOYUT
       sort_by: SIRALAMA
-      top_sellers: Ən yaxşı satıcılar
-      type: NÖV
     populate_get_error: Bir şey səhv oldu. Xahiş edirəm elementi yenidən əlavə edin.
     powered_by: Powered by
     pre_tax_amount: Vergi öncəsi məbləğ

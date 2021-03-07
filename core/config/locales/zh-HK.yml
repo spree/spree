@@ -1211,10 +1211,7 @@ zh-HK:
     please_define_payment_methods: 请先定义一些付款方式。
     please_enter_reasonable_quantity: 请输入合理的数量。
     plp:
-      best_selling: 最畅销
       clear_all: 全部清除
-      collection: 收藏
-      color: 颜色
       default: 默认
       done: 完毕
       filter_by: 过滤
@@ -1228,12 +1225,8 @@ zh-HK:
       price: 价格
       price_high_to_low: 价格（高-低）
       price_low_to_high: 价格（低-高）
-      result: 结果
       results_for: 结果
-      size: 尺寸
       sort_by: 排序方式
-      top_sellers: 畅销品
-      type: 类型
     populate_get_error: 出了些问题。请尝试再次添加该项目。
     powered_by: 供电
     pre_tax_amount: 税前金额

@@ -1211,10 +1211,7 @@ tt:
     please_define_payment_methods: Зинһар, башта түләү ысулларын билгеләгез.
     please_enter_reasonable_quantity: Зинһар, тиешле күләмдә кертегез.
     plp:
-      best_selling: Иң яхшы сату
       clear_all: Барысын да чистарт
-      collection: КОЛЛЕКTIONИЯ
-      color: Төс
       default: DEFAULT
       done: ТОРМЫШ
       filter_by: Фильтр
@@ -1228,12 +1225,8 @@ tt:
       price: бәя
       price_high_to_low: БАХ (HIGHгары - Түбән)
       price_low_to_high: Бәясе (түбән - югары)
-      result: Нәтиҗә
       results_for: Нәтиҗә
-      size: SIZE
       sort_by: КАРАТА ТӨРЛӘ
-      top_sellers: Төп сатучылар
-      type: ТYР
     populate_get_error: Нәрсәдер дөрес булмаган. Зинһар, әйберне кабат өстәргә тырышыгыз.
     powered_by: Туклана
     pre_tax_amount: Салым алдыннан сумма

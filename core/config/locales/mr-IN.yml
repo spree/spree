@@ -1211,10 +1211,7 @@ mr-IN:
     please_define_payment_methods: कृपया प्रथम काही देयक पद्धती परिभाषित करा.
     please_enter_reasonable_quantity: कृपया वाजवी प्रमाण प्रविष्ट करा.
     plp:
-      best_selling: सर्वोत्तम विक्री
       clear_all: सर्व साफ करा
-      collection: संग्रह
-      color: रंग
       default: पराभव
       done: पूर्ण झाले
       filter_by: फिल्टर करा
@@ -1228,12 +1225,8 @@ mr-IN:
       price: किंमत
       price_high_to_low: किंमत (उच्च - कमी)
       price_low_to_high: किंमत (कमी - उच्च)
-      result: परिणाम
       results_for: साठी परिणाम
-      size: आकार
       sort_by: क्रमवारी लावा
-      top_sellers: शीर्ष विक्रेते
-      type: प्रकार
     populate_get_error: काहीतरी चूक झाली. कृपया आयटम पुन्हा जोडण्याचा प्रयत्न करा.
     powered_by: द्वारा समर्थित
     pre_tax_amount: करपूर्व रक्कम

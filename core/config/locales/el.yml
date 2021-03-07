@@ -1211,10 +1211,7 @@ el:
     please_define_payment_methods: Καθορίστε πρώτα κάποιους τρόπους πληρωμής.
     please_enter_reasonable_quantity: Εισαγάγετε μια εύλογη ποσότητα.
     plp:
-      best_selling: ΚΑΛΥΤΕΡΗ ΠΩΛΗΣΗ
       clear_all: ΤΑ ΚΑΘΑΡΙΖΩ ΟΛΑ
-      collection: ΣΥΛΛΟΓΗ
-      color: ΧΡΩΜΑ
       default: ΠΡΟΚΑΘΟΡΙΣΜΕΝΟ
       done: ΕΓΙΝΕ
       filter_by: ΦΙΛΤΡΟ ΑΠΟ
@@ -1228,12 +1225,8 @@ el:
       price: τιμή
       price_high_to_low: ΤΙΜΗ (ΥΨΗΛΗ - ΧΑΜΗΛΗ)
       price_low_to_high: ΤΙΜΗ (ΧΑΜΗΛΗ - ΥΨΗΛΗ)
-      result: ΑΠΟΤΕΛΕΣΜΑ
       results_for: ΑΠΟΤΕΛΕΣΜΑΤΑ ΓΙΑ
-      size: ΜΕΓΕΘΟΣ
       sort_by: ΤΑΞΙΝΟΜΗΣΗ ΚΑΤΑ
-      top_sellers: Κορυφαίοι πωλητές
-      type: ΤΥΠΟΣ
     populate_get_error: Κάτι πήγε στραβά. Δοκιμάστε να προσθέσετε ξανά το στοιχείο.
     powered_by: Υποστηρίζεται από
     pre_tax_amount: Ποσό προ φόρων

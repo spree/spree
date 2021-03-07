@@ -1211,10 +1211,7 @@ sq:
     please_define_payment_methods: Ju lutemi përcaktoni më parë disa mënyra pagese.
     please_enter_reasonable_quantity: Ju lutemi shkruani një sasi të arsyeshme.
     plp:
-      best_selling: SHITJET ME TE MIRA
       clear_all: PASTROJI TË GJITHA
-      collection: MBLEDHJE
-      color: NGJYRË
       default: DEFULTI
       done: BERE
       filter_by: FILTRI NGA
@@ -1228,12 +1225,8 @@ sq:
       price: çmimi
       price_high_to_low: ÇMIMI (I LART - I ULT)
       price_low_to_high: ÇMIMI (I UL --T - I LART)
-      result: REZULTATI
       results_for: REZULTATET PER
-      size: Madhësia
       sort_by: NDAJ SIPAS
-      top_sellers: SHITESIT E PARE
-      type: LLOJI
     populate_get_error: Dicka shkoi keq. Ju lutemi provoni ta shtoni artikullin përsëri.
     powered_by: Mundësuar nga
     pre_tax_amount: Shuma para-tatimore

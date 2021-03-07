@@ -1211,10 +1211,7 @@ mk:
     please_define_payment_methods: Прво, дефинирајте неколку начини на плаќање.
     please_enter_reasonable_quantity: Внесете разумна количина.
     plp:
-      best_selling: НАЈДОБРА ПРОДАВАЕ
       clear_all: ИСЧИСТИ СЕ
-      collection: ЗБИРКА
-      color: БОЈА
       default: ДЕФОЛТ
       done: НАПРАВЕНО
       filter_by: ФИЛТЕР ОД
@@ -1228,12 +1225,8 @@ mk:
       price: цена
       price_high_to_low: ЦЕНА (висока - ниска)
       price_low_to_high: ЦЕНА (НИСКО - ВИСОК)
-      result: РЕЗУЛТАТ
       results_for: РЕЗУЛТАТИ ЗА
-      size: ГОЛЕМИНА
       sort_by: СОРТИРАЈ ПО
-      top_sellers: ВРВИ ПРОДАВАЧИ
-      type: ВИД
     populate_get_error: Нешто тргна наопаку. Ве молиме, обидете се повторно да ја додадете ставката.
     powered_by: Поддржано од
     pre_tax_amount: Износ пред оданочување

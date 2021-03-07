@@ -1211,10 +1211,7 @@ sv-SE:
     please_define_payment_methods: Definiera först några betalningsmetoder.
     please_enter_reasonable_quantity: Ange en rimlig mängd.
     plp:
-      best_selling: BÄSTSÄLJARE
       clear_all: RENSA ALLA
-      collection: SAMLING
-      color: FÄRG
       default: STANDARD
       done: GJORT
       filter_by: FILTRERA EFTER
@@ -1228,12 +1225,8 @@ sv-SE:
       price: pris
       price_high_to_low: PRIS (HÖG - LÅG)
       price_low_to_high: PRIS (LÅG - HÖG)
-      result: RESULTAT
       results_for: RESULTAT FÖR
-      size: STORLEK
       sort_by: SORTERA EFTER
-      top_sellers: TOPP SÄLJARE
-      type: TYP
     populate_get_error: Något gick fel. Försök att lägga till objektet igen.
     powered_by: Drivs av
     pre_tax_amount: Belopp före skatt

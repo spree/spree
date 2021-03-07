@@ -1299,10 +1299,7 @@ sl:
     please_define_payment_methods: Najprej določite nekatere načine plačila.
     please_enter_reasonable_quantity: Vnesite primerno količino.
     plp:
-      best_selling: NAJBOLJ PRODAJA
       clear_all: POČISTI VSE
-      collection: ZBIRKA
-      color: BARVA
       default: PRIPOMOČNO
       done: KONČANO
       filter_by: FILTRIRAJ
@@ -1316,12 +1313,8 @@ sl:
       price: cena
       price_high_to_low: CENA (VISOKO - NIZKO)
       price_low_to_high: CENA (NIZKO - VISOKO)
-      result: REZULTAT
       results_for: REZULTATI ZA
-      size: VELIKOST
       sort_by: RAZVRSTI PO
-      top_sellers: VRHUNSKI PRODAJALCI
-      type: TIP
     populate_get_error: Nekaj je šlo narobe. Poskusite znova dodati izdelek.
     powered_by: Poganja ga
     pre_tax_amount: Znesek pred obdavčitvijo

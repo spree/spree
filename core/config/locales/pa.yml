@@ -1211,10 +1211,7 @@ pa:
     please_define_payment_methods: ਕਿਰਪਾ ਕਰਕੇ ਪਹਿਲਾਂ ਕੁਝ ਭੁਗਤਾਨ ਵਿਧੀਆਂ ਨੂੰ ਪ੍ਰਭਾਸ਼ਿਤ ਕਰੋ.
     please_enter_reasonable_quantity: ਕਿਰਪਾ ਕਰਕੇ ਉਚਿਤ ਮਾਤਰਾ ਦਾਖਲ ਕਰੋ.
     plp:
-      best_selling: ਵਧੀਆ ਵਿਕਰੀ
       clear_all: ਸਾਰਾ ਸਾਫ ਕਰੋ
-      collection: ਸੰਗ੍ਰਹਿ
-      color: ਰੰਗ
       default: ਨਿਰਾਸ਼
       done: ਹੋ ਗਿਆ
       filter_by: ਫਿਲਟਰ ਦੁਆਰਾ
@@ -1228,12 +1225,8 @@ pa:
       price: ਕੀਮਤ
       price_high_to_low: ਮੁੱਲ (ਉੱਚਾ - ਘੱਟ)
       price_low_to_high: ਮੁੱਲ (ਘੱਟ - ਉੱਚਾ)
-      result: ਨਤੀਜੇ
       results_for: ਲਈ ਨਤੀਜੇ
-      size: ਆਕਾਰ
       sort_by: ਦੇ ਨਾਲ ਕ੍ਰਮਬੱਧ
-      top_sellers: ਚੋਟੀ ਦੇ ਵਿਕਰੇਤਾ
-      type: ਕਿਸਮ
     populate_get_error: ਕੁਝ ਗਲਤ ਹੋ ਗਿਆ. ਕਿਰਪਾ ਕਰਕੇ ਇਕਾਈ ਨੂੰ ਮੁੜ ਜੋੜਨ ਦੀ ਕੋਸ਼ਿਸ਼ ਕਰੋ.
     powered_by: ਦੁਆਰਾ ਸੰਚਾਲਿਤ
     pre_tax_amount: ਟੈਕਸ ਤੋਂ ਪਹਿਲਾਂ ਦੀ ਰਕਮ

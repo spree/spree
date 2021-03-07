@@ -1211,10 +1211,7 @@ lo:
     please_define_payment_methods: ກະລຸນາ ກຳ ນົດບາງວິທີການຈ່າຍເງິນກ່ອນ.
     please_enter_reasonable_quantity: ກະລຸນາໃສ່ປະລິມານທີ່ ເໝາະ ສົມ.
     plp:
-      best_selling: ຂາຍ​ດີ
       clear_all: ລ້າງທຸກຢ່າງ
-      collection: ການລວບລວມ
-      color: ສີ
       default: DEFAULT
       done: ເຮັດແລ້ວ
       filter_by: ຍື່ນໂດຍ
@@ -1228,12 +1225,8 @@ lo:
       price: ລາຄາ
       price_high_to_low: ລາຄາ (ສູງ - ຕ່ ຳ)
       price_low_to_high: ລາຄາ (ຕ່ ຳ - ສູງ)
-      result: ຜົນໄດ້ຮັບ
       results_for: ຜົນໄດ້ຮັບ
-      size: ຂະ ໜາດ
       sort_by: ສົ່ງໂດຍ
-      top_sellers: ສະເພາະຜູ້ຂາຍ
-      type: ປະເພດ
     populate_get_error: ມີບາງຢ່າງຜິດປົກກະຕິ. ກະລຸນາລອງເພີ່ມລາຍການອີກຄັ້ງ.
     powered_by: ສະ​ຫນັບ​ສະ​ຫນູນ​ໂດຍ
     pre_tax_amount: ຈຳ ນວນເງີນກ່ອນອາກອນ
