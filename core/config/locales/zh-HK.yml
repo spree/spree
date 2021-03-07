@@ -1068,6 +1068,7 @@ zh-HK:
     percent_per_item: 每个项目的百分比
     permalink: 固定链接
     phone: 电话
+    place_order: 下订单
     please_define_payment_methods: 请先定义一些付款方式。
     plp:
       clear_all: 全部清除

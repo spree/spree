@@ -1068,6 +1068,7 @@ en:
     percent_per_item: Percent Per Item
     permalink: Permalink
     phone: Phone
+    place_order: Place Order
     please_define_payment_methods: Please define some payment methods first.
     plp:
       clear_all: CLEAR ALL

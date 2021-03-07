@@ -1068,6 +1068,7 @@ fr-CA:
     percent_per_item: Pourcentage par article
     permalink: Permalien
     phone: Téléphone
+    place_order: Passer la commande
     please_define_payment_methods: Veuillez d'abord définir certains modes de paiement.
     plp:
       clear_all: TOUT EFFACER
