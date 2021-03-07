@@ -472,6 +472,8 @@ pa:
     add_variant: ਵੇਰੀਐਂਟ ਸ਼ਾਮਲ ਕਰੋ
     added_to_cart: ਸਫਲਤਾਪੂਰਕ ਕਾਰਟ ਵਿੱਚ ਜੋੜਿਆ ਗਿਆ!
     address: ਪਤਾ
+    address1: ਪਤਾ
+    address2: ਪਤਾ (ਜਾਰੀ)
     address_action_popup:
       delete_button: ਹਾਂ, ਮਿਟਾਓ
       delete_text: ਕੀ ਤੁਸੀਂ ਸੱਚਮੁੱਚ ਇਸ ਪਤੇ ਨੂੰ ਮਿਟਾਉਣਾ ਚਾਹੁੰਦੇ ਹੋ?

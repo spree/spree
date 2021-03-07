@@ -472,6 +472,8 @@ he:
     add_variant: הוסף וריאנט
     added_to_cart: נוסף לעגלה בהצלחה!
     address: כתובת
+    address1: כתובת
+    address2: כתובת (המשך)
     address_action_popup:
       delete_button: כן, מחק
       delete_text: האם אתה באמת רוצה ש <br /> ימחק כתובת זו?

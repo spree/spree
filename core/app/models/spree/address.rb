@@ -23,6 +23,18 @@ module Spree
     # we're not freezing this on purpose so developers can extend and manage
     # those attributes depending of the logic of their applications
     ADDRESS_FIELDS = %w(firstname lastname company address1 address2 city state zipcode country phone)
+    # The comments below add these to the translations locales file
+    # i18n-tasks-use I18n.t('spree.address1')
+    # i18n-tasks-use I18n.t('spree.address2')
+    # i18n-tasks-use I18n.t('spree.city')
+    # i18n-tasks-use I18n.t('spree.company')
+    # i18n-tasks-use I18n.t('spree.country')
+    # i18n-tasks-use I18n.t('spree.firstname')
+    # i18n-tasks-use I18n.t('spree.lastname')
+    # i18n-tasks-use I18n.t('spree.phone')
+    # i18n-tasks-use I18n.t('spree.state')
+    # i18n-tasks-use I18n.t('spree.zipcode')
+
     EXCLUDED_KEYS_FOR_COMPARISION = %w(id updated_at created_at deleted_at label user_id)
 
     belongs_to :country, class_name: 'Spree::Country'

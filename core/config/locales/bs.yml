@@ -554,6 +554,8 @@ bs:
     add_variant: Dodaj varijantu
     added_to_cart: Uspješno dodano u košaricu!
     address: Adresa
+    address1: Adresa
+    address2: Adresa (nastavak)
     address_action_popup:
       delete_button: da, izbriši
       delete_text: Da li stvarno želite <br /> izbrisati ovu adresu?

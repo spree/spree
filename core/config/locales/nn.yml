@@ -472,6 +472,8 @@ nn:
     add_variant: Legg til variant
     added_to_cart: Lagt til i handlekurven vellykket!
     address: Adresse
+    address1: Adresse
+    address2: Adresse (forts.)
     address_action_popup:
       delete_button: ja, slett
       delete_text: Vil du virkelig <br /> slette denne adressen?

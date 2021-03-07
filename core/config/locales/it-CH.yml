@@ -472,6 +472,8 @@ it-CH:
     add_variant: Aggiungi variante
     added_to_cart: Aggiunto al carrello con successo!
     address: Indirizzo
+    address1: Indirizzo
+    address2: Indirizzo (segue)
     address_action_popup:
       delete_button: si, cancella
       delete_text: Vuoi davvero <br /> eliminare questo indirizzo?

@@ -472,6 +472,8 @@ az:
     add_variant: Variant əlavə edin
     added_to_cart: Səbətə uğurla əlavə edildi!
     address: Ünvan
+    address1: Ünvan
+    address2: Ünvan (davam)
     address_action_popup:
       delete_button: bəli silin
       delete_text: "<br /> bu ünvanı silməsini həqiqətən istəyirsiniz?"

@@ -472,6 +472,8 @@ eo:
     add_variant: Aldoni Varianton
     added_to_cart: Aldonita al ĉaro sukcese!
     address: Adreso
+    address1: Adreso
+    address2: Adreso (daŭr.)
     address_action_popup:
       delete_button: jes, forigu
       delete_text: Ĉu vi vere volas <br /> forigi ĉi tiun adreson?

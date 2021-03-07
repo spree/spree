@@ -472,6 +472,8 @@ tl:
     add_variant: Magdagdag ng Variant
     added_to_cart: Matagumpay na naidagdag sa cart!
     address: Tirahan
+    address1: Tirahan
+    address2: Address (karagdagan.)
     address_action_popup:
       delete_button: oo, tanggalin
       delete_text: Nais mo bang i-delete ng address na ito ang <br />?

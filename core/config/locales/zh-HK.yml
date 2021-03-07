@@ -472,6 +472,8 @@ zh-HK:
     add_variant: 添加变体
     added_to_cart: 已成功添加到购物车！
     address: 地址
+    address1: 地址
+    address2: 地址（续）
     address_action_popup:
       delete_button: 是的，删除
       delete_text: 您真的要<br />删除此地址吗？

@@ -472,6 +472,8 @@ mr-IN:
     add_variant: व्हेरिएंट जोडा
     added_to_cart: यशस्वीरित्या कार्टमध्ये जोडले!
     address: पत्ता
+    address1: पत्ता
+    address2: पत्ता (जारी)
     address_action_popup:
       delete_button: होय, हटवा
       delete_text: तुम्हाला हा पत्ता हटवायचा आहे का?

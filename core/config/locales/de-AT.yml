@@ -472,6 +472,8 @@ de-AT:
     add_variant: Variante hinzufügen
     added_to_cart: Erfolgreich in den Warenkorb gelegt!
     address: Adresse
+    address1: Adresse
+    address2: Adresse (Forts.)
     address_action_popup:
       delete_button: ja, löschen
       delete_text: Möchten Sie wirklich, dass <br /> diese Adresse löscht?

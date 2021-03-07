@@ -472,6 +472,8 @@ sv-SE:
     add_variant: Lägg till variant
     added_to_cart: Tillagd i kundvagnen framgångsrikt!
     address: Adress
+    address1: Adress
+    address2: Adress (forts.)
     address_action_popup:
       delete_button: ja, ta bort
       delete_text: Vill du verkligen <br /> ta bort den här adressen?

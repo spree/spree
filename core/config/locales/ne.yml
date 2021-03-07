@@ -472,6 +472,8 @@ ne:
     add_variant: भेरियन्ट थप्नुहोस्
     added_to_cart: सफलतापूर्वक कार्टमा थपियो!
     address: ठेगाना
+    address1: ठेगाना
+    address2: ठेगाना (जारी)
     address_action_popup:
       delete_button: हो, हटाउनुहोस्
       delete_text: के तपाई वास्तवमै चाहानुहुन्छ <br /> यो ठेगाना मेटाउनको लागि?

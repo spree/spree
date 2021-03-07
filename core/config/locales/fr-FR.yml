@@ -472,6 +472,8 @@ fr-FR:
     add_variant: Ajouter une variante
     added_to_cart: Ajouté au panier avec succès!
     address: Adresse
+    address1: Adresse
+    address2: Adresse (suite)
     address_action_popup:
       delete_button: oui, supprimer
       delete_text: Voulez-vous vraiment <br /> supprimer cette adresse?

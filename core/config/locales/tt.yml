@@ -472,6 +472,8 @@ tt:
     add_variant: Вариантны өстәгез
     added_to_cart: Арбага уңышлы кушылды!
     address: Адрес
+    address1: Адрес
+    address2: Адрес (дәвамы)
     address_action_popup:
       delete_button: әйе, бетерегез
       delete_text: Сез чыннан да <br /> бу адресны бетерергә телисезме?

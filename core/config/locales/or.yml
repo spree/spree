@@ -472,6 +472,8 @@ or:
     add_variant: ଭାରିଆଣ୍ଟ ଯୋଡନ୍ତୁ |
     added_to_cart: ସଫଳତାର ସହିତ କାର୍ଟରେ ଯୋଡା ଯାଇଛି!
     address: ଠିକଣା
+    address1: ଠିକଣା
+    address2: ଠିକଣା (ଅବ।)
     address_action_popup:
       delete_button: ହଁ, ଡିଲିଟ୍ କରନ୍ତୁ |
       delete_text: ଆପଣ ପ୍ରକୃତରେ ଏହି ଠିକଣା ବିଲୋପ କରିବାକୁ ଚାହୁଁଛନ୍ତି କି?

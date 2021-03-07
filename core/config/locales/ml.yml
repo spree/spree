@@ -472,6 +472,8 @@ ml:
     add_variant: വേരിയൻറ് ചേർക്കുക
     added_to_cart: കാർട്ടിലേക്ക് വിജയകരമായി ചേർത്തു!
     address: വിലാസം
+    address1: വിലാസം
+    address2: വിലാസം (തുടരുന്നു)
     address_action_popup:
       delete_button: അതെ, ഇല്ലാതാക്കുക
       delete_text: "<br /> ഈ വിലാസം ഇല്ലാതാക്കാൻ നിങ്ങൾ ആഗ്രഹിക്കുന്നുണ്ടോ?"

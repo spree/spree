@@ -472,6 +472,8 @@ ug:
     add_variant: Variant نى قوشۇڭ
     added_to_cart: ھارۋىغا مۇۋەپپەقىيەتلىك قوشۇلدى!
     address: ئادرېس
+    address1: ئادرېس
+    address2: ئادرېس (داۋامى)
     address_action_popup:
       delete_button: ھەئە ، ئۆچۈرۈڭ
       delete_text: سىز <br /> بۇ ئادرېسنى ئۆچۈرمەكچىمۇ؟

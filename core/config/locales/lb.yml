@@ -472,6 +472,8 @@ lb:
     add_variant: Add Variant
     added_to_cart: Erfolleg an de Wuerekuerf bäigefüügt!
     address: Adress
+    address1: Adress
+    address2: Adress (weider.)
     address_action_popup:
       delete_button: jo, läschen
       delete_text: Wëllt Dir wierklech <br /> dës Adress läschen?

@@ -472,6 +472,8 @@ te:
     add_variant: వేరియంట్‌ను జోడించండి
     added_to_cart: కార్ట్‌కు విజయవంతంగా జోడించబడింది!
     address: చిరునామా
+    address1: చిరునామా
+    address2: చిరునామా (వివాదం)
     address_action_popup:
       delete_button: అవును, తొలగించండి
       delete_text: "<br /> ఈ చిరునామాను తొలగించాలని మీరు నిజంగా కోరుకుంటున్నారా?"

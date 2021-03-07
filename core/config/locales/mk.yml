@@ -472,6 +472,8 @@ mk:
     add_variant: Додадете варијанта
     added_to_cart: Успешно додаден во кошничката!
     address: Адреса
+    address1: Адреса
+    address2: Адреса (продолжение)
     address_action_popup:
       delete_button: да, избриши
       delete_text: Дали навистина сакате <br /> да ја избришете оваа адреса?

@@ -472,6 +472,8 @@ bn:
     add_variant: ভেরিয়েন্ট যুক্ত করুন
     added_to_cart: সফলভাবে কার্টে যুক্ত!
     address: ঠিকানা
+    address1: ঠিকানা
+    address2: ঠিকানা (নিয়ন্ত্রিত)
     address_action_popup:
       delete_button: হ্যাঁ, মুছুন
       delete_text: আপনি কি এই ঠিকানাটি মুছে ফেলতে চান?

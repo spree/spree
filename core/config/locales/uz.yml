@@ -472,6 +472,8 @@ uz:
     add_variant: Variant qo'shish
     added_to_cart: Savatga muvaffaqiyatli qo'shildi!
     address: Manzil
+    address1: Manzil
+    address2: Manzil (davomi)
     address_action_popup:
       delete_button: ha, o'chirish
       delete_text: Siz haqiqatan ham ushbu manzilni o'chirishni xohlaysizmi <br />?

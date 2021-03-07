@@ -472,6 +472,8 @@ eu:
     add_variant: Gehitu aldaera
     added_to_cart: Saskira gehitu da!
     address: Helbidea
+    address1: Helbidea
+    address2: Helbidea (jarraipena)
     address_action_popup:
       delete_button: bai, ezabatu
       delete_text: Ziur zaude <br /> helbide hau ezabatzea nahi duzula?

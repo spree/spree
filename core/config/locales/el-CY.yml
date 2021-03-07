@@ -472,6 +472,8 @@ el-CY:
     add_variant: Προσθήκη παραλλαγής
     added_to_cart: Προστέθηκε με επιτυχία στο καλάθι!
     address: Διεύθυνση
+    address1: Διεύθυνση
+    address2: Διεύθυνση (συνέχεια)
     address_action_popup:
       delete_button: ναι, διαγράψτε
       delete_text: Θέλετε πραγματικά να διαγράψετε αυτήν τη διεύθυνση;

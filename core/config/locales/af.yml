@@ -472,6 +472,8 @@ af:
     add_variant: Voeg Variant by
     added_to_cart: Suksesvol by die mandjie gevoeg!
     address: Adres
+    address1: Adres
+    address2: Adres (vervolg)
     address_action_popup:
       delete_button: ja, verwyder
       delete_text: Wil u regtig <br /> hierdie adres verwyder?

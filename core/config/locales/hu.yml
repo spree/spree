@@ -472,6 +472,8 @@ hu:
     add_variant: Változat hozzáadása
     added_to_cart: Sikeresen hozzáadva a kosárhoz!
     address: Cím
+    address1: Cím
+    address2: Cím (folytatás)
     address_action_popup:
       delete_button: igen, törölni
       delete_text: Tényleg szeretné <br /> törölni ezt a címet?

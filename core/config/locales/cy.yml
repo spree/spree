@@ -636,6 +636,8 @@ cy:
     add_variant: Ychwanegu Amrywiad
     added_to_cart: Ychwanegwyd at y drol yn llwyddiannus!
     address: Cyfeiriad
+    address1: Cyfeiriad
+    address2: Cyfeiriad (parhad.)
     address_action_popup:
       delete_button: ie, dileu
       delete_text: Ydych chi wir eisiau i <br /> ddileu'r cyfeiriad hwn?

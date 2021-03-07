@@ -472,6 +472,8 @@ lo:
     add_variant: ຕື່ມ Variant
     added_to_cart: ເພີ່ມເຂົ້າກະຕ່າ ສຳ ເລັດແລ້ວ!
     address: ທີ່ຢູ່
+    address1: ທີ່ຢູ່
+    address2: ທີ່ຢູ່ (ຕໍ່)
     address_action_popup:
       delete_button: ແມ່ນແລ້ວ, ລົບລ້າງ
       delete_text: ທ່ານຕ້ອງການ <br /> ລຶບທີ່ຢູ່ນີ້ບໍ?

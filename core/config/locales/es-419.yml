@@ -472,6 +472,8 @@ es-419:
     add_variant: Agregar variante
     added_to_cart: "¡Agregado al carrito con éxito!"
     address: Dirección
+    address1: Dirección
+    address2: Dirección (continuación.)
     address_action_popup:
       delete_button: si, borra
       delete_text: "¿Realmente desea <br /> eliminar esta dirección?"

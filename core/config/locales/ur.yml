@@ -472,6 +472,8 @@ ur:
     add_variant: متغیر شامل کریں
     added_to_cart: کامیابی کے ساتھ ٹوکری میں شامل کیا گیا!
     address: پتہ
+    address1: پتہ
+    address2: پتہ (جاری)
     address_action_popup:
       delete_button: ہاں ، حذف کریں
       delete_text: کیا آپ واقعی میں چاہتے ہیں کہ <br /> یہ پتہ حذف کریں؟

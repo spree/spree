@@ -554,6 +554,8 @@ sl:
     add_variant: Dodaj različico
     added_to_cart: Uspešno dodano v košarico!
     address: Naslov
+    address1: Naslov
+    address2: Naslov (nadaljevanje)
     address_action_popup:
       delete_button: ja, izbriši
       delete_text: Ali res želite <br /> izbrisati ta naslov?

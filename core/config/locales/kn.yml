@@ -472,6 +472,8 @@ kn:
     add_variant: ರೂಪಾಂತರವನ್ನು ಸೇರಿಸಿ
     added_to_cart: ಕಾರ್ಟ್‌ಗೆ ಯಶಸ್ವಿಯಾಗಿ ಸೇರಿಸಲಾಗಿದೆ!
     address: ವಿಳಾಸ
+    address1: ವಿಳಾಸ
+    address2: ವಿಳಾಸ (ಸ್ಪರ್ಧೆ)
     address_action_popup:
       delete_button: ಹೌದು, ಅಳಿಸಿ
       delete_text: "<br /> ಈ ವಿಳಾಸವನ್ನು ಅಳಿಸಲು ನೀವು ನಿಜವಾಗಿಯೂ ಬಯಸುವಿರಾ?"

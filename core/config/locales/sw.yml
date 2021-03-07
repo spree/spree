@@ -472,6 +472,8 @@ sw:
     add_variant: Ongeza lahaja
     added_to_cart: Imeongezwa kwenye mkokoteni kwa mafanikio!
     address: Anwani
+    address1: Anwani
+    address2: Anwani (contd.)
     address_action_popup:
       delete_button: ndio, futa
       delete_text: Je! Kweli unataka <br /> kufuta anwani hii?

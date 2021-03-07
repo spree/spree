@@ -472,6 +472,8 @@ mg:
     add_variant: Manampy Variant
     added_to_cart: Nampidirina anaty sarety soa aman-tsara!
     address: Adiresy
+    address1: Adiresy
+    address2: Adiresy (tohiny.)
     address_action_popup:
       delete_button: eny, fafao
       delete_text: Tena tianao hofafana ity adiresy ity?

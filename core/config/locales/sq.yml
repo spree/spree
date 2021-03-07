@@ -472,6 +472,8 @@ sq:
     add_variant: Shto variantin
     added_to_cart: U shtua në shportë me sukses!
     address: Adresë
+    address1: Adresë
+    address2: Adresa (vazhduar)
     address_action_popup:
       delete_button: po, fshi
       delete_text: Dëshironi vërtet që <br /> ta fshini këtë adresë?

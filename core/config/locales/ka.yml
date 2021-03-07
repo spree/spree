@@ -472,6 +472,8 @@ ka:
     add_variant: ვარიანტის დამატება
     added_to_cart: კალათაში წარმატებით დაემატა!
     address: მისამართი
+    address1: მისამართი
+    address2: მისამართი (კონტაქტი)
     address_action_popup:
       delete_button: დიახ, წაშლა
       delete_text: ნამდვილად გსურთ <br /> ამ მისამართის წაშლა?

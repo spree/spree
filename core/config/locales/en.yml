@@ -472,6 +472,8 @@ en:
     add_variant: Add Variant
     added_to_cart: Added to cart successfully!
     address: Address
+    address1: Address
+    address2: Address (contd.)
     address_action_popup:
       delete_button: yes, delete
       delete_text: Do you really want <br /> to delete this address?

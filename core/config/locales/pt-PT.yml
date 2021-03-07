@@ -472,6 +472,8 @@ pt-PT:
     add_variant: Adicionar variante
     added_to_cart: Adicionado ao carrinho com sucesso!
     address: Endereço
+    address1: Endereço
+    address2: Endereço (continuação)
     address_action_popup:
       delete_button: sim deleta
       delete_text: Você realmente deseja <br /> deletar este endereço?

@@ -472,6 +472,8 @@ mn:
     add_variant: Хувилбар нэмэх
     added_to_cart: Сагсанд амжилттай нэмлээ!
     address: Хаяг
+    address1: Хаяг
+    address2: Хаяг (үргэлжлэл)
     address_action_popup:
       delete_button: Тийм ээ, устга
       delete_text: Та энэ хаягийг устгахыг <br /> үнэхээр хүсч байна уу?

@@ -472,6 +472,8 @@ is:
     add_variant: Bæta við afbrigði
     added_to_cart: Bætt í körfu með góðum árangri!
     address: Heimilisfang
+    address1: Heimilisfang
+    address2: Heimilisfang (frh.)
     address_action_popup:
       delete_button: já, eyttu
       delete_text: Viltu virkilega <br /> eyða þessu netfangi?

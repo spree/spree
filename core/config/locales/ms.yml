@@ -472,6 +472,8 @@ ms:
     add_variant: Tambah Varian
     added_to_cart: Berjaya ditambahkan ke troli!
     address: Alamat
+    address1: Alamat
+    address2: Alamat (samb.)
     address_action_popup:
       delete_button: ya, padam
       delete_text: Adakah anda benar-benar mahu <br /> memadamkan alamat ini?

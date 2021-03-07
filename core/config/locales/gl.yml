@@ -472,6 +472,8 @@ gl:
     add_variant: Engadir variante
     added_to_cart: Engadiuse ao carro correctamente.
     address: Enderezo
+    address1: Enderezo
+    address2: Enderezo (cont.)
     address_action_popup:
       delete_button: si, elimina
       delete_text: Desexa realmente <br /> eliminar este enderezo?

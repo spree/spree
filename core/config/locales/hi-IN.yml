@@ -472,6 +472,8 @@ hi-IN:
     add_variant: वेरिएंट जोड़ें
     added_to_cart: कार्ट में सफलतापूर्वक जोड़ा गया!
     address: पता
+    address1: पता
+    address2: पता (contd)
     address_action_popup:
       delete_button: हाँ, हटाओ
       delete_text: क्या आप वास्तव में <br /> इस पते को हटाना चाहते हैं?
