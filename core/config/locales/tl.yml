@@ -508,6 +508,7 @@ tl:
     adjustment_successfully_opened: Matagumpay na nabuksan ang pagsasaayos!
     adjustment_total: Kabuuang Pagsasaayos
     adjustments: Mga pagsasaayos
+    adjustments_deleted: Tinanggal ang mga pagsasaayos
     admin:
       order:
         events:
@@ -691,7 +692,6 @@ tl:
     coupon_code: Code ng kupon
     coupon_code_already_applied: Ang coupon code ay nailapat na sa order na ito
     coupon_code_applied: Ang coupon code ay matagumpay na nailapat sa iyong order.
-    coupon_code_apply: Mag-apply
     coupon_code_better_exists: Ang dating inilapat na mga coupon code ay nagreresulta sa isang mas mahusay na deal
     coupon_code_expired: Nag-expire na ang coupon code
     coupon_code_max_usage: Nalampasan ang limitasyon sa paggamit ng kupon code
@@ -1195,12 +1195,9 @@ tl:
     payments: Pagbabayad
     pdp:
       checkout: Tignan mo
-      description: Paglalarawan
-      details: Mga Detalye
       products_included_in_promotion: Mga produktong kasama sa promosyon
       quantity: Dami
       view_cart: Tingnan ang cart
-      you_may_also_like: Baka gusto mo din
     pending: Nakabinbin
     pending_sale: Nakabinbing Pagbebenta
     percent: Porsyento

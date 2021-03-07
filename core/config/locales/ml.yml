@@ -508,6 +508,7 @@ ml:
     adjustment_successfully_opened: ക്രമീകരണം വിജയകരമായി തുറന്നു!
     adjustment_total: ക്രമീകരണം ആകെ
     adjustments: ക്രമീകരണങ്ങൾ
+    adjustments_deleted: ക്രമീകരണങ്ങൾ ഇല്ലാതാക്കി
     admin:
       order:
         events:
@@ -691,7 +692,6 @@ ml:
     coupon_code: കൂപ്പൺ കോഡ്
     coupon_code_already_applied: ഈ ഓർഡറിലേക്ക് കൂപ്പൺ കോഡ് ഇതിനകം പ്രയോഗിച്ചു
     coupon_code_applied: നിങ്ങളുടെ ഓർഡറിൽ കൂപ്പൺ കോഡ് വിജയകരമായി പ്രയോഗിച്ചു.
-    coupon_code_apply: പ്രയോഗിക്കുക
     coupon_code_better_exists: മുമ്പ് പ്രയോഗിച്ച കൂപ്പൺ കോഡ് മികച്ച ഡീൽ നൽകുന്നു
     coupon_code_expired: കൂപ്പൺ കോഡ് കാലഹരണപ്പെട്ടു
     coupon_code_max_usage: കൂപ്പൺ കോഡ് ഉപയോഗ പരിധി കവിഞ്ഞു
@@ -1195,12 +1195,9 @@ ml:
     payments: പേയ്‌മെന്റുകൾ
     pdp:
       checkout: ചെക്ക് ഔട്ട്
-      description: വിവരണം
-      details: വിശദാംശങ്ങൾ
       products_included_in_promotion: പ്രൊമോഷനിൽ ഉൽപ്പന്നങ്ങൾ ഉൾപ്പെടുത്തിയിട്ടുണ്ട്
       quantity: അളവ്
       view_cart: സഞ്ചി കാണുക
-      you_may_also_like: നിങ്ങൾക്ക് ഇതും ഇഷ്ടപ്പെടുമായിരിക്കും
     pending: ശേഷിക്കുന്നു
     pending_sale: വിൽപ്പന തീർപ്പുകൽപ്പിച്ചിട്ടില്ല
     percent: ശതമാനം

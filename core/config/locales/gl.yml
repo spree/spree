@@ -508,6 +508,7 @@ gl:
     adjustment_successfully_opened: O axuste abriuse correctamente.
     adjustment_total: Axuste total
     adjustments: Axustes
+    adjustments_deleted: Elimináronse os axustes
     admin:
       order:
         events:
@@ -691,7 +692,6 @@ gl:
     coupon_code: Código de cupón
     coupon_code_already_applied: O código do cupón xa se aplicou a esta orde
     coupon_code_applied: O código do cupón aplicouse correctamente ao seu pedido.
-    coupon_code_apply: Solicitar
     coupon_code_better_exists: O código de cupón aplicado anteriormente resulta nunha mellor oferta
     coupon_code_expired: O código do cupón caducou
     coupon_code_max_usage: Superouse o límite de uso do código do cupón
@@ -1195,12 +1195,9 @@ gl:
     payments: Pagamentos
     pdp:
       checkout: Comprobar
-      description: Descrición
-      details: Detalles
       products_included_in_promotion: Produtos incluídos na promoción
       quantity: Cantidade
       view_cart: Ver cesta
-      you_may_also_like: Tamén che pode gustar
     pending: Pendente
     pending_sale: Venda pendente
     percent: Porcentaxe

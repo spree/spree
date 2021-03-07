@@ -508,6 +508,7 @@ te:
     adjustment_successfully_opened: సర్దుబాటు విజయవంతంగా తెరవబడింది!
     adjustment_total: సర్దుబాటు మొత్తం
     adjustments: సర్దుబాట్లు
+    adjustments_deleted: సర్దుబాట్లు తొలగించబడ్డాయి
     admin:
       order:
         events:
@@ -691,7 +692,6 @@ te:
     coupon_code: కూపన్ కోడ్
     coupon_code_already_applied: ఈ ఆర్డర్‌కు కూపన్ కోడ్ ఇప్పటికే వర్తింపజేయబడింది
     coupon_code_applied: మీ ఆర్డర్‌కు కూపన్ కోడ్ విజయవంతంగా వర్తించబడింది.
-    coupon_code_apply: వర్తించు
     coupon_code_better_exists: గతంలో వర్తింపజేసిన కూపన్ కోడ్ మంచి ఒప్పందానికి దారితీస్తుంది
     coupon_code_expired: కూపన్ కోడ్ గడువు ముగిసింది
     coupon_code_max_usage: కూపన్ కోడ్ వినియోగ పరిమితి మించిపోయింది
@@ -1195,12 +1195,9 @@ te:
     payments: చెల్లింపులు
     pdp:
       checkout: చెక్అవుట్
-      description: వివరణ
-      details: వివరాలు
       products_included_in_promotion: ఉత్పత్తులు ప్రమోషన్‌లో చేర్చబడ్డాయి
       quantity: పరిమాణం
       view_cart: కార్ట్ చూడండి
-      you_may_also_like: మీకు ఇది కూడా నచ్చవచ్చు
     pending: పెండింగ్‌లో ఉంది
     pending_sale: అమ్మకం పెండింగ్‌లో ఉంది
     percent: శాతం

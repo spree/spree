@@ -508,6 +508,7 @@ sw:
     adjustment_successfully_opened: Marekebisho yamefunguliwa kwa mafanikio!
     adjustment_total: Marekebisho Jumla
     adjustments: Marekebisho
+    adjustments_deleted: Marekebisho yamefutwa
     admin:
       order:
         events:
@@ -691,7 +692,6 @@ sw:
     coupon_code: Nambari ya kuponi
     coupon_code_already_applied: Nambari ya kuponi tayari imetumika kwa agizo hili
     coupon_code_applied: Nambari ya kuponi ilitekelezwa vizuri kwa agizo lako.
-    coupon_code_apply: Tumia
     coupon_code_better_exists: Nambari ya kuponi iliyotumiwa hapo awali inasababisha mpango mzuri
     coupon_code_expired: Nambari ya kuponi imeisha
     coupon_code_max_usage: Kikomo cha matumizi ya nambari ya kuponi kilizidi
@@ -1195,12 +1195,9 @@ sw:
     payments: Malipo
     pdp:
       checkout: Angalia
-      description: Maelezo
-      details: Maelezo
       products_included_in_promotion: Bidhaa zilizojumuishwa katika kukuza
       quantity: Wingi
       view_cart: Angalia gari
-      you_may_also_like: Unaweza pia kupenda
     pending: Inasubiri
     pending_sale: Inasubiri Kuuzwa
     percent: Asilimia

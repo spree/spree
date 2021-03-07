@@ -508,6 +508,7 @@ zh-YUE:
     adjustment_successfully_opened: 调整已成功打开！
     adjustment_total: 调整合计
     adjustments: 调整项
+    adjustments_deleted: 调整已删除
     admin:
       order:
         events:
@@ -691,7 +692,6 @@ zh-YUE:
     coupon_code: 优惠卷号码
     coupon_code_already_applied: 优惠券代码已应用于此订单
     coupon_code_applied: 优惠券代码已成功应用于您的订单。
-    coupon_code_apply: 申请
     coupon_code_better_exists: 先前应用的优惠券代码可带来更好的交易
     coupon_code_expired: 优惠券代码已过期
     coupon_code_max_usage: 超出优惠券代码使用限制
@@ -1195,12 +1195,9 @@ zh-YUE:
     payments: 付款方式
     pdp:
       checkout: 退房
-      description: 描述
-      details: 细节
       products_included_in_promotion: 促销中包含的产品
       quantity: 数量
       view_cart: 查看购物车
-      you_may_also_like: 您可能还喜欢
     pending: 待办的
     pending_sale: 待售中
     percent: 百分

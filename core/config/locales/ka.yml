@@ -508,6 +508,7 @@ ka:
     adjustment_successfully_opened: რეგულირება წარმატებით გაიხსნა!
     adjustment_total: რეგულირება სულ
     adjustments: შესწორებები
+    adjustments_deleted: კორექტირებები წაიშალა
     admin:
       order:
         events:
@@ -691,7 +692,6 @@ ka:
     coupon_code: Კუპონის კოდი
     coupon_code_already_applied: კუპონის კოდი უკვე გამოყენებულია ამ შეკვეთისთვის
     coupon_code_applied: კუპონის კოდი წარმატებით იქნა გამოყენებული თქვენს შეკვეთასთან დაკავშირებით.
-    coupon_code_apply: მიმართვა
     coupon_code_better_exists: ადრე გამოყენებული კუპონის კოდი უკეთეს გარიგებას იწვევს
     coupon_code_expired: კუპონის კოდი ამოიწურა
     coupon_code_max_usage: კუპონის კოდის გამოყენების ლიმიტი გადაჭარბებულია
@@ -1195,12 +1195,9 @@ ka:
     payments: გადახდები
     pdp:
       checkout: გადახდა
-      description: აღწერა
-      details: დეტალები
       products_included_in_promotion: აქციაში შეტანილი პროდუქტები
       quantity: რაოდენობა
       view_cart: Კალათის ნახვა
-      you_may_also_like: შეიძლება მოგეწონოთ
     pending: ელოდება
     pending_sale: გაყიდვის მოლოდინი
     percent: პროცენტი

@@ -508,6 +508,7 @@ ug:
     adjustment_successfully_opened: تەڭشەش مۇۋەپپەقىيەتلىك ئېچىلدى!
     adjustment_total: تەڭشەش ئومۇمىي
     adjustments: تەڭشەش
+    adjustments_deleted: تەڭشەش ئۆچۈرۈلدى
     admin:
       order:
         events:
@@ -691,7 +692,6 @@ ug:
     coupon_code: Coupon code
     coupon_code_already_applied: بۇ بۇيرۇققا تالون كودى ئاللىقاچان قوللىنىلىپ بولغان
     coupon_code_applied: تالون كودى سىزنىڭ بۇيرۇقىڭىزغا مۇۋەپپەقىيەتلىك قوللىنىلدى.
-    coupon_code_apply: ئىلتىماس قىلىڭ
     coupon_code_better_exists: ئىلگىرى قوللىنىلغان تالون كودى تېخىمۇ ياخشى سودىغا ئېرىشىدۇ
     coupon_code_expired: تالون كودىنىڭ ۋاقتى توشتى
     coupon_code_max_usage: Coupon كودى ئىشلىتىش چېكىدىن ئېشىپ كەتتى
@@ -1195,12 +1195,9 @@ ug:
     payments: چىقىم
     pdp:
       checkout: چىقىمدان
-      description: چۈشەندۈرۈش
-      details: تەپسىلاتى
       products_included_in_promotion: تەشۋىقاتقا كىرگۈزۈلگەن مەھسۇلاتلار
       quantity: سانى
       view_cart: ھارۋىنى كۆرۈش
-      you_may_also_like: ياقتۇرۇشىڭىز مۇمكىن
     pending: ساقلىنىۋاتىدۇ
     pending_sale: ساقلىنىۋاتىدۇ
     percent: پىرسەنت

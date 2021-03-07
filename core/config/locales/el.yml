@@ -508,6 +508,7 @@ el:
     adjustment_successfully_opened: Η προσαρμογή άνοιξε με επιτυχία!
     adjustment_total: Σύνολο προσαρμογής
     adjustments: Προσαρμογές
+    adjustments_deleted: Οι προσαρμογές διαγράφηκαν
     admin:
       order:
         events:
@@ -691,7 +692,6 @@ el:
     coupon_code: Κωδικός κουπονιού
     coupon_code_already_applied: Ο κωδικός κουπονιού έχει ήδη εφαρμοστεί σε αυτήν την παραγγελία
     coupon_code_applied: Ο κωδικός κουπονιού εφαρμόστηκε με επιτυχία στην παραγγελία σας.
-    coupon_code_apply: Ισχύουν
     coupon_code_better_exists: Ο κωδικός κουπονιού που εφαρμόστηκε προηγουμένως έχει ως αποτέλεσμα καλύτερη συμφωνία
     coupon_code_expired: Ο κωδικός κουπονιού έχει λήξει
     coupon_code_max_usage: Υπέρβαση ορίου χρήσης κωδικού κουπονιού
@@ -1195,12 +1195,9 @@ el:
     payments: Πληρωμές
     pdp:
       checkout: ολοκλήρωση παραγγελίας
-      description: Περιγραφή
-      details: Λεπτομέριες
       products_included_in_promotion: Προϊόντα που περιλαμβάνονται στην προσφορά
       quantity: Ποσότητα
       view_cart: Προβολή καλαθιού
-      you_may_also_like: μπορεί να σου αρέσει επίσης
     pending: εκκρεμής
     pending_sale: Εκκρεμεί πώληση
     percent: Τοις εκατό

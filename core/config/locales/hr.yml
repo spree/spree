@@ -590,6 +590,7 @@ hr:
     adjustment_successfully_opened: Prilagodba je uspješno otvorena!
     adjustment_total: Ukupna prilagodba
     adjustments: Prilagođavanja
+    adjustments_deleted: Prilagodbe izbrisane
     admin:
       order:
         events:
@@ -775,7 +776,6 @@ hr:
     coupon_code: Šifra kupona
     coupon_code_already_applied: Kôd kupona već je primijenjen na ovu narudžbu
     coupon_code_applied: Kôd kupona uspješno je primijenjen na vašu narudžbu.
-    coupon_code_apply: Prijavite se
     coupon_code_better_exists: Ranije primijenjeni kôd kupona rezultira boljom pogodbom
     coupon_code_expired: Kôd kupona je istekao
     coupon_code_max_usage: Premašeno je ograničenje upotrebe koda kupona
@@ -1283,12 +1283,9 @@ hr:
     payments: Plaćanja
     pdp:
       checkout: Provjeri
-      description: Opis
-      details: Pojedinosti
       products_included_in_promotion: Proizvodi uključeni u promociju
       quantity: Količina
       view_cart: Pogledaj košaricu
-      you_may_also_like: Možda ti se također svidi
     pending: U tijeku
     pending_sale: Na prodaju
     percent: Postotak

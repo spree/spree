@@ -508,6 +508,7 @@ ms:
     adjustment_successfully_opened: Penyesuaian telah berjaya dibuka!
     adjustment_total: Jumlah Pelarasan
     adjustments: Pelarasan
+    adjustments_deleted: Pelarasan dipadamkan
     admin:
       order:
         events:
@@ -691,7 +692,6 @@ ms:
     coupon_code: Kod Kupon
     coupon_code_already_applied: Kod kupon telah digunakan untuk pesanan ini
     coupon_code_applied: Kod kupon berjaya digunakan untuk pesanan anda.
-    coupon_code_apply: Memohon
     coupon_code_better_exists: Kod kupon yang digunakan sebelum ini menghasilkan kesepakatan yang lebih baik
     coupon_code_expired: Kod kupon telah tamat
     coupon_code_max_usage: Melebihi had penggunaan kod kupon
@@ -1195,12 +1195,9 @@ ms:
     payments: Pembayaran
     pdp:
       checkout: Daftar keluar
-      description: Penerangan
-      details: Perincian
       products_included_in_promotion: Produk termasuk dalam promosi
       quantity: Kuantiti
       view_cart: Lihat troli
-      you_may_also_like: Awak juga mungkin menyukai
     pending: Yang belum selesai
     pending_sale: Jualan Tertunda
     percent: Peratus

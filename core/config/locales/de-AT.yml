@@ -508,6 +508,7 @@ de-AT:
     adjustment_successfully_opened: Anpassung wurde erfolgreich geöffnet!
     adjustment_total: Anpassungssumme
     adjustments: Anpassungen
+    adjustments_deleted: Anpassungen gelöscht
     admin:
       order:
         events:
@@ -691,7 +692,6 @@ de-AT:
     coupon_code: Gutscheincode
     coupon_code_already_applied: Der Gutscheincode wurde bereits auf diese Bestellung angewendet
     coupon_code_applied: Der Gutscheincode wurde erfolgreich auf Ihre Bestellung angewendet.
-    coupon_code_apply: Anwenden
     coupon_code_better_exists: Der zuvor angewendete Gutscheincode führt zu einem besseren Angebot
     coupon_code_expired: Der Gutscheincode ist abgelaufen
     coupon_code_max_usage: Das Nutzungslimit für den Gutscheincode wurde überschritten
@@ -1195,12 +1195,9 @@ de-AT:
     payments: Zahlungen
     pdp:
       checkout: Überprüfen
-      description: Beschreibung
-      details: Einzelheiten
       products_included_in_promotion: In der Aktion enthaltene Produkte
       quantity: Menge
       view_cart: Warenkorb ansehen
-      you_may_also_like: Sie können auch mögen
     pending: steht aus
     pending_sale: Verkauft steht bevor
     percent: Prozent

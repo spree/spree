@@ -508,6 +508,7 @@ uz:
     adjustment_successfully_opened: Sozlash muvaffaqiyatli ochildi!
     adjustment_total: Jami sozlash
     adjustments: Tuzatishlar
+    adjustments_deleted: Sozlamalar o'chirildi
     admin:
       order:
         events:
@@ -691,7 +692,6 @@ uz:
     coupon_code: Kupon kodi
     coupon_code_already_applied: Ushbu buyurtma uchun kupon kodi allaqachon qo'llanilgan
     coupon_code_applied: Kupon kodi sizning buyurtmangizga muvaffaqiyatli tatbiq etildi.
-    coupon_code_apply: Ariza bering
     coupon_code_better_exists: Ilgari qo'llanilgan kupon kodi yaxshi bitimga olib keladi
     coupon_code_expired: Kupon kodining muddati tugagan
     coupon_code_max_usage: Kupon kodidan foydalanish limitidan oshib ketdi
@@ -1195,12 +1195,9 @@ uz:
     payments: To'lovlar
     pdp:
       checkout: Tekshirib ko'rmoq
-      description: Tavsif
-      details: Tafsilotlar
       products_included_in_promotion: Aktsiyaga kiritilgan mahsulotlar
       quantity: Miqdor
       view_cart: Savatni ko'rish
-      you_may_also_like: Sizga ham yoqishi mumkin
     pending: Kutilmoqda
     pending_sale: Sotish kutilmoqda
     percent: Foiz

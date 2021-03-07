@@ -508,6 +508,7 @@ az:
     adjustment_successfully_opened: Tənzimləmə uğurla açıldı!
     adjustment_total: Ayarlama cəmi
     adjustments: Düzəlişlər
+    adjustments_deleted: Düzəlişlər silindi
     admin:
       order:
         events:
@@ -691,7 +692,6 @@ az:
     coupon_code: Kupon Kodu
     coupon_code_already_applied: Kupon kodu artıq bu sifarişə tətbiq edilmişdir
     coupon_code_applied: Kupon kodu sifarişinizə uğurla tətbiq edildi.
-    coupon_code_apply: Müraciət edin
     coupon_code_better_exists: Daha əvvəl tətbiq olunan kupon kodu daha yaxşı bir anlaşma ilə nəticələnir
     coupon_code_expired: Kupon kodu bitib
     coupon_code_max_usage: Kupon kodu istifadə həddi aşıldı
@@ -1195,12 +1195,9 @@ az:
     payments: Ödənişlər
     pdp:
       checkout: Yoxla
-      description: Təsvir
-      details: Ətraflı məlumat
       products_included_in_promotion: Təqdimata daxil olan məhsullar
       quantity: Miqdarı
       view_cart: Səbətə bax
-      you_may_also_like: Siz həmçinin bəyənə bilərsiniz
     pending: gözləyən
     pending_sale: Gözlənən Satış
     percent: Faiz

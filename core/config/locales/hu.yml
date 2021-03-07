@@ -508,6 +508,7 @@ hu:
     adjustment_successfully_opened: A kiigazítás sikeresen megnyílt!
     adjustment_total: Kiigazítás összesen
     adjustments: Kiigazítások
+    adjustments_deleted: A kiigazítások törölve
     admin:
       order:
         events:
@@ -691,7 +692,6 @@ hu:
     coupon_code: Kupon kód
     coupon_code_already_applied: A kuponkódot már alkalmazták erre a megrendelésre
     coupon_code_applied: A kuponkódot sikeresen alkalmaztuk megrendelésére.
-    coupon_code_apply: Alkalmaz
     coupon_code_better_exists: A korábban alkalmazott kuponkód jobb üzletet eredményez
     coupon_code_expired: A kuponkód lejárt
     coupon_code_max_usage: Túllépte a kuponkód használati korlátját
@@ -1195,12 +1195,9 @@ hu:
     payments: Kifizetések
     pdp:
       checkout: Pénztár
-      description: Leírás
-      details: Részletek
       products_included_in_promotion: Az akcióban szereplő termékek
       quantity: Mennyiség
       view_cart: Kosár megtekintése
-      you_may_also_like: még szintén kedvelheted
     pending: Függőben levő
     pending_sale: Függőben lévő eladás
     percent: Százalék

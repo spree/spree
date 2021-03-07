@@ -508,6 +508,7 @@ lo:
     adjustment_successfully_opened: ການປັບໄດ້ເປີດໃຫ້ ສຳ ເລັດແລ້ວ!
     adjustment_total: ການປັບຕົວທັງ ໝົດ
     adjustments: ການປັບຕົວ
+    adjustments_deleted: ການດັດປັບການລຶບ
     admin:
       order:
         events:
@@ -691,7 +692,6 @@ lo:
     coupon_code: ລະຫັດຄູປອງ
     coupon_code_already_applied: ລະຫັດຄູປອງໄດ້ຖືກ ນຳ ໃຊ້ກັບ ຄຳ ສັ່ງນີ້ແລ້ວ
     coupon_code_applied: ລະຫັດຄູປອງຖືກປະສົບຜົນ ສຳ ເລັດໃນການສັ່ງຊື້ຂອງທ່ານ.
-    coupon_code_apply: ສະ ໝັກ
     coupon_code_better_exists: ລະຫັດຄູປອງທີ່ ນຳ ໃຊ້ມາກ່ອນຈະສົ່ງຜົນໃຫ້ດີຂື້ນ
     coupon_code_expired: ລະຫັດຄູປອງ ໝົດ ອາຍຸ
     coupon_code_max_usage: ເກີນຂີດ ຈຳ ກັດການ ນຳ ໃຊ້ລະຫັດຄູປອງ
@@ -1195,12 +1195,9 @@ lo:
     payments: ການ ຊຳ ລະເງິນ
     pdp:
       checkout: ເຊັກເອົາ
-      description: ລາຍລະອຽດ
-      details: ລາຍລະອຽດ
       products_included_in_promotion: ຜະລິດຕະພັນລວມເຂົ້າໃນໂປໂມຊັ່ນ
       quantity: ຈຳ ນວນ
       view_cart: ເບິ່ງລົດເຂັນ
-      you_may_also_like: ທ່ານອາດຈະມັກ
     pending: ທີ່ຍັງຄ້າງ
     pending_sale: ການຂາຍທີ່ຍັງຄ້າງ
     percent: ເປີເຊັນ

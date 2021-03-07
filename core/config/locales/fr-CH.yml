@@ -508,6 +508,7 @@ fr-CH:
     adjustment_successfully_opened: L'ajustement a été ouvert avec succès!
     adjustment_total: Total de l'ajustement
     adjustments: Ajustements
+    adjustments_deleted: Ajustements supprimés
     admin:
       order:
         events:
@@ -691,7 +692,6 @@ fr-CH:
     coupon_code: Code de coupon
     coupon_code_already_applied: Le code promo a déjà été appliqué à cette commande
     coupon_code_applied: Le code de réduction a été appliqué avec succès à votre commande.
-    coupon_code_apply: Appliquer
     coupon_code_better_exists: Le code de coupon appliqué précédemment donne une meilleure offre
     coupon_code_expired: Le code promo est expiré
     coupon_code_max_usage: Limite d'utilisation du code de réduction dépassée
@@ -1195,12 +1195,9 @@ fr-CH:
     payments: Paiements
     pdp:
       checkout: Vérifier
-      description: Description
-      details: Des détails
       products_included_in_promotion: Produits inclus dans la promotion
       quantity: Quantité
       view_cart: Voir le panier
-      you_may_also_like: Tu pourrais aussi aimer
     pending: En attente
     pending_sale: Vente en cours
     percent: Pour cent

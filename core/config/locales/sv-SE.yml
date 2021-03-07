@@ -508,6 +508,7 @@ sv-SE:
     adjustment_successfully_opened: Justeringen har öppnats framgångsrikt!
     adjustment_total: Justering totalt
     adjustments: Justeringar
+    adjustments_deleted: Justeringar raderade
     admin:
       order:
         events:
@@ -691,7 +692,6 @@ sv-SE:
     coupon_code: Kupongskod
     coupon_code_already_applied: Kupongkoden har redan tillämpats på denna beställning
     coupon_code_applied: Kupongkoden tillämpades framgångsrikt på din beställning.
-    coupon_code_apply: Tillämpa
     coupon_code_better_exists: Den tidigare tillämpade kupongkoden resulterar i en bättre affär
     coupon_code_expired: Kupongkoden har upphört att gälla
     coupon_code_max_usage: Gränsen för användning av kupongkoden har överskridits
@@ -1195,12 +1195,9 @@ sv-SE:
     payments: Betalningar
     pdp:
       checkout: Kolla upp
-      description: Beskrivning
-      details: Detaljer
       products_included_in_promotion: Produkter som ingår i kampanjen
       quantity: Kvantitet
       view_cart: Visa kundvagn
-      you_may_also_like: Du kanske också gillar
     pending: I väntan på
     pending_sale: Väntande försäljning
     percent: Procent

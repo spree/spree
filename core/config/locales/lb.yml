@@ -508,6 +508,7 @@ lb:
     adjustment_successfully_opened: Upassung gouf erfollegräich opgemaach!
     adjustment_total: Upassung Total
     adjustments: Upassungen
+    adjustments_deleted: Upassunge geläscht
     admin:
       order:
         events:
@@ -691,7 +692,6 @@ lb:
     coupon_code: Coupon Code
     coupon_code_already_applied: De Coupon Code gouf scho fir dës Bestellung ugewannt
     coupon_code_applied: De Coupon Code gouf erfollegräich op Är Bestellung applizéiert.
-    coupon_code_apply: Mell dech un
     coupon_code_better_exists: De fréier ugewandte Coupon Code resultéiert zu engem besseren Deal
     coupon_code_expired: De Coupon Code ass ofgelaf
     coupon_code_max_usage: Benotzungslimit vum Coupon Code iwwerschratt
@@ -1195,12 +1195,9 @@ lb:
     payments: Bezuelungen
     pdp:
       checkout: Ofmellen
-      description: Beschreiwung
-      details: Detailer
       products_included_in_promotion: Produkter abegraff an der Promotioun
       quantity: Quantitéit
       view_cart: Kuerf kucken
-      you_may_also_like: Dir kënnt och gär hunn
     pending: Waarden
     pending_sale: Waarden Verkaf
     percent: Prozentsaz

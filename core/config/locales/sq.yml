@@ -508,6 +508,7 @@ sq:
     adjustment_successfully_opened: Rregullimi është hapur me sukses!
     adjustment_total: Gjithsej rregullimi
     adjustments: Rregullimet
+    adjustments_deleted: Rregullimet u fshinë
     admin:
       order:
         events:
@@ -691,7 +692,6 @@ sq:
     coupon_code: Kodi kupon
     coupon_code_already_applied: Kodi i kuponit është aplikuar tashmë në këtë porosi
     coupon_code_applied: Kodi i kuponit u aplikua me sukses në porosinë tuaj.
-    coupon_code_apply: Aplikoni
     coupon_code_better_exists: Kodi i kuponit i aplikuar më parë rezulton në një marrëveshje më të mirë
     coupon_code_expired: Kodi i kuponit ka skaduar
     coupon_code_max_usage: Kufiri i përdorimit të kodit të kuponit është tejkaluar
@@ -1195,12 +1195,9 @@ sq:
     payments: Pagesat
     pdp:
       checkout: Arka
-      description: Përshkrim
-      details: Detajet
       products_included_in_promotion: Produktet e përfshira në promovim
       quantity: sasi
       view_cart: Shikoni karrocën
-      you_may_also_like: Ju gjithashtu mund të pëlqeni
     pending: Në pritje
     pending_sale: Shitje në pritje
     percent: Përqindja

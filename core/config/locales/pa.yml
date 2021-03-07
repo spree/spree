@@ -508,6 +508,7 @@ pa:
     adjustment_successfully_opened: ਵਿਵਸਥਾ ਸਫਲਤਾਪੂਰਵਕ ਖੋਲ੍ਹ ਦਿੱਤੀ ਗਈ ਹੈ!
     adjustment_total: ਐਡਜਸਟਮੈਂਟ ਕੁੱਲ
     adjustments: ਵਿਵਸਥਾ
+    adjustments_deleted: ਵਿਵਸਥਾਪਨ ਮਿਟਾਏ ਗਏ
     admin:
       order:
         events:
@@ -691,7 +692,6 @@ pa:
     coupon_code: ਕੂਪਨ ਕੋਡ
     coupon_code_already_applied: ਇਸ ਆਰਡਰ 'ਤੇ ਕੂਪਨ ਕੋਡ ਪਹਿਲਾਂ ਹੀ ਲਾਗੂ ਕੀਤਾ ਗਿਆ ਹੈ
     coupon_code_applied: ਕੂਪਨ ਕੋਡ ਸਫਲਤਾਪੂਰਵਕ ਤੁਹਾਡੇ ਆਰਡਰ ਤੇ ਲਾਗੂ ਕੀਤਾ ਗਿਆ ਸੀ.
-    coupon_code_apply: ਲਾਗੂ ਕਰੋ
     coupon_code_better_exists: ਪਹਿਲਾਂ ਲਾਗੂ ਕੀਤਾ ਕੂਪਨ ਕੋਡ ਇੱਕ ਵਧੀਆ ਸੌਦੇ ਦੇ ਨਤੀਜੇ ਵਜੋਂ
     coupon_code_expired: ਕੂਪਨ ਕੋਡ ਦੀ ਮਿਆਦ ਖਤਮ ਹੋ ਗਈ ਹੈ
     coupon_code_max_usage: ਕੂਪਨ ਕੋਡ ਦੀ ਵਰਤੋਂ ਸੀਮਾ ਵੱਧ ਗਈ
@@ -1195,12 +1195,9 @@ pa:
     payments: ਭੁਗਤਾਨ
     pdp:
       checkout: ਕਮਰਾ ਛੱਡ ਦਿਓ
-      description: ਵੇਰਵਾ
-      details: ਵੇਰਵਾ
       products_included_in_promotion: ਉਤਪਾਦ ਤਰੱਕੀ ਵਿੱਚ ਸ਼ਾਮਲ
       quantity: ਮਾਤਰਾ
       view_cart: ਕਾਰਟ ਦੇਖੋ
-      you_may_also_like: ਤੁਸੀਂ ਵੀ ਪਸੰਦ ਕਰ ਸਕਦੇ ਹੋ
     pending: ਬਕਾਇਆ
     pending_sale: ਬਕਾਇਆ ਵਿਕਰੀ
     percent: ਪ੍ਰਤੀਸ਼ਤ

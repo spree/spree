@@ -508,6 +508,7 @@ he:
     adjustment_successfully_opened: ההתאמה נפתחה בהצלחה!
     adjustment_total: סה"כ התאמה
     adjustments: התאמות
+    adjustments_deleted: ההתאמות נמחקו
     admin:
       order:
         events:
@@ -691,7 +692,6 @@ he:
     coupon_code: קוד קופון
     coupon_code_already_applied: קוד הקופון כבר הוחל על הזמנה זו
     coupon_code_applied: קוד הקופון הוחל בהצלחה על הזמנתך.
-    coupon_code_apply: להגיש מועמדות
     coupon_code_better_exists: קוד הקופון שהוחל בעבר מביא לעסקה טובה יותר
     coupon_code_expired: פג תוקף קוד הקופון
     coupon_code_max_usage: מגבלת השימוש בקוד קופון חרגה
@@ -1195,12 +1195,9 @@ he:
     payments: תשלומים
     pdp:
       checkout: לבדוק
-      description: תיאור
-      details: פרטים
       products_included_in_promotion: מוצרים הכלולים במבצע
       quantity: כַּמוּת
       view_cart: צפה בסל
-      you_may_also_like: אולי גם תאהב
     pending: ממתין ל
     pending_sale: מכירה בהמתנה
     percent: אָחוּז

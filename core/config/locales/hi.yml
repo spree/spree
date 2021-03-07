@@ -508,6 +508,7 @@ hi:
     adjustment_successfully_opened: समायोजन सफलतापूर्वक खोला गया है!
     adjustment_total: समायोजन कुल
     adjustments: समायोजन
+    adjustments_deleted: समायोजन हटा दिया गया
     admin:
       order:
         events:
@@ -691,7 +692,6 @@ hi:
     coupon_code: कूपन कोड
     coupon_code_already_applied: इस आदेश पर कूपन कोड पहले ही लागू हो चुका है
     coupon_code_applied: कूपन कोड आपके आदेश पर सफलतापूर्वक लागू किया गया था।
-    coupon_code_apply: लागू
     coupon_code_better_exists: पहले से लागू कूपन कोड एक बेहतर सौदे का परिणाम है
     coupon_code_expired: कूपन कोड समाप्त हो गया है
     coupon_code_max_usage: कूपन कोड उपयोग सीमा पार हो गई
@@ -1195,12 +1195,9 @@ hi:
     payments: भुगतान
     pdp:
       checkout: चेक आउट
-      description: विवरण
-      details: विवरण
       products_included_in_promotion: प्रचार में शामिल उत्पाद
       quantity: मात्रा
       view_cart: गाडी देंखे
-      you_may_also_like: आपको यह भी पसंद आ सकता हैं
     pending: विचाराधीन
     pending_sale: विचाराधीन विक्रय
     percent: प्रतिशत

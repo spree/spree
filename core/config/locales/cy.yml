@@ -672,6 +672,7 @@ cy:
     adjustment_successfully_opened: Mae'r addasiad wedi'i agor yn llwyddiannus!
     adjustment_total: Cyfanswm yr Addasiad
     adjustments: Addasiadau
+    adjustments_deleted: Addasiadau wedi'u dileu
     admin:
       order:
         events:
@@ -859,7 +860,6 @@ cy:
     coupon_code: Cod cwpon
     coupon_code_already_applied: Mae'r cod cwpon eisoes wedi'i gymhwyso i'r gorchymyn hwn
     coupon_code_applied: Cymhwyswyd y cod cwpon yn llwyddiannus i'ch archeb.
-    coupon_code_apply: Ymgeisiwch
     coupon_code_better_exists: Mae'r cod cwpon a gymhwyswyd yn flaenorol yn arwain at fargen well
     coupon_code_expired: Mae'r cod cwpon wedi dod i ben
     coupon_code_max_usage: Rhagorwyd ar y terfyn defnyddio cod cwpon
@@ -1371,12 +1371,9 @@ cy:
     payments: Taliadau
     pdp:
       checkout: Til
-      description: Disgrifiad
-      details: Manylion
       products_included_in_promotion: Cynhyrchion wedi'u cynnwys yn yr hyrwyddiad
       quantity: Nifer
       view_cart: Gweld y drol
-      you_may_also_like: Efallai yr hoffech chi hefyd
     pending: Yn yr arfaeth
     pending_sale: Arwerthiant i ddod
     percent: Canran

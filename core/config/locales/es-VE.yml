@@ -508,6 +508,7 @@ es-VE:
     adjustment_successfully_opened: "¡El ajuste se ha abierto con éxito!"
     adjustment_total: Total de ajuste
     adjustments: Ajustes
+    adjustments_deleted: Ajustes eliminados
     admin:
       order:
         events:
@@ -691,7 +692,6 @@ es-VE:
     coupon_code: Código promocional
     coupon_code_already_applied: El código de cupón ya se aplicó a este pedido.
     coupon_code_applied: El código de cupón se aplicó correctamente a su pedido.
-    coupon_code_apply: Aplicar
     coupon_code_better_exists: El código de cupón aplicado anteriormente da como resultado una mejor oferta
     coupon_code_expired: El código de cupón ha caducado.
     coupon_code_max_usage: Se superó el límite de uso del código de cupón
@@ -1195,12 +1195,9 @@ es-VE:
     payments: Pagos
     pdp:
       checkout: Revisa
-      description: Descripción
-      details: Detalles
       products_included_in_promotion: Productos incluidos en la promoción
       quantity: Cantidad
       view_cart: Ver carrito
-      you_may_also_like: También te puede interesar
     pending: Pendiente
     pending_sale: Venta pendiente
     percent: Por ciento

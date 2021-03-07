@@ -508,6 +508,7 @@ mg:
     adjustment_successfully_opened: Vaky soa aman-tsara ny fanitsiana!
     adjustment_total: Fanitsiana
     adjustments: fanitsiana
+    adjustments_deleted: Voafafa ny fanitsiana
     admin:
       order:
         events:
@@ -691,7 +692,6 @@ mg:
     coupon_code: Kaody kaody
     coupon_code_already_applied: Ny kaody coupon dia efa nampiharina tamin'ity baiko ity
     coupon_code_applied: Ny code coupon dia nampiharina tamim-pahombiazana tamin'ny baikonao.
-    coupon_code_apply: AMPIHARO
     coupon_code_better_exists: Ny kaody coupon efa nampiharina teo aloha dia miteraka fifanarahana tsara kokoa
     coupon_code_expired: Tapitra ny kaody coupon
     coupon_code_max_usage: Nihoatra ny fetran'ny fampiasana kaody coupon
@@ -1195,12 +1195,9 @@ mg:
     payments: fandoavam-bola
     pdp:
       checkout: Zahao hoe
-      description: Description
-      details: tsipiriany
       products_included_in_promotion: Vokatra tafiditra ao amin'ny fampiroboroboana
       quantity: Quantity
       view_cart: Hijery sarety
-      you_may_also_like: Mety tianao ihany koa
     pending: mbola miandry
     pending_sale: Fivarotana miandry
     percent: isan-jato

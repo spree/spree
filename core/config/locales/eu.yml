@@ -508,6 +508,7 @@ eu:
     adjustment_successfully_opened: Doikuntza ongi ireki da!
     adjustment_total: Doikuntza totala
     adjustments: Doikuntzak
+    adjustments_deleted: Ezarpenak ezabatu dira
     admin:
       order:
         events:
@@ -691,7 +692,6 @@ eu:
     coupon_code: Kupoi kodea
     coupon_code_already_applied: Kupoi kodea dagoeneko aplikatu zaio eskaera honi
     coupon_code_applied: Kupoi kodea zure eskaerari ondo aplikatu zaio.
-    coupon_code_apply: Aplikatu
     coupon_code_better_exists: Aurretik aplikatutako kupoi kodeak hobeagoa da
     coupon_code_expired: Kupoi kodea iraungi egin da
     coupon_code_max_usage: Kupoi kodea erabiltzeko muga gainditu da
@@ -1195,12 +1195,9 @@ eu:
     payments: Ordainketak
     pdp:
       checkout: Errebisatu
-      description: Deskribapena
-      details: Xehetasunak
       products_included_in_promotion: Promozioan sartutako produktuak
       quantity: Kopurua
       view_cart: Ikusi saskia
-      you_may_also_like: Agian ere gustatuko zaizu
     pending: Zain
     pending_sale: Salmenta zain
     percent: Ehunekoa

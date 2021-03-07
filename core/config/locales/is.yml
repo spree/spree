@@ -508,6 +508,7 @@ is:
     adjustment_successfully_opened: Aðlögun hefur verið opnuð!
     adjustment_total: Aðlögun Samtals
     adjustments: Aðlögun
+    adjustments_deleted: Leiðréttingum eytt
     admin:
       order:
         events:
@@ -691,7 +692,6 @@ is:
     coupon_code: Afsláttarkóði
     coupon_code_already_applied: Afsláttarkóðanum hefur þegar verið beitt á þessa pöntun
     coupon_code_applied: Afsláttarkóðanum var beitt á pöntunina þína.
-    coupon_code_apply: Sækja um
     coupon_code_better_exists: Áður notaður afsláttarmiða kóði skilar betri viðskiptum
     coupon_code_expired: Afsláttarkóðinn er útrunninn
     coupon_code_max_usage: Hámark afsláttarmiða á notkun afsláttarkóða
@@ -1195,12 +1195,9 @@ is:
     payments: Greiðslur
     pdp:
       checkout: Athuga
-      description: Lýsing
-      details: Upplýsingar
       products_included_in_promotion: Vörur innifaldar í kynningunni
       quantity: Magn
       view_cart: Skoða körfu
-      you_may_also_like: þér gæti einnig líkað við
     pending: Í bið
     pending_sale: Sala í bið
     percent: Hlutfall

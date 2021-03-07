@@ -508,6 +508,7 @@ mr-IN:
     adjustment_successfully_opened: समायोजन यशस्वीरित्या उघडले गेले आहे!
     adjustment_total: एकूण समायोजन
     adjustments: समायोजन
+    adjustments_deleted: समायोजने हटविली
     admin:
       order:
         events:
@@ -691,7 +692,6 @@ mr-IN:
     coupon_code: कूपन कोड
     coupon_code_already_applied: या ऑर्डरवर कूपन कोड आधीपासून लागू केला गेला आहे
     coupon_code_applied: आपल्या ऑर्डरवर कूपन कोड यशस्वीरित्या लागू झाला.
-    coupon_code_apply: अर्ज करा
     coupon_code_better_exists: पूर्वी लागू केलेल्या कूपन कोडचा चांगला परिणाम होईल
     coupon_code_expired: कूपन कोड कालबाह्य झाला आहे
     coupon_code_max_usage: कूपन कोड वापर मर्यादा ओलांडली
@@ -1195,12 +1195,9 @@ mr-IN:
     payments: देयके
     pdp:
       checkout: तपासा
-      description: वर्णन
-      details: तपशील
       products_included_in_promotion: जाहिरातींमध्ये समाविष्ट उत्पादने
       quantity: प्रमाण
       view_cart: कार्ट पहा
-      you_may_also_like: आपल्याला देखील आवडेल
     pending: प्रलंबित
     pending_sale: प्रलंबित विक्री
     percent: टक्के

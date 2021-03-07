@@ -508,6 +508,7 @@ bn:
     adjustment_successfully_opened: সমন্বয় সফলভাবে খোলা হয়েছে!
     adjustment_total: সমন্বয় মোট
     adjustments: সামঞ্জস্য
+    adjustments_deleted: সমন্বয় মোছা হয়েছে
     admin:
       order:
         events:
@@ -691,7 +692,6 @@ bn:
     coupon_code: কুপন কোড
     coupon_code_already_applied: এই আদেশে ইতিমধ্যে কুপন কোড প্রয়োগ করা হয়েছে
     coupon_code_applied: কুপন কোডটি সফলভাবে আপনার আদেশে প্রয়োগ হয়েছিল।
-    coupon_code_apply: প্রয়োগ করুন
     coupon_code_better_exists: পূর্বে প্রয়োগ করা কুপন কোডের ফলে আরও ভাল চুক্তি হয়
     coupon_code_expired: কুপন কোডটির মেয়াদ শেষ হয়ে গেছে
     coupon_code_max_usage: কুপন কোড ব্যবহারের সীমা অতিক্রম করেছে
@@ -1195,12 +1195,9 @@ bn:
     payments: অর্থ প্রদান
     pdp:
       checkout: চেকআউট
-      description: বর্ণনা
-      details: বিশদ
       products_included_in_promotion: পণ্য প্রচার অন্তর্ভুক্ত
       quantity: পরিমাণ
       view_cart: কার্ট দেখুন
-      you_may_also_like: তুমিও পছন্দ করতে পার
     pending: বিচারাধীন
     pending_sale: মুলতুবি বিক্রয়
     percent: শতাংশ

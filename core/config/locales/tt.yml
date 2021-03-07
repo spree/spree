@@ -508,6 +508,7 @@ tt:
     adjustment_successfully_opened: Көйләү уңышлы ачылды!
     adjustment_total: Барлык көйләү
     adjustments: Көйләүләр
+    adjustments_deleted: Көйләүләр бетерелде
     admin:
       order:
         events:
@@ -691,7 +692,6 @@ tt:
     coupon_code: Купон коды
     coupon_code_already_applied: Купон коды бу заказга кулланылган инде
     coupon_code_applied: Купон коды сезнең заказга уңышлы кулланылды.
-    coupon_code_apply: Кулланыгыз
     coupon_code_better_exists: Элегерәк кулланылган талон коды яхшырак килешүгә китерә
     coupon_code_expired: Купон коды бетте
     coupon_code_max_usage: Купон кодын куллану чикләре артты
@@ -1195,12 +1195,9 @@ tt:
     payments: Түләү
     pdp:
       checkout: Тишерү
-      description: Тасвирлау
-      details: Детальләр
       products_included_in_promotion: Рекламага кертелгән продуктлар
       quantity: Сан
       view_cart: Арбаны карау
-      you_may_also_like: Сезгә шулай ук ошарга мөмкин
     pending: Көтелгән
     pending_sale: Сату көтелә
     percent: Процент

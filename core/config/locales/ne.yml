@@ -508,6 +508,7 @@ ne:
     adjustment_successfully_opened: समायोजन सफलतापूर्वक खोलिएको छ!
     adjustment_total: समायोजन कुल
     adjustments: समायोजनहरू
+    adjustments_deleted: समायोजन मेटाइयो
     admin:
       order:
         events:
@@ -691,7 +692,6 @@ ne:
     coupon_code: कुपन कोड
     coupon_code_already_applied: कुपन कोड यस अर्डरमा पहिले नै लागू गरिएको छ
     coupon_code_applied: कुपन कोड सफलतापूर्वक तपाईंको अर्डरमा लागू गरियो।
-    coupon_code_apply: निवेदन गर्नु
     coupon_code_better_exists: पहिले लागू गरिएको कुपन कोडले राम्रो डिलमा परिणाम दिन्छ
     coupon_code_expired: कुपन कोड समाप्त भयो
     coupon_code_max_usage: कुपन कोड उपयोग सीमा पार भयो
@@ -1195,12 +1195,9 @@ ne:
     payments: भुक्तानी
     pdp:
       checkout: चेकआउट
-      description: वर्णन
-      details: विवरण
       products_included_in_promotion: उत्पादनहरु पदोन्नति मा शामिल
       quantity: मात्रा
       view_cart: कार्ट हेर्नुहोस्
-      you_may_also_like: तपाईंलाई पनि मनपर्न सक्छ
     pending: पेन्डि।
     pending_sale: पेन्डि Sale बिक्री
     percent: प्रतिशत

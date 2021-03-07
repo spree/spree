@@ -508,6 +508,7 @@ kn:
     adjustment_successfully_opened: ಹೊಂದಾಣಿಕೆ ಯಶಸ್ವಿಯಾಗಿ ತೆರೆಯಲ್ಪಟ್ಟಿದೆ!
     adjustment_total: ಹೊಂದಾಣಿಕೆ ಒಟ್ಟು
     adjustments: ಹೊಂದಾಣಿಕೆಗಳು
+    adjustments_deleted: ಹೊಂದಾಣಿಕೆಗಳನ್ನು ಅಳಿಸಲಾಗಿದೆ
     admin:
       order:
         events:
@@ -691,7 +692,6 @@ kn:
     coupon_code: ಕೂಪನ್ ಕೋಡ್
     coupon_code_already_applied: ಈ ಆದೇಶಕ್ಕೆ ಕೂಪನ್ ಕೋಡ್ ಅನ್ನು ಈಗಾಗಲೇ ಅನ್ವಯಿಸಲಾಗಿದೆ
     coupon_code_applied: ನಿಮ್ಮ ಆದೇಶಕ್ಕೆ ಕೂಪನ್ ಕೋಡ್ ಅನ್ನು ಯಶಸ್ವಿಯಾಗಿ ಅನ್ವಯಿಸಲಾಗಿದೆ.
-    coupon_code_apply: ಅನ್ವಯಿಸು
     coupon_code_better_exists: ಹಿಂದೆ ಅನ್ವಯಿಸಲಾದ ಕೂಪನ್ ಕೋಡ್ ಉತ್ತಮ ವ್ಯವಹಾರಕ್ಕೆ ಕಾರಣವಾಗುತ್ತದೆ
     coupon_code_expired: ಕೂಪನ್ ಕೋಡ್ ಅವಧಿ ಮೀರಿದೆ
     coupon_code_max_usage: ಕೂಪನ್ ಕೋಡ್ ಬಳಕೆಯ ಮಿತಿಯನ್ನು ಮೀರಿದೆ
@@ -1195,12 +1195,9 @@ kn:
     payments: ಪಾವತಿಗಳು
     pdp:
       checkout: ಚೆಕ್ out ಟ್
-      description: ವಿವರಣೆ
-      details: ವಿವರಗಳು
       products_included_in_promotion: ಉತ್ಪನ್ನಗಳನ್ನು ಪ್ರಚಾರದಲ್ಲಿ ಸೇರಿಸಲಾಗಿದೆ
       quantity: ಪ್ರಮಾಣ
       view_cart: ಕಾರ್ಟ್ ವೀಕ್ಷಿಸಿ
-      you_may_also_like: ನೀವು ಸಹ ಇಷ್ಟಪಡಬಹುದು
     pending: ಬಾಕಿ ಉಳಿದಿದೆ
     pending_sale: ಮಾರಾಟ ಬಾಕಿ ಇದೆ
     percent: ಶೇಕಡಾ

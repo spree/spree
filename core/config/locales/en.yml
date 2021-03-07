@@ -508,6 +508,7 @@ en:
     adjustment_successfully_opened: Adjustment has been successfully opened!
     adjustment_total: Adjustment Total
     adjustments: Adjustments
+    adjustments_deleted: Adjustments deleted
     admin:
       order:
         events:
@@ -691,7 +692,6 @@ en:
     coupon_code: Coupon code
     coupon_code_already_applied: The coupon code has already been applied to this order
     coupon_code_applied: The coupon code was successfully applied to your order.
-    coupon_code_apply: Apply
     coupon_code_better_exists: The previously applied coupon code results in a better deal
     coupon_code_expired: The coupon code is expired
     coupon_code_max_usage: Coupon code usage limit exceeded
@@ -1195,12 +1195,9 @@ en:
     payments: Payments
     pdp:
       checkout: Checkout
-      description: Description
-      details: Details
       products_included_in_promotion: Products included in the promotion
       quantity: Quantity
       view_cart: View cart
-      you_may_also_like: You may also like
     pending: Pending
     pending_sale: Pending Sale
     percent: Percent

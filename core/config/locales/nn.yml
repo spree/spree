@@ -508,6 +508,7 @@ nn:
     adjustment_successfully_opened: Justeringen er vellykket åpnet!
     adjustment_total: Justering totalt
     adjustments: Justeringer
+    adjustments_deleted: Justeringer slettet
     admin:
       order:
         events:
@@ -691,7 +692,6 @@ nn:
     coupon_code: Kupongkode
     coupon_code_already_applied: Kupongkoden er allerede brukt på denne bestillingen
     coupon_code_applied: Kupongkoden ble brukt på bestillingen din.
-    coupon_code_apply: Søke om
     coupon_code_better_exists: Den tidligere anvendte kupongkoden gir en bedre avtale
     coupon_code_expired: Kupongkoden er utløpt
     coupon_code_max_usage: Grensen for bruk av kupongkode er overskredet
@@ -1195,12 +1195,9 @@ nn:
     payments: Betalinger
     pdp:
       checkout: Sjekk ut
-      description: Beskrivelse
-      details: Detaljer
       products_included_in_promotion: Produkter inkludert i kampanjen
       quantity: Mengde
       view_cart: Se handlekurv
-      you_may_also_like: Kan hende du også liker
     pending: Avventer
     pending_sale: Venter på salg
     percent: Prosent

@@ -508,6 +508,7 @@ or:
     adjustment_successfully_opened: ଆଡଜଷ୍ଟମେଣ୍ଟ ସଫଳତାର ସହିତ ଖୋଲା ଯାଇଛି!
     adjustment_total: ଆଡଜଷ୍ଟମେଣ୍ଟ ସମୁଦାୟ
     adjustments: ସଂଶୋଧନ
+    adjustments_deleted: ଆଡଜଷ୍ଟମେଣ୍ଟ ଡିଲିଟ୍ ହୋଇଛି |
     admin:
       order:
         events:
@@ -691,7 +692,6 @@ or:
     coupon_code: କୁପନ୍ କୋଡ୍ |
     coupon_code_already_applied: ଏହି କ୍ରମରେ କୁପନ୍ କୋଡ୍ ପ୍ରୟୋଗ ହୋଇସାରିଛି |
     coupon_code_applied: ତୁମର କ୍ରମରେ କୁପନ୍ କୋଡ୍ ସଫଳତାର ସହିତ ପ୍ରୟୋଗ ହେଲା |
-    coupon_code_apply: ପ୍ରୟୋଗ କରନ୍ତୁ |
     coupon_code_better_exists: ପୂର୍ବରୁ ପ୍ରୟୋଗ ହୋଇଥିବା କୁପନ୍ କୋଡ୍ ଏକ ଭଲ ଡିଲରେ ଫଳାଫଳ ଦେଇଥାଏ |
     coupon_code_expired: କୁପନ କୋଡ୍ ମିଆଦ ପୂର୍ଣ୍ଣ ହୋଇଛି |
     coupon_code_max_usage: କୁପନ କୋଡ୍ ବ୍ୟବହାର ସୀମା ଅତିକ୍ରମ କଲା |
@@ -1195,12 +1195,9 @@ or:
     payments: ଦେୟ
     pdp:
       checkout: ଚେକଆଉଟ୍ |
-      description: ବର୍ଣ୍ଣନା
-      details: ବିବରଣୀ
       products_included_in_promotion: ପଦୋନ୍ନତିରେ ଉତ୍ପାଦଗୁଡିକ ଅନ୍ତର୍ଭୁକ୍ତ |
       quantity: ପରିମାଣ
       view_cart: କାର୍ଟ ଦେଖନ୍ତୁ |
-      you_may_also_like: ଆପଣ ମଧ୍ୟ ପସନ୍ଦ କରିପାରନ୍ତି |
     pending: ବିଚାରାଧୀନ ଅଛି
     pending_sale: ବିକ୍ରୟ ବିଚାରାଧୀନ ଅଛି |
     percent: ଶତକଡା

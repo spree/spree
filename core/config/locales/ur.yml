@@ -508,6 +508,7 @@ ur:
     adjustment_successfully_opened: ایڈجسٹمنٹ کامیابی کے ساتھ کھول دی گئی ہے!
     adjustment_total: ایڈجسٹمنٹ کل
     adjustments: ایڈجسٹمنٹ
+    adjustments_deleted: ایڈجسٹمنٹ حذف ہوگئیں
     admin:
       order:
         events:
@@ -691,7 +692,6 @@ ur:
     coupon_code: کوپن کوڈ
     coupon_code_already_applied: کوپن کوڈ پہلے ہی اس آرڈر پر لاگو ہوچکا ہے
     coupon_code_applied: کوپن کوڈ کامیابی کے ساتھ آپ کے آرڈر پر لاگو ہوا۔
-    coupon_code_apply: درخواست دیں
     coupon_code_better_exists: پہلے استعمال شدہ کوپن کوڈ کے نتیجے میں ایک بہتر سودا ہوگا
     coupon_code_expired: کوپن کوڈ کی میعاد ختم ہوگئی ہے
     coupon_code_max_usage: کوپن کوڈ استعمال کی حد تجاوز کرگئی
@@ -1195,12 +1195,9 @@ ur:
     payments: ادائیگی
     pdp:
       checkout: اس کو دیکھو
-      description: تفصیل
-      details: تفصیلات
       products_included_in_promotion: مصنوعات کو فروغ دینے میں شامل کیا گیا
       quantity: مقدار
       view_cart: ٹوکری دیکھیں
-      you_may_also_like: آپ کو بھی پسند ہے
     pending: زیر التواء
     pending_sale: زیر التواء فروخت
     percent: فیصد

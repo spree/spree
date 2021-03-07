@@ -13,12 +13,12 @@ module Spree
           if promotion.present? && promotion.actions.exists?
             handle_present_promotion
           elsif Promotion.with_coupon_code(order.coupon_code).try(:expired?)
-            set_error_code :coupon_code_expired
+            @error = Spree.t(:coupon_code_expired)
           else
-            set_error_code :coupon_code_not_found
+            @error = Spree.t(:coupon_code_not_found)
           end
         else
-          set_error_code :coupon_code_not_found
+          @error = Spree.t(:coupon_code_not_found)
         end
         self
       end
@@ -33,21 +33,11 @@ module Spree
           remove_promotion_line_items(promotion)
           order.update_with_updater!
 
-          set_success_code :adjustments_deleted
+          @success = Spree.t(:adjustments_deleted)
         else
-          set_error_code :coupon_code_not_found
+          @error = Spree.t(:coupon_code_not_found)
         end
         self
-      end
-
-      def set_success_code(code)
-        @status_code = code
-        @success = Spree.t(code)
-      end
-
-      def set_error_code(code)
-        @status_code = code
-        @error = Spree.t(code)
       end
 
       def promotion
@@ -93,20 +83,20 @@ module Spree
         if promotion.activate(order: order)
           determine_promotion_application_result
         else
-          set_error_code :coupon_code_unknown_error
+          @error = Spree.t(:coupon_code_unknown_error)
         end
       end
 
       def promotion_usage_limit_exceeded
-        set_error_code :coupon_code_max_usage
+        @error = Spree.t(:coupon_code_max_usage)
       end
 
       def ineligible_for_this_order
-        set_error_code :coupon_code_not_eligible
+        @error = Spree.t(:coupon_code_not_eligible)
       end
 
       def promotion_applied
-        set_error_code :coupon_code_already_applied
+        @error = Spree.t(:coupon_code_already_applied)
       end
 
       def promotion_exists_on_order?
@@ -129,14 +119,16 @@ module Spree
         if discount || created_line_items
           order.update_totals
           order.persist_totals
-          set_success_code :coupon_code_applied
+
+          @success = Spree.t(:coupon_code_applied)
         elsif order.promotions.with_coupon_code(order.coupon_code)
           # if the promotion exists on an order, but wasn't found above,
           # we've already selected a better promotion
-          set_error_code :coupon_code_better_exists
+
+          @error = Spree.t(:coupon_code_better_exists)
         else
           # if the promotion was created after the order
-          set_error_code :coupon_code_not_found
+          @error = Spree.t(:coupon_code_not_found)
         end
       end
     end

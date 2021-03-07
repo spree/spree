@@ -508,6 +508,7 @@ eo:
     adjustment_successfully_opened: Alĝustigo sukcese malfermiĝis!
     adjustment_total: Ĝustiga Sumo
     adjustments: Alĝustigoj
+    adjustments_deleted: Ĝustigoj forigitaj
     admin:
       order:
         events:
@@ -691,7 +692,6 @@ eo:
     coupon_code: Kupona kodo
     coupon_code_already_applied: La kupona kodo jam estis aplikita al ĉi tiu ordo
     coupon_code_applied: La kupona kodo sukcese aplikiĝis al via mendo.
-    coupon_code_apply: Apliki
     coupon_code_better_exists: La antaŭe aplikita kupona kodo rezultigas pli bonan oferton
     coupon_code_expired: La kupona kodo eksvalidiĝis
     coupon_code_max_usage: Kupona koduzo-limo superis
@@ -1195,12 +1195,9 @@ eo:
     payments: Pagoj
     pdp:
       checkout: Kaso
-      description: Priskribo
-      details: Detaloj
       products_included_in_promotion: Produktoj inkluzivitaj en la promocio
       quantity: Kvanto
       view_cart: Vidi ĉaron
-      you_may_also_like: Eble ankaŭ vi ŝatos
     pending: Decidota
     pending_sale: Atendanta Vendo
     percent: Procento

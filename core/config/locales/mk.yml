@@ -508,6 +508,7 @@ mk:
     adjustment_successfully_opened: Прилагодувањето е успешно отворено!
     adjustment_total: Вкупно прилагодување
     adjustments: Прилагодувања
+    adjustments_deleted: Прилагодувањата се избришани
     admin:
       order:
         events:
@@ -691,7 +692,6 @@ mk:
     coupon_code: Шифра на купон
     coupon_code_already_applied: Купонскиот код веќе е применет на оваа нарачка
     coupon_code_applied: Купонскиот код беше успешно применет на вашата нарачка.
-    coupon_code_apply: Аплицирај
     coupon_code_better_exists: Претходно применетиот купонски код резултира во подобра зделка
     coupon_code_expired: Кодот на купонот е истечен
     coupon_code_max_usage: Границата за употреба на кодот за купон е надмината
@@ -1195,12 +1195,9 @@ mk:
     payments: Плаќања
     pdp:
       checkout: Одјавување
-      description: Опис
-      details: Детали
       products_included_in_promotion: Производи вклучени во промоцијата
       quantity: Квантитет
       view_cart: Погледнете ја количката
-      you_may_also_like: Можно е и ова да ти се допаѓа
     pending: Во очекување
     pending_sale: Во очекување на продажба
     percent: Процент

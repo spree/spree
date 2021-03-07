@@ -508,6 +508,7 @@ af:
     adjustment_successfully_opened: Aanpassing is suksesvol geopen!
     adjustment_total: Aanpassing Totaal
     adjustments: Aanpassings
+    adjustments_deleted: Aanpassings is uitgevee
     admin:
       order:
         events:
@@ -691,7 +692,6 @@ af:
     coupon_code: Koeponkode
     coupon_code_already_applied: Die koeponkode is reeds op hierdie bestelling toegepas
     coupon_code_applied: Die koeponkode is suksesvol op u bestelling toegepas.
-    coupon_code_apply: Doen aansoek
     coupon_code_better_exists: Die koeponkode wat voorheen toegepas is, het 'n beter ooreenkoms
     coupon_code_expired: Die koeponkode is verval
     coupon_code_max_usage: Gebruiksperk vir koeponkode oorskry
@@ -1195,12 +1195,9 @@ af:
     payments: Betalings
     pdp:
       checkout: Uitteken
-      description: Beskrywing
-      details: Besonderhede
       products_included_in_promotion: Produkte ingesluit by die promosie
       quantity: Hoeveelheid
       view_cart: Besigtig wa
-      you_may_also_like: Jy sal ook dalk hiervan hou
     pending: Hangende
     pending_sale: Hangende uitverkoping
     percent: Persent

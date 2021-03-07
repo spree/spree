@@ -508,6 +508,7 @@ mn:
     adjustment_successfully_opened: Тохируулга амжилттай нээгдлээ!
     adjustment_total: Нийт тохируулга
     adjustments: Тохируулга
+    adjustments_deleted: Тохируулгыг устгасан
     admin:
       order:
         events:
@@ -691,7 +692,6 @@ mn:
     coupon_code: Купоны код
     coupon_code_already_applied: Энэ захиалгад купоны кодыг аль хэдийн ашигласан болно
     coupon_code_applied: Купоны кодыг таны захиалгад амжилттай хэрэгжүүлэв.
-    coupon_code_apply: Өргөдөл гаргах
     coupon_code_better_exists: Өмнө нь ашигласан купоны код нь илүү сайн тохиролцоонд хүргэсэн
     coupon_code_expired: Купоны кодын хугацаа дууссан
     coupon_code_max_usage: Купоны код ашиглах хязгаар хэтэрсэн байна
@@ -1195,12 +1195,9 @@ mn:
     payments: Төлбөр
     pdp:
       checkout: Тооцоо хийх
-      description: Тодорхойлолт
-      details: Дэлгэрэнгүй мэдээлэл
       products_included_in_promotion: Урамшуулалд багтсан бүтээгдэхүүнүүд
       quantity: Тоо хэмжээ
       view_cart: Сагсыг үзэх
-      you_may_also_like: Танд бас таалагдаж магадгүй
     pending: Хүлээгдэж байна
     pending_sale: Хүлээгдэж буй хямдрал
     percent: Хувь
