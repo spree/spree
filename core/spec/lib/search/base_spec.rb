@@ -48,14 +48,14 @@ describe Spree::Core::Search::Base do
   end
 
   it 'maps search params to named scopes' do
-    params = { per_page: '', search: { 'price_range_any' => ['Under $10.00'] } }
+    params = { per_page: '', search: { 'price_range_any' => ["#{Spree.t('spree.under')} $10.00"] } }
     searcher = described_class.new(ActionController::Parameters.new(params))
     expect(searcher.send(:extended_base_scope).to_sql).to match(/<= 10/)
     expect(searcher.retrieve_products.count).to eq(1)
   end
 
   it 'maps multiple price_range_any filters' do
-    params = { per_page: '', search: { 'price_range_any' => ['Under $10.00', '$10.00 - $15.00'] } }
+    params = { per_page: '', search: { 'price_range_any' => ["#{Spree.t('spree.under')} $10.00", '$10.00 - $15.00'] } }
     searcher = described_class.new(ActionController::Parameters.new(params))
     expect(searcher.send(:extended_base_scope).to_sql).to match(/<= 10/)
     expect(searcher.send(:extended_base_scope).to_sql).to match(/between 10.0 and 15.0/i)
@@ -66,7 +66,7 @@ describe Spree::Core::Search::Base do
     pln_price
 
     Spree::Config[:currency] = 'PLN'
-    params_pln = { per_page: '', search: { 'price_range_any' => ['Under 10.00 zł', '10.00 zł - 15.00 zł'] } }
+    params_pln = { per_page: '', search: { 'price_range_any' => ["#{Spree.t('spree.under')} 10.00 zł", '10.00 zł - 15.00 zł'] } }
     searcher_pln = described_class.new(ActionController::Parameters.new(params_pln))
     searcher_pln.current_currency = 'PLN'
     expect(searcher_pln.send(:extended_base_scope).to_sql).to match(/<= 10/)

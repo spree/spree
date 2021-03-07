@@ -552,6 +552,7 @@ en:
     approver: Approver
     are_you_sure: Are you sure?
     are_you_sure_delete: Are you sure you want to delete this record?
+    authorization_failure: Authorization failure
     authorized: Authorized
     auto_capture: Auto Capture
     availability: availability
@@ -974,6 +975,7 @@ en:
     optional: Optional
     options: Options
     or: or
+    or_over_price: "%{price} or over"
     order: Order
     order_adjustments: Order adjustments
     order_already_updated: The order has already been updated.
@@ -1098,6 +1100,7 @@ en:
     previous_state_missing: n/a
     previously_used_card: Previously Used Cards
     price: Price
+    price_range: Price range
     price_sack: Price Sack
     prices: Prices
     product: Product
@@ -1496,6 +1499,7 @@ en:
     type_to_search: Type to search
     unable_to_connect_to_gateway: Unable to connect to gateway.
     unable_to_create_reimbursements: Unable to create reimbursements because there are items pending manual intervention.
+    under_price: Under %{price}
     unrecognized_card_type: Unrecognized card type
     update: Update
     url: URL

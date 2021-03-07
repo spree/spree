@@ -55,7 +55,7 @@ search:
   ## Paths or `File.find` patterns to search in:
   paths:
     - '../backend/app'
-    - '../core/app'
+    - '../core'
     - '../frontend/app'
 
   ## Root directories for relative keys resolution.
