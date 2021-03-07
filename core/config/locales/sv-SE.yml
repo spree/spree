@@ -530,11 +530,9 @@ sv-SE:
       return_authorization:
         product: Produkt
       tab:
-        configuration: Konfiguration
         customer_returns: Kunden returnerar
         option_types: Alternativtyper
         orders: Order
-        overview: Översikt
         products: Produkter
         promotion_categories: Kampanjkategorier
         promotions: Kampanjer
@@ -1531,8 +1529,6 @@ sv-SE:
     special_instructions: speciella instruktioner
     split: Dela
     spree_gateway_error_flash_for_checkout: Det uppstod ett problem med din betalningsinformation. Kontrollera din information och försök igen.
-    ssl:
-      change_protocol: Byt till att använda HTTP (snarare än HTTPS) och försök igen med denna begäran.
     start: Start
     starting_from: Börjar kl
     state: stat
@@ -1732,7 +1728,6 @@ sv-SE:
     use_existing_cc: Använd ett befintligt kort
     use_new_cc: Använd ett nytt kort
     use_new_cc_or_payment_method: Använd ett nytt kort / betalningsmetod
-    use_s3: Använd Amazon S3 för bilder
     used: Begagnade
     user: Användare
     user_not_found: Användaren hittades inte
@@ -1760,7 +1755,6 @@ sv-SE:
     width: Bredd
     year: År
     you_have_no_orders_yet: Du har inga beställningar än
-    your_cart_is_empty: din vagn är tom
     your_order_is_empty_add_product: Din beställning är tom, sök efter och lägg till en produkt ovan
     zip: Blixtlås
     zipcode: Postnummer

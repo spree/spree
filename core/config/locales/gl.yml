@@ -530,11 +530,9 @@ gl:
       return_authorization:
         product: Produto
       tab:
-        configuration: Configuración
         customer_returns: Devolucións do cliente
         option_types: Tipos de opcións
         orders: Ordes
-        overview: Visión xeral
         products: Produtos
         promotion_categories: Categorías de promocións
         promotions: Promocións
@@ -1531,8 +1529,6 @@ gl:
     special_instructions: Instrucións especiais
     split: Partir
     spree_gateway_error_flash_for_checkout: Produciuse un problema coa túa información de pago. Comprobe a súa información e ténteo de novo.
-    ssl:
-      change_protocol: Cambia a usar HTTP (en lugar de HTTPS) e tenta de novo esta solicitude.
     start: Comezar
     starting_from: Comeza ás
     state: Estado
@@ -1732,7 +1728,6 @@ gl:
     use_existing_cc: Usa unha tarxeta existente no ficheiro
     use_new_cc: Usa unha nova tarxeta
     use_new_cc_or_payment_method: Usa unha nova tarxeta / método de pago
-    use_s3: Usa Amazon S3 para imaxes
     used: Usado
     user: Usuario
     user_not_found: Non se atopou o usuario
@@ -1760,7 +1755,6 @@ gl:
     width: Ancho
     year: Ano
     you_have_no_orders_yet: Aínda non tes pedidos
-    your_cart_is_empty: O teu carro está baleiro
     your_order_is_empty_add_product: O seu pedido está baleiro, busque e engada un produto anterior
     zip: Zip
     zipcode: Código postal

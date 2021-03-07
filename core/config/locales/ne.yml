@@ -530,11 +530,9 @@ ne:
       return_authorization:
         product: उत्पादन
       tab:
-        configuration: कन्फिगरेसन
         customer_returns: ग्राहक रिटर्न
         option_types: विकल्प प्रकारहरू
         orders: अर्डर
-        overview: अवलोकन
         products: उत्पादनहरू
         promotion_categories: पदोन्नति कोटिहरु
         promotions: पदोन्नतिहरु
@@ -1531,8 +1529,6 @@ ne:
     special_instructions: विशेष निर्देशन
     split: विभाजन
     spree_gateway_error_flash_for_checkout: 'तपाईंको भुक्तान जानकारीको साथ एक समस्या थियो। कृपया तपाईंको जानकारी जाँच गर्नुहोस् र पुन: प्रयास गर्नुहोस्।'
-    ssl:
-      change_protocol: 'कृपया HTTP प्रयोग गर्न स्विच गर्नुहोस् (HTTPS को सट्टामा) र यो अनुरोध पुन: प्रयास गर्नुहोस्।'
     start: सुरु गर्नुहोस्
     starting_from: मा सुरू हुन्छ
     state: राज्य
@@ -1732,7 +1728,6 @@ ne:
     use_existing_cc: फाईलमा अवस्थित कार्ड प्रयोग गर्नुहोस्
     use_new_cc: नयाँ कार्ड प्रयोग गर्नुहोस्
     use_new_cc_or_payment_method: नयाँ कार्ड / भुक्तान विधि प्रयोग गर्नुहोस्
-    use_s3: छविहरूका लागि अमेजन एस Use प्रयोग गर्नुहोस्
     used: प्रयुक्त
     user: प्रयोगकर्ता
     user_not_found: प्रयोगकर्ता फेला परेन
@@ -1760,7 +1755,6 @@ ne:
     width: चौड़ाई
     year: बर्ष
     you_have_no_orders_yet: तपाईंसँग अहिलेसम्म कुनै अर्डर छैन
-    your_cart_is_empty: तपाईंको कार्ट खाली छ
     your_order_is_empty_add_product: तपाईंको अर्डर खाली छ, कृपया खोज्नुहोस् र माथिको उत्पादन थप्नुहोस्
     zip: Zip
     zipcode: जिप कोड

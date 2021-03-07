@@ -530,11 +530,9 @@ mg:
       return_authorization:
         product: Vokatra
       tab:
-        configuration: fanahafana
         customer_returns: Fiverenan'ny mpanjifa
         option_types: Karazana safidy
         orders: Filaharana
-        overview: Topimaso
         products: Products
         promotion_categories: Sokajy fampiroboroboana
         promotions: fisondrotana
@@ -1531,8 +1529,6 @@ mg:
     special_instructions: Torolàlana manokana
     split: Saraho
     spree_gateway_error_flash_for_checkout: Nisy olana tamin'ny fampahalalana momba ny fandoavanao. Azafady mba jereo ny mombamomba anao ary manandrama indray.
-    ssl:
-      change_protocol: Azafady mifamadiho amin'ny fampiasana HTTP (fa tsy HTTPS) ary andramo indray ity fangatahana ity.
     start: fanombohana
     starting_from: Manomboka amin'ny
     state: FANJAKANA
@@ -1732,7 +1728,6 @@ mg:
     use_existing_cc: Mampiasà karatra efa misy ao anaty rakitra
     use_new_cc: Mampiasà karatra vaovao
     use_new_cc_or_payment_method: Mampiasà karatra / fomba fandoavam-bola vaovao
-    use_s3: Ampiasao ny Amazon S3 ho an'ny sary
     used: ampiasaina
     user: Mpampiasa
     user_not_found: Tsy hita ny mpampiasa
@@ -1760,7 +1755,6 @@ mg:
     width: sakany
     year: TAOM-
     you_have_no_orders_yet: Tsy mbola manana baiko ianao
-    your_cart_is_empty: Foana ny saretinao
     your_order_is_empty_add_product: Foana ny kaomandinao, mba mitady sy manampy vokatra etsy ambony
     zip: Zip
     zipcode: Kaody positaly

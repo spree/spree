@@ -530,11 +530,9 @@ hi-IN:
       return_authorization:
         product: उत्पाद
       tab:
-        configuration: विन्यास
         customer_returns: ग्राहकों की वापसी
         option_types: विकल्प के प्रकार
         orders: आदेश
-        overview: अवलोकन
         products: उत्पादों
         promotion_categories: पदोन्नति श्रेणियाँ
         promotions: प्रोन्नति
@@ -1531,8 +1529,6 @@ hi-IN:
     special_instructions: विशेष निर्देश
     split: विभाजित करें
     spree_gateway_error_flash_for_checkout: आपकी भुगतान जानकारी में कोई समस्या थी। कृपया अपनी जानकारी जांचें और पुनः प्रयास करें।
-    ssl:
-      change_protocol: कृपया HTTP (HTTPS के बजाय) का उपयोग करें और इस अनुरोध को पुनः प्रयास करें।
     start: शुरू
     starting_from: पर आरंभ होती है
     state: राज्य
@@ -1732,7 +1728,6 @@ hi-IN:
     use_existing_cc: फ़ाइल पर मौजूदा कार्ड का उपयोग करें
     use_new_cc: एक नए कार्ड का उपयोग करें
     use_new_cc_or_payment_method: नए कार्ड / भुगतान पद्धति का उपयोग करें
-    use_s3: छवियों के लिए अमेज़ॅन एस 3 का उपयोग करें
     used: उपयोग किया गया
     user: उपयोगकर्ता
     user_not_found: उपयोगकर्ता नहीं मिला
@@ -1760,7 +1755,6 @@ hi-IN:
     width: चौड़ाई
     year: साल
     you_have_no_orders_yet: आपके पास अभी तक कोई आदेश नहीं है
-    your_cart_is_empty: आपकी गाड़ी खाली है
     your_order_is_empty_add_product: आपका आदेश खाली है, कृपया ऊपर एक उत्पाद खोजें और जोड़ें
     zip: ज़िप
     zipcode: ज़िप कोड

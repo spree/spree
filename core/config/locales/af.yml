@@ -530,11 +530,9 @@ af:
       return_authorization:
         product: Produk
       tab:
-        configuration: Konfigurasie
         customer_returns: Kliënt opbrengste
         option_types: Opsie tipes
         orders: Bestellings
-        overview: Oorsig
         products: Produkte
         promotion_categories: Promosiekategorieë
         promotions: Promosies
@@ -1531,8 +1529,6 @@ af:
     special_instructions: Spesiale Instruksies
     split: Verdeel
     spree_gateway_error_flash_for_checkout: Daar was 'n probleem met u betalingsinligting. Gaan u inligting na en probeer weer.
-    ssl:
-      change_protocol: Skakel asseblief oor na die gebruik van HTTP (eerder as HTTPS) en probeer weer hierdie versoek.
     start: Begin
     starting_from: Begin om
     state: Staat
@@ -1732,7 +1728,6 @@ af:
     use_existing_cc: Gebruik 'n bestaande kaart
     use_new_cc: Gebruik 'n nuwe kaart
     use_new_cc_or_payment_method: Gebruik 'n nuwe kaart / betaalmetode
-    use_s3: Gebruik Amazon S3 vir beelde
     used: Gebruik
     user: Gebruiker
     user_not_found: Gebruiker nie gevind nie
@@ -1760,7 +1755,6 @@ af:
     width: Breedte
     year: Jaar
     you_have_no_orders_yet: U het nog geen bestellings nie
-    your_cart_is_empty: Jou wa is leeg
     your_order_is_empty_add_product: U bestelling is leeg, soek en voeg 'n produk hierbo by
     zip: Rits
     zipcode: Poskode

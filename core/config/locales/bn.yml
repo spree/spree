@@ -530,11 +530,9 @@ bn:
       return_authorization:
         product: পণ্য
       tab:
-        configuration: কনফিগারেশন
         customer_returns: গ্রাহক রিটার্নস
         option_types: বিকল্প প্রকার
         orders: অর্ডার
-        overview: ওভারভিউ
         products: পণ্য
         promotion_categories: প্রচার বিভাগ
         promotions: পদোন্নতি
@@ -1531,8 +1529,6 @@ bn:
     special_instructions: বিশেষ নির্দেশনা
     split: বিভক্ত
     spree_gateway_error_flash_for_checkout: আপনার প্রদানের তথ্য নিয়ে একটি সমস্যা ছিল। আপনার তথ্য পরীক্ষা করে দেখুন এবং আবার চেষ্টা করুন।
-    ssl:
-      change_protocol: দয়া করে এইচটিটিপি (এইচটিটিপিএসের চেয়ে) ব্যবহার করে স্যুইচ করুন এবং এই অনুরোধটি আবার চেষ্টা করুন।
     start: শুরু করুন
     starting_from: আরম্ভ করা হয়
     state: রাষ্ট্র
@@ -1732,7 +1728,6 @@ bn:
     use_existing_cc: ফাইলটিতে বিদ্যমান কার্ড ব্যবহার করুন
     use_new_cc: একটি নতুন কার্ড ব্যবহার করুন
     use_new_cc_or_payment_method: একটি নতুন কার্ড / পেমেন্ট পদ্ধতি ব্যবহার করুন
-    use_s3: চিত্রগুলির জন্য অ্যামাজন এস 3 ব্যবহার করুন
     used: ব্যবহৃত
     user: ব্যবহারকারী
     user_not_found: ব্যবহারকারী খুঁজে পাওয়া যায় না
@@ -1760,7 +1755,6 @@ bn:
     width: প্রস্থ
     year: বছর
     you_have_no_orders_yet: আপনার এখনও কোনও আদেশ নেই
-    your_cart_is_empty: তোমার থলে তো খালি
     your_order_is_empty_add_product: আপনার অর্ডার খালি, দয়া করে উপরের পণ্যটি অনুসন্ধান করুন এবং যুক্ত করুন
     zip: জিপ
     zipcode: জিপ কোড

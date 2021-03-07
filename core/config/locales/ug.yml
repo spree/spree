@@ -530,11 +530,9 @@ ug:
       return_authorization:
         product: مەھسۇلات
       tab:
-        configuration: سەپلىمىسى
         customer_returns: خېرىدار قايتىدۇ
         option_types: تاللاش تۈرلىرى
         orders: زاكاز
-        overview: ئومۇمىي چۈشەنچە
         products: مەھسۇلاتلار
         promotion_categories: تەشۋىق تۈرلىرى
         promotions: تەشۋىق
@@ -1531,8 +1529,6 @@ ug:
     special_instructions: ئالاھىدە كۆرسەتمە
     split: Split
     spree_gateway_error_flash_for_checkout: ھەق تۆلەش ئۇچۇرلىرىڭىزدا مەسىلە كۆرۈلدى. ئۇچۇرلىرىڭىزنى تەكشۈرۈپ قايتا سىناڭ.
-    ssl:
-      change_protocol: HTTP (HTTPS ئەمەس) نى ئىشلىتىپ بۇ تەلەپنى قايتا سىناڭ.
     start: باشلاش
     starting_from: باشلىنىدۇ
     state: دۆلەت
@@ -1732,7 +1728,6 @@ ug:
     use_existing_cc: ھۆججەتتىكى مەۋجۇت كارتىنى ئىشلىتىڭ
     use_new_cc: يېڭى كارتا ئىشلىتىڭ
     use_new_cc_or_payment_method: يېڭى كارتا / پۇل تۆلەش ئۇسۇلىنى ئىشلىتىڭ
-    use_s3: رەسىملەر ئۈچۈن ئامازون S3 نى ئىشلىتىڭ
     used: ئىشلىتىلگەن
     user: ئىشلەتكۈچى
     user_not_found: ئىشلەتكۈچى تېپىلمىدى
@@ -1760,7 +1755,6 @@ ug:
     width: كەڭلىك
     year: يىل
     you_have_no_orders_yet: ھازىرچە زاكاز يوق
-    your_cart_is_empty: ھارۋىڭىز قۇرۇق
     your_order_is_empty_add_product: زاكازڭىز قۇرۇق ، ئۈستىدىكى مەھسۇلاتنى ئىزدەڭ ۋە قوشۇڭ
     zip: Zip
     zipcode: پوچتا نومۇرى

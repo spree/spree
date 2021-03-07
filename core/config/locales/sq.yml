@@ -530,11 +530,9 @@ sq:
       return_authorization:
         product: Produkt
       tab:
-        configuration: Konfigurimi
         customer_returns: Kthimi i Klientit
         option_types: Llojet e opsioneve
         orders: Porositë
-        overview: Përmbledhje
         products: Produktet
         promotion_categories: Kategoritë e Promovimit
         promotions: Promovime
@@ -1531,8 +1529,6 @@ sq:
     special_instructions: Udhëzime të veçanta
     split: Split
     spree_gateway_error_flash_for_checkout: Kishte një problem me informacionin tënd të pagesës. Ju lutemi kontrolloni informacionin tuaj dhe provoni përsëri.
-    ssl:
-      change_protocol: Ju lutemi kaloni në përdorimin e HTTP (në vend të HTTPS) dhe riprovoni këtë kërkesë.
     start: Fillo
     starting_from: Fillon në
     state: Shtet
@@ -1732,7 +1728,6 @@ sq:
     use_existing_cc: Përdorni një kartë ekzistuese në skedar
     use_new_cc: Përdorni një kartë të re
     use_new_cc_or_payment_method: Përdorni një kartë të re / një mënyrë pagese
-    use_s3: Përdorni Amazon S3 për Imazhe
     used: Të përdorura
     user: Përdorues
     user_not_found: Përdoruesi nuk u gjet
@@ -1760,7 +1755,6 @@ sq:
     width: Gjerësia
     year: Viti
     you_have_no_orders_yet: Nuk keni porosi akoma
-    your_cart_is_empty: Karroca juaj është bosh
     your_order_is_empty_add_product: Porosia juaj është bosh, ju lutemi kërkoni dhe shtoni një produkt më sipër
     zip: Zip
     zipcode: Kodi Postal

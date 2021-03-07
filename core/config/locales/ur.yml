@@ -530,11 +530,9 @@ ur:
       return_authorization:
         product: پروڈکٹ
       tab:
-        configuration: تشکیل
         customer_returns: گاہک کی واپسی
         option_types: آپشن کی قسمیں
         orders: احکامات
-        overview: جائزہ
         products: مصنوعات
         promotion_categories: پروموشن کیٹیگریز
         promotions: پروموشنز
@@ -1531,8 +1529,6 @@ ur:
     special_instructions: خصوصی ہدایات
     split: سپلٹ
     spree_gateway_error_flash_for_checkout: آپ کی ادائیگی کی معلومات میں ایک دشواری تھی۔ براہ کرم اپنی معلومات دیکھیں اور دوبارہ کوشش کریں۔
-    ssl:
-      change_protocol: براہ کرم HTTP کا استعمال کریں (بجائے HTTPS) اور اس درخواست پر دوبارہ کوشش کریں۔
     start: شروع کریں
     starting_from: سے شروع ہوتا ہے
     state: حالت
@@ -1732,7 +1728,6 @@ ur:
     use_existing_cc: فائل پر موجود کارڈ استعمال کریں
     use_new_cc: نیا کارڈ استعمال کریں
     use_new_cc_or_payment_method: نیا کارڈ / ادائیگی کا طریقہ استعمال کریں
-    use_s3: امیجز ایس 3 امیجز کے لئے استعمال کریں
     used: استعمال کیا جاتا ہے
     user: صارف
     user_not_found: صارف نہیں ملا
@@ -1760,7 +1755,6 @@ ur:
     width: چوڑائی
     year: سال
     you_have_no_orders_yet: ابھی آپ کے پاس کوئی آرڈر نہیں ہیں
-    your_cart_is_empty: آپ کی ٹوکری خالی ہے
     your_order_is_empty_add_product: آپ کا آرڈر خالی ہے ، براہ کرم اوپر کی مصنوعات کو تلاش کریں اور شامل کریں
     zip: زپ
     zipcode: زپ کوڈ

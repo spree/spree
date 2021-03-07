@@ -530,11 +530,9 @@ te:
       return_authorization:
         product: ఉత్పత్తి
       tab:
-        configuration: ఆకృతీకరణ
         customer_returns: కస్టమర్ రిటర్న్స్
         option_types: ఎంపిక రకాలు
         orders: ఆదేశాలు
-        overview: అవలోకనం
         products: ఉత్పత్తులు
         promotion_categories: ప్రమోషన్ వర్గాలు
         promotions: పదోన్నతులు
@@ -1531,8 +1529,6 @@ te:
     special_instructions: ప్రత్యేక సూచనలు
     split: స్ప్లిట్
     spree_gateway_error_flash_for_checkout: మీ చెల్లింపు సమాచారంతో సమస్య ఉంది. దయచేసి మీ సమాచారాన్ని తనిఖీ చేసి, మళ్లీ ప్రయత్నించండి.
-    ssl:
-      change_protocol: దయచేసి HTTP (HTTPS కాకుండా) ఉపయోగించడానికి మారండి మరియు ఈ అభ్యర్థనను మళ్లీ ప్రయత్నించండి.
     start: ప్రారంభించండి
     starting_from: వద్ద ప్రారంభమవుతుంది
     state: రాష్ట్రం
@@ -1732,7 +1728,6 @@ te:
     use_existing_cc: ఫైల్‌లో ఇప్పటికే ఉన్న కార్డును ఉపయోగించండి
     use_new_cc: క్రొత్త కార్డును ఉపయోగించండి
     use_new_cc_or_payment_method: క్రొత్త కార్డ్ / చెల్లింపు పద్ధతిని ఉపయోగించండి
-    use_s3: చిత్రాల కోసం అమెజాన్ ఎస్ 3 ఉపయోగించండి
     used: ఉపయోగించబడిన
     user: వినియోగదారు
     user_not_found: వినియోగదారుడు కనపడలేదు
@@ -1760,7 +1755,6 @@ te:
     width: వెడల్పు
     year: సంవత్సరం
     you_have_no_orders_yet: మీకు ఇంకా ఆర్డర్లు లేవు
-    your_cart_is_empty: మీ సరుకుల సంచీ ఖాళీగా నున్నది
     your_order_is_empty_add_product: మీ ఆర్డర్ ఖాళీగా ఉంది, దయచేసి పైన ఉత్పత్తిని శోధించండి మరియు జోడించండి
     zip: జిప్
     zipcode: పిన్ కోడ్

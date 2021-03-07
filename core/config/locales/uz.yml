@@ -530,11 +530,9 @@ uz:
       return_authorization:
         product: Mahsulot
       tab:
-        configuration: Konfiguratsiya
         customer_returns: Mijozlarning qaytib kelishi
         option_types: Variant turlari
         orders: Buyurtmalar
-        overview: Umumiy nuqtai
         products: Mahsulotlar
         promotion_categories: Reklama toifalari
         promotions: Aktsiyalar
@@ -1531,8 +1529,6 @@ uz:
     special_instructions: Maxsus ko'rsatmalar
     split: Split
     spree_gateway_error_flash_for_checkout: To‘lov ma’lumotlaringizda muammo yuz berdi. Ma'lumotlaringizni tekshiring va qayta urinib ko'ring.
-    ssl:
-      change_protocol: Iltimos, HTTP (HTTPS o'rniga) dan foydalanishga o'ting va ushbu so'rovni takrorlang.
     start: Boshlang
     starting_from: Boshlanishi
     state: Shtat
@@ -1732,7 +1728,6 @@ uz:
     use_existing_cc: Fayldagi mavjud kartadan foydalaning
     use_new_cc: Yangi kartadan foydalaning
     use_new_cc_or_payment_method: Yangi karta / to'lov usulidan foydalaning
-    use_s3: Tasvirlar uchun Amazon S3-dan foydalaning
     used: Ishlatilgan
     user: Foydalanuvchi
     user_not_found: Foydalanuvchi topilmadi
@@ -1760,7 +1755,6 @@ uz:
     width: Kengligi
     year: Yil
     you_have_no_orders_yet: Sizda hali buyurtmalar yo'q
-    your_cart_is_empty: Savatingiz bo'sh
     your_order_is_empty_add_product: Sizning buyurtmangiz bo'sh, iltimos, yuqoridagi mahsulotni qidirib toping
     zip: Zip
     zipcode: Pochta indeksi

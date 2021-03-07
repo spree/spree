@@ -530,11 +530,9 @@ sw:
       return_authorization:
         product: Bidhaa
       tab:
-        configuration: Usanidi
         customer_returns: Kurudi kwa Wateja
         option_types: Aina za Chaguo
         orders: Maagizo
-        overview: Maelezo ya jumla
         products: Bidhaa
         promotion_categories: Jamii za Kukuza
         promotions: Matangazo
@@ -1531,8 +1529,6 @@ sw:
     special_instructions: Maagizo Maalum
     split: Kugawanyika
     spree_gateway_error_flash_for_checkout: Kulikuwa na tatizo na maelezo yako ya malipo. Tafadhali angalia habari yako na ujaribu tena.
-    ssl:
-      change_protocol: Tafadhali badili kwa kutumia HTTP (badala ya HTTPS) na ujaribu tena ombi hili.
     start: Anza
     starting_from: Huanza saa
     state: Hali
@@ -1732,7 +1728,6 @@ sw:
     use_existing_cc: Tumia kadi iliyopo kwenye faili
     use_new_cc: Tumia kadi mpya
     use_new_cc_or_payment_method: Tumia njia mpya ya kadi / malipo
-    use_s3: Tumia Amazon S3 Kwa Picha
     used: Imetumika
     user: Mtumiaji
     user_not_found: Mtumiaji hajapatikana
@@ -1760,7 +1755,6 @@ sw:
     width: Upana
     year: Mwaka
     you_have_no_orders_yet: Bado huna maagizo
-    your_cart_is_empty: Kikapu chako hakina kitu
     your_order_is_empty_add_product: Agizo lako ni tupu, tafadhali tafuta na uongeze bidhaa hapo juu
     zip: Zip
     zipcode: Namba ya Posta

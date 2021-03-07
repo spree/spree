@@ -530,11 +530,9 @@ mk:
       return_authorization:
         product: Производ
       tab:
-        configuration: Конфигурација
         customer_returns: Враќање на клиентите
         option_types: Видови на опции
         orders: Нарачки
-        overview: Преглед
         products: Производи
         promotion_categories: Категории на промоција
         promotions: Промоции
@@ -1531,8 +1529,6 @@ mk:
     special_instructions: Специјални инструкции
     split: Подели
     spree_gateway_error_flash_for_checkout: Имаше проблем со вашите информации за плаќање. Проверете ги вашите информации и обидете се повторно.
-    ssl:
-      change_protocol: Префрлете се на користење HTTP (наместо HTTPS) и обидете се повторно со ова барање.
     start: Започнете
     starting_from: Започнува во
     state: Држава
@@ -1732,7 +1728,6 @@ mk:
     use_existing_cc: Користете постоечка картичка во датотеката
     use_new_cc: Користете нова картичка
     use_new_cc_or_payment_method: Користете нова картичка / начин на плаќање
-    use_s3: Користете Amazon S3 за слики
     used: Користени
     user: Корисник
     user_not_found: Корисникот не е пронајден
@@ -1760,7 +1755,6 @@ mk:
     width: Ширина
     year: Година
     you_have_no_orders_yet: Сè уште немате нарачки
-    your_cart_is_empty: Вашата количка е празна
     your_order_is_empty_add_product: Вашата нарачка е празна, ве молиме, побарајте и додадете производ погоре
     zip: Поштенски
     zipcode: Поштенски код

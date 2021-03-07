@@ -530,11 +530,9 @@ is:
       return_authorization:
         product: Vara
       tab:
-        configuration: Stillingar
         customer_returns: Viðskiptavinur skilar sér
         option_types: Valkostategundir
         orders: Pantanir
-        overview: Yfirlit
         products: Vörur
         promotion_categories: Kynningarflokkar
         promotions: Kynningar
@@ -1531,8 +1529,6 @@ is:
     special_instructions: sérstakar leiðbeiningar
     split: Skipta
     spree_gateway_error_flash_for_checkout: Vandamál kom upp með greiðsluupplýsingar þínar. Vinsamlegast athugaðu upplýsingar þínar og reyndu aftur.
-    ssl:
-      change_protocol: Skiptu yfir í að nota HTTP (frekar en HTTPS) og reyndu þessa beiðni aftur.
     start: Byrjaðu
     starting_from: Byrjar kl
     state: Ríki
@@ -1732,7 +1728,6 @@ is:
     use_existing_cc: Notaðu núverandi kort á skrá
     use_new_cc: Notaðu nýtt kort
     use_new_cc_or_payment_method: Notaðu nýtt kort / greiðslumáta
-    use_s3: Notaðu Amazon S3 fyrir myndir
     used: Notað
     user: Notandi
     user_not_found: Notandi finnst ekki
@@ -1760,7 +1755,6 @@ is:
     width: Breidd
     year: Ár
     you_have_no_orders_yet: Þú hefur engar pantanir ennþá
-    your_cart_is_empty: Karfan þín er tóm
     your_order_is_empty_add_product: Pöntunin þín er tóm, vinsamlegast leitaðu að og bættu við vöru hér að ofan
     zip: Rennilás
     zipcode: Póstnúmer

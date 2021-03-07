@@ -530,11 +530,9 @@ tt:
       return_authorization:
         product: Продукция
       tab:
-        configuration: Конфигурация
         customer_returns: Клиент кайта
         option_types: Вариант төрләре
         orders: Заказлар
-        overview: Гомуми күзәтү
         products: Продукция
         promotion_categories: Реклама категорияләре
         promotions: Акцияләр
@@ -1531,8 +1529,6 @@ tt:
     special_instructions: Махсус күрсәтмәләр
     split: Бүленү
     spree_gateway_error_flash_for_checkout: Сезнең түләү мәгълүматыгыз белән проблема килеп чыкты. Зинһар, мәгълүматыгызны тикшерегез һәм кабатлап карагыз.
-    ssl:
-      change_protocol: Зинһар, HTTP куллануга күчә (HTTPS түгел) һәм бу үтенечне кабатлап карагыз.
     start: Башлау
     starting_from: Башлана
     state: Дәүләт
@@ -1732,7 +1728,6 @@ tt:
     use_existing_cc: Файлда булган картаны кулланыгыз
     use_new_cc: Яңа картаны кулланыгыз
     use_new_cc_or_payment_method: Яңа картаны / түләү ысулын кулланыгыз
-    use_s3: Рәсемнәр өчен Amazon S3 кулланыгыз
     used: Кулланыла
     user: Кулланучы
     user_not_found: Кулланучы табылмады
@@ -1760,7 +1755,6 @@ tt:
     width: Киңлек
     year: Ел
     you_have_no_orders_yet: Сездә әле заказ юк
-    your_cart_is_empty: Сезнең арба буш
     your_order_is_empty_add_product: Сезнең заказ буш, өстә продукт эзләгез һәм өстәгез
     zip: Почта
     zipcode: Почта индексы

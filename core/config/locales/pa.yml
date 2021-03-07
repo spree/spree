@@ -530,11 +530,9 @@ pa:
       return_authorization:
         product: ਉਤਪਾਦ
       tab:
-        configuration: ਸੰਰਚਨਾ
         customer_returns: ਗਾਹਕ ਰਿਟਰਨ
         option_types: ਵਿਕਲਪ ਦੀਆਂ ਕਿਸਮਾਂ
         orders: ਆਰਡਰ
-        overview: ਸੰਖੇਪ ਜਾਣਕਾਰੀ
         products: ਉਤਪਾਦ
         promotion_categories: ਪ੍ਰਚਾਰ ਦੀਆਂ ਸ਼੍ਰੇਣੀਆਂ
         promotions: ਪ੍ਰਚਾਰ
@@ -1531,8 +1529,6 @@ pa:
     special_instructions: ਵਿਸ਼ੇਸ਼ ਨਿਰਦੇਸ਼
     split: ਵੰਡ
     spree_gateway_error_flash_for_checkout: ਤੁਹਾਡੀ ਭੁਗਤਾਨ ਦੀ ਜਾਣਕਾਰੀ ਵਿੱਚ ਇੱਕ ਸਮੱਸਿਆ ਸੀ. ਕਿਰਪਾ ਕਰਕੇ ਆਪਣੀ ਜਾਣਕਾਰੀ ਦੀ ਜਾਂਚ ਕਰੋ ਅਤੇ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ.
-    ssl:
-      change_protocol: ਕਿਰਪਾ ਕਰਕੇ HTTP ਦੀ ਵਰਤੋਂ ਕਰੋ (HTTPS ਦੀ ਬਜਾਏ) ਅਤੇ ਇਸ ਬੇਨਤੀ ਤੇ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ.
     start: ਸ਼ੁਰੂ ਕਰੋ
     starting_from: ਤੋਂ ਸ਼ੁਰੂ ਹੁੰਦਾ ਹੈ
     state: ਰਾਜ
@@ -1732,7 +1728,6 @@ pa:
     use_existing_cc: ਫਾਈਲ ਤੇ ਇੱਕ ਮੌਜੂਦਾ ਕਾਰਡ ਦੀ ਵਰਤੋਂ ਕਰੋ
     use_new_cc: ਇੱਕ ਨਵਾਂ ਕਾਰਡ ਵਰਤੋਂ
     use_new_cc_or_payment_method: ਇੱਕ ਨਵਾਂ ਕਾਰਡ / ਭੁਗਤਾਨ ਵਿਧੀ ਦੀ ਵਰਤੋਂ ਕਰੋ
-    use_s3: ਚਿੱਤਰਾਂ ਲਈ ਐਮਾਜ਼ਾਨ ਐਸ 3 ਦੀ ਵਰਤੋਂ ਕਰੋ
     used: ਵਰਤਿਆ
     user: ਉਪਭੋਗਤਾ
     user_not_found: ਉਪਭੋਗਤਾ ਨਹੀਂ ਮਿਲਿਆ
@@ -1760,7 +1755,6 @@ pa:
     width: ਚੌੜਾਈ
     year: ਸਾਲ
     you_have_no_orders_yet: ਤੁਹਾਡੇ ਕੋਲ ਅਜੇ ਕੋਈ ਆਰਡਰ ਨਹੀਂ ਹਨ
-    your_cart_is_empty: ਤੁਹਾਡਾ ਕਾਰਟ ਖਾਲੀ ਹੈ
     your_order_is_empty_add_product: ਤੁਹਾਡਾ ਆਰਡਰ ਖਾਲੀ ਹੈ, ਕਿਰਪਾ ਕਰਕੇ ਉੱਪਰ ਦਿੱਤੇ ਉਤਪਾਦ ਨੂੰ ਲੱਭੋ ਅਤੇ ਸ਼ਾਮਲ ਕਰੋ
     zip: ਜ਼ਿਪ
     zipcode: ਜ਼ਿਪ ਕੋਡ

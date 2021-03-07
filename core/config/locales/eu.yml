@@ -530,11 +530,9 @@ eu:
       return_authorization:
         product: Produktua
       tab:
-        configuration: Konfigurazioa
         customer_returns: Bezeroaren itzulketak
         option_types: Aukera motak
         orders: Eskaerak
-        overview: Ikuspegi orokorra
         products: Produktuak
         promotion_categories: Sustapen Kategoriak
         promotions: Promozioak
@@ -1531,8 +1529,6 @@ eu:
     special_instructions: Argibide bereziak
     split: Zatitu
     spree_gateway_error_flash_for_checkout: Arazo bat izan da ordainketa informazioarekin. Mesedez, egiaztatu zure informazioa eta saiatu berriro.
-    ssl:
-      change_protocol: Mesedez, aldatu HTTP (HTTPS baino) erabiltzera eta saiatu berriro eskaera hau egiten.
     start: Hasi
     starting_from: Hasten da
     state: Estatu
@@ -1732,7 +1728,6 @@ eu:
     use_existing_cc: Erabili lehendik dagoen txartela fitxategian
     use_new_cc: Erabili txartel berria
     use_new_cc_or_payment_method: Erabili txartel / ordainketa metodo berria
-    use_s3: Erabili Amazon S3 Irudietarako
     used: Erabilitakoa
     user: Erabiltzailea
     user_not_found: Erabiltzailea ez da aurkitu
@@ -1760,7 +1755,6 @@ eu:
     width: Zabalera
     year: Urtea
     you_have_no_orders_yet: Oraindik ez duzu agindurik
-    your_cart_is_empty: Zure saskia hutsik dago
     your_order_is_empty_add_product: Zure eskaera hutsik dago, bilatu eta gehitu produktu bat goian
     zip: Zip
     zipcode: Posta Kodea

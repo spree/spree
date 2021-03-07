@@ -530,11 +530,9 @@ hu:
       return_authorization:
         product: Termék
       tab:
-        configuration: Konfiguráció
         customer_returns: Ügyfél visszatér
         option_types: Opciótípusok
         orders: Rendelések
-        overview: Áttekintés
         products: Termékek
         promotion_categories: Promóciós kategóriák
         promotions: Akciók
@@ -1531,8 +1529,6 @@ hu:
     special_instructions: Különleges utasítások
     split: Hasított
     spree_gateway_error_flash_for_checkout: Hiba történt a fizetési adatokkal kapcsolatban. Kérjük, ellenőrizze adatait, és próbálkozzon újra.
-    ssl:
-      change_protocol: Váltson a HTTP (nem a HTTPS) használatára, és próbálja újra ezt a kérést.
     start: Rajt
     starting_from: Kezdődik
     state: Állapot
@@ -1732,7 +1728,6 @@ hu:
     use_existing_cc: Használjon meglévő kártyát a fájlban
     use_new_cc: Használjon új kártyát
     use_new_cc_or_payment_method: Használjon új kártyát / fizetési módot
-    use_s3: Használja az Amazon S3 for Images alkalmazást
     used: Használt
     user: Felhasználó
     user_not_found: Felhasználó nem található
@@ -1760,7 +1755,6 @@ hu:
     width: Szélesség
     year: Év
     you_have_no_orders_yet: Még nincs megrendelése
-    your_cart_is_empty: Az Ön kosara üres
     your_order_is_empty_add_product: Megrendelése üres, kérjük, keressen és adjon hozzá egy terméket
     zip: Postai irányítószám
     zipcode: Irányítószám

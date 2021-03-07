@@ -530,11 +530,9 @@ lb:
       return_authorization:
         product: Produkt
       tab:
-        configuration: Konfiguratioun
         customer_returns: Client Returns
         option_types: Optiounen Typen
         orders: Commanden
-        overview: Iwwersiicht
         products: Produkter
         promotion_categories: Promotiounskategorien
         promotions: Promotiounen
@@ -1531,8 +1529,6 @@ lb:
     special_instructions: Spezial Instruktiounen
     split: Split
     spree_gateway_error_flash_for_checkout: Et war e Problem mat Ärer Bezuelungsinformatioun. Kuckt w.e.g. Är Informatioun a probéiert nach eng Kéier.
-    ssl:
-      change_protocol: Wiesselt w.e.g. op HTTP benotzen (anstatt HTTPS) a probéiert dës Ufro nach eng Kéier.
     start: Start
     starting_from: Fänkt un
     state: Staat
@@ -1732,7 +1728,6 @@ lb:
     use_existing_cc: Benotzt eng existent Kaart op der Datei
     use_new_cc: Benotzt eng nei Kaart
     use_new_cc_or_payment_method: Benotzt eng nei Kaart / Bezuelmethod
-    use_s3: Benotzt Amazon S3 Fir Biller
     used: Benotzt
     user: Benotzer
     user_not_found: Benotzer net fonnt
@@ -1760,7 +1755,6 @@ lb:
     width: Breet
     year: Joer
     you_have_no_orders_yet: Dir hutt nach keng Commanden
-    your_cart_is_empty: Äre Weenchen ass eidel
     your_order_is_empty_add_product: Är Bestellung ass eidel, sicht w.e.g. no a füügt e Produkt uewen derbäi
     zip: Zip
     zipcode: Postleitzuel

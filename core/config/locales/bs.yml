@@ -612,11 +612,9 @@ bs:
       return_authorization:
         product: Proizvoda
       tab:
-        configuration: Konfiguracija
         customer_returns: Povratak kupaca
         option_types: Vrste opcija
         orders: Narudžbe
-        overview: Pregled
         products: Proizvodi
         promotion_categories: Kategorije promocije
         promotions: Promocije
@@ -1619,8 +1617,6 @@ bs:
     special_instructions: specialne instrukcije
     split: Podijeliti
     spree_gateway_error_flash_for_checkout: Došlo je do problema s vašim podacima o plaćanju. Provjerite svoje podatke i pokušajte ponovo.
-    ssl:
-      change_protocol: Prebacite se na upotrebu HTTP-a (umjesto HTTPS-a) i pokušajte ponovo sa ovim zahtjevom.
     start: Počni
     starting_from: Počinje u
     state: Država
@@ -1820,7 +1816,6 @@ bs:
     use_existing_cc: Koristite postojeću karticu u evidenciji
     use_new_cc: Koristite novu karticu
     use_new_cc_or_payment_method: Koristite novu karticu / način plaćanja
-    use_s3: Koristite Amazon S3 za slike
     used: Korišteno
     user: Korisnik
     user_not_found: Korisnik nije pronađen
@@ -1848,7 +1843,6 @@ bs:
     width: Širina
     year: Godina
     you_have_no_orders_yet: Još nemate narudžbe
-    your_cart_is_empty: Vaša košarica je prazna
     your_order_is_empty_add_product: Vaša narudžba je prazna, potražite i dodajte proizvod iznad
     zip: Zip
     zipcode: Poštanski broj

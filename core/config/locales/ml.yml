@@ -530,11 +530,9 @@ ml:
       return_authorization:
         product: ഉൽപ്പന്നം
       tab:
-        configuration: കോൺഫിഗറേഷൻ
         customer_returns: കസ്റ്റമർ റിട്ടേൺസ്
         option_types: ഓപ്ഷൻ തരങ്ങൾ
         orders: ഓർഡറുകൾ
-        overview: അവലോകനം
         products: ഉൽപ്പന്നങ്ങൾ
         promotion_categories: പ്രമോഷൻ വിഭാഗങ്ങൾ
         promotions: പ്രമോഷനുകൾ
@@ -1531,8 +1529,6 @@ ml:
     special_instructions: പ്രത്യേക നിർദ്ദേശങ്ങൾ
     split: രണ്ടായി പിരിയുക
     spree_gateway_error_flash_for_checkout: നിങ്ങളുടെ പേയ്‌മെന്റ് വിവരങ്ങളിൽ ഒരു പ്രശ്‌നമുണ്ടായിരുന്നു. നിങ്ങളുടെ വിവരങ്ങൾ പരിശോധിച്ച് വീണ്ടും ശ്രമിക്കുക.
-    ssl:
-      change_protocol: എച്ച്ടിടിപി (എച്ച്ടിടിപിഎസിനുപകരം) ഉപയോഗിക്കുന്നതിലേക്ക് മാറി ഈ അഭ്യർത്ഥന വീണ്ടും ശ്രമിക്കുക.
     start: ആരംഭിക്കുക
     starting_from: ആരംഭിക്കുന്നു
     state: സംസ്ഥാനം
@@ -1732,7 +1728,6 @@ ml:
     use_existing_cc: ഫയലിൽ നിലവിലുള്ള ഒരു കാർഡ് ഉപയോഗിക്കുക
     use_new_cc: ഒരു പുതിയ കാർഡ് ഉപയോഗിക്കുക
     use_new_cc_or_payment_method: ഒരു പുതിയ കാർഡ് / പേയ്‌മെന്റ് രീതി ഉപയോഗിക്കുക
-    use_s3: ചിത്രങ്ങൾക്കായി ആമസോൺ എസ് 3 ഉപയോഗിക്കുക
     used: ഉപയോഗിച്ചു
     user: ഉപയോക്താവ്
     user_not_found: ഉപയോക്താവിനെ കണ്ടെത്തിയില്ല
@@ -1760,7 +1755,6 @@ ml:
     width: വീതി
     year: വർഷം
     you_have_no_orders_yet: നിങ്ങൾക്ക് ഇതുവരെ ഓർഡറുകളൊന്നുമില്ല
-    your_cart_is_empty: നിങ്ങളുടെ കാർട്ട് ശൂന്യമാണ്
     your_order_is_empty_add_product: നിങ്ങളുടെ ഓർഡർ ശൂന്യമാണ്, ദയവായി മുകളിൽ ഒരു ഉൽപ്പന്നം തിരയുക, ചേർക്കുക
     zip: സിപ്പ്
     zipcode: തപാൽ കോഡ്

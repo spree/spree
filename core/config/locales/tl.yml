@@ -530,11 +530,9 @@ tl:
       return_authorization:
         product: Produkto
       tab:
-        configuration: Pag-configure
         customer_returns: Bumabalik ang Customer
         option_types: Mga Uri ng Pagpipilian
         orders: Mga order
-        overview: Pangkalahatang-ideya
         products: Mga produkto
         promotion_categories: Mga Kategoryang Pang-promosyon
         promotions: Mga Promosyon
@@ -1531,8 +1529,6 @@ tl:
     special_instructions: Mga Espesyal na Tagubilin
     split: Hatiin
     spree_gateway_error_flash_for_checkout: Mayroong problema sa iyong impormasyon sa pagbabayad. Mangyaring suriin ang iyong impormasyon at subukang muli.
-    ssl:
-      change_protocol: Mangyaring lumipat sa paggamit ng HTTP (sa halip na HTTPS) at subukang muli ang kahilingang ito.
     start: Magsimula
     starting_from: Nagsisimula sa
     state: Estado
@@ -1732,7 +1728,6 @@ tl:
     use_existing_cc: Gumamit ng isang mayroon nang card sa file
     use_new_cc: Gumamit ng bagong card
     use_new_cc_or_payment_method: Gumamit ng bagong paraan ng card / pagbabayad
-    use_s3: Gumamit ng Amazon S3 Para sa Mga Larawan
     used: Ginamit na
     user: Gumagamit
     user_not_found: Hindi nahanap ang gumagamit
@@ -1760,7 +1755,6 @@ tl:
     width: Lapad
     year: Taon
     you_have_no_orders_yet: Wala ka pang order
-    your_cart_is_empty: Walang laman ang iyong cart
     your_order_is_empty_add_product: Walang laman ang iyong order, mangyaring maghanap at magdagdag ng isang produkto sa itaas
     zip: Zip
     zipcode: Zip Code

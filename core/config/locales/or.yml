@@ -530,11 +530,9 @@ or:
       return_authorization:
         product: ଉତ୍ପାଦ
       tab:
-        configuration: ବିନ୍ୟାସ
         customer_returns: ଗ୍ରାହକ ଫେରସ୍ତ
         option_types: ବିକଳ୍ପ ପ୍ରକାରଗୁଡିକ |
         orders: ଆଦେଶ
-        overview: ସମୀକ୍ଷା
         products: ଉତ୍ପାଦଗୁଡିକ
         promotion_categories: ପଦୋନ୍ନତି ବର୍ଗଗୁଡିକ |
         promotions: ପଦୋନ୍ନତି
@@ -1531,8 +1529,6 @@ or:
     special_instructions: ବିଶେଷ ନିର୍ଦ୍ଦେଶ
     split: ବିଭାଜନ
     spree_gateway_error_flash_for_checkout: ଆପଣଙ୍କର ଦେୟ ସୂଚନା ସହିତ ଏକ ସମସ୍ୟା ଥିଲା | ଦୟାକରି ଆପଣଙ୍କର ସୂଚନା ଯାଞ୍ଚ କରନ୍ତୁ ଏବଂ ପୁନର୍ବାର ଚେଷ୍ଟା କରନ୍ତୁ |
-    ssl:
-      change_protocol: ଦୟାକରି HTTP ବ୍ୟବହାର କରିବାକୁ ସୁଇଚ୍ କରନ୍ତୁ (HTTPS ପରିବର୍ତ୍ତେ) ଏବଂ ଏହି ଅନୁରୋଧକୁ ପୁନ ry ଚେଷ୍ଟା କରନ୍ତୁ |
     start: ଆରମ୍ଭ କରନ୍ତୁ |
     starting_from: ଠାରୁ ଆରମ୍ଭ ହେବ
     state: ରାଜ୍ୟ
@@ -1732,7 +1728,6 @@ or:
     use_existing_cc: ଫାଇଲରେ ଏକ ବିଦ୍ୟମାନ କାର୍ଡ ବ୍ୟବହାର କରନ୍ତୁ |
     use_new_cc: ଏକ ନୂତନ କାର୍ଡ ବ୍ୟବହାର କରନ୍ତୁ |
     use_new_cc_or_payment_method: ଏକ ନୂତନ କାର୍ଡ / ଦେୟ ପଦ୍ଧତି ବ୍ୟବହାର କରନ୍ତୁ |
-    use_s3: ପ୍ରତିଛବି ପାଇଁ ଆମାଜନ S3 ବ୍ୟବହାର କରନ୍ତୁ |
     used: ବ୍ୟବହୃତ |
     user: ଉପଯୋଗକର୍ତ୍ତା |
     user_not_found: ଉପଯୋଗକର୍ତ୍ତା ମିଳିଲା ନାହିଁ |
@@ -1760,7 +1755,6 @@ or:
     width: ମୋଟେଇ
     year: ବର୍ଷ
     you_have_no_orders_yet: ଆପଣଙ୍କର ଏପର୍ଯ୍ୟନ୍ତ କ orders ଣସି ଆଦେଶ ନାହିଁ |
-    your_cart_is_empty: ତୁମର କାର୍ଟ ଖାଲି ଅଛି |
     your_order_is_empty_add_product: ତୁମର ଅର୍ଡର ଖାଲି ଅଛି, ଦୟାକରି ଉପରେ ଏକ ଉତ୍ପାଦ ଖୋଜ ଏବଂ ଯୋଗ କର |
     zip: ଜିପ୍
     zipcode: ଜିପ୍ କୋଡ୍

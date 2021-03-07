@@ -530,11 +530,9 @@ de-AT:
       return_authorization:
         product: Produkt
       tab:
-        configuration: Aufbau
         customer_returns: Kundenretouren
         option_types: Optionstypen
         orders: Aufträge
-        overview: Überblick
         products: Produkte
         promotion_categories: Werbekategorien
         promotions: Promotions
@@ -1531,8 +1529,6 @@ de-AT:
     special_instructions: spezielle Anweisungen
     split: Teilt
     spree_gateway_error_flash_for_checkout: Es ist ein Problem mit Ihren Zahlungsinformationen aufgetreten. Bitte überprüfen Sie Ihre Angaben und versuchen Sie es erneut.
-    ssl:
-      change_protocol: Bitte wechseln Sie zu HTTP (anstelle von HTTPS) und wiederholen Sie diese Anforderung.
     start: Start
     starting_from: Startet um
     state: Zustand
@@ -1732,7 +1728,6 @@ de-AT:
     use_existing_cc: Verwenden Sie eine vorhandene Karte
     use_new_cc: Verwenden Sie eine neue Karte
     use_new_cc_or_payment_method: Verwenden Sie eine neue Karte / Zahlungsmethode
-    use_s3: Verwenden Sie Amazon S3 für Bilder
     used: Benutzt
     user: Nutzer
     user_not_found: Benutzer wurde nicht gefunden
@@ -1760,7 +1755,6 @@ de-AT:
     width: Breite
     year: Jahr
     you_have_no_orders_yet: Sie haben noch keine Bestellungen
-    your_cart_is_empty: Ihr Warenkorb ist leer
     your_order_is_empty_add_product: Ihre Bestellung ist leer. Bitte suchen Sie nach einem Produkt und fügen Sie es hinzu
     zip: Postleitzahl
     zipcode: Postleitzahl

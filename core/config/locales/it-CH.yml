@@ -530,11 +530,9 @@ it-CH:
       return_authorization:
         product: Prodotto
       tab:
-        configuration: Configurazione
         customer_returns: Resi dei clienti
         option_types: Tipi di opzione
         orders: Ordini
-        overview: Panoramica
         products: Prodotti
         promotion_categories: Categorie di promozione
         promotions: Promozioni
@@ -1531,8 +1529,6 @@ it-CH:
     special_instructions: istruzioni speciali
     split: Diviso
     spree_gateway_error_flash_for_checkout: Si è verificato un problema con i tuoi dati di pagamento. Controlla le tue informazioni e riprova.
-    ssl:
-      change_protocol: Passa a utilizzare HTTP (anziché HTTPS) e riprova a eseguire la richiesta.
     start: Inizio
     starting_from: Inizia a
     state: Stato
@@ -1732,7 +1728,6 @@ it-CH:
     use_existing_cc: Usa una carta esistente in archivio
     use_new_cc: Usa una nuova carta
     use_new_cc_or_payment_method: Usa una nuova carta / metodo di pagamento
-    use_s3: Usa Amazon S3 per le immagini
     used: Usato
     user: Utente
     user_not_found: Utente non trovato
@@ -1760,7 +1755,6 @@ it-CH:
     width: Larghezza
     year: Anno
     you_have_no_orders_yet: Non hai ancora ordini
-    your_cart_is_empty: il tuo carrello è vuoto
     your_order_is_empty_add_product: Il tuo ordine è vuoto, cerca e aggiungi un prodotto sopra
     zip: Cerniera lampo
     zipcode: Cap

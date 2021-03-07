@@ -530,11 +530,9 @@ ka:
       return_authorization:
         product: პროდუქტი
       tab:
-        configuration: კონფიგურაცია
         customer_returns: მომხმარებელთა ბრუნდება
         option_types: ვარიანტის ტიპები
         orders: შეკვეთები
-        overview: მიმოხილვა
         products: პროდუქტები
         promotion_categories: დაწინაურების კატეგორიები
         promotions: აქციები
@@ -1531,8 +1529,6 @@ ka:
     special_instructions: სპეციალური ინსტრუქციები
     split: გაყოფილი
     spree_gateway_error_flash_for_checkout: თქვენს გადახდის ინფორმაციასთან დაკავშირებით პრობლემა წარმოიშვა. გთხოვთ, შეამოწმოთ თქვენი ინფორმაცია და სცადოთ ხელახლა.
-    ssl:
-      change_protocol: გთხოვთ, გადახვიდეთ HTTP (და არა HTTPS) გამოყენებაზე და ხელახლა სცადოთ ეს მოთხოვნა.
     start: დაწყება
     starting_from: Იწყება
     state: სახელმწიფო
@@ -1732,7 +1728,6 @@ ka:
     use_existing_cc: გამოიყენეთ არსებული ბარათი
     use_new_cc: გამოიყენეთ ახალი ბარათი
     use_new_cc_or_payment_method: გამოიყენეთ ახალი ბარათი / გადახდის მეთოდი
-    use_s3: გამოიყენეთ Amazon S3 სურათებისათვის
     used: Გამოყენებული
     user: მომხმარებელი
     user_not_found: Მომხმარებელი არ მოიძებნა
@@ -1760,7 +1755,6 @@ ka:
     width: სიგანე
     year: წელი
     you_have_no_orders_yet: ჯერ შეკვეთები არ გაქვთ
-    your_cart_is_empty: თქვენი კალათა ცარიელია
     your_order_is_empty_add_product: თქვენი შეკვეთა ცარიელია, გთხოვთ მოიძიოთ და დაამატოთ ზემოთ პროდუქტი
     zip: Zip
     zipcode: Ზიპ კოდი

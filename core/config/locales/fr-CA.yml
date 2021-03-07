@@ -530,11 +530,9 @@ fr-CA:
       return_authorization:
         product: Produit
       tab:
-        configuration: Configuration
         customer_returns: Les retours clients
         option_types: Types d'options
         orders: Ordres
-        overview: Aperçu
         products: Des produits
         promotion_categories: Catégories de promotion
         promotions: Promotions
@@ -1531,8 +1529,6 @@ fr-CA:
     special_instructions: instructions spéciales
     split: Diviser
     spree_gateway_error_flash_for_checkout: Un problème est survenu avec vos informations de paiement. Veuillez vérifier vos informations et réessayer.
-    ssl:
-      change_protocol: Veuillez passer à HTTP (plutôt que HTTPS) et réessayer cette demande.
     start: Début
     starting_from: Commence à
     state: État
@@ -1732,7 +1728,6 @@ fr-CA:
     use_existing_cc: Utiliser une carte existante dans le fichier
     use_new_cc: Utiliser une nouvelle carte
     use_new_cc_or_payment_method: Utiliser une nouvelle carte / mode de paiement
-    use_s3: Utiliser Amazon S3 pour les images
     used: Utilisé
     user: Utilisateur
     user_not_found: Utilisateur non trouvé
@@ -1760,7 +1755,6 @@ fr-CA:
     width: Largeur
     year: An
     you_have_no_orders_yet: Vous n'avez pas encore de commandes
-    your_cart_is_empty: Votre panier est vide
     your_order_is_empty_add_product: Votre commande est vide, veuillez rechercher et ajouter un produit ci-dessus
     zip: Zipper
     zipcode: Code postal

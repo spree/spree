@@ -530,11 +530,9 @@ eo:
       return_authorization:
         product: Produkto
       tab:
-        configuration: Agordo
         customer_returns: Kliento Revenas
         option_types: Opcio-Tipoj
         orders: Ordoj
-        overview: Superrigardo
         products: Produktoj
         promotion_categories: Reklamaj Kategorioj
         promotions: Reklamoj
@@ -1531,8 +1529,6 @@ eo:
     special_instructions: Specialaj Instrukcioj
     split: Disigi
     spree_gateway_error_flash_for_checkout: Estis problemo kun viaj pagaj informoj. Bonvolu kontroli viajn informojn kaj reprovi.
-    ssl:
-      change_protocol: Bonvolu ŝanĝi al uzado de HTTP (anstataŭ HTTPS) kaj reprovu ĉi tiun peton.
     start: Komencu
     starting_from: Komencas ĉe
     state: Ŝtato
@@ -1732,7 +1728,6 @@ eo:
     use_existing_cc: Uzu ekzistantan karton en dosiero
     use_new_cc: Uzu novan karton
     use_new_cc_or_payment_method: Uzu novan karton / pagmanieron
-    use_s3: Uzu Amazon S3 Por Bildoj
     used: Uzita
     user: Uzanto
     user_not_found: Uzanto ne trovita
@@ -1760,7 +1755,6 @@ eo:
     width: Larĝo
     year: Jaro
     you_have_no_orders_yet: Vi ankoraŭ ne havas mendojn
-    your_cart_is_empty: Via ĉaro estas malplena
     your_order_is_empty_add_product: Via mendo estas malplena, bonvolu serĉi kaj aldoni produkton supre
     zip: Zip
     zipcode: Poŝtkodo

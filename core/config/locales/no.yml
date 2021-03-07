@@ -530,11 +530,9 @@
       return_authorization:
         product: Produkt
       tab:
-        configuration: Konfigurasjon
         customer_returns: Kunden returnerer
         option_types: Alternativtyper
         orders: Bestillinger
-        overview: Oversikt
         products: Produkter
         promotion_categories: Kampanjekategorier
         promotions: Kampanjer
@@ -1531,8 +1529,6 @@
     special_instructions: Spesielle instruksjoner
     split: Dele
     spree_gateway_error_flash_for_checkout: Det oppsto et problem med betalingsinformasjonen din. Sjekk informasjonen din og prøv på nytt.
-    ssl:
-      change_protocol: Bytt til å bruke HTTP (i stedet for HTTPS), og prøv denne forespørselen på nytt.
     start: Start
     starting_from: Begynner kl
     state: Stat
@@ -1732,7 +1728,6 @@
     use_existing_cc: Bruk et eksisterende kort
     use_new_cc: Bruk et nytt kort
     use_new_cc_or_payment_method: Bruk et nytt kort / betalingsmåte
-    use_s3: Bruk Amazon S3 for bilder
     used: Brukt
     user: Bruker
     user_not_found: Bruker ikke funnet
@@ -1760,7 +1755,6 @@
     width: Bredde
     year: År
     you_have_no_orders_yet: Du har ingen bestillinger ennå
-    your_cart_is_empty: Vognen din er tom
     your_order_is_empty_add_product: Bestillingen din er tom, vennligst søk etter og legg til et produkt ovenfor
     zip: Glidelås
     zipcode: Post kode

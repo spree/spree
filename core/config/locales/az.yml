@@ -530,11 +530,9 @@ az:
       return_authorization:
         product: Məhsul
       tab:
-        configuration: Konfiqurasiya
         customer_returns: Müştəri qayıdır
         option_types: Seçim növləri
         orders: Sifarişlər
-        overview: Baxış
         products: Məhsullar
         promotion_categories: Təqdimat kateqoriyaları
         promotions: Tanıtımlar
@@ -1531,8 +1529,6 @@ az:
     special_instructions: Xüsusi Təlimatlar
     split: Bölün
     spree_gateway_error_flash_for_checkout: Ödəniş məlumatlarınızla bağlı bir problem oldu. Xahiş edirəm məlumatlarınızı yoxlayın və yenidən cəhd edin.
-    ssl:
-      change_protocol: Xahiş edirəm HTTP istifadə etməyə keçin (HTTPS əvəzinə) və bu sorğunu yenidən sınayın.
     start: Başlamaq
     starting_from: Başlayır
     state: Dövlət
@@ -1732,7 +1728,6 @@ az:
     use_existing_cc: Faylda mövcud bir kartı istifadə edin
     use_new_cc: Yeni bir kart istifadə edin
     use_new_cc_or_payment_method: Yeni bir kart / ödəniş metodundan istifadə edin
-    use_s3: Şəkillər üçün Amazon S3 istifadə edin
     used: İstifadə olunmuşdur
     user: İstifadəçi
     user_not_found: İstifadəçi tapılmadı
@@ -1760,7 +1755,6 @@ az:
     width: Eni
     year: İl
     you_have_no_orders_yet: Hələ sifarişiniz yoxdur
-    your_cart_is_empty: Sizin kartınız boşdur
     your_order_is_empty_add_product: Sifarişiniz boşdur, yuxarıda bir məhsul axtarın və əlavə edin
     zip: Zip
     zipcode: Poçt kodu

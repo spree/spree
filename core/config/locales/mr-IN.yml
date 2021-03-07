@@ -530,11 +530,9 @@ mr-IN:
       return_authorization:
         product: उत्पादन
       tab:
-        configuration: कॉन्फिगरेशन
         customer_returns: ग्राहक परतावा
         option_types: पर्याय प्रकार
         orders: आदेश
-        overview: आढावा
         products: उत्पादने
         promotion_categories: जाहिरात श्रेणी
         promotions: जाहिराती
@@ -1531,8 +1529,6 @@ mr-IN:
     special_instructions: विशेष सूचना
     split: स्प्लिट
     spree_gateway_error_flash_for_checkout: आपल्या देय माहितीसह एक समस्या होती. कृपया आपली माहिती तपासा आणि पुन्हा प्रयत्न करा.
-    ssl:
-      change_protocol: कृपया HTTP वापरण्यावर स्विच करा (HTTPS ऐवजी) आणि या विनंतीवर पुन्हा प्रयत्न करा.
     start: प्रारंभ करा
     starting_from: पासून सुरू होते
     state: राज्य
@@ -1732,7 +1728,6 @@ mr-IN:
     use_existing_cc: फाईलवर विद्यमान कार्ड वापरा
     use_new_cc: नवीन कार्ड वापरा
     use_new_cc_or_payment_method: नवीन कार्ड / पेमेंट पद्धत वापरा
-    use_s3: प्रतिमांसाठी Amazonमेझॉन एस 3 वापरा
     used: वापरलेले
     user: वापरकर्ता
     user_not_found: वापरकर्ता आढळला नाही
@@ -1760,7 +1755,6 @@ mr-IN:
     width: रुंदी
     year: वर्ष
     you_have_no_orders_yet: आपल्याकडे अद्याप ऑर्डर नाहीत
-    your_cart_is_empty: आपली कार्ट रिक्त आहे
     your_order_is_empty_add_product: आपली ऑर्डर रिक्त आहे, कृपया वरील उत्पादन शोधा आणि जोडा
     zip: जि.प.
     zipcode: पिनकोड

@@ -530,11 +530,9 @@ kn:
       return_authorization:
         product: ಉತ್ಪನ್ನ
       tab:
-        configuration: ಸಂರಚನೆ
         customer_returns: ಗ್ರಾಹಕ ರಿಟರ್ನ್ಸ್
         option_types: ಆಯ್ಕೆ ಪ್ರಕಾರಗಳು
         orders: ಆದೇಶಗಳು
-        overview: ಅವಲೋಕನ
         products: ಉತ್ಪನ್ನಗಳು
         promotion_categories: ಪ್ರಚಾರ ವರ್ಗಗಳು
         promotions: ಪ್ರಚಾರಗಳು
@@ -1531,8 +1529,6 @@ kn:
     special_instructions: ವಿಶೇಷ ಸೂಚನೆಗಳು
     split: ವಿಭಜನೆ
     spree_gateway_error_flash_for_checkout: ನಿಮ್ಮ ಪಾವತಿ ಮಾಹಿತಿಯೊಂದಿಗೆ ಸಮಸ್ಯೆ ಇದೆ. ದಯವಿಟ್ಟು ನಿಮ್ಮ ಮಾಹಿತಿಯನ್ನು ಪರಿಶೀಲಿಸಿ ಮತ್ತು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.
-    ssl:
-      change_protocol: ದಯವಿಟ್ಟು HTTP (HTTPS ಬದಲಿಗೆ) ಬಳಸಲು ಬದಲಾಯಿಸಿ ಮತ್ತು ಈ ವಿನಂತಿಯನ್ನು ಮರುಪ್ರಯತ್ನಿಸಿ.
     start: ಪ್ರಾರಂಭಿಸಿ
     starting_from: ನಲ್ಲಿ ಪ್ರಾರಂಭವಾಗುತ್ತದೆ
     state: ರಾಜ್ಯ
@@ -1732,7 +1728,6 @@ kn:
     use_existing_cc: ಫೈಲ್‌ನಲ್ಲಿ ಅಸ್ತಿತ್ವದಲ್ಲಿರುವ ಕಾರ್ಡ್ ಬಳಸಿ
     use_new_cc: ಹೊಸ ಕಾರ್ಡ್ ಬಳಸಿ
     use_new_cc_or_payment_method: ಹೊಸ ಕಾರ್ಡ್ / ಪಾವತಿ ವಿಧಾನವನ್ನು ಬಳಸಿ
-    use_s3: ಚಿತ್ರಗಳಿಗಾಗಿ ಅಮೆಜಾನ್ ಎಸ್ 3 ಬಳಸಿ
     used: ಬಳಸಲಾಗುತ್ತದೆ
     user: ಬಳಕೆದಾರ
     user_not_found: ಬಳಕೆದಾರರು ಕಂಡುಬಂದಿಲ್ಲ
@@ -1760,7 +1755,6 @@ kn:
     width: ಅಗಲ
     year: ವರ್ಷ
     you_have_no_orders_yet: ನಿಮಗೆ ಇನ್ನೂ ಯಾವುದೇ ಆದೇಶಗಳಿಲ್ಲ
-    your_cart_is_empty: ನಿಮ್ಮ ಕಾರ್ಟ್ ಖಾಲಿಯಾಗಿದೆ
     your_order_is_empty_add_product: ನಿಮ್ಮ ಆದೇಶ ಖಾಲಿಯಾಗಿದೆ, ದಯವಿಟ್ಟು ಮೇಲಿನ ಉತ್ಪನ್ನವನ್ನು ಹುಡುಕಿ ಮತ್ತು ಸೇರಿಸಿ
     zip: ಜಿಪ್
     zipcode: ಪಿನ್ ಕೋಡ್

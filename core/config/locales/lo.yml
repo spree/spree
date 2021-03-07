@@ -530,11 +530,9 @@ lo:
       return_authorization:
         product: ຜະລິດຕະພັນ
       tab:
-        configuration: ການຕັ້ງຄ່າ
         customer_returns: ການກັບຄືນຂອງລູກຄ້າ
         option_types: ປະເພດທາງເລືອກ
         orders: ຄຳ ສັ່ງ
-        overview: ພາບລວມ
         products: ຜະລິດຕະພັນ
         promotion_categories: ປະເພດການສົ່ງເສີມ
         promotions: ໂປຣໂມຊັ່ນ
@@ -1531,8 +1529,6 @@ lo:
     special_instructions: ຄຳ ແນະ ນຳ ພິເສດ
     split: ແບ່ງປັນ
     spree_gateway_error_flash_for_checkout: ມີປັນຫາກ່ຽວກັບຂໍ້ມູນການຈ່າຍເງິນຂອງທ່ານ. ກະລຸນາກວດເບິ່ງຂໍ້ມູນຂອງທ່ານແລະລອງ ໃໝ່ ອີກຄັ້ງ.
-    ssl:
-      change_protocol: ກະລຸນາປ່ຽນໄປໃຊ້ HTTP (ແທນ HTTPS) ແລະລອງ ໃໝ່ ຄຳ ຮ້ອງຂໍນີ້.
     start: ເລີ່ມຕົ້ນ
     starting_from: ເລີ່ມຕົ້ນທີ່
     state: ລັດ
@@ -1732,7 +1728,6 @@ lo:
     use_existing_cc: ໃຊ້ບັດທີ່ມີຢູ່ໃນເອກະສານ
     use_new_cc: ໃຊ້ບັດ ໃໝ່
     use_new_cc_or_payment_method: ໃຊ້ວິທີການບັດ / ວິທີການຈ່າຍເງິນ ໃໝ່
-    use_s3: ໃຊ້ Amazon S3 ສຳ ລັບຮູບພາບ
     used: ໃຊ້ແລ້ວ
     user: ຜູ້ໃຊ້
     user_not_found: ບໍ່ພົບຜູ້ໃຊ້
@@ -1760,7 +1755,6 @@ lo:
     width: ກວ້າງ
     year: ປີ
     you_have_no_orders_yet: ທ່ານຍັງບໍ່ທັນມີ ຄຳ ສັ່ງເທື່ອ
-    your_cart_is_empty: ລົດເຂັນຂອງທ່ານຫວ່າງເປົ່າ
     your_order_is_empty_add_product: ການສັ່ງຊື້ຂອງທ່ານຫວ່າງແລ້ວ, ກະລຸນາຄົ້ນຫາແລະເພີ່ມຜະລິດຕະພັນຂ້າງເທິງ
     zip: ຫັດໄປສະນີ
     zipcode: ລະ​ຫັດ​ໄປ​ສະ​ນີ

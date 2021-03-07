@@ -530,11 +530,9 @@ zh-HK:
       return_authorization:
         product: 产品
       tab:
-        configuration: 配置
         customer_returns: 客户退货
         option_types: 期权类型
         orders: 命令
-        overview: 概述
         products: 产品
         promotion_categories: 促销类别
         promotions: 促销活动
@@ -1531,8 +1529,6 @@ zh-HK:
     special_instructions: 特别说明
     split: 分裂
     spree_gateway_error_flash_for_checkout: 您的付款信息有问题。请检查您的信息，然后重试。
-    ssl:
-      change_protocol: 请切换为使用HTTP（而不是HTTPS），然后重试此请求。
     start: 开始
     starting_from: 开始于
     state: 状态
@@ -1732,7 +1728,6 @@ zh-HK:
     use_existing_cc: 使用文件上的现有卡
     use_new_cc: 使用新卡
     use_new_cc_or_payment_method: 使用新卡/付款方式
-    use_s3: 对图像使用Amazon S3
     used: 用过的
     user: 用户
     user_not_found: 找不到使用者
@@ -1760,7 +1755,6 @@ zh-HK:
     width: 宽度
     year: 年
     you_have_no_orders_yet: 您还没有订单
-    your_cart_is_empty: 您的购物车是空的
     your_order_is_empty_add_product: 您的订单为空，请在上方搜索并添加产品
     zip: 压缩
     zipcode: 邮政编码

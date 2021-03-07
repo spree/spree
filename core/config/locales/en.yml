@@ -530,11 +530,9 @@ en:
       return_authorization:
         product: Product
       tab:
-        configuration: Configuration
         customer_returns: Customer Returns
         option_types: Option Types
         orders: Orders
-        overview: Overview
         products: Products
         promotion_categories: Promotion Categories
         promotions: Promotions
@@ -1531,8 +1529,6 @@ en:
     special_instructions: Special Instructions
     split: Split
     spree_gateway_error_flash_for_checkout: There was a problem with your payment information. Please check your information and try again.
-    ssl:
-      change_protocol: Please switch to using HTTP (rather than HTTPS) and retry this request.
     start: Start
     starting_from: Starts at
     state: State
@@ -1732,7 +1728,6 @@ en:
     use_existing_cc: Use an existing card on file
     use_new_cc: Use a new card
     use_new_cc_or_payment_method: Use a new card / payment method
-    use_s3: Use Amazon S3 For Images
     used: Used
     user: User
     user_not_found: User not found
@@ -1760,7 +1755,6 @@ en:
     width: Width
     year: Year
     you_have_no_orders_yet: You have no orders yet
-    your_cart_is_empty: Your cart is empty
     your_order_is_empty_add_product: Your order is empty, please search for and add a product above
     zip: Zip
     zipcode: Zip Code

@@ -530,11 +530,9 @@ es-ES:
       return_authorization:
         product: Producto
       tab:
-        configuration: Configuración
         customer_returns: Devoluciones del cliente
         option_types: Tipos de opciones
         orders: Pedidos
-        overview: Visión general
         products: Productos
         promotion_categories: Categorías de promoción
         promotions: Promociones
@@ -1531,8 +1529,6 @@ es-ES:
     special_instructions: instrucciones especiales
     split: Separar
     spree_gateway_error_flash_for_checkout: Hubo un problema con su información de pago. Verifique su información y vuelva a intentarlo.
-    ssl:
-      change_protocol: Cambie a HTTP (en lugar de HTTPS) y vuelva a intentar esta solicitud.
     start: Comienzo
     starting_from: Empieza a
     state: Expresar
@@ -1732,7 +1728,6 @@ es-ES:
     use_existing_cc: Utilice una tarjeta existente en el archivo
     use_new_cc: Usa una nueva tarjeta
     use_new_cc_or_payment_method: Utilice una nueva tarjeta / método de pago
-    use_s3: Utilice Amazon S3 para imágenes
     used: Usado
     user: Usuario
     user_not_found: Usuario no encontrado
@@ -1760,7 +1755,6 @@ es-ES:
     width: Ancho
     year: Año
     you_have_no_orders_yet: Aún no tienes pedidos
-    your_cart_is_empty: Tu carrito esta vacío
     your_order_is_empty_add_product: Su pedido está vacío, busque y agregue un producto arriba
     zip: Cremallera
     zipcode: Código postal

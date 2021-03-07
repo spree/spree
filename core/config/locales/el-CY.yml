@@ -530,11 +530,9 @@ el-CY:
       return_authorization:
         product: Προϊόν
       tab:
-        configuration: Διαμόρφωση
         customer_returns: Επιστροφές πελατών
         option_types: Τύποι επιλογών
         orders: Παραγγελίες
-        overview: ΣΦΑΙΡΙΚΗ ΕΙΚΟΝΑ
         products: Προϊόντα
         promotion_categories: Κατηγορίες προώθησης
         promotions: Προσφορές
@@ -1531,8 +1529,6 @@ el-CY:
     special_instructions: Ειδικές Οδηγίες
     split: Διαίρεση
     spree_gateway_error_flash_for_checkout: Παρουσιάστηκε πρόβλημα με τα στοιχεία πληρωμής σας. Ελέγξτε τις πληροφορίες σας και δοκιμάστε ξανά.
-    ssl:
-      change_protocol: Μεταβείτε στη χρήση HTTP (αντί για HTTPS) και δοκιμάστε ξανά αυτό το αίτημα.
     start: Αρχή
     starting_from: Αρχίζει στις
     state: κατάσταση
@@ -1732,7 +1728,6 @@ el-CY:
     use_existing_cc: Χρησιμοποιήστε μια υπάρχουσα κάρτα στο αρχείο
     use_new_cc: Χρησιμοποιήστε μια νέα κάρτα
     use_new_cc_or_payment_method: Χρησιμοποιήστε μια νέα κάρτα / μέθοδο πληρωμής
-    use_s3: Χρησιμοποιήστε το Amazon S3 για εικόνες
     used: Μεταχειρισμένος
     user: Χρήστης
     user_not_found: Ο χρήστης δεν βρέθηκε
@@ -1760,7 +1755,6 @@ el-CY:
     width: Πλάτος
     year: Ετος
     you_have_no_orders_yet: Δεν έχετε παραγγελίες ακόμη
-    your_cart_is_empty: Το καλάθι σας είναι άδειο
     your_order_is_empty_add_product: Η παραγγελία σας είναι κενή, αναζητήστε και προσθέστε ένα παραπάνω προϊόν
     zip: Φερμουάρ
     zipcode: Ταχυδρομικός κώδικας

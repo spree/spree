@@ -530,11 +530,9 @@ mn:
       return_authorization:
         product: Бүтээгдэхүүн
       tab:
-        configuration: Тохиргоо
         customer_returns: Үйлчлүүлэгчийн буцах
         option_types: Сонголтын төрлүүд
         orders: Захиалга
-        overview: Тойм
         products: Бүтээгдэхүүн
         promotion_categories: Сурталчилгааны ангилал
         promotions: Урамшуулал
@@ -1531,8 +1529,6 @@ mn:
     special_instructions: Тусгай заавар
     split: салгах
     spree_gateway_error_flash_for_checkout: Таны төлбөрийн мэдээлэлд асуудал гарлаа. Мэдээллээ шалгаад дахин оролдоно уу.
-    ssl:
-      change_protocol: HTTP (HTTPS гэхээсээ илүү) ашиглах горимд шилжиж, энэ хүсэлтийг дахин оруулна уу.
     start: Эхлэ
     starting_from: Эхлэх
     state: Муж
@@ -1732,7 +1728,6 @@ mn:
     use_existing_cc: Файл дээрх байгаа картыг ашиглана уу
     use_new_cc: Шинэ карт ашиглана уу
     use_new_cc_or_payment_method: Шинэ карт / төлбөрийн хэрэгсэл ашиглана уу
-    use_s3: Зургийн хувьд Amazon S3 ашиглана уу
     used: Ашигласан
     user: Хэрэглэгч
     user_not_found: Хэрэглэгч олдсонгүй
@@ -1760,7 +1755,6 @@ mn:
     width: Өргөн
     year: Он
     you_have_no_orders_yet: Танд одоогоор захиалга алга байна
-    your_cart_is_empty: Таны карт хоосон байна
     your_order_is_empty_add_product: Таны захиалга хоосон байна. Дээрх бүтээгдэхүүнийг хайж олоод нэмнэ үү
     zip: Зип
     zipcode: Бүсийн код

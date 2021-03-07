@@ -530,11 +530,9 @@ ms:
       return_authorization:
         product: Produk
       tab:
-        configuration: Konfigurasi
         customer_returns: Pemulangan Pelanggan
         option_types: Jenis Pilihan
         orders: Pesanan
-        overview: Gambaran keseluruhan
         products: Produk
         promotion_categories: Kategori Promosi
         promotions: Promosi
@@ -1531,8 +1529,6 @@ ms:
     special_instructions: Arahan Khas
     split: Berpisah
     spree_gateway_error_flash_for_checkout: Terdapat masalah dengan maklumat pembayaran anda. Sila periksa maklumat anda dan cuba lagi.
-    ssl:
-      change_protocol: Sila beralih menggunakan HTTP (bukan HTTPS) dan cuba lagi permintaan ini.
     start: Mulakan
     starting_from: Bermula pada
     state: Nyatakan
@@ -1732,7 +1728,6 @@ ms:
     use_existing_cc: Gunakan kad yang ada pada fail
     use_new_cc: Gunakan kad baru
     use_new_cc_or_payment_method: Gunakan kad / kaedah pembayaran baru
-    use_s3: Gunakan Amazon S3 Untuk Imej
     used: Terpakai
     user: Pengguna
     user_not_found: Pengguna tidak dijumpai
@@ -1760,7 +1755,6 @@ ms:
     width: Lebar
     year: Tahun
     you_have_no_orders_yet: Anda belum mempunyai pesanan
-    your_cart_is_empty: Troli anda kosong
     your_order_is_empty_add_product: Pesanan anda kosong, sila cari dan tambahkan produk di atas
     zip: Zip
     zipcode: Poskod

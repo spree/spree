@@ -530,11 +530,9 @@ pt-PT:
       return_authorization:
         product: produtos
       tab:
-        configuration: Configuração
         customer_returns: Retorno do consumidor
         option_types: Tipos de opção
         orders: Pedidos
-        overview: Visão geral
         products: Produtos
         promotion_categories: Categorias de promoção
         promotions: Promoções
@@ -1531,8 +1529,6 @@ pt-PT:
     special_instructions: Instruções Especiais
     split: Dividir
     spree_gateway_error_flash_for_checkout: Ocorreu um problema com suas informações de pagamento. Por favor, verifique suas informações e tente novamente.
-    ssl:
-      change_protocol: Mude para o uso de HTTP (em vez de HTTPS) e repita esta solicitação.
     start: Começar
     starting_from: Começa em
     state: Estado
@@ -1732,7 +1728,6 @@ pt-PT:
     use_existing_cc: Use um cartão existente no arquivo
     use_new_cc: Use um novo cartão
     use_new_cc_or_payment_method: Use um novo cartão / método de pagamento
-    use_s3: Use Amazon S3 para imagens
     used: Usava
     user: Do utilizador
     user_not_found: Usuário não encontrado
@@ -1760,7 +1755,6 @@ pt-PT:
     width: Largura
     year: Ano
     you_have_no_orders_yet: Você ainda não tem pedidos
-    your_cart_is_empty: Seu carrinho está vazio
     your_order_is_empty_add_product: Seu pedido está vazio, por favor, pesquise e adicione um produto acima
     zip: Fecho eclair
     zipcode: Código postal

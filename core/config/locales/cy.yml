@@ -694,11 +694,9 @@ cy:
       return_authorization:
         product: Cynnyrch
       tab:
-        configuration: Ffurfweddiad
         customer_returns: Ffurflenni Cwsmeriaid
         option_types: Mathau Opsiwn
         orders: Gorchmynion
-        overview: Trosolwg
         products: Cynhyrchion
         promotion_categories: Categorïau Hyrwyddo
         promotions: Hyrwyddiadau
@@ -1707,8 +1705,6 @@ cy:
     special_instructions: Cyfarwyddiadau Arbennig
     split: Hollti
     spree_gateway_error_flash_for_checkout: Roedd problem gyda'ch gwybodaeth dalu. Gwiriwch eich gwybodaeth a rhoi cynnig arall arni.
-    ssl:
-      change_protocol: Newid i ddefnyddio HTTP (yn hytrach na HTTPS) a rhoi cynnig arall ar y cais hwn.
     start: Dechrau
     starting_from: Yn dechrau am
     state: Nodwch
@@ -1908,7 +1904,6 @@ cy:
     use_existing_cc: Defnyddiwch gerdyn sy'n bodoli ar ffeil
     use_new_cc: Defnyddiwch gerdyn newydd
     use_new_cc_or_payment_method: Defnyddiwch gerdyn / dull talu newydd
-    use_s3: Defnyddiwch Amazon S3 ar gyfer Delweddau
     used: Defnyddir
     user: Defnyddiwr
     user_not_found: Ni ddaethpwyd o hyd i'r defnyddiwr
@@ -1936,7 +1931,6 @@ cy:
     width: Lled
     year: Blwyddyn
     you_have_no_orders_yet: Nid oes gennych unrhyw archebion eto
-    your_cart_is_empty: Mae'ch trol yn wag
     your_order_is_empty_add_product: Mae eich archeb yn wag, chwiliwch am ac ychwanegwch gynnyrch uchod
     zip: Zip
     zipcode: Côd post

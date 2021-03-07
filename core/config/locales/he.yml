@@ -530,11 +530,9 @@ he:
       return_authorization:
         product: מוצר
       tab:
-        configuration: תְצוּרָה
         customer_returns: החזרות של לקוחות
         option_types: סוגי אפשרויות
         orders: הזמנות
-        overview: סקירה כללית
         products: מוצרים
         promotion_categories: קטגוריות קידום
         promotions: מבצעים
@@ -1531,8 +1529,6 @@ he:
     special_instructions: הוראות מיוחדות
     split: לְפַצֵל
     spree_gateway_error_flash_for_checkout: הייתה בעיה במידע התשלום שלך. אנא בדוק את המידע שלך ונסה שוב.
-    ssl:
-      change_protocol: עבור לשימוש ב- HTTP (ולא ב- HTTPS) ונסה שוב בקשה זו.
     start: הַתחָלָה
     starting_from: מתחיל ב
     state: מדינה
@@ -1732,7 +1728,6 @@ he:
     use_existing_cc: השתמש בכרטיס קיים בתיק
     use_new_cc: השתמש בכרטיס חדש
     use_new_cc_or_payment_method: השתמש בכרטיס / אמצעי תשלום חדש
-    use_s3: השתמש באמזון S3 לתמונות
     used: בשימוש
     user: מִשׁתַמֵשׁ
     user_not_found: המשתמש לא נמצא
@@ -1760,7 +1755,6 @@ he:
     width: רוֹחַב
     year: שָׁנָה
     you_have_no_orders_yet: אין לך עדיין הזמנות
-    your_cart_is_empty: העגלה שלך ריקה
     your_order_is_empty_add_product: ההזמנה שלך ריקה, אנא חפש והוסף מוצר למעלה
     zip: רוכסן
     zipcode: מיקוד
