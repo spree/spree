@@ -1434,6 +1434,7 @@ af:
     street_address: Straatadres
     street_address_2: Straatadres (vervolg)
     subtotal: subtotaal
+    subtract: Trek af
     success: Sukses
     successfully_created: "%{resource} is suksesvol geskep!"
     successfully_removed: "%{resource} is suksesvol verwyder!"

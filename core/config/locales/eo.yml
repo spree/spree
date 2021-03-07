@@ -1434,6 +1434,7 @@ eo:
     street_address: Strata Adreso
     street_address_2: Strata Adreso (daŭrigita)
     subtotal: Subtotalo
+    subtract: Subtrahi
     success: Sukceso
     successfully_created: "%{resource} sukcese kreiĝis!"
     successfully_removed: "%{resource} estis sukcese forigita!"

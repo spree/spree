@@ -1434,6 +1434,7 @@ bn:
     street_address: রাস্তার ঠিকানা
     street_address_2: রাস্তার ঠিকানা (অবিরত)
     subtotal: উপমোটাল
+    subtract: বিয়োগ
     success: সাফল্য
     successfully_created: "%{resource} সফলভাবে তৈরি করা হয়েছে!"
     successfully_removed: "%{resource} সফলভাবে সরানো হয়েছে!"

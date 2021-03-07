@@ -1434,6 +1434,7 @@ en:
     street_address: Street Address
     street_address_2: Street Address (cont'd)
     subtotal: Subtotal
+    subtract: Subtract
     success: Success
     successfully_created: "%{resource} has been successfully created!"
     successfully_removed: "%{resource} has been successfully removed!"

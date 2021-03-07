@@ -1434,6 +1434,7 @@ eu:
     street_address: Helbidea
     street_address_2: Helbidea (jarraian)
     subtotal: Subtotala
+    subtract: Kendu
     success: Arrakasta
     successfully_created: "%{resource} ongi sortu da!"
     successfully_removed: "%{resource} behar bezala kendu da!"

@@ -1434,6 +1434,7 @@ mr-IN:
     street_address: रस्त्याचा पत्ता
     street_address_2: रस्त्याचा पत्ता (चालू)
     subtotal: एकूण
+    subtract: वजा करा
     success: यश
     successfully_created: "%{resource} यशस्वीरित्या तयार केले गेले आहे!"
     successfully_removed: "%{resource} यशस्वीरित्या काढला गेला आहे!"

@@ -1434,6 +1434,7 @@ kn:
     street_address: ರಸ್ತೆ ವಿಳಾಸ
     street_address_2: ರಸ್ತೆ ವಿಳಾಸ (cont'd)
     subtotal: ಒಟ್ಟು ಮೊತ್ತ
+    subtract: ಕಳೆಯಿರಿ
     success: ಯಶಸ್ಸು
     successfully_created: "%{resource} ಅನ್ನು ಯಶಸ್ವಿಯಾಗಿ ರಚಿಸಲಾಗಿದೆ!"
     successfully_removed: "%{resource} ಅನ್ನು ಯಶಸ್ವಿಯಾಗಿ ತೆಗೆದುಹಾಕಲಾಗಿದೆ!"

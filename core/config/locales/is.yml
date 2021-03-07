@@ -1434,6 +1434,7 @@ is:
     street_address: Heimilisfang
     street_address_2: Heimilisfang (frh.)
     subtotal: Samtals
+    subtract: Dragðu frá
     success: Árangur
     successfully_created: vel hefur verið búið til %{resource}!
     successfully_removed: tókst að fjarlægja %{resource}!

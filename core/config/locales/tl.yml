@@ -1434,6 +1434,7 @@ tl:
     street_address: Address ng kalye
     street_address_2: Address ng Kalye (karagdagan)
     subtotal: Subtotal
+    subtract: Ibawas
     success: Tagumpay
     successfully_created: matagumpay na nilikha ang %{resource}!
     successfully_removed: matagumpay na naalis ang %{resource}!

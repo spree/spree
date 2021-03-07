@@ -1434,6 +1434,7 @@ hu:
     street_address: Cím
     street_address_2: Utca címe (folytatás)
     subtotal: Részösszeg
+    subtract: Kivonás
     success: Siker
     successfully_created: A %{resource} sikeresen létrehozva!
     successfully_removed: "%{resource} sikeresen eltávolítva!"

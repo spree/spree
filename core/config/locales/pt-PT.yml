@@ -1434,6 +1434,7 @@ pt-PT:
     street_address: Endereço
     street_address_2: Endereço (continuação)
     subtotal: Subtotal
+    subtract: Subtrair
     success: Sucesso
     successfully_created: "%{resource} foi criado com sucesso!"
     successfully_removed: "%{resource} foi removido com sucesso!"

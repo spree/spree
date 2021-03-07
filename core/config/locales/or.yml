@@ -1434,6 +1434,7 @@ or:
     street_address: ରାସ୍ତା ଠିକଣା
     street_address_2: ଗଳି ଠିକଣା (cont'd)
     subtotal: ସବଟୋଟାଲ୍ |
+    subtract: ବିତରଣ କରନ୍ତୁ |
     success: ସଫଳତା
     successfully_created: "%{resource} ସଫଳତାର ସହିତ ସୃଷ୍ଟି ହୋଇଛି!"
     successfully_removed: "%{resource} ସଫଳତାର ସହିତ ଅପସାରିତ ହୋଇଛି!"

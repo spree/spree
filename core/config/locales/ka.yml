@@ -1434,6 +1434,7 @@ ka:
     street_address: Ქუჩის მისამართი
     street_address_2: ქუჩის მისამართი (გაგრძელება)
     subtotal: ქვეტოტალი
+    subtract: გამოკლება
     success: წარმატება
     successfully_created: "%{resource} წარმატებით შეიქმნა!"
     successfully_removed: "%{resource} წარმატებით მოიხსნა!"

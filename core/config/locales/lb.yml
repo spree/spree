@@ -1434,6 +1434,7 @@ lb:
     street_address: Strooss Adress
     street_address_2: Strooss Adress (weider)
     subtotal: Subtotal
+    subtract: Ofzéien
     success: Erfolleg
     successfully_created: "%{resource} gouf erfollegräich erstallt!"
     successfully_removed: "%{resource} gouf erfollegräich geläscht!"

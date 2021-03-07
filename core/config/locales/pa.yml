@@ -1434,6 +1434,7 @@ pa:
     street_address: ਸੜਕ ਦਾ ਪਤਾ
     street_address_2: ਗਲੀ ਦਾ ਪਤਾ (ਜਾਰੀ)
     subtotal: ਕੁਲ
+    subtract: ਘਟਾਓ
     success: ਸਫਲਤਾ
     successfully_created: "%{resource} ਸਫਲਤਾਪੂਰਵਕ ਬਣਾਇਆ ਗਿਆ ਹੈ!"
     successfully_removed: "%{resource} ਸਫਲਤਾਪੂਰਕ ਹਟਾ ਦਿੱਤਾ ਗਿਆ ਹੈ!"

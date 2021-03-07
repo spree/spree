@@ -1434,6 +1434,7 @@ tt:
     street_address: Урам адресы
     street_address_2: Урам адресы (дәвамы)
     subtotal: Субтотал
+    subtract: Алыну
     success: Уңыш
     successfully_created: "%{resource} уңышлы булдырылды!"
     successfully_removed: "%{resource} уңышлы бетерелде!"

@@ -1606,6 +1606,7 @@ cy:
     street_address: Cyfeiriad stryd
     street_address_2: Cyfeiriad Stryd (parhad)
     subtotal: Is-gyfanswm
+    subtract: Tynnu
     success: Llwyddiant
     successfully_created: mae %{resource} wedi'i greu'n llwyddiannus!
     successfully_removed: Mae %{resource} wedi'i dynnu'n llwyddiannus!

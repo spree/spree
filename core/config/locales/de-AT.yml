@@ -1434,6 +1434,7 @@ de-AT:
     street_address: Adresse
     street_address_2: Straße (Fortsetzung)
     subtotal: Zwischensumme
+    subtract: Subtrahieren
     success: Erfolg
     successfully_created: "%{resource} wurde erfolgreich erstellt!"
     successfully_removed: "%{resource} wurde erfolgreich entfernt!"

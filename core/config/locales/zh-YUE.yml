@@ -1434,6 +1434,7 @@ zh-YUE:
     street_address: 街道地址
     street_address_2: 街道地址（续）
     subtotal: 小计
+    subtract: 减去
     success: 成功
     successfully_created: "%{resource}已成功创建！"
     successfully_removed: "%{resource}已成功删除！"

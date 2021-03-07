@@ -1434,6 +1434,7 @@ az:
     street_address: Küçə ünvanı
     street_address_2: Küçə Ünvanı (davam edir)
     subtotal: Cəmi
+    subtract: Çıxarın
     success: Uğur
     successfully_created: "%{resource} uğurla yaradıldı!"
     successfully_removed: "%{resource} uğurla silindi!"

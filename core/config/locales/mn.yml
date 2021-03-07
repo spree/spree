@@ -1434,6 +1434,7 @@ mn:
     street_address: Гудамжны хаяг
     street_address_2: Гудамжны хаяг (үргэлжлэл)
     subtotal: Нийт дүн
+    subtract: Хасах
     success: Амжилт
     successfully_created: "%{resource} амжилттай бүтээгдсэн!"
     successfully_removed: "%{resource} амжилттай устгагдлаа!"

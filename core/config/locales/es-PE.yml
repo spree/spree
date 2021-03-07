@@ -1434,6 +1434,7 @@ es-PE:
     street_address: Dirección
     street_address_2: Dirección postal (continuación)
     subtotal: Total parcial
+    subtract: Sustraer
     success: Éxito
     successfully_created: "¡%{resource} se ha creado correctamente!"
     successfully_removed: "¡%{resource} se ha eliminado correctamente!"

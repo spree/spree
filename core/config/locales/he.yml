@@ -1434,6 +1434,7 @@ he:
     street_address: כתובת רחוב
     street_address_2: כתובת רחוב (המשך)
     subtotal: סך הכל
+    subtract: להחסיר
     success: הַצלָחָה
     successfully_created: "%{resource} נוצר בהצלחה!"
     successfully_removed: "%{resource} הוסר בהצלחה!"

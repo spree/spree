@@ -1434,6 +1434,7 @@ mk:
     street_address: Улична адреса
     street_address_2: Улична адреса (продолжение)
     subtotal: Субтотал
+    subtract: Одземи
     success: Успех
     successfully_created: "%{resource} е успешно создаден!"
     successfully_removed: "%{resource} е успешно отстранет!"

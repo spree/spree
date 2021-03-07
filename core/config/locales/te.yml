@@ -1434,6 +1434,7 @@ te:
     street_address: చిరునామా
     street_address_2: వీధి చిరునామా (cont'd)
     subtotal: మొత్తం
+    subtract: తీసివేయండి
     success: విజయం
     successfully_created: "%{resource} విజయవంతంగా సృష్టించబడింది!"
     successfully_removed: "%{resource} విజయవంతంగా తొలగించబడింది!"

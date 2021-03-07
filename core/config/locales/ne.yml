@@ -1434,6 +1434,7 @@ ne:
     street_address: सडक ठेगाना
     street_address_2: सडक ठेगाना (जारी)
     subtotal: उप कूल
+    subtract: घटाउ
     success: सफलता
     successfully_created: "%{resource} सफलतापूर्वक सिर्जना गरिएको छ!"
     successfully_removed: "%{resource} सफलतापूर्वक हटाईएको छ!"

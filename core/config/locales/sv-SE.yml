@@ -1434,6 +1434,7 @@ sv-SE:
     street_address: Gatuadress
     street_address_2: Gatuadress (forts.)
     subtotal: Delsumma
+    subtract: Subtrahera
     success: Framgång
     successfully_created: "%{resource} har skapats!"
     successfully_removed: "%{resource} har tagits bort!"

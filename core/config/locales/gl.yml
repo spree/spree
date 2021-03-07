@@ -1434,6 +1434,7 @@ gl:
     street_address: Enderezo
     street_address_2: Enderezo postal (continuación)
     subtotal: Subtotal
+    subtract: Restar
     success: Éxito
     successfully_created: "%{resource} creouse correctamente."
     successfully_removed: "%{resource} eliminouse correctamente."

@@ -1520,6 +1520,7 @@ sl:
     street_address: Naslov ceste
     street_address_2: Ulični naslov (nadaljevanje)
     subtotal: Vmesni seštevek
+    subtract: Odštej
     success: Uspeh
     successfully_created: "%{resource} je bil uspešno ustvarjen!"
     successfully_removed: "%{resource} je bil uspešno odstranjen!"

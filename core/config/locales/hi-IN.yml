@@ -1434,6 +1434,7 @@ hi-IN:
     street_address: गली का पता
     street_address_2: सड़क का पता (cont'd)
     subtotal: उप-योग
+    subtract: घटाना
     success: सफलता
     successfully_created: "%{resource} को सफलतापूर्वक बनाया गया है!"
     successfully_removed: "%{resource} को सफलतापूर्वक हटा दिया गया है!"

@@ -1434,6 +1434,7 @@ ms:
     street_address: Alamat Jalan
     street_address_2: Alamat Jalan (samb)
     subtotal: jumlah kecil
+    subtract: Kurangkan
     success: Kejayaan
     successfully_created: "%{resource} telah berjaya dibuat!"
     successfully_removed: "%{resource} telah berjaya dikeluarkan!"

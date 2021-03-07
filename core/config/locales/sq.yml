@@ -1434,6 +1434,7 @@ sq:
     street_address: Adresa e rrugës
     street_address_2: Adresa e Rrugës (vazhduar)
     subtotal: Nëntotali
+    subtract: Zbrit
     success: Sukses
     successfully_created: "%{resource} është krijuar me sukses!"
     successfully_removed: "%{resource} është hequr me sukses!"

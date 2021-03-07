@@ -1434,6 +1434,7 @@ ur:
     street_address: گلی کا پتہ
     street_address_2: گلی کا پتہ (جاری ہے)
     subtotal: کل
+    subtract: منہا کرنا
     success: کامیابی
     successfully_created: "%{resource} کامیابی کے ساتھ تشکیل دے دیا گیا ہے!"
     successfully_removed: "%{resource} کامیابی کے ساتھ ہٹا دیا گیا ہے!"

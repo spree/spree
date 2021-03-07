@@ -1434,6 +1434,7 @@ lo:
     street_address: ທີ່​ຢູ່​ຖະ​ຫນົນ
     street_address_2: ທີ່ຢູ່ຖະ ໜົນ (ຕໍ່ເນື່ອງ)
     subtotal: Subtotal
+    subtract: ການຫັກລົບ
     success: ຄວາມ​ສໍາ​ເລັດ
     successfully_created: "%{resource} ໄດ້ສ້າງ ສຳ ເລັດແລ້ວ!"
     successfully_removed: "%{resource} ຖືກລຶບອອກແລ້ວ!"

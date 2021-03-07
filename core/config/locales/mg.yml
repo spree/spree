@@ -1434,6 +1434,7 @@ mg:
     street_address: Adiresin'ny Làlana
     street_address_2: Adiresin'ny arabe (tohiny)
     subtotal: Subtotal
+    subtract: analana
     success: FETY
     successfully_created: "%{resource} vita soa aman-tsara!"
     successfully_removed: "%{resource} nesorina soa aman-tsara!"

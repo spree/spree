@@ -1434,6 +1434,7 @@ ml:
     street_address: സ്ട്രീറ്റ് വിലാസം
     street_address_2: തെരുവ് വിലാസം (cont'd)
     subtotal: ആകെത്തുക
+    subtract: കുറയ്ക്കുക
     success: വിജയം
     successfully_created: "%{resource} വിജയകരമായി സൃഷ്ടിച്ചു!"
     successfully_removed: "%{resource} വിജയകരമായി നീക്കംചെയ്‌തു!"

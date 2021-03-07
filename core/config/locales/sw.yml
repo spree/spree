@@ -1434,6 +1434,7 @@ sw:
     street_address: Anuani ya mtaa
     street_address_2: Anwani ya Mtaa (imeendelea)
     subtotal: jumla ndogo
+    subtract: Ondoa
     success: Mafanikio
     successfully_created: "%{resource} imeundwa kwa mafanikio!"
     successfully_removed: "%{resource} imeondolewa kwa mafanikio!"

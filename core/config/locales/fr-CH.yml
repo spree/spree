@@ -1434,6 +1434,7 @@ fr-CH:
     street_address: Adresse de rue
     street_address_2: Adresse postale (suite)
     subtotal: Total
+    subtract: Soustraire
     success: Succès
     successfully_created: "%{resource} a été créé avec succès!"
     successfully_removed: "%{resource} a été supprimé avec succès!"

@@ -1434,6 +1434,7 @@ el-CY:
     street_address: Διεύθυνση
     street_address_2: Οδός (συνέχεια)
     subtotal: ΜΕΡΙΚΟ ΣΥΝΟΛΟ
+    subtract: Αφαιρώ
     success: Επιτυχία
     successfully_created: Το %{resource} δημιουργήθηκε με επιτυχία!
     successfully_removed: Το %{resource} καταργήθηκε με επιτυχία!

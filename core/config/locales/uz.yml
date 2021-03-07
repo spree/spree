@@ -1434,6 +1434,7 @@ uz:
     street_address: Ko'cha manzili
     street_address_2: Ko'cha manzili (davom etmoqda)
     subtotal: Jami
+    subtract: Chiqaring
     success: Muvaffaqiyat
     successfully_created: "%{resource} muvaffaqiyatli yaratildi!"
     successfully_removed: "%{resource} muvaffaqiyatli olib tashlandi!"

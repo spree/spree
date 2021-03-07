@@ -1434,6 +1434,7 @@ it-CH:
     street_address: Indirizzo
     street_address_2: Indirizzo stradale (continua)
     subtotal: totale parziale
+    subtract: Sottrarre
     success: Successo
     successfully_created: "%{resource} è stato creato con successo!"
     successfully_removed: "%{resource} è stato rimosso con successo!"

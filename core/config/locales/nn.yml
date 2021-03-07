@@ -1434,6 +1434,7 @@ nn:
     street_address: Gateadresse
     street_address_2: Gateadresse (forts.)
     subtotal: Delsum
+    subtract: Trekke fra
     success: Suksess
     successfully_created: "%{resource} har blitt opprettet!"
     successfully_removed: "%{resource} er fjernet!"

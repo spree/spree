@@ -1434,6 +1434,7 @@ ug:
     street_address: كوچا ئادرېسى
     street_address_2: كوچا ئادرېسى (داۋامى)
     subtotal: Subtotal
+    subtract: ئېلىش
     success: مۇۋەپپەقىيەت
     successfully_created: "%{resource} مۇۋەپپەقىيەتلىك قۇرۇلدى!"
     successfully_removed: "%{resource} مۇۋەپپەقىيەتلىك ئۆچۈرۈلدى!"

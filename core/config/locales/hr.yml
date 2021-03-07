@@ -1520,6 +1520,7 @@ hr:
     street_address: Adresa ulice
     street_address_2: Adresa (nastavak)
     subtotal: Međuzbir
+    subtract: Oduzeti
     success: Uspjeh
     successfully_created: "%{resource} je uspješno stvoren!"
     successfully_removed: "%{resource} je uspješno uklonjen!"
