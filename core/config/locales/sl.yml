@@ -938,10 +938,6 @@ sl:
     generate_code: Ustvari kodo kupona
     get_back_to_the: Vrnite se na
     go_to_category: Pojdi v kategorijo
-    go_to_facebook: Pojdi na facebook
-    go_to_homepage: Pojdite na domačo stran
-    go_to_instagram: Pojdi na instagram
-    go_to_twitter: Pojdi na twitter
     guest_checkout: Gost Checkout
     guest_user_account: Odjava kot gost
     has_no_shipped_units: nima odpremljenih enot

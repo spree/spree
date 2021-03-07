@@ -14,9 +14,11 @@ module Spree
 
           if user || email
             if !completed_orders.blank? && completed_orders.first != order
+              # i18n-tasks-use I18n.t('spree.eligibility_errors.messages.not_first_order')
               eligibility_errors.add(:base, eligibility_error_message(:not_first_order))
             end
           else
+            # i18n-tasks-use I18n.t('spree.eligibility_errors.messages.no_user_or_email_specified')
             eligibility_errors.add(:base, eligibility_error_message(:no_user_or_email_specified))
           end
 

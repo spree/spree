@@ -938,10 +938,6 @@ bs:
     generate_code: Generirajte kod kupona
     get_back_to_the: Vrati se na
     go_to_category: Idite u kategoriju
-    go_to_facebook: Idite na facebook
-    go_to_homepage: Idite na početnu stranicu
-    go_to_instagram: Idite na instagram
-    go_to_twitter: Idite na twitter
     guest_checkout: Gost Checkout
     guest_user_account: Odjava kao gost
     has_no_shipped_units: nema isporučene jedinice

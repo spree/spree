@@ -27,14 +27,18 @@ module Spree
 
           if preferred_match_policy == 'all'
             unless eligible_products.all? { |p| order.products.include?(p) }
+              # i18n-tasks-use I18n.t('spree.eligibility_errors.messages.missing_product')
               eligibility_errors.add(:base, eligibility_error_message(:missing_product))
             end
           elsif preferred_match_policy == 'any'
             unless order.products.any? { |p| eligible_products.include?(p) }
+               # i18n-tasks-use I18n.t('spree.eligibility_errors.messages.no_applicable_products')
               eligibility_errors.add(:base, eligibility_error_message(:no_applicable_products))
             end
           else
             unless order.products.none? { |p| eligible_products.include?(p) }
+
+              # i18n-tasks-use I18n.t('spree.eligibility_errors.messages.has_excluded_product')
               eligibility_errors.add(:base, eligibility_error_message(:has_excluded_product))
             end
           end

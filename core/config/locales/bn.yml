@@ -852,10 +852,6 @@ bn:
     generate_code: কুপন কোড উত্পন্ন করুন
     get_back_to_the: ফিরে যান
     go_to_category: বিভাগে যান
-    go_to_facebook: ফেসবুকে যাও
-    go_to_homepage: হোমপেজে যান
-    go_to_instagram: ইনস্টাগ্রামে যান
-    go_to_twitter: টুইটারে যান
     guest_checkout: অতিথি পাস
     guest_user_account: অতিথি হিসাবে চেকআউট করুন
     has_no_shipped_units: কোনও শিপড ইউনিট নেই

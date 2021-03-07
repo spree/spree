@@ -17,11 +17,13 @@ module Spree
         def eligible?(order, _options = {})
           if preferred_match_policy == 'all'
             unless (taxons.to_a - taxons_in_order_including_parents(order)).empty?
+              # i18n-tasks-use I18n.t('spree.eligibility_errors.messages.missing_taxon')
               eligibility_errors.add(:base, eligibility_error_message(:missing_taxon))
             end
           else
             order_taxons = taxons_in_order_including_parents(order)
             unless taxons.any? { |taxon| order_taxons.include? taxon }
+              # i18n-tasks-use I18n.t('spree.eligibility_errors.messages.no_matching_taxons')
               eligibility_errors.add(:base, eligibility_error_message(:no_matching_taxons))
             end
           end

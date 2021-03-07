@@ -852,10 +852,6 @@ mk:
     generate_code: Генерирајте го кодот за купон
     get_back_to_the: Врати се на
     go_to_category: Одете во категоријата
-    go_to_facebook: Одете на Фејсбук
-    go_to_homepage: Одете на почетната страница
-    go_to_instagram: Одете на инстаграм
-    go_to_twitter: Одете на Твитер
     guest_checkout: Наплата за гости
     guest_user_account: Плаќање како гостин
     has_no_shipped_units: нема испорачани единици
