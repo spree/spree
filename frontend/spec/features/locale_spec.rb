@@ -38,7 +38,7 @@ describe 'setting locale', type: :feature, js: true do
     context 'locale dropdown' do
       before { open_i18n_menu }
 
-      it { expect(page).to have_select('switch_to_locale', selected: 'Français (FR)') }
+      it { expect(page).to have_select('switch_to_locale', selected: Spree::Store.locale_language_name('fr')) }
     end
 
     it { expect(page.evaluate_script('SPREE_LOCALE')).to eq('fr') }
@@ -97,7 +97,7 @@ describe 'setting locale', type: :feature, js: true do
   context 'via UI' do
     before do
       visit spree.cart_path
-      switch_to_locale('Français (FR)')
+      switch_to_locale(Spree::Store.locale_language_name('fr'))
     end
 
     it { expect(page).to have_current_path('/fr/cart') }
