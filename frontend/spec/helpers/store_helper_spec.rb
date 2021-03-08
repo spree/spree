@@ -7,9 +7,9 @@ module Spree
 
     before do
       I18n.backend.store_translations(:de,
-        spree: {
-          is_fully_translated: true
-        })
+                                      spree: {
+                                        is_fully_translated: true
+                                      })
     end
 
     describe '#stores' do
@@ -34,8 +34,8 @@ module Spree
     end
 
     describe '#store_locale_name' do
-      it { expect(store_locale_name(Spree::Store.default)).to eq(Spree::Store.locale_language_name('en', 'en')) }
-      it { expect(store_locale_name(eu_store)).to eq(Spree::Store.locale_language_name('en', default_locale)) }
+      it { expect(store_locale_name(Spree::Store.default)).to eq(Spree::Store.locale_language_name('en')) }
+      it { expect(store_locale_name(eu_store)).to eq(Spree::Store.locale_language_name('en')) }
       it { expect { store_locale_name(nil) }.not_to raise_error }
     end
 

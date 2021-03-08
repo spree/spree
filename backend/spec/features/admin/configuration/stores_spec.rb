@@ -32,7 +32,7 @@ describe 'Stores admin', type: :feature, js: true do
       expect(store_table).to have_content('My Store')
       expect(store_table).to have_content('example.com')
       expect(store_table).to have_content('EUR, USD')
-      expect(store_table).to have_content("#{Spree::Store.locale_language_name('en', 'en')}, #{Spree::Store.locale_language_name('fr', 'en')}")
+      expect(store_table).to have_content("#{Spree::Store.locale_language_name('en')}, #{Spree::Store.locale_language_name('fr')}")
     end
   end
 
@@ -94,7 +94,7 @@ describe 'Stores admin', type: :feature, js: true do
       select2_search 'GBP', from: 'Supported Currencies'
       select2_select 'GBP', from: 'Supported Currencies'
 
-      select2 Spree::Store.locale_language_name('en', 'en'), from: 'Default locale'
+      select2 Spree::Store.locale_language_name('en'), from: 'Default locale'
 
       click_button 'Create'
 

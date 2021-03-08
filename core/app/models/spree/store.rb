@@ -46,13 +46,13 @@ module Spree
       end
     end
 
-    def self.locale_language_name(locale, current_locale)
-      ensure_locale_as_symbol = locale.to_sym
-      ensure_current_locale_as_symbol = current_locale
-      falback_locale = locale.slice(0..1).to_sym
+    def self.locale_language_name(locale)
+      locale_as_symbol = locale.to_sym
+      falback_locale = locale.to_s.slice(0..1).to_sym
+      store_locale = default.default_locale.to_sym
 
-      returned_language_name = ensure_locale_as_symbol.localize(ensure_current_locale_as_symbol).as_language_code || falback_locale.localize(ensure_current_locale_as_symbol).as_language_code
-      "#{returned_language_name.to_s.capitalize} (#{locale.to_s})"
+      lang_name = locale_as_symbol.localize(store_locale).as_language_code || falback_locale.localize(store_locale).as_language_code
+      "#{lang_name.to_s.capitalize} (#{locale})"
     end
 
     def self.available_locales
