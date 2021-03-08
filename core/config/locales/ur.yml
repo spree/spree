@@ -1514,12 +1514,7 @@ ur:
       choose_users: صارفین کا انتخاب کریں
     users: صارفین
     validation:
-      cannot_be_less_than_shipped_units: بھیجے گئے یونٹوں کی تعداد سے کم نہیں ہوسکتی ہے۔
-      cannot_destroy_line_item_as_inventory_units_have_shipped: لائن آئٹم کو تباہ نہیں کیا جاسکتا ہے کیونکہ کچھ انوینٹری یونٹ بھیج چکے ہیں۔
-      exceeds_available_stock: دستیاب اسٹاک سے تجاوز براہ کرم یقینی بنائیں کہ لائن آئٹمز میں ایک مناسب مقدار موجود ہے۔
-      is_too_large: بہت بڑا ہے - ہاتھ پر اسٹاک درخواست کی مقدار کو پورا نہیں کرسکتا!
       must_be_int: ایک عدد صحیح ہونا چاہئے
-      must_be_non_negative: ایک غیر منفی قدر ہونی چاہئے
       unpaid_amount_not_zero: 'رقم کی مکمل ادائیگی نہیں کی گئی تھی۔ پھر بھی واجب الادا: %{amount}'
     value: قدر
     variant: متغیر

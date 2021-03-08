@@ -1514,12 +1514,7 @@ lo:
       choose_users: ເລືອກຜູ້ໃຊ້
     users: ຜູ້ໃຊ້
     validation:
-      cannot_be_less_than_shipped_units: ບໍ່ສາມາດຈະຫນ້ອຍກ່ວາຈໍານວນຂອງເຄື່ອງສົ່ງ.
-      cannot_destroy_line_item_as_inventory_units_have_shipped: ບໍ່ສາມາດ ທຳ ລາຍສິນຄ້າໃນເສັ້ນໄດ້ເນື່ອງຈາກບາງຫົວ ໜ່ວຍ ສິນຄ້າຄົງຄັງໄດ້ຂົນສົ່ງ.
-      exceeds_available_stock: ເກີນຮຸ້ນທີ່ມີຢູ່. ກະລຸນາຮັບປະກັນລາຍການໃນສາຍມີປະລິມານທີ່ຖືກຕ້ອງ.
-      is_too_large: ມີຂະ ໜາດ ໃຫຍ່ເກີນໄປ - ຫຸ້ນຢູ່ໃນມືບໍ່ສາມາດກວມເອົາປະລິມານທີ່ຮ້ອງຂໍ!
       must_be_int: ຕ້ອງເປັນຕົວເລກ ໜຶ່ງ
-      must_be_non_negative: ຕ້ອງເປັນຄຸນຄ່າທີ່ບໍ່ແມ່ນລົບ
       unpaid_amount_not_zero: 'ຈຳ ນວນເງິນບໍ່ໄດ້ຮັບການຕອບແທນຢ່າງເຕັມທີ່. ຍັງຮອດເວລາ: %{amount}'
     value: ຄຸນຄ່າ
     variant: ຕົວແປ

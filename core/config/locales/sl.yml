@@ -1600,12 +1600,7 @@ sl:
       choose_users: Izberite uporabnike
     users: Uporabniki
     validation:
-      cannot_be_less_than_shipped_units: ne sme biti manjše od števila odposlanih enot.
-      cannot_destroy_line_item_as_inventory_units_have_shipped: Elementa vrstice ni mogoče uničiti, saj so nekatere enote oglasnega prostora poslane.
-      exceeds_available_stock: presega razpoložljivo zalogo. Preverite, ali imajo postavke v vrsticah veljavno količino.
-      is_too_large: je prevelika - zaloga pri roki ne more pokriti zahtevane količine!
       must_be_int: mora biti celo število
-      must_be_non_negative: mora biti negativna vrednost
       unpaid_amount_not_zero: 'Znesek ni bil povrnjen v celoti. Še vedno zapadlo: %{amount}'
     value: Vrednost
     variant: Varianta

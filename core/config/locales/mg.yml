@@ -1514,12 +1514,7 @@ mg:
       choose_users: Misafidiana mpampiasa
     users: mpampiasa
     validation:
-      cannot_be_less_than_shipped_units: tsy mety latsaky ny isan'ny singa nalefa.
-      cannot_destroy_line_item_as_inventory_units_have_shipped: Tsy afaka manimba ny singa andalana satria efa nandefa ireo singa fitahirizana sasany.
-      exceeds_available_stock: mihoatra ny tahiry misy. Azafady mba alao antoka fa misy isa manan-kery ao anaty laharana.
-      is_too_large: lehibe loatra - ny tahiry eo an-tanana dia tsy afaka manarona habetsahana nangatahina!
       must_be_int: tsy maintsy integer
-      must_be_non_negative: dia tokony ho sanda tsy miiba
       unpaid_amount_not_zero: 'Ny vola dia tsy naverina tamin''ny laoniny. Mbola tokony horaisina: %{amount}'
     value: sarobidy
     variant: Variant

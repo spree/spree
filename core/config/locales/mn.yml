@@ -1514,12 +1514,7 @@ mn:
       choose_users: Хэрэглэгчдийг сонгоно уу
     users: Хэрэглэгчид
     validation:
-      cannot_be_less_than_shipped_units: ачуулсан нэгжийн тооноос бага байж болохгүй.
-      cannot_destroy_line_item_as_inventory_units_have_shipped: Бараа материалын зарим нэгж илгээсэн тул мөрийн зүйлийг устгах боломжгүй.
-      exceeds_available_stock: бэлэн байгаа хувьцаанаас хэтэрсэн байна. Шугамын зүйлс хүчинтэй тоо хэмжээтэй байгаа эсэхийг шалгана уу.
-      is_too_large: хэтэрхий том байна - гар дээр байгаа хувьцаа хүссэн хэмжээгээ нөхөж чадахгүй!
       must_be_int: бүхэл тоо байх ёстой
-      must_be_non_negative: сөрөг биш утга байх ёстой
       unpaid_amount_not_zero: 'Хэмжээг бүрэн буцааж өгөөгүй байна. Ажиллах хугацаа: %{amount}'
     value: Утга
     variant: Хувилбар

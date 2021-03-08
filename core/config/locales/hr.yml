@@ -1600,12 +1600,7 @@ hr:
       choose_users: Odaberite korisnike
     users: Korisnici
     validation:
-      cannot_be_less_than_shipped_units: ne može biti manji od broja isporučenih jedinica.
-      cannot_destroy_line_item_as_inventory_units_have_shipped: Stavku retka nije moguće uništiti jer su isporučene neke jedinice inventara.
-      exceeds_available_stock: premašuje raspoložive zalihe. Molimo osigurajte da stavke retka imaju valjanu količinu.
-      is_too_large: je prevelika - zalihe pri ruci ne mogu pokriti traženu količinu!
       must_be_int: mora biti cijeli broj
-      must_be_non_negative: mora biti negativna vrijednost
       unpaid_amount_not_zero: 'Iznos nije u potpunosti nadoknađen. Još uvijek zbog: %{amount}'
     value: Vrijednost
     variant: Varijanta

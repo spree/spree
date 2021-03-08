@@ -1514,12 +1514,7 @@ he:
       choose_users: בחר משתמשים
     users: משתמשים
     validation:
-      cannot_be_less_than_shipped_units: לא יכול להיות פחות ממספר היחידות שנשלחו.
-      cannot_destroy_line_item_as_inventory_units_have_shipped: לא ניתן להרוס פריט מכיוון שחלק מיחידות המלאי נשלחו.
-      exceeds_available_stock: עולה על המלאי הזמין. אנא וודא שלפריטים יש כמות חוקית.
-      is_too_large: גדול מדי - מלאי בהישג יד אינו יכול לכסות את הכמות המבוקשת!
       must_be_int: חייב להיות מספר שלם
-      must_be_non_negative: חייב להיות ערך לא שלילי
       unpaid_amount_not_zero: 'הסכום לא הוחזר במלואו. עדיין בשל: %{amount}'
     value: ערך
     variant: גִרְסָה אַחֶרֶת

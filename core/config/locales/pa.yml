@@ -1514,12 +1514,7 @@ pa:
       choose_users: ਉਪਭੋਗਤਾ ਚੁਣੋ
     users: ਉਪਭੋਗਤਾ
     validation:
-      cannot_be_less_than_shipped_units: ਭੇਜੀਆਂ ਇਕਾਈਆਂ ਦੀ ਗਿਣਤੀ ਤੋਂ ਘੱਟ ਨਹੀਂ ਹੋ ਸਕਦਾ.
-      cannot_destroy_line_item_as_inventory_units_have_shipped: ਲਾਈਨ ਆਈਟਮ ਨੂੰ ਖਤਮ ਨਹੀਂ ਕੀਤਾ ਜਾ ਸਕਦਾ ਕਿਉਂਕਿ ਕੁਝ ਵਸਤੂ ਇਕਾਈਆਂ ਨੇ ਭੇਜਿਆ ਹੈ.
-      exceeds_available_stock: ਉਪਲਬਧ ਸਟਾਕ ਤੋਂ ਵੱਧ ਗਿਆ. ਕਿਰਪਾ ਕਰਕੇ ਇਹ ਸੁਨਿਸ਼ਚਿਤ ਕਰੋ ਕਿ ਲਾਈਨ ਆਈਟਮਾਂ ਵਿੱਚ ਯੋਗ ਮਾਤਰਾ ਹੈ.
-      is_too_large: ਬਹੁਤ ਵੱਡਾ ਹੈ - ਹੱਥ ਦਾ ਸਟਾਕ ਬੇਨਤੀ ਕੀਤੀ ਮਾਤਰਾ ਨੂੰ ਪੂਰਾ ਨਹੀਂ ਕਰ ਸਕਦਾ!
       must_be_int: ਇੱਕ ਪੂਰਨ ਅੰਕ ਹੋਣਾ ਚਾਹੀਦਾ ਹੈ
-      must_be_non_negative: ਇੱਕ ਗੈਰ-ਨਕਾਰਾਤਮਕ ਮੁੱਲ ਹੋਣਾ ਚਾਹੀਦਾ ਹੈ
       unpaid_amount_not_zero: 'ਰਕਮ ਦੀ ਪੂਰੀ ਅਦਾਇਗੀ ਨਹੀਂ ਕੀਤੀ ਗਈ ਸੀ. ਅਜੇ ਵੀ ਬਕਾਇਆ: %{amount}'
     value: ਮੁੱਲ
     variant: ਵੇਰੀਐਂਟ

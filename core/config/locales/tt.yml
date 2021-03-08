@@ -1514,12 +1514,7 @@ tt:
       choose_users: Кулланучыларны сайлагыз
     users: Кулланучылар
     validation:
-      cannot_be_less_than_shipped_units: җибәрелгән агрегатлар саныннан ким була алмый.
-      cannot_destroy_line_item_as_inventory_units_have_shipped: Кайбер инвентаризация бүлекчәләре җибәргәнгә, линия әйберләрен юкка чыгарып булмый.
-      exceeds_available_stock: булган запаслардан артып китә. Зинһар, линия әйберләренең дөрес күләмдә булуына инаныгыз.
-      is_too_large: бик зур - кулдагы запас соралган санны каплый алмый!
       must_be_int: бөтен булырга тиеш
-      must_be_non_negative: тискәре булмаган кыйммәт булырга тиеш
       unpaid_amount_not_zero: 'Сумма тулысынча кайтарылмады. Әле тиеш: %{amount}'
     value: Кыйммәт
     variant: Вариант

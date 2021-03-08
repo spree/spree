@@ -1514,12 +1514,7 @@ pt-PT:
       choose_users: Escolha os usuários
     users: Comercial
     validation:
-      cannot_be_less_than_shipped_units: não pode ser menor que o número de unidades enviadas.
-      cannot_destroy_line_item_as_inventory_units_have_shipped: Não é possível destruir o item de linha porque algumas unidades de estoque foram enviadas.
-      exceeds_available_stock: excede o estoque disponível. Certifique-se de que os itens de linha tenham uma quantidade válida.
-      is_too_large: é muito grande - o estoque disponível não pode cobrir a quantidade solicitada!
       must_be_int: deve ser um inteiro
-      must_be_non_negative: deve ser um valor não negativo
       unpaid_amount_not_zero: 'O valor não foi totalmente reembolsado. Ainda devido: %{amount}'
     value: Valor
     variant: Variante

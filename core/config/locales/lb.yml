@@ -1514,12 +1514,7 @@ lb:
       choose_users: Wielt Benotzer
     users: Benotzer
     validation:
-      cannot_be_less_than_shipped_units: kann net manner sinn wéi d'Zuel vun den Unitéite verschéckt.
-      cannot_destroy_line_item_as_inventory_units_have_shipped: Kann d'Linneartikel net zerstéieren well e puer Inventaire Eenheeten ausgeliwwert goufen.
-      exceeds_available_stock: iwwerschreift verfügbare Lager. Gitt sécher datt d'Linneartikelen eng valabel Quantitéit hunn.
-      is_too_large: ass ze grouss - Stock op der Hand kann net ugefrot Quantitéit decken!
       must_be_int: muss eng ganz Zuel sinn
-      must_be_non_negative: muss en net-negative Wäert sinn
       unpaid_amount_not_zero: 'Betrag gouf net komplett rembourséiert. Nach wéinst: %{amount}'
     value: Wäert
     variant: Variant

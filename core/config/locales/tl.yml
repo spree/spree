@@ -1514,12 +1514,7 @@ tl:
       choose_users: Pumili ng mga gumagamit
     users: Mga gumagamit
     validation:
-      cannot_be_less_than_shipped_units: hindi maaaring mas mababa sa bilang ng mga naipalang yunit.
-      cannot_destroy_line_item_as_inventory_units_have_shipped: Hindi masira ang item sa linya tulad ng naipadala ng ilang mga yunit ng imbentaryo.
-      exceeds_available_stock: lumagpas sa magagamit na stock. Mangyaring tiyakin na ang mga item sa linya ay may wastong dami.
-      is_too_large: ay masyadong malaki - stock sa kamay ay hindi maaaring masakop ang hiniling na dami!
       must_be_int: dapat ay isang integer
-      must_be_non_negative: dapat na isang hindi negatibong halaga
       unpaid_amount_not_zero: 'Ang halaga ay hindi ganap na nabayaran. Dahil pa rin sa: %{amount}'
     value: Halaga
     variant: Iba-iba

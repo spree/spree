@@ -1514,12 +1514,7 @@ it-CH:
       choose_users: Scegli utenti
     users: Utenti
     validation:
-      cannot_be_less_than_shipped_units: non può essere inferiore al numero di unità spedite.
-      cannot_destroy_line_item_as_inventory_units_have_shipped: Impossibile distruggere l'elemento pubblicitario poiché sono state spedite alcune unità di spazio pubblicitario.
-      exceeds_available_stock: supera lo stock disponibile. Assicurati che gli elementi pubblicitari abbiano una quantità valida.
-      is_too_large: è troppo grande - le scorte disponibili non possono coprire la quantità richiesta!
       must_be_int: deve essere un numero intero
-      must_be_non_negative: deve essere un valore non negativo
       unpaid_amount_not_zero: 'L''importo non è stato completamente rimborsato. Ancora in scadenza: %{amount}'
     value: Valore
     variant: Variante

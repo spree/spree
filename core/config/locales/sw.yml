@@ -1514,12 +1514,7 @@ sw:
       choose_users: Chagua watumiaji
     users: Watumiaji
     validation:
-      cannot_be_less_than_shipped_units: haiwezi kuwa chini ya idadi ya vitengo vilivyosafirishwa.
-      cannot_destroy_line_item_as_inventory_units_have_shipped: Haiwezi kuharibu bidhaa kama vile baadhi ya vitengo vya hesabu vimesafirishwa
-      exceeds_available_stock: unazidi hisa zinazopatikana. Tafadhali hakikisha vitu vya laini vina idadi halali.
-      is_too_large: ni kubwa sana - hisa mkononi haiwezi kufunika kiasi kilichoombwa!
       must_be_int: lazima iwe nambari kamili
-      must_be_non_negative: lazima iwe nambari isiyo hasi
       unpaid_amount_not_zero: 'Kiasi hakijarejeshwa kikamilifu. Bado inastahili: %{amount}'
     value: Thamani
     variant: Tofauti

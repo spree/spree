@@ -1514,12 +1514,7 @@ az:
       choose_users: İstifadəçiləri seçin
     users: İstifadəçilər
     validation:
-      cannot_be_less_than_shipped_units: göndərilən vahidlərin sayından az ola bilməz.
-      cannot_destroy_line_item_as_inventory_units_have_shipped: Bəzi inventar vahidləri göndərildiyi üçün sətir elementi məhv edilə bilməz.
-      exceeds_available_stock: mövcud ehtiyatı aşıb. Xahiş edirəm sətir elementlərinin etibarlı miqdarda olmasını təmin edin.
-      is_too_large: çox böyükdür - əldəki stok istənilən miqdarı əhatə edə bilməz!
       must_be_int: bir tam olmalıdır
-      must_be_non_negative: mənfi olmayan bir dəyər olmalıdır
       unpaid_amount_not_zero: 'Məbləğ tam ödənilməyib. Hələ də var: %{amount}'
     value: Dəyər
     variant: Variant

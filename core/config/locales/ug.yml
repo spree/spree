@@ -1514,12 +1514,7 @@ ug:
       choose_users: ئىشلەتكۈچىنى تاللاڭ
     users: ئىشلەتكۈچى
     validation:
-      cannot_be_less_than_shipped_units: توشۇلغان ئورۇن سانىدىن كەم بولسا بولمايدۇ.
-      cannot_destroy_line_item_as_inventory_units_have_shipped: بەزى ئامبار زاپىسى توشۇغانلىقتىن قۇر تۈرنى يوقىتالمايدۇ.
-      exceeds_available_stock: پاي چېكىدىن ئېشىپ كەتتى. قۇر تۈرلىرىنىڭ ئۈنۈملۈك مىقداردا بولۇشىغا كاپالەتلىك قىلىڭ.
-      is_too_large: بەك چوڭ - قولىدىكى پاي تەلەپ قىلىنغان مىقدارنى قاپلىيالمايدۇ!
       must_be_int: چوقۇم پۈتۈن سان بولۇشى كېرەك
-      must_be_non_negative: چوقۇم مەنپىي بولمىغان قىممەت بولۇشى كېرەك
       unpaid_amount_not_zero: 'سومما تولۇق قايتۇرۇلمىدى. يەنىلا ۋاقتى: %{amount}'
     value: قىممەت
     variant: Variant

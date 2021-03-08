@@ -1514,12 +1514,7 @@ sq:
       choose_users: Zgjidhni përdoruesit
     users: Përdoruesit
     validation:
-      cannot_be_less_than_shipped_units: nuk mund të jetë më i vogël se numri i njësive të dërguara.
-      cannot_destroy_line_item_as_inventory_units_have_shipped: Nuk mund të shkatërrojë artikullin e linjës pasi disa njësi të inventarit janë dërguar.
-      exceeds_available_stock: tejkalon aksionet e disponueshme. Ju lutemi sigurohuni që artikujt e linjës të kenë një sasi të vlefshme.
-      is_too_large: është shumë i madh - stoku në dispozicion nuk mund të mbulojë sasinë e kërkuar!
       must_be_int: duhet të jetë një numër i plotë
-      must_be_non_negative: duhet të jetë një vlerë jo-negative
       unpaid_amount_not_zero: 'Shuma nuk ishte rimbursuar plotësisht. Ende afati i fundit: %{amount}'
     value: Vlera
     variant: Variant

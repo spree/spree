@@ -1514,12 +1514,7 @@ hu:
       choose_users: Válassza ki a felhasználókat
     users: Felhasználók
     validation:
-      cannot_be_less_than_shipped_units: nem lehet kevesebb, mint a leszállított egységek száma.
-      cannot_destroy_line_item_as_inventory_units_have_shipped: Nem lehet megsemmisíteni a sort, mivel egyes készletegységek kiszállításra kerültek.
-      exceeds_available_stock: meghaladja a rendelkezésre álló készletet. Győződjön meg arról, hogy a sorok érvényes mennyiséggel rendelkeznek.
-      is_too_large: túl nagy - a készleten lévő készlet nem fedezi a kért mennyiséget!
       must_be_int: egész számnak kell lennie
-      must_be_non_negative: nem negatív értéknek kell lennie
       unpaid_amount_not_zero: 'Az összeget nem térítették vissza teljes mértékben. Még esedékes: %{amount}'
     value: Érték
     variant: Változat

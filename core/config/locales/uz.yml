@@ -1514,12 +1514,7 @@ uz:
       choose_users: Foydalanuvchilarni tanlang
     users: Foydalanuvchilar
     validation:
-      cannot_be_less_than_shipped_units: jo'natilgan birliklar sonidan kam bo'lishi mumkin emas.
-      cannot_destroy_line_item_as_inventory_units_have_shipped: Ba'zi inventarizatsiya birliklari jo'natilganligi sababli satr elementini yo'q qilib bo'lmaydi.
-      exceeds_available_stock: mavjud zaxiradan oshib ketadi. Iltimos, satr elementlari haqiqiy miqdorga ega ekanligiga ishonch hosil qiling.
-      is_too_large: juda katta - omborxonada talab qilingan miqdorni qoplash mumkin emas!
       must_be_int: tamsayı bo'lishi kerak
-      must_be_non_negative: manfiy bo'lmagan qiymat bo'lishi kerak
       unpaid_amount_not_zero: 'Miqdor to''liq qoplanmagan. Hali ham bajarilishi kerak: %{amount}'
     value: Qiymat
     variant: Variant

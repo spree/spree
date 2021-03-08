@@ -1514,12 +1514,7 @@ af:
       choose_users: Kies gebruikers
     users: Gebruikers
     validation:
-      cannot_be_less_than_shipped_units: kan nie minder wees as die aantal versende eenhede nie.
-      cannot_destroy_line_item_as_inventory_units_have_shipped: Kan lynitem nie vernietig nie, aangesien sommige voorraadeenhede versend is.
-      exceeds_available_stock: die beskikbare voorraad oorskry. Maak seker dat lynitems 'n geldige hoeveelheid het.
-      is_too_large: is te groot - voorraad voorhande kan nie die aangevraagde hoeveelheid dek nie!
       must_be_int: moet 'n heelgetal wees
-      must_be_non_negative: moet 'n nie-negatiewe waarde wees
       unpaid_amount_not_zero: 'Die bedrag is nie ten volle vergoed nie. Nog steeds verskuldig: %{amount}'
     value: Waarde
     variant: Variant

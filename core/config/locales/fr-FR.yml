@@ -1514,12 +1514,7 @@ fr-FR:
       choose_users: Choisissez les utilisateurs
     users: Utilisateurs
     validation:
-      cannot_be_less_than_shipped_units: ne peut pas être inférieur au nombre d'unités expédiées.
-      cannot_destroy_line_item_as_inventory_units_have_shipped: Impossible de détruire l'élément de campagne car certains blocs d'inventaire ont été expédiés.
-      exceeds_available_stock: dépasse le stock disponible. Veuillez vous assurer que les éléments de campagne ont une quantité valide.
-      is_too_large: est trop important - le stock disponible ne peut pas couvrir la quantité demandée!
       must_be_int: Doit être un entier
-      must_be_non_negative: doit être une valeur non négative
       unpaid_amount_not_zero: 'Le montant n''a pas été entièrement remboursé. Toujours dû: %{amount}'
     value: Évaluer
     variant: Une variante

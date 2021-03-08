@@ -1514,12 +1514,7 @@ es-US:
       choose_users: Elija usuarios
     users: Usuarios
     validation:
-      cannot_be_less_than_shipped_units: no puede ser menor que el número de unidades enviadas.
-      cannot_destroy_line_item_as_inventory_units_have_shipped: No se puede destruir el artículo de línea porque se han enviado algunas unidades de inventario.
-      exceeds_available_stock: excede el stock disponible. Asegúrese de que las líneas de pedido tengan una cantidad válida.
-      is_too_large: es demasiado grande - ¡el stock disponible no puede cubrir la cantidad solicitada!
       must_be_int: debe ser un entero
-      must_be_non_negative: debe ser un valor no negativo
       unpaid_amount_not_zero: 'El monto no fue reembolsado en su totalidad. Aún debido: %{amount}'
     value: Valor
     variant: Variante

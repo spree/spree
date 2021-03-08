@@ -1514,12 +1514,7 @@ or:
       choose_users: ଉପଯୋଗକର୍ତ୍ତା ବାଛନ୍ତୁ |
     users: ଉପଯୋଗକର୍ତ୍ତାଗଣ |
     validation:
-      cannot_be_less_than_shipped_units: ପଠାଯାଇଥିବା ୟୁନିଟ୍ ସଂଖ୍ୟାଠାରୁ କମ୍ ହୋଇପାରିବ ନାହିଁ |
-      cannot_destroy_line_item_as_inventory_units_have_shipped: କିଛି ଭଣ୍ଡାର ୟୁନିଟ୍ ପଠାଯାଇଥିବା ହେତୁ ରେଖା ଆଇଟମ୍ ନଷ୍ଟ କରିପାରିବ ନାହିଁ |
-      exceeds_available_stock: ଉପଲବ୍ଧ ଷ୍ଟକ୍ ଅତିକ୍ରମ କରେ | ଦୟାକରି ନିଶ୍ଚିତ କରନ୍ତୁ ଯେ ରେଖା ଆଇଟମଗୁଡିକର ଏକ ବ valid ଧ ପରିମାଣ ଅଛି |
-      is_too_large: ବହୁତ ବଡ - ହାତରେ ଷ୍ଟକ୍ ଅନୁରୋଧ କରାଯାଇଥିବା ପରିମାଣକୁ ଆଚ୍ଛାଦନ କରିପାରିବ ନାହିଁ!
       must_be_int: ଏକ ପୂର୍ଣ୍ଣ ସଂଖ୍ୟା ହେବା ଜରୁରୀ |
-      must_be_non_negative: ଏକ ଅଣ-ନକାରାତ୍ମକ ମୂଲ୍ୟ ହେବା ଜରୁରୀ |
       unpaid_amount_not_zero: 'ପରିମାଣ ସମ୍ପୂର୍ଣ୍ଣ ରୂପେ ଫେରସ୍ତ କରାଯାଇ ନାହିଁ | ତଥାପି ଦେୟ: %{amount}'
     value: ମୂଲ୍ୟ
     variant: ପ୍ରକାର

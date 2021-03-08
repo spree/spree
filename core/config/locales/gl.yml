@@ -1514,12 +1514,7 @@ gl:
       choose_users: Escolla usuarios
     users: Usuarios
     validation:
-      cannot_be_less_than_shipped_units: non pode ser inferior ao número de unidades enviadas.
-      cannot_destroy_line_item_as_inventory_units_have_shipped: Non se pode destruír a liña de pedido xa que se enviaron algunhas unidades de inventario.
-      exceeds_available_stock: supera o stock dispoñible. Asegúrese de que as partidas de liña teñen unha cantidade válida
-      is_too_large: 'é demasiado grande: o stock dispoñible non pode cubrir a cantidade solicitada.'
       must_be_int: debe ser un número enteiro
-      must_be_non_negative: debe ser un valor non negativo
       unpaid_amount_not_zero: 'A cantidade non se reembolsou por completo. Aínda pendente: %{amount}'
     value: Valor
     variant: Variante

@@ -1686,12 +1686,7 @@ cy:
       choose_users: Dewiswch ddefnyddwyr
     users: Defnyddwyr
     validation:
-      cannot_be_less_than_shipped_units: ni all fod yn llai na nifer yr unedau sy'n cael eu cludo.
-      cannot_destroy_line_item_as_inventory_units_have_shipped: Ni all ddinistrio eitem llinell gan fod rhai unedau rhestr eiddo wedi cludo.
-      exceeds_available_stock: yn fwy na'r stoc sydd ar gael. Sicrhewch fod gan eitemau llinell swm dilys.
-      is_too_large: yn rhy fawr - ni all stoc wrth law gwmpasu'r maint y gofynnwyd amdano!
       must_be_int: rhaid iddo fod yn gyfanrif
-      must_be_non_negative: rhaid iddo fod yn werth nad yw'n negyddol
       unpaid_amount_not_zero: 'Ni ad-dalwyd y swm yn llawn. Yn ddyledus o hyd: %{amount}'
     value: Gwerth
     variant: Amrywiol

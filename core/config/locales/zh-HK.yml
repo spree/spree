@@ -1514,12 +1514,7 @@ zh-HK:
       choose_users: 选择用户
     users: 用户数
     validation:
-      cannot_be_less_than_shipped_units: 不能少于发货数量。
-      cannot_destroy_line_item_as_inventory_units_have_shipped: 由于某些库存单位已经发货，因此无法销毁订单项。
-      exceeds_available_stock: 超出可用库存。请确保订单项的有效数量。
-      is_too_large: 太大-现有库存无法满足要求的数量！
       must_be_int: 必须是整数
-      must_be_non_negative: 必须为非负值
       unpaid_amount_not_zero: 金额未完全偿还。仍应付款：%{amount}
     value: 价值
     variant: 变体

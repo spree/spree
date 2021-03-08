@@ -1514,12 +1514,7 @@ de-DE:
       choose_users: Wählen Sie Benutzer
     users: Benutzer
     validation:
-      cannot_be_less_than_shipped_units: darf nicht kleiner sein als die Anzahl der versendeten Einheiten.
-      cannot_destroy_line_item_as_inventory_units_have_shipped: Werbebuchung kann nicht zerstört werden, da einige Inventareinheiten ausgeliefert wurden.
-      exceeds_available_stock: überschreitet den verfügbaren Bestand. Bitte stellen Sie sicher, dass die Werbebuchungen eine gültige Menge haben.
-      is_too_large: ist zu groß - der Lagerbestand kann die angeforderte Menge nicht abdecken!
       must_be_int: muss eine ganze Zahl sein
-      must_be_non_negative: muss ein nicht negativer Wert sein
       unpaid_amount_not_zero: 'Der Betrag wurde nicht vollständig erstattet. Noch fällig: %{amount}'
     value: Wert
     variant: Variante

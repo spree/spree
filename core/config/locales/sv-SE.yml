@@ -1514,12 +1514,7 @@ sv-SE:
       choose_users: Välj användare
     users: Användare
     validation:
-      cannot_be_less_than_shipped_units: får inte vara mindre än antalet levererade enheter.
-      cannot_destroy_line_item_as_inventory_units_have_shipped: Det går inte att förstöra rader eftersom vissa lagerenheter har skickats.
-      exceeds_available_stock: överstiger tillgängligt lager. Se till att rader har en giltig kvantitet.
-      is_too_large: är för stort - lager på plats kan inte täcka begärd mängd!
       must_be_int: måste vara ett heltal
-      must_be_non_negative: måste vara ett icke-negativt värde
       unpaid_amount_not_zero: 'Beloppet återbetalades inte helt. Fortfarande på grund: %{amount}'
     value: Värde
     variant: Variant

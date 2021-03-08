@@ -1514,12 +1514,7 @@ mr-IN:
       choose_users: वापरकर्ते निवडा
     users: वापरकर्ते
     validation:
-      cannot_be_less_than_shipped_units: शिप केलेल्या युनिट्सच्या संख्येपेक्षा कमी असू शकत नाही.
-      cannot_destroy_line_item_as_inventory_units_have_shipped: काही यादी युनिट्स शिप केल्यामुळे लाइन आयटम नष्ट करणे शक्य नाही.
-      exceeds_available_stock: उपलब्ध स्टॉकपेक्षा जास्त कृपया लाइन आयटममध्ये वैध प्रमाण असल्याचे सुनिश्चित करा.
-      is_too_large: खूप मोठा आहे - हातातील साठा विनंती केलेल्या प्रमाणात व्यापू शकत नाही!
       must_be_int: पूर्णांक असणे आवश्यक आहे
-      must_be_non_negative: एक नकारात्मक-नकारात्मक मूल्य असणे आवश्यक आहे
       unpaid_amount_not_zero: 'रकमेची संपूर्ण परतफेड केली गेली नाही. अद्याप देय: %{amount}'
     value: मूल्य
     variant: व्हेरिएंट

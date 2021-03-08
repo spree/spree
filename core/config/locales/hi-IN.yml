@@ -1514,12 +1514,7 @@ hi-IN:
       choose_users: उपयोगकर्ता चुनें
     users: उपयोगकर्ताओं
     validation:
-      cannot_be_less_than_shipped_units: शिप की गई इकाइयों की संख्या से कम नहीं हो सकती।
-      cannot_destroy_line_item_as_inventory_units_have_shipped: लाइन आइटम को नष्ट नहीं कर सकता क्योंकि कुछ इन्वेंट्री इकाइयों ने शिप किया है।
-      exceeds_available_stock: उपलब्ध स्टॉक से अधिक है। कृपया सुनिश्चित करें कि लाइन आइटम में एक मान्य मात्रा है।
-      is_too_large: बहुत बड़ा है - हाथ पर स्टॉक अनुरोधित मात्रा को कवर नहीं कर सकता है!
       must_be_int: पूर्णांक होना चाहिए
-      must_be_non_negative: एक गैर-नकारात्मक मूल्य होना चाहिए
       unpaid_amount_not_zero: 'राशि की पूरी तरह से प्रतिपूर्ति नहीं की गई थी। अभी भी कारण: %{amount}'
     value: मूल्य
     variant: प्रकार

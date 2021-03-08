@@ -1514,12 +1514,7 @@ ms:
       choose_users: Pilih pengguna
     users: Pengguna
     validation:
-      cannot_be_less_than_shipped_units: tidak boleh kurang daripada jumlah unit yang dihantar.
-      cannot_destroy_line_item_as_inventory_units_have_shipped: Tidak dapat memusnahkan item baris kerana beberapa unit inventori telah dihantar.
-      exceeds_available_stock: melebihi stok yang ada. Pastikan item baris mempunyai kuantiti yang sah.
-      is_too_large: terlalu besar - stok di tangan tidak dapat menampung kuantiti yang diminta!
       must_be_int: mestilah bilangan bulat
-      must_be_non_negative: mestilah nilai bukan negatif
       unpaid_amount_not_zero: 'Jumlah tidak diganti sepenuhnya. Masih belum selesai: %{amount}'
     value: Nilai
     variant: Pelbagai

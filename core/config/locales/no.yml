@@ -1514,12 +1514,7 @@
       choose_users: Velg brukere
     users: Brukere
     validation:
-      cannot_be_less_than_shipped_units: kan ikke være mindre enn antall sendte enheter.
-      cannot_destroy_line_item_as_inventory_units_have_shipped: Kan ikke ødelegge ordrelinje ettersom noen beholdningsenheter har blitt sendt.
-      exceeds_available_stock: overstiger tilgjengelig lager. Forsikre deg om at ordrelinjer har et gyldig antall.
-      is_too_large: er for stor - lager på hånden kan ikke dekke ønsket mengde!
       must_be_int: må være et helt tall
-      must_be_non_negative: må være en ikke-negativ verdi
       unpaid_amount_not_zero: 'Beløpet ble ikke fullstendig tilbakebetalt. Fortsatt på grunn: %{amount}'
     value: Verdi
     variant: Variant

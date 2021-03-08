@@ -1514,12 +1514,7 @@ eu:
       choose_users: Aukeratu erabiltzaileak
     users: Erabiltzaileak
     validation:
-      cannot_be_less_than_shipped_units: ezin da bidalitako unitate kopurua baino txikiagoa izan.
-      cannot_destroy_line_item_as_inventory_units_have_shipped: Ezin da linea elementua suntsitu inbentario unitate batzuk bidali baitira.
-      exceeds_available_stock: eskuragarri dagoen stocka gainditzen du. Ziurtatu lerro-elementuek baliozko kantitatea dutela.
-      is_too_large: handiegia da - esku artean dagoen stockak ezin du eskatutako kopurua estali!
       must_be_int: zenbaki oso bat izan behar du
-      must_be_non_negative: balio ez negatiboa izan behar du
       unpaid_amount_not_zero: 'Zenbatekoa ez da guztiz itzuli. Oraindik epemuga: %{amount}'
     value: Balioa
     variant: Aldaera

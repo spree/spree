@@ -1514,12 +1514,7 @@ eo:
       choose_users: Elektu uzantojn
     users: Uzantoj
     validation:
-      cannot_be_less_than_shipped_units: ne povas esti malpli ol la nombro de senditaj unuoj.
-      cannot_destroy_line_item_as_inventory_units_have_shipped: Ne eblas detrui linion, ĉar iuj stokregistraj unuoj sendiĝis.
-      exceeds_available_stock: superas disponeblan stokon. Bonvolu certigi, ke liniaj eroj havas validan kvanton.
-      is_too_large: estas tro granda - akcioj sur la mano ne povas kovri petitan kvanton!
       must_be_int: devas esti entjero
-      must_be_non_negative: devas esti negativa valoro
       unpaid_amount_not_zero: 'Kvanto ne estis plene repagita. Ankoraŭ devas: %{amount}'
     value: Valoro
     variant: Varianto

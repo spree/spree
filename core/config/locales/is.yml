@@ -1514,12 +1514,7 @@ is:
       choose_users: Veldu notendur
     users: Notendur
     validation:
-      cannot_be_less_than_shipped_units: getur ekki verið minna en fjöldi sendra eininga.
-      cannot_destroy_line_item_as_inventory_units_have_shipped: Get ekki eyðilagt línu þar sem sumar birgðir einingar hafa verið sendar.
-      exceeds_available_stock: umfram tiltæka birgðir. Vinsamlegast vertu viss um að línur hafi gilt magn.
-      is_too_large: er of stór - birgðir á hendi geta ekki náð til umbeðins magns!
       must_be_int: verður að vera heiltala
-      must_be_non_negative: verður að vera ekki neikvætt gildi
       unpaid_amount_not_zero: 'Upphæðin var ekki endurgreidd að fullu. Enn vegna: %{amount}'
     value: Gildi
     variant: Afbrigði

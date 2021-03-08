@@ -1514,12 +1514,7 @@ ne:
       choose_users: प्रयोगकर्ता छान्नुहोस्
     users: प्रयोगकर्ताहरू
     validation:
-      cannot_be_less_than_shipped_units: पठाइएको इकाईहरूको संख्या भन्दा कम हुन सक्दैन।
-      cannot_destroy_line_item_as_inventory_units_have_shipped: लाइन वस्तु नष्ट गर्न सक्दैन किनकि केहि ईन्भेन्टरी इकाईहरू ढुवानी गरियो।
-      exceeds_available_stock: उपलब्ध स्टक नाघ्यो। कृपया सुनिश्चित गर्नुहोस् कि रेखा आईटमहरूमा मान्य मात्रा छ।
-      is_too_large: धेरै ठूलो छ - हातमा स्टकले अनुरोध गरिएको मात्रा कभर गर्न सक्दैन!
       must_be_int: पूर्णांक हुनुपर्दछ
-      must_be_non_negative: एक गैर-नकारात्मक मान हुनु पर्छ
       unpaid_amount_not_zero: 'रकम पूर्ण रूपमा फिर्ता गरिएको थिएन। अझै पनी बाँकी: %{amount}'
     value: मान
     variant: भेरियन्ट

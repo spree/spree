@@ -1514,12 +1514,7 @@ bn:
       choose_users: ব্যবহারকারীদের চয়ন করুন
     users: ব্যবহারকারীরা
     validation:
-      cannot_be_less_than_shipped_units: শিপড ইউনিটগুলির চেয়ে কম হতে পারে না।
-      cannot_destroy_line_item_as_inventory_units_have_shipped: কিছু জায় ইউনিট পাঠানো হওয়ায় লাইন আইটেমটি ধ্বংস করতে পারে না destroy
-      exceeds_available_stock: উপলব্ধ স্টক অতিক্রম করে। দয়া করে লাইন আইটেমগুলির একটি বৈধ পরিমাণ রয়েছে তা নিশ্চিত করুন।
-      is_too_large: খুব বড় - হাতে স্টক অনুরোধ পরিমাণ কভার করতে পারে না!
       must_be_int: একটি পূর্ণসংখ্যা হতে হবে
-      must_be_non_negative: অবশ্যই একটি অ-নেতিবাচক মান হওয়া উচিত
       unpaid_amount_not_zero: 'পরিমাণ পুরোপুরি পরিশোধ করা হয়নি। তবুও বাকি: %{amount}'
     value: মান
     variant: বৈকল্পিক
