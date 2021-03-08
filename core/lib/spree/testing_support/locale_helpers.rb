@@ -5,14 +5,11 @@ module Spree
       def add_french_locales
         I18n.backend.store_translations(:fr,
           spree: {
+            is_fully_translated: true,
             added_to_cart: 'Ajouté au panier avec succès!',
             continue_shopping: 'Continuer vos achats',
             choose_currency: 'Choisir la devise',
             internationalization: 'Internationalisation',
-            i18n: {
-              language: 'Langue',
-              this_file_language: 'Français (FR)'
-            },
             cart_page: {
               header: 'Votre panier',
               empty_info: 'Votre panier est vide',

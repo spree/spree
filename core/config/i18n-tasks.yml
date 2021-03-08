@@ -64,7 +64,6 @@ ignore_missing:
   - 'number.currency.format.separator'
   - 'spree.fpr_human_friendly_date_format'
   - 'spree.fpr_human_friendly_date_time_format'
-  - 'spree.i18n.this_file_language'
 
 
 # Do not consider these as unused:

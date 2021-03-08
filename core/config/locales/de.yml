@@ -1,5 +1,5 @@
 ---
-de-AT:
+de:
   activemodel:
     errors:
       models:
@@ -923,7 +923,7 @@ de-AT:
     num_orders: "# Aufträge"
     number: Nummer
     ok: OK
-    open_all_adjustments: Öffnen Sie alle Einstellungen
+    open_all_adjustments: Öffnen Sie alle Anpassungen
     option_type_placeholder: Wählen Sie einen Optionstyp
     option_types: Optionstypen
     option_values: Optionswerte

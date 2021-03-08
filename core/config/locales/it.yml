@@ -1,5 +1,5 @@
 ---
-it-CH:
+it:
   activemodel:
     errors:
       models:
@@ -942,7 +942,7 @@ it-CH:
     order_mailer:
       cancel_email:
         dear_customer: Gentile %{name},
-        instructions: Il tuo ordine è stato ANNULLATO. Si prega di conservare queste informazioni sulla cancellazione per i propri archivi.
+        instructions: Il tuo ordine è stato ANNULLATO. Si prega di conservare queste informazioni sull'annullamento per i propri archivi.
         order_summary_canceled: Riepilogo ordine %{number} [ANNULLATO]
         subject: Annullamento dell'ordine
         thanks: Grazie per il tuo business.
@@ -1420,7 +1420,7 @@ it-CH:
     taxonomy_brands_name: Marche
     taxonomy_categories_name: Categorie
     taxonomy_tree_error: La modifica richiesta non è stata accettata e l'albero è stato riportato allo stato precedente, riprova.
-    taxonomy_tree_instruction: "* Fare clic con il pulsante destro del mouse (o toccare due volte sul dispositivo iOS) su un bambino nell'albero per accedere al menu per l'aggiunta, l'eliminazione o l'ordinamento di un bambino."
+    taxonomy_tree_instruction: "* Fare clic con il pulsante destro del mouse (o toccare due volte sul dispositivo iOS) su un bambino nell'albero per accedere al menu per aggiungere, eliminare o ordinare un bambino."
     taxons: Taxons
     test_mailer:
       test_email:

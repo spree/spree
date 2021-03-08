@@ -51,11 +51,8 @@ module Spree
       ensure_current_locale_as_symbol = current_locale
       falback_locale = locale.slice(0..1).to_sym
 
-      if ensure_locale_as_symbol.localize(ensure_current_locale_as_symbol).as_language_code
-        ensure_locale_as_symbol.localize(ensure_current_locale_as_symbol).as_language_code
-      else
-        falback_locale.localize(ensure_current_locale_as_symbol).as_language_code
-      end
+      returned_language_name = ensure_locale_as_symbol.localize(ensure_current_locale_as_symbol).as_language_code || falback_locale.localize(ensure_current_locale_as_symbol).as_language_code
+      "#{returned_language_name.to_s.capitalize} (#{locale.to_s})"
     end
 
     def self.available_locales

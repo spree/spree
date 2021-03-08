@@ -18,7 +18,7 @@ module Spree
       formatted_locale = locale.to_s
 
       if I18n.t('spree.is_fully_translated', locale: formatted_locale, fallback: false) == true
-        ["#{Spree::Store.locale_language_name(formatted_locale, current_locale).to_s} (#{formatted_locale})", formatted_locale]
+        [Spree::Store.locale_language_name(formatted_locale, current_locale), formatted_locale]
       else
         []
       end

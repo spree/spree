@@ -1,5 +1,5 @@
 ---
-fr-CH:
+fr:
   activemodel:
     errors:
       models:
@@ -1112,13 +1112,13 @@ fr-CH:
         description: Une seule utilisation par utilisateur
         name: Une utilisation par utilisateur
       option_value:
-        description: La commande comprend le (s) produit (s) spécifié (s) avec la (les) valeur (s) d'option correspondante (s)
+        description: La commande comprend le (s) produit (s) spécifié (s) avec la ou les valeurs d'option correspondantes
         name: Valeur (s) de l'option
       product:
         description: La commande comprend le (s) produit (s) spécifié (s)
         name: Des produits)
       taxon:
-        description: La commande comprend des produits avec des taxons spécifiés
+        description: La commande comprend des produits avec un (des) taxon (s) spécifié (s)
         name: Taxon (s)
       user:
         description: Disponible uniquement pour les utilisateurs spécifiés
@@ -1420,7 +1420,7 @@ fr-CH:
     taxonomy_brands_name: Marques
     taxonomy_categories_name: Catégories
     taxonomy_tree_error: La modification demandée n'a pas été acceptée et l'arborescence est revenue à son état précédent, veuillez réessayer.
-    taxonomy_tree_instruction: "* Cliquez avec le bouton droit (ou appuyez deux fois sur un appareil iOS) sur un enfant dans l'arborescence pour accéder au menu permettant d'ajouter, de supprimer ou de trier un enfant."
+    taxonomy_tree_instruction: "* Cliquez avec le bouton droit (ou appuyez deux fois sur l'appareil iOS) sur un enfant dans l'arborescence pour accéder au menu permettant d'ajouter, de supprimer ou de trier un enfant."
     taxons: Taxons
     test_mailer:
       test_email:

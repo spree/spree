@@ -9,20 +9,16 @@ describe Spree::LocaleHelper, type: :helper do
   before do
     I18n.backend.store_translations(:de,
       spree: {
-        i18n: {
-          this_file_language: 'Deutsch (DE)'
-        }
+        is_fully_translated: true
       })
     I18n.backend.store_translations(:fr,
       spree: {
-        i18n: {
-          this_file_language: 'Français (FR)'
-        }
+        is_fully_translated: true
       })
   end
 
   describe '#all_locales_options' do
-    it { expect(all_locales_options).to contain_exactly([Spree.t('i18n.this_file_language', locale: 'en'), 'en'], ['Deutsch (DE)', 'de'], ['Français (FR)', 'fr']) }
+    it { expect(all_locales_options).to contain_exactly([Spree::Store.locale_language_name('en', 'en'), 'en'], [Spree::Store.locale_language_name('de', 'en'), 'de'], [Spree::Store.locale_language_name('fr', 'en'), 'fr']) }
   end
 
   describe '#available_locales_options' do
@@ -31,7 +27,7 @@ describe Spree::LocaleHelper, type: :helper do
       create(:store, supported_locales: 'en')
     end
 
-    it { expect(available_locales_options).to contain_exactly([Spree.t('i18n.this_file_language', locale: 'en'), 'en'], ['Deutsch (DE)', 'de']) }
+    it { expect(available_locales_options).to contain_exactly([Spree::Store.locale_language_name('en', 'en'), 'en'], [Spree::Store.locale_language_name('de', 'en'), 'de']) }
   end
 
   describe '#supported_locales_options' do
