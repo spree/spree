@@ -8,13 +8,13 @@ describe Spree::LocaleHelper, type: :helper do
 
   before do
     I18n.backend.store_translations(:de,
-      spree: {
-        is_fully_translated: true
-      })
+                                    spree: {
+                                      is_fully_translated: true
+                                    })
     I18n.backend.store_translations(:fr,
-      spree: {
-        is_fully_translated: true
-      })
+                                    spree: {
+                                      is_fully_translated: true
+                                    })
   end
 
   describe '#all_locales_options' do
