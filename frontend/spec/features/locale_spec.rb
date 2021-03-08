@@ -6,7 +6,6 @@ describe 'setting locale', type: :feature, js: true do
 
   before do
     store.update(default_locale: 'en', supported_locales: 'en,fr')
-    add_french_locales
   end
 
   context 'checkout form validation messages' do
