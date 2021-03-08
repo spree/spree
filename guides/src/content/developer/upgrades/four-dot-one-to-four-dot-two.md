@@ -39,9 +39,9 @@ If you used that gem in the past you need to remove. Multi Currency is now incor
 
 ## Add `deface` gem (optional)
 
-If you used [Deface overrides](/developer/tutorials/deface_overrides_tutorial.html) you will need to include `deface` in your `Gemfile` as it was removed from Spree / Spree Auth Devise / Spree Gateway dependencies.
+If you use [Deface overrides](/developer/tutorials/deface_overrides_tutorial.html) you will need to include `deface` in your `Gemfile` as it was removed from Spree / Spree Auth Devise / Spree Gateway dependencies.
 
-Simply add:
+Simply add it to your `Gemfile`:
 
 ```ruby
 gem 'deface'
@@ -97,6 +97,23 @@ Please follow [this guide to migrate your custom serializers](https://github.com
 ### Migrate select2 3.5 to 4.x
 
 Only if you've added new Admin Panel pages with Select2 dropdown - [this guide will help](https://select2.org/upgrading/migrating-from-35)
+
+### Make sure you've got up to date Spree templates (Storefront)
+
+If you're using Spree default Storefront (`spree_frontend` gem) make sure to update your templates, especially:
+
+* [app/views/spree/shared/_head.html.erb](https://github.com/spree/spree/blob/4-2-stable/frontend/app/views/spree/shared/_head.html.erb)
+* [app/views/spree/shared/_locale_and_currency.html.erb](https://github.com/spree/spree/blob/4-2-stable/frontend/app/views/spree/shared/_locale_and_currency.html.erb)
+* [app/views/spree/shared/_link_to_account.html.erb](https://github.com/spree/spree/blob/4-2-stable/frontend/app/views/spree/shared/_link_to_account.html.erb)
+* [app/views/spree/shared/_internationalization_options.html.erb](https://github.com/spree/spree/blob/master/frontend/app/views/spree/shared/_internationalization_options.html.erb)
+* [app/views/spree/shared/_locale_dropdown.html.erb](https://github.com/spree/spree/blob/4-2-stable/frontend/app/views/spree/shared/_locale_dropdown.html.erb)
+* [app/views/spree/shared/_currency_dropdown.html.erb](https://github.com/spree/spree/blob/4-2-stable/frontend/app/views/spree/shared/_currency_dropdown.html.erb)
+* [app/views/spree/shared/_mobile_navigation.html.erb](https://github.com/spree/spree/blob/4-2-stable/frontend/app/views/spree/shared/_mobile_navigation.html.erb)
+* [app/views/spree/shared/_mobile_internationalization_options.html.erb](https://github.com/spree/spree/blob/4-2-stable/frontend/app/views/spree/shared/_mobile_internationalization_options.html.erb)
+* [app/views/spree/shared/_nav_bar.html.erb](https://github.com/spree/spree/blob/4-2-stable/frontend/app/views/spree/shared/_nav_bar.html.erb)
+* [app/views/spree/shared/_line_item.html.erb](https://github.com/spree/spree/blob/4-2-stable/frontend/app/views/spree/shared/_line_item.html.erb)
+
+Or simply run `bundle exec rails g spree:storefront:copy_storefront`
 
 ## Read the release notes
 
