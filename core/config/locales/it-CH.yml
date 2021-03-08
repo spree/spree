@@ -387,44 +387,6 @@ it-CH:
       spree/zone:
         one: Zona
         other: Zone
-  devise:
-    confirmations:
-      confirmed: Il tuo account è stato confermato con successo. Ora sei connesso.
-      send_instructions: Riceverai un'e-mail con le istruzioni su come confermare il tuo account in pochi minuti.
-    failure:
-      inactive: Il tuo account non è stato ancora attivato.
-      invalid: E-mail o password non validi.
-      invalid_token: Token di autenticazione non valido.
-      locked: Il tuo account è bloccato.
-      timeout: La tua sessione è scaduta, accedi di nuovo per continuare.
-      unauthenticated: Devi accedere o registrarti prima di continuare.
-      unconfirmed: Devi confermare il tuo account prima di continuare.
-    mailer:
-      confirmation_instructions:
-        subject: Istruzioni di conferma
-      reset_password_instructions:
-        subject: Reimposta le istruzioni per la password
-      unlock_instructions:
-        subject: Sblocca le istruzioni
-    oauth_callbacks:
-      failure: Impossibile autorizzarti da %{kind} perché "%{reason}".
-      success: Autorizzato con successo dall'account %{kind}.
-    unlocks:
-      send_instructions: Riceverai un'e-mail con le istruzioni su come sbloccare il tuo account in pochi minuti.
-      unlocked: Il tuo account è stato sbloccato con successo. Ora sei connesso.
-    user_passwords:
-      user:
-        cannot_be_blank: La tua password non può essere vuota.
-        send_instructions: Riceverai un'e-mail con le istruzioni su come reimpostare la password in pochi minuti.
-        updated: La tua password è stata cambiata con successo. Ora sei connesso.
-    user_registrations:
-      destroyed: Ciao! Il tuo account è stato cancellato con successo. Speriamo di rivedervi presto.
-      inactive_signed_up: Ti sei registrato con successo. Tuttavia, non è stato possibile eseguire l'accesso perché il tuo account è %{reason}.
-      signed_up: Benvenuto! Ti sei registrato con successo.
-      updated: Hai aggiornato correttamente il tuo account.
-    user_sessions:
-      signed_in: Accesso eseguito con successo.
-      signed_out: Disconnesso con successo.
   errors:
     messages:
       already_confirmed: era già stato confermato

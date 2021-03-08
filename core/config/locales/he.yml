@@ -387,44 +387,6 @@ he:
       spree/zone:
         one: אֵזוֹר
         other: אזורים
-  devise:
-    confirmations:
-      confirmed: חשבונך אושר בהצלחה. אתה מחובר כעת.
-      send_instructions: תקבל אימייל עם הוראות כיצד לאשר את חשבונך תוך מספר דקות.
-    failure:
-      inactive: חשבונך עדיין לא הופעל.
-      invalid: דוא"ל או סיסמה שגויים.
-      invalid_token: אסימון אימות לא חוקי.
-      locked: החשבון שלך נעול.
-      timeout: פג תוקף ההפעלה שלך, היכנס שוב כדי להמשיך.
-      unauthenticated: עליך להיכנס או להירשם לפני שתמשיך.
-      unconfirmed: עליך לאשר את חשבונך לפני שתמשיך.
-    mailer:
-      confirmation_instructions:
-        subject: הוראות אישור
-      reset_password_instructions:
-        subject: אפס את הוראות הסיסמה
-      unlock_instructions:
-        subject: הוראות נעילה
-    oauth_callbacks:
-      failure: לא ניתן לאשר אותך מ- %{kind} מכיוון ש- "%{reason}".
-      success: אושרה בהצלחה מחשבון %{kind}.
-    unlocks:
-      send_instructions: תקבל דוא"ל עם הוראות כיצד לבטל את נעילת חשבונך תוך מספר דקות.
-      unlocked: נעילת החשבון שלך הושלמה בהצלחה. אתה מחובר כעת.
-    user_passwords:
-      user:
-        cannot_be_blank: הסיסמה שלך לא יכולה להיות ריקה.
-        send_instructions: תקבל אימייל עם הוראות כיצד לאפס את הסיסמה שלך תוך מספר דקות.
-        updated: הסיסמה שלך שונתה בהצלחה. אתה מחובר כעת.
-    user_registrations:
-      destroyed: ביי! חשבונך בוטל בהצלחה. אנחנו מקווים לראות אותך שוב בקרוב.
-      inactive_signed_up: נרשמת בהצלחה. עם זאת, לא הצלחנו להיכנס אליך מכיוון שחשבונך הוא %{reason}.
-      signed_up: ברוך הבא! נרשמת בהצלחה.
-      updated: עדכנת את חשבונך בהצלחה.
-    user_sessions:
-      signed_in: נכנס בהצלחה.
-      signed_out: התנתק בהצלחה.
   errors:
     messages:
       already_confirmed: כבר אושר

@@ -387,44 +387,6 @@ az:
       spree/zone:
         one: Zona
         other: Bölgələr
-  devise:
-    confirmations:
-      confirmed: Hesabınız uğurla təsdiqləndi. İndi daxil olmusunuz.
-      send_instructions: Bir neçə dəqiqə ərzində hesabınızı necə təsdiqləməyinə dair təlimatları əks etdirən bir e-poçt alacaqsınız.
-    failure:
-      inactive: Hesabınız hələ aktivləşdirilməyib.
-      invalid: Yanlış e-poçt və ya parol.
-      invalid_token: Yanlış identifikasiya işarəsi.
-      locked: Hesabınız kilidlənib.
-      timeout: Sessiyanızın müddəti bitdi, davam etmək üçün yenidən daxil olun.
-      unauthenticated: Davam etmədən əvvəl daxil olmalı və ya qeydiyyatdan keçməlisiniz.
-      unconfirmed: Davam etmədən əvvəl hesabınızı təsdiqləməlisiniz.
-    mailer:
-      confirmation_instructions:
-        subject: Təsdiq təlimatları
-      reset_password_instructions:
-        subject: Parol təlimatlarını yenidən qurun
-      unlock_instructions:
-        subject: Təlimatları kiliddən çıxarın
-    oauth_callbacks:
-      failure: '"%{reason}" olduğu üçün sizə %{kind}-dan icazə verilmədi.'
-      success: "%{kind} hesabından müvəffəqiyyətlə icazə verildi."
-    unlocks:
-      send_instructions: Bir neçə dəqiqə ərzində hesabınızın kilidini necə açacağınıza dair təlimatları əks etdirən bir e-poçt alacaqsınız.
-      unlocked: Hesabınız uğurla kiliddən çıxarıldı. İndi daxil olmusunuz.
-    user_passwords:
-      user:
-        cannot_be_blank: Parolunuz boş ola bilməz.
-        send_instructions: Şifrənizi bir neçə dəqiqə ərzində necə sıfırlayacağınıza dair təlimatları əks etdirən bir e-poçt alacaqsınız.
-        updated: Parolunuz uğurla dəyişdirildi. İndi daxil olmusunuz.
-    user_registrations:
-      destroyed: Əlvida! Hesabınız uğurla ləğv edildi. Ümid edirik tezliklə yenidən görüşəcəyik.
-      inactive_signed_up: Uğurla qeydiyyatdan keçdiniz. Lakin hesabınız %{reason} olduğundan sizi daxil edə bilmədik.
-      signed_up: Xoş gəlmisiniz! Uğurla qeydiyyatdan keçdiniz.
-      updated: Hesabınızı uğurla yeniləmisiniz.
-    user_sessions:
-      signed_in: Uğurla daxil oldunuz.
-      signed_out: Uğurla çıxıldı.
   errors:
     messages:
       already_confirmed: artıq təsdiqləndi

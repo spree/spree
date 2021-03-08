@@ -387,44 +387,6 @@ eo:
       spree/zone:
         one: Zono
         other: Zonoj
-  devise:
-    confirmations:
-      confirmed: Via konto estis sukcese konfirmita. Vi nun estas ensalutita.
-      send_instructions: Vi ricevos retpoŝton kun instrukcioj pri kiel konfirmi vian konton post kelkaj minutoj.
-    failure:
-      inactive: Via konto ankoraŭ ne estis aktivigita.
-      invalid: Nevalida retpoŝto aŭ pasvorto.
-      invalid_token: Nevalida aŭtentikiga signo.
-      locked: Via konto estas ŝlosita.
-      timeout: Via kunsido eksvalidiĝis, bonvolu ensaluti denove por daŭrigi.
-      unauthenticated: Vi devas ensaluti aŭ registriĝi antaŭ ol daŭrigi.
-      unconfirmed: Vi devas konfirmi vian konton antaŭ ol daŭrigi.
-    mailer:
-      confirmation_instructions:
-        subject: Instruoj pri konfirmo
-      reset_password_instructions:
-        subject: Restarigi pasvortajn instrukciojn
-      unlock_instructions:
-        subject: Malŝlosi Instrukciojn
-    oauth_callbacks:
-      failure: Ne povis rajtigi vin de %{kind} ĉar "%{reason}".
-      success: Sukcese rajtigita de %{kind}-konto.
-    unlocks:
-      send_instructions: Vi ricevos retpoŝton kun instrukcioj pri kiel malŝlosi vian konton post kelkaj minutoj.
-      unlocked: Via konto estis sukcese malŝlosita. Vi nun estas ensalutita.
-    user_passwords:
-      user:
-        cannot_be_blank: Via pasvorto ne povas esti malplena.
-        send_instructions: Vi ricevos retpoŝton kun instrukcioj pri kiel reagordi vian pasvorton post kelkaj minutoj.
-        updated: Via pasvorto estis sukcese ŝanĝita. Vi nun estas ensalutita.
-    user_registrations:
-      destroyed: Ĝis revido! Via konto estis sukcese nuligita. Ni esperas revidi vin baldaŭ.
-      inactive_signed_up: Vi registriĝis sukcese. Tamen ni ne povis ensaluti vin ĉar via konto estas %{reason}.
-      signed_up: Bonvenon! Vi registriĝis sukcese.
-      updated: Vi ĝisdatigis vian konton sukcese.
-    user_sessions:
-      signed_in: Ensalutita sukcese.
-      signed_out: Ensalutita sukcese.
   errors:
     messages:
       already_confirmed: estis jam konfirmita

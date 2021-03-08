@@ -467,44 +467,6 @@ sl:
         one: Cona
         other: Območja
         two: Območja
-  devise:
-    confirmations:
-      confirmed: Vaš račun je bil uspešno potrjen. Zdaj ste prijavljeni.
-      send_instructions: V nekaj minutah boste prejeli e-poštno sporočilo z navodili za potrditev računa.
-    failure:
-      inactive: Vaš račun še ni bil aktiviran.
-      invalid: Neveljaven e-poštni naslov ali geslo.
-      invalid_token: Neveljaven žeton za preverjanje pristnosti.
-      locked: Vaš račun je zaklenjen.
-      timeout: Vaša seja je potekla. Če želite nadaljevati, se znova prijavite.
-      unauthenticated: Pred nadaljevanjem se morate prijaviti ali prijaviti.
-      unconfirmed: Pred nadaljevanjem morate potrditi svoj račun.
-    mailer:
-      confirmation_instructions:
-        subject: Navodila za potrditev
-      reset_password_instructions:
-        subject: Ponastavite navodila za geslo
-      unlock_instructions:
-        subject: Navodila za odklepanje
-    oauth_callbacks:
-      failure: Ne morem vas pooblastiti za %{kind}, ker "%{reason}".
-      success: Uspešno pooblaščen z računa %{kind}.
-    unlocks:
-      send_instructions: V nekaj minutah boste prejeli e-poštno sporočilo z navodili za odklepanje računa.
-      unlocked: Vaš račun je bil uspešno odklenjen. Zdaj ste prijavljeni.
-    user_passwords:
-      user:
-        cannot_be_blank: Vaše geslo ne sme biti prazno.
-        send_instructions: Čez nekaj minut boste prejeli e-poštno sporočilo z navodili za ponastavitev gesla.
-        updated: Vaše geslo je bilo uspešno spremenjeno. Zdaj ste prijavljeni.
-    user_registrations:
-      destroyed: Adijo! Vaš račun je bil uspešno preklican. Upamo, da se kmalu spet vidimo.
-      inactive_signed_up: Uspešno ste se prijavili. Vendar vas nismo mogli prijaviti, ker je vaš račun %{reason}.
-      signed_up: Dobrodošli! Uspešno ste se prijavili.
-      updated: Račun ste uspešno posodobili.
-    user_sessions:
-      signed_in: Prijavite se uspešno.
-      signed_out: Odjava je bila uspešna.
   errors:
     messages:
       already_confirmed: je bila že potrjena

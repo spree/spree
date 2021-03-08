@@ -387,44 +387,6 @@ sw:
       spree/zone:
         one: Eneo
         other: Kanda
-  devise:
-    confirmations:
-      confirmed: Akaunti yako ilithibitishwa vyema. Umeingia katika akaunti sasa.
-      send_instructions: Utapokea barua pepe na maagizo kuhusu jinsi ya kudhibitisha akaunti yako kwa dakika chache.
-    failure:
-      inactive: Akaunti yako bado haijawashwa.
-      invalid: Barua pepe au nywila batili.
-      invalid_token: Ishara batili ya uthibitishaji.
-      locked: Akaunti yako imefungwa.
-      timeout: Muda wako umekwisha, tafadhali ingia tena ili kuendelea.
-      unauthenticated: Unahitaji kuingia au kujiandikisha kabla ya kuendelea.
-      unconfirmed: Lazima uthibitishe akaunti yako kabla ya kuendelea.
-    mailer:
-      confirmation_instructions:
-        subject: Maagizo ya uthibitisho
-      reset_password_instructions:
-        subject: Weka upya maagizo ya nywila
-      unlock_instructions:
-        subject: Fungua Maagizo
-    oauth_callbacks:
-      failure: Haikuweza kukuidhinisha kutoka kwa %{kind} kwa sababu "%{reason}".
-      success: Imeidhinishwa kwa mafanikio kutoka kwa akaunti ya %{kind}.
-    unlocks:
-      send_instructions: Utapokea barua pepe na maagizo kuhusu jinsi ya kufungua akaunti yako kwa dakika chache.
-      unlocked: Akaunti yako imefunguliwa vizuri. Umeingia katika akaunti sasa.
-    user_passwords:
-      user:
-        cannot_be_blank: Nenosiri lako haliwezi kuwa wazi.
-        send_instructions: Utapokea barua pepe na maagizo juu ya jinsi ya kuweka upya nywila yako kwa dakika chache.
-        updated: Nenosiri lako lilibadilishwa kwa mafanikio. Umeingia katika akaunti sasa.
-    user_registrations:
-      destroyed: Kwaheri! Akaunti yako ilifutwa kwa mafanikio. Tunatarajia kukuona tena hivi karibuni.
-      inactive_signed_up: Umejisajili kwa mafanikio. Walakini, hatukuweza kukuingia kwa sababu akaunti yako ni %{reason}.
-      signed_up: Karibu! Umejisajili kwa mafanikio.
-      updated: Ulisasisha akaunti yako kwa mafanikio.
-    user_sessions:
-      signed_in: Umeingia katika akaunti kwa mafanikio.
-      signed_out: Umeondoka kwenye akaunti kwa mafanikio.
   errors:
     messages:
       already_confirmed: ilikuwa imethibitishwa tayari

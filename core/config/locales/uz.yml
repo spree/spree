@@ -387,44 +387,6 @@ uz:
       spree/zone:
         one: Mintaqa
         other: Mintaqalar
-  devise:
-    confirmations:
-      confirmed: Sizning hisobingiz muvaffaqiyatli tasdiqlandi. Siz tizimga kirdingiz.
-      send_instructions: Sizga bir necha daqiqada hisobingizni qanday tasdiqlash haqida ko'rsatmalar berilgan elektron pochta xabarlari keladi.
-    failure:
-      inactive: Sizning hisob qaydnomangiz hali faollashtirilmagan.
-      invalid: Elektron pochta yoki parol yaroqsiz.
-      invalid_token: Autentifikatsiya belgisi noto‘g‘ri.
-      locked: Sizning hisobingiz qulflangan.
-      timeout: Seansingiz muddati tugadi, davom etish uchun qayta kiring.
-      unauthenticated: Davom etishdan oldin tizimga kirishingiz yoki ro'yxatdan o'tishingiz kerak.
-      unconfirmed: Davom etishdan oldin hisobingizni tasdiqlashingiz kerak.
-    mailer:
-      confirmation_instructions:
-        subject: Tasdiqlash bo'yicha ko'rsatmalar
-      reset_password_instructions:
-        subject: Parol bo'yicha ko'rsatmalarni tiklash
-      unlock_instructions:
-        subject: Ko'rsatmalarni oching
-    oauth_callbacks:
-      failure: Sizga %{kind}-dan ruxsat berilmadi, chunki "%{reason}".
-      success: "%{kind} hisobidan muvaffaqiyatli avtorizatsiya qilindi."
-    unlocks:
-      send_instructions: Sizga bir necha daqiqada hisobingizni qanday ochish haqida ko'rsatmalar berilgan elektron pochta xabarlari keladi.
-      unlocked: Hisobingiz muvaffaqiyatli ochildi. Siz tizimga kirdingiz.
-    user_passwords:
-      user:
-        cannot_be_blank: Parolingiz bo'sh bo'lishi mumkin emas.
-        send_instructions: Sizga bir necha daqiqada parolni qanday tiklash haqida ko'rsatmalar berilgan elektron pochta xabarlari keladi.
-        updated: Parolingiz muvaffaqiyatli o'zgartirildi. Siz tizimga kirdingiz.
-    user_registrations:
-      destroyed: Xayr! Hisobingiz muvaffaqiyatli bekor qilindi. Tez orada yana uchrashamiz degan umiddamiz.
-      inactive_signed_up: Siz muvaffaqiyatli ro'yxatdan o'tdingiz. Ammo biz sizning hisobingizga kira olmadik, chunki sizning hisobingiz %{reason}.
-      signed_up: Xush kelibsiz! Siz muvaffaqiyatli ro'yxatdan o'tdingiz.
-      updated: Hisobingizni muvaffaqiyatli yangiladingiz.
-    user_sessions:
-      signed_in: Muvaffaqiyatli tizimga kirildi.
-      signed_out: Muvaffaqiyatli tizimdan chiqdim.
   errors:
     messages:
       already_confirmed: allaqachon tasdiqlangan

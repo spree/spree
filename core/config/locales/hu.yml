@@ -387,44 +387,6 @@ hu:
       spree/zone:
         one: Zóna
         other: Zónák
-  devise:
-    confirmations:
-      confirmed: Fiókját sikeresen megerősítettük. Most be van jelentkezve.
-      send_instructions: Néhány perc múlva e-mailt fog kapni a fiók megerősítéséről.
-    failure:
-      inactive: Fiókját még nem aktiválták.
-      invalid: Rossz email cím vagy jelszó.
-      invalid_token: Érvénytelen hitelesítési token.
-      locked: Fiókja zárolva van.
-      timeout: A munkamenet lejárt, a folytatáshoz jelentkezzen be újra.
-      unauthenticated: A folytatáshoz be kell jelentkeznie vagy regisztrálnia kell.
-      unconfirmed: A folytatás előtt meg kell erősítenie a fiókját.
-    mailer:
-      confirmation_instructions:
-        subject: Megerősítési utasítások
-      reset_password_instructions:
-        subject: Jelszó visszaállítása
-      unlock_instructions:
-        subject: Oldja fel az utasításokat
-    oauth_callbacks:
-      failure: Nem sikerült felhatalmazni a %{kind} fájlból, mert a "%{reason}".
-      success: Sikeresen engedélyezve a %{kind} fiókból.
-    unlocks:
-      send_instructions: Néhány perc múlva e-mailt fog kapni a fiókjának feloldásával kapcsolatos utasításokkal.
-      unlocked: Fiókjának zárolását sikeresen feloldották. Most be van jelentkezve.
-    user_passwords:
-      user:
-        cannot_be_blank: Jelszava nem lehet üres.
-        send_instructions: Néhány perc múlva e-mailt fog kapni a jelszó visszaállítására vonatkozó utasításokkal.
-        updated: Jelszavát sikeresen megváltoztattuk. Most be van jelentkezve.
-    user_registrations:
-      destroyed: Viszlát! Fiókját sikeresen töröltük. Reméljük, hogy hamarosan újra találkozunk.
-      inactive_signed_up: Sikeresen regisztrált. Nem tudtunk azonban bejelentkezni, mert fiókja %{reason}.
-      signed_up: Üdvözöljük! Sikeresen regisztrált.
-      updated: Sikeresen frissítette fiókját.
-    user_sessions:
-      signed_in: Sikeresen bejelentkezett.
-      signed_out: Sikeresen kijelentkezett.
   errors:
     messages:
       already_confirmed: már megerősítették

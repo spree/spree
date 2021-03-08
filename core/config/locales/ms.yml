@@ -387,44 +387,6 @@ ms:
       spree/zone:
         one: Zon
         other: Zon
-  devise:
-    confirmations:
-      confirmed: Akaun anda berjaya disahkan. Anda kini melog masuk.
-      send_instructions: Anda akan menerima e-mel dengan arahan mengenai cara mengesahkan akaun anda dalam beberapa minit.
-    failure:
-      inactive: Akaun anda belum diaktifkan.
-      invalid: Emel dan kata laluan tidak sah.
-      invalid_token: Token pengesahan tidak sah.
-      locked: Akaun anda dikunci.
-      timeout: Sesi anda tamat, sila masuk lagi untuk meneruskan.
-      unauthenticated: Anda perlu log masuk atau mendaftar sebelum meneruskan.
-      unconfirmed: Anda mesti mengesahkan akaun anda sebelum meneruskan.
-    mailer:
-      confirmation_instructions:
-        subject: Arahan pengesahan
-      reset_password_instructions:
-        subject: Tetapkan semula arahan kata laluan
-      unlock_instructions:
-        subject: Arahan Buka Kunci
-    oauth_callbacks:
-      failure: Tidak dapat membenarkan anda dari %{kind} kerana "%{reason}".
-      success: Berjaya dibenarkan dari akaun %{kind}.
-    unlocks:
-      send_instructions: Anda akan menerima e-mel dengan arahan mengenai cara membuka kunci akaun anda dalam beberapa minit.
-      unlocked: Akaun anda berjaya dibuka. Anda kini melog masuk.
-    user_passwords:
-      user:
-        cannot_be_blank: Kata laluan anda tidak boleh kosong.
-        send_instructions: Anda akan menerima e-mel dengan arahan mengenai cara menetapkan semula kata laluan anda dalam beberapa minit.
-        updated: Kata laluan anda berjaya ditukar. Anda kini melog masuk.
-    user_registrations:
-      destroyed: Selamat tinggal! Akaun anda berjaya dibatalkan. Kami berharap dapat berjumpa dengan anda tidak lama lagi.
-      inactive_signed_up: Anda berjaya mendaftar. Namun, kami tidak dapat log masuk kerana akaun anda adalah %{reason}.
-      signed_up: Selamat datang! Anda berjaya mendaftar.
-      updated: Anda berjaya mengemas kini akaun anda.
-    user_sessions:
-      signed_in: Berjaya log masuk.
-      signed_out: Log keluar berjaya.
   errors:
     messages:
       already_confirmed: sudah disahkan

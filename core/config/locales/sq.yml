@@ -387,44 +387,6 @@ sq:
       spree/zone:
         one: Zona
         other: Zonat
-  devise:
-    confirmations:
-      confirmed: Llogaria juaj u konfirmua me sukses. Tani jeni identifikuar
-      send_instructions: Ju do të merrni një email me udhëzime se si të konfirmoni llogarinë tuaj brenda pak minutash.
-    failure:
-      inactive: Llogaria juaj nuk është aktivizuar akoma.
-      invalid: Email ose fjalekalim i gabuar.
-      invalid_token: Shenjë e pavlefshme vërtetimi.
-      locked: Llogaria juaj është kyçur.
-      timeout: Seanca juaj ka skaduar, ju lutem identifikohuni përsëri për të vazhduar.
-      unauthenticated: Duhet të identifikoheni ose të regjistroheni para se të vazhdoni.
-      unconfirmed: Ju duhet të konfirmoni llogarinë tuaj para se të vazhdoni.
-    mailer:
-      confirmation_instructions:
-        subject: Udhëzime konfirmimi
-      reset_password_instructions:
-        subject: Rivendosni udhëzimet për fjalëkalimin
-      unlock_instructions:
-        subject: Zhbllokoni udhëzimet
-    oauth_callbacks:
-      failure: Nuk mund të ju autorizoj nga %{kind} sepse "%{reason}".
-      success: Autorizuar me sukses nga llogaria %{kind}.
-    unlocks:
-      send_instructions: Ju do të merrni një email me udhëzime se si të zhbllokoni llogarinë tuaj brenda pak minutash.
-      unlocked: Llogaria juaj u zhbllokua me sukses. Tani jeni identifikuar
-    user_passwords:
-      user:
-        cannot_be_blank: Fjalëkalimi juaj nuk mund të jetë bosh.
-        send_instructions: Ju do të merrni një email me udhëzime se si të rivendosni fjalëkalimin tuaj brenda pak minutash.
-        updated: Fjalëkalimi juaj u ndryshua me sukses. Tani jeni identifikuar
-    user_registrations:
-      destroyed: Mirupafshim! Llogaria juaj u anulua me sukses. Shpresojmë të shihemi së shpejti.
-      inactive_signed_up: Ju jeni regjistruar me sukses. Sidoqoftë, nuk mund të të identifikonim sepse llogaria jote është %{reason}.
-      signed_up: Mirësevini! Ju jeni regjistruar me sukses.
-      updated: Ju azhurnuat llogarinë tuaj me sukses.
-    user_sessions:
-      signed_in: U identifikua me sukses.
-      signed_out: Dilni me sukses.
   errors:
     messages:
       already_confirmed: ishte konfirmuar tashmë

@@ -387,44 +387,6 @@ af:
       spree/zone:
         one: Sone
         other: Sones
-  devise:
-    confirmations:
-      confirmed: U rekening is suksesvol bevestig. U is nou aangemeld.
-      send_instructions: U sal 'n e-pos ontvang met instruksies oor hoe u u rekening binne 'n paar minute kan bevestig.
-    failure:
-      inactive: U rekening is nog nie geaktiveer nie.
-      invalid: Ongeldige e-pos of wagwoord.
-      invalid_token: Ongeldige stawingstoken.
-      locked: U rekening is gesluit.
-      timeout: U sessie het verval. Meld asseblief weer aan om voort te gaan.
-      unauthenticated: U moet aanmeld of aanmeld voordat u verder gaan.
-      unconfirmed: U moet u rekening bevestig voordat u voortgaan.
-    mailer:
-      confirmation_instructions:
-        subject: Bevestigingsinstruksies
-      reset_password_instructions:
-        subject: Stel die wagwoordinstellings terug
-      unlock_instructions:
-        subject: Ontsluit instruksies
-    oauth_callbacks:
-      failure: Kon u nie van %{kind} magtig nie omdat "%{reason}".
-      success: Suksesvol gemagtig vanaf die %{kind}-rekening.
-    unlocks:
-      send_instructions: U sal 'n e-pos ontvang met instruksies oor hoe u u rekening binne 'n paar minute kan ontsluit.
-      unlocked: U rekening is suksesvol ontsluit. U is nou aangemeld.
-    user_passwords:
-      user:
-        cannot_be_blank: U wagwoord kan nie leeg wees nie.
-        send_instructions: U sal 'n e-pos ontvang met instruksies oor hoe u u wagwoord binne 'n paar minute kan herstel.
-        updated: U wagwoord is suksesvol verander. U is nou aangemeld.
-    user_registrations:
-      destroyed: Totsiens! U rekening is suksesvol gekanselleer. Ons hoop om u binnekort weer te sien.
-      inactive_signed_up: U het suksesvol ingeteken. Ons kon u egter nie aanmeld nie, want u rekening is %{reason}.
-      signed_up: Welkom! U het suksesvol ingeteken.
-      updated: U het u rekening suksesvol opgedateer.
-    user_sessions:
-      signed_in: Suksesvol aangemeld.
-      signed_out: Suksesvol afgeteken.
   errors:
     messages:
       already_confirmed: is reeds bevestig

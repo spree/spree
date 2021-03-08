@@ -387,44 +387,6 @@ zh-HK:
       spree/zone:
         one: 区
         other: 区域
-  devise:
-    confirmations:
-      confirmed: 您的帐户已成功确认。您现在已登录。
-      send_instructions: 您将在几分钟内收到一封电子邮件，其中包含有关如何确认帐户的说明。
-    failure:
-      inactive: 您的帐户尚未激活。
-      invalid: 无效的电子邮件或密码。
-      invalid_token: 无效的身份验证令牌。
-      locked: 您的帐户已被锁定。
-      timeout: 您的会话已过期，请重新登录以继续。
-      unauthenticated: 您需要先登录或注册，然后再继续。
-      unconfirmed: 您必须先确认您的帐户，然后才能继续。
-    mailer:
-      confirmation_instructions:
-        subject: 确认说明
-      reset_password_instructions:
-        subject: 重置密码说明
-      unlock_instructions:
-        subject: 解锁说明
-    oauth_callbacks:
-      failure: 无法从%{kind}授权您，因为“ %{reason}”。
-      success: 已成功从%{kind}帐户授权。
-    unlocks:
-      send_instructions: 您将在几分钟内收到一封电子邮件，其中包含有关如何解锁帐户的说明。
-      unlocked: 您的帐户已成功解锁。您现在已登录。
-    user_passwords:
-      user:
-        cannot_be_blank: 您的密码不能为空。
-        send_instructions: 您将在几分钟内收到一封电子邮件，其中包含有关如何重设密码的说明。
-        updated: 您的密码已成功更改。您现在已登录。
-    user_registrations:
-      destroyed: 再见！您的帐户已成功取消。我们希望很快再见到你。
-      inactive_signed_up: 您已成功注册。但是，由于您的帐户为%{reason}，因此我们无法登录。
-      signed_up: 欢迎！您已成功注册。
-      updated: 您已成功更新帐户。
-    user_sessions:
-      signed_in: 登录成功。
-      signed_out: 登出成功。
   errors:
     messages:
       already_confirmed: 已经被确认

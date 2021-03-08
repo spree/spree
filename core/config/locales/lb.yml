@@ -387,44 +387,6 @@ lb:
       spree/zone:
         one: Zone
         other: Zonen
-  devise:
-    confirmations:
-      confirmed: Äre Kont gouf erfollegräich bestätegt. Dir sidd elo ugemellt.
-      send_instructions: Dir kritt en E-Mail mat Instruktioune wéi Dir Äre Kont an e puer Minutten confirméiere kënnt.
-    failure:
-      inactive: Äre Kont war nach net aktivéiert.
-      invalid: Ongëltegen E-Mail oder Passwuert.
-      invalid_token: Ongülteg Authentifikatiounstoken.
-      locked: Äre Kont ass gespaart.
-      timeout: Är Sëtzung ass ofgelaf, mellt Iech w.e.g. nach eng Kéier fir weiderzemaachen.
-      unauthenticated: Dir musst Iech umellen oder Iech umellen ier Dir weidergitt.
-      unconfirmed: Dir musst Äre Kont bestätegen ier Dir weidergitt.
-    mailer:
-      confirmation_instructions:
-        subject: Bestätegungsinstruktiounen
-      reset_password_instructions:
-        subject: Reset Passwuert Instruktiounen
-      unlock_instructions:
-        subject: Entlooss Instruktiounen
-    oauth_callbacks:
-      failure: Konnt dech net vum %{kind} autoriséieren, well "%{reason}".
-      success: Erfollegräich autoriséiert vum %{kind} Kont.
-    unlocks:
-      send_instructions: Dir kritt en E-Mail mat Instruktioune wéi Dir Äre Kont an e puer Minutten opléist.
-      unlocked: Äre Kont gouf erfollegräich opgehuewen. Dir sidd elo ugemellt.
-    user_passwords:
-      user:
-        cannot_be_blank: Äert Passwuert kann net eidel sinn.
-        send_instructions: Dir kritt en E-Mail mat Instruktioune wéi Dir Äert Passwuert an e puer Minutten zréckgesat hutt.
-        updated: Äert Passwuert gouf erfollegräich geännert. Dir sidd elo ugemellt.
-    user_registrations:
-      destroyed: Äddi! Äre Kont gouf erfollegräich annuléiert. Mir hoffen Iech geschwënn erëm ze gesinn.
-      inactive_signed_up: Dir hutt Iech erfollegräich ugemellt. Mir konnten Iech awer net umellen, well Äre Kont %{reason} ass.
-      signed_up: Wëllkomm! Dir hutt Iech erfollegräich ugemellt.
-      updated: Dir hutt Äre Kont erfollegräich aktualiséiert.
-    user_sessions:
-      signed_in: Erfolleg ënnerschriwwen.
-      signed_out: Erfollegräich ofgemellt.
   errors:
     messages:
       already_confirmed: war scho bestätegt

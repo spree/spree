@@ -118,7 +118,6 @@ ignore_missing:
 ignore_unused:
   - 'activerecord.*'
   - 'activemodel.*'
-  - 'devise.*'
   - 'errors.*'
 
 ## Exclude these keys from the `i18n-tasks eq-base' report:

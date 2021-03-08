@@ -387,44 +387,6 @@ fr-FR:
       spree/zone:
         one: Zone
         other: Zones
-  devise:
-    confirmations:
-      confirmed: Votre compte a été confirmé avec succès. Vous êtes maintenant inscrit.
-      send_instructions: Vous recevrez un e-mail avec des instructions sur la façon de confirmer votre compte dans quelques minutes.
-    failure:
-      inactive: Votre compte n'a pas encore été activé.
-      invalid: Email ou mot de passe invalide.
-      invalid_token: Jeton d'authentification non valide.
-      locked: Ton compte est bloqué.
-      timeout: Votre session a expiré, veuillez vous reconnecter pour continuer.
-      unauthenticated: Vous devez vous connecter ou vous inscrire avant de continuer.
-      unconfirmed: Vous devez confirmer votre compte avant de continuer.
-    mailer:
-      confirmation_instructions:
-        subject: Instructions de confirmation
-      reset_password_instructions:
-        subject: Réinitialiser les instructions de mot de passe
-      unlock_instructions:
-        subject: Déverrouiller les instructions
-    oauth_callbacks:
-      failure: Impossible de vous autoriser à partir de %{kind} car "%{reason}".
-      success: Autorisé avec succès depuis le compte %{kind}.
-    unlocks:
-      send_instructions: Vous recevrez un e-mail avec des instructions sur la façon de déverrouiller votre compte dans quelques minutes.
-      unlocked: Votre compte a été déverrouillé avec succès. Vous êtes maintenant inscrit.
-    user_passwords:
-      user:
-        cannot_be_blank: Votre mot de passe ne peut pas être vide.
-        send_instructions: Vous recevrez un e-mail avec des instructions sur la réinitialisation de votre mot de passe dans quelques minutes.
-        updated: Votre mot de passe à été changé avec succès. Vous êtes maintenant inscrit.
-    user_registrations:
-      destroyed: Au revoir! Votre compte a été annulé avec succès. Nous espérons te revoir bientôt.
-      inactive_signed_up: Vous vous êtes inscrit avec succès. Cependant, nous n'avons pas pu vous connecter car votre compte est %{reason}.
-      signed_up: Bienvenue! Vous vous êtes inscrit avec succès.
-      updated: Vous avez mis à jour votre compte avec succès.
-    user_sessions:
-      signed_in: Connexion réussie.
-      signed_out: Déconnecté avec succès.
   errors:
     messages:
       already_confirmed: était déjà confirmé

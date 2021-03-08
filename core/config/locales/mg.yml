@@ -387,44 +387,6 @@ mg:
       spree/zone:
         one: ara-potoana
         other: faritra
-  devise:
-    confirmations:
-      confirmed: Voamarina tsara ny kaontinao. Miditra ianao izao.
-      send_instructions: Handray mailaka ianao miaraka amin'ny torolàlana momba ny fomba hanamafisana ny kaontinao ao anatin'ny minitra vitsy.
-    failure:
-      inactive: Tsy mbola navadika ny kaontinao.
-      invalid: Mailaka na teny miafina tsy mety.
-      invalid_token: Famantarana fanamarinana tsy mety.
-      locked: Mihidy ny kaontinao.
-      timeout: Tapitra ny fotoananao, miangavy anao hiditra indray mba hanohy.
-      unauthenticated: Mila miditra na misoratra anarana ianao alohan'ny hanohizana.
-      unconfirmed: Mila manamafy ny kaontinao ianao alohan'ny hanohizanao.
-    mailer:
-      confirmation_instructions:
-        subject: Torohevitra fanamafisana
-      reset_password_instructions:
-        subject: Avereno ny torolàlana momba ny teny miafina
-      unlock_instructions:
-        subject: Mamaha torolàlana
-    oauth_callbacks:
-      failure: Tsy afaka nanome alalana anao avy amin'ny %{kind} satria "%{reason}".
-      success: Nahazo alalana tamin'ny kaonty %{kind}.
-    unlocks:
-      send_instructions: Handray mailaka ianao miaraka amin'ny torolàlana momba ny fomba hamohana ny kaontinao ao anatin'ny minitra vitsy.
-      unlocked: Novohana soa aman-tsara ny kaontinao. Miditra ianao izao.
-    user_passwords:
-      user:
-        cannot_be_blank: Tsy tokony ho banga ny teny miafinao.
-        send_instructions: Hahazo mailaka ianao miaraka amin'ny torolàlana momba ny fomba hamerenanao ny teny miafinao afaka minitra vitsy.
-        updated: Novaina soa aman-tsara ny teny miafinao Miditra ianao izao.
-    user_registrations:
-      destroyed: Veloma! Nofoanana tamim-pahombiazana ny kaontinao. Manantena ny hahita anao tsy ho ela intsony izahay.
-      inactive_signed_up: Nahavita nisoratra anarana tamim-pahombiazana ianao. Na izany aza, tsy afaka nanao sonia anao izahay satria %{reason} ny kaontinao.
-      signed_up: Tongasoa! Nahavita nisoratra anarana tamim-pahombiazana ianao.
-      updated: Nahomby ny fanavaozana ny kaontinao.
-    user_sessions:
-      signed_in: Nahomby tamin'ny sonia.
-      signed_out: Nahomby tamin'ny sonia.
   errors:
     messages:
       already_confirmed: dia efa voamarina

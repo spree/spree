@@ -547,44 +547,6 @@ cy:
         other: Parthau
         two: Parthau
         zero: Dim Parth
-  devise:
-    confirmations:
-      confirmed: Cadarnhawyd eich cyfrif yn llwyddiannus. Rydych chi bellach wedi mewngofnodi.
-      send_instructions: Byddwch yn derbyn e-bost gyda chyfarwyddiadau ar sut i gadarnhau eich cyfrif mewn ychydig funudau.
-    failure:
-      inactive: Ni weithredwyd eich cyfrif eto.
-      invalid: E-bost neu gyfrinair annilys.
-      invalid_token: Tocyn dilysu annilys.
-      locked: Mae'ch cyfrif wedi'i gloi.
-      timeout: Daeth eich sesiwn i ben, mewngofnodwch eto i barhau.
-      unauthenticated: Mae angen i chi fewngofnodi neu arwyddo cyn parhau.
-      unconfirmed: Mae'n rhaid i chi gadarnhau eich cyfrif cyn parhau.
-    mailer:
-      confirmation_instructions:
-        subject: Cyfarwyddiadau cadarnhau
-      reset_password_instructions:
-        subject: Ailosod cyfarwyddiadau cyfrinair
-      unlock_instructions:
-        subject: Datgloi Cyfarwyddiadau
-    oauth_callbacks:
-      failure: Ni allai eich awdurdodi rhag %{kind} oherwydd "%{reason}".
-      success: Wedi'i awdurdodi'n llwyddiannus o gyfrif %{kind}.
-    unlocks:
-      send_instructions: Byddwch yn derbyn e-bost gyda chyfarwyddiadau ar sut i ddatgloi eich cyfrif mewn ychydig funudau.
-      unlocked: Datglowyd eich cyfrif yn llwyddiannus. Rydych chi bellach wedi mewngofnodi.
-    user_passwords:
-      user:
-        cannot_be_blank: Ni all eich cyfrinair fod yn wag.
-        send_instructions: Byddwch yn derbyn e-bost gyda chyfarwyddiadau ar sut i ailosod eich cyfrinair mewn ychydig funudau.
-        updated: Newidiwyd eich cyfrinair yn llwyddiannus. Rydych chi bellach wedi mewngofnodi.
-    user_registrations:
-      destroyed: Hwyl! Cafodd eich cyfrif ei ganslo'n llwyddiannus. Gobeithiwn eich gweld eto yn fuan.
-      inactive_signed_up: Rydych wedi cofrestru'n llwyddiannus. Fodd bynnag, ni allem eich llofnodi i mewn oherwydd bod eich cyfrif yn %{reason}.
-      signed_up: Croeso! Rydych wedi cofrestru'n llwyddiannus.
-      updated: Fe wnaethoch chi ddiweddaru'ch cyfrif yn llwyddiannus.
-    user_sessions:
-      signed_in: Llofnodwyd i mewn yn llwyddiannus.
-      signed_out: Llofnodwyd yn llwyddiannus.
   errors:
     messages:
       already_confirmed: cadarnhawyd eisoes

@@ -387,44 +387,6 @@ sv-SE:
       spree/zone:
         one: Zon
         other: Zoner
-  devise:
-    confirmations:
-      confirmed: Ditt konto har bekräftats. Du är nu inloggad.
-      send_instructions: Du kommer att få ett mejl med instruktioner om hur du bekräftar ditt konto på några minuter.
-    failure:
-      inactive: Ditt konto har inte aktiverats ännu.
-      invalid: Ogiltig e-post eller lösenord.
-      invalid_token: Ogiltigt autentiseringstoken.
-      locked: Ditt konto är låst.
-      timeout: Din session har gått ut. Logga in igen för att fortsätta.
-      unauthenticated: Du måste logga in eller registrera dig innan du fortsätter.
-      unconfirmed: Du måste bekräfta ditt konto innan du fortsätter.
-    mailer:
-      confirmation_instructions:
-        subject: Bekräftelseanvisningar
-      reset_password_instructions:
-        subject: Återställ lösenordsinstruktioner
-      unlock_instructions:
-        subject: Lås upp instruktioner
-    oauth_callbacks:
-      failure: Kunde inte auktorisera dig från %{kind} eftersom "%{reason}".
-      success: Auktoriserat från %{kind}-konto.
-    unlocks:
-      send_instructions: Du kommer att få ett mejl med instruktioner om hur du låser upp ditt konto på några minuter.
-      unlocked: Ditt konto har låsts upp. Du är nu inloggad.
-    user_passwords:
-      user:
-        cannot_be_blank: Ditt lösenord kan inte vara tomt.
-        send_instructions: Du kommer att få ett mejl med instruktioner om hur du återställer ditt lösenord på några minuter.
-        updated: Ditt lösenord har ändrats. Du är nu inloggad.
-    user_registrations:
-      destroyed: Hejdå! Ditt konto avbröts. Vi hoppas att vi ses snart igen.
-      inactive_signed_up: Du har registrerat dig framgångsrikt. Vi kunde dock inte logga in dig eftersom ditt konto är %{reason}.
-      signed_up: Välkommen! Du har registrerat dig framgångsrikt.
-      updated: Du uppdaterade ditt konto framgångsrikt.
-    user_sessions:
-      signed_in: Inloggad framgångsrikt.
-      signed_out: Loggade ut framgångsrikt.
   errors:
     messages:
       already_confirmed: var redan bekräftad

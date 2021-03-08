@@ -467,44 +467,6 @@ hr:
         many: Zone
         one: Zona
         other: Zone
-  devise:
-    confirmations:
-      confirmed: Vaš račun je uspješno potvrđen. Sada ste prijavljeni.
-      send_instructions: Za nekoliko minuta dobit ćete e-poštu s uputama o tome kako potvrditi račun.
-    failure:
-      inactive: Vaš račun još nije aktiviran.
-      invalid: Nevažeća e-adresa ili lozinka.
-      invalid_token: Nevažeći token za provjeru autentičnosti.
-      locked: Vaš je račun zaključan.
-      timeout: Vaša je sesija istekla, prijavite se ponovo da biste nastavili.
-      unauthenticated: Prije nastavka morate se prijaviti ili prijaviti.
-      unconfirmed: Prije nastavka morate potvrditi svoj račun.
-    mailer:
-      confirmation_instructions:
-        subject: Upute za potvrdu
-      reset_password_instructions:
-        subject: Poništite upute za lozinku
-      unlock_instructions:
-        subject: Upute za otključavanje
-    oauth_callbacks:
-      failure: Ne možemo vas ovlastiti za %{kind} jer "%{reason}".
-      success: Uspješno odobreno s računa %{kind}.
-    unlocks:
-      send_instructions: Za nekoliko minuta primit ćete e-poštu s uputama o tome kako otključati račun.
-      unlocked: Vaš je račun uspješno otključan. Sada ste prijavljeni.
-    user_passwords:
-      user:
-        cannot_be_blank: Vaša lozinka ne može biti prazna.
-        send_instructions: Za nekoliko minuta dobit ćete e-poštu s uputama o tome kako resetirati lozinku.
-        updated: Vaša je lozinka uspješno promijenjena. Sada ste prijavljeni.
-    user_registrations:
-      destroyed: Zbogom! Vaš račun je uspješno otkazan. Nadamo se da ćemo se uskoro opet vidjeti.
-      inactive_signed_up: Uspješno ste se prijavili. Međutim, nismo vas mogli prijaviti jer je vaš račun %{reason}.
-      signed_up: Dobrodošli! Uspješno ste se prijavili.
-      updated: Uspješno ste ažurirali račun.
-    user_sessions:
-      signed_in: Uspješno ste se prijavili.
-      signed_out: Odjava uspješno.
   errors:
     messages:
       already_confirmed: već bila potvrđena

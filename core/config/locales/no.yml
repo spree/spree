@@ -387,44 +387,6 @@
       spree/zone:
         one: sone
         other: Soner
-  devise:
-    confirmations:
-      confirmed: Kontoen din ble bekreftet. Du er nå logget på.
-      send_instructions: Du vil motta en e-post med instruksjoner om hvordan du kan bekrefte kontoen din om noen få minutter.
-    failure:
-      inactive: Kontoen din var ikke aktivert ennå.
-      invalid: Ugyldig epost eller passord.
-      invalid_token: Ugyldig godkjenningstoken.
-      locked: Kontoen din er låst.
-      timeout: Økten din utløp. Logg deg på igjen for å fortsette.
-      unauthenticated: Du må logge på eller registrere deg før du fortsetter.
-      unconfirmed: Du må bekrefte kontoen din før du fortsetter.
-    mailer:
-      confirmation_instructions:
-        subject: Bekreftelsesinstruksjoner
-      reset_password_instructions:
-        subject: Tilbakestill passordinstruksjonene
-      unlock_instructions:
-        subject: Lås opp instruksjoner
-    oauth_callbacks:
-      failure: Kunne ikke godkjenne deg fra %{kind} fordi "%{reason}".
-      success: Godkjent fra %{kind}-konto.
-    unlocks:
-      send_instructions: Du vil motta en e-post med instruksjoner om hvordan du låser opp kontoen din om noen få minutter.
-      unlocked: Kontoen din ble låst opp. Du er nå logget på.
-    user_passwords:
-      user:
-        cannot_be_blank: Passordet ditt kan ikke være tomt.
-        send_instructions: Du vil motta en e-post med instruksjoner om hvordan du tilbakestiller passordet ditt om noen minutter.
-        updated: Passordet ditt ble endret. Du er nå logget på.
-    user_registrations:
-      destroyed: Ha det! Kontoen din ble kansellert. Vi håper å se deg igjen snart.
-      inactive_signed_up: Du har registrert deg. Vi kunne imidlertid ikke logge deg på fordi kontoen din er %{reason}.
-      signed_up: Velkommen! Du har registrert deg.
-      updated: Du oppdaterte kontoen din.
-    user_sessions:
-      signed_in: Logget på.
-      signed_out: Logget av.
   errors:
     messages:
       already_confirmed: var allerede bekreftet

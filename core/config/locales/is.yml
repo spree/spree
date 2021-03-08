@@ -387,44 +387,6 @@ is:
       spree/zone:
         one: Svæði
         other: Svæði
-  devise:
-    confirmations:
-      confirmed: Reikningurinn þinn var staðfestur. Þú ert nú skráð inn.
-      send_instructions: Þú færð tölvupóst með leiðbeiningum um hvernig á að staðfesta reikninginn þinn á nokkrum mínútum.
-    failure:
-      inactive: Reikningurinn þinn var ekki virkur ennþá.
-      invalid: Rangt netfang eða lykilorð.
-      invalid_token: Ógilt auðkenningarmerki.
-      locked: Reikningurinn þinn er læstur.
-      timeout: Þingið þitt rann út. Vinsamlegast skráðu þig inn aftur til að halda áfram.
-      unauthenticated: Þú þarft að skrá þig inn eða skrá þig áður en þú heldur áfram.
-      unconfirmed: Þú verður að staðfesta reikninginn þinn áður en þú heldur áfram.
-    mailer:
-      confirmation_instructions:
-        subject: Staðfestingarleiðbeiningar
-      reset_password_instructions:
-        subject: Endurstilla leiðbeiningar um lykilorð
-      unlock_instructions:
-        subject: Opna leiðbeiningar
-    oauth_callbacks:
-      failure: Gat ekki heimilað þér frá %{kind} vegna þess að "%{reason}".
-      success: Heimilt hefur verið frá %{kind} reikningi.
-    unlocks:
-      send_instructions: Þú færð tölvupóst með leiðbeiningum um hvernig á að opna reikninginn þinn á nokkrum mínútum.
-      unlocked: Reikningurinn þinn var opnaður. Þú ert nú skráð inn.
-    user_passwords:
-      user:
-        cannot_be_blank: Lykilorðið þitt getur ekki verið autt.
-        send_instructions: Þú færð tölvupóst með leiðbeiningum um hvernig á að endurstilla lykilorðið þitt á nokkrum mínútum.
-        updated: Lykilorðinu þínu var breytt. Þú ert nú skráð inn.
-    user_registrations:
-      destroyed: Bless! Reikningi þínum var rift. Við vonumst til að sjá þig aftur fljótlega.
-      inactive_signed_up: Þú hefur skráð þig. Við gátum þó ekki skráð þig inn vegna þess að reikningurinn þinn er %{reason}.
-      signed_up: Velkominn! Þú hefur skráð þig.
-      updated: Þú uppfærðir reikninginn þinn með góðum árangri.
-    user_sessions:
-      signed_in: Skráði þig inn með góðum árangri.
-      signed_out: Skráði þig út með góðum árangri.
   errors:
     messages:
       already_confirmed: var þegar staðfest

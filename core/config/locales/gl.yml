@@ -387,44 +387,6 @@ gl:
       spree/zone:
         one: Zona
         other: Zonas
-  devise:
-    confirmations:
-      confirmed: A túa conta confirmouse correctamente. Agora iniciaches sesión.
-      send_instructions: Recibirá un correo electrónico con instrucións sobre como confirmar a súa conta nuns minutos.
-    failure:
-      inactive: A túa conta aínda non se activou.
-      invalid: Correo electrónico ou contrasinal non válidos.
-      invalid_token: Token de autenticación non válido.
-      locked: A túa conta está bloqueada.
-      timeout: A túa sesión caducou. Inicia sesión de novo para continuar.
-      unauthenticated: Necesitas iniciar sesión ou rexistrarte antes de continuar.
-      unconfirmed: Debes confirmar a túa conta antes de continuar.
-    mailer:
-      confirmation_instructions:
-        subject: Instrucións de confirmación
-      reset_password_instructions:
-        subject: Restablece as instrucións do contrasinal
-      unlock_instructions:
-        subject: Instrucións de desbloqueo
-    oauth_callbacks:
-      failure: Non se puido autorizar a vostede desde %{kind} porque "%{reason}".
-      success: Autorizado correctamente desde a conta %{kind}.
-    unlocks:
-      send_instructions: Recibirá un correo electrónico con instrucións sobre como desbloquear a súa conta nuns minutos.
-      unlocked: Desbloqueouse correctamente a túa conta. Agora iniciaches sesión.
-    user_passwords:
-      user:
-        cannot_be_blank: O seu contrasinal non pode estar en branco.
-        send_instructions: Recibirá un correo electrónico con instrucións sobre como restablecer o seu contrasinal nuns minutos.
-        updated: O seu contrasinal cambiouse correctamente. Agora iniciaches sesión.
-    user_registrations:
-      destroyed: Adeus! A túa conta cancelouse correctamente. Esperamos verte de novo en breve.
-      inactive_signed_up: Rexistrouse correctamente. Non obstante, non puidemos iniciar sesión porque a túa conta é %{reason}.
-      signed_up: Benvido! Rexistrouse correctamente.
-      updated: Actualizou a súa conta correctamente.
-    user_sessions:
-      signed_in: Iniciaches sesión correctamente.
-      signed_out: Pechou sesión correctamente.
   errors:
     messages:
       already_confirmed: xa estaba confirmado

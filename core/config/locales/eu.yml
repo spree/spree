@@ -387,44 +387,6 @@ eu:
       spree/zone:
         one: Zona
         other: Zonaldeak
-  devise:
-    confirmations:
-      confirmed: Zure kontua behar bezala baieztatu da. Saioa hasi duzu.
-      send_instructions: Minutu gutxi barru zure kontua berresteko argibideekin mezu elektroniko bat jasoko duzu.
-    failure:
-      inactive: Zure kontua oraindik ez da aktibatu.
-      invalid: Mezu elektroniko edo pasahitz baliogabea.
-      invalid_token: Autentifikazio token baliogabea.
-      locked: Zure kontua blokeatuta dago.
-      timeout: Saioa iraungi egin da. Mesedez, hasi berriro saioa jarraitzeko.
-      unauthenticated: Jarraitu aurretik hasi edo erregistratu behar duzu.
-      unconfirmed: Jarraitu aurretik zure kontua berretsi behar duzu.
-    mailer:
-      confirmation_instructions:
-        subject: Baieztapen argibideak
-      reset_password_instructions:
-        subject: Pasahitz argibideak berrezarri
-      unlock_instructions:
-        subject: Desblokeatu argibideak
-    oauth_callbacks:
-      failure: Ezin izan dizut baimendu %{kind}-etik "%{reason}" delako.
-      success: "%{kind} kontutik baimendu da."
-    unlocks:
-      send_instructions: Minutu gutxi barru zure kontua desblokeatzeko argibideekin mezu elektroniko bat jasoko duzu.
-      unlocked: Zure kontua ongi desblokeatu da. Saioa hasi duzu.
-    user_passwords:
-      user:
-        cannot_be_blank: Zure pasahitza ezin da hutsik egon.
-        send_instructions: Minutu gutxi barru pasahitza berrezartzeko moduari buruzko argibideekin mezu elektroniko bat jasoko duzu.
-        updated: Zure pasahitza ondo aldatu da. Saioa hasi duzu.
-    user_registrations:
-      destroyed: Agur! Zure kontua behar bezala bertan behera utzi da. Laster berriro ikustea espero dugu.
-      inactive_signed_up: Behar bezala erregistratu zara. Hala ere, ezin izan dugu saioa hasi zure kontua %{reason} delako.
-      signed_up: Ongi etorri! Behar bezala erregistratu zara.
-      updated: Zure kontua behar bezala eguneratu duzu.
-    user_sessions:
-      signed_in: Saioa hasita ongi egin da.
-      signed_out: Saioa amaitu da.
   errors:
     messages:
       already_confirmed: dagoeneko baieztatuta zegoen

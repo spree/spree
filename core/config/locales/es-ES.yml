@@ -387,44 +387,6 @@ es-ES:
       spree/zone:
         one: Zona
         other: Zonas
-  devise:
-    confirmations:
-      confirmed: Tu cuenta fue confirmada exitosamente. Ya estás registrado.
-      send_instructions: Recibirá un correo electrónico con instrucciones sobre cómo confirmar su cuenta en unos minutos.
-    failure:
-      inactive: Tu cuenta aún no ha sido activada.
-      invalid: Correo electrónico o contraseña no válidos.
-      invalid_token: Token de autenticación no válido.
-      locked: Tu cuenta esta bloqueada.
-      timeout: Tu sesión expiró, vuelve a iniciar sesión para continuar.
-      unauthenticated: Debes iniciar sesión o registrarte antes de continuar.
-      unconfirmed: Tienes que confirmar tu cuenta antes de continuar.
-    mailer:
-      confirmation_instructions:
-        subject: Instrucciones de confirmación
-      reset_password_instructions:
-        subject: Restablecer las instrucciones de contraseña
-      unlock_instructions:
-        subject: Instrucciones de desbloqueo
-    oauth_callbacks:
-      failure: No se pudo autorizar su uso de %{kind} porque "%{reason}".
-      success: Autorizado con éxito desde la cuenta %{kind}.
-    unlocks:
-      send_instructions: Recibirá un correo electrónico con instrucciones sobre cómo desbloquear su cuenta en unos minutos.
-      unlocked: Su cuenta se desbloqueó correctamente. Ya estás registrado.
-    user_passwords:
-      user:
-        cannot_be_blank: Su contraseña no puede estar en blanco.
-        send_instructions: Recibirá un correo electrónico con instrucciones sobre cómo restablecer su contraseña en unos minutos.
-        updated: Tu contraseña fue cambiada exitosamente. Ya estás registrado.
-    user_registrations:
-      destroyed: "¡Chau! Su cuenta fue cancelada con éxito. Esperamos volver a verte pronto."
-      inactive_signed_up: Te has registrado correctamente. Sin embargo, no pudimos iniciar sesión porque su cuenta es %{reason}.
-      signed_up: "¡Bienvenida! Te has registrado correctamente."
-      updated: Actualizó su cuenta con éxito.
-    user_sessions:
-      signed_in: Accediste correctamente.
-      signed_out: Cerrar sesión correctamente.
   errors:
     messages:
       already_confirmed: ya estaba confirmado

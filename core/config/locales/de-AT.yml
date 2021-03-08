@@ -387,44 +387,6 @@ de-AT:
       spree/zone:
         one: Zone
         other: Zonen
-  devise:
-    confirmations:
-      confirmed: Ihr Konto wurde erfolgreich bestätigt. Sie sind jetzt angemeldet.
-      send_instructions: Sie erhalten in wenigen Minuten eine E-Mail mit Anweisungen zur Bestätigung Ihres Kontos.
-    failure:
-      inactive: Ihr Konto wurde noch nicht aktiviert.
-      invalid: Ungültige E-Mail oder Passwort.
-      invalid_token: Ungültiges Authentifizierungstoken.
-      locked: Ihr Konto ist gesperrt.
-      timeout: Ihre Sitzung ist abgelaufen. Melden Sie sich erneut an, um fortzufahren.
-      unauthenticated: Sie müssen sich anmelden oder anmelden, bevor Sie fortfahren können.
-      unconfirmed: Sie müssen Ihr Konto bestätigen, bevor Sie fortfahren können.
-    mailer:
-      confirmation_instructions:
-        subject: Bestätigungsanweisungen
-      reset_password_instructions:
-        subject: Anweisungen zum Zurücksetzen des Passworts
-      unlock_instructions:
-        subject: Anweisungen entsperren
-    oauth_callbacks:
-      failure: Konnte Sie nicht von %{kind} autorisieren, weil "%{reason}".
-      success: Erfolgreich vom %{kind}-Konto autorisiert.
-    unlocks:
-      send_instructions: Sie erhalten in wenigen Minuten eine E-Mail mit Anweisungen zum Entsperren Ihres Kontos.
-      unlocked: Ihr Konto wurde erfolgreich entsperrt. Sie sind jetzt angemeldet.
-    user_passwords:
-      user:
-        cannot_be_blank: Ihr Passwort darf nicht leer sein.
-        send_instructions: Sie erhalten in wenigen Minuten eine E-Mail mit Anweisungen zum Zurücksetzen Ihres Passworts.
-        updated: Ihr Kennwort wurde erfolgreich geändert. Sie sind jetzt angemeldet.
-    user_registrations:
-      destroyed: Tschüss! Ihr Konto wurde erfolgreich aufgelöst. Wir hoffen, Sie bald wieder zu sehen.
-      inactive_signed_up: Sie haben sich erfolgreich angemeldet. Wir konnten Sie jedoch nicht anmelden, da Ihr Konto %{reason} ist.
-      signed_up: Herzlich willkommen! Sie haben sich erfolgreich angemeldet.
-      updated: Sie haben Ihr Konto erfolgreich aktualisiert.
-    user_sessions:
-      signed_in: Erfolgreich angemeldet.
-      signed_out: Erfolgreich Abgemeldet.
   errors:
     messages:
       already_confirmed: wurde bereits bestätigt

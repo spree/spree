@@ -387,44 +387,6 @@ pt-PT:
       spree/zone:
         one: Zona
         other: Zonas
-  devise:
-    confirmations:
-      confirmed: Sua conta foi confirmada com sucesso. Agora você está conectado.
-      send_instructions: Você receberá um e-mail com instruções sobre como confirmar sua conta em alguns minutos.
-    failure:
-      inactive: Sua conta ainda não foi ativada.
-      invalid: E-mail ou senha inválidos.
-      invalid_token: Token de autenticação inválido.
-      locked: Sua conta está bloqueada.
-      timeout: Sua sessão expirou, faça login novamente para continuar.
-      unauthenticated: Você precisa entrar ou se inscrever antes de continuar.
-      unconfirmed: Você tem que confirmar sua conta antes de continuar.
-    mailer:
-      confirmation_instructions:
-        subject: Instruções de confirmação
-      reset_password_instructions:
-        subject: Instruções de redefinição de senha
-      unlock_instructions:
-        subject: Instruções de desbloqueio
-    oauth_callbacks:
-      failure: Não foi possível autorizar você de %{kind} porque "%{reason}".
-      success: Autorizado com sucesso na conta %{kind}.
-    unlocks:
-      send_instructions: Você receberá um e-mail com instruções sobre como desbloquear sua conta em alguns minutos.
-      unlocked: Sua conta foi desbloqueada com sucesso. Agora você está conectado.
-    user_passwords:
-      user:
-        cannot_be_blank: Sua senha não pode ficar em branco.
-        send_instructions: Você receberá um e-mail com instruções sobre como redefinir sua senha em alguns minutos.
-        updated: Sua senha foi alterada com sucesso. Agora você está conectado.
-    user_registrations:
-      destroyed: Tchau! Sua conta foi cancelada com sucesso. Nós esperamos te ver novamente em breve.
-      inactive_signed_up: Você se inscreveu com sucesso. No entanto, não foi possível fazer seu login porque sua conta é %{reason}.
-      signed_up: Receber! Você se inscreveu com sucesso.
-      updated: Você atualizou sua conta com sucesso.
-    user_sessions:
-      signed_in: Login feito com sucesso.
-      signed_out: Saiu com sucesso.
   errors:
     messages:
       already_confirmed: já foi confirmado

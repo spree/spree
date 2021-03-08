@@ -387,44 +387,6 @@ tl:
       spree/zone:
         one: Zone
         other: Mga Zone
-  devise:
-    confirmations:
-      confirmed: Ang iyong account ay matagumpay na nakumpirma. Naka-sign in ka na
-      send_instructions: Makakatanggap ka ng isang email na may mga tagubilin tungkol sa kung paano kumpirmahin ang iyong account sa loob ng ilang minuto.
-    failure:
-      inactive: Ang iyong account ay hindi pa napapagana.
-      invalid: Hindi wastong email o password.
-      invalid_token: Di-wastong token ng pagpapatotoo.
-      locked: Ang iyong account ay naka-lock.
-      timeout: Nag-expire na ang iyong session, mangyaring mag-sign in muli upang magpatuloy.
-      unauthenticated: Kailangan mong mag-sign in o mag-sign up bago magpatuloy.
-      unconfirmed: Kailangan mong kumpirmahin ang iyong account bago magpatuloy.
-    mailer:
-      confirmation_instructions:
-        subject: Mga tagubilin sa kumpirmasyon
-      reset_password_instructions:
-        subject: I-reset ang mga tagubilin sa password
-      unlock_instructions:
-        subject: I-unlock ang Mga Tagubilin
-    oauth_callbacks:
-      failure: Hindi ka pahintulutan mula sa %{kind} dahil "%{reason}".
-      success: Matagumpay na pinahintulutan mula sa %{kind} account.
-    unlocks:
-      send_instructions: Makakatanggap ka ng isang email na may mga tagubilin tungkol sa kung paano i-unlock ang iyong account sa loob ng ilang minuto.
-      unlocked: Matagumpay na na-unlock ang iyong account. Naka-sign in ka na
-    user_passwords:
-      user:
-        cannot_be_blank: Ang iyong password ay hindi maaaring blangko.
-        send_instructions: Makakatanggap ka ng isang email na may mga tagubilin tungkol sa kung paano i-reset ang iyong password sa loob ng ilang minuto.
-        updated: Matagumpay na nabago ang iyong password. Naka-sign in ka na
-    user_registrations:
-      destroyed: Paalam! Matagumpay na nakansela ang iyong account. Inaasahan namin na makita ka ulit sa lalong madaling panahon.
-      inactive_signed_up: Matagumpay kang nag-sign up. Gayunpaman, hindi ka namin mai-sign in dahil ang iyong account ay %{reason}.
-      signed_up: Maligayang pagdating! Matagumpay kang nag-sign up.
-      updated: Matagumpay mong na-update ang iyong account.
-    user_sessions:
-      signed_in: Matagumpay na nag-sign in.
-      signed_out: Matagumpay na nag-sign out.
   errors:
     messages:
       already_confirmed: nakumpirma na
