@@ -387,14 +387,6 @@ tt:
       spree/zone:
         one: Зона
         other: Зоналар
-  errors:
-    messages:
-      already_confirmed: расланган иде
-      not_found: табылмады
-      not_locked: бикләнмәгән
-      not_saved:
-        one: '1 хата бу %{resource} саклауны тыйды:'
-        other: "%{count} хаталары бу %{resource} саклауны тыйды:"
   spree:
     abbreviation: Кыскарту
     accept: Кабул ит

@@ -387,14 +387,6 @@ ka:
       spree/zone:
         one: ზონა
         other: ზონები
-  errors:
-    messages:
-      already_confirmed: უკვე დადასტურებული იყო
-      not_found: არ არის ნაპოვნი
-      not_locked: ჩაკეტილი არ იყო
-      not_saved:
-        one: '1 შეცდომამ აკრძალა ამ %{resource}- ის შენახვა:'
-        other: "%{count} შეცდომებმა აკრძალა ამ %{resource}- ის შენახვა:"
   spree:
     abbreviation: შემოკლებით
     accept: მიღება

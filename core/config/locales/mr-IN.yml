@@ -387,14 +387,6 @@ mr-IN:
       spree/zone:
         one: झोन
         other: झोन
-  errors:
-    messages:
-      already_confirmed: आधीच खात्री झाली होती
-      not_found: सापडले नाही
-      not_locked: लॉक केलेला नव्हता
-      not_saved:
-        one: 1 त्रुटीने या झेक्सएक्सएक्सएक्स %{resource} ला जतन होण्यास प्रतिबंधित केलेः
-        other: "%{count} त्रुटींनी या %{resource} ला जतन होण्यास प्रतिबंधित केले आहे:"
   spree:
     abbreviation: संक्षिप्त
     accept: स्वीकारा

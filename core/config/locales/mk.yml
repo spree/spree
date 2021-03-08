@@ -387,14 +387,6 @@ mk:
       spree/zone:
         one: Зона
         other: Зони
-  errors:
-    messages:
-      already_confirmed: веќе беше потврдено
-      not_found: не е најдено
-      not_locked: не беше заклучен
-      not_saved:
-        one: '1 грешка забрани зачувување на овој %{resource}:'
-        other: "%{count} грешките забранија зачувување на овој %{resource}:"
   spree:
     abbreviation: Кратенка
     accept: Прифати

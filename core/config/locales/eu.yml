@@ -387,14 +387,6 @@ eu:
       spree/zone:
         one: Zona
         other: Zonaldeak
-  errors:
-    messages:
-      already_confirmed: dagoeneko baieztatuta zegoen
-      not_found: ez da aurkitu
-      not_locked: ez zen blokeatuta egon
-      not_saved:
-        one: '1 errore batek debekatu egin du %{resource} hau gordetzea:'
-        other: "%{count} erroreek debekatu egin dute %{resource} hau gordetzea:"
   spree:
     abbreviation: Laburdura
     accept: Onartu

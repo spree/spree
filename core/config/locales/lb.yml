@@ -387,14 +387,6 @@ lb:
       spree/zone:
         one: Zone
         other: Zonen
-  errors:
-    messages:
-      already_confirmed: war scho bestätegt
-      not_found: net fonnt
-      not_locked: war net gespaart
-      not_saved:
-        one: '1 Feeler verbueden dës %{resource} ze späicheren:'
-        other: "%{count} Feeler verbidden dës %{resource} ze späicheren:"
   spree:
     abbreviation: Ofkierzung
     accept: Akzeptéieren

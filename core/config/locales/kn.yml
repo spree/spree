@@ -387,14 +387,6 @@ kn:
       spree/zone:
         one: ವಲಯ
         other: ವಲಯಗಳು
-  errors:
-    messages:
-      already_confirmed: ಈಗಾಗಲೇ ದೃ was ೀಕರಿಸಲಾಗಿದೆ
-      not_found: ಸಿಕ್ಕಿಲ್ಲ
-      not_locked: ಲಾಕ್ ಆಗಿಲ್ಲ
-      not_saved:
-        one: '1 ದೋಷವು ಈ %{resource} ಅನ್ನು ಉಳಿಸುವುದನ್ನು ನಿಷೇಧಿಸಿದೆ:'
-        other: "%{count} ದೋಷಗಳು ಈ %{resource} ಅನ್ನು ಉಳಿಸುವುದನ್ನು ನಿಷೇಧಿಸಿದೆ:"
   spree:
     abbreviation: ಸಂಕ್ಷೇಪಣ
     accept: ಒಪ್ಪಿಕೊಳ್ಳಿ

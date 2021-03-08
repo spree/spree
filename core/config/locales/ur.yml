@@ -387,14 +387,6 @@ ur:
       spree/zone:
         one: زون
         other: زون
-  errors:
-    messages:
-      already_confirmed: پہلے ہی تصدیق ہوگئی تھی
-      not_found: نہیں ملا
-      not_locked: مقفل نہیں تھا
-      not_saved:
-        one: '1 غلطی نے اس %{resource} کو محفوظ ہونے سے منع کیا:'
-        other: "%{count} غلطیوں نے اس %{resource} کو محفوظ ہونے سے منع کیا:"
   spree:
     abbreviation: مخفف
     accept: قبول کریں

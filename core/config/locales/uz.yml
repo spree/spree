@@ -387,14 +387,6 @@ uz:
       spree/zone:
         one: Mintaqa
         other: Mintaqalar
-  errors:
-    messages:
-      already_confirmed: allaqachon tasdiqlangan
-      not_found: topilmadi
-      not_locked: qulflanmagan
-      not_saved:
-        one: '1 ta xato ushbu %{resource}-ni saqlashni taqiqladi:'
-        other: "%{count} xatolari ushbu %{resource}-ni saqlashni taqiqladi:"
   spree:
     abbreviation: Qisqartirish
     accept: Qabul qiling

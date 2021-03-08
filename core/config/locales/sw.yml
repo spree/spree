@@ -387,14 +387,6 @@ sw:
       spree/zone:
         one: Eneo
         other: Kanda
-  errors:
-    messages:
-      already_confirmed: ilikuwa imethibitishwa tayari
-      not_found: haipatikani
-      not_locked: haikuwa imefungwa
-      not_saved:
-        one: 'Kosa 1 limekataza %{resource} hii kuokolewa:'
-        other: 'makosa ya %{count} yalikataza %{resource} hii kuokolewa:'
   spree:
     abbreviation: Kifupisho
     accept: Kubali

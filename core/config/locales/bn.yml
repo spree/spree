@@ -387,14 +387,6 @@ bn:
       spree/zone:
         one: মণ্ডল
         other: অঞ্চলগুলি
-  errors:
-    messages:
-      already_confirmed: ইতিমধ্যে নিশ্চিত ছিল
-      not_found: খুঁজে পাওয়া যায় নি
-      not_locked: লক ছিল না
-      not_saved:
-        one: '1 টি ত্রুটি এই %{resource} সংরক্ষণ থেকে নিষিদ্ধ করেছে:'
-        other: "%{count} ত্রুটিগুলি এই %{resource} সংরক্ষণ থেকে নিষিদ্ধ করেছে:"
   spree:
     abbreviation: সংক্ষিপ্তসার
     accept: গ্রহণ করুন

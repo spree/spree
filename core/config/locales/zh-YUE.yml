@@ -387,14 +387,6 @@ zh-YUE:
       spree/zone:
         one: 区
         other: 区域
-  errors:
-    messages:
-      already_confirmed: 已经被确认
-      not_found: 未找到
-      not_locked: 没有锁定
-      not_saved:
-        one: 1个错误禁止保存此%{resource}：
-        other: "%{count}错误禁止保存此%{resource}："
   spree:
     abbreviation: 缩写
     accept: 接受

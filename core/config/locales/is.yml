@@ -387,14 +387,6 @@ is:
       spree/zone:
         one: Svæði
         other: Svæði
-  errors:
-    messages:
-      already_confirmed: var þegar staðfest
-      not_found: ekki fundið
-      not_locked: var ekki læst
-      not_saved:
-        one: '1 villa bannaði að vista þennan %{resource}:'
-        other: "%{count} villur bannaði að vista þennan %{resource}:"
   spree:
     abbreviation: Skammstöfun
     accept: Taka

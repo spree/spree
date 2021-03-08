@@ -387,14 +387,6 @@ hi-IN:
       spree/zone:
         one: क्षेत्र
         other: क्षेत्र
-  errors:
-    messages:
-      already_confirmed: पहले से ही पुष्टि की गई थी
-      not_found: पता नहीं चला
-      not_locked: बंद नहीं था
-      not_saved:
-        one: '1 त्रुटि ने इस %{resource} को सहेजने से प्रतिबंधित कर दिया:'
-        other: "%{count} त्रुटियों ने इस %{resource} को सहेजे जाने से प्रतिबंधित किया है:"
   spree:
     abbreviation: संक्षिप्त
     accept: स्वीकार करना

@@ -387,14 +387,6 @@ pa:
       spree/zone:
         one: ਜ਼ੋਨ
         other: ਜ਼ੋਨ
-  errors:
-    messages:
-      already_confirmed: ਪਹਿਲਾਂ ਹੀ ਪੁਸ਼ਟੀ ਕੀਤੀ ਗਈ ਸੀ
-      not_found: ਨਹੀਂ ਲਭਿਆ
-      not_locked: ਲਾਕ ਨਹੀਂ ਕੀਤਾ ਗਿਆ ਸੀ
-      not_saved:
-        one: '1 ਅਸ਼ੁੱਧੀ ਨੇ ਇਸ %{resource} ਨੂੰ ਬਚਾਉਣ ਤੋਂ ਵਰਜਿਆ:'
-        other: "%{count} ਗਲਤੀਆਂ ਨੇ ਇਸ %{resource} ਨੂੰ ਬਚਾਉਣ ਤੋਂ ਵਰਜਿਆ:"
   spree:
     abbreviation: ਸੰਖੇਪ
     accept: ਸਵੀਕਾਰ ਕਰੋ

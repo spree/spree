@@ -387,14 +387,6 @@
       spree/zone:
         one: sone
         other: Soner
-  errors:
-    messages:
-      already_confirmed: var allerede bekreftet
-      not_found: ikke funnet
-      not_locked: var ikke låst
-      not_saved:
-        one: '1 feil forbød denne %{resource} å bli lagret:'
-        other: "%{count} feil forbød denne %{resource} å bli lagret:"
   spree:
     abbreviation: Forkortelse
     accept: Aksepterer

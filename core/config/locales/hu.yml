@@ -387,14 +387,6 @@ hu:
       spree/zone:
         one: Zóna
         other: Zónák
-  errors:
-    messages:
-      already_confirmed: már megerősítették
-      not_found: nem található
-      not_locked: nem volt bezárva
-      not_saved:
-        one: '1 hiba tiltotta a %{resource} mentését:'
-        other: 'A %{count} hibák tiltották a %{resource} mentését:'
   spree:
     abbreviation: Rövidítés
     accept: Elfogad

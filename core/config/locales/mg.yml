@@ -387,14 +387,6 @@ mg:
       spree/zone:
         one: ara-potoana
         other: faritra
-  errors:
-    messages:
-      already_confirmed: dia efa voamarina
-      not_found: tsy hita
-      not_locked: tsy nihidy
-      not_saved:
-        one: 'Hadisoana 1 no nandrara ity %{resource} tsy ho voavonjy ity:'
-        other: "%{count} lesoka dia nandrara ity %{resource} tsy ho voavonjy ity:"
   spree:
     abbreviation: fanafohezana
     accept: MANAIKY

@@ -387,18 +387,6 @@ en:
       spree/zone:
         one: Zone
         other: Zones
-  errors:
-    messages:
-      already_confirmed: 已经被确认
-      not_found: 未找到
-      not_locked: 没有锁定
-      not_saved:
-        few: '1 napaka je prepovedala shranjevanje tega %{resource}:'
-        many: 'pogreške %{count} zabranile su spremanje ovog %{resource}:'
-        one: 1个错误禁止保存此%{resource}：
-        other: "%{count}错误禁止保存此%{resource}："
-        two: 'napake %{count} so prepovedale shranjevanje tega %{resource}:'
-        zero: Dim
   spree:
     abbreviation: Abbreviation
     accept: Accept

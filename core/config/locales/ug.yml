@@ -387,14 +387,6 @@ ug:
       spree/zone:
         one: رايون
         other: رايونلار
-  errors:
-    messages:
-      already_confirmed: ئاللىقاچان جەزملەشتۈرۈلدى
-      not_found: تېپىلمىدى
-      not_locked: قۇلۇپلانمىدى
-      not_saved:
-        one: '1 خاتالىق بۇ %{resource} نىڭ ساقلىنىشىنى چەكلىدى:'
-        other: "%{count} خاتالىق بۇ %{resource} نىڭ ساقلىنىشىنى چەكلىدى:"
   spree:
     abbreviation: قىسقارتىش
     accept: قوبۇل قىلىڭ

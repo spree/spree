@@ -467,16 +467,6 @@ sl:
         one: Cona
         other: Območja
         two: Območja
-  errors:
-    messages:
-      already_confirmed: je bila že potrjena
-      not_found: ni najdeno
-      not_locked: ni bil zaklenjen
-      not_saved:
-        few: '1 napaka je prepovedala shranjevanje tega %{resource}:'
-        one: '1 napaka je prepovedala shranjevanje tega %{resource}:'
-        other: 'napake %{count} so prepovedale shranjevanje tega %{resource}:'
-        two: 'napake %{count} so prepovedale shranjevanje tega %{resource}:'
   spree:
     abbreviation: Okrajšava
     accept: Sprejmi

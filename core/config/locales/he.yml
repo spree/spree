@@ -387,14 +387,6 @@ he:
       spree/zone:
         one: אֵזוֹר
         other: אזורים
-  errors:
-    messages:
-      already_confirmed: כבר אושר
-      not_found: לא נמצא
-      not_locked: לא היה נעול
-      not_saved:
-        one: 'שגיאה אחת אסרה על שמירת %{resource} זה:'
-        other: 'שגיאות %{count} אסרו על שמירת %{resource} זה:'
   spree:
     abbreviation: נוֹטָרִיקוֹן
     accept: לְקַבֵּל

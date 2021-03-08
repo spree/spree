@@ -547,18 +547,6 @@ cy:
         other: Parthau
         two: Parthau
         zero: Dim Parth
-  errors:
-    messages:
-      already_confirmed: cadarnhawyd eisoes
-      not_found: heb ei ddarganfod
-      not_locked: ni chafodd ei gloi
-      not_saved:
-        few: 'Roedd 1 gwall yn gwahardd arbed y %{resource} hwn:'
-        many: 'Roedd gwallau %{count} yn gwahardd arbed y %{resource} hwn:'
-        one: 'Roedd 1 gwall yn gwahardd arbed y %{resource} hwn:'
-        other: 'Roedd gwallau %{count} yn gwahardd arbed y %{resource} hwn:'
-        two: 'Roedd gwallau %{count} yn gwahardd arbed y %{resource} hwn:'
-        zero: Dim
   spree:
     abbreviation: Talfyriad
     accept: Derbyn

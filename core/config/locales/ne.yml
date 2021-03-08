@@ -387,14 +387,6 @@ ne:
       spree/zone:
         one: क्षेत्र
         other: क्षेत्रहरू
-  errors:
-    messages:
-      already_confirmed: पहिल्यै पुष्टि भइसकेको थियो
-      not_found: फेला परेन
-      not_locked: लक गरिएको थिएन
-      not_saved:
-        one: '१ त्रुटिले यो %{resource} लाई बचत गर्नबाट रोक्‍यो:'
-        other: "%{count} त्रुटिहरूले यस %{resource} लाई बचत गर्नबाट रोक्‍यो:"
   spree:
     abbreviation: संक्षिप्त
     accept: स्वीकार्नुहोस्

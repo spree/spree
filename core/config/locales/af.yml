@@ -387,14 +387,6 @@ af:
       spree/zone:
         one: Sone
         other: Sones
-  errors:
-    messages:
-      already_confirmed: is reeds bevestig
-      not_found: nie gevind nie
-      not_locked: was nie gesluit nie
-      not_saved:
-        one: '1 fout het verbied om hierdie %{resource} te stoor:'
-        other: "%{count}-foute het verbied om hierdie %{resource} te stoor:"
   spree:
     abbreviation: Afkorting
     accept: Aanvaar

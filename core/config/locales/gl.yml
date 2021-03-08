@@ -387,14 +387,6 @@ gl:
       spree/zone:
         one: Zona
         other: Zonas
-  errors:
-    messages:
-      already_confirmed: xa estaba confirmado
-      not_found: non atopado
-      not_locked: non foi bloqueado
-      not_saved:
-        one: '1 erro prohibiu gardar este %{resource}:'
-        other: 'Os erros %{count} prohibiron gardar este %{resource}:'
   spree:
     abbreviation: Abreviatura
     accept: Aceptar

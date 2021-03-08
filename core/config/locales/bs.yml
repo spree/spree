@@ -467,16 +467,6 @@ bs:
         many: Zones
         one: Zona
         other: Zones
-  errors:
-    messages:
-      already_confirmed: je već potvrđena
-      not_found: nije pronađeno
-      not_locked: nije bila zaključana
-      not_saved:
-        few: '1 greška zabranila je spremanje ovog %{resource}:'
-        many: 'greške %{count} zabranile su spremanje ovog %{resource}:'
-        one: '1 greška zabranila je spremanje ovog %{resource}:'
-        other: 'greške %{count} zabranile su spremanje ovog %{resource}:'
   spree:
     abbreviation: Skraćenica
     accept: Prihvati

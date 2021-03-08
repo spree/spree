@@ -387,14 +387,6 @@ te:
       spree/zone:
         one: జోన్
         other: మండలాలు
-  errors:
-    messages:
-      already_confirmed: ఇప్పటికే నిర్ధారించబడింది
-      not_found: దొరకలేదు
-      not_locked: లాక్ చేయబడలేదు
-      not_saved:
-        one: '1 లోపం ఈ %{resource} ను సేవ్ చేయకుండా నిషేధించింది:'
-        other: "%{count} లోపాలు ఈ %{resource} ను సేవ్ చేయకుండా నిషేధించాయి:"
   spree:
     abbreviation: సంక్షిప్తీకరణ
     accept: అంగీకరించు

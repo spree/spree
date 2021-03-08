@@ -387,14 +387,6 @@ el:
       spree/zone:
         one: Ζώνη
         other: Ζώνες
-  errors:
-    messages:
-      already_confirmed: έχει ήδη επιβεβαιωθεί
-      not_found: δεν βρέθηκε
-      not_locked: δεν ήταν κλειδωμένο
-      not_saved:
-        one: '1 σφάλμα απαγόρευσε την αποθήκευση αυτού του %{resource}:'
-        other: 'Τα σφάλματα %{count} απαγόρευαν την αποθήκευση αυτού του %{resource}:'
   spree:
     abbreviation: Συντομογραφία
     accept: Αποδέχομαι

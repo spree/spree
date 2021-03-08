@@ -387,14 +387,6 @@ de-AT:
       spree/zone:
         one: Zone
         other: Zonen
-  errors:
-    messages:
-      already_confirmed: wurde bereits bestätigt
-      not_found: nicht gefunden
-      not_locked: wurde nicht gesperrt
-      not_saved:
-        one: '1 Fehler hat das Speichern dieses %{resource} verhindert:'
-        other: "%{count}-Fehler haben das Speichern dieses %{resource} verhindert:"
   spree:
     abbreviation: Abkürzung
     accept: Akzeptieren

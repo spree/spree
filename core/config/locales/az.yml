@@ -387,14 +387,6 @@ az:
       spree/zone:
         one: Zona
         other: Bölgələr
-  errors:
-    messages:
-      already_confirmed: artıq təsdiqləndi
-      not_found: tapılmadı
-      not_locked: kilidli deyildi
-      not_saved:
-        one: '1 %{resource}-un qeyd olunmasına qadağa qoyuldu:'
-        other: "%{count} səhvləri bu %{resource} qeyd edilməsini qadağan etdi:"
   spree:
     abbreviation: Qısaltma
     accept: Qəbul et

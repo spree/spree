@@ -387,14 +387,6 @@ tl:
       spree/zone:
         one: Zone
         other: Mga Zone
-  errors:
-    messages:
-      already_confirmed: nakumpirma na
-      not_found: hindi mahanap
-      not_locked: ay hindi naka-lock
-      not_saved:
-        one: '1 error ang nagbawal sa %{resource} na ito na mai-save:'
-        other: 'Ang mga error sa %{count} ay nagbawal sa %{resource} na ito mula sa nai-save:'
   spree:
     abbreviation: Pagpapaikli
     accept: Tanggapin

@@ -387,14 +387,6 @@ ml:
       spree/zone:
         one: സോൺ
         other: സോണുകൾ
-  errors:
-    messages:
-      already_confirmed: ഇതിനകം സ്ഥിരീകരിച്ചു
-      not_found: കാണ്മാനില്ല
-      not_locked: ലോക്ക് ചെയ്തിട്ടില്ല
-      not_saved:
-        one: '1 പിശക് ഈ %{resource} സംരക്ഷിക്കുന്നതിൽ നിന്ന് വിലക്കി:'
-        other: "%{count} പിശകുകൾ ഈ %{resource} സംരക്ഷിക്കുന്നതിൽ നിന്ന് വിലക്കി:"
   spree:
     abbreviation: ചുരുക്കെഴുത്ത്
     accept: അംഗീകരിക്കുക

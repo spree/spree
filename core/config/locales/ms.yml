@@ -387,14 +387,6 @@ ms:
       spree/zone:
         one: Zon
         other: Zon
-  errors:
-    messages:
-      already_confirmed: sudah disahkan
-      not_found: tidak ditemui
-      not_locked: tidak dikunci
-      not_saved:
-        one: '1 ralat melarang %{resource} ini disimpan:'
-        other: 'Kesalahan %{count} melarang %{resource} ini disimpan:'
   spree:
     abbreviation: Singkatan
     accept: Terima

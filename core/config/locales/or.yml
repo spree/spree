@@ -387,14 +387,6 @@ or:
       spree/zone:
         one: ଜୋନ୍
         other: ଜୋନ୍
-  errors:
-    messages:
-      already_confirmed: ପୂର୍ବରୁ ନିଶ୍ଚିତ ହୋଇସାରିଛି |
-      not_found: ମିଳିଲା ନାହି
-      not_locked: ତାଲା ନଥିଲା |
-      not_saved:
-        one: '1 ତ୍ରୁଟି ଏହି %{resource} କୁ ସଞ୍ଚୟ କରିବାକୁ ବାରଣ କଲା:'
-        other: "%{count} ତ୍ରୁଟି ଏହି %{resource} କୁ ସଞ୍ଚୟ କରିବାକୁ ବାରଣ କଲା:"
   spree:
     abbreviation: ସଂକ୍ଷିପ୍ତକରଣ
     accept: ଗ୍ରହଣ କରନ୍ତୁ

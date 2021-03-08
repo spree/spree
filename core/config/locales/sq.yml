@@ -387,14 +387,6 @@ sq:
       spree/zone:
         one: Zona
         other: Zonat
-  errors:
-    messages:
-      already_confirmed: ishte konfirmuar tashmë
-      not_found: nuk u gjet
-      not_locked: nuk ishte mbyllur
-      not_saved:
-        one: '1 gabim e ndaloi këtë %{resource} të ruhej:'
-        other: 'gabimet e %{count} e ndaluan këtë %{resource} të ruhej:'
   spree:
     abbreviation: Shkurtimi
     accept: Pranoj

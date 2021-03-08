@@ -387,14 +387,6 @@ mn:
       spree/zone:
         one: Бүс
         other: Бүсүүд
-  errors:
-    messages:
-      already_confirmed: аль хэдийн батлагдсан
-      not_found: олдсонгүй
-      not_locked: түгжигдээгүй байсан
-      not_saved:
-        one: '1 алдаа нь энэ %{resource}-ийг хадгалахыг хориглосон:'
-        other: "%{count} алдаа нь энэ %{resource}-ийг хадгалахыг хориглосон:"
   spree:
     abbreviation: Товчлол
     accept: Хүлээн зөвшөөр

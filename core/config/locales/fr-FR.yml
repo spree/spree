@@ -387,14 +387,6 @@ fr-FR:
       spree/zone:
         one: Zone
         other: Zones
-  errors:
-    messages:
-      already_confirmed: était déjà confirmé
-      not_found: pas trouvé
-      not_locked: n'était pas verrouillé
-      not_saved:
-        one: '1 erreur a empêché ce %{resource} d''être enregistré:'
-        other: 'Les erreurs %{count} ont empêché l''enregistrement de ce %{resource}:'
   spree:
     abbreviation: Abréviation
     accept: J'accepte

@@ -387,14 +387,6 @@ sv-SE:
       spree/zone:
         one: Zon
         other: Zoner
-  errors:
-    messages:
-      already_confirmed: var redan bekräftad
-      not_found: hittades inte
-      not_locked: var inte låst
-      not_saved:
-        one: '1 fel förbjöd att denna %{resource} sparades:'
-        other: "%{count}-fel förhindrade att denna %{resource} sparades:"
   spree:
     abbreviation: Förkortning
     accept: Acceptera

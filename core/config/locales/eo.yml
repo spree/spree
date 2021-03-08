@@ -387,14 +387,6 @@ eo:
       spree/zone:
         one: Zono
         other: Zonoj
-  errors:
-    messages:
-      already_confirmed: estis jam konfirmita
-      not_found: ne trovita
-      not_locked: ne estis ŝlosita
-      not_saved:
-        one: '1 eraro malpermesis konservi ĉi tiun %{resource}:'
-        other: 'eraroj %{count} malpermesis konservi ĉi tiun %{resource}:'
   spree:
     abbreviation: Mallongigo
     accept: Akceptu

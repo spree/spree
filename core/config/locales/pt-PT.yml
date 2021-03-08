@@ -387,14 +387,6 @@ pt-PT:
       spree/zone:
         one: Zona
         other: Zonas
-  errors:
-    messages:
-      already_confirmed: já foi confirmado
-      not_found: não encontrado
-      not_locked: não estava trancado
-      not_saved:
-        one: '1 erro impediu que este %{resource} fosse salvo:'
-        other: 'Os erros %{count} impediram que este %{resource} fosse salvo:'
   spree:
     abbreviation: Abreviação
     accept: Aceitar

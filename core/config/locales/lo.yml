@@ -387,14 +387,6 @@ lo:
       spree/zone:
         one: ເຂດ
         other: ເຂດຕ່າງໆ
-  errors:
-    messages:
-      already_confirmed: ໄດ້ຖືກຢືນຢັນແລ້ວ
-      not_found: ບໍ່​ພົບ
-      not_locked: ບໍ່ໄດ້ລັອກ
-      not_saved:
-        one: '1 ຂໍ້ຜິດພາດໄດ້ຫ້າມ %{resource} ນີ້ຈາກການບັນທຶກ:'
-        other: 'ຂໍ້ຜິດພາດ %{count} ຫ້າມບໍ່ໃຫ້ %{resource} ນີ້ຖືກບັນທຶກ:'
   spree:
     abbreviation: ຕົວຫຍໍ້
     accept: ຍອມ​ຮັບ

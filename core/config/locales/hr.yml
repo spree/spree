@@ -467,16 +467,6 @@ hr:
         many: Zone
         one: Zona
         other: Zone
-  errors:
-    messages:
-      already_confirmed: već bila potvrđena
-      not_found: nije pronađeno
-      not_locked: nije bila zaključana
-      not_saved:
-        few: '1 pogreška zabranila je spremanje ovog %{resource}:'
-        many: 'pogreške %{count} zabranile su spremanje ovog %{resource}:'
-        one: '1 pogreška zabranila je spremanje ovog %{resource}:'
-        other: 'pogreške %{count} zabranile su spremanje ovog %{resource}:'
   spree:
     abbreviation: Skraćenica
     accept: Prihvatiti
