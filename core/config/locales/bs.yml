@@ -861,6 +861,7 @@ bs:
     invalid_promotion_action: Nevažeća akcija promocije.
     invalid_promotion_rule: Nevažeće pravilo promocije.
     inventory_error_flash_for_insufficient_quantity: Predmet u vašoj košarici postao je nedostupan.
+    is_fully_translated: true
     iso: ISO Alpha-2
     iso3: ISO Alpha-3
     iso_name: ISO naziv
@@ -1098,6 +1099,7 @@ bs:
     payment_type: Vrsta plaćanja
     payment_updated: Plaćanje ažurirano
     payments: Plaćanja
+    payments_count: 'Uplate: %{count}'
     pdp:
       checkout: Provjeri
       products_included_in_promotion: Proizvodi uključeni u promociju

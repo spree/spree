@@ -777,6 +777,7 @@ zh-HK:
     invalid_promotion_action: 无效的升级操作。
     invalid_promotion_rule: 无效的升级规则。
     inventory_error_flash_for_insufficient_quantity: 您的购物车中的物品已不可用。
+    is_fully_translated: true
     iso: ISO Alpha-2
     iso3: ISO Alpha-3
     iso_name: ISO名称
@@ -1014,6 +1015,7 @@ zh-HK:
     payment_type: 付款方式
     payment_updated: 付款已更新
     payments: 付款方式
+    payments_count: 付款次数：%{count}
     pdp:
       checkout: 退房
       products_included_in_promotion: 促销中包含的产品

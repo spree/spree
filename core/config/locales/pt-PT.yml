@@ -777,6 +777,7 @@ pt-PT:
     invalid_promotion_action: Ação de promoção inválida.
     invalid_promotion_rule: Regra de promoção inválida.
     inventory_error_flash_for_insufficient_quantity: Um item em seu carrinho ficou indisponível.
+    is_fully_translated: true
     iso: ISO Alpha-2
     iso3: ISO Alpha-3
     iso_name: Nome ISO
@@ -1014,6 +1015,7 @@ pt-PT:
     payment_type: Tipo de pagamento
     payment_updated: Pagamento Atualizado
     payments: Pagamentos
+    payments_count: 'Contagem de pagamentos: %{count}'
     pdp:
       checkout: Confira
       products_included_in_promotion: Produtos incluídos na promoção

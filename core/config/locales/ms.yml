@@ -777,6 +777,7 @@ ms:
     invalid_promotion_action: Tindakan promosi tidak sah.
     invalid_promotion_rule: Peraturan promosi tidak sah.
     inventory_error_flash_for_insufficient_quantity: Item dalam troli anda sudah tidak tersedia.
+    is_fully_translated: true
     iso: ISO Alpha-2
     iso3: ISO Alpha-3
     iso_name: Nama ISO
@@ -1014,6 +1015,7 @@ ms:
     payment_type: Jenis pembayaran
     payment_updated: Pembayaran Dikemas kini
     payments: Pembayaran
+    payments_count: 'Kiraan pembayaran: %{count}'
     pdp:
       checkout: Daftar keluar
       products_included_in_promotion: Produk termasuk dalam promosi

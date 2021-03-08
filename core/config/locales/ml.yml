@@ -777,6 +777,7 @@ ml:
     invalid_promotion_action: പ്രമോഷൻ നടപടി അസാധുവാണ്.
     invalid_promotion_rule: പ്രമോഷൻ നിയമം അസാധുവാണ്.
     inventory_error_flash_for_insufficient_quantity: നിങ്ങളുടെ കാർട്ടിലെ ഒരു ഇനം ലഭ്യമല്ല.
+    is_fully_translated: true
     iso: ഐ‌എസ്ഒ ആൽഫ -2
     iso3: ഐ‌എസ്ഒ ആൽഫ -3
     iso_name: ഐ‌എസ്ഒ നാമം
@@ -1014,6 +1015,7 @@ ml:
     payment_type: പേയ്‌മെന്റ് തരം
     payment_updated: പേയ്‌മെന്റ് അപ്‌ഡേറ്റുചെയ്‌തു
     payments: പേയ്‌മെന്റുകൾ
+    payments_count: 'പേയ്‌മെന്റുകളുടെ എണ്ണം: %{count}'
     pdp:
       checkout: ചെക്ക് ഔട്ട്
       products_included_in_promotion: പ്രൊമോഷനിൽ ഉൽപ്പന്നങ്ങൾ ഉൾപ്പെടുത്തിയിട്ടുണ്ട്

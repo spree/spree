@@ -777,6 +777,7 @@ ka:
     invalid_promotion_action: არასწორი აქცია.
     invalid_promotion_rule: დაწინაურების არასწორი წესი.
     inventory_error_flash_for_insufficient_quantity: თქვენს კალათაში საქონელი მიუწვდომელი გახდა.
+    is_fully_translated: true
     iso: ISO ალფა -2
     iso3: ISO Alpha-3
     iso_name: ISO სახელი
@@ -1014,6 +1015,7 @@ ka:
     payment_type: Გადახდის ტიპი
     payment_updated: გადახდა განახლებულია
     payments: გადახდები
+    payments_count: 'გადახდების რაოდენობა: %{count}'
     pdp:
       checkout: გადახდა
       products_included_in_promotion: აქციაში შეტანილი პროდუქტები

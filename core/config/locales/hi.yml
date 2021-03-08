@@ -777,6 +777,7 @@ hi:
     invalid_promotion_action: अवैध पदोन्नति कार्रवाई।
     invalid_promotion_rule: अमान्य प्रचार नियम।
     inventory_error_flash_for_insufficient_quantity: आपकी कार्ट में कोई आइटम अनुपलब्ध हो गया है।
+    is_fully_translated: true
     iso: आईएसओ अल्फा -2
     iso3: आईएसओ अल्फा -3
     iso_name: आईएसओ नाम
@@ -1014,6 +1015,7 @@ hi:
     payment_type: भुगतान प्रकार
     payment_updated: भुगतान अपडेट किया गया
     payments: भुगतान
+    payments_count: 'भुगतान की गणना: %{count}'
     pdp:
       checkout: चेक आउट
       products_included_in_promotion: प्रचार में शामिल उत्पाद

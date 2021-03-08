@@ -777,6 +777,7 @@ he:
     invalid_promotion_action: פעולת קידום לא חוקית.
     invalid_promotion_rule: כלל קידום לא חוקי.
     inventory_error_flash_for_insufficient_quantity: פריט בעגלתך הפך להיות לא זמין.
+    is_fully_translated: true
     iso: ISO אלפא -2
     iso3: ISO אלפא -3
     iso_name: שם ISO
@@ -1014,6 +1015,7 @@ he:
     payment_type: סוג תשלום
     payment_updated: התשלום עודכן
     payments: תשלומים
+    payments_count: 'ספירת תשלומים: %{count}'
     pdp:
       checkout: לבדוק
       products_included_in_promotion: מוצרים הכלולים במבצע

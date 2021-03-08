@@ -777,6 +777,7 @@ gl:
     invalid_promotion_action: Acción de promoción non válida.
     invalid_promotion_rule: Regra de promoción non válida.
     inventory_error_flash_for_insufficient_quantity: Un artigo da túa cesta xa non está dispoñible.
+    is_fully_translated: true
     iso: ISO Alpha-2
     iso3: ISO Alpha-3
     iso_name: Nome ISO
@@ -1014,6 +1015,7 @@ gl:
     payment_type: Tipo de pagamento
     payment_updated: Pago actualizado
     payments: Pagamentos
+    payments_count: 'Contas de pagamentos: %{count}'
     pdp:
       checkout: Comprobar
       products_included_in_promotion: Produtos incluídos na promoción

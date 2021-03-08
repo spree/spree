@@ -777,6 +777,7 @@ tt:
     invalid_promotion_action: Яраксыз акция.
     invalid_promotion_rule: Дөрес булмаган реклама кагыйдәсе.
     inventory_error_flash_for_insufficient_quantity: Арбагыздагы әйбер мөмкин түгел.
+    is_fully_translated: true
     iso: ISO Альфа-2
     iso3: ISO Альфа-3
     iso_name: ISO исеме
@@ -1014,6 +1015,7 @@ tt:
     payment_type: Түләү төре
     payment_updated: Түләү яңартылды
     payments: Түләү
+    payments_count: 'Түләүләр саны: %{count}'
     pdp:
       checkout: Тишерү
       products_included_in_promotion: Рекламага кертелгән продуктлар

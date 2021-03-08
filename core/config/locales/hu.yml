@@ -777,6 +777,7 @@ hu:
     invalid_promotion_action: Érvénytelen promóciós művelet.
     invalid_promotion_rule: Érvénytelen promóciós szabály.
     inventory_error_flash_for_insufficient_quantity: A kosárban lévő elemek már nem érhetők el.
+    is_fully_translated: true
     iso: ISO Alpha-2
     iso3: ISO Alpha-3
     iso_name: ISO név
@@ -1014,6 +1015,7 @@ hu:
     payment_type: Fizetési mód
     payment_updated: Fizetés frissítve
     payments: Kifizetések
+    payments_count: 'A kifizetések száma: %{count}'
     pdp:
       checkout: Pénztár
       products_included_in_promotion: Az akcióban szereplő termékek

@@ -777,6 +777,7 @@ sq:
     invalid_promotion_action: Veprim i pavlefshëm për promovim.
     invalid_promotion_rule: Rregull i pavlefshëm i promovimit.
     inventory_error_flash_for_insufficient_quantity: Një artikull në shportën tuaj është bërë i padisponueshëm.
+    is_fully_translated: true
     iso: ISO Alpha-2
     iso3: ISO Alpha-3
     iso_name: Emri ISO
@@ -1014,6 +1015,7 @@ sq:
     payment_type: Lloji i pageses
     payment_updated: Pagesa u azhurnua
     payments: Pagesat
+    payments_count: 'Numri i pagesave: %{count}'
     pdp:
       checkout: Arka
       products_included_in_promotion: Produktet e përfshira në promovim

@@ -777,6 +777,7 @@ lo:
     invalid_promotion_action: ການປະຕິບັດການສົ່ງເສີມທີ່ບໍ່ຖືກຕ້ອງ.
     invalid_promotion_rule: ກົດລະບຽບການສົ່ງເສີມທີ່ບໍ່ຖືກຕ້ອງ.
     inventory_error_flash_for_insufficient_quantity: ລາຍການທີ່ຢູ່ໃນກະຕ່າຂອງທ່ານບໍ່ມີຢູ່ແລ້ວ.
+    is_fully_translated: true
     iso: ISO Alpha-2
     iso3: ISO Alpha-3
     iso_name: ຊື່ ISO
@@ -1014,6 +1015,7 @@ lo:
     payment_type: ປະເພດການຈ່າຍເງິນ
     payment_updated: ການ ຊຳ ລະເງິນ
     payments: ການ ຊຳ ລະເງິນ
+    payments_count: 'ການຈ່າຍເງິນນັບ: %{count}'
     pdp:
       checkout: ເຊັກເອົາ
       products_included_in_promotion: ຜະລິດຕະພັນລວມເຂົ້າໃນໂປໂມຊັ່ນ

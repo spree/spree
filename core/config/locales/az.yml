@@ -777,6 +777,7 @@ az:
     invalid_promotion_action: Yanlış təbliğat əməliyyatı.
     invalid_promotion_rule: Yanlış promosyon qaydası.
     inventory_error_flash_for_insufficient_quantity: Səbətinizdəki bir maddə əlçatmaz oldu.
+    is_fully_translated: true
     iso: ISO Alpha-2
     iso3: ISO Alpha-3
     iso_name: ISO adı
@@ -1014,6 +1015,7 @@ az:
     payment_type: Ödəniş növü
     payment_updated: Ödəmə Yeniləndi
     payments: Ödənişlər
+    payments_count: 'Ödənişlərin sayı: %{count}'
     pdp:
       checkout: Yoxla
       products_included_in_promotion: Təqdimata daxil olan məhsullar

@@ -777,6 +777,7 @@ ur:
     invalid_promotion_action: غلط پروموشن ایکشن۔
     invalid_promotion_rule: غلط پروموشن رول
     inventory_error_flash_for_insufficient_quantity: آپ کی ٹوکری میں موجود کوئی چیز دستیاب نہیں ہے۔
+    is_fully_translated: true
     iso: آئی ایس او الفا -2
     iso3: آئی ایس او الفا -3
     iso_name: آئی ایس او کا نام
@@ -1014,6 +1015,7 @@ ur:
     payment_type: ادائیگی کی قسم
     payment_updated: ادائیگی کی تازہ کاری
     payments: ادائیگی
+    payments_count: 'ادائیگیوں کی گنتی: %{count}'
     pdp:
       checkout: اس کو دیکھو
       products_included_in_promotion: مصنوعات کو فروغ دینے میں شامل کیا گیا

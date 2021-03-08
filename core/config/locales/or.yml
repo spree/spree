@@ -777,6 +777,7 @@ or:
     invalid_promotion_action: ଅବ promotion ଧ ପଦୋନ୍ନତି କାର୍ଯ୍ୟ |
     invalid_promotion_rule: ଅବ promotion ଧ ପଦୋନ୍ନତି ନିୟମ |
     inventory_error_flash_for_insufficient_quantity: ଆପଣଙ୍କ କାର୍ଟରେ ଥିବା ଏକ ଆଇଟମ୍ ଉପଲବ୍ଧ ହୋଇନାହିଁ |
+    is_fully_translated: true
     iso: ISO ଆଲଫା -2 |
     iso3: ISO ଆଲଫା -3 |
     iso_name: ISO ନାମ
@@ -1014,6 +1015,7 @@ or:
     payment_type: ଦେୟ ପ୍ରକାର
     payment_updated: ଦେୟ ଅଦ୍ୟତନ ହୋଇଛି |
     payments: ଦେୟ
+    payments_count: 'ଦେୟ ଗଣନା: %{count}'
     pdp:
       checkout: ଚେକଆଉଟ୍ |
       products_included_in_promotion: ପଦୋନ୍ନତିରେ ଉତ୍ପାଦଗୁଡିକ ଅନ୍ତର୍ଭୁକ୍ତ |

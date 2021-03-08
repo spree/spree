@@ -777,6 +777,7 @@ de-AT:
     invalid_promotion_action: Ungültige Werbemaßnahme.
     invalid_promotion_rule: Ungültige Werberegel.
     inventory_error_flash_for_insufficient_quantity: Ein Artikel in Ihrem Warenkorb ist nicht mehr verfügbar.
+    is_fully_translated: true
     iso: ISO Alpha-2
     iso3: ISO Alpha-3
     iso_name: ISO-Name
@@ -1014,6 +1015,7 @@ de-AT:
     payment_type: Zahlungsart
     payment_updated: Zahlung aktualisiert
     payments: Zahlungen
+    payments_count: 'Zahlungen zählen: %{count}'
     pdp:
       checkout: Überprüfen
       products_included_in_promotion: In der Aktion enthaltene Produkte

@@ -777,6 +777,7 @@ el-CY:
     invalid_promotion_action: Μη έγκυρη ενέργεια προώθησης.
     invalid_promotion_rule: Μη έγκυρος κανόνας προώθησης.
     inventory_error_flash_for_insufficient_quantity: Ένα στοιχείο στο καλάθι σας δεν είναι διαθέσιμο.
+    is_fully_translated: true
     iso: ISO Alpha-2
     iso3: ISO Alpha-3
     iso_name: Όνομα ISO
@@ -1014,6 +1015,7 @@ el-CY:
     payment_type: Τρόπος πληρωμής
     payment_updated: Η πληρωμή ενημερώθηκε
     payments: Πληρωμές
+    payments_count: 'Αριθμός πληρωμών: %{count}'
     pdp:
       checkout: ολοκλήρωση παραγγελίας
       products_included_in_promotion: Προϊόντα που περιλαμβάνονται στην προσφορά

@@ -777,6 +777,7 @@ eu:
     invalid_promotion_action: Sustapen ekintza baliogabea.
     invalid_promotion_rule: Promozio arau baliogabea.
     inventory_error_flash_for_insufficient_quantity: Zure saskiko elementu bat ez dago erabilgarri.
+    is_fully_translated: true
     iso: ISO Alpha-2
     iso3: ISO Alpha-3
     iso_name: ISO izena
@@ -1014,6 +1015,7 @@ eu:
     payment_type: Ordainketa mota
     payment_updated: Ordainketa eguneratu da
     payments: Ordainketak
+    payments_count: 'Ordainketak zenbatu: %{count}'
     pdp:
       checkout: Errebisatu
       products_included_in_promotion: Promozioan sartutako produktuak

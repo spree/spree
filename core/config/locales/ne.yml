@@ -777,6 +777,7 @@ ne:
     invalid_promotion_action: अवैध पदोन्नति कार्य।
     invalid_promotion_rule: अवैध पदोन्नति नियम।
     inventory_error_flash_for_insufficient_quantity: तपाईंको कार्टमा आईटम अनुपलब्ध भएको छ।
+    is_fully_translated: true
     iso: आईएसओ अल्फा -२
     iso3: ISO अल्फा-3
     iso_name: आईएसओ नाम
@@ -1014,6 +1015,7 @@ ne:
     payment_type: भुक्तानी प्रकार
     payment_updated: भुक्तानी अपडेट भयो
     payments: भुक्तानी
+    payments_count: 'भुक्तानी गणना: %{count}'
     pdp:
       checkout: चेकआउट
       products_included_in_promotion: उत्पादनहरु पदोन्नति मा शामिल

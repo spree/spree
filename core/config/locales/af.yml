@@ -777,6 +777,7 @@ af:
     invalid_promotion_action: Ongeldige promosie-aksie.
     invalid_promotion_rule: Ongeldige promosiereël.
     inventory_error_flash_for_insufficient_quantity: "'N Item in u mandjie het onbeskikbaar geraak."
+    is_fully_translated: true
     iso: ISO Alpha-2
     iso3: ISO Alpha-3
     iso_name: ISO Naam
@@ -1014,6 +1015,7 @@ af:
     payment_type: Tipe van betaling
     payment_updated: Betaling opgedateer
     payments: Betalings
+    payments_count: 'Betalings tel: %{count}'
     pdp:
       checkout: Uitteken
       products_included_in_promotion: Produkte ingesluit by die promosie

@@ -1,5 +1,7 @@
 module Spree
   class Store < Spree::Base
+    require 'twitter_cldr'
+
     has_many :orders, class_name: 'Spree::Order'
     has_many :payment_methods, class_name: 'Spree::PaymentMethod'
     belongs_to :default_country, class_name: 'Spree::Country'
@@ -41,6 +43,18 @@ module Spree
     def self.default
       Rails.cache.fetch('default_store') do
         where(default: true).first_or_initialize
+      end
+    end
+
+    def self.locale_language_name(locale, current_locale)
+      ensure_locale_as_symbol = locale.to_sym
+      ensure_current_locale_as_symbol = current_locale
+      falback_locale = locale.slice(0..1).to_sym
+
+      if ensure_locale_as_symbol.localize(ensure_current_locale_as_symbol).as_language_code
+        ensure_locale_as_symbol.localize(ensure_current_locale_as_symbol).as_language_code
+      else
+        falback_locale.localize(ensure_current_locale_as_symbol).as_language_code
       end
     end
 

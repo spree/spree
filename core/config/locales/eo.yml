@@ -777,6 +777,7 @@ eo:
     invalid_promotion_action: Nevalida reklama ago.
     invalid_promotion_rule: Nevalida reklamregulo.
     inventory_error_flash_for_insufficient_quantity: Artikolo en via ĉaro fariĝis neatingebla.
+    is_fully_translated: true
     iso: ISO Alfa-2
     iso3: ISO Alfa-3
     iso_name: ISO-Nomo
@@ -1014,6 +1015,7 @@ eo:
     payment_type: Pagospeco
     payment_updated: Pago Ĝisdatigita
     payments: Pagoj
+    payments_count: 'Pagoj kalkulas: %{count}'
     pdp:
       checkout: Kaso
       products_included_in_promotion: Produktoj inkluzivitaj en la promocio

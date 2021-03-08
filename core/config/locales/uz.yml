@@ -777,6 +777,7 @@ uz:
     invalid_promotion_action: Notanish reklama aktsiyasi.
     invalid_promotion_rule: Reklama qoidasi yaroqsiz.
     inventory_error_flash_for_insufficient_quantity: Savatdagi narsa mavjud emas.
+    is_fully_translated: true
     iso: ISO Alpha-2
     iso3: ISO Alpha-3
     iso_name: ISO nomi
@@ -1014,6 +1015,7 @@ uz:
     payment_type: To'lov turi
     payment_updated: To'lov yangilandi
     payments: To'lovlar
+    payments_count: 'To''lovlar soni: %{count}'
     pdp:
       checkout: Tekshirib ko'rmoq
       products_included_in_promotion: Aktsiyaga kiritilgan mahsulotlar

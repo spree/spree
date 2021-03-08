@@ -777,6 +777,7 @@ lb:
     invalid_promotion_action: Ongülteg Promotiounsaktioun.
     invalid_promotion_rule: Ongülteg Promotiounsregel.
     inventory_error_flash_for_insufficient_quantity: En Element an Ärem Won ass net verfügbar.
+    is_fully_translated: true
     iso: ISO Alpha-2
     iso3: ISO Alpha-3
     iso_name: ISO Numm
@@ -1014,6 +1015,7 @@ lb:
     payment_type: Bezuelstyp
     payment_updated: Bezuelen Aktualiséiert
     payments: Bezuelungen
+    payments_count: 'Paiementer zielen: %{count}'
     pdp:
       checkout: Ofmellen
       products_included_in_promotion: Produkter abegraff an der Promotioun

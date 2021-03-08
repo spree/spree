@@ -777,6 +777,7 @@ pa:
     invalid_promotion_action: ਅਵੈਧ ਤਰੱਕੀ ਕਿਰਿਆ
     invalid_promotion_rule: ਅਵੈਧ ਪ੍ਰਚਾਰ ਨਿਯਮ
     inventory_error_flash_for_insufficient_quantity: ਤੁਹਾਡੀ ਕਾਰਟ ਵਿਚ ਇਕ ਚੀਜ਼ ਉਪਲਬਧ ਨਹੀਂ ਹੈ.
+    is_fully_translated: true
     iso: ਆਈਐਸਓ ਅਲਫ਼ਾ -2
     iso3: ਆਈਐਸਓ ਅਲਫ਼ਾ -3
     iso_name: ISO ਨਾਮ
@@ -1014,6 +1015,7 @@ pa:
     payment_type: ਭੁਗਤਾਨ ਦੀ ਕਿਸਮ
     payment_updated: ਭੁਗਤਾਨ ਅਪਡੇਟ ਕੀਤਾ ਗਿਆ
     payments: ਭੁਗਤਾਨ
+    payments_count: 'ਭੁਗਤਾਨ ਦੀ ਗਿਣਤੀ: %{count}'
     pdp:
       checkout: ਕਮਰਾ ਛੱਡ ਦਿਓ
       products_included_in_promotion: ਉਤਪਾਦ ਤਰੱਕੀ ਵਿੱਚ ਸ਼ਾਮਲ

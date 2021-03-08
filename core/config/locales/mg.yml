@@ -777,6 +777,7 @@ mg:
     invalid_promotion_action: Hetsika fampiroboroboana tsy mety.
     invalid_promotion_rule: Fitsipika fampiroboroboana tsy mety.
     inventory_error_flash_for_insufficient_quantity: Nanjary tsy misy ny entana iray ao anaty sarinao.
+    is_fully_translated: true
     iso: ISO Alpha-2
     iso3: ISO Alpha-3
     iso_name: ISO anarana
@@ -1014,6 +1015,7 @@ mg:
     payment_type: Karazan-karama
     payment_updated: Nohavaozina ny fandoavam-bola
     payments: fandoavam-bola
+    payments_count: 'Isan''ny fandoavam-bola: %{count}'
     pdp:
       checkout: Zahao hoe
       products_included_in_promotion: Vokatra tafiditra ao amin'ny fampiroboroboana

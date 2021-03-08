@@ -777,6 +777,7 @@ ug:
     invalid_promotion_action: ئىناۋەتسىز ھەرىكەت.
     invalid_promotion_rule: ئىناۋەتسىز تەشۋىق قىلىش قائىدىسى.
     inventory_error_flash_for_insufficient_quantity: ھارۋىڭىزدىكى بىر نەرسە تېپىلمىدى.
+    is_fully_translated: true
     iso: ISO Alpha-2
     iso3: ISO Alpha-3
     iso_name: ISO ئىسمى
@@ -1014,6 +1015,7 @@ ug:
     payment_type: چىقىم تىپى
     payment_updated: ھەق يېڭىلاندى
     payments: چىقىم
+    payments_count: 'چىقىم سانى: %{count}'
     pdp:
       checkout: چىقىمدان
       products_included_in_promotion: تەشۋىقاتقا كىرگۈزۈلگەن مەھسۇلاتلار

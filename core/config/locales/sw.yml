@@ -777,6 +777,7 @@ sw:
     invalid_promotion_action: Kitendo batili cha ukuzaji.
     invalid_promotion_rule: Kanuni batili ya ukuzaji.
     inventory_error_flash_for_insufficient_quantity: Bidhaa kwenye gari lako haipatikani.
+    is_fully_translated: true
     iso: ISO Alpha-2
     iso3: ISO Alpha-3
     iso_name: Jina la ISO
@@ -1014,6 +1015,7 @@ sw:
     payment_type: Aina ya malipo
     payment_updated: Malipo Yamesasishwa
     payments: Malipo
+    payments_count: 'Hesabu ya malipo: %{count}'
     pdp:
       checkout: Angalia
       products_included_in_promotion: Bidhaa zilizojumuishwa katika kukuza

@@ -17,10 +17,10 @@ module Spree
     def locale_presentation(locale)
       formatted_locale = locale.to_s
 
-      if I18n.exists?('spree.i18n.this_file_language', locale: formatted_locale, fallback: false)
-        [Spree.t('i18n.this_file_language', locale: formatted_locale), formatted_locale]
+      if I18n.t('spree.is_fully_translated', locale: formatted_locale, fallback: false) == true
+        ["#{Spree::Store.locale_language_name(formatted_locale, current_locale).to_s} (#{formatted_locale})", formatted_locale]
       else
-        [formatted_locale, formatted_locale]
+        []
       end
     end
 

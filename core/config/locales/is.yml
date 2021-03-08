@@ -777,6 +777,7 @@ is:
     invalid_promotion_action: Ógild kynningaraðgerð.
     invalid_promotion_rule: Ógild kynningarregla.
     inventory_error_flash_for_insufficient_quantity: Hlutur í körfunni þinni er orðinn ófáanlegur.
+    is_fully_translated: true
     iso: ISO Alpha-2
     iso3: ISO Alpha-3
     iso_name: ISO nafn
@@ -1014,6 +1015,7 @@ is:
     payment_type: Greiðslugerð
     payment_updated: Greiðsla uppfærð
     payments: Greiðslur
+    payments_count: 'Greiðslur telja: %{count}'
     pdp:
       checkout: Athuga
       products_included_in_promotion: Vörur innifaldar í kynningunni

@@ -861,6 +861,7 @@ sl:
     invalid_promotion_action: Neveljavna promocijska akcija.
     invalid_promotion_rule: Neveljavno pravilo promocije.
     inventory_error_flash_for_insufficient_quantity: Izdelek v košarici je na voljo.
+    is_fully_translated: true
     iso: ISO Alpha-2
     iso3: ISO Alpha-3
     iso_name: Ime ISO
@@ -1098,6 +1099,7 @@ sl:
     payment_type: Način plačila
     payment_updated: Plačilo posodobljeno
     payments: Plačila
+    payments_count: 'Število plačil: %{count}'
     pdp:
       checkout: Preveri
       products_included_in_promotion: Izdelki, vključeni v promocijo

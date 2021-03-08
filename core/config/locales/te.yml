@@ -777,6 +777,7 @@ te:
     invalid_promotion_action: ప్రమోషన్ చర్య చెల్లదు.
     invalid_promotion_rule: ప్రమోషన్ నియమం చెల్లదు.
     inventory_error_flash_for_insufficient_quantity: మీ కార్ట్‌లోని అంశం అందుబాటులో లేదు.
+    is_fully_translated: true
     iso: ISO ఆల్ఫా -2
     iso3: ISO ఆల్ఫా -3
     iso_name: ISO పేరు
@@ -1014,6 +1015,7 @@ te:
     payment_type: చెల్లించు విధానము
     payment_updated: చెల్లింపు నవీకరించబడింది
     payments: చెల్లింపులు
+    payments_count: 'చెల్లింపుల సంఖ్య: %{count}'
     pdp:
       checkout: చెక్అవుట్
       products_included_in_promotion: ఉత్పత్తులు ప్రమోషన్‌లో చేర్చబడ్డాయి

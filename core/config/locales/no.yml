@@ -777,6 +777,7 @@
     invalid_promotion_action: Ugyldig markedsføringshandling.
     invalid_promotion_rule: Ugyldig salgsfremmende regel.
     inventory_error_flash_for_insufficient_quantity: En vare i handlekurven din har blitt utilgjengelig.
+    is_fully_translated: true
     iso: ISO Alpha-2
     iso3: ISO Alpha-3
     iso_name: ISO-navn
@@ -1014,6 +1015,7 @@
     payment_type: Betalings type
     payment_updated: Betaling oppdatert
     payments: Betalinger
+    payments_count: 'Betalinger teller: %{count}'
     pdp:
       checkout: Sjekk ut
       products_included_in_promotion: Produkter inkludert i kampanjen

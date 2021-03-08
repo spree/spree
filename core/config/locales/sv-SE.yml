@@ -777,6 +777,7 @@ sv-SE:
     invalid_promotion_action: Ogiltig marknadsföringsåtgärd.
     invalid_promotion_rule: Ogiltig marknadsföringsregel.
     inventory_error_flash_for_insufficient_quantity: En vara i din kundvagn har blivit otillgänglig.
+    is_fully_translated: true
     iso: ISO Alpha-2
     iso3: ISO Alpha-3
     iso_name: ISO-namn
@@ -1014,6 +1015,7 @@ sv-SE:
     payment_type: Betalnings typ
     payment_updated: Betalning uppdaterad
     payments: Betalningar
+    payments_count: 'Betalningar: %{count}'
     pdp:
       checkout: Kolla upp
       products_included_in_promotion: Produkter som ingår i kampanjen

@@ -777,6 +777,7 @@ bn:
     invalid_promotion_action: অবৈধ প্রচারের ক্রিয়া।
     invalid_promotion_rule: অবৈধ প্রচারের নিয়ম।
     inventory_error_flash_for_insufficient_quantity: আপনার কার্টের একটি আইটেম অনুপলব্ধ হয়ে গেছে।
+    is_fully_translated: true
     iso: আইএসও আলফা -২
     iso3: আইএসও আলফা -৩
     iso_name: আইএসও নাম
@@ -1014,6 +1015,7 @@ bn:
     payment_type: শোধের ধরণ
     payment_updated: পেমেন্ট আপডেট হয়েছে
     payments: অর্থ প্রদান
+    payments_count: 'প্রদানের গণনা: %{count}'
     pdp:
       checkout: চেকআউট
       products_included_in_promotion: পণ্য প্রচার অন্তর্ভুক্ত

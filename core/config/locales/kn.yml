@@ -777,6 +777,7 @@ kn:
     invalid_promotion_action: ಅಮಾನ್ಯ ಪ್ರಚಾರ ಕ್ರಮ.
     invalid_promotion_rule: ಅಮಾನ್ಯ ಪ್ರಚಾರ ನಿಯಮ.
     inventory_error_flash_for_insufficient_quantity: ನಿಮ್ಮ ಕಾರ್ಟ್‌ನಲ್ಲಿರುವ ಐಟಂ ಲಭ್ಯವಿಲ್ಲ.
+    is_fully_translated: true
     iso: ಐಎಸ್ಒ ಆಲ್ಫಾ -2
     iso3: ಐಎಸ್ಒ ಆಲ್ಫಾ -3
     iso_name: ಐಎಸ್ಒ ಹೆಸರು
@@ -1014,6 +1015,7 @@ kn:
     payment_type: ಪಾವತಿ ವಿಧಾನ
     payment_updated: ಪಾವತಿ ನವೀಕರಿಸಲಾಗಿದೆ
     payments: ಪಾವತಿಗಳು
+    payments_count: 'ಪಾವತಿಗಳ ಎಣಿಕೆ: %{count}'
     pdp:
       checkout: ಚೆಕ್ out ಟ್
       products_included_in_promotion: ಉತ್ಪನ್ನಗಳನ್ನು ಪ್ರಚಾರದಲ್ಲಿ ಸೇರಿಸಲಾಗಿದೆ

@@ -777,6 +777,7 @@ mk:
     invalid_promotion_action: Неважечка акција за промоција.
     invalid_promotion_rule: Неважечко правило за унапредување.
     inventory_error_flash_for_insufficient_quantity: Ставка во вашата кошничка стана недостапна.
+    is_fully_translated: true
     iso: ISO Алфа-2
     iso3: ISO Алфа-3
     iso_name: ИСО Име
@@ -1014,6 +1015,7 @@ mk:
     payment_type: Начин на плаќање
     payment_updated: Плаќањето е ажурирано
     payments: Плаќања
+    payments_count: 'Број на плаќања: %{count}'
     pdp:
       checkout: Одјавување
       products_included_in_promotion: Производи вклучени во промоцијата

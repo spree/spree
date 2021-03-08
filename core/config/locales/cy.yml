@@ -945,6 +945,7 @@ cy:
     invalid_promotion_action: Camau hyrwyddo annilys.
     invalid_promotion_rule: Rheol hyrwyddo annilys.
     inventory_error_flash_for_insufficient_quantity: Nid yw eitem yn eich trol ar gael.
+    is_fully_translated: true
     iso: ISO Alpha-2
     iso3: ISO Alpha-3
     iso_name: Enw ISO
@@ -1182,6 +1183,7 @@ cy:
     payment_type: Math o daliad
     payment_updated: Diweddariad o'r Taliad
     payments: Taliadau
+    payments_count: 'Cyfrif taliadau: %{count}'
     pdp:
       checkout: Til
       products_included_in_promotion: Cynhyrchion wedi'u cynnwys yn yr hyrwyddiad

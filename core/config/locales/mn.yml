@@ -777,6 +777,7 @@ mn:
     invalid_promotion_action: Хүчингүй сурталчилгааны арга хэмжээ.
     invalid_promotion_rule: Сурталчилгааны дүрэм буруу байна.
     inventory_error_flash_for_insufficient_quantity: Таны сагсанд байгаа зүйл боломжгүй болсон.
+    is_fully_translated: true
     iso: ISO Альфа-2
     iso3: ISO Alpha-3
     iso_name: ISO нэр
@@ -1014,6 +1015,7 @@ mn:
     payment_type: Төлбөрийн хэлбэр
     payment_updated: Төлбөрийг шинэчилсэн
     payments: Төлбөр
+    payments_count: 'Төлбөрийн тоо: %{count}'
     pdp:
       checkout: Тооцоо хийх
       products_included_in_promotion: Урамшуулалд багтсан бүтээгдэхүүнүүд

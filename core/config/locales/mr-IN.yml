@@ -777,6 +777,7 @@ mr-IN:
     invalid_promotion_action: अवैध जाहिरात क्रिया.
     invalid_promotion_rule: अवैध जाहिरात नियम.
     inventory_error_flash_for_insufficient_quantity: आपल्या कार्टमधील एखादी वस्तू अनुपलब्ध झाली आहे.
+    is_fully_translated: true
     iso: आयएसओ अल्फा -2
     iso3: आयएसओ अल्फा -3
     iso_name: आयएसओ नाव
@@ -1014,6 +1015,7 @@ mr-IN:
     payment_type: पैसे भरण्याची पध्दत
     payment_updated: देय अद्यतनित
     payments: देयके
+    payments_count: पेमेंट्सची संख्याः %{count}
     pdp:
       checkout: तपासा
       products_included_in_promotion: जाहिरातींमध्ये समाविष्ट उत्पादने

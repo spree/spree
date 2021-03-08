@@ -777,6 +777,7 @@ tl:
     invalid_promotion_action: Di-wastong pagkilos sa promosyon.
     invalid_promotion_rule: Di-wastong panuntunan sa promosyon.
     inventory_error_flash_for_insufficient_quantity: Ang isang item sa iyong cart ay naging hindi magagamit.
+    is_fully_translated: true
     iso: ISO Alpha-2
     iso3: ISO Alpha-3
     iso_name: Pangalan ng ISO
@@ -1014,6 +1015,7 @@ tl:
     payment_type: Uri ng pagbabayad
     payment_updated: Nai-update ang Bayad
     payments: Pagbabayad
+    payments_count: 'Bilang ng mga pagbabayad: %{count}'
     pdp:
       checkout: Tignan mo
       products_included_in_promotion: Mga produktong kasama sa promosyon
