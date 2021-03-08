@@ -49,7 +49,8 @@ module Spree
     def self.locale_language_name(locale)
       locale_as_symbol = locale.to_sym
       falback_locale = locale.to_s.slice(0..1).to_sym
-      store_locale = default.default_locale.to_sym
+      store_locale = default.default_locale || :en
+      store_locale.to_sym
 
       lang_name = locale_as_symbol.localize(store_locale).as_language_code || falback_locale.localize(store_locale).as_language_code
       "#{lang_name.to_s.capitalize} (#{locale})"
