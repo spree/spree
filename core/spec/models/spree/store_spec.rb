@@ -82,6 +82,42 @@ describe Spree::Store, type: :model do
     it { expect(described_class.available_locales).to contain_exactly('en', 'de') }
   end
 
+  describe '.locale_language_name' do
+    context 'With store default set to de' do
+      let!(:store) { create(:store, default_locale: 'en') }
+
+      it 'returns English (en) as the language name' do
+        expect(described_class.locale_language_name('en')).to eq 'English (en)'
+      end
+    end
+
+    context 'With store default set to es' do
+      let!(:store) { create(:store, default_locale: 'de') }
+
+      it 'returns Inglés (en) as the language name' do
+        expect(described_class.locale_language_name('en')).to eq 'Englisch (en)'
+      end
+    end
+
+    context 'With a languge and locale it has no translation for' do
+      it 'returns Spanish (es-US) using the fallback' do
+        expect(described_class.locale_language_name('es-US')).to eq 'Spanish (es-US)'
+      end
+    end
+
+    context 'With a language hat it does not know' do
+      it 'returns just the locale code' do
+        expect(described_class.locale_language_name('xx-XX')).to eq ' (xx-XX)'
+      end
+    end
+
+    context 'If you pass it a symbol' do
+      it 'returns the correct language' do
+        expect(described_class.locale_language_name(:it)).to eq 'Italian (it)'
+      end
+    end
+  end
+
   shared_context 'with checkout zone set' do
     let!(:country1) { create(:country) }
     let!(:country2) { create(:country) }
