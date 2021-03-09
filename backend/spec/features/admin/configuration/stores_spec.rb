@@ -9,10 +9,6 @@ describe 'Stores admin', type: :feature, js: true do
 
   describe 'visiting the stores page' do
     before do
-      I18n.backend.store_translations(:fr,
-                                      spree: {
-                                        is_fully_translated: true
-                                      })
       store.update(
         name: 'My Store',
         url: 'example.com',

@@ -5,13 +5,6 @@ module Spree
     let(:germany) { build(:country, name: 'Germany', iso: 'gr') }
     let!(:eu_store) { build(:store, url: 'eu.spreecommerce.org', default_currency: 'EUR', default_locale: 'de', default_country: germany) }
 
-    before do
-      I18n.backend.store_translations(:de,
-                                      spree: {
-                                        is_fully_translated: true
-                                      })
-    end
-
     describe '#stores' do
       before { create_list(:store, 3) }
 

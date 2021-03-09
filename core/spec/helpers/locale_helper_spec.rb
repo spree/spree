@@ -6,17 +6,6 @@ describe Spree::LocaleHelper, type: :helper do
   let(:available_locales) { Spree::Store.available_locales }
   let(:supported_locales_for_all_stores) { [:en, :de, :fr] }
 
-  before do
-    I18n.backend.store_translations(:de,
-                                    spree: {
-                                      is_fully_translated: true
-                                    })
-    I18n.backend.store_translations(:fr,
-                                    spree: {
-                                      is_fully_translated: true
-                                    })
-  end
-
   describe '#all_locales_options' do
     it { expect(all_locales_options).to contain_exactly([Spree::Store.locale_language_name('en'), 'en'], [Spree::Store.locale_language_name('de'), 'de'], [Spree::Store.locale_language_name('fr'), 'fr']) }
   end
