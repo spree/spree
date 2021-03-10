@@ -42,6 +42,8 @@ module Spree
 
     def add_files
       template 'config/initializers/spree.rb', 'config/initializers/spree.rb'
+      template 'config/i18n-tasks.yml', 'config/i18n-tasks.yml'
+      template '../../../../../config/locales/en.yml', 'config/locales/spree.base.en.yml'
     end
 
     def additional_tweaks
