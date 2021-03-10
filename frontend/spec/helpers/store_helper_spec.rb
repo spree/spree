@@ -9,7 +9,7 @@ module Spree
       I18n.backend.store_translations(:de,
                                       spree: {
                                         i18n: {
-                                          this_file_language: 'Deutsch (DE)'
+                                          this_file_language: 'Deutsch (de)'
                                         }
                                       })
     end
@@ -36,14 +36,14 @@ module Spree
     end
 
     describe '#store_locale_name' do
-      it { expect(store_locale_name(Spree::Store.default)).to eq('English (US)') }
-      it { expect(store_locale_name(eu_store)).to eq('Deutsch (DE)') }
+      it { expect(store_locale_name(Spree::Store.default)).to eq('English (en)') }
+      it { expect(store_locale_name(eu_store)).to eq('Deutsch (de)') }
       it { expect { store_locale_name(nil) }.not_to raise_error }
     end
 
     describe '#store_link' do
-      it { expect(store_link(eu_store)).to eq('<a href="https://eu.spreecommerce.org">Deutsch (DE) (€)</a>') }
-      it { expect(store_link(eu_store, class: 'some-class')).to eq('<a class="some-class" href="https://eu.spreecommerce.org">Deutsch (DE) (€)</a>') }
+      it { expect(store_link(eu_store)).to eq('<a href="https://eu.spreecommerce.org">Deutsch (de) (€)</a>') }
+      it { expect(store_link(eu_store, class: 'some-class')).to eq('<a class="some-class" href="https://eu.spreecommerce.org">Deutsch (de) (€)</a>') }
       it { expect { store_link(nil) }.not_to raise_error }
     end
 

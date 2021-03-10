@@ -26,8 +26,6 @@ module Spree
       current_store.supported_locales_list.size > 1
     end
 
-    private
-
     def locale_language_name(locale, use_active_locale)
       locale_as_symbol = locale.to_sym
       falback_locale = locale.to_s.slice(0..1).to_sym
