@@ -15,10 +15,12 @@ module Spree
     end
 
     def locale_presentation(locale)
-      if I18n.exists?('spree.i18n.this_file_language', locale: locale)
-        [Spree.t('i18n.this_file_language', locale: locale), locale.to_s]
+      formatted_locale = locale.to_s
+
+      if I18n.t('spree.language_activated', locale: formatted_locale, fallback: false) == true
+        [Spree::Store.locale_language_name(formatted_locale), formatted_locale]
       else
-        locale.to_s == 'en' ? ['English (US)', 'en'] : [locale, locale.to_s]
+        []
       end
     end
 
