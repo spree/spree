@@ -23,7 +23,7 @@
           <td><%= store.unique_name %></td>
           <td><%= link_to store.url, store.formatted_url, target: :blank %></td>
           <td><%= store.supported_currencies_list.map(&:iso_code).join(', ') %></td>
-          <td><%= store.supported_locales_list.map {|l| locale_presentation(l).first }.join(', ') %></td>
+          <td><%= store.supported_locales_list.map {|l| locale_presentation(l, true).first }.join(', ') %></td>
           <td><%= active_badge(store.default) %></td>
           <td class="actions actions-2 text-right" data-hook="admin_stores_index_row_actions">
             <%= link_to_edit_url spree.edit_admin_store_path(store), no_text: true if can?(:edit, store) %>

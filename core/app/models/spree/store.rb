@@ -52,9 +52,15 @@ module Spree
       end
     end
 
-    def self.locale_language_name(locale)
+    def self.locale_language_name(locale, use_active_locale)
       locale_as_symbol = locale.to_sym
       falback_locale = locale.to_s.slice(0..1).to_sym
+
+      used_default_locale = if use_active_locale
+                              I18n.locale.to_sym
+                            else
+                              locale.to_sym
+                            end
 
       # Allows a user to override the language naming
       return I18n.t('spree.language_name_overide', locale: locale) if I18n.exists?('spree.language_name_overide', locale: locale, fallback: false)
@@ -63,7 +69,7 @@ module Spree
       # If no translation is found for a complex regional, it returns the language by using
       # the fallback :es-US falls back to :es and returns => Espanola (es-US)
       # If no translation is found at all, it returns the locale in brackets: => (li-PI)
-      lang_name = locale_as_symbol.localize(locale_as_symbol).as_language_code || falback_locale.localize(falback_locale).as_language_code
+      lang_name = locale_as_symbol.localize(used_default_locale).as_language_code || falback_locale.localize(falback_locale).as_language_code
       "#{lang_name.to_s.capitalize} (#{locale})"
     end
 
