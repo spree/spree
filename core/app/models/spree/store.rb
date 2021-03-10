@@ -56,12 +56,13 @@ module Spree
       locale_as_symbol = locale.to_sym
       falback_locale = locale.to_s.slice(0..1).to_sym
 
-      # Allows a user to overide the language naming convension should they see fit.
+      # Allows a user to override the language naming
       return I18n.t('spree.language_name_overide', locale: locale) if I18n.exists?('spree.language_name_overide', locale: locale, fallback: false)
 
-      # Returns the locale language name from twitter_cldr in its native language :fr => Français (fr)
-      # If none is found for a complex regional language, it then returns the language by using the fallback :es-US falls back to :es and returns => Española (es-US)
-      # if no translation is found it returns the locale back in brackets (xx-XX)
+      # Returns the locale language name from twitter_cldr in its native language :fr => Francais (fr)
+      # If no translation is found for a complex regional, it returns the language by using
+      # the fallback :es-US falls back to :es and returns => Espanola (es-US)
+      # If no translation is found at all, it returns the locale in brackets: => (li-PI)
       lang_name = locale_as_symbol.localize(locale_as_symbol).as_language_code || falback_locale.localize(falback_locale).as_language_code
       "#{lang_name.to_s.capitalize} (#{locale})"
     end
