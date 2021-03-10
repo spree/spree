@@ -7,18 +7,10 @@ describe Spree::LocaleHelper, type: :helper do
   let(:supported_locales_for_all_stores) { [:en, :de, :fr] }
 
   before do
-    I18n.backend.store_translations(:de,
-      spree: {
-        i18n: {
-          this_file_language: 'Deutsch (DE)'
-        }
-      })
-    I18n.backend.store_translations(:fr,
-      spree: {
-        i18n: {
-          this_file_language: 'Français (fr)'
-        }
-      })
+    I18n.backend.store_translations(:sv,
+                                    spree: {
+                                      language_name_overide: 'SLOVAKIA (SLK)'
+                                    })
   end
 
   describe '#all_locales_options' do
@@ -29,13 +21,22 @@ describe Spree::LocaleHelper, type: :helper do
     it { expect(all_locales_options(true)).to contain_exactly(['English (en)', 'en'], ['German (de)', 'de'], ['French (fr)', 'fr']) }
   end
 
-  describe '#available_locales_options' do
+  describe '#available_locales_options including one that can not be named by twitte_cldr' do
     before do
       create(:store, supported_locales: 'en,de,xx-XX')
       create(:store, supported_locales: 'en')
     end
 
-    it { expect(available_locales_options).to contain_exactly(['English (en)', 'en'], ['Deutsch (de)', 'de'], ['(xx-XX)','xx-XX']) }
+    it { expect(available_locales_options).to contain_exactly(['English (en)', 'en'], ['Deutsch (de)', 'de'], ['(xx-XX)', 'xx-XX']) }
+  end
+
+  describe '#available_locales_options including one have been given a custom name' do
+    before do
+      create(:store, supported_locales: 'en,sv')
+      create(:store, supported_locales: 'en')
+    end
+
+    it { expect(available_locales_options).to contain_exactly(['English (en)', 'en'], ['SLOVAKIA (SLK)', 'sv']) }
   end
 
   describe '#supported_locales_options' do
@@ -45,7 +46,7 @@ describe Spree::LocaleHelper, type: :helper do
   end
 
   describe '#locale_presentation' do
-    it { expect(locale_presentation(:fr)).to eq( ['Français (fr)', 'fr']) }
+    it { expect(locale_presentation(:fr)).to eq(['Français (fr)', 'fr']) }
   end
 
   describe '#should_render_locale_dropdown?' do
