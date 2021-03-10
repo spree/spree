@@ -2,16 +2,25 @@ require 'spec_helper'
 
 describe Spree::LocaleHelper, type: :helper do
   let(:germany) { create(:country, name: 'Germany', iso: 'DE') }
-  let(:eu_store) { create(:store, default_currency: 'EUR', default_locale: 'de', default_country: germany, supported_locales: 'fr,de') }
+  let(:eu_store) { create(:store, default_currency: 'EUR', default_locale: 'de', default_country: germany, supported_locales: 'fr,de,it') }
   let(:available_locales) { Spree::Store.available_locales }
-  let(:supported_locales_for_all_stores) { [:en, :de, :fr] }
+  let(:supported_locales_for_all_stores) { [:en, :de, :fr, :it] }
+
+  before do
+    I18n.backend.store_translations(:en,
+                                    spree: {
+                                      language_name_overide: {
+                                        it: 'Italiano (IT) - CUSTOM'
+                                      }
+                                    })
+  end
 
   describe '#all_locales_options' do
-    it { expect(all_locales_options).to contain_exactly(['English (en)', 'en'], ['Deutsch (de)', 'de'], ['Français (fr)', 'fr']) }
+    it { expect(all_locales_options).to contain_exactly(['English (en)', 'en'], ['Deutsch (de)', 'de'], ['Français (fr)', 'fr'], ["Italiano (it)", "it"]) }
   end
 
   describe '#all_locales_options shown in the active locale' do
-    it { expect(all_locales_options(true)).to contain_exactly(['English (en)', 'en'], ['German (de)', 'de'], ['French (fr)', 'fr']) }
+    it { expect(all_locales_options(true)).to contain_exactly(['English (en)', 'en'], ['German (de)', 'de'], ['French (fr)', 'fr'], ["Italiano (IT) - CUSTOM", "it"]) }
   end
 
   describe '#available_locales_options including one that can not be named by twitte_cldr' do
@@ -37,29 +46,19 @@ describe Spree::LocaleHelper, type: :helper do
   end
 
   describe '#locale_language_name when using custom name' do
-    before do
-      I18n.backend.store_translations(:en,
-                                      spree: {
-                                        language_name_overide: {
-                                          de: 'DE Germany (DEEE)',
-                                          fr: 'FR FRANCE (FRRRR)'
-                                        }
-                                      })
-    end
-
     context 'In native mode it returns the local translation' do
       it { expect(locale_language_name('de', false)).to eq('Deutsch (de)') }
     end
 
     context 'In active language mode with custom translation it return the custom translation' do
-      it { expect(locale_language_name('de', true)).to eq('DE Germany (DEEE)') }
+      it { expect(locale_language_name('it', true)).to eq('Italiano (IT) - CUSTOM') }
     end
   end
 
   describe '#supported_locales_options' do
     let(:current_store) { eu_store }
 
-    it { expect(supported_locales_options).to contain_exactly(['Deutsch (de)', 'de'], ['Français (fr)', 'fr']) }
+    it { expect(supported_locales_options).to contain_exactly(['Deutsch (de)', 'de'], ['Français (fr)', 'fr'], ["Italiano (it)", "it"]) }
   end
 
   describe '#locale_presentation' do
