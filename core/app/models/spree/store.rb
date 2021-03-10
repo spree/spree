@@ -1,7 +1,5 @@
 module Spree
   class Store < Spree::Base
-    require 'twitter_cldr'
-
     has_many :orders, class_name: 'Spree::Order'
     has_many :payment_methods, class_name: 'Spree::PaymentMethod'
     belongs_to :default_country, class_name: 'Spree::Country'
@@ -50,24 +48,6 @@ module Spree
       Rails.cache.fetch('stores_available_locales') do
         Spree::Store.all.map(&:supported_locales_list).flatten.uniq
       end
-    end
-
-    def self.locale_language_name(locale, use_active_locale)
-      locale_as_symbol = locale.to_sym
-      falback_locale = locale.to_s.slice(0..1).to_sym
-
-      used_default_locale = if use_active_locale
-                              I18n.locale.to_sym
-                            else
-                              locale.to_sym
-                            end
-
-      if I18n.exists?("spree.language_name_overide.#{locale}", locale: used_default_locale.to_s, fallback: false)
-        return I18n.t("spree.language_name_overide.#{locale}", locale: used_default_locale.to_s)
-      end
-
-      lang_name = locale_as_symbol.localize(used_default_locale).as_language_code || falback_locale.localize(used_default_locale).as_language_code
-      ("#{lang_name.to_s.capitalize} (#{locale})").strip
     end
 
     def supported_currencies_list

@@ -17,13 +17,33 @@ module Spree
     def locale_presentation(locale, use_active_locale = false)
       formatted_locale = locale.to_s
 
-      [Spree::Store.locale_language_name(formatted_locale, use_active_locale), formatted_locale]
+      [locale_language_name(formatted_locale, use_active_locale), formatted_locale]
     end
 
     def should_render_locale_dropdown?
       return false if current_store.nil?
 
       current_store.supported_locales_list.size > 1
+    end
+
+    private
+
+    def locale_language_name(locale, use_active_locale)
+      locale_as_symbol = locale.to_sym
+      falback_locale = locale.to_s.slice(0..1).to_sym
+
+      used_default_locale = if use_active_locale
+                              I18n.locale.to_sym
+                            else
+                              locale.to_sym
+                            end
+
+      if I18n.exists?("spree.language_name_overide.#{locale}", locale: used_default_locale.to_s, fallback: false)
+        return I18n.t("spree.language_name_overide.#{locale}", locale: used_default_locale.to_s)
+      end
+
+      lang_name = locale_as_symbol.localize(used_default_locale).as_language_code || falback_locale.localize(used_default_locale).as_language_code
+      "#{lang_name.to_s.capitalize} (#{locale})".strip
     end
   end
 end

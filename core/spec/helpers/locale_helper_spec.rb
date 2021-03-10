@@ -1,11 +1,10 @@
 require 'spec_helper'
 
 describe Spree::LocaleHelper, type: :helper do
-  let(:germany) { create(:country, name: 'Germany', iso: 'GR') }
+  let(:germany) { create(:country, name: 'Germany', iso: 'DE') }
   let(:eu_store) { create(:store, default_currency: 'EUR', default_locale: 'de', default_country: germany, supported_locales: 'fr,de') }
   let(:available_locales) { Spree::Store.available_locales }
   let(:supported_locales_for_all_stores) { [:en, :de, :fr] }
-
 
   describe '#all_locales_options' do
     it { expect(all_locales_options).to contain_exactly(['English (en)', 'en'], ['Deutsch (de)', 'de'], ['Français (fr)', 'fr']) }
@@ -18,10 +17,44 @@ describe Spree::LocaleHelper, type: :helper do
   describe '#available_locales_options including one that can not be named by twitte_cldr' do
     before do
       create(:store, supported_locales: 'en,de,xx-XX')
-      create(:store, supported_locales: 'en')
     end
 
     it { expect(available_locales_options).to contain_exactly(['English (en)', 'en'], ['Deutsch (de)', 'de'], ['(xx-XX)', 'xx-XX']) }
+  end
+
+  describe '#locale_language_name' do
+    context 'In native mode it returns the local translation' do
+      it { expect(locale_language_name('zh-TW', false)).to eq('繁體中文 (zh-TW)') }
+    end
+
+    context 'in active locale mode it returns the english name' do
+      it { expect(locale_language_name('zh-TW', true)).to eq('Traditional chinese (zh-TW)') }
+    end
+
+    context 'when passed a locale it does not reconise it returns the locale' do
+      it { expect(locale_language_name('xx-XX', true)).to eq('(xx-XX)') }
+    end
+  end
+
+  describe '#locale_language_name when using custom name' do
+    before do
+      create(:store, supported_locales: 'en,it', default_locale: 'it')
+      I18n.backend.store_translations(:en,
+                                      spree: {
+                                        language_name_overide: {
+                                          de: 'DE Germany (DEEE)',
+                                          fr: 'FR FRANCE (FRRRR)'
+                                        }
+                                      })
+    end
+
+    context 'In native mode it returns the local translation' do
+      it { expect(locale_language_name('de', false)).to eq('Deutsch (de)') }
+    end
+
+    context 'In active language mode with custom translation it return the custom translation' do
+      it { expect(locale_language_name('de', true)).to eq('DE Germany (DEEE)') }
+    end
   end
 
   describe '#supported_locales_options' do

@@ -7,11 +7,11 @@ module Spree
 
     before do
       I18n.backend.store_translations(:de,
-        spree: {
-          i18n: {
-            this_file_language: 'Deutsch (DE)'
-          }
-        })
+                                      spree: {
+                                        i18n: {
+                                          this_file_language: 'Deutsch (DE)'
+                                        }
+                                      })
     end
 
     describe '#stores' do
