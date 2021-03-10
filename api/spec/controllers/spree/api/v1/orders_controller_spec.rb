@@ -708,6 +708,82 @@ module Spree
       end
     end
 
+    describe '#apply_coupon_code' do
+      subject(:apply_coupon_code) do
+        api_put :apply_coupon_code, id: order.number,
+                                    order_token: order.token,
+                                    coupon_code: coupon_code
+      end
+
+      let(:order) { create(:order_with_line_items, user: current_api_user) }
+      let(:coupon_code) { 'coupon_code' }
+
+      context 'when coupon is not found' do
+        it 'returns coupon not found response' do
+          apply_coupon_code
+
+          expect(response.status).to eq 422
+          expect(json_response[:successful]).to eq false
+          expect(json_response[:status_code]).to eq 'coupon_code_not_found'
+          expect(json_response[:error]).to eq "The coupon code you entered doesn't exist. Please try again."
+          expect(json_response[:success]).to be_nil
+        end
+
+        it 'does not apply any promotion to order' do
+          apply_coupon_code
+
+          expect(order.promotions).to be_empty
+        end
+      end
+
+      context 'when coupon is found' do
+        let!(:promotion) { create(:promotion_with_one_use_per_user_rule, code: coupon_code) }
+
+        context 'when coupon is applied' do
+          it 'returns coupon applied response' do
+            apply_coupon_code
+
+            expect(response.status).to eq 200
+            expect(json_response[:successful]).to eq true
+            expect(json_response[:status_code]).to eq 'coupon_code_applied'
+            expect(json_response[:success]).to eq 'The coupon code was successfully applied to your order.'
+            expect(json_response[:error]).to be_nil
+          end
+
+          it 'applies specified promotion to order' do
+            expect(order.promotions).to be_empty
+
+            apply_coupon_code
+
+            expect(order.promotions.count).to eq 1
+            expect(order.promotions.first.code).to eq coupon_code
+          end
+        end
+
+        context 'when coupon can not be applied' do
+          let!(:order_with_line_item_promotion) do
+            create(:order_with_line_items, coupon_code: coupon_code, user: current_api_user).tap do |order|
+              Spree::PromotionHandler::Coupon.new(order).apply
+              order.update_column(:completed_at, Time.current)
+              order.update_column(:state, 'complete')
+            end
+          end
+
+          context 'when coupon was used by user already' do
+            it 'returns coupon was used already' do
+              apply_coupon_code
+
+              expect(response.status).to eq 422
+              expect(json_response[:successful]).to eq false
+              expect(json_response[:status_code]).to be_nil
+              expect(json_response[:error]).to eq 'This coupon code can only be used once per user.'
+              expect(json_response[:success]).to be_nil
+            end
+          end
+        end
+      end
+    end
+
     context 'PUT remove_coupon_code' do
       let(:order) { create(:order_with_line_items) }
 

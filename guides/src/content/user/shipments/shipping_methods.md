@@ -4,7 +4,7 @@ title: Shipping Methods
 
 ## Shipping Methods
 
-Now that you have set up all of the pieces you need, it's time to put them together into the shipping options that the customer sees when they reach checkout. These options are called Shipping Methods - they are the carriers and services used to send your products.
+Now that you have set up all of the elements you need, it's time to put them together into the shipping options that the customer sees when they reach the checkout. These options are called Shipping Methods; they are the carriers and services used to send your products.
 
 ### Adding a Shipping Method
 
@@ -14,7 +14,7 @@ To add a new shipping method to your store, go to the Admin Interface and click 
 
 ### Name
 
-Enter a name for the shipping method. This is the exact wording that the customer will see at checkout. This should include both the carrier (USPS, UPS, Fedex, DHL, etc.) as well as the service type (First Class Mail, Overnight, Ground, etc.) So it would be very common to need several shipping methods for your store, for example:
+Enter a name for the shipping method. This is the exact wording that the customer will see at the checkout. This should include both the carrier (USPS, UPS, FedEx, DHL, etc.) as well as the service type (First Class Mail, Overnight, Ground, etc.) It is very common to need several shipping methods for your store, for example:
 
 * USPS First Class
 * USPS First Class International
@@ -22,7 +22,7 @@ Enter a name for the shipping method. This is the exact wording that the custome
 * USPS MediaMail
 * UPS Two-Day
 * UPS Ground
-* Fedex Overnight
+* FedEx Overnight
 
 Remember that you will need to associate one or more [zones](#zones) with each shipping method in order for it to appear as an option at checkout.
 
@@ -35,8 +35,8 @@ Shipping methods that are displayed on the frontend can be chosen by your store'
 If a shipping method is available only on backend, then only your store's administrators can assign it to an order. Some examples of cases where you might want to use a backend-only shipping method:
 
 * You sell handmade wind chimes. You want to offer a "Pick-up in Store" option, but only to certain customers.
-* With your online produce market you provide personal delivery of goods, but only to your best local customers.
-* Yours is a photography studio. You usually sell prints that physical delivery, but for some clients you are willing to send electronic media that they can print themselves.
+* You want to provide personal delivery of goods only to your best local customers.
+* Your photography studio usually sells prints that are physically delivered; however, some clients are willing to receive electronic media that they can print themselves.
 
 ### Tracking URL
 
@@ -58,7 +58,7 @@ Check the boxes next to the categories you want served by your new shipping meth
 
 ### Zones
 
-In [a previous step to this guide](/user/shipments/zones.html) you learned about how to set up geographical zones for your store. Within the form's "Zones" section, you need to specify which zones are served by this shipping method. The "EU_VAT" (European Value-Added Tax) zone could be served by USPS First Class International, but could _not_ be served by USPS Priority Mail.
+In [a previous step to this guide](/user/shipments/zones.html) you learned how to set up geographical zones for your store. Within the "Zones" section of the form, you need to specify which zones are served by this shipping method. The "EU_VAT" (European Value-Added Tax) zone could be served by USPS First Class International, but could _not_ be served by USPS Priority Mail.
 
 ![Shipping Method Zones](../../../images/user/shipments/shipping_method_zones.jpg)
 
@@ -66,11 +66,11 @@ Check the boxes next to any zones you want served by this shipping method.
 
 ### Calculator
 
-Each shipping method is associated with one [Calculator](/user/shipments/calculators.html). You can choose one of the built-in Spree calculators, or one you made yourself.
+Each shipping method is associated with one [Calculator](/user/shipments/calculators.html). You can choose one of the built-in Spree calculators or one you have made yourself.
 
 ![Shipping Method Calculator](../../../images/user/shipments/shipping_method_calculator.jpg)
 
-Once you've made your calculator selection, click the "Create" button to finalize your new shipping method. The screen will refresh with one or more fields you'll use to set the parameters of your calculator. For example, creating a shipping method with a flat percent calculator will produce a screen like this:
+Once you've made your calculator selection, click the "Create" button to finalize your new shipping method. The screen will refresh with one or more fields which you then use to set the parameters of your calculator. For example, creating a shipping method with a flat percent calculator will produce a screen like this:
 
 ![Shipping Method Flat Percent](../../../images/user/shipments/shipping_method_flat_percent.jpg)
 

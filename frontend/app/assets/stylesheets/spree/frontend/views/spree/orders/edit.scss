@@ -42,7 +42,7 @@
       }
     }
     &-continue-link {
-      margin-top: 234px;
+      margin-top: 100px;
       margin-bottom: 30px;
       @include media-breakpoint-up(sm) {
         padding: 20px 12px;
@@ -131,7 +131,7 @@
       }
     }
     &-description {
-      h4 {
+      h2 {
         font-size: font-px-to-rem(14px);
         @include media-breakpoint-up(sm) {
           font-size: font-px-to-rem(22px);
@@ -227,6 +227,7 @@
         border-width: 1px !important;
         border-style: solid;
         color: color-yiq($input-background);
+        touch-action: manipulation;
         @include media-breakpoint-up(sm) {
           height: 51.4px;
           font-size: font-px-to-rem(24px);
@@ -358,7 +359,7 @@
         }
       }
     }
-    input[type=text] {
+    input[type="text"] {
       -webkit-appearance: none;
       -moz-appearance: none;
       appearance: none;

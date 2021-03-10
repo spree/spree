@@ -1,0 +1,12 @@
+.search-form {
+  button {
+    svg {
+      width: 20px;
+      height: 20px;
+      @include media-breakpoint-up(md) {
+        width: 27px;
+        height: 27px;
+      }
+    }
+  }
+}

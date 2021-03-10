@@ -1,9 +1,13 @@
 require 'spec_helper'
 
 describe Spree::BaseHelper, type: :helper do
-  include Spree::BaseHelper
+  include described_class
 
   let(:current_store) { create :store }
+
+  before do
+    allow(controller).to receive(:controller_name).and_return('test')
+  end
 
   context 'available_countries' do
     let(:country) { create(:country) }
@@ -12,9 +16,24 @@ describe Spree::BaseHelper, type: :helper do
       create_list(:country, 3)
     end
 
+    context 'with checkout zone assigned to the store' do
+      before do
+        Spree::Config[:checkout_zone] = nil
+        @zone = create(:zone, name: 'No Limits', kind: 'country')
+        @zone.members.create(zoneable: country)
+        current_store.update(checkout_zone_id: @zone.id)
+      end
+
+      it 'return only the countries defined by the checkout_zone_id' do
+        expect(available_countries).to eq([country])
+        expect(current_store.checkout_zone_id).to eq @zone.id
+      end
+    end
+
     context 'with no checkout zone defined' do
       before do
         Spree::Config[:checkout_zone] = nil
+        current_store.update(checkout_zone_id: nil)
       end
 
       it 'return complete list of countries' do
@@ -25,7 +44,7 @@ describe Spree::BaseHelper, type: :helper do
     context 'with a checkout zone defined' do
       context 'checkout zone is of type country' do
         before do
-          @country_zone = create(:zone, name: 'CountryZone')
+          @country_zone = create(:zone, name: 'CountryZone', kind: 'country')
           @country_zone.members.create(zoneable: country)
           Spree::Config[:checkout_zone] = @country_zone.name
         end
@@ -36,15 +55,17 @@ describe Spree::BaseHelper, type: :helper do
       end
 
       context 'checkout zone is of type state' do
+        let(:state) { create(:state, country: country) }
+
         before do
           state_zone = create(:zone, name: 'StateZone')
-          state = create(:state, country: country)
           state_zone.members.create(zoneable: state)
+
           Spree::Config[:checkout_zone] = state_zone.name
         end
 
-        it 'return complete list of countries' do
-          expect(available_countries.count).to eq(Spree::Country.count)
+        it 'returns list of countries associated with states' do
+          expect(available_countries).to contain_exactly state.country
         end
       end
     end
@@ -121,15 +142,59 @@ describe Spree::BaseHelper, type: :helper do
     end
   end
 
+  context 'og_meta_data_tags' do
+    let(:current_currency) { 'USD' }
+    let(:image) { create(:image, position: 1) }
+    let(:product) do
+      create(:product).tap { |product| product.master.images << image }
+    end
+
+    it 'renders open graph meta data tags for PDP' do
+      # Because the controller_name method returns "test"
+      # controller_name is used by this method to infer what it is supposed
+      # to be generating og_meta_data_tags for
+      @test               = product
+      tags                = Nokogiri::HTML.parse(og_meta_data_tags)
+
+      meta_image          = tags.css('meta[property="og:image"]').first['content']
+      meta_type           = tags.css('meta[property="og:type"]').first['content']
+      meta_title          = tags.css('meta[property="og:title"]').first['content']
+      meta_description    = tags.css('meta[property="og:description"]').first['content']
+      meta_price_amount   = tags.css('meta[property="product:price:amount"]').first['content']
+      meta_price_currency = tags.css('meta[property="product:price:currency"]').first['content']
+
+      expect(meta_image).to be_present
+
+      expect(meta_type).to eq('product')
+      expect(meta_title).to eq(product.name)
+      expect(meta_description).to eq(product.description)
+
+      default_price = product.master.default_price
+      expect(meta_price_amount).to eq(default_price.amount.to_s)
+      expect(meta_price_currency).to eq(default_price.currency)
+    end
+  end
+
   # Regression test for #5384
 
   context 'pretty_time' do
     it 'prints in a format' do
-      expect(pretty_time(Time.new(2012, 5, 6, 13, 33))).to eq 'May 06, 2012  1:33 PM'
+      time = Time.new(2012, 5, 6, 13, 33)
+      expect(pretty_time(time)).to eq "May 06, 2012  1:33 PM #{time.zone}"
     end
 
     it 'return empty stirng when nil is supplied' do
       expect(pretty_time(nil)).to eq ''
+    end
+  end
+
+  context 'pretty_date' do
+    it 'prints in a format' do
+      expect(pretty_date(Time.new(2012, 5, 6, 13, 33))).to eq 'May 06, 2012'
+    end
+
+    it 'return empty stirng when nil is supplied' do
+      expect(pretty_date(nil)).to eq ''
     end
   end
 
@@ -207,13 +272,29 @@ describe Spree::BaseHelper, type: :helper do
 
       it { is_expected.to eq(nil) }
 
-      context 'with variants' do
-        let!(:image_1) { create :image, viewable: product.master }
-        let!(:image_2) { create :image, viewable: product.master }
-        let!(:image_3) { create :image, viewable: variant }
-        let!(:image_4) { create :image, viewable: variant }
+      context 'with master and variants' do
+        context 'master and variants with images' do
+          let!(:master_image_1) { create :image, viewable: product.master }
+          let!(:master_image_2) { create :image, viewable: product.master }
+          let!(:variant_image_1) { create :image, viewable: variant }
+          let!(:variant_image_2) { create :image, viewable: variant }
 
-        it { is_expected.to eq(image_3) }
+          it { is_expected.to eq(master_image_1) }
+        end
+
+        context 'master without images' do
+          let!(:variant_image_1) { create :image, viewable: variant }
+          let!(:variant_image_2) { create :image, viewable: variant }
+
+          it { is_expected.to eq(variant_image_1) }
+        end
+
+        context 'variants without images' do
+          let!(:master_image_1) { create :image, viewable: product.master }
+          let!(:master_image_2) { create :image, viewable: product.master }
+
+          it { is_expected.to eq(master_image_1) }
+        end
       end
 
       context 'only with master' do
@@ -242,57 +323,6 @@ describe Spree::BaseHelper, type: :helper do
         let!(:image_2) { create :image, viewable: variant_2 }
 
         it { is_expected.to eq(image_1) }
-      end
-    end
-  end
-
-  describe '#meta_image_data_tag' do
-    context 'when meta_image_url_path is present' do
-      it 'returns meta tag' do
-        allow_any_instance_of(Spree::BaseHelper).to receive(:meta_image_url_path).and_return('image_url')
-
-        expect(meta_image_data_tag).to eq "<meta property=\"og:image\" content=\"image_url\" />"
-      end
-    end
-
-    context 'when meta_image_url_path is absent' do
-      it 'returns meta tag' do
-        allow_any_instance_of(Spree::BaseHelper).to receive(:meta_image_url_path).and_return(nil)
-
-        expect(meta_image_data_tag).to eq nil
-      end
-    end
-  end
-
-  describe '#meta_image_url_path' do
-    context 'when object is not a product' do
-      let!(:taxon) { build :taxon }
-
-      it 'returns false' do
-        allow_any_instance_of(Spree::BaseHelper).to receive(:instance_variable_get).and_return(taxon)
-
-        expect(meta_image_url_path).to eq nil
-      end
-    end
-
-    context 'when object is product' do
-      let!(:product) { build :product }
-      before do
-        allow_any_instance_of(Spree::BaseHelper).to receive(:instance_variable_get).and_return(product)
-      end
-
-      context 'and has no images attached' do
-        it 'returns spree logo url' do
-          expect(meta_image_url_path).to eq asset_path(Spree::Config[:logo])
-        end
-      end
-
-      context 'and has image attached' do
-        let!(:image) { create :image, viewable: product.master }
-
-        it 'returns main image url' do
-          expect(meta_image_url_path).to eq asset_path(main_app.url_for(image.attachment))
-        end
       end
     end
   end

@@ -1,16 +1,11 @@
-<ul id="nav-bar" class="nav align-items-center d-flex justify-content-end navbar-right">
+<ul id="nav-bar" class="nav align-items-center d-flex flex-nowrap justify-content-end navbar-right">
   <li>
     <div class="navbar-right-search-menu">
-      <button type="button" class="navbar-right-dropdown-toggle search-icons" aria-label="<%= Spree.t('nav_bar.show_search')%>">
+      <button type="button" class="navbar-right-dropdown-toggle search-icons" aria-label="<%= Spree.t('nav_bar.show_search') %>">
         <%= icon(name: 'magnifying-glass',
-                 classes: 'd-none d-xl-inline-block',
+                 classes: 'd-inline-block',
                  width: 36,
-                 height: 36)  %>
-
-        <%= icon(name: 'magnifying-glass',
-                 classes: 'd-xl-none',
-                 width: 24,
-                 height: 24)  %>
+                 height: 36) %>
       </button>
 
       <div id="search-dropdown" class="p-0 px-md-4 py-md-2 w-100 shadow navbar-right-search-menu-dropdown hide-on-esc">
@@ -21,16 +16,11 @@
   <% if defined?(spree.account_link_path) %>
     <li>
       <div class="dropdown navbar-right-dropdown">
-        <button id="account-button" type="button" data-toggle="dropdown" class="navbar-right-dropdown-toggle" aria-label="<%= Spree.t('nav_bar.show_user_menu')%>">
+        <button id="account-button" type="button" data-toggle="dropdown" class="navbar-right-dropdown-toggle account-icon" aria-label="<%= Spree.t('nav_bar.show_user_menu') %>">
           <%= icon(name: 'person',
-                  classes: 'd-none d-xl-inline-block',
+                  classes: 'd-inline-block',
                   width: 41.4,
-                  height: 36)  %>
-
-          <%= icon(name: 'person',
-                  classes: 'd-xl-none',
-                  width: 27.6,
-                  height: 24)  %>
+                  height: 36) %>
         </button>
 
         <div id="link-to-account" class="dropdown-menu dropdown-menu-right text-right">
@@ -39,7 +29,7 @@
     </li>
   <% end %>
   <li id="link-to-cart">
-    <%= render 'spree/shared/cart', class: 'd-none d-xl-inline-block cart-icon--xl', size: 36, item_count: 0 %>
-    <%= render 'spree/shared/cart', class: 'd-xl-none', size: 24, item_count: 0 %>
+    <%= render 'spree/shared/cart', class: 'd-inline-block cart-icon', size: 36, item_count: 0 %>
   </li>
+  <%= render partial: 'spree/shared/internationalization_options' %>
 </ul>

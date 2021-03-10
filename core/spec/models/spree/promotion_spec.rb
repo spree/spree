@@ -25,6 +25,38 @@ describe Spree::Promotion, type: :model do
       expect(@valid_promotion).not_to be_valid
     end
 
+    describe 'code should be unique' do
+      let(:code) { 'code' }
+
+      context 'code is unique' do
+        before do
+          @valid_promotion.code = code
+        end
+
+        it { expect(@valid_promotion).to be_valid }
+      end
+
+      context 'code is not unique' do
+        let!(:promotion_with_code) { Spree::Promotion.create! name: 'test1', code: code }
+
+        context 'code is identical' do
+          before do
+            @valid_promotion.code = code
+          end
+
+          it { expect(@valid_promotion).not_to be_valid }
+        end
+
+        context 'code is identical with whitespace' do
+          before do
+            @valid_promotion.code = code + ' '
+          end
+
+          it { expect(@valid_promotion).not_to be_valid }
+        end
+      end
+    end
+
     describe 'expires_at_must_be_later_than_starts_at' do
       before do
         @valid_promotion.starts_at = Date.today
@@ -640,7 +672,7 @@ describe Spree::Promotion, type: :model do
       context 'when the order is complete' do
         it { is_expected.to be true }
 
-        context 'when the promotion was not eligible' do
+        context 'when the promotion is not eligible' do
           let(:adjustment) { order.adjustments.first }
 
           before do

@@ -16,6 +16,8 @@ describe 'API V2 Storefront Products Spec', type: :request do
   let!(:discontinued_product)  { create(:product, discontinue_on: Time.current - 1.day) }
   let!(:not_available_product) { create(:product, available_on: nil) }
 
+  before { Spree::Api::Config[:api_v2_per_page_limit] = 4 }
+
   describe 'products#index' do
     context 'with no params' do
       before { get '/api/v2/storefront/products' }
@@ -192,23 +194,49 @@ describe 'API V2 Storefront Products Spec', type: :request do
 
     context 'paginate products' do
       context 'with specified pagination params' do
-        before { get '/api/v2/storefront/products?page=1&per_page=2' }
+        context 'when per_page is between 1 and default value' do
+          before { get '/api/v2/storefront/products?page=1&per_page=2' }
 
-        it_behaves_like 'returns 200 HTTP status'
+          it_behaves_like 'returns 200 HTTP status'
 
-        it 'returns specified amount products' do
-          expect(json_response['data'].count).to eq 2
+          it 'returns the default number of products' do
+            expect(json_response['data'].count).to eq 2
+          end
+
+          it 'returns proper meta data' do
+            expect(json_response['meta']['count']).to       eq 2
+            expect(json_response['meta']['total_count']).to eq Spree::Product.available.count
+          end
+
+          it 'returns proper links data' do
+            expect(json_response['links']['self']).to include('/api/v2/storefront/products?page=1&per_page=2')
+            expect(json_response['links']['next']).to include('/api/v2/storefront/products?page=2&per_page=2')
+            expect(json_response['links']['prev']).to include('/api/v2/storefront/products?page=1&per_page=2')
+          end
         end
 
-        it 'returns proper meta data' do
-          expect(json_response['meta']['count']).to       eq 2
-          expect(json_response['meta']['total_count']).to eq Spree::Product.available.count
+        context 'when per_page is above the default value' do
+          before { get '/api/v2/storefront/products?page=1&per_page=10' }
+
+          it 'returns the default number of products' do
+            expect(json_response['data'].count).to eq 6
+          end
         end
 
-        it 'returns proper links data' do
-          expect(json_response['links']['self']).to include('/api/v2/storefront/products?page=1&per_page=2')
-          expect(json_response['links']['next']).to include('/api/v2/storefront/products?page=2&per_page=2')
-          expect(json_response['links']['prev']).to include('/api/v2/storefront/products?page=1&per_page=2')
+        context 'when per_page is less than 0' do
+          before { get '/api/v2/storefront/products?page=1&per_page=-1' }
+
+          it 'returns the default number of products' do
+            expect(json_response['data'].count).to eq 6
+          end
+        end
+
+        context 'when per_page is equal 0' do
+          before { get '/api/v2/storefront/products?page=1&per_page=0' }
+
+          it 'returns the default number of products' do
+            expect(json_response['data'].count).to eq 6
+          end
         end
       end
 
@@ -233,9 +261,107 @@ describe 'API V2 Storefront Products Spec', type: :request do
         end
       end
     end
+
+    context 'fetch products by curency param' do
+      let!(:store) { create(:store, default: true, supported_currencies: 'USD,EUR,GBP', default_currency: 'USD' ) }
+
+      context 'with default currency' do
+        before { get '/api/v2/storefront/products?currency=USD' }
+
+        it 'returns products' do
+          expect(json_response['data']).not_to be_empty
+          expect(json_response['data'][0]['attributes']['currency']).to eq 'USD'
+          expect(json_response['data'].count).to eq Spree::Product.available.count
+        end
+      end
+
+      context 'with supported currency' do
+        let(:product) { products.first }
+        let(:currency) { 'EUR' }
+
+        before do
+          product.master.prices.create(currency: currency, amount: 99.90, compare_at_amount: 129.90)
+          get "/api/v2/storefront/products?currency=#{currency}&include=default_variant"
+        end
+
+        it 'returns products with prices in that currency' do
+          expect(json_response['data']).not_to be_empty
+          expect(json_response['data'].count).to eq(1)
+          expect(json_response['data'][0]['id']).to eq(product.id.to_s)
+          expect(json_response['data'][0]['attributes']['currency']).to eq currency
+          expect(json_response['data'][0]['attributes']['price']).to eq('99.90')
+          expect(json_response['data'][0]['attributes']['display_price']).to eq('€99.90')
+          expect(json_response['data'][0]['attributes']['compare_at_price']).to eq('129.90')
+          expect(json_response['data'][0]['attributes']['display_compare_at_price']).to eq('€129.90')
+          expect(json_response['included'][0]['id']).to eq(product.default_variant_id.to_s)
+          expect(json_response['included'][0]['type']).to eq('variant')
+          expect(json_response['included'][0]['attributes']['price']).to eq('99.90')
+          expect(json_response['included'][0]['attributes']['display_price']).to eq('€99.90')
+          expect(json_response['included'][0]['attributes']['compare_at_price']).to eq('129.90')
+          expect(json_response['included'][0]['attributes']['display_compare_at_price']).to eq('€129.90')
+        end
+      end
+
+      context 'without supported currency' do
+        before { get '/api/v2/storefront/products?currency=PLN' }
+
+        it 'returns results with default currency' do
+          expect(json_response['data']).not_to be_empty
+          expect(json_response['data'][0]['attributes']['currency']).to eq 'USD'
+          expect(json_response['data'][0]['attributes']['display_price']).to match('$')
+        end
+      end
+    end
   end
 
   describe 'products#show' do
+    context 'with supported currency param' do
+      before { get "/api/v2/storefront/products/#{product.slug}?currency=USD" }
+
+      it_behaves_like 'returns 200 HTTP status'
+
+      it 'return product with supported currency' do
+        expect(json_response['data']).not_to be_empty
+        expect(json_response['data']['id']).to eq(product.id.to_s)
+        expect(json_response['data']['attributes']['currency']).to eq('USD')
+      end
+    end
+
+    context 'with supported currency but without prices in that currency' do
+      let!(:store) { create(:store, default: true, supported_currencies: 'USD,EUR,GBP', default_currency: 'USD') }
+
+      before { get "/api/v2/storefront/products/#{product.slug}?currency=EUR&include=default_variant" }
+
+      it_behaves_like 'returns 200 HTTP status'
+
+      it 'returns empty prices' do
+        expect(json_response['data']).not_to be_empty
+        expect(json_response['data']['id']).to eq(product.id.to_s)
+        expect(json_response['data']['attributes']['currency']).to eq('EUR')
+        expect(json_response['data']['attributes']['price']).to be_nil
+        expect(json_response['data']['attributes']['display_price']).to be_nil
+        expect(json_response['data']['attributes']['compare_at_price']).to be_nil
+        expect(json_response['data']['attributes']['display_compare_at_price']).to be_nil
+        expect(json_response['included'][0]['id']).to eq(product.default_variant_id.to_s)
+        expect(json_response['included'][0]['type']).to eq('variant')
+        expect(json_response['included'][0]['attributes']['currency']).to eq('EUR')
+        expect(json_response['included'][0]['attributes']['price']).to be_nil
+        expect(json_response['included'][0]['attributes']['display_price']).to be_nil
+        expect(json_response['included'][0]['attributes']['compare_at_price']).to be_nil
+        expect(json_response['included'][0]['attributes']['display_compare_at_price']).to be_nil
+      end
+    end
+
+    context 'without supported currency param' do
+      before { get "/api/v2/storefront/products/#{product.slug}?currency=PLN" }
+
+      it 'fallbacks to default currency' do
+        expect(json_response['data']).not_to be_empty
+        expect(json_response['data']['id']).to eq(product.id.to_s)
+        expect(json_response['data']['attributes']['currency']).to eq('USD')
+      end
+    end
+
     context 'with non-existing product' do
       before { get '/api/v2/storefront/products/example' }
 

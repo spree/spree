@@ -6,29 +6,25 @@
   data-product-carousel-per-page="<%= per_page %>"
   data-product-carousel-is-slave="true"
   data-interval="false"
-  data-hook
->
+  data-hook>
   <div class="carousel-inner order-1 h-100">
   <% images.each_with_index do |image, image_index| %>
       <% if image_index % per_page == 0 %>
-        <div class="carousel-item product-thumbnails-carousel-item<%= ' active' if image_index == 0 %>">
+        <div class="carousel-item product-thumbnails-carousel-item h-100<%= ' active' if image_index == 0 %>">
         <div class="h-100 d-flex flex-column justify-content-center">
-            <div class="product-thumbnails-carousel-item-content py-1">
+            <div class="product-thumbnails-carousel-item-content py-1 h-100">
       <% end %>
               <div
                 class="product-thumbnails-carousel-item-single product-thumbnails-carousel-item-single--visible"
                 data-product-carousel-to-slide="<%= image_index %>"
                 data-variant-is-master="<%= image.viewable_id == @product.master_id %>"
-                data-variant-id="<%= image.viewable_id %>"
-              >
+                data-variant-id="<%= image.viewable_id %>">
                 <%= lazy_image(
                   src: main_app.url_for(image.url(:pdp_thumbnail)),
                   class: 'd-block w-100',
                   alt: image.alt || @product.name,
                   width: 57,
-                  height: 70
-                )
-                %>
+                  height: 70) %>
               </div>
       <% if (image_index + 1) % per_page == 0 || (image_index + 1) == images.length %>
             </div>
@@ -37,32 +33,32 @@
       <% end %>
     <% end %>
   </div>
-  <a
-    class="d-none d-sm-flex order-0 justify-content-center w-100 product-thumbnails-carousel-previous"
-    href="#<%= id %>"
-    role="button"
-    data-slide="prev"
-  >
-    <span aria-hidden="true">
-      <%= icon(name: 'arrow-right',
-               classes: 'spree-icon-arrow spree-icon-arrow-up',
-               width: 16,
-               height: 16) %>
-    </span>
-    <span class="sr-only"><%= Spree.t(:previous) %></span>
-  </a>
-  <a
-    class="d-none d-sm-flex order-2 justify-content-center w-100 product-thumbnails-carousel-next"
-    href="#<%= id %>"
-    role="button"
-    data-slide="next"
-  >
-    <span aria-hidden="true">
-      <%= icon(name: 'arrow-right',
-               classes: 'spree-icon-arrow spree-icon-arrow-down',
-               width: 16,
-               height: 16) %>
-    </span>
-    <span class="sr-only"><%= Spree.t(:next) %></span>
-  </a>
+  <% if images.length > per_page %>
+    <a
+      class="d-none d-sm-flex order-0 justify-content-center w-100 product-thumbnails-carousel-previous"
+      href="#<%= id %>"
+      role="button"
+      data-slide="prev">
+      <span aria-hidden="true">
+        <%= icon(name: 'arrow-right',
+                classes: 'spree-icon-arrow spree-icon-arrow-up',
+                width: 16,
+                height: 16) %>
+      </span>
+      <span class="sr-only"><%= Spree.t(:previous) %></span>
+    </a>
+    <a
+      class="d-none d-sm-flex order-2 justify-content-center w-100 product-thumbnails-carousel-next"
+      href="#<%= id %>"
+      role="button"
+      data-slide="next">
+      <span aria-hidden="true">
+        <%= icon(name: 'arrow-right',
+                classes: 'spree-icon-arrow spree-icon-arrow-down',
+                width: 16,
+                height: 16) %>
+      </span>
+      <span class="sr-only"><%= Spree.t(:next) %></span>
+    </a>
+  <% end %>
 </div>

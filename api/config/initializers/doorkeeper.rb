@@ -3,11 +3,20 @@ Doorkeeper.configure do
   use_refresh_token
   api_only
 
+  skip_client_authentication_for_password_grant { true } if defined?(skip_client_authentication_for_password_grant)
+
   resource_owner_authenticator { current_spree_user }
 
   resource_owner_from_credentials do
     user = Spree.user_class.find_for_database_authentication(email: params[:username])
-    user if user&.valid_for_authentication? { user.valid_password?(params[:password]) }
+
+    next if user.nil?
+
+    if defined?(Spree::Auth::Config) && Spree::Auth::Config[:confirmable] == true
+      user if user.active_for_authentication? && user.valid_for_authentication? { user.valid_password?(params[:password]) }
+    elsif user&.valid_for_authentication? { user.valid_password?(params[:password]) }
+      user
+    end
   end
 
   admin_authenticator do |routes|

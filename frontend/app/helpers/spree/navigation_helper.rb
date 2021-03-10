@@ -3,7 +3,7 @@ require 'digest'
 module Spree
   module NavigationHelper
     def spree_navigation_data
-      SpreeStorefrontConfig.dig(current_store.code, :navigation) || SpreeStorefrontConfig.dig(:default, :navigation) || []
+      @spree_navigation_data ||= SpreeStorefrontConfig.dig(I18n.locale, :navigation) || SpreeStorefrontConfig.dig(current_store.code, :navigation) || SpreeStorefrontConfig.dig(:default, :navigation) || []
     # safeguard for older Spree installs that don't have spree_navigation initializer
     # or spree.yml file present
     rescue
@@ -11,7 +11,10 @@ module Spree
     end
 
     def spree_nav_cache_key(section = 'header')
-      base_cache_key + [current_store, spree_navigation_data_cache_key, Spree::Config[:logo], section]
+      @spree_nav_cache_key = begin
+        keys = base_cache_key + [current_store, spree_navigation_data_cache_key, Spree::Config[:logo], stores&.cache_key, section]
+        Digest::MD5.hexdigest(keys.join('-'))
+      end
     end
 
     def main_nav_image(image_path, title = '')
@@ -23,6 +26,11 @@ module Spree
         width: 350,
         height: 234
       )
+    end
+
+    def should_render_internationalization_dropdown?
+      (defined?(should_render_locale_dropdown?) && should_render_locale_dropdown?) ||
+        (defined?(should_render_currency_dropdown?) && should_render_currency_dropdown?)
     end
 
     private

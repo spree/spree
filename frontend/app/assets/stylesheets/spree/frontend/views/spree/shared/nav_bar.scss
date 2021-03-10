@@ -1,9 +1,9 @@
 .navbar-right {
-  li+li {
+  li + li {
     margin-left: calc-spacer(2);
   }
   @include media-breakpoint-up(xl) {
-    li+li {
+    li + li {
       margin-left: calc-spacer(4);
     }
   }
@@ -14,18 +14,35 @@
       padding: 0;
       margin: 0;
       color: $header-font-color;
-      &:focus {
-        outline: none;
-      }
     }
     .dropdown-menu {
       border-color: $global-border-style;
     }
   }
+  .account-icon {
+    svg {
+      width: 27.6px;
+      height: 24px;
+      @include media-breakpoint-up(xl) {
+        width: 41.4px;
+        height: 36px;
+      }
+    }
+  }
+  .search-icons {
+    svg {
+      width: 24px;
+      height: 24px;
+      @include media-breakpoint-up(xl) {
+        width: 36px;
+        height: 36px;
+      }
+    }
+  }
   &-search-menu {
     position: static;
     &-dropdown {
-      background-color: theme-color('light-background');
+      background-color: theme-color("light-background");
       visibility: hidden;
       opacity: 0;
       z-index: 4;
@@ -44,7 +61,7 @@
       }
 
       form {
-        input#keywords{
+        input#keywords {
           background: transparent;
           color: $meganav-font-color;
           font-size: font-px-to-rem(14px);

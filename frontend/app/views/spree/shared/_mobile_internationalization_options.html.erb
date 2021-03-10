@@ -1,0 +1,37 @@
+<% if (defined?(should_render_store_chooser?) && should_render_store_chooser?) || (defined?(should_render_internationalization_dropdown?) && should_render_internationalization_dropdown?) %>
+  <% link_title = "#{Spree.t(:choose_currency)} / #{Spree.t('i18n.language')}" %>
+
+  <li class="d-flex justify-content-between align-items-center mobile-navigation-list-item">
+    <span class="w-75"><%= link_title %></span>
+    <a class="w-25 text-right mobile-navigation-category-link" data-category="internationalization" href="#" aria-label="<%= link_title %>">
+      <%= icon(name: 'arrow-right',
+              classes: 'd-sm-none spree-icon-arrow spree-icon-arrow-right',
+              width: 16,
+              height: 16) %>
+      <%= icon(name: 'arrow-right',
+              classes: 'd-none d-sm-inline spree-icon-arrow spree-icon-arrow-right',
+              width: 14,
+              height: 27) %>
+    </a>
+
+    <ul class="list-unstyled position-absolute mobile-navigation-sublist" data-category="internationalization">
+      <li class="text-center font-weight-bold mobile-navigation-sublist-header">
+        <%= Spree.t(:internationalization) %>
+      </li>
+      <% if (defined?(should_render_store_chooser?) && should_render_store_chooser?) %>
+        <% stores.each do |store| %>
+          <li class="d-flex justify-content-between align-items-center mobile-navigation-list-item">
+            <%= country_flag_icon(store_country_iso(store)) %>
+            <%= store_link(store, class: "dropdown-item text-uppercase d-flex #{'font-weight-bold' if current_store == store}") %>
+          </li>
+        <% end %>
+      <% else %>
+        <div class="mt-4 pt-4">
+          <%= render 'spree/shared/locale_dropdown' %>
+          <div class="dropdown-divider mt-4 pb-4"></div>
+          <%= render 'spree/shared/currency_dropdown' %>
+        </div>
+      <% end %>
+    </ul>
+  </li>
+<% end %>

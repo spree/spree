@@ -1,5 +1,25 @@
 <% @body_id = 'checkout-page' %>
 
+<%
+content_for :head do
+  agent = request.env['HTTP_USER_AGENT']
+  if agent =~ /Safari/ && !(agent =~ /Chrome/)
+%>
+  <script>
+    if (!!window.performance && window.performance.navigation.type === 2) {
+      window.location.reload();
+    }
+    window.onpageshow = function(event) {
+      if (event.persisted) {
+        window.location.reload()
+      }
+    }
+  </script>
+<%
+  end
+end
+%>
+
 <div id="checkout" class="container checkout" data-hook>
   <%= render partial: 'spree/shared/error_messages', locals: { target: @order } %>
 
@@ -7,7 +27,7 @@
     <div class="text-uppercase checkout-header-title">
       <h1 data-hook="checkout_title"><%= Spree.t('checkout_page.header') %></h1>
     </div>
-    <div class="checkout-progress" data-hook="checkout_progress">
+    <div class="checkout-progress" data-hook="checkout_progress" role="navigation" aria-label="<%= Spree.t('checkout_page.checkout_navigation') %>">
       <%= checkout_progress %>
     </div>
   </div>

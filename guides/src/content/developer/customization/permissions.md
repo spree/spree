@@ -1,0 +1,108 @@
+---
+title: 'Permissions'
+section: customization
+order: 5
+---
+
+## Overview
+
+## User and Roles
+
+Spree by default comes with `admin` and `user` roles. You can create more roles in the Admin Panel UI or rails console / seed, eg.:
+
+```ruby
+Spree::Role.find_or_create_by(name: 'customer_service')
+```
+
+Same with assigning a role, you can do it in the Admin Panel or from the console:
+
+```ruby
+Spree.user_class.find_by(email: 'john@example.com').spree_roles << Spree::Role.find_or_create_by(name: 'customer_service')
+```
+
+## Ability class
+
+For authorization Spree uses [CanCanCan](https://github.com/CanCanCommunity/cancancan). The main ability class by default is [Spree::Ability](https://github.com/spree/spree/blob/master/core/app/models/spree/ability.rb).
+
+## Adding custom permissions
+
+Let's assume you would like to add a new Role `customer_service` with some limited access to Admin Panel (only Orders section).
+
+Create a new file called `app/models/my_project/customer_service_ability.rb`
+
+```ruby
+module MyProject
+  class CustomerServiceAbility
+    include CanCan::Ability
+
+    def initialize(user)
+      if user.respond_to?(:has_spree_role?) && user.has_spree_role?('customer_service')
+        can :manage, ::Spree::Order
+      end
+    end
+  end
+end
+```
+
+Please familiarize yourself with [CanCanCan](https://github.com/CanCanCommunity/cancancan) syntax to understand `can/cannot` methods more.
+
+Now we need to inform Spree to use this ability, create another file `app/models/my_project/spree/ability_decorator.rb` with contents:
+
+```ruby
+module MyProject
+  module Spree
+    module AbilityDecorator
+      def abilities_to_register
+        [CustomerServiceAbility]
+      end
+    end
+  end
+end
+
+::Spree::Ability.prepend(MyProject::Spree::AbilityDecorator)
+```
+
+## Replacing all permissions
+
+As we've mentioned earlier, Spree uses main Ability class. But you can change that to use your own custom Ability class via [Dependencies](/developer/customization/dependencies.html) in Spree initializer (`config/initializers/spree.rb`), eg.
+
+```ruby
+Spree::Dependencies.ability_class = 'MyProject::Ability'
+```
+
+Now, let's define that new class in `app/models/my_project/ability.rb`
+
+```ruby
+module MyProject
+  class Ability < ::Spree::Ability
+    def initialize(user)
+      alias_cancan_delete_action
+
+      user ||= Spree.user_class.new
+
+      if user.respond_to?(:has_spree_role?) && user.has_spree_role?('admin')
+        apply_admin_permissions(user)
+        # add some more permissions here for the admin role
+      else 
+        if user.respond_to?(:has_spree_role?) && user.has_spree_role?(:customer_service)
+          apply_customer_service_permissions(user)
+        end
+
+        apply_user_permissions(user)
+      end
+
+      protect_admin_role
+    end
+
+    protected
+
+    def apply_customer_service_permissions(user)
+      can :manage, ::Spree::Order
+    end
+  end
+end
+```
+
+Now your can restart your rails server and observe new permissions being implemented in the application.
+
+Leter permission changes should be automatically picked up in development and should not require application restarts.

@@ -4,6 +4,10 @@
   <%= @taxon.name %>
 <% end %>
 
+<% content_for :page_actions do %>
+  <%= taxon_preview_link(@taxon) %>
+<% end %>
+
 <%# Because otherwise the form would attempt to use to_param of @taxon %>
 <% form_url = admin_taxonomy_taxon_path(@taxonomy.id, @taxon.id) %>
 
@@ -13,8 +17,8 @@
   <%= render 'form', f: f %>
 
   <div class="form-actions" data-hook="buttons">
-    <%= button Spree.t('actions.update'), 'save' %>
+    <%= button Spree.t('actions.update'), 'save.svg' %>
     <span class="or"><%= Spree.t(:or) %></span>
-    <%= button_link_to Spree.t('actions.cancel'), edit_admin_taxonomy_url(@taxonomy), icon: "remove" %>
+    <%= button_link_to Spree.t('actions.cancel'), edit_admin_taxonomy_url(@taxonomy), icon: "cancel.svg" %>
   </div>
 <% end %>

@@ -1,7 +1,7 @@
 ---
 title: Upgrading Spree 4.0 to 4.1
 section: upgrades
-order: 0
+order: 1
 ---
 
 This guide covers upgrading a **4.0 Spree application** to **Spree 4.1**.
@@ -22,7 +22,7 @@ This is the safest and recommended method.
 
 ```ruby
 gem 'spree', '~> 4.1'
-gem 'spree_gateway', '~> 3.7'
+gem 'spree_gateway', '~> 3.9'
 ```
 
 ## Run `bundle update`

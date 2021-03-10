@@ -18,10 +18,10 @@
           <%= form_for @order, url: path, method: :put, html: { id: 'checkout_form_registration' } do |f| %>
             <div class="form-group">
               <p class="form-group checkout-content-inner-field">
-                <%= f.email_field :email, class: 'spree-flat-input', placeholder: Spree.t(:email), autofocus: true %>
+                <%= f.email_field :email, class: 'spree-flat-input', placeholder: Spree.t(:email) %>
               </p>
             </div>
-            <%= f.submit Spree.t(:continue_as_guest), class: 'btn btn-block btn-outline-primary spree-btn', tabindex: 4 %>
+            <%= f.submit Spree.t(:continue_as_guest), class: 'btn btn-block btn-outline-primary spree-btn' %>
           <% end %>
         <% end %>
       </div>

@@ -24,10 +24,9 @@ module Spree
     attribute :month, ActiveRecord::Type::Integer.new
     attribute :year,  ActiveRecord::Type::Integer.new
 
-    attr_reader :number
+    attr_reader :number, :verification_value
     attr_accessor :encrypted_data,
                   :imported,
-                  :verification_value,
                   :manual_entry
 
     with_options if: :require_card_numbers?, on: :create do
@@ -38,6 +37,11 @@ module Spree
 
     scope :with_payment_profile, -> { where.not(gateway_customer_profile_id: nil) }
     scope :default, -> { where(default: true) }
+    scope :not_expired, lambda {
+      where('CAST(spree_credit_cards.year AS DECIMAL) > ?', Time.current.year).
+        or(where('CAST(spree_credit_cards.year AS DECIMAL) = ?', Time.current.year).
+           where('CAST(spree_credit_cards.month AS DECIMAL) >= ?', Time.current.month))
+    }
 
     # needed for some of the ActiveMerchant gateways (eg. SagePay)
     alias_attribute :brand, :cc_type
@@ -101,9 +105,11 @@ module Spree
                        end
     end
 
+    def verification_value=(value)
+      @verification_value = value.to_s.gsub(/\s/, '')
+    end
+
     def set_last_digits
-      number.to_s.gsub!(/\s/, '')
-      verification_value.to_s.gsub!(/\s/, '')
       self.last_digits ||= number.to_s.length <= 4 ? number : number.to_s.slice(-4..-1)
     end
 
@@ -119,6 +125,10 @@ module Spree
     # Show the card number, with all but last 4 numbers replace with "X". (XXXX-XXXX-XXXX-4338)
     def display_number
       "XXXX-XXXX-XXXX-#{last_digits}"
+    end
+
+    def display_brand
+      brand.present? ? brand.upcase : Spree.t(:no_cc_type)
     end
 
     def actions

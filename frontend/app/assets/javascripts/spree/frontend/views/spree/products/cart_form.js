@@ -1,5 +1,6 @@
 //= require spree/api/storefront/cart
 //= require ../shared/product_added_modal
+//= require ../shared/variant_select
 
 var ADD_TO_CART_FORM_SELECTOR = '.add-to-cart-form'
 var VARIANT_ID_SELECTOR = '[name="variant_id"]'
@@ -20,21 +21,36 @@ function CartForm($, $cartForm) {
   }
 
   this.initialize = function() {
+    this.urlQueryMatchFound = false
     this.selectedOptionValueIds = []
     this.variants = JSON.parse($cartForm.attr('data-variants'))
     this.withOptionValues = Boolean($cartForm.find(OPTION_VALUE_SELECTOR).length)
 
     this.$addToCart = $cartForm.find(ADD_TO_CART_SELECTOR)
     this.$price = $cartForm.find('.price.selling')
+    this.$compareAtPrice = $cartForm.find('.compare-at-price')
     this.$variantIdInput = $cartForm.find(VARIANT_ID_SELECTOR)
 
-    this.initializeForm()
+    this.initializeQueryParamsCheck()
+    this.initializeColorVarianTooltip()
+
+    if (this.urlQueryMatchFound) {
+      this.setSelectedVariantFromUrl()
+    } else {
+      this.initializeForm()
+    }
   }
 
   this.initializeForm = function() {
     if (this.withOptionValues) {
       var $optionValue = this.firstCheckedOptionValue()
       this.applyCheckedOptionValue($optionValue, true)
+      var singleOptionValues = this.getSingleOptionValuesFromEachOptionType()
+      if (singleOptionValues.length) {
+        singleOptionValues.forEach(function($value) {
+          this.applyCheckedOptionValue($value, true)
+        })
+      }
     } else {
       this.updateAddToCart()
       this.triggerVariantImages()
@@ -46,7 +62,9 @@ function CartForm($, $cartForm) {
   }
 
   this.handleOptionValueClick = function(event) {
-    this.applyCheckedOptionValue($(event.currentTarget))
+    var currentTarget = $(event.currentTarget)
+    this.applyCheckedOptionValue(currentTarget)
+    currentTarget.blur()
   }.bind(this)
 
   this.applyCheckedOptionValue = function($optionValue, initialUpdate) {
@@ -61,6 +79,8 @@ function CartForm($, $cartForm) {
     if (this.shouldTriggerVariantImage($optionValue)) {
       this.triggerVariantImages()
     }
+
+    if (initialUpdate) $optionValue.prop('checked', true)
   }
 
   this.saveCheckedOptionValue = function($optionValue) {
@@ -118,6 +138,17 @@ function CartForm($, $cartForm) {
 
   this.firstCheckedOptionValue = function() {
     return $cartForm.find(OPTION_VALUE_SELECTOR + '[data-option-type-index=0]' + ':checked')
+  }
+
+  this.getSingleOptionValuesFromEachOptionType = function() {
+    var singleOptionValues = []
+    this.optionTypes().each(function(_, optionType) {
+      var $optionValues = $(optionType).find(OPTION_VALUE_SELECTOR)
+      if ($optionValues.length === 1) {
+        singleOptionValues.push($optionValues.first())
+      }
+    })
+    return singleOptionValues
   }
 
   this.shouldTriggerVariantImage = function($optionValue) {
@@ -220,7 +251,12 @@ function CartForm($, $cartForm) {
 
     if (!variant) return
 
+    var shouldDisplayCompareAtPrice = variant.should_display_compare_at_price
+
     this.$price.html(variant.display_price)
+
+    var compareAtPriceContent = shouldDisplayCompareAtPrice ? variant.display_compare_at_price : ''
+    this.$compareAtPrice.html(compareAtPriceContent)
   }
 
   this.updateVariantId = function() {
@@ -243,21 +279,24 @@ Spree.ready(function($) {
     )
   }
 
+  Spree.addToCartFormSubmissionOptions = function() {
+    return {};
+  }
+
   $('#product-details').on('submit', ADD_TO_CART_FORM_SELECTOR, function(event) {
-    var variantId
-    var quantity
-    var $cartForm = $(event.currentTarget)
-    var $addToCart = $cartForm.find(ADD_TO_CART_SELECTOR)
+    var $cartForm = $(event.currentTarget);
+    var $addToCart = $cartForm.find(ADD_TO_CART_SELECTOR);
+    var variantId = $cartForm.find(VARIANT_ID_SELECTOR).val();
+    var quantity = parseInt($cartForm.find('[name="quantity"]').val());
+    var options = Spree.addToCartFormSubmissionOptions();
 
     event.preventDefault()
-    $addToCart.prop('disabled', true)
-    variantId = $cartForm.find(VARIANT_ID_SELECTOR).val()
-    quantity = parseInt($cartForm.find('[name="quantity"]').val())
+    $addToCart.prop('disabled', true);
     Spree.ensureCart(function() {
       SpreeAPI.Storefront.addToCart(
         variantId,
         quantity,
-        {}, // options hash - you can pass additional parameters here, your backend
+        options, // options hash - you can pass additional parameters here, your backend
         // needs to be aware of those, see API docs:
         // https://github.com/spree/spree/blob/master/api/docs/v2/storefront/index.yaml#L42
         function(response) {
@@ -266,6 +305,12 @@ Spree.ready(function($) {
           Spree.showProductAddedModal(JSON.parse(
             $cartForm.attr('data-product-summary')
           ), Spree.variantById($cartForm, variantId))
+          $cartForm.trigger({
+            type: 'product_add_to_cart',
+            variant: Spree.variantById($cartForm, variantId),
+            quantity_increment: quantity,
+            cart: response.attributes
+          })
         },
         function(error) {
           if (typeof error === 'string' && error !== '') {
@@ -284,5 +329,9 @@ Spree.ready(function($) {
     var $cartForm = $(cartFormElement)
 
     CartForm($, $cartForm)
+  })
+
+  document.addEventListener('turbolinks:request-start', function () {
+    Spree.hideProductAddedModal()
   })
 })

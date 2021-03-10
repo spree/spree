@@ -24,11 +24,33 @@ describe Spree::Admin::BaseHelper, type: :helper do
 
   context '#order_time' do
     it 'prints in a format' do
-      expect(order_time(Time.new(2016, 5, 6, 13, 33))).to eq '2016-05-06 1:33 PM'
+      time = Time.new(2016, 5, 6, 13, 33)
+      expect(order_time(time)).to eq "2016-05-06 1:33 PM #{time.zone}"
     end
 
     it 'return empty stirng when nil is supplied' do
       expect(order_time(nil)).to eq ''
+    end
+  end
+
+  describe '#admin_logout_link' do
+    it 'returns nil if no logout route is defined' do
+      expect(helper.admin_logout_link).to be_nil
+    end
+
+    context 'returns spree_logout_path if defined' do
+      before { allow(helper).to receive(:spree_logout_path).and_return('/logout') }
+
+      it { expect(helper.admin_logout_link).to eq('/logout') }
+    end
+
+    context 'spree.admin_logout_path if defined' do
+      before do
+        allow(helper).to receive(:spree_logout_path).and_return('/logout')
+        allow(helper).to receive(:admin_logout_path).and_return('/admin/logout')
+      end
+
+      it { expect(helper.admin_logout_link).to eq('/admin/logout') }
     end
   end
 end

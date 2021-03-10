@@ -12,7 +12,7 @@ describe 'Cart Indicator Spec', type: :request do
     end
 
     it 'with cart html' do
-      expect(response.body).to include('<div class="font-weight-medium cart-icon-count">0</div>')
+      expect(response.body).to include('<span class="font-weight-medium cart-icon-count">0</span>')
     end
   end
 
@@ -22,7 +22,7 @@ describe 'Cart Indicator Spec', type: :request do
     end
 
     it 'returns 1' do
-      expect(response.body).to include('<div class="font-weight-medium cart-icon-count">1</div>')
+      expect(response.body).to include('<span class="font-weight-medium cart-icon-count">1</span>')
     end
   end
 

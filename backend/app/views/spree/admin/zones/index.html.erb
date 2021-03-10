@@ -3,12 +3,11 @@
 <% end %>
 
 <% content_for :page_actions do %>
-  <%= button_link_to Spree.t(:new_zone), new_object_url, class: "btn-success", icon: 'add', id: 'admin_new_zone_link' %>
+  <%= button_link_to Spree.t(:new_zone), new_object_url, class: "btn-success", icon: 'add.svg', id: 'admin_new_zone_link' %>
 <% end if can? :create, Spree::Zone %>
 
-<%= paginate @zones, theme: 'twitter-bootstrap-4' %>
-
 <% if @zones.any? %>
+<div class="table-responsive">
   <table class="table" id='listing_zones' data-hook>
     <thead>
       <tr data-hook="zones_header">
@@ -25,7 +24,7 @@
         <tr id="<%= spree_dom_id zone %>" data-hook="zones_row">
           <td><%= zone.name %></td>
           <td><%= zone.description %></td>
-          <td><%= zone.default_tax? ? Spree.t(:say_yes) : Spree.t(:say_no) %></td>
+          <td><%= active_badge(zone.default_tax?) %></td>
           <td class="actions actions-2 text-right">
             <%= link_to_edit(zone, no_text: true) if can? :edit, zone %>
             <%= link_to_delete(zone, no_text: true) if can? :delete, zone %>
@@ -34,6 +33,7 @@
       <% end %>
     </tbody>
   </table>
+</div>
 <% else %>
   <div class="alert alert-info no-objects-found">
     <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::Zone)) %>,
@@ -41,4 +41,4 @@
   </div>
 <% end %>
 
-<%= paginate @zones, theme: 'twitter-bootstrap-4' %>
+<%= paginate @zones, theme: 'admin-twitter-bootstrap-4' %>

@@ -24,7 +24,7 @@ For example, if you have two shipping methods defined for your store ("UPS 1-Day
 
 The Flat Rate (per item/product) calculator allows you to determine the shipping costs based on the number of items in the order.
 
-For example, if there are 4 items in an order and the flat rate per item amount is set to $10 then the total shipping costs for the order would be $40.
+For example, if there are 4 items in an order and the flat rate per item amount is set to $10, then the total shipping costs for the order would be $40.
 
 ### Flat Percent
 
@@ -57,7 +57,7 @@ The Price Sack calculator is a way to offer discount shipping to orders over a c
 * Discount Amount
 * Currency (defaults to the currency you have configured for your store)
 
-Any order whose subtotal is under is less than what you set for Minimal Amount would be charged a shipping cost of Normal Amount. Orders whose subtotals are equal to or greater than the Minimal Amount would be charged the Discount Amount.
+Any order whose subtotal is less than what you set for Minimal Amount would be charged a shipping cost of Normal Amount. Orders whose subtotals are equal to or greater than the Minimal Amount would be charged at the Discount Amount.
 
 For example, suppose you create a shipping calculator with these settings:
 
@@ -69,8 +69,8 @@ A customer whose order subtotal equals $35 would be offered a shipping cost of $
 
 ### Custom Calculators
 
-You can define your own calculator if you have more complex needs. In that case, check out the [Calculators Guide](../developer/calculators.html).
+You can define your own calculator if you have more complex needs. In that case, check out the [Calculators Guide](/developer/core/calculators.html).
 
 ## Next Step
 
-If you have followed this guide series [from the beginning](shipments), your store is now stocked with [shipping categories](shipping_categories), [geographical shipping zones](zones), and calculators. The final step is to pull it all together into [shipping methods](shipping_methods), from which your customers can choose at checkout.
+If you have followed this guide series from the beginning, your store is now furnished with [shipping categories](shipping_categories), [geographical shipping zones](zones), and calculators. The final step is to pull it all together into [shipping methods](shipping_methods), from which your customers can choose at checkout.

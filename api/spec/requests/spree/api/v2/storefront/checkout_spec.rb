@@ -276,9 +276,9 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
         let(:params) do
           {
             order: {
-              shipments_attributes: {
-                '0' => { selected_shipping_rate_id: new_selected_shipping_rate_id, id: shipment.id }
-              }
+              shipments_attributes: [
+                { selected_shipping_rate_id: new_selected_shipping_rate_id, id: shipment.id }
+              ]
             }
           }
         end
@@ -339,6 +339,17 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
             expect(order.payments.last.source.name).to eq('Spree Commerce')
             expect(order.payments.last.source.last_digits).to eq('1111')
           end
+        end
+
+        context 'when the gateway rejects the payment source' do
+          let(:params) { payment_params }
+
+          before do
+            allow_any_instance_of(Spree::Order).to receive(:update_from_params).and_raise(Spree::Core::GatewayError.new('Card declined'))
+            execute
+          end
+
+          it_behaves_like 'returns 422 HTTP status'
         end
       end
 
@@ -596,7 +607,7 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
         expect(json_response['data'][0]).to have_type('shipment')
         expect(json_response['data'][0]).to have_relationships(:shipping_rates)
         expect(json_response['included']).to be_present
-        expect(json_response['included'].size).to eq(shipment.shipping_rates.count)
+        expect(json_response['included'].size).to eq(shipment.shipping_rates.count + 1)
         shipment.shipping_rates.each do |shipping_rate|
           expect(json_response['included']).to include(have_type('shipping_rate').and have_id(shipping_rate.id.to_s))
         end
@@ -612,6 +623,9 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
         expect(json_response['included'][0]).to have_attribute(:shipping_method_id).with_value(shipping_method.id)
         expect(json_response['included'][0]).to have_attribute(:selected).with_value(shipping_rate.selected)
         expect(json_response['included'][0]).to have_attribute(:free).with_value(shipping_rate.free?)
+
+        expect(json_response['included']).to include(have_type('stock_location').and have_id(shipment.stock_location_id.to_s))
+        expect(json_response['included']).to include(have_type('stock_location').and have_attribute(:name).with_value(shipment.stock_location.name))
       end
     end
 
@@ -653,9 +667,9 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
     let(:shipment_params) do
       {
         order: {
-          shipments_attributes: {
-            '0' => { selected_shipping_rate_id: new_selected_shipping_rate_id, id: shipment_id }
-          }
+          shipments_attributes: [
+            { selected_shipping_rate_id: shipping_rate_id, id: shipment_id }
+          ]
         }
       }
     end
@@ -664,8 +678,6 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
       json_response['data'].first['relationships']['shipping_rates']['data'].first['id']
     end
     let(:shipment_id) { json_response['data'].first['id'] }
-    let!(:new_selected_shipping_method) { create(:shipping_method, name: 'Fedex') }
-    let(:new_selected_shipping_rate_id) { new_selected_shipping_method.shipping_rates.last.id }
 
     shared_examples 'transitions through checkout from start to finish' do
       before do
@@ -700,7 +712,6 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
         expect(response.status).to eq(200)
         expect(order.reload.completed_at).not_to be_nil
         expect(order.state).to eq('complete')
-        expect(order.shipments.first.shipping_method).to eq(new_selected_shipping_method)
         expect(order.payments.valid.first.payment_method).to eq(payment_method)
       end
     end

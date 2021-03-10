@@ -1,6 +1,7 @@
 ---
 title: "Shipments"
 section: "core"
+order: 4
 ---
 
 ## Overview
@@ -244,7 +245,7 @@ gem 'active_shipping', git: 'git://github.com/Shopify/active_shipping.git'
 
 and run `bundle install` from the command line.
 
-As an example of how to use the [spree_active_shipping extension](https://github.com/spree/spree_active_shipping) we'll demonstrate how to configure it to work with the USPS API. The other carriers follow a very similar pattern.
+As an example of how to use the [Spree Active Shipping extension](https://github.com/spree/spree_active_shipping) we'll demonstrate how to configure it to work with the USPS API. The other carriers follow a very similar pattern.
 
 For each USPS delivery service you want to offer (e.g. "USPS Media Mail"), you will need to create a `ShippingMethod` with a descriptive name (`Configuration` -> `Shipping Methods`) and a `Calculator` (registered in the `active_shipping` extension) that ties the delivery service and the shipping method together.
 

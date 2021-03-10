@@ -88,4 +88,37 @@ describe Spree::Api::V2::BaseController, type: :controller do
       end
     end
   end
+
+  describe '#error_during_processing' do
+
+    controller(described_class) do
+      def index
+        render plain: { 'products' => [] }.to_json
+      end
+    end
+
+    before do
+      @routes = ActionDispatch::Routing::RouteSet.new.tap do |r|
+        r.draw { get 'index', to: 'spree/api/v2/base#index' }
+      end
+    end
+
+    let!(:user) { create :user }
+    let(:exception) { ArgumentError.new('foo') }
+    let(:result_class) { Struct.new(:value) }
+    let(:result) { result_class.new({message: 'foo'}) }
+
+    it 'handles ArgumentError exceptions' do
+      expect(subject).to receive(:index).and_raise(exception)
+      expect(subject).to receive(:spree_current_user).and_return(user)
+      expect_next_instance_of(::Spree::Api::ErrorHandler) do |instance|
+        expect(instance).to receive(:call).with(
+          exception: exception,
+          opts: { user: user }
+        ).and_return(result)
+      end
+      get :index, params: { token: 'exception-message' }
+      expect(json_response).to eql('error' => 'foo')
+    end
+  end
 end

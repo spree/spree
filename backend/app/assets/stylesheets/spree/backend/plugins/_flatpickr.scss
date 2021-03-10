@@ -1,0 +1,113 @@
+.flatpickr-calendar {
+  // Custom Flatpickr styling for Spree + BS4.
+  .flatpickr-current-month {
+    span.cur-month:hover {
+      background: transparent;
+    }
+      .numInputWrapper {
+      margin-left: 3px;
+      border-radius: $border-radius;
+      overflow: hidden;
+    }
+
+    .flatpickr-monthDropdown-months {
+      @include prefix((
+        appearance: none
+      ), webkit moz ms khtml);
+
+      padding: 0.2em;
+      border-radius: $border-radius;
+    }
+  }
+
+  .numInputWrapper span.arrowUp {
+    border-color: transparent;
+    border-radius: 0;
+  }
+
+  .numInputWrapper span.arrowDown {
+    border-color: transparent;
+    border-radius: 0;
+  }
+
+  .flatpickr-day {
+    margin: 2px 0;
+    border-radius: $border-radius ;
+  }
+
+  .flatpickr-months .flatpickr-prev-month:hover svg,
+  .flatpickr-months .flatpickr-next-month:hover svg {
+    fill: $primary;
+  }
+
+  .flatpickr-time {
+    border-radius: 0 0 5px 5px;
+    &:after {
+      display: none;
+    }
+    .numInputWrapper {
+      span {
+        border-color: transparent;
+        border-radius: 0;
+      }
+    }
+  }
+
+  // Required to stop an opened cal showing above the nav bar.
+  &.open {
+    z-index: $zindex-dropdown;
+  }
+}
+
+// Mixin for calendar toggle icon show/hide.
+@mixin swith-appended-icon {
+  &:placeholder-shown:not(:focus) + * {
+      @content;
+  }
+}
+
+.input-group.datePickerFrom,
+.input-group.datePickerTo,
+.input-group.datepicker {
+  input.flatpickr-alt-input[readonly] {
+    // Flatpickr alternate input is read-only,
+    // style it as an active input field.
+    background-color: white !important;
+
+    // Fix a bug where occasionally the whole screen will highlight
+    // if you clicked the Flatpcikr input box while moving the cursor.
+    @include prefix((
+      appearance: none,
+      touch-callout: none,
+      user-select: none
+    ), webkit moz ms khtml);
+
+    @include swith-appended-icon  {
+      opacity: 0;
+    }
+  }
+
+  // Required for calendar toggle icon show/hide.
+  .append_under {
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: 0;
+    height: 100%;
+  }
+
+  // Styling for calendar toggle icon toggle
+  .input-group-append:not(:last-child) >
+  .force-round {
+    z-index: 5;
+    border-top-right-radius: $border-radius !important;
+    border-bottom-right-radius: $border-radius !important;
+  }
+
+  // Styling for calendar toggle icon toggle
+  .form-control:not(:first-child),
+  .input-group >.flatpickr-alt-input:not(:first-child) {
+    border-top-left-radius: $border-radius !important;
+    border-bottom-left-radius: $border-radius !important;
+  }
+}

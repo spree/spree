@@ -16,7 +16,10 @@ describe 'Cancelling + Resuming', type: :feature do
 
   it 'can cancel an order' do
     visit spree.edit_admin_order_path(order.number)
-    click_button 'Cancel'
+    within find('#contentHeader') do
+      click_button 'Cancel'
+    end
+
     expect(page).to have_css('.additional-info .state', text: 'canceled')
   end
 
@@ -27,7 +30,10 @@ describe 'Cancelling + Resuming', type: :feature do
 
     it 'can resume an order' do
       visit spree.edit_admin_order_path(order.number)
-      click_button 'Resume'
+      within find('#contentHeader') do
+        click_button 'Resume'
+      end
+      
       expect(page).to have_css('.additional-info .state', text: 'resumed')
     end
   end

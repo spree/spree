@@ -1,61 +1,56 @@
-<table class="row header">
-  <tr>
-    <td>
-      <p class="lede">
-        <%= Spree.t('reimbursement_mailer.reimbursement_email.dear_customer') %>
-      </p>
-      <p>
-        <%= Spree.t('reimbursement_mailer.reimbursement_email.instructions') %>
-      </p>
-      <p>
-        <%= Spree.t('reimbursement_mailer.reimbursement_email.refund_summary') %>
-      </p>
-      <p>
-        <%= Spree.t('reimbursement_mailer.reimbursement_email.total_refunded', total: @reimbursement.display_total) %>
-      </p>
+<h1>
+  <%= Spree.t('reimbursement_mailer.reimbursement_email.dear_customer', name: name_for(@order)) %>
+</h1>
+<p>
+  <%= Spree.t('reimbursement_mailer.reimbursement_email.instructions') %>
+</p>
+<p>
+  <%= Spree.t('reimbursement_mailer.reimbursement_email.refund_summary') %>
+</p>
+<p>
+  <%= Spree.t('reimbursement_mailer.reimbursement_email.total_refunded', total: @reimbursement.display_total) %>
+</p>
+<% if @reimbursement.return_items.exchange_requested.present? %>
+  <p>
+    <%= Spree.t('reimbursement_mailer.reimbursement_email.exchange_summary') %>
+  </p>
 
-      <% if @reimbursement.return_items.exchange_requested.present? %>
-        
-        <p>
-        <%= Spree.t('reimbursement_mailer.reimbursement_email.exchange_summary') %>
-        </p>
-
-        <table class="container">
-          <tr>
-            <td class="wrapper last">
-              <table class="twelve columns">
-
-                <% @reimbursement.return_items.exchange_requested.each do |return_item| %>
-                  <tr>
-                    <td class="six sub-columns">
-                      <%= return_item.variant.sku %>
-                    </td>
-                    <td>
-                      <%= link_to raw(return_item.variant.product.name),
-                                  spree.product_url(return_item.variant.product) %>
-                    </td>
-                    <td>
-                      <%= "(#{raw(return_item.exchange_variant.options_text)})" if return_item.exchange_variant.options_text.present? -%>
-                    </td>
-                  </tr>
-                <% end %>
-
-              </table>
-            </td>
-          </tr>
-        </table>
-
-
-        <% if @reimbursement.return_items.awaiting_return.present? && Spree::Config[:expedited_exchanges] %>
-          <p>
-          <%= Spree.t('reimbursement_mailer.reimbursement_email.days_to_send', days: Spree::Config[:expedited_exchanges_days_window]) %>
+  <table class="purchase_content">
+    <% @reimbursement.return_items.exchange_requested.each do |return_item| %>
+      <tr>
+        <td class="purchase_image">
+          <% if frontend_available? %>
+            <%= link_to(image_tag(variant_image_url(return_item.variant)), spree.product_url(return_item.variant.product)) %>
+          <% else %>
+            <%= image_tag(variant_image_url(return_item.variant)) %>
+          <% end %>
+        </td>
+        <td class="purchase_item">
+          <strong>
+            <span class="f-fallback">
+              <% if frontend_available? %>
+                <%= link_to raw(return_item.variant.name), spree.product_url(return_item.variant.product) %>
+              <% else %>
+                <%= raw(return_item.variant.name) %>
+              <% end %>
+            </span>
+          </strong>
+          <p class="purchase_item--additional">
+            <%= "(#{raw(return_item.exchange_variant.options_text)})" if return_item.exchange_variant.options_text.present? -%>
           </p>
-        <% end %>
+        </td>
+      </tr>
+    <% end %>
+  </table>
+  <% if @reimbursement.return_items.awaiting_return.present? && Spree::Config[:expedited_exchanges] %>
+    <p>
+      <%= Spree.t('reimbursement_mailer.reimbursement_email.days_to_send', days: Spree::Config[:expedited_exchanges_days_window]) %>
+    </p>
+  <% end %>
+<% end %>
 
-      <% end %>
-      <p>
-        <%= Spree.t('reimbursement_mailer.reimbursement_email.thanks') %>
-      </p>
-    <td class="expander"></td>
-  </tr>
-</table>
+<p>
+  <%= Spree.t('reimbursement_mailer.reimbursement_email.thanks') %>
+  <br />
+  <%= Spree.t('reimbursement_mailer.reimbursement_email.store_team', store_name: current_store.name) %>
+</p>

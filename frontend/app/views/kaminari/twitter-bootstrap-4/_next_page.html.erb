@@ -4,10 +4,10 @@
     current_page:  a page object for the currently displayed page
     total_pages:   total number of pages
     per_page:      number of items to fetch per page
-    remote:        data-remote
--%>
+    remote:        data-remote -%>
+
 <% unless current_page.last? %>
   <li class="next_page page-item">
-    <%= link_to_unless current_page.last?, inline_svg_tag('pagination-arrow-right.svg', size: '13px*16px'), url, rel: 'next', remote: remote, class: 'page-link' %>
+    <%= link_to_unless current_page.last?, inline_svg_tag('pagination-arrow-right.svg', size: '13px*16px'), url, rel: 'next', remote: remote, class: 'page-link', 'aria-label': 'Next page' %>
   </li>
 <% end %>

@@ -33,7 +33,7 @@ module Spree
       :id, :firstname, :lastname, :first_name, :last_name,
       :address1, :address2, :city, :country_iso, :country_id, :state_id,
       :zipcode, :phone, :state_name, :alternative_phone, :company,
-      :user_id, :deleted_at,
+      :user_id, :deleted_at, :label,
       country: [:iso, :name, :iso3, :iso_name],
       state: [:name, :abbr]
     ]
@@ -64,7 +64,7 @@ module Spree
       :meta_keywords, :price, :sku, :deleted_at, :prototype_id,
       :option_values_hash, :weight, :height, :width, :depth,
       :shipping_category_id, :tax_category_id,
-      :cost_currency, :cost_price,
+      :cost_currency, :cost_price, :compare_at_price,
       option_type_ids: [], taxon_ids: []
     ]
 
@@ -96,9 +96,12 @@ module Spree
       :quantity, :stock_item, :stock_item_id, :originator, :action
     ]
 
-    @@store_attributes = [:name, :url, :seo_title, :code, :meta_keywords,
+    @@store_attributes = [:name, :url, :seo_title, :code, :meta_keywords, :logo,
                           :meta_description, :default_currency, :mail_from_address,
-                          :facebook, :twitter, :instagram, :default_locale]
+                          :customer_support_email, :facebook, :twitter, :instagram,
+                          :description, :address, :contact_phone, :supported_locales,
+                          :default_locale, :default_country_id, :supported_currencies,
+                          :new_order_notifications_email, :mailer_logo, :checkout_zone_id, :seo_robots]
 
     @@store_credit_attributes = %i[amount currency category_id memo]
 
@@ -115,7 +118,7 @@ module Spree
     @@variant_attributes = [
       :name, :presentation, :cost_price, :discontinue_on, :lock_version,
       :position, :track_inventory,
-      :product_id, :product, :option_values_attributes, :price,
+      :product_id, :product, :option_values_attributes, :price, :compare_at_price,
       :weight, :height, :width, :depth, :sku, :cost_currency,
       options: [:name, :value], option_value_ids: []
     ]

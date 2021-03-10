@@ -10,6 +10,13 @@ module.exports = {
   plugins: [
     'gatsby-plugin-sitemap',
     'gatsby-plugin-react-helmet',
+    {
+      resolve: 'gatsby-plugin-react-helmet-canonical-urls',
+      options: {
+        siteUrl: 'https://guides.spreecommerce.org',
+        noQueryString: true
+      },
+    },
     'gatsby-transformer-remark',
     'gatsby-plugin-robots-txt',
     {
@@ -58,7 +65,15 @@ module.exports = {
             resolve: `gatsby-remark-images`,
             options: {
               quality: 100,
-              maxWidth: 1200
+              maxWidth: 1200,
+              linkImagesToOriginal: false,
+              showCaptions: true
+            }
+          },
+          {
+            resolve: `gatsby-remark-images-medium-zoom`, // Important!
+            options: {
+              margin: 10
             }
           },
           {
@@ -99,7 +114,7 @@ module.exports = {
               // setting this to '{ sh: "bash" }' will let you use
               // the language "sh" which will highlight using the
               // bash highlighter.
-              aliases: {},
+              aliases: { irb: 'ruby' },
               // This toggles the display of line numbers alongside the code.
               // To use it, add the following line in src/layouts/index.js
               // right after importing the prism color scheme:

@@ -10,7 +10,7 @@ Extensions provide a convenient mechanism for Spree developers to share reusable
 
 ## Installing an Extension
 
-We are going to be adding the [spree_i18n](https://github.com/spree-contrib/spree_i18n) extension to our store. SpreeI18n is a extension containing community contributed translations of Spree & ability to supply different attribute values per language such as product names and descriptions. Extensions can also add models, controllers, and views to create new functionality.
+We are going to be adding the [Spree I18n](https://github.com/spree-contrib/spree_i18n) extension to our store. SpreeI18n is a extension containing community contributed translations of Spree & ability to supply different attribute values per language such as product names and descriptions. Extensions can also add models, controllers, and views to create new functionality.
 
 There are three steps we need to take to install spree_i18n.
 

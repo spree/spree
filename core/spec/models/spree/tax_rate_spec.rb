@@ -19,7 +19,7 @@ describe Spree::TaxRate, type: :model do
 
       context 'when there is no default tax zone' do
         before do
-          @zone = create(:zone, name: 'Country Zone', default_tax: false, zone_members: [])
+          @zone = create(:zone, name: 'Country Zone', kind: 'country', default_tax: false, zone_members: [])
           @zone.zone_members.create(zoneable: country)
         end
 
@@ -61,7 +61,7 @@ describe Spree::TaxRate, type: :model do
 
         context 'when the tax_zone is contained within a rate zone' do
           before do
-            sub_zone = create(:zone, name: 'State Zone', zone_members: [])
+            sub_zone = create(:zone, name: 'State Zone', kind: 'state', zone_members: [])
             sub_zone.zone_members.create(zoneable: create(:state, country: country))
             allow(order).to receive_messages tax_zone: sub_zone
             @rate = Spree::TaxRate.create(
@@ -82,7 +82,7 @@ describe Spree::TaxRate, type: :model do
         subject { Spree::TaxRate.match(order.tax_zone) }
 
         before do
-          @zone = create(:zone, name: 'Country Zone', default_tax: true, zone_members: [])
+          @zone = create(:zone, name: 'Country Zone', kind: 'country', default_tax: true, zone_members: [])
           @zone.zone_members.create(zoneable: country)
         end
 
@@ -113,7 +113,7 @@ describe Spree::TaxRate, type: :model do
 
         context 'when the order has a different tax zone' do
           before do
-            allow(order).to receive_messages tax_zone: create(:zone, name: 'Other Zone')
+            allow(order).to receive_messages tax_zone: create(:zone, kind: 'country', name: 'Other Zone')
           end
 
           context 'when the tax is a VAT' do
@@ -202,9 +202,9 @@ describe Spree::TaxRate, type: :model do
       let(:germany) { create :country, name: 'Germany' }
       let(:india) { create :country, name: 'India' }
       let(:france) { create :country, name: 'France' }
-      let(:france_zone) { create :zone_with_country, name: 'France Zone' }
-      let(:germany_zone) { create :zone_with_country, name: 'Germany Zone', default_tax: true }
-      let(:india_zone) { create :zone_with_country, name: 'India' }
+      let(:france_zone) { create :zone_with_country, kind: 'country', name: 'France Zone' }
+      let(:germany_zone) { create :zone_with_country, kind: 'country', name: 'Germany Zone', default_tax: true }
+      let(:india_zone) { create :zone_with_country, kind: 'country', name: 'India' }
       let(:moss_category) { Spree::TaxCategory.create(name: 'Digital Goods') }
       let(:normal_category) { Spree::TaxCategory.create(name: 'Analogue Goods') }
       let(:eu_zone) { create(:zone, name: 'EU') }
@@ -379,7 +379,7 @@ describe Spree::TaxRate, type: :model do
   describe '#adjust' do
     before do
       @country = create(:country)
-      @zone = create(:zone, name: 'Country Zone', default_tax: true, zone_members: [])
+      @zone = create(:zone, name: 'Country Zone', kind: 'country', default_tax: true, zone_members: [])
       @zone.zone_members.create(zoneable: @country)
       @category    = Spree::TaxCategory.create name: 'Taxable Foo'
       @category2   = Spree::TaxCategory.create(name: 'Non Taxable')

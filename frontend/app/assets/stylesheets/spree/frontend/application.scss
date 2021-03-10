@@ -1,6 +1,4 @@
 @import "spree/frontend/variables/variables";
-@import "spree/frontend/variables/bootstrap-overrides";
-@import "spree/frontend/variables/helper-variables";
 @import "bootstrap";
 @import "spree/frontend/bootstrap-patches";
 
@@ -8,6 +6,7 @@
 @import "spree/frontend/mixins";
 @import "spree/frontend/functions";
 @import "spree/frontend/margins";
+@import "spree/frontend/flags/flag-icon";
 
 @import "spree/frontend/components-bootstrap/carousel";
 @import "spree/frontend/components-bootstrap/button";
@@ -25,6 +24,7 @@
 @import "spree/frontend/views/spree/shared/header";
 @import "spree/frontend/views/spree/shared/login";
 @import "spree/frontend/views/spree/shared/nav_bar";
+@import "spree/frontend/views/spree/shared/search_form";
 @import "spree/frontend/views/spree/shared/order_details";
 @import "spree/frontend/views/spree/shared/main_nav_bar";
 @import "spree/frontend/views/spree/errors/not_found";
@@ -37,6 +37,7 @@
 @import "spree/frontend/components-custom/headers";
 @import "spree/frontend/components-custom/inputs";
 @import "spree/frontend/views/spree/checkout/registration";
+@import "spree/frontend/views/spree/checkout/delivery";
 @import "spree/frontend/views/spree/checkout/confirm";
 @import "spree/frontend/views/spree/checkout/payment";
 @import "spree/frontend/views/spree/orders/edit";
@@ -47,6 +48,7 @@
 @import "spree/frontend/views/spree/shared/product";
 @import "spree/frontend/views/spree/products/show";
 @import "spree/frontend/views/spree/products/cart_form";
+@import "spree/frontend/views/spree/products/gallery_modal";
 @import "spree/frontend/views/spree/shared/product_added_modal";
 @import "spree/frontend/views/spree/shared/mobile_navigation";
 @import "spree/frontend/views/spree/shared/no_product_available";

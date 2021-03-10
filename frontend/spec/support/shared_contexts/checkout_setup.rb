@@ -4,9 +4,9 @@ shared_context 'checkout setup' do
   let!(:shipping_method) { create(:shipping_method) }
   let!(:stock_location) { create(:stock_location) }
   let!(:mug) { create(:product, name: 'RoR Mug') }
-  let!(:credit_card_payment) { create(:credit_card_payment_method) }
-  let!(:check_payment) { create(:check_payment_method) }
-  let!(:unsupported_payment) { create(:check_payment_method, store: create(:store)) }
+  let!(:credit_card_payment) { create(:credit_card_payment_method, stores: [store]) }
+  let!(:check_payment) { create(:check_payment_method, stores: [store]) }
+  let!(:unsupported_payment) { create(:check_payment_method, stores: [create(:store)]) }
   let!(:zone) { create(:zone) }
   let!(:store) { create(:store) }
 

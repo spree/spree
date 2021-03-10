@@ -5,6 +5,7 @@
 <% end %>
 
 <% if @state_changes.any? %>
+<div class="table-responsive">
   <table class="table" id="listing_order_state_changes" data-hook>
     <thead>
       <tr data-hook="admin_orders_state_changes_headers">
@@ -18,10 +19,11 @@
 
     <tbody>
       <% @state_changes.each do |state_change| %>
+        <% scope = state_change.name == 'order'  ? "#{ state_change.name }_state" : "#{ state_change.name }_states" -%>
         <tr>
           <td><%= Spree.t("state_machine_states.#{state_change.name}") %></td>
-          <td><%= state_change.previous_state ? Spree.t(state_change.previous_state, scope: "#{ state_change.name }_state") : Spree.t(:previous_state_missing) %></td>
-          <td><%= Spree.t(state_change.next_state, scope: "#{ state_change.name }_state") %></td>
+          <td><%= state_change.previous_state ? Spree.t(state_change.previous_state, scope: scope) : Spree.t(:previous_state_missing) %></td>
+          <td><%= Spree.t(state_change.next_state, scope: scope) %></td>
           <td>
             <% if state_change.user %>
               <% user_login = state_change.user.try(:login) || state_change.user.try(:email) %>
@@ -38,6 +40,7 @@
       <% end %>
     </tbody>
   </table>
+</div>
 <% else %>
   <div class="alert alert-info no-objects-found">
     <%= Spree.t(:no_state_changes) %>

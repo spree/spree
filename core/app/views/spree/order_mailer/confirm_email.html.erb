@@ -1,70 +1,23 @@
-<table class="row header">
+<h1>
+  <%= Spree.t('order_mailer.confirm_email.dear_customer', name: name_for(@order)) %>
+</h1>
+<p>
+  <%= Spree.t('order_mailer.confirm_email.instructions') %>
+</p>
+<table class="purchase" role="presentation">
   <tr>
     <td>
-      <p class="lede">
-        <%= Spree.t('order_mailer.confirm_email.dear_customer') %>
-      </p>
-      <p>
-        <%= Spree.t('order_mailer.confirm_email.instructions') %>
-      </p>
-      <p>
-        <%= Spree.t('order_mailer.confirm_email.order_summary', number: @order.number) %>
-      </p>
-      <table class="container">
-        <tr>
-          <td class="wrapper last">
-            <table class="twelve columns">
-              <%= render collection: @order.line_items, partial: 'spree/shared/mailer_line_item', as: :line_item %>
-              <%= render 'spree/order_mailer/subtotal', order: @order %>
-              <% if @order.line_item_adjustments.exists? %>
-                <% if @order.all_adjustments.promotion.eligible.exists? %>
-                  <% @order.all_adjustments.promotion.eligible.group_by(&:label).each do |label, adjustments| %>
-                    <tr>
-                      <td class="six sub-columns">
-                        <%= Spree.t(:promotion) %> <%= label %>:
-                      </td>
-                      <td class="six sub-columns last right">
-                        <%= Spree::Money.new(adjustments.sum(&:amount), currency: @order.currency) %>
-                      </td>
-                    </tr>
-                  <% end %>
-                <% end %>
-              <% end %>
-              <% @order.shipments.group_by { |s| s.selected_shipping_rate.try(:name) }.each do |name, shipments| %>
-                <tr>
-                  <td class="six sub-columns">
-                    <%= Spree.t(:shipping) %> <%= name %>:
-                  </td>
-                  <td class="six sub-columns last right">
-                    <%= Spree::Money.new(shipments.sum(&:discounted_cost), currency: @order.currency) %>
-                  </td>
-                </tr>
-              <% end %>
-              <% if @order.all_adjustments.eligible.tax.exists? %>
-                <% @order.all_adjustments.eligible.tax.group_by(&:label).each do |label, adjustments| %>
-                  <tr>
-                    <td class="six sub-columns">
-                      <%= Spree.t(:tax) %> <%= label %>:
-                    </td>
-                    <td class="six sub-columns last right">
-                      <%= Spree::Money.new(adjustments.sum(&:amount), currency: @order.currency) %>
-                    </td>
-                  </tr>
-                <% end %>
-              <% end %>
-              <% @order.adjustments.eligible.each do |adjustment| %>
-                <% next if (adjustment.source_type == 'Spree::TaxRate') || (adjustment.amount == 0) %>
-                <%= render 'spree/order_mailer/adjustment', adjustment: adjustment %>
-              <% end %>
-              <%= render 'spree/order_mailer/total', order: @order %>
-            </table>
-          </td>
-        </tr>
-      </table>
-      <p>
-        <%= Spree.t('order_mailer.confirm_email.thanks') %>
-      </p>
+      <h3><%= Spree.t('order_mailer.confirm_email.order_summary', number: @order.number) %></h3>
     </td>
-    <td class="expander"></td>
+  </tr>
+  <tr>
+    <td colspan="2">
+      <%= render 'spree/shared/purchased_items_table', line_items: @order.line_items, order: @order %>
+    </td>
   </tr>
 </table>
+<p>
+  <%= Spree.t('order_mailer.confirm_email.thanks') %>
+  <br />
+  <%= Spree.t('order_mailer.store_team', store_name: current_store.name) %>
+</p>

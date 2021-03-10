@@ -1,5 +1,5 @@
 <div class="modal product-added-modal" tabindex="-1" role="dialog" aria-hidden="true">
-  <div class="modal-dialog modal-lg" role="document" >
+  <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header pb-0 px-4 pt-4 border-0">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -34,7 +34,7 @@
           </div>
           <div class="row pt-5 justify-content-center align-items-center product-added-modal-product">
             <div class="col-4 col-sm-2 product-added-modal-product-image-container">
-              <img class="product-added-modal-product-image-container-image" src="data:," alt="<%= @product.name %>">
+              <img class="product-added-modal-product-image-container-image" src="data:," alt="<%= @product&.name %>">
             </div>
             <div class="col-8 col-sm-6 col-lg-4 py-1 product-added-modal-product-details">
               <div class="product-added-modal-product-details-name"></div>
@@ -48,7 +48,7 @@
           <div class="row pb-4 justify-content-center">
             <div class="col-12 col-lg-8">
               <%= link_to spree.checkout_path, class: 'btn btn-primary w-100 font-weight-bold text-uppercase product-added-modal-button', method: :get do %>
-                <%= Spree.t('pdp.checkout') %>
+                <%= Spree.t(:checkout) %>
               <% end %>
             </div>
           </div>

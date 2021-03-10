@@ -1,5 +1,3 @@
-require_relative 'r_m_a_required'
-
 module Spree
   class ReturnItem::EligibilityValidator::Default < Spree::ReturnItem::EligibilityValidator::BaseValidator
     class_attribute :permitted_eligibility_validators

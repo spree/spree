@@ -6,7 +6,8 @@ $(function () {
     $.ajax({
       type: this.method,
       url: this.action,
-      data: $(this).serialize()
+      data: $(this).serialize(),
+      dataType: 'json'
     })
     return false
   })

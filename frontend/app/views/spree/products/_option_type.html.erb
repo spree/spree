@@ -15,12 +15,10 @@
               "option-type-index" => index,
               "presentation" => option_value[:presentation],
               "variant-id" => option_value[:variant_id]
-            }
-          %>
+            } %>
 
           <%= label_tag "variant_option_value_id_#{option_type[:id]}_#{option_value[:id]}",
             class: "m-1 select-label",
-            tabindex: 0,
             "aria-label" => option_value[:presentation] do %>
 
             <span><%= option_value[:presentation] %></span>

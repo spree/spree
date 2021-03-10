@@ -2,6 +2,7 @@ module Spree
   class ProductsController < Spree::StoreController
     include Spree::ProductsHelper
     include Spree::FrontendHelper
+    include Spree::CacheHelper
 
     before_action :load_product, only: [:show, :related]
     before_action :load_taxon, only: :index
@@ -9,19 +10,12 @@ module Spree
     respond_to :html
 
     def index
-      @searcher = build_searcher(params.merge(include_images: true))
+      @searcher = build_searcher(params.merge(include_images: true, current_store_id: current_store.id))
       @products = @searcher.retrieve_products
 
-      last_modified = @products.maximum(:updated_at)&.utc if @products.respond_to?(:maximum)
-
-      etag = [
-        store_etag,
-        last_modified&.to_i,
-        available_option_types_cache_key,
-        filtering_params_cache_key
-      ]
-
-      fresh_when etag: etag, last_modified: last_modified, public: true
+      if http_cache_enabled?
+        fresh_when etag: etag_index, last_modified: last_modified_index, public: true
+      end
     end
 
     def show
@@ -29,7 +23,7 @@ module Spree
 
       @taxon = params[:taxon_id].present? ? Spree::Taxon.find(params[:taxon_id]) : @product.taxons.first
 
-      if stale?(etag: product_etag, last_modified: @product.updated_at.utc, public: true)
+      if !http_cache_enabled? || stale?(etag: etag_show, last_modified: last_modified_show, public: true)
         @product_summary = Spree::ProductSummaryPresenter.new(@product).call
         @product_properties = @product.product_properties.includes(:property)
         @product_price = @product.price_in(current_currency).amount
@@ -39,9 +33,7 @@ module Spree
     end
 
     def related
-      @related_products = related_products
-
-      if @related_products.any?
+      if product_relation_types.any?
         render template: 'spree/products/related', layout: false
       else
         head :no_content
@@ -96,7 +88,16 @@ module Spree
       end
     end
 
-    def product_etag
+    def etag_index
+      [
+        store_etag,
+        last_modified_index,
+        available_option_types_cache_key,
+        filtering_params_cache_key
+      ]
+    end
+
+    def etag_show
       [
         store_etag,
         @product,
@@ -104,6 +105,22 @@ module Spree
         @product.possible_promotion_ids,
         @product.possible_promotions.maximum(:updated_at),
       ]
+    end
+
+    alias product_etag etag_show
+
+    def last_modified_index
+      products_last_modified      = @products.maximum(:updated_at)&.utc if @products.respond_to?(:maximum)
+      current_store_last_modified = current_store.updated_at.utc
+
+      [products_last_modified, current_store_last_modified].compact.max
+    end
+
+    def last_modified_show
+      product_last_modified       = @product.updated_at.utc
+      current_store_last_modified = current_store.updated_at.utc
+
+      [product_last_modified, current_store_last_modified].compact.max
     end
   end
 end

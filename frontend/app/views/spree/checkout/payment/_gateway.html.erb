@@ -11,14 +11,14 @@
       <% options_hash = Rails.env.production? ? {autocomplete: 'off'} : {} %>
       <%= text_field_tag "#{param_prefix}[number]", '', options_hash.merge(id: 'card_number', class: 'spree-flat-input cardNumber', size: 19, maxlength: 19, autocomplete: "off", placeholder: Spree.t(:card_number)) %>
       <span id="card_type" style="display:none;">
-        ( <span id="looks_like" ><%= Spree.t(:card_type_is) %> <span id="type"></span></span>
+        ( <span id="looks_like"><%= Spree.t(:card_type_is) %> <span id="type"></span></span>
           <span id="unrecognized"><%= Spree.t(:unrecognized_card_type) %></span>
         )
       </span>
     </div>
     <div class="payment-gateway-half-fields d-flex justify-content-between">
       <div class="payment-gateway-field checkout-content-inner-field" data-hook="card_expiration">
-        <%= text_field_tag "#{param_prefix}[expiry]", '', id: 'card_expiry', class: 'spree-flat-input cardExpiry', placeholder: "MM / YY" %>
+        <%= text_field_tag "#{param_prefix}[expiry]", '', id: 'card_expiry', class: 'spree-flat-input cardExpiry', placeholder: "MM/YYYY" %>
       </div>
       <div class="payment-gateway-field checkout-content-inner-field" data-hook="card_code">
         <%= text_field_tag "#{param_prefix}[verification_value]", '', options_hash.merge(id: 'card_code', class: 'spree-flat-input cardCode', size: 5, placeholder: Spree.t(:cvv)) %>

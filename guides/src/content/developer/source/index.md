@@ -5,7 +5,7 @@ section: source-code
 
 Spree's functionality is split across seven different components:
 
-* [**API**](https://guides.spreecommerce.org/api/overview): Provides a HTTP JSON API for several of Spree's components.
+* [**API**](https://api.spreecommerce.org): Provides a HTTP JSON API for several of Spree's components.
 * [**Backend**](https://github.com/spree/spree/tree/master/backend): Provides the admin backend component for Spree;
   things like product and order management.
 * [**cmd**](https://github.com/spree/spree/tree/master/cmd): Provides the `spree` command, used for generating extensions.

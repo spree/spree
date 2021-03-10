@@ -1,7 +1,7 @@
 ---
-title: Upgrading Spree from 3.5.x to 3.6.x
+title: Upgrading Spree from 3.5 to 3.6
 section: upgrades
-order: 3
+order: 4
 ---
 
 This guide covers upgrading a 3.5 Spree application, to a 3.6 application.

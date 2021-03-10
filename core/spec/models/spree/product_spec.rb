@@ -317,6 +317,29 @@ describe Spree::Product, type: :model do
         expect(latest_slug).not_to be_nil
       end
     end
+
+    context 'memoized data' do
+      let(:corrent_total_on_hand) { 5 }
+      let(:incorrent_total_on_hand) { 15 }
+
+      before do
+        product.stock_items.first.set_count_on_hand corrent_total_on_hand
+        product.instance_variable_set(:@total_on_hand, incorrent_total_on_hand)
+      end
+
+      it 'without action keeps data' do
+        expect(product.total_on_hand).to eq incorrent_total_on_hand
+      end
+
+      it 'resets memoized data after save' do
+        product.save
+        expect(product.total_on_hand).to eq corrent_total_on_hand
+      end
+
+      it 'resets memoized data reload' do
+        expect(product.reload.total_on_hand).to eq corrent_total_on_hand
+      end
+    end
   end
 
   context 'properties' do
@@ -470,7 +493,7 @@ describe Spree::Product, type: :model do
   context '#images' do
     let(:product) { create(:product) }
     let(:file) { File.open(File.expand_path('../../fixtures/thinking-cat.jpg', __dir__)) }
-    let(:params) { { viewable_id: product.master.id, viewable_type: 'Spree::Variant', attachment: file, alt: 'position 2', position: 2 } }
+    let(:params) { { viewable_id: product.master.id, viewable_type: 'Spree::Variant', alt: 'position 2', position: 2 } }
 
     before do
       images = [
@@ -698,6 +721,27 @@ describe Spree::Product, type: :model do
       it 'returns master variant ID' do
         expect(product.default_variant_id).to eq(product.master.id)
       end
+    end
+  end
+end
+
+describe '#default_variant_cache_key' do
+  let(:product) { create(:product) }
+  let(:key) { product.send(:default_variant_cache_key) }
+
+  context 'with inventory tracking' do
+    before { Spree::Config[:track_inventory_levels] = true }
+
+    it 'returns proper key' do
+      expect(key).to eq("spree/default-variant/#{product.cache_key_with_version}/true")
+    end
+  end
+
+  context 'without invenrtory tracking' do
+    before { Spree::Config[:track_inventory_levels] = false }
+
+    it 'returns proper key' do
+      expect(key).to eq("spree/default-variant/#{product.cache_key_with_version}/false")
     end
   end
 end

@@ -1,6 +1,7 @@
 ---
 title: "Promotions"
 section: core
+order: 5
 ---
 
 ## Overview

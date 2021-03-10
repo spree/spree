@@ -39,7 +39,7 @@
           <%#-------------------------------------------------%>
           <div class="card mb-3" id="general-settings-cache" data-hook="general_settings_cache">
             <div class="card-header">
-              <h1 class="card-title mb-0 h5"><%= Spree.t(:clear_cache)%></h1>
+              <h1 class="card-title mb-0 h5"><%= Spree.t(:clear_cache) %></h1>
             </div>
 
             <div class="card-body">
@@ -47,7 +47,7 @@
                 <%= Spree.t(:clear_cache_warning) %>
               </div>
               <div data-hook="general_settings_clear_cache">
-                <%= button Spree.t(:clear_cache), 'ok', 'button', id: "clear_cache" %>
+                <%= button Spree.t(:clear_cache), 'recycle.svg', 'button', id: "clear_cache" %>
               </div>
             </div>
           </div>
@@ -61,14 +61,38 @@
           <div class="card mb-3" id="general-settings-currency" data-hook="general_settings_currency">
             <div class="card-header">
               <h1 class="card-title mb-0 h5">
-                <%= Spree.t(:currency_settings)%>
+                <%= Spree.t(:currency_settings) %>
               </h1>
             </div>
 
             <div class="card-body">
+              <div class="alert alert-warning col-12">
+                This can be overriden by individual Store settings
+              </div>
               <div class="form-group">
-                <%= label_tag :currency, Spree.t(:choose_currency) %>
+                <%= label_tag :currency, Spree.t(:default_currency) %>
                 <%= select_tag :currency, currency_options %>
+              </div>
+            </div>
+          </div>
+
+          <div class="card mb-3" id="general-settings-stores" data-hook="general_settings_stores">
+            <div class="card-header">
+              <h1 class="card-title mb-0 h5">
+                <%= Spree.t(:multiple_stores) %>
+              </h1>
+            </div>
+            <div class="card-body">
+              <div class="alert alert-warning col-12">
+                <%= Spree.t('show_store_selector.long') %>
+              </div>
+              <div class="form-group">
+                <div class="checkbox">
+                  <label>
+                    <%= check_box('', :show_store_selector, { checked: Spree::Config.show_store_selector }) %>
+                    <%= Spree.t('show_store_selector.short') %>
+                  </label>
+                </div>
               </div>
             </div>
           </div>
@@ -76,9 +100,9 @@
       </div>
 
       <div class="form-actions" data-hook="buttons">
-        <%= button Spree.t('actions.update'), 'save' %>
+        <%= button Spree.t('actions.update'), 'save.svg' %>
         <span class="or"><%= Spree.t(:or) %></span>
-        <%= button_link_to Spree.t('actions.cancel'), edit_admin_general_settings_url, icon: 'delete' %>
+        <%= button_link_to Spree.t('actions.cancel'), edit_admin_general_settings_url, icon: 'cancel.svg' %>
       </div>
 
     </fieldset>

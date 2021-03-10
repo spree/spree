@@ -4,16 +4,15 @@
   </p>
 
   <div data-hook="checkout_payment_step">
-
     <%= render partial: 'spree/checkout/payment/storecredit' %>
 
     <ul id="payment-method-fields" class="list-unstyled position-relative" data-hook>
-      <% @order.available_payment_methods.each do |method| %>
+      <% checkout_available_payment_methods.each do |method| %>
         <li class="radio">
           <%= label_tag '', class: "form-check-label spree-radio-label payment-option", data: { type: method.id == @payment_sources&.first&.payment_method_id ? 'card' : nil } do %>
             <%= radio_button_tag "order[payments_attributes][][payment_method_id]",
                                  method.id,
-                                 method.id == @order.payments.checkout.last&.payment_method_id || method == @order.available_payment_methods.first %>
+                                 method.id == @order.payments.checkout.last&.payment_method_id || method == checkout_available_payment_methods.first %>
             <span class="spree-radio-label-custom-input"></span>
             <%= Spree.t(method.name, scope: :payment_methods, default: method.name) %>
           <% end %>
@@ -22,29 +21,11 @@
     </ul>
 
     <div class="payment-sources">
-      <% if @payment_sources.present? %>
-        <div id="existing_cards" class="payment-sources-existing-cards">
-          <%= radio_button_tag 'use_existing_card', 'yes', true, class: 'd-none' %>
-          <div class="form-group" data-hook="existing_cards">
-            <div class="d-flex flex-column payment-sources-list">
-              <% @payment_sources.each do |card| %>
-                <%= render partial: 'credit_card', locals: { card: card } %>
-              <% end %>
-              <div>
-                <label class="form-check-label spree-radio-label col-6 mb-2">
-                  <%= radio_button_tag 'use_existing_card', 'no' %>
-                  <span class="spree-radio-label-custom-input"></span>
-                  <span><%= Spree.t(:add_new_credit_card) %></span>
-                </label>
-              </div>
-            </div>
-          </div>
-        </div>
-      <% end %>
+      <%= render partial: 'payment_sources' if @payment_sources.present? %>
 
       <ul id="payment-methods" class="list-unstyled position-relative mb-0 payment-sources-add-form" data-hook>
-        <% @order.available_payment_methods.each do |method| %>
-          <li id="payment_method_<%= method.id %>" class="<%= 'last' if method == @order.available_payment_methods.last %>" data-hook>
+        <% checkout_available_payment_methods.each do |method| %>
+          <li id="payment_method_<%= method.id %>" class="<%= 'last' if method == checkout_available_payment_methods.last %>" data-hook>
             <fieldset>
               <%= render partial: "spree/checkout/payment/#{method.method_type}", locals: { payment_method: method } %>
             </fieldset>

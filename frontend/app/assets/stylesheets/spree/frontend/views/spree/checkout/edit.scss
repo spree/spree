@@ -149,7 +149,7 @@
         }
         hr {
           margin: 0;
-          width: 33%;
+          flex: 1;
           border: 1px solid theme-color('info');
         }
       }
@@ -160,8 +160,11 @@
       .nav-item {
         color: theme-color('info');
         font-weight: 600;
+        max-width: 70px;
+        text-align: center;
         @include media-breakpoint-up(sm) {
           font-weight: 500;
+          max-width: 100px;
         }
         a {
           color: inherit;
@@ -494,9 +497,6 @@
           font-size: font-px-to-rem(16px);
         }
       }
-      .delete-address-img {
-        color: $primary-color;
-      }
     }
 
     #checkout-summary {
@@ -508,7 +508,8 @@
         height: 100%;
         padding: 0;
         max-width: 380px;
-        align-self: flex-end;
+        margin-right: 0;
+        margin-left: auto;
       }
     }
 
@@ -517,3 +518,4 @@
     }
   }
 }
+

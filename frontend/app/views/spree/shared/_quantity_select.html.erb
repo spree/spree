@@ -1,6 +1,6 @@
 <%# TODO: Use in cart %>
-<div class="d-flex quantity-select mx-auto mx-md-0">
+<div class="d-inline-flex quantity-select">
   <%= button_tag '-', type: 'button', class: "border-right-0 flex-grow-0 flex-shrink-0 py-0 px-3 quantity-select-decrease" %>
-  <%= number_field_tag input_name, 1, min: 1, class: "p-0 flex-grow-1 flex-shrink-1 text-center form-control border-left-0 border-right-0 quantity-select-value", 'aria-label': Spree.t('pdp.quantity') %>
+  <%= number_field_tag input_name, 1, min: 1, max: maximum_quantity, class: "p-0 flex-grow-1 flex-shrink-1 text-center form-control border-left-0 border-right-0 quantity-select-value", 'aria-label': Spree.t('pdp.quantity') %>
   <%= button_tag '+', type: 'button', class: "border-left-0  flex-grow-0 flex-shrink-0 py-0 px-3 quantity-select-increase" %>
 </div>

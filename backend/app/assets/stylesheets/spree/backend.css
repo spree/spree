@@ -3,10 +3,10 @@
  * and any sub-directories. You're free to add application-wide styles to this file and they'll appear at
  * the top of the compiled file, but it's generally better to create a new file per style scope.
 
- *= require jquery-ui/datepicker
  *= require jquery-ui/autocomplete
  *= require select2
  *= require animate
+ *= require flatpickr
  *= require spree/backend/spree_admin
  *= require chart
 */

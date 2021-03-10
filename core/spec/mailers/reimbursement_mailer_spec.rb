@@ -22,6 +22,24 @@ describe Spree::ReimbursementMailer, type: :mailer do
     end.not_to raise_error
   end
 
+  context 'when order has no customer\'s name' do
+    before { allow(reimbursement.order).to receive(:name).and_return(nil) }
+
+    specify 'shows Dear Customer in email body' do
+      reimbursement_email = described_class.reimbursement_email(reimbursement)
+      expect(reimbursement_email).to have_body_text('Dear Customer')
+    end
+  end
+
+  context 'when order has customer\'s name' do
+    before { allow(reimbursement.order).to receive(:name).and_return('Test User') }
+
+    specify 'shows order\'s user name in email body' do
+      reimbursement_email = described_class.reimbursement_email(reimbursement)
+      expect(reimbursement_email).to have_body_text('Dear Test User')
+    end
+  end
+
   context 'emails must be translatable' do
     context 'reimbursement_email' do
       context 'pt-BR locale' do
@@ -47,6 +65,14 @@ describe Spree::ReimbursementMailer, type: :mailer do
           reimbursement_email.text_part.to include('Caro Cliente,')
         end
       end
+    end
+  end
+
+  context 'emails contain only urls of the store where the order was made' do
+    it 'shows proper host url in email content' do
+      ActionMailer::Base.default_url_options[:host] = reimbursement.order.store.url
+      described_class.reimbursement_email(reimbursement).deliver_now
+      expect(ActionMailer::Base.default_url_options[:host]).to eq(reimbursement.order.store.url)
     end
   end
 end

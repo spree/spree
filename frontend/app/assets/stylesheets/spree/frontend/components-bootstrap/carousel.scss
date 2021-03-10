@@ -15,6 +15,10 @@
   }
   &-vertically-animated {
     // Source: https://stackoverflow.com/questions/42910076/bootstrap-4-alpha-6-vertical-carousel
+    .carousel-item {
+      -webkit-transform: translate3d(0, 0, 0);
+      transform: translate3d(0, 0, 0);
+    }
     .carousel-item-next.carousel-item-left,
     .carousel-item-prev.carousel-item-right {
       -webkit-transform: translate3d(0, 0, 0);

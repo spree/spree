@@ -1,4 +1,4 @@
-<% cache [common_product_cache_keys, products&.maximum(:updated_at)&.to_i, id] do %>
+<% cache [common_product_cache_keys, products&.maximum(:updated_at)&.to_i, id, products&.ids&.join(',')] do %>
   <div id="<%= id %>-mobile" class="carousel slide d-md-none homepage-carousel" data-interval="false">
     <div class="carousel-inner">
       <% products.each_slice(2).with_index do |sliced_items, index| %>
@@ -20,8 +20,7 @@
       class="d-flex position-absolute justify-content-center align-items-center carousel-icon-control carousel-icon-control--previous"
       href="#<%= id %>-mobile"
       role="button"
-      data-slide="prev"
-    >
+      data-slide="prev">
       <span class="d-flex justify-content-center align-items-center carousel-icon-control-rounded" aria-hidden="true">
         <%= icon(name: 'arrow-right',
                 classes: 'spree-icon-arrow spree-icon-arrow-left',
@@ -35,8 +34,7 @@
       class="d-flex position-absolute justify-content-center align-items-center carousel-icon-control carousel-icon-control--next"
       href="#<%= id %>-mobile"
       role="button"
-      data-slide="next"
-    >
+      data-slide="next">
       <span class="d-flex justify-content-center align-items-center carousel-icon-control-rounded" aria-hidden="true">
         <%= icon(name: 'arrow-right',
                 classes: 'spree-icon-arrow spree-icon-arrow-right',
@@ -56,14 +54,12 @@
               class="d-flex position-absolute justify-content-center align-items-center carousel-icon-control carousel-icon-control--previous"
               href="#<%= id %>-desktop"
               role="button"
-              data-slide="prev"
-            >
+              data-slide="prev">
               <span class="d-flex justify-content-center align-items-center carousel-icon-control-rounded" aria-hidden="true">
                 <%= icon(name: 'arrow-right',
                         classes: 'spree-icon-arrow spree-icon-arrow-left',
                         width: 20,
-                        height: 20)
-                %>
+                        height: 20) %>
               </span>
               <span class="sr-only"><%= Spree.t(:previous) %></span>
             </a>
@@ -80,14 +76,12 @@
               class="d-md-flex position-absolute justify-content-center align-items-center carousel-icon-control carousel-icon-control--next"
               href="#<%= id %>-desktop"
               role="button"
-              data-slide="next"
-            >
+              data-slide="next">
               <span class="d-flex justify-content-center align-items-center carousel-icon-control-rounded" aria-hidden="true">
                 <%= icon(name: 'arrow-right',
                         classes: 'spree-icon-arrow spree-icon-arrow-right',
                         width: 20,
-                        height: 20)
-                %>
+                        height: 20) %>
               </span>
               <span class="sr-only"><%= Spree.t(:next) %></span>
             </a>

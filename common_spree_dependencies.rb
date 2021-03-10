@@ -7,6 +7,8 @@ gem 'sass-rails'
 gem 'sqlite3', '~> 1.4.0', platforms: [:ruby, :mingw, :mswin, :x64_mingw]
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw]
 
+gem 'rails', ENV.fetch('RAILS_VERSION', '~> 6.1.0'), require: false
+
 platforms :jruby do
   gem 'jruby-openssl'
   gem 'activerecord-jdbcsqlite3-adapter'
@@ -23,9 +25,9 @@ group :test do
   gem 'capybara-select-2'
   gem 'database_cleaner', '~> 1.3'
   gem 'email_spec'
-  gem 'factory_bot_rails', '~> 5.0'
+  gem 'factory_bot_rails', '~> 6.0'
   gem 'rspec-activemodel-mocks', '~> 1.0'
-  gem 'rspec-rails', '~> 4.0.0.beta2'
+  gem 'rspec-rails', '~> 4.0'
   gem 'rspec-retry'
   gem 'rspec_junit_formatter'
   gem 'jsonapi-rspec'
@@ -36,10 +38,12 @@ group :test do
 end
 
 group :test, :development do
-  gem 'rubocop', '~> 0.60.0', require: false
+  gem 'gem-release'
+  gem 'rubocop', '~> 1.0.0', require: false # bumped
   gem 'rubocop-rspec', require: false
   gem 'pry-byebug'
   gem 'webdrivers', '~> 4.1'
+  gem 'puma'
 end
 
 gem 'solargraph', group: :development

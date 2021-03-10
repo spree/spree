@@ -27,6 +27,9 @@
   <div id="inside-product-cart-form" data-hook="inside_product_cart_form">
     <% if is_product_available_in_currency %>
       <div id="product-price" class="mb-2 text-center text-md-left add-to-cart-form-price" data-hook="product_price">
+        <% if should_display_compare_at_price?(default_variant) %>
+          <span class="compare-at-price mr-3"><%= display_compare_at_price(default_variant) %></span>
+        <% end %>
         <span class="price selling" content="<%= @product_price.to_d %>">
           <%= display_price(default_variant) %>
         </span>
@@ -52,7 +55,7 @@
       <ul id="product-variants" class="product-variants">
         <% used_variants_options(@variants, @product).each_with_index do |option_type, index| %>
           <li>
-            <% if option_type[:name] == "color" %>
+            <% if color_option_type_name.present? && color_option_type_name == option_type[:name] %>
               <%= render "color_option_type", option_type: option_type, index: index %>
             <% else %>
               <%= render "option_type", option_type: option_type, index: index %>
@@ -67,7 +70,7 @@
 
       <hr>
       <div>
-        <div class="mb-5 mt-4">
+        <div class="mb-5 mt-4 text-center text-md-left">
           <%= render 'spree/shared/quantity_select', input_name: :quantity %>
         </div>
 

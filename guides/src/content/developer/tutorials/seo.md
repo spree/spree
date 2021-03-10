@@ -1,7 +1,7 @@
 ---
 title: 'Improve SEO'
 section: advanced
-order: 0
+order: 3
 ---
 
 ## Overview

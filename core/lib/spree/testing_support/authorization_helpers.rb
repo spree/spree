@@ -27,13 +27,14 @@ module Spree
 
         def stub_authorization!
           ability = build_ability
+          ability_class = Spree::Dependencies.ability_class.constantize
 
           after(:all) do
-            Spree::Ability.remove_ability(ability)
+            ability_class.remove_ability(ability)
           end
 
           before(:all) do
-            Spree::Ability.register_ability(ability)
+            ability_class.register_ability(ability)
           end
 
           before do
@@ -45,11 +46,13 @@ module Spree
 
         def custom_authorization!(&block)
           ability = build_ability(&block)
+          ability_class = Spree::Dependencies.ability_class.constantize
+
           after(:all) do
-            Spree::Ability.remove_ability(ability)
+            ability_class.remove_ability(ability)
           end
           before(:all) do
-            Spree::Ability.register_ability(ability)
+            ability_class.register_ability(ability)
           end
         end
       end

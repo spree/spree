@@ -20,9 +20,9 @@ module Spree
           format.html do
             if params.key?(:checkout)
               @order.next if @order.cart?
-              redirect_to checkout_state_path(@order.checkout_steps.first)
+              redirect_to spree.checkout_state_path(@order.checkout_steps.first)
             else
-              redirect_to cart_path
+              redirect_to spree.cart_path
             end
           end
         end
