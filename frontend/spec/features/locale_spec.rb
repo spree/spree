@@ -90,7 +90,7 @@ describe 'setting locale', type: :feature, js: true do
 
     it 'renders the list' do
       expect(page).to have_text(Spree.t(:'i18n.language'))
-      expect(page).to have_select('switch_to_locale', with_options: ['English (US)', 'Français (fr)'])
+      expect(page).to have_select('switch_to_locale', with_options: ['English (en)', 'Français (fr)'])
     end
   end
 
