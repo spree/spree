@@ -450,7 +450,6 @@ en:
     truncate: "&hellip;"
 
   spree:
-    language_activated: true
     abbreviation: Abbreviation
     accept: Accept
     acceptance_status: Acceptance status

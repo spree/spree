@@ -1,7 +1,7 @@
 module Spree
   module LocaleHelper
-    def all_locales_options(use_default_store_locale = false)
-      supported_locales_for_all_stores.map { |locale| locale_presentation(locale, use_default_store_locale) }
+    def all_locales_options(use_active_locale = false)
+      supported_locales_for_all_stores.map { |locale| locale_presentation(locale, use_active_locale) }
     end
 
     def available_locales_options
@@ -17,11 +17,7 @@ module Spree
     def locale_presentation(locale, use_active_locale = false)
       formatted_locale = locale.to_s
 
-      if I18n.t('spree.language_activated', locale: formatted_locale, fallback: false) == true
-        [Spree::Store.locale_language_name(formatted_locale, use_active_locale), formatted_locale]
-      else
-        []
-      end
+      [Spree::Store.locale_language_name(formatted_locale, use_active_locale), formatted_locale]
     end
 
     def should_render_locale_dropdown?

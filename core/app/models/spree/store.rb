@@ -62,14 +62,9 @@ module Spree
                               locale.to_sym
                             end
 
-      # Allows a user to override the language naming
       return I18n.t('spree.language_name_overide', locale: locale) if I18n.exists?('spree.language_name_overide', locale: locale, fallback: false)
 
-      # Returns the locale language name from twitter_cldr in its native language :fr => Francais (fr)
-      # If no translation is found for a complex regional, it returns the language by using
-      # the fallback :es-US falls back to :es and returns => Espanola (es-US)
-      # If no translation is found at all, it returns the locale in brackets: => (li-PI)
-      lang_name = locale_as_symbol.localize(used_default_locale).as_language_code || falback_locale.localize(falback_locale).as_language_code
+      lang_name = locale_as_symbol.localize(used_default_locale).as_language_code || falback_locale.localize(used_default_locale).as_language_code
       "#{lang_name.to_s.capitalize} (#{locale})"
     end
 
