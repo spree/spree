@@ -90,7 +90,7 @@ describe 'Stores admin', type: :feature, js: true do
       select2_search 'GBP', from: 'Supported Currencies'
       select2_select 'GBP', from: 'Supported Currencies'
 
-      select2 'English (US)', from: 'Default locale'
+      select2 'English (en)', from: 'Default locale'
 
       click_button 'Create'
 

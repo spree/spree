@@ -9,10 +9,6 @@ module Spree
             continue_shopping: 'Continuer vos achats',
             choose_currency: 'Choisir la devise',
             internationalization: 'Internationalisation',
-            i18n: {
-              language: 'Langue',
-              this_file_language: 'Français (FR)'
-            },
             cart_page: {
               header: 'Votre panier',
               empty_info: 'Votre panier est vide',
