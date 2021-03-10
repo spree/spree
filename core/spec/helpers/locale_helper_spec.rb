@@ -6,12 +6,6 @@ describe Spree::LocaleHelper, type: :helper do
   let(:available_locales) { Spree::Store.available_locales }
   let(:supported_locales_for_all_stores) { [:en, :de, :fr] }
 
-  before do
-    I18n.backend.store_translations(:sv,
-                                    spree: {
-                                      language_name_overide: 'SLOVAKIA (SLK)'
-                                    })
-  end
 
   describe '#all_locales_options' do
     it { expect(all_locales_options).to contain_exactly(['English (en)', 'en'], ['Deutsch (de)', 'de'], ['Français (fr)', 'fr']) }
@@ -32,11 +26,15 @@ describe Spree::LocaleHelper, type: :helper do
 
   describe '#available_locales_options including one have been given a custom name' do
     before do
-      create(:store, supported_locales: 'en,sv')
+      create(:store, supported_locales: 'en,it')
       create(:store, supported_locales: 'en')
+      I18n.backend.store_translations(:it,
+                                    spree: {
+                                      language_name_overide: 'Sicilians Italian (SI)'
+                                    })
     end
 
-    it { expect(available_locales_options).to contain_exactly(['English (en)', 'en'], ['SLOVAKIA (SLK)', 'sv']) }
+    it { expect(available_locales_options).to contain_exactly(['English (en)', 'en'], ['Sicilians Italian (SI)', 'it']) }
   end
 
   describe '#supported_locales_options' do
