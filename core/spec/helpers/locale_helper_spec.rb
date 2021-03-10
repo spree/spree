@@ -22,26 +22,30 @@ describe Spree::LocaleHelper, type: :helper do
   end
 
   describe '#all_locales_options' do
-    it { expect(all_locales_options).to contain_exactly(['English (US)', 'en'], ['Deutsch (DE)', 'de'], ['Français (FR)', 'fr']) }
+    it { expect(all_locales_options).to contain_exactly(['English (en)', 'en'], ['Deutsch (de)', 'de'], ['Français (fr)', 'fr']) }
+  end
+
+  describe '#all_locales_options shown in the active locale' do
+    it { expect(all_locales_options(true)).to contain_exactly(['English (en)', 'en'], ['German (de)', 'de'], ['French (fr)', 'fr']) }
   end
 
   describe '#available_locales_options' do
     before do
-      create(:store, supported_locales: 'en,de')
+      create(:store, supported_locales: 'en,de,xx-XX')
       create(:store, supported_locales: 'en')
     end
 
-    it { expect(available_locales_options).to contain_exactly(['English (US)', 'en'], ['Deutsch (DE)', 'de']) }
+    it { expect(available_locales_options).to contain_exactly(['English (en)', 'en'], ['Deutsch (de)', 'de'], ['(xx-XX)','xx-XX']) }
   end
 
   describe '#supported_locales_options' do
     let(:current_store) { eu_store }
 
-    it { expect(supported_locales_options).to contain_exactly(['Deutsch (DE)', 'de'], ['Français (FR)', 'fr']) }
+    it { expect(supported_locales_options).to contain_exactly(['Deutsch (de)', 'de'], ['Français (fr)', 'fr']) }
   end
 
   describe '#locale_presentation' do
-    it { expect(locale_presentation(:fr)).to eq( ['Français (FR)', 'fr']) }
+    it { expect(locale_presentation(:fr)).to eq( ['Français (fr)', 'fr']) }
   end
 
   describe '#should_render_locale_dropdown?' do

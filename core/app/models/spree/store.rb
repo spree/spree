@@ -65,7 +65,7 @@ module Spree
       return I18n.t('spree.language_name_overide', locale: locale) if I18n.exists?('spree.language_name_overide', locale: locale, fallback: false)
 
       lang_name = locale_as_symbol.localize(used_default_locale).as_language_code || falback_locale.localize(used_default_locale).as_language_code
-      "#{lang_name.to_s.capitalize} (#{locale})"
+      ("#{lang_name.to_s.capitalize} (#{locale})").strip
     end
 
     def supported_currencies_list
