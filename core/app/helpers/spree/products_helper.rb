@@ -19,6 +19,9 @@ module Spree
 
       diff   = variant.amount_in(current_currency) - product_amount
       amount = Spree::Money.new(diff.abs, currency: current_currency).to_html
+
+      # i18n-tasks-use I18n.t('spree.subtract')
+      # i18n-tasks-use I18n.t('spree.add')
       label  = diff > 0 ? :add : :subtract
       "(#{Spree.t(label)}: #{amount})".html_safe
     end

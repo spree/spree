@@ -1,8 +1,20 @@
 <ul id="sidebar-product" class="border-top bg-white collapse nav nav-pills nav-stacked" data-hook="admin_product_sub_tabs">
+
+  <%# i18n-tasks-use I18n.t('spree.admin.tab.products') %>
   <%= tab :products, match_path: '/products' %>
-  <%= tab :option_types, match_path: '/option_types' %>
+
+  <%# i18n-tasks-use I18n.t('spree.admin.tab.option_types') %>
+  <%= tab :option_types, match_path: '/option_types' %>\
+
+  <%# i18n-tasks-use I18n.t('spree.admin.tab.properties') %>
   <%= tab :properties %>
+
+  <%# i18n-tasks-use I18n.t('spree.admin.tab.prototypes') %>
   <%= tab :prototypes %>
+
+  <%# i18n-tasks-use I18n.t('spree.admin.tab.taxonomies') %>
   <%= tab :taxonomies, match_path: '/taxonomies' %>
+
+  <%# i18n-tasks-use I18n.t('spree.admin.tab.taxons') %>
   <%= tab :taxons, match_path: '/taxons' %>
 </ul>

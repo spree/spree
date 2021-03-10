@@ -2,17 +2,8 @@ require 'spec_helper'
 
 module Spree
   describe StoreHelper, type: :helper do
-    let(:germany) { build(:country, name: 'Germany', iso: 'GR') }
-    let(:eu_store) { build(:store, url: 'eu.spreecommerce.org', default_currency: 'EUR', default_locale: 'de', default_country: germany) }
-
-    before do
-      I18n.backend.store_translations(:de,
-        spree: {
-          i18n: {
-            this_file_language: 'Deutsch (DE)'
-          }
-        })
-    end
+    let(:germany) { build(:country, name: 'Germany', iso: 'gr') }
+    let!(:eu_store) { build(:store, url: 'eu.spreecommerce.org', default_currency: 'EUR', default_locale: 'de', default_country: germany) }
 
     describe '#stores' do
       before { create_list(:store, 3) }
@@ -36,14 +27,14 @@ module Spree
     end
 
     describe '#store_locale_name' do
-      it { expect(store_locale_name(Spree::Store.default)).to eq('English (US)') }
-      it { expect(store_locale_name(eu_store)).to eq('Deutsch (DE)') }
+      it { expect(store_locale_name(Spree::Store.default)).to eq(Spree::Store.locale_language_name('en')) }
+      it { expect(store_locale_name(eu_store)).to eq(Spree::Store.locale_language_name('de')) }
       it { expect { store_locale_name(nil) }.not_to raise_error }
     end
 
     describe '#store_link' do
-      it { expect(store_link(eu_store)).to eq('<a href="https://eu.spreecommerce.org">Deutsch (DE) (€)</a>') }
-      it { expect(store_link(eu_store, class: 'some-class')).to eq('<a class="some-class" href="https://eu.spreecommerce.org">Deutsch (DE) (€)</a>') }
+      it { expect(store_link(eu_store)).to eq('<a href="https://eu.spreecommerce.org">' + "#{Spree::Store.locale_language_name('de')} (€)" + '</a>') }
+      it { expect(store_link(eu_store, class: 'some-class')).to eq('<a class="some-class" href="https://eu.spreecommerce.org">' + "#{Spree::Store.locale_language_name('de')} (€)" + '</a>') }
       it { expect { store_link(nil) }.not_to raise_error }
     end
 

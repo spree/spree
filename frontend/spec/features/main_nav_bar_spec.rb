@@ -29,11 +29,11 @@ describe 'Main navigation bar', type: :feature do
         let(:stores_number) { 2 }
         let(:first_store) { stores.first }
         let(:first_store_currency_symbol) { ::Money::Currency.find(first_store.default_currency).symbol }
-        let(:first_link_name) { "#{Spree.t('i18n.this_file_language', locale: first_store.default_locale)} (#{first_store_currency_symbol})" }
+        let(:first_link_name) { "#{Spree::Store.locale_language_name('en')} (#{first_store_currency_symbol})" }
         let(:first_url) { first_store.formatted_url }
         let(:second_store) { stores.second }
         let(:second_store_currency_symbol) { ::Money::Currency.find(second_store.default_currency).symbol }
-        let(:second_link_name) { "#{Spree.t('i18n.this_file_language', locale: second_store.default_locale)} (#{first_store_currency_symbol})" }
+        let(:second_link_name) { "#{Spree::Store.locale_language_name('en')} (#{first_store_currency_symbol})" }
         let(:second_url) { second_store.formatted_url }
 
         it 'shows currency selector button' do

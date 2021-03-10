@@ -8,6 +8,7 @@ module Spree
 
         def eligible?(order, _options = {})
           unless order.user.present?
+            # i18n-tasks-use I18n.t('spree.eligibility_errors.messages.no_user_specified')
             eligibility_errors.add(:base, eligibility_error_message(:no_user_specified))
           end
           eligibility_errors.empty?

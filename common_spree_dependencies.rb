@@ -44,6 +44,8 @@ group :test, :development do
   gem 'pry-byebug'
   gem 'webdrivers', '~> 4.1'
   gem 'puma'
+  gem 'i18n-tasks', '~> 0.9.34'
+  gem 'easy_translate'
 end
 
 gem 'solargraph', group: :development

@@ -32,9 +32,9 @@ describe 'Stock Movements', type: :feature do
     it 'creates new stock movement' do
       fill_in 'Quantity', with: 10
 
-      select2_open label: 'Stock Item'
-      select2_search product.name, from: 'Stock Item'
-      select2_select product.name, from: 'Stock Item', match: :first
+      select2_open label: Spree.t('stock_item_id')
+      select2_search product.name, from: Spree.t('stock_item_id')
+      select2_select product.name, from: Spree.t('stock_item_id'), match: :first
 
       click_button 'Create'
 

@@ -6,7 +6,6 @@ describe 'setting locale', type: :feature, js: true do
 
   before do
     store.update(default_locale: 'en', supported_locales: 'en,fr')
-    add_french_locales
   end
 
   context 'checkout form validation messages' do
@@ -28,7 +27,7 @@ describe 'setting locale', type: :feature, js: true do
   end
 
   shared_examples 'translates cart page' do
-    it 'is in french', retry: 3  do
+    it 'is in french', retry: 3 do
       expect(page).to have_content('Votre panier')
       expect(page).to have_content('Votre panier est vide')
     end
@@ -38,7 +37,7 @@ describe 'setting locale', type: :feature, js: true do
     context 'locale dropdown' do
       before { open_i18n_menu }
 
-      it { expect(page).to have_select('switch_to_locale', selected: 'Français (FR)') }
+      it { expect(page).to have_select('switch_to_locale', selected: Spree::Store.locale_language_name('fr')) }
     end
 
     it { expect(page.evaluate_script('SPREE_LOCALE')).to eq('fr') }
@@ -90,14 +89,14 @@ describe 'setting locale', type: :feature, js: true do
 
     it 'renders the list' do
       expect(page).to have_text(Spree.t(:'i18n.language'))
-      expect(page).to have_select('switch_to_locale', with_options: ['English (US)', 'Français (FR)'])
+      expect(page).to have_select('switch_to_locale', with_options: [Spree::Store.locale_language_name('en'), Spree::Store.locale_language_name('fr')])
     end
   end
 
   context 'via UI' do
     before do
       visit spree.cart_path
-      switch_to_locale('Français (FR)')
+      switch_to_locale(Spree::Store.locale_language_name('fr'))
     end
 
     it { expect(page).to have_current_path('/fr/cart') }

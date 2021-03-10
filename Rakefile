@@ -4,14 +4,37 @@ require 'thor/group'
 begin
   require 'spree/testing_support/common_rake'
 rescue LoadError
-  raise "Could not find spree/testing_support/common_rake. You need to run this command using Bundler."
+  raise 'Could not find spree/testing_support/common_rake. You need to run this command using Bundler.'
 end
 
 SPREE_GEMS = %w(core api cmd backend frontend sample).freeze
 
 task default: :test
 
-desc "Runs all tests in all Spree engines"
+namespace :i18n do
+  desc 'Generates a health report for the locale files in core/config/locales.'
+  task :health do
+    Dir.chdir("#{File.dirname(__FILE__)}/core") do
+      sh 'i18n-tasks health'
+    end
+  end
+
+  desc 'Adds new translations to the base locale file (en.yml), then removes unused locales from all files.'
+  task :sync do
+    Dir.chdir("#{File.dirname(__FILE__)}/core") do
+      sh 'i18n-tasks add-missing --locales en && i18n-tasks remove-unused'
+    end
+  end
+
+  desc 'Translates keys found in the base file (en.yml) to all other languages.'
+  task :translate do
+    Dir.chdir("#{File.dirname(__FILE__)}/core") do
+      sh 'i18n-tasks normalize && i18n-tasks translate-missing'
+    end
+  end
+end
+
+desc 'Runs all tests in all Spree engines'
 task test: :test_app do
   SPREE_GEMS.each do |gem_name|
     Dir.chdir("#{File.dirname(__FILE__)}/#{gem_name}") do
@@ -20,7 +43,7 @@ task test: :test_app do
   end
 end
 
-desc "Generates a dummy app for testing for every Spree engine"
+desc 'Generates a dummy app for testing for every Spree engine'
 task :test_app do
   SPREE_GEMS.each do |gem_name|
     Dir.chdir("#{File.dirname(__FILE__)}/#{gem_name}") do
@@ -29,11 +52,11 @@ task :test_app do
   end
 end
 
-desc "clean the whole repository by removing all the generated files"
+desc 'clean the whole repository by removing all the generated files'
 task :clean do
-  rm_f  "Gemfile.lock"
-  rm_rf "sandbox"
-  rm_rf "pkg"
+  rm_f  'Gemfile.lock'
+  rm_rf 'sandbox'
+  rm_rf 'pkg'
 
   SPREE_GEMS.each do |gem_name|
     rm_f  "#{gem_name}/Gemfile.lock"
@@ -55,9 +78,9 @@ namespace :gem do
     yield "pkg/spree-#{version}.gem"
   end
 
-  desc "Build all spree gems"
+  desc 'Build all spree gems'
   task :build do
-    pkgdir = File.expand_path("../pkg", __FILE__)
+    pkgdir = File.expand_path('pkg', __dir__)
     FileUtils.mkdir_p pkgdir
 
     SPREE_GEMS.each do |gem_name|
@@ -67,11 +90,11 @@ namespace :gem do
       end
     end
 
-    sh "gem build spree.gemspec"
+    sh 'gem build spree.gemspec'
     mv "spree-#{version}.gem", pkgdir
   end
 
-  desc "Install all spree gems"
+  desc 'Install all spree gems'
   task install: :build do
     for_each_gem do |gem_path|
       Bundler.with_clean_env do
@@ -80,7 +103,7 @@ namespace :gem do
     end
   end
 
-  desc "Release all gems to rubygems"
+  desc 'Release all gems to rubygems'
   task release: :build do
     sh "git tag -a -m \"Version #{version}\" v#{version}"
 
@@ -90,9 +113,9 @@ namespace :gem do
   end
 end
 
-desc "Creates a sandbox application for simulating the Spree code in a deployed Rails app"
+desc 'Creates a sandbox application for simulating the Spree code in a deployed Rails app'
 task :sandbox do
   Bundler.with_clean_env do
-    exec("bin/sandbox.sh")
+    exec('bin/sandbox.sh')
   end
 end

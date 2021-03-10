@@ -19,7 +19,7 @@
         <th><%= I18n.t(:quantity, scope: 'activerecord.attributes.spree/line_item') %></th>
         <th><%= Spree.t(:total) %></th>
         <th><%= sort_link @search, :state, I18n.t(:state, scope: 'activerecord.attributes.spree/order'), {}, {title: 'orders_state_title'} %></th>
-        <th><%= sort_link @search, :number, Spree.t(:order_num, scope: 'admin.user'), {}, {title: 'orders_number_title'} %></th>
+        <th><%= sort_link @search, :number, Spree.t('admin.user.order_num'), {}, {title: 'orders_number_title'} %></th>
       </thead>
       <tbody>
         <% @orders.each do |order| %>

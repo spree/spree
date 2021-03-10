@@ -9,12 +9,6 @@ describe 'Stores admin', type: :feature, js: true do
 
   describe 'visiting the stores page' do
     before do
-      I18n.backend.store_translations(:fr,
-        spree: {
-          i18n: {
-            this_file_language: 'Français (FR)'
-          }
-        })
       store.update(
         name: 'My Store',
         url: 'example.com',
@@ -34,7 +28,7 @@ describe 'Stores admin', type: :feature, js: true do
       expect(store_table).to have_content('My Store')
       expect(store_table).to have_content('example.com')
       expect(store_table).to have_content('EUR, USD')
-      expect(store_table).to have_content('English (US), Français (FR)')
+      expect(store_table).to have_content("#{Spree::Store.locale_language_name('en')}, #{Spree::Store.locale_language_name('fr')}")
     end
   end
 
@@ -96,7 +90,7 @@ describe 'Stores admin', type: :feature, js: true do
       select2_search 'GBP', from: 'Supported Currencies'
       select2_select 'GBP', from: 'Supported Currencies'
 
-      select2 'English (US)', from: 'Default locale'
+      select2 Spree::Store.locale_language_name('en'), from: 'Default locale'
 
       click_button 'Create'
 

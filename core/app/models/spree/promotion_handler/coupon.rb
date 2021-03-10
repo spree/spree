@@ -13,11 +13,14 @@ module Spree
           if promotion.present? && promotion.actions.exists?
             handle_present_promotion
           elsif Promotion.with_coupon_code(order.coupon_code).try(:expired?)
+            # i18n-tasks-use I18n.t('spree.coupon_code_expired')
             set_error_code :coupon_code_expired
           else
+            # i18n-tasks-use I18n.t('spree.coupon_code_not_found')
             set_error_code :coupon_code_not_found
           end
         else
+          # i18n-tasks-use I18n.t('spree.coupon_code_not_found')
           set_error_code :coupon_code_not_found
         end
         self
@@ -33,8 +36,10 @@ module Spree
           remove_promotion_line_items(promotion)
           order.update_with_updater!
 
+          # i18n-tasks-use I18n.t('spree.adjustments_deleted')
           set_success_code :adjustments_deleted
         else
+          # i18n-tasks-use I18n.t('spree.coupon_code_not_found')
           set_error_code :coupon_code_not_found
         end
         self
@@ -93,19 +98,23 @@ module Spree
         if promotion.activate(order: order)
           determine_promotion_application_result
         else
+          # i18n-tasks-use I18n.t('spree.coupon_code_unknown_error')
           set_error_code :coupon_code_unknown_error
         end
       end
 
       def promotion_usage_limit_exceeded
+        # i18n-tasks-use I18n.t('spree.coupon_code_max_usage')
         set_error_code :coupon_code_max_usage
       end
 
       def ineligible_for_this_order
+        # i18n-tasks-use I18n.t('spree.coupon_code_not_eligible')
         set_error_code :coupon_code_not_eligible
       end
 
       def promotion_applied
+        # i18n-tasks-use I18n.t('spree.coupon_code_already_applied')
         set_error_code :coupon_code_already_applied
       end
 
@@ -129,13 +138,18 @@ module Spree
         if discount || created_line_items
           order.update_totals
           order.persist_totals
+
+          # i18n-tasks-use I18n.t('spree.coupon_code_applied')
           set_success_code :coupon_code_applied
         elsif order.promotions.with_coupon_code(order.coupon_code)
           # if the promotion exists on an order, but wasn't found above,
           # we've already selected a better promotion
+
+          # i18n-tasks-use I18n.t('spree.coupon_code_better_exists')
           set_error_code :coupon_code_better_exists
         else
           # if the promotion was created after the order
+          # i18n-tasks-use I18n.t('spree.coupon_code_not_found')
           set_error_code :coupon_code_not_found
         end
       end

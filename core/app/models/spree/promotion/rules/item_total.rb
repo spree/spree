@@ -40,16 +40,20 @@ module Spree
 
         def ineligible_message_max
           if preferred_operator_max == 'lt'
+            # i18n-tasks-use I18n.t('spree.eligibility_errors.messages.item_total_more_than_or_equal')
             eligibility_error_message(:item_total_more_than_or_equal, amount: formatted_amount_max)
           else
+            # i18n-tasks-use I18n.t('spree.eligibility_errors.messages.item_total_more_than')
             eligibility_error_message(:item_total_more_than, amount: formatted_amount_max)
           end
         end
 
         def ineligible_message_min
           if preferred_operator_min == 'gte'
+            # i18n-tasks-use I18n.t('spree.eligibility_errors.messages.item_total_less_than')
             eligibility_error_message(:item_total_less_than, amount: formatted_amount_min)
           else
+            # i18n-tasks-use I18n.t('spree.eligibility_errors.messages.item_total_less_than_or_equal')
             eligibility_error_message(:item_total_less_than_or_equal, amount: formatted_amount_min)
           end
         end
