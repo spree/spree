@@ -38,7 +38,6 @@ describe Spree::LocaleHelper, type: :helper do
 
   describe '#locale_language_name when using custom name' do
     before do
-      create(:store, supported_locales: 'en,it', default_locale: 'it')
       I18n.backend.store_translations(:en,
                                       spree: {
                                         language_name_overide: {

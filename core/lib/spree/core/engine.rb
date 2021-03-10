@@ -20,9 +20,7 @@ module Spree
 
       initializer 'spree.environment', before: :load_config_initializers do |app|
         app.config.spree = Environment.new(SpreeCalculators.new, Spree::AppConfiguration.new, Spree::AppDependencies.new)
-
-        # Added this as a fallback is essential because of the date picker.
-        app.config.i18n.fallbacks = true
+        app.config.i18n.fallbacks = true # This is required for the date picker config to fall back to the default setup.
         Spree::Config = app.config.spree.preferences
         Spree::Dependencies = app.config.spree.dependencies
       end
