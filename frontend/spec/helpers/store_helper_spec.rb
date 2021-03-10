@@ -42,8 +42,8 @@ module Spree
     end
 
     describe '#store_link' do
-      it { expect(store_link(eu_store)).to eq('<a href="https://eu.spreecommerce.org">Deutsch (de) (€)</a>') }
-      it { expect(store_link(eu_store, class: 'some-class')).to eq('<a class="some-class" href="https://eu.spreecommerce.org">Deutsch (de) (€)</a>') }
+      it { expect(store_link(eu_store)).to eq('<a href="https://eu.spreecommerce.org">Deutsch (DE) (€)</a>') }
+      it { expect(store_link(eu_store, class: 'some-class')).to eq('<a class="some-class" href="https://eu.spreecommerce.org">Deutsch (DE) (€)</a>') }
       it { expect { store_link(nil) }.not_to raise_error }
     end
 
