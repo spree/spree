@@ -16,7 +16,7 @@ describe Spree::LocaleHelper, type: :helper do
     I18n.backend.store_translations(:fr,
       spree: {
         i18n: {
-          this_file_language: 'Français (FR)'
+          this_file_language: 'Français (fr)'
         }
       })
   end
