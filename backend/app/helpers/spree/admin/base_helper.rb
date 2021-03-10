@@ -1,6 +1,18 @@
 module Spree
   module Admin
     module BaseHelper
+      SELECT2_SUPPORTED_LOCALES = %w[
+        af ar az bg bn bs ca cs da de dsb el en eo es et eu fa fi fr gl he
+        hi hr hsb hu hy id is it ja ka km ko lt lv mk ms nb ne nl pa pl ps
+        pt pt-BR ro ru sk sl sq sr sr-Cyrl sv th tk tr uk vi zh-CN zh-TW
+      ].freeze
+
+      FLATPICKR_SUPPORTED_LOCALES = %w[
+        ar at az be bg bn bs cs cy da de eo es et fa fi fo fr ga gr he
+        hi hr hu id is it ja ka km ko kz lv mk mn ms my nl no pa pl pt ro ru
+        si sk sl sq sr sv th tr uk uz vn zh
+      ].freeze
+
       def flash_alert(flash)
         if flash.present?
           message = flash[:error] || flash[:notice] || flash[:success]
@@ -46,7 +58,7 @@ module Spree
 
       def datepicker_field_value(date)
         unless date.blank?
-          l(date, format: Spree.t('date_picker.format', default: '%Y/%m/%d'))
+          l(date, format: '%Y/%m/%d')
         end
       end
 
@@ -93,7 +105,9 @@ module Spree
                             class: 'input_integer form-control'
                           }
                         when :boolean
-                          {}
+                          {
+                            class: 'form-check-input'
+                          }
                         when :string
                           {
                             size: 10,
@@ -127,11 +141,25 @@ module Spree
 
         fields = object.preferences.keys.map do |key|
           if object.has_preference?(key)
-            form.label("preferred_#{key}", Spree.t(key) + ': ') +
-              preference_field_for(form, "preferred_#{key}", type: object.preference_type(key))
+            case key
+            when :currency
+              content_tag(:div, form.label("preferred_#{key}", Spree.t(key)) +
+                (form.select "preferred_#{key}", currency_options(object.preferences[key]), {}, { class: 'form-control select2' }),
+                          class: 'form-group', id: [object.class.to_s.parameterize, 'preference', key].join('-'))
+            else
+              if object.preference_type(key) == :boolean
+                content_tag(:div, preference_field_for(form, "preferred_#{key}", type: object.preference_type(key)) +
+                  form.label("preferred_#{key}", Spree.t(key), class: 'form-check-label'),
+                            class: 'form-group form-check', id: [object.class.to_s.parameterize, 'preference', key].join('-'))
+              else
+                content_tag(:div, form.label("preferred_#{key}", Spree.t(key)) +
+                  preference_field_for(form, "preferred_#{key}", type: object.preference_type(key)),
+                            class: 'form-group', id: [object.class.to_s.parameterize, 'preference', key].join('-'))
+              end
+            end
           end
         end
-        safe_join(fields, '<br />'.html_safe)
+        safe_join(fields)
       end
 
       # renders hidden field and link to remove record using nested_attributes
@@ -163,7 +191,7 @@ module Spree
       end
 
       def required_span_tag
-        content_tag(:span, ' *', class: 'required')
+        content_tag(:span, ' *', class: 'required font-weight-bold text-danger')
       end
 
       def product_preview_link(product)
@@ -184,6 +212,40 @@ module Spree
           seo_url(taxon),
           class: 'btn-outline-secondary', icon: 'view.svg', id: 'admin_preview_taxon', target: :blank
         )
+      end
+
+      def admin_logout_link
+        if defined?(admin_logout_path)
+          admin_logout_path
+        elsif defined?(spree_logout_path)
+          spree_logout_path
+        end
+      end
+
+      def select2_local_fallback
+        stripped_locale = I18n.locale.to_s.split('-').first
+
+        if ['zh-CN', 'zh-TW', 'sr-Cyrl', 'pt-BR'].include?(I18n.locale.to_s)
+          I18n.locale
+        elsif SELECT2_SUPPORTED_LOCALES.include? stripped_locale
+          stripped_locale
+        else
+          'en'
+        end
+      end
+
+      def flatpickr_local_fallback
+        stripped_locale = I18n.locale.to_s.split('-').first
+
+        if I18n.locale.to_s == 'zh-TW'
+          # Taiwanese is a popular language in Spree,
+          # it has been well translated.
+          'zh-tw'
+        elsif FLATPICKR_SUPPORTED_LOCALES.include? stripped_locale
+          stripped_locale
+        else
+          'default'
+        end
       end
     end
   end

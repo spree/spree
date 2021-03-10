@@ -9,16 +9,11 @@ import kebabCase from 'lodash.kebabcase'
  */
 
 const styleToc = css`
-  top: 140px;
-  max-height: calc(100% - 140px);
+  top: 100px;
+  max-height: calc(100% - 120px);
   overflow-y: auto;
   overflow-x: hidden;
-
-  @media screen and (min-width: 60em) {
-    & + article {
-      margin-right: 16rem;
-    }
-  }
+  margin-left: 50rem;
 `
 
 /**
@@ -34,8 +29,8 @@ const getMarginDepth = depth => ([1, 2].includes(depth) ? 0 : depth)
  */
 
 const Toc = ({ headings }) => (
-  <aside className="ml3 mw5 fixed dn db-l overflow-auto right-1" css={styleToc}>
-    <h4 className="ttu mt0 mb3">Table Of Contents</h4>
+  <aside className="ml3 mw5 fixed dn db-l overflow-auto" css={styleToc}>
+    <h3 className="mt0 mb1">Table Of Contents</h3>
 
     <nav>
       {headings.map(heading => {

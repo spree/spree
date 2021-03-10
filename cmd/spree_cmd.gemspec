@@ -24,7 +24,5 @@ Gem::Specification.new do |s|
   s.executables   = `git ls-files -- bin/*`.split("\n").map { |f| File.basename(f) }
   s.require_paths = ['lib']
 
-  s.add_development_dependency 'rspec'
-  # Temporary hack until https://github.com/wycats/thor/issues/234 is fixed
-  s.add_dependency 'thor', '~> 0.20.3'
+  s.add_dependency 'thor', '~> 1.0'
 end

@@ -3,7 +3,7 @@ module Spree
     acts_as_paranoid
     acts_as_list scope: :product
 
-    belongs_to :product, touch: true, class_name: 'Spree::Product', inverse_of: :variants
+    belongs_to :product, -> { with_deleted }, touch: true, class_name: 'Spree::Product', inverse_of: :variants
     belongs_to :tax_category, class_name: 'Spree::TaxCategory', optional: true
 
     delegate :name, :name=, :description, :slug, :available_on, :shipping_category_id,
@@ -123,15 +123,15 @@ module Spree
     end
 
     def tax_category
-      if self[:tax_category_id].nil?
-        product.tax_category
-      else
-        Spree::TaxCategory.find(self[:tax_category_id])
-      end
+      @tax_category ||= if self[:tax_category_id].nil?
+                          product.tax_category
+                        else
+                          Spree::TaxCategory.find(self[:tax_category_id])
+                        end
     end
 
     def options_text
-      Spree::Variants::OptionsPresenter.new(self).to_sentence
+      @options_text ||= Spree::Variants::OptionsPresenter.new(self).to_sentence
     end
 
     # Default to master name
@@ -148,13 +148,6 @@ module Spree
     # their own definition.
     def deleted?
       !!deleted_at
-    end
-
-    # Product may be created with deleted_at already set,
-    # which would make AR's default finder return nil.
-    # This is a stopgap for that little problem.
-    def product
-      Spree::Product.unscoped { super }
     end
 
     def options=(options = {})
@@ -199,7 +192,7 @@ module Spree
     end
 
     def price_in(currency)
-      prices.detect { |price| price.currency == currency } || prices.build(currency: currency)
+      prices.detect { |price| price.currency == currency&.upcase } || prices.build(currency: currency&.upcase)
     end
 
     def amount_in(currency)
@@ -233,7 +226,7 @@ module Spree
     end
 
     def compare_at_price
-      price_in(cost_currency).try(:compare_at_amount)
+      @compare_at_price ||= price_in(cost_currency).try(:compare_at_amount)
     end
 
     def name_and_sku

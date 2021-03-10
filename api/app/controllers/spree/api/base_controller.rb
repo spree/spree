@@ -6,6 +6,8 @@ module Spree
       include Spree::Api::ControllerSetup
       include Spree::Core::ControllerHelpers::Store
       include Spree::Core::ControllerHelpers::StrongParameters
+      include Spree::Core::ControllerHelpers::Locale
+      include Spree::Core::ControllerHelpers::Currency
 
       attr_accessor :current_api_user
 
@@ -81,10 +83,16 @@ module Spree
       end
 
       def error_during_processing(exception)
-        Rails.logger.error exception.message
+        message = if exception.respond_to?(:original_message)
+                    exception.original_message
+                  else
+                    exception.message
+                  end
+
+        Rails.logger.error message
         Rails.logger.error exception.backtrace.join("\n")
 
-        unprocessable_entity(exception.message)
+        unprocessable_entity(message)
       end
 
       def unprocessable_entity(message)

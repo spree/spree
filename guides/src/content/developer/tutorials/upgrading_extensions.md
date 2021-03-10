@@ -1,5 +1,5 @@
 ---
-title: Updating Extensions to Rails 6 and Spree 4.1
+title: Updating Extensions to Rails 6 and Spree 4
 section: advanced
 ---
 

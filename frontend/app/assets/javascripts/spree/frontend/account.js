@@ -1,6 +1,6 @@
 Spree.fetchAccount = function () {
   return $.ajax({
-    url: Spree.pathFor('account_link')
+    url: Spree.localizedPathFor('account_link')
   }).done(function (data) {
     Spree.accountFetched = true
     return $('#link-to-account').html(data)

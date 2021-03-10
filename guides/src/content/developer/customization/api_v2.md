@@ -1,5 +1,5 @@
 ---
-title: API v2 Customization
+title: API v2
 section: customization
 order: 6
 ---

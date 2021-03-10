@@ -6,7 +6,7 @@ module Spree
 
     MAXIMUM_AMOUNT = BigDecimal('99_999_999.99')
 
-    belongs_to :variant, class_name: 'Spree::Variant', inverse_of: :prices, touch: true
+    belongs_to :variant, -> { with_deleted }, class_name: 'Spree::Variant', inverse_of: :prices, touch: true
 
     before_validation :ensure_currency
 
@@ -27,7 +27,7 @@ module Spree
     self.whitelisted_ransackable_attributes = ['amount', 'compare_at_amount']
 
     def money
-      Spree::Money.new(amount || 0, currency: currency)
+      Spree::Money.new(amount || 0, currency: currency.upcase)
     end
 
     def amount=(amount)
@@ -61,11 +61,6 @@ module Spree
 
     def display_compare_at_price_including_vat_for(price_options)
       Spree::Money.new(compare_at_price_including_vat_for(price_options), currency: currency)
-    end
-
-    # Remove variant default_scope `deleted_at: nil`
-    def variant
-      Spree::Variant.unscoped { super }
     end
 
     private

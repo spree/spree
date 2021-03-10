@@ -1,6 +1,7 @@
 ---
 title: Migrating to Spree
 section: advanced
+hidden: true
 ---
 
 ## Overview

@@ -5,13 +5,13 @@ describe Spree::OrderMailer, type: :mailer do
   include EmailSpec::Helpers
   include EmailSpec::Matchers
 
-  before { create(:store) }
+  before { create(:store, default_locale: nil) }
 
-  let(:first_store) { create(:store, name: 'First Store') }
-  let(:second_store) { create(:store, name: 'Second Store') }
+  let(:first_store) { create(:store, name: 'First Store', default_locale: nil) }
+  let(:second_store) { create(:store, name: 'Second Store', url: 'other.example.com', default_locale: nil) }
 
   let(:order) do
-    order = stub_model(Spree::Order)
+    order = stub_model(Spree::Order, email: 'test@example.com')
     product = stub_model(Spree::Product, name: %{The "BEST" product})
     variant = stub_model(Spree::Variant, product: product)
     price = stub_model(Spree::Price, variant: variant, amount: 5.00)
@@ -25,7 +25,7 @@ describe Spree::OrderMailer, type: :mailer do
   end
 
   let(:second_order) do
-    order = stub_model(Spree::Order)
+    order = stub_model(Spree::Order, email: 'test2@example.com')
     product = stub_model(Spree::Product, name: %{The "BESTEST" product})
     variant = stub_model(Spree::Variant, product: product)
     price = stub_model(Spree::Price, variant: variant, amount: 15.00)
@@ -167,18 +167,32 @@ describe Spree::OrderMailer, type: :mailer do
         I18n.enforce_available_locales = true
       end
 
-      context 'confirm_email' do
-        specify do
-          confirmation_email = Spree::OrderMailer.confirm_email(order)
-          expect(confirmation_email).to have_body_text('Caro Cliente,')
+      shared_examples 'translates emails' do
+        context 'confirm_email' do
+          specify do
+            confirmation_email = Spree::OrderMailer.confirm_email(order)
+            expect(confirmation_email).to have_body_text('Caro Cliente,')
+          end
+        end
+
+        context 'cancel_email' do
+          specify do
+            cancel_email = Spree::OrderMailer.cancel_email(order)
+            expect(cancel_email).to have_body_text('Resumo da Pedido [CANCELADA]')
+          end
         end
       end
 
-      context 'cancel_email' do
-        specify do
-          cancel_email = Spree::OrderMailer.cancel_email(order)
-          expect(cancel_email).to have_body_text('Resumo da Pedido [CANCELADA]')
-        end
+      context 'via I18n' do
+        before { I18n.locale = :'pt-BR' }
+
+        it_behaves_like 'translates emails'
+      end
+
+      context 'via Store locale' do
+        before { order.store.update!(default_locale: 'pt-BR') }
+
+        it_behaves_like 'translates emails'
       end
     end
   end
@@ -202,6 +216,20 @@ describe Spree::OrderMailer, type: :mailer do
       confirmation_email = Spree::OrderMailer.confirm_email(second_order)
       expect(confirmation_email.from).to include(second_store.mail_from_address)
       expect(confirmation_email.subject).to include(second_store.name)
+    end
+  end
+
+  context 'emails contain only urls of the store where the order was made' do
+    it 'shows proper host url in email content' do
+      ActionMailer::Base.default_url_options[:host] = order.store.url
+      described_class.confirm_email(order).deliver_now
+      expect(ActionMailer::Base.default_url_options[:host]).to eq(order.store.url)
+    end
+
+    it 'shows proper host url in email content #2' do
+      ActionMailer::Base.default_url_options[:host] = second_order.store.url
+      described_class.confirm_email(second_order).deliver_now
+      expect(ActionMailer::Base.default_url_options[:host]).to eq(second_order.store.url)
     end
   end
 end

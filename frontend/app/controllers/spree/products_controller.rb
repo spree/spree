@@ -2,6 +2,7 @@ module Spree
   class ProductsController < Spree::StoreController
     include Spree::ProductsHelper
     include Spree::FrontendHelper
+    include Spree::CacheHelper
 
     before_action :load_product, only: [:show, :related]
     before_action :load_taxon, only: :index
@@ -12,7 +13,9 @@ module Spree
       @searcher = build_searcher(params.merge(include_images: true, current_store_id: current_store.id))
       @products = @searcher.retrieve_products
 
-      fresh_when etag: etag_index, last_modified: last_modified_index, public: true
+      if http_cache_enabled?
+        fresh_when etag: etag_index, last_modified: last_modified_index, public: true
+      end
     end
 
     def show
@@ -20,7 +23,7 @@ module Spree
 
       @taxon = params[:taxon_id].present? ? Spree::Taxon.find(params[:taxon_id]) : @product.taxons.first
 
-      if stale?(etag: etag_show, last_modified: last_modified_show, public: true)
+      if !http_cache_enabled? || stale?(etag: etag_show, last_modified: last_modified_show, public: true)
         @product_summary = Spree::ProductSummaryPresenter.new(@product).call
         @product_properties = @product.product_properties.includes(:property)
         @product_price = @product.price_in(current_currency).amount
@@ -30,9 +33,7 @@ module Spree
     end
 
     def related
-      @related_products = related_products
-
-      if @related_products.any?
+      if product_relation_types.any?
         render template: 'spree/products/related', layout: false
       else
         head :no_content

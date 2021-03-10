@@ -27,7 +27,7 @@ module Spree
       end
 
       def render(*args)
-        @preferences_currency |= [:show_store_currency_selector]
+        @preferences_currency |= [:show_store_selector]
         super
       end
 

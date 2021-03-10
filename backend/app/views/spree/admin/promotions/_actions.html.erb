@@ -8,7 +8,7 @@
     <% options = options_for_select(  Rails.application.config.spree.promotions.actions.map(&:name).map {|name| [ Spree.t("promotion_action_types.#{name.demodulize.underscore}.name"), name] } ) %>
 
     <div class="form-group">
-      <%= label_tag :action_type, Spree.t(:add_action_of_type)%>
+      <%= label_tag :action_type, Spree.t(:add_action_of_type) %>
       <%= select_tag 'action_type', options, class: 'select2' %>
     </div>
     <div class="form-actions">
@@ -18,7 +18,7 @@
   <% end %>
 
   <%= form_for @promotion, url: spree.admin_promotion_path(@promotion), method: :put do |f| %>
-    <div id="actions" class="filter_list margint">
+    <div id="actions" class="filter_list mt-3">
       <% if @promotion.actions.any? %>
         <%= render partial: 'promotion_action',  collection: @promotion.actions %>
       <% else %>
@@ -31,5 +31,4 @@
       <%= button Spree.t('actions.update'), 'save.svg' %>
     </div>
   <% end %>
-
 </div>

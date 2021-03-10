@@ -49,7 +49,7 @@
           <%= button Spree.t('clear_key', scope: 'api'), 'delete.svg', 'submit', class: "btn-danger" %>
         <% end %>
 
-        <span class="or"><%= Spree.t(:or)%></span>
+        <span class="or"><%= Spree.t(:or) %></span>
 
         <%= form_tag spree.generate_api_key_admin_user_path(@user), method: :put do %>
           <%= button Spree.t('regenerate_key', scope: 'api'), 'recycle.svg' %>

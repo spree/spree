@@ -345,7 +345,7 @@ paths:
         - $ref: '#/components/parameters/PerPageParam'
       security:
         - bearerAuth: []
-  '/api/v2/storefront/api/v2/storefront/account/orders/{number}':
+  '/api/v2/storefront/account/orders/{number}':
     get:
       description: "Return the User's completed Order"
       summary: Get an Order

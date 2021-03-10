@@ -86,6 +86,8 @@ Spree::Core::Engine.add_routes do
         put :resume
         get :store
         put :set_store
+        get :channel
+        put :set_channel
       end
 
       resources :state_changes, only: [:index]
@@ -134,7 +136,11 @@ Spree::Core::Engine.add_routes do
       collection do
         post :update_positions
       end
-      resources :taxons
+      resources :taxons do
+        member do
+          delete :remove_icon
+        end
+      end
     end
 
     resources :taxons, only: [:index, :show]

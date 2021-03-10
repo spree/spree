@@ -25,7 +25,13 @@ describe 'Stores', type: :feature, js: true do
       expect(page).to have_field(id: 'store_description')
       expect(page).to have_field(id: 'store_address')
       expect(page).to have_field(id: 'store_contact_phone')
-      expect(page).to have_field(id: 'store_contact_email')
+    end
+
+    it 'has seo fields' do
+      expect(page).to have_field(id: 'store_seo_title')
+      expect(page).to have_field(id: 'store_meta_description')
+      expect(page).to have_field(id: 'store_meta_keywords')
+      expect(page).to have_field(id: 'store_seo_robots')
     end
 
     it 'creates a new store' do
@@ -39,7 +45,7 @@ describe 'Stores', type: :feature, js: true do
       expect(page).to have_content('successfully created!')
     end
 
-    it 'creates a new store with footer info' do
+    it 'creates a new store with footer and seo data' do
       fill_in 'Name', with: 'Store name'
       fill_in 'Code', with: 'example_store'
       fill_in 'URL', with: 'store.example.com'
@@ -47,7 +53,11 @@ describe 'Stores', type: :feature, js: true do
       fill_in 'Description', with: 'New store description'
       fill_in 'Address', with: 'New store address 123, City 123'
       fill_in 'Contact phone', with: '123123123'
-      fill_in 'Contact email', with: 'contact@example.com'
+      fill_in 'Customer Support Email', with: 'contact@example.com'
+      fill_in 'SEO Title', with: 'Spree Store meta title'
+      fill_in 'Meta Description', with: 'Spree Store meta description'
+      fill_in 'Meta Keywords', with: 'Spree, Store'
+      fill_in 'SEO Robots', with: 'noindex'
 
       click_button 'Create'
 

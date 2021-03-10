@@ -134,7 +134,8 @@ module Spree
       [I18n.l(date.to_date, format: :long)].join(' ')
     end
 
-    def seo_url(taxon, options = nil)
+    def seo_url(taxon, options = {})
+      options.merge(locale: locale_param)
       spree.nested_taxons_path(taxon.permalink, options)
     end
 

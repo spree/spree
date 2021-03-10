@@ -2,17 +2,7 @@ module Spree
   module Api
     module V2
       module Storefront
-        class TaxonsController < ::Spree::Api::V2::BaseController
-          include Spree::Api::V2::CollectionOptionsHelpers
-
-          def index
-            render_serialized_payload { serialize_collection(paginated_collection) }
-          end
-
-          def show
-            render_serialized_payload { serialize_resource(resource) }
-          end
-
+        class TaxonsController < ::Spree::Api::V2::ResourceController
           private
 
           def collection_serializer
@@ -39,8 +29,8 @@ module Spree
             scope.find_by(permalink: params[:id]) || scope.find(params[:id])
           end
 
-          def scope
-            Spree::Taxon.accessible_by(current_ability, :show).includes(scope_includes)
+          def model_class
+            Spree::Taxon
           end
 
           def scope_includes

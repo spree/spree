@@ -31,7 +31,7 @@
               </td>
               <td class="item-name">
                 <%= item.name %>
-                <br />
+                <br>
                 <%= "(#{item.options_text})" if item.options_text.present? %>
                 <% if item.sku.present? %>
                   <strong><%= Spree.t(:sku) %>:</strong> <%= item.variant.sku %>

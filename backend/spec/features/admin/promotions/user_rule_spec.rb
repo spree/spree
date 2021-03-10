@@ -22,15 +22,15 @@ describe 'Promotion with user rule', type: :feature, js: true do
     select2 'User', from: 'Add rule of type', match: :first
     within('#rule_fields') { click_button 'Add' }
 
-    find('.user_picker').fill_in with: 'first'
+    select2_open label: 'Choose users'
+    select2_search 'first', label: 'Choose users'
+
     expect(page).to have_content('first@example.com')
 
     expect(page).not_to have_content('second@example.com')
     expect(page).not_to have_content('third@example.com')
 
-    within('#select2-drop') do
-      first('.select2-result').click
-    end
+    select2_select 'first@example.com', from: 'Choose users', match: :first
 
     wait_for { !page.has_button?('Update') }
     within('#rules_container') { click_button 'Update' }
@@ -45,7 +45,8 @@ describe 'Promotion with user rule', type: :feature, js: true do
     select2 'User', from: 'Add rule of type', match: :first
     within('#rule_fields') { click_button 'Add' }
 
-    find('.user_picker').fill_in with: 'example'
+    select2_open label: 'Choose users'
+    select2_search 'example', label: 'Choose users'
 
     expect(page).to have_content('first@example.com')
     expect(page).to have_content('second@example.com')
@@ -59,7 +60,8 @@ describe 'Promotion with user rule', type: :feature, js: true do
     select2 'User', from: 'Add rule of type', match: :first
     within('#rule_fields') { click_button 'Add' }
 
-    find('.user_picker').fill_in with: 'test'
+    select2_open label: 'Choose users'
+    select2_search 'test', label: 'Choose users'
 
     expect(page).to have_content('fourth@testing.com')
     expect(page).to have_content('fifth@testing.com')

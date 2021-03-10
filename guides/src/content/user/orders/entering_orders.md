@@ -17,7 +17,7 @@ To create a new order manually, go into the Admin Interface, click the "Orders" 
 
 ![Create New Order](../../../images/user/orders/create_new_order.jpg)
 
-Type the name of the product you would like to add to the order in the search field. A list of matching products and variants combinations will show up in the drop-down menu. Select the product/variant option you want to add to the order.
+Type the name of the product you would like to add to the order in the search field. A list of matching product and variant combinations will show up in the drop-down menu. Select the product/variant option you want to add to the order.
 
 ![Create New Order](../../../images/user/orders/order_product_search.jpg)
 
@@ -77,7 +77,7 @@ Confirm the deletion by clicking "OK".
 
 ### Opening and Closing Adjustments
 
-Some types of adjustments - such as tax and shipping - may re-calculate as the order changes; for example, as new products are added to it. If you want to be sure that the amount of an adjustments will remain the same, you can lock them. This is also known as closing the adjustments.
+Some types of adjustments - such as tax and shipping - may re-calculate as the order changes; for example, as new products are added to it. If you want to be sure that the amount of an adjustment will remain the same, you can lock them. This is also known as closing the adjustments.
 
 ***
 Closed adjustments can be re-opened and changed up to the moment when the order is shipped. At that point, the adjustment is finalized and cannot be changed.
@@ -93,7 +93,7 @@ You can also add further adjustments - positive or negative - to the order to ac
 
 ![New Adjustment Button](../../../images/user/orders/new_adjustment_button.jpg)
 
-You need only enter the "Amount" (positive for a charge on the order; negative for a credit) and a "Description", then click the "Continue" button.
+You need only enter the "Amount" (positive for a charge on the order; negative for credit) and a "Description", then click the "Continue" button.
 
 ![New Adjustment Form](../../../images/user/orders/new_adjustment_form.jpg)
 
@@ -103,7 +103,7 @@ Once you have finished all of the changes you want in the order's Adjustments, c
 
 ## Payments
 
-If you are manually entering this order, it is presumed that you have received payment either in person, on the phone, or through some other non-website means. You can manually enter payment using any of your site's configured [payment methods](/user/payments/payment_methods.html).
+If you are manually entering this order, it is presumed that you have received payment either in person, on the phone, or through some other non-website means. You can manually enter payments using any of your site's configured [payment methods](/user/payments/payment_methods.html).
 
 Just click the "Payments" link in the right panel section.
 
@@ -111,7 +111,7 @@ Just click the "Payments" link in the right panel section.
 
 This form is pretty self-explanatory; you enter the amount of the payment, the method, and the credit card information (if applicable).
 
-One thing to note is that you can enter multiple payments on the same order. This is useful if, for example, a customer wants to pay part of their order in cash and put the rest on a credit card. In that case, all you have to do is create the first payment for the cash amount, check the "Cash" payment method (be sure you have it configured in your store first!), and click "Update".
+One thing to note is that you can enter multiple payments on the same order. This is useful if, for example, a customer wants to pay part of their order in cash and put the rest on a credit card. In that case, all you have to do is create the first payment for the cash amount, check the "Cash" payment method (be sure that you have it configured in your store first!), and click "Update".
 
 Then, click the "New Payment" link to enter the information for the credit card portion of the payment.
 

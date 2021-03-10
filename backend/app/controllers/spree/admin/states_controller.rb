@@ -22,7 +22,7 @@ module Spree
       end
 
       def load_data
-        @countries = Country.order(:name)
+        @countries = Spree::Country.where(states_required: true).order(:name)
       end
     end
   end

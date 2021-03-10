@@ -261,6 +261,9 @@
   }
   #checkout-summary {
     margin-top: 30px;
+    @include media-breakpoint-down(sm) {
+      flex-basis: 100%;
+    }
     @include media-breakpoint-up(sm) {
       margin-top: 75px;
     }

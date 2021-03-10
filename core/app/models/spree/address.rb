@@ -2,6 +2,10 @@ module Spree
   class Address < Spree::Base
     require 'twitter_cldr'
 
+    if Rails::VERSION::STRING >= '6.1'
+      serialize :preferences, Hash, default: {}
+    end
+
     NO_ZIPCODE_ISO_CODES ||= [
       'AO', 'AG', 'AW', 'BS', 'BZ', 'BJ', 'BM', 'BO', 'BW', 'BF', 'BI', 'CM', 'CF', 'KM', 'CG',
       'CD', 'CK', 'CUW', 'CI', 'DJ', 'DM', 'GQ', 'ER', 'FJ', 'TF', 'GAB', 'GM', 'GH', 'GD', 'GN',

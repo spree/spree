@@ -17,7 +17,27 @@ Spree.adminPath = function () {
 
 Spree.pathFor = function (path) {
   var locationOrigin = (window.location.protocol + '//' + window.location.hostname) + (window.location.port ? ':' + window.location.port : '')
+
   return this.url('' + locationOrigin + (this.mountedAt()) + path, this.url_params).toString()
+}
+
+Spree.localizedPathFor = function(path) {
+  if (typeof (SPREE_LOCALE) !== 'undefined' && typeof (SPREE_CURRENCY) !== 'undefined') {
+    var fullUrl = new URL(Spree.pathFor(path))
+    var params = fullUrl.searchParams
+    var pathName = fullUrl.pathname
+
+    params.set('currency', SPREE_CURRENCY)
+
+    if (pathName.match(/api\/v/)) {
+      params.set('locale', SPREE_LOCALE)
+    } else {
+      pathName = SPREE_LOCALE + '/' + pathName
+    }
+
+    path = pathName + '?' + params.toString()
+  }
+  return Spree.pathFor(path)
 }
 
 Spree.adminPathFor = function (path) {

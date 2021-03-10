@@ -40,109 +40,25 @@ Explore demo features: https://spreecommerce.org/spree-commerce-demo-explainer/
 
 Or fire up your own demo on Heroku:
 
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/spree/spree/tree/4-1-stable)
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/spree/spree_starter)
 
 Admin panel credentials for your own Heroku demo:
 
 * login: `spree@example.com`
 * password: `spree123`
 
-## Installation
+## Local Installation
 
-### Create new Rails app (optional)
+### Option A - use Spree Starter with Docker
 
-If you're starting a new application from scrach run:
+1. [Install Docker](https://docs.docker.com/get-docker/)
+2. Download [Spree Starter](https://github.com/spree/spree_starter/archive/main.zip)
+3. Unzip it
+4. Run `bin/setup` in `spree_starter-main` directory
 
-```bash
-rails new my_store
-cd my_store
-```
+### Option B - add Spree to an existing application
 
-You can **add Spree to your existing Rails application** as well.
-
-### Add Spree gems to your `Gemfile`
-
-#### Rails 6.0
-
-```ruby
-gem 'spree', '~> 4.1'
-gem 'spree_auth_devise', '~> 4.2'
-gem 'spree_gateway', '~> 3.9'
-```
-
-#### Rails 5.2
-
-```ruby
-gem 'spree', '~> 3.7.0'
-gem 'spree_auth_devise', '~> 3.5'
-gem 'spree_gateway', '~> 3.4'
-```
-
-To see what rails version are you using run this command:
-
-```bash
-rails -v
-```
-
-Older rails versions are also supported: [Rails 5.1](https://guides.spreecommerce.org/release_notes/3_5_0.html), [Rails 5.0](https://guides.spreecommerce.org/release_notes/3_2_0.html), [Rails 4.2](https://guides.spreecommerce.org/release_notes/3_1_0.html)
-
-### Install gems
-
-```bash
-bundle install
-```
-
-**Note**: if you run into `Bundler could not find compatible versions for gem "sprockets":` error message, please run
-
-```bash
-bundle update
-```
-
-### Use the install generators to set up Spree
-
-```shell
-bundle exec rails g spree:install --user_class=Spree::User
-bundle exec rails g spree:auth:install
-bundle exec rails g spree_gateway:install
-```
-
-## Installation options
-
-By default, the installation generator (`rails g spree:install`) will run
-migrations as well as adding seed and sample data and will copy storefront data
-for easy customization (if `spree_frontend` available). This can be disabled using
-
-```shell
-rails g spree:install --migrate=false --sample=false --seed=false --copy_storefront=false
-```
-
-You can always perform any of these steps later by using these commands.
-
-```shell
-bundle exec rake railties:install:migrations
-bundle exec rails db:migrate
-bundle exec rails db:seed
-bundle exec rake spree_sample:load
-bundle exec rails g spree:frontend:copy_storefront
-```
-
-### Headless installation
-
-To use Spree in [API-only mode](https://guides.spreecommerce.org/api/overview/) you need to replace `spree` with `spree_api` in your project Gemfile. This will skip Storefront and Admin Panel. If you would want to include the Admin Panel please add `spree_backend` to your Gemfile.
-
-## Run rails sever
-
-```bash
-rails s
-```
-
-## Browse Storefront
-
-Go to http://localhost:3000
-
-## Browse Admin Panel
-
-Go to http://localhost:3000/admin
+1. [Please follow Add Spree to an existing Ruby on Rails application tutorial](https://guides.spreecommerce.org/developer/tutorials/existing_app_tutorial.html)
 
 ## Extensions
 
@@ -162,7 +78,6 @@ Spree Extensions provide additional features not present in the Core system.
 | [spree_globalize](https://github.com/spree-contrib/spree_globalize) | [![Build Status](https://travis-ci.org/spree-contrib/spree_globalize.svg?branch=master)](https://travis-ci.org/spree-contrib/spree_globalize) | Adds support for model translations (multi-language stores)
 | [spree_i18n](https://github.com/spree-contrib/spree_i18n) | [![Build Status](https://travis-ci.org/spree-contrib/spree_i18n.svg?branch=master)](https://travis-ci.org/spree-contrib/spree_i18n) | I18n translation files for Spree Commerce
 | [spree-mollie-gateway](https://github.com/mollie/spree-mollie-gateway) | [![Build Status](https://travis-ci.org/mollie/spree-mollie-gateway.svg?branch=master)](https://github.com/mollie/spree-mollie-gateway) | Official [Mollie](https://www.mollie.com) payment gateway for Spree Commerce. |
-| [spree_multi_currency](https://github.com/spree-contrib/spree_multi_currency) | [![Build Status](https://travis-ci.org/spree-contrib/spree_multi_currency.svg?branch=master)](https://travis-ci.org/spree-contrib/spree_multi_currency) | Provides UI to allow configuring multiple currencies in Spree |
 | [spree-multi-domain](https://github.com/spree-contrib/spree-multi-domain) | [![Build Status](https://travis-ci.org/spree-contrib/spree-multi-domain.svg?branch=master)](https://travis-ci.org/spree-contrib/spree-multi-domain) | Multiple Spree stores on different domains - single unified backed for processing orders
 | [spree_multi_vendor](https://github.com/spree-contrib/spree_multi_vendor) | [![Build Status](https://travis-ci.org/spree-contrib/spree_multi_vendor.svg?branch=master)](https://travis-ci.org/spree-contrib/spree_multi_vendor) | Spree Multi Vendor Marketplace extension |
 | [spree-product-assembly](https://github.com/spree-contrib/spree-product-assembly) | [![Build Status](https://travis-ci.org/spree-contrib/spree-product-assembly.svg?branch=master)](https://travis-ci.org/spree-contrib/spree-product-assembly) | Product Bundles |

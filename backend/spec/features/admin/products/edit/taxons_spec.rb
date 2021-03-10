@@ -4,10 +4,6 @@ describe 'Product Taxons', type: :feature, js: true do
   stub_authorization!
 
   context 'managing taxons' do
-    def selected_taxons
-      find('#product_taxon_ids', visible: :hidden).value.split(',').map(&:to_i).uniq
-    end
-
     it 'allows an admin to manage taxons' do
       taxon_1 = create(:taxon)
       taxon_2 = create(:taxon, name: 'Clothing')
@@ -17,16 +13,16 @@ describe 'Product Taxons', type: :feature, js: true do
       visit spree.admin_products_path
       within_row(1) { click_icon :edit }
 
-      expect(page).to have_css('.select2-search-choice', exact_text: "#{taxon_1.parent.name} -> #{taxon_1.name}")
-      expect(selected_taxons).to match_array([taxon_1.id])
+      expect(page).to have_css('.select2-selection__choice', text: "#{taxon_1.parent.name} -> #{taxon_1.name}")
 
-      select2 'Clothing', from: 'Taxons'
+      select2_open label: 'Taxons'
+      select2_search 'Clothing', from: 'Taxons'
+      select2_select 'Clothing', from: 'Taxons', match: :first
       wait_for { !page.has_button?('Update') }
       click_button 'Update'
-      expect(selected_taxons).to match_array([taxon_1.id, taxon_2.id])
 
-      expect(page).to have_css('.select2-search-choice', text: taxon_1.name).
-                  and have_css('.select2-search-choice', text: taxon_2.name)
+      expect(page).to have_css('.select2-selection__choice', text: taxon_1.name).
+                  and have_css('.select2-selection__choice', text: taxon_2.name)
     end
   end
 end

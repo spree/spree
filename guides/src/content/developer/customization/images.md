@@ -1,5 +1,5 @@
 ---
-title: 'Images Customization'
+title: 'Images'
 section: customization
 order: 2
 ---

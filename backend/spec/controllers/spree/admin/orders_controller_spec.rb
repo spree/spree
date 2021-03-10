@@ -26,6 +26,18 @@ describe Spree::Admin::OrdersController, type: :controller do
       )
     end
 
+    let(:pos_order) do
+      mock_model(
+        Spree::Order,
+        completed?: true,
+        total: 100,
+        number: 'R123456789',
+        all_adjustments: adjustments,
+        billing_address: mock_model(Spree::Address),
+        channel: 'POS'
+      )
+    end
+
     let(:adjustments) { double('adjustments') }
     let(:display_value) { Spree::ShippingMethod::DISPLAY_ON_BACK_END }
 
@@ -48,6 +60,28 @@ describe Spree::Admin::OrdersController, type: :controller do
         expect(order).to receive(:canceled_by).with(controller.try_spree_current_user)
         put :cancel, params: { id: order.number }
         expect(flash[:success]).to eq Spree.t(:order_canceled)
+      end
+    end
+
+    describe '#channel' do
+      subject do
+        get :channel, params: { id: cart_order.number }
+      end
+
+      let(:cart_order) { create(:order_with_line_items) }
+
+      it 'displays a page with channel input' do
+        expect(subject).to render_template :channel
+      end
+    end
+
+    context '#set_channel' do
+      it 'sets channel on an order' do
+        expect(order).to receive(:update).and_return(pos_order)
+
+        put :set_channel, params: { id: order.number, channel: 'POS' }
+
+        expect(flash[:success]).to eq Spree.t(:successfully_updated, resource: 'Order')
       end
     end
 

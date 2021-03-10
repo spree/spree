@@ -1,57 +1,36 @@
 ---
-title: 'Storefront Customization'
+title: 'Storefront'
 section: customization
 order: 0
 ---
 
-## Overview
-
-The new Spree UX is here. Feel free to customize it to your needs, including:  the overall styling, header, footer, placeholder images and text, and SEO settings.
-
-![](../../../images/developer/storefront/1.png)
-
-![](../../../images/developer/storefront/2.png)
+<alert kind="note">
+  The default Storefront mentioned in this guide is available since [Spree 4.1 release](/release_notes/4_1_0.html). If you're using
+  an older Spree version [please upgrade](/developer/upgrades/four-dot-oh-to-four-dot-one.html).
+</alert>
 
 ## Styling with SASS variables
 
-Spree 4.x uses [Bootstrap 4 with built-in Sass variables](https://www.example.com) for global style preferences for easy theming and component changes.
+Spree 4 under the hood uses [Bootstrap 4](https://getbootstrap.com/docs/4.6/getting-started/theming/) for easy theming with some additional Spree-specific [SASS variables](https://sass-lang.com/documentation/variables).
 
-All the Sass variables needed for customizing the new Spree UX are in the variables.scss file. Color variables listed there can be assigned any CSS color value:
-
-- HEX - example: #007bff
-- RGB-A - example: 0 123 255 1
-- HSL-A - example: 211 100% 50% 1
-- Color name - example: Blue
-
-To make those changes live you need to update
-[app/assets/stylesheets/spree/frontend/variables/variables.scss](https://github.com/spree/spree/blob/master/frontend/app/assets/stylesheets/spree/frontend/variables/variables.scss)
-in your project directory with your values and then commit those changes to your project code repository.
+To make those changes live you need to update SCSS variable files located in your project at `app/assets/stylesheets/spree/frontend/variables/variables.scss`.
 
 ### Header
 
-__*$header-background*__ - header background color variable with 2 examples: white and blue one. By default, this is set with a __*$primary-background*__ value but feel to replace it with any other value in the variables.scss file.
+__*$header-background*__ - header background color variable with 2 examples: white and blue one. By default, this is set with a __*$primary-background*__ value but you can replace it with any other value in the variables.scss file.
 
-White
+![White](../../../images/developer/storefront/3.png)
 
-![](../../../images/developer/storefront/3.png)
+![Blue](../../../images/developer/storefront/4.png)
 
-Blue
+__*$header-font-color*__- Header font color. By default set with __*$font-color*__ value but you can replace it with any other value in the variables.scss file.
 
-![](../../../images/developer/storefront/4.png)
+![Dark grey](../../../images/developer/storefront/5.png)
 
-__*$header-font-color*__- Header font color. By default set with __*$font-color*__ value but feel to replace it with any other value in the variables.scss file.
+![Blue](../../../images/developer/storefront/6.png)
 
-Dark grey
 
-![](../../../images/developer/storefront/5.png)
-
-Blue
-
-![](../../../images/developer/storefront/6.png)
-
-White
-
-![](../../../images/developer/storefront/7.png)
+![White](../../../images/developer/storefront/7.png)
 
 ### Footer
 
@@ -69,13 +48,13 @@ __*$footer-font-color*__ - a variable that overrides __*$font-color*__ and allow
 
 ### Meganav menu
 
-__*$meganav-background*__ - a variable that allows you to change the mega nav menu background color. By default the meganav menu is set to a __*$primary-background*__ value but feel to replace it with any other value in the variables.scss file.
+__*$meganav-background*__ - a variable that allows you to change the mega nav menu background color. By default the meganav menu is set to a __*$primary-background*__ value but you can replace it with any other value in the variables.scss file.
 
 ![](../../../images/developer/storefront/12.png)
 
 ![](../../../images/developer/storefront/13.png)
 
-__*$meganav-font-color*__ - a font color variable in the mega nav menu. By default the mega nav font color is set to a \$font-color value but feel to replace it with any other value in the variables.scss file.
+__*$meganav-font-color*__ - a font color variable in the mega nav menu. By default the mega nav font color is set to a \$font-color value but you can replace it with any other value in the variables.scss file.
 
 ![](../../../images/developer/storefront/14.png)
 
@@ -105,7 +84,7 @@ __*$font-color*__ - this variable affects all fonts on the \$primary-background.
 
 ![](../../../images/developer/storefront/23.png)
 
-__*$secondary-font-color*__ - this affects all fonts on $secondary-background. By default, it is set with a $font-color value but feel to replace it with any other value in the variables.scss file.
+__*$secondary-font-color*__ - this affects all fonts on $secondary-background. By default, it is set with a $font-color value but you can replace it with any other value in the variables.scss file.
 
 ![](../../../images/developer/storefront/24.png)
 
@@ -137,7 +116,7 @@ __*$global-border-style*__ - this affects the border and separator color through
 
 ### Fonts
 
-__*$font-family*__ - this sets the font family used across your site. By default, it is in Sans Serif but feel to replace it with any other value in the variables.scss file. Check out [these font families](https://websitesetup.org/web-safe-fonts-html-css/) you might use.
+__*$font-family*__ - this sets the font family used across your site. By default, it is in Sans Serif but you can replace it with any other value in the variables.scss file. Check out [these font families](https://websitesetup.org/web-safe-fonts-html-css/) you might use.
 
 ### Input fields
 
@@ -473,7 +452,7 @@ In order to replace the default Spree logo with your own [please follow these st
 
 Categories visible in the Megamenu are defined in the `spree_storefront.yml`. The file is automatically copied to `config/spree_storefront.yml` in your application directory.
 
-Make sure that these categories are also defined in the Admin panel on your site. You will find them in the Products > Taxonomies menu. Learn more about [categories (taxonomies and taxons)](https://guides.spreecommerce.org/user/products/taxonomies_and_taxons.html) in the Spree guides.
+Make sure that these categories are also defined in the Admin panel on your site. You will find them in the `Products > Taxonomies` menu. Learn more about [categories (taxonomies and taxons)](https://guides.spreecommerce.org/user/products/taxonomies_and_taxons.html) in the Spree guides.
 
 ### Social media icons in the footer
 
@@ -512,7 +491,7 @@ You will need to replace various promo banner placeholder images, text, and butt
 
 In the screenshot below you’ll find homepage promo banner slots with the default image placeholders indicating desktop placeholder sizes in pixels. Please note that each of these placeholders requires four images for the various devices listed below. This is just the example for desktops.
 
-Homepage text values may be replaced in your project repository in the /app/views/spree/home/index.html.erb. Please note that this file will be automatically copied to your project directory after running Spree installer.
+Homepage text values may be replaced in your project repository in the `/app/views/spree/home/index.html.erb`. Please note that this file will be automatically copied to your project directory after running Spree installer.
 
 You’ll need to upload four sizes for each of these promo banners:
 

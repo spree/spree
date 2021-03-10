@@ -5,6 +5,8 @@ module Spree
         if stock_movement.originator.respond_to?(:number)
           if stock_movement.originator.respond_to?(:order)
             link_to stock_movement.originator.number, [:edit, :admin, stock_movement.originator.order]
+          elsif stock_movement.originator.is_a?(Spree::StockTransfer)
+            link_to stock_movement.originator.number, spree.admin_stock_transfer_url(stock_movement.originator)
           else
             stock_movement.originator.number
           end

@@ -34,7 +34,6 @@ Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each { |f| require f }
 require 'capybara-select-2'
 require 'database_cleaner'
 require 'ffaker'
-require 'rspec/retry'
 
 require 'spree/testing_support/authorization_helpers'
 require 'spree/testing_support/factories'
@@ -45,7 +44,9 @@ require 'spree/testing_support/url_helpers'
 require 'spree/testing_support/order_walkthrough'
 require 'spree/testing_support/capybara_ext'
 require 'spree/testing_support/capybara_config'
+require 'spree/testing_support/rspec_retry_config'
 require 'spree/testing_support/image_helpers'
+require 'spree/testing_support/flatpickr_capybara'
 
 require 'spree/core/controller_helpers/strong_parameters'
 require 'webdrivers'
@@ -97,6 +98,7 @@ RSpec.configure do |config|
   end
 
   config.include CapybaraSelect2
+  config.include CapybaraSelect2::Helpers
   config.include FactoryBot::Syntax::Methods
 
   config.include Spree::TestingSupport::Preferences
@@ -104,15 +106,9 @@ RSpec.configure do |config|
   config.include Spree::TestingSupport::ControllerRequests, type: :controller
   config.include Spree::TestingSupport::Flash
   config.include Spree::TestingSupport::ImageHelpers
+  config.include Spree::TestingSupport::FlatpickrCapybara
 
   config.include Spree::Core::ControllerHelpers::StrongParameters, type: :controller
-
-  config.verbose_retry = true
-  config.display_try_failure_messages = true
-
-  config.around :each, type: :feature do |ex|
-    ex.run_with_retry retry: 3
-  end
 
   config.order = :random
   Kernel.srand config.seed

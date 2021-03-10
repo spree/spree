@@ -4,7 +4,7 @@ title: Return Authorization Reasons
 
 ## Introduction
 
-Before you make any return you must describe the reasons why the user wants to return the items. This is the place where you can create Reasons and name them.
+Before a return can be made, the user must describe the reason(s) why they wish to return their item(s). This is the place where you can create and name these reasons for your store.
 
 ![Return Autho Reasons](../../../images/user/config/return_autho_reasons.jpg)
 

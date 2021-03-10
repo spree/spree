@@ -10,7 +10,7 @@
           <strong><%= Spree.t(:status) %>:</strong>
         </td>
         <td>
-          <span class="state badge badge-<%= @order.state %>">
+          <span class="state badge badge-<%= @order.state %> text-uppercase">
             <%= Spree.t(@order.state, scope: :order_state) %>
           </span>
         </td>
@@ -71,26 +71,30 @@
       </tr>
 
       <% if @order.completed? %>
-        <tr>
-          <td>
-            <strong><%= Spree.t(:shipment) %>:</strong>
-          </td>
-          <td id='shipment_status'>
-            <span class="state badge badge-<%= @order.shipment_state %>">
-              <%= Spree.t(@order.shipment_state, scope: :shipment_states, default: [:missing, "none"]) %>
-            </span>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <strong><%= Spree.t(:payment) %>:</strong>
-          </td>
-          <td id='payment_status'>
-            <span class="state badge badge-<%= @order.payment_state %>">
-              <%= Spree.t(@order.payment_state, scope: :payment_states, default: [:missing, "none"]) %>
-            </span>
-          </td>
-        </tr>
+        <% if @order.shipment_state.present? %>
+          <tr>
+            <td>
+              <strong><%= Spree.t(:shipment) %>:</strong>
+            </td>
+            <td id='shipment_status'>
+              <span class="state badge badge-<%= @order.shipment_state %> text-uppercase">
+                <%= Spree.t(@order.shipment_state, scope: :shipment_states, default: [:missing, "none"]) %>
+              </span>
+            </td>
+          </tr>
+        <% end %>
+        <% if @order.payment_state.present? %>
+          <tr>
+            <td>
+              <strong><%= Spree.t(:payment) %>:</strong>
+            </td>
+            <td id='payment_status'>
+              <span class="state badge badge-<%= @order.payment_state %> text-uppercase">
+                <%= Spree.t(@order.payment_state, scope: :payment_states, default: [:missing, "none"]) %>
+              </span>
+            </td>
+          </tr>
+        <% end %>
         <tr>
           <td data-hook='admin_order_tab_date_completed_title'>
             <strong><%= Spree.t(:date_completed) %>:</strong>

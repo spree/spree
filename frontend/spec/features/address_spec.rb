@@ -16,7 +16,6 @@ describe 'Address', type: :feature, inaccessible: true do
     @zipcode_label_css = '#b_zipcode_label'
   end
 
-
   context 'store checkout_zone', js: true do
     let!(:store) { create(:store, default: true) }
     let!(:asia_zone) do
@@ -76,7 +75,6 @@ describe 'Address', type: :feature, inaccessible: true do
       end
     end
 
-
     context 'when checkout_zone is set by preference' do
       before do
         store.update(checkout_zone_id: nil)
@@ -123,14 +121,19 @@ describe 'Address', type: :feature, inaccessible: true do
 
       it 'shows the state input field' do
         select canada.name, from: @country_css
-        expect(page).to have_css(@state_select_css, visible: :hidden, class: ['!required'])
-        expect(page).to have_css(@state_name_css, visible: true, class: ['!hidden', 'required'])
-        expect(page).not_to have_css("input#{@state_name_css}[disabled]")
+        expect(page).to have_css(@state_select_css, filter_set: :select, disabled: true, visible: :hidden)
+        expect(page).to have_css(@state_name_css, filter_set: :field, disabled: false, visible: :visible)
+        expect(page).not_to have_css('label.state-select-label')
+      end
+
+      it 'removes state-select-label from label class list' do
+        select canada.name, from: @country_css
+        expect(page).not_to have_css('label.state-select-label')
       end
 
       it 'shows placeholder and label text indicating a required field' do
         select canada.name, from: @country_css
-        find("input[placeholder='#{Spree.t(:state)} #{ Spree.t(:required)}']").set "Ontario"
+        find("input[placeholder='#{Spree.t(:state)} #{Spree.t(:required)}']").set 'Ontario'
         expect(page).to have_css("label#{@state_label_css}", text: Spree.t(:required))
       end
     end
@@ -146,8 +149,13 @@ describe 'Address', type: :feature, inaccessible: true do
 
       it 'shows the state collection selection' do
         select canada.name, from: @country_css
-        expect(page).to have_css(@state_select_css, visible: true, class: ['!hidden', 'required'])
-        expect(page).to have_css(@state_name_css, visible: :hidden, class: ['!required'])
+        expect(page).to have_css(@state_select_css, visible: :visible)
+        expect(page).to have_css(@state_name_css, filter_set: :field, disabled: true, visible: :hidden)
+      end
+
+      it 'adds state-select-label to the lable class list' do
+        select canada.name, from: @country_css
+        expect(page).to have_css('label.state-select-label')
       end
 
       it 'shows the state required indicator in the label' do
@@ -169,8 +177,8 @@ describe 'Address', type: :feature, inaccessible: true do
         select canada.name, from: @country_css
         page.find(@state_name_css).set('Toscana')
         select france.name, from: @country_css
-        expect(page).to have_css(@state_name_css, filter_set: :field, disabled: true, with: '', visible: :hidden, class: ['!hidden', '!required'])
-        expect(page).to have_css(@state_select_css, visible: :hidden, class: ['!required'])
+        expect(page).to have_css(@state_name_css, filter_set: :field, disabled: true, visible: :hidden)
+        expect(page).to have_css(@state_select_css, visible: :hidden)
       end
     end
   end
@@ -191,30 +199,28 @@ describe 'Address', type: :feature, inaccessible: true do
     end
   end
 
-
-
   context 'country that requires zipcode', js: true do
     let!(:canada) { create(:country, name: 'Canada', states_required: true, iso: 'CA', zipcode_required: true) }
     let!(:ug) { create(:country, name: 'Uganda', states_required: false, iso: 'UG', zipcode_required: false) }
 
-    before { Spree::Config[:default_country_id] = canada.id }
-
     before do
+      Spree::Config[:default_country_id] = canada.id
+
       add_to_cart(mug) do
         click_link 'Checkout'
       end
     end
 
     it 'loads the page with the zipcode field showing required in the label and placeholder' do
-      expect(page).to have_css("label#{@zipcode_label_css}", text: Spree.t(:required), visible: false)
-      find("input[placeholder='#{Spree.t(:zipcode)} #{Spree.t(:required)}']").set "98378"
+      expect(page).to have_css("label#{@zipcode_label_css}", text: Spree.t(:required), visible: :hidden)
+      find("input[placeholder='#{Spree.t(:zipcode)} #{Spree.t(:required)}']").set '98378'
       expect(page).to have_css("label#{@zipcode_label_css}", text: Spree.t(:required))
     end
 
     context 'When the country is changed to one that does not require a zip code' do
       it 'the JS removes the required markers in the label and placeholder text' do
         select ug.name, from: @country_css
-        find("input[placeholder='#{Spree.t(:zipcode)}']").set "98378"
+        find("input[placeholder='#{Spree.t(:zipcode)}']").set '98378'
         expect(page).to have_css("label#{@zipcode_label_css}", text: Spree.t(:zipcode).upcase)
       end
     end
@@ -224,24 +230,24 @@ describe 'Address', type: :feature, inaccessible: true do
     let!(:canada) { create(:country, name: 'Canada', states_required: true, iso: 'CA', zipcode_required: true) }
     let!(:ug) { create(:country, name: 'Uganda', states_required: false, iso: 'UG', zipcode_required: false) }
 
-    before { Spree::Config[:default_country_id] = ug.id }
-
     before do
+      Spree::Config[:default_country_id] = ug.id
+
       add_to_cart(mug) do
         click_link 'Checkout'
       end
     end
 
     it 'loads the page without the zipcode field showing required in the label and placeholder' do
-      find("input[placeholder='#{Spree.t(:zipcode)}']").set "98378"
+      find("input[placeholder='#{Spree.t(:zipcode)}']").set '98378'
       expect(page).to have_css("label#{@zipcode_label_css}", text: Spree.t(:zipcode).upcase)
     end
 
     context 'When the country is changed to one that does require a zip code' do
       it 'the JS adds the required markers in the label and placeholder text' do
         select canada.name, from: @country_css
-        expect(page).to have_css("label#{@zipcode_label_css}", text: Spree.t(:required), visible: false)
-        find("input[placeholder='#{Spree.t(:zipcode)} #{Spree.t(:required)}']").set "98378"
+        expect(page).to have_css("label#{@zipcode_label_css}", text: Spree.t(:required), visible: :hidden)
+        find("input[placeholder='#{Spree.t(:zipcode)} #{Spree.t(:required)}']").set '98378'
         expect(page).to have_css("label#{@zipcode_label_css}", text: Spree.t(:required))
       end
     end

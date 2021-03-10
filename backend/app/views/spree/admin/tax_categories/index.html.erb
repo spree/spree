@@ -21,13 +21,13 @@
     <tbody>
       <% @tax_categories.each do |tax_category|
            @edit_url = edit_admin_tax_category_path(tax_category)
-           @delete_url = admin_tax_category_path(tax_category)
-      %>
+           @delete_url = admin_tax_category_path(tax_category) %>
+
         <tr id="<%= spree_dom_id tax_category %>" data-hook="tax_row">
           <td><%= tax_category.name %></td>
           <td><%= tax_category.tax_code %></td>
           <td><%= tax_category.description %></td>
-          <td><%= tax_category.is_default? ? Spree.t(:say_yes) : Spree.t(:say_no) %></td>
+          <td><%= active_badge(tax_category.is_default?) %></td>
           <td class="actions actions-2 text-right">
             <%= link_to_edit(tax_category, no_text: true) if can? :edit, tax_category %>
             <%= link_to_delete(tax_category, no_text: true) if can? :delete, tax_category %>

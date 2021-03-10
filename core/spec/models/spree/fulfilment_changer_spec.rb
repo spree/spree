@@ -166,7 +166,7 @@ describe Spree::FulfilmentChanger do
               new_unit.update!(quantity: 5)
             end
 
-            it 'reduces the backordered items first' do
+            it 'reduces the backordered items first', retry: 3 do
               expect(current_shipment.inventory_units.on_hand.count).to eq(2)
               expect(current_shipment.inventory_units.on_hand.sum(:quantity)).to eq(6)
               expect(current_shipment.inventory_units.backordered.count).to eq(1)

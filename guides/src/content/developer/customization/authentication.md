@@ -1,5 +1,5 @@
 ---
-title: "Custom Authentication"
+title: "Authentication"
 section: customization
 order: 8
 ---
@@ -218,7 +218,7 @@ which will generate and clear the Spree API key respectively.
 ## Login link
 
 <alert kind="warning">
-  This is only applicable for Spree 4.0 and older. Spree 4.1 handles this out of the box.
+  This is only applicable for Spree 4.0 and older. Spree 4.1 and newer releases handle this out of the box.
 </alert>
 
 To make the login link appear on Spree pages, you will need to modify
@@ -237,7 +237,7 @@ You will need to add this code:
     <%%= link_to Spree.t(:login), spree_login_path %>
   </li>
   <li>
-    <%%= link_to Spree.t(:signup), spree_signup_path %>
+    <%%= link_to Spree.t(:sign_up), spree_signup_path %>
   </li>
 <%% end %>
 ```

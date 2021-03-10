@@ -57,8 +57,8 @@
               <%#-------------------------------------------------%>
               <%# Main content                                    %>
               <%#-------------------------------------------------%>
-              <div class="<%= content_for?(:sidebar) ? 'with-sidebar col-12 col-lg-9' : 'col-12'  %>" id="content" data-hook>
-                <%= render partial: 'spree/admin/shared/table_filter' if content_for?(:table_filter)%>
+              <div class="<%= content_for?(:sidebar) ? 'with-sidebar col-12 col-lg-9' : 'col-12' %>" id="content" data-hook>
+                <%= render partial: 'spree/admin/shared/table_filter' if content_for?(:table_filter) %>
                 <%= yield %>
               </div>
 
@@ -87,6 +87,5 @@
     <%# Alerts                                          %>
     <%#-------------------------------------------------%>
     <%= flash_alert(flash) %>
-    
   </body>
 </html>

@@ -7,7 +7,7 @@ describe 'Updating currencies settings', type: :feature, js: true do
   describe 'enabling currency settings' do
     before do
       reset_spree_preferences do |config|
-        config.show_store_currency_selector = false
+        config.show_store_selector = false
       end
     end
 
@@ -15,35 +15,35 @@ describe 'Updating currencies settings', type: :feature, js: true do
       visit spree.edit_admin_general_settings_path
 
       # Test initial state
-      expect(page).to have_unchecked_field('show_store_currency_selector')
+      expect(page).to have_unchecked_field('show_store_selector')
 
       # Interact with the form
-      check('show_store_currency_selector')
+      check('show_store_selector')
       click_button 'Update'
 
       # Test final state
       expect(page).to have_content 'General Settings has been successfully updated!'
-      expect(page).to have_checked_field('show_store_currency_selector')
+      expect(page).to have_checked_field('show_store_selector')
     end
   end
 
   describe 'disabling currency settings' do
     before do
       reset_spree_preferences do |config|
-        config.show_store_currency_selector = true
+        config.show_store_selector = true
       end
     end
 
     it 'allows to disable currency settings' do
       visit spree.edit_admin_general_settings_path
 
-      expect(page).to have_checked_field('show_store_currency_selector')
+      expect(page).to have_checked_field('show_store_selector')
 
-      uncheck('show_store_currency_selector')
+      uncheck('show_store_selector')
       click_button 'Update'
 
       expect(page).to have_content 'General Settings has been successfully updated!'
-      expect(page).to have_unchecked_field('show_store_currency_selector')
+      expect(page).to have_unchecked_field('show_store_selector')
     end
   end
 end

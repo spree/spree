@@ -1,7 +1,6 @@
 ---
 title: 'Extend Product Attributes'
 section: tutorial
-order: 0
 ---
 
 ## Overview

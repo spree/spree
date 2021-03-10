@@ -35,6 +35,11 @@ module Spree
       variants_option_types_presenter(variants, product).default_variant || product.default_variant
     end
 
+    def should_display_compare_at_price?(default_variant)
+      default_variant_price = default_variant.price_in(current_currency)
+      default_variant_price.compare_at_amount.present? && (default_variant_price.compare_at_amount > default_variant_price.amount)
+    end
+
     def used_variants_options(variants, product)
       variants_option_types_presenter(variants, product).options
     end
@@ -115,19 +120,39 @@ module Spree
       ).call.to_json
     end
 
-    def related_products
-      return [] unless @product.respond_to?(:has_related_products?) && @product.has_related_products?(:related_products)
+    def product_relation_types
+      @product_relation_types ||= @product.respond_to?(:relation_types) ? @product.relation_types : []
+    end
 
-      @related_products ||= @product.
-                            related_products.
-                            includes(
-                              :tax_category,
-                              master: [
-                                :prices,
-                                images: { attachment_attachment: :blob },
-                              ]
-                            ).
-                            limit(Spree::Config[:products_per_page])
+    def product_relations_by_type(relation_type)
+      return [] if product_relation_types.none? || !@product.respond_to?(:relations)
+
+      product_ids = @product.relations.where(relation_type: relation_type).pluck(:related_to_id).uniq
+
+      return [] if product_ids.empty?
+
+      Spree::Product.
+        available.not_discontinued.distinct.
+        where(id: product_ids).
+        includes(
+          :tax_category,
+          master: [
+            :prices,
+            { images: { attachment_attachment: :blob } },
+          ]
+        ).
+        limit(Spree::Config[:products_per_page])
+    end
+
+    def related_products
+      ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
+        ProductsHelper#related_products is deprecated and will be removed in Spree 5.0.
+        Please use ProductsHelper#relations from now on.
+      DEPRECATION
+
+      return [] unless @product.respond_to?(:has_related_products?)
+
+      @related_products ||= relations_by_type('related_products')
     end
 
     def product_available_in_currency?

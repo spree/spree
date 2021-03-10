@@ -1,5 +1,5 @@
 ---
-title: "Asset Customization"
+title: "Assets (JS & CSS)"
 section: customization
 order: 1
 ---

@@ -25,4 +25,9 @@ class Spree::Base < ApplicationRecord
   def self.spree_base_scopes
     where(nil)
   end
+
+  # FIXME: https://github.com/rails/rails/issues/40943
+  def self.has_many_inversing
+    false
+  end
 end

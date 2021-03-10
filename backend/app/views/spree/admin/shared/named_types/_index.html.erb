@@ -23,7 +23,7 @@
             <%= named_type.name %>
           </td>
           <td class="align-center">
-            <%= Spree.t(named_type.active? ? :active : :inactive) %>
+            <%= active_badge(named_type.active, label: Spree.t(named_type.active? ? :active : :inactive)) %>
           </td>
           <td class="actions actions-1 text-right">
             <% if named_type.mutable? %>

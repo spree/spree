@@ -3,25 +3,21 @@ module Spree
     module V2
       module Storefront
         module Account
-          class CreditCardsController < ::Spree::Api::V2::BaseController
+          class CreditCardsController < ::Spree::Api::V2::ResourceController
             before_action :require_spree_current_user
-
-            def index
-              render_serialized_payload { serialize_collection(resource) }
-            end
-
-            def show
-              render_serialized_payload { serialize_resource(resource) }
-            end
 
             private
 
-            def resource
-              resource_finder.new.execute(scope: scope, params: params)
+            def model_class
+              Spree::CreditCard
             end
 
             def collection_serializer
               Spree::Api::Dependencies.storefront_credit_card_serializer.constantize
+            end
+
+            def collection_finder
+              Spree::Api::Dependencies.storefront_credit_card_finder.constantize
             end
 
             def resource_serializer
@@ -38,10 +34,6 @@ module Spree
                 include: resource_includes,
                 fields: sparse_fields
               ).serializable_hash
-            end
-
-            def scope
-              spree_current_user.credit_cards.accessible_by(current_ability, :show)
             end
           end
         end

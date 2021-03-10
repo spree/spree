@@ -16,7 +16,7 @@ There are a few concepts you need to understand in order to configure your site 
 
 ## Tax Categories
 
-Tax Categories is Spree's way of grouping products which are taxed in the same way. This is a behind-the-scenes functionality; the customer never sees the category a product is in. They only see the amount they will be charged based on their order's delivery address.
+Tax Categories is Spree's way of grouping products that are taxed in the same way. This is a behind-the-scenes functionality; the customer never sees the category a product is in. They only see the amount they will be charged based on their order's delivery address.
 
 To access your store's existing Tax Categories, go to your Admin Interface and click "Configuration" then "Tax Categories".
 
@@ -36,11 +36,11 @@ To create a new Tax Category, click the "New Tax Category" button.
 
 You supply a name, an optional description, and whether or not this is the default tax category for this store.
 
-Each product in your store will need a tax category assigned to it in order to accurately calculate the tax payable on an order. Any product that does not have a tax category assigned will be put in the default tax category. If there is no default tax category set, the item will be treated as non-taxable.
+Each product in your store will need a tax category assigned to it in order to accurately calculate the tax payable on an order. Any product that does not have a tax category assigned will automatically be assigned the default tax category. If there is no default tax category set, the item will be treated as non-taxable.
 
 ## Zones
 
-In addition to a product's tax category, the zone an order is being shipped to will play a role in determining the tax amount. You can read more about how zones work in the [Zones guide](https://guides.spreecommerce.org/user/shipments/zones.html).
+In addition to a product's tax category, the zone that an order is being shipped to will play a role in determining the tax amount. You can read more about how zones work in the [Zones guide](https://guides.spreecommerce.org/user/shipments/zones.html).
 
 ## Tax Rates
 
@@ -60,7 +60,7 @@ Here, you can see all of your existing tax rates and how they are configured. To
 * **Tax Category** - The [tax category](#tax-categories) that relates to this tax rate.
 * **Included in Price** - Check this box if you have already added the cost of tax into the price of the items.
 * **Show Rate in Label** - When this box is checked, order summaries will include the tax rate, not just the tax amount.
-* **Calculator** - By default, Spree uses the Default Tax calculator (the calculation being the simple tax rate multiplied by item price, with adjustments made for any promotions) to determine tax. If you need something more specific or customised than this, you can work with your development team to make it happen.
+* **Calculator** - By default, Spree uses the Default Tax calculator (the calculation being the simple tax rate multiplied by item price, with adjustments made for any promotions) to determine tax. If you need something more specific or customized than this, you can work with your development team to make it happen.
 
 ## Tax Settings
 

@@ -429,7 +429,8 @@ describe 'Order Details', type: :feature, js: true do
                 click_icon :add
               end
 
-              expect(page).to have_css('[data-hook="add_product_name"]', text: 'Choose a variant')
+              expect(page).to have_content(order.number)
+              expect(page).to have_css('[data-hook="add_product_name"]', text: 'Name or SKU (enter at least first 3 characters of product name)')
 
               within('[data-hook=admin_order_form_fields]') do
                 expect(page).to have_content(tote.name)
@@ -587,7 +588,7 @@ describe 'Order Details', type: :feature, js: true do
         end
       end
 
-      context 'display order summary' do
+      context 'display order summary', js: false do
         before do
           visit spree.cart_admin_order_path(order)
         end

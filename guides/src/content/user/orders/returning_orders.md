@@ -4,7 +4,7 @@ title: Returns
 
 ## Introduction
 
-Returns are a reality of doing business for most e-commerce sites. A customer may find that the item they ordered doesn't fit, or that it doesn't fit their needs. The product may be damaged in shipping. There are many reasons why a customer could choose to return an item they purchased in your store. This guide covers how you, as the site administrator, issue RMAs (Return Merchandise Authorizations) and process returns.
+Returns are a reality of doing business for most e-commerce sites. A customer may find that the item they ordered doesn't fit, or that it doesn't suit their needs. The product may have been damaged in shipping. There are many reasons why a customer might choose to return an item they purchased from your store. This guide covers how you, as the site administrator, issue RMAs (Return Merchandise Authorizations) and process returns.
 
 ## Creating RMAs for Returns
 
@@ -21,7 +21,7 @@ Next, choose if you are returning the customer's money or shipping a replacement
 If reimbursing money, selecting the "Original" reimbursement type will refund a user via their original payment method when the items are returned and approved.
 Selecting an exchange item will create a new shipment of a replacement item for the customer. The form will automatically calculate the RMA value based on the sale price of the item(s), but you will have to confirm the amount when the reimbursement is issued. This gives you a chance to adjust for handling fees, restocking fees, damages, etc.
 
-Input the reason and any memo notes for the return, and select the [Stock Location](/user/configuration/configuring_inventory.html) the item is coming back to. Click the "Create" button.
+Input the reason and any memo notes for the return, and select the [Stock Location](/user/configuration/configuring_inventory.html) that the item is being sent back to. Click the "Create" button.
 
 Now, you just need to wait for the package to be received at your location.
 
@@ -41,7 +41,7 @@ Once you receive a return package, you need to create a "Customer Return". To do
 
 ![Receive RMA Button](../../../images/user/orders/customer_return_link.jpg)
 
-Select which of the authorized return items were received or mark all of them by simply clicking next to the product on the left side checkbox, and to which [Stock Location](/user/products/creating_products.html). You can also set if the item that has been returned by the User is still **Resellable** or not. Once you are done, click the "Create" button.
+Select which of the authorized return items were received or mark all of them by simply clicking the check box on the left-hand side of the product, and the [Stock Location](/user/products/creating_products.html) at which the item was received. You can also select whether the item that has been returned by the User is still **Resellable** or not. Once you are done, click the "Create" button.
 
 ![Receive RMA Button](../../../images/user/orders/customer_return_form.jpg)
 
@@ -49,7 +49,7 @@ The return items are marked as accepted, and now you can create a reimbursement 
 
 ![RMA Received](../../../images/user/orders/create_reimbursement_button.jpg)
 
-The reimbursement form will be populated according to your original reimbursement or exchange selections chosen during the return authorization form.  You may override the selected reimbursement type or exchange item now if you want. If not, click the "Reimburse" button to create the refund.
+The reimbursement form will be populated according to your original reimbursement or exchange selections that were chosen in the return authorization form.  You may now override the selected reimbursement type or exchange item, if required. If not, click the "Reimburse" button to create the refund.
 
 ![Issue a Reimbursement](../../../images/user/orders/reimbursement_form.jpg)
 

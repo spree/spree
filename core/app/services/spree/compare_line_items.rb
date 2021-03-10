@@ -1,9 +1,11 @@
 # This class should be refactored
 module Spree
   class CompareLineItems
-    prepend Spree::ServiceModule:: Base
+    prepend Spree::ServiceModule::Base
 
-    def call(order:, line_item:, options: {}, comparison_hooks: Rails.application.config.spree.line_item_comparison_hooks)
+    def call(order:, line_item:, options: {}, comparison_hooks: nil)
+      comparison_hooks ||= Rails.application.config.spree.line_item_comparison_hooks
+
       legacy_part = comparison_hooks.all? do |hook|
         order.send(hook, line_item, options)
       end
