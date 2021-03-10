@@ -62,7 +62,9 @@ module Spree
                               locale.to_sym
                             end
 
-      return I18n.t('spree.language_name_overide', locale: locale) if I18n.exists?('spree.language_name_overide', locale: locale, fallback: false)
+      if I18n.exists?("spree.language_name_overide.#{locale}", locale: used_default_locale.to_s, fallback: false)
+        return I18n.t("spree.language_name_overide.#{locale}", locale: used_default_locale.to_s)
+      end
 
       lang_name = locale_as_symbol.localize(used_default_locale).as_language_code || falback_locale.localize(used_default_locale).as_language_code
       ("#{lang_name.to_s.capitalize} (#{locale})").strip
