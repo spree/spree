@@ -1,5 +1,7 @@
 module Spree
   module LocaleHelper
+    require 'twitter_cldr'
+
     def all_locales_options(use_active_locale = false)
       supported_locales_for_all_stores.map { |locale| locale_presentation(locale, use_active_locale) }
     end
