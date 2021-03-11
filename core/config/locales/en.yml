@@ -473,6 +473,7 @@ en:
       update: Update
     activate: Activate
     active: Active
+    active_language: true
     add: Add
     add_new_credit_card: Add a new card
     add_action_of_type: Add action of type
@@ -1535,6 +1536,10 @@ en:
     show_only_considered_risky: Only show risky orders
     show_property: Show Property
     show_rate_in_label: Show rate in label
+    show_hide_languages:
+      short: Only show languages marked as active
+      long: Uncheck the checkbox below to display all the available languages in the Store language selection area.
+      more_info: For information on adding and activating new translations, visit the spree documentation by clicking here.
     show_store_selector:
       short: Show Store selector
       long: Display the Store selector in the main nav bar of Storefront and allow users to change Store and Currency
@@ -1657,7 +1662,6 @@ en:
       user_has_no_store_credits: "User does not have any available store credit"
       select_one_store_credit: "Select store credit to go towards remaining balance"
     store_default: Default store
-    store_set_default_button: Set as default
     store_not_set_as_default: Couldn't set store %{store} as a default store
     store_set_as_default: Store %{store} is now a default store
     street_address: Street Address

@@ -96,6 +96,30 @@
               </div>
             </div>
           </div>
+
+          <div class="card mb-3" id="general-settings-stores" data-hook="general_settings_stores">
+            <div class="card-header">
+              <h1 class="card-title mb-0 h5">
+                <%= Spree.t(:language_control) %>
+              </h1>
+            </div>
+            <div class="card-body">
+              <div class="alert alert-warning col-12">
+                <%= Spree.t('show_hide_languages.long') %>
+              </div>
+              <div class="form-group">
+                <div class="checkbox">
+                  <label>
+                    <%= check_box('', :only_show_languages_marked_as_active, { checked: Spree::Config.only_show_languages_marked_as_active }) %>
+                    <%= Spree.t('show_hide_languages.short') %>
+                  </label>
+                </div>
+              </div>
+              <div class="alert alert-info col-12">
+                <%= Spree.t('show_hide_languages.more_info') %>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 

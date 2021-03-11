@@ -19,7 +19,15 @@ module Spree
     def locale_presentation(locale, use_active_locale = false)
       formatted_locale = locale.to_s
 
-      [locale_language_name(formatted_locale, use_active_locale), formatted_locale]
+      if Spree::Config.only_show_languages_marked_as_active
+        if I18n.exists?('spree.active_language', locale: locale, fallback: false)
+          [locale_language_name(formatted_locale, use_active_locale), formatted_locale]
+        else
+          []
+        end
+      else
+        [locale_language_name(formatted_locale, use_active_locale), formatted_locale]
+      end
     end
 
     def should_render_locale_dropdown?

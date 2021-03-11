@@ -1,5 +1,4 @@
-# encoding: UTF-8
-require_relative '../core/lib/spree/core/version.rb'
+require_relative '../core/lib/spree/core/version'
 
 Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
@@ -13,10 +12,10 @@ Gem::Specification.new do |s|
   s.license     = 'BSD-3-Clause'
 
   s.metadata = {
-    "bug_tracker_uri"   => "https://github.com/spree/spree/issues",
-    "changelog_uri"     => "https://github.com/spree/spree/releases/tag/v#{s.version}",
-    "documentation_uri" => "https://guides.spreecommerce.org/",
-    "source_code_uri"   => "https://github.com/spree/spree/tree/v#{s.version}",
+    'bug_tracker_uri' => 'https://github.com/spree/spree/issues',
+    'changelog_uri' => "https://github.com/spree/spree/releases/tag/v#{s.version}",
+    'documentation_uri' => 'https://guides.spreecommerce.org/',
+    'source_code_uri' => "https://github.com/spree/spree/tree/v#{s.version}",
   }
 
   s.required_ruby_version = '>= 2.5.0'
@@ -29,11 +28,11 @@ Gem::Specification.new do |s|
   s.add_dependency 'spree_core', s.version
 
   s.add_dependency 'bootstrap',       '>= 4.3.1', '< 4.7.0'
-  s.add_dependency 'glyphicons',      '~> 1.0.2'
   s.add_dependency 'flatpickr',       '~> 4.6.0'
+  s.add_dependency 'glyphicons',      '~> 1.0.2'
   s.add_dependency 'inline_svg',      '~> 1.5'
   s.add_dependency 'jquery-rails',    '~> 4.3'
   s.add_dependency 'jquery-ui-rails', '~> 6.0.1'
   s.add_dependency 'rails-i18n'
-  s.add_dependency 'select2-rails',   '~> 4.0.0'
+  s.add_dependency 'select2-rails', '~> 4.0.0'
 end

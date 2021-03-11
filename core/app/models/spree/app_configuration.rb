@@ -71,6 +71,9 @@ module Spree
     # Multi store configurations
     preference :show_store_selector, :boolean, default: false
 
+    # Only present languages if they have the key spree.activate_language: true
+    preference :only_show_languages_marked_as_active, :boolean, default: false
+
     # searcher_class allows spree extension writers to provide their own Search class
     def searcher_class
       @searcher_class ||= Spree::Core::Search::Base
