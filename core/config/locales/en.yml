@@ -973,6 +973,7 @@ en:
     limit_usage_to: Limit usage to
     line_item_adjustments: "Line item adjustments"
     list: List
+    language_control: Language Control
     loading: Loading
     loading_tree: Loading tree. Please wait…
     locale_changed: Locale Changed
@@ -1538,8 +1539,8 @@ en:
     show_rate_in_label: Show rate in label
     show_hide_languages:
       short: Only show languages marked as active
-      long: Uncheck the checkbox below to display all the available languages in the Store language selection area.
-      more_info: For information on adding and activating new translations, visit the spree documentation by clicking here.
+      long: Check the checkbox below to only display languages marked as active.
+      more_info: For information on adding, translating and activating new languages, see the Spree documentation by clicking here.
     show_store_selector:
       short: Show Store selector
       long: Display the Store selector in the main nav bar of Storefront and allow users to change Store and Currency
