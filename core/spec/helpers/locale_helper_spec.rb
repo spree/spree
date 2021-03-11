@@ -9,6 +9,7 @@ describe Spree::LocaleHelper, type: :helper do
   before do
     I18n.backend.store_translations(:en,
                                     spree: {
+                                      active_language: true,
                                       language_name_overide: {
                                         it: 'Italiano (IT) - CUSTOM'
                                       }
@@ -61,8 +62,17 @@ describe Spree::LocaleHelper, type: :helper do
     it { expect(supported_locales_options).to contain_exactly(['Deutsch (de)', 'de'], ['Français (fr)', 'fr'], ["Italiano (it)", "it"]) }
   end
 
-  describe '#locale_presentation' do
+  describe '#locale_presentation in show all mode' do
     it { expect(locale_presentation(:fr)).to eq(['Français (fr)', 'fr']) }
+  end
+
+  describe '#locale_presentation set to only show active_language' do
+    before do
+      Spree::Config[:only_show_languages_marked_as_active] = true
+    end
+
+    it { expect(locale_presentation(:fr)).to eq([]) }
+    it { expect(locale_presentation(:en)).to eq(["English (en)", "en"]) }
   end
 
   describe '#should_render_locale_dropdown?' do
