@@ -1,19 +1,22 @@
 ---
-title: Updating Extensions to Rails 6 and Spree 4
-section: advanced
+title: Updating Extensions for Spree 4
+section: contributing
+order: 2
 ---
 
-### Zeitwerk compatibility
+## Overview
 
-Zeitwerk is a new default code autoloader in Rails 6. See https://weblog.rubyonrails.org/2019/2/22/zeitwerk-integration-in-rails-6-beta-2/
+This guide covers the process of migrating an old Spree 2/3 extension to Spree 4.
 
-This doesn't work well with the old approach to decorators (files that name ends with decorator.rb, eg. `app/models/spree/order_decorator.rb`) in Spree using `class_eval` (we should always use `Module.prepend`, [more on this](https://medium.com/@leo_hetsch/ruby-modules-include-vs-prepend-vs-extend-f09837a5b073)).
+## Zeitwerk compatibility
 
-To fix this we need to convert all class_eval decorators to Module.prepend and name them properly according to Zeitwerk rules: https://github.com/fxn/zeitwerk#file-structure
+Zeitwerk is the [new default code autoloader in Rails 6](https://weblog.rubyonrails.org/2019/2/22/zeitwerk-integration-in-rails-6-beta-2/).
 
-Eg.
+This doesn't work well with the old approach to decorators (files that name ends with decorator.rb, eg. `app/models/spree/order_decorator.rb`) using [class_eval](https://www.jimmycuadra.com/posts/metaprogramming-ruby-class-eval-and-instance-eval/).
 
-old decorator
+To fix this we need to convert all `class_eval` decorators to modules and use [Module.prepend](https://medium.com/@leo_hetsch/ruby-modules-include-vs-prepend-vs-extend-f09837a5b073). Also we need to name them properly according to [Zeitwerk naming rules](https://github.com/fxn/zeitwerk#file-structure)
+
+Example of an old decorator:
 
 `app/models/spree/order_decorator.rb`
 ```ruby
@@ -26,7 +29,7 @@ Spree::Order.class_eval do
 end
 ```
 
-new one:
+the same decorator in the new notation:
 
 `app/models/your_extension_name/order_decorator.rb`
 ```ruby
@@ -43,11 +46,11 @@ end
 ::Spree::Order.prepend(YourExtensionName::OrderDecorator)
 ```
 
-###  Travis CI configuration
+## Travis CI configuration
 You can always find up-to-date Travis CI config here: https://github.com/spree/spree/blob/master/cmd/lib/spree_cmd/templates/extension/travis.yml
 For the rationale of the changes please look at the blame view: https://github.com/spree/spree/blame/master/cmd/lib/spree_cmd/templates/extension/travis.yml
 
-### Appraisals config
+## Appraisals config
 You can always find up-to-date Appraisals config here: https://github.com/spree/spree/blob/master/cmd/lib/spree_cmd/templates/extension/Appraisals
 
 For the rationale of the changes please look at the blame view: https://github.com/spree/spree/blame/master/cmd/lib/spree_cmd/templates/extension/Appraisals
@@ -58,7 +61,7 @@ After each change please remember to re-generate gemfiles by running:
 bundle exec appraisal generate --travis
 ```
 
-### Fixing Deface Overrides
+## Fixing Deface Overrides
 Some Extensions still use Deface overrides to add some UI features, mainly in the admin panel. Deface isn't recommended. If you can use other methods.
 Eg. If your extension adds a link to the Admin Panel menu you can do it this way https://guides.spreecommerce.org/developer/customization/view.html#adding-new-links-to-the-admin-panel-menu
 
@@ -69,7 +72,7 @@ Spree 4 uses Bootstrap 4 and many partials and HTML structure changed compared t
 
 Also - **remember to add deface gem to gemspec** as deface itself was removed as a dependency of Spree. eg. https://github.com/spree/spree_auth_devise/commit/d729689ca87d8586e541ffcc865ef1e0a5a79fe4
 
-### Migrate to Spree Dev Tools
+## Migrate to Spree Dev Tools
 Replace all development dependencies with:
 
 ```ruby
@@ -85,10 +88,3 @@ Example migrations:
 * https://github.com/spree/spree_gateway/pull/357
 * https://github.com/spree-contrib/spree-product-assembly/pull/200
 * https://github.com/spree/spree_auth_devise/pull/487
-
-### Fixing deprecations
-Please fix any Rails 6.1 deprecations eg.
-
-```ruby
-DEPRECATION WARNING: update_attributes! is deprecated and will be removed from Rails 6.1 (please, use update! instead)
-```

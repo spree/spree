@@ -1,6 +1,7 @@
 ---
 title: Creating an Extension
-section: tutorial
+section: contributing
+order: 1
 ---
 
 ## Getting Started
