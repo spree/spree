@@ -1,6 +1,6 @@
 ---
-title: "Core Internals"
-section: core
+title: "Spree Internals"
+section: internals
 ---
 
 This section covers all of the most important Spree internals. Nitty-gritty technical descriptions of how Spree works under the hood.

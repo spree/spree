@@ -1,14 +1,18 @@
 ---
-title: Getting Started with Spree
-section: tutorial
+title: Installation
+section: getting_started
 order: 0
 ---
 
 ## Prerequisites
 
-Before starting this tutorial, make sure you have [Docker](https://docs.docker.com/get-docker/) installed on your system. This is fairly straightforward, but differs depending on which operating system you use.
+Before proceeding make sure you have [Docker Desktop](https://docs.docker.com/get-docker/) installed on your system. This is fairly straightforward, but differs depending on which operating system you use.
 
-If you would like to add Spree to your existing Ruby on Rails application, please [follow this guide instead](/developer/tutorials/existing_app_tutorial.html).
+If you would like to add Spree to your existing Ruby on Rails application, please [follow this guide instead](/developer/advanced/existing_app_tutorial.html).
+
+### Windows
+
+Windows users will need to [install Linux subsystem](https://docs.microsoft.com/en-us/windows/wsl/install-win10) to proceed.
 
 ## Installation
 
@@ -16,6 +20,7 @@ If you would like to add Spree to your existing Ruby on Rails application, pleas
 2. Unzip it
 3. Rename `spree_starter-main` directory as you please
 4. Run `bin/setup` in said directory
+5. Wait for the commands to execute (it can take around 2-3 minutes)
 
 ## Hello, Spree Commerce
 
@@ -39,13 +44,3 @@ Upon successful authentication, you should see the admin screen:
 ![Admin Screen](../../../images/developer/overview.png)
 
 Feel free to explore some of the Admin Panel features that Spree has to offer and to verify that your installation is working properly.
-
-## Next steps
-
-If you've followed the steps described in this tutorial, you should now have a fully functional Spree application up and running.
-
-For starting/stopping/restarting application please refer to [Spree Starter README](https://github.com/spree/spree_starter#running-the-project).
-
-We recommend you should also continue to [Customization section](/developer/customization/storefront.html) to learn how to modify and extend your Spree application.
-
-To learn more about Spree internals please refer [Core section](/developer/core/orders.html).

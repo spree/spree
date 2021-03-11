@@ -4,11 +4,6 @@ section: customization
 order: 0
 ---
 
-<alert kind="note">
-  The default Storefront mentioned in this guide is available since [Spree 4.1 release](/release_notes/4_1_0.html). If you're using
-  an older Spree version [please upgrade](/developer/upgrades/four-dot-oh-to-four-dot-one.html).
-</alert>
-
 ## Styling with SASS variables
 
 Spree 4 under the hood uses [Bootstrap 4](https://getbootstrap.com/docs/4.6/getting-started/theming/) for easy theming with some additional Spree-specific [SASS variables](https://sass-lang.com/documentation/variables).

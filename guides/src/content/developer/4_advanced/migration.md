@@ -216,12 +216,12 @@ this if the product does not have option variants.
 
 If you don't have option variants, then you may also need to register
 some stock for the master variant. The exact steps depend on how you
-have configured Spree's [inventory system](/developer/core/inventory.html), but most sites
+have configured Spree's [inventory system](/developer/internals/inventory.html), but most sites
 will just need to assign to *p.on_hand*, eg *p.on_hand = 100*.
 
 #### Shipping category
 
-A product's [shipping category](/developer/core/shipments.html#shipping-categories) field
+A product's [shipping category](/developer/internals/shipments.html#shipping-categories) field
 provides product-specific information for the shipping
 calculators, eg to indicate that a product requires additional insurance
 or can only be surface shipped. If no special conditions are needed, you
@@ -244,7 +244,7 @@ The model wraps a name *and* a description (both strings), and you can
 leave the field as nil if no special treatment is needed.
 
 You can use the *where.first_or_create* technique, though you probably
-want to set up the entire [tax configuration](/developer/core/taxation.html) before you start
+want to set up the entire [tax configuration](/developer/internals/taxation.html) before you start
 loading products.
 
 You can also fill in this information automatically at a *later* date,
@@ -379,7 +379,7 @@ a product's price will need to be copied to all of its variants.
 
 Next, you may also want to register some stock for this variant.
 The exact steps depend on how you have configured Spree's
-[inventory system](/developer/core/inventory.html), but most sites
+[inventory system](/developer/internals/inventory.html), but most sites
 will just need to assign to *v.on_hand*, eg *v.on_hand = 100*.
 
 You now need to set some option types and values, so customers can

@@ -81,7 +81,7 @@ export default class Sidebar extends React.PureComponent {
                       <li key={index}>
                         <SidebarRootLink
                           isSingleRoot={length(this.props.nav) < 2}
-                          title={capitalize(startCase(item.section))}
+                          title={capitalize(startCase(item.section)).replace(/^\d+ /, '')}
                           isOpen={this.sectionIsOpen(item.section)}
                           toggleSection={() =>
                             this._toggleSection(item.section)

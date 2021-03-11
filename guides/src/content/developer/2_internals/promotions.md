@@ -1,6 +1,6 @@
 ---
 title: "Promotions"
-section: core
+section: internals
 order: 5
 ---
 
@@ -41,7 +41,7 @@ When a `CreateAdjustment` action is undertaken, an adjustment is automatically a
 
 Once the adjustment has been applied to the order, its eligibility is re-checked every time the order is saved, by way of the `Promotion#eligible?` method, which uses `Promotion#eligible_rules` to determine if the promotion is still eligible based on its rules. For how this process works, please see the [rules section](#rules) below.
 
-An adjustment to an order from a promotion depends on the calculators. For more information about calculators, please see the [Calculators guide](/developer/core/calculators.html).
+An adjustment to an order from a promotion depends on the calculators. For more information about calculators, please see the [Calculators guide](/developer/internals/calculators.html).
 
 ### Creating an item adjustment
 
@@ -49,7 +49,7 @@ When a `CreateItemAdjustments` action is undertaken, an adjustment is automatica
 
 The eligibility of the item for this promotion is re-checked whenever the item is updated. Its eligibility is based off the rules of the promotion.
 
-An adjustment to an order from a promotion depends on the calculators. For more information about calculators, please see the [Calculators guide](/developer/core/calculators.html).
+An adjustment to an order from a promotion depends on the calculators. For more information about calculators, please see the [Calculators guide](/developer/internals/calculators.html).
 
 ### Free Shipping
 

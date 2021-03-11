@@ -1,6 +1,6 @@
 ---
 title: "Stores"
-section: core
+section: internals
 order: 0
 ---
 
@@ -13,6 +13,7 @@ Each Store operates on a different domain or subdomain, eg.
 * Store B, `eu.example.com`
 * Store C, `another-brand.com`
 
+![Spree Multi-Currency and Multi-Language](../../../images/features/international_978@2x.png)
 ## `current_store` method
 
 All Spree controllers or any other controllers that includes [Spree::Core::ControllerHelpers::Store](https://github.com/spree/spree/blob/master/core/lib/spree/core/controller_helpers/store.rb) have access to the `current_store` method which returns the currently in use `Spree::Store` object. 
@@ -30,9 +31,7 @@ To get the default store in code you can call `Spree::Store.default`.
 
 ## Localization and Currency
 
-<alert kind="note">
-  This section only applies to Spree 4.2 or newer. If you're using an older version, [please upgrade](/developer/upgrades)
-</alert>
+![](../../../images/features/international_dropdown.gif)
 
 Each Store can have different multiple locales and currencies. This configuration is stored in Store model attributes:
 
@@ -43,25 +42,21 @@ Each Store can have different multiple locales and currencies. This configuratio
 
 ## Checkout configuration
 
-<alert kind="note">
-  This section only applies to Spree 4.2 or newer. If you're using an older version, [please upgrade](/developer/upgrades)
-</alert>
-
 Each Store can be configured to ship to only selected countries. This is achieved via `checkout_zone_id` attribute which holds the ID of the selected [Zone record](/user/configuration/configuring_geography.html).
 
-Available Shipping Methods on the Checkout are determined based on the [Zone and Shipping Methods configuration](/developer/core/shipments.html).
+Available Shipping Methods on the Checkout are determined based on the [Zone and Shipping Methods configuration](/developer/internals/shipments.html).
 
-This will also have an effect on what [Shipping / Billing Addresses](/developer/core/addresses.html) user can add / select during Checkout. Only Addresses from Countries or States available in the selected Zone can be used and will be visible in the User's Address Book.
+This will also have an effect on what [Shipping / Billing Addresses](/developer/internals/addresses.html) user can add / select during Checkout. Only Addresses from Countries or States available in the selected Zone can be used and will be visible in the User's Address Book.
 
 ## Associated models
 
 ### Orders
 
-When a user starts a checkout in a selected Store [Order](/developer/core/orders.html) is associated with that Store. That means that items added to the Cart will be visible only in a selected Store. If a user switches to another Store they will have a separate `Order` record for that Store. Order is created when a User adds the first item to the Cart. This means you can host multiple brands on one single Spree instance.
+When a user starts a checkout in a selected Store [Order](/developer/internals/orders.html) is associated with that Store. That means that items added to the Cart will be visible only in a selected Store. If a user switches to another Store they will have a separate `Order` record for that Store. Order is created when a User adds the first item to the Cart. This means you can host multiple brands on one single Spree instance.
 
 ### Payment Methods
 
-Each [Payment Method](/developer/core/payments.html#payment-methods) can be associated with multiple Stores, eg. you would like to have Stripe and PayPal in Store A, but only Stripe in Store B, and Braintree in Store C.
+Each [Payment Method](/developer/internals/payments.html#payment-methods) can be associated with multiple Stores, eg. you would like to have Stripe and PayPal in Store A, but only Stripe in Store B, and Braintree in Store C.
 
 ### Products
 

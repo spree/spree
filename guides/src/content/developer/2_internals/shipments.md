@@ -142,7 +142,7 @@ Shipping methods can now have multiple shipping categories assigned to them. Thi
 
 ### Zones
 
-Zones serve as a mechanism for grouping geographic areas together into a single entity. You can read all about how to configure and use Zones in the [Zones Guide](/developer/core/addresses.html#zones).
+Zones serve as a mechanism for grouping geographic areas together into a single entity. You can read all about how to configure and use Zones in the [Zones Guide](/developer/internals/addresses.html#zones).
 
 The Shipping Address entered during checkout will define the zone the customer is in and limit the Shipping Methods available to him.
 
@@ -178,7 +178,7 @@ Spree ships with 5 default Calculators:
 
 Flexible rate is defined as a flat rate for the first product, plus a different flat rate for each additional product.
 
-You can define your own calculator if you have more complex needs. In that case, check out the [Calculators Guide](/developer/core/calculators.html).
+You can define your own calculator if you have more complex needs. In that case, check out the [Calculators Guide](/developer/internals/calculators.html).
 
 ## UI
 
@@ -208,7 +208,7 @@ There are a few Spree extensions which provide additional shipping methods, incl
 
 ### Writing Your Own
 
-For more detailed information, check out the section on [Calculators](/developer/core/calculators.html).
+For more detailed information, check out the section on [Calculators](/developer/internals/calculators.html).
 
 Your calculator should accept an array of `LineItem` objects and return a cost. It can look at any reachable data, but typically uses the address, the order and the information from variants which are contained in the line_items.
 

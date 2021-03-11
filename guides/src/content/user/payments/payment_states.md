@@ -33,7 +33,7 @@ The details for the payment will appear. The "Payment State" column will display
 
 Authorizing a payment is the process of confirming the availability of funds for a transaction with the purchaser's credit card company. Capturing a payment is the process of telling the credit card company that you would like to get paid for the transaction amount. Typically, this two-step process of first authorizing the payment and then capturing the payment is used by online retailers to delay charging the customer until the product(s) purchased have been fulfilled (shipped).
 
-By default, Spree automatically handles authorizing the payment for a transaction. For capturing payments, we give you the choice of auto-capturing the payment or manually capturing the payment via the Admin Interface. If you like, you can read further [documentation about auto-capturing payments](/developer/core/payments.html#auto-capturing).
+By default, Spree automatically handles authorizing the payment for a transaction. For capturing payments, we give you the choice of auto-capturing the payment or manually capturing the payment via the Admin Interface. If you like, you can read further [documentation about auto-capturing payments](/developer/internals/payments.html#auto-capturing).
 
 Note: Not all payment gateways allow for the two-step *authorize and then capture* payment process. If this functionality is required for your store, please confirm with your payment gateway that they can support this process.
 

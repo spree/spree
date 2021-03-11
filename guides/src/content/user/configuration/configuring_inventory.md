@@ -7,11 +7,11 @@ order: 1
 
 The Spree store gives you a great deal of leverage in managing your business' inventory. You can set up multiple [stock locations](#stock-locations), each of which represents a physical location where you store your products for delivery to customers. As you add new products and make sales, [stock movements](#stock-movements) are recorded. You can receive stock from a supplier, and even move products from one stock location to another by recording [stock transfers](#stock-transfers). All of this helps to keep your inventorying manageable and current.
 
-### Stock Locations
+## Stock Locations
 
 To reach the Stock Locations management panel, go to your Admin Interface, click "Configuration", then click "Stock Locations". Your store should already have at least one default stock location. If you keep all of your inventory in one place, this may be all you need.
 
-#### Creating a New Stock Location
+### Creating a New Stock Location
 
 To add a stock location to your store, click the "New Stock Location" button.
 
@@ -25,7 +25,7 @@ Here, you can input everything of relevance about your stock location: name, add
 
 Input the values for all of the fields, and click "Create" to add your new stock location.
 
-#### Editing a Stock Location
+### Editing a Stock Location
 
 To edit a stock location, click the "Edit" icon next to it in the Stock Locations list.
 
@@ -33,7 +33,7 @@ To edit a stock location, click the "Edit" icon next to it in the Stock Location
 
 Make the desired changes in the form and click "Update".
 
-#### Deleting a Stock Location
+### Deleting a Stock Location
 
 To remove a stock location, click the "Delete" icon next to it in the Stock Locations list.
 
@@ -41,7 +41,7 @@ To remove a stock location, click the "Delete" icon next to it in the Stock Loca
 
 Click "OK" to confirm the deletion.
 
-### Stock Movements
+## Stock Movements
 
 Note the "Stock Movements" link on the Stock Locations list.
 
@@ -51,7 +51,7 @@ Clicking this link will show you all of the stock movements that have taken plac
 
 Stock movements are actions that happen automatically through the normal management and functioning of your store. You do not have to (and in fact, can not) manually manipulate them. This is just a way for you to see which things are moving in and out of a particular stock location.
 
-### Stock Transfers
+## Stock Transfers
 
 If you have more than one stock location, your Spree store offers you a way to record the movement of inventory from one location to another: the stock transfer.
 
@@ -67,9 +67,9 @@ Select a product variant from the "Variant" drop-down list and enter the quantit
 
 ![Stock Transfer Readied](../../../images/user/config/stock_transfer.jpg)
 
-***
+<alert kind="warning">
 If you try to transfer an item that you do not have in stock at your Source location, the Spree system will record a stock transfer with a quantity of 0.
-***
+</alert>
 
 The new stock transfer is readied. Once you have added all of the items you want to transfer, click the "Transfer Stock" button.
 

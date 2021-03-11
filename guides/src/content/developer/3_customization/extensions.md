@@ -36,8 +36,9 @@ Answer **yes** when prompted to run migrations.
 
 ## Finding more Extensions
 
-[Spree Contrib](https://github.com/spree-contrib) GitHub Organization is a collection of officially supported extensions. You can also find others on GitHub. 
+[Go to Extension Directory](/extensions/) to find more. You can also search and browse GitHub there are many smaller, 
+3rd party extensions out there.
 
 ## Creating your own Extension
 
-Please refer [Creating an Extension Tutorial](/developer/tutorials/extensions_tutorial.html)
+Please refer [Creating an Extension Tutorial](/developer/advanced/extensions_tutorial.html)

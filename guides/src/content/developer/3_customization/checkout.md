@@ -43,7 +43,7 @@ def check_registration
 end
 ```
 
-The configuration of the guest checkout option is done via [Preferences](/developer/core/preferences.html). Spree will allow guest checkout by default. Use the `allow_guest_checkout` preference to change the default setting.
+The configuration of the guest checkout option is done via [Preferences](/developer/internals/preferences.html). Spree will allow guest checkout by default. Use the `allow_guest_checkout` preference to change the default setting.
 
 ### Address Information
 
@@ -59,7 +59,7 @@ The address fields include a select box for choosing state/province. The list of
   The state field can be disabled entirely by using the `Spree::Config[:address_requires_state]` preference. You can also allow for an "alternate phone" field by using the `Spree::Config[:alternative_shipping_phone]` and `Spree::Config[:alternative_shipping]` fields.
 </alert>
 
-The list of countries that appear in the country select box can also be configured. Spree will list all countries by default, but you can configure exactly which countries you would like to appear. The list can be limited to a specific set of countries by configuring the `Spree::Config[:checkout_zone]` preference and setting its value to the name of a [Zone](/developer/core/addresses.html#zones) containing the countries you wish to use. Spree assumes that the list of billing and shipping countries will be the same. You can always change this logic via an extension if this does not suit your needs.
+The list of countries that appear in the country select box can also be configured. Spree will list all countries by default, but you can configure exactly which countries you would like to appear. The list can be limited to a specific set of countries by configuring the `Spree::Config[:checkout_zone]` preference and setting its value to the name of a [Zone](/developer/internals/addresses.html#zones) containing the countries you wish to use. Spree assumes that the list of billing and shipping countries will be the same. You can always change this logic via an extension if this does not suit your needs.
 
 ### Delivery Options
 
@@ -81,7 +81,7 @@ If you do not want to use a gateway with payment profiles then you will need to 
   information will be lost before it's time to authorize the card.
 </alert>
 
-For more information about payments, please see the [Payments guide](/developer/core/payments.html).
+For more information about payments, please see the [Payments guide](/developer/internals/payments.html).
 
 ### Confirmation
 

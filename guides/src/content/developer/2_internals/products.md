@@ -1,6 +1,6 @@
 ---
 title: "Products"
-section: core
+section: internals
 order: 2
 ---
 

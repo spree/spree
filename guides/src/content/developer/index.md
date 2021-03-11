@@ -1,9 +1,21 @@
 ---
-title: Spree Developer Documentation
+title: Developer Documentation
 ---
 
-This part of Spree's documentation covers the technical aspects of Spree. If you are working with Rails and are building a Spree store, this is the documentation for you.
+This part of Spree's documentation covers the technical aspects of Spree. If you're building a Spree store, this is the documentation for you.
 
-**The best place to start is the [Getting Started guide](/developer/tutorials/getting_started_tutorial.html).**
+## Where to start?
 
-Otherwise, please see the [user documentation](/user/).
+The best place to start is the [Getting Started guide](/developer/getting_started/installation.html).
+
+## I want to learn how Spree works
+
+This wisdom can be found reading [Internals section](/developer/internals/).
+
+## I want to customize my Spree Store
+
+You will find all the required information in the [Customization section](/developer/customization/storefront.html).
+
+## I want to contribute to Spree
+
+Awesome! Please see [Contributing](developer/contributing/) for details.

@@ -60,7 +60,11 @@ ID = "49ded9cc-27d3-4e02-b186-4fd7fd334ed8"
 # tutorials redirects
 [[redirects]]
   from = "/developer/getting_started_tutorial.html"
-  to = "/developer/tutorials/getting_started_tutorial.html"
+  to = "/developer/getting_started/installation.html"
+
+[[redirects]]
+  from = "/developer/tutorials/getting_started_tutorial.html"
+  to = "/developer/getting_started/installation.html"
 
 [[redirects]]
   from = "/developer/api_customization_tutorial.html"
@@ -68,72 +72,92 @@ ID = "49ded9cc-27d3-4e02-b186-4fd7fd334ed8"
 
 [[redirects]]
   from = "/developer/deface_overrides_tutorial.html"
-  to = "/developer/tutorials/deface_overrides_tutorial.html"
+  to = "/developer/advanced/deface_overrides_tutorial.html"
+
+[[redirects]]
+  from = "/developer/tutorials/deface_overrides_tutorial.html"
+  to = "/developer/advanced/deface_overrides_tutorial.html"
 
 [[redirects]]
   from = "/developer/extensions_tutorial.html"
-  to = "/developer/tutorials/extensions_tutorial.html"
+  to = "/developer/contributing/extensions_tutorial.html"
+
+[[redirects]]
+  from = "/developer/tutorials/extensions_tutorial.html"
+  to = "/developer/contributing/extensions_tutorial.html"
 
 [[redirects]]
   from = "/developer/testing.html"
-  to = "/developer/tutorials/testing.html"
+  to = "/developer/advanced/testing.html"
+
+[[redirects]]
+  from = "/developer/tutorials/testing.html"
+  to = "/developer/advanced/testing.html"
 
 [[redirects]]
   from = "/developer/migration.html"
-  to = "/developer/tutorials/migration.html"
+  to = "/developer/advanced/migration.html"
 
 [[redirects]]
   from = "/developer/seo.html"
-  to = "/developer/tutorials/seo.html"
+  to = "/developer/advanced/seo.html"
+
+[[redirects]]
+  from = "/developer/tutorials/seo.html"
+  to = "/developer/advanced/seo.html"
 
 [[redirects]]
   from = "/developer/security.html"
-  to = "/developer/tutorials/security.html"
+  to = "/developer/security"
+
+[[redirects]]
+  from = "/developer/tutorials/security.html"
+  to = "/developer/security"
 
 # core
 [[redirects]]
   from = "/developer/addresses.html"
-  to = "/developer/core/addresses.html"
+  to = "/developer/internals/addresses.html"
 
 [[redirects]]
   from = "/developer/adjustments.html"
-  to = "/developer/core/adjustments.html"
+  to = "/developer/internals/adjustments.html"
 
 [[redirects]]
   from = "/developer/calculators.html"
-  to = "/developer/core/calculators.html"
+  to = "/developer/internals/calculators.html"
 
 [[redirects]]
   from = "/developer/inventory.html"
-  to = "/developer/core/inventory.html"
+  to = "/developer/internals/inventory.html"
 
 [[redirects]]
   from = "/developer/orders.html"
-  to = "/developer/core/orders.html"
+  to = "/developer/internals/orders.html"
 
 [[redirects]]
   from = "/developer/payments.html"
-  to = "/developer/core/payments.html"
+  to = "/developer/internals/payments.html"
 
 [[redirects]]
   from = "/developer/preferences.html"
-  to = "/developer/core/preferences.html"
+  to = "/developer/internals/preferences.html"
 
 [[redirects]]
   from = "/developer/products.html"
-  to = "/developer/core/products.html"
+  to = "/developer/internals/products.html"
 
 [[redirects]]
   from = "/developer/promotions.html"
-  to = "/developer/core/promotions.html"
+  to = "/developer/internals/promotions.html"
 
 [[redirects]]
   from = "/developer/shipments.html"
-  to = "/developer/core/shipments.html"
+  to = "/developer/internals/shipments.html"
 
 [[redirects]]
   from = "/developer/taxation.html"
-  to = "/developer/core/taxation.html"
+  to = "/developer/internals/taxation.html"
 
 # customization
 
@@ -305,4 +329,12 @@ ID = "49ded9cc-27d3-4e02-b186-4fd7fd334ed8"
 
 [[redirects]]
   from = "/api/overview"
-  to = "https://api.spreecommerce.org"
+  to = "/api/"
+
+# core -> internals redirects
+[[redirects]]
+  from = "/developer/core/"
+  to = "/developer/internals/"
+[[redirects]]
+  from = "/developer/core/*"
+  to = "/developer/internals/:splat"

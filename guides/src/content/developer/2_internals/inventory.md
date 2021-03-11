@@ -1,6 +1,6 @@
 ---
 title: "Inventory"
-section: core
+section: internals
 order: 5
 ---
 

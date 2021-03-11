@@ -1,6 +1,6 @@
 ---
 title: "Payments"
-section: core
+section: internals
 order: 3
 ---
 
@@ -10,7 +10,7 @@ Spree has a highly flexible payments model which allows multiple payment methods
 
 Payment methods typically represent a payment gateway. Gateways will process card payments, and may also include non-gateway methods of payment such as Check, which is provided in Spree by default.
 
-The `Payment` model in Spree tracks payments against [Orders](/developer/core/orders.html). Payments relate to a `source` which indicates how the payment was made, and a `PaymentMethod`, indicating the processor used for this payment.
+The `Payment` model in Spree tracks payments against [Orders](/developer/internals/orders.html). Payments relate to a `source` which indicates how the payment was made, and a `PaymentMethod`, indicating the processor used for this payment.
 
 When a payment is created, it is given a unique, 8-character identifier. This is used when sending the payment details to the payment processor. Without this identifier, some payment gateways mistakenly reported duplicate payments.
 

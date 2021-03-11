@@ -1,6 +1,6 @@
 ---
 title: 'Calculators'
-section: core
+section: internals
 order: 7
 ---
 
@@ -26,7 +26,7 @@ The following are descriptions of the currently available calculators in Spree. 
 
 ### Default Tax
 
-For information about this calculator, please read the [Taxation](/developer/core/taxation.html) guide.
+For information about this calculator, please read the [Taxation](/developer/internals/taxation.html) guide.
 
 ### Flat Percent Per Item Total
 

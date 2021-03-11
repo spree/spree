@@ -35,7 +35,7 @@ All of those views will be added to your `app/views` directory under `spree` fol
 
 ### Switch storefront layout
 
-If you want to leave most of the views intact and you want to only change the layout file you can change it by setting a [preference](/developer/core/preferences.html) in your Spree initializer (`config/initializers/spree.rb`), eg.
+If you want to leave most of the views intact and you want to only change the layout file you can change it by setting a [preference](/developer/internals/preferences.html) in your Spree initializer (`config/initializers/spree.rb`), eg.
 
 ```ruby
 Spree.config do |config|

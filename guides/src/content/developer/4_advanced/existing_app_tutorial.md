@@ -1,6 +1,6 @@
 ---
 title: Add Spree to an existing Ruby on Rails application
-section: tutorial
+section: advanced
 order: 1
 ---
 
@@ -21,7 +21,7 @@ in your project root directory.
     **Rails 6.0 and 6.1**
 
     ```ruby
-    gem 'spree', '~> 4.2.0'
+    gem 'spree', '~> 4.2'
     gem 'spree_auth_devise', '~> 4.3'
     gem 'spree_gateway', '~> 3.9'
     gem 'spree_i18n', '~> 5.0'
@@ -146,4 +146,4 @@ If you've followed the steps described in this tutorial, you should now have a f
 
 We recommend you should continue to [Customization section](/developer/customization/storefront.html) to learn how to modify and extend your Spree application.
 
-To learn more about Spree internals please refer [Core section](/developer/core/orders.html).
+To learn more about Spree internals please refer [Core section](/developer/internals/orders.html).

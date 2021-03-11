@@ -10,11 +10,11 @@ order: 7
 
 ## Introduction
 
-In this tutorial we are going to learn how we can customize the **[REST API](../../api)** provided by Spree, adding a new endpoint (or you can override an existing in core). We will use `spree_simple_sales` extension created in [Extensions tutorial](/developer/tutorials/extensions_tutorial.html). If you haven't seen before, please check them!
+In this tutorial we are going to learn how we can customize the **[REST API](../../api)** provided by Spree, adding a new endpoint (or you can override an existing in core). We will use `spree_simple_sales` extension created in [Extensions tutorial](/developer/advanced/extensions_tutorial.html). If you haven't seen before, please check them!
 
 ## Adding Custom Endpoints
 
-Similarly to adding a controller action of [Extensions tutorial](/developer/tutorials/extensions_tutorial.html), you can create a new controller class with an action that   emits a json response from a [Rabl](https://github.com/nesquena/rabl) view.
+Similarly to adding a controller action of [Extensions tutorial](/developer/advanced/extensions_tutorial.html), you can create a new controller class with an action that   emits a json response from a [Rabl](https://github.com/nesquena/rabl) view.
 
 
 ### Creating the controller and action
@@ -99,7 +99,7 @@ attributes *product_attributes << :sale_price
 
 ### Testing Our endpoint
 
-Like described in [Testing Our Decorator](/developer/tutorials/extensions_tutorial.html#testing-our-decorator) it's always a good idea to test your code, including your api new/changed endpoints. Let's write a integration test that simulate your api of simple unit tests for `sales_controller.rb`
+Like described in [Testing Our Decorator](/developer/advanced/extensions_tutorial.html#testing-our-decorator) it's always a good idea to test your code, including your api new/changed endpoints. Let's write a integration test that simulate your api of simple unit tests for `sales_controller.rb`
 
 #### Creating and running the test
 
@@ -185,5 +185,5 @@ api_key = user.spree_api_key # Copy the api_key value
 Now, when we head to `http://localhost:3000/api/v1/sales`, passing the header `X-Spree-Token: [YOUR_COPIED_API_KEY]`, (or add a `?token=[YOUR_COPIED_API_KEY]`  to the url) into your browser or any REST client, we should see the json result with all products with a sale price.
 
 <alert kind="note">
-  Note that you will likely need to restart our example Spree application (created in the [Getting Started](/developer/tutorials/getting_started_tutorial.html) tutorial).
+  Note that you will likely need to restart our example Spree application (created in the [Getting Started](/developer/getting_started/installation.html) tutorial).
 </alert>
