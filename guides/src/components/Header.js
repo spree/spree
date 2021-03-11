@@ -18,7 +18,6 @@ import IconGithub from 'react-feather/dist/icons/github'
 import IconBurger from 'react-feather/dist/icons/menu'
 import IconClose from 'react-feather/dist/icons/x-circle'
 import IconSearch from 'react-feather/dist/icons/search'
-import IconContact from 'react-feather/dist/icons/message-circle'
 
 /**
  * Component
