@@ -20,7 +20,7 @@ module Spree
       formatted_locale = locale.to_s
 
       if Spree::Config.only_show_languages_marked_as_active
-        if I18n.exists?('spree.active_language', locale: locale, fallback: false)
+        if I18n.t('spree.active_language', locale: locale, fallback: false) == true
           [locale_language_name(formatted_locale, use_active_locale), formatted_locale]
         else
           []
