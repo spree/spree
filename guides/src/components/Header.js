@@ -90,9 +90,7 @@ export default class Header extends React.PureComponent {
             />
             <NavItem url="https://demo.spreecommerce.org/">Demo</NavItem>
 
-            <NavItem url="https://spreecommerce.org/contact/">
-              Contact
-            </NavItem>
+            <NavItem text="Support" url="/support" isActive={this.isActive('support')} />
 
             <NavItem url="http://slack.spreecommerce.org/" title="Join our Slack">
               <IconSlack />
@@ -103,9 +101,6 @@ export default class Header extends React.PureComponent {
           </nav>
 
           <nav className="dn-l justify-end w-100 flex">
-            <NavItem url="https://spreecommerce.org/contact/">
-              <IconContact />
-            </NavItem>
             {this.state.searchIsOpen ? (
               <IconClose
                 className="pointer dib dn-l mv2 mr3 z-999 right-0 absolute pr3 pv2 gray"
@@ -175,6 +170,8 @@ export default class Header extends React.PureComponent {
                   <Sidebar nav={this.props.nav} isMobile />
                 )}
               </NavItem>
+
+              <NavItem text="Support" url="/support" isActive={this.isActive('support')} />
             </nav>
           </div>
         )}
