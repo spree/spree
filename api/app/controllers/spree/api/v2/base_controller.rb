@@ -11,6 +11,9 @@ module Spree
         rescue_from CanCan::AccessDenied, with: :access_denied
         rescue_from Spree::Core::GatewayError, with: :gateway_error
         rescue_from ActionController::ParameterMissing, with: :error_during_processing
+        if defined?(JSONAPI::Serializer::UnsupportedIncludeError)
+          rescue_from JSONAPI::Serializer::UnsupportedIncludeError, with: :error_during_processing
+        end
         rescue_from ArgumentError, with: :error_during_processing
 
         def content_type
