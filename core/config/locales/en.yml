@@ -1138,28 +1138,26 @@ en:
     order_email_resent: Order Email Resent
     order_information: Order Information
     order_line_items: Order Line Items
+    mailers:
+      dear_customer: Dear %{name},
+      thanks: Thank you for your business
+      store_team: '%{store_name} Team'
     order_mailer:
       subtotal: ! 'Subtotal:'
       total: ! 'Order Total:'
-      store_team: '%{store_name} Team'
       cancel_email:
-        dear_customer: Dear %{name},
         instructions: Your order has been CANCELED.  Please retain this cancellation information for your records.
         order_summary_canceled: Order %{number} Summary [CANCELED]
         subject: Cancellation of Order
-        thanks: Thank you for your business.
       confirm_email:
-        dear_customer: Dear %{name},
         instructions: Please review and retain the following order information for your records.
         order_summary: Order %{number} Summary
         subject: Order Confirmation
-        thanks: Thank you for your business.
       store_owner_notification_email:
         heading: New Order Received
         instructions: You have received a new order.
         order_summary: Order %{number} Summary
         subject: '%{store_name} received a new order'
-        thanks: Thank you for your business.
     order_not_found: We couldn't find your order. Please try that action again.
     order_number: Order %{number}
     order_processed_successfully: Your order has been processed successfully
@@ -1423,16 +1421,13 @@ en:
     return_items_cannot_be_associated_with_multiple_orders: Return items cannot be associated with multiple orders.
     reimbursement_mailer:
       reimbursement_email:
-        store_team: '%{store_name} Team'
         days_to_send: ! 'You have %{days} days to send back any items awaiting exchange.'
-        dear_customer: Dear %{name},
         exchange_summary: Exchange Summary
         for: for
         instructions: Your reimbursement has been processed.
         refund_summary: Refund Summary
         subject: Reimbursement Notification
         total_refunded: ! 'Total refunded: %{total}'
-        thanks: Thank you for your business.
     return_number: Return Number
     return_quantity: Return Quantity
     returned: Returned
@@ -1488,13 +1483,10 @@ en:
     shipment_details: "From %{stock_location} via %{shipping_method}"
     shipment_mailer:
       shipped_email:
-        store_team: '%{store_name} Team'
-        dear_customer: Dear %{name},
         instructions: Your order %{number} has been shipped
         shipment_summary: Shipment Summary for order
         shipping_method: "Shipping method: %{shipping_method}"
         subject: Shipment Notification
-        thanks: Thank you for your business.
         track_information: ! 'Tracking Information: %{tracking}'
         track_link: "Tracking Link: %{url}"
     shipment_state: Shipment State

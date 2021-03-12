@@ -1,5 +1,5 @@
 <h1>
-  <%= Spree.t('order_mailer.confirm_email.dear_customer', name: name_for(@order)) %>
+  <%= Spree.t('mailers.dear_customer', name: name_for(@order)) %>
 </h1>
 <p>
   <%= Spree.t('order_mailer.confirm_email.instructions') %>
@@ -17,7 +17,7 @@
   </tr>
 </table>
 <p>
-  <%= Spree.t('order_mailer.confirm_email.thanks') %>
+  <%= Spree.t('mailers.thanks') %>
   <br />
-  <%= Spree.t('order_mailer.store_team', store_name: current_store.name) %>
+  <%= Spree.t('mailers.store_team', store_name: current_store.name) %>
 </p>
