@@ -4,8 +4,7 @@ module Spree
       class AddressSerializer < BaseSerializer
         set_type :address
 
-        attributes :firstname, :lastname, :address1, :address2, :city, :zipcode, :phone, :state_name,
-                   :company, :country_name, :country_iso3, :country_iso, :label
+        attributes(*Spree::Address.serializer_attibutes)
 
         attribute :state_code do |address|
           address.state_abbr

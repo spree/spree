@@ -1,6 +1,6 @@
 <% s_or_b = type.chars.first %>
 <div id="<%= type %>" data-hook="address_fields">
-  <% Spree::Address::ADDRESS_FIELDS.each do |field| %>
+  <% Spree::Config[:address_fields].each do |field| %>
     <% if field == "country" %>
       <%= field_container (s_or_b + '_' + field), nil, class: ["form-group", "#{type}-row"] do %>
         <%= f.label :country_id, Spree.t(:country) %>

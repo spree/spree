@@ -9,6 +9,7 @@ The `Address` model in the `spree` gem is used to track address information, mai
 
 Addresses have the following attributes:
 
+* `label`: unique name for address, eg. Work, Home
 * `firstname`: The first name for the person at this address.
 * `lastname`: The last name for the person at this address.
 * `address1`: The address's first line.

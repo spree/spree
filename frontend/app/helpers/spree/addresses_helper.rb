@@ -1,6 +1,10 @@
 # https://github.com/spree-contrib/spree_address_book/blob/master/app/helpers/spree/addresses_helper.rb
 module Spree
   module AddressesHelper
+    def address_fields
+      Spree::Config[:address_fields]
+    end
+
     def address_field(form, method, address_id = 'b', &handler)
       content_tag :div, id: [address_id, method].join, class: 'form-group checkout-content-inner-field has-float-label' do
         if handler
