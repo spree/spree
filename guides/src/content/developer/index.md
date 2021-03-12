@@ -18,4 +18,4 @@ You will find all the required information in the [Customization section](/devel
 
 ## I want to contribute to Spree
 
-Awesome! Please see [Contributing](developer/contributing/) for details.
+Awesome! Please see [Contributing](/developer/contributing/) for details.

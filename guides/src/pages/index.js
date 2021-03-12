@@ -34,7 +34,7 @@ import Section from 'components/Section'
 
       <p class="tc mb3">
         <strong>First time?</strong> We recommend you read the&nbsp;
-        <a href="/developer/tutorials/getting_started_tutorial.html">Getting Started</a> tutorial
+        <a href="/developer/getting_started/installation.html">Getting Started</a> tutorial
       </p>
 
       <div className="mw8 center">
