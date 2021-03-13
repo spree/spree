@@ -2,8 +2,8 @@ module Spree
   module LocaleHelper
     require 'twitter_cldr'
 
-    def all_locales_options(use_active_locale = false)
-      supported_locales_for_all_stores.map { |locale| locale_presentation(locale, use_active_locale) }
+    def all_locales_options(set_locale = nil)
+      supported_locales_for_all_stores.map { |locale| locale_presentation(locale, set_locale) }
     end
 
     def available_locales_options
@@ -16,17 +16,17 @@ module Spree
       current_store.supported_locales_list.map { |locale| locale_presentation(locale) }
     end
 
-    def locale_presentation(locale, use_active_locale = false)
+    def locale_presentation(locale, set_locale = nil)
       formatted_locale = locale.to_s
 
       if Spree::Config.only_show_languages_marked_as_active
         if I18n.t('spree.active_language', locale: locale, fallback: false) == true
-          [locale_language_name(formatted_locale, use_active_locale), formatted_locale]
+          [locale_language_name(formatted_locale, set_locale), formatted_locale]
         else
           []
         end
       else
-        [locale_language_name(formatted_locale, use_active_locale), formatted_locale]
+        [locale_language_name(formatted_locale, use_locale), formatted_locale]
       end
     end
 
@@ -36,21 +36,26 @@ module Spree
       current_store.supported_locales_list.size > 1
     end
 
-    def locale_language_name(locale, use_active_locale)
+    # Returns a given locale name in its own language, or a set language.
+    #
+    # The first argument passed should be the locale key of the language name you want returning.
+    # The second optional argument allows you to set language you require the locale language names returning in.
+    # Takes a string or symbol value
+    def locale_language_name(locale, set_locale = nil)
       locale_as_symbol = locale.to_sym
       falback_locale = locale.to_s.slice(0..1).to_sym
 
-      used_default_locale = if use_active_locale
-                              I18n.locale.to_sym
-                            else
-                              locale.to_sym
-                            end
+      used_locale = if set_locale
+                      set_locale.to_s
+                    else
+                      locale.to_sym
+                    end
 
-      if I18n.exists?("spree.language_name_overide.#{locale}", locale: used_default_locale.to_s, fallback: false)
-        return I18n.t("spree.language_name_overide.#{locale}", locale: used_default_locale.to_s)
+      if I18n.exists?("spree.language_name_overide.#{locale}", locale: used_locale.to_s, fallback: false)
+        return I18n.t("spree.language_name_overide.#{locale}", locale: used_locale.to_s)
       end
 
-      lang_name = locale_as_symbol.localize(used_default_locale).as_language_code || falback_locale.localize(used_default_locale).as_language_code
+      lang_name = locale_as_symbol.localize(used_locale).as_language_code || falback_locale.localize(used_locale).as_language_code
       "#{lang_name.to_s.capitalize} (#{locale})".strip
     end
   end

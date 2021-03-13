@@ -24,7 +24,7 @@ module Spree
       return unless store
       return store.name if store.default_locale.blank?
 
-      locale_language_name(store.default_locale, false)
+      locale_language_name(store.default_locale)
     end
 
     def should_render_store_chooser?
