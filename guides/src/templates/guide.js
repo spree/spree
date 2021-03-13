@@ -59,11 +59,11 @@ export default function Template({ data }) {
 
   let pageTitle = guide.frontmatter.title
 
-  if (guide.fields.section) {
-    pageTitle += ` | ${capitalize(guide.fields.section.replace(/_/, ' '))}`
+  if (guide.fields.section && guide.fields.section !== guide.fields.rootSection) {
+    pageTitle += ` | ${capitalize(guide.fields.section.replace('_', ' ').replace(/^\d+/, ''))}`
   }
-  if (guide.fields.rootSection) {
-    pageTitle += ` | ${capitalize(guide.fields.rootSection.replace(/_/, ' '))}`
+  if (guide.fields.rootSection && guide.fields.rootSection !== pageTitle) {
+    pageTitle += ` | ${capitalize(guide.fields.rootSection.replace('_', ' '))}`
   }
 
   let pageDescription = guide.frontmatter.description

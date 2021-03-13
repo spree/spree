@@ -97,7 +97,7 @@ You need only enter the "Amount" (positive for a charge on the order; negative f
 
 ![New Adjustment Form](../../../images/user/orders/new_adjustment_form.jpg)
 
-For a better understanding of adjustments, please read the [Developer Adjustments Guide](/developer/core/adjustments.html).
+For a better understanding of adjustments, please read the [Developer Adjustments Guide](/developer/internals/adjustments.html).
 
 Once you have finished all of the changes you want in the order's Adjustments, click "Continue".
 

@@ -13,7 +13,7 @@ const styleToc = css`
   max-height: calc(100% - 120px);
   overflow-y: auto;
   overflow-x: hidden;
-  margin-left: 50rem;
+  margin-left: 51rem;
 `
 
 /**
@@ -34,7 +34,8 @@ const Toc = ({ headings }) => (
 
     <nav>
       {headings.map(heading => {
-        const slug = getSlugHref(heading.value)
+        const title = heading.value.replace(/(<([^>]+)>)/gi, '')
+        const slug = getSlugHref(title)
         const margin = `ml${getMarginDepth(heading.depth)}`
 
         if (heading.depth >= 4) return
@@ -42,10 +43,10 @@ const Toc = ({ headings }) => (
         return (
           <a
             key={slug}
-            className={`db gray hover-spree-green mb1 pointer link ${margin}`}
+            className={`db gray hover-spree-green mb1 pointer link f6 ${margin}`}
             href={slug}
           >
-            <span dangerouslySetInnerHTML={{ __html: heading.value }} />
+            {title}
           </a>
         )
       })}

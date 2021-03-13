@@ -43,7 +43,18 @@ export default class Layout extends React.Component {
             nav={this.props.nav}
           />
 
-          <div className="z-3 relative ph4 items-center mw9 center h-100">
+          <div
+            className={cx(
+              'z-3 relative items-center center h-100',
+              this.props.nav && 'mw9'
+            )}
+            css={{
+              '@media (min-width: 60rem)': {
+                paddingLeft: '2rem',
+                paddingRight: '2rem'
+              }
+            }}
+          >
             {this.props.nav && this.props.activeSection != 'api' && (
               <Sidebar
                 nav={this.props.nav}
