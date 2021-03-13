@@ -60,6 +60,14 @@ describe Spree::LocaleHelper, type: :helper do
     context 'can handle symbol values' do
       it { expect(locale_language_name(:'zh-TW', :en)).to eq('Traditional chinese (zh-TW)') }
     end
+
+    context 'if it does not recognize the requested locale, it uses the fallback' do
+      it { expect(locale_language_name(:'it', 'de-XX')).to eq('Italienisch (it)') }
+    end
+
+    context 'as a last resort, it will try to use the fallback for the language you required' do
+      it { expect(locale_language_name(:'es-US', 'de')).to eq('Spanisch (es-US)') }
+    end
   end
 
   describe '#supported_locales_options' do

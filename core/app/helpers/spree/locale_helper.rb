@@ -48,20 +48,20 @@ module Spree
     #   locale_language_name(:en, :de) #=> 'Englisch (en)'
     #   locale_language_name('xx-XX') #=> '(xx-XX)'
     def locale_language_name(locale, set_locale = nil)
-      locale_as_symbol = locale.to_sym
-      falback_locale = locale.to_s.slice(0..1).to_sym
-
+      last_resort_locale = locale.to_s.slice(0..1).to_sym
+      locale_as_symbol = TwitterCldr.convert_locale(locale).to_sym
       used_locale = if set_locale
-                      set_locale.to_s
+                      TwitterCldr.convert_locale(set_locale).to_sym
                     else
-                      locale.to_sym
+                      locale_as_symbol
                     end
 
       if I18n.exists?("spree.language_name_overide.#{locale}", locale: used_locale.to_s, fallback: false)
         return I18n.t("spree.language_name_overide.#{locale}", locale: used_locale.to_s)
       end
 
-      lang_name = locale_as_symbol.localize(used_locale).as_language_code || falback_locale.localize(used_locale).as_language_code
+      lang_name = locale_as_symbol.localize(used_locale).as_language_code || last_resort_locale.localize(used_locale).as_language_code
+
       "#{lang_name.to_s.capitalize} (#{locale})".strip
     end
   end
