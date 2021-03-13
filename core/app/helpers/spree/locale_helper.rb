@@ -26,7 +26,7 @@ module Spree
           []
         end
       else
-        [locale_language_name(formatted_locale, use_locale), formatted_locale]
+        [locale_language_name(formatted_locale, set_locale), formatted_locale]
       end
     end
 

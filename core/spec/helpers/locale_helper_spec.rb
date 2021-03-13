@@ -16,12 +16,12 @@ describe Spree::LocaleHelper, type: :helper do
                                     })
   end
 
-  describe '#all_locales_options' do
+  describe '#all_locales_options with no set language argument passed returns each in its own language' do
     it { expect(all_locales_options).to contain_exactly(['English (en)', 'en'], ['Deutsch (de)', 'de'], ['Français (fr)', 'fr'], ["Italiano (it)", "it"]) }
   end
 
-  describe '#all_locales_options shown in the active locale' do
-    it { expect(all_locales_options(true)).to contain_exactly(['English (en)', 'en'], ['German (de)', 'de'], ['French (fr)', 'fr'], ["Italiano (IT) - CUSTOM", "it"]) }
+  describe '#all_locales_options with the argument passed to return language names in "en"' do
+    it { expect(all_locales_options('en')).to contain_exactly(['English (en)', 'en'], ['German (de)', 'de'], ['French (fr)', 'fr'], ["Italiano (IT) - CUSTOM", "it"]) }
   end
 
   describe '#available_locales_options including one that can not be named by twitte_cldr' do
@@ -33,26 +33,28 @@ describe Spree::LocaleHelper, type: :helper do
   end
 
   describe '#locale_language_name' do
-    context 'In native mode it returns the local translation' do
-      it { expect(locale_language_name('zh-TW', false)).to eq('繁體中文 (zh-TW)') }
+    context 'with no argumants passed returns the language name in its own language' do
+      it { expect(locale_language_name('zh-TW')).to eq('繁體中文 (zh-TW)') }
     end
 
-    context 'in active locale mode it returns the english name' do
-      it { expect(locale_language_name('zh-TW', true)).to eq('Traditional chinese (zh-TW)') }
+    context 'iwhen passed the argument of "en" it returns the English name' do
+      it { expect(locale_language_name('zh-TW', 'en')).to eq('Traditional chinese (zh-TW)') }
     end
 
     context 'when passed a locale it does not reconise it returns the locale' do
-      it { expect(locale_language_name('xx-XX', true)).to eq('(xx-XX)') }
-    end
-  end
-
-  describe '#locale_language_name when using custom name' do
-    context 'In native mode it returns the local translation' do
-      it { expect(locale_language_name('de', false)).to eq('Deutsch (de)') }
+      it { expect(locale_language_name('xx-XX', :en)).to eq('(xx-XX)') }
     end
 
-    context 'In active language mode with custom translation it return the custom translation' do
-      it { expect(locale_language_name('it', true)).to eq('Italiano (IT) - CUSTOM') }
+    context 'when passed a locale with a custom overide it returns the custom name' do
+      it { expect(locale_language_name('fr', :en)).to eq('French (fr)') }
+    end
+
+    context 'can handle string values' do
+      it { expect(locale_language_name('it', 'en')).to eq('Italiano (IT) - CUSTOM') }
+    end
+
+    context 'can handle symbol values' do
+      it { expect(locale_language_name(:'zh-TW', :en)).to eq('Traditional chinese (zh-TW)') }
     end
   end
 
