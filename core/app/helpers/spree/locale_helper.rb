@@ -36,11 +36,18 @@ module Spree
       current_store.supported_locales_list.size > 1
     end
 
-    # Returns a given locale name in its own language, or a set language.
+    # Returns a locale name in its native language, or a specified language.
     #
-    # The first argument passed should be the locale key of the language name you want returning.
-    # The second optional argument allows you to set language you require the locale language names returning in.
-    # Takes a string or symbol value
+    # The first argument passed is the locale of the language name that you require.
+    # The optional second argument is the language you require the locale name returning in.
+    #
+    # ==== Examples
+    #
+    #   locale_language_name('de') => Deutsch (de)
+    #   locale_language_name('de', 'en' ) => German (de)
+    #   locale_language_name(:it, :de) => Italienisch (it)
+    #   locale_language_name('xx-XX') => (xx-XX)
+    #
     def locale_language_name(locale, set_locale = nil)
       locale_as_symbol = locale.to_sym
       falback_locale = locale.to_s.slice(0..1).to_sym

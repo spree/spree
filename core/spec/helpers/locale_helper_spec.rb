@@ -16,12 +16,12 @@ describe Spree::LocaleHelper, type: :helper do
                                     })
   end
 
-  describe '#all_locales_options with no set language argument passed returns each in its own language' do
-    it { expect(all_locales_options).to contain_exactly(['English (en)', 'en'], ['Deutsch (de)', 'de'], ['Français (fr)', 'fr'], ["Italiano (it)", "it"]) }
+  describe '#all_locales_options with no set language argument passed returns each in its native language' do
+    it { expect(all_locales_options).to contain_exactly(['English (en)', 'en'], ['Deutsch (de)', 'de'], ['Français (fr)', 'fr'], ['Italiano (it)', 'it']) }
   end
 
   describe '#all_locales_options with the argument passed to return language names in "en"' do
-    it { expect(all_locales_options('en')).to contain_exactly(['English (en)', 'en'], ['German (de)', 'de'], ['French (fr)', 'fr'], ["Italiano (IT) - CUSTOM", "it"]) }
+    it { expect(all_locales_options('en')).to contain_exactly(['English (en)', 'en'], ['German (de)', 'de'], ['French (fr)', 'fr'], ['Italiano (IT) - CUSTOM', 'it']) }
   end
 
   describe '#available_locales_options including one that can not be named by twitte_cldr' do
@@ -33,19 +33,23 @@ describe Spree::LocaleHelper, type: :helper do
   end
 
   describe '#locale_language_name' do
-    context 'with no argumants passed returns the language name in its own language' do
+    context 'with no arguments passed, it returns the language name in its native language' do
       it { expect(locale_language_name('zh-TW')).to eq('繁體中文 (zh-TW)') }
     end
 
-    context 'iwhen passed the argument of "en" it returns the English name' do
+    context 'when passed the argument of "en" it returns the English translation of the locale name' do
       it { expect(locale_language_name('zh-TW', 'en')).to eq('Traditional chinese (zh-TW)') }
     end
 
-    context 'when passed a locale it does not reconise it returns the locale' do
+    context 'when passed a locale it does not recognise it returns the locale' do
       it { expect(locale_language_name('xx-XX', :en)).to eq('(xx-XX)') }
     end
 
-    context 'when passed a locale with a custom overide it returns the custom name' do
+    context 'when passed a locale it does not recognise in a requested language it does not recognise' do
+      it { expect(locale_language_name('xx-XX', 'xx-XX')).to eq('(xx-XX)') }
+    end
+
+    context 'when passed a locale with a custom override, it returns the custom name' do
       it { expect(locale_language_name('fr', :en)).to eq('French (fr)') }
     end
 
@@ -61,7 +65,7 @@ describe Spree::LocaleHelper, type: :helper do
   describe '#supported_locales_options' do
     let(:current_store) { eu_store }
 
-    it { expect(supported_locales_options).to contain_exactly(['Deutsch (de)', 'de'], ['Français (fr)', 'fr'], ["Italiano (it)", "it"]) }
+    it { expect(supported_locales_options).to contain_exactly(['Deutsch (de)', 'de'], ['Français (fr)', 'fr'], ['Italiano (it)', 'it']) }
   end
 
   describe '#locale_presentation in show all mode' do
@@ -74,7 +78,7 @@ describe Spree::LocaleHelper, type: :helper do
     end
 
     it { expect(locale_presentation(:fr)).to eq([]) }
-    it { expect(locale_presentation(:en)).to eq(["English (en)", "en"]) }
+    it { expect(locale_presentation(:en)).to eq(['English (en)', 'en']) }
   end
 
   describe '#should_render_locale_dropdown?' do
