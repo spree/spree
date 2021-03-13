@@ -37,17 +37,15 @@ module Spree
     end
 
     # Returns a locale name in its native language, or a specified language.
-    #
     # The first argument passed is the locale of the language name that you require.
     # The optional second argument is the language you require the locale name returning in.
     #
     # ==== Examples
     #
-    #   locale_language_name('de') => 'Deutsch (de)'
-    #   locale_language_name('de', 'en' ) => 'German (de)'
-    #   locale_language_name(:it, :de) => 'Italienisch (it)'
-    #   locale_language_name('xx-XX') => '(xx-XX)' # Returning an unrecognized locale.
-    #
+    #   locale_language_name('de') #=> 'Deutsch (de)'
+    #   locale_language_name('de', 'en' ) #=> 'German (de)'
+    #   locale_language_name(:it, :de) #=> 'Italienisch (it)'
+    #   locale_language_name('xx-XX') #=> '(xx-XX)'
     def locale_language_name(locale, set_locale = nil)
       locale_as_symbol = locale.to_sym
       falback_locale = locale.to_s.slice(0..1).to_sym
