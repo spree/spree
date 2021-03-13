@@ -43,8 +43,9 @@ module Spree
     # ==== Examples
     #
     #   locale_language_name('de') #=> 'Deutsch (de)'
+    #   locale_language_name(:en) #=> 'English (en)'
     #   locale_language_name('de', 'en' ) #=> 'German (de)'
-    #   locale_language_name(:it, :de) #=> 'Italienisch (it)'
+    #   locale_language_name(:en, :de) #=> 'Englisch (en)'
     #   locale_language_name('xx-XX') #=> '(xx-XX)'
     def locale_language_name(locale, set_locale = nil)
       locale_as_symbol = locale.to_sym
