@@ -23,7 +23,7 @@ env:
   - DB=postgres
 
 gemfile:
-  - gemfiles/spree_4_2.gemfile
+  - gemfiles/spree_4.gemfile
   - gemfiles/spree_master.gemfile
 
 jobs:

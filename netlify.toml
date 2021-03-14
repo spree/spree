@@ -338,3 +338,7 @@ ID = "49ded9cc-27d3-4e02-b186-4fd7fd334ed8"
 [[redirects]]
   from = "/developer/core/*"
   to = "/developer/internals/:splat"
+
+[[redirects]]
+  from = "/developer/tutorials/existing_app_tutorial.html"
+  to = "/developer/advanced/existing_app_tutorial.html"
