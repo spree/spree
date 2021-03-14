@@ -72,6 +72,12 @@ export default class ExtensionsPage extends React.Component {
               )
             })}
           </div>
+
+          <p className="tc mt4 pt4">
+            If you're an extension author and we didn't list your extension, please
+            &nbsp;
+            <a href="https://github.com/spree/spree/edit/master/guides/src/data/extensions.json" target="_blank" rel="nofollow" className="fw6 dib link ttu bg-spree-blue pv2 ph3 white br2 lh-copy inline-flex items-center">submit it</a>
+          </p>
         </div>
       </Layout>
     )

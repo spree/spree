@@ -67,6 +67,11 @@
           "name": "Print Invoice",
           "description": "Create a PDF invoice for Spree orders.",
           "url": "https://github.com/spree-contrib/spree_print_invoice"
+        },
+        {
+          "name": "HTML Invoice",
+          "description": "Provides a \"Print Invoice\" button on the Admin Orders view which opens a printable HTML page with the order details",
+          "url": "https://github.com/TruemarkDev/spree-html-invoice"
         }
       ]
     },
@@ -159,13 +164,18 @@
           "url": "https://github.com/spree-contrib/spree_braintree_vzero"
         },
         {
+          "name": "Mollie",
+          "description": "official Mollie payment gateway for Spree Commerce. Accept all major payment methods, including iDEAL, Bancontact, Visa, Mastercard, AmEx, and many more",
+          "url": "https://github.com/mollie/spree-mollie-gateway"
+        },
+        {
           "name": "PayPal Express",
           "description": "A better Spree PayPal Express Extension.",
           "url": "https://github.com/spree-contrib/better_spree_paypal_express"
         },
         {
           "name": "Stripe Terminal",
-          "description": "This gem allows you to process payments with the stripe terminal via the backend of spree.",
+          "description": "Allows you to process payments with the stripe terminal via the backend of spree.",
           "url": "https://github.com/ShopFelixGray/spree_stripe_terminal"
         }
       ]
@@ -177,6 +187,11 @@
           "name": "Digital Products",
           "description": "A Spree extension to enable downloadable products",
           "url": "https://github.com/spree-contrib/spree_digital"
+        },
+        {
+          "name": "Products Q&A",
+          "description": "Q&A Sections for products. Logged in users can ask a question, and then admins are able to answer it. All answered (and accepted) questions are displayed on a product page",
+          "url": "https://github.com/TruemarkDev/spree_products_qa"
         },
         {
           "name": "Videos",
