@@ -36,9 +36,11 @@ module Spree
       current_store.supported_locales_list.size > 1
     end
 
-    # Returns a locale name in its native language, or a specified language.
+    # Returns a locales language name in its native language, or a specified language.
     # The first argument passed is the locale of the language name that you require.
-    # The optional second argument is the language you require the locale name returning in.
+    # The optional second argument is the language you require the language name returning in.
+    # If no second argument is passed, the language name will be returned in its native language.
+    # Arguments should be of the type Symbol or String.
     #
     # ==== Examples
     #
