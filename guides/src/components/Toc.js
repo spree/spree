@@ -13,7 +13,11 @@ const styleToc = css`
   max-height: calc(100% - 120px);
   overflow-y: auto;
   overflow-x: hidden;
-  margin-left: 51rem;
+  right: 3rem;
+  @media screen and (min-width: 96em) {
+    right: auto;
+    margin-left: 51rem;
+  }
 `
 
 /**
