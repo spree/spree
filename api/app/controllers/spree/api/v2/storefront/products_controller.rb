@@ -10,11 +10,11 @@ module Spree
           end
 
           def collection
-            collection_finder.new(scope: scope, params: params, current_currency: current_currency).execute
+            @collection ||= collection_finder.new(scope: scope, params: params, current_currency: current_currency).execute
           end
 
           def resource
-            scope.find_by(slug: params[:id]) || scope.find(params[:id])
+            @resource ||= scope.find_by(slug: params[:id]) || scope.find(params[:id])
           end
 
           def collection_sorter

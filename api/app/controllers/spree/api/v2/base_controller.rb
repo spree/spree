@@ -39,7 +39,7 @@ module Spree
         end
 
         def paginated_collection
-          collection_paginator.new(sorted_collection, params).call
+          @paginated_collection ||= collection_paginator.new(sorted_collection, params).call
         end
 
         def collection_paginator
