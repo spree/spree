@@ -15,7 +15,7 @@ module Spree
         protected
 
         def sorted_collection
-          collection_sorter.new(collection, params, allowed_sort_attributes).call
+          @sorted_collection ||= collection_sorter.new(collection, params, allowed_sort_attributes).call
         end
 
         def allowed_sort_attributes
