@@ -26,7 +26,7 @@ module Spree
 
         def update
           authorize! :update, @order, order_token
-          byebug
+          
           if @order.update_from_params(params, permitted_checkout_attributes, request.headers.env)
             if current_api_user.has_spree_role?('admin') && user_id.present?
               @order.associate_user!(Spree.user_class.find(user_id))
