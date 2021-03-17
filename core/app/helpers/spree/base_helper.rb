@@ -87,7 +87,7 @@ module Spree
 
     def create_product_image_tag(image, product, options, style)
       options[:alt] = image.alt.blank? ? product.name : image.alt
-      if image.url(style) == 'noimage/small.png'
+      if image.url(style).include? 'noimage'
         image_tag "/noimage/small.png", options
       else
         image_tag main_app.url_for(image.url(style)), options
