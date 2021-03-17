@@ -1,7 +1,7 @@
 require 'rails/all'
 require 'sprockets/rails'
 
-require 'bootstrap'
+require 'bootstrap-sass'
 require 'glyphicons'
 require 'popper_js'
 require 'canonical-rails'

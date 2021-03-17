@@ -2,7 +2,7 @@ require 'rails/all'
 require 'jquery-rails'
 require 'jquery-ui-rails'
 require 'select2-rails'
-require 'bootstrap'
+require 'bootstrap-sass'
 require 'glyphicons'
 require 'popper_js'
 
