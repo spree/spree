@@ -1,4 +1,6 @@
-![Spree Commerce](guides/src/images/features/spree_header@2x.png)
+<a href="https://spreecommerce.org">
+   <img src="https://raw.githubusercontent.com/spree/spree/master/guides/src/images/features/spree_header%402x.png" alt="Spree Commerce - complete open source e-commerce solution built with Ruby on Rails. PWA, Global Commerce, Headless Commerce" />
+</a>
 
 # Spree Commerce
 
