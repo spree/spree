@@ -32,7 +32,7 @@ module Spree
 
           def update
             spree_authorize! :update, spree_current_order, order_token
-
+            
             result = update_service.call(
               order: spree_current_order,
               params: params,
