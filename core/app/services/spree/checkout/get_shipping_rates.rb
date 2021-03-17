@@ -10,7 +10,7 @@ module Spree
         run :generate_or_return_shipping_rates
       end
 
-      private
+      protected
 
       # we need to reload order to fetch the most up-to-date version of it
       def reload_order(order:)

@@ -20,7 +20,7 @@ module Spree
         success(order)
       end
 
-      private
+      protected
 
       def filter_order_items(order, params)
         return params if params[:line_items_attributes].nil? || params[:line_items_attributes][:id]

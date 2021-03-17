@@ -6,11 +6,11 @@ module Spree
       def call(order:, variant:, quantity: nil, options: {})
         ApplicationRecord.transaction do
           run :add_to_line_item
-          run Spree::Dependencies.cart_recalculate_service.constantize
+          run :recalculate_service
         end
       end
 
-      private
+      protected
 
       def add_to_line_item(order:, variant:, quantity: nil, options: {})
         options ||= {}
@@ -39,6 +39,10 @@ module Spree
 
         ::Spree::TaxRate.adjust(order, [line_item]) if line_item_created
         success(order: order, line_item: line_item, line_item_created: line_item_created, options: options)
+      end
+
+      def recalculate_service
+        Spree::Dependencies.cart_recalculate_service.constantize
       end
     end
   end

@@ -17,7 +17,7 @@ module Spree
         @order.reload.payments.store_credits.valid.any? ? success(@order) : failure(@order)
       end
 
-      private
+      protected
 
       def apply_store_credits(remaining_total)
         payment_method = Spree::PaymentMethod::StoreCredit.available.first

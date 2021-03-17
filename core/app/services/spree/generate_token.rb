@@ -7,7 +7,7 @@ module Spree
       end
     end
 
-    private
+    protected
 
     def random_token
       SecureRandom.urlsafe_base64(nil, false)

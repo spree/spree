@@ -18,7 +18,7 @@ module Spree
         success(shipping_rates)
       end
 
-      private
+      protected
 
       def country_id(country_iso)
         if country_iso.present?
