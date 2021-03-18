@@ -10,23 +10,23 @@ module Spree
       [localized_country_name(country.iso, requested_locale), country.id]
     end
 
-    # Localizes the county names to the requested language
+    # Localizes the county names to the requested language.
     #
     # Example:
     #
     #   localized_country_name('GB', 'de') # => Vereinigtes Konigreich
     #   localized_country_name('GB', 'en') # => England
     def localized_country_name(country_iso, locale)
-      # TODO: Write checks and fallbacks think if there would be a default best case
       country_iso_formatted = country_iso.to_s.downcase.to_sym
       locale_formatted = locale.to_s.downcase.to_sym
 
-      # TODO: Fix the fallback
-      if country_iso_formatted.localize(locale_formatted).as_territory
-        country_iso_formatted.localize(locale_formatted).as_territory
-      else
-        country_iso
+      # Allows a user to override the Country name on a per Country, per Language basis.
+      if I18n.exists?("spree.country_name_overide.#{country_iso_formatted}", locale: locale_formatted.to_s, fallback: false)
+        return I18n.t("spree.country_name_overide.#{country_iso_formatted}", locale: locale_formatted.to_s)
       end
+
+      # Falls back to pulling the country name from the DB.
+      country_iso_formatted.localize(locale_formatted).as_territory || Spree::Country.find_by(iso: country_iso)
     end
   end
 end
