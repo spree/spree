@@ -20,7 +20,7 @@ module Spree
 
       def bill_address_id=(id)
         address = Spree::Address.find_by(id: id)
-        if address && address.user_id == user_id
+        if address
           self['bill_address_id'] = address.id
           user.update_attribute(:bill_address_id, address.id)
           bill_address.reload
