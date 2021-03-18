@@ -7,7 +7,7 @@ module Spree
       countries = current_store.countries_available_for_checkout
 
       countries.collect do |country|
-        country.name = localized_country_name(country.iso, current_locale)
+        country.name = localized_country_name(country.iso)
 
         country
       end.sort_by { |c| c.name.parameterize }
