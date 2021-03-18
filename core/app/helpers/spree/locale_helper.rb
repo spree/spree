@@ -81,7 +81,7 @@ module Spree
     #
     # Example:
     #
-    #   localized_country_name('GB', 'de') # => Vereinigtes Königreich
+    #   localized_country_name('GB', 'de') # => Vereinigtes Konigreich
     #   localized_country_name('GB', 'en') # => England
     def localized_country_name(country_iso, locale)
       # TODO: Write checks and fallbacks think if there would be a default best case
