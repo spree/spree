@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe 'Address', type: :feature, inaccessible: true do
   stub_authorization!
-  let!(:country) { create(:country, name: 'United States', iso: 'US') }
+
   let!(:mug) { create(:product, name: 'RoR Mug') }
 
   before do

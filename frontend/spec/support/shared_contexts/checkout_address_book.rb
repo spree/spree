@@ -1,4 +1,8 @@
 shared_context 'checkout address book' do
+  let!(:country) { create(:country, name: 'United States', iso: 'US') }
+  let!(:countr_1) { create(:country, name: 'United Kingdom', iso: 'GB') }
+  let!(:countr_2) { create(:country, name: 'France', iso: 'FR') }
+
   before do
     @store = Spree::Store.current || create(:store)
     @state = Spree::State.all.first || create(:state)
