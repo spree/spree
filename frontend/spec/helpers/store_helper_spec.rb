@@ -15,7 +15,7 @@ module Spree
     describe '#store_country_iso' do
       let(:store_with_default_country) { build(:store, default_country: germany) }
 
-      it { expect(store_country_iso(eu_store)).to eq('gr') }
+      it { expect(store_country_iso(eu_store)).to eq('de') }
       it { expect(store_country_iso(Spree::Store.default)).to be_nil }
       it { expect { store_country_iso(nil) }.not_to raise_error }
     end
