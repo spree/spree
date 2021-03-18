@@ -1,6 +1,7 @@
 module Spree
   module BaseHelper
     include Spree::LocaleHelper
+    include Spree::CountryHelper
 
     def available_countries
       countries = current_store.countries_available_for_checkout

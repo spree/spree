@@ -2,7 +2,7 @@ require 'spec_helper'
 
 module Spree
   describe StoreHelper, type: :helper do
-    let(:germany) { build(:country, name: 'Germany', iso: 'GR') }
+    let(:germany) { build(:country, name: 'Germany', iso: 'DE') }
     let(:eu_store) { build(:store, url: 'eu.spreecommerce.org', default_currency: 'EUR', default_locale: 'de', default_country: germany) }
 
     describe '#stores' do

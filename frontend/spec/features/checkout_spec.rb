@@ -3,7 +3,7 @@ require 'spec_helper'
 describe 'Checkout', type: :feature, inaccessible: true, js: true do
   include_context 'checkout setup'
 
-  let(:country) { create(:country, name: 'United States of America', iso_name: 'UNITED STATES') }
+  let(:country) { create(:country, name: 'United States', iso_name: 'UNITED STATES', iso: 'US') }
   let(:state) { create(:state, name: 'Alabama', abbr: 'AL', country: country) }
   let(:store) { Spree::Store.default }
 
@@ -44,14 +44,14 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
 
     context 'store checkout_zone' do
       let!(:north_america_zone) do
-        usa = Spree::Country.find_by(name: 'United States of America')
+        usa = Spree::Country.find_by(name: 'United States')
         create(:zone, name: 'North America', kind: 'country', default_tax: true).tap do |zone|
           zone.members << create(:zone_member, zoneable: usa)
         end
       end
 
       let!(:eu_vat_zone) do
-        denmark = create(:country, name: 'Denmark')
+        denmark = create(:country, name: 'Denmark', iso: 'DK')
         create(:zone, name: 'EU_VAT', kind: 'country', default_tax: true).tap do |zone|
           zone.members << create(:zone_member, zoneable: denmark)
         end
@@ -66,7 +66,7 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
         end
 
         it 'address form contain selected zone' do
-          expect(page.find('#order_bill_address_attributes_country_id').text).to eq 'United States of America'
+          expect(page.find('#order_bill_address_attributes_country_id').text).to eq 'United States'
         end
       end
 
@@ -610,7 +610,7 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
       let!(:default_tax_category) { create(:tax_category, name: 'Default', is_default: true) }
 
       before do
-        usa = Spree::Country.find_by(name: 'United States of America')
+        usa = Spree::Country.find_by(name: 'United States')
         north_america_zone = create(:zone,
                                     name: 'North America',
                                     kind: 'country',
