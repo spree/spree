@@ -11,11 +11,10 @@ describe Spree::BaseHelper, type: :helper do
   end
 
   context 'available_countries' do
-    let(:country) { create(:country) }
-
-    before do
-      create_list(:country, 3)
-    end
+    let(:country) { create(:country, name: 'United States', iso: 'US') }
+    let(:country_1) { create(:country, name: 'Germany', iso: 'DE') }
+    let(:country_2) { create(:country, name: 'England', iso: 'GB') }
+    let(:country_3) { create(:country, name: 'France', iso: 'FR') }
 
     context 'with checkout zone assigned to the store' do
       before do
