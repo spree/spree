@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe 'Address', type: :feature, inaccessible: true do
   stub_authorization!
-
+  let!(:country) { create(:country, name: 'United States', iso: 'US') }
   let!(:mug) { create(:product, name: 'RoR Mug') }
 
   before do
@@ -19,14 +19,14 @@ describe 'Address', type: :feature, inaccessible: true do
   context 'store checkout_zone', js: true do
     let!(:store) { create(:store, default: true) }
     let!(:asia_zone) do
-      hk = create(:country, name: 'Hong Kong', iso_name: 'HK')
+      hk = create(:country, name: 'Hong Kong SAR China', iso_name: 'HONG KONG', iso: 'HK')
       create(:zone, name: 'Asia', kind: 'country', default_tax: true).tap do |zone|
         zone.members << create(:zone_member, zoneable: hk)
       end
     end
 
     let!(:eu_vat_zone) do
-      denmark = create(:country, name: 'Denmark', iso_name: 'DNK')
+      denmark = create(:country, name: 'Denmark', iso_name: 'DENMARK', iso: 'DK')
       create(:zone, name: 'EU_VAT', kind: 'country', default_tax: true).tap do |zone|
         zone.members << create(:zone_member, zoneable: denmark)
       end
@@ -42,7 +42,7 @@ describe 'Address', type: :feature, inaccessible: true do
       end
 
       it 'address form contain selected zone' do
-        expect(page.find('#order_bill_address_attributes_country_id').text).to eq 'Hong Kong'
+        expect(page.find('#order_bill_address_attributes_country_id').text).to eq 'Hong Kong SAR China'
       end
     end
 
@@ -56,7 +56,7 @@ describe 'Address', type: :feature, inaccessible: true do
           it 'address form contain selected zone' do
             visit spree.new_address_path
 
-            expect(page.find('#address_country_id').text).to eq 'Hong Kong'
+            expect(page.find('#address_country_id').text).to eq 'Hong Kong SAR China'
           end
         end
 
@@ -108,7 +108,7 @@ describe 'Address', type: :feature, inaccessible: true do
 
   context 'country requires state', js: true do
     let!(:canada) { create(:country, name: 'Canada', states_required: true, iso: 'CA', zipcode_required: true) }
-    let!(:uk) { create(:country, name: 'United Kingdom', states_required: false, iso: 'UK', zipcode_required: true) }
+    let!(:uk) { create(:country, name: 'United Kingdom', states_required: false, iso: 'GB', zipcode_required: true) }
 
     before { Spree::Config[:default_country_id] = uk.id }
 
@@ -165,7 +165,7 @@ describe 'Address', type: :feature, inaccessible: true do
     end
 
     context 'user changes to country without states required' do
-      let!(:france) { create(:country, name: 'France', states_required: false, iso: 'FRA') }
+      let!(:france) { create(:country, name: 'France', states_required: false, iso: 'FR') }
 
       before do
         add_to_cart(mug) do
@@ -184,7 +184,7 @@ describe 'Address', type: :feature, inaccessible: true do
   end
 
   context 'country does not require state', js: true do
-    let!(:france) { create(:country, name: 'France', states_required: false, iso: 'FRA') }
+    let!(:france) { create(:country, name: 'France', states_required: false, iso: 'FR') }
 
     before do
       add_to_cart(mug) do
