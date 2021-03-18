@@ -4,6 +4,7 @@ describe Spree::BaseHelper, type: :helper do
   include described_class
 
   let(:current_store) { create :store }
+  let(:current_locale) { I18n.locale }
 
   before do
     allow(controller).to receive(:controller_name).and_return('test')
