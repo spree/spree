@@ -21,7 +21,12 @@ module Spree
       country_iso_formatted = country_iso.to_s.downcase.to_sym
       locale_formatted = locale.to_s.downcase.to_sym
 
-      country_iso_formatted.localize(locale_formatted).as_territory
+      # TODO: Fix the fallback
+      if country_iso_formatted.localize(locale_formatted).as_territory
+        country_iso_formatted.localize(locale_formatted).as_territory
+      else
+        country_iso
+      end
     end
   end
 end
