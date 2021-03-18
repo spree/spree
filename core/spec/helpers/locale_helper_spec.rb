@@ -32,41 +32,41 @@ describe Spree::LocaleHelper, type: :helper do
     it { expect(available_locales_options).to contain_exactly(['English (en)', 'en'], ['Deutsch (de)', 'de'], ['(xx-XX)', 'xx-XX']) }
   end
 
-  describe '#locale_language_name' do
+  describe '#localized_language_name' do
     context 'passing in "zh-TW" with no other arguments passed, it returns the language name in its native language' do
-      it { expect(locale_language_name('zh-TW')).to eq('繁體中文 (zh-TW)') }
+      it { expect(localized_language_name('zh-TW')).to eq('繁體中文 (zh-TW)') }
     end
 
     context 'when passed "zh-TW" the argument of "en" it returns the English translation of the locale name' do
-      it { expect(locale_language_name('zh-TW', 'en')).to eq('Traditional chinese (zh-TW)') }
+      it { expect(localized_language_name('zh-TW', 'en')).to eq('Traditional chinese (zh-TW)') }
     end
 
     context 'when passed "xx-XX" a locale it does not recognise it returns the same locale' do
-      it { expect(locale_language_name('xx-XX', :en)).to eq('(xx-XX)') }
+      it { expect(localized_language_name('xx-XX', :en)).to eq('(xx-XX)') }
     end
 
     context 'when passed "xx-XX" a locale it does not recognise in a requested language it does not recognise "xx-XX it returns the locale"' do
-      it { expect(locale_language_name('xx-XX', 'xx-XX')).to eq('(xx-XX)') }
+      it { expect(localized_language_name('xx-XX', 'xx-XX')).to eq('(xx-XX)') }
     end
 
     context 'when passed "it" requested in "en" a locale that has a custom locale it returns the locale name set in en.yml' do
-      it { expect(locale_language_name('it', 'en')).to eq('Italiano (IT) - CUSTOM') }
+      it { expect(localized_language_name('it', 'en')).to eq('Italiano (IT) - CUSTOM') }
     end
 
     context 'can handle string values' do
-      it { expect(locale_language_name('fr', 'fr')).to eq('Français (fr)') }
+      it { expect(localized_language_name('fr', 'fr')).to eq('Français (fr)') }
     end
 
     context 'can handle symbol values' do
-      it { expect(locale_language_name(:'zh-TW', :en)).to eq('Traditional chinese (zh-TW)') }
+      it { expect(localized_language_name(:'zh-TW', :en)).to eq('Traditional chinese (zh-TW)') }
     end
 
     context 'if it does not recognize "it" in the the requested language of "de-XX", it uses the fallback "de"' do
-      it { expect(locale_language_name(:'it', 'de-XX')).to eq('Italienisch (it)') }
+      it { expect(localized_language_name(:'it', 'de-XX')).to eq('Italienisch (it)') }
     end
 
     context 'if you request "es-XX" a language it does not know how to name, as a last resort, it will use the fallback "es" for the language you required' do
-      it { expect(locale_language_name(:'es-XX', 'de')).to eq('Spanisch (es-XX)') }
+      it { expect(localized_language_name(:'es-XX', 'de')).to eq('Spanisch (es-XX)') }
     end
   end
 
