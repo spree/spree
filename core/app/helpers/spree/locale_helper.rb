@@ -69,6 +69,14 @@ module Spree
       "#{lang_name.to_s.capitalize} (#{locale})".strip
     end
 
+    def all_country_options(countries, requested_locale)
+      countries.map { |country| country_presentation(country, requested_locale) }
+    end
+
+    def country_presentation(country, requested_locale)
+      [localized_country_name(country.iso, requested_locale), country.id]
+    end
+
     # Localizes the county names to the requested language
     #
     # Example:
