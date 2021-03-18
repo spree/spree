@@ -1,10 +1,13 @@
 module Spree
   module BaseHelper
+    include Spree::LocaleHelper
+
     def available_countries
       countries = current_store.countries_available_for_checkout
 
       countries.collect do |country|
-        country.name = Spree.t(country.iso, scope: 'country_names', default: country.name)
+        country.name = localized_country_name(country.iso, current_locale)
+
         country
       end.sort_by { |c| c.name.parameterize }
     end
