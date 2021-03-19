@@ -8,7 +8,7 @@ Spree.ready = function (callback) {
 }
 
 Spree.mountedAt = function () {
-    return window.SpreePaths.mounted_at
+  return window.SpreePaths.mounted_at
 }
 
 Spree.adminPath = function () {
