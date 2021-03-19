@@ -19,6 +19,7 @@
     <tbody>
       <% @countries.each do |country| %>
         <tr id="<%= spree_dom_id country %>" data-hook="country_row">
+          <!-- Do not localize the country names here, show what is saved in the DB -->
           <td><%= country.name %></td>
           <td class="text-center"><%= country.iso3 %></td>
           <td class="text-center"><%= active_badge(country.states_required?) %></td>
