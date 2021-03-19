@@ -32,10 +32,9 @@ Spree.localizedPathFor = function(path) {
     if (pathName.match(/api\/v/)) {
       params.set('locale', SPREE_LOCALE)
     } else {
-      pathName = SPREE_LOCALE + '/' + pathName
+      pathName = SPREE_LOCALE + '/' + path
     }
-
-    path = pathName + '?' + params.toString()
+    return fullUrl.origin + (this.mountedAt()) + pathName + '?' + params.toString()
   }
   return Spree.pathFor(path)
 }
