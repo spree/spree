@@ -2,12 +2,12 @@ module Spree
   module CountryHelper
     require 'twitter_cldr'
 
-    def all_country_options(countries, requested_locale)
-      countries.map { |country| country_presentation(country, requested_locale) }
+    def all_country_options(countries)
+      countries.map { |country| country_presentation(country) }
     end
 
-    def country_presentation(country, requested_locale)
-      [localized_country_name(country.iso, requested_locale), country.id]
+    def country_presentation(country)
+      [localized_country_name(country.iso), country.id]
     end
 
     # Localizes the county names to the current_locale.
