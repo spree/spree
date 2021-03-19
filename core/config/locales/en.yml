@@ -533,6 +533,7 @@ en:
     adjustment_total: Adjustment Total
     adjustments: Adjustments
     admin:
+      country_name_info: The country name is only if no locale translation is available.
       tab:
         configuration: Configuration
         option_types: Option Types

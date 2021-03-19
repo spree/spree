@@ -19,7 +19,7 @@
     <tbody>
       <% @countries.each do |country| %>
         <tr id="<%= spree_dom_id country %>" data-hook="country_row">
-          <td><%= localized_country_name(country.iso) %></td>
+          <td><%= country.name %></td>
           <td class="text-center"><%= country.iso3 %></td>
           <td class="text-center"><%= active_badge(country.states_required?) %></td>
           <td class="text-center"><%= active_badge(country.zipcode_required?) %></td>
