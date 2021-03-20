@@ -23,18 +23,18 @@ describe Spree::CountryHelper, type: :helper do
                                     })
   end
 
-  describe '#all_country_options_localized' do
-    it { expect(all_country_options_localized).to contain_exactly(["France", 2], ["Germany", 1], ["Italy", 3], ["RUSSSIA - RU", 4], ["United Kingdom", 5]) }
+  describe '#all_country_options' do
+    it { expect(all_country_options).to contain_exactly(["France", france.id], ["Germany", germany.id], ["Italy", italy.id], ["RUSSSIA - RU", russia.id], ["United Kingdom", uk.id]) }
   end
 
   describe '#country_presentation in English returns' do
-    it { expect(country_presentation(france)).to eq(['France', 2]) }
+    it { expect(country_presentation(france)).to eq(['France', france.id]) }
   end
 
   describe '#country_presentation in German' do
     let(:current_locale) { :de }
 
-    it { expect(country_presentation(france)).to eq(['Frankreich', 2]) }
+    it { expect(country_presentation(france)).to eq(['Frankreich', france.id]) }
   end
 
   describe '#localized_country_name in English' do
