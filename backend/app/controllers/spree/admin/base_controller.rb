@@ -4,6 +4,7 @@ module Spree
       helper 'spree/admin/navigation'
       helper 'spree/locale'
       helper 'spree/currency'
+      helper 'spree/country'
       layout 'spree/layouts/admin'
 
       before_action :authorize_admin
