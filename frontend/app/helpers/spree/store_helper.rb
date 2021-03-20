@@ -1,5 +1,7 @@
 module Spree
   module StoreHelper
+    include Spree::LocaleHelper
+
     def store_country_iso(store = nil)
       store ||= current_store if defined?(current_store)
 
@@ -22,7 +24,7 @@ module Spree
       return unless store
       return store.name if store.default_locale.blank?
 
-      Spree::LocaleHelper.localized_language_name(store.default_locale)
+      localized_language_name(store.default_locale)
     end
 
     def should_render_store_chooser?
