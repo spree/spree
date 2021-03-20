@@ -9,7 +9,7 @@
 <div data-hook="country" class="form-group">
   <%= label_tag :country, Spree.t(:country) %>
   <select id="country" class='observe_field select2' data-base-url="<%= admin_states_path(format: :js) %>?country_id=" data-update="#state-list">
-    <%= options_from_collection_for_select(all_country_options(@countries), :last, :first, @country.id) %>
+    <%= options_from_collection_for_select(all_country_options_localized, :last, :first, @country.id) %>
   </select>
 </div>
 

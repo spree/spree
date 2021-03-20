@@ -2,8 +2,18 @@ module Spree
   module CountryHelper
     require 'twitter_cldr'
 
-    def all_country_options(countries)
-      countries.map { |country| country_presentation(country) }
+    def available_countries
+      countries = current_store.countries_available_for_checkout
+
+      countries.collect do |country|
+        country.name = localized_country_name(country.iso)
+
+        country
+      end.sort_by { |c| c.name.parameterize }
+    end
+
+    def all_country_options_localized
+      Spree::Country.all.map { |country| country_presentation(country) }
     end
 
     def country_presentation(country)
