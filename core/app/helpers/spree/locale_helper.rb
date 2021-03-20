@@ -36,6 +36,7 @@ module Spree
       current_store.supported_locales_list.size > 1
     end
 
+    ##
     # Returns a locales language name in its native language, or a specified language.
     # The first argument passed is the locale of the language name that you require.
     # The optional second argument is the language you require the language name returning in.
@@ -51,6 +52,7 @@ module Spree
     #
     #   # An unsupported locale returns the locale in braces
     #   localized_language_name('xx-XX') #=> '(xx-XX)'
+    #
     def localized_language_name(locale, set_locale = nil)
       last_resort_locale = locale.to_s.slice(0..1).to_sym
       locale_as_sym = TwitterCldr.convert_locale(locale).to_sym
