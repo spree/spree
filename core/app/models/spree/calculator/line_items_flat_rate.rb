@@ -15,7 +15,7 @@ module Spree
       last_actionable_line_item_id = object[:preferences][:last_actionable_line_item_id]
 
       # Ensure the line item meets the currency requirements
-      return 0 if object && preferred_currency.casecmp(object.currency.upcase).zero?
+      return 0 unless object && preferred_currency.casecmp(object.currency.upcase).zero?
 
       if object.id != last_actionable_line_item_id || last_actionable_line_item_id.nil?
 
