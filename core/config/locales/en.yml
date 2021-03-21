@@ -450,6 +450,7 @@ en:
     truncate: "&hellip;"
 
   spree:
+    fixed_amount_line_items: Fixed Amount (Items total)
     abbreviation: Abbreviation
     accept: Accept
     acceptance_status: Acceptance status
