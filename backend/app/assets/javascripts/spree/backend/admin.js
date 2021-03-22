@@ -120,7 +120,7 @@ jQuery(function ($) {
   $('.js-filterable').each(function () {
     var $this = $(this)
 
-    if ($this.val() !== null && $this.val() !== '' && $this.val().length !== 0 && !$this.hasClass('flatpickr-alt-input')) {
+    if ($this.val() !== null && $this.val() !== '' && $this.val().length !== 0 && !$this.hasClass('flatpickr-alt-input') && !$this.hasClass('flatpickr-mobile')) {
       var ransackValue, filter
       var ransackFieldId = $this.attr('id')
       var label = $('label[for="' + ransackFieldId + '"]')
