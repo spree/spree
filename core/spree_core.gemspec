@@ -47,7 +47,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'state_machines-activemodel', '~> 0.7'
   s.add_dependency 'stringex'
   s.add_dependency 'twitter_cldr', '>= 4.3', '< 7.0'
-  s.add_dependency 'sprockets', '~> 3.7'
+  s.add_dependency 'sprockets', '~> 4.0'
   s.add_dependency 'sprockets-rails'
   s.add_dependency 'mini_magick', '>= 4.9.4', '< 4.12.0'
   s.add_dependency 'image_processing', '~> 1.2'
