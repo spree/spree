@@ -32,7 +32,7 @@
     </td>
 
     <td class="cart-item-delete actions" data-hook="cart_item_delete">
-      <span class="d-flex justify-content-end">
+      <span class="d-flex justify-content-center">
         <% if((!shipment.shipped?) && can?(:update, item.line_item)) %>
           <%= link_to_with_icon 'edit.svg', Spree.t('actions.edit'), "#", class: 'edit-item btn btn-outline-secondary btn-sm', title: Spree.t('actions.edit'), no_text: true %>
           <%= link_to_with_icon 'cancel.svg', Spree.t('actions.cancel'), "#", class: 'cancel-item  btn btn-outline-secondary btn-sm', data: { action: 'cancel' }, title: Spree.t('actions.cancel'), style: 'display: none', no_text: true %>

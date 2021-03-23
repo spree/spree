@@ -25,7 +25,7 @@
             </span>
           </td>
           <td class="actions">
-            <span class="d-flex justify-content-end">
+            <span class="d-flex justify-content-center payment-action-buttons">
               <% payment.actions.each do |action| %>
                 <% if action == 'credit' %>
                   <%= link_to_with_icon('exit.svg', Spree.t(:refund), new_admin_order_payment_refund_path(@order, payment), no_text: true, class: "btn btn-outline-secondary btn-sm") if can?(:create, Spree::Refund) %>

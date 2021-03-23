@@ -37,8 +37,10 @@
                 <strong class="badge badge-inactive text-uppercase"><%= Spree.t(:incomplete) %></strong>
               <% end %>
             </td>
-            <td class='actions actions-1' data-hook="admin_orders_customer_returns_index_row_actions">
-              <%= link_to_edit_url(edit_admin_order_customer_return_path(@order, customer_return), title: "admin_edit_#{dom_id(customer_return)}", no_text: true) if can?(:edit, customer_return) %>
+            <td class='actions' data-hook="admin_orders_customer_returns_index_row_actions">
+              <span class="d-flex justify-content-end">
+                <%= link_to_edit_url(edit_admin_order_customer_return_path(@order, customer_return), title: "admin_edit_#{dom_id(customer_return)}", no_text: true) if can?(:edit, customer_return) %>
+              </span>
             </td>
           </tr>
         <% end %>

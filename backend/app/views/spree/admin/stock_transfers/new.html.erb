@@ -8,12 +8,14 @@
     <tr>
       <td>{{name}}</td>
       <td class='text-center'>{{quantity}}</td>
-      <td class='actions actions-1 text-center'>
-        <button class='icon_link btn btn-danger btn-sm transfer_remove_variant' data-variant-id='{{id}}'>
-          <span class='icon icon-delete' data-variant-id='{{id}}'></span>
-        </button>
-        <input type='hidden' id='variant[]' name='variant[]' value='{{id}}'>
-        <input type='hidden' id='quantity[]' name='quantity[]' value='{{quantity}}'>
+      <td class='actions'>
+        <span class='d-flex justify-content-end'>
+          <button class='icon_link btn btn-danger btn-sm transfer_remove_variant' data-variant-id='{{id}}'>
+            <span class='icon icon-delete' data-variant-id='{{id}}'></span>
+          </button>
+          <input type='hidden' id='variant[]' name='variant[]' value='{{id}}'>
+          <input type='hidden' id='quantity[]' name='quantity[]' value='{{quantity}}'>
+        </script>
       </td>
     </tr>
   {{/each}}
