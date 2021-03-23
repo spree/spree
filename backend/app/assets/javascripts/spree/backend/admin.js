@@ -117,10 +117,12 @@ jQuery(function ($) {
     }
   }
 
-  $('.js-filterable').each(function () {
+  // To appear in the filtered options, the elements id attribute must start with 'q_',
+  // and it must have the class'.js-filterable'.
+  $('[id^="q_"].js-filterable').each(function () {
     var $this = $(this)
 
-    if ($this.val() !== null && $this.val() !== '' && $this.val().length !== 0 && !$this.hasClass('flatpickr-alt-input') && !$this.hasClass('flatpickr-mobile')) {
+    if ($this.val() !== null && $this.val() !== '' && $this.val().length !== 0) {
       var ransackValue, filter
       var ransackFieldId = $this.attr('id')
       var label = $('label[for="' + ransackFieldId + '"]')
@@ -134,10 +136,11 @@ jQuery(function ($) {
       }
 
       label = ransackField(label.text()) + ': ' + ransackValue
+
       var cleanLabel = DOMPurify.sanitize(label)
 
       filter = '<span class="js-filter badge badge-secondary" data-ransack-field="' + ransackFieldId + '">' + cleanLabel + '<i class="icon icon-cancel ml-2 js-delete-filter"></i></span>'
-      $(".js-filters").append(filter).show()
+      $('.js-filters').append(filter).show()
     }
   })
 
