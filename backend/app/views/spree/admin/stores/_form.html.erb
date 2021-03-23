@@ -151,7 +151,7 @@
     <% end %>
     <%= f.field_container :default_locale, class: ['form-group'] do %>
       <%= f.label :default_locale %>
-      <%= f.select :default_locale, options_from_collection_for_select(all_locales_options, :last, :first, @store.default_locale || I18n.locale), {}, { class: 'select2' } %>
+      <%= f.select :default_locale, options_from_collection_for_select(all_locales_options(current_locale), :last, :first, @store.default_locale || I18n.locale), {}, { class: 'select2' } %>
       <%= f.error_message_on :default_locale %>
       <% unless defined?(SpreeI18n) %>
         <small class="form-text text-muted">
@@ -161,12 +161,12 @@
     <% end %>
     <%= f.field_container :supported_locales, class: ['form-group'] do %>
       <%= f.label :supported_locales, Spree.t(:supported_locales) %>
-      <%= f.select :supported_locales, options_from_collection_for_select(all_locales_options, :last, :first, @store.supported_locales&.split(',')), {}, { multiple: true, class: 'select2' } %>
+      <%= f.select :supported_locales, options_from_collection_for_select(all_locales_options(current_locale), :last, :first, @store.supported_locales&.split(',')), {}, { multiple: true, class: 'select2' } %>
       <%= f.error_message_on :supported_locales %>
     <% end %>
     <%= f.field_container :default_country_id, class: ['form-group'] do %>
       <%= f.label :default_country_id, Spree.t('i18n.default_country') %>
-      <%= f.select :default_country_id, options_from_collection_for_select(@countries, :id, :name, @store.default_country_id || Spree::Config[:default_country_id]), {}, { class: 'select2' } %>
+      <%= f.select :default_country_id, options_from_collection_for_select(available_countries, :id, :name, @store.default_country_id || Spree::Config[:default_country_id]), {}, { class: 'select2' } %>
       <%= f.error_message_on :default_country_id %>
       <small class="form-text text-muted">
         <%= Spree.t('store_form.default_country_help') %>

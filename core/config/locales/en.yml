@@ -473,6 +473,7 @@ en:
       update: Update
     activate: Activate
     active: Active
+    active_language: true
     add: Add
     add_new_credit_card: Add a new card
     add_action_of_type: Add action of type
@@ -532,6 +533,7 @@ en:
     adjustment_total: Adjustment Total
     adjustments: Adjustments
     admin:
+      country_name_info: The country name is only if no locale translation is available.
       tab:
         configuration: Configuration
         option_types: Option Types
@@ -910,7 +912,7 @@ en:
       select_locale: Select locale
       show_only: Show only
       supported_locales: Supported Locales
-      this_file_language: English (US)
+      this_file_language: English (en)
       translations: Translations
     icon: Icon
     image: Image
@@ -972,6 +974,7 @@ en:
     limit_usage_to: Limit usage to
     line_item_adjustments: "Line item adjustments"
     list: List
+    language_control: Language Control
     loading: Loading
     loading_tree: Loading tree. Please wait…
     locale_changed: Locale Changed
@@ -1535,6 +1538,10 @@ en:
     show_only_considered_risky: Only show risky orders
     show_property: Show Property
     show_rate_in_label: Show rate in label
+    show_hide_languages:
+      short: Only show languages marked as active
+      long: Check the checkbox below to only display languages marked as active.
+      more_info: "For more information please view the <a href='https://guides.spreecommerce.org/developer/customization/i18n.html' rel='noopener noreferrer nofollow' target='_blank' class='alert-link'>Internationalization documentation</a>."
     show_store_selector:
       short: Show Store selector
       long: Display the Store selector in the main nav bar of Storefront and allow users to change Store and Currency
@@ -1614,15 +1621,15 @@ en:
     store_form:
       code_help: "Store unique identifier, which is an abbreviated version of the store’s name (used as the layout directory name, and also helpful for separating templates by store)"
       checkout_zone_help: "Selecting zone will limit to which Countries or States products are shipped.
-        For more information <a href='https://guides.spreecommerce.org/user/configuration/configuring_geography.html#zones' target='_blank' class='alert-link'>please see documentation</a>"
-      locales_help: "Install <a href='https://github.com/spree-contrib/spree_i18n' target='_blank' class='alert-link'>Spree I18n extension</a> to add more locales"
+        For more information <a href='https://guides.spreecommerce.org/user/configuration/configuring_geography.html#zones' rel='noopener noreferrer nofollow' target='_blank' class='alert-link'>please see documentation</a>"
+      locales_help: "Install <a href='https://github.com/spree-contrib/spree_i18n' rel='noopener noreferrer nofollow' target='_blank' class='alert-link'>Spree I18n extension</a> to add pre-translated locales, or visit the Spree <a href='https://guides.spreecommerce.org/developer/customization/i18n.html' rel='noopener noreferrer nofollow' target='_blank' class='alert-link'>Internationalization documentation</a> to learn more about adding custom translations."
       social_help: "If you want to link to your social accounts in the footer part of your website please fill below fields"
       default_country_help: "This is the Country that will be pre-selected on the Checkout Address form"
       footer_help: "This content is visible in the footer section of your Store"
       mail_from_address_help: "This is the email which will be the sender of all your Store emails (Order Confirmation, Shipment notification etc)"
       customer_support_email_help: "This email is visible to your Store visitors in the Footer section"
       new_order_notifications_email_help: "If you want to receive an email notification every time someone places an Order please provide an email address for that notification to be sent to"
-      seo_robots: "Please check <a href='https://developers.google.com/search/reference/robots_meta_tag' target='_blank'>this page for more help</a>"
+      seo_robots: "Please check <a href='https://developers.google.com/search/reference/robots_meta_tag' rel='noopener noreferrer nofollow' target='_blank'>this page for more help</a>"
     store_set_default_button: Set as default
     stores: Stores
     store_credit_name: Store Credit
@@ -1657,7 +1664,6 @@ en:
       user_has_no_store_credits: "User does not have any available store credit"
       select_one_store_credit: "Select store credit to go towards remaining balance"
     store_default: Default store
-    store_set_default_button: Set as default
     store_not_set_as_default: Couldn't set store %{store} as a default store
     store_set_as_default: Store %{store} is now a default store
     street_address: Street Address

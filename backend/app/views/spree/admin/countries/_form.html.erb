@@ -3,6 +3,7 @@
     <%= f.label :name, Spree.t(:name) %>
     <%= f.text_field :name, class: 'form-control' %>
     <%= f.error_message_on :name %>
+    <small class="form-text text-muted"><%= Spree.t('admin.country_name_info') %></small>
   <% end %>
 
   <%= f.field_container :iso_name, class: ['form-group'], 'data-hook' => 'iso_name' do %>

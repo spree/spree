@@ -18,12 +18,7 @@ module Spree
 
     def available_locales
       locales_from_i18n = I18n.available_locales
-      locales =
-        if defined?(SpreeI18n)
-          (SpreeI18n::Locale.all << :en).map(&:to_s)
-        else
-          [Rails.application.config.i18n.default_locale, I18n.locale, :en]
-        end
+      locales = [Rails.application.config.i18n.default_locale, I18n.locale, :en]
 
       (locales + locales_from_i18n).uniq.compact
     end

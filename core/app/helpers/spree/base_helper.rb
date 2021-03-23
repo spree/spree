@@ -1,14 +1,5 @@
 module Spree
   module BaseHelper
-    def available_countries
-      countries = current_store.countries_available_for_checkout
-
-      countries.collect do |country|
-        country.name = Spree.t(country.iso, scope: 'country_names', default: country.name)
-        country
-      end.sort_by { |c| c.name.parameterize }
-    end
-
     def display_price(product_or_variant)
       product_or_variant.
         price_in(current_currency).

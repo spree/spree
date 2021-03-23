@@ -3,7 +3,7 @@ require 'spec_helper'
 describe 'Customer Details', type: :feature, js: true do
   stub_authorization!
 
-  let!(:country) { create(:country, name: 'United States of America', iso: 'US') }
+  let!(:country) { create(:country, name: 'United States', iso: 'US') }
   let!(:state) { create(:state, name: 'Alabama', country: country, abbr: 'AL') }
   let!(:order) { create(:order, state: 'complete', completed_at: '2011-02-01 12:36:15') }
   let!(:product) { create(:product_in_stock) }

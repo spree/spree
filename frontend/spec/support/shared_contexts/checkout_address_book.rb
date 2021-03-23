@@ -1,4 +1,10 @@
 shared_context 'checkout address book' do
+  let!(:country) { create(:country, name: 'United States', iso: 'US') }
+  let!(:countr_1) { create(:country, name: 'United Kingdom', iso: 'GB') }
+  let!(:countr_2) { create(:country, name: 'France', iso: 'FR') }
+  let!(:countr_3) { create(:country, name: 'Germany', iso: 'DE') }
+  let!(:countr_4) { create(:country, name: 'Spain', iso: 'ES') }
+
   before do
     @store = Spree::Store.current || create(:store)
     @state = Spree::State.all.first || create(:state)
@@ -7,7 +13,7 @@ shared_context 'checkout address book' do
     @tax_category = Spree::TaxCategory.first || create(:tax_category)
     @shipping = Spree::ShippingMethod.find_by_name('UPS Ground') || create(:shipping_method, tax_category: @tax_category)
 
-    create(:credit_card_payment_method, stores: [@store] )
+    create(:credit_card_payment_method, stores: [@store])
     create(:check_payment_method, stores: [@store])
 
     reset_spree_preferences do |config|
