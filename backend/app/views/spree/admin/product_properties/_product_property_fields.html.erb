@@ -19,13 +19,15 @@
   <td class="show_property">
     <%= f.check_box :show_property %>
   </td>
-  <td class="actions actions-1">
-    <% if f.object.persisted? && can?(:destroy, f.object) %>
-      <%= link_to_delete f.object, no_text: true %>
-    <% else %>
-    <span class="btn btn-danger btn-sm icon-link disabled" style="opacity:0.2;">
-      <%= svg_icon name: "delete.svg", width: '18', height: '18' %>
+  <td class="actions">
+    <span class="d-flex justify-content-end">
+      <% if f.object.persisted? && can?(:destroy, f.object) %>
+        <%= link_to_delete f.object, no_text: true %>
+      <% else %>
+      <span class="btn btn-danger btn-sm icon-link disabled" style="opacity:0.2;">
+        <%= svg_icon name: "delete.svg", width: '18', height: '18' %>
+      </span>
+      <% end %>
     </span>
-    <% end %>
   </td>
 </tr>

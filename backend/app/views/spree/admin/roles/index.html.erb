@@ -19,9 +19,11 @@
         <% @roles.each do |role| %>
           <tr id="<%= spree_dom_id role %>" data-hook="admin_roles_index_rows">
             <td><%= role.name %></td>
-            <td class="actions text-right">
-              <%= link_to_edit(role, no_text: true) if can? :edit, role %>
-              <%= link_to_delete(role, no_text: true) if can? :destroy, role %>
+            <td class="actions">
+              <span class="d-flex justify-content-end">
+                <%= link_to_edit(role, no_text: true) if can? :edit, role %>
+                <%= link_to_delete(role, no_text: true) if can? :destroy, role %>
+              </span>
             </td>
           </tr>
         <% end %>

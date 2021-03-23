@@ -20,9 +20,11 @@
         <tr>
           <td><%= promotion_category.name %></td>
           <td><%= promotion_category.code %></td>
-          <td class="actions actions-2 text-right">
-            <%= link_to_edit promotion_category, no_text: true if can?(:edit, promotion_category) %>
-            <%= link_to_delete promotion_category, no_text: true if can?(:delete, promotion_category) %>
+          <td class="actions">
+            <span class="d-flex justify-content-end">
+              <%= link_to_edit promotion_category, no_text: true if can?(:edit, promotion_category) %>
+              <%= link_to_delete promotion_category, no_text: true if can?(:delete, promotion_category) %>
+            </span>
           </td>
         </tr>
       <% end %>

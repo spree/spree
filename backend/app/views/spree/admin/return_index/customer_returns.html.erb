@@ -47,8 +47,10 @@
             <% end %>
           </td>
           <td><%= customer_return.display_pre_tax_total.to_html %></td>
-          <td class="actions actions-1 text-right">
-            <%= link_to_edit_url spree.edit_admin_order_customer_return_path(customer_return.order, customer_return), no_text: true if can?(:edit, customer_return) %>
+          <td class="actions">
+            <span class="d-flex justify-content-end">
+              <%= link_to_edit_url spree.edit_admin_order_customer_return_path(customer_return.order, customer_return), no_text: true if can?(:edit, customer_return) %>
+            </span>
           </td>
         </tr>
       <% end %>

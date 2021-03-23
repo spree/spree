@@ -254,8 +254,10 @@
           <% end %>
         </td>
         <td><%= order.display_total.to_html %></td>
-        <td class='actions actions-1' data-hook="admin_orders_index_row_actions">
-          <%= link_to_edit_url edit_admin_order_path(order), title: "admin_edit_#{dom_id(order)}", no_text: true if can?(:edit, order) %>
+        <td class='actions' data-hook="admin_orders_index_row_actions">
+          <span class="d-flex justify-content-end">
+            <%= link_to_edit_url edit_admin_order_path(order), title: "admin_edit_#{dom_id(order)}", no_text: true if can?(:edit, order) %>
+          </span>
         </td>
       </tr>
     <% end %>

@@ -25,9 +25,11 @@
         <td><%= variant.options_text %></td>
         <td><%= display_price(variant) %></td>
         <td><%= variant.sku %></td>
-        <td class="actions actions-2 text-right">
-          <%= link_to_edit(variant, no_text: true) if can?(:edit, variant) && !variant.deleted? %>
-          <%= link_to_delete(variant, no_text: true) if can?(:destroy, variant) && !variant.deleted? %>
+        <td class="actions">
+          <span class="d-flex justify-content-end">
+            <%= link_to_edit(variant, no_text: true) if can?(:edit, variant) && !variant.deleted? %>
+            <%= link_to_delete(variant, no_text: true) if can?(:destroy, variant) && !variant.deleted? %>
+          </span>
         </td>
       </tr>
       <% end %>
