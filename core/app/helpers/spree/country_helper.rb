@@ -30,7 +30,7 @@ module Spree
         return I18n.t("spree.country_name_overide.#{country_iso_formatted}", locale: locale_formatted.to_s)
       end
 
-      country_iso_formatted.localize(locale_formatted).as_territory || Spree::Country.find_by(iso: country_iso)
+      country_iso_formatted.localize(locale_formatted).as_territory || Spree::Country.by_iso(country_iso)
     end
   end
 end
