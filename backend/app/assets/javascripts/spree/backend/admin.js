@@ -354,7 +354,7 @@ $(document).ready(function() {
   })
 
   // Sortable List Up-Down
-  var parentEl = document.getElementsByClassName("sortable")[0];
+  var parentEl = document.getElementsByClassName('sortable')[0];
   if (parentEl) {
     var element = parentEl.querySelector('tbody')
   }
