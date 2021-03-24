@@ -83,7 +83,7 @@ end
 
 ### Adding new links to the Admin Panel menu
 
-You can easily add new links to the admin menu by adding thos code to `config/initializers/spree.rb`:
+You can easily add new links to the admin menu by adding this code to `config/initializers/spree.rb`:
 
 ```ruby
 Spree::BackendConfiguration::ORDER_TABS << :my_custom_orders
