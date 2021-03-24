@@ -10,6 +10,24 @@
       id: 'admin_new_order' %>
 <% end if can? :create, Spree::Order %>
 
+<% content_for :page_tabs do %>
+  <li class="nav-item">
+    <%= link_to Spree.t(:completed),
+      spree.admin_orders_path,
+      class: "nav-link #{'active' if params[:q][:state_not_eq].blank?}" %>
+  </li>
+  <li class="nav-item">
+    <%= link_to Spree.t('abandoned'),
+      params.merge({q: {completed_at_not_null: nil, state_not_eq: :complete }}).permit!,
+      class: "nav-link #{'active' if params[:q][:state_not_eq] == 'complete'}" %>
+  </li>
+  <li class="nav-item">
+    <%= link_to Spree.t(:canceled),
+      params.merge({q: {state_eq: :canceled}}).permit!,
+      class: "nav-link #{'active' if params[:q][:state_eq] == 'canceled'}" %>
+  </li>
+<% end %>
+
 <% content_for :table_filter do %>
   <div data-hook="admin_orders_index_search">
 
