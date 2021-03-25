@@ -12,19 +12,24 @@
 
 <% content_for :page_tabs do %>
   <li class="nav-item">
-    <%= link_to Spree.t(:completed),
+    <%= link_to Spree.t(:all),
       spree.admin_orders_path,
-      class: "nav-link #{'active' if params[:q][:state_not_eq].blank?}" %>
+      class: "nav-link #{'active' if params[:q][:state_eq].blank? && params[:q][:state_not_eq].blank?}" %>
   </li>
   <li class="nav-item">
-    <%= link_to Spree.t('abandoned'),
-      params.merge({q: {completed_at_not_null: nil, state_not_eq: :complete }}).permit!,
-      class: "nav-link #{'active' if params[:q][:state_not_eq] == 'complete'}" %>
+    <%= link_to Spree.t(:unpaid),
+      params.merge({q: {state_eq: :complete, payment_state_eq: :balance_due}}).permit!,
+      class: "nav-link #{'active' if params[:q][:state_eq] == 'complete' && params[:q][:payment_state_eq] == 'balance_due'}" %>
   </li>
   <li class="nav-item">
-    <%= link_to Spree.t(:canceled),
-      params.merge({q: {state_eq: :canceled}}).permit!,
-      class: "nav-link #{'active' if params[:q][:state_eq] == 'canceled'}" %>
+    <%= link_to Spree.t(:unfulfilled),
+      params.merge({q: {state_eq: :complete, payment_state_eq: :paid, shipment_state_not_eq: :shipped}}).permit!,
+      class: "nav-link #{'active' if params[:q][:state_eq] == 'complete' && params[:q][:payment_state_eq] == 'paid'} " %>
+  </li>
+  <li class="nav-item">
+    <%= link_to Spree.t('incomplete'),
+      params.merge({q: {completed_at_not_null: '', state_not_eq: :complete }}).permit!,
+      class: "nav-link #{'active' if params[:q][:completed_at_not_null] == '' && params[:q][:state_not_eq] == 'complete'}" %>
   </li>
 <% end %>
 
