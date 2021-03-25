@@ -1,7 +1,7 @@
-<div id="contentHeader" class="row mb-3">
+<div id="contentHeader" class="row">
   <% if content_for?(:page_title) || content_for?(:page_actions) %>
     <div class="content-header col <%= "with-page-tabs" if content_for?(:page_tabs) %> page-header">
-      <div class="row align-items-center  <%= if content_for?(:page_tabs) then "pb-0" else "border-bottom" end %>">
+      <div class="row align-items-center border-bottom">
 
         <% if content_for?(:page_title) %>
           <h1 class="contextual-title px-0 mb-0 col">
@@ -34,9 +34,11 @@
 
       <% if content_for?(:page_tabs) %>
         <div class="row">
-          <ul class="nav nav-tabs w-100 mt-4 px-0">
-            <%= yield :page_tabs %>
-          </ul>
+          <div class="col-12">
+            <ul class="nav nav-pills mt-4">
+              <%= yield :page_tabs %>
+            </ul>
+          </div>
         </div>
       <% end %>
 
