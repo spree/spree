@@ -1,4 +1,3 @@
-/* eslint-disable no-var */
 /**
 This is a collection of javascript functions and whatnot
 under the spree namespace that do stuff we find helpful.
