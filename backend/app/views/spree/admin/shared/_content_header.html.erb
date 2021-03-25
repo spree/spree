@@ -1,6 +1,6 @@
 <div id="contentHeader" class="row">
   <% if content_for?(:page_title) || content_for?(:page_actions) %>
-    <div class="content-header col <%= "with-page-tabs" if content_for?(:page_tabs) %> page-header">
+    <div class="content-header col page-header">
       <div class="row align-items-center border-bottom">
 
         <% if content_for?(:page_title) %>
@@ -33,9 +33,9 @@
       </div>
 
       <% if content_for?(:page_tabs) %>
-        <div class="row">
+        <div class="row pb-0 mb-0">
           <div class="col-12">
-            <ul class="nav nav-pills mt-4">
+            <ul id="spreePageTabs" class="nav nav-pills mt-2">
               <%= yield :page_tabs %>
             </ul>
           </div>

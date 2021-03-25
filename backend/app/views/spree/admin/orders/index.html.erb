@@ -32,8 +32,8 @@
         class: "nav-link #{'active' if params[:q][:completed_at_not_null] == '' && params[:q][:state_not_eq] == 'complete'}" %>
     </li>
 
-  <li class="nav-item dropdown d-sm-none">
-    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">More Views</a>
+  <li class="nav-item dropdown d-sm-none mobile-only-pills">
+    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false"><%= Spree.t('more_views') %></a>
     <div class="dropdown-menu">
       <%= link_to Spree.t(:unfulfilled),
         params.merge({q: {state_eq: :complete, payment_state_eq: :paid, shipment_state_not_eq: :shipped}}).permit!,
@@ -215,7 +215,7 @@
 <% end %>
 
 <% if @orders.any? %>
-<div class="table-responsive">
+<div class="table-responsive mt-4">
   <table class="table" id="listing_orders" data-hook>
     <thead>
       <tr data-hook="admin_orders_index_headers">

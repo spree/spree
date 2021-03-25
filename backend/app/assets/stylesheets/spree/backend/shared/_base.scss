@@ -59,3 +59,18 @@
 .button_to {
   display: inline-block;
 }
+
+// Make the tabs (Pills) not quite so tall
+ul#spreePageTabs {
+  li.nav-item {
+    a.dropdown-toggle {
+      padding: 0.3rem 1rem;
+
+      &::after {
+        margin-left: 0.75em;
+        vertical-align: 0.175em;
+      }
+    }
+
+  }
+}

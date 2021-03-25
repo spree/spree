@@ -1,3 +1,4 @@
+/* eslint-disable no-var */
 /**
 This is a collection of javascript functions and whatnot
 under the spree namespace that do stuff we find helpful.
@@ -25,8 +26,8 @@ jQuery(function ($) {
   })
 
   // Responsive Menus
-  var body  = $('body')
-  var modalBackdrop  = $('#multi-backdrop')
+  var body = $('body')
+  var modalBackdrop = $('#multi-backdrop')
 
   // Fail safe on resize
   var resizeTimer;
@@ -48,9 +49,9 @@ jQuery(function ($) {
   modalBackdrop.click(closeAllMenus)
 
   // Main Menu Functionality
-  var sidebarOpen    = $('#sidebar-open')
-  var sidebarClose   = $('#sidebar-close')
-  var activeItem     = $('#main-sidebar').find('.selected')
+  var sidebarOpen = $('#sidebar-open')
+  var sidebarClose = $('#sidebar-close')
+  var activeItem = $('#main-sidebar').find('.selected')
 
   activeItem.closest('.nav-sidebar').addClass('active-option')
   activeItem.closest('.nav-pills').addClass('in show')
@@ -188,7 +189,7 @@ $(document).ready(function () {
   }
 })
 
-$.fn.visible = function (cond) { this[ cond ? 'show' : 'hide' ]() }
+$.fn.visible = function (cond) { this[cond ? 'show' : 'hide']() }
 // Triggers alerts when requested by javascript.
 // eslint-disable-next-line camelcase
 function show_flash (type, message) {
@@ -226,7 +227,29 @@ $.fn.radioControlsVisibilityOfElement = function (dependentElementSelector) {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+  // ADAPTIVE NAMING + ACTIVE
+  // Adds the ability to set mobile drop-downs within the tabs area
+  // and have the active link that is nested in the drop down show as the tab name
+  // + mark the parent tab of the nested link as active.
+  var parentNode = document.querySelectorAll('.mobile-only-pills');
+
+  if (!parentNode) return
+
+  parentNode.forEach(function (elem) {
+    var activeLink = elem.querySelector('div.dropdown-menu .active')
+    var dropDownLink = elem.querySelector('[data-toggle=dropdown]')
+
+    if (!activeLink) return
+
+    var activeLinkText = activeLink.innerHTML
+    dropDownLink.innerHTML = activeLinkText
+    dropDownLink.classList.add('active')
+  })
+
+  // FLATPICKR
+  // Gives Spree its date picker calenders [>= 4.2]
   flatpickr.setDefaults({
+    disableMobile: true,
     altInput: true,
     time_24hr: true,
     altInputClass: 'flatpickr-alt-input',
@@ -250,7 +273,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 $(document).ready(function() {
   $('.observe_field').on('change', function() {
-    target = $(this).data('update')
+    var target = $(this).data('update')
     $(target).hide()
     $.ajax({
       dataType: 'html',
@@ -298,8 +321,8 @@ $(document).ready(function() {
           el.blur()
         }
       }).done(function () {
-        var $flash_element = $('.alert-success')
-        if ($flash_element.length) {
+        var $flashElement = $('.alert-success')
+        if ($flashElement.length) {
           el.parents('tr').fadeOut('hide', function () {
             $(this).remove()
           })
@@ -314,7 +337,7 @@ $(document).ready(function() {
   })
 
   $('body').on('click', 'a.spree_remove_fields', function () {
-    el = $(this)
+    var el = $(this)
     el.prev('input[type=hidden]').val('1')
     el.closest('.fields').hide()
     if (el.prop('href').substr(-1) === '#') {
@@ -340,20 +363,21 @@ $(document).ready(function() {
 
   $('body').on('click', '.select_properties_from_prototype', function() {
     $('#busy_indicator').show()
-    var clicked_link = $(this)
+    var clickedLink = $(this)
     $.ajax({
       dataType: 'script',
-      url: clicked_link.prop('href'),
+      url: clickedLink.prop('href'),
       type: 'GET'
     }).done(function () {
-      clicked_link.parent('td').parent('tr').hide()
+      clickedLink.parent('td').parent('tr').hide()
       $('#busy_indicator').hide()
     })
     return false
   })
 
-  // Sortable List Up-Down
-  var parentEl = document.getElementsByClassName("sortable")[0];
+  // SORTABLE
+  // Gives Spree drag and drop sortable lists. [>= 4.2]
+  var parentEl = document.getElementsByClassName('sortable')[0];
   if (parentEl) {
     var element = parentEl.querySelector('tbody')
   }
@@ -363,7 +387,7 @@ $(document).ready(function() {
       handle: '.move-handle',
       animation: 550,
       ghostClass: 'bg-light',
-      dragClass: "sortable-drag-v",
+      dragClass: 'sortable-drag-v',
       easing: 'cubic-bezier(1, 0, 0, 1)',
       swapThreshold: 0.9,
       forceFallback: true,
@@ -371,8 +395,8 @@ $(document).ready(function() {
         var itemEl = evt.item
         var positions = { authenticity_token: AUTH_TOKEN }
         $.each($('tr', element), function(position, obj) {
-          reg = /spree_(\w+_?)+_(\d+)/
-          parts = reg.exec($(obj).prop('id'))
+          var reg = /spree_(\w+_?)+_(\d+)/
+          var parts = reg.exec($(obj).prop('id'))
           if (parts) {
             positions['positions[' + parts[2] + ']'] = position + 1
           }
@@ -387,7 +411,8 @@ $(document).ready(function() {
     })
   }
 
-  // Close notifications
+  // CLOSE ALERTS
+  // From legacy alerts. [< 4.2] DEPRECIATED?
   $('a.dismiss').click(function () {
     $(this).parent().fadeOut()
   })
