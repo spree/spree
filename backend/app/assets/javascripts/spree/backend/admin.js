@@ -248,7 +248,7 @@ document.addEventListener('DOMContentLoaded', function() {
   // FLATPICKR
   // Gives Spree its date picker calenders [>= 4.2]
   flatpickr.setDefaults({
-    disableMobile: true,
+    // disableMobile: true,
     altInput: true,
     time_24hr: true,
     altInputClass: 'flatpickr-alt-input',

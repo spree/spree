@@ -1017,6 +1017,7 @@ en:
     missing_return_authorization: ! 'Missing Return Authorization for %{item_name}.'
     month: Month
     more: More
+    more_views: More views
     move_stock_between_locations: Move Stock Between Locations
     my_account: My Account
     my_orders: My Orders
