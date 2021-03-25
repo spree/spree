@@ -63,10 +63,10 @@
 // Make the tabs (Pills) not quite so tall
 ul#spreePageTabs {
   li.nav-item {
-    a.dropdown-toggle {
+    a {
       padding: 0.3rem 1rem;
 
-      &::after {
+      &.dropdown-toggle::after {
         margin-left: 0.75em;
         vertical-align: 0.175em;
       }
