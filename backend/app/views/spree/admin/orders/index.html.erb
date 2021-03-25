@@ -17,12 +17,12 @@
         class: "nav-link #{'active' if params[:q][:state_eq].blank? && params[:q][:state_not_eq].blank?}" %>
     </li>
     <li class="nav-item">
-      <%= link_to Spree.t(:unpaid),
+      <%= link_to Spree.t('unpaid'),
         params.merge({q: {state_eq: :complete, payment_state_eq: :balance_due}}).permit!,
         class: "nav-link #{'active' if params[:q][:state_eq] == 'complete' && params[:q][:payment_state_eq] == 'balance_due'}" %>
     </li>
     <li class="nav-item d-none d-sm-flex">
-      <%= link_to Spree.t(:unfulfilled),
+      <%= link_to Spree.t('unfulfilled'),
         params.merge({q: {state_eq: :complete, payment_state_eq: :paid, shipment_state_not_eq: :shipped}}).permit!,
         class: "nav-link #{'active' if params[:q][:state_eq] == 'complete' && params[:q][:payment_state_eq] == 'paid'} " %>
     </li>
@@ -35,7 +35,7 @@
   <li class="nav-item dropdown d-sm-none mobile-only-pills">
     <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false"><%= Spree.t('more_views') %></a>
     <div class="dropdown-menu">
-      <%= link_to Spree.t(:unfulfilled),
+      <%= link_to Spree.t('unfulfilled'),
         params.merge({q: {state_eq: :complete, payment_state_eq: :paid, shipment_state_not_eq: :shipped}}).permit!,
         class: "dropdown-item #{'active' if params[:q][:state_eq] == 'complete' && params[:q][:payment_state_eq] == 'paid'} " %>
 

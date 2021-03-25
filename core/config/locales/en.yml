@@ -1657,7 +1657,6 @@ en:
       user_has_no_store_credits: "User does not have any available store credit"
       select_one_store_credit: "Select store credit to go towards remaining balance"
     store_default: Default store
-    store_set_default_button: Set as default
     store_not_set_as_default: Couldn't set store %{store} as a default store
     store_set_as_default: Store %{store} is now a default store
     street_address: Street Address
@@ -1737,6 +1736,8 @@ en:
     unable_to_connect_to_gateway: Unable to connect to gateway.
     unable_to_create_reimbursements: Unable to create reimbursements because there are items pending manual intervention.
     under_price: Under %{price}
+    unpaid: Unpaid
+    unfulfilled: Unfulfilled
     unlock: Unlock
     unrecognized_card_type: Unrecognized card type
     unshippable_items: Unshippable Items
