@@ -41,4 +41,4 @@ Answer **yes** when prompted to run migrations.
 
 ## Creating your own Extension
 
-Please refer [Creating an Extension Tutorial](/developer/advanced/extensions_tutorial.html)
+Please refer [Creating an Extension Tutorial](/developer/contributing/extensions_tutorial.html)
