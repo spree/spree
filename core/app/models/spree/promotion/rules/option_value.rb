@@ -31,7 +31,7 @@ module Spree
         end
 
         def actionable?(line_item)
-          product_id = line_item.product.id
+          product_id = line_item.product_id
           option_values_ids = line_item.variant.option_value_ids
           eligible_product_ids = preferred_eligible_values.keys
           eligible_value_ids = preferred_eligible_values[product_id]

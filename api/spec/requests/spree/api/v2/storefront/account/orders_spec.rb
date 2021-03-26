@@ -4,6 +4,8 @@ describe 'Storefront API v2 Orders spec', type: :request do
   let!(:user) { create(:user_with_addresses) }
   let!(:order) { create(:order, state: 'complete', user: user, completed_at: Time.current) }
 
+  before { Spree::Api::Config[:api_v2_per_page_limit] = 2 }
+
   include_context 'API v2 tokens'
 
   describe 'orders#index' do
@@ -49,29 +51,55 @@ describe 'Storefront API v2 Orders spec', type: :request do
       end
     end
 
-    context 'with specified pagination params' do
+    context 'when per_page is between 1 and default value' do
       let!(:order) { create(:order, state: 'complete', user: user, completed_at: Time.current) }
       let!(:order_1) { create(:order, state: 'complete', user: user, completed_at: Time.current + 1.day) }
       let!(:order_2) { create(:order, state: 'complete', user: user, completed_at: Time.current + 2.days) }
       let!(:order_3) { create(:order, state: 'complete', user: user, completed_at: Time.current + 3.days) }
 
-      before { get '/api/v2/storefront/account/orders?page=1&per_page=2', headers: headers_bearer }
+      context 'with specified pagination params' do
+        before { get '/api/v2/storefront/account/orders?page=1&per_page=2', headers: headers_bearer }
 
-      it_behaves_like 'returns 200 HTTP status'
+        it_behaves_like 'returns 200 HTTP status'
 
-      it 'returns specified amount orders' do
-        expect(json_response['data'].count).to eq 2
+        it 'returns specified amount orders' do
+          expect(json_response['data'].count).to eq 2
+        end
+
+        it 'returns proper meta data' do
+          expect(json_response['meta']['count']).to       eq 2
+          expect(json_response['meta']['total_count']).to eq Spree::Order.count
+        end
+
+        it 'returns proper links data' do
+          expect(json_response['links']['self']).to include('/api/v2/storefront/account/orders?page=1&per_page=2')
+          expect(json_response['links']['next']).to include('/api/v2/storefront/account/orders?page=2&per_page=2')
+          expect(json_response['links']['prev']).to include('/api/v2/storefront/account/orders?page=1&per_page=2')
+        end
       end
 
-      it 'returns proper meta data' do
-        expect(json_response['meta']['count']).to       eq 2
-        expect(json_response['meta']['total_count']).to eq Spree::Order.count
+      context 'when per_page is above the default value' do
+        before { get '/api/v2/storefront/account/orders?page=1&per_page=10', headers: headers_bearer }
+
+        it 'returns the default number of orders' do
+          expect(json_response['data'].count).to eq 4
+        end
       end
 
-      it 'returns proper links data' do
-        expect(json_response['links']['self']).to include('/api/v2/storefront/account/orders?page=1&per_page=2')
-        expect(json_response['links']['next']).to include('/api/v2/storefront/account/orders?page=2&per_page=2')
-        expect(json_response['links']['prev']).to include('/api/v2/storefront/account/orders?page=1&per_page=2')
+      context 'when per_page is less than 0' do
+        before { get '/api/v2/storefront/account/orders?page=1&per_page=-1', headers: headers_bearer }
+
+        it 'returns the default number of orders' do
+          expect(json_response['data'].count).to eq 4
+        end
+      end
+
+      context 'when per_page is equal 0' do
+        before { get '/api/v2/storefront/account/orders?page=1&per_page=0', headers: headers_bearer }
+
+        it 'returns the default number of orders' do
+          expect(json_response['data'].count).to eq 4
+        end
       end
     end
 

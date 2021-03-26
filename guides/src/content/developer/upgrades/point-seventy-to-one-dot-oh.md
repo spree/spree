@@ -2,6 +2,7 @@
 title: Upgrading Spree from 0.70.x to 1.0.x
 section: upgrades
 order: 17
+hidden: true
 ---
 
 ## Overview

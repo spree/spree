@@ -7,7 +7,7 @@ Introduction goes here.
 1. Add this extension to your Gemfile with this line:
 
     ```ruby
-    gem '<%= file_name %>', github: '[your-github-handle]/<%= file_name %>'
+    gem '<%= file_name %>'
     ```
 
 2. Install the gem using Bundler
@@ -41,6 +41,15 @@ Simply add this require statement to your spec_helper:
 ```ruby
 require '<%= file_name %>/factories'
 ```
+
+## Releasing
+
+```shell
+bundle exec gem bump -p -t
+bundle exec gem release
+```
+
+For more options please see [gem-release REAMDE](https://github.com/svenfuchs/gem-release)
 
 ## Contributing
 

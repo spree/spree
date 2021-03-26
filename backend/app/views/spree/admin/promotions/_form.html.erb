@@ -1,7 +1,7 @@
 <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @promotion } %>
 
-<div class="row" id="general_fields" >
-  <div class="col-12 col-md-3">
+<div class="row" id="general_fields">
+  <div class="col-12 col-lg-4">
     <%= f.field_container :name, class: ['form-group'] do %>
       <%= f.label :name %>
       <%= f.text_field :name, class: 'form-control' %>
@@ -35,7 +35,7 @@
     <% end %>
   </div>
 
-  <div class="col-12 col-md-6">
+  <div class="col-12 col-lg-4">
     <%= f.field_container :description, class: ['form-group'] do %>
       <%= f.label :description %>
       <%= f.text_area :description, rows: 7, class: 'form-control' %>
@@ -47,7 +47,7 @@
     <% end %>
   </div>
 
-  <div id="expiry_fields" class="col-12 col-md-3">
+  <div id="expiry_fields" class="col-12 col-lg-4">
     <div class="form-group">
       <%= f.field_container :usage_limit do %>
         <%= f.label :usage_limit, Spree.t('limit_usage_to') %>
@@ -57,14 +57,13 @@
         <%= Spree.t(:current_promotion_usage, count: @promotion.credits_count) %>
       </small>
     </div>
-
     <div id="starts_at_field" class="form-group">
       <%= f.label :starts_at %>
       <div class="input-group datePickerFrom"
            data-wrap="true"
            data-enable-time="true"
-           data-date-format="<%= Spree.t('js_date_time', scope: 'date_picker') %>"
-           data-max-date="<%= @promotion.expires_at %>" >
+           data-alt-format="<%= Spree.t(:fpr_human_friendly_date_time_format, scope: 'date_picker', default: 'M j, Y H:i') %>"
+           data-max-date="<%= @promotion.expires_at %>">
         <%= f.datetime_field :starts_at,
                              class: 'form-control shadow-none',
                              placeholder: Spree.t('starting_from'),
@@ -78,9 +77,9 @@
       <%= f.label :expires_at %>
       <div class="input-group datePickerTo"
            data-wrap="true"
-           data-enable-time= 'true'
-           data-date-format= "<%= Spree.t('js_date_time', scope: 'date_picker') %>"
-           data-min-date="<%= @promotion.starts_at %>" >
+           data-enable-time='true'
+           data-alt-format="<%= Spree.t(:fpr_human_friendly_date_time_format, scope: 'date_picker', default: 'M j, Y H:i') %>"
+           data-min-date="<%= @promotion.starts_at %>">
         <%= f.datetime_field :expires_at,
                               placeholder:Spree.t('ends_at'),
                               class: 'form-control shadow-none',

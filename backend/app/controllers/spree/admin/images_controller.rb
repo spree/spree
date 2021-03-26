@@ -18,15 +18,15 @@ module Spree
       end
 
       def load_index_data
-        @product = Product.friendly.includes(*variant_index_includes).find(params[:product_id])
+        @product = Product.friendly.preload(*variant_index_includes).find(params[:product_id])
       end
 
       def load_edit_data
-        @product = Product.friendly.includes(*variant_edit_includes).find(params[:product_id])
+        @product = Product.friendly.preload(*variant_edit_includes).find(params[:product_id])
         @variants = @product.variants.map do |variant|
           [variant.sku_and_options_text, variant.id]
         end
-        @variants.insert(0, [Spree.t(:all), @product.master.id])
+        @variants.insert(0, [Spree.t(:all), @product.master_id])
       end
 
       def set_viewable

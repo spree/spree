@@ -11,6 +11,7 @@ else
     s.customer_support_email       = 'support@example.com'
     s.default_currency             = 'USD'
     s.default_country_id           = Spree::Config[:default_country_id]
+    s.default_locale               = I18n.locale
     s.seo_title                    = 'Spree Commerce Demo Shop'
     s.meta_description             = 'This is the new Spree UX DEMO | OVERVIEW: http://bit.ly/new-spree-ux | DOCS: http://bit.ly/spree-ux-customization-docs | CONTACT: https://spreecommerce.org/contact/'
     s.facebook                     = 'spreecommerce'

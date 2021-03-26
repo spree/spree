@@ -19,7 +19,7 @@
 <%= form_for @product, url: spree.admin_product_url(@product), method: :put do |f| %>
   <fieldset>
     <div id="prototypes" data-hook></div>
-    <div class=" table-responsive">
+    <div class=" table-responsive mb-3">
       <table id="product_properties" class="table sortable" data-hook data-sortable-link="<%= update_positions_admin_product_product_properties_url %>">
         <thead>
           <tr data-hook="product_properties_header">
@@ -41,7 +41,7 @@
   </fieldset>
 <% end %>
 
-<%= javascript_tag do %>
+<script>
   var properties = <%= raw(@properties.to_json) %>;
   $('#product_properties').on('keydown', 'input.autocomplete', function() {
     already_auto_completed = $(this).is('ac_input');
@@ -50,8 +50,7 @@
       $(this).focus();
     }
   });
-<% end %>
-
+</script>
 
 <style>
   div.ui-helper-hidden-accessible {display:none;}

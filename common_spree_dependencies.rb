@@ -3,7 +3,6 @@
 # the one component of Spree.
 source 'https://rubygems.org'
 
-gem 'sass-rails'
 gem 'sqlite3', '~> 1.4.0', platforms: [:ruby, :mingw, :mswin, :x64_mingw]
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw]
 
@@ -38,6 +37,7 @@ group :test do
 end
 
 group :test, :development do
+  gem 'gem-release'
   gem 'rubocop', '~> 1.0.0', require: false # bumped
   gem 'rubocop-rspec', require: false
   gem 'pry-byebug'

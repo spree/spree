@@ -1,10 +1,10 @@
 <% if target && target.errors.any? %>
   <div id="errorExplanation" class="alert alert-danger d-flex justify-content-center mb-0" data-hook>
-     <ul class="mb-0 pl-0"  style="list-style-type: none;">
+     <ul class="mb-0 pl-0" style="list-style-type: none;">
        <% target.errors.full_messages.each do |msg| %>
          <li><%= msg %></li>
        <% end %>
      </ul>
-     <br/>
+     <br>
   </div>
 <% end %>

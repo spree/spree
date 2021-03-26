@@ -667,7 +667,6 @@ en:
       jackets_and_coats: JACKET & COASTS
       new_collection: NEW COLLECTION
       special_offers: SPECIAL OFFERS
-      summer_2019: SUMMER 2019
     channel: Channel
     charged: Charged
     checkout: Checkout
@@ -760,42 +759,14 @@ en:
     new_order_notifications_email: New Order Notifications Email
     cut: Cut
     cvv: CVV
+    no_cc_type: N/A
     cvv_response: CVV Response
     date: Date
     date_completed: Date Completed
     date_picker:
-      am: 'AM'
-      first_day: 0
-      format: ! '%Y/%m/%d'
-      hourAriaLabel: 'Hour'
-      js_format: Y/m/d
-      js_date_time: Y/m/d - H:i
-      minuteAriaLabel: 'Minute'
-      pm: 'PM'
-      rangeSeparator: ' to '
-      scrollTitle: 'Scroll to increment'
-      toggleTitle: 'Click to toggle'
-      weekAbbreviation: 'Wk'
-      yearAriaLabel: 'Year'
-      sun: 'Sun'
-      mon: 'Mon'
-      tue: 'Tue'
-      wed: 'Wed'
-      thu: 'Thu'
-      fri: 'Fri'
-      sat: 'Sat'
-      lh_jan: 'January'
-      lh_feb: 'February'
-      lh_mar: 'March'
-      lh_apr: 'April'
-      lh_may: 'May'
-      lh_jun: 'June'
-      lh_jul: 'July'
-      lh_aug: 'August'
-      lh_sep: 'September'
-      lh_oct: 'October'
-      lh_nov: 'November'
-      lh_dec: 'December'
+      # FlatPickr human friendly formatting
+      fpr_human_friendly_date_format: M j, Y
+      fpr_human_friendly_date_time_format: M j, Y at H:i
     date_range: Date Range
     default: Default
     default_country_cannot_be_deleted: Default country cannot be deleted
@@ -930,24 +901,6 @@ en:
     hide_from_subcategories_nav: Hide from subcategories navigation
     home: Home
     home_page: homepage
-    homepage:
-      bestsellers: BESTSELLERS
-      fashion_trends: FASHION TRENDS
-      fashion_trends_note: Want to rock this season’s hottest trend in style? These are the top fashion from Summer 2020 Fashion Weeks that are coming our way this season.
-      men: MEN
-      new: NEW
-      new_collection: NEW COLLECTION
-      read_more: READ MORE
-      shoes: SHOES
-      shop_now: SHOP NOW
-      sportswear: SPORTSWEAR
-      streetstyle: STREETSTYLE
-      summer_2020: Summer 2020
-      summer_collection:  Summer Collection
-      summer_sale: SUMMER SALE
-      trending: TRENDING
-      up_to_60: UP TO 60%
-      women: WOMEN
     help_center: Help Center
     i18n:
       available_locales: Available Locales
@@ -1586,7 +1539,7 @@ en:
     show_only_considered_risky: Only show risky orders
     show_property: Show Property
     show_rate_in_label: Show rate in label
-    show_store_currency_selector:
+    show_store_selector:
       short: Show Store selector
       long: Display the Store selector in the main nav bar of Storefront and allow users to change Store and Currency
     sign_up: Sign Up
@@ -1664,9 +1617,9 @@ en:
       unable_to_delete: Unable to delete store.
     store_form:
       code_help: "Store unique identifier, which is an abbreviated version of the store’s name (used as the layout directory name, and also helpful for separating templates by store)"
-      checkout_zone_help: "Selecting a Zone will limit customers on Checkout to Addresses in Countries or States in that Zone.
+      checkout_zone_help: "Selecting zone will limit to which Countries or States products are shipped.
         For more information <a href='https://guides.spreecommerce.org/user/configuration/configuring_geography.html#zones' target='_blank' class='alert-link'>please see documentation</a>"
-      languages_help: "Install <a href='https://github.com/spree-contrib/spree_i18n target='_blank' class='alert-link'>Spree I18n extension</a> to add more languages"
+      locales_help: "Install <a href='https://github.com/spree-contrib/spree_i18n' target='_blank' class='alert-link'>Spree I18n extension</a> to add more locales"
       social_help: "If you want to link to your social accounts in the footer part of your website please fill below fields"
       default_country_help: "This is the Country that will be pre-selected on the Checkout Address form"
       footer_help: "This content is visible in the footer section of your Store"
@@ -1723,6 +1676,7 @@ en:
     summary: Summary
     supported_currencies: Supported Currencies
     supported_currencies_long: A comma separated list of supported currencies
+    supported_locales: Supported Locales
     tax: Tax
     tax_included: "Tax (incl.)"
     tax_categories: Tax Categories

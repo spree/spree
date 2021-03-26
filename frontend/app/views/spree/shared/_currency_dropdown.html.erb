@@ -1,0 +1,13 @@
+<% if defined?(should_render_currency_dropdown?) && should_render_currency_dropdown? %>
+  <%= form_tag spree.set_currency_path, method: :get, class: 'px-4 py-3 w-100 currency-select' do %>
+    <div class="form-group">
+      <label for="switch_to_currency" class="dropdown-header text-center">
+        <%= Spree.t(:choose_currency) %>
+      </label>
+      <%= select_tag(:switch_to_currency,
+        options_for_select(supported_currency_options, current_currency),
+        class: 'custom-select w-100') %>
+      <noscript><%= submit_tag %></noscript>
+    </div>
+  <% end %>
+<% end %>

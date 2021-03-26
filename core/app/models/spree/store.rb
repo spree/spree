@@ -24,6 +24,7 @@ module Spree
     validates :mailer_logo, content_type: ['image/png', 'image/jpg', 'image/jpeg']
 
     before_save :ensure_default_exists_and_is_unique
+    before_save :ensure_supported_currencies, :ensure_supported_locales
     before_destroy :validate_not_default
 
     scope :by_url, ->(url) { where('url like ?', "%#{url}%") }
@@ -43,28 +44,39 @@ module Spree
       end
     end
 
+    def self.available_locales
+      Rails.cache.fetch('stores_available_locales') do
+        Spree::Store.all.map(&:supported_locales_list).flatten.uniq
+      end
+    end
+
     def supported_currencies_list
-      (read_attribute(:supported_currencies).to_s.split(',') << default_currency).map(&:to_s).map do |code|
+      @supported_currencies_list ||= (read_attribute(:supported_currencies).to_s.split(',') << default_currency).sort.map(&:to_s).map do |code|
         ::Money::Currency.find(code.strip)
       end.uniq.compact
     end
 
+    def supported_locales_list
+      # TODO: add support of multiple supported languages to a single Store
+      @supported_locales_list ||= (read_attribute(:supported_locales).to_s.split(',') << default_locale).compact.uniq.sort
+    end
+
     def unique_name
-      "#{name} (#{code})"
+      @unique_name ||= "#{name} (#{code})"
     end
 
     def formatted_url
       return if url.blank?
 
-      if url.match(/http:\/\/|https:\/\//)
-        url
-      else
-        "https://#{url}"
-      end
+      @formatted_url ||= if url.match(/http:\/\/|https:\/\//)
+                           url
+                         else
+                           Rails.env.development? ? "http://#{url}" : "https://#{url}"
+                         end
     end
 
     def countries_available_for_checkout
-      checkout_zone_or_default.try(:country_list) || Spree::Country.all
+      @countries_available_for_checkout ||= checkout_zone_or_default.try(:country_list) || Spree::Country.all
     end
 
     def states_available_for_checkout(country)
@@ -72,7 +84,7 @@ module Spree
     end
 
     def checkout_zone_or_default
-      checkout_zone || Spree::Zone.default_checkout_zone
+      @checkout_zone_or_default ||= checkout_zone || Spree::Zone.default_checkout_zone
     end
 
     private
@@ -85,6 +97,22 @@ module Spree
       end
     end
 
+    def ensure_supported_locales
+      return unless attributes.keys.include?('supported_locales')
+      return if supported_locales.present?
+      return if default_locale.blank?
+
+      self.supported_locales = default_locale
+    end
+
+    def ensure_supported_currencies
+      return unless attributes.keys.include?('supported_currencies')
+      return if supported_currencies.present?
+      return if default_currency.blank?
+
+      self.supported_currencies = default_currency
+    end
+
     def validate_not_default
       if default
         errors.add(:base, :cannot_destroy_default_store)
@@ -94,6 +122,7 @@ module Spree
 
     def clear_cache
       Rails.cache.delete('default_store')
+      Rails.cache.delete('stores_available_locales')
     end
   end
 end

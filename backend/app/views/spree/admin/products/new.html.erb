@@ -44,7 +44,9 @@
           <%= f.label :available_on, Spree.t(:available_on) %>
           <%= f.error_message_on :available_on %>
 
-          <div class="input-group datepicker" data-wrap="true">
+          <div class="input-group datepicker"
+               data-wrap="true"
+               data-alt-format="<%= Spree.t(:fpr_human_friendly_date_format, scope: 'date_picker', default: 'M j, Y') %>">
             <%= f.text_field :available_on,
                              value: datepicker_field_value(@product.available_on),
                              placeholder: Spree.t(:select_a_date),

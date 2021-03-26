@@ -2,6 +2,7 @@ module Spree
   class VariantPresenter
     include Rails.application.routes.url_helpers
     include Spree::BaseHelper
+    include Spree::ProductsHelper
 
     attr_reader :current_currency, :current_price_options, :current_store
 
@@ -19,7 +20,7 @@ module Spree
           display_price: display_price(variant),
           price: variant.price_in(current_currency),
           display_compare_at_price: display_compare_at_price(variant),
-          should_display_compare_at_price: should_display_compare_at_price(variant),
+          should_display_compare_at_price: should_display_compare_at_price?(variant),
           is_product_available_in_currency: @is_product_available_in_currency,
           backorderable: backorderable?(variant),
           in_stock: in_stock?(variant),
@@ -74,10 +75,6 @@ module Spree
         sku: variant.sku,
         purchasable: variant.purchasable?
       }
-    end
-
-    def should_display_compare_at_price(variant)
-      variant.compare_at_price.present? && variant.compare_at_price > variant.price
     end
   end
 end

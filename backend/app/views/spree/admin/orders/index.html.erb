@@ -23,6 +23,7 @@
             <div class="col-12 col-md-6 mb-3 mb-md-0">
               <div class="input-group datePickerFrom"
                    data-wrap="true"
+                   data-alt-format="<%= Spree.t(:fpr_human_friendly_date_format, scope: 'date_picker', default: 'M j, Y') %>"
                    data-max-date="<%= params[:q][:created_at_lt] %>">
                 <%= f.text_field :created_at_gt,
                   class: 'form-control js-filterable shadow-none',
@@ -36,6 +37,7 @@
             <div class="col-12 col-md-6 mt-3 mt-md-0">
               <div class="input-group datePickerTo"
                    data-wrap="true"
+                   data-alt-format="<%= Spree.t(:fpr_human_friendly_date_format, scope: 'date_picker', default: 'M j, Y') %>"
                    data-min-date="<%= params[:q][:created_at_gt] %>">
 
                 <%= f.text_field :created_at_lt,

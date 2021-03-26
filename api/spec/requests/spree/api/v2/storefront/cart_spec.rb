@@ -440,6 +440,29 @@ describe 'API V2 Storefront Cart Spec', type: :request do
           expect(json_response['data']).to have_attribute(:currency).with_value('EUR')
         end
       end
+
+      context 'as a signed user' do
+        context 'with valid currency param' do
+          include_context 'creates order with line item'
+          it_behaves_like 'showing the cart'
+
+          it 'includes the requested currency' do
+            get '/api/v2/storefront/cart', headers: headers, params: { currency: 'USD' }
+            expect(json_response['data']).to have_attribute(:currency).with_value('USD')
+          end
+        end
+
+        context 'with invalid currency param' do
+          include_context 'creates order with line item'
+          it_behaves_like 'showing the cart'
+
+          it 'includes the requested currency' do
+            get '/api/v2/storefront/cart', headers: headers, params: { currency: 'PLN' }
+
+            expect(json_response['data']['attributes']['currency']).to eq store.default_currency
+          end
+        end
+      end
     end
 
     context 'with option: include' do

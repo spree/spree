@@ -5,18 +5,49 @@ module Spree
         include CanCan::ControllerAdditions
         include Spree::Core::ControllerHelpers::StrongParameters
         include Spree::Core::ControllerHelpers::Store
+        include Spree::Core::ControllerHelpers::Locale
+        include Spree::Core::ControllerHelpers::Currency
         rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
         rescue_from CanCan::AccessDenied, with: :access_denied
         rescue_from Spree::Core::GatewayError, with: :gateway_error
+        rescue_from ActionController::ParameterMissing, with: :error_during_processing
+        if defined?(JSONAPI::Serializer::UnsupportedIncludeError)
+          rescue_from JSONAPI::Serializer::UnsupportedIncludeError, with: :error_during_processing
+        end
+        rescue_from ArgumentError, with: :error_during_processing
 
         def content_type
           Spree::Api::Config[:api_v2_content_type]
         end
 
+        protected
+
+        def serialize_collection(collection)
+          collection_serializer.new(
+            collection,
+            collection_options(collection).merge(params: serializer_params)
+          ).serializable_hash
+        end
+
+        def serialize_resource(resource)
+          resource_serializer.new(
+            resource,
+            params: serializer_params,
+            include: resource_includes,
+            fields: sparse_fields
+          ).serializable_hash
+        end
+
+        def paginated_collection
+          collection_paginator.new(sorted_collection, params).call
+        end
+
+        def collection_paginator
+          Spree::Api::Dependencies.storefront_collection_paginator.constantize
+        end
+
         def render_serialized_payload(status = 200)
           render json: yield, status: status, content_type: content_type
-        rescue ArgumentError => exception
-          render_error_payload(exception.message, 400)
         end
 
         def render_error_payload(error, status = 422)
@@ -82,6 +113,10 @@ module Spree
           fields.presence
         end
 
+        def serializer_params
+          { currency: current_currency, store: current_store, user: spree_current_user }
+        end
+
         def record_not_found
           render_error_payload(I18n.t(:resource_not_found, scope: 'spree.api'), 404)
         end
@@ -92,6 +127,16 @@ module Spree
 
         def gateway_error(exception)
           render_error_payload(exception.message)
+        end
+
+        def error_during_processing(exception)
+          result = error_handler.call(exception: exception, opts: { user: spree_current_user })
+
+          render_error_payload(result.value[:message], 400)
+        end
+
+        def error_handler
+          Spree::Api::Dependencies.error_handler.constantize
         end
       end
     end

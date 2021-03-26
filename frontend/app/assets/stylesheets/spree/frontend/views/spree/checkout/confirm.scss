@@ -2,11 +2,6 @@
   display: flex;
   flex-direction: column;
 
-  div:first-child {
-    -webkit-flex: 0;
-    flex-shrink: 0;
-  }
-
   &-order-details {
     padding-bottom: 40px;
     font-weight: 500;
@@ -36,6 +31,9 @@
     }
 
     &-line-items {
+      @include media-breakpoint-down(sm) {
+        flex-basis: 100%;
+      }
       @include media-breakpoint-up(lg) {
         border: none;
         flex: 1 1 0;
@@ -47,15 +45,6 @@
 
       &-line-item {
         $self: &;
-
-        a {
-          max-width: 50%;
-          margin-right: 20px;
-
-          @include media-breakpoint-up(lg) {
-            margin-right: 40px;
-          }
-        }
 
         img {
           width: 90px;
@@ -73,14 +62,28 @@
         &-name {
           font-size: font-px-to-rem(14px);
           border-top: 1px solid $global-border-style;
+          margin-right: 20px;
 
-          @include media-breakpoint-up(sm) {
-            font-size: font-px-to-rem(27px);
+          &-image {
+            padding-right: 16px;
           }
 
-          @include media-breakpoint-up(lg) {
-            font-size: font-px-to-rem(22px);
-            width: 55%;
+          &-link {
+            max-width: 50%;
+
+            @include media-breakpoint-up(lg) {
+              margin-right: 40px;
+            }
+
+
+            @include media-breakpoint-up(sm) {
+              font-size: font-px-to-rem(27px);
+            }
+
+            @include media-breakpoint-up(lg) {
+              font-size: font-px-to-rem(22px);
+              width: 55%;
+            }
           }
 
           &-options {
@@ -185,6 +188,8 @@
   }
 
   &-delivery-informations {
+    flex-basis: 100%;
+
     div:first-child {
       flex-shrink: unset;
       -webkit-flex: unset;
@@ -253,9 +258,9 @@
   }
 
   #checkout-summary {
-    margin-top: 20px;
-    @include media-breakpoint-up(sm) {
-      margin-top: 70px;
+    flex: 1 1 0;
+    @include media-breakpoint-down(sm) {
+      margin-top: 20px;
     }
   }
 }

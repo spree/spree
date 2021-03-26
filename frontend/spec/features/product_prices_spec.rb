@@ -1,15 +1,12 @@
 require 'spec_helper'
 
 describe 'Product with prices in multiple currencies', type: :feature, js: true do
-  xcontext 'currency switcher' do
+  context 'currency switcher' do
     context 'with USD, EUR and GBP as currencies' do
-      let!(:store) { create(:store, default: true) }
+      let!(:store) { create(:store, default: true, supported_currencies: 'USD,EUR,GBP') }
       let!(:product) { create(:product) }
 
       before do
-        reset_spree_preferences do |config|
-          config.show_store_currency_selector  = true
-        end
         create(:price, variant: product.master, currency: 'EUR', amount: 16.00)
         create(:price, variant: product.master, currency: 'GBP', amount: 23.00)
       end
@@ -17,29 +14,27 @@ describe 'Product with prices in multiple currencies', type: :feature, js: true 
       it 'can switch by currency', :js do
         visit spree.product_path(product)
         expect(page).to have_text '$19.99'
-        select 'EUR', from: 'currency'
+        switch_to_currency('EUR')
         expect(page).to have_text '€16.00'
-        select 'GBP', from: 'currency'
+        expect(page).to have_current_path(spree.product_path(product, currency: 'EUR'))
+        switch_to_currency('GBP')
         expect(page).to have_text '£23.00'
-      end
-
-      context 'and :show_store_currency_selector is false' do
-        before do
-          reset_spree_preferences do |config|
-            config.show_store_currency_selector  = false
-          end
-        end
-
-        it 'will not render the currency selector' do
-          visit spree.product_path(product)
-          expect(page).to have_current_path(spree.product_path(product))
-          expect(page).to_not have_text 'Currency'
-        end
+        expect(page).to have_current_path(spree.product_path(product, currency: 'GBP'))
+        visit spree.products_path
+        expect(page).to have_text '£23.00'
+        expect(page).to have_link product.name, href: "/products/#{product.slug}?currency=GBP"
+        open_i18n_menu
+        expect(page).to have_select('switch_to_currency', selected: '£ GBP')
+        close_i18n_menu
+        switch_to_currency('USD')
+        expect(page).to have_text '$19.99'
+        expect(page).to have_current_path(spree.products_path)
+        expect(page).to have_link product.name, href: "/products/#{product.slug}"
       end
     end
   end
 
-  context 'store currency' do
+  context 'store default currency' do
     let!(:store) { create(:store, default: true, default_currency: 'GBP') }
     let(:product) { create(:product, price: 9.99, currency: 'USD') }
 

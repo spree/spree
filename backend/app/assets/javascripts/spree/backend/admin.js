@@ -5,9 +5,6 @@ Hopefully, this will evolve into a propper class.
 **/
 
 /* global AUTH_TOKEN, order_number, Sortable, flatpickr, DOMPurify */
-
-//= require spree/backend/flatpickr_locals
-
 jQuery(function ($) {
   // Add some tips
   $('.with-tip').each(function() {
@@ -120,7 +117,9 @@ jQuery(function ($) {
     }
   }
 
-  $('.js-filterable').each(function () {
+  // To appear in the filtered options, the elements id attribute must start with 'q_',
+  // and it must have the class'.js-filterable'.
+  $('[id^="q_"].js-filterable').each(function () {
     var $this = $(this)
 
     if ($this.val() !== null && $this.val() !== '' && $this.val().length !== 0) {
@@ -137,10 +136,11 @@ jQuery(function ($) {
       }
 
       label = ransackField(label.text()) + ': ' + ransackValue
+
       var cleanLabel = DOMPurify.sanitize(label)
 
       filter = '<span class="js-filter badge badge-secondary" data-ransack-field="' + ransackFieldId + '">' + cleanLabel + '<i class="icon icon-cancel ml-2 js-delete-filter"></i></span>'
-      $(".js-filters").append(filter).show()
+      $('.js-filters').append(filter).show()
     }
   })
 
@@ -226,29 +226,26 @@ $.fn.radioControlsVisibilityOfElement = function (dependentElementSelector) {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-  var dateFrom = flatpickr('.datePickerFrom', {
+  flatpickr.setDefaults({
+    altInput: true,
     time_24hr: true,
-    dateFormat: Spree.translations.date_picker,
-    monthSelectorType: 'static',
+    altInputClass: 'flatpickr-alt-input',
+    locale: Spree.translations.flatpickr_locale
+  })
+
+  var dateFrom = flatpickr('.datePickerFrom', {
     onChange: function(selectedDates) {
       dateTo.set('minDate', selectedDates[0])
     }
   })
 
   var dateTo = flatpickr('.datePickerTo', {
-    monthSelectorType: 'static',
-    time_24hr: true,
-    dateFormat: Spree.translations.date_picker,
     onChange: function(selectedDates) {
       dateFrom.set('maxDate', selectedDates[0])
     }
   })
 
-  flatpickr('.datepicker', {
-    monthSelectorType: 'static',
-    time_24hr: true,
-    dateFormat: Spree.translations.date_picker
-  })
+  flatpickr('.datepicker', { })
 })
 
 $(document).ready(function() {

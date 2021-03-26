@@ -72,47 +72,14 @@ describe Spree::Store, type: :model do
         expect(Spree::Store.default.default).to be(true)
       end
     end
+  end
 
-    context 'when footer info is provided' do
-      let!(:store) { create(:store, description: 'Some description', address: 'Address street 123, City 17', contact_phone: '123123123', contact_email: 'user@example.com') }
+  describe '.available_locales' do
+    let!(:store) { create(:store, default_locale: 'en') }
+    let!(:store_2) { create(:store, default_locale: 'de') }
+    let!(:store_3) { create(:store, default_locale: 'en') }
 
-      it 'sets footer info fields' do
-        expect(store.description).to eq('Some description')
-        expect(store.address).to eq('Address street 123, City 17')
-        expect(store.contact_phone).to eq('123123123')
-      end
-    end
-
-    context '.unique_name' do
-      let!(:store) { create(:store) }
-
-      it 'returns the Store Name followed by the Store Code in parentheses' do
-        expect(store.unique_name).to eq("#{store.name} (#{store.code})")
-      end
-    end
-
-    describe '.supported_currencies_list' do
-      context 'with supported currencies set' do
-        let(:currencies) { 'USD, EUR, dummy' }
-        let!(:store) { create(:store, default_currency: 'USD', supported_currencies: currencies) }
-
-        it 'returns supported currencies list' do
-          expect(store.supported_currencies_list).to contain_exactly(
-            ::Money::Currency.find('USD'), ::Money::Currency.find('EUR')
-          )
-        end
-      end
-
-      context 'without supported currencies set' do
-        let!(:store) { create(:store, default_currency: 'EUR', supported_currencies: nil) }
-
-        it 'returns supported currencies list' do
-          expect(store.supported_currencies_list).to contain_exactly(
-            ::Money::Currency.find('EUR')
-          )
-        end
-      end
-    end
+    it { expect(described_class.available_locales).to contain_exactly('en', 'de') }
   end
 
   shared_context 'with checkout zone set' do
@@ -259,6 +226,91 @@ describe Spree::Store, type: :model do
           expect(subject.checkout_zone_or_default).to be_nil
         end
       end
+    end
+  end
+
+  describe '#unique_name' do
+    let!(:store) { build(:store) }
+
+    it 'returns the Store Name followed by the Store Code in parentheses' do
+      expect(store.unique_name).to eq("#{store.name} (#{store.code})")
+    end
+  end
+
+  describe '#supported_currencies_list' do
+    context 'with supported currencies set' do
+      let(:currencies) { 'USD, EUR, dummy' }
+      let!(:store) { build(:store, default_currency: 'USD', supported_currencies: currencies) }
+
+      it 'returns supported currencies list' do
+        expect(store.supported_currencies_list).to contain_exactly(
+          ::Money::Currency.find('EUR'), ::Money::Currency.find('USD')
+        )
+      end
+    end
+
+    context 'without supported currencies set' do
+      let!(:store) { build(:store, default_currency: 'EUR', supported_currencies: nil) }
+
+      it 'returns supported currencies list' do
+        expect(store.supported_currencies_list).to contain_exactly(
+          ::Money::Currency.find('EUR')
+        )
+      end
+    end
+  end
+
+  describe '#supported_locales_list' do
+    context 'with supported locale set' do
+      let(:store) { build(:store, default_locale: 'fr', supported_locales: 'fr,de') }
+
+      it 'returns supported currencies list' do
+        expect(store.supported_locales_list).to be_an_instance_of(Array)
+        expect(store.supported_locales_list).to contain_exactly('de', 'fr')
+      end
+    end
+
+    context 'without supported currencies set' do
+      let(:store) { build(:store, default_locale: nil, supported_locales: nil) }
+
+      it 'returns supported currencies list' do
+        expect(store.supported_locales_list).to be_an_instance_of(Array)
+        expect(store.supported_locales_list).to be_empty
+      end
+    end
+  end
+
+  describe '#ensure_supported_locales' do
+    context 'store with default_locale' do
+      let(:store) { build(:store, default_locale: 'fr', supported_locales: nil) }
+
+      it { expect { store.save! }.to change(store, :supported_locales).from(nil).to('fr') }
+    end
+
+    context 'store without default locale' do
+      let(:store) { build(:store, default_locale: nil, supported_locales: nil) }
+
+      it { expect { store.save! }.not_to change(store, :supported_locales).from(nil) }
+    end
+
+    context 'store with supported locales' do
+      let(:store) { build(:store, default_locale: 'fr', supported_locales: 'fr,de') }
+
+      it { expect { store.save! }.not_to change(store, :supported_locales) }
+    end
+  end
+
+  describe '#ensure_supported_currencies' do
+    context 'store with default_currency' do
+      let(:store) { build(:store, default_currency: 'EUR', supported_currencies: nil) }
+
+      it { expect { store.save! }.to change(store, :supported_currencies).from(nil).to('EUR') }
+    end
+
+    context 'store with supported currencies' do
+      let(:store) { build(:store, default_currency: 'EUR', supported_currencies: 'EUR,GBP') }
+
+      it { expect { store.save! }.not_to change(store, :supported_currencies) }
     end
   end
 end

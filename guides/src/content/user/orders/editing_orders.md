@@ -9,7 +9,7 @@ There will be times when you need to edit orders that are placed in your store. 
 * A customer may call you to adjust the quantity of items they want to purchase.
 * You may sell out of an item and need to remove it from an order altogether.
 * You may need to change the shipping being charged on an order.
-* The customer may hold a store credit which you need to manually apply to their order.
+* The customer may have store credit which you need to manually apply to their order.
 
 ## Editing an Order
 

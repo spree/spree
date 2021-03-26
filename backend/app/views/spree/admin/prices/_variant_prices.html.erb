@@ -1,20 +1,13 @@
-<div class="panel-body no-padding-bottom panel-default  table-responsive">
+<div class="table-responsive">
   <div id="variant_prices-table-wrapper">
-    <table class="table sortable">
-      <colgroup>
-        <col style="width: 15%" />
-        <col style="width: 30%" />
-        <col style="width: 15%" />
-        <col style="width: 20%" />
-        <col style="width: 20%" />
-      </colgroup>
+    <table class="table">
       <thead>
         <tr data-hook="variant_prices_header">
-          <th><%= Spree.t(:options) %></th>
-          <th><%= Spree.t(:sku) %></th>
-          <th><%= Spree.t(:currency) %></th>
-          <th><%= Spree.t(:price) %></th>
-          <th><%= Spree.t(:compare_at_price) %></th>
+          <th scope="col"><%= Spree.t(:options) %></th>
+          <th scope="col"><%= Spree.t(:sku) %></th>
+          <th scope="col"><%= Spree.t(:currency) %></th>
+          <th scope="col" style="min-width: 150px;"><%= Spree.t(:price) %></th>
+          <th scope="col" style="min-width: 150px;"><%= Spree.t(:compare_at_price) %></th>
         </tr>
       </thead>
       <tbody id="variant-prices" data-hook="variant_prices_body">

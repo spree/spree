@@ -17,13 +17,13 @@
     </colgroup>
     <thead>
       <tr data-hook="admin_stock_movements_index_headers">
-        <th><%= Spree.t(:stock_item) %>
+        <th><%= Spree.t(:variant) %>
         <th><%= Spree.t(:quantity) %></th>
         <th><%= Spree.t(:action) %></th>
       </tr>
     </thead>
     <tbody>
-      <% @stock_movements.each do |stock_movement|%>
+      <% @stock_movements.each do |stock_movement| %>
         <tr id="<%= spree_dom_id stock_movement %>" data-hook="admin_stock_movements_index_rows">
           <td>
             <%= display_variant(stock_movement) %>

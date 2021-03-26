@@ -33,7 +33,7 @@
           <div class="d-flex flex-column align-items-center align-items-xl-start pb-3 flex-grow-2 footer-spree-contact-note">
             <div>
               <strong><%= current_store.name %></strong>
-              <br/>
+              <br>
               <% if current_store.address %>
                 <%= current_store.address.html_safe %>
               <% end %>
@@ -68,7 +68,7 @@
               <%= Spree.t('nav_bar.my_account') %>
             </div>
             <div class="pt-2">
-              <%= link_to Spree.t('nav_bar.my_orders'), spree.account_path(anchor: "account-my-orders") %>
+              <%= link_to Spree.t(:my_orders).upcase, spree.account_path(anchor: "account-my-orders") %>
             </div>
           </div>
         <% end %>

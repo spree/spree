@@ -4,7 +4,7 @@ title: Roles
 
 ## Introduction
 
-Roles are used to define user’s permissions on your website. This option gives you the ability to control the rights of users. By default, Spree offers two kinds of Roles: **Admin** and **User**. If you would like to make more roles with more specific features than the Admin and User roles, our company offers making those with the help of a little backend development work.
+Roles are used to define users' permissions on your website. This option gives you the ability to control the rights of users. By default, Spree offers two kinds of Roles: **Admin** and **User**. If you would like to create other roles with more specific features than the Admin and User roles, our company offers creating them for you, with the help of a little backend development work.
 To open the **Roles** tab, extend the **Configuration** dropdown and find **Roles**.
 
 ## Creating a New Role

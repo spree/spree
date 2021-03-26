@@ -42,7 +42,9 @@
       <div class="form-group" data-hook="discontinue_on">
           <%= f.label :discontinue_on, Spree.t(:discontinue_on) %>
           <%= f.error_message_on :discontinue_on %>
-          <div class="input-group datepicker" data-wrap="true" >
+          <div class="input-group datepicker"
+               data-wrap="true"
+               data-alt-format="<%= Spree.t(:fpr_human_friendly_date_format, scope: 'date_picker', default: 'M j, Y') %>">
             <%= f.text_field :discontinue_on,
                              value: datepicker_field_value(@variant.discontinue_on),
                              placeholder: Spree.t(:select_a_date),

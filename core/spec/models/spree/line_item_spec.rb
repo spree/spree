@@ -171,25 +171,12 @@ describe Spree::LineItem, type: :model do
   end
 
   # test for copying prices when the vat changes
-  context '#update_price' do
-    let(:price)     { double "price" }
-    let(:order)     { create :order, currency: "EUR" }
-    let(:line_item) { create :line_item, order_id: order.id, currency: "EUR" }
-
-    before do
-      expect(line_item).to receive(:variant_id).and_return(1001)
-
-      expect(Spree::Price).to receive(:where).with(
-        currency: "EUR",
-        variant_id: 1001
-      ).and_return([price])
-
-      expect(price).to receive(:price_including_vat_for).and_return(12)
-
-      reset_spree_preferences do |config|
-        config.show_store_currency_selector = true
-      end
-    end
+  describe '#update_price' do
+    let(:currency)  { 'EUR' }
+    let(:order)     { create(:order, currency: currency) }
+    let(:product)   { create(:product_in_stock) }
+    let!(:line_item) { create(:line_item, order_id: order.id, currency: currency, product: product, variant: product.master) }
+    let!(:price)     { create(:price, currency: currency, variant: product.master, amount: 12) }
 
     it 'copies over a variants differing price for another vat zone' do
       line_item.price = 10

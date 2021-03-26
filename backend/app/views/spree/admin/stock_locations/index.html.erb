@@ -19,12 +19,12 @@
     </thead>
     <tbody>
       <% @stock_locations.each do |stock_location|
-           @edit_url = edit_admin_stock_location_path(stock_location)
-           @delete_url = admin_stock_location_path(stock_location)
-      %>
+           @edit_url = spree.edit_admin_stock_location_path(stock_location)
+           @delete_url = spree.admin_stock_location_path(stock_location) %>
+
         <tr id="<%= spree_dom_id stock_location %>" data-hook="stock_location_row">
           <td><%= display_name(stock_location) %></td>
-          <td><%= link_to Spree.t(:stock_movements), admin_stock_location_stock_movements_path(stock_location.id) %> </td>
+          <td><%= link_to Spree.t(:stock_movements), spree.admin_stock_location_stock_movements_path(stock_location.id) %> </td>
           <td><%= active_badge(stock_location.active, label: Spree.t(state(stock_location))) %></td>
           <td class="actions actions-2 text-center">
             <%= link_to_edit(stock_location, no_text: true) if can? :create, stock_location %>

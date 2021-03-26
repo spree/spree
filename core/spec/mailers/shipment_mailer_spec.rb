@@ -5,7 +5,7 @@ describe Spree::ShipmentMailer, type: :mailer do
   include EmailSpec::Helpers
   include EmailSpec::Matchers
 
-  let!(:store) { create(:store) }
+  let!(:store) { create(:store, default_locale: nil) }
 
   let(:order) { stub_model(Spree::Order, number: 'R12345', store: store, email: 'test@example.com') }
   let(:shipping_method) { stub_model(Spree::ShippingMethod, name: 'USPS') }

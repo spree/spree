@@ -11,19 +11,6 @@ module Spree
       initializer 'spree.params.filter' do |app|
         app.config.filter_parameters += [:password, :password_confirmation, :number]
       end
-
-      # sets the manifests / assets to be precompiled, even when initialize_on_precompile is false
-      initializer 'spree.assets.precompile', group: :all do |app|
-        app.config.assets.paths << "#{Rails.root}/app/assets/fonts"
-        app.config.assets.precompile << /\.(?:svg|eot|woff|ttf)$/
-
-        app.config.assets.precompile += %w[
-          spree/backend/all*
-          spree/backend/address_states.js
-          jquery.jstree/themes/spree/*
-          select2_locale*
-        ]
-      end
     end
   end
 end

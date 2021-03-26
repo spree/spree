@@ -1,6 +1,4 @@
-
 <div data-hook="admin_product_form_fields">
-
   <div class="row">
 
     <div class="col-12 col-md-8" data-hook="admin_product_form_left">
@@ -68,7 +66,8 @@
 
           <div class="input-group datePickerFrom"
                data-wrap="true"
-               data-max-date="<%= @product.discontinue_on %>" >
+               data-alt-format="<%= Spree.t(:fpr_human_friendly_date_format, scope: 'date_picker', default: 'M j, Y') %>"
+               data-max-date="<%= @product.discontinue_on %>">
 
             <%= f.text_field :available_on,
                              value: datepicker_field_value(@product.available_on),
@@ -81,7 +80,6 @@
         <% end %>
       </div>
 
-
       <div data-hook="admin_product_form_discontinue_on">
         <%= f.field_container :discontinue_on, class: ['form-group'] do %>
           <%= f.label :discontinue_on, Spree.t(:discontinue_on) %>
@@ -89,7 +87,8 @@
 
           <div class="input-group datePickerTo"
                data-wrap="true"
-               data-min-date="<%= @product.available_on %>" >
+               data-alt-format="<%= Spree.t(:fpr_human_friendly_date_format, scope: 'date_picker', default: 'M j, Y') %>"
+               data-min-date="<%= @product.available_on %>">
 
             <%= f.text_field :discontinue_on,
                               value: datepicker_field_value(@product.discontinue_on),
@@ -195,7 +194,7 @@
       <%= f.label :taxon_ids, Spree.t(:taxons) %>
 
       <% if can? :modify, Spree::Classification %>
-        <%= f.select :taxon_ids, options_from_collection_for_select(@product.taxons, :id, :pretty_name, @product.taxons.pluck(:id)), { include_hidden: true }, multiple: true, class: 'select2-hidden-accessible'  %>
+        <%= f.select :taxon_ids, options_from_collection_for_select(@product.taxons, :id, :pretty_name, @product.taxons.pluck(:id)), { include_hidden: true }, multiple: true, class: 'select2-hidden-accessible' %>
       <% elsif @product.taxons.any? %>
         <ul class="text_list">
           <% @product.taxons.each do |taxon| %>

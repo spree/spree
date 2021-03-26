@@ -62,7 +62,7 @@ When you click "Update", not only is the product photo uploaded, it is automatic
 
 Suppose that you sell drink tumblers in your store. All of the tumblers are made by the same manufacturer and have the same basic product specifications -such as materials used and machine washability rating but your inventory includes several options:
 
-* **Size** - You sotck both medium and large tumblers
+* **Size** - You stock both medium and large tumblers
 * **Decorative Wrap** - Your tumblers come with the option of several kinds of decorative plastic wraps: stars, owls, pink paisley, purple paisley, or skulls.
 * **Lid Color** - The tumblers also come with an assortment of lids to match the decorative wrap - the star tumblers have blue lids, the owls have orange lids, the pink paisley have pink lids, the purple paisley have white lids, and the skulls can be purchased with white *or* black lids.
 
@@ -115,7 +115,7 @@ You can read much more in-depth information about this feature in the [Product P
 
 ## Stock Management
 
-As of version 2.0 of Spree, you now have much more granular control over how inventory is tracked through your store. You will learn more about stock locations in the [Stock Locations Guide](/user/configuration/configuring_inventory.html), but for now it's enough to understand that you enter the number of each product variant that you have at each of your individual stock locations.
+As of Spree version 2.0, you now have much more granular control over how inventory is tracked through your store. You will learn more about stock locations in the [Stock Locations Guide](/user/configuration/configuring_inventory.html), but for now, it's enough to understand that you enter the number of each product variant that you have at each of your individual stock locations.
 
 Let's assume that you have two stock locations - your main New York warehouse and your satellite Detroit warehouse. Refer to the instructions on creating stock locations in the [Stock Locations Guide](/user/configuration/configuring_inventory.html#create-a-new-stock-location) to add your warehouses.
 

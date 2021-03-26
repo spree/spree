@@ -21,8 +21,8 @@
     <tbody>
       <% @tax_categories.each do |tax_category|
            @edit_url = edit_admin_tax_category_path(tax_category)
-           @delete_url = admin_tax_category_path(tax_category)
-      %>
+           @delete_url = admin_tax_category_path(tax_category) %>
+
         <tr id="<%= spree_dom_id tax_category %>" data-hook="tax_row">
           <td><%= tax_category.name %></td>
           <td><%= tax_category.tax_code %></td>

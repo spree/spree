@@ -123,15 +123,15 @@ module Spree
     end
 
     def tax_category
-      if self[:tax_category_id].nil?
-        product.tax_category
-      else
-        Spree::TaxCategory.find(self[:tax_category_id])
-      end
+      @tax_category ||= if self[:tax_category_id].nil?
+                          product.tax_category
+                        else
+                          Spree::TaxCategory.find(self[:tax_category_id])
+                        end
     end
 
     def options_text
-      Spree::Variants::OptionsPresenter.new(self).to_sentence
+      @options_text ||= Spree::Variants::OptionsPresenter.new(self).to_sentence
     end
 
     # Default to master name
@@ -192,7 +192,7 @@ module Spree
     end
 
     def price_in(currency)
-      prices.detect { |price| price.currency == currency } || prices.build(currency: currency)
+      prices.detect { |price| price.currency == currency&.upcase } || prices.build(currency: currency&.upcase)
     end
 
     def amount_in(currency)
@@ -226,7 +226,7 @@ module Spree
     end
 
     def compare_at_price
-      price_in(cost_currency).try(:compare_at_amount)
+      @compare_at_price ||= price_in(cost_currency).try(:compare_at_amount)
     end
 
     def name_and_sku

@@ -2,7 +2,7 @@
 title: Orders
 ---
 
-Much of your time administering your Spree store will be spent manipulating customer orders - processing payments, issuing refunds, confirming shipments, etc.
+A lot of the time you spend administering your Spree store will involve manipulating customer orders - processing payments, issuing refunds, confirming shipments, etc.
 
 In these guides, you will learn how to:
 

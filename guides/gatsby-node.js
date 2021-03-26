@@ -52,6 +52,14 @@ exports.createPages = ({ actions, graphql }) => {
   })
 }
 
+const fixSlug = slug => {
+  if (!slug.match(/release_notes/)) {
+    return slug.replace(/\/\d+\_/, '/')
+  } else {
+    return slug
+  }
+}
+
 exports.onCreateNode = ({ node, getNode, actions }) => {
   const { createNodeField } = actions
 
@@ -74,7 +82,7 @@ exports.onCreateNode = ({ node, getNode, actions }) => {
     createNodeField({
       node,
       name: 'slug',
-      value: isIndex ? slug : slugWithExt
+      value: fixSlug(isIndex ? slug : slugWithExt)
     })
 
     createNodeField({
