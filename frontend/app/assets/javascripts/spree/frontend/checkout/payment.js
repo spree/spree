@@ -27,7 +27,6 @@ Spree.ready(function ($) {
       if ($(CARD_NUMBER_SELECTOR).length > 0 &&
           $(CARD_EXPIRATION_SELECTOR).length > 0 &&
           $(CARD_CODE_SELECTOR).length > 0) {
-
         var cardCodeCleave;
         var updateCardCodeCleave = function (length) {
           if (cardCodeCleave) cardCodeCleave.destroy()
