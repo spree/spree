@@ -1,3 +1,4 @@
+// Needs some work
 .flatpickr-calendar {
   background-color: $secondary-bg-hover-color_dm;
   box-shadow: 1px 0 0 $color-btn-hover-border_dm, -1px 0 0 $color-btn-hover-border_dm, 0 1px 0 $color-btn-hover-border_dm, 0 -1px 0 $color-btn-hover-border_dm, 0 3px 13px rgba(0,0,0,0.08);
@@ -16,4 +17,27 @@
 
 .flatpickr-calendar.arrowBottom:before {
   border-top-color: $main-border-color_dm !important;
+}
+
+.flatpickr-current-month .flatpickr-monthDropdown-months {
+  color: $main-text-color_dm;
+}
+
+span.flatpickr-weekday {
+  color: $main-text-color_dm;
+}
+
+.flatpickr-current-month input.cur-year {
+  color: $main-text-color_dm;
+}
+
+
+.flatpickr-months .flatpickr-prev-month, .flatpickr-months .flatpickr-next-month {
+  svg {
+    color: $main-text-color_dm !important;
+  }
+}
+
+.input-group.datePickerFrom input.flatpickr-alt-input[readonly], .input-group.datePickerTo input.flatpickr-alt-input[readonly], .input-group.datepicker input.flatpickr-alt-input[readonly] {
+  background-color: $secondary-bg-hover-color_dm !important;
 }
