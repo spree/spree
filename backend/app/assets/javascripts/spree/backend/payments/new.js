@@ -2,22 +2,35 @@
 
 $(document).ready(function () {
   if ($('#new_payment').length) {
+    var cardCodeCleave;
+    var updateCardCodeCleave = function (length) {
+      if (cardCodeCleave) cardCodeCleave.destroy()
+
+      cardCodeCleave = new Cleave('.cardCode', {
+        numericOnly: true,
+        blocks: [length]
+      })
+    }
+
+    updateCardCodeCleave(3)
+
     /* eslint-disable no-new */
     new Cleave('.cardNumber', {
       creditCard: true,
       onCreditCardTypeChanged: function (type) {
         $('.ccType').val(type)
+
+        if (type === 'amex') {
+          updateCardCodeCleave(4)
+        } else {
+          updateCardCodeCleave(3)
+        }
       }
     })
     /* eslint-disable no-new */
     new Cleave('.cardExpiry', {
       date: true,
       datePattern: ['m', 'Y']
-    })
-    /* eslint-disable no-new */
-    new Cleave('.cardCode', {
-      numericOnly: true,
-      blocks: [3]
     })
 
     $('.payment_methods_radios').click(
