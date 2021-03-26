@@ -121,12 +121,12 @@
         {
           "name": "Mirakl",
           "description": "Spree intergration for Mirakl API",
-          "url": "https://github.com/spree-contrib/spree_shared"
+          "url": "https://github.com/ShopFelixGray/spree_mirakl_api"
         },
         {
           "name": "Multi Vendor",
           "description": "Official marketplace extension",
-          "url": "https://github.com/ShopFelixGray/spree_mirakl_api"
+          "url": "https://github.com/spree-contrib/spree_multi_vendor"
         },
         {
           "name": "Apartment",
