@@ -41,7 +41,7 @@ module Spree
         if @order.completed?
           @current_order = nil
           flash['order_completed'] = true
-          redirect_to completion_route
+          redirect_to "#{completion_route}-order-success"
         else
           redirect_to spree.checkout_state_path(@order.state)
         end

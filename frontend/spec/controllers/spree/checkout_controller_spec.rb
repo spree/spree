@@ -561,7 +561,7 @@ describe Spree::CheckoutController, type: :controller do
         # This inadvertently is a regression test for #2694
         it 'redirects to the order view' do
           post :update, params: { state: 'confirm' }
-          expect(response).to redirect_to spree.order_path(order)
+          expect(response).to redirect_to "#{spree.order_path(order)}-order-success"
         end
 
         it 'removes completed order from current_order' do
