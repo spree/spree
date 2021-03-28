@@ -27,22 +27,35 @@ Spree.ready(function ($) {
       if ($(CARD_NUMBER_SELECTOR).length > 0 &&
           $(CARD_EXPIRATION_SELECTOR).length > 0 &&
           $(CARD_CODE_SELECTOR).length > 0) {
+        var cardCodeCleave;
+        var updateCardCodeCleave = function (length) {
+          if (cardCodeCleave) cardCodeCleave.destroy()
+
+          cardCodeCleave = new Cleave(CARD_CODE_SELECTOR, {
+            numericOnly: true,
+            blocks: [length]
+          })
+        }
+
+        updateCardCodeCleave(3)
+
         /* eslint-disable no-new */
         new Cleave(CARD_NUMBER_SELECTOR, {
           creditCard: true,
           onCreditCardTypeChanged: function (type) {
             $('.ccType').val(type)
+
+            if (type === 'amex') {
+              updateCardCodeCleave(4)
+            } else {
+              updateCardCodeCleave(3)
+            }
           }
         })
         /* eslint-disable no-new */
         new Cleave(CARD_EXPIRATION_SELECTOR, {
           date: true,
           datePattern: ['m', 'Y']
-        })
-        /* eslint-disable no-new */
-        new Cleave(CARD_CODE_SELECTOR, {
-          numericOnly: true,
-          blocks: [3]
         })
       }
 
