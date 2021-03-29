@@ -763,6 +763,34 @@ describe Spree::Order, type: :model do
     end
   end
 
+  context '#uneditable?' do
+    let(:order) { Spree::Order.create }
+
+    it 'returns true when order is completed' do
+      allow(order).to receive_messages(complete?: true)
+
+      expect(order.uneditable?).to be true
+    end
+
+    it 'returns true when order is canceled' do
+      allow(order).to receive_messages(canceled?: true)
+
+      expect(order.uneditable?).to be true
+    end
+
+    it 'returns true when order is returned' do
+      allow(order).to receive_messages(returned?: true)
+
+      expect(order.uneditable?).to be true
+    end
+
+    it 'returns false when order is during checkout' do
+      allow(order).to receive_messages(confirm?: true)
+
+      expect(order.uneditable?).to be false
+    end
+  end
+
   context '#completed?' do
     it 'indicates if order is completed' do
       order.completed_at = nil

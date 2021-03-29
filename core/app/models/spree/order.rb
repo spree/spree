@@ -326,6 +326,10 @@ module Spree
       complete? || resumed? || awaiting_return? || returned?
     end
 
+    def uneditable?
+      complete? || canceled? || returned?
+    end
+
     def credit_cards
       credit_card_ids = payments.from_credit_card.pluck(:source_id).uniq
       CreditCard.where(id: credit_card_ids)

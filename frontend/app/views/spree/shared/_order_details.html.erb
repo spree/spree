@@ -117,7 +117,7 @@
 
   <div class="mt-5" id="checkout-summary" data-hook="checkout_summary_box">
     <%= render partial: 'spree/checkout/summary', locals: { order: @order } %>
-    <% unless @order.complete? %>
+    <% unless @order.uneditable? %>
       <div data-hook="buttons">
         <% submit_label_key = @order.confirm? ? :place_order : :save_and_continue %>
         <%= submit_tag Spree.t(submit_label_key), class: 'btn btn-primary text-uppercase font-weight-bold w-100 checkout-content-save-continue-button' %>
