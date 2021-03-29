@@ -92,7 +92,7 @@ If you want to grab just the line item adjustments, call `line_item_adjustments`
 order.line_item_adjustments
 ```
 
-Simiarly, if you want to grab the adjustments applied to shipments, call `shipment_adjustments`:
+Similarly, if you want to grab the adjustments applied to shipments, call `shipment_adjustments`:
 
 ```ruby
 order.shipment_adjustments
