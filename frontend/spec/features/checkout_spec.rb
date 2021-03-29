@@ -230,6 +230,24 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
 
       expect(page).to have_selector('input.btn-primary.checkout-content-save-continue-button[data-disable-with]')
     end
+
+    it 'checks if link to checkout address step will be displayed' do
+      visit spree.checkout_state_path(:confirm)
+
+      expect(page).to have_link(href: spree.checkout_state_path(:address))
+    end
+
+    it 'checks if link to checkout delivery step will be displayed' do
+      visit spree.checkout_state_path(:confirm)
+
+      expect(page).to have_link(href: spree.checkout_state_path(:delivery))
+    end
+
+    it 'checks if link to checkout payment step will be displayed' do
+      visit spree.checkout_state_path(:confirm)
+
+      expect(page).to have_link(href: spree.checkout_state_path(:payment))
+    end
   end
 
   context 'when several payment methods are available', js: true do
