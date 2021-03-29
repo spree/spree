@@ -305,7 +305,7 @@ module Spree
     end
 
     def checkout_edit_link(step = 'address', order = @order)
-      return if order.complete?
+      return if order.uneditable?
 
       classes = 'align-text-bottom checkout-confirm-delivery-informations-link'
 
