@@ -2,6 +2,7 @@ Doorkeeper.configure do
   orm :active_record
   use_refresh_token
   api_only
+  base_controller 'ActionController::API'
 
   skip_client_authentication_for_password_grant { true } if defined?(skip_client_authentication_for_password_grant)
 
