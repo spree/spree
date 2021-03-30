@@ -53,7 +53,8 @@ module Spree
     alias_attribute :first_name, :firstname
     alias_attribute :last_name, :lastname
 
-    self.whitelisted_ransackable_attributes = %w[firstname lastname company]
+    self.whitelisted_ransackable_attributes = ADDRESS_FIELDS
+    self.whitelisted_ransackable_associations = %w[country state user]
 
     def self.build_default
       new(country: Spree::Country.default)
