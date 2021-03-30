@@ -137,10 +137,10 @@ module Spree
     end
 
     def asset_exists?(path)
-      if Rails.env.production?
-        Rails.application.assets_manifest.find_sources(path).present?
+      if Rails.configuration.assets.compile
+        Rails.application.precompiled_assets.include? path
       else
-        Rails.application.assets.find_asset(path).present?
+        Rails.application.assets_manifest.assets[path].present?
       end
     end
 
