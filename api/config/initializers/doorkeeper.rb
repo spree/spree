@@ -24,11 +24,15 @@ Doorkeeper.configure do
     current_spree_user&.has_spree_role?('admin') || redirect_to(routes.root_url)
   end
 
-  grant_flows %w(password)
+  grant_flows %w[password client_credentials]
+
+  allow_blank_redirect_uri true
 
   handle_auth_errors :raise
 
   access_token_methods :from_bearer_authorization, :from_access_token_param
+
+  optional_scopes :admin, :write, :read
 end
 
 Doorkeeper::AccessGrant.class_eval do
