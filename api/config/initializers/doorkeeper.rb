@@ -26,6 +26,8 @@ Doorkeeper.configure do
 
   grant_flows %w(password)
 
+  handle_auth_errors :raise
+
   access_token_methods :from_bearer_authorization, :from_access_token_param
 end
 

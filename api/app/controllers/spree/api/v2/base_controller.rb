@@ -7,8 +7,10 @@ module Spree
         include Spree::Core::ControllerHelpers::Store
         include Spree::Core::ControllerHelpers::Locale
         include Spree::Core::ControllerHelpers::Currency
+
         rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
         rescue_from CanCan::AccessDenied, with: :access_denied
+        rescue_from Doorkeeper::Errors::DoorkeeperError, with: :access_denied_401
         rescue_from Spree::Core::GatewayError, with: :gateway_error
         rescue_from ActionController::ParameterMissing, with: :error_during_processing
         if defined?(JSONAPI::Serializer::UnsupportedIncludeError)
@@ -127,6 +129,10 @@ module Spree
 
         def access_denied(exception)
           render_error_payload(exception.message, 403)
+        end
+
+        def access_denied_401(exception)
+          render_error_payload(exception.message, 401)
         end
 
         def gateway_error(exception)
