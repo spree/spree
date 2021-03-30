@@ -23,7 +23,7 @@ module Spree
         end
 
         def default_sort_atributes
-          [:id, :updated_at, :created_at]
+          [:id, :name, :number, :updated_at, :created_at]
         end
 
         def scope
