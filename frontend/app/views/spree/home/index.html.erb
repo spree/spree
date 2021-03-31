@@ -2,7 +2,7 @@
 
 <div class="homepage-hero-image mb-3 position-relative">
   <img class="lazyload hero-image position-absolute"
-    data-src="<%= asset_path('homepage/temporary_renamed_main_banner.jpg') %>"
+    data-src="<%= main_banner %>"
     data-srcset="<%= image_source_set('homepage/main_banner') %>"
     alt="Summer Collection">
 
@@ -22,7 +22,7 @@
 
       <%= link_to spree.nested_taxons_path('men'), class: "homepage-taxon-box mb-3" do %>
         <img class="w-100 lazyload"
-          data-src="<%= asset_path('homepage/temporary_renamed_category_banner_upper.jpg') %>"
+          data-src="<%= category_banner_upper %>"
           data-srcset="<%= image_source_set('homepage/category_banner_upper') %>"
           alt="Men">
 
@@ -33,7 +33,7 @@
 
       <%= link_to spree.nested_taxons_path('sportswear'), class: "homepage-taxon-box" do %>
         <img class="w-100 lazyload"
-          data-src="<%= asset_path('homepage/temporary_renamed_category_banner_lower.jpg') %>"
+          data-src="<%= category_banner_lower %>"
           data-srcset="<%= image_source_set('homepage/category_banner_lower') %>"
           alt="Sportswear">
 
@@ -48,7 +48,7 @@
 
       <%= link_to spree.nested_taxons_path('women'), class: "homepage-taxon-box flex-grow-1" do %>
         <img class="w-100 lazyload"
-          data-src="<%= asset_path('homepage/temporary_renamed_big_category_banner.jpg') %>"
+          data-src="<%= big_category_banner %>"
           data-srcset="<%= image_source_set('homepage/big_category_banner') %>"
           alt="Women">
 
@@ -82,7 +82,7 @@
       <%= link_to spree.nested_taxons_path('streetstyle') do %>
         <div class="homepage-bottom-box text-center mb-3">
           <img class="w-100 lazyload"
-            data-src="<%= asset_path('homepage/temporary_renamed_promo_banner_left.jpg') %>"
+            data-src="<%= promo_banner_left %>"
             data-srcset="<%= image_source_set('homepage/promo_banner_left') %>"
             alt="NEW COLLECTION">
 
@@ -102,7 +102,7 @@
       <%= link_to spree.nested_taxons_path('summer-sale') do %>
         <div class="homepage-bottom-box text-center mb-3">
           <img class="w-100 lazyload"
-            data-src="<%= asset_path('homepage/temporary_renamed_promo_banner_right.jpg') %>"
+            data-src="<%= promo_banner_right %>"
             data-srcset="<%= image_source_set('homepage/promo_banner_right') %>"
             alt="Summer Sale">
 
