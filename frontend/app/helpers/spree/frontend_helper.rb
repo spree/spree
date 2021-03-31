@@ -200,7 +200,7 @@ module Spree
       set = []
       widths.each do |key, value|
         filename = key == :desktop ? name : "#{name}_#{key}"
-        file = asset_path("#{filename}.jpg")
+        file = find_asset_path(filename)
 
         set << "#{file} #{value}w"
       end
@@ -286,6 +286,14 @@ module Spree
       return if country_iso_code.blank?
 
       content_tag :span, nil, class: "flag-icon flag-icon-#{country_iso_code.downcase}"
+    end
+
+    def find_asset_path(image_name)
+      if Rails.application.assets.find_asset("homepage/#{image_name}.jpg")
+        asset_path("homepage/#{image_name}.jpg")
+      else
+        asset_path("homepage/temporary_renamed_#{image_name}.jpg")
+      end
     end
 
     private

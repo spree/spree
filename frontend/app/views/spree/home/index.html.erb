@@ -2,8 +2,8 @@
 
 <div class="homepage-hero-image mb-3 position-relative">
   <img class="lazyload hero-image position-absolute"
-    data-src="<%= main_banner %>"
-    data-srcset="<%= image_source_set('homepage/main_banner') %>"
+    data-src="<%= find_asset_path(:main_banner) %>"
+    data-srcset="<%= image_source_set(:main_banner) %>"
     alt="Summer Collection">
 
   <div class="hero-content">
@@ -22,8 +22,8 @@
 
       <%= link_to spree.nested_taxons_path('men'), class: "homepage-taxon-box mb-3" do %>
         <img class="w-100 lazyload"
-          data-src="<%= category_banner_upper %>"
-          data-srcset="<%= image_source_set('homepage/category_banner_upper') %>"
+          data-src="<%= find_asset_path(:category_banner_upper) %>"
+          data-srcset="<%= image_source_set(:category_banner_upper) %>"
           alt="Men">
 
         <div class="homepage-taxon-box-text">
@@ -33,8 +33,8 @@
 
       <%= link_to spree.nested_taxons_path('sportswear'), class: "homepage-taxon-box" do %>
         <img class="w-100 lazyload"
-          data-src="<%= category_banner_lower %>"
-          data-srcset="<%= image_source_set('homepage/category_banner_lower') %>"
+          data-src="<%= find_asset_path(:category_banner_lower) %>"
+          data-srcset="<%= image_source_set(:category_banner_lower) %>"
           alt="Sportswear">
 
         <div class="homepage-taxon-box-text" role="img" aria-label="Sportswear">
@@ -48,8 +48,8 @@
 
       <%= link_to spree.nested_taxons_path('women'), class: "homepage-taxon-box flex-grow-1" do %>
         <img class="w-100 lazyload"
-          data-src="<%= big_category_banner %>"
-          data-srcset="<%= image_source_set('homepage/big_category_banner') %>"
+          data-src="<%= find_asset_path(:big_category_banner) %>"
+          data-srcset="<%= image_source_set(:big_category_banner) %>"
           alt="Women">
 
         <div class="homepage-taxon-box-text">
@@ -82,8 +82,8 @@
       <%= link_to spree.nested_taxons_path('streetstyle') do %>
         <div class="homepage-bottom-box text-center mb-3">
           <img class="w-100 lazyload"
-            data-src="<%= promo_banner_left %>"
-            data-srcset="<%= image_source_set('homepage/promo_banner_left') %>"
+            data-src="<%= find_asset_path(:promo_banner_left) %>"
+            data-srcset="<%= image_source_set(:promo_banner_left) %>"
             alt="NEW COLLECTION">
 
           <div class="homepage-bottom-box-inner" role="img" aria-label="New Collection">
@@ -102,8 +102,8 @@
       <%= link_to spree.nested_taxons_path('summer-sale') do %>
         <div class="homepage-bottom-box text-center mb-3">
           <img class="w-100 lazyload"
-            data-src="<%= promo_banner_right %>"
-            data-srcset="<%= image_source_set('homepage/promo_banner_right') %>"
+            data-src="<%= find_asset_path(:promo_banner_right) %>"
+            data-srcset="<%= image_source_set(:promo_banner_right) %>"
             alt="Summer Sale">
 
           <div class="homepage-bottom-box-inner">
