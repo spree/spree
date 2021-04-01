@@ -113,7 +113,7 @@ If you're using Spree default Storefront (`spree_frontend` gem) make sure to upd
 * [app/views/spree/shared/_nav_bar.html.erb](https://github.com/spree/spree/blob/4-2-stable/frontend/app/views/spree/shared/_nav_bar.html.erb)
 * [app/views/spree/shared/_line_item.html.erb](https://github.com/spree/spree/blob/4-2-stable/frontend/app/views/spree/shared/_line_item.html.erb)
 
-Or simply run `bundle exec rails g spree:storefront:copy_storefront`
+Or simply run `bundle exec rails g spree:frontend:copy_storefront`
 
 ## Read the release notes
 
