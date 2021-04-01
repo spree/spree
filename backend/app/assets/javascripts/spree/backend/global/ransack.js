@@ -1,5 +1,3 @@
-/* global DOMPurify */
-
 document.addEventListener('DOMContentLoaded', function() {
   $('.js-show-index-filters').click(function() {
     $('.filter-well').slideToggle()

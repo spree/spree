@@ -1,5 +1,3 @@
-/* global flatpickr */
-
 document.addEventListener('DOMContentLoaded', function() {
   flatpickr.setDefaults({
     altInput: true,

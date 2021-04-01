@@ -1,5 +1,3 @@
-/* global DOMPurify */
-
 // Triggers alert if required on DOMContentLoaded.
 document.addEventListener('DOMContentLoaded', function() {
   var element = document.querySelector('.flash-alert')

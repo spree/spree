@@ -1,4 +1,4 @@
-/* global AUTH_TOKEN, order_number, show_flash */
+/* global order_number, show_flash */
 
 $(document).ready(function() {
   /**

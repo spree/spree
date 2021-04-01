@@ -4,6 +4,9 @@ extends: standard
 globals:
   Spree: true
   analytics: true
+  DOMPurify: true
+  flatpickr: true
+  Sortable: true
   ga: true
   _: true
   Select2: true
@@ -29,4 +32,3 @@ env:
 rules:
   space-before-function-paren: off
   semi: off
-  no-var: off
