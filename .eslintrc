@@ -4,6 +4,9 @@ extends: standard
 globals:
   Spree: true
   analytics: true
+  DOMPurify: true
+  flatpickr: true
+  Sortable: true
   ga: true
   _: true
   Select2: true
