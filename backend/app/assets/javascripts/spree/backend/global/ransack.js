@@ -1,11 +1,14 @@
 /* eslint-disable no-var */
 document.addEventListener('DOMContentLoaded', function() {
   var QuickSearchInput = document.getElementById('quick_search')
-  var QuickSearchPlaceHolder = QuickSearchInput.placeholder
-  var TargetSearchFieldId = document.querySelector('input.js-quick-search-target').id
-  var AssociatedLabelName = document.querySelector(`label[for="${TargetSearchFieldId}"]`).innerHTML
 
-  QuickSearchInput.placeholder = `${QuickSearchPlaceHolder} ${AssociatedLabelName}`
+  if (QuickSearchInput) {
+    var QuickSearchPlaceHolder = QuickSearchInput.placeholder
+    var TargetSearchFieldId = document.querySelector('input.js-quick-search-target').id
+    var AssociatedLabelName = document.querySelector(`label[for="${TargetSearchFieldId}"]`).innerHTML
+
+    QuickSearchInput.placeholder = `${QuickSearchPlaceHolder} ${AssociatedLabelName}`
+  }
 
   $('.js-show-index-filters').click(function() {
     $('.filter-well').slideToggle()
