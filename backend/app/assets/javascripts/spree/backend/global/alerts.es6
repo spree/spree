@@ -1,38 +1,66 @@
-// Triggers alert if required on DOMContentLoaded.
-document.addEventListener('DOMContentLoaded', function() {
-  var element = document.querySelector('.flash-alert')
+/* global Swal */
 
-  if (element) {
-    handleAlert(element)
-  }
+document.addEventListener('DOMContentLoaded', function() {
+  const alertEl = document.querySelectorAll('[data-alert-type]')
+
+  if (!alertEl) return
+
+  alertEl.forEach(function (elem) {
+    const alertType = elem.dataset.alertType
+    const alertMessage = elem.innerHTML
+
+    show_flash(alertType, alertMessage)
+  })
 })
 
-// Triggers alerts when requested by javascript.
-// eslint-disable-next-line camelcase, no-unused-vars
+// eslint-disable-next-line camelcase
 function show_flash(type, message) {
-  var cleanMessage = DOMPurify.sanitize(message)
-  var existingAlert = document.querySelector('.flash-alert')
+  let sanitizedType = DOMPurify.sanitize(type)
+  const sanitizedMessage = DOMPurify.sanitize(message)
 
-  if (existingAlert) {
-    existingAlert.remove()
-  }
+  if (sanitizedType === 'notice') sanitizedType = 'info'
 
-  var flashDiv = $('.alert-' + type)
-  if (flashDiv.length === 0) {
-    flashDiv = $('<div class="d-flex justify-content-center position-fixed flash-alert">' +
-      '<div class="alert alert-' + type + ' mx-2">' + cleanMessage + '</div></div>')
+  // Set up Swal toast alert defaults
+  const Toast = Swal.mixin({
+    toast: true,
+    position: 'bottom',
+    showConfirmButton: false,
+    showCloseButton: true,
+    timer: 3000,
+    timerProgressBar: false,
+    showClass: {
+      popup: 'animate__animated animate__fadeInUp animate__faster',
+      backdrop: '-',
+      icon: '-'
+    },
+    hideClass: {
+      popup: 'animate__animated animate__fadeOutDown animate__faster',
+      backdrop: '-',
+      icon: '-'
+    }
+  })
 
-    $('body').append(flashDiv)
+  Toast.fire({
+    icon: sanitizedType,
+    title: sanitizedMessage
+  })
 
-    var ajaxFlashNotfication = document.querySelector('.flash-alert')
-    handleAlert(ajaxFlashNotfication)
-  }
+  appendToFlashAlertsContainer(sanitizedMessage, sanitizedType)
 }
 
-function handleAlert(element) {
-  element.classList.add('animate__animated', 'animate__bounceInUp')
-  element.addEventListener('animationend', function() {
-    element.classList.remove('animate__bounceInUp')
-    element.classList.add('animate__fadeOutDownBig', 'animate__delay-3s')
-  })
+function appendToFlashAlertsContainer (message, type) {
+  if (type === 'info') type = 'notice'
+
+  const parnetNode = document.querySelector('#FlashAlertsContainer')
+  const node = document.createElement('SPAN');
+  const textNode = document.createTextNode(message);
+
+  // Only the most recent alert should be left in the #FlashAlertsContainer.
+  parnetNode.innerHTML = ''
+
+  node.classList.add('d-none')
+  node.setAttribute('data-alert-type', type);
+  node.appendChild(textNode)
+
+  parnetNode.appendChild(node);
 }

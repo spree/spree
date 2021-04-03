@@ -15,13 +15,9 @@ module Spree
 
       def flash_alert(flash)
         if flash.present?
-          message = flash[:error] || flash[:notice] || flash[:success]
-          flash_class = 'danger' if flash[:error]
-          flash_class = 'info' if flash[:notice]
-          flash_class = 'success' if flash[:success]
-          flash_div = content_tag(:div, message, class: "alert alert-#{flash_class} mx-2")
-          content_tag(:div, flash_div,
-                      class: 'd-flex justify-content-center position-fixed flash-alert ')
+          type = flash.first[0]
+          message = flash.first[1]
+          content_tag(:span, message, class: 'd-none', data: { alert_type: type })
         end
       end
 
