@@ -9,7 +9,7 @@
           </button>
         </span>
         <%= form_tag request.fullpath, id: "quick-search", class: 'flex-grow-1' do %>
-          <%= text_field_tag :quick_search, nil, class: "form-control js-quick-search", placeholder: Spree.t(:quick_search) %>
+          <%= text_field_tag :quick_search, nil, class: "form-control js-quick-search", placeholder: Spree.t(:search_by) %>
         <% end %>
       </div>
       <% unless defined?(simple) %>

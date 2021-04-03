@@ -1,4 +1,12 @@
+/* eslint-disable no-var */
 document.addEventListener('DOMContentLoaded', function() {
+  var QuickSearchInput = document.getElementById('quick_search')
+  var QuickSearchPlaceHolder = QuickSearchInput.placeholder
+  var TargetSearchFieldId = document.querySelector('input.js-quick-search-target').id
+  var AssociatedLabelName = document.querySelector(`label[for="${TargetSearchFieldId}"]`).innerHTML
+
+  QuickSearchInput.placeholder = `${QuickSearchPlaceHolder} ${AssociatedLabelName}`
+
   $('.js-show-index-filters').click(function() {
     $('.filter-well').slideToggle()
     $(this).parents('.filter-wrap').toggleClass('collapsed')
@@ -8,6 +16,7 @@ document.addEventListener('DOMContentLoaded', function() {
   // Temp quick search
   // When there was a search term, copy it
   $('.js-quick-search').val($('.js-quick-search-target').val())
+
   // Catch the quick search form submit and submit the real form
   $('#quick-search').submit(function() {
     $('.js-quick-search-target').val($('.js-quick-search').val())
