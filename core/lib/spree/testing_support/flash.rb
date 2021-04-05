@@ -9,14 +9,6 @@ module Spree
         end
       end
 
-      def assert_flash_alert(message)
-        message_content = convert_flash(message)
-
-        within('#FlashAlertsContainer', visible: :hidden) do
-          expect(page).to have_css('span', text: message_content, visible: :hidden)
-        end
-      end
-
       def assert_successful_update_message(resource)
         flash = Spree.t(:successfully_updated, resource: Spree.t(resource))
         assert_flash_success(flash)
