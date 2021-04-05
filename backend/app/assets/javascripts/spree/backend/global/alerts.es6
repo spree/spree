@@ -53,6 +53,7 @@ function appendToFlashAlertsContainer (message, type) {
   const textNode = document.createTextNode(message);
 
   node.classList.add('d-none', 'expired-flash-alert')
+  node.setAttribute('data-alert-type', type);
   node.appendChild(textNode)
 
   document.querySelector('#FlashAlertsContainer').appendChild(node);
