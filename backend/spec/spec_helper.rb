@@ -120,11 +120,11 @@ end
 module Spree
   module TestingSupport
     module Flash
-      def assert_flash_success(flash)
-        flash = convert_flash(flash)
+      def assert_flash_alert(message)
+        message_content = convert_flash(message)
 
-        within('#FlashAlertsContainer') do
-          expect(page).to have_content(flash)
+        within('#FlashAlertsContainer', visible: :hidden) do
+          expect(page).to have_css('span', text: message_content, visible: :hidden)
         end
       end
     end
