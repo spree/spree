@@ -19,7 +19,7 @@ module Spree
           flash_type = 'danger' if flash[:error]
           flash_type = 'info' if flash[:notice]
           flash_type = 'success' if flash[:success]
-          content_tag(:div, message, class: 'd-none', data: { alert_type: flash_type, flash_alert: '' })
+          content_tag(:span, message, class: 'd-none flash-alert-message', data: { alert_type: flash_type })
         end
       end
 
