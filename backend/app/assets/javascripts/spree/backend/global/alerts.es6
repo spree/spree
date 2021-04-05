@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
     progressBar: false,
     closeWith: ['button'],
     animation: {
-      open: 'animate__animated animate__fadeInUp animate__faster',
+      open: 'animate__animated animate__bounceInUp animate__fast',
       close: 'animate__animated animate__fadeOutDown animate__faster'
     }
   })
