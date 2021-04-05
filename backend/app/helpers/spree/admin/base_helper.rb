@@ -15,11 +15,9 @@ module Spree
 
       def flash_alert(flash)
         if flash.present?
-          message = flash[:error] || flash[:notice] || flash[:success]
-          flash_type = 'error' if flash[:error]
-          flash_type = 'notice' if flash[:notice]
-          flash_type = 'success' if flash[:success]
-          content_tag(:span, message, class: 'd-none', data: { alert_type: flash_type })
+          type = flash.first[0]
+          message = flash.first[1]
+          content_tag(:span, message, class: 'd-none', data: { alert_type: type })
         end
       end
 
