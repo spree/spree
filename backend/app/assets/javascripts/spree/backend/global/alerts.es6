@@ -14,9 +14,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   })
 
-  // Find all DIV elements with the attribute 'data-flash-alert' if one or more are
-  // present in the DOM on page load we de-construct the data for each instance
-  // and pass the date to the 'flash_alert()' function.
   const alertEl = document.querySelectorAll('[data-alert-type]')
 
   if (!alertEl) return
@@ -49,12 +46,15 @@ function show_flash(type, message) {
 }
 
 function appendToFlashAlertsContainer (message, type) {
+  const parnetNode = document.querySelector('#FlashAlertsContainer')
   const node = document.createElement('SPAN');
   const textNode = document.createTextNode(message);
+
+  parnetNode.innerHTML = ''
 
   node.classList.add('d-none', 'expired-flash-alert')
   node.setAttribute('data-alert-type', type);
   node.appendChild(textNode)
 
-  document.querySelector('#FlashAlertsContainer').appendChild(node);
+  parnetNode.appendChild(node);
 }
