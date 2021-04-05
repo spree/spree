@@ -24,6 +24,7 @@ describe 'Updating currencies settings', type: :feature, js: true do
       # Test final state
       expect(page).to have_content 'General Settings has been successfully updated!'
       expect(page).to have_checked_field('show_store_selector')
+      assert_admin_flash_alert_success('General Settings has been successfully updated!')
     end
   end
 
