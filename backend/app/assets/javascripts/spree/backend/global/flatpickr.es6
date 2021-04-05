@@ -6,13 +6,13 @@ document.addEventListener('DOMContentLoaded', function() {
     locale: Spree.translations.flatpickr_locale
   })
 
-  const dateFrom = flatpickr('.datePickerFrom', {
+  var dateFrom = flatpickr('.datePickerFrom', {
     onChange: function(selectedDates) {
       dateTo.set('minDate', selectedDates[0])
     }
   })
 
-  const dateTo = flatpickr('.datePickerTo', {
+  var dateTo = flatpickr('.datePickerTo', {
     onChange: function(selectedDates) {
       dateFrom.set('maxDate', selectedDates[0])
     }

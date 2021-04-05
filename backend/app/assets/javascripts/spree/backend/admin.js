@@ -60,12 +60,9 @@ $(document).ready(function() {
           el.blur()
         }
       }).done(function() {
-        var $flashElement = $('.alert-success')
-        if ($flashElement.length) {
-          el.parents('tr').fadeOut('hide', function() {
-            $(this).remove()
-          })
-        }
+        el.parents('tr').fadeOut('hide', function() {
+          $(this).remove()
+        })
       }).fail(function(response) {
         show_flash('error', response.responseText)
       })
