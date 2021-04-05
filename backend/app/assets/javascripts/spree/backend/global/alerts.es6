@@ -22,13 +22,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const alertType = elem.dataset.alertType
     const alertMessage = elem.innerHTML
 
-    if (alertType === 'expired') return
-
     show_flash(alertType, alertMessage)
-
-    // Remove message once it has been shown,
-    // it will be inserted back in the DOM as an expired-flash-alert
-    elem.remove()
   })
 })
 
@@ -50,9 +44,10 @@ function appendToFlashAlertsContainer (message, type) {
   const node = document.createElement('SPAN');
   const textNode = document.createTextNode(message);
 
+  // Only the most recent alert should be left in the #FlashAlertsContainer.
   parnetNode.innerHTML = ''
 
-  node.classList.add('d-none', 'expired-flash-alert')
+  node.classList.add('d-none')
   node.setAttribute('data-alert-type', type);
   node.appendChild(textNode)
 
