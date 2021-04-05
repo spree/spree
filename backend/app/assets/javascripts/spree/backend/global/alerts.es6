@@ -1,38 +1,41 @@
-// Triggers alert if required on DOMContentLoaded.
-document.addEventListener('DOMContentLoaded', function() {
-  var element = document.querySelector('.flash-alert')
+/* global Noty */
 
-  if (element) {
-    handleAlert(element)
-  }
+document.addEventListener('DOMContentLoaded', function() {
+  // Set up Noty alert defaults
+  Noty.overrideDefaults({
+    layout: 'bottomCenter',
+    theme: 'bootstrap-v4',
+    timeout: '3000',
+    progressBar: false,
+    closeWith: ['button'],
+    animation: {
+      open: 'animate__animated animate__fadeInUp animate__faster',
+      close: 'animate__animated animate__fadeOutDown animate__faster'
+    }
+  })
+
+  // Find all DIV elements with the attribute 'data-flash-alert' if one or more are
+  // present in the DOM on page load we de-construct the data for each instance
+  // and pass the date to the 'flash_alert()' function.
+  const alertEl = document.querySelectorAll('[data-flash-alert]')
+
+  if (!alertEl) return
+
+  alertEl.forEach(function (elem) {
+    const alertType = elem.dataset.alertType
+    const alertMessage = elem.innerHTML
+
+    show_flash(alertType, alertMessage)
+  })
 })
 
-// Triggers alerts when requested by javascript.
-// eslint-disable-next-line camelcase, no-unused-vars
+// eslint-disable-next-line camelcase
 function show_flash(type, message) {
-  var cleanMessage = DOMPurify.sanitize(message)
-  var existingAlert = document.querySelector('.flash-alert')
+  const sanitizedType = DOMPurify.sanitize(type)
+  const sanitizedMessage = DOMPurify.sanitize(message)
 
-  if (existingAlert) {
-    existingAlert.remove()
-  }
-
-  var flashDiv = $('.alert-' + type)
-  if (flashDiv.length === 0) {
-    flashDiv = $('<div class="d-flex justify-content-center position-fixed flash-alert">' +
-      '<div class="alert alert-' + type + ' mx-2">' + cleanMessage + '</div></div>')
-
-    $('body').append(flashDiv)
-
-    var ajaxFlashNotfication = document.querySelector('.flash-alert')
-    handleAlert(ajaxFlashNotfication)
-  }
-}
-
-function handleAlert(element) {
-  element.classList.add('animate__animated', 'animate__bounceInUp')
-  element.addEventListener('animationend', function() {
-    element.classList.remove('animate__bounceInUp')
-    element.classList.add('animate__fadeOutDownBig', 'animate__delay-3s')
-  })
+  new Noty({
+    type: sanitizedType,
+    text: sanitizedMessage
+  }).show()
 }
