@@ -29,8 +29,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     show_flash(alertType, alertMessage)
 
-    // store
-    elem.dataset.alertType = 'expired'
+    // Remove message once it has been shown,
+    // it will be inserted back in the DOM as an expired-flash-alert
+    elem.remove()
   })
 })
 
@@ -51,7 +52,7 @@ function appendToFlashAlertsContainer (message, type) {
   const node = document.createElement('SPAN');
   const textNode = document.createTextNode(message);
 
-  node.classList.add('d-none', 'flash-alert-message')
+  node.classList.add('d-none', 'expired-flash-alert')
   node.appendChild(textNode)
 
   document.querySelector('#FlashAlertsContainer').appendChild(node);
