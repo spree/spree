@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
   flatpickr.setDefaults({
-    disableMobile: true,
     altInput: true,
     time_24hr: true,
     altInputClass: 'flatpickr-alt-input',

@@ -1,0 +1,221 @@
+$primary-color: #333;
+$default-width: 325px;
+$corner-space: 20px;
+
+.noty_layout_mixin {
+  position: fixed;
+  margin: 0;
+  padding: 0;
+  z-index: 9999999;
+  transform: translateZ(0) scale(1.0, 1.0);
+  backface-visibility: hidden;
+  -webkit-font-smoothing: subpixel-antialiased;
+  filter: blur(0);
+  -webkit-filter: blur(0);
+  max-width: 90%;
+}
+
+#noty_layout__top {
+  @extend .noty_layout_mixin;
+  top: 0;
+  left: 5%;
+  width: 90%;
+}
+
+#noty_layout__topLeft {
+  @extend .noty_layout_mixin;
+  top: $corner-space;
+  left: $corner-space;
+  width: $default-width;
+}
+
+#noty_layout__topCenter {
+  @extend .noty_layout_mixin;
+  top: 5%;
+  left: 50%;
+  width: $default-width;
+  transform: translate(calc(-50% - .5px)) translateZ(0) scale(1.0, 1.0);
+}
+
+#noty_layout__topRight {
+  @extend .noty_layout_mixin;
+  top: $corner-space;
+  right: $corner-space;
+  width: $default-width;
+}
+
+#noty_layout__bottom {
+  @extend .noty_layout_mixin;
+  bottom: 0;
+  left: 5%;
+  width: 90%;
+}
+
+#noty_layout__bottomLeft {
+  @extend .noty_layout_mixin;
+  bottom: $corner-space;
+  left: $corner-space;
+  width: $default-width;
+}
+
+#noty_layout__bottomCenter {
+  @extend .noty_layout_mixin;
+  bottom: 5%;
+  left: 50%;
+  width: $default-width;
+  transform: translate(calc(-50% - .5px)) translateZ(0) scale(1.0, 1.0);
+}
+
+#noty_layout__bottomRight {
+  @extend .noty_layout_mixin;
+  bottom: $corner-space;
+  right: $corner-space;
+  width: $default-width;
+}
+
+#noty_layout__center {
+  @extend .noty_layout_mixin;
+  top: 50%;
+  left: 50%;
+  width: $default-width;
+  transform: translate(calc(-50% - .5px), calc(-50% - .5px)) translateZ(0) scale(1.0, 1.0);
+}
+
+#noty_layout__centerLeft {
+  @extend .noty_layout_mixin;
+  top: 50%;
+  left: $corner-space;
+  width: $default-width;
+  transform: translate(0, calc(-50% - .5px)) translateZ(0) scale(1.0, 1.0);
+}
+
+#noty_layout__centerRight {
+  @extend .noty_layout_mixin;
+  top: 50%;
+  right: $corner-space;
+  width: $default-width;
+  transform: translate(0, calc(-50% - .5px)) translateZ(0) scale(1, 1);
+}
+
+.noty_progressbar {
+  display: none;
+}
+
+.noty_has_timeout.noty_has_progressbar .noty_progressbar {
+  display: block;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 3px;
+  width: 100%;
+  background-color: #646464;
+  opacity: 0.2;
+  filter: alpha(opacity=10)
+}
+
+.noty_bar {
+  -webkit-backface-visibility: hidden;
+  -webkit-transform: translate(0, 0) translateZ(0) scale(1.0, 1.0);
+  transform: translate(0, 0) scale(1.0, 1.0);
+  -webkit-font-smoothing: subpixel-antialiased;
+  overflow: hidden;
+}
+
+.noty_effects_open {
+  opacity: 0;
+  transform: translate(50%);
+  animation: noty_anim_in .5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  animation-fill-mode: forwards;
+}
+
+.noty_effects_close {
+  animation: noty_anim_out .5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  animation-fill-mode: forwards;
+}
+
+.noty_fix_effects_height {
+  animation: noty_anim_height 75ms ease-out;
+}
+
+.noty_close_with_click {
+  cursor: pointer;
+}
+
+.noty_close_button {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  font-weight: bold;
+  width: 20px;
+  height: 20px;
+  text-align: center;
+  line-height: 20px;
+  background-color: rgba(0, 0, 0, .05);
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all .2s ease-out;
+}
+
+.noty_close_button:hover {
+  background-color: rgba(0, 0, 0, .1);
+}
+
+.noty_modal {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background-color: #000;
+  z-index: 10000;
+  opacity: .3;
+  left: 0;
+  top: 0;
+}
+
+.noty_modal.noty_modal_open {
+  opacity: 0;
+  animation: noty_modal_in .3s ease-out;
+}
+.noty_modal.noty_modal_close {
+  animation: noty_modal_out .3s ease-out;
+  animation-fill-mode: forwards;
+}
+
+@keyframes noty_modal_in {
+  100% {
+    opacity: .3;
+  }
+}
+@keyframes noty_modal_out {
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes noty_modal_out {
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes noty_anim_in {
+  100% {
+    transform: translate(0);
+    opacity: 1;
+  }
+}
+
+@keyframes noty_anim_out {
+  100% {
+    transform: translate(50%);
+    opacity: 0;
+  }
+}
+
+@keyframes noty_anim_height {
+  100% {
+    height: 0;
+  }
+}
+
+
+@import "noty_bootstrap";

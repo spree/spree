@@ -12,6 +12,7 @@
 //= require jquery_ujs
 //= require jquery-ui/widgets/autocomplete
 //= require select2-full
+//= require noty
 //= require underscore-min.js
 
 //= require spree/backend/global/alerts
