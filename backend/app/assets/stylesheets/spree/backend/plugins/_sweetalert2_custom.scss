@@ -1,5 +1,9 @@
 .swal2-popup.swal2-toast {
   margin-bottom: 50px;
+
+  .swal2-icon {
+    display: none !important;
+  }
 }
 
 .swal2-popup.swal2-toast.swal2-icon-success {
@@ -10,6 +14,8 @@
   h2, button {
     @extend .alert-success;
   }
+
+
 }
 
 .swal2-popup.swal2-toast.swal2-icon-error {
@@ -44,4 +50,11 @@
 
 button.swal2-close:hover {
   opacity: 0.75;
+}
+
+
+body.swal2-toast-shown .swal2-container.swal2-bottom {
+  right: -50% !important;
+  transform: translateX(-50%);
+  max-width: 500px;
 }
