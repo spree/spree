@@ -119,12 +119,13 @@ module Spree
           end
 
           def serialize_payment_methods(payment_methods)
-            payment_methods_serializer.new(payment_methods).serializable_hash
+            payment_methods_serializer.new(payment_methods, params: serializer_params).serializable_hash
           end
 
           def serialize_shipping_rates(shipments)
             shipping_rates_serializer.new(
               shipments,
+              params: serializer_params,
               include: [:shipping_rates, :stock_location]
             ).serializable_hash
           end

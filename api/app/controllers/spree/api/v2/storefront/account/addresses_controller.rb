@@ -38,10 +38,6 @@ module Spree
               Spree::Api::Dependencies.storefront_address_serializer.constantize
             end
 
-            def serialize_collection(collection)
-              collection_serializer.new(collection).serializable_hash
-            end
-
             def create_service
               Spree::Api::Dependencies.storefront_account_create_address_service.constantize
             end
