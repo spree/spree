@@ -26,7 +26,7 @@ function show_flash(type, message) {
     position: 'bottom',
     showConfirmButton: false,
     showCloseButton: true,
-    timer: 3000,
+    timer: 399000,
     timerProgressBar: false,
     showClass: {
       popup: 'animate__animated animate__fadeInUp animate__faster',
