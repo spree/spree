@@ -1,27 +1,38 @@
-.swal2-popup.swal2-toast {
-  margin-bottom: 50px;
+body.swal2-toast-shown .swal2-container.swal2-bottom {
+  right: -50% !important;
+  max-width: 500px;
 
-  .swal2-icon {
-    display: none !important;
+  .swal2-popup.swal2-toast {
+    border-width: 3px;
+    border-style: solid;
+    box-shadow: none !important;
+    margin-bottom: 50px;
+
+    .swal2-icon {
+      display: none !important;
+    }
+
+    button.swal2-close {
+      width: 30px;
+      min-width: 30px;
+      height: 30px;
+      margin-bottom: 5px;
+
+        &:hover {
+        opacity: 0.75;
+      }
+    }
   }
 }
 
 .swal2-popup.swal2-toast.swal2-icon-success {
-  border-width: 3px;
-  border-style: solid;
-  box-shadow: none;
   @extend .alert-success;
   h2, button {
     @extend .alert-success;
   }
-
-
 }
 
 .swal2-popup.swal2-toast.swal2-icon-error {
-  border-width: 3px;
-  border-style: solid;
-  box-shadow: none;
   @extend .alert-danger;
   h2, button {
     @extend .alert-danger;
@@ -29,9 +40,6 @@
 }
 
 .swal2-popup.swal2-toast.swal2-icon-info {
-  border-width: 3px;
-  border-style: solid;
-  box-shadow: none;
   @extend .alert-info;
   h2, button {
     @extend .alert-info;
@@ -39,22 +47,8 @@
 }
 
 .swal2-popup.swal2-toast.swal2-icon-question {
-  border-width: 3px;
-  border-style: solid;
-  box-shadow: none;
   @extend .alert-warning;
   h2, button {
     @extend .alert-warning;
   }
-}
-
-button.swal2-close:hover {
-  opacity: 0.75;
-}
-
-
-body.swal2-toast-shown .swal2-container.swal2-bottom {
-  right: -50% !important;
-  transform: translateX(-50%);
-  max-width: 500px;
 }
