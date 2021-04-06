@@ -1,19 +1,6 @@
-/* global Noty */
+/* global Swal */
 
 document.addEventListener('DOMContentLoaded', function() {
-  // Set up Noty alert defaults
-  Noty.overrideDefaults({
-    layout: 'bottomCenter',
-    theme: 'bootstrap-v4',
-    timeout: '3000',
-    progressBar: false,
-    closeWith: ['button'],
-    animation: {
-      open: 'animate__animated animate__bounceInUp animate__fast',
-      close: 'animate__animated animate__fadeOutDown animate__faster'
-    }
-  })
-
   const alertEl = document.querySelectorAll('[data-alert-type]')
 
   if (!alertEl) return
@@ -28,18 +15,42 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // eslint-disable-next-line camelcase
 function show_flash(type, message) {
-  const sanitizedType = DOMPurify.sanitize(type)
+  let sanitizedType = DOMPurify.sanitize(type)
   const sanitizedMessage = DOMPurify.sanitize(message)
 
-  new Noty({
-    type: sanitizedType,
-    text: sanitizedMessage
-  }).show()
+  if (sanitizedType === 'notice') sanitizedType = 'info'
+
+  // Set up Swal toast alert defaults
+  const Toast = Swal.mixin({
+    toast: true,
+    position: 'bottom',
+    showConfirmButton: false,
+    showCloseButton: true,
+    timer: 3500,
+    timerProgressBar: false,
+    showClass: {
+      popup: 'animate__animated animate__fadeInUp animate__faster',
+      backdrop: '-',
+      icon: '-'
+    },
+    hideClass: {
+      popup: 'animate__animated animate__fadeOutDown animate__faster',
+      backdrop: '-',
+      icon: '-'
+    }
+  })
+
+  Toast.fire({
+    icon: sanitizedType,
+    title: sanitizedMessage
+  })
 
   appendToFlashAlertsContainer(sanitizedMessage, sanitizedType)
 }
 
 function appendToFlashAlertsContainer (message, type) {
+  if (type === 'info') type = 'notice'
+
   const parnetNode = document.querySelector('#FlashAlertsContainer')
   const node = document.createElement('SPAN');
   const textNode = document.createTextNode(message);

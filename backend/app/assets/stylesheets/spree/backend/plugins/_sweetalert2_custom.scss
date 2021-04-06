@@ -1,0 +1,47 @@
+.swal2-popup.swal2-toast {
+  margin-bottom: 50px;
+}
+
+.swal2-popup.swal2-toast.swal2-icon-success {
+  border-width: 3px;
+  border-style: solid;
+  box-shadow: none;
+  @extend .alert-success;
+  h2, button {
+    @extend .alert-success;
+  }
+}
+
+.swal2-popup.swal2-toast.swal2-icon-error {
+  border-width: 3px;
+  border-style: solid;
+  box-shadow: none;
+  @extend .alert-danger;
+  h2, button {
+    @extend .alert-danger;
+  }
+}
+
+.swal2-popup.swal2-toast.swal2-icon-info {
+  border-width: 3px;
+  border-style: solid;
+  box-shadow: none;
+  @extend .alert-info;
+  h2, button {
+    @extend .alert-info;
+  }
+}
+
+.swal2-popup.swal2-toast.swal2-icon-question {
+  border-width: 3px;
+  border-style: solid;
+  box-shadow: none;
+  @extend .alert-warning;
+  h2, button {
+    @extend .alert-warning;
+  }
+}
+
+button.swal2-close:hover {
+  opacity: 0.75;
+}
