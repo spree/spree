@@ -6,22 +6,26 @@ module Spree
           private
 
           def serialize_collection(collection)
-            collection_serializer.new(collection).serializable_hash
-          end
-
-          def serialize_resource(resource)
-            resource_serializer.new(
-              resource,
-              include: resource_includes,
-              fields: sparse_fields,
-              params: resource_serializer_params
+            collection_serializer.new(
+              collection,
+              collection_options(collection).merge(params: collection_serializer_params)
             ).serializable_hash
           end
 
-          def resource_serializer_params
+          def collection_serializer_params
             {
+              currency: current_currency,
+              store: current_store,
+              user: spree_current_user,
+            }
+          end
+
+          def serializer_params
+            {
+              currency: current_currency,
+              store: current_store,
+              user: spree_current_user,
               include_states: true,
-              current_store: current_store
             }
           end
 

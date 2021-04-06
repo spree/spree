@@ -114,7 +114,11 @@ module Spree
         end
 
         def serializer_params
-          { currency: current_currency, store: current_store, user: spree_current_user }
+          {
+            currency: current_currency,
+            store: current_store,
+            user: spree_current_user
+          }
         end
 
         def record_not_found

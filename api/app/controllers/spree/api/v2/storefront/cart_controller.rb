@@ -163,7 +163,7 @@ module Spree
           def serialize_estimated_shipping_rates(shipping_rates)
             estimate_shipping_rates_serializer.new(
               shipping_rates,
-              params: { currency: spree_current_order.currency }
+              params: serializer_params
             ).serializable_hash
           end
 
