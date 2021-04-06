@@ -294,7 +294,7 @@ paths:
         - in: query
           name: 'filter[payment_method_id]'
           schema:
-            type: integer
+            type: string
           example: 2
           description: Filter based on payment method ID
         - $ref: '#/components/parameters/CreditCardIncludeParam'
@@ -727,28 +727,28 @@ paths:
         PATCH /checkout
         ```
 
-        ```
-          order: {
-            email: 'john@snow.org',
-            bill_address_attributes: {
-              firstname: 'John',
-              lastname: 'Snow',
-              address1: '7735 Old Georgetown Road',
-              city: 'Bethesda',
-              phone: '3014445002',
-              zipcode: '20814',
-              state_name: 'MD',
-              country_iso: 'US'
+        ```json
+          "order": {
+            "email": "john@snow.org",
+            "bill_address_attributes": {
+              "firstname": "John",
+              "lastname": "Snow",
+              "address1": "7735 Old Georgetown Road",
+              "city": "Bethesda",
+              "phone": "3014445002",
+              "zipcode": "20814",
+              "state_name": "MD",
+              "country_iso": "US"
             },
-            ship_address_attributes: {
-              firstname: 'John',
-              lastname: 'Snow',
-              address1: '7735 Old Georgetown Road',
-              city: 'Bethesda',
-              phone: '3014445002',
-              zipcode: '20814',
-              state_name: 'MD',
-              country_iso: 'US'
+            "ship_address_attributes": {
+              "firstname": "John",
+              "lastname": "Snow",
+              "address1": "7735 Old Georgetown Road",
+              "city": "Bethesda",
+              "phone": "3014445002",
+              "zipcode": "20814",
+              "state_name": "MD",
+              "country_iso": "US"
             }
           }
         ```
@@ -771,12 +771,12 @@ paths:
         PATCH /checkout
         ```
 
-        ```
-          order: {
-            shipments_attributes: [
+        ```json
+          "order": {
+            "shipments_attributes": [
               {
-                id: 1,
-                selected_shipping_rate_id: 1
+                "id": "1",
+                "selected_shipping_rate_id": "1"
               }
             ]
           }
@@ -792,22 +792,22 @@ paths:
         PATCH /checkout
         ```
 
-        ```
+        ```json
           {
-            order: {
-              payments_attributes: [
+            "order": {
+              "payments_attributes": [
                 {
-                  payment_method_id: 1
+                  "payment_method_id": "1"
                 }
               ]
             },
-            payment_source: {
+            "payment_source": {
               1: {
-                number: '4111111111111111',
-                month: '01',
-                year: '2022',
-                verification_value: '123',
-                name: 'John Doe'
+                "number": "4111111111111111",
+                "month": "01",
+                "year": "2022",
+                "verification_value": "123",
+                "name": "John Doe"
               }
             }
           }
@@ -868,8 +868,8 @@ paths:
                         type: object
                         properties:
                           payment_method_id:
-                            type: number
-                            example: 1
+                            type: string
+                            example: "1"
                             description: ID of selected payment method
                     shipments_attributes:
                       type: object
