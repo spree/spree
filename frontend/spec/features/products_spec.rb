@@ -317,7 +317,7 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
 
   it 'is not able to put a product without a current price in the cart' do
     product = FactoryBot.create(:base_product, description: nil, name: 'Sample', price: '19.99')
-    store.update(default_currency: 'CAN')
+    store.update(default_currency: 'CAD')
     Spree::Config.show_products_without_price = true
     visit spree.product_path(product)
     expect(page).to have_content 'This product is not available in the selected currency.'
