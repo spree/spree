@@ -75,6 +75,13 @@ describe 'New Order', type: :feature do
     end
   end
 
+  context 'skipping to shipping without having an address', js: true do
+    it 'prompts you with a flash notice to: Please fill in customer info' do
+      click_on 'Shipments'
+      assert_admin_flash_alert_notice('Please fill in customer info')
+    end
+  end
+
   context "adding new item to the order which isn't available", js: true do
     before do
       product.update(available_on: nil)

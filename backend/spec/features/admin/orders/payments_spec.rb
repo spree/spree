@@ -141,7 +141,7 @@ describe 'Payments', type: :feature, js: true do
             click_icon(:save)
           end
 
-          expect(page).to have_selector('.alert-error', text: 'Invalid resource. Please fix errors and try again.')
+          assert_admin_flash_alert_error('Invalid resource. Please fix errors and try again.')
           expect(page).to have_field('amount', with: 'invalid')
           expect(payment.reload.amount).to eq(150.00)
         end
