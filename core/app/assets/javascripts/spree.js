@@ -25,7 +25,7 @@ Spree.localizedPathFor = function(path) {
   if (typeof (SPREE_LOCALE) !== 'undefined' && typeof (SPREE_CURRENCY) !== 'undefined') {
     var fullUrl = new URL(Spree.pathFor(path))
     var params = fullUrl.searchParams
-    var pathName = fullUrl.pathname
+    var pathName = path
 
     params.set('currency', SPREE_CURRENCY)
 
