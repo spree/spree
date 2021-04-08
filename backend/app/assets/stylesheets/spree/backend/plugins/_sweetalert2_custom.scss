@@ -22,6 +22,16 @@ body.swal2-toast-shown .swal2-container.swal2-bottom {
   }
 }
 
+@include media-breakpoint-down(sm) {
+  body.swal2-toast-shown .swal2-container.swal2-bottom {
+    .swal2-popup.swal2-toast {
+      button.swal2-close {
+        padding-bottom: 0;
+      }
+    }
+  }
+}
+
 .swal2-popup.swal2-toast.swal2-icon-success {
   @extend .alert-success;
   h2, button {
