@@ -7,6 +7,7 @@ module Spree
 
           belongs_to :country
           belongs_to :state
+          belongs_to :user
         end
       end
     end
