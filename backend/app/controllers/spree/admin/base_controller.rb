@@ -58,7 +58,7 @@ module Spree
 
       def admin_oauth_application
         @admin_oauth_application ||= begin
-          Doorkeeper::Application.find_or_create_by!(name: 'Admin Panel', scopes: 'admin write read', redirect_uri: '')
+          Doorkeeper::Application.find_or_create_by!(name: 'Admin Panel', scopes: 'admin', redirect_uri: '')
         end
       end
 

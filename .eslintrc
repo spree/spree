@@ -24,6 +24,8 @@ globals:
   SPREE_DEFAULT_CURRENCY: true
   SPREE_DEFAULT_LOCALE: true
   update_state: true
+  OAUTH_TOKEN: true
+  formatSelect2Options: true
 
 env:
   browser: true
