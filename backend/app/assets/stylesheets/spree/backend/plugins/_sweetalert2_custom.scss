@@ -13,11 +13,8 @@ body.swal2-toast-shown .swal2-container.swal2-bottom {
     }
 
     button.swal2-close {
-      width: 30px;
-      min-width: 30px;
-      height: 30px;
-      margin-bottom: 3px;
-
+        min-width: .8em;
+        padding-bottom: 0.1em;
         &:hover {
         opacity: 0.75;
       }
