@@ -1,0 +1,44 @@
+<% content_for :page_title do %>
+  <%= link_to Spree.t(:menus), spree.admin_menus_url %> / <%= @menu.name %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <%= button_link_to Spree.t('admin.navigation.add_new_menu_item', menu: @menu.name), spree.new_admin_menu_menu_item_path(@menu), icon: 'add.svg' %>
+<% end %>
+
+<%= render partial: 'spree/admin/shared/error_messages', locals: { target: @menu } %>
+
+<%= form_for [:admin, @menu] do |f| %>
+  <%= render partial: 'form', locals: { f: f } %>
+  <%= render partial: 'spree/admin/shared/edit_resource_links' %>
+<% end %>
+
+<hr>
+
+<% if @menu.menu_items.any? %>
+<div class="table-responsive">
+  <table class="table">
+    <thead>
+      <th><%= Spree.t(:name) %></th>
+      <th data-hook="admin_menus_index_header_actions" class="actions"></th>
+    <thead>
+    <tbody>
+      <% @menu.menu_items.each do |menu_item| %>
+        <tr>
+          <td><%= menu_item.name %></td>
+          <td class="actions" data-hook="admin_menus_index_row_actions">
+             <span class="d-flex justify-content-end">
+             <%= link_to_edit(menu_item, no_text: true, url: spree.edit_admin_menu_menu_item_path(@menu, menu_item)) %>
+             <%= link_to_delete(menu_item, no_text: true, url: spree.admin_menu_menu_item_path(@menu, menu_item)) if can?(:destroy, menu_item) %>
+            </span>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+<% else %>
+  <div class="alert alert-info no-objects-found">
+    <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::MenuItem)) %>
+  </div>
+<% end %>

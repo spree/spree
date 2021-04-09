@@ -571,6 +571,15 @@ en:
         store_credits: Store Credits
         no_store_credit: User has no Store Credit available.
         available_store_credit: User has %{amount} in Store Credit available.
+      navigation:
+          add_new_menu_item: 'Add A New Menu Item'
+          menu_item_type: Menu Item Type
+          menu_item_basic_details: Basic Details
+          link_settings: Link Settings
+          link_to: Link To
+          open_link_in_new_window: Open this link in a new window
+          menu_item_type_message: "Set your <b>Menu Item Type</b>, for more information about using existing Types or adding custom Types
+          <a href='https://guides.spreecommerce.org/user/configuration/configuring_geography.html#zones' target='_blank' class='alert-link'>click here</a> to see the documentation"
     administration: Administration
     advertise: Advertise
     agree_to_privacy_policy: Agree to Privacy Policy
@@ -697,6 +706,7 @@ en:
     confirm_password: Password Confirmation
     contact_phone: Contact phone
     contact_us: Contact us
+    content: Content
     continue: Continue
     continue_as_guest: Continue as a guest
     continue_shopping: Continue shopping
@@ -1023,6 +1033,7 @@ en:
     name: Name
     name_on_card: Name on card
     name_or_sku: Name or SKU (enter at least first 3 characters of product name)
+    navigation: Navigation
     nav_bar:
       admin_panel: Admin Panel
       change_country: Change country
