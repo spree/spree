@@ -1,9 +1,9 @@
 <% content_for :page_title do %>
-  <%= Spree.t('menus') %>
+  <%= Spree.t('admin.navigation.menus') %>
 <% end %>
 
 <% content_for :page_actions do %>
-  <%= button_link_to Spree.t(:new_menu), new_object_url, { class: "btn-success", icon: 'add.svg', id: 'new_menu' } %>
+  <%= button_link_to Spree.t('admin.navigation.new_menu'), new_object_url, { class: "btn-success", icon: 'add.svg', id: 'new_menu' } %>
 <% end if can?(:create, Spree::Menu) %>
 
 <% if @menus.any? %>

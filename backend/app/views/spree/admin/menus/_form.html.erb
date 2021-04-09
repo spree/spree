@@ -1,9 +1,15 @@
 <div data-hook="admin_menu_form_fields" class="row">
-  <div class="col-12">
+  <div class="col-12 col-md-6">
     <%= f.field_container :name, class: ['form-group'] do %>
       <%= f.label :name, Spree.t(:name) %>
       <%= f.text_field :name, class: 'form-control' %>
       <%= f.error_message_on :name %>
     <% end %>
+  </div>
+  <div class="col-12 col-md-6">
+    <div class="form-group ">
+      <%= label_tag :menu_stores, Spree.t(:stores) %>
+      <%= collection_select(:menu, :store_ids, @stores, :id, :unique_name, {}, { multiple: true, class: 'select2' }) %>
+    </div>
   </div>
 </div>

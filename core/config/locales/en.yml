@@ -534,6 +534,7 @@ en:
     admin:
       tab:
         configuration: Configuration
+        content: Content
         option_types: Option Types
         orders: Orders
         overview: Overview
@@ -543,6 +544,7 @@ en:
         properties: Properties
         prototypes: Prototypes
         reports: Reports
+        navigation: Navigation
         taxonomies: Taxonomies
         taxons: Taxons
         users: Users
@@ -572,14 +574,21 @@ en:
         no_store_credit: User has no Store Credit available.
         available_store_credit: User has %{amount} in Store Credit available.
       navigation:
-          add_new_menu_item: 'Add A New Menu Item'
+          add_new_item: 'Add New Item'
+          back_to_all_menus: Back To All Menus
           menu_item_type: Menu Item Type
           menu_item_basic_details: Basic Details
           link_settings: Link Settings
           link_to: Link To
+          new_menu: New Menu
+          new_menu_item: New Menu Item
+          item_type: Item Type
           open_link_in_new_window: Open this link in a new window
           menu_item_type_message: "Set your <b>Menu Item Type</b>, for more information about using existing Types or adding custom Types
           <a href='https://guides.spreecommerce.org/user/configuration/configuring_geography.html#zones' target='_blank' class='alert-link'>click here</a> to see the documentation"
+          menus: Menus
+          menu_items: Menu Items
+          subtitle: Subtitle
     administration: Administration
     advertise: Advertise
     agree_to_privacy_policy: Agree to Privacy Policy
@@ -706,7 +715,6 @@ en:
     confirm_password: Password Confirmation
     contact_phone: Contact phone
     contact_us: Contact us
-    content: Content
     continue: Continue
     continue_as_guest: Continue as a guest
     continue_shopping: Continue shopping
@@ -1033,7 +1041,6 @@ en:
     name: Name
     name_on_card: Name on card
     name_or_sku: Name or SKU (enter at least first 3 characters of product name)
-    navigation: Navigation
     nav_bar:
       admin_panel: Admin Panel
       change_country: Change country
@@ -1682,6 +1689,7 @@ en:
     successfully_removed: ! '%{resource} has been successfully removed!'
     successfully_updated: ! '%{resource} has been successfully updated!'
     summary: Summary
+    support: Support
     supported_currencies: Supported Currencies
     supported_currencies_long: A comma separated list of supported currencies
     supported_locales: Supported Locales
