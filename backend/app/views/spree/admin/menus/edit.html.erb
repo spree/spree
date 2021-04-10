@@ -3,62 +3,172 @@
 <% end %>
 
 <% content_for :page_actions do %>
-  <%= button_link_to Spree.t('admin.navigation.back_to_all_menus', menu: @menu.name), spree.admin_menus_url, icon: 'chevron-left.svg' %>
+  <%#= button_link_to Spree.t('admin.navigation.back_to_all_menus', menu: @menu.name), spree.admin_menus_url, icon: 'chevron-left.svg' %>
 <% end %>
 
-<%= render partial: 'spree/admin/shared/error_messages', locals: { target: @menu } %>
-
-<%= form_for [:admin, @menu] do |f| %>
-  <%= render partial: 'form', locals: { f: f } %>
-  <div class="d-flex justify-content-center mb-5">
-    <%= render partial: 'spree/admin/shared/edit_resource_links' %>
+<div class="row">
+    <div class="col-12">
+      <div class="card mb-3">
+        <div class="card-header">
+          <h5>Settings</h5>
+        </div>
+        <div class="card-body">
+          <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @menu } %>
+          <%= form_for [:admin, @menu] do |f| %>
+            <%= render partial: 'form', locals: { f: f } %>
+            <div class="d-flex ">
+              <%= render partial: 'spree/admin/shared/edit_resource_links' %>
+            </div>
+          <% end %>
+        </div>
+    </div>
   </div>
-<% end %>
+</div>
 
 <hr>
-
-<div class="row mt-5">
-  <div class="col-12">
-      <div class="card mb-3">
+<div id="menuArea">
+  <div class="row mt-5">
+    <div class="col-12">
+      <div class="card mb-3" style="overflow: hidden;">
         <div class="card-header">
           <div class="row pb-0">
             <div class="col d-flex">
-             <h5 class="mb-0 align-self-center"><%= Spree.t('admin.navigation.menu_items') %></h5>
+             <h5 class="mb-0 align-self-center"><%= Spree.t('admin.navigation.menu_items', menu_name: @menu.name) %></h5>
             </div>
             <div class="col d-flex justify-content-end">
               <%= button_link_to Spree.t('admin.navigation.add_new_item', menu: @menu.name), spree.new_admin_menu_menu_item_path(@menu), icon: 'add.svg', class: 'no-wrap btn btn-success align-self-center' %>
             </div>
           </div>
         </div>
-        <div class="card-body">
-          <% if @menu.menu_items.any? %>
-            <div class="table-responsive">
-              <table class="table">
-                <thead>
-                  <th><%= Spree.t(:name) %></th>
-                  <th data-hook="admin_menus_index_header_actions" class="actions"></th>
-                <thead>
-                <tbody>
-                  <% @menu.menu_items.each do |menu_item| %>
-                    <tr>
-                      <td><%= menu_item.name %></td>
-                      <td class="actions" data-hook="admin_menus_index_row_actions">
-                         <span class="d-flex justify-content-end">
-                         <%= link_to_edit(menu_item, no_text: true, url: spree.edit_admin_menu_menu_item_path(@menu, menu_item)) %>
-                         <%= link_to_delete(menu_item, no_text: true, url: spree.admin_menu_menu_item_path(@menu, menu_item)) if can?(:destroy, menu_item) %>
-                        </span>
-                      </td>
-                    </tr>
-                  <% end %>
-                </tbody>
-              </table>
+        <div class="card-body" style="padding: 0;">
+
+          <div id="primaryMenuContainer" class="menu-container">
+
+            <div class="menu-container-item dragable">
+              <div class="d-flex container-info-row">
+                <span class="move-handle"><%= svg_icon name: "sort.svg", width: '20', height: '20' %> WOMEN</span>
+              </div>
+              <div class="menu-container">
+                <div class="menu-item dragable">
+                  <span class="move-handle"><%= svg_icon name: "sort.svg", width: '20', height: '20' %> SKIRTS</span>
+                </div>
+                <div class="menu-item dragable">
+                  <span class="move-handle"><%= svg_icon name: "sort.svg", width: '20', height: '20' %> DRESSES</span>
+                </div>
+                <div class="menu-item dragable">
+                  <span class="move-handle"><%= svg_icon name: "sort.svg", width: '20', height: '20' %> SHIRTS & BLOUSES</span>
+                </div>
+                <div class="menu-item dragable">
+                  <span class="move-handle"><%= svg_icon name: "sort.svg", width: '20', height: '20' %> SWEATERS</span>
+                </div>
+                <div class="menu-item dragable">
+                  <span class="move-handle"><%= svg_icon name: "sort.svg", width: '20', height: '20' %> TOPS & T-SHIRTS</span>
+                </div>
+                <div class="menu-item dragable">
+                  <span class="move-handle"><%= svg_icon name: "sort.svg", width: '20', height: '20' %> JACKETS & COATS</span>
+                </div>
+
+
+                <div class="menu-container-item dragable">
+                  <div class="d-flex container-info-row">
+                    <span class="move-handle"><%= svg_icon name: "sort.svg", width: '20', height: '20' %> Promotions</span>
+                  </div>
+                  <div class="menu-container">
+                    <div class="menu-item dragable">
+                      <span class="move-handle"><%= svg_icon name: "sort.svg", width: '20', height: '20' %> New Collection</span>
+                    </div>
+                    <div class="menu-item dragable">
+                      <span class="move-handle"><%= svg_icon name: "sort.svg", width: '20', height: '20' %> Special Offer</span>
+                    </div>
+                  </div>
+                </div>
+
+
+              </div>
             </div>
-          <% else %>
-            <div class="alert alert-info no-objects-found">
-              <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::MenuItem)) %>
+
+
+            <div class="menu-container-item dragable">
+              <div class="d-flex container-info-row">
+                <span class="move-handle"><%= svg_icon name: "sort.svg", width: '20', height: '20' %> MEN</span>
+              </div>
+              <div class="menu-container">
+                <div class="menu-item dragable">
+                  <span class="move-handle"><%= svg_icon name: "sort.svg", width: '20', height: '20' %> SHIRTS</span>
+                </div>
+
+                <div class="menu-item dragable">
+                  <span class="move-handle"><%= svg_icon name: "sort.svg", width: '20', height: '20' %> T-SHIRTS</span>
+                </div>
+
+                <div class="menu-item dragable">
+                  <span class="move-handle"><%= svg_icon name: "sort.svg", width: '20', height: '20' %> SWEATERS</span>
+                </div>
+
+                <div class="menu-item dragable">
+                  <span class="move-handle"><%= svg_icon name: "sort.svg", width: '20', height: '20' %> JACKETS & COATS</span>
+                </div>
+
+
+                <div class="menu-container-item dragable">
+                  <div class="d-flex container-info-row">
+                    <span class="move-handle"><%= svg_icon name: "sort.svg", width: '20', height: '20' %> Promotions</span>
+                  </div>
+                  <div class="menu-container">
+                    <div class="menu-item dragable">
+                      <span class="move-handle"><%= svg_icon name: "sort.svg", width: '20', height: '20' %> New Collection</span>
+                    </div>
+                    <div class="menu-item dragable">
+                      <span class="move-handle"><%= svg_icon name: "sort.svg", width: '20', height: '20' %> Special Offer</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-          <% end %>
+
+
+            <div class="menu-container-item dragable">
+              <div class="d-flex container-info-row">
+                <span class="move-handle"><%= svg_icon name: "sort.svg", width: '20', height: '20' %> SPORTSWARE</span>
+              </div>
+              <div class="menu-container">
+                <div class="menu-item dragable">
+                  <span class="move-handle"><%= svg_icon name: "sort.svg", width: '20', height: '20' %> SHIRTS</span>
+                </div>
+
+                <div class="menu-item dragable">
+                  <span class="move-handle"><%= svg_icon name: "sort.svg", width: '20', height: '20' %> T-SHIRTS</span>
+                </div>
+
+                <div class="menu-item dragable">
+                  <span class="move-handle"><%= svg_icon name: "sort.svg", width: '20', height: '20' %> SWEATERS</span>
+                </div>
+
+                <div class="menu-item dragable">
+                  <span class="move-handle"><%= svg_icon name: "sort.svg", width: '20', height: '20' %> JACKETS & COATS</span>
+                </div>
+
+
+                <div class="menu-container-item dragable">
+                  <div class="d-flex container-info-row">
+                    <span class="move-handle"><%= svg_icon name: "sort.svg", width: '20', height: '20' %> Promotions</span>
+                  </div>
+                  <div class="menu-container">
+                    <div class="menu-item dragable">
+                      <span class="move-handle"><%= svg_icon name: "sort.svg", width: '20', height: '20' %> New Collection</span>
+                    </div>
+                    <div class="menu-item dragable">
+                      <span class="move-handle"><%= svg_icon name: "sort.svg", width: '20', height: '20' %> Special Offer</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
         </div>
-      </div>
+    </div>
+    </div>
   </div>
 </div>
