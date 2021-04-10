@@ -1,15 +1,17 @@
 /* eslint-disable no-new */
+
 document.addEventListener('DOMContentLoaded', function() {
   const menuItemSortable = {
     group: {
-      name: 'sortable-list-2',
+      name: 'sortable-menu-sub',
       pull: true,
       put: true
     },
     handle: '.move-handle',
+    dragClass: 'menu-item-dragged',
     draggable: '.dragable',
-    animation: 250,
-    forceFallback: true
+    animation: 350,
+    forceFallback: false
   };
 
   let containers = null;
