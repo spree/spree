@@ -2,10 +2,12 @@ module Spree
   class MenuItem < Spree::Base
     belongs_to :menu
 
+    acts_as_nested_set
+
     # Not frozen so they can be added to
     ITEM_TYPE = %w[Link Promotion]
-    LINKED_RESOURCE_TYPE = ['Home Page']
-    STATIC_RESOURCE_TYPE = ['URL']
+    LINKED_RESOURCE_TYPE = []
+    STATIC_RESOURCE_TYPE = ['URL', 'Home Page']
     DYNAMIC_RESOURCE_TYPE = ['Spree::Product', 'Spree::Taxon', 'Spree::Page']
 
     LINKED_RESOURCE_TYPE.unshift(*STATIC_RESOURCE_TYPE)

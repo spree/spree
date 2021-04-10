@@ -1,0 +1,8 @@
+<div id="linkResourcePanel" data-panel-type="<%= linked_resource %>">
+  <% if linked_resource == 'URL' %>
+    <%= render 'spree/admin/menu_items/link_inputs/url', f: f %>
+  <% elsif linked_resource == 'Home Page' %>
+      <%= render 'spree/admin/menu_items/link_inputs/home_page', f: f %>
+  <% else %>
+<% end %>
+</div>
