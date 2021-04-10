@@ -1,0 +1,51 @@
+// Tabels
+#table-filter {
+  border-color: $main-border-color_dm;
+}
+
+.custom-select {
+  color: $main-text-color_dm;
+  background-color: $secondary-bg-color_dm;
+  border-color: $main-border-color_dm;
+}
+
+td.move-handle {
+  color: $info_dm;
+}
+
+
+
+table.table {
+  margin-bottom: 0;
+  color: $main-text-color_dm;
+}
+
+table.table-bordered,
+.table thead th,
+.table td {
+  border-color: $main-border-color_dm !important;
+}
+
+table.table tbody tr {
+  background-color: $secondary-bg-color_dm;
+  &:hover {
+    background-color: $secondary-bg-hover-color_dm;
+  }
+}
+
+thead {
+  background-color: $main-bg-color_dm;
+}
+
+.table-responsive {
+  border-radius: $border-radius;
+  border-color: $main-border-color_dm !important;
+  border: 1px solid;
+}
+.card  {
+  .table-responsive {
+    border-radius: 0;
+    border-color: $main-border-color_dm !important;
+    border: 1px solid;
+  }
+}

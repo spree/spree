@@ -1,0 +1,38 @@
+.select2-container--bootstrap4 .select2-selection {
+  background-color: $main-bg-color_dm;
+  border-color: $main-border-color_dm;
+}
+
+// Badges & Alerts
+.select2-container--bootstrap4 .select2-selection--multiple li.select2-selection__choice {
+  color: $info_dm;
+  @include alert-variant(rgba(darken($info_dm, 20), 0.1), $info_dm, $info_dm);
+  border: 1px solid;
+
+  .select2-selection__choice__remove {
+    color: $info_dm;
+  }
+
+  &:hover {
+    .select2-selection__choice__remove {
+      color: darken($info_dm, 30);
+    }
+  }
+}
+
+.select2-container--bootstrap4 .select2-dropdown {
+  background-color: $main-bg-color_dm;
+  border-color: $main-border-color_dm;
+}
+
+.select2-container--bootstrap4 .select2-results__option--highlighted[aria-selected] {
+  background-color: $secondary-bg-hover-color_dm;
+}
+
+.select2-container--bootstrap4 .select2-results__option[aria-selected=true] {
+  display: none;
+}
+
+.select2-container--bootstrap4 .select2-selection--single .select2-selection__rendered {
+  color: $main-text-color_dm;
+}
