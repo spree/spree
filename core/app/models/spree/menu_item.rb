@@ -4,6 +4,8 @@ module Spree
 
     acts_as_nested_set
 
+    has_one_attached :image_asset
+
     # Not frozen so they can be added to
     ITEM_TYPE = %w[Link Promotion]
     LINKED_RESOURCE_TYPE = []

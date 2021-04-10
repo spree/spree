@@ -11,11 +11,19 @@
             <%= f.select(:item_type, Spree::MenuItem::ITEM_TYPE, {include_blank: false}, { class: 'select2' }) %>
             <%= f.error_message_on :item_type %>
           <% end %>
-        </div>
 
-         <div class="alert alert-info mx-3 mt-0">
+          <%= f.field_container :container do %>
+            <div class="custom-control custom-checkbox">
+              <%= f.check_box :container, class: 'custom-control-input' %>
+              <%= f.label :container, Spree.t('admin.navigation.allow_this_menu_item_to_contain_nested_menu_items'), class: 'custom-control-label' %>
+              <%= f.error_message_on :container %>
+            </div>
+          <% end %>
+
+          <div class="alert alert-info mt-3 mb-0">
           <%= raw Spree.t('admin.navigation.menu_item_type_message') %>
          </div>
+        </div>
       </div>
     </div>
 
@@ -37,7 +45,18 @@
             <%= f.error_message_on :subtitle %>
           <% end %>
 
-          <!-- TODO: ADD LINK TO UPLOAD IMAGE / ICON HERE -->
+          <%= f.field_container :image_asset, class: ['form-group'] do %>
+            <% if @menu_item.image_asset.attached? && @menu_item.image_asset.variable? %>
+              <%= image_tag main_app.url_for(@menu_item.image_asset.variant(resize: '244x104>')) %>
+            <% elsif @menu_item.image_asset.attached? && @store.image_asset.image? %>
+              <%= image_tag main_app.url_for(@menu_item.image_asset) %>
+            <% end %>
+            <%= f.field_container :image_asset, class: ['form-group'] do %>
+              <%= f.label :image_asset, Spree.t(:image_asset) %><br>
+              <%= f.file_field :image_asset %>
+              <%= f.error_message_on :image_asset %>
+            <% end %>
+          <% end %>
         </div>
       </div>
     </div>

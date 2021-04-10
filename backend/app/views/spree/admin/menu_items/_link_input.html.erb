@@ -4,5 +4,6 @@
   <% elsif linked_resource == 'Home Page' %>
       <%= render 'spree/admin/menu_items/link_inputs/home_page', f: f %>
   <% else %>
-<% end %>
+      <%= render 'spree/admin/menu_items/link_inputs/search', linked_resource: linked_resource, f: f %>
+  <% end %>
 </div>
