@@ -35,6 +35,8 @@ module Spree
 
       def addresses
         if request.put?
+          params[:user][:bill_address_attributes][:user_id] = @user.id if params[:user][:bill_address_attributes].present?
+          params[:user][:ship_address_attributes][:user_id] = @user.id if params[:user][:ship_address_attributes].present?
           if @user.update(user_params)
             flash.now[:success] = Spree.t(:account_updated)
           end
