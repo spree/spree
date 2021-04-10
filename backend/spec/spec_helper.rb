@@ -120,11 +120,27 @@ end
 module Spree
   module TestingSupport
     module Flash
-      def assert_flash_success(flash)
-        flash = convert_flash(flash)
+      def assert_admin_flash_alert_success(message)
+        message_content = convert_flash(message)
 
-        within('.alert-success') do
-          expect(page).to have_content(flash)
+        within('#FlashAlertsContainer', visible: :all) do
+          expect(page).to have_css('span[data-alert-type="success"]', text: message_content, visible: :all)
+        end
+      end
+
+      def assert_admin_flash_alert_error(message)
+        message_content = convert_flash(message)
+
+        within('#FlashAlertsContainer', visible: :all) do
+          expect(page).to have_css('span[data-alert-type="error"]', text: message_content, visible: :all)
+        end
+      end
+
+      def assert_admin_flash_alert_notice(message)
+        message_content = convert_flash(message)
+
+        within('#FlashAlertsContainer', visible: :all) do
+          expect(page).to have_css('span[data-alert-type="notice"]', text: message_content, visible: :all)
         end
       end
     end

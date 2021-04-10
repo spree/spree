@@ -1,0 +1,61 @@
+body.swal2-toast-shown .swal2-container.swal2-bottom {
+  right: -50% !important;
+  max-width: 500px;
+
+  .swal2-popup.swal2-toast {
+    border-width: 3px;
+    border-style: solid;
+    box-shadow: none !important;
+    margin-bottom: 50px;
+
+    .swal2-icon {
+      display: none !important;
+    }
+
+    button.swal2-close {
+        min-width: .8em;
+        padding-bottom: 0.1em;
+        &:hover {
+        opacity: 0.75;
+      }
+    }
+  }
+}
+
+@include media-breakpoint-down(sm) {
+  body.swal2-toast-shown .swal2-container.swal2-bottom {
+    .swal2-popup.swal2-toast {
+      button.swal2-close {
+        padding-bottom: 0;
+      }
+    }
+  }
+}
+
+.swal2-popup.swal2-toast.swal2-icon-success {
+  @extend .alert-success;
+  h2, button {
+    @extend .alert-success;
+  }
+}
+
+.swal2-popup.swal2-toast.swal2-icon-error {
+  @extend .alert-danger;
+  h2, button {
+    @extend .alert-danger;
+  }
+}
+
+.swal2-popup.swal2-toast.swal2-icon-info {
+  @extend .alert-info;
+  h2, button {
+    @extend .alert-info;
+  }
+}
+
+.swal2-popup.swal2-toast.swal2-icon-question {
+  @extend .alert-warning;
+  h2, button {
+    @extend .alert-warning;
+  }
+}
