@@ -80,10 +80,8 @@ $.fn.customerAutocomplete = function() {
           filter: {
             'm': 'or',
             email_i_cont: params.term,
-            ship_address_firstname_start: params.term,
-            ship_address_lastname_start: params.term,
-            bill_address_firstname_start: params.term,
-            bill_address_lastname_start: params.term
+            addresses_firstname_start: params.term,
+            addresses_lastname_start: params.term
           },
           include: 'ship_address.country,ship_address.state,bill_address.country,bill_address.state'
         }
