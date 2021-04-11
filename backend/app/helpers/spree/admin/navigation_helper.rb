@@ -147,7 +147,7 @@ module Spree
       def link_to_edit(resource, options = {})
         url = options[:url] || edit_object_url(resource)
         options[:data] = { action: 'edit' }
-        options[:class] = 'btn btn-primary btn-sm'
+        options[:class] ||= 'btn btn-primary btn-sm'
         link_to_with_icon('edit.svg', Spree.t(:edit), url, options)
       end
 
@@ -160,7 +160,7 @@ module Spree
       def link_to_delete(resource, options = {})
         url = options[:url] || object_url(resource)
         name = options[:name] || Spree.t(:delete)
-        options[:class] = 'btn btn-danger btn-sm delete-resource'
+        options[:class] ||= 'btn btn-danger btn-sm delete-resource'
         options[:data] = { confirm: Spree.t(:are_you_sure), action: 'remove' }
         link_to_with_icon 'delete.svg', name, url, options
       end

@@ -575,7 +575,7 @@ en:
         available_store_credit: User has %{amount} in Store Credit available.
       navigation:
           add_new_item: 'Add New Item'
-          allow_this_menu_item_to_contain_nested_menu_items: Allow this Menu Item to contain nested Menu Items
+          allow_this_menu_item_to_contain_nested_menu_items: Allow this Menu Item to contain nested items
           back_to_all_menus: Back To All Menus
           menu_item_type: Menu Item Type
           menu_item_basic_details: Basic Details

@@ -1,10 +1,6 @@
 table.table {
   font-size: $font-size-sm;
 
-  .move-handle {
-    cursor: grab;
-  }
-
   th {
     padding: 0.5rem;
 
@@ -137,4 +133,8 @@ div.table-responsive table.table-bordered {
     opacity: 1;
     }
   }
+}
+
+.move-handle {
+  cursor: grab;
 }

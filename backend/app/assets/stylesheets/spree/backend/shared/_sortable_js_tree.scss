@@ -1,6 +1,10 @@
-$item-padding: 14px;
+$item-padding: 0;
+$nestable-background-color: rgb(214, 214, 214);
 
 #menuArea {
+  .space-buttons a {
+    margin: 2px;
+  }
   .menu-item {
     background-color: white;
     padding: $item-padding;
@@ -11,10 +15,10 @@ $item-padding: 14px;
   }
 
   .container-info-row {
-    border: 1px solid var(--gray);
+    border: 1px solid $nestable-background-color;
     border-right: none;
     padding: $item-padding;
-    background-color: var(--gray);
+    background-color:$nestable-background-color;
   }
 
   .menu-container {
@@ -30,11 +34,6 @@ $item-padding: 14px;
     border: none;
     padding: 0;
     margin-left: 0;
-    .container-info-row {
-      .move-handle {
-        color: white;
-      }
-    }
   }
 
   #primaryMenuContainer > div.menu-item {

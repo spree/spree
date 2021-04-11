@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', function() {
     dragClass: 'menu-item-dragged',
     draggable: '.dragable',
     animation: 350,
-    forceFallback: false
+    forceFallback: true
   };
 
   let containers = null;

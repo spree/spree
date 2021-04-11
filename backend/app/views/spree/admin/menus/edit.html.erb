@@ -2,10 +2,6 @@
   <%= link_to Spree.t('admin.navigation.menus'), spree.admin_menus_url %> / <%= @menu.name %>
 <% end %>
 
-<% content_for :page_actions do %>
-  <%#= button_link_to Spree.t('admin.navigation.back_to_all_menus', menu: @menu.name), spree.admin_menus_url, icon: 'chevron-left.svg' %>
-<% end %>
-
 <div class="row">
     <div class="col-12">
       <div class="card mb-3">
@@ -25,11 +21,10 @@
   </div>
 </div>
 
-<hr>
 <div id="menuArea">
   <div class="row mt-5">
     <div class="col-12">
-      <div class="card mb-3" >
+      <div class="card mb-3">
         <div class="card-header">
           <div class="row pb-0">
             <div class="col d-flex">
@@ -41,130 +36,11 @@
           </div>
         </div>
         <div class="card-body" style="padding: 0;">
-
           <div id="primaryMenuContainer" class="menu-container">
-
-            <div class="menu-container-item dragable">
-              <div class="d-flex container-info-row">
-                <span class="move-handle"><%= svg_icon name: "sort.svg", width: '20', height: '20' %> WOMEN</span>
-              </div>
-              <div class="menu-container">
-                <div class="menu-item dragable">
-                  <span class="move-handle"><%= svg_icon name: "sort.svg", width: '20', height: '20' %> SKIRTS</span>
-                </div>
-                <div class="menu-item dragable">
-                  <span class="move-handle"><%= svg_icon name: "sort.svg", width: '20', height: '20' %> DRESSES</span>
-                </div>
-                <div class="menu-item dragable">
-                  <span class="move-handle"><%= svg_icon name: "sort.svg", width: '20', height: '20' %> SHIRTS & BLOUSES</span>
-                </div>
-                <div class="menu-item dragable">
-                  <span class="move-handle"><%= svg_icon name: "sort.svg", width: '20', height: '20' %> SWEATERS</span>
-                </div>
-                <div class="menu-item dragable">
-                  <span class="move-handle"><%= svg_icon name: "sort.svg", width: '20', height: '20' %> TOPS & T-SHIRTS</span>
-                </div>
-                <div class="menu-item dragable">
-                  <span class="move-handle"><%= svg_icon name: "sort.svg", width: '20', height: '20' %> JACKETS & COATS</span>
-                </div>
-
-
-                <div class="menu-container-item dragable">
-                  <div class="d-flex container-info-row">
-                    <span class="move-handle"><%= svg_icon name: "sort.svg", width: '20', height: '20' %> Promotions</span>
-                  </div>
-                  <div class="menu-container">
-                    <div class="menu-item dragable">
-                      <span class="move-handle"><%= svg_icon name: "sort.svg", width: '20', height: '20' %> New Collection</span>
-                    </div>
-                    <div class="menu-item dragable">
-                      <span class="move-handle"><%= svg_icon name: "sort.svg", width: '20', height: '20' %> Special Offer</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-
-            <div class="menu-container-item dragable">
-              <div class="d-flex container-info-row">
-                <span class="move-handle"><%= svg_icon name: "sort.svg", width: '20', height: '20' %> MEN</span>
-              </div>
-              <div class="menu-container">
-                <div class="menu-item dragable">
-                  <span class="move-handle"><%= svg_icon name: "sort.svg", width: '20', height: '20' %> SHIRTS</span>
-                </div>
-
-                <div class="menu-item dragable">
-                  <span class="move-handle"><%= svg_icon name: "sort.svg", width: '20', height: '20' %> T-SHIRTS</span>
-                </div>
-
-                <div class="menu-item dragable">
-                  <span class="move-handle"><%= svg_icon name: "sort.svg", width: '20', height: '20' %> SWEATERS</span>
-                </div>
-
-                <div class="menu-item dragable">
-                  <span class="move-handle"><%= svg_icon name: "sort.svg", width: '20', height: '20' %> JACKETS & COATS</span>
-                </div>
-
-
-                <div class="menu-container-item dragable">
-                  <div class="d-flex container-info-row">
-                    <span class="move-handle"><%= svg_icon name: "sort.svg", width: '20', height: '20' %> Promotions</span>
-                  </div>
-                  <div class="menu-container">
-                    <div class="menu-item dragable">
-                      <span class="move-handle"><%= svg_icon name: "sort.svg", width: '20', height: '20' %> New Collection</span>
-                    </div>
-                    <div class="menu-item dragable">
-                      <span class="move-handle"><%= svg_icon name: "sort.svg", width: '20', height: '20' %> Special Offer</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-
-            <div class="menu-container-item dragable">
-              <div class="d-flex container-info-row">
-                <span class="move-handle"><%= svg_icon name: "sort.svg", width: '20', height: '20' %> SPORTSWARE</span>
-              </div>
-              <div class="menu-container">
-                <div class="menu-item dragable">
-                  <span class="move-handle"><%= svg_icon name: "sort.svg", width: '20', height: '20' %> SHIRTS</span>
-                </div>
-
-                <div class="menu-item dragable">
-                  <span class="move-handle"><%= svg_icon name: "sort.svg", width: '20', height: '20' %> T-SHIRTS</span>
-                </div>
-
-                <div class="menu-item dragable">
-                  <span class="move-handle"><%= svg_icon name: "sort.svg", width: '20', height: '20' %> SWEATERS</span>
-                </div>
-
-                <div class="menu-item dragable">
-                  <span class="move-handle"><%= svg_icon name: "sort.svg", width: '20', height: '20' %> JACKETS & COATS</span>
-                </div>
-
-
-                <div class="menu-container-item dragable">
-                  <div class="d-flex container-info-row">
-                    <span class="move-handle"><%= svg_icon name: "sort.svg", width: '20', height: '20' %> Promotions</span>
-                  </div>
-                  <div class="menu-container">
-                    <div class="menu-item dragable">
-                      <span class="move-handle"><%= svg_icon name: "sort.svg", width: '20', height: '20' %> New Collection</span>
-                    </div>
-                    <div class="menu-item dragable">
-                      <span class="move-handle"><%= svg_icon name: "sort.svg", width: '20', height: '20' %> Special Offer</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
+            <% @menu.menu_items.each do |menu_item| %>
+              <%= build_menu_item(@menu, menu_item) %>
+            <% end %>
           </div>
-
         </div>
     </div>
     </div>
