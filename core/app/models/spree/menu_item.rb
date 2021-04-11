@@ -4,6 +4,9 @@ module Spree
 
     acts_as_nested_set
 
+    after_save :touch_ancestors
+    after_touch :touch_ancestors
+
     has_one_attached :image_asset
 
     # Not frozen so they can be added to
@@ -18,5 +21,11 @@ module Spree
     validates :name, presence: true
     validates :item_type, inclusion: { in: ITEM_TYPE }
     validates :linked_resource_type, inclusion: { in: LINKED_RESOURCE_TYPE }
+
+
+    def touch_ancestors
+      # Touches all ancestors at once to avoid recursive taxonomy touch, and reduce queries.
+      ancestors.update_all(updated_at: Time.current)
+    end
   end
 end
