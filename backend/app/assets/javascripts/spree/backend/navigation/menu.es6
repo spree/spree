@@ -8,6 +8,8 @@ document.addEventListener('DOMContentLoaded', function() {
       put: true
     },
     handle: '.move-handle',
+    swapThreshold: 0.5,
+    emptyInsertThreshold: 8,
     dragClass: 'menu-item-dragged',
     draggable: '.dragable',
     animation: 350,

@@ -2,18 +2,10 @@ module Spree
   module Admin
     module MenuHelper
       def build_menu_item(menu, item)
-        if item.container
-          dragable = nil
-          klazz = 'container-item-row'
-          menu_item_that_accepts_nested_items(menu, item, klazz, dragable)
-        else
-          dragable = 'dragable'
-          klazz = 'standard-item-row'
-          standard_menu_item(menu, item, klazz, dragable)
-        end
+        menu_item_that_accepts_nested_items(menu, item)
       end
 
-      def standard_menu_item(menu, item, klazz, dragable)
+      def menu_item_bar(menu, item)
         edit_button = link_to_edit(item, no_text: true, url: spree.edit_admin_menu_menu_item_path(menu, item))
         delete_button = link_to_delete(item, no_text: true, url: spree.admin_menu_menu_item_path(menu, item)) if can?(:destroy, item)
 
@@ -21,37 +13,24 @@ module Spree
         description_area = content_tag(:div, item.name, class: 'd-flex align-items-center w-100')
         buttons_area = content_tag(:div, edit_button + delete_button, class: 'd-flex align-items-center space-buttons px-2')
 
-        content_tag(:div, move_handle + description_area + buttons_area, class: "#{klazz} #{dragable} d-flex flex-nowrap #{'menu-item' if !item.container}", data: {item_id: item.id, parent_id: item.parent_id})
+        content_tag(:div, move_handle + description_area + buttons_area,
+                    class: 'container-item-row d-flex flex-nowrap',
+                    data: { item_id: item.id, parent_id: item.parent_id })
       end
 
-      def menu_item_that_accepts_nested_items(menu, item, klazz, dragable)
-        info_row = standard_menu_item(menu, item, klazz, dragable)
-        sub_menu_container = content_tag(:div, nil, class: 'menu-container')
+      def menu_item_that_accepts_nested_items(menu, item)
+        decendents = build_menu_item(menu, item.descendants[0]) unless item.leaf?
 
-        content_tag(:div, info_row + sub_menu_container, class: 'menu-item menu-container-item dragable', data: {item_id: item.id})
+        info_row = menu_item_bar(menu, item)
+        sub_menu_container = content_tag(:div, decendents, class: 'menu-container')
+
+        content_tag(:div, info_row + sub_menu_container, class: 'menu-item menu-container-item dragable', data: { item_id: item.id })
       end
 
 
+      def test(a, b)
+        b.self_and_descendants.inspect
 
-
-      def child_check(objp)
-        nested_set_options(objp) do |child_item|
-          child_item.name
-        end
-      end
-
-      # this is not used at the moment
-      # Remove this if it never gets used.
-      def humanize_class_name(object)
-        if object.is_a? Array
-          object.map do |obj|
-            obj.split('::').last
-          end
-        elsif object.is_a? String
-          object.split('::').last
-        else
-          'Pass me a String or an Array'
-        end
       end
     end
   end

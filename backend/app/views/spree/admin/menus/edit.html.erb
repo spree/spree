@@ -21,6 +21,8 @@
   </div>
 </div>
 
+
+
 <div id="menuArea">
   <div class="row mt-5">
     <div class="col-12">
@@ -36,10 +38,13 @@
           </div>
         </div>
 
-        <div class="card-body" style="padding: 0;">
+        <div class="card-body p-0 bg-light" >
           <div id="primaryMenuContainer" class="menu-container">
-            <% @menu.menu_items.each_with_level(@menu.menu_items.root.self_and_descendants) do |item, level| %>
-              <%= build_menu_item(@menu, item) %>
+            <% nested_set_options(@menu.menu_items) do |item| %>
+              <% if item.root? %>
+                <%= build_menu_item(@menu, item) %>
+                <%= test(@menu, item) %>
+              <% end %>
             <% end %>
           </div>
         </div>
@@ -47,3 +52,4 @@
     </div>
   </div>
 </div>
+

@@ -2,7 +2,7 @@ module Spree
   class MenuItem < Spree::Base
     belongs_to :menu
 
-    acts_as_nested_set
+    acts_as_nested_set dependent: :destroy
 
     after_save :touch_ancestors
     after_touch :touch_ancestors
@@ -22,9 +22,21 @@ module Spree
     validates :item_type, inclusion: { in: ITEM_TYPE }
     validates :linked_resource_type, inclusion: { in: LINKED_RESOURCE_TYPE }
 
+    def cached_self_and_descendants_ids
+      Rails.cache.fetch("#{cache_key_with_version}/descendant-ids") do
+        self_and_descendants.ids
+      end
+    end
+
+    def cached_self_and_descendants
+      Rails.cache.fetch("#{cache_key_with_version}/descendant-ids") do
+        self_and_descendants
+      end
+    end
+
+    private
 
     def touch_ancestors
-      # Touches all ancestors at once to avoid recursive taxonomy touch, and reduce queries.
       ancestors.update_all(updated_at: Time.current)
     end
   end

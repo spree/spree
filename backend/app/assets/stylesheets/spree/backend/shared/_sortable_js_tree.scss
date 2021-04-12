@@ -7,23 +7,14 @@ $nestable-background-color: rgb(214, 214, 214);
     margin: 2px;
   }
 
-  .standard-item-row {
-    background-color: white;
-    padding: $item-padding;
-    border: 1px solid $border-color;
-    border-bottom: 1px solid transparent;
-    margin: 0;
-    border-right: none;
-  }
-
   .container-item-row {
-    border: 1px solid $nestable-background-color;
-    border-right: none;
-    padding: $item-padding;
-    background-color:$nestable-background-color;
+    border: 1px solid $main-items-border-color;
+    margin: 2px;
+    background-color: white;
   }
 
   .menu-container-item {
+    border: solid 1px transparent;
     padding: 0;
     background-color: var(--light);
 
@@ -33,22 +24,8 @@ $nestable-background-color: rgb(214, 214, 214);
     }
   }
 
-  #primaryMenuContainer {
-    border: none;
-    padding: 0;
-    margin-left: 0;
-  }
-
-  #primaryMenuContainer > div.standard-item-row {
-    border-left: 1px solid transparent;
-  }
-
-  #primaryMenuContainer > div.standard-item-row:first-child {
-    border-top: 1px solid transparent;
-    border-left: 1px solid transparent;
-  }
-
-  .standard-item-row.menu-item-dragged {
-    border: 1px solid $border-color;
+  .sortable-chosen {
+    border: 1px dashed var(--gray);
+    border-radius: 5px;
   }
 }
