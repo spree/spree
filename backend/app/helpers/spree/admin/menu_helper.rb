@@ -19,10 +19,16 @@ module Spree
       end
 
       def menu_item_that_accepts_nested_items(menu, item)
-        decendents = build_menu_item(menu, item.children[0]) unless item.leaf?
+        decendents = []
+
+        unless item.leaf?
+          item.children.each do |x|
+            decendents << build_menu_item(menu, x) unless item.leaf?
+          end
+        end
 
         info_row = menu_item_bar(menu, item)
-        sub_menu_container = content_tag(:div, decendents, class: 'menu-container', data: { parent_id: item.id })
+        sub_menu_container = content_tag(:div, raw(decendents.join), class: 'menu-container', data: { parent_id: item.id })
 
         content_tag(:div, info_row + sub_menu_container, class: 'menu-item menu-container-item dragable', data: { item_id: item.id })
       end

@@ -15,6 +15,9 @@
           <div class="alert alert-info mt-3 mb-0">
           <%= raw Spree.t('admin.navigation.menu_item_type_message') %>
          </div>
+
+         <hr>
+         <%= f.select :parent_id, nested_set_options(Spree::MenuItem, @menu_item) {|i| "#{'-' * i.level} #{i.name}" }, {include_blank: true}, {class: 'select2-clear'} %>
         </div>
       </div>
     </div>

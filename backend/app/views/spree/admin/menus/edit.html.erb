@@ -38,7 +38,7 @@
 
         <div class="card-body p-0 bg-light">
           <div id="primaryMenuContainer" class="menu-container">
-            <% nested_set_options(@menu.menu_items) do |item| %>
+            <% nested_set_options(@menu_items_in_order) do |item| %>
               <% if item.root? %>
                 <%= build_menu_item(@menu, item) %>
               <% end %>
