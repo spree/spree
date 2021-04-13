@@ -65,7 +65,7 @@ $(document).ready(function() {
           el.parents('tr').fadeOut('hide', function() {
             $(this).remove()
           })
-          el.parents('div.menu-item').fadeOut('hide', function() {
+          el.closest('div.menu-item').fadeOut('hide', function() {
             $(this).remove()
           })
         }
