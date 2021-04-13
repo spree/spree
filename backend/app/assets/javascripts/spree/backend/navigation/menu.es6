@@ -13,7 +13,11 @@ document.addEventListener('DOMContentLoaded', function() {
     dragClass: 'menu-item-dragged',
     draggable: '.dragable',
     animation: 350,
-    forceFallback: true
+    forceFallback: true,
+    onEnd: function (evt) {
+      const newParentId = evt.to.dataset.parentId
+      const position = evt.newIndex
+    }
   };
 
   let containers = null;

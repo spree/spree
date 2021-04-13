@@ -23,7 +23,7 @@ module Spree
         decendents = build_menu_item(menu, item.children[0]) unless item.leaf?
 
         info_row = menu_item_bar(menu, item)
-        sub_menu_container = content_tag(:div, decendents, class: 'menu-container')
+        sub_menu_container = content_tag(:div, decendents, class: 'menu-container', data: { parent_id: item.id })
 
         content_tag(:div, info_row + sub_menu_container, class: 'menu-item menu-container-item dragable', data: { item_id: item.id })
       end
