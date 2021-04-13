@@ -28,4 +28,21 @@ $nestable-background-color: rgb(214, 214, 214);
     border: 1px dashed var(--gray);
     border-radius: 5px;
   }
+
+  .menu_items_image_holder {
+    position: relative;
+    border: 1px solid $main-items-border-color;
+    border-radius: 7px;
+    overflow: hidden;
+    width: 45px;
+    height: 45px;
+    img {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      height: 100%;
+      width: auto;
+      transform: translate(-50%,-50%);
+    }
+  }
 }

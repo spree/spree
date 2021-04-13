@@ -583,6 +583,7 @@ en:
           link_to: Link To
           new_menu: New Menu
           new_menu_item: New Menu Item
+          nested_under_info: Quickly nest your link in the menu.
           item_type: Item Type
           open_link_in_new_window: Open this link in a new window
           menu_item_type_message: "For more information about Menu Item Types and nesting Menu Items, visit the documentation by

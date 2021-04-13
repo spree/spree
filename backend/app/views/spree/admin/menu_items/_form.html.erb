@@ -17,7 +17,14 @@
          </div>
 
          <hr>
-         <%= f.select :parent_id, nested_set_options(Spree::MenuItem, @menu_item) {|i| "#{'-' * i.level} #{i.name}" }, {include_blank: true}, {class: 'select2-clear'} %>
+         <%= f.field_container :parent_id, class: ['form-group'] do %>
+            <%= f.label :parent_id, Spree.t('admin.navigation.nested_under') %>
+            <%= f.select :parent_id, nested_set_options(@menu.menu_items, @menu_item) {|i| "#{'-' * i.level} #{i.name}" }, {include_blank: true}, {class: 'select2-clear'} %>
+            <%= f.error_message_on :parent_id %>
+            <small class="form-text text-muted">
+              <%= Spree.t('admin.navigation.nested_under_info') %>
+            </small>
+          <% end %>
         </div>
       </div>
     </div>
@@ -43,7 +50,7 @@
           <%= f.field_container :image_asset, class: ['form-group'] do %>
             <% if @menu_item.image_asset.attached? && @menu_item.image_asset.variable? %>
               <%= image_tag main_app.url_for(@menu_item.image_asset.variant(resize: '244x104>')) %>
-            <% elsif @menu_item.image_asset.attached? && @store.image_asset.image? %>
+            <% elsif @menu_item.image_asset.attached? && @menu_item.image_asset.image? %>
               <%= image_tag main_app.url_for(@menu_item.image_asset) %>
             <% end %>
             <%= f.field_container :image_asset, class: ['form-group'] do %>
