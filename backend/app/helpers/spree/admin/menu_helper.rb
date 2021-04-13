@@ -19,7 +19,8 @@ module Spree
       end
 
       def menu_item_that_accepts_nested_items(menu, item)
-        decendents = build_menu_item(menu, item.descendants[0]) unless item.leaf?
+
+        decendents = build_menu_item(menu, item.children[0]) unless item.leaf?
 
         info_row = menu_item_bar(menu, item)
         sub_menu_container = content_tag(:div, decendents, class: 'menu-container')
@@ -29,8 +30,7 @@ module Spree
 
 
       def test(a, b)
-        b.self_and_descendants.inspect
-
+        b.item.children[0]
       end
     end
   end

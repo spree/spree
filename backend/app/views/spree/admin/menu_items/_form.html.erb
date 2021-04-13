@@ -12,14 +12,6 @@
             <%= f.error_message_on :item_type %>
           <% end %>
 
-          <%= f.field_container :container do %>
-            <div class="custom-control custom-checkbox">
-              <%= f.check_box :container, class: 'custom-control-input' %>
-              <%= f.label :container, Spree.t('admin.navigation.allow_this_menu_item_to_contain_nested_menu_items'), class: 'custom-control-label' %>
-              <%= f.error_message_on :container %>
-            </div>
-          <% end %>
-
           <div class="alert alert-info mt-3 mb-0">
           <%= raw Spree.t('admin.navigation.menu_item_type_message') %>
          </div>
