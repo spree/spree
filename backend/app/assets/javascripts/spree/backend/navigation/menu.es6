@@ -15,10 +15,9 @@ document.addEventListener('DOMContentLoaded', function() {
     animation: 350,
     forceFallback: true,
     onEnd: function (evt) {
-      const newParentId = evt.to.dataset.parentId
-      const position = evt.newIndex
+      handleMenuMove(evt)
     }
-  };
+  }
 
   let containers = null;
   containers = document.querySelectorAll('.menu-container');
@@ -27,3 +26,11 @@ document.addEventListener('DOMContentLoaded', function() {
     new Sortable(containers[i], menuItemSortable);
   }
 })
+
+function handleMenuMove (evt) {
+  const newParentId = evt.to.dataset.parentId
+  const position = evt.newIndex
+
+  console.log(newParentId)
+  console.log(position)
+}
