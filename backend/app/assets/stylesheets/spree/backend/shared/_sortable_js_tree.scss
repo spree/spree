@@ -3,11 +3,14 @@ $main-items-border-color: rgba(0, 0, 0, 0.125);
 $nestable-background-color: rgb(214, 214, 214);
 
 #menuArea {
-  .space-buttons a {
-    margin: 2px;
+  .space-buttons {
+    box-shadow: -11px 0 16px 6px white;
+    a {
+      margin: 2px;
+    }
   }
-
   .container-item-row {
+    overflow: hidden;
     border: 1px solid $main-items-border-color;
     margin: 2px;
     background-color: white;

@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', function() {
     animation: 350,
     forceFallback: true,
     onEnd: function (evt) {
-      handleMenuMove(evt)
+      handleMenuItemMove(evt)
     }
   }
 
@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 })
 
-function handleMenuMove (evt) {
+function handleMenuItemMove (evt) {
   const newParentId = evt.to.dataset.parentId
   const position = evt.newIndex
 

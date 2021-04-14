@@ -583,6 +583,7 @@ en:
           link_to: Link To
           new_menu: New Menu
           new_menu_item: New Menu Item
+          no_menu_items: '<b>%{menu}</b> has no items. Click the <b>Add New Item</b> button to begin adding links to this menu.'
           nested_under_info: Quickly nest your link in the menu.
           item_type: Item Type
           open_link_in_new_window: Open this link in a new window

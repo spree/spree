@@ -38,10 +38,16 @@
 
         <div class="card-body p-0 bg-light">
           <div id="primaryMenuContainer" class="menu-container">
+            <% if @menu_items_in_order.any? %>
             <% nested_set_options(@menu_items_in_order) do |item| %>
               <% if item.root? %>
                 <%= build_menu_item(@menu, item) %>
               <% end %>
+            <% end %>
+            <% else %>
+              <div class="alert alert-info no-objects-found m-5">
+                <%= raw Spree.t('admin.navigation.no_menu_items', menu: @menu.name) %>
+              </div>
             <% end %>
           </div>
         </div>

@@ -1,9 +1,12 @@
 <div id="linkResourcePanel" data-panel-type="<%= linked_resource %>">
-  <% if linked_resource == 'URL' %>
+  <% case linked_resource %>
+  <% when 'URL' %>
     <%= render 'spree/admin/menu_items/link_inputs/url', f: f %>
-  <% elsif linked_resource == 'Home Page' %>
-      <%= render 'spree/admin/menu_items/link_inputs/home_page', f: f %>
-  <% else %>
-      <%= render 'spree/admin/menu_items/link_inputs/search', linked_resource: linked_resource, f: f %>
+  <% when 'Home Page' %>
+    <%= render 'spree/admin/menu_items/link_inputs/home_page', f: f %>
+  <% when 'Taxon' %>
+    <%= render 'spree/admin/menu_items/link_inputs/taxon', linked_resource: linked_resource, f: f %>
+  <% when 'Product' %>
+    <%= render 'spree/admin/menu_items/link_inputs/product', linked_resource: linked_resource, f: f %>
   <% end %>
 </div>

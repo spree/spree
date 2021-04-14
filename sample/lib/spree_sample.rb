@@ -7,7 +7,6 @@ module SpreeSample
 
     # Needs to be here so we can access it inside the tests
     def self.load_samples
-      Spree::Sample.load_sample('menus')
       Spree::Sample.load_sample('addresses')
       Spree::Sample.load_sample('zones')
       Spree::Sample.load_sample('payment_methods')
@@ -17,6 +16,7 @@ module SpreeSample
       Spree::Sample.load_sample('tax_rates')
       Spree::Sample.load_sample('taxonomies')
       Spree::Sample.load_sample('promotions')
+      Spree::Sample.load_sample('menus')
 
       Spree::Sample.load_sample('products')
       Spree::Sample.load_sample('taxons')
@@ -26,6 +26,7 @@ module SpreeSample
       Spree::Sample.load_sample('prototypes')
       Spree::Sample.load_sample('variants')
       Spree::Sample.load_sample('stock')
+      Spree::Sample.load_sample('menu_items')
 
       Spree::Sample.load_sample('orders')
       Spree::Sample.load_sample('adjustments')

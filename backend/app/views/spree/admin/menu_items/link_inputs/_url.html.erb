@@ -2,6 +2,7 @@
   <%= f.field_container :url, class: ['form-group'] do %>
     <%= f.label :url, Spree.t(:url) %>
     <%= f.text_field :url, class: 'form-control' %>
+    <small class="form-text text-muted"><%= @menu_item.destination %></small>
     <%= f.error_message_on :url %>
   <% end %>
 
