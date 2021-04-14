@@ -39,7 +39,7 @@ module Spree
         end
 
         def paginated_collection
-          collection_paginator.new(sorted_collection, params).call
+          @paginated_collection ||= collection_paginator.new(sorted_collection, params).call
         end
 
         def collection_paginator
@@ -114,7 +114,11 @@ module Spree
         end
 
         def serializer_params
-          { currency: current_currency, store: current_store, user: spree_current_user }
+          {
+            currency: current_currency,
+            store: current_store,
+            user: spree_current_user
+          }
         end
 
         def record_not_found
