@@ -7,6 +7,7 @@ module SpreeSample
 
     # Needs to be here so we can access it inside the tests
     def self.load_samples
+      Spree::Sample.load_sample('menus')
       Spree::Sample.load_sample('addresses')
       Spree::Sample.load_sample('zones')
       Spree::Sample.load_sample('payment_methods')
