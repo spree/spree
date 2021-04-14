@@ -1,0 +1,139 @@
+.no-product-available {
+  width: 100%;
+  height: 277px;
+  border: solid 1px #707070;
+  background-color: #ffffff;
+  align-items: center;
+  position: static;
+  margin: auto;
+
+  @include media-breakpoint-up(md) {
+    width: 767px;
+    height: 443px;
+  }
+
+  &-dropdown {
+    visibility: hidden;
+    opacity: 0;
+    z-index: 6;
+    left: 0;
+    right: 0;
+    position: absolute;
+    top: $spree-header-mobile-height;
+    margin: auto;
+
+    @include media-breakpoint-up(sm) {
+      top: $spree-header-tablet-height;
+    }
+
+    @include media-breakpoint-up(md) {
+      top: 230px;
+    }
+
+    form {
+      input#keywords{
+        color: theme-color("dark-text");
+        font-size: font-px-to-rem(14px);
+        width: calc(100% - 40px);
+        &:focus {
+          outline: none;
+        }
+        &::placeholder {
+          color: theme-color("borders");
+        }
+        &::-webkit-search-cancel-button {
+          display: none;
+        }
+        @include media-breakpoint-up(md) {
+          font-size: font-px-to-rem(22px);
+        }
+      }
+      input[type="submit"] {
+        display: none;
+      }
+    }
+
+    &.shown {
+      visibility: visible;
+      opacity: 1;
+      transition: opacity 0.5s;
+    }
+  }
+  &-header {
+    font-size: font-px-to-rem(22px);
+    font-weight: 600;
+    line-height: 0.91;
+    letter-spacing: 0.55px;
+    text-align: center;
+    color: #232323;
+    margin-bottom: 23px;
+
+    @include media-breakpoint-up(md) {
+      font-size: font-px-to-rem(32px);
+      margin-bottom: 48px;
+      line-height: 1.06;
+      letter-spacing: 0.8px;
+    }
+  }
+  &-text {
+    width: 234px;
+    font-size: font-px-to-rem(16px);
+    font-weight: 500;
+    line-height: 1.38;
+    letter-spacing: 0.4px;
+    text-align: center;
+    color: #232323;
+    margin: auto;
+
+    @include media-breakpoint-up(md) {
+      width: 462px;
+      font-size: font-px-to-rem(24px);
+      line-height: 1.42;
+      letter-spacing: 0.6px;
+    }
+  }
+  &-button {
+    width: 306px;
+    height: 29px;
+    background-color: #0074c2;
+    margin: 44px auto auto auto;
+
+    @include media-breakpoint-up(md) {
+      width: 389px;
+      height: 53px;
+      margin: 80px auto auto auto;
+    }
+
+    @include media-breakpoint-down(xs) {
+      width: 80%;
+    }
+
+    &-text {
+      font-size: font-px-to-rem(12px);
+      line-height: 1.4;
+      letter-spacing: 0.3px;
+      text-align: center;
+      color: #ffffff;
+
+      @include media-breakpoint-up(md) {
+        font-size: font-px-to-rem(20px);
+        line-height: 0.84;
+        letter-spacing: 0.5px;
+      }
+    }
+  }
+  &-icon {
+    width: 16.8px;
+    height: 16.8px;
+    margin: 17px 18px 20px auto;
+
+    @include media-breakpoint-up(md) {
+      width: 29.7px;
+      height: 29.7px;
+      margin: 34px 32px 20px auto;
+    }
+  }
+  &-icon:hover {
+    cursor: pointer;
+  }
+}

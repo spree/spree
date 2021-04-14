@@ -1,0 +1,8 @@
+<td>
+  <% payment_sources.each do |payment_source| %>
+    <%= payment_source.class.to_s.underscore.split('/').second.humanize.titleize %>
+    <br>
+    <%= payment_source.last_digits.rjust(16, '*') %>
+    <br>
+  <% end %>
+</td>

@@ -8,24 +8,25 @@
     <%= render partial: 'spree/admin/shared/report_order_criteria' %>
   </div>
 </div>
-
-<table class="table table-bordered admin-report" data-hook="sales_total">
-  <thead>
-    <tr>
-      <th><%= Spree.t(:currency) %></th>
-      <th><%= Spree.t(:item_total) %></th>
-      <th><%= Spree.t(:adjustment_total) %></th>
-      <th><%= Spree.t(:sales_total) %></th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @totals.each do |key, row| %>
+<div class="table-responsive">
+  <table class="table table-bordered admin-report" data-hook="sales_total">
+    <thead>
       <tr>
-        <td><%= key %></td>
-        <td><%= Spree::Money.new(row[:item_total], { currency: key }) %></td>
-        <td><%= Spree::Money.new(row[:adjustment_total], { currency: key }) %></td>
-        <td><%= Spree::Money.new(row[:sales_total], { currency: key }) %></td>
+        <th><%= Spree.t(:currency) %></th>
+        <th><%= Spree.t(:item_total) %></th>
+        <th><%= Spree.t(:adjustment_total) %></th>
+        <th><%= Spree.t(:sales_total) %></th>
       </tr>
-    <% end %>
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+      <% @totals.each do |key, row| %>
+        <tr>
+          <td><%= key %></td>
+          <td><%= Spree::Money.new(row[:item_total], { currency: key }) %></td>
+          <td><%= Spree::Money.new(row[:adjustment_total], { currency: key }) %></td>
+          <td><%= Spree::Money.new(row[:sales_total], { currency: key }) %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

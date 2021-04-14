@@ -38,7 +38,7 @@ module Spree
             end
           end
           order.reload
-        rescue Exception => e
+        rescue StandardError => e
           order.destroy if order&.persisted?
           raise e.message
         end
@@ -80,7 +80,7 @@ module Spree
 
             adjustments = s.delete(:adjustments_attributes)
             create_adjustments_from_params(adjustments, order, shipment)
-          rescue Exception => e
+          rescue StandardError => e
             raise "Order import shipments: #{e.message} #{s}"
           end
         end
@@ -115,7 +115,7 @@ module Spree
               line_item.save!
             end
             create_adjustments_from_params(adjustments, order, line_item)
-          rescue Exception => e
+          rescue StandardError => e
             raise "Order import line items: #{e.message} #{line_item}"
           end
         end
@@ -132,7 +132,7 @@ module Spree
             )
             adjustment.save!
             adjustment.close!
-          rescue Exception => e
+          rescue StandardError => e
             raise "Order import adjustments: #{e.message} #{a}"
           end
         end
@@ -150,7 +150,7 @@ module Spree
             payment.payment_method = Spree::PaymentMethod.find_by!(name: p[:payment_method])
             payment.source = create_source_payment_from_params(p[:source], payment) if p[:source]
             payment.save!
-          rescue Exception => e
+          rescue StandardError => e
             raise "Order import payments: #{e.message} #{p}"
           end
         end
@@ -167,7 +167,7 @@ module Spree
             gateway_payment_profile_id: source_hash[:gateway_payment_profile_id],
             imported: true
           )
-        rescue Exception => e
+        rescue StandardError => e
           raise "Order import source payments: #{e.message} #{source_hash}"
         end
 
@@ -179,7 +179,7 @@ module Spree
           hash
         rescue ActiveRecord::RecordNotFound => e
           raise "Ensure order import variant: Variant w/SKU #{sku} not found."
-        rescue Exception => e
+        rescue StandardError => e
           raise "Ensure order import variant: #{e.message} #{hash}"
         end
 
@@ -200,7 +200,7 @@ module Spree
 
             address.delete(:country)
             address[:country_id] = Spree::Country.where(search).first!.id
-          rescue Exception => e
+          rescue StandardError => e
             raise "Ensure order import address country: #{e.message} #{search}"
           end
         end
@@ -224,7 +224,7 @@ module Spree
             else
               address[:state_name] = search[:name] || search[:abbr]
             end
-          rescue Exception => e
+          rescue StandardError => e
             raise "Ensure order import address state: #{e.message} #{search}"
           end
         end

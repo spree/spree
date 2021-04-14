@@ -1,0 +1,266 @@
+.checkout-confirm {
+  display: flex;
+  flex-direction: column;
+
+  &-order-details {
+    padding-bottom: 40px;
+    font-weight: 500;
+
+    dd {
+      font-size: font-px-to-rem(14px);
+      @include media-breakpoint-up(sm) {
+        padding-bottom: 0px;
+        margin-bottom: 60px;
+        font-size: font-px-to-rem(27px);
+      }
+      @include media-breakpoint-up(lg) {
+        font-size: font-px-to-rem(18px);
+      }
+    }
+
+    dt {
+      font-weight: 500;
+      @include media-breakpoint-up(sm) {
+        padding: 0;
+        margin-bottom: 32px;
+        font-size: font-px-to-rem(30px);
+      }
+      @include media-breakpoint-up(lg) {
+        font-size: font-px-to-rem(22px);
+      }
+    }
+
+    &-line-items {
+      @include media-breakpoint-down(sm) {
+        flex-basis: 100%;
+      }
+      @include media-breakpoint-up(lg) {
+        border: none;
+        flex: 1 1 0;
+      }
+
+      &-header {
+        font-size: font-px-to-rem(27px);
+      }
+
+      &-line-item {
+        $self: &;
+
+        img {
+          width: 90px;
+          height: auto;
+
+          @include media-breakpoint-up(sm) {
+            width: 120px;
+          }
+
+          @include media-breakpoint-up(lg) {
+            width: 190px;
+          }
+        }
+
+        &-name {
+          font-size: font-px-to-rem(14px);
+          border-top: 1px solid $global-border-style;
+          margin-right: 20px;
+
+          &-image {
+            padding-right: 16px;
+          }
+
+          &-link {
+            max-width: 50%;
+
+            @include media-breakpoint-up(lg) {
+              margin-right: 40px;
+            }
+
+
+            @include media-breakpoint-up(sm) {
+              font-size: font-px-to-rem(27px);
+            }
+
+            @include media-breakpoint-up(lg) {
+              font-size: font-px-to-rem(22px);
+              width: 55%;
+            }
+          }
+
+          &-options {
+            font-size: font-px-to-rem(12px);
+            @include media-breakpoint-down(lg) {
+              li {
+                display: inline;
+                &:not(:last-child):after {
+                  content: ', ';
+                }
+              }
+            }
+            @include media-breakpoint-up(sm) {
+              font-size: font-px-to-rem(22px);
+            }
+            @include media-breakpoint-up(lg) {
+              font-size: font-px-to-rem(18px);
+            }
+          }
+        }
+
+        &-subtitle {
+          font-size: font-px-to-rem(12px);
+          @include media-breakpoint-down(lg) {
+            ul {
+              li {
+                display: inline;
+                &:not(:last-child):after {
+                  content: ', ';
+                }
+              }
+            }
+          }
+          @include media-breakpoint-up(sm) {
+            font-size: font-px-to-rem(22px);
+          }
+          @include media-breakpoint-up(lg) {
+            font-size: font-px-to-rem(18px);
+          }
+        }
+
+        &-price {
+          font-size: font-px-to-rem(14px);
+          border-top: 1px solid $global-border-style;
+
+          @include media-breakpoint-up(sm) {
+            font-size: font-px-to-rem(27px);
+            margin-bottom: auto;
+          }
+          @include media-breakpoint-up(lg) {
+            font-size: font-px-to-rem(22px);
+          }
+          div:last-child {
+            @include media-breakpoint-up(lg) {
+              font-size: font-px-to-rem(22px);
+            }
+          }
+        }
+
+        &-quantity {
+          font-size: font-px-to-rem(14px);
+          border-top: 1px solid $global-border-style;
+
+          @include media-breakpoint-up(sm) {
+            font-size: font-px-to-rem(27px);
+          }
+          @include media-breakpoint-up(lg) {
+            font-size: font-px-to-rem(20px);
+          }
+
+          span {
+            @include media-breakpoint-up(lg) {
+              font-size: font-px-to-rem(22px);
+              margin-left: 30px;
+            }
+          }
+        }
+
+        &-total {
+          border-top: 1px solid $global-border-style;
+          @include media-breakpoint-up(lg) {
+            font-size: font-px-to-rem(20px);
+          }
+          div:last-child {
+            @include media-breakpoint-up(lg) {
+              font-size: font-px-to-rem(22px);
+            }
+          }
+        }
+
+        &-check-mark {
+          padding-bottom: 25px;
+        }
+
+        &:last-child {
+          #{$self}-name, #{$self}-price, #{$self}-quantity, #{$self}-total {
+            border-bottom: 1px solid $global-border-style;
+          }
+        }
+      }
+    }
+  }
+
+  &-delivery-informations {
+    flex-basis: 100%;
+
+    div:first-child {
+      flex-shrink: unset;
+      -webkit-flex: unset;
+    }
+
+    border-bottom: 1px solid $global-border-style;
+    font-weight: 500;
+
+    &-header {
+      letter-spacing: 0.4px;
+      margin-bottom: 20px;
+    }
+    dt {
+      letter-spacing: 0.4px;
+      margin-bottom: 15px;
+    }
+    dd {
+      letter-spacing: 0.35px;
+      margin-bottom: 25px;
+    }
+
+    &-link {
+      @include media-breakpoint-between(sm, md) {
+        svg {
+          height: 30px;
+          width: 30px;
+        }
+      }
+    }
+
+    @include media-breakpoint-up(sm) {
+      font-size: font-px-to-rem(30px);
+      &-header {
+        margin-top: 45px;
+        margin-bottom: 40px;
+        letter-spacing: 0.75px;
+      }
+      dt {
+        padding: 0;
+        margin-bottom: 37px;
+        letter-spacing: 0.75px;
+      }
+      dd {
+        font-size: font-px-to-rem(27px);
+        margin-bottom: 57px;
+        letter-spacing: 0.68px;
+      }
+    }
+
+    @include media-breakpoint-up(lg) {
+      border: none;
+      font-size: font-px-to-rem(22px);
+
+      dl {
+        display: flex;
+        justify-content: space-between;
+      }
+      dt {
+        letter-spacing: 0.55px;
+      }
+      dd {
+        font-size: font-px-to-rem(18px);
+        letter-spacing: 0.45px;
+      }
+    }
+  }
+
+  #checkout-summary {
+    flex: 1 1 0;
+    @include media-breakpoint-down(sm) {
+      margin-top: 20px;
+    }
+  }
+}

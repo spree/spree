@@ -14,7 +14,7 @@ Spree::Core::Engine.add_routes do
 
     resources :stores do
       member do
-        post :set_default
+        put :set_default
       end
     end
 
@@ -45,6 +45,7 @@ Spree::Core::Engine.add_routes do
         end
       end
       resources :variants_including_master, only: [:update]
+      resources :prices, only: [:index, :create]
     end
 
     resources :option_types do
@@ -85,6 +86,8 @@ Spree::Core::Engine.add_routes do
         put :resume
         get :store
         put :set_store
+        get :channel
+        put :set_channel
       end
 
       resources :state_changes, only: [:index]
@@ -99,7 +102,7 @@ Spree::Core::Engine.add_routes do
       resources :adjustments
       resources :return_authorizations do
         member do
-          put :fire
+          put :cancel
         end
       end
       resources :payments do
@@ -133,7 +136,11 @@ Spree::Core::Engine.add_routes do
       collection do
         post :update_positions
       end
-      resources :taxons
+      resources :taxons do
+        member do
+          delete :remove_icon
+        end
+      end
     end
 
     resources :taxons, only: [:index, :show]

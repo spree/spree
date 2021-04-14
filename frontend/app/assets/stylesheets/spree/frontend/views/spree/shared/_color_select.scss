@@ -1,0 +1,33 @@
+.color-select {
+  &-border {
+    stroke: $second-global-border;
+    &--selected {
+      stroke: $secondary-color;
+    }
+  }
+  &-label {
+    cursor: pointer;
+    @include media-breakpoint-up(sm) {
+      svg {
+        width: 49px;
+        height: 49px;
+      }
+    }
+    @include media-breakpoint-up(md) {
+      svg {
+        width: auto;
+        height: auto;
+      }
+    }
+    input:checked,
+    input:focus,
+    input:active,
+    input:focus-within {
+      & + .color-select {
+        .color-select-border {
+          stroke: $secondary-color;
+        }
+      }
+    }
+  }
+}

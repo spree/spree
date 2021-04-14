@@ -1,0 +1,182 @@
+.product-details {
+  &-title {
+    font-size: font-px-to-rem(22px);
+    color: $font-color;
+    @include media-breakpoint-up(sm) {
+      font-size: font-px-to-rem(34px);
+    }
+  }
+  &-subtitle {
+    font-size: font-px-to-rem(14px);
+    color: $font-color;
+    @include media-breakpoint-up(sm) {
+      font-size: font-px-to-rem(22px);
+    }
+    @include media-breakpoint-up(md) {
+      font-size: font-px-to-rem(16px);
+    }
+  }
+  &-vendor-img {
+    max-height: 100px;
+    max-width: 100px;
+  }
+  &-vendor-name {
+    font-size: font-px-to-rem(20px);
+  }
+  &-images {
+    & > .product-details-thumbnails {
+      width: (1 / 7) * 100%;
+      flex: 0 1 auto;
+      margin-right: $grid-gutter-width / 2;
+      & + .product-details-single {
+        @include media-breakpoint-up(sm) {
+          margin-left: $grid-gutter-width / 2;
+        }
+
+        @include media-breakpoint-up(lg) {
+          margin-left: 4rem;
+          margin-right: 4rem;
+        }
+      }
+    }
+    & > .product-details-single {
+      width: (6 / 7) * 100%;
+      flex: 1 1 auto;
+      // It's simpler to use a desktop-first approach here to counter container gutters and make the carousel edge-to-edge on xs.
+      @include media-breakpoint-down(xs) {
+        margin-left: -$container-padding;
+        margin-right: -$container-padding;
+      }
+    }
+  }
+  @include media-breakpoint-up(md) {
+    &-title {
+      font-size: font-px-to-rem(28px);
+    }
+    &-subtitle {
+      font-size: font-px-to-rem(16px);
+    }
+  }
+  &-carousel {
+    a,
+    a:hover,
+    a:active,
+    a:visited,
+    a:focus {
+      text-decoration: none !important;
+    }
+    &-text {
+      font-size: font-px-to-rem(12px);
+      margin-bottom: 30px;
+      @include media-breakpoint-up(sm) {
+        font-size: font-px-to-rem(20px);
+      }
+
+      @include media-breakpoint-up(md) {
+        font-size: font-px-to-rem(18px);
+      }
+    }
+  }
+  &-related {
+    margin: 56px auto 102px auto;
+  }
+  .modal-dialog {
+    &--zoom {
+      &.modal-dialog .modal-content {
+        border: 0;
+        padding: 0;
+        .modal-close {
+          top: 5px;
+        }
+        @media (min-height: 780px) {
+          padding: 62px;
+          .modal-close {
+            top: -30px;
+          }
+        }
+        .product-details-thumbnails {
+          @include zoom-modal-thumbnails-width(0px);
+          @media (min-height: 780px) {
+            @include zoom-modal-thumbnails-width(62px);
+          }
+
+          @media (min-height: $zoom-height-breakpoint) {
+            margin-right: 4rem;
+          }
+        }
+
+        .product-details-single {
+          width: auto;
+          flex: none;
+        }
+      }
+    }
+    .modal-content {
+      padding: 62px;
+      .product-details-single {
+        width: 650px;
+      }
+      .product-details-thumbnails {
+        width: 113px;
+      }
+      .modal-close {
+        align-self: flex-end;
+        border-color: transparent;
+        background: transparent;
+        font-size: 30px;
+        position: absolute;
+        right: 10px;
+        top: -30px;
+        span {
+          background: transparent;
+        }
+      }
+    }
+  }
+
+  .modal {
+    .product-details-thumbnails {
+      margin-right: 2rem;
+    }
+  }
+}
+
+.product-description {
+  font-size: font-px-to-rem(12px);
+  @include media-breakpoint-up(sm) {
+    font-size: font-px-to-rem(16px);
+  }
+  @include media-breakpoint-up(md) {
+    font-size: font-px-to-rem(14px);
+    line-height: font-px-to-rem(26px);
+  }
+
+  &-arrow {
+    width: 44px;
+    height: 44px;
+  }
+
+  &-arrow:hover {
+    cursor: pointer;
+  }
+}
+
+.product-properies {
+  font-size: font-px-to-rem(12px);
+  @include media-breakpoint-up(sm) {
+    font-size: font-px-to-rem(16px);
+  }
+  @include media-breakpoint-up(md) {
+    font-size: font-px-to-rem(14px);
+    line-height: font-px-to-rem(26px);
+  }
+}
+
+#product-details {
+  .breadcrumb-item:last-of-type {
+    display: none;
+    @include media-breakpoint-up(md) {
+      display: block;
+    }
+  }
+}

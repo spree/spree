@@ -3,7 +3,12 @@ import PropTypes from 'prop-types'
 import { OutboundLink } from 'gatsby-plugin-google-gtag'
 
 const ExternalLink = ({ url, children }) => (
-  <OutboundLink href={url} rel="nofollow" target="_blank">
+  <OutboundLink
+    href={url}
+    rel="nofollow"
+    target="_blank"
+    className="link spree-blue hover-spree-green"
+  >
     {children}
   </OutboundLink>
 )

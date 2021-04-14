@@ -1,0 +1,30 @@
+<div class="product-variants-variant" data-option-type-id="<%= option_type[:id] %>">
+  <span class="d-block mb-2 text-center text-md-left text-uppercase product-variants-variant-title">
+    <%= option_type[:presentation] %>
+  </span>
+
+  <div class="d-flex flex-wrap justify-content-center justify-content-md-start">
+    <ol class="d-flex flex-wrap product-variants-variant-values">
+      <% option_type[:option_values].each do |option_value| %>
+        <li>
+          <%= radio_button_tag "variant_option_value_id_#{option_type[:id]}",
+            option_value[:id],
+            option_value[:is_default] && index == 0,
+            class: "product-variants-variant-values-radio",
+            data: {
+              "option-type-index" => index,
+              "presentation" => option_value[:presentation],
+              "variant-id" => option_value[:variant_id]
+            } %>
+
+          <%= label_tag "variant_option_value_id_#{option_type[:id]}_#{option_value[:id]}",
+            class: "m-1 select-label",
+            "aria-label" => option_value[:presentation] do %>
+
+            <span><%= option_value[:presentation] %></span>
+          <% end %>
+        </li>
+      <% end %>
+    </ol>
+  </div>
+</div>

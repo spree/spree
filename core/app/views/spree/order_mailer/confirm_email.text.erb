@@ -1,4 +1,4 @@
-<%= Spree.t('order_mailer.confirm_email.dear_customer') %>
+<%= Spree.t('order_mailer.confirm_email.dear_customer', name: name_for(@order)) %>
 
 <%= Spree.t('order_mailer.confirm_email.instructions') %>
 
@@ -36,3 +36,4 @@
 <%= Spree.t('order_mailer.total') %> <%= @order.display_total %>
 
 <%= Spree.t('order_mailer.confirm_email.thanks') %>
+<%= Spree.t('order_mailer.store_team', store_name: current_store.name) %>

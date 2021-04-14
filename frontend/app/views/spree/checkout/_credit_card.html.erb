@@ -1,0 +1,9 @@
+<div id="<%= dom_id(card,'spree') %>" class="payment-sources-list-item">
+  <label class="form-check-label spree-radio-label">
+    <%= radio_button_tag "order[existing_card]", card.id, (card == @payment_sources.first), { class: "existing-cc-radio" } %>
+    <span class="spree-radio-label-custom-input"></span>
+    <%= credit_card_icon(card.cc_type) %>
+    <span>****<%= card.last_digits %>,&nbsp</span>
+    <span><%= card.name %></span>
+  </label>
+</div>

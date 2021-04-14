@@ -12,6 +12,9 @@ function handleMove (e, data) {
   var newParent = data.rslt.np
   var url = Spree.url(base_url).clone()
   url.setPath(url.path() + '/' + node.prop('id'))
+  if (newParent.attr('id') === data.rslt.op.attr('id') && position > data.rslt.cop) {
+    position = position - 1
+  }
   $.ajax({
     type: 'POST',
     dataType: 'json',
@@ -155,9 +158,16 @@ root.setup_taxonomy_tree = function (taxonomyId) {
         return $(this).jstree('core').toggle_node($('.jstree-icon').first())
       })
     })
+
     $taxonomyTree.on('dblclick', 'a', function () {
-      $taxonomyTree.jstree('rename', this)
+      var iOS = /iPad|iPhone|iPod/.test(navigator.platform || '')
+      if (iOS) {
+        $taxonomyTree.jstree('show_contextmenu', this)
+      } else {
+        $taxonomyTree.jstree('rename', this)
+      }
     })
+
     // suppress form submit on enter/return
     $(document).keypress(function (event) {
       if (event.keyCode === 13) {

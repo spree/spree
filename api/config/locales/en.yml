@@ -26,7 +26,7 @@ en:
         cannot_ready: "Cannot ready shipment."
       stock_location_required: "A stock_location_id parameter must be provided in order to retrieve stock movements."
       invalid_taxonomy_id: "Invalid taxonomy id."
-      shipment_transfer_errors_occured: "Following errors occured while attempting this action:"
+      shipment_transfer_errors_occurred: "Following errors occured while attempting this action:"
       negative_quantity: "quantity is negative"
       wrong_shipment_target: "target shipment is the same as original shipment"
 

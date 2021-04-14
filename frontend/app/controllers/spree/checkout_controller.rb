@@ -7,6 +7,7 @@ module Spree
     include Spree::Checkout::AddressBook
 
     before_action :set_cache_header, only: [:edit]
+    before_action :set_current_order
     before_action :load_order_with_lock
     before_action :ensure_valid_state_lock_version, only: [:update]
     before_action :set_state_if_present
@@ -26,22 +27,23 @@ module Spree
 
     rescue_from Spree::Core::GatewayError, with: :rescue_from_spree_gateway_error
 
+    layout 'spree/layouts/checkout'
+
     # Updates the order and advances to the next state (when possible.)
     def update
       if @order.update_from_params(params, permitted_checkout_attributes, request.headers.env)
         @order.temporary_address = !params[:save_user_address]
         unless @order.next
           flash[:error] = @order.errors.full_messages.join("\n")
-          redirect_to(checkout_state_path(@order.state)) && return
+          redirect_to(spree.checkout_state_path(@order.state)) && return
         end
 
         if @order.completed?
           @current_order = nil
-          flash.notice = Spree.t(:order_processed_successfully)
           flash['order_completed'] = true
           redirect_to completion_route
         else
-          redirect_to checkout_state_path(@order.state)
+          redirect_to spree.checkout_state_path(@order.state)
         end
       else
         render :edit
@@ -75,7 +77,7 @@ module Spree
       if @order.state != correct_state && !skip_state_validation?
         flash.keep
         @order.update_column(:state, correct_state)
-        redirect_to checkout_state_path(@order.state)
+        redirect_to spree.checkout_state_path(@order.state)
       end
     end
 
@@ -106,7 +108,7 @@ module Spree
 
     def set_state_if_present
       if params[:state]
-        redirect_to checkout_state_path(@order.state) if @order.can_go_to_state?(params[:state]) && !skip_state_validation?
+        redirect_to spree.checkout_state_path(@order.state) if @order.can_go_to_state?(params[:state]) && !skip_state_validation?
         @order.state = params[:state]
       end
     end
@@ -127,8 +129,8 @@ module Spree
     end
 
     # Provides a route to redirect after order completion
-    def completion_route(custom_params = nil)
-      spree.order_path(@order, custom_params)
+    def completion_route(custom_params = {})
+      spree.order_path(@order, custom_params.merge(locale: locale_param))
     end
 
     def setup_for_current_state
@@ -172,14 +174,14 @@ module Spree
         params.delete(:payment_source)
 
         # Return to the Payments page if additional payment is needed.
-        redirect_to checkout_state_path(@order.state) and return if @order.payments.valid.sum(:amount) < @order.total
+        redirect_to spree.checkout_state_path(@order.state) and return if @order.payments.valid.sum(:amount) < @order.total
       end
     end
 
     def remove_store_credit_payments
       if params.key?(:remove_store_credit)
         remove_store_credit_service.call(order: @order)
-        redirect_to checkout_state_path(@order.state) and return
+        redirect_to spree.checkout_state_path(@order.state) and return
       end
     end
 

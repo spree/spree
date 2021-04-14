@@ -1,7 +1,8 @@
 ---
 title: Upgrading Spree from 1.2.x to 1.3.x
 section: upgrades
-order: 12
+order: 14
+hidden: true
 ---
 
 ## Overview

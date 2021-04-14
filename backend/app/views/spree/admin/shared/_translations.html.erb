@@ -10,10 +10,8 @@
     confirm_delete:           Spree.t(:confirm_delete),
     currency_separator:       I18n.t('number.currency.format.separator'),
     cut:                      Spree.t(:cut),
-    date_picker:              Spree.t(:js_format, scope: 'date_picker', default: 'yy/mm/dd'),
     destroy:                  Spree.t(:destroy, scope: :actions),
     edit:                     Spree.t(:edit,    scope: :actions),
-    first_day:                Spree.t(:first_day, scope: 'date_picker', default: 0).to_i,
     find_a_taxon:             Spree.t(:find_a_taxon),
     item_stock_placeholder:   Spree.t(:choose_location),
     loading:                  Spree.t(:loading),
@@ -32,6 +30,7 @@
     save:                     Spree.t(:save,    scope: :actions),
     searching:                Spree.t(:searching),
     server_error:             Spree.t(:server_error),
+    select_an_option:         Spree.t(:select_an_option),
     sku:                      Spree.t(:sku),
     type_to_search:           Spree.t(:type_to_search),
     taxon_placeholder:        Spree.t(:taxon_placeholder),
@@ -39,11 +38,15 @@
     tags_placeholder:         Spree.t(:tags_placeholder),
     tracking:                 Spree.t(:tracking),
     variant_placeholder:      Spree.t(:variant_placeholder),
-    value:                    Spree.t(:value)
+    value:                    Spree.t(:value),
+
+                              # Substitute - for _ converting zh-tw to zh_tw
+                              # Flatpickr not making things easy here.
+    flatpickr_locale:         "#{flatpickr_local_fallback.sub("-", "_")}"
+
   }.to_json
 %>
 </script>
 
-<% if I18n.locale != :en %>
-  <%= javascript_include_tag "select2_locale_#{I18n.locale}" %>
-<% end %>
+<%= javascript_include_tag "select2_locale_#{select2_local_fallback}" %>
+<%= javascript_include_tag "flatpickr/l10n/#{flatpickr_local_fallback}" %>

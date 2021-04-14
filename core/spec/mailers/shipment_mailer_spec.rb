@@ -5,9 +5,9 @@ describe Spree::ShipmentMailer, type: :mailer do
   include EmailSpec::Helpers
   include EmailSpec::Matchers
 
-  before { create(:store) }
+  let!(:store) { create(:store, default_locale: nil) }
 
-  let(:order) { stub_model(Spree::Order, number: 'R12345') }
+  let(:order) { stub_model(Spree::Order, number: 'R12345', store: store, email: 'test@example.com') }
   let(:shipping_method) { stub_model(Spree::ShippingMethod, name: 'USPS') }
   let(:product) { stub_model(Spree::Product, name: %{The "BEST" product}, sku: 'SKU0001') }
   let(:variant) { stub_model(Spree::Variant, product: product) }
@@ -76,6 +76,26 @@ describe Spree::ShipmentMailer, type: :mailer do
 
     specify do
       expect(shipped_email).to have_body_text("href=\"#{shipment.tracking_url}\"")
+    end
+
+    specify do
+      expect(shipped_email).to have_body_text('Dear Customer')
+    end
+
+    context 'when order has customer\'s name' do
+      before { allow(order).to receive(:name).and_return('Test User') }
+
+      specify 'shows order\'s user name in email body' do
+        expect(shipped_email).to have_body_text('Dear Test User')
+      end
+    end
+  end
+
+  context 'emails contain only urls of the store where the order was made' do
+    it 'shows proper host url in email content' do
+      ActionMailer::Base.default_url_options[:host] = store.url
+      described_class.shipped_email(shipment).deliver_now
+      expect(ActionMailer::Base.default_url_options[:host]).to eq(shipment.order.store.url)
     end
   end
 end

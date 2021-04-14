@@ -54,7 +54,7 @@ describe Spree::Zone, type: :model do
 
     context 'when there are two qualified zones with same member type' do
       let(:address) { create(:address, country: country, state: state) }
-      let(:second_zone) { create(:zone, name: 'SecondZone') }
+      let(:second_zone) { create(:zone, name: 'SecondZone', kind: 'country') }
 
       before { second_zone.members.create(zoneable: country) }
 
@@ -172,165 +172,172 @@ describe Spree::Zone, type: :model do
     let(:state2) { create(:state) }
     let(:state3) { create(:state) }
 
-    before do
-      @source = create(:zone, name: 'source', zone_members: [])
-      @target = create(:zone, name: 'target', zone_members: [])
-    end
+    let(:source) { create(:zone, name: 'source', kind: 'country', zone_members: []) }
+    let(:target) { create(:zone, name: 'target', kind: 'country', zone_members: []) }
 
     context 'when the target has no members' do
-      before { @source.members.create(zoneable: country1) }
+      before { source.members.create(zoneable: country1) }
 
       it 'is false' do
-        expect(@source.contains?(@target)).to be false
+        expect(source.contains?(target)).to be false
       end
     end
 
     context 'when the source has no members' do
-      before { @target.members.create(zoneable: country1) }
+      before { target.members.create(zoneable: country1) }
 
       it 'is false' do
-        expect(@source.contains?(@target)).to be false
+        expect(source.contains?(target)).to be false
       end
     end
 
     context 'when both zones are the same zone' do
       before do
-        @source.members.create(zoneable: country1)
-        @target = @source
+        source.members.create(zoneable: country1)
+        target.members.create(zoneable: country1)
       end
 
       it 'is true' do
-        expect(@source.contains?(@target)).to be true
+        expect(source.contains?(target)).to be true
       end
     end
 
     context 'when checking countries against countries' do
       before do
-        @source.members.create(zoneable: country1)
-        @source.members.create(zoneable: country2)
+        source.members.create(zoneable: country1)
+        source.members.create(zoneable: country2)
       end
 
       context 'when all members are included in the zone we check against' do
         before do
-          @target.members.create(zoneable: country1)
-          @target.members.create(zoneable: country2)
+          target.members.create(zoneable: country1)
+          target.members.create(zoneable: country2)
         end
 
         it 'is true' do
-          expect(@source.contains?(@target)).to be true
+          expect(source.contains?(target)).to be true
         end
       end
 
       context 'when some members are included in the zone we check against' do
         before do
-          @target.members.create(zoneable: country1)
-          @target.members.create(zoneable: country2)
-          @target.members.create(zoneable: create(:country))
+          target.members.create(zoneable: country1)
+          target.members.create(zoneable: country2)
+          target.members.create(zoneable: create(:country))
         end
 
         it 'is false' do
-          expect(@source.contains?(@target)).to be false
+          expect(source.contains?(target)).to be false
         end
       end
 
       context 'when none of the members are included in the zone we check against' do
         before do
-          @target.members.create(zoneable: create(:country))
-          @target.members.create(zoneable: create(:country))
+          target.members.create(zoneable: create(:country))
+          target.members.create(zoneable: create(:country))
         end
 
         it 'is false' do
-          expect(@source.contains?(@target)).to be false
+          expect(source.contains?(target)).to be false
         end
       end
     end
 
     context 'when checking states against states' do
+      let(:source) { create(:zone, name: 'source', kind: 'state', zone_members: []) }
+      let(:target) { create(:zone, name: 'target', kind: 'state', zone_members: []) }
+
       before do
-        @source.members.create(zoneable: state1)
-        @source.members.create(zoneable: state2)
+        source.members.create(zoneable: state1)
+        source.members.create(zoneable: state2)
       end
 
       context 'when all members are included in the zone we check against' do
         before do
-          @target.members.create(zoneable: state1)
-          @target.members.create(zoneable: state2)
+          target.members.create(zoneable: state1)
+          target.members.create(zoneable: state2)
         end
 
         it 'is true' do
-          expect(@source.contains?(@target)).to be true
+          expect(source.contains?(target)).to be true
         end
       end
 
       context 'when some members are included in the zone we check against' do
         before do
-          @target.members.create(zoneable: state1)
-          @target.members.create(zoneable: state2)
-          @target.members.create(zoneable: create(:state))
+          target.members.create(zoneable: state1)
+          target.members.create(zoneable: state2)
+          target.members.create(zoneable: create(:state))
         end
 
         it 'is false' do
-          expect(@source.contains?(@target)).to be false
+          expect(source.contains?(target)).to be false
         end
       end
 
       context 'when none of the members are included in the zone we check against' do
         before do
-          @target.members.create(zoneable: create(:state))
-          @target.members.create(zoneable: create(:state))
+          target.members.create(zoneable: create(:state))
+          target.members.create(zoneable: create(:state))
         end
 
         it 'is false' do
-          expect(@source.contains?(@target)).to be false
+          expect(source.contains?(target)).to be false
         end
       end
     end
 
     context 'when checking country against state' do
+      let(:source) { create(:zone, name: 'source', kind: 'state', zone_members: []) }
+      let(:target) { create(:zone, name: 'target', kind: 'country', zone_members: []) }
+
       before do
-        @source.members.create(zoneable: create(:state))
-        @target.members.create(zoneable: country1)
+        source.members.create(zoneable: create(:state))
+        target.members.create(zoneable: country1)
       end
 
       it 'is false' do
-        expect(@source.contains?(@target)).to be false
+        expect(source.contains?(target)).to be false
       end
     end
 
     context 'when checking state against country' do
-      before { @source.members.create(zoneable: country1) }
+      let(:source) { create(:zone, name: 'source', kind: 'country', zone_members: []) }
+      let(:target) { create(:zone, name: 'target', kind: 'state', zone_members: []) }
+
+      before { source.members.create(zoneable: country1) }
 
       context 'when all states contained in one of the countries we check against' do
         before do
           state1 = create(:state, country: country1)
-          @target.members.create(zoneable: state1)
+          target.members.create(zoneable: state1)
         end
 
         it 'is true' do
-          expect(@source.contains?(@target)).to be true
+          expect(source.contains?(target)).to be true
         end
       end
 
       context 'when some states contained in one of the countries we check against' do
         before do
           state1 = create(:state, country: country1)
-          @target.members.create(zoneable: state1)
-          @target.members.create(zoneable: create(:state, country: country2))
+          target.members.create(zoneable: state1)
+          target.members.create(zoneable: create(:state, country: country2))
         end
 
         it 'is false' do
-          expect(@source.contains?(@target)).to be false
+          expect(source.contains?(target)).to be false
         end
       end
 
       context 'when none of the states contained in any of the countries we check against' do
         before do
-          @target.members.create(zoneable: create(:state, country: country2))
-          @target.members.create(zoneable: create(:state, country: country2))
+          target.members.create(zoneable: create(:state, country: country2))
+          target.members.create(zoneable: create(:state, country: country2))
         end
 
         it 'is false' do
-          expect(@source.contains?(@target)).to be false
+          expect(source.contains?(target)).to be false
         end
       end
     end
@@ -346,14 +353,17 @@ describe Spree::Zone, type: :model do
     end
 
     context 'when a zone member country is added to an existing zone consisting of state members' do
-      it 'removes existing state members' do
-        zone = create(:zone, name: 'foo', zone_members: [])
-        state = create(:state)
+      it 'removes existing country members' do
+        zone    = create(:zone, name: 'foo', kind: 'state', zone_members: [])
+        state   = create(:state)
         country = create(:country)
-        zone.members.create(zoneable: state)
-        country_member = zone.members.create(zoneable: country)
+
+        state_member    = zone.members.create(zoneable: state)
+        _country_member = zone.members.create(zoneable: country)
+
         zone.save
-        expect(zone.reload.members).to eq([country_member])
+
+        expect(zone.reload.members).to eq([state_member])
       end
     end
   end
@@ -365,13 +375,14 @@ describe Spree::Zone, type: :model do
     end
 
     context 'when the zone consists of country zone members' do
+      let(:zone) { create(:zone, name: 'country', kind: 'country', zone_members: []) }
+
       before do
-        @zone = create(:zone, name: 'country', zone_members: [])
-        @zone.members.create(zoneable: create(:country))
+        zone.members.create(zoneable: create(:country))
       end
 
       it 'returns the kind of zone member' do
-        expect(@zone.kind).to eq('country')
+        expect(zone.kind).to eq('country')
       end
     end
   end
@@ -386,24 +397,26 @@ describe Spree::Zone, type: :model do
 
     context 'finding potential matches for a country zone' do
       let!(:zone) do
-        create(:zone).tap do |z|
+        create(:zone, kind: 'country').tap do |z|
           z.members.create(zoneable: country)
           z.members.create(zoneable: country2)
           z.save!
         end
       end
       let!(:zone2) do
-        create(:zone).tap { |z| z.members.create(zoneable: country) && z.save! }
+        create(:zone, kind: 'country').tap do |zone|
+          zone.members.create(zoneable: country)
+        end
       end
+      let(:result) { Spree::Zone.potential_matching_zones(zone) }
 
-      before { @result = Spree::Zone.potential_matching_zones(zone) }
 
       it 'will find all zones with countries covered by the passed in zone' do
-        expect(@result).to include(zone, zone2)
+        expect(result).to include(zone, zone2)
       end
 
       it 'only returns each zone once' do
-        expect(@result.select { |z| z == zone }.size).to be 1
+        expect(result.select { |z| z == zone }.size).to be 1
       end
     end
 
@@ -462,6 +475,91 @@ describe Spree::Zone, type: :model do
 
       it 'can access associated states' do
         expect(zone.states).to include(state)
+      end
+    end
+  end
+
+  describe '#default_checkout_zone' do
+    let!(:country) { create(:country) }
+    let!(:zone) { create(:zone, name: 'Asia') }
+    let!(:default_zone) { create(:zone, name: 'No Limits') }
+
+    context 'when checkout_zone is set by config file' do
+      before { Spree::Config[:checkout_zone] = zone.name }
+
+      it 'return default checkout zone object' do
+        expect(Spree::Zone.default_checkout_zone).to eq zone
+      end
+    end
+
+    context 'when checkout_zone is not set in config file' do
+      before { Spree::Config[:checkout_zone] = nil }
+
+      it 'return default checkout zone object' do
+        expect(Spree::Zone.default_checkout_zone).to eq nil
+      end
+    end
+  end
+
+  describe '#state_list' do
+    let!(:country) { create(:country) }
+    let!(:state)   { create(:state, country: country) }
+
+    context 'has countries associated' do
+      let(:country_zone) do
+        create(:zone, kind: 'country').tap do |zone|
+          zone.members.create(zoneable: country)
+        end
+      end
+
+      it 'returns states associated to that countries' do
+        expect(country_zone.state_list).to contain_exactly(state)
+      end
+    end
+
+    context 'has states associated' do
+      let(:state_zone) do
+        create(:zone, kind: 'state').tap do |zone|
+          zone.members.create(zoneable: state)
+        end
+      end
+
+      it 'returns that states' do
+        expect(state_zone.state_list).to contain_exactly(state)
+      end
+    end
+  end
+
+  describe '#state_list_for' do
+    let!(:country1) { create(:country) }
+    let!(:country2) { create(:country) }
+
+    let!(:state1)   { create(:state, country: country1) }
+    let!(:state2)   { create(:state, country: country2) }
+
+    context 'has countries associated' do
+      let(:country_zone) do
+        create(:zone, kind: 'country').tap do |zone|
+          zone.members.create(zoneable: country1)
+          zone.members.create(zoneable: country2)
+        end
+      end
+
+      it 'returns states associated with the country' do
+        expect(country_zone.state_list_for(country1)).to contain_exactly(state1)
+      end
+    end
+
+    context 'has states associated' do
+      let(:state_zone) do
+        create(:zone, kind: 'state').tap do |zone|
+          zone.members.create(zoneable: state1)
+          zone.members.create(zoneable: state2)
+        end
+      end
+
+      it 'returns states associated with the country' do
+        expect(state_zone.state_list_for(country1)).to contain_exactly(state1)
       end
     end
   end

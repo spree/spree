@@ -29,4 +29,19 @@ describe 'API v2 Errors spec', type: :request do
       expect(json_response['error']).to eq('You are not authorized to access this page.')
     end
   end
+
+  context 'expired token failure' do
+    let(:user) { create(:user) }
+    let(:headers) { headers_bearer }
+
+    include_context 'API v2 tokens'
+
+    before do
+      token.expires_in = -1
+      token.save
+      get '/api/v2/storefront/account', headers: headers
+    end
+
+    it_behaves_like 'returns 401 HTTP status'
+  end
 end

@@ -2,9 +2,40 @@ module Spree
   module Admin
     class StoresController < Spree::Admin::BaseController
       before_action :load_store, only: [:new, :edit, :update]
+      before_action :set_default_currency, only: :new
+      before_action :set_default_locale, only: :new
+      before_action :normalize_supported_currencies, only: [:create, :update]
+      before_action :normalize_supported_locales, only: [:create, :update]
+      before_action :set_default_country_id, only: :new
+      before_action :load_all_countries, only: [:new, :edit, :update, :create]
+      before_action :load_all_zones, only: %i[new edit]
 
       def index
-        @stores = Spree::Store.all
+        if params[:ids]
+          load_stores_by_ids
+        elsif params[:q]
+          load_stores_by_query
+        else
+          @stores = Spree::Store.all
+        end
+
+        respond_with(@stores) do |format|
+          format.json { render layout: false }
+        end
+      end
+
+      def load_stores_by_ids
+        ids = params[:ids].split(',')
+        @stores = Spree::Store.where(id: ids)
+      end
+
+      def load_stores_by_query
+        @stores = if defined?(SpreeGlobalize)
+                    Spree::Store.joins(:translations).where("LOWER(#{Store::Translation.table_name}.name) LIKE LOWER(:query)",
+                                                            query: "%#{params[:q]}%")
+                  else
+                    Spree::Store.where('LOWER(name) LIKE LOWER(:query)', query: "%#{params[:q]}%")
+                  end
       end
 
       def create
@@ -14,7 +45,7 @@ module Spree
           flash[:success] = flash_message_for(@store, :successfully_created)
           redirect_to admin_stores_path
         else
-          flash[:error] = "#{Spree.t('store.errors.unable_to_create')}: #{@store.errors.full_messages.join(', ')}"
+          flash[:error] = "#{Spree.t('store_errors.unable_to_create')}: #{@store.errors.full_messages.join(', ')}"
           render :new
         end
       end
@@ -26,7 +57,7 @@ module Spree
           flash[:success] = flash_message_for(@store, :successfully_updated)
           redirect_to admin_stores_path
         else
-          flash[:error] = "#{Spree.t('store.errors.unable_to_update')}: #{@store.errors.full_messages.join(', ')}"
+          flash[:error] = "#{Spree.t('store_errors.unable_to_update')}: #{@store.errors.full_messages.join(', ')}"
           render :edit
         end
       end
@@ -41,7 +72,7 @@ module Spree
             format.js { render_js_for_destroy }
           end
         else
-          render plain: "#{Spree.t('store.errors.unable_to_delete')}: #{@store.errors.full_messages.join(', ')}", status: :unprocessable_entity
+          render plain: "#{Spree.t('store_errors.unable_to_delete')}: #{@store.errors.full_messages.join(', ')}", status: :unprocessable_entity
         end
       end
 
@@ -73,6 +104,38 @@ module Spree
 
       def load_store
         @store = Spree::Store.find_by(id: params[:id]) || Spree::Store.new
+      end
+
+      def load_all_countries
+        @countries = Spree::Country.all
+      end
+
+      def load_all_zones
+        @zones = Spree::Zone.pluck(:name, :id)
+      end
+
+      def set_default_currency
+        @store.default_currency = Spree::Config[:currency]
+      end
+
+      def set_default_locale
+        @store.default_locale = I18n.locale
+      end
+
+      def normalize_supported_currencies
+        if params[:store][:supported_currencies]&.is_a?(Array)
+          params[:store][:supported_currencies] = params[:store][:supported_currencies].compact.uniq.reject(&:blank?).join(',')
+        end
+      end
+
+      def normalize_supported_locales
+        if params[:store][:supported_locales]&.is_a?(Array)
+          params[:store][:supported_locales] = params[:store][:supported_locales].compact.uniq.reject(&:blank?).join(',')
+        end
+      end
+
+      def set_default_country_id
+        @store.default_country_id = Spree::Config[:default_country_id]
       end
     end
   end

@@ -4,7 +4,7 @@ module Spree
 
     with_options inverse_of: :stock_items do
       belongs_to :stock_location, class_name: 'Spree::StockLocation'
-      belongs_to :variant, class_name: 'Spree::Variant'
+      belongs_to :variant, -> { with_deleted }, class_name: 'Spree::Variant'
     end
     has_many :stock_movements, inverse_of: :stock_item
 
@@ -54,10 +54,6 @@ module Spree
     # Tells whether it's available to be included in a shipment
     def available?
       in_stock? || backorderable?
-    end
-
-    def variant
-      Spree::Variant.unscoped { super }
     end
 
     def reduce_count_on_hand_to_zero

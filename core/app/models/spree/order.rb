@@ -21,7 +21,8 @@ module Spree
     extend Spree::DisplayMoney
     money_methods :outstanding_balance, :item_total,           :adjustment_total,
                   :included_tax_total,  :additional_tax_total, :tax_total,
-                  :shipment_total,      :promo_total,          :total
+                  :shipment_total,      :promo_total,          :total,
+                  :cart_promo_total,    :pre_tax_item_amount,  :pre_tax_total
 
     alias display_ship_total display_shipment_total
     alias_attribute :ship_total, :shipment_total
@@ -51,7 +52,7 @@ module Spree
       go_to_state :payment, if: ->(order) { order.payment? || order.payment_required? }
       go_to_state :confirm, if: ->(order) { order.confirmation_required? }
       go_to_state :complete
-      remove_transition from: :delivery, to: :confirm
+      remove_transition from: :delivery, to: :confirm, unless: ->(order) { order.confirmation_required? }
     end
 
     self.whitelisted_ransackable_associations = %w[shipments user promotions bill_address ship_address line_items store]
@@ -128,7 +129,7 @@ module Spree
     before_update :homogenize_line_item_currencies, if: :currency_changed?
 
     with_options presence: true do
-      validates :number, length: { maximum: 32, allow_blank: true }, uniqueness: { allow_blank: true }
+      validates :number, length: { maximum: 32, allow_blank: true }, uniqueness: { allow_blank: true, case_sensitive: false }
       validates :email, length: { maximum: 254, allow_blank: true }, email: { allow_blank: true }, if: :require_email
       validates :item_count, numericality: { greater_than_or_equal_to: 0, less_than: 2**31, only_integer: true, allow_blank: true }
       validates :store
@@ -156,6 +157,7 @@ module Spree
     scope :completed_between, ->(start_date, end_date) { where(completed_at: start_date..end_date) }
     scope :complete, -> { where.not(completed_at: nil) }
     scope :incomplete, -> { where(completed_at: nil) }
+    scope :not_canceled, -> { where.not(state: 'canceled') }
 
     # shows completed orders first, by their completed_at date, then uncompleted orders by their created_at
     scope :reverse_chronological, -> { order(Arel.sql('spree_orders.completed_at IS NULL'), completed_at: :desc, created_at: :desc) }
@@ -173,7 +175,12 @@ module Spree
 
     # Sum of all line item amounts pre-tax
     def pre_tax_item_amount
-      line_items.to_a.sum(&:pre_tax_amount)
+      line_items.sum(:pre_tax_amount)
+    end
+
+    # Sum of all line item and shipment pre-tax
+    def pre_tax_total
+      pre_tax_item_amount + shipments.sum(:pre_tax_amount)
     end
 
     def shipping_discount
@@ -296,13 +303,13 @@ module Spree
     def outstanding_balance
       if canceled?
         -1 * payment_total
-      elsif refunds.exists?
-        # If refund has happened add it back to total to prevent balance_due payment state
-        # See: https://github.com/spree/spree/issues/6229 & https://github.com/spree/spree/issues/8136
-        total - (payment_total + refunds.sum(:amount))
       else
-        total - payment_total
+        total - (payment_total + reimbursement_paid_total)
       end
+    end
+
+    def reimbursement_paid_total
+      reimbursements.sum(&:paid_amount)
     end
 
     def outstanding_balance?
@@ -317,6 +324,10 @@ module Spree
 
     def can_ship?
       complete? || resumed? || awaiting_return? || returned?
+    end
+
+    def uneditable?
+      complete? || canceled? || returned?
     end
 
     def credit_cards
@@ -350,6 +361,8 @@ module Spree
 
       deliver_order_confirmation_email unless confirmation_delivered?
 
+      deliver_store_owner_order_notification_email if deliver_store_owner_order_notification_email?
+
       consider_risk
     end
 
@@ -369,8 +382,8 @@ module Spree
       payment_state == 'paid' || payment_state == 'credit_owed'
     end
 
-    def available_payment_methods
-      @available_payment_methods ||= collect_payment_methods
+    def available_payment_methods(store = nil)
+      @available_payment_methods ||= collect_payment_methods(store)
     end
 
     def insufficient_stock_lines
@@ -617,6 +630,36 @@ module Spree
       end
     end
 
+    def valid_promotions
+      order_promotions.where(promotion_id: valid_promotion_ids).uniq(&:promotion_id)
+    end
+
+    def valid_promotion_ids
+      all_adjustments.eligible.nonzero.promotion.map { |a| a.source.promotion_id }.uniq
+    end
+
+    def valid_coupon_promotions
+      promotions.
+        where(id: valid_promotion_ids).
+        coupons
+    end
+
+    # Returns item and whole order discount amount for Order
+    # without Shipment disccounts (eg. Free Shipping)
+    # @return [BigDecimal]
+    def cart_promo_total
+      all_adjustments.eligible.nonzero.promotion.
+        where.not(adjustable_type: 'Spree::Shipment').
+        sum(:amount)
+    end
+
+    def has_free_shipping?
+      shipment_adjustments.
+        joins(:promotion_action).
+        where(spree_adjustments: { eligible: true, source_type: 'Spree::PromotionAction' },
+              spree_promotion_actions: { type: 'Spree::Promotion::Actions::FreeShipping' }).exists?
+    end
+
     private
 
     def link_by_email
@@ -675,12 +718,24 @@ module Spree
       self.token ||= generate_token
     end
 
-    def collect_payment_methods
-      PaymentMethod.available_on_front_end.select { |pm| pm.available_for_order?(self) }
+    def collect_payment_methods(store = nil)
+      PaymentMethod.available_on_front_end.select { |pm| pm.available_for_order?(self) && pm.available_for_store?(store) }
     end
 
     def credit_card_nil_payment?(attributes)
       payments.store_credits.present? && attributes[:amount].to_f.zero?
+    end
+
+    # Returns true if:
+    #   1. an email address is set for new order notifications AND
+    #   2. no notification for this order has been sent yet.
+    def deliver_store_owner_order_notification_email?
+      store.new_order_notifications_email.present? && !store_owner_notification_delivered?
+    end
+
+    def deliver_store_owner_order_notification_email
+      OrderMailer.store_owner_notification_email(id).deliver_later
+      update_column(:store_owner_notification_delivered, true)
     end
   end
 end

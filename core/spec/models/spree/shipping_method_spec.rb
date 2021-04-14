@@ -43,6 +43,11 @@ describe Spree::ShippingMethod, type: :model do
       expect(subject.errors.messages[:name].size).to eq(1)
     end
 
+    it 'validates presence of display_on' do
+      subject.valid?
+      expect(subject.errors.messages[:display_on].size).to eq(1)
+    end
+
     context 'shipping category' do
       context 'is required' do
         before { subject.valid? }

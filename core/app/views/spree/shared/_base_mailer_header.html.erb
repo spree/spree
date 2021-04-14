@@ -1,33 +1,13 @@
 <!-- You can override this template to design your own header. -->
-<table class="row header">
-  <tr>
-    <td class="center" align="center">
-      <center>
-
-        <table class="container">
-          <tr>
-            <td class="wrapper last">
-
-              <table class="twelve columns">
-                <tr>
-                  <td class="twelve sub-columns last">
-                    <% if frontend_available? %>
-                      <%= link_to spree.root_url, class: 'template-label' do %>
-                        <%= image_tag Spree::Config.logo, class: 'logo', alt: Spree::Store.current.name, title: Spree::Store.current.name %>
-                      <% end %>
-                    <% else %>
-                      <%= image_tag Spree::Config.logo, class: 'logo', alt: Spree::Store.current.name, title: Spree::Store.current.name %>
-                    <% end %>
-                  </td>
-                  <td class="expander"></td>
-                </tr>
-              </table>
-
-            </td>
-          </tr>
-        </table>
-
-      </center>
-    </td>
-  </tr>
-</table>
+<% store_name = @order&.store&.name || current_store.name %>
+<tr>
+  <td class="email-masthead">
+    <% if frontend_available? %>
+      <%= link_to spree.root_url, class: 'template-label' do %>
+        <%= image_tag logo_path, class: 'logo', alt: store_name, title: store_name %>
+      <% end %>
+    <% else %>
+      <%= image_tag logo_path, class: 'logo', alt: store_name, title: store_name %>
+    <% end %>
+  </td>
+</tr>

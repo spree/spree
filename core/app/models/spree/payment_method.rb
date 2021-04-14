@@ -12,6 +12,8 @@ module Spree
 
     validates :name, presence: true
 
+    has_and_belongs_to_many :stores
+
     with_options dependent: :restrict_with_error do
       has_many :payments, class_name: 'Spree::Payment', inverse_of: :payment_method
       has_many :credit_cards, class_name: 'Spree::CreditCard'
@@ -74,6 +76,12 @@ module Spree
     # availability for concrete order.
     def available_for_order?(_order)
       true
+    end
+
+    def available_for_store?(store)
+      return true if store.blank?
+
+      store_ids.include?(store.id)
     end
   end
 end

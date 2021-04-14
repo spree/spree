@@ -1,7 +1,8 @@
 ---
 title: Upgrading Spree from 2.2.x to 2.3.x
 section: upgrades
-order: 8
+hidden: true
+order: 10
 ---
 
 ## Overview

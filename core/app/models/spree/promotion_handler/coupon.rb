@@ -25,10 +25,9 @@ module Spree
 
       def remove(coupon_code)
         promotion = order.promotions.with_coupon_code(coupon_code)
-
         if promotion.present?
           # Order promotion has to be destroyed before line item removing
-          order.order_promotions.find_by!(promotion_id: promotion.id).destroy
+          order.order_promotions.where(promotion_id: promotion.id).destroy_all
 
           remove_promotion_adjustments(promotion)
           remove_promotion_line_items(promotion)
@@ -76,7 +75,7 @@ module Spree
           line_item = order.find_line_item_by_variant(item.variant)
           next if line_item.blank?
 
-          Spree::Dependencies.cart_remove_item_service(order: order, item: item.variant, quantity: item.quantity)
+          Spree::Dependencies.cart_remove_item_service.constantize.call(order: order, item: item.variant, quantity: item.quantity)
         end
       end
 

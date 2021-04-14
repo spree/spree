@@ -8,19 +8,13 @@ module Spree
                    :updated_at, :completed_at, :included_tax_total, :additional_tax_total, :display_additional_tax_total,
                    :display_included_tax_total, :tax_total, :currency, :state, :token, :email,
                    :display_item_total, :display_ship_total, :display_adjustment_total, :display_tax_total,
-                   :promo_total, :display_promo_total, :item_count, :special_instructions, :display_total
+                   :promo_total, :display_promo_total, :item_count, :special_instructions, :display_total,
+                   :pre_tax_item_amount, :display_pre_tax_item_amount, :pre_tax_total, :display_pre_tax_total,
+                   :shipment_state, :payment_state
 
         has_many   :line_items
         has_many   :variants
-        has_many   :promotions, id_method_name: :promotion_id do |cart|
-          # we only want to display applied and valid promotions
-          # sometimes Order can have multiple promotions but the promo engine
-          # will only apply those that are more beneficial for the customer
-          # TODO: we should probably move this code out of the serializer
-          promotion_ids = cart.all_adjustments.eligible.nonzero.promotion.map { |a| a.source.promotion_id }.uniq
-
-          cart.order_promotions.where(promotion_id: promotion_ids).uniq(&:promotion_id)
-        end
+        has_many   :promotions, object_method_name: :valid_promotions, id_method_name: :valid_promotion_ids
         has_many   :payments do |cart|
           cart.payments.valid
         end
@@ -28,12 +22,14 @@ module Spree
 
         belongs_to :user
         belongs_to :billing_address,
-          id_method_name: :bill_address_id,
-          serializer: :address
+                   id_method_name: :bill_address_id,
+                   serializer: :address,
+                   record_type: :address
 
         belongs_to :shipping_address,
-          id_method_name: :ship_address_id,
-          serializer: :address
+                   id_method_name: :ship_address_id,
+                   serializer: :address,
+                   record_type: :address
       end
     end
   end

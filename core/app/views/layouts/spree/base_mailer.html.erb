@@ -1,41 +1,46 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-		<meta name="viewport" content="width=device-width"/>
-		<%= render partial: 'spree/shared/base_mailer_stylesheets' %>
-	</head>
-	<body>
-	  <table class="body">
-	    <tr>
-	      <td class="center" align="center" valign="top">
-	        <center>
-	          <%= render partial: 'spree/shared/base_mailer_header' %>
-	          <table class="container">
-	            <tr>
-	              <td>
-	                <table class="row">
-	                  <tr>
-	                    <td class="wrapper last">
-	                      <table class="twelve columns">
-	                        <tr>
-	                          <td>
-	                            <%= yield %>
-	                          </td>
-	                          <td class="expander"></td>
-	                        </tr>
-	                      </table>
-	                    </td>
-	                  </tr>
-	                </table>
-	                <%= render partial: 'spree/shared/base_mailer_footer' %>
-	              <!-- container end below -->
-	              </td>
-	            </tr>
-	          </table>
-	        </center>
-	      </td>
-	    </tr>
-	  </table>
-	</body>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="x-apple-disable-message-reformatting"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+
+    <%= render partial: 'spree/shared/base_mailer_stylesheets' %>
+  </head>
+  <body>
+    <table class="email-wrapper" width="100%" cellpadding="0" cellspacing="0" role="presentation">
+      <tr>
+        <td align="center">
+          <table class="email-content" width="100%" cellpadding="0" cellspacing="0" role="presentation">
+            <%= render partial: 'spree/shared/base_mailer_header' %>
+            <!-- Email Body -->
+            <tr>
+              <td class="email-body" width="570" cellpadding="0" cellspacing="0">
+                <table class="email-body_inner" align="center" width="570" cellpadding="0" cellspacing="0" role="presentation">
+                  <!-- Body content -->
+                  <tbody>
+                  <tr>
+                    <td class="content-cell">
+                      <div class="f-fallback">
+                        <%= yield %>
+                      </div>
+                    </td>
+                  </tr>
+                  </tbody>
+                </table>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <%= render partial: 'spree/shared/base_mailer_footer' %>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td height="60px">&nbsp;</td>
+      </tr>
+    </table>
+  </body>
 </html>

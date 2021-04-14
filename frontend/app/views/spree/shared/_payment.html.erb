@@ -2,14 +2,11 @@
 
 <% if source.is_a?(Spree::CreditCard) %>
   <span class="cc-type">
-    <% unless (cc_type = source.cc_type).blank? %>
-      <%= image_tag "credit_cards/icons/#{cc_type}.png" %>
-    <% end %>
     <% if source.last_digits %>
       <%= Spree.t(:ending_in) %> <%= source.last_digits %>
     <% end %>
   </span>
-  <br />
+  <br>
   <span class="full-name"><%= source.name %></span>
 <% else %>
   <%= content_tag(:span, payment.payment_method.name) %>
@@ -17,4 +14,4 @@
 
 <span class="payment-amount">(<%= payment.display_amount %>)</span>
 
-<br />
+<br>

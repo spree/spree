@@ -2,12 +2,10 @@ module Spree
   module Api
     module V2
       module Storefront
-        class OrderStatusController < ::Spree::Api::V2::BaseController
+        class OrderStatusController < ::Spree::Api::V2::ResourceController
           include Spree::Api::V2::Storefront::OrderConcern
 
-          def show
-            render_serialized_payload { serialize_resource(resource) }
-          end
+          before_action :ensure_order_token
 
           private
 
@@ -24,6 +22,10 @@ module Spree
 
           def resource_serializer
             Spree::Api::Dependencies.storefront_cart_serializer.constantize
+          end
+
+          def ensure_order_token
+            raise ActiveRecord::RecordNotFound unless order_token.present?
           end
         end
       end

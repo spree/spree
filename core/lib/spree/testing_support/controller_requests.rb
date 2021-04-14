@@ -9,7 +9,7 @@ module Spree
 
       def spree_get(action, parameters = nil, session = nil, flash = nil)
         ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
-          ControllerRequests#spree_get is deprecated and will be removed in Spree 4.1.
+          ControllerRequests#spree_get is deprecated and will be removed in Spree 5.0.
           Please use get, params: {}
         DEPRECATION
         process_spree_action(action, parameters, session, flash, 'GET')
@@ -18,7 +18,7 @@ module Spree
       # Executes a request simulating POST HTTP method and set/volley the response
       def spree_post(action, parameters = nil, session = nil, flash = nil)
         ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
-          ControllerRequests#spree_post is deprecated and will be removed in Spree 4.1.
+          ControllerRequests#spree_post is deprecated and will be removed in Spree 5.0.
           Please use post, params: {}
         DEPRECATION
         process_spree_action(action, parameters, session, flash, 'POST')
@@ -27,7 +27,7 @@ module Spree
       # Executes a request simulating PUT HTTP method and set/volley the response
       def spree_put(action, parameters = nil, session = nil, flash = nil)
         ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
-          ControllerRequests#spree_put is deprecated and will be removed in Spree 4.1.
+          ControllerRequests#spree_put is deprecated and will be removed in Spree 5.0.
           Please use put, params: {}
         DEPRECATION
         process_spree_action(action, parameters, session, flash, 'PUT')
@@ -36,7 +36,7 @@ module Spree
       # # Executes a request simulating PATCH HTTP method and set/volley the response
       def spree_patch(action, parameters = nil, session = nil, flash = nil)
         ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
-          ControllerRequests#spree_patch is deprecated and will be removed in Spree 4.1.
+          ControllerRequests#spree_patch is deprecated and will be removed in Spree 5.0.
           Please use patch, params: {}
         DEPRECATION
         process_spree_action(action, parameters, session, flash, 'PATCH')
@@ -45,7 +45,7 @@ module Spree
       # Executes a request simulating DELETE HTTP method and set/volley the response
       def spree_delete(action, parameters = nil, session = nil, flash = nil)
         ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
-          ControllerRequests#spree_delete is deprecated and will be removed in Spree 4.1.
+          ControllerRequests#spree_delete is deprecated and will be removed in Spree 5.0.
           Please use delete, params: {}
         DEPRECATION
         process_spree_action(action, parameters, session, flash, 'DELETE')
@@ -53,35 +53,35 @@ module Spree
 
       def spree_xhr_get(action, parameters = nil, session = nil, flash = nil)
         ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
-          ControllerRequests#spree_xhr_get is deprecated and will be removed in Spree 4.1.
+          ControllerRequests#spree_xhr_get is deprecated and will be removed in Spree 5.0.
         DEPRECATION
         process_spree_xhr_action(action, parameters, session, flash, :get)
       end
 
       def spree_xhr_post(action, parameters = nil, session = nil, flash = nil)
         ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
-          ControllerRequests#spree_xhr_post is deprecated and will be removed in Spree 4.1.
+          ControllerRequests#spree_xhr_post is deprecated and will be removed in Spree 5.0.
         DEPRECATION
         process_spree_xhr_action(action, parameters, session, flash, :post)
       end
 
       def spree_xhr_put(action, parameters = nil, session = nil, flash = nil)
         ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
-          ControllerRequests#spree_xhr_put is deprecated and will be removed in Spree 4.1.
+          ControllerRequests#spree_xhr_put is deprecated and will be removed in Spree 5.0.
         DEPRECATION
         process_spree_xhr_action(action, parameters, session, flash, :put)
       end
 
       def spree_xhr_patch(action, parameters = nil, session = nil, flash = nil)
         ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
-          ControllerRequests#spree_xhr_patch is deprecated and will be removed in Spree 4.1.
+          ControllerRequests#spree_xhr_patch is deprecated and will be removed in Spree 5.0.
         DEPRECATION
         process_spree_xhr_action(action, parameters, session, flash, :patch)
       end
 
       def spree_xhr_delete(action, parameters = nil, session = nil, flash = nil)
         ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
-          ControllerRequests#spree_xhr_delete is deprecated and will be removed in Spree 4.1.
+          ControllerRequests#spree_xhr_delete is deprecated and will be removed in Spree 5.0.
         DEPRECATION
         process_spree_xhr_action(action, parameters, session, flash, :delete)
       end

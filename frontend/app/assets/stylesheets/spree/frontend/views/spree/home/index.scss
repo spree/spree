@@ -1,0 +1,293 @@
+.homepage {
+  &-hero-image {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+    height: 204px;
+    width: 100%;
+    overflow: hidden;
+
+    .hero-image {
+      object-fit: cover;
+      position: relative;
+      z-index: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    @include media-breakpoint-up(md) {
+      height: 418px;
+    }
+
+    @include media-breakpoint-up(lg) {
+      height: 600px;
+    }
+
+    .hero-content {
+      position: absolute;
+      z-index: 1;
+      right: 10%;
+    }
+
+    &-text {
+      font-size: font-px-to-rem(22px);
+      font-weight: 500;
+      line-height: 1.27;
+      letter-spacing: 0.55px;
+      color: $font-color;
+      width: 116px;
+
+      @include media-breakpoint-up(md) {
+        font-size: font-px-to-rem(44px);
+        width: 288px;
+      }
+
+      @include media-breakpoint-up(lg) {
+        font-size: font-px-to-rem(54px);
+      }
+    }
+
+    .spree-btn {
+      &.btn-primary {
+        font-size: font-px-to-rem(12px);
+        font-weight: bold;
+        text-transform: uppercase;
+        @include media-breakpoint-up(md) {
+          font-size: font-px-to-rem(24px);
+        }
+        @include media-breakpoint-up(lg) {
+          font-size: font-px-to-rem(32px);
+        }
+      }
+    }
+  }
+
+  &-taxon-box {
+    display: block;
+    flex-direction: column;
+    height: 140px;
+    position: relative;
+    overflow: hidden;
+
+    img {
+      display: block;
+      object-fit: cover;
+      width: 100%;
+      height: 100%;
+    }
+
+    h3 {
+      margin: 0;
+      width: auto;
+      background: $primary-background;
+      text-align: center;
+      font-size: font-px-to-rem(14px);
+      font-weight: 500;
+      line-height: 2;
+      letter-spacing: 0.35px;
+      padding: 0 5%;
+
+      @include media-breakpoint-up(md) {
+        font-size: font-px-to-rem(24px);
+      }
+
+      @include media-breakpoint-up(lg) {
+        font-size: font-px-to-rem(32px);
+      }
+    }
+
+    @include media-breakpoint-up(md) {
+      height: 324px;
+    }
+
+    @include media-breakpoint-up(lg) {
+      height: 390px;
+    }
+
+    &-text {
+      width: 100%;
+      text-transform: uppercase;
+      color: $font-color;
+      position: absolute;
+      left: 0;
+      bottom: 21px;
+      justify-content: center;
+      display: flex;
+    }
+  }
+
+  &-taxons-separator {
+    background: $secondary-background;
+    color: $secondary-font-color;
+    height: 40px;
+
+    @include media-breakpoint-up(md) {
+      height: 87px;
+    }
+    @include media-breakpoint-up(lg) {
+      height: 190px;
+    }
+  }
+
+  &-fashion-trends-box {
+    background: $secondary-background;
+    color: $secondary-font-color;
+    padding: 30px 0px;
+
+    @include media-breakpoint-up(md) {
+      padding: 60px 0px;
+    }
+
+    &-summer-text {
+      font-weight: 500;
+      line-height: 1.83;
+      letter-spacing: 0.3px;
+      text-align: center;
+      color: theme-color('primary');
+      font-size: font-px-to-rem(12px);
+
+      @include media-breakpoint-up(md) {
+        font-size: font-px-to-rem(24px);
+      }
+      @include media-breakpoint-up(lg) {
+        font-size: font-px-to-rem(20px);
+      }
+    }
+
+    &-fashion-trends-text {
+      font-weight: 500;
+      line-height: 1.22;
+      letter-spacing: 0.45px;
+      text-align: center;
+      color: $font-color;
+      font-size: font-px-to-rem(18px);
+
+      @include media-breakpoint-up(md) {
+        font-size: font-px-to-rem(36px);
+      }
+      @include media-breakpoint-up(lg) {
+        font-size: font-px-to-rem(26px);
+      }
+    }
+
+    &-description-text {
+      font-weight: 500;
+      line-height: 1.67;
+      letter-spacing: 0.3px;
+      color: $font-color;
+      margin: auto;
+      font-size: font-px-to-rem(12px);
+      width: 283px;
+
+      @include media-breakpoint-up(md) {
+        font-size: font-px-to-rem(16px);
+        width: 608px;
+      }
+    }
+    .spree-btn {
+      &.btn-outline-primary {
+        border: solid 2px theme-color('primary');
+        font-size: font-px-to-rem(12px);
+        font-weight: bold;
+        @include media-breakpoint-up(md) {
+          font-size: font-px-to-rem(22px);
+          width: 400px;
+          padding-top: 0.7rem;
+        }
+        @include media-breakpoint-up(lg) {
+          font-size: font-px-to-rem(20px);
+          width: 497.2px;
+        }
+      }
+    }
+  }
+
+  &-bottom-box {
+    background: $secondary-background;
+    color: $secondary-font-color;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+    height: 168px;
+    overflow: hidden;
+
+    img {
+      width: 100%;
+      object-fit: cover;
+    }
+
+    @include media-breakpoint-up(md) {
+      height: 363px;
+    }
+    @include media-breakpoint-up(lg) {
+      height: 350px;
+    }
+
+    &-inner {
+      background: $primary-background;
+      margin: auto;
+      padding: 10px 30px;
+      position: absolute;
+      width: 70%;
+      left: 15%;
+
+      @include media-breakpoint-up(md) {
+        padding: 30px 100px;
+      }
+
+      &-small-text {
+        font-weight: 500;
+        line-height: 0.9;
+        letter-spacing: 0.25px;
+        text-align: center;
+        color: theme-color('primary');
+        font-size: font-px-to-rem(10px);
+
+        @include media-breakpoint-up(md) {
+          font-size: font-px-to-rem(18px);
+        }
+        @include media-breakpoint-up(lg) {
+          font-size: font-px-to-rem(16px);
+        }
+      }
+
+      &-big-text {
+        font-weight: 600;
+        line-height: 1.2;
+        letter-spacing: 0.38px;
+        text-align: center;
+        color: $font-color;
+        font-size: font-px-to-rem(15px);
+
+        @include media-breakpoint-up(md) {
+          font-size: font-px-to-rem(27px);
+        }
+        @include media-breakpoint-up(lg) {
+          font-size: font-px-to-rem(26px);
+        }
+      }
+    }
+  }
+
+  &-carousel {
+    a,
+    a:hover,
+    a:active,
+    a:visited,
+    a:focus {
+      text-decoration: none !important;
+    }
+    &-text {
+      font-size: 12px;
+
+      @include media-breakpoint-up(md) {
+        font-size: 22px;
+      }
+      @include media-breakpoint-up(lg) {
+        font-size: 24px;
+      }
+    }
+  }
+}

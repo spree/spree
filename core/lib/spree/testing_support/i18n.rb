@@ -84,7 +84,7 @@ RSpec.configure do |config|
       end
 
       Spree.check_unused_translations
-      if false && Spree.unused_translation_messages.any?
+      if Spree.unused_translation_messages.any?
         puts "\nThere are unused translations within Spree:"
         puts Spree.unused_translation_messages.sort
         exit(1)

@@ -3,10 +3,11 @@
 <% end %>
 
 <% content_for :page_actions do %>
-  <%= button_link_to Spree.t(:new_tax_rate), new_object_url, class: "btn-success", icon: 'add' %>
+  <%= button_link_to Spree.t(:new_tax_rate), new_object_url, class: "btn-success", icon: 'add.svg' %>
 <% end if can? :create, Spree::TaxRate %>
 
 <% if @tax_rates.any? %>
+<div class="table-responsive">
   <table class="table">
     <thead>
       <tr data-hook="rate_header">
@@ -21,15 +22,15 @@
       </tr>
     </thead>
     <tbody>
-      <% @tax_rates.each do |tax_rate|%>
+      <% @tax_rates.each do |tax_rate| %>
       <tr id="<%= spree_dom_id tax_rate %>" data-hook="rate_row">
-        <td><%=tax_rate.zone.try(:name) || Spree.t(:not_available) %></td>
-        <td><%=tax_rate.name %></td>
-        <td><%=tax_rate.tax_category.try(:name) || Spree.t(:not_available) %></td>
-        <td><%=tax_rate.amount %></td>
-        <td><%=tax_rate.included_in_price? ? Spree.t(:say_yes) : Spree.t(:say_no) %></td>
-        <td><%=tax_rate.show_rate_in_label? ? Spree.t(:say_yes) : Spree.t(:say_no) %></td>
-        <td><%=tax_rate.calculator.to_s %></td>
+        <td><%= tax_rate.zone.try(:name) || Spree.t(:not_available) %></td>
+        <td><%= tax_rate.name %></td>
+        <td><%= tax_rate.tax_category.try(:name) || Spree.t(:not_available) %></td>
+        <td><%= tax_rate.amount %></td>
+        <td><%= active_badge(tax_rate.included_in_price?) %></td>
+        <td><%= active_badge(tax_rate.show_rate_in_label?) %></td>
+        <td><%= tax_rate.calculator.to_s %></td>
         <td class="actions actions-2 text-right">
           <%= link_to_edit(tax_rate, no_text: true) if can? :edit, tax_rate %>
           <%= link_to_delete(tax_rate, no_text: true) if can? :delete, tax_rate %>
@@ -38,6 +39,7 @@
       <% end %>
     </tbody>
   </table>
+</div>
 <% else %>
   <div class="alert alert-info no-objects-found">
     <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::TaxRate)) %>,

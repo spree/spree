@@ -1,17 +1,24 @@
 openapi: 3.0.0
 servers:
-  - url: 'http://localhost:3000/spree_oauth'
+  - url: 'https://demo.spreecommerce.org'
+    description: demo
+  - url: 'http://localhost:3000'
+    description: localhost
 info:
   version: 1.0.0
   title: Spree OAuth 2.0 Authentication
-  description: >-
-    Spree uses the [Doorkeeper](https://github.com/doorkeeper-gem/doorkeeper) gem
-    for handling OAuth. This integration is built into `spree_api` gem.
+  description: "For API v2 Spree uses [Doorkeeper](https://github.com/doorkeeper-gem/doorkeeper) gem for handling OAuth athentication. \n\nSpree supports new token creation and refreshing of existing tokens."
+  contact:
+    name: Spark Solutions
+    url: 'https://sparksolutions.co'
+    email: we@sparksolutions.co
+  license:
+    url: 'https://github.com/spree/spree/blob/master/license.md'
+    name: BSD-3-Clause
 paths:
-  '/token':
+  /spree_oauth/token:
     post:
-      description: >-
-        Creates or refreshes a Bearer token required to authorize calls API calls
+      description: Creates or refreshes a Bearer token required to authorize calls API calls
       tags:
         - Token
       operationId: Create or Refresh Token
@@ -22,14 +29,40 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Token'
+              examples:
+                create token:
+                  value:
+                    access_token: SfM3k8kq5Wkc6xz6rgMlsl-mbygJ1ptq4DR0Ah51vjA
+                    token_type: Bearer
+                    expires_in: 7200
+                    refresh_token: SqJDIwX00fehqHxS6xmb-kzqAlrYe_0EHgekMexVT8k
+                    created_at: 1581873931
+                refresh token:
+                  value:
+                    access_token: Es9lLPW2mVaDB80I-I_OdQCw3JfOT1s19YN1naFWx98
+                    token_type: Bearer
+                    expires_in: 7200
+                    refresh_token: j92BxulqIIYtiiaBsuAM1TzGsGSVxaykT4kk8OYHGNY
+                    created_at: 1581876572
       requestBody:
         required: true
         content:
-          application/x-www-form-urlencoded:
+          application/json:
             schema:
               oneOf:
                 - $ref: '#/components/schemas/CreateTokenBody'
                 - $ref: '#/components/schemas/RefreshTokenBody'
+            examples:
+              create token:
+                value:
+                  grant_type: password
+                  username: spree@example.com
+                  password: spree123
+              refresh token:
+                value:
+                  grant_type: refresh_token
+                  refresh_token: SqJDIwX00fehqHxS6xmb-kzqAlrYe_0EHgekMexVT8k
+        description: ''
 components:
   schemas:
     Token:
@@ -44,34 +77,64 @@ components:
         expires_in:
           type: integer
           example: 7200
-          description: 'Time (in seconds) after which the access token will expire'
+          description: Time (in seconds) after which the access token will expire
         refresh_token:
           type: string
           example: f5d78642252eeb3f3001f67b196ac21a27afc030462a54060b0ebbdae2b8dc9c
         created_at:
           type: integer
           example: 1539863418
+      x-examples:
+        create token:
+          access_token: SfM3k8kq5Wkc6xz6rgMlsl-mbygJ1ptq4DR0Ah51vjA
+          token_type: Bearer
+          expires_in: 7200
+          refresh_token: SqJDIwX00fehqHxS6xmb-kzqAlrYe_0EHgekMexVT8k
+          created_at: 1581873931
+        refresh token:
+          access_token: Es9lLPW2mVaDB80I-I_OdQCw3JfOT1s19YN1naFWx98
+          token_type: Bearer
+          expires_in: 7200
+          refresh_token: j92BxulqIIYtiiaBsuAM1TzGsGSVxaykT4kk8OYHGNY
+          created_at: 1581876572
     CreateTokenBody:
+      type: object
+      x-examples:
+        example-1:
+          grant_type: password
+          username: spree@example.com
+          password: spree123
       properties:
         grant_type:
           type: string
           default: password
-          description: >-
-            Use `password` to create a token and `refresh_token` to refresh it
+          description: Use `password` to create a token and `refresh_token` to refresh it
         username:
           type: string
           description: User email address
-          example: 'spree@example.com'
+          example: spree@example.com
         password:
           type: string
           description: User password
-          example: 'spree123'
+          example: spree123
+      required:
+        - grant_type
+        - username
+        - password
     RefreshTokenBody:
+      type: object
       properties:
         grant_type:
           type: string
           default: refresh_token
         refresh_token:
           type: string
-          description: Rerefresh token obtained from the old created token
-          example: 27af95fd57a424e5d01aaf5eab1324a8d5c0ca57daf384fae39f811a5144330143301'
+          description: Refresh token obtained from the create token response
+          example: "27af95fd57a424e5d01aaf5eab1324a8d5c0ca57daf384fae39f811a5144330143301'"
+      required:
+        - grant_type
+        - refresh_token
+      x-examples:
+        example-1:
+          grant_type: refresh_token
+          refresh_token: SqJDIwX00fehqHxS6xmb-kzqAlrYe_0EHgekMexVT8k

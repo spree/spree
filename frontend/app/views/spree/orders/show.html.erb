@@ -1,22 +1,19 @@
-<fieldset id="order_summary" data-hook>
-  <h1><%= accurate_title %></h1>
-
+<div class='order-show container d-flex flex-column align-items-center flex-lg-wrap flex-lg-row justify-content-center' id="order_summary" data-hook>
   <% if order_just_completed?(@order) %>
-    <p><strong><%= Spree.t(:thank_you_for_your_order) %></strong></p>
+    <%= icon(name: 'check-mark-circle',
+             classes: 'd-block d-lg-none mx-auto order-show-check-mark',
+             width: 56,
+             height: 56) %>
+    <%= icon(name: 'check-mark-circle',
+             classes: 'd-none d-lg-block mx-auto order-show-check-mark',
+             width: 102,
+             height: 102) %>
+    <h5 class="w-100 text-center"><%= Spree.t(:order_success) %></h5>
+    <p class="order-show-explain w-100 text-center"><%= Spree.t(:order_success_explain) %></p>
   <% end %>
 
-  <div id="order" data-hook>
-    <%= render partial: 'spree/shared/order_details', locals: { order: @order } %>
-
-    <br class="clear" />
-
-    <p data-hook="links">
-      <%= link_to Spree.t(:back_to_store), spree.root_path, class: "button" %>
-      <% unless order_just_completed?(@order) %>
-        <% if try_spree_current_user && respond_to?(:account_path) %>
-          <%= link_to Spree.t(:my_account), account_path, class: "button" %>
-        <% end %>
-      <% end %>
-    </p>
-  </div>
-</fieldset>
+  <p class="order-show-number text-uppercase w-100 text-center">
+    <%= accurate_title %> / <%= pretty_date(@order.completed_at) %>
+  </p>
+  <%= render partial: 'spree/shared/order_details', locals: { order: @order } %>
+</div>

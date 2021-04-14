@@ -7,18 +7,15 @@
   <%= render "spree/admin/orders/adjustments",
           adjustments: @order.line_item_adjustments,
           order: order,
-          title: Spree.t(:line_item_adjustments)
-  %>
+          title: Spree.t(:line_item_adjustments) %>
   <%= render "spree/admin/orders/adjustments",
           adjustments: @order.shipment_adjustments,
           order: order,
-          title: Spree.t(:shipment_adjustments)
-  %>
+          title: Spree.t(:shipment_adjustments) %>
   <%= render "spree/admin/orders/adjustments",
           adjustments: @order.adjustments,
           order: order,
-          title: Spree.t(:order_adjustments)
-  %>
+          title: Spree.t(:order_adjustments) %>
 
   <% if order.line_items.exists? %>
     <div class="alert alert-success" id="order-total" data-hook="order_details_total">
@@ -26,7 +23,7 @@
     </div>
   <% end %>
 
-  <%= javascript_tag do %>
+  <script>
     var order_number = '<%= @order.number %>';
     var shipments = [];
 
@@ -35,5 +32,5 @@
     <% end %>
 
     <%= render partial: 'spree/admin/shared/update_order_state', formats: [:js], handlers: [:erb] %>
-  <% end %>
+  </script>
 </div>

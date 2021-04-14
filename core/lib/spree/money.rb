@@ -1,10 +1,11 @@
 require 'money'
 
 Money.locale_backend = :i18n
+Money.rounding_mode = BigDecimal::ROUND_HALF_UP
 
 module Spree
   class Money
-    class <<self
+    class << self
       attr_accessor :default_formatting_rules
     end
 
@@ -15,9 +16,11 @@ module Spree
     }
 
     attr_reader :money
+
     delegate    :cents, :currency, to: :money
 
     def initialize(amount, options = {})
+      use_default_currency
       @money   = Monetize.parse([amount, (options[:currency] || Spree::Config[:currency])].join)
       @options = Spree::Money.default_formatting_rules.merge(options)
     end
@@ -27,7 +30,7 @@ module Spree
     end
 
     def to_s
-      money.format(options)
+      money&.format(options)
     end
 
     # 1) prevent blank, breaking spaces
@@ -60,6 +63,11 @@ module Spree
 
     def ==(obj)
       money == obj.money
+    end
+
+    def use_default_currency
+      currency = Spree::Store.default.default_currency || Spree::Config[:currency]
+      ::Money.default_currency = currency
     end
 
     private

@@ -17,14 +17,13 @@
     <div class="payment-method-settings">
       <% @payment_methods.each do |method| %>
 
-        <div class="payment-methods" id="payment_method_<%= method.id %>">
+        <div class="payment-methods my-3" id="payment_method_<%= method.id %>">
           <% if method.source_required? %>
-            <%=render partial: "spree/admin/payments/source_forms/#{method.method_type}",
+            <%= render partial: "spree/admin/payments/source_forms/#{method.method_type}",
                        locals: {
                          payment_method: method,
                          previous_cards: method.reusable_sources(@order)
-                       }
-            %>
+                       } %>
           <% end %>
         </div>
       <% end %>

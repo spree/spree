@@ -4,7 +4,7 @@ module Spree
 
     with_options inverse_of: :line_items do
       belongs_to :order, class_name: 'Spree::Order', touch: true
-      belongs_to :variant, class_name: 'Spree::Variant'
+      belongs_to :variant, -> { with_deleted }, class_name: 'Spree::Variant'
     end
     belongs_to :tax_category, class_name: 'Spree::TaxCategory'
 
@@ -17,7 +17,14 @@ module Spree
     before_validation :copy_tax_category
 
     validates :variant, :order, presence: true
-    validates :quantity, numericality: { only_integer: true, message: Spree.t('validation.must_be_int') }
+
+    # numericality: :less_than_or_equal_to validation is due to the restriction at the database level
+    #   https://github.com/spree/spree/issues/2695#issuecomment-143314161
+    validates :quantity, numericality: {
+      less_than_or_equal_to: DatabaseTypeUtilities.maximum_value_for(:integer),
+      only_integer: true, message: Spree.t('validation.must_be_int')
+    }
+
     validates :price, numericality: true
 
     validates_with Spree::Stock::AvailabilityValidator
@@ -50,7 +57,13 @@ module Spree
     end
 
     def update_price
-      self.price = variant.price_including_vat_for(tax_zone: tax_zone)
+      currency_price = variant.price_in(order.currency)
+
+      self.price = if currency_price.amount.present?
+                     currency_price.price_including_vat_for(tax_zone: tax_zone)
+                   else
+                     0
+                   end
     end
 
     def copy_tax_category
@@ -59,7 +72,8 @@ module Spree
 
     extend DisplayMoney
     money_methods :amount, :subtotal, :discounted_amount, :final_amount, :total, :price,
-                  :adjustment_total, :additional_tax_total, :promo_total, :included_tax_total
+                  :adjustment_total, :additional_tax_total, :promo_total, :included_tax_total,
+                  :pre_tax_amount
 
     alias single_money display_price
     alias single_display_amount display_price
@@ -101,11 +115,6 @@ module Spree
 
       update_price_from_modifier(currency, opts)
       assign_attributes opts
-    end
-
-    # Remove variant default_scope `deleted_at: nil`
-    def variant
-      Spree::Variant.unscoped { super }
     end
 
     private

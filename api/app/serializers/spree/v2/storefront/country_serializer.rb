@@ -12,6 +12,12 @@ module Spree
         end
 
         has_many :states, if: proc { |_record, params| params && params[:include_states] }
+
+        has_many :checkout_zone_applicable_states,
+                 serializer: ::Spree::V2::Storefront::StateSerializer,
+                 if: proc { |_record, params| params && params[:current_store].present? } do |object, params|
+          params[:current_store].states_available_for_checkout(object)
+        end
       end
     end
   end

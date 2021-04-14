@@ -1,35 +1,33 @@
 require 'i18n'
 require 'active_support/core_ext/array/extract_options'
-require 'spree/i18n/base'
+require 'action_view'
 
 module Spree
-  extend ActionView::Helpers::TranslationHelper
-  extend ActionView::Helpers::TagHelper
+  class TranslationHelperWrapper
+    include ActionView::Helpers::TranslationHelper
+  end
 
   class << self
     # Add spree namespace and delegate to Rails TranslationHelper for some nice
     # extra functionality. e.g return reasonable strings for missing translations
-    def translate(*args)
-      @virtual_path = virtual_path
+    def translate(key, options = {})
+      options[:scope] = [*options[:scope]].unshift(:spree).uniq
 
-      options = args.extract_options!
-      options[:scope] = [*options[:scope]].unshift(:spree)
-      args << options
-      super(*args)
+      TranslationHelperWrapper.new.translate(key, **options)
+    end
+
+    def available_locales
+      locales_from_i18n = I18n.available_locales
+      locales =
+        if defined?(SpreeI18n)
+          (SpreeI18n::Locale.all << :en).map(&:to_s)
+        else
+          [Rails.application.config.i18n.default_locale, I18n.locale, :en]
+        end
+
+      (locales + locales_from_i18n).uniq.compact
     end
 
     alias t translate
-
-    def context
-      Spree::ViewContext.context
-    end
-
-    def virtual_path
-      if context
-        path = context.instance_variable_get('@virtual_path')
-
-        path&.gsub(/spree/, '')
-      end
-    end
   end
 end

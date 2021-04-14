@@ -4,7 +4,7 @@ module Spree
       class StoreCreditSerializer < BaseSerializer
         set_type :store_credit
 
-        belongs_to :category
+        belongs_to :category, serializer: :store_credit_category
         has_many :store_credit_events
         belongs_to :credit_type,
                    id_method_name: :type_id,

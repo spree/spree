@@ -1,0 +1,23 @@
+<nav id="breadcrumbs" class="col-12 mt-1 mt-sm-3 mt-lg-4" aria-label="breadcrumbs">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item">
+      <span>
+        <%= link_to Spree.t(:home), spree.root_path %>
+      </span>
+    </li>
+    <% if @taxon %>
+      <% @taxon.ancestors.where.not(parent_id: nil).each do |ancestor| %>
+        <li class="breadcrumb-item">
+          <%= ancestor.name %>
+        </li>
+      <% end %>
+      <li class="breadcrumb-item">
+        <%= @taxon.name %>
+      </li>
+    <% else %>
+      <li class="breadcrumb-item">
+        <%= current_page_name %>
+      </li>
+    <% end %>
+  </ol>
+</nav>

@@ -1,0 +1,7 @@
+.registration-button {
+  margin-top: font-px-to-rem(39px);
+
+  @include media-breakpoint-up(sm) {
+    margin-top: font-px-to-rem(26px);
+  }
+}

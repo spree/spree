@@ -1,0 +1,14 @@
+<% if product_relation_types.any? %>
+  <div id="related-products">
+    <% product_relation_types.each do |relation_type| %>
+      <% products = product_relations_by_type(relation_type) %>
+
+      <% if products.any? %>
+        <div class="product-details-related" id="product-details-related-<%= relation_type.id %>">
+          <p class="font-weight-bold text-center text-uppercase product-details-carousel-text"><%= relation_type.name %></p>
+          <%= render 'spree/shared/carousel_4_products', id: "related-products-carousel-#{relation_type.id}", products: products %>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+<% end %>

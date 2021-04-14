@@ -26,9 +26,12 @@ describe 'Shipping Methods', type: :feature do
 
   context 'create' do
     it 'is able to create a new shipping method' do
-      click_link 'New Shipping Method'
+      within find('#contentHeader') do
+        click_link 'New Shipping Method'
+      end
 
       fill_in 'shipping_method_name', with: 'bullock cart'
+      select 'Both', from: 'Display'
 
       within('#shipping_method_categories_field', match: :first) do
         check first("input[type='checkbox']")['name']
@@ -47,7 +50,7 @@ describe 'Shipping Methods', type: :feature do
       end
 
       expect(page).to have_css('.calculator-settings-warning', visible: :hidden)
-      select2_search('Flexible Rate', from: 'Calculator')
+      select2 'Flexible Rate', from: 'Calculator'
       expect(page).to have_css('.calculator-settings-warning')
 
       click_button 'Update'

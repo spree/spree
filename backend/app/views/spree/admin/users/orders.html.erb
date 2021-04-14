@@ -7,38 +7,39 @@
 <% end %>
 
 <fieldset data-hook="admin_user_order_history">
-  <%= paginate @orders, theme: 'twitter-bootstrap-4' %>
 
   <% if @orders.any? %>
     <%# TODO add search interface %>
-    <table class="table table-condensed table-bordered" id="listing_orders" data-hook>
-      <thead>
-        <tr data-hook="admin_orders_index_headers">
-          <th><%= sort_link @search, :completed_at,   I18n.t(:completed_at, scope: 'activerecord.attributes.spree/order'), {}, {title: 'orders_completed_at_title'} %></th>
-          <th><%= sort_link @search, :number,         I18n.t(:number, scope: 'activerecord.attributes.spree/order'), {}, {title: 'orders_number_title'} %></th>
-          <th><%= sort_link @search, :state,          I18n.t(:state, scope: 'activerecord.attributes.spree/order'), {}, {title: 'orders_state_title'} %></th>
-          <th><%= sort_link @search, :total,          I18n.t(:total, scope: 'activerecord.attributes.spree/order'), {}, {title: 'orders_total_title'} %></th>
-        </tr>
-      </thead>
-      <tbody>
-      <% @orders.each do |order| %>
-        <tr data-hook="admin_orders_index_rows" class="state-<%= order.state.downcase %> <%= cycle('odd', 'even') %>">
-          <td class="order-completed-at"><%= order_time(order.completed_at) if order.completed_at %></td>
-          <td class="order-number"><%= link_to order.number, edit_admin_order_path(order) %></td>
-          <td class="order-state">
-            <div class="state <%= order.state.downcase %>"><%= Spree.t("order_state.#{order.state.downcase}") %></div>
-            <% if order.payment_state %>
-              <div class="state <%= order.payment_state %>"><%= link_to Spree.t("payment_states.#{order.payment_state}"), admin_order_payments_path(order) %></div>
-            <% end %>
-            <% if Spree::Order.checkout_step_names.include?(:delivery) && order.shipment_state %>
-              <div class="state <%= order.shipment_state %>"><%= Spree.t("shipment_states.#{order.shipment_state}") %></div>
-            <% end %>
-          </td>
-          <td class="order-total"><%= order.display_total.to_html %></td>
-        </tr>
-      <% end %>
-      </tbody>
+    <div class="table-responsive">
+      <table class="table table-condensed table-bordered" id="listing_orders" data-hook>
+        <thead>
+          <tr data-hook="admin_orders_index_headers">
+            <th><%= sort_link @search, :completed_at,   I18n.t(:completed_at, scope: 'activerecord.attributes.spree/order'), {}, {title: 'orders_completed_at_title'} %></th>
+            <th><%= sort_link @search, :number,         I18n.t(:number, scope: 'activerecord.attributes.spree/order'), {}, {title: 'orders_number_title'} %></th>
+            <th><%= sort_link @search, :state,          I18n.t(:state, scope: 'activerecord.attributes.spree/order'), {}, {title: 'orders_state_title'} %></th>
+            <th><%= sort_link @search, :total,          I18n.t(:total, scope: 'activerecord.attributes.spree/order'), {}, {title: 'orders_total_title'} %></th>
+          </tr>
+        </thead>
+        <tbody>
+        <% @orders.each do |order| %>
+          <tr data-hook="admin_orders_index_rows" class="state-<%= order.state.downcase %> <%= cycle('odd', 'even') %>">
+            <td class="order-completed-at"><%= order_time(order.completed_at) if order.completed_at %></td>
+            <td class="order-number"><%= link_to order.number, edit_admin_order_path(order) %></td>
+            <td class="order-state">
+              <div class="state <%= order.state.downcase %>"><%= Spree.t("order_state.#{order.state.downcase}") %></div>
+              <% if order.payment_state %>
+                <div class="state <%= order.payment_state %>"><%= link_to Spree.t("payment_states.#{order.payment_state}"), admin_order_payments_path(order) %></div>
+              <% end %>
+              <% if Spree::Order.checkout_step_names.include?(:delivery) && order.shipment_state %>
+                <div class="state <%= order.shipment_state %>"><%= Spree.t("shipment_states.#{order.shipment_state}") %></div>
+              <% end %>
+            </td>
+            <td class="order-total"><%= order.display_total.to_html %></td>
+          </tr>
+        <% end %>
+        </tbody>
     </table>
+    </div>
   <% else %>
     <div class="alert alert-info no-objects-found">
       <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::Order)) %>,
@@ -46,7 +47,7 @@
     </div>
   <% end %>
 
-  <%= paginate @orders, theme: 'twitter-bootstrap-4' %>
+  <%= paginate @orders, theme: 'admin-twitter-bootstrap-4' %>
 </fieldset>
 
 <%= render 'spree/admin/users/lifetime_stats' %>

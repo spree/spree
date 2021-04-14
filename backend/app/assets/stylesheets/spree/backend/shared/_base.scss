@@ -2,8 +2,17 @@
   padding: 0 0 15px 0;
 }
 
+.card {
+  overflow: hidden;
+}
+
 .is-hidden {
   display: none;
+}
+
+.tooltip{
+  pointer-events: none;
+  z-index: $zindex-dropdown;
 }
 
 // No-margin and no-padding helper classes
@@ -12,6 +21,13 @@
   .no-padding-#{$side} { padding-#{side}: 0; }
 }
 
-.alert-error {
-  @extend .alert-danger;
+.js-remove-promo-rule-option-value {
+  color: $primary !important;
+  &:hover {
+    color: darken($primary, 10) !important;
+  }
+}
+
+.button_to {
+  display: inline-block;
 }

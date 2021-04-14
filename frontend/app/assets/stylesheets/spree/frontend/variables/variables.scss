@@ -1,0 +1,74 @@
+// main spree variables
+$primary-color: #0074c2;
+$secondary-color: #4c4c4c;
+$primary-background: #ffffff;
+$secondary-background: #f2f2f2;
+$input-background: #ffffff;
+$font-color: black;
+$font-family: "Montserrat", sans-serif;
+$header-font-color: $font-color;
+$header-background: $primary-background;
+$meganav-font-color: $font-color;
+$meganav-background: $primary-background;
+$footer-font-color: $font-color;
+$footer-background: $primary-background;
+$secondary-font-color: $font-color;
+$global-border-style: #e2e2e2;
+$second-global-border: #e2e2e2;
+$spree-header-max-width: 1440px;
+$spree-header-mobile-height: 50px;
+$spree-header-tablet-height: 75px;
+$spree-header-desktop-height: 75px;
+
+// bootstrap overrides
+$grid-gutter-width: 19px;
+$body-color: $font-color;
+$theme-colors: (
+  // standard bootstrap colors
+  "primary": $primary-color,
+  "secondary": $secondary-color,
+  "danger": #f53737,
+  "info": #999999,
+  "warning": #ffc107,
+  "light-secondary": #999999,
+  "borders": $second-global-border,
+  "dark-borders": $global-border-style,
+  "light-background": $primary-background,
+  "dark-text": $font-color,
+  "overlay": rgba(76, 76, 76, 0.5),
+  "shadow": rgba(0, 0, 0, 0.16)
+);
+$enable-rounded: false;
+$enable-shadows: false;
+$enable-gradients: false;
+$font-family-sans-serif: $font-family;
+$font-weight-medium: 500;
+.font-weight-medium {
+  font-weight: $font-weight-medium;
+}
+$btn-border-width: 2px;
+$modal-dialog-margin: 0;
+$grid-breakpoints: (
+  xs: 0,
+  sm: 576px,
+  md: 768px,
+  lg: 992px,
+  xl: 1200px
+);
+$container-max-widths: (
+  sm: 768px,
+  md: 992px,
+  lg: 1200px
+);
+
+// helper variables
+$container-padding: 17px;
+$photo-width-to-height-ratio: 30001/ 37500;
+$photo-width-to-height-ratio-zoom: 28015 / 37500;
+$thumbnails-carousel-single-height: 100% / $photo-width-to-height-ratio;
+$thumbnails-carousel-single-height-zoom: 100% /
+  $photo-width-to-height-ratio-zoom;
+$zoom-height-breakpoint: calc(
+  650px / #{$photo-width-to-height-ratio-zoom} + 102px * 2
+);
+$spree-plp-filter-desktop-position: $spree-header-desktop-height + 77px;

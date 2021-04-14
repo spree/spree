@@ -2,6 +2,10 @@ module Spree
   class Address < Spree::Base
     require 'twitter_cldr'
 
+    if Rails::VERSION::STRING >= '6.1'
+      serialize :preferences, Hash, default: {}
+    end
+
     NO_ZIPCODE_ISO_CODES ||= [
       'AO', 'AG', 'AW', 'BS', 'BZ', 'BJ', 'BM', 'BO', 'BW', 'BF', 'BI', 'CM', 'CF', 'KM', 'CG',
       'CD', 'CK', 'CUW', 'CI', 'DJ', 'DM', 'GQ', 'ER', 'FJ', 'TF', 'GAB', 'GM', 'GH', 'GD', 'GN',
@@ -10,10 +14,16 @@ module Spree
       'TO', 'TV', 'UG', 'AE', 'VU', 'YE', 'ZW'
     ].freeze
 
+    # The required states listed below match those used by PayPal and Shopify.
+    STATES_REQUIRED = [
+      'AU', 'AE', 'BR', 'CA', 'CN', 'ES', 'HK', 'IE', 'IN',
+      'IT', 'MY', 'MX', 'NZ', 'PT', 'RO', 'TH', 'US', 'ZA'
+    ].freeze
+
     # we're not freezing this on purpose so developers can extend and manage
     # those attributes depending of the logic of their applications
     ADDRESS_FIELDS = %w(firstname lastname company address1 address2 city state zipcode country phone)
-    EXCLUDED_KEYS_FOR_COMPARISION = %w(id updated_at created_at deleted_at user_id)
+    EXCLUDED_KEYS_FOR_COMPARISION = %w(id updated_at created_at deleted_at label user_id)
 
     belongs_to :country, class_name: 'Spree::Country'
     belongs_to :state, class_name: 'Spree::State', optional: true
@@ -30,6 +40,12 @@ module Spree
     end
 
     validate :state_validate, :postal_code_validate
+
+    validates :label, uniqueness: { conditions: -> { where(deleted_at: nil) },
+                                    scope: :user_id,
+                                    case_sensitive: false,
+                                    allow_blank: true,
+                                    allow_nil: true }
 
     delegate :name, :iso3, :iso, :iso_name, to: :country, prefix: true
     delegate :abbr, to: :state, prefix: true, allow_nil: true

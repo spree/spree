@@ -1,0 +1,78 @@
+<div
+  id="<%= id %>"
+  class="carousel slide product-carousel<%= ' product-carousel--empty' if images.length.zero? %>"
+  data-product-carousel-group-identifier="<%= group_id %>"
+  data-variant-change-trigger-identifier="<%= trigger_id %>"
+  data-interval="false"
+  data-hook>
+  <% if images.length > 1 %>
+    <a
+      class="d-none d-md-flex h-100 justify-content-center align-items-center product-carousel-control position-absolute product-carousel-control--previous"
+      href="#<%= id %>"
+      role="button"
+      data-slide="prev">
+      <span class="d-flex justify-content-center align-items-center product-carousel-control-rounded" aria-hidden="true">
+        <%= icon(name: 'arrow-right',
+                classes: 'spree-icon-arrow spree-icon-arrow-left',
+                width: 20,
+                height: 20) %>
+      </span>
+      <span class="sr-only"><%= Spree.t(:previous) %></span>
+    </a>
+
+    <a
+      class="d-none d-md-flex h-100 justify-content-center align-items-center product-carousel-control position-absolute product-carousel-control--next"
+      href="#<%= id %>"
+      role="button"
+      data-slide="next">
+      <span class="d-flex justify-content-center align-items-center product-carousel-control-rounded" aria-hidden="true">
+        <%= icon(name: 'arrow-right',
+                classes: 'spree-icon-arrow spree-icon-arrow-right',
+                width: 20,
+                height: 20) %>
+      </span>
+      <span class="sr-only"><%= Spree.t(:next) %></span>
+    </a>
+  <% end %>
+
+  <div class="carousel-inner">
+    <div class="d-flex flex-row position-absolute product-carousel-overlay">
+      <div class="d-none d-lg-block <%= 'product-carousel-overlay-modal-opener' unless zoomed %>" <%= 'data-toggle=modal data-target=#picturesModal' unless zoomed %>></div>
+    </div>
+
+    <% images.each_with_index do |image, imageIndex| %>
+      <div
+        class="carousel-item product-carousel-item<%= ' active' if imageIndex == 0 %>"
+        data-variant-is-master="<%= image.viewable_id == @product.master_id %>"
+        data-variant-id="<%= image.viewable_id %>">
+        <div class="product-carousel-item-squared <%= 'product-carousel-item-squared-only' if images.length == 1 %>">
+          <% image_attrs = {
+            src: main_app.url_for(image.url(zoomed ? :zoomed : :large)),
+            alt: image.alt || @product.name,
+            class: "d-block w-100",
+            width: zoomed ? 650 : 475,
+            height: zoomed ? 870 : 594
+          } %>
+          <%= imageIndex.zero? ? image_tag(image_attrs.delete(:src), image_attrs) : lazy_image(**image_attrs) %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <ul class="d-sm-none carousel-indicators product-carousel-indicators">
+    <% images.each_with_index do |image, imageIndex| %>
+      <li
+        data-target="#<%= id %>"
+        data-slide-to="<%= imageIndex %>"
+        class="product-carousel-indicators-indicator product-carousel-indicators-indicator--visible<%= ' active' if imageIndex == 0 %>">
+        <%= lazy_image(
+          src: main_app.url_for(image.url(:pdp_thumbnail)),
+          class: 'd-block w-100',
+          alt: image.alt || @product.name,
+          width: image.style(:pdp_thumbnail)[:width],
+          height: image.style(:pdp_thumbnail)[:height]
+        ) %>
+      </li>
+    <% end %>
+  </ul>
+</div>

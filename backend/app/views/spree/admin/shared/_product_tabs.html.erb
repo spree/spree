@@ -6,7 +6,7 @@
 <% content_for :sidebar do %>
   <ul class="nav flex-column nav-pills" data-hook="admin_product_tabs">
     <%= content_tag :li do %>
-      <%= link_to_with_icon 'edit',
+      <%= link_to_with_icon 'edit.svg',
         Spree.t(:details),
         edit_admin_product_url(@product),
         class: "nav-link #{'active' if current == :details}" %>
@@ -14,7 +14,7 @@
     <% end if can?(:admin, Spree::Product) %>
 
     <%= content_tag :li do %>
-      <%= link_to_with_icon 'picture',
+      <%= link_to_with_icon 'images.svg',
         Spree.t(:images),
         spree.admin_product_images_url(@product),
         class: "nav-link #{'active' if current == :images}" %>
@@ -22,7 +22,7 @@
     <% end if can?(:admin, Spree::Image) && !@product.deleted? %>
 
     <%= content_tag :li do %>
-      <%= link_to_with_icon 'th-large',
+      <%= link_to_with_icon 'adjust.svg',
         Spree.t(:variants),
         spree.admin_product_variants_url(@product),
         class: "nav-link #{'active' if current == :variants}" %>
@@ -30,7 +30,7 @@
     <% end if can?(:admin, Spree::Variant) && !@product.deleted? %>
 
     <%= content_tag :li do %>
-      <%= link_to_with_icon 'list-alt',
+      <%= link_to_with_icon 'list.svg',
         Spree.t(:properties),
         spree.admin_product_product_properties_url(@product),
         class: "nav-link #{'active' if current == :properties}" %>
@@ -38,11 +38,19 @@
     <% end if can?(:admin, Spree::ProductProperty) && !@product.deleted? %>
 
     <%= content_tag :li do %>
-      <%= link_to_with_icon 'home',
+      <%= link_to_with_icon 'items.svg',
         Spree.t(:stock),
         stock_admin_product_url(@product),
         class: "nav-link #{'active' if current == :stock}" %>
 
     <% end if can?(:admin, Spree::StockItem) && !@product.deleted? %>
+
+    <%= content_tag :li do %>
+      <%= link_to_with_icon 'money.svg',
+        Spree.t(:prices),
+        admin_product_prices_path(@product),
+        class: "nav-link #{'active' if current == :prices}" %>
+
+    <% end if can?(:admin, Spree::Price) && !@product.deleted? %>
   </ul>
 <% end %>

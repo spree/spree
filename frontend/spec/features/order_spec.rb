@@ -6,7 +6,6 @@ describe 'orders', type: :feature do
 
   before do
     order.update_attribute(:user_id, user.id)
-    order.shipments.destroy_all
     allow_any_instance_of(Spree::OrdersController).to receive_messages(try_spree_current_user: user)
   end
 
@@ -24,8 +23,7 @@ describe 'orders', type: :feature do
 
     visit spree.order_path(order)
 
-    # Tests view spree/shared/_order_details
-    within 'td.price' do
+    within first('[data-hook="order_item_price"]') do
       expect(page).to have_content '19.00'
     end
   end
@@ -33,7 +31,8 @@ describe 'orders', type: :feature do
   it 'has credit card info if paid with credit card' do
     create(:payment, order: order)
     visit spree.order_path(order)
-    within '.payment-info' do
+
+    within '#order_summary' do
       expect(page).to have_content 'Ending in 1111'
     end
   end
@@ -41,7 +40,8 @@ describe 'orders', type: :feature do
   it 'has payment method name visible if not paid with credit card' do
     create(:check_payment, order: order)
     visit spree.order_path(order)
-    within '.payment-info' do
+
+    within '#order_summary' do
       expect(page).to have_content 'Check'
     end
   end
@@ -58,8 +58,9 @@ describe 'orders', type: :feature do
 
     specify do
       visit spree.order_path(order)
-      within '.payment-info' do
-        expect(page).not_to have_selector('img')
+
+      within '#order_summary' do
+        expect(page).to have_content 'Ending in 1111'
       end
     end
   end
@@ -82,7 +83,7 @@ describe 'orders', type: :feature do
       it 'shows state text' do
         visit spree.order_path(order)
 
-        within '#order' do
+        within '#order_summary' do
           expect(page).to have_content(order.bill_address.state_text)
           expect(page).to have_content(order.ship_address.state_text)
         end
@@ -97,11 +98,41 @@ describe 'orders', type: :feature do
       it 'does not show state text' do
         visit spree.order_path(order)
 
-        within '#order' do
+        within '#order_summary' do
           expect(page).not_to have_content(order.bill_address.state_text)
           expect(page).not_to have_content(order.ship_address.state_text)
         end
       end
     end
+  end
+
+  it 'does not have save and continue button' do
+    visit spree.order_path(order)
+
+    expect(page).not_to have_selector('input.btn-primary.checkout-content-save-continue-button[data-disable-with]')
+  end
+
+  it 'does not have place order button' do
+    visit spree.order_path(order)
+
+    expect(page).not_to have_button(class: 'btn-primary', value: 'Place Order')
+  end
+
+  it 'does not have link to checkout address step' do
+    visit spree.order_path(order)
+
+    expect(page).not_to have_link(href: spree.checkout_state_path(:address))
+  end
+
+  it 'does not have link to checkout delivery step' do
+    visit spree.order_path(order)
+
+    expect(page).not_to have_link(href: spree.checkout_state_path(:delivery))
+  end
+
+  it 'does not have link to checkout payment step' do
+    visit spree.order_path(order)
+
+    expect(page).not_to have_link(href: spree.checkout_state_path(:payment))
   end
 end

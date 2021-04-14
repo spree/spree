@@ -44,7 +44,7 @@
 </fieldset>
 
 <% if !@customer_return.fully_reimbursed? && @pending_reimbursements.empty? && can?(:create, Spree::Reimbursement) %>
-  <fieldset data-hook="reimbursements" class="marginb">
+  <fieldset data-hook="reimbursements" class="mb-3">
     <% if @customer_return.completely_decided? %>
       <%= form_for [:admin, @order, Spree::Reimbursement.new] do |f| %>
         <%= hidden_field_tag :build_from_customer_return_id, @customer_return.id %>

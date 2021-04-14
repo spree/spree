@@ -2,17 +2,7 @@ module Spree
   module Api
     module V2
       module Storefront
-        class CountriesController < ::Spree::Api::V2::BaseController
-          include Spree::Api::V2::CollectionOptionsHelpers
-
-          def index
-            render_serialized_payload { serialize_collection(collection) }
-          end
-
-          def show
-            render_serialized_payload { serialize_resource(resource) }
-          end
-
+        class CountriesController < ::Spree::Api::V2::ResourceController
           private
 
           def serialize_collection(collection)
@@ -24,18 +14,22 @@ module Spree
               resource,
               include: resource_includes,
               fields: sparse_fields,
-              params: { include_states: true }
+              params: resource_serializer_params
             ).serializable_hash
           end
 
-          def collection
-            collection_finder.new(scope, params).call
+          def resource_serializer_params
+            {
+              include_states: true,
+              current_store: current_store
+            }
           end
 
           def resource
             return scope.default if params[:iso] == 'default'
 
             scope.find_by(iso: params[:iso]&.upcase) ||
+              scope.find_by(id: params[:iso]&.upcase) ||
               scope.find_by(iso3: params[:iso]&.upcase)
           end
 
@@ -51,8 +45,8 @@ module Spree
             Spree::Api::Dependencies.storefront_country_finder.constantize
           end
 
-          def scope
-            Spree::Country.accessible_by(current_ability, :show)
+          def model_class
+            Spree::Country
           end
         end
       end

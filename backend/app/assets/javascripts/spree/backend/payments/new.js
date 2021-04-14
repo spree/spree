@@ -1,12 +1,36 @@
-//= require jquery.payment
+/* global Cleave */
+
 $(document).ready(function () {
   if ($('#new_payment').length) {
-    $('.cardNumber').payment('formatCardNumber')
-    $('.cardExpiry').payment('formatCardExpiry')
-    $('.cardCode').payment('formatCardCVC')
+    var cardCodeCleave;
+    var updateCardCodeCleave = function (length) {
+      if (cardCodeCleave) cardCodeCleave.destroy()
 
-    $('.cardNumber').change(function () {
-      $('.ccType').val($.payment.cardType(this.value))
+      cardCodeCleave = new Cleave('.cardCode', {
+        numericOnly: true,
+        blocks: [length]
+      })
+    }
+
+    updateCardCodeCleave(3)
+
+    /* eslint-disable no-new */
+    new Cleave('.cardNumber', {
+      creditCard: true,
+      onCreditCardTypeChanged: function (type) {
+        $('.ccType').val(type)
+
+        if (type === 'amex') {
+          updateCardCodeCleave(4)
+        } else {
+          updateCardCodeCleave(3)
+        }
+      }
+    })
+    /* eslint-disable no-new */
+    new Cleave('.cardExpiry', {
+      date: true,
+      datePattern: ['m', 'Y']
     })
 
     $('.payment_methods_radios').click(
@@ -35,16 +59,5 @@ $(document).ready(function () {
         }
       }
     )
-
-    $('.cvvLink').click(function (event) {
-      var windowName = 'cvv_info'
-      var windowOptions = 'left=20,top=20,width=500,height=500,toolbar=0,resizable=0,scrollbars=1'
-      window.open($(this).prop('href'), windowName, windowOptions)
-      event.preventDefault()
-    })
-
-    $('select.jump_menu').change(function () {
-      window.location = this.options[this.selectedIndex].value
-    })
   }
 })

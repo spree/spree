@@ -1,0 +1,63 @@
+<% cache base_cache_key + [available_option_types_cache_key, filtering_params_cache_key, @taxon&.id] do %>
+  <div id="plp-filters-accordion" class="d-none d-lg-block col-lg-3 pr-5 position-sticky h-100 plp-filters" data-hook="taxon_sidebar_navigation">
+    <div class="plp-filters-scroller">
+      <% @available_option_types.each do |option_type| %>
+        <div class="w-100 card plp-filters-card">
+          <% ot_downcase_name = option_type.filter_param %>
+          <% option_type_name = ot_downcase_name.titleize %>
+          <% collapsed = params[ot_downcase_name].blank? %>
+
+          <button class="card-header <%= 'collapsed' if collapsed %> px-1 plp-filters-card-header" id="filters<%= option_type_name %>" data-toggle="collapse" data-target="#collapseFilter<%= option_type_name %>" aria-expanded="<%= !collapsed %>" aria-controls="collapseFilter<%= option_type_name %>" role="heading" aria-level="2">
+            <%= option_type.presentation %>
+            <%= icon(name: 'plus',
+                    classes: 'mt-1 float-right arrow plp-filters-card-header-arrow--plus',
+                    width: 16,
+                    height: 16) %>
+            <%= icon(name: 'minus',
+                    classes: 'mt-1 float-right arrow plp-filters-card-header-arrow--minus',
+                    width: 16,
+                    height: 16) %>
+          </button>
+          <div id="collapseFilter<%= option_type_name %>" class="collapse <%= 'show' unless collapsed %>" aria-labelledby="filters<%= option_type_name %>">
+            <div class="card-body px-0 pt-1">
+              <%= render 'spree/shared/option_values',
+                params_ot_downcase_name: params[ot_downcase_name],
+                option_type: option_type,
+                permitted_params: permitted_params,
+                ot_downcase_name: ot_downcase_name %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+      <% price_collapsed = params[:price].blank? %>
+      <div class="w-100 card plp-filters-card">
+        <button class="card-header text-capitalize <%= 'collapsed' if price_collapsed %> px-1 plp-filters-card-header" id="filtersPrice" data-toggle="collapse" data-target="#collapseFilterPrice" aria-expanded="<% !price_collapsed %>" aria-controls="collapseFilterPrice" role="heading" aria-level="2">
+          <%= Spree.t('plp.price') %>
+          <%= icon(name: 'plus',
+                  classes: 'mt-1 float-right arrow plp-filters-card-header-arrow--plus',
+                  width: 16,
+                  height: 16) %>
+          <%= icon(name: 'minus',
+                  classes: 'mt-1 float-right arrow plp-filters-card-header-arrow--minus',
+                  width: 16,
+                  height: 16) %>
+        </button>
+        <div id="collapseFilterPrice" class="collapse <%= 'show' unless price_collapsed %>" aria-labelledby="filtersPrice">
+          <div class="card-body px-0 pt-1">
+            <% price_filter_values.each do |name| %>
+              <% price_param = params[:price] == name ? '' : name %>
+              <%= link_to permitted_params.merge({ price: price_param }), class: "d-block" do %>
+                <div class="d-inline-block py-1 px-2 m-1 text-uppercase plp-filters-card-item <%= 'plp-filters-card-item--selected' if params[:price] == name %>">
+                  <%= name %>
+                </div>
+              <% end %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+      <% additional_filters_partials.each do |partial| %>
+        <%= render "spree/products/filters/#{partial}", permitted_params: permitted_params %>
+      <% end %>
+    </div>
+  </div>
+<% end %>

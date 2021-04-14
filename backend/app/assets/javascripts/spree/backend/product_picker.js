@@ -4,45 +4,61 @@ $.fn.productAutocomplete = function (options) {
   // Default options
   options = options || {}
   var multiple = typeof (options.multiple) !== 'undefined' ? options.multiple : true
+  var values = typeof (options.values) !== 'undefined' ? options.values : null
 
-  function formatProduct (product) {
-    return Select2.util.escapeMarkup(product.name)
+  function formatProductList(products) {
+    return products.map(function(obj) {
+      return { id: obj.id, text: obj.name }
+    })
+  }
+
+  function addOptions(select, values) {
+    $.ajax({
+      url: Spree.routes.products_api,
+      dataType: 'json',
+      data: {
+        q: {
+          id_in: values
+        },
+        token: Spree.api_key
+      }
+    }).then(function (data) {
+      select.addSelect2Options(data.products)
+    })
   }
 
   this.select2({
-    minimumInputLength: 3,
     multiple: multiple,
-    initSelection: function (element, callback) {
-      $.get(Spree.routes.products_api, {
-        ids: element.val().split(','),
-        token: Spree.api_key
-      }, function (data) {
-        callback(multiple ? data.products : data.products[0])
-      })
-    },
+    minimumInputLength: 3,
     ajax: {
       url: Spree.routes.products_api,
-      datatype: 'json',
-      cache: true,
-      data: function (term, page) {
+      dataType: 'json',
+      data: function (params) {
         return {
           q: {
-            name_or_master_sku_cont: term
+            name_or_master_sku_cont: params.term
           },
           m: 'OR',
           token: Spree.api_key
         }
       },
-      results: function (data, page) {
+      processResults: function(data) {
         var products = data.products ? data.products : []
+        var results = formatProductList(products)
+
         return {
-          results: products
+          results: results
         }
       }
     },
-    formatResult: formatProduct,
-    formatSelection: formatProduct
+    templateSelection: function(data, _container) {
+      return data.text
+    }
   })
+
+  if (values) {
+    addOptions(this, values)
+  }
 }
 
 $(document).ready(function () {

@@ -5,7 +5,8 @@ module Spree
     describe AvailabilityValidator, type: :model do
       subject { described_class.new }
 
-      let!(:line_item) { double(quantity: 5, variant_id: 1, variant: double.as_null_object, errors: double('errors'), inventory_units: []) }
+      let!(:order) { create(:order_with_line_item_quantity, line_items_quantity: 5) }
+      let!(:line_item) { order.line_items.first }
       let(:inventory_unit) { double('InventoryUnit') }
       let(:inventory_units) { [inventory_unit] }
 
@@ -22,8 +23,9 @@ module Spree
 
       it 'is invalid when supply is insufficent' do
         allow_any_instance_of(Stock::Quantifier).to receive_messages(can_supply?: false)
-        expect(line_item.errors).to receive(:[]).with(:quantity).and_return []
+        expect(line_item.errors[:quantity]).to eq []
         subject.validate(line_item)
+        expect(line_item.errors[:quantity].to_s).to match(/is not available/)
       end
 
       it 'considers existing inventory_units sufficient' do

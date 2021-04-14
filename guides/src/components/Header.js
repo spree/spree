@@ -18,7 +18,6 @@ import IconGithub from 'react-feather/dist/icons/github'
 import IconBurger from 'react-feather/dist/icons/menu'
 import IconClose from 'react-feather/dist/icons/x-circle'
 import IconSearch from 'react-feather/dist/icons/search'
-import IconContact from 'react-feather/dist/icons/message-circle'
 
 /**
  * Component
@@ -47,11 +46,6 @@ export default class Header extends React.PureComponent {
     this.setState({ searchIsOpen: !this.state.searchIsOpen })
   }
 
-  isApiSectionActive = () =>
-    this.isActive('api') ||
-    this.isActive('api/overview') ||
-    this.isActive('api/v2')
-
   render() {
     return (
       <header
@@ -63,7 +57,7 @@ export default class Header extends React.PureComponent {
       >
         <div className="z-3 relative ph4 flex items-center mw9 center h-100">
           <a
-            href="https://spreecommerce.org"
+            href="/"
             className={cx(
               { db: !this.state.searchIsOpen },
               { dn: this.state.searchIsOpen },
@@ -75,12 +69,9 @@ export default class Header extends React.PureComponent {
 
           <DocSearch isOpen={this.state.searchIsOpen} />
 
-          <nav className="w-100 tr dn flex-l items-center justify-end">
-            <NavItem
-              text="API"
-              isActive={this.isApiSectionActive()}
-              url="/api/overview/"
-            />
+          <nav className="h-100 w-100 tr dn flex-l items-center justify-end">
+            <NavItem text="API" url="/api/" isActive={this.isActive('api')} />
+            <NavItem text="Extensions" url="/extensions" isActive={this.isActive('extensions')} />
             <NavItem
               text="Developer"
               isActive={this.isActive('developer')}
@@ -92,19 +83,15 @@ export default class Header extends React.PureComponent {
               url="/user/"
             />
             <NavItem
-              text="Release Notes"
+              text="Releases"
               isActive={this.isActive('release_notes')}
               url="/release_notes/"
             />
-            <NavItem url="https://heroku.com/deploy?template=https://github.com/spree/spree/tree/3-7-stable">
-              Demo
-            </NavItem>
+            <NavItem url="https://demo.spreecommerce.org/">Demo</NavItem>
 
-            <NavItem url="https://spreecommerce.org/contact/">
-              Contact Us
-            </NavItem>
+            <NavItem text="Support" url="/support" isActive={this.isActive('support')} />
 
-            <NavItem url="http://slack.spreecommerce.org/">
+            <NavItem url="http://slack.spreecommerce.org/" title="Join our Slack">
               <IconSlack />
             </NavItem>
             <NavItem url="https://github.com/spree/spree">
@@ -113,9 +100,6 @@ export default class Header extends React.PureComponent {
           </nav>
 
           <nav className="dn-l justify-end w-100 flex">
-            <NavItem url="https://spreecommerce.org/contact/">
-              <IconContact />
-            </NavItem>
             {this.state.searchIsOpen ? (
               <IconClose
                 className="pointer dib dn-l mv2 mr3 z-999 right-0 absolute pr3 pv2 gray"
@@ -123,7 +107,7 @@ export default class Header extends React.PureComponent {
               />
             ) : (
               <IconSearch
-                className="pointer dib dn-l mv2 mv0-l mr0 pv2 ph1 gray"
+                className="pointer dib dn-l mv2 mv0-l mr0 ph1 pv2 gray"
                 onClick={this._toggleSearch}
               />
             )}
@@ -156,15 +140,8 @@ export default class Header extends React.PureComponent {
             }}
           >
             <nav className="flex flex-column overflow-auto mr4 mr0-l">
-              <NavItem
-                text="API"
-                isActive={this.isApiSectionActive()}
-                url="/api/overview/"
-              >
-                {this.isApiSectionActive() && (
-                  <Sidebar nav={this.props.nav} isMobile />
-                )}
-              </NavItem>
+              <NavItem text="API" url="/api/" isActive={this.isActive('api')} />
+              <NavItem text="Extensions" url="/extensions" isActive={this.isActive('extensions')} />
               <NavItem
                 text="Developer"
                 isActive={this.isActive('developer')}
@@ -184,7 +161,7 @@ export default class Header extends React.PureComponent {
                 )}
               </NavItem>
               <NavItem
-                text="Release Notes"
+                text="Releases"
                 isActive={this.isActive('release_notes')}
                 url="/release_notes/"
               >
@@ -192,6 +169,8 @@ export default class Header extends React.PureComponent {
                   <Sidebar nav={this.props.nav} isMobile />
                 )}
               </NavItem>
+
+              <NavItem text="Support" url="/support" isActive={this.isActive('support')} />
             </nav>
           </div>
         )}

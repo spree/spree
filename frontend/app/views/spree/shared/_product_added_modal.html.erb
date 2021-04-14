@@ -1,0 +1,66 @@
+<div class="modal product-added-modal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header pb-0 px-4 pt-4 border-0">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">
+            <%= icon(name: 'close',
+                     classes: 'd-block d-lg-none',
+                     width: 16,
+                     height: 16) %>
+            <%= icon(name: 'close',
+                     classes: 'd-none d-lg-block',
+                     width: 30,
+                     height: 30) %>
+          </span>
+        </button>
+      </div>
+      <div class="modal-body p-4">
+        <div class="container-fluid">
+          <div class="row justify-content-center align-items-center">
+            <div class="col-md-2 d-flex w-auto">
+              <%= icon(name: 'check-mark-circle',
+                       classes: 'd-block d-lg-none mx-auto product-added-modal-check-mark',
+                       width: 38,
+                       height: 38) %>
+              <%= icon(name: 'check-mark-circle',
+                       classes: 'd-none d-lg-block mx-auto product-added-modal-check-mark',
+                       width: 68,
+                       height: 68) %>
+            </div>
+            <div class="col-8 col-sm-6 col-lg-4 product-added-modal-message">
+              <%= Spree.t(:added_to_cart) %>
+            </div>
+          </div>
+          <div class="row pt-5 justify-content-center align-items-center product-added-modal-product">
+            <div class="col-4 col-sm-2 product-added-modal-product-image-container">
+              <img class="product-added-modal-product-image-container-image" src="data:," alt="<%= @product&.name %>">
+            </div>
+            <div class="col-8 col-sm-6 col-lg-4 py-1 product-added-modal-product-details">
+              <div class="product-added-modal-product-details-name"></div>
+              <div class="product-added-modal-product-details-price"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer p-4 pb-5 border-0">
+        <div class="container-fluid">
+          <div class="row pb-4 justify-content-center">
+            <div class="col-12 col-lg-8">
+              <%= link_to spree.checkout_path, class: 'btn btn-primary w-100 font-weight-bold text-uppercase product-added-modal-button', method: :get do %>
+                <%= Spree.t(:checkout) %>
+              <% end %>
+            </div>
+          </div>
+          <div class="row justify-content-center">
+            <div class="col-12 col-lg-8">
+              <%= link_to spree.cart_path, class: 'btn btn-outline-primary w-100 font-weight-bold text-uppercase product-added-modal-button' do %>
+                <%= Spree.t('pdp.view_cart') %>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

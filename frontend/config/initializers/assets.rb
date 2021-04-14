@@ -1,1 +1,4 @@
-Rails.application.config.assets.precompile += %w(favicon.ico credit_cards/* spree/frontend/checkout/shipment)
+Rails.application.config.assets.precompile << 'spree_frontend_manifest.js'
+Rails.application.config.assets.configure do |env|
+  env.export_concurrent = false
+end

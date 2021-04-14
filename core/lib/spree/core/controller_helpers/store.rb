@@ -5,17 +5,16 @@ module Spree
         extend ActiveSupport::Concern
 
         included do
-          helper_method :current_currency
           helper_method :current_store
           helper_method :current_price_options
         end
 
-        def current_currency
-          Spree::Config[:currency]
-        end
-
         def current_store
           @current_store ||= Spree::Store.current(request.env['SERVER_NAME'])
+        end
+
+        def store_locale
+          current_store.default_locale
         end
 
         # Return a Hash of things that influence the prices displayed in your shop.
@@ -43,7 +42,7 @@ module Spree
         private
 
         def current_tax_zone
-          current_order.try(:tax_zone) || Spree::Zone.default_tax
+          @current_tax_zone ||= @current_order&.tax_zone || Spree::Zone.default_tax
         end
       end
     end

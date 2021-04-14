@@ -1,4 +1,4 @@
-<%= Spree.t('shipment_mailer.shipped_email.dear_customer') %>
+<%= Spree.t('shipment_mailer.shipped_email.dear_customer', name: name_for(@shipment.order)) %>
 
 <%= Spree.t('shipment_mailer.shipped_email.instructions', number: @shipment.order.number) %>
 
@@ -14,3 +14,4 @@
 <%= Spree.t('shipment_mailer.shipped_email.track_link', url: @shipment.tracking_url) if @shipment.tracking_url %>
 
 <%= Spree.t('shipment_mailer.shipped_email.thanks') %>
+<%= Spree.t('shipment_mailer.shipped_email.store_team', store_name: current_store.name) %>
