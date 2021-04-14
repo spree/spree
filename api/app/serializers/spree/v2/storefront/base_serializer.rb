@@ -11,7 +11,7 @@ module Spree
         def self.record_cache_options(options, fieldset, include_list, params)
           opts = options.dup
 
-          params_cache_key = [params[:currency], params[:user]&.cache_key, params[:store]&.cache_key].join('-')
+          params_cache_key = [params[:currency], params[:user]&.cache_key_with_version, params[:store]&.cache_key_with_version].join('-')
 
           opts[:namespace] += "-#{params_cache_key}"
 
