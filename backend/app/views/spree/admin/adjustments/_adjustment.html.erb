@@ -18,10 +18,12 @@
       <%= Spree.t("state_machine_states.#{adjustment.state}") %>
     </span>
   </td>
-  <td class="actions actions-2 text-center">
-    <% if adjustment.open? %>
-      <%= link_to_edit(adjustment, no_text: true) if can?(:edit, adjustment) %>
-      <%= link_to_delete(adjustment, no_text: true) if can?(:delete, adjustment) %>
-    <% end %>
+  <td class="actions">
+    <span class="d-flex justify-content-center">
+      <% if adjustment.open? %>
+        <%= link_to_edit(adjustment, no_text: true) if can?(:edit, adjustment) %>
+        <%= link_to_delete(adjustment, no_text: true) if can?(:delete, adjustment) %>
+      <% end %>
+    </span>
   </td>
 </tr>

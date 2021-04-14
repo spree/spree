@@ -24,14 +24,16 @@
               <%= Spree.t(payment.state, scope: :payment_states, default: payment.state.capitalize) %>
             </span>
           </td>
-          <td class="actions actions-2 text-center no-wrap">
-            <% payment.actions.each do |action| %>
-              <% if action == 'credit' %>
-                <%= link_to_with_icon('exit.svg', Spree.t(:refund), new_admin_order_payment_refund_path(@order, payment), no_text: true, class: "btn btn-outline-secondary btn-sm") if can?(:create, Spree::Refund) %>
-              <% else %>
-                <%= link_to_with_icon(action + '.svg', Spree.t(action), fire_admin_order_payment_path(@order, payment, e: action), method: :put, no_text: true, data: { action: action }, class: "btn btn-outline-secondary btn-sm") if can?(action.to_sym, payment) %>
+          <td class="actions">
+            <span class="d-flex justify-content-center payment-action-buttons">
+              <% payment.actions.each do |action| %>
+                <% if action == 'credit' %>
+                  <%= link_to_with_icon('exit.svg', Spree.t(:refund), new_admin_order_payment_refund_path(@order, payment), no_text: true, class: "btn btn-outline-secondary btn-sm") if can?(:create, Spree::Refund) %>
+                <% else %>
+                  <%= link_to_with_icon(action + '.svg', Spree.t(action), fire_admin_order_payment_path(@order, payment, e: action), method: :put, no_text: true, data: { action: action }, class: "btn btn-outline-secondary btn-sm") if can?(action.to_sym, payment) %>
+                <% end %>
               <% end %>
-            <% end %>
+            </span>
           </td>
         </tr>
       <% end %>

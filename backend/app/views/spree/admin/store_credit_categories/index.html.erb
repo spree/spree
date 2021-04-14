@@ -19,9 +19,11 @@
       <% @store_credit_categories.each do |store_credit_category| %>
         <tr id="<%= spree_dom_id store_credit_category %>" data-hook="admin_store_credit_categories_index_rows">
           <td><%= store_credit_category.name %></td>
-          <td class="actions text-right">
-            <%= link_to_edit(store_credit_category, no_text: true) if can? :edit, store_credit_category %>
-            <%= link_to_delete(store_credit_category, no_text: true) if can? :destroy, store_credit_category %>
+          <td class="actions">
+            <span class="d-flex justify-content-end">
+              <%= link_to_edit(store_credit_category, no_text: true) if can? :edit, store_credit_category %>
+              <%= link_to_delete(store_credit_category, no_text: true) if can? :destroy, store_credit_category %>
+            </span>
           </td>
         </tr>
       <% end %>
