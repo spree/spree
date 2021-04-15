@@ -3,23 +3,35 @@ main_menu = Spree::Menu.find_by!(name: 'Main Menu')
 ##############
 # Root Items #
 ##############
+woman_taxon = Spree::Taxon.find_by!(permalink: 'women')
 main_menu_root_women = Spree::MenuItem.where(
   name: 'Women',
   item_type: 'Link',
+  linked_resource_type: 'Taxon',
   menu_id: main_menu
 ).first_or_create!
+main_menu_root_women.linked_resource_id = woman_taxon.id
+main_menu_root_women.save!
 
+men_taxon = Spree::Taxon.find_by!(permalink: 'men')
 main_menu_root_men = Spree::MenuItem.where(
   name: 'Men',
   item_type: 'Link',
+  linked_resource_type: 'Taxon',
   menu_id: main_menu
 ).first_or_create!
+main_menu_root_men.linked_resource_id = men_taxon.id
+main_menu_root_men.save!
 
+sw_taxon = Spree::Taxon.find_by!(permalink: 'sportswear')
 main_menu_root_sw = Spree::MenuItem.where(
   name: 'Sportsware',
   item_type: 'Link',
+  linked_resource_type: 'Taxon',
   menu_id: main_menu
 ).first_or_create!
+main_menu_root_sw.linked_resource_id = sw_taxon.id
+main_menu_root_sw.save!
 
 ##############
 # Catagories #
@@ -107,134 +119,151 @@ end
 #################################
 # Links For: WOMEN / CATAGORIES #
 #################################
-Spree::MenuItem.where(
+women_skirts_t = Spree::Taxon.find_by!(permalink: 'women/skirts')
+women_skirts = Spree::MenuItem.where(
   name: 'Skirts',
-  linked_resource_type: 'URL',
-  url: '/t/women/skirts',
+  linked_resource_type: 'Taxon',
   item_type: 'Link',
   menu_id: main_menu,
   parent_id: main_menu_cat_women
 ).first_or_create!
+women_skirts.linked_resource_id = women_skirts_t.id
+women_skirts.save!
 
-Spree::MenuItem.where(
+women_dresses_t = Spree::Taxon.find_by!(permalink: 'women/dresses')
+women_dresses = Spree::MenuItem.where(
   name: 'Dresses',
-  linked_resource_type: 'URL',
-  url: '/t/women/dresses',
+  linked_resource_type: 'Taxon',
   item_type: 'Link',
   menu_id: main_menu,
   parent_id: main_menu_cat_women
 ).first_or_create!
+women_dresses.linked_resource_id = women_dresses_t.id
+women_dresses.save!
 
-Spree::MenuItem.where(
+women_s_b_t = Spree::Taxon.find_by!(permalink: 'women/shirts-and-blouses')
+women_s_b = Spree::MenuItem.where(
   name: 'Shirts And Blouses',
-  linked_resource_type: 'URL',
-  url: '/t/women/shirts-and-blouses',
+  linked_resource_type: 'Taxon',
   item_type: 'Link',
   menu_id: main_menu,
   parent_id: main_menu_cat_women
 ).first_or_create!
+women_s_b.linked_resource_id = women_s_b_t.id
+women_s_b.save!
 
-Spree::MenuItem.where(
-  name: 'Shirts And Blouses',
-  linked_resource_type: 'URL',
-  url: '/t/women/shirts-and-blouses',
-  item_type: 'Link',
-  menu_id: main_menu,
-  parent_id: main_menu_cat_women
-).first_or_create!
-
-Spree::MenuItem.where(
+women_sweaters_t = Spree::Taxon.find_by!(permalink: 'women/sweaters')
+women_sweaters = Spree::MenuItem.where(
   name: 'Sweaters',
-  linked_resource_type: 'URL',
-  url: '/t/women/sweaters',
+  linked_resource_type: 'Taxon',
   item_type: 'Link',
   menu_id: main_menu,
   parent_id: main_menu_cat_women
 ).first_or_create!
+women_sweaters.linked_resource_id = women_sweaters_t.id
+women_sweaters.save!
 
-Spree::MenuItem.where(
+women_tops_tees_t = Spree::Taxon.find_by!(permalink: 'women/tops-and-t-shirts')
+women_tops_tees = Spree::MenuItem.where(
   name: 'Tops and T-Shirts',
-  linked_resource_type: 'URL',
-  url: '/t/women/tops-and-t-shirts',
+  linked_resource_type: 'Taxon',
   item_type: 'Link',
   menu_id: main_menu,
   parent_id: main_menu_cat_women
 ).first_or_create!
+women_tops_tees.linked_resource_id = women_tops_tees_t.id
+women_tops_tees.save!
 
-Spree::MenuItem.where(
+women_j_c_t = Spree::Taxon.find_by!(permalink: 'women/jackets-and-coats')
+women_j_c = Spree::MenuItem.where(
   name: 'Jackets and Coats',
-  linked_resource_type: 'URL',
-  url: '/t/women/jackets-and-coats',
+  linked_resource_type: 'Taxon',
   item_type: 'Link',
   menu_id: main_menu,
   parent_id: main_menu_cat_women
 ).first_or_create!
+women_j_c.linked_resource_id = women_j_c_t.id
+women_j_c.save!
 
 ###############################
 # Links For: MEN / CATAGORIES #
 ###############################
-Spree::MenuItem.where(
+men_shirts_t = Spree::Taxon.find_by!(permalink: 'men/shirts')
+men_shirts = Spree::MenuItem.where(
   name: 'Shirts',
-  linked_resource_type: 'URL',
-  url: '/t/men/shirts',
+  linked_resource_type: 'Taxon',
   item_type: 'Link',
   menu_id: main_menu,
   parent_id: main_menu_cat_men
 ).first_or_create!
+men_shirts.linked_resource_id = men_shirts_t.id
+men_shirts.save!
 
-Spree::MenuItem.where(
+men_t_shirts_t = Spree::Taxon.find_by!(permalink: 'men/t-shirts')
+men_t_shirts = Spree::MenuItem.where(
   name: 'T-Shirts',
-  linked_resource_type: 'URL',
-  url: '/t/men/t-shirts',
+  linked_resource_type: 'Taxon',
   item_type: 'Link',
   menu_id: main_menu,
   parent_id: main_menu_cat_men
 ).first_or_create!
+men_t_shirts.linked_resource_id = men_t_shirts_t.id
+men_t_shirts.save!
 
-Spree::MenuItem.where(
+men_sweaters_t = Spree::Taxon.find_by!(permalink: 'men/sweaters')
+men_sweaters = Spree::MenuItem.where(
   name: 'Sweaters',
-  linked_resource_type: 'URL',
-  url: '/t/men/sweaters',
+  linked_resource_type: 'Taxon',
   item_type: 'Link',
   menu_id: main_menu,
   parent_id: main_menu_cat_men
 ).first_or_create!
+men_sweaters.linked_resource_id = men_sweaters_t.id
+men_sweaters.save!
 
-Spree::MenuItem.where(
+men_j_c_t = Spree::Taxon.find_by!(permalink: 'men/jackets-and-coats')
+men_j_c = Spree::MenuItem.where(
   name: 'Jackets and Coats',
-  linked_resource_type: 'URL',
-  url: '/t/men/jackets-and-coats',
+  linked_resource_type: 'Taxon',
   item_type: 'Link',
   menu_id: main_menu,
   parent_id: main_menu_cat_men
 ).first_or_create!
+men_j_c.linked_resource_id = men_j_c_t.id
+men_j_c.save!
 
 ######################################
 # Links For: SPORTSWARE / CATAGORIES #
 ######################################
-Spree::MenuItem.where(
+sw_tops_t = Spree::Taxon.find_by!(permalink: 'sportswear/tops')
+sw_tops = Spree::MenuItem.where(
   name: 'Tops',
-  linked_resource_type: 'URL',
-  url: '/t/sportswear/tops',
+  linked_resource_type: 'Taxon',
   item_type: 'Link',
   menu_id: main_menu,
   parent_id: main_menu_cat_sw
 ).first_or_create!
+sw_tops.linked_resource_id = sw_tops_t.id
+sw_tops.save!
 
-Spree::MenuItem.where(
+sw_sweatshirts_t = Spree::Taxon.find_by!(permalink: 'sportswear/sweatshirts')
+sw_sweatshirts = Spree::MenuItem.where(
   name: 'Sweatshirts',
-  linked_resource_type: 'URL',
-  url: '/t/sportswear/sweatshirts',
+  linked_resource_type: 'Taxon',
   item_type: 'Link',
   menu_id: main_menu,
   parent_id: main_menu_cat_sw
 ).first_or_create!
+sw_sweatshirts.linked_resource_id = sw_sweatshirts_t.id
+sw_sweatshirts.save!
 
-Spree::MenuItem.where(
+sw_pants_t = Spree::Taxon.find_by!(permalink: 'sportswear/pants')
+sw_pants = Spree::MenuItem.where(
   name: 'Pants',
-  linked_resource_type: 'URL',
-  url: '/t/sportswear/pants',
+  linked_resource_type: 'Taxon',
   item_type: 'Link',
   menu_id: main_menu,
   parent_id: main_menu_cat_sw
 ).first_or_create!
+sw_pants.linked_resource_id = sw_pants_t.id
+sw_pants.save!
