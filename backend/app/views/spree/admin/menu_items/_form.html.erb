@@ -8,7 +8,7 @@
         <div class="card-body">
           <%= f.field_container :item_type, class: ['form-group'] do %>
             <%= f.label :item_type, Spree.t('admin.navigation.item_type') %>
-            <%= f.select(:item_type, Spree::MenuItem::ITEM_TYPE, {include_blank: false}, { class: 'select2' }) %>
+            <%= f.select(:item_type, @menu_item_types, {include_blank: false}, { class: 'select2' }) %>
             <%= f.error_message_on :item_type %>
           <% end %>
 
@@ -75,7 +75,7 @@
             <div class="col-6">
               <%= f.field_container :linked_resource_type, class: ['form-group'] do %>
                 <%= f.label :linked_resource_type, Spree.t('admin.navigation.link_to') %>
-                <%= f.select(:linked_resource_type, Spree::MenuItem::LINKED_RESOURCE_TYPE, {include_blank: false}, { class: 'selec2', id: 'LinkToSelect2' }) %>
+                <%= f.select(:linked_resource_type, @linked_resource_types, {include_blank: false}, { class: 'selec2', id: 'LinkToSelect2' }) %>
                 <%= f.error_message_on :linked_resource_type %>
               <% end %>
             </div>

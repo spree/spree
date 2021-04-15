@@ -3,6 +3,8 @@ module Spree
     class MenuItemsController < ResourceController
       belongs_to 'spree/menu'
 
+      before_action :load_data
+
       def index; end
 
       def collection_url
@@ -11,6 +13,13 @@ module Spree
 
       def location_after_save
         spree.edit_admin_menu_menu_item_path(@menu, @menu_item)
+      end
+
+      def load_data
+        @menu_item_types = Spree::MenuItem::ITEM_TYPE
+        @linked_resource_types = Spree::MenuItem::LINKED_RESOURCE_TYPE
+        @taxons = Spree::Taxon.all
+        @products = Spree::Product.all
       end
     end
   end

@@ -8,6 +8,7 @@ module Spree
 
       before_action :authorize_admin
       before_action :generate_admin_api_key
+      before_action :load_data
 
       protected
 
@@ -45,6 +46,10 @@ module Spree
 
       def config_locale
         Spree::Backend::Config[:locale]
+      end
+
+      def load_data
+        @stores = Spree::Store.accessible_by(current_ability, :show)
       end
 
       def can_not_transition_without_customer_info
