@@ -31,7 +31,7 @@ module Spree
 
         case linked_resource_type
         when 'Taxon'
-          permalink = Spree::Taxon.find(linked_resource_id).permalink || 'summer'
+          permalink = Spree::Taxon.find(linked_resource_id).permalink
           Spree::Core::Engine.routes.url_helpers.nested_taxons_path(permalink)
         when 'Product'
           product = Spree::Product.find(linked_resource_id)
