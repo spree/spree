@@ -77,7 +77,7 @@ offers = Spree::Taxon.find_by!(permalink: 'special-offers/30-percent-off')
 # Links For: PROMOS #
 #####################
 PROMOS.each do |promo|
-  Spree::MenuItem.where(
+  summer_promo = Spree::MenuItem.where(
     name: 'New Collection',
     subtitle: "Summer #{Date.today.year}",
     linked_resource_type: 'Taxon',
@@ -87,7 +87,10 @@ PROMOS.each do |promo|
     parent_id: promo
   ).first_or_create!
 
-  Spree::MenuItem.where(
+  summer_promo.linked_resource_id = summer.id
+  summer_promo.save!
+
+  special_offer = Spree::MenuItem.where(
     name: 'Special Offers',
     subtitle: 'Get up to 30% OFF',
     linked_resource_type: 'Taxon',
@@ -96,6 +99,9 @@ PROMOS.each do |promo|
     menu_id: main_menu,
     parent_id: promo
   ).first_or_create!
+
+  special_offer.linked_resource_id = offers.id
+  special_offer.save!
 end
 
 #################################
