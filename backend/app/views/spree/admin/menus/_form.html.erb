@@ -2,7 +2,7 @@
   <div class="col-12 col-md-6">
     <%= f.field_container :name, class: ['form-group'] do %>
       <%= f.label :name, Spree.t(:name) %>
-      <%= f.text_field :name, class: 'form-control' %>
+      <%= f.text_field :name, class: 'form-control', required: true %>
       <%= f.error_message_on :name %>
     <% end %>
   </div>

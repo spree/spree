@@ -4,9 +4,9 @@
     <%= render 'spree/admin/menu_items/link_inputs/url', f: f %>
   <% when 'Home Page' %>
     <%= render 'spree/admin/menu_items/link_inputs/home_page', f: f %>
-  <% when 'Taxon' %>
+  <% when 'Spree::Taxon' %>
     <%= render 'spree/admin/menu_items/link_inputs/taxon', linked_resource: linked_resource, f: f %>
-  <% when 'Product' %>
+  <% when 'Spree::Product' %>
     <%= render 'spree/admin/menu_items/link_inputs/product', linked_resource: linked_resource, f: f %>
   <% end %>
 </div>

@@ -6,6 +6,6 @@ class CreateSpreeMenus < ActiveRecord::Migration[6.0]
       t.timestamps
     end
 
-    add_index :spree_menus, :name
+    add_index :spree_menus, :name, unique: true
   end
 end

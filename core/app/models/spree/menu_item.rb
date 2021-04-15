@@ -1,6 +1,7 @@
 module Spree
   class MenuItem < Spree::Base
     belongs_to :menu
+    belongs_to :linked_resource, polymorphic: true
 
     acts_as_nested_set dependent: :destroy
 
@@ -16,7 +17,7 @@ module Spree
 
     LINKED_RESOURCE_TYPE = []
     STATIC_RESOURCE_TYPE = ['URL', 'Home Page']
-    DYNAMIC_RESOURCE_TYPE = ['Product', 'Taxon']
+    DYNAMIC_RESOURCE_TYPE = ['Spree::Product', 'Spree::Taxon']
 
     LINKED_RESOURCE_TYPE.unshift(*STATIC_RESOURCE_TYPE)
     LINKED_RESOURCE_TYPE.push(*DYNAMIC_RESOURCE_TYPE)
@@ -30,12 +31,10 @@ module Spree
         return if linked_resource_id.nil?
 
         case linked_resource_type
-        when 'Taxon'
-          permalink = Spree::Taxon.find(linked_resource_id).permalink
-          Spree::Core::Engine.routes.url_helpers.nested_taxons_path(permalink)
-        when 'Product'
-          product = Spree::Product.find(linked_resource_id)
-          Spree::Core::Engine.routes.url_helpers.product_path(product)
+        when 'Spree::Taxon'
+          Spree::Core::Engine.routes.url_helpers.nested_taxons_path(linked_resource.permalink)
+        when 'Spree::Product'
+          Spree::Core::Engine.routes.url_helpers.product_path(linked_resource)
         end
       else
         case linked_resource_type
