@@ -23,8 +23,8 @@ globals:
   SPREE_CURRENCY: true
   SPREE_DEFAULT_CURRENCY: true
   SPREE_DEFAULT_LOCALE: true
-  update_state: true
   OAUTH_TOKEN: true
+  updateAddressState: true
   formatSelect2Options: true
 
 env:

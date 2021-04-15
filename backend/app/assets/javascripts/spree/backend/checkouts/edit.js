@@ -33,7 +33,7 @@ function formatCustomerAddress(address, kind) {
 
   var stateSelect = $('#order_' + kind + '_address_attributes_state_id')
 
-  update_state(kind.charAt(0), function() {
+  updateAddressState(kind.charAt(0), function() {
     if (address.state) {
       stateSelect.val(address.state.id).trigger('change')
     }

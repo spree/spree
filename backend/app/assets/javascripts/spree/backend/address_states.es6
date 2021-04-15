@@ -1,24 +1,21 @@
-// eslint-disable-next-line camelcase, no-unused-vars
-function update_state(region, done) {
-  'use strict'
-
-  var countryId = $('#' + region + 'country select').val()
-  var stateContainer = $('#' + region + 'state').parent()
-  var stateSelect = $('#' + region + 'state select')
-  var stateInput = $('#' + region + 'state input.state_name')
+function updateAddressState(region, successCallback) {
+  const countryId = $('#' + region + 'country select').val()
+  const stateContainer = $('#' + region + 'state').parent()
+  const stateSelect = $('#' + region + 'state select')
+  const stateInput = $('#' + region + 'state input.state_name')
 
   fetch(Spree.routes.countries_api_v2 + '/' + countryId + '?include=states', {
     headers: Spree.apiV2Authentication()
-  }).then(function (response) {
+  }).then((response) => {
     switch (response.status) {
       case 200:
-        response.json().then(function (json) {
-          var states = json.included
-          var statesRequired = json.data.attributes.states_required
+        response.json().then((json) => {
+          const states = json.included
+          const statesRequired = json.data.attributes.states_required
           if (states.length > 0) {
             stateSelect.html('')
             $.each(states, function (_pos, state) {
-              var opt = $(document.createElement('option'))
+              const opt = $(document.createElement('option'))
                 .prop('value', state.id)
                 .html(state.attributes.name)
               stateSelect.append(opt).trigger('change')
@@ -39,7 +36,7 @@ function update_state(region, done) {
               stateContainer.hide()
             }
           }
-          if (done) done()
+          if (successCallback) successCallback()
         })
         break
     }
