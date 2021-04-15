@@ -28,7 +28,7 @@ module Spree
 
     def destination
       if DYNAMIC_RESOURCE_TYPE.include? linked_resource_type
-        return if linked_resource_id.nil?
+        return if linked_resource.nil?
 
         case linked_resource_type
         when 'Spree::Taxon'
