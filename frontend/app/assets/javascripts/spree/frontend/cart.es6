@@ -162,12 +162,15 @@ Spree.ready(function ($) {
 })
 
 Spree.fetchCart = (successCallback) => {
-  return $.ajax({
-    url: Spree.localizedPathFor('cart_link')
-  }).done((data) => {
+  fetch(Spree.localizedPathFor('cart_link'), {
+    method: 'GET',
+    credentials: 'same-origin'
+  }).then((response) => {
     Spree.cartFetched = true
-    $('#link-to-cart').html(data)
-    if (successCallback) successCallback()
+    response.text().then((html) => {
+      document.getElementById('link-to-cart').innerHTML = html
+      if (successCallback) successCallback()
+    })
   })
 }
 
