@@ -11,7 +11,7 @@ function CouponManager (input) {
   this.couponErrorIcon.src = Spree.translations.coupon_code_error_icon
 }
 
-CouponManager.prototype.applyCoupon = function () {
+CouponManager.prototype.applyCoupon = function (successCallback = null, failureCallback = null) {
   this.couponCode = $.trim($(this.couponCodeField).val())
   if (this.couponCode !== '') {
     if (this.couponStatus.length === 0) {
@@ -21,14 +21,14 @@ CouponManager.prototype.applyCoupon = function () {
       this.couponCodeField.parent().append(this.couponStatus)
     }
     this.couponStatus.removeClass()
-    this.sendRequest()
+    this.sendRequest(successCallback, failureCallback)
     return this.couponApplied
   } else {
     return true
   }
 }
 
-CouponManager.prototype.removeCoupon = function () {
+CouponManager.prototype.removeCoupon = function (successCallback = null, failureCallback = null) {
   this.couponCode = $.trim($(this.appliedCouponCodeField).attr('data-code'))
   if (this.couponCode !== '') {
     if (this.couponStatus.length === 0) {
@@ -38,14 +38,14 @@ CouponManager.prototype.removeCoupon = function () {
       this.appliedCouponCodeField.parent().append(this.couponStatus)
     }
     this.couponStatus.removeClass()
-    this.sendRemoveRequest()
+    this.sendRemoveRequest(successCallback, failureCallback)
     return this.couponRemoved
   } else {
     return true
   }
 }
 
-CouponManager.prototype.sendRequest = function () {
+CouponManager.prototype.sendRequest = function (successCallback = null, failureCallback = null) {
   return $.ajax({
     async: false,
     method: 'PATCH',
@@ -61,16 +61,18 @@ CouponManager.prototype.sendRequest = function () {
     this.couponCodeField.val('')
     this.couponStatus.addClass('alert-success').html(Spree.translations.coupon_code_applied)
     this.couponApplied = true
+    if (successCallback) successCallback()
   }.bind(this)).fail(function (xhr) {
     var handler = xhr.responseJSON
     this.couponCodeField.addClass('error')
     this.couponButton.addClass('error')
     this.couponStatus.addClass('alert-error').html(handler['error'])
     this.couponStatus.prepend(this.couponErrorIcon)
+    if (failureCallback) failureCallback()
   }.bind(this))
 }
 
-CouponManager.prototype.sendRemoveRequest = function () {
+CouponManager.prototype.sendRemoveRequest = function (successCallback = null, failureCallback = null) {
   return $.ajax({
     async: false,
     method: 'DELETE',
@@ -83,11 +85,13 @@ CouponManager.prototype.sendRemoveRequest = function () {
     this.appliedCouponCodeField.val('')
     this.couponStatus.addClass('alert-success').html(Spree.translations.coupon_code_removed)
     this.couponRemoved = true
+    if (successCallback) successCallback()
   }.bind(this)).fail(function (xhr) {
     var handler = xhr.responseJSON
     this.appliedCouponCodeField.addClass('error')
     this.removeCouponButton.addClass('error')
     this.couponStatus.addClass('alert-error').html(handler['error'])
     this.couponStatus.prepend(this.couponErrorIcon)
+    if (failureCallback) failureCallback()
   }.bind(this))
 }

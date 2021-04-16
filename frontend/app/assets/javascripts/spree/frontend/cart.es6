@@ -2,8 +2,6 @@
 //= require spree/api/storefront/cart
 
 Spree.ready(function ($) {
-  const formUpdateCart = $('form#update-cart')
-
   const buildEventTriggerObject = (dataset, quantity) => {
     if (!dataset || !quantity) return false
 
@@ -30,15 +28,9 @@ Spree.ready(function ($) {
   const getLineItemQuantity = (lineItemId) => parseInt(getLineItemInput(lineItemId).value, 10)
   const setLineItemQuantity = (lineItemId, newQuantity) => getLineItemInput(lineItemId).value = newQuantity
 
-  const handleCartApiError = (error, target) => {
-    if (target) target.removeAttribute('disabled')
-    Spree.hideProgressBar()
-    alert(error)
-  }
+  const handleSetQuantity = (event, quantityChange = null, successCallback, failureCallback) => {
+    event.preventDefault()
 
-  const handleCartApiSuccess = () => Spree.fetchCart(() => Turbolinks.visit())
-
-  const handleSetQuantity = (event, quantityChange = 0) => {
     const target = event.target
     const lineItemId = getLineItemId(target)
     const oldQuantity = getLineItemQuantity(lineItemId)
@@ -57,15 +49,15 @@ Spree.ready(function ($) {
     SpreeAPI.Storefront.setLineItemQuantity(
       lineItemId,
       newQuantity,
-      _response => handleCartApiSuccess(),
+      response => successCallback(response),
       error => {
-        handleCartApiError(error, target)
+        failureCallback(error, target)
         setLineItemQuantity(lineItemId, oldQuantity)
       }
     )
   }
 
-  const handleRemoveLineItem = (event) => {
+  const handleRemoveLineItem = (event, successCallback, failureCallback) => {
     event.preventDefault()
 
     // we need to check if click was recorded for the link element or SVG icon click inside the link
@@ -85,95 +77,106 @@ Spree.ready(function ($) {
 
     SpreeAPI.Storefront.removeLineItemFromCart(
       lineItemId,
-      _response => {
+      response => {
         if (target[0] && target[0].dataset && quantity) {
           target.trigger(buildEventTriggerObject(target[0].dataset, quantity))
         }
-        handleCartApiSuccess()
+        successCallback(response)
       },
-      error => handleCartApiError(error, target)
+      error => failureCallback(error, target)
     )
   }
 
-  if (formUpdateCart.length) {
-    const COUPON_CODE_ELEMENTS = {
-      appliedCouponCodeField: formUpdateCart.find('#order_applied_coupon_code'),
-      couponCodeField: formUpdateCart.find('#order_coupon_code'),
-      couponStatus: formUpdateCart.find('#coupon_status'),
-      couponButton: formUpdateCart.find('#shopping-cart-coupon-code-button'),
-      removeCouponButton: formUpdateCart.find('#shopping-cart-remove-coupon-code-button')
+  // full page cart
+  const formUpdateCart = document.getElementById('update-cart')
+  if (formUpdateCart) {
+    // success callback
+    const handleCartApiSuccess = () => Spree.fetchCart(() => Turbolinks.visit())
+    // failure
+    const handleCartApiError = (error = null, target = null) => {
+      if (target) target.removeAttribute('disabled')
+      Spree.hideProgressBar()
+      if (error) alert(error)
     }
 
     // handle remove line item from cart
-    document.querySelectorAll('#update-cart .delete').forEach((target) => target.addEventListener('click', (event) => handleRemoveLineItem(event)))
+    document.querySelectorAll('#update-cart .delete').forEach((target) => {
+      target.addEventListener('click', (event) => handleRemoveLineItem(event, handleCartApiSuccess, handleCartApiError))
+    })
 
     // handle quantity change
-    document.querySelectorAll('#update-cart input.shopping-cart-item-quantity-input').forEach((target) => target.addEventListener('change', (event) => handleSetQuantity(event)))
-    document.querySelectorAll('#update-cart .shopping-cart-item-quantity-decrease-btn').forEach((target) => target.addEventListener('click', (event) => handleSetQuantity(event, -1)))
-    document.querySelectorAll('#update-cart .shopping-cart-item-quantity-increase-btn').forEach((target) => target.addEventListener('click', (event) => handleSetQuantity(event, 1)))
+    document.querySelectorAll('#update-cart input.shopping-cart-item-quantity-input').forEach((target) => {
+      target.addEventListener('change', (event) => handleSetQuantity(event, null, handleCartApiSuccess, handleCartApiError))
+    })
+    document.querySelectorAll('#update-cart .shopping-cart-item-quantity-decrease-btn').forEach((target) => {
+      target.addEventListener('click', (event) => handleSetQuantity(event, -1, handleCartApiSuccess, handleCartApiError))
+    })
+    document.querySelectorAll('#update-cart .shopping-cart-item-quantity-increase-btn').forEach((target) => {
+      target.addEventListener('click', (event) => handleSetQuantity(event, 1, handleCartApiSuccess, handleCartApiError))
+    })
+
+    // coupon code manager
+    const COUPON_CODE_ELEMENTS = {
+      appliedCouponCodeField: $('#order_applied_coupon_code'),
+      couponCodeField: $('#order_coupon_code'),
+      couponStatus: $('#coupon_status'),
+      couponButton: $('#shopping-cart-coupon-code-button'),
+      removeCouponButton: $('#shopping-cart-remove-coupon-code-button')
+    }
 
     // handle coupon code apply
-    COUPON_CODE_ELEMENTS.couponButton.off('click').on('click', (event) => {
-      event.preventDefault()
+    if (COUPON_CODE_ELEMENTS.couponButton && COUPON_CODE_ELEMENTS.couponButton[0]) {
+      COUPON_CODE_ELEMENTS.couponButton[0].addEventListener('click', (event) => {
+        if (COUPON_CODE_ELEMENTS.couponCodeField && COUPON_CODE_ELEMENTS.couponCodeField[0].value.trim().length > 0) {
+          event.preventDefault()
+          Spree.showProgressBar()
 
-      if ($.trim(COUPON_CODE_ELEMENTS.couponCodeField.val()).length > 0) {
-        Spree.showProgressBar()
-
-        if (new CouponManager(COUPON_CODE_ELEMENTS).applyCoupon()) {
-          handleCartApiSuccess()
-        } else {
-          Spree.hideProgressBar()
+          new CouponManager(COUPON_CODE_ELEMENTS).applyCoupon(
+            () => handleCartApiSuccess(), // success callback
+            () => handleCartApiError() // failure callback
+          )
         }
-      }
-
-      return false
-    })
+      })
+    }
 
     // handle coupon code removal
-    COUPON_CODE_ELEMENTS.removeCouponButton.off('click').on('click', (event) => {
-      event.preventDefault()
-      Spree.showProgressBar()
-
-      if (new CouponManager(COUPON_CODE_ELEMENTS).removeCoupon()) {
-        handleCartApiSuccess()
-      } else {
-        Spree.hideProgressBar()
-      }
-      return false
-    })
-  }
-
-  // legacy submit action
-  // will be removed in Spree 5.0
-  formUpdateCart.submit(function (event) {
-    if ($.trim(COUPON_CODE_ELEMENTS.couponCodeField.val()).length > 0) {
-      // eslint-disable-next-line no-undef
-      if (new CouponManager(COUPON_CODE_ELEMENTS).applyCoupon()) {
-        this.submit()
-        return true
-      } else {
+    if (COUPON_CODE_ELEMENTS.removeCouponButton && COUPON_CODE_ELEMENTS.removeCouponButton[0]) {
+      COUPON_CODE_ELEMENTS.removeCouponButton[0].addEventListener('click', (event) => {
         event.preventDefault()
-        return false
-      }
+        Spree.showProgressBar()
+
+        new CouponManager(COUPON_CODE_ELEMENTS).removeCoupon(
+          () => handleCartApiSuccess(), // success callback
+          () => handleCartApiError() // failure callback
+        )
+      })
     }
-  })
+
+    formUpdateCart.addEventListener('submit', (event) => event.preventDefault())
+  }
 
   if (!Spree.cartFetched) Spree.fetchCart()
 })
 
-Spree.fetchCart = (successCallback) => {
-  fetch(Spree.localizedPathFor('cart_link'), {
-    method: 'GET',
-    credentials: 'same-origin'
-  }).then((response) => {
-    Spree.cartFetched = true
-    response.text().then((html) => {
-      document.getElementById('link-to-cart').innerHTML = html
-      if (successCallback) successCallback()
+// cart indicator
+Spree.fetchCart = (successCallback = null) => {
+  const cartIndicator = document.getElementById('link-to-cart')
+
+  if (cartIndicator || successCallback) {
+    fetch(Spree.localizedPathFor('cart_link'), {
+      method: 'GET',
+      credentials: 'same-origin'
+    }).then((response) => {
+      Spree.cartFetched = true
+      response.text().then((html) => {
+        if (cartIndicator) cartIndicator.innerHTML = html
+        if (successCallback) successCallback()
+      })
     })
-  })
+  }
 }
 
+// when adding to cart we need to make sure that the cart exists
 Spree.ensureCart = (successCallback) => {
   if (SpreeAPI.orderToken) {
     successCallback()
