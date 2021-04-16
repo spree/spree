@@ -5,7 +5,7 @@
       <%= field_container (s_or_b + '_' + field), nil, class: ["form-group", "#{type}-row"] do %>
         <%= f.label :country_id, Spree.t(:country) %>
         <div id="<%= s_or_b %>country">
-          <%= f.collection_select :country_id, available_countries, :id, :name, {}, { class: 'select2 w-100' } %>
+          <%= f.collection_select :country_id, all_countries, :id, :name, {}, { class: 'select2 w-100' } %>
         </div>
       <% end %>
     <% elsif field == "state" %>
@@ -38,7 +38,7 @@
 <% content_for :head do %>
   <script>
     $(document).ready(function(){
-      $('#<%= s_or_b %>country select').on('change', function() { update_state('<%= s_or_b %>'); });
+      $('#<%= s_or_b %>country select').on('change', function() { updateAddressState('<%= s_or_b %>'); });
     });
   </script>
 <% end %>

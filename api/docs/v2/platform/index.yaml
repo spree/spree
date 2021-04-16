@@ -1,0 +1,599 @@
+---
+openapi: 3.0.1
+info:
+  title: Platform API V2
+  version: v2
+paths:
+  "/api/v2/platform/addresses":
+    get:
+      summary: Returns a list of an Addresses
+      tags:
+      - Addresses
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: page
+        in: query
+        example: 1
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        example: 50
+        schema:
+          type: integer
+      - name: include
+        in: query
+        descripton: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: user,country,state
+        schema:
+          type: string
+      - name: filter
+        in: query
+        descripton: ''
+        example: user_id_eq=1&firstname_cont=Joh
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Records returned
+          content:
+            application/json:
+              example:
+                data:
+                - id: '1'
+                  type: address
+                  attributes:
+                    firstname: John
+                    lastname: Doe
+                    address1: 10 Lovely Street
+                    address2: Northwest
+                    city: Herndon
+                    zipcode: '35005'
+                    phone: 555-555-0199
+                    state_name:
+                    alternative_phone: 555-555-0199
+                    company: Company
+                    created_at: '2021-04-01T18:55:03.630Z'
+                    updated_at: '2021-04-01T18:55:03.630Z'
+                    deleted_at:
+                    label:
+                  relationships:
+                    country:
+                      data:
+                        id: '1'
+                        type: country
+                    state:
+                      data:
+                        id: '1'
+                        type: state
+                    user:
+                      data:
+                - id: '2'
+                  type: address
+                  attributes:
+                    firstname: John
+                    lastname: Doe
+                    address1: 10 Lovely Street
+                    address2: Northwest
+                    city: Herndon
+                    zipcode: '35005'
+                    phone: 555-555-0199
+                    state_name:
+                    alternative_phone: 555-555-0199
+                    company: Company
+                    created_at: '2021-04-01T18:55:03.634Z'
+                    updated_at: '2021-04-01T18:55:03.634Z'
+                    deleted_at:
+                    label:
+                  relationships:
+                    country:
+                      data:
+                        id: '1'
+                        type: country
+                    state:
+                      data:
+                        id: '2'
+                        type: state
+                    user:
+                      data:
+                meta:
+                  count: 2
+                  total_count: 2
+                  total_pages: 1
+                links:
+                  self: http://www.example.com/api/v2/platform/addresses?page=1&per_page=&include=&filter=
+                  next: http://www.example.com/api/v2/platform/addresses?include=&page=1&per_page=
+                  prev: http://www.example.com/api/v2/platform/addresses?include=&page=1&per_page=
+                  last: http://www.example.com/api/v2/platform/addresses?include=&page=1&per_page=
+                  first: http://www.example.com/api/v2/platform/addresses?include=&page=1&per_page=
+        '401':
+          description: Authentication Failed
+          content:
+            application/json:
+              example:
+                error: The access token is invalid
+    post:
+      summary: Creates an Address
+      tags:
+      - Addresses
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: include
+        in: query
+        descripton: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: user,country,state
+        schema:
+          type: string
+      responses:
+        '201':
+          description: record created
+          content:
+            application/json:
+              example:
+                data:
+                  id: '1'
+                  type: address
+                  attributes:
+                    firstname: John
+                    lastname: Doe
+                    address1: 10 Lovely Street
+                    address2: Northwest
+                    city: Herndon
+                    zipcode: '35005'
+                    phone: 555-555-0199
+                    state_name:
+                    alternative_phone: 555-555-0199
+                    company: Company
+                    created_at: '2021-04-01T18:55:03.796Z'
+                    updated_at: '2021-04-01T18:55:03.796Z'
+                    deleted_at:
+                    label:
+                  relationships:
+                    country:
+                      data:
+                        id: '1'
+                        type: country
+                    state:
+                      data:
+                        id: '1'
+                        type: state
+                    user:
+                      data:
+                        id: '1'
+                        type: user
+        '422':
+          description: invalid request
+          content:
+            application/json:
+              example:
+                error: First Name can't be blank, Last Name can't be blank, Address
+                  can't be blank, City can't be blank, Country can't be blank, Zip
+                  Code can't be blank, and Phone can't be blank
+                errors:
+                  firstname:
+                  - can't be blank
+                  lastname:
+                  - can't be blank
+                  address1:
+                  - can't be blank
+                  city:
+                  - can't be blank
+                  country:
+                  - can't be blank
+                  zipcode:
+                  - can't be blank
+                  phone:
+                  - can't be blank
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/address_params"
+  "/api/v2/platform/addresses/{id}":
+    get:
+      summary: Returns an Address
+      tags:
+      - Addresses
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: include
+        in: query
+        descripton: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: user,country,state
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Record found
+          content:
+            application/json:
+              example:
+                data:
+                  id: '1'
+                  type: address
+                  attributes:
+                    firstname: John
+                    lastname: Doe
+                    address1: 10 Lovely Street
+                    address2: Northwest
+                    city: Herndon
+                    zipcode: '35005'
+                    phone: 555-555-0199
+                    state_name:
+                    alternative_phone: 555-555-0199
+                    company: Company
+                    created_at: '2021-04-01T18:55:03.828Z'
+                    updated_at: '2021-04-01T18:55:03.828Z'
+                    deleted_at:
+                    label:
+                  relationships:
+                    country:
+                      data:
+                        id: '1'
+                        type: country
+                    state:
+                      data:
+                        id: '1'
+                        type: state
+                    user:
+                      data:
+        '404':
+          description: Record not found
+          content:
+            application/json:
+              example:
+                error: The resource you were looking for could not be found.
+        '401':
+          description: Authentication Failed
+          content:
+            application/json:
+              example:
+                error: The access token is invalid
+    put:
+      summary: Updates an Address
+      tags:
+      - Addresses
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: include
+        in: query
+        descripton: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: user,country,state
+        schema:
+          type: string
+      responses:
+        '200':
+          description: record updated
+          content:
+            application/json:
+              example:
+                data:
+                  id: '1'
+                  type: address
+                  attributes:
+                    firstname: Jack
+                    lastname: Doe
+                    address1: 10 Lovely Street
+                    address2: Northwest
+                    city: Herndon
+                    zipcode: '35005'
+                    phone: 555-555-0199
+                    state_name:
+                    alternative_phone: 555-555-0199
+                    company: Company
+                    created_at: '2021-04-01T18:55:03.885Z'
+                    updated_at: '2021-04-01T18:55:03.895Z'
+                    deleted_at:
+                    label:
+                  relationships:
+                    country:
+                      data:
+                        id: '1'
+                        type: country
+                    state:
+                      data:
+                        id: '1'
+                        type: state
+                    user:
+                      data:
+        '422':
+          description: invalid request
+          content:
+            application/json:
+              example:
+                error: First Name can't be blank and Last Name can't be blank
+                errors:
+                  firstname:
+                  - can't be blank
+                  lastname:
+                  - can't be blank
+        '404':
+          description: Record not found
+          content:
+            application/json:
+              example:
+                error: The resource you were looking for could not be found.
+        '401':
+          description: Authentication Failed
+          content:
+            application/json:
+              example:
+                error: The access token is invalid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/address_params"
+    delete:
+      summary: Deletes an Address
+      tags:
+      - Addresses
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Record deleted
+        '404':
+          description: Record not found
+          content:
+            application/json:
+              example:
+                error: The resource you were looking for could not be found.
+        '401':
+          description: Authentication Failed
+          content:
+            application/json:
+              example:
+                error: The access token is invalid
+  "/api/v2/platform/countries":
+    get:
+      summary: Returns a list of Countries
+      tags:
+      - Countries
+      security:
+      - bearer_auth: []
+      responses:
+        '200':
+          description: Records returned
+          content:
+            application/json:
+              example:
+                data:
+                - id: '1'
+                  type: country
+                  attributes:
+                    iso_name: ISO_NAME_11
+                    iso: I11
+                    iso3: IS11
+                    name: NAME_11
+                    numcode: 840
+                    states_required: false
+                    updated_at: '2021-04-01T18:55:04.007Z'
+                    zipcode_required: true
+                  relationships:
+                    states:
+                      data: []
+                - id: '2'
+                  type: country
+                  attributes:
+                    iso_name: ISO_NAME_12
+                    iso: I12
+                    iso3: IS12
+                    name: NAME_12
+                    numcode: 840
+                    states_required: false
+                    updated_at: '2021-04-01T18:55:04.009Z'
+                    zipcode_required: true
+                  relationships:
+                    states:
+                      data: []
+                meta:
+                  count: 2
+                  total_count: 2
+                  total_pages: 1
+                links:
+                  self: http://www.example.com/api/v2/platform/countries
+                  next: http://www.example.com/api/v2/platform/countries?page=1
+                  prev: http://www.example.com/api/v2/platform/countries?page=1
+                  last: http://www.example.com/api/v2/platform/countries?page=1
+                  first: http://www.example.com/api/v2/platform/countries?page=1
+        '401':
+          description: Authentication Failed
+          content:
+            application/json:
+              example:
+                error: The access token is invalid
+  "/api/v2/platform/countries/{id}":
+    get:
+      summary: Returns a Country
+      tags:
+      - Countries
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Record found
+          content:
+            application/json:
+              example:
+                data:
+                  id: '1'
+                  type: country
+                  attributes:
+                    iso_name: ISO_NAME_15
+                    iso: I15
+                    iso3: IS15
+                    name: NAME_15
+                    numcode: 840
+                    states_required: false
+                    updated_at: '2021-04-01T18:55:04.046Z'
+                    zipcode_required: true
+                  relationships:
+                    states:
+                      data: []
+        '404':
+          description: Record not found
+          content:
+            application/json:
+              example:
+                error: The resource you were looking for could not be found.
+        '401':
+          description: Authentication Failed
+          content:
+            application/json:
+              example:
+                error: The access token is invalid
+servers:
+- url: https://{defaultHost}
+  variables:
+    defaultHost:
+      default: localhost:3000
+components:
+  securitySchemes:
+    bearer_auth:
+      type: http
+      scheme: bearer
+  schemas:
+    address_params:
+      type: object
+      properties:
+        country_id:
+          type: integer
+        state_id:
+          type: integer
+        state_name:
+          type: string
+        address1:
+          type: string
+        city:
+          type: string
+        zipcode:
+          type: string
+        phone:
+          type: string
+        alternative_phone:
+          type: string
+        firstname:
+          type: string
+        lastname:
+          type: string
+        label:
+          type: string
+        company:
+          type: string
+        user_id:
+          type: integer
+    resources_list:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            allOf:
+            - "$ref": "#/components/schemas/resource_properties"
+        meta:
+          type: object
+          properties:
+            count:
+              type: integer
+            total_count:
+              type: integer
+            total_pages:
+              type: integer
+          required:
+          - count
+          - total_count
+          - total_pages
+        links:
+          type: object
+          properties:
+            self:
+              type: string
+            next:
+              type: string
+            prev:
+              type: string
+            last:
+              type: string
+            first:
+              type: string
+          required:
+          - self
+          - next
+          - prev
+          - last
+          - first
+      required:
+      - data
+      - meta
+      - links
+    resource_properties:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+        attributes:
+          type: object
+        relationships:
+          type: object
+      required:
+      - id
+      - type
+      - attributes
+      - relationships
+    resource:
+      type: object
+      properties:
+        data:
+          "$ref": "#/components/schemas/resource_properties"
+      required:
+      - data
+    error:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+      - error
+    validation_errors:
+      type: object
+      properties:
+        error:
+          type: string
+        errors:
+          type: object
+      required:
+      - error
+      - errors

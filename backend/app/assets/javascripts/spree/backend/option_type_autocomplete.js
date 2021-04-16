@@ -5,29 +5,19 @@ $.fn.optionTypeAutocomplete = function () {
     minimumInputLength: 2,
     multiple: true,
     ajax: {
-      url: Spree.routes.option_types_api,
+      url: Spree.routes.option_types_api_v2,
       datatype: 'json',
+      headers: Spree.apiV2Authentication(),
       data: function (params) {
-        var query = {
-          q: {
-            name_cont: params.term
-          },
-          token: Spree.api_key
+        return {
+          filter: {
+            name_i_cont: params.term
+          }
         }
-
-        return query
       },
       processResults: function (data) {
-        return {
-          results: data
-        }
+        return formatSelect2Options(data)
       }
-    },
-    templateResult: function (optionType) {
-      return optionType.name
-    },
-    templateSelection: function (optionType) {
-      return optionType.text
     }
   })
 }

@@ -25,6 +25,8 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
 
   s.add_development_dependency 'jsonapi-rspec'
+  s.add_development_dependency 'rswag-specs'
+  s.add_development_dependency 'multi_json'
 
   s.add_dependency 'spree_core', s.version
   s.add_dependency 'rabl', '~> 0.14.2'
