@@ -1,5 +1,9 @@
 <% @body_id = 'cart' %>
 
+<% content_for :head do %>
+  <meta name="turbolinks-cache-control" content="no-cache" />
+<% end %>
+
 <div data-hook="cart_container" class="container shopping-cart">
   <%= render 'spree/shared/breadcrumbs', current_page_name: Spree.t('cart_page.title') %>
 
