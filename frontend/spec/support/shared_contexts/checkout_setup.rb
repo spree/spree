@@ -28,10 +28,6 @@ shared_context 'checkout setup' do
     fill_in 'card_expiry', with: '12 / 24'
     fill_in 'card_code', with: '123'
   end
-
-  def add_mug_to_cart
-    add_to_cart(mug)
-  end
 end
 
 shared_context 'proceed to payment step' do

@@ -12,7 +12,7 @@ function CouponManager (input) {
 }
 
 CouponManager.prototype.applyCoupon = function (successCallback = null, failureCallback = null) {
-  this.couponCode = $.trim($(this.couponCodeField).val())
+  this.couponCode = $(this.couponCodeField).val().trim()
   if (this.couponCode !== '') {
     if (this.couponStatus.length === 0) {
       this.couponStatus = $('<div/>', {
@@ -29,7 +29,7 @@ CouponManager.prototype.applyCoupon = function (successCallback = null, failureC
 }
 
 CouponManager.prototype.removeCoupon = function (successCallback = null, failureCallback = null) {
-  this.couponCode = $.trim($(this.appliedCouponCodeField).attr('data-code'))
+  this.couponCode = $(this.appliedCouponCodeField).attr('data-code').trim()
   if (this.couponCode !== '') {
     if (this.couponStatus.length === 0) {
       this.couponStatus = $('<div/>', {

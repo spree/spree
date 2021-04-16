@@ -33,7 +33,7 @@ end
   </div>
 
   <div class="row checkout-content" data-hook="checkout_content">
-    <%= form_for @order, url: spree.update_checkout_path(@order.state), html: { id: "checkout_form_#{@order.state}", class: "w-100 d-lg-flex align-items-lg-baseline  flex-wrap position-relative" } do |form| %>
+    <%= form_for @order, url: spree.update_checkout_path(@order.state), html: { id: "checkout_form_#{@order.state}", class: "w-100 d-lg-flex align-items-lg-baseline checkout-form flex-wrap position-relative" } do |form| %>
       <div class="<%= if @order.state != 'confirm' then 'col-lg-6' else 'col-md-12' end %>" data-hook="checkout_form_wrapper">
         <%= form.hidden_field :state_lock_version %>
         <%= render @order.state, form: form %>
@@ -43,6 +43,15 @@ end
         <div id="checkout-summary" class="col-md-12 col-lg-auto" data-hook="checkout_summary_box">
           <div class="checkout-summary-container position-sticky">
             <%= render partial: 'summary', locals: { order: @order } %>
+            <% if Spree::Frontend::Config[:coupon_codes_enabled] %>
+              <%= render partial: 'spree/orders/coupon_code',
+                locals: {
+                  promotion: @order.valid_coupon_promotions.first,
+                  order_form: form,
+                  classes: ''
+                }
+              %>
+            <% end %>
             <div data-hook="buttons">
               <% submit_label_key = @order.confirm? ? :place_order : :save_and_continue %>
               <%= submit_tag Spree.t(submit_label_key), class: 'btn btn-primary text-uppercase font-weight-bold w-100 checkout-content-save-continue-button' %>

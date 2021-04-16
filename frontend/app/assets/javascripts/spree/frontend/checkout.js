@@ -1,6 +1,7 @@
 //= require spree/frontend/coupon_manager
 
 Spree.disableSaveOnClick = function () {
+  console.warn('DEPRECATION: Spree.disableSaveOnClick() will be removed in Spree 5.0')
   $('form.edit_order').on('submit', function (event) {
     if ($(this).data('submitted') === true) {
       event.preventDefault()
@@ -18,9 +19,9 @@ Spree.enableSave = function () {
 Spree.ready(function () {
   Spree.Checkout = {}
 
-  var formCheckoutConfirm = $('form#checkout_form_confirm')
-  if (formCheckoutConfirm.length) {
-    $('form#checkout_form_confirm button#shopping-cart-coupon-code-button').off('click').on('click', function(event) {
+  var checkoutForm = $('form.checkout-form')
+  if (checkoutForm.length) {
+    $('form.checkout-form #shopping-cart-coupon-code-button').off('click').on('click', function(event) {
       event.preventDefault()
 
       var input = {
@@ -39,7 +40,7 @@ Spree.ready(function () {
       }
     })
 
-    $('form#checkout_form_confirm button#shopping-cart-remove-coupon-code-button').off('click').on('click', function(event) {
+    $('form.checkout-form #shopping-cart-remove-coupon-code-button').off('click').on('click', function(event) {
       var input = {
         appliedCouponCodeField: $('#order_applied_coupon_code'),
         couponCodeField: $('#order_coupon_code'),
@@ -49,6 +50,7 @@ Spree.ready(function () {
       }
 
       if (new CouponManager(input).removeCoupon()) {
+        location.reload()
         return true
       } else {
         event.preventDefault()
