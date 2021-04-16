@@ -67,7 +67,7 @@ Spree.ready(function ($) {
       var lineItemId = getLineItemId(this)
       var button = $(event.target)
       // FIXME: this selector madness need to go away...
-      var quantityInputs = $("form#update-cart input.shopping-cart-item-quantity-input[data-id='line_item" + lineItemId + "']")
+      var quantityInputs = document.querySelector(`input[data-id='line_item_${lineItemId}']`)
       var quantity = $(quantityInputs).val()
       button.attr('disabled', true)
 
