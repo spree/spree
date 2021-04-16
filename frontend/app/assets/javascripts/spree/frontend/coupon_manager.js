@@ -64,6 +64,7 @@ CouponManager.prototype.sendRequest = function (successCallback = null, failureC
     if (successCallback) successCallback()
   }.bind(this)).fail(function (xhr) {
     var handler = xhr.responseJSON
+    this.couponCodeField.val('')
     this.couponCodeField.addClass('error')
     this.couponButton.addClass('error')
     this.couponStatus.addClass('alert-error').html(handler['error'])
