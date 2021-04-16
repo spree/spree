@@ -1,7 +1,9 @@
 require 'spec_helper'
 
-describe 'Editing an existing menu', type: :feature do
+describe 'Menu Edit', type: :feature do
   stub_authorization!
+
+  # Work In Progress
 
   let!(:main_menu) { create(:menu, name: 'Main Menu') }
 

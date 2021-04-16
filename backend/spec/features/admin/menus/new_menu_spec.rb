@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'New Menu Page', type: :feature do
+describe 'New Menu', type: :feature do
   stub_authorization!
 
   context 'when user visits new menu page' do
@@ -34,14 +34,14 @@ describe 'New Menu Page', type: :feature do
     end
   end
 
-  context 'when a user tries to create a menu with no name' do
+  context 'when a user tries to create a menu with a duplicate name' do
     let!(:main_menu) { create(:menu, name: 'Main Menu') }
 
     before do
       visit spree.new_admin_menu_path
     end
 
-    it 'lets the user know that the Name has already been taken' do
+    it 'warns the user that the Name has already been taken' do
       fill_in 'Name', with: 'Main Menu'
       click_on 'Create'
       expect(page).to have_text ('Name has already been taken')

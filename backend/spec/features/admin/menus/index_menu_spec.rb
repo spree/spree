@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'Menu index page', type: :feature do
+describe 'Menus Index', type: :feature do
   stub_authorization!
 
   context 'when no menus are present' do
@@ -21,7 +21,7 @@ describe 'Menu index page', type: :feature do
       visit spree.admin_menus_path
     end
 
-    it 'lists all of the menus in the DOM' do
+    it 'lists all of the menus in the table' do
       within_table('menusTable') do
         expect(page).to have_text 'Main Menu'
         expect(page).to have_text 'Footer Menu'
@@ -37,7 +37,7 @@ describe 'Menu index page', type: :feature do
     end
   end
 
-  context 'when a user click Add New Menu' do
+  context 'when a user clicks Add New Menu' do
     before do
       visit spree.admin_menus_path
       within('div#contentHeader') do
