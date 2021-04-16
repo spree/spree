@@ -11,7 +11,7 @@ The Spree test code is an evolving story. We started out with RSpec, then switch
 
 ## Testing Spree Components
 
-Spree consists of several different gems (see the [Source Code Guide](/developer/source/navigating.html#layout-and-structure) for more details.) Each of these gems has its own test suite which can be found in the `spec` directory. Since these gems are also Rails engines, they can't really be tested in complete isolation - they need to be tested within the context of a Rails application.
+Spree consists of several different gems (see the [Understanding Spree](/developer/getting_started/understanding_spree.html#spree-modules) for more details.) Each of these gems has its own test suite which can be found in the `spec` directory. Since these gems are also Rails engines, they can't really be tested in complete isolation - they need to be tested within the context of a Rails application.
 
 You can easily build such an application by using the Rake task designed for this purpose, running it inside the component you want to test:
 

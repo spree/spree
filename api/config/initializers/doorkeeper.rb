@@ -2,6 +2,7 @@ Doorkeeper.configure do
   orm :active_record
   use_refresh_token
   api_only
+  base_controller 'ActionController::API'
 
   skip_client_authentication_for_password_grant { true } if defined?(skip_client_authentication_for_password_grant)
 
@@ -23,9 +24,15 @@ Doorkeeper.configure do
     current_spree_user&.has_spree_role?('admin') || redirect_to(routes.root_url)
   end
 
-  grant_flows %w(password)
+  grant_flows %w[password client_credentials]
+
+  allow_blank_redirect_uri true
+
+  handle_auth_errors :raise
 
   access_token_methods :from_bearer_authorization, :from_access_token_param
+
+  optional_scopes :admin, :write, :read
 end
 
 Doorkeeper::AccessGrant.class_eval do

@@ -59,9 +59,11 @@
         <% @users.each do |user| %>
           <tr id="<%= spree_dom_id user %>" data-hook="admin_users_index_rows">
             <td class='user_email'><%= link_to user.email, edit_admin_user_url(user) %></td>
-            <td data-hook="admin_users_index_row_actions" class="actions actions-2 text-right">
-              <%= link_to_edit user, no_text: true if can?(:edit, user) %>
-              <%= link_to_delete user, no_text: true if can?(:delete, user) %>
+            <td data-hook="admin_users_index_row_actions" class="actions">
+              <span class="d-flex justify-content-end">
+                <%= link_to_edit user, no_text: true if can?(:edit, user) %>
+                <%= link_to_delete user, no_text: true if can?(:delete, user) %>
+              </span>
             </td>
           </tr>
         <% end %>

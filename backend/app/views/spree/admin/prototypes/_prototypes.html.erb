@@ -10,12 +10,14 @@
       <% @prototypes.each do |prototype| %>
         <tr id="row_<%= prototype.id %>" data-hook="available_row">
           <td><%= prototype.name %></td>
-          <td class="actions actions-1">
-            <%= link_to_with_icon 'save.svg',
-              Spree.t(:select),
-              select_admin_prototype_url(prototype),
-              class: 'btn btn-success btn-sm ajax select_properties_from_prototype',
-              no_text: true %>
+          <td class="actions">
+            <span class="d-flex justify-content-end">
+              <%= link_to_with_icon 'save.svg',
+                Spree.t(:select),
+                select_admin_prototype_url(prototype),
+                class: 'btn btn-success btn-sm ajax select_properties_from_prototype',
+                no_text: true %>
+            </span>
           </td>
         </tr>
       <% end %>

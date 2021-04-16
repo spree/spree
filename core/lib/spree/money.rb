@@ -5,7 +5,7 @@ Money.rounding_mode = BigDecimal::ROUND_HALF_UP
 
 module Spree
   class Money
-    class <<self
+    class << self
       attr_accessor :default_formatting_rules
     end
 
@@ -16,6 +16,7 @@ module Spree
     }
 
     attr_reader :money
+
     delegate    :cents, :currency, to: :money
 
     def initialize(amount, options = {})

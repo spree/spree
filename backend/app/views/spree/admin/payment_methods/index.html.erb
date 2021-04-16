@@ -31,9 +31,11 @@
           <td><%= method.type.split('::', 3).last %></td>
           <td class="text-center"><%= Spree.t(method.display_on) %></td>
           <td class="text-center"><%= active_badge(method.active) %></td>
-          <td data-hook="admin_payment_methods_index_row_actions" class="actions actions-2 text-right">
-            <%= link_to_edit(method, no_text: true) if can? :edit, method %>
-            <%= link_to_delete(method, no_text: true) if can? :delete, method %>
+          <td data-hook="admin_payment_methods_index_row_actions" class="actions">
+            <span class="d-flex justify-content-end">
+              <%= link_to_edit(method, no_text: true) if can? :edit, method %>
+              <%= link_to_delete(method, no_text: true) if can? :delete, method %>
+            </span>
           </td>
         </tr>
       <% end %>

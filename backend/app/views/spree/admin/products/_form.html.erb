@@ -194,7 +194,7 @@
       <%= f.label :taxon_ids, Spree.t(:taxons) %>
 
       <% if can? :modify, Spree::Classification %>
-        <%= f.select :taxon_ids, options_from_collection_for_select(@product.taxons, :id, :pretty_name, @product.taxons.pluck(:id)), { include_hidden: true }, multiple: true, class: 'select2-hidden-accessible' %>
+        <%= f.select :taxon_ids, options_from_collection_for_select(@product.taxons, :id, :pretty_name, @product.taxon_ids), { include_hidden: true }, multiple: true, class: 'select2-hidden-accessible' %>
       <% elsif @product.taxons.any? %>
         <ul class="text_list">
           <% @product.taxons.each do |taxon| %>
@@ -213,7 +213,7 @@
       <%= f.label :option_type_ids, Spree.t(:option_types) %>
 
       <% if can? :modify, Spree::ProductOptionType %>
-        <%= f.select :option_type_ids, options_from_collection_for_select(Spree::OptionType.all, :id, :name, @product.option_types.pluck(:id)), { include_hidden: true }, multiple: true, class: 'select2-hidden-accessible' %>
+        <%= f.select :option_type_ids, options_from_collection_for_select(@product.option_types, :id, :name, @product.option_type_ids), { include_hidden: true }, multiple: true, class: 'select2-hidden-accessible' %>
       <% elsif @product.option_types.any? %>
         <ul class="text_list">
           <% @product.option_types.each do |type| %>

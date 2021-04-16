@@ -31,14 +31,16 @@
       <%= line_item_shipment_price(item.line_item, item.quantity) %>
     </td>
 
-    <td class="cart-item-delete actions actions-3 text-center" data-hook="cart_item_delete">
-      <% if((!shipment.shipped?) && can?(:update, item.line_item)) %>
-        <%= link_to_with_icon 'edit.svg', Spree.t('actions.edit'), "#", class: 'edit-item btn btn-outline-secondary btn-sm', title: Spree.t('actions.edit'), no_text: true %>
-        <%= link_to_with_icon 'cancel.svg', Spree.t('actions.cancel'), "#", class: 'cancel-item  btn btn-outline-secondary btn-sm', data: { action: 'cancel' }, title: Spree.t('actions.cancel'), style: 'display: none', no_text: true %>
-        <%= link_to_with_icon 'save.svg', Spree.t('actions.save'), "#", class: 'save-item btn btn-success btn-sm', data: {'shipment-number' => shipment.number, 'variant-id' => item.variant.id, action: 'save'}, title: Spree.t('actions.save'), style: 'display: none', no_text: true %>
-        <%= link_to_with_icon 'split.svg', Spree.t('split'), "#", class: 'split-item btn btn-outline-secondary btn-sm', data: {action: 'split', 'variant-id' => item.variant.id}, title: Spree.t('split'), no_text: true %>
-        <%= link_to_with_icon 'delete.svg', Spree.t('delete'), "#", class: 'delete-item btn btn-danger btn-sm', data: { 'shipment-number' => shipment.number, 'variant-id' => item.variant.id, action: 'remove'}, title: Spree.t('delete'), no_text: true %>
-      <% end %>
+    <td class="cart-item-delete actions" data-hook="cart_item_delete">
+      <span class="d-flex justify-content-center">
+        <% if((!shipment.shipped?) && can?(:update, item.line_item)) %>
+          <%= link_to_with_icon 'edit.svg', Spree.t('actions.edit'), "#", class: 'edit-item btn btn-outline-secondary btn-sm', title: Spree.t('actions.edit'), no_text: true %>
+          <%= link_to_with_icon 'cancel.svg', Spree.t('actions.cancel'), "#", class: 'cancel-item  btn btn-outline-secondary btn-sm', data: { action: 'cancel' }, title: Spree.t('actions.cancel'), style: 'display: none', no_text: true %>
+          <%= link_to_with_icon 'save.svg', Spree.t('actions.save'), "#", class: 'save-item btn btn-success btn-sm', data: {'shipment-number' => shipment.number, 'variant-id' => item.variant.id, action: 'save'}, title: Spree.t('actions.save'), style: 'display: none', no_text: true %>
+          <%= link_to_with_icon 'split.svg', Spree.t('split'), "#", class: 'split-item btn btn-outline-secondary btn-sm', data: {action: 'split', 'variant-id' => item.variant.id}, title: Spree.t('split'), no_text: true %>
+          <%= link_to_with_icon 'delete.svg', Spree.t('delete'), "#", class: 'delete-item btn btn-danger btn-sm', data: { 'shipment-number' => shipment.number, 'variant-id' => item.variant.id, action: 'remove'}, title: Spree.t('delete'), no_text: true %>
+        <% end %>
+      </span>
     </td>
   </tr>
 <% end %>

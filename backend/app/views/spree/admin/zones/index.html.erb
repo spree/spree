@@ -25,9 +25,11 @@
           <td><%= zone.name %></td>
           <td><%= zone.description %></td>
           <td><%= active_badge(zone.default_tax?) %></td>
-          <td class="actions actions-2 text-right">
-            <%= link_to_edit(zone, no_text: true) if can? :edit, zone %>
-            <%= link_to_delete(zone, no_text: true) if can? :delete, zone %>
+          <td class="actions">
+            <span class="d-flex justify-content-end">
+              <%= link_to_edit(zone, no_text: true) if can? :edit, zone %>
+              <%= link_to_delete(zone, no_text: true) if can? :delete, zone %>
+            </span>
           </td>
         </tr>
       <% end %>

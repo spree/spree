@@ -62,8 +62,10 @@
                                   id: "stock_item_backorderable_#{item.stock_location.id}" %>
                           <% end if can? :update, item %>
                         </td>
-                        <td class="actions actions-1 text-center">
-                          <%= link_to_with_icon('delete.svg', Spree.t(:remove), [:admin, item], method: :delete, remote: true, class: 'icon_link btn btn-danger btn-sm', data: { action: :remove, confirm: Spree.t(:are_you_sure) }, no_text: true) if can? :destroy, item %>
+                        <td class="actions">
+                          <span class="d-flex justify-content-center">
+                            <%= link_to_with_icon('delete.svg', Spree.t(:remove), [:admin, item], method: :delete, remote: true, class: 'icon_link btn btn-danger btn-sm', data: { action: :remove, confirm: Spree.t(:are_you_sure) }, no_text: true) if can? :destroy, item %>
+                          </span>
                         </td>
                       </tr>
                     <% end %>

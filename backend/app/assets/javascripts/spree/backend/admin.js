@@ -60,7 +60,7 @@ $(document).ready(function() {
           el.blur()
         }
       }).done(function() {
-        var $flashElement = $('.alert-success')
+        var $flashElement = $('#FlashAlertsContainer span[data-alert-type="success"]')
         if ($flashElement.length) {
           el.parents('tr').fadeOut('hide', function() {
             $(this).remove()

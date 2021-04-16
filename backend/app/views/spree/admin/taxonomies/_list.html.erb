@@ -14,9 +14,11 @@
             <%= svg_icon name: "sort.svg", width: '18', height: '18' %>
           </td>
           <td><%= taxonomy.name %></td>
-          <td class="actions actions-2 text-right">
-            <%= link_to_edit taxonomy.id, no_text: true if can?(:edit, taxonomy) %>
-            <%= link_to_delete taxonomy, no_text: true if can?(:delete, taxonomy) %>
+          <td class="actions">
+            <span class="d-flex justify-content-end">
+              <%= link_to_edit taxonomy.id, no_text: true if can?(:edit, taxonomy) %>
+              <%= link_to_delete taxonomy, no_text: true if can?(:delete, taxonomy) %>
+            </span>
           </td>
         </tr>
       <% end %>

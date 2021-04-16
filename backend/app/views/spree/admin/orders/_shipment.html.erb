@@ -43,11 +43,13 @@
                       { class: 'select2', data: {'shipment-number' => shipment.number } } %>
               </div>
             </td>
-            <td class="actions text-center">
-              <% if can? :update, shipment %>
-                <%= link_to_with_icon 'cancel.svg', Spree.t('actions.cancel'), "#", class: 'cancel-method btn btn-outline-secondary btn-sm', data: {action: 'cancel'}, title: Spree.t('actions.cancel'), no_text: true %>
-                <%= link_to_with_icon 'save.svg', Spree.t('actions.save'), "#", class: 'save-method btn btn-success btn-sm', data: {'shipment-number' => shipment.number, action: 'save'}, title: Spree.t('actions.save'), no_text: true %>
-              <% end %>
+            <td class="actions">
+              <span class="d-flex justify-content-center">
+                <% if can? :update, shipment %>
+                  <%= link_to_with_icon 'cancel.svg', Spree.t('actions.cancel'), "#", class: 'cancel-method btn btn-outline-secondary btn-sm', data: {action: 'cancel'}, title: Spree.t('actions.cancel'), no_text: true %>
+                  <%= link_to_with_icon 'save.svg', Spree.t('actions.save'), "#", class: 'save-method btn btn-success btn-sm', data: {'shipment-number' => shipment.number, action: 'save'}, title: Spree.t('actions.save'), no_text: true %>
+                <% end %>
+              </span>
             </td>
           </tr>
           <% end %>
@@ -64,10 +66,12 @@
               <td colspan='5'><%= Spree.t(:no_shipping_method_selected) %></td>
             <% end %>
 
-            <td class="actions text-center">
-              <% if( (can? :update, shipment) and !shipment.shipped?) %>
-                <%= link_to_with_icon 'edit.svg', Spree.t('edit'), "javascript:;", class: 'edit-method with-tip btn btn-sm btn-outline-secondary', data: {action: 'edit'}, no_text: true %>
-              <% end %>
+            <td class="actions">
+              <span class="d-flex justify-content-center">
+                <% if( (can? :update, shipment) and !shipment.shipped?) %>
+                  <%= link_to_with_icon 'edit.svg', Spree.t('edit'), "javascript:;", class: 'edit-method with-tip btn btn-sm btn-outline-secondary', data: {action: 'edit'}, no_text: true %>
+                <% end %>
+              </span>
             </td>
           </tr>
 
@@ -76,11 +80,13 @@
             <label><%= Spree.t(:tracking_number) %>:</label>
             <%= text_field_tag :tracking, shipment.tracking, class: "form-control" %>
           </td>
-          <td class="actions text-center">
-            <% if can? :update, shipment %>
-              <%= link_to_with_icon 'cancel.svg', Spree.t('actions.cancel'), "#", class: 'cancel-tracking btn btn-outline-secondary btn-sm', data: {action: 'cancel'}, title: Spree.t('actions.cancel'), no_text: true %>
-              <%= link_to_with_icon 'save.svg', Spree.t('actions.save'), "#", class: 'save-tracking btn btn-success btn-sm', data: {'shipment-number' => shipment.number, action: 'save'}, title: Spree.t('actions.save'), no_text: true %>
-            <% end %>
+          <td class="actions">
+            <span class="d-flex justify-content-center">
+              <% if can? :update, shipment %>
+                <%= link_to_with_icon 'cancel.svg', Spree.t('actions.cancel'), "#", class: 'cancel-tracking btn btn-outline-secondary btn-sm', data: {action: 'cancel'}, title: Spree.t('actions.cancel'), no_text: true %>
+                <%= link_to_with_icon 'save.svg', Spree.t('actions.save'), "#", class: 'save-tracking btn btn-success btn-sm', data: {'shipment-number' => shipment.number, action: 'save'}, title: Spree.t('actions.save'), no_text: true %>
+              <% end %>
+            </span>
           </td>
         </tr>
 
@@ -100,10 +106,12 @@
               <%= Spree.t(:no_tracking_present) %>
             <% end %>
           </td>
-          <td class="actions text-center">
-            <% if can? :update, shipment %>
-              <%= link_to_with_icon 'edit.svg', Spree.t('edit'), "#", class: 'edit-tracking btn btn-outline-secondary btn-sm', data: {action: 'edit'}, title: Spree.t('edit'), no_text: true %>
-            <% end %>
+          <td class="actions">
+            <span class="d-flex justify-content-center">
+              <% if can? :update, shipment %>
+                <%= link_to_with_icon 'edit.svg', Spree.t('edit'), "#", class: 'edit-tracking btn btn-outline-secondary btn-sm', data: {action: 'edit'}, title: Spree.t('edit'), no_text: true %>
+              <% end %>
+            </span>
           </td>
         </tr>
       </tbody>
