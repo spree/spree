@@ -21,8 +21,9 @@ module Spree
     def show
       redirect_if_legacy_path
 
-      @taxon = params[:taxon_id].present? ? Spree::Taxon.find(params[:taxon_id]) : @product.taxons.first
-
+      @taxon = params[:taxon_id].present? ? Spree::Taxon.find_by(id: params[:taxon_id]) : nil
+      @taxon = @product.taxons.first unless @taxon.present?
+      
       if !http_cache_enabled? || stale?(etag: etag_show, last_modified: last_modified_show, public: true)
         @product_summary = Spree::ProductSummaryPresenter.new(@product).call
         @product_properties = @product.product_properties.includes(:property)
