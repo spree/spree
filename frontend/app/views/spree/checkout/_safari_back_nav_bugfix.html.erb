@@ -1,0 +1,19 @@
+<%
+content_for :head do
+  agent = request.env['HTTP_USER_AGENT']
+  if agent =~ /Safari/ && !(agent =~ /Chrome/)
+%>
+  <script>
+    if (!!window.performance && window.performance.navigation.type === 2) {
+      window.location.reload();
+    }
+    window.onpageshow = function(event) {
+      if (event.persisted) {
+        window.location.reload()
+      }
+    }
+  </script>
+<%
+  end
+end
+%>
