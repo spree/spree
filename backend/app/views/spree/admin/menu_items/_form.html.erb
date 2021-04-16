@@ -54,7 +54,7 @@
               <%= image_tag main_app.url_for(@menu_item.image_asset) %>
             <% end %>
             <%= f.field_container :image_asset, class: ['form-group'] do %>
-              <%= f.label :image_asset, Spree.t(:image_asset) %><br>
+              <%= f.label :image_asset, Spree.t('admin.navigation.image_asset') %><br>
               <%= f.file_field :image_asset %>
               <%= f.error_message_on :image_asset %>
             <% end %>
@@ -85,7 +85,11 @@
 
               <div id="alertToClickUpdate" class="d-none">
                 <div class="alert alert-warning mt-3">
-                  Click update to load your new link
+                  <% if %w[new create].include? controller.action_name %>
+                    <%= raw Spree.t('admin.navigation.click_create_to_load_new_link') %>
+                  <% else %>
+                    <%= raw Spree.t('admin.navigation.click_update_to_load_new_link') %>
+                  <% end %>
                 </div>
               </div>
             </div>

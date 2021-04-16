@@ -7,9 +7,10 @@
     <% end %>
   </div>
   <div class="col-12 col-md-6">
-    <div class="form-group ">
+    <div class="form-group">
       <%= label_tag :menu_stores, Spree.t(:stores) %>
       <%= collection_select(:menu, :store_ids, @stores, :id, :unique_name, {}, { multiple: true, class: 'select2' }) %>
+      <%= f.error_message_on :menu_stores %>
     </div>
   </div>
 </div>

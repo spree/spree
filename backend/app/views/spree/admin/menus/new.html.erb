@@ -1,5 +1,5 @@
 <% content_for :page_title do %>
-  <%= link_to Spree.t(:menus), spree.admin_menus_url %> / <%= Spree.t(:new_menu) %>
+  <%= link_to Spree.t('admin.navigation.all_menus'), spree.admin_menus_url %> / <%= Spree.t('admin.navigation.new_menu') %>
 <% end %>
 
 <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @menu } %>

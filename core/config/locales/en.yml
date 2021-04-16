@@ -574,25 +574,32 @@ en:
         no_store_credit: User has no Store Credit available.
         available_store_credit: User has %{amount} in Store Credit available.
       navigation:
-          add_new_item: 'Add New Item'
-          allow_this_menu_item_to_contain_nested_menu_items: Allow this Menu Item to contain nested items
-          back_to_all_menus: Back To All Menus
-          menu_item_type: Menu Item Type
-          menu_item_basic_details: Basic Details
-          link_settings: Link Settings
-          link_to: Link To
-          new_menu: New Menu
-          new_menu_item: New Menu Item
-          no_menu_items: '<b>%{menu}</b> has no items. Click the <b>Add New Item</b> button to begin adding links to this menu.'
-          nested_under_info: Quickly nest your link in the menu.
-          item_type: Item Type
-          open_link_in_new_window: Open this link in a new window
-          menu_item_type_message: "For more information about Menu Item Types and nesting Menu Items, visit the documentation by
-          <a href='https://guides.spreecommerce.org/user/configuration/configuring_geography.html#zones' target='_blank' class='alert-link'>clicking here</a>."
-          menus: Menus
-          menu_items: '%{menu_name} Items'
-          subtitle: Subtitle
-          this_link_takes_you_to_your_stores_home_page: This link takes you to your stores home page.
+        all_menus: All Menus
+        add_new_menu: Add New Menu
+        add_new_item: 'Add New Item'
+        allow_this_menu_item_to_contain_nested_menu_items: Allow this Menu Item to contain nested items
+        back_to_all_menus: Back To All Menus
+        click_create_to_load_new_link: 'Click the <b>Create</b> button below to save your new Menu Item, and update the link.'
+        click_update_to_load_new_link: 'Click the <b>Update</b> button below to change the link.'
+        menu_item_type: Menu Item Type
+        menu_item_basic_details: Basic Details
+        link_settings: Link Settings
+        link_to: Link To
+        image_asset: Add a Promotion image or Link icon.
+        new_menu_item: New Menu Item
+        new_menu: New Menu
+        nested_under: Nested under
+        no_menu_items: '<b>%{menu}</b> has no items. Click the <b>Add New Item</b> button to begin adding links to this menu.'
+        nested_under_info: Quickly nest your link in the menu.
+        item_type: Item Type
+        open_link_in_new_window: Open this link in a new window
+        menu_item_type_message: "For more information about Menu Item Types and nesting Menu Items, visit the documentation by
+        <a href='https://guides.spreecommerce.org/user/configuration/configuring_geography.html#zones' target='_blank' class='alert-link'>clicking here</a>."
+        menus: Menus
+        menu_items: '%{menu_name} Items'
+        subtitle: Subtitle
+        you_have_no_menus: You have no Menus, click the Add New Menu button to create your first Menu.
+        this_link_takes_you_to_your_stores_home_page: This link takes you to your stores home page.
     administration: Administration
     advertise: Advertise
     agree_to_privacy_policy: Agree to Privacy Policy

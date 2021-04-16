@@ -21,6 +21,6 @@ class CreateSpreeMenuItems < ActiveRecord::Migration[6.0]
     add_index :spree_menu_items, :rgt
     add_index :spree_menu_items, :parent_id
     add_index :spree_menu_items, :item_type
-    add_index :spree_menu_items, [:linked_resource_type, :linked_resource_id], name: 'index_on_linked_resource_type_and_linked_resource_id'
+    add_index :spree_menu_items, [:linked_resource_type, :linked_resource_id], name: 'index_spree_menu_items_on_linked_resource'
   end
 end
