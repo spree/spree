@@ -9,11 +9,8 @@ describe Spree::Menu, type: :model do
     let!(:menu) { create(:menu, store_ids: [store_1.id, store_3.id]) }
 
     it 'returns menu if they are avalable to the store' do
-      by_store_1 = described_class.by_store(store_1.id)
-      by_store_2 = described_class.by_store(store_2.id)
-
-      expect(by_store_1).to include(menu)
-      expect(by_store_2).not_to include(menu)
+      expect(described_class.by_store(store_1.id)).to include(menu)
+      expect(described_class.by_store(store_2.id)).not_to include(menu)
     end
   end
 
@@ -22,14 +19,12 @@ describe Spree::Menu, type: :model do
     let!(:menu_2) { create(:menu, name: 'Header') }
 
     it 'returns a menu when searched for by name' do
-      by_name_1 = described_class.by_name(menu_1.name)
-
-      expect(by_name_1).to include(menu_1)
-      expect(by_name_1).not_to include(menu_2)
+      expect(described_class.by_name(menu_1.name)).to include(menu_1)
+      expect(described_class.by_name(menu_1.name)).not_to include(menu_2)
     end
   end
 
-  describe 'validates uniqueness' do
+  describe 'validates uniqueness of name' do
     let!(:menu_1) { create(:menu, name: 'Footer') }
 
     it 'returns uniqueness error' do

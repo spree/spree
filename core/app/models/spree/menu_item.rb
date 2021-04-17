@@ -14,7 +14,6 @@ module Spree
 
     has_one_attached :image_asset
 
-    # Not frozen so they can be added to
     ITEM_TYPE = %w[Link Promotion Container]
 
     LINKED_RESOURCE_TYPE = []
@@ -25,6 +24,7 @@ module Spree
     LINKED_RESOURCE_TYPE.push(*DYNAMIC_RESOURCE_TYPE)
 
     validates :name, presence: true
+    validates :menu_id, presence: true, numericality: { only_integer: true }
     validates :item_type, inclusion: { in: ITEM_TYPE }
     validates :linked_resource_type, inclusion: { in: LINKED_RESOURCE_TYPE }
 
