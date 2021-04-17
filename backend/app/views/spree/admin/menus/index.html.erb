@@ -11,12 +11,18 @@
   <table id="menusTable" class="table">
     <thead>
       <th><%= Spree.t(:name) %></th>
+       <th><%= Spree.t('admin.navigation.used_in') %></th>
       <th data-hook="admin_menus_index_header_actions" class="actions"></th>
     <thead>
     <tbody>
       <% @menus.each do |menu| %>
         <tr>
           <td><%= menu.name %></td>
+          <td>
+            <% menu.store_ids.each do |store| %>
+              <span class="badge badge-secondary"><%= @stores.find(store).unique_name %></span>
+            <% end %>
+          </td>
           <td class="actions" data-hook="admin_menus_index_row_actions">
              <span class="d-flex justify-content-end">
              <%= link_to_edit(menu, no_text: true) %>

@@ -12,7 +12,9 @@ module Spree
         menu_item_type = content_tag(:small, item.item_type, class: 'form-text text-muted mt-0')
 
         image = if item.image_asset.attached? && item.image_asset.image?
-                  content_tag(:div, content_tag(:div, (image_tag main_app.url_for(item.image_asset)), class: 'menu_items_image_holder'), class: 'ml-2')
+                  content_tag(:div, content_tag(:div,
+                                                (image_tag main_app.url_for(item.image_asset)),
+                                                class: 'menu_items_image_holder'), class: 'ml-2')
                 else
                   ''
                 end

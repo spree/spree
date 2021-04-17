@@ -598,6 +598,7 @@ en:
         menus: Menus
         menu_items: '%{menu_name} Items'
         subtitle: Subtitle
+        used_in: Used In
         you_have_no_menus: You have no Menus, click the Add New Menu button to create your first Menu.
         this_link_takes_you_to_your_stores_home_page: This link takes you to your stores home page.
     administration: Administration

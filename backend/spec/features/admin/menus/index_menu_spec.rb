@@ -14,7 +14,11 @@ describe 'Menus Index', type: :feature do
   end
 
   context 'when menus are present' do
-    let!(:main_menu) { create(:menu, name: 'Main Menu') }
+    let!(:store_1) { create(:store) }
+    let!(:store_2) { create(:store) }
+    let!(:store_3) { create(:store) }
+
+    let!(:main_menu) { create(:menu, name: 'Main Menu', store_ids: [store_1.id, store_3.id]) }
     let!(:footer_menu) { create(:menu, name: 'Footer Menu') }
 
     before do
@@ -25,6 +29,16 @@ describe 'Menus Index', type: :feature do
       within_table('menusTable') do
         expect(page).to have_text 'Main Menu'
         expect(page).to have_text 'Footer Menu'
+      end
+    end
+
+    it 'lists each menu with its store ' do
+      within_table('menusTable') do
+        expect(page).to have_text 'Main Menu'
+        expect(page).to have_text 'Footer Menu'
+        expect(page).to have_text store_1.unique_name
+        expect(page).to have_text store_3.unique_name
+        expect(page).not_to have_text store_2.unique_name
       end
     end
 
