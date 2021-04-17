@@ -2,5 +2,5 @@
   <%= f.label :linked_resource_id, Spree.t('taxon') %>
   <%= f.select :linked_resource_id, options_from_collection_for_select(@taxons, :id, :pretty_name, @menu_item.linked_resource_id), {include_blank: true}, multiple: false, class: 'select2-clear' %>
   <%= f.error_message_on :linked_resource_id %>
-  <small class="form-text text-muted"><%= @menu_item.destination %></small>
+  <small class="form-text text-muted d-none"><%#= @menu_item.destination %></small>
 <% end %>

@@ -1,5 +1,5 @@
 <% content_for :page_title do %>
-  <%= link_to Spree.t('admin.navigation.all_menus'), spree.admin_menus_url %> / <%= @menu.name %>
+  <%= link_to Spree.t('admin.navigation.all_menus'), spree.admin_menus_path %> / <%= @menu.name %>
 <% end %>
 
 <div class="row">
@@ -38,7 +38,7 @@
 
         <div class="card-body p-0 bg-light">
           <div id="primaryMenuContainer" class="menu-container">
-            <% if @menu_items_in_order.any? %>
+            <% if @menu_items_in_order.present? %>
             <% nested_set_options(@menu_items_in_order) do |item| %>
               <% if item.root? %>
                 <%= build_menu_item(@menu, item) %>

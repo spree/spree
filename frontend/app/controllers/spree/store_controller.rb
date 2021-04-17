@@ -9,6 +9,7 @@ module Spree
     skip_before_action :verify_authenticity_token, only: :ensure_cart, raise: false
 
     before_action :redirect_to_default_locale
+    before_action :load_menus
 
     def account_link
       render partial: 'spree/shared/link_to_account'
@@ -29,6 +30,10 @@ module Spree
 
     def ensure_cart
       render json: current_order(create_order_if_necessary: true) # force creation of order if doesn't exists
+    end
+
+    def load_menus
+      @menus = Spree::Menu.by_store(current_store)
     end
 
     protected

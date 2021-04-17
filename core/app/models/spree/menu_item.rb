@@ -1,5 +1,7 @@
 module Spree
   class MenuItem < Spree::Base
+    include Spree::Core::Engine.routes.url_helpers
+
     belongs_to :menu
     belongs_to :linked_resource, polymorphic: true
 
@@ -32,16 +34,16 @@ module Spree
 
         case linked_resource_type
         when 'Spree::Taxon'
-          Spree::Core::Engine.routes.url_helpers.nested_taxons_path(linked_resource.permalink)
+          nested_taxons_path(linked_resource.permalink)
         when 'Spree::Product'
-          Spree::Core::Engine.routes.url_helpers.product_path(linked_resource)
+          product_path(linked_resource)
         end
       else
         case linked_resource_type
         when 'URL'
           url
         when 'Home Page'
-          Spree::Core::Engine.routes.url_helpers.root_path
+          root_path
         end
       end
     end

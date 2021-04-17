@@ -5,6 +5,7 @@ $nestable-background-color: rgb(214, 214, 214);
 #menuArea {
   .space-buttons {
     box-shadow: -11px 0 16px 6px white;
+    z-index: 9;
     a {
       margin: 2px;
     }
@@ -22,8 +23,14 @@ $nestable-background-color: rgb(214, 214, 214);
     background-color: var(--light);
 
     .menu-container {
-      margin-left: 50px;
+      margin-left: 25px;
       background-color: var(--light);
+    }
+
+    @include media-breakpoint-up(sm) {
+      .menu-container {
+        margin-left: 50px;
+      }
     }
   }
 
