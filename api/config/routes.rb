@@ -252,6 +252,14 @@ Spree::Core::Engine.add_routes do
         resources :credit_cards
         resources :addresses
 
+        # Menu API
+        resources :menus
+        resource :menu_items do
+          member do
+            patch :reposition
+          end
+        end
+
         # Store API
         resources :stores
       end

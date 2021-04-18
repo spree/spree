@@ -48,10 +48,6 @@ module Spree
       end
     end
 
-    def child_index=(idx)
-      move_to_child_with_index(parent, idx.to_i) unless new_record?
-    end
-
     private
 
     def reset_link_attributes
