@@ -81,7 +81,7 @@ SpreeAPI.Storefront.applyCouponCode = function (couponCode, successCallback, fai
 SpreeAPI.Storefront.removeCouponCode = function (couponCode, successCallback, failureCallback) {
   fetch(Spree.routes.api_v2_storefront_cart_remove_coupon_code(couponCode), {
     method: 'DELETE',
-    headers: SpreeAPI.prepareHeaders({ 'X-Spree-Order-Token': SpreeAPI.orderToken }),
+    headers: SpreeAPI.prepareHeaders({ 'X-Spree-Order-Token': SpreeAPI.orderToken })
   }).then(function (response) { SpreeAPI.Storefront.handleCartUpdate(response, successCallback, failureCallback) })
 }
 

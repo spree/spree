@@ -1,4 +1,5 @@
 function CouponManager (input) {
+  console.warn('Coupon Manager class is deprecated and will be removed in Spree 5.0. Please use the new coupon_code template with Stimulus controller')
   this.input = input
   this.appliedCouponCodeField = this.input.appliedCouponCodeField
   this.couponCodeField = this.input.couponCodeField

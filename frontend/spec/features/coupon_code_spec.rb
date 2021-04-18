@@ -1,18 +1,9 @@
 require 'spec_helper'
 
 describe 'Coupon code promotions', type: :feature, js: true do
-  let!(:country) { create(:country, name: 'United States of America', states_required: true) }
-  let!(:state) { create(:state, name: 'Alabama', country: country) }
-  let!(:mug) { create(:product, name: 'RoR Mug', price: 20) }
-
   include_context 'checkout setup'
 
-  before do
-    create(:zone)
-    create(:shipping_method)
-    create(:check_payment_method)
-    add_to_cart(mug)
-  end
+  before { add_to_cart(mug) }
 
   context 'visitor makes checkout as guest without registration' do
     def create_basic_coupon_promotion(code)
@@ -33,11 +24,6 @@ describe 'Coupon code promotions', type: :feature, js: true do
     end
 
     let!(:promotion) { create_basic_coupon_promotion('onetwo') }
-
-    def apply_coupon(code)
-      fill_in 'order_coupon_code', with: code
-      click_button 'shopping-cart-coupon-code-button'
-    end
 
     shared_examples 'apply coupon code' do
       it 'informs about an invalid coupon code' do
@@ -65,7 +51,7 @@ describe 'Coupon code promotions', type: :feature, js: true do
         it 'applies a promotion to an order and later removes it' do
           apply_coupon('onetwo')
           expect(page).to have_field('order_applied_coupon_code', with: 'Promotion (Onetwo)')
-          click_button 'shopping-cart-remove-coupon-code-button'
+          find('.shopping-cart-coupon-code button').click
           expect(page).not_to have_field('order_applied_coupon_code', with: 'Promotion (Onetwo)')
         end
       end

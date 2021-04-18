@@ -1,7 +1,6 @@
-//= require spree/frontend/coupon_manager
 //= require spree/api/storefront/cart
 
-Spree.ready(function ($) {
+Spree.ready(() => {
   const buildEventTriggerObject = (dataset, quantity) => {
     if (!dataset || !quantity) return false
 
@@ -114,43 +113,6 @@ Spree.ready(function ($) {
     document.querySelectorAll('#update-cart .shopping-cart-item-quantity-increase-btn').forEach((target) => {
       target.addEventListener('click', (event) => handleSetQuantity(event, 1, handleCartApiSuccess, handleCartApiError))
     })
-
-    // coupon code manager
-    const COUPON_CODE_ELEMENTS = {
-      appliedCouponCodeField: $('#order_applied_coupon_code'),
-      couponCodeField: $('#order_coupon_code'),
-      couponStatus: $('#coupon_status'),
-      couponButton: $('#shopping-cart-coupon-code-button'),
-      removeCouponButton: $('#shopping-cart-remove-coupon-code-button')
-    }
-
-    // handle coupon code apply
-    if (COUPON_CODE_ELEMENTS.couponButton && COUPON_CODE_ELEMENTS.couponButton[0]) {
-      COUPON_CODE_ELEMENTS.couponButton[0].addEventListener('click', (event) => {
-        if (COUPON_CODE_ELEMENTS.couponCodeField && COUPON_CODE_ELEMENTS.couponCodeField[0].value.trim().length > 0) {
-          event.preventDefault()
-          Spree.showProgressBar()
-
-          new CouponManager(COUPON_CODE_ELEMENTS).applyCoupon(
-            () => handleCartApiSuccess(), // success callback
-            () => handleCartApiError() // failure callback
-          )
-        }
-      })
-    }
-
-    // handle coupon code removal
-    if (COUPON_CODE_ELEMENTS.removeCouponButton && COUPON_CODE_ELEMENTS.removeCouponButton[0]) {
-      COUPON_CODE_ELEMENTS.removeCouponButton[0].addEventListener('click', (event) => {
-        event.preventDefault()
-        Spree.showProgressBar()
-
-        new CouponManager(COUPON_CODE_ELEMENTS).removeCoupon(
-          () => handleCartApiSuccess(), // success callback
-          () => handleCartApiError() // failure callback
-        )
-      })
-    }
 
     formUpdateCart.addEventListener('submit', (event) => event.preventDefault())
   }

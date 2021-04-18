@@ -28,6 +28,11 @@ shared_context 'checkout setup' do
     fill_in 'card_expiry', with: '12 / 24'
     fill_in 'card_code', with: '123'
   end
+
+  def apply_coupon(code)
+    fill_in 'order_coupon_code', with: code
+    find('.shopping-cart-coupon-code button').click
+  end
 end
 
 shared_context 'proceed to payment step' do

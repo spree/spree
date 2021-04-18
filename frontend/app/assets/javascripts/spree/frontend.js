@@ -2,6 +2,7 @@
 //= require jquery_ujs
 //= require popper
 //= require bootstrap
+//= require stimulus.umd
 //= require jquery.payment
 //= require cleave
 //= require spree
@@ -41,6 +42,8 @@
 //= require spree/frontend/turbolinks_scroll_fix
 //= require spree/frontend/main_nav_bar
 //= require spree/frontend/login
+//= require spree/frontend/stimulus
+//= require_tree ./frontend/controllers
 
 Spree.routes.api_tokens = Spree.pathFor('api_tokens')
 Spree.routes.ensure_cart = Spree.pathFor('ensure_cart')

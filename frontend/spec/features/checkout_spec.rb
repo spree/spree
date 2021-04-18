@@ -459,8 +459,8 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
     end
 
     it 'makes sure payment reflects order total with discounts' do
-      find('#order_coupon_code').fill_in with: promotion.code
-      find('#shopping-cart-coupon-code-button').click
+      apply_coupon(promotion.code)
+      expect(page).to have_field('order_applied_coupon_code', with: 'Promotion (Huhuhu)')
       click_on 'checkout'
 
       fill_in 'order_email', with: 'test@example.com'
@@ -480,8 +480,7 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
 
     context 'invalid coupon' do
       it 'doesnt create a payment record' do
-        find('#order_coupon_code').fill_in with: 'invalid'
-        find('#shopping-cart-coupon-code-button').click
+        apply_coupon('invalid')
 
         expect(Spree::Payment.count).to eq 0
         expect(page).to have_content(Spree.t(:coupon_code_not_found))
@@ -514,8 +513,8 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
         end
 
         it 'move user to order succesfully placed page' do
-          find('#order_coupon_code').fill_in(with: promotion2.code)
-          find('#shopping-cart-coupon-code-button').click
+          apply_coupon(promotion2.code)
+          expect(page).to have_field('order_applied_coupon_code', with: 'Promotion (test-7450)')
           click_on 'checkout'
 
           fill_in 'order_email', with: 'test@example.com'
