@@ -4,8 +4,9 @@ module Spree
       module Platform
         class MenuItemsController < ResourceController
           def reposition
+            puts "MSK: #{params[:new_parent_id]}"
             @moved_item = Spree::MenuItem.find(params[:moved_item_id])
-            @new_parent = if params[:new_parent_id] == 'undefined' || params[:new_parent_id].nil?
+            @new_parent = if params[:new_parent_id].nil?
                             nil
                           else
                             Spree::MenuItem.find(params[:new_parent_id])

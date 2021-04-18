@@ -28,13 +28,19 @@ document.addEventListener('DOMContentLoaded', function() {
 })
 
 function handleMenuItemMove(evt, successCallback) {
-  const movedItem = evt.item.dataset.itemId
-  const newParentId = evt.to.dataset.parentId
-  const newPosition = evt.newIndex
+  const data = {
+    moved_item_id: evt.item.dataset.itemId,
+    new_parent_id: evt.to.dataset.parentId || null,
+    new_position_idx: evt.newIndex
+  }
 
-  fetch(Spree.routes.menus_items_api_v2 + `?moved_item_id=${movedItem}&new_parent_id=${newParentId}&new_position_idx=${newPosition}`, {
+  fetch(Spree.routes.menus_items_api_v2, {
     method: 'PATCH',
-    headers: Spree.apiV2Authentication()
+    headers: {
+      Authorization: 'Bearer' + OAUTH_TOKEN,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(data)
   })
     .then(response => {
       console.log(response);

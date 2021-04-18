@@ -22,7 +22,7 @@ module AwesomeNestedSet
       # and we can skip moving the item to root.
       move_to_root unless level == 0 && root?
 
-      # Sort the positioninng of the item
+      # Sort the positioning of the item
       # at root level based on its siblings.
       my_position = siblings.to_a.index(self)
       if my_position && my_position < index
