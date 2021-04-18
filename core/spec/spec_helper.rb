@@ -69,7 +69,6 @@ RSpec.configure do |config|
 
   config.include FactoryBot::Syntax::Methods
   config.include Spree::TestingSupport::Preferences
-  config.include Spree::TestingSupport::UrlHelpers
   config.include Spree::TestingSupport::Kernel
 
   # Clean out the database state before the tests run
