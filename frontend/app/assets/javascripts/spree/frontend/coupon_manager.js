@@ -46,53 +46,42 @@ CouponManager.prototype.removeCoupon = function (successCallback = null, failure
 }
 
 CouponManager.prototype.sendRequest = function (successCallback = null, failureCallback = null) {
-  return $.ajax({
-    async: false,
-    method: 'PATCH',
-    url: Spree.routes.api_v2_storefront_cart_apply_coupon_code,
-    dataType: 'json',
-    headers: {
-      'X-Spree-Order-Token': SpreeAPI.orderToken
+  var cc = this
+  SpreeAPI.Storefront.applyCouponCode(
+    this.couponCode,
+    function(_response) {
+      cc.couponCodeField.val('')
+      cc.couponStatus.addClass('alert-success').html(Spree.translations.coupon_code_applied)
+      cc.couponApplied = true
+      if (successCallback) successCallback()
     },
-    data: {
-      coupon_code: this.couponCode
+    function(error) {
+      cc.couponCodeField.val('')
+      cc.couponCodeField.addClass('error')
+      cc.couponButton.addClass('error')
+      cc.couponStatus.addClass('alert-error').html(error)
+      cc.couponStatus.prepend(cc.couponErrorIcon)
+      if (failureCallback) failureCallback()
     }
-  }).done(function () {
-    this.couponCodeField.val('')
-    this.couponStatus.addClass('alert-success').html(Spree.translations.coupon_code_applied)
-    this.couponApplied = true
-    if (successCallback) successCallback()
-  }.bind(this)).fail(function (xhr) {
-    var handler = xhr.responseJSON
-    this.couponCodeField.val('')
-    this.couponCodeField.addClass('error')
-    this.couponButton.addClass('error')
-    this.couponStatus.addClass('alert-error').html(handler['error'])
-    this.couponStatus.prepend(this.couponErrorIcon)
-    if (failureCallback) failureCallback()
-  }.bind(this))
+  )
 }
 
 CouponManager.prototype.sendRemoveRequest = function (successCallback = null, failureCallback = null) {
-  return $.ajax({
-    async: false,
-    method: 'DELETE',
-    url: Spree.routes.api_v2_storefront_cart_remove_coupon_code(this.couponCode),
-    dataType: 'json',
-    headers: {
-      'X-Spree-Order-Token': SpreeAPI.orderToken
+  var cc = this
+  SpreeAPI.Storefront.removeCouponCode(
+    this.couponCode,
+    function(_response) {
+      cc.appliedCouponCodeField.val('')
+      cc.couponStatus.addClass('alert-success').html(Spree.translations.coupon_code_removed)
+      cc.couponRemoved = true
+      if (successCallback) successCallback()
+    },
+    function(error) {
+      cc.appliedCouponCodeField.addClass('error')
+      cc.removeCouponButton.addClass('error')
+      cc.couponStatus.addClass('alert-error').html(error)
+      cc.couponStatus.prepend(cc.couponErrorIcon)
+      if (failureCallback) failureCallback()
     }
-  }).done(function () {
-    this.appliedCouponCodeField.val('')
-    this.couponStatus.addClass('alert-success').html(Spree.translations.coupon_code_removed)
-    this.couponRemoved = true
-    if (successCallback) successCallback()
-  }.bind(this)).fail(function (xhr) {
-    var handler = xhr.responseJSON
-    this.appliedCouponCodeField.addClass('error')
-    this.removeCouponButton.addClass('error')
-    this.couponStatus.addClass('alert-error').html(handler['error'])
-    this.couponStatus.prepend(this.couponErrorIcon)
-    if (failureCallback) failureCallback()
-  }.bind(this))
+  )
 }

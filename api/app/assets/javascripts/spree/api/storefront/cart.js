@@ -68,6 +68,23 @@ SpreeAPI.Storefront.setLineItemQuantity = function (lineItemId, quantity, succes
   }).then(function (response) { SpreeAPI.Storefront.handleCartUpdate(response, successCallback, failureCallback) })
 }
 
+SpreeAPI.Storefront.applyCouponCode = function (couponCode, successCallback, failureCallback) {
+  fetch(Spree.routes.api_v2_storefront_cart_apply_coupon_code, {
+    method: 'PATCH',
+    headers: SpreeAPI.prepareHeaders({ 'X-Spree-Order-Token': SpreeAPI.orderToken }),
+    body: JSON.stringify({
+      coupon_code: couponCode
+    })
+  }).then(function (response) { SpreeAPI.Storefront.handleCartUpdate(response, successCallback, failureCallback) })
+}
+
+SpreeAPI.Storefront.removeCouponCode = function (couponCode, successCallback, failureCallback) {
+  fetch(Spree.routes.api_v2_storefront_cart_remove_coupon_code(couponCode), {
+    method: 'DELETE',
+    headers: SpreeAPI.prepareHeaders({ 'X-Spree-Order-Token': SpreeAPI.orderToken }),
+  }).then(function (response) { SpreeAPI.Storefront.handleCartUpdate(response, successCallback, failureCallback) })
+}
+
 SpreeAPI.Storefront.emptyCart = function (successCallback, failureCallback) {
   fetch(Spree.routes.api_v2_storefront_cart_empty, {
     method: 'PATCH',
