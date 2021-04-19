@@ -43,9 +43,16 @@ function handleMenuItemMove(evt, successCallback) {
     body: JSON.stringify(data)
   })
     .then(response => {
-      console.log(response);
+      if (response.ok !== true) {
+        handleMenuItemMoveError(response)
+      }
     })
     .catch(err => {
       console.error(err);
     });
+}
+
+function handleMenuItemMoveError (response) {
+  // eslint-disable-next-line no-undef
+  show_flash('error', Spree.translations.move_could_not_be_saved)
 }

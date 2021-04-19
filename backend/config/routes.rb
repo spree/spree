@@ -189,7 +189,7 @@ Spree::Core::Engine.add_routes do
     end
 
     resources :menus do
-      resources :menu_items
+      resources :menu_items, except: :index
     end
   end
 
