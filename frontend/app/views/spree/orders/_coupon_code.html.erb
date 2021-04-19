@@ -1,23 +1,25 @@
-<% if promotion.nil? %>
-  <div class='shopping-cart-coupon-code <%= classes %>' data-hook='coupon_code'>
-    <div class="input-group">
-      <%= order_form.text_field :coupon_code, size: '30', class: 'form-control border-right-0', placeholder: Spree.t('cart_page.add_promo_code'), aria: { label: Spree.t('cart_page.add_promo_code') } %>
+<div class='shopping-cart-coupon-code <%= classes %>' data-hook='coupon_code' data-controller='coupon-code'>
+  <div class="input-group">
+    <% if promotion.nil? %>
+      <%= order_form.text_field :coupon_code, size: '30', class: 'form-control border-right-0', placeholder: Spree.t('cart_page.add_promo_code'),
+                                              aria: { label: Spree.t('cart_page.add_promo_code') },
+                                              data: { 'coupon-code-target': 'code' } %>
       <div class="input-group-append">
-        <%= button_tag '+', name: '', id: 'shopping-cart-coupon-code-button', class: 'btn border-left-0' %>
+        <%= button_tag '+', name: '', class: 'btn border-left-0', type: 'button', data: { action: 'click->coupon-code#apply' } %>
       </div>
-    </div>
-  </div>
-<% else %>
-  <div class='shopping-cart-coupon-code <%= classes %>' data-hook='coupon_code'>
-    <div class="input-group">
+    <% else %>
+      <%= hidden_field_tag :coupon_code, promotion.code, data: { 'coupon-code-target': 'code' } %>
       <%= order_form.text_field :applied_coupon_code, name: '', size: '30', class: 'form-control border-right-0 disabled',
-        value: Spree.t(:promotion_label, name: promotion.name),
-        data: { code: promotion.code } %>
+                                                      value: Spree.t(:promotion_label, name: promotion.name) %>
       <div class="input-group-append">
-        <%= button_tag name: '', id: 'shopping-cart-remove-coupon-code-button', class: 'btn border-left-0 remove' do %>
+        <%= button_tag name: '', class: 'btn border-left-0 remove', type: 'button', data: { action: 'click->coupon-code#remove' } do %>
           <%= icon(name: 'close', width: 15, height: 14) %>
         <% end %>
       </div>
-    </div>
+    <% end %>
   </div>
-<% end %>
+  <div>
+    <img data-coupon-code-target='resultIcon' />
+    <span data-coupon-code-target='resultText'></span>
+  </div>
+</div>
