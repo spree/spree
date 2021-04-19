@@ -25,6 +25,28 @@ module Spree
         to_html
     end
 
+    def menu_item_link_to(item)
+      if Spree::MenuItem::DYNAMIC_RESOURCE_TYPE.include? item.linked_resource_type
+        return if item.linked_resource.nil?
+
+        case item.linked_resource_type
+        when 'Spree::Product'
+          spree.product_path(item.linked_resource)
+        when 'Spree::Taxon'
+          spree.nested_taxons_path(item.linked_resource.permalink)
+        end
+      else
+        case item.linked_resource_type
+        when 'URL'
+          url
+        when 'Home Page'
+          spree.root_path
+        else
+          '#'
+        end
+      end
+    end
+
     def display_compare_at_price(product_or_variant)
       product_or_variant.
         price_in(current_currency).

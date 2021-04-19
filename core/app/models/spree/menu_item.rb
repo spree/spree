@@ -16,37 +16,19 @@ module Spree
 
     ITEM_TYPE = %w[Link Promotion Container]
 
-    LINKED_RESOURCE_TYPE = []
-    STATIC_RESOURCE_TYPE = ['URL', 'Home Page']
+    LINKED_RESOURCE_TYPE = ['URL']
+    STATIC_RESOURCE_TYPE = ['Home Page']
     DYNAMIC_RESOURCE_TYPE = ['Spree::Product', 'Spree::Taxon']
 
-    LINKED_RESOURCE_TYPE.unshift(*STATIC_RESOURCE_TYPE)
-    LINKED_RESOURCE_TYPE.push(*DYNAMIC_RESOURCE_TYPE)
+    if defined?(Spree::Frontend)
+      LINKED_RESOURCE_TYPE.unshift(*STATIC_RESOURCE_TYPE)
+      LINKED_RESOURCE_TYPE.push(*DYNAMIC_RESOURCE_TYPE)
+    end
 
     validates :name, presence: true
     validates :menu_id, presence: true, numericality: { only_integer: true }
     validates :item_type, inclusion: { in: ITEM_TYPE }
     validates :linked_resource_type, inclusion: { in: LINKED_RESOURCE_TYPE }
-
-    def destination
-      if DYNAMIC_RESOURCE_TYPE.include? linked_resource_type
-        return if linked_resource.nil?
-
-        case linked_resource_type
-        when 'Spree::Taxon'
-          nested_taxons_path(linked_resource.permalink)
-        when 'Spree::Product'
-          product_path(linked_resource)
-        end
-      else
-        case linked_resource_type
-        when 'URL'
-          url
-        when 'Home Page'
-          root_path
-        end
-      end
-    end
 
     private
 
