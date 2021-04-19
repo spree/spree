@@ -12,6 +12,7 @@
     "dev": "microbundle watch"
   },
   "dependencies": {
+    "@spree/storefront-api-v2-sdk": "^4.5.0",
     "stimulus": "^2.0.0"
   },
   "devDependencies": {

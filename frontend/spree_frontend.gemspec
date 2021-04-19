@@ -29,13 +29,13 @@ Gem::Specification.new do |s|
   s.add_dependency 'spree_core', s.version
 
   s.add_dependency 'babel-transpiler', '~> 0.7'
-  s.add_dependency 'bootstrap',       '>= 4.3.1', '< 4.7.0'
-  s.add_dependency 'glyphicons',      '~> 1.0.2'
+  s.add_dependency 'bootstrap',       '~> 4.3'
+  s.add_dependency 'glyphicons',      '~> 1.0'
   s.add_dependency 'canonical-rails', '~> 0.2.10'
   s.add_dependency 'inline_svg',      '~> 1.5'
   s.add_dependency 'jquery-rails',    '~> 4.3'
   s.add_dependency 'sass-rails',      '>= 5'
-  s.add_dependency 'turbolinks',      '~> 5.2.0'
+  s.add_dependency 'turbolinks',      '~> 5.2'
   s.add_dependency 'webpacker'
 
   s.add_development_dependency 'capybara-accessible'
