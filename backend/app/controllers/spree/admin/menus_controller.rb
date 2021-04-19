@@ -1,7 +1,7 @@
 module Spree
   module Admin
     class MenusController < ResourceController
-      before_action :load_menu_items_ordered, only: :edit
+      before_action :load_menu_items_ordered, only: [:edit, :update]
 
       def index; end
 

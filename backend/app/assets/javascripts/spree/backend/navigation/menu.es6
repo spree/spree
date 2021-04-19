@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function() {
     dragClass: 'menu-item-dragged',
     draggable: '.dragable',
     animation: 350,
-    forceFallback: true,
+    forceFallback: false,
     onEnd: function (evt) {
       handleMenuItemMove(evt)
     }

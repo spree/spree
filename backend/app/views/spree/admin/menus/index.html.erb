@@ -8,12 +8,12 @@
 
 <% if @menus.any? %>
 <div class="table-responsive">
-  <table id="menusTable" class="table">
+  <table class="table" id="menusTable">
     <thead>
-      <th><%= Spree.t(:name) %></th>
-       <th><%= Spree.t('admin.navigation.used_in') %></th>
-      <th data-hook="admin_menus_index_header_actions" class="actions"></th>
-    <thead>
+      <th scope="col"><%= Spree.t(:name) %></th>
+      <th scope="col"><%= Spree.t('admin.navigation.used_in') %></th>
+      <th scope="col"></th>
+    </thead>
     <tbody>
       <% @menus.each do |menu| %>
         <tr>
@@ -39,3 +39,5 @@
     <%= Spree.t('admin.navigation.you_have_no_menus') %>
   </div>
 <% end %>
+
+
