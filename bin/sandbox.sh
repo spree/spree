@@ -28,7 +28,6 @@ bundle exec rails new sandbox --database="$RAILSDB" \
   --skip-spring \
   --skip-test \
   --skip-coffee \
-  --skip-javascript \
   --skip-bootsnap
 
 if [ ! -d "sandbox" ]; then
@@ -104,6 +103,9 @@ Rails.application.config.hosts << /.*\.lvh\.me/
 RUBY
 
 bundle install --gemfile Gemfile
+bundle exec rails webpacker:install
+yarn add link:../frontend/
+
 bundle exec rails db:drop || true
 bundle exec rails db:create
 bundle exec rails g spree:install --auto-accept --user_class=Spree::User --enforce_available_locales=true --copy_storefront=false
