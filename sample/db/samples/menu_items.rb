@@ -38,24 +38,24 @@ MENUS.each do |menu_id|
   menu_root_sw.save!
 
   ##############
-  # Catagories #
+  # Categories #
   ##############
   menu_cat_women = Spree::MenuItem.where(
-    name: 'Catagories',
+    name: 'Categories',
     item_type: 'Container',
     menu_id: menu_id,
     parent_id: menu_root_women
   ).first_or_create!
 
   menu_cat_men = Spree::MenuItem.where(
-    name: 'Catagories',
+    name: 'Categories',
     item_type: 'Container',
     menu_id: menu_id,
     parent_id: menu_root_men
   ).first_or_create!
 
   menu_cat_sw = Spree::MenuItem.where(
-    name: 'Catagories',
+    name: 'Categories',
     item_type: 'Container',
     menu_id: menu_id,
     parent_id: menu_root_sw

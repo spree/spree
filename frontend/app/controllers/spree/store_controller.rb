@@ -36,6 +36,24 @@ module Spree
       @menus = Spree::Menu.by_store(current_store)
     end
 
+    def menu_by_name(name)
+      menu = @menus.by_name(name)
+
+      return if menu.nil?
+
+      menu[0]
+    end
+    helper_method :menu_by_name
+
+    def menu_by_name_items(name)
+      menu = @menus.by_name(name)[0] || nil
+
+      return if menu.nil?
+
+      menu.menu_items.order(:lft)
+    end
+    helper_method :menu_by_name_items
+
     protected
 
     def config_locale
