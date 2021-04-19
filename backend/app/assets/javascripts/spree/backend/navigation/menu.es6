@@ -29,22 +29,22 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function handleMenuItemMove(evt, successCallback) {
   const data = {
-    moved_item_id: evt.item.dataset.itemId,
-    new_parent_id: evt.to.dataset.parentId || null,
-    new_position_idx: evt.newIndex
+    moved_item_id: parseInt(evt.item.dataset.itemId, 10),
+    new_parent_id: parseInt(evt.to.dataset.parentId, 10) || null,
+    new_position_idx: parseInt(evt.newIndex, 10)
   }
 
   fetch(Spree.routes.menus_items_api_v2, {
     method: 'PATCH',
     headers: {
-      Authorization: 'Bearer' + OAUTH_TOKEN,
+      Authorization: 'Bearer ' + OAUTH_TOKEN,
       'Content-Type': 'application/json'
     },
     body: JSON.stringify(data)
   })
     .then(response => {
       if (response.ok !== true) {
-        handleMenuItemMoveError(response)
+        handleMenuItemMoveError()
       }
     })
     .catch(err => {
@@ -52,7 +52,7 @@ function handleMenuItemMove(evt, successCallback) {
     });
 }
 
-function handleMenuItemMoveError (response) {
+function handleMenuItemMoveError () {
   // eslint-disable-next-line no-undef
   show_flash('error', Spree.translations.move_could_not_be_saved)
 }
