@@ -18,7 +18,7 @@ module Spree
 
             def destroy
               if resource.destroy
-                render_serialized_payload(201) { serialize_resource(resource) }
+                render_serialized_payload(200) { serialize_resource(resource) }
               else
                 render_error_payload(resource.errors)
               end

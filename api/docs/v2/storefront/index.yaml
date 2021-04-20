@@ -239,6 +239,25 @@ paths:
       security:
         - bearerAuth: []
   '/api/v2/storefront/account/addresses/{id}':
+    delete:
+      description: 'Removes selected Address for the signed in User. It uses soft-delete for addresses with shipments and orders.'
+      tags:
+        - Account
+      operationId: Remove Address
+      parameters:
+        - $ref: '#/components/parameters/AddressId'
+      responses:
+        '200':
+          description: Requested Address has been removed from the User Account
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Address'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+      security:
+        - bearerAuth: []
+      summary: Remove Address
     patch:
       description: >-
         Update selected Address for the signed in User
@@ -5246,6 +5265,14 @@ components:
         - state_name
         - country_iso
   parameters:
+    AddressId:
+      name: address_id
+      in: path
+      required: true
+      description: Address ID
+      schema:
+        type: string
+      example: '1'
     CreditCardIncludeParam:
       name: include
       in: query
