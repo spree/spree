@@ -183,8 +183,6 @@ describe 'Storefront API v2 Addresses spec', type: :request do
       before { delete "/api/v2/storefront/account/addresses/#{address.id}", headers: headers_bearer }
 
       it 'destroys address permanently' do
-        expect(json_response['data']).to have_id(address.id.to_s)
-        expect(json_response.size).to eq(1)
         expect { Spree::Address.unscoped.find(address.id) }.to raise_exception(ActiveRecord::RecordNotFound)
         expect { address.reload }.to raise_exception(ActiveRecord::RecordNotFound)
       end
@@ -199,10 +197,7 @@ describe 'Storefront API v2 Addresses spec', type: :request do
       }
 
       it 'sets deleted_at date for address' do
-        expect(json_response['data']).to have_id(address.id.to_s)
-        expect(json_response.size).to eq(1)
-        expect(Spree::Address.unscoped.find(address.id)).to eq(address)
-        expect(address.deleted_at.to_date).to eq(Date.today)
+        expect(address.deleted_at).not_to be_nil
       end
     end
 
