@@ -1,3 +1,5 @@
+<% footer_menu_items = menu_by_name_items('Footer Menu') %>
+
 <% cache spree_nav_cache_key('footer') do %>
   <footer id="footer" class="pt-2 mx-auto border-top footer-spree" data-turbolinks-permanent>
     <div class="container">
@@ -48,20 +50,28 @@
         </div>
       </div>
       <div class="row d-none d-xl-flex border-top py-5 text-uppercase footer-spree-menu-links">
-        <% if spree_navigation_data.any? %>
-          <% spree_navigation_data.first(3).each do |root| %>
+
+        <% if footer_menu_items %>
+          <% footer_menu_items.each do |root| %>
+            <% if root.root? %>
             <div class="col-3">
               <div class="footer-spree-label">
-                <%= link_to root[:title], root[:url] %>
+                <%= link_to root.name, menu_item_link_to(root) %>
               </div>
-              <% if  root[:items].present? %>
-                <% root[:items].each do |item| %>
-                  <div class="pt-2"><%= link_to item[:title], item[:url] %></div>
+              <% root.children.each do |child| %>
+                <% if child.code == 'category' && child.item_type == 'Container' %>
+                  <% if child.children.present? %>
+                    <% child.children.each do |category_link| %>
+                      <div class="pt-2"><%= link_to category_link.name, menu_item_link_to(category_link) %></div>
+                    <% end %>
+                  <% end %>
                 <% end %>
               <% end %>
             </div>
+            <% end %>
           <% end %>
         <% end %>
+
         <% if spree.respond_to?(:account_path) %>
           <div class="col-3">
             <div class="footer-spree-label">
