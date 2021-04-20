@@ -35,7 +35,7 @@ namespace :common do
       system("bundle exec rails webpacker:install > #{File::NULL}")
       system("cd ../../ && yarn install && yarn build > #{File::NULL}")
       system('yarn add link:../../')
-      system("sed 's/compile: true/compile: false/g' config/webpacker.yml")
+      system("sed 's/compile: true/compile: false/g' config/webpacker.yml | tee config/webpacker.yml > #{File::NULL}")
     end
 
     puts 'Precompiling assets...'
