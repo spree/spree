@@ -16,6 +16,14 @@ module Spree
               render_result(result)
             end
 
+            def destroy
+              if resource.destroy
+                render_serialized_payload(201) { serialize_resource(resource) }
+              else
+                render_error_payload(resource.errors)
+              end
+            end
+
             private
 
             def collection
