@@ -32,8 +32,6 @@
   display: inline-block;
 }
 
-.truncate {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.move-handle {
+  cursor: grab;
 }

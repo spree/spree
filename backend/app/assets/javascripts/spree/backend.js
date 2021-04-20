@@ -45,8 +45,7 @@
 //= require spree/backend/product_picker
 //= require spree/backend/progress
 //= require spree/backend/promotions
-//= require spree/backend/navigation/menu_item
-//= require spree/backend/navigation/menu
+//= require spree/backend/menus/index
 //= require spree/backend/returns/expedited_exchanges_warning
 //= require spree/backend/returns/return_item_selection
 //= require spree/backend/shipments

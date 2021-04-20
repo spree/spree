@@ -1,7 +1,3 @@
-$item-padding: 0;
-$main-items-border-color: rgba(0, 0, 0, 0.125);
-$nestable-background-color: rgb(214, 214, 214);
-
 #menuArea {
   .space-buttons {
     box-shadow: -11px 0 16px 6px white;
@@ -12,7 +8,7 @@ $nestable-background-color: rgb(214, 214, 214);
   }
   .container-item-row {
     overflow: hidden;
-    border: 1px solid $main-items-border-color;
+    border: 1px solid $border-color;
     margin: 2px;
     background-color: white;
   }
@@ -41,7 +37,7 @@ $nestable-background-color: rgb(214, 214, 214);
 
   .menu_items_image_holder {
     position: relative;
-    border: 1px solid $main-items-border-color;
+    border: 1px solid $border-color;
     border-radius: 7px;
     overflow: hidden;
     width: 45px;

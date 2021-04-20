@@ -4,7 +4,6 @@
 @import 'bootstrap';
 @import 'glyphicons';
 @import 'shared/glyphicons_urls_fix';
-@import 'shared/sortable_js_tree';
 
 @import 'components/navbar';
 @import 'components/sidebar';
@@ -29,6 +28,7 @@
 @import 'shared/base';
 @import 'shared/forms';
 
+@import 'views/menus';
 @import 'views/order_payments';
 @import 'views/product_properties';
 @import 'views/prototypes';
