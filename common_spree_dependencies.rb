@@ -22,7 +22,6 @@ group :test do
   gem 'capybara', '~> 3.24'
   gem 'capybara-screenshot', '~> 1.0'
   gem 'capybara-select-2'
-  gem 'capybara-chromedriver-logger'
   gem 'database_cleaner', '~> 1.3'
   gem 'email_spec'
   gem 'factory_bot_rails', '~> 6.0'
