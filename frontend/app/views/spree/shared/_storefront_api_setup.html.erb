@@ -1,5 +1,5 @@
 <script>
-  window.addEventListener('turbolinks:load', function() {
-    window.SpreeAPI.host = "<%= spree_storefront_api_host %>"
-  })
+  window.SpreeStorefrontApi = {
+    'host': "<%= spree_storefront_api_host %>"
+  }
 </script>

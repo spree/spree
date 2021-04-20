@@ -14,7 +14,7 @@ export default class extends Controller {
 
   initialize() {
     this.apiClient = makeClient({
-      host: window.SpreeAPI.storefrontHost
+      host: window.SpreeStorefrontApi.host
     })
   }
 
