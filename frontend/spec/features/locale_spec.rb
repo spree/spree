@@ -1,12 +1,24 @@
 require 'spec_helper'
 
 describe 'setting locale', type: :feature, js: true do
-  let(:store) { Spree::Store.default }
-  let(:locale) { :fr }
+  let!(:store) { Spree::Store.default }
+  let!(:locale) { :fr }
+
+  let!(:main_menu) { create(:menu, name: 'Main Menu', unique_code: 'spree-all-main', store_ids: [store.id]) }
+
+  let!(:mi_root) { create(:menu_item, name: 'URL', menu_id: main_menu.id, url: 'https://spree.com') }
+  let!(:mi_home) { create(:menu_item, name: 'Home', menu_id: main_menu.id, linked_resource_type: 'Home Page') }
+  let!(:mi_ta) { create(:menu_item, name: 'Taxon', menu_id: main_menu.id, linked_resource_type: 'Spree::Taxon') }
+  let!(:mi_pro) { create(:menu_item, name: 'Product', menu_id: main_menu.id, linked_resource_type: 'Spree::Product') }
+
+  let!(:tax_x) { create(:taxon) }
+  let!(:pr_x) { create(:product_in_stock, taxons: [tax_x]) }
 
   before do
     store.update(default_locale: 'en', supported_locales: 'en,fr')
     add_french_locales
+    mi_ta.update(linked_resource_id: tax_x.id)
+    mi_pro.update(linked_resource_id: pr_x.id)
   end
 
   context 'checkout form validation messages' do
@@ -47,7 +59,8 @@ describe 'setting locale', type: :feature, js: true do
   shared_examples 'generates proper URLs' do
     it 'has localized links', retry: 3 do
       expect(page).to have_link(store.name, href: '/fr')
-      expect(page).to have_link('Femmes', href: '/fr/t/women')
+      expect(page).to have_link(mi_ta.name, href: spree.nested_taxons_path(mi_ta.linked_resource, locale: 'fr'))
+      expect(page).to have_link(mi_pro.name, href: spree.product_path(mi_pro.linked_resource, locale: 'fr'))
     end
   end
 
