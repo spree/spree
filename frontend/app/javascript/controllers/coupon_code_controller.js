@@ -17,22 +17,34 @@ export default class extends Controller {
     })
   }
 
-  apply() {
+  async apply() {
     if (!this.code) return
 
-    window.SpreeAPI.Storefront.applyCouponCode(
-      this.code,
-      () => this.handleSuccess(),
-      (error) => this.handleError(error)
-    )
+    const orderToken = window.SpreeAPI.orderToken
+
+    const response = await this.apiClient.cart.applyCouponCode({ orderToken }, {
+      coupon_code: this.code
+    })
+
+    this.handleResponse(response)
   }
 
-  remove() {
-    window.SpreeAPI.Storefront.removeCouponCode(
-      this.code,
-      () => this.handleSuccess(),
-      (error) => this.handleError(error)
-    )
+  async remove() {
+    if (!this.code) return
+
+    const orderToken = window.SpreeAPI.orderToken
+
+    const response = await this.apiClient.cart.removeCouponCode({ orderToken }, this.code)
+
+    this.handleResponse(response)
+  }
+
+  handleResponse(response) {
+    if (response.isFail()) {
+      this.handleError(response.fail().serverResponse.data.error)
+    } else {
+      this.handleSuccess()
+    }
   }
 
   handleError(error) {
