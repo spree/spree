@@ -1,8 +1,10 @@
-import { Application } from "stimulus"
-import * as Controllers from './controllers'
+import { Application } from 'stimulus'
+import { definitionsFromContext } from "stimulus/webpack-helpers"
+const controllersContext = require.context('./controllers', true, /_controller\.js$/)
 
 const application = Application.start()
-application.register('coupon-code', Controllers.CouponCodeController)
+
+application.load(definitionsFromContext(controllersContext))
 
 export default {
   start() {
