@@ -43,6 +43,7 @@ MENUS.each do |menu_id|
   menu_cat_women = Spree::MenuItem.where(
     name: 'Categories',
     item_type: 'Container',
+    code: 'category',
     menu_id: menu_id,
     parent_id: menu_root_women
   ).first_or_create!
@@ -50,6 +51,7 @@ MENUS.each do |menu_id|
   menu_cat_men = Spree::MenuItem.where(
     name: 'Categories',
     item_type: 'Container',
+    code: 'category',
     menu_id: menu_id,
     parent_id: menu_root_men
   ).first_or_create!
@@ -57,6 +59,7 @@ MENUS.each do |menu_id|
   menu_cat_sw = Spree::MenuItem.where(
     name: 'Categories',
     item_type: 'Container',
+    code: 'category',
     menu_id: menu_id,
     parent_id: menu_root_sw
   ).first_or_create!
@@ -67,6 +70,7 @@ MENUS.each do |menu_id|
   menu_promo_women = Spree::MenuItem.where(
     name: 'Promos',
     item_type: 'Container',
+    code: 'promo',
     menu_id: menu_id,
     parent_id: menu_root_women
   ).first_or_create!
@@ -74,6 +78,7 @@ MENUS.each do |menu_id|
   menu_promo_men = Spree::MenuItem.where(
     name: 'Promos',
     item_type: 'Container',
+    code: 'promo',
     menu_id: menu_id,
     parent_id: menu_root_men
   ).first_or_create!
@@ -81,6 +86,7 @@ MENUS.each do |menu_id|
   menu_promo_sw = Spree::MenuItem.where(
     name: 'Promos',
     item_type: 'Container',
+    code: 'promo',
     menu_id: menu_id,
     parent_id: menu_root_sw
   ).first_or_create!

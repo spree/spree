@@ -17,7 +17,12 @@
     <tbody>
       <% @menus.each do |menu| %>
         <tr>
-          <td><%= menu.name %></td>
+          <td>
+            <%= menu.name %> <br>
+            <small class="form-text text-muted">
+              <%= menu.unique_code %>
+            </small>
+          </td>
           <td>
             <% menu.store_ids.each do |store| %>
               <span class="badge badge-secondary"><%= @stores.find(store).unique_name %></span>

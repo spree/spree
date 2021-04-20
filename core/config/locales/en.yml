@@ -581,8 +581,7 @@ en:
         back_to_all_menus: Back To All Menus
         click_create_to_load_new_link: 'Click the <b>Create</b> button below to save your new Menu Item, and update the link.'
         click_update_to_load_new_link: 'Click the <b>Update</b> button below to change the link.'
-        menu_item_type: Menu Item Type
-        menu_item_basic_details: Basic Details
+        give_your_menu_a_unique_name: 'Use the unique code to identify your menu: spree-eu-main'
         link_settings: Link Settings
         link_to: Link To
         image_asset: Add a Promotion image or Link icon.
@@ -591,15 +590,19 @@ en:
         new_menu: New Menu
         nested_under: Nested under
         no_menu_items: '<b>%{menu}</b> has no items. Click the <b>Add New Item</b> button to begin adding links to this menu.'
-        nested_under_info: Quickly nest your link in the menu.
+        nested_under_info: Quickly nest your Menu Item if you already know where it needs to be.
         item_type: Item Type
         open_link_in_new_window: Open this link in a new window
-        menu_item_type_message: "For more information about Menu Item Types and nesting Menu Items, visit the documentation by
+        menu_item_type_message: "For more information about Menu Item Types, Nesting and using Codes, visit the documentation by
         <a href='https://guides.spreecommerce.org/user/configuration/configuring_geography.html#zones' target='_blank' class='alert-link'>clicking here</a>."
         menus: Menus
         menu_items: '%{menu_name} Items'
+        public_details: Public Details
         subtitle: Subtitle
+        settings: Settings
+        set_a_code: Give your Menu Item a code, this is optional, but can be useful if you need to identify this menu item.
         used_in: Used In
+        unique_code: Unique Code
         you_have_no_menus: You have no Menus, click the Add New Menu button to create your first Menu.
         this_link_takes_you_to_your_stores_home_page: This link takes you to your stores home page.
     administration: Administration

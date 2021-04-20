@@ -18,7 +18,7 @@
                     <% item.children.each do |child| %>
 
                       <!-- Categories -->
-                      <% if child.name == 'Categories' && child.item_type == 'Container' %>
+                      <% if child.code == 'category' && child.item_type == 'Container' %>
                         <div class="category-links">
                           <div class="category-links-header text-uppercase">
                             <%= child.name %>
@@ -36,7 +36,7 @@
                       <% end %>
 
                       <!-- Promos -->
-                      <% if child.name == 'Promos' && child.item_type == 'Container' %>
+                      <% if child.code == 'promo' && child.item_type == 'Container' %>
                         <% if child.children.present? %>
                           <% child.children.each do |promo_banner| %>
                             <%= link_to menu_item_link_to(promo_banner), class: "dropdown-item" do %>

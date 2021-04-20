@@ -1,9 +1,16 @@
 <div data-hook="admin_menu_form_fields" class="row">
   <div class="col-12 col-md-6">
     <%= f.field_container :name, class: ['form-group'] do %>
-      <%= f.label :name, Spree.t(:name) %>
+      <%= f.label :name, raw(Spree.t(:name) + required_span_tag) %>
       <%= f.text_field :name, class: 'form-control', required: true %>
       <%= f.error_message_on :name %>
+    <% end %>
+
+    <%= f.field_container :unique_code, class: ['form-group'] do %>
+      <%= f.label :unique_code, raw(Spree.t('admin.navigation.unique_code') + required_span_tag) %>
+      <%= f.text_field :unique_code, class: 'form-control', required: true %>
+      <%= f.error_message_on :unique_code %>
+      <small class="form-text text-muted"><%= Spree.t('admin.navigation.give_your_menu_a_unique_name') %></small>
     <% end %>
   </div>
   <div class="col-12 col-md-6">
