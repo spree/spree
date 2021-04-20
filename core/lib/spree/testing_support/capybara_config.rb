@@ -7,14 +7,17 @@ if ENV['WEBDRIVER'] == 'accessible'
   Capybara.javascript_driver = :accessible
 else
   Capybara.register_driver :chrome do |app|
-    Selenium::WebDriver.logger.level = :error
-
-    Capybara::Selenium::Driver.new app,
-      browser: :chrome,
-      options: Selenium::WebDriver::Chrome::Options.new(
+    capabilities = Capybara::Chromedriver::Logger.build_capabilities(
+      chromeOptions: {
         args: %w[no-sandbox disable-dev-shm-usage disable-popup-blocking headless disable-gpu window-size=1920,1080 --enable-features=NetworkService,NetworkServiceInProcess --disable-features=VizDisplayCompositor],
-        log_level: :error
-      )
+      }
+    )
+
+    Capybara::Selenium::Driver.new(
+      app,
+      browser: :chrome,
+      desired_capabilities: capabilities
+    )
   end
   Capybara.javascript_driver = :chrome
 
@@ -24,3 +27,4 @@ else
 end
 Capybara.default_max_wait_time = 45
 Capybara.server = :puma
+Capybara::Chromedriver::Logger::TestHooks.for_rspec!
