@@ -33,6 +33,8 @@ namespace :common do
     if ['spree/frontend'].include?(ENV['LIB_NAME'])
       puts 'Setup Webpacker'
       system("bundle exec rails webpacker:install > #{File::NULL}")
+      system('cd ../../ && yarn install && yarn build')
+      system('yarn add link:../../')
     end
 
     puts 'Precompiling assets...'
