@@ -8,7 +8,7 @@
   "module": "dist/spree_frontend.module.js",
   "unpkg": "dist/spree_frontend.umd.js",
   "scripts": {
-    "build": "microbundle",
+    "build": "microbundle --globals @spree/storefront-api-v2-sdk=SpreeSDK",
     "dev": "microbundle watch"
   },
   "dependencies": {
