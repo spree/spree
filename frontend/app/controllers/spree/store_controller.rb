@@ -36,23 +36,23 @@ module Spree
       @menus = Spree::Menu.by_store(current_store)
     end
 
-    def menu_by_name(name)
-      menu = @menus.by_name(name)
+    def find_menu_by_unique_code(code)
+      menu = @menus.by_unique_code(code)
 
       return if menu.nil?
 
       menu[0]
     end
-    helper_method :menu_by_name
+    helper_method :find_menu_by_unique_code
 
-    def menu_by_name_items(name)
-      menu = @menus.by_name(name)[0] || nil
+    def menu_items_for_menu_with_unique_code(code)
+      menu = @menus.by_unique_code(code)[0] || nil
 
       return if menu.nil?
 
       menu.menu_items.order(:lft)
     end
-    helper_method :menu_by_name_items
+    helper_method :menu_items_for_menu_with_unique_code
 
     protected
 

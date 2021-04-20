@@ -7,6 +7,6 @@ module Spree
     validates :unique_code, presence: true, uniqueness: true
 
     scope :by_store, ->(store) { joins(:stores).where('store_id = ?', store) }
-    scope :by_name, ->(menu_name) { where name: menu_name }
+    scope :by_unique_code, ->(menu_code) { where unique_code: menu_code }
   end
 end

@@ -14,21 +14,21 @@ describe Spree::Menu, type: :model do
     end
   end
 
-  describe '.by_name' do
+  describe '.by_unique_code' do
     let!(:menu_1) { create(:menu, name: 'Footer') }
     let!(:menu_2) { create(:menu, name: 'Header') }
 
     it 'returns a menu when searched for by name' do
-      expect(described_class.by_name(menu_1.name)).to include(menu_1)
-      expect(described_class.by_name(menu_1.name)).not_to include(menu_2)
+      expect(described_class.by_unique_code(menu_1.unique_code)).to include(menu_1)
+      expect(described_class.by_unique_code(menu_1.unique_code)).not_to include(menu_2)
     end
   end
 
-  describe 'validates uniqueness of name' do
-    let!(:menu_1) { create(:menu, name: 'Footer') }
+  describe 'validates uniqueness of unique_code' do
+    let!(:menu_1) { create(:menu, name: 'Footer', unique_code: 'ABC123') }
 
     it 'returns uniqueness error' do
-      expect(described_class.new(name: 'Footer')).not_to be_valid
+      expect(described_class.new(name: 'Footer', unique_code: 'ABC123')).not_to be_valid
     end
   end
 end

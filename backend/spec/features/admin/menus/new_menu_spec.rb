@@ -34,17 +34,18 @@ describe 'New Menu', type: :feature do
     end
   end
 
-  context 'when a user tries to create a menu with a duplicate name' do
+  context 'when a user tries to create a menu with a duplicate code' do
     let!(:main_menu) { create(:menu, name: 'Main Menu') }
 
     before do
       visit spree.new_admin_menu_path
     end
 
-    it 'warns the user that the Name has already been taken' do
+    it 'warns the user that the Unique code has already been taken' do
       fill_in 'Name', with: 'Main Menu'
+      fill_in 'Unique Code', with: main_menu.unique_code
       click_on 'Create'
-      expect(page).to have_text ('Name has already been taken')
+      expect(page).to have_text ('Unique code has already been taken')
     end
   end
 
@@ -59,6 +60,7 @@ describe 'New Menu', type: :feature do
 
     it 'with stores' do
       fill_in 'Name', with: 'Main Menu'
+      fill_in 'Unique Code', with: 'unip-s-s-s'
 
       select2 store_1.unique_name, from: 'Stores'
       select2 store_3.unique_name, from: 'Stores'

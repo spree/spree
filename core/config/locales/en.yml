@@ -577,6 +577,7 @@ en:
         all_menus: All Menus
         add_new_menu: Add New Menu
         add_new_item: 'Add New Item'
+        code: Code
         allow_this_menu_item_to_contain_nested_menu_items: Allow this Menu Item to contain nested items
         back_to_all_menus: Back To All Menus
         click_create_to_load_new_link: 'Click the <b>Create</b> button below to save your new Menu Item, and update the link.'

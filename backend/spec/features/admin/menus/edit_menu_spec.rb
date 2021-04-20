@@ -20,71 +20,73 @@ describe 'Menu Edit', type: :feature do
     end
   end
 
-  context 'setting a home page link', js: true do
-    let!(:main_menu) { create(:menu, name: 'Main Menu') }
-    let!(:menu_item) { create(:menu_item, menu_id: main_menu.id) }
+  # FRONT END ONLY
 
-    before do
-      visit spree.edit_admin_menu_menu_item_path(main_menu, menu_item)
-    end
+  # context 'setting a home page link', js: true do
+  #   let!(:main_menu) { create(:menu, name: 'Main Menu') }
+  #   let!(:menu_item) { create(:menu_item, menu_id: main_menu.id) }
 
-    it 'allows you to switch to home page link' do
-      select2 'Home Page', from: 'Link To'
-      expect(page).to have_text 'Click the Update button below to change the link.'
-      click_on 'Update'
+  #   before do
+  #     visit spree.edit_admin_menu_menu_item_path(main_menu, menu_item)
+  #   end
 
-      assert_admin_flash_alert_success('Menu item "Link To Somewhere" has been successfully updated!')
-      expect(page).to have_text 'This link takes you to your stores home page.'
-    end
-  end
+  #   it 'allows you to switch to home page link' do
+  #     select2 'Home Page', from: 'Link To'
+  #     expect(page).to have_text 'Click the Update button below to change the link.'
+  #     click_on 'Update'
 
-  context 'setting the link to a product link', js: true do
-    let!(:main_menu) { create(:menu, name: 'Main Menu') }
-    let!(:menu_item) { create(:menu_item, menu_id: main_menu.id) }
-    let!(:product_1) { create(:product, name: 'Blue Shoes') }
-    let!(:product_2) { create(:product, name: 'Black Socks') }
-    let!(:product_3) { create(:product, name: 'Green Shirt') }
+  #     assert_admin_flash_alert_success('Menu item "Link To Somewhere" has been successfully updated!')
+  #     expect(page).to have_text 'This link takes you to your stores home page.'
+  #   end
+  # end
 
-    before do
-      visit spree.edit_admin_menu_menu_item_path(main_menu, menu_item)
-    end
+  # context 'setting the link to a product link', js: true do
+  #   let!(:main_menu) { create(:menu, name: 'Main Menu') }
+  #   let!(:menu_item) { create(:menu_item, menu_id: main_menu.id) }
+  #   let!(:product_1) { create(:product, name: 'Blue Shoes') }
+  #   let!(:product_2) { create(:product, name: 'Black Socks') }
+  #   let!(:product_3) { create(:product, name: 'Green Shirt') }
 
-    it 'allows you to switch to select a product and save' do
-      select2 'Spree::Product', from: 'Link To'
-      expect(page).to have_text 'Click the Update button below to change the link.'
-      click_on 'Update'
+  #   before do
+  #     visit spree.edit_admin_menu_menu_item_path(main_menu, menu_item)
+  #   end
 
-      select2 product_2.name, from: 'Product'
-      click_on 'Update'
+  #   it 'allows you to switch to select a product and save' do
+  #     select2 'Spree::Product', from: 'Link To'
+  #     expect(page).to have_text 'Click the Update button below to change the link.'
+  #     click_on 'Update'
 
-      assert_admin_flash_alert_success('Menu item "Link To Somewhere" has been successfully updated!')
-      expect(page).to have_css('span.select2-selection', text: product_2.name)
-    end
-  end
+  #     select2 product_2.name, from: 'Product'
+  #     click_on 'Update'
 
-  context 'setting the link to a taxon link', js: true do
-    let!(:main_menu) { create(:menu, name: 'Main Menu') }
-    let!(:menu_item) { create(:menu_item, menu_id: main_menu.id) }
-    let!(:taxon_1) { create(:taxon) }
-    let!(:taxon_2) { create(:taxon) }
-    let!(:taxon_3) { create(:taxon) }
+  #     assert_admin_flash_alert_success('Menu item "Link To Somewhere" has been successfully updated!')
+  #     expect(page).to have_css('span.select2-selection', text: product_2.name)
+  #   end
+  # end
 
-    before do
-      visit spree.edit_admin_menu_menu_item_path(main_menu, menu_item)
-    end
+  # context 'setting the link to a taxon link', js: true do
+  #   let!(:main_menu) { create(:menu, name: 'Main Menu') }
+  #   let!(:menu_item) { create(:menu_item, menu_id: main_menu.id) }
+  #   let!(:taxon_1) { create(:taxon) }
+  #   let!(:taxon_2) { create(:taxon) }
+  #   let!(:taxon_3) { create(:taxon) }
 
-    it 'allows you to select a taxon and save' do
-      select2 'Spree::Taxon', from: 'Link To'
-      expect(page).to have_text 'Click the Update button below to change the link.'
-      click_on 'Update'
+  #   before do
+  #     visit spree.edit_admin_menu_menu_item_path(main_menu, menu_item)
+  #   end
 
-      select2 taxon_2.name, from: 'Taxon'
-      click_on 'Update'
+  #   it 'allows you to select a taxon and save' do
+  #     select2 'Spree::Taxon', from: 'Link To'
+  #     expect(page).to have_text 'Click the Update button below to change the link.'
+  #     click_on 'Update'
 
-      assert_admin_flash_alert_success('Menu item "Link To Somewhere" has been successfully updated!')
-      expect(page).to have_css('span.select2-selection', text: taxon_2.pretty_name)
-    end
-  end
+  #     select2 taxon_2.name, from: 'Taxon'
+  #     click_on 'Update'
+
+  #     assert_admin_flash_alert_success('Menu item "Link To Somewhere" has been successfully updated!')
+  #     expect(page).to have_css('span.select2-selection', text: taxon_2.pretty_name)
+  #   end
+  # end
 
   context 'trying to save a menu item without a name' do
     let!(:main_menu) { create(:menu, name: 'Main Menu') }
