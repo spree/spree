@@ -9,7 +9,7 @@
   "unpkg": "dist/spree_frontend.umd.js",
   "scripts": {
     "build": "microbundle --globals @spree/storefront-api-v2-sdk=SpreeSDK",
-    "dev": "microbundle watch"
+    "dev": "microbundle watch --globals @spree/storefront-api-v2-sdk=SpreeSDK"
   },
   "dependencies": {
     "@spree/storefront-api-v2-sdk": "^4.5.0",

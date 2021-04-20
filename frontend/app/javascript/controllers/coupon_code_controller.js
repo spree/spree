@@ -1,5 +1,4 @@
 import { Controller } from 'stimulus'
-// import { makeClient } from '@spree/storefront-api-v2-sdk/dist/client'
 
 export default class extends Controller {
   static targets = [ 'code', 'resultText', 'resultIcon' ]
@@ -13,9 +12,9 @@ export default class extends Controller {
   }
 
   initialize() {
-    // this.apiClient = makeClient({
-    //   host: 'http://localhost:3000'
-    // })
+    this.apiClient = window.SpreeSDK.makeClient({
+      host: window.SpreeAPI.storefrontHost
+    })
   }
 
   apply() {
