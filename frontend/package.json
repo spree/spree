@@ -3,10 +3,10 @@
   "version": "4.3.0-alpha",
   "license": "BSD-3",
   "source": "app/javascript/index.js",
-  "main": "dist/spree_frontend.js",
-  "exports": "dist/spree_frontend.modern.js",
-  "module": "dist/spree_frontend.module.js",
-  "unpkg": "dist/spree_frontend.umd.js",
+  "main": "./dist/spree_frontend.js",
+  "exports": "./dist/spree_frontend.modern.js",
+  "module": "./dist/spree_frontend.module.js",
+  "unpkg": "./dist/spree_frontend.umd.js",
   "scripts": {
     "build": "microbundle --globals @spree/storefront-api-v2-sdk=SpreeSDK",
     "dev": "microbundle watch --globals @spree/storefront-api-v2-sdk=SpreeSDK"
