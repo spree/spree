@@ -30,6 +30,11 @@ namespace :common do
       puts 'Skipping installation no generator to run...'
     end
 
+    if ['spree/frontend'].include?(ENV['LIB_NAME'])
+      puts 'Setup Webpacker'
+      system("bundle exec rails webpacker:install > #{File::NULL}")
+    end
+
     puts 'Precompiling assets...'
     system("bundle exec rake assets:precompile > #{File::NULL}")
   end
