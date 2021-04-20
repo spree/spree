@@ -43,6 +43,15 @@ end
         <div id="checkout-summary" class="col-md-12 col-lg-auto" data-hook="checkout_summary_box">
           <div class="checkout-summary-container position-sticky">
             <%= render partial: 'summary', locals: { order: @order } %>
+            <% if Spree::Frontend::Config[:coupon_codes_enabled] %>
+              <%= render partial: 'spree/orders/coupon_code',
+                locals: {
+                  promotion: @order.valid_coupon_promotions.first,
+                  order_form: form,
+                  classes: ''
+                }
+              %>
+            <% end %>
             <div data-hook="buttons">
               <%= checkout_submit_tag %>
             </div>
