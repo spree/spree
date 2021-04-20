@@ -5,7 +5,7 @@
   "main": "./dist/spree_frontend.web.umd.js",
   "scripts": {
     "build": "webpack --progress",
-    "dev": "npm run build -- --watch"
+    "dev": "yarn run build -- --watch"
   },
   "dependencies": {
     "@spree/storefront-api-v2-sdk": "^4.5.0",
