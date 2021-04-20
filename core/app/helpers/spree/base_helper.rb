@@ -38,7 +38,11 @@ module Spree
       else
         case item.linked_resource_type
         when 'URL'
-          url
+          if item.url.present?
+            item.url
+          else
+            '#'
+          end
         when 'Home Page'
           spree.root_path
         else
