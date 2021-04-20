@@ -602,6 +602,7 @@ en:
         subtitle: Subtitle
         settings: Settings
         set_a_code: Give your Menu Item a code, this is optional, but can be useful if you need to identify this menu item.
+        type: Type
         used_in: Used In
         unique_code: Unique Code
         you_have_no_menus: You have no Menus, click the Add New Menu button to create your first Menu.
