@@ -14,12 +14,12 @@
              <% if has_dropdown %>
               <div class="dropdown-menu w-100 shadow main-nav-bar-category-dropdown">
                 <div class="container p-0 d-flex justify-content-xl-around mx-auto">
-                  <div class="row">
+                  <div class="row px-5">
                     <% root.children.each do |child| %>
 
                       <!-- Categories -->
                       <% if child.code == 'category' && child.item_type == 'Container' %>
-                        <div class="category-links">
+                        <div class="category-links my-4 mx-2">
                           <div class="category-links-header text-uppercase">
                             <%= child.name %>
                           </div>
@@ -27,7 +27,7 @@
                             <ul class="pl-0">
                               <% child.children.each do |category_link| %>
                                 <li>
-                                  <%= link_to category_link.name, menu_item_link_to(category_link), class: "text-uppercase main-nav-bar-category-links dropdown-item" %>
+                                  <%= link_to category_link.name, menu_item_link_to(category_link), class: "text-uppercase main-nav-bar-category-links dropdown-item truncate" %>
                                 </li>
                               <% end %>
                             </ul>
@@ -40,7 +40,7 @@
                         <% if child.children.present? %>
                           <% child.children.each do |promo_banner| %>
                             <%= link_to menu_item_link_to(promo_banner), class: "dropdown-item" do %>
-                              <div class="category-image text-center mx-3">
+                              <div class="category-image text-center my-4 mx-3">
                                 <% if promo_banner.image_asset.attached? && promo_banner.image_asset.image? %>
                                   <%= image_tag main_app.url_for(promo_banner.image_asset), title: promo_banner.subtitle %>
                                 <% end %>

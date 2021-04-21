@@ -9,9 +9,6 @@ module Spree
 
     before_save :reset_link_attributes
 
-    after_save :touch_ancestors
-    after_touch :touch_ancestors
-
     has_one_attached :image_asset
 
     ITEM_TYPE = %w[Link Promotion Container]
@@ -37,10 +34,6 @@ module Spree
         self.linked_resource_id = nil
         self.url = nil
       end
-    end
-
-    def touch_ancestors
-      ancestors.update_all(updated_at: Time.current)
     end
   end
 end

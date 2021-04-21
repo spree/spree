@@ -3,7 +3,7 @@
 document.addEventListener('DOMContentLoaded', function() {
   const menuItemSortable = {
     group: {
-      name: 'sortable-menu-sub',
+      name: 'sortable-menu',
       pull: true,
       put: true
     },

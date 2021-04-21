@@ -22,6 +22,7 @@ class CreateSpreeMenuItems < ActiveRecord::Migration[6.0]
 
     add_index :spree_menu_items, :lft
     add_index :spree_menu_items, :rgt
+    add_index :spree_menu_items, :depth
     add_index :spree_menu_items, :parent_id
     add_index :spree_menu_items, :item_type
     add_index :spree_menu_items, :code
