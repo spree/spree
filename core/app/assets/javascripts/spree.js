@@ -25,16 +25,16 @@ Spree.localizedPathFor = function(path) {
   if (typeof (SPREE_LOCALE) !== 'undefined' && typeof (SPREE_CURRENCY) !== 'undefined') {
     var fullUrl = new URL(Spree.pathFor(path))
     var params = fullUrl.searchParams
-    var pathName = path
+    var pathName = fullUrl.pathname
 
     params.set('currency', SPREE_CURRENCY)
 
     if (pathName.match(/api\/v/)) {
       params.set('locale', SPREE_LOCALE)
     } else {
-      pathName = SPREE_LOCALE + '/' + path
+      pathName = (this.mountedAt()) + SPREE_LOCALE + '/' + path
     }
-    return fullUrl.origin + (this.mountedAt()) + pathName + '?' + params.toString()
+    return fullUrl.origin + pathName + '?' + params.toString()
   }
   return Spree.pathFor(path)
 }
