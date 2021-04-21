@@ -35,13 +35,15 @@
                 <%= number_field_tag :quantity, item.quantity, min: 0, class: "line_item_quantity form-control", size: 5 %>
               </td>
               <td class="line-item-total text-center"><%= line_item_shipment_price(item, item.quantity) %></td>
-              <td class="cart-line-item-delete actions actions-4 text-center no-wrap" data-hook="cart_line_item_delete">
-                <% if can? :update, item %>
-                  <%= link_to_with_icon 'cancel.svg', Spree.t('actions.cancel'), "#", class: 'cancel-line-item btn btn-outline-secondary btn-sm', data: {action: 'cancel'}, title: Spree.t('actions.cancel'), style: 'display: none', no_text: true %>
-                  <%= link_to_with_icon 'save.svg', Spree.t('actions.save'), "#", class: 'save-line-item btn btn-success btn-sm', no_text: true, data: { :'line-item-id' => item.id, action: 'save'}, title: Spree.t('actions.save'), style: 'display: none' %>
-                  <%= link_to_with_icon 'edit.svg', Spree.t('edit'), "#", class: 'edit-line-item btn btn-outline-secondary btn-sm', data: {action: 'edit'}, title: Spree.t('edit'), no_text: true %>
-                  <%= link_to_with_icon 'delete.svg', Spree.t('delete'), "#", class: 'delete-line-item btn btn-danger btn-sm', data: { 'line-item-id' => item.id, action: 'remove'}, title: Spree.t('delete'), no_text: true %>
-                <% end %>
+              <td class="cart-line-item-delete actions" data-hook="cart_line_item_delete">
+                <span class="d-flex justify-content-center">
+                  <% if can? :update, item %>
+                    <%= link_to_with_icon 'cancel.svg', Spree.t('actions.cancel'), "#", class: 'cancel-line-item btn btn-outline-secondary btn-sm', data: {action: 'cancel'}, title: Spree.t('actions.cancel'), style: 'display: none', no_text: true %>
+                    <%= link_to_with_icon 'save.svg', Spree.t('actions.save'), "#", class: 'save-line-item btn btn-success btn-sm', no_text: true, data: { :'line-item-id' => item.id, action: 'save'}, title: Spree.t('actions.save'), style: 'display: none' %>
+                    <%= link_to_with_icon 'edit.svg', Spree.t('edit'), "#", class: 'edit-line-item btn btn-outline-secondary btn-sm', data: {action: 'edit'}, title: Spree.t('edit'), no_text: true %>
+                    <%= link_to_with_icon 'delete.svg', Spree.t('delete'), "#", class: 'delete-line-item btn btn-danger btn-sm', data: { 'line-item-id' => item.id, action: 'remove'}, title: Spree.t('delete'), no_text: true %>
+                  <% end %>
+                </span>
               </td>
             </tr>
           <% end %>

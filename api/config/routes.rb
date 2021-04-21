@@ -152,7 +152,7 @@ Spree::Core::Engine.add_routes do
         resource :account, controller: :account, only: %i[show]
 
         namespace :account do
-          resources :addresses, controller: :addresses, only: %i[index create update]
+          resources :addresses, controller: :addresses
           resources :credit_cards, controller: :credit_cards, only: %i[index show]
           resources :orders, controller: :orders, only: %i[index show]
         end
@@ -163,6 +163,97 @@ Spree::Core::Engine.add_routes do
         resources :products, only: %i[index show]
         resources :taxons,   only: %i[index show], id: /.+/
         get '/stores/:code', to: 'stores#show', as: :store
+      end
+
+      namespace :platform do
+        # Promotions API
+        resources :promotions
+
+        # Returns API
+        resources :customer_returns
+        resources :reimbursements
+        resources :return_authorizations do
+          member do
+            put :add
+            put :cancel
+            put :receive
+          end
+        end
+
+        # Product Catalog API
+        resources :products
+        resources :images
+        resources :variants
+        resources :properties
+        resources :product_properties
+        resources :taxonomies do
+          member do
+            get :jstree
+          end
+        end
+        resources :taxons do
+          member do
+            get :jstree
+          end
+        end
+        resources :option_types
+        resources :option_values
+
+        # Order API
+        resources :orders do
+          member do
+            put :next
+            put :advance
+            put :approve
+            put :cancel
+            put :empty
+            put :apply_coupon_code
+            put :remove_coupon_code
+          end
+        end
+        resources :line_items
+        resources :payments do
+          member do
+            put :authorize
+            put :capture
+            put :purchase
+            put :void
+            put :credit
+          end
+        end
+
+        # Geo API
+        resources :zones
+        resources :countries
+        resources :states
+
+        # Shipment API
+        resources :shipments do
+          collection do
+            post 'transfer_to_location'
+            post 'transfer_to_shipment'
+          end
+          member do
+            put :ready
+            put :ship
+            put :add
+            put :remove
+          end
+        end
+
+        # Inventory API
+        resources :inventory_units
+        resources :stock_items
+        resources :stock_locations
+        resources :stock_movements
+
+        # User API
+        resources :users
+        resources :credit_cards
+        resources :addresses
+
+        # Store API
+        resources :stores
       end
     end
 

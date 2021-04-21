@@ -72,8 +72,10 @@
             <% end %>
           </td>
           <td><%= stock_transfer.created_at.strftime('%F %T %Z') %></td>
-          <td class="actions actions-1">
-            <%= link_to_with_icon 'show', Spree.t(:show), admin_stock_transfer_path(stock_transfer), class: 'btn btn-outline-secondary btn-sm', no_text: true, data: {action: 'view'} %>
+          <td class="actions">
+            <span class="d-flex justify-content-end">
+              <%= link_to_with_icon 'view.svg', Spree.t(:show), admin_stock_transfer_path(stock_transfer), class: 'btn btn-outline-secondary btn-sm', no_text: true, data: {action: 'view'} %>
+            </span>
           </td>
         </tr>
       <% end %>

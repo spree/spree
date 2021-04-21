@@ -16,7 +16,14 @@ $.fn.addSelect2Options = function (data) {
   var select = this
 
   function appendOption(select, data) {
-    var option = new Option(data.name, data.id, true, true)
+    var option = null;
+    if (data.attributes) {
+      // API v2
+      option = new Option(data.attributes.name, data.id, true, true)
+    } else {
+      // API v1
+      option = new Option(data.name, data.id, true, true)
+    }
     select.append(option).trigger('change')
   }
 
@@ -38,3 +45,14 @@ $.fn.addSelect2Options = function (data) {
 $.fn.select2.defaults.set('width', 'style')
 $.fn.select2.defaults.set('dropdownAutoWidth', false)
 $.fn.select2.defaults.set('theme', 'bootstrap4')
+
+function formatSelect2Options(data) {
+  var results = data.data.map(function (obj) {
+    return {
+      id: obj.id,
+      text: obj.attributes.name
+    }
+  })
+
+  return { results: results }
+}

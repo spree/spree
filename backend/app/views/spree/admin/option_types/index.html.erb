@@ -31,9 +31,11 @@
           <td><%= option_type.name %></td>
           <td class="presentation"><%= option_type.presentation %></td>
           <td><%= active_badge(option_type.filterable) %></td>
-          <td class="actions actions-2 text-right">
-            <%= link_to_edit(option_type, class: 'admin_edit_option_type', no_text: true) if can?(:edit, option_type) %>
-            <%= link_to_delete(option_type, no_text: true) if can?(:delete, option_type) %>
+          <td class="actions">
+            <span class="d-flex justify-content-end">
+              <%= link_to_edit(option_type, class: 'admin_edit_option_type', no_text: true) if can?(:edit, option_type) %>
+              <%= link_to_delete(option_type, no_text: true) if can?(:delete, option_type) %>
+            </span>
           </td>
         </tr>
       <% end %>

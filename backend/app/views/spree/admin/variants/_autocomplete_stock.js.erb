@@ -17,10 +17,12 @@
             <td>
               <input class="quantity form-control input-sm" id="stock_item_quantity" data-stock-location-id="{{this.stock_location_id}}" type="number" min="1" value="1">
             </td>
-            <td class="actions actions-1">
-              <button class="btn btn-sm btn-success add_variant with-tip" data-stock-location-id="{{this.stock_location_id}}" title="<%= Spree.t(:add) %>" data-action="add">
-                <%= svg_icon name: "add", width: '16', height: '16' %>
-              </button>
+            <td class="actions">
+              <span class="d-flex justify-content-center">
+                <button class="btn btn-sm btn-success add_variant with-tip" data-stock-location-id="{{this.stock_location_id}}" title="<%= Spree.t(:add) %>" data-action="add">
+                  <%= svg_icon name: "add", width: '16', height: '16' %>
+                </button>
+              </span>
             </td>
           {{else}}
             {{#if this.available}}
@@ -31,10 +33,12 @@
               <td>
                 <input class="quantity form-control input-sm" id="stock_item_quantity" data-stock-location-id="{{this.stock_location_id}}" type="number" min="1" value="1">
               </td>
-              <td class="actions actions-1">
-                <button class="btn btn-sm btn-success add_variant with-tip" data-stock-location-id="{{this.stock_location_id}}" title="<%= Spree.t(:add) %>" data-action="add">
-                  <%= svg_icon name: "add", width: '16', height: '16' %>
-                </button>
+              <td class="actions">
+                <span class="d-flex justify-content-center">
+                  <button class="btn btn-sm btn-success add_variant with-tip" data-stock-location-id="{{this.stock_location_id}}" title="<%= Spree.t(:add) %>" data-action="add">
+                    <%= svg_icon name: "add", width: '16', height: '16' %>
+                  </button>
+                </span>
               </td>
             {{else}}
               <td><%= Spree.t(:out_of_stock) %></td>

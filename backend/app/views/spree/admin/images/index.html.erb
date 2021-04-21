@@ -47,9 +47,11 @@
             <td><%= options_text_for(image) %></td>
           <% end %>
           <td><%= image.alt %></td>
-          <td class="actions actions-2 text-right">
-            <%= link_to_with_icon('edit.svg', Spree.t(:edit), spree.edit_admin_product_image_url(@product, image), class: 'btn btn-primary btn-sm', no_text: true, data: { action: 'edit' }) if can? :edit, image %>
-            <%= link_to_delete(image, { url: spree.admin_product_image_url(@product, image), no_text: true }) if can? :destroy, image %>
+          <td class="actions">
+            <span class="d-flex justify-content-end">
+              <%= link_to_with_icon('edit.svg', Spree.t(:edit), spree.edit_admin_product_image_url(@product, image), class: 'btn btn-primary btn-sm', no_text: true, data: { action: 'edit' }) if can? :edit, image %>
+              <%= link_to_delete(image, { url: spree.admin_product_image_url(@product, image), no_text: true }) if can? :destroy, image %>
+            </span>
           </td>
         </tr>
       <% end %>

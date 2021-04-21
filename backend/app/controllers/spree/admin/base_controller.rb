@@ -9,6 +9,8 @@ module Spree
       before_action :authorize_admin
       before_action :generate_admin_api_key
 
+      helper_method :admin_oauth_token
+
       protected
 
       def action
@@ -52,6 +54,27 @@ module Spree
           flash[:notice] = Spree.t(:fill_in_customer_info)
           redirect_to edit_admin_order_customer_url(@order)
         end
+      end
+
+      def admin_oauth_application
+        @admin_oauth_application ||= begin
+          Doorkeeper::Application.find_or_create_by!(name: 'Admin Panel', scopes: 'admin', redirect_uri: '')
+        end
+      end
+
+      # FIXME: auto-expire this token
+      def admin_oauth_token
+        user = try_spree_current_user
+        return unless user
+
+        @admin_oauth_token ||= begin
+          Doorkeeper::AccessToken.active_for(user).where(application_id: admin_oauth_application.id).last ||
+            Doorkeeper::AccessToken.create!(
+              resource_owner_id: user.id,
+              application_id: admin_oauth_application.id,
+              scopes: admin_oauth_application.scopes
+            )
+        end.token
       end
     end
   end

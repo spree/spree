@@ -27,7 +27,7 @@ module Spree
       belongs_to :ship_address, class_name: 'Spree::Address', optional: true
       belongs_to :bill_address, class_name: 'Spree::Address', optional: true
 
-      self.whitelisted_ransackable_associations = %w[bill_address ship_address]
+      self.whitelisted_ransackable_associations = %w[bill_address ship_address addresses]
       self.whitelisted_ransackable_attributes = %w[id email]
 
       def self.with_email(query)

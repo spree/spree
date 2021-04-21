@@ -23,9 +23,11 @@
           <td class="text-center"><%= country.iso3 %></td>
           <td class="text-center"><%= active_badge(country.states_required?) %></td>
           <td class="text-center"><%= active_badge(country.zipcode_required?) %></td>
-          <td class="actions actions-2 text-right">
-            <%= link_to_edit(country, no_text: true) if can? :edit, country %>
-            <%= link_to_delete(country, no_text: true) if can? :delete, country %>
+          <td class="actions">
+            <span class="d-flex justify-content-end">
+              <%= link_to_edit(country, no_text: true) if can? :edit, country %>
+              <%= link_to_delete(country, no_text: true) if can? :delete, country %>
+            </span>
           </td>
         </tr>
       <% end %>

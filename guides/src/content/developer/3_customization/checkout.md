@@ -334,7 +334,7 @@ en:
 
 The default checkout process in Spree assumes a gateway that allows for some
 form of third party support for payment profiles.  An example of such a service
-would be [Authorize.net CIM](http://www.authorize.net/solutions/merchantsolutions/merchantservices/cim/)
+would be [Authorize.net CIM](https://www.authorize.net/our-features/secure-customer-data.html)
 Such a service allows for a secure and PCI compliant means of storing the users
 credit card information.  This allows merchants to issue refunds to the credit
 card or to make changes to an existing order without having to leave Spree and

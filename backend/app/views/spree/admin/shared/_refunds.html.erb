@@ -23,8 +23,10 @@
           <td><%= refund.transaction_id %></td>
           <td><%= truncate(refund.reason.name, length: 100) %></td>
           <% if show_actions %>
-            <td class="actions actions-1">
-              <%= link_to_with_icon('edit.svg', Spree.t(:edit), edit_admin_order_payment_refund_path(refund.payment.order, refund.payment, refund), no_text: true, class: "btn btn-outline-secondary btn-sm") if can?(:edit, refund) %>
+            <td class="actions">
+              <span class="d-flex justify-content-end">
+                <%= link_to_with_icon('edit.svg', Spree.t(:edit), edit_admin_order_payment_refund_path(refund.payment.order, refund.payment, refund), no_text: true, class: "btn btn-outline-secondary btn-sm") if can?(:edit, refund) %>
+              </span>
             </td>
           <% end %>
         </tr>

@@ -1,8 +1,9 @@
+require 'active_support/cache'
+
 module Spree
   module V2
     module Storefront
-      class BaseSerializer
-        include JSONAPI::Serializer
+      class BaseSerializer < ::Spree::Api::V2::BaseSerializer
       end
     end
   end

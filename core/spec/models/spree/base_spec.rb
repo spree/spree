@@ -43,4 +43,19 @@ describe Spree::Base do
     expect(model_instance.errors.messages).to include(:parent)
     expect(model_instance.errors.messages[:parent]).to include('must exist')
   end
+
+  describe '.json_api_type' do
+    it { expect(Spree::InventoryUnit.json_api_type).to eq('inventory_unit') }
+    it { expect(Spree::Address.json_api_type).to eq('address') }
+  end
+
+  describe '.json_api_columns' do
+    it 'skips sensitive data' do
+      expect(Spree::LegacyUser.json_api_columns).not_to include('password')
+      expect(Spree::LegacyUser.json_api_columns).to include('email')
+    end
+
+    it { expect(Spree::Address.json_api_columns).to contain_exactly('address1', 'address2', 'alternative_phone', 'city', 'company', 'created_at', 'deleted_at', 'firstname', 'label', 'lastname', 'phone', 'state_name', 'updated_at', 'zipcode') }
+    it { expect(Spree::Address.json_api_columns).not_to include('country_id') }
+  end
 end

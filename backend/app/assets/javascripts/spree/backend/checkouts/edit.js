@@ -28,13 +28,15 @@ function formatCustomerAddress(address, kind) {
   $('#order_' + kind + '_address_attributes_zipcode').val(address.zipcode)
   $('#order_' + kind + '_address_attributes_phone').val(address.phone)
   $('#order_' + kind + '_address_attributes_phone').val(address.phone)
-  $('#order_' + kind + '_address_attributes_country_id').val(address.country_id)
+  $('#order_' + kind + '_address_attributes_country_id').val(address.country.id)
   $('#order_' + kind + '_address_attributes_country_id').trigger('change')
 
   var stateSelect = $('#order_' + kind + '_address_attributes_state_id')
 
-  update_state(kind.charAt(0), function() {
-    stateSelect.val(address.state_id).trigger('change')
+  updateAddressState(kind.charAt(0), function() {
+    if (address.state) {
+      stateSelect.val(address.state.id).trigger('change')
+    }
   })
 }
 
@@ -64,27 +66,34 @@ function formatCustomerSelection(customer) {
 }
 
 $.fn.customerAutocomplete = function() {
+  var jsonApiUsers = {}
+
   this.select2({
     minimumInputLength: 3,
     placeholder: Spree.translations.choose_a_customer,
     ajax: {
-      url: Spree.routes.users_api,
+      url: Spree.routes.users_api_v2,
       datatype: 'json',
+      headers: Spree.apiV2Authentication(),
       data: function (params) {
         return {
-          q: {
+          filter: {
             'm': 'or',
-            email_start: params.term,
-            ship_address_firstname_start: params.term,
-            ship_address_lastname_start: params.term,
-            bill_address_firstname_start: params.term,
-            bill_address_lastname_start: params.term
+            email_i_cont: params.term,
+            addresses_firstname_start: params.term,
+            addresses_lastname_start: params.term
           },
-          token: Spree.api_key
+          include: 'ship_address.country,ship_address.state,bill_address.country,bill_address.state'
         }
       },
-      processResults: function (data) {
-        return { results: data.users }
+      success: function(data) {
+        var JSONAPIDeserializer = require('jsonapi-serializer').Deserializer
+        new JSONAPIDeserializer({ keyForAttribute: 'snake_case' }).deserialize(data, function (_err, users) {
+          jsonApiUsers = users
+        })
+      },
+      processResults: function (_data) {
+        return { results: jsonApiUsers } // we need to return deserialized json api data
       }
     },
     templateResult: formatCustomerResult

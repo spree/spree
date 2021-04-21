@@ -175,4 +175,36 @@ describe 'Storefront API v2 Addresses spec', type: :request do
       it_behaves_like 'returns 403 HTTP status'
     end
   end
+
+  describe 'addresses#destroy' do
+    let(:address) { addresses.last }
+
+    context 'valid request' do
+      before { delete "/api/v2/storefront/account/addresses/#{address.id}", headers: headers_bearer }
+
+      it 'destroys address permanently' do
+        expect { Spree::Address.unscoped.find(address.id) }.to raise_exception(ActiveRecord::RecordNotFound)
+        expect { address.reload }.to raise_exception(ActiveRecord::RecordNotFound)
+      end
+    end
+
+    context 'valid request with existing shipment' do
+      let!(:order) { create :completed_order_with_totals, ship_address: address, bill_address: address}
+
+      before {
+        delete "/api/v2/storefront/account/addresses/#{address.id}", headers: headers_bearer
+        address.reload
+      }
+
+      it 'sets deleted_at date for address' do
+        expect(address.deleted_at).not_to be_nil
+      end
+    end
+
+    context 'with missing authorization token' do
+      before { delete "/api/v2/storefront/account/addresses/#{address.id}" }
+
+      it_behaves_like 'returns 403 HTTP status'
+    end
+  end
 end

@@ -26,9 +26,11 @@
           <td><%= display_name(stock_location) %></td>
           <td><%= link_to Spree.t(:stock_movements), spree.admin_stock_location_stock_movements_path(stock_location.id) %> </td>
           <td><%= active_badge(stock_location.active, label: Spree.t(state(stock_location))) %></td>
-          <td class="actions actions-2 text-center">
-            <%= link_to_edit(stock_location, no_text: true) if can? :create, stock_location %>
-            <%= link_to_delete(stock_location, no_text: true) if can? :create, stock_location %>
+          <td class="actions">
+            <span class="d-flex justify-content-end">
+              <%= link_to_edit(stock_location, no_text: true) if can? :create, stock_location %>
+              <%= link_to_delete(stock_location, no_text: true) if can? :create, stock_location %>
+            </span>
           </td>
         </tr>
       <% end %>

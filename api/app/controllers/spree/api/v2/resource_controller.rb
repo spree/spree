@@ -15,7 +15,7 @@ module Spree
         protected
 
         def sorted_collection
-          collection_sorter.new(collection, params, allowed_sort_attributes).call
+          @sorted_collection ||= collection_sorter.new(collection, params, allowed_sort_attributes).call
         end
 
         def allowed_sort_attributes
@@ -23,7 +23,7 @@ module Spree
         end
 
         def default_sort_atributes
-          [:id, :updated_at, :created_at]
+          [:id, :name, :number, :updated_at, :created_at]
         end
 
         def scope

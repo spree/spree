@@ -115,7 +115,7 @@ jQuery(function ($) {
     }
 
     PaymentView.prototype.$actions = function () {
-      return this.$el.find('.actions')
+      return this.$el.find('.payment-action-buttons')
     }
 
     PaymentView.prototype.$amount = function () {

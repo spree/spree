@@ -12,7 +12,9 @@
 //= require jquery_ujs
 //= require jquery-ui/widgets/autocomplete
 //= require select2-full
+//= require sweetalert2
 //= require underscore-min.js
+//= require jsonapi-serializer.min
 
 //= require spree/backend/global/alerts
 //= require spree/backend/global/bootstrap
@@ -75,7 +77,6 @@ Spree.routes.stock_locations_api = Spree.pathFor('api/v1/stock_locations')
 Spree.routes.taxon_products_api = Spree.pathFor('api/v1/taxons/products')
 Spree.routes.taxons_api = Spree.pathFor('api/v1/taxons')
 Spree.routes.users_api = Spree.pathFor('api/v1/users')
-Spree.routes.tags_api = Spree.pathFor('api/v1/tags')
 Spree.routes.variants_api = Spree.pathFor('api/v1/variants')
 
 Spree.routes.edit_product = function (productId) {
@@ -88,4 +89,19 @@ Spree.routes.payments_api = function (orderId) {
 
 Spree.routes.stock_items_api = function (stockLocationId) {
   return Spree.pathFor('api/v1/stock_locations/' + stockLocationId + '/stock_items')
+}
+
+// API v2
+
+Spree.routes.countries_api_v2 = Spree.pathFor('api/v2/platform/countries')
+
+Spree.routes.option_types_api_v2 = Spree.pathFor('api/v2/platform/option_types')
+Spree.routes.option_values_api_v2 = Spree.pathFor('api/v2/platform/option_values')
+
+Spree.routes.users_api_v2 = Spree.pathFor('api/v2/platform/users')
+
+Spree.apiV2Authentication = function() {
+  return {
+    'Authorization': 'Bearer ' + OAUTH_TOKEN
+  }
 }

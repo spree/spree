@@ -13,9 +13,11 @@
         <tr id="<%= spree_dom_id state %>" data-hook="states_row">
           <td><%= state.name %></td>
           <td class="text-center"><%= state.abbr %></td>
-          <td class="actions actions-2 text-right">
-            <%= link_to_edit(state, no_text: true) if can? :edit, state %>
-            <%= link_to_delete(state, no_text: true) if can? :delete, state %>
+          <td class="actions">
+            <span class="d-flex justify-content-end">
+              <%= link_to_edit(state, no_text: true) if can? :edit, state %>
+              <%= link_to_delete(state, no_text: true) if can? :delete, state %>
+            </span>
           </td>
         </tr>
       <% end %>

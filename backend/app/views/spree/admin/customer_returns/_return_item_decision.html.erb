@@ -38,13 +38,15 @@
             <%= return_item.acceptance_status_errors if return_item.acceptance_status_errors.present? %>
           </td>
           <% if show_decision %>
-            <td class='actions actions-2'>
-              <%= button_to [:admin, return_item], { class: 'with-tip display-inline btn btn-success btn-sm', params: { "return_item[acceptance_status]" => 'accepted' }, "data-action" => 'save', title: Spree.t(:accept), method: 'put' } do %>
-                <%= Spree.t(:accept) %>
-              <% end if can?(:accept, return_item) %>
-              <%= button_to [:admin, return_item], { class: 'with-tip display-inline btn btn-danger btn-sm', params: { "return_item[acceptance_status]" => 'rejected' }, "data-action" => 'remove', title: Spree.t(:reject), method: 'put' } do %>
-                <%= Spree.t(:reject) %>
-              <% end if can?(:reject, return_item) %>
+            <td class='actions'>
+              <span class="d-flex justify-content-end">
+                <%= button_to [:admin, return_item], { class: 'with-tip display-inline btn btn-success btn-sm', params: { "return_item[acceptance_status]" => 'accepted' }, "data-action" => 'save', title: Spree.t(:accept), method: 'put' } do %>
+                  <%= Spree.t(:accept) %>
+                <% end if can?(:accept, return_item) %>
+                <%= button_to [:admin, return_item], { class: 'with-tip display-inline btn btn-danger btn-sm', params: { "return_item[acceptance_status]" => 'rejected' }, "data-action" => 'remove', title: Spree.t(:reject), method: 'put' } do %>
+                  <%= Spree.t(:reject) %>
+                <% end if can?(:reject, return_item) %>
+              </span>
             </td>
           <% end %>
         </tr>

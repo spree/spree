@@ -9,26 +9,20 @@ $.fn.optionValueAutocomplete = function (options) {
   var values = options.values
   var clearSelection = options.clearSelection
 
-  function formatOptionValueList(values) {
-    return values.map(function(obj) {
-      return { id: obj.id, text: obj.name }
-    })
-  }
-
   function addOptions(select, productId, values) {
     $.ajax({
       type: 'GET',
-      url: Spree.routes.option_values_api,
+      url: Spree.routes.option_values_api_v2,
+      headers: Spree.apiV2Authentication(),
       dataType: 'json',
       data: {
-        token: Spree.api_key,
-        q: {
+        filter: {
           id_in: values,
           variants_product_id_eq: productId
         }
       }
     }).then(function (data) {
-      select.addSelect2Options(data)
+      select.addSelect2Options(data.data)
     })
   }
 
@@ -36,27 +30,21 @@ $.fn.optionValueAutocomplete = function (options) {
     multiple: multiple,
     minimumInputLength: 1,
     ajax: {
-      url: Spree.routes.option_values_api,
+      url: Spree.routes.option_values_api_v2,
       dataType: 'json',
+      headers: Spree.apiV2Authentication(),
       data: function (params) {
         var selectedProductId = typeof (productSelect) !== 'undefined' ? productSelect.val() : null
 
-        var query = {
-          q: {
+        return {
+          filter: {
             name_cont: params.term,
             variants_product_id_eq: selectedProductId
-          },
-          token: Spree.api_key
+          }
         }
-
-        return query;
       },
       processResults: function(data) {
-        var results = formatOptionValueList(data)
-
-        return {
-          results: results
-        }
+        return formatSelect2Options(data)
       }
     }
   })

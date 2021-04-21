@@ -7,8 +7,10 @@ module Spree
         include Spree::Core::ControllerHelpers::Store
         include Spree::Core::ControllerHelpers::Locale
         include Spree::Core::ControllerHelpers::Currency
+
         rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
         rescue_from CanCan::AccessDenied, with: :access_denied
+        rescue_from Doorkeeper::Errors::DoorkeeperError, with: :access_denied_401
         rescue_from Spree::Core::GatewayError, with: :gateway_error
         rescue_from ActionController::ParameterMissing, with: :error_during_processing
         if defined?(JSONAPI::Serializer::UnsupportedIncludeError)
@@ -39,7 +41,7 @@ module Spree
         end
 
         def paginated_collection
-          collection_paginator.new(sorted_collection, params).call
+          @paginated_collection ||= collection_paginator.new(sorted_collection, params).call
         end
 
         def collection_paginator
@@ -51,11 +53,15 @@ module Spree
         end
 
         def render_error_payload(error, status = 422)
-          if error.is_a?(Struct)
-            render json: { error: error.to_s, errors: error.to_h }, status: status, content_type: content_type
-          elsif error.is_a?(String)
-            render json: { error: error }, status: status, content_type: content_type
-          end
+          json = if error.is_a?(ActiveModel::Errors)
+                   { error: error.full_messages.to_sentence, errors: error.messages }
+                 elsif error.is_a?(Struct)
+                   { error: error.to_s, errors: error.to_h }
+                 else
+                   { error: error }
+                 end
+
+          render json: json, status: status, content_type: content_type
         end
 
         def spree_current_user
@@ -114,7 +120,11 @@ module Spree
         end
 
         def serializer_params
-          { currency: current_currency, store: current_store, user: spree_current_user }
+          {
+            currency: current_currency,
+            store: current_store,
+            user: spree_current_user
+          }
         end
 
         def record_not_found
@@ -123,6 +133,10 @@ module Spree
 
         def access_denied(exception)
           render_error_payload(exception.message, 403)
+        end
+
+        def access_denied_401(exception)
+          render_error_payload(exception.message, 401)
         end
 
         def gateway_error(exception)

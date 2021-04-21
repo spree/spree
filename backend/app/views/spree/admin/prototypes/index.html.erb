@@ -19,9 +19,11 @@
         <% @prototypes.each do |prototype| %>
           <tr id="<%= spree_dom_id prototype %>" data-hook="prototypes_row">
             <td><%= prototype.name %></td>
-            <td class="actions actions-2 text-right">
-              <%= link_to_edit(prototype, no_text: true, class: 'admin_edit_prototype') if can?(:edit, prototype) %>
-              <%= link_to_delete(prototype, no_text: true) if can?(:delete, prototype) %>
+            <td class="actions">
+              <span class="d-flex justify-content-end">
+                <%= link_to_edit(prototype, no_text: true, class: 'admin_edit_prototype') if can?(:edit, prototype) %>
+                <%= link_to_delete(prototype, no_text: true) if can?(:delete, prototype) %>
+              </span>
             </td>
           </tr>
         <% end %>
