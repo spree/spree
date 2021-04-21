@@ -7,7 +7,7 @@ module Spree
             before_action :require_spree_current_user
 
             def create
-              spree_authorize! :create, Spree::Address
+              spree_authorize! :create, model_class
 
               result = create_service.call(user: spree_current_user, address_params: address_params)
               render_result(result)
