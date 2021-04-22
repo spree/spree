@@ -328,13 +328,12 @@ module Spree
     private
 
     def sync_menu_item_paths
-      old_slug = slug_before_last_save
       slug_updated = true if slug_changed?
 
       yield
 
       if slug_updated
-        Spree::MenuItem.refresh_paths(self, old_slug)
+        Spree::MenuItem.refresh_paths(self)
       end
     end
 

@@ -97,13 +97,12 @@ module Spree
     private
 
     def sync_menu_item_paths
-      old_permalink = permalink_before_last_save
       permalink_updated = true if permalink_changed?
 
       yield
 
       if permalink_updated
-        Spree::MenuItem.refresh_paths(self, old_permalink)
+        Spree::MenuItem.refresh_paths(self)
       end
     end
 

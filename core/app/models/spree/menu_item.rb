@@ -25,7 +25,7 @@ module Spree
     validates :item_type, inclusion: { in: ITEM_TYPE }
     validates :linked_resource_type, inclusion: { in: LINKED_RESOURCE_TYPE }
 
-    def self.refresh_paths(resorce, old_value)
+    def self.refresh_paths(resorce)
       where(linked_resource_type: resorce.class.name, linked_resource_id: resorce.id).each(&:save!)
     end
 
