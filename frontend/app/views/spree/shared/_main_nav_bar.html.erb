@@ -1,9 +1,10 @@
-<% main_menu_items = menu_items_for_menu_with_unique_code('spree-all-main') %>
+<% category = 'category' %>
+<% promo = 'promo' %>
 
-<% if main_menu_items %>
+<% if menu_by_code('spree-all-main').present? %>
   <div class="h-100" role="navigation" aria-label="<%= Spree.t('nav_bar.desktop') %>">
     <ul class="nav h-100 main-nav-bar">
-      <% main_menu_items.each do |root| %>
+      <% menu_by_code('spree-all-main').menu_items.each do |root| %>
         <% if root.root? %>
           <li class="p-0 nav-item main-nav-bar-category">
             <% has_dropdown = root.children.present? %>
@@ -18,7 +19,7 @@
                     <% root.children.each do |child| %>
 
                       <!-- Categories -->
-                      <% if child.code == 'category' && child.item_type == 'Container' %>
+                      <% if child.code == category && child.item_type == 'Container' %>
                         <div class="category-links my-4 mx-2">
                           <div class="category-links-header text-uppercase">
                             <%= child.name %>
@@ -36,12 +37,12 @@
                       <% end %>
 
                       <!-- Promos -->
-                      <% if child.code == 'promo' && child.item_type == 'Container' %>
+                      <% if child.code == promo && child.item_type == 'Container' %>
                         <% if child.children.present? %>
                           <% child.children.each do |promo_banner| %>
                             <%= link_to menu_item_link_to(promo_banner), class: "dropdown-item" do %>
                               <div class="category-image text-center my-4 mx-3">
-                                <% if promo_banner.image_asset.attached? && promo_banner.image_asset.image? %>
+                                <% if promo_banner.uses_attached_image %>
                                   <%= image_tag main_app.url_for(promo_banner.image_asset), title: promo_banner.subtitle %>
                                 <% end %>
                                 <div class="category-box">

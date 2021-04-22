@@ -1,6 +1,4 @@
-<% main_menu_items = menu_items_for_menu_with_unique_code('spree-all-main') %>
-
-<% if main_menu_items %>
+<% if menu_by_code('spree-all-main').present? %>
   <div class="position-fixed text-uppercase d-xl-none mobile-navigation" role="navigation" aria-label="<%= Spree.t('nav_bar.mobile') %>">
     <div class="container d-flex align-items-center justify-content-between header-spree" data-hook>
       <button class="m-0 p-0" id="mobile-navigation-back-button" aria-label="<%= Spree.t('nav_bar.go_to_previous_menu') %>">
@@ -20,7 +18,7 @@
     </div>
 
     <ul class="list-unstyled position-relative h-100 mobile-navigation-list">
-      <% main_menu_items.each do |root| %>
+      <% menu_by_code('spree-all-main').menu_items.each do |root| %>
         <% if root.root? %>
           <li class="d-flex justify-content-between align-items-center mobile-navigation-list-item">
           <%= link_to root.name, menu_item_link_to(root), class: 'w-75' %>

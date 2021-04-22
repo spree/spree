@@ -1,5 +1,3 @@
-<% footer_menu_items = menu_items_for_menu_with_unique_code('spree-all-footer') %>
-
 <% cache spree_nav_cache_key('footer') do %>
   <footer id="footer" class="pt-2 mx-auto border-top footer-spree" data-turbolinks-permanent>
     <div class="container">
@@ -51,8 +49,8 @@
       </div>
       <div class="row d-none d-xl-flex border-top py-5 text-uppercase footer-spree-menu-links">
 
-        <% if footer_menu_items %>
-          <% footer_menu_items.each do |root| %>
+        <% if menu_by_code('spree-all-footer').present? %>
+          <% menu_by_code('spree-all-footer').menu_items.each do |root| %>
             <% if root.root? %>
             <div class="col-3">
               <div class="footer-spree-label">

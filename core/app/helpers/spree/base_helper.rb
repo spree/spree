@@ -27,14 +27,9 @@ module Spree
 
     def menu_item_link_to(item)
       if Spree::MenuItem::DYNAMIC_RESOURCE_TYPE.include? item.linked_resource_type
-        return if item.linked_resource.nil?
+        return if item.path.nil?
 
-        case item.linked_resource_type
-        when 'Spree::Product'
-          spree.product_path(item.linked_resource)
-        when 'Spree::Taxon'
-          spree.nested_taxons_path(item.linked_resource.permalink)
-        end
+        item.path
       else
         case item.linked_resource_type
         when 'URL'
@@ -44,7 +39,7 @@ module Spree
             '#'
           end
         when 'Home Page'
-          spree.root_path
+          '/'
         else
           '#'
         end

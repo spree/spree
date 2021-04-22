@@ -6,7 +6,7 @@
   <div class="d-flex align-items-center w-100 truncate">
     <div>
       <%= item.name %>
-      <% if defined?(Spree::Frontend) && menu_item_link_to(item) != '#' %>
+      <% if menu_item_link_to(item) != '#' %>
         <small class="text-muted mt-0">-></small> <span class="badge badge-light badge-light-muted-text"><%= menu_item_link_to(item) %></span>
       <% end %>
       <small class="form-text text-muted mt-0">
@@ -14,13 +14,14 @@
         <%= "| #{Spree.t('admin.navigation.code')}: #{item.code}" if item.code.present? %>
       </small>
     </div>
-
-    <% if item.image_asset.attached? && item.image_asset.image? %>
-      <div class="ml-2">
-        <div class="menu_items_image_holder">
-          <%= image_tag main_app.url_for(item.image_asset) %>
+    <% if item.uses_attached_image %>
+      <% if item.image_asset.attached? && item.image_asset.image? %>
+        <div class="ml-2">
+          <div class="menu_items_image_holder">
+            <%= image_tag main_app.url_for(item.image_asset) %>
+          </div>
         </div>
-      </div>
+      <% end %>
     <% end %>
   </div>
 

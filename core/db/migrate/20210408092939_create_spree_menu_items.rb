@@ -4,7 +4,9 @@ class CreateSpreeMenuItems < ActiveRecord::Migration[6.0]
       t.column :name, :string, null: false
       t.column :subtitle, :string
       t.column :url, :string
+      t.column :path, :string
       t.column :new_window, :boolean, default: false
+      t.column :has_attached_image, :boolean, default: false
       t.column :item_type, :string
       t.column :linked_resource_type, :string, default: 'URL'
       t.column :linked_resource_id, :integer

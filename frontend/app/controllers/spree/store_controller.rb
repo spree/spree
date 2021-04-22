@@ -9,7 +9,6 @@ module Spree
     skip_before_action :verify_authenticity_token, only: :ensure_cart, raise: false
 
     before_action :redirect_to_default_locale
-    before_action :load_menus
 
     def account_link
       render partial: 'spree/shared/link_to_account'
@@ -32,27 +31,11 @@ module Spree
       render json: current_order(create_order_if_necessary: true) # force creation of order if doesn't exists
     end
 
-    def load_menus
-      @menus = Spree::Menu.by_store(current_store)
-    end
-
-    def find_menu_by_unique_code(code)
-      menu = @menus.by_unique_code(code)
-
-      return if menu.nil?
-
+    def menu_by_code(code)
+      menu = Spree::Menu.includes(:menu_items).by_store(current_store).by_unique_code(code)
       menu[0]
     end
-    helper_method :find_menu_by_unique_code
-
-    def menu_items_for_menu_with_unique_code(code)
-      menu = @menus.by_unique_code(code)[0] || nil
-
-      return if menu.nil?
-
-      menu.menu_items.order(:lft)
-    end
-    helper_method :menu_items_for_menu_with_unique_code
+    helper_method :menu_by_code
 
     protected
 

@@ -12,7 +12,7 @@ module Spree
       end
 
       def load_menu_items_ordered
-        @menu_items_in_order = @menu.menu_items.order(:lft)
+        @menu_items = @menu.menu_items.roots.order(:lft)
       end
     end
   end

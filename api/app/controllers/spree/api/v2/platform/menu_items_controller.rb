@@ -12,6 +12,10 @@ module Spree
                           end
 
             @moved_item.move_with_index(params[:new_position_idx].to_i, @new_parent)
+
+            if @moved_item.save
+              head :no_content
+            end
           end
 
           private
