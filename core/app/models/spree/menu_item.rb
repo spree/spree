@@ -26,9 +26,7 @@ module Spree
     validates :linked_resource_type, inclusion: { in: LINKED_RESOURCE_TYPE }
 
     def self.refresh_paths(resorce, old_value)
-      where(linked_resource_type: resorce.class.name).where('path LIKE ?', "%/#{old_value}%").each do |item|
-        item.save!
-      end
+      where(linked_resource_type: resorce.class.name).where('path LIKE ?', "%/#{old_value}%").each(&:save!)
     end
 
     private
