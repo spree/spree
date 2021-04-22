@@ -26,7 +26,7 @@ module Spree
     validates :linked_resource_type, inclusion: { in: LINKED_RESOURCE_TYPE }
 
     def self.refresh_paths(resorce, old_value)
-      where(linked_resource_type: resorce.class.name).where('path LIKE ?', "%/#{old_value}%").each(&:save!)
+      where(linked_resource_type: resorce.class.name, linked_resource_id: resorce.id).each(&:save!)
     end
 
     private
@@ -53,7 +53,7 @@ module Spree
     end
 
     def check_for_image
-      self.uses_attached_image = if image_asset.attached?
+      self.has_attached_image = if image_asset.attached?
                                    true
                                  else
                                    false

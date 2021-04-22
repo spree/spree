@@ -42,7 +42,7 @@
                           <% child.children.each do |promo_banner| %>
                             <%= link_to menu_item_link_to(promo_banner), class: "dropdown-item" do %>
                               <div class="category-image text-center my-4 mx-3">
-                                <% if promo_banner.uses_attached_image %>
+                                <% if promo_banner.has_attached_image %>
                                   <%= image_tag main_app.url_for(promo_banner.image_asset), title: promo_banner.subtitle %>
                                 <% end %>
                                 <div class="category-box">

@@ -14,7 +14,7 @@
         <%= "| #{Spree.t('admin.navigation.code')}: #{item.code}" if item.code.present? %>
       </small>
     </div>
-    <% if item.uses_attached_image %>
+    <% if item.has_attached_image %>
       <% if item.image_asset.attached? && item.image_asset.image? %>
         <div class="ml-2">
           <div class="menu_items_image_holder">
