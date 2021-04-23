@@ -78,7 +78,7 @@ module Spree
 
     # These paths are used if Spree::Frontend is not being used.
     preference :api_product_path, :string, default: 'products'
-    preference :api_taxon_path, :string, default: 'collection'
+    preference :api_taxon_path, :string, default: 't'
 
     attr_writer :searcher_class
   end
