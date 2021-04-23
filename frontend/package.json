@@ -1,8 +1,8 @@
 {
-  "name": "@spree/frontend",
+  "name": "@spree/storefront",
   "version": "4.3.0-alpha",
   "license": "BSD-3",
-  "main": "./dist/spree_frontend.web.umd.js",
+  "main": "./dist/spree_storefront.web.umd.js",
   "scripts": {
     "build": "webpack --progress",
     "dev": "yarn run build -- --watch"
