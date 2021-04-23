@@ -1,8 +1,9 @@
 document.addEventListener('DOMContentLoaded', function() {
-  $('#LinkToSelect2').select2()
+  $('#menu_item_linked_resource_type').select2()
+  $('#menu_item_item_type').select2()
 
-  $('#LinkToSelect2').on('change', function() {
-    const selectedLinkTo = $('#LinkToSelect2').val()
+  $('#menu_item_linked_resource_type').on('change', function() {
+    const selectedLinkTo = $('#menu_item_linked_resource_type').val()
     const message = document.getElementById('alertToClickUpdate')
     const activePanel = document.getElementById('linkResourcePanel')
     const panelType = activePanel.dataset.panelType
@@ -21,4 +22,24 @@ document.addEventListener('DOMContentLoaded', function() {
       message.classList.add('d-block')
     }
   });
+
+  updateContainerMessage()
+
+  $('#menu_item_item_type').on('change', function() {
+    updateContainerMessage()
+  });
+
+  function updateContainerMessage () {
+    const selectedLinkType = $('#menu_item_item_type').val()
+    const linkSettingsPanel = document.getElementById('LinkSettings')
+    const usingConainerMessage = document.getElementById('usingContainerInfo')
+
+    if (selectedLinkType === 'Container') {
+      linkSettingsPanel.classList.add('d-none')
+      usingConainerMessage.classList.remove('d-none')
+    } else {
+      linkSettingsPanel.classList.remove('d-none')
+      usingConainerMessage.classList.add('d-none')
+    }
+  }
 })

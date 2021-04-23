@@ -76,9 +76,9 @@ module Spree
       @searcher_class ||= Spree::Core::Search::Base
     end
 
-    # These are used if no frontend is being used.
+    # These paths are used if Spree::Frontend is not being used.
     preference :api_product_path, :string, default: 'products'
-    preference :api_taxon_path, :string, default: 'categories'
+    preference :api_taxon_path, :string, default: 'collection'
 
     attr_writer :searcher_class
   end

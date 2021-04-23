@@ -67,10 +67,12 @@ module Spree
     end
 
     def reset_link_attributes
-      if linked_resource_type_changed?
+      if linked_resource_type_changed? || item_type == 'Container'
         self.linked_resource_id = nil
         self.destination = nil
         self.new_window = false
+
+        self.linked_resource_type = 'URL' if item_type == 'Container'
       end
     end
 
