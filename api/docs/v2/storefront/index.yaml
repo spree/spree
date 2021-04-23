@@ -238,6 +238,21 @@ paths:
       security:
         - bearerAuth: []
   '/api/v2/storefront/account/addresses/{id}':
+    delete:
+      description: 'Removes selected Address for the signed in User. It uses soft-delete for addresses with shipments and orders.'
+      tags:
+        - Account
+      operationId: Remove Address
+      parameters:
+        - $ref: '#/components/parameters/AddressId'
+      responses:
+        '204':
+          description: Requested Address has been removed from the User Account
+        '404':
+          $ref: '#/components/responses/404NotFound'
+      security:
+        - bearerAuth: []
+      summary: Remove Address
     patch:
       description: Update selected Address for the signed in User
       summary: List of Addresses
@@ -245,13 +260,7 @@ paths:
         - Account
       operationId: Update Address
       parameters:
-        - name: id
-          in: path
-          required: true
-          description: Selected Address for update
-          schema:
-            type: string
-          example: '1'
+        - $ref: '#/components/parameters/AddressId'
       requestBody:
         required: true
         content:
@@ -5380,6 +5389,14 @@ components:
         - state_name
         - country_iso
   parameters:
+    AddressId:
+      name: address_id
+      in: path
+      required: true
+      description: Address ID
+      schema:
+        type: string
+      example: '1'
     CreditCardIncludeParam:
       name: include
       in: query

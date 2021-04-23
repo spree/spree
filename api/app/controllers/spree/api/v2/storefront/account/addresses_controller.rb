@@ -7,13 +7,27 @@ module Spree
             before_action :require_spree_current_user
 
             def create
+              spree_authorize! :create, model_class
+
               result = create_service.call(user: spree_current_user, address_params: address_params)
               render_result(result)
             end
 
             def update
+              spree_authorize! :update, resource
+
               result = update_service.call(address: resource, address_params: address_params)
               render_result(result)
+            end
+
+            def destroy
+              spree_authorize! :destroy, resource
+
+              if resource.destroy
+                head 204
+              else
+                render_error_payload(resource.errors)
+              end
             end
 
             private
