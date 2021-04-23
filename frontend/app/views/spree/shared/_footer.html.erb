@@ -56,13 +56,13 @@
             <% if root.root? %>
             <div class="col-3">
               <div class="footer-spree-label">
-                <%= link_to root.name, root.destination %>
+                <%= link_to root.name, localized_item_link(root) %>
               </div>
               <% root.children.each do |child| %>
                 <% if child.code == 'category' && child.item_type == 'Container' %>
                   <% if child.children.present? %>
                     <% child.children.each do |category_link| %>
-                      <div class="pt-2"><%= link_to category_link.name, category_link.destination %></div>
+                      <div class="pt-2"><%= link_to category_link.name, localized_item_link(category_link) %></div>
                     <% end %>
                   <% end %>
                 <% end %>

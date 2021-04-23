@@ -30,8 +30,12 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   function updateContainerMessage () {
-    const selectedLinkType = $('#menu_item_item_type').val()
     const linkSettingsPanel = document.getElementById('LinkSettings')
+
+    if (!linkSettingsPanel) return
+
+    const selectedLinkType = $('#menu_item_item_type').val()
+
     const usingConainerMessage = document.getElementById('usingContainerInfo')
 
     if (selectedLinkType === 'Container') {
