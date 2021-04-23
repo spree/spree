@@ -57,6 +57,7 @@ vendor/bundle
 .ignore
 TODO
 */node_modules
+*/dist
 
 # new guides
 guides/output
