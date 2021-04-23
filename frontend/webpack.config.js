@@ -23,7 +23,7 @@ module.exports = {
     ],
   },
   output: {
-    filename: "spree_frontend.web.umd.js",
+    filename: "spree_storefront.web.umd.js",
     path: distDirectoryPath,
     library: {
       type: "umd",

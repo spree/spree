@@ -28,7 +28,7 @@ module Spree
           # Sprockets 4 manifest
           template 'app/assets/config/manifest.js', './app/assets/config/manifest.js'
           # Webpacker pack
-          template 'app/javascript/packs/spree_frontend.js', './app/javascript/packs/spree_frontend.js'
+          template 'app/javascript/packs/spree_storefront.js', './app/javascript/packs/spree_storefront.js'
           # home page template
           directory 'home', './app/views/spree/home'
         end

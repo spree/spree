@@ -11,5 +11,5 @@
 <%= render 'spree/shared/locale_and_currency' %>
 <%= render 'spree/shared/storefront_api_setup' %>
 <%= javascript_include_tag 'spree/frontend/all', defer: true, 'data-turbolinks-track': 'reload' %>
-<%= javascript_pack_tag 'spree_frontend' if defined?(javascript_pack_tag) %>
+<%= javascript_pack_tag 'spree_storefront' %>
 <%= yield :head %>
