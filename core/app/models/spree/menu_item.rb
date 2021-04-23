@@ -33,38 +33,43 @@ module Spree
 
     def build_path
       if DYNAMIC_RESOURCE_TYPE.include? linked_resource_type
-        return if linked_resource_id.nil?
+        return if linked_resource.nil?
 
         case linked_resource_type
         when 'Spree::Taxon'
-          self.path = if frontend_available?
-                        Spree::Core::Engine.routes.url_helpers.nested_taxons_path(linked_resource.permalink)
-                      else
-                        "/#{Spree::Config[:api_taxon_path]}/#{linked_resource.permalink}"
-                      end
+          self.destination = if frontend_available?
+                               Spree::Core::Engine.routes.url_helpers.nested_taxons_path(linked_resource.permalink)
+                             else
+                               "/#{Spree::Config[:api_taxon_path]}/#{linked_resource.permalink}"
+                             end
         when 'Spree::Product'
-          self.path = if frontend_available?
-                        Spree::Core::Engine.routes.url_helpers.product_path(linked_resource)
-                      else
-                        "/#{Spree::Config[:api_product_path]}/#{linked_resource.slug}"
-                      end
+          self.destination = if frontend_available?
+                               Spree::Core::Engine.routes.url_helpers.product_path(linked_resource)
+                             else
+                               "/#{Spree::Config[:api_product_path]}/#{linked_resource.slug}"
+                             end
+
+        end
+      else
+        case linked_resource_type
+        when 'Home Page'
+          self.destination = '/'
         end
       end
     end
 
     def check_for_image
       self.has_attached_image = if image_asset.attached?
-                                   true
-                                 else
-                                   false
-                                 end
+                                  true
+                                else
+                                  false
+                                end
     end
 
     def reset_link_attributes
       if linked_resource_type_changed?
         self.linked_resource_id = nil
-        self.url = nil
-        self.path = nil
+        self.destination = nil
         self.new_window = false
       end
     end

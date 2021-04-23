@@ -6,8 +6,8 @@
   <div class="d-flex align-items-center w-100 truncate">
     <div>
       <%= item.name %>
-      <% if menu_item_link_to(item) != '#' %>
-        <small class="text-muted mt-0">-></small> <span class="badge badge-light badge-light-muted-text"><%= menu_item_link_to(item) %></span>
+      <% if item.destination %>
+        <small class="text-muted mt-0">-></small> <span class="badge badge-light badge-light-muted-text"><%= item.destination %></span>
       <% end %>
       <small class="form-text text-muted mt-0">
         <%= "#{Spree.t('admin.navigation.type')}: #{item.item_type}" %>

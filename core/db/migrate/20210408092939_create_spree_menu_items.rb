@@ -3,8 +3,7 @@ class CreateSpreeMenuItems < ActiveRecord::Migration[6.0]
     create_table :spree_menu_items do |t|
       t.column :name, :string, null: false
       t.column :subtitle, :string
-      t.column :url, :string
-      t.column :path, :string
+      t.column :destination, :string
       t.column :new_window, :boolean, default: false
       t.column :has_attached_image, :boolean, default: false
       t.column :item_type, :string

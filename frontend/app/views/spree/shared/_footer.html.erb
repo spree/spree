@@ -50,17 +50,19 @@
       <div class="row d-none d-xl-flex border-top py-5 text-uppercase footer-spree-menu-links">
 
         <% if menu_by_code('spree-all-footer').present? %>
-          <% menu_by_code('spree-all-footer').menu_items.each do |root| %>
+        <% footer_menu_items = menu_by_code('spree-all-footer').menu_items.order(:lft) %>
+
+          <% footer_menu_items.each do |root| %>
             <% if root.root? %>
             <div class="col-3">
               <div class="footer-spree-label">
-                <%= link_to root.name, menu_item_link_to(root) %>
+                <%= link_to root.name, root.destination %>
               </div>
               <% root.children.each do |child| %>
                 <% if child.code == 'category' && child.item_type == 'Container' %>
                   <% if child.children.present? %>
                     <% child.children.each do |category_link| %>
-                      <div class="pt-2"><%= link_to category_link.name, menu_item_link_to(category_link) %></div>
+                      <div class="pt-2"><%= link_to category_link.name, category_link.destination %></div>
                     <% end %>
                   <% end %>
                 <% end %>
