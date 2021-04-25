@@ -3,11 +3,11 @@
     <%= svg_icon(name: 'sort.svg', width: '20', height: '20') %>
   </div>
 
-  <div class="d-flex align-items-center w-100 truncate">
-    <div>
+  <div class="d-flex align-items-center overflow-hidden w-100">
+    <div class="overflow-hidden">
       <%= item.name %>
       <% if item.destination %>
-        <small class="text-muted mt-0">-></small> <span class="badge badge-light badge-light-muted-text"><%= item.destination %></span>
+        <span class="badge badge-light badge-light-muted-text">-> <%= item.destination %></span>
       <% end %>
       <small class="form-text text-muted mt-0">
         <%= "#{Spree.t('admin.navigation.type')}: #{item.item_type}" %>
