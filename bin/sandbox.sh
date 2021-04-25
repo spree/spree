@@ -28,7 +28,8 @@ bundle exec rails new sandbox --database="$RAILSDB" \
   --skip-spring \
   --skip-test \
   --skip-coffee \
-  --skip-bootsnap
+  --skip-bootsnap \
+  --skip-turbolinks
 
 if [ ! -d "sandbox" ]; then
   echo 'sandbox rails application failed'

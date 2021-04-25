@@ -7,6 +7,29 @@
   resolved "https://registry.npmjs.org/@discoveryjs/json-ext/-/json-ext-0.5.2.tgz"
   integrity sha512-HyYEUDeIj5rRQU2Hk5HTB2uHsbRQpF70nvMhVzi+VJR0X+xNEhjPui4/kBf3VeH/wqD28PT4sVOm8qqLjBrSZg==
 
+"@hotwired/turbo-rails@^7.0.0-beta.5":
+  version "7.0.0-beta.5"
+  resolved "https://registry.yarnpkg.com/@hotwired/turbo-rails/-/turbo-rails-7.0.0-beta.5.tgz#a0efdb7a20613845c43afe6f376b353e62f7e68d"
+  integrity sha512-zj+ZYbs2IHeJHtLavcLX5K0oW/3K8s3zjok4lpujxqLactp3OpuqBZxKBr+tgODnAX/WYFoKLpzivyx3xVRfTw==
+  dependencies:
+    "@hotwired/turbo" "^7.0.0-beta.4"
+    "@rails/actioncable" "^6.1.0"
+
+"@hotwired/turbo@^7.0.0-beta.4", "@hotwired/turbo@^7.0.0-beta.5":
+  version "7.0.0-beta.5"
+  resolved "https://registry.yarnpkg.com/@hotwired/turbo/-/turbo-7.0.0-beta.5.tgz#3167e8e882b9075c5b3b2e2f32432cca2862c61c"
+  integrity sha512-z10dI2U/StkMSmnfJUsyez6jrhnitgzjyw2CxE3LnAAzW/TBhvsMYKsVG7Xu337r3gh0r6UwIFWyvvtm3in6gg==
+
+"@rails/actioncable@^6.1.0":
+  version "6.1.3"
+  resolved "https://registry.yarnpkg.com/@rails/actioncable/-/actioncable-6.1.3.tgz#c8a67ec4d22ecd6931f7ebd98143fddbc815419a"
+  integrity sha512-m02524MR9cTnUNfGz39Lkx9jVvuL0tle4O7YgvouJ7H83FILxzG1nQ5jw8pAjLAr9XQGu+P1sY4SKE3zyhCNjw==
+
+"@rails/ujs@^6.1.3-1":
+  version "6.1.3-1"
+  resolved "https://registry.yarnpkg.com/@rails/ujs/-/ujs-6.1.3-1.tgz#c25ca8473a40298ecab7b0020214e77c0e6f5188"
+  integrity sha512-mygePdimLMOQ2nr9YclG1UIyKgaNfb2dMhsjhTs18j6DvlKR9VRz1j/Mbd2E7VL7HX7hlMBD1cltDrQsTZPjEw==
+
 "@spree/storefront-api-v2-sdk@^4.5.0":
   version "4.5.0"
   resolved "https://registry.npmjs.org/@spree/storefront-api-v2-sdk/-/storefront-api-v2-sdk-4.5.0.tgz"
