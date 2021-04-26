@@ -32,7 +32,7 @@ module Spree
     end
 
     def menu_by_code(code)
-      menu = Spree::Menu.includes(:menu_items).by_store(current_store).by_unique_code(code)
+      menu = Spree::Menu.by_store(current_store).by_unique_code(code)
       menu[0]
     end
     helper_method :menu_by_code

@@ -50,10 +50,9 @@
       <div class="row d-none d-xl-flex border-top py-5 text-uppercase footer-spree-menu-links">
 
         <% if menu_by_code('spree-all-footer').present? %>
-        <% footer_menu_items = menu_by_code('spree-all-footer').menu_items.order(:lft) %>
+          <% footer_menu_root = menu_by_code('spree-all-footer').root %>
 
-          <% footer_menu_items.each do |root| %>
-            <% if root.root? %>
+          <% footer_menu_root.children.each do |root| %>
             <div class="col-3">
               <div class="footer-spree-label">
                 <%= link_to root.name, localized_item_link(root) %>
@@ -68,7 +67,6 @@
                 <% end %>
               <% end %>
             </div>
-            <% end %>
           <% end %>
         <% end %>
 
