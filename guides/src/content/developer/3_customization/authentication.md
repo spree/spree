@@ -110,8 +110,17 @@ include Spree::Core::ControllerHelpers::Auth
 include Spree::Core::ControllerHelpers::Common
 include Spree::Core::ControllerHelpers::Order
 include Spree::Core::ControllerHelpers::Store
+include Spree::Core::ControllerHelpers::Currency
+include Spree::Core::ControllerHelpers::Locale
+
 helper 'spree/base'
+helper 'spree/locale' if defined?(Spree::LocaleHelper)
+helper 'spree/currency' if defined?(Spree::CurrencyHelper)
+helper 'spree/store' if defined?(Spree::StoreHelper)
 ```
+
+Please note that including `Spree::Core::ControllerHelpers::Common` will direct all Spree routes to the root of the app. For applications not mounting Spree at `'/'` omit the `Spree::Core::ControllerHelpers::Common` module to preserve existing application routes. Move the `mount Spree::Core::Engine` statement to the end of the `config/routes.rb` file.
+
 
 Each of the methods defined in this module return values that are the
 most common in Rails applications today, but you may need to customize
@@ -247,6 +256,10 @@ This will then use the URL helpers you have defined in
 allow users to logout, one to allow them to login, and one to allow them
 to signup. These links will be visible on all customer-facing pages of
 Spree.
+
+## Gemfile
+
+The `spree_auth_devise` gem is not needed when using an existing application authentication unless the goal is to have two separate authentication methods.
 
 ## Signup promotion
 
