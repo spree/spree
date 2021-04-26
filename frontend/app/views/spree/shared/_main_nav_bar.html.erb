@@ -1,12 +1,11 @@
 <% if menu_by_code('spree-all-main').present? %>
-<% main_menu_items = menu_by_code('spree-all-main').menu_items.order(:lft) %>
+<% main_menu_items = menu_by_code('spree-all-main') %>
 <% category = 'category' %>
 <% promo = 'promo' %>
 
   <div class="h-100" role="navigation" aria-label="<%= Spree.t('nav_bar.desktop') %>">
     <ul class="nav h-100 main-nav-bar">
-      <% main_menu_items.each do |root| %>
-        <% if root.root? %>
+      <% main_menu_items.root.children.each do |root| %>
           <li class="p-0 nav-item main-nav-bar-category">
             <% has_dropdown = root.children.present? %>
             <% dropdown_toggle_class = has_dropdown ? "dropdown-toggle" : "" %>
@@ -67,7 +66,7 @@
 
              <% end %>
           </li>
-        <% end %>
+
       <% end %>
     </ul>
   </div>

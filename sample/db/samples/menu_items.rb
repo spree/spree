@@ -3,7 +3,7 @@ footer_menu = Spree::Menu.find_by!(name: 'Footer Menu')
 
 MENUS = [main_menu, footer_menu]
 
-MENUS.each do |menu_id|
+MENUS.each do |menu|
   ##############
   # Root Items #
   ##############
@@ -12,7 +12,8 @@ MENUS.each do |menu_id|
     name: 'Women',
     item_type: 'Link',
     linked_resource_type: 'Spree::Taxon',
-    menu_id: menu_id
+    menu_id: menu,
+    parent_id: menu.root.id
   ).first_or_create!
   menu_root_women.linked_resource_id = woman_taxon.id
   menu_root_women.save!
@@ -22,7 +23,8 @@ MENUS.each do |menu_id|
     name: 'Men',
     item_type: 'Link',
     linked_resource_type: 'Spree::Taxon',
-    menu_id: menu_id
+    menu_id: menu,
+    parent_id: menu.root.id
   ).first_or_create!
   menu_root_men.linked_resource_id = men_taxon.id
   menu_root_men.save!
@@ -32,7 +34,8 @@ MENUS.each do |menu_id|
     name: 'Sportsware',
     item_type: 'Link',
     linked_resource_type: 'Spree::Taxon',
-    menu_id: menu_id
+    menu_id: menu,
+    parent_id: menu.root.id
   ).first_or_create!
   menu_root_sw.linked_resource_id = sw_taxon.id
   menu_root_sw.save!
@@ -44,7 +47,7 @@ MENUS.each do |menu_id|
     name: 'Categories',
     item_type: 'Container',
     code: 'category',
-    menu_id: menu_id,
+    menu_id: menu,
     parent_id: menu_root_women
   ).first_or_create!
 
@@ -52,7 +55,7 @@ MENUS.each do |menu_id|
     name: 'Categories',
     item_type: 'Container',
     code: 'category',
-    menu_id: menu_id,
+    menu_id: menu,
     parent_id: menu_root_men
   ).first_or_create!
 
@@ -60,51 +63,57 @@ MENUS.each do |menu_id|
     name: 'Categories',
     item_type: 'Container',
     code: 'category',
-    menu_id: menu_id,
+    menu_id: menu,
     parent_id: menu_root_sw
   ).first_or_create!
 
   ##############
   # Promotions #
   ##############
-  menu_promo_women = Spree::MenuItem.where(
-    name: 'Promos',
-    item_type: 'Container',
-    code: 'promo',
-    menu_id: menu_id,
-    parent_id: menu_root_women
-  ).first_or_create!
+  if menu.unique_code == 'spree-all-main'
+    menu_promo_women = Spree::MenuItem.where(
+      name: 'Promos',
+      item_type: 'Container',
+      code: 'promo',
+      menu_id: menu,
+      parent_id: menu_root_women
+    ).first_or_create!
 
-  menu_promo_men = Spree::MenuItem.where(
-    name: 'Promos',
-    item_type: 'Container',
-    code: 'promo',
-    menu_id: menu_id,
-    parent_id: menu_root_men
-  ).first_or_create!
+    menu_promo_men = Spree::MenuItem.where(
+      name: 'Promos',
+      item_type: 'Container',
+      code: 'promo',
+      menu_id: menu,
+      parent_id: menu_root_men
+    ).first_or_create!
 
-  menu_promo_sw = Spree::MenuItem.where(
-    name: 'Promos',
-    item_type: 'Container',
-    code: 'promo',
-    menu_id: menu_id,
-    parent_id: menu_root_sw
-  ).first_or_create!
+    menu_promo_sw = Spree::MenuItem.where(
+      name: 'Promos',
+      item_type: 'Container',
+      code: 'promo',
+      menu_id: menu,
+      parent_id: menu_root_sw
+    ).first_or_create!
 
-  promos = [menu_promo_women, menu_promo_men, menu_promo_sw]
+    promos = [menu_promo_women, menu_promo_men, menu_promo_sw]
+  else
+    promos = []
+  end
+
   summer = Spree::Taxon.find_by!(permalink: 'new-collection/summer-2021')
   offers = Spree::Taxon.find_by!(permalink: 'special-offers/30-percent-off')
 
   #####################
   # Links For: PROMOS #
   #####################
+
   promos.each do |promo|
     summer_promo = Spree::MenuItem.where(
       name: 'New Collection',
       subtitle: "Summer #{Date.today.year}",
       linked_resource_type: 'Spree::Taxon',
       item_type: 'Promotion',
-      menu_id: menu_id,
+      menu_id: menu,
       parent_id: promo
     ).first_or_create!
     summer_promo.linked_resource_id = summer.id
@@ -115,7 +124,7 @@ MENUS.each do |menu_id|
       subtitle: 'Get up to 30% OFF',
       linked_resource_type: 'Spree::Taxon',
       item_type: 'Promotion',
-      menu_id: menu_id,
+      menu_id: menu,
       parent_id: promo
     ).first_or_create!
     special_offer.linked_resource_id = offers.id
@@ -130,7 +139,7 @@ MENUS.each do |menu_id|
     name: 'Skirts',
     linked_resource_type: 'Spree::Taxon',
     item_type: 'Link',
-    menu_id: menu_id,
+    menu_id: menu,
     parent_id: menu_cat_women
   ).first_or_create!
   women_skirts.linked_resource_id = women_skirts_t.id
@@ -141,7 +150,7 @@ MENUS.each do |menu_id|
     name: 'Dresses',
     linked_resource_type: 'Spree::Taxon',
     item_type: 'Link',
-    menu_id: menu_id,
+    menu_id: menu,
     parent_id: menu_cat_women
   ).first_or_create!
   women_dresses.linked_resource_id = women_dresses_t.id
@@ -152,7 +161,7 @@ MENUS.each do |menu_id|
     name: 'Shirts And Blouses',
     linked_resource_type: 'Spree::Taxon',
     item_type: 'Link',
-    menu_id: menu_id,
+    menu_id: menu,
     parent_id: menu_cat_women
   ).first_or_create!
   women_s_b.linked_resource_id = women_s_b_t.id
@@ -163,7 +172,7 @@ MENUS.each do |menu_id|
     name: 'Sweaters',
     linked_resource_type: 'Spree::Taxon',
     item_type: 'Link',
-    menu_id: menu_id,
+    menu_id: menu,
     parent_id: menu_cat_women
   ).first_or_create!
   women_sweaters.linked_resource_id = women_sweaters_t.id
@@ -174,7 +183,7 @@ MENUS.each do |menu_id|
     name: 'Tops and T-Shirts',
     linked_resource_type: 'Spree::Taxon',
     item_type: 'Link',
-    menu_id: menu_id,
+    menu_id: menu,
     parent_id: menu_cat_women
   ).first_or_create!
   women_tops_tees.linked_resource_id = women_tops_tees_t.id
@@ -185,7 +194,7 @@ MENUS.each do |menu_id|
     name: 'Jackets and Coats',
     linked_resource_type: 'Spree::Taxon',
     item_type: 'Link',
-    menu_id: menu_id,
+    menu_id: menu,
     parent_id: menu_cat_women
   ).first_or_create!
   women_j_c.linked_resource_id = women_j_c_t.id
@@ -199,7 +208,7 @@ MENUS.each do |menu_id|
     name: 'Shirts',
     linked_resource_type: 'Spree::Taxon',
     item_type: 'Link',
-    menu_id: menu_id,
+    menu_id: menu,
     parent_id: menu_cat_men
   ).first_or_create!
   men_shirts.linked_resource_id = men_shirts_t.id
@@ -210,7 +219,7 @@ MENUS.each do |menu_id|
     name: 'T-Shirts',
     linked_resource_type: 'Spree::Taxon',
     item_type: 'Link',
-    menu_id: menu_id,
+    menu_id: menu,
     parent_id: menu_cat_men
   ).first_or_create!
   men_t_shirts.linked_resource_id = men_t_shirts_t.id
@@ -221,7 +230,7 @@ MENUS.each do |menu_id|
     name: 'Sweaters',
     linked_resource_type: 'Spree::Taxon',
     item_type: 'Link',
-    menu_id: menu_id,
+    menu_id: menu,
     parent_id: menu_cat_men
   ).first_or_create!
   men_sweaters.linked_resource_id = men_sweaters_t.id
@@ -232,7 +241,7 @@ MENUS.each do |menu_id|
     name: 'Jackets and Coats',
     linked_resource_type: 'Spree::Taxon',
     item_type: 'Link',
-    menu_id: menu_id,
+    menu_id: menu,
     parent_id: menu_cat_men
   ).first_or_create!
   men_j_c.linked_resource_id = men_j_c_t.id
@@ -246,7 +255,7 @@ MENUS.each do |menu_id|
     name: 'Tops',
     linked_resource_type: 'Spree::Taxon',
     item_type: 'Link',
-    menu_id: menu_id,
+    menu_id: menu,
     parent_id: menu_cat_sw
   ).first_or_create!
   sw_tops.linked_resource_id = sw_tops_t.id
@@ -257,7 +266,7 @@ MENUS.each do |menu_id|
     name: 'Sweatshirts',
     linked_resource_type: 'Spree::Taxon',
     item_type: 'Link',
-    menu_id: menu_id,
+    menu_id: menu,
     parent_id: menu_cat_sw
   ).first_or_create!
   sw_sweatshirts.linked_resource_id = sw_sweatshirts_t.id
@@ -268,7 +277,7 @@ MENUS.each do |menu_id|
     name: 'Pants',
     linked_resource_type: 'Spree::Taxon',
     item_type: 'Link',
-    menu_id: menu_id,
+    menu_id: menu,
     parent_id: menu_cat_sw
   ).first_or_create!
   sw_pants.linked_resource_id = sw_pants_t.id

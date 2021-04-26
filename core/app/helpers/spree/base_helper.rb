@@ -31,17 +31,17 @@ module Spree
       output_locale = if current_locale == current_store.default_locale
                         ''
                       else
-                        current_locale.to_s
+                        "/#{current_locale}"
                       end
 
       if Spree::MenuItem::DYNAMIC_RESOURCE_TYPE.include? item.linked_resource_type
-        "/#{output_locale + item.destination}"
+        "#{output_locale + item.destination}"
       else
         case item.linked_resource_type
         when 'URL'
           item.destination
         when 'Home Page'
-          "/#{output_locale}"
+          output_locale
         end
       end
     end

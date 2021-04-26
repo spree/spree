@@ -23,7 +23,7 @@
 
          <%= f.field_container :parent_id, class: ['form-group'] do %>
             <%= f.label :parent_id, Spree.t('admin.navigation.nested_under') %>
-            <%= f.select :parent_id, nested_set_options(@menu.menu_items, @menu_item) {|i| "#{'-' * i.level} #{i.name}" }, {include_blank: true}, {class: 'select2-clear'} %>
+            <%= f.select :parent_id, nested_set_options(@menu.menu_items, @menu_item) {|i| "#{'-' * i.level} #{i.name}" }, {include_blank: false}, {class: 'select2'} %>
             <%= f.error_message_on :parent_id %>
             <small class="form-text text-muted">
               <%= Spree.t('admin.navigation.nested_under_info') %>

@@ -11,7 +11,11 @@ module Spree
                             scope.find(params[:new_parent_id])
                           end
 
-            @moved_item.move_with_index(params[:new_position_idx].to_i, @new_parent)
+            if @moved_item && @new_parent
+              @moved_item.move_to_child_with_index(@new_parent, params[:new_position_idx].to_i)
+            else
+              head :bad_request
+            end
 
             if @moved_item.save
               head :no_content
