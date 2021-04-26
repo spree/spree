@@ -41,8 +41,10 @@ module Spree
       [
         current_store,
         current_currency,
-        I18n.locale
-      ]
+        I18n.locale,
+        try_spree_current_user.present?,
+        try_spree_current_user.try(:has_spree_role?, 'admin')
+      ].compact
     end
 
     def store_last_modified
