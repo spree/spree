@@ -24,6 +24,7 @@ module Spree
     validates :menu_id, presence: true, numericality: { only_integer: true }
     validates :item_type, inclusion: { in: ITEM_TYPE }
     validates :linked_resource_type, inclusion: { in: LINKED_RESOURCE_TYPE }
+    validate :check_for_root, on: :create
 
     def self.refresh_paths(resorce)
       where(linked_resource_type: resorce.class.name, linked_resource_id: resorce.id).each(&:save!)
@@ -78,6 +79,12 @@ module Spree
 
     def frontend_available?
       Spree::Core::Engine.frontend_available?
+    end
+
+    def check_for_root
+      if menu.try(:root).present? && parent_id.nil?
+        errors.add(:root_conflict, 'This Menu already has a root item')
+      end
     end
   end
 end

@@ -36,17 +36,20 @@
           </div>
         </div>
 
-        <% if @menu_items.root.present? %>
-          <% @menu_items.roots.each do |item| %>
-            <div class="card-body p-0 bg-light">
-              <div id="primaryMenuContainer" class="menu-container" data-parent-id="<%= item.id %>">
-
-                <% item.children.each do |c| %>
-                     <%= build_menu_item(@menu, c) %>
+        <% if @menu.root.present? %>
+          <div class="card-body p-0 bg-light">
+            <div id="primaryMenuContainer" class="menu-container" data-parent-id="<%= @menu.root.id %>">
+              <% if @menu.root.children.present? %>
+                <% @menu.root.children.each do |root_children| %>
+                     <%= build_menu_item(@menu, root_children) %>
                 <% end %>
+              <% else %>
+                <div class="alert alert-info no-objects-found m-5">
+                  <%= raw Spree.t('admin.navigation.no_menu_items', menu: @menu.name) %>
+                </div>
+              <% end %>
             </div>
           </div>
-          <% end %>
         <% end %>
       </div>
     </div>

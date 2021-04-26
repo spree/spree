@@ -6,10 +6,10 @@ describe 'setting locale', type: :feature, js: true do
 
   let!(:main_menu) { create(:menu, name: 'Main Menu', unique_code: 'spree-all-main', store_ids: [store.id]) }
 
-  let!(:mi_root) { create(:menu_item, name: 'URL', menu_id: main_menu.id, destination: 'https://spree.com') }
-  let!(:mi_home) { create(:menu_item, name: 'Home', menu_id: main_menu.id, linked_resource_type: 'Home Page') }
-  let!(:mi_ta) { create(:menu_item, name: 'Taxon', menu_id: main_menu.id, linked_resource_type: 'Spree::Taxon') }
-  let!(:mi_pro) { create(:menu_item, name: 'Product', menu_id: main_menu.id, linked_resource_type: 'Spree::Product') }
+  let!(:mi_root) { create(:menu_item, name: 'URL', menu_id: main_menu.id, parent_id: main_menu.root.id, destination: 'https://spree.com') }
+  let!(:mi_home) { create(:menu_item, name: 'Home', menu_id: main_menu.id, parent_id: main_menu.root.id, linked_resource_type: 'Home Page') }
+  let!(:mi_ta) { create(:menu_item, name: 'Taxon', menu_id: main_menu.id, parent_id: main_menu.root.id, linked_resource_type: 'Spree::Taxon') }
+  let!(:mi_pro) { create(:menu_item, name: 'Product', menu_id: main_menu.id, parent_id: main_menu.root.id, linked_resource_type: 'Spree::Product') }
 
   let!(:tax_x) { create(:taxon) }
   let!(:pr_x) { create(:product_in_stock, taxons: [tax_x]) }
