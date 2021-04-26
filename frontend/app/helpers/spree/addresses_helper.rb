@@ -60,8 +60,9 @@ module Spree
                     class: [!have_states ? 'hidden' : nil, 'position-absolute spree-flat-select-arrow'].compact)
       ].join.tr('"', "'").delete("\n")
 
-      content_tag(:noscript, form.text_field(:state_name)) +
-        javascript_tag("document.write(\"<span class='d-block position-relative'>#{state_elements.html_safe}</span>\");")
+      content_tag :span, class: 'd-block position-relative' do
+        state_elements.html_safe
+      end
     end
 
     def user_available_addresses
