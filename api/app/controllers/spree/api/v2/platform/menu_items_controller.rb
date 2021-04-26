@@ -5,14 +5,11 @@ module Spree
         class MenuItemsController < ResourceController
           def reposition
             @moved_item = scope.find(params[:moved_item_id])
-            @new_parent = if params[:new_parent_id].nil?
-                            nil
-                          else
-                            scope.find(params[:new_parent_id])
-                          end
+            @new_parent = scope.find(params[:new_parent_id])
+            new_index = params[:new_position_idx].to_i
 
-            if @moved_item && @new_parent
-              @moved_item.move_to_child_with_index(@new_parent, params[:new_position_idx].to_i)
+            if @moved_item && @new_parent && new_index
+              @moved_item.move_to_child_with_index(@new_parent, new_index)
             else
               head :bad_request
             end
