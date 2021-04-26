@@ -3,7 +3,7 @@ module Spree
     has_many :menu_items, dependent: :destroy
     has_and_belongs_to_many :stores
 
-    before_save :paremeterize_unique_code
+    before_validation :paremeterize_unique_code
     after_create :set_root
     after_save :set_root_menu_item_name
 

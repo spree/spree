@@ -19,10 +19,10 @@ module Spree
         end
 
         has_one :image,
-          object_method_name: :image_asset,
-          id_method_name: :image_asset,
-          record_type: :image,
-          serializer: :image
+                object_method_name: :image_asset,
+                id_method_name: :image_asset,
+                record_type: :image,
+                serializer: :image
 
         belongs_to :menu
       end

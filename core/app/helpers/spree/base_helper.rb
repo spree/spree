@@ -35,7 +35,7 @@ module Spree
                       end
 
       if Spree::MenuItem::DYNAMIC_RESOURCE_TYPE.include? item.linked_resource_type
-        "#{output_locale + item.destination}"
+        output_locale.to_s + item.destination.to_s
       else
         case item.linked_resource_type
         when 'URL'

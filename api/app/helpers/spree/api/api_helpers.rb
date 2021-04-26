@@ -9,7 +9,6 @@ module Spree
         :option_value_attributes,
         :order_attributes,
         :line_item_attributes,
-        :menu_attributes,
         :option_type_attributes,
         :payment_attributes,
         :payment_method_attributes,
@@ -85,8 +84,6 @@ module Spree
       ]
 
       @@line_item_attributes = [:id, :quantity, :price, :variant_id]
-
-      @@menu_attributes = [:id, :name, :unique_code]
 
       @@option_type_attributes = [:id, :name, :presentation, :position]
 
