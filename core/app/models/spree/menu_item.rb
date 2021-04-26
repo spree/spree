@@ -5,9 +5,8 @@ module Spree
 
     acts_as_nested_set dependent: :destroy
 
-    before_save :reset_link_attributes
-    before_save :check_for_image
-    before_save :build_path
+    before_save :reset_link_attributes, :check_for_image,
+                :build_path, :paremeterize_code
 
     has_one_attached :image_asset
 
@@ -83,7 +82,13 @@ module Spree
 
     def check_for_root
       if menu.try(:root).present? && parent_id.nil?
-        errors.add(:root_conflict, 'This Menu already has a root item')
+        errors.add(:root_conflict, Spree.t(:this_menu_already_has_a_root_item))
+      end
+    end
+
+    def paremeterize_code
+      if code
+        self.code = code.parameterize
       end
     end
   end

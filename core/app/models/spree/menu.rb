@@ -3,6 +3,7 @@ module Spree
     has_many :menu_items, dependent: :destroy
     has_and_belongs_to_many :stores
 
+    before_save :paremeterize_unique_code
     after_create :set_root
     after_save :set_root_menu_item_name
 
@@ -16,10 +17,12 @@ module Spree
 
     private
 
-    def set_root
-      code_name = name.parameterize
+    def paremeterize_unique_code
+      self.unique_code = unique_code.parameterize
+    end
 
-      self.root ||= MenuItem.create!(menu_id: id, name: name, item_type: 'Container', code: "#{code_name}-root")
+    def set_root
+      self.root ||= MenuItem.create!(menu_id: id, name: name, item_type: 'Container', code: "#{name}-root")
     end
 
     def set_root_menu_item_name
