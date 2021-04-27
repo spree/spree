@@ -61,7 +61,9 @@
   </div>
 </div>
 
-<div data-product-carousel data-product-carousel-taxon-id='bestsellers' class="my-3"></div>
+<div data-product-carousel data-product-carousel-taxon-id='bestsellers' class="my-3">
+  <%= turbo_frame_tag 'product_carousel_bestsellers', src: spree.taxon_product_carousel_path('bestsellers'), loading: :lazy, target: '_top' %>
+</div>
 
 <div class="homepage-fashion-trends-box mb-3">
   <div class="text-center">
@@ -74,7 +76,9 @@
   </div>
 </div>
 
-<div data-product-carousel data-product-carousel-taxon-id='trending' class="mb-3"></div>
+<div class="mb-3">
+  <%= turbo_frame_tag 'product_carousel_trending', src: spree.taxon_product_carousel_path('trending'), loading: :lazy, target: '_top' %>
+</div>
 
 <div class="container">
   <div class="row">
