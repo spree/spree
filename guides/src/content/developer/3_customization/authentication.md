@@ -119,7 +119,7 @@ helper 'spree/currency' if defined?(Spree::CurrencyHelper)
 helper 'spree/store' if defined?(Spree::StoreHelper)
 ```
 
-Please note that including `Spree::Core::ControllerHelpers::Common` will direct all Spree routes to the root of the app. For applications not mounting Spree at `'/'` omit the `Spree::Core::ControllerHelpers::Common` module to preserve existing application routes. Move the `mount Spree::Core::Engine` statement to the end of the `config/routes.rb` file.
+Please note that including `Spree::Core::ControllerHelpers::Common` will replace your application layout with [Spree layout](https://github.com/spree/spree/blob/master/frontend/app/views/spree/layouts/spree_application.html.erb). For applications not wanting to use Spree layout omit the `Spree::Core::ControllerHelpers::Common` module.
 
 
 Each of the methods defined in this module return values that are the
