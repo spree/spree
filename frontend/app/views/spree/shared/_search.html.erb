@@ -5,8 +5,9 @@
                        title: Spree.t(:search),
                        autofocus: true,
                        'aria-label': Spree.t(:search),
+                       data: { 'search-form-target': 'query' },
                        class: " border-0 p-3" %>
-  <button type="submit" class="btn border-0 p-0" aria-label="Submit">
+  <button type="submit" class="btn border-0 p-0" aria-label="Submit" data-action="search-form#submit">
     <%= icon(name: 'search',
             classes: 'd-inline',
             width: 27,

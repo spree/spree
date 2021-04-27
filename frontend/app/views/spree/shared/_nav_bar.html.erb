@@ -1,14 +1,19 @@
 <ul id="nav-bar" class="nav align-items-center d-flex flex-nowrap justify-content-end navbar-right">
   <li>
-    <div class="navbar-right-search-menu">
-      <button type="button" class="navbar-right-dropdown-toggle search-icons" aria-label="<%= Spree.t('nav_bar.show_search') %>">
+    <div class="navbar-right-search-menu" data-controller="search-form"
+         data-action="search-form:click:outside->search-form#hide">
+      <button type="button"
+              class="navbar-right-dropdown-toggle search-icons"
+              aria-label="<%= Spree.t('nav_bar.show_search') %>"
+              data-action="search-form#toggle">
         <%= icon(name: 'magnifying-glass',
                  classes: 'd-inline-block',
                  width: 36,
-                 height: 36) %>
+                 height: 36,
+                 opts: { data: { action: 'search-form#toggle' } }) %>
       </button>
 
-      <div id="search-dropdown" class="p-0 px-md-4 py-md-2 w-100 shadow navbar-right-search-menu-dropdown hide-on-esc">
+      <div id="search-dropdown" data-search-form-target="container" class="p-0 px-md-4 py-md-2 w-100 shadow navbar-right-search-menu-dropdown hide-on-esc">
         <%= render partial: 'spree/shared/search' %>
       </div>
     </div>
@@ -24,12 +29,17 @@
         </button>
 
         <div id="link-to-account" class="dropdown-menu dropdown-menu-right text-right">
+          <%= turbo_frame_tag :account_menu, src: spree.account_link_path, loading: :lazy, target: '_top' do %>
+            <%= render 'spree/shared/link_to_account' %>
+          <% end %>
         </div>
       </div>
     </li>
   <% end %>
   <li id="link-to-cart">
-    <%= render 'spree/shared/cart', class: 'd-inline-block cart-icon', size: 36, item_count: 0 %>
+    <%= turbo_frame_tag :cart_indicator, src: spree.cart_link_path, loading: :lazy, target: '_top' do %>
+      <%= render 'spree/shared/cart', class: 'd-inline-block cart-icon', size: 36, item_count: 0 %>
+    <% end %>
   </li>
   <%= render partial: 'spree/shared/internationalization_options' %>
 </ul>

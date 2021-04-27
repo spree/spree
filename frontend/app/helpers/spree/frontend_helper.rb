@@ -229,8 +229,11 @@ module Spree
       return image.alt if image.alt.present?
     end
 
-    def icon(name:, classes: '', width:, height:)
-      inline_svg_tag "#{name}.svg", class: "spree-icon #{classes}", size: "#{width}px*#{height}px"
+    def icon(name:, classes: '', width:, height:, opts: {})
+      opts[:class] = "spree-icon #{classes}"
+      opts[:size] = "#{width}px*#{height}px"
+
+      inline_svg_tag "#{name}.svg", opts
     end
 
     def price_filter_values
