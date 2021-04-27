@@ -114,9 +114,7 @@ include Spree::Core::ControllerHelpers::Currency
 include Spree::Core::ControllerHelpers::Locale
 
 helper 'spree/base'
-helper 'spree/locale' if defined?(Spree::LocaleHelper)
-helper 'spree/currency' if defined?(Spree::CurrencyHelper)
-helper 'spree/store' if defined?(Spree::StoreHelper)
+helper 'spree/locale', 'spree/currency', 'spree/store'
 ```
 
 Please note that including `Spree::Core::ControllerHelpers::Common` will replace your application layout with [Spree layout](https://github.com/spree/spree/blob/master/frontend/app/views/spree/layouts/spree_application.html.erb). For applications not wanting to use Spree layout omit the `Spree::Core::ControllerHelpers::Common` module.
