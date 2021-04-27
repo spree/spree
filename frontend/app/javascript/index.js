@@ -1,16 +1,36 @@
 import { Application } from 'stimulus'
 import * as Turbo from "@hotwired/turbo"
+import Rails from '@rails/ujs'
 import { definitionsFromContext } from 'stimulus/webpack-helpers'
+import 'bootstrap/js/dist/util'
+import 'bootstrap/js/dist/alert'
+import 'bootstrap/js/dist/carousel'
+import 'bootstrap/js/dist/collapse'
+import 'bootstrap/js/dist/dropdown'
+import lazySizes from 'lazysizes'
+
 window.Turbo = Turbo
+window.Rails = Rails
+
 const controllersContext = require.context('./controllers', true, /_controller\.js$/)
+const spreeStimulusApplication = Application.start()
+spreeStimulusApplication.load(definitionsFromContext(controllersContext))
 
-const application = Application.start()
+const initLazysizes = () => {
+  lazySizes.cfg.loadMode = 1
+  lazySizes.cfg.loadHidden = false
+}
 
-application.load(definitionsFromContext(controllersContext))
+export {
+  Spree,
+  spreeStimulusApplication,
+  initLazysizes
+}
 
 export default {
   start() {
-    console.log('Spree Frontend initialized')
+    Rails.start()
+    initLazysizes()
   }
 }
 
