@@ -693,7 +693,7 @@ en:
     configuration: Configuration
     configurations: Configurations
     confirm: Confirm
-    confirm_delete: Confirm Deletion
+    confirm_delete: Are you sure?
     confirm_password: Password Confirmation
     contact_phone: Contact phone
     contact_us: Contact us
