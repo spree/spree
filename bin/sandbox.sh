@@ -103,6 +103,12 @@ cat <<RUBY >> config/environments/development.rb
 Rails.application.config.hosts << /.*\.lvh\.me/
 RUBY
 
+cat <<YAML >> Procfile
+web: bundle exec --gemfile Gemfile rails s -p 3000
+webpack: bin/webpack-dev-server
+storefront_npm: cd ../frontend && yarn install && yarn run dev
+YAML
+
 bundle install --gemfile Gemfile
 bundle exec rails webpacker:install
 yarn add link:../frontend/
