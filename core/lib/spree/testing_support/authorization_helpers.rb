@@ -41,7 +41,9 @@ module Spree
 
           before do
             allow(Spree.user_class).to receive(:find_by).and_return(Spree.user_class.new)
-            allow_any_instance_of(Spree::Admin::BaseController).to receive(:admin_oauth_token).and_return(admin_token)
+            if defined?(Spree::Admin)
+              allow_any_instance_of(Spree::Admin::BaseController).to receive(:admin_oauth_token).and_return(admin_token)
+            end
           end
         end
 
