@@ -1,0 +1,33 @@
+<%= turbo_frame_tag :coupon_code do %>
+  <div class='shopping-cart-coupon-code <%= local_assigns[:classes] %>'>
+    <%= form_for :promotion, url: spree.cart_promotions_path do |promo_form| %>
+      <div class="input-group">
+        <% if promotion.nil? %>
+          <%= promo_form.text_field :coupon_code, size: '30', class: 'form-control border-right-0', placeholder: Spree.t('cart_page.add_promo_code'),
+                                                  aria: { label: Spree.t('cart_page.add_promo_code') }, required: true %>
+          <div class="input-group-append">
+            <%= button_tag '+', name: '', class: 'btn border-left-0' %>
+          </div>
+        <% else %>
+          <%= promo_form.text_field :applied_coupon_code, name: '', size: '30', class: 'form-control border-right-0 disabled',
+                                                          value: Spree.t(:promotion_label, name: promotion.name) %>
+          <div class="input-group-append">
+            <%= button_tag name: '', class: 'btn border-left-0 remove' do %>
+              <%= icon(name: 'close', width: 15, height: 14) %>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+    <% if local_assigns[:result] %>
+      <% if result.error.blank? %>
+        <div class="alert-success"><%= Spree.t(:coupon_code_applied) %></div>
+      <% else %>
+        <div class="alert-error">
+          <%= icon(name: 'error', width: 15, height: 14) %>
+          <span><%= result.error %></span>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+<% end %>

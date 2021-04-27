@@ -1,0 +1,7 @@
+<%= turbo_stream.remove(@line_item) %>
+
+<%= turbo_stream.replace :cart_summary do %>
+  <%= render 'spree/cart/summary', order: @order %>
+<% end %>
+
+<%= spree_turbo_update_cart(@order) %>

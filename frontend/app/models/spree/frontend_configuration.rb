@@ -7,5 +7,6 @@ module Spree
     preference :additional_filters_partials, :array, default: %w()
     preference :remember_me_enabled, :boolean, default: true
     preference :storefront_api_host, default: nil
+    preference :new_cart_enabled, default: true
   end
 end

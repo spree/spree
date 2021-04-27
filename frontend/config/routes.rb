@@ -17,9 +17,16 @@ Spree::Core::Engine.add_routes do
 
     resources :addresses, except: [:show]
 
+    # legacy cart
     get '/cart', to: 'orders#edit', as: :cart
     patch '/cart', to: 'orders#update', as: :update_cart
     put '/cart/empty', to: 'orders#empty', as: :empty_cart
+
+    # new cart
+    namespace :cart do
+      resources :line_items, only: [:create, :update, :destroy]
+      resources :promotions, only: [:create, :destroy]
+    end
 
     get '/content/cvv', to: 'content#cvv', as: :cvv
     get '/content/test', to: 'content#test'

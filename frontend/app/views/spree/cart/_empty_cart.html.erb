@@ -1,0 +1,13 @@
+<div data-hook="empty_cart" class="shopping-cart-empty">
+  <div class="d-flex flex-column justify-content-between h-100">
+    <div class="d-flex flex-column align-items-center">
+      <%= icon(name: 'empty-cart',
+               classes: 'shopping-cart-empty-image',
+               width: 83,
+               height: 83) %>
+
+      <p class="text-center shopping-cart-empty-info"><%= Spree.t('cart_page.empty_info').html_safe %></p>
+    </div>
+    <%= link_to Spree.t(:continue_shopping), spree.products_path, class: 'btn btn-primary text-uppercase font-weight-bold shopping-cart-empty-continue-link' %>
+  </div>
+</div>

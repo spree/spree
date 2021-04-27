@@ -36,6 +36,8 @@ module Spree
                includes(line_items: [variant: [:images, :product, option_values: :option_type]]).
                find_or_initialize_by(token: cookies.signed[:token])
       associate_user
+
+      render template: 'spree/cart/edit' #if Spree::Frontend::Config[:new_cart_enabled]
     end
 
     def empty

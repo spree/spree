@@ -1,0 +1,16 @@
+<% if @result.error.blank? %>
+  <%= spree_turbo_update_cart(@order) %>
+
+  <%= turbo_stream.replace :cart_summary do %>
+    <%= render 'spree/cart/summary', order: @order %>
+  <% end %>
+
+  <%= turbo_stream.replace :cart_line_items do %>
+    <%= render partial: 'spree/cart/line_item', collection: @order.line_items %>
+  <% end %>
+<% end %>
+
+<%= turbo_stream.replace :coupon_code do %>
+  <%= render 'spree/shared/coupon_code', promotion: @order.valid_coupon_promotions.first,
+                                         result: @result, classes: @result.error.present? ? 'error' : '' %>
+<% end %>

@@ -1,0 +1,5 @@
+<% if flash[:error] %>
+  <%= spree_turbo_update_flashes %>
+<% else %>
+  <%= spree_turbo_update_cart(@order) %>
+<% end %>
