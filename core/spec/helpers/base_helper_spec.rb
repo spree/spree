@@ -9,6 +9,56 @@ describe Spree::BaseHelper, type: :helper do
     allow(controller).to receive(:controller_name).and_return('test')
   end
 
+  context 'localized_item_link' do
+    let(:menu) { create(:menu, unique_code: 'main-123') }
+    let(:product) { create(:product) }
+    let(:taxon) { create(:taxon) }
+    let(:item_url) { create(:menu_item, name: 'URL To Random Site', item_type: 'Link', menu_id: menu.id, parent_id: menu.root.id, linked_resource_type: 'URL', destination: 'https://some-other-website.com') }
+    let(:item_home) { create(:menu_item, name: 'Home', item_type: 'Link', menu_id: menu.id, parent_id: menu.root.id, linked_resource_type: 'Home Page') }
+    let(:item_product) { create(:menu_item, name: product.name, item_type: 'Link', menu_id: menu.id, parent_id: menu.root.id, linked_resource_type: 'Spree::Product') }
+    let(:item_taxon) { create(:menu_item, name: taxon.name, item_type: 'Link', menu_id: menu.id, parent_id: menu.root.id, linked_resource_type: 'Spree::Taxon') }
+
+    context 'when the default language is passed in' do
+      it 'returns / for home page' do
+        expect(localized_item_link(item_home, 'en')).to eq('/')
+      end
+
+      it 'returns /t/taxonomy-1/taxon-1 for a taxon' do
+        item_taxon.update(linked_resource_id: taxon.id)
+        expect(localized_item_link(item_taxon, 'en')).to eq("#{item_taxon.destination}")
+      end
+
+      it 'returns /products/product-18-4225 for a product' do
+        item_product.update(linked_resource_id: product.id)
+        expect(localized_item_link(item_product, 'en')).to eq("#{item_product.destination}")
+      end
+
+      it 'returns https://some-other-website.com for a URL' do
+        expect(localized_item_link(item_url, 'en')).to eq("#{item_url.destination}")
+      end
+    end
+
+    context 'with the none default locale passed in (:fr)' do
+      it 'returns /fr for home page' do
+        expect(localized_item_link(item_home, :fr)).to eq('/fr')
+      end
+
+      it 'returns /fr/t/taxonomy-1/taxon-1 for a taxon' do
+        item_taxon.update(linked_resource_id: taxon.id)
+        expect(localized_item_link(item_taxon, :fr)).to eq("/fr#{item_taxon.destination}")
+      end
+
+      it 'returns /fr/products/product-18-4225 for a product' do
+        item_product.update(linked_resource_id: product.id)
+        expect(localized_item_link(item_product, 'fr')).to eq("/fr#{item_product.destination}")
+      end
+
+      it 'returns https://some-other-website.com for a URL' do
+        expect(localized_item_link(item_url, 'fr')).to eq("#{item_url.destination}")
+      end
+    end
+  end
+
   context 'available_countries' do
     let(:country) { create(:country) }
 

@@ -32,29 +32,26 @@ module Spree
     private
 
     def build_path
-      if DYNAMIC_RESOURCE_TYPE.include? linked_resource_type
+      case linked_resource_type
+      when 'Spree::Taxon'
         return if linked_resource.nil?
 
-        case linked_resource_type
-        when 'Spree::Taxon'
-          self.destination = if frontend_available?
-                               Spree::Core::Engine.routes.url_helpers.nested_taxons_path(linked_resource.permalink)
-                             else
-                               "/#{Spree::Config[:api_taxon_path]}/#{linked_resource.permalink}"
-                             end
-        when 'Spree::Product'
-          self.destination = if frontend_available?
-                               Spree::Core::Engine.routes.url_helpers.product_path(linked_resource)
-                             else
-                               "/#{Spree::Config[:api_product_path]}/#{linked_resource.slug}"
-                             end
+        self.destination = if frontend_available?
+                             Spree::Core::Engine.routes.url_helpers.nested_taxons_path(linked_resource.permalink)
+                           else
+                             "/#{Spree::Config[:api_taxon_path]}/#{linked_resource.permalink}"
+                           end
+      when 'Spree::Product'
+        return if linked_resource.nil?
 
-        end
-      else
-        case linked_resource_type
-        when 'Home Page'
-          self.destination = '/'
-        end
+        self.destination = if frontend_available?
+                             Spree::Core::Engine.routes.url_helpers.product_path(linked_resource)
+                           else
+                             "/#{Spree::Config[:api_product_path]}/#{linked_resource.slug}"
+                           end
+
+      when 'Home Page'
+        self.destination = '/'
       end
     end
 

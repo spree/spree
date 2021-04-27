@@ -55,13 +55,13 @@
           <% footer_menu_root.children.each do |root| %>
             <div class="col-3">
               <div class="footer-spree-label">
-                <%= link_to root.name, localized_item_link(root) %>
+                <%= link_to root.name, localized_item_link(root, current_locale) %>
               </div>
               <% root.children.each do |child| %>
                 <% if child.code == 'category' && child.item_type == 'Container' %>
                   <% if child.children.present? %>
                     <% child.children.each do |category_link| %>
-                      <div class="pt-2"><%= link_to category_link.name, localized_item_link(category_link) %></div>
+                      <div class="pt-2"><%= link_to category_link.name, localized_item_link(category_link, current_locale) %></div>
                     <% end %>
                   <% end %>
                 <% end %>

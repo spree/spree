@@ -25,24 +25,21 @@ module Spree
         to_html
     end
 
-    def localized_item_link(item)
+    def localized_item_link(item, locale)
       return if item.destination.nil?
 
-      output_locale = if current_locale == current_store.default_locale
-                        ''
+      output_locale = if locale == current_store.default_locale
+                        nil
                       else
-                        "/#{current_locale}"
+                        "/#{locale}"
                       end
 
       if Spree::MenuItem::DYNAMIC_RESOURCE_TYPE.include? item.linked_resource_type
-        output_locale.to_s + item.destination.to_s
+        output_locale.to_s + item.destination
+      elsif item.linked_resource_type == 'Home Page'
+        output_locale || item.destination
       else
-        case item.linked_resource_type
-        when 'URL'
-          item.destination
-        when 'Home Page'
-          output_locale
-        end
+        item.destination
       end
     end
 
