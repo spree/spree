@@ -117,7 +117,13 @@ module Spree
             content_tag(:span, text)
         end
       end
-      flashes.html_safe
+      if defined?(turbo_frame_tag)
+        turbo_frame_tag :flash do
+          flashes.html_safe
+        end
+      else
+        flashes.html_safe
+      end
     end
 
     def link_to_cart(text = nil)
