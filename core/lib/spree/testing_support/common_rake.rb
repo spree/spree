@@ -38,8 +38,10 @@ namespace :common do
       system("sed 's/compile: true/compile: false/g' config/webpacker.yml | tee config/webpacker.yml > #{File::NULL}")
     end
 
-    puts 'Precompiling assets...'
-    system("bundle exec rake assets:precompile > #{File::NULL}")
+    unless ['spree/api', 'spree/core', 'spree/sample'].include?(ENV['LIB_NAME'])
+      puts 'Precompiling assets...'
+      system("bundle exec rake assets:precompile > #{File::NULL}")
+    end
   end
 
   task :seed do |_t|
