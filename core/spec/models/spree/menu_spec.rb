@@ -15,8 +15,8 @@ describe Spree::Menu, type: :model do
   end
 
   describe '.by_unique_code' do
-    let!(:menu_1) { create(:menu, name: 'Footer') }
-    let!(:menu_2) { create(:menu, name: 'Header') }
+    let!(:menu_1) { create(:menu) }
+    let!(:menu_2) { create(:menu) }
 
     it 'returns a menu when searched for by name' do
       expect(described_class.by_unique_code(menu_1.unique_code)).to include(menu_1)
@@ -24,11 +24,27 @@ describe Spree::Menu, type: :model do
     end
   end
 
-  describe 'validates uniqueness of unique_code' do
+  describe 'creating new menu' do
     let!(:menu_1) { create(:menu, name: 'Footer', unique_code: 'ABC123') }
+    let!(:menu_param) { create(:menu, name: 'Footer', unique_code: 'ABC 123 XyZ') }
 
-    it 'returns uniqueness error' do
+    it 'validates uniqueness of unique_code' do
       expect(described_class.new(name: 'Footer', unique_code: 'ABC123')).not_to be_valid
+    end
+
+    it 'validates presence of name' do
+      expect(described_class.new(name: '', unique_code: 'ABC123')).not_to be_valid
+    end
+
+    it 'adds a root item' do
+      expect(menu_1.root.name).to eql('Footer')
+      expect(menu_1.root.code).to eql('footer-root')
+      expect(menu_1.root.root?).to be true
+      expect(menu_1.root.item_type).to eql('Container')
+    end
+
+    it 'paremeterizes the unique_code' do
+      expect(menu_param.unique_code).to eql('abc-123-xyz')
     end
   end
 end

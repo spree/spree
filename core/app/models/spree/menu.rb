@@ -5,7 +5,6 @@ module Spree
 
     before_validation :paremeterize_unique_code
     after_create :set_root
-    after_save :set_root_menu_item_name
 
     validates :name, presence: true
     validates :unique_code, presence: true, uniqueness: true
@@ -23,10 +22,6 @@ module Spree
 
     def set_root
       self.root ||= MenuItem.create!(menu_id: id, name: name, item_type: 'Container', code: "#{name}-root")
-    end
-
-    def set_root_menu_item_name
-      root.update(name: name)
     end
   end
 end

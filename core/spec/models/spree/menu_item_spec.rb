@@ -35,6 +35,55 @@ describe Spree::MenuItem, type: :model do
     end
   end
 
+  describe '.reset_link_attributes from URL to Taxon' do
+    let(:i_a) do
+      create(:menu_item, name: 'Home', item_type: 'Link', menu_id: menu.id,
+                         parent_id: menu.root.id, linked_resource_type: 'URL', destination: 'http://somewhere.com', new_window: true, linked_resource_id: 5)
+    end
+
+    before do
+      i_a.update!(linked_resource_type: 'Spree::Taxon')
+    end
+
+    it 'sets resets the new_window to false' do
+      expect(i_a.new_window).to be false
+    end
+
+    it 'sets resets the destination to nil' do
+      expect(i_a.destination).to be nil
+    end
+  end
+
+  describe '.reset_link_attributes from URL to Home Page' do
+    let(:i_b) do
+      create(:menu_item, name: 'Home', item_type: 'Link', menu_id: menu.id,
+                         parent_id: menu.root.id, linked_resource_type: 'URL', destination: 'http://somewhere.com', new_window: true, linked_resource_id: 5)
+    end
+
+    before do
+      i_b.update!(linked_resource_type: 'Home Page')
+    end
+
+    it 'sets destination to /' do
+      expect(i_b.destination).to eql('/')
+    end
+  end
+
+  describe '.reset_link_attributes from Link to Container' do
+    let(:i_c) do
+      create(:menu_item, name: 'Home', item_type: 'Link', menu_id: menu.id,
+                         parent_id: menu.root.id, linked_resource_type: 'URL', destination: 'http://somewhere.com', new_window: true, linked_resource_id: 5)
+    end
+
+    before do
+      i_c.update!(item_type: 'Container')
+    end
+
+    it 'sets resets the destination to nil' do
+      expect(i_c.destination).to be nil
+    end
+  end
+
   describe '#build_path' do
     let(:product) { create(:product) }
     let(:taxon) { create(:taxon) }
@@ -64,7 +113,7 @@ describe Spree::MenuItem, type: :model do
     end
   end
 
-  describe 'paremeterize_code' do
+  describe '.paremeterize_code' do
     let(:item) { create(:menu_item, name: 'URL', item_type: 'Link', menu_id: menu.id, parent_id: menu.root.id, linked_resource_type: 'URL', code: 'My Fantastic Code') }
 
     it 'paramatizes a code when one is given' do
@@ -72,7 +121,7 @@ describe Spree::MenuItem, type: :model do
     end
   end
 
-  describe 'check_for_root' do
+  describe '.check_for_root' do
     it 'does not validate the Menu Item' do
       expect(described_class.new(name: 'Menu Item', menu_id: menu.id, item_type: 'Link', parent_id: nil)).not_to be_valid
     end

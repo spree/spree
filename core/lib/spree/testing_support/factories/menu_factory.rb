@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :menu, class: Spree::Menu do
-    name { 'Main Menu' }
+    name { generate(:random_string) }
     unique_code { generate(:random_string) }
   end
 end
