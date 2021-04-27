@@ -110,8 +110,15 @@ include Spree::Core::ControllerHelpers::Auth
 include Spree::Core::ControllerHelpers::Common
 include Spree::Core::ControllerHelpers::Order
 include Spree::Core::ControllerHelpers::Store
+include Spree::Core::ControllerHelpers::Currency
+include Spree::Core::ControllerHelpers::Locale
+
 helper 'spree/base'
+helper 'spree/locale', 'spree/currency', 'spree/store'
 ```
+
+Please note that including `Spree::Core::ControllerHelpers::Common` will replace your application layout with [Spree layout](https://github.com/spree/spree/blob/master/frontend/app/views/spree/layouts/spree_application.html.erb). For applications not wanting to use Spree layout omit the `Spree::Core::ControllerHelpers::Common` module.
+
 
 Each of the methods defined in this module return values that are the
 most common in Rails applications today, but you may need to customize
@@ -247,6 +254,10 @@ This will then use the URL helpers you have defined in
 allow users to logout, one to allow them to login, and one to allow them
 to signup. These links will be visible on all customer-facing pages of
 Spree.
+
+## Gemfile
+
+The `spree_auth_devise` gem is not needed when using an existing application authentication unless the goal is to have two separate authentication methods.
 
 ## Signup promotion
 
