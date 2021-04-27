@@ -33,7 +33,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'glyphicons',      '~> 1.0'
   s.add_dependency 'canonical-rails', '~> 0.2.10'
   s.add_dependency 'inline_svg',      '~> 1.5'
-  s.add_dependency 'jquery-rails',    '~> 4.3'
   s.add_dependency 'sass-rails',      '>= 5'
   s.add_dependency 'turbo-rails'
   s.add_dependency 'webpacker'
