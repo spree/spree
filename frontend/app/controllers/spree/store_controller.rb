@@ -31,33 +31,6 @@ module Spree
       render json: current_order(create_order_if_necessary: true) # force creation of order if doesn't exists
     end
 
-    # Find a menu by its unique_code
-    # this method will only return a menu if it is
-    # available for use in the current store.
-    def menu(unique_code)
-      menu = available_menus.by_unique_code(unique_code)
-      menu[0]
-    end
-    helper_method :menu
-
-    # Returns the root for the menu by unique_code.
-    # You can use .children to retrieve the top level of menu items,
-    # or .descendants to retrieve all menu items.
-    def root_item_for_menu(unique_code)
-      if menu(unique_code).present?
-        menu(unique_code).root
-      end
-    end
-    helper_method :root_item_for_menu
-
-    # Returns only the top level items for the menu by unique_code
-    def top_level_items_for_menu(unique_code)
-      if menu(unique_code).present?
-        menu(unique_code).root.children
-      end
-    end
-    helper_method :top_level_items_for_menu
-
     protected
 
     def config_locale

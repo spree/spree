@@ -16,9 +16,6 @@ module Spree
         end
 
         def install
-          # main navigation configuration
-          template 'config/initializers/spree_storefront.rb', 'config/initializers/spree_storefront.rb'
-          template 'config/spree_storefront.yml', 'config/spree_storefront.yml'
           # static images
           directory 'noimage', './app/assets/images/noimage'
           directory 'homepage', './app/assets/images/homepage'
