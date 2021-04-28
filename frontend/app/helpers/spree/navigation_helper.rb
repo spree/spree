@@ -2,9 +2,17 @@ require 'digest'
 
 module Spree
   module NavigationHelper
+    def spree_navigation_data
+      @spree_navigation_data ||= SpreeStorefrontConfig.dig(I18n.locale, :navigation) || SpreeStorefrontConfig.dig(current_store.code, :navigation) || SpreeStorefrontConfig.dig(:default, :navigation) || []
+    # safeguard for older Spree installs that don't have spree_navigation initializer
+    # or spree.yml file present
+    rescue
+      []
+    end
+
     def spree_nav_cache_key(section = 'header')
       @spree_nav_cache_key = begin
-        keys = base_cache_key + [current_store, Spree::Config[:logo], stores&.cache_key, section]
+        keys = base_cache_key + [current_store, spree_navigation_data_cache_key, Spree::Config[:logo], stores&.cache_key, section]
         Digest::MD5.hexdigest(keys.join('-'))
       end
     end
@@ -59,8 +67,7 @@ module Spree
     private
 
     def spree_navigation_data_cache_key
-      # TODO: Fix cache key for new menus
-      # @spree_navigation_data_cache_key ||= root_item_for_menu('spree-all-main').self_and_descendants
+      @spree_navigation_data_cache_key ||= Digest::MD5.hexdigest(spree_navigation_data.to_s)
     end
   end
 end

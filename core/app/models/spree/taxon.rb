@@ -35,7 +35,8 @@ module Spree
     after_save :touch_ancestors_and_taxonomy
     after_touch :touch_ancestors_and_taxonomy
 
-    around_update :sync_menu_item_paths
+    after_save :sync_menu_item_paths
+    after_commit :sync_menu_item_paths
 
     has_one :icon, as: :viewable, dependent: :destroy, class_name: 'Spree::TaxonImage'
 
@@ -97,13 +98,7 @@ module Spree
     private
 
     def sync_menu_item_paths
-      permalink_updated = true if permalink_changed?
-
-      yield
-
-      if permalink_updated
-        Spree::MenuItem.refresh_paths(self)
-      end
+      Spree::MenuItem.refresh_paths(self)
     end
 
     def touch_ancestors_and_taxonomy

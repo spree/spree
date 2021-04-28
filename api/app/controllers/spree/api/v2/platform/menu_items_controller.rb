@@ -3,7 +3,11 @@ module Spree
     module V2
       module Platform
         class MenuItemsController < ResourceController
+          before_action -> { doorkeeper_authorize! :write, :admin }, only: WRITE_ACTIONS << :reposition
+
           def reposition
+            spree_authorize! :update, @moved_item
+
             @moved_item = scope.find(params[:moved_item_id])
             @new_parent = scope.find(params[:new_parent_id])
             new_index = params[:new_position_idx].to_i

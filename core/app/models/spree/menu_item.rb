@@ -17,7 +17,7 @@ module Spree
     LINKED_RESOURCE_TYPE.push(*DYNAMIC_RESOURCE_TYPE)
 
     validates :name, presence: true
-    validates :menu_id, presence: true, numericality: { only_integer: true }
+    validates :menu, presence: true
     validates :item_type, inclusion: { in: ITEM_TYPE }
     validates :linked_resource_type, inclusion: { in: LINKED_RESOURCE_TYPE }
     validate :check_for_root, on: :create
@@ -39,7 +39,7 @@ module Spree
         self.destination = if frontend_available?
                              Spree::Core::Engine.routes.url_helpers.nested_taxons_path(linked_resource.permalink)
                            else
-                             "/#{Spree::Config[:api_taxon_path]}/#{linked_resource.permalink}"
+                             "/#{Spree::Config[:storefront_taxon_path]}/#{linked_resource.permalink}"
                            end
       when 'Spree::Product'
         return if linked_resource.nil?
@@ -47,7 +47,7 @@ module Spree
         self.destination = if frontend_available?
                              Spree::Core::Engine.routes.url_helpers.product_path(linked_resource)
                            else
-                             "/#{Spree::Config[:api_product_path]}/#{linked_resource.slug}"
+                             "/#{Spree::Config[:storefront_product_path]}/#{linked_resource.slug}"
                            end
 
       when 'Home Page'
@@ -76,9 +76,9 @@ module Spree
     end
 
     def paremeterize_code
-      if code
-        self.code = code.parameterize
-      end
+      return if code.blank?
+
+      self.code = code.parameterize
     end
   end
 end

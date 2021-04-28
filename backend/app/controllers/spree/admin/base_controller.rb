@@ -8,7 +8,7 @@ module Spree
 
       before_action :authorize_admin
       before_action :generate_admin_api_key
-      before_action :load_data
+      before_action :load_stores
 
       helper_method :admin_oauth_token
 
@@ -50,8 +50,8 @@ module Spree
         Spree::Backend::Config[:locale]
       end
 
-      def load_data
-        @stores = Spree::Store.accessible_by(current_ability, :show)
+      def load_stores
+        @stores = Spree::Store.accessible_by(current_ability, :show).order(default: :desc)
       end
 
       def can_not_transition_without_customer_info
