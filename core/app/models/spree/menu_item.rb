@@ -5,10 +5,7 @@ module Spree
 
     acts_as_nested_set dependent: :destroy
 
-    before_save :reset_link_attributes, :check_for_image,
-                :build_path, :paremeterize_code
-
-    has_one_attached :image_asset
+    before_save :reset_link_attributes, :build_path, :paremeterize_code
 
     ITEM_TYPE = %w[Link Promotion Container]
 
@@ -24,6 +21,9 @@ module Spree
     validates :item_type, inclusion: { in: ITEM_TYPE }
     validates :linked_resource_type, inclusion: { in: LINKED_RESOURCE_TYPE }
     validate :check_for_root, on: :create
+
+    has_one :menu_item_image, as: :viewable, dependent: :destroy, class_name: "Spree::MenuItemImage"
+    accepts_nested_attributes_for :menu_item_image, reject_if: :all_blank
 
     def self.refresh_paths(resorce)
       where(linked_resource_type: resorce.class.name, linked_resource_id: resorce.id).each(&:save!)
@@ -53,14 +53,6 @@ module Spree
       when 'Home Page'
         self.destination = '/'
       end
-    end
-
-    def check_for_image
-      self.has_attached_image = if image_asset.attached?
-                                  true
-                                else
-                                  false
-                                end
     end
 
     def reset_link_attributes

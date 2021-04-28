@@ -1,3 +1,10 @@
+#menuItemImgContainer {
+  width: 200px;
+  img {
+    max-width: 100%;
+  }
+}
+
 #menuArea {
   .space-buttons {
     box-shadow: -11px 0 16px 6px white;

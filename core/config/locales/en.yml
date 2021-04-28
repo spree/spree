@@ -585,6 +585,7 @@ en:
         give_your_menu_a_unique_name: 'Use the unique code to identify your menu: spree-eu-main'
         link_settings: Link Settings
         link_to: Link To
+        image_alt_text: Add alt text to your image
         image_asset: Add a Promotion image or Link icon.
         move_could_not_be_saved: 'ERROR: This move could not be saved.'
         new_menu_item: New Menu Item

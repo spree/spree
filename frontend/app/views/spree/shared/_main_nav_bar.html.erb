@@ -41,8 +41,8 @@
                           <% child.children.each do |promo_banner| %>
                             <%= link_to localized_item_link(promo_banner, current_locale), class: "dropdown-item" do %>
                               <div class="category-image text-center my-4 mx-3">
-                                <% if promo_banner.has_attached_image %>
-                                  <%= image_tag main_app.url_for(promo_banner.image_asset), title: promo_banner.subtitle %>
+                                <% if promo_banner.menu_item_image.present? %>
+                                  <%= image_tag main_app.url_for(promo_banner.menu_item_image.attachment), alt: promo_banner.menu_item_image.alt ,title: promo_banner.subtitle %>
                                 <% end %>
                                 <div class="category-box">
                                   <div class="category-box-small-text">

@@ -58,19 +58,28 @@
             <%= f.error_message_on :subtitle %>
           <% end %>
 
-          <%= f.field_container :image_asset, class: ['form-group'] do %>
-            <% if @menu_item.image_asset.attached? && @menu_item.image_asset.variable? %>
-              <%= image_tag main_app.url_for(@menu_item.image_asset.variant(resize: '244x104>')) %>
-            <% elsif @menu_item.image_asset.attached? && @menu_item.image_asset.image? %>
-              <%= image_tag main_app.url_for(@menu_item.image_asset) %>
+          <% @menu_item.build_menu_item_image unless @menu_item.menu_item_image %>
+            <%= f.fields_for :menu_item_image do |menu_item_image_field| %>
+              <%= f.field_container :menu_item_image_attachment do %>
+                <% unless @menu_item.menu_item_image.new_record? %>
+                  <div id="menuItemImgContainer" class="my-2">
+                    <%= image_tag(main_app.url_for(@menu_item.menu_item_image.attachment)) %>
+                  </div>
+                <% end %>
+              <div id="<% unless @menu_item.menu_item_image.new_record? %>MenuItemImageButton<% end %>">
+                <%= menu_item_image_field.file_field :attachment %>
+              </div>
             <% end %>
-            <%= f.field_container :image_asset, class: ['form-group'] do %>
-              <%= f.label :image_asset, Spree.t('admin.navigation.image_asset') %><br>
-              <%= f.file_field :image_asset %>
-              <%= f.error_message_on :image_asset %>
+
+            <%= f.field_container :menu_item_image_alt do %>
+              <% unless @menu_item.menu_item_image.new_record? %>
+                <div class="form-group my-3">
+                  <%= menu_item_image_field.label :alt, Spree.t('admin.navigation.image_alt_text') %>
+                  <%= menu_item_image_field.text_field :alt, class: 'form-control' %>
+                </div>
+              <% end %>
             <% end %>
           <% end %>
-
         </div>
       </div>
     </div>

@@ -14,15 +14,13 @@
         <%= "| #{Spree.t('admin.navigation.code')}: #{item.code}" if item.code.present? %>
       </small>
     </div>
-    <% if item.has_attached_image %>
-      <% if item.image_asset.attached? && item.image_asset.image? %>
+      <% if item.menu_item_image.present? %>
         <div class="ml-2">
           <div class="menu_items_image_holder">
-            <%= image_tag main_app.url_for(item.image_asset) %>
+            <%= image_tag main_app.url_for(item.menu_item_image.attachment) %>
           </div>
         </div>
       <% end %>
-    <% end %>
   </div>
 
   <div class="d-flex align-items-center space-buttons px-2">
