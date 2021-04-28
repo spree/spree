@@ -4,7 +4,7 @@ module Spree
       class MenuSerializer < BaseSerializer
         set_type :menu
 
-        attributes :name, :unique_code
+        attributes :name, :unique_code, :store_ids
 
         has_many :menu_items, if: proc { |_record, params| params && params[:include_menu_items] }
       end

@@ -22,7 +22,7 @@ module Spree
     validates :linked_resource_type, inclusion: { in: LINKED_RESOURCE_TYPE }
     validate :check_for_root, on: :create
 
-    has_one :menu_item_image, as: :viewable, dependent: :destroy, class_name: "Spree::MenuItemImage"
+    has_one :menu_item_image, as: :viewable, dependent: :destroy, class_name: 'Spree::MenuItemImage'
     accepts_nested_attributes_for :menu_item_image, reject_if: :all_blank
 
     def self.refresh_paths(resorce)

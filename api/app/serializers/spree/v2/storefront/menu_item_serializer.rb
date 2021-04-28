@@ -4,7 +4,7 @@ module Spree
       class MenuItemSerializer < BaseSerializer
         set_type :menu_item
 
-        attributes :name, :subtitle, :destination, :code, :new_window, :parent_id, :lft, :rgt, :depth
+        attributes :item_type, :code, :name, :subtitle, :destination, :new_window, :parent_id, :lft, :rgt, :depth
 
         attribute :is_root do |menu_item|
           menu_item.root?
@@ -19,8 +19,8 @@ module Spree
         end
 
         has_one :image,
-                object_method_name: :image_asset,
-                id_method_name: :image_asset,
+                object_method_name: :menu_item_image,
+                id_method_name: :menu_item_image_id,
                 record_type: :image,
                 serializer: :image
 
