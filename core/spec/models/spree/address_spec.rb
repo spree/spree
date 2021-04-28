@@ -509,7 +509,8 @@ describe Spree::Address, type: :model do
 
     it 'is destroyed deleted timestamp' do
       address2.destroy
-      expect(Spree::Address.where(['id = (?)', address2.id])).to_not be_empty
+      expect(Spree::Address.where(['id = (?)', address2.id])).not_to be_empty
+      expect(Spree::Address.not_deleted.where(['id = (?)', address2.id])).to be_empty
     end
   end
 
