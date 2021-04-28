@@ -5,6 +5,7 @@ describe Spree::StoreController, type: :controller do
     let!(:store) { create(:store, default: true, default_locale: 'es', default_currency: 'EUR') }
 
     before { controller.send(:set_locale) }
+    after { I18n.locale = I18n.default_locale }
 
     context 'guest visitor' do
       it do

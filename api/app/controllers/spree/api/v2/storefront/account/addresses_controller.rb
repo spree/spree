@@ -36,6 +36,10 @@ module Spree
               collection_finder.new(scope: scope, params: params).execute
             end
 
+            def scope
+              model_class.not_deleted
+            end
+
             def model_class
               Spree::Address
             end
