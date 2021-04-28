@@ -47,6 +47,22 @@ describe 'Storefront API v2 Addresses spec', type: :request do
 
       it_behaves_like 'returns 403 HTTP status'
     end
+
+    context 'when address can not be deleted' do
+      let!(:address) { create(:address, user_id: user.id) }
+
+      before do
+        expect(address).to receive(:can_be_deleted?).and_return(false).at_least(:once)
+        address.destroy!
+        get '/api/v2/storefront/account/addresses', headers: headers_bearer
+      end
+
+      it 'should not return deleted address' do
+        expect(address.deleted_at).not_to be_nil
+        expect(json_response['data'][0]).to have_type('address')
+        expect(json_response['data'].size).to eq(addresses.count)
+      end
+    end
   end
 
   describe 'addresses#create' do
