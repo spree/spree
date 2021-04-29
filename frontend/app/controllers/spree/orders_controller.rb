@@ -37,7 +37,7 @@ module Spree
                find_or_initialize_by(token: cookies.signed[:token])
       associate_user
 
-      render template: 'spree/cart/edit' #if Spree::Frontend::Config[:new_cart_enabled]
+      render template: 'spree/cart/edit' if Spree::Frontend::Config[:turbo_cart_page_enabled]
     end
 
     def empty

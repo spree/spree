@@ -8,5 +8,6 @@ module Spree
     preference :remember_me_enabled, :boolean, default: true
     preference :storefront_api_host, default: nil
     preference :new_cart_enabled, default: true
+    preference :turbo_cart_page_enabled, :boolean, default: true
   end
 end
