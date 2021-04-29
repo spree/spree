@@ -16,13 +16,7 @@
 //= require underscore-min.js
 //= require jsonapi-serializer.min
 
-//= require spree/backend/global/alerts
-//= require spree/backend/global/bootstrap
-//= require spree/backend/global/flatpickr
-//= require spree/backend/global/ransack
-//= require spree/backend/global/radio_panel_toggle
-//= require spree/backend/global/responsive_menus
-//= require spree/backend/global/sortable
+//= require spree/backend/global/index
 
 //= require spree
 //= require spree/backend/spree-select2
@@ -99,6 +93,8 @@ Spree.routes.menus_api_v2 = Spree.pathFor('api/v2/platform/menus')
 Spree.routes.menus_items_api_v2 = Spree.pathFor('api/v2/platform/menu_items/reposition')
 Spree.routes.option_types_api_v2 = Spree.pathFor('api/v2/platform/option_types')
 Spree.routes.option_values_api_v2 = Spree.pathFor('api/v2/platform/option_values')
+Spree.routes.products_api_v2 = Spree.pathFor('/api/v2/platform/products')
+Spree.routes.taxons_api_v2 = Spree.pathFor('/api/v2/platform/taxons')
 Spree.routes.users_api_v2 = Spree.pathFor('api/v2/platform/users')
 
 Spree.apiV2Authentication = function() {

@@ -26,6 +26,8 @@ module Spree
 
         belongs_to :menu
         belongs_to :parent, record_type: :menu_item, serializer: :menu_item
+
+        has_many   :children, record_type: :menu_item, serializer: :menu_item
       end
     end
   end

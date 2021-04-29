@@ -16,9 +16,6 @@ module Spree
       def load_data
         @menu_item_types = Spree::MenuItem::ITEM_TYPE
         @linked_resource_types = Spree::MenuItem::LINKED_RESOURCE_TYPE
-
-        @taxons = Spree::Taxon.all
-        @products = Spree::Product.all
       end
     end
   end

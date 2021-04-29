@@ -1,0 +1,31 @@
+<%= f.field_container :linked_resource_id, class: ['form-group'] do %>
+  <% if @menu_item.linked_resource_type == 'Spree::Taxon' %>
+    <%= f.label :linked_resource_id, Spree.t('taxon') %>
+  <% elsif @menu_item.linked_resource_type == 'Spree::Product' %>
+    <%= f.label :linked_resource_id, Spree.t('product') %>
+  <% end %>
+
+  <%= f.select :linked_resource_id, options_from_collection_for_select([], nil, nil, @menu_item.linked_resource_id), {include_blank: true}, multiple: false, class: 'select2-clear' %>
+  <%= f.error_message_on :linked_resource_id %>
+  <small class="form-text text-muted"><%= @menu_item.destination %></small>
+<% end %>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    populateSelectOptionsFromApi({
+      targetElement:     '#menu_item_linked_resource_id',
+
+      <% if @menu_item.linked_resource_type == 'Spree::Taxon' %>
+        apiUrl: Spree.routes.taxons_api_v2,
+        returnAttribute:  'pretty_name',
+      <% elsif @menu_item.linked_resource_type == 'Spree::Product' %>
+        apiUrl: Spree.routes.products_api_v2,
+        returnAttribute:  'name',
+      <% end %>
+
+      <% if @menu_item.linked_resource_id %>
+        selectedOption:   <%= @menu_item.linked_resource_id %>
+      <% end %>
+    })
+  });
+</script>
