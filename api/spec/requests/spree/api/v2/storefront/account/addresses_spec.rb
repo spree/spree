@@ -63,6 +63,19 @@ describe 'Storefront API v2 Addresses spec', type: :request do
         expect(json_response['data'].size).to eq(addresses.count)
       end
     end
+
+    context 'when address without user exists' do
+      let!(:address) { create(:address, user_id: nil) }
+
+      before do
+        get '/api/v2/storefront/account/addresses', headers: headers_bearer
+      end
+
+      it 'should not return address without user id' do
+        expect(json_response['data'][0]).to have_type('address')
+        expect(json_response['data'].size).to eq(addresses.count)
+      end
+    end
   end
 
   describe 'addresses#create' do

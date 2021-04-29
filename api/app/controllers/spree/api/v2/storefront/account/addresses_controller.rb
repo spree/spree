@@ -37,7 +37,7 @@ module Spree
             end
 
             def scope
-              model_class.not_deleted
+              super.not_deleted
             end
 
             def model_class
