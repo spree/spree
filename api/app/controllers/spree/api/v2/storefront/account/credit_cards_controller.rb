@@ -12,6 +12,10 @@ module Spree
               Spree::CreditCard
             end
 
+            def scope
+              super.where(user: spree_current_user)
+            end
+
             def collection_serializer
               Spree::Api::Dependencies.storefront_credit_card_serializer.constantize
             end
