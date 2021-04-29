@@ -18,6 +18,8 @@ module Spree
     end
 
     def check_authorization
+      return if current_order.nil?
+
       authorize! :edit, current_order, cookies.signed[:token]
     end
   end
