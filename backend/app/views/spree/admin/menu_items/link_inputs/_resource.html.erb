@@ -11,20 +11,20 @@
 <% end %>
 
 <script>
-  document.addEventListener("DOMContentLoaded", () => {
+  document.addEventListener('DOMContentLoaded', function() {
     populateSelectOptionsFromApi({
-      targetElement:     '#menu_item_linked_resource_id',
+      targetElement: '#menu_item_linked_resource_id',
 
       <% if @menu_item.linked_resource_type == 'Spree::Taxon' %>
         apiUrl: Spree.routes.taxons_api_v2,
-        returnAttribute:  'pretty_name',
+        returnAttribute: 'pretty_name',
       <% elsif @menu_item.linked_resource_type == 'Spree::Product' %>
         apiUrl: Spree.routes.products_api_v2,
-        returnAttribute:  'name',
+        returnAttribute: 'name',
       <% end %>
 
       <% if @menu_item.linked_resource_id %>
-        selectedOption:   <%= @menu_item.linked_resource_id %>
+        selectedOption: <%= @menu_item.linked_resource_id %>
       <% end %>
     })
   });

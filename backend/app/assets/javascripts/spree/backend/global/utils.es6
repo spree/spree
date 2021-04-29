@@ -1,29 +1,49 @@
-/* eslint-disable no-unused-vars */
-function populateSelectOptionsFromApi(params) {
+/**
+  populateSelectOptionsFromApi()
+
+  Allows you to easily fetch data from API (Platfrom v2)
+  and populate an empty Select2 with options, including a pre selected option.
+
+  ## EXAMPLE USE CASE called from ERB view file:
+
+  populateSelectOptionsFromApi({
+    targetElement: '#mySelectElement',
+    apiUrl: Spree.routes.taxons_api_v2,
+    returnAttribute: 'pretty_name',
+
+    <% if @menu_item.linked_resource_id %>
+      selectedOption: <%= @menu_item.linked_resource_id %>
+    <% end %>
+  })
+**/
+// eslint-disable-next-line no-unused-vars
+const populateSelectOptionsFromApi = function(params) {
+  createRequest(params, updateSelectSuccess, updateSelectError)
+};
+
+const createRequest = function(params, succeed, fail, init) {
   const targetElement = params.targetElement
   const apiUrl = params.apiUrl
   const returnAttribute = params.returnAttribute
   const selectedOption = params.selectedOption
 
-  fetch(apiUrl, {
-    headers: Spree.apiV2Authentication()
-  }).then((response) => {
-    switch (response.status) {
-      case 200:
-        response.json()
-          .then((json) => {
-            const object = json.data
-            populateSelect(object, returnAttribute, targetElement, selectedOption)
-          })
-        break
-    }
-  })
+  fetch(apiUrl, { headers: Spree.apiV2Authentication() })
+    .then((response) => handleErrors(response))
+    .then((json) => succeed(json.data, returnAttribute, targetElement, selectedOption))
+    .catch((error) => fail(error, targetElement));
+};
+
+const handleErrors = function(response) {
+  if (!response.ok) {
+    throw new Error((response.status + ': ' + response.statusText));
+  }
+  return response.json();
 }
 
-function populateSelect (object, returnAttribute, targetElement, selectedOption) {
-  const resourceSelect = document.querySelector(targetElement)
+const updateSelectSuccess = function(parsedData, returnAttribute, targetElement, selectedOption) {
+  const selectEl = document.querySelector(targetElement)
 
-  object.forEach((item) => {
+  parsedData.forEach((item) => {
     const oppt = document.createElement('option');
     oppt.value = item.id;
     oppt.innerHTML = item.attributes[returnAttribute];
@@ -31,6 +51,13 @@ function populateSelect (object, returnAttribute, targetElement, selectedOption)
     if (parseInt(selectedOption, 10) === parseInt(item.id, 10)) {
       oppt.selected = true;
     }
-    resourceSelect.appendChild(oppt)
+    selectEl.appendChild(oppt)
   })
 }
+
+const updateSelectError = function(error, targetElement) {
+  const selectEl = document.querySelector(targetElement)
+  selectEl.disabled = true
+
+  console.log(error)
+};

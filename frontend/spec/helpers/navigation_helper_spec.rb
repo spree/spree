@@ -5,27 +5,29 @@ module Spree
     include Spree::CurrencyHelper
     include Spree::LocaleHelper
 
-    describe '#spree_navigation_data' do
-      let!(:current_store) { create(:store) }
+    # Can't test the old data as it does not exist, will be able to test
+    # translation on name at some stage.
+    # describe '#spree_navigation_data' do
+    #   let!(:current_store) { create(:store) }
 
-      context 'fetch via locale' do
-        before { I18n.locale = :fr }
+    #   context 'fetch via locale' do
+    #     before { I18n.locale = :fr }
 
-        after { I18n.locale = :en }
+    #     after { I18n.locale = :en }
 
-        it { expect(spree_navigation_data.first[:title]).to eq('Femmes') }
-      end
+    #     it { expect(spree_navigation_data.first[:title]).to eq('Femmes') }
+    #   end
 
-      context 'fetch via store code' do
-        before { current_store.update(code: 'fr') }
+    #   context 'fetch via store code' do
+    #     before { current_store.update(code: 'fr') }
 
-        it { expect(spree_navigation_data.first[:title]).to eq('Femmes') }
-      end
+    #     it { expect(spree_navigation_data.first[:title]).to eq('Femmes') }
+    #   end
 
-      context 'fallback to default' do
-        it { expect(spree_navigation_data.first[:title]).to eq('Women') }
-      end
-    end
+    #   context 'fallback to default' do
+    #     it { expect(spree_navigation_data.first[:title]).to eq('Women') }
+    #   end
+    # end
 
     describe '#should_render_internationalization_dropdown?' do
       context 'store with multiple currencies' do
