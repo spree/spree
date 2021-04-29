@@ -6,8 +6,6 @@ module Spree
     preference :products_filters, :array, default: %w(keywords price sort_by)
     preference :additional_filters_partials, :array, default: %w()
     preference :remember_me_enabled, :boolean, default: true
-    preference :storefront_api_host, default: nil
-    preference :new_cart_enabled, default: true
     preference :turbo_cart_page_enabled, :boolean, default: true
   end
 end
