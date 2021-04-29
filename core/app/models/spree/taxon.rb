@@ -98,6 +98,8 @@ module Spree
     private
 
     def sync_menu_item_paths
+      return unless saved_change_to_permalink?
+
       Spree::MenuItem.refresh_paths(self)
     end
 
