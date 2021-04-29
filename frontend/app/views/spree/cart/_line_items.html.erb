@@ -11,9 +11,7 @@
     <div class="d-table-cell cart-item-total-header text-uppercase"><%= Spree.t(:total) %></div>
     <div class="d-table-cell cart-item-delete-header"></div>
   </div>
-  <div id="line_items" class="shopping-cart-table-line-items" data-hook>
-    <%= turbo_frame_tag :cart_line_items, target: '_top' do %>
-      <%= render partial: 'spree/cart/line_item', collection: order.line_items %>
-    <% end %>
-  </div>
+  <%= turbo_frame_tag :cart_line_items, id: 'line_items', class: 'shopping-cart-table-line-items', target: '_top' do %>
+    <%= render partial: 'spree/cart/line_item', collection: order.line_items %>
+  <% end %>
 </div>

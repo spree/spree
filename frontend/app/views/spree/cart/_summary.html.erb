@@ -1,59 +1,57 @@
-<%= turbo_frame_tag :cart_summary, target: '_top' do %>
-  <div class="d-lg-flex flex-wrap justify-content-between">
-    <div class="text-uppercase d-none d-lg-block mt-3">
-      <%= link_to Spree.t(:continue_shopping), spree.products_path, class: 'shopping-cart-buttons-continue' %>
-    </div>
+<%= turbo_frame_tag :cart_summary, target: '_top', class: 'd-lg-flex flex-wrap justify-content-between' do %>
+  <div class="text-uppercase d-none d-lg-block mt-3">
+    <%= link_to Spree.t(:continue_shopping), spree.products_path, class: 'shopping-cart-buttons-continue' %>
+  </div>
 
-    <div class="text-right shopping-cart-total d-none d-lg-block">
+  <div class="text-right shopping-cart-total d-none d-lg-block">
+    <div class="row no-gutters align-items-center">
+      <div class="text-uppercase shopping-cart-total-text col-8 mr-0">
+        <%= Spree.t(:subtotal) %>
+      </div>
+      <div class="shopping-cart-total-amount col align-self-end">
+        <%= order.display_item_total %>
+      </div>
+    </div>
+    <% if !order.cart_promo_total.zero? %>
       <div class="row no-gutters align-items-center">
         <div class="text-uppercase shopping-cart-total-text col-8 mr-0">
-          <%= Spree.t(:subtotal) %>
+          <%= Spree.t(:promotion) %>
         </div>
         <div class="shopping-cart-total-amount col align-self-end">
-          <%= order.display_item_total %>
+          <%= order.display_cart_promo_total %>
         </div>
       </div>
-      <% if !order.cart_promo_total.zero? %>
-        <div class="row no-gutters align-items-center">
-          <div class="text-uppercase shopping-cart-total-text col-8 mr-0">
-            <%= Spree.t(:promotion) %>
-          </div>
-          <div class="shopping-cart-total-amount col align-self-end">
-            <%= order.display_cart_promo_total %>
-          </div>
-        </div>
-      <% end %>
-    </div>
-
-    <% if Spree::Frontend::Config[:coupon_codes_enabled] %>
-      <%= render 'spree/shared/coupon_code', promotion: order.valid_coupon_promotions.first %>
     <% end %>
+  </div>
 
-    <div class="text-right shopping-cart-total d-lg-none">
+  <% if Spree::Frontend::Config[:coupon_codes_enabled] %>
+    <%= render 'spree/shared/coupon_code', promotion: order.valid_coupon_promotions.first %>
+  <% end %>
+
+  <div class="text-right shopping-cart-total d-lg-none">
+    <div class="row no-gutters align-items-center">
+      <div class="text-uppercase shopping-cart-total-text col-8 mr-0">
+        <%= Spree.t(:subtotal) %>
+      </div>
+      <div class="shopping-cart-total-amount col align-self-end">
+        <%= order.display_item_total %>
+      </div>
+    </div>
+    <% if !order.cart_promo_total.zero? %>
       <div class="row no-gutters align-items-center">
         <div class="text-uppercase shopping-cart-total-text col-8 mr-0">
-          <%= Spree.t(:subtotal) %>
+          <%= Spree.t(:promotion) %>
         </div>
         <div class="shopping-cart-total-amount col align-self-end">
-          <%= order.display_item_total %>
+          <%= order.display_cart_promo_total %>
         </div>
       </div>
-      <% if !order.cart_promo_total.zero? %>
-        <div class="row no-gutters align-items-center">
-          <div class="text-uppercase shopping-cart-total-text col-8 mr-0">
-            <%= Spree.t(:promotion) %>
-          </div>
-          <div class="shopping-cart-total-amount col align-self-end">
-            <%= order.display_cart_promo_total %>
-          </div>
-        </div>
-      <% end %>
-    </div>
+    <% end %>
+  </div>
 
-    <div class="d-flex flex-column text-center shopping-cart-buttons" data-hook="cart_buttons">
-      <%= link_to Spree.t('cart_page.checkout'), spree.checkout_path, class: 'btn btn-primary text-uppercase font-weight-bold cart-checkout-btn shopping-cart-buttons-checkout', id: 'checkout-link', method: :get %>
-      <span class="text-uppercase shopping-cart-buttons-or d-lg-none"><%= Spree.t(:or) %></span>
-      <%= link_to Spree.t(:continue_shopping), spree.products_path, class: 'btn btn-outline-primary text-uppercase font-weight-bold d-lg-none shopping-cart-buttons-continue' %>
-    </div>
+  <div class="d-flex flex-column text-center shopping-cart-buttons" data-hook="cart_buttons">
+    <%= link_to Spree.t('cart_page.checkout'), spree.checkout_path, class: 'btn btn-primary text-uppercase font-weight-bold cart-checkout-btn shopping-cart-buttons-checkout', id: 'checkout-link', method: :get %>
+    <span class="text-uppercase shopping-cart-buttons-or d-lg-none"><%= Spree.t(:or) %></span>
+    <%= link_to Spree.t(:continue_shopping), spree.products_path, class: 'btn btn-outline-primary text-uppercase font-weight-bold d-lg-none shopping-cart-buttons-continue' %>
   </div>
 <% end %>
