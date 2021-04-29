@@ -3,8 +3,6 @@ module Spree
     module V2
       module Platform
         class TaxonSerializer < BaseSerializer
-          include ::Spree::Api::V2::ResourceSerializerConcern
-
           set_type   :taxon
 
           attributes :name, :pretty_name, :permalink, :seo_title, :description, :meta_title, :meta_description,
@@ -29,10 +27,10 @@ module Spree
           has_many   :products, record_type: :product
 
           has_one    :image,
-            object_method_name: :icon,
-            id_method_name: :icon_id,
-            record_type: :taxon_image,
-            serializer: :taxon_image
+                     object_method_name: :icon,
+                     id_method_name: :icon_id,
+                     record_type: :taxon_image,
+                     serializer: :taxon_image
         end
       end
     end

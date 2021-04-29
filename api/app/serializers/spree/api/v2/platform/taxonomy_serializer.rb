@@ -3,9 +3,7 @@ module Spree
     module V2
       module Platform
         class TaxonomySerializer < BaseSerializer
-          set_type   :taxonomy
-
-          attributes :name, :position
+          include ::Spree::Api::V2::ResourceSerializerConcern
         end
       end
     end

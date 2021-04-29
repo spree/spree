@@ -3,9 +3,7 @@ module Spree
     module V2
       module Platform
         class ImageSerializer < BaseSerializer
-          set_type :image
-
-          attributes :viewable_type, :viewable_id, :styles
+          include ::Spree::Api::V2::ResourceSerializerConcern
         end
       end
     end

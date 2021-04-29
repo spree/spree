@@ -3,9 +3,7 @@ module Spree
     module V2
       module Platform
         class TaxonImageSerializer < BaseSerializer
-          set_type   :taxon_image
-
-          attributes :viewable_type, :viewable_id, :styles
+          include ::Spree::Api::V2::ResourceSerializerConcern
         end
       end
     end
