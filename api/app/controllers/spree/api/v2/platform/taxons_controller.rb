@@ -2,28 +2,8 @@ module Spree
   module Api
     module V2
       module Platform
-        class TaxonsController < ::Spree::Api::V2::ResourceController
+        class TaxonsController < ResourceController
           private
-
-          def collection_serializer
-            Spree::Api::Dependencies.storefront_taxon_serializer.constantize
-          end
-
-          def resource_serializer
-            Spree::Api::Dependencies.storefront_taxon_serializer.constantize
-          end
-
-          def collection_finder
-            Spree::Api::Dependencies.storefront_taxon_finder.constantize
-          end
-
-          def paginated_collection
-            @paginated_collection ||= collection_paginator.new(collection, params).call
-          end
-
-          def resource
-            @resource ||= scope.find_by(permalink: params[:id]) || scope.find(params[:id])
-          end
 
           def model_class
             Spree::Taxon

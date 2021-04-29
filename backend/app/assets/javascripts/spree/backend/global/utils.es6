@@ -21,7 +21,7 @@ const populateSelectOptionsFromApi = function(params) {
   createRequest(params, updateSelectSuccess, updateSelectError)
 };
 
-const createRequest = function(params, succeed, fail, init) {
+const createRequest = function(params, succeed, fail) {
   const targetElement = params.targetElement
   const apiUrl = params.apiUrl
   const returnAttribute = params.returnAttribute
