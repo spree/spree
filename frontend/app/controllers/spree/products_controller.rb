@@ -2,7 +2,6 @@ module Spree
   class ProductsController < Spree::StoreController
     include Spree::ProductsHelper
     include Spree::FrontendHelper
-    include Spree::CacheHelper
 
     before_action :load_product, only: [:show, :related]
     before_action :load_taxon, only: :index
