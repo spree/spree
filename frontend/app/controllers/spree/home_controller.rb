@@ -1,7 +1,5 @@
 module Spree
   class HomeController < Spree::StoreController
-    include Spree::CacheHelper
-
     respond_to :html
 
     def index
