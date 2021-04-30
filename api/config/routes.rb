@@ -149,13 +149,12 @@ Spree::Core::Engine.add_routes do
           get :shipping_rates
         end
 
-        resource :account, controller: :account, only: %i[show]
+        resource :account, controller: :account, only: %i[show update]
 
         namespace :account do
           resources :addresses, controller: :addresses
           resources :credit_cards, controller: :credit_cards, only: %i[index show]
           resources :orders, controller: :orders, only: %i[index show]
-          resources :users, controller: :users, only: %i[update]
         end
 
         resources :countries, only: %i[index]
