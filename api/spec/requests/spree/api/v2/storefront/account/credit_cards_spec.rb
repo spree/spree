@@ -47,6 +47,20 @@ describe 'Storefront API v2 CreditCards spec', type: :request do
 
       it_behaves_like 'returns 403 HTTP status'
     end
+
+    context 'when user has admin privileges' do
+      let!(:user) { create(:admin_user) }
+      let!(:new_user) { create(:user) }
+      let!(:new_credit_card) { create(:credit_card, user_id: new_user.id, last_digits: '2222') }
+
+      before { get '/api/v2/storefront/account/credit_cards', headers: headers_bearer }
+
+      it 'should return user credit cards only' do
+        expect(json_response['data'][0]).to have_type('credit_card')
+        expect(json_response['data'].size).to eq(credit_cards.count)
+        expect(json_response['data'].map { |card| card['attributes']['last_digits'] }).not_to include(new_credit_card.last_digits)
+      end
+    end
   end
 
   describe 'credit_cards#show' do
