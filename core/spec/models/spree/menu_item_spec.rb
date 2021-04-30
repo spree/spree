@@ -98,10 +98,24 @@ describe Spree::MenuItem, type: :model do
       expect(item_taxon.destination).to eql "/t/#{taxon.permalink}"
     end
 
+    it 'returns nil for destination when taxon is removed' do
+      item_taxon.update(linked_resource_id: taxon.id)
+      item_taxon.update(linked_resource_id: nil)
+
+      expect(item_taxon.destination).to eql nil
+    end
+
     it 'returns product path' do
       item_product.update(linked_resource_id: product.id)
 
       expect(item_product.destination).to eql "/products/#{product.slug}"
+    end
+
+    it 'returns nil for destination when product is removed' do
+      item_product.update(linked_resource_id: product.id)
+      item_product.update(linked_resource_id: nil)
+
+      expect(item_product.destination).to eql nil
     end
 
     it 'returns root path' do
