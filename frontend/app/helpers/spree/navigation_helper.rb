@@ -45,23 +45,23 @@ module Spree
     # You can use .children to retrieve the top level of menu items,
     # or .descendants to retrieve all menu items.
     def root_item_for_menu(unique_code)
-      if menu(unique_code).present?
-        menu(unique_code).root
-      end
+      return unless menu(unique_code).present?
+
+      menu(unique_code).root
     end
 
     # Returns only the top level items for the menu by unique_code
     def top_level_items_for_menu(unique_code)
-      if menu(unique_code).present?
-        menu(unique_code).root.children
-      end
+      return unless root_item_for_menu(unique_code).present?
+
+      root_item_for_menu(unique_code).children
     end
 
     # Returns all items for the menu by unique_code
     def all_items_for_menu(unique_code)
-      if menu(unique_code).present?
-        menu(unique_code).root.descendants
-      end
+      return unless root_item_for_menu(unique_code).present?
+
+      root_item_for_menu(unique_code).descendants
     end
 
     private
