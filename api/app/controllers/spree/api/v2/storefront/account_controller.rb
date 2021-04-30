@@ -36,10 +36,6 @@ module Spree
           def user_params
             params.require(:user).permit(permitted_user_attributes)
           end
-
-          def resource_serializer
-            Spree::Api::Dependencies.storefront_user_serializer.constantize
-          end
         end
       end
     end

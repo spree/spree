@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Spree
-  describe Account::Users::Update do
+  describe Account::Update do
     subject { described_class }
 
     let!(:user)  { create(:user_with_addresses) }
