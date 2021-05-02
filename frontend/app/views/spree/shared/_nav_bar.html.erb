@@ -36,7 +36,7 @@
       </div>
     </li>
   <% end %>
-  <li id="link-to-cart">
+  <li id="link-to-cart" data-turbo-permanent data-turbolinks-permanent>
     <%= turbo_frame_tag :cart_indicator, src: spree.cart_link_path, loading: :lazy, target: '_top' do %>
       <%= render 'spree/shared/cart', class: 'd-inline-block cart-icon', size: 36, item_count: 0 %>
     <% end %>

@@ -16,6 +16,7 @@
     "lazysizes": "^5.3.2",
     "popper.js": "^1.16.1",
     "stimulus": "^2.0.0",
+    "stimulus-rails-autosave": "^2.0.0",
     "stimulus-use": "^0.23.0"
   },
   "devDependencies": {
