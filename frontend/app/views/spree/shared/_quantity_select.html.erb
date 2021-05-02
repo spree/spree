@@ -1,16 +1,8 @@
-<% button_type ||= 'button' %>
-<% quantity_opts = { min: 1, max: maximum_quantity,
-                     class: "p-0 flex-grow-1 flex-shrink-1 text-center form-control border-left-0 border-right-0 quantity-select-value",
-                     data: { 'cart-form-target': 'quantity', 'quantity-picker-target': 'quantity' },
-                     aria: { label: Spree.t(:quantity) } } %>
-
 <div class="d-inline-flex quantity-select" data-controller="quantity-picker">
-  <%= button_tag '-', type: button_type, class: 'd-none' if button_type == 'submit' %>
-  <%= button_tag '-', type: button_type,
-                      class: "border-right-0 flex-grow-0 flex-shrink-0 py-0 px-3 quantity-select-decrease",
-                      data: { action: 'click->quantity-picker#decrease' } %>
-  <%= local_assigns[:form] ? form.number_field(:quantity, quantity_opts) : number_field_tag(:quantity, 1, quantity_opts) %>
-  <%= button_tag '+', type: button_type,
-                      class: "border-left-0  flex-grow-0 flex-shrink-0 py-0 px-3 quantity-select-increase",
-                      data: { action: 'click->quantity-picker#increase' } %>
+  <!-- this is a dummy button to work with turbo frame forms when hitting ENTER -->
+  <%= button_tag '-', type: local_assigns[:button_type], class: 'd-none' if local_assigns[:button_type] == 'submit' %>
+
+  <%= quantity_modifier_button_tag '-', type: local_assigns[:button_type], action: 'decrease' %>
+  <%= local_assigns[:form] ? form.number_field(:quantity, quantity_field_options) : number_field_tag(:quantity, 1, quantity_field_options) %>
+  <%= quantity_modifier_button_tag '+', type: local_assigns[:button_type], action: 'increase' %>
 </div>

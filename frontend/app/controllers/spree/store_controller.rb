@@ -6,6 +6,7 @@ module Spree
 
     helper 'spree/locale'
     helper 'spree/currency'
+    helper 'spree/cart'
 
     skip_before_action :verify_authenticity_token, only: :ensure_cart, raise: false
 
