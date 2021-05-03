@@ -79,7 +79,7 @@ module Spree
           css_classes << 'completed'
           link_content = content_tag :span, nil, class: 'checkout-progress-steps-image checkout-progress-steps-image--full'
           link_content << text
-          text = link_to(link_content, spree.checkout_state_path(state), class: 'd-flex flex-column align-items-center', method: :get)
+          text = link_to(link_content, spree.checkout_state_path(state), class: 'd-flex flex-column align-items-center')
         end
 
         css_classes << 'next' if state_index == current_index + 1
