@@ -4,7 +4,7 @@ module Spree
       module Platform
         class ResourceController < ::Spree::Api::V2::ResourceController
           READ_ACTIONS = %i[show index]
-          WRITE_ACTIONS = %i[create update destroy reposition]
+          WRITE_ACTIONS = %i[create update destroy]
 
           # doorkeeper scopes usage: https://github.com/doorkeeper-gem/doorkeeper/wiki/Using-Scopes
           before_action -> { doorkeeper_authorize! :read, :admin }, only: READ_ACTIONS

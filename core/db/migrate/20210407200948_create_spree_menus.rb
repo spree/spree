@@ -8,6 +8,6 @@ class CreateSpreeMenus < ActiveRecord::Migration[6.0]
     end
 
     add_index :spree_menus, :name
-    add_index :spree_menus, :unique_code, unique: true
+    add_index :spree_menus, :unique_code
   end
 end
