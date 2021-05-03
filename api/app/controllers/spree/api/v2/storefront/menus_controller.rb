@@ -14,18 +14,14 @@ module Spree
 
           def collection_serializer_params
             {
-              currency: current_currency,
-              store: current_store,
-              user: spree_current_user,
+              store: current_store
             }
           end
 
           def serializer_params
             {
-              currency: current_currency,
               store: current_store,
-              user: spree_current_user,
-              include_menu_items: true,
+              include_menu_items: true
             }
           end
 

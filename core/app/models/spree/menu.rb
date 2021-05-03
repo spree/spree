@@ -1,7 +1,8 @@
 module Spree
   class Menu < Spree::Base
     has_many :menu_items, dependent: :destroy
-    has_and_belongs_to_many :stores
+    has_many :navigations, inverse_of: :menu
+    has_many :stores, through: :navigations
 
     before_validation :paremeterize_unique_code
     after_create :set_root
