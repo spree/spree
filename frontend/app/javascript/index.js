@@ -9,6 +9,7 @@ import 'bootstrap/js/dist/collapse'
 import 'bootstrap/js/dist/dropdown'
 import lazySizes from 'lazysizes'
 import Autosave from 'stimulus-rails-autosave'
+import Reveal from 'stimulus-reveal-controller'
 
 window.Turbo = Turbo
 window.Rails = Rails
@@ -17,6 +18,7 @@ const controllersContext = require.context('./controllers', true, /_controller\.
 const spreeStimulusApplication = Application.start()
 spreeStimulusApplication.load(definitionsFromContext(controllersContext))
 spreeStimulusApplication.register('autosave', Autosave)
+spreeStimulusApplication.register('reveal', Reveal)
 
 const initLazysizes = () => {
   lazySizes.cfg.loadMode = 1

@@ -14,16 +14,16 @@
   <div class="dropdown-menu text-right plp-sort-dropdown">
     <ul class="pt-1 plp-sort-dropdown-ul">
       <li class="p-3 plp-sort-dropdown-ul-li<%= '--active' if params[:sort_by].blank? %>">
-        <%= link_to Spree.t('plp.default'), url_for(permitted_params.merge(sort_by: nil)), class: 'dropdown-item' %>
+        <%= link_to Spree.t('plp.default'), url_for(permitted_products_params.merge(sort_by: nil)), class: 'dropdown-item' %>
       </li>
       <li class="p-3 plp-sort-dropdown-ul-li<%= '--active' if params[:sort_by] == 'newest-first' %>">
-        <%= link_to Spree.t('plp.newest_first'), url_for(permitted_params.merge(sort_by: 'newest-first')), class: 'dropdown-item' %>
+        <%= link_to Spree.t('plp.newest_first'), url_for(permitted_products_params.merge(sort_by: 'newest-first')), class: 'dropdown-item' %>
       </li>
       <li class="p-3 plp-sort-dropdown-ul-li<%= '--active' if params[:sort_by] == 'price-high-to-low' %>">
-        <%= link_to Spree.t('plp.price_high_to_low'), url_for(permitted_params.merge(sort_by: 'price-high-to-low')), class: 'dropdown-item' %>
+        <%= link_to Spree.t('plp.price_high_to_low'), url_for(permitted_products_params.merge(sort_by: 'price-high-to-low')), class: 'dropdown-item' %>
       </li>
       <li class="p-3 plp-sort-dropdown-ul-li<%= '--active' if params[:sort_by] == 'price-low-to-high' %>">
-        <%= link_to Spree.t('plp.price_low_to_high'), url_for(permitted_params.merge(sort_by: 'price-low-to-high')), class: 'dropdown-item' %>
+        <%= link_to Spree.t('plp.price_low_to_high'), url_for(permitted_products_params.merge(sort_by: 'price-low-to-high')), class: 'dropdown-item' %>
       </li>
     </ul>
   </div>

@@ -23,7 +23,6 @@
               <%= render 'spree/shared/option_values',
                 params_ot_downcase_name: params[ot_downcase_name],
                 option_type: option_type,
-                permitted_params: permitted_params,
                 ot_downcase_name: ot_downcase_name %>
             </div>
           </div>
@@ -46,7 +45,7 @@
           <div class="card-body px-0 pt-1">
             <% price_filter_values.each do |name| %>
               <% price_param = params[:price] == name ? '' : name %>
-              <%= link_to permitted_params.merge({ price: price_param }), class: "d-block" do %>
+              <%= link_to permitted_products_params.merge({ price: price_param }), class: "d-block" do %>
                 <div class="d-inline-block py-1 px-2 m-1 text-uppercase plp-filters-card-item <%= 'plp-filters-card-item--selected' if params[:price] == name %>">
                   <%= name %>
                 </div>
