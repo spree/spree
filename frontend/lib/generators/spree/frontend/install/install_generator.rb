@@ -19,7 +19,6 @@ module Spree
           # static images
           directory 'noimage', './app/assets/images/noimage'
           directory 'homepage', './app/assets/images/homepage'
-          directory 'meganav', './app/assets/images/meganav'
           # SCSS theming
           template 'variables.scss', './app/assets/stylesheets/spree/frontend/variables/variables.scss'
           # Sprockets 4 manifest
