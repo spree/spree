@@ -25,11 +25,19 @@ describe Spree::Menu, type: :model do
   end
 
   describe 'creating new menu' do
-    let!(:menu_1) { create(:menu, name: 'Footer', unique_code: 'ABC123') }
+    let!(:store_1) { create(:store) }
+    let!(:store_2) { create(:store) }
+    let!(:store_3) { create(:store) }
+
+    let!(:menu_a) { create(:menu, name: 'Footer', unique_code: 'ABC123', store_ids: [store_1.id, store_3.id]) }
     let!(:menu_param) { create(:menu, name: 'Footer', unique_code: 'ABC 123 XyZ') }
 
-    it 'validates uniqueness of unique_code' do
-      expect(described_class.new(name: 'Footer', unique_code: 'ABC123')).not_to be_valid
+    it 'validates uniqueness of unique_code to be valid if not associated with a store with the same code' do
+      expect(described_class.new(name: 'Footer', unique_code: 'ABC123', store_ids: [store_2.id])).to be_valid
+    end
+
+    it 'validates uniqueness of unique_code to not be valid if it is associated with a store with the same code' do
+      expect(described_class.new(name: 'Footer', unique_code: 'ABC123', store_ids: [store_1.id])).not_to be_valid
     end
 
     it 'validates presence of name' do
@@ -37,10 +45,10 @@ describe Spree::Menu, type: :model do
     end
 
     it 'adds a root item' do
-      expect(menu_1.root.name).to eql('Footer')
-      expect(menu_1.root.code).to eql('footer-root')
-      expect(menu_1.root.root?).to be true
-      expect(menu_1.root.item_type).to eql('Container')
+      expect(menu_a.root.name).to eql('Footer')
+      expect(menu_a.root.code).to eql('footer-root')
+      expect(menu_a.root.root?).to be true
+      expect(menu_a.root.item_type).to eql('Container')
     end
 
     it 'paremeterizes the unique_code' do
