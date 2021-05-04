@@ -52,7 +52,7 @@
         <tr id="<%= spree_dom_id property %>" data-hook="listing_properties_row">
           <td><%= property.name %></td>
           <td><%= property.presentation %></td>
-          <td><%= property.filterable %></td>
+          <td><%= active_badge(property.filterable) %></td>
           <td class="actions">
             <span class="d-flex justify-content-end">
               <%= link_to_edit(property, no_text: true) if can?(:edit, property) %>
