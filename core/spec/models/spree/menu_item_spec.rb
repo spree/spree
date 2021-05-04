@@ -1,7 +1,8 @@
 require 'spec_helper'
 
 describe Spree::MenuItem, type: :model do
-  let!(:menu) { create(:menu, name: 'Main Menu') }
+  let!(:store) { create(:store) }
+  let!(:menu) { create(:menu, name: 'Main Menu', store_id: store.id) }
 
   describe 'validates name' do
     it 'returns presence error when no name is given' do

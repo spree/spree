@@ -11,17 +11,18 @@
   <table class="table" id="menusTable">
     <thead>
       <th scope="col"><%= Spree.t(:name) %></th>
-      <th scope="col"><%= Spree.t('admin.navigation.used_in') %></th>
+      <th scope="col"><%= Spree.t('admin.navigation.unique_code') %></th>
+      <th scope="col"><%= Spree.t('store') %></th>
       <th scope="col"></th>
     </thead>
     <tbody>
       <% @menus.each do |menu| %>
         <tr>
           <td>
-            <%= menu.name %> <br>
-            <small class="form-text text-muted">
-              <%= menu.unique_code %>
-            </small>
+            <%= menu.name %>
+          </td>
+          <td>
+            <%= menu.unique_code %>
           </td>
           <td>
             <span class="badge badge-secondary"><%= menu.store.unique_name %></span>

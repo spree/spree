@@ -10,7 +10,7 @@ describe Spree::BaseHelper, type: :helper do
   end
 
   context 'localized_item_link' do
-    let(:menu) { create(:menu, unique_code: 'main-123') }
+    let(:menu) { create(:menu, unique_code: 'main-123', store_id: current_store.id) }
     let(:product) { create(:product) }
     let(:taxon) { create(:taxon) }
     let(:item_url) { create(:menu_item, name: 'URL To Random Site', item_type: 'Link', menu_id: menu.id, parent_id: menu.root.id, linked_resource_type: 'URL', destination: 'https://some-other-website.com') }
