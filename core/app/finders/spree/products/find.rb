@@ -179,7 +179,7 @@ module Spree
 
           products.
             joins(:product_properties).
-            where(spree_product_properties: { property_id: property_id, param: values }).ids
+            where(spree_product_properties: { property_id: property_id, filter_param: values }).ids
         end.flatten.compact.uniq
 
         products.where(id: product_ids)

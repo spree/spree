@@ -1,5 +1,7 @@
 module Spree
   class Property < Spree::Base
+    auto_strip_attributes :name
+
     has_many :property_prototypes, class_name: 'Spree::PropertyPrototype'
     has_many :prototypes, through: :property_prototypes, class_name: 'Spree::Prototype'
 
@@ -16,7 +18,7 @@ module Spree
     self.whitelisted_ransackable_attributes = ['presentation']
 
     def uniq_values
-      product_properties.pluck(:param).compact.uniq
+      product_properties.pluck(:filter_param).compact.uniq
     end
 
     private

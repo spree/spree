@@ -27,7 +27,7 @@ describe Spree::ProductProperty, type: :model do
   context 'setting param' do
     subject { build(:product_property, value: '90% Cotton 10% Elastan') }
 
-    it { expect { subject.save! }.to change(subject, :param).from(nil).to('90-cotton-10-elastan') }
+    it { expect { subject.save! }.to change(subject, :filter_param).from(nil).to('90-cotton-10-elastan') }
   end
 
   context 'setting value' do

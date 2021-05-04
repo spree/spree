@@ -1,5 +1,7 @@
 module Spree
   class ProductProperty < Spree::Base
+    include Spree::FilterParam
+
     auto_strip_attributes :value
 
     acts_as_list scope: :product
@@ -13,7 +15,7 @@ module Spree
 
     default_scope { order(:position) }
 
-    self.whitelisted_ransackable_attributes = ['value', 'param']
+    self.whitelisted_ransackable_attributes = ['value', 'filter_param']
     self.whitelisted_ransackable_associations = ['property']
 
     # virtual attributes for use with AJAX completion stuff
@@ -26,10 +28,10 @@ module Spree
       end
     end
 
-    def set_param
-      return if value.blank?
+    protected
 
-      self.param = value.parameterize
+    def param_candidate
+      value
     end
   end
 end
