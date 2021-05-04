@@ -35,17 +35,14 @@ module Spree
 
       private
 
-      BELONGS_TO_OTHER_USER = 'belongs to other user'
-      ADDRESS_ASSOCIATED_WITH_COMPLETED_ORDER = 'associated with completed order'
-
       def address_not_associated_with_other_user
-        errors.add(:bill_address_id, BELONGS_TO_OTHER_USER) if bill_address&.user_id && self != bill_address&.user
-        errors.add(:ship_address_id, BELONGS_TO_OTHER_USER) if ship_address&.user_id && self != ship_address&.user
+        errors.add(:bill_address_id, :belongs_to_other_user) if bill_address&.user_id && self != bill_address&.user
+        errors.add(:ship_address_id, :belongs_to_other_user) if ship_address&.user_id && self != ship_address&.user
       end
 
       def address_not_associated_with_placed_order
-        errors.add(:bill_address_id, ADDRESS_ASSOCIATED_WITH_COMPLETED_ORDER) if orders.complete.where(bill_address: bill_address_id).any?
-        errors.add(:ship_address_id, ADDRESS_ASSOCIATED_WITH_COMPLETED_ORDER) if orders.complete.where(ship_address: ship_address_id).any?
+        errors.add(:bill_address_id, :associated_with_completed_order) if orders.complete.where(bill_address: bill_address_id).any?
+        errors.add(:ship_address_id, :associated_with_completed_order) if orders.complete.where(ship_address: ship_address_id).any?
       end
     end
   end
