@@ -5,20 +5,6 @@ module Spree
         class MenuItemSerializer < BaseSerializer
           include ::Spree::Api::V2::ResourceSerializerConcern
 
-          attributes :item_type, :code, :name, :subtitle, :destination, :new_window, :lft, :rgt, :depth
-
-          attribute :is_root do |menu_item|
-            menu_item.root?
-          end
-
-          attribute :is_child do |menu_item|
-            menu_item.child?
-          end
-
-          attribute :is_leaf do |menu_item|
-            menu_item.leaf?
-          end
-
           has_one :image,
                   object_method_name: :menu_item_image,
                   id_method_name: :menu_item_image_id,

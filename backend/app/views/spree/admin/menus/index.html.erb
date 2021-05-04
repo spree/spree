@@ -24,9 +24,7 @@
             </small>
           </td>
           <td>
-            <% if menu.store_id %>
-              <span class="badge badge-secondary"><%= @stores.find(menu.store_id).unique_name %></span>
-            <% end %>
+            <span class="badge badge-secondary"><%= menu.store.unique_name %></span>
           </td>
           <td class="actions" data-hook="admin_menus_index_row_actions">
              <span class="d-flex justify-content-end">

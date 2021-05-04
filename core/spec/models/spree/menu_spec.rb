@@ -13,10 +13,12 @@ describe Spree::Menu, type: :model do
   end
 
   describe '.by_unique_code' do
-    let!(:menu_1) { create(:menu) }
-    let!(:menu_2) { create(:menu) }
+    let!(:store_1) { create(:store) }
+    let!(:store_2) { create(:store) }
+    let!(:menu_1) { create(:menu, store_id: store_1.id) }
+    let!(:menu_2) { create(:menu, store_id: store_2.id) }
 
-    it 'returns a menu when searched for by name' do
+    it 'returns a menu when searched for by unique_code' do
       expect(described_class.by_unique_code(menu_1.unique_code)).to include(menu_1)
       expect(described_class.by_unique_code(menu_1.unique_code)).not_to include(menu_2)
     end
@@ -25,11 +27,12 @@ describe Spree::Menu, type: :model do
   describe 'creating new menu' do
     let!(:store_1) { create(:store) }
     let!(:store_2) { create(:store) }
+    let!(:store_3) { create(:store) }
 
     let!(:menu_a) { create(:menu, name: 'Footer', unique_code: 'ABC123', store_id: store_1.id) }
-    let!(:menu_param) { create(:menu, name: 'Footer', unique_code: 'ABC 123 XyZ') }
+    let!(:menu_param) { create(:menu, name: 'Footer', unique_code: 'ABC 123 XyZ', store_id: store_2.id) }
 
-    it 'validates uniqueness of unique_code to be valid if not associated with a store with the same code' do
+    it 'validates uniqueness of unique_code to be valid in scope of store' do
       expect(described_class.new(name: 'Footer', unique_code: 'ABC123', store_id: store_2.id)).to be_valid
     end
 
@@ -38,7 +41,11 @@ describe Spree::Menu, type: :model do
     end
 
     it 'validates presence of name' do
-      expect(described_class.new(name: '', unique_code: 'ABC123')).not_to be_valid
+      expect(described_class.new(name: '', unique_code: 'ABC123', store_id: store_3.id)).not_to be_valid
+    end
+
+    it 'validates presence of store' do
+      expect(described_class.new(name: 'Got Name', unique_code: 'ABC123', store_id: nil)).not_to be_valid
     end
 
     it 'adds a root item' do

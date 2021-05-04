@@ -36,7 +36,7 @@ describe 'New Menu', type: :feature do
 
   context 'when a user tries to create a menu with a duplicate code withn scope of stores', js: true do
     let!(:store_1) { create(:store) }
-    let!(:main_menu) { create(:menu, name: 'Main Menu', store_ids: [store_1.id]) }
+    let!(:main_menu) { create(:menu, name: 'Main Menu', store_id: store_1.id) }
 
     before do
       visit spree.new_admin_menu_path
@@ -48,16 +48,13 @@ describe 'New Menu', type: :feature do
 
       select2 store_1.unique_name, from: 'Stores'
       click_on 'Create'
-      expect(page).to have_text (Spree.t('admin.navigation.unique_code_store_error',
-                                         code: main_menu.unique_code,
-                                         menus: main_menu.name))
+      expect(page).to have_text ('Unique code has already been taken')
     end
   end
 
   context 'user can create a new menu', js: true do
     let!(:store_1) { create(:store) }
     let!(:store_2) { create(:store) }
-    let!(:store_3) { create(:store) }
 
     before do
       visit spree.new_admin_menu_path
@@ -67,8 +64,7 @@ describe 'New Menu', type: :feature do
       fill_in 'Name', with: 'Main Menu'
       fill_in 'Unique Code', with: 'unip-s-s-s'
 
-      select2 store_1.unique_name, from: 'Stores'
-      select2 store_3.unique_name, from: 'Stores'
+      select2 store_2.unique_name, from: 'Stores'
       click_on 'Create'
 
       assert_admin_flash_alert_success('Menu "Main Menu" has been successfully created!')

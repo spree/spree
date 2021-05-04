@@ -16,7 +16,7 @@
   <div class="col-12 col-md-6">
     <div class="form-group">
       <%= label_tag :menu_stores, Spree.t(:stores) %>
-      <%= collection_select(:menu, :store_id, @stores, :id, :unique_name, { include_blank: true }, { class: 'select2-clear' }) %>
+      <%= collection_select(:menu, :store_id, @stores, :id, :unique_name, {}, { class: 'select2' }) %>
       <%= f.error_message_on :menu_stores %>
     </div>
   </div>

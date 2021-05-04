@@ -3,7 +3,8 @@ require 'spec_helper'
 describe 'Menu Edit', type: :feature do
   stub_authorization!
 
-  let!(:main_menu) { create(:menu, name: 'Main Menu', unique_code: 'spree-main') }
+  let!(:store_1) { create(:store) }
+  let!(:main_menu) { create(:menu, name: 'Main Menu', unique_code: 'spree-main', store_id: store_1.id) }
   let!(:menu_item) { create(:menu_item, menu_id: main_menu.id, parent_id: main_menu.root.id) }
 
   context 'when link to URL the user can' do

@@ -18,8 +18,8 @@ describe 'Menus Index', type: :feature do
     let!(:store_2) { create(:store) }
     let!(:store_3) { create(:store) }
 
-    let!(:main_menu) { create(:menu, name: 'Main Menu', store_ids: [store_1.id, store_3.id]) }
-    let!(:footer_menu) { create(:menu, name: 'Footer Menu') }
+    let!(:main_menu) { create(:menu, name: 'Main Menu', store_id: store_1.id) }
+    let!(:footer_menu) { create(:menu, name: 'Footer Menu', store_id: store_3.id) }
 
     before do
       visit spree.admin_menus_path
@@ -37,7 +37,6 @@ describe 'Menus Index', type: :feature do
         expect(page).to have_text 'Main Menu'
         expect(page).to have_text 'Footer Menu'
         expect(page).to have_text store_1.unique_name
-        expect(page).to have_text store_3.unique_name
         expect(page).not_to have_text store_2.unique_name
       end
     end

@@ -6,8 +6,8 @@ module Spree
     before_validation :paremeterize_unique_code
     after_create :set_root
 
-    validates :name, presence: true
-    validates :unique_code, uniqueness: { scope: :store_id }
+    validates :name, :store, presence: true
+    validates :unique_code, uniqueness: { scope: :store }
 
     scope :by_unique_code, ->(menu_code) { where unique_code: menu_code }
     scope :by_store, ->(store) { where store_id: store }
