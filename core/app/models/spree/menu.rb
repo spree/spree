@@ -36,7 +36,7 @@ module Spree
 
       unless menus.empty?
         errors.add(:unique_code,
-                   Spree.t('admin.navigation.scope_unique_name_store_id_error',
+                   Spree.t('admin.navigation.unique_code_store_error',
                            code: unique_code,
                            menus: menus[0]))
       end

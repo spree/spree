@@ -49,7 +49,7 @@ describe 'Menu Edit', type: :feature do
       expect(page).to have_text 'Click the Update button below to change the link.'
       click_on 'Update'
 
-      select2 product_2.name, from: 'Product'
+      select2 product_2.name, from: 'Product', search: true
       click_on 'Update'
 
       assert_admin_flash_alert_success('Menu item "Link To Somewhere" has been successfully updated!')
@@ -72,7 +72,7 @@ describe 'Menu Edit', type: :feature do
       expect(page).to have_text 'Click the Update button below to change the link.'
       click_on 'Update'
 
-      select2 taxon_2.name, from: 'Taxon'
+      select2 taxon_2.name, from: 'Taxon', search: true
       click_on 'Update'
 
       assert_admin_flash_alert_success('Menu item "Link To Somewhere" has been successfully updated!')

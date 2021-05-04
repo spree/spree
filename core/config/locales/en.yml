@@ -601,8 +601,10 @@ en:
         menus: Menus
         menu_items: '%{menu_name} Items'
         public_details: Public Details
-        scope_unique_name_store_id_error: 'The code: %{code} is already used for Menu: %{menus}, make sure your unique code is unique within the store it is being used for.'
+        unique_code_store_error: 'The code: %{code} is already used for Menu: %{menus}, make sure your unique code is unique within the store it is being used for.'
         subtitle: Subtitle
+        seach_for_a_product: Search for a Product
+        seach_for_a_taxon: Search for a Taxon
         settings: Settings
         set_a_code: Give your Menu Item a code, this is optional, but can be useful if you need to identify this menu item.
         type: Type
