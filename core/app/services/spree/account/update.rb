@@ -3,7 +3,7 @@ module Spree
     class Update
       prepend Spree::ServiceModule::Base
 
-      def call(user:, user_params:)
+      def call(user:, user_params: {})
         if user.update(user_params)
           success(user)
         else

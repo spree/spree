@@ -29,7 +29,7 @@ module Spree
     end
 
     shared_examples 'both default addresses changed' do
-      it 'changes both defauly bill address and ship address' do
+      it 'changes both default bill address and ship address' do
         expect(user.bill_address).not_to eq(new_default_bill_address)
         expect(user.ship_address).not_to eq(new_default_ship_address)
 
@@ -109,7 +109,7 @@ module Spree
           end
         end
 
-        context 'when only address params are given' do
+        context 'when no params are given' do
           let(:user_params) do
             {}
           end
