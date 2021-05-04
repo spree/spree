@@ -1,5 +1,7 @@
 module Spree
   class ProductProperty < Spree::Base
+    auto_strip_attributes :value
+
     acts_as_list scope: :product
 
     with_options inverse_of: :product_properties do
@@ -17,19 +19,11 @@ module Spree
     # virtual attributes for use with AJAX completion stuff
     delegate :name, :presentation, to: :property, prefix: true, allow_nil: true
 
-    before_save :trim_value, :set_param
-
     def property_name=(name)
       if name.present?
         # don't use `find_by :name` to workaround globalize/globalize#423 bug
         self.property = Property.where(name: name).first_or_create(presentation: name)
       end
-    end
-
-    def trim_value
-      return if value.blank?
-
-      value.strip!
     end
 
     def set_param
