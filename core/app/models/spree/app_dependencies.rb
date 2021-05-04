@@ -12,8 +12,8 @@ module Spree
       :coupon_handler, :country_finder, :current_order_finder, :credit_card_finder,
       :completed_order_finder, :order_sorter, :cart_compare_line_items_service, :collection_paginator, :products_sorter,
       :products_finder, :taxon_finder, :line_item_by_variant_finder, :cart_estimate_shipping_rates_service,
-      :account_create_address_service, :account_update_address_service, :account_update_service, :address_finder,
-      :collection_sorter, :error_handler
+      :account_create_address_service, :account_update_address_service, :account_create_service, :account_update_service,
+      :address_finder, :collection_sorter, :error_handler
     ].freeze
 
     attr_accessor *INJECTION_POINTS
@@ -64,6 +64,7 @@ module Spree
       @coupon_handler = 'Spree::PromotionHandler::Coupon'
 
       # account
+      @account_create_service = 'Spree::Account::Create'
       @account_update_service = 'Spree::Account::Update'
       @account_create_address_service = 'Spree::Account::Addresses::Create'
       @account_update_address_service = 'Spree::Account::Addresses::Update'
