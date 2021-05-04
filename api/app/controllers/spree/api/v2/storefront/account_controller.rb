@@ -18,6 +18,10 @@ module Spree
 
           private
 
+          def resource
+            spree_current_user
+          end
+
           def resource_serializer
             Spree::Api::Dependencies.storefront_user_serializer.constantize
           end
