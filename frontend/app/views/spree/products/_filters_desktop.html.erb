@@ -1,4 +1,4 @@
-<% cache base_cache_key + [available_option_types_cache_key, filtering_params_cache_key, @taxon&.id] do %>
+<% cache filters_cache_key('desktop') do %>
   <div id="plp-filters-accordion" class="d-none d-lg-block col-lg-3 pr-5 position-sticky h-100 plp-filters" data-hook="taxon_sidebar_navigation">
     <div class="plp-filters-scroller">
       <% @available_option_types.each do |option_type| %>
@@ -29,6 +29,37 @@
           </div>
         </div>
       <% end %>
+
+      <% available_properties.each do |property| %>
+        <% if property.uniq_values.present? %>
+          <div class="w-100 card plp-filters-card">
+            <% property_name = property.name %>
+            <% collapsed = params.dig(:properties, property.id.to_s).blank? %>
+            <button class="card-header <%= 'collapsed' if collapsed %> px-1 plp-filters-card-header" id="filters<%= property_name %>" data-toggle="collapse" data-target="#collapseFilter<%= property_name %>" aria-expanded="<%= !collapsed %>" aria-controls="collapseFilter<%= property_name %>" role="heading" aria-level="2">
+              <%= property.presentation.titleize %>
+              <%= icon(name: 'plus',
+                      classes: 'mt-1 float-right arrow plp-filters-card-header-arrow--plus',
+                      width: 16,
+                      height: 16) %>
+              <%= icon(name: 'minus',
+                      classes: 'mt-1 float-right arrow plp-filters-card-header-arrow--minus',
+                      width: 16,
+                      height: 16) %>
+            </button>
+            <div id="collapseFilter<%= property_name %>" class="collapse <%= 'show' unless collapsed %>" aria-labelledby="filters<%= property_name %>">
+              <div class="card-body px-0 pt-1">
+                <%= render 'spree/shared/properties',
+                  params_property_name: params[property_name],
+                  property: property,
+                  permitted_params: permitted_params,
+                  property_name: property_name
+                %>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      <% end %>
+
       <% price_collapsed = params[:price].blank? %>
       <div class="w-100 card plp-filters-card">
         <button class="card-header text-capitalize <%= 'collapsed' if price_collapsed %> px-1 plp-filters-card-header" id="filtersPrice" data-toggle="collapse" data-target="#collapseFilterPrice" aria-expanded="<% !price_collapsed %>" aria-controls="collapseFilterPrice" role="heading" aria-level="2">

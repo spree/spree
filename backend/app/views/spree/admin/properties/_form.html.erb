@@ -13,4 +13,10 @@
       <%= f.error_message_on :presentation %>
     <% end %>
   </div>
+  <div class="col-12 col-md-6">
+    <%= f.field_container :filterable, class: ['form-group'] do %>
+      <%= f.label :filterable, Spree.t(:filterable) %>
+      <%= f.check_box :filterable %>
+    <% end %>
+  </div>
 </div>

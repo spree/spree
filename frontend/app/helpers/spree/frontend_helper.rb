@@ -250,7 +250,42 @@ module Spree
     end
 
     def filtering_params_cache_key
-      @filtering_params_cache_key ||= params.permit(*filtering_params)&.reject { |_, v| v.blank? }&.to_param
+      @filtering_params_cache_key ||= begin
+        cache_key_parts = []
+
+        permitted_products_params.each do |key, value|
+          next if value.blank?
+
+          if value.is_a?(String)
+            cache_key_parts << [key, value].join('-')
+          else
+            value.each do |part_key, part_value|
+              next if part_value.blank?
+
+              cache_key_parts << [part_key, part_value].join('-')
+            end
+          end
+        end
+
+        cache_key_parts.join('-').parameterize
+      end
+    end
+
+    def filters_cache_key(kind)
+      base_cache_key + [
+        kind,
+        available_option_types_cache_key,
+        available_properties_cache_key,
+        filtering_params_cache_key,
+        @taxon&.id,
+        params[:menu_open]
+      ].flatten
+    end
+
+    def permitted_products_params
+      @permitted_products_params ||= begin
+        params.permit(*filtering_params, properties: available_properties.map(&:id).map(&:to_s))
+      end
     end
 
     def available_option_types_cache_key
@@ -262,6 +297,17 @@ module Spree
         Spree::OptionType.includes(:option_values).filterable.to_a
       end
       @available_option_types
+    end
+
+    def available_properties_cache_key
+      @available_properties_cache_key ||= Spree::Property.filterable.maximum(:updated_at)&.utc&.to_i
+    end
+
+    def available_properties
+      @available_properties ||= Rails.cache.fetch("available-properties/#{available_properties_cache_key}") do
+        Spree::Property.includes(:product_properties).filterable.to_a
+      end
+      @available_properties
     end
 
     def spree_social_link(service)
