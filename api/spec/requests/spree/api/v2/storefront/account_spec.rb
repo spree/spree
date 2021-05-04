@@ -56,9 +56,44 @@ describe 'Storefront API v2 Account spec', type: :request do
     end
   end
 
+  describe 'users#create' do
+    let(:default_bill_address) { create(:address) }
+    let(:default_ship_address) { create(:address) }
+    let(:new_attributes) do
+      {
+        email: 'new@email.com',
+        password: 'newpassword123',
+        password_confirmation: 'newpassword123',
+        bill_address_id: default_bill_address.id,
+        ship_address_id: default_ship_address.id
+      }
+    end
+    let(:params) { { user: new_attributes } }
+
+    before { post "/api/v2/storefront/account", params: params }
+
+    context 'valid request' do
+      it_behaves_like 'returns 200 HTTP status'
+
+      it 'updates and returns user' do
+        expect(json_response['data']['id'].to_i).to eq Spree.user_class.last.id
+        expect(json_response['data']).to have_attribute(:email).with_value(new_attributes[:email])
+        expect(json_response.size).to eq(1)
+      end
+
+      it 'does not create user default bill_address and ship_address' do
+        expect(json_response['data']['relationships']['default_billing_address']).to eq ({ "data" => nil })
+        expect(json_response['data']['relationships']['default_shipping_address']).to eq ({ "data" => nil })
+      end
+    end
+  end
+
   describe 'users#update' do
     let(:new_attributes) do
       {
+        email: 'new@email.com',
+        password: 'newpassword123',
+        password_confirmation: 'newpassword123',
         bill_address_id: new_default_bill_address.id,
         ship_address_id: new_default_ship_address.id
       }
@@ -75,6 +110,7 @@ describe 'Storefront API v2 Account spec', type: :request do
 
       it 'updates and returns user' do
         expect(json_response['data']).to have_id(user.id.to_s)
+        expect(json_response['data']).to have_attribute(:email).with_value(new_attributes[:email])
         expect(json_response['data']).to have_relationship(:default_billing_address)
                                            .with_data({ 'id' => new_default_bill_address.id.to_s, 'type' => 'address' })
         expect(json_response['data']).to have_relationship(:default_shipping_address)
@@ -92,9 +128,9 @@ describe 'Storefront API v2 Account spec', type: :request do
 
       it 'returns errors' do
         expect(json_response['errors']).to eq(
-                                             'bill_address_id' => ["belongs to other user"],
-                                             'ship_address_id' => ["belongs to other user"]
-                                           )
+                                              'bill_address_id' => ["belongs to other user"],
+                                              'ship_address_id' => ["belongs to other user"]
+                                             )
       end
     end
 
