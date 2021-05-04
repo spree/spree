@@ -49,10 +49,10 @@ module Spree
             }
           end
 
-          it_should_behave_like 'user not created'
-          it_should_behave_like 'successful response'
-          it_should_behave_like 'updated attributes'
-          it_should_behave_like 'both default addresses changed'
+          it_behaves_like 'user not created'
+          it_behaves_like 'successful response'
+          it_behaves_like 'updated attributes'
+          it_behaves_like 'both default addresses changed'
         end
 
         context 'when only address params are given' do
@@ -63,10 +63,10 @@ module Spree
             }
           end
 
-          it_should_behave_like 'user not created'
-          it_should_behave_like 'successful response'
-          it_should_behave_like 'updated attributes'
-          it_should_behave_like 'both default addresses changed'
+          it_behaves_like 'user not created'
+          it_behaves_like 'successful response'
+          it_behaves_like 'updated attributes'
+          it_behaves_like 'both default addresses changed'
 
           context 'when only bill address is given' do
             let(:user_params) do
@@ -75,9 +75,9 @@ module Spree
               }
             end
 
-            it_should_behave_like 'user not created'
-            it_should_behave_like 'successful response'
-            it_should_behave_like 'updated attributes'
+            it_behaves_like 'user not created'
+            it_behaves_like 'successful response'
+            it_behaves_like 'updated attributes'
 
             it 'changes only user default bill address' do
               expect(user.bill_address).not_to eq(new_default_bill_address)
@@ -95,9 +95,9 @@ module Spree
               }
             end
 
-            it_should_behave_like 'user not created'
-            it_should_behave_like 'successful response'
-            it_should_behave_like 'updated attributes'
+            it_behaves_like 'user not created'
+            it_behaves_like 'successful response'
+            it_behaves_like 'updated attributes'
 
             it 'changes only user default ship address' do
               expect(user.bill_address).not_to eq(new_default_bill_address)
@@ -114,8 +114,8 @@ module Spree
             {}
           end
 
-          it_should_behave_like 'user not created'
-          it_should_behave_like 'successful response'
+          it_behaves_like 'user not created'
+          it_behaves_like 'successful response'
 
           it 'does not change user data at all' do
             expect(value).to have_attributes(user.attributes)
