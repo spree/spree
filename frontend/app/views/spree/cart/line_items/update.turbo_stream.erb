@@ -1,0 +1,13 @@
+<% if flash[:error] %>
+  <%= spree_turbo_update_flashes %>
+<% else %>
+  <%= turbo_stream.replace @line_item do %>
+    <%= render 'spree/cart/line_item', line_item: @line_item %>
+  <% end %>
+
+  <%= turbo_stream.replace :cart_summary do %>
+    <%= render 'spree/cart/summary', order: @order %>
+  <% end %>
+
+  <%= spree_turbo_update_cart(@order) %>
+<% end %>

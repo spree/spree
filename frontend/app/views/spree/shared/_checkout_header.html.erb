@@ -2,7 +2,7 @@
   <header id="header" class="d-flex align-items-center header-spree border-bottom">
     <div class="container position-relative" role="navigation" aria-label="<%= Spree.t('checkout_page.main_navigation') %>">
       <div class="position-absolute checkout-header-link">
-        <%= link_to spree.cart_path, class: "d-none d-sm-inline text-uppercase", method: :get do %>
+        <%= link_to spree.cart_path, class: "d-none d-sm-inline text-uppercase" do %>
           <%= icon(name: 'arrow-right',
                    classes: 'spree-icon-arrow spree-icon-arrow-left',
                    width: 7,
@@ -10,7 +10,7 @@
           <span class="checkout-header-link-text"><%= Spree.t('checkout_page.back_to_cart') %></span>
         <% end %>
 
-        <%= link_to spree.cart_path, class: "d-sm-none text-uppercase", method: :get do %>
+        <%= link_to spree.cart_path, class: "d-sm-none text-uppercase" do %>
           <%= icon(name: 'arrow-right',
                    classes: 'spree-icon-arrow spree-icon-arrow-left',
                    width: 7,
@@ -20,7 +20,7 @@
       </div>
       <div class="d-flex flex-nowrap align-items-center justify-content-center">
         <figure class="logo flex-grow-0 flex-xl-grow-0 order-xl-0 header-spree-fluid-logo m-0">
-          <%= logo(nil, {method: :get}) %>
+          <%= logo %>
         </figure>
       </div>
     </div>

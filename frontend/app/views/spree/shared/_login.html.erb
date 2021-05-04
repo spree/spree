@@ -1,6 +1,6 @@
 <div class="col-lg-11 mx-auto">
   <h3 class="spree-mb-large spree-mt-large spree-header"><%= Spree.t(:log_in_to_continue) %></h3>
-  <%= form_for Spree.user_class.new, as: :spree_user, url: spree_login_path do |f| %>
+  <%= form_for Spree.user_class.new, as: :spree_user, url: spree_login_path, data: { turbo: false } do |f| %>
     <div id="password-credentials" class="mb-4">
       <div class="form-group mb-4">
         <p class="form-group checkout-content-inner-field">

@@ -30,8 +30,18 @@ namespace :common do
       puts 'Skipping installation no generator to run...'
     end
 
-    puts 'Precompiling assets...'
-    system("bundle exec rake assets:precompile > #{File::NULL}")
+    if ['spree/frontend'].include?(ENV['LIB_NAME'])
+      puts 'Setup Webpacker'
+      system("bundle exec rails webpacker:install > #{File::NULL}")
+      system("cd ../../ && yarn install && yarn build > #{File::NULL}")
+      system('yarn add link:../../')
+      system("sed 's/compile: true/compile: false/g' config/webpacker.yml | tee config/webpacker.yml > #{File::NULL}")
+    end
+
+    unless ['spree/api', 'spree/core', 'spree/sample'].include?(ENV['LIB_NAME'])
+      puts 'Precompiling assets...'
+      system("bundle exec rake assets:precompile > #{File::NULL}")
+    end
   end
 
   task :seed do |_t|

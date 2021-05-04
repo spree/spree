@@ -1,0 +1,24 @@
+<% @body_id = 'cart' %>
+
+<%= turbo_frame_tag dom_id(@order), target: '_top' do %>
+  <div data-hook="cart_container" class="container shopping-cart">
+    <%= render 'spree/shared/breadcrumbs', current_page_name: Spree.t('cart_page.title') %>
+
+    <h1 class="text-uppercase shopping-cart-header"><%= Spree.t('cart_page.header') %></h1>
+
+    <% if @order.line_items.empty? %>
+      <%= render 'spree/cart/empty_cart' %>
+    <% else %>
+      <div data-hook="outside_cart_form">
+        <div id="edit-order" data-controller="cart">
+          <div data-hook="inside_cart_form">
+            <div data-hook="cart_items" class="shopping-cart-table">
+              <%= render 'spree/cart/line_items', order: @order %>
+            </div>
+            <%= render 'spree/cart/summary', order: @order %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>

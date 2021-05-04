@@ -23,9 +23,15 @@
         </div>
 
         <div class="plp-pagination d-lg-none">
-          <%= paginate products, window: 1, theme: 'twitter-bootstrap-4' %>
+          <%= paginate products, window: 1, theme: 'twitter-bootstrap-4', params: { menu_open: nil } %>
         </div>
       </div>
     </div>
+  <% end %>
+
+  <% unless products.empty? %>
+    <% cache cache_key_for_products(products, 'json-ld') do %>
+      <%= products_structured_data(products) %>
+    <% end %>
   <% end %>
 </div>

@@ -272,6 +272,12 @@
     }
   }
   &-coupon-code {
+    &.error {
+      .form-control, button {
+        border: 1px solid theme-color("danger")
+      }
+    }
+
     margin-bottom: 30px;
     @include media-breakpoint-up(lg) {
       flex-basis: 49%;
@@ -346,17 +352,16 @@
       @include media-breakpoint-up(lg) {
         font-size: font-px-to-rem(12px);
       }
-
-      img {
+    }
+    img {
+      width: 16px;
+      margin-right: 10px;
+      vertical-align: bottom;
+      @include media-breakpoint-up(sm) {
+        width: 33.2px;
+      }
+      @include media-breakpoint-up(lg) {
         width: 16px;
-        margin-right: 10px;
-        vertical-align: bottom;
-        @include media-breakpoint-up(sm) {
-          width: 33.2px;
-        }
-        @include media-breakpoint-up(lg) {
-          width: 16px;
-        }
       }
     }
     input[type="text"] {

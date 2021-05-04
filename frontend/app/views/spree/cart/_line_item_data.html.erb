@@ -1,0 +1,26 @@
+<% if view == "mobile" %>
+  <% additional_classes = "d-lg-none" %>
+<% elsif view == "desktop" %>
+  <% additional_classes = "d-none d-lg-table-cell" %>
+<% end %>
+
+<div class="shopping-cart-item-price <%= additional_classes %>" data-hook="cart_item_price">
+  <%= line_item.single_money.to_html %>
+</div>
+<div class="shopping-cart-item-quantity <%= additional_classes %>" data-hook="cart_item_quantity">
+  <%= form_for line_item, url: spree.cart_line_item_path(line_item) do |item_form| %>
+    <%= render 'spree/shared/quantity_select', form: item_form, button_type: 'submit', value: line_item.quantity %>
+  <% end %>
+</div>
+
+<% if view == "desktop" %>
+  <div class="shopping-cart-item-total d-none d-lg-table-cell" data-hook="cart_item_total">
+    <%= line_item.display_amount.to_html unless line_item.quantity.nil? %>
+  </div>
+<% end %>
+
+<div class="shopping-cart-item-delete <%= additional_classes %>" data-hook="cart_item_delete">
+  <%= button_to spree.cart_line_item_path(line_item), method: :delete do %>
+    <%= icon(name: 'garbage', classes: 'shopping-cart-item-delete-icon', width: 18.9, height: 17) %>
+  <% end %>
+</div>

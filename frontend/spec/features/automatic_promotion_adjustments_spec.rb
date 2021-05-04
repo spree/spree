@@ -34,17 +34,16 @@ describe 'Automatic promotions', type: :feature, js: true do
     end
 
     it 'automatically applies the promotion once the order crosses the threshold' do
-      fill_in 'order_line_items_attributes_0_quantity', with: 10
-      # this is needed to reset a mouse focus (so quantity will update)
-      find('.shopping-cart-header').click
+      fill_in('order_line_items_attributes_0_quantity', with: 10).send_keys(:tab)
+      expect(page).to have_content('$200.00')
 
       click_link 'checkout'
       expect(page).to have_content('PROMOTION ($10 OFF WHEN YOU SPEND MORE THAN $100)')
 
       visit '/cart'
 
-      fill_in 'order_line_items_attributes_0_quantity', with: 1
-      find('.shopping-cart-header').click
+      fill_in('order_line_items_attributes_0_quantity', with: 1).send_keys(:tab)
+      expect(page).not_to have_content('$200.00')
 
       click_link 'checkout'
 

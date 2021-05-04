@@ -18,7 +18,7 @@
       </div>
     </div>
     <div class="col-xs-12 col-lg-8 mt-sm-5 mt-lg-0">
-      <h4 class="mb-3"><%= link_to Spree.t(:add_new_address), spree.new_address_path, method: :get %></h4>
+      <h4 class="mb-3"><%= link_to Spree.t(:add_new_address), spree.new_address_path %></h4>
       <div class="row">
         <% @user.addresses.each_with_index do |address, index| %>
           <div class="col-12 col-sm-6 mb-3">

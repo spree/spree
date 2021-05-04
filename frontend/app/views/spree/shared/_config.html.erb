@@ -1,0 +1,10 @@
+<script>
+  var SpreeConfig = {
+    'currentCurrency': '<%= current_currency %>',
+    'currentLocale': '<%= I18n.locale %>',
+    'defaultCurrency': '<%= current_store.default_currency %>',
+    'defaultLocale': '<%= current_store.default_locale %>'
+  }
+</script>
+
+<%= render 'spree/shared/paths' %>

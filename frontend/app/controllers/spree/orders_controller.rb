@@ -1,7 +1,6 @@
 module Spree
   class OrdersController < Spree::StoreController
-    before_action :set_current_order
-    before_action :check_authorization
+    include ::Spree::CartMethods
 
     helper 'spree/products', 'spree/orders'
 
@@ -37,6 +36,8 @@ module Spree
                includes(line_items: [variant: [:images, :product, option_values: :option_type]]).
                find_or_initialize_by(token: cookies.signed[:token])
       associate_user
+
+      render template: 'spree/cart/edit' if Spree::Frontend::Config[:turbo_cart_page_enabled]
     end
 
     def empty
@@ -74,18 +75,6 @@ module Spree
       else
         {}
       end
-    end
-
-    def assign_order_with_lock
-      @order = current_order(lock: true)
-      unless @order
-        flash[:error] = Spree.t(:order_not_found)
-        redirect_to root_path and return
-      end
-    end
-
-    def cart_add_item_service
-      Spree::Dependencies.cart_add_item_service.constantize
     end
   end
 end

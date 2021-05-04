@@ -75,6 +75,7 @@ RSpec.configure do |config|
   config.before(:suite) do
     DatabaseCleaner.strategy = :truncation
     DatabaseCleaner.clean
+    Webpacker.compile
   end
 
   config.before do

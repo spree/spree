@@ -99,7 +99,7 @@ class Project
   # @return [Boolean]
   #   the success of the tests
   def run_tests
-    system("bundle exec rspec #{rspec_arguments.join(' ')}")
+    system("bundle exec rspec ./spec #{rspec_arguments.join(' ')}")
   end
 
   def rspec_arguments(custom_name = name)

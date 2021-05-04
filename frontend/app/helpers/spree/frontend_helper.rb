@@ -79,7 +79,7 @@ module Spree
           css_classes << 'completed'
           link_content = content_tag :span, nil, class: 'checkout-progress-steps-image checkout-progress-steps-image--full'
           link_content << text
-          text = link_to(link_content, spree.checkout_state_path(state), class: 'd-flex flex-column align-items-center', method: :get)
+          text = link_to(link_content, spree.checkout_state_path(state), class: 'd-flex flex-column align-items-center')
         end
 
         css_classes << 'next' if state_index == current_index + 1
@@ -117,7 +117,13 @@ module Spree
             content_tag(:span, text)
         end
       end
-      flashes.html_safe
+      if defined?(turbo_frame_tag)
+        turbo_frame_tag :flash do
+          flashes.html_safe
+        end
+      else
+        flashes.html_safe
+      end
     end
 
     def link_to_cart(text = nil)
@@ -223,8 +229,11 @@ module Spree
       return image.alt if image.alt.present?
     end
 
-    def icon(name:, classes: '', width:, height:)
-      inline_svg_tag "#{name}.svg", class: "spree-icon #{classes}", size: "#{width}px*#{height}px"
+    def icon(name:, classes: '', width:, height:, opts: {})
+      opts[:class] = "spree-icon #{classes}"
+      opts[:size] = "#{width}px*#{height}px"
+
+      inline_svg_tag "#{name}.svg", opts
     end
 
     def price_filter_values
@@ -251,6 +260,10 @@ module Spree
 
     def filtering_params_cache_key
       @filtering_params_cache_key ||= params.permit(*filtering_params)&.reject { |_, v| v.blank? }&.to_param
+    end
+
+    def permitted_products_params
+      @permitted_products_params ||= params.permit(*filtering_params)
     end
 
     def available_option_types_cache_key

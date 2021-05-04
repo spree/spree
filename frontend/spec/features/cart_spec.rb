@@ -11,7 +11,7 @@ describe 'Cart', type: :feature, inaccessible: true, js: true do
 
   def apply_coupon(code)
     fill_in 'order_coupon_code', with: code
-    click_button 'shopping-cart-coupon-code-button'
+    find('.shopping-cart-coupon-code button').click
   end
 
   it 'shows cart icon on non-cart pages' do
@@ -110,6 +110,7 @@ describe 'Cart', type: :feature, inaccessible: true, js: true do
       promotion.actions << action
       add_to_cart(product)
       apply_coupon(promotion.code)
+      expect(page).to have_field('order_applied_coupon_code', with: 'Promotion (Huhuhu)')
     end
 
     it 'renders proper amount' do

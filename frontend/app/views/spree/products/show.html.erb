@@ -45,7 +45,6 @@
   <%= render 'spree/shared/product_added_modal' %>
 <% end %>
 
-<div
-  data-related-products
-  data-related-products-id="<%= @product.slug %>"
-  data-related-products-enabled="<%= @product.respond_to?(:has_related_products?) %>" />
+<% if @product.respond_to?(:has_related_products?) %>
+  <%= turbo_frame_tag 'related_products', src: spree.product_related_products_path(@product), loading: :lazy, target: '_top' %>
+<% end %>
