@@ -8,8 +8,7 @@ module Spree
                    :twitter, :instagram, :default_locale, :customer_support_email, :default_country_id, :description,
                    :address, :contact_phone, :supported_locales
 
-        has_many :menus, record_type: :menu
-
+        has_many :menus
         has_one :default_country, serializer: :country, record_type: :country, id_method_name: :default_country_id
       end
     end

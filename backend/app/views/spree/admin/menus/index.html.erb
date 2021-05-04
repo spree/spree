@@ -24,8 +24,8 @@
             </small>
           </td>
           <td>
-            <% menu.store_ids.each do |store| %>
-              <span class="badge badge-secondary"><%= @stores.find(store).unique_name %></span>
+            <% if menu.store_id %>
+              <span class="badge badge-secondary"><%= @stores.find(menu.store_id).unique_name %></span>
             <% end %>
           </td>
           <td class="actions" data-hook="admin_menus_index_row_actions">
@@ -44,5 +44,3 @@
     <%= Spree.t('admin.navigation.you_have_no_menus') %>
   </div>
 <% end %>
-
-

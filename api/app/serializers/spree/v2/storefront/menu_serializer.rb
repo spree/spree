@@ -6,6 +6,7 @@ module Spree
 
         attributes :name, :unique_code
 
+        belongs_to :store
         has_many :menu_items
       end
     end

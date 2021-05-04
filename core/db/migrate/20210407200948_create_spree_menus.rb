@@ -4,6 +4,8 @@ class CreateSpreeMenus < ActiveRecord::Migration[6.0]
       t.column :name, :string
       t.column :unique_code, :string, null: false
 
+      t.belongs_to :store
+
       t.timestamps
     end
 

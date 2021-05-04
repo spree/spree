@@ -1,7 +1,8 @@
-main_menu = Spree::Menu.find_by!(name: 'Main Menu')
-footer_menu = Spree::Menu.find_by!(name: 'Footer Menu')
+MENUS = []
 
-MENUS = [main_menu, footer_menu]
+Spree::Menu.all.each do |menu|
+  MENUS << menu
+end
 
 MENUS.each do |menu|
   ##############

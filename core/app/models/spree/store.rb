@@ -3,8 +3,7 @@ module Spree
     has_many :orders, class_name: 'Spree::Order'
     has_many :payment_methods, class_name: 'Spree::PaymentMethod'
 
-    has_many :navigations, inverse_of: :store
-    has_many :menus, through: :navigations
+    has_many :menus
 
     belongs_to :default_country, class_name: 'Spree::Country'
     belongs_to :checkout_zone, class_name: 'Spree::Zone'

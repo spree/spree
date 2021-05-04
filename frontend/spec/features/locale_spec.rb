@@ -4,7 +4,7 @@ describe 'setting locale', type: :feature, js: true do
   let!(:store) { Spree::Store.default }
   let!(:locale) { :fr }
 
-  let!(:main_menu) { create(:menu, name: 'Main Menu', unique_code: 'spree-all-main', store_ids: [store.id]) }
+  let!(:main_menu) { create(:menu, name: 'Main Menu', unique_code: 'spree-all-main', store_id: store.id) }
 
   let!(:mi_root) { create(:menu_item, name: 'URL', menu_id: main_menu.id, parent_id: main_menu.root.id, destination: 'https://spree.com') }
   let!(:mi_home) { create(:menu_item, name: 'Home', menu_id: main_menu.id, parent_id: main_menu.root.id, linked_resource_type: 'Home Page') }
