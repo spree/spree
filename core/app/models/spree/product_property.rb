@@ -9,8 +9,6 @@ module Spree
 
     validates :property, presence: true
 
-    validates :value, db_maximum_length: true
-
     default_scope { order(:position) }
 
     self.whitelisted_ransackable_attributes = ['value']
