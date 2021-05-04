@@ -172,13 +172,15 @@ module Spree
       def by_properties(products)
         return products unless properties? && properties.values.reject(&:empty?).present?
 
-        products.where(
-          id: properties.map do |property_id, product_properties_ids|
-            products.
-              joins(:product_properties).
-              where(spree_product_properties: { property_id: property_id, id: product_properties_ids.split(',') }).ids
-          end.flatten.compact.uniq
-        )
+        product_ids = properties.map do |property_id, product_properties_ids|
+          next if product_properties_ids.empty?
+
+          products.
+            joins(:product_properties).
+            where(spree_product_properties: { property_id: property_id, id: product_properties_ids.split(',') }).ids
+        end.flatten.compact.uniq
+
+        products.where(id: product_ids)
       end
 
       def option_types_count(option_value_ids)
