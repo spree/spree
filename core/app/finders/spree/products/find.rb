@@ -172,12 +172,14 @@ module Spree
       def by_properties(products)
         return products unless properties? && properties.values.reject(&:empty?).present?
 
-        product_ids = properties.map do |property_id, product_properties_ids|
-          next if product_properties_ids.empty?
+        product_ids = properties.map do |property_id, product_properties_values|
+          next if product_properties_values.empty?
+
+          values = product_properties_values.split(',').map(&:strip)
 
           products.
             joins(:product_properties).
-            where(spree_product_properties: { property_id: property_id, id: product_properties_ids.split(',') }).ids
+            where(spree_product_properties: { property_id: property_id, param: values }).ids
         end.flatten.compact.uniq
 
         products.where(id: product_ids)

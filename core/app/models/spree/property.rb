@@ -16,11 +16,7 @@ module Spree
     self.whitelisted_ransackable_attributes = ['presentation']
 
     def uniq_values
-      product_properties.pluck(:value).compact.uniq
-    end
-
-    def first_with_value(value)
-      product_properties.where(value: value).first
+      product_properties.pluck(:param).compact.uniq
     end
 
     private

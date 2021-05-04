@@ -11,13 +11,13 @@ module Spree
 
     default_scope { order(:position) }
 
-    self.whitelisted_ransackable_attributes = ['value']
+    self.whitelisted_ransackable_attributes = ['value', 'param']
     self.whitelisted_ransackable_associations = ['property']
 
     # virtual attributes for use with AJAX completion stuff
     delegate :name, :presentation, to: :property, prefix: true, allow_nil: true
 
-    before_save :trim_value
+    before_save :trim_value, :set_param
 
     def property_name=(name)
       if name.present?
@@ -27,9 +27,15 @@ module Spree
     end
 
     def trim_value
-      return if value.nil?
+      return if value.blank?
 
       value.strip!
+    end
+
+    def set_param
+      return if value.blank?
+
+      self.param = value.parameterize
     end
   end
 end
