@@ -1247,6 +1247,8 @@ en:
       done: DONE
       default: DEFAULT
       filter_by: FILTER BY
+      max_price: 'Max'
+      min_price: 'Min'
       newest_first: NEWEST FIRST
       no_results: No results
       no_results_found: No results found

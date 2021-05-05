@@ -291,6 +291,26 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
                              'Ruby on Rails Stein'])
   end
 
+  it 'is able to display products based on a given price range', js: true do
+    within(:css, '.plp-filters-scroller') do
+      click_on Spree.t('plp.price')
+
+      fill_in Spree.t('plp.min_price'), with: '55'
+      fill_in Spree.t('plp.max_price'), with: '103'
+
+      click_on Spree.t(:search)
+    end
+
+    expect(page).to have_css('.product-component-name').exactly(3).times
+
+    product_names = page.all('.product-component-name').map(&:text).flatten.compact.delete('')
+    expect(product_names.sort).to contain_exactly(
+      'Ruby on Rails Bag',
+      'Ruby on Rails Mug',
+      'Ruby on Rails Tote'
+    )
+  end
+
   context 'pagination' do
     before { Spree::Config.products_per_page = 3 }
 
