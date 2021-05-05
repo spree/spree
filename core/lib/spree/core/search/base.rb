@@ -44,7 +44,8 @@ module Spree
                 option_value_ids: option_value_ids,
                 taxons: taxon&.id
               },
-              sort_by: sort_by
+              sort_by: sort_by,
+              product_properties: product_properties
             },
             current_currency: current_currency
           ).execute
@@ -136,6 +137,7 @@ module Spree
                                else
                                  1
                                end
+          @properties[:product_properties] = params[:properties].try(:to_unsafe_hash)
         end
       end
     end
