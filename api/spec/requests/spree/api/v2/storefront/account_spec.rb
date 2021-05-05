@@ -75,7 +75,7 @@ describe 'Storefront API v2 Account spec', type: :request do
     context 'valid request' do
       it_behaves_like 'returns 200 HTTP status'
 
-      it 'updates and returns user' do
+      it 'creates and returns user' do
         expect(json_response['data']['id'].to_i).to eq Spree.user_class.last.id
         expect(json_response['data']).to have_attribute(:email).with_value(new_attributes[:email])
         expect(json_response.size).to eq(1)
@@ -84,6 +84,40 @@ describe 'Storefront API v2 Account spec', type: :request do
       it 'does not create user default bill_address and ship_address' do
         expect(json_response['data']['relationships']['default_billing_address']).to eq ({ "data" => nil })
         expect(json_response['data']['relationships']['default_shipping_address']).to eq ({ "data" => nil })
+      end
+    end
+
+    context 'invalid request' do
+      let(:new_attributes) do
+        {
+          email: 'new@email.com',
+          password: 'newpassword123',
+          password_confirmation: '',
+          bill_address_id: default_bill_address.id,
+          ship_address_id: default_ship_address.id
+        }
+      end
+      let(:create_service) { double(Spree::Account::Create) }
+      let(:permitted_params) { {user_params: ActionController::Parameters.new(user: {email: 'new@email.com',password: 'newpassword123',password_confirmation: ''}).require(:user).permit!} }
+      let(:result) { instance_double(Spree::ServiceModule::Result) }
+
+      before do
+        allow(Spree::Api::Dependencies).to receive_message_chain(:storefront_account_create_service, :constantize).and_return(create_service)
+        allow(create_service).to receive(:call).with(permitted_params)
+      end
+
+      describe 'expects to receive' do
+        after { post "/api/v2/storefront/account", params: params }
+
+        it { expect(Spree::Api::Dependencies).to receive_message_chain(:storefront_account_create_service, :constantize).and_return(create_service) }
+      end
+
+      describe 'response' do
+        before { post "/api/v2/storefront/account", params: params }
+
+        it 'returns errors' do
+          expect(json_response['errors']).not_to be_nil
+        end
       end
     end
   end
@@ -101,21 +135,45 @@ describe 'Storefront API v2 Account spec', type: :request do
     let(:params) { { user: new_attributes } }
 
     context 'valid request' do
-      let(:new_default_bill_address) { create(:address, user: user) }
-      let(:new_default_ship_address) { create(:address, user: user) }
+      context 'all params passed' do
+        let(:new_default_bill_address) { create(:address, user: user) }
+        let(:new_default_ship_address) { create(:address, user: user) }
 
-      before { patch "/api/v2/storefront/account", params: params, headers: headers }
+        before { patch "/api/v2/storefront/account", params: params, headers: headers }
 
-      it_behaves_like 'returns 200 HTTP status'
+        it_behaves_like 'returns 200 HTTP status'
 
-      it 'updates and returns user' do
-        expect(json_response['data']).to have_id(user.id.to_s)
-        expect(json_response['data']).to have_attribute(:email).with_value(new_attributes[:email])
-        expect(json_response['data']).to have_relationship(:default_billing_address)
-                                           .with_data({ 'id' => new_default_bill_address.id.to_s, 'type' => 'address' })
-        expect(json_response['data']).to have_relationship(:default_shipping_address)
-                                           .with_data({ 'id' => new_default_ship_address.id.to_s, 'type' => 'address' })
-        expect(json_response.size).to eq(1)
+        it 'updates and returns user' do
+          expect(json_response['data']).to have_id(user.id.to_s)
+          expect(json_response['data']).to have_attribute(:email).with_value(new_attributes[:email])
+          expect(json_response['data']).to have_relationship(:default_billing_address)
+                                             .with_data({ 'id' => new_default_bill_address.id.to_s, 'type' => 'address' })
+          expect(json_response['data']).to have_relationship(:default_shipping_address)
+                                             .with_data({ 'id' => new_default_ship_address.id.to_s, 'type' => 'address' })
+          expect(json_response.size).to eq(1)
+        end
+      end
+
+      context 'with only email passed' do
+        let(:new_attributes) do
+          {
+            email: 'new@email.com'
+          }
+        end
+
+        before { patch "/api/v2/storefront/account", params: params, headers: headers }
+
+        it_behaves_like 'returns 200 HTTP status'
+
+        it 'updates only email' do
+          expect(json_response['data']).to have_id(user.id.to_s)
+          expect(json_response['data']).to have_attribute(:email).with_value(new_attributes[:email])
+          expect(json_response['data']).to have_relationship(:default_billing_address)
+                                             .with_data({ 'id' => user.bill_address_id.to_s, 'type' => 'address' })
+          expect(json_response['data']).to have_relationship(:default_shipping_address)
+                                             .with_data({ 'id' => user.ship_address_id.to_s, 'type' => 'address' })
+          expect(json_response.size).to eq(1)
+        end
       end
     end
 
