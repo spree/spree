@@ -6,6 +6,30 @@ describe 'Storefront API v2 Account spec', type: :request do
   let!(:user)  { create(:user_with_addresses) }
   let(:headers) { headers_bearer }
 
+  shared_examples 'mock tests for failed user saving' do
+    it { expect(service).to receive(:call).with(permitted_params).and_return(result) }
+    it { expect(result).to receive(:success?).and_return(false) }
+    it { expect(result).to receive(:error).and_return(error) }
+    it { expect(error).to receive_message_chain(:full_messages, :to_sentence).and_return("Password Confirmation doesn't match Password") }
+  end
+
+  shared_context 'stubs for failed user saving' do
+    before do
+      allow(service).to receive(:call).with(permitted_params).and_return(result)
+      allow(result).to receive(:success?).and_return(false)
+      allow(result).to receive(:error).and_return(error)
+      allow(error).to receive(:is_a?).with(ActiveModel::Errors).and_return(true)
+      allow(error).to receive(:messages).and_return({ password_confirmation: "doesn't match Password" })
+      allow(error).to receive_message_chain(:full_messages, :to_sentence).and_return("Password Confirmation doesn't match Password")
+    end
+  end
+
+  shared_examples 'password mismatched error' do
+    it 'returns error' do
+      expect(json_response['error']).to eq "Password Confirmation doesn't match Password"
+    end
+  end
+
   describe 'account#show' do
     before { get '/api/v2/storefront/account', headers: headers }
 
@@ -95,37 +119,29 @@ describe 'Storefront API v2 Account spec', type: :request do
           password_confirmation: ''
         }
       end
-      let(:create_service) { double(Spree::Account::Create) }
+      let(:service) { double(Spree::Account::Create) }
       let(:permitted_params) { {user_params: ActionController::Parameters.new(params).require(:user).permit!} }
       let(:result) { instance_double(Spree::ServiceModule::Result) }
       let(:error) { instance_double(ActiveModel::Errors) }
 
       before do
-        allow(Spree::Api::Dependencies).to receive_message_chain(:storefront_account_create_service, :constantize).and_return(create_service)
-        allow(create_service).to receive(:call).with(permitted_params).and_return(result)
-        allow(result).to receive(:success?).and_return(false)
-        allow(result).to receive(:error).and_return(error)
-        allow(error).to receive(:is_a?).with(ActiveModel::Errors).and_return(true)
-        allow(error).to receive(:messages).and_return({ password_confirmation: "doesn't match Password" })
-        allow(error).to receive_message_chain(:full_messages, :to_sentence).and_return("Password Confirmation doesn't match Password")
+        allow(Spree::Api::Dependencies).to receive_message_chain(:storefront_account_create_service, :constantize).and_return(service)
       end
+
+      include_context 'stubs for failed user saving'
 
       describe 'mocks' do
         after { post "/api/v2/storefront/account", params: params }
 
-        it { expect(Spree::Api::Dependencies).to receive_message_chain(:storefront_account_create_service, :constantize).and_return(create_service) }
-        it { expect(create_service).to receive(:call) }
-        it { expect(result).to receive(:success?).and_return(false) }
-        it { expect(result).to receive(:error).and_return(error) }
-        it { expect(error).to receive_message_chain(:full_messages, :to_sentence).and_return("Password Confirmation doesn't match Password") }
+        it { expect(Spree::Api::Dependencies).to receive_message_chain(:storefront_account_create_service, :constantize).and_return(service) }
+
+        it_behaves_like 'mock tests for failed user saving'
       end
 
       describe 'response' do
         before { post "/api/v2/storefront/account", params: params }
 
-        it 'returns errors' do
-          expect(json_response['error']).to eq "Password Confirmation doesn't match Password"
-        end
+        it_behaves_like 'password mismatched error'
       end
     end
   end
@@ -186,17 +202,53 @@ describe 'Storefront API v2 Account spec', type: :request do
     end
 
     context 'invalid request' do
-      let!(:other_user) { create(:user_with_addresses) }
-      let(:new_default_bill_address) { create(:address, user: other_user) }
-      let(:new_default_ship_address) { create(:address, user: other_user) }
+      context 'wrong default address' do
+        let!(:other_user) { create(:user_with_addresses) }
+        let(:new_default_bill_address) { create(:address, user: other_user) }
+        let(:new_default_ship_address) { create(:address, user: other_user) }
 
-      before { patch "/api/v2/storefront/account", params: params, headers: headers }
+        before { patch "/api/v2/storefront/account", params: params, headers: headers }
 
-      it 'returns errors' do
-        expect(json_response['errors']).to eq(
-                                              'bill_address_id' => ["belongs to other user"],
-                                              'ship_address_id' => ["belongs to other user"]
-                                             )
+        it 'returns errors' do
+          expect(json_response['errors']).to eq(
+                                                'bill_address_id' => ["belongs to other user"],
+                                                'ship_address_id' => ["belongs to other user"]
+                                               )
+        end
+      end
+
+      context 'password mismatch error' do
+        let(:new_attributes) do
+          {
+            email: 'new@email.com',
+            password: 'newpassword123',
+            password_confirmation: ''
+          }
+        end
+        let(:service) { double(Spree::Account::Update) }
+        let(:permitted_params) { { user_params: ActionController::Parameters.new(params).require(:user).permit!, user: user } }
+        let(:result) { instance_double(Spree::ServiceModule::Result) }
+        let(:error) { instance_double(ActiveModel::Errors) }
+
+        before do
+          allow(Spree::Api::Dependencies).to receive_message_chain(:storefront_account_update_service, :constantize).and_return(service)
+        end
+
+        include_context 'stubs for failed user saving'
+
+        describe 'mocks' do
+          after { patch "/api/v2/storefront/account", params: params, headers: headers }
+
+          it { expect(Spree::Api::Dependencies).to receive_message_chain(:storefront_account_update_service, :constantize).and_return(service) }
+
+          it_behaves_like 'mock tests for failed user saving'
+        end
+
+        describe 'response' do
+          before { patch "/api/v2/storefront/account", params: params, headers: headers }
+
+          it_behaves_like 'password mismatched error'
+        end
       end
     end
 
