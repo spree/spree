@@ -22,6 +22,9 @@ module Spree
     delegate :name, :presentation, to: :property, prefix: true, allow_nil: true
 
     def property_name=(name)
+      ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
+        `ProductProperty#property_name=` is deprecated and will be removed in Spree 5.0.
+      DEPRECATION
       if name.present?
         # don't use `find_by :name` to workaround globalize/globalize#423 bug
         self.property = Property.where(name: name).first_or_create(presentation: name)
