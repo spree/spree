@@ -100,15 +100,27 @@ describe 'API V2 Storefront Products Spec', type: :request do
     end
 
     context 'with specified properties' do
-      before { get "/api/v2/storefront/products?filter[properties][#{property.id}]=#{product_property.filter_param}&include=product_properties" }
+      context 'using proper filter params' do
+        before { get "/api/v2/storefront/products?filter[properties][#{property.filter_param}]=#{product_property.filter_param}&include=product_properties" }
 
-      it_behaves_like 'returns 200 HTTP status'
+        it_behaves_like 'returns 200 HTTP status'
 
-      it 'returns products with specified options' do
-        expect(json_response['data'].first).to have_id(product_with_property.id.to_s)
-        expect(json_response['included']).to include(have_type('product_property').and(have_attribute(:name).with_value(property.name)))
-        expect(json_response['included']).to include(have_type('product_property').and(have_attribute(:value).with_value(product_property.value)))
-        expect(json_response['included']).to include(have_type('product_property').and(have_attribute(:filter_param).with_value(product_property.filter_param)))
+        it 'returns products with specified options' do
+          expect(json_response['data'].first).to have_id(product_with_property.id.to_s)
+          expect(json_response['included']).to include(have_type('product_property').and(have_attribute(:name).with_value(property.name)))
+          expect(json_response['included']).to include(have_type('product_property').and(have_attribute(:value).with_value(product_property.value)))
+          expect(json_response['included']).to include(have_type('product_property').and(have_attribute(:filter_param).with_value(product_property.filter_param)))
+        end
+      end
+
+      context 'using property names and values' do
+        before { get "/api/v2/storefront/products?filter[properties][#{property.name}]=#{product_property.value}&include=product_properties" }
+
+        it_behaves_like 'returns 200 HTTP status'
+
+        it 'returns products with specified options' do
+          expect(json_response['data'].first).to have_id(product_with_property.id.to_s)
+        end
       end
     end
 

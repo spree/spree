@@ -33,7 +33,7 @@
         <% available_properties.each do |property| %>
           <% if property.uniq_values.present? %>
             <% property_name = property.name %>
-            <% collapsed = params.dig(:properties, property.id.to_s).blank? %>
+            <% collapsed = params.dig(:properties, property.filter_param).blank? %>
             <div class="card plp-overlay-card">
               <div class="card-header text-uppercase <%= 'collapsed' if collapsed %> plp-overlay-card-header" data-toggle="collapse" id="filtersMobile<%= property_name %>" data-target="#collapseFilterMobile<%= property_name %>" aria-expanded="true" aria-controls="collapseFilterMobile<%= property_name %>" role="heading" aria-level="3">
                 <%= property_name %>

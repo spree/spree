@@ -1,6 +1,8 @@
 module Spree
   class Property < Spree::Base
-    auto_strip_attributes :name
+    include Spree::FilterParam
+
+    auto_strip_attributes :name, :presentation
 
     has_many :property_prototypes, class_name: 'Spree::PropertyPrototype'
     has_many :prototypes, through: :property_prototypes, class_name: 'Spree::Prototype'

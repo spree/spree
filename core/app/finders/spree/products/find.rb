@@ -172,14 +172,15 @@ module Spree
       def by_properties(products)
         return products unless properties? && properties.values.reject(&:empty?).present?
 
-        product_ids = properties.to_unsafe_hash.map do |property_id, product_properties_values|
-          next if product_properties_values.empty?
+        product_ids = properties.to_unsafe_hash.map do |property_filter_param, product_properties_values|
+          next if property_filter_param.blank? || product_properties_values.empty?
 
-          values = product_properties_values.split(',').map(&:strip)
+          values = product_properties_values.split(',').map(&:parameterize)
 
           products.
-            joins(:product_properties).
-            where(spree_product_properties: { property_id: property_id, filter_param: values }).ids
+            joins(product_properties: :property).
+            where(spree_properties: { filter_param: property_filter_param.parameterize }).
+            where(spree_product_properties: { filter_param: values }).ids
         end.flatten.compact.uniq
 
         products.where(id: product_ids)
