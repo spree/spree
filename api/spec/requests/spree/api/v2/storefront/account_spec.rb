@@ -92,31 +92,39 @@ describe 'Storefront API v2 Account spec', type: :request do
         {
           email: 'new@email.com',
           password: 'newpassword123',
-          password_confirmation: '',
-          bill_address_id: default_bill_address.id,
-          ship_address_id: default_ship_address.id
+          password_confirmation: ''
         }
       end
       let(:create_service) { double(Spree::Account::Create) }
-      let(:permitted_params) { {user_params: ActionController::Parameters.new(user: {email: 'new@email.com',password: 'newpassword123',password_confirmation: ''}).require(:user).permit!} }
+      let(:permitted_params) { {user_params: ActionController::Parameters.new(params).require(:user).permit!} }
       let(:result) { instance_double(Spree::ServiceModule::Result) }
+      let(:error) { instance_double(ActiveModel::Errors) }
 
       before do
         allow(Spree::Api::Dependencies).to receive_message_chain(:storefront_account_create_service, :constantize).and_return(create_service)
-        allow(create_service).to receive(:call).with(permitted_params)
+        allow(create_service).to receive(:call).with(permitted_params).and_return(result)
+        allow(result).to receive(:success?).and_return(false)
+        allow(result).to receive(:error).and_return(error)
+        allow(error).to receive(:is_a?).with(ActiveModel::Errors).and_return(true)
+        allow(error).to receive(:messages).and_return({ password_confirmation: "doesn't match Password" })
+        allow(error).to receive_message_chain(:full_messages, :to_sentence).and_return("Password Confirmation doesn't match Password")
       end
 
-      describe 'expects to receive' do
+      describe 'mocks' do
         after { post "/api/v2/storefront/account", params: params }
 
         it { expect(Spree::Api::Dependencies).to receive_message_chain(:storefront_account_create_service, :constantize).and_return(create_service) }
+        it { expect(create_service).to receive(:call) }
+        it { expect(result).to receive(:success?).and_return(false) }
+        it { expect(result).to receive(:error).and_return(error) }
+        it { expect(error).to receive_message_chain(:full_messages, :to_sentence).and_return("Password Confirmation doesn't match Password") }
       end
 
       describe 'response' do
         before { post "/api/v2/storefront/account", params: params }
 
         it 'returns errors' do
-          expect(json_response['errors']).not_to be_nil
+          expect(json_response['error']).to eq "Password Confirmation doesn't match Password"
         end
       end
     end
