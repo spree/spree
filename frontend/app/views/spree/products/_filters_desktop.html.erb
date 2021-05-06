@@ -34,7 +34,7 @@
         <% if property.uniq_values.present? %>
           <div class="w-100 card plp-filters-card">
             <% property_name = property.name %>
-            <% collapsed = params.dig(:properties, property.id.to_s).blank? %>
+            <% collapsed = params.dig(:properties, property.filter_param).blank? %>
             <button class="card-header <%= 'collapsed' if collapsed %> px-1 plp-filters-card-header" id="filters<%= property_name %>" data-toggle="collapse" data-target="#collapseFilter<%= property_name %>" aria-expanded="<%= !collapsed %>" aria-controls="collapseFilter<%= property_name %>" role="heading" aria-level="2">
               <%= property.presentation.titleize %>
               <%= icon(name: 'plus',

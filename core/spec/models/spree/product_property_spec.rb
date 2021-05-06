@@ -21,6 +21,18 @@ describe Spree::ProductProperty, type: :model do
   end
 
   context 'ransackable_associations' do
-    it { expect(Spree::ProductProperty.whitelisted_ransackable_associations).to include('property') }
+    it { expect(described_class.whitelisted_ransackable_associations).to include('property') }
+  end
+
+  context 'setting param' do
+    subject { build(:product_property, value: '90% Cotton 10% Elastan') }
+
+    it { expect { subject.save! }.to change(subject, :filter_param).from(nil).to('90-cotton-10-elastan') }
+  end
+
+  context 'setting value' do
+    subject { build(:product_property, value: ' 90% Cotton 10% Elastan ') }
+
+    it { expect { subject.save! }.to change(subject, :value).to('90% Cotton 10% Elastan') }
   end
 end

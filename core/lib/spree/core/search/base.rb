@@ -42,10 +42,10 @@ module Spree
               filter: {
                 price: price,
                 option_value_ids: option_value_ids,
+                properties: product_properties,
                 taxons: taxon&.id
               },
-              sort_by: sort_by,
-              product_properties: product_properties
+              sort_by: sort_by
             },
             current_currency: current_currency
           ).execute
@@ -114,7 +114,7 @@ module Spree
         end
 
         def build_option_value_ids(params)
-          filter_params = Spree::OptionType.all.map(&:filter_param)
+          filter_params = Spree::OptionType.filterable.map(&:filter_param)
 
           filter_params.reduce([]) do |acc, filter_param|
             acc + params[filter_param].to_s.split(',')
@@ -137,7 +137,7 @@ module Spree
                                else
                                  1
                                end
-          @properties[:product_properties] = params[:properties].try(:to_unsafe_hash)
+          @properties[:product_properties] = params[:properties]
         end
       end
     end

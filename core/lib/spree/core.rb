@@ -1,6 +1,7 @@
 require 'rails/all'
 require 'active_merchant'
 require 'acts_as_list'
+require 'auto_strip_attributes'
 require 'awesome_nested_set'
 require 'cancan'
 require 'friendly_id'

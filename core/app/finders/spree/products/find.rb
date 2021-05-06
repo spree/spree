@@ -16,7 +16,7 @@ module Spree
         @sort_by          = params.dig(:sort_by)
         @deleted          = params.dig(:filter, :show_deleted)
         @discontinued     = params.dig(:filter, :show_discontinued)
-        @properties       = params.dig(:product_properties)
+        @properties       = params.dig(:filter, :properties)
       end
 
       def execute
@@ -172,12 +172,15 @@ module Spree
       def by_properties(products)
         return products unless properties? && properties.values.reject(&:empty?).present?
 
-        product_ids = properties.map do |property_id, product_properties_ids|
-          next if product_properties_ids.empty?
+        product_ids = properties.to_unsafe_hash.map do |property_filter_param, product_properties_values|
+          next if property_filter_param.blank? || product_properties_values.empty?
+
+          values = product_properties_values.split(',').map(&:parameterize)
 
           products.
-            joins(:product_properties).
-            where(spree_product_properties: { property_id: property_id, id: product_properties_ids.split(',') }).ids
+            joins(product_properties: :property).
+            where(spree_properties: { filter_param: property_filter_param.parameterize }).
+            where(spree_product_properties: { filter_param: values }).ids
         end.flatten.compact.uniq
 
         products.where(id: product_ids)

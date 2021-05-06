@@ -1102,6 +1102,12 @@ paths:
           example: Red
           description: 'Find Prodcuts with Variants that have the specified option (eg. color, size) and value (eg. red, XS)'
         - in: query
+          name: 'filter[properties][brand-name]'
+          schema:
+            type: string
+          example: alpha
+          description: 'Find Prodcuts with Property Brand Name with value Alpha'
+        - in: query
           name: 'filter[show_deleted]'
           schema:
             type: boolean

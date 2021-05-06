@@ -4,7 +4,7 @@ module Spree
       class ProductPropertySerializer < BaseSerializer
         set_type  :product_property
 
-        attribute :value
+        attribute :value, :filter_param
 
         attribute :name do |product_property|
           product_property.property_name
