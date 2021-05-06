@@ -744,4 +744,10 @@ describe '#default_variant_cache_key' do
       expect(key).to eq("spree/default-variant/#{product.cache_key_with_version}/false")
     end
   end
+
+  describe '#requires_shipping_category?' do
+    let(:product) { build(:product, shipping_category: nil) }
+
+    it { expect(product.save).to eq(false) }
+  end
 end
