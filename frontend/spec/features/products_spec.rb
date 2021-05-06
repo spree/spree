@@ -291,24 +291,64 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
                              'Ruby on Rails Stein'])
   end
 
-  it 'is able to display products based on a given price range', js: true do
-    within(:css, '.plp-filters-scroller') do
-      click_on Spree.t('plp.price')
+  context 'filtering by giving a price range', js: true do
+    it 'is able to display products between 55 and 103 dollars' do
+      within(:css, '.plp-filters-scroller') do
+        click_on Spree.t('plp.price')
 
-      fill_in Spree.t('plp.min_price'), with: '55'
-      fill_in Spree.t('plp.max_price'), with: '103'
+        fill_in Spree.t(:min), with: '55'
+        fill_in Spree.t(:max), with: '103'
+        click_on Spree.t(:search)
+      end
 
-      click_on Spree.t(:search)
+      expect(page).to have_css('.product-component-name').exactly(3).times
+
+      product_names = page.all('.product-component-name').map(&:text).flatten.compact
+      expect(product_names).to contain_exactly(
+        'Ruby on Rails Bag',
+        'Ruby on Rails Mug',
+        'Ruby on Rails Tote'
+      )
     end
 
-    expect(page).to have_css('.product-component-name').exactly(3).times
+    it 'is able to display products when providing only min amount of 55 dollars' do
+      within(:css, '.plp-filters-scroller') do
+        click_on Spree.t('plp.price')
 
-    product_names = page.all('.product-component-name').map(&:text).flatten.compact.delete('')
-    expect(product_names.sort).to contain_exactly(
-      'Ruby on Rails Bag',
-      'Ruby on Rails Mug',
-      'Ruby on Rails Tote'
-    )
+        fill_in Spree.t(:min), with: '56'
+        click_on Spree.t(:search)
+      end
+
+      expect(page).to have_css('.product-component-name').exactly(7).times
+
+      product_names = page.all('.product-component-name').map(&:text).flatten.compact
+      expect(product_names).to contain_exactly(
+        'Ruby on Rails Ringer T-Shirt',
+        'Ruby on Rails Bag',
+        'Ruby on Rails Baseball Jersey',
+        'Ruby on Rails Stein',
+        'Ruby on Rails Jr. Spaghetti',
+        'Ruby Baseball Jersey',
+        'Apache Baseball Jersey'
+      )
+    end
+
+    it 'is able to display products when providing only max amount of 56 dollars' do
+      within(:css, '.plp-filters-scroller') do
+        click_on Spree.t('plp.price')
+
+        fill_in Spree.t(:max), with: '56'
+        click_on Spree.t(:search)
+      end
+
+      expect(page).to have_css('.product-component-name').exactly(2).times
+
+      product_names = page.all('.product-component-name').map(&:text).flatten.compact
+      expect(product_names).to contain_exactly(
+        'Ruby on Rails Mug',
+        'Ruby on Rails Tote'
+      )
+    end
   end
 
   context 'pagination' do

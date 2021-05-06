@@ -6,7 +6,7 @@ module Spree
 
         @ids              = String(params.dig(:filter, :ids)).split(',')
         @skus             = String(params.dig(:filter, :skus)).split(',')
-        @price            = String(params.dig(:filter, :price)).split(',').map(&:to_f)
+        @price            = map_prices(String(params.dig(:filter, :price)).split(','))
         @currency         = current_currency
         @taxons           = taxon_ids(params.dig(:filter, :taxons))
         @concat_taxons    = taxon_ids(params.dig(:filter, :concat_taxons))
@@ -226,6 +226,12 @@ module Spree
 
       def include_discontinued(products)
         discontinued ? products : products.available
+      end
+
+      def map_prices(prices)
+        prices.map do |price|
+          price == 'Infinity' ? Float::INFINITY : price.to_f
+        end
       end
 
       def taxon_ids(taxons_ids)

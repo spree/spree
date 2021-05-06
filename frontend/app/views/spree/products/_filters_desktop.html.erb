@@ -84,9 +84,10 @@
               <% end %>
             <% end %>
 
-            <%= form_with id: 'filterPriceRange', method: :get do |f| %>
-              <%= f.number_field :min_price, min: 0, step: 1, placeholder: Spree.t('plp.min_price') %>
-              <%= f.number_field :max_price, min: 0, step: 1, placeholder: Spree.t('plp.max_price') %>
+            <%= form_with url: permitted_params, id: 'filterPriceRange', method: :get do |f| %>
+              <%= f.hidden_field :price %>
+              <%= f.number_field :min_price, value: params[:min_price], min: 0, step: 1, placeholder: Spree.t(:min) %>
+              <%= f.number_field :max_price, value: params[:max_price], min: 0, step: 1, placeholder: Spree.t(:max) %>
 
               <%= f.submit Spree.t(:search) %>
             <% end %>

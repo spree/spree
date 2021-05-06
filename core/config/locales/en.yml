@@ -1005,6 +1005,7 @@ en:
     match_choices:
       all: All
       none: None
+    max: 'Max'
     max_items: Max Items
     member_since: Member Since
     memo: Memo
@@ -1013,6 +1014,7 @@ en:
     meta_title: Meta Title
     metadata: Metadata
     mutable: Mutable
+    min: 'Min'
     minimal_amount: Minimal Amount
     missing_return_authorization: ! 'Missing Return Authorization for %{item_name}.'
     month: Month
@@ -1247,8 +1249,6 @@ en:
       done: DONE
       default: DEFAULT
       filter_by: FILTER BY
-      max_price: 'Max'
-      min_price: 'Min'
       newest_first: NEWEST FIRST
       no_results: No results
       no_results_found: No results found
