@@ -108,18 +108,4 @@ Spree.ready(function ($) {
       setNewUrl(searchParams);
     }
   });
-
-  $('#filterPriceRange').submit(function(event) {
-    var $priceRangeForm = $(event.currentTarget);
-    var minPrice = parseInt($priceRangeForm.find('[name="min_price"]').val());
-    var maxPrice = parseInt($priceRangeForm.find('[name="max_price"]').val());
-
-    var formattedPriceRange = [
-      minPrice || 0,
-      '-',
-      maxPrice || 0
-    ].join(' ');
-
-    $priceRangeForm.find('[name="price"]').val(formattedPriceRange)
-  });
 });

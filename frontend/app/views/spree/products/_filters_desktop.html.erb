@@ -84,13 +84,11 @@
               <% end %>
             <% end %>
 
-            <%= form_with url: permitted_params, id: 'filterPriceRange', method: :get do |f| %>
-              <%= f.hidden_field :price %>
-              <%= f.number_field :min_price, value: params[:min_price], min: 0, step: 1, placeholder: Spree.t(:min) %>
-              <%= f.number_field :max_price, value: params[:max_price], min: 0, step: 1, placeholder: Spree.t(:max) %>
-
-              <%= f.submit Spree.t(:search) %>
-            <% end %>
+            <div id="filterPriceRange">
+              <%= min_price_filter_input %>
+              <%= max_price_filter_input %>
+              <%= link_to Spree.t('plp.done'), permitted_params, class: 'btn btn-primary spree-btn', data: { params: permitted_params } %>
+            </div>
           </div>
         </div>
       </div>

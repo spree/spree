@@ -298,7 +298,7 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
 
         fill_in Spree.t(:min), with: '55'
         fill_in Spree.t(:max), with: '103'
-        click_on Spree.t(:search)
+        click_on Spree.t('plp.done')
       end
 
       expect(page).to have_css('.product-component-name').exactly(3).times
@@ -316,7 +316,7 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
         click_on Spree.t('plp.price')
 
         fill_in Spree.t(:min), with: '56'
-        click_on Spree.t(:search)
+        click_on Spree.t('plp.done')
       end
 
       expect(page).to have_css('.product-component-name').exactly(7).times
@@ -338,7 +338,7 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
         click_on Spree.t('plp.price')
 
         fill_in Spree.t(:max), with: '56'
-        click_on Spree.t(:search)
+        click_on Spree.t('plp.done')
       end
 
       expect(page).to have_css('.product-component-name').exactly(2).times
