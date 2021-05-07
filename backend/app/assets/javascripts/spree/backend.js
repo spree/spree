@@ -96,12 +96,8 @@ Spree.routes.products_api_v2 = Spree.pathFor('/api/v2/platform/products')
 Spree.routes.users_api_v2 = Spree.pathFor('api/v2/platform/users')
 
 // TODO:
-// Update this from storefont to platform.
-
-// Using storefront due to issues with
-// taxon platform api not returning the attribute :pretty_name
-// and also returning all taxons, even when filtered by name.
-Spree.routes.taxons_api_v2 = Spree.pathFor('/api/v2/storefront/taxons')
+// taxon returning all taxons, even when filtered by name.
+Spree.routes.taxons_api_v2 = Spree.pathFor('/api/v2/platform/taxons')
 
 Spree.apiV2Authentication = function() {
   return {

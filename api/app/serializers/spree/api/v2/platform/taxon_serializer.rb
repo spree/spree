@@ -5,6 +5,20 @@ module Spree
         class TaxonSerializer < BaseSerializer
           include ::Spree::Api::V2::ResourceSerializerConcern
 
+          attributes :pretty_name, :seo_title
+
+          attribute :is_root do |taxon|
+            taxon.root?
+          end
+
+          attribute :is_child do |taxon|
+            taxon.child?
+          end
+
+          attribute :is_leaf do |taxon|
+            taxon.leaf?
+          end
+
           belongs_to :parent,   record_type: :taxon, serializer: :taxon
           belongs_to :taxonomy, record_type: :taxonomy
 

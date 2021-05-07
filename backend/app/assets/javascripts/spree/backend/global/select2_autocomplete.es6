@@ -1,5 +1,5 @@
 // Allows you to use one autocomplete for sevral use cases with sensible defaults.
-// Requires two params passing to work, the api V1 URI, and the data attribute -> data_attrbute_name: 'products'
+// Requires two params passing to work, the api URI, and the data attribute -> data_attrbute_name: 'products'
 $.fn.select2Autocomplete = function(params) {
   // Required params
   const apiUrl = params.apiUrl
