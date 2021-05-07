@@ -21,7 +21,7 @@ Spree.ready(function() {
     }
 
     updatePricesForFiltering(minPrice, maxPrice) {
-      const formattedPriceRange = `${minPrice} - ${maxPrice}`
+      const formattedPriceRange = `${minPrice}-${maxPrice}`
 
       const dataParams = JSON.parse(this.filterButton.dataset.params)
       const urlParams = new URLSearchParams(dataParams)

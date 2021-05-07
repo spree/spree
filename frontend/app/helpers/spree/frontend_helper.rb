@@ -227,14 +227,19 @@ module Spree
       inline_svg_tag "#{name}.svg", class: "spree-icon #{classes}", size: "#{width}px*#{height}px"
     end
 
-    def price_filter_values
-      @price_filter_values ||= [
-        "#{I18n.t('activerecord.attributes.spree/product.less_than')} #{formatted_price(50)}",
-        "#{formatted_price(50)} - #{formatted_price(100)}",
-        "#{formatted_price(101)} - #{formatted_price(150)}",
-        "#{formatted_price(151)} - #{formatted_price(200)}",
-        "#{formatted_price(201)} - #{formatted_price(300)}"
+    def price_filters
+      @price_filters ||= [
+        less_than_price_range(50),
+        price_range(50, 100),
+        price_range(101, 150),
+        price_range(151, 200),
+        price_range(201, 300),
+        more_than_price_range(300)
       ]
+    end
+
+    def price_filter_values
+      @price_filter_values ||= price_filters.map(&:to_s)
     end
 
     def static_filters
@@ -336,8 +341,23 @@ module Spree
 
     private
 
-    def formatted_price(value)
-      Spree::Money.new(value, currency: current_currency, no_cents_if_whole: true).to_s
+    def price_range(min_amount, max_amount)
+      Filters::PriceRange.new(
+        min_price: price(min_amount),
+        max_price: price(max_amount)
+      )
+    end
+
+    def less_than_price_range(amount)
+      Filters::LessThanPriceRange.new(price: price(amount))
+    end
+
+    def more_than_price_range(amount)
+      Filters::MoreThanPriceRange.new(price: price(amount))
+    end
+
+    def price(amount)
+      Filters::Price.new(amount: amount, currency: current_currency)
     end
 
     def credit_card_icon(type)

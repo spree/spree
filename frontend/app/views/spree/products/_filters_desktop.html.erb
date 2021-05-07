@@ -75,11 +75,11 @@
         </button>
         <div id="collapseFilterPrice" class="collapse <%= 'show' unless price_collapsed %>" aria-labelledby="filtersPrice">
           <div class="card-body px-0 pt-1">
-            <% price_filter_values.each do |name| %>
-              <% price_param = params[:price] == name ? '' : name %>
-              <%= link_to permitted_params.merge({ price: price_param }), class: "d-block" do %>
-                <div class="d-inline-block py-1 px-2 m-1 text-uppercase plp-filters-card-item <%= 'plp-filters-card-item--selected' if params[:price] == name %>">
-                  <%= name %>
+            <% price_filters.each do |price_range| %>
+              <% price_param = params[:price] == price_range.to_param ? '' : price_range.to_param %>
+              <%= link_to permitted_params.merge(price: price_param), class: "d-block" do %>
+                <div class="d-inline-block py-1 px-2 m-1 text-uppercase plp-filters-card-item <%= 'plp-filters-card-item--selected' if params[:price] == price_range.to_param %>">
+                  <%= price_range %>
                 </div>
               <% end %>
             <% end %>

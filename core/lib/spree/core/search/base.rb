@@ -108,7 +108,7 @@ module Spree
             high_price = Monetize.parse(price_param.remove("#{less_than_string} ")).to_i
           else
             low_price, high_price = Monetize.parse_collection(price_param).map(&:to_i)
-            high_price = Float::INFINITY if high_price.zero?
+            high_price = Float::INFINITY if high_price&.zero?
           end
 
           "#{low_price},#{high_price}"

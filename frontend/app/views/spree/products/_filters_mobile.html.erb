@@ -66,11 +66,11 @@
           </div>
           <div id="collapseFour" class="collapse <%= 'show' unless params[:price].blank? %>" aria-labelledby="headingFour" data-parent="#filters-accordion">
             <div class="card-body pt-1">
-              <% price_filter_values.each do |name| %>
-                <% price_param = params[:price] == name ? '' : name %>
+              <% price_filters.each do |price_range| %>
+                <% price_param = params[:price] == price_range.to_param ? '' : price_range.to_param %>
                 <%= link_to permitted_params.merge(price: price_param, menu_open: 1), data: { params: permitted_params.merge(price: price_param, menu_open: 1), filter_name: 'price' } do %>
-                  <div class="d-inline-block py-1 px-2 m-1 text-uppercase plp-overlay-card-item <%= 'plp-overlay-card-item--selected' if params[:price] == name %>">
-                    <%= name %>
+                  <div class="d-inline-block py-1 px-2 m-1 text-uppercase plp-overlay-card-item <%= 'plp-overlay-card-item--selected' if params[:price] == price_range.to_param %>">
+                    <%= price_range %>
                   </div>
                 <% end %>
               <% end %>
