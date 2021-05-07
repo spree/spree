@@ -75,9 +75,11 @@
                 <% end %>
               <% end %>
 
-              <div id="filterPriceRangeMobile">
-                <%= min_price_filter_input %>
-                <%= max_price_filter_input %>
+              <div id="filterPriceRangeMobile" class="m-1">
+                <div class="d-inline-flex">
+                  <%= min_price_filter_input class: 'w-50 p-2 mr-1' %>
+                  <%= max_price_filter_input class: 'w-50 p-2' %>
+                </div>
               </div>
             </div>
           </div>

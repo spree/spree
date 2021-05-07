@@ -84,10 +84,13 @@
               <% end %>
             <% end %>
 
-            <div id="filterPriceRangeDesktop">
-              <%= min_price_filter_input %>
-              <%= max_price_filter_input %>
-              <%= link_to Spree.t('plp.done'), permitted_params, class: 'btn btn-primary spree-btn', data: { params: permitted_params } %>
+            <div id="filterPriceRangeDesktop" class="m-1">
+              <div class="d-inline-flex mb-2">
+                <%= min_price_filter_input class: 'w-50 p-2 mr-1' %>
+                <%= max_price_filter_input class: 'w-50 p-2' %>
+              </div>
+
+              <%= link_to Spree.t('plp.done'), permitted_params, class: 'btn btn-primary spree-btn w-100', data: { params: permitted_params } %>
             </div>
           </div>
         </div>
