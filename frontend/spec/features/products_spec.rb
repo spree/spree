@@ -309,6 +309,9 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
         'Ruby on Rails Mug',
         'Ruby on Rails Tote'
       )
+
+      expect(page).to have_field(Spree.t(:min), with: '55')
+      expect(page).to have_field(Spree.t(:max), with: '103')
     end
 
     it 'is able to display products when providing only min amount of 55 dollars' do
@@ -331,6 +334,9 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
         'Ruby Baseball Jersey',
         'Apache Baseball Jersey'
       )
+
+      expect(page).to have_field(Spree.t(:min), with: '56')
+      expect(page).to have_field(Spree.t(:max), with: '')
     end
 
     it 'is able to display products when providing only max amount of 56 dollars' do
@@ -348,6 +354,9 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
         'Ruby on Rails Mug',
         'Ruby on Rails Tote'
       )
+
+      expect(page).to have_field(Spree.t(:min), with: '')
+      expect(page).to have_field(Spree.t(:max), with: '56')
     end
   end
 

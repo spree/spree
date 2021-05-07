@@ -21,6 +21,6 @@ Spree.ready(function() {
     const urlParams = new URLSearchParams(dataParams)
 
     urlParams.set('price', formattedPriceRange)
-    priceRangeSubmitButton.href = `${location.pathname}?${decodeURIComponent(urlParams.toString())}`
+    priceRangeSubmitButton.href = decodeURIComponent(`${location.pathname}?${urlParams.toString()}`)
   }
 });
