@@ -292,12 +292,15 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
   end
 
   context 'filtering by giving a price range', js: true do
+    let(:min_price_input) { "$ #{Spree.t(:min)}" }
+    let(:max_price_input) { "$ #{Spree.t(:max)}" }
+
     it 'is able to display products between 55 and 103 dollars' do
       within(:css, '.plp-filters-scroller') do
         click_on Spree.t('plp.price')
 
-        fill_in Spree.t(:min), with: '55'
-        fill_in Spree.t(:max), with: '103'
+        fill_in min_price_input, with: '55'
+        fill_in max_price_input, with: '103'
         click_on Spree.t('plp.done')
       end
 
@@ -310,15 +313,15 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
         'Ruby on Rails Tote'
       )
 
-      expect(page).to have_field(Spree.t(:min), with: '55')
-      expect(page).to have_field(Spree.t(:max), with: '103')
+      expect(page).to have_field(min_price_input, with: '55')
+      expect(page).to have_field(max_price_input, with: '103')
     end
 
     it 'is able to display products when providing only min amount of 55 dollars' do
       within(:css, '.plp-filters-scroller') do
         click_on Spree.t('plp.price')
 
-        fill_in Spree.t(:min), with: '56'
+        fill_in min_price_input, with: '56'
         click_on Spree.t('plp.done')
       end
 
@@ -335,15 +338,15 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
         'Apache Baseball Jersey'
       )
 
-      expect(page).to have_field(Spree.t(:min), with: '56')
-      expect(page).to have_field(Spree.t(:max), with: '')
+      expect(page).to have_field(min_price_input, with: '56')
+      expect(page).to have_field(max_price_input, with: '')
     end
 
     it 'is able to display products when providing only max amount of 56 dollars' do
       within(:css, '.plp-filters-scroller') do
         click_on Spree.t('plp.price')
 
-        fill_in Spree.t(:max), with: '56'
+        fill_in max_price_input, with: '56'
         click_on Spree.t('plp.done')
       end
 
@@ -355,8 +358,8 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
         'Ruby on Rails Tote'
       )
 
-      expect(page).to have_field(Spree.t(:min), with: '')
-      expect(page).to have_field(Spree.t(:max), with: '56')
+      expect(page).to have_field(min_price_input, with: '')
+      expect(page).to have_field(max_price_input, with: '56')
     end
   end
 
