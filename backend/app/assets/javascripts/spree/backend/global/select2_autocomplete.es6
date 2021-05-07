@@ -11,13 +11,13 @@ $.fn.select2Autocomplete = function(params) {
   const select2allowClear = params.allow_clear || false // Pass true to use Allow Clear on the Select2, you will also need to set include_blank: true on the select el.
   const returnAttribute = params.return_attribute || 'name' // Pass a custom return attribute -> return_attribute: 'pretty_name'
   const minimumInput = params.minimum_input || 3 // Pass a custom minimum input
-  const searchQuery = params.search_query || 'name_cont' // Pass a search query -> search_query: 'name_or_master_sku_cont'
+  const searchQuery = params.search_query || 'filter[name]' // Pass a search query -> search_query: 'name_or_master_sku_cont'
 
   function formatList(values) {
     return values.map(function (obj) {
       return {
         id: obj.id,
-        text: obj[returnAttribute]
+        text: obj.attributes[returnAttribute]
       }
     })
   }
@@ -29,18 +29,13 @@ $.fn.select2Autocomplete = function(params) {
     minimumInputLength: minimumInput,
     ajax: {
       url: apiUrl,
-      dataType: 'json',
+      headers: Spree.apiV2Authentication(),
       data: function (params) {
-        return {
-          q: {
-            [searchQuery]: params.term
-          },
-          token: Spree.api_key
-        }
+        return { [searchQuery]: params.term }
       },
-      processResults: function(data) {
+      processResults: function(json) {
         return {
-          results: formatList(data[dataAttrName])
+          results: formatList(json.data)
         }
       }
     }

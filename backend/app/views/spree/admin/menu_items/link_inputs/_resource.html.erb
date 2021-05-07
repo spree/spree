@@ -19,7 +19,7 @@
         data_attrbute_name: 'taxons',
         placeholder: "<%= Spree.t('admin.navigation.seach_for_a_taxon') %>",
         allow_clear: true,
-        apiUrl: Spree.routes.taxons_api,
+        apiUrl: Spree.routes.taxons_api_v2,
         return_attribute: 'pretty_name',
       })
     })
@@ -39,7 +39,7 @@
         data_attrbute_name: 'products',
         placeholder: "<%= Spree.t('admin.navigation.seach_for_a_product') %>",
         allow_clear: true,
-        apiUrl: Spree.routes.products_api
+        apiUrl: Spree.routes.taxons_api_v2,
       })
     })
   </script>

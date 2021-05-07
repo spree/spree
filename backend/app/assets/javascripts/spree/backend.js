@@ -87,15 +87,21 @@ Spree.routes.stock_items_api = function (stockLocationId) {
 }
 
 // API v2
-
 Spree.routes.countries_api_v2 = Spree.pathFor('api/v2/platform/countries')
 Spree.routes.menus_api_v2 = Spree.pathFor('api/v2/platform/menus')
 Spree.routes.menus_items_api_v2 = Spree.pathFor('api/v2/platform/menu_items/reposition')
 Spree.routes.option_types_api_v2 = Spree.pathFor('api/v2/platform/option_types')
 Spree.routes.option_values_api_v2 = Spree.pathFor('api/v2/platform/option_values')
 Spree.routes.products_api_v2 = Spree.pathFor('/api/v2/platform/products')
-Spree.routes.taxons_api_v2 = Spree.pathFor('/api/v2/platform/taxons')
 Spree.routes.users_api_v2 = Spree.pathFor('api/v2/platform/users')
+
+// TODO:
+// Update this from storefont to platform.
+
+// Using storefront due to issues with
+// taxon platform api not returning the attribute :pretty_name
+// and also returning all taxons, even when filtered by name.
+Spree.routes.taxons_api_v2 = Spree.pathFor('/api/v2/storefront/taxons')
 
 Spree.apiV2Authentication = function() {
   return {
