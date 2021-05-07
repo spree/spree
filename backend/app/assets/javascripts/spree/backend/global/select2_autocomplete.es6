@@ -11,7 +11,7 @@ $.fn.select2Autocomplete = function(params) {
   const select2allowClear = params.allow_clear || false // Pass true to use Allow Clear on the Select2, you will also need to set include_blank: true on the select el.
   const returnAttribute = params.return_attribute || 'name' // Pass a custom return attribute -> return_attribute: 'pretty_name'
   const minimumInput = params.minimum_input || 3 // Pass a custom minimum input
-  const searchQuery = params.search_query || 'filter[name]' // Pass a search query -> search_query: 'name_or_master_sku_cont'
+  const searchQuery = params.search_query || 'name_i_cont' // Pass a search query -> search_query: 'name_or_master_sku_cont'
 
   function formatList(values) {
     return values.map(function (obj) {
@@ -31,7 +31,11 @@ $.fn.select2Autocomplete = function(params) {
       url: apiUrl,
       headers: Spree.apiV2Authentication(),
       data: function (params) {
-        return { [searchQuery]: params.term }
+        return {
+          filter: {
+            [searchQuery]: params.term
+          }
+        }
       },
       processResults: function(json) {
         return {
