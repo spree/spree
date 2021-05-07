@@ -74,6 +74,11 @@
                   </div>
                 <% end %>
               <% end %>
+
+              <div id="filterPriceRangeMobile">
+                <%= min_price_filter_input %>
+                <%= max_price_filter_input %>
+              </div>
             </div>
           </div>
         </div>
@@ -87,6 +92,6 @@
 
   <div class="container position-absolute text-center plp-overlay-buttons pt-3">
     <%= link_to Spree.t('plp.clear_all'), permitted_params.select { |key, value| key == "sort_by"}, class: 'btn spree-btn btn-outline-primary w-100 mb-4', data: { params: permitted_params.select { |key, value| key == "sort_by"} } %>
-    <%= link_to Spree.t('plp.done'), permitted_params, class: 'btn btn-primary spree-btn w-100 done-btn', data: { params: permitted_params } %>
+    <%= link_to Spree.t('plp.done'), permitted_params, id: 'filterProductsButtonMobile', class: 'btn btn-primary spree-btn w-100 done-btn', data: { params: permitted_params } %>
   </div>
 </div>

@@ -1,26 +1,44 @@
 Spree.ready(function() {
-  const priceRangeFilterElement = document.getElementById('filterPriceRange')
-  const priceInputs = priceRangeFilterElement.querySelectorAll('input')
-  const minPriceInput = priceRangeFilterElement.querySelector('input[name="min_price"]')
-  const maxPriceInput = priceRangeFilterElement.querySelector('input[name="max_price"]')
+  class PriceRangeFilter {
+    constructor(inputsContainer, filterButton) {
+      this.inputsContainer = inputsContainer
+      this.filterButton = filterButton
 
-  priceInputs.forEach((priceInput) => {
-    priceInput.addEventListener('change', () => {
-      updatePriceRangeFilter(
-        parseInt(minPriceInput.value) || 0,
-        parseInt(maxPriceInput.value) || 0
-      )
-    })
-  })
+      this.priceInputs = inputsContainer.querySelectorAll('input')
+      this.minPriceInput = inputsContainer.querySelector('input[name="min_price"]')
+      this.maxPriceInput = inputsContainer.querySelector('input[name="max_price"]')
+    }
 
-  function updatePriceRangeFilter(minPrice, maxPrice) {
-    const formattedPriceRange = `${minPrice} - ${maxPrice}`
+    handlePriceChange() {
+      this.priceInputs.forEach((priceInput) => {
+        priceInput.addEventListener('change', () => {
+          this.updatePricesForFiltering(
+            parseInt(this.minPriceInput.value) || 0,
+            parseInt(this.maxPriceInput.value) || 0
+          )
+        })
+      })
+    }
 
-    const priceRangeSubmitButton = priceRangeFilterElement.querySelector('a')
-    const dataParams = JSON.parse(priceRangeSubmitButton.dataset.params)
-    const urlParams = new URLSearchParams(dataParams)
+    updatePricesForFiltering(minPrice, maxPrice) {
+      const formattedPriceRange = `${minPrice} - ${maxPrice}`
 
-    urlParams.set('price', formattedPriceRange)
-    priceRangeSubmitButton.href = decodeURIComponent(`${location.pathname}?${urlParams.toString()}`)
+      const dataParams = JSON.parse(this.filterButton.dataset.params)
+      const urlParams = new URLSearchParams(dataParams)
+
+      urlParams.set('price', formattedPriceRange)
+      this.filterButton.href = decodeURIComponent(`${location.pathname}?${urlParams.toString()}`)
+    }
   }
+
+  // we have 2 elements for filtering prices - desktop and mobile
+  const desktopElement = document.getElementById('filterPriceRangeDesktop')
+  const desktopFilterButton = desktopElement.querySelector('a')
+  const desktopPriceRangeFilter = new PriceRangeFilter(desktopElement, desktopFilterButton)
+  desktopPriceRangeFilter.handlePriceChange()
+
+  const mobileElement = document.getElementById('filterPriceRangeMobile')
+  const mobileFilterButton = document.getElementById('filterProductsButtonMobile')
+  const mobilePriceRangeFilter = new PriceRangeFilter(mobileElement, mobileFilterButton)
+  mobilePriceRangeFilter.handlePriceChange()
 });

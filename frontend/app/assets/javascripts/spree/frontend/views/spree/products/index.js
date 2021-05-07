@@ -99,13 +99,4 @@ Spree.ready(function ($) {
     $('.plp-overlay-ul-li').removeClass('plp-overlay-ul-li--active')
     $(this).addClass('plp-overlay-ul-li--active');
   });
-
-  $('.plp-overlay-buttons .done-btn').click(function (event) {
-    if (window.URLSearchParams) {
-      event.preventDefault();
-      var searchParams = new URLSearchParams(location.search);
-      searchParams.delete('menu_open');
-      setNewUrl(searchParams);
-    }
-  });
 });

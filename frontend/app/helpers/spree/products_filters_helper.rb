@@ -10,7 +10,7 @@ module Spree
 
     def price_filter_input(name:, value:, placeholder:)
       price_value = value&.zero? ? '' : value
-      number_field_tag(name, price_value, min: 0, step: 1, placeholder: placeholder)
+      number_field_tag(name, price_value, id: name, min: 0, step: 1, placeholder: placeholder)
     end
 
     private
