@@ -46,31 +46,14 @@ module Spree
     # this method will only return a menu if it is
     # available for use in the current store.
     def spree_menu(unique_code)
-      menu = available_menus.by_unique_code(unique_code)
-      menu[0]
-    end
-
-    # Returns the root for the menu by unique_code.
-    # You can use .children to retrieve the top level of menu items,
-    # or .descendants to retrieve all menu items.
-    def spree_root_item_for_menu(unique_code)
-      return unless spree_menu(unique_code).present?
-
-      spree_menu(unique_code).root
+      available_menus.by_unique_code(unique_code)
     end
 
     # Returns only the top level items for the menu by unique_code
     def spree_top_level_items_for_menu(unique_code)
-      return unless spree_root_item_for_menu(unique_code).present?
+      return unless spree_menu(unique_code).present?
 
-      spree_root_item_for_menu(unique_code).children
-    end
-
-    # Returns all items for the menu by unique_code
-    def spree_all_items_for_menu(unique_code)
-      return unless spree_root_item_for_menu(unique_code).present?
-
-      spree_root_item_for_menu(unique_code).descendants
+      spree_menu(unique_code).root.children
     end
 
     def spree_localized_item_link(item)

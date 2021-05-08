@@ -15,7 +15,7 @@ module Spree
         end
 
         def available_menus
-          @available_menus ||= Spree::Menu.by_store(current_store)
+          @available_menus ||= current_store.menus
         end
 
         def store_locale

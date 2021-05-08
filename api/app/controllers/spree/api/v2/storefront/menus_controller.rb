@@ -8,21 +8,8 @@ module Spree
           def serialize_collection(collection)
             collection_serializer.new(
               collection,
-              collection_options(collection).merge(params: collection_serializer_params)
+              collection_options(collection).merge(params: serializer_params)
             ).serializable_hash
-          end
-
-          def collection_serializer_params
-            {
-              store: current_store
-            }
-          end
-
-          def serializer_params
-            {
-              store: current_store,
-              include_menu_items: true
-            }
           end
 
           def resource
@@ -43,6 +30,10 @@ module Spree
 
           def model_class
             Spree::Menu
+          end
+
+          def scope
+            super.by_store(current_store)
           end
         end
       end

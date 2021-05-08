@@ -9,10 +9,13 @@ module Spree
     validates :name, :store, presence: true
     validates :unique_code, uniqueness: { scope: :store }
 
-    scope :by_unique_code, ->(menu_code) { where unique_code: menu_code }
-    scope :by_store, ->(store) { where store_id: store }
+    scope :by_store, ->(store) { where store: store }
 
-    has_one :root, -> { where parent_id: nil }, class_name: 'Spree::MenuItem', dependent: :destroy
+    has_one :root, -> { where(parent_id: nil) }, class_name: 'Spree::MenuItem', dependent: :destroy
+
+    def self.by_unique_code(menu_code)
+      find_by(unique_code: menu_code)
+    end
 
     private
 
