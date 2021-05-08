@@ -58,24 +58,24 @@
             <%= f.error_message_on :subtitle %>
           <% end %>
 
-          <% @menu_item.build_menu_item_image unless @menu_item.menu_item_image %>
-            <%= f.fields_for :menu_item_image do |menu_item_image_field| %>
-              <%= f.field_container :menu_item_image_attachment do %>
-                <% unless @menu_item.menu_item_image.new_record? %>
+          <% @menu_item.build_icon unless @menu_item.icon %>
+            <%= f.fields_for :icon do |icon_field| %>
+              <%= f.field_container :icon_attachment do %>
+                <% unless @menu_item.icon.new_record? %>
                   <div id="menuItemImgContainer" class="my-2">
-                    <%= image_tag(main_app.url_for(@menu_item.menu_item_image.attachment)) %>
+                    <%= image_tag(main_app.url_for(@menu_item.icon.attachment)) %>
                   </div>
                 <% end %>
-              <div id="<% unless @menu_item.menu_item_image.new_record? %>MenuItemImageButton<% end %>">
-                <%= menu_item_image_field.file_field :attachment %>
+              <div id="<% unless @menu_item.icon.new_record? %>MenuItemImageButton<% end %>">
+                <%= icon_field.file_field :attachment %>
               </div>
             <% end %>
 
-            <%= f.field_container :menu_item_image_alt do %>
-              <% unless @menu_item.menu_item_image.new_record? %>
+            <%= f.field_container :icon_alt do %>
+              <% unless @menu_item.icon.new_record? %>
                 <div class="form-group my-3">
-                  <%= menu_item_image_field.label :alt, Spree.t('admin.navigation.image_alt_text') %>
-                  <%= menu_item_image_field.text_field :alt, class: 'form-control' %>
+                  <%= icon_field.label :alt, Spree.t('admin.navigation.image_alt_text') %>
+                  <%= icon_field.text_field :alt, class: 'form-control' %>
                 </div>
               <% end %>
             <% end %>

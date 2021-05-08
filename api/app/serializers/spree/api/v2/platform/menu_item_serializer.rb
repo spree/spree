@@ -6,8 +6,8 @@ module Spree
           include ::Spree::Api::V2::ResourceSerializerConcern
 
           has_one :image,
-                  object_method_name: :menu_item_image,
-                  id_method_name: :menu_item_image_id,
+                  object_method_name: :icon,
+                  id_method_name: :icon_id,
                   record_type: :image,
                   serializer: :image
 

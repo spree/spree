@@ -49,17 +49,17 @@
       </div>
       <div class="row d-none d-xl-flex border-top py-5 text-uppercase footer-spree-menu-links">
 
-        <% if top_level_items_for_menu('spree-all-footer').present? %>
-          <% top_level_items_for_menu('spree-all-footer').each do |parent| %>
+        <% if spree_top_level_items_for_menu('spree-all-footer').present? %>
+          <% spree_top_level_items_for_menu('spree-all-footer').each do |parent| %>
             <div class="col-3">
               <div class="footer-spree-label">
-                <%= link_to parent.name, localized_item_link(parent, current_locale) %>
+                <%= link_to parent.name, spree_localized_item_link(parent) %>
               </div>
               <% parent.children.each do |child| %>
                 <% if child.code == 'category' && child.item_type == 'Container' %>
                   <% if child.children.present? %>
                     <% child.children.each do |category_link| %>
-                      <div class="pt-2"><%= link_to category_link.name, localized_item_link(category_link, current_locale) %></div>
+                      <div class="pt-2"><%= link_to category_link.name, spree_localized_item_link(category_link) %></div>
                     <% end %>
                   <% end %>
                 <% end %>

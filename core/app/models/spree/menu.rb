@@ -21,7 +21,7 @@ module Spree
     end
 
     def set_root
-      self.root ||= MenuItem.create!(menu_id: id, name: name, item_type: 'Container', code: "#{name}-root")
+      self.root ||= MenuItem.create!(menu_id: id, name: name, item_type: 'Container')
     end
   end
 end

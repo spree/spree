@@ -1,10 +1,11 @@
 module Spree
   class MenuItem < Spree::Base
+    acts_as_nested_set dependent: :destroy
+
     belongs_to :menu
     belongs_to :linked_resource, polymorphic: true
 
-    acts_as_nested_set dependent: :destroy
-
+    before_create :ensure_item_belongs_to_root
     before_save :reset_link_attributes, :build_path, :paremeterize_code
 
     ITEM_TYPE = %w[Link Promotion Container]
@@ -20,10 +21,9 @@ module Spree
     validates :menu, presence: true
     validates :item_type, inclusion: { in: ITEM_TYPE }
     validates :linked_resource_type, inclusion: { in: LINKED_RESOURCE_TYPE }
-    validate :check_for_root, on: :create
 
-    has_one :menu_item_image, as: :viewable, dependent: :destroy, class_name: 'Spree::MenuItemImage'
-    accepts_nested_attributes_for :menu_item_image, reject_if: :all_blank
+    has_one :icon, as: :viewable, dependent: :destroy, class_name: 'Spree::Icon'
+    accepts_nested_attributes_for :icon, reject_if: :all_blank
 
     def self.refresh_paths(resorce)
       where(linked_resource_type: resorce.class.name, linked_resource_id: resorce.id).each(&:save!)
@@ -69,9 +69,9 @@ module Spree
       Spree::Core::Engine.frontend_available?
     end
 
-    def check_for_root
+    def ensure_item_belongs_to_root
       if menu.try(:root).present? && parent_id.nil?
-        errors.add(:root_conflict, Spree.t(:this_menu_already_has_a_root_item))
+        self.parent_id = menu.root.id
       end
     end
 

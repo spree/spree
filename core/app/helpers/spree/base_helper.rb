@@ -25,24 +25,6 @@ module Spree
         to_html
     end
 
-    def localized_item_link(item, locale)
-      return if item.destination.nil?
-
-      output_locale = if locale == current_store.default_locale
-                        nil
-                      else
-                        "/#{locale}"
-                      end
-
-      if Spree::MenuItem::DYNAMIC_RESOURCE_TYPE.include? item.linked_resource_type
-        output_locale.to_s + item.destination
-      elsif item.linked_resource_type == 'Home Page'
-        output_locale || item.destination
-      else
-        item.destination
-      end
-    end
-
     def display_compare_at_price(product_or_variant)
       product_or_variant.
         price_in(current_currency).

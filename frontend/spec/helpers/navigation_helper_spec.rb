@@ -5,30 +5,6 @@ module Spree
     include Spree::CurrencyHelper
     include Spree::LocaleHelper
 
-    # Can't test the old data as it does not exist, will be able to test
-    # translation on name at some stage.
-    # describe '#spree_navigation_data' do
-    #   let!(:current_store) { create(:store) }
-
-    #   context 'fetch via locale' do
-    #     before { I18n.locale = :fr }
-
-    #     after { I18n.locale = :en }
-
-    #     it { expect(spree_navigation_data.first[:title]).to eq('Femmes') }
-    #   end
-
-    #   context 'fetch via store code' do
-    #     before { current_store.update(code: 'fr') }
-
-    #     it { expect(spree_navigation_data.first[:title]).to eq('Femmes') }
-    #   end
-
-    #   context 'fallback to default' do
-    #     it { expect(spree_navigation_data.first[:title]).to eq('Women') }
-    #   end
-    # end
-
     describe '#should_render_internationalization_dropdown?' do
       context 'store with multiple currencies' do
         let(:current_store) { create(:store, supported_currencies: 'EUR,USD') }
@@ -52,6 +28,56 @@ module Spree
         let(:current_store) { create(:store, supported_currencies: nil, supported_locales: nil) }
 
         it { expect(should_render_internationalization_dropdown?).to be_falsey }
+      end
+    end
+
+    context 'spree_localized_item_link' do
+      let(:menu) { create(:menu, unique_code: 'main-123', store_id: current_store.id) }
+      let(:product) { create(:product) }
+      let(:taxon) { create(:taxon) }
+      let(:item_url) { create(:menu_item, name: 'URL To Random Site', item_type: 'Link', menu_id: menu.id, parent_id: menu.root.id, linked_resource_type: 'URL', destination: 'https://some-other-website.com') }
+      let(:item_home) { create(:menu_item, name: 'Home', item_type: 'Link', menu_id: menu.id, parent_id: menu.root.id, linked_resource_type: 'Home Page') }
+      let(:item_product) { create(:menu_item, name: product.name, item_type: 'Link', menu_id: menu.id, parent_id: menu.root.id, linked_resource_type: 'Spree::Product') }
+      let(:item_taxon) { create(:menu_item, name: taxon.name, item_type: 'Link', menu_id: menu.id, parent_id: menu.root.id, linked_resource_type: 'Spree::Taxon') }
+
+      context 'when the default language is passed in' do
+        it 'returns / for home page' do
+          expect(spree_localized_item_link(item_home)).to eq('/')
+        end
+
+        it 'returns /t/taxonomy-1/taxon-1 for a taxon' do
+          item_taxon.update(linked_resource_id: taxon.id)
+          expect(spree_localized_item_link(item_taxon)).to eq("#{item_taxon.destination}")
+        end
+
+        it 'returns /products/product-18-4225 for a product' do
+          item_product.update(linked_resource_id: product.id)
+          expect(spree_localized_item_link(item_product)).to eq("#{item_product.destination}")
+        end
+
+        it 'returns https://some-other-website.com for a URL' do
+          expect(spree_localized_item_link(item_url)).to eq("#{item_url.destination}")
+        end
+      end
+
+      context 'with the none default locale passed in (:fr)' do
+        it 'returns /fr for home page' do
+          expect(spree_localized_item_link(item_home)).to eq('/fr')
+        end
+
+        it 'returns /fr/t/taxonomy-1/taxon-1 for a taxon' do
+          item_taxon.update(linked_resource_id: taxon.id)
+          expect(spree_localized_item_link(item_taxon)).to eq("/fr#{item_taxon.destination}")
+        end
+
+        it 'returns /fr/products/product-18-4225 for a product' do
+          item_product.update(linked_resource_id: product.id)
+          expect(spree_localized_item_link(item_product)).to eq("/fr#{item_product.destination}")
+        end
+
+        it 'returns https://some-other-website.com for a URL' do
+          expect(spree_localized_item_link(item_url)).to eq("#{item_url.destination}")
+        end
       end
     end
   end
