@@ -42,20 +42,6 @@ module Spree
         (defined?(should_render_currency_dropdown?) && should_render_currency_dropdown?)
     end
 
-    # Find a menu by its unique_code
-    # this method will only return a menu if it is
-    # available for use in the current store.
-    def spree_menu(unique_code)
-      available_menus.by_unique_code(unique_code)
-    end
-
-    # Returns only the top level items for the menu by unique_code
-    def spree_top_level_items_for_menu(unique_code)
-      return unless spree_menu(unique_code).present?
-
-      spree_menu(unique_code).root.children
-    end
-
     def spree_localized_item_link(item)
       return if item.destination.nil?
 

@@ -2,7 +2,8 @@ class CreateSpreeMenus < ActiveRecord::Migration[6.0]
   def change
     create_table :spree_menus do |t|
       t.column :name, :string
-      t.column :unique_code, :string, null: false
+      t.column :location, :string
+      t.column :locale, :string
 
       t.belongs_to :store
 
@@ -10,6 +11,7 @@ class CreateSpreeMenus < ActiveRecord::Migration[6.0]
     end
 
     add_index :spree_menus, :name
-    add_index :spree_menus, :unique_code
+    add_index :spree_menus, :location
+    add_index :spree_menus, :locale
   end
 end

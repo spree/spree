@@ -11,8 +11,9 @@
   <table class="table" id="menusTable">
     <thead>
       <th scope="col"><%= Spree.t(:name) %></th>
-      <th scope="col"><%= Spree.t('admin.navigation.unique_code') %></th>
+      <th scope="col"><%= Spree.t('admin.navigation.location') %></th>
       <th scope="col"><%= Spree.t('store') %></th>
+      <th scope="col"><%= Spree.t('language') %></th>
       <th scope="col"></th>
     </thead>
     <tbody>
@@ -22,10 +23,13 @@
             <%= menu.name %>
           </td>
           <td>
-            <%= menu.unique_code %>
+            <%= menu.location.titleize %>
           </td>
           <td>
-            <span class="badge badge-secondary"><%= menu.store.unique_name %></span>
+            <%= menu.store.unique_name %>
+          </td>
+          <td>
+            <%= menu.locale %>
           </td>
           <td class="actions" data-hook="admin_menus_index_row_actions">
              <span class="d-flex justify-content-end">

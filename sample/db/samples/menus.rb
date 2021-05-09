@@ -1,13 +1,17 @@
-Spree::Store.ids.each do |store|
-  Spree::Menu.where(
-    name: 'Main Menu',
-    unique_code: 'spree-all-main',
-    store_id: store
-  ).first_or_create!
+Spree::Store.all.each do |store|
+  store.supported_locales_list.each do |locale|
+    Spree::Menu.where(
+      name: 'Main Menu',
+      location: 'header',
+      store_id: store,
+      locale: locale
+    ).first_or_create!
 
-  Spree::Menu.where(
-    name: 'Footer Menu',
-    unique_code: 'spree-all-footer',
-    store_id: store
-  ).first_or_create!
+    Spree::Menu.where(
+      name: 'Footer Menu',
+      location: 'footer',
+      store_id: store,
+      locale: locale
+    ).first_or_create!
+  end
 end

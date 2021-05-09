@@ -6,11 +6,10 @@
       <%= f.error_message_on :name %>
     <% end %>
 
-    <%= f.field_container :unique_code, class: ['form-group'] do %>
-      <%= f.label :unique_code, raw(Spree.t('admin.navigation.unique_code') + required_span_tag) %>
-      <%= f.text_field :unique_code, class: 'form-control', required: true %>
-      <%= f.error_message_on :unique_code %>
-      <small class="form-text text-muted"><%= Spree.t('admin.navigation.give_your_menu_a_unique_name') %></small>
+    <%= f.field_container :location, class: ['form-group'] do %>
+      <%= f.label :location, Spree.t('admin.navigation.location') %>
+      <%= f.select(:location, @menu_locations, {include_blank: false}, class: 'select2') %>
+      <%= f.error_message_on :location %>
     <% end %>
   </div>
   <div class="col-12 col-md-6">
@@ -18,6 +17,11 @@
       <%= label_tag :menu_stores, Spree.t(:stores) %>
       <%= collection_select(:menu, :store_id, @stores, :id, :unique_name, {}, { class: 'select2' }) %>
       <%= f.error_message_on :menu_stores %>
+    </div>
+    <div class="form-group">
+      <%= f.label :locale %>
+      <%= f.select :locale, options_from_collection_for_select(all_locales_options, :last, :first, @menu.locale || I18n.locale), {}, { class: 'select2' } %>
+      <%= f.error_message_on :default_locale %>
     </div>
   </div>
 </div>

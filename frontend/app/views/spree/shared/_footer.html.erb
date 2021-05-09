@@ -49,8 +49,8 @@
       </div>
       <div class="row d-none d-xl-flex border-top py-5 text-uppercase footer-spree-menu-links">
 
-        <% if spree_top_level_items_for_menu('spree-all-footer').present? %>
-          <% spree_top_level_items_for_menu('spree-all-footer').each do |parent| %>
+        <% if available_menus.for_footer(I18n.locale).present? %>
+          <% available_menus.for_header(I18n.locale).children.each do |parent| %>
             <div class="col-3">
               <div class="footer-spree-label">
                 <%= link_to parent.name, spree_localized_item_link(parent) %>
