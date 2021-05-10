@@ -101,6 +101,7 @@ en:
         shipping_category: Shipping Category
         tax_category: Tax Category
         less_than: Less than
+        more_than: More than
       spree/promotion:
         advertise: Advertise
         code: Code
@@ -1005,6 +1006,7 @@ en:
     match_choices:
       all: All
       none: None
+    max: 'Max'
     max_items: Max Items
     member_since: Member Since
     memo: Memo
@@ -1013,6 +1015,7 @@ en:
     meta_title: Meta Title
     metadata: Metadata
     mutable: Mutable
+    min: 'Min'
     minimal_amount: Minimal Amount
     missing_return_authorization: ! 'Missing Return Authorization for %{item_name}.'
     month: Month
