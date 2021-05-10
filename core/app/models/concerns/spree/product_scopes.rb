@@ -227,6 +227,14 @@ module Spree
       end
       search_scopes << :active
 
+      def self.for_user(user = nil)
+        if user.try(:has_spree_role?, 'admin')
+          with_deleted
+        else
+          not_deleted.not_discontinued.where("#{Product.quoted_table_name}.available_on <= ?", Time.current)
+        end
+      end
+
       add_search_scope :taxons_name_eq do |name|
         group('spree_products.id').joins(:taxons).where(Taxon.arel_table[:name].eq(name))
       end
