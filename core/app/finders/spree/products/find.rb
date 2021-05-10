@@ -83,7 +83,7 @@ module Spree
       end
 
       def properties?
-        properties.present?
+        properties.present? && properties.values.reject(&:empty?).present?
       end
 
       def name_matcher
@@ -164,18 +164,30 @@ module Spree
       end
 
       def by_properties(products)
-        return products unless properties? && properties.values.reject(&:empty?).present?
+        return products unless properties?
 
-        product_ids = properties.to_unsafe_hash.map do |property_filter_param, product_properties_values|
+        product_ids = []
+        index = 0
+
+        properties.to_unsafe_hash.each do |property_filter_param, product_properties_values|
           next if property_filter_param.blank? || product_properties_values.empty?
 
           values = product_properties_values.split(',').map(&:parameterize)
 
-          products.
-            joins(product_properties: :property).
-            where(spree_properties: { filter_param: property_filter_param.parameterize }).
-            where(spree_product_properties: { filter_param: values }).ids
-        end.flatten.compact.uniq
+          next if values.empty?
+
+          ids = products.
+                joins(product_properties: :property).
+                where(spree_properties: { filter_param: property_filter_param.parameterize }).
+                where(spree_product_properties: { filter_param: values }).distinct.ids
+
+          if index == 0
+            product_ids = ids
+          else
+            product_ids &= ids
+          end
+          index += 1
+        end
 
         products.where(id: product_ids)
       end
