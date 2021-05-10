@@ -14,7 +14,7 @@ Spree.ready(function() {
         priceInput.addEventListener('change', () => {
           this.updatePricesForFiltering(
             parseInt(this.minPriceInput.value) || 0,
-            parseInt(this.maxPriceInput.value) || 0
+            parseInt(this.maxPriceInput.value) || 'Infinity'
           )
         })
       })

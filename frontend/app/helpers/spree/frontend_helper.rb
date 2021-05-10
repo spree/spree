@@ -227,17 +227,6 @@ module Spree
       inline_svg_tag "#{name}.svg", class: "spree-icon #{classes}", size: "#{width}px*#{height}px"
     end
 
-    def price_filters
-      @price_filters ||= [
-        less_than_price_range(50),
-        price_range(50, 100),
-        price_range(101, 150),
-        price_range(151, 200),
-        price_range(201, 300),
-        more_than_price_range(300)
-      ]
-    end
-
     def price_filter_values
       @price_filter_values ||= [
         "#{I18n.t('activerecord.attributes.spree/product.less_than')} #{formatted_price(50)}",
