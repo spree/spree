@@ -13,14 +13,7 @@ module Spree
         end
 
         def retrieve_products
-          @products = extended_base_scope&.available
-          curr_page = page || 1
-
-          unless Spree::Config.show_products_without_price
-            @products = @products.where('spree_prices.amount IS NOT NULL').
-                        where('spree_prices.currency' => current_currency)
-          end
-          @products = @products.page(curr_page).per(per_page)
+          @products = extended_base_scope.page(page || 1).per(per_page)
         end
 
         def method_missing(name)
@@ -34,7 +27,7 @@ module Spree
         protected
 
         def extended_base_scope
-          base_scope = Spree::Product.spree_base_scopes.active
+          base_scope = Spree::Product.spree_base_scopes
           base_scope = get_products_conditions_for(base_scope, keywords)
           base_scope = Spree::Dependencies.products_finder.constantize.new(
             scope: base_scope,
@@ -50,12 +43,11 @@ module Spree
             current_currency: current_currency
           ).execute
           base_scope = add_search_scopes(base_scope)
-          base_scope = add_eagerload_scopes(base_scope)
-          base_scope
+          add_eagerload_scopes(base_scope)
         end
 
         def add_eagerload_scopes(scope)
-          scope = scope.includes(
+          scope.includes(
             :tax_category,
             variants: [
               { images: { attachment_attachment: :blob } }
@@ -65,7 +57,6 @@ module Spree
               { images: { attachment_attachment: :blob } }
             ]
           )
-          scope
         end
 
         def add_search_scopes(base_scope)

@@ -203,7 +203,7 @@ describe 'API V2 Storefront Products Spec', type: :request do
 
           it 'returns products sorted by updated_at' do
             expect(json_response['data'].count).to      eq Spree::Product.available.count
-            expect(json_response['data'].pluck(:id)).to eq Spree::Product.available.order(:updated_at).pluck(:id).map(&:to_s)
+            expect(json_response['data'].pluck(:id)).to eq Spree::Product.available.order(:updated_at).map(&:id).map(&:to_s)
           end
         end
 
@@ -214,7 +214,7 @@ describe 'API V2 Storefront Products Spec', type: :request do
 
           it 'returns products sorted by updated_at with descending order' do
             expect(json_response['data'].count).to      eq Spree::Product.available.count
-            expect(json_response['data'].pluck(:id)).to eq Spree::Product.available.order(updated_at: :desc).pluck(:id).map(&:to_s)
+            expect(json_response['data'].pluck(:id)).to eq Spree::Product.available.order(updated_at: :desc).map(&:id).map(&:to_s)
           end
         end
       end
