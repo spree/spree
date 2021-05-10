@@ -228,6 +228,11 @@ module Spree
     end
 
     def price_filter_values
+      ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
+        `FrontendHelper#price_filter_values` is deprecated and will be removed in Spree 5.0.
+        Please use `ProductsFiltersHelper#price_filters` method
+      DEPRECATION
+
       @price_filter_values ||= [
         "#{I18n.t('activerecord.attributes.spree/product.less_than')} #{formatted_price(50)}",
         "#{formatted_price(50)} - #{formatted_price(100)}",
