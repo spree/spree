@@ -136,9 +136,11 @@ describe Spree::MenuItem, type: :model do
     end
   end
 
-  describe '.check_for_root' do
-    it 'does not validate the Menu Item' do
-      expect(described_class.new(name: 'Menu Item', menu_id: menu.id, item_type: 'Link', parent_id: nil)).not_to be_valid
+  describe '.ensure_item_belongs_to_root' do
+    let(:item_x) { create(:menu_item, name: 'URL', item_type: 'Link', menu_id: menu.id, parent_id: menu.root.id, linked_resource_type: 'URL', code: 'My Fantastic Code') }
+
+    it 'Sets new items parent_id to root.id' do
+      expect(item_x.parent_id).to eql menu.root.id
     end
   end
 end

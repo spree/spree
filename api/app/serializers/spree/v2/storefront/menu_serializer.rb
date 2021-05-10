@@ -4,7 +4,7 @@ module Spree
       class MenuSerializer < BaseSerializer
         set_type :menu
 
-        attributes :name, :unique_code
+        attributes :name, :location, :locale
 
         belongs_to :store
         has_many :menu_items

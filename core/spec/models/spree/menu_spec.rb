@@ -1,62 +1,60 @@
 require 'spec_helper'
 
 describe Spree::Menu, type: :model do
-  describe '.by_store' do
-    let!(:store_1) { create(:store) }
-    let!(:store_2) { create(:store) }
-    let!(:menu) { create(:menu, store_id: store_1.id) }
-
-    it 'returns menu if they are avalable to the store' do
-      expect(described_class.by_store(store_1)).to include(menu)
-      expect(described_class.by_store(store_2.id)).not_to include(menu)
-    end
+  it 'responds to for_header' do
+    expect(described_class).to respond_to(:for_header)
   end
 
-  describe '.by_unique_code' do
-    let!(:store_1) { create(:store) }
-    let!(:store_2) { create(:store) }
-    let!(:menu_1) { create(:menu, store_id: store_1.id) }
-    let!(:menu_2) { create(:menu, store_id: store_2.id) }
-
-    it 'returns a menu when searched for by unique_code' do
-      expect(described_class.by_unique_code(menu_1.unique_code)).to include(menu_1)
-      expect(described_class.by_unique_code(menu_1.unique_code)).not_to include(menu_2)
-    end
+  it 'does not respond to for_some_other_location' do
+    expect(described_class).not_to respond_to(:for_some_other_location)
   end
 
   describe 'creating new menu' do
-    let!(:store_1) { create(:store) }
-    let!(:store_2) { create(:store) }
-    let!(:store_3) { create(:store) }
-
-    let!(:menu_a) { create(:menu, name: 'Footer', unique_code: 'ABC123', store_id: store_1.id) }
-    let!(:menu_param) { create(:menu, name: 'Footer', unique_code: 'ABC 123 XyZ', store_id: store_2.id) }
-
-    it 'validates uniqueness of unique_code to be valid in scope of store' do
-      expect(described_class.new(name: 'Footer', unique_code: 'ABC123', store_id: store_2.id)).to be_valid
-    end
-
-    it 'validates uniqueness of unique_code to not be valid if it is associated with a store with the same code' do
-      expect(described_class.new(name: 'Footer', unique_code: 'ABC123', store_id: store_1.id)).not_to be_valid
-    end
+    let(:store_1) { create(:store) }
+    let(:store_2) { create(:store) }
+    let(:store_3) { create(:store) }
+    let!(:menu) { create(:menu, name: 'Footer Menu', location: 'Footer', store_id: store_1.id) }
 
     it 'validates presence of name' do
-      expect(described_class.new(name: '', unique_code: 'ABC123', store_id: store_3.id)).not_to be_valid
+      expect(described_class.new(name: '', location: 'Header', store_id: store_3.id)).not_to be_valid
     end
 
     it 'validates presence of store' do
-      expect(described_class.new(name: 'Got Name', unique_code: 'ABC123', store_id: nil)).not_to be_valid
+      expect(described_class.new(name: 'Got Name', location: 'Header', store_id: nil)).not_to be_valid
     end
 
-    it 'adds a root item' do
-      expect(menu_a.root.name).to eql('Footer')
-      expect(menu_a.root.code).to eql('footer-root')
-      expect(menu_a.root.root?).to be true
-      expect(menu_a.root.item_type).to eql('Container')
+    it 'validates presence of locale' do
+      expect(described_class.new(name: 'No Locale For Me', location: 'Header', locale: nil, store_id: store_2.id)).not_to be_valid
     end
 
-    it 'paremeterizes the unique_code' do
-      expect(menu_param.unique_code).to eql('abc-123-xyz')
+    it 'validates uniqueness of location within scope of language and store' do
+      expect(described_class.new(name: 'BBB', location: 'Footer', locale: 'en', store_id: store_1.id)).not_to be_valid
+      expect(described_class.new(name: 'BBB', location: 'Footer', locale: 'fr', store_id: store_1.id)).to be_valid
+      expect(described_class.new(name: 'BBB', location: 'Header', locale: 'en', store_id: store_1.id)).to be_valid
+      expect(described_class.new(name: 'BBB', location: 'Footer', locale: 'en', store_id: store_2.id)).to be_valid
+    end
+
+    it '.paremeterize_location parametizes the location' do
+      expect(menu.location).to eql('footer')
+    end
+
+    it '.set_root creates a new root item' do
+      expect(menu.root.name).to eql('Footer Menu')
+      expect(menu.root.root?).to be true
+      expect(menu.root.item_type).to eql('Container')
+    end
+  end
+
+  describe 'updating the menu name' do
+    let(:store_a) { create(:store) }
+    let(:m_x) { create(:menu, name: 'Main Menu', location: 'Header', store_id: store_a.id) }
+
+    before do
+      m_x.update!(name: 'Super Menu')
+    end
+
+    it '.update_root_name sets the new root menu_item name' do
+      expect(m_x.root.name).to eql('Super Menu')
     end
   end
 end

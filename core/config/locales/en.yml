@@ -1005,6 +1005,7 @@ en:
     items_to_be_reimbursed: Items to be reimbursed
     items_reimbursed: Items reimbursed
     join_slack: Join Slack
+    language: Language
     last_name: Last Name
     lastname: Last Name
     last_name_begins_with: Last Name Begins With

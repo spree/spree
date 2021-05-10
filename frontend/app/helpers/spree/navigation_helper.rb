@@ -49,7 +49,7 @@ module Spree
       return if item.destination.nil?
 
       output_locale = if locale_param
-                        "/#{locale}"
+                        "/#{I18n.locale}"
                       end
 
       if Spree::MenuItem::DYNAMIC_RESOURCE_TYPE.include? item.linked_resource_type
@@ -59,6 +59,11 @@ module Spree
       else
         item.destination
       end
+    end
+
+    def should_render_internationalization_dropdown?
+      (defined?(should_render_locale_dropdown?) && should_render_locale_dropdown?) ||
+        (defined?(should_render_currency_dropdown?) && should_render_currency_dropdown?)
     end
 
     private

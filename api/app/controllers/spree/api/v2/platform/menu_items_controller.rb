@@ -6,7 +6,7 @@ module Spree
           before_action -> { doorkeeper_authorize! :write, :admin }, only: WRITE_ACTIONS << :reposition
 
           def reposition
-            spree_authorize! :update, @moved_item
+            spree_authorize! :update, @moved_item # How do I get past this when testing?
 
             @moved_item = scope.find(params[:moved_item_id])
             @new_parent = scope.find(params[:new_parent_id])

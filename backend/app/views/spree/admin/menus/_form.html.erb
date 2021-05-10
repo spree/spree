@@ -7,7 +7,7 @@
     <% end %>
 
     <%= f.field_container :location, class: ['form-group'] do %>
-      <%= f.label :location, Spree.t('admin.navigation.location') %>
+      <%= f.label :location, Spree.t('location') %>
       <%= f.select(:location, @menu_locations, {include_blank: false}, class: 'select2') %>
       <%= f.error_message_on :location %>
     <% end %>

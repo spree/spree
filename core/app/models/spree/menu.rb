@@ -43,6 +43,8 @@ module Spree
     end
 
     def update_root_name
+      return unless saved_change_to_name?
+
       root.update(name: name)
     end
   end

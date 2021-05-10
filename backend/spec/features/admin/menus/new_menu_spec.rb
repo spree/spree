@@ -34,7 +34,7 @@ describe 'New Menu', type: :feature do
     end
   end
 
-  context 'when a user tries to create a menu with a duplicate code withn scope of stores', js: true do
+  context 'when a user tries to create a menu with a duplicate location within scope of stores and language', js: true do
     let!(:store_1) { create(:store) }
     let!(:main_menu) { create(:menu, name: 'Main Menu', store_id: store_1.id) }
 
@@ -44,11 +44,11 @@ describe 'New Menu', type: :feature do
 
     it 'warns the user that the Unique code has already been taken' do
       fill_in 'Name', with: 'Main Menu'
-      fill_in 'Unique Code', with: main_menu.unique_code
 
+      select2 'Header', from: 'Location'
       select2 store_1.unique_name, from: 'Stores'
       click_on 'Create'
-      expect(page).to have_text ('Unique code has already been taken')
+      expect(page).to have_text ('Location has already been taken')
     end
   end
 
@@ -62,8 +62,8 @@ describe 'New Menu', type: :feature do
 
     it 'with stores' do
       fill_in 'Name', with: 'Main Menu'
-      fill_in 'Unique Code', with: 'unip-s-s-s'
 
+      select2 'Footer', from: 'Location'
       select2 store_2.unique_name, from: 'Stores'
       click_on 'Create'
 
