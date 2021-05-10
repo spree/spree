@@ -105,19 +105,13 @@ module Spree
       def by_price(products)
         return products unless price?
 
-        products.joins(master: :prices).
-          where(
-            spree_prices: {
-              amount: price.min..price.max,
-              currency: currency&.upcase
-            }
-          )
+        products.price_between(price.min, price.max)
       end
 
       def by_currency(products)
         return products unless currency?
 
-        products.joins(master: :prices).where(spree_prices: { currency: currency.upcase })
+        products.with_currency(currency)
       end
 
       def by_taxons(products)
@@ -225,7 +219,7 @@ module Spree
       end
 
       def include_discontinued(products)
-        discontinued ? products : products.available
+        discontinued ? products : products.active(currency)
       end
 
       def taxon_ids(taxons_ids)
