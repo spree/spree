@@ -33,12 +33,16 @@ Spree.ready(function() {
 
   // we have 2 elements for filtering prices - desktop and mobile
   const desktopElement = document.getElementById('filterPriceRangeDesktop')
-  const desktopFilterButton = desktopElement.querySelector('a')
-  const desktopPriceRangeFilter = new PriceRangeFilter(desktopElement, desktopFilterButton)
-  desktopPriceRangeFilter.handlePriceChange()
+  if (desktopElement) {
+    const desktopFilterButton = desktopElement.querySelector('a')
+    const desktopPriceRangeFilter = new PriceRangeFilter(desktopElement, desktopFilterButton)
+    desktopPriceRangeFilter.handlePriceChange()
+  }
 
   const mobileElement = document.getElementById('filterPriceRangeMobile')
-  const mobileFilterButton = document.getElementById('filterProductsButtonMobile')
-  const mobilePriceRangeFilter = new PriceRangeFilter(mobileElement, mobileFilterButton)
-  mobilePriceRangeFilter.handlePriceChange()
+  if (mobileElement) {
+    const mobileFilterButton = document.getElementById('filterProductsButtonMobile')
+    const mobilePriceRangeFilter = new PriceRangeFilter(mobileElement, mobileFilterButton)
+    mobilePriceRangeFilter.handlePriceChange()
+  }
 });
