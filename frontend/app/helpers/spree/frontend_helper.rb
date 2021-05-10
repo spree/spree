@@ -336,25 +336,6 @@ module Spree
 
     private
 
-    def price_range(min_amount, max_amount)
-      Filters::PriceRange.new(
-        min_price: price(min_amount),
-        max_price: price(max_amount)
-      )
-    end
-
-    def less_than_price_range(amount)
-      Filters::LessThanPriceRange.new(price: price(amount))
-    end
-
-    def more_than_price_range(amount)
-      Filters::MoreThanPriceRange.new(price: price(amount))
-    end
-
-    def price(amount)
-      Filters::Price.new(amount: amount, currency: current_currency)
-    end
-
     def formatted_price(value)
       Spree::Money.new(value, currency: current_currency, no_cents_if_whole: true).to_s
     end
