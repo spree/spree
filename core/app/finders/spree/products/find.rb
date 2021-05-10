@@ -172,20 +172,12 @@ module Spree
         properties.to_unsafe_hash.each do |property_filter_param, product_properties_values|
           next if property_filter_param.blank? || product_properties_values.empty?
 
-          values = product_properties_values.split(',').map(&:parameterize)
+          values = product_properties_values.split(',').reject(&:empty?).uniq.map(&:parameterize)
 
           next if values.empty?
 
-          ids = products.
-                joins(product_properties: :property).
-                where(spree_properties: { filter_param: property_filter_param.parameterize }).
-                where(spree_product_properties: { filter_param: values }).distinct.ids
-
-          if index == 0
-            product_ids = ids
-          else
-            product_ids &= ids
-          end
+          ids = products.with_property_values(property_filter_param, values).ids
+          product_ids = index == 0 ? ids : product_ids & ids
           index += 1
         end
 
