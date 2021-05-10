@@ -1,10 +1,10 @@
-<% if available_menus.for_header(I18n.locale).present? %>
+<% if spree_menu('header').present? %>
   <% category = 'category' %>
   <% promo = 'promo' %>
 
   <div class="h-100" role="navigation" aria-label="<%= Spree.t('nav_bar.desktop') %>">
     <ul class="nav h-100 main-nav-bar">
-      <% available_menus.for_header(I18n.locale).children.each do |parent| %>
+      <% spree_menu('header').children.each do |parent| %>
           <li class="p-0 nav-item main-nav-bar-category">
             <% has_dropdown = parent.children.present? %>
             <% dropdown_toggle_class = has_dropdown ? "dropdown-toggle" : "" %>

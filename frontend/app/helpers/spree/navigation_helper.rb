@@ -37,9 +37,12 @@ module Spree
       )
     end
 
-    def should_render_internationalization_dropdown?
-      (defined?(should_render_locale_dropdown?) && should_render_locale_dropdown?) ||
-        (defined?(should_render_currency_dropdown?) && should_render_currency_dropdown?)
+    def spree_menu(location = 'header')
+      method_name = "for_#{location}"
+
+      if available_menus.respond_to?(method_name) && Spree::Menu::MENU_LOCATIONS_PARAMETERIZED.include?(location)
+        available_menus.send(method_name, I18n.locale)
+      end
     end
 
     def spree_localized_item_link(item)

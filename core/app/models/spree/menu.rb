@@ -15,6 +15,7 @@ module Spree
 
     before_validation :paremeterize_location
     after_create :set_root
+    after_save :update_root_name
 
     validates :name, :store, :locale, presence: true
     validates :location, uniqueness: { scope: [:store, :locale] }
@@ -39,6 +40,10 @@ module Spree
 
     def set_root
       self.root ||= MenuItem.create!(menu_id: id, name: name, item_type: 'Container')
+    end
+
+    def update_root_name
+      root.update(name: name)
     end
   end
 end

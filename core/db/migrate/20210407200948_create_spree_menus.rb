@@ -10,8 +10,7 @@ class CreateSpreeMenus < ActiveRecord::Migration[6.0]
       t.timestamps
     end
 
-    add_index :spree_menus, :name
-    add_index :spree_menus, :location
     add_index :spree_menus, :locale
+    add_index :spree_menus, [:store_id, :location, :locale], unique: true
   end
 end
