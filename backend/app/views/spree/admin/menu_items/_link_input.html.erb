@@ -1,0 +1,10 @@
+<div id="linkResourcePanel" data-panel-type="<%= linked_resource_type %>">
+  <% case linked_resource_type %>
+  <% when 'URL' %>
+    <%= render 'spree/admin/menu_items/link_inputs/url', f: f %>
+  <% when 'Home Page' %>
+    <%= render 'spree/admin/menu_items/link_inputs/home_page', f: f %>
+  <% else %>
+    <%= render 'spree/admin/menu_items/link_inputs/resource', linked_resource: linked_resource_type, f: f %>
+  <% end %>
+</div>

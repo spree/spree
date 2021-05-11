@@ -163,6 +163,9 @@ Spree::Core::Engine.add_routes do
         resources :products, only: %i[index show]
         resources :taxons,   only: %i[index show], id: /.+/
         get '/stores/:code', to: 'stores#show', as: :store
+
+        resources :menus, only: %i[index]
+        get '/menus/:unique_code', to: 'menus#show', as: :menu
       end
 
       namespace :platform do
@@ -251,6 +254,14 @@ Spree::Core::Engine.add_routes do
         resources :users
         resources :credit_cards
         resources :addresses
+
+        # Menu API
+        resources :menus
+        resource :menu_items do
+          member do
+            patch :reposition
+          end
+        end
 
         # Store API
         resources :stores

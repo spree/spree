@@ -65,6 +65,9 @@ $(document).ready(function() {
           el.parents('tr').fadeOut('hide', function() {
             $(this).remove()
           })
+          el.closest('div.menu-item').fadeOut('hide', function() {
+            $(this).remove()
+          })
         }
       }).fail(function(response) {
         show_flash('error', response.responseText)

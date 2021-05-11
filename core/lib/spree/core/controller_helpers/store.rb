@@ -7,10 +7,15 @@ module Spree
         included do
           helper_method :current_store
           helper_method :current_price_options
+          helper_method :available_menus
         end
 
         def current_store
           @current_store ||= Spree::Store.current(request.env['SERVER_NAME'])
+        end
+
+        def available_menus
+          @available_menus ||= current_store.menus
         end
 
         def store_locale

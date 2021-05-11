@@ -535,6 +535,7 @@ en:
     admin:
       tab:
         configuration: Configuration
+        content: Content
         option_types: Option Types
         orders: Orders
         overview: Overview
@@ -544,6 +545,7 @@ en:
         properties: Properties
         prototypes: Prototypes
         reports: Reports
+        navigation: Navigation
         taxonomies: Taxonomies
         taxons: Taxons
         users: Users
@@ -572,6 +574,45 @@ en:
         store_credits: Store Credits
         no_store_credit: User has no Store Credit available.
         available_store_credit: User has %{amount} in Store Credit available.
+      navigation:
+        all_menus: All Menus
+        add_new_menu: Add New Menu
+        add_new_item: 'Add New Item'
+        code: Code
+        allow_this_menu_item_to_contain_nested_menu_items: Allow this Menu Item to contain nested items
+        back_to_all_menus: Back To All Menus
+        click_create_to_load_new_link: 'Click the <b>Create</b> button below to save your new Menu Item, and update the link.'
+        click_update_to_load_new_link: 'Click the <b>Update</b> button below to change the link.'
+        give_your_menu_a_unique_name: 'Use the unique code to identify your menu: spree-eu-main'
+        link_settings: Link Settings
+        link_to: Link To
+        image_alt_text: Add alt text to your image
+        image_asset: Add a Promotion image or Link icon.
+        move_could_not_be_saved: 'ERROR: This move could not be saved.'
+        new_menu_item: New Menu Item
+        new_menu: New Menu
+        nested_under: Nested under
+        no_menu_items: '<b>%{menu}</b> has no items. Click the <b>Add New Item</b> button to begin adding links to this menu.'
+        nested_under_info: Quickly nest your Menu Item if you already know where it needs to be.
+        item_type: Item Type
+        open_link_in_new_window: Open this link in a new window
+        menu_item_type_message: "For more information about Menu Item Types, Nesting and using Codes, visit the documentation by
+        <a href='https://guides.spreecommerce.org/user/configuration/configuring_geography.html#zones' target='_blank' class='alert-link'>clicking here</a>."
+        menu_item_type_container_message: "<b>Containers</b> are used to organize other Menu Items, such as Links, or Promotions into groups using the Menu Item code.<ul><li>Containers do not link to a location.</li></ul> To learn more, please see the <a href='https://guides.spreecommerce.org/user/configuration/configuring_geography.html#zones' target='_blank' class='alert-link'>documentation</a>."
+        menus: Menus
+        menu_items: '%{menu_name} Items'
+        public_details: Public Details
+        unique_code_store_error: 'The code: %{code} is already used for Menu: %{menus}, make sure your unique code is unique within the store it is being used for.'
+        subtitle: Subtitle
+        seach_for_a_product: Search for a Product
+        seach_for_a_taxon: Search for a Taxon
+        settings: Settings
+        set_a_code: Give your Menu Item a code, this is optional, but can be useful if you need to identify this menu item.
+        type: Type
+        used_in: Used In
+        unique_code: Unique Code
+        you_have_no_menus: You have no Menus, click the Add New Menu button to create your first Menu.
+        this_link_takes_you_to_your_stores_home_page: This link takes you to your stores home page.
     administration: Administration
     advertise: Advertise
     agree_to_privacy_policy: Agree to Privacy Policy
@@ -965,6 +1006,7 @@ en:
     items_to_be_reimbursed: Items to be reimbursed
     items_reimbursed: Items reimbursed
     join_slack: Join Slack
+    language: Language
     last_name: Last Name
     lastname: Last Name
     last_name_begins_with: Last Name Begins With
@@ -1674,6 +1716,7 @@ en:
     successfully_removed: ! '%{resource} has been successfully removed!'
     successfully_updated: ! '%{resource} has been successfully updated!'
     summary: Summary
+    support: Support
     supported_currencies: Supported Currencies
     supported_currencies_long: A comma separated list of supported currencies
     supported_locales: Supported Locales
@@ -1710,6 +1753,7 @@ en:
         message: If you have received this email, then your email settings are correct.
         subject: Test Mail
     test_mode: Test Mode
+    this_menu_already_has_a_root_item: This Menu already has a root item
     thank_you_for_your_order: Thank you for your business.  Please print out a copy of this confirmation page for your records.
     there_are_no_items_for_this_order: There are no items for this order. Please add an item to the order to continue.
     there_were_problems_with_the_following_fields: There were problems with the following fields

@@ -9,7 +9,7 @@ module Spree
       :cart_update_service, :checkout_next_service, :checkout_advance_service, :checkout_update_service,
       :checkout_complete_service, :checkout_add_store_credit_service,
       :checkout_remove_store_credit_service, :checkout_get_shipping_rates_service,
-      :coupon_handler, :country_finder, :current_order_finder, :credit_card_finder,
+      :coupon_handler, :menu_finder, :country_finder, :current_order_finder, :credit_card_finder,
       :completed_order_finder, :order_sorter, :cart_compare_line_items_service, :collection_paginator, :products_sorter,
       :products_finder, :taxon_finder, :line_item_by_variant_finder, :cart_estimate_shipping_rates_service,
       :account_create_address_service, :account_update_address_service, :address_finder,
@@ -73,6 +73,7 @@ module Spree
     def set_default_finders
       @address_finder = 'Spree::Addresses::Find'
       @country_finder = 'Spree::Countries::Find'
+      @menu_finder = 'Spree::Menus::Find'
       @current_order_finder = 'Spree::Orders::FindCurrent'
       @completed_order_finder = 'Spree::Orders::FindComplete'
       @credit_card_finder = 'Spree::CreditCards::Find'

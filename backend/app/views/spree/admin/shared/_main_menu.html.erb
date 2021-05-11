@@ -46,6 +46,12 @@
     </ul>
   <% end %>
 
+  <% if can? :admin, Spree::Menu %>
+    <ul class="nav nav-sidebar border-bottom" id="sidebarMenu">
+      <%= main_menu_tree Spree.t('admin.tab.content'), icon: "pages.svg", sub_menu: "content", url: "#sidebar-content" %>
+    </ul>
+  <% end %>
+
   <% if can? :admin, current_store %>
     <ul class="nav nav-sidebar border-bottom" id="sidebarConfiguration">
       <%= main_menu_tree Spree.t(:configurations), icon: "settings.svg", sub_menu: "configuration", url: "#sidebar-configuration" %>

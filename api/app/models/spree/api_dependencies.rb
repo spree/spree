@@ -10,10 +10,11 @@ module Spree
       :storefront_checkout_remove_store_credit_service, :storefront_checkout_get_shipping_rates_service,
       :storefront_cart_compare_line_items_service, :storefront_cart_serializer, :storefront_credit_card_serializer,
       :storefront_credit_card_finder, :storefront_shipment_serializer, :storefront_payment_method_serializer, :storefront_country_finder,
-      :storefront_country_serializer, :storefront_current_order_finder, :storefront_completed_order_finder, :storefront_order_sorter,
-      :storefront_collection_paginator, :storefront_user_serializer, :storefront_products_sorter, :storefront_products_finder,
-      :storefront_product_serializer, :storefront_taxon_serializer, :storefront_taxon_finder, :storefront_find_by_variant_finder,
-      :storefront_cart_update_service, :storefront_cart_estimate_shipping_rates_service, :storefront_estimated_shipment_serializer,
+      :storefront_country_serializer, :storefront_menu_serializer, :storefront_menu_finder, :storefront_current_order_finder,
+      :storefront_completed_order_finder, :storefront_order_sorter, :storefront_collection_paginator, :storefront_user_serializer,
+      :storefront_products_sorter, :storefront_products_finder, :storefront_product_serializer, :storefront_taxon_serializer,
+      :storefront_taxon_finder, :storefront_find_by_variant_finder, :storefront_cart_update_service,
+      :storefront_cart_estimate_shipping_rates_service, :storefront_estimated_shipment_serializer,
       :storefront_store_serializer, :storefront_address_serializer, :storefront_order_serializer,
       :storefront_account_create_address_service, :storefront_account_update_address_service, :storefront_address_finder,
       :storefront_collection_sorter, :error_handler
@@ -60,6 +61,7 @@ module Spree
       @storefront_cart_serializer = 'Spree::V2::Storefront::CartSerializer'
       @storefront_credit_card_serializer = 'Spree::V2::Storefront::CreditCardSerializer'
       @storefront_country_serializer = 'Spree::V2::Storefront::CountrySerializer'
+      @storefront_menu_serializer = 'Spree::V2::Storefront::MenuSerializer'
       @storefront_user_serializer = 'Spree::V2::Storefront::UserSerializer'
       @storefront_shipment_serializer = 'Spree::V2::Storefront::ShipmentSerializer'
       @storefront_taxon_serializer = 'Spree::V2::Storefront::TaxonSerializer'
@@ -80,6 +82,7 @@ module Spree
       # finders
       @storefront_address_finder = Spree::Dependencies.address_finder
       @storefront_country_finder = Spree::Dependencies.country_finder
+      @storefront_menu_finder = Spree::Dependencies.menu_finder
       @storefront_current_order_finder = Spree::Dependencies.current_order_finder
       @storefront_completed_order_finder = Spree::Dependencies.completed_order_finder
       @storefront_credit_card_finder = Spree::Dependencies.credit_card_finder

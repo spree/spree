@@ -48,20 +48,26 @@
         </div>
       </div>
       <div class="row d-none d-xl-flex border-top py-5 text-uppercase footer-spree-menu-links">
-        <% if spree_navigation_data.any? %>
-          <% spree_navigation_data.first(3).each do |root| %>
+
+        <% if spree_menu('footer').present? %>
+          <% spree_menu('footer').children.each do |parent| %>
             <div class="col-3">
               <div class="footer-spree-label">
-                <%= link_to root[:title], root[:url] %>
+                <%= link_to parent.name, spree_localized_item_link(parent) %>
               </div>
-              <% if  root[:items].present? %>
-                <% root[:items].each do |item| %>
-                  <div class="pt-2"><%= link_to item[:title], item[:url] %></div>
+              <% parent.children.each do |child| %>
+                <% if child.code == 'category' && child.item_type == 'Container' %>
+                  <% if child.children.present? %>
+                    <% child.children.each do |category_link| %>
+                      <div class="pt-2"><%= link_to category_link.name, spree_localized_item_link(category_link) %></div>
+                    <% end %>
+                  <% end %>
                 <% end %>
               <% end %>
             </div>
           <% end %>
         <% end %>
+
         <% if spree.respond_to?(:account_path) %>
           <div class="col-3">
             <div class="footer-spree-label">

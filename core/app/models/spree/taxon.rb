@@ -13,6 +13,8 @@ module Spree
     has_many :classifications, -> { order(:position) }, dependent: :delete_all, inverse_of: :taxon
     has_many :products, through: :classifications
 
+    has_many :menu_items, as: :linked_resource
+
     has_many :prototype_taxons, class_name: 'Spree::PrototypeTaxon', dependent: :destroy
     has_many :prototypes, through: :prototype_taxons, class_name: 'Spree::Prototype'
 
@@ -32,6 +34,9 @@ module Spree
 
     after_save :touch_ancestors_and_taxonomy
     after_touch :touch_ancestors_and_taxonomy
+
+    after_save :sync_menu_item_paths
+    after_commit :sync_menu_item_paths
 
     has_one :icon, as: :viewable, dependent: :destroy, class_name: 'Spree::TaxonImage'
 
@@ -91,6 +96,12 @@ module Spree
     end
 
     private
+
+    def sync_menu_item_paths
+      return unless saved_change_to_permalink?
+
+      Spree::MenuItem.refresh_paths(self)
+    end
 
     def touch_ancestors_and_taxonomy
       # Touches all ancestors at once to avoid recursive taxonomy touch, and reduce queries.

@@ -36,6 +36,8 @@ module Spree
     has_many :product_properties, dependent: :destroy, inverse_of: :product
     has_many :properties, through: :product_properties
 
+    has_many :menu_items, as: :linked_resource
+
     has_many :classifications, dependent: :delete_all, inverse_of: :product
     has_many :taxons, through: :classifications, before_remove: :remove_taxon
 
@@ -93,6 +95,9 @@ module Spree
     # reset cache on save inside trasaction and transaction commit
     after_save :reset_memoized_data
     after_commit :reset_memoized_data
+
+    after_save :sync_menu_item_paths
+    after_commit :sync_menu_item_paths
 
     before_validation :normalize_slug, on: :update
     before_validation :validate_master
@@ -323,6 +328,12 @@ module Spree
     end
 
     private
+
+    def sync_menu_item_paths
+      return unless saved_change_to_slug?
+
+      Spree::MenuItem.refresh_paths(self)
+    end
 
     def add_associations_from_prototype
       if prototype_id && prototype = Spree::Prototype.find_by(id: prototype_id)
