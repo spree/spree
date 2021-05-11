@@ -299,7 +299,10 @@ module Spree
 
     def available_option_types
       @available_option_types ||= Rails.cache.fetch("available-option-types/#{available_option_types_cache_key}") do
-        Spree::OptionType.includes(:option_values).filterable.to_a
+        products_scope = Product.active(current_currency).in_taxon(@taxon)
+        option_values = OptionValues::FindFilterable.new(products_scope: products_scope).execute
+
+        Filters::Options.new(option_values: option_values).to_a
       end
       @available_option_types
     end

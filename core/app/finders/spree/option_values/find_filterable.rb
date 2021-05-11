@@ -9,12 +9,16 @@ module Spree
       def execute
         scope.
           filterable.
-          where(variants: { product_id: products_scope.pluck(:id) })
+          where(variants: { product_id: products_ids })
       end
 
       private
 
       attr_reader :scope, :products_scope
+
+      def products_ids
+        products_scope.map(&:id)
+      end
     end
   end
 end
