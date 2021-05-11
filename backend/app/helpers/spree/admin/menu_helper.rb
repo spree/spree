@@ -19,6 +19,34 @@ module Spree
 
         content_tag(:div, info_row + menu_container, class: 'menu-item menu-container-item dragable', data: { item_id: item.id })
       end
+
+      def resorce_types_formatted_for_select
+        formatted_resouces = []
+
+        Spree::MenuItem::LINKED_RESOURCE_TYPE.each do |resource_type|
+          formatted = if Spree::MenuItem::DYNAMIC_RESOURCE_TYPE.include? resource_type
+                        resource_type.split('::', 3).last
+                      else
+                        resource_type
+                      end
+
+          formatted_resouces << [formatted, resource_type]
+        end
+
+        formatted_resouces
+      end
+
+      def menu_location_formatted_for_select
+        menu_items_for_select = []
+
+        Spree::Menu::MENU_LOCATIONS.each do |location|
+          parameterize_location = location.parameterize(separator: '_')
+
+          menu_items_for_select << [location, parameterize_location]
+        end
+
+        menu_items_for_select
+      end
     end
   end
 end

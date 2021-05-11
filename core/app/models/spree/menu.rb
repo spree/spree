@@ -2,12 +2,10 @@ module Spree
   class Menu < Spree::Base
     MENU_LOCATIONS = ['Header', 'Footer']
     MENU_LOCATIONS_PARAMETERIZED = []
-    MENU_LOCATIONS_FOR_SELECT = []
 
     MENU_LOCATIONS.each do |location|
       parameterize_location = location.parameterize(separator: '_')
       MENU_LOCATIONS_PARAMETERIZED << parameterize_location
-      MENU_LOCATIONS_FOR_SELECT << [location, parameterize_location]
     end
 
     has_many :menu_items, dependent: :destroy

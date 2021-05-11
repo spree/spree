@@ -6,8 +6,7 @@ module Spree
           before_action -> { doorkeeper_authorize! :write, :admin }, only: WRITE_ACTIONS << :reposition
 
           def reposition
-            # TODO: In the tests I can't seem to get past this.
-            # spree_authorize! :update, @moved_item
+            spree_authorize! :update, @moved_item if spree_current_user.present?
 
             @moved_item = scope.find(params[:moved_item_id])
             @new_parent = scope.find(params[:new_parent_id])
