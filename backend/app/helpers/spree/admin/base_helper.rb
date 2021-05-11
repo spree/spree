@@ -218,6 +218,16 @@ module Spree
         end
       end
 
+      def stores_formatted_for_select
+        formatted_stores = []
+
+        @stores.each do |store|
+          formatted_stores << ["#{store.name} (#{store.code})", store.id]
+        end
+
+        formatted_stores
+      end
+
       def select2_local_fallback
         stripped_locale = I18n.locale.to_s.split('-').first
 

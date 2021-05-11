@@ -90,7 +90,7 @@ describe 'Menus Index', type: :feature do
 
       it 'is able to filter by store' do
         click_on 'Filter'
-        select2 store_2.code, from: 'Store'
+        select2 store_2.unique_name, from: 'Store'
         click_on 'Search'
 
         expect(page).to have_text 'MA'
