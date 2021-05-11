@@ -16,10 +16,14 @@ module Spree
 
     def locale_presentation(locale)
       if I18n.exists?('spree.i18n.this_file_language', locale: locale)
-        [Spree.t('i18n.this_file_language', locale: locale), locale.to_s]
+        [locale_full_name(locale), locale.to_s]
       else
         locale.to_s == 'en' ? ['English (US)', 'en'] : [locale, locale.to_s]
       end
+    end
+
+    def locale_full_name(locale)
+      Spree.t('i18n.this_file_language', locale: locale)
     end
 
     def should_render_locale_dropdown?
