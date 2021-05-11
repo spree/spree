@@ -11,6 +11,12 @@ module Spree
       validates :presentation
     end
 
+    scope :filterable, lambda {
+      joins(:option_type, :variants).
+        where(option_type: { filterable: true }).
+        distinct
+    }
+
     after_touch :touch_all_variants
 
     delegate :name, :presentation, to: :option_type, prefix: true, allow_nil: true
