@@ -46,7 +46,7 @@ describe 'Menu Edit', type: :feature do
     end
 
     it 'allows you to switch to select a product and save' do
-      select2 'Spree::Product', from: 'Link To'
+      select2 'Product', from: 'Link To'
       expect(page).to have_text 'Click the Update button below to change the link.'
       click_on 'Update'
 
@@ -69,7 +69,7 @@ describe 'Menu Edit', type: :feature do
     end
 
     it 'allows you to select a taxon and save' do
-      select2 'Spree::Taxon', from: 'Link To'
+      select2 'Taxon', from: 'Link To'
       expect(page).to have_text 'Click the Update button below to change the link.'
       click_on 'Update'
 

@@ -15,7 +15,7 @@ module Spree
 
       def load_data
         @menu_item_types = Spree::MenuItem::ITEM_TYPE
-        @linked_resource_types = Spree::MenuItem::LINKED_RESOURCE_TYPE
+        @linked_resource_types = Spree::MenuItem::LINKED_RESOURCE_TYPE_FOR_SELECT
       end
     end
   end

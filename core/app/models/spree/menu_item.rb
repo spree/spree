@@ -13,9 +13,20 @@ module Spree
     LINKED_RESOURCE_TYPE = ['URL']
     STATIC_RESOURCE_TYPE = ['Home Page']
     DYNAMIC_RESOURCE_TYPE = ['Spree::Product', 'Spree::Taxon']
+    LINKED_RESOURCE_TYPE_FOR_SELECT = []
 
     LINKED_RESOURCE_TYPE.unshift(*STATIC_RESOURCE_TYPE)
     LINKED_RESOURCE_TYPE.push(*DYNAMIC_RESOURCE_TYPE)
+
+    LINKED_RESOURCE_TYPE.each do |resource_type|
+       if DYNAMIC_RESOURCE_TYPE.include? resource_type
+         formatted = resource_type.split('::', 3).last
+       else
+         formatted = resource_type
+       end
+
+       LINKED_RESOURCE_TYPE_FOR_SELECT << [formatted, resource_type]
+     end
 
     validates :name, presence: true
     validates :menu, presence: true
