@@ -1,10 +1,4 @@
 <% selected_properties = params.dig(:properties, "#{property.filter_param}")&.split(',') || [] %>
-<% param_key = "properties[#{property.filter_param}]" %>
 <% property.uniq_values.each do |value| %>
-  <% property_values = (selected_properties.include?(value) ? selected_properties - [value] : selected_properties + [value]) %>
-  <%= link_to permitted_params.merge(properties: { property.filter_param => property_values }, menu_open: 1), data: { params: permitted_params.merge(param_key => property_values, menu_open: 1), id: value, filter_name: param_key, multiselect: true } do %>
-    <div class="d-inline-block text-uppercase py-1 px-2 m-1 plp-overlay-card-item <%= 'plp-overlay-card-item--selected' if selected_properties.include?(value) %>">
-      <%= value %>
-    </div>
-  <% end %>
+  <%= property_value_filter_link(property, value, permitted_params) %>
 <% end %>
