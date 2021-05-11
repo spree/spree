@@ -21,6 +21,8 @@ module Spree
 
     has_one :root, -> { where(parent_id: nil) }, class_name: 'Spree::MenuItem', dependent: :destroy
 
+    self.whitelisted_ransackable_attributes = %w[name location locale store_id]
+
     MENU_LOCATIONS_PARAMETERIZED.each do |name|
       define_singleton_method("for_#{name}") do |locale|
         menu = find_by(location: name, locale: locale.to_s) || find_by(location: name)
@@ -33,6 +35,8 @@ module Spree
     private
 
     def paremeterize_location
+      return unless location.present?
+
       self.location = location.parameterize(separator: '_')
     end
 

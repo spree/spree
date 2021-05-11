@@ -6,6 +6,47 @@
   <%= button_link_to Spree.t('admin.navigation.add_new_menu'), new_object_url, { class: "btn-success", icon: 'add.svg', id: 'new_menu' } %>
 <% end if can?(:create, Spree::Menu) %>
 
+<% content_for :table_filter do %>
+  <div data-hook="admin_menus_sidebar">
+    <%= search_form_for [:admin, @search] do |f| %>
+      <%- locals = {f: f} %>
+      <div class="row">
+        <div class="col-12 col-lg-6">
+          <div class="form-group">
+            <%= f.label :name_cont, Spree.t('name') %>
+            <%= f.text_field :name_cont, size: 15, class: "form-control js-quick-search-target js-filterable" %>
+          </div>
+        </div>
+        <div class="col-12 col-lg-6">
+          <div class="form-group">
+            <%= label_tag :q_location_eq, Spree.t(:location) %>
+            <%= f.select :location_eq, menu_location_formatted_for_select, { include_blank: true }, class: 'select2-clear js-filterable' %>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-12 col-lg-6">
+         <div class="form-group">
+           <%= label_tag :q_locale_eq, Spree.t(:language) %>
+           <%= f.select :locale_eq, all_locales_options, { include_blank: true }, class: 'select2-clear js-filterable' %>
+         </div>
+        </div>
+        <div class="col-12 col-lg-6">
+          <div class="form-group">
+            <%= label_tag :q_store_id_in, Spree.t(:store) %>
+            <%= f.select :store_id_in, @stores.pluck(:code, :id), { include_blank: true }, class: 'select2-clear js-filterable' %>
+          </div>
+        </div>
+      </div>
+
+      <div data-hook="admin_menus_index_search_buttons" class="form-actions">
+        <%= button Spree.t(:search), 'search.svg' %>
+      </div>
+    <% end %>
+  </div>
+<% end %>
+
 <% if @menus.any? %>
 <div class="table-responsive">
   <table class="table" id="menusTable">
