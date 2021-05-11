@@ -31,6 +31,12 @@ describe 'Menus Index', type: :feature do
 
     before do
       visit spree.admin_menus_path
+      I18n.backend.store_translations(:fr,
+                                      spree: {
+                                        i18n: {
+                                          this_file_language: 'Français (FR)'
+                                        }
+                                      })
     end
 
     it 'lists each menu with stores' do
@@ -68,7 +74,7 @@ describe 'Menus Index', type: :feature do
 
       it 'is able to filter by language' do
         click_on 'Filter'
-        select2 'fr', from: 'Language'
+        select2 'Français (FR)', from: 'Language'
         click_on 'Search'
 
         expect(page).to have_text 'Main Menu FR'

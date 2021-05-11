@@ -8,7 +8,7 @@
 
     <%= f.field_container :location, class: ['form-group'] do %>
       <%= f.label :location, Spree.t('location') %>
-      <%= f.select(:location, menu_location_formatted_for_select, {include_blank: false}, class: 'select2') %>
+      <%= f.select(:location, menu_locations_dropdown_values, {include_blank: false}, class: 'select2') %>
       <%= f.error_message_on :location %>
     <% end %>
   </div>

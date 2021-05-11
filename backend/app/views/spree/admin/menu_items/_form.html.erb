@@ -98,7 +98,7 @@
               <div class="col-6">
                 <%= f.field_container :linked_resource_type, class: ['form-group'] do %>
                   <%= f.label :linked_resource_type, Spree.t('admin.navigation.link_to') %>
-                  <%= f.select(:linked_resource_type, resorce_types_formatted_for_select, {include_blank: false}) %>
+                  <%= f.select(:linked_resource_type, resorce_types_dropdown_values, {include_blank: false}) %>
                   <%= f.error_message_on :linked_resource_type %>
                 <% end %>
               </div>

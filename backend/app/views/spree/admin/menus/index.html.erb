@@ -20,7 +20,7 @@
         <div class="col-12 col-lg-6">
           <div class="form-group">
             <%= label_tag :q_location_eq, Spree.t(:location) %>
-            <%= f.select :location_eq, menu_location_formatted_for_select, { include_blank: true }, class: 'select2-clear js-filterable' %>
+            <%= f.select :location_eq, menu_locations_dropdown_values, { include_blank: true }, class: 'select2-clear js-filterable' %>
           </div>
         </div>
       </div>
@@ -35,7 +35,7 @@
         <div class="col-12 col-lg-6">
           <div class="form-group">
             <%= label_tag :q_store_id_in, Spree.t(:store) %>
-            <%= f.select :store_id_in, stores_formatted_for_select, { include_blank: true }, class: 'select2-clear js-filterable' %>
+            <%= f.select :store_id_in, stores_dropdown_values, { include_blank: true }, class: 'select2-clear js-filterable' %>
           </div>
         </div>
       </div>

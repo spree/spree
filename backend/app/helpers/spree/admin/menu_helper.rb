@@ -20,7 +20,7 @@ module Spree
         content_tag(:div, info_row + menu_container, class: 'menu-item menu-container-item dragable', data: { item_id: item.id })
       end
 
-      def resorce_types_formatted_for_select
+      def resorce_types_dropdown_values
         formatted_resouces = []
 
         Spree::MenuItem::LINKED_RESOURCE_TYPE.each do |resource_type|
@@ -36,13 +36,13 @@ module Spree
         formatted_resouces
       end
 
-      def menu_location_formatted_for_select
+      def menu_locations_dropdown_values
         menu_items_for_select = []
 
         Spree::Menu::MENU_LOCATIONS.each do |location|
-          parameterize_location = location.parameterize(separator: '_')
+          parameterized_location = location.parameterize(separator: '_')
 
-          menu_items_for_select << [location, parameterize_location]
+          menu_items_for_select << [location, parameterized_location]
         end
 
         menu_items_for_select
