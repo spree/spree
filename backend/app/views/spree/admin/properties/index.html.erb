@@ -44,6 +44,7 @@
         <th><%= Spree.t(:name) %></th>
         <th><%= Spree.t(:presentation) %></th>
         <th><%= Spree.t(:filterable) %></th>
+        <th><%= Spree.t(:filter_param) %></th>
         <th class="actions"></th>
       </tr>
     </thead>
@@ -53,6 +54,7 @@
           <td><%= property.name %></td>
           <td><%= property.presentation %></td>
           <td><%= active_badge(property.filterable) %></td>
+          <td><%= property.filter_param %></td>
           <td class="actions">
             <span class="d-flex justify-content-end">
               <%= link_to_edit(property, no_text: true) if can?(:edit, property) %>

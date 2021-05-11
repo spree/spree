@@ -110,7 +110,7 @@ describe 'Products filtering', :js do
     it 'shows products that match property filter' do
       visit spree.products_path
 
-      click_on_filter 'Brand', value: 'Alpha'
+      click_on_filter 'Brand', value: 'alpha'
 
       expect(page).not_to have_content('First shirt')
       expect(page).to have_content('Second shirt')

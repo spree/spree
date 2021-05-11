@@ -34,7 +34,7 @@
         <% if property.uniq_values.present? %>
           <div class="w-100 card plp-filters-card">
             <% property_name = property.name %>
-            <% collapsed = params.dig(:properties, property.id.to_s).blank? %>
+            <% collapsed = params.dig(:properties, property.filter_param).blank? %>
             <button class="card-header <%= 'collapsed' if collapsed %> px-1 plp-filters-card-header" id="filters<%= property_name %>" data-toggle="collapse" data-target="#collapseFilter<%= property_name %>" aria-expanded="<%= !collapsed %>" aria-controls="collapseFilter<%= property_name %>" role="heading" aria-level="2">
               <%= property.presentation.titleize %>
               <%= icon(name: 'plus',
@@ -75,14 +75,23 @@
         </button>
         <div id="collapseFilterPrice" class="collapse <%= 'show' unless price_collapsed %>" aria-labelledby="filtersPrice">
           <div class="card-body px-0 pt-1">
-            <% price_filter_values.each do |name| %>
-              <% price_param = params[:price] == name ? '' : name %>
-              <%= link_to permitted_params.merge({ price: price_param }), class: "d-block" do %>
-                <div class="d-inline-block py-1 px-2 m-1 text-uppercase plp-filters-card-item <%= 'plp-filters-card-item--selected' if params[:price] == name %>">
-                  <%= name %>
+            <% price_filters.each do |price_range| %>
+              <% price_param = params[:price] == price_range.to_param ? '' : price_range.to_param %>
+              <%= link_to permitted_params.merge(price: price_param), class: "d-block" do %>
+                <div class="d-inline-block py-1 px-2 m-1 text-uppercase plp-filters-card-item <%= 'plp-filters-card-item--selected' if params[:price] == price_range.to_param %>">
+                  <%= price_range %>
                 </div>
               <% end %>
             <% end %>
+
+            <div id="filterPriceRangeDesktop" class="m-1">
+              <div class="d-inline-flex mb-2">
+                <%= min_price_filter_input class: 'w-50 p-2 mr-1' %>
+                <%= max_price_filter_input class: 'w-50 p-2' %>
+              </div>
+
+              <%= link_to Spree.t('plp.done'), permitted_params, class: 'btn btn-primary spree-btn w-100', data: { params: permitted_params } %>
+            </div>
           </div>
         </div>
       </div>

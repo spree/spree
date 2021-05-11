@@ -102,8 +102,9 @@ module Spree
       validates :meta_title
     end
     with_options presence: true do
-      validates :name, :shipping_category
-      validates :price, if: proc { Spree::Config[:require_master_price] }
+      validates :name
+      validates :shipping_category, if: :requires_shipping_category?
+      validates :price, if: :requires_price?
     end
 
     validates :slug, presence: true, uniqueness: { allow_blank: true, case_sensitive: false }
@@ -484,6 +485,14 @@ module Spree
       %w(total_on_hand taxonomy_ids taxon_and_ancestors category default_variant_id tax_category default_variant).each do |v|
         instance_variable_set(:"@#{v}", nil)
       end
+    end
+
+    def requires_price?
+      Spree::Config[:require_master_price]
+    end
+
+    def requires_shipping_category?
+      true
     end
   end
 end

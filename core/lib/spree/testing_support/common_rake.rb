@@ -30,8 +30,10 @@ namespace :common do
       puts 'Skipping installation no generator to run...'
     end
 
-    puts 'Precompiling assets...'
-    system("bundle exec rake assets:precompile > #{File::NULL}")
+    unless ['spree/api', 'spree/core', 'spree/sample'].include?(ENV['LIB_NAME'])
+      puts 'Precompiling assets...'
+      system("bundle exec rake assets:precompile > #{File::NULL}")
+    end
   end
 
   task :seed do |_t|

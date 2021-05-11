@@ -43,23 +43,23 @@ module Spree
       add_simple_scopes simple_scopes
 
       add_search_scope :ascend_by_master_price do
-        joins(master: :default_price).order("#{price_table_name}.amount ASC")
+        order("#{price_table_name}.amount ASC")
       end
 
       add_search_scope :descend_by_master_price do
-        joins(master: :default_price).order("#{price_table_name}.amount DESC")
+        order("#{price_table_name}.amount DESC")
       end
 
       add_search_scope :price_between do |low, high|
-        joins(master: :default_price).where(Price.table_name => { amount: low..high })
+        where(Price.table_name => { amount: low..high })
       end
 
       add_search_scope :master_price_lte do |price|
-        joins(master: :default_price).where("#{price_table_name}.amount <= ?", price)
+        where("#{price_table_name}.amount <= ?", price)
       end
 
       add_search_scope :master_price_gte do |price|
-        joins(master: :default_price).where("#{price_table_name}.amount >= ?", price)
+        where("#{price_table_name}.amount >= ?", price)
       end
 
       # This scope selects products in taxon AND all its descendants
@@ -198,17 +198,42 @@ module Spree
         end
       end
       search_scopes << :not_discontinued
+
+      def self.with_currency(currency)
+        joins(variants_including_master: :prices).
+          where(Price.table_name => { currency: currency.upcase }).
+          where.not(Price.table_name => { amount: nil }).
+          distinct
+      end
+      search_scopes << :with_currency
+
       # Can't use add_search_scope for this as it needs a default argument
-      def self.available(available_on = nil, _currency = nil)
+      def self.available(available_on = nil, currency = nil)
         available_on ||= Time.current
-        not_discontinued.joins(master: :prices).where("#{Product.quoted_table_name}.available_on <= ?", available_on)
+
+        scope = not_discontinued.where("#{Product.quoted_table_name}.available_on <= ?", available_on)
+
+        unless Spree::Config.show_products_without_price
+          currency ||= Spree::Config[:currency]
+          scope = scope.with_currency(currency)
+        end
+
+        scope
       end
       search_scopes << :available
 
       def self.active(currency = nil)
-        available(nil, currency&.upcase)
+        available(nil, currency)
       end
       search_scopes << :active
+
+      def self.for_user(user = nil)
+        if user.try(:has_spree_role?, 'admin')
+          with_deleted
+        else
+          not_deleted.not_discontinued.where("#{Product.quoted_table_name}.available_on <= ?", Time.current)
+        end
+      end
 
       add_search_scope :taxons_name_eq do |name|
         group('spree_products.id').joins(:taxons).where(Taxon.arel_table[:name].eq(name))

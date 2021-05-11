@@ -4,7 +4,7 @@ module Spree
   describe Products::Find do
     let!(:product)              { create(:product, price: 15.99) }
     let!(:product_2)            { create(:product, discontinue_on: Time.current + 1.day, price: 23.99) }
-    let!(:product_3)            { create(:variant).product }
+    let!(:product_3)            { create(:variant, price: 19.99).product }
     let!(:option_value)         { create(:option_value) }
     let!(:deleted_product)      { create(:product, deleted_at: Time.current - 1.day) }
     let!(:discontinued_product) { create(:product, discontinue_on: Time.current - 1.day) }
@@ -235,6 +235,38 @@ module Spree
         end
 
         it { expect(products).to match_array [product_2,product_3] }
+      end
+    end
+
+    describe 'filter by prices' do
+      subject(:products) do
+        described_class.new(
+          scope: Spree::Product.all,
+          params: params,
+          current_currency: 'USD'
+        ).execute
+      end
+
+      let(:params) { { filter: { price: price_param } } }
+
+      context 'for a price less than 20' do
+        let(:price_param) { '0,20' }
+
+        it { is_expected.to contain_exactly(product, product_3) }
+      end
+
+      context 'for a price between 16 and 24' do
+        let(:price_param) { '16,24' }
+
+        it { is_expected.to contain_exactly(product_2, product_3) }
+      end
+
+      context 'for a price more than 23' do
+        let(:price_param) { '23,Infinity' }
+
+        it do
+          is_expected.to contain_exactly(product_2)
+        end
       end
     end
 

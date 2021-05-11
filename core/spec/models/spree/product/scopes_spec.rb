@@ -27,6 +27,14 @@ describe 'Product scopes', type: :model do
 
       it { expect(Spree::Product.available).not_to include(unavailable_product) }
     end
+
+    context 'different currency' do
+      let!(:price_eur) { create(:price, variant: product.master, currency: 'EUR') }
+      let!(:product_2) { create(:product) }
+
+      it { expect(Spree::Product.available(nil, 'EUR')).to include(product) }
+      it { expect(Spree::Product.available(nil, 'EUR')).not_to include(product_2) }
+    end
   end
 
   context 'A product assigned to parent and child taxons' do

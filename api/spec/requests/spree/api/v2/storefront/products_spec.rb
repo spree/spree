@@ -15,6 +15,9 @@ describe 'API V2 Storefront Products Spec', type: :request do
   let!(:deleted_product)       { create(:product, deleted_at: Time.current - 1.day) }
   let!(:discontinued_product)  { create(:product, discontinue_on: Time.current - 1.day) }
   let!(:not_available_product) { create(:product, available_on: nil) }
+  let!(:property)              { create(:property) }
+  let!(:product_with_property) { create(:product, properties: [property]) }
+  let!(:product_property)      { create(:product_property, property: property, product: product_with_property, value: 'Some Value') }
 
   before { Spree::Api::Config[:api_v2_per_page_limit] = 4 }
 
@@ -96,6 +99,31 @@ describe 'API V2 Storefront Products Spec', type: :request do
       end
     end
 
+    context 'with specified properties' do
+      context 'using proper filter params' do
+        before { get "/api/v2/storefront/products?filter[properties][#{property.filter_param}]=#{product_property.filter_param}&include=product_properties" }
+
+        it_behaves_like 'returns 200 HTTP status'
+
+        it 'returns products with specified options' do
+          expect(json_response['data'].first).to have_id(product_with_property.id.to_s)
+          expect(json_response['included']).to include(have_type('product_property').and(have_attribute(:name).with_value(property.name)))
+          expect(json_response['included']).to include(have_type('product_property').and(have_attribute(:value).with_value(product_property.value)))
+          expect(json_response['included']).to include(have_type('product_property').and(have_attribute(:filter_param).with_value(product_property.filter_param)))
+        end
+      end
+
+      context 'using property names and values' do
+        before { get "/api/v2/storefront/products?filter[properties][#{property.name}]=#{product_property.value}&include=product_properties" }
+
+        it_behaves_like 'returns 200 HTTP status'
+
+        it 'returns products with specified options' do
+          expect(json_response['data'].first).to have_id(product_with_property.id.to_s)
+        end
+      end
+    end
+
     context 'with specified multiple filters' do
       before { get "/api/v2/storefront/products?filter[name]=#{product_with_name.name}&filter[price]=#{product_with_name.price.to_f - 0.02},#{product_with_name.price.to_f + 0.02}" }
 
@@ -113,7 +141,7 @@ describe 'API V2 Storefront Products Spec', type: :request do
       it_behaves_like 'returns 200 HTTP status'
 
       it 'returns products with deleted products' do
-        expect(json_response['data'].count).to eq 7
+        expect(json_response['data'].count).to eq 8
         expect(json_response['data'].pluck(:id)).to include(deleted_product.id.to_s)
       end
     end
@@ -124,7 +152,7 @@ describe 'API V2 Storefront Products Spec', type: :request do
       it_behaves_like 'returns 200 HTTP status'
 
       it 'returns products with discontinued products' do
-        expect(json_response['data'].count).to eq 8
+        expect(json_response['data'].count).to eq 9
         expect(json_response['data'].pluck(:id)).to include(discontinued_product.id.to_s)
       end
     end
@@ -137,7 +165,7 @@ describe 'API V2 Storefront Products Spec', type: :request do
       it_behaves_like 'returns 200 HTTP status'
 
       it 'returns available, deleted and discontinued products' do
-        expect(json_response['data'].count).to eq 9
+        expect(json_response['data'].count).to eq 10
         expect(json_response['data'].pluck(:id)).to include(deleted_product.id.to_s, discontinued_product.id.to_s)
       end
     end
@@ -175,7 +203,7 @@ describe 'API V2 Storefront Products Spec', type: :request do
 
           it 'returns products sorted by updated_at' do
             expect(json_response['data'].count).to      eq Spree::Product.available.count
-            expect(json_response['data'].pluck(:id)).to eq Spree::Product.available.order(:updated_at).pluck(:id).map(&:to_s)
+            expect(json_response['data'].pluck(:id)).to eq Spree::Product.available.order(:updated_at).map(&:id).map(&:to_s)
           end
         end
 
@@ -186,7 +214,7 @@ describe 'API V2 Storefront Products Spec', type: :request do
 
           it 'returns products sorted by updated_at with descending order' do
             expect(json_response['data'].count).to      eq Spree::Product.available.count
-            expect(json_response['data'].pluck(:id)).to eq Spree::Product.available.order(updated_at: :desc).pluck(:id).map(&:to_s)
+            expect(json_response['data'].pluck(:id)).to eq Spree::Product.available.order(updated_at: :desc).map(&:id).map(&:to_s)
           end
         end
       end
@@ -219,7 +247,7 @@ describe 'API V2 Storefront Products Spec', type: :request do
           before { get '/api/v2/storefront/products?page=1&per_page=10' }
 
           it 'returns the default number of products' do
-            expect(json_response['data'].count).to eq 6
+            expect(json_response['data'].count).to eq 7
           end
         end
 
@@ -227,7 +255,7 @@ describe 'API V2 Storefront Products Spec', type: :request do
           before { get '/api/v2/storefront/products?page=1&per_page=-1' }
 
           it 'returns the default number of products' do
-            expect(json_response['data'].count).to eq 6
+            expect(json_response['data'].count).to eq 7
           end
         end
 
@@ -235,7 +263,7 @@ describe 'API V2 Storefront Products Spec', type: :request do
           before { get '/api/v2/storefront/products?page=1&per_page=0' }
 
           it 'returns the default number of products' do
-            expect(json_response['data'].count).to eq 6
+            expect(json_response['data'].count).to eq 7
           end
         end
       end
