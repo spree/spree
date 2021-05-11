@@ -14,10 +14,10 @@ describe 'Menus Index', type: :feature do
   end
 
   context 'when menus are present' do
-    let!(:store_1) { create(:store, name: 'AbCd') }
-    let!(:store_2) { create(:store, name: 'EfGh') }
-    let!(:store_3) { create(:store, name: 'IjKl') }
-    let!(:store_4) { create(:store, name: 'MnOp') }
+    let!(:store_1) { create(:store) }
+    let!(:store_2) { create(:store) }
+    let!(:store_3) { create(:store) }
+    let!(:store_4) { create(:store) }
 
     let!(:main_menu) { create(:menu, name: 'Main Menu', store_id: store_1.id) }
     let!(:main_menu_fr) { create(:menu, name: 'Main Menu FR', store_id: store_1.id, locale: 'fr') }
@@ -33,7 +33,7 @@ describe 'Menus Index', type: :feature do
       visit spree.admin_menus_path
     end
 
-    it 'lists each menu with its store ' do
+    it 'lists each menu with stores' do
       within_table('menusTable') do
         expect(page).to have_text 'Main Menu'
         expect(page).to have_text 'Footer Menu'
@@ -56,7 +56,7 @@ describe 'Menus Index', type: :feature do
       expect(page).not_to have_css('.translation_missing', visible: :all)
     end
 
-    describe 'when filtering menus', js: true do
+    describe 'when filtering', js: true do
       it 'is able to filter by name' do
         click_on 'Filter'
         fill_in 'Name', with: 'Main Menu FR'
@@ -75,7 +75,7 @@ describe 'Menus Index', type: :feature do
         expect(page).not_to have_text 'Footer Menu'
       end
 
-      it 'is able to filter by menu location' do
+      it 'is able to filter by location' do
         click_on 'Filter'
         select2 'Footer', from: 'Location'
         click_on 'Search'
