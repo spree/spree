@@ -13,7 +13,7 @@ module Spree
 
     scope :filterable, lambda {
       joins(:option_type, :variants).
-        where(option_type: { filterable: true }).
+        where(OptionType.table_name => { filterable: true }).
         distinct
     }
 
