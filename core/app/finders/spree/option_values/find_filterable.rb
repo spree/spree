@@ -9,7 +9,7 @@ module Spree
       def execute
         scope.
           filterable.
-          where(variants: { product_id: products_ids })
+          where(Variant.table_name => { product_id: products_ids })
       end
 
       private
