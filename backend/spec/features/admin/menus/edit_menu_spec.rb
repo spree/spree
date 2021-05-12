@@ -60,7 +60,7 @@ describe 'Menu Edit', type: :feature do
     end
   end
 
-  context 'setting the link to a menu link', js: true do
+  context 'setting the link to a Taxon link', js: true do
     let!(:taxon_1) { create(:taxon) }
     let!(:taxon_2) { create(:taxon) }
     let!(:taxon_3) { create(:taxon) }
@@ -69,7 +69,7 @@ describe 'Menu Edit', type: :feature do
       visit spree.edit_admin_menu_menu_item_path(main_menu, menu_item)
     end
 
-    it 'allows you to select a menu and save' do
+    it 'allows you to select a Taxon and save' do
       select2 'Taxon', from: 'Link To'
       expect(page).to have_text 'Click the Update button below to change the link.'
       click_on 'Update'
