@@ -189,7 +189,11 @@ Spree::Core::Engine.add_routes do
     end
 
     resources :menus do
-      resources :menu_items, except: :index
+      resources :menu_items, except: :index do
+        member do
+          delete :remove_icon
+        end
+      end
     end
   end
 

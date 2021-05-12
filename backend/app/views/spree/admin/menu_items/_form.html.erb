@@ -62,8 +62,9 @@
             <%= f.fields_for :icon do |icon_field| %>
               <%= f.field_container :icon_attachment do %>
                 <% unless @menu_item.icon.new_record? %>
-                  <div id="menuItemImgContainer" class="my-2">
+                  <div id="menuItemImgContainer" class="my-3 ">
                     <%= image_tag(main_app.url_for(@menu_item.icon.attachment)) %>
+                    <%= link_to Spree.t(:remove_image), remove_icon_admin_menu_menu_item_path(@menu, @menu_item), method: :delete %>
                   </div>
                 <% end %>
               <div id="<% unless @menu_item.icon.new_record? %>MenuItemImageButton<% end %>">

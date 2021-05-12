@@ -36,7 +36,7 @@ describe 'New Menu', type: :feature do
 
   context 'when a user tries to create a menu with a duplicate location within scope of stores and language', js: true do
     let!(:store_1) { create(:store) }
-    let!(:main_menu) { create(:menu, name: 'Main Menu', store_id: store_1.id) }
+    let!(:main_menu) { create(:menu, name: 'Main Menu', store: store_1) }
 
     before do
       visit spree.new_admin_menu_path
@@ -72,6 +72,11 @@ describe 'New Menu', type: :feature do
       expect(page).to have_selector('a', text: Spree.t('admin.navigation.add_new_item'))
 
       expect(page).not_to have_css('.translation_missing', visible: :all)
+
+      # Tests that root name is in sync with menu name.
+      fill_in 'Name', with: 'X14dP'
+      click_on 'Update'
+      expect(page).to have_text 'X14dP has no items. Click the Add New Item button to begin adding links to this menu.'
     end
   end
 end

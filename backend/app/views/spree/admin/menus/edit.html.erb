@@ -45,7 +45,7 @@
                 <% end %>
               <% else %>
                 <div class="alert alert-info no-objects-found m-5">
-                  <%= raw Spree.t('admin.navigation.no_menu_items', menu: @menu.name) %>
+                  <%= raw Spree.t('admin.navigation.no_menu_items', menu: @menu.root.name) %>
                 </div>
               <% end %>
             </div>

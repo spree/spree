@@ -19,15 +19,15 @@ describe 'Menus Index', type: :feature do
     let!(:store_3) { create(:store) }
     let!(:store_4) { create(:store) }
 
-    let!(:main_menu) { create(:menu, name: 'Main Menu', store_id: store_1.id) }
-    let!(:main_menu_fr) { create(:menu, name: 'Main Menu FR', store_id: store_1.id, locale: 'fr') }
+    let!(:main_menu) { create(:menu, name: 'Main Menu', store: store_1) }
+    let!(:main_menu_fr) { create(:menu, name: 'Main Menu FR', store: store_1, locale: 'fr') }
 
-    let!(:main_menu_a) { create(:menu, name: 'MA', store_id: store_2.id) }
-    let!(:main_menu_b) { create(:menu, name: 'MB', store_id: store_3.id) }
+    let!(:main_menu_a) { create(:menu, name: 'MA', store: store_2) }
+    let!(:main_menu_b) { create(:menu, name: 'MB', store: store_3) }
 
-    let!(:footer_menu) { create(:menu, name: 'Footer Menu', location: 'footer', store_id: store_3.id) }
-    let!(:footer_menu_a) { create(:menu, name: 'FA', location: 'footer', store_id: store_1.id) }
-    let!(:footer_menu_b) { create(:menu, name: 'FB', location: 'footer', store_id: store_2.id) }
+    let!(:footer_menu) { create(:menu, name: 'Footer Menu', location: 'footer', store: store_3) }
+    let!(:footer_menu_a) { create(:menu, name: 'FA', location: 'footer', store: store_1) }
+    let!(:footer_menu_b) { create(:menu, name: 'FB', location: 'footer', store: store_2) }
 
     before do
       visit spree.admin_menus_path

@@ -5,8 +5,11 @@ module Spree
     belongs_to :menu, touch: true
     belongs_to :linked_resource, polymorphic: true
 
-    before_create :ensure_item_belongs_to_root
+    around_create :ensure_item_belongs_to_root
     before_save :reset_link_attributes, :build_path, :paremeterize_code
+
+    after_save :touch_ancestors_and_menu
+    after_touch :touch_ancestors_and_menu
 
     ITEM_TYPE = %w[Link Promotion Container]
 
@@ -73,6 +76,15 @@ module Spree
       if menu.try(:root).present? && parent_id.nil?
         self.parent = menu.root
       end
+
+      yield
+
+      move_to_child_of(menu.root) unless root
+    end
+
+    def touch_ancestors_and_menu
+      ancestors.update_all(updated_at: Time.current)
+      menu.try!(:touch)
     end
 
     def paremeterize_code
