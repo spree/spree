@@ -13,10 +13,10 @@ describe Spree::Menu, type: :model do
     let(:store_1) { create(:store) }
     let(:store_2) { create(:store) }
     let(:store_3) { create(:store) }
-    let!(:menu) { create(:menu, name: 'Footer Menu', location: 'Footer', store_id: store_1.id) }
+    let!(:menu) { create(:menu, name: 'Footer Menu', location: 'Footer', store: store_1) }
 
     it 'validates presence of name' do
-      expect(described_class.new(name: '', location: 'Header', store_id: store_3.id)).not_to be_valid
+      expect(described_class.new(name: '', location: 'Header', store: store_3)).not_to be_valid
     end
 
     it 'validates presence of store' do
@@ -24,14 +24,14 @@ describe Spree::Menu, type: :model do
     end
 
     it 'validates presence of locale' do
-      expect(described_class.new(name: 'No Locale For Me', location: 'Header', locale: nil, store_id: store_2.id)).not_to be_valid
+      expect(described_class.new(name: 'No Locale For Me', location: 'Header', locale: nil, store: store_2)).not_to be_valid
     end
 
     it 'validates uniqueness of location within scope of language and store' do
-      expect(described_class.new(name: 'BBB', location: 'Footer', locale: 'en', store_id: store_1.id)).not_to be_valid
-      expect(described_class.new(name: 'BBB', location: 'Footer', locale: 'fr', store_id: store_1.id)).to be_valid
-      expect(described_class.new(name: 'BBB', location: 'Header', locale: 'en', store_id: store_1.id)).to be_valid
-      expect(described_class.new(name: 'BBB', location: 'Footer', locale: 'en', store_id: store_2.id)).to be_valid
+      expect(described_class.new(name: 'BBB', location: 'Footer', locale: 'en', store: store_1)).not_to be_valid
+      expect(described_class.new(name: 'BBB', location: 'Footer', locale: 'fr', store: store_1)).to be_valid
+      expect(described_class.new(name: 'BBB', location: 'Header', locale: 'en', store: store_1)).to be_valid
+      expect(described_class.new(name: 'BBB', location: 'Footer', locale: 'en', store: store_2)).to be_valid
     end
 
     it '.paremeterize_location parametizes the location' do
@@ -47,7 +47,7 @@ describe Spree::Menu, type: :model do
 
   describe 'updating the menu name' do
     let(:store_a) { create(:store) }
-    let(:m_x) { create(:menu, name: 'Main Menu', location: 'Header', store_id: store_a.id) }
+    let(:m_x) { create(:menu, name: 'Main Menu', location: 'Header', store: store_a) }
 
     before do
       m_x.update!(name: 'Super Menu')
@@ -56,5 +56,12 @@ describe Spree::Menu, type: :model do
     it '.update_root_name sets the new root menu_item name' do
       expect(m_x.root.name).to eql('Super Menu')
     end
+  end
+
+  describe 'touch store' do
+    let!(:store) { create(:store) }
+    let(:menu) { build(:menu, store: store) }
+
+    it { expect { menu.save! }.to change(store, :updated_at) }
   end
 end

@@ -9,11 +9,12 @@ module Spree
     end
 
     has_many :menu_items, dependent: :destroy
-    belongs_to :store
+    belongs_to :store, touch: true
 
     before_validation :paremeterize_location
     after_create :set_root
     after_save :update_root_name
+    after_touch :touch_store
 
     validates :name, :store, :locale, presence: true
     validates :location, uniqueness: { scope: [:store, :locale] }
@@ -48,6 +49,10 @@ module Spree
       return unless saved_change_to_name?
 
       root.update(name: name)
+    end
+
+    def touch_store
+      store.touch
     end
   end
 end
