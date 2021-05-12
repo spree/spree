@@ -14,7 +14,7 @@ module Spree
       end
 
       def remove_icon
-        if @menu_item.icon.destroy
+        if @menu_item.icon&.destroy
           flash[:success] = Spree.t('notice_messages.icon_removed')
           redirect_to spree.edit_admin_menu_menu_item_path(@menu, @menu_item)
         else
