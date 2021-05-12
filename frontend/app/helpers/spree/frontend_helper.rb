@@ -299,7 +299,7 @@ module Spree
 
     def available_option_types
       @available_option_types ||= Rails.cache.fetch("available-option-types/#{available_option_types_cache_key}") do
-        option_values = OptionValues::FindAvailable.new(taxon: @taxon, currency: current_currency).execute
+        option_values = OptionValues::FindAvailable.new(products_scope: products_for_available_option_values).execute
         Filters::Options.new(option_values_scope: option_values).to_a
       end
     end
@@ -363,6 +363,12 @@ module Spree
       link_to spree.checkout_state_path(step), class: classes, method: :get do
         inline_svg_tag 'edit.svg'
       end
+    end
+
+    def products_for_available_option_values
+      scope = Product.active(current_currency)
+      scope = scope.in_taxon(@taxon) if @taxon.present?
+      scope
     end
   end
 end

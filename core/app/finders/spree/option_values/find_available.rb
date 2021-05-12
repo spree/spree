@@ -1,10 +1,9 @@
 module Spree
   module OptionValues
     class FindAvailable
-      def initialize(scope: OptionValue.spree_base_scopes, currency: nil, taxon: nil)
+      def initialize(scope: OptionValue.spree_base_scopes, products_scope: Product.spree_base_scopes)
         @scope = scope
-        @currency = currency
-        @taxon = taxon
+        @products_scope = products_scope
       end
 
       def execute
@@ -14,22 +13,7 @@ module Spree
 
       private
 
-      attr_reader :scope, :currency, :taxon
-
-      def products_scope
-        products = products_by_currency(Product.spree_base_scopes)
-        products_by_taxon(products)
-      end
-
-      def products_by_currency(products)
-        products.active(currency)
-      end
-
-      def products_by_taxon(products)
-        return products if taxon.nil?
-
-        products.in_taxon(taxon)
-      end
+      attr_reader :scope, :products_scope
     end
   end
 end
