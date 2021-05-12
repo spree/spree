@@ -2,7 +2,7 @@ module Spree
   class MenuItem < Spree::Base
     acts_as_nested_set dependent: :destroy
 
-    belongs_to :menu
+    belongs_to :menu, touch: true
     belongs_to :linked_resource, polymorphic: true
 
     before_create :ensure_item_belongs_to_root
@@ -71,7 +71,7 @@ module Spree
 
     def ensure_item_belongs_to_root
       if menu.try(:root).present? && parent_id.nil?
-        self.parent_id = menu.root.id
+        self.parent = menu.root
       end
     end
 

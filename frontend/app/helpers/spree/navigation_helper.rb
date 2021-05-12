@@ -20,10 +20,26 @@ module Spree
     end
 
     def spree_nav_cache_key(section = 'header')
+      ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
+        NavigationHelper#spree_nav_cache_key is deprecated and will be removed in Spree 5.0.
+        Please migrate to the new navigation cms system.
+      DEPRECATION
+
       @spree_nav_cache_key = begin
-        keys = base_cache_key + [current_store, spree_navigation_data_cache_key, Spree::Config[:logo], stores&.cache_key, section]
+        keys = base_cache_key + [current_store, spree_navigation_data_cache_key, Spree::Config[:logo], stores&.cache_key_with_version, section]
         Digest::MD5.hexdigest(keys.join('-'))
       end
+    end
+
+    def spree_menu_cache_key(section = 'header')
+      keys = base_cache_key + [
+        current_store.cache_key_with_version,
+        spree_menu(section)&.cache_key_with_version,
+        Spree::Config[:logo],
+        stores&.cache_key_with_version,
+        section
+      ]
+      Digest::MD5.hexdigest(keys.join('-'))
     end
 
     def main_nav_image(image_path, title = '')
