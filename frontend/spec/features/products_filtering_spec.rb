@@ -19,10 +19,11 @@ describe 'Products filtering', :js do
 
   let!(:property_3) { create :property, name: 'collection', presentation: 'Collection', filterable: true }
 
-  let!(:product_1) { create :product, name: 'First shirt', option_types: [option_type_1] }
-  let!(:variant_1_1) { create :variant, product: product_1, option_values: [option_value_1_1] }
+  let!(:product_1) { create :product, name: 'First shirt', option_types: [option_type_1, option_type_2], taxons: [taxon] }
+  let!(:variant_1_1) { create :variant, product: product_1, option_values: [option_value_1_1, option_value_2_1] }
 
-  let!(:product_2) { create :product, name: 'Second shirt', option_types: [option_type_1], product_properties: [product_property_3] }
+  let!(:product_2) { create :product, name: 'Second shirt', option_types: [option_type_1], product_properties: [product_property_3], taxons: [taxon] }
+  let!(:variant_2_1) { create :variant, product: product_2, option_values: [option_value_1_2] }
 
   def search_by(text)
     find('.search-icons').click
@@ -65,13 +66,16 @@ describe 'Products filtering', :js do
 
     search_by 'shirt'
     expect(page).to have_content 'First shirt'
+    expect(page).to have_content 'Second shirt'
 
     click_on_filter 'Size', value: 'm'
-    expect(page).to have_content 'No results'
+    expect(page).not_to have_content 'First shirt'
+    expect(page).to have_content 'Second shirt'
     expect(page).to have_selected_filter_with(value: 'M')
 
     click_on_filter 'Size', value: 's'
     expect(page).to have_content 'First shirt'
+    expect(page).to have_content 'Second shirt'
     expect(page).to have_selected_filter_with(value: 'M')
     expect(page).to have_selected_filter_with(value: 'S')
 
