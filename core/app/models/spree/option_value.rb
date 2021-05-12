@@ -17,6 +17,8 @@ module Spree
         distinct
     }
 
+    scope :for_products, ->(products) { where(Variant.table_name => { product_id: products.map(&:id) }) }
+
     after_touch :touch_all_variants
 
     delegate :name, :presentation, to: :option_type, prefix: true, allow_nil: true

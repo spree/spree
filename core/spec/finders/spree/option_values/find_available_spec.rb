@@ -16,7 +16,7 @@ module Spree
     let!(:blue_color) { create(:option_value, option_type: color, name: 'blue') }
 
     let!(:length) { create(:option_type, filterable: false) }
-    let!(:mini) { create(:option_value, option_type: length) }
+    let!(:mini_length) { create(:option_value, option_type: length) }
 
     before do
       product_1 = create(:product, option_types: [color, size], taxons: [taxon], currency: gbp)
@@ -26,7 +26,7 @@ module Spree
       create(:variant, option_values: [red_color, m_size], product: product_2)
 
       product_3 = create(:product, option_types: [size, length], taxons: [taxon], currency: gbp)
-      create(:variant, option_values: [s_size, mini], product: product_3)
+      create(:variant, option_values: [s_size, mini_length], product: product_3)
 
       product_4 = create(:product, option_types: [color], taxons: [create(:taxon)], currency: gbp)
       create(:variant, option_values: [blue_color], product: product_4)
@@ -37,6 +37,15 @@ module Spree
 
     describe '#execute' do
       subject(:available_options) { finder.execute }
+
+      context 'when given a predefined scope' do
+        let(:finder) { described_class.new(scope: scope) }
+        let(:scope) { OptionValue.where(id: [s_size, green_color, mini_length]) }
+
+        it 'finds available Option Values with respect to a predefined scope' do
+          expect(available_options).to contain_exactly(s_size, green_color)
+        end
+      end
 
       context 'when taxon and currency are given' do
         let(:finder) { described_class.new(taxon: taxon, currency: gbp) }

@@ -8,27 +8,24 @@ module Spree
       end
 
       def execute
-        filterable_finder.execute
+        filterable_options = scope.filterable
+        filterable_options.for_products(products_scope)
       end
 
       private
 
       attr_reader :scope, :currency, :taxon
 
-      def filterable_finder
-        FindFilterable.new(scope: scope, products_scope: products_scope)
-      end
-
       def products_scope
-        products = by_currency(Product.spree_base_scopes)
-        by_taxon(products)
+        products = products_by_currency(Product.spree_base_scopes)
+        products_by_taxon(products)
       end
 
-      def by_currency(products)
+      def products_by_currency(products)
         products.active(currency)
       end
 
-      def by_taxon(products)
+      def products_by_taxon(products)
         return products if taxon.nil?
 
         products.in_taxon(taxon)
