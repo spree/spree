@@ -12,12 +12,15 @@ module Spree
     end
 
     scope :filterable, lambda {
-      joins(:option_type, :variants).
+      joins(:option_type).
         where(OptionType.table_name => { filterable: true }).
         distinct
     }
 
-    scope :for_products, ->(products) { where(Variant.table_name => { product_id: products.map(&:id) }) }
+    scope :for_products, lambda { |products|
+      joins(:variants).
+        where(Variant.table_name => { product_id: products.map(&:id) })
+    }
 
     after_touch :touch_all_variants
 
