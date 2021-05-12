@@ -5,7 +5,7 @@ module Spree
     belongs_to :menu, touch: true
     belongs_to :linked_resource, polymorphic: true
 
-    around_create :ensure_item_belongs_to_root
+    before_create :ensure_item_belongs_to_root
     before_save :reset_link_attributes, :build_path, :paremeterize_code
 
     after_save :touch_ancestors_and_menu
@@ -75,11 +75,9 @@ module Spree
     def ensure_item_belongs_to_root
       if menu.try(:root).present? && parent_id.nil?
         self.parent = menu.root
+
+        store_new_parent
       end
-
-      yield
-
-      move_to_child_of(menu.root) unless root
     end
 
     def touch_ancestors_and_menu

@@ -103,7 +103,7 @@ describe Spree::MenuItem, type: :model do
       item_taxon.update(linked_resource: taxon)
       item_taxon.update(linked_resource_id: nil)
 
-      expect(item_taxon.destination).to eql nil
+      expect(item_taxon.destination).to be nil
     end
 
     it 'returns product path' do
@@ -116,7 +116,7 @@ describe Spree::MenuItem, type: :model do
       item_product.update(linked_resource: product)
       item_product.update(linked_resource_id: nil)
 
-      expect(item_product.destination).to eql nil
+      expect(item_product.destination).to be nil
     end
 
     it 'returns root path' do
@@ -137,10 +137,18 @@ describe Spree::MenuItem, type: :model do
   end
 
   describe '.ensure_item_belongs_to_root' do
-    let(:item_x) { create(:menu_item, name: 'URL', item_type: 'Link', menu: menu, parent: menu.root, linked_resource_type: 'URL', code: 'My Fantastic Code') }
+    let(:item_x) { create(:menu_item, name: 'URL', item_type: 'Link', menu: menu, linked_resource_type: 'URL', code: 'My Fantastic Code') }
 
     it 'Sets new items parent_id to root.id' do
       expect(item_x.parent_id).to eql menu.root.id
+    end
+
+    it 'is not a root' do
+      expect(item_x.root?).to be false
+    end
+
+    it 'is level 1' do
+      expect(item_x.level).to eql 1
     end
   end
 
