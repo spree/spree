@@ -1,5 +1,8 @@
 module Spree
   module ProductsFiltersHelper
+    FILTER_LINK_CSS_CLASSES = 'd-inline-block text-uppercase py-1 px-2 m-1 plp-overlay-card-item'.freeze
+    ACTIVE_FILTER_LINK_CSS_CLASSES = 'plp-overlay-card-item--selected'.freeze
+
     def price_filters
       @price_filters ||= [
         filters_less_than_price_range(50),
@@ -42,7 +45,73 @@ module Spree
       )
     end
 
+    def option_value_filter_link(option_value, permitted_params, opts = {})
+      id = option_value.id
+      ot_downcase_name = option_value.option_type.filter_param
+      selected_option_values = params[ot_downcase_name]&.split(',')&.map(&:to_i) || []
+      is_selected = selected_option_values.include?(id)
+      option_value_param = (is_selected ? selected_option_values - [id] : selected_option_values + [id]).join(',')
+      new_params = permitted_params.merge(ot_downcase_name => option_value_param, menu_open: 1)
+
+      link_to new_params, data: { params: new_params, id: id, filter_name: ot_downcase_name, multiselect: true } do
+        # TODO: refactor this
+        if color_option_type_name.present? && color_option_type_name.downcase == ot_downcase_name
+          content_tag :span, class: 'd-inline-block mb-1' do
+            render partial: 'spree/shared/color_select', locals: {
+              color: option_value.presentation,
+              selected: is_selected
+            }
+          end
+        else
+          filter_content_tag(option_value.name, opts.merge(is_selected: is_selected))
+        end
+      end
+    end
+
+    def property_value_filter_link(property, value, permitted_params, opts = {})
+      id = value.first
+      name = value.last
+
+      selected_properties = params.dig(:properties, property.filter_param)&.split(',') || []
+      is_selected = selected_properties.include?(id)
+      property_values = (is_selected ? selected_properties - [id] : selected_properties + [id])
+      url = permitted_params.merge(properties: { property.filter_param => property_values }, menu_open: 1)
+      filter_name = "properties[#{property.filter_param}]"
+      new_params = permitted_params.merge(filter_name => property_values, menu_open: 1)
+
+      base_filter_link(url, name, opts.merge(params: new_params, is_selected: is_selected, filter_name: filter_name, id: id, multiselect: true))
+    end
+
+    def price_filter_link(price_range, permitted_params, opts = {})
+      is_selected = params[:price] == price_range.to_param
+      price_param = is_selected ? '' : price_range.to_param
+      url = permitted_params.merge(price: price_param, menu_open: 1)
+
+      opts[:is_selected] ||= is_selected
+
+      content_tag :div do
+        base_filter_link(url, price_range, opts.merge(is_selected: is_selected, filter_name: 'price', id: price_param))
+      end
+    end
+
     private
+
+    def base_filter_link(url, label, opts = {})
+      opts[:params] ||= url
+
+      link_to url, data: { filter_name: opts[:filter_name], id: opts[:id], params: opts[:params], multiselect: opts[:multiselect] } do
+        filter_content_tag(label, opts)
+      end
+    end
+
+    def filter_content_tag(label, opts = {})
+      opts[:css_class]        ||= FILTER_LINK_CSS_CLASSES
+      opts[:css_active_class] ||= ACTIVE_FILTER_LINK_CSS_CLASSES
+
+      content_tag :div, class: "#{opts[:css_class]} #{opts[:css_active_class] if opts[:is_selected]}" do
+        label.to_s
+      end
+    end
 
     def filters_price_range_from_param
       Filters::PriceRange.from_param(params[:price].to_s, currency: current_currency)

@@ -289,7 +289,7 @@ module Spree
 
     def permitted_products_params
       @permitted_products_params ||= begin
-        params.permit(*filtering_params, properties: available_properties.map(&:id).map(&:to_s))
+        params.permit(*filtering_params, properties: available_properties.map(&:filter_param))
       end
     end
 
