@@ -54,6 +54,7 @@ module Spree
       new_params = permitted_params.merge(ot_downcase_name => option_value_param, menu_open: 1)
 
       link_to new_params, data: { params: new_params, id: id, filter_name: ot_downcase_name, multiselect: true } do
+        # TODO: refactor this
         if color_option_type_name.present? && color_option_type_name.downcase == ot_downcase_name
           content_tag :span, class: 'd-inline-block mb-1' do
             render partial: 'spree/shared/color_select', locals: {
@@ -62,9 +63,7 @@ module Spree
             }
           end
         else
-          content_tag :div, class: "#{FILTER_LINK_CSS_CLASSES} #{ACTIVE_FILTER_LINK_CSS_CLASSES if is_selected}" do
-            option_value.name
-          end
+          filter_content_tag(option_value.name, opts.merge(is_selected: is_selected))
         end
       end
     end
@@ -98,14 +97,19 @@ module Spree
     private
 
     def base_filter_link(url, label, opts = {})
-      opts[:css_class]        ||= FILTER_LINK_CSS_CLASSES
-      opts[:css_active_class] ||= ACTIVE_FILTER_LINK_CSS_CLASSES
       opts[:params] ||= url
 
       link_to url, data: { filter_name: opts[:filter_name], id: opts[:id], params: opts[:params], multiselect: opts[:multiselect] } do
-        content_tag :div, class: "#{opts[:css_class]} #{opts[:css_active_class] if opts[:is_selected]}" do
-          label.to_s
-        end
+        filter_content_tag(label, opts)
+      end
+    end
+
+    def filter_content_tag(label, opts = {})
+      opts[:css_class]        ||= FILTER_LINK_CSS_CLASSES
+      opts[:css_active_class] ||= ACTIVE_FILTER_LINK_CSS_CLASSES
+
+      content_tag :div, class: "#{opts[:css_class]} #{opts[:css_active_class] if opts[:is_selected]}" do
+        label.to_s
       end
     end
 
