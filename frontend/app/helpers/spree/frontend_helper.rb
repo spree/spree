@@ -299,7 +299,7 @@ module Spree
 
     def available_option_types
       @available_option_types ||= Rails.cache.fetch("available-option-types/#{available_option_types_cache_key}") do
-        option_values = OptionValues::FindAvailable.new(products_scope: products_for_available_option_values).execute
+        option_values = OptionValues::FindAvailable.new(products_scope: products_for_filtering).execute
         Filters::Options.new(option_values_scope: option_values).to_a
       end
     end
@@ -310,9 +310,9 @@ module Spree
 
     def available_properties
       @available_properties ||= Rails.cache.fetch("available-properties/#{available_properties_cache_key}") do
-        Spree::Property.includes(:product_properties).filterable.to_a
+        product_properties = ProductProperties::FindAvailable.new(products_scope: products_for_filtering).execute
+        Filters::Properties.new(product_properties_scope: product_properties).to_a
       end
-      @available_properties
     end
 
     def spree_social_link(service)
@@ -365,7 +365,7 @@ module Spree
       end
     end
 
-    def products_for_available_option_values
+    def products_for_filtering
       scope = Product.active(current_currency)
       scope = scope.in_taxon(@taxon) if @taxon.present?
       scope

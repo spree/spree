@@ -1,9 +1,9 @@
 module Spree
-  module OptionValues
+  module ProductProperties
     class FindAvailable
       include ProductFilterable
 
-      def initialize(scope: OptionValue.spree_base_scopes, products_scope: Product.spree_base_scopes)
+      def initialize(scope: ProductProperty.spree_base_scopes, products_scope: Product.spree_base_scopes)
         @scope = scope
         @products_scope = products_scope
       end
