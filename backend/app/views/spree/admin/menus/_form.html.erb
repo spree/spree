@@ -13,15 +13,15 @@
     <% end %>
   </div>
   <div class="col-12 col-md-6">
-    <div class="form-group">
+    <%= f.field_container :menu_stores, class: ['form-group'] do %>
       <%= label_tag :menu_stores, Spree.t(:stores) %>
       <%= collection_select(:menu, :store_id, @stores, :id, :unique_name, {}, { class: 'select2' }) %>
       <%= f.error_message_on :menu_stores %>
-    </div>
-    <div class="form-group">
+    <% end %>
+    <%= f.field_container :locale, class: ['form-group'] do %>
       <%= f.label :locale %>
       <%= f.select :locale, options_from_collection_for_select(all_locales_options, :last, :first, @menu.locale || I18n.locale), {}, { class: 'select2' } %>
       <%= f.error_message_on :default_locale %>
-    </div>
+    <% end %>
   </div>
 </div>
