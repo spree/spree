@@ -19,10 +19,10 @@ describe 'Products filtering', :js do
 
   let!(:property_3) { create :property, name: 'collection', presentation: 'Collection', filterable: true }
 
-  let!(:product_1) { create :product, name: 'First shirt', option_types: [option_type_1, option_type_2], taxons: [taxon] }
+  let!(:product_1) { create :product, name: 'First shirt', option_types: [option_type_1, option_type_2], product_properties: [product_property_2], taxons: [taxon] }
   let!(:variant_1_1) { create :variant, product: product_1, option_values: [option_value_1_1, option_value_2_1] }
 
-  let!(:product_2) { create :product, name: 'Second shirt', option_types: [option_type_1], product_properties: [product_property_3], taxons: [taxon] }
+  let!(:product_2) { create :product, name: 'Second shirt', option_types: [option_type_1], product_properties: [product_property_1, product_property_3], taxons: [taxon] }
   let!(:variant_2_1) { create :variant, product: product_2, option_values: [option_value_1_2] }
 
   def search_by(text)
@@ -81,9 +81,22 @@ describe 'Products filtering', :js do
 
     expect_working_filters_clearing
 
+    click_on_filter 'Manufacturer', value: 'wilson'
+    expect(page).not_to have_content 'First shirt'
+    expect(page).to have_content 'Second shirt'
+    expect(page).to have_selected_filter_with(value: 'WILSON')
+
+    click_on_filter 'Brand', value: 'Zeta'
+    expect(page).to have_content 'First shirt'
+    expect(page).to have_content 'Second shirt'
+    expect(page).to have_selected_filter_with(value: 'WILSON')
+    expect(page).to have_selected_filter_with(value: 'ZETA')
+
     click_on_filter 'Brand', value: 'Alpha'
     expect(page).not_to have_content 'First shirt'
     expect(page).to have_content 'Second shirt'
+    expect(page).to have_selected_filter_with(value: 'WILSON')
+    expect(page).to have_selected_filter_with(value: 'ZETA')
     expect(page).to have_selected_filter_with(value: 'ALPHA')
 
     expect_working_filters_clearing
