@@ -80,17 +80,18 @@ describe 'Product scopes', type: :model do
   end
 
   context 'property scopes' do
-    let(:name) { 'A proper tee' }
-    let(:value) { 'A proper value' }
-    let!(:property) { create(:property, name: name) }
+    let(:name) { property.name }
+    let(:value) { 'Alpha' }
+
+    let(:product_property) { create(:product_property, property: property, value: value) }
+    let(:property) { create(:property, :brand) }
 
     before do
-      product.properties << property
-      product.product_properties.find_by(property: property).update_column(:value, value)
+      product.product_properties << product_property
     end
 
     context 'with_property' do
-      let(:with_property) { Spree::Product.method(:with_property) }
+      subject(:with_property) { Spree::Product.method(:with_property) }
 
       it "finds by a property's name" do
         expect(with_property.call(name).count).to eq(1)
@@ -114,7 +115,7 @@ describe 'Product scopes', type: :model do
     end
 
     context 'with_property_value' do
-      let(:with_property_value) { Spree::Product.method(:with_property_value) }
+      subject(:with_property_value) { Spree::Product.method(:with_property_value) }
 
       it "finds by a property's name" do
         expect(with_property_value.call(name, value).count).to eq(1)
@@ -146,6 +147,32 @@ describe 'Product scopes', type: :model do
 
       it 'cannot find with an invalid value' do
         expect(with_property_value.call(property.id, 'fake').count).to eq(0)
+      end
+    end
+
+    context 'with_property_values' do
+      subject(:with_property_values) { Spree::Product.method(:with_property_values) }
+
+      let!(:product_2) { create(:product, product_properties: [product_2_property]) }
+      let(:product_2_property) { create(:product_property, property: property, value: value_2) }
+      let(:value_2) { 'Beta 10%' }
+
+      before do
+        create(:product, product_properties: [create(:product_property, property: property, value: '20% Gamma')])
+      end
+
+      it 'finds by property values' do
+        expect(with_property_values.call(name, [value, value_2, 'non_existent'])).to contain_exactly(
+          product, product_2
+        )
+      end
+
+      it 'cannot find with an invalid property name' do
+        expect(with_property_values.call('fake', [value, value_2])).to be_empty
+      end
+
+      it 'cannot find with invalid property values' do
+        expect(with_property_values.call(name, ['fake'])).to be_empty
       end
     end
   end

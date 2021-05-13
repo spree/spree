@@ -110,7 +110,7 @@ module Spree
       add_search_scope :with_property_values do |property_filter_param, property_values|
         joins(product_properties: :property).
           where(Property.table_name => { filter_param: property_filter_param }).
-          where(ProductProperty.table_name => { filter_param: property_values })
+          where(ProductProperty.table_name => { filter_param: property_values.map(&:parameterize) })
       end
 
       add_search_scope :with_option do |option|
