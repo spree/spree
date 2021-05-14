@@ -1,7 +1,11 @@
 module Spree
   module ProductsFiltersHelper
+    PRICE_FILTER_NAME = 'price'.freeze
+
     FILTER_LINK_CSS_CLASSES = 'd-inline-block text-uppercase py-1 px-2 m-1 plp-overlay-card-item'.freeze
     ACTIVE_FILTER_LINK_CSS_CLASSES = 'plp-overlay-card-item--selected'.freeze
+
+    CLEAR_ALL_FILTERS_LINK_CSS_CLASSES = 'btn spree-btn btn-outline-primary w-100 mb-4'.freeze
 
     def price_filters
       @price_filters ||= [
@@ -90,11 +94,36 @@ module Spree
       opts[:is_selected] ||= is_selected
 
       content_tag :div do
-        base_filter_link(url, price_range, opts.merge(is_selected: is_selected, filter_name: 'price', id: price_param))
+        base_filter_link(url, price_range, opts.merge(is_selected: is_selected, filter_name: PRICE_FILTER_NAME, id: price_param))
       end
     end
 
+    def product_filters_present?(permitted_params)
+      properties = permitted_params.fetch(:properties, {}).to_unsafe_h
+      flatten_params = permitted_params.to_h.merge(properties)
+
+      flatten_params.any? { |name, value| product_filter_present?(name, value) }
+    end
+
+    def clear_all_filters_link(permitted_params, opts = {})
+      opts[:css_class] ||= CLEAR_ALL_FILTERS_LINK_CSS_CLASSES
+      sort_by_param = permitted_params.slice(:sort_by)
+
+      link_to Spree.t('plp.clear_all'), sort_by_param, class: opts[:css_class], data: { params: sort_by_param }
+    end
+
     private
+
+    def product_filter_present?(filter_param, filter_value)
+      filter_param.in?(product_filters_params) && filter_value.present?
+    end
+
+    def product_filters_params
+      options_filter_params = OptionType.filterable.map(&:filter_param)
+      properties_filter_params = Property.filterable.pluck(:filter_param)
+
+      options_filter_params + properties_filter_params + [PRICE_FILTER_NAME]
+    end
 
     def base_filter_link(url, label, opts = {})
       opts[:params] ||= url
