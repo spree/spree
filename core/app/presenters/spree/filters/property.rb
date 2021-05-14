@@ -6,6 +6,8 @@ module Spree
         @product_properties = product_properties
       end
 
+      attr_reader :product_properties
+
       delegate_missing_to :property
 
       def uniq_values
@@ -14,7 +16,7 @@ module Spree
 
       private
 
-      attr_reader :property, :product_properties
+      attr_reader :property
     end
   end
 end

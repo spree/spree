@@ -4,12 +4,12 @@ module Spree
   RSpec.describe ProductProperties::FindAvailable do
     let(:finder) { described_class.new }
 
-    let(:brand) { create(:property, :brand, :filterable,) }
+    let(:brand) { create(:property, :brand, :filterable) }
     let(:alpha_brand) { create(:product_property, property: brand, value: 'Alpha') }
     let(:beta_brand) { create(:product_property, property: brand, value: 'Beta') }
     let(:gamma_brand) { create(:product_property, property: brand, value: 'Gamma') }
 
-    let(:manufacturer) { create(:property, :manufacturer, :filterable,) }
+    let(:manufacturer) { create(:property, :manufacturer, :filterable) }
     let(:wilson_manufacturer) { create(:product_property, property: manufacturer, value: 'Wilson') }
     let(:jerseys_manufacturer) { create(:product_property, property: manufacturer, value: 'Jerseys') }
 
