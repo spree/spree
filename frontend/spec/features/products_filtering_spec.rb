@@ -79,9 +79,7 @@ describe 'Products filtering', :js do
     expect(page).to have_selected_filter_with(value: 'M')
     expect(page).to have_selected_filter_with(value: 'S')
 
-    expect_working_filters_clearing
-
-    click_on_filter 'Manufacturer', value: 'wilson'
+    click_on_filter 'Manufacturer', value: 'Wilson'
     expect(page).not_to have_content 'First shirt'
     expect(page).to have_content 'Second shirt'
     expect(page).to have_selected_filter_with(value: 'WILSON')
@@ -90,7 +88,7 @@ describe 'Products filtering', :js do
     expect(page).to have_content 'First shirt'
     expect(page).to have_content 'Second shirt'
     expect(page).to have_selected_filter_with(value: 'WILSON')
-    expect(page).to have_selected_filter_with(value: 'ZETA')
+    expect(page).to have_selected_filter_with(value: 'ALPHA')
 
     click_on_filter 'Brand', value: 'Alpha'
     expect(page).not_to have_content 'First shirt'

@@ -19,9 +19,11 @@ module Spree
 
     self.whitelisted_ransackable_attributes = ['presentation']
 
-    def uniq_values
+    def uniq_values(product_properties_scope: nil)
       Rails.cache.fetch("property-uniq-values/#{cache_key_with_version}") do
-        product_properties.where.not(value: [nil, '']).pluck(:filter_param, :value).uniq
+        properties = product_properties
+        properties = properties.where(id: product_properties_scope) if product_properties_scope.present?
+        properties.where.not(value: [nil, '']).pluck(:filter_param, :value).uniq
       end
     end
 

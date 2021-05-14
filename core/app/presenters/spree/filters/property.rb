@@ -9,7 +9,7 @@ module Spree
       delegate_missing_to :property
 
       def uniq_values
-        product_properties.pluck(:filter_param).uniq
+        property.uniq_values(product_properties_scope: product_properties)
       end
 
       private
