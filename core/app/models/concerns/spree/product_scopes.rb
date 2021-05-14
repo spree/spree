@@ -233,6 +233,13 @@ module Spree
       end
       search_scopes << :active
 
+      def self.for_filters(currency, taxon = nil)
+        scope = active(currency)
+        scope = scope.in_taxon(taxon) if taxon.present?
+        scope
+      end
+      search_scopes << :for_filters
+
       def self.for_user(user = nil)
         if user.try(:has_spree_role?, 'admin')
           with_deleted
