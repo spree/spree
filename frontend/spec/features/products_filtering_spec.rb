@@ -47,12 +47,21 @@ describe 'Products filtering', :js do
     have_css '.plp-overlay-card-item--selected', text: value
   end
 
+  def expect_working_filters_clearing
+    click_on 'CLEAR ALL'
+    expect(page).to have_content 'First shirt'
+    expect(page).to have_content 'Second shirt'
+    expect(page).not_to have_css('.plp-overlay-card-item--selected')
+  end
+
   def filters
     find('#plp-filters-accordion')
   end
 
   it 'correctly filters Products' do
     visit spree.nested_taxons_path(taxon)
+
+    expect(page).not_to have_content('CLEAR ALL')
 
     search_by 'shirt'
     expect(page).to have_content 'First shirt'
@@ -65,6 +74,21 @@ describe 'Products filtering', :js do
     expect(page).to have_content 'First shirt'
     expect(page).to have_selected_filter_with(value: 'M')
     expect(page).to have_selected_filter_with(value: 'S')
+
+    expect_working_filters_clearing
+
+    click_on_filter 'Brand', value: 'Alpha'
+    expect(page).not_to have_content 'First shirt'
+    expect(page).to have_content 'Second shirt'
+    expect(page).to have_selected_filter_with(value: 'ALPHA')
+
+    expect_working_filters_clearing
+
+    click_on_filter 'Price', value: '$50 - $100'
+    expect(page).to have_content 'No results'
+
+    expect_working_filters_clearing
+
     expect(current_path).to eq spree.products_path
   end
 
