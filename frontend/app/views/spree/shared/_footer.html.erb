@@ -56,13 +56,7 @@
                 <%= link_to parent.name, spree_localized_item_link(parent) %>
               </div>
               <% parent.children.each do |child| %>
-                <% if child.code == 'category' && child.item_type == 'Container' %>
-                  <% if child.children.present? %>
-                    <% child.children.each do |category_link| %>
-                      <div class="pt-2"><%= link_to category_link.name, spree_localized_item_link(category_link) %></div>
-                    <% end %>
-                  <% end %>
-                <% end %>
+                <div class="pt-2"><%= link_to child.name, spree_localized_item_link(child) %></div>
               <% end %>
             </div>
           <% end %>
