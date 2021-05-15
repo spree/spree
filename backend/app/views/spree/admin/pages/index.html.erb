@@ -1,0 +1,49 @@
+<% content_for :page_title do %>
+  <%= Spree.t('admin.pages.pages') %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <%= button_link_to Spree.t('admin.pages.add_new_page'), new_object_url, { class: "btn-success", icon: 'add.svg', id: 'new_page' } %>
+<% end if can?(:create, Spree::Page) %>
+
+<% if @pages.any? %>
+<div class="table-responsive">
+  <table class="table" id="pagesTable">
+    <thead>
+      <th scope="col"><%= Spree.t(:title) %></th>
+      <th scope="col"><%= Spree.t('admin.pages.kind') %></th>
+      <th scope="col"><%= Spree.t('store') %></th>
+      <th scope="col"><%= Spree.t('language') %></th>
+      <th scope="col"></th>
+    </thead>
+    <tbody>
+      <% @pages.each do |page| %>
+        <tr>
+          <td>
+            <%= page.title %>
+          </td>
+          <td>
+            <%= page.kind %>
+          </td>
+          <td>
+            <%= page.store.unique_name %>
+          </td>
+          <td>
+            <%= locale_full_name(page.locale) %>
+          </td>
+          <td class="actions" data-hook="admin_pages_index_row_actions">
+             <span class="d-flex justify-content-end">
+             <%= link_to_edit(page, no_text: true) %>
+             <%= link_to_delete page, no_text: true, url: spree.admin_page_path(page) if can?(:destroy, page) %>
+            </span>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+<% else %>
+  <div class="alert alert-info no-objects-found">
+    <%= Spree.t('admin.page.you_have_no_pages') %>
+  </div>
+<% end %>

@@ -1,0 +1,54 @@
+<% content_for :page_title do %>
+  <%= link_to Spree.t('admin.navigation.all_pages'), spree.admin_pages_path %> / <%= @page.title %>
+<% end %>
+
+<div class="row">
+    <div class="col-12">
+      <div class="card mb-3">
+        <div class="card-header">
+          <h5 class="mb-0"><%= Spree.t('settings') %></h5>
+        </div>
+        <div class="card-body">
+          <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @page } %>
+          <%= form_for [:admin, @page] do |f| %>
+            <%= render partial: 'form', locals: { f: f } %>
+            <div class="d-flex ">
+              <%= render partial: 'spree/admin/shared/edit_resource_links' %>
+            </div>
+          <% end %>
+        </div>
+    </div>
+  </div>
+</div>
+
+<div id="pageSectionsArea">
+  <div class="row mt-2">
+    <div class="col-12">
+      <div class="card mb-3">
+        <div class="card-header">
+          <div class="row pb-0">
+            <div class="col d-flex">
+             <h5 class="mb-0 align-self-center"> PAGE<%#= Spree.t('admin.navigation.menu_items', menu_name: @page.title) %></h5>
+            </div>
+            <div class="col d-flex justify-content-end">
+              <%= button_link_to 'LL', spree.new_admin_page_section_path(@page), icon: 'add.svg', class: 'no-wrap btn btn-success align-self-center' %>
+            </div>
+          </div>
+        </div>
+
+        <% if @page.sections.any? %>
+          <% @page.sections.each do |section| %>
+            <div>
+              <%= section.content %>
+            </div>
+          <% end %>
+        <% else %>
+          <div class="alert alert-info no-objects-found">
+            <%#= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::OptionType)) %>,
+            <%#= link_to Spree.t(:add_one), new_object_url if can?(:create, Spree::OptionType) %>!
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
