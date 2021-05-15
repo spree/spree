@@ -11,7 +11,7 @@ module Spree
     after_save :touch_ancestors_and_menu
     after_touch :touch_ancestors_and_menu
 
-    ITEM_TYPE = %w[Link Promotion Container]
+    ITEM_TYPE = %w[Link Container]
 
     LINKED_RESOURCE_TYPE = ['URL']
     STATIC_RESOURCE_TYPE = ['Home Page']

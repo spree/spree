@@ -41,6 +41,10 @@
     @include media-breakpoint-up(xl) {
       font-size: font-px-to-rem(16px);
       font-weight: 500;
+
+      a {
+        font-size: font-px-to-rem(16px) !important;
+      }
     }
   }
   &-info {
