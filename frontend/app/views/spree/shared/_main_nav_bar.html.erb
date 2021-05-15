@@ -10,7 +10,12 @@
             <% dropdown_toggle_class = has_dropdown ? "dropdown-toggle" : "" %>
             <% data_attr = has_dropdown ? { toggle: "dropdown" } : {} %>
             <% aria_attr = has_dropdown ? { haspopup: true, expanded: false } : {} %>
-            <%= link_to(parent.name, spree_localized_item_link(parent), class: "nav-link main-nav-bar-item main-nav-bar-category-button #{dropdown_toggle_class}", data: data_attr, aria: aria_attr) %>
+            <% if parent.item_type == "Container" %>
+              <%= content_tag :span, parent.name, class: "nav-link main-nav-bar-item main-nav-bar-category-button #{dropdown_toggle_class}", data: data_attr, aria: aria_attr %>
+            <% else %>
+               <%= link_to(parent.name, spree_localized_item_link(parent), class: "nav-link main-nav-bar-item main-nav-bar-category-button #{dropdown_toggle_class}", data: data_attr, aria: aria_attr) %>
+            <% end %>
+
              <% if has_dropdown %>
               <div class="dropdown-menu w-100 shadow main-nav-bar-category-dropdown">
                 <div class="container p-0 d-flex justify-content-xl-around mx-auto">
