@@ -533,6 +533,9 @@ en:
     adjustment_total: Adjustment Total
     adjustments: Adjustments
     admin:
+      cms:
+        page_sections: '%{page_name} Sections'
+        page_sections_info: 'below represents your page area, add sections and drag them into position'
       tab:
         configuration: Configuration
         content: Content

@@ -8,7 +8,7 @@ class CreateSpreeCmsSections < ActiveRecord::Migration[6.0]
       t.column :width, :string
       t.column :kind, :string
       t.column :position, :integer
-      t.column :linked_resource_type, :string, default: 'None'
+      t.column :linked_resource_type, :string, default: 'Text Block'
       t.column :linked_resource_id, :integer
 
       t.belongs_to :cms_page

@@ -1,0 +1,23 @@
+<% @cms_section.build_icon unless @cms_section.icon %>
+  <%= f.fields_for :icon do |icon_field| %>
+    <%= f.field_container :icon_attachment do %>
+      <% unless @cms_section.icon.new_record? %>
+        <div id="menuItemImgContainer" class="my-3 ">
+          <%= image_tag(main_app.url_for(@cms_section.icon.attachment)) %>
+          <%#= link_to Spree.t(:remove_image), remove_icon_admin_menu_menu_item_path(@cms_page, @cms_section), method: :delete %>
+        </div>
+      <% end %>
+    <div id="<% unless @cms_section.icon.new_record? %>MenuItemImageButton<% end %>">
+      <%= icon_field.file_field :attachment %>
+    </div>
+  <% end %>
+
+  <%= f.field_container :icon_alt do %>
+    <% unless @cms_section.icon.new_record? %>
+      <div class="form-group my-3">
+        <%= icon_field.label :alt, Spree.t('admin.navigation.image_alt_text') %>
+        <%= icon_field.text_field :alt, class: 'form-control' %>
+      </div>
+    <% end %>
+  <% end %>
+<% end %>

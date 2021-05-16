@@ -27,6 +27,7 @@ module Spree
 
       def load_data
         @cms_section_widths = Spree::CmsSection::SECTION_WIDTHS
+        @cms_section_types = Spree::CmsSection::SECTION_TYPES
       end
     end
   end

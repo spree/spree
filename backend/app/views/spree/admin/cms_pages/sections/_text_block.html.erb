@@ -1,0 +1,12 @@
+<div class="<%= width %> mb-4">
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title"><%= section.name %></h5>
+        <% if section.content.present? %>
+          <span class="small">
+            <%= section.content.html_safe %>
+          </span>
+        <% end %>
+    </div>
+  </div>
+</div>
