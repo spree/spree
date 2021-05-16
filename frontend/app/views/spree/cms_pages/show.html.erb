@@ -1,0 +1,9 @@
+<div class="container">
+  <% if @cms_page.content.present? %>
+    <div class="row my-5">
+      <div class="col-12">
+        <%= @cms_page.content.html_safe %>
+      </div>
+    </div>
+  <% end %>
+</div>

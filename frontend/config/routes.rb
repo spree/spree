@@ -32,5 +32,7 @@ Spree::Core::Engine.add_routes do
 
     get '/api_tokens', to: 'store#api_tokens'
     post '/ensure_cart', to: 'store#ensure_cart'
+
+    get '/pages/:id', to: 'cms_pages#show', as: :page
   end
 end

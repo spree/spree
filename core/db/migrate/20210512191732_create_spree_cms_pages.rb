@@ -3,10 +3,11 @@ class CreateSpreeCmsPages < ActiveRecord::Migration[6.0]
     create_table :spree_cms_pages do |t|
       t.column :title, :string, null: false
       t.column :meta_title, :string
+      t.column :content, :text
       t.column :meta_description, :text
       t.column :visible, :boolean, default: false
       t.column :slug, :string
-      t.column :kind, :string
+      t.column :kind, :string, default: 'Standard Page'
       t.column :locale, :string
 
       t.belongs_to :store
