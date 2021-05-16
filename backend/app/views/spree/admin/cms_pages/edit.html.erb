@@ -1,5 +1,5 @@
 <% content_for :page_title do %>
-  <%= link_to Spree.t('admin.navigation.all_pages'), spree.admin_pages_path %> / <%= @page.title %>
+  <%= link_to Spree.t('admin.navigation.all_pages'), spree.admin_cms_pages_path %> / <%= @cms_page.title %>
 <% end %>
 
 <div class="row">
@@ -9,8 +9,8 @@
           <h5 class="mb-0"><%= Spree.t('settings') %></h5>
         </div>
         <div class="card-body">
-          <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @page } %>
-          <%= form_for [:admin, @page] do |f| %>
+          <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @cms_page } %>
+          <%= form_for [:admin, @cms_page] do |f| %>
             <%= render partial: 'form', locals: { f: f } %>
             <div class="d-flex ">
               <%= render partial: 'spree/admin/shared/edit_resource_links' %>
@@ -31,21 +31,21 @@
              <h5 class="mb-0 align-self-center"> PAGE<%#= Spree.t('admin.navigation.menu_items', menu_name: @page.title) %></h5>
             </div>
             <div class="col d-flex justify-content-end">
-              <%= button_link_to 'LL', spree.new_admin_page_section_path(@page), icon: 'add.svg', class: 'no-wrap btn btn-success align-self-center' %>
+              <%= button_link_to 'LL', spree.new_admin_cms_page_cms_section_path(@cms_page), icon: 'add.svg', class: 'no-wrap btn btn-success align-self-center' %>
             </div>
           </div>
         </div>
 
-        <% if @page.sections.any? %>
-          <% @page.sections.each do |section| %>
+        <% if @cms_page.cms_sections.any? %>
+          <% @cms_page.cms_sections.each do |section| %>
             <div>
               <%= section.content %>
             </div>
           <% end %>
         <% else %>
           <div class="alert alert-info no-objects-found">
-            <%#= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::OptionType)) %>,
-            <%#= link_to Spree.t(:add_one), new_object_url if can?(:create, Spree::OptionType) %>!
+            <%#= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::CmsSection)) %>
+            <%#= link_to Spree.t(:add_one), new_object_url if can?(:create, Spree::CmsSection) %>
           </div>
         <% end %>
       </div>

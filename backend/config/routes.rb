@@ -188,8 +188,8 @@ Spree::Core::Engine.add_routes do
       resources :store_credits
     end
 
-    resources :pages do
-      resources :sections, except: :index
+    resources :cms_pages do
+      resources :cms_sections, except: :index
     end
 
     resources :menus do

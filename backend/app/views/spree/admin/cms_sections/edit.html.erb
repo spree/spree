@@ -1,0 +1,10 @@
+<% content_for :page_title do %>
+  <%= link_to @cms_page.title, spree.edit_admin_cms_page_path(@cms_page) %> / <%= @cms_section.name %>
+<% end %>
+
+<%= render partial: 'spree/admin/shared/error_messages', locals: { target: @cms_section } %>
+
+<%= form_for [:admin, @cms_page, @cms_section] do |f| %>
+  <%= render partial: 'form', locals: { f: f } %>
+  <%= render partial: 'spree/admin/shared/edit_resource_links' %>
+<% end %>

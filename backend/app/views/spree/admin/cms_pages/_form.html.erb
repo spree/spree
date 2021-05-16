@@ -32,14 +32,14 @@
       <%= f.error_message_on :kind %>
     <% end %>
 
-    <%= f.field_container :page_stores, class: ['form-group'] do %>
-      <%= label_tag :page_stores, Spree.t(:stores) %>
-      <%= collection_select(:page, :store_id, @stores, :id, :unique_name, {}, { class: 'select2' }) %>
-      <%= f.error_message_on :page_stores %>
+    <%= f.field_container :cms_page_stores, class: ['form-group'] do %>
+      <%= label_tag :cms_page_stores, Spree.t(:stores) %>
+      <%= collection_select(:cms_page, :store_id, @stores, :id, :unique_name, {}, { class: 'select2' }) %>
+      <%= f.error_message_on :cms_page_stores %>
     <% end %>
     <%= f.field_container :locale, class: ['form-group'] do %>
       <%= f.label :locale %>
-      <%= f.select :locale, options_from_collection_for_select(all_locales_options, :last, :first, @page.locale || I18n.locale), {}, { class: 'select2' } %>
+      <%= f.select :locale, options_from_collection_for_select(all_locales_options, :last, :first, @cms_page.locale || I18n.locale), {}, { class: 'select2' } %>
       <%= f.error_message_on :default_locale %>
     <% end %>
 
