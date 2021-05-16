@@ -25,6 +25,10 @@ module Spree
 
       private
 
+      def parent
+        @cms_page = CmsPage.friendly.find(params[:cms_page_id])
+      end
+
       def load_data
         @cms_section_widths = Spree::CmsSection::SECTION_WIDTHS
         @cms_section_types = Spree::CmsSection::SECTION_TYPES

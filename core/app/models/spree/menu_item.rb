@@ -15,7 +15,7 @@ module Spree
 
     LINKED_RESOURCE_TYPE = ['URL']
     STATIC_RESOURCE_TYPE = ['Home Page']
-    DYNAMIC_RESOURCE_TYPE = ['Spree::Product', 'Spree::Taxon']
+    DYNAMIC_RESOURCE_TYPE = ['Spree::Product', 'Spree::Taxon', 'Spree::CmsPage']
 
     LINKED_RESOURCE_TYPE.unshift(*STATIC_RESOURCE_TYPE)
     LINKED_RESOURCE_TYPE.push(*DYNAMIC_RESOURCE_TYPE)

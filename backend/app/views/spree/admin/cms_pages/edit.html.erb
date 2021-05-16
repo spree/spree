@@ -2,11 +2,32 @@
   <%= link_to Spree.t('admin.navigation.all_pages'), spree.admin_cms_pages_path %> / <%= @cms_page.title %>
 <% end %>
 
-<%= render partial: 'spree/admin/shared/error_messages', locals: { target: @cms_page } %>
-<%= form_for [:admin, @cms_page] do |f| %>
-  <%= render partial: 'form', locals: { f: f } %>
-  <div class="d-flex ">
-    <%= render partial: 'spree/admin/shared/edit_resource_links' %>
+<% content_for :page_actions do %>
+  <%= page_preview_link(@cms_page) %>
+<% end %>
+
+<% if @cms_page.kind == 'Standard Page' %>
+  <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @cms_page } %>
+  <%= form_for [:admin, @cms_page] do |f| %>
+    <%= render partial: 'form', locals: { f: f } %>
+    <div class="d-flex ">
+      <%= render partial: 'spree/admin/shared/edit_resource_links' %>
+    </div>
+  <% end %>
+<% else %>
+  <div class="card">
+    <div class="card-header">
+      <h5 class="mb-0"><%= Spree.t('admin.cms.feature_page_settings') %></h5>
+    </div>
+    <div class="card-body">
+      <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @cms_page } %>
+      <%= form_for [:admin, @cms_page] do |f| %>
+        <%= render partial: 'feature_form', locals: { f: f } %>
+        <div class="d-flex ">
+          <%= render partial: 'spree/admin/shared/edit_resource_links' %>
+        </div>
+      <% end %>
+    </div>
   </div>
 <% end %>
 

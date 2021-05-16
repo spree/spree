@@ -200,6 +200,16 @@ module Spree
         )
       end
 
+      def page_preview_link(page)
+        return unless frontend_available?
+
+        button_link_to(
+          Spree.t(:preview_page),
+          spree.page_url(page),
+          class: 'btn-outline-secondary', icon: 'view.svg', id: 'admin_preview_product', target: :blank
+        )
+      end
+
       def taxon_preview_link(taxon)
         return unless frontend_available?
 

@@ -7,6 +7,10 @@ module Spree
 
     belongs_to :store, touch: true
     has_many :cms_sections
+    has_many :menu_items, as: :linked_resource
+
+    after_save :sync_menu_item_paths
+    after_commit :sync_menu_item_paths
 
     before_save :create_slug
 
@@ -21,6 +25,12 @@ module Spree
     end
 
     private
+
+    def sync_menu_item_paths
+      return unless saved_change_to_slug?
+
+      Spree::MenuItem.refresh_paths(self)
+    end
 
     def create_slug
       self.slug = if slug.blank?
