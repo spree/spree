@@ -8,7 +8,7 @@ module Spree
 
     with_options inverse_of: :product_properties do
       belongs_to :product, touch: true, class_name: 'Spree::Product'
-      belongs_to :property, class_name: 'Spree::Property'
+      belongs_to :property, touch: true, class_name: 'Spree::Property'
     end
 
     validates :property, presence: true

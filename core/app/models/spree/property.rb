@@ -20,7 +20,7 @@ module Spree
     self.whitelisted_ransackable_attributes = ['presentation']
 
     def uniq_values(product_properties_scope: nil)
-      Rails.cache.fetch("property-uniq-values/#{cache_key_with_version}") do
+      with_uniq_values_cache_key(product_properties_scope) do
         properties = product_properties
         properties = properties.where(id: product_properties_scope) if product_properties_scope.present?
         properties.where.not(value: [nil, '']).pluck(:filter_param, :value).uniq
@@ -31,6 +31,13 @@ module Spree
 
     def touch_all_products
       products.update_all(updated_at: Time.current)
+    end
+
+    def with_uniq_values_cache_key(product_properties_scope, &block)
+      return block.call if product_properties_scope.present?
+
+      uniq_values_cache_key = ['property-uniq-values', cache_key_with_version]
+      Rails.cache.fetch(uniq_values_cache_key) { block.call }
     end
   end
 end
