@@ -294,7 +294,10 @@ module Spree
     end
 
     def available_option_types_cache_key
-      @available_option_types_cache_key ||= Spree::OptionType.filterable.maximum(:updated_at)&.utc&.to_i
+      @available_option_types_cache_key ||= [
+        Spree::OptionType.filterable.maximum(:updated_at).to_i,
+        products_for_filters_cache_key
+      ].join('/')
     end
 
     def available_option_types
@@ -305,7 +308,10 @@ module Spree
     end
 
     def available_properties_cache_key
-      @available_properties_cache_key ||= Spree::Property.filterable.maximum(:updated_at)&.utc&.to_i
+      @available_properties_cache_key ||= [
+        Spree::Property.filterable.maximum(:updated_at).to_i,
+        products_for_filters_cache_key
+      ].join('/')
     end
 
     def available_properties
@@ -367,6 +373,14 @@ module Spree
 
     def products_for_filters
       Product.for_filters(current_currency, @taxon)
+    end
+
+    def products_for_filters_cache_key
+      [
+        products_for_filters.maximum(:updated_at).to_i,
+        current_currency,
+        @taxon&.permalink
+      ].compact.join('/')
     end
   end
 end
