@@ -2,10 +2,16 @@ require 'spec_helper'
 
 describe Spree::ProductProperty, type: :model do
   context 'touching' do
+    let(:product_property) { create(:product_property) }
+
     it 'updates product' do
-      pp = create(:product_property)
-      expect(pp.product).to receive(:touch)
-      pp.touch
+      expect(product_property.product).to receive(:touch)
+      product_property.touch
+    end
+
+    it 'updates property' do
+      expect(product_property.property).to receive(:touch)
+      product_property.touch
     end
   end
 
