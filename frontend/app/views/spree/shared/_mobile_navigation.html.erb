@@ -39,7 +39,7 @@
                 </li>
 
                 <% parent.children.each do |child| %>
-                  <% if child.code == 'category' && child.item_type == 'Container' %>
+                  <% if child.container? && child.code?('category') %>
                   <li class="text-muted mt-2"><%= child.name %></li>
                     <% if child.children.present? %>
                       <% child.children.each do |category_link| %>

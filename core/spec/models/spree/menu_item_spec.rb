@@ -36,7 +36,7 @@ describe Spree::MenuItem, type: :model do
     end
   end
 
-  describe '.reset_link_attributes from URL to Taxon' do
+  describe '#reset_link_attributes from URL to Taxon' do
     let(:i_a) do
       create(:menu_item, name: 'Home', item_type: 'Link', menu: menu,
                          parent: menu.root, linked_resource_type: 'URL', destination: 'http://somewhere.com', new_window: true, linked_resource_id: 5)
@@ -68,7 +68,32 @@ describe Spree::MenuItem, type: :model do
     end
   end
 
-  describe '.reset_link_attributes from URL to Home Page' do
+  describe '#code?' do
+    let(:coded_item){ create(:menu_item, name: 'Link 1', item_type: 'Container', menu: menu, code: 'some-code') }
+    let(:not_coded_item) { create(:menu_item, name: 'Home', item_type: 'Link', menu: menu) }
+
+    it 'returns true when the menu item has a matching code' do
+      expect(coded_item.code?('some-code')).to be true
+    end
+
+    it 'returns false when the menu item has a code but the code does not match' do
+      expect(coded_item.code?('Some-code')).to be false
+    end
+
+    it 'returns false when the menu item has no code' do
+      expect(not_coded_item.code?('some-code')).to be false
+    end
+
+    it 'returns true if no args are passed, and the item has a code' do
+      expect(coded_item.code?).to be true
+    end
+
+    it 'returns false if no args are passed, and the item has no code' do
+      expect(not_coded_item.code?).to be false
+    end
+  end
+
+  describe '#reset_link_attributes from URL to Home Page' do
     let(:i_b) do
       create(:menu_item, name: 'Home', item_type: 'Link', menu: menu,
                          parent: menu.root, linked_resource_type: 'URL', destination: 'http://somewhere.com', new_window: true, linked_resource_id: 5)
@@ -83,7 +108,7 @@ describe Spree::MenuItem, type: :model do
     end
   end
 
-  describe '.reset_link_attributes from Link to Container' do
+  describe '#reset_link_attributes from Link to Container' do
     let(:i_c) do
       create(:menu_item, name: 'Home', item_type: 'Link', menu: menu,
                          parent: menu.root, linked_resource_type: 'URL', destination: 'http://somewhere.com', new_window: true, linked_resource_id: 5)
@@ -141,7 +166,7 @@ describe Spree::MenuItem, type: :model do
     end
   end
 
-  describe '.paremeterize_code' do
+  describe '#paremeterize_code' do
     let(:item) { create(:menu_item, name: 'URL', item_type: 'Link', menu: menu, parent: menu.root, linked_resource_type: 'URL', code: 'My Fantastic Code') }
 
     it 'paramatizes a code when one is given' do
@@ -149,7 +174,7 @@ describe Spree::MenuItem, type: :model do
     end
   end
 
-  describe '.ensure_item_belongs_to_root' do
+  describe '#ensure_item_belongs_to_root' do
     let(:item_x) { create(:menu_item, name: 'URL', item_type: 'Link', menu: menu, linked_resource_type: 'URL', code: 'My Fantastic Code') }
 
     it 'Sets new items parent_id to root.id' do

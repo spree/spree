@@ -36,6 +36,14 @@ module Spree
       item_type == 'Container'
     end
 
+    def code?(item_code = nil)
+      if item_code
+        code == item_code
+      else
+        code.present?
+      end
+    end
+
     private
 
     def build_path

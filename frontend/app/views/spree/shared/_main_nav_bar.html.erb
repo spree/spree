@@ -1,7 +1,4 @@
 <% if spree_menu.present? %>
-  <% category = 'category' %>
-  <% promo = 'promo' %>
-
   <div class="h-100" role="navigation" aria-label="<%= Spree.t('nav_bar.desktop') %>">
     <ul class="nav h-100 main-nav-bar">
       <% spree_menu.children.each do |parent| %>
@@ -23,7 +20,7 @@
                     <% parent.children.each do |child| %>
 
                       <!-- Categories -->
-                      <% if child.container? && child.code == category %>
+                      <% if child.container? && child.code?('category') %>
                         <div class="category-links my-4 mx-2">
                           <div class="category-links-header text-uppercase">
                             <%= child.name %>
@@ -41,7 +38,7 @@
                       <% end %>
 
                       <!-- Promos -->
-                      <% if child.container? && child.code == promo %>
+                      <% if child.container? && child.code?('promo') %>
                         <% if child.children.present? %>
                           <% child.children.each do |promo_banner| %>
                             <%= spree_nav_link_tag(promo_banner, { class: "dropdown-item" }) do %>
