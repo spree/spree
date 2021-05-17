@@ -55,6 +55,19 @@ describe Spree::MenuItem, type: :model do
     end
   end
 
+  describe '#container?' do
+    let(:container_item){ create(:menu_item, name: 'Link 1', item_type: 'Container', menu: menu) }
+    let(:link_item) { create(:menu_item, name: 'Home', item_type: 'Link', menu: menu) }
+
+    it 'returns true when the menu item is of type container' do
+      expect(container_item.container?).to be true
+    end
+
+    it 'returns false when the menu item is of type Link' do
+      expect(link_item.container?).to be false
+    end
+  end
+
   describe '.reset_link_attributes from URL to Home Page' do
     let(:i_b) do
       create(:menu_item, name: 'Home', item_type: 'Link', menu: menu,

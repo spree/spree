@@ -20,7 +20,7 @@
     <ul class="list-unstyled position-relative h-100 mobile-navigation-list">
       <% spree_menu.children.each do |parent| %>
           <li class="d-flex justify-content-between align-items-center mobile-navigation-list-item">
-          <% if parent.item_type == "Container" %>
+          <% if parent.container? %>
             <%= content_tag :span, parent.name %>
           <% else %>
             <%= link_to parent.name, spree_localized_item_link(parent), class: 'w-75' %>

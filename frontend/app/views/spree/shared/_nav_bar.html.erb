@@ -1,4 +1,4 @@
-<ul id="nav-bar" class="nav align-items-center d-flex flex-nowrap justify-content-end navbar-right" data-turbolinks-permanent>
+<ul id="nav-bar" class="nav align-items-center d-flex flex-nowrap justify-content-end navbar-right">
   <li>
     <div class="navbar-right-search-menu">
       <button type="button" class="navbar-right-dropdown-toggle search-icons" aria-label="<%= Spree.t('nav_bar.show_search') %>">
@@ -28,7 +28,7 @@
       </div>
     </li>
   <% end %>
-  <li id="link-to-cart">
+  <li id="link-to-cart" data-turbo-permanent data-turbolinks-permanent>
     <%= render 'spree/shared/cart', class: 'd-inline-block cart-icon', size: 36, item_count: 0 %>
   </li>
   <%= render partial: 'spree/shared/internationalization_options' %>

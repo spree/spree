@@ -32,6 +32,10 @@ module Spree
       where(linked_resource_type: resorce.class.name, linked_resource_id: resorce.id).each(&:save!)
     end
 
+    def container?
+      item_type == 'Container'
+    end
+
     private
 
     def build_path

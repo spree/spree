@@ -82,6 +82,24 @@ module Spree
         (defined?(should_render_currency_dropdown?) && should_render_currency_dropdown?)
     end
 
+    def spree_nav_link_tag(item, opts = {})
+      if item.new_window
+        target = opts[:target] || '_blank'
+        rel = opts[:rel] || 'noopener noreferrer'
+      end
+
+      if block_given?
+        link_to spree_localized_item_link(item), target: target, rel: rel, class: opts[:class],
+                                                          id: opts[:id], data: opts[:data], aria: opts[:aria] do
+                                                            yield
+                                                          end
+
+      else
+        link_to item.name, spree_localized_item_link(item), target: target, rel: rel, class: opts[:class],
+                                                          id: opts[:id], data: opts[:data], aria: opts[:aria]
+      end
+    end
+
     private
 
     def spree_navigation_data_cache_key

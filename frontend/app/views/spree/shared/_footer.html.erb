@@ -53,19 +53,15 @@
           <% spree_menu('footer').children.each do |parent| %>
             <div class="col-3">
               <div class="footer-spree-label">
-                <% if parent.item_type == 'Container' %>
+                <% if parent.container? %>
                   <%= parent.name %>
                 <% else %>
-                  <%= link_to parent.name, spree_localized_item_link(parent) %>
+                  <%= spree_nav_link_tag(parent) %>
                 <% end %>
               </div>
               <% parent.children.each do |child| %>
                 <div class="pt-2">
-                  <% if child.new_window %>
-                    <%= link_to child.name, spree_localized_item_link(child), target: '_blank', rel: 'noopener noreferrer' %>
-                  <% else %>
-                    <%= link_to child.name, spree_localized_item_link(child) %>
-                  <% end %>
+                  <%= spree_nav_link_tag(child) %>
                 </div>
               <% end %>
             </div>
