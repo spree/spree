@@ -58,7 +58,7 @@ module Spree
       context 'when link is passed with setting to open in a new window, and passed custom attributes' do
         let(:menu_item) { create(:menu_item, menu: menu, destination: 'https://my-website.com', new_window: true) }
 
-        it 'returns the link destination with target="_blank" rel="noopener noreferrer"' do
+        it 'returns the link destination with a full set of cutstom attributes' do
           expect(spree_nav_link_tag(menu_item, { class: 'custom-class', id: 'custonId', target: '_not_so_blank', rel: 'related', data: 'custom-data', aria: 'custom-aria' })).
             to eq('<a target="_not_so_blank" rel="related" class="custom-class" id="custonId" data="custom-data" aria="custom-aria" href="https://my-website.com">Link To Somewhere</a>')
         end
