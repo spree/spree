@@ -85,10 +85,9 @@ describe 'Products filtering', :js do
     expect(page).to have_selected_filter_with(value: 'WILSON')
 
     click_on_filter 'Brand', value: 'Zeta'
-    expect(page).to have_content 'First shirt'
-    expect(page).to have_content 'Second shirt'
+    expect(page).to have_content 'No results'
     expect(page).to have_selected_filter_with(value: 'WILSON')
-    expect(page).to have_selected_filter_with(value: 'ALPHA')
+    expect(page).to have_selected_filter_with(value: 'ZETA')
 
     click_on_filter 'Brand', value: 'Alpha'
     expect(page).not_to have_content 'First shirt'
