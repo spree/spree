@@ -3,9 +3,9 @@ Spree::Core::Engine.add_routes do
     root to: 'home#index'
 
     resources :products, only: [:index, :show]
-    get '/products/:id/related', to: 'products#related'
+    get "/#{Spree::Config[:storefront_product_path]}/:id/related", to: 'products#related'
     # route globbing for pretty nested taxon and product paths
-    get '/t/*id', to: 'taxons#show', as: :nested_taxons
+    get "/#{Spree::Config[:storefront_taxon_path]}/*id", to: 'taxons#show', as: :nested_taxons
     get '/product_carousel/:id', to: 'taxons#product_carousel'
 
     # non-restful checkout stuff

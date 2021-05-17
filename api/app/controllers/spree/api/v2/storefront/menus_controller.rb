@@ -13,7 +13,7 @@ module Spree
           end
 
           def resource
-            scope.find_by(unique_code: params[:unique_code])
+            scope.find_by(location: params[:location])
           end
 
           def resource_serializer
@@ -30,10 +30,6 @@ module Spree
 
           def model_class
             Spree::Menu
-          end
-
-          def scope
-            super.by_store(current_store)
           end
         end
       end

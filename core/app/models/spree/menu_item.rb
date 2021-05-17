@@ -6,7 +6,7 @@ module Spree
     belongs_to :linked_resource, polymorphic: true
 
     before_create :ensure_item_belongs_to_root
-    before_save :reset_link_attributes, :build_path, :paremeterize_code
+    before_save :reset_link_attributes, :paremeterize_code
 
     after_save :touch_ancestors_and_menu
     after_touch :touch_ancestors_and_menu
@@ -28,10 +28,6 @@ module Spree
     has_one :icon, as: :viewable, dependent: :destroy, class_name: 'Spree::Icon'
     accepts_nested_attributes_for :icon, reject_if: :all_blank
 
-    def self.refresh_paths(resorce)
-      where(linked_resource_type: resorce.class.name, linked_resource_id: resorce.id).each(&:save!)
-    end
-
     def container?
       item_type == 'Container'
     end
@@ -44,31 +40,28 @@ module Spree
       end
     end
 
-    private
-
-    def build_path
+    def link
       case linked_resource_type
       when 'Spree::Taxon'
-        self.destination = if linked_resource.nil?
-                             nil
-                           elsif frontend_available?
-                             Spree::Core::Engine.routes.url_helpers.nested_taxons_path(linked_resource.permalink)
-                           else
-                             "/#{Spree::Config[:storefront_taxon_path]}/#{linked_resource.permalink}"
-                           end
+        if linked_resource.nil?
+          nil
+        else
+          "/#{Spree::Config[:storefront_taxon_path]}/#{linked_resource.permalink}"
+        end
       when 'Spree::Product'
-        self.destination = if linked_resource.nil?
-                             nil
-                           elsif frontend_available?
-                             Spree::Core::Engine.routes.url_helpers.product_path(linked_resource)
-                           else
-                             "/#{Spree::Config[:storefront_product_path]}/#{linked_resource.slug}"
-                           end
-
+        if linked_resource.nil?
+          nil
+        else
+          "/#{Spree::Config[:storefront_product_path]}/#{linked_resource.slug}"
+        end
       when 'Home Page'
-        self.destination = '/'
+        '/'
+      when 'URL'
+        destination
       end
     end
+
+    private
 
     def reset_link_attributes
       if linked_resource_type_changed? || item_type == 'Container'
@@ -78,10 +71,6 @@ module Spree
 
         self.linked_resource_type = 'URL' if item_type == 'Container'
       end
-    end
-
-    def frontend_available?
-      Spree::Core::Engine.frontend_available?
     end
 
     def ensure_item_belongs_to_root

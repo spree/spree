@@ -96,9 +96,6 @@ module Spree
     after_save :reset_memoized_data
     after_commit :reset_memoized_data
 
-    after_save :sync_menu_item_paths
-    after_commit :sync_menu_item_paths
-
     before_validation :normalize_slug, on: :update
     before_validation :validate_master
 
@@ -328,12 +325,6 @@ module Spree
     end
 
     private
-
-    def sync_menu_item_paths
-      return unless saved_change_to_slug?
-
-      Spree::MenuItem.refresh_paths(self)
-    end
 
     def add_associations_from_prototype
       if prototype_id && prototype = Spree::Prototype.find_by(id: prototype_id)
