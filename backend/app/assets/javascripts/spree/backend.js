@@ -100,6 +100,7 @@ Spree.routes.stock_items_api = function (stockLocationId) {
 
 // API v2
 Spree.routes.countries_api_v2 = Spree.pathFor('api/v2/platform/countries')
+Spree.routes.section_reposition_api_v2 = Spree.pathFor('/api/v2/platform/cms_sections/reposition')
 Spree.routes.menus_api_v2 = Spree.pathFor('api/v2/platform/menus')
 Spree.routes.menus_items_api_v2 = Spree.pathFor('api/v2/platform/menu_items/reposition')
 Spree.routes.option_types_api_v2 = Spree.pathFor('api/v2/platform/option_types')
