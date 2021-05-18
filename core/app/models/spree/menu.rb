@@ -22,6 +22,9 @@ module Spree
 
     has_one :root, -> { where(parent_id: nil) }, class_name: 'Spree::MenuItem', dependent: :destroy
 
+    scope :by_store, ->(store) { where(store: store) }
+    scope :by_locale, ->(locale) { where(locale: locale) }
+
     self.whitelisted_ransackable_attributes = %w[name location locale store_id]
 
     MENU_LOCATIONS_PARAMETERIZED.each do |name|

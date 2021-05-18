@@ -604,6 +604,8 @@ en:
         public_details: Public Details
         unique_code_store_error: 'The code: %{code} is already used for Menu: %{menus}, make sure your unique code is unique within the store it is being used for.'
         subtitle: Subtitle
+        url_info: 'The URL field can link to an external website using <b>https://example.com</b>, link to an otherwise unreachable internal path using <b>/policies/privacy</b>,
+        launch an email client using <b>mailto:sales@example.com</b> or used to create a clickable phone number with <b>tel:123456789</b>'
         seach_for_a_product: Search for a Product
         seach_for_a_taxon: Search for a Taxon
         settings: Settings

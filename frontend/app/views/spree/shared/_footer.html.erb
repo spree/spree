@@ -1,5 +1,5 @@
 <% cache spree_menu_cache_key('footer') do %>
-  <footer id="footer" class="pt-2 mx-auto border-top footer-spree" data-turbolinks-permanent>
+  <footer id="footer" class="pt-2 mx-auto border-top footer-spree">
     <div class="container">
       <div class="row d-xl-flex justify-content-xl-around pb-xl-5">
         <div class="d-flex d-xl-block flex-xl-grow-0 col-xl-4">
@@ -53,16 +53,16 @@
           <% spree_menu('footer').children.each do |parent| %>
             <div class="col-3">
               <div class="footer-spree-label">
-                <%= link_to parent.name, spree_localized_item_link(parent) %>
+                <% if parent.container? %>
+                  <%= parent.name %>
+                <% else %>
+                  <%= spree_nav_link_tag(parent) %>
+                <% end %>
               </div>
               <% parent.children.each do |child| %>
-                <% if child.code == 'category' && child.item_type == 'Container' %>
-                  <% if child.children.present? %>
-                    <% child.children.each do |category_link| %>
-                      <div class="pt-2"><%= link_to category_link.name, spree_localized_item_link(category_link) %></div>
-                    <% end %>
-                  <% end %>
-                <% end %>
+                <div class="pt-2">
+                  <%= spree_nav_link_tag(child) %>
+                </div>
               <% end %>
             </div>
           <% end %>

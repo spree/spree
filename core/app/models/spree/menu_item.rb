@@ -11,7 +11,7 @@ module Spree
     after_save :touch_ancestors_and_menu
     after_touch :touch_ancestors_and_menu
 
-    ITEM_TYPE = %w[Link Promotion Container]
+    ITEM_TYPE = %w[Link Container]
 
     LINKED_RESOURCE_TYPE = ['URL']
     STATIC_RESOURCE_TYPE = ['Home Page']
@@ -30,6 +30,18 @@ module Spree
 
     def self.refresh_paths(resorce)
       where(linked_resource_type: resorce.class.name, linked_resource_id: resorce.id).each(&:save!)
+    end
+
+    def container?
+      item_type == 'Container'
+    end
+
+    def code?(item_code = nil)
+      if item_code
+        code == item_code
+      else
+        code.present?
+      end
     end
 
     private
