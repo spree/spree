@@ -535,7 +535,7 @@ en:
     admin:
       cms:
         page_sections: '%{page_name} Sections'
-        page_sections_info: 'below represents your page area, add sections and drag them into position'
+        page_sections_info: 'The area below represents your %{page_type} displayed in %{store}, add sections and drag them into position'
       tab:
         configuration: Configuration
         content: Content

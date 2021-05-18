@@ -21,6 +21,15 @@
               <%= f.error_message_on :kind %>
             <% end %>
             </div>
+
+            <div class="col-6">
+            <%= f.field_container :width, class: ['form-group'] do %>
+              <%= f.label :width, Spree.t('admin.navigation.width') %>
+              <%= f.select(:width, @cms_section_widths, {include_blank: false}, class: 'select2') %>
+              <%= f.error_message_on :width %>
+            <% end %>
+            </div>
+
           </div>
         </div>
       </div>

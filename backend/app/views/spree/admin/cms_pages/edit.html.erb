@@ -40,7 +40,7 @@
             <div class="row pb-0">
               <div class="col">
                <h5 class="mb-0 align-self-center"> <%= Spree.t('admin.cms.page_sections', page_name: @cms_page.title) %></h5>
-               <small><%= Spree.t('admin.cms.page_sections_info') %></small>
+               <small><%= Spree.t('admin.cms.page_sections_info', page_type: @cms_page.kind, store: @cms_page.store.unique_name ) %></small>
               </div>
               <div class="col d-flex justify-content-end">
                 <%= button_link_to Spree.t('admin.pages.add_new_section'), spree.new_admin_cms_page_cms_section_path(@cms_page), icon: 'add.svg', class: 'no-wrap btn btn-success align-self-center' %>
@@ -49,12 +49,10 @@
           </div>
 
           <% if @cms_page.cms_sections.any? %>
-            <div class="card-body p-0">
-              <div class="row pb-0 no-gutters">
-                <% @cms_page.cms_sections.each do |section| %>
-                  <%= build_page_section(section) %>
-                <% end %>
-              </div>
+            <div id="cmsPagesectionsArea" class="card-body row m-0 p-0 py-3 bg-light">
+              <% @cms_page.cms_sections.each do |section| %>
+                <%= build_page_section(section) %>
+              <% end %>
             </div>
           <% else %>
             <div class="alert alert-info no-objects-found">

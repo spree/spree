@@ -1,12 +1,15 @@
-<div class="<%= width %> mb-4">
-  <div class="card">
-    <div class="card-body">
-      <h5 class="card-title"><%= section.name %></h5>
-        <% if section.content.present? %>
-          <span class="small">
-            <%= section.content.html_safe %>
-          </span>
-        <% end %>
+<div class="<%= width %>" data-section-id="<%= section.id %>">
+  <div class="row m-0 p-0 py-3 mb-3 border bg-white">
+    <div class="col" style="width:30px; max-width: 70px; text-align: center;">
+      <span class="move-handle"><%= svg_icon(name: 'sort.svg', width: '20', height: '20') %></span>
+    </div>
+    <div class="col text-center">
+      <div>Name: <%= section.name %></div>
+      <div>Type: <%= section.kind %></div>
+    </div>
+    <div class="col actions" style="width:30px; max-width: 70px; text-align: center;">
+      <%= link_to_edit(section, no_text: true, url: spree.edit_admin_cms_page_cms_section_path(@cms_page, section)) %>
+      <%= link_to_delete(section, no_text: true, url: spree.admin_cms_page_cms_section_path(@cms_page, section)) if can?(:destroy, section) %>
     </div>
   </div>
 </div>
