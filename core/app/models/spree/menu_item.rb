@@ -43,7 +43,7 @@ module Spree
     def link
       case linked_resource_type
       when 'Spree::Taxon'
-        return if linked_resource.nil?
+        return '' if linked_resource.nil?
 
         if frontend_available?
           Spree::Core::Engine.routes.url_helpers.nested_taxons_path(linked_resource.permalink)
@@ -51,7 +51,7 @@ module Spree
           "/#{Spree::Config[:storefront_taxon_path]}/#{linked_resource.permalink}"
         end
       when 'Spree::Product'
-        return if linked_resource.nil?
+        return '' if linked_resource.nil?
 
         if frontend_available?
           Spree::Core::Engine.routes.url_helpers.product_path(linked_resource)
@@ -61,7 +61,7 @@ module Spree
       when 'Home Page'
         '/'
       when 'URL'
-        destination
+        destination || ''
       end
     end
 

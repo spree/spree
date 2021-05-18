@@ -107,10 +107,11 @@ describe Spree::MenuItem, type: :model do
   describe '#link' do
     let(:product) { create(:product) }
     let(:taxon) { create(:taxon) }
-    let(:item_url) { create(:menu_item, name: 'URL To Random Site', item_type: 'Link', menu: menu, parent: menu.root, linked_resource_type: 'URL', destination: 'https://some-other-website.com') }
-    let(:item_home) { create(:menu_item, name: 'Home', item_type: 'Link', menu: menu, parent: menu.root, linked_resource_type: 'Home Page') }
-    let(:item_product) { create(:menu_item, name: product.name, item_type: 'Link', menu: menu, parent: menu.root, linked_resource_type: 'Spree::Product') }
-    let(:item_taxon) { create(:menu_item, name: taxon.name, item_type: 'Link', menu: menu, parent: menu.root, linked_resource_type: 'Spree::Taxon') }
+    let(:item_url) { create(:menu_item, name: 'URL To Random Site', item_type: 'Link', menu: menu, linked_resource_type: 'URL', destination: 'https://some-other-website.com') }
+    let(:item_empty_url) { create(:menu_item, name: 'URL To Random Site', item_type: 'Link', menu: menu, linked_resource_type: 'URL', destination: nil) }
+    let(:item_home) { create(:menu_item, name: 'Home', item_type: 'Link', menu: menu, linked_resource_type: 'Home Page') }
+    let(:item_product) { create(:menu_item, name: product.name, item_type: 'Link', menu: menu, linked_resource_type: 'Spree::Product') }
+    let(:item_taxon) { create(:menu_item, name: taxon.name, item_type: 'Link', menu: menu, linked_resource_type: 'Spree::Taxon') }
 
     it 'returns correct taxon path' do
       item_taxon.update(linked_resource: taxon)
@@ -118,11 +119,11 @@ describe Spree::MenuItem, type: :model do
       expect(item_taxon.link).to eql "/t/#{taxon.permalink}"
     end
 
-    it 'returns nil for destination when taxon is removed' do
+    it 'returns empty string for destination when taxon is removed' do
       item_taxon.update(linked_resource: taxon)
       item_taxon.update(linked_resource_id: nil)
 
-      expect(item_taxon.destination).to be nil
+      expect(item_taxon.link).to eq ''
     end
 
     it 'returns correct product path' do
@@ -131,19 +132,23 @@ describe Spree::MenuItem, type: :model do
       expect(item_product.link).to eql "/products/#{product.slug}"
     end
 
-    it 'returns nil for destination when product is removed' do
+    it 'returns empty string for destination when product is removed' do
       item_product.update(linked_resource: product)
       item_product.update(linked_resource_id: nil)
 
-      expect(item_product.link).to be nil
+      expect(item_product.link).to eq ''
     end
 
     it 'returns correct root path' do
-      expect(item_home.link).to eql '/'
+      expect(item_home.link).to eq '/'
     end
 
     it 'returns correct URL path' do
       expect(item_url.link).to eql 'https://some-other-website.com'
+    end
+
+    it 'returns empty string when URL is nil' do
+      expect(item_empty_url.link).to eq ''
     end
   end
 

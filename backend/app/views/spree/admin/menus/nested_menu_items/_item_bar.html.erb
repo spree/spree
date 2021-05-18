@@ -6,7 +6,7 @@
   <div class="d-flex align-items-center overflow-hidden w-100">
     <div class="overflow-hidden">
       <%= item.name %>
-      <% if item.link %>
+      <% if item.link.present? %>
         <span class="badge badge-light badge-light-muted-text">-> <%= item.link %></span>
       <% end %>
       <small class="form-text text-muted mt-0">
