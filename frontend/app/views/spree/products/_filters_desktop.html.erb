@@ -3,7 +3,7 @@
     <%= clear_all_filters_link(permitted_params) if product_filters_present?(permitted_params) %>
 
     <div class="plp-filters-scroller">
-      <% @available_option_types.each do |option_type| %>
+      <% available_option_types.each do |option_type| %>
         <div class="w-100 card plp-filters-card">
           <% ot_downcase_name = option_type.filter_param %>
           <% option_type_name = ot_downcase_name.titleize %>
