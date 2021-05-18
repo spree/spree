@@ -1,5 +1,6 @@
 module Spree
   module FrontendHelper
+    include BaseHelper
     include InlineSvg::ActionView::Helpers
 
     def body_class
@@ -294,25 +295,31 @@ module Spree
     end
 
     def available_option_types_cache_key
-      @available_option_types_cache_key ||= Spree::OptionType.filterable.maximum(:updated_at)&.utc&.to_i
+      @available_option_types_cache_key ||= [
+        Spree::OptionType.filterable.maximum(:updated_at).to_f,
+        products_for_filters_cache_key
+      ].flatten.join('/')
     end
 
     def available_option_types
       @available_option_types ||= Rails.cache.fetch("available-option-types/#{available_option_types_cache_key}") do
-        Spree::OptionType.includes(:option_values).filterable.to_a
+        option_values = OptionValues::FindAvailable.new(products_scope: products_for_filters).execute
+        Filters::Options.new(option_values_scope: option_values).to_a
       end
-      @available_option_types
     end
 
     def available_properties_cache_key
-      @available_properties_cache_key ||= Spree::Property.filterable.maximum(:updated_at)&.utc&.to_i
+      @available_properties_cache_key ||= [
+        Spree::Property.filterable.maximum(:updated_at).to_f,
+        products_for_filters_cache_key
+      ].flatten.join('/')
     end
 
     def available_properties
       @available_properties ||= Rails.cache.fetch("available-properties/#{available_properties_cache_key}") do
-        Spree::Property.includes(:product_properties).filterable.to_a
+        product_properties = ProductProperties::FindAvailable.new(products_scope: products_for_filters).execute
+        Filters::Properties.new(product_properties_scope: product_properties).to_a
       end
-      @available_properties
     end
 
     def spree_social_link(service)
@@ -363,6 +370,18 @@ module Spree
       link_to spree.checkout_state_path(step), class: classes, method: :get do
         inline_svg_tag 'edit.svg'
       end
+    end
+
+    def products_for_filters
+      Product.for_filters(current_currency, @taxon)
+    end
+
+    def products_for_filters_cache_key
+      [
+        products_for_filters.maximum(:updated_at).to_f,
+        base_cache_key,
+        @taxon&.permalink
+      ].flatten.compact
     end
   end
 end

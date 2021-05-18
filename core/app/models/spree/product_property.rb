@@ -8,12 +8,15 @@ module Spree
 
     with_options inverse_of: :product_properties do
       belongs_to :product, touch: true, class_name: 'Spree::Product'
-      belongs_to :property, class_name: 'Spree::Property'
+      belongs_to :property, touch: true, class_name: 'Spree::Property'
     end
 
     validates :property, presence: true
 
     default_scope { order(:position) }
+
+    scope :filterable, -> { joins(:property).where(Property.table_name => { filterable: true }) }
+    scope :for_products, ->(products) { joins(:product).merge(products) }
 
     self.whitelisted_ransackable_attributes = ['value', 'filter_param']
     self.whitelisted_ransackable_associations = ['property']
