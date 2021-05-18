@@ -1,5 +1,6 @@
 module Spree
   module FrontendHelper
+    include BaseHelper
     include InlineSvg::ActionView::Helpers
 
     def body_class
@@ -295,9 +296,9 @@ module Spree
 
     def available_option_types_cache_key
       @available_option_types_cache_key ||= [
-        Spree::OptionType.filterable.maximum(:updated_at).to_i,
+        Spree::OptionType.filterable.maximum(:updated_at).to_f,
         products_for_filters_cache_key
-      ].join('/')
+      ].flatten.join('/')
     end
 
     def available_option_types
@@ -309,9 +310,9 @@ module Spree
 
     def available_properties_cache_key
       @available_properties_cache_key ||= [
-        Spree::Property.filterable.maximum(:updated_at).to_i,
+        Spree::Property.filterable.maximum(:updated_at).to_f,
         products_for_filters_cache_key
-      ].join('/')
+      ].flatten.join('/')
     end
 
     def available_properties
@@ -377,10 +378,10 @@ module Spree
 
     def products_for_filters_cache_key
       [
-        products_for_filters.maximum(:updated_at).to_i,
-        current_currency,
+        products_for_filters.maximum(:updated_at).to_f,
+        base_cache_key,
         @taxon&.permalink
-      ].compact.join('/')
+      ].flatten.compact
     end
   end
 end
