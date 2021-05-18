@@ -13,7 +13,7 @@ module Spree
           end
 
           def resource
-            scope.find_by(location: params[:location])
+            @resource ||= scope.find_by(location: params[:location])
           end
 
           def resource_serializer

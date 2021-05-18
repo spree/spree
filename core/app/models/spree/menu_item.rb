@@ -43,14 +43,18 @@ module Spree
     def link
       case linked_resource_type
       when 'Spree::Taxon'
-        if linked_resource.nil?
-          nil
+        return if linked_resource.nil?
+
+        if frontend_available?
+          Spree::Core::Engine.routes.url_helpers.nested_taxons_path(linked_resource.permalink)
         else
           "/#{Spree::Config[:storefront_taxon_path]}/#{linked_resource.permalink}"
         end
       when 'Spree::Product'
-        if linked_resource.nil?
-          nil
+        return if linked_resource.nil?
+
+        if frontend_available?
+          Spree::Core::Engine.routes.url_helpers.product_path(linked_resource)
         else
           "/#{Spree::Config[:storefront_product_path]}/#{linked_resource.slug}"
         end
@@ -62,6 +66,10 @@ module Spree
     end
 
     private
+
+    def frontend_available?
+      Spree::Core::Engine.frontend_available?
+    end
 
     def reset_link_attributes
       if linked_resource_type_changed? || item_type == 'Container'
