@@ -39,14 +39,16 @@ describe 'Products filtering', :js do
     fill_in 'keywords', with: "#{text}\n"
   end
 
-  def click_on_filter(filter_name, value:)
+  def click_on_filter(filter_name, value: nil)
     filter_element = find('.plp-filters-card', text: filter_name)
     filter_header_element = filter_element.find('.plp-filters-card-header')
 
     filter_header_element.click if filter_header_element[:class].include?('collapsed')
 
-    filter_element.click_link(value)
-    wait_for_turbolinks
+    if value.present?
+      filter_element.click_link(value)
+      wait_for_turbolinks
+    end
   end
 
   def wait_for_turbolinks
@@ -108,6 +110,12 @@ describe 'Products filtering', :js do
     expect(page).to have_selected_filter_with(value: 'WILSON')
     expect(page).to have_selected_filter_with(value: 'ZETA')
     expect(page).to have_selected_filter_with(value: 'ALPHA')
+
+    click_on_filter 'Price'
+    fill_in "$ #{Spree.t(:min)}", with: '19'
+    fill_in "$ #{Spree.t(:max)}", with: '20'
+    click_on 'DONE'
+    expect(page).to have_content 'Second shirt'
 
     expect_working_filters_clearing
 
