@@ -31,6 +31,10 @@ module Spree
           def model_class
             Spree::Menu
           end
+
+          def scope
+            super.by_store(current_store)
+          end
         end
       end
     end

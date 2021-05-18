@@ -88,13 +88,11 @@ module Spree
         rel = opts[:rel] || 'noopener noreferrer'
       end
 
+      link_opts = { target: target, rel: rel, class: opts[:class], id: opts[:id], data: opts[:data], aria: opts[:aria] }
       if block_given?
-        link_to spree_localized_item_link(item), target: target, rel: rel, class: opts[:class],
-                                                 id: opts[:id], data: opts[:data], aria: opts[:aria], &block
-
+        link_to spree_localized_item_link(item), spree_localized_item_link(item), link_opts, &block
       else
-        link_to item.name, spree_localized_item_link(item), target: target, rel: rel, class: opts[:class],
-                                                            id: opts[:id], data: opts[:data], aria: opts[:aria]
+        link_to item.name, spree_localized_item_link(item), link_opts
       end
     end
 
