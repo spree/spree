@@ -7,7 +7,7 @@
             <% dropdown_toggle_class = has_dropdown ? "dropdown-toggle" : "" %>
             <% data_attr = has_dropdown ? { toggle: "dropdown" } : {} %>
             <% aria_attr = has_dropdown ? { haspopup: true, expanded: false } : {} %>
-            <% if parent.item_type == "Container" %>
+            <% if parent.container? %>
               <%= content_tag :span, parent.name, class: "nav-link main-nav-bar-item main-nav-bar-category-button #{dropdown_toggle_class}", data: data_attr, aria: aria_attr %>
             <% else %>
                <%= spree_nav_link_tag(parent, { class: "nav-link main-nav-bar-item main-nav-bar-category-button #{dropdown_toggle_class}", data: data_attr, aria: aria_attr }) %>
