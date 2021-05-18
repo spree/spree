@@ -23,11 +23,11 @@ module Spree
 
     has_one_attached :logo
     has_one_attached :mailer_logo
-    has_one_attached :favicon
+    has_one_attached :favicon_image
 
     validates :mailer_logo, content_type: ['image/png', 'image/jpg', 'image/jpeg']
 
-    validates :favicon, content_type: ['image/png', 'image/x-icon']
+    validates :favicon_image, content_type: ['image/png', 'image/x-icon', 'image/vnd.microsoft.icon']
 
     before_save :ensure_default_exists_and_is_unique
     before_save :ensure_supported_currencies, :ensure_supported_locales
@@ -91,6 +91,13 @@ module Spree
 
     def checkout_zone_or_default
       @checkout_zone_or_default ||= checkout_zone || Spree::Zone.default_checkout_zone
+    end
+
+    def favicon
+      return Config[:favicon] unless favicon_image.attached?
+      return favicon_image.variant(resize: '32x32') if favicon_image.variable?
+
+      favicon_image
     end
 
     private
