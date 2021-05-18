@@ -33,7 +33,7 @@ module Spree
           end
 
           def scope
-            super.by_store(current_store)
+            super.by_store(current_store).by_locale(I18n.locale)
           end
         end
       end
