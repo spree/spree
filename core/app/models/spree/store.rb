@@ -95,9 +95,8 @@ module Spree
 
     def favicon
       return Config[:favicon] unless favicon_image.attached?
-      return favicon_image.variant(resize: '32x32') if favicon_image.variable?
 
-      favicon_image
+      favicon_image.variant(resize: '32x32')
     end
 
     private

@@ -326,4 +326,13 @@ describe Spree::BaseHelper, type: :helper do
       end
     end
   end
+
+  describe '#favicon_path' do
+    let(:current_store) { create(:store, :with_favicon) }
+
+    it do
+      expect(favicon_path).to end_with('favicon.ico')
+      expect(URI.parse(favicon_path).host).to be_present
+    end
+  end
 end
