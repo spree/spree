@@ -12,12 +12,12 @@ describe Spree::Menu, type: :model do
   describe 'by_store' do
     let!(:store) { create(:store) }
     let!(:store_b) { create(:store) }
+
     let!(:menu_a) { create(:menu, store: store) }
     let!(:menu_b) { create(:menu, store: store_b) }
-    let!(:menu_c) { create(:menu, store: store, location: 'footer') }
 
     it 'returns menus for the requested store' do
-      expect(described_class.by_store(store)).to eq([menu_a, menu_c])
+      expect(described_class.by_store(store)).to eq([menu_a])
     end
   end
 
