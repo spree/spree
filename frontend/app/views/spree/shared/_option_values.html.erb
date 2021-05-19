@@ -1,5 +1,3 @@
-<% cache base_cache_key + [ot_downcase_name, params_ot_downcase_name, filtering_params_cache_key, @taxon&.id] do %>
-  <% option_type.option_values.each do |option_value| %>
-    <%= option_value_filter_link(option_value, permitted_params) %>
-  <% end %>
+<% option_type.option_values.each do |option_value| %>
+  <%= option_value_filter_link(option_value, permitted_params) %>
 <% end %>
