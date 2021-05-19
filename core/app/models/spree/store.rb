@@ -1,5 +1,8 @@
 module Spree
   class Store < Spree::Base
+    MAILER_LOGO_CONTENT_TYPES = ['image/png', 'image/jpg', 'image/jpeg'].freeze
+    FAVICON_CONTENT_TYPES = ['image/png', 'image/x-icon', 'image/vnd.microsoft.icon'].freeze
+
     has_many :orders, class_name: 'Spree::Order'
     has_many :payment_methods, class_name: 'Spree::PaymentMethod'
 
@@ -25,9 +28,8 @@ module Spree
     has_one_attached :mailer_logo
     has_one_attached :favicon_image
 
-    validates :mailer_logo, content_type: ['image/png', 'image/jpg', 'image/jpeg']
-
-    validates :favicon_image, content_type: ['image/png', 'image/x-icon', 'image/vnd.microsoft.icon']
+    validates :mailer_logo, content_type: MAILER_LOGO_CONTENT_TYPES
+    validates :favicon_image, content_type: FAVICON_CONTENT_TYPES
 
     before_save :ensure_default_exists_and_is_unique
     before_save :ensure_supported_currencies, :ensure_supported_locales
@@ -94,7 +96,7 @@ module Spree
     end
 
     def favicon
-      return Config[:favicon] unless favicon_image.attached?
+      return unless favicon_image.attached?
 
       favicon_image.variant(resize: '32x32')
     end

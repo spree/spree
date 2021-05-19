@@ -151,6 +151,18 @@ describe 'Stores admin', type: :feature, js: true do
       store.reload
       expect(store.new_order_notifications_email).to eq(store_owner_email)
     end
+
+    it 'allows uploading a favicon' do
+      visit spree.admin_stores_path
+
+      within_row(1) { click_icon :edit }
+      attach_file('Favicon', file_fixture('favicon.ico'))
+
+      click_on 'Update'
+
+      expect(page).to have_content('Store "Spree Test Store" has been successfully updated!')
+      expect(store.reload.favicon_image.attached?).to be(true)
+    end
   end
 
   describe 'deleting store' do
