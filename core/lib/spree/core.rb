@@ -11,7 +11,6 @@ require 'monetize'
 require 'paranoia'
 require 'mini_magick'
 require 'ransack'
-require 'responders'
 require 'state_machines-activerecord'
 require 'active_storage_validations'
 

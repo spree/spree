@@ -7,6 +7,7 @@ require 'bootstrap'
 require 'glyphicons'
 require 'popper_js'
 require 'inline_svg'
+require 'responders'
 
 require 'spree_core'
 require 'spree_api'

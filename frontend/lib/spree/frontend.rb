@@ -8,6 +8,8 @@ require 'popper_js'
 require 'canonical-rails'
 require 'jquery-rails'
 require 'turbolinks'
+require 'responders'
+
 require 'spree/core'
 require 'spree/frontend/middleware/seo_assist'
 require 'spree/frontend/engine'

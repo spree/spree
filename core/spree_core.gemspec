@@ -40,7 +40,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'paranoia', '~> 2.4'
   s.add_dependency 'rails', '>= 6.0', '< 6.2'
   s.add_dependency 'ransack', '~> 2.3'
-  s.add_dependency 'responders'
   s.add_dependency 'rexml'
   s.add_dependency 'state_machines-activerecord', '~> 0.6'
   s.add_dependency 'state_machines-activemodel', '~> 0.7'
