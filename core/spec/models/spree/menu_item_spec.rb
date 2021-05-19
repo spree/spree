@@ -119,11 +119,11 @@ describe Spree::MenuItem, type: :model do
       expect(item_taxon.link).to eql "/t/#{taxon.permalink}"
     end
 
-    it 'returns empty string for destination when taxon is removed' do
+    it 'returns nil for destination when taxon is removed' do
       item_taxon.update(linked_resource: taxon)
       item_taxon.update(linked_resource_id: nil)
 
-      expect(item_taxon.link).to eq ''
+      expect(item_taxon.link).to be nil
     end
 
     it 'returns correct product path' do
@@ -132,11 +132,11 @@ describe Spree::MenuItem, type: :model do
       expect(item_product.link).to eql "/products/#{product.slug}"
     end
 
-    it 'returns empty string for destination when product is removed' do
+    it 'returns nil for destination when product is removed' do
       item_product.update(linked_resource: product)
       item_product.update(linked_resource_id: nil)
 
-      expect(item_product.link).to eq ''
+      expect(item_product.link).to be nil
     end
 
     it 'returns correct root path' do
@@ -147,8 +147,8 @@ describe Spree::MenuItem, type: :model do
       expect(item_url.link).to eql 'https://some-other-website.com'
     end
 
-    it 'returns empty string when URL is nil' do
-      expect(item_empty_url.link).to eq ''
+    it 'returns nil when URL is nil' do
+      expect(item_empty_url.link).to be nil
     end
   end
 
