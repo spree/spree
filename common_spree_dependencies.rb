@@ -44,6 +44,7 @@ group :test, :development do
   gem 'pry-byebug'
   gem 'webdrivers', '~> 4.1'
   gem 'puma'
+  gem 'ffaker'
 end
 
 gem 'solargraph', group: :development
