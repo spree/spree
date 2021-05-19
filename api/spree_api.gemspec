@@ -29,7 +29,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'multi_json'
 
   s.add_dependency 'spree_core', s.version
-  s.add_dependency 'rabl', '~> 0.14.2'
+  s.add_dependency 'rabl', '~> 0.14', '>= 0.14.2'
   s.add_dependency 'jsonapi-serializer', '~> 2.1'
   s.add_dependency 'doorkeeper', '~> 5.2', '>= 5.2.1'
 end

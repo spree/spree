@@ -24,4 +24,5 @@ Gem::Specification.new do |s|
   s.requirements << 'none'
 
   s.add_dependency 'spree_core', s.version
+  s.add_dependency 'ffaker', '~> 2.9'
 end
