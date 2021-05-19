@@ -12,5 +12,14 @@ FactoryBot.define do
     facebook               { 'spreecommerce' }
     twitter                { 'spreecommerce' }
     instagram              { 'spreecommerce' }
+
+    trait :with_favicon do
+      favicon_image do
+        Rack::Test::UploadedFile.new(
+          Spree::Core::Engine.root.join('spec', 'fixtures', 'favicon.ico'),
+          'image/x-icon'
+        )
+      end
+    end
   end
 end

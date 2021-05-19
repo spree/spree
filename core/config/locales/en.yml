@@ -900,6 +900,7 @@ en:
     existing_shipments: Existing shipments
     facebook: Facebook
     failed_payment_attempts: Failed Payment Attempts
+    favicon: 'Favicon'
     filename: Filename
     fill_in_customer_info: Please fill in customer info
     filter: Filter

@@ -60,6 +60,10 @@ module Spree
       end
     end
 
+    def spree_favicon_path
+      main_app.url_for(current_store.favicon || 'favicon.ico')
+    end
+
     def object
       instance_variable_get('@' + controller_name.singularize)
     end
