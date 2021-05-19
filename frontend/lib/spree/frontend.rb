@@ -1,5 +1,7 @@
-require 'rails/all'
-require 'sprockets/rails'
+require 'spree_core'
+require 'spree_api'
+
+require 'sprockets/railtie'
 
 require 'bootstrap'
 require 'glyphicons'
@@ -10,6 +12,5 @@ require 'jquery-rails'
 require 'turbolinks'
 require 'responders'
 
-require 'spree/core'
 require 'spree/frontend/middleware/seo_assist'
 require 'spree/frontend/engine'

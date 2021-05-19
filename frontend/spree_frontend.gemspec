@@ -38,7 +38,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'turbolinks',      '~> 5.2'
   s.add_dependency 'responders'
   s.add_dependency 'sprockets', '~> 4.0'
-  s.add_dependency 'sprockets-rails'
 
   s.add_development_dependency 'capybara-accessible'
 end
