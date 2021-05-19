@@ -327,19 +327,19 @@ describe Spree::BaseHelper, type: :helper do
     end
   end
 
-  describe '#favicon_path' do
+  describe '#spree_favicon_path' do
     context 'when a store has its own favicon' do
       let(:current_store) { create(:store, :with_favicon) }
 
       it do
-        expect(favicon_path).to end_with('favicon.ico')
-        expect(URI.parse(favicon_path).host).to be_present
+        expect(spree_favicon_path).to end_with('favicon.ico')
+        expect(URI.parse(spree_favicon_path).host).to be_present
       end
     end
 
     context 'when a store has no favicon' do
       it do
-        expect(favicon_path).to eq('favicon.ico')
+        expect(spree_favicon_path).to eq('favicon.ico')
       end
     end
   end

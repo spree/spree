@@ -60,7 +60,7 @@ module Spree
       end
     end
 
-    def favicon_path
+    def spree_favicon_path
       main_app.url_for(current_store.favicon || 'favicon.ico')
     end
 
