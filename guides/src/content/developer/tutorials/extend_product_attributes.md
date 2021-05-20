@@ -15,7 +15,7 @@ Note: Replace `RailsappName` and `railsapp_name` with your actualy Rails App Nam
 Create a migration that extends your spree products table. `rails g migration AddFieldsToSpreeProducts short_description:text` should create this migration
 
 ```ruby
-class AddFieldsToSpreeProducts < ActiveRecord::Migration[6.0]
+class AddFieldsToSpreeProducts < ActiveRecord::Migration[5.2]
   def change
     add_column :spree_products, :short_description, :text
   end

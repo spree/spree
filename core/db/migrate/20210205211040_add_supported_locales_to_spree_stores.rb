@@ -1,4 +1,4 @@
-class AddSupportedLocalesToSpreeStores < ActiveRecord::Migration[6.0]
+class AddSupportedLocalesToSpreeStores < ActiveRecord::Migration[5.2]
   def change
     unless column_exists?(:spree_stores, :supported_locales)
       add_column :spree_stores, :supported_locales, :string
