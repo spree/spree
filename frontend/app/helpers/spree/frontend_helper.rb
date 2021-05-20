@@ -294,6 +294,17 @@ module Spree
       end
     end
 
+    def option_type_cache_key(option_type)
+      filter_param = option_type.filter_param
+      filtered_params = params[filter_param]
+
+      [
+        available_option_types_cache_key,
+        filter_param,
+        filtered_params
+      ]
+    end
+
     def available_option_types_cache_key
       @available_option_types_cache_key ||= [
         Spree::OptionType.filterable.maximum(:updated_at).to_f,
