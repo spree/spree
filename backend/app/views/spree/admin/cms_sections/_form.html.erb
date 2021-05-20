@@ -37,10 +37,23 @@
   </div>
 </div>
 
-<% if @cms_section.kind.present? %>
-<div class="row">
-  <div class="col-12">
-    <%= render "spree/admin/cms_sections/types/#{@cms_section.kind.parameterize(separator: '_')}", f: f %>
+<div data-hook="admin_cms_section_form_fields">
+  <div class="row">
+    <div class="col-12 col-md-6">
+      <div class="card mb-3">
+        <div class="card-header">
+          <h5 class="mb-0"><%= Spree.t('admin.cms.settings_for', section_kind: @cms_section.kind) %></h5>
+        </div>
+        <div class="card-body">
+          <% if @cms_section.kind.present? %>
+          <div class="row">
+            <div class="col-12">
+              <%= render "spree/admin/cms_sections/types/#{@cms_section.kind.parameterize(separator: '_')}", f: f %>
+            </div>
+          </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
-<% end %>

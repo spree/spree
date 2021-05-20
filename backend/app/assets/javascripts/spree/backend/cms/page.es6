@@ -16,7 +16,6 @@ const el = document.getElementById('cmsPagesectionsArea')
   }
 })
 
-
 function handleSectionReposition(evt) {
   const data = {
     section_id: parseInt(evt.item.dataset.sectionId, 10),

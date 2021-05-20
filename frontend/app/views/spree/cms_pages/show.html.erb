@@ -1,9 +1,13 @@
+<% if @cms_page.content.present? && @cms_page.kind == 'Standard Page' %>
 <div class="container">
-  <% if @cms_page.content.present? %>
-    <div class="row my-5">
-      <div class="col-12">
-        <%= @cms_page.content.html_safe %>
-      </div>
+  <div class="row my-5">
+    <div class="col-12">
+      <%= @cms_page.content.html_safe %>
     </div>
-  <% end %>
+  </div>
 </div>
+<% else %>
+  <% @cms_page.cms_sections.each do |section| %>
+    <%= build_section(section) %>
+  <% end %>
+<% end %>

@@ -534,6 +534,7 @@ en:
     adjustments: Adjustments
     admin:
       cms:
+        settings_for: 'Available Options For %{section_kind}'
         page_sections: '%{page_name} Sections'
         page_sections_info: 'The area below represents your %{page_type} displayed in %{store}, add sections and drag them into position'
       tab:
