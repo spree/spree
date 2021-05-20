@@ -169,11 +169,12 @@ describe 'Products filtering', :js do
   end
 
   context 'with cached filters' do
-    context 'when after visiting products page new filters were added' do
+    context 'when after visiting products page new filters were added or deleted' do
       let(:jersey_manufacturer) { create(:product_property, value: 'Jerseys', property: manufacturer) }
       let(:beta_brand) { create(:product_property, value: 'Beta', property: brand) }
 
       let(:xl_size) { create(:option_value, option_type: size, name: 'xl', presentation: 'XL') }
+      let!(:variant_1_2) { create(:variant, product: product_1, option_values: [green_color]) }
 
       it 'correctly displays filterable properties' do
         visit_taxons_page(taxon)
@@ -206,8 +207,9 @@ describe 'Products filtering', :js do
         click_on 'Size'
         expect(page).to have_filter_with(value: 'S')
         expect(page).to have_filter_with(value: 'M')
+        expect(page).not_to have_filter_with(value: 'XL')
 
-        product_1.variants << create(:variant, option_values: [xl_size])
+        variant_1_2.update(option_values: [green_color, xl_size])
 
         visit_taxons_page(taxon)
 
@@ -215,6 +217,15 @@ describe 'Products filtering', :js do
         expect(page).to have_filter_with(value: 'S')
         expect(page).to have_filter_with(value: 'M')
         expect(page).to have_filter_with(value: 'XL')
+
+        variant_1_2.update(option_values: [green_color])
+
+        visit_taxons_page(taxon)
+
+        click_on 'Size'
+        expect(page).to have_filter_with(value: 'S')
+        expect(page).to have_filter_with(value: 'M')
+        expect(page).not_to have_filter_with(value: 'XL')
       end
     end
 
