@@ -5,9 +5,9 @@
     <div class="plp-filters-scroller">
       <% available_option_types.each do |option_type| %>
         <div class="w-100 card plp-filters-card">
-          <% ot_downcase_name = option_type.filter_param %>
-          <% option_type_name = ot_downcase_name.titleize %>
-          <% collapsed = params[ot_downcase_name].blank? %>
+          <% ot_filter_param = option_type.filter_param %>
+          <% option_type_name = ot_filter_param.titleize %>
+          <% collapsed = params[ot_filter_param].blank? %>
 
           <button class="card-header <%= 'collapsed' if collapsed %> px-1 plp-filters-card-header" id="filters<%= option_type_name %>" data-toggle="collapse" data-target="#collapseFilter<%= option_type_name %>" aria-expanded="<%= !collapsed %>" aria-controls="collapseFilter<%= option_type_name %>" role="heading" aria-level="2">
             <%= option_type.presentation %>
@@ -23,10 +23,8 @@
           <div id="collapseFilter<%= option_type_name %>" class="collapse <%= 'show' unless collapsed %>" aria-labelledby="filters<%= option_type_name %>">
             <div class="card-body px-0 pt-1">
               <%= render 'spree/shared/option_values',
-                params_ot_downcase_name: params[ot_downcase_name],
                 option_type: option_type,
-                permitted_params: permitted_params,
-                ot_downcase_name: ot_downcase_name %>
+                permitted_params: permitted_params %>
             </div>
           </div>
         </div>
