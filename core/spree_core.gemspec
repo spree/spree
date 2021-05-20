@@ -26,6 +26,13 @@ Gem::Specification.new do |s|
   s.files        = `git ls-files`.split("\n").reject { |f| f.match(/^spec/) && !f.match(/^spec\/fixtures/) }
   s.require_path = 'lib'
 
+  %w[
+    actionmailer actionpack actionview activejob activemodel activerecord
+    activestorage activesupport railties
+  ].each do |rails_gem|
+    s.add_dependency rails_gem, '>= 6.0', '< 6.2'
+  end
+
   s.add_dependency 'activemerchant', '~> 1.67'
   s.add_dependency 'acts_as_list', '>= 0.8'
   s.add_dependency 'auto_strip_attributes', '~> 2.6'
@@ -38,17 +45,12 @@ Gem::Specification.new do |s|
   s.add_dependency 'money', '~> 6.13'
   s.add_dependency 'monetize', '~> 1.9'
   s.add_dependency 'paranoia', '~> 2.4'
-  s.add_dependency 'premailer-rails'
-  s.add_dependency 'rails', '>= 6.0', '< 6.2'
   s.add_dependency 'ransack', '~> 2.3'
-  s.add_dependency 'responders'
   s.add_dependency 'rexml'
   s.add_dependency 'state_machines-activerecord', '~> 0.6'
   s.add_dependency 'state_machines-activemodel', '~> 0.7'
   s.add_dependency 'stringex'
   s.add_dependency 'twitter_cldr', '>= 4.3'
-  s.add_dependency 'sprockets', '~> 4.0'
-  s.add_dependency 'sprockets-rails'
   s.add_dependency 'mini_magick', '~> 4.9', '>= 4.9.4'
   s.add_dependency 'image_processing', '~> 1.2'
   s.add_dependency 'active_storage_validations', '~> 0.9'

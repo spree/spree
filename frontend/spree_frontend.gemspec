@@ -36,6 +36,8 @@ Gem::Specification.new do |s|
   s.add_dependency 'jquery-rails',    '~> 4.3'
   s.add_dependency 'sass-rails',      '>= 5'
   s.add_dependency 'turbolinks',      '~> 5.2'
+  s.add_dependency 'responders'
+  s.add_dependency 'sprockets', '~> 4.0'
 
   s.add_development_dependency 'capybara-accessible'
 end
