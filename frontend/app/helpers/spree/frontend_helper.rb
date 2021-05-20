@@ -294,12 +294,13 @@ module Spree
       end
     end
 
-    def option_type_cache_key(ot_filter_param)
-      filtered_params = params[ot_filter_param]
+    def option_type_cache_key(option_type)
+      filter_param = option_type.filter_param
+      filtered_params = params[filter_param]
 
       [
         available_option_types_cache_key,
-        ot_filter_param,
+        filter_param,
         filtered_params
       ]
     end
