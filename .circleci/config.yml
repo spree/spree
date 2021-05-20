@@ -144,6 +144,34 @@ jobs:
     - store_test_results:
         path: /tmp/test-results
 
+  tests_postgres_rails_5_2:
+    <<: *tests_postgres
+    environment:
+      <<: *postgres_environment
+      RAILS_VERSION: '~> 5.2.0'
+    steps:
+    - checkout
+    - restore_cache:
+        keys:
+          - spree-bundle-v8-ruby-2-7-{{ .Branch }}
+          - spree-bundle-v8-ruby-2-7
+    - run:
+        name: Ensure Bundle Install
+        command: |
+          bundle install
+          ./bin/build-ci.rb install
+    - run:
+        name: Run rspec in parallel
+        command: BUNDLE_GEMFILE=../Gemfile ./bin/build-ci.rb test
+    - store_artifacts:
+        path: /tmp/test-artifacts
+        destination: test-artifacts
+    - store_artifacts:
+        path: /tmp/test-results
+        destination: raw-test-output
+    - store_test_results:
+        path: /tmp/test-results
+
   tests_mysql: &tests_mysql
     <<: *run_tests
     environment: &mysql_environment
@@ -263,6 +291,9 @@ workflows:
           requires:
             - bundle_ruby_3_0
       - tests_postgres_rails_6_0:
+          requires:
+            - bundle
+      - tests_postgres_rails_5_2:
           requires:
             - bundle
       - tests_mysql_ruby_3_0:
