@@ -36,7 +36,7 @@ module Spree
         current_store.cache_key_with_version,
         spree_menu(section)&.cache_key_with_version,
         Spree::Config[:logo],
-        stores&.cache_key_with_version,
+        stores&.maximum(:updated_at),
         section
       ]
       Digest::MD5.hexdigest(keys.join('-'))
