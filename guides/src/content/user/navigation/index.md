@@ -7,5 +7,4 @@ The Navigation section of the Admin / Content interface will allow you to create
 You will learn how to:
 
 * [Create A Menu](/user/navigation/creating_menus.html)
-* [Add Link Items](/user/navigation/creating_link_menu_items.html)
-* [Add Container Items](/user/navigation/creating_container_menu_items.html)
+* [Add Items To A Menu](/user/navigation/add_menu_items.html)
