@@ -37,6 +37,32 @@ describe 'Product scopes', type: :model do
     end
   end
 
+  describe '.for_filters' do
+    subject { Spree::Product.method(:for_filters) }
+
+    let(:taxon_1) { create(:taxon) }
+    let(:taxon_2) { create(:taxon) }
+
+    let!(:product_1) { create(:product, currency: 'GBP', taxons: [taxon_1]) }
+    let!(:product_2) { create(:product, currency: 'GBP', taxons: [taxon_2]) }
+
+    before do
+      create(:product, currency: 'USD', taxons: [create(:taxon)])
+    end
+
+    context 'when giving a taxon' do
+      it { expect(subject.call('GBP', taxon_1)).to contain_exactly(product_1) }
+    end
+
+    context 'when giving no taxon' do
+      it { expect(subject.call('GBP')).to contain_exactly(product_1, product_2) }
+    end
+
+    context 'when giving a currency with no products' do
+      it { expect(subject.call('PLN')).to be_empty }
+    end
+  end
+
   context 'A product assigned to parent and child taxons' do
     before do
       @taxonomy = create(:taxonomy)

@@ -22,12 +22,10 @@ Spree.ready(function() {
 
     updatePricesForFiltering(minPrice, maxPrice) {
       const formattedPriceRange = `${minPrice}-${maxPrice}`
+      const url = new URL(this.filterButton.href)
 
-      const dataParams = JSON.parse(this.filterButton.dataset.params)
-      const urlParams = new URLSearchParams(dataParams)
-
-      urlParams.set('price', formattedPriceRange)
-      this.filterButton.href = decodeURIComponent(`${location.pathname}?${urlParams.toString()}`)
+      url.searchParams.set('price', formattedPriceRange)
+      this.filterButton.href = `${url.pathname}${url.search}`
     }
   }
 

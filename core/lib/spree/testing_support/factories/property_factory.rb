@@ -3,6 +3,10 @@ FactoryBot.define do
     name         { 'baseball_cap_color' }
     presentation { 'cap color' }
 
+    trait :filterable do
+      filterable { true }
+    end
+
     trait :brand do
       name         { 'brand' }
       presentation { 'Brand' }

@@ -110,7 +110,6 @@ MENUS.each do |menu|
     promo_b_subtitle = 'Obtenga hasta un 30% de descuento'
   end
 
-
   ##############
   # Root Items #
   ##############
@@ -220,7 +219,7 @@ MENUS.each do |menu|
       name: promo_a_name,
       subtitle: promo_a_subtitle,
       linked_resource_type: 'Spree::Taxon',
-      item_type: 'Promotion',
+      item_type: 'Container',
       menu_id: menu,
       parent_id: promo
     ).first_or_create!
@@ -231,7 +230,7 @@ MENUS.each do |menu|
       name: promo_b_name,
       subtitle: promo_b_subtitle,
       linked_resource_type: 'Spree::Taxon',
-      item_type: 'Promotion',
+      item_type: 'Container',
       menu_id: menu,
       parent_id: promo
     ).first_or_create!
@@ -244,10 +243,10 @@ MENUS.each do |menu|
   #################################
 
   women_link_parent_id = if menu.location == 'header'
-                              menu_cat_women
-                           else
-                              menu_root_women
-                           end
+                           menu_cat_women
+                         else
+                           menu_root_women
+                         end
 
   women_skirts_t = Spree::Taxon.find_by!(permalink: 'women/skirts')
   women_skirts = Spree::MenuItem.where(
@@ -320,10 +319,10 @@ MENUS.each do |menu|
   ###############################
 
   men_link_parent_id = if menu.location == 'header'
-                              menu_cat_men
-                           else
-                              menu_root_men
-                           end
+                         menu_cat_men
+                       else
+                         menu_root_men
+                       end
 
   men_shirts_t = Spree::Taxon.find_by!(permalink: 'men/shirts')
   men_shirts = Spree::MenuItem.where(
@@ -374,10 +373,10 @@ MENUS.each do |menu|
   ######################################
 
   sw_link_parent_id = if menu.location == 'header'
-                              menu_cat_sw
-                           else
-                              menu_root_sw
-                           end
+                        menu_cat_sw
+                      else
+                        menu_root_sw
+                      end
 
   sw_tops_t = Spree::Taxon.find_by!(permalink: 'sportswear/tops')
   sw_tops = Spree::MenuItem.where(

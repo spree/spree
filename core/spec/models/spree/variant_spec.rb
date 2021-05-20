@@ -684,6 +684,22 @@ describe Spree::Variant, type: :model do
       expect(Rails.cache).to receive(:delete).with(variant.send(:in_stock_cache_key))
       variant.touch
     end
+
+    context 'when unlinking an option value' do
+      let(:option_value) { create(:option_value) }
+
+      before do
+        variant.option_values << option_value
+        variant.save!
+      end
+
+      it 'touches variant' do
+        expect(variant).to receive(:touch)
+
+        option_values = variant.option_values - [option_value]
+        variant.update(option_values: option_values)
+      end
+    end
   end
 
   describe '#should_track_inventory?' do
