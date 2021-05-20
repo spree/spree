@@ -48,7 +48,7 @@ module Spree
         if frontend_available?
           Spree::Core::Engine.routes.url_helpers.nested_taxons_path(linked_resource.permalink)
         else
-          "/#{Spree::Config[:storefront_taxon_path]}/#{linked_resource.permalink}"
+          "/#{Spree::Config[:storefront_taxons_path]}/#{linked_resource.permalink}"
         end
       when 'Spree::Product'
         return if linked_resource.nil?
@@ -56,7 +56,7 @@ module Spree
         if frontend_available?
           Spree::Core::Engine.routes.url_helpers.product_path(linked_resource)
         else
-          "/#{Spree::Config[:storefront_product_path]}/#{linked_resource.slug}"
+          "/#{Spree::Config[:storefront_products_path]}/#{linked_resource.slug}"
         end
       when 'Home Page'
         '/'
