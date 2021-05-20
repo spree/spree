@@ -2,7 +2,8 @@ Spree::Core::Engine.add_routes do
   scope '(:locale)', locale: /#{Spree.available_locales.join('|')}/, defaults: { locale: nil } do
     root to: 'home#index'
 
-    resources :products, only: [:index, :show]
+    resources :products, only: [:index, :show], path: "/#{Spree::Config[:storefront_product_path]}"
+
     get "/#{Spree::Config[:storefront_product_path]}/:id/related", to: 'products#related'
     # route globbing for pretty nested taxon and product paths
     get "/#{Spree::Config[:storefront_taxon_path]}/*id", to: 'taxons#show', as: :nested_taxons
