@@ -62,18 +62,18 @@ module Spree
     end
 
     def spree_localized_item_link(item)
-      return if item.destination.nil?
+      return if item.link.nil?
 
       output_locale = if locale_param
                         "/#{I18n.locale}"
                       end
 
       if Spree::MenuItem::DYNAMIC_RESOURCE_TYPE.include? item.linked_resource_type
-        output_locale.to_s + item.destination
+        output_locale.to_s + item.link
       elsif item.linked_resource_type == 'Home Page'
         "/#{locale_param}"
       else
-        item.destination
+        item.link
       end
     end
 
