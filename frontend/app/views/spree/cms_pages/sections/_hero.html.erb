@@ -1,14 +1,18 @@
-<div class="homepage-hero-image mb-3 position-relative">
-  <% if section.icon.present? %>
-    <%= image_tag main_app.url_for(section.icon.attachment) %>
-  <% end %>
+<div class="col-12">
+  <div class="full-width">
+    <div class="homepage-hero-image mb-3 position-relative p-0">
+      <% if section.icon.present? %>
+        <%= image_tag main_app.url_for(section.icon.attachment) %>
+      <% end %>
 
-  <div class="hero-content">
-    <div class="homepage-hero-image-text mb-2 mx-auto pb-3 pb-md-4">
-      <%= section.title %>
-    </div>
-    <div>
-      <%= link_to section.subtitle, spree.products_path, class: 'btn btn-primary spree-btn px-5' %>
+      <div class="hero-content">
+        <div class="homepage-hero-image-text mb-2 mx-auto pb-3 pb-md-4">
+          <%= section.title %>
+        </div>
+        <div>
+          <%= link_to section.subtitle, spree.products_path, class: 'btn btn-primary spree-btn px-5' %>
+        </div>
+      </div>
     </div>
   </div>
 </div>

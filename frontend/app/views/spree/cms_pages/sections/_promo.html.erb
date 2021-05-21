@@ -1,0 +1,18 @@
+<div class="<%= width %>">
+  <%= link_to spree.nested_taxons_path('streetstyle') do %>
+    <div class="homepage-bottom-box text-center mb-3">
+      <% if section.icon.present? %>
+        <%= image_tag main_app.url_for(section.icon.attachment) %>
+      <% end %>
+
+      <div class="homepage-bottom-box-inner" role="img" aria-label="New Collection">
+        <div class="homepage-bottom-box-inner-small-text">
+          New Collection
+        </div>
+        <div class="homepage-bottom-box-inner-big-text">
+          Streetstyle
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>

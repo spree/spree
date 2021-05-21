@@ -11,7 +11,7 @@ module Spree
     accepts_nested_attributes_for :icon, reject_if: :all_blank
 
     SECTION_WIDTHS = ['Full', 'Half']
-    SECTION_TYPES = ['Text Block', 'Hero']
+    SECTION_TYPES = ['Text Block', 'Hero', 'Promo']
 
     SECTION_LINKS_TO = ['None', 'Spree::Taxon', 'Spree::Product']
   end

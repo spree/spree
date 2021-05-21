@@ -7,7 +7,11 @@
   </div>
 </div>
 <% else %>
-  <% @cms_page.cms_sections.each do |section| %>
-    <%= build_section(section) %>
-  <% end %>
+<div class="container">
+  <div class="row">
+    <% @cms_page.cms_sections.each do |section| %>
+      <%= build_section(section) %>
+    <% end %>
+   </div>
+ </div>
 <% end %>
