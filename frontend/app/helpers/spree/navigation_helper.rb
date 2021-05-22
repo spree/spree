@@ -62,24 +62,38 @@ module Spree
     end
 
     def spree_localized_item_link(item)
-      return if item.destination.nil?
+      return if item.link.nil?
 
       output_locale = if locale_param
                         "/#{I18n.locale}"
                       end
 
       if Spree::MenuItem::DYNAMIC_RESOURCE_TYPE.include? item.linked_resource_type
-        output_locale.to_s + item.destination
+        output_locale.to_s + item.link
       elsif item.linked_resource_type == 'Home Page'
         "/#{locale_param}"
       else
-        item.destination
+        item.link
       end
     end
 
     def should_render_internationalization_dropdown?
       (defined?(should_render_locale_dropdown?) && should_render_locale_dropdown?) ||
         (defined?(should_render_currency_dropdown?) && should_render_currency_dropdown?)
+    end
+
+    def spree_nav_link_tag(item, opts = {}, &block)
+      if item.new_window
+        target = opts[:target] || '_blank'
+        rel = opts[:rel] || 'noopener noreferrer'
+      end
+
+      link_opts = { target: target, rel: rel, class: opts[:class], id: opts[:id], data: opts[:data], aria: opts[:aria] }
+      if block_given?
+        link_to spree_localized_item_link(item), link_opts, &block
+      else
+        link_to item.name, spree_localized_item_link(item), link_opts
+      end
     end
 
     private

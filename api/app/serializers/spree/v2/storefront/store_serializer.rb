@@ -10,6 +10,13 @@ module Spree
 
         has_many :menus
         has_one :default_country, serializer: :country, record_type: :country, id_method_name: :default_country_id
+
+        attribute :favicon_path do |store|
+          if store.favicon_image.attached?
+            url_helpers = Rails.application.routes.url_helpers
+            url_helpers.rails_representation_path(store.favicon, only_path: true)
+          end
+        end
       end
     end
   end

@@ -35,9 +35,6 @@ module Spree
     after_save :touch_ancestors_and_taxonomy
     after_touch :touch_ancestors_and_taxonomy
 
-    after_save :sync_menu_item_paths
-    after_commit :sync_menu_item_paths
-
     has_one :icon, as: :viewable, dependent: :destroy, class_name: 'Spree::TaxonImage'
 
     self.whitelisted_ransackable_associations = %w[taxonomy]
@@ -96,12 +93,6 @@ module Spree
     end
 
     private
-
-    def sync_menu_item_paths
-      return unless saved_change_to_permalink?
-
-      Spree::MenuItem.refresh_paths(self)
-    end
 
     def touch_ancestors_and_taxonomy
       # Touches all ancestors at once to avoid recursive taxonomy touch, and reduce queries.

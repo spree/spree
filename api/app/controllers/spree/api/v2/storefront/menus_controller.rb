@@ -13,7 +13,7 @@ module Spree
           end
 
           def resource
-            scope.find_by(unique_code: params[:unique_code])
+            @resource ||= scope.find_by(location: params[:location])
           end
 
           def resource_serializer
@@ -33,7 +33,7 @@ module Spree
           end
 
           def scope
-            super.by_store(current_store)
+            super.by_store(current_store).by_locale(I18n.locale)
           end
         end
       end

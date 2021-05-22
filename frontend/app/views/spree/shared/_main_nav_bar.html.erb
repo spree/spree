@@ -1,7 +1,4 @@
 <% if spree_menu.present? %>
-  <% category = 'category' %>
-  <% promo = 'promo' %>
-
   <div class="h-100" role="navigation" aria-label="<%= Spree.t('nav_bar.desktop') %>">
     <ul class="nav h-100 main-nav-bar">
       <% spree_menu.children.each do |parent| %>
@@ -10,7 +7,12 @@
             <% dropdown_toggle_class = has_dropdown ? "dropdown-toggle" : "" %>
             <% data_attr = has_dropdown ? { toggle: "dropdown" } : {} %>
             <% aria_attr = has_dropdown ? { haspopup: true, expanded: false } : {} %>
-            <%= link_to(parent.name, spree_localized_item_link(parent), class: "nav-link main-nav-bar-item main-nav-bar-category-button #{dropdown_toggle_class}", data: data_attr, aria: aria_attr) %>
+            <% if parent.container? %>
+              <%= content_tag :span, parent.name, class: "nav-link main-nav-bar-item main-nav-bar-category-button #{dropdown_toggle_class}", data: data_attr, aria: aria_attr %>
+            <% else %>
+               <%= spree_nav_link_tag(parent, { class: "nav-link main-nav-bar-item main-nav-bar-category-button #{dropdown_toggle_class}", data: data_attr, aria: aria_attr }) %>
+            <% end %>
+
              <% if has_dropdown %>
               <div class="dropdown-menu w-100 shadow main-nav-bar-category-dropdown">
                 <div class="container p-0 d-flex justify-content-xl-around mx-auto">
@@ -18,7 +20,7 @@
                     <% parent.children.each do |child| %>
 
                       <!-- Categories -->
-                      <% if child.code == category && child.item_type == 'Container' %>
+                      <% if child.container? && child.code?('category') %>
                         <div class="category-links my-4 mx-2">
                           <div class="category-links-header text-uppercase">
                             <%= child.name %>
@@ -27,7 +29,7 @@
                             <ul class="pl-0">
                               <% child.children.each do |category_link| %>
                                 <li>
-                                  <%= link_to category_link.name, spree_localized_item_link(category_link), class: "text-uppercase main-nav-bar-category-links dropdown-item truncate" %>
+                                  <%= spree_nav_link_tag(category_link, { class: "text-uppercase main-nav-bar-category-links dropdown-item truncate" }) %>
                                 </li>
                               <% end %>
                             </ul>
@@ -36,10 +38,10 @@
                       <% end %>
 
                       <!-- Promos -->
-                      <% if child.code == promo && child.item_type == 'Container' %>
+                      <% if child.container? && child.code?('promo') %>
                         <% if child.children.present? %>
                           <% child.children.each do |promo_banner| %>
-                            <%= link_to spree_localized_item_link(promo_banner), class: "dropdown-item" do %>
+                            <%= spree_nav_link_tag(promo_banner, { class: "dropdown-item" }) do %>
                               <div class="category-image text-center my-4 mx-3">
                                 <% if promo_banner.icon.present? %>
                                   <%= image_tag main_app.url_for(promo_banner.icon.attachment), alt: promo_banner.icon.alt ,title: promo_banner.subtitle %>
