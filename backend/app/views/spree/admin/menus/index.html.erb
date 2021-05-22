@@ -55,6 +55,7 @@
       <th scope="col"><%= Spree.t('location') %></th>
       <th scope="col"><%= Spree.t('store') %></th>
       <th scope="col"><%= Spree.t('language') %></th>
+      <th class="text-center" scope="col"><%= Spree.t('default') %></th>
       <th scope="col"></th>
     </thead>
     <tbody>
@@ -71,6 +72,11 @@
           </td>
           <td>
             <%= locale_full_name(menu.locale) %>
+          </td>
+          <td class="text-center">
+            <% if default_menu_for_store?(menu) %>
+              <%= svg_icon name: "tick.svg", width: '20', height: '20' %>
+            <% end %>
           </td>
           <td class="actions" data-hook="admin_menus_index_row_actions">
              <span class="d-flex justify-content-end">
