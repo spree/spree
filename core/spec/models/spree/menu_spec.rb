@@ -31,6 +31,28 @@ describe Spree::Menu, type: :model do
     end
   end
 
+  describe '#for_header' do
+    let!(:fr_store) { create(:store, default_locale: 'fr', supported_locales: 'fr,en') }
+    let!(:menu_en) { create(:menu, name: 'Main Menu EN', store: fr_store, locale: 'en') }
+    let!(:menu_fr) { create(:menu, name: 'Main Menu FR', store: fr_store, locale: 'fr') }
+
+    it 'returns a menu in the requested locale if one is available' do
+      expect(described_class.for_header('en', 'fr').name).to eql('Main Menu EN')
+    end
+
+    it 'returns a menu in the current stores default locale if one is available' do
+      expect(described_class.for_header('de', 'fr').name).to eql('Main Menu FR')
+    end
+
+    it 'returns a menu even if no locales are matched' do
+      expect(described_class.for_header(nil, nil).name).to eql('Main Menu EN')
+    end
+
+    it 'handels no args being passed and still returns a menu' do
+      expect(described_class.for_header.name).to eql('Main Menu EN')
+    end
+  end
+
   describe 'creating new menu' do
     let(:store_1) { create(:store) }
     let(:store_2) { create(:store) }
