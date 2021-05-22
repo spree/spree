@@ -46,8 +46,8 @@ Spree.user_class = 'User'
 
 Next, you need to run the custom user generator for Spree which will
 create two files. The first is a migration that will add the necessary
-Spree fields to your users table, and the second is an extension that
-lives at `lib/spree/authentication_helpers.rb` to the
+Spree fields to your users table, and the second is an extension (that
+lives at `lib/spree/authentication_helpers.rb`) to the
 `Spree::Core::AuthenticationHelpers` module inside of Spree.
 
 Run this generator with this command:
@@ -156,7 +156,7 @@ end
 ```
 
 Of course, this code will be different if you're not using Devise.
-Simply do not use the `devise_scope` method and change the controllers
+Simply **do not** use the `devise_scope` method and change the controllers
 and actions for these routes.
 
 You can also customize the `spree_login_path`, `spree_signup_path`
@@ -166,7 +166,7 @@ already provided by the authentication setup you have, if you wish.
 
 <alert kind="note">
 Any modifications made to `lib/spree/authentication_helpers.rb`
-while the server is running will require a restart, as wth any other
+while the server is running will require a restart, as with any other
 modification to other files in `lib`.
 </alert>
 
