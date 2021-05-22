@@ -579,6 +579,9 @@ en:
         add_new_menu: Add New Menu
         add_new_item: 'Add New Item'
         code: Code
+        create_default_menus_info: "Default menus are menus whose language matches the associated store's default language.<br><br>
+        Default menus are displayed to your visitor if no menu is available in the current language they are using. <br><br>
+        It is recommended that you create a default menu for each menu location."
         allow_this_menu_item_to_contain_nested_menu_items: Allow this Menu Item to contain nested items
         back_to_all_menus: Back To All Menus
         click_create_to_load_new_link: 'Click the <b>Create</b> button below to save your new Menu Item, and update the link.'

@@ -1,6 +1,17 @@
 /* global Swal */
 
 document.addEventListener('DOMContentLoaded', function() {
+  const infoToggle = document.querySelectorAll('[data-show-info]')
+
+  infoToggle.forEach(function (infoElem) {
+    infoElem.addEventListener('click', function() {
+      const alertType = infoElem.dataset.alertType || 'info'
+      const alertMessage = infoElem.dataset.alertMessage || 'Add the attribute -> data-alert-message="Set your informative message here!" to the clickable element'
+
+      show_flash(alertType, alertMessage, null)
+    })
+  })
+
   const alertEl = document.querySelectorAll('[data-alert-type]')
 
   if (!alertEl) return
@@ -14,7 +25,7 @@ document.addEventListener('DOMContentLoaded', function() {
 })
 
 // eslint-disable-next-line camelcase
-function show_flash(type, message) {
+function show_flash(type, message, time = 4500) {
   let sanitizedType = DOMPurify.sanitize(type)
   const sanitizedMessage = DOMPurify.sanitize(message)
 
@@ -26,7 +37,7 @@ function show_flash(type, message) {
     position: 'bottom',
     showConfirmButton: false,
     showCloseButton: true,
-    timer: 4500,
+    timer: time,
     timerProgressBar: false,
     showClass: {
       popup: 'animate__animated animate__fadeInUp animate__faster',

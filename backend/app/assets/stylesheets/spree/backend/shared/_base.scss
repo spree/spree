@@ -39,3 +39,12 @@
 .badge-light-muted-text {
   color: rgba(0, 0, 0, 0.50);
 }
+
+[data-show-info] {
+  color:  $primary;
+  cursor: pointer;
+
+  &:hover {
+    color: darken($primary, 10) !important;
+  }
+}
