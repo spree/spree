@@ -20,11 +20,23 @@ You will be presented with three panels, **Settings**, **Public Details** and **
 
 The Settings panel contains Menu Item specific settings, such as **Item Type**, **Code** and **Nest Under**.
 
-* **Item Type:** The Item Type selector allows you to set if this menu item is a **Link** or a **Container** type. Links are used for linking to Products, Taxons and other parts of your website. In contrast, containers are used to group links together, creating organized sections of a menu.
+###Item Type
 
-* **Code:** A menu item code is an optional setting that allows you to identify your link or container for specific uses; for example, if a container has the code of promo, links that are nested inside that container will appear as promotion links with large image and the name and subtitle displayed, while links placed within a container with the code category will be displayed as standard menu text links.
+The Item Type selector allows you to set if this menu item is a **Link** or a **Container** type. Links are used for linking to Products, Taxons and other parts of your website. In contrast, containers are used to group links together, creating organized sections of a menu.
 
-* **Nest Under** The Nest Under option allows you to quickly nest your new item within other menu items, don't worry; if you forget to nest your new menu item, you can re-arrange the items on the main menu items area,
+### Code
+
+A menu item code is an optional setting that allows you to identify your link or container for specific uses; for example, if a container has the code of `promo`, links that are nested inside that container will appear as promotion links with large image and the name and subtitle displayed prominently, while links placed within a container with the code `category` will be displayed as standard menu text links.
+
+The image below shows how the Spree Main Menu uses two containers, one outlined in green and the second outlined in red, each container has a code that identifies the links nested inside are to be displayed in different formats.
+
+For more information on using the Spree Main Menu visit the [Building The Main Menu](/user/navigation/building_the_main_menu.html) page.
+
+![Contianers With Code](../../../images/user/navigation/container_code.jpg)
+
+### Nest Under
+
+The Nest Under option allows you to quickly nest your new item within other menu items, don't worry; if you forget to nest your new menu item, you can re-arrange the items on the main menu items area,
 
 Using the combination of **Item Type** and **Code** allows you as a designer to create menus of any kind imaginable. An example this would be to set the menu code in the footer view file to look for a container with the code of social; any links nested inside this container would be displayed as SVG icons to your company social media pages.
 
@@ -32,9 +44,17 @@ Using the combination of **Item Type** and **Code** allows you as a designer to 
 
 Public setting is where your public-facing information is set.
 
-* **Name:** This is the name used for the link or container displayed in the view.
-* **Subtitle:** The Subtitle used for standard links as the title attribute text, or on promotional items, the subtitle is displayed in the banner.
-* **Image:** You have the option to add a photo or SVG icon to your links or containers as you please. Once an image is added, you also have the opportunity to add image alt text for SEO.
+### Name
+
+This is the name used for the link or container displayed in the view.
+
+### Subtitle
+
+The Subtitle used for standard links as the title attribute text, or on promotional items, the subtitle is displayed in the banner.
+
+### Image
+
+You have the option to add a photo or SVG icon to your links or containers as you please. Once an image is added, you also have the opportunity to add image alt text for SEO.
 
 ## Link Settings
 

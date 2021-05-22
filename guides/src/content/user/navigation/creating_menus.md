@@ -11,7 +11,7 @@ Once you are in the menus area, you will see a button in the top right of the sc
 
 
 
-![Menus Page](../../../images/user/navigation/menus_page.jpg)
+![Menus Page](../../../images/user/navigation/empty_menu_page.jpg)
 
 
 ## New Menu Options
@@ -26,9 +26,10 @@ Once you have entered the New Menu screen, you are presented with four options.
 
 * **Location:** Choose the location of your menu. By default, you are offered the choice of Header or Footer; if you wish to add more options, click here to view the developer docs.
 
-* **Locale:** Each Menu is unique by Store, Location and Language; for example, you can not have two menus for your default store, both menus set to appear in the header, and both set to use the Language English (US).
+* **Locale:** Each Menu is unique by **Store**, **Location** and **Language**; for example, you can not have two menus for your **Default Store**, that both appear in the **Header**, and
+both use the language **English**.
 
-Once you have familiarized yourself with the options above, populate each field as required and click Create.
+Once you have familiarized yourself with the options above, populate each field as required and click **Create**.
 
 Upon creating your first menu, you will be presented with a Menu Items Area; this is where you organize the links of your menu.
 
