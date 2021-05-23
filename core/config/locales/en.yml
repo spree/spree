@@ -601,7 +601,7 @@ en:
         open_link_in_new_window: Open this link in a new window
         menu_item_type_message: "For more information about Menu Item Types, Nesting and using Codes, visit the documentation by
         <a href='https://guides.spreecommerce.org/user/configuration/configuring_geography.html#zones' target='_blank' class='alert-link'>clicking here</a>."
-        menu_item_type_container_message: Use containers to organize menu items into groups.
+        menu_item_type_container_message: "Containers are menu items that do not link to a destination. Use containers to organize other menu items into groups.<br> <br> By nesting links inside a container with a set code, you can build menus with categories or promotions, as seen in the Spree Demo store."
         menus: Menus
         menu_items: '%{menu_name} Items'
         public_details: Public Details
