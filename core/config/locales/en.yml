@@ -584,8 +584,8 @@ en:
         It is recommended that you create a default menu for each menu location."
         allow_this_menu_item_to_contain_nested_menu_items: Allow this Menu Item to contain nested items
         back_to_all_menus: Back To All Menus
-        click_create_to_load_new_link: 'Click the <b>Create</b> button below to save your new Menu Item, and update the link.'
-        click_update_to_load_new_link: 'Click the <b>Update</b> button below to change the link.'
+        click_create_to_load_new_link: 'Click the <b>Create</b> button below to change the link field.'
+        click_update_to_load_new_link: 'Click the <b>Update</b> button below to change the link field.'
         give_your_menu_a_unique_name: 'Use the unique code to identify your menu: spree-eu-main'
         link_settings: Link Settings
         link_to: Link To
