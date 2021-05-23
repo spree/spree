@@ -198,7 +198,6 @@ module Spree
         when 'default'
           if taxons?
             products.
-              select("#{Product.table_name}.*, #{Classification.table_name}.position").
               order("#{Classification.table_name}.position" => :asc)
           else
             products
