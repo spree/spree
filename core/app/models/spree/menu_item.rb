@@ -1,6 +1,6 @@
 module Spree
   class MenuItem < Spree::Base
-    include Spree::Link
+    include Spree::DisplayLink
 
     acts_as_nested_set dependent: :destroy
 

@@ -8,6 +8,9 @@
         <div class="card-body">
           <%= f.field_container :item_type, class: ['form-group'] do %>
             <%= f.label :item_type, Spree.t('admin.navigation.item_type') %>
+            <span class="d-none" id="usingContainerInfo" data-show-info data-alert-message="<%= Spree.t('admin.navigation.menu_item_type_container_message') %>">
+              <%= svg_icon name: "info.svg", width: '15', height: '15' %>
+            </span>
             <%= f.select(:item_type, @menu_item_types, {include_blank: false}) %>
             <%= f.error_message_on :item_type %>
           <% end %>
@@ -29,13 +32,6 @@
               <%= Spree.t('admin.navigation.nested_under_info') %>
             </small>
           <% end %>
-
-          <div class="d-none" id="usingContainerInfo">
-            <hr>
-            <div class="alert alert-info mt-3 mb-0">
-              <%= raw Spree.t('admin.navigation.menu_item_type_container_message') %>
-            </div>
-          </div>
         </div>
       </div>
     </div>

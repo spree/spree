@@ -1,7 +1,5 @@
 module Spree
-  module Link
-    extend ActiveSupport::Concern
-
+  module DisplayLink
     def link
       case linked_resource_type
       when 'Spree::Taxon'
