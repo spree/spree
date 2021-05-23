@@ -51,6 +51,10 @@ module Spree
       def default_menu_for_store?(menu)
         menu.store.default_locale == menu.locale
       end
+
+      def to_path_format(string)
+        string.parameterize(separator: '_')
+      end
     end
   end
 end

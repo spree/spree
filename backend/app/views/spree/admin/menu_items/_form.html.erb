@@ -100,9 +100,9 @@
                 <% end %>
               </div>
               <div class="col-6">
-
-                <%= render 'link_input', linked_resource_type: @menu_item.linked_resource_type, f: f %>
-
+                <div id="linkResourcePanel" data-panel-type="<%= @menu_item.linked_resource_type %>">
+                  <%= render "spree/admin/menu_items/link_inputs/#{to_path_format(@menu_item.linked_resource_type)}", linked_resource: @menu_item.linked_resource_type, f: f %>
+                </div>
                 <div id="alertToClickUpdate" class="d-none">
                   <div class="alert alert-warning mt-3">
                     <% if %w[new create].include? controller.action_name %>
@@ -116,11 +116,6 @@
             </div>
           </div>
         </div>
-      </div>
-      <div class="d-none" id="usingContainerInfo">
-        <div class="alert alert-info mt-3 mb-0">
-            <%= raw Spree.t('admin.navigation.menu_item_type_container_message') %>
-          </div>
       </div>
     </div>
   </div>
