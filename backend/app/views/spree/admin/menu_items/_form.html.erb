@@ -95,23 +95,12 @@
               <div class="col-6">
                 <%= f.field_container :linked_resource_type, class: ['form-group'] do %>
                   <%= f.label :linked_resource_type, Spree.t('admin.navigation.link_to') %>
-                  <%= f.select(:linked_resource_type, resorce_types_dropdown_values, {include_blank: false}) %>
+                  <%= f.select(:linked_resource_type, resorce_types_dropdown_values, {include_blank: false}, class: 'link_switcher') %>
                   <%= f.error_message_on :linked_resource_type %>
                 <% end %>
               </div>
               <div class="col-6">
-                <div id="linkResourcePanel" data-panel-type="<%= @menu_item.linked_resource_type %>">
-                  <%= render "spree/admin/menu_items/link_inputs/#{to_path_format(@menu_item.linked_resource_type)}", linked_resource: @menu_item.linked_resource_type, f: f %>
-                </div>
-                <div id="alertToClickUpdate" class="d-none">
-                  <div class="alert alert-warning mt-3">
-                    <% if %w[new create].include? controller.action_name %>
-                      <%= raw Spree.t('admin.navigation.click_create_to_load_new_link') %>
-                    <% else %>
-                      <%= raw Spree.t('admin.navigation.click_update_to_load_new_link') %>
-                    <% end %>
-                  </div>
-                </div>
+                <%= render "spree/admin/shared/link_fields", resource: @menu_item, f: f %>
               </div>
             </div>
           </div>

@@ -61,7 +61,7 @@ module Spree
       end
     end
 
-    def spree_localized_item_link(item)
+    def spree_localized_link(item)
       return if item.link.nil?
 
       output_locale = if locale_param
@@ -90,9 +90,9 @@ module Spree
 
       link_opts = { target: target, rel: rel, class: opts[:class], id: opts[:id], data: opts[:data], aria: opts[:aria] }
       if block_given?
-        link_to spree_localized_item_link(item), link_opts, &block
+        link_to spree_localized_link(item), link_opts, &block
       else
-        link_to item.name, spree_localized_item_link(item), link_opts
+        link_to item.name, spree_localized_link(item), link_opts
       end
     end
 
