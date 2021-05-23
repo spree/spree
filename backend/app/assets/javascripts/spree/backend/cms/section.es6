@@ -1,27 +1,24 @@
 document.addEventListener('DOMContentLoaded', function() {
-  $('#cms_section_linked_resource_type').select2()
-  $('#cms_section_item_type').select2()
+  const sectionKindSelector = $('#cms_section_kind').select2()
 
-  $('#cms_section_linked_resource_type').on('change', function() {
-    const selectedLinkTo = $('#cms_section_linked_resource_type').val()
+  sectionKindSelector.on('change', function() {
+    const selectedValue = $(sectionKindSelector).val()
     const message = document.getElementById('alertToClickUpdate')
-    const activePanel = document.getElementById('linkResourcePanel')
-    const panelType = activePanel.dataset.panelType
+    const activeSectionKind = document.getElementById('CmsSectionKind')
+    const panelType = activeSectionKind.dataset.panelKind
 
-    if (selectedLinkTo === panelType) {
-      activePanel.classList = ''
-      activePanel.classList.add('d-block')
+    if (selectedValue === panelType) {
+      activeSectionKind.classList = ''
+      activeSectionKind.classList.add('d-block')
 
       message.classList = ''
       message.classList.add('d-none')
     } else {
-      activePanel.classList = ''
-      activePanel.classList.add('d-none')
+      activeSectionKind.classList = ''
+      activeSectionKind.classList.add('d-none')
 
       message.classList = ''
       message.classList.add('d-block')
     }
   });
-
-
 })

@@ -15,45 +15,54 @@
               <% end %>
             </div>
             <div class="col-6">
-            <%= f.field_container :kind, class: ['form-group'] do %>
-              <%= f.label :kind, Spree.t('admin.navigation.section_type') %>
-              <%= f.select(:kind, @cms_section_types, {include_blank: false}, class: 'select2') %>
-              <%= f.error_message_on :kind %>
-            <% end %>
+              <%= f.field_container :kind, class: ['form-group'] do %>
+                <%= f.label :kind, Spree.t('admin.navigation.section_type') %>
+                <%= f.select(:kind, @cms_section_types, {include_blank: false}) %>
+                <%= f.error_message_on :kind %>
+              <% end %>
             </div>
-
-            <div class="col-6">
-            <%= f.field_container :width, class: ['form-group'] do %>
-              <%= f.label :width, Spree.t('admin.navigation.width') %>
-              <%= f.select(:width, @cms_section_widths, {include_blank: false}, class: 'select2') %>
-              <%= f.error_message_on :width %>
-            <% end %>
-            </div>
-
           </div>
         </div>
       </div>
     </div>
   </div>
-</div>
 
-<div data-hook="admin_cms_section_form_fields">
-  <div class="row">
-    <div class="col-12 col-md-6">
-      <div class="card mb-3">
-        <div class="card-header">
-          <h5 class="mb-0"><%= Spree.t('admin.cms.settings_for', section_kind: @cms_section.kind) %></h5>
-        </div>
-        <div class="card-body">
-          <% if @cms_section.kind.present? %>
-          <div class="row">
-            <div class="col-12">
-              <%= render "spree/admin/cms_sections/types/#{@cms_section.kind.parameterize(separator: '_')}", f: f %>
-            </div>
-          </div>
+  <div id="alertToClickUpdate" class="d-none">
+    <div class="row">
+      <div class="col-12">
+        <div class="alert alert-warning mt-3">
+          <% if %w[new create].include? controller.action_name %>
+            <%= raw Spree.t('admin.cms.click_create_to_load_new_link') %>
+          <% else %>
+            <%= raw Spree.t('admin.cms.click_update_to_load_new_link') %>
           <% end %>
         </div>
       </div>
     </div>
   </div>
+
+  <% if @cms_section.kind.present? %>
+    <div id="CmsSectionKind"
+         data-hook="admin_cms_section_form_fields"
+         data-panel-kind="<%= @cms_section.kind %>">
+      <div class="row">
+        <div class="col-12">
+          <div class="card mb-3">
+            <div class="card-header">
+              <h5 class="mb-0"><%= Spree.t('admin.cms.settings_for', section_kind: @cms_section.kind) %></h5>
+            </div>
+            <div class="card-body">
+              <% if @cms_section.kind.present? %>
+              <div class="row">
+                <div class="col-12">
+                  <%= render "spree/admin/cms_sections/types/#{@cms_section.kind.parameterize(separator: '_')}", f: f %>
+                </div>
+              </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
 </div>

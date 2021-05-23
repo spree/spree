@@ -2,7 +2,7 @@
   <div class="full-width">
     <div class="homepage-hero-image mb-3 position-relative p-0">
       <% if section.icon.present? %>
-        <%= image_tag main_app.url_for(section.icon.attachment) %>
+        <%= image_tag main_app.url_for(section.icon.attachment), alt: section.icon.alt %>
       <% end %>
 
       <div class="hero-content">
@@ -10,7 +10,7 @@
           <%= section.title %>
         </div>
         <div>
-          <%= link_to section.subtitle, spree.products_path, class: 'btn btn-primary spree-btn px-5' %>
+          <%= link_to section.subtitle, section.link, class: 'btn btn-primary spree-btn px-5' %>
         </div>
       </div>
     </div>

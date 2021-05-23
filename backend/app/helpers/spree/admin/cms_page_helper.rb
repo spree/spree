@@ -13,6 +13,10 @@ module Spree
 
         render "spree/admin/cms_pages/sections/#{preview_type}", section: section, width: css_width
       end
+
+      def linkable_as_path(item)
+        item.parameterize(separator: '_')
+      end
     end
   end
 end
