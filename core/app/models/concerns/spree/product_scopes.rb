@@ -94,6 +94,19 @@ module Spree
         taxons.first ? prepare_taxon_conditions(taxons) : where(nil)
       end
 
+      add_search_scope :ascend_by_taxons_min_position do |taxon_ids|
+        joins(:classifications).
+          where(Classification.table_name => { taxon_id: taxon_ids }).
+          select(
+            [
+              "#{Product.table_name}.*",
+              "MIN(#{Classification.table_name}.position) AS min_position"
+            ].join(', ')
+          ).
+          group(:id).
+          order(min_position: :asc)
+      end
+
       # a scope that finds all products having property specified by name, object or id
       add_search_scope :with_property do |property|
         joins(:properties).where(property_conditions(property))

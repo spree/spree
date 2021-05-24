@@ -360,22 +360,27 @@ module Spree
         end
 
         context 'when filtering by taxons' do
-          let(:taxonomy) { create(:taxonomy) }
-          let(:child_taxon) { create(:taxon, taxonomy: taxonomy) }
-
-          before do
-            product.taxons << child_taxon
-            product_2.taxons << child_taxon
-
-            # swap products positions
-            product.classifications.find_by(taxon: child_taxon).update(position: 2)
-            product_2.classifications.find_by(taxon: child_taxon).update(position: 1)
+          let(:params) do
+            { sort_by: 'default', filter: { taxons: taxonomy.root.id } }
           end
 
-          let(:params) { { sort_by: 'default', filter: { taxons: taxonomy.root.id } } }
+          let(:taxonomy) { create(:taxonomy) }
+          let(:child_taxon_1) { create(:taxon, taxonomy: taxonomy) }
+          let(:child_taxon_2) { create(:taxon, taxonomy: taxonomy) }
+
+          before do
+            product.taxons << child_taxon_1
+            product_2.taxons << child_taxon_1
+            product_3.taxons << child_taxon_2
+
+            # swap products positions
+            product.classifications.find_by(taxon: child_taxon_1).update(position: 3)
+            product_3.classifications.find_by(taxon: child_taxon_2).update(position: 2)
+            product_2.classifications.find_by(taxon: child_taxon_1).update(position: 1)
+          end
 
           it 'returns products ordered by associated taxon position' do
-            expect(products).to match_array [product_2, product]
+            expect(products).to eq [product_2, product_3, product]
           end
         end
       end

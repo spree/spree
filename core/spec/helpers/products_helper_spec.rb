@@ -206,6 +206,8 @@ THIS IS THE BEST PRODUCT EVER!
       before do
         allow(helper).to receive(:params).and_return(page: 10)
         allow(helper).to receive(:current_price_options) { price_options }
+
+        allow(products).to receive(:except).with(:group, :order).and_return(products)
       end
 
       context 'when there is a maximum updated date' do

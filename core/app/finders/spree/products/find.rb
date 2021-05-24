@@ -197,9 +197,7 @@ module Spree
         case sort_by
         when 'default'
           if taxons?
-            products.
-              select("#{Product.table_name}.*, #{Classification.table_name}.position").
-              order("#{Classification.table_name}.position" => :asc)
+            products.ascend_by_taxons_min_position(taxons)
           else
             products
           end

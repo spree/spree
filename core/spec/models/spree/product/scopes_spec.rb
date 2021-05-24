@@ -258,4 +258,55 @@ describe 'Product scopes', type: :model do
       expect(result.count).to eq(2)
     end
   end
+
+  context '#ascend_by_taxons_min_position' do
+    subject(:ordered_products) { Spree::Product.ascend_by_taxons_min_position(taxons) }
+
+    let(:taxons) { [parent_taxon, child_taxon_1, child_taxon_2, child_taxon_1_1, child_taxon_2_1] }
+
+    let(:parent_taxon) { create(:taxon) }
+
+    let(:child_taxon_1) { create(:taxon, parent: parent_taxon) }
+    let(:child_taxon_1_1) { create(:taxon, parent: child_taxon_1) }
+
+    let(:child_taxon_2) { create(:taxon, parent: parent_taxon) }
+    let(:child_taxon_2_1) { create(:taxon, parent: child_taxon_2) }
+
+    let!(:product_1) { create(:product) }
+    let!(:classification_1_1) { create(:classification, position: 5, product: product_1, taxon: parent_taxon) }
+    let!(:classification_1_2) { create(:classification, position: 4, product: product_1, taxon: child_taxon_1_1) }
+
+    let!(:product_2) { create(:product) }
+    let!(:classification_2_1) { create(:classification, position: 1, product: product_2, taxon: parent_taxon) }
+    let!(:classification_2_2) { create(:classification, position: 2, product: product_2, taxon: child_taxon_2_1) }
+
+    let!(:product_3) { create(:product) }
+    let!(:classification_3_1) { create(:classification, position: 3, product: product_3, taxon: child_taxon_1) }
+    let!(:classification_3_2) { create(:classification, position: 4, product: product_3, taxon: child_taxon_2_1) }
+
+    let!(:product_4) { create(:product) }
+    let!(:classification_4_1) { create(:classification, position: 2, product: product_4, taxon: child_taxon_2) }
+
+    let!(:product_5) { create(:product) }
+    let!(:classification_5_1) { create(:classification, position: 1, product: product_5, taxon: child_taxon_1_1) }
+
+    let!(:product_6) { create(:product) }
+    let!(:classification_6_1) { create(:classification, position: 6, product: product_6, taxon: child_taxon_2) }
+    let!(:classification_6_2) { create(:classification, position: 3, product: product_6, taxon: child_taxon_1) }
+
+    before do
+      create_list(:product, 3, taxons: [create(:taxon)])
+    end
+
+    it 'orders products by ascending taxons minimum position' do
+      expect(ordered_products).to eq(
+        [
+          product_2, product_5, # position: 1
+          product_4,            # position: 2
+          product_6, product_3, # position: 3
+          product_1             # position: 4
+        ]
+      )
+    end
+  end
 end
