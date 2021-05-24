@@ -32,7 +32,6 @@ module Spree
       opts[:skip_bundle] = true
       opts[:skip_gemfile] = true
       opts[:skip_git] = true
-      opts[:skip_keeps] = true
       opts[:skip_listen] = true
       opts[:skip_rc] = true
       opts[:skip_spring] = true
