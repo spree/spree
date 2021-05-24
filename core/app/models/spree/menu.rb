@@ -22,14 +22,16 @@ module Spree
 
     has_one :root, -> { where(parent_id: nil) }, class_name: 'Spree::MenuItem', dependent: :destroy
 
+    default_scope { order(created_at: :desc) }
+
     scope :by_store, ->(store) { where(store: store) }
     scope :by_locale, ->(locale) { where(locale: locale) }
 
     self.whitelisted_ransackable_attributes = %w[name location locale store_id]
 
     MENU_LOCATIONS_PARAMETERIZED.each do |location_name|
-      define_singleton_method("for_#{location_name}") do |store|
-        menu = find_by(location: location_name, locale: I18n.locale.to_s) ||
+      define_singleton_method("for_#{location_name}") do |locale, store|
+        menu = find_by(location: location_name, locale: locale.to_s) ||
           store.default_menu(location_name) ||
           find_by(location: location_name)
         if menu.present?

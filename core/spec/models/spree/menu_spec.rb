@@ -37,26 +37,20 @@ describe Spree::Menu, type: :model do
     let!(:menu_fr) { create(:menu, name: 'Main Menu FR', store: fr_store, locale: 'fr') }
 
     context 'when the I18n.locale is set to a none default laguage and a menu is available' do
-      before { I18n.locale = :en }
-
       it 'returns a menu in the correct locale' do
-        expect(described_class.for_header(fr_store).name).to eql('Main Menu EN')
+        expect(described_class.for_header('en', fr_store).name).to eql('Main Menu EN')
       end
     end
 
     context 'when the I18n.locale is set to a none default laguage and a menu is not available' do
-      before { I18n.locale = :de }
-
       it 'returns a menu in the current stores default locale if one is available' do
-        expect(described_class.for_header(fr_store).name).to eql('Main Menu FR')
+        expect(described_class.for_header('de',fr_store).name).to eql('Main Menu FR')
       end
     end
 
     context 'when the I18n.locale is set to the default laguage and a menu is available' do
-      before { I18n.locale = :fr }
-
       it 'returns a the default menu' do
-        expect(described_class.for_header(fr_store).name).to eql('Main Menu FR')
+        expect(described_class.for_header('fr', fr_store).name).to eql('Main Menu FR')
       end
     end
   end

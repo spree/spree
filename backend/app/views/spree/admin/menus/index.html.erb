@@ -78,9 +78,7 @@
             <%= locale_full_name(menu.locale) %>
           </td>
           <td class="text-center">
-            <% if default_menu_for_store?(menu) %>
-              <%= svg_icon name: "tick.svg", width: '20', height: '20' %>
-            <% end %>
+            <%= active_badge(default_menu_for_store?(menu)) %>
           </td>
           <td class="actions" data-hook="admin_menus_index_row_actions">
              <span class="d-flex justify-content-end">
