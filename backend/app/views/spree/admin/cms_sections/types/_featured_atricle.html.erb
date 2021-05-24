@@ -1,5 +1,5 @@
 <div class="row">
-  <div class="col-12 col-md-6">
+  <div class="col-12 col-md-4">
     <%= f.field_container :title, class: ['form-group'] do %>
       <%= f.label :title, Spree.t(:title) %>
       <%= f.text_field :title, class: 'form-control' %>
@@ -24,8 +24,9 @@
       <%= f.error_message_on :width %>
     <% end %>
   </div>
-  <div class="col-12 col-md-6">
+  <div class="col-12 col-md-8">
     <%= f.field_container :content, class: ['form-group'] do %>
+      <%= f.label :width, Spree.t('content') %>
       <%= f.text_area :content, { rows: "20", class: 'form-control spree-rte' } %>
       <%= f.error_message_on :content %>
     <% end %>

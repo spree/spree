@@ -1,62 +1,91 @@
-<div data-hook="admin_page_form_fields" class="row">
-  <div class="col-12 col-md-8">
-    <%= f.field_container :content, class: ['form-group']  do %>
-      <%= f.label :content, Spree.t(:content) %>
-      <%= f.text_area :content, { rows: 26, class: 'spree-rte'} %>
-      <%= f.error_message_on :content %>
-    <% end %>
-  </div>
+<div data-hook="admin_page_form_fields">
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="mb-0"> <%= Spree.t(:settings) %></h5>
+        </div>
+        <div class="card-body">
 
-  <div class="col-12 col-md-4">
-    <%= f.field_container :title, class: ['form-group'] do %>
-      <%= f.label :title, raw(Spree.t('admin.cms.page_title') + required_span_tag) %>
-      <%= f.text_field :title, class: 'form-control', required: true %>
-      <%= f.error_message_on :title %>
-    <% end %>
+          <div class="row pb-0">
+            <%= f.field_container :title, class: ['form-group col-6'] do %>
+              <%= f.label :title, raw(Spree.t('admin.cms.page_title') + required_span_tag) %>
+              <%= f.text_field :title, class: 'form-control', required: true %>
+              <%= f.error_message_on :title %>
+            <% end %>
 
-    <%= f.field_container :kind, class: ['form-group'] do %>
-      <%= f.label :kind, Spree.t('admin.cms.page_type') %>
-      <%= f.select(:kind, @page_kinds, {include_blank: false}, class: 'select2') %>
-      <%= f.error_message_on :kind %>
-    <% end %>
+            <%= f.field_container :kind, class: ['form-group col-6'] do %>
+              <%= f.label :kind, Spree.t('admin.cms.page_type') %>
+              <%= f.select(:kind, @page_kinds, {include_blank: false}, class: 'select2') %>
+              <%= f.error_message_on :kind %>
+            <% end %>
 
-    <hr class="mt-5">
-    <%= f.field_container :cms_page_stores, class: ['form-group'] do %>
-      <%= label_tag :cms_page_stores, Spree.t(:stores) %>
-      <%= collection_select(:cms_page, :store_id, @stores, :id, :unique_name, {}, { class: 'select2' }) %>
-      <%= f.error_message_on :cms_page_stores %>
-    <% end %>
-    <%= f.field_container :locale, class: ['form-group'] do %>
-      <%= f.label :locale %>
-      <%= f.select :locale, options_from_collection_for_select(all_locales_options, :last, :first, @cms_page.locale || I18n.locale), {}, { class: 'select2' } %>
-      <%= f.error_message_on :default_locale %>
-    <% end %>
+            <%= f.field_container :cms_page_stores, class: ['form-group col-6'] do %>
+              <%= label_tag :cms_page_stores, Spree.t(:stores) %>
+              <%= collection_select(:cms_page, :store_id, @stores, :id, :unique_name, {}, { class: 'select2' }) %>
+              <%= f.error_message_on :cms_page_stores %>
+            <% end %>
 
-    <%= f.field_container :visible, class: ['form-group'] do %>
-      <div class="custom-control custom-checkbox">
-        <%= f.check_box :visible, class: 'custom-control-input' %>
-        <%= f.label :visible, Spree.t(:visible), class: 'custom-control-label' %>
-        <%= f.error_message_on :visible %>
+            <%= f.field_container :locale, class: ['form-group col-6'] do %>
+              <%= f.label :locale %>
+              <%= f.select :locale, options_from_collection_for_select(all_locales_options, :last, :first, @cms_page.locale || I18n.locale), {}, { class: 'select2' } %>
+              <%= f.error_message_on :default_locale %>
+            <% end %>
+
+            <%= f.field_container :visible, class: ['form-group col-6'] do %>
+              <div class="custom-control custom-checkbox">
+                <%= f.check_box :visible, class: 'custom-control-input' %>
+                <%= f.label :visible, Spree.t(:visible), class: 'custom-control-label' %>
+                <%= f.error_message_on :visible %>
+              </div>
+            <% end %>
+
+            <div class="col-12 text-right">
+              <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#cmsSeoSettings" aria-expanded="false" aria-controls="collapseExample">
+                <%= Spree.t('admin.cms.view_seo_settings') %>
+              </button>
+            </div>
+
+              <div class="col-12 collapse" id="cmsSeoSettings">
+                <hr class="mt-5">
+                <h5 class="mt-4"><%= Spree.t('admin.cms.seo_settings') %></h5>
+                <div class="row pb-0">
+                <%= f.field_container :meta_title, class: ['form-group col-6'] do %>
+                  <%= f.label :meta_title, Spree.t('admin.pages.meta_title') %>
+                  <%= f.text_field :meta_title, class: 'form-control' %>
+                  <%= f.error_message_on :meta_title %>
+                <% end %>
+
+                <%= f.field_container :slug, class: ['form-group col-6'] do %>
+                  <%= f.label :slug, Spree.t('admin.pages.slug') %>
+                  <%= f.text_field :slug, class: 'form-control' %>
+                  <%= f.error_message_on :slug %>
+                <% end %>
+
+                <%= f.field_container :meta_description, class: ['form-group col-12'] do %>
+                  <%= f.label :meta_description, Spree.t('admin.pages.meta_description') %>
+                  <%= f.text_area :meta_description, { rows: 3, class: 'form-control' } %>
+                  <%= f.error_message_on :meta_description %>
+                <% end %>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
       </div>
-    <% end %>
-
-    <h5 class="mt-4">SEO</h5>
-    <%= f.field_container :meta_title, class: ['form-group'] do %>
-      <%= f.label :meta_title, Spree.t('admin.pages.meta_title') %>
-      <%= f.text_field :meta_title, class: 'form-control' %>
-      <%= f.error_message_on :meta_title %>
-    <% end %>
-
-    <%= f.field_container :meta_description, class: ['form-group'] do %>
-      <%= f.label :meta_description, Spree.t('admin.pages.meta_description') %>
-      <%= f.text_area :meta_description, { rows: 3, class: 'form-control' } %>
-      <%= f.error_message_on :meta_description %>
-    <% end %>
-
-    <%= f.field_container :slug, class: ['form-group'] do %>
-      <%= f.label :slug, Spree.t('admin.pages.slug') %>
-      <%= f.text_field :slug, class: 'form-control' %>
-      <%= f.error_message_on :slug %>
-    <% end %>
+    </div>
   </div>
+
+  <% if @cms_page.kind == 'Standard Page' %>
+    <div class="row">
+      <div class="col-12">
+        <%= f.field_container :content, class: ['form-group']  do %>
+          <%= f.label :content, Spree.t(:content) %>
+          <%= f.text_area :content, { rows: 26, class: 'spree-rte'} %>
+          <%= f.error_message_on :content %>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
 </div>

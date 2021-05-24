@@ -9,7 +9,7 @@ module Spree
     private
 
     def load_cms_page
-      @cms_page = Spree::CmsPage.friendly.find(params[:id])
+      @cms_page = available_pages.visible.friendly.find(params[:id])
     end
   end
 end

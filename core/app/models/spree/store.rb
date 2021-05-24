@@ -7,6 +7,7 @@ module Spree
     has_many :payment_methods, class_name: 'Spree::PaymentMethod'
 
     has_many :menus
+    has_many :cms_pages
 
     belongs_to :default_country, class_name: 'Spree::Country'
     belongs_to :checkout_zone, class_name: 'Spree::Zone'

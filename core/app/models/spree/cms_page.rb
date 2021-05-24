@@ -13,6 +13,8 @@ module Spree
 
     validates :title, presence: true
 
+    validates :kind, uniqueness: { scope: [:store, :locale] }, if: :home_page?
+
     scope :visible, -> { where visible: true }
 
     def seo_title
@@ -24,6 +26,10 @@ module Spree
     end
 
     private
+
+    def home_page?
+      kind == 'Home Page'
+    end
 
     def create_slug
       self.slug = if slug.blank?

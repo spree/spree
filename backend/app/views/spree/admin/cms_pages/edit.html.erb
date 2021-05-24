@@ -6,33 +6,16 @@
   <%= page_preview_link(@cms_page) %>
 <% end %>
 
-<% if @cms_page.kind == 'Standard Page' %>
-  <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @cms_page } %>
-  <%= form_for [:admin, @cms_page] do |f| %>
-    <%= render partial: 'form', locals: { f: f } %>
-    <div class="d-flex ">
-      <%= render partial: 'spree/admin/shared/edit_resource_links' %>
-    </div>
-  <% end %>
-<% else %>
-  <div class="card">
-    <div class="card-header">
-      <h5 class="mb-0"><%= Spree.t('admin.cms.feature_page_settings') %></h5>
-    </div>
-    <div class="card-body">
-      <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @cms_page } %>
-      <%= form_for [:admin, @cms_page] do |f| %>
-        <%= render partial: 'feature_form', locals: { f: f } %>
-        <div class="d-flex ">
-          <%= render partial: 'spree/admin/shared/edit_resource_links' %>
-        </div>
-      <% end %>
-    </div>
+<%= render partial: 'spree/admin/shared/error_messages', locals: { target: @cms_page } %>
+<%= form_for [:admin, @cms_page] do |f| %>
+  <%= render partial: 'form', locals: { f: f } %>
+  <div class="col-12">
+    <%= render partial: 'spree/admin/shared/edit_resource_links' %>
   </div>
 <% end %>
 
 <% unless @cms_page.kind == "Standard Page" %>
-  <div id="pageSectionsArea">
+  <div id="pageSectionsArea" class="col-12">
     <div class="row mt-5">
       <div class="col-12">
         <div class="card mb-3">
@@ -54,9 +37,13 @@
               <% end %>
             </div>
           <% else %>
-            <div class="alert alert-info no-objects-found">
-              <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::CmsSection)) %>
-              <%= link_to Spree.t(:add_one), new_object_url if can?(:create, Spree::CmsSection) %>
+            <div class="row">
+              <div class="col-12">
+                <div class="alert alert-info no-objects-found m-4">
+                  <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::CmsSection)) %>
+                  <%= link_to Spree.t(:add_one), new_object_url if can?(:create, Spree::CmsSection) %>
+                </div>
+              </div>
             </div>
           <% end %>
         </div>

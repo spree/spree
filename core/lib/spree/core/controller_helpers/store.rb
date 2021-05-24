@@ -8,6 +8,7 @@ module Spree
           helper_method :current_store
           helper_method :current_price_options
           helper_method :available_menus
+          helper_method :available_pages
         end
 
         def current_store
@@ -16,6 +17,10 @@ module Spree
 
         def available_menus
           @available_menus ||= current_store.menus
+        end
+
+        def available_pages
+          @available_pages ||= current_store.cms_pages
         end
 
         def store_locale

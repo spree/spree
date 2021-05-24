@@ -5,7 +5,7 @@
 <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @cms_page } %>
 <%= form_for [:admin, @cms_page] do |f| %>
   <%= render partial: 'form', locals: { f: f } %>
-  <div class="d-flex">
+  <div class="col-12">
     <%= render partial: 'spree/admin/shared/new_resource_links' %>
   </div>
 <% end %>
