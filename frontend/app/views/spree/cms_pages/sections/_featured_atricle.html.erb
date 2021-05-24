@@ -1,0 +1,14 @@
+<div class="<%= width %>">
+  <div class="<%= edge_to_edge %>">
+    <div class="homepage-fashion-trends-box mb-3">
+      <div class="text-center">
+        <div class="homepage-fashion-trends-box-summer-text mb-1"><%= section.title %></div>
+        <div class="homepage-fashion-trends-box-fashion-trends-text mb-2"><%= section.subtitle %></div>
+        <div class="homepage-fashion-trends-box-description-text text-center mb-3">
+          <%= raw section.content %>
+        </div>
+        <%= link_to section.button_text, spree.nested_taxons_path('trending'), class: 'btn px-5 spree-btn btn-outline-primary' %>
+      </div>
+    </div>
+  </div>
+</div>

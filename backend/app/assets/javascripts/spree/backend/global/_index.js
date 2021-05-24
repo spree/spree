@@ -7,3 +7,4 @@
 //= require spree/backend/global/select2_autocomplete
 //= require spree/backend/global/select2_populate
 //= require spree/backend/global/sortable
+//= require spree/backend/global/tinymce

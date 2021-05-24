@@ -7,14 +7,14 @@
         </div>
         <div class="card-body">
           <div class="row">
-            <div class="col-6">
+            <div class="col-12 col-md-6">
               <%= f.field_container :name, class: ['form-group'] do %>
                 <%= f.label :name, raw(Spree.t(:name) + required_span_tag) %>
                 <%= f.text_field :name, class: 'form-control', required: true %>
                 <%= f.error_message_on :name %>
               <% end %>
             </div>
-            <div class="col-6">
+            <div class="col-12 col-md-6">
               <%= f.field_container :kind, class: ['form-group'] do %>
                 <%= f.label :kind, Spree.t('admin.navigation.section_type') %>
                 <%= f.select(:kind, @cms_section_types, {include_blank: false}) %>

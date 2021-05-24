@@ -182,7 +182,9 @@
 
       @include media-breakpoint-up(md) {
         font-size: font-px-to-rem(16px);
-        width: 608px;
+        width: 90%;
+        max-width: 608px;
+
       }
     }
     .spree-btn {

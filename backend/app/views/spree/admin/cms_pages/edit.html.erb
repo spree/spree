@@ -33,14 +33,13 @@
 
 <% unless @cms_page.kind == "Standard Page" %>
   <div id="pageSectionsArea">
-    <div class="row mt-2">
+    <div class="row mt-5">
       <div class="col-12">
         <div class="card mb-3">
           <div class="card-header">
             <div class="row pb-0">
-              <div class="col">
+              <div class="d-flex pl-3">
                <h5 class="mb-0 align-self-center"> <%= Spree.t('admin.cms.page_sections', page_name: @cms_page.title) %></h5>
-               <small><%= Spree.t('admin.cms.page_sections_info', page_type: @cms_page.kind, store: @cms_page.store.unique_name ) %></small>
               </div>
               <div class="col d-flex justify-content-end">
                 <%= button_link_to Spree.t('admin.pages.add_new_section'), spree.new_admin_cms_page_cms_section_path(@cms_page), icon: 'add.svg', class: 'no-wrap btn btn-success align-self-center' %>

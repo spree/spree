@@ -2,7 +2,7 @@
   <div class="col-12 col-md-8">
     <%= f.field_container :content, class: ['form-group']  do %>
       <%= f.label :content, Spree.t(:content) %>
-      <%= f.text_area :content, { rows: 26} %>
+      <%= f.text_area :content, { rows: 26, class: 'spree-rte'} %>
       <%= f.error_message_on :content %>
     <% end %>
   </div>
@@ -20,6 +20,7 @@
       <%= f.error_message_on :kind %>
     <% end %>
 
+    <hr class="mt-5">
     <%= f.field_container :cms_page_stores, class: ['form-group'] do %>
       <%= label_tag :cms_page_stores, Spree.t(:stores) %>
       <%= collection_select(:cms_page, :store_id, @stores, :id, :unique_name, {}, { class: 'select2' }) %>
@@ -59,15 +60,3 @@
     <% end %>
   </div>
 </div>
-
-<script type="text/javascript">
-  tinymce.init({
-    selector: "#cms_page_content",
-    plugins: [
-      "image table paste code",
-    ],
-    menubar: false,
-    toolbar:
-      "undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | code ",
-  });
-</script>

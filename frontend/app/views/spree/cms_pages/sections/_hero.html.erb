@@ -1,5 +1,5 @@
-<div class="col-12">
-  <div class="full-width">
+<div class="<%= width %>">
+  <div class="<%= edge_to_edge %>">
     <div class="homepage-hero-image mb-3 position-relative p-0">
       <% if section.icon.present? %>
         <%= image_tag main_app.url_for(section.icon.attachment), alt: section.icon.alt %>

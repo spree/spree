@@ -1,6 +1,6 @@
 module Spree
   class CmsPage < Spree::Base
-    PAGE_KINDS = ['Standard Page','Feature Page', 'Home Page']
+    PAGE_KINDS = ['Standard Page', 'Feature Page', 'Home Page']
 
     extend FriendlyId
     friendly_id :slug, use: [:slugged, :finders, :history]
@@ -12,6 +12,8 @@ module Spree
     before_save :create_slug
 
     validates :title, presence: true
+
+    scope :visible, -> { where visible: true }
 
     def seo_title
       if meta_title.present?
@@ -25,10 +27,10 @@ module Spree
 
     def create_slug
       self.slug = if slug.blank?
-        title.to_url
-      else
-        slug.to_url
-      end
+                    title.to_url
+                  else
+                    slug.to_url
+                  end
     end
   end
 end
