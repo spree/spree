@@ -1,6 +1,48 @@
 require 'spec_helper'
 
 describe Spree::Store, type: :model do
+  describe 'validations' do
+    describe 'favicon image' do
+      it 'validates image properties' do
+        expect(build(:store, :with_favicon, filepath: file_fixture('icon_256x256.png'))).to be_valid
+
+        expect(build(:store, :with_favicon, filepath: file_fixture('icon_512x512.png'))).not_to be_valid
+        expect(build(:store, :with_favicon, filepath: file_fixture('icon_256x256.gif'))).not_to be_valid
+        expect(build(:store, :with_favicon, filepath: file_fixture('img_256x128.png'))).not_to be_valid
+      end
+
+      context 'file size' do
+        let(:store) do
+          store = build(:store)
+          store.favicon_image.attach(io: file, filename: 'favicon.png')
+          store
+        end
+
+        let(:file) { File.open(file_fixture('icon_256x256.png')) }
+
+        before do
+          allow(file).to receive(:size).and_return(size)
+        end
+
+        context 'when size is 1 megabyte' do
+          let(:size) { 1.megabyte }
+
+          it 'is valid' do
+            expect(store.valid?).to be(true)
+          end
+        end
+
+        context 'when size is over 1 megabyte' do
+          let(:size) { 1.megabyte + 1 }
+
+          it 'is invalid' do
+            expect(store.valid?).to be(false)
+          end
+        end
+      end
+    end
+  end
+
   describe '.by_url' do
     let!(:store)    { create(:store, url: "website1.com\nwww.subdomain.com") }
     let!(:store_2)  { create(:store, url: 'freethewhales.com') }

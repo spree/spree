@@ -14,11 +14,13 @@ FactoryBot.define do
     instagram              { 'spreecommerce' }
 
     trait :with_favicon do
+      transient do
+        filepath { Spree::Core::Engine.root.join('spec', 'fixtures', 'favicon.ico') }
+        image_type { 'image/x-icon' }
+      end
+
       favicon_image do
-        Rack::Test::UploadedFile.new(
-          Spree::Core::Engine.root.join('spec', 'fixtures', 'favicon.ico'),
-          'image/x-icon'
-        )
+        Rack::Test::UploadedFile.new(filepath, image_type)
       end
     end
   end
