@@ -82,6 +82,14 @@ describe Spree::Store, type: :model do
     it { expect(described_class.available_locales).to contain_exactly('en', 'de') }
   end
 
+  describe '.default_menu' do
+    let!(:store_a) { create(:store, default_locale: 'en') }
+    let!(:menu_a) { create(:menu, store: store_a, locale: 'en') }
+    let!(:menu_b) { create(:menu, store: store_a, locale: 'de') }
+
+    it { expect(store_a.default_menu('header')).to eq(menu_a) }
+  end
+
   shared_context 'with checkout zone set' do
     let!(:country1) { create(:country) }
     let!(:country2) { create(:country) }

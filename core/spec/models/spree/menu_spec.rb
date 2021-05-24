@@ -32,24 +32,32 @@ describe Spree::Menu, type: :model do
   end
 
   describe '#for_header' do
-    let!(:fr_store) { create(:store, default_locale: 'fr', supported_locales: 'fr,en') }
+    let!(:fr_store) { create(:store, default_locale: 'fr', supported_locales: 'fr,en,de') }
     let!(:menu_en) { create(:menu, name: 'Main Menu EN', store: fr_store, locale: 'en') }
     let!(:menu_fr) { create(:menu, name: 'Main Menu FR', store: fr_store, locale: 'fr') }
 
-    it 'returns a menu in the requested locale if one is available' do
-      expect(described_class.for_header('en', 'fr').name).to eql('Main Menu EN')
+    context 'when the I18n.locale is set to a none default laguage and a menu is available' do
+      before { I18n.locale = :en }
+
+      it 'returns a menu in the correct locale' do
+        expect(described_class.for_header(fr_store).name).to eql('Main Menu EN')
+      end
     end
 
-    it 'returns a menu in the current stores default locale if one is available' do
-      expect(described_class.for_header('de', 'fr').name).to eql('Main Menu FR')
+    context 'when the I18n.locale is set to a none default laguage and a menu is not available' do
+      before { I18n.locale = :de }
+
+      it 'returns a menu in the current stores default locale if one is available' do
+        expect(described_class.for_header(fr_store).name).to eql('Main Menu FR')
+      end
     end
 
-    it 'returns a menu even if no locales are matched' do
-      expect(described_class.for_header(nil, nil).name).to eql('Main Menu EN')
-    end
+    context 'when the I18n.locale is set to the default laguage and a menu is available' do
+      before { I18n.locale = :fr }
 
-    it 'handels no args being passed and still returns a menu' do
-      expect(described_class.for_header.name).to eql('Main Menu EN')
+      it 'returns a the default menu' do
+        expect(described_class.for_header(fr_store).name).to eql('Main Menu FR')
+      end
     end
   end
 
