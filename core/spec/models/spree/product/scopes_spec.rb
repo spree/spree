@@ -301,7 +301,7 @@ describe 'Product scopes', type: :model do
     it 'orders products by ascending taxons minimum position' do
       expect(ordered_products).to eq(
         [
-          product_5, product_2, # position: 1
+          product_2, product_5, # position: 1
           product_4,            # position: 2
           product_6, product_3, # position: 3
           product_1             # position: 4
