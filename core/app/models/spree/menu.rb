@@ -22,8 +22,6 @@ module Spree
 
     has_one :root, -> { where(parent_id: nil) }, class_name: 'Spree::MenuItem', dependent: :destroy
 
-    default_scope { order(created_at: :asc) }
-
     scope :by_store, ->(store) { where(store: store) }
     scope :by_locale, ->(locale) { where(locale: locale) }
 
@@ -33,7 +31,7 @@ module Spree
       define_singleton_method("for_#{location_name}") do |locale, store|
         menu = find_by(location: location_name, locale: locale.to_s) ||
           store.default_menu(location_name) ||
-          find_by(location: location_name)
+          find_by(location: location_name, created_at: :asc)
         if menu.present?
           menu.root
         end
