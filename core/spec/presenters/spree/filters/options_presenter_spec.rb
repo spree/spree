@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Spree
-  RSpec.describe Filters::Options do
+  RSpec.describe Filters::OptionsPresenter do
     let(:options) { described_class.new(option_values_scope: OptionValue.where(id: option_values)) }
 
     let(:size) { create(:option_type, :size) }

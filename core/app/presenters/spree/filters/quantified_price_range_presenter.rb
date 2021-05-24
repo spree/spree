@@ -1,6 +1,6 @@
 module Spree
   module Filters
-    class QuantifiedPriceRange
+    class QuantifiedPriceRangePresenter
       ALLOWED_QUANTIFIERS = [
         :less_than,
         :more_than

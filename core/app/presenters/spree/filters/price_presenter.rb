@@ -1,6 +1,6 @@
 module Spree
   module Filters
-    class Price
+    class PricePresenter
       def initialize(amount:, currency:)
         @amount = amount.to_i
         @currency = currency

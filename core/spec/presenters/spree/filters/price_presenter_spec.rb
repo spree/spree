@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-RSpec.describe Spree::Filters::Price do
+RSpec.describe Spree::Filters::PricePresenter do
   let(:price) { described_class.new(amount: 50, currency: 'USD') }
 
   describe '#to_i' do
