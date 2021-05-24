@@ -11,8 +11,10 @@ module Spree
              class_name: 'Spree::ZoneMember',
              dependent: :destroy,
              foreign_key: :zoneable_id
-
     has_many :zones, through: :zone_members, class_name: 'Spree::Zone'
+    has_many(:states,
+             -> { order name: :asc },
+             inverse_of: :country)
 
     validates :name, :iso_name, :iso, :iso3, presence: true, uniqueness: { case_sensitive: false }
 
