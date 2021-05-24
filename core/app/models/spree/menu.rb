@@ -22,7 +22,7 @@ module Spree
 
     has_one :root, -> { where(parent_id: nil) }, class_name: 'Spree::MenuItem', dependent: :destroy
 
-    default_scope { order(created_at: :desc) }
+    default_scope { order(created_at: :asc) }
 
     scope :by_store, ->(store) { where(store: store) }
     scope :by_locale, ->(locale) { where(locale: locale) }
