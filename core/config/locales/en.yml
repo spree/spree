@@ -325,6 +325,14 @@ en:
             base:
               card_expired: "Card has expired"
               expiry_invalid: "Card expiration is invalid"
+        spree/legacy_user:
+          attributes:
+            bill_address_id:
+              belongs_to_other_user: belongs to other user
+              associated_with_completed_order: associated with completed order
+            ship_address_id:
+              belongs_to_other_user: belongs to other user
+              associated_with_completed_order: associated with completed order
         spree/line_item:
           attributes:
             currency:

@@ -17,7 +17,7 @@ module Spree
       :storefront_cart_estimate_shipping_rates_service, :storefront_estimated_shipment_serializer,
       :storefront_store_serializer, :storefront_address_serializer, :storefront_order_serializer,
       :storefront_account_create_address_service, :storefront_account_update_address_service, :storefront_address_finder,
-      :storefront_collection_sorter, :error_handler
+      :storefront_account_create_service, :storefront_account_update_service, :storefront_collection_sorter, :error_handler
     ].freeze
 
     attr_accessor *INJECTION_POINTS
@@ -53,6 +53,8 @@ module Spree
       @storefront_checkout_get_shipping_rates_service = Spree::Dependencies.checkout_get_shipping_rates_service
 
       # account services
+      @storefront_account_create_service = Spree::Dependencies.account_create_service
+      @storefront_account_update_service = Spree::Dependencies.account_update_service
       @storefront_account_create_address_service = Spree::Dependencies.account_create_address_service
       @storefront_account_update_address_service = Spree::Dependencies.account_update_address_service
 

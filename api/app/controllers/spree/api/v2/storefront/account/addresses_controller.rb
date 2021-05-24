@@ -67,14 +67,6 @@ module Spree
             def address_params
               params.require(:address).permit(permitted_address_attributes)
             end
-
-            def render_result(result)
-              if result.success?
-                render_serialized_payload { serialize_resource(result.value) }
-              else
-                render_error_payload(result.error)
-              end
-            end
           end
         end
       end

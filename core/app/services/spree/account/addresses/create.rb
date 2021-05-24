@@ -12,6 +12,7 @@ module Spree
 
           address = user.addresses.new(address_params)
           if address.save
+            assign_to_user_as_default(user: user, address_id: address.id)
             success(address)
           else
             failure(address)

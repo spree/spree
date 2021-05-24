@@ -31,6 +31,12 @@ module Spree
           params[:state_id] = country.states.find_by(name: state_name)&.id
           params
         end
+
+        def assign_to_user_as_default(user:, address_id:)
+          if user.addresses.pluck(:id) == [address_id] # check if it's user first address
+            user.update(bill_address_id: address_id, ship_address_id: address_id)
+          end
+        end
       end
     end
   end
