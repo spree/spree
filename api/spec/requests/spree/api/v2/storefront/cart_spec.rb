@@ -775,16 +775,19 @@ describe 'API V2 Storefront Cart Spec', type: :request do
     let(:country) { create(:country, iso: 'USA') }
     let(:zone) { create(:zone, name: 'US') }
     let(:shipping_method) { create(:shipping_method) }
+    let(:shipping_method_2) { create(:shipping_method) }
     let(:address) { create(:address, country: country) }
 
     let(:shipment) { order.shipments.first }
     let(:shipping_rate) { shipment.selected_shipping_rate }
+    let(:shipping_rate_2) { shipment.shipping_rates.where(selected: false).first }
 
     shared_examples 'returns a list of shipments with shipping rates' do
       before do
         order.shipping_address = address
         zone.countries << country
         shipping_method.zones = [zone]
+        shipping_method_2.zones = [zone]
         order.create_proposed_shipments
         execute
       end
@@ -792,20 +795,18 @@ describe 'API V2 Storefront Cart Spec', type: :request do
       it_behaves_like 'returns 200 HTTP status'
 
       it 'returns valid shipments JSON' do
-        expect(json_response['data']).not_to be_empty
-        expect(json_response['data'][0]).to have_type('shipping_rate')
-        expect(json_response['data'][0]['attributes']).to be_present
-        expect(json_response['data'][0]).to have_type('shipping_rate')
-        expect(json_response['data'][0]).to have_attribute(:name).with_value(shipping_method.name)
-        expect(json_response['data'][0]).to have_attribute(:cost).with_value(shipping_rate.cost.to_s)
-        expect(json_response['data'][0]).to have_attribute(:tax_amount).with_value(shipping_rate.tax_amount.to_s)
-        expect(json_response['data'][0]).to have_attribute(:shipping_method_id).with_value(shipping_method.id)
-        expect(json_response['data'][0]).to have_attribute(:selected).with_value(shipping_rate.selected)
-        expect(json_response['data'][0]).to have_attribute(:final_price).with_value(shipping_rate.final_price.to_s)
-        expect(json_response['data'][0]).to have_attribute(:free).with_value(shipping_rate.free?)
-        expect(json_response['data'][0]).to have_attribute(:display_final_price).with_value(shipping_rate.display_final_price.to_s)
-        expect(json_response['data'][0]).to have_attribute(:display_cost).with_value(shipping_rate.display_cost.to_s)
-        expect(json_response['data'][0]).to have_attribute(:display_tax_amount).with_value(shipping_rate.display_tax_amount.to_s)
+        [{shipping_method: shipping_method, shipping_rate: shipping_rate}, {shipping_method: shipping_method_2, shipping_rate: shipping_rate_2}].each do |shipping|
+          expect(json_response['data']).to include(have_type('shipping_rate').and have_attribute(:name).with_value(shipping[:shipping_method].name))
+          expect(json_response['data']).to include(have_type('shipping_rate').and have_attribute(:shipping_method_id).with_value(shipping[:shipping_method].id))
+          expect(json_response['data']).to include(have_type('shipping_rate').and have_attribute(:cost).with_value(shipping[:shipping_rate].cost.to_s))
+          expect(json_response['data']).to include(have_type('shipping_rate').and have_attribute(:tax_amount).with_value(shipping[:shipping_rate].tax_amount.to_s))
+          expect(json_response['data']).to include(have_type('shipping_rate').and have_attribute(:selected).with_value(shipping[:shipping_rate].selected))
+          expect(json_response['data']).to include(have_type('shipping_rate').and have_attribute(:final_price).with_value(shipping[:shipping_rate].final_price.to_s))
+          expect(json_response['data']).to include(have_type('shipping_rate').and have_attribute(:free).with_value(shipping[:shipping_rate].free?))
+          expect(json_response['data']).to include(have_type('shipping_rate').and have_attribute(:display_final_price).with_value(shipping[:shipping_rate].display_final_price.to_s))
+          expect(json_response['data']).to include(have_type('shipping_rate').and have_attribute(:display_cost).with_value(shipping[:shipping_rate].display_cost.to_s))
+          expect(json_response['data']).to include(have_type('shipping_rate').and have_attribute(:display_tax_amount).with_value(shipping[:shipping_rate].display_tax_amount.to_s))
+        end
       end
     end
 
