@@ -152,16 +152,31 @@ describe 'Stores admin', type: :feature, js: true do
       expect(store.new_order_notifications_email).to eq(store_owner_email)
     end
 
-    it 'allows uploading a favicon' do
-      visit spree.admin_stores_path
+    describe 'uploading a favicon' do
+      let(:favicon) { file_fixture('favicon.ico') }
 
-      within_row(1) { click_icon :edit }
-      attach_file('Favicon', file_fixture('favicon.ico'))
+      before do
+        visit spree.admin_stores_path
 
-      click_on 'Update'
+        within_row(1) { click_icon :edit }
+        attach_file('Favicon', favicon)
 
-      expect(page).to have_content('Store "Spree Test Store" has been successfully updated!')
-      expect(store.reload.favicon_image.attached?).to be(true)
+        click_on 'Update'
+      end
+
+      it 'allows uploading a favicon' do
+        expect(page).to have_content('Store "Spree Test Store" has been successfully updated!')
+        expect(store.reload.favicon_image.attached?).to be(true)
+      end
+
+      context 'when a favicon is invalid' do
+        let(:favicon) { file_fixture('icon_512x512.png') }
+
+        it 'prevents uploading a favicon and displays an error message' do
+          expect(page).to have_content('Unable to update store.: Favicon image must be less than or equal to 256 x 256 pixel')
+          expect(store.reload.favicon_image.attached?).to be(false)
+        end
+      end
     end
   end
 

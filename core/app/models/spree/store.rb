@@ -29,7 +29,10 @@ module Spree
     has_one_attached :favicon_image
 
     validates :mailer_logo, content_type: MAILER_LOGO_CONTENT_TYPES
-    validates :favicon_image, content_type: FAVICON_CONTENT_TYPES
+    validates :favicon_image, content_type: FAVICON_CONTENT_TYPES,
+                              dimension: { max: 256..256 },
+                              aspect_ratio: :square,
+                              size: { less_than_or_equal_to: 1.megabyte }
 
     before_save :ensure_default_exists_and_is_unique
     before_save :ensure_supported_currencies, :ensure_supported_locales

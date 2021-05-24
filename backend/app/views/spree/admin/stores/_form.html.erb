@@ -34,7 +34,7 @@
         <%= image_tag main_app.url_for(@store.favicon_image.variant(resize: '104x104')) %>
       <% end %>
       <%= f.field_container :favicon_image, class: ['form-group'] do %>
-        <%= f.label :favicon_image, Spree.t(:favicon) %><br>
+        <%= f.label :favicon_image, "#{Spree.t(:favicon)} (#{Spree.t(:favicon_upload_info)})" %><br>
         <%= f.file_field :favicon_image, accept: Spree::Store::FAVICON_CONTENT_TYPES.join(',') %>
         <%= f.error_message_on :favicon_image %>
       <% end %>
