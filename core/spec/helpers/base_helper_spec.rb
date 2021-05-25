@@ -142,6 +142,29 @@ describe Spree::BaseHelper, type: :helper do
     end
   end
 
+  context 'base_cache_key' do
+    let(:try_spree_current_user) { create(:admin_user) }
+    let(:current_currency) { 'USD' }
+
+    before { I18n.locale = I18n.default_locale }
+
+    context 'when admin user' do
+      let(:try_spree_current_user) { create(:admin_user) }
+
+      it 'returns base cache key' do
+        expect(base_cache_key).to eq [:en, 'USD', true, true]
+      end
+    end
+
+    context 'when user without admin role' do
+      let(:try_spree_current_user) { create(:user) }
+
+      it 'returns base cache key' do
+        expect(base_cache_key).to eq [:en, 'USD', true, false]
+      end
+    end
+  end
+
   context 'og_meta_data_tags' do
     let(:current_currency) { 'USD' }
     let(:image) { create(:image, position: 1) }
