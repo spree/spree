@@ -5,7 +5,7 @@ module Spree
       when 'Spree::Taxon'
         return if linked_resource.nil?
 
-        if defined?(SpreeFrontend)
+        if Spree::Core::Engine.routes.url_helpers.method_defined?(:nested_taxons_path)
           Spree::Core::Engine.routes.url_helpers.nested_taxons_path(linked_resource.permalink)
         else
           "/#{Spree::Config[:storefront_taxons_path]}/#{linked_resource.permalink}"
@@ -13,7 +13,7 @@ module Spree
       when 'Spree::Product'
         return if linked_resource.nil?
 
-        if defined?(SpreeFrontend)
+        if Spree::Core::Engine.routes.url_helpers.method_defined?(:products_path)
           Spree::Core::Engine.routes.url_helpers.product_path(linked_resource)
         else
           "/#{Spree::Config[:storefront_products_path]}/#{linked_resource.slug}"
