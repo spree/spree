@@ -30,8 +30,10 @@ module Spree
     self.whitelisted_ransackable_attributes = %w[name location locale store_id]
 
     MENU_LOCATIONS_PARAMETERIZED.each do |location_name|
-      define_singleton_method("for_#{location_name}") do |locale, store|
-        menu = find_by(location: location_name, locale: locale.to_s) || store.default_menu(location_name)
+      define_singleton_method("for_#{location_name}") do |locale, default_locale|
+        menu = find_by(location: location_name, locale: locale.to_s) ||
+          find_by(location: location_name, locale: default_locale.to_s) ||
+          find_by(location: location_name)
 
         if menu.present?
           menu.root
