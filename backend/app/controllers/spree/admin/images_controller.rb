@@ -26,7 +26,7 @@ module Spree
         @variants = @product.variants.map do |variant|
           [variant.sku_and_options_text, variant.id]
         end
-        @variants.insert(0, [Spree.t(:all), @product.master_id])
+        @variants.insert(0, [Spree.t(:all), @product.master.id])
       end
 
       def set_viewable
