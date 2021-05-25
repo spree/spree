@@ -31,9 +31,8 @@ module Spree
 
     MENU_LOCATIONS_PARAMETERIZED.each do |location_name|
       define_singleton_method("for_#{location_name}") do |locale, store|
-        menu = find_by(location: location_name, locale: locale.to_s) ||
-          store.default_menu(location_name) ||
-          find_by(location: location_name)
+        menu = find_by(location: location_name, locale: locale.to_s) || store.default_menu(location_name)
+
         if menu.present?
           menu.root
         end
