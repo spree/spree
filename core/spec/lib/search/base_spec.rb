@@ -58,7 +58,7 @@ describe Spree::Core::Search::Base do
     params = { per_page: '', search: { 'price_range_any' => ['Under $10.00', '$10.00 - $15.00'] } }
     searcher = described_class.new(ActionController::Parameters.new(params))
     expect(searcher.send(:extended_base_scope).to_sql).to match(/<= 10/)
-    expect(searcher.send(:extended_base_scope).to_sql).to match(/between 10.0 and 15.0/i)
+    expect(searcher.send(:extended_base_scope).to_sql).to match(/between 10.0 and 15.0|BETWEEN 10 AND 15/i)
     expect(searcher.retrieve_products.count).to eq(2)
   end
 
@@ -70,7 +70,7 @@ describe Spree::Core::Search::Base do
     searcher_pln = described_class.new(ActionController::Parameters.new(params_pln))
     searcher_pln.current_currency = 'PLN'
     expect(searcher_pln.send(:extended_base_scope).to_sql).to match(/<= 10/)
-    expect(searcher_pln.send(:extended_base_scope).to_sql).to match(/between 10.0 and 15.0/i)
+    expect(searcher_pln.send(:extended_base_scope).to_sql).to match(/between 10.0 and 15.0|BETWEEN 10 AND 15/i)
     expect(searcher_pln.retrieve_products.count).to eq(1)
   end
 
