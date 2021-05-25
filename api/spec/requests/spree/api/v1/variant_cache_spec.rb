@@ -28,11 +28,15 @@ describe 'Variant cache', type: :request, caching: true do
 
   context 'with cache versioning turned on' do
     before do
-      Spree::Variant.collection_cache_versioning = true
+      if Spree::Variant.method_defined?(:collection_cache_versioning)
+        Spree::Variant.collection_cache_versioning = true
+      end
       Spree::Variant.cache_versioning = true
 
       expect(Spree::Variant.cache_versioning).to be_truthy
-      expect(Spree::Variant.collection_cache_versioning).to be_truthy
+      if Spree::Variant.method_defined?(:collection_cache_versioning)
+        expect(Spree::Variant.collection_cache_versioning).to be_truthy
+      end
     end
 
     context 'without stock' do
@@ -70,14 +74,17 @@ describe 'Variant cache', type: :request, caching: true do
     end
   end
 
-
   context 'with cache versioning turned off' do
     before do
-      Spree::Variant.collection_cache_versioning = false
+      if Spree::Variant.method_defined?(:collection_cache_versioning)
+        Spree::Variant.collection_cache_versioning = false
+      end
       Spree::Variant.cache_versioning = false
 
       expect(Spree::Variant.cache_versioning).to be_falsey
-      expect(Spree::Variant.collection_cache_versioning).to be_falsey
+      if Spree::Variant.method_defined?(:collection_cache_versioning)
+        expect(Spree::Variant.collection_cache_versioning).to be_falsey
+      end
     end
 
     context 'without stock' do
