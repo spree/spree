@@ -598,10 +598,11 @@ en:
         no_menu_items: '<b>%{menu}</b> has no items. Click the <b>Add New Item</b> button to begin adding links to this menu.'
         nested_under_info: Quickly nest your Menu Item if you already know where it needs to be.
         item_type: Item Type
+        image_info: '<b>NOTE:</b> You can attach an image to any menu item, but your image will only be displayed in the main menu when nested inside a container with the code <b>promo</b>.<br><br> For best results use images with a width of 540px and height of 350px.'
         open_link_in_new_window: Open this link in a new window
-        menu_item_type_message: "For more information about Menu Item Types, Nesting and using Codes, visit the documentation by
-        <a href='https://guides.spreecommerce.org/user/configuration/configuring_geography.html#zones' target='_blank' class='alert-link'>clicking here</a>."
-        menu_item_type_container_message: "Containers are menu items that do not link to a destination. Use containers to organize other menu items into groups.<br> <br> By nesting links inside a container with a set code, you can build menus with categories or promotions, as seen in the Spree Demo store."
+        menu_item_type_container_message: "Containers are menu items that do not link to a destination. If you are building the Spree Main Menu
+        create containers with the code: <b>category</b> or <b>promo</b>, and then nest your links inside these containers build out your menu.
+        <br><br> For an indepth guide to building the main menu see the documenttation page <a href='https://guides.spreecommerce.org/user/navigation/building_the_main_menu.html' target='_blank' class='alert-link'>Building The Main Menu</a>"
         menus: Menus
         menu_items: '%{menu_name} Items'
         public_details: Public Details
@@ -612,7 +613,8 @@ en:
         seach_for_a_product: Search for a Product
         seach_for_a_taxon: Search for a Taxon
         settings: Settings
-        set_a_code: Give your Menu Item a code, this is optional, but can be useful if you need to identify this menu item.
+        set_a_code: "Adding a code is optional but can be useful if you need to identify this menu item. When building
+        the Spree main menu use the code <b>category</b> or <b>promo</b> to create the containers that organize links and promotions appropriately. To learn more view the documentation by <a href='https://guides.spreecommerce.org/user/navigation/add_menu_items.html' target='_blank' class='alert-link'>clicking here</a>."
         type: Type
         used_in: Used In
         unique_code: Unique Code
