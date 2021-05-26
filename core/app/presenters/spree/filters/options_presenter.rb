@@ -1,6 +1,6 @@
 module Spree
   module Filters
-    class Options
+    class OptionsPresenter
       FilterableOptionType = Struct.new(:option_type, :option_values, keyword_init: true) do
         delegate_missing_to :option_type
       end

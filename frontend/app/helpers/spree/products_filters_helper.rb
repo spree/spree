@@ -143,26 +143,26 @@ module Spree
     end
 
     def filters_price_range_from_param
-      Filters::PriceRange.from_param(params[:price].to_s, currency: current_currency)
+      Filters::PriceRangePresenter.from_param(params[:price].to_s, currency: current_currency)
     end
 
     def filters_price_range(min_amount, max_amount)
-      Filters::PriceRange.new(
+      Filters::PriceRangePresenter.new(
         min_price: filters_price(min_amount),
         max_price: filters_price(max_amount)
       )
     end
 
     def filters_less_than_price_range(amount)
-      Filters::QuantifiedPriceRange.new(price: filters_price(amount), quantifier: :less_than)
+      Filters::QuantifiedPriceRangePresenter.new(price: filters_price(amount), quantifier: :less_than)
     end
 
     def filters_more_than_price_range(amount)
-      Filters::QuantifiedPriceRange.new(price: filters_price(amount), quantifier: :more_than)
+      Filters::QuantifiedPriceRangePresenter.new(price: filters_price(amount), quantifier: :more_than)
     end
 
     def filters_price(amount)
-      Filters::Price.new(amount: amount, currency: current_currency)
+      Filters::PricePresenter.new(amount: amount, currency: current_currency)
     end
   end
 end

@@ -315,7 +315,7 @@ module Spree
     def available_option_types
       @available_option_types ||= Rails.cache.fetch("available-option-types/#{available_option_types_cache_key}") do
         option_values = OptionValues::FindAvailable.new(products_scope: products_for_filters).execute
-        Filters::Options.new(option_values_scope: option_values).to_a
+        Filters::OptionsPresenter.new(option_values_scope: option_values).to_a
       end
     end
 
@@ -329,7 +329,7 @@ module Spree
     def available_properties
       @available_properties ||= Rails.cache.fetch("available-properties/#{available_properties_cache_key}") do
         product_properties = ProductProperties::FindAvailable.new(products_scope: products_for_filters).execute
-        Filters::Properties.new(product_properties_scope: product_properties).to_a
+        Filters::PropertiesPresenter.new(product_properties_scope: product_properties).to_a
       end
     end
 

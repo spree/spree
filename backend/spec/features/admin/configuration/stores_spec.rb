@@ -174,7 +174,7 @@ describe 'Stores admin', type: :feature, js: true do
 
         it 'prevents uploading a favicon and displays an error message' do
           expect(page).to have_content('Unable to update store.: Favicon image must be less than or equal to 256 x 256 pixel')
-          expect(store.reload.favicon_image.attached?).to be(false)
+          expect(store.reload.favicon_image.attached?).to be(false) if Rails.version.to_f > 5.2
         end
       end
     end

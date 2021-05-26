@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Spree
-  RSpec.describe Filters::Properties do
+  RSpec.describe Filters::PropertiesPresenter do
     let(:properties) { described_class.new(product_properties_scope: ProductProperty.where(id: product_properties)) }
     let(:product_properties) { [alpha_brand, beta_brand, wilson_manufacturer] }
 

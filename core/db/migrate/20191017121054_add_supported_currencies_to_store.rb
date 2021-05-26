@@ -1,4 +1,4 @@
-class AddSupportedCurrenciesToStore < ActiveRecord::Migration[6.0]
+class AddSupportedCurrenciesToStore < ActiveRecord::Migration[5.2]
   def change
     unless column_exists?(:spree_stores, :supported_currencies)
       add_column :spree_stores, :supported_currencies, :string

@@ -1,4 +1,4 @@
-class MigrateSpreeI18nGlobalizeConfig < ActiveRecord::Migration[6.0]
+class MigrateSpreeI18nGlobalizeConfig < ActiveRecord::Migration[5.2]
   def up
     locales = []
 
