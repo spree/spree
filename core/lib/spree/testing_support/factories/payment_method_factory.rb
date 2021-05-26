@@ -4,7 +4,7 @@ FactoryBot.define do
 
     before(:create) do |payment_method|
       if payment_method.stores.empty?
-        store = Spree::Store.first || create(:store)
+        store = Spree::Store.default || create(:store)
         payment_method.stores << [store]
       end
     end
