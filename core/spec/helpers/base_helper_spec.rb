@@ -128,6 +128,51 @@ describe Spree::BaseHelper, type: :helper do
     end
   end
 
+  context 'base_cache_key' do
+    let(:current_currency) { 'USD' }
+
+    context 'when try_spree_current_user defined' do
+      before do
+        I18n.locale = I18n.default_locale
+        allow_any_instance_of(described_class).to receive(:try_spree_current_user).and_return(user)
+      end
+
+      context 'when admin user' do
+        let!(:user) { create(:admin_user) }
+
+        it 'returns base cache key' do
+          expect(base_cache_key).to eq [:en, 'USD', true, true]
+        end
+      end
+
+      context 'when user without admin role' do
+        let!(:user) { create(:user) }
+
+        it 'returns base cache key' do
+          expect(base_cache_key).to eq [:en, 'USD', true, false]
+        end
+      end
+
+      context 'when spree_current_user is nil' do
+        let!(:user) { nil }
+
+        it 'returns base cache key' do
+          expect(base_cache_key).to eq [:en, 'USD', false, nil]
+        end
+      end
+    end
+
+    context 'when try_spree_current_user is undefined' do
+      let(:current_currency) { 'USD' }
+
+      before { I18n.locale = I18n.default_locale }
+
+      it 'returns base cache key' do
+        expect(base_cache_key).to eq [:en, 'USD', nil, nil]
+      end
+    end
+  end
+
   # Regression test for #2396
   context 'meta_data_tags' do
     it 'truncates a product description to 160 characters' do

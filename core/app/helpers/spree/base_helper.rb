@@ -170,7 +170,8 @@ module Spree
     end
 
     def base_cache_key
-      [I18n.locale, current_currency]
+      [I18n.locale, current_currency, defined?(try_spree_current_user) && try_spree_current_user.present?,
+        defined?(try_spree_current_user) && try_spree_current_user.try(:has_spree_role?, 'admin')]
     end
 
     def maximum_quantity
