@@ -38,7 +38,7 @@ run_tests: &run_tests
         path: /tmp/test-results
 
 jobs:
-  bundle_install:
+  bundle:
     <<: *defaults
     steps:
       - checkout
@@ -56,7 +56,7 @@ jobs:
           paths:
             - ~/spree/vendor/bundle
 
-  run_tests_postgres: &run_tests_postgres
+  tests_postgres: &tests_postgres
     <<: *run_tests
     environment: &postgres_environment
       <<: *environment
@@ -69,7 +69,35 @@ jobs:
         environment:
           POSTGRES_USER: postgres
 
-  run_tests_mysql:
+  tests_postgres_rails_5_2:
+    <<: *tests_postgres
+    environment:
+      <<: *postgres_environment
+      RAILS_VERSION: '~> 5.2.0'
+    steps:
+    - checkout
+    - restore_cache:
+        keys:
+          - spree-bundle-v5-{{ checksum ".ruby-version" }}-{{ .Branch }}
+          - spree-bundle-v5-{{ checksum ".ruby-version" }}
+    - run:
+        name: Ensure Bundle Install
+        command: |
+          bundle install
+          ./bin/build-ci.rb install
+    - run:
+        name: Run rspec in parallel
+        command: BUNDLE_GEMFILE=../Gemfile ./bin/build-ci.rb test
+    - store_artifacts:
+        path: /tmp/test-artifacts
+        destination: test-artifacts
+    - store_artifacts:
+        path: /tmp/test-results
+        destination: raw-test-output
+    - store_test_results:
+        path: /tmp/test-results
+
+  tests_mysql:
     <<: *run_tests
     environment:
       <<: *environment
@@ -173,16 +201,19 @@ workflows:
   version: 2
   main:
     jobs:
-      - bundle_install
-      - run_tests_postgres:
+      - bundle
+      - tests_postgres:
           requires:
-            - bundle_install
-      - run_tests_mysql:
+            - bundle
+      - tests_postgres_rails_5_2:
           requires:
-            - bundle_install
+            - bundle
+      - tests_mysql:
+          requires:
+            - bundle
       - send_test_coverage:
           requires:
-            - run_tests_mysql
+            - tests_mysql
   update_staging_repository:
     jobs:
       - update_staging_repository:
