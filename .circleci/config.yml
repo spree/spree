@@ -83,11 +83,11 @@ jobs:
     - run:
         name: Ensure Bundle Install
         command: |
-          bundle install
-          ./bin/build-ci.rb install
+          bundle install --path=~/spree/vendor/bundle
+          ./build-ci.rb install
     - run:
         name: Run rspec in parallel
-        command: BUNDLE_GEMFILE=../Gemfile ./bin/build-ci.rb test
+        command: BUNDLE_GEMFILE=../Gemfile ./build-ci.rb test
     - store_artifacts:
         path: /tmp/test-artifacts
         destination: test-artifacts
