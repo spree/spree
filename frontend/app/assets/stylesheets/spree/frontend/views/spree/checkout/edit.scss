@@ -32,9 +32,21 @@
         }
       }
       &-text {
-        padding-left: 15px;
+        color: black;
+        font-size: 0.8rem;
+        @include media-breakpoint-up(sm) {
+          font-size: 1rem;
+        }
+        @include media-breakpoint-up(lg) {
+          font-size: 1.25rem;
+        }
+        svg {
+          height: 15px;
+          padding-top: 2px;
+        }
         &:hover {
           text-decoration: underline;
+          color: black;
         }
       }
     }
