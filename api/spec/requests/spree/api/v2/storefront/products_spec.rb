@@ -96,6 +96,64 @@ describe 'API V2 Storefront Products Spec', type: :request do
       end
     end
 
+    context 'with multiple specified options' do
+      let!(:color) { create(:option_type, :color) }
+      let!(:green_color) { create(:option_value, option_type: color, name: 'green') }
+      let!(:white_color) { create(:option_value, option_type: color, name: 'white') }
+
+      let!(:size) { create(:option_type, :size) }
+      let!(:s_size) { create(:option_value, option_type: size, name: 's') }
+      let!(:m_size) { create(:option_value, option_type: size, name: 'm') }
+
+      let(:product_1) { create(:product, option_types: [color, size]) }
+      let!(:variant_1) { create(:variant, product: product_1, option_values: [white_color, m_size]) }
+
+      let(:product_2) { create(:product, option_types: [color, size]) }
+      let!(:variant_2_1) { create(:variant, product: product_2, option_values: [green_color, s_size]) }
+      let!(:variant_2_2) { create(:variant, product: product_2, option_values: [white_color, s_size]) }
+
+      context 'for filters with products' do
+        let(:options_filter) do
+          [
+            "filter[options][#{color.name}]=#{white_color.name}",
+            "filter[options][#{size.name}]=#{m_size.name}"
+          ].join('&')
+        end
+
+        before { get "/api/v2/storefront/products?#{options_filter}&include=option_types,variants.option_values" }
+
+        it_behaves_like 'returns 200 HTTP status'
+
+        it 'returns products with specified options' do
+          expect(json_response['data']).to include(have_id(product_1.id.to_s))
+          expect(json_response['data']).not_to include(have_id(product_2.id.to_s))
+
+          expect(json_response['included']).to include(have_type('option_type').and(have_attribute(:name).with_value(color.name)))
+          expect(json_response['included']).to include(have_type('option_value').and(have_attribute(:name).with_value(white_color.name)))
+
+          expect(json_response['included']).to include(have_type('option_type').and(have_attribute(:name).with_value(size.name)))
+          expect(json_response['included']).to include(have_type('option_value').and(have_attribute(:name).with_value(m_size.name)))
+        end
+      end
+
+      context 'for excluding filters' do
+        let(:options_filter) do
+          [
+            "filter[options][#{color.name}]=#{green_color.name}",
+            "filter[options][#{size.name}]=#{m_size.name}"
+          ].join('&')
+        end
+
+        before { get "/api/v2/storefront/products?#{options_filter}&include=option_types,variants.option_values" }
+
+        it_behaves_like 'returns 200 HTTP status'
+
+        it 'returns no products' do
+          expect(json_response['data']).to be_empty
+        end
+      end
+    end
+
     context 'with specified multiple filters' do
       before { get "/api/v2/storefront/products?filter[name]=#{product_with_name.name}&filter[price]=#{product_with_name.price.to_f - 0.02},#{product_with_name.price.to_f + 0.02}" }
 
