@@ -652,7 +652,7 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
     end
     let!(:zone) { create(:zone) }
     let!(:zone_member) { create(:zone_member, zone: zone, zoneable: country) }
-    let!(:payment_method) { create(:credit_card_payment_method) }
+    let!(:payment_method) { create(:credit_card_payment_method, stores: [store]) }
 
     let(:customer_params) do
       {
