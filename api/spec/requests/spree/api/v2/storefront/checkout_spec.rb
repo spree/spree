@@ -224,7 +224,7 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
     let!(:stock_location) { create(:stock_location) }
 
     let!(:shipping_method) { create(:shipping_method, zones: [country_zone]) }
-    let!(:payment_method)  { create(:credit_card_payment_method) }
+    let!(:payment_method)  { create(:credit_card_payment_method, stores: [store]) }
 
     let(:execute) { patch '/api/v2/storefront/checkout', params: params, headers: headers }
 
@@ -545,7 +545,7 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
 
   describe 'checkout#payment_methods' do
     let(:execute) { get '/api/v2/storefront/checkout/payment_methods', headers: headers }
-    let!(:payment_method) { create(:credit_card_payment_method) }
+    let!(:payment_method) { create(:credit_card_payment_method, stores: [store]) }
     let(:payment_methods) { order.available_payment_methods }
 
     shared_examples 'returns a list of available payment methods' do
