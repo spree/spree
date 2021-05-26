@@ -1,8 +1,8 @@
 <div id="spree-header">
   <header id="header" class="d-flex align-items-center header-spree border-bottom">
     <div class="container" role="navigation" aria-label="<%= Spree.t('checkout_page.main_navigation') %>">
-
       <div class="row">
+
         <div class="col d-flex align-items-center truncate pr-0">
           <%= link_to spree.cart_path, class: "text-uppercase truncate checkout-header-link-text", method: :get do %>
             <%= icon(name: 'arrow-right',
@@ -18,7 +18,10 @@
             <%= logo(nil, {method: :get}) %>
           </figure>
         </div>
-        <div class="col-0 col-md"><!-- spacer --></div>
+
+        <div class="col-0 col-md">
+          <!-- spacer -->
+        </div>
 
       </div>
     </div>
