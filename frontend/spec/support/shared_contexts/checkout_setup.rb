@@ -25,7 +25,7 @@ shared_context 'checkout setup' do
   def fill_in_credit_card_info(invalid: false)
     fill_in 'name_on_card', with: 'Spree Commerce'
     fill_in 'card_number', with: invalid ? '123' : '4111 1111 1111 1111'
-    fill_in 'card_expiry', with: '12 / 24'
+    fill_in_with_force 'card_expiry', with: '12 / 24'
     fill_in 'card_code', with: '123'
   end
 

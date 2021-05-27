@@ -63,6 +63,13 @@ rescue Selenium::WebDriver::Error::TimeOutError
   default_options[:error].nil? ? false : raise(default_options[:error])
 end
 
+# Usage examples:
+# fill_in_with_force 'CVC', with: 123
+def fill_in_with_force(locator, with:)
+  field_id = find_field(locator)[:id]
+  page.execute_script "document.getElementById('#{field_id}').value = '#{with}';"
+end
+
 Capybara.configure do |config|
   config.match = :smart
   config.ignore_hidden_elements = true
