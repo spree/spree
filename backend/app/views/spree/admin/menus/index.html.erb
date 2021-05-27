@@ -56,7 +56,10 @@
       <th scope="col"><%= Spree.t('store') %></th>
       <th scope="col"><%= Spree.t('language') %></th>
       <th class="text-center" scope="col"><%= Spree.t('default') %>
-        <span data-show-info data-alert-message="<%= Spree.t('admin.navigation.create_default_menus_info') %>">
+        <span data-show-info
+              data-alert-kind="info"
+              data-alert-title="<%= Spree.t('admin.navigation.default_menus_info.title') %>"
+              data-alert-html="<%= Spree.t('admin.navigation.default_menus_info.body') %>">
           <%= svg_icon name: "info.svg", width: '15', height: '15' %>
         </span>
       </th>

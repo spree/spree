@@ -579,10 +579,13 @@ en:
         add_new_menu: Add New Menu
         add_new_item: 'Add New Item'
         code: Code
-        create_default_menus_info: "Default menus are menus whose language matches the associated store's default language.<br><br>
-        Default menus are displayed to your visitor if no menu is available in the current language they are using. <br><br>
-        It is recommended that you create a default menu for each menu location."
-        allow_this_menu_item_to_contain_nested_menu_items: Allow this Menu Item to contain nested items
+        default_menus_info:
+          title: Default Menus
+          body: "Default menus are menus whose language matches the associated store's default language.<br><br>
+          <h5>Example</h5>If you have a store that uses Spanish as the default language but also offers the options of German and French; your default header menu for this store would be set to use <b>Español (es)</b> for the language and <b>Header</b> as the location.<br><br>
+          <h5>Why Are Default Menus Important?</h5> Default menus are displayed to your visitor if no menu is available in the current language they are browsing. It is recommended that you create a default menu for each menu location within each store.<br><br>
+          <h5>More Information</h5>To learn more about menus, view the official Spree user documentation by <a href='https://guides.spreecommerce.org/user/navigation/building_the_main_menu.html' target='_blank' class='alert-link'>clicking here</a>."
+          allow_this_menu_item_to_contain_nested_menu_items: Allow this Menu Item to contain nested items
         back_to_all_menus: Back To All Menus
         click_create_to_load_new_link: 'Click the <b>Create</b> button below to change the link field.'
         click_update_to_load_new_link: 'Click the <b>Update</b> button below to change the link field.'
