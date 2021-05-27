@@ -9,13 +9,14 @@ module Spree
     has_many :cms_sections
     has_many :menu_items, as: :linked_resource
 
-    before_save :create_slug
+    before_validation :create_slug
 
     validates :title, presence: true
-
+    validates :slug, uniqueness: true
     validates :kind, uniqueness: { scope: [:store, :locale] }, if: :home_page?
 
     scope :visible, -> { where visible: true }
+    scope :by_store, ->(store) { where(store: store) }
 
     def seo_title
       if meta_title.present?
@@ -23,6 +24,10 @@ module Spree
       else
         title
       end
+    end
+
+    def self.by_localized_slug(slug, locale)
+      find_by(slug: slug, locale: locale.to_s) || store.default_page
     end
 
     private
