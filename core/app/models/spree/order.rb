@@ -129,7 +129,7 @@ module Spree
     before_update :homogenize_line_item_currencies, if: :currency_changed?
 
     with_options presence: true do
-      validates :number, length: { maximum: 32, allow_blank: true }, uniqueness: { allow_blank: true, case_sensitive: false }
+      validates :number, length: { maximum: 32, allow_blank: true }, uniqueness: { allow_blank: true, case_sensitive: true }
       validates :email, length: { maximum: 254, allow_blank: true }, email: { allow_blank: true }, if: :require_email
       validates :item_count, numericality: { greater_than_or_equal_to: 0, less_than: 2**31, only_integer: true, allow_blank: true }
       validates :store
