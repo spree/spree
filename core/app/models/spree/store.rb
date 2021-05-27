@@ -65,6 +65,10 @@ module Spree
       end.uniq.compact
     end
 
+    def home_page(locale)
+      Spree::CmsPage.find_by(store_id: id, locale: locale, kind: 'Home Page')
+    end
+
     def supported_locales_list
       # TODO: add support of multiple supported languages to a single Store
       @supported_locales_list ||= (read_attribute(:supported_locales).to_s.split(',') << default_locale).compact.uniq.sort

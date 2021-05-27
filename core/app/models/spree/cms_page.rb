@@ -26,8 +26,9 @@ module Spree
       end
     end
 
-    def self.by_localized_slug(slug, locale)
-      find_by(slug: slug, locale: locale.to_s) || store.default_page
+    def home_page(store, locale)
+      find_by(store: store, locale: locale.to_s, kind: 'Home Page') ||
+        find_by(store: store, locale: locale.to_s)
     end
 
     private
