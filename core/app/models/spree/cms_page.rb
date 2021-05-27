@@ -1,6 +1,6 @@
 module Spree
   class CmsPage < Spree::Base
-    PAGE_KINDS = ['Standard Page', 'Feature Page', 'Home Page']
+    PAGE_TYPES = ['Spree::Cms::Pages::StandardPage', 'Spree::Cms::Pages::FeaturePage', 'Spree::Cms::Pages::Homepage']
 
     extend FriendlyId
     friendly_id :slug, use: [:slugged, :finders, :history]
@@ -12,8 +12,6 @@ module Spree
     before_validation :create_slug
 
     validates :title, presence: true
-    validates :slug, uniqueness: true
-    validates :kind, uniqueness: { scope: [:store, :locale] }, if: :home_page?
 
     scope :visible, -> { where visible: true }
     scope :by_store, ->(store) { where(store: store) }
@@ -27,14 +25,18 @@ module Spree
     end
 
     def home_page(store, locale)
-      find_by(store: store, locale: locale.to_s, kind: 'Home Page') ||
-        find_by(store: store, locale: locale.to_s)
+      find_by(store: store, locale: locale.to_s, type: 'Spree::Cms::Pages::Homepage') ||
+        find_by(store: store, type: 'Spree::Cms::Pages::Homepage')
+    end
+
+    def sections?
+      false
     end
 
     private
 
     def home_page?
-      kind == 'Home Page'
+      type == 'Spree::Cms::Pages::Homepage'
     end
 
     def create_slug

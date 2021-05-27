@@ -1,4 +1,4 @@
-<% if @cms_page.content.present? && @cms_page.kind == 'Standard Page' %>
+<% if @cms_page.content.present? && !@cms_page.sections? %>
 <div class="container">
   <div class="row my-5">
     <div class="col-12">

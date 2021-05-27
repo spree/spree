@@ -6,7 +6,7 @@ module Spree
       private
 
       def load_data
-        @page_kinds = Spree::CmsPage::PAGE_KINDS
+        @page_types = Spree::CmsPage::PAGE_TYPES
       end
 
       def location_after_save

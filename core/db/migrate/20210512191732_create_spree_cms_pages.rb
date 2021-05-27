@@ -7,7 +7,7 @@ class CreateSpreeCmsPages < ActiveRecord::Migration[6.0]
       t.column :meta_description, :text
       t.column :visible, :boolean, default: false
       t.column :slug, :string
-      t.column :kind, :string, default: 'Standard Page'
+      t.column :type, :string
       t.column :locale, :string
 
       t.belongs_to :store

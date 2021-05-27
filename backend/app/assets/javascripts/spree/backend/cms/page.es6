@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
-const el = document.getElementById('cmsPagesectionsArea')
+  updateCmsPageType()
+  const el = document.getElementById('cmsPagesectionsArea')
 
   if (el) {
     Sortable.create(el, {
@@ -13,6 +14,24 @@ const el = document.getElementById('cmsPagesectionsArea')
         handleSectionReposition(evt)
       }
     })
+  }
+
+  $('#cms_page_type').on('change', function() {
+    updateCmsPageType()
+  });
+
+  function updateCmsPageType () {
+    const linkSettingsPanel = document.getElementById('cms_page_slug_field')
+
+    if (!linkSettingsPanel) return
+
+    const selectedLinkType = $('#cms_page_type').val()
+
+    if (selectedLinkType === 'Spree::Cms::Pages::Homepage') {
+      linkSettingsPanel.classList.add('d-none')
+    } else {
+      linkSettingsPanel.classList.remove('d-none')
+    }
   }
 })
 

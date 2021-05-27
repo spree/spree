@@ -7,17 +7,24 @@
         </div>
         <div class="card-body">
 
+          <div class="row">
+            <%= f.field_container :type, class: ['form-group col-12 col-md-6'] do %>
+              <%= f.label :type, Spree.t('admin.cms.page_type') %>
+              <%= f.select(:type, page_types_dropdown_values, {include_blank: false}, class: 'select2') %>
+              <%= f.error_message_on :type %>
+            <% end %>
+
+            <div class="col-12 col-md-6 mt-3">
+              <div class="alert alert-info">Select your page type... (Add more info)</div>
+            </div>
+            <div class="col-12"><hr></div>
+          </div>
+
           <div class="row pb-0">
             <%= f.field_container :title, class: ['form-group col-6'] do %>
               <%= f.label :title, raw(Spree.t('admin.cms.page_title') + required_span_tag) %>
               <%= f.text_field :title, class: 'form-control', required: true %>
               <%= f.error_message_on :title %>
-            <% end %>
-
-            <%= f.field_container :kind, class: ['form-group col-6'] do %>
-              <%= f.label :kind, Spree.t('admin.cms.page_type') %>
-              <%= f.select(:kind, @page_kinds, {include_blank: false}, class: 'select2') %>
-              <%= f.error_message_on :kind %>
             <% end %>
 
             <%= f.field_container :cms_page_stores, class: ['form-group col-6'] do %>
@@ -30,6 +37,12 @@
               <%= f.label :locale %>
               <%= f.select :locale, options_from_collection_for_select(all_locales_options, :last, :first, @cms_page.locale || I18n.locale), {}, { class: 'select2' } %>
               <%= f.error_message_on :default_locale %>
+            <% end %>
+
+            <%= f.field_container :slug, class: ['form-group col-6'] do %>
+              <%= f.label :slug, Spree.t('admin.pages.slug') %>
+              <%= f.text_field :slug, class: 'form-control' %>
+              <%= f.error_message_on :slug %>
             <% end %>
 
             <%= f.field_container :visible, class: ['form-group col-6'] do %>
@@ -50,16 +63,10 @@
                 <hr class="mt-5">
                 <h5 class="mt-4"><%= Spree.t('admin.cms.seo_settings') %></h5>
                 <div class="row pb-0">
-                <%= f.field_container :meta_title, class: ['form-group col-6'] do %>
+                <%= f.field_container :meta_title, class: ['form-group col-12'] do %>
                   <%= f.label :meta_title, Spree.t('admin.pages.meta_title') %>
                   <%= f.text_field :meta_title, class: 'form-control' %>
                   <%= f.error_message_on :meta_title %>
-                <% end %>
-
-                <%= f.field_container :slug, class: ['form-group col-6'] do %>
-                  <%= f.label :slug, Spree.t('admin.pages.slug') %>
-                  <%= f.text_field :slug, class: 'form-control' %>
-                  <%= f.error_message_on :slug %>
                 <% end %>
 
                 <%= f.field_container :meta_description, class: ['form-group col-12'] do %>
@@ -77,7 +84,7 @@
     </div>
   </div>
 
-  <% if @cms_page.kind == 'Standard Page' %>
+  <% if @cms_page.type == 'Spree::Cms::Pages::StandardPage' %>
     <div class="row">
       <div class="col-12">
         <%= f.field_container :content, class: ['form-group']  do %>
