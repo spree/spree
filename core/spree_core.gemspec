@@ -38,7 +38,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'monetize', '~> 1.9'
   s.add_dependency 'paranoia', '~> 2.4'
   s.add_dependency 'premailer-rails'
-  s.add_dependency 'rails', '>= 6.0', '< 6.2'
+  s.add_dependency 'rails', '>= 5.2', '< 6.2'
   s.add_dependency 'ransack', '~> 2.3'
   s.add_dependency 'responders'
   s.add_dependency 'rexml'
