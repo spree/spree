@@ -3,7 +3,8 @@ require 'spec_helper'
 describe 'Address', type: :feature, inaccessible: true do
   stub_authorization!
 
-  let!(:mug) { create(:product, name: 'RoR Mug') }
+  let!(:mug) { create(:product, name: 'RoR Mug', stores: [store]) }
+  let(:store) { create(:store, default: true) }
 
   before do
     create(:order_with_totals, state: 'cart')
@@ -17,7 +18,6 @@ describe 'Address', type: :feature, inaccessible: true do
   end
 
   context 'store checkout_zone', js: true do
-    let!(:store) { create(:store, default: true) }
     let!(:asia_zone) do
       hk = create(:country, name: 'Hong Kong', iso_name: 'HK')
       create(:zone, name: 'Asia', kind: 'country', default_tax: true).tap do |zone|

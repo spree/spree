@@ -4,7 +4,6 @@ module Spree
       helper 'spree/products'
 
       before_action :load_data, except: :index
-      before_action :load_stores, only: [:edit, :update]
 
       create.before :create_before
       update.before :update_before
@@ -105,10 +104,6 @@ module Spree
         @option_types = OptionType.order(:name)
         @tax_categories = TaxCategory.order(:name)
         @shipping_categories = ShippingCategory.order(:name)
-      end
-
-      def load_stores
-        @stores = Spree::Store.pluck(:name, :id)
       end
 
       def collection

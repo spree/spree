@@ -253,7 +253,7 @@
       <%= f.field_container :stores, class: ['form-group'] do %>
         <%= f.label :store_ids, Spree.t(:stores) %>
         <% if can? :modify, Spree::Store %>
-          <%= f.select :store_ids, @stores, { include_blank: true }, { class: 'select2-clear', multiple: true, "data-placeholder" => Spree.t(:select_stores) } %>
+          <%= f.select :store_ids, @stores.pluck(:name, :id), { include_blank: true }, { class: 'select2-clear', multiple: true, "data-placeholder" => Spree.t(:select_stores) } %>
         <% elsif @product.stores.any? %>
           <ul class="text_list">
             <% @product.stores.each do |store| %>

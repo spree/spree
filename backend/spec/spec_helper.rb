@@ -31,7 +31,6 @@ require 'rspec/rails'
 # in ./support/ and its subdirectories.
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each { |f| require f }
 
-
 require 'capybara-select-2'
 require 'database_cleaner'
 require 'ffaker'
@@ -51,8 +50,6 @@ require 'spree/testing_support/flatpickr_capybara'
 
 require 'spree/core/controller_helpers/strong_parameters'
 require 'webdrivers'
-
-Capybara.javascript_driver = :selenium_chrome
 
 RSpec.configure do |config|
   config.color = true

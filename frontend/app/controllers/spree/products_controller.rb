@@ -62,7 +62,7 @@ module Spree
     end
 
     def can_show_product?
-      raise ActiveRecord::RecordNotFound if @product.stores.empty? || @product.stores.exclude?(current_store)
+      raise ActiveRecord::RecordNotFound if @product.stores.exclude?(current_store)
     end
 
     def load_variants
