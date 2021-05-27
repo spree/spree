@@ -31,6 +31,11 @@ module Spree
 
         formatted_types
       end
+
+      def humanize_cms_page_type(page)
+        last_word = page.type.split('::', 4).last
+        last_word.gsub(/(?<=[a-z])(?=[A-Z])/, ' ')
+      end
     end
   end
 end

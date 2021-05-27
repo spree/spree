@@ -11,7 +11,7 @@
   <table class="table" id="pagesTable">
     <thead>
       <th scope="col"><%= Spree.t(:title) %></th>
-      <th scope="col"><%= Spree.t('admin.pages.kind') %></th>
+      <th scope="col"><%= Spree.t('admin.pages.page_type') %></th>
       <th scope="col"><%= Spree.t('store') %></th>
       <th scope="col"><%= Spree.t('language') %></th>
       <th scope="col"></th>
@@ -23,7 +23,7 @@
             <%= page.title %>
           </td>
           <td>
-            <%= page.type %>
+            <%= humanize_cms_page_type(page) %>
           </td>
           <td>
             <%= page.store.unique_name %>
