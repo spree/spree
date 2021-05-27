@@ -21,16 +21,24 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   function updateCmsPageType () {
-    const linkSettingsPanel = document.getElementById('cms_page_slug_field')
+    const slugField = document.getElementById('noHomePage')
+    const updatePageType = document.getElementById('updatePageType')
+    const existingType = updatePageType.dataset.pageType
 
-    if (!linkSettingsPanel) return
+    if (!slugField) return
 
     const selectedLinkType = $('#cms_page_type').val()
 
-    if (selectedLinkType === 'Spree::Cms::Pages::Homepage') {
-      linkSettingsPanel.classList.add('d-none')
+    if (selectedLinkType === existingType) {
+      updatePageType.classList.add('d-none')
     } else {
-      linkSettingsPanel.classList.remove('d-none')
+      updatePageType.classList.remove('d-none')
+    }
+
+    if (selectedLinkType === 'Spree::Cms::Pages::Homepage') {
+      slugField.classList.add('d-none')
+    } else {
+      slugField.classList.remove('d-none')
     }
   }
 })

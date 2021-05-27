@@ -5,7 +5,7 @@
 
 <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @cms_section } %>
 
-<%= form_for [:admin, @cms_page, @cms_section] do |f| %>
+<%= form_for [:admin, @cms_page, @cms_section], url: spree.admin_cms_page_cms_sections_path do |f| %>
   <%= render partial: 'form', locals: { f: f } %>
   <%= render partial: 'spree/admin/shared/new_resource_links' %>
 <% end %>

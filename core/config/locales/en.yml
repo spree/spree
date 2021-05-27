@@ -534,6 +534,8 @@ en:
     adjustments: Adjustments
     admin:
       cms:
+        select_page_type: Select a page type
+        click_button_to_change_page_type: Click the <b>%{button_type}</b> button to load the options for this page type.
         view_seo_settings: View SEO Settings
         seo_settings: SEO Settings
         click_create_to_load_new_link: 'Click the <b>Create</b> button below to save your new page section, and load the section settings.'
@@ -1830,6 +1832,9 @@ en:
     variants: Variants
     version: Version
     void: Void
+    we_will_be_back: We'll be back.
+    we_are_busy_updating: "We're busy updating the %{store_name} for you."
+    please_check_back_soon: Please check back soon.
     weight: Weight
     what_is_a_cvv: What is a (CVV) Credit Card Code?
     what_is_this: What's This?

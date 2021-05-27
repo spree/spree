@@ -9,9 +9,6 @@
 <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @cms_page } %>
 <%= form_for [:admin, @cms_page], as: :cms_page, url: spree.admin_cms_page_path do |f| %>
   <%= render partial: 'form', locals: { f: f } %>
-  <div class="col-12">
-    <%= render partial: 'spree/admin/shared/edit_resource_links' %>
-  </div>
 <% end %>
 
 <% if @cms_page.sections? %>

@@ -65,8 +65,10 @@ module Spree
       end.uniq.compact
     end
 
-    def home_page(locale)
-      Spree::CmsPage.find_by(store_id: id, locale: locale, kind: 'Home Page')
+    def homepage(requested_locale)
+      Spree::CmsPage.find_by(store_id: id, locale: requested_locale, type: 'Spree::Cms::Pages::Homepage') ||
+        Spree::CmsPage.find_by(store_id: id, locale: default_locale, type: 'Spree::Cms::Pages::Homepage') ||
+        Spree::CmsPage.find_by(store_id: id, type: 'Spree::Cms::Pages::Homepage')
     end
 
     def supported_locales_list

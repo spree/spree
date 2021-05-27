@@ -1,3 +1,36 @@
 <% @body_id = 'home' %>
 
-<%= @home_page.title %>
+<% if @homepage %>
+<div class="container">
+  <div class="row">
+    <% @homepage.cms_sections.each do |section| %>
+      <%= build_section(section) %>
+    <% end %>
+   </div>
+ </div>
+<% else %>
+  <div id="missingHomepage" class="container my-5">
+    <div class="row my-5">
+      <div class="col-12">
+        <figure class="logo mx-auto missing-homepage-logo-container">
+          <%= logo %>
+        </figure>
+      </div>
+      <div class="col-12 mb-5 text-center">
+        <h1 class="mb-3"><%= Spree.t('we_will_be_back') %></h1>
+        <h4 class="text-dark"><%= Spree.t('we_are_busy_updating', store_name: current_store.name) %></h4>
+        <h4 class="text-dark"><%= Spree.t('please_check_back_soon') %></h4>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<% if @edit_mode %>
+<div class="fixed-bottom text-center">
+  <div class="row">
+    <div id="draftNotice" class="col-12 d-flex w-100 p-4 justify-content-center align-items-center bg-dark">
+      <span class="text-white"><%= Spree.t('spree_pages.draft_mode') %></span>
+    </div>
+  </div>
+</div>
+<% end %>

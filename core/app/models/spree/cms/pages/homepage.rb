@@ -3,12 +3,12 @@ module Spree::Cms::Pages
     validates :type, uniqueness: { scope: [:store, :locale] }
 
     def sections?
-      false
+      true
     end
 
     private
 
-    def create_slug
+    def handle_slug
       self.slug = nil
     end
   end

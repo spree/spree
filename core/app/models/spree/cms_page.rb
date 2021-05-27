@@ -1,6 +1,8 @@
 module Spree
   class CmsPage < Spree::Base
-    PAGE_TYPES = ['Spree::Cms::Pages::StandardPage', 'Spree::Cms::Pages::FeaturePage', 'Spree::Cms::Pages::Homepage']
+    PAGE_TYPES = ['Spree::Cms::Pages::StandardPage',
+                  'Spree::Cms::Pages::FeaturePage',
+                  'Spree::Cms::Pages::Homepage']
 
     extend FriendlyId
     friendly_id :slug, use: [:slugged, :finders, :history]
@@ -9,7 +11,7 @@ module Spree
     has_many :cms_sections
     has_many :menu_items, as: :linked_resource
 
-    before_validation :create_slug
+    before_validation :handle_slug
 
     validates :title, presence: true
 
@@ -24,22 +26,18 @@ module Spree
       end
     end
 
-    def home_page(store, locale)
-      find_by(store: store, locale: locale.to_s, type: 'Spree::Cms::Pages::Homepage') ||
-        find_by(store: store, type: 'Spree::Cms::Pages::Homepage')
-    end
-
+    # Overide this if your page uses cms_sections
     def sections?
       false
     end
 
-    private
-
-    def home_page?
-      type == 'Spree::Cms::Pages::Homepage'
+    def viewable?
+      visible
     end
 
-    def create_slug
+    private
+
+    def handle_slug
       self.slug = if slug.blank?
                     title.to_url
                   else

@@ -15,7 +15,14 @@
             <% end %>
 
             <div class="col-12 col-md-6 mt-3">
-              <div class="alert alert-info">Select your page type... (Add more info)</div>
+              <div id="updatePageType" data-page-type="<%= @cms_page.type %>" class="alert alert-info d-none">
+                <% if %w[new create].include? controller.action_name %>
+                  <% button_type = Spree.t('create') %>
+                <% else %>
+                  <% button_type = Spree.t('update') %>
+                <% end %>
+                <%= raw Spree.t('admin.cms.click_button_to_change_page_type', button_type: button_type) %>
+              </div>
             </div>
             <div class="col-12"><hr></div>
           </div>
@@ -40,9 +47,11 @@
             <% end %>
 
             <%= f.field_container :slug, class: ['form-group col-6'] do %>
-              <%= f.label :slug, Spree.t('admin.pages.slug') %>
-              <%= f.text_field :slug, class: 'form-control' %>
-              <%= f.error_message_on :slug %>
+              <div id="noHomePage">
+                <%= f.label :slug, Spree.t('admin.pages.slug') %>
+                <%= f.text_field :slug, class: 'form-control' %>
+                <%= f.error_message_on :slug %>
+              </div>
             <% end %>
 
             <%= f.field_container :visible, class: ['form-group col-6'] do %>
@@ -81,6 +90,16 @@
           </div>
         </div>
       </div>
+    </div>
+  </div>
+
+  <div class="row mb-4">
+    <div class="col-12">
+      <% if %w[new create].include? controller.action_name %>
+        <%= render partial: 'spree/admin/shared/new_resource_links' %>
+      <% else %>
+        <%= render partial: 'spree/admin/shared/edit_resource_links' %>
+      <% end %>
     </div>
   </div>
 
