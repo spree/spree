@@ -2,8 +2,6 @@ module Spree
   module Admin
     module CmsPageHelper
       def build_page_section(section)
-        preview_type = section.kind.parameterize(separator: '_')
-
         case section.width
         when 'Half'
           css_width = 'col-6'
@@ -13,7 +11,7 @@ module Spree
           css_width = 'col-12 px-0 edge'
         end
 
-        render "spree/admin/cms_pages/section_template", section: section, width: css_width
+        render 'spree/admin/cms_pages/section_template', section: section, width: css_width
       end
 
       def linkable_as_path(item)
