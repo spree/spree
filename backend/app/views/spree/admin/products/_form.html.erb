@@ -249,6 +249,26 @@
       <% end %>
     </div>
 
+    <p data-hook="admin_product_form_stores" class="omega two columns">
+      <%= f.field_container :stores, class: ['form-group'] do %>
+        <%= f.label :store_ids, Spree.t(:stores) %>
+        <% if can? :modify, Spree::Store %>
+          <%= f.select :store_ids, @stores, { include_blank: true }, { class: 'select2-clear', multiple: true, "data-placeholder" => Spree.t(:select_stores) } %>
+        <% elsif @product.stores.any? %>
+          <ul class="text_list">
+            <% @product.stores.each do |store| %>
+              <li><%= store.name %></li>
+            <% end %>
+          </ul>
+        <% else %>
+          <div class="alert alert-info">
+            <%= Spree.t(:no_resource_found, resource: :stores) %>
+          </div>
+        <% end %>
+      <% end %>
+    </p>
+
+
     <div data-hook="admin_product_form_additional_fields"></div>
 
   </div>

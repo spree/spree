@@ -39,6 +39,12 @@
             </label>
           </div>
         </div>
+        <div class="col-12 col-lg-6">
+          <div class="form-group">
+            <label for="stores_id_in"><%= Spree.t(:store) %></label>
+            <%= f.select :stores_id_in, Spree::Store.pluck(:name, :id), {include_blank: true}, class: 'select2-clear', multiple: true %></p>
+          </div>
+        </div>
       </div>
       <div data-hook="admin_products_index_search_buttons" class="form-actions">
         <%= button Spree.t(:search), 'search.svg' %>
@@ -59,6 +65,7 @@
         <th scope="col" class="text-center">
           <%= sort_link @search, :master_default_price_amount, Spree.t(:master_price), {}, {title: 'admin_products_listing_price_title'} %>
         </th>
+        <th><%= Spree.t(:stores) %></th>
         <th scope="col" data-hook="admin_products_index_header_actions" class="actions"></th>
       </tr>
     </thead>
@@ -75,6 +82,12 @@
             <td class="sku"><%= product.sku rescue '' %></td>
             <td class="status"><%= active_badge(available_status == Spree.t(:available), label: available_status) %></td>
             <td class="text-center"><%= display_price(product) %></td>
+            <td>
+              <% product.stores.pluck(:name).each do |store_name| %>
+                <dd><small><%= store_name %></small></dd>
+              <% end %>
+            </td>
+
             <td class="actions " data-hook="admin_products_index_row_actions">
               <span class="d-flex justify-content-end">
                 <%= link_to_edit product, no_text: true, class: 'edit' if can?(:edit, product) && !product.deleted? %>

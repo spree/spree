@@ -309,4 +309,21 @@ describe 'Product scopes', type: :model do
       )
     end
   end
+
+  context '#by_store' do
+    subject(:products_by_store) { Spree::Product.by_store(store) }
+
+    let(:store) { create(:store) }
+
+    let!(:product_1) { create(:product, stores: [store]) }
+    let!(:product_2) { create(:product, stores: [store]) }
+
+    before do
+      create_list(:product, 3, stores: [create(:store)])
+    end
+
+    it 'returns products assigned to a store' do
+      expect(products_by_store).to contain_exactly(product_1, product_2)
+    end
+  end
 end

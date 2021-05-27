@@ -8,6 +8,9 @@ module Spree
 
     has_many :menus
 
+    has_many :store_products, class_name: 'Spree::StoreProduct', dependent: :destroy
+    has_many :products, through: :store_products, class_name: 'Spree::Product'
+
     belongs_to :default_country, class_name: 'Spree::Country'
     belongs_to :checkout_zone, class_name: 'Spree::Zone'
 
