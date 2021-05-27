@@ -1186,6 +1186,7 @@ en:
     open: Open
     open_all_adjustments: Open All Adjustments
     option_type: Option Type
+    option_type_filterable_info: 'When an option type is set to Filterable, your storefront visitors are presented with the option to filter a taxon of products based on the option type. A typical example of this would be to filter clothing by size and color.<br><br><b>Please Note:</b> Filters will only be visible in the storefront taxons that contain products with this option type set.'
     option_type_placeholder: Choose an option type
     option_types: Option Types
     option_value: Option Value
