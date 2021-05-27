@@ -28,6 +28,7 @@ module Spree
 
         def extended_base_scope
           base_scope = Spree::Product.spree_base_scopes
+          base_scope = base_scope.by_store(current_store) if current_store.present?
           base_scope = get_products_conditions_for(base_scope, keywords)
           base_scope = Spree::Dependencies.products_finder.constantize.new(
             scope: base_scope,
@@ -114,6 +115,7 @@ module Spree
         end
 
         def prepare(params)
+          @properties[:current_store] = Spree::Store.find_by(id: params[:current_store_id])
           @properties[:taxon] = params[:taxon].blank? ? nil : Spree::Taxon.find(params[:taxon])
           @properties[:keywords] = params[:keywords]
           @properties[:option_value_ids] = build_option_value_ids(params)
