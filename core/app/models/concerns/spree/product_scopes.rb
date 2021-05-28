@@ -250,9 +250,10 @@ module Spree
       end
       search_scopes << :active
 
-      def self.for_filters(currency, taxon = nil)
+      def self.for_filters(currency, taxon: nil, store: nil)
         scope = active(currency)
         scope = scope.in_taxon(taxon) if taxon.present?
+        scope = scope.by_store(store) if store.present?
         scope
       end
       search_scopes << :for_filters
