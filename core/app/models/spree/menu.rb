@@ -33,9 +33,7 @@ module Spree
       define_singleton_method("for_#{location_name}") do |locale|
         menu = find_by(location: location_name, locale: locale.to_s)
 
-        if menu.present?
-          menu.root
-        end
+        menu.root if menu.present?
       end
     end
 
