@@ -40,6 +40,10 @@ module Spree
       visible
     end
 
+    def draft_mode?
+      !visible
+    end
+
     private
 
     def handle_slug

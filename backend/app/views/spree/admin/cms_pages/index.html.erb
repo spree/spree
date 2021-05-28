@@ -11,6 +11,7 @@
   <table class="table" id="pagesTable">
     <thead>
       <th scope="col"><%= Spree.t(:title) %></th>
+      <th scope="col"><%= Spree.t(:draft_mode) %></th>
       <th scope="col"><%= Spree.t('admin.pages.page_type') %></th>
       <th scope="col"><%= Spree.t('store') %></th>
       <th scope="col"><%= Spree.t('language') %></th>
@@ -21,6 +22,9 @@
         <tr>
           <td>
             <%= page.title %>
+          </td>
+          <td>
+            <%= active_badge(page.draft_mode?) %>
           </td>
           <td>
             <%= humanize_cms_page_type(page) %>
