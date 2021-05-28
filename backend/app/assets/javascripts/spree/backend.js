@@ -13,16 +13,7 @@
 //= require jquery-ui/widgets/autocomplete
 //= require select2-full
 //= require sweetalert2
-
-//= require tinymce/tinymce.min
-//= require tinymce/themes/silver/theme.min
-//= require tinymce/icons/default/icons.min
-//= require tinymce/plugins/media/plugin.min
-//= require tinymce/plugins/paste/plugin.min
-//= require tinymce/plugins/table/plugin.min
-//= require tinymce/plugins/code/plugin.min
-//= require tinymce/plugins/image/plugin.min
-
+//= require tinymce
 
 //= require underscore-min.js
 //= require jsonapi-serializer.min
