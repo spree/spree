@@ -1,6 +1,6 @@
 module Spree
   class Address < Spree::Base
-    require 'twitter_cldr'
+    require 'validates_zipcode'
 
     if Rails::VERSION::STRING >= '6.1'
       serialize :preferences, Hash, default: {}
@@ -215,11 +215,15 @@ module Spree
     end
 
     def postal_code_validate
-      return if country.blank? || country.iso.blank? || !require_zipcode?
-      return unless TwitterCldr::Shared::PostalCodes.territories.include?(country.iso.downcase.to_sym)
+      return if country.blank? || country_iso.blank? || !require_zipcode?
+      return unless ::ValidatesZipcode::CldrRegexpCollection::ZIPCODES_REGEX.keys.include?(country_iso.upcase.to_sym)
 
-      postal_code = TwitterCldr::Shared::PostalCodes.for_territory(country.iso)
-      errors.add(:zipcode, :invalid) unless postal_code.valid?(zipcode.to_s.strip)
+      formatted_zip = ::ValidatesZipcode::Formatter.new(
+        zipcode: zipcode.to_s.strip,
+        country_alpha2: country_iso.upcase
+      ).format
+
+      errors.add(:zipcode, :invalid) unless ::ValidatesZipcode.valid?(formatted_zip, country_iso.upcase)
     end
   end
 end
