@@ -1,15 +1,15 @@
 // Allows you to use one autocomplete for several use cases with sensible defaults.
 
 // REQUIRED ATTRIBUTES
-// data-ac-name="products"        <- used for api search - Example: (taxons).
-// data-ac-url="products_api_v2"  <- gets appended to const url - Example: (taxons_api_v2).
+// data-autocomplete-name-value="products"        <- used for api search - Example: (taxons).
+// data-autocomplete-url-value="products_api_v2"  <- gets appended to const url - Example: (taxons_api_v2).
 
 // OPTIONAL ATTRIBUTES
-// data-ac-clear="boolean"                          <- true or false allows select2 clear.
-// data-ac-multiple="boolean"                       <- true or false set multiple or single select
-// data-ac-return-attr="pretty_name"                <- example shown returns taxon pretty_name
-// data-ac-min-input="4"                            <- set a minimum input for search, default is 3.
-// data-ac-search-query="name_or_master_sku_cont"   <- custom search query.
+// data-autocomplete-clear-value="boolean"                          <- true or false allows select2 clear.
+// data-autocomplete-multiple-value="boolean"                       <- true or false set multiple or single select
+// data-autocomplete-return-attr-value="pretty_name"                <- example shown returns taxon pretty_name
+// data-autocomplete-min-input-value="4"                            <- set a minimum input for search, default is 3.
+// data-autocomplete-search-query-value="name_or_master_sku_cont"   <- custom search query.
 
 // can also be called directly as javastript.
 
@@ -20,16 +20,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function buildParamsFromDataAttrs (element) {
   // Required Attributes
-  const name = element.dataset.acName
-  const url = element.dataset.acUrl
+  const name = element.dataset.autocompleteNameValue
+  const url = element.dataset.autocompleteUrlValue
 
   // Optional Attributes
-  const placeholder = element.dataset.acPlaceholder
-  const clear = element.dataset.acClear
-  const multiple = element.dataset.acMultiple
-  const returnAttr = element.dataset.acReturnAttr
-  const minimumInput = element.dataset.acMinInput
-  const searchQuery = element.dataset.acSearchQuery
+  const placeholder = element.dataset.autocompletePlaceholderValue
+  const clear = element.dataset.autocompleteClearValue
+  const multiple = element.dataset.autocompleteMultipleValue
+  const returnAttr = element.dataset.autocompleteReturnAttrValue
+  const minimumInput = element.dataset.autocompleteMinInputValue
+  const searchQuery = element.dataset.autocompleteSearchQueryValue
 
   $(element).select2Autocomplete({
     // Required Attributes
