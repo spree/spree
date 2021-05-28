@@ -1,18 +1,22 @@
+// Allows you to use one autocomplete for several use cases with sensible defaults.
+
+// REQUIRED ATTRIBUTES
+// data-ac-name="products"        <- used for api search - Example: (taxons).
+// data-ac-url="products_api_v2"  <- gets appended to const url - Example: (taxons_api_v2).
+
+// OPTIONAL ATTRIBUTES
+// data-ac-clear="boolean"                          <- true or false allows select2 clear.
+// data-ac-multiple="boolean"                       <- true or false set multiple or single select
+// data-ac-return-attr="pretty_name"                <- example shown returns taxon pretty_name
+// data-ac-min-input="4"                            <- set a minimum input for search, default is 3.
+// data-ac-search-query="name_or_master_sku_cont"   <- custom search query.
+
+// can also be called directly as javastript.
+
 document.addEventListener('DOMContentLoaded', function() {
   const select2Autocompletes = document.querySelectorAll('select.select2autocomplete')
   select2Autocompletes.forEach(element => buildParamsFromDataAttrs(element))
 })
-
-// REQUIRED
-// data-ac_name="products" <- used for api search.
-// data-ac_url="products_api_v2" or data-ac_url="taxons_api_v2" <- gets appended to const to build url.
-
-// OPTIONAL
-// data-ac_clear="boolean" <- true or false allows select2 clear.
-// data-ac_multiple="boolean" <- true or false set multiple or single select
-// data-ac_return_attr="pretty_name" <- example shown returns taxon pretty_name
-// data-ac_min_input="4" <- set a minimum input for search, default is 3.
-// data-ac_search_query="name_or_master_sku_cont" <- custom search query.
 
 function buildParamsFromDataAttrs (element) {
   // Required Attributes
@@ -42,20 +46,18 @@ function buildParamsFromDataAttrs (element) {
   })
 }
 
-// Allows you to use one autocomplete for several use cases with sensible defaults.
-// Requires two params passing to work, the api URI, and the data attribute -> data_attrbute_name: 'products'
 $.fn.select2Autocomplete = function(params) {
   // Required params
   const apiUrl = params.apiUrl
   const dataAttrName = params.data_attrbute_name
 
-  // Custom params
-  const select2placeHolder = params.placeholder || `${Spree.translations.search}: ${dataAttrName}` // Pass your own custom place holder as a string.
-  const select2Multiple = params.multiple || false // Pass true to use multiple Select2.
-  const select2allowClear = params.allow_clear || false // Pass true to use Allow Clear on the Select2, you will also need to set include_blank: true on the select el.
-  const returnAttribute = params.return_attribute || 'name' // Pass a custom return attribute -> return_attribute: 'pretty_name'
-  const minimumInput = params.minimum_input || 3 // Pass a custom minimum input
-  const searchQuery = params.search_query || 'name_i_cont' // Pass a search query -> search_query: 'name_or_master_sku_cont'
+  // Optional params
+  const select2placeHolder = params.placeholder || `${Spree.translations.search}: ${dataAttrName}`
+  const select2Multiple = params.multiple || false
+  const select2allowClear = params.allow_clear || false
+  const returnAttribute = params.return_attribute || 'name'
+  const minimumInput = params.minimum_input || 3
+  const searchQuery = params.search_query || 'name_i_cont'
 
   function formatList(values) {
     return values.map(function (obj) {
