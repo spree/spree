@@ -309,7 +309,7 @@ describe Spree.user_class, type: :model do
       shared_examples 'invalid' do
         it 'is invalid' do
           expect(subject.valid?).to be false
-          expect(subject.errors.messages.values.flatten).to include('associated with completed order')
+          expect(subject.errors.messages.values.flatten).to include('deprecated in completed order')
         end
       end
 

@@ -41,9 +41,9 @@ module Spree
       end
 
       def address_not_deprecated_in_completed_order
-        errors.add(:bill_address_id, :associated_with_completed_order) if
+        errors.add(:bill_address_id, :deprecated_in_completed_order) if
           orders.complete.with_deleted_bill_address.where(bill_address: bill_address_id).any?
-        errors.add(:ship_address_id, :associated_with_completed_order) if
+        errors.add(:ship_address_id, :deprecated_in_completed_order) if
           orders.complete.with_deleted_ship_address.where(ship_address: ship_address_id).any?
       end
     end
