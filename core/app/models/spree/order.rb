@@ -158,6 +158,8 @@ module Spree
     scope :complete, -> { where.not(completed_at: nil) }
     scope :incomplete, -> { where(completed_at: nil) }
     scope :not_canceled, -> { where.not(state: 'canceled') }
+    scope :with_deleted_bill_address, -> { where(bill_address_id: Address.deleted) }
+    scope :with_deleted_ship_address, -> { where(ship_address_id: Address.deleted) }
 
     # shows completed orders first, by their completed_at date, then uncompleted orders by their created_at
     scope :reverse_chronological, -> { order(Arel.sql('spree_orders.completed_at IS NULL'), completed_at: :desc, created_at: :desc) }

@@ -42,9 +42,9 @@ module Spree
 
       def address_not_deprecated_in_completed_order
         errors.add(:bill_address_id, :associated_with_completed_order) if
-          orders.complete.joins(:bill_address).where.not(spree_addresses: { deleted_at: nil }).where(bill_address: bill_address_id).any?
+          orders.complete.with_deleted_bill_address.where(bill_address: bill_address_id).any?
         errors.add(:ship_address_id, :associated_with_completed_order) if
-          orders.complete.joins(:ship_address).where.not(spree_addresses: { deleted_at: nil }).where(ship_address: ship_address_id).any?
+          orders.complete.with_deleted_ship_address.where(ship_address: ship_address_id).any?
       end
     end
   end
