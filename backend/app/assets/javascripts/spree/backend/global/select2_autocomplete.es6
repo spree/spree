@@ -1,4 +1,48 @@
-// Allows you to use one autocomplete for sevral use cases with sensible defaults.
+document.addEventListener('DOMContentLoaded', function() {
+  const select2Autocompletes = document.querySelectorAll('select.autocomplete')
+  select2Autocompletes.forEach(element => buildParamsFromDataAttrs(element))
+})
+
+// REQUIRED
+// data-ac_name="products" <- used for api search.
+// data-ac_url="products_api_v2" or data-ac_url="taxons_api_v2" <- gets appended to const to build url.
+
+// OPTIONAL
+// data-ac_clear="boolean" <- true or false allows select2 clear.
+// data-ac_multiple="boolean" <- true or false set multiple or single select
+// data-ac_return_attr="pretty_name" <- example shown returns taxon pretty_name
+// data-ac_min_input="4" <- set a minimum input for search, default is 3.
+// data-ac_search_query="name_or_master_sku_cont" <- custom search query.
+
+function buildParamsFromDataAttrs (element) {
+  // Required Attributes
+  const name = element.dataset.acName
+  const url = element.dataset.acUrl
+
+  // Optional Attributes
+  const placeholder = element.dataset.acPlaceholder
+  const clear = element.dataset.acClear
+  const multiple = element.dataset.acMultiple
+  const returnAttr = element.dataset.acReturnAttr
+  const minimumInput = element.dataset.acMinInput
+  const searchQuery = element.dataset.acSearchQuery
+
+  $(element).select2Autocomplete({
+    // Required Attributes
+    data_attrbute_name: name,
+    apiUrl: Spree.routes[url],
+
+    // Optional Attributes
+    placeholder: placeholder,
+    allow_clear: clear,
+    multiple: multiple,
+    return_attribute: returnAttr,
+    minimum_input: minimumInput,
+    search_query: searchQuery
+  })
+}
+
+// Allows you to use one autocomplete for several use cases with sensible defaults.
 // Requires two params passing to work, the api URI, and the data attribute -> data_attrbute_name: 'products'
 $.fn.select2Autocomplete = function(params) {
   // Required params
