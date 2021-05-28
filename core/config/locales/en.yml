@@ -843,6 +843,7 @@ en:
     display: Display
     doesnt_track_inventory: It doesn't track inventory
     dont_have_account: No account?
+    draft_mode: Draft Mode
     edit: Edit
     editing_resource: 'Editing %{resource}'
     editing_rma_reason: Editing RMA Reason
@@ -1833,7 +1834,8 @@ en:
     version: Version
     void: Void
     we_will_be_back: We'll be back.
-    we_are_busy_updating: "We're busy updating the %{store_name} for you."
+    we_are_busy_updating: "We're updating the %{store_name} homepage."
+    we_are_busy_updating_page: "We're busy updating this page."
     please_check_back_soon: Please check back soon.
     weight: Weight
     what_is_a_cvv: What is a (CVV) Credit Card Code?

@@ -1,17 +1,35 @@
-<% if @cms_page.content.present? && !@cms_page.sections? %>
-<div class="container">
-  <div class="row my-5">
-    <div class="col-12">
-      <%= @cms_page.content.html_safe %>
+<% if @cms_page %>
+  <% if simple_page?(@cms_page) %>
+  <div class="container">
+    <div class="row my-5">
+      <div class="col-12">
+        <%= @cms_page.content.html_safe %>
+      </div>
     </div>
   </div>
-</div>
-<% else %>
-<div class="container">
-  <div class="row">
-    <% @cms_page.cms_sections.each do |section| %>
-      <%= build_section(section) %>
-    <% end %>
+  <% else %>
+  <div class="container">
+    <div class="row">
+      <% @cms_page.cms_sections.each do |section| %>
+        <%= build_section(section) %>
+      <% end %>
+     </div>
    </div>
- </div>
+  <% end %>
+<% else %>
+  <div id="missingHomepage" class="container my-5">
+    <div class="row my-5">
+      <div class="col-12">
+        <figure class="logo mx-auto missing-homepage-logo-container">
+          <%= logo %>
+        </figure>
+      </div>
+      <div class="col-12 mb-5 text-center">
+        <h1 class="mb-3"><%= Spree.t('we_will_be_back') %></h1>
+        <h4 class="text-dark"><%= Spree.t('we_are_busy_updating_page', store_name: current_store.name) %></h4>
+        <h4 class="text-dark"><%= Spree.t('please_check_back_soon') %></h4>
+      </div>
+    </div>
+  </div>
 <% end %>
+<%= render "spree/shared/cms/pages/edit_mode", edit_mode: @edit_mode %>

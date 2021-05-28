@@ -17,6 +17,7 @@ module Spree
 
     scope :visible, -> { where visible: true }
     scope :by_store, ->(store) { where(store: store) }
+    scope :by_locale, ->(locale) { where(locale: locale) }
 
     def seo_title
       if meta_title.present?
@@ -29,6 +30,10 @@ module Spree
     # Overide this if your page uses cms_sections
     def sections?
       false
+    end
+
+    def homepage?
+      type == 'Spree::Cms::Pages::Homepage'
     end
 
     def viewable?
