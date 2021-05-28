@@ -1,7 +1,9 @@
 require 'spec_helper'
 
 describe 'API v2 Caching spec', type: :request do
-  let!(:product) { create(:product, name: 'Some name') }
+  let!(:product) { create(:product, name: 'Some name', stores: [store]) }
+  let(:store) { create(:store) }
+
   let(:cache_store) { Spree::V2::Storefront::ProductSerializer.cache_store_instance }
   let(:cache_entry) { cache_store.read(product, namespace: cache_namespace) }
 
@@ -15,7 +17,7 @@ describe 'API v2 Caching spec', type: :request do
   end
 
   context 'auto expiration' do
-    let(:cache_namespace) { 'jsonapi-serializer---spree/stores/new' }
+    let(:cache_namespace) { "jsonapi-serializer-USD--#{store.cache_key_with_version}" }
 
     it 'auto expire cache after record being updated' do
       get "/api/v2/storefront/products/#{product.id}"
