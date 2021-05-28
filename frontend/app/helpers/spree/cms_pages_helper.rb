@@ -3,6 +3,7 @@ module Spree
     def simple_page?(page)
       page.content.present? && !page.sections?
     end
+
     def build_section(section)
       preview_type = section.type.parameterize(separator: '_')
 

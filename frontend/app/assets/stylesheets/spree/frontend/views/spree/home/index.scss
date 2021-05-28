@@ -1,13 +1,3 @@
-#missingHomepage {
-  .missing-homepage-logo-container {
-    width: 160px;
-
-    img {
-      max-width: 100%;
-    }
-  }
-}
-
 .homepage {
   &-hero-image {
     display: flex;
@@ -304,6 +294,15 @@
   }
 }
 
+#missingHomepage {
+  .missing-homepage-logo-container {
+    width: 160px;
+
+    img {
+      max-width: 100%;
+    }
+  }
+}
 
 .full-width {
   width: 100vw;

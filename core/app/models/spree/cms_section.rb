@@ -14,8 +14,8 @@ module Spree
 
     SECTION_WIDTHS = ['Edge-to-Edge', 'Full', 'Half']
     SECTION_TYPES = ['Spree::Cms::Sections::Hero',
-                  'Spree::Cms::Sections::Promo',
-                  'Spree::Cms::Sections::Featured Atricle']
+                     'Spree::Cms::Sections::Promo',
+                     'Spree::Cms::Sections::Featured Atricle']
 
     SECTION_LINKS_TO = ['Spree::Taxon', 'Spree::Product']
   end

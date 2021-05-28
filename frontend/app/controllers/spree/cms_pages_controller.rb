@@ -8,7 +8,7 @@ module Spree
     def show
       if @page&.viewable?
         @cms_page = @page
-      elsif spree_current_user&.admin?
+      elsif try_spree_current_user&.admin?
         @cms_page = @page
         @edit_mode = true
       end

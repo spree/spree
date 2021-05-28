@@ -9,7 +9,7 @@ module Spree
     def index
       if @cms_home_page&.viewable?
         @homepage = @cms_home_page
-      elsif spree_current_user&.admin?
+      elsif try_spree_current_user&.admin?
         @homepage = @cms_home_page
         @edit_mode = true
       end
