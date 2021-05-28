@@ -10,7 +10,7 @@
         options_from_collection_for_select(resorce_holder || [],
                                            id_holder, name_holder, active_id_holder || nil),
         { include_blank: true },
-        class: 'autocomplete',
+        class: 'select2autocomplete',
         data: { ac_name: 'taxons',
                 ac_placeholder: Spree.t('admin.navigation.seach_for_a_taxon'),
                 ac_clear: true,

@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-  const select2Autocompletes = document.querySelectorAll('select.autocomplete')
+  const select2Autocompletes = document.querySelectorAll('select.select2autocomplete')
   select2Autocompletes.forEach(element => buildParamsFromDataAttrs(element))
 })
 
