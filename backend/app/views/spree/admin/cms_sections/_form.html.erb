@@ -15,10 +15,10 @@
               <% end %>
             </div>
             <div class="col-12 col-md-6">
-              <%= f.field_container :kind, class: ['form-group'] do %>
-                <%= f.label :kind, Spree.t('admin.navigation.section_type') %>
-                <%= f.select(:kind, @cms_section_types, {include_blank: false}) %>
-                <%= f.error_message_on :kind %>
+              <%= f.field_container :type, class: ['form-group'] do %>
+                <%= f.label :type, Spree.t('admin.navigation.section_type') %>
+                <%= f.select(:type, @cms_section_types, {include_blank: false}) %>
+                <%= f.error_message_on :type %>
               <% end %>
             </div>
           </div>
@@ -41,21 +41,21 @@
     </div>
   </div>
 
-  <% if @cms_section.kind.present? %>
+  <% if @cms_section.type.present? %>
     <div id="CmsSectionKind"
          data-hook="admin_cms_section_form_fields"
-         data-panel-kind="<%= @cms_section.kind %>">
+         data-panel-type="<%= @cms_section.type %>">
       <div class="row">
         <div class="col-12">
           <div class="card mb-3">
             <div class="card-header">
-              <h5 class="mb-0"><%= Spree.t('admin.cms.settings_for', section_kind: @cms_section.kind) %></h5>
+              <h5 class="mb-0"><%#= Spree.t('admin.cms.settings_for', section_type: @cms_section.type) %></h5>
             </div>
             <div class="card-body">
-              <% if @cms_section.kind.present? %>
+              <% if @cms_section.type.present? %>
               <div class="row">
                 <div class="col-12">
-                  <%= render "spree/admin/cms_sections/types/#{@cms_section.kind.parameterize(separator: '_')}", f: f %>
+                  <%= render "spree/admin/cms_sections/types/#{@cms_section.type.parameterize(separator: '_')}", f: f %>
                 </div>
               </div>
               <% end %>

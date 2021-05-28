@@ -7,7 +7,7 @@ module Spree
     respond_to :html
 
     def index
-      if @cms_home_page.viewable?
+      if @cms_home_page&.viewable?
         @homepage = @cms_home_page
       elsif spree_current_user&.admin?
         @homepage = @cms_home_page

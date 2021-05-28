@@ -7,7 +7,7 @@ class CreateSpreeCmsSections < ActiveRecord::Migration[6.0]
       t.column :button_text, :string
       t.column :content, :text
       t.column :width, :string
-      t.column :kind, :string
+      t.column :type, :string
       t.column :destination, :string
       t.column :position, :integer
 

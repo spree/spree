@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-  const sectionKindSelector = $('#cms_section_kind').select2()
+  const sectionKindSelector = $('#cms_section_type').select2()
 
   sectionKindSelector.on('change', function() {
     const selectedValue = $(sectionKindSelector).val()
