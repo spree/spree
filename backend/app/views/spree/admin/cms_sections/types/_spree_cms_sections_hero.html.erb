@@ -47,11 +47,11 @@
   <div class="col-12 col-md-6">
     <%= f.field_container :linked_resource_type, class: ['form-group'] do %>
       <%= f.label :linked_resource_type, Spree.t('admin.navigation.link_to') %>
-      <%= f.select(:linked_resource_type, @cms_section_links_to, {include_blank: false}, class: 'link_switcher') %>
+      <%= f.select(:linked_resource_type, Spree::Cms::Sections::Hero::LINKS_TO, {include_blank: false}, class: 'link_switcher') %>
       <%= f.error_message_on :linked_resource_type %>
     <% end %>
   </div>
   <div class="col-12 col-md-6">
-    <%= render "spree/admin/shared/link_switcher", resource: @cms_section, f: f %>
+    <%= render "spree/admin/shared/link_fields", resource: @cms_section, f: f %>
   </div>
 </div>

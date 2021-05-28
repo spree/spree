@@ -4,8 +4,8 @@ document.addEventListener('DOMContentLoaded', function() {
   sectionKindSelector.on('change', function() {
     const selectedValue = $(sectionKindSelector).val()
     const message = document.getElementById('alertToClickUpdate')
-    const activeSectionKind = document.getElementById('CmsSectionKind')
-    const panelType = activeSectionKind.dataset.panelKind
+    const activeSectionKind = document.getElementById('CmsSectionType')
+    const panelType = activeSectionKind.dataset.panelSectionType
 
     if (selectedValue === panelType) {
       activeSectionKind.classList = ''

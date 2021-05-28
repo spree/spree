@@ -1,6 +1,8 @@
 document.addEventListener('DOMContentLoaded', function() {
-  updateCmsPageType()
+  const pageTypeSelector = document.getElementById('cms_page_type')
   const el = document.getElementById('cmsPagesectionsArea')
+
+  if (pageTypeSelector) { updateCmsPageType() }
 
   if (el) {
     Sortable.create(el, {
@@ -16,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function() {
     })
   }
 
-  $('#cms_page_type').on('change', function() {
+  $(pageTypeSelector).on('change', function() {
     updateCmsPageType()
   });
 

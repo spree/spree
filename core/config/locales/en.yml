@@ -556,7 +556,7 @@ en:
         seo_settings: SEO Settings
         click_create_to_load_new_link: 'Click the <b>Create</b> button below to save your new page section, and load the section settings.'
         click_update_to_load_new_link: 'Click the <b>Update</b> button below to load the new section settings.'
-        settings_for: 'Available Options For %{section_kind}'
+        settings_for: 'Available Options For %{section}'
         page_sections: '%{page_name} Sections'
         page_sections_info: 'The area below represents your %{page_type} displayed in %{store}, add sections and drag them into position'
       tab:
