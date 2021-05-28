@@ -21,7 +21,7 @@ describe Spree::Core::Search::Base do
   context 'when include_images is included in the initalization params' do
     subject { described_class.new(params).retrieve_products }
 
-    let(:params) { { include_images: true, keyword: product1.name, taxon: taxon.id } }
+    let(:params) { { include_images: true, keyword: product1.name, taxon: taxon } }
 
     before do
       product1.master.images << create(:image, position: 2)
@@ -117,8 +117,8 @@ describe Spree::Core::Search::Base do
 
     let!(:product_for_spree_store) { create(:product, name: 'P-Spree-1', stores: [spree_store]) }
 
-    context 'current_store_id is given in params' do
-      let(:params) { { current_store_id: current_store.id } }
+    context 'current sture is given in params' do
+      let(:params) { { current_store: current_store } }
 
       context 'when EU Store' do
         let(:current_store) { eu_store }
@@ -157,8 +157,8 @@ describe Spree::Core::Search::Base do
       end
     end
 
-    context 'store id is not given in params' do
-      let(:params) { { current_store_id: nil } }
+    context 'current store is not given in params' do
+      let(:params) { { current_store: nil } }
 
       it 'returns 8 products' do
         expect(retrieved_products.count).to eq(8)

@@ -37,8 +37,8 @@ module Spree
 
     def load_products
       search_params = params.merge(
-        current_store_id: current_store.id,
-        taxon: @taxon.id,
+        current_store: current_store,
+        taxon: @taxon,
         include_images: true
       )
 

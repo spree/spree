@@ -2,13 +2,14 @@ module Spree
   module Core
     module Search
       class Base
-        attr_accessor :properties
-        attr_accessor :current_user
-        attr_accessor :current_currency
+        attr_accessor :properties, :current_user, :current_currency, :current_store, :taxon
 
         def initialize(params)
-          self.current_currency = Spree::Config[:currency]
           @properties = {}
+          @current_currency = Spree::Config[:currency]
+          @current_store = params[:current_store]
+          @taxon = params[:taxon]
+
           prepare(params)
         end
 
@@ -115,8 +116,6 @@ module Spree
         end
 
         def prepare(params)
-          @properties[:current_store] = Spree::Store.find_by(id: params[:current_store_id])
-          @properties[:taxon] = params[:taxon].blank? ? nil : Spree::Taxon.find(params[:taxon])
           @properties[:keywords] = params[:keywords]
           @properties[:option_value_ids] = build_option_value_ids(params)
           @properties[:price] = get_price_range(params[:price])

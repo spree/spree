@@ -12,7 +12,7 @@ module Spree
     respond_to :html
 
     def index
-      @searcher = build_searcher(params.merge(include_images: true, current_store_id: current_store.id))
+      @searcher = build_searcher(params.merge(include_images: true, current_store: current_store))
       @products = @searcher.retrieve_products
 
       if http_cache_enabled?
