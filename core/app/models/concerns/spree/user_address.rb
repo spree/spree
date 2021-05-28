@@ -16,7 +16,7 @@ module Spree
       has_many :addresses, -> { where(deleted_at: nil).order('updated_at DESC') },
                            class_name: 'Spree::Address', foreign_key: :user_id
 
-      validate :address_not_associated_with_other_user, :address_not_associated_with_placed_order
+      validate :address_not_associated_with_other_user, :address_not_deprecated_in_completed_order
 
       def persist_order_address(order)
         b_address = bill_address || build_bill_address
@@ -40,9 +40,11 @@ module Spree
         errors.add(:ship_address_id, :belongs_to_other_user) if ship_address&.user_id && self != ship_address&.user
       end
 
-      def address_not_associated_with_placed_order
-        errors.add(:bill_address_id, :associated_with_completed_order) if orders.complete.where(bill_address: bill_address_id).any?
-        errors.add(:ship_address_id, :associated_with_completed_order) if orders.complete.where(ship_address: ship_address_id).any?
+      def address_not_deprecated_in_completed_order
+        errors.add(:bill_address_id, :deprecated_in_completed_order) if
+          orders.complete.with_deleted_bill_address.where(bill_address: bill_address_id).any?
+        errors.add(:ship_address_id, :deprecated_in_completed_order) if
+          orders.complete.with_deleted_ship_address.where(ship_address: ship_address_id).any?
       end
     end
   end
