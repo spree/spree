@@ -1,17 +1,63 @@
-// Allows you to use one autocomplete for sevral use cases with sensible defaults.
-// Requires two params passing to work, the api URI, and the data attribute -> data_attrbute_name: 'products'
+// Allows you to use one autocomplete for several use cases with sensible defaults.
+
+// REQUIRED ATTRIBUTES
+// data-autocomplete-name-value="products"        <- used for api search - Example: (taxons).
+// data-autocomplete-url-value="products_api_v2"  <- gets appended to const url - Example: (taxons_api_v2).
+
+// OPTIONAL ATTRIBUTES
+// data-autocomplete-clear-value="boolean"                          <- true or false allows select2 clear.
+// data-autocomplete-multiple-value="boolean"                       <- true or false set multiple or single select
+// data-autocomplete-return-attr-value="pretty_name"                <- example shown returns taxon pretty_name
+// data-autocomplete-min-input-value="4"                            <- set a minimum input for search, default is 3.
+// data-autocomplete-search-query-value="name_or_master_sku_cont"   <- custom search query.
+
+// can also be called directly as javastript.
+
+document.addEventListener('DOMContentLoaded', function() {
+  const select2Autocompletes = document.querySelectorAll('select.select2autocomplete')
+  select2Autocompletes.forEach(element => buildParamsFromDataAttrs(element))
+})
+
+function buildParamsFromDataAttrs (element) {
+  // Required Attributes
+  const name = element.dataset.autocompleteNameValue
+  const url = element.dataset.autocompleteUrlValue
+
+  // Optional Attributes
+  const placeholder = element.dataset.autocompletePlaceholderValue
+  const clear = element.dataset.autocompleteClearValue
+  const multiple = element.dataset.autocompleteMultipleValue
+  const returnAttr = element.dataset.autocompleteReturnAttrValue
+  const minimumInput = element.dataset.autocompleteMinInputValue
+  const searchQuery = element.dataset.autocompleteSearchQueryValue
+
+  $(element).select2Autocomplete({
+    // Required Attributes
+    data_attrbute_name: name,
+    apiUrl: Spree.routes[url],
+
+    // Optional Attributes
+    placeholder: placeholder,
+    allow_clear: clear,
+    multiple: multiple,
+    return_attribute: returnAttr,
+    minimum_input: minimumInput,
+    search_query: searchQuery
+  })
+}
+
 $.fn.select2Autocomplete = function(params) {
   // Required params
   const apiUrl = params.apiUrl
   const dataAttrName = params.data_attrbute_name
 
-  // Custom params
-  const select2placeHolder = params.placeholder || `${Spree.translations.search}: ${dataAttrName}` // Pass your own custom place holder as a string.
-  const select2Multiple = params.multiple || false // Pass true to use multiple Select2.
-  const select2allowClear = params.allow_clear || false // Pass true to use Allow Clear on the Select2, you will also need to set include_blank: true on the select el.
-  const returnAttribute = params.return_attribute || 'name' // Pass a custom return attribute -> return_attribute: 'pretty_name'
-  const minimumInput = params.minimum_input || 3 // Pass a custom minimum input
-  const searchQuery = params.search_query || 'name_i_cont' // Pass a search query -> search_query: 'name_or_master_sku_cont'
+  // Optional params
+  const select2placeHolder = params.placeholder || `${Spree.translations.search}: ${dataAttrName}`
+  const select2Multiple = params.multiple || false
+  const select2allowClear = params.allow_clear || false
+  const returnAttribute = params.return_attribute || 'name'
+  const minimumInput = params.minimum_input || 3
+  const searchQuery = params.search_query || 'name_i_cont'
 
   function formatList(values) {
     return values.map(function (obj) {

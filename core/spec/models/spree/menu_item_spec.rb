@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Spree::MenuItem, type: :model do
-  let!(:store) { create(:store) }
+  let!(:store) { create(:store, default_locale: 'en') }
   let!(:menu) { create(:menu, name: 'Main Menu', store: store) }
 
   describe 'validates name' do

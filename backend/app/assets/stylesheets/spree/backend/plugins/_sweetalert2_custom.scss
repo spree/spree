@@ -1,3 +1,42 @@
+// Custom SCSS Standard SweetAlerts
+body.swal2-shown {
+  .swal2-popup {
+    border-radius:$border-radius;
+  }
+  .swal2-html-container {
+    text-align: left;
+    font-size: 0.9em;
+
+    .alert-link {
+      font-weight: 400;
+    }
+  }
+    .swal2-content {
+      padding: 0 !important;
+    }
+  .swal2-header {
+    .swal2-icon {
+      width: 2.5em;
+      height: 2.5em;
+
+      .swal2-icon-content {
+        font-size: 2.15em;
+      }
+    }
+
+    .swal2-close {
+      top: 3px;
+      right: 3px;
+      padding-bottom: 3px;
+
+      &:hover {
+        color:grey;
+      }
+    }
+  }
+}
+
+// Custom SCSS Toast SweetAlerts
 body.swal2-toast-shown .swal2-container.swal2-bottom {
   right: -50% !important;
   max-width: 500px;

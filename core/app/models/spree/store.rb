@@ -64,6 +64,12 @@ module Spree
       end
     end
 
+    def default_menu(location)
+      menu = menus.find_by(location: location, locale: default_locale) || menus.find_by(location: location)
+
+      menu.root if menu.present?
+    end
+
     def supported_currencies_list
       @supported_currencies_list ||= (read_attribute(:supported_currencies).to_s.split(',') << default_currency).sort.map(&:to_s).map do |code|
         ::Money::Currency.find(code.strip)

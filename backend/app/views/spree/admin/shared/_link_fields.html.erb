@@ -1,0 +1,14 @@
+<% if resource.linked_resource_type.present? %>
+  <div data-panel-type="<%= resource.linked_resource_type %>">
+    <%= render "spree/admin/shared/linkables/#{to_path_format(resource.linked_resource_type)}", resource: resource, f: f %>
+  </div>
+<% end %>
+<div id="linkClickUpdate" class="d-none">
+  <div class="alert alert-warning mt-3">
+    <% if %w[new create].include? controller.action_name %>
+      <%= raw Spree.t('admin.navigation.click_create_to_load_new_link') %>
+    <% else %>
+      <%= raw Spree.t('admin.navigation.click_update_to_load_new_link') %>
+    <% end %>
+  </div>
+</div>
