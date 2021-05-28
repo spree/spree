@@ -212,7 +212,7 @@ describe Spree::Address, type: :model do
         end
 
         it 'does not have a supported country iso' do
-          allow(address.country).to receive(:iso).and_return('BO')
+          allow(address.country).to receive(:iso).and_return('XX')
           address.valid?
           expect(address.errors['zipcode']).not_to include('is invalid')
         end

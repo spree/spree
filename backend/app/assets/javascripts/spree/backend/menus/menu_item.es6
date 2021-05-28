@@ -1,7 +1,9 @@
 document.addEventListener('DOMContentLoaded', function() {
+  const menuItemType = $('#menu_item_item_type').select2()
+
   updateContainerMessage()
 
-  $('#menu_item_item_type').on('change', function() {
+  menuItemType.on('change', function() {
     updateContainerMessage()
   });
 
@@ -11,7 +13,6 @@ document.addEventListener('DOMContentLoaded', function() {
     if (!linkSettingsPanel) return
 
     const selectedLinkType = $('#menu_item_item_type').val()
-
     const usingConainerMessage = document.getElementById('usingContainerInfo')
 
     if (selectedLinkType === 'Container') {

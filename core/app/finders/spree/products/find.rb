@@ -142,11 +142,8 @@ module Spree
       def by_options(products)
         return products unless options?
 
-        products.where(
-          id: options.map do |key, value|
-            products.with_option_value(key, value).ids
-          end.flatten.compact.uniq
-        )
+        products_ids = options.map { |key, value| products.with_option_value(key, value).ids }
+        products.where(id: products_ids.reduce(&:intersection))
       end
 
       def by_option_value_ids(products)
@@ -197,9 +194,7 @@ module Spree
         case sort_by
         when 'default'
           if taxons?
-            products.
-              select("#{Product.table_name}.*, #{Classification.table_name}.position").
-              order("#{Classification.table_name}.position" => :asc)
+            products.ascend_by_taxons_min_position(taxons)
           else
             products
           end

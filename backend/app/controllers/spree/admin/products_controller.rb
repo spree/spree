@@ -4,6 +4,7 @@ module Spree
       helper 'spree/products'
 
       before_action :load_data, except: :index
+
       create.before :create_before
       update.before :update_before
       helper_method :clone_object_url

@@ -23,7 +23,7 @@
           <% if parent.container? %>
             <%= content_tag :span, parent.name %>
           <% else %>
-            <%= link_to parent.name, spree_localized_item_link(parent), class: 'w-75' %>
+            <%= spree_nav_link_tag(parent, {class: 'w-75'}) %>
           <% end %>
 
           <% if parent.children.present? %>
@@ -44,7 +44,7 @@
                     <% if child.children.present? %>
                       <% child.children.each do |category_link| %>
                         <li class="d-flex justify-content-between align-items-center mobile-navigation-list-item">
-                          <%= link_to category_link.name, spree_localized_item_link(category_link), class: 'w-75' %>
+                          <%= spree_nav_link_tag(category_link, {class: 'w-75'}) %>
                         </li>
                       <% end %>
                     <% end %>

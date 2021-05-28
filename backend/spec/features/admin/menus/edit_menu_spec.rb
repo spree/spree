@@ -29,7 +29,7 @@ describe 'Menu Edit', type: :feature do
 
     it 'allows you to switch to home page link' do
       select2 'Home Page', from: 'Link To'
-      expect(page).to have_text 'Click the Update button below to change the link.'
+      expect(page).to have_text 'Click the Update button below to change the link field.'
       click_on 'Update'
 
       assert_admin_flash_alert_success('Menu item "Link To Somewhere" has been successfully updated!')
@@ -48,7 +48,7 @@ describe 'Menu Edit', type: :feature do
 
     it 'allows you to switch to select a product and save' do
       select2 'Product', from: 'Link To'
-      expect(page).to have_text 'Click the Update button below to change the link.'
+      expect(page).to have_text 'Click the Update button below to change the link field.'
       click_on 'Update'
 
       select2 product_2.name, from: 'Product', search: true
@@ -71,7 +71,7 @@ describe 'Menu Edit', type: :feature do
 
     it 'allows you to select a Taxon and save' do
       select2 'Taxon', from: 'Link To'
-      expect(page).to have_text 'Click the Update button below to change the link.'
+      expect(page).to have_text 'Click the Update button below to change the link field.'
       click_on 'Update'
 
       select2 taxon_2.name, from: 'Taxon', search: true

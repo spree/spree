@@ -9,6 +9,9 @@ module Spree
     has_many :menus
     has_many :cms_pages
 
+    has_many :store_products, class_name: 'Spree::StoreProduct', dependent: :destroy
+    has_many :products, through: :store_products, class_name: 'Spree::Product'
+
     belongs_to :default_country, class_name: 'Spree::Country'
     belongs_to :checkout_zone, class_name: 'Spree::Zone'
 
@@ -30,7 +33,10 @@ module Spree
     has_one_attached :favicon_image
 
     validates :mailer_logo, content_type: MAILER_LOGO_CONTENT_TYPES
-    validates :favicon_image, content_type: FAVICON_CONTENT_TYPES
+    validates :favicon_image, content_type: FAVICON_CONTENT_TYPES,
+                              dimension: { max: 256..256 },
+                              aspect_ratio: :square,
+                              size: { less_than_or_equal_to: 1.megabyte }
 
     before_save :ensure_default_exists_and_is_unique
     before_save :ensure_supported_currencies, :ensure_supported_locales
@@ -57,6 +63,12 @@ module Spree
       Rails.cache.fetch('stores_available_locales') do
         Spree::Store.all.map(&:supported_locales_list).flatten.uniq
       end
+    end
+
+    def default_menu(location)
+      menu = menus.find_by(location: location, locale: default_locale) || menus.find_by(location: location)
+
+      menu.root if menu.present?
     end
 
     def supported_currencies_list

@@ -92,7 +92,7 @@ module Spree
       end
     end
 
-    describe 'filter by option values' do
+    describe 'filter by options and option values' do
       subject(:products) do
         described_class.new(
           scope: Spree::Product.all,
@@ -117,28 +117,47 @@ module Spree
       let!(:variant_2) { create :variant, product: product_2, option_values: [option_value_1_2, option_value_2_2] }
       let!(:variant_3) { create :variant, product: product_3, option_values: [option_value_1_1, option_value_2_2] }
 
-      let(:option_value_ids) { [] }
-      let(:params) do
-        {
-          filter: {
-            option_value_ids: option_value_ids
+      context 'for options' do
+        let(:params) do
+          {
+            filter: {
+              options: ActionController::Parameters.new(
+                size: 's',
+                state: 'old'
+              )
+            }
           }
-        }
-      end
+        end
 
-      context 'filtering by one option' do
-        let(:option_value_ids) { [option_value_1_1.id] }
-
-        it 'returns products with proper option values' do
-          expect(products).to match_array([product_1, product_3])
+        it 'returns products matching all given options' do
+          expect(products).to contain_exactly(product_1)
         end
       end
 
-      context 'filtering by several options' do
-        let(:option_value_ids) { [option_value_1_1.id, option_value_2_2.id] }
+      context 'for option values' do
+        let(:option_value_ids) { [] }
+        let(:params) do
+          {
+            filter: {
+              option_value_ids: option_value_ids
+            }
+          }
+        end
 
-        it 'returns products that have both options' do
-          expect(products).to match_array([product_3])
+        context 'filtering by one option' do
+          let(:option_value_ids) { [option_value_1_1.id] }
+
+          it 'returns products with proper option values' do
+            expect(products).to match_array([product_1, product_3])
+          end
+        end
+
+        context 'filtering by several options' do
+          let(:option_value_ids) { [option_value_1_1.id, option_value_2_2.id] }
+
+          it 'returns products that have both options' do
+            expect(products).to match_array([product_3])
+          end
         end
       end
     end
@@ -360,22 +379,27 @@ module Spree
         end
 
         context 'when filtering by taxons' do
-          let(:taxonomy) { create(:taxonomy) }
-          let(:child_taxon) { create(:taxon, taxonomy: taxonomy) }
-
-          before do
-            product.taxons << child_taxon
-            product_2.taxons << child_taxon
-
-            # swap products positions
-            product.classifications.find_by(taxon: child_taxon).update(position: 2)
-            product_2.classifications.find_by(taxon: child_taxon).update(position: 1)
+          let(:params) do
+            { sort_by: 'default', filter: { taxons: taxonomy.root.id } }
           end
 
-          let(:params) { { sort_by: 'default', filter: { taxons: taxonomy.root.id } } }
+          let(:taxonomy) { create(:taxonomy) }
+          let(:child_taxon_1) { create(:taxon, taxonomy: taxonomy) }
+          let(:child_taxon_2) { create(:taxon, taxonomy: taxonomy) }
+
+          before do
+            product.taxons << child_taxon_1
+            product_2.taxons << child_taxon_1
+            product_3.taxons << child_taxon_2
+
+            # swap products positions
+            product.classifications.find_by(taxon: child_taxon_1).update(position: 3)
+            product_3.classifications.find_by(taxon: child_taxon_2).update(position: 2)
+            product_2.classifications.find_by(taxon: child_taxon_1).update(position: 1)
+          end
 
           it 'returns products ordered by associated taxon position' do
-            expect(products).to match_array [product_2, product]
+            expect(products).to eq [product_2, product_3, product]
           end
         end
       end

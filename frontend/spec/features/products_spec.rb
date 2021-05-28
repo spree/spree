@@ -600,4 +600,32 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
       expect(page).not_to have_content('9377-AMZ-1837')
     end
   end
+
+  context 'for multiple stores' do
+    let(:other_store) { create(:store) }
+
+    before do
+      create(:product, stores: [other_store], name: 'Other Store Product 1')
+      create(:product, stores: [other_store], name: 'Other Store Product 2')
+    end
+
+    it 'shows products from the current store only' do
+      visit spree.products_path
+
+      expect(page).to have_css('.product-component-name').exactly(9).times
+
+      product_names = page.all('.product-component-name').map(&:text).flatten.compact
+      expect(product_names).to contain_exactly(
+        'Ruby on Rails Ringer T-Shirt',
+        'Ruby on Rails Mug',
+        'Ruby on Rails Tote',
+        'Ruby on Rails Bag',
+        'Ruby on Rails Baseball Jersey',
+        'Ruby on Rails Stein',
+        'Ruby on Rails Jr. Spaghetti',
+        'Ruby Baseball Jersey',
+        'Apache Baseball Jersey'
+      )
+    end
+  end
 end

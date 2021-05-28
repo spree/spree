@@ -1,6 +1,48 @@
 require 'spec_helper'
 
 describe Spree::Store, type: :model do
+  describe 'validations' do
+    describe 'favicon image' do
+      it 'validates image properties' do
+        expect(build(:store, :with_favicon, filepath: file_fixture('icon_256x256.png'))).to be_valid
+
+        expect(build(:store, :with_favicon, filepath: file_fixture('icon_512x512.png'))).not_to be_valid
+        expect(build(:store, :with_favicon, filepath: file_fixture('icon_256x256.gif'))).not_to be_valid
+        expect(build(:store, :with_favicon, filepath: file_fixture('img_256x128.png'))).not_to be_valid
+      end
+
+      context 'file size' do
+        let(:store) do
+          store = build(:store)
+          store.favicon_image.attach(io: file, filename: 'favicon.png')
+          store
+        end
+
+        let(:file) { File.open(file_fixture('icon_256x256.png')) }
+
+        before do
+          allow(file).to receive(:size).and_return(size)
+        end
+
+        context 'when size is 1 megabyte' do
+          let(:size) { 1.megabyte }
+
+          it 'is valid' do
+            expect(store.valid?).to be(true)
+          end
+        end
+
+        context 'when size is over 1 megabyte' do
+          let(:size) { 1.megabyte + 1 }
+
+          it 'is invalid' do
+            expect(store.valid?).to be(false)
+          end
+        end
+      end
+    end
+  end
+
   describe '.by_url' do
     let!(:store)    { create(:store, url: "website1.com\nwww.subdomain.com") }
     let!(:store_2)  { create(:store, url: 'freethewhales.com') }
@@ -80,6 +122,29 @@ describe Spree::Store, type: :model do
     let!(:store_3) { create(:store, default_locale: 'en') }
 
     it { expect(described_class.available_locales).to contain_exactly('en', 'de') }
+  end
+
+  describe '.default_menu' do
+    let!(:store_a) { create(:store, default_locale: 'en') }
+    let!(:store_b) { create(:store, default_locale: 'en') }
+
+    context 'when default menu is available' do
+      let!(:menu_a) { create(:menu, store: store_a, locale: 'en') }
+      let!(:menu_b) { create(:menu, store: store_a, locale: 'de') }
+
+      it 'returns the default menu root' do
+        expect(store_a.default_menu('header')).to eq(menu_a.root)
+      end
+    end
+
+    context 'when default menu is not available' do
+      let!(:menu_c) { create(:menu, store: store_b, locale: 'de') }
+      let!(:menu_d) { create(:menu, store: store_b, locale: 'pl') }
+
+      it 'returns the first created menu root' do
+        expect(store_b.default_menu('header')).to eq(menu_c.root)
+      end
+    end
   end
 
   shared_context 'with checkout zone set' do

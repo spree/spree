@@ -30,7 +30,7 @@ Gem::Specification.new do |s|
     actionmailer actionpack actionview activejob activemodel activerecord
     activestorage activesupport railties
   ].each do |rails_gem|
-    s.add_dependency rails_gem, '>= 6.0', '< 6.2'
+    s.add_dependency rails_gem, '>= 5.2'
   end
 
   s.add_dependency 'activemerchant', '~> 1.67'
@@ -50,7 +50,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'state_machines-activerecord', '~> 0.6'
   s.add_dependency 'state_machines-activemodel', '~> 0.7'
   s.add_dependency 'stringex'
-  s.add_dependency 'twitter_cldr', '>= 4.3'
+  s.add_dependency 'validates_zipcode'
   s.add_dependency 'mini_magick', '~> 4.9', '>= 4.9.4'
   s.add_dependency 'image_processing', '~> 1.2'
   s.add_dependency 'active_storage_validations', '~> 0.9'

@@ -59,6 +59,7 @@
         <th scope="col" class="text-center">
           <%= sort_link @search, :master_default_price_amount, Spree.t(:master_price), {}, {title: 'admin_products_listing_price_title'} %>
         </th>
+        <th><%= Spree.t(:stores) %></th>
         <th scope="col" data-hook="admin_products_index_header_actions" class="actions"></th>
       </tr>
     </thead>
@@ -75,6 +76,7 @@
             <td class="sku"><%= product.sku rescue '' %></td>
             <td class="status"><%= active_badge(available_status == Spree.t(:available), label: available_status) %></td>
             <td class="text-center"><%= display_price(product) %></td>
+
             <td class="actions " data-hook="admin_products_index_row_actions">
               <span class="d-flex justify-content-end">
                 <%= link_to_edit product, no_text: true, class: 'edit' if can?(:edit, product) && !product.deleted? %>

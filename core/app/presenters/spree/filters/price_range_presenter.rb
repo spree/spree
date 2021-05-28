@@ -1,12 +1,12 @@
 module Spree
   module Filters
-    class PriceRange
+    class PriceRangePresenter
       def self.from_param(param, currency:)
         prices = param.split('-')
 
         new(
-          min_price: Price.new(amount: prices.first, currency: currency),
-          max_price: Price.new(amount: prices.last, currency: currency)
+          min_price: PricePresenter.new(amount: prices.first, currency: currency),
+          max_price: PricePresenter.new(amount: prices.last, currency: currency)
         )
       end
 

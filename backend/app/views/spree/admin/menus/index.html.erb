@@ -55,6 +55,14 @@
       <th scope="col"><%= Spree.t('location') %></th>
       <th scope="col"><%= Spree.t('store') %></th>
       <th scope="col"><%= Spree.t('language') %></th>
+      <th class="text-center" scope="col"><%= Spree.t('default') %>
+        <span data-show-info
+              data-alert-kind="info"
+              data-alert-title="<%= Spree.t('admin.navigation.default_menus_info.title') %>"
+              data-alert-html="<%= Spree.t('admin.navigation.default_menus_info.body') %>">
+          <%= svg_icon name: "info.svg", width: '15', height: '15' %>
+        </span>
+      </th>
       <th scope="col"></th>
     </thead>
     <tbody>
@@ -71,6 +79,9 @@
           </td>
           <td>
             <%= locale_full_name(menu.locale) %>
+          </td>
+          <td class="text-center">
+            <%= active_badge(default_menu_for_store?(menu)) %>
           </td>
           <td class="actions" data-hook="admin_menus_index_row_actions">
              <span class="d-flex justify-content-end">

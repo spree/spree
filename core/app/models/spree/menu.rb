@@ -22,17 +22,18 @@ module Spree
 
     has_one :root, -> { where(parent_id: nil) }, class_name: 'Spree::MenuItem', dependent: :destroy
 
+    default_scope { order(created_at: :asc) }
+
     scope :by_store, ->(store) { where(store: store) }
     scope :by_locale, ->(locale) { where(locale: locale) }
 
     self.whitelisted_ransackable_attributes = %w[name location locale store_id]
 
-    MENU_LOCATIONS_PARAMETERIZED.each do |name|
-      define_singleton_method("for_#{name}") do |locale|
-        menu = find_by(location: name, locale: locale.to_s) || find_by(location: name)
-        if menu.present?
-          menu.root
-        end
+    MENU_LOCATIONS_PARAMETERIZED.each do |location_name|
+      define_singleton_method("for_#{location_name}") do |locale|
+        menu = find_by(location: location_name, locale: locale.to_s)
+
+        menu.root if menu.present?
       end
     end
 

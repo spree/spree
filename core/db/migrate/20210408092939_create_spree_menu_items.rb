@@ -1,4 +1,4 @@
-class CreateSpreeMenuItems < ActiveRecord::Migration[6.0]
+class CreateSpreeMenuItems < ActiveRecord::Migration[5.2]
   def change
     create_table :spree_menu_items do |t|
       t.column :name, :string, null: false

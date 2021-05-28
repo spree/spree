@@ -36,7 +36,13 @@ module Spree
     end
 
     def load_products
-      @searcher = build_searcher(params.merge(taxon: @taxon.id, include_images: true))
+      search_params = params.merge(
+        current_store: current_store,
+        taxon: @taxon,
+        include_images: true
+      )
+
+      @searcher = build_searcher(search_params)
       @products = @searcher.retrieve_products
     end
 

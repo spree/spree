@@ -120,10 +120,10 @@ describe 'Cart', type: :feature, inaccessible: true, js: true do
   end
 
   context 'switching currency' do
-    let!(:product) { create(:product) }
+    let!(:product) { create(:product, stores: [store]) }
+    let(:store) { create(:store, default: true, supported_currencies: 'USD,EUR,GBP') }
 
     before do
-      create(:store, default: true, supported_currencies: 'USD,EUR,GBP')
       create(:price, variant: product.master, currency: 'EUR', amount: 16.00)
       create(:price, variant: product.master, currency: 'GBP', amount: 23.00)
       add_to_cart(product)

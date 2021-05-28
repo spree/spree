@@ -1,6 +1,6 @@
 module Spree
   module Filters
-    class Property
+    class PropertyPresenter
       def initialize(property:, product_properties:)
         @property = property
         @product_properties = product_properties

@@ -4,6 +4,8 @@ module Spree
       class EstimatedShippingRateSerializer < BaseSerializer
         set_type :shipping_rate
 
+        cache_options store: nil
+
         attributes :name, :selected, :cost, :tax_amount, :shipping_method_id
 
         attribute :final_price do |shipping_rate|

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Spree::MenuItem, type: :model do
-  let!(:store) { create(:store) }
+  let!(:store) { create(:store, default_locale: 'en') }
   let!(:menu) { create(:menu, name: 'Main Menu', store: store) }
 
   describe 'validates name' do
@@ -179,7 +179,11 @@ describe Spree::MenuItem, type: :model do
   describe 'touch menu and store' do
     let(:menu_item) { build(:menu_item, menu: menu) }
 
-    it { expect { menu_item.save! }.to change(menu, :updated_at) }
+    it 'touches menu' do
+      expect(menu).to receive(:touch)
+      menu_item.save!
+    end
+
     it { expect { menu_item.save! }.to change(store, :updated_at) }
   end
 end

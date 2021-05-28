@@ -5,13 +5,15 @@ module Spree
     before_destroy :ensure_not_default
 
     has_many :addresses, dependent: :restrict_with_error
-    has_many :states, dependent: :destroy
+    has_many :states,
+             -> { order name: :asc },
+             inverse_of: :country,
+             dependent: :destroy
     has_many :zone_members,
              -> { where(zoneable_type: 'Spree::Country') },
              class_name: 'Spree::ZoneMember',
              dependent: :destroy,
              foreign_key: :zoneable_id
-
     has_many :zones, through: :zone_members, class_name: 'Spree::Zone'
 
     validates :name, :iso_name, :iso, :iso3, presence: true, uniqueness: { case_sensitive: false }

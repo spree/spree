@@ -1,4 +1,4 @@
-class AddCheckoutZoneFieldToStore < ActiveRecord::Migration[6.0]
+class AddCheckoutZoneFieldToStore < ActiveRecord::Migration[5.2]
   def change
     unless column_exists?(:spree_stores, :checkout_zone_id)
       add_column :spree_stores, :checkout_zone_id, :integer

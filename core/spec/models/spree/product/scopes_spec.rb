@@ -43,18 +43,29 @@ describe 'Product scopes', type: :model do
     let(:taxon_1) { create(:taxon) }
     let(:taxon_2) { create(:taxon) }
 
-    let!(:product_1) { create(:product, currency: 'GBP', taxons: [taxon_1]) }
-    let!(:product_2) { create(:product, currency: 'GBP', taxons: [taxon_2]) }
+    let(:store_1) { create(:store) }
+    let(:store_2) { create(:store) }
+
+    let!(:product_1) { create(:product, currency: 'GBP', taxons: [taxon_1], stores: [store_1]) }
+    let!(:product_2) { create(:product, currency: 'GBP', taxons: [taxon_2], stores: [store_2]) }
 
     before do
       create(:product, currency: 'USD', taxons: [create(:taxon)])
     end
 
     context 'when giving a taxon' do
-      it { expect(subject.call('GBP', taxon_1)).to contain_exactly(product_1) }
+      it { expect(subject.call('GBP', taxon: taxon_1)).to contain_exactly(product_1) }
     end
 
-    context 'when giving no taxon' do
+    context 'when giving a store' do
+      it { expect(subject.call('GBP', store: store_2)).to contain_exactly(product_2) }
+    end
+
+    context 'when giving both taxon and store' do
+      it { expect(subject.call('GBP', taxon: taxon_1, store: store_1)).to contain_exactly(product_1) }
+    end
+
+    context 'when giving no taxon and store' do
       it { expect(subject.call('GBP')).to contain_exactly(product_1, product_2) }
     end
 
@@ -256,6 +267,74 @@ describe 'Product scopes', type: :model do
       result = Spree::Product.search_by_name('Second').to_a
       expect(result).to include(second_product, third_product)
       expect(result.count).to eq(2)
+    end
+  end
+
+  context '#ascend_by_taxons_min_position' do
+    subject(:ordered_products) { Spree::Product.ascend_by_taxons_min_position(taxons) }
+
+    let(:taxons) { [parent_taxon, child_taxon_1, child_taxon_2, child_taxon_1_1, child_taxon_2_1] }
+
+    let(:parent_taxon) { create(:taxon) }
+
+    let(:child_taxon_1) { create(:taxon, parent: parent_taxon) }
+    let(:child_taxon_1_1) { create(:taxon, parent: child_taxon_1) }
+
+    let(:child_taxon_2) { create(:taxon, parent: parent_taxon) }
+    let(:child_taxon_2_1) { create(:taxon, parent: child_taxon_2) }
+
+    let!(:product_1) { create(:product) }
+    let!(:classification_1_1) { create(:classification, position: 5, product: product_1, taxon: parent_taxon) }
+    let!(:classification_1_2) { create(:classification, position: 4, product: product_1, taxon: child_taxon_1_1) }
+
+    let!(:product_2) { create(:product) }
+    let!(:classification_2_1) { create(:classification, position: 1, product: product_2, taxon: parent_taxon) }
+    let!(:classification_2_2) { create(:classification, position: 2, product: product_2, taxon: child_taxon_2_1) }
+
+    let!(:product_3) { create(:product) }
+    let!(:classification_3_1) { create(:classification, position: 3, product: product_3, taxon: child_taxon_1) }
+    let!(:classification_3_2) { create(:classification, position: 4, product: product_3, taxon: child_taxon_2_1) }
+
+    let!(:product_4) { create(:product) }
+    let!(:classification_4_1) { create(:classification, position: 2, product: product_4, taxon: child_taxon_2) }
+
+    let!(:product_5) { create(:product) }
+    let!(:classification_5_1) { create(:classification, position: 1, product: product_5, taxon: child_taxon_1_1) }
+
+    let!(:product_6) { create(:product) }
+    let!(:classification_6_1) { create(:classification, position: 6, product: product_6, taxon: child_taxon_2) }
+    let!(:classification_6_2) { create(:classification, position: 3, product: product_6, taxon: child_taxon_1) }
+
+    before do
+      create_list(:product, 3, taxons: [create(:taxon)])
+    end
+
+    it 'orders products by ascending taxons minimum position' do
+      expect(ordered_products).to eq(
+        [
+          product_2, product_5, # position: 1
+          product_4,            # position: 2
+          product_6, product_3, # position: 3
+          product_1             # position: 4
+        ]
+      )
+    end
+  end
+
+  context '#by_store' do
+    subject(:products_by_store) { Spree::Product.by_store(store) }
+
+    let(:store) { create(:store) }
+
+    let!(:product_1) { create(:product, stores: [store]) }
+    let!(:product_2) { create(:product, stores: [store]) }
+
+    before do
+      create_list(:product, 3, stores: [create(:store)])
+    end
+
+    it 'returns products assigned to a store' do
+      expect(products_by_store).to contain_exactly(product_1, product_2)
     end
   end
 end

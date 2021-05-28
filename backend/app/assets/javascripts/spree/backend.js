@@ -50,6 +50,7 @@
 //= require spree/backend/product_picker
 //= require spree/backend/progress
 //= require spree/backend/promotions
+//= require spree/backend/cms/_index
 //= require spree/backend/menus/_index
 //= require spree/backend/cms/_index
 //= require spree/backend/returns/expedited_exchanges_warning

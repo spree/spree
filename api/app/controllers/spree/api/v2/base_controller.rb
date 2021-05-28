@@ -64,6 +64,14 @@ module Spree
           render json: json, status: status, content_type: content_type
         end
 
+        def render_result(result)
+          if result.success?
+            render_serialized_payload { serialize_resource(result.value) }
+          else
+            render_error_payload(result.error)
+          end
+        end
+
         def spree_current_user
           return nil unless doorkeeper_token
           return @spree_current_user if @spree_current_user

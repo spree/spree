@@ -2,9 +2,9 @@ require 'spec_helper'
 
 module Spree
   module Filters
-    RSpec.describe QuantifiedPriceRange do
+    RSpec.describe QuantifiedPriceRangePresenter do
       let(:price_range) { described_class.new(price: price, quantifier: quantifier) }
-      let(:price) { Price.new(amount: 50, currency: 'USD') }
+      let(:price) { PricePresenter.new(amount: 50, currency: 'USD') }
 
       context 'when the quantifier is less_than' do
         let(:quantifier) { :less_than }

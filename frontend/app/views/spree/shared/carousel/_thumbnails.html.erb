@@ -17,7 +17,7 @@
               <div
                 class="product-thumbnails-carousel-item-single product-thumbnails-carousel-item-single--visible"
                 data-product-carousel-to-slide="<%= image_index %>"
-                data-variant-is-master="<%= image.viewable_id == @product.master_id %>"
+                data-variant-is-master="<%= image.viewable_id == @product.master.id %>"
                 data-variant-id="<%= image.viewable_id %>">
                 <%= lazy_image(
                   src: main_app.url_for(image.url(:pdp_thumbnail)),

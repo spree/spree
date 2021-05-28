@@ -2,6 +2,7 @@
 //= require spree/backend/global/bootstrap
 //= require spree/backend/global/flatpickr
 //= require spree/backend/global/ransack
+//= require spree/backend/global/info_alert
 //= require spree/backend/global/radio_panel_toggle
 //= require spree/backend/global/responsive_menus
 //= require spree/backend/global/select2_autocomplete
