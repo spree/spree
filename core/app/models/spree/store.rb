@@ -59,7 +59,11 @@ module Spree
     end
 
     def default_menu(location)
-      menus.find_by(location: location, locale: default_locale) || menus.find_by(location: location)
+      menu = menus.find_by(location: location, locale: default_locale) || menus.find_by(location: location)
+
+      if menu.present?
+        menu.root
+      end
     end
 
     def supported_currencies_list

@@ -8,7 +8,6 @@ module Spree
           helper_method :current_store
           helper_method :current_price_options
           helper_method :available_menus
-          helper_method :store_locale
         end
 
         def current_store
