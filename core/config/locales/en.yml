@@ -1538,6 +1538,7 @@ en:
     select_a_store_credit_reason: Select a reason for the store credit
     select_an_option: Select an option
     select_stock: Select stock
+    select_stores: Select Store(s)
     selected_quantity_not_available: ! 'selected of %{item} is not available.'
     send_copy_of_all_mails_to: Send Copy of All Mails To
     send_mails_as: Send Mails As

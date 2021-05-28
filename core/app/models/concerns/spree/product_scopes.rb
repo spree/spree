@@ -62,6 +62,10 @@ module Spree
         where("#{price_table_name}.amount >= ?", price)
       end
 
+      add_search_scope :by_store do |store|
+        joins(:stores).where(Spree::StoreProduct.table_name => { store_id: store.id })
+      end
+
       # This scope selects products in taxon AND all its descendants
       # If you need products only within one taxon use
       #
@@ -246,9 +250,10 @@ module Spree
       end
       search_scopes << :active
 
-      def self.for_filters(currency, taxon = nil)
+      def self.for_filters(currency, taxon: nil, store: nil)
         scope = active(currency)
         scope = scope.in_taxon(taxon) if taxon.present?
+        scope = scope.by_store(store) if store.present?
         scope
       end
       search_scopes << :for_filters

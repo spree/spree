@@ -7,10 +7,12 @@ module Spree
     before_action :load_product, only: [:show, :related]
     before_action :load_taxon, only: :index
 
+    before_action :can_show_product?, only: :show
+
     respond_to :html
 
     def index
-      @searcher = build_searcher(params.merge(include_images: true, current_store_id: current_store.id))
+      @searcher = build_searcher(params.merge(include_images: true, current_store: current_store))
       @products = @searcher.retrieve_products
 
       if http_cache_enabled?
@@ -57,6 +59,10 @@ module Spree
 
     def load_taxon
       @taxon = Spree::Taxon.find(params[:taxon]) if params[:taxon].present?
+    end
+
+    def can_show_product?
+      raise ActiveRecord::RecordNotFound if @product.stores.exclude?(current_store)
     end
 
     def load_variants
