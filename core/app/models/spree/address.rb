@@ -26,7 +26,6 @@ module Spree
     EXCLUDED_KEYS_FOR_COMPARISION = %w(id updated_at created_at deleted_at label user_id)
 
     scope :not_deleted, -> { where(deleted_at: nil) }
-    scope :deleted, -> { where.not(deleted_at: nil) }
 
     belongs_to :country, class_name: 'Spree::Country'
     belongs_to :state, class_name: 'Spree::State', optional: true
