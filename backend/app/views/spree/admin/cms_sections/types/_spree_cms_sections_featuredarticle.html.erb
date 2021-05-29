@@ -20,7 +20,7 @@
 
     <%= f.field_container :width, class: ['form-group'] do %>
       <%= f.label :width, Spree.t('admin.navigation.width') %>
-      <%= f.select(:width, @cms_section_widths, {include_blank: false}, class: 'select2') %>
+      <%= f.select(:width, @cms_section.widths, {include_blank: false}, class: 'select2') %>
       <%= f.error_message_on :width %>
     <% end %>
   </div>
@@ -35,11 +35,11 @@
   <div class="col-12 col-md-6">
     <%= f.field_container :linked_resource_type, class: ['form-group'] do %>
       <%= f.label :linked_resource_type, Spree.t('admin.navigation.link_to') %>
-      <%= f.select(:linked_resource_type, @cms_section_links_to, {include_blank: false}, class: 'link_switcher') %>
+      <%= f.select(:linked_resource_type, @cms_section.links_to, {include_blank: false}, class: 'link_switcher') %>
       <%= f.error_message_on :linked_resource_type %>
     <% end %>
   </div>
   <div class="col-12 col-md-6">
-    <%= render "spree/admin/shared/link_switcher", resource: @cms_section, f: f %>
+    <%= render "spree/admin/shared/link_fields", resource: @cms_section, f: f %>
   </div>
 </div>

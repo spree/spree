@@ -12,11 +12,16 @@ module Spree
     has_one :icon, as: :viewable, dependent: :destroy, class_name: 'Spree::Icon'
     accepts_nested_attributes_for :icon, reject_if: :all_blank
 
-    WIDTHS = ['Edge-to-Edge', 'Full', 'Half']
     TYPES = ['Spree::Cms::Sections::Hero',
-                     'Spree::Cms::Sections::Promo',
-                     'Spree::Cms::Sections::Featured Atricle']
+             'Spree::Cms::Sections::Promo',
+             'Spree::Cms::Sections::FeaturedArticle']
 
-    LINKS_TO = []
+    def links_to
+      []
+    end
+
+    def widths
+      []
+    end
   end
 end

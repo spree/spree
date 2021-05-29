@@ -3,8 +3,6 @@ module Spree
     class CmsSectionsController < ResourceController
       belongs_to 'spree/cms_page'
 
-      before_action :load_data
-
       def collection_url
         spree.edit_admin_cms_page_path(@cms_page)
       end
@@ -27,11 +25,6 @@ module Spree
 
       def parent
         @cms_page = CmsPage.friendly.find(params[:cms_page_id])
-      end
-
-      def load_data
-        @cms_section_widths = Spree::CmsSection::WIDTHS
-        @cms_section_types = Spree::CmsSection::TYPES
       end
     end
   end

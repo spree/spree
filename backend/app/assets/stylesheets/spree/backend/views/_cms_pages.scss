@@ -32,3 +32,35 @@
     border-left: 1px solid #dee2e6;
   }
 }
+
+
+
+@include media-breakpoint-up(sm) {
+  #pageLivePreviewWrapper {
+    padding: 0;
+    overflow: hidden;
+  }
+
+  #pageLivePreview {
+    margin: auto;
+    left: 28px;
+    top: 38px;
+    width: 282%;
+    height: 277%;
+    margin-bottom: -151%;
+    border: 3px solid grey;
+    border-radius: 15px;
+    transform: scale(0.3181);
+    -webkit-transform: scale(0.3181);
+    -o-transform: scale(0.3181);
+    -ms-transform: scale(0.3181);
+    -moz-transform: scale(0.3181);
+    transform-origin: top left;
+    -webkit-transform-origin: top left;
+    -o-transform-origin: top left;
+    -ms-transform-origin: top left;
+    -moz-transform-origin: top left;
+  }
+}
+@include media-breakpoint-up(lg) {  }
+@include media-breakpoint-up(xl) {  }

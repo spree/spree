@@ -45,6 +45,10 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 })
 
+function reloadPreview () {
+  document.getElementById('pageLivePreview').contentWindow.location.reload();
+}
+
 function handleSectionReposition(evt) {
   const data = {
     section_id: parseInt(evt.item.dataset.sectionId, 10),
@@ -60,7 +64,9 @@ function handleSectionReposition(evt) {
     body: JSON.stringify(data)
   })
     .then(response => {
-      if (response.ok !== true) {
+      if (response.ok) {
+        reloadPreview()
+      } else {
         handleMenuItemMoveError()
       }
     })
