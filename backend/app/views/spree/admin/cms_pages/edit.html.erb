@@ -14,44 +14,45 @@
 <% if @cms_page.sections? %>
   <div id="pageSectionsArea" class="col-12">
     <div class="row">
-      <div class="col-12">
-        <hr class="mb-5">
-       <h5 class="mb-0">
-        <%= Spree.t('admin.cms.page_sections', page_name: @cms_page.title) %>
-        </h5>
+      <div class="col d-flex justify-content-start">
+        <%= button_link_to Spree.t('admin.pages.add_new_section'), spree.new_admin_cms_page_cms_section_path(@cms_page), icon: 'add.svg', class: 'no-wrap btn btn-success align-self-center' %>
+      </div>
+      <div class="col d-flex justify-content-end">
+        <div id="LiveViewSwitcher" class="btn-group btn-group-toggle" data-toggle="buttons">
+          <label class="btn btn-outline-primary active">
+            <input type="radio" name="options" id="mobileLiveView" autocomplete="off"> Mobile
+          </label>
+          <label class="btn btn-outline-primary">
+            <input type="radio" name="options" id="tabletLiveView" autocomplete="off"> Tablet
+          </label>
+          <label class="btn btn-outline-primary">
+            <input type="radio" name="options" id="desktopLiveView" autocomplete="off" checked> Desktop
+          </label>
+        </div>
       </div>
     </div>
-    <div class="row">
-      <div class="col-12 col-md-3">
-        <div class="card mb-3">
-          <div class="card-header">
-            <div class="row pb-0">
-              <div class="col d-flex justify-content-end">
-                <%= button_link_to Spree.t('admin.pages.add_new_section'), spree.new_admin_cms_page_cms_section_path(@cms_page), icon: 'add.svg', class: 'no-wrap btn btn-success align-self-center' %>
+    <div class="row no-gutters">
+      <div class="col-12 col-md-4 bg-light border">
+        <% if @cms_page.cms_sections.any? %>
+          <div id="cmsPagesectionsArea" class="card-body row m-0 p-0 no-gutters">
+            <% @cms_page.cms_sections.each do |section| %>
+              <%= build_page_section(section) %>
+            <% end %>
+          </div>
+
+        <% else %>
+          <div class="row">
+            <div class="col-12">
+              <div class="alert alert-info no-objects-found m-4">
+                <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::CmsSection)) %>
+                <%= link_to Spree.t(:add_one), new_object_url if can?(:create, Spree::CmsSection) %>
               </div>
             </div>
           </div>
-
-          <% if @cms_page.cms_sections.any? %>
-            <div id="cmsPagesectionsArea" class="card-body row m-0 p-0 py-3 bg-light">
-              <% @cms_page.cms_sections.each do |section| %>
-                <%= build_page_section(section) %>
-              <% end %>
-            </div>
-          <% else %>
-            <div class="row">
-              <div class="col-12">
-                <div class="alert alert-info no-objects-found m-4">
-                  <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::CmsSection)) %>
-                  <%= link_to Spree.t(:add_one), new_object_url if can?(:create, Spree::CmsSection) %>
-                </div>
-              </div>
-            </div>
-          <% end %>
-        </div>
+        <% end %>
       </div>
 
-      <div class="d-none d-md-block col-9">
+      <div class="d-none d-md-block col-8 bg-secondary border">
         <div id="liveViewCont" class="desktopLiveView">
           <div class="embed-responsive embed-responsive-4by3">
             <iframe class="embed-responsive-item"
@@ -61,22 +62,8 @@
             </iframe>
           </div>
         </div>
-
-        <div class="d-flex justify-content-center mt-3">
-          <div id="LiveViewSwitcher" class="btn-group btn-group-toggle" data-toggle="buttons">
-            <label class="btn btn-outline-primary active">
-              <input type="radio" name="options" id="mobileLiveView" autocomplete="off"> Mobile
-            </label>
-            <label class="btn btn-outline-primary">
-              <input type="radio" name="options" id="tabletLiveView" autocomplete="off"> Tablet
-            </label>
-            <label class="btn btn-outline-primary">
-              <input type="radio" name="options" id="desktopLiveView" autocomplete="off" checked> Desktop
-            </label>
-          </div>
-        </div>
-
       </div>
+
     </div>
   </div>
 <% end %>
