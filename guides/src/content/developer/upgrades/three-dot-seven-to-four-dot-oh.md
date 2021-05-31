@@ -20,75 +20,17 @@ This is the safest and recommended method.
 
 ## Update your Ruby version to 2.5.0 at least
 
-Spree 4.0 and Rails 6.0 require Ruby 2.5.0 at least so you need to bump the ruby version in your project's `Gemfile` and `.ruby-version` files.
-
-## Update your Rails version to 6.0
-
-Please follow the
-[official Rails guide](https://edgeguides.rubyonrails.org/upgrading_ruby_on_rails.html#upgrading-from-rails-5-2-to-rails-6-0)
-to upgrade your store.
+Spree 4.0 requires Ruby 2.5.0 at least so you need to bump the ruby version in your project's `Gemfile` and `.ruby-version` files.
 
 ## Migrate from Paperclip to ActiveStorage
 
 In Spree 3.6 we deprecated [Paperclip support in favour of ActiveStorage](/release_notes/3_6_0.html#active-storage-support). Paperclip gem itself isn't maintained anymore and it is recommended to move to ActiveStorage as it is the defualt Rails storage engine since Rails 5.2 release.
 
-In Spree 4.0 we completely removed Paperclip support in favour of ActiveStorage.
+In Spree 4.0 we've removed Paperclip support in favour of ActiveStorage.
 
-Also please remove any occurances of `Rails.application.config.use_paperclip` and `Configuration::Paperclip` in your codebase.
+Please remove also any occurances of `Rails.application.config.use_paperclip` and `Configuration::Paperclip` from your codebase.
 
-Please follow the [official Paperclip to ActiveStorage migration guide](https://github.com/thoughtbot/paperclip/blob/master/MIGRATING.md)
-
-## Replace `class_eval` with `Module.prepend`
-
-Rails 6.0 ships with [new code autoloader called Zeitwerk](https://medium.com/@fxn/zeitwerk-a-new-code-loader-for-ruby-ae7895977e73) which has some [strict rules in terms of file naming and contents](https://github.com/fxn/zeitwerk#file-structure). If you used `class_eval` to extend and modify Spree classes you will need to rewrite those with `Module.prepend`. Eg.
-
-Old decorator - `app/models/spree/order_decorator.rb`
-
-```ruby
-Spree::Order.class_eval do
-  has_many :new_custom_model
-
-  def some_method
-     # ...
-  end
-end
-```
-
-New decorator - `app/models/my_store/spree/order_decorator.rb`
-
-```ruby
-module MyStore
-  module Spree
-    module OrderDecorator
-      def self.prepended(base)
-        base.has_many :new_custom_model
-      end
-
-      def some_method
-        # ...
-      end
-    end
-  end
-end
-
-::Spree::Order.prepend(MyStore::Spree::OrderDecorator)
-```
-
-When migrating class method to the new [autoloader](https://medium.com/@fxn/zeitwerk-a-new-code-loader-for-ruby-ae7895977e73) things are a little different because you will have to prepend to the Singleton class as shown in this example: 
-
-```ruby
-module Spree::BaseDecorator
-  def spree_base_scopes
-    # custom implementation
-  end
-end
-
-Spree::Base.singleton_class.send :prepend, Spree::BaseDecorator
-```
-
-Please also consider other options for [Logic Customization](/developer/customization/logic.html).
-
-We recommend also reading through [Ruby modules: Include vs Prepend vs Extend](https://medium.com/@leo_hetsch/ruby-modules-include-vs-prepend-vs-extend-f09837a5b073)
+Please follow the [official Paperclip to ActiveStorage migration guide](https://github.com/thoughtbot/paperclip/blob/master/MIGRATING.md).
 
 ## Replace OrderContents with services in your codebase
 
@@ -188,29 +130,94 @@ Spree::Checkout::RemoveStoreCredit.call(order: order)
 
 If you're using [Address Book](https://github.com/spree-contrib/spree_address_book) extension you need to remove as this feature was [merged into core Spree](/release_notes/4_0_0.html#address-book-support).
 
-### Remove it from Gemfile
+1. Remove this line from `Gemfile`
 
-Remove this line:
+    ```ruby
+    gem 'spree_address_book', github: 'spree-contrib/spree_address_book'
+    ```
+
+2. Remove this line from `vendor/assets/javascripts/spree/frontend/all.js`
+
+    ```
+    //= require spree/frontend/spree_address_book
+    ```
+
+3. Remove this line from `vendor/assets/stylesheets/spree/frontend/all.css`
+
+    ```
+    //= require spree/frontend/spree_address_book
+    ```
+
+## Replace `class_eval` with `Module.prepend` (only for Rails 6)
+
+Rails 6.0 ships with [new code autoloader called Zeitwerk](https://medium.com/@fxn/zeitwerk-a-new-code-loader-for-ruby-ae7895977e73) which has some [strict rules in terms of file naming and contents](https://github.com/fxn/zeitwerk#file-structure). If you used `class_eval` to extend and modify Spree classes you will need to rewrite those with `Module.prepend`. Eg.
+
+Old decorator syntax - `app/models/spree/order_decorator.rb`
 
 ```ruby
-gem 'spree_address_book', github: 'spree-contrib/spree_address_book'
+Spree::Order.class_eval do
+  has_many :new_custom_model
+
+  def some_method
+     # ...
+  end
+end
 ```
 
-### Remove it from `vendor/assets/javascripts/spree/frontend/all.js`
+New decorator syntax - `app/models/my_store/spree/order_decorator.rb`
 
-Remove this line if your're using `spree_frontend`:
+```ruby
+module MyStore
+  module Spree
+    module OrderDecorator
+      def self.prepended(base)
+        base.has_many :new_custom_model
+      end
 
+      def some_method
+        # ...
+      end
+    end
+  end
+end
+
+::Spree::Order.prepend(MyStore::Spree::OrderDecorator)
 ```
-//= require spree/frontend/spree_address_book
+
+When migrating class method to the new [autoloader](https://medium.com/@fxn/zeitwerk-a-new-code-loader-for-ruby-ae7895977e73) things are a little different because you will have to prepend to the Singleton class as shown in this example: 
+
+```ruby
+module Spree::BaseDecorator
+  def spree_base_scopes
+    # custom implementation
+  end
+end
+
+Spree::Base.singleton_class.send :prepend, Spree::BaseDecorator
 ```
 
-### Remove it from `vendor/assets/stylesheets/spree/frontend/all.css`
+Please also consider other options for [Logic Customization](/developer/customization/logic.html).
 
-Remove this line if your're using `spree_frontend`:
+We recommend also reading through [Ruby modules: Include vs Prepend vs Extend](https://medium.com/@leo_hetsch/ruby-modules-include-vs-prepend-vs-extend-f09837a5b073)
 
-```
-//= require spree/frontend/spree_address_book
-```
+## Update Bootstrap 3 to 4 or stay at Bootstrap 3
+
+Spree 4 uses Bootstrap 4 for both Storefront and Admin Panel. You have two options:
+
+### Stay at Bootstrap 3
+
+As we know this is a big portion of work you can still use Bootstrap 3 for your Storefront.
+
+1. Copy all remaining views by running `bundle exec spree:frontend:copy_views`
+2. Add `bootstrap-sass` gem to your `Gemfile`
+
+    ```ruby
+    gem 'bootstrap-sass', '~> 3.4.1'
+    ```
+
+### Move to Bootstrap 4
+
+[Follow the official Bootstrap 3 to 4 migration guide](https://getbootstrap.com/docs/4.0/migration/)
 
 ## Update Gemfile
 
