@@ -68,6 +68,11 @@ $(document).ready(function() {
           el.closest('div.menu-item').fadeOut('hide', function() {
             $(this).remove()
           })
+          el.closest('.removeable').fadeOut('hide', function() {
+            $(this).remove()
+          })
+          const livePreview = document.getElementById('pageLivePreview')
+          if (livePreview) { livePreview.contentWindow.location.reload() }
         }
       }).fail(function(response) {
         show_flash('error', response.responseText)
