@@ -1,4 +1,16 @@
 #cmsPagesectionsArea {
+  overflow-x: hidden;
+  overflow-y: scroll;
+  max-height: 553px;
+  padding-top: 5px !important;
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+
   .col-xl, .col-xl-auto, .col-xl-12,
   .col-xl-11, .col-xl-10, .col-xl-9,
   .col-xl-8, .col-xl-7, .col-xl-6,
@@ -50,6 +62,29 @@
     border-left: 1px solid #dee2e6;
   }
 }
+
+body.cmsSectionFullScreenMode {
+  .hide-on-full-screen-mode {
+    display: none;
+  }
+  #pageSectionsArea {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 9999;
+    background: white;
+    padding: 15px 15px 0 15px;
+    height: 100vh;
+
+    #cmsPagesectionsArea {
+      max-height: 90vh;
+    }
+
+    .embed-responsive-4by3 {
+      height: 90vh;
+    }
+  }
+ }
 
 #pageLivePreview {
   transform-origin: top left;
