@@ -1,10 +1,9 @@
 .homepage {
   &-hero-image {
     display: flex;
-    justify-content: center;
+    justify-content: start;
     flex-direction: column;
     text-align: center;
-    height: 204px;
     width: 100%;
     overflow: hidden;
 
@@ -17,17 +16,18 @@
     }
 
     @include media-breakpoint-up(md) {
-      height: 418px;
+
     }
 
     @include media-breakpoint-up(lg) {
-      height: 600px;
+
     }
 
     .hero-content {
       position: absolute;
       z-index: 1;
       right: 10%;
+      top:25%;
     }
 
     &-text {

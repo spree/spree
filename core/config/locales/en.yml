@@ -550,10 +550,13 @@ en:
     adjustments: Adjustments
     admin:
       cms:
+        hero:
+          aspect_ratio: Please use an image with the aspext ratio of 12:5 (2400px x 1000px)
         select_page_type: Select a page type
         click_button_to_change_page_type: Click the <b>%{button_type}</b> button to load the options for this page type.
         view_seo_settings: View SEO Settings
         seo_settings: SEO Settings
+        no_sections_found_please_add_one: Add your first section to this page by clicking the + Add New Section button above.
         click_create_to_load_new_link: 'Click the <b>Create</b> button below to save your new page section, and load the section settings.'
         click_update_to_load_new_link: 'Click the <b>Update</b> button below to load the new section settings.'
         settings_for: 'Available Options For %{section}'

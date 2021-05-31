@@ -44,8 +44,7 @@
           <div class="row">
             <div class="col-12">
               <div class="alert alert-info no-objects-found m-4">
-                <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::CmsSection)) %>
-                <%= link_to Spree.t(:add_one), new_object_url if can?(:create, Spree::CmsSection) %>
+                <%= Spree.t('admin.cms.no_sections_found_please_add_one') %>
               </div>
             </div>
           </div>

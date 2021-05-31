@@ -9,9 +9,6 @@ module Spree
 
     default_scope { order(position: :asc) }
 
-    has_one :icon, as: :viewable, dependent: :destroy, class_name: 'Spree::Icon'
-    accepts_nested_attributes_for :icon, reject_if: :all_blank
-
     TYPES = ['Spree::Cms::Sections::Hero',
              'Spree::Cms::Sections::Promo',
              'Spree::Cms::Sections::FeaturedArticle']
