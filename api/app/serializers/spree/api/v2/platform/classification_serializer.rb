@@ -2,10 +2,11 @@ module Spree
   module Api
     module V2
       module Platform
-        class ImageSerializer < BaseSerializer
+        class ClassificationSerializer < BaseSerializer
           include ::Spree::Api::V2::ResourceSerializerConcern
 
-          attribute :styles
+          belongs_to :product
+          belongs_to :taxon
         end
       end
     end

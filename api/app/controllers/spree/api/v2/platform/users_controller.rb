@@ -16,6 +16,11 @@ module Spree
           def scope_includes
             [:ship_address, :bill_address]
           end
+
+          # we need to define this here as developers can configure their own `user_class`
+          def model_param_name
+            'user'
+          end
         end
       end
     end

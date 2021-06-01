@@ -90,10 +90,20 @@ module Spree
             end
           end
 
-          def permitted_resource_params
-            model_param_name = model_class.to_s.demodulize.underscore
+          def model_param_name
+            model_class.to_s.demodulize.underscore
+          end
 
-            params.require(model_param_name).permit(Spree::PermittedAttributes.send("#{model_param_name}_attributes"))
+          def spree_permitted_attributes
+            Spree::PermittedAttributes.try("#{model_param_name}_attributes") || {}
+          end
+
+          def permitted_resource_params
+            params.require(model_param_name).permit(spree_permitted_attributes)
+          end
+
+          def allowed_sort_attributes
+            super << spree_permitted_attributes
           end
         end
       end

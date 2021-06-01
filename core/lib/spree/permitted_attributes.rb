@@ -2,6 +2,7 @@ module Spree
   module PermittedAttributes
     ATTRIBUTES = [
       :address_attributes,
+      :classification_attributes,
       :checkout_attributes,
       :customer_return_attributes,
       :image_attributes,
@@ -41,6 +42,10 @@ module Spree
     @@checkout_attributes = [
       :coupon_code, :email, :shipping_method_id, :special_instructions, :use_billing,
       :user_id, :bill_address_id, :ship_address_id
+    ]
+
+    @@classification_attributes = [
+      :position, :taxon_id, :product_id
     ]
 
     @@customer_return_attributes = [:stock_location_id, return_items_attributes: [:id, :inventory_unit_id, :return_authorization_id, :returned, :pre_tax_amount, :acceptance_status, :exchange_variant_id, :resellable]]
