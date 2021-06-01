@@ -154,6 +154,7 @@ module Spree
     end
 
     def destroy
+      # binding.pry
       if can_be_deleted?
         super
       else
@@ -229,9 +230,10 @@ module Spree
 
     def assign_new_default_address_to_user
       return unless user
-
-      user.update(bill_address: user.addresses.last) if user.bill_address == self
-      user.update(ship_address: user.addresses.last) if user.ship_address == self
+      
+      user.bill_address = user.addresses.last if user.bill_address == self
+      user.ship_address = user.addresses.last if user.ship_address == self
+      user.save!
     end
   end
 end

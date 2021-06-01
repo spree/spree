@@ -49,10 +49,10 @@ describe 'Storefront API v2 Addresses spec', type: :request do
     end
 
     context 'when address can not be deleted' do
-      let!(:order) { create(:completed_order_with_totals, bill_address: address) }
       let!(:address) { create(:address, user_id: user.id) }
 
       before do
+        expect(address).to receive(:can_be_deleted?).and_return(false).at_least(:once)
         address.destroy!
         get '/api/v2/storefront/account/addresses', headers: headers_bearer
       end
