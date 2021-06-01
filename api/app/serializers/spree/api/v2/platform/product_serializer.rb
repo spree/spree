@@ -4,6 +4,23 @@ module Spree
       module Platform
         class ProductSerializer < BaseSerializer
           include ::Spree::Api::V2::ResourceSerializerConcern
+          include ::Spree::Api::V2::DisplayMoneyHelper
+
+          attribute :price do |product, params|
+            price(product, params[:currency])
+          end
+
+          attribute :display_price do |product, params|
+            display_price(product, params[:currency])
+          end
+
+          attribute :compare_at_price do |product, params|
+            compare_at_price(product, params[:currency])
+          end
+
+          attribute :display_compare_at_price do |product, params|
+            display_compare_at_price(product, params[:currency])
+          end
 
           has_many :variants
           has_many :option_types

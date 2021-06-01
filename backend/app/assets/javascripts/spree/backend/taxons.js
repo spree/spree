@@ -14,17 +14,17 @@ $(function () {
       swapThreshold: 0.9,
       forceFallback: true,
       onEnd: function (evt) {
-        var itemEl = evt.item.getAttribute('data-product-id')
-        var newin = evt.newIndex
+        var classificationId = evt.item.getAttribute('data-classification-id')
+        var newIndex = evt.newIndex
         return $.ajax({
-          url: Spree.routes.classifications_api,
+          url: Spree.routes.classifications_api_v2 + '/' + classificationId.toString() + '/reposition',
+          headers: Spree.apiV2Authentication(),
           method: 'PUT',
           dataType: 'json',
           data: {
-            token: Spree.api_key,
-            product_id: itemEl,
-            taxon_id: $('#taxon_id').val(),
-            position: newin
+            classification: {
+              position: newIndex
+            }
           }
         })
       }
@@ -37,22 +37,27 @@ $(function () {
       minimumInputLength: 3,
       multiple: false,
       ajax: {
-        url: Spree.routes.taxons_api,
+        url: Spree.routes.taxons_api_v2,
         datatype: 'json',
+        headers: Spree.apiV2Authentication(),
         data: function (params, page) {
           return {
             per_page: 50,
             page: page,
-            without_children: true,
-            q: {
+            filter: {
               name_cont: params.term
-            },
-            token: Spree.api_key
+            }
           }
         },
         processResults: function (data, page) {
-          var more = page < data.pages
-          var results = formatTaxonList(data.taxons)
+          var more = page < data.meta.total_pages
+
+          results = data.data.map(function (obj) {
+            return {
+              id: obj.id,
+              text: obj.attributes.pretty_name
+            }
+          })
 
           return {
             results: results,
@@ -61,40 +66,61 @@ $(function () {
             }
           }
         }
-      },
-      templateResult: formatTaxon,
-      templateSelection: formatTaxon
+      }
     }).on('select2:select', function (e) {
-      var el = $('#taxon_products')
       $.ajax({
-        url: Spree.routes.taxon_products_api,
-        data: { id: e.params.data.id, token: Spree.api_key }
-      }).done(function (data) {
-        var i, j, len, len1, product, ref, ref1, results, variant
-        el.empty()
-        if (data.products.length === 0) {
-          return $('#taxon_products').html('<div class="alert alert-info">' + Spree.translations.no_results + '</div>')
+        url: Spree.routes.classifications_api_v2,
+        headers: Spree.apiV2Authentication(),
+        data: {
+          filter: {
+            taxon_id_eq: e.params.data.id
+          },
+          include: 'product.images',
+          per_page: 150,
+          sort: 'position'
+        }
+      }).done(function (json) {
+        taxonProducts.empty()
+
+        if (json.data.length === 0) {
+          return taxonProducts.html('<div class="alert alert-info">' + Spree.translations.no_results + '</div>')
         } else {
-          ref = data.products
           results = []
-          for (i = 0, len = ref.length; i < len; i++) {
-            product = ref[i]
-            if (product.master.images[0] !== void 0 && product.master.images[0].small_url !== void 0) {
-              product.image = product.master.images[0].small_url
-            } else {
-              ref1 = product.variants
-              for (j = 0, len1 = ref1.length; j < len1; j++) {
-                variant = ref1[j]
-                if (variant.images[0] !== void 0 && variant.images[0].small_url !== void 0) {
-                  product.image = variant.images[0].small_url
-                  break
+
+          json.data.forEach(function (classification) {
+            var productId = classification.relationships.product.data.id.toString()
+
+            var product = json.included.find(function(included) {
+              if (included.type == 'product' && included.id == productId) {
+                return included
+              }
+            })
+
+            if (product && classification) {
+              var imageUrl = null
+
+              if(product.relationships.images.data.length > 0) {
+                var imageId = product.relationships.images.data[0].id
+
+                image = json.included.find(function(included) {
+                  if (included.type == 'image' && included.id == imageId) {
+                    return included
+                  }
+                })
+
+                if (image && image.attributes && image.attributes.styles) {
+                  imageUrl = image.attributes.styles[2].url
                 }
               }
+
+              results.push(taxonProducts.append(productTemplate({
+                product: product,
+                classification: classification,
+                image: imageUrl
+              })))
             }
-            results.push(el.append(productTemplate({
-              product: product
-            })))
-          }
+          })
+
           return results
         }
       })
@@ -102,43 +128,18 @@ $(function () {
   }
 
   taxonProducts.on('click', '.js-delete-product', function (e) {
-    var currentTaxonId = $('#taxon_id').val()
     var product = $(this).parents('.product')
-    var productId = product.data('product-id')
-    var productTaxons = String(product.data('taxons')).split(',').map(Number)
-    var productIndex = productTaxons.indexOf(parseFloat(currentTaxonId))
-    productTaxons.splice(productIndex, 1)
-    var taxonIds = productTaxons.length > 0 ? productTaxons : ['']
+    var classificationId = product.data('classification-id')
     $.ajax({
-      url: Spree.routes.products_api + '/' + productId,
-      data: {
-        product: {
-          taxon_ids: taxonIds
-        },
-        token: Spree.api_key
-      },
-      type: 'PUT'
+      url: Spree.routes.classifications_api_v2 + '/' + classificationId.toString(),
+      headers: Spree.apiV2Authentication(),
+      type: 'DELETE'
     }).done(function () {
       product.fadeOut(400, function (e) {
         product.remove()
       })
     })
   })
+
   $('.variant_autocomplete').variantAutocomplete()
-
-  function formatTaxon (taxon) {
-    if (taxon.loading) {
-      return taxon.text;
-    }
-    return taxon.pretty_name
-  }
-
-  function formatTaxonList(values) {
-    return values.map(function (obj) {
-      return {
-        id: obj.id,
-        pretty_name: obj.pretty_name
-      }
-    })
-  }
 })
