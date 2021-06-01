@@ -158,6 +158,7 @@ module Spree
         super
       else
         update_column :deleted_at, Time.current
+        assign_new_default_address_to_user
       end
     end
 
@@ -224,6 +225,13 @@ module Spree
       ).format
 
       errors.add(:zipcode, :invalid) unless ::ValidatesZipcode.valid?(formatted_zip, country_iso.upcase)
+    end
+
+    def assign_new_default_address_to_user
+      return unless user
+
+      user.update(bill_address: user.addresses.last) if user.bill_address == self
+      user.update(ship_address: user.addresses.last) if user.ship_address == self
     end
   end
 end
