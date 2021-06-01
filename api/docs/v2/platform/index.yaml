@@ -6,7 +6,7 @@ info:
 paths:
   "/api/v2/platform/addresses":
     get:
-      summary: Returns a list of an Addresses
+      summary: Returns a list of Addresses
       tags:
       - Addresses
       security:
@@ -55,8 +55,8 @@ paths:
                     state_name:
                     alternative_phone: 555-555-0199
                     company: Company
-                    created_at: '2021-04-01T18:55:03.630Z'
-                    updated_at: '2021-04-01T18:55:03.630Z'
+                    created_at: '2021-06-01T21:54:19.808Z'
+                    updated_at: '2021-06-01T21:54:19.808Z'
                     deleted_at:
                     label:
                   relationships:
@@ -83,8 +83,8 @@ paths:
                     state_name:
                     alternative_phone: 555-555-0199
                     company: Company
-                    created_at: '2021-04-01T18:55:03.634Z'
-                    updated_at: '2021-04-01T18:55:03.634Z'
+                    created_at: '2021-06-01T21:54:19.814Z'
+                    updated_at: '2021-06-01T21:54:19.814Z'
                     deleted_at:
                     label:
                   relationships:
@@ -135,7 +135,7 @@ paths:
             application/json:
               example:
                 data:
-                  id: '1'
+                  id: '5'
                   type: address
                   attributes:
                     firstname: John
@@ -148,18 +148,18 @@ paths:
                     state_name:
                     alternative_phone: 555-555-0199
                     company: Company
-                    created_at: '2021-04-01T18:55:03.796Z'
-                    updated_at: '2021-04-01T18:55:03.796Z'
+                    created_at: '2021-06-01T21:54:20.069Z'
+                    updated_at: '2021-06-01T21:54:20.069Z'
                     deleted_at:
                     label:
                   relationships:
                     country:
                       data:
-                        id: '1'
+                        id: '3'
                         type: country
                     state:
                       data:
-                        id: '1'
+                        id: '5'
                         type: state
                     user:
                       data:
@@ -220,7 +220,7 @@ paths:
             application/json:
               example:
                 data:
-                  id: '1'
+                  id: '6'
                   type: address
                   attributes:
                     firstname: John
@@ -233,18 +233,18 @@ paths:
                     state_name:
                     alternative_phone: 555-555-0199
                     company: Company
-                    created_at: '2021-04-01T18:55:03.828Z'
-                    updated_at: '2021-04-01T18:55:03.828Z'
+                    created_at: '2021-06-01T21:54:20.111Z'
+                    updated_at: '2021-06-01T21:54:20.111Z'
                     deleted_at:
                     label:
                   relationships:
                     country:
                       data:
-                        id: '1'
+                        id: '4'
                         type: country
                     state:
                       data:
-                        id: '1'
+                        id: '6'
                         type: state
                     user:
                       data:
@@ -286,7 +286,7 @@ paths:
             application/json:
               example:
                 data:
-                  id: '1'
+                  id: '8'
                   type: address
                   attributes:
                     firstname: Jack
@@ -299,18 +299,18 @@ paths:
                     state_name:
                     alternative_phone: 555-555-0199
                     company: Company
-                    created_at: '2021-04-01T18:55:03.885Z'
-                    updated_at: '2021-04-01T18:55:03.895Z'
+                    created_at: '2021-06-01T21:54:20.171Z'
+                    updated_at: '2021-06-01T21:54:20.183Z'
                     deleted_at:
                     label:
                   relationships:
                     country:
                       data:
-                        id: '1'
+                        id: '6'
                         type: country
                     state:
                       data:
-                        id: '1'
+                        id: '8'
                         type: state
                     user:
                       data:
@@ -369,6 +369,347 @@ paths:
             application/json:
               example:
                 error: The access token is invalid
+  "/api/v2/platform/classifications":
+    get:
+      summary: Returns a list of Classifications
+      tags:
+      - Classifications
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: page
+        in: query
+        example: 1
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        example: 50
+        schema:
+          type: integer
+      - name: include
+        in: query
+        descripton: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: product,taxon
+        schema:
+          type: string
+      - name: filter
+        in: query
+        descripton: ''
+        example: taxon_id_eq=1
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Records returned
+          content:
+            application/json:
+              example:
+                data:
+                - id: '1'
+                  type: classification
+                  attributes:
+                    position: 1
+                  relationships:
+                    product:
+                      data:
+                        id: '1'
+                        type: product
+                    taxon:
+                      data:
+                        id: '2'
+                        type: taxon
+                - id: '2'
+                  type: classification
+                  attributes:
+                    position: 1
+                  relationships:
+                    product:
+                      data:
+                        id: '2'
+                        type: product
+                    taxon:
+                      data:
+                        id: '4'
+                        type: taxon
+                meta:
+                  count: 2
+                  total_count: 2
+                  total_pages: 1
+                links:
+                  self: http://www.example.com/api/v2/platform/classifications?page=1&per_page=&include=&filter=
+                  next: http://www.example.com/api/v2/platform/classifications?include=&page=1&per_page=
+                  prev: http://www.example.com/api/v2/platform/classifications?include=&page=1&per_page=
+                  last: http://www.example.com/api/v2/platform/classifications?include=&page=1&per_page=
+                  first: http://www.example.com/api/v2/platform/classifications?include=&page=1&per_page=
+        '401':
+          description: Authentication Failed
+          content:
+            application/json:
+              example:
+                error: The access token is invalid
+    post:
+      summary: Creates a Classification
+      tags:
+      - Classifications
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: include
+        in: query
+        descripton: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: product,taxon
+        schema:
+          type: string
+      responses:
+        '201':
+          description: record created
+          content:
+            application/json:
+              example:
+                data:
+                  id: '5'
+                  type: classification
+                  attributes:
+                    position: 1
+                  relationships:
+                    product:
+                      data:
+                        id: '5'
+                        type: product
+                    taxon:
+                      data:
+                        id: '10'
+                        type: taxon
+        '422':
+          description: invalid request
+          content:
+            application/json:
+              example:
+                error: Taxon can't be blank, Product can't be blank, and Position
+                  is not a number
+                errors:
+                  taxon:
+                  - can't be blank
+                  product:
+                  - can't be blank
+                  position:
+                  - is not a number
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/classification_params"
+  "/api/v2/platform/classifications/{id}":
+    get:
+      summary: Returns a Classification
+      tags:
+      - Classifications
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: include
+        in: query
+        descripton: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: product,taxon
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Record found
+          content:
+            application/json:
+              example:
+                data:
+                  id: '6'
+                  type: classification
+                  attributes:
+                    position: 1
+                  relationships:
+                    product:
+                      data:
+                        id: '6'
+                        type: product
+                    taxon:
+                      data:
+                        id: '12'
+                        type: taxon
+        '404':
+          description: Record not found
+          content:
+            application/json:
+              example:
+                error: The resource you were looking for could not be found.
+        '401':
+          description: Authentication Failed
+          content:
+            application/json:
+              example:
+                error: The access token is invalid
+    put:
+      summary: Updates a Classification
+      tags:
+      - Classifications
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: include
+        in: query
+        descripton: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: product,taxon
+        schema:
+          type: string
+      responses:
+        '200':
+          description: record updated
+          content:
+            application/json:
+              example:
+                data:
+                  id: '8'
+                  type: classification
+                  attributes:
+                    position: 1
+                  relationships:
+                    product:
+                      data:
+                        id: '8'
+                        type: product
+                    taxon:
+                      data:
+                        id: '16'
+                        type: taxon
+        '422':
+          description: invalid request
+          content:
+            application/json:
+              example:
+                error: Product can't be blank
+                errors:
+                  product:
+                  - can't be blank
+        '404':
+          description: Record not found
+          content:
+            application/json:
+              example:
+                error: The resource you were looking for could not be found.
+        '401':
+          description: Authentication Failed
+          content:
+            application/json:
+              example:
+                error: The access token is invalid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/classification_params"
+    delete:
+      summary: Deletes a Classification
+      tags:
+      - Classifications
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Record deleted
+        '404':
+          description: Record not found
+          content:
+            application/json:
+              example:
+                error: The resource you were looking for could not be found.
+        '401':
+          description: Authentication Failed
+          content:
+            application/json:
+              example:
+                error: The access token is invalid
+  "/api/v2/platform/classifications/{id}/reposition":
+    put:
+      summary: Reposition a Classification
+      tags:
+      - Classifications
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: include
+        in: query
+        descripton: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: product,taxon
+        schema:
+          type: string
+      responses:
+        '200':
+          description: record updated
+          content:
+            application/json:
+              example:
+                data:
+                  id: '13'
+                  type: classification
+                  attributes:
+                    position: 2
+                  relationships:
+                    product:
+                      data:
+                        id: '13'
+                        type: product
+                    taxon:
+                      data:
+                        id: '26'
+                        type: taxon
+        '422':
+          description: invalid request
+          content:
+            application/json:
+              example:
+                error: is not a number
+                errors: {}
+        '404':
+          description: Record not found
+          content:
+            application/json:
+              example:
+                error: The resource you were looking for could not be found.
+        '401':
+          description: Authentication Failed
+          content:
+            application/json:
+              example:
+                error: The access token is invalid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/classification_params"
   "/api/v2/platform/countries":
     get:
       summary: Returns a list of Countries
@@ -383,30 +724,30 @@ paths:
             application/json:
               example:
                 data:
-                - id: '1'
+                - id: '24'
                   type: country
                   attributes:
-                    iso_name: ISO_NAME_11
-                    iso: I11
-                    iso3: IS11
-                    name: NAME_11
+                    iso_name: ISO_NAME_24
+                    iso: I24
+                    iso3: IS24
+                    name: NAME_24
                     numcode: 840
                     states_required: false
-                    updated_at: '2021-04-01T18:55:04.007Z'
+                    updated_at: '2021-06-01T21:54:22.285Z'
                     zipcode_required: true
                   relationships:
                     states:
                       data: []
-                - id: '2'
+                - id: '25'
                   type: country
                   attributes:
-                    iso_name: ISO_NAME_12
-                    iso: I12
-                    iso3: IS12
-                    name: NAME_12
+                    iso_name: ISO_NAME_25
+                    iso: I25
+                    iso3: IS25
+                    name: NAME_25
                     numcode: 840
                     states_required: false
-                    updated_at: '2021-04-01T18:55:04.009Z'
+                    updated_at: '2021-06-01T21:54:22.288Z'
                     zipcode_required: true
                   relationships:
                     states:
@@ -447,16 +788,16 @@ paths:
             application/json:
               example:
                 data:
-                  id: '1'
+                  id: '28'
                   type: country
                   attributes:
-                    iso_name: ISO_NAME_15
-                    iso: I15
-                    iso3: IS15
-                    name: NAME_15
+                    iso_name: ISO_NAME_28
+                    iso: I28
+                    iso3: IS28
+                    name: NAME_28
                     numcode: 840
                     states_required: false
-                    updated_at: '2021-04-01T18:55:04.046Z'
+                    updated_at: '2021-06-01T21:54:22.337Z'
                     zipcode_required: true
                   relationships:
                     states:
@@ -512,6 +853,15 @@ components:
         company:
           type: string
         user_id:
+          type: integer
+    classification_params:
+      type: object
+      properties:
+        product_id:
+          type: integer
+        taxon_id:
+          type: integer
+        position:
           type: integer
     resources_list:
       type: object
