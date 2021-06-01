@@ -85,7 +85,7 @@ $(function () {
         if (json.data.length === 0) {
           return taxonProducts.html('<div class="alert alert-info">' + Spree.translations.no_results + '</div>')
         } else {
-          results = []
+          var results = []
 
           json.data.forEach(function (classification) {
             var productId = classification.relationships.product.data.id.toString()
@@ -102,7 +102,7 @@ $(function () {
               if(product.relationships.images.data.length > 0) {
                 var imageId = product.relationships.images.data[0].id
 
-                image = json.included.find(function(included) {
+                var image = json.included.find(function(included) {
                   if (included.type == 'image' && included.id == imageId) {
                     return included
                   }
