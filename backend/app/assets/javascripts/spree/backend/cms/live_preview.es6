@@ -1,5 +1,9 @@
 document.addEventListener('DOMContentLoaded', function() {
-  document.getElementById('LiveViewSwitcher').addEventListener('click', function(event) {
+  const LiveViewSwitcher = document.getElementById('LiveViewSwitcher')
+
+  if (!LiveViewSwitcher) return
+
+  LiveViewSwitcher.addEventListener('click', function(event) {
     if (event.target && event.target.matches("input[type='radio']")) {
       switchLiveViewClass(event.target.id)
     }

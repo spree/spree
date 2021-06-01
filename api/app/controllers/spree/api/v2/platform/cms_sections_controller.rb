@@ -12,7 +12,7 @@ module Spree
             new_index = params[:new_position_idx].to_i + 1
 
             if @moved_section && new_index
-              @moved_section.insert_at(new_index)
+              @moved_section.set_list_position(new_index)
             else
               head :bad_request
             end

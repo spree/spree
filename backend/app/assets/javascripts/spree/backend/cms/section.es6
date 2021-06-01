@@ -5,6 +5,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const selectedValue = $(sectionKindSelector).val()
     const message = document.getElementById('alertToClickUpdate')
     const activeSectionKind = document.getElementById('CmsSectionType')
+
+    if (!activeSectionKind) return
+
     const panelType = activeSectionKind.dataset.panelSectionType
 
     if (selectedValue === panelType) {

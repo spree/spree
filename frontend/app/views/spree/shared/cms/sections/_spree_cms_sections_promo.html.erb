@@ -1,9 +1,40 @@
 <div class="<%= width %>">
-  <%= link_to spree.nested_taxons_path('streetstyle') do %>
+  <%= link_to section.link do %>
     <div class="homepage-bottom-box text-center mb-3">
+
       <% if section.icon.present? %>
-        <%= image_tag main_app.url_for(section.icon.attachment) %>
-      <% end %>
+        <!-- XS to MD -->
+        <div class="d-sm-none" style="--aspect-ratio:54/35;">
+          <img class="lazyload"
+            data-src="<%= main_app.url_for(section.icon.attachment.variant(resize: '768x320>')) %>"
+            data-srcset="<%= main_app.url_for(section.icon.attachment.variant(resize: '768x320>')) %>"
+            alt="<%= section.icon.alt %>">
+        </div>
+
+        <!-- SM to MD -->
+        <div class="d-none d-sm-block d-md-none" style="--aspect-ratio:54/35;">
+          <img class="lazyload"
+            data-src="<%= main_app.url_for(section.icon.attachment.variant(resize: '990x412>')) %>"
+            data-srcset="<%= main_app.url_for(section.icon.attachment.variant(resize: '990x412>')) %>"
+            alt="<%= section.icon.alt %>">
+        </div>
+
+        <!-- MD to LG -->
+        <div class="d-none d-md-block d-lg-none" style="--aspect-ratio:54/35;">
+          <img class="lazyload"
+            data-src="<%= main_app.url_for(section.icon.attachment.variant(resize: '540x350>')) %>"
+            data-srcset="<%= main_app.url_for(section.icon.attachment.variant(resize: '540x350>')) %>"
+           alt="<%= section.icon.alt %>">
+        </div>
+
+        <!-- XL UP -->
+        <div class="d-none d-lg-block" style="--aspect-ratio:54/35;">
+          <img class="lazyload"
+            data-src="<%= main_app.url_for(section.icon.attachment.variant(resize: '2400x1000>')) %>"
+            data-srcset="<%= main_app.url_for(section.icon.attachment.variant(resize: '2400x1000>')) %>"
+            alt="<%= section.icon.alt %>">
+        </div>
+       <% end %>
 
       <div class="homepage-bottom-box-inner" role="img" aria-label="New Collection">
         <div class="homepage-bottom-box-inner-small-text">
