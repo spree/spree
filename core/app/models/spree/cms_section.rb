@@ -11,7 +11,10 @@ module Spree
 
     TYPES = ['Spree::Cms::Sections::Hero',
              'Spree::Cms::Sections::Promo',
-             'Spree::Cms::Sections::FeaturedArticle']
+             'Spree::Cms::Sections::FeaturedArticle',
+             'Spree::Cms::Sections::Carousel',
+             'Spree::Cms::Sections::CategoryBannerSquare',
+             'Spree::Cms::Sections::CategoryBannerTall']
 
     def links_to
       []
