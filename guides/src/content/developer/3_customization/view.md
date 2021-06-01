@@ -81,18 +81,6 @@ Spree.config do |config|
 end
 ```
 
-### Adding new links to the Admin Panel menu
-
-You can easily add new links to the admin menu by adding this code to `config/initializers/spree.rb`:
-
-```ruby
-Spree::BackendConfiguration::ORDER_TABS << :my_custom_orders
-```
-
-This will add a link to `spree.admin_my_custom_orders_path` route under the `Orders` tab.
-
-You can add links to `ORDER_TABS`, `PRODUCT_TABS`, `REPORT_TABS`, `CONFIGURATION_TABS`, `PROMOTION_TABS`, `USER_TABS`.
-
 ### Import admin views into your application
 
 To get all of the Admin Panel views please type:
