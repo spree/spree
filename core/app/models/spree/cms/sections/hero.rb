@@ -17,6 +17,7 @@ module Spree::Cms::Sections
 
     def default_values
       self.width ||= 'Edge-to-Edge'
+      self.linked_resource_type ||= 'Spree::Taxon'
     end
   end
 end
