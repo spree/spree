@@ -82,8 +82,8 @@ $(function () {
       }).done(function (json) {
         taxonProducts.empty()
 
-        if (json.data.length === 0) {
-          return taxonProducts.html('<div class="alert alert-info">' + Spree.translations.no_results + '</div>')
+        if (json.meta.total_count === 0) {
+          return taxonProducts.html('<p class="text-center w-100 p-4">' + Spree.translations.no_results + '</p>')
         } else {
           var results = []
 
