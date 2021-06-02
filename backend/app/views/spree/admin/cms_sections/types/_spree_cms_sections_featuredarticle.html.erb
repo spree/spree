@@ -18,11 +18,19 @@
       <%= f.error_message_on :button_text %>
     <% end %>
 
-    <%= f.field_container :width, class: ['form-group'] do %>
-      <%= f.label :width, Spree.t('admin.navigation.width') %>
-      <%= f.select(:width, @cms_section.widths, {include_blank: false}, class: 'select2') %>
-      <%= f.error_message_on :width %>
-    <% end %>
+    <div class="row">
+      <%= f.field_container :width, class: ['form-group col-6'] do %>
+        <%= f.label :width, Spree.t('admin.navigation.width') %>
+        <%= f.select(:width, @cms_section.widths, {include_blank: false}, class: 'select2') %>
+        <%= f.error_message_on :width %>
+      <% end %>
+
+      <%= f.field_container :boundary, class: ['form-group col-6'] do %>
+        <%= f.label :boundary, Spree.t('admin.navigation.boundary') %>
+        <%= f.select(:boundary, @cms_section.boundaries, {include_blank: false}, class: 'select2') %>
+        <%= f.error_message_on :boundary %>
+      <% end %>
+    </div>
   </div>
   <div class="col-12 col-md-8">
     <%= f.field_container :content, class: ['form-group'] do %>

@@ -16,12 +16,19 @@ module Spree
              'Spree::Cms::Sections::CategoryBannerSquare',
              'Spree::Cms::Sections::CategoryBannerTall']
 
+    # Overide this per section type
     def links_to
       []
     end
 
+    # Overide this per section type
+    def boundaries
+      ['Container', 'Screen']
+    end
+
+    # Overide this per section type
     def widths
-      []
+      ['Full', 'Half']
     end
   end
 end

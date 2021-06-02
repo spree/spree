@@ -1,5 +1,5 @@
-<div class="<%= width %>">
-  <div class="<%= edge_to_edge %>">
+<<%= element  %> class="<%= width %>">
+  <div class="<%= boundary %>">
     <div class="homepage-fashion-trends-box mb-3">
       <div class="text-center">
 
@@ -15,9 +15,9 @@
           <%= raw section.content %>
         </div>
         <% if section.button_text.present? && section.link.present? %>
-          <%= link_to section.button_text, section.link, class: 'btn px-5 spree-btn btn-outline-primary' %>
+          <%= link_to section.button_text, section.link, class: 'btn text-center spree-btn btn-outline-primary' %>
         <% end %>
       </div>
     </div>
   </div>
-</div>
+</<%= element  %>>

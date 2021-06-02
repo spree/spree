@@ -7,13 +7,14 @@ module Spree::Cms::Sections
     end
 
     def widths
-      ['Edge-to-Edge', 'Full', 'Half']
+      ['Full', 'Half']
     end
 
     private
 
     def default_values
-      self.width ||= 'Edge-to-Edge'
+      self.width ||= 'Full'
+      self.boundary ||= 'Screen'
       self.linked_resource_type ||= 'Spree::Taxon'
     end
   end

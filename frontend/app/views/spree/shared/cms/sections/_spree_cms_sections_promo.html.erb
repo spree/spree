@@ -1,49 +1,44 @@
-<div class="<%= width %>">
-  <%= link_to section.link do %>
-    <div class="homepage-bottom-box text-center mb-3">
+<aside class="<%= width %>">
+  <div class="<%= boundary %>">
+    <%= link_to section.link do %>
+      <div class="d-flex
+                  align-items-center
+                  justify-content-center
+                  bg-light text-center
+                  mb-3
+                  overflow-hidden
+                  homepage-bottom-box"
+                  style="--aspect-ratio:54/35;">
 
-      <% if section.icon.present? %>
-        <!-- XS to MD -->
-        <div class="d-sm-none" style="--aspect-ratio:54/35;">
-          <img class="lazyload"
-            data-src="<%= main_app.url_for(section.icon.attachment.variant(resize: '768x320>')) %>"
-            data-srcset="<%= main_app.url_for(section.icon.attachment.variant(resize: '768x320>')) %>"
-            alt="<%= section.icon.alt %>">
-        </div>
+        <% if section.icon.present? %>
+          <!-- XS to MD -->
+            <img class="d-md-none lazyload"
+              data-src="<%= main_app.url_for(section.icon.attachment.variant(resize: '387x250>')) %>"
+              data-srcset="<%= main_app.url_for(section.icon.attachment.variant(resize: '387x250>')) %>"
+              alt="<%= section.icon.alt %>">
 
-        <!-- SM to MD -->
-        <div class="d-none d-sm-block d-md-none" style="--aspect-ratio:54/35;">
-          <img class="lazyload"
-            data-src="<%= main_app.url_for(section.icon.attachment.variant(resize: '990x412>')) %>"
-            data-srcset="<%= main_app.url_for(section.icon.attachment.variant(resize: '990x412>')) %>"
-            alt="<%= section.icon.alt %>">
-        </div>
+          <!-- MD to XL -->
+            <img class="d-none d-md-block d-xl-none lazyload"
+              data-src="<%= main_app.url_for(section.icon.attachment.variant(resize: '734x476>')) %>"
+              data-srcset="<%= main_app.url_for(section.icon.attachment.variant(resize: '734x476>')) %>"
+              alt="<%= section.icon.alt %>">
 
-        <!-- MD to LG -->
-        <div class="d-none d-md-block d-lg-none" style="--aspect-ratio:54/35;">
-          <img class="lazyload"
-            data-src="<%= main_app.url_for(section.icon.attachment.variant(resize: '540x350>')) %>"
-            data-srcset="<%= main_app.url_for(section.icon.attachment.variant(resize: '540x350>')) %>"
-           alt="<%= section.icon.alt %>">
-        </div>
+          <!-- XL UP -->
+            <img class="d-none d-xl-block lazyload"
+              data-src="<%= main_app.url_for(section.icon.attachment.variant(resize: '1468x952>')) %>"
+              data-srcset="<%= main_app.url_for(section.icon.attachment.variant(resize: '1468x952>')) %>"
+              alt="<%= section.icon.alt %>">
+         <% end %>
 
-        <!-- XL UP -->
-        <div class="d-none d-lg-block" style="--aspect-ratio:54/35;">
-          <img class="lazyload"
-            data-src="<%= main_app.url_for(section.icon.attachment.variant(resize: '2400x1000>')) %>"
-            data-srcset="<%= main_app.url_for(section.icon.attachment.variant(resize: '2400x1000>')) %>"
-            alt="<%= section.icon.alt %>">
-        </div>
-       <% end %>
-
-      <div class="homepage-bottom-box-inner" role="img" aria-label="New Collection">
-        <div class="homepage-bottom-box-inner-small-text">
-          <%= section.title %>
-        </div>
-        <div class="homepage-bottom-box-inner-big-text">
-          <%= section.subtitle %>
+        <div class="homepage-bottom-box-inner p-1 p-sm-2 p-md-3 p-lg-5" role="img" aria-label="New Collection">
+          <div class="homepage-bottom-box-inner-small-text">
+            <%= section.title %>
+          </div>
+          <div class="homepage-bottom-box-inner-big-text">
+            <%= section.subtitle %>
+          </div>
         </div>
       </div>
-    </div>
-  <% end %>
-</div>
+    <% end %>
+  </div>
+</aside>

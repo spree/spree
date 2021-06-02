@@ -14,6 +14,14 @@ module Spree
         render 'spree/admin/cms_pages/section_template', section: section, width: css_width
       end
 
+      def preview_url(page)
+        if page.homepage?
+          '/'
+        else
+         Spree::Core::Engine.routes.url_helpers.page_path(page.slug)
+        end
+      end
+
       def linkable_as_path(item)
         item.parameterize(separator: '_')
       end

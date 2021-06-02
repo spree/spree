@@ -9,6 +9,8 @@ module Spree::Cms::Sections
       ['Spree::Taxon', 'Spree::Product']
     end
 
+    # Overide this per section type
+
     def widths
       ['Half']
     end
@@ -17,6 +19,7 @@ module Spree::Cms::Sections
 
     def default_values
       self.width ||= 'Half'
+      self.boundary ||= 'Container'
       self.linked_resource_type ||= 'Spree::Taxon'
     end
   end

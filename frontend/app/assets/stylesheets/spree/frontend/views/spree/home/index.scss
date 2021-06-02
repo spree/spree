@@ -133,7 +133,7 @@
   &-fashion-trends-box {
     background: $secondary-background;
     color: $secondary-font-color;
-    padding: 30px 0px;
+    padding: 30px 15px;
 
     @include media-breakpoint-up(md) {
       padding: 60px 0px;
@@ -178,13 +178,12 @@
       color: $font-color;
       margin: auto;
       font-size: font-px-to-rem(12px);
-      width: 283px;
+      max-width: 283px;
 
       @include media-breakpoint-up(md) {
         font-size: font-px-to-rem(16px);
         width: 90%;
         max-width: 608px;
-
       }
     }
     .spree-btn {
@@ -192,58 +191,35 @@
         border: solid 2px theme-color('primary');
         font-size: font-px-to-rem(12px);
         font-weight: bold;
+        max-width: 100%;
         @include media-breakpoint-up(md) {
           font-size: font-px-to-rem(22px);
-          width: 400px;
-          padding-top: 0.7rem;
         }
         @include media-breakpoint-up(lg) {
           font-size: font-px-to-rem(20px);
-          width: 497.2px;
         }
       }
     }
   }
 
   &-bottom-box {
-    background: $secondary-background;
-    color: $secondary-font-color;
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
-    text-align: center;
-    height: 168px;
-    overflow: hidden;
-
     img {
       width: 100%;
       object-fit: cover;
     }
 
-    @include media-breakpoint-up(md) {
-      height: 363px;
-    }
-    @include media-breakpoint-up(lg) {
-      height: 350px;
-    }
-
     &-inner {
       background: $primary-background;
       margin: auto;
-      padding: 10px 30px;
       position: absolute;
-      width: 70%;
-      left: 15%;
-
-      @include media-breakpoint-up(md) {
-        padding: 30px 100px;
-      }
+      max-height: 70%;
+      min-width: 60%;
+      max-width: 80%;
 
       &-small-text {
         font-weight: 500;
         line-height: 0.9;
         letter-spacing: 0.25px;
-        text-align: center;
         color: theme-color('primary');
         font-size: font-px-to-rem(10px);
 
@@ -259,9 +235,12 @@
         font-weight: 600;
         line-height: 1.2;
         letter-spacing: 0.38px;
-        text-align: center;
         color: $font-color;
-        font-size: font-px-to-rem(15px);
+        font-size: font-px-to-rem(14px);
+
+        @include media-breakpoint-up(sm) {
+          font-size: font-px-to-rem(22px);
+        }
 
         @include media-breakpoint-up(md) {
           font-size: font-px-to-rem(27px);
@@ -311,4 +290,27 @@
   right: 50%;
   margin-left: -50vw;
   margin-right: -50vw;
+}
+
+
+aside {
+    .full-width {
+    width: calc(50vw - #{$grid-gutter-width / 2});
+    position: relative;
+    left: 100%;
+    right: 100%;
+    margin-left: calc(-50vw + #{$grid-gutter-width / 2});
+    margin-right: 0;
+  }
+
+  &:nth-of-type(even) {
+     .full-width {
+      width: calc(50vw - #{$grid-gutter-width / 2});
+      position: relative;
+      left: 0;
+      right: 100%;
+      margin-left: 0vw;
+      margin-right: calc(-50vw + #{$grid-gutter-width / 2});
+    }
+  }
 }

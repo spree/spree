@@ -9,17 +9,27 @@ module Spree
 
       case section.width
       when 'Half'
-        edge_to_edge = ''
+        element = 'aside'
         css_width = 'col-6'
       when 'Full'
-        edge_to_edge = ''
+        element = 'div'
         css_width = 'col-12'
-      when 'Edge-to-Edge'
-        edge_to_edge = 'full-width'
-        css_width = 'col-12'
+      else
+        element = 'div'
+        css_width = ''
       end
 
-      render "spree/shared/cms/sections/#{preview_type}", section: section, width: css_width, edge_to_edge: edge_to_edge
+      boundary = case section.boundary
+                 when 'Screen'
+                   'full-width'
+                 else
+                   ''
+                 end
+
+      render "spree/shared/cms/sections/#{preview_type}", section: section,
+                                                          width: css_width,
+                                                          boundary: boundary,
+                                                          element: element
     end
   end
 end

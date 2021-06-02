@@ -1,4 +1,4 @@
-class CreateSpreeCmsPages < ActiveRecord::Migration[6.0]
+class CreateSpreeCmsPages < ActiveRecord::Migration[5.2]
   def change
     create_table :spree_cms_pages do |t|
       t.column :title, :string, null: false

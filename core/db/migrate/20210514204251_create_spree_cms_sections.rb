@@ -1,4 +1,4 @@
-class CreateSpreeCmsSections < ActiveRecord::Migration[6.0]
+class CreateSpreeCmsSections < ActiveRecord::Migration[5.2]
   def change
     create_table :spree_cms_sections do |t|
       t.column :name, :string, null: false
@@ -7,6 +7,8 @@ class CreateSpreeCmsSections < ActiveRecord::Migration[6.0]
       t.column :button_text, :string
       t.column :content, :text
       t.column :width, :string
+      t.column :width_small, :string
+      t.column :boundary, :string
       t.column :type, :string
       t.column :destination, :string
       t.column :position, :integer

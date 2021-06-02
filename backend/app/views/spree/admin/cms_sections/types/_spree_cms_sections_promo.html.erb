@@ -12,10 +12,10 @@
       <%= f.error_message_on :subtitle %>
     <% end %>
 
-    <%= f.field_container :width, class: ['form-group'] do %>
-      <%= f.label :width, Spree.t('admin.navigation.width') %>
-      <%= f.select(:width, @cms_section.widths, {include_blank: false}, class: 'select2') %>
-      <%= f.error_message_on :width %>
+    <%= f.field_container :boundary, class: ['form-group'] do %>
+      <%= f.label :boundary, Spree.t('admin.navigation.boundary') %>
+      <%= f.select(:boundary, @cms_section.boundaries, {include_blank: false}, class: 'select2') %>
+      <%= f.error_message_on :boundary %>
     <% end %>
   </div>
   <div class="col-12 col-md-6">

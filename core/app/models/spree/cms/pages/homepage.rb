@@ -1,5 +1,6 @@
 module Spree::Cms::Pages
   class Homepage < Spree::CmsPage
+    before_save :empty_slug
     validates :type, uniqueness: { scope: [:store, :locale] }
 
     def sections?
@@ -8,7 +9,7 @@ module Spree::Cms::Pages
 
     private
 
-    def handle_slug
+    def empty_slug
       self.slug = nil
     end
   end
