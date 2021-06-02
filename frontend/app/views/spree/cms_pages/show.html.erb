@@ -9,7 +9,7 @@
   </div>
   <% else %>
   <div class="container">
-    <div class="row">
+    <div id="featurePageContent" class="row">
       <% @cms_page.cms_sections.each do |section| %>
         <%= build_section(section) %>
       <% end %>

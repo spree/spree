@@ -2,23 +2,49 @@ module Spree
   module Admin
     module CmsPageHelper
       def build_page_section(section)
-        case section.width
-        when 'Half'
-          css_width = 'col-6'
-        when 'Full'
-          css_width = 'col-12'
-        when 'Edge-to-Edge'
-          css_width = 'col-12 px-0 edge'
-        end
+        css_width = case section.width
+                    when 'Half'
+                      'col-6'
+                    else
+                      'col-12'
+                    end
 
-        render 'spree/admin/cms_pages/section_template', section: section, width: css_width
+        boundary = case section.boundary
+                   when 'Screen'
+                     'px-0 edge'
+                   else
+                     ''
+                   end
+
+        render 'spree/admin/cms_pages/section_template',
+               section: section,
+               width: css_width,
+               boundary: boundary
+      end
+
+      def page_preview_link(page)
+        return unless frontend_available?
+
+        url = if page.homepage?
+                spree.root_url
+              else
+                spree.page_url(page.slug)
+              end
+
+        button_link_to(
+          Spree.t(:preview_page),
+          url,
+          class: 'btn-outline-secondary', icon: 'view.svg', id: 'admin_preview_product', target: :blank
+        )
       end
 
       def preview_url(page)
+        return unless frontend_available?
+
         if page.homepage?
-          '/'
+          spree.root_path
         else
-         Spree::Core::Engine.routes.url_helpers.page_path(page.slug)
+          spree.page_path(page.slug)
         end
       end
 
