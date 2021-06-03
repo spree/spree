@@ -28,7 +28,11 @@ function buildParamsFromDataAttrs (element) {
     multiple: element.dataset.autocompleteMultipleValue,
     return_attribute: element.dataset.autocompleteReturnAttrValue,
     minimum_input: element.dataset.autocompleteMinInputValue,
-    search_query: element.dataset.autocompleteSearchQueryValue
+    search_query: element.dataset.autocompleteSearchQueryValue,
+
+    // hard coded additional filter for those edge cases.
+    additional_query: element.dataset.autocompleteAdditionalQueryValue,
+    additional_term: element.dataset.autocompleteAdditionalTermValue
   })
 }
 
@@ -43,6 +47,9 @@ $.fn.select2Autocomplete = function(params) {
   const returnAttribute = params.return_attribute || 'name'
   const minimumInput = params.minimum_input || 3
   const searchQuery = params.search_query || 'name_i_cont'
+
+  const additionalQuery = params.additional_query || null
+  const additionalTerm = params.additional_term || null
 
   function formatList(values) {
     return values.map(function (obj) {
@@ -64,7 +71,8 @@ $.fn.select2Autocomplete = function(params) {
       data: function (params) {
         return {
           filter: {
-            [searchQuery]: params.term
+            [searchQuery]: params.term,
+            [additionalQuery]: additionalTerm
           }
         }
       },

@@ -21,6 +21,9 @@ module Spree
     scope :visible, -> { where visible: true }
     scope :by_store, ->(store) { where(store: store) }
     scope :by_locale, ->(locale) { where(locale: locale) }
+    scope :linkable_pages, -> { where.not(type: 'Spree::Cms::Pages::Homepage') }
+
+    self.whitelisted_ransackable_attributes = %w[title type]
 
     def seo_title
       if meta_title.present?
