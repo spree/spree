@@ -17,6 +17,16 @@
       <%= f.select(:boundary, @cms_section.boundaries, {include_blank: false}, class: 'select2') %>
       <%= f.error_message_on :boundary %>
     <% end %>
+
+    <div class="row">
+      <%= f.field_container :full_width_on_small, class: ['form-group col-6'] do %>
+        <div class="custom-control custom-checkbox">
+          <%= f.check_box :full_width_on_small, class: 'custom-control-input' %>
+          <%= f.label :full_width_on_small, Spree.t(:full_width_on_small), class: 'custom-control-label' %>
+          <%= f.error_message_on :full_width_on_small %>
+        </div>
+      <% end %>
+    </div>
   </div>
   <div class="col-12 col-md-6">
     <% @cms_section.build_icon unless @cms_section.icon %>

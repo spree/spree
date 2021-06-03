@@ -7,7 +7,7 @@ class CreateSpreeCmsSections < ActiveRecord::Migration[5.2]
       t.column :button_text, :string
       t.column :content, :text
       t.column :width, :string
-      t.column :width_small, :string
+      t.column :full_width_on_small, :boolean, default: false
       t.column :boundary, :string
       t.column :type, :string
       t.column :destination, :string
@@ -19,5 +19,6 @@ class CreateSpreeCmsSections < ActiveRecord::Migration[5.2]
 
       t.timestamps
     end
+    add_index :spree_cms_sections, :position
   end
 end

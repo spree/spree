@@ -10,7 +10,6 @@ module Spree::Cms::Sections
     end
 
     # Overide this per section type
-
     def widths
       ['Half']
     end

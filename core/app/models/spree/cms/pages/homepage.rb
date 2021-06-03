@@ -1,6 +1,8 @@
 module Spree::Cms::Pages
   class Homepage < Spree::CmsPage
-    before_save :empty_slug
+    before_create :empty_slug
+    after_save :empty_slug
+
     validates :type, uniqueness: { scope: [:store, :locale] }
 
     def sections?
