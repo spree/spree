@@ -25,7 +25,12 @@ module Spree
 
         Spree::MenuItem::LINKED_RESOURCE_TYPE.each do |resource_type|
           formatted = if Spree::MenuItem::DYNAMIC_RESOURCE_TYPE.include? resource_type
-                        resource_type.split('::', 3).last
+                        str = resource_type.split('::', 3).last
+                        if str.starts_with?('Cms')
+                          str.slice(3, 100)
+                        else
+                          str
+                        end
                       else
                         resource_type
                       end

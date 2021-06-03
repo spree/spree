@@ -9,6 +9,7 @@ module Spree
 
     belongs_to :store, touch: true
     has_many :cms_sections, dependent: :destroy
+
     has_many :menu_items, as: :linked_resource
 
     before_validation :handle_slug

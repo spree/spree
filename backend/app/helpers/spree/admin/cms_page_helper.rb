@@ -26,9 +26,9 @@ module Spree
         return unless frontend_available?
 
         url = if page.homepage?
-                spree.root_url + "#{page.locale}/"
+                spree.root_url + page.locale
               else
-                spree.page_url(page.slug) + "#{page.locale}/"
+                spree.page_url(page.slug)
               end
 
         button_link_to(
@@ -42,9 +42,9 @@ module Spree
         return unless frontend_available?
 
         if page.homepage?
-           spree.root_path + "#{page.locale}/"
+          spree.root_path + page.locale
         else
-          spree.page_path(page.slug) + "#{page.locale}/"
+          spree.page_path(page.slug)
         end
       end
 
