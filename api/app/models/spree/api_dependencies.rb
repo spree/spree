@@ -5,6 +5,7 @@ module Spree
     INJECTION_POINTS = [
       :storefront_cart_create_service, :storefront_cart_add_item_service, :storefront_cart_remove_line_item_service,
       :storefront_cart_remove_item_service, :storefront_cart_set_item_quantity_service, :storefront_cart_recalculate_service,
+      :storefront_cms_page_serializer, :storefront_cms_page_finder,
       :storefront_cart_update, :storefront_coupon_handler, :storefront_checkout_next_service, :storefront_checkout_advance_service,
       :storefront_checkout_update_service, :storefront_checkout_complete_service, :storefront_checkout_add_store_credit_service,
       :storefront_checkout_remove_store_credit_service, :storefront_checkout_get_shipping_rates_service,
@@ -61,6 +62,7 @@ module Spree
       # serializers
       @storefront_address_serializer = 'Spree::V2::Storefront::AddressSerializer'
       @storefront_cart_serializer = 'Spree::V2::Storefront::CartSerializer'
+      @storefront_cms_page_serializer = 'Spree::V2::Storefront::CmsPageSerializer'
       @storefront_credit_card_serializer = 'Spree::V2::Storefront::CreditCardSerializer'
       @storefront_country_serializer = 'Spree::V2::Storefront::CountrySerializer'
       @storefront_menu_serializer = 'Spree::V2::Storefront::MenuSerializer'
@@ -84,6 +86,7 @@ module Spree
       # finders
       @storefront_address_finder = Spree::Dependencies.address_finder
       @storefront_country_finder = Spree::Dependencies.country_finder
+      @storefront_cms_page_finder = Spree::Dependencies.cms_page_finder
       @storefront_menu_finder = Spree::Dependencies.menu_finder
       @storefront_current_order_finder = Spree::Dependencies.current_order_finder
       @storefront_completed_order_finder = Spree::Dependencies.completed_order_finder

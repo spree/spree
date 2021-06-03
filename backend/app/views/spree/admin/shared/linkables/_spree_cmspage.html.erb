@@ -14,7 +14,8 @@
          data: { autocomplete_name_value: 'cms_pages',
                  autocomplete_placeholder_value: Spree.t('admin.navigation.seach_for_a_page'),
                  autocomplete_clear_value: true,
-                 autocomplete_url_value: 'pages_api_v2' } %>
+                 autocomplete_url_value: 'pages_api_v2',
+                 autocomplete_search_query_value: 'title_i_cont' } %>
 
    <%= f.error_message_on :linked_resource_id %>
    <small class="form-text text-muted"><%= resource.link %></small>

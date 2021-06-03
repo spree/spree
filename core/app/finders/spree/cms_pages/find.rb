@@ -1,8 +1,8 @@
 module Spree
-  module Menus
+  module CmsPage
     class Find < ::Spree::BaseFinder
       def execute
-        return scope.where(location: params[:filter]['location']) if params[:filter].present?
+        return scope.where(title: params[:filter]['title']) if params[:filter].present?
 
         scope
       end
