@@ -18,6 +18,14 @@ module Spree
         else
           "/#{Spree::Config[:storefront_products_path]}/#{linked_resource.slug}"
         end
+      when 'Spree::CmsPage'
+        return if linked_resource.nil?
+
+        if spree_routes.method_defined?(:page_path)
+          spree_routes.page_path(linked_resource)
+        else
+          "/#{Spree::Config[:storefront_pages_path]}/#{linked_resource.slug}"
+        end
       when 'Home Page'
         '/'
       when 'URL'

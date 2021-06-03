@@ -11,8 +11,7 @@
                                            id_holder, name_holder, active_id_holder || nil),
         { include_blank: true },
         class: 'select2autocomplete',
-        data: { autocomplete_name_value: 'taxons',
-                autocomplete_placeholder_value: Spree.t('admin.navigation.seach_for_a_taxon'),
+        data: { autocomplete_placeholder_value: Spree.t('admin.navigation.seach_for_a_taxon'),
                 autocomplete_clear_value: true,
                 autocomplete_url_value: 'taxons_api_v2',
                 autocomplete_return_attr_value: 'pretty_name' } %>

@@ -1,7 +1,6 @@
 // Allows you to use one autocomplete for several use cases with sensible defaults.
 
 // REQUIRED ATTRIBUTES
-// data-autocomplete-name-value="products"        <- used for api search - Example: (taxons).
 // data-autocomplete-url-value="products_api_v2"  <- gets appended to const url - Example: (taxons_api_v2).
 
 // OPTIONAL ATTRIBUTES
@@ -19,40 +18,26 @@ document.addEventListener('DOMContentLoaded', function() {
 })
 
 function buildParamsFromDataAttrs (element) {
-  // Required Attributes
-  const name = element.dataset.autocompleteNameValue
-  const url = element.dataset.autocompleteUrlValue
-
-  // Optional Attributes
-  const placeholder = element.dataset.autocompletePlaceholderValue
-  const clear = element.dataset.autocompleteClearValue
-  const multiple = element.dataset.autocompleteMultipleValue
-  const returnAttr = element.dataset.autocompleteReturnAttrValue
-  const minimumInput = element.dataset.autocompleteMinInputValue
-  const searchQuery = element.dataset.autocompleteSearchQueryValue
-
   $(element).select2Autocomplete({
     // Required Attributes
-    data_attrbute_name: name,
-    apiUrl: Spree.routes[url],
+    apiUrl: Spree.routes[element.dataset.autocompleteUrlValue],
 
     // Optional Attributes
-    placeholder: placeholder,
-    allow_clear: clear,
-    multiple: multiple,
-    return_attribute: returnAttr,
-    minimum_input: minimumInput,
-    search_query: searchQuery
+    placeholder: element.dataset.autocompletePlaceholderValue,
+    allow_clear: element.dataset.autocompleteClearValue,
+    multiple: element.dataset.autocompleteMultipleValue,
+    return_attribute: element.dataset.autocompleteReturnAttrValue,
+    minimum_input: element.dataset.autocompleteMinInputValue,
+    search_query: element.dataset.autocompleteSearchQueryValue
   })
 }
 
 $.fn.select2Autocomplete = function(params) {
   // Required params
   const apiUrl = params.apiUrl
-  const dataAttrName = params.data_attrbute_name
 
   // Optional params
-  const select2placeHolder = params.placeholder || `${Spree.translations.search}: ${dataAttrName}`
+  const select2placeHolder = params.placeholder || Spree.translations.search
   const select2Multiple = params.multiple || false
   const select2allowClear = params.allow_clear || false
   const returnAttribute = params.return_attribute || 'name'

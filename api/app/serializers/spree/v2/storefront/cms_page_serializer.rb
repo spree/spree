@@ -5,7 +5,6 @@ module Spree
         set_type :cms_page
 
         attributes :title, :type, :locale
-
       end
     end
   end

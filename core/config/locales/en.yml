@@ -562,6 +562,8 @@ en:
         settings_for: 'Available Options For %{section}'
         page_sections: '%{page_name} Sections'
         page_sections_info: 'The area below represents your %{page_type} displayed in %{store}, add sections and drag them into position'
+      linkable:
+        seach_for_a_page: Search for a page
       tab:
         configuration: Configuration
         content: Content

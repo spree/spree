@@ -1,10 +1,23 @@
 module Spree
   module CmsPage
     class Find < ::Spree::BaseFinder
-      def execute
-        return scope.where(title: params[:filter]['title']) if params[:filter].present?
+      def initialize(scope:, params:)
+        @scope = scope
+        @title  = params.dig(:filter, :title)
+      end
 
-        scope
+      def execute
+        pages = by_title(pages)
+
+        pages
+      end
+
+      def title_matcher
+        Spree::CmsPage.arel_table[:title].matches("%#{title}%")
+      end
+
+      def by_title(pages)
+        pages.where(title_matcher)
       end
     end
   end
