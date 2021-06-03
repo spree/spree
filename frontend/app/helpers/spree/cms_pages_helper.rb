@@ -13,7 +13,7 @@ module Spree
         css_width = 'col-6 cms_half_section'
       when 'Full'
         element = 'div'
-        css_width = 'col-12'
+        css_width = 'col-12 cms_full_section'
       else
         element = 'div'
         css_width = ''
