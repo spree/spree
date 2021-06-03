@@ -11,6 +11,8 @@ module Spree
       elsif try_spree_current_user&.admin?
         @cms_page = @page
         @edit_mode = true
+      else
+        raise ActiveRecord::RecordNotFound
       end
     end
 
