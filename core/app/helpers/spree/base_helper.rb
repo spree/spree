@@ -18,6 +18,12 @@ module Spree
       end.sort_by { |c| c.name.parameterize }
     end
 
+    def spree_resource_path(resource)
+      last_word = resource.class.name.split('::', 10).last
+
+      last_word.underscore.humanize.parameterize(separator: '_')
+    end
+
     def display_price(product_or_variant)
       product_or_variant.
         price_in(current_currency).

@@ -5,7 +5,7 @@ module Spree
         formatted_types = []
 
         Spree::CmsSection::TYPES.each do |type|
-          last_word = type.split('::', 4).last
+          last_word = type.split('::', 10).last
           readable_type = last_word.gsub(/(?<=[a-z])(?=[A-Z])/, ' ')
           formatted_types << [readable_type, type]
         end

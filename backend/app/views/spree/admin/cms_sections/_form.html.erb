@@ -57,7 +57,7 @@
               <% if @cms_section.type.present? %>
               <div class="row">
                 <div class="col-12">
-                  <%= render "spree/admin/cms_sections/types/#{@cms_section.type.parameterize(separator: '_')}", f: f %>
+                  <%= render "spree/admin/cms_sections/types/#{spree_resource_path(@cms_section)}", f: f %>
                 </div>
               </div>
               <% end %>

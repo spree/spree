@@ -3,6 +3,8 @@
 <% if @homepage %>
 <div class="container">
   <div id="featurePageContent" class="row">
+
+
     <% @homepage.cms_sections.each do |section| %>
       <%= build_section(section) %>
     <% end %>

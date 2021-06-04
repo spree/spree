@@ -5,8 +5,6 @@ module Spree
     end
 
     def build_section(section)
-      preview_type = section.type.parameterize(separator: '_')
-
       if section.full_width_on_small
         case section.width
         when 'Half'
@@ -47,10 +45,10 @@ module Spree
                    end
       end
 
-      render "spree/shared/cms/sections/#{preview_type}", section: section,
-                                                          width: css_width,
-                                                          boundary: boundary,
-                                                          element: element
+      render "spree/shared/cms/sections/#{spree_resource_path(section)}", section: section,
+                                                                          width: css_width,
+                                                                          boundary: boundary,
+                                                                          element: element
     end
   end
 end

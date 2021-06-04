@@ -56,7 +56,7 @@ module Spree
         formatted_types = []
 
         Spree::CmsPage::PAGE_TYPES.each do |type|
-          last_word = type.split('::', 4).last
+          last_word = type.split('::', 10).last
           readable_type = last_word.gsub(/(?<=[a-z])(?=[A-Z])/, ' ')
           formatted_types << [readable_type, type]
         end
@@ -65,12 +65,12 @@ module Spree
       end
 
       def humanize_cms_type(obj)
-        last_word = obj.type.split('::', 4).last
+        last_word = obj.type.split('::', 10).last
         last_word.gsub(/(?<=[a-z])(?=[A-Z])/, ' ')
       end
 
       def parametize_cms_type(obj)
-        last_word = obj.type.split('::', 4).last
+        last_word = obj.type.split('::', 10).last
         last_word.parameterize(separator: '_')
       end
     end
