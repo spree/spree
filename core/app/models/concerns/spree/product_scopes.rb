@@ -107,7 +107,8 @@ module Spree
               "MIN(#{Classification.table_name}.position) AS min_position"
             ].join(', ')
           ).
-          group(:id)
+          group(:id).
+          order(position: :asc)
       end
 
       # a scope that finds all products having property specified by name, object or id
