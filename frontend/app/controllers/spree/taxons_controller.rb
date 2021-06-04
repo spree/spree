@@ -36,7 +36,15 @@ module Spree
     end
 
     def load_products
-      @products = Spree::Product.joins(:taxons).where(Taxon.table_name => { id: @taxon.id })
+      search_params = params.merge(
+        current_store: current_store,
+        taxon: @taxon,
+        include_images: true,
+        distinct: true
+      )
+
+      @searcher = build_searcher(search_params)
+      @products = @searcher.retrieve_products
     end
 
     def etag
