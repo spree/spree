@@ -29,7 +29,6 @@ module Spree
     def load_cms_page
       @page = Spree::CmsPage.
               by_store(current_store).
-              by_locale(I18n.locale).
               friendly.find(params[:id])
     end
   end
