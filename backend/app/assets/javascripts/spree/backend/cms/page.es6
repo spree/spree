@@ -55,7 +55,7 @@ function handleSectionReposition(evt) {
     new_position_idx: parseInt(evt.newIndex, 10)
   }
 
-  fetch(Spree.routes.section_reposition_api_v2, {
+  fetch(Spree.routes.section_reposition_api_v2 + '/reposition', {
     method: 'PATCH',
     headers: {
       Authorization: 'Bearer ' + OAUTH_TOKEN,

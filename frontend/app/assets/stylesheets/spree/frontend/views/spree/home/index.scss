@@ -15,14 +15,6 @@
       height: 100%;
     }
 
-    @include media-breakpoint-up(md) {
-
-    }
-
-    @include media-breakpoint-up(lg) {
-
-    }
-
     .hero-content {
       position: absolute;
       z-index: 1;
@@ -282,7 +274,6 @@
     }
   }
 }
-
 
 .full-width {
   width: 100vw;

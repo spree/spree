@@ -3,9 +3,11 @@
   overflow-y: scroll;
   max-height: 553px;
   padding-top: 5px !important;
+
+  // Hide scroll-bar in live preview
+  // sidebar.
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
-
   &::-webkit-scrollbar {
     display: none;
   }
@@ -74,6 +76,7 @@ body.cmsSectionFullScreenMode {
   .hide-on-full-screen-mode {
     display: none;
   }
+
   #pageSectionsArea {
     position: fixed;
     top: 0;
@@ -113,6 +116,7 @@ body.cmsSectionFullScreenMode {
     left: 19%;
   }
 }
+
 .mobileLiveView {
     #pageLivePreview {
     width: 60%;

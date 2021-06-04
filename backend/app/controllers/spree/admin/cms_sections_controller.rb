@@ -11,16 +11,6 @@ module Spree
         spree.edit_admin_cms_page_cms_section_path(@cms_page, @cms_section)
       end
 
-      def remove_icon
-        if @cms_section.icon&.destroy
-          flash[:success] = Spree.t('notice_messages.icon_removed')
-          redirect_to spree.edit_admin_cms_page_cms_section_path(@cms_page, @cms_section)
-        else
-          flash[:error] = Spree.t('errors.messages.cannot_remove_icon')
-          render :edit
-        end
-      end
-
       private
 
       def parent

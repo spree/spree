@@ -92,13 +92,13 @@ Spree.routes.stock_items_api = function (stockLocationId) {
 
 // API v2
 Spree.routes.countries_api_v2 = Spree.pathFor('api/v2/platform/countries')
-Spree.routes.section_reposition_api_v2 = Spree.pathFor('/api/v2/platform/cms_sections/reposition')
 Spree.routes.menus_api_v2 = Spree.pathFor('api/v2/platform/menus')
 Spree.routes.menus_items_api_v2 = Spree.pathFor('api/v2/platform/menu_items')
 Spree.routes.option_types_api_v2 = Spree.pathFor('api/v2/platform/option_types')
 Spree.routes.option_values_api_v2 = Spree.pathFor('api/v2/platform/option_values')
 Spree.routes.pages_api_v2 = Spree.pathFor('api/v2/platform/cms_pages')
 Spree.routes.products_api_v2 = Spree.pathFor('/api/v2/platform/products')
+Spree.routes.section_reposition_api_v2 = Spree.pathFor('/api/v2/platform/cms_sections')
 Spree.routes.taxons_api_v2 = Spree.pathFor('/api/v2/platform/taxons')
 Spree.routes.users_api_v2 = Spree.pathFor('api/v2/platform/users')
 

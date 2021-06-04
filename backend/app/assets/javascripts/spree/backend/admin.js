@@ -65,10 +65,7 @@ $(document).ready(function() {
           el.parents('tr').fadeOut('hide', function() {
             $(this).remove()
           })
-          el.closest('div.menu-item').fadeOut('hide', function() {
-            $(this).remove()
-          })
-          el.closest('.removeable').fadeOut('hide', function() {
+          el.closest('.removable-dom-element').fadeOut('hide', function() {
             $(this).remove()
           })
           const livePreview = document.getElementById('pageLivePreview')

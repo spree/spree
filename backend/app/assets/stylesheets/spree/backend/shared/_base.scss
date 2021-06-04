@@ -15,10 +15,6 @@
   z-index: $zindex-dropdown;
 }
 
-.tox-statusbar__branding {
-  display: none;
-}
-
 // No-margin and no-padding helper classes
 @each $side in top bottom left right {
   .no-margin-#{$side}  { margin-#{side}: 0; }
