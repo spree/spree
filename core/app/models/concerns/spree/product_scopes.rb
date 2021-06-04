@@ -108,7 +108,7 @@ module Spree
             ].join(', ')
           ).
           group(:id).
-          order(position: :asc)
+          order(min_position: :asc)
       end
 
       # a scope that finds all products having property specified by name, object or id

@@ -39,8 +39,7 @@ module Spree
       search_params = params.merge(
         current_store: current_store,
         taxon: @taxon,
-        include_images: true,
-        distinct: true
+        include_images: true
       )
 
       @searcher = build_searcher(search_params)
