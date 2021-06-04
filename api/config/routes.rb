@@ -165,7 +165,7 @@ Spree::Core::Engine.add_routes do
         get '/stores/:code', to: 'stores#show', as: :store
 
         resources :menus, only: %i[index]
-        get '/menus/:unique_code', to: 'menus#show', as: :menu
+        get '/menus/:location', to: 'menus#show', as: :menu
       end
 
       namespace :platform do
