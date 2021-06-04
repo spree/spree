@@ -10,7 +10,6 @@ class CreateSpreeCmsSections < ActiveRecord::Migration[5.2]
       t.column :full_width_on_small, :boolean, default: false
       t.column :boundary, :string
       t.column :type, :string
-      t.column :destination, :string
       t.column :position, :integer
 
       t.references :linked_resource, polymorphic: true, index: { name: 'index_spree_cms_sections_on_linked_resource' }

@@ -10,7 +10,7 @@ module Spree
           end
 
           def resource
-            @resource ||= scope.find_by!(title: params[:title])
+            @resource ||= scope.find_by!(slug: params[:slug])
           end
 
           def resource_serializer

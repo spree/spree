@@ -253,13 +253,13 @@
       text-decoration: none !important;
     }
     &-text {
-      font-size: 12px;
+      font-size: font-px-to-rem(12px);
 
       @include media-breakpoint-up(md) {
-        font-size: 22px;
+        font-size: font-px-to-rem(22px);
       }
       @include media-breakpoint-up(lg) {
-        font-size: 24px;
+        font-size: font-px-to-rem(24px);
       }
     }
   }
