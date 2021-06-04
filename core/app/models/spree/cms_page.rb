@@ -2,9 +2,9 @@ module Spree
   class CmsPage < Spree::Base
     include Spree::DisplayLink
 
-    PAGE_TYPES = ['Spree::Cms::Pages::StandardPage',
-                  'Spree::Cms::Pages::FeaturePage',
-                  'Spree::Cms::Pages::Homepage']
+    TYPES = ['Spree::Cms::Pages::StandardPage',
+             'Spree::Cms::Pages::FeaturePage',
+             'Spree::Cms::Pages::Homepage']
 
     extend FriendlyId
     friendly_id :slug, use: [:slugged, :finders, :history]

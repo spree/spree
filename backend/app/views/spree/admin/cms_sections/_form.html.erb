@@ -17,7 +17,7 @@
             <div class="col-12 col-md-6">
               <%= f.field_container :type, class: ['form-group'] do %>
                 <%= f.label :type, Spree.t('admin.navigation.section_type') %>
-                <%= f.select(:type, section_types_dropdown_values, {include_blank: false}) %>
+                <%= f.select(:type, humanize_dropdown_values(@cms_section), {include_blank: false}) %>
                 <%= f.error_message_on :type %>
               <% end %>
             </div>
@@ -50,7 +50,7 @@
           <div class="card mb-3">
             <div class="card-header">
               <h5 class="mb-0">
-                <%= Spree.t('admin.cms.settings_for', section: humanize_cms_type(@cms_section)) %>
+                <%= Spree.t('admin.cms.settings_for', section: humanize_cms_type(@cms_section.type)) %>
               </h5>
             </div>
             <div class="card-body">

@@ -17,13 +17,6 @@ module Spree
           element = 'div'
           css_width = ''
         end
-
-        boundary = case section.boundary
-                   when 'Screen'
-                     'full-width '
-                   else
-                     ''
-                   end
       else
         case section.width
         when 'Half'
@@ -36,14 +29,14 @@ module Spree
           element = 'div'
           css_width = ''
         end
-
-        boundary = case section.boundary
-                   when 'Screen'
-                     'full-width'
-                   else
-                     ''
-                   end
       end
+
+      boundary = case section.boundary
+                 when 'Screen'
+                   'full-width '
+                 else
+                   ''
+                 end
 
       render "spree/shared/cms/sections/#{spree_resource_path(section)}", section: section,
                                                                           width: css_width,

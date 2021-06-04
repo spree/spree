@@ -17,7 +17,9 @@ module Spree
         info_row = menu_item_bar(menu, item)
         menu_container = content_tag(:div, raw(decendents.join), class: 'menu-container', data: { parent_id: item.id })
 
-        content_tag(:div, info_row + menu_container, class: 'menu-item menu-container-item dragable removable-dom-element', data: { item_id: item.id })
+        content_tag(:div, info_row + menu_container,
+                    class: 'menu-item menu-container-item dragable removable-dom-element',
+                    data: { item_id: item.id })
       end
 
       def resorce_types_dropdown_values

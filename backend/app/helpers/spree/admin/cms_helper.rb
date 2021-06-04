@@ -1,6 +1,6 @@
 module Spree
   module Admin
-    module CmsPageHelper
+    module CmsHelper
       def build_page_section(section)
         css_width = case section.width
                     when 'Half'
@@ -52,26 +52,19 @@ module Spree
         item.parameterize(separator: '_')
       end
 
-      def page_types_dropdown_values
+      def humanize_dropdown_values(obj)
         formatted_types = []
 
-        Spree::CmsPage::PAGE_TYPES.each do |type|
-          last_word = type.split('::', 10).last
-          readable_type = last_word.gsub(/(?<=[a-z])(?=[A-Z])/, ' ')
-          formatted_types << [readable_type, type]
+        obj.class::TYPES.each do |type|
+          formatted_types << [humanize_cms_type(type), type]
         end
 
         formatted_types
       end
 
       def humanize_cms_type(obj)
-        last_word = obj.type.split('::', 10).last
+        last_word = obj.split('::', 10).last
         last_word.gsub(/(?<=[a-z])(?=[A-Z])/, ' ')
-      end
-
-      def parametize_cms_type(obj)
-        last_word = obj.type.split('::', 10).last
-        last_word.parameterize(separator: '_')
       end
     end
   end
