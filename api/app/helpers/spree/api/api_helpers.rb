@@ -10,7 +10,6 @@ module Spree
         :order_attributes,
         :line_item_attributes,
         :option_type_attributes,
-        :menu_attributes,
         :payment_attributes,
         :payment_method_attributes,
         :shipment_attributes,
@@ -137,10 +136,6 @@ module Spree
 
       @@payment_source_attributes = [
         :id, :month, :year, :cc_type, :last_digits, :name
-      ]
-
-      @@menu_attributes = [
-        :location
       ]
 
       @@user_attributes = [:id, :email, :created_at, :updated_at]
