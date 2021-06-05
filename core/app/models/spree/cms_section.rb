@@ -13,8 +13,7 @@ module Spree
              'Spree::Cms::Sections::Promo',
              'Spree::Cms::Sections::FeaturedArticle',
              'Spree::Cms::Sections::Carousel',
-             'Spree::Cms::Sections::CategoryBannerSquare',
-             'Spree::Cms::Sections::CategoryBannerTall']
+             'Spree::Cms::Sections::MenuCategory']
 
     # Overide this per section type
     def links_to

@@ -13,6 +13,10 @@ module Spree
         @homepage = @cms_home_page
         @edit_mode = true
       end
+
+      if http_cache_enabled?
+        fresh_when etag: store_etag, last_modified: store_last_modified, public: true
+      end
     end
 
     private
