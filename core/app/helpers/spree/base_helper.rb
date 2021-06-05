@@ -21,7 +21,11 @@ module Spree
     def spree_resource_path(resource)
       last_word = resource.class.name.split('::', 10).last
 
-      last_word.underscore.humanize.parameterize(separator: '_')
+      spree_class_name_as_path(last_word)
+    end
+
+    def spree_class_name_as_path(class_name)
+      class_name.underscore.humanize.parameterize(separator: '_')
     end
 
     def display_price(product_or_variant)

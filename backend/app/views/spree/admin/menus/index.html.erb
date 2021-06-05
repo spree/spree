@@ -20,7 +20,7 @@
         <div class="col-12 col-lg-6">
           <div class="form-group">
             <%= label_tag :q_location_eq, Spree.t(:location) %>
-            <%= f.select :location_eq, menu_locations_dropdown_values, { include_blank: true }, class: 'select2-clear js-filterable' %>
+            <%= f.select :location_eq, spree_humanize_dropdown_values('Spree::Menu', 'MENU_LOCATIONS'), { include_blank: true }, class: 'select2-clear js-filterable' %>
           </div>
         </div>
       </div>

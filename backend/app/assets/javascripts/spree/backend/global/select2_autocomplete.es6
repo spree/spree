@@ -1,17 +1,20 @@
 // SELECT2 AUTOCOMPLETE JS
 // This JavaScript file allows Spree developers to set up Select2 autocomplete search
-// using the API v2 by simply adding data attributes to the <select> DOM element.
+// using the API v2 by simply adding data attributes to a select element with the class: 'select2autocomplete'
+// as shown here: <select class="select2autocomplete"></select>.
 
 // REQUIRED ATTRIBUTES
 // You must provide a URL for the API V2, use the format shown below.
 // See the backend.js file for other API V2 URL's.
 //
+//  Example:
 //  data-autocomplete-url-value="products_api_v2"
 
 // OPTIONAL ATTRIBUTES
-// These attributes have sensible defaults, you many not need to use them in many cases,
-// but they do provide a powerful toolkit to refine your search when needed.
+// These optional attributes have sensible defaults, you many not need to use them in many cases,
+// but they do provide a powerful toolkit to refine your autocomplete search as required.
 //
+//  Examples:
 //  data-autocomplete-placeholder-value="Seach Pages"    <- Sets the placeholder | DEFAULT is: 'Search'
 //  data-autocomplete-clear-value="boolean"              <- Allow select2 to be cleared | DEFAULT is: false (no clear button)
 //  data-autocomplete-multiple-value="boolean"           <- Multiple or Single select | DEFAULT is: false (single)
@@ -26,8 +29,9 @@
 // here we only want to retuen Pages that have linkable slugs, not homepages, and so we filter those using the
 // data attributes shown below.
 //
-//  data-autocomplete-additional-query-value="type_not_eq"                  <- Pass a second hard coded filter query value | DEFAULT: null (not used)
-//  data-autocomplete-additional-term-value="Spree::Cms::Pages::Homepage"   <- Pass a second hard coded term | DEFAULT: null (not used)
+//  Examples:
+//  data-autocomplete-additional-query-value="type_not_eq"                  <- Additional hard coded query | DEFAULT: null (not used)
+//  data-autocomplete-additional-term-value="Spree::Cms::Pages::Homepage"   <- Additional hard coded term | DEFAULT: null (not used)
 
 document.addEventListener('DOMContentLoaded', function() {
   const select2Autocompletes = document.querySelectorAll('select.select2autocomplete')
@@ -59,7 +63,7 @@ $.fn.select2Autocomplete = function(params) {
   // Required params
   const apiUrl = params.apiUrl || null
 
-  // Optional params
+  // Optional Params
   const select2placeHolder = params.placeholder || Spree.translations.search
   const select2Multiple = params.multiple || false
   const select2allowClear = params.allow_clear || false

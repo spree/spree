@@ -1,6 +1,6 @@
 <% if resource.linked_resource_type.present? %>
   <div data-panel-type="<%= resource.linked_resource_type %>">
-    <%= render "spree/admin/shared/linkables/#{to_path_format(resource.linked_resource_type)}", resource: resource, f: f %>
+    <%= render "spree/admin/shared/linkables/#{spree_class_name_as_path(resource.linked_resource_type)}", resource: resource, f: f %>
   </div>
 <% end %>
 <div id="linkClickUpdate" class="d-none">

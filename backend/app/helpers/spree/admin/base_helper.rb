@@ -31,6 +31,32 @@ module Spree
         )
       end
 
+      def spree_humanize_dropdown_values(obj, const = 'TYPES')
+        formatted_types = []
+
+        if obj.is_a? String
+          obj.constantize.const_get(const).each do |type|
+            formatted_types << [spree_humanize_type(type), type]
+          end
+        else
+          obj.class::const_get(const).each do |type|
+            formatted_types << [spree_humanize_type(type), type]
+          end
+        end
+
+        formatted_types
+      end
+
+      def spree_humanize_type(obj)
+        last_word = obj.split('::', 10).last
+
+        if last_word.starts_with?('Cms')
+          last_word.slice(3, 100).gsub(/(?<=[a-z])(?=[A-Z])/, ' ')
+        else
+          last_word.gsub(/(?<=[a-z])(?=[A-Z])/, ' ')
+        end
+      end
+
       def error_message_on(object, method, _options = {})
         object = convert_to_model(object)
         obj = object.respond_to?(:errors) ? object : instance_variable_get("@#{object}")

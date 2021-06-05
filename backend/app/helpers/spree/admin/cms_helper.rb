@@ -47,25 +47,6 @@ module Spree
           spree.page_path(page.slug)
         end
       end
-
-      def linkable_as_path(item)
-        item.parameterize(separator: '_')
-      end
-
-      def humanize_dropdown_values(obj)
-        formatted_types = []
-
-        obj.class::TYPES.each do |type|
-          formatted_types << [humanize_cms_type(type), type]
-        end
-
-        formatted_types
-      end
-
-      def humanize_cms_type(obj)
-        last_word = obj.split('::', 10).last
-        last_word.gsub(/(?<=[a-z])(?=[A-Z])/, ' ')
-      end
     end
   end
 end
