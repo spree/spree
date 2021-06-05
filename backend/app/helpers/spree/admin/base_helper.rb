@@ -33,7 +33,7 @@ module Spree
 
       def spree_humanize_dropdown_values(object, options = {})
         formatted_options = []
-        const = options[:const] ||= nil
+        const = options[:const] || nil
         attribute_name = options[:attr] || nil
 
         if object.is_a? String

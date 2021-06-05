@@ -8,6 +8,7 @@ exclude:
 - vendor/**/*
 - ".bundle/**/*"
 - sample/**/*
+- cmd/lib/spree_cmd/templates/extension
 - guides/**/*
 - sandbox/**/*
 - pkg/**/*
