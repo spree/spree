@@ -475,8 +475,10 @@ describe Spree::Address, type: :model do
   end
 
   context 'editable & destroy' do
-    let(:address) { create(:address) }
-    let(:address2) { create(:address) }
+    subject(:destroy_address) { address.destroy }
+
+    let(:address) { create(:address, user: user) }
+    let(:address2) { create(:address, user: user) }
     let(:order) { create(:completed_order_with_totals) }
     let(:user) { create(:user) }
 
@@ -511,6 +513,34 @@ describe Spree::Address, type: :model do
       address2.destroy
       expect(Spree::Address.where(['id = (?)', address2.id])).not_to be_empty
       expect(Spree::Address.not_deleted.where(['id = (?)', address2.id])).to be_empty
+    end
+
+    context 'when address can not be deleted' do
+      let!(:order) { create(:completed_order_with_totals, bill_address: address, ship_address: address) }
+
+      context 'when address is default user address' do
+        before { user.update(bill_address: address, ship_address: address) }
+
+        context 'when user have many addresses' do
+          it 'assigns last available address as default to bill and ship address' do
+            destroy_address
+
+            expect(user.reload.bill_address_id).to eq address2.id
+            expect(user.reload.ship_address_id).to eq address2.id
+          end
+        end
+
+        context 'when deleted address was the only one' do
+          before { address2.destroy }
+
+          it 'does not assign any address' do
+            destroy_address
+
+            expect(user.reload.bill_address_id).to be nil
+            expect(user.reload.ship_address_id).to be nil
+          end
+        end
+      end
     end
   end
 
