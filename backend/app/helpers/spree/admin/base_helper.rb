@@ -31,20 +31,22 @@ module Spree
         )
       end
 
-      def spree_humanize_dropdown_values(obj, const = 'TYPES')
-        formatted_types = []
+      def spree_humanize_dropdown_values(object, options = {})
+        formatted_options = []
+        const = options[:const] ||= nil
+        attribute_name = options[:attr] || nil
 
-        if obj.is_a? String
-          obj.constantize.const_get(const).each do |type|
-            formatted_types << [spree_humanize_type(type), type]
-          end
-        else
-          obj.class::const_get(const).each do |type|
-            formatted_types << [spree_humanize_type(type), type]
-          end
+        if object.is_a? String
+          object.constantize.const_get(const).
+            map { |type| formatted_options << [spree_humanize_type(type), type] }
+        elsif attribute_name.present? && const.nil?
+          object.map { |obj| formatted_options << [obj.send(attribute_name), obj.id] }
+        elsif attribute_name.nil? && const.present?
+          object.class.const_get(const).
+            map { |type| formatted_options << [spree_humanize_type(type), type] }
         end
 
-        formatted_types
+        formatted_options
       end
 
       def spree_humanize_type(obj)
