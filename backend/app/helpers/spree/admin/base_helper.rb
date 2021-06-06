@@ -61,27 +61,6 @@ module Spree
         formatted_option_values
       end
 
-      # Returns Custom Dropdown Values
-      # Pass the object as the first argument, and then a hash of options as a second arguments.
-      # text: returns the visable text in the dropdown option, and value: defaults to id but can be overidden.
-      # Example:
-      #
-      #   spree_custom_dropdown_values(@store, { text: 'unique_name' })
-      #   spree_custom_dropdown_values(@store, { text: 'unique_name', value: 'name' })
-      #
-      def spree_custom_dropdown_values(object, options = {})
-        formatted_option_values = []
-
-        text = options[:text] || nil
-        value = options[:value] || 'id'
-
-        return unless text.present?
-
-        object.map { |obj| formatted_option_values << [obj.send(text), obj.send(value)] }
-
-        formatted_option_values
-      end
-
       def spree_humanize_type(obj)
         last_word = obj.split('::', 10).last
 

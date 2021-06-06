@@ -32,7 +32,7 @@ module Spree
               end
 
         button_link_to(
-          Spree.t(:preview_page),
+          Spree.t('admin.cms.preview_page'),
           url,
           class: 'btn-outline-secondary', icon: 'view.svg', id: 'admin_preview_product', target: :blank
         )

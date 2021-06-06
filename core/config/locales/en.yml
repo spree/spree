@@ -550,6 +550,20 @@ en:
     adjustments: Adjustments
     admin:
       cms:
+        all_pages: All Pages
+        add_new_page: Add New Page
+        add_new_section: Add New Section
+        content: Content
+        draft_mode: Draft Mode
+        full_width: Full width
+        title: Title
+        page_type: Page Type
+        you_have_no_pages: You have no pages, click the Add New Page button to get started.
+        new_page: New Page
+        visible: Visible
+        meta_title: Meta Title
+        meta_description: Meta Description
+        preview_page: Preview Page
         hero:
           aspect_ratio: Please use an image with the aspext ratio of 12:5 (2400px x 1000px)
         select_page_type: Select a page type

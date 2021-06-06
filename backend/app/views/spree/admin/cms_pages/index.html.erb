@@ -1,18 +1,18 @@
 <% content_for :page_title do %>
-  <%= Spree.t('admin.pages.pages') %>
+  <%= Spree.t('admin.cms.all_pages') %>
 <% end %>
 
 <% content_for :page_actions do %>
-  <%= button_link_to Spree.t('admin.pages.add_new_page'), new_object_url, { class: "btn-success", icon: 'add.svg', id: 'new_page' } %>
+  <%= button_link_to Spree.t('admin.cms.add_new_page'), new_object_url, { class: "btn-success", icon: 'add.svg', id: 'new_page' } %>
 <% end if can?(:create, Spree::CmsPage) %>
 
 <% if @cms_pages.any? %>
 <div class="table-responsive">
   <table class="table" id="pagesTable">
     <thead>
-      <th scope="col"><%= Spree.t(:title) %></th>
+      <th scope="col"><%= Spree.t('admin.cms.title') %></th>
       <th scope="col"><%= Spree.t(:draft_mode) %></th>
-      <th scope="col"><%= Spree.t('admin.pages.page_type') %></th>
+      <th scope="col"><%= Spree.t('admin.cms.page_type') %></th>
       <th scope="col"><%= Spree.t('store') %></th>
       <th scope="col"><%= Spree.t('language') %></th>
       <th scope="col"></th>
@@ -48,6 +48,6 @@
 </div>
 <% else %>
   <div class="alert alert-info no-objects-found">
-    <%= Spree.t('admin.page.you_have_no_pages') %>
+    <%= Spree.t('admin.cms.you_have_no_pages') %>
   </div>
 <% end %>

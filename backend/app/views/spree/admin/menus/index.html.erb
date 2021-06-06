@@ -35,7 +35,7 @@
         <div class="col-12 col-lg-6">
           <div class="form-group">
             <%= label_tag :q_store_id_in, Spree.t(:store) %>
-            <%= f.select :store_id_in, spree_custom_dropdown_values(@stores, { text: 'unique_name' }), { include_blank: true }, class: 'select2-clear js-filterable' %>
+            <%= f.collection_select(:store_id_in, @stores, :id, :unique_name,  { include_blank: true }, { class: 'select2-clear js-filterable' }) %>
           </div>
         </div>
       </div>
