@@ -1,7 +1,7 @@
 class CreateSpreeProductsStores < ActiveRecord::Migration[5.2]
   def up
     unless table_exists?(:spree_products_stores)
-      create_table :spree_products_stores, id: :serial do |t|
+      create_table :spree_products_stores do |t|
         t.references :product, index: true
         t.references :store,  index: true
         t.timestamps
