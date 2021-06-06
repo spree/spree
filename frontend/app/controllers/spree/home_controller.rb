@@ -15,11 +15,25 @@ module Spree
       end
 
       if http_cache_enabled?
-        fresh_when etag: store_etag, last_modified: store_last_modified, public: true
+        fresh_when etag: store_etag, last_modified: last_modified_index, public: true
       end
     end
 
     private
+
+    def etag_index
+      [
+        store_etag,
+        last_modified_index,
+      ]
+    end
+
+    def last_modified_index
+      page_last_modified  = @cms_home_page.maximum(:updated_at)&.utc if @cms_home_page.respond_to?(:maximum)
+      current_store_last_modified = current_store.updated_at.utc
+
+      [page_last_modified, current_store_last_modified].compact.max
+    end
 
     def accurate_title
       if @cms_home_page

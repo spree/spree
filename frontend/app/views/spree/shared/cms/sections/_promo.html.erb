@@ -1,11 +1,10 @@
-<aside class="<%= width %>">
+<aside class="<%= width %> mb-3">
   <div class="<%= boundary %>">
     <%= link_to section.link do %>
       <div class="d-flex
-                  align-items-center
+                  align-items-end
                   justify-content-center
                   bg-light text-center
-                  mb-3
                   overflow-hidden
                   homepage-bottom-box"
                   style="--aspect-ratio:54/35;">
@@ -30,7 +29,7 @@
               alt="<%= section.icon.alt %>">
          <% end %>
 
-        <div class="homepage-bottom-box-inner p-1 p-sm-2 p-md-3 p-lg-5" role="img" aria-label="New Collection">
+        <div class="homepage-bottom-box-inner p-1 p-sm-2 p-md-4" role="img" aria-label="New Collection">
           <div class="homepage-bottom-box-inner-small-text">
             <%= section.title %>
           </div>

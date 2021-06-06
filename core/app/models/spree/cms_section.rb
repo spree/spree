@@ -3,22 +3,19 @@ module Spree
     include Spree::DisplayLink
 
     acts_as_list scope: :cms_page
-    belongs_to :cms_page
+    belongs_to :cms_page, touch: true
 
     belongs_to :linked_resource, polymorphic: true
 
     default_scope { order(position: :asc) }
 
+    LINKED_RESOURCE_TYPE = []
+
     TYPES = ['Spree::Cms::Sections::Hero',
              'Spree::Cms::Sections::Promo',
              'Spree::Cms::Sections::FeaturedArticle',
              'Spree::Cms::Sections::Carousel',
-             'Spree::Cms::Sections::MenuCategory']
-
-    # Overide this per section type
-    def links_to
-      []
-    end
+             'Spree::Cms::Sections::TaxonCategory']
 
     # Overide this per section type
     def boundaries

@@ -1,5 +1,18 @@
 <div class="row">
   <div class="col-12 col-md-6">
+    <%= f.field_container :image_one, class: ['form-group'] do %>
+      <% if @cms_section.image_one.attached? && @cms_section.image_one.variable? %>
+        <%= image_tag main_app.url_for(@cms_section.image_one.variant(resize: '244x104>')) %>
+      <% elsif @cms_section.image_one.attached? && @cms_section.image_one.image? %>
+        <%= image_tag main_app.url_for(@cms_section.image_one) %>
+      <% end %>
+      <%= f.field_container :image_one, class: ['form-group'] do %>
+        <%= f.label :image_one, Spree.t(:image_one) %><br>
+        <%= f.file_field :image_one %>
+        <%= f.error_message_on :image_one %>
+      <% end %>
+    <% end %>
+
     <%= f.field_container :title, class: ['form-group'] do %>
       <%= f.label :title, Spree.t(:title) %>
       <%= f.select :title,
@@ -17,6 +30,18 @@
   </div>
 
   <div class="col-12 col-md-6">
+    <%= f.field_container :image_two, class: ['form-group'] do %>
+      <% if @cms_section.image_two.attached? && @cms_section.image_two.variable? %>
+        <%= image_tag main_app.url_for(@cms_section.image_two.variant(resize: '244x104>')) %>
+      <% elsif @cms_section.image_two.attached? && @cms_section.image_two.image? %>
+        <%= image_tag main_app.url_for(@cms_section.image_two) %>
+      <% end %>
+      <%= f.field_container :image_two, class: ['form-group'] do %>
+        <%= f.label :image_two, Spree.t(:image_two) %><br>
+        <%= f.file_field :image_two %>
+        <%= f.error_message_on :image_two %>
+      <% end %>
+    <% end %>
     <%= f.field_container :subtitle, class: ['form-group'] do %>
       <%= f.label :subtitle, Spree.t(:subtitle) %>
       <%= f.select :subtitle,
@@ -34,6 +59,18 @@
   </div>
 
   <div class="col-12 col-md-6">
+    <%= f.field_container :image_three, class: ['form-group'] do %>
+      <% if @cms_section.image_three.attached? && @cms_section.image_three.variable? %>
+        <%= image_tag main_app.url_for(@cms_section.image_three.variant(resize: '244x104>')) %>
+      <% elsif @cms_section.image_three.attached? && @cms_section.image_three.image? %>
+        <%= image_tag main_app.url_for(@cms_section.image_three) %>
+      <% end %>
+      <%= f.field_container :image_three, class: ['form-group'] do %>
+        <%= f.label :image_three, Spree.t(:image_three) %><br>
+        <%= f.file_field :image_three %>
+        <%= f.error_message_on :image_three %>
+      <% end %>
+    <% end %>
     <%= f.field_container :button_text, class: ['form-group'] do %>
       <%= f.label :button_text, Spree.t(:button_text) %>
       <%= f.select :button_text,

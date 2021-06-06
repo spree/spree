@@ -1,6 +1,10 @@
 module Spree::Cms::Sections
-  class MenuCategory < Spree::CmsSection
+  class TaxonCategory < Spree::CmsSection
     after_initialize :default_values
+
+    has_one_attached :image_one
+    has_one_attached :image_two
+    has_one_attached :image_three
 
     def widths
       ['Full']

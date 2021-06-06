@@ -2,9 +2,7 @@ module Spree::Cms::Sections
   class Carousel < Spree::CmsSection
     after_initialize :default_values
 
-    def links_to
-      ['Spree::Taxon']
-    end
+    LINKED_RESOURCE_TYPE = ['Spree::Taxon']
 
     def widths
       ['Full']

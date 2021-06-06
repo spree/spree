@@ -8,7 +8,8 @@ exclude:
 - vendor/**/*
 - ".bundle/**/*"
 - sample/**/*
-- cmd/**/*
+- cmd/lib/spree_cmd/templates/extension/extension.gemspec
+- cmd/spree_cmd.gemspec
 - guides/**/*
 - sandbox/**/*
 - pkg/**/*
