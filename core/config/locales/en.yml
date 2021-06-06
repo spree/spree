@@ -641,7 +641,6 @@ en:
         menus: Menus
         menu_items: '%{menu_name} Items'
         public_details: Public Details
-        unique_code_store_error: 'The code: %{code} is already used for Menu: %{menus}, make sure your unique code is unique within the store it is being used for.'
         subtitle: Subtitle
         url_info: 'The URL field can link to an external website using <b>https://example.com</b>, link to an otherwise unreachable internal path using <b>/policies/privacy</b>,
         launch an email client using <b>mailto:sales@example.com</b> or used to create a clickable phone number with <b>tel:123456789</b>'
@@ -652,7 +651,6 @@ en:
         the Spree main menu use the code <b>category</b> or <b>promo</b> to create the containers that organize links and promotions appropriately. To learn more view the documentation by <a href='https://guides.spreecommerce.org/user/navigation/add_menu_items.html' target='_blank' class='alert-link'>clicking here</a>."
         type: Type
         used_in: Used In
-        unique_code: Unique Code
         you_have_no_menus: You have no Menus, click the Add New Menu button to create your first Menu.
         this_link_takes_you_to_your_stores_home_page: This link takes you to your stores home page.
     administration: Administration

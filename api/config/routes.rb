@@ -165,10 +165,7 @@ Spree::Core::Engine.add_routes do
         get '/stores/:code', to: 'stores#show', as: :store
 
         resources :menus, only: %i[index]
-        get '/menus/:unique_code', to: 'menus#show', as: :menu
-
-        resources :cms_pages, only: %i[index], path: '/pages'
-        get '/pages/:slug', to: 'cms_page#show', as: :page
+        get '/menus/:location', to: 'menus#show', as: :menu
       end
 
       namespace :platform do
@@ -261,14 +258,6 @@ Spree::Core::Engine.add_routes do
         # Menu API
         resources :menus
         resource :menu_items do
-          member do
-            patch :reposition
-          end
-        end
-
-        # CMS Pages API
-        resources :cms_pages
-        resource :cms_sections do
           member do
             patch :reposition
           end
