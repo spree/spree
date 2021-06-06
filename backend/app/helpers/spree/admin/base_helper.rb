@@ -33,15 +33,23 @@ module Spree
 
       def spree_humanize_dropdown_values(object, options = {})
         formatted_options = []
+
         const = options[:const] || nil
-        attribute_name = options[:attr] || nil
+        text = options[:text] || nil
+        value = options[:value] || 'id'
+        paramterize_value = options[:paramterize_value] || false
 
         if object.is_a? String
-          object.constantize.const_get(const).
-            map { |type| formatted_options << [spree_humanize_type(type), type] }
-        elsif attribute_name.present? && const.nil?
-          object.map { |obj| formatted_options << [obj.send(attribute_name), obj.id] }
-        elsif attribute_name.nil? && const.present?
+          if paramterize_value
+            object.constantize.const_get(const).
+              map { |type| formatted_options << [spree_humanize_type(type), type.parameterize(separator: '_')] }
+          else
+            object.constantize.const_get(const).
+              map { |type| formatted_options << [spree_humanize_type(type), type] }
+          end
+        elsif text.present? && const.nil?
+          object.map { |obj| formatted_options << [obj.send(text), obj.send(value)] }
+        elsif text.nil? && const.present?
           object.class.const_get(const).
             map { |type| formatted_options << [spree_humanize_type(type), type] }
         end
