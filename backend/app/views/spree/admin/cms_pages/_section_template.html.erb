@@ -1,18 +1,19 @@
 <div class="<%= width %> <%= boundary %> removable-dom-element" data-section-id="<%= section.id %>">
-  <div class="row m-0 mb-1 pb-0 border bg-white">
-    <div class="col move-handle d-flex flex-nowrap pr-0">
-
-      <div class="d-flex align-items-center overflow-hidden w-100">
-        <div>
-          <h6 class="mb-0"><small><%= section.name %></small></h6>
-          <small class="form-text text-muted mt-0">Type: <%= spree_humanize_type(section.type) %></small>
-        </div>
-
+  <div class="row m-0 mb-1 pb-0 border border-secondary bg-white">
+    <div class="col move-handle d-flex pr-0 truncate">
+      <div class="<% if section.full_width_on_small %>py-2<% else %>py-3<% end %> align-items-center overflow-hidden w-100">
+          <h6 class="m-0"><%= section.name %></h6>
+          <small class="form-text mt-0 text-muted"><%= spree_humanize_type(section.type) %></small>
+          <% if section.full_width_on_small %>
+            <small class="form-text mt-1">
+              <%= svg_icon name: "mobile.svg", width: '23', height: '23' %>
+               Full-width
+            </small>
+          <% end %>
       </div>
     </div>
-
-    <div class="col d-flex p-0 align-items-center actions cms_section_action_col">
-      <div>
+    <div>
+      <div class="col h-100 d-flex flex-column align-self-sm-stretch p-0 justify-content-between actions cms_section_action_col">
         <%= link_to_edit(section, no_text: true, url: spree.edit_admin_cms_page_cms_section_path(@cms_page, section)) %>
         <%= link_to_delete(section, no_text: true, url: spree.admin_cms_page_cms_section_path(@cms_page, section)) if can?(:destroy, section) %>
       </div>

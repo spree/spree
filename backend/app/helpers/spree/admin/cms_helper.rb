@@ -11,7 +11,7 @@ module Spree
 
         boundary = case section.boundary
                    when 'Screen'
-                     'px-0 edge'
+                     'edge'
                    else
                      ''
                    end

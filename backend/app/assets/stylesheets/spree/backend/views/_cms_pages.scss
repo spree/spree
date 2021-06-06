@@ -4,6 +4,10 @@
   max-height: 553px;
   padding-top: 5px !important;
 
+  .border {
+    border-color: #9c9c9c !important;
+  }
+
   // Hide scroll-bar in live preview
   // sidebar.
   -ms-overflow-style: none;  /* IE and Edge */
@@ -51,9 +55,12 @@
   }
 
   .edge {
+     padding-left: 0;
+      padding-right: 0;
     div.row {
       border-left: none !important;
       border-right: none !important;
+
     }
   }
 
@@ -62,8 +69,14 @@
     text-align: center;
 
     a.btn-sm {
+      height: 100%;
+      display: flex;
       margin: 0;
       border-radius: 0;
+      svg {
+        align-self: center;
+        margin: 0;
+      }
     }
   }
 

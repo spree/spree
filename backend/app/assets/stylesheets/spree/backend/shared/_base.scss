@@ -40,6 +40,12 @@
   color: rgba(0, 0, 0, 0.50);
 }
 
+.truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 [data-show-info] {
   color:  $primary;
   cursor: pointer;
