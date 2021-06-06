@@ -17,7 +17,7 @@
             <div class="col-12 col-md-6">
               <%= f.field_container :type, class: ['form-group'] do %>
                 <%= f.label :type, Spree.t('admin.navigation.section_type') %>
-                <%= f.select(:type, spree_humanize_dropdown_values(@cms_section, {const: 'TYPES'}), {include_blank: false}) %>
+                <%= f.select(:type, spree_humanize_dropdown_values('Spree::CmsSection', {const: 'TYPES'}), {include_blank: false}) %>
                 <%= f.error_message_on :type %>
               <% end %>
             </div>

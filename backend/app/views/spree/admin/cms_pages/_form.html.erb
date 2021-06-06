@@ -10,7 +10,7 @@
           <div class="row">
             <%= f.field_container :type, class: ['form-group col-12 col-md-6'] do %>
               <%= f.label :type, Spree.t('admin.cms.page_type') %>
-              <%= f.select(:type, spree_humanize_dropdown_values(@cms_page, {const: 'TYPES'}), {include_blank: false}, class: 'select2') %>
+              <%= f.select(:type, spree_humanize_dropdown_values('Spree::CmsPage', {const: 'TYPES'}), {include_blank: false}, class: 'select2') %>
               <%= f.error_message_on :type %>
             <% end %>
 

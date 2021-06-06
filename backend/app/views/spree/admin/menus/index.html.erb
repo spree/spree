@@ -20,7 +20,7 @@
         <div class="col-12 col-lg-6">
           <div class="form-group">
             <%= label_tag :q_location_eq, Spree.t(:location) %>
-            <%= f.select :location_eq, spree_humanize_dropdown_values('Spree::Menu', {const: 'MENU_LOCATIONS', paramterize_value: true}), { include_blank: true }, class: 'select2-clear js-filterable' %>
+            <%= f.select :location_eq, spree_humanize_dropdown_values('Spree::Menu', { const: 'MENU_LOCATIONS', paramterize_values: true }), { include_blank: true }, class: 'select2-clear js-filterable' %>
           </div>
         </div>
       </div>
@@ -35,7 +35,7 @@
         <div class="col-12 col-lg-6">
           <div class="form-group">
             <%= label_tag :q_store_id_in, Spree.t(:store) %>
-            <%= f.select :store_id_in, spree_humanize_dropdown_values(@stores, {text: 'unique_name'}), { include_blank: true }, class: 'select2-clear js-filterable' %>
+            <%= f.select :store_id_in, spree_custom_dropdown_values(@stores, { text: 'unique_name' }), { include_blank: true }, class: 'select2-clear js-filterable' %>
           </div>
         </div>
       </div>

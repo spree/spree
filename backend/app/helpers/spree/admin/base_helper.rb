@@ -31,30 +31,55 @@ module Spree
         )
       end
 
-      def spree_humanize_dropdown_values(object, options = {})
-        formatted_options = []
+      # Returns Humanized Dropdown Values From a Constant In the Model
+      # Pass the model name as a string and then a hash containing the constant name
+      # and the option to paramatize the return value.
+      #
+      # Example:
+      #
+      #   spree_humanize_dropdown_values('Spree::CmsPage', { const: 'TYPES' })
+      #   spree_humanize_dropdown_values('Spree::Menu', { const: 'MENU_TYPES', paramterize_values: true })
+      #
+      def spree_humanize_dropdown_values(model_name, options = {})
+        formatted_option_values = []
 
         const = options[:const] || nil
-        text = options[:text] || nil
-        value = options[:value] || 'id'
-        paramterize_value = options[:paramterize_value] || false
+        paramterize_values = options[:paramterize_values] || false
 
-        if object.is_a? String
-          if paramterize_value
-            object.constantize.const_get(const).
-              map { |type| formatted_options << [spree_humanize_type(type), type.parameterize(separator: '_')] }
-          else
-            object.constantize.const_get(const).
-              map { |type| formatted_options << [spree_humanize_type(type), type] }
-          end
-        elsif text.present? && const.nil?
-          object.map { |obj| formatted_options << [obj.send(text), obj.send(value)] }
-        elsif text.nil? && const.present?
-          object.class.const_get(const).
-            map { |type| formatted_options << [spree_humanize_type(type), type] }
+        return unless const.present?
+
+        model_name.constantize.const_get(const).map do |type|
+          return_value = if paramterize_values
+                           type.parameterize(separator: '_')
+                         else
+                           type
+                         end
+
+          formatted_option_values << [spree_humanize_type(type), return_value]
         end
 
-        formatted_options
+        formatted_option_values
+      end
+
+      # Returns Custom Dropdown Values
+      # Pass the object as the first argument, and then a hash of options as a second arguments.
+      # text: returns the visable text in the dropdown option, and value: defaults to id but can be overidden.
+      # Example:
+      #
+      #   spree_custom_dropdown_values(@store, { text: 'unique_name' })
+      #   spree_custom_dropdown_values(@store, { text: 'unique_name', value: 'name' })
+      #
+      def spree_custom_dropdown_values(object, options = {})
+        formatted_option_values = []
+
+        text = options[:text] || nil
+        value = options[:value] || 'id'
+
+        return unless text.present?
+
+        object.map { |obj| formatted_option_values << [obj.send(text), obj.send(value)] }
+
+        formatted_option_values
       end
 
       def spree_humanize_type(obj)
