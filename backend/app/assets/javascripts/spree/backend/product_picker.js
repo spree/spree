@@ -8,7 +8,7 @@ $.fn.productAutocomplete = function (options) {
 
   function addOptions(select, values) {
     $.ajax({
-      url: Spree.routes.products_api_v2 ,
+      url: Spree.routes.products_api_v2,
       dataType: 'json',
       headers: Spree.apiV2Authentication(),
       data: {
@@ -16,8 +16,8 @@ $.fn.productAutocomplete = function (options) {
           id_in: values
         }
       }
-    }).then(function (data) {
-      select.addSelect2Options(data.products)
+    }).then(function (json) {
+      select.addSelect2Options(json.data)
     })
   }
 
