@@ -12,7 +12,7 @@ MENUS.each do |menu|
   when 'en'
     root_name_a = 'Women'
     root_name_b = 'Men'
-    root_name_c = 'Sportsware'
+    root_name_c = 'Sportswear'
 
     catagories = 'Categories'
 
@@ -37,7 +37,7 @@ MENUS.each do |menu|
   when 'fr'
     root_name_a = 'Femmes'
     root_name_b = 'Hommes'
-    root_name_c = 'Vêtements de sport'
+    root_name_c = 'Tenue de sport'
 
     catagories = 'Catégories'
 
@@ -62,7 +62,7 @@ MENUS.each do |menu|
   when 'de'
     root_name_a = 'Frauen'
     root_name_b = 'Männer'
-    root_name_c = 'Sportartikel'
+    root_name_c = 'Sportbekleidung'
 
     catagories = 'Kategorien'
 
@@ -87,7 +87,7 @@ MENUS.each do |menu|
   when 'es'
     root_name_a = 'Hombres'
     root_name_b = 'Mujeres'
-    root_name_c = 'Deportes'
+    root_name_c = 'Ropa de deporte'
 
     catagories = 'Categorías'
 
