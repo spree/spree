@@ -13,7 +13,7 @@ module Spree
       @order = current_order(lock: true)
       unless @order
         flash[:error] = Spree.t(:order_not_found)
-        redirect_to spree.root_path and return
+        redirect_to spree.root_path && return
       end
     end
 
