@@ -1,3 +1,7 @@
+:root {
+  --spree-border-color: transparent;
+}
+
 .homepage {
   &-hero-image {
     display: flex;
@@ -263,6 +267,10 @@
         font-size: font-px-to-rem(24px);
       }
     }
+  }
+
+  &-hpb {
+    border: 3px solid var(--spree-border-color);
   }
 }
 

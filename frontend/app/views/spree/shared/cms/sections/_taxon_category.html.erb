@@ -21,8 +21,8 @@
         alt="<%= section.title %>">
    <% end %>
 
-    <div class="homepage-taxon-box-text">
-      <h3><%= section.title %></h3>
+    <div class="homepage-taxon-box-text ">
+      <h3 class="homepage-hpb"><%= section.title %></h3>
     </div>
   <% end %>
   <%= link_to spree.nested_taxons_path(section.button_text), class: "homepage-taxon-box" do %>
@@ -47,7 +47,7 @@
      <% end %>
 
     <div class="homepage-taxon-box-text" role="img" aria-label="Sportswear">
-      <h3><%= section.button_text %></h3>
+      <h3 class="homepage-hpb"><%= section.button_text %></h3>
     </div>
   <% end %>
 </div>
@@ -75,7 +75,7 @@
      <% end %>
 
     <div class="homepage-taxon-box-text">
-      <h3><%= section.subtitle %></h3>
+      <h3 class="homepage-hpb"><%= section.subtitle %></h3>
     </div>
   <% end %>
 </div>
