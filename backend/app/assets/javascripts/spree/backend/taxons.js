@@ -52,7 +52,7 @@ $(function () {
         processResults: function (data, page) {
           var more = page < data.meta.total_pages
 
-          results = data.data.map(function (obj) {
+          var results = data.data.map(function (obj) {
             return {
               id: obj.id,
               text: obj.attributes.pretty_name
@@ -91,7 +91,7 @@ $(function () {
             var productId = classification.relationships.product.data.id.toString()
 
             var product = json.included.find(function(included) {
-              if (included.type == 'product' && included.id == productId) {
+              if (included.type === 'product' && included.id === productId) {
                 return included
               }
             })
@@ -99,11 +99,11 @@ $(function () {
             if (product && classification) {
               var imageUrl = null
 
-              if(product.relationships.images.data.length > 0) {
+              if (product.relationships.images.data.length > 0) {
                 var imageId = product.relationships.images.data[0].id
 
                 var image = json.included.find(function(included) {
-                  if (included.type == 'image' && included.id == imageId) {
+                  if (included.type === 'image' && included.id === imageId) {
                     return included
                   }
                 })
