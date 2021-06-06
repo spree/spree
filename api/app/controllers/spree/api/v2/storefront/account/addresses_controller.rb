@@ -37,7 +37,7 @@ module Spree
             end
 
             def scope
-              super.not_deleted
+              super.where(user: spree_current_user).not_deleted
             end
 
             def model_class
