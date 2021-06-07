@@ -8,7 +8,7 @@
 
     <%= f.field_container :location, class: ['form-group'] do %>
       <%= f.label :location, Spree.t('location') %>
-      <%= f.select(:location, spree_humanize_dropdown_values('Spree::Menu', { const: 'MENU_LOCATIONS'}), {include_blank: false}, class: 'select2') %>
+      <%= f.select(:location, spree_humanize_dropdown_values('Spree::Menu', { const: 'MENU_LOCATIONS', paramterize_values: true }), {include_blank: false}, class: 'select2') %>
       <%= f.error_message_on :location %>
     <% end %>
   </div>

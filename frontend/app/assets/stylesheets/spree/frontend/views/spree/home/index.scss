@@ -2,6 +2,13 @@
   --spree-border-color: transparent;
 }
 
+.brand {
+  img {
+    width: 85%;
+    max-width: 140px;
+  }
+}
+
 .homepage {
   &-hero-image {
     display: flex;

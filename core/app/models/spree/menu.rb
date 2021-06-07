@@ -1,6 +1,6 @@
 module Spree
   class Menu < Spree::Base
-    MENU_LOCATIONS = ['Header', 'Footer']
+    MENU_LOCATIONS = ['Header', 'Footer', 'Brands']
     MENU_LOCATIONS_PARAMETERIZED = []
 
     MENU_LOCATIONS.each do |location|

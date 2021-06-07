@@ -29,8 +29,8 @@ module Spree
     end
 
     def last_modified_index
-      page_last_modified = @cms_home_page.maximum(:updated_at)&.utc if @cms_home_page.respond_to?(:maximum)
-      current_store_last_modified = current_store.updated_at.utc
+      page_last_modified = @cms_home_page&.maximum(:updated_at)&.utc if @cms_home_page.respond_to?(:maximum)
+      current_store_last_modified =current_store.updated_at.utc
 
       [page_last_modified, current_store_last_modified].compact.max
     end

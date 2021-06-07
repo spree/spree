@@ -15,7 +15,8 @@ module Spree
              'Spree::Cms::Sections::Promo',
              'Spree::Cms::Sections::FeaturedArticle',
              'Spree::Cms::Sections::Carousel',
-             'Spree::Cms::Sections::TaxonCategory']
+             'Spree::Cms::Sections::TaxonCategory',
+             'Spree::Cms::Sections::Brands']
 
     # Overide this per section type
     def boundaries
