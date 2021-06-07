@@ -19,10 +19,11 @@ describe 'Create New Promotion', type: :feature, js: true do
     end
 
     it 'Allows you to set a promotion with start and end time' do
-      fill_in 'Name', with: 'Promotion 2'
-      fill_in 'Code', with: 'Random 2323'
       fill_in_date_time_picker('promotion_starts_at', with: '2012-01-24-16-45')
+      fill_in 'Name', with: 'Promotion 2'
+
       fill_in_date_time_picker('promotion_expires_at', with: '2012-01-25-22-10')
+      fill_in 'Code', with: 'Random 2323'
 
       click_button 'Create'
 

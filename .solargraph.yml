@@ -13,6 +13,7 @@ exclude:
 - guides/**/*
 - sandbox/**/*
 - pkg/**/*
+- cmd/**/*.gemspec
 require: []
 domains: []
 reporters:
