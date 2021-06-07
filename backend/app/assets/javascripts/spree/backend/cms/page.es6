@@ -4,6 +4,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
   if (pageTypeSelector) { updateCmsPageType() }
 
+  $(pageTypeSelector).on('change', function() {
+    updateCmsPageType()
+  });
+
   if (el) {
     Sortable.create(el, {
       handle: '.move-handle',
@@ -16,32 +20,6 @@ document.addEventListener('DOMContentLoaded', function() {
         handleSectionReposition(evt)
       }
     })
-  }
-
-  $(pageTypeSelector).on('change', function() {
-    updateCmsPageType()
-  });
-
-  function updateCmsPageType () {
-    const slugField = document.getElementById('noHomePage')
-    const updatePageType = document.getElementById('updatePageType')
-    const existingType = updatePageType.dataset.pageType
-
-    if (!slugField) return
-
-    const selectedLinkType = $('#cms_page_type').val()
-
-    if (selectedLinkType === existingType) {
-      updatePageType.classList.add('d-none')
-    } else {
-      updatePageType.classList.remove('d-none')
-    }
-
-    if (selectedLinkType === 'Spree::Cms::Pages::Homepage') {
-      slugField.classList.add('d-none')
-    } else {
-      slugField.classList.remove('d-none')
-    }
   }
 })
 
@@ -79,3 +57,29 @@ function handleMenuItemMoveError () {
   // eslint-disable-next-line no-undef
   show_flash('error', Spree.translations.move_could_not_be_saved)
 }
+
+function updateCmsPageType () {
+  const slugField = document.getElementById('cms_page_slug')
+  const updatePageType = document.getElementById('updatePageType')
+
+  if (!slugField) return
+
+  const selectedLinkType = $('#cms_page_type').val()
+
+  if (selectedLinkType === 'Spree::Cms::Pages::Homepage') {
+    slugField.disabled = true
+  } else {
+    slugField.disabled = false
+  }
+
+  if (!updatePageType) return
+
+  const existingType = updatePageType.dataset.pageType
+
+  if (selectedLinkType === existingType) {
+    updatePageType.classList.add('d-none')
+  } else {
+    updatePageType.classList.remove('d-none')
+  }
+}
+

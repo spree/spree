@@ -19,10 +19,16 @@ document.addEventListener('DOMContentLoaded', function() {
   const cmsSectionEditorFullScreen = document.getElementById('cmsSectionEditorFullScreen')
 
   cmsSectionEditorFullScreen.addEventListener('click', function(event) {
-    if (event.target.getAttribute('aria-pressed') === 'true') {
+    if (this.getAttribute('aria-pressed') === 'true') {
       document.body.classList.remove('cmsSectionFullScreenMode')
     } else {
       document.body.classList.add('cmsSectionFullScreenMode')
     }
   })
+
+  const queryString = window.location.search;
+  const urlParams = new URLSearchParams(queryString);
+  const fullScreenMode = urlParams.get('section_editor_full_screen_mode')
+
+  if (fullScreenMode) cmsSectionEditorFullScreen.click()
 })

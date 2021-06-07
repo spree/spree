@@ -3,8 +3,6 @@
 <% if @homepage %>
 <div class="container">
   <div id="featurePageContent" class="row">
-
-
     <% @homepage.cms_sections.each do |section| %>
       <%= build_section(section) %>
     <% end %>
@@ -26,4 +24,5 @@
     </div>
   </div>
 <% end %>
+
 <%= render "spree/shared/cms/pages/edit_mode", edit_mode: @edit_mode %>

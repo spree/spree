@@ -1,3 +1,44 @@
+#standardPage {
+  .sp-pb-0 {
+    padding-bottom: 0 !important;
+  }
+
+  .sp-card {
+    border-bottom: 0;
+    border-radius: 5px 5px 0 0;
+  }
+}
+
+[aria-expanded="false"] {
+  span.more {
+    display: inline;
+  }
+  span.less {
+    display: none;
+  }
+}
+
+[aria-expanded="true"] {
+  span.more {
+    display: none;
+  }
+  span.less {
+    display: inline;
+  }
+}
+
+button#cmsSectionEditorFullScreen {
+  span.exit {
+    display: none;
+  }
+
+  &.active {
+    span.exit {
+      display: inline;
+    }
+  }
+}
+
 #cmsPagesectionsArea {
   overflow-x: hidden;
   overflow-y: scroll;
