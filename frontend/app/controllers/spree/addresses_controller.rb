@@ -23,7 +23,7 @@ module Spree
     end
 
     def new
-      @address = Spree::Address.default
+      @address = try_spree_current_user.addresses.new(country: current_store.default_country)
     end
 
     def update

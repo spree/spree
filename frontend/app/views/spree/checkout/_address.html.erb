@@ -54,7 +54,7 @@
               address_name: address_name,
               address_form: address_form,
               address_type: address_type,
-              address: Spree::Address.default,
+              address: Spree::Address.new(country: current_store.default_country),
               form: form
             } %>
           </div>
