@@ -7,8 +7,8 @@ module Spree
         attributes :iso, :iso3, :iso_name, :name, :states_required,
                    :zipcode_required
 
-        attribute :default do |object|
-          object.default?
+        attribute :default do |object, params|
+          object.default?(params[:store])
         end
 
         has_many :states, if: proc { |_record, params| params && params[:include_states] }

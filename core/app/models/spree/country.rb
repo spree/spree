@@ -18,8 +18,9 @@ module Spree
 
     validates :name, :iso_name, :iso, :iso3, presence: true, uniqueness: { case_sensitive: false }
 
-    def self.default
-      country_id = Spree::Config[:default_country_id]
+    def self.default(store = nil)
+      store ||= Spree::Store.default
+      country_id = store.default_country_id
       default = find_by(id: country_id) if country_id.present?
       default || find_by(iso: 'US') || first
     end
@@ -28,8 +29,9 @@ module Spree
       where(['LOWER(iso) = ?', iso.downcase]).or(where(['LOWER(iso3) = ?', iso.downcase])).take
     end
 
-    def default?
-      id == Spree::Config[:default_country_id]
+    def default?(store = nil)
+      store ||= Spree::Store.default
+      self == store.default_country
     end
 
     def <=>(other)

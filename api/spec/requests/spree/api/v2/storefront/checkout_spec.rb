@@ -1,8 +1,7 @@
 require 'spec_helper'
 
 describe 'API V2 Storefront Checkout Spec', type: :request do
-  let(:default_currency) { 'USD' }
-  let(:store) { create(:store, default_currency: default_currency) }
+  let(:store) { Spree::Store.default }
   let(:currency) { store.default_currency }
   let(:user)  { create(:user) }
   let(:order) { create(:order, user: user, store: store, currency: currency) }
@@ -455,14 +454,14 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
     end
 
     context 'for guest or user without store credit' do
-      let!(:order) { create(:order, total: order_total) }
+      let!(:order) { create(:order, total: order_total, store: store) }
 
       it_behaves_like 'returns 422 HTTP status'
     end
 
     context 'for user with store credits' do
       let!(:store_credit) { create(:store_credit, amount: order_total) }
-      let!(:order) { create(:order, user: store_credit.user, total: order_total) }
+      let!(:order) { create(:order, user: store_credit.user, total: order_total, store: store) }
 
       shared_examples 'valid payload' do |amount|
         it 'returns StoreCredit payment' do
@@ -527,8 +526,7 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
     let(:order_total) { 500.00 }
     let(:params) { { order_token: order.token, include: 'payments', fields: { payment: 'state' } } }
     let(:execute) { post '/api/v2/storefront/checkout/remove_store_credit', params: params, headers: headers }
-    let!(:store_credit) { create(:store_credit, amount: order_total) }
-    let!(:order) { create(:order, user: store_credit.user, total: order_total) }
+    let!(:store_credit) { create(:store_credit, amount: order_total, user: user) }
 
     before do
       create(:store_credit_payment_method)

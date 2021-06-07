@@ -13,9 +13,6 @@ module Spree
         def edit
           @order.build_bill_address(country: current_store.default_country) if @order.bill_address.nil?
           @order.build_ship_address(country: current_store.default_country) if @order.ship_address.nil?
-
-          @order.bill_address.country_id = country_id if @order.bill_address.country.nil?
-          @order.ship_address.country_id = country_id if @order.ship_address.country.nil?
         end
 
         def update

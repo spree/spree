@@ -6,7 +6,7 @@ describe Spree::Promotion::Rules::Country, type: :model do
   let(:country) { create(:country) }
   let(:other_country) { create(:country) }
 
-  before { allow(Spree::Country).to receive(:default) { other_country.id } }
+  before { allow(Spree::Country).to receive(:default) { other_country } }
 
   context 'preferred country is set' do
     before { rule.preferred_country_id = country.id }
