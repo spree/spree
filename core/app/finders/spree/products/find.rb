@@ -198,6 +198,10 @@ module Spree
           else
             products
           end
+        when 'name-a-z'
+          products.order(name: :asc)
+        when 'name-z-a'
+          products.order(name: :desc)
         when 'newest-first'
           products.order(available_on: :desc)
         when 'price-high-to-low'

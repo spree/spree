@@ -415,7 +415,7 @@ module Spree
           current_currency: 'USD'
         ).execute.map(&:id)
 
-        expect(product_ids).to match_array Spree::Product.available.order(available_on: :desc).map(&:id)
+        expect(product_ids).to eq Spree::Product.available.order(available_on: :desc).map(&:id)
       end
 
       it 'returns products in price-high-to-low order' do
@@ -429,7 +429,7 @@ module Spree
           current_currency: 'USD'
         ).execute.to_a
 
-        expect(products).to match_array [product_2, product_3, product]
+        expect(products).to eq [product_2, product_3, product]
       end
 
       it 'returns products in price-low-to-high order' do
@@ -443,7 +443,35 @@ module Spree
           current_currency: 'USD'
         ).execute
 
-        expect(products).to match_array [product, product_3, product_2]
+        expect(products).to eq [product, product_3, product_2]
+      end
+
+      it 'returns products in name-a-z order' do
+        params = {
+          sort_by: 'name-a-z'
+        }
+
+        products = described_class.new(
+          scope: Spree::Product.all,
+          params: params,
+          current_currency: 'USD'
+        ).execute
+
+        expect(products).to eq [product, product_2, product_3]
+      end
+
+      it 'returns products in name-z-a order' do
+        params = {
+          sort_by: 'name-z-a'
+        }
+
+        products = described_class.new(
+          scope: Spree::Product.all,
+          params: params,
+          current_currency: 'USD'
+        ).execute
+
+        expect(products).to eq [product_3, product_2, product]
       end
     end
   end

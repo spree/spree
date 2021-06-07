@@ -1329,6 +1329,8 @@ en:
       price: price
       price_high_to_low: PRICE (HIGH - LOW)
       price_low_to_high: PRICE (LOW - HIGH)
+      name_a_z: NAME (A-Z)
+      name_z_a: NAME (Z-A)
       result: RESULT
       results_for: RESULTS FOR
       size: SIZE
