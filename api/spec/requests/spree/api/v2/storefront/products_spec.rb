@@ -253,6 +253,30 @@ describe 'API V2 Storefront Products Spec', type: :request do
         end
       end
 
+      context 'sorting by name' do
+        context 'A-Z' do
+          before { get '/api/v2/storefront/products?sort=name' }
+
+          it_behaves_like 'returns 200 HTTP status'
+
+          it 'returns products sorted by name' do
+            expect(json_response['data'].count).to      eq Spree::Product.available.count
+            expect(json_response['data'].pluck(:id)).to eq Spree::Product.available.order(:name).map(&:id).map(&:to_s)
+          end
+        end
+
+        context 'Z-A' do
+          before { get '/api/v2/storefront/products?sort=-name' }
+
+          it_behaves_like 'returns 200 HTTP status'
+
+          it 'returns products sorted by name with descending order' do
+            expect(json_response['data'].count).to      eq Spree::Product.available.count
+            expect(json_response['data'].pluck(:id)).to eq Spree::Product.available.order(name: :desc).map(&:id).map(&:to_s)
+          end
+        end
+      end
+
       context 'sorting by updated_at' do
         context 'ascending order' do
           before { get '/api/v2/storefront/products?sort=updated_at' }
