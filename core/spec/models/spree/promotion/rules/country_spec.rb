@@ -1,12 +1,11 @@
 require 'spec_helper'
 
 describe Spree::Promotion::Rules::Country, type: :model do
-  let(:rule) { Spree::Promotion::Rules::Country.new }
-  let(:order) { create(:order) }
+  let!(:store) { create(:store, default_country: other_country) }
+  let(:rule) { described_class.new }
+  let(:order) { create(:order, store: store) }
   let(:country) { create(:country) }
   let(:other_country) { create(:country) }
-
-  before { allow(Spree::Country).to receive(:default) { other_country } }
 
   context 'preferred country is set' do
     before { rule.preferred_country_id = country.id }
