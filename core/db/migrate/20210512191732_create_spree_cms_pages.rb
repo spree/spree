@@ -5,7 +5,7 @@ class CreateSpreeCmsPages < ActiveRecord::Migration[5.2]
       t.column :meta_title, :string
       t.column :content, :text
       t.column :meta_description, :text
-      t.column :visible, :boolean, default: false
+      t.column :visible, :boolean, default: true
       t.column :slug, :string
       t.column :type, :string
       t.column :locale, :string

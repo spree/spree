@@ -9,7 +9,7 @@ module Spree
                       'col-12'
                     end
 
-        boundary = case section.boundary
+        fit = case section.fit
                    when 'Screen'
                      'edge'
                    else
@@ -19,7 +19,7 @@ module Spree
         render 'spree/admin/cms_pages/section_template',
                section: section,
                width: css_width,
-               boundary: boundary
+               fit: fit
       end
 
       def page_preview_link(page)

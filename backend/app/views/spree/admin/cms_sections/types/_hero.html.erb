@@ -1,42 +1,40 @@
 <div class="row">
   <div class="col-12 col-md-6">
     <%= f.field_container :title, class: ['form-group'] do %>
-      <%= f.label :title, Spree.t(:title) %>
+      <%= f.label :title, Spree.t('admin.cms.title') %>
       <%= f.text_field :title, class: 'form-control' %>
       <%= f.error_message_on :title %>
     <% end %>
 
     <%= f.field_container :button_text, class: ['form-group'] do %>
-      <%= f.label :button_text, Spree.t(:button_text) %>
+      <%= f.label :button_text, Spree.t('admin.cms.button_text') %>
       <%= f.text_field :button_text, class: 'form-control' %>
       <%= f.error_message_on :button_text %>
     <% end %>
 
-    <%= f.field_container :boundary, class: ['form-group'] do %>
-      <%= f.label :boundary, Spree.t('admin.navigation.boundary') %>
-      <%= f.select(:boundary, @cms_section.boundaries, {include_blank: false}, class: 'select2') %>
-      <%= f.error_message_on :boundary %>
+    <%= f.field_container :fit, class: ['form-group'] do %>
+      <%= f.label :fit, Spree.t('admin.cms.fit') %>
+      <%= f.select(:fit, @cms_section.boundaries, {include_blank: false}, class: 'select2') %>
+      <%= f.error_message_on :fit %>
     <% end %>
   </div>
-  <div class="col-12 col-md-6">
+  <div class="col-12 col-md-6 pt-4">
     <% @cms_section.build_icon unless @cms_section.icon %>
       <%= f.fields_for :icon do |icon_field| %>
         <%= f.field_container :icon_attachment do %>
           <% unless @cms_section.icon.new_record? %>
-            <div id="menuItemImgContainer" class="my-3 ">
+            <figure class="admin-img-holder">
               <%= image_tag(main_app.url_for(@cms_section.icon.attachment)) %>
-            </div>
+            </figure>
           <% end %>
-        <div id="<% unless @cms_section.icon.new_record? %>MenuItemImageButton<% end %>">
           <%= icon_field.file_field :attachment %>
-        </div>
       <% end %>
       <small class="form-text text-muted"><%= Spree.t('admin.cms.hero.aspect_ratio') %></small>
 
       <%= f.field_container :icon_alt do %>
         <% unless @cms_section.icon.new_record? %>
           <div class="form-group my-3">
-            <%= icon_field.label :alt, Spree.t('admin.navigation.image_alt_text') %>
+            <%= icon_field.label :alt, Spree.t('image_alt_text') %>
             <%= icon_field.text_field :alt, class: 'form-control' %>
           </div>
         <% end %>

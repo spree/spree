@@ -1,13 +1,13 @@
 <% content_for :page_title do %>
-  <%= link_to Spree.t('admin.cms_section.all_pages'), spree.admin_cms_pages_path %> /
+  <%= link_to Spree.t('admin.cms.all_pages'), spree.admin_cms_pages_path %> /
   <%= link_to @cms_page.title, spree.edit_admin_cms_page_path(@cms_page) %> / <%= @cms_section.name %>
 <% end %>
 
 <% content_for :page_actions do %>
 <%= button_link_to(
-          Spree.t('admin.cms.back_to_full_screen_mode'),
+          Spree.t('admin.cms.exit_to_full_screen_mode'),
           spree.edit_admin_cms_page_path(@cms_page) + '?section_editor_full_screen_mode=true',
-          class: 'btn-outline-secondary', icon: 'view.svg', id: 'admin_preview_product'
+          class: 'btn-outline-secondary', icon: 'move.svg', id: 'admin_preview_product'
         ) %>
 <% end %>
 

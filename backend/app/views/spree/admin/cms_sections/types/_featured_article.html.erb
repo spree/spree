@@ -20,15 +20,15 @@
 
     <div class="row">
       <%= f.field_container :width, class: ['form-group col-6'] do %>
-        <%= f.label :width, Spree.t('admin.navigation.width') %>
+        <%= f.label :width, Spree.t('admin.cms.width') %>
         <%= f.select(:width, @cms_section.widths, {include_blank: false}, class: 'select2') %>
         <%= f.error_message_on :width %>
       <% end %>
 
-      <%= f.field_container :boundary, class: ['form-group col-6'] do %>
-        <%= f.label :boundary, Spree.t('admin.navigation.boundary') %>
-        <%= f.select(:boundary, @cms_section.boundaries, {include_blank: false}, class: 'select2') %>
-        <%= f.error_message_on :boundary %>
+      <%= f.field_container :fit, class: ['form-group col-6'] do %>
+        <%= f.label :fit, Spree.t('admin.cms.fit') %>
+        <%= f.select(:fit, @cms_section.boundaries, {include_blank: false}, class: 'select2') %>
+        <%= f.error_message_on :fit %>
       <% end %>
     </div>
   </div>

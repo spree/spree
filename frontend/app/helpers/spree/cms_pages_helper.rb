@@ -31,7 +31,7 @@ module Spree
         end
       end
 
-      boundary = case section.boundary
+      fit = case section.fit
                  when 'Screen'
                    'full-width '
                  else
@@ -40,7 +40,7 @@ module Spree
 
       render "spree/shared/cms/sections/#{spree_resource_path(section)}", section: section,
                                                                           width: css_width,
-                                                                          boundary: boundary,
+                                                                          fit: fit,
                                                                           element: element
     end
   end

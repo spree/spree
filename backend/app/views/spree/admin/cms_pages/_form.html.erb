@@ -26,7 +26,7 @@
           <div class="row pb-0">
 
             <%= f.field_container :title, class: ['form-group col-6'] do %>
-              <%= f.label :title, raw(Spree.t('admin.cms.name') + required_span_tag) %>
+              <%= f.label :title, raw(Spree.t('admin.cms.title') + required_span_tag) %>
               <%= f.text_field :title, class: 'form-control', required: true %>
               <%= f.error_message_on :title %>
             <% end %>

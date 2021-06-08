@@ -16,7 +16,7 @@ module Spree::Cms::Sections
 
     def default_values
       self.width ||= 'Half'
-      self.boundary ||= 'Container'
+      self.fit ||= 'Container'
       self.linked_resource_type ||= 'Spree::Taxon'
     end
   end

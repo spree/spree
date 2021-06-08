@@ -8,7 +8,8 @@ class CreateSpreeCmsSections < ActiveRecord::Migration[5.2]
       t.column :content, :text
       t.column :width, :string
       t.column :full_width_on_small, :boolean, default: false
-      t.column :boundary, :string
+      t.column :fit, :string
+      t.column :destination, :string
       t.column :type, :string
       t.column :position, :integer
 

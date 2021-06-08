@@ -10,7 +10,7 @@ module Spree::Cms::Sections
 
     def default_values
       self.width ||= 'Full'
-      self.boundary ||= 'Screen'
+      self.fit ||= 'Screen'
     end
   end
 end

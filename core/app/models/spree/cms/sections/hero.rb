@@ -15,7 +15,7 @@ module Spree::Cms::Sections
 
     def default_values
       self.width ||= 'Full'
-      self.boundary ||= 'Screen'
+      self.fit ||= 'Screen'
       self.linked_resource_type ||= 'Spree::Taxon'
     end
   end
