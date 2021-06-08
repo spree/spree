@@ -158,7 +158,7 @@ module Spree
       self.default_country = if checkout_zone.present? && checkout_zone.country_list.any?
                                checkout_zone.country_list.first
                              else
-                               Country.default
+                               Country.find_by(iso: 'US') || Country.first
                              end
     end
   end

@@ -1,6 +1,6 @@
 default_store = Spree::Store.default
 default_store.checkout_zone = Spree::Zone.find_by(name: 'North America')
-default_store.default_country = Spree::Country.default
+default_store.default_country = Spree::Country.find_by(iso: 'US')
 default_store.supported_currencies = 'CAD,USD'
 default_store.supported_locales = 'en,fr'
 default_store.url = Rails.env.development? ? 'localhost:3000' : 'demo.spreecommerce.org'

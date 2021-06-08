@@ -19,6 +19,10 @@ module Spree
     validates :name, :iso_name, :iso, :iso3, presence: true, uniqueness: { case_sensitive: false }
 
     def self.default(store = nil)
+      ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
+        `Country#default` is deprecated and will be removed in Spree 5.0.
+        Please use `current_store.default_country` instead
+      DEPRECATION
       store ||= Spree::Store.default
       country_id = store.default_country_id
       default = find_by(id: country_id) if country_id.present?
