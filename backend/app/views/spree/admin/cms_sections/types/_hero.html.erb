@@ -48,7 +48,7 @@
       <%= f.select(:linked_resource_type,
           spree_humanize_dropdown_values('Spree::Cms::Sections::Hero',
                                           { const: 'LINKED_RESOURCE_TYPE' }),
-                                          {include_blank: false},
+                                          { include_blank: false },
                                           class: 'link_switcher') %>
       <%= f.error_message_on :linked_resource_type %>
     <% end %>

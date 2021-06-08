@@ -558,6 +558,7 @@ en:
         full_width: Full width
         title: Title
         fit: Fit To
+        full_width_on_small: Full width on small devices
         button_text: Button Text
         exit_to_full_screen_mode: Exit To Full Screen
         page_type: Page Type
@@ -578,7 +579,7 @@ en:
         no_sections_found_please_add_one: Add your first section to this page by clicking the + Add New Section button above.
         click_create_to_load_new_link: 'Click the <b>Create</b> button below to save your new page section, and load the section settings.'
         click_update_to_load_new_link: 'Click the <b>Update</b> button below to load the new section settings.'
-        settings_for: 'Available Options For %{section}'
+        settings_for: 'Options For: <b>%{section} Section</b>'
         page_sections: '%{page_name} Sections'
         page_sections_info: 'The area below represents your %{page_type} displayed in %{store}, add sections and drag them into position'
       linkable:

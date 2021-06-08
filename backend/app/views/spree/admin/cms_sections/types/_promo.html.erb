@@ -22,7 +22,7 @@
       <%= f.field_container :full_width_on_small, class: ['form-group col-6'] do %>
         <div class="custom-control custom-checkbox">
           <%= f.check_box :full_width_on_small, class: 'custom-control-input' %>
-          <%= f.label :full_width_on_small, Spree.t(:full_width_on_small), class: 'custom-control-label' %>
+          <%= f.label :full_width_on_small, Spree.t('admin.cms.full_width_on_small'), class: 'custom-control-label' %>
           <%= f.error_message_on :full_width_on_small %>
         </div>
       <% end %>
@@ -35,7 +35,6 @@
           <% unless @cms_section.icon.new_record? %>
             <div id="menuItemImgContainer" class="my-3 ">
               <%= image_tag(main_app.url_for(@cms_section.icon.attachment)) %>
-              <%#= link_to Spree.t(:remove_image), remove_icon_admin_menu_menu_item_path(@cms_page, @cms_section), method: :delete %>
             </div>
           <% end %>
         <div id="<% unless @cms_section.icon.new_record? %>MenuItemImageButton<% end %>">
@@ -60,7 +59,7 @@
       <%= f.select(:linked_resource_type,
           spree_humanize_dropdown_values('Spree::Cms::Sections::Promo',
                                           { const: 'LINKED_RESOURCE_TYPE' }),
-                                          {include_blank: false},
+                                          { include_blank: false },
                                           class: 'link_switcher') %>
       <%= f.error_message_on :linked_resource_type %>
     <% end %>

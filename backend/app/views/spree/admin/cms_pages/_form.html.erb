@@ -28,7 +28,7 @@
         </div>
         <% end %>
 
-        <div class="card-body">
+        <div class="card-body pb-2">
           <div class="row pb-0">
 
             <%= f.field_container :title, class: ['form-group col-6'] do %>
@@ -92,9 +92,13 @@
 
           <% unless %w[new create].include? controller.action_name %>
             <div class="row pb-0">
-              <div class="col-6">
-                  <%= render partial: 'spree/admin/shared/edit_resource_links' %>
-              </div>
+              <% if @cms_page.type != 'Spree::Cms::Pages::StandardPage' %>
+                <div class="col-6">
+                    <%= render partial: 'spree/admin/shared/edit_resource_links' %>
+                </div>
+              <% else %>
+                <div class="col"></div>
+              <% end %>
 
               <div class="col-6 text-right">
                 <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#cmsSeoSettings" aria-expanded="false" aria-controls="collapseExample">
@@ -125,5 +129,8 @@
         <%= f.error_message_on :content %>
       <% end %>
     </div>
+  </div>
+  <div class="d-flex ">
+    <%= render partial: 'spree/admin/shared/edit_resource_links' %>
   </div>
 <% end %>
