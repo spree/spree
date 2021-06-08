@@ -85,7 +85,7 @@ module Spree
     scope :not_deleted, -> { where("#{Spree::Variant.quoted_table_name}.deleted_at IS NULL") }
 
     scope :for_currency_and_available_price_amount, ->(currency = nil) do
-      currency ||= Spree::Config[:currency]
+      currency ||= Spree::Store.default.default_currency
       joins(:prices).where('spree_prices.currency = ?', currency).where('spree_prices.amount IS NOT NULL').distinct
     end
 
@@ -314,12 +314,12 @@ module Spree
         self.price = product.master.price
       end
       if price.present? && currency.nil?
-        self.currency = Spree::Config[:currency]
+        self.currency = Store.default.default_currency
       end
     end
 
     def set_cost_currency
-      self.cost_currency = Spree::Config[:currency] if cost_currency.blank?
+      self.cost_currency = Store.default.default_currency if cost_currency.blank?
     end
 
     def create_stock_items

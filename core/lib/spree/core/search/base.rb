@@ -6,7 +6,7 @@ module Spree
 
         def initialize(params)
           @properties = {}
-          @current_currency = Spree::Config[:currency]
+          @current_currency = params[:current_store].default_currency
           @current_store = params[:current_store]
           @taxon = params[:taxon]
 

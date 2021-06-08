@@ -4,7 +4,7 @@ module Spree
 
     included do
       has_one :default_price,
-              -> { with_deleted.where(currency: Spree::Config[:currency]) },
+              -> { with_deleted.where(currency: Store.default.default_currency) },
               class_name: 'Spree::Price',
               dependent: :destroy
 

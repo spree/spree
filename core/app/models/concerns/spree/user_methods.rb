@@ -60,7 +60,7 @@ module Spree
     end
 
     def total_available_store_credit(currency = nil)
-      currency ||= Spree::Config[:currency]
+      currency ||= Spree::Store.default.default_currency
       store_credits.where(currency: currency).reload.to_a.sum(&:amount_remaining)
     end
 

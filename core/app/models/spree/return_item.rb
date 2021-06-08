@@ -165,7 +165,7 @@ module Spree
     end
 
     def currency
-      return_authorization.try(:currency) || Spree::Config[:currency]
+      return_authorization.try(:currency) || Store.default.default_currency
     end
 
     private
