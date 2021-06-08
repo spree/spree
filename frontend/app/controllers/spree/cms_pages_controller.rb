@@ -6,7 +6,7 @@ module Spree
     include Spree::CacheHelper
 
     def show
-      if @page&.viewable?
+      if @page&.visible?
         @cms_page = @page
       elsif try_spree_current_user&.admin?
         @cms_page = @page

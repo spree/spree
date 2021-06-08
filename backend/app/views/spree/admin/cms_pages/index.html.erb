@@ -11,7 +11,7 @@
   <table class="table" id="pagesTable">
     <thead>
       <th scope="col"><%= Spree.t('admin.cms.title') %></th>
-      <th scope="col"><%= Spree.t(:draft_mode) %></th>
+      <th scope="col"><%= Spree.t('admin.cms.visible') %></th>
       <th scope="col"><%= Spree.t('admin.cms.page_type') %></th>
       <th scope="col"><%= Spree.t('store') %></th>
       <th scope="col"><%= Spree.t('language') %></th>
@@ -24,7 +24,7 @@
             <%= page.title %>
           </td>
           <td>
-            <%= active_badge(page.draft_mode?) %>
+            <%= active_badge(page.visible?) %>
           </td>
           <td>
             <%= spree_humanize_type(page.type) %>

@@ -42,7 +42,7 @@ module Spree
       type == 'Spree::Cms::Pages::Homepage'
     end
 
-    def viewable?
+    def visible?
       visible
     end
 

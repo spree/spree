@@ -582,6 +582,7 @@ en:
         settings_for: 'Options For: <b>%{section} Section</b>'
         page_sections: '%{page_name} Sections'
         page_sections_info: 'The area below represents your %{page_type} displayed in %{store}, add sections and drag them into position'
+        visible: Visible
       linkable:
         seach_for_a_page: Search for a page
       tab:

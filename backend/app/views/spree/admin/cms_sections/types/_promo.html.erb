@@ -28,19 +28,19 @@
       <% end %>
     </div>
   </div>
-  <div class="col-12 col-md-6">
+  <div class="col-12 col-md-6 pt-4">
     <% @cms_section.build_icon unless @cms_section.icon %>
       <%= f.fields_for :icon do |icon_field| %>
         <%= f.field_container :icon_attachment do %>
           <% unless @cms_section.icon.new_record? %>
-            <div id="menuItemImgContainer" class="my-3 ">
+            <figure class="admin-img-holder">
               <%= image_tag(main_app.url_for(@cms_section.icon.attachment)) %>
-            </div>
+            </figure>
           <% end %>
-        <div id="<% unless @cms_section.icon.new_record? %>MenuItemImageButton<% end %>">
           <%= icon_field.file_field :attachment %>
-        </div>
       <% end %>
+
+      <small class="form-text text-muted"><%= Spree.t('admin.cms.promo.aspect_ratio') %></small>
 
       <%= f.field_container :icon_alt do %>
         <% unless @cms_section.icon.new_record? %>

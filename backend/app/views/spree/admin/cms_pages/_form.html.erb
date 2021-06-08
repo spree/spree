@@ -15,7 +15,7 @@
               <% end %>
 
               <span id="visibilityStatus" class="d-flex align-items-center">
-                <span class="page_hidden badge badge-secondary <% if @cms_page.viewable? %>d-none<% end %>">
+                <span class="page_hidden badge badge-secondary <% if @cms_page.visible? %>d-none<% end %>">
                   <%= svg_icon name: "eye-slash-fill.svg", width: '18', height: '18' %> <%= Spree.t('admin.cms.draft_mode') %>
                 </span>
 
@@ -101,7 +101,7 @@
               <% end %>
 
               <div class="col-6 text-right">
-                <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#cmsSeoSettings" aria-expanded="false" aria-controls="collapseExample">
+                <button class="btn btn-outline-secondary" type="button" data-toggle="collapse" data-target="#cmsSeoSettings" aria-expanded="false" aria-controls="collapseExample">
                   <%= raw Spree.t('admin.cms.more_page_settings') %>
                 </button>
               </div>
