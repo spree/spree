@@ -5,15 +5,20 @@
         <div class="card-header col-12">
           <div class="row pb-0">
             <div class="col d-flex justify-content-start">
-              <h5 class="mb-0"> <%= Spree.t(:settings) %></h5>
+
+              <%= f.field_container :visible, class: ['form-group pb-0 mb-0 mr-3'] do %>
+                <div class="custom-control custom-switch">
+                  <%= f.check_box :visible, class: 'custom-control-input', data: {cms_page_id: @cms_page.id} %>
+                  <%= f.label :visible, Spree.t('admin.cms.toggle_page_visibility'), class: 'custom-control-label' %>
+                  <%= f.error_message_on :visible %>
+                </div>
+              <% end %>
             </div>
-            <%= f.field_container :visible, class: ['form-group pb-0 mb-0 mr-3'] do %>
-              <div class="custom-control custom-switch">
-                <%= f.check_box :visible, class: 'custom-control-input' %>
-                <%= f.label :visible, Spree.t('admin.cms.visible'), class: 'custom-control-label' %>
-                <%= f.error_message_on :visible %>
-              </div>
-            <% end %>
+            <div class="d-flex mr-3">
+              <h5 id="visibilityStatus" class="pb-0 mb-0">
+                <span class="page_hidden text-danger <% if @cms_page.viewable? %>d-none<% end %>"><%= svg_icon name: "view.svg", width: '16', height: '16' %> Hidden</span>
+              </h5>
+            </div>
           </div>
         </div>
 

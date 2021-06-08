@@ -560,7 +560,7 @@ en:
         page_type: Page Type
         you_have_no_pages: You have no pages, click the Add New Page button to get started.
         new_page: New Page
-        visible: Visible
+        toggle_page_visibility: Toggle page visibility
         meta_title: Meta Title
         meta_description: Meta Description
         preview_page: Preview Page

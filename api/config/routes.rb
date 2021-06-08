@@ -267,7 +267,12 @@ Spree::Core::Engine.add_routes do
         end
 
         # CMS Pages API
-        resources :cms_pages
+        resources :cms_pages do
+          member do
+            patch :toggle_visibility
+          end
+        end
+
         resource :cms_sections do
           member do
             patch :reposition

@@ -21,10 +21,57 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     })
   }
+
+  const pageVisabilityAttribute = document.querySelectorAll('[data-cms-page-id]')
+  pageVisabilityAttribute.forEach(function (elem) {
+    elem.addEventListener('change', function () {
+      handleToggleVisibility(this)
+    })
+  })
 })
 
+function handleToggleVisibility(obj) {
+  const pageId = parseInt(obj.dataset.cmsPageId, 10)
+  const data = { page_id: pageId }
+
+  fetch(Spree.routes.pages_api_v2 + `/${pageId}/toggle_visibility`, {
+    method: 'PATCH',
+    headers: {
+      Authorization: 'Bearer ' + OAUTH_TOKEN,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(data)
+  })
+    .then(response => {
+      if (response.ok) {
+        reloadPreview()
+        toggleVisibilityState(obj)
+      } else {
+        handleMenuItemMoveError()
+      }
+    })
+    .catch(err => {
+      console.error(err);
+    });
+}
+
+function toggleVisibilityState (obj) {
+  const statusHolder = document.getElementById('visibilityStatus')
+  const pageHidden = statusHolder.querySelector('.page_hidden')
+
+  if (obj.checked) {
+    pageHidden.classList.add('d-none')
+  } else {
+    pageHidden.classList.remove('d-none')
+  }
+}
+
 function reloadPreview () {
-  document.getElementById('pageLivePreview').contentWindow.location.reload();
+  const liveLiewArea = document.getElementById('pageLivePreview')
+
+  if (!liveLiewArea) return
+
+  liveLiewArea.contentWindow.location.reload();
 }
 
 function handleSectionReposition(evt) {
@@ -82,4 +129,3 @@ function updateCmsPageType () {
     updatePageType.classList.remove('d-none')
   }
 }
-
