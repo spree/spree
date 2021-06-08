@@ -196,11 +196,15 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
   end
 
   def set_currency
-    @object.currency = current_currency if model_class.method_defined?(:currency)
-    @object.cost_currency = current_currency if model_class.method_defined?(:cost_currency)
+    return if @object.nil?
+
+    @object.currency = current_currency if model_class.method_defined?(:currency=)
+    @object.cost_currency = current_currency if model_class.method_defined?(:cost_currency=)
   end
 
   def set_store
+    return if @object.nil?
+
     if @object.has_attribute?(:store_id)
       @object.store = current_store
     elsif model_class.method_defined?(:stores)
