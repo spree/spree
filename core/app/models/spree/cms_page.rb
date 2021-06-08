@@ -53,13 +53,15 @@ module Spree
     private
 
     def handle_slug
-      return if homepage?
-
-      self.slug = if slug.blank?
-                    title.to_url
-                  else
-                    slug.to_url
-                  end
+      if homepage?
+        self.slug = nil
+      else
+        self.slug = if slug.blank?
+                      title.to_url
+                    else
+                      slug.to_url
+                    end
+      end
     end
   end
 end
