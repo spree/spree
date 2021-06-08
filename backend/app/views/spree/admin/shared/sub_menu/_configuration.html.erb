@@ -6,7 +6,7 @@
   <%= configurations_sidebar_menu_item(Spree.t(:zones), spree.admin_zones_path) if can? :manage, Spree::Zone %>
   <%= configurations_sidebar_menu_item(Spree.t(:countries), spree.admin_countries_path) if can? :manage, Spree::Country %>
 
-  <% if country = Spree::Country.find_by(id: Spree::Config[:default_country_id]) || Spree::Country.first %>
+  <% if country = current_store.default_country %>
     <%= configurations_sidebar_menu_item(Spree.t(:states), spree.admin_country_states_path(country)) if can? :manage, Spree::Country %>
   <% end %>
 

@@ -1,7 +1,8 @@
 require 'spec_helper'
 
 describe 'Free shipping promotions', type: :feature, js: true do
-  let!(:country) { create(:country, name: 'United States of America', states_required: true) }
+  let(:store) { Spree::Store.default }
+  let(:country) { store.default_country }
   let!(:state) { create(:state, name: 'Alabama', country: country) }
 
   before do

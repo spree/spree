@@ -22,7 +22,7 @@ module Spree
     end
 
     def address_zipcode(form, country, address_id = 'b')
-      country ||= Spree::Country.default
+      country ||= address_default_country
       is_required = country.zipcode_required?
       method_name = Spree.t(:zipcode)
       required = Spree.t(:required)
@@ -38,7 +38,7 @@ module Spree
     end
 
     def address_state(form, country, address_id = 'b')
-      country ||= Spree::Country.find(Spree::Config[:default_country_id])
+      country ||= address_default_country
       have_states = country.states.any?
       state_elements = [
         form.collection_select(:state_id, checkout_zone_applicable_states_for(country).sort_by(&:name),
@@ -80,6 +80,10 @@ module Spree
 
     def checkout_zone_applicable_states_for(country)
       current_store.states_available_for_checkout(country)
+    end
+
+    def address_default_country
+      @address_default_country ||= current_store.default_country
     end
   end
 end
