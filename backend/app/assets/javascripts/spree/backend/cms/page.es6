@@ -55,10 +55,13 @@ function handleTogglePageVisibility(obj) {
 function toggleVisibilityState(obj) {
   const statusHolder = document.getElementById('visibilityStatus')
   const pageHidden = statusHolder.querySelector('.page_hidden')
+  const pageVisible = statusHolder.querySelector('.page_visible')
 
   if (obj.checked) {
     pageHidden.classList.add('d-none')
+    pageVisible.classList.remove('d-none')
   } else {
+    pageVisible.classList.add('d-none')
     pageHidden.classList.remove('d-none')
   }
 }

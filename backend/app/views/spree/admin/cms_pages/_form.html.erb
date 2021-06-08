@@ -2,25 +2,31 @@
   <div class="row sp-pb-0">
     <div class="col-12">
       <div class="card sp-card">
+        <% unless %w[new create].include? controller.action_name %>
         <div class="card-header col-12">
           <div class="row pb-0">
-            <div class="col d-flex justify-content-start">
-
-              <%= f.field_container :visible, class: ['form-group pb-0 mb-0 mr-3'] do %>
-                <div class="custom-control custom-switch">
+            <div class="col d-flex justify-content-start align-items-center">
+              <%= f.field_container :visible, class: ['form-group pb-0 mb-0'] do %>
+                <div class="custom-control custom-switch custom-switch-md">
                   <%= f.check_box :visible, class: 'custom-control-input', data: {cms_page_id: @cms_page.id} %>
-                  <%= f.label :visible, Spree.t('admin.cms.toggle_page_visibility'), class: 'custom-control-label' %>
+                  <label class="custom-control-label" for="cms_page_visible"></label>
                   <%= f.error_message_on :visible %>
                 </div>
               <% end %>
-            </div>
-            <div class="d-flex mr-3">
-              <h5 id="visibilityStatus" class="pb-0 mb-0">
-                <span class="page_hidden text-danger <% if @cms_page.viewable? %>d-none<% end %>"><%= svg_icon name: "view.svg", width: '16', height: '16' %> Hidden</span>
-              </h5>
+
+              <span id="visibilityStatus" class="d-flex align-items-center">
+                <span class="page_hidden badge badge-secondary <% if @cms_page.viewable? %>d-none<% end %>">
+                  <%= svg_icon name: "eye-slash-fill.svg", width: '18', height: '18' %> <%= Spree.t('admin.cms.draft_mode') %>
+                </span>
+
+                <span class="page_visible badge badge-primary <% if @cms_page.draft_mode? %>d-none<% end %>">
+                  <%= svg_icon name: "view.svg", width: '18', height: '18' %> <%= Spree.t('admin.cms.visable') %>
+                </span>
+              </span>
             </div>
           </div>
         </div>
+        <% end %>
 
         <div class="card-body">
           <div class="row pb-0">
