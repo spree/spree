@@ -1,4 +1,5 @@
 //= require spree/backend/global/alerts
+//= require spree/backend/global/api_functions
 //= require spree/backend/global/bootstrap
 //= require spree/backend/global/flatpickr
 //= require spree/backend/global/ransack
