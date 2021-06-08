@@ -1,16 +1,9 @@
 require 'spec_helper'
 
 describe 'Coupon code promotions', type: :feature, js: true do
-  let!(:country) { create(:country, name: 'United States of America', states_required: true) }
-  let!(:state) { create(:state, name: 'Alabama', country: country) }
-  let!(:mug) { create(:product, name: 'RoR Mug', price: 20) }
+  include_context 'checkout setup'
 
-  before do
-    create(:zone)
-    create(:shipping_method)
-    create(:check_payment_method)
-    create(:store)
-  end
+  before { add_to_cart(mug) }
 
   context 'visitor makes checkout as guest without registration' do
     def create_basic_coupon_promotion(code)
@@ -32,23 +25,13 @@ describe 'Coupon code promotions', type: :feature, js: true do
 
     let!(:promotion) { create_basic_coupon_promotion('onetwo') }
 
-    def apply_coupon(code)
-      fill_in 'order_coupon_code', with: code
-      click_button 'shopping-cart-coupon-code-button'
-    end
-
-    # OrdersController
-    context 'on the payment page' do
+    shared_examples 'apply coupon code' do
       it 'informs about an invalid coupon code' do
-        add_to_cart(mug)
-
         apply_coupon('coupon_codes_rule_man')
         expect(page).to have_content(Spree.t(:coupon_code_not_found))
       end
 
       it 'informs the user about a coupon code which has exceeded its usage' do
-        add_to_cart(mug)
-
         promotion.update_column(:usage_limit, 5)
         allow_any_instance_of(promotion.class).to receive_messages(credits_count: 10)
 
@@ -57,8 +40,6 @@ describe 'Coupon code promotions', type: :feature, js: true do
       end
 
       it 'can enter an invalid coupon code, then a real one' do
-        add_to_cart(mug)
-
         apply_coupon('coupon_codes_rule_man')
         expect(page).to have_content(Spree.t(:coupon_code_not_found))
 
@@ -67,13 +48,51 @@ describe 'Coupon code promotions', type: :feature, js: true do
       end
 
       context 'with a promotion' do
-        it 'applies a promotion to an order' do
-          add_to_cart(mug)
-
+        it 'applies a promotion to an order and later removes it' do
           apply_coupon('onetwo')
           expect(page).to have_field('order_applied_coupon_code', with: 'Promotion (Onetwo)')
+          find('.shopping-cart-coupon-code button').click
+          expect(page).not_to have_field('order_applied_coupon_code', with: 'Promotion (Onetwo)')
         end
       end
+    end
+
+    context 'cart' do
+      it_behaves_like 'apply coupon code'
+    end
+
+    context 'checkout address' do
+      before do
+        click_link 'checkout'
+        expect(page).to have_current_path(%r{/checkout/address})
+      end
+
+      it_behaves_like 'apply coupon code'
+    end
+
+    context 'checkout delivery' do
+      before do
+        click_link 'checkout'
+        fill_in 'order_email', with: 'test@example.com'
+        fill_in_address
+        click_button 'Save and Continue'
+        expect(page).to have_current_path(%r{/checkout/delivery})
+      end
+
+      it_behaves_like 'apply coupon code'
+    end
+
+    context 'checkout payment' do
+      before do
+        click_link 'checkout'
+        fill_in 'order_email', with: 'test@example.com'
+        fill_in_address
+        click_button 'Save and Continue'
+        click_button 'Save and Continue'
+        expect(page).to have_current_path(%r{/checkout/payment})
+      end
+
+      it_behaves_like 'apply coupon code'
     end
   end
 end

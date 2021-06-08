@@ -14,7 +14,7 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
 
     context 'defaults to use billing address' do
       before do
-        add_mug_to_cart
+        add_to_cart(mug)
         Spree::Order.last.update_column(:email, 'test@example.com')
         click_link 'checkout'
       end
@@ -32,7 +32,7 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
     # Regression test for #4079
     context 'persists state when on address page' do
       before do
-        add_mug_to_cart
+        add_to_cart(mug)
         click_link 'checkout'
       end
 
@@ -61,7 +61,7 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
         before do
           store.update!(checkout_zone_id: north_america_zone.id)
 
-          add_mug_to_cart
+          add_to_cart(mug)
           click_link 'checkout'
         end
 
@@ -75,7 +75,7 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
           store.update(checkout_zone_id: nil)
           Spree::Config[:checkout_zone] = eu_vat_zone.name
 
-          add_mug_to_cart
+          add_to_cart(mug)
           click_link 'checkout'
         end
 
@@ -89,7 +89,7 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
           store.update(checkout_zone_id: nil)
           Spree::Config.preference_default(:checkout_zone)
 
-          add_mug_to_cart
+          add_to_cart(mug)
           click_link 'checkout'
         end
 
@@ -106,7 +106,7 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
         mug.shipping_category = shipping_method.shipping_categories.first
         mug.save!
 
-        add_mug_to_cart
+        add_to_cart(mug)
         click_link 'checkout'
         fill_in 'order_email', with: 'test@example.com'
       end
@@ -124,7 +124,7 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
     # Regression test for #4306
     context 'free shipping' do
       before do
-        add_mug_to_cart
+        add_to_cart(mug)
         click_link 'checkout'
         fill_in 'order_email', with: 'test@example.com'
       end
@@ -138,7 +138,7 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
 
     # Regression test for #4190
     it 'updates state_lock_version on form submission', js: true do
-      add_mug_to_cart
+      add_to_cart(mug)
       click_link 'checkout'
       fill_in 'order_email', with: 'test@example.com'
 
@@ -184,7 +184,7 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
     end
 
     it 'displays confirmation step', js: true do
-      add_mug_to_cart
+      add_to_cart(mug)
       click_link 'checkout'
       fill_in 'order_email', with: 'test@example.com'
 
@@ -367,7 +367,7 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
     let!(:bag) { create(:product, name: 'RoR Bag') }
 
     it 'transit nicely through checkout steps again' do
-      add_mug_to_cart
+      add_to_cart(mug)
       click_on 'checkout'
       fill_in 'order_email', with: 'test@example.com'
       fill_in_address
@@ -390,7 +390,7 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
 
   context 'from payment step customer goes back to cart', js: true do
     before do
-      add_mug_to_cart
+      add_to_cart(mug)
       click_on 'checkout'
       fill_in 'order_email', with: 'test@example.com'
       fill_in_address
@@ -405,7 +405,8 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
       before do
         visit spree.cart_path
         within '.shopping-cart-item' do
-          find('.shopping-cart-item-quantity .shopping-cart-item-quantity-input').fill_in with: cart_quantity
+          find('.shopping-cart-item-quantity .shopping-cart-item-quantity-input').fill_in(with: cart_quantity).send_keys(:tab)
+          expect(page).to have_content('$59.97') # price of 3 items
         end
         find('body').click
       end
@@ -454,12 +455,12 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
 
     before do
       promotion.actions << action
-      add_mug_to_cart
+      add_to_cart(mug)
     end
 
     it 'makes sure payment reflects order total with discounts' do
-      find('#order_coupon_code').fill_in with: promotion.code
-      find('#shopping-cart-coupon-code-button').click
+      apply_coupon(promotion.code)
+      expect(page).to have_field('order_applied_coupon_code', with: 'Promotion (Huhuhu)')
       click_on 'checkout'
 
       fill_in 'order_email', with: 'test@example.com'
@@ -479,8 +480,7 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
 
     context 'invalid coupon' do
       it 'doesnt create a payment record' do
-        find('#order_coupon_code').fill_in with: 'invalid'
-        find('#shopping-cart-coupon-code-button').click
+        apply_coupon('invalid')
 
         expect(Spree::Payment.count).to eq 0
         expect(page).to have_content(Spree.t(:coupon_code_not_found))
@@ -513,8 +513,8 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
         end
 
         it 'move user to order succesfully placed page' do
-          find('#order_coupon_code').fill_in(with: promotion2.code)
-          find('#shopping-cart-coupon-code-button').click
+          apply_coupon(promotion2.code)
+          expect(page).to have_field('order_applied_coupon_code', with: 'Promotion (test-7450)')
           click_on 'checkout'
 
           fill_in 'order_email', with: 'test@example.com'
@@ -543,7 +543,7 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
 
       allow_any_instance_of(Spree::Order).to receive_messages email: 'spree@commerce.com'
 
-      add_mug_to_cart
+      add_to_cart(mug)
       click_on 'checkout'
     end
 
@@ -565,7 +565,7 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
   context 'save my address' do
     before do
       stock_location.stock_items.update_all(count_on_hand: 1)
-      add_mug_to_cart
+      add_to_cart(mug)
     end
 
     context 'as a guest' do
@@ -599,7 +599,7 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
     let!(:order) { create(:order) }
 
     before do
-      add_mug_to_cart
+      add_to_cart(mug)
       click_on 'checkout'
       fill_in 'order_email', with: 'test@example.com'
       fill_in_address

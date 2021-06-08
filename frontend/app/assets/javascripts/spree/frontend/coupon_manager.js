@@ -1,4 +1,5 @@
 function CouponManager (input) {
+  console.warn('Coupon Manager class is deprecated and will be removed in Spree 5.0. Please use the new coupon_code template with Stimulus controller')
   this.input = input
   this.appliedCouponCodeField = this.input.appliedCouponCodeField
   this.couponCodeField = this.input.couponCodeField
@@ -11,8 +12,8 @@ function CouponManager (input) {
   this.couponErrorIcon.src = Spree.translations.coupon_code_error_icon
 }
 
-CouponManager.prototype.applyCoupon = function () {
-  this.couponCode = $.trim($(this.couponCodeField).val())
+CouponManager.prototype.applyCoupon = function (successCallback = null, failureCallback = null) {
+  this.couponCode = $(this.couponCodeField).val().trim()
   if (this.couponCode !== '') {
     if (this.couponStatus.length === 0) {
       this.couponStatus = $('<div/>', {
@@ -21,15 +22,15 @@ CouponManager.prototype.applyCoupon = function () {
       this.couponCodeField.parent().append(this.couponStatus)
     }
     this.couponStatus.removeClass()
-    this.sendRequest()
+    this.sendRequest(successCallback, failureCallback)
     return this.couponApplied
   } else {
     return true
   }
 }
 
-CouponManager.prototype.removeCoupon = function () {
-  this.couponCode = $.trim($(this.appliedCouponCodeField).attr('data-code'))
+CouponManager.prototype.removeCoupon = function (successCallback = null, failureCallback = null) {
+  this.couponCode = $(this.appliedCouponCodeField).attr('data-code').trim()
   if (this.couponCode !== '') {
     if (this.couponStatus.length === 0) {
       this.couponStatus = $('<div/>', {
@@ -38,56 +39,50 @@ CouponManager.prototype.removeCoupon = function () {
       this.appliedCouponCodeField.parent().append(this.couponStatus)
     }
     this.couponStatus.removeClass()
-    this.sendRemoveRequest()
+    this.sendRemoveRequest(successCallback, failureCallback)
     return this.couponRemoved
   } else {
     return true
   }
 }
 
-CouponManager.prototype.sendRequest = function () {
-  return $.ajax({
-    async: false,
-    method: 'PATCH',
-    url: Spree.routes.api_v2_storefront_cart_apply_coupon_code,
-    dataType: 'json',
-    headers: {
-      'X-Spree-Order-Token': SpreeAPI.orderToken
+CouponManager.prototype.sendRequest = function (successCallback = null, failureCallback = null) {
+  var cc = this
+  SpreeAPI.Storefront.applyCouponCode(
+    this.couponCode,
+    function(_response) {
+      cc.couponCodeField.val('')
+      cc.couponStatus.addClass('alert-success').html(Spree.translations.coupon_code_applied)
+      cc.couponApplied = true
+      if (successCallback) successCallback()
     },
-    data: {
-      coupon_code: this.couponCode
+    function(error) {
+      cc.couponCodeField.val('')
+      cc.couponCodeField.addClass('error')
+      cc.couponButton.addClass('error')
+      cc.couponStatus.addClass('alert-error').html(error)
+      cc.couponStatus.prepend(cc.couponErrorIcon)
+      if (failureCallback) failureCallback()
     }
-  }).done(function () {
-    this.couponCodeField.val('')
-    this.couponStatus.addClass('alert-success').html(Spree.translations.coupon_code_applied)
-    this.couponApplied = true
-  }.bind(this)).fail(function (xhr) {
-    var handler = xhr.responseJSON
-    this.couponCodeField.addClass('error')
-    this.couponButton.addClass('error')
-    this.couponStatus.addClass('alert-error').html(handler['error'])
-    this.couponStatus.prepend(this.couponErrorIcon)
-  }.bind(this))
+  )
 }
 
-CouponManager.prototype.sendRemoveRequest = function () {
-  return $.ajax({
-    async: false,
-    method: 'DELETE',
-    url: Spree.routes.api_v2_storefront_cart_remove_coupon_code(this.couponCode),
-    dataType: 'json',
-    headers: {
-      'X-Spree-Order-Token': SpreeAPI.orderToken
+CouponManager.prototype.sendRemoveRequest = function (successCallback = null, failureCallback = null) {
+  var cc = this
+  SpreeAPI.Storefront.removeCouponCode(
+    this.couponCode,
+    function(_response) {
+      cc.appliedCouponCodeField.val('')
+      cc.couponStatus.addClass('alert-success').html(Spree.translations.coupon_code_removed)
+      cc.couponRemoved = true
+      if (successCallback) successCallback()
+    },
+    function(error) {
+      cc.appliedCouponCodeField.addClass('error')
+      cc.removeCouponButton.addClass('error')
+      cc.couponStatus.addClass('alert-error').html(error)
+      cc.couponStatus.prepend(cc.couponErrorIcon)
+      if (failureCallback) failureCallback()
     }
-  }).done(function () {
-    this.appliedCouponCodeField.val('')
-    this.couponStatus.addClass('alert-success').html(Spree.translations.coupon_code_removed)
-    this.couponRemoved = true
-  }.bind(this)).fail(function (xhr) {
-    var handler = xhr.responseJSON
-    this.appliedCouponCodeField.addClass('error')
-    this.removeCouponButton.addClass('error')
-    this.couponStatus.addClass('alert-error').html(handler['error'])
-    this.couponStatus.prepend(this.couponErrorIcon)
-  }.bind(this))
+  )
 }

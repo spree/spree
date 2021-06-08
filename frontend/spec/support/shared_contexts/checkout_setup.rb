@@ -29,8 +29,9 @@ shared_context 'checkout setup' do
     fill_in 'card_code', with: '123'
   end
 
-  def add_mug_to_cart
-    add_to_cart(mug)
+  def apply_coupon(code)
+    fill_in 'order_coupon_code', with: code
+    find('.shopping-cart-coupon-code button').click
   end
 end
 
