@@ -3,9 +3,9 @@ document.addEventListener('DOMContentLoaded', function() {
   tinymce.init({
     selector: '.spree-rte',
     plugins: [
-      'image table paste code'
+      'image table paste code link'
     ],
     menubar: false,
-    toolbar: 'undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | code '
+    toolbar: 'undo redo | styleselect | bold italic link | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | code '
   });
 })
