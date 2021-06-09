@@ -4,7 +4,7 @@
       <div class="card sp-card">
         <% unless %w[new create].include? controller.action_name %>
         <div class="card-header col-12">
-          <div class="row pb-0">
+          <div class="row no-gutters pb-0">
             <div class="col d-flex justify-content-start align-items-center">
               <%= f.field_container :visible, class: ['form-group pb-0 mb-0'] do %>
                 <div class="custom-control custom-switch custom-switch-md">
@@ -20,8 +20,16 @@
                 </span>
 
                 <span class="page_visible badge badge-primary <% if @cms_page.draft_mode? %>d-none<% end %>">
-                  <%= svg_icon name: "view.svg", width: '18', height: '18' %> <%= Spree.t('admin.cms.visable') %>
+                  <%= svg_icon name: "view.svg", width: '18', height: '18' %> <%= Spree.t('admin.cms.visible') %>
                 </span>
+              </span>
+            </div>
+            <div class="col-auto d-flex align-items-center">
+              <span class="badge badge-secondary mx-2">
+                  <%= svg_icon name: "store.svg", width: '18', height: '18' %> <%= @cms_page.store.unique_name %>
+              </span>
+              <span class="badge badge-secondary">
+                  <%= svg_icon name: "translate.svg", width: '18', height: '18' %> <%= locale_full_name(@cms_page.locale) %>
               </span>
             </div>
           </div>
@@ -125,7 +133,7 @@
   <div class="row">
     <div class="col-12">
       <%= f.field_container :content, class: ['form-group']  do %>
-        <%= f.text_area :content, { rows: 26, class: 'spree-rte'} %>
+        <%= f.text_area :content, { rows: 22, class: 'spree-rte'} %>
         <%= f.error_message_on :content %>
       <% end %>
     </div>

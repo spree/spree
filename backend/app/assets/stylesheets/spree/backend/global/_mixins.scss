@@ -22,21 +22,25 @@
 @mixin switch($res: 'sm') {
     $index: 1rem;
     $mainVal: 1rem;
+    $baseVal: 1rem;
 
     @if $res == 'md' {
         $index: 2rem;
         $mainVal: 1.5rem;
+        $baseVal: 1rem;
         min-height: $index;
     } @else if $res == 'lg' {
         $index: 3rem;
         $mainVal: 2rem;
+        $baseVal: 1rem;
     } @else if $res == 'xl' {
         $index: 4rem;
         $mainVal: 2.5rem;
+        $baseVal: 1rem;
     }
 
     .custom-control-label {
-        padding-left: #{$index};
+        padding-left: #{$baseVal};
         padding-bottom: #{$mainVal};
     }
 
