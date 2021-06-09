@@ -98,10 +98,6 @@ button#cmsSectionEditorFullScreen {
   .edge {
     padding-left: 0;
     padding-right: 0;
-
-    div.row {
-
-    }
   }
 
   .cms_section_action_col {
@@ -178,3 +174,18 @@ body.cmsSectionFullScreenMode {
     left: 28%;
   }
 }
+
+// ToDo: Fix zoom state on difrent screen sizes
+// To get optimal use from the Live Editor Preview.
+// Bootstrap media break points are not going to be suitable as
+// it is in frame in a screen.
+// @include media-breakpoint-up(lg) {
+//   .desktopLiveView {
+//     #pageLivePreview {
+//       width: 125%;
+//       height: 100%;
+//       transform: scale(0.75);
+
+//     }
+//   }
+// }

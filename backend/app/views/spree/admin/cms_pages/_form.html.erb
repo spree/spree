@@ -39,7 +39,7 @@
         <div class="card-body pb-2">
           <div class="row pb-0">
 
-            <%= f.field_container :title, class: ['form-group col-6'] do %>
+            <%= f.field_container :title, class: ['form-group col-12 col-md-6'] do %>
               <%= f.label :title, raw(Spree.t('admin.cms.title') + required_span_tag) %>
               <%= f.text_field :title, class: 'form-control', required: true %>
               <%= f.error_message_on :title %>
@@ -101,14 +101,14 @@
           <% unless %w[new create].include? controller.action_name %>
             <div class="row pb-0">
               <% if @cms_page.type != 'Spree::Cms::Pages::StandardPage' %>
-                <div class="col-6">
+                <div class="col-12 col-md-6">
                     <%= render partial: 'spree/admin/shared/edit_resource_links' %>
                 </div>
               <% else %>
                 <div class="col"></div>
               <% end %>
 
-              <div class="col-6 text-right">
+              <div class="col-12 col-md text-right pt-3 pt-md-0">
                 <button class="btn btn-outline-secondary" type="button" data-toggle="collapse" data-target="#cmsSeoSettings" aria-expanded="false" aria-controls="collapseExample">
                   <%= raw Spree.t('admin.cms.more_page_settings') %>
                 </button>
