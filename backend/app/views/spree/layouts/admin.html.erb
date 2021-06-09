@@ -27,8 +27,10 @@
           id="main-sidebar"
           data-hook="admin_tabs">
           <%= render partial: 'spree/admin/shared/main_menu' %>
-
-          <%= render partial: 'spree/admin/shared/store_switcher' %>
+          <div>
+            <%= render partial: 'spree/admin/shared/version' %>
+            <%= render partial: 'spree/admin/shared/store_switcher' %>
+          </div>
         </aside>
 
         <%#-------------------------------------------------%>

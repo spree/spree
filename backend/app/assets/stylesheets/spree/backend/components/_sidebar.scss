@@ -10,13 +10,11 @@ aside#main-sidebar {
   transition: 0.3s ease;
   z-index: 1041;
 
-  .dropdown {
+  .stores_select {
     width: 100%;
-    .dropdown-toggle {
-      border: none;
-      background: none;
-      width: 100%;
-    }
+    border: none;
+    background: none;
+    width: 100%;
   }
 }
 

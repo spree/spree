@@ -45,7 +45,7 @@ module Spree
           params[:q][:completed_at_lt] = params[:q].delete(:created_at_lt)
         end
 
-        @search = current_store.orders.preload(:user).accessible_by(current_ability, :index).ransack(params[:q])
+        @search = scope.preload(:user).accessible_by(current_ability, :index).ransack(params[:q])
 
         # lazy loading other models here (via includes) may result in an invalid query
         # e.g. SELECT  DISTINCT DISTINCT "spree_orders".id, "spree_orders"."created_at" AS alias_0 FROM "spree_orders"
@@ -60,7 +60,7 @@ module Spree
       end
 
       def new
-        @order = current_store.orders.create(order_params)
+        @order = scope.create(order_params)
         redirect_to cart_admin_order_url(@order)
       end
 
@@ -142,7 +142,7 @@ module Spree
           flash[:error] = @order.errors.full_messages.join(', ')
         end
 
-        redirect_to store_admin_order_url(@order)
+        redirect_to admin_orders_url
       end
 
       def set_channel
@@ -157,13 +157,17 @@ module Spree
 
       private
 
+      def scope
+        current_store.orders
+      end
+
       def order_params
         params[:created_by_id] = try_spree_current_user.try(:id)
         params.permit(:created_by_id, :user_id, :store_id, :channel)
       end
 
       def load_order
-        @order = current_store.orders.includes(:adjustments).find_by!(number: params[:id])
+        @order = scope.includes(:adjustments).find_by!(number: params[:id])
         authorize! action, @order
       end
 
