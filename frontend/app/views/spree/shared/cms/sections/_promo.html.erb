@@ -27,16 +27,23 @@
               data-src="<%= main_app.url_for(section.icon.attachment.variant(resize: '1468x952>')) %>"
               data-srcset="<%= main_app.url_for(section.icon.attachment.variant(resize: '1468x952>')) %>"
               alt="<%= section.icon.alt %>">
+         <% else %>
+          <%= icon( name: 'card-image',
+                    classes: 'text-dark',
+                    width: 26,
+                    height: 26) %>
          <% end %>
 
-        <div class="homepage-bottom-box-inner p-1 p-sm-2 p-md-4 homepage-hpb" role="img" aria-label="New Collection">
-          <div class="homepage-bottom-box-inner-small-text">
-            <%= section.title %>
+         <% if section.title.present? && section.subtitle.present? %>
+          <div class="homepage-bottom-box-inner p-1 p-sm-2 p-md-4 homepage-hpb" role="img" aria-label="New Collection">
+            <div class="homepage-bottom-box-inner-small-text">
+              <%= section.title %>
+            </div>
+            <div class="homepage-bottom-box-inner-big-text">
+              <%= section.subtitle %>
+            </div>
           </div>
-          <div class="homepage-bottom-box-inner-big-text">
-            <%= section.subtitle %>
-          </div>
-        </div>
+        <% end %>
       </div>
     <% end %>
   </div>

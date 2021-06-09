@@ -1,3 +1,7 @@
+<% menu = Spree::Menu.
+              by_store(@cms_section&.cms_page.store).
+              for_brands(@cms_section&.cms_page.locale).menu %>
+
 <div class="row">
   <div class="col-12 col-md-6">
     <%= f.field_container :title, class: ['form-group'] do %>
@@ -19,14 +23,22 @@
     <% end %>
   </div>
   <div class="col-6">
-    <div class="alert alert-info mt-4">
-      Create a Branding Menu with the following settings
-    </div>
+      <% if menu.present? %>
+        <div class="pt-4">
+          <%= raw Spree.t('admin.cms.brand_bar.uses_menu', menu: menu.name) %>
+          <%= link_to Spree.t('admin.cms.click_here'), spree.edit_admin_menu_path(menu) %>
+          <%= raw Spree.t('admin.cms.brand_bar.vist_menu_to_edit', menu: menu.name) %>
+        </div>
+      <% else %>
+        <div class="alert alert-info mt-4">
+          Create a Branding Menu with the following settings
           <span class="badge badge-secondary mx-2">
-          <%= svg_icon name: "store.svg", width: '18', height: '18' %> <%= @cms_section.cms_page.store.unique_name %>
-      </span>
-      <span class="badge badge-secondary">
-        <%= svg_icon name: "translate.svg", width: '18', height: '18' %> <%= locale_full_name(@cms_section.cms_page.locale) %>
-      </span>
+            <%= svg_icon name: "store.svg", width: '18', height: '18' %> <%= @cms_section.cms_page.store.unique_name %>
+          </span>
+          <span class="badge badge-secondary">
+            <%= svg_icon name: "translate.svg", width: '18', height: '18' %> <%= locale_full_name(@cms_section.cms_page.locale) %>
+          </span>
+        </div>
+      <% end %>
   </div>
 </div>

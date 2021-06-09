@@ -1,84 +1,111 @@
 <div class="col-12">
   <div class="row">
     <div class="col-6 mb-3">
-      <%= link_to spree.nested_taxons_path(section.title), class: "homepage-taxon-box mb-3" do %>
-
-      <% if section.image_one.attached? && section.image_one.variable? %>
-        <!-- XS to MD -->
-          <img class="d-md-none lazyload"
-            data-src="<%= main_app.url_for(section.image_one.attachment.variant(resize: '387x250>')) %>"
-            data-srcset="<%= main_app.url_for(section.image_one.attachment.variant(resize: '387x250>')) %>"
-            alt="<%= section.title %>">
-
-        <!-- MD to XL -->
-          <img class="d-none d-md-block d-xl-none lazyload"
-            data-src="<%= main_app.url_for(section.image_one.attachment.variant(resize: '734x476>')) %>"
-            data-srcset="<%= main_app.url_for(section.image_one.attachment.variant(resize: '734x476>')) %>"
-            alt="<%= section.title %>">
-
-        <!-- XL UP -->
-          <img class="d-none d-xl-block lazyload"
-            data-src="<%= main_app.url_for(section.image_one.attachment.variant(resize: '1468x952>')) %>"
-            data-srcset="<%= main_app.url_for(section.image_one.attachment.variant(resize: '1468x952>')) %>"
-            alt="<%= section.title %>">
-       <% end %>
-
-        <div class="homepage-taxon-box-text ">
-          <h3 class="homepage-hpb"><%= section.title %></h3>
-        </div>
-      <% end %>
-      <%= link_to spree.nested_taxons_path(section.button_text), class: "homepage-taxon-box" do %>
-        <% if section.image_three.attached? && section.image_three.variable? %>
+      <% if section.title.present? %>
+          <%= link_to spree.nested_taxons_path(section.title), class: "homepage-taxon-box mb-3 bg-light" do %>
+        <% if section.image_one.attached? && section.image_one.variable? %>
           <!-- XS to MD -->
             <img class="d-md-none lazyload"
-              data-src="<%= main_app.url_for(section.image_three.attachment.variant(resize: '387x250>')) %>"
-              data-srcset="<%= main_app.url_for(section.image_three.attachment.variant(resize: '387x250>')) %>"
-              alt="<%= section.button_text %>">
+              data-src="<%= main_app.url_for(section.image_one.attachment.variant(resize: '387x250>')) %>"
+              data-srcset="<%= main_app.url_for(section.image_one.attachment.variant(resize: '387x250>')) %>"
+              alt="<%= section.title %>">
 
           <!-- MD to XL -->
             <img class="d-none d-md-block d-xl-none lazyload"
-              data-src="<%= main_app.url_for(section.image_three.attachment.variant(resize: '734x476>')) %>"
-              data-srcset="<%= main_app.url_for(section.image_three.attachment.variant(resize: '734x476>')) %>"
-              alt="<%= section.button_text %>">
+              data-src="<%= main_app.url_for(section.image_one.attachment.variant(resize: '734x476>')) %>"
+              data-srcset="<%= main_app.url_for(section.image_one.attachment.variant(resize: '734x476>')) %>"
+              alt="<%= section.title %>">
 
           <!-- XL UP -->
             <img class="d-none d-xl-block lazyload"
-              data-src="<%= main_app.url_for(section.image_three.attachment.variant(resize: '1468x952>')) %>"
-              data-srcset="<%= main_app.url_for(section.image_three.attachment.variant(resize: '1468x952>')) %>"
-              alt="<%= section.button_text %>">
+              data-src="<%= main_app.url_for(section.image_one.attachment.variant(resize: '1468x952>')) %>"
+              data-srcset="<%= main_app.url_for(section.image_one.attachment.variant(resize: '1468x952>')) %>"
+              alt="<%= section.title %>">
+          <% else %>
+            <div style="--aspect-ratio:54/35;">
+               <%= icon( name: 'card-image',
+                classes: 'homepage-taxon-box text-dark',
+                width: 26,
+                height: 26) %>
+            </div>
          <% end %>
 
-        <div class="homepage-taxon-box-text" role="img" aria-label="Sportswear">
-          <h3 class="homepage-hpb"><%= section.button_text %></h3>
-        </div>
+          <div class="homepage-taxon-box-text ">
+            <h3 class="homepage-hpb"><%= section.title %></h3>
+          </div>
+        <% end %>
+      <% end %>
+
+      <% if section.button_text.present? %>
+        <%= link_to spree.nested_taxons_path(section.button_text), class: "homepage-taxon-box bg-light" do %>
+          <% if section.image_three.attached? && section.image_three.variable? %>
+            <!-- XS to MD -->
+              <img class="d-md-none lazyload"
+                data-src="<%= main_app.url_for(section.image_three.attachment.variant(resize: '387x250>')) %>"
+                data-srcset="<%= main_app.url_for(section.image_three.attachment.variant(resize: '387x250>')) %>"
+                alt="<%= section.button_text %>">
+
+            <!-- MD to XL -->
+              <img class="d-none d-md-block d-xl-none lazyload"
+                data-src="<%= main_app.url_for(section.image_three.attachment.variant(resize: '734x476>')) %>"
+                data-srcset="<%= main_app.url_for(section.image_three.attachment.variant(resize: '734x476>')) %>"
+                alt="<%= section.button_text %>">
+
+            <!-- XL UP -->
+              <img class="d-none d-xl-block lazyload"
+                data-src="<%= main_app.url_for(section.image_three.attachment.variant(resize: '1468x952>')) %>"
+                data-srcset="<%= main_app.url_for(section.image_three.attachment.variant(resize: '1468x952>')) %>"
+                alt="<%= section.button_text %>">
+            <% else %>
+              <div style="--aspect-ratio:54/35;">
+                 <%= icon( name: 'card-image',
+                  classes: 'homepage-taxon-box text-dark',
+                  width: 26,
+                  height: 26) %>
+              </div>
+           <% end %>
+
+          <div class="homepage-taxon-box-text" role="img" aria-label="Sportswear">
+            <h3 class="homepage-hpb"><%= section.button_text %></h3>
+          </div>
+        <% end %>
       <% end %>
     </div>
 
     <div class="col-6 mb-3 d-flex flex-column">
-      <%= link_to spree.nested_taxons_path(section.subtitle), class: "homepage-taxon-box flex-grow-1" do %>
-        <% if section.image_two.attached? && section.image_two.variable? %>
-          <!-- XS to MD -->
-            <img class="d-md-none lazyload"
-              data-src="<%= main_app.url_for(section.image_two.variant(resize: '387x250>')) %>"
-              data-srcset="<%= main_app.url_for(section.image_two.variant(resize: '387x250>')) %>"
-              alt="<%= section.subtitle %>">
+      <% if section.button_text.present? %>
+        <%= link_to spree.nested_taxons_path(section.subtitle), class: "homepage-taxon-box flex-grow-1 bg-light" do %>
+          <% if section.image_two.attached? && section.image_two.variable? %>
+            <!-- XS to MD -->
+              <img class="d-md-none lazyload"
+                data-src="<%= main_app.url_for(section.image_two.variant(resize: '387x250>')) %>"
+                data-srcset="<%= main_app.url_for(section.image_two.variant(resize: '387x250>')) %>"
+                alt="<%= section.subtitle %>">
 
-          <!-- MD to XL -->
-            <img class="d-none d-md-block d-xl-none lazyload"
-              data-src="<%= main_app.url_for(section.image_two.variant(resize: '734x476>')) %>"
-              data-srcset="<%= main_app.url_for(section.image_two.variant(resize: '734x476>')) %>"
-              alt="<%= section.subtitle %>">
+            <!-- MD to XL -->
+              <img class="d-none d-md-block d-xl-none lazyload"
+                data-src="<%= main_app.url_for(section.image_two.variant(resize: '734x476>')) %>"
+                data-srcset="<%= main_app.url_for(section.image_two.variant(resize: '734x476>')) %>"
+                alt="<%= section.subtitle %>">
 
-          <!-- XL UP -->
-            <img class="d-none d-xl-block lazyload"
-              data-src="<%= main_app.url_for(section.image_two.variant(resize: '1468x952>')) %>"
-              data-srcset="<%= main_app.url_for(section.image_two.variant(resize: '1468x952>')) %>"
-              alt="<%= section.subtitle %>">
-         <% end %>
+            <!-- XL UP -->
+              <img class="d-none d-xl-block lazyload"
+                data-src="<%= main_app.url_for(section.image_two.variant(resize: '1468x952>')) %>"
+                data-srcset="<%= main_app.url_for(section.image_two.variant(resize: '1468x952>')) %>"
+                alt="<%= section.subtitle %>">
+            <% else %>
+              <div style="--aspect-ratio:27/40; margin: 50px;">
+                 <%= icon( name: 'file-image',
+                  classes: 'homepage-taxon-box text-dark',
+                  width: 26,
+                  height: 26) %>
+              </div>
+           <% end %>
 
-        <div class="homepage-taxon-box-text">
-          <h3 class="homepage-hpb"><%= section.subtitle %></h3>
-        </div>
+          <div class="homepage-taxon-box-text">
+            <h3 class="homepage-hpb"><%= section.subtitle %></h3>
+          </div>
+        <% end %>
       <% end %>
     </div>
   </div>

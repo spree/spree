@@ -554,10 +554,14 @@ en:
         add_new_page: Add New Page
         add_new_section: Add New Section
         content: Content
+        click_here: click here
         draft_mode: Draft Mode
         full_width: Full width
         title: Title
         fit: Fit To
+        brand_bar:
+          uses_menu: This section uses your Spree Menu named <b>%{menu}</b> to manage the images and links,
+          vist_menu_to_edit: to edit this menu.
         full_width_on_small: Full width on small devices
         button_text: Button Text
         exit_to_full_screen_mode: Exit To Full Screen
