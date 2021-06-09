@@ -1,0 +1,17 @@
+<% if can?(:admin, current_store) %>
+  <li class="d-block internationalization-options">
+    <div class="dropdown border-top">
+      <button id="internationalization-button-desktop" type="button" data-toggle="dropdown" class="dropdown-toggle p-3" aria-label="<%= Spree.t(:internationalization) %>">
+        <%= current_store.name %>
+      </button>
+      <div id="internationalization-options-desktop" class="dropdown-menu dropdown-menu-right text-left">
+        <% stores.each do |store| %>
+          <div class="pl-3 d-flex justify-content-between align-items-center stores-list">
+            <%= country_flag_icon(store_country_iso(store)) %>
+            <%= store_link(store, class: "dropdown-item text-uppercase #{'font-weight-bold' if current_store == store}") %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </li>
+<% end %>

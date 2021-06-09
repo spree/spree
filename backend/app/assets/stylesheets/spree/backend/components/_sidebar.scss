@@ -9,6 +9,15 @@ aside#main-sidebar {
   height: 100%;
   transition: 0.3s ease;
   z-index: 1041;
+
+  .dropdown {
+    width: 100%;
+    .dropdown-toggle {
+      border: none;
+      background: none;
+      width: 100%;
+    }
+  }
 }
 
 body.sidebar-open {
