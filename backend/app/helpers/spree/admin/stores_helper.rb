@@ -14,7 +14,7 @@ module Spree
       end
 
       def stores_select()
-        collection_select(nil, nil, @stores, :formatted_url, :name, { selected: current_store.formatted_url, prompt: "Select store" }, { onchange: "window.location.href=`${this.value}/admin`", id: "stores_select", class: "stores_select" })
+        collection_select(nil, nil, @stores, :formatted_url, :name, { selected: current_store.formatted_url, prompt: "Select store" }, { onchange: "window.location.href=`${this.value}/admin`", id: "store_select", class: "stores_select" })
       end
     end
   end
