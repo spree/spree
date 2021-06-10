@@ -20,6 +20,10 @@ module Spree
           def collection_serializer
             Spree::Api::Dependencies.storefront_cms_page_serializer.constantize
           end
+
+          def scope
+            super.by_store(current_store).by_locale(I18n.locale).linkable_pages
+          end
         end
       end
     end
