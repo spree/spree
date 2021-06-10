@@ -11,12 +11,12 @@ module Spree
 
     LINKED_RESOURCE_TYPE = []
 
-    TYPES = ['Spree::Cms::Sections::Hero',
-             'Spree::Cms::Sections::Promo',
+    TYPES = ['Spree::Cms::Sections::FullScreenHeroImage',
+             'Spree::Cms::Sections::HalfScreenPromotionBlock',
              'Spree::Cms::Sections::FeaturedArticle',
-             'Spree::Cms::Sections::Carousel',
-             'Spree::Cms::Sections::TaxonCategory',
-             'Spree::Cms::Sections::Brands']
+             'Spree::Cms::Sections::ProductCarousel',
+             'Spree::Cms::Sections::ThreeTaxonCategoriesBlock',
+             'Spree::Cms::Sections::StaticBrandingBar']
 
     # Overide this per section type
     def boundaries
