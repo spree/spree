@@ -1,60 +1,57 @@
-<div class="<%= width %>">
-  <div class="<%= fit %>">
-    <div class="homepage-hero-image mb-3 position-relative p-0 bg-light">
-      <% if section.icon.present? %>
-        <!-- XS to MD -->
-        <div class="d-sm-none" style="--aspect-ratio:12/5;">
-          <img class="lazyload"
-            data-src="<%= main_app.url_for(section.icon.attachment.variant(resize: '768x320>')) %>"
-            data-srcset="<%= main_app.url_for(section.icon.attachment.variant(resize: '768x320>')) %>"
-            alt="<%= section.icon.alt %>">
-        </div>
-
-        <!-- SM to MD -->
-        <div class="d-none d-sm-block d-md-none" style="--aspect-ratio:12/5;">
-          <img class="lazyload"
-            data-src="<%= main_app.url_for(section.icon.attachment.variant(resize: '990x412>')) %>"
-            data-srcset="<%= main_app.url_for(section.icon.attachment.variant(resize: '990x412>')) %>"
-            alt="<%= section.icon.alt %>">
-        </div>
-
-        <!-- MD to LG -->
-        <div class="d-none d-md-block d-lg-none" style="--aspect-ratio:12/5;">
-          <img class="lazyload"
-            data-src="<%= main_app.url_for(section.icon.attachment.variant(resize: '1200x500>')) %>"
-            data-srcset="<%= main_app.url_for(section.icon.attachment.variant(resize: '1200x500>')) %>"
-           alt="<%= section.icon.alt %>">
-        </div>
-
-        <!-- XL UP -->
-        <div class="d-none d-lg-block" style="--aspect-ratio:12/5;">
-          <img class="lazyload"
-            data-src="<%= main_app.url_for(section.icon.attachment.variant(resize: '2400x1000>')) %>"
-            data-srcset="<%= main_app.url_for(section.icon.attachment.variant(resize: '2400x1000>')) %>"
-            alt="<%= section.icon.alt %>">
-        </div>
-       <% else %>
-        <div style="--aspect-ratio:12/5;">
-         <%= icon( name: 'card-image',
-                   classes: 'text-black-50',
-                   width: 26,
-                   height: 26) %>
-        </div>
-       <% end %>
-
-      <div class="hero-content position-absolute-y-center">
-        <% if section.title.present? %>
-          <div class="homepage-hero-image-text mx-auto pb-0 pb-sm-2 pb-md-3">
-            <%= section.title %>
-          </div>
-        <% end %>
-
-        <% if section.link.present? && section.button_text.present? %>
-          <div>
-            <%= link_to section.button_text, section.link, class: 'btn btn-primary spree-btn px-5' %>
-          </div>
-        <% end %>
-      </div>
+<div class="homepage-hero-image position-relative p-0 bg-light">
+  <% if section.icon.present? %>
+    <!-- XS to MD -->
+    <div class="d-sm-none" style="--aspect-ratio:12/5;">
+      <img class="lazyload"
+        data-src="<%= main_app.url_for(section.icon.attachment.variant(resize: '768x320>')) %>"
+        data-srcset="<%= main_app.url_for(section.icon.attachment.variant(resize: '768x320>')) %>"
+        alt="<%= section.icon.alt %>">
     </div>
+
+    <!-- SM to MD -->
+    <div class="d-none d-sm-block d-md-none" style="--aspect-ratio:12/5;">
+      <img class="lazyload"
+        data-src="<%= main_app.url_for(section.icon.attachment.variant(resize: '990x412>')) %>"
+        data-srcset="<%= main_app.url_for(section.icon.attachment.variant(resize: '990x412>')) %>"
+        alt="<%= section.icon.alt %>">
+    </div>
+
+    <!-- MD to LG -->
+    <div class="d-none d-md-block d-lg-none" style="--aspect-ratio:12/5;">
+      <img class="lazyload"
+        data-src="<%= main_app.url_for(section.icon.attachment.variant(resize: '1200x500>')) %>"
+        data-srcset="<%= main_app.url_for(section.icon.attachment.variant(resize: '1200x500>')) %>"
+       alt="<%= section.icon.alt %>">
+    </div>
+
+    <!-- XL UP -->
+    <div class="d-none d-lg-block" style="--aspect-ratio:12/5;">
+      <img class="lazyload"
+        data-src="<%= main_app.url_for(section.icon.attachment.variant(resize: '2400x1000>')) %>"
+        data-srcset="<%= main_app.url_for(section.icon.attachment.variant(resize: '2400x1000>')) %>"
+        alt="<%= section.icon.alt %>">
+    </div>
+   <% else %>
+    <div style="--aspect-ratio:12/5;">
+     <%= icon( name: 'card-image',
+               classes: 'text-black-50',
+               width: 26,
+               height: 26) %>
+    </div>
+   <% end %>
+
+  <div class="hero-content position-absolute-y-center">
+    <% if section.title.present? %>
+      <div class="homepage-hero-image-text mx-auto pb-0 pb-sm-2 pb-md-3">
+        <%= section.title %>
+      </div>
+    <% end %>
+
+    <% if section.link.present? && section.button_text.present? %>
+      <div>
+        <%= link_to section.button_text, section.link, class: 'btn btn-primary spree-btn px-5' %>
+      </div>
+    <% end %>
   </div>
 </div>
+

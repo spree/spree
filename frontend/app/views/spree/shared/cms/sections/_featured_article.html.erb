@@ -1,26 +1,22 @@
-<<%= element  %> class="<%= width %> mb-3">
-  <div class="<%= fit %>">
-    <div class="homepage-fashion-trends-box">
-      <div class="text-center">
+<div class="homepage-fashion-trends-box">
+  <div class="text-center">
 
-        <% if section.title.present? %>
-          <div class="homepage-fashion-trends-box-summer-text mb-1"><%= section.title %></div>
-        <% end %>
+    <% if section.title.present? %>
+      <div class="homepage-fashion-trends-box-summer-text mb-1"><%= section.title %></div>
+    <% end %>
 
-        <% if section.subtitle.present? %>
-          <div class="homepage-fashion-trends-box-fashion-trends-text mb-2"><%= section.subtitle %></div>
-        <% end %>
+    <% if section.subtitle.present? %>
+      <div class="homepage-fashion-trends-box-fashion-trends-text mb-2"><%= section.subtitle %></div>
+    <% end %>
 
-        <div class="homepage-fashion-trends-box-description-text text-center mb-3">
-          <div class="mb-3">
-            <%= raw section.content %>
-          </div>
-
-          <% if section.button_text.present? && section.link.present? %>
-            <%= link_to section.button_text, section.link, class: 'btn text-center spree-btn btn-outline-primary w-75' %>
-          <% end %>
-        </div>
+    <div class="homepage-fashion-trends-box-description-text text-center mb-3">
+      <div class="mb-3">
+        <%= raw section.content %>
       </div>
+
+      <% if section.button_text.present? && section.link.present? %>
+        <%= link_to section.button_text, section.link, class: 'btn text-center spree-btn btn-outline-primary w-75' %>
+      <% end %>
     </div>
   </div>
-</<%= element  %>>
+</div>
