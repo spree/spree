@@ -10,11 +10,11 @@ module Spree
                     end
 
         fit = case section.fit
-                   when 'Screen'
-                     'edge'
-                   else
-                     ''
-                   end
+              when 'Screen'
+                'edge'
+              else
+                ''
+              end
 
         render 'spree/admin/cms_pages/section_template',
                section: section,

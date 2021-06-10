@@ -17,6 +17,7 @@ module Spree
     before_validation :handle_slug
 
     validates :title, presence: true
+    validates :slug, uniqueness: { allow_nil: true, case_sensitive: true }
 
     scope :visible, -> { where(visible: true) }
     scope :by_store, ->(store) { where(store: store) }
@@ -53,15 +54,13 @@ module Spree
     private
 
     def handle_slug
-      if homepage?
-        self.slug = nil
-      else
-        self.slug = if slug.blank?
-                      title.to_url
-                    else
-                      slug.to_url
-                    end
-      end
+      self.slug = if homepage?
+                    nil
+                  elsif slug.blank?
+                    title&.downcase&.to_url
+                  else
+                    slug&.downcase&.to_url
+                  end
     end
   end
 end
