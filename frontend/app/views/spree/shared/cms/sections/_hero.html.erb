@@ -36,13 +36,13 @@
        <% else %>
         <div style="--aspect-ratio:12/5;">
          <%= icon( name: 'card-image',
-                   classes: 'text-dark',
+                   classes: 'text-black-50',
                    width: 26,
                    height: 26) %>
         </div>
        <% end %>
 
-      <div class="hero-content align-self-center">
+      <div class="hero-content position-absolute-y-center">
         <% if section.title.present? %>
           <div class="homepage-hero-image-text mx-auto pb-0 pb-sm-2 pb-md-3">
             <%= section.title %>

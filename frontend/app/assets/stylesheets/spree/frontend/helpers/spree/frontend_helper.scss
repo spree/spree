@@ -1,3 +1,22 @@
+.position-absolute-center {
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%, -50%);
+}
+
+.position-absolute-x-center {
+  position:absolute;
+  left:50%;
+  transform:translate(-50%, 0);
+}
+
+.position-absolute-y-center {
+  position:absolute;
+  top:50%;
+  transform:translate(0, -50%);
+}
+
 #breadcrumbs {
   padding: 0;
 }
