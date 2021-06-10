@@ -1,0 +1,89 @@
+<div class="row">
+  <div class="col-12 col-md-6">
+    <%= f.field_container :image_one, class: ['form-group'] do %>
+      <% if @cms_section.image_one.attached? && @cms_section.image_one.variable? %>
+        <%= image_tag main_app.url_for(@cms_section.image_one.variant(resize: '244x104>')) %>
+      <% elsif @cms_section.image_one.attached? && @cms_section.image_one.image? %>
+        <%= image_tag main_app.url_for(@cms_section.image_one) %>
+      <% end %>
+      <%= f.field_container :image_one, class: ['form-group'] do %>
+        <%= f.label :image_one, Spree.t(:image_one) %><br>
+        <%= f.file_field :image_one %>
+        <%= f.error_message_on :image_one %>
+      <% end %>
+    <% end %>
+
+    <%= f.field_container :title, class: ['form-group'] do %>
+      <%= f.label :title, Spree.t('admin.cms.taxon_category.section_one') %>
+      <%= f.select :title,
+           options_from_collection_for_select([@cms_section],
+                                           :title, :title, @cms_section.title || nil),
+           { include_blank: true },
+           class: 'select2autocomplete',
+           data: { autocomplete_placeholder_value: Spree.t('admin.navigation.seach_for_a_taxon'),
+                   autocomplete_clear_value: true,
+                   autocomplete_url_value: 'taxons_api_v2',
+                   autocomplete_return_attr_value: 'permalink',
+                   autocomplete_custom_return_id_value: 'permalink' } %>
+      <%= f.error_message_on :title %>
+    <% end %>
+  </div>
+
+  <div class="col-12 col-md-6">
+    <%= f.field_container :image_two, class: ['form-group'] do %>
+      <% if @cms_section.image_two.attached? && @cms_section.image_two.variable? %>
+        <%= image_tag main_app.url_for(@cms_section.image_two.variant(resize: '244x104>')) %>
+      <% elsif @cms_section.image_two.attached? && @cms_section.image_two.image? %>
+        <%= image_tag main_app.url_for(@cms_section.image_two) %>
+      <% end %>
+      <%= f.field_container :image_two, class: ['form-group'] do %>
+        <%= f.label :image_two, Spree.t(:image_two) %><br>
+        <%= f.file_field :image_two %>
+        <%= f.error_message_on :image_two %>
+      <% end %>
+    <% end %>
+    <%= f.field_container :subtitle, class: ['form-group'] do %>
+      <%= f.label :subtitle, Spree.t('admin.cms.taxon_category.section_two') %>
+      <%= f.select :subtitle,
+           options_from_collection_for_select([@cms_section],
+                                           :subtitle, :subtitle, @cms_section.subtitle || nil),
+           { include_blank: true },
+           class: 'select2autocomplete',
+           data: { autocomplete_placeholder_value: Spree.t('admin.navigation.seach_for_a_taxon'),
+                   autocomplete_clear_value: true,
+                   autocomplete_url_value: 'taxons_api_v2',
+                   autocomplete_return_attr_value: 'permalink',
+                   autocomplete_custom_return_id_value: 'permalink' } %>
+      <%= f.error_message_on :subtitle %>
+    <% end %>
+  </div>
+
+  <div class="col-12 col-md-6">
+    <%= f.field_container :image_three, class: ['form-group'] do %>
+      <% if @cms_section.image_three.attached? && @cms_section.image_three.variable? %>
+        <%= image_tag main_app.url_for(@cms_section.image_three.variant(resize: '244x104>')) %>
+      <% elsif @cms_section.image_three.attached? && @cms_section.image_three.image? %>
+        <%= image_tag main_app.url_for(@cms_section.image_three) %>
+      <% end %>
+      <%= f.field_container :image_three, class: ['form-group'] do %>
+        <%= f.label :image_three, Spree.t(:image_three) %><br>
+        <%= f.file_field :image_three %>
+        <%= f.error_message_on :image_three %>
+      <% end %>
+    <% end %>
+    <%= f.field_container :button_text, class: ['form-group'] do %>
+      <%= f.label :button_text, Spree.t('admin.cms.taxon_category.section_three') %>
+      <%= f.select :button_text,
+           options_from_collection_for_select([@cms_section],
+                                           :button_text, :button_text, @cms_section.button_text || nil),
+           { include_blank: true },
+           class: 'select2autocomplete',
+           data: { autocomplete_placeholder_value: Spree.t('admin.navigation.seach_for_a_taxon'),
+                   autocomplete_clear_value: true,
+                   autocomplete_url_value: 'taxons_api_v2',
+                   autocomplete_return_attr_value: 'permalink',
+                   autocomplete_custom_return_id_value: 'permalink' } %>
+      <%= f.error_message_on :button_text %>
+    <% end %>
+  </div>
+</div>
