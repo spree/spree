@@ -18,10 +18,10 @@ module Spree
 
     validates :title, presence: true
 
-    scope :visible, -> { where visible: true }
+    scope :visible, -> { where(visible: true) }
     scope :by_store, ->(store) { where(store: store) }
     scope :by_locale, ->(locale) { where(locale: locale) }
-    scope :linkable_pages, -> { where.not(type: 'Spree::Cms::Pages::Homepage') }
+    scope :linkable, -> { where.not(slug: nil, type: 'Spree::Cms::Pages::Homepage') }
 
     self.whitelisted_ransackable_attributes = %w[title type]
 

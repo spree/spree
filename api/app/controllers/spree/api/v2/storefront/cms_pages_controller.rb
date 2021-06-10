@@ -22,7 +22,7 @@ module Spree
           end
 
           def scope
-            super.by_store(current_store).by_locale(I18n.locale).linkable_pages
+            super.by_store(current_store).by_locale(I18n.locale).linkable
           end
         end
       end
