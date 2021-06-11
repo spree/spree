@@ -20,9 +20,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
   cmsSectionEditorFullScreen.addEventListener('click', function(event) {
     if (this.getAttribute('aria-pressed') === 'true') {
-      document.body.classList.remove('cmsSectionFullScreenMode')
+      document.body.removeAttribute('data-sections-editor-full-screen')
     } else {
-      document.body.classList.add('cmsSectionFullScreenMode')
+      document.body.setAttribute('data-sections-editor-full-screen', '')
     }
   })
 

@@ -566,7 +566,7 @@ en:
         button_text: Button Text
         exit_to_full_screen_mode: Exit To Full Screen
         page_type: Page Type
-        you_have_no_pages: You have no pages, click the Add New Page button to get started.
+        you_have_no_pages: You have no Pages, click the <b>+ Add New Page</b> button to get started.
         new_page: New Page
         toggle_page_visibility: Toggle page visibility
         meta_title: Meta Title
@@ -580,7 +580,7 @@ en:
         click_button_to_change_page_type: Click the <b>%{button_type}</b> button to load the options for this page type.
         more_page_settings: '<span class="more">More</span><span class="less">Less</span> Page Settings'
         seo_settings: SEO Settings
-        no_sections_found_please_add_one: Add your first section to this page by clicking the + Add New Section button above.
+        no_sections_found_please_add_one: Add your first section to this page by clicking the <b>+ Add New Section</b> button above.
         click_create_to_load_new_link: 'Click the <b>Create</b> button below to save your new page section, and load the section settings.'
         click_update_to_load_new_link: 'Click the <b>Update</b> button below to load the new section settings.'
         settings_for: 'Options For: <b>%{section} Section</b>'

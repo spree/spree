@@ -121,7 +121,7 @@ button#cmsSectionEditorFullScreen {
   }
 }
 
-body.cmsSectionFullScreenMode {
+body[data-sections-editor-full-screen] {
   .hide-on-full-screen-mode {
     display: none;
   }

@@ -42,7 +42,7 @@ describe 'New Menu', type: :feature do
       visit spree.new_admin_menu_path
     end
 
-    it 'warns the user that the Unique code has already been taken' do
+    it 'warns the user that the location has already been taken' do
       fill_in 'Name', with: 'Main Menu'
 
       select2 'Header', from: 'Location'

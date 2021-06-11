@@ -61,7 +61,7 @@
             <% end %>
           </div>
 
-          <div class="<% unless %w[new create].include? controller.action_name %>collapse<% end %>" id="cmsSeoSettings">
+          <div class="<% unless %w[new create].include? controller.action_name %>collapse<% end %>" id="cmsPageSettings">
             <div class="row pb-0">
               <div class="col-12"><hr></div>
               <%= f.field_container :cms_page_stores, class: ['form-group col-6'] do %>
@@ -71,7 +71,7 @@
               <% end %>
 
               <%= f.field_container :locale, class: ['form-group col-6'] do %>
-                <%= f.label :locale %>
+                <%= f.label :language %>
                 <%= f.select :locale, options_from_collection_for_select(all_locales_options, :last, :first, @cms_page.locale || I18n.locale), {}, { class: 'select2' } %>
                 <%= f.error_message_on :default_locale %>
               <% end %>
@@ -85,7 +85,7 @@
               <%= f.field_container :slug, class: ['form-group col-6'] do %>
                 <div id="noHomePage">
                   <%= f.label :slug, Spree.t('slug') %>
-                  <%= f.text_field :slug, class: 'form-control' %>
+                  <%= f.text_field :slug, class: 'form-control', disabled: @cms_page.homepage? %>
                   <%= f.error_message_on :slug %>
                 </div>
               <% end %>
@@ -109,7 +109,7 @@
               <% end %>
 
               <div class="col-12 col-md text-right pt-3 pt-md-0">
-                <button class="btn btn-outline-secondary" type="button" data-toggle="collapse" data-target="#cmsSeoSettings" aria-expanded="false" aria-controls="collapseExample">
+                <button id="toggleMorePageSettingsButton" class="btn btn-outline-secondary" type="button" data-toggle="collapse" data-target="#cmsPageSettings" aria-expanded="false" aria-controls="collapsePageSettings">
                   <%= raw Spree.t('admin.cms.more_page_settings') %>
                 </button>
               </div>
