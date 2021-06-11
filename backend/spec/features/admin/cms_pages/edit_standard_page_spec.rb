@@ -8,6 +8,12 @@ describe 'Edit Standard Page', type: :feature do
 
     before do
       visit spree.new_admin_cms_page_path
+      I18n.backend.store_translations(:fr,
+                                      spree: {
+                                        i18n: {
+                                          this_file_language: 'Français (FR)'
+                                        }
+                                      })
 
       fill_in 'Title *', with: 'Privacy Policy'
       fill_in 'Meta Title', with: 'Meta-T-Content'
@@ -38,12 +44,11 @@ describe 'Edit Standard Page', type: :feature do
     it 'allows user to switch language', js: true do
       find('[aria-controls="collapsePageSettings"]').click
 
-      select2 'fr', from: 'Language'
+      select2 'Français (FR)', from: 'Language'
 
       click_on 'Update'
 
-      # TODO: Not the best translation ever.
-      expect(page).to have_text('This File Language')
+      expect(page).to have_text('Français (FR)')
     end
 
     it 'allows user to toggle visability', js: true do

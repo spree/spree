@@ -7,6 +7,12 @@ describe 'Edit Feature Page', type: :feature do
     let!(:store_1) { create(:store) }
 
     before do
+      I18n.backend.store_translations(:fr,
+                                      spree: {
+                                        i18n: {
+                                          this_file_language: 'Français (FR)'
+                                        }
+                                      })
       visit spree.new_admin_cms_page_path
       fill_in 'Title *', with: 'Homepage (English)'
       select 'Feature Page', from: 'cms_page[type]'
@@ -48,12 +54,11 @@ describe 'Edit Feature Page', type: :feature do
     it 'allows user to switch language', js: true do
       find('[aria-controls="collapsePageSettings"]').click
 
-      select2 'fr', from: 'Language'
+      select2 'Français (FR)', from: 'Language'
 
       click_on 'Update'
 
-      # TODO: Not the best translation ever.
-      expect(page).to have_text('This File Language')
+      expect(page).to have_text('Français (FR)')
     end
   end
 end
