@@ -43,7 +43,7 @@ module Spree
     end
 
     def main_nav_image(image_path, title = '')
-      image_url = asset_path(asset_exists?(image_path) ? image_path : 'noimage/plp.png')
+      image_url = asset_path(asset_exists?(image_path) ? image_path : 'noimage/plp.svg')
 
       lazy_image(
         src: image_url,

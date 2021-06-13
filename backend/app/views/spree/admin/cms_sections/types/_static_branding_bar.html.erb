@@ -1,6 +1,6 @@
 <% menu = Spree::Menu.
-              by_store(@cms_section&.cms_page.store).
-              for_brands(@cms_section&.cms_page.locale).menu %>
+              by_store(@cms_section&.cms_page.store)&.
+              for_brands(@cms_section&.cms_page.locale)&.menu %>
 
 <div class="row">
   <div class="col-12 col-md-6">

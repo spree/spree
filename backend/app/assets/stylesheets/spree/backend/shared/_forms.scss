@@ -37,6 +37,14 @@ input[type=number].hide-number-toggle {
   -moz-appearance: textfield;
 }
 
+input[type="file"] {
+  width: fit-content;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 
 // Remove the default 5px outlines and box-shadows
 // from all inputs on focus.

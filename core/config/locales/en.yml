@@ -557,6 +557,7 @@ en:
         click_here: click here
         draft_mode: Draft Mode
         full_width: Full width
+        link_to_taxon: Link to Taxon
         title: Title
         fit: Fit To
         brand_bar:
@@ -583,10 +584,17 @@ en:
         no_sections_found_please_add_one: Add your first section to this page by clicking the <b>+ Add New Section</b> button above.
         click_create_to_load_new_link: 'Click the <b>Create</b> button below to save your new page section, and load the section settings.'
         click_update_to_load_new_link: 'Click the <b>Update</b> button below to load the new section settings.'
-        settings_for: 'Options For: <b>%{section} Section</b>'
+        settings_for: 'Options For: <b>%{section}</b>'
         page_sections: '%{page_name} Sections'
         page_sections_info: 'The area below represents your %{page_type} displayed in %{store}, add sections and drag them into position'
         visible: Visible
+        three_taxon_block:
+          section_one: Section One
+          section_one_info: This section is displayed in the top left of the three image block. Please use an image with an aspect ratio of 5/9.
+          section_two: Section Two
+          section_two_info: This section is displayed on the right as the tall banner. Please use an image with an aspect ratio of 5/9.
+          section_three: Section Three
+          section_three_info: This section is displayed on the left below section one. Please use an image with an aspect ratio of 5/9.
       linkable:
         seach_for_a_page: Search for a page
       tab:

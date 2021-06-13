@@ -7,24 +7,24 @@
               homepage-bottom-box"
               style="--aspect-ratio:54/35;">
 
-    <% if section.icon.present? %>
+    <% if section.image_one.present? %>
       <!-- XS to MD -->
         <img class="d-md-none lazyload"
-          data-src="<%= main_app.url_for(section.icon.attachment.variant(resize: '387x250>')) %>"
-          data-srcset="<%= main_app.url_for(section.icon.attachment.variant(resize: '387x250>')) %>"
-          alt="<%= section.icon.alt %>">
+          data-src="<%= main_app.url_for(section.image_one.attachment.variant(resize: '387x250>')) %>"
+          data-srcset="<%= main_app.url_for(section.image_one.attachment.variant(resize: '387x250>')) %>"
+          alt="<%= section&.title %>">
 
       <!-- MD to XL -->
         <img class="d-none d-md-block d-xl-none lazyload"
-          data-src="<%= main_app.url_for(section.icon.attachment.variant(resize: '734x476>')) %>"
-          data-srcset="<%= main_app.url_for(section.icon.attachment.variant(resize: '734x476>')) %>"
-          alt="<%= section.icon.alt %>">
+          data-src="<%= main_app.url_for(section.image_one.attachment.variant(resize: '734x476>')) %>"
+          data-srcset="<%= main_app.url_for(section.image_one.attachment.variant(resize: '734x476>')) %>"
+          alt="<%= section&.title %>">
 
       <!-- XL UP -->
         <img class="d-none d-xl-block lazyload"
-          data-src="<%= main_app.url_for(section.icon.attachment.variant(resize: '1468x952>')) %>"
-          data-srcset="<%= main_app.url_for(section.icon.attachment.variant(resize: '1468x952>')) %>"
-          alt="<%= section.icon.alt %>">
+          data-src="<%= main_app.url_for(section.image_one.attachment.variant(resize: '1468x952>')) %>"
+          data-srcset="<%= main_app.url_for(section.image_one.attachment.variant(resize: '1468x952>')) %>"
+          alt="<%= section&.title %>">
      <% else %>
       <%= icon( name: 'card-image',
                 classes: 'text-black-50',

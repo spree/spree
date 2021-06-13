@@ -5,6 +5,17 @@ module Spree
     acts_as_list scope: :cms_page
     belongs_to :cms_page, touch: true
 
+    # Six images in one section should cover a large number of potential use cases.
+    # The standardization of putting them here means we can offer them up through
+    # the API serializer vs hoping they get added per section basis and the naming
+    # matches those used in the API serializer attributes.
+    has_one_attached :image_one
+    has_one_attached :image_two
+    has_one_attached :image_three
+    has_one_attached :image_four
+    has_one_attached :image_five
+    has_one_attached :image_six
+
     belongs_to :linked_resource, polymorphic: true
 
     default_scope { order(position: :asc) }

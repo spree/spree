@@ -29,28 +29,23 @@
     </div>
   </div>
   <div class="col-12 col-md-6 pt-4">
-    <% @cms_section.build_icon unless @cms_section.icon %>
-      <%= f.fields_for :icon do |icon_field| %>
-        <%= f.field_container :icon_attachment do %>
-          <% unless @cms_section.icon.new_record? %>
-            <figure class="admin-img-holder">
-              <%= image_tag(main_app.url_for(@cms_section.icon.attachment)) %>
-            </figure>
-          <% end %>
-          <%= icon_field.file_field :attachment %>
+      <%= f.field_container :image_one, class: ['form-group'] do %>
+        <% if @cms_section.image_one.attached? && @cms_section.image_one.variable? %>
+          <figure class="admin-img-holder">
+            <%= image_tag main_app.url_for(@cms_section.image_one.variant(resize: '244x104>')) %>
+          </figure>
+        <% elsif @cms_section.image_one.attached? && @cms_section.image_one.image? %>
+          <figure class="admin-img-holder">
+            <%= image_tag main_app.url_for(@cms_section.image_one) %>
+          </figure>
+        <% end %>
+        <%= f.field_container :image_one, class: ['form-group mb-0'] do %>
+          <%= f.file_field :image_one %>
+          <%= f.error_message_on :image_one %>
+        <% end %>
       <% end %>
 
       <small class="form-text text-muted"><%= Spree.t('admin.cms.promo.aspect_ratio') %></small>
-
-      <%= f.field_container :icon_alt do %>
-        <% unless @cms_section.icon.new_record? %>
-          <div class="form-group my-3">
-            <%= icon_field.label :alt, Spree.t('image_alt_text') %>
-            <%= icon_field.text_field :alt, class: 'form-control' %>
-          </div>
-        <% end %>
-      <% end %>
-    <% end %>
   </div>
   <div class="col-12"><hr></div>
   <div class="col-12 col-md-6">

@@ -2,9 +2,7 @@ class CreateSpreeCmsSections < ActiveRecord::Migration[5.2]
   def change
     create_table :spree_cms_sections do |t|
       t.column :name, :string, null: false
-      t.column :title, :string
-      t.column :subtitle, :string
-      t.column :button_text, :string
+      t.column :options, :text
       t.column :content, :text
       t.column :width, :string
       t.column :full_width_on_small, :boolean, default: false

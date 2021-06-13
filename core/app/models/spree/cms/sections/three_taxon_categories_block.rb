@@ -2,9 +2,9 @@ module Spree::Cms::Sections
   class ThreeTaxonCategoriesBlock < Spree::CmsSection
     after_initialize :default_values
 
-    has_one_attached :image_one
-    has_one_attached :image_two
-    has_one_attached :image_three
+    store :options, accessors: [:permalink_one, :title_one,
+                                :permalink_two, :title_two,
+                                :permalink_three, :title_three], coder: JSON
 
     def widths
       ['Full']
