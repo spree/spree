@@ -65,17 +65,9 @@ module Spree
     def setup_assets
       @lib_name = 'spree'
       %w{javascripts stylesheets images}.each do |path|
-        if Spree::Core::Engine.frontend_available? || Rails.env.test?
-          empty_directory "vendor/assets/#{path}/spree/frontend"
-        end
         if Spree::Core::Engine.backend_available? || Rails.env.test?
           empty_directory "vendor/assets/#{path}/spree/backend"
         end
-      end
-
-      if Spree::Core::Engine.frontend_available? || Rails.env.test?
-        template 'vendor/assets/javascripts/spree/frontend/all.js'
-        template 'vendor/assets/stylesheets/spree/frontend/all.css'
       end
 
       if Spree::Core::Engine.backend_available? || Rails.env.test?

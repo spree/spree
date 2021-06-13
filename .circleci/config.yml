@@ -27,7 +27,7 @@ run_tests: &run_tests
           - spree-bundle-v8-ruby-2-7
     - run:
         name: Run rspec in parallel
-        command: BUNDLE_GEMFILE=../Gemfile ./bin/build-ci.rb test
+        command: ./bin/build-ci.rb test
     - store_artifacts:
         path: /tmp/test-artifacts
         destination: test-artifacts
@@ -48,7 +48,7 @@ run_tests_3_0: &run_tests_3_0
           - spree-bundle-v8-ruby-3-0
     - run:
         name: Run rspec in parallel
-        command: BUNDLE_GEMFILE=../Gemfile ./bin/build-ci.rb test
+        command: ./bin/build-ci.rb test
     - store_artifacts:
         path: /tmp/test-artifacts
         destination: test-artifacts
@@ -134,7 +134,7 @@ jobs:
           ./bin/build-ci.rb install
     - run:
         name: Run rspec in parallel
-        command: BUNDLE_GEMFILE=../Gemfile ./bin/build-ci.rb test
+        command: ./bin/build-ci.rb test
     - store_artifacts:
         path: /tmp/test-artifacts
         destination: test-artifacts
@@ -162,7 +162,7 @@ jobs:
           ./bin/build-ci.rb install
     - run:
         name: Run rspec in parallel
-        command: BUNDLE_GEMFILE=../Gemfile ./bin/build-ci.rb test
+        command: ./bin/build-ci.rb test
     - store_artifacts:
         path: /tmp/test-artifacts
         destination: test-artifacts
@@ -201,7 +201,7 @@ jobs:
             - spree-bundle-v8-ruby-3-0
       - run:
           name: Run rspec in parallel
-          command: BUNDLE_GEMFILE=../Gemfile ./bin/build-ci.rb test
+          command: ./bin/build-ci.rb test
       - store_artifacts:
           path: /tmp/test-artifacts
           destination: test-artifacts

@@ -74,6 +74,7 @@ RUBY
 else
 cat <<RUBY >> Gemfile
 gem 'spree', path: '..'
+gem 'spree_frontend', path: '../frontend'
 $SPREE_AUTH_DEVISE_GEM
 $SPREE_GATEWAY_GEM
 gem 'spree_i18n', github: 'spree-contrib/spree_i18n', branch: 'master'
@@ -106,6 +107,7 @@ bundle install --gemfile Gemfile
 bundle exec rails db:drop || true
 bundle exec rails db:create
 bundle exec rails g spree:install --auto-accept --user_class=Spree::User --enforce_available_locales=true --copy_storefront=false
+bundle exec rails g spree:frontend:install
 bundle exec rails g spree:mailers_preview
 bundle exec rails g spree:auth:install
 bundle exec rails g spree_gateway:install
