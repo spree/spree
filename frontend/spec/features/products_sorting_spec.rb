@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'Products sorting', type: :feature, js: true do
+describe 'Products sorting', type: :feature, js: true, retry: 3 do
   let(:store) { Spree::Store.default }
 
   def wait_for_turbolinks
