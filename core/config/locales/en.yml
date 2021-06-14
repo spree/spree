@@ -565,7 +565,7 @@ en:
           vist_menu_to_edit: to edit this menu.
         full_width_on_small: Full width on small devices
         button_text: Button Text
-        exit_to_full_screen_mode: Exit To Full Screen
+        go_to_fullscreen_section_manager: Go To Fullscreen Section Manager
         page_type: Page Type
         you_have_no_pages: You have no Pages, click the <b>+ Add New Page</b> button to get started.
         new_page: New Page
@@ -589,12 +589,12 @@ en:
         page_sections_info: 'The area below represents your %{page_type} displayed in %{store}, add sections and drag them into position'
         visible: Visible
         three_taxon_block:
-          section_one: Section One
-          section_one_info: This section is displayed in the top left of the three image block. Please use an image with an aspect ratio of 5/9.
-          section_two: Section Two
-          section_two_info: This section is displayed on the right as the tall banner. Please use an image with an aspect ratio of 5/9.
-          section_three: Section Three
-          section_three_info: This section is displayed on the left below section one. Please use an image with an aspect ratio of 5/9.
+          top_left_block: Top Left Block
+          section_one_info: 'This section is displayed in the top left of the three image block. Please use an image with an aspect ratio of 18:13 (1080px x 780px).'
+          right_tall_block: Right Tall Block
+          section_two_info: 'This section is displayed on the right as the tall banner. Please use an image with an aspect ratio of 27:40 (1080px x 1600px).'
+          bottom_left_block: Bottom Left Block
+          section_three_info: 'This section is displayed on the left below section one. Please use an image with an aspect ratio of 18:13 (1080px x 780px).'
       linkable:
         seach_for_a_page: Search for a page
       tab:

@@ -96,4 +96,21 @@
       <small class="text-muted"><%= Spree.t('admin.cms.three_taxon_block.section_two_info') %></small>
     </div>
   </div>
+
+<div class="col-12"><hr></div>
+  <div class="col-6">
+    <%= f.field_container :fit, class: ['form-group'] do %>
+      <%= f.label :fit, Spree.t('admin.cms.fit') %>
+      <%= f.select(:fit, @cms_section.boundaries, {include_blank: false}, class: 'select2') %>
+      <%= f.error_message_on :fit %>
+    <% end %>
+  </div>
+
+  <div class="col-6">
+    <%= f.field_container :gutters, class: ['form-group'] do %>
+      <%= f.label :gutters, Spree.t('admin.cms.set_gutters') %>
+      <%= f.select(:gutters, @cms_section.gutters_sizes, {include_blank: false}, class: 'select2') %>
+      <%= f.error_message_on :gutters %>
+    <% end %>
+  </div>
 </div>

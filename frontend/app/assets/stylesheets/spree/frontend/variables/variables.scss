@@ -62,7 +62,7 @@ $container-max-widths: (
 );
 
 // helper variables
-$container-padding: $grid-gutter-width;
+$container-padding: $grid-gutter-width / 2;
 $photo-width-to-height-ratio: 30001/ 37500;
 $photo-width-to-height-ratio-zoom: 28015 / 37500;
 $thumbnails-carousel-single-height: 100% / $photo-width-to-height-ratio;

@@ -1,7 +1,7 @@
 <div class="row pb-0">
   <div class="col-12 col-md-4 mb-3">
     <div class="card p-3">
-      <h5 class="border-bottom"><%= Spree.t('admin.cms.three_taxon_block.section_one') %></h5>
+      <h5 class="border-bottom"><%= Spree.t('admin.cms.three_taxon_block.top_left_block') %></h5>
       <%= f.field_container :image_one, class: ['form-group'] do %>
         <% if @cms_section.image_one.attached? && @cms_section.image_one.variable? %>
           <figure class="admin-img-holder">
@@ -44,7 +44,7 @@
 
   <div class="col-12 col-md-4 mb-3">
     <div class="card p-3">
-      <h5 class="border-bottom"><%= Spree.t('admin.cms.three_taxon_block.section_two') %></h5>
+      <h5 class="border-bottom"><%= Spree.t('admin.cms.three_taxon_block.right_tall_block') %></h5>
       <%= f.field_container :image_two, class: ['form-group'] do %>
         <% if @cms_section.image_two.attached? && @cms_section.image_two.variable? %>
           <figure class="admin-img-holder">
@@ -87,7 +87,7 @@
 
   <div class="col-12 col-md-4 mb-3">
     <div class="card p-3">
-      <h5 class="border-bottom"><%= Spree.t('admin.cms.three_taxon_block.section_three') %></h5>
+      <h5 class="border-bottom"><%= Spree.t('admin.cms.three_taxon_block.bottom_left_block') %></h5>
       <%= f.field_container :image_three, class: ['form-group'] do %>
         <% if @cms_section.image_three.attached? && @cms_section.image_three.variable? %>
           <figure class="admin-img-holder">
@@ -126,5 +126,12 @@
       <% end %>
       <small class="text-muted"><%= Spree.t('admin.cms.three_taxon_block.section_three_info') %></small>
     </div>
+  </div>
+  <div class="col-12">
+    <%= f.field_container :fit, class: ['form-group'] do %>
+      <%= f.label :fit, Spree.t('admin.cms.fit') %>
+      <%= f.select(:fit, @cms_section.boundaries, {include_blank: false}, class: 'select2') %>
+      <%= f.error_message_on :fit %>
+    <% end %>
   </div>
 </div>

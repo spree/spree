@@ -13,6 +13,11 @@
   margin-bottom: #{$grid-gutter-width};
 }
 
+.match-col-gap {
+  padding-left: $container-padding;
+  padding-right: $container-padding;
+}
+
 .homepage {
   &-hero-image {
     display: flex;
@@ -70,17 +75,6 @@
 
   &-taxon-box {
     display: block;
-    flex-direction: column;
-    height: 140px;
-    position: relative;
-    overflow: hidden;
-
-    img {
-      display: block;
-      object-fit: cover;
-      width: 100%;
-      height: 100%;
-    }
 
     h3 {
       margin: 0;
@@ -100,14 +94,6 @@
       @include media-breakpoint-up(lg) {
         font-size: font-px-to-rem(32px);
       }
-    }
-
-    @include media-breakpoint-up(md) {
-      height: 324px;
-    }
-
-    @include media-breakpoint-up(lg) {
-      height: 390px;
     }
 
     &-text {
