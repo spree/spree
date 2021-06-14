@@ -19,12 +19,6 @@
     <% end %>
 
     <div class="row">
-      <%= f.field_container :width, class: ['form-group col-6'] do %>
-        <%= f.label :width, Spree.t('admin.cms.width') %>
-        <%= f.select(:width, @cms_section.widths, {include_blank: false}, class: 'select2') %>
-        <%= f.error_message_on :width %>
-      <% end %>
-
       <%= f.field_container :fit, class: ['form-group col-6'] do %>
         <%= f.label :fit, Spree.t('admin.cms.fit') %>
         <%= f.select(:fit, @cms_section.boundaries, {include_blank: false}, class: 'select2') %>
@@ -33,10 +27,10 @@
     </div>
   </div>
   <div class="col-12 col-md-8">
-    <%= f.field_container :content, class: ['form-group'] do %>
-      <%= f.label :width, Spree.t('content') %>
-      <%= f.text_area :content, { rows: "20", class: 'form-control spree-rte' } %>
-      <%= f.error_message_on :content %>
+    <%= f.field_container :rte_content, class: ['form-group'] do %>
+      <%= f.label :rte_content, Spree.t('content') %>
+      <%= f.text_area :rte_content, { rows: "20", class: 'form-control spree-rte' } %>
+      <%= f.error_message_on :rte_content %>
     <% end %>
   </div>
   <div class="col-12"><hr></div>

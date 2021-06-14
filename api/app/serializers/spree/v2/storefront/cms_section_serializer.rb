@@ -4,8 +4,7 @@ module Spree
       class CmsSectionSerializer < BaseSerializer
         set_type :cms_section
 
-        attributes :name, :options, :content, :width,
-                   :full_width_on_small, :fit, :type, :position
+        attributes :name, :content, :settings, :link, :fit, :type, :position
 
         attribute :image_one_path do |section|
           if section.image_one_path.attached?
@@ -47,6 +46,10 @@ module Spree
             url_helpers = Rails.application.routes.url_helpers
             url_helpers.rails_representation_path(section.image_six_path, only_path: true)
           end
+        end
+
+        attribute :is_fullscreen do |section|
+          section.fullscreen?
         end
 
         belongs_to :cms_page

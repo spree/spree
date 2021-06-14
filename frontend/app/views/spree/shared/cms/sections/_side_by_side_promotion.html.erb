@@ -1,0 +1,97 @@
+<div class="col-12 col-lg-6">
+  <%= link_to spree.nested_taxons_path(section.permalink_one) do %>
+    <div class="d-flex
+                align-items-end
+                justify-content-center
+                bg-light text-center
+                overflow-hidden
+                homepage-bottom-box"
+                style="--aspect-ratio:54/35;">
+
+      <% if section.image_one.present? %>
+        <!-- XS to MD -->
+          <img class="d-md-none lazyload"
+            data-src="<%= main_app.url_for(section.image_one.attachment.variant(resize: '387x250>')) %>"
+            data-srcset="<%= main_app.url_for(section.image_one.attachment.variant(resize: '387x250>')) %>"
+            alt="<%= section&.title_one %>">
+
+        <!-- MD to XL -->
+          <img class="d-none d-md-block d-xl-none lazyload"
+            data-src="<%= main_app.url_for(section.image_one.attachment.variant(resize: '734x476>')) %>"
+            data-srcset="<%= main_app.url_for(section.image_one.attachment.variant(resize: '734x476>')) %>"
+            alt="<%= section&.title_one %>">
+
+        <!-- XL UP -->
+          <img class="d-none d-xl-block lazyload"
+            data-src="<%= main_app.url_for(section.image_one.attachment.variant(resize: '1468x952>')) %>"
+            data-srcset="<%= main_app.url_for(section.image_one.attachment.variant(resize: '1468x952>')) %>"
+            alt="<%= section&.title_one %>">
+       <% else %>
+        <%= icon( name: 'card-image',
+                  classes: 'text-black-50',
+                  width: 26,
+                  height: 26) %>
+       <% end %>
+
+       <% if section.title_one.present? || section.subtitle_one.present? %>
+        <div class="homepage-bottom-box-inner p-1 p-sm-2 p-md-4 homepage-hpb" role="img" aria-label="New Collection">
+          <div class="homepage-bottom-box-inner-small-text">
+            <%= section&.title_one %>
+          </div>
+          <div class="homepage-bottom-box-inner-big-text">
+            <%= section.subtitle_one %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+</div>
+
+<div class="col-12 col-lg-6">
+  <%= link_to spree.nested_taxons_path(section.permalink_two) do %>
+    <div class="d-flex
+                align-items-end
+                justify-content-center
+                bg-light text-center
+                overflow-hidden
+                homepage-bottom-box"
+                style="--aspect-ratio:54/35;">
+
+      <% if section.image_two.present? %>
+        <!-- XS to MD -->
+          <img class="d-md-none lazyload"
+            data-src="<%= main_app.url_for(section.image_two.attachment.variant(resize: '387x250>')) %>"
+            data-srcset="<%= main_app.url_for(section.image_two.attachment.variant(resize: '387x250>')) %>"
+            alt="<%= section&.title_two %>">
+
+        <!-- MD to XL -->
+          <img class="d-none d-md-block d-xl-none lazyload"
+            data-src="<%= main_app.url_for(section.image_two.attachment.variant(resize: '734x476>')) %>"
+            data-srcset="<%= main_app.url_for(section.image_two.attachment.variant(resize: '734x476>')) %>"
+            alt="<%= section&.title_two %>">
+
+        <!-- XL UP -->
+          <img class="d-none d-xl-block lazyload"
+            data-src="<%= main_app.url_for(section.image_two.attachment.variant(resize: '1468x952>')) %>"
+            data-srcset="<%= main_app.url_for(section.image_two.attachment.variant(resize: '1468x952>')) %>"
+            alt="<%= section&.title_two %>">
+       <% else %>
+        <%= icon( name: 'card-image',
+                  classes: 'text-black-50',
+                  width: 26,
+                  height: 26) %>
+       <% end %>
+
+       <% if section.title_two.present? || section.subtitle_two.present? %>
+        <div class="homepage-bottom-box-inner p-1 p-sm-2 p-md-4 homepage-hpb" role="img" aria-label="New Collection">
+          <div class="homepage-bottom-box-inner-small-text">
+            <%= section&.title_two %>
+          </div>
+          <div class="homepage-bottom-box-inner-big-text">
+            <%= section.subtitle_two %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+</div>

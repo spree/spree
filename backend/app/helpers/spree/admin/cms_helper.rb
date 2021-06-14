@@ -2,13 +2,6 @@ module Spree
   module Admin
     module CmsHelper
       def build_page_section(section)
-        css_width = case section.width
-                    when 'Half'
-                      'col-6'
-                    else
-                      'col-12'
-                    end
-
         fit = case section.fit
               when 'Screen'
                 'edge'
@@ -18,7 +11,6 @@ module Spree
 
         render 'spree/admin/cms_pages/section_template',
                section: section,
-               width: css_width,
                fit: fit
       end
 

@@ -23,20 +23,18 @@ module Spree
     LINKED_RESOURCE_TYPE = []
 
     TYPES = ['Spree::Cms::Sections::FullScreenHeroImage',
-             'Spree::Cms::Sections::HalfScreenPromotionBlock',
              'Spree::Cms::Sections::FeaturedArticle',
              'Spree::Cms::Sections::ProductCarousel',
              'Spree::Cms::Sections::ThreeTaxonCategoriesBlock',
-             'Spree::Cms::Sections::StaticBrandingBar']
+             'Spree::Cms::Sections::StaticBrandingBar',
+             'Spree::Cms::Sections::SideBySidePromotion']
 
-    # Overide this per section type
     def boundaries
       ['Container', 'Screen']
     end
 
-    # Overide this per section type
-    def widths
-      ['Full', 'Half']
+    def fullscreen?
+      fit == 'Screen'
     end
   end
 end

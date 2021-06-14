@@ -1,4 +1,4 @@
-<div class="homepage-fashion-trends-box">
+<div class="col-12 homepage-fashion-trends-box">
   <div class="text-center">
 
     <% if section.title.present? %>
@@ -11,7 +11,7 @@
 
     <div class="homepage-fashion-trends-box-description-text text-center mb-3">
       <div class="mb-3">
-        <%= raw section.content %>
+        <%= raw section.rte_content %>
       </div>
 
       <% if section.button_text.present? && section.link.present? %>

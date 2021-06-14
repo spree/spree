@@ -31,7 +31,6 @@
 //= require spree/frontend/views/spree/products/modal_carousel
 //= require spree/frontend/views/spree/products/price_filters
 //= require spree/frontend/views/spree/shared/carousel
-//= require spree/frontend/views/spree/shared/cms_sections
 //= require spree/frontend/views/spree/shared/carousel/single
 //= require spree/frontend/views/spree/shared/carousel/swipes
 //= require spree/frontend/views/spree/shared/carousel/thumbnails

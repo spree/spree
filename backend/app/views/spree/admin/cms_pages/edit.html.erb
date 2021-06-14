@@ -39,9 +39,9 @@
         </div>
       </div>
       <div class="row no-gutters">
-        <div class="col-12 col-md-4 bg-light border border-right-0">
+        <div class="col-12 col-md-3 bg-light border border-right-0">
           <% if @cms_page.cms_sections.any? %>
-            <div id="cmsPagesectionsArea" class="card-body row m-0 p-0 no-gutters">
+            <div id="cmsPagesectionsArea" class="card-body row m-0 p-1 no-gutters">
               <% @cms_page.cms_sections.each do |section| %>
                 <%= build_page_section(section) %>
               <% end %>
@@ -58,7 +58,7 @@
           <% end %>
         </div>
 
-        <div class="d-none d-md-block col-8 bg-secondary border">
+        <div class="d-none d-md-block col bg-secondary border">
           <div id="liveViewCont" class="desktopLiveView">
             <div class="embed-responsive embed-responsive-4by3">
               <iframe class="embed-responsive-item"
