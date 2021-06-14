@@ -204,7 +204,14 @@
       <%= f.label :taxon_ids, Spree.t(:taxons) %>
 
       <% if can? :modify, Spree::Classification %>
-        <%= f.select :taxon_ids, options_from_collection_for_select(@product.taxons, :id, :pretty_name, @product.taxon_ids), { include_hidden: true }, multiple: true, class: 'select2-hidden-accessible' %>
+        <%= f.select :taxon_ids, options_from_collection_for_select(@product.taxons, :id, :pretty_name, @product.taxon_ids), 
+                                 { include_hidden: true }, multiple: true, class: 'select2autocomplete',
+                                 data: {
+                                   'autocomplete-name-value': 'taxons',
+                                   'autocomplete-url-value': 'taxons_api_v2',
+                                   'autocomplete-return-attr-value': 'pretty_name',
+                                   'autocomplete-multiple-value': true
+                                 } %>
       <% elsif @product.taxons.any? %>
         <ul class="text_list">
           <% @product.taxons.each do |taxon| %>
