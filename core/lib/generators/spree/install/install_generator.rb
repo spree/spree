@@ -11,6 +11,7 @@ module Spree
     class_option :seed, type: :boolean, default: true, banner: 'load seed data (migrations must be run)'
     class_option :sample, type: :boolean, default: true, banner: 'load sample data (migrations must be run)'
     class_option :install_storefront, type: :boolean, default: false, banner: 'installs default rails storefront'
+    class_option :install_admin, type: :boolean, default: false, banner: 'installs default rails admin'
     class_option :copy_storefront, type: :boolean, default: false, banner: 'copy all storefront views and stylesheets'
     class_option :auto_accept, type: :boolean
     class_option :user_class, type: :string
@@ -32,6 +33,7 @@ module Spree
       @load_seed_data = options[:seed]
       @load_sample_data = options[:sample]
       @install_storefront = options[:install_storefront]
+      @install_admin = options[:install_admin]
       @copy_storefront = options[:copy_storefront]
 
       unless @run_migrations
@@ -62,20 +64,6 @@ module Spree
       ROBOTS
     end
 
-    def setup_assets
-      @lib_name = 'spree'
-      %w{javascripts stylesheets images}.each do |path|
-        if Spree::Core::Engine.backend_available? || Rails.env.test?
-          empty_directory "vendor/assets/#{path}/spree/backend"
-        end
-      end
-
-      if Spree::Core::Engine.backend_available? || Rails.env.test?
-        template 'vendor/assets/javascripts/spree/backend/all.js'
-        template 'vendor/assets/stylesheets/spree/backend/all.css'
-      end
-    end
-
     def create_overrides_directory
       empty_directory 'app/overrides'
     end
@@ -83,6 +71,12 @@ module Spree
     def install_storefront
       if @install_storefront && Spree::Core::Engine.frontend_available?
         generate 'spree:frontend:install'
+      end
+    end
+
+    def install_admin
+      if @install_admin && Spree::Core::Engine.backend_available?
+        generate 'spree:backend:install'
       end
     end
 
