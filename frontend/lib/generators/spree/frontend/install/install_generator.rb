@@ -2,7 +2,7 @@ module Spree
   module Frontend
     module Generators
       class InstallGenerator < Rails::Generators::Base
-        desc 'Copies storefront configuration files for easy customization'
+        desc 'Installs Spree rails storefront'
 
         def self.source_paths
           [

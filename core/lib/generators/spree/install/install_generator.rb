@@ -10,7 +10,7 @@ module Spree
     class_option :migrate, type: :boolean, default: true, banner: 'Run Spree migrations'
     class_option :seed, type: :boolean, default: true, banner: 'load seed data (migrations must be run)'
     class_option :sample, type: :boolean, default: true, banner: 'load sample data (migrations must be run)'
-    class_option :install_storefront, type: :boolean, default: true, banner: 'installs storefront configuration files'
+    class_option :install_storefront, type: :boolean, default: false, banner: 'installs default rails storefront'
     class_option :copy_storefront, type: :boolean, default: false, banner: 'copy all storefront views and stylesheets'
     class_option :auto_accept, type: :boolean
     class_option :user_class, type: :string
