@@ -1,6 +1,8 @@
 $.fn.taxonAutocomplete = function() {
   'use strict'
 
+  console.warn('taxonAutocomplete is deprecated and will be removed in Spree 5.0')
+
   function formatTaxonList(values) {
     return values.map(function (obj) {
       return {
@@ -33,7 +35,3 @@ $.fn.taxonAutocomplete = function() {
     }
   })
 }
-
-$(document).ready(function () {
-  $('#product_taxon_ids').taxonAutocomplete()
-})
