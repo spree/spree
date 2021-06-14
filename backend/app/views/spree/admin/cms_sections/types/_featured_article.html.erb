@@ -18,13 +18,12 @@
       <%= f.error_message_on :button_text %>
     <% end %>
 
-    <div class="row">
-      <%= f.field_container :fit, class: ['form-group col-6'] do %>
-        <%= f.label :fit, Spree.t('admin.cms.fit') %>
-        <%= f.select(:fit, @cms_section.boundaries, {include_blank: false}, class: 'select2') %>
-        <%= f.error_message_on :fit %>
-      <% end %>
-    </div>
+    <%= f.field_container :gutters, class: ['form-group'] do %>
+      <%= f.label :gutters, Spree.t('admin.cms.gutters') %>
+      <%= f.select(:gutters, @cms_section.gutters_sizes, {include_blank: false}, class: 'select2') %>
+      <%= f.error_message_on :gutters %>
+    <% end %>
+
   </div>
   <div class="col-12 col-md-8">
     <%= f.field_container :rte_content, class: ['form-group'] do %>

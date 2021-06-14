@@ -16,33 +16,28 @@
 <% end %>
 
 <div class="col-12 col-md-6 mb-3 mb-md-0 <%= section_one_padding %>">
-  <%= link_to spree.nested_taxons_path(section.permalink_one) do %>
-    <div class="d-flex
-                align-items-end
-                justify-content-center
-                bg-light text-center
-                overflow-hidden
-                homepage-bottom-box"
-                style="--aspect-ratio:54/35;">
+  <%= link_to spree.nested_taxons_path(section.permalink_one),
+              class: 'd-flex align-items-end justify-content-center bg-light text-center overflow-hidden homepage-bottom-box',
+              style: '--aspect-ratio:54/35;' do %>
 
       <% if section.image_one.present? %>
         <!-- XS to MD -->
-          <img class="d-md-none lazyload"
-            data-src="<%= main_app.url_for(section.image_one.attachment.variant(resize: '387x250>')) %>"
-            data-srcset="<%= main_app.url_for(section.image_one.attachment.variant(resize: '387x250>')) %>"
-            alt="<%= section&.title_one %>">
+        <img class="d-md-none lazyload"
+          data-src="<%= main_app.url_for(section.image_one.attachment.variant(resize: '387x250>')) %>"
+          data-srcset="<%= main_app.url_for(section.image_one.attachment.variant(resize: '387x250>')) %>"
+          alt="<%= section&.title_one %>">
 
         <!-- MD to XL -->
-          <img class="d-none d-md-block d-xl-none lazyload"
-            data-src="<%= main_app.url_for(section.image_one.attachment.variant(resize: '734x476>')) %>"
-            data-srcset="<%= main_app.url_for(section.image_one.attachment.variant(resize: '734x476>')) %>"
-            alt="<%= section&.title_one %>">
+        <img class="d-none d-md-block d-xl-none lazyload"
+          data-src="<%= main_app.url_for(section.image_one.attachment.variant(resize: '734x476>')) %>"
+          data-srcset="<%= main_app.url_for(section.image_one.attachment.variant(resize: '734x476>')) %>"
+          alt="<%= section&.title_one %>">
 
         <!-- XL UP -->
-          <img class="d-none d-xl-block lazyload"
-            data-src="<%= main_app.url_for(section.image_one.attachment.variant(resize: '1468x952>')) %>"
-            data-srcset="<%= main_app.url_for(section.image_one.attachment.variant(resize: '1468x952>')) %>"
-            alt="<%= section&.title_one %>">
+        <img class="d-none d-xl-block lazyload"
+          data-src="<%= main_app.url_for(section.image_one.attachment.variant(resize: '1468x952>')) %>"
+          data-srcset="<%= main_app.url_for(section.image_one.attachment.variant(resize: '1468x952>')) %>"
+          alt="<%= section&.title_one %>">
        <% else %>
         <%= icon( name: 'card-image',
                   classes: 'text-black-50',
@@ -60,19 +55,13 @@
           </div>
         </div>
       <% end %>
-    </div>
   <% end %>
 </div>
 
 <div class="col-12 col-md-6 <%= section_two_padding %>">
-  <%= link_to spree.nested_taxons_path(section.permalink_two) do %>
-    <div class="d-flex
-                align-items-end
-                justify-content-center
-                bg-light text-center
-                overflow-hidden
-                homepage-bottom-box"
-                style="--aspect-ratio:54/35;">
+  <%= link_to spree.nested_taxons_path(section.permalink_two),
+              class: 'd-flex align-items-end justify-content-center bg-light text-center overflow-hidden homepage-bottom-box',
+              style: '--aspect-ratio:54/35;' do %>
 
       <% if section.image_two.present? %>
         <!-- XS to MD -->
@@ -109,6 +98,5 @@
           </div>
         </div>
       <% end %>
-    </div>
   <% end %>
 </div>

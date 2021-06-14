@@ -1,56 +1,48 @@
-<div class="col-12 homepage-hero-image position-relative p-0 bg-light">
-  <% if section.image_one.present? %>
-    <!-- XS to MD -->
-    <div class="d-sm-none" style="--aspect-ratio:12/5;">
-      <img class="lazyload"
-        data-src="<%= main_app.url_for(section.image_one.attachment.variant(resize: '768x320>')) %>"
-        data-srcset="<%= main_app.url_for(section.image_one.attachment.variant(resize: '768x320>')) %>"
-        alt="<%= section&.title %>">
-    </div>
+<% if section.fullscreen? %>
+  <% if section.gutters? %>
+    <% section_padding = 'px-3' %>
+  <% else %>
+    <% section_padding = 'px-0' %>
+  <% end %>
+<% else %>
+  <% section_padding = 'px-2' %>
+<% end %>
 
-    <!-- SM to MD -->
-    <div class="d-none d-sm-block d-md-none" style="--aspect-ratio:12/5;">
-      <img class="lazyload"
-        data-src="<%= main_app.url_for(section.image_one.attachment.variant(resize: '990x412>')) %>"
-        data-srcset="<%= main_app.url_for(section.image_one.attachment.variant(resize: '990x412>')) %>"
-        alt="<%= section&.title %>">
-    </div>
+<div class="col-12 homepage-hero-image position-relative p-0 <%= section_padding %>">
+  <div class="bg-light" style="--aspect-ratio:12/5;">
+    <% if section.image_one.present? %>
 
-    <!-- MD to LG -->
-    <div class="d-none d-md-block d-lg-none" style="--aspect-ratio:12/5;">
-      <img class="lazyload"
-        data-src="<%= main_app.url_for(section.image_one.attachment.variant(resize: '1200x500>')) %>"
-        data-srcset="<%= main_app.url_for(section.image_one.attachment.variant(resize: '1200x500>')) %>"
-       alt="<%= section&.title %>">
-    </div>
+        <!-- XS to LG -->
+        <img class="d-lg-none lazyload"
+          data-src="<%= main_app.url_for(section.image_one.attachment.variant(resize: '1200x500>')) %>"
+          data-srcset="<%= main_app.url_for(section.image_one.attachment.variant(resize: '1200x500>')) %>"
+          alt="<%= section&.title %>">
 
-    <!-- XL UP -->
-    <div class="d-none d-lg-block" style="--aspect-ratio:12/5;">
-      <img class="lazyload"
-        data-src="<%= main_app.url_for(section.image_one.attachment.variant(resize: '2400x1000>')) %>"
-        data-srcset="<%= main_app.url_for(section.image_one.attachment.variant(resize: '2400x1000>')) %>"
-        alt="<%= section&.title %>">
-    </div>
-   <% else %>
-    <div style="--aspect-ratio:12/5;">
-     <%= icon( name: 'card-image',
-               classes: 'text-black-50',
-               width: 26,
-               height: 26) %>
-    </div>
-   <% end %>
+        <!-- LG UP -->
+        <img class="d-none d-lg-block lazyload"
+          data-src="<%= main_app.url_for(section.image_one.attachment.variant(resize: '2400x1000>')) %>"
+          data-srcset="<%= main_app.url_for(section.image_one.attachment.variant(resize: '2400x1000>')) %>"
+          alt="<%= section&.title %>">
 
-  <div class="hero-content position-absolute-y-center">
-    <% if section.title.present? %>
-      <div class="homepage-hero-image-text mx-auto pb-0 pb-sm-2 pb-md-3">
-        <%= section.title %>
-      </div>
-    <% end %>
+     <% else %>
+       <%= icon( name: 'card-image',
+                 classes: 'text-black-50',
+                 width: 26,
+                 height: 26) %>
+     <% end %>
 
-    <% if section.link.present? && section.button_text.present? %>
-      <div>
-        <%= link_to section.button_text, section.link, class: 'btn btn-primary spree-btn px-5' %>
-      </div>
-    <% end %>
+    <div class="hero-content position-absolute-y-center">
+      <% if section.title.present? %>
+        <div class="homepage-hero-image-text mx-auto pb-0 pb-sm-2 pb-md-3">
+          <%= section.title %>
+        </div>
+      <% end %>
+
+      <% if section.link.present? && section.button_text.present? %>
+        <div>
+          <%= link_to section.button_text, section.link, class: 'btn btn-primary spree-btn px-5' %>
+        </div>
+      <% end %>
+    </div>
   </div>
 </div>

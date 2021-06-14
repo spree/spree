@@ -1,6 +1,11 @@
-<div class="col-12 homepage-fashion-trends-box">
-  <div class="text-center">
+<% if section.gutters? %>
+  <% section_padding = 'px-3' %>
+<% else %>
+  <% section_padding = 'px-0' %>
+<% end %>
 
+<div class="col-12 <%= section_padding %>">
+  <div class="text-center homepage-fashion-trends-box">
     <% if section.title.present? %>
       <div class="homepage-fashion-trends-box-summer-text mb-1"><%= section.title %></div>
     <% end %>
