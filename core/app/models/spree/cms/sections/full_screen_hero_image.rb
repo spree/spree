@@ -7,17 +7,14 @@ module Spree::Cms::Sections
 
     LINKED_RESOURCE_TYPE = ['Spree::Taxon', 'Spree::Product']
 
-    def gutters_sizes
-      ['Use gutters', 'No Gutters']
-    end
-
     def gutters?
-      gutters == 'Use gutters'
+      gutters == 'Gutters'
     end
 
     private
 
     def default_values
+      self.gutters ||= 'No Gutters'
       self.fit ||= 'Screen'
       self.linked_resource_type ||= 'Spree::Taxon'
     end

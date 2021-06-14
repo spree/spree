@@ -7,7 +7,7 @@ module Spree
 
     # Six images in one section should cover a large number of potential use cases.
     # The standardization of putting them here means we can offer them up through
-    # the API serializer vs hoping they get added per section basis and the naming
+    # the API serializer vs hoping they get added on a per-section basis and the naming
     # matches those used in the API serializer attributes.
     has_one_attached :image_one
     has_one_attached :image_two
@@ -31,6 +31,10 @@ module Spree
 
     def boundaries
       ['Container', 'Screen']
+    end
+
+    def gutters_sizes
+      ['Gutters', 'No Gutters']
     end
 
     def fullscreen?

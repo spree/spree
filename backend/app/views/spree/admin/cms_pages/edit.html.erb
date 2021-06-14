@@ -43,7 +43,7 @@
           <% if @cms_page.cms_sections.any? %>
             <div id="cmsPagesectionsArea" class="card-body row m-0 p-1 no-gutters">
               <% @cms_page.cms_sections.each do |section| %>
-                <%= build_page_section(section) %>
+                <%= render 'spree/admin/cms_pages/section_template', section: section %>
               <% end %>
             </div>
 

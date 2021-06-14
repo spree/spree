@@ -7,12 +7,8 @@ module Spree::Cms::Sections
 
     LINKED_RESOURCE_TYPE = ['Spree::Taxon', 'Spree::Product', 'Spree::CmsPage']
 
-    def gutters_sizes
-      ['Use gutters', 'No Gutters']
-    end
-
     def gutters?
-      gutters == 'Use gutters'
+      gutters == 'Gutters'
     end
 
     private

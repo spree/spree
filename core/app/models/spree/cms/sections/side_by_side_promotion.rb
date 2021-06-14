@@ -6,17 +6,14 @@ module Spree::Cms::Sections
                                 :permalink_two, :title_two, :subtitle_two], coder: JSON
     store :settings, accessors: [:gutters], coder: JSON
 
-    def gutters_sizes
-      ['Use gutters', 'No Gutters']
-    end
-
     def gutters?
-      gutters == 'Use gutters'
+      gutters == 'Gutters'
     end
 
     private
 
     def default_values
+      self.gutters ||= 'Gutters'
       self.fit ||= 'Container'
     end
   end

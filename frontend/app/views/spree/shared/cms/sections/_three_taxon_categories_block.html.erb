@@ -15,7 +15,7 @@
     <div class="row" style="margin-bottom: 3.7%;">
       <div class="col-12">
 
-        <%= link_to spree.nested_taxons_path(section.permalink_one), class: 'homepage-taxon-box', style: '--aspect-ratio:18/13;' do %>
+        <%= link_to spree.nested_taxons_path(section.permalink_one), class: 'homepage-taxon-box bg-light', style: '--aspect-ratio:18/13;' do %>
           <% if section.image_one.attached? && section.image_one.variable? %>
 
               <!-- XS to MD -->
@@ -55,7 +55,7 @@
     <div class="row">
       <div class="col-12">
 
-        <%= link_to spree.nested_taxons_path(section.permalink_three), class: 'homepage-taxon-box', style: '--aspect-ratio:18/13;' do %>
+        <%= link_to spree.nested_taxons_path(section.permalink_three), class: 'homepage-taxon-box bg-light', style: '--aspect-ratio:18/13;' do %>
           <% if section.image_three.attached? && section.image_three.variable? %>
 
               <!-- XS to MD -->
@@ -94,7 +94,7 @@
 <!-- Right Block TALL -->
 <div class="col-6 <%= section_two_padding %>">
   <% if section.permalink_two.present? %>
-    <%= link_to spree.nested_taxons_path(section.permalink_two), class: 'homepage-taxon-box', style: '--aspect-ratio:27/40;' do %>
+    <%= link_to spree.nested_taxons_path(section.permalink_two), class: 'homepage-taxon-box bg-light', style: '--aspect-ratio:27/40;' do %>
       <% if section.image_two.attached? && section.image_two.variable? %>
 
           <!-- XS to MD -->
