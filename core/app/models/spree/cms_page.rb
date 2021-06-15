@@ -6,9 +6,6 @@ module Spree
              'Spree::Cms::Pages::FeaturePage',
              'Spree::Cms::Pages::Homepage']
 
-    extend FriendlyId
-    friendly_id :slug, use: [:slugged, :finders, :history]
-
     belongs_to :store, touch: true
     has_many :cms_sections, dependent: :destroy
 
@@ -22,6 +19,7 @@ module Spree
     scope :visible, -> { where(visible: true) }
     scope :by_store, ->(store) { where(store: store) }
     scope :by_locale, ->(locale) { where(locale: locale) }
+    scope :by_slug, ->(slug) { where(slug: slug) }
     scope :linkable, -> { where.not(slug: nil, type: 'Spree::Cms::Pages::Homepage') }
 
     self.whitelisted_ransackable_attributes = %w[title type]

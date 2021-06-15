@@ -27,9 +27,7 @@ module Spree
     end
 
     def load_cms_page
-      @page = Spree::CmsPage.
-              by_store(current_store).
-              friendly.find(params[:id])
+      @page = Spree::CmsPage.by_store(current_store).find_by(slug: params[:slug])
     end
   end
 end
