@@ -4,13 +4,5 @@
 // It's not advisable to add code directly here, but if you do, it'll appear at the bottom of the
 // the compiled file.
 //
-//= require accounting.min
 //= require spree/frontend
-<% unless options[:lib_name] == 'spree' || options[:lib_name] == 'spree/frontend' %>
-  <% filename = "spree/frontend/#{ options[:lib_name].gsub("/", "_") }" %>
-  <% filepath = File.join(File.dirname(__FILE__), "../../app/assets/javascripts/#{ filename }") %>
-  <% if javascript_exists?(filepath) %>
-    //= require <%= filename %>
-  <% end %>
-<% end %>
 //= require_tree .
