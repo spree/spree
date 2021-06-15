@@ -15,8 +15,8 @@ class CreateSpreeCmsPages < ActiveRecord::Migration[5.2]
       t.timestamps
     end
 
-    add_index :spree_cms_pages, [:title, :type, :store_id]
     add_index :spree_cms_pages, [:slug, :store_id]
+    add_index :spree_cms_pages, [:title, :type, :store_id]
     add_index :spree_cms_pages, [:store_id, :locale, :type]
   end
 end
