@@ -7,44 +7,44 @@ module Spree
         attributes :name, :content, :settings, :link, :fit, :type, :position
 
         attribute :image_one_path do |section|
-          if section.image_one_path.attached?
+          if section.image_one.attached?
             url_helpers = Rails.application.routes.url_helpers
-            url_helpers.rails_representation_path(section.image_one_path, only_path: true)
+            url_helpers.rails_blob_path(section.image_one, only_path: true)
           end
         end
 
         attribute :image_two_path do |section|
-          if section.image_two_path.attached?
+          if section.image_two.attached?
             url_helpers = Rails.application.routes.url_helpers
-            url_helpers.rails_representation_path(section.image_two_path, only_path: true)
+            url_helpers.rails_blob_path(section.image_two, only_path: true)
           end
         end
 
         attribute :image_three_path do |section|
-          if section.image_three_path.attached?
+          if section.image_three.attached?
             url_helpers = Rails.application.routes.url_helpers
-            url_helpers.rails_representation_path(section.image_three_path, only_path: true)
+            url_helpers.rails_blob_path(section.image_three, only_path: true)
           end
         end
 
         attribute :image_four_path do |section|
-          if section.image_four_path.attached?
+          if section.image_four.attached?
             url_helpers = Rails.application.routes.url_helpers
-            url_helpers.rails_representation_path(section.image_four_path, only_path: true)
+            url_helpers.rails_blob_path(section.image_four, only_path: true)
           end
         end
 
         attribute :image_five_path do |section|
-          if section.image_five_path.attached?
+          if section.image_five.attached?
             url_helpers = Rails.application.routes.url_helpers
-            url_helpers.rails_representation_path(section.image_five_path, only_path: true)
+            url_helpers.rails_blob_path(section.image_five, only_path: true)
           end
         end
 
         attribute :image_six_path do |section|
-          if section.image_six_path.attached?
+          if section.image_six.attached?
             url_helpers = Rails.application.routes.url_helpers
-            url_helpers.rails_representation_path(section.image_six_path, only_path: true)
+            url_helpers.rails_blob_path(section.image_six, only_path: true)
           end
         end
 

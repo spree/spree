@@ -21,7 +21,7 @@
                 class: 'd-flex align-items-end justify-content-center bg-light text-center overflow-hidden homepage-bottom-box',
                 style: '--aspect-ratio:54/35;' do %>
 
-        <% if section.image_one.present? %>
+        <% if section.image_one.attached? %>
           <!-- XS to MD -->
           <img class="d-md-none lazyload"
             data-src="<%= main_app.url_for(section.image_one.attachment.variant(resize: '387x250>')) %>"
