@@ -5,6 +5,8 @@ module Spree
         class VariantSerializer < BaseSerializer
           include ::Spree::Api::V2::ResourceSerializerConcern
 
+          attributes :name, :width, :options_text, :option_values
+
           belongs_to :product
           has_many :images
           has_many :option_values

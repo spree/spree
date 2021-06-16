@@ -1,6 +1,8 @@
 $.fn.userAutocomplete = function () {
   'use strict'
 
+  console.warn('userAutocomplete is deprecated and will be removed in Spree 5.0')
+
   function formatUserList(values) {
     return values.map(function (obj) {
       return {
@@ -32,7 +34,3 @@ $.fn.userAutocomplete = function () {
     }
   })
 }
-
-$(document).ready(function () {
-  $('.user_picker').userAutocomplete()
-})
