@@ -1,6 +1,8 @@
 $.fn.optionTypeAutocomplete = function () {
   'use strict'
 
+  console.warn('optionTypeAutocomplete is deprecated and will be removed in Spree 5.0')
+
   this.select2({
     minimumInputLength: 2,
     multiple: true,
@@ -21,7 +23,3 @@ $.fn.optionTypeAutocomplete = function () {
     }
   })
 }
-
-$(document).ready(function () {
-  $('#product_option_type_ids').optionTypeAutocomplete()
-})

@@ -1,6 +1,6 @@
 /* global variantTemplate */
 // variant autocompletion
-$(function () {
+$(function() {
   var variantAutocompleteTemplate = $('#variant_autocomplete_template')
   if (variantAutocompleteTemplate.length > 0) {
     window.variantTemplate = Handlebars.compile(variantAutocompleteTemplate.text())
@@ -9,54 +9,77 @@ $(function () {
   }
 })
 
-function formatVariantResult(variant) {
-  if (variant.loading) {
-    return variant.text
+function formatVariantResult(results) {
+  if (results.loading) {
+    return results
   }
 
-  if (variant['images'][0] !== undefined && variant['images'][0].mini_url !== undefined) {
-    variant.image = variant.images[0].mini_url
+  if (results.type === 'variant') {
+    var options = results.attributes.options_text.split(',')
+
+    return $(variantTemplate({
+      options: options,
+      variant: results.attributes
+    }))
   }
-  return $(variantTemplate({
-    variant: variant
-  }))
 }
-
-$.fn.variantAutocomplete = function () {
-
+$.fn.variantAutocomplete = function() {
   // deal with initSelection
   return this.select2({
     placeholder: Spree.translations.variant_placeholder,
     minimumInputLength: 3,
-    quietMillis: 200,
     ajax: {
-      url: Spree.url(Spree.routes.variants_api),
+      url: Spree.routes.products_api_v2 + '?include=default_variant%2Cvariants%2Cimages',
+      headers: Spree.apiV2Authentication(),
       dataType: 'json',
-      data: function (params) {
+      data: function(params) {
         var query = {
-          q: {
-            search_by_product_name_or_sku: params.term
-          },
-          token: Spree.api_key
+          filter: {
+            name_i_cont: params.term
+          }
         }
 
         return query;
       },
-      processResults: function(data) {
-        window.variants = data['variants']
+      processResults: function(json) {
+        var variantsAndImages = json.included
+        variantsAndImages.forEach(item => findImages(item))
+
+        function findImages (item) {
+          if (item.type === 'variant' && item.relationships.images.data[0]) {
+            var attachedImageId = item.relationships.images.data[0].id
+
+            var path = setImgPath(attachedImageId)
+            item.attributes.image_path = path
+          }
+        }
+
+        function setImgPath (attachedImageId) {
+          var imgPath = []
+          var items = json.included
+
+          items.forEach(function (i) {
+            if (i.type === 'image' && i.id === attachedImageId) {
+              imgPath.push(i.attributes.styles[2].url)
+            }
+          })
+          return imgPath[0]
+        }
+
         return {
-          results: data.variants
+          results: json.included
         }
       }
     },
     templateResult: formatVariantResult,
     templateSelection: function(variant) {
-      if (!!variant.options_text) {
-        return variant.name + '(' + variant.options_text + ')'
-      } else {
-        return variant.name
+      if (variant.attributes) {
+        if (variant.attributes.options_text) {
+          return variant.attributes.name + ' (' + variant.attributes.options_text + ')'
+        } else {
+          return variant.attributes.name
+        }
       }
     }
   })
-
 }

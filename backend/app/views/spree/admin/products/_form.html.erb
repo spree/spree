@@ -204,10 +204,9 @@
       <%= f.label :taxon_ids, Spree.t(:taxons) %>
 
       <% if can? :modify, Spree::Classification %>
-        <%= f.select :taxon_ids, options_from_collection_for_select(@product.taxons, :id, :pretty_name, @product.taxon_ids), 
-                                 { include_hidden: true }, multiple: true, class: 'select2autocomplete',
+        <%= f.select :taxon_ids, options_from_collection_for_select(@product.taxons, :id, :pretty_name, @product.taxon_ids),
+                                 { include_hidden: true }, multiple: true,
                                  data: {
-                                   'autocomplete-name-value': 'taxons',
                                    'autocomplete-url-value': 'taxons_api_v2',
                                    'autocomplete-return-attr-value': 'pretty_name',
                                    'autocomplete-multiple-value': true
@@ -230,7 +229,13 @@
       <%= f.label :option_type_ids, Spree.t(:option_types) %>
 
       <% if can? :modify, Spree::ProductOptionType %>
-        <%= f.select :option_type_ids, options_from_collection_for_select(@product.option_types, :id, :name, @product.option_type_ids), { include_hidden: true }, multiple: true, class: 'select2-hidden-accessible' %>
+        <%= f.select :option_type_ids, options_from_collection_for_select(@product.option_types, :id, :name, @product.option_type_ids),
+                                       { include_hidden: true }, multiple: true, class: 'select2-hidden-accessible',
+                                       data: {
+                                         'autocomplete-url-value': 'option_types_api_v2',
+                                         'autocomplete-return-attr-value': 'name',
+                                         'autocomplete-multiple-value': true
+                                       } %>
       <% elsif @product.option_types.any? %>
         <ul class="text_list">
           <% @product.option_types.each do |type| %>

@@ -6,6 +6,28 @@
   overflow: hidden;
 }
 
+ figure.select2-result {
+    position: relative;
+    border: 1px solid $border-color;
+    border-radius: 7px;
+    overflow: hidden;
+    width: 60px;
+    height: 60px;
+    background-color: white;
+    img {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      height: 150%;
+      width: 150%;
+      transform: translate(-50%,-50%);
+      &.no-zoom {
+        height: 100%;
+        width: 100%;
+      }
+    }
+  }
+
 .is-hidden {
   display: none;
 }

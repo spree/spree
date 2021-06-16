@@ -34,9 +34,13 @@
 //  data-autocomplete-additional-term-value="Spree::Cms::Pages::Homepage"   <- Additional hard coded term | DEFAULT: null (not used)
 
 document.addEventListener('DOMContentLoaded', function() {
-  const select2Autocompletes = document.querySelectorAll('select.select2autocomplete')
-  select2Autocompletes.forEach(element => buildParamsFromDataAttrs(element))
+  loadAutoCompleteParams()
 })
+
+function loadAutoCompleteParams () {
+  const select2Autocompletes = document.querySelectorAll('select[data-autocomplete-url-value]')
+  select2Autocompletes.forEach(element => buildParamsFromDataAttrs(element))
+}
 
 function buildParamsFromDataAttrs (element) {
   $(element).select2Autocomplete({
