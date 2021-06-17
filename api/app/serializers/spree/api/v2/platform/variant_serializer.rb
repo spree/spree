@@ -5,7 +5,7 @@ module Spree
         class VariantSerializer < BaseSerializer
           include ::Spree::Api::V2::ResourceSerializerConcern
 
-          attributes :name, :width, :options_text, :option_values
+          attributes :name, :width, :options_text, :option_values, :total_on_hand
 
           attribute :stock_items do |variant|
             variant.stock_items

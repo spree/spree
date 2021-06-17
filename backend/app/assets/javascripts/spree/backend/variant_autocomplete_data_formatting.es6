@@ -43,7 +43,7 @@ function buildJsonDataForVariants (json) {
       const stockItems = item.attributes.stock_items
 
       stockItems.forEach(function (si) {
-        if (si.count_on_hand > 0 && si.backorderable === true) {
+        if (si.count_on_hand > 0 || si.backorderable === true) {
           si.is_available = true
         } else {
           si.is_available = false

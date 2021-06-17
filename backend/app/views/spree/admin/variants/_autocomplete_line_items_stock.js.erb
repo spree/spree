@@ -12,10 +12,10 @@
     <tbody>
       <tr>
         <td>{{variant.name}}</td>
-        {{#if variant.track_inventory}}
-          {{#if variant.is_orderable}}
+        {{#if variant.track_inventory }}
+          {{#if variant.purchasable }}
             <td class="text-center">
-              {{variant.total_on_hand}}
+              {{ variant.total_on_hand }}
             </td>
 
             <td class="text-center">
