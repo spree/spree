@@ -59,8 +59,7 @@
 //= require spree/backend/taxons
 //= require spree/backend/users/edit
 //= require spree/backend/user_picker
-//= require spree/backend/variant_autocomplete
-//= require spree/backend/variant_management
+//= require spree/backend/variants/_index
 //= require spree/backend/zone
 
 Spree.routes.clear_cache = Spree.adminPathFor('general_settings/clear_cache')
