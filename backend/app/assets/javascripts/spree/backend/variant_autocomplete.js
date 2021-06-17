@@ -1,5 +1,7 @@
 /* global variantTemplate */
 // variant autocompletion
+//= require spree/backend/variant_autocomplete_data_formatting
+
 $(function() {
   var variantAutocompleteTemplate = $('#variant_autocomplete_template')
   if (variantAutocompleteTemplate.length > 0) {
@@ -42,30 +44,10 @@ $.fn.variantAutocomplete = function() {
         return query;
       },
       processResults: function(json) {
-        var variantsAndImages = json.included
-        variantsAndImages.forEach(item => findImages(item))
+        // eslint-disable-next-line no-undef
+        buildJsonDataForVariants(json)
 
-        function findImages (item) {
-          if (item.type === 'variant' && item.relationships.images.data[0]) {
-            var attachedImageId = item.relationships.images.data[0].id
-
-            var path = setImgPath(attachedImageId)
-            item.attributes.image_path = path
-          }
-        }
-
-        function setImgPath (attachedImageId) {
-          var imgPath = []
-          var items = json.included
-
-          items.forEach(function (i) {
-            if (i.type === 'image' && i.id === attachedImageId) {
-              imgPath.push(i.attributes.styles[2].url)
-            }
-          })
-          return imgPath[0]
-        }
-
+        window.variants = json.included
         return {
           results: json.included
         }

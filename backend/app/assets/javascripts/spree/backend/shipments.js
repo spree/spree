@@ -7,10 +7,10 @@ $(document).ready(function () {
   $('#add_variant_id').change(function () {
     var variantId = parseInt($(this).val())
     var variant = _.find(window.variants, function (variant) {
-      return variant.id === variantId
+      return parseInt(variant.id) === variantId
     })
 
-    $('#stock_details').html(variantStockTemplate({ variant: variant }))
+    $('#stock_details').html(variantStockTemplate({ variant: variant.attributes }))
     $('#stock_details').show()
 
     $('button.add_variant').click(addVariantFromStockLocation)
