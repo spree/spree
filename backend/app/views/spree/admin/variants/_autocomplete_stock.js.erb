@@ -9,10 +9,10 @@
       <th class="actions"></th>
     </thead>
     <tbody>
-      {{#each variant.stock_items}}
+      {{#each variant.stock_items }}
         <tr>
-          <td>{{this.stock_location_name}}</td>
-          {{#unless ../variant.track_inventory}}
+          <td>{{ this.stock_location_name }}</td>
+          {{#unless ../variant.track_inventory }}
             <td><%= Spree.t(:doesnt_track_inventory) %></td>
             <td>
               <input class="quantity form-control input-sm" id="stock_item_quantity" data-stock-location-id="{{this.stock_location_id}}" type="number" min="1" value="1">
@@ -25,10 +25,10 @@
               </span>
             </td>
           {{else}}
-            {{#if this.available}}
+            {{#if this.is_available }}
               <td>
-                {{this.count_on_hand}}
-                {{#if this.backorderable}} (<%= Spree.t(:backorders_allowed) %>) {{/if}}
+                {{ this.count_on_hand }}
+                {{#if this.backorderable }} (<%= Spree.t(:backorders_allowed) %>) {{/if}}
               </td>
               <td>
                 <input class="quantity form-control input-sm" id="stock_item_quantity" data-stock-location-id="{{this.stock_location_id}}" type="number" min="1" value="1">
