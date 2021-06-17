@@ -70,6 +70,7 @@ cat <<RUBY >> Gemfile
 gem 'spree', path: '..'
 gem 'spree_frontend', path: '../frontend'
 gem 'spree_backend', path: '../backend'
+gem 'spree_emails', path: '../emails'
 $SPREE_AUTH_DEVISE_GEM
 $SPREE_GATEWAY_GEM
 gem 'spree_i18n', github: 'spree-contrib/spree_i18n', branch: 'master'
@@ -105,7 +106,7 @@ bundle exec rails g spree:install --auto-accept --user_class=Spree::User
 if [ "$SPREE_HEADLESS" == "" ]; then
   bundle exec rails g spree:frontend:install
   bundle exec rails g spree:backend:install
-  bundle exec rails g spree:mailers_preview
+  bundle exec rails g spree:emails:install
 fi
 bundle exec rails g spree:auth:install
 bundle exec rails g spree_gateway:install

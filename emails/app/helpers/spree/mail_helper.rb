@@ -16,6 +16,11 @@ module Spree
     end
 
     def default_logo
+      ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
+        `MailHelper#default_logo` is deprecated and will be removed in Spree 5.0.
+        Please upload a Store logo instead
+      DEPRECATION
+
       Spree::Config.mailer_logo || Spree::Config.logo
     end
 

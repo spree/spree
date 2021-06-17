@@ -21,7 +21,7 @@ class Project
     @name = name
   end
 
-  ALL = %w[api backend core frontend sample].map(&method(:new)).freeze
+  ALL = %w[api backend core frontend emails sample].map(&method(:new)).freeze
 
   # Install subproject
   #

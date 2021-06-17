@@ -59,12 +59,12 @@ module Spree
 
       context 'when no custom logo attached' do
         it 'shows default mailer logo' do
-          expect(subject).to eq Spree::Config.mailer_logo
+          expect(subject).to eq Spree::Config[:mailer_logo]
         end
       end
 
       context 'when @order exists' do
-        let(:logo_image) { File.open(File.expand_path('../../app/assets/images/logo/spree_50.png', __dir__)) }
+        let(:logo_image) { File.open(File.expand_path('../../../app/assets/images/logo/spree_50.png', __dir__)) }
 
         before do
           store.mailer_logo.attach(io: logo_image, filename: 'spree_50.png', content_type: 'image/png')
@@ -77,7 +77,7 @@ module Spree
       end
 
       context 'when @order does not exist' do
-        let(:logo_image) { File.open(File.expand_path('../../app/assets/images/noimage/mini.png', __dir__)) }
+        let(:logo_image) { File.open(File.expand_path('../../../app/assets/images/noimage/mini.png', __dir__)) }
 
         before do
           store.mailer_logo.attach(io: logo_image, filename: 'mini.png', content_type: 'image/png')

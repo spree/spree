@@ -124,29 +124,12 @@ describe Spree::Order, type: :model do
       allow_any_instance_of(Spree::OrderUpdater).to receive(:update_adjustment_total).and_return(10)
     end
 
-    it 'sends a cancel email' do
-      # Stub methods that cause side-effects in this test
-      allow(shipment).to receive(:cancel!)
-      allow(order).to receive :restock_items!
-      mail_message = double 'Mail::Message'
-      order_id = nil
-      expect(Spree::OrderMailer).to receive(:cancel_email) { |*args|
-        order_id = args[0]
-        mail_message
-      }
-      expect(mail_message).to receive :deliver_later
-      order.cancel!
-      expect(order_id).to eq(order.id)
-    end
-
     context 'resets payment state' do
       let(:payment) { create(:payment, amount: order.total) }
 
       before do
         # TODO: This is ugly :(
         # Stubs methods that cause unwanted side effects in this test
-        allow(Spree::OrderMailer).to receive(:cancel_email).and_return(mail_message = double)
-        allow(mail_message).to receive :deliver_later
         allow(order).to receive :restock_items!
         allow(shipment).to receive(:cancel!)
         allow(payment).to receive(:cancel!)
