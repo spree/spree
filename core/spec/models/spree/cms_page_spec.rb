@@ -93,8 +93,9 @@ describe Spree::CmsPage, type: :model do
     let!(:homepage_b) { create(:cms_homepage, store: store_b) }
 
     it 'returns homepage for the requested store' do
-      expect(described_class.by_store(store_a)).to include(homepage_a)
-      expect(described_class.by_store(store_a)).not_to include(homepage_b)
+      result_a = described_class.find(homepage_a.id)
+
+      expect(described_class.by_store(store_a)).to eq([result_a])
     end
   end
 
@@ -103,8 +104,9 @@ describe Spree::CmsPage, type: :model do
     let!(:homepage_de) { create(:cms_homepage, store: store_a, locale: 'de') }
 
     it 'returns homepage for the requested locale' do
-      expect(described_class.by_locale(:de)).to include(homepage_de)
-      expect(described_class.by_locale(:de)).not_to include(homepage_en)
+      result_de = described_class.find(homepage_de.id)
+
+      expect(described_class.by_locale(:de)).to eq([result_de])
     end
   end
 
@@ -113,8 +115,9 @@ describe Spree::CmsPage, type: :model do
     let!(:standard_page_slug_b) { create(:cms_standard_page, store: store_a, title: 'Big Page') }
 
     it 'returns standard_page_slug_a for the requested locale' do
-      expect(described_class.by_slug('little-page')).to include(standard_page_slug_a)
-      expect(described_class.by_slug('not-little-page')).not_to include(standard_page_slug_a)
+      result_slug_a = described_class.find(standard_page_slug_a.id)
+
+      expect(described_class.by_slug('little-page')).to eq([result_slug_a])
     end
   end
 
@@ -124,9 +127,10 @@ describe Spree::CmsPage, type: :model do
     let!(:standard_page_linkable) { create(:cms_standard_page, store: store_a, title: 'Big Page') }
 
     it 'returns standard_page_slug_a for the requested locale' do
-      expect(described_class.linkable).to include(feature_page_linkable)
-      expect(described_class.linkable).to include(standard_page_linkable)
-      expect(described_class.linkable).not_to include(homepage_not_linkable)
+      result_feature_page_linkable = described_class.find(feature_page_linkable.id)
+      result_standard_page_linkable = described_class.find(standard_page_linkable.id)
+
+      expect(described_class.linkable).to eq([result_feature_page_linkable, result_standard_page_linkable])
     end
   end
 

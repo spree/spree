@@ -36,7 +36,7 @@ describe 'New Page', type: :feature do
 
   context 'when a user tries to create a page with a duplicate slug' do
     let!(:store_1) { create(:store) }
-    let!(:cms_page) { create(:cms_page, title: 'About Us', store: store_1) }
+    let!(:cms_page) { create(:cms_standard_page, title: 'About Us', store: store_1) }
 
     before do
       visit spree.new_admin_cms_page_path

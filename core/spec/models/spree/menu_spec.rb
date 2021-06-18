@@ -22,9 +22,9 @@ describe Spree::Menu, type: :model do
   end
 
   describe 'by_locale' do
-    let!(:store_milti) { create(:store) }
-    let!(:menu_en) { create(:menu, store: store_milti, locale: 'en') }
-    let!(:menu_fr) { create(:menu, store: store_milti, locale: 'fr') }
+    let!(:store_multi) { create(:store) }
+    let!(:menu_en) { create(:menu, store: store_multi, locale: 'en') }
+    let!(:menu_fr) { create(:menu, store: store_multi, locale: 'fr') }
 
     it 'returns menus for the requested locale' do
       expect(described_class.by_locale('fr')).to eq([menu_fr])
