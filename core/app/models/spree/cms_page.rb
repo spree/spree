@@ -13,7 +13,7 @@ module Spree
 
     before_validation :handle_slug
 
-    validates :title, presence: true
+    validates :title, :store, :locale, presence: true
     validates :slug, uniqueness: { scope: :store, allow_nil: true, case_sensitive: true }
 
     scope :visible, -> { where(visible: true) }

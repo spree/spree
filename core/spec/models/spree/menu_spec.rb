@@ -62,11 +62,11 @@ describe Spree::Menu, type: :model do
     let!(:menu) { create(:menu, name: 'Footer Menu', location: 'Footer', store: store_1) }
 
     it 'validates presence of name' do
-      expect(described_class.new(name: '', location: 'Header', store: store_3)).not_to be_valid
+      expect(described_class.new(name: nil, location: 'Header', store: store_3)).not_to be_valid
     end
 
     it 'validates presence of store' do
-      expect(described_class.new(name: 'Got Name', location: 'Header', store_id: nil)).not_to be_valid
+      expect(described_class.new(name: 'Got Name', location: 'Header', store: nil)).not_to be_valid
     end
 
     it 'validates presence of locale' do

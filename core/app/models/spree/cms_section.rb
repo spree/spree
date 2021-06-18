@@ -20,6 +20,8 @@ module Spree
 
     default_scope { order(position: :asc) }
 
+    validates :name, :cms_page, presence: true
+
     LINKED_RESOURCE_TYPE = []
 
     TYPES = ['Spree::Cms::Sections::FullScreenHeroImage',

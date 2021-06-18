@@ -4,6 +4,18 @@ describe Spree::CmsPage, type: :model do
   let!(:store_a) { create(:store) }
   let!(:store_b) { create(:store) }
 
+  it 'validates presence of title' do
+    expect(described_class.new(title: nil, store: store_a, locale: :en)).not_to be_valid
+  end
+
+  it 'validates presence of store' do
+    expect(described_class.new(title: 'Got Name', store: nil, locale: :en)).not_to be_valid
+  end
+
+  it 'validates presence of locale' do
+    expect(described_class.new(title: 'Got Name', store: store_a, locale: nil)).not_to be_valid
+  end
+
   describe 'Spree::Cms::Pages::Homepage' do
     let(:homepage) { create(:cms_homepage, store: store_a) }
 
