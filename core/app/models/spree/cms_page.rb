@@ -32,7 +32,7 @@ module Spree
       end
     end
 
-    # Overide this if your page uses cms_sections
+    # Overide this if your page type uses cms_sections
     def sections?
       false
     end
