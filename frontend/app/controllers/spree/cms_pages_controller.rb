@@ -8,7 +8,7 @@ module Spree
     def show
       if @page&.visible?
         @cms_page = @page
-      elsif try_spree_current_user&.admin?
+      elsif @page&.draft_mode? && try_spree_current_user&.admin?
         @cms_page = @page
         @edit_mode = true
       else
@@ -19,11 +19,7 @@ module Spree
     private
 
     def accurate_title
-      if @page
-        @page.seo_title
-      else
-        super
-      end
+      @page.seo_title || super
     end
 
     def load_cms_page
