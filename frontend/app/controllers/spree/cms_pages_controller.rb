@@ -23,7 +23,7 @@ module Spree
     end
 
     def load_cms_page
-      @page = Spree::CmsPage.by_store(current_store).find_by(slug: params[:slug])
+      @page = Spree::CmsPage.by_store(current_store).by_locale(I18n.locale).find_by(slug: params[:slug])
     end
   end
 end
