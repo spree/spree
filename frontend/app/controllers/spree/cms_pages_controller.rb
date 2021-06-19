@@ -19,7 +19,7 @@ module Spree
     private
 
     def accurate_title
-      @page.seo_title || super
+      @page&.seo_title || super
     end
 
     def load_cms_page
