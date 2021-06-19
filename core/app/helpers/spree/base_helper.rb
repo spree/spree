@@ -118,7 +118,7 @@ module Spree
                               description: [object.name, current_store.meta_description].reject(&:blank?).join(', '))
         else
           meta.reverse_merge!(keywords: (current_store.meta_keywords || current_store.seo_title),
-                              description: (current_store.meta_description || current_store.seo_title))
+                              description: (current_store.homepage(I18n.locale)&.seo_meta_description || current_store.seo_meta_description))
         end
       end
       meta
@@ -194,7 +194,7 @@ module Spree
 
     def base_cache_key
       [I18n.locale, current_currency, defined?(try_spree_current_user) && try_spree_current_user.present?,
-        defined?(try_spree_current_user) && try_spree_current_user.try(:has_spree_role?, 'admin')]
+       defined?(try_spree_current_user) && try_spree_current_user.try(:has_spree_role?, 'admin')]
     end
 
     def maximum_quantity

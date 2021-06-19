@@ -4,6 +4,71 @@ describe 'homepage', type: :feature, js: true do
   let!(:eu_store) { create(:store, default: true, supported_currencies: 'EUR', default_locale: 'de', supported_locales: 'de,fr') }
   let!(:us_store) { create(:store, supported_currencies: 'USD', default_locale: 'en', supported_locales: 'en') }
 
+  context 'meta title' do
+    let!(:current_store) { create(:store) }
+    let!(:homepage_mt) { create(:cms_homepage, store: eu_store, locale: 'de') }
+
+    before { visit spree.root_path }
+
+    it 'displays page title as page title if no meta_title is set' do
+      expect(page).to have_title("#{homepage_mt.title} - #{current_store.name}")
+    end
+
+    it 'displays page meta_title as page title if meta_title is set' do
+      expect(page).to have_title("#{homepage_mt.meta_title} - #{current_store.name}")
+    end
+  end
+
+  context 'meta description - when no cms_homepage is set and store has no meta data set' do
+    let!(:current_store) { create(:store) }
+
+    before { visit spree.root_path }
+
+    it 'returns store_seo_description falling back to store name' do
+      expect(page).to have_meta(:description, current_store.name)
+    end
+  end
+
+  context 'meta description - when no cms_homepage is set and store has meta title set' do
+    let!(:current_store_with_seo_title) { create(:store, default: true, seo_title: 'Store SEO Title') }
+
+    before { visit spree.root_path }
+
+    it 'uses store seo_title as meta_description if no page meta_description or store meta_description have been set' do
+      expect(page).to have_meta(:description, current_store_with_seo_title.seo_title)
+    end
+  end
+
+  context 'meta description - when no cms_homepage is set and store has meta description set' do
+    let!(:current_store_with_seo_meta_desscription) { create(:store, default: true, meta_description: 'Store Meta Description') }
+
+    before { visit spree.root_path }
+
+    it 'uses store seo_title as meta_description if no page meta_description or store meta_description have been set' do
+      expect(page).to have_meta(:description, current_store_with_seo_meta_desscription.meta_description)
+    end
+  end
+
+  context 'meta description - when cms_homepage is set and has no meta description' do
+    let!(:homepage_with_no_meta_description) { create(:cms_homepage, store: eu_store, locale: 'de') }
+
+    before { visit spree.root_path }
+
+    it 'falls back to store seo_meta_description' do
+      expect(page).to have_meta(:description, eu_store.name)
+    end
+  end
+
+  context 'meta description - when cms_homepage is set and has meta description' do
+    let!(:homepage_with_meta_description) { create(:cms_homepage, store: eu_store, locale: 'de', meta_description: 'Page Meta Description') }
+
+    before { visit spree.root_path }
+
+    it 'falls back to store seo_meta_description' do
+      expect(page).to have_meta(:description, homepage_with_meta_description.meta_description)
+    end
+  end
+
   context 'when no homepage is set' do
     before { visit spree.root_path }
 

@@ -36,11 +36,7 @@ module Spree
     end
 
     def accurate_title
-      if @cms_home_page
-        @cms_home_page.seo_title
-      else
-        super
-      end
+      @cms_home_page&.seo_title || super
     end
 
     def load_homepage

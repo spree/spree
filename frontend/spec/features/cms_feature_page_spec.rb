@@ -20,7 +20,7 @@ describe 'cms_page feature page', type: :feature, js: true do
       expect(page).not_to have_text('About Us')
     end
 
-    it 'displays meta_title as page title if no meta_title is set' do
+    it 'displays title as page title if no meta_title is set' do
       expect(page).to have_title("#{cms_feature_page.title} - #{store.name}")
     end
 

@@ -120,6 +120,16 @@ module Spree
       favicon_image.variant(resize: '32x32')
     end
 
+    def seo_meta_description
+      if meta_description.present?
+        meta_description
+      elsif seo_title.present?
+        seo_title
+      else
+        name
+      end
+    end
+
     private
 
     def ensure_default_exists_and_is_unique

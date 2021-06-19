@@ -9,6 +9,10 @@ module Spree::Cms::Pages
       true
     end
 
+    def seo_meta_description
+      meta_description if meta_description.present?
+    end
+
     private
 
     def empty_slug
