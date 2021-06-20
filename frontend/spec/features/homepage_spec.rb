@@ -2,7 +2,14 @@ require 'spec_helper'
 
 describe 'homepage', type: :feature, js: true do
   let(:eu_store_hp) { create(:store, default: true, supported_currencies: 'EUR', default_locale: 'de', supported_locales: 'de,fr') }
-  let(:us_store_hp) { create(:store, supported_currencies: 'USD', default_locale: 'en', supported_locales: 'en') }
+
+  after do
+    create(:store, default: true)
+
+    eu_store_hp.update(default_locale: nil)
+    I18n.locale = :en
+    Spree::Frontend::Config[:locale] = :en
+  end
 
   context 'meta title' do
     let!(:homepage_mt) { create(:cms_homepage, store: eu_store_hp, locale: 'de') }
@@ -70,7 +77,7 @@ describe 'homepage', type: :feature, js: true do
     before { visit spree.root_path }
 
     it 'the index page is still accesable with a back soon message' do
-      expect(page).to have_text("We'll be back.")
+      expect(page).to have_text('We will be back.')
     end
   end
 
@@ -98,7 +105,6 @@ describe 'homepage', type: :feature, js: true do
     let!(:hp_section_de) { create(:cms_featured_article_section, cms_page: homepage_de) }
 
     before do
-      I18n.locale = :fr
       Spree::Frontend::Config[:locale] = :fr
 
       hp_sec_de = Spree::CmsSection.find(hp_section_de.id)
@@ -111,8 +117,7 @@ describe 'homepage', type: :feature, js: true do
     end
 
     after do
-      I18n.locale = :de
-      Spree::Frontend::Config[:locale] = :de
+      Spree::Frontend::Config[:locale] = nil
     end
 
     it 'displays the cms_homepage for the stores default language' do
@@ -127,7 +132,6 @@ describe 'homepage', type: :feature, js: true do
     let!(:hp_section_fr) { create(:cms_featured_article_section, cms_page: homepage_fr) }
 
     before do
-      I18n.locale = :fr
       Spree::Frontend::Config[:locale] = :fr
 
       hp_sec_de = Spree::CmsSection.find(hp_section_de.id)
@@ -146,8 +150,7 @@ describe 'homepage', type: :feature, js: true do
     end
 
     after do
-      I18n.locale = :de
-      Spree::Frontend::Config[:locale] = :de
+      Spree::Frontend::Config[:locale] = nil
     end
 
     it 'displays the correct cms_homepage' do
@@ -156,6 +159,7 @@ describe 'homepage', type: :feature, js: true do
   end
 
   context 'homepage is displayed for the current store' do
+    let(:us_store_hp) { create(:store, supported_currencies: 'USD', default_locale: 'en', supported_locales: 'en') }
     let!(:homepage_eu_store) { create(:cms_homepage, store: eu_store_hp, locale: 'de') }
     let!(:homepage_us_store) { create(:cms_homepage, store: us_store_hp, locale: 'en') }
     let!(:hp_section_de) { create(:cms_featured_article_section, cms_page: homepage_eu_store) }
