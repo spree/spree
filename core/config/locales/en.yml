@@ -1902,7 +1902,7 @@ en:
     variants: Variants
     version: Version
     void: Void
-    we_will_be_back: We'll be back.
+    we_will_be_back: We will be back.
     we_are_busy_updating: "We're updating the %{store_name} homepage."
     we_are_busy_updating_page: "We're busy updating this page."
     please_check_back_soon: Please check back soon.
