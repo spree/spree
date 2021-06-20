@@ -4,7 +4,7 @@ describe 'Edit Feature Page', type: :feature do
   stub_authorization!
 
   context 'when a user creates a Feature Page' do
-    let!(:store_1) { create(:store) }
+    let!(:store_1) { create(:store, supported_locales: 'en,fr') }
 
     before do
       I18n.backend.store_translations(:fr,
