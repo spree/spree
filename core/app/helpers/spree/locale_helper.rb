@@ -8,7 +8,7 @@ module Spree
       available_locales.map { |locale| locale_presentation(locale) }
     end
 
-    def c
+    def supported_locales_options
       return if current_store.nil?
 
       current_store.supported_locales_list.map { |locale| locale_presentation(locale) }
