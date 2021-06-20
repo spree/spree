@@ -89,17 +89,15 @@ button#cmsSectionEditorFullScreen {
 
 #pageLivePreview {
   transform-origin: top left;
+  background: rgb(62, 62, 62);
 }
 
 .desktopLiveView {
   #pageLivePreview {
-    width: 200%;
-    height:200%;
-    top: 0%;
-    left: 50%;
-    bottom: 0%;
-    right: 50%;
-    transform: scale(0.5) translate(-50%);
+    width: 200.5%;
+    height:200.5%;
+    inset: 50%;
+    transform: scale(0.5) translate(-50%, -50%);
     max-width: 2600px;
   }
 }
@@ -107,12 +105,9 @@ button#cmsSectionEditorFullScreen {
 .tabletLiveView {
   #pageLivePreview {
     width: 85%;
-    height: 133%;
-    top: 0%;
-    left: 50%;
-    bottom: 0%;
-    right: 50%;
-    transform: scale(0.75) translate(-50%);
+    height: 133.5%;
+    inset: 50%;
+    transform: scale(0.75) translate(-50%, -50%);
     max-width: 991px;
     min-width: 768px;
   }
@@ -121,12 +116,9 @@ button#cmsSectionEditorFullScreen {
 .mobileLiveView {
     #pageLivePreview {
     width: 60%;
-    height: 133%;
-    top: 0%;
-    left: 50%;
-    bottom: 0%;
-    right: 50%;
-    transform: scale(0.75) translate(-50%);
+    height: 133.5%;
+    inset: 50%;
+    transform: scale(0.75) translate(-50%, -50%);
     max-width: 767px;
     min-width: 375px;
   }

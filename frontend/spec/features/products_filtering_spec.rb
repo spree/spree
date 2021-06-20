@@ -131,7 +131,7 @@ describe 'Products filtering', :js do
     let!(:length) { create :option_type, name: 'length', presentation: 'Length', filterable: true }
     let!(:mini_length) { create :option_value, option_type: length, name: 'mini', presentation: 'MINI' }
 
-    let!(:product_3) { create :product, stores: [create(:store)], taxons: [taxon], option_types: [length] }
+    let!(:product_3) { create :product, stores: [create(:store, default: true)], taxons: [taxon], option_types: [length] }
     let!(:variant_3) { create :variant, product: product_3, option_values: [mini_length] }
 
     it 'does not display option types for products assigned to the other store' do
@@ -160,7 +160,7 @@ describe 'Products filtering', :js do
     let!(:material) { create :property, :material, filterable: true }
     let!(:cotton_material) { create :product_property, value: 'Cotton', property: material }
 
-    let!(:product_3) { create :product, stores: [create(:store)], taxons: [taxon], product_properties: [cotton_material] }
+    let!(:product_3) { create :product, stores: [create(:store, default: true)], taxons: [taxon], product_properties: [cotton_material] }
 
     it 'does not display properties for products assigned to the other store' do
       visit spree.nested_taxons_path(taxon)
