@@ -7,11 +7,13 @@ module Spree
         url = if page.homepage?
                 spree.root_url + page.locale
               else
-                spree.page_url(page.slug)
+                spree.page_url(page.locale, page.slug)
               end
 
-        button_link_to(Spree.t('admin.cms.preview_page'), url,
-                       class: 'btn-outline-secondary', icon: 'view.svg', id: 'admin_preview_product', target: :blank)
+        button_link_to(Spree.t('admin.cms.preview_page'), url, class: 'btn-outline-secondary',
+                                                               icon: 'view.svg',
+                                                               id: 'admin_preview_product',
+                                                               target: :blank)
       end
 
       def preview_url(page)
@@ -20,7 +22,7 @@ module Spree
         if page.homepage?
           spree.root_path + page.locale + "?no_cache=#{rand(1...10000)}"
         else
-          spree.page_path(page.slug) + "?no_cache=#{rand(1...10000)}"
+          "/#{page.locale + spree.page_path(page.slug)}?no_cache=#{rand(1...10000)}"
         end
       end
     end

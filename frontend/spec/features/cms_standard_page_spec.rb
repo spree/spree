@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe 'cms_page standard page', type: :feature, js: true do
-  let!(:store) { create(:store, default: true, supported_currencies: 'USD') }
+  let!(:store) { create(:store, default: true, supported_currencies: 'USD', supported_locales: 'en,fr') }
 
   describe 'page' do
     let!(:cms_page) { create(:cms_standard_page, store: store, locale: 'en', content: '<h2>About Us</h2>') }
@@ -16,6 +16,13 @@ describe 'cms_page standard page', type: :feature, js: true do
 
     it 'displays title as page title if no meta_title is set' do
       expect(page).to have_title("#{cms_page.title} - #{store.name}")
+    end
+
+    it 'redirects to homepage when language is changed via locale selector' do
+      find('#internationalization-button-desktop').click
+      find('#switch_to_locale').find(:xpath, 'option[2]').select_option
+
+      expect(page).to have_text('We Will Be Back')
     end
   end
 
