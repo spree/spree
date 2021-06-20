@@ -57,29 +57,35 @@ button#cmsSectionEditorFullScreen {
   }
 }
 
-body[data-sections-editor-full-screen] {
-  .hide-on-full-screen-mode {
-    display: none;
-  }
-
-  #pageSectionsArea {
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 9999;
-    background: white;
-    padding: 15px 15px 0 15px;
-    height: 100vh;
-
-    #cmsPagesectionsArea {
-      max-height: 90vh;
+@include media-breakpoint-up(md) {
+  body[data-sections-editor-full-screen] {
+    .hide-on-full-screen-mode {
+      display: none;
     }
 
-    .embed-responsive-4by3 {
-      height: 90vh;
+    #pageSectionsArea {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 9999;
+      background: white;
+      padding: 15px 15px 0 15px;
+      height: 100vh;
+
+      #cmsPagesectionsArea {
+        max-height: 90vh;
+      }
+
+      .embed-responsive-4by3 {
+        height: 90vh;
+      }
     }
-  }
- }
+
+    #draggableSectionsHolder {
+      max-width: 350px;
+    }
+   }
+}
 
 #pageLivePreview {
   transform-origin: top left;
@@ -88,8 +94,13 @@ body[data-sections-editor-full-screen] {
 .desktopLiveView {
   #pageLivePreview {
     width: 200%;
-    height: 200%;
-    transform: scale(0.5);
+    height:200%;
+    top: 0%;
+    left: 50%;
+    bottom: 0%;
+    right: 50%;
+    transform: scale(0.5) translate(-50%);
+    max-width: 2600px;
   }
 }
 
@@ -97,8 +108,13 @@ body[data-sections-editor-full-screen] {
   #pageLivePreview {
     width: 85%;
     height: 133%;
-    transform: scale(0.75);
-    left: 19%;
+    top: 0%;
+    left: 50%;
+    bottom: 0%;
+    right: 50%;
+    transform: scale(0.75) translate(-50%);
+    max-width: 991px;
+    min-width: 768px;
   }
 }
 
@@ -106,22 +122,12 @@ body[data-sections-editor-full-screen] {
     #pageLivePreview {
     width: 60%;
     height: 133%;
-    transform: scale(0.75);
-    left: 28%;
+    top: 0%;
+    left: 50%;
+    bottom: 0%;
+    right: 50%;
+    transform: scale(0.75) translate(-50%);
+    max-width: 767px;
+    min-width: 375px;
   }
 }
-
-// ToDo: Fix zoom state on difrent screen sizes
-// To get optimal use from the Live Editor Preview.
-// Bootstrap media break points are not going to be suitable as
-// it is in frame in a screen.
-// @include media-breakpoint-up(lg) {
-//   .desktopLiveView {
-//     #pageLivePreview {
-//       width: 125%;
-//       height: 100%;
-//       transform: scale(0.75);
-
-//     }
-//   }
-// }
