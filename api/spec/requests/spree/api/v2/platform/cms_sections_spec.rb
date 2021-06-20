@@ -1,15 +1,15 @@
 require 'spec_helper'
 
-describe 'Platform API v2 CmsSection', type: :request do
+describe 'Platform API v2 CmsSections', type: :request do
   include_context 'API v2 tokens'
   include_context 'Platform API v2'
 
-  let!(:store) { create(:store, default: true) }
-  let!(:page) { create(:cms_homepage, store: store) }
-  let!(:section_a) { create(:cms_section, cms_page: page) }
-  let!(:section_b) { create(:cms_section, cms_page: page) }
-  let!(:section_c) { create(:cms_section, cms_page: page) }
-  let!(:section_d) { create(:cms_section, cms_page: page) }
+  let(:store) { create(:store, default: true) }
+  let(:page) { create(:cms_homepage, store: store) }
+  let(:section_a) { create(:cms_section, cms_page: page) }
+  let(:section_b) { create(:cms_section, cms_page: page) }
+  let(:section_c) { create(:cms_section, cms_page: page) }
+  let(:section_d) { create(:cms_section, cms_page: page) }
   let(:bearer_token) { { 'Authorization' => valid_authorization } }
 
   describe 'cms_section#reposition' do

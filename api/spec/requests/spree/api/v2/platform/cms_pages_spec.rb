@@ -1,11 +1,11 @@
 require 'spec_helper'
 
-describe 'Platform API v2 CmsPage', type: :request do
+describe 'Platform API v2 CmsPages', type: :request do
   include_context 'API v2 tokens'
   include_context 'Platform API v2'
 
-  let!(:store) { create(:store, default: true) }
-  let!(:page) { create(:cms_homepage, store: store) }
+  let(:store) { create(:store, default: true) }
+  let(:page) { create(:cms_homepage, store: store) }
   let(:bearer_token) { { 'Authorization' => valid_authorization } }
 
   describe 'cms_page#toggle_visibility' do
