@@ -30,15 +30,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function handleTogglePageVisibility(obj) {
   const pageId = parseInt(obj.dataset.cmsPageId, 10)
-  const data = { page_id: pageId }
 
   fetch(Spree.routes.pages_api_v2 + `/${pageId}/toggle_visibility`, {
     method: 'PATCH',
     headers: {
       Authorization: 'Bearer ' + OAUTH_TOKEN,
       'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(data)
+    }
   })
     .then(response => {
       if (response.ok) {

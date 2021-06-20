@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'Platform API v2 Menu Items spec', type: :request do
+describe 'Platform API v2 MenuItem', type: :request do
   include_context 'API v2 tokens'
   include_context 'Platform API v2'
 

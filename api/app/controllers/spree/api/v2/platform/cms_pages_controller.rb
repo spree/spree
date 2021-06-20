@@ -8,7 +8,7 @@ module Spree
           def toggle_visibility
             spree_authorize! :update, @toggle_page if spree_current_user.present?
 
-            @toggle_page = scope.find(params[:page_id])
+            @toggle_page = scope.find(params[:id])
 
             if @toggle_page
               @toggle_page.toggle!(:visible)
