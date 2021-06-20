@@ -4,7 +4,7 @@ describe 'Edit Standard Page', type: :feature do
   stub_authorization!
 
   context 'when a user creates a Standard Page' do
-    let!(:store_1) { create(:store, name: 'Super Store', supported_locales: 'en,fr') }
+    let!(:store_sp) { create(:store, name: 'Super Store', supported_locales: 'en,fr') }
 
     before do
       visit spree.new_admin_cms_page_path

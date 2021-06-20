@@ -1,31 +1,34 @@
 require 'spec_helper'
 
 describe 'homepage', type: :feature, js: true do
-  let!(:eu_store) { create(:store, default: true, supported_currencies: 'EUR', default_locale: 'de', supported_locales: 'de,fr') }
-  let!(:us_store) { create(:store, supported_currencies: 'USD', default_locale: 'en', supported_locales: 'en') }
+  let!(:eu_store_hp) { create(:store, default: true, supported_currencies: 'EUR', default_locale: 'de', supported_locales: 'de,fr') }
+  let!(:us_store_hp) { create(:store, supported_currencies: 'USD', default_locale: 'en', supported_locales: 'en') }
+
+  after do
+    eu_store_hp.update(default: false)
+    eu_store_hp.save!
+    eu_store_hp.reload
+  end
 
   context 'meta title' do
-    let!(:current_store) { create(:store) }
-    let!(:homepage_mt) { create(:cms_homepage, store: eu_store, locale: 'de') }
+    let!(:homepage_mt) { create(:cms_homepage, store: eu_store_hp, locale: 'de') }
 
     before { visit spree.root_path }
 
     it 'displays page title as page title if no meta_title is set' do
-      expect(page).to have_title("#{homepage_mt.title} - #{current_store.name}")
+      expect(page).to have_title("#{homepage_mt.title} - #{eu_store_hp.name}")
     end
 
     it 'displays page meta_title as page title if meta_title is set' do
-      expect(page).to have_title("#{homepage_mt.meta_title} - #{current_store.name}")
+      expect(page).to have_title("#{homepage_mt.meta_title} - #{eu_store_hp.name}")
     end
   end
 
   context 'meta description - when no cms_homepage is set and store has no meta data set' do
-    let!(:current_store) { create(:store) }
-
     before { visit spree.root_path }
 
     it 'returns store_seo_description falling back to store name' do
-      expect(page).to have_meta(:description, current_store.name)
+      expect(page).to have_meta(:description, eu_store_hp.name)
     end
   end
 
@@ -50,17 +53,17 @@ describe 'homepage', type: :feature, js: true do
   end
 
   context 'meta description - when cms_homepage is set and has no meta description' do
-    let!(:homepage_with_no_meta_description) { create(:cms_homepage, store: eu_store, locale: 'de') }
+    let!(:homepage_with_no_meta_description) { create(:cms_homepage, store: eu_store_hp, locale: 'de') }
 
     before { visit spree.root_path }
 
     it 'falls back to store seo_meta_description' do
-      expect(page).to have_meta(:description, eu_store.name)
+      expect(page).to have_meta(:description, eu_store_hp.name)
     end
   end
 
   context 'meta description - when cms_homepage is set and has meta description' do
-    let!(:homepage_with_meta_description) { create(:cms_homepage, store: eu_store, locale: 'de', meta_description: 'Page Meta Description') }
+    let!(:homepage_with_meta_description) { create(:cms_homepage, store: eu_store_hp, locale: 'de', meta_description: 'Page Meta Description') }
 
     before { visit spree.root_path }
 
@@ -78,7 +81,7 @@ describe 'homepage', type: :feature, js: true do
   end
 
   context 'when homepage is set' do
-    let!(:homepage) { create(:cms_homepage, store: eu_store, locale: 'de') }
+    let!(:homepage) { create(:cms_homepage, store: eu_store_hp, locale: 'de') }
     let!(:hp_section) { create(:cms_featured_article_section, cms_page: homepage) }
 
     before do
@@ -97,7 +100,7 @@ describe 'homepage', type: :feature, js: true do
   end
 
   context 'when the index page is viewed using a none default language but no cms_homepage is available for the current language' do
-    let!(:homepage_de) { create(:cms_homepage, store: eu_store, locale: 'de') }
+    let!(:homepage_de) { create(:cms_homepage, store: eu_store_hp, locale: 'de') }
     let!(:hp_section_de) { create(:cms_featured_article_section, cms_page: homepage_de) }
 
     before do
@@ -124,8 +127,8 @@ describe 'homepage', type: :feature, js: true do
   end
 
   context 'when the index page is viewed using none default language and translation is present' do
-    let!(:homepage_de) { create(:cms_homepage, store: eu_store, locale: 'de') }
-    let!(:homepage_fr) { create(:cms_homepage, store: eu_store, locale: 'fr') }
+    let!(:homepage_de) { create(:cms_homepage, store: eu_store_hp, locale: 'de') }
+    let!(:homepage_fr) { create(:cms_homepage, store: eu_store_hp, locale: 'fr') }
     let!(:hp_section_de) { create(:cms_featured_article_section, cms_page: homepage_de) }
     let!(:hp_section_fr) { create(:cms_featured_article_section, cms_page: homepage_fr) }
 
@@ -159,14 +162,14 @@ describe 'homepage', type: :feature, js: true do
   end
 
   context 'homepage is displayed for the current store' do
-    let!(:homepage_eu_store) { create(:cms_homepage, store: eu_store, locale: 'de') }
-    let!(:homepage_us_store) { create(:cms_homepage, store: us_store, locale: 'en') }
+    let!(:homepage_eu_store) { create(:cms_homepage, store: eu_store_hp, locale: 'de') }
+    let!(:homepage_us_store) { create(:cms_homepage, store: us_store_hp, locale: 'en') }
     let!(:hp_section_de) { create(:cms_featured_article_section, cms_page: homepage_eu_store) }
     let!(:hp_section_us) { create(:cms_featured_article_section, cms_page: homepage_us_store) }
 
     before do
-      eu_store.update(default: false)
-      us_store.update(default: true)
+      eu_store_hp.update(default: false)
+      us_store_hp.update(default: true)
       hp_eu_sec = Spree::CmsSection.find(homepage_eu_store.id)
 
       hp_eu_sec.content[:title] = 'Willkommen in unserem EU-Shop'
@@ -183,8 +186,8 @@ describe 'homepage', type: :feature, js: true do
     end
 
     after do
-      eu_store.update(default: true)
-      us_store.update(default: false)
+      eu_store_hp.update(default: true)
+      us_store_hp.update(default: false)
     end
 
     it 'displays the correct homepage for the current store' do

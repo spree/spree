@@ -22,7 +22,7 @@ module Spree
     scope :by_slug, ->(slug) { where(slug: slug) }
     scope :linkable, -> { where.not(slug: nil, type: 'Spree::Cms::Pages::Homepage') }
 
-    self.whitelisted_ransackable_attributes = %w[title type]
+    self.whitelisted_ransackable_attributes = %w[title type locale store_id]
 
     def seo_title
       if meta_title.present?
