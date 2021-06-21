@@ -2,6 +2,7 @@ require 'spec_helper'
 
 describe 'setting locale', type: :feature, js: true do
   let!(:store) { Spree::Store.default }
+  let!(:location_header) { create(:menu_location) }
   let!(:locale) { :fr }
 
   let!(:en_main_menu) { create(:menu, name: 'Main Menu', store_id: store.id) }

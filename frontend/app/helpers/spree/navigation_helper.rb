@@ -56,7 +56,7 @@ module Spree
     def spree_menu(location = 'header')
       method_name = "for_#{location}"
 
-      if available_menus.respond_to?(method_name) && Spree::Menu::MENU_LOCATIONS_PARAMETERIZED.include?(location)
+      if available_menus.respond_to?(method_name)
         available_menus.send(method_name, I18n.locale) || current_store.default_menu(location)
       end
     end

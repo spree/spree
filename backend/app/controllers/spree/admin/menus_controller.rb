@@ -1,6 +1,7 @@
 module Spree
   module Admin
     class MenusController < ResourceController
+      before_action :load_data
       def index; end
 
       private
@@ -17,6 +18,10 @@ module Spree
 
       def location_after_save
         spree.edit_admin_menu_path(@menu)
+      end
+
+      def load_data
+        @menu_locations = Spree::MenuLocation.all
       end
     end
   end

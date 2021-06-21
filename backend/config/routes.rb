@@ -195,6 +195,7 @@ Spree::Core::Engine.add_routes do
         end
       end
     end
+    resources :menu_locations
   end
 
   spree_path = Rails.application.routes.url_helpers.try(:spree_path, trailing_slash: true) || '/'

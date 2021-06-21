@@ -8,7 +8,7 @@
 
     <%= f.field_container :location, class: ['form-group'] do %>
       <%= f.label :location, Spree.t('location') %>
-      <%= f.select(:location, menu_locations_dropdown_values, {include_blank: false}, class: 'select2') %>
+      <%= collection_select(:menu, :location, @menu_locations, :parameterized_name, :name, {}, { class: 'select2' }) %>
       <%= f.error_message_on :location %>
     <% end %>
   </div>

@@ -1,0 +1,37 @@
+<% content_for :page_actions do %>
+  <%= button_link_to Spree.t('admin.navigation.add_new_menu_location'), new_object_url, { class: "btn-success", icon: 'add.svg', id: 'new_menu_location' } %>
+<% end if can?(:create, Spree::Menu) %>
+
+<% content_for :page_title do %>
+  <%= link_to Spree.t('admin.navigation.all_menus'), spree.admin_menus_path %> / <%= Spree.t('admin.navigation.menu_locations') %>
+<% end %>
+
+<% if @menu_locations.any? %>
+<div class="table-responsive">
+  <table class="table" id="menusTable">
+    <thead>
+      <th scope="col"><%= Spree.t('name') %></th>
+      <th scope="col"></th>
+    </thead>
+    <tbody>
+      <% @menu_locations.each do |location| %>
+        <tr>
+          <td>
+            <%= location.name %>
+          </td>
+          <td class="actions" data-hook="admin_menus_index_row_actions">
+             <span class="d-flex justify-content-end">
+             <%= link_to_edit(location, no_text: true) %>
+             <%= link_to_delete location, no_text: true, url: spree.admin_menu_location_path(location) if can?(:destroy, location) %>
+            </span>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+<% else %>
+  <div class="alert alert-info no-objects-found">
+    <%= Spree.t('admin.navigation.you_have_no_menus') %>
+  </div>
+<% end %>

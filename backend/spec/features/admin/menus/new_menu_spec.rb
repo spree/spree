@@ -3,11 +3,16 @@ require 'spec_helper'
 describe 'New Menu', type: :feature do
   stub_authorization!
 
-  context 'when user visits new menu page' do
-    before do
-      visit spree.new_admin_menu_path
-    end
+  let!(:store_1) { create(:store) }
+  let!(:store_2) { create(:store) }
+  let!(:location_header) { create(:menu_location) }
+  let!(:location_footer) { create(:menu_location, name: 'Footer') }
 
+  before do
+    visit spree.new_admin_menu_path
+  end
+
+  context 'when user visits new menu page' do
     it 'shows in the contextual header bar the user is creating a new menu' do
       within('h1') do
         expect(page).to have_text Spree.t('admin.navigation.new_menu')
@@ -24,10 +29,6 @@ describe 'New Menu', type: :feature do
   end
 
   context 'when a user tries to create a menu with no name' do
-    before do
-      visit spree.new_admin_menu_path
-    end
-
     it "warns that the Name can't be blank" do
       click_on 'Create'
       expect(page).to have_text ("Name can't be blank")
@@ -35,12 +36,7 @@ describe 'New Menu', type: :feature do
   end
 
   context 'when a user tries to create a menu with a duplicate location within scope of stores and language', js: true do
-    let!(:store_1) { create(:store) }
     let!(:main_menu) { create(:menu, name: 'Main Menu', store: store_1) }
-
-    before do
-      visit spree.new_admin_menu_path
-    end
 
     it 'warns the user that the Unique code has already been taken' do
       fill_in 'Name', with: 'Main Menu'
@@ -53,13 +49,6 @@ describe 'New Menu', type: :feature do
   end
 
   context 'user can create a new menu', js: true do
-    let!(:store_1) { create(:store) }
-    let!(:store_2) { create(:store) }
-
-    before do
-      visit spree.new_admin_menu_path
-    end
-
     it 'with stores' do
       fill_in 'Name', with: 'Main Menu'
 

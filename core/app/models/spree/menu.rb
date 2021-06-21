@@ -1,24 +1,16 @@
 module Spree
   class Menu < Spree::Base
-    MENU_LOCATIONS = ['Header', 'Footer']
-    MENU_LOCATIONS_PARAMETERIZED = []
-
-    MENU_LOCATIONS.each do |location|
-      parameterize_location = location.parameterize(separator: '_')
-      MENU_LOCATIONS_PARAMETERIZED << parameterize_location
-    end
-
     has_many :menu_items, dependent: :destroy
     belongs_to :store, touch: true
 
-    before_validation :paremeterize_location
+    before_validation :parameterize_location
+
     after_create :set_root
     after_save :update_root_name
     after_touch :touch_store
 
     validates :name, :store, :locale, presence: true
     validates :location, uniqueness: { scope: [:store, :locale] }
-    validates :location, inclusion: { in: MENU_LOCATIONS_PARAMETERIZED }
 
     has_one :root, -> { where(parent_id: nil) }, class_name: 'Spree::MenuItem', dependent: :destroy
 
@@ -29,17 +21,19 @@ module Spree
 
     self.whitelisted_ransackable_attributes = %w[name location locale store_id]
 
-    MENU_LOCATIONS_PARAMETERIZED.each do |location_name|
-      define_singleton_method("for_#{location_name}") do |locale|
-        menu = find_by(location: location_name, locale: locale.to_s)
+    def self.refresh_for_locations
+      MenuLocation.all.each do |location|
+        define_singleton_method("for_#{location.parameterized_name}") do |locale|
+          menu = find_by(location: location.parameterized_name, locale: locale.to_s)
 
-        menu.root if menu.present?
+          menu.root if menu.present?
+        end
       end
     end
 
     private
 
-    def paremeterize_location
+    def parameterize_location
       return unless location.present?
 
       self.location = location.parameterize(separator: '_')
