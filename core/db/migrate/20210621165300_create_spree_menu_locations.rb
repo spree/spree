@@ -7,7 +7,7 @@ class CreateSpreeMenuLocations < ActiveRecord::Migration[5.2]
       t.timestamps
     end
 
-    add_index :spree_menu_items, :name
-    add_index :spree_menu_items, :parameterized_name
+    add_index :spree_menu_locations, :name
+    add_index :spree_menu_locations, :parameterized_name
   end
 end
