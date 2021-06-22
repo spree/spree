@@ -5,6 +5,8 @@ module Spree
 
     before_validation :parameterize_location
 
+    after_initialize :load_locations
+
     after_create :set_root
     after_save :update_root_name
     after_touch :touch_store
@@ -20,6 +22,10 @@ module Spree
     scope :by_locale, ->(locale) { where(locale: locale) }
 
     self.whitelisted_ransackable_attributes = %w[name location locale store_id]
+
+    def load_locations
+      self.class.refresh_for_locations
+    end
 
     def self.refresh_for_locations
       MenuLocation.all.each do |location|

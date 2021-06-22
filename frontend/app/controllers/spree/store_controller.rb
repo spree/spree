@@ -8,7 +8,7 @@ module Spree
 
     skip_before_action :verify_authenticity_token, only: :ensure_cart, raise: false
 
-    before_action :redirect_to_default_locale
+    before_action :redirect_to_default_locale, :load_menu_locations
 
     def account_link
       render partial: 'spree/shared/link_to_account'
@@ -32,6 +32,10 @@ module Spree
     end
 
     protected
+
+    def load_menu_locations
+      Spree::Menu.refresh_for_locations
+    end
 
     def config_locale
       Spree::Frontend::Config[:locale]

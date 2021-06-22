@@ -33,6 +33,7 @@ module SpreeSample
       Spree::Sample.load_sample('return_authorization_reasons')
       Spree::Sample.load_sample('stores')
 
+      Spree::Sample.load_sample('menu_locations')
       Spree::Sample.load_sample('menus')
       Spree::Sample.load_sample('menu_items')
     end

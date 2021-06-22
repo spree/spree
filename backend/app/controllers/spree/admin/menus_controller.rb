@@ -21,6 +21,7 @@ module Spree
       end
 
       def load_data
+        Spree::Menu.refresh_for_locations
         @menu_locations = Spree::MenuLocation.all
       end
     end
