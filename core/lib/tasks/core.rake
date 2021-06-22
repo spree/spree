@@ -8,7 +8,7 @@ use rake db:load_file[/absolute/path/to/sample/filename.rb]}
     file = Pathname.new(args.file)
 
     puts "loading ruby #{file}"
-    require file
+    load file
   end
 
   desc 'Loads fixtures from the the dir you specify using rake db:load_dir[loadfrom]'
