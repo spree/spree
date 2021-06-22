@@ -8,6 +8,22 @@ module Spree
       @body_class
     end
 
+    def logo(image_path = nil, options = {})
+      image_path ||= if current_store.logo.attached? && current_store.logo.variable?
+                       main_app.url_for(current_store.logo.variant(resize: '244x104>'))
+                     elsif current_store.logo.attached? && current_store.logo.image?
+                       main_app.url_for(current_store.logo)
+                     else
+                       Spree::Config[:logo]
+                     end
+
+      path = spree.respond_to?(:root_path) ? spree.root_path : main_app.root_path
+
+      link_to path, 'aria-label': current_store.name, method: options[:method] do
+        image_tag image_path, alt: current_store.name, title: current_store.name
+      end
+    end
+
     def spree_breadcrumbs(taxon, _separator = '', product = nil)
       return '' if current_page?('/') || taxon.nil?
 
