@@ -1,6 +1,17 @@
 module Spree
   module Admin
-    class BaseController < Spree::BaseController
+    class BaseController < ApplicationController
+      include Spree::Core::ControllerHelpers::Auth
+      include Spree::Core::ControllerHelpers::Common
+      include Spree::Core::ControllerHelpers::Search
+      include Spree::Core::ControllerHelpers::Store
+      include Spree::Core::ControllerHelpers::StrongParameters
+      include Spree::Core::ControllerHelpers::Locale
+      include Spree::Core::ControllerHelpers::Currency
+
+      respond_to :html
+
+      helper 'spree/base'
       helper 'spree/admin/navigation'
       helper 'spree/locale'
       helper 'spree/currency'

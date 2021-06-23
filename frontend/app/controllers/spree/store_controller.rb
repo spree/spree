@@ -1,8 +1,18 @@
 module Spree
-  class StoreController < Spree::BaseController
+  class StoreController < ApplicationController
+    include Spree::Core::ControllerHelpers::Auth
+    include Spree::Core::ControllerHelpers::Common
+    include Spree::Core::ControllerHelpers::Search
+    include Spree::Core::ControllerHelpers::Store
+    include Spree::Core::ControllerHelpers::StrongParameters
+    include Spree::Core::ControllerHelpers::Locale
+    include Spree::Core::ControllerHelpers::Currency
     include Spree::Core::ControllerHelpers::Order
     include Spree::LocaleUrls
 
+    respond_to :html
+
+    helper 'spree/base'
     helper 'spree/locale'
     helper 'spree/currency'
 
