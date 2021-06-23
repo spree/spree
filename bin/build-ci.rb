@@ -22,6 +22,7 @@ class Project
   end
 
   ALL = %w[api backend core frontend emails sample].map(&method(:new)).freeze
+  CORE_GEMS = %w[api core sample].freeze
 
   # Install subproject
   #
@@ -91,7 +92,13 @@ class Project
   #
   # @return [undefined]
   def setup_test_app
-    system("bundle exec --gemfile=#{ROOT_GEMFILE} rake test_app") || raise('Failed to setup the test app')
+    gemfile_path = if CORE_GEMS.include?(self.name)
+                     ROOT_GEMFILE
+                   else
+                     './Gemfile'
+                   end
+
+    system("bundle exec --gemfile=#{gemfile_path} rake test_app ") || raise('Failed to setup the test app')
   end
 
   # Run tests for subproject
