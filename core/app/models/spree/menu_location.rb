@@ -4,7 +4,7 @@ module Spree
 
     after_save :sync_menu
     after_commit :sync_menu
-    around_destroy :remove_location_from_menu_singleton_methods
+    around_destroy :remove_location_from_menu
 
     validates :name, :parameterized_name, presence: true
     validates :name, :parameterized_name, uniqueness: true
@@ -15,7 +15,7 @@ module Spree
       Menu.refresh_for_locations
     end
 
-    def remove_location_from_menu_singleton_methods
+    def remove_location_from_menu
       # Capture the deleted location parameterized_name
       location_method_name = "for_#{parameterized_name}".to_sym
 
@@ -28,8 +28,7 @@ module Spree
       end
 
       # If a rollback occurs, it won't matter, as we re-sync the menu_locations and dynamically add the
-      # class methods, so if the menu_location still exists in the database, it will get re-add to the
-      # singleton_class methods list.
+      # class methods, so if the menu_location still exists in the database, it will get re-add.
       sync_menu
     end
 
