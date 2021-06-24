@@ -1,4 +1,4 @@
-<%= Spree.t('order_mailer.cancel_email.dear_customer', name: name_for(@order)) %>
+<%= Spree.t('mailers.dear_customer', name: name_for(@order)) %>
 
 <%= Spree.t('order_mailer.cancel_email.instructions') %>
 
@@ -34,5 +34,5 @@
 <% end %>
 ============================================================
 <%= Spree.t('order_mailer.total') %> <%= @order.display_total %>
-<%= Spree.t('order_mailer.cancel_email.thanks') %>
-<%= Spree.t('order_mailer.store_team', store_name: current_store.name) %>
+<%= Spree.t('mailers.thanks') %>
+<%= Spree.t('mailers.store_team', store_name: current_store.name) %>
