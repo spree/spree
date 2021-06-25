@@ -88,7 +88,7 @@ module Spree
         rel = opts[:rel] || 'noopener noreferrer'
       end
 
-      active_class = if current_page?(spree_localized_link(item))
+      active_class = if request && current_page?(spree_localized_link(item))
                        "active #{opts[:class]}"
                      else
                        opts[:class]
