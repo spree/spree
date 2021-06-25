@@ -1,5 +1,5 @@
 module Spree
-  class ErrorsController < BaseController
+  class ErrorsController < StoreController
     def forbidden
       render status: 403
     end
