@@ -19,16 +19,16 @@ module Spree
       # Capture the deleted location parameterized_name
       location_method_name = "for_#{parameterized_name}".to_sym
 
-      # Delete the menu_location
+      # Delete the menu_location from the DB
       yield
 
-      # Remove the dynamically created class method if it exists
+      # Remove the dynamically created class method if it exists in Spree::Menu
       if Spree::Menu.respond_to?(location_method_name)
         Menu.singleton_class.send :undef_method, location_method_name
       end
 
-      # If a rollback occurs, it won't matter, as we re-sync the menu_locations and dynamically add the
-      # class methods, so if the menu_location still exists in the database, it will get re-add.
+      # If a rollback occurs, it won't matter, as we re-sync the menu_locations and dynamically
+      # add the class methods that exists in the database.
       sync_menu
     end
 
