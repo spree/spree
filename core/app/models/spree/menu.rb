@@ -11,7 +11,7 @@ module Spree
     has_many :menu_items, dependent: :destroy
     belongs_to :store, touch: true
 
-    before_validation :paremeterize_location
+    before_validation :parameterize_location
     after_create :set_root
     after_save :update_root_name
     after_touch :touch_store
@@ -39,7 +39,7 @@ module Spree
 
     private
 
-    def paremeterize_location
+    def parameterize_location
       return unless location.present?
 
       self.location = location.parameterize(separator: '_')
