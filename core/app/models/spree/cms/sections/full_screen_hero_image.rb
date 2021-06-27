@@ -5,7 +5,7 @@ module Spree::Cms::Sections
     store :content, accessors: [:title, :button_text], coder: JSON
     store :settings, accessors: [:gutters], coder: JSON
 
-    LINKED_RESOURCE_TYPE = ['Spree::Taxon', 'Spree::Product']
+    LINKED_RESOURCE_TYPE = ['Spree::Taxon', 'Spree::Product', 'Spree::CmsPage']
 
     def gutters?
       gutters == 'Gutters'

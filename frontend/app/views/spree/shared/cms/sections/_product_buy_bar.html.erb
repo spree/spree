@@ -1,0 +1,29 @@
+<div class="col-12 buy-container">
+  <div class="container-fluid h-100 header-spree-fluid">
+    <div class="d-flex flex-nowrap align-items-center h-100 px-2">
+      <figure class="logo flex-grow-1 header-spree-fluid-logo m-0">
+        <h3 class="m-0 p-0"><%= section.linked_resource.name %></h3>
+      </figure>
+
+      <div class="d-flex h-100">
+        <% if spree_menu('demo_buy_bar').present? %>
+         <ul class="d-block d-md-flex h-100 m-0 p-0">
+            <% spree_menu('demo_buy_bar').children.each do |link| %>
+              <li class="p-0 mx-3 d-flex buy-bar">
+                <%= spree_nav_link_tag(link, { class: "d-flex align-items-center" }) %>
+              </li>
+            <% end %>
+          </ul>
+        <% end %>
+      </div>
+
+      <div class="d-flex ml-3 align-items-center justify-content-end navbar-right">
+        <% if section.link.present? && section.button_text.present? %>
+          <div>
+            <%= link_to section.button_text, section.link, class: 'btn btn-primary spree-btn px-5' %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

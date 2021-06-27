@@ -22,7 +22,7 @@ module Spree
         return if linked_resource.nil?
 
         if spree_routes.method_defined?(:page_path)
-          spree_routes.page_path(linked_resource)
+          spree_routes.page_path(linked_resource.slug)
         else
           "/#{Spree::Config[:storefront_pages_path]}/#{linked_resource.slug}"
         end
