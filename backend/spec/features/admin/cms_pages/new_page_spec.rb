@@ -35,15 +35,16 @@ describe 'New Page', type: :feature do
   end
 
   context 'when a user tries to create a page with a duplicate slug' do
-    let!(:store_1) { create(:store) }
+    let!(:store_1) { create(:store, default: true) }
     let!(:cms_page) { create(:cms_standard_page, title: 'About Us', store: store_1) }
 
     before do
       visit spree.new_admin_cms_page_path
     end
 
-    it 'warns the user that the slug has already been taken' do
+    it 'warns the user that the slug has already been taken', js: true do
       fill_in 'Title *', with: 'About Us'
+      select2 store_1.unique_name, from: 'Stores'
 
       click_on 'Create'
       expect(page).to have_text ('Slug has already been taken')

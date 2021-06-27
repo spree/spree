@@ -19,7 +19,6 @@ describe 'Visiting the homepage', type: :feature, js: true do
 
     it 'loads the carousel with the products displayed' do
       within "div[data-product-carousel-taxon-id='#{hp_section.linked_resource.id}']" do
-        expect(page).not_to have_content('BESTSELLERS')
         expect(page).to have_content('Superman T-Shirt')
         expect(page).to have_content('Batman Socks')
       end

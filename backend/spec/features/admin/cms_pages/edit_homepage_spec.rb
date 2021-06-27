@@ -4,7 +4,7 @@ describe 'Edit Homepage', type: :feature do
   stub_authorization!
 
   context 'when a user creates a Homepage' do
-    let!(:store_hp) { create(:store, name: 'Super Store', supported_locales: 'en,fr') }
+    let!(:store_hp) { create(:store, default: true, name: 'Super Store', supported_locales: 'en,fr') }
 
     before do
       I18n.backend.store_translations(:fr,
