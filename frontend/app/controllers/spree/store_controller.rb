@@ -60,5 +60,19 @@ module Spree
     def store_last_modified
       (current_store.updated_at || Time.current).utc
     end
+
+    def redirect_unauthorized_access
+      if try_spree_current_user
+        flash[:error] = Spree.t(:authorization_failure)
+        redirect_to spree.forbidden_path
+      else
+        store_location
+        if respond_to?(:spree_login_path)
+          redirect_to spree_login_path
+        else
+          redirect_to spree.root_path
+        end
+      end
+    end
   end
 end

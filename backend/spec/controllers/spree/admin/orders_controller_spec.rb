@@ -285,14 +285,14 @@ describe Spree::Admin::OrdersController, type: :controller do
         user.spree_roles.clear
         user.spree_roles << Spree::Role.find_or_create_by(name: 'bar')
         put :update, params: { id: order.number }
-        expect(response).to redirect_to(spree.forbidden_path)
+        expect(response).to redirect_to(spree.admin_forbidden_path)
       end
     end
 
     it 'denies access to users without an admin role' do
       allow(user).to receive_messages has_spree_role?: false
       post :index
-      expect(response).to redirect_to(spree.forbidden_path)
+      expect(response).to redirect_to(spree.admin_forbidden_path)
     end
 
     it 'denies access to not signed in users' do

@@ -71,6 +71,10 @@ module Spree
         # Override this method in your controllers if you want to have special behavior in case the user is not authorized
         # to access the requested action.  For example, a popup window might simply close itself.
         def redirect_unauthorized_access
+          ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
+            Core::ControllerHelpers#redirect_unauthorized_access is deprecated and will be removed in Spree 5.0.
+            This method is implemented differently for Storefront and Admin
+          DEPRECATION
           if try_spree_current_user
             flash[:error] = Spree.t(:authorization_failure)
             redirect_to spree.forbidden_path
