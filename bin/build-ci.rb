@@ -22,7 +22,7 @@ class Project
   end
 
   ALL = %w[api backend core frontend emails sample].map(&method(:new)).freeze
-  CORE_GEMS = %w[api core sample].freeze
+  CORE_GEMS = %w[api core].freeze
 
   # Install subproject
   #

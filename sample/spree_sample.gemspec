@@ -7,8 +7,8 @@ Gem::Specification.new do |s|
   s.version     = Spree.version
   s.authors     = ['Sean Schofield', 'Spark Solutions']
   s.email       = 'hello@spreecommerce.org'
-  s.summary     = 'Sample data (including images) for use with Spree.'
-  s.description = 'Required dependency for Spree'
+  s.summary     = 'Sample data for Spree Commerce'
+  s.description = 'Optional package containing example data of products, stores, shipping methods, categories and others to quickly setup a demo Spree store'
   s.homepage    = 'https://spreecommerce.org'
   s.license     = 'BSD-3-Clause'
 
@@ -23,6 +23,6 @@ Gem::Specification.new do |s|
   s.require_path = 'lib'
   s.requirements << 'none'
 
-  s.add_dependency 'spree_core', s.version
+  s.add_dependency 'spree_core', ">= #{s.version}"
   s.add_dependency 'ffaker', '~> 2.9'
 end

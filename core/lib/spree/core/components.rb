@@ -16,6 +16,10 @@ module Spree
       def self.emails_available?
         @@emails_available ||= ::Rails::Engine.subclasses.map(&:instance).map { |e| e.class.to_s }.include?('Spree::Emails::Engine')
       end
+
+      def self.sample_available?
+        @@sample_available ||= ::Rails::Engine.subclasses.map(&:instance).map { |e| e.class.to_s }.include?('SpreeSample::Engine')
+      end
     end
   end
 end
