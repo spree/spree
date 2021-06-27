@@ -39,7 +39,7 @@ module Spree
                               size: { less_than_or_equal_to: 1.megabyte }
 
     before_save :ensure_default_exists_and_is_unique
-    before_save :ensure_supported_currencies, :ensure_supported_locales
+    before_save :ensure_supported_currencies, :ensure_supported_locales, :ensure_default_country
     before_destroy :validate_not_default
 
     scope :by_url, ->(url) { where('url like ?', "%#{url}%") }
@@ -166,6 +166,17 @@ module Spree
     def clear_cache
       Rails.cache.delete('default_store')
       Rails.cache.delete('stores_available_locales')
+    end
+
+    def ensure_default_country
+      return unless has_attribute?(:default_country_id)
+      return if default_country.present? && (checkout_zone.blank? || checkout_zone.country_list.blank? || checkout_zone.country_list.include?(default_country))
+
+      self.default_country = if checkout_zone.present? && checkout_zone.country_list.any?
+                               checkout_zone.country_list.first
+                             else
+                               Country.find_by(iso: 'US') || Country.first
+                             end
     end
   end
 end

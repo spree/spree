@@ -2,7 +2,7 @@ module Spree
   module Frontend
     module Generators
       class InstallGenerator < Rails::Generators::Base
-        desc 'Copies storefront configuration files for easy customization'
+        desc 'Installs Spree rails storefront'
 
         def self.source_paths
           [
@@ -16,13 +16,15 @@ module Spree
         end
 
         def install
+          template 'vendor/assets/javascripts/spree/frontend/all.js'
+          template 'vendor/assets/stylesheets/spree/frontend/all.css'
           # static images
           directory 'noimage', './app/assets/images/noimage'
           directory 'homepage', './app/assets/images/homepage'
           # SCSS theming
           template 'variables.scss', './app/assets/stylesheets/spree/frontend/variables/variables.scss'
           # Sprockets 4 manifest
-          template 'app/assets/config/manifest.js', './app/assets/config/manifest.js'
+          template 'app/assets/config/manifest.js'
           # home page template
           directory 'home', './app/views/spree/home'
         end

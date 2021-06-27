@@ -750,4 +750,10 @@ describe '#default_variant_cache_key' do
 
     it { expect(product.save).to eq(false) }
   end
+
+  describe '#downcase_slug' do
+    let(:product) { build(:product, slug: 'My-slug') }
+
+    it { expect { product.valid? }.to change(product, :slug).to('my-slug') }
+  end
 end

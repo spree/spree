@@ -1129,11 +1129,12 @@ paths:
           name: sort
           schema:
             type: string
-          example: '-updated_at,price'
+          example: '-updated_at,price,-name'
           description: |-
             Sort products based on: <ul>
               <li>price (ascending/descenging)</li>
               <li>updated_at (ascending/descenging)</li>
+              <li>name (ascending/descenging)</li>
             </ul> Use <q>-</q> sign to set descenging sort, eg. <q>-updated_at</q>
         - $ref: '#/components/parameters/PageParam'
         - $ref: '#/components/parameters/PerPageParam'

@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe 'API v2 Caching spec', type: :request do
   let!(:product) { create(:product, name: 'Some name', stores: [store]) }
-  let(:store) { create(:store) }
+  let(:store) { Spree::Store.default }
 
   let(:cache_store) { Spree::V2::Storefront::ProductSerializer.cache_store_instance }
   let(:cache_entry) { cache_store.read(product, namespace: cache_namespace) }
@@ -39,8 +39,9 @@ describe 'API v2 Caching spec', type: :request do
   context 'currency and user' do
     include_context 'API v2 tokens'
 
+    before { store.update!(supported_currencies: 'USD,EUR') }
+
     let!(:user) { create(:user) }
-    let!(:store) { create(:store, supported_currencies: 'USD,EUR') }
     let(:currency) { 'EUR' }
     let(:cache_namespace) { "jsonapi-serializer-EUR-#{user.cache_key_with_version}-#{store.cache_key_with_version}" }
 

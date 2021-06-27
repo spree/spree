@@ -80,7 +80,7 @@ describe Spree::Menu, type: :model do
       expect(described_class.new(name: 'BBB', location: 'Footer', locale: 'en', store: store_2)).to be_valid
     end
 
-    it '.paremeterize_location parametizes the location' do
+    it '.parameterize_location parametizes the location' do
       expect(menu.location).to eql('footer')
     end
 

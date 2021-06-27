@@ -252,7 +252,6 @@ describe Spree::Store, type: :model do
         end
 
         it 'returns list of states associated to country' do
-
           checkout_available_states_ids3 = subject.states_available_for_checkout(country_with_states).pluck(:id)
           all_countries_ids              = country_with_states.states.pluck(:id)
 
@@ -289,6 +288,82 @@ describe Spree::Store, type: :model do
 
         it 'returns nil' do
           expect(subject.checkout_zone_or_default).to be_nil
+        end
+      end
+    end
+  end
+
+  describe '#ensure_default_country' do
+    subject { build(:store) }
+
+    let!(:default_country) { create(:country) }
+    let!(:other_country) { create(:country) }
+    let!(:other_country_2) { create(:country) }
+
+    before { Spree::Config[:default_country_id] = default_country.id }
+
+    context 'checkout zone not set' do
+      before { subject.save! }
+
+      context 'with default country' do
+        before { subject.default_country = other_country }
+
+        it { expect(subject.default_country).to eq(other_country) }
+      end
+
+      it { expect(subject.default_country).to eq(default_country) }
+    end
+
+    context 'checkout zone set' do
+      let!(:zone) { create(:zone, kind: 'country') }
+
+      before do
+        zone.members.create(zoneable: other_country_2)
+        subject.checkout_zone = zone
+      end
+
+      context 'with default country set' do
+        before { subject.default_country = other_country }
+
+        context 'no zone members' do
+          before do
+            zone.members.delete_all
+            subject.save!
+          end
+
+          it { expect(subject.default_country).to eq(other_country) }
+        end
+
+        context 'default country is a zone member' do
+          before do
+            zone.members.create(zoneable: other_country)
+            subject.save!
+          end
+
+          it { expect(subject.default_country).to eq(other_country) }
+        end
+
+        context 'default country is not a zone member' do
+          before { subject.save! }
+
+          it { expect(subject.default_country).to eq(other_country_2) }
+        end
+      end
+
+      context 'without default country set' do
+        context 'no zone members' do
+          before do
+            zone.members.delete_all
+            subject.save!
+          end
+
+          it { expect(subject.default_country).to eq(default_country) }
+        end
+
+        context 'with zone members' do
+          before { subject.save! }
+
+          it { expect(subject.default_country).to eq(other_country_2) }
         end
       end
     end

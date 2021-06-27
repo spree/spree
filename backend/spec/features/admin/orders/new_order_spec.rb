@@ -4,6 +4,8 @@ describe 'New Order', type: :feature do
   let!(:product) { create(:product_in_stock) }
   let!(:state) { create(:state) }
   let!(:user) { create(:user, ship_address: create(:address), bill_address: create(:address)) }
+  let(:order) { Spree::Order.last }
+  let(:store) { Spree::Store.default }
 
   stub_authorization!
 
@@ -12,14 +14,18 @@ describe 'New Order', type: :feature do
     create(:shipping_method)
     # create default store
     allow(Spree.user_class).to receive(:find_by).and_return(user)
-    create(:store)
     visit spree.new_admin_order_path
   end
 
   it 'does check if you have a billing address before letting you add shipments' do
     click_on 'Shipments'
     expect(page).to have_content 'Please fill in customer info'
-    expect(page).to have_current_path(spree.edit_admin_order_customer_path(Spree::Order.last))
+    expect(page).to have_current_path(spree.edit_admin_order_customer_path(order))
+  end
+
+  it 'sets proper currency and store' do
+    expect(order.store).to eq(store)
+    expect(order.currency).to eq(store.default_currency)
   end
 
   it 'completes new order successfully without using the cart', js: true do
@@ -38,7 +44,7 @@ describe 'New Order', type: :feature do
     click_on 'Payments'
     click_on 'Update'
 
-    expect(page).to have_current_path(spree.admin_order_payments_path(Spree::Order.last))
+    expect(page).to have_current_path(spree.admin_order_payments_path(order))
     click_icon 'capture'
 
     click_on 'Shipments'
@@ -58,6 +64,7 @@ describe 'New Order', type: :feature do
 
       within('.line-items') do
         expect(page).to have_content(product.name)
+        expect(page).to have_content(product.price_in(store.default_currency).display_price.to_s)
       end
 
       click_on 'Customer'
@@ -172,7 +179,7 @@ describe 'New Order', type: :feature do
       select_customer
       wait_for { !page.has_button?('Update') }
       click_button 'Update'
-      expect(Spree::Order.last.state).to eq 'delivery'
+      expect(order.state).to eq 'delivery'
     end
   end
 

@@ -2,6 +2,8 @@
 require 'spec_helper'
 
 describe 'Products', type: :feature do
+  let(:store) { Spree::Store.default }
+
   context 'as admin user' do
     stub_authorization!
 
@@ -49,7 +51,7 @@ describe 'Products', type: :feature do
         context 'using Russian Rubles' do
           before do
             Spree::Config[:currency] = 'RUB'
-            create(:store, default: true, default_currency: 'RUB')
+            Spree::Store.default.update!(default_currency: 'RUB')
             create(:product, name: 'Just a product', price: 19.99)
           end
 
@@ -209,6 +211,7 @@ describe 'Products', type: :feature do
 
     context 'creating a new product' do
       before do
+        store.update!(default_currency: 'EUR')
         @shipping_category = create(:shipping_category)
         visit spree.admin_products_path
         within find('#contentHeader') do
@@ -228,6 +231,10 @@ describe 'Products', type: :feature do
         select @shipping_category.name, from: 'product_shipping_category_id'
         click_button 'Create'
         expect(page).to have_content('successfully created!')
+        expect(page).to have_field('product_price', with: '100.00')
+        expect(page).to have_select('product_store_ids', selected: store.name)
+        expect(page).to have_select('product_cost_currency', selected: 'Euro (EUR)')
+        expect(Spree::Product.last.master.prices.last.currency).to eq('EUR')
         click_button 'Update'
         expect(page).to have_content('successfully updated!')
       end

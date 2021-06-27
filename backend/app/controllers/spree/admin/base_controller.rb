@@ -50,8 +50,12 @@ module Spree
         Spree::Backend::Config[:locale]
       end
 
+      def stores_scope
+        Spree::Store.accessible_by(current_ability, :show)
+      end
+
       def load_stores
-        @stores = Spree::Store.accessible_by(current_ability, :show).order(default: :desc)
+        @stores = stores_scope.order(default: :desc)
       end
 
       def can_not_transition_without_customer_info

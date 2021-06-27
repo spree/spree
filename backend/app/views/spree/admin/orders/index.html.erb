@@ -133,7 +133,7 @@
       <div class="col-12 col-lg-4">
         <div class="form-group">
           <%= label_tag :q_store_id_in, Spree.t(:store) %>
-          <%= f.select :store_id_in, Spree::Store.order(:name).pluck(:name, :id), { include_blank: true }, class: 'select2-clear js-filterable' %>
+          <%= f.select :store_id_in, @stores.pluck(:name, :id), { include_blank: true }, class: 'select2-clear js-filterable' %>
         </div>
       </div>
 

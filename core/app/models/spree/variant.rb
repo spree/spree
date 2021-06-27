@@ -199,6 +199,10 @@ module Spree
       price_in(currency).try(:amount)
     end
 
+    def compare_at_amount_in(currency)
+      price_in(currency).try(:compare_at_amount)
+    end
+
     def price_modifier_amount_in(currency, options = {})
       return 0 unless options.present?
 

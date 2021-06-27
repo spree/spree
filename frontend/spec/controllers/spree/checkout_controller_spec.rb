@@ -1,12 +1,15 @@
 require 'spec_helper'
 
 describe Spree::CheckoutController, type: :controller do
+  let(:store) { Spree::Store.default }
+  let(:country) { store.default_country }
+  let(:state) { country.states.first }
   let(:token) { 'some_token' }
   let(:user) { stub_model(Spree::LegacyUser) }
-  let(:order) { FactoryBot.create(:order_with_totals) }
+  let(:order) { create(:order_with_totals, store: store) }
 
   let(:address_params) do
-    address = FactoryBot.build(:address)
+    address = build(:address, country: country, state: state)
     address.attributes.except('created_at', 'updated_at')
   end
 
@@ -126,7 +129,8 @@ describe Spree::CheckoutController, type: :controller do
                  bill_address: bill_address,
                  ship_address: ship_address,
                  state: 'address',
-                 user: user)
+                 user: user,
+                 store: store)
         end
         let(:save_user_address) { true }
         let(:update_params) do
@@ -249,8 +253,8 @@ describe Spree::CheckoutController, type: :controller do
 
             context 'when default address is editable' do
               let(:use_billing) { false }
-              let(:bill_address_params) { build(:address, city: 'Chicago').attributes.merge(id: default_bill_address.id).except(:user_id, :created_at, :updated_at) }
-              let(:ship_address_params) { build(:address, city: 'Washington').attributes.merge(id: default_ship_address.id).except(:user_id, :created_at, :updated_at) }
+              let(:bill_address_params) { build(:address, city: 'Chicago', state: state).attributes.merge(id: default_bill_address.id).except(:user_id, :created_at, :updated_at) }
+              let(:ship_address_params) { build(:address, city: 'Washington', state: state).attributes.merge(id: default_ship_address.id).except(:user_id, :created_at, :updated_at) }
 
               it 'updates current addresses' do
                 expect(default_bill_address.city).to eq 'Herndon'
@@ -269,8 +273,8 @@ describe Spree::CheckoutController, type: :controller do
             context 'when default address is not editable' do
               let(:use_billing) { true }
               let!(:shipment) { create(:shipment, address: default_bill_address) }
-              let(:bill_address_params) { build(:address, city: 'Chicago').attributes.merge(id: default_bill_address.id).except(:user_id, :created_at, :updated_at) }
-              let(:ship_address_params) { build(:address, city: 'Washington').attributes.merge(id: default_ship_address.id).except(:user_id, :created_at, :updated_at) }
+              let(:bill_address_params) { build(:address, city: 'Chicago', state: state).attributes.merge(id: default_bill_address.id).except(:user_id, :created_at, :updated_at) }
+              let(:ship_address_params) { build(:address, city: 'Washington', state: state).attributes.merge(id: default_ship_address.id).except(:user_id, :created_at, :updated_at) }
               let(:created_address_id) { Spree::Address.find_by(city: 'Chicago').id }
 
               it_behaves_like 'default address not changed'
@@ -332,7 +336,7 @@ describe Spree::CheckoutController, type: :controller do
             context 'when submitted addresses already exist' do
               let!(:bill_address) { create(:address, city: 'Chicago', user: nil) }
               let!(:ship_address) { create(:address, city: 'Washington', user: nil) }
-              let(:order) { create(:order_with_totals, bill_address: nil, ship_address: nil, state: 'address', user: nil, email: 'example@email.com') }
+              let(:order) { create(:order_with_totals, store: store, bill_address: nil, ship_address: nil, state: 'address', user: nil, email: 'example@email.com') }
               let(:bill_address_params) { bill_address.attributes.except(:id, :user_id, :created_at, :updated_at) }
               let(:ship_address_params) { ship_address.attributes.except(:id, :user_id, :created_at, :updated_at) }
 
@@ -347,9 +351,9 @@ describe Spree::CheckoutController, type: :controller do
             end
 
             context 'when submitted addresses does not exist' do
-              let(:order) { create(:order_with_totals, bill_address: nil, ship_address: nil, state: 'address', user: nil, email: 'example@email.com') }
-              let(:bill_address_params) { build(:address, city: 'Chicago', user: nil).attributes.except(:user_id, :created_at, :updated_at) }
-              let(:ship_address_params) { build(:address, city: 'Washington', user: nil).attributes.except(:user_id, :created_at, :updated_at) }
+              let(:order) { create(:order_with_totals, store: store, bill_address: nil, ship_address: nil, state: 'address', user: nil, email: 'example@email.com') }
+              let(:bill_address_params) { build(:address, city: 'Chicago', user: nil, state: state).attributes.except(:user_id, :created_at, :updated_at) }
+              let(:ship_address_params) { build(:address, city: 'Washington', user: nil, state: state).attributes.except(:user_id, :created_at, :updated_at) }
 
               it 'keeps created addresses unassigned' do
                 update
@@ -364,7 +368,7 @@ describe Spree::CheckoutController, type: :controller do
             end
 
             context 'when attributes are invalid' do
-              let(:order) { create(:order_with_totals, bill_address: nil, ship_address: nil, state: 'address', user: nil, email: 'example@email.com') }
+              let(:order) { create(:order_with_totals, store: store, bill_address: nil, ship_address: nil, state: 'address', user: nil, email: 'example@email.com') }
               let(:bill_address_params) { build(:address, firstname: nil, city: 'Chicago', user: nil).attributes.except(:user_id, :created_at, :updated_at) }
               let(:ship_address_params) { build(:address, firstname: nil, city: 'Washington', user: nil).attributes.except(:user_id, :created_at, :updated_at) }
               let(:bill_address_error) { { "bill_address.firstname": ["can't be blank"] } }
@@ -467,7 +471,7 @@ describe Spree::CheckoutController, type: :controller do
 
             context 'when default address is not editable' do
               let!(:shipment) { create(:shipment, address: default_bill_address) }
-              let(:bill_address_params) { build(:address, city: 'Chicago').attributes.merge(id: default_bill_address.id).except(:user_id, :created_at, :updated_at) }
+              let(:bill_address_params) { build(:address, city: 'Chicago', state: state).attributes.merge(id: default_bill_address.id).except(:user_id, :created_at, :updated_at) }
               let(:created_address_id) { Spree::Address.find_by(city: 'Chicago').id }
 
               it_behaves_like 'default address not changed'
@@ -505,7 +509,7 @@ describe Spree::CheckoutController, type: :controller do
 
             context 'when submitted bill address already exists' do
               let!(:bill_address) { create(:address, city: 'Chicago', user: nil) }
-              let(:order) { create(:order_with_totals, bill_address: nil, ship_address: nil, state: 'address', user: nil, email: 'exaple@email.com') }
+              let(:order) { create(:order_with_totals, store: store, bill_address: nil, ship_address: nil, state: 'address', user: nil, email: 'exaple@email.com') }
               let(:bill_address_params) { bill_address.attributes.except(:id, :user_id, :created_at, :updated_at) }
 
               it 'keeps address unassigned' do
@@ -518,8 +522,8 @@ describe Spree::CheckoutController, type: :controller do
             end
 
             context 'when submitted bill address does not exits' do
-              let(:order) { create(:order_with_totals, bill_address: nil, ship_address: nil, state: 'address', user: nil, email: 'example@email.com') }
-              let(:bill_address_params) { build(:address, city: 'Chicago', user: nil).attributes.except(:user_id, :created_at, :updated_at) }
+              let(:order) { create(:order_with_totals, store: store, bill_address: nil, ship_address: nil, state: 'address', user: nil, email: 'example@email.com') }
+              let(:bill_address_params) { build(:address, city: 'Chicago', state: state, user: nil).attributes.except(:user_id, :created_at, :updated_at) }
 
               it 'keeps created address unassigned' do
                 update
@@ -531,7 +535,7 @@ describe Spree::CheckoutController, type: :controller do
             end
 
             context 'when attributes are invalid' do
-              let(:order) { create(:order_with_totals, bill_address: nil, ship_address: nil, state: 'address', user: nil, email: 'example@email.com') }
+              let(:order) { create(:order_with_totals, store: store, bill_address: nil, ship_address: nil, state: 'address', user: nil, email: 'example@email.com') }
               let(:bill_address_params) { build(:address, firstname: nil, city: 'Chicago', user: nil).attributes.except(:user_id, :created_at, :updated_at) }
               let(:bill_address_error) { { "bill_address.firstname": ["can't be blank"] } }
 
@@ -721,7 +725,7 @@ describe Spree::CheckoutController, type: :controller do
 
     context 'fails to transition from payment to complete' do
       let(:order) do
-        FactoryBot.create(:order_with_line_items).tap do |order|
+        create(:order_with_line_items, store: store).tap do |order|
           order.next! until order.state == 'payment'
           # So that the confirmation step is skipped and we get straight to the action.
           payment_method = FactoryBot.create(:simple_credit_card_payment_method)
@@ -747,7 +751,7 @@ describe Spree::CheckoutController, type: :controller do
     let(:product) { mock_model(Spree::Product, name: 'Amazing Object') }
     let(:variant) { mock_model(Spree::Variant) }
     let(:line_item) { mock_model Spree::LineItem, insufficient_stock?: true, amount: 0 }
-    let(:order) { create(:order_with_line_items) }
+    let(:order) { create(:order_with_line_items, store: store) }
 
     before do
       allow(order).to receive_messages(insufficient_stock_lines: [line_item], state: 'payment')
@@ -913,8 +917,8 @@ describe Spree::CheckoutController, type: :controller do
   context 'Address Book' do
     let!(:user) { create(:user) }
     let!(:variant) { create(:product, sku: 'Demo-SKU').master }
-    let!(:address) { create(:address, user: user) }
-    let!(:order) { create(:order, bill_address_id: nil, ship_address_id: nil, user: user, state: 'address') }
+    let!(:address) { create(:address, user: user, country: country, state: state) }
+    let!(:order) { create(:order, store: store, bill_address_id: nil, ship_address_id: nil, user: user, state: 'address') }
     let(:address_params) { address.value_attributes.merge(firstname: 'Something Else') }
 
     before do

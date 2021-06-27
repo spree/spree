@@ -193,10 +193,10 @@ describe 'Storefront API v2 Addresses spec', type: :request do
       before { patch "/api/v2/storefront/account/addresses/#{address.id}", params: params, headers: headers_bearer }
 
       it 'returns errors' do
-        expect(json_response['error']).to eq("City can't be blank, Zip Code can't be blank")
+        expect(json_response['error']).to eq("City can't be blank, Zip Code can't be blank, Zip Code is invalid")
         expect(json_response['errors']).to eq(
           'city' => ["can't be blank"],
-          'zipcode' => ["can't be blank"]
+          'zipcode' => ["can't be blank", "is invalid"]
         )
       end
     end
