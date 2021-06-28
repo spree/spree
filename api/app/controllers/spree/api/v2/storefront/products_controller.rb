@@ -3,7 +3,7 @@ module Spree
     module V2
       module Storefront
         class ProductsController < ::Spree::Api::V2::ResourceController
-          private
+          protected
 
           def sorted_collection
             collection_sorter.new(collection, current_currency, params, allowed_sort_attributes).call
@@ -35,6 +35,10 @@ module Spree
 
           def model_class
             Spree::Product
+          end
+
+          def scope
+            current_store.products.accessible_by(current_ability, :show).includes(scope_includes)
           end
 
           def scope_includes
