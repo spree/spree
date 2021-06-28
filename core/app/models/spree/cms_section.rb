@@ -28,9 +28,7 @@ module Spree
              'Spree::Cms::Sections::FeaturedArticle',
              'Spree::Cms::Sections::ProductCarousel',
              'Spree::Cms::Sections::ThreeTaxonCategoriesBlock',
-             'Spree::Cms::Sections::StaticBrandingBar',
              'Spree::Cms::Sections::SideBySidePromotion',
-             'Spree::Cms::Sections::ProductBuyBar',
              'Spree::Cms::Sections::RichTextContent']
 
     def boundaries

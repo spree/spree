@@ -1,13 +1,14 @@
 <% if resource.linked_resource %>
-   <% resorce_holder = [resource.linked_resource] %>
+   <% resource_holder = [resource.linked_resource] %>
    <% id_holder = :id %>
    <% name_holder = :pretty_name %>
    <% active_id_holder = resource.linked_resource.id %>
  <% end %>
- <%= f.field_container :linked_resource_id, class: ['form-group'] do %>
+
+ <%= f.field_container :linked_resource_field, class: ['form-group'] do %>
    <%= f.label :linked_resource_id, Spree.t('taxon') %>
    <%= f.select :linked_resource_id,
-        options_from_collection_for_select(resorce_holder || [],
+        options_from_collection_for_select(resource_holder || [],
                                            id_holder, name_holder, active_id_holder || nil),
         { include_blank: true },
         class: 'select2autocomplete',

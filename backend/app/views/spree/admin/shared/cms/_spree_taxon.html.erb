@@ -1,0 +1,14 @@
+<%= f.field_container save_to, class: ['form-group'] do %>
+  <%= f.label save_to, Spree.t('admin.cms.link_to_taxon') %>
+  <%= f.select save_to,
+       options_from_collection_for_select([resource],
+                                       save_to, save_to, resource.send(save_to) || nil),
+       { include_blank: true },
+       class: 'select2autocomplete',
+       data: { autocomplete_placeholder_value: Spree.t('admin.navigation.seach_for_a_taxon'),
+               autocomplete_clear_value: true,
+               autocomplete_url_value: 'taxons_api_v2',
+               autocomplete_return_attr_value: 'permalink',
+               autocomplete_custom_return_id_value: 'permalink' } %>
+  <%= f.error_message_on :save_to %>
+<% end %>

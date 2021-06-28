@@ -560,6 +560,14 @@ en:
         link_to_taxon: Link to Taxon
         title: Title
         fit: Fit To
+        info_full_screen_hero_image_body: "<p>The Full-Screen Hero Image section adds a large image with a button and tagline text to your page.</p>
+        <p>The button can link to a Product, Taxon or Page. This section can be set to fit within the central container or to the edges of the screen.</p>"
+        info_three_taxon_categories_block_body: "<p>The Full-Screen Hero Image section adds a large image with a button and tagline text to your page.</p>
+        <p>The button can link to a Product, Taxon or Page. This section can be set to fit within the central container or to the edges of the screen.</p>"
+        info_product_carousel_body: "TODO: Write description"
+        info_featured_article_body: "TODO: Write description"
+        info_side_by_side_promotion_body: "TODO: Write description"
+        info_rich_text_content_body: "TODO: Write description"
         brand_bar:
           uses_menu: This section uses your Spree Menu named <b>%{menu}</b> to manage the images and links,
           vist_menu_to_edit: to edit this menu.

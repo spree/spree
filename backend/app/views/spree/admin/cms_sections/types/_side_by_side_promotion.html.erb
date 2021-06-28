@@ -30,20 +30,17 @@
         <%= f.error_message_on :subtitle_one %>
       <% end %>
 
-      <%= f.field_container :permalink_one, class: ['form-group'] do %>
-        <%= f.label :permalink_one, Spree.t('admin.cms.link_to_taxon') %>
-        <%= f.select :permalink_one,
-             options_from_collection_for_select([@cms_section],
-                                             :permalink_one, :permalink_one, @cms_section.permalink_one || nil),
-             { include_blank: true },
-             class: 'select2autocomplete',
-             data: { autocomplete_placeholder_value: Spree.t('admin.navigation.seach_for_a_taxon'),
-                     autocomplete_clear_value: true,
-                     autocomplete_url_value: 'taxons_api_v2',
-                     autocomplete_return_attr_value: 'permalink',
-                     autocomplete_custom_return_id_value: 'permalink' } %>
-        <%= f.error_message_on :permalink_ones %>
+      <%= f.field_container :link_type_one, class: ['form-group'] do %>
+        <%= f.label :link_type_one, Spree.t('admin.navigation.link_to') %>
+        <%= f.select(:link_type_one,
+            spree_humanize_dropdown_values('Spree::Cms::Sections::SideBySidePromotion',
+                                            { const: 'LINKED_RESOURCE_TYPE' }),
+                                            { include_blank: false },
+                                            class: 'link_switcher') %>
+        <%= f.error_message_on :link_type_one %>
       <% end %>
+      <%= render "spree/admin/shared/cms/link_fields", resource: @cms_section, linked_type: @cms_section.link_type_one, save_to: :link_one, f: f %>
+
       <small class="text-muted"><%= Spree.t('admin.cms.side_by_side.section_one_info') %></small>
     </div>
   </div>
@@ -79,20 +76,17 @@
         <%= f.error_message_on :subtitle_two %>
       <% end %>
 
-      <%= f.field_container :permalink_two, class: ['form-group'] do %>
-        <%= f.label :permalink_two, Spree.t('admin.cms.link_to_taxon') %>
-        <%= f.select :permalink_two,
-             options_from_collection_for_select([@cms_section],
-                                             :permalink_two, :permalink_two, @cms_section.permalink_two || nil),
-             { include_blank: true },
-             class: 'select2autocomplete',
-             data: { autocomplete_placeholder_value: Spree.t('admin.navigation.seach_for_a_taxon'),
-                     autocomplete_clear_value: true,
-                     autocomplete_url_value: 'taxons_api_v2',
-                     autocomplete_return_attr_value: 'permalink',
-                     autocomplete_custom_return_id_value: 'permalink' } %>
-        <%= f.error_message_on :permalink_two %>
+      <%= f.field_container :link_type_two, class: ['form-group'] do %>
+        <%= f.label :link_type_two, Spree.t('admin.navigation.link_to') %>
+        <%= f.select(:link_type_two,
+            spree_humanize_dropdown_values('Spree::Cms::Sections::SideBySidePromotion',
+                                            { const: 'LINKED_RESOURCE_TYPE' }),
+                                            { include_blank: false },
+                                            class: 'link_switcher') %>
+        <%= f.error_message_on :link_type_two %>
       <% end %>
+      <%= render "spree/admin/shared/cms/link_fields", resource: @cms_section, linked_type: @cms_section.link_type_two, save_to: :link_two, f: f %>
+
       <small class="text-muted"><%= Spree.t('admin.cms.side_by_side.section_two_info') %></small>
     </div>
   </div>

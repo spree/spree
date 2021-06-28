@@ -37,14 +37,22 @@
       <div class="row">
         <div class="col-12">
           <div class="card mb-3">
-            <div class="card-header">
-              <h5 class="mb-0">
+            <div class="card-header d-flex">
+              <h5 class="mb-0 d-flex flex-grow-1">
                 <%= raw Spree.t('admin.cms.settings_for', section: spree_humanize_type(@cms_section.type)) %>
               </h5>
+              <div class="d-flex">
+                <span data-show-info
+                          data-alert-kind="info"
+                          data-alert-title="<%= spree_humanize_type(@cms_section.type) %>"
+                          data-alert-html="<%= raw I18n.t("spree.admin.cms.info_#{spree_resource_path(@cms_section)}_body") %>">
+                          <%= svg_icon name: "info.svg", width: '25', height: '25' %>
+                </span>
+              </div>
             </div>
             <div class="card-body">
               <% if @cms_section.type.present? %>
-              <div class="row">
+              <div class="row pb-0">
                 <div class="col-12">
                   <%= render "spree/admin/cms_sections/types/#{spree_resource_path(@cms_section)}", f: f %>
                 </div>

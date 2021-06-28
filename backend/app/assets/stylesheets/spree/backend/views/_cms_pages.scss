@@ -39,10 +39,18 @@ button#cmsSectionEditorFullScreen {
   }
 }
 
+#liveViewCont {
+  height: 100%;
+
+  .embed-responsive {
+    height: 100%;
+  }
+}
+
 #cmsPagesectionsArea {
   overflow-x: hidden;
   overflow-y: scroll;
-  max-height: 553px;
+  max-height: 100%;
 
   .border {
     border-color: #9c9c9c !important;
