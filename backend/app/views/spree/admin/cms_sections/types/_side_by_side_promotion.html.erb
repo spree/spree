@@ -40,7 +40,7 @@
                                             data: { target_field: :link_one}) %>
         <%= f.error_message_on :link_type_one %>
       <% end %>
-      <%= render "spree/admin/shared/cms/link_fields", resource: @cms_section, linked_type: @cms_section.link_type_one, save_to: :link_one, f: f %>
+      <%= render "spree/admin/shared/link_fields", resource: @cms_section, linked_type: @cms_section.link_type_one, save_to: :link_one, f: f %>
 
       <small class="text-muted"><%= Spree.t('admin.cms.side_by_side.section_one_info') %></small>
     </div>
@@ -87,7 +87,7 @@
                                             data: { target_field: :link_two}) %>
         <%= f.error_message_on :link_type_two %>
       <% end %>
-      <%= render "spree/admin/shared/cms/link_fields", resource: @cms_section, linked_type: @cms_section.link_type_two, save_to: :link_two, f: f %>
+      <%= render "spree/admin/shared/link_fields", resource: @cms_section, linked_type: @cms_section.link_type_two, save_to: :link_two, f: f %>
 
       <small class="text-muted"><%= Spree.t('admin.cms.side_by_side.section_two_info') %></small>
     </div>
