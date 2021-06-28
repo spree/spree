@@ -7,8 +7,8 @@ Gem::Specification.new do |s|
   s.version     = Spree.version
   s.authors     = ['Sean Schofield', 'Spark Solutions']
   s.email       = 'hello@spreecommerce.org'
-  s.summary     = 'Full-stack e-commerce framework for Ruby on Rails.'
-  s.description = 'Spree is an open source e-commerce framework for Ruby on Rails. Join us on http://slack.spreecommerce.org'
+  s.summary     = 'Headless API-first open source eCommerce platform'
+  s.description = 'A complete open source e-commerce solution with multi-store, multi-currency and multi-language capabilities'
   s.homepage    = 'https://spreecommerce.org'
   s.license     = 'BSD-3-Clause'
 

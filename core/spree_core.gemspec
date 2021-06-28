@@ -8,8 +8,8 @@ Gem::Specification.new do |s|
   s.version     = Spree.version
   s.authors     = ['Sean Schofield', 'Spark Solutions']
   s.email       = 'hello@spreecommerce.org'
-  s.summary     = 'The bare bones necessary for Spree.'
-  s.description = 'The bare bones necessary for Spree.'
+  s.summary     = 'The bare bones necessary for Spree'
+  s.description = 'Spree Models, Helpers, Services and core libraries'
   s.homepage    = 'https://spreecommerce.org'
   s.license     = 'BSD-3-Clause'
 
