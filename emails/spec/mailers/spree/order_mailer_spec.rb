@@ -5,10 +5,8 @@ describe Spree::OrderMailer, type: :mailer do
   include EmailSpec::Helpers
   include EmailSpec::Matchers
 
-  before { create(:store, default_locale: nil) }
-
-  let(:first_store) { create(:store, name: 'First Store', default_locale: nil) }
-  let(:second_store) { create(:store, name: 'Second Store', url: 'other.example.com', default_locale: nil) }
+  let(:first_store) { create(:store, name: 'First Store') }
+  let(:second_store) { create(:store, name: 'Second Store', url: 'other.example.com') }
 
   let(:order) do
     order = stub_model(Spree::Order, email: 'test@example.com')
@@ -159,7 +157,7 @@ describe Spree::OrderMailer, type: :mailer do
         pt_br_cancel_mail = { spree: { order_mailer: { cancel_email: { order_summary_canceled: 'Resumo da Pedido [CANCELADA]' } } } }
         I18n.backend.store_translations :'pt-BR', pt_br_confirm_mail
         I18n.backend.store_translations :'pt-BR', pt_br_cancel_mail
-        Spree::Store.default.update(default_locale: 'pt-BR')
+        first_store.update(default_locale: 'pt-BR')
       end
 
       after do

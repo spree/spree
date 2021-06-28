@@ -5,7 +5,7 @@ describe Spree::ShipmentMailer, type: :mailer do
   include EmailSpec::Helpers
   include EmailSpec::Matchers
 
-  let!(:store) { create(:store, default_locale: nil) }
+  let!(:store) { create(:store) }
 
   let(:order) { stub_model(Spree::Order, number: 'R12345', store: store, email: 'test@example.com') }
   let(:shipping_method) { stub_model(Spree::ShippingMethod, name: 'USPS') }
@@ -23,7 +23,7 @@ describe Spree::ShipmentMailer, type: :mailer do
   context ':from not set explicitly' do
     it 'falls back to spree config' do
       message = Spree::ShipmentMailer.shipped_email(shipment)
-      expect(message.from).to eq([Spree::Store.default.mail_from_address])
+      expect(message.from).to eq([store.mail_from_address])
     end
   end
 
@@ -47,7 +47,7 @@ describe Spree::ShipmentMailer, type: :mailer do
           I18n.enforce_available_locales = false
           pt_br_shipped_email = { spree: { shipment_mailer: { shipped_email: { dear_customer: 'Caro Cliente,' } } } }
           I18n.backend.store_translations :'pt-BR', pt_br_shipped_email
-          Spree::Store.default.update(default_locale: 'pt-BR')
+          store.update(default_locale: 'pt-BR')
         end
 
         after do

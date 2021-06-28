@@ -9,11 +9,12 @@ describe Spree::Reimbursement, type: :model do
     let!(:tax_rate)               { nil }
     let!(:tax_zone) { create(:zone_with_country, default_tax: true) }
 
-    let(:order)                   { create(:order_with_line_items, state: 'payment', line_items_count: 1, line_items_price: line_items_price, shipment_cost: 0) }
+    let(:store) { create(:store) }
+    let(:order)                   { create(:shipped_order, line_items_count: 1, line_items_price: line_items_price, shipment_cost: 0, store: store) }
     let(:line_items_price)        { BigDecimal(10) }
     let(:line_item)               { order.line_items.first }
     let(:inventory_unit)          { line_item.inventory_units.first }
-    let(:payment)                 { build(:payment, amount: payment_amount, order: order, state: 'completed') }
+    let(:payment)                 { order.payments.first }
     let(:payment_amount)          { order.total }
     let(:customer_return)         { build(:customer_return, return_items: [return_item]) }
     let(:return_item)             { build(:return_item, inventory_unit: inventory_unit) }
@@ -25,17 +26,6 @@ describe Spree::Reimbursement, type: :model do
     let(:store_credit_reimbursement_type) { create(:reimbursement_type, name: 'StoreCredit', type: 'Spree::ReimbursementType::StoreCredit') }
 
     before do
-      order.shipments.each do |shipment|
-        shipment.inventory_units.update_all state: 'shipped'
-        shipment.update_column('state', 'shipped')
-      end
-      order.reload
-      order.update_with_updater!
-      if payment
-        payment.save!
-        order.next! # confirm
-      end
-      order.next! # completed
       customer_return.save!
       return_item.accept!
     end

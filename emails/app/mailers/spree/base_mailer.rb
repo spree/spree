@@ -3,12 +3,12 @@ module Spree
     helper Spree::MailHelper
 
     def current_store
-      @current_store ||= Spree::Dependencies.current_store_finder.constantize.new.execute
+      @current_store ||= @order&.store.presence || Spree::Dependencies.current_store_finder.constantize.new.execute
     end
     helper_method :current_store
 
     def from_address
-      @order&.store&.mail_from_address || current_store.mail_from_address
+      current_store.mail_from_address
     end
 
     def money(amount, currency = nil)
