@@ -8,8 +8,8 @@ Gem::Specification.new do |s|
   s.version     = Spree.version
   s.authors     = ['Sean Schofield', 'Spark Solutions']
   s.email       = 'hello@spreecommerce.org'
-  s.summary     = 'Transactional emails for Spree Commerce'
-  s.description = 'Transactional emails for Spree Commerce such as Order placed or Shipment shipped notification'
+  s.summary     = 'Transactional emails for Spree eCommerce platform'
+  s.description = 'Optional transactional emails for Spree such as Order placed or Shipment notification emails'
   s.homepage    = 'https://spreecommerce.org'
   s.license     = 'BSD-3-Clause'
 
@@ -26,13 +26,9 @@ Gem::Specification.new do |s|
   s.files        = `git ls-files`.split("\n").reject { |f| f.match(/^spec/) && !f.match(/^spec\/fixtures/) }
   s.require_path = 'lib'
 
-  %w[
-    actionmailer actionview
-  ].each do |rails_gem|
-    s.add_dependency rails_gem, '>= 5.2'
-  end
   s.add_dependency 'spree_core', ">= #{s.version}"
-  s.add_dependency 'sprockets', '~> 4.0'
+  s.add_dependency 'actionmailer'
+  s.add_dependency 'sprockets', '>= 4.0'
 
   s.add_development_dependency 'email_spec', '~> 2.2'
 end
