@@ -1,7 +1,7 @@
 <div class="row pb-0">
   <div class="col-12 col-md-6 mb-3">
     <div class="card p-3">
-      <h5 class="border-bottom"><%= Spree.t('admin.cms.three_taxon_block.section_one') %></h5>
+      <h5 class="border-bottom"><%= Spree.t('admin.cms.side_by_side.left_image') %></h5>
       <%= f.field_container :image_one, class: ['form-group'] do %>
         <% if @cms_section.image_one.attached? && @cms_section.image_one.variable? %>
           <figure class="admin-img-holder">
@@ -36,7 +36,8 @@
             spree_humanize_dropdown_values('Spree::Cms::Sections::SideBySidePromotion',
                                             { const: 'LINKED_RESOURCE_TYPE' }),
                                             { include_blank: false },
-                                            class: 'link_switcher') %>
+                                            class: 'link_switcher',
+                                            data: { target_field: :link_one}) %>
         <%= f.error_message_on :link_type_one %>
       <% end %>
       <%= render "spree/admin/shared/cms/link_fields", resource: @cms_section, linked_type: @cms_section.link_type_one, save_to: :link_one, f: f %>
@@ -47,7 +48,7 @@
 
   <div class="col-12 col-md-6 mb-3">
     <div class="card p-3">
-      <h5 class="border-bottom"><%= Spree.t('admin.cms.three_taxon_block.section_two') %></h5>
+      <h5 class="border-bottom"><%= Spree.t('admin.cms.side_by_side.right_image') %></h5>
       <%= f.field_container :image_two, class: ['form-group'] do %>
         <% if @cms_section.image_two.attached? && @cms_section.image_two.variable? %>
           <figure class="admin-img-holder">
@@ -82,7 +83,8 @@
             spree_humanize_dropdown_values('Spree::Cms::Sections::SideBySidePromotion',
                                             { const: 'LINKED_RESOURCE_TYPE' }),
                                             { include_blank: false },
-                                            class: 'link_switcher') %>
+                                            class: 'link_switcher',
+                                            data: { target_field: :link_two}) %>
         <%= f.error_message_on :link_type_two %>
       <% end %>
       <%= render "spree/admin/shared/cms/link_fields", resource: @cms_section, linked_type: @cms_section.link_type_two, save_to: :link_two, f: f %>

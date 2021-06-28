@@ -587,6 +587,8 @@ en:
           aspect_ratio: Please use an image with the aspect ratio of 12:5 (2400px x 1000px)
         select_page_type: Select a page type
         section_type: Section Type
+        subtitle: Subtitle
+        set_gutters: Set Gutters
         click_button_to_change_page_type: Click the <b>%{button_type}</b> button to load the options for this page type.
         more_page_settings: '<span class="more">More</span><span class="less">Less</span> Page Settings'
         seo_settings: SEO Settings
@@ -598,9 +600,10 @@ en:
         page_sections_info: 'The area below represents your %{page_type} displayed in %{store}, add sections and drag them into position'
         visible: Visible
         side_by_side:
+          left_image: Left Image
+          right_image: Right Image
           section_one_info: 'This section is displayed on the left hand side of the screen and stacks to fullscreen on mobile size screens. Please use an image with an aspect ratio of 54:35 (1468px x 952px).'
           section_two_info: 'This section is displayed on the right hand side of the screen and stacks to fullscreen on mobile size screens. Please use an image with an aspect ratio of 54:35 (1468px x 952px).'
-
         three_taxon_block:
           top_left_block: Top Left Block
           section_one_info: 'This section is displayed in the top left of the three image block. Please use an image with an aspect ratio of 18:13 (1080px x 780px).'

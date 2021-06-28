@@ -189,8 +189,10 @@ end
 
 # Side-by-Side Promotions
 PAGES.each do |page|
-  permalink_one = 'streetstyle'
-  permalink_two = 'special-offers/30-percent-off'
+
+  link_type = 'Spree::Taxon'
+  link_one = 'streetstyle'
+  link_two = 'special-offers/30-percent-off'
 
   case page.locale
   when 'en'
@@ -236,11 +238,13 @@ PAGES.each do |page|
 
   promos_section.title_one = title_one
   promos_section.subtitle_one = subtitle_one
-  promos_section.permalink_one = permalink_one
+  promos_section.link_type_one = link_type
+  promos_section.link_one = link_one
 
   promos_section.title_two = title_two
   promos_section.subtitle_two = subtitle_two
-  promos_section.permalink_two = permalink_two
+  promos_section.link_type_two = link_type
+  promos_section.link_two = link_two
 
   promos_section.save!
 end
