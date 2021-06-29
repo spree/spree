@@ -17,7 +17,7 @@ describe 'API v2 Caching spec', type: :request do
   end
 
   context 'auto expiration' do
-    let(:cache_namespace) { "jsonapi-serializer-USD-en--#{store.cache_key_with_version}" }
+    let(:cache_namespace) { "jsonapi-serializer-usd-en-#{store.cache_key_with_version}" }
 
     it 'auto expire cache after record being updated' do
       get "/api/v2/storefront/products/#{product.id}"
@@ -44,7 +44,7 @@ describe 'API v2 Caching spec', type: :request do
     let!(:user) { create(:user) }
     let(:currency) { 'EUR' }
     let(:locale) { 'de' }
-    let(:cache_namespace) { "jsonapi-serializer-EUR-de-#{user.cache_key_with_version}-#{store.cache_key_with_version}" }
+    let(:cache_namespace) { "jsonapi-serializer-eur-de-#{store.cache_key_with_version}-#{user.cache_key_with_version}" }
 
     it 'includes currency and signed user in the cache key' do
       get "/api/v2/storefront/products/#{product.id}?currency=#{currency}&locale=#{locale}", headers: headers_bearer

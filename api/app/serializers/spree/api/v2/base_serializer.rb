@@ -12,7 +12,15 @@ module Spree
         def self.record_cache_options(options, fieldset, include_list, params)
           opts = options.dup
 
-          params_cache_key = [params[:currency], params[:locale], params[:user]&.cache_key_with_version, params[:store]&.cache_key_with_version].join('-')
+          params_cache_key = params.map do |param|
+            next if param.nil? || param.last.nil?
+
+            if param.last.respond_to?(:cache_key_with_version)
+              param.last.cache_key_with_version
+            else
+              param.last.to_s.downcase
+            end
+          end.compact.reject(&:blank?).join('-')
 
           opts[:namespace] += "-#{params_cache_key}"
 
