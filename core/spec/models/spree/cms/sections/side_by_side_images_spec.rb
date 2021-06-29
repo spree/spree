@@ -52,7 +52,6 @@ describe Spree::Cms::Sections::SideBySideImages, type: :model do
     before do
       section = Spree::CmsSection.find(side_by_side_images_section.id)
 
-      section.content[:link_type_one] = 'Spree::Product'
       section.content[:link_type_two] = 'Spree::Product'
       section.save!
       section.reload
@@ -60,8 +59,6 @@ describe Spree::Cms::Sections::SideBySideImages, type: :model do
 
     it 'link_one and link_two are reset to nil' do
       section = Spree::CmsSection.find(side_by_side_images_section.id)
-
-      expect(section.link_one).to be nil
       expect(section.link_two).to be nil
     end
   end
