@@ -12,6 +12,10 @@ module Spree::Cms::Sections
       gutters == 'Gutters'
     end
 
+    def screen?
+      fit == 'Screen'
+    end
+
     private
 
     def reset_link_attributes

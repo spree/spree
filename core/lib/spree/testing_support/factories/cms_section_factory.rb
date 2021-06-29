@@ -2,7 +2,7 @@ FactoryBot.define do
   factory :cms_section, class: Spree::CmsSection do
     name { generate(:random_string) }
 
-    factory :cms_hero_section do
+    factory :cms_hero_image_section do
       type { 'Spree::Cms::Sections::HeroImage' }
     end
 
@@ -14,12 +14,16 @@ FactoryBot.define do
       type { 'Spree::Cms::Sections::ProductCarousel' }
     end
 
-    factory :cms_three_taxon_categories_section do
+    factory :cms_image_gallery_section do
       type { 'Spree::Cms::Sections::ImageGallery' }
     end
 
-    factory :cms_side_by_side_promotion_section do
+    factory :cms_side_by_side_images_section do
       type { 'Spree::Cms::Sections::SideBySideImages' }
+    end
+
+    factory :cms_rich_text_content_section do
+      type { 'Spree::Cms::Sections::RichTextContent' }
     end
   end
 end

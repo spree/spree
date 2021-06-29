@@ -12,6 +12,14 @@ module Spree::Cms::Sections
 
     store :settings, accessors: [:layout_style, :display_labels], coder: JSON
 
+    def screen?
+      fit == 'Screen'
+    end
+
+    def default_layout?
+      layout_style == 'Default'
+    end
+
     private
 
     def default_values

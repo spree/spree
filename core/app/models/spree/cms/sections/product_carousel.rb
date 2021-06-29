@@ -4,6 +4,10 @@ module Spree::Cms::Sections
 
     LINKED_RESOURCE_TYPE = ['Spree::Taxon']
 
+    def screen?
+      fit == 'Screen'
+    end
+
     private
 
     def default_values
