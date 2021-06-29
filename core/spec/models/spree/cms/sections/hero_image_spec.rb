@@ -39,10 +39,10 @@ describe Spree::Cms::Sections::HeroImage, type: :model do
       expect(section.gutters?).to be false
     end
 
-    it '#screen? is true' do
+    it '#fullscreen? is true' do
       section = Spree::CmsSection.find(hero_section.id)
 
-      expect(section.screen?).to be true
+      expect(section.fullscreen?).to be true
     end
   end
 

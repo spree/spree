@@ -45,10 +45,10 @@ describe Spree::Cms::Sections::ImageGallery, type: :model do
       expect(section.fit).to eq('Container')
     end
 
-    it '#screen? is true' do
+    it '#fullscreen? is true' do
       section = Spree::CmsSection.find(image_gallery_section.id)
 
-      expect(section.screen?).to be false
+      expect(section.fullscreen?).to be false
     end
 
     it '#default_layout? is true' do

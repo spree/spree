@@ -1,5 +1,5 @@
 <% if section.fullscreen? %>
-  <% if section.layout_style == 'Default' %>
+  <% if section.default_layout? %>
     <% section_one_padding = 'pl-3' %>
     <% section_two_padding = 'pr-3' %>
   <% else %>
@@ -7,7 +7,7 @@
     <% section_two_padding = 'pl-3 order-1' %>
   <% end %>
 <% else %>
-  <% if section.layout_style == 'Default' %>
+  <% if section.default_layout? %>
     <% section_one_padding = '' %>
     <% section_two_padding = '' %>
   <% else %>
@@ -16,10 +16,10 @@
   <% end %>
 <% end %>
 
-<% if section.display_labels == 'Hide' %>
-  <% labels_class = 'd-none' %>
-<% else %>
+<% if section.show_labels? %>
   <% labels_class = 'homepage-taxon-box-text' %>
+<% else %>
+  <% labels_class = 'd-none' %>
 <% end %>
 
 <% if section.link_one.present? && section.link_type_one == 'Spree::Taxon' %>

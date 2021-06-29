@@ -33,10 +33,10 @@ describe Spree::Cms::Sections::SideBySideImages, type: :model do
       expect(section.fit).to eq('Container')
     end
 
-    it '#screen? is true' do
+    it '#fullscreen? is true' do
       section = Spree::CmsSection.find(side_by_side_images_section.id)
 
-      expect(section.screen?).to be false
+      expect(section.fullscreen?).to be false
     end
 
     it '#gutters? is true' do
