@@ -607,13 +607,14 @@ en:
           left_image: Left Image
           right_image: Right Image
           image_info: 'Please use an image with an aspect ratio of 54:35 (1468px x 952px).'
-        three_taxon_block:
-          top_left_block: Top Left Block
-          section_one_info: 'This section is displayed in the top left of the three image block. Please use an image with an aspect ratio of 18:13 (1080px x 780px).'
-          right_tall_block: Right Tall Block
-          section_two_info: 'This section is displayed on the right as the tall banner. Please use an image with an aspect ratio of 27:40 (1080px x 1600px).'
-          bottom_left_block: Bottom Left Block
-          section_three_info: 'This section is displayed on the left below section one. Please use an image with an aspect ratio of 18:13 (1080px x 780px).'
+        image_gallery:
+          display_labels: Display labels
+          image_a: Image A
+          image_b: Image B
+          image_c: Image C
+          layout_style: Layout Style
+          square_image: Please use an image with an aspect ratio of 18:13 (1080px x 780px).
+          tall_image: Please use an image with an aspect ratio of 27:40 (1080px x 1600px).
       linkable:
         seach_for_a_page: Search for a page
       tab:

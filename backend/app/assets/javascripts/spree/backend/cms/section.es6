@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
   const sectionKindSelector = $('#cms_section_type').select2()
+  const layoutSwitcher = $('#cms_section_layout_style').select2()
 
   sectionKindSelector.on('change', function() {
     const selectedValue = $(sectionKindSelector).val()
@@ -24,4 +25,19 @@ document.addEventListener('DOMContentLoaded', function() {
       message.classList.add('d-block')
     }
   });
+
+  if (!layoutSwitcher) return
+
+  layoutSwitcher.on('change', function() {
+    const layoutDefault = document.querySelector('#Default')
+    const layoutReverse = document.querySelector('#Reversed')
+
+    if (this.value === 'Default') {
+      layoutDefault.classList = 'd-block'
+      layoutReverse.classList = 'd-none'
+    } else {
+      layoutDefault.classList = 'd-none'
+      layoutReverse.classList = 'd-block'
+    }
+  })
 })
