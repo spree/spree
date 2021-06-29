@@ -3,7 +3,7 @@ FactoryBot.define do
     name { generate(:random_string) }
 
     factory :cms_hero_section do
-      type { 'Spree::Cms::Sections::FullScreenHeroImage' }
+      type { 'Spree::Cms::Sections::HeroImage' }
     end
 
     factory :cms_featured_article_section do

@@ -31,7 +31,7 @@ PAGES.each do |page|
 
   hero_section = Spree::CmsSection.where(
     name: name_txt,
-    type: 'Spree::Cms::Sections::FullScreenHeroImage',
+    type: 'Spree::Cms::Sections::HeroImage',
     linked_resource_type: 'Spree::Taxon',
     cms_page: page
   ).first_or_create!

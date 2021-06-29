@@ -560,7 +560,7 @@ en:
         link_to_taxon: Link to Taxon
         title: Title
         fit: Fit To
-        info_full_screen_hero_image_body: "<p>The Full-Screen Hero Image section adds a large image with a button and tagline text to your page.</p>
+        info_hero_image_body: "<p>The Hero Image section adds a large image with a button and tagline text to your page.</p>
         <p>The button can link to a Product, Taxon or Page. This section can be set to fit within the central container or to the edges of the screen.</p>
         <p><b>Tip:</b> Use a hero image with no button text or title, and then set the <b>Fit:</b> to <b>Container</b> and <b>Gutters</b> to <b>Use Gutters</b> this creates an image section that looks perfect above a side-by-side promotions section or the three taxons sections.</p>
         <p>Experiment with the settings, and don't be afraid to use more than one Hero Image section per page.</p>"

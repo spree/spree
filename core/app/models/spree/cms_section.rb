@@ -24,7 +24,7 @@ module Spree
 
     LINKED_RESOURCE_TYPE = []
 
-    TYPES = ['Spree::Cms::Sections::FullScreenHeroImage',
+    TYPES = ['Spree::Cms::Sections::HeroImage',
              'Spree::Cms::Sections::FeaturedArticle',
              'Spree::Cms::Sections::ProductCarousel',
              'Spree::Cms::Sections::ThreeTaxonCategoriesBlock',

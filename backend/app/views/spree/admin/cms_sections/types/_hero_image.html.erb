@@ -49,7 +49,7 @@
     <%= f.field_container :linked_resource_type, class: ['form-group'] do %>
       <%= f.label :linked_resource_type, Spree.t('admin.navigation.link_to') %>
       <%= f.select(:linked_resource_type,
-          spree_humanize_dropdown_values('Spree::Cms::Sections::FullScreenHeroImage',
+          spree_humanize_dropdown_values('Spree::Cms::Sections::HeroImage',
                                           { const: 'LINKED_RESOURCE_TYPE' }),
                                           { include_blank: false },
                                           class: 'link_switcher') %>

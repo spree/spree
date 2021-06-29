@@ -1,5 +1,5 @@
 module Spree::Cms::Sections
-  class FullScreenHeroImage < Spree::CmsSection
+  class HeroImage < Spree::CmsSection
     before_save :reset_link_attributes
     after_initialize :default_values
 
