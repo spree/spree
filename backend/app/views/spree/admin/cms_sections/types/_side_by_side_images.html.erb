@@ -1,7 +1,7 @@
 <div class="row pb-0">
   <div class="col-12 col-md-6 mb-3">
     <div class="card p-3">
-      <h5 class="text-center"><%= Spree.t('admin.cms.side_by_side.left_image') %></h5>
+      <h4 class="text-center pb-2"><%= Spree.t('admin.cms.side_by_side.left_image') %></h4>
       <%= f.field_container :image_one, class: ['form-group'] do %>
         <% if @cms_section.image_one.attached? && @cms_section.image_one.variable? %>
           <figure class="admin-img-holder">
@@ -49,7 +49,7 @@
 
   <div class="col-12 col-md-6 mb-3">
     <div class="card p-3">
-      <h5 class="text-center"><%= Spree.t('admin.cms.side_by_side.right_image') %></h5>
+      <h4 class="text-center pb-2"><%= Spree.t('admin.cms.side_by_side.right_image') %></h4>
       <%= f.field_container :image_two, class: ['form-group'] do %>
         <% if @cms_section.image_two.attached? && @cms_section.image_two.variable? %>
           <figure class="admin-img-holder">

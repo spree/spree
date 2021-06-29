@@ -1,5 +1,5 @@
 <div class="row align-items-center">
-  <div id="ImageGalleryLayout" class="col-6 text-center m-auto">
+  <div id="ImageGalleryLayout" class="col-12 col-md-6 text-center m-auto">
     <div id="LayoutType">
       <div id="Default" class="<% unless @cms_section.layout_style == 'Default' %>d-none<% end %>">
         <%= svg_icon name: "default-layout.svg", width: '150', height: '150' %>
@@ -49,20 +49,19 @@
         <%= f.error_message_on :title_one %>
       <% end %>
 
-      <%= f.field_container :permalink_one, class: ['form-group'] do %>
-        <%= f.label :permalink_one, Spree.t('admin.cms.link_to_taxon') %>
-        <%= f.select :permalink_one,
-             options_from_collection_for_select([@cms_section],
-                                             :permalink_one, :permalink_one, @cms_section.permalink_one || nil),
-             { include_blank: true },
-             class: 'select2autocomplete',
-             data: { autocomplete_placeholder_value: Spree.t('admin.navigation.seach_for_a_taxon'),
-                     autocomplete_clear_value: true,
-                     autocomplete_url_value: 'taxons_api_v2',
-                     autocomplete_return_attr_value: 'permalink',
-                     autocomplete_custom_return_id_value: 'permalink' } %>
-        <%= f.error_message_on :permalink_ones %>
+      <div class="col-12"><hr></div>
+
+      <%= f.field_container :link_type_one, class: ['form-group'] do %>
+        <%= f.label :link_type_one, Spree.t('admin.navigation.link_to') %>
+        <%= f.select(:link_type_one,
+            spree_humanize_dropdown_values('Spree::Cms::Sections::ImageGallery',
+                                            { const: 'LINKED_RESOURCE_TYPE' }),
+                                            { include_blank: false },
+                                            class: 'link_switcher',
+                                            data: { target_field: :link_one}) %>
+        <%= f.error_message_on :link_type_one %>
       <% end %>
+      <%= render "spree/admin/shared/link_fields", resource: @cms_section, linked_type: @cms_section.link_type_one, save_to: :link_one, f: f %>
     </div>
   </div>
 
@@ -94,20 +93,19 @@
         <%= f.error_message_on :title_two %>
       <% end %>
 
-      <%= f.field_container :permalink_two, class: ['form-group'] do %>
-        <%= f.label :permalink_two, Spree.t('admin.cms.link_to_taxon') %>
-        <%= f.select :permalink_two,
-             options_from_collection_for_select([@cms_section],
-                                             :permalink_two, :permalink_two, @cms_section.permalink_two || nil),
-             { include_blank: true },
-             class: 'select2autocomplete',
-             data: { autocomplete_placeholder_value: Spree.t('admin.navigation.seach_for_a_taxon'),
-                     autocomplete_clear_value: true,
-                     autocomplete_url_value: 'taxons_api_v2',
-                     autocomplete_return_attr_value: 'permalink',
-                     autocomplete_custom_return_id_value: 'permalink' } %>
-        <%= f.error_message_on :permalink_two %>
+      <div class="col-12"><hr></div>
+
+      <%= f.field_container :link_type_two, class: ['form-group'] do %>
+        <%= f.label :link_type_two, Spree.t('admin.navigation.link_to') %>
+        <%= f.select(:link_type_two,
+            spree_humanize_dropdown_values('Spree::Cms::Sections::ImageGallery',
+                                            { const: 'LINKED_RESOURCE_TYPE' }),
+                                            { include_blank: false },
+                                            class: 'link_switcher',
+                                            data: { target_field: :link_two}) %>
+        <%= f.error_message_on :link_type_two %>
       <% end %>
+      <%= render "spree/admin/shared/link_fields", resource: @cms_section, linked_type: @cms_section.link_type_two, save_to: :link_two, f: f %>
     </div>
   </div>
 
@@ -139,20 +137,19 @@
         <%= f.error_message_on :title_three %>
       <% end %>
 
-      <%= f.field_container :permalink_three, class: ['form-group'] do %>
-        <%= f.label :permalink_three, Spree.t('admin.cms.link_to_taxon') %>
-        <%= f.select :permalink_three,
-             options_from_collection_for_select([@cms_section],
-                                             :permalink_three, :permalink_three, @cms_section.permalink_three || nil),
-             { include_blank: true },
-             class: 'select2autocomplete',
-             data: { autocomplete_placeholder_value: Spree.t('admin.navigation.seach_for_a_taxon'),
-                     autocomplete_clear_value: true,
-                     autocomplete_url_value: 'taxons_api_v2',
-                     autocomplete_return_attr_value: 'permalink',
-                     autocomplete_custom_return_id_value: 'permalink' } %>
-        <%= f.error_message_on :permalink_three %>
+      <div class="col-12"><hr></div>
+
+      <%= f.field_container :link_type_three, class: ['form-group'] do %>
+        <%= f.label :link_type_three, Spree.t('admin.navigation.link_to') %>
+        <%= f.select(:link_type_three,
+            spree_humanize_dropdown_values('Spree::Cms::Sections::ImageGallery',
+                                            { const: 'LINKED_RESOURCE_TYPE' }),
+                                            { include_blank: false },
+                                            class: 'link_switcher',
+                                            data: { target_field: :link_three}) %>
+        <%= f.error_message_on :link_type_three %>
       <% end %>
+      <%= render "spree/admin/shared/link_fields", resource: @cms_section, linked_type: @cms_section.link_type_three, save_to: :link_three, f: f %>
     </div>
   </div>
 </div>

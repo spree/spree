@@ -22,24 +22,33 @@
   <% labels_class = 'homepage-taxon-box-text' %>
 <% end %>
 
-<% if section.permalink_one.present? %>
-  <% link_one = spree.nested_taxons_path(section.permalink_one) %>
+<% if section.link_one.present? && section.link_type_one == 'Spree::Taxon' %>
+  <% link_one = spree.nested_taxons_path(section.link_one) %>
+  <% link_one_classes = 'homepage-taxon-box bg-light' %>
+<% elsif section.link_one.present? && section.link_type_one == 'Spree::Product' %>
+  <% link_one = spree.product_path(section.link_one) %>
   <% link_one_classes = 'homepage-taxon-box bg-light' %>
 <% else %>
   <% link_one = nil %>
   <% link_one_classes = 'homepage-taxon-box bg-light pointer-events-none cursor-default' %>
 <% end %>
 
-<% if section.permalink_two.present? %>
-  <% link_two = spree.nested_taxons_path(section.permalink_two) %>
+<% if section.link_two.present? && section.link_type_two == 'Spree::Taxon' %>
+  <% link_two = spree.nested_taxons_path(section.link_two) %>
+  <% link_two_classes = 'homepage-taxon-box bg-light' %>
+<% elsif section.link_two.present? && section.link_type_two == 'Spree::Product' %>
+  <% link_two = spree.product_path(section.link_two) %>
   <% link_two_classes = 'homepage-taxon-box bg-light' %>
 <% else %>
   <% link_two = nil %>
   <% link_two_classes = 'homepage-taxon-box bg-light pointer-events-none cursor-default' %>
 <% end %>
 
-<% if section.permalink_three.present? %>
-  <% link_three = spree.nested_taxons_path(section.permalink_two) %>
+<% if section.link_three.present? && section.link_type_three == 'Spree::Taxon' %>
+  <% link_three = spree.nested_taxons_path(section.link_three) %>
+  <% link_three_classes = 'homepage-taxon-box bg-light' %>
+<% elsif section.link_three.present? && section.link_type_three == 'Spree::Product' %>
+  <% link_three = spree.product_path(section.link_three) %>
   <% link_three_classes = 'homepage-taxon-box bg-light' %>
 <% else %>
   <% link_three = nil %>

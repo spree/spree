@@ -44,9 +44,9 @@ end
 
 # Three Taxons
 PAGES.each do |page|
-  permalink_one = 'men'
-  permalink_two = 'women'
-  permalink_three = 'sportswear'
+  link_one = 'men'
+  link_two = 'women'
+  link_three = 'sportswear'
 
   case page.locale
   when 'en'
@@ -82,9 +82,9 @@ PAGES.each do |page|
     cms_page: page
   ).first_or_create!
 
-  three_taxon_section.permalink_one = permalink_one
-  three_taxon_section.permalink_two = permalink_two
-  three_taxon_section.permalink_three = permalink_three
+  three_taxon_section.link_one = link_one
+  three_taxon_section.link_two = link_two
+  three_taxon_section.link_three = link_three
 
   three_taxon_section.title_one = title_one
   three_taxon_section.title_two = title_two
@@ -189,8 +189,6 @@ end
 
 # Side-by-Side Promotions
 PAGES.each do |page|
-
-  link_type = 'Spree::Taxon'
   link_one = 'streetstyle'
   link_two = 'special-offers/30-percent-off'
 
@@ -238,12 +236,10 @@ PAGES.each do |page|
 
   promos_section.title_one = title_one
   promos_section.subtitle_one = subtitle_one
-  promos_section.link_type_one = link_type
   promos_section.link_one = link_one
 
   promos_section.title_two = title_two
   promos_section.subtitle_two = subtitle_two
-  promos_section.link_type_two = link_type
   promos_section.link_two = link_two
 
   promos_section.save!
