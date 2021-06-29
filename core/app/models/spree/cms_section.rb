@@ -2,6 +2,8 @@ module Spree
   class CmsSection < Spree::Base
     include Spree::DisplayLink
 
+    IMAGE_TYPES = ['image/png', 'image/jpg', 'image/jpeg', 'image/gif'].freeze
+
     acts_as_list scope: :cms_page
     belongs_to :cms_page, touch: true
 
@@ -21,6 +23,9 @@ module Spree
     default_scope { order(position: :asc) }
 
     validates :name, :cms_page, presence: true
+
+    validates :image_one, :image_two, :image_three, :image_four,
+              :image_five, :image_six, content_type: IMAGE_TYPES
 
     LINKED_RESOURCE_TYPE = []
 
