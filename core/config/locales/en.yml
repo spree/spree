@@ -561,13 +561,17 @@ en:
         title: Title
         fit: Fit To
         info_full_screen_hero_image_body: "<p>The Full-Screen Hero Image section adds a large image with a button and tagline text to your page.</p>
-        <p>The button can link to a Product, Taxon or Page. This section can be set to fit within the central container or to the edges of the screen.</p>"
-        info_three_taxon_categories_block_body: "<p>The Full-Screen Hero Image section adds a large image with a button and tagline text to your page.</p>
-        <p>The button can link to a Product, Taxon or Page. This section can be set to fit within the central container or to the edges of the screen.</p>"
-        info_product_carousel_body: "TODO: Write description"
-        info_featured_article_body: "TODO: Write description"
-        info_side_by_side_promotion_body: "TODO: Write description"
-        info_rich_text_content_body: "TODO: Write description"
+        <p>The button can link to a Product, Taxon or Page. This section can be set to fit within the central container or to the edges of the screen.</p>
+        <p><b>Tip:</b> Use a hero image with no button text or title, and then set the <b>Fit:</b> to <b>Container</b> and <b>Gutters</b> to <b>Use Gutters</b> this creates an image section that looks perfect above a side-by-side promotions section or the three taxons sections.</p>
+        <p>Experiment with the settings, and don't be afraid to use more than one Hero Image section per page.</p>"
+        info_three_taxon_categories_block_body: "<p>Three Taxon Block can be configured in several ways. For example, each image can link to a product or taxon. If you do not provide a link, you can display three images. Additionally, you can also use labels to add text to your images.</p>
+        <p>There are two layout configurations for the Three Taxon Block, with the taller image used on the left or the right. You can also set this section to fit the edges of the screen or the central container to match your website's style.</p>"
+        info_product_carousel_body: "<p>Product Carousel is a simple section to use. Search for the taxon you wish to display, save the changes, and the products in your chosen taxon will be displayed on your page.</p>"
+        info_featured_article_body: "<p>The Feature Article section allows you to add rich text to your page with a set title subtitle and linking button.</p>
+        <p>This section can be set to use full screen or container and also use gutters.</p>"
+        info_side_by_side_promotion_body: "<p>Side-By-Side Promotions can be configured in several ways, you have the option of using them as plane images, images with text, and either of those options can be clickable links if a link is set.</p>
+        <p><b>Tip:</b> You can blow these images out to the edge of the screen and remove the gutters to create a completely different look.</p>"
+        info_rich_text_content_body: "<p>The Rich Text Content section is simply a section that offers nothing more than an area of rich text editor content to be displayed on your page.</p>"
         brand_bar:
           uses_menu: This section uses your Spree Menu named <b>%{menu}</b> to manage the images and links,
           vist_menu_to_edit: to edit this menu.
