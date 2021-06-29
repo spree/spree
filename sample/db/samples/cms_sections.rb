@@ -232,7 +232,7 @@ PAGES.each do |page|
 
   promos_section = Spree::CmsSection.where(
     name: name_txt,
-    type: 'Spree::Cms::Sections::SideBySidePromotion',
+    type: 'Spree::Cms::Sections::SideBySideImages',
     cms_page: page
   ).first_or_create!
 

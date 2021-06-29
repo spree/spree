@@ -562,14 +562,14 @@ en:
         fit: Fit To
         info_hero_image_body: "<p>The Hero Image section adds a large image with a button and tagline text to your page.</p>
         <p>The button can link to a Product, Taxon or Page. This section can be set to fit within the central container or to the edges of the screen.</p>
-        <p><b>Tip:</b> Use a hero image with no button text or title, and then set the <b>Fit:</b> to <b>Container</b> and <b>Gutters</b> to <b>Use Gutters</b> this creates an image section that looks perfect above a side-by-side promotions section or the three taxons sections.</p>
+        <p><b>Tip:</b> Use a hero image with no button text or title, and then set the <b>Fit:</b> to <b>Container</b> and <b>Gutters</b> to <b>Use Gutters</b> this creates an image section that looks great above a Side-by-Side Images section, or an Image Gallery section.</p>
         <p>Experiment with the settings, and don't be afraid to use more than one Hero Image section per page.</p>"
         info_image_gallery_body: "<p>The Image Gallery section can be configured in several ways. For example, each image can link to a product or taxon. If you do not provide a link, you can display three images. Additionally, you can also use labels to add text to your images.</p>
         <p>There are two layout configurations for the Image Gallery section, with the taller image used on the left or the right. You can also set this section to fit the edges of the screen or the central container to match your website's style.</p>"
         info_product_carousel_body: "<p>Product Carousel is a simple section to use. Search for the taxon you wish to display, save the changes, and the products in your chosen taxon will be displayed on your page.</p>"
         info_featured_article_body: "<p>The Feature Article section allows you to add rich text to your page with a set title subtitle and linking button.</p>
         <p>This section can be set to use full screen or container and also use gutters.</p>"
-        info_side_by_side_promotion_body: "<p>Side-By-Side Promotions can be configured in several ways, you have the option of using them as plane images, images with text, and either of those options can be clickable links if a link is set.</p>
+        info_side_by_side_images_body: "<p>The Side-by-Side Images section can be configured in several ways, you have the option of using them as plane images, images with text, and either of those options can be clickable links if a link is set.</p>
         <p><b>Tip:</b> You can blow these images out to the edge of the screen and remove the gutters to create a completely different look.</p>"
         info_rich_text_content_body: "<p>The Rich Text Content section is simply a section that offers nothing more than an area of rich text editor content to be displayed on your page.</p>"
         brand_bar:
@@ -606,8 +606,7 @@ en:
         side_by_side:
           left_image: Left Image
           right_image: Right Image
-          section_one_info: 'This section is displayed on the left hand side of the screen and stacks to fullscreen on mobile size screens. Please use an image with an aspect ratio of 54:35 (1468px x 952px).'
-          section_two_info: 'This section is displayed on the right hand side of the screen and stacks to fullscreen on mobile size screens. Please use an image with an aspect ratio of 54:35 (1468px x 952px).'
+          image_info: 'Please use an image with an aspect ratio of 54:35 (1468px x 952px).'
         three_taxon_block:
           top_left_block: Top Left Block
           section_one_info: 'This section is displayed in the top left of the three image block. Please use an image with an aspect ratio of 18:13 (1080px x 780px).'

@@ -1,5 +1,5 @@
 module Spree::Cms::Sections
-  class SideBySidePromotion < Spree::CmsSection
+  class SideBySideImages < Spree::CmsSection
     after_initialize :default_values
     before_save :reset_link_attributes
 

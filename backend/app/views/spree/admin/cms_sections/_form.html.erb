@@ -38,9 +38,11 @@
         <div class="col-12">
           <div class="card mb-3">
             <div class="card-header d-flex">
-              <h5 class="mb-0 d-flex flex-grow-1">
-                <%= raw Spree.t('admin.cms.settings_for', section: spree_humanize_type(@cms_section.type)) %>
-              </h5>
+              <div class="d-flex flex-grow-1">
+                <h5 class="mb-0">
+                  <%= raw Spree.t('admin.cms.settings_for', section: spree_humanize_type(@cms_section.type)) %>
+                </h5>
+              </div>
               <div class="d-flex">
                 <span data-show-info
                           data-alert-kind="info"

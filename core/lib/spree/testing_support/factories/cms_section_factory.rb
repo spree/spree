@@ -18,12 +18,8 @@ FactoryBot.define do
       type { 'Spree::Cms::Sections::ImageGallery' }
     end
 
-    factory :cms_static_branding_bar_section do
-      type { 'Spree::Cms::Sections::StaticBrandingBar' }
-    end
-
     factory :cms_side_by_side_promotion_section do
-      type { 'Spree::Cms::Sections::SideBySidePromotion' }
+      type { 'Spree::Cms::Sections::SideBySideImages' }
     end
   end
 end

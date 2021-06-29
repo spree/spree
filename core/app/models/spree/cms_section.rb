@@ -28,7 +28,7 @@ module Spree
              'Spree::Cms::Sections::FeaturedArticle',
              'Spree::Cms::Sections::ProductCarousel',
              'Spree::Cms::Sections::ImageGallery',
-             'Spree::Cms::Sections::SideBySidePromotion',
+             'Spree::Cms::Sections::SideBySideImages',
              'Spree::Cms::Sections::RichTextContent']
 
     def boundaries
