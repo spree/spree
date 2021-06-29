@@ -78,7 +78,7 @@ PAGES.each do |page|
 
   three_taxon_section = Spree::CmsSection.where(
     name: name_txt,
-    type: 'Spree::Cms::Sections::ThreeTaxonCategoriesBlock',
+    type: 'Spree::Cms::Sections::ImageGallery',
     cms_page: page
   ).first_or_create!
 

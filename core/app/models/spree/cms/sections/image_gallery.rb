@@ -1,5 +1,5 @@
 module Spree::Cms::Sections
-  class ThreeTaxonCategoriesBlock < Spree::CmsSection
+  class ImageGallery < Spree::CmsSection
     after_initialize :default_values
 
     store :content, accessors: [:permalink_one, :title_one,

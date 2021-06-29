@@ -15,7 +15,7 @@ FactoryBot.define do
     end
 
     factory :cms_three_taxon_categories_section do
-      type { 'Spree::Cms::Sections::ThreeTaxonCategoriesBlock' }
+      type { 'Spree::Cms::Sections::ImageGallery' }
     end
 
     factory :cms_static_branding_bar_section do
