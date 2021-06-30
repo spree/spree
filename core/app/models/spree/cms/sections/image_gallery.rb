@@ -1,6 +1,7 @@
 module Spree::Cms::Sections
   class ImageGallery < Spree::CmsSection
     after_initialize :default_values
+    before_save :reset_link_attributes
 
     LINKED_RESOURCE_TYPE = ['Spree::Taxon', 'Spree::Product'].freeze
     LAYOUT_OPTIONS = ['Default', 'Reversed'].freeze
@@ -21,6 +22,22 @@ module Spree::Cms::Sections
     end
 
     private
+
+    def reset_link_attributes
+      return if Rails::VERSION::STRING < '6.0'
+
+      if link_type_one_changed?
+        self.link_one = nil
+      end
+
+      if link_type_two_changed?
+        self.link_two = nil
+      end
+
+      if link_type_three_changed?
+        self.link_three = nil
+      end
+    end
 
     def default_values
       self.layout_style ||= 'Default'

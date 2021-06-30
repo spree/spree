@@ -58,25 +58,32 @@ describe Spree::Cms::Sections::ImageGallery, type: :model do
     end
   end
 
-  context 'when changing the link types for links one two and three' do
-    let!(:image_gallery_section) { create(:cms_image_gallery_section, cms_page: homepage) }
+  if Rails::VERSION::STRING >= '6.1'
+    context 'when changing the link types for links one two and three' do
+      let!(:image_gallery_section) { create(:cms_image_gallery_section, cms_page: homepage) }
 
-    before do
-      section = Spree::CmsSection.find(image_gallery_section.id)
+      before do
+        section = Spree::CmsSection.find(image_gallery_section.id)
 
-      section.content[:link_type_one] = 'Spree::Product'
-      section.content[:link_type_two] = 'Spree::Product'
-      section.content[:link_type_three] = 'Spree::Product'
-      section.save!
-      section.reload
-    end
+        section.content[:link_type_one] = 'Spree::Product'
+        section.content[:link_type_two] = 'Spree::Product'
+        section.content[:link_type_three] = 'Spree::Product'
 
-    it 'link_one, link_two and link_three are reset to nil' do
-      section = Spree::CmsSection.find(image_gallery_section.id)
+        section.content[:link_one] = 'Shirt 1'
+        section.content[:link_two] = 'Shirt 2'
+        section.content[:link_three] = 'Shirt 3'
 
-      expect(section.link_one).to be nil
-      expect(section.link_two).to be nil
-      expect(section.link_three).to be nil
+        section.save!
+        section.reload
+      end
+
+      it 'link_one, link_two and link_three are reset to nil' do
+        section = Spree::CmsSection.find(image_gallery_section.id)
+
+        expect(section.link_one).to be nil
+        expect(section.link_two).to be nil
+        expect(section.link_three).to be nil
+      end
     end
   end
 end

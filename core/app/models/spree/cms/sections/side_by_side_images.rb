@@ -17,6 +17,8 @@ module Spree::Cms::Sections
     private
 
     def reset_link_attributes
+      return if Rails::VERSION::STRING < '6.0'
+
       if link_type_one_changed?
         self.link_one = nil
       end
