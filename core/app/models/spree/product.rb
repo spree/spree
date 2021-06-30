@@ -99,6 +99,7 @@ module Spree
     after_save :reset_memoized_data
     after_commit :reset_memoized_data
 
+    before_validation :downcase_slug
     before_validation :normalize_slug, on: :update
     before_validation :validate_master
 
@@ -112,7 +113,7 @@ module Spree
       validates :price, if: :requires_price?
     end
 
-    validates :slug, presence: true, uniqueness: { allow_blank: true, case_sensitive: false }
+    validates :slug, presence: true, uniqueness: { allow_blank: true, case_sensitive: true }
     validate :discontinue_on_must_be_later_than_available_on, if: -> { available_on && discontinue_on }
 
     attr_accessor :option_values_hash
@@ -498,6 +499,10 @@ module Spree
 
     def requires_shipping_category?
       true
+    end
+
+    def downcase_slug
+      slug&.downcase!
     end
   end
 end

@@ -1415,4 +1415,10 @@ describe Spree::Order, type: :model do
       it { is_expected.to be false }
     end
   end
+
+  describe '#uppercase_number' do
+    let(:order) { build(:order, number: 'r1234') }
+
+    it { expect { order.valid? }.to change(order, :number).to('R1234') }
+  end
 end

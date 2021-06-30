@@ -90,7 +90,6 @@ describe Spree::Api::V2::BaseController, type: :controller do
   end
 
   describe '#error_during_processing' do
-
     controller(described_class) do
       def index
         render plain: { 'products' => [] }.to_json
@@ -119,6 +118,48 @@ describe Spree::Api::V2::BaseController, type: :controller do
       end
       get :index, params: { token: 'exception-message' }
       expect(json_response).to eql('error' => 'foo')
+    end
+  end
+
+  describe '#serializer_params' do
+    let(:store) { Spree::Store.default }
+    let(:currency) { store.default_currency }
+    let(:locale) { store.default_locale }
+    let(:user) { nil }
+
+    shared_examples 'returns proper values' do
+      before do
+        allow(dummy_controller).to receive(:current_store).and_return(store)
+        allow(dummy_controller).to receive(:current_currency).and_return(currency)
+        allow(dummy_controller).to receive(:current_locale).and_return(locale)
+        allow(dummy_controller).to receive(:spree_current_user).and_return(user)
+      end
+
+      it { expect(dummy_controller.send(:serializer_params).keys).to eq(%i[currency locale store user]) }
+
+      it do
+        expect(dummy_controller.send(:serializer_params)).to eq(
+          {
+            store: store,
+            currency: currency,
+            user: user,
+            locale: locale
+          }
+        )
+      end
+    end
+
+    context 'default values' do
+      it_behaves_like 'returns proper values'
+    end
+
+    context 'non-default values' do
+      let(:user) { create(:user) }
+      let(:currency) { 'EUR' }
+      let(:locale) { 'de' }
+      let(:store) { create(:store, default_locale: locale, default_currency: currency) }
+
+      it_behaves_like 'returns proper values'
     end
   end
 end
