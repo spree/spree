@@ -5,6 +5,7 @@
     <%= preference_field_tag(
       field_name,
       calculator.get_preference(key),
-      type: calculator.preference_type(key)) %>
+      type: calculator.preference_type(key),
+      key: key) %>
   </div>
 <% end %>
