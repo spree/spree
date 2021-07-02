@@ -24,7 +24,16 @@
   & > * {
     z-index: 200;
   }
+
+  // Bug fix for iOS jittery elastic scroll from Bootstrap 4 transaition on pills and buttons.
+  // Kill transitions on items within [data-overscroll-content]
+  & > li > a {
+    transition: none !important;
+  }
 }
+
+
+
 
 .pn-ProductNav_Contents-no-transition {
   transition: none;
