@@ -32,11 +32,6 @@ document.addEventListener('DOMContentLoaded', function () {
       setOverscrollIndicators()
     })
 
-    // Load and show active link
-    function focusActiveItem (containerEl, activeEl) {
-      containerEl.scrollLeft = activeEl.offsetLeft - 45;
-    }
-
     function setOverscrollIndicators () {
       overScrollContainer.setAttribute('data-overflowing', determineOverflow(overScrollContents, overScrollContainer))
     }
@@ -52,9 +47,9 @@ document.addEventListener('DOMContentLoaded', function () {
         // If the space available is less than two lots of our desired distance, just move the whole amount
         // otherwise, move by the amount in the settings
         if (availableScrollLeft < SETTINGS.navBarTravelDistance * 2) {
-          overScrollContents.style.transform = 'translateX(' + availableScrollLeft + 'px)'
+          overScrollContents.style.transform = `translateX(${availableScrollLeft}px)`
         } else {
-          overScrollContents.style.transform = 'translateX(' + SETTINGS.navBarTravelDistance + 'px)'
+          overScrollContents.style.transform = `translateX(${SETTINGS.navBarTravelDistance}px)`
         }
         // We do want a transition (this is set in CSS) when moving so remove the class that would prevent that
         overScrollContents.classList.remove('pn-ProductNav_Contents-no-transition')
@@ -80,9 +75,9 @@ document.addEventListener('DOMContentLoaded', function () {
         // If the space available is less than two lots of our desired distance, just move the whole amount
         // otherwise, move by the amount in the settings
         if (availableScrollRight < SETTINGS.navBarTravelDistance * 2) {
-          overScrollContents.style.transform = 'translateX(-' + availableScrollRight + 'px)'
+          overScrollContents.style.transform = `translateX(-${availableScrollRight}px)`
         } else {
-          overScrollContents.style.transform = 'translateX(-' + SETTINGS.navBarTravelDistance + 'px)'
+          overScrollContents.style.transform = `translateX(-${SETTINGS.navBarTravelDistance}px)`
         }
         // We do want a transition (this is set in CSS) when moving so remove the class that would prevent that
         overScrollContents.classList.remove('pn-ProductNav_Contents-no-transition')
@@ -118,6 +113,12 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 })
 
+// Set active link into view
+function focusActiveItem (containerEl, activeEl) {
+  containerEl.scrollLeft = activeEl.offsetLeft - 45;
+}
+
+// Determine Scroll status
 function determineOverflow (content, container) {
   const containerMetrics = container.getBoundingClientRect()
   const containerMetricsRight = Math.floor(containerMetrics.right)
