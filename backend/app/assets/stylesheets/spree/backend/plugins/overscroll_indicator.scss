@@ -1,9 +1,9 @@
-[data-overscroll-wrapper] {
+[data-nav-x-wrapper] {
   position: relative;
   padding: 0 11px;
 }
 
-[data-overscroll-container] {
+[data-nav-x-container] {
   overflow-x: auto;
   overflow-y: hidden;
   white-space: nowrap;
@@ -16,7 +16,7 @@
   }
 }
 
-[data-overscroll-content] {
+[data-nav-x-content] {
   float: left;
   transition: transform .2s ease-in-out;
   position: relative;
@@ -25,21 +25,18 @@
     z-index: 200;
   }
 
-  // Bug fix for iOS jittery elastic scroll from Bootstrap 4 transaition on pills and buttons.
-  // Kill transitions on items within [data-overscroll-content]
+  // Bug fix for iOS jittery elastic scroll from Bootstrap 4
+  // transaition on pills and buttons nested a tag.
   & > li > a {
     transition: none !important;
   }
 }
 
-
-
-
-.pn-ProductNav_Contents-no-transition {
+.nav-x_Transition_None {
   transition: none;
 }
 
-.pn-Advancer {
+.nav-x_Advancer {
   appearance: none;
   background: transparent;
   border: 0;
@@ -59,33 +56,33 @@
   &:hover {
     cursor: pointer;
   }
+
+  svg {
+    height: 100%;
+    fill: #bbb;
+  }
 }
 
-.pn-Advancer_Left {
+.nav-x_Advancer_Left {
   border-right: 2px solid rgba(128, 128, 128, 0.56);
   background: linear-gradient(90deg, rgba(255,255,255,1) 0%, rgba(255,255,255,1) 65%, rgba(255,255,255,0.8533788515406162) 100%);
   left: -1px;
 }
 
-[data-overflowing="both"] ~ .pn-Advancer_Left,
-[data-overflowing="left"] ~ .pn-Advancer_Left {
+[data-overflowing="both"] ~ .nav-x_Advancer_Left,
+[data-overflowing="left"] ~ .nav-x_Advancer_Left {
   opacity: 1;
   z-index: 300;
 }
 
-.pn-Advancer_Right {
+.nav-x_Advancer_Right {
   border-left: 2px solid rgba(128, 128, 128, 0.56);
   background: linear-gradient(90deg, rgba(255,255,255,0.850577731092437) 0%, rgba(255,255,255,1) 35%, rgba(255,255,255,1) 100%);
   right: -1px;
 }
 
-[data-overflowing="both"] ~ .pn-Advancer_Right,
-[data-overflowing="right"] ~ .pn-Advancer_Right {
+[data-overflowing="both"] ~ .nav-x_Advancer_Right,
+[data-overflowing="right"] ~ .nav-x_Advancer_Right {
   opacity: 1;
   z-index: 300;
-}
-
-.pn-Advancer_Icon {
-  height: 100%;
-  fill: #bbb;
 }
