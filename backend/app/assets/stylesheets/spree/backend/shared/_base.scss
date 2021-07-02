@@ -1,3 +1,28 @@
+.transparent-indicator-bg {
+  background: repeating-conic-gradient(#c7c7c7 0% 25%, transparent 0% 50%) 50% / 20px 20px
+}
+
+figure.admin-img-holder {
+   max-width: 285px;
+   border: 2px solid grey;
+   border-radius: $border-radius;
+   overflow: hidden;
+   display: inline-block;
+
+   img {
+     max-width: 100%;
+     height: auto;
+   }
+ }
+
+ ul#spreePageTabs {
+    li.nav-item {
+      a {
+        padding: 0.3rem 1rem;
+      }
+    }
+  }
+
 .row {
   padding: 0 0 15px 0;
 }
@@ -38,6 +63,13 @@
 
 .badge-light-muted-text {
   color: rgba(0, 0, 0, 0.50);
+}
+
+a#storeSelectorDropdown {
+  svg {
+    margin-bottom: 0;
+    margin-left: 3px;
+  }
 }
 
 [data-show-info] {

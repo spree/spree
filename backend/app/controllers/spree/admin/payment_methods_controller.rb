@@ -50,7 +50,13 @@ module Spree
       private
 
       def collection
+        return @collection if @collection.present?
+
+        params[:q] ||= {}
         @collection = super.order(position: :asc)
+
+        @search = @collection.ransack(params[:q])
+        @collection = @search.result.page(params[:page]).per(params[:per_page])
       end
 
       def load_data

@@ -6,22 +6,32 @@
   <%= button_link_to Spree.t(:new_product), new_object_url, { class: "btn-success", icon: 'add.svg', id: 'admin_new_product' } %>
 <% end if can?(:create, Spree::Product) %>
 
+<% content_for :page_tabs do %>
+  <%= render 'spree/admin/shared/fast_store_filter', query: :stores_id_in, all_stores_path: spree.admin_products_path %>
+<% end %>
+
 <% content_for :table_filter do %>
   <div data-hook="admin_products_sidebar">
 
     <%= search_form_for [:admin, @search] do |f| %>
       <%- locals = {f: f} %>
       <div data-hook="admin_products_index_search" class="row">
-        <div class="col-12 col-lg-6">
+        <div class="col-12 col-lg-4">
           <div class="form-group">
             <%= f.label :search_by_name, Spree.t(:product_name) %>
             <%= f.text_field :search_by_name, size: 15, class: "form-control js-quick-search-target js-filterable" %>
           </div>
         </div>
-        <div class="col-12 col-lg-6">
+        <div class="col-12 col-lg-4">
           <div class="form-group">
             <%= f.label :variants_including_master_sku_cont, Spree.t(:sku) %>
             <%= f.text_field :variants_including_master_sku_cont, size: 15, class: "form-control js-filterable" %>
+          </div>
+        </div>
+        <div class="col-12 col-lg-4">
+          <div class="form-group">
+            <%= label_tag :q_stores_id_in, Spree.t(:store) %>
+            <%= f.select :stores_id_in, Spree::Store.order(:name).pluck(:name, :id), { include_blank: true }, class: 'select2-clear js-filterable' %>
           </div>
         </div>
         <div class="col-12">
@@ -59,7 +69,6 @@
         <th scope="col" class="text-center">
           <%= sort_link @search, :master_default_price_amount, Spree.t(:master_price), {}, {title: 'admin_products_listing_price_title'} %>
         </th>
-        <th><%= Spree.t(:stores) %></th>
         <th scope="col" data-hook="admin_products_index_header_actions" class="actions"></th>
       </tr>
     </thead>

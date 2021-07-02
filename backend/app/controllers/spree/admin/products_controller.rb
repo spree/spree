@@ -31,13 +31,7 @@ module Spree
           invoke_callbacks(:update, :after)
           flash[:success] = flash_message_for(@object, :successfully_updated)
           respond_with(@object) do |format|
-            format.html do
-              if params[:product][:store_ids].include? current_store.id
-                redirect_to location_after_save
-              else
-                redirect_to admin_products_url
-              end
-            end
+            format.html { redirect_to location_after_save }
             format.js   { render layout: false }
           end
         else
@@ -97,12 +91,8 @@ module Spree
 
       protected
 
-      def scope
-        current_store.products
-      end
-
       def find_resource
-        scope.with_deleted.friendly.find(params[:id])
+        Product.with_deleted.friendly.find(params[:id])
       end
 
       def location_after_save
@@ -124,7 +114,7 @@ module Spree
         params[:q][:not_discontinued] ||= '1'
 
         params[:q][:s] ||= 'name asc'
-        @collection = scope
+        @collection = super
         # Don't delete params[:q][:deleted_at_null] here because it is used in view to check the
         # checkbox for 'q[deleted_at_null]'. This also messed with pagination when deleted_at_null is checked.
         if params[:q][:deleted_at_null] == '0'

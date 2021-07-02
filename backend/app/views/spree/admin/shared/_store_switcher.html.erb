@@ -1,5 +1,19 @@
 <% if can?(:admin, current_store) %>
-  <div class="d-block border-top p-3 mt-3">
-    <%= stores_select %>
+<%#= stores_select %>
+  <div id="storeSwitcherDropdown" class="dropdown">
+
+    <span class="d-none d-lg-inline text-light">
+      <%= svg_icon name: "spree-icon.svg", width: '35', height: '35' %>
+    </span>
+
+    <a class="px-0 py-1 btn text-light" id="storeSelectorDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <%= current_store.unique_name %>  <%= svg_icon name: "chevron-down.svg", width: '12', height: '12' %>
+    </a>
+
+    <div class="dropdown-menu dropdown-menu-left overflow-hidden mt-2 py-0" aria-labelledby="storeSelectorDropdown">
+      <% @stores.each do |store| %>
+        <%= store_switcher_link(store) %>
+      <% end %>
+    </div>
   </div>
 <% end %>

@@ -27,6 +27,8 @@ module Spree
       validates :new_order_notifications_email, email: { allow_blank: true }
     end
 
+    default_scope { order(created_at: :asc) }
+
     has_one_attached :logo
     has_one_attached :mailer_logo
     has_one_attached :favicon_image

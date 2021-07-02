@@ -10,6 +10,10 @@
       id: 'admin_new_order' %>
 <% end if can? :create, Spree::Order %>
 
+<% content_for :page_tabs do %>
+  <%= render 'spree/admin/shared/fast_store_filter', all_stores_path: spree.admin_orders_path %>
+<% end %>
+
 <% content_for :table_filter do %>
   <div data-hook="admin_orders_index_search">
 
@@ -30,7 +34,6 @@
                     value: params[:q][:created_at_gt],
                     placeholder: Spree.t(:starting_from),
                     'data-input':'' %>
-
                 <%= render partial: 'spree/admin/shared/cal_close' %>
               </div>
             </div>
@@ -45,7 +48,6 @@
                     value: params[:q][:created_at_lt],
                     placeholder: Spree.t(:ending_at),
                     'data-input':'' %>
-
                 <%= render partial: 'spree/admin/shared/cal_close' %>
                 </div>
             </div>
@@ -54,7 +56,7 @@
       </div>
       <div class="col-12 col-lg-4">
         <div class="form-group">
-          <%= label_tag :q_number_cont, Spree.t(:order_number, number: 'Number') %>
+          <%= label_tag :q_number_cont, Spree.t(:order_number, number: '') %>
           <%= f.text_field :number_cont, class: 'form-control js-quick-search-target js-filterable' %>
         </div>
       </div>
@@ -127,6 +129,13 @@
         <div class="form-group">
           <%= label_tag :q_promotions_id_in, Spree.t(:promotion) %>
           <%= f.select :promotions_id_in, Spree::Promotion.applied.pluck(:name, :id), { include_blank: true }, class: 'select2-clear js-filterable' %>
+        </div>
+      </div>
+
+      <div class="col-12 col-lg-4">
+        <div class="form-group">
+          <%= label_tag :q_store_id_in, Spree.t(:store) %>
+          <%= f.select :store_id_in, Spree::Store.order(:name).pluck(:name, :id), { include_blank: true }, class: 'select2-clear js-filterable' %>
         </div>
       </div>
 

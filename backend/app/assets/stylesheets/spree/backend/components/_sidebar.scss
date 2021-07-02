@@ -1,4 +1,3 @@
-
 aside#main-sidebar {
   overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
   background-color: $gray-100;
@@ -9,13 +8,6 @@ aside#main-sidebar {
   height: 100%;
   transition: 0.3s ease;
   z-index: 1041;
-
-  .store_select {
-    width: 100%;
-    border: none;
-    background: none;
-    width: 100%;
-  }
 }
 
 body.sidebar-open {
