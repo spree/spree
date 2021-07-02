@@ -59,10 +59,8 @@ module Spree
       end
 
       def preference_field_tag(name, value, options)
-        # binding.pry
-        pp 'debtu', name, options
         if options[:key] == :currency
-          return select_tag(name, options_from_collection_for_select(supported_currencies, :iso_code, :iso_code, value), class: 'select2')
+          return select_tag(name, options_from_collection_for_select(supported_currencies_for_all_stores, :iso_code, :iso_code, value), class: 'select2')
         end
 
         case options[:type]
