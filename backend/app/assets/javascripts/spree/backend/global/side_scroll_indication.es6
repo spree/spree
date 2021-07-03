@@ -111,7 +111,7 @@ function initHorizontalNav (containerEl) {
 
 // Set active link into view
 function focusActiveItem (containerEl, activeEl) {
-  containerEl.scrollLeft = activeEl.offsetLeft - 45;
+  containerEl.scrollLeft = activeEl.offsetLeft - 45
 }
 
 // Determine Scroll status

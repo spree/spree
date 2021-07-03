@@ -17,8 +17,13 @@ figure.admin-img-holder {
 
  ul#spreePageTabs {
     li.nav-item {
+      margin-left: 0.2em;
       a {
         padding: 0.3rem 1rem;
+      }
+
+      &:first-child {
+        margin-left: 0;
       }
     }
   }

@@ -26,8 +26,8 @@
     z-index: 200;
   }
 
-  // Bug fix for iOS jittery elastic scroll from Bootstrap 4
-  // transaition on pills and buttons nested a tag.
+  // Bug fix for iOS jittery elastic scroll from Bootstrap
+  // transaition on pills and buttons.
   & > li > a {
     transition: none !important;
   }
