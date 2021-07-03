@@ -1,6 +1,7 @@
 [data-nav-x-wrapper] {
   position: relative;
   padding: 0 11px;
+  overflow: hidden;
 }
 
 [data-nav-x-container] {
@@ -43,11 +44,12 @@
   position: absolute;
   padding: 5px;
   height: 100%;
+  max-width: 45px;
   top: 0;
   bottom: 0;
   opacity: 0;
-  z-index: 100;
-  transition: all .3s;
+  transition: linear 0.01s 0.6s, opacity 0.4s;
+  z-index:300;
 
   &:focus {
     outline: 0;
@@ -59,30 +61,32 @@
 
   svg {
     height: 100%;
-    fill: #bbb;
+    color: rgba(128, 128, 128, 0.56);
   }
 }
 
 .nav-x_Advancer_Left {
   border-right: 2px solid rgba(128, 128, 128, 0.56);
   background: linear-gradient(90deg, rgba(255,255,255,1) 0%, rgba(255,255,255,1) 65%, rgba(255,255,255,0.8533788515406162) 100%);
-  left: -1px;
+  left: -46px;
 }
 
 [data-overflowing="both"] ~ .nav-x_Advancer_Left,
 [data-overflowing="left"] ~ .nav-x_Advancer_Left {
   opacity: 1;
-  z-index: 300;
+  left: -1px;
+  transition: linear 0.01s, opacity 0.4s 0.02s;
 }
 
 .nav-x_Advancer_Right {
   border-left: 2px solid rgba(128, 128, 128, 0.56);
   background: linear-gradient(90deg, rgba(255,255,255,0.850577731092437) 0%, rgba(255,255,255,1) 35%, rgba(255,255,255,1) 100%);
-  right: -1px;
+  right: -46px;
 }
 
 [data-overflowing="both"] ~ .nav-x_Advancer_Right,
 [data-overflowing="right"] ~ .nav-x_Advancer_Right {
   opacity: 1;
-  z-index: 300;
+  right: -1px;
+  transition: linear 0.01s, opacity 0.4s 0.02s;
 }
