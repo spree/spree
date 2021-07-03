@@ -44,7 +44,7 @@
   position: absolute;
   padding: 5px;
   height: 100%;
-  max-width: 45px;
+  width: fit-content;
   top: 0;
   bottom: 0;
   opacity: 0;
@@ -60,7 +60,8 @@
   }
 
   svg {
-    height: 100%;
+    height: 1.5em;
+    width: 1.5em;
     color: rgba(128, 128, 128, 0.56);
   }
 }
@@ -69,6 +70,7 @@
   border-right: 2px solid rgba(128, 128, 128, 0.56);
   background: linear-gradient(90deg, rgba(255,255,255,1) 0%, rgba(255,255,255,1) 65%, rgba(255,255,255,0.8533788515406162) 100%);
   left: -46px;
+  padding-right: 0;
 }
 
 [data-overflowing="both"] ~ .nav-x_Advancer_Left,
@@ -82,6 +84,7 @@
   border-left: 2px solid rgba(128, 128, 128, 0.56);
   background: linear-gradient(90deg, rgba(255,255,255,0.850577731092437) 0%, rgba(255,255,255,1) 35%, rgba(255,255,255,1) 100%);
   right: -46px;
+  padding-left: 0;
 }
 
 [data-overflowing="both"] ~ .nav-x_Advancer_Right,
