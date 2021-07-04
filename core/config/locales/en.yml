@@ -611,6 +611,8 @@ en:
         image_alt_text: Add alt text to your image
         image_asset: Add a Promotion image or Link icon.
         move_could_not_be_saved: 'ERROR: This move could not be saved.'
+        managing_by_store_title: 'Managing Menus By Store'
+        managing_by_store: <p>You are managing the menus for <b>%{store}</b>. To manage menus for other stores, change the global store using the drop-down in the main navbar found at the top of the screen.</p>
         new_menu_item: New Menu Item
         new_menu: New Menu
         nested_under: Nested under

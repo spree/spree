@@ -2,32 +2,6 @@
   background: repeating-conic-gradient(#c7c7c7 0% 25%, transparent 0% 50%) 50% / 20px 20px
 }
 
-figure.admin-img-holder {
-   max-width: 285px;
-   border: 2px solid grey;
-   border-radius: $border-radius;
-   overflow: hidden;
-   display: inline-block;
-
-   img {
-     max-width: 100%;
-     height: auto;
-   }
- }
-
- ul#spreePageTabs {
-    li.nav-item {
-      margin-left: 0.2em;
-      a {
-        padding: 0.3rem 1rem;
-      }
-
-      &:first-child {
-        margin-left: 0;
-      }
-    }
-  }
-
 .row {
   padding: 0 0 15px 0;
 }
@@ -70,18 +44,7 @@ figure.admin-img-holder {
   color: rgba(0, 0, 0, 0.50);
 }
 
-a#storeSelectorDropdown {
-  svg {
-    margin-bottom: 0;
-    margin-left: 3px;
-  }
-}
-
 [data-show-info] {
   color:  $primary;
   cursor: pointer;
-
-  &:hover {
-    color: darken($primary, 10) !important;
-  }
 }
