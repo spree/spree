@@ -8,6 +8,6 @@
 
 <% unless current_page.last? %>
   <li class="next_page page-item">
-    <%= link_to_unless current_page.last?, svg_icon(name: "chevron-right.svg", width: '13', height: '20', classes: 'spree-icon-arrow-right mb-0'), url, rel: 'next', remote: remote, class: 'page-link d-flex', 'aria-label': 'Next page' %>
+    <%= link_to_unless current_page.last?, svg_icon(name: "chevron-right.svg", width: '13', height: '16', classes: 'spree-icon-arrow-right mb-0'), url, rel: 'next', remote: remote, class: 'page-link', 'aria-label': 'Next page' %>
   </li>
 <% end %>

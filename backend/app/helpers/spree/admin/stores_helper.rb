@@ -2,15 +2,15 @@ module Spree
   module Admin
     module StoresHelper
       def admin_current_store_products_path
-        spree.admin_products_path(q: {stores_id_in: current_store.id})
+        spree.admin_products_path(q: { stores_id_in: current_store.id })
       end
 
       def admin_current_store_orders_path
-        spree.admin_orders_path(q: {store_id_in: current_store.id})
+        spree.admin_orders_path(q: { store_id_in: current_store.id })
       end
 
       def admin_current_store_payment_methods_path
-        spree.admin_payment_methods_path(q: {stores_id_in: current_store.id})
+        spree.admin_payment_methods_path(q: { stores_id_in: current_store.id })
       end
 
       def selected_checkout_zone(store)
