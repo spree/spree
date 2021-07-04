@@ -10,10 +10,6 @@
       id: 'admin_new_order' %>
 <% end if can? :create, Spree::Order %>
 
-<% content_for :page_tabs do %>
-  <%= render 'spree/admin/shared/fast_store_filter', all_stores_path: spree.admin_orders_path %>
-<% end %>
-
 <% content_for :table_filter do %>
   <div data-hook="admin_orders_index_search">
 
@@ -134,40 +130,33 @@
 
       <div class="col-12 col-lg-4">
         <div class="form-group">
-          <%= label_tag :q_store_id_in, Spree.t(:store) %>
-          <%= f.select :store_id_in, Spree::Store.order(:name).pluck(:name, :id), { include_blank: true }, class: 'select2-clear js-filterable' %>
-        </div>
-      </div>
-
-      <div class="col-12 col-lg-4">
-        <div class="form-group">
           <%= label_tag :q_channel_eq, Spree.t(:channel) %>
           <%= f.select :channel_eq, Spree::Order.distinct.pluck(:channel), { include_blank: true }, class: 'select2-clear js-filterable' %>
         </div>
       </div>
 
-      <div class="col-12 col-lg-4">
-
-        <div class="form-group">
-
-          <div class="checkbox mt-2">
-            <%= label_tag 'q_completed_at_not_null' do %>
-              <%= f.check_box :completed_at_not_null, {checked: @show_only_completed}, '1', '0' %>
-              <%= Spree.t(:show_only_complete_orders) %>
-            <% end %>
+      <div class="col-12">
+        <%= f.field_container :all_stores do %>
+          <div class="custom-control custom-checkbox">
+            <%= f.check_box :all_stores, {checked: params[:q][:all_stores] == '1', class: 'custom-control-input'}, '1', '0' %>
+            <%= f.label :all_stores, Spree.t('admin.show_orders_for_all_stores'), class: 'custom-control-label' %>
           </div>
+        <% end %>
 
-          <div class="checkbox mt-2">
-            <%= label_tag 'q_considered_risky_eq' do %>
-              <%= f.check_box :considered_risky_eq, {checked: (params[:q][:considered_risky_eq] == '1')}, '1', '' %>
-              <%= Spree.t(:show_only_considered_risky) %>
-            <% end %>
+        <%= f.field_container :completed_at_not_null do %>
+          <div class="custom-control custom-checkbox">
+            <%= f.check_box :completed_at_not_null, {checked: @show_only_completed, class: 'custom-control-input'}, '1', '0' %>
+            <%= f.label :completed_at_not_null, Spree.t(:show_only_complete_orders), class: 'custom-control-label' %>
           </div>
+        <% end %>
 
-        </div>
-
+        <%= f.field_container :considered_risky_eq do %>
+          <div class="custom-control custom-checkbox">
+            <%= f.check_box :considered_risky_eq, {checked: params[:q][:considered_risky_eq] == '1', class: 'custom-control-input'}, '1', '' %>
+            <%= f.label :considered_risky_eq, Spree.t(:show_only_considered_risky), class: 'custom-control-label' %>
+          </div>
+        <% end %>
       </div>
-
     </div>
 
     <div data-hook="admin_orders_index_search_buttons" class="form-actions">

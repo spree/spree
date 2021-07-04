@@ -12,7 +12,7 @@
 
   <% if can? :admin, Spree::Order %>
     <ul class="nav nav-sidebar border-bottom" id="sidebarOrder">
-      <%= tab *Spree::BackendConfiguration::ORDER_TABS, url: admin_current_store_orders_path, icon: 'list.svg' %>
+      <%= tab *Spree::BackendConfiguration::ORDER_TABS, url: admin_orders_path, icon: 'list.svg' %>
     </ul>
   <% end %>
 

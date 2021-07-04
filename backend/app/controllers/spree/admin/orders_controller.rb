@@ -26,18 +26,18 @@ module Spree
 
         if params[:q][:created_at_gt].present?
           params[:q][:created_at_gt] = begin
-                                         Time.zone.parse(params[:q][:created_at_gt]).beginning_of_day
-                                       rescue StandardError
-                                         ''
-                                       end
+            Time.zone.parse(params[:q][:created_at_gt]).beginning_of_day
+          rescue StandardError
+            ''
+          end
         end
 
         if params[:q][:created_at_lt].present?
           params[:q][:created_at_lt] = begin
-                                         Time.zone.parse(params[:q][:created_at_lt]).end_of_day
-                                       rescue StandardError
-                                         ''
-                                       end
+            Time.zone.parse(params[:q][:created_at_lt]).end_of_day
+          rescue StandardError
+            ''
+          end
         end
 
         if @show_only_completed
@@ -45,7 +45,11 @@ module Spree
           params[:q][:completed_at_lt] = params[:q].delete(:created_at_lt)
         end
 
-        @search = Spree::Order.preload(:user).accessible_by(current_ability, :index).ransack(params[:q])
+        @search = if params[:q][:all_stores] == '1'
+                    Spree::Order.preload(:user).accessible_by(current_ability, :index).ransack(params[:q])
+                  else
+                    scope.preload(:user).accessible_by(current_ability, :index).ransack(params[:q])
+                  end
 
         # lazy loading other models here (via includes) may result in an invalid query
         # e.g. SELECT  DISTINCT DISTINCT "spree_orders".id, "spree_orders"."created_at" AS alias_0 FROM "spree_orders"
@@ -60,7 +64,7 @@ module Spree
       end
 
       def new
-        @order = Spree::Order.create(order_params)
+        @order = scope.create(order_params)
         redirect_to cart_admin_order_url(@order)
       end
 
@@ -87,8 +91,8 @@ module Spree
             # Jump to next step if order is not completed.
             redirect_to admin_order_customer_path(@order) and return
           end
-        else
-          @order.errors.add(:line_items, Spree.t('errors.messages.blank')) if @order.line_items.empty?
+        elsif @order.line_items.empty?
+          @order.errors.add(:line_items, Spree.t('errors.messages.blank'))
         end
 
         render action: :edit
@@ -156,6 +160,10 @@ module Spree
       end
 
       private
+
+      def scope
+        current_store.orders
+      end
 
       def order_params
         params[:created_by_id] = try_spree_current_user.try(:id)

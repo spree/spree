@@ -6,10 +6,6 @@
   <%= button_link_to Spree.t(:new_payment_method), new_object_url, class: "btn-success", icon: 'add.svg', id: 'admin_new_payment_methods_link' %>
 <% end if can? :create, Spree::PaymentMethod %>
 
-<% content_for :page_tabs do %>
-  <%= render 'spree/admin/shared/fast_store_filter', query: :stores_id_in, all_stores_path: spree.admin_payment_methods_path %>
-<% end %>
-
 <% if @payment_methods.any? %>
 <div class="table-responsive">
   <table class="table sortable" id='listing_payment_methods' data-hook data-sortable-link="<%= update_positions_admin_payment_methods_url %>">

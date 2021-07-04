@@ -1,7 +1,3 @@
-.transparent-indicator-bg {
-  background: repeating-conic-gradient(#c7c7c7 0% 25%, transparent 0% 50%) 50% / 20px 20px
-}
-
 .row {
   padding: 0 0 15px 0;
 }
@@ -38,6 +34,10 @@
 
 .move-handle {
   cursor: grab;
+}
+
+.badge {
+  padding: 0.5em 0.6em;
 }
 
 .badge-light-muted-text {

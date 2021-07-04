@@ -3,6 +3,7 @@ table.table {
 
   th {
     padding: 0.5rem;
+    padding-left: 0;
 
     &.handel-head {
       width: 50px;
@@ -14,6 +15,11 @@ table.table {
 
   td {
     padding: 0.5rem;
+    padding-left: 0;
+  }
+
+  td.move-handle {
+    width:45px;
   }
 
   .badge {
@@ -25,6 +31,7 @@ table.table {
       text-transform: uppercase;
       font-size: $small-font-size;
       padding: 0.5rem;
+      padding-left: 0;
       padding-top: 14px;
       padding-bottom: 14px;
       vertical-align: top;
@@ -54,7 +61,6 @@ table.table {
 
 .table-active-filters {
   display: none;
-  margin: -.5em 0 .9em;
 
   .js-filter {
     .icon {
