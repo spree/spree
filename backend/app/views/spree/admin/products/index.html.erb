@@ -6,10 +6,6 @@
   <%= button_link_to Spree.t(:new_product), new_object_url, { class: "btn-success", icon: 'add.svg', id: 'admin_new_product' } %>
 <% end if can?(:create, Spree::Product) %>
 
-<%# content_for :page_tabs do %>
-  <%#= render 'spree/admin/shared/store_filter', query: :stores_id_in, all_stores_path: spree.admin_products_path %>
-<%# end %>
-
 <% content_for :table_filter do %>
   <div data-hook="admin_products_sidebar">
 

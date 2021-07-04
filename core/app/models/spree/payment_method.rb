@@ -12,8 +12,6 @@ module Spree
 
     validates :name, presence: true
 
-    self.whitelisted_ransackable_associations = %w[stores]
-
     has_and_belongs_to_many :stores
 
     with_options dependent: :restrict_with_error do
