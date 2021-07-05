@@ -1,7 +1,7 @@
 <div id="contentHeader" class="row mb-0 pb-0">
   <% if content_for?(:page_title) || content_for?(:page_actions) %>
     <div class="content-header col <%= "with-page-tabs" if content_for?(:page_tabs) %> page-header">
-      <div class="row align-items-center  <%= if content_for?(:page_tabs) then "border-bottom pb-2" else "border-bottom pb-2 mb-3" end %>">
+      <div id="contentHeaderRow" class="row align-items-center  <%= if content_for?(:page_tabs) then "border-bottom pb-2" else "border-bottom pb-2 mb-3" end %>">
 
         <% if content_for?(:page_title) %>
           <h1 class="contextual-title px-0 mb-0 col">

@@ -41,7 +41,8 @@ module Spree
       validates :phone, if: :require_phone?
     end
 
-    validate :state_validate, :postal_code_validate
+    validate :state_validate
+    before_validation :postal_code_validate
 
     validates :label, uniqueness: { conditions: -> { where(deleted_at: nil) },
                                     scope: :user_id,
@@ -223,7 +224,7 @@ module Spree
     end
 
     def postal_code_validate
-      return if country.blank? || country_iso.blank? || !require_zipcode?
+      return if country.blank? || country_iso.blank? || !require_zipcode? || zipcode.nil?
       return unless ::ValidatesZipcode::CldrRegexpCollection::ZIPCODES_REGEX.keys.include?(country_iso.upcase.to_sym)
 
       formatted_zip = ::ValidatesZipcode::Formatter.new(

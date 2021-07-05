@@ -130,6 +130,8 @@ module Spree
     before_create :link_by_email
     before_update :homogenize_line_item_currencies, if: :currency_changed?
 
+    before_save :reset_order_if_store_association_has_changed
+
     with_options presence: true do
       # we want to have this case_sentive: true as changing it to false causes all SQL to use LOWER(slug)
       # which is very costly and slow on large set of records
@@ -667,6 +669,14 @@ module Spree
     end
 
     private
+
+    def reset_order_if_store_association_has_changed
+      return if new_record?
+
+      if store_id_changed?
+        empty!
+      end
+    end
 
     def link_by_email
       self.email = user.email if user

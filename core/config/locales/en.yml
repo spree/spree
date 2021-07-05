@@ -571,6 +571,8 @@ en:
         return_authorizations: Return Authorizations
         customer_returns: Customer Returns
       order:
+        changing_store_warning: If you change the store this order belongs to, the order will be reset.
+        once_an_order_is_complete_you_can_not_change_store: 'Sorry, once an order is complete, you can no longer change the store that the order belongs to.'
         events:
           approve: approve
           cancel: cancel
