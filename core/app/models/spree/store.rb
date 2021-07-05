@@ -4,7 +4,9 @@ module Spree
     FAVICON_CONTENT_TYPES = ['image/png', 'image/x-icon', 'image/vnd.microsoft.icon'].freeze
 
     has_many :orders, class_name: 'Spree::Order'
-    has_many :payment_methods, class_name: 'Spree::PaymentMethod'
+
+    has_many :store_payment_methods, class_name: 'Spree::StorePaymentMethod', dependent: :destroy
+    has_many :payment_methods, through: :store_payment_methods, class_name: 'Spree::PaymentMethod'
 
     has_many :menus
 

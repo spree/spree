@@ -49,11 +49,21 @@ module Spree
 
       private
 
+      def scope
+        current_store.payment_methods
+      end
+
       def collection
         return @collection if @collection.present?
 
         params[:q] ||= {}
         @collection = super.order(position: :asc)
+
+        @collection = if params[:q][:all_stores] == '1'
+                        super.order(position: :asc)
+                      else
+                        scope.order(position: :asc)
+                      end
 
         @search = @collection.ransack(params[:q])
         @collection = @search.result.page(params[:page]).per(params[:per_page])

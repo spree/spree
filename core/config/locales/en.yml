@@ -549,9 +549,9 @@ en:
     adjustment_total: Adjustment Total
     adjustments: Adjustments
     admin:
-      show_orders_for_all_stores: Show orders for all stores
-      show_products_for_all_stores: Show products for all stores
-      show_menus_for_all_stores: Show menus for all stores
+      show_orders_for_all_stores: Show Orders for all stores
+      show_products_for_all_stores: Show Products for all stores
+      show_payment_methods_for_all_stores: Show Payment Methods for all stores
       tab:
         configuration: Configuration
         content: Content
