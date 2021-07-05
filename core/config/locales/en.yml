@@ -580,6 +580,8 @@ en:
           resend: Resend
       orders:
         cart: Cart
+      reports:
+        for: For %{store_name}
       return_authorization:
         product: Product
       user:
