@@ -31,14 +31,7 @@ module Spree
           invoke_callbacks(:update, :after)
           flash[:success] = flash_message_for(@object, :successfully_updated)
           respond_with(@object) do |format|
-            format.html do
-              if params[:product][:store_ids].include? current_store.id
-                redirect_to location_after_save
-              else
-                redirect_to admin_products_url
-              end
-            end
-
+            format.html { redirect_to location_after_save }
             format.js { render layout: false }
           end
         else
@@ -103,7 +96,7 @@ module Spree
       end
 
       def find_resource
-        scope.with_deleted.friendly.find(params[:id])
+        Spree::Product.with_deleted.friendly.find(params[:id])
       end
 
       def location_after_save
