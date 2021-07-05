@@ -10,7 +10,7 @@ module Spree
           private
 
           def resource
-            resource = resource_finder.new(number: params[:number], token: order_token).execute.take
+            resource = resource_finder.new(number: params[:number], token: order_token, store: current_store).execute.take
             raise ActiveRecord::RecordNotFound if resource.nil?
 
             resource
