@@ -1539,6 +1539,7 @@ en:
     scope: Scope
     search: Search
     search_by: 'Search by:'
+    search_order_number: Order Number
     search_results: Search results for '%{keywords}'
     searching: Searching
     secure_connection_type: Secure Connection Type
