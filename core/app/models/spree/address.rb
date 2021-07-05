@@ -41,8 +41,7 @@ module Spree
       validates :phone, if: :require_phone?
     end
 
-    validate :state_validate
-    before_validation :postal_code_validate
+    validate :state_validate, :postal_code_validate
 
     validates :label, uniqueness: { conditions: -> { where(deleted_at: nil) },
                                     scope: :user_id,
