@@ -45,7 +45,7 @@ module Spree
           params[:q][:completed_at_lt] = params[:q].delete(:created_at_lt)
         end
 
-        @search = if params[:q][:all_stores] == '1'
+        @search = if params[:q][:all_stores] == '1' || !current_store.present?
                     Spree::Order.preload(:user).accessible_by(current_ability, :index).ransack(params[:q])
                   else
                     scope.preload(:user).accessible_by(current_ability, :index).ransack(params[:q])

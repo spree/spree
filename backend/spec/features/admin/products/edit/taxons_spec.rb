@@ -15,7 +15,9 @@ describe 'Product Taxons', type: :feature, js: true do
 
       expect(page).to have_css('.select2-selection__choice', text: "#{taxon_1.parent.name} -> #{taxon_1.name}")
 
+      select2_open css: '#product_taxons_field'
       select2_open label: 'Taxons'
+
       select2_search 'Clothing', from: 'Taxons'
       select2_select 'Clothing', from: 'Taxons', match: :first
       wait_for { !page.has_button?('Update') }
