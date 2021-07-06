@@ -1,13 +1,22 @@
 module Spree
   module Products
     class Find
-      def initialize(scope:, params:, current_currency:)
+      def initialize(scope:, params:, current_currency: nil)
         @scope = scope
+
+        ActiveSupport::Deprecation.warn('`current_currency` param is deprecated and will be removed in Spree 5') if current_currency
+
+        if current_currency.present?
+          ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
+            `current_currency` param is deprecated and will be removed in Spree 5.
+            Please pass `:currency` in `params` hash instead.
+          DEPRECATION
+        end
 
         @ids              = String(params.dig(:filter, :ids)).split(',')
         @skus             = String(params.dig(:filter, :skus)).split(',')
         @price            = map_prices(String(params.dig(:filter, :price)).split(','))
-        @currency         = current_currency
+        @currency         = current_currency || params.dig(:filter, :currency) || params[:currency]
         @taxons           = taxon_ids(params.dig(:filter, :taxons))
         @concat_taxons    = taxon_ids(params.dig(:filter, :concat_taxons))
         @name             = params.dig(:filter, :name)
