@@ -10,7 +10,8 @@ module Spree
     before_action :assign_order_with_lock, only: :update
 
     def show
-      @order = Order.includes(line_items: [variant: [:option_values, :images, :product]], bill_address: :state, ship_address: :state).find_by!(number: params[:id])
+      order_id = params[:id].gsub('-order-success','')
+      @order = Order.includes(line_items: [variant: [:option_values, :images, :product]], bill_address: :state, ship_address: :state).find_by!(number: order_id)
     end
 
     def update
