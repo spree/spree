@@ -596,7 +596,7 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
 
   context 'when order is completed' do
     let!(:user) { create(:user) }
-    let!(:order) { create(:order) }
+    let!(:order) { create(:order, store: store) }
 
     before do
       add_mug_to_cart
