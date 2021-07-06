@@ -10,7 +10,7 @@ module Spree
           end
 
           def collection
-            @collection ||= collection_finder.new(scope: scope, params: params, current_currency: current_currency).execute
+            @collection ||= collection_finder.new(scope: scope, params: finder_params).execute
           end
 
           def resource
@@ -35,10 +35,6 @@ module Spree
 
           def model_class
             Spree::Product
-          end
-
-          def scope
-            current_store.products.accessible_by(current_ability, :show).includes(scope_includes)
           end
 
           def scope_includes
