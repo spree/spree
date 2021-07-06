@@ -689,7 +689,7 @@ describe Spree::Order, type: :model do
     end
 
     context 'when the user is not persisted' do
-      let(:user) { FactoryBot.build(:user_with_addreses) }
+      let(:user) { build(:user) }
 
       it 'does not persist the user' do
         expect { order.associate_user!(user) }.
