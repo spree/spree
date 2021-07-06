@@ -63,6 +63,7 @@ module Spree
     preference :show_raw_product_description, :boolean, default: false
     preference :tax_using_ship_address, :boolean, default: true
     preference :track_inventory_levels, :boolean, default: true # Determines whether to track on_hand values for variants / products.
+    preference :variants_per_page, :integer, default: Kaminari.config.default_per_page
 
     # Store credits configurations
     preference :non_expiring_credit_types, :array, default: []
