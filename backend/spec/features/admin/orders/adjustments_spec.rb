@@ -13,11 +13,11 @@ describe 'Adjustments', type: :feature do
 
   before do
     create(:tax_adjustment,
-            adjustable: line_item,
-            state: 'closed',
-            order: order,
-            label: 'VAT 5%',
-            amount: 10)
+           adjustable: line_item,
+           state: 'closed',
+           order: order,
+           label: 'VAT 5%',
+           amount: 10)
 
     order.adjustments.create!(order: order, label: 'Rebate', amount: 10)
 
