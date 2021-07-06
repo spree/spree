@@ -4,7 +4,7 @@ class ApiV2DummyController < Spree::Api::V2::ResourceController
   private
 
   def model_class
-    Spree::Order
+    Spree::Product
   end
 end
 
@@ -52,5 +52,22 @@ describe Spree::Api::V2::ResourceController, type: :controller do
 
       it_behaves_like 'returns proper values'
     end
+  end
+
+  describe '#collection' do
+    let!(:product) { create(:product, stores: [store]) }
+    let!(:product_from_another_store) { create(:product, stores: [create(:store)]) }
+    let(:collection) { dummy_controller.send(:collection) }
+
+    before do
+      dummy_controller.params = {}
+      allow(dummy_controller).to receive(:current_store).and_return(store)
+      allow(dummy_controller).to receive(:spree_current_user).and_return(nil)
+    end
+
+    it { expect(collection.first).to be_instance_of(Spree::Product) }
+    it { expect(collection.count).to eq(store.products.count) }
+    it { expect(collection.map(&:id)).to include(product.id) }
+    it { expect(collection.map(&:id)).not_to include(product_from_another_store.id) }
   end
 end

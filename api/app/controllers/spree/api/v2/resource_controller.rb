@@ -26,7 +26,7 @@ module Spree
           [:id, :name, :number, :updated_at, :created_at]
         end
 
-        def scope
+        def scope(skip_cancancan: false)
           plural_model_name = model_class.model_name.plural.gsub(/spree_/, '').to_sym
 
           base_scope = if current_store.respond_to?(plural_model_name)
@@ -35,7 +35,7 @@ module Spree
                          model_class
                        end
 
-          base_scope = base_scope.accessible_by(current_ability, :show)
+          base_scope = base_scope.accessible_by(current_ability, :show) unless skip_cancancan
           base_scope = base_scope.includes(scope_includes) if scope_includes.any?
           base_scope
         end
