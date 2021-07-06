@@ -10,7 +10,7 @@ module Spree
 
     def create
       @address = try_spree_current_user.addresses.build(address_params)
-      if @address.save
+      if create_service.call(user: try_spree_current_user, address_params: @address.attributes).success?
         flash[:notice] = I18n.t(:successfully_created, scope: :address_book)
         redirect_to spree.account_path
       else
@@ -59,6 +59,18 @@ module Spree
 
     def address_params
       params.require(:address).permit(permitted_address_attributes)
+    end
+
+    def create_service
+      Spree::Api::Dependencies.storefront_account_create_address_service.constantize
+    end
+
+    def update_service
+      Spree::Api::Dependencies.storefront_account_update_address_service.constantize
+    end
+
+    def check_authorization
+      authorize! :create, Address
     end
   end
 end
