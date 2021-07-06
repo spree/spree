@@ -75,13 +75,13 @@ describe 'Products', type: :feature do
         expect(page).to have_content('zomg shirt')
         expect(page).not_to have_content('apache baseball cap')
 
-        check 'Show Deleted'
+        find('label', text: 'Show Deleted').click
         click_on 'Search'
 
         expect(page).to have_content('zomg shirt')
         expect(page).to have_content('apache baseball cap')
 
-        uncheck 'Show Deleted'
+        find('label', text: 'Show Deleted').click
         click_on 'Search'
 
         expect(page).to have_content('zomg shirt')
@@ -311,7 +311,7 @@ describe 'Products', type: :feature do
 
           visit spree.admin_products_path
           click_on 'Filter'
-          check 'Show Deleted'
+          find('label', text: 'Show Deleted').click
           click_on 'Search'
 
           expect(page).to have_content('apache baseball cap')
@@ -424,7 +424,7 @@ describe 'Products', type: :feature do
 
         click_on 'Filter'
         # This will show our deleted product
-        check 'Show Deleted'
+        find('label', text: 'Show Deleted').click
         click_on 'Search'
         click_link(product.name, match: :first)
         expect(page).to have_field(id: 'product_price') do |field|

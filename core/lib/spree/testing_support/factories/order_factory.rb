@@ -9,6 +9,16 @@ FactoryBot.define do
 
     transient do
       line_items_price { BigDecimal(10) }
+      attach_to_default_store { true }
+    end
+
+    before(:create) do |order, evaluator|
+      if evaluator.attach_to_default_store
+        default_store = Spree::Store.default.persisted? ? Spree::Store.default : nil
+        store = default_store || create(:store)
+
+        order.store = store
+      end
     end
 
     factory :order_with_totals do

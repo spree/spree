@@ -245,7 +245,6 @@ describe 'Orders Listing', type: :feature do
           fill_in 'q_line_items_variant_sku_eq', with: 'BAG-00001'
           select2 'Promo', from: 'Promotion'
           fill_in 'q_bill_address_firstname_start', with: 'John'
-          select2 'Spree Test Store', from: 'Store', match: :first
           fill_in 'q_bill_address_lastname_start', with: 'Smith'
           select2 'spree', from: 'Channel'
 
@@ -269,7 +268,6 @@ describe 'Orders Listing', type: :feature do
           expect(page).to have_content('Promotion: Promo')
           expect(page).to have_content('Email: john_smith@example.com')
           expect(page).to have_content('SKU: BAG-00001')
-          expect(page).to have_content('Store: Spree Test Store')
           expect(page).to have_content('Channel: spree')
         end
       end

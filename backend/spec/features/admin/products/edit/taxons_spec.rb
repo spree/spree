@@ -22,7 +22,7 @@ describe 'Product Taxons', type: :feature, js: true do
       click_button 'Update'
 
       expect(page).to have_css('.select2-selection__choice', text: taxon_1.name).
-                  and have_css('.select2-selection__choice', text: taxon_2.name)
+        and have_css('.select2-selection__choice', text: taxon_2.name)
     end
   end
 end
