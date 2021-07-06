@@ -120,8 +120,9 @@ module Spree
       end
 
       it 'keeps source attributes after updating' do
-        persisted_order = Spree::Order.create
-        credit_card_payment_method = create(:credit_card_payment_method)
+        store = create(:store)
+        persisted_order = create(:order, store: store)
+        credit_card_payment_method = create(:credit_card_payment_method, stores: [store])
         attributes = {
           payments_attributes: [
             {
