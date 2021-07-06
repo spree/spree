@@ -9,13 +9,11 @@ describe 'Product Taxons', type: :feature, js: true do
       taxon_2 = create(:taxon, name: 'Clothing')
       product = create(:product)
       product.taxons << taxon_1
-
-      visit spree.admin_products_path
-      within_row(1) { click_icon :edit }
+      visit spree.admin_product_path(product)
 
       expect(page).to have_css('.select2-selection__choice', text: "#{taxon_1.parent.name} -> #{taxon_1.name}")
 
-      select2_open css: '#product_taxons_field'
+      select2_open label: 'Taxons'
       select2_open label: 'Taxons'
 
       select2_search 'Clothing', from: 'Taxons'
