@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe Spree::PaymentMethod, type: :model do
+  let(:store) { create(:store) }
+
   context 'visibility scopes' do
     before do
       [nil, '', 'both', 'front_end', 'back_end'].each do |display_on|
@@ -8,7 +10,8 @@ describe Spree::PaymentMethod, type: :model do
           name: 'Display Both',
           display_on: display_on,
           active: true,
-          description: 'foofah'
+          description: 'foofah',
+          stores: [store]
         )
       end
     end
@@ -38,6 +41,21 @@ describe Spree::PaymentMethod, type: :model do
         methods = Spree::PaymentMethod.available_on_back_end
         expect(methods.size).to eq(2)
         expect(methods.pluck(:display_on)).to eq(['both', 'back_end'])
+      end
+    end
+
+    describe '#for_store' do
+      it 'returns all methods available to front-end/back-end for a store' do
+        store_2 = create(:store)
+        method_from_other_store = Spree::Gateway::Test.create(
+          name: 'Display Both',
+          active: true,
+          description: 'foofah',
+          stores: [store_2]
+        )
+        methods = Spree::PaymentMethod.for_store(store)
+        expect(methods).not_to include(method_from_other_store)
+        expect(methods.size).to eq(5)
       end
     end
   end
