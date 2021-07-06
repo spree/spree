@@ -4,12 +4,8 @@ FactoryBot.define do
     locale { 'en' }
     location {'Header'}
 
-    transient do
-      attach_to_default_store { true }
-    end
-
-    before(:create) do |menu, evaluator|
-      if evaluator.attach_to_default_store
+    before(:create) do |menu|
+      if menu.store.nil?
         default_store = Spree::Store.default.persisted? ? Spree::Store.default : nil
         store = default_store || create(:store)
 
