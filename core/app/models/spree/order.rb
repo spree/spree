@@ -130,7 +130,8 @@ module Spree
     before_create :link_by_email
     before_update :homogenize_line_item_currencies, if: :currency_changed?
 
-    before_save :reset_order_if_store_association_has_changed
+    # TODO: handle_store_change
+    # before_save :handle_store_change
 
     with_options presence: true do
       # we want to have this case_sentive: true as changing it to false causes all SQL to use LOWER(slug)
@@ -411,6 +412,24 @@ module Spree
       end
     end
 
+    # TODO: Implement hanedeling of store
+    # Removes line items from the order if the line item is not
+    # available in the store the order belongs to.
+    def sync_line_items_with_order_by_store
+      line_items.any? do |line_item|
+        line_item_stores = line_item.variant.product.stores
+
+        line_item_available_store_ids = []
+        line_item_stores.map do |store|
+          line_item_available_store_ids << store.id
+        end
+
+        unless line_item_available_store_ids.include?(store.id)
+          line_item.destroy
+        end
+      end
+    end
+
     def ensure_line_items_are_in_stock
       if insufficient_stock_lines.present?
         restart_checkout_flow
@@ -670,11 +689,20 @@ module Spree
 
     private
 
-    def reset_order_if_store_association_has_changed
+    # TODO: Implement hanedeling of store
+    # change and store scoped products.
+    def handle_store_change
       return if new_record?
 
-      if store_id_changed?
-        empty!
+      if store_id_changed? && completed?
+        errors.add(:base, Spree.t('errors.messages.once_an_order_is_complete_you_can_not_change_store'))
+        throw(:abort)
+      elsif store_id_changed? && !completed?
+        sync_line_items_with_order_by_store
+        update_with_updater!
+        self
+      else
+        true
       end
     end
 

@@ -894,6 +894,7 @@ en:
     error: error
     errors:
       messages:
+        once_an_order_is_complete_you_can_not_change_store: Once an order is complete, you can not change the store.
         blank: can't be blank
         could_not_create_taxon: Could not create taxon
         no_shipping_methods_available: No shipping methods available for selected location, please change your address and try again.
