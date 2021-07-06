@@ -119,7 +119,9 @@ module Spree
 
         params[:q][:s] ||= 'name asc'
 
-        @collection = if params[:q][:all_stores] == '1'
+        # Do not scope by store if the params filter is set to :all_stores,
+        # or we are looking to show deleted products. Deleted products do not have any stores attahced.
+        @collection = if params[:q][:all_stores] == '1' || params[:q][:deleted_at_null] == '0'
                         super
                       else
                         scope
@@ -148,7 +150,7 @@ module Spree
       end
 
       def update_before
-        # note: we only reset the product properties if we're receiving a post
+        # NOTE: we only reset the product properties if we're receiving a post
         #       from the form on that tab
         return unless params[:clear_product_properties]
 
