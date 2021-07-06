@@ -6,9 +6,12 @@ module Spree
       def call(user:, store:, currency:, order_params: nil)
         order_params ||= {}
 
+        # we cannot create an order without store
+        return failure(:store_is_required) if store.nil?
+
         default_params = {
           user: user,
-          currency: currency,
+          currency: currency || store.default_currency,
           token: Spree::GenerateToken.new.call(Spree::Order)
         }
 
