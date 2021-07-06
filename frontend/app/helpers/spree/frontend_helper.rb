@@ -388,11 +388,13 @@ module Spree
     end
 
     def products_for_filters_cache_key
-      [
-        products_for_filters.maximum(:updated_at).to_f,
-        base_cache_key,
-        @taxon&.permalink
-      ].flatten.compact
+      @products_for_filters_cache_key ||= begin
+        [
+          products_for_filters.maximum(:updated_at).to_f,
+          base_cache_key,
+          @taxon&.permalink
+        ].flatten.compact
+      end
     end
   end
 end
