@@ -43,11 +43,8 @@ describe 'Product scopes', type: :model do
     let(:taxon_1) { create(:taxon) }
     let(:taxon_2) { create(:taxon) }
 
-    let(:store_1) { create(:store) }
-    let(:store_2) { create(:store) }
-
-    let!(:product_1) { create(:product, currency: 'GBP', taxons: [taxon_1], stores: [store_1]) }
-    let!(:product_2) { create(:product, currency: 'GBP', taxons: [taxon_2], stores: [store_2]) }
+    let!(:product_1) { create(:product, currency: 'GBP', taxons: [taxon_1]) }
+    let!(:product_2) { create(:product, currency: 'GBP', taxons: [taxon_2]) }
 
     before do
       create(:product, currency: 'USD', taxons: [create(:taxon)])
@@ -55,18 +52,6 @@ describe 'Product scopes', type: :model do
 
     context 'when giving a taxon' do
       it { expect(subject.call('GBP', taxon: taxon_1)).to contain_exactly(product_1) }
-    end
-
-    context 'when giving a store' do
-      it { expect(subject.call('GBP', store: store_2)).to contain_exactly(product_2) }
-    end
-
-    context 'when giving both taxon and store' do
-      it { expect(subject.call('GBP', taxon: taxon_1, store: store_1)).to contain_exactly(product_1) }
-    end
-
-    context 'when giving no taxon and store' do
-      it { expect(subject.call('GBP')).to contain_exactly(product_1, product_2) }
     end
 
     context 'when giving a currency with no products' do
@@ -321,8 +306,8 @@ describe 'Product scopes', type: :model do
     end
   end
 
-  context '#by_store' do
-    subject(:products_by_store) { Spree::Product.by_store(store) }
+  describe '#for_store' do
+    subject(:products_by_store) { Spree::Product.for_store(store) }
 
     let(:store) { create(:store) }
 

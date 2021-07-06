@@ -384,7 +384,7 @@ module Spree
     end
 
     def products_for_filters
-      Product.for_filters(current_currency, taxon: @taxon, store: current_store)
+      @products_for_filters ||= current_store.products.for_filters(current_currency, taxon: @taxon)
     end
 
     def products_for_filters_cache_key

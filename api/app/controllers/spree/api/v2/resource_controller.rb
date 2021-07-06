@@ -27,15 +27,17 @@ module Spree
         end
 
         def scope
-          base_scope = if model_class.respond_to?(:store_id)
-                         model_class.where(store_id: current_store.id)
-                       elsif model_class.respond_to?(:for_store)
-                         model_class.for_store(current_store)
+          plural_model_name = model_class.model_name.plural.gsub(/spree_/, '').to_sym
+
+          base_scope = if current_store.respond_to?(plural_model_name)
+                         current_store.send(plural_model_name)
                        else
                          model_class
                        end
 
-          base_scope.accessible_by(current_ability, :show).includes(scope_includes)
+          base_scope = base_scope.accessible_by(current_ability, :show)
+          base_scope = base_scope.includes(scope_includes) if scope_includes.any?
+          base_scope
         end
 
         def scope_includes
