@@ -8,12 +8,11 @@ module Spree
 
         default_params = {
           user: user,
-          store: store,
           currency: currency,
           token: Spree::GenerateToken.new.call(Spree::Order)
         }
 
-        order = Spree::Order.create!(default_params.merge(order_params))
+        order = store.orders.create!(default_params.merge(order_params))
         success(order)
       end
     end
