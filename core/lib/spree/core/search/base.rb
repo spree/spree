@@ -7,7 +7,7 @@ module Spree
         def initialize(params)
           @properties = {}
           @current_currency = Spree::Config[:currency]
-          @current_store = params[:current_store]
+          @current_store = params[:current_store] || Spree::Store.default
           @taxon = params[:taxon]
 
           prepare(params)
@@ -28,8 +28,7 @@ module Spree
         protected
 
         def extended_base_scope
-          base_scope = Spree::Product.spree_base_scopes
-          base_scope = base_scope.by_store(current_store) if current_store.present?
+          base_scope = current_store.products.spree_base_scopes
           base_scope = get_products_conditions_for(base_scope, keywords)
           base_scope = Spree::Dependencies.products_finder.constantize.new(
             scope: base_scope,
