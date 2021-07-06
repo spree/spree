@@ -5,6 +5,7 @@ describe 'Order Details', type: :feature, js: true do
   let!(:product) { create(:product, name: 'spree t-shirt', price: 20.00) }
   let!(:store) { create(:store) }
   let(:order) { create(:order, state: 'complete', completed_at: '2011-02-01 12:36:15', number: 'R100', store_id: store.id) }
+  let(:fresh_order) { create(:order) }
   let(:state) { create(:state) }
 
   before do
@@ -21,7 +22,7 @@ describe 'Order Details', type: :feature, js: true do
 
       before do
         product.master.stock_items.first.update_column(:count_on_hand, 100)
-        visit spree.store_admin_order_path(order)
+        visit spree.store_admin_order_path(fresh_order)
       end
 
       it 'displays select with current order store name' do
