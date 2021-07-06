@@ -344,7 +344,7 @@ module Spree
     end
 
     def checkout_available_payment_methods
-      @checkout_available_payment_methods ||= @order.available_payment_methods(current_store)
+      @checkout_available_payment_methods ||= @order.available_payment_methods
     end
 
     def color_option_type_name
