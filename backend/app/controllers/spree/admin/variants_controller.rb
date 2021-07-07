@@ -50,7 +50,7 @@ module Spree
         @search = @collection.ransack(params[:q])
         @collection = @search.result.
                       page(params[:page]).
-                      per(params[:per_page] || Spree::Config[:variants_per_page])
+                      per(params[:per_page] || Spree::Backend::Config[:variants_per_page])
       end
 
       private
