@@ -112,7 +112,7 @@ module Spree
       end
 
       def set_default_currency
-        @store.default_currency = Spree::Config[:currency]
+        @store.default_currency = Spree::Store.default.default_currency
       end
 
       def set_default_locale
