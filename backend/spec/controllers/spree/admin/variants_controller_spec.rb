@@ -22,7 +22,7 @@ module Spree
           before { variant_2.destroy }
 
           it 'assigns only deleted variants for a requested product' do
-            get :index, params: { product_id: product.slug, deleted: 'on' }
+            get :index, params: { product_id: product.slug, q: { deleted_at_null: '1' } }
             expect(assigns(:collection)).not_to include variant_1
             expect(assigns(:collection)).to include variant_2
           end
