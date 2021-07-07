@@ -19,7 +19,7 @@ module Spree
             @simple_current_order.last_ip_address = ip_address
             return @simple_current_order
           else
-            @simple_current_order = Spree::Order.new
+            @simple_current_order = current_store.orders.new
           end
         end
 
@@ -36,7 +36,7 @@ module Spree
           @current_order = find_order_by_token_or_user(options, true)
 
           if options[:create_order_if_necessary] && (@current_order.nil? || @current_order.completed?)
-            @current_order = Spree::Order.create!(current_order_params)
+            @current_order = current_store.orders.create!(current_order_params)
             @current_order.associate_user! try_spree_current_user if try_spree_current_user
             @current_order.last_ip_address = ip_address
           end
@@ -75,7 +75,7 @@ module Spree
         end
 
         def current_order_params
-          { currency: current_currency, token: cookies.signed[:token], store_id: current_store.id, user_id: try_spree_current_user.try(:id) }
+          { currency: current_currency, token: cookies.signed[:token], user_id: try_spree_current_user.try(:id) }
         end
 
         def find_order_by_token_or_user(options = {}, with_adjustments = false)
@@ -88,7 +88,7 @@ module Spree
                      end
 
           # Find any incomplete orders for the token
-          incomplete_orders = Spree::Order.incomplete.includes(includes)
+          incomplete_orders = current_store.orders.incomplete.includes(includes)
 
           token_order_params = current_order_params.except(:user_id)
           order = if with_adjustments

@@ -344,7 +344,7 @@ module Spree
     end
 
     def checkout_available_payment_methods
-      @checkout_available_payment_methods ||= @order.available_payment_methods(current_store)
+      @checkout_available_payment_methods ||= @order.available_payment_methods
     end
 
     def color_option_type_name
@@ -384,15 +384,17 @@ module Spree
     end
 
     def products_for_filters
-      Product.for_filters(current_currency, taxon: @taxon, store: current_store)
+      @products_for_filters ||= current_store.products.for_filters(current_currency, taxon: @taxon)
     end
 
     def products_for_filters_cache_key
-      [
-        products_for_filters.maximum(:updated_at).to_f,
-        base_cache_key,
-        @taxon&.permalink
-      ].flatten.compact
+      @products_for_filters_cache_key ||= begin
+        [
+          products_for_filters.maximum(:updated_at).to_f,
+          base_cache_key,
+          @taxon&.permalink
+        ].flatten.compact
+      end
     end
   end
 end

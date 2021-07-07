@@ -1,18 +1,20 @@
 module Spree
   module Orders
     class FindComplete
-      attr_reader :user, :number, :token
+      attr_reader :user, :number, :token, :store
 
-      def initialize(user: nil, number: nil, token: nil)
+      def initialize(user: nil, number: nil, token: nil, store: nil)
         @user = user
         @number = number
         @token = token
+        @store = store
       end
 
       def execute
         orders = by_user(scope)
         orders = by_number(orders)
         orders = by_token(orders)
+        orders = by_store(orders)
 
         orders
       end
@@ -35,6 +37,10 @@ module Spree
         token.present?
       end
 
+      def store?
+        store.present?
+      end
+
       def by_user(orders)
         return orders unless user?
 
@@ -51,6 +57,12 @@ module Spree
         return orders unless token?
 
         orders.where(token: token)
+      end
+
+      def by_store(orders)
+        return orders unless store?
+
+        orders.where(store: store)
       end
 
       def scope_includes

@@ -11,7 +11,7 @@ module Spree
         end
 
         def current_store
-          @current_store ||= Spree::Store.current(request.env['SERVER_NAME'])
+          @current_store ||= current_store_finder.new(url: request.env['HTTP_SERVER_NAME']).execute
         end
 
         def available_menus
@@ -48,6 +48,10 @@ module Spree
 
         def current_tax_zone
           @current_tax_zone ||= @current_order&.tax_zone || Spree::Zone.default_tax
+        end
+
+        def current_store_finder
+          Spree::Dependencies.current_store_finder.constantize
         end
       end
     end
