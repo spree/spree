@@ -8,8 +8,29 @@ describe 'Payment Methods', type: :feature do
   let!(:store_2) { create(:store) }
   let!(:store_3) { create(:store) }
 
+  let!(:payment_method_one) { create(:payment_method) }
+  let!(:payment_method_two) { create(:payment_method, name: 'Should Be MIA' ,stores: [store_3]) }
+
   before do
     visit spree.admin_payment_methods_path
+  end
+
+  context 'managine payment methods by store' do
+    it 'only displays payment methods for current store' do
+      within('table#listing_payment_methods') do
+        expect(page).to have_content(payment_method_one.name)
+        expect(page).not_to have_content(payment_method_two.name)
+      end
+    end
+
+    it 'is able to show payment methods for all stores using filter' do
+      check 'q_all_stores'
+      click_on 'Search'
+
+      expect(page).to have_checked_field(id: 'q_all_stores')
+      expect(page).to have_content(payment_method_one.name)
+      expect(page).to have_content(payment_method_two.name)
+    end
   end
 
   context 'admin visiting payment methods listing page' do
