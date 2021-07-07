@@ -1,19 +1,38 @@
 require 'spec_helper'
 
-describe 'Admin store selector', type: :feature, js: true do
+describe 'Admin store switcher', type: :feature, js: true do
   stub_authorization!
 
   let!(:admin_user) { create(:admin_user) }
+  let!(:store_one) { Spree::Store.default }
+  let!(:store_two) { create(:store, url: 'www.example-one.com') }
+  let!(:store_three) { create(:store, url: 'www.example-two.com') }
 
-  let!(:store) { create(:store, url: "www.example1.com") }
+  context 'on the orders page of admin' do
+    before do
+      visit spree.admin_path
+    end
 
-  before do
-    visit spree.admin_path
+    it 'allows to change the url to the seleted store and returns you to orders page' do
+      find('a#storeSelectorDropdown').click
+
+      expect(page).to have_selector(:css, "a[href='#{store_one.formatted_url}/admin/orders']")
+      expect(page).to have_selector(:css, "a[href='#{store_two.formatted_url}/admin/orders']")
+      expect(page).to have_selector(:css, "a[href='#{store_three.formatted_url}/admin/orders']")
+    end
   end
 
-  it "should allow to change the url to the seleted store" do
-    expect(current_url).not_to include("#{store.formatted_url}")
-    find("select#store_select").find(:xpath, 'option[2]').select_option
-    expect(current_url).to eq "#{store.formatted_url}/admin"
+  context 'on the products page of admin' do
+    before do
+      visit spree.admin_products_path
+    end
+
+    it 'allows to change the store store and returns you to products page' do
+      find('a#storeSelectorDropdown').click
+
+      expect(page).to have_selector(:css, "a[href='#{store_one.formatted_url}/admin/products']")
+      expect(page).to have_selector(:css, "a[href='#{store_two.formatted_url}/admin/products']")
+      expect(page).to have_selector(:css, "a[href='#{store_three.formatted_url}/admin/products']")
+    end
   end
 end
