@@ -24,3 +24,5 @@ else
 end
 Capybara.default_max_wait_time = 45
 Capybara.server = :puma
+
+Capybara.always_include_port = true
