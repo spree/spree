@@ -1,4 +1,3 @@
-# coding: utf-8
 require 'spec_helper'
 
 describe 'Variants', type: :feature do
@@ -27,6 +26,35 @@ describe 'Variants', type: :feature do
   end
 
   context 'listing variants' do
+    context "there's fewer than 26 variants" do
+      it 'displays pagination' do
+        visit spree.admin_product_variants_path(product)
+        expect(product.variants.size < 26).to be_truthy
+        expect(page).not_to have_css('.pagination.d-inline-flex')
+        expect(page).to have_css('select[name="per_page"]')
+      end
+    end
+
+    context "there's variants than in preference variants_per_page" do
+      before { create_list(:variant, (default_per_page + 1), product: product) }
+      let(:default_per_page) { Spree::Backend::Config[:variants_per_page] }
+
+      it 'allows to change number of displayed variants', js: true do
+        second_page_link_selector = "a[href='#{spree.admin_product_variants_path(product, page: 2)}']"
+        visit spree.admin_product_variants_path(product)
+        expect(page).to have_css(second_page_link_selector)
+        page.select('50', from: 'per_page')
+        expect(page).to have_current_path(spree.admin_product_variants_path(product, per_page: 50))
+        expect(page).not_to have_css(second_page_link_selector)
+      end
+
+      it 'allows to go to the second page' do
+        visit spree.admin_product_variants_path(product)
+        page.click_link('2')
+        expect(page).to have_current_path(spree.admin_product_variants_path(product, page: 2))
+      end
+    end
+
     context 'currency displaying' do
       context 'using Russian Rubles' do
         before do

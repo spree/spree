@@ -10,7 +10,7 @@
       <tr>
         <th colspan="2"><%= Spree.t(:options) %></th>
         <th><%= Spree.t(:price) %></th>
-        <th><%= Spree.t(:sku) %></th>
+        <th><%= sort_link @search, :sku, Spree.t(:sku) %></th>
         <th class="actions"></th>
       </tr>
     </thead>
@@ -65,6 +65,7 @@
   <% content_for :page_actions do %>
     <%= product_preview_link(@product) %>
     <%= button_link_to(Spree.t(:new_variant), spree.new_admin_product_variant_url(@product), { icon: 'add.svg', :'data-update' => 'new_variant', class: 'btn-success', id: 'new_var_link' }) if can? :create, Spree::Variant %>
-    <%= button_link_to (@deleted.blank? ? Spree.t(:show_deleted) : Spree.t(:show_active)), spree.admin_product_variants_url(@product, deleted: @deleted.blank? ? "on" : "off"), { class: 'btn-outline-secondary', icon: 'filter.svg' } %>
+    <%= button_link_to (@deleted == '1' ? Spree.t(:show_active) : Spree.t(:show_deleted)), spree.admin_product_variants_url(@product, { q: { deleted_at_null: @deleted == '1' ? "0" : "1" } }), { class: 'btn-outline-secondary', icon: 'filter.svg' } %>
   <% end %>
 <% end %>
+<%= render partial: 'spree/admin/shared/index_table_options', locals: { collection: @collection } %>

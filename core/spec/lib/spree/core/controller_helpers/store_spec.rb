@@ -24,7 +24,7 @@ describe Spree::Core::ControllerHelpers::Store, type: :controller do
 
     context 'by domain' do
       before do
-        controller.request.env['HTTP_SERVER_NAME'] = 'another.com'
+        controller.request.env['SERVER_NAME'] = 'another.com'
       end
 
       it 'returns current store' do
@@ -36,7 +36,7 @@ describe Spree::Core::ControllerHelpers::Store, type: :controller do
       let!(:store_3) { create :store, url: 'some.another.com' }
 
       before do
-        controller.request.env['HTTP_SERVER_NAME'] = 'some.another.com'
+        controller.request.env['SERVER_NAME'] = 'some.another.com'
       end
 
       it 'returns current store' do

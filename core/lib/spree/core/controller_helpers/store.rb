@@ -11,7 +11,7 @@ module Spree
         end
 
         def current_store
-          @current_store ||= current_store_finder.new(url: request.env['HTTP_SERVER_NAME']).execute
+          @current_store ||= current_store_finder.new(url: request.env['SERVER_NAME']).execute
         end
 
         def available_menus

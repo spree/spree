@@ -20,8 +20,9 @@ describe 'Products sorting', type: :feature, js: true, retry: 3 do
 
   before do
     visit spree.products_path
-    create_list(:product, 10, stores: [store]).each do |p|
-      p.price = rand(1..100)
+    random_prices = (1..100).to_a.shuffle.sample(10)
+    create_list(:product, 10, stores: [store]).each_with_index do |p, i|
+      p.price = random_prices[i]
       p.save
     end
     store.products.reload
