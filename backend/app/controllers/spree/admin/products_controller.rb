@@ -92,7 +92,7 @@ module Spree
       protected
 
       def scope
-        current_store.products
+        current_store.products.accessible_by(current_ability, :index)
       end
 
       def find_resource

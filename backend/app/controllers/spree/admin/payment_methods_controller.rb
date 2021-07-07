@@ -50,7 +50,7 @@ module Spree
       private
 
       def scope
-        current_store.payment_methods
+        current_store.payment_methods.accessible_by(current_ability, :index)
       end
 
       def collection

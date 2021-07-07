@@ -63,7 +63,7 @@ module Spree
       private
 
       def scope
-        current_store.orders
+        current_store.orders.accessible_by(current_ability, :index)
       end
 
       def model_class
