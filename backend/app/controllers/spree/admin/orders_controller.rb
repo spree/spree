@@ -45,10 +45,10 @@ module Spree
           params[:q][:completed_at_lt] = params[:q].delete(:created_at_lt)
         end
 
-        @search = if params[:q][:all_stores] == '1' || !current_store.present?
+        @search = if params[:q][:all_stores] == '1'
                     Spree::Order.preload(:user).accessible_by(current_ability, :index).ransack(params[:q])
                   else
-                    scope.preload(:user).accessible_by(current_ability, :index).ransack(params[:q])
+                    Spree::Order.preload(:user).where(store_id: current_store.id).accessible_by(current_ability, :index).ransack(params[:q])
                   end
 
         # lazy loading other models here (via includes) may result in an invalid query

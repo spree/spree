@@ -3,6 +3,7 @@ require 'spec_helper'
 
 describe 'Products', type: :feature do
   let(:store) { Spree::Store.default }
+  let(:other_store) { create(:store)}
 
   context 'as admin user' do
     stub_authorization!
@@ -20,6 +21,7 @@ describe 'Products', type: :feature do
         before do
           create(:product, name: 'apache baseball cap', price: 10)
           create(:product, name: 'zomg shirt', price: 5)
+          create(:product, name: 'Long T-Shirt', price: 15, stores: [other_store])
         end
 
         it 'lists existing products with correct sorting by name' do
@@ -44,6 +46,12 @@ describe 'Products', type: :feature do
           click_link 'admin_products_listing_price_title'
           within_row(1) { expect(page).to have_content('zomg shirt') }
           within_row(2) { expect(page).to have_content('apache baseball cap') }
+        end
+
+        it 'does not list the product that belongs to other store' do
+          visit spree.admin_products_path
+
+          expect(page).not_to have_content('Long T-Shirt')
         end
       end
 
@@ -86,6 +94,24 @@ describe 'Products', type: :feature do
 
         expect(page).to have_content('zomg shirt')
         expect(page).not_to have_content('apache baseball cap')
+      end
+
+      it 'filter is able to show products for all stores' do
+        create(:product, name: 'apache baseball cap')
+        create(:product, name: 'zomg shirt')
+        create(:product, name: 'Long T-Shirt', price: 15, stores: [other_store])
+
+        visit spree.admin_products_path
+        expect(page).to have_content('zomg shirt')
+        expect(page).to have_content('apache baseball cap')
+        expect(page).not_to have_content('Long T-Shirt')
+
+        find('label', text: 'Show Products for all stores').click
+        click_on 'Search'
+
+        expect(page).to have_content('zomg shirt')
+        expect(page).to have_content('apache baseball cap')
+        expect(page).to have_content('Long T-Shirt')
       end
 
       it 'is able to search products by their properties' do
