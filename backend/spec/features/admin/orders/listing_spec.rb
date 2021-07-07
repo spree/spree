@@ -3,6 +3,9 @@ require 'spec_helper'
 describe 'Orders Listing', type: :feature do
   stub_authorization!
 
+  let(:other_store_a) { create(:store) }
+  let(:other_store_b) { create(:store) }
+
   let(:order1) do
     create :order_with_line_items,
            created_at: 1.day.from_now,
@@ -18,11 +21,29 @@ describe 'Orders Listing', type: :feature do
            number: 'R200'
   end
 
+  let(:order3) do
+    create :order,
+           store: other_store_a,
+           created_at: 1.day.ago,
+           completed_at: 1.day.ago,
+           number: 'R300'
+  end
+
+  let(:order4) do
+    create :order,
+           store: other_store_b,
+           created_at: 1.day.ago,
+           completed_at: 1.day.ago,
+           number: 'R400'
+  end
+
   before do
     allow_any_instance_of(Spree::OrderInventory).to receive(:add_to_shipment)
     # create the order instances after stubbing the `add_to_shipment` method
     order1
     order2
+    order3
+    order4
     visit spree.admin_orders_path
   end
 
@@ -38,6 +59,11 @@ describe 'Orders Listing', type: :feature do
         expect(column_text(1)).to eq 'R200'
         expect(find('td:nth-child(3)')).to have_css '.badge-considered_safe'
       end
+    end
+
+    it 'does not show the order that belongs to the other_store' do
+      expect(page).not_to have_content('R300')
+      expect(page).not_to have_content('R400')
     end
 
     it 'is able to sort the orders listing' do
@@ -94,6 +120,15 @@ describe 'Orders Listing', type: :feature do
       end
       # Insure the non risky order is not present
       expect(page).not_to have_content('R200')
+    end
+
+    it 'is able to show orders from all stores' do
+      check 'q_all_stores'
+      click_on 'Filter Results'
+
+      expect(page).to have_checked_field(id: 'q_all_stores')
+      expect(page).to have_content('R300')
+      expect(page).to have_content('R400')
     end
 
     it 'is able to filter on variant_sku' do
@@ -202,7 +237,7 @@ describe 'Orders Listing', type: :feature do
       end
 
       it 'adds per_page parameter to url' do
-        expect(page).to have_current_path(/per_page\=50/)
+        expect(page).to have_current_path(/per_page=50/)
       end
 
       it 'can be used with search filtering' do
@@ -211,12 +246,12 @@ describe 'Orders Listing', type: :feature do
         click_on 'Filter Results'
         expect(page).not_to have_content('R100')
         within_row(1) { expect(page).to have_content('R200') }
-        expect(page).to have_current_path(/per_page\=50/)
+        expect(page).to have_current_path(/per_page=50/)
         expect(page).to have_select('per_page', selected: '50')
         within('div.index-pagination-row', match: :first) do
           select '75', from: 'per_page'
         end
-        expect(page).to have_current_path(/per_page\=75/)
+        expect(page).to have_current_path(/per_page=75/)
         expect(page).to have_select('per_page', selected: '75')
         expect(page).to have_selector(:css, 'select.per-page-selected-75')
         expect(page).not_to have_content('R100')
@@ -250,8 +285,8 @@ describe 'Orders Listing', type: :feature do
 
           # Can not test these in the filter dropdown
           # With current implementation of flatpickr test support.
-          #fill_in_date_picker('q_created_at_gt', with: '2018-01-01')
-          #fill_in_date_picker('q_created_at_lt', with: '2018-01-01')
+          # fill_in_date_picker('q_created_at_gt', with: '2018-01-01')
+          # fill_in_date_picker('q_created_at_lt', with: '2018-01-01')
         end
 
         click_on 'Filter Results'

@@ -46,7 +46,6 @@
     <thead>
       <th scope="col"><%= Spree.t(:name) %></th>
       <th scope="col"><%= Spree.t('location') %></th>
-      <th scope="col"><%= Spree.t('store') %></th>
       <th scope="col"><%= Spree.t('language') %></th>
       <th class="text-center" scope="col"><%= Spree.t('default') %>
         <span data-show-info
@@ -66,9 +65,6 @@
           </td>
           <td>
             <%= menu.location.titleize %>
-          </td>
-          <td>
-            <%= menu.store.unique_name %>
           </td>
           <td>
             <%= locale_full_name(menu.locale) %>
