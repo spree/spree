@@ -14,10 +14,12 @@ describe 'Menus Index', type: :feature do
   end
 
   context 'when menus are present' do
+    let!(:other_store) { create(:store) }
     let!(:main_menu) { create(:menu, name: 'Main Menu') }
     let!(:main_menu_fr) { create(:menu, name: 'Main Menu FR', locale: 'fr') }
-
     let!(:footer_menu) { create(:menu, name: 'Footer Menu', location: 'footer') }
+
+    let!(:main_menu_other_store) { create(:menu, name: 'Other Store Main Menu', store: other_store) }
 
     before do
       visit spree.admin_menus_path
@@ -29,10 +31,16 @@ describe 'Menus Index', type: :feature do
                                       })
     end
 
-    it 'lists each menu with stores' do
+    it 'lists each menu' do
       within_table('menusTable') do
         expect(page).to have_text 'Main Menu'
         expect(page).to have_text 'Footer Menu'
+      end
+    end
+
+    it 'does not list menus from other store' do
+      within_table('menusTable') do
+        expect(page).not_to have_text 'Other Store Main Menu'
       end
     end
 

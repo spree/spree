@@ -1,16 +1,17 @@
 <header class="header logged-in">
-  <nav class="navbar fixed-top navbar-dark">
+  <nav class="navbar fixed-top navbar-dark flex-nowrap">
     <div class="col p-0 d-lg-none">
       <button
         id="sidebar-open"
-        class="navbar-toggler h-100 text-light"
+        class="navbar-toggler h-100 text-light px-3"
         type="button"
         aria-expanded="false"
         aria-label="Toggle navigation">
         <%= svg_icon name: "menu.svg", width: '20', height: '20' %>
       </button>
     </div>
-    <div class="col-auto text-center text-lg-left px-0 px-lg-2 align-items-center">
+
+    <div id="storeSwitcherDropdown" class="col-auto text-center text-lg-left px-0 px-lg-2 align-items-center dropdown">
       <%= render partial: 'spree/admin/shared/store_switcher' %>
     </div>
 
