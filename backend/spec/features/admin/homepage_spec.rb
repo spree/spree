@@ -25,6 +25,10 @@ describe 'Homepage', type: :feature do
         expect(page).to have_link('Products', href: '/admin/products')
       end
 
+      it 'has a link to stock' do
+        expect(page).to have_link('Stock', href: '#sidebar-stock')
+      end
+
       it 'has a link to reports' do
         expect(page).to have_link('Reports', href: '/admin/reports')
       end
@@ -76,6 +80,20 @@ describe 'Homepage', type: :feature do
 
       it 'has a link to prototypes' do
         within('.sidebar') { expect(page).to have_link('Prototypes', href: '/admin/prototypes') }
+      end
+    end
+
+    context 'visiting the stock tab' do
+      before do
+        visit spree.admin_stock_transfers_path
+      end
+
+      it 'has a link to stock transfers' do
+        within('.sidebar') { expect(page).to have_link('Stock Transfers', href: '/admin/stock_transfers') }
+      end
+
+      it 'has a link to stock locations' do
+        within('.sidebar') { expect(page).to have_link('Stock Locations', href: '/admin/stock_locations') }
       end
     end
   end
