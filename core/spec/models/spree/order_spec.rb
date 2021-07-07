@@ -708,7 +708,7 @@ describe Spree::Order, type: :model do
     end
 
     context 'when the user is not persisted' do
-      let(:user) { FactoryBot.build(:user_with_addreses) }
+      let(:user) { build(:user) }
 
       it 'does not persist the user' do
         expect { order.associate_user!(user) }.
@@ -1439,5 +1439,135 @@ describe Spree::Order, type: :model do
     let(:order) { build(:order, number: 'r1234') }
 
     it { expect { order.valid? }.to change(order, :number).to('R1234') }
+  end
+
+  describe "bill_address_id=" do
+    let(:user) { create(:user) }
+    let(:order) { create(:order, user: user) }
+    let(:address) { create(:address, user: user) }
+
+    subject { order.bill_address_id = address.id }
+
+    context 'when assigned address exist' do
+      context 'when assigned address belongs to user' do
+        it 'assigns address to order as bill address' do
+          expect(order.bill_address_id).not_to eq address.id
+          subject
+          expect(order.bill_address_id).to eq address.id
+        end
+
+        it 'does not set address as user default bill address' do
+          subject
+          expect(user.bill_address_id).not_to eq address.id
+        end
+      end
+    end
+  end
+
+  describe '#bill_address_attributes=' do
+    let(:order) { create(:order, user: user) }
+    let(:address_attributes) { attributes_for(:address) }
+
+    subject { order.bill_address_attributes = address_attributes }
+
+    context 'when user has default bill address' do
+      let!(:user) { create(:user_with_addresses) }
+
+      it 'does not change user default bill addresss' do
+        expect(user.bill_address_id).not_to be nil
+
+        expect { subject }.not_to change { user.bill_address_id }
+      end
+    end
+
+    context 'when user does not have any addresses' do
+      let!(:user) { create(:user) }
+
+      it 'changes user default bill addresss' do
+        expect(user.bill_address_id).to be nil
+        expect(user.addresses).to be_empty
+
+        expect { subject }.to change { user.bill_address_id }
+      end
+    end
+
+    context 'when user has address but without default bill address' do
+      let(:address) { create(:address, user: user) }
+      let(:user) { create(:user_with_addresses, bill_address: nil) }
+
+      before { user.addresses << address }
+
+      it 'changes user default bill addresss' do
+        expect(user.bill_address_id).to be nil
+        expect(user.addresses).not_to be_empty
+
+        expect { subject }.to change { user.bill_address_id }
+      end
+    end
+  end
+
+  describe "ship_address_id=" do
+    let(:user) { create(:user) }
+    let(:order) { create(:order, user: user) }
+    let(:address) { create(:address, user: user) }
+
+    subject { order.ship_address_id = address.id }
+
+    context 'when assigned address exist' do
+      context 'when assigned address belongs to user' do
+        it 'assigns address to order as ship address' do
+          expect(order.ship_address_id).not_to eq address.id
+          subject
+          expect(order.ship_address_id).to eq address.id
+        end
+
+        it 'does not set address as user default ship address' do
+          subject
+          expect(user.ship_address_id).not_to eq address.id
+        end
+      end
+    end
+  end
+
+  describe '#ship_address_attributes=' do
+    let(:order) { create(:order, user: user) }
+    let(:address_attributes) { attributes_for(:address) }
+
+    subject { order.ship_address_attributes = address_attributes }
+
+    context 'when user has default ship address' do
+      let!(:user) { create(:user_with_addresses) }
+
+      it 'does not change user default ship addresss' do
+        expect(user.ship_address_id).not_to be nil
+
+        expect { subject }.not_to change { user.ship_address_id }
+      end
+    end
+
+    context 'when user does not have any addresses' do
+      let!(:user) { create(:user) }
+
+      it 'changes user default ship addresss' do
+        expect(user.ship_address_id).to be nil
+        expect(user.addresses).to be_empty
+
+        expect { subject }.to change { user.ship_address_id }
+      end
+    end
+
+    context 'when user has address but without default ship address' do
+      let(:address) { create(:address, user: user) }
+      let(:user) { create(:user_with_addresses, ship_address: nil) }
+
+      before { user.addresses << address }
+
+      it 'changes user default ship addresss' do
+        expect(user.ship_address_id).to be nil
+        expect(user.addresses).not_to be_empty
+
+        expect { subject }.to change { user.ship_address_id }
+      end
+    end
   end
 end
