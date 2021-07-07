@@ -347,6 +347,36 @@ describe Spree::Order, type: :model do
     end
   end
 
+  context '#handle_store_change' do
+    let(:other_store) { create(:store) }
+
+    context 'completed order' do
+      let(:order) { create(:completed_order_with_totals) }
+
+      it 'raises ActiveRecord::RecordNotSaved' do
+        expect { order.update!(store: store) }.to raise_error(ActiveRecord::RecordNotSaved, 'Failed to save the record')
+      end
+    end
+
+    context 'uncompleted order' do
+      let(:order) { create(:order_with_line_items) }
+
+      before do
+        order.update!(store: store)
+      end
+
+      it 'clears out line items, adjustments and update totals using .empty!' do
+        expect(order.line_items.count).to be_zero
+        expect(order.adjustments.count).to be_zero
+        expect(order.shipments.count).to be_zero
+        expect(order.order_promotions.count).to be_zero
+        expect(order.promo_total).to be_zero
+        expect(order.item_total).to be_zero
+        expect(order.empty!).to eq(order)
+      end
+    end
+  end
+
   context '#display_outstanding_balance' do
     it 'returns the value as a spree money' do
       allow(order).to receive(:outstanding_balance).and_return(10.55)
