@@ -105,13 +105,13 @@ describe Spree::Core::Search::Base do
 
     let!(:products_for_eu_store) do
       (1..3).map do |v|
-        create(:product, name: "P-EU-#{v}", stores: [eu_store])
+        create(:product, name: "P-EU-#{v}", stores: [eu_store], currency: 'EUR')
       end
     end
 
     let!(:products_for_uk_store) do
       (1..2).map do |v|
-        create(:product, name: "P-UK-#{v}", stores: [uk_store])
+        create(:product, name: "P-UK-#{v}", stores: [uk_store], currency: 'GBP')
       end
     end
 
@@ -154,23 +154,6 @@ describe Spree::Core::Search::Base do
         it 'returns only products from Spree store' do
           expect(retrieved_products).to contain_exactly(product_for_spree_store)
         end
-      end
-    end
-
-    context 'current store is not given in params' do
-      let(:params) { { current_store: nil } }
-
-      it 'returns 8 products' do
-        expect(retrieved_products.count).to eq(8)
-      end
-
-      it 'returns products from all stores' do
-        expect(retrieved_products).to contain_exactly(
-          product1, product2,
-          product_for_spree_store,
-          *products_for_eu_store,
-          *products_for_uk_store
-        )
       end
     end
   end

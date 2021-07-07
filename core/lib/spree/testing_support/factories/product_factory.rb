@@ -19,7 +19,7 @@ FactoryBot.define do
     before(:create) do |product, evaluator|
       if evaluator.with_store && product.stores.empty?
         default_store = Spree::Store.default.persisted? ? Spree::Store.default : nil
-        store = default_store || create(:store)
+        store = default_store || create(:store, default: true)
 
         product.stores << store
       end

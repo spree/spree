@@ -391,6 +391,10 @@ module Spree
     end
 
     def available_payment_methods(store = nil)
+      if store.present?
+        ActiveSupport::Deprecation.warn('The `store` parameter is deprecated and will be removed in Spree 5. Order is already associated with Store')
+      end
+
       @available_payment_methods ||= collect_payment_methods(store)
     end
 
@@ -629,12 +633,12 @@ module Spree
 
     def validate_payments_attributes(attributes)
       # Ensure the payment methods specified are allowed for this user
-      payment_methods = Spree::PaymentMethod.where(id: available_payment_methods.map(&:id))
-      attributes.each do |payment_attributes|
-        payment_method_id = payment_attributes[:payment_method_id]
+      payment_method_ids = available_payment_methods.map(&:id)
 
-        # raise RecordNotFound unless it is an allowed payment method
-        payment_methods.find(payment_method_id) if payment_method_id
+      attributes.each do |payment_attributes|
+        payment_method_id = payment_attributes[:payment_method_id].to_i
+
+        raise ActiveRecord::RecordNotFound unless payment_method_ids.include?(payment_method_id)
       end
     end
 
@@ -741,7 +745,12 @@ module Spree
     end
 
     def collect_payment_methods(store = nil)
-      PaymentMethod.available_on_front_end.select { |pm| pm.available_for_order?(self) && pm.available_for_store?(store) }
+      if store.present?
+        ActiveSupport::Deprecation.warn('The `store` parameter is deprecated and will be removed in Spree 5. Order is already associated with Store')
+      end
+      store ||= self.store
+
+      PaymentMethod.for_store(store).available_on_front_end.select { |pm| pm.available_for_order?(self) }
     end
 
     def credit_card_nil_payment?(attributes)

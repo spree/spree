@@ -2,9 +2,10 @@ require 'spec_helper'
 require 'spree/testing_support/order_walkthrough'
 
 describe Spree::Order, type: :model do
-  let(:order) { Spree::Order.new }
-
-  before { create(:store) }
+  let!(:store) { create(:store, default: true) }
+  let(:order) { build(:order, store: store) }
+  let(:country) { create(:country) }
+  let!(:state) { country.states.first || create(:state, country: country) }
 
   def assert_state_changed(order, from, to)
     state_change_exists = order.state_changes.where(previous_state: from, next_state: to).exists?
@@ -136,10 +137,11 @@ describe Spree::Order, type: :model do
         end
 
         context 'with default addresses' do
-          let(:default_address) { FactoryBot.create(:address) }
+          let(:default_address) { create(:address, state: state) }
 
           before do
-            order.user = FactoryBot.create(:user, "#{address_kind}_address" => default_address)
+            order.update("#{address_kind}_address_id": nil)
+            order.update(user: create(:user, "#{address_kind}_address" => default_address))
             order.next!
             order.reload
           end
@@ -148,7 +150,6 @@ describe Spree::Order, type: :model do
             it do
               default_attributes = default_address.attributes
               order_attributes = order.send("#{address_kind}_address".to_sym).try(:attributes) || {}
-
               expect(order_attributes.except('id', 'created_at', 'updated_at')).to eql(default_attributes.except('id', 'created_at', 'updated_at'))
             end
           end

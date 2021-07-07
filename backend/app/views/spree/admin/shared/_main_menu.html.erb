@@ -31,6 +31,12 @@
     </ul>
   <% end %>
 
+  <% if can?(:admin, Spree::StockLocation) || can?(:admin, Spree::StockTransfer) %>
+    <ul class="nav nav-sidebar border-bottom" id="sidebarStock">
+      <%= main_menu_tree Spree.t(:stock), icon: "box.svg", sub_menu: "stock", url: "#sidebar-stock" %>
+    </ul>
+  <% end %>
+
   <% if can? :admin, Spree::Admin::ReportsController %>
     <ul class="nav nav-sidebar border-bottom" id="sidebarReport">
       <%= tab *Spree::BackendConfiguration::REPORT_TABS, icon: 'report.svg' %>

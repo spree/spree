@@ -131,7 +131,7 @@ module Spree
 
       return [] if product_ids.empty?
 
-      Spree::Product.
+      current_store.products.
         available.not_discontinued.distinct.
         where(id: product_ids).
         includes(

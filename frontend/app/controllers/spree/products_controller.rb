@@ -54,7 +54,7 @@ module Spree
     end
 
     def load_product
-      @product = Product.for_user(try_spree_current_user).friendly.find(params[:id])
+      @product = current_store.products.for_user(try_spree_current_user).friendly.find(params[:id])
     end
 
     def load_taxon

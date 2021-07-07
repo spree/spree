@@ -4,6 +4,8 @@ module Spree
   describe Api::V1::CheckoutsController, type: :controller do
     render_views
 
+    let(:store) { Spree::Store.default }
+
     shared_examples_for 'action which loads order using load_order_with_lock' do
       before do
         allow(controller).to receive(:load_order).with(true).and_return(true)
@@ -44,7 +46,7 @@ module Spree
       create(:stock_location)
 
       @shipping_method = create(:shipping_method, zones: [country_zone])
-      @payment_method = create(:credit_card_payment_method)
+      @payment_method = create(:credit_card_payment_method, stores: [store], display_on: 'both')
     end
 
     after do
@@ -53,7 +55,7 @@ module Spree
 
     context "PUT 'update'" do
       let(:order) do
-        order = create(:order_with_line_items)
+        order = create(:order_with_line_items, store: store)
         # Order should be in a pristine state
         # Without doing this, the order may transition from 'cart' straight to 'delivery'
         Spree::ShippingRate.where(shipment_id: order.shipment_ids).delete_all
@@ -305,7 +307,7 @@ module Spree
     end
 
     context "PUT 'next'" do
-      let!(:order) { create(:order_with_line_items) }
+      let!(:order) { create(:order_with_line_items, store: store) }
 
       it 'cannot transition to address without a line item' do
         order.line_items.delete_all
@@ -355,7 +357,7 @@ module Spree
     end
 
     context "PUT 'advance'" do
-      let!(:order) { create(:order_with_line_items) }
+      let!(:order) { create(:order_with_line_items, store: store) }
 
       it 'continues to advance advances an order while it can move forward' do
         expect_any_instance_of(Spree::Order).to receive(:next).exactly(3).times.and_return(true, true, false)

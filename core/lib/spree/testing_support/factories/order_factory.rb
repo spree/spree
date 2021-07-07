@@ -4,7 +4,7 @@ FactoryBot.define do
     bill_address
     store
     completed_at { nil }
-    email        { user.email }
+    email        { user&.email }
     currency     { 'USD' }
 
     transient do

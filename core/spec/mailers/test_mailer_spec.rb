@@ -12,7 +12,7 @@ describe Spree::TestMailer, type: :mailer do
   context ':from not set explicitly' do
     it 'falls back to spree config' do
       message = Spree::TestMailer.test_email('test@example.com')
-      expect(message.from).to eq([Spree::Store.current.mail_from_address])
+      expect(message.from).to eq([Spree::Store.default.mail_from_address])
     end
   end
 
@@ -26,7 +26,7 @@ describe Spree::TestMailer, type: :mailer do
     it 'falls back to spree store url' do
       ActionMailer::Base.default_url_options = {}
       Spree::TestMailer.test_email('test@example.com').deliver_now
-      expect(ActionMailer::Base.default_url_options[:host]).to eq(Spree::Store.current.url)
+      expect(ActionMailer::Base.default_url_options[:host]).to eq(Spree::Store.default.url)
     end
 
     it 'uses developer set host' do
