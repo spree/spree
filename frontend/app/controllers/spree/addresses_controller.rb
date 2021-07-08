@@ -27,25 +27,11 @@ module Spree
     end
 
     def update
-      if @address.editable?
-        if @address.update(address_params)
-          flash[:notice] = Spree.t(:successfully_updated, scope: :address_book)
-          redirect_back_or_default(addresses_path)
-        else
-          render :edit
-        end
+      if update_service.call(address: @address, address_params: address_params).success?
+        flash[:notice] = Spree.t(:successfully_updated, scope: :address_book)
+        redirect_back_or_default(addresses_path)
       else
-        new_address = @address.clone
-        new_address.attributes = address_params
-        new_address.user_id = @address.user_id
-        if new_address.save
-          # binding.pry
-          @address.update_attribute(:deleted_at, Time.current)
-          flash[:notice] = Spree.t(:successfully_updated, scope: :address_book)
-          redirect_back_or_default(addresses_path)
-        else
-          render :edit
-        end
+        render :edit
       end
     end
 
