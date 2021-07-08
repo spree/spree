@@ -5,7 +5,7 @@ module Spree
 
     has_many :orders, class_name: 'Spree::Order'
 
-    has_many :store_payment_methods, class_name: 'Spree::StorePaymentMethod', dependent: :destroy
+    has_many :store_payment_methods, class_name: 'Spree::StorePaymentMethod'
     has_many :payment_methods, through: :store_payment_methods, class_name: 'Spree::PaymentMethod'
 
     has_many :menus
