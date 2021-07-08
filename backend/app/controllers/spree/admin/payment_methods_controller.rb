@@ -10,6 +10,7 @@ module Spree
       def create
         @payment_method = params[:payment_method].delete(:type).constantize.new(payment_method_params)
         @object = @payment_method
+        set_store
         invoke_callbacks(:create, :before)
         if @payment_method.save
           invoke_callbacks(:create, :after)
