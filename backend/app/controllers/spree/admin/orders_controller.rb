@@ -82,8 +82,6 @@ module Spree
         end
       end
 
-      def store; end
-
       def update
         if @order.update(params[:order]) && @order.line_items.present?
           @order.update_with_updater!

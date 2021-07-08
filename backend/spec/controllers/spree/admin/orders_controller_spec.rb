@@ -101,18 +101,6 @@ describe Spree::Admin::OrdersController, type: :controller do
       end
     end
 
-    describe '#store' do
-      subject do
-        get :store, params: { id: cart_order.number }
-      end
-
-      let(:cart_order) { create(:order_with_line_items) }
-
-      it 'displays a page with stores select tag' do
-        expect(subject).to render_template :store
-      end
-    end
-
     # Test for #3346
     context '#new' do
       it 'a new order has the current user assigned as a creator' do

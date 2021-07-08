@@ -17,26 +17,6 @@ describe 'Order Details', type: :feature, js: true do
   context 'as Admin' do
     stub_authorization!
 
-    context 'store edit page' do
-      let!(:new_store) { create(:store) }
-
-      before do
-        product.master.stock_items.first.update_column(:count_on_hand, 100)
-        visit spree.store_admin_order_path(fresh_order)
-      end
-
-      it 'displays select with current order store name' do
-        expect(page).to have_content(store.name)
-      end
-
-      it 'after selecting a store assings a new store to order' do
-        select2 new_store.name, from: 'Store', match: :first
-        find('[name=button]').click
-
-        expect(page).to have_content(new_store.name)
-      end
-    end
-
     context 'cart edit page' do
       before do
         product.master.stock_items.first.update_column(:count_on_hand, 100)

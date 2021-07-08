@@ -130,8 +130,6 @@ module Spree
     before_create :link_by_email
     before_update :homogenize_line_item_currencies, if: :currency_changed?
 
-    before_save :handle_store_change
-
     with_options presence: true do
       # we want to have this case_sentive: true as changing it to false causes all SQL to use LOWER(slug)
       # which is very costly and slow on large set of records
@@ -673,20 +671,6 @@ module Spree
     end
 
     private
-
-    def handle_store_change
-      return if new_record?
-
-      if store_id_changed? && completed?
-        errors.add(:base, Spree.t('errors.messages.once_an_order_is_complete_you_can_not_change_store'))
-        throw(:abort)
-      elsif store_id_changed? && !completed?
-        # TODO: Implement better handeling of store change than
-        # just resetting the order using empty!
-
-        empty!
-      end
-    end
 
     def link_by_email
       self.email = user.email if user
