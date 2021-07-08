@@ -38,8 +38,9 @@ module Spree
         new_address = @address.clone
         new_address.attributes = address_params
         new_address.user_id = @address.user_id
-        @address.update_attribute(:deleted_at, Time.current)
         if new_address.save
+          # binding.pry
+          @address.update_attribute(:deleted_at, Time.current)
           flash[:notice] = Spree.t(:successfully_updated, scope: :address_book)
           redirect_back_or_default(addresses_path)
         else
@@ -67,10 +68,6 @@ module Spree
 
     def update_service
       Spree::Api::Dependencies.storefront_account_update_address_service.constantize
-    end
-
-    def check_authorization
-      authorize! :create, Address
     end
   end
 end
