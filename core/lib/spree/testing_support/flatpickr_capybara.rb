@@ -57,18 +57,18 @@ module Spree
         date_field.send_keys :tab # Close the date picker widget
       end
 
-      def within_open_flatpickr(label_text)
+      def within_open_flatpickr(label_text, &block)
         with_open_flatpickr(label_text) do
-          within find(:xpath, "/html/body/div[contains(@class, 'flatpickr-calendar')]") { yield }
+          within find(:xpath, "/html/body/div[contains(@class, 'flatpickr-calendar')]", &block)
         end
       end
 
-      def within_flatpickr_months
-        within find('.flatpickr-months .flatpickr-month .flatpickr-current-month') { yield }
+      def within_flatpickr_months(&block)
+        within find('.flatpickr-months .flatpickr-month .flatpickr-current-month', &block)
       end
 
-      def within_flatpickr_time
-        within find('.flatpickr-time') { yield }
+      def within_flatpickr_time(&block)
+        within find('.flatpickr-time', &block)
       end
 
       def select_flatpickr_month(month)
@@ -85,8 +85,8 @@ module Spree
         end
       end
 
-      def within_flatpickr_days
-        within find('.flatpickr-innerContainer > .flatpickr-rContainer > .flatpickr-days') { yield }
+      def within_flatpickr_days(&block)
+        within find('.flatpickr-innerContainer > .flatpickr-rContainer > .flatpickr-days', &block)
       end
 
       def select_flatpickr_hour(hour)

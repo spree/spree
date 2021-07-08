@@ -3,9 +3,11 @@ require 'spec_helper'
 describe 'Stores admin', type: :feature, js: true do
   stub_authorization!
 
-  let!(:store) { create(:store, checkout_zone_id: zone.id) }
-  let!(:zone) { create(:zone, name: 'EU_VAT') }
+  let(:store) { Spree::Store.default }
+  let(:zone) { create(:zone, name: 'EU_VAT') }
   let!(:no_limits) { create(:zone, name: 'No Limits') }
+
+  before { store.update!(checkout_zone: zone) }
 
   describe 'visiting the stores page' do
     before do

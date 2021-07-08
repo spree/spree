@@ -3,14 +3,14 @@ module Spree
     module V2
       module Storefront
         class ProductsController < ::Spree::Api::V2::ResourceController
-          private
+          protected
 
           def sorted_collection
             collection_sorter.new(collection, current_currency, params, allowed_sort_attributes).call
           end
 
           def collection
-            @collection ||= collection_finder.new(scope: scope, params: params, current_currency: current_currency).execute
+            @collection ||= collection_finder.new(scope: scope, params: finder_params).execute
           end
 
           def resource

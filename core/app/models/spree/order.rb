@@ -121,6 +121,8 @@ module Spree
     # Needs to happen before save_permalink is called
     before_validation :ensure_store_presence
     before_validation :ensure_currency_presence
+    before_validation :uppercase_number
+
     before_validation :clone_billing_address, if: :use_billing?
     attr_accessor :use_billing
 
@@ -129,7 +131,9 @@ module Spree
     before_update :homogenize_line_item_currencies, if: :currency_changed?
 
     with_options presence: true do
-      validates :number, length: { maximum: 32, allow_blank: true }, uniqueness: { allow_blank: true, case_sensitive: false }
+      # we want to have this case_sentive: true as changing it to false causes all SQL to use LOWER(slug)
+      # which is very costly and slow on large set of records
+      validates :number, length: { maximum: 32, allow_blank: true }, uniqueness: { allow_blank: true, case_sensitive: true }
       validates :email, length: { maximum: 254, allow_blank: true }, email: { allow_blank: true }, if: :require_email
       validates :item_count, numericality: { greater_than_or_equal_to: 0, less_than: 2**31, only_integer: true, allow_blank: true }
       validates :store
@@ -385,6 +389,10 @@ module Spree
     end
 
     def available_payment_methods(store = nil)
+      if store.present?
+        ActiveSupport::Deprecation.warn('The `store` parameter is deprecated and will be removed in Spree 5. Order is already associated with Store')
+      end
+
       @available_payment_methods ||= collect_payment_methods(store)
     end
 
@@ -623,12 +631,12 @@ module Spree
 
     def validate_payments_attributes(attributes)
       # Ensure the payment methods specified are allowed for this user
-      payment_methods = Spree::PaymentMethod.where(id: available_payment_methods.map(&:id))
-      attributes.each do |payment_attributes|
-        payment_method_id = payment_attributes[:payment_method_id]
+      payment_method_ids = available_payment_methods.map(&:id)
 
-        # raise RecordNotFound unless it is an allowed payment method
-        payment_methods.find(payment_method_id) if payment_method_id
+      attributes.each do |payment_attributes|
+        payment_method_id = payment_attributes[:payment_method_id].to_i
+
+        raise ActiveRecord::RecordNotFound unless payment_method_ids.include?(payment_method_id)
       end
     end
 
@@ -721,7 +729,12 @@ module Spree
     end
 
     def collect_payment_methods(store = nil)
-      PaymentMethod.available_on_front_end.select { |pm| pm.available_for_order?(self) && pm.available_for_store?(store) }
+      if store.present?
+        ActiveSupport::Deprecation.warn('The `store` parameter is deprecated and will be removed in Spree 5. Order is already associated with Store')
+      end
+      store ||= self.store
+
+      PaymentMethod.for_store(store).available_on_front_end.select { |pm| pm.available_for_order?(self) }
     end
 
     def credit_card_nil_payment?(attributes)
@@ -738,6 +751,10 @@ module Spree
     def deliver_store_owner_order_notification_email
       OrderMailer.store_owner_notification_email(id).deliver_later
       update_column(:store_owner_notification_delivered, true)
+    end
+
+    def uppercase_number
+      number&.upcase!
     end
   end
 end

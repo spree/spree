@@ -3,6 +3,7 @@ require 'spec_helper'
 describe 'Payment Methods', type: :feature do
   stub_authorization!
 
+  let(:store) { Spree::Store.default }
   let!(:store_1) { create(:store) }
   let!(:store_2) { create(:store) }
   let!(:store_3) { create(:store) }
@@ -41,6 +42,8 @@ describe 'Payment Methods', type: :feature do
       select 'PaymentMethod::Check', from: 'gtwy-type'
       click_button 'Create'
       expect(page).to have_content('successfully created!')
+
+      expect(page).to have_select('payment_method_store_ids', selected: store.unique_name)
     end
 
     it 'is able to create a new payment method with 2 stores' do

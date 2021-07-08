@@ -20,7 +20,7 @@ ENV['RAILS_ENV'] ||= 'test'
 begin
   require File.expand_path('../dummy/config/environment', __FILE__)
 rescue LoadError
-  puts 'Could not load dummy application. Please ensure you have run `BUNDLE_GEMFILE=../Gemfile bundle exec rake test_app`'
+  puts 'Could not load dummy application. Please ensure you have run `bundle exec rake test_app`'
   exit
 end
 
@@ -89,6 +89,9 @@ RSpec.configure do |config|
     ApplicationRecord.connection.increment_open_transactions if ApplicationRecord.connection.open_transactions < 0
     DatabaseCleaner.start
     reset_spree_preferences
+
+    country = create(:country, name: 'United States of America', iso_name: 'UNITED STATES', iso: 'US', states_required: true)
+    Spree::Config[:default_country_id] = country.id
 
     create(:store, default: true)
     create(:taxon, permalink: 'trending')

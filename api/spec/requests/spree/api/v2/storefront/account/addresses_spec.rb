@@ -32,6 +32,8 @@ describe 'Storefront API v2 Addresses spec', type: :request do
 
   describe 'addresses#index' do
     context 'without options' do
+      let!(:other_user) { create(:user_with_addresses) }
+
       before { get '/api/v2/storefront/account/addresses', headers: headers_bearer }
 
       it_behaves_like 'returns valid user addresses resource JSON'
@@ -39,6 +41,7 @@ describe 'Storefront API v2 Addresses spec', type: :request do
       it 'returns all user addresses' do
         expect(json_response['data'][0]).to have_type('address')
         expect(json_response['data'].size).to eq(addresses.count)
+        expect(json_response['data'].size).not_to eq Spree::Address.count
       end
     end
 
@@ -190,10 +193,10 @@ describe 'Storefront API v2 Addresses spec', type: :request do
       before { patch "/api/v2/storefront/account/addresses/#{address.id}", params: params, headers: headers_bearer }
 
       it 'returns errors' do
-        expect(json_response['error']).to eq("City can't be blank, Zip Code can't be blank")
+        expect(json_response['error']).to eq("City can't be blank, Zip Code can't be blank, Zip Code is invalid")
         expect(json_response['errors']).to eq(
           'city' => ["can't be blank"],
-          'zipcode' => ["can't be blank"]
+          'zipcode' => ["can't be blank", "is invalid"]
         )
       end
     end

@@ -12,21 +12,12 @@ module Spree
             ).serializable_hash
           end
 
-          def collection_serializer_params
-            {
-              currency: current_currency,
-              store: current_store,
-              user: spree_current_user,
-            }
+          def serializer_params
+            super.merge(include_states: true)
           end
 
-          def serializer_params
-            {
-              currency: current_currency,
-              store: current_store,
-              user: spree_current_user,
-              include_states: true,
-            }
+          def collection_serializer_params
+            serializer_params.merge(include_states: false)
           end
 
           def resource

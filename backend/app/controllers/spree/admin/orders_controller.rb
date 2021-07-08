@@ -78,9 +78,7 @@ module Spree
         end
       end
 
-      def store
-        @stores = Spree::Store.all
-      end
+      def store; end
 
       def update
         if @order.update(params[:order]) && @order.line_items.present?

@@ -1,6 +1,7 @@
 require 'spec_helper'
 
 describe Spree::Country, type: :model do
+  let(:store) { create(:store, default: true, default_country: america) }
   let(:america) { create :country }
   let(:canada)  { create :country, name: 'Canada', iso_name: 'CANADA', iso: 'CA', iso3: 'CAN', numcode: '124' }
 
@@ -95,15 +96,31 @@ describe Spree::Country, type: :model do
     end
   end
 
-  context '#default?' do
-    before { Spree::Config[:default_country_id] = america.id }
-
-    it 'returns true for default country' do
-      expect(america.default?).to eq(true)
+  describe '#default?' do
+    before do
+      allow_any_instance_of(Spree::Store).to receive(:default).and_return(store)
     end
 
-    it 'returns false for other countries' do
-      expect(canada.default?).to eq(false)
+    context 'no arguments' do
+      it 'returns true for store default country' do
+        expect(america.default?).to eq(true)
+      end
+
+      it 'returns false for other countries' do
+        expect(canada.default?).to eq(false)
+      end
+    end
+
+    context 'other store passed' do
+      let(:other_store) { create(:store, default_country: canada) }
+
+      it 'returns true for store default country' do
+        expect(canada.default?(other_store)).to eq(true)
+      end
+
+      it 'returns false for other countries' do
+        expect(america.default?(other_store)).to eq(false)
+      end
     end
   end
 end

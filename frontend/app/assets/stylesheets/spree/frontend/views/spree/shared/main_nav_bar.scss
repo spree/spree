@@ -28,6 +28,14 @@
       }
     }
 
+    #{$self}-button.active {
+      color: $header-font-color;
+      text-decoration: none;
+      &:after {
+        border-bottom-color: $header-font-color;
+      }
+    }
+
     .dropdown-item {
       width: auto;
       padding: 0;

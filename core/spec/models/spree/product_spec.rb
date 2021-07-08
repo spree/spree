@@ -723,31 +723,37 @@ describe Spree::Product, type: :model do
       end
     end
   end
-end
 
-describe '#default_variant_cache_key' do
-  let(:product) { create(:product) }
-  let(:key) { product.send(:default_variant_cache_key) }
+  describe '#default_variant_cache_key' do
+    let(:product) { create(:product) }
+    let(:key) { product.send(:default_variant_cache_key) }
 
-  context 'with inventory tracking' do
-    before { Spree::Config[:track_inventory_levels] = true }
+    context 'with inventory tracking' do
+      before { Spree::Config[:track_inventory_levels] = true }
 
-    it 'returns proper key' do
-      expect(key).to eq("spree/default-variant/#{product.cache_key_with_version}/true")
+      it 'returns proper key' do
+        expect(key).to eq("spree/default-variant/#{product.cache_key_with_version}/true")
+      end
     end
-  end
 
-  context 'without invenrtory tracking' do
-    before { Spree::Config[:track_inventory_levels] = false }
+    context 'without invenrtory tracking' do
+      before { Spree::Config[:track_inventory_levels] = false }
 
-    it 'returns proper key' do
-      expect(key).to eq("spree/default-variant/#{product.cache_key_with_version}/false")
+      it 'returns proper key' do
+        expect(key).to eq("spree/default-variant/#{product.cache_key_with_version}/false")
+      end
     end
-  end
 
-  describe '#requires_shipping_category?' do
-    let(:product) { build(:product, shipping_category: nil) }
+    describe '#requires_shipping_category?' do
+      let(:product) { build(:product, shipping_category: nil) }
 
-    it { expect(product.save).to eq(false) }
+      it { expect(product.save).to eq(false) }
+    end
+
+    describe '#downcase_slug' do
+      let(:product) { build(:product, slug: 'My-slug') }
+
+      it { expect { product.valid? }.to change(product, :slug).to('my-slug') }
+    end
   end
 end

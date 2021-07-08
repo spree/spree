@@ -33,8 +33,13 @@
 
       <div data-hook="new_product_price" class="col-12 col-md-4">
         <%= f.field_container :price, class: ['form-group'] do %>
-          <%= f.label :price, Spree.t(:master_price) %> <span class="required">*</span>
+        <%= f.label :price, Spree.t(:master_price) %> <span class="required">*</span>
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text"><%= currency_symbol(current_currency) %></span>
+          </div>
           <%= f.text_field :price, value: number_to_currency(@product.price, unit: ''), class: 'form-control', required: :required %>
+        </div>
           <%= f.error_message_on :price %>
         <% end %>
       </div>

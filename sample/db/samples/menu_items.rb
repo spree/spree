@@ -219,7 +219,7 @@ MENUS.each do |menu|
       name: promo_a_name,
       subtitle: promo_a_subtitle,
       linked_resource_type: 'Spree::Taxon',
-      item_type: 'Container',
+      item_type: 'Link',
       menu_id: menu,
       parent_id: promo
     ).first_or_create!
@@ -230,7 +230,7 @@ MENUS.each do |menu|
       name: promo_b_name,
       subtitle: promo_b_subtitle,
       linked_resource_type: 'Spree::Taxon',
-      item_type: 'Container',
+      item_type: 'Link',
       menu_id: menu,
       parent_id: promo
     ).first_or_create!

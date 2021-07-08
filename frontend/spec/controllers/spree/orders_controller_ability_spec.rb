@@ -2,13 +2,14 @@ require 'spec_helper'
 
 module Spree
   describe OrdersController, type: :controller do
+    let(:store) { Spree::Store.default }
     let(:user) { create(:user) }
     let(:guest_user) { create(:user) }
-    let(:order) { Spree::Order.create }
+    let(:order) { create(:order, store: store, user: nil) }
 
     context 'when an order exists in the cookies.signed' do
       let(:token) { 'some_token' }
-      let(:specified_order) { create(:order) }
+      let(:specified_order) { create(:order, store: store) }
       let!(:variant) { create(:variant) }
 
       before do
@@ -61,7 +62,7 @@ module Spree
     end
 
     context 'when no authenticated user' do
-      let(:order) { create(:order, number: 'R123') }
+      let(:order) { create(:order, number: 'R123', store: store) }
 
       context '#show' do
         context 'when token correct' do
@@ -78,6 +79,19 @@ module Spree
           it 'raises ActiveRecord::RecordNotFound' do
             expect { get :show, params: { id: 'R123' } }.to raise_error(ActiveRecord::RecordNotFound)
           end
+        end
+      end
+    end
+
+    context 'order from another store' do
+      let(:store_2) { create(:store) }
+      let(:order) { create(:order, number: 'R123', store: store_2) }
+
+      describe '#show' do
+        before { cookies.signed[:token] = order.token }
+
+        it 'raises ActiveRecord::RecordNotFound' do
+          expect { get :show, params: { id: 'R123' } }.to raise_error(ActiveRecord::RecordNotFound)
         end
       end
     end

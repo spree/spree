@@ -2,6 +2,7 @@ require 'spec_helper'
 
 describe Spree::ProductsController, type: :controller do
   let!(:product) { create(:product, available_on: 1.year.from_now) }
+  let(:product_from_other_store) { create(:product, stores: [create(:store)]) }
   let(:taxon) { create(:taxon) }
 
   # Regression test for #1390
@@ -13,6 +14,10 @@ describe Spree::ProductsController, type: :controller do
 
   it 'cannot view non-active products' do
     expect { get :show, params: { id: product.to_param } }.to raise_error(ActiveRecord::RecordNotFound)
+  end
+
+  it 'cannot view products from other store' do
+    expect { get :show, params: { id: product_from_other_store.to_param } }.to raise_error(ActiveRecord::RecordNotFound)
   end
 
   it 'provides the current user to the searcher class' do

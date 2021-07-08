@@ -5,7 +5,8 @@ module Spree
     render_views
 
     let!(:store) do
-      create(:store, name: 'My Spree Store', url: 'spreestore.example.com')
+      Spree::Store.default.update!(name: 'My Spree Store', url: 'spreestore.example.com')
+      Spree::Store.default
     end
 
     before do

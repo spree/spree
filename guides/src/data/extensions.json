@@ -47,6 +47,11 @@
           "name": "Globalize",
           "description": "Adds support for model translations (multi-language stores)",
           "url": "https://github.com/spree-contrib/spree_globalize"
+        },
+        {
+          "name": "Flow Commerce",
+          "description": "Integration with Flow Commerce API for cross border selling",
+          "url": "https://github.com/mejuri-inc/flowcommerce_spree"
         }
       ]
     },

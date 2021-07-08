@@ -10,6 +10,7 @@
 //= require spree/api/main
 //= require ./lazysizes.config
 //= require lazysizes.min
+//= require accounting.min
 //= require turbolinks
 //= require spree/frontend/account
 //= require spree/frontend/api_tokens

@@ -3,7 +3,7 @@ require 'spec_helper'
 describe 'Checkout', type: :feature, inaccessible: true, js: true do
   include_context 'checkout setup'
 
-  let(:country) { create(:country, name: 'United States of America', iso_name: 'UNITED STATES') }
+  let(:country) { store.default_country }
   let(:state) { create(:state, name: 'Alabama', abbr: 'AL', country: country) }
   let(:store) { Spree::Store.default }
 
@@ -596,7 +596,7 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
 
   context 'when order is completed' do
     let!(:user) { create(:user) }
-    let!(:order) { create(:order) }
+    let!(:order) { create(:order, store: store) }
 
     before do
       add_mug_to_cart

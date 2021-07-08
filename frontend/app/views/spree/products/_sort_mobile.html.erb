@@ -15,6 +15,22 @@
         <%= Spree.t('plp.default') %>
       </a>
     </li>
+    <li class="plp-overlay-ul-li <%= 'plp-overlay-ul-li--active' if params[:sort_by] == 'name-a-z' %>">
+      <a class="p-3 d-block" href="<%= url_for(permitted_params.merge(sort_by: 'name-a-z')) %>">
+        <div class="plp-empty-dot">
+          <div class="filled-dot"></div>
+        </div>
+        <%= Spree.t('plp.name_a_z') %>
+      </a>
+    </li>
+    <li class="plp-overlay-ul-li <%= 'plp-overlay-ul-li--active' if params[:sort_by] == 'name-z-a' %>">
+      <a class="p-3 d-block" href="<%= url_for(permitted_params.merge(sort_by: 'name-z-a')) %>">
+        <div class="plp-empty-dot">
+          <div class="filled-dot"></div>
+        </div>
+        <%= Spree.t('plp.name_z_a') %>
+      </a>
+    </li>
     <li class="plp-overlay-ul-li <%= 'plp-overlay-ul-li--active' if params[:sort_by] == 'newest-first' %>">
       <a class="p-3 d-block" href="<%= url_for(permitted_params.merge(sort_by: 'newest-first')) %>">
         <div class="plp-empty-dot">

@@ -735,7 +735,7 @@ en:
     checkout_page:
       main_navigation: Main navigation
       checkout_navigation: Checkout navigation
-      back_to_cart: back to the cart
+      back_to_cart: back to cart
       delivery_method: delivery method
       header: Checkout
       product: Product
@@ -1329,6 +1329,8 @@ en:
       price: price
       price_high_to_low: PRICE (HIGH - LOW)
       price_low_to_high: PRICE (LOW - HIGH)
+      name_a_z: NAME (A-Z)
+      name_z_a: NAME (Z-A)
       result: RESULT
       results_for: RESULTS FOR
       size: SIZE

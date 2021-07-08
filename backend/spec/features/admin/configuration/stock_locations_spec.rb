@@ -12,7 +12,7 @@ describe 'Stock Locations', type: :feature do
     within find('#contentHeader') do
       click_link 'New Stock Location'
     end
-    
+
     fill_in 'Name', with: 'London'
     check 'Active'
     click_button 'Create'

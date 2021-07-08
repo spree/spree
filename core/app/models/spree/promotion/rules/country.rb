@@ -11,7 +11,7 @@ module Spree
 
         def eligible?(order, options = {})
           country_id = options[:country_id] || order.ship_address.try(:country_id)
-          unless country_id.eql?(preferred_country_id || Spree::Country.default)
+          unless country_id.eql?(preferred_country_id || order.store.default_country_id)
             eligibility_errors.add(:base, eligibility_error_message(:wrong_country))
           end
 
