@@ -49,12 +49,10 @@ module Spree
     end
 
     def create_service
-      binding.pry
       Spree::Dependencies.account_create_address_service.constantize
     end
 
     def update_service
-      binding.pry
       Spree::Dependencies.account_update_address_service.constantize
     end
   end
