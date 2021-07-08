@@ -194,7 +194,7 @@ describe 'Spree::Api::V2::Storefront::Account::AddressesController', type: :requ
 
             patch_update
 
-            expect(address.reload.deleted_at).to eq Time.current
+            expect(address.reload.deleted_at.to_s).to eq Time.current.to_s
           end
         end
       end
