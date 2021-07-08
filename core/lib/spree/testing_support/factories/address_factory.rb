@@ -3,7 +3,7 @@ FactoryBot.define do
     firstname         { 'John' }
     lastname          { 'Doe' }
     company           { 'Company' }
-    address1          { '10 Lovely Street' }
+    sequence(:address1) { |n| "#{n} Lovely Street" }
     address2          { 'Northwest' }
     city              { 'Herndon' }
     zipcode           { '35005' }

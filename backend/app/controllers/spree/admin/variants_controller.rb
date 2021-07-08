@@ -39,15 +39,18 @@ module Spree
       end
 
       def collection
-        @deleted = params.key?(:deleted) && params[:deleted] == 'on' ? 'checked' : ''
+        return @collection if @collection.present?
 
-        @collection ||=
-          if @deleted.blank?
-            super.includes(:default_price, option_values: :option_type)
-          else
-            Variant.only_deleted.where(product_id: parent.id)
-          end
-        @collection
+        params[:q] ||= {}
+        @deleted = params.dig(:q, :deleted_at_null) || '0'
+
+        @collection = super
+        @collection = @collection.deleted if @deleted == '1'
+        # @search needs to be defined as this is passed to search_link
+        @search = @collection.ransack(params[:q])
+        @collection = @search.result.
+                      page(params[:page]).
+                      per(params[:per_page] || Spree::Backend::Config[:variants_per_page])
       end
 
       private

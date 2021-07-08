@@ -1,6 +1,6 @@
 shared_context 'checkout address book' do
   before do
-    @store = Spree::Store.current || create(:store)
+    @store = Spree::Store.default || create(:store)
     @state = Spree::State.all.first || create(:state)
     @zone = Spree::Zone.global || create(:global_zone)
     @zone.countries << Spree::Country.all

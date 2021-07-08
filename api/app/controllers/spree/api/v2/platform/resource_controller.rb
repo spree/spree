@@ -61,7 +61,7 @@ module Spree
           def scope
             return super if spree_current_user.present?
 
-            model_class.includes(scope_includes)
+            super(skip_cancancan: true)
           end
 
           # We're overwriting this method because the original one calls `dookreeper_authorize`
