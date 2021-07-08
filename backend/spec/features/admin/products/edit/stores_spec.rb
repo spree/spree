@@ -4,7 +4,7 @@ describe 'Product Stores', type: :feature, js: true do
   stub_authorization!
 
   before do
-    create(:product)
+    create(:product, stores: Spree::Store.all)
     create(:store, name: 'First store', code: 'first')
     create(:store, name: 'Second store', code: 'second')
 

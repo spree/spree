@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe 'New Order', type: :feature do
-  let!(:product) { create(:product_in_stock) }
+  let!(:product) { create(:product_in_stock, stores: [store]) }
   let!(:state) { create(:state) }
   let!(:user) { create(:user, ship_address: create(:address), bill_address: create(:address)) }
   let(:order) { Spree::Order.last }

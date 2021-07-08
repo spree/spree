@@ -5,7 +5,7 @@ module Spree
     render_views
 
     let(:option_value) { create(:option_value) }
-    let!(:product) { create(:product) }
+    let!(:product) { create(:product, stores: Spree::Store.all) }
     let!(:variant) do
       variant = product.master
       variant.option_values << option_value

@@ -4,7 +4,7 @@ describe 'Variant Prices', type: :feature, js: true do
   stub_authorization!
   let!(:store) { create(:store, default: true, supported_currencies: 'USD,EUR') }
   let!(:store2) { create(:store, default: false, default_currency: 'GBP') }
-  let!(:product) { create(:product) }
+  let!(:product) { create(:product, stores: Spree::Store.all) }
 
   context 'with USD and EUR as currencies' do
     it 'allows to save a price for each currency' do

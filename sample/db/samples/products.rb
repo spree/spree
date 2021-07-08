@@ -4,6 +4,7 @@ Spree::Sample.load_sample('tax_categories')
 Spree::Sample.load_sample('shipping_categories')
 Spree::Sample.load_sample('option_types')
 Spree::Sample.load_sample('taxons')
+Spree::Sample.load_sample('stores')
 
 default_shipping_category = Spree::ShippingCategory.find_by!(name: 'Default')
 clothing_tax_category = Spree::TaxCategory.find_by!(name: 'Clothing')
@@ -35,6 +36,7 @@ PRODUCTS.each do |(parent_name, taxon_name, product_name)|
     product.sku = [taxon_name.delete(' '), product_name.delete(' '), product.price].join('_')
     product.taxons << parent unless product.taxons.include?(parent)
     product.taxons << taxon unless product.taxons.include?(taxon)
+    product.stores = Spree::Store.all
   end
 end
 

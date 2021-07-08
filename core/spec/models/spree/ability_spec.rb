@@ -18,6 +18,7 @@ class FooAbility
 end
 
 describe Spree::Ability, type: :model do
+  let(:store) { create(:store) }
   let(:user) { build(:user) }
   let(:ability) { Spree::Ability.new(user) }
   let(:token) { nil }
@@ -69,9 +70,9 @@ describe Spree::Ability, type: :model do
   context 'for admin protected resources' do
     let(:resource) { Object.new }
     let(:resource_shipment) { Spree::Shipment.new }
-    let(:resource_product) { Spree::Product.new }
+    let(:resource_product) { store.products.new }
     let(:resource_user) { create :user }
-    let(:resource_order) { Spree::Order.new }
+    let(:resource_order) { store.orders.new }
     let(:fakedispatch_user) { Spree.user_class.create }
     let(:fakedispatch_ability) { Spree::Ability.new(fakedispatch_user) }
 
@@ -189,7 +190,7 @@ describe Spree::Ability, type: :model do
     end
 
     context 'for Product' do
-      let(:resource) { Spree::Product.new }
+      let(:resource) { store.products.new }
 
       context 'requested by any user' do
         it_behaves_like 'read only'
@@ -197,7 +198,7 @@ describe Spree::Ability, type: :model do
     end
 
     context 'for ProductProperty' do
-      let(:resource) { Spree::Product.new }
+      let(:resource) { store.products.new }
 
       context 'requested by any user' do
         it_behaves_like 'read only'
@@ -205,7 +206,7 @@ describe Spree::Ability, type: :model do
     end
 
     context 'for Property' do
-      let(:resource) { Spree::Product.new }
+      let(:resource) { store.products.new }
 
       context 'requested by any user' do
         it_behaves_like 'read only'

@@ -8,7 +8,7 @@ end
 
 describe Spree::Order, type: :model do
   let(:user) { stub_model(Spree::LegacyUser, email: 'spree@example.com') }
-  let(:store) { create(:store, default: true) }
+  let!(:store) { create(:store, default: true) }
   let(:order) { stub_model(Spree::Order, user: user, store: store) }
 
   before do
@@ -1191,8 +1191,8 @@ describe Spree::Order, type: :model do
 
   describe '#collect_backend_payment_methods' do
     let!(:order) { create(:order_with_line_items, line_items_count: 2) }
-    let!(:credit_card_payment_method) { create(:simple_credit_card_payment_method, display_on: 'both') }
-    let!(:store_credit_payment_method) { create(:store_credit_payment_method, display_on: 'both') }
+    let!(:credit_card_payment_method) { create(:simple_credit_card_payment_method, display_on: 'both', stores: [store]) }
+    let!(:store_credit_payment_method) { create(:store_credit_payment_method, display_on: 'both', stores: [store]) }
 
     it { expect(order.collect_backend_payment_methods).to include(credit_card_payment_method) }
     it { expect(order.collect_backend_payment_methods).not_to include(store_credit_payment_method) }

@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe Spree::Property, type: :model do
+  let(:store) { create(:store) }
+
   context 'setting filter param' do
     subject { build(:property, name: 'Brand Name') }
 
@@ -73,8 +75,8 @@ describe Spree::Property, type: :model do
 
   describe '#ensure_product_properties_have_filter_params' do
     let(:property) { create(:property) }
-    let(:product) { create(:product) }
-    let(:product_2) { create(:product) }
+    let(:product) { create(:product, stores: [store]) }
+    let(:product_2) { create(:product, stores: [store]) }
 
     let(:product_property) { create(:product_property, property: property, product: product) }
     let(:product_property_2) { create(:product_property, property: property, product: product_2, value: 'Test Test') }

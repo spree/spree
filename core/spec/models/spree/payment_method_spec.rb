@@ -138,4 +138,12 @@ describe Spree::PaymentMethod, type: :model do
       expect(eligible).to be true
     end
   end
+
+  describe '#ensure_store_presence' do
+    let(:valid_payment_method) { build(:payment_method, stores: [create(:store)]) }
+    let(:invalid_payment_mthod) { build(:payment_method, stores: []) }
+
+    it { expect(valid_payment_method).to be_valid }
+    it { expect(invalid_payment_mthod).not_to be_valid }
+  end
 end
