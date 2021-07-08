@@ -1,4 +1,4 @@
-/* global order_number, show_flash */
+/* global show_flash */
 
 $(document).ready(function() {
   /**
@@ -122,20 +122,4 @@ $(document).ready(function() {
     })
     return false
   })
-
-  /**
-    UTILITY
-  **/
-  window.Spree.advanceOrder = function() {
-    $.ajax({
-      type: 'PUT',
-      async: false,
-      data: {
-        token: Spree.api_key
-      },
-      url: Spree.url(Spree.routes.checkouts_api + '/' + order_number + '/advance')
-    }).done(function() {
-      window.location.reload()
-    })
-  }
 })

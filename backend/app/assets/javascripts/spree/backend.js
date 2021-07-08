@@ -33,7 +33,7 @@
 //= require spree/backend/multi_currency
 //= require spree/backend/option_type_autocomplete
 //= require spree/backend/option_value_picker
-//= require spree/backend/orders/edit
+//= require spree/backend/orders/_index
 //= require spree/backend/payments/edit
 //= require spree/backend/payments/new
 //= require spree/backend/product_picker
@@ -67,7 +67,6 @@ Spree.routes.option_values_api = Spree.pathFor('api/v1/option_values')
 Spree.routes.orders_api = Spree.pathFor('api/v1/orders')
 Spree.routes.products_api = Spree.pathFor('api/v1/products')
 Spree.routes.shipments_api = Spree.pathFor('api/v1/shipments')
-Spree.routes.checkouts_api = Spree.pathFor('api/v1/checkouts')
 Spree.routes.stock_locations_api = Spree.pathFor('api/v1/stock_locations')
 Spree.routes.taxon_products_api = Spree.pathFor('api/v1/taxons/products')
 Spree.routes.taxons_api = Spree.pathFor('api/v1/taxons')
@@ -93,12 +92,13 @@ Spree.routes.menus_api_v2 = Spree.pathFor('api/v2/platform/menus')
 Spree.routes.menus_items_api_v2 = Spree.pathFor('api/v2/platform/menu_items')
 Spree.routes.option_types_api_v2 = Spree.pathFor('api/v2/platform/option_types')
 Spree.routes.option_values_api_v2 = Spree.pathFor('api/v2/platform/option_values')
+Spree.routes.orders_api_v2 = Spree.pathFor('api/v2/platform/orders')
 Spree.routes.products_api_v2 = Spree.pathFor('/api/v2/platform/products')
 Spree.routes.taxons_api_v2 = Spree.pathFor('/api/v2/platform/taxons')
 Spree.routes.users_api_v2 = Spree.pathFor('api/v2/platform/users')
 
 Spree.apiV2Authentication = function() {
   return {
-    'Authorization': 'Bearer ' + OAUTH_TOKEN
+    Authorization: 'Bearer ' + OAUTH_TOKEN
   }
 }
