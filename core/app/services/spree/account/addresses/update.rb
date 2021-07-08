@@ -18,6 +18,8 @@ module Spree
           end
         end
 
+        private
+
         def new_address(address_params = {})
           @new_address ||= ::Spree::Address.find_or_create_by(address_params.except(:id, :updated_at, :created_at))
         end
