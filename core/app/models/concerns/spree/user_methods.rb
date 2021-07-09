@@ -4,6 +4,7 @@ module Spree
 
     include Spree::UserPaymentSource
     include Spree::UserReporting
+    include Spree::UserRoles
     include Spree::RansackableAttributes
 
     included do
@@ -14,9 +15,6 @@ module Spree
       after_destroy :nullify_approver_id_in_approved_orders
 
       attr_accessor :use_billing
-
-      has_many :role_users, class_name: 'Spree::RoleUser', foreign_key: :user_id, dependent: :destroy
-      has_many :spree_roles, through: :role_users, class_name: 'Spree::Role', source: :role
 
       has_many :promotion_rule_users, class_name: 'Spree::PromotionRuleUser', foreign_key: :user_id, dependent: :destroy
       has_many :promotion_rules, through: :promotion_rule_users, class_name: 'Spree::PromotionRule'
@@ -45,11 +43,6 @@ module Spree
           where("#{Spree::Address.table_name}.firstname LIKE ? or #{Spree::Address.table_name}.lastname LIKE ? or #{table_name}.email LIKE ?",
                 "%#{address}%", "%#{address}%", "%#{email}%")
       end
-    end
-
-    # has_spree_role? simply needs to return true or false whether a user has a role or not.
-    def has_spree_role?(role_in_question)
-      spree_roles.any? { |role| role.name == role_in_question.to_s }
     end
 
     def last_incomplete_spree_order(store, options = {})

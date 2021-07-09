@@ -72,12 +72,12 @@ describe Spree::Ability, type: :model do
     let(:resource_product) { Spree::Product.new }
     let(:resource_user) { create :user }
     let(:resource_order) { Spree::Order.new }
-    let(:fakedispatch_user) { Spree.user_class.create }
+    let(:fakedispatch_user) { create(:user) }
     let(:fakedispatch_ability) { Spree::Ability.new(fakedispatch_user) }
 
     context 'with admin user' do
       it 'is able to admin' do
-        user.spree_roles << Spree::Role.find_or_create_by(name: 'admin')
+        allow(user).to receive(:has_spree_role?).with('admin').and_return(true)
         expect(ability).to be_able_to :admin, resource
         expect(ability).to be_able_to :index, resource_order
         expect(ability).to be_able_to :show, resource_product
@@ -87,7 +87,8 @@ describe Spree::Ability, type: :model do
 
     context 'with fakedispatch user' do
       it 'is able to admin on the order and shipment pages' do
-        user.spree_roles << Spree::Role.find_or_create_by(name: 'bar')
+        allow(user).to receive(:has_spree_role?).with('admin').and_return(false)
+        allow(user).to receive(:has_spree_role?).with('bar').and_return(true)
 
         Spree::Ability.register_ability(BarAbility)
 
