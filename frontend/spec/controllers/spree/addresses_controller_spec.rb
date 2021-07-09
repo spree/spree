@@ -144,7 +144,7 @@ describe Spree::AddressesController, type: :controller do
 
             put_update
 
-            expect(address.deleted_at).to eq Time.current
+            expect(address.deleted_at).not_to be nil
           end
         end
 
