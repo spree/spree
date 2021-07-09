@@ -761,10 +761,26 @@ describe Spree::Product, type: :model do
   end
 
   describe '#ensure_store_presence' do
-    let(:valid_product) { build(:product, stores: [create(:store)]) }
-    let(:invalid_product) { build(:product, stores: []) }
+    let(:valid_record) { build(:product, stores: [create(:store)]) }
+    let(:invalid_record) { build(:product, stores: []) }
 
-    it { expect(valid_product).to be_valid }
-    it { expect(invalid_product).not_to be_valid }
+    it { expect(valid_record).to be_valid }
+    it { expect(invalid_record).not_to be_valid }
+
+    context 'validation disabled' do
+      context 'method overwrite' do
+        before { allow_any_instance_of(described_class).to receive(:disable_store_presence_validation?).and_return(true) }
+
+        it { expect(valid_record).to be_valid }
+        it { expect(invalid_record).to be_valid }
+      end
+
+      context 'preference set' do
+        before { Spree::Config[:disable_store_presence_validation] = true }
+
+        it { expect(valid_record).to be_valid }
+        it { expect(invalid_record).to be_valid }
+      end
+    end
   end
 end

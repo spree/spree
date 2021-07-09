@@ -18,7 +18,7 @@ module Spree
 
     # this can be overriden on model basis
     def disable_store_presence_validation?
-      false
+      Spree::Config[:disable_store_presence_validation]
     end
   end
 end
