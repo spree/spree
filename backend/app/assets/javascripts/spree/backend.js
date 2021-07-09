@@ -1,28 +1,31 @@
-//= require modernizr
-//= require purify
-//= require sortable
-//= require flatpickr
-//= require jquery3
-//= require popper
-//= require bootstrap-sprockets
-//= require handlebars
+// 3rd party JavaScript libraries
 //= require cleave
+//= require flatpickr
+//= require handlebars
 //= require js.cookie
-//= require jquery.jstree/jquery.jstree
-//= require jquery_ujs
-//= require jquery-ui/widgets/autocomplete
-//= require select2-full
+//= require jsonapi-serializer.min
+//= require modernizr
+//= require popper
+//= require purify
+//= require rails-ujs
+//= require sortable
 //= require sweetalert2
 //= require underscore-min.js
-//= require jsonapi-serializer.min
 
-//= require spree/backend/global/_index
+// 3rd party JavaScript libraries requiring jQuery
+//= require jquery3
+//= require bootstrap-sprockets
+//= require jquery.jstree/jquery.jstree
+//= require jquery-ui/widgets/autocomplete
+//= require select2-full
 
+// Spree JavaScript
 //= require spree
 //= require spree/backend/spree-select2
 //= require spree/backend/address_states
 //= require spree/backend/adjustments
 //= require spree/backend/admin
+//= require spree/backend/global/_index
 //= require spree/backend/calculator
 //= require spree/backend/checkouts/edit
 //= require spree/backend/gateway
@@ -59,6 +62,7 @@
 //= require spree/backend/variants/_index
 //= require spree/backend/zone
 
+// API v1
 Spree.routes.clear_cache = Spree.adminPathFor('general_settings/clear_cache')
 Spree.routes.checkouts_api = Spree.pathFor('api/v1/checkouts')
 Spree.routes.classifications_api = Spree.pathFor('api/v1/classifications')
