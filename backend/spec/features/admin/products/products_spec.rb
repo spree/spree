@@ -321,7 +321,7 @@ describe 'Products', type: :feature do
 
     context 'cloning a product', js: true do
       it 'allows an admin to clone a product' do
-        create(:product)
+        create(:product, stores: Spree::Store.all)
 
         visit spree.admin_products_path
         within_row(1) do
@@ -352,7 +352,7 @@ describe 'Products', type: :feature do
     end
 
     context 'updating a product' do
-      let(:product) { create(:product) }
+      let(:product) { create(:product, stores: Spree::Store.all) }
 
       let(:prototype) do
         size = build_option_type_with_values('size', %w(Small Medium Large))
@@ -439,7 +439,7 @@ describe 'Products', type: :feature do
     end
 
     context 'deleting a product', js: true do
-      let!(:product) { create(:product) }
+      let!(:product) { create(:product, stores: Spree::Store.all) }
 
       it 'is still viewable' do
         visit spree.admin_products_path
@@ -480,7 +480,7 @@ describe 'Products', type: :feature do
     end
 
     context 'editing product compare at price', js: true do
-      let!(:product) { create(:product) }
+      let!(:product) { create(:product, stores: Spree::Store.all) }
 
       it 'lets admin edit compare at price for product' do
         visit spree.admin_products_path
@@ -502,7 +502,7 @@ describe 'Products', type: :feature do
     custom_authorization! do |_user|
       can [:admin, :update, :read], Spree::Product
     end
-    let!(:product) { create(:product) }
+    let!(:product) { create(:product, stores: Spree::Store.all) }
 
     it 'only displays accessible links on index' do
       visit spree.admin_products_path

@@ -18,7 +18,7 @@ describe 'setting locale', type: :feature, js: true do
   let!(:fr_menu_item_product) { create(:menu_item, name: 'Product in French', menu_id: fr_main_menu.id, linked_resource_type: 'Spree::Product') }
 
   let!(:taxon_x) { create(:taxon) }
-  let!(:prod_x) { create(:product_in_stock, taxons: [taxon_x]) }
+  let!(:prod_x) { create(:product_in_stock, taxons: [taxon_x], stores: [store]) }
 
   before do
     store.update(default_locale: 'en', supported_locales: 'en,fr')
@@ -131,7 +131,7 @@ describe 'setting locale', type: :feature, js: true do
 
   context 'via URL' do
     let!(:taxon) { create(:taxon) }
-    let!(:product) { create(:product_in_stock, taxons: [taxon]) }
+    let!(:product) { create(:product_in_stock, taxons: [taxon], stores: [store]) }
 
     context 'cart page' do
       before do

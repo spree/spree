@@ -4,7 +4,7 @@ describe Spree::Variants::OptionTypesPresenter do
   let(:option_type_1) { create :option_type, position: 2 }
   let(:option_type_2) { create :option_type, position: 1 }
 
-  let(:product) { create :product, option_types: [option_type_1, option_type_2] }
+  let(:product) { create :product, option_types: [option_type_1, option_type_2], stores: [create(:store)] }
   let(:product_2) { create :product, option_types: [option_type_1, option_type_2] }
 
   let!(:variant_0) { create :variant, product: product, option_values: [option_value_1_0, option_value_2_0] }

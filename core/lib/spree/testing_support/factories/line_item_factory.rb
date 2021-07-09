@@ -4,9 +4,7 @@ FactoryBot.define do
     quantity { 1 }
     price    { BigDecimal('10.00') }
     currency { order.currency }
-    transient do
-      association :product
-    end
+    product { create(:product, stores: [order.store]) }
     variant { product.master }
   end
 end

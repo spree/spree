@@ -138,4 +138,28 @@ describe Spree::PaymentMethod, type: :model do
       expect(eligible).to be true
     end
   end
+
+  describe '#ensure_store_presence' do
+    let(:valid_record) { build(:payment_method, stores: [create(:store)]) }
+    let(:invalid_record) { build(:payment_method, stores: []) }
+
+    it { expect(valid_record).to be_valid }
+    it { expect(invalid_record).not_to be_valid }
+
+    context 'validation disabled' do
+      context 'method overwrite' do
+        before { allow_any_instance_of(described_class).to receive(:disable_store_presence_validation?).and_return(true) }
+
+        it { expect(valid_record).to be_valid }
+        it { expect(invalid_record).to be_valid }
+      end
+
+      context 'preference set' do
+        before { Spree::Config[:disable_store_presence_validation] = true }
+
+        it { expect(valid_record).to be_valid }
+        it { expect(invalid_record).to be_valid }
+      end
+    end
+  end
 end

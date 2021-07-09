@@ -15,7 +15,7 @@ describe 'Product Images', type: :feature, js: true do
 
   context 'uploading, editing, and deleting an image' do
     it 'allows an admin to upload and edit an image for a product' do
-      create(:product)
+      create(:product, stores: Spree::Store.all)
 
       visit spree.admin_products_path
       click_icon(:edit)
@@ -66,7 +66,7 @@ describe 'Product Images', type: :feature, js: true do
   end
 
   it 'does not see variant column when product has no variants', js: false do
-    product = create(:product)
+    product = create(:product, stores: Spree::Store.all)
     create_image(product, File.open(file_path))
     visit spree.admin_product_images_path(product)
 

@@ -1,6 +1,7 @@
 require 'spec_helper'
 
 describe Spree::Variant, type: :model do
+  let!(:store) { create(:store) }
   let!(:variant) { create(:variant) }
   let(:master_variant) { create(:master_variant) }
 
@@ -73,7 +74,7 @@ describe Spree::Variant, type: :model do
   end
 
   context 'after create' do
-    let!(:product) { create(:product) }
+    let!(:product) { create(:product, stores: [store]) }
 
     it 'propagate to stock items' do
       expect_any_instance_of(Spree::StockLocation).to receive(:propagate_variant)
@@ -109,8 +110,8 @@ describe Spree::Variant, type: :model do
   describe 'scope' do
     describe '.eligible' do
       context 'when only master variants' do
-        let!(:product_1) { create(:product) }
-        let!(:product_2) { create(:product) }
+        let!(:product_1) { create(:product, stores: [store]) }
+        let!(:product_2) { create(:product, stores: [store]) }
 
         it 'returns all of them' do
           expect(Spree::Variant.eligible).to include(product_1.master)
@@ -119,7 +120,7 @@ describe Spree::Variant, type: :model do
       end
 
       context 'when product has more than 1 variant' do
-        let!(:product) { create(:product) }
+        let!(:product) { create(:product, stores: [store]) }
         let!(:variant) { create(:variant, product: product) }
 
         it 'filters master variant out' do

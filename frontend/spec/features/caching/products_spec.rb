@@ -1,8 +1,8 @@
 # require 'spec_helper'
 
 # describe 'products', type: :feature, caching: true do
-#   let!(:product) { create(:product) }
-#   let!(:product2) { create(:product) }
+#   let!(:product) { create(:product, stores: Spree::Store.all) }
+#   let!(:product2) { create(:product, stores: Spree::Store.all) }
 #   let!(:taxonomy) { create(:taxonomy) }
 
 #   after { Timecop.return }

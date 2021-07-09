@@ -1102,6 +1102,7 @@ en:
     move_stock_between_locations: Move Stock Between Locations
     my_account: My Account
     my_orders: My Orders
+    must_have_one_store: Must have at least one Store associated
     name: Name
     name_on_card: Name on card
     name_or_sku: Name or SKU (enter at least first 3 characters of product name)

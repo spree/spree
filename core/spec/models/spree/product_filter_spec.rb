@@ -2,9 +2,11 @@ require 'spec_helper'
 require 'spree/core/product_filters'
 
 describe 'product filters', type: :model do
+  let(:store) { create(:store) }
+
   # Regression test for #1709
   context 'finds products filtered by brand' do
-    let(:product) { create(:product) }
+    let(:product) { create(:product, stores: [store]) }
 
     before do
       Spree::Property.create!(name: 'brand', presentation: 'brand')
@@ -20,7 +22,7 @@ describe 'product filters', type: :model do
     end
     it 'sorts products without brand specified' do
       product.set_property('brand', 'Nike')
-      create(:product).set_property('brand', nil)
+      create(:product, stores: [store]).set_property('brand', nil)
       expect { Spree::Core::ProductFilters.brand_filter[:labels] }.not_to raise_error
     end
   end

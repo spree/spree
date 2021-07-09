@@ -5,8 +5,10 @@ module Spree
   describe Api::V1::ProductsController, type: :controller do
     render_views
 
-    let!(:product) { create(:product) }
-    let!(:inactive_product) { create(:product, available_on: Time.current.tomorrow, name: 'inactive') }
+    let(:store) { Spree::Store.default }
+
+    let!(:product) { create(:product, stores: [store]) }
+    let!(:inactive_product) { create(:product, available_on: Time.current.tomorrow, name: 'inactive', stores: [store]) }
     let(:base_attributes) { Api::ApiHelpers.product_attributes }
     let(:show_attributes) { base_attributes.dup.push(:has_variants) }
     let(:new_attributes) { base_attributes }
@@ -31,7 +33,7 @@ module Spree
     context 'as a normal user' do
       context 'with caching enabled' do
         before do
-          create(:product) # product_2
+          create(:product, stores: [store]) # product_2
           ActionController::Base.perform_caching = true
         end
 
@@ -74,7 +76,7 @@ module Spree
       end
 
       it 'retrieves a list of products by ids string' do
-        second_product = create(:product)
+        second_product = create(:product, stores: [store])
         api_get :index, ids: [product.id, second_product.id].join(',')
         expect(json_response['products'].first).to have_attributes(show_attributes)
         expect(json_response['products'][1]).to have_attributes(show_attributes)
@@ -95,7 +97,7 @@ module Spree
       end
 
       context 'pagination' do
-        before { create(:product) }
+        before { create(:product, stores: [store]) }
 
         it 'can select the next page of products' do
           api_get :index, page: 2, per_page: 1
@@ -115,7 +117,7 @@ module Spree
       end
 
       it 'can search for products' do
-        create(:product, name: 'The best product in the world')
+        create(:product, name: 'The best product in the world', stores: [store])
         api_get :index, q: { name_cont: 'best' }
         expect(json_response['products'].first).to have_attributes(show_attributes)
         expect(json_response['count']).to eq(1)
@@ -123,8 +125,8 @@ module Spree
 
       # regression test for https://github.com/spree/spree/issues/8207
       it 'can sort products by date' do
-        first_product = create(:product, created_at: Time.current - 1.month)
-        create(:product, created_at: Time.current) # second_product
+        first_product = create(:product, created_at: Time.current - 1.month, stores: [store])
+        create(:product, created_at: Time.current, stores: [store]) # second_product
         api_get :index, q: { s: 'created_at asc' }
         expect(json_response['products'].first['id']).to eq(first_product.id)
       end
@@ -175,7 +177,7 @@ module Spree
       end
 
       context 'finds a product by slug first then by id' do
-        let!(:other_product) { create(:product, slug: 'these-are-not-the-droids-you-are-looking-for') }
+        let!(:other_product) { create(:product, slug: 'these-are-not-the-droids-you-are-looking-for', stores:[store]) }
 
         before do
           product.update_column(:slug, "#{other_product.id}-and-1-ways")
@@ -230,7 +232,7 @@ module Spree
       # Regression test for #1626
       context 'deleted products' do
         before do
-          create(:product, deleted_at: 1.day.ago)
+          create(:product, deleted_at: 1.day.ago, stores: [store])
         end
 
         it 'does not include deleted products' do

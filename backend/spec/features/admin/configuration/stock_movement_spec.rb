@@ -2,6 +2,7 @@ require 'spec_helper'
 
 describe 'Stock Movements', type: :feature do
   stub_authorization!
+  let(:store) { Spree::Store.default }
   let!(:stock_location) { create(:stock_location_with_items) }
   let(:stock_item) { stock_location.stock_items.first }
   let!(:stock_movement) { create(:stock_movement, stock_item: stock_item, quantity: 10) }
@@ -22,7 +23,7 @@ describe 'Stock Movements', type: :feature do
   end
 
   describe 'creation', js: true do
-    let!(:product) { create(:product_in_stock) }
+    let!(:product) { create(:product_in_stock, stores: [store]) }
 
     before do
       visit spree.admin_stock_location_stock_movements_path(stock_location.id)

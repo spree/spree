@@ -207,7 +207,7 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
 
     if @object.has_attribute?(:store_id)
       @object.store = current_store
-    elsif model_class.method_defined?(:stores)
+    elsif model_class.method_defined?(:stores) && @object.stores.exclude?(current_store)
       @object.stores << current_store
     end
   end

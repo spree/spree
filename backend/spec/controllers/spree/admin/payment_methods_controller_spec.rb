@@ -8,7 +8,8 @@ module Spree
   describe Admin::PaymentMethodsController, type: :controller do
     stub_authorization!
 
-    let(:payment_method) { GatewayWithPassword.create!(name: 'Bogus', preferred_password: 'haxme') }
+    let(:store) { Spree::Store.default }
+    let(:payment_method) { GatewayWithPassword.create!(name: 'Bogus', preferred_password: 'haxme', stores: [store]) }
 
     # regression test for #2094
     it 'does not clear password on update' do
@@ -48,6 +49,8 @@ module Spree
       expect do
         post :create, params: { payment_method: { name: 'Test Method', type: 'Spree::Gateway::Bogus' } }
       end.to change(Spree::PaymentMethod, :count).by(1)
+
+      expect(Spree::PaymentMethod.last.stores).to eq([store])
 
       expect(response).to be_redirect
       expect(response).to redirect_to spree.edit_admin_payment_method_path(assigns(:payment_method))

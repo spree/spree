@@ -6,7 +6,7 @@ module Spree
       stub_authorization!
 
       describe '#index' do
-        let(:product) { create(:product) }
+        let(:product) { create(:product, stores: Spree::Store.all) }
         let!(:variant_1) { create(:variant, product: product) }
         let!(:variant_2) { create(:variant, product: product) }
 
