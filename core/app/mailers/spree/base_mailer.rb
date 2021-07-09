@@ -3,7 +3,7 @@ module Spree
     helper Spree::MailHelper
 
     def current_store
-      @current_store ||= Spree::Store.current
+      @current_store ||= Spree::Dependencies.current_store_finder.constantize.new.execute
     end
     helper_method :current_store
 

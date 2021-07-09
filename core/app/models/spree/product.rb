@@ -21,7 +21,8 @@
 module Spree
   class Product < Spree::Base
     extend FriendlyId
-    include Spree::ProductScopes
+    include ProductScopes
+    include MultipleStoresResource
 
     friendly_id :slug_candidates, use: :history
 

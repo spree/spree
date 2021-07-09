@@ -30,6 +30,7 @@ module Spree
         end
 
         def orders_by_email
+          # FIXME: this will need a change after we associate Promotion with Store
           Spree::Order.where(email: email).complete
         end
       end

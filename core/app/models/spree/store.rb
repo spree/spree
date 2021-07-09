@@ -47,9 +47,12 @@ module Spree
 
     alias_attribute :contact_email, :customer_support_email
 
-    def self.current(domain = nil)
-      current_store = domain ? Store.by_url(domain).first : nil
-      current_store || Store.default
+    def self.current(url = nil)
+      ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
+        `Spree::Store.current` is deprecated and will be removed in Spree 5
+        Spree::Stores::FindCurrent.new(url: "http://example.com") instead
+      DEPRECATION
+      Stores::FindCurrent.new(url: url).execute
     end
 
     def self.default

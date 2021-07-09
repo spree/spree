@@ -9,11 +9,11 @@ module Spree
             private
 
             def collection
-              collection_finder.new(user: spree_current_user).execute
+              collection_finder.new(user: spree_current_user, store: current_store).execute
             end
 
             def resource
-              resource = resource_finder.new(user: spree_current_user, number: params[:id]).execute.take
+              resource = resource_finder.new(user: spree_current_user, number: params[:id], store: current_store).execute.take
               raise ActiveRecord::RecordNotFound if resource.nil?
 
               resource

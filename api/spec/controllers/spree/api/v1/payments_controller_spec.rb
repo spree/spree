@@ -3,7 +3,8 @@ require 'spec_helper'
 module Spree
   describe Api::V1::PaymentsController, type: :controller do
     render_views
-    let!(:order) { create(:order) }
+    let(:store) { Spree::Store.default }
+    let!(:order) { create(:order, store: store) }
     let!(:payment) { create(:payment, order: order) }
     let!(:attributes) do
       [:id, :source_type, :source_id, :amount, :display_amount,

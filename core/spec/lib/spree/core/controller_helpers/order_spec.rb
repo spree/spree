@@ -3,6 +3,8 @@ require 'spec_helper'
 class FakesController < ApplicationController
   include Spree::Core::ControllerHelpers::Store
   include Spree::Core::ControllerHelpers::Order
+  include Spree::Core::ControllerHelpers::Currency
+  include Spree::Core::ControllerHelpers::Locale
 end
 
 describe Spree::Core::ControllerHelpers::Order, type: :controller do
@@ -52,8 +54,8 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
     end
 
     context 'gets using the token' do
-      let!(:order)       { create :order, user: user }
-      let!(:guest_order) { create :order, user: nil, email: nil, token: 'token' }
+      let!(:order)       { create :order, user: user, store: store }
+      let!(:guest_order) { create :order, user: nil, email: nil, token: 'token', store: store }
 
       before do
         expect(controller).to receive(:current_order_params).and_return(

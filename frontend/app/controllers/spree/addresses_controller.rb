@@ -10,7 +10,7 @@ module Spree
 
     def create
       @address = try_spree_current_user.addresses.build(address_params)
-      if @address.save
+      if create_service.call(user: try_spree_current_user, address_params: @address.attributes).success?
         flash[:notice] = I18n.t(:successfully_created, scope: :address_book)
         redirect_to spree.account_path
       else
@@ -27,24 +27,11 @@ module Spree
     end
 
     def update
-      if @address.editable?
-        if @address.update(address_params)
-          flash[:notice] = Spree.t(:successfully_updated, scope: :address_book)
-          redirect_back_or_default(addresses_path)
-        else
-          render :edit
-        end
+      if update_service.call(address: @address, address_params: address_params).success?
+        flash[:notice] = Spree.t(:successfully_updated, scope: :address_book)
+        redirect_back_or_default(addresses_path)
       else
-        new_address = @address.clone
-        new_address.attributes = address_params
-        new_address.user_id = @address.user_id
-        @address.update_attribute(:deleted_at, Time.current)
-        if new_address.save
-          flash[:notice] = Spree.t(:successfully_updated, scope: :address_book)
-          redirect_back_or_default(addresses_path)
-        else
-          render :edit
-        end
+        render :edit
       end
     end
 
@@ -59,6 +46,14 @@ module Spree
 
     def address_params
       params.require(:address).permit(permitted_address_attributes)
+    end
+
+    def create_service
+      Spree::Dependencies.account_create_address_service.constantize
+    end
+
+    def update_service
+      Spree::Dependencies.account_update_address_service.constantize
     end
   end
 end

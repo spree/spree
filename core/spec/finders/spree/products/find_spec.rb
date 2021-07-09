@@ -16,7 +16,7 @@ module Spree
             ids: '',
             skus: '',
             price: '',
-            currency: false,
+            currency: 'USD',
             taxons: '',
             concat_taxons: '',
             name: false,
@@ -29,8 +29,7 @@ module Spree
         expect(
           described_class.new(
             scope: Spree::Product.all,
-            params: params,
-            current_currency: 'USD'
+            params: params
           ).execute
         ).to include(product, product_2, discontinued_product)
       end
@@ -45,8 +44,8 @@ module Spree
             ids: '',
             skus: '',
             price: '',
-            currency: false,
             taxons: '',
+            currency: 'USD',
             concat_taxons: '',
             name: false,
             options: false,
@@ -58,8 +57,7 @@ module Spree
         expect(
           described_class.new(
             scope: Spree::Product.all,
-            params: params,
-            current_currency: 'USD'
+            params: params
           ).execute
         ).to include(product, product_2, deleted_product)
       end
@@ -72,7 +70,7 @@ module Spree
             ids: '',
             skus: '',
             price: '',
-            currency: false,
+            currency: 'USD',
             taxons: '',
             concat_taxons: '',
             name: false,
@@ -85,8 +83,7 @@ module Spree
         expect(
           described_class.new(
             scope: Spree::Product.all,
-            params: params,
-            current_currency: 'USD'
+            params: params
           ).execute
         ).to include(product, product_2)
       end
@@ -96,8 +93,7 @@ module Spree
       subject(:products) do
         described_class.new(
           scope: Spree::Product.all,
-          params: params,
-          current_currency: 'USD'
+          params: params
         ).execute
       end
 
@@ -166,8 +162,7 @@ module Spree
       subject(:products) do
         described_class.new(
             scope: Spree::Product.all,
-            params: params,
-            current_currency: 'USD'
+            params: params
         ).execute
       end
 
@@ -261,8 +256,7 @@ module Spree
       subject(:products) do
         described_class.new(
           scope: Spree::Product.all,
-          params: params,
-          current_currency: 'USD'
+          params: params
         ).execute
       end
 
@@ -293,8 +287,7 @@ module Spree
       subject(:products) do
         described_class.new(
           scope: Spree::Product.all,
-          params: params,
-          current_currency: 'USD'
+          params: params
         ).execute
       end
 
@@ -365,8 +358,7 @@ module Spree
         subject(:products) do
           described_class.new(
             scope: Spree::Product.all,
-            params: params,
-            current_currency: 'USD'
+            params: params
           ).execute
         end
 
@@ -411,8 +403,7 @@ module Spree
 
         product_ids = described_class.new(
           scope: Spree::Product.all,
-          params: params,
-          current_currency: 'USD'
+          params: params
         ).execute.map(&:id)
 
         expect(product_ids).to eq Spree::Product.available.order(available_on: :desc).map(&:id)
@@ -425,8 +416,7 @@ module Spree
 
         products = described_class.new(
           scope: Spree::Product.all,
-          params: params,
-          current_currency: 'USD'
+          params: params
         ).execute.to_a
 
         expect(products).to eq [product_2, product_3, product]
@@ -439,8 +429,7 @@ module Spree
 
         products = described_class.new(
           scope: Spree::Product.all,
-          params: params,
-          current_currency: 'USD'
+          params: params
         ).execute
 
         expect(products).to eq [product, product_3, product_2]
@@ -453,8 +442,7 @@ module Spree
 
         products = described_class.new(
           scope: Spree::Product.all,
-          params: params,
-          current_currency: 'USD'
+          params: params
         ).execute
 
         expect(products).to eq [product, product_2, product_3]
@@ -467,8 +455,7 @@ module Spree
 
         products = described_class.new(
           scope: Spree::Product.all,
-          params: params,
-          current_currency: 'USD'
+          params: params
         ).execute
 
         expect(products).to eq [product_3, product_2, product]

@@ -130,6 +130,7 @@ module Spree
         def serializer_params
           {
             currency: current_currency,
+            locale: current_locale,
             store: current_store,
             user: spree_current_user
           }
