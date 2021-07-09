@@ -1,6 +1,7 @@
 require 'spec_helper'
 
 describe Spree::Promotion, type: :model do
+  let(:store) { create(:store) }
   let(:promotion) { Spree::Promotion.new }
 
   describe 'validations' do
@@ -385,7 +386,7 @@ describe Spree::Promotion, type: :model do
   end
 
   context '#products' do
-    let(:product) { create(:product) }
+    let(:product) { create(:product, stores: [store]) }
     let(:promotion) { create(:promotion) }
 
     context 'when it has product rules with products associated' do

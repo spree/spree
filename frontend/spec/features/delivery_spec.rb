@@ -27,7 +27,7 @@ describe 'Delivery', type: :feature, inaccessible: true, js: true do
   end
 
   before do
-    create(:product) # product 2
+    create(:product, stores: Spree::Store.all) # product 2
     shipping_method.calculator.preferred_amount = 10
     shipping_method.calculator.save
   end

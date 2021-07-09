@@ -6,7 +6,7 @@ module Spree
 
     let!(:order) { create(:shipped_order) }
 
-    let(:product) { create(:product) }
+    let(:product) { create(:product, stores: Spree::Store.all) }
     let(:attributes) { [:id, :memo, :state] }
     let(:resource_scoping) { { order_id: order.to_param } }
 

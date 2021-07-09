@@ -80,7 +80,7 @@ module Spree
     has_many :variant_images, -> { order(:position) }, source: :images, through: :variants_including_master
     has_many :variant_images_without_master, -> { order(:position) }, source: :images, through: :variants
 
-    has_many :store_products, class_name: 'Spree::StoreProduct', dependent: :destroy
+    has_many :store_products, class_name: 'Spree::StoreProduct'
     has_many :stores, through: :store_products, class_name: 'Spree::Store'
 
     after_create :add_associations_from_prototype

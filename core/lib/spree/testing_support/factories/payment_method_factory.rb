@@ -26,7 +26,7 @@ FactoryBot.define do
     name { 'Credit Card' }
   end
 
-  factory :store_credit_payment_method, class: Spree::PaymentMethod::StoreCredit do
+  factory :store_credit_payment_method, parent: :payment_method, class: Spree::PaymentMethod::StoreCredit do
     type          { 'Spree::PaymentMethod::StoreCredit' }
     name          { 'Store Credit' }
     description   { 'Store Credit' }

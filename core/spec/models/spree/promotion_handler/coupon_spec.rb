@@ -5,7 +5,8 @@ module Spree
     describe Coupon, type: :model do
       subject { Coupon.new(order) }
 
-      let(:order) { double('Order', coupon_code: '10off').as_null_object }
+      let(:store) { create(:store) }
+      let(:order) { double('Order', coupon_code: '10off', store: store).as_null_object }
 
       it 'returns self in apply' do
         expect(subject.apply).to be_a Coupon
@@ -72,7 +73,7 @@ module Spree
         end
 
         context 'with a per-item adjustment action' do
-          let(:order) { create(:order_with_line_items, line_items_count: 3) }
+          let(:order) { create(:order_with_line_items, line_items_count: 3, store: store) }
 
           context 'right coupon given' do
             context 'with correct coupon code casing' do
@@ -115,7 +116,7 @@ module Spree
           end
 
           context 'coexists with a non coupon code promo' do
-            let!(:order) { create(:order) }
+            let!(:order) { create(:order, store: store) }
 
             before do
               allow(order).to receive_messages coupon_code: '10off'
@@ -138,7 +139,7 @@ module Spree
           let!(:action) { Promotion::Actions::FreeShipping.create(promotion: promotion) }
 
           context 'right coupon code given' do
-            let(:order) { create(:order_with_line_items, line_items_count: 3) }
+            let(:order) { create(:order_with_line_items, line_items_count: 3, store: store) }
 
             before { allow(order).to receive_messages coupon_code: '10off' }
 
@@ -163,7 +164,7 @@ module Spree
           let!(:action) { Promotion::Actions::CreateAdjustment.create(promotion: promotion, calculator: calculator) }
 
           context 'right coupon given' do
-            let(:order) { create(:order) }
+            let(:order) { create(:order, store: store) }
             let(:calculator) { Calculator::FlatRate.new(preferred_amount: 10) }
 
             before do
@@ -197,7 +198,7 @@ module Spree
               subject.apply
               expect(subject.successful?).to be true
 
-              order_2 = create(:order)
+              order_2 = create(:order, store: store)
               allow(order_2).to receive_messages coupon_code: '10off'
               coupon = Coupon.new(order_2)
               coupon.apply
@@ -219,7 +220,7 @@ module Spree
         end
 
         context 'for an order with taxable line items' do
-          let!(:order)         { create(:order, line_items_price: 0.0) }
+          let!(:order)         { create(:order, line_items_price: 0.0, store: store) }
           let!(:zone)          { create(:zone_with_country, default_tax: true) }
           let!(:tax_category)  { create(:tax_category, name: 'Taxable Foo') }
           let!(:rate)          { create(:tax_rate, amount: 0.10, tax_category: tax_category, zone: zone) }
@@ -227,7 +228,7 @@ module Spree
           before { allow(order).to receive(:coupon_code).and_return '10off' }
 
           context 'and the product price is less than promo discount' do
-            let(:product_list) { create_list(:product, 3, tax_category: tax_category, price: 9.0) }
+            let(:product_list) { create_list(:product, 3, tax_category: tax_category, price: 9.0, stores: [store]) }
 
             before { product_list.each { |item| Spree::Cart::AddItem.call(order: order, variant: item.master) } }
 
@@ -243,7 +244,7 @@ module Spree
           end
 
           context 'and the product price is greater than promo discount' do
-            let(:product_list) { create_list(:product, 3, tax_category: tax_category, price: 11.0) }
+            let(:product_list) { create_list(:product, 3, tax_category: tax_category, price: 11.0, stores: [store]) }
 
             before { product_list.each { |item| Spree::Cart::AddItem.call(order: order, variant: item.master, quantity: 2) } }
 
@@ -260,7 +261,7 @@ module Spree
 
           context 'and multiple quantity per line item' do
             let(:promotion)    { create(:promotion, :with_line_item_adjustment, adjustment_rate: 20, code: '20off') }
-            let(:product_list) { create_list(:product, 3, tax_category: tax_category, price: 10.0) }
+            let(:product_list) { create_list(:product, 3, tax_category: tax_category, price: 10.0, stores: [store]) }
 
             before do
               allow(order).to receive(:coupon_code).and_return '20off'
@@ -282,7 +283,7 @@ module Spree
         context 'with a CreateLineItems action' do
           let!(:variant) { create(:variant) }
           let!(:action) { Promotion::Actions::CreateLineItems.create(promotion: promotion) }
-          let(:order) { create(:order) }
+          let(:order) { create(:order, store: store) }
 
           before do
             action.promotion_action_line_items.create(

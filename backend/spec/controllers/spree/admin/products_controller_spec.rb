@@ -8,7 +8,7 @@ describe Spree::Admin::ProductsController, type: :controller do
 
     # Regression test for #1259
     it 'can find a product by SKU' do
-      product = create(:product, sku: 'ABC123')
+      product = create(:product, sku: 'ABC123', stores: Spree::Store.all)
       get :index, params: { q: { sku_start: 'ABC123' } }
       expect(assigns[:collection]).not_to be_empty
       expect(assigns[:collection]).to include(product)
@@ -17,7 +17,7 @@ describe Spree::Admin::ProductsController, type: :controller do
 
   # regression test for #1370
   context 'adding properties to a product' do
-    let!(:product) { create(:product) }
+    let!(:product) { create(:product, stores: Spree::Store.all) }
 
     specify do
       put :update, params: {
@@ -150,7 +150,7 @@ describe Spree::Admin::ProductsController, type: :controller do
   end
 
   context 'stock' do
-    let(:product) { create(:product) }
+    let(:product) { create(:product, stores: Spree::Store.all) }
 
     it 'restricts stock location based on accessible attributes' do
       expect(Spree::StockLocation).to receive(:accessible_by).and_return([])

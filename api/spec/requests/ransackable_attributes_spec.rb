@@ -1,6 +1,7 @@
 require 'spec_helper'
 
 describe 'Ransackable Attributes' do
+  let(:store) { Spree::Store.default }
   let(:user) { create(:user).tap(&:generate_spree_api_key!) }
   let(:order) { create(:order_with_line_items, user: user) }
 
@@ -28,7 +29,7 @@ describe 'Ransackable Attributes' do
 
   context 'it maintains desired association behavior' do
     it 'allows filtering of variants product name' do
-      product = create(:product, name: 'Fritos')
+      product = create(:product, name: 'Fritos', stores: [store])
       variant = create(:variant, product: product)
       other_variant = create(:variant)
 
@@ -42,8 +43,8 @@ describe 'Ransackable Attributes' do
 
   context 'filtering by attributes' do
     it 'most attributes are not filterable by default' do
-      create(:product, meta_title: 'special product')
-      create(:product)
+      create(:product, meta_title: 'special product', stores: [store])
+      create(:product, stores: [store])
 
       get '/api/v1/products?q[meta_title_cont]=special', params: { token: user.spree_api_key }
 
@@ -52,8 +53,8 @@ describe 'Ransackable Attributes' do
     end
 
     it 'id is filterable by default' do
-      product = create(:product)
-      other_product = create(:product)
+      product = create(:product, stores: [store])
+      other_product = create(:product, stores: [store])
 
       get "/api/v1/products?q[id_eq]=#{product.id}", params: { token: user.spree_api_key }
 
@@ -65,8 +66,8 @@ describe 'Ransackable Attributes' do
 
   context 'filtering by whitelisted attributes' do
     it 'filtering is supported for whitelisted attributes' do
-      product = create(:product, name: 'Fritos')
-      other_product = create(:product)
+      product = create(:product, name: 'Fritos', stores: [store])
+      other_product = create(:product, stores: [store])
 
       get '/api/v1/products?q[name_cont]=fritos', params: { token: user.spree_api_key }
 

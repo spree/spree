@@ -4,7 +4,7 @@ describe 'Product Properties', type: :feature, js: true do
   stub_authorization!
 
   before do
-    create(:product)
+    create(:product, stores: Spree::Store.all)
     visit spree.admin_products_path
   end
 

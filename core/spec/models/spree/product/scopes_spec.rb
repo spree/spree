@@ -1,36 +1,37 @@
 require 'spec_helper'
 
 describe 'Product scopes', type: :model do
-  let!(:product) { create(:product) }
+  let(:store) { create(:store) }
+  let!(:product) { create(:product, stores: [store]) }
 
   describe '#available' do
     context 'when discontinued' do
-      let!(:discontinued_product) { create(:product, discontinue_on: Time.current - 1.day) }
+      let!(:discontinued_product) { create(:product, discontinue_on: Time.current - 1.day, stores:[store]) }
 
       it { expect(Spree::Product.available).not_to include(discontinued_product) }
     end
 
     context 'when not discontinued' do
-      let!(:product_2) { create(:product, discontinue_on: Time.current + 1.day) }
+      let!(:product_2) { create(:product, discontinue_on: Time.current + 1.day, stores: [store]) }
 
       it { expect(Spree::Product.available).to include(product_2) }
     end
 
     context 'when available' do
-      let!(:product_2) { create(:product, available_on: Time.current - 1.day) }
+      let!(:product_2) { create(:product, available_on: Time.current - 1.day,stores: [store]) }
 
       it { expect(Spree::Product.available).to include(product_2) }
     end
 
     context 'when not available' do
-      let!(:unavailable_product) { create(:product, available_on: Time.current + 1.day) }
+      let!(:unavailable_product) { create(:product, available_on: Time.current + 1.day,stores: [store]) }
 
       it { expect(Spree::Product.available).not_to include(unavailable_product) }
     end
 
     context 'different currency' do
       let!(:price_eur) { create(:price, variant: product.master, currency: 'EUR') }
-      let!(:product_2) { create(:product) }
+      let!(:product_2) { create(:product, stores: [store]) }
 
       it { expect(Spree::Product.available(nil, 'EUR')).to include(product) }
       it { expect(Spree::Product.available(nil, 'EUR')).not_to include(product_2) }
@@ -43,11 +44,11 @@ describe 'Product scopes', type: :model do
     let(:taxon_1) { create(:taxon) }
     let(:taxon_2) { create(:taxon) }
 
-    let!(:product_1) { create(:product, currency: 'GBP', taxons: [taxon_1]) }
-    let!(:product_2) { create(:product, currency: 'GBP', taxons: [taxon_2]) }
+    let!(:product_1) { create(:product, currency: 'GBP', taxons: [taxon_1], stores: [store]) }
+    let!(:product_2) { create(:product, currency: 'GBP', taxons: [taxon_2], stores: [store]) }
 
     before do
-      create(:product, currency: 'USD', taxons: [create(:taxon)])
+      create(:product, currency: 'USD', taxons: [create(:taxon)], stores: [store])
     end
 
     context 'when giving a taxon' do
@@ -85,7 +86,7 @@ describe 'Product scopes', type: :model do
 
     context 'orders products based on their ordering within the classifications' do
       let(:other_taxon) { create(:taxon, products: [product]) }
-      let!(:product_2) { create(:product, taxons: [@child_taxon, other_taxon]) }
+      let!(:product_2) { create(:product, taxons: [@child_taxon, other_taxon], stores: [store]) }
 
       it 'by initial ordering' do
         expect(Spree::Product.in_taxon(@child_taxon)).to eq([product, product_2])
@@ -175,12 +176,12 @@ describe 'Product scopes', type: :model do
     context 'with_property_values' do
       subject(:with_property_values) { Spree::Product.method(:with_property_values) }
 
-      let!(:product_2) { create(:product, product_properties: [product_2_property]) }
+      let!(:product_2) { create(:product, product_properties: [product_2_property], stores: [store]) }
       let(:product_2_property) { create(:product_property, property: property, value: value_2) }
       let(:value_2) { 'Beta 10%' }
 
       before do
-        create(:product, product_properties: [create(:product_property, property: property, value: '20% Gamma')])
+        create(:product, product_properties: [create(:product_property, property: property, value: '20% Gamma')], stores: [store])
       end
 
       it 'finds by property values' do
@@ -232,9 +233,9 @@ describe 'Product scopes', type: :model do
   end
 
   context '#search_by_name' do
-    let!(:first_product) { create(:product, name: 'First product') }
-    let!(:second_product) { create(:product, name: 'Second product') }
-    let!(:third_product) { create(:product, name: 'Other second product') }
+    let!(:first_product) { create(:product, name: 'First product', stores: [store]) }
+    let!(:second_product) { create(:product, name: 'Second product',stores: [store]) }
+    let!(:third_product) { create(:product, name: 'Other second product',stores: [store]) }
 
     it 'shows product whose name contains phrase' do
       result = Spree::Product.search_by_name('First').to_a
@@ -268,30 +269,30 @@ describe 'Product scopes', type: :model do
     let(:child_taxon_2) { create(:taxon, parent: parent_taxon) }
     let(:child_taxon_2_1) { create(:taxon, parent: child_taxon_2) }
 
-    let!(:product_1) { create(:product) }
+    let!(:product_1) { create(:product, stores: [store]) }
     let!(:classification_1_1) { create(:classification, position: 5, product: product_1, taxon: parent_taxon) }
     let!(:classification_1_2) { create(:classification, position: 4, product: product_1, taxon: child_taxon_1_1) }
 
-    let!(:product_2) { create(:product) }
+    let!(:product_2) { create(:product, stores: [store]) }
     let!(:classification_2_1) { create(:classification, position: 1, product: product_2, taxon: parent_taxon) }
     let!(:classification_2_2) { create(:classification, position: 2, product: product_2, taxon: child_taxon_2_1) }
 
-    let!(:product_3) { create(:product) }
+    let!(:product_3) { create(:product, stores: [store]) }
     let!(:classification_3_1) { create(:classification, position: 3, product: product_3, taxon: child_taxon_1) }
     let!(:classification_3_2) { create(:classification, position: 4, product: product_3, taxon: child_taxon_2_1) }
 
-    let!(:product_4) { create(:product) }
+    let!(:product_4) { create(:product, stores: [store]) }
     let!(:classification_4_1) { create(:classification, position: 2, product: product_4, taxon: child_taxon_2) }
 
-    let!(:product_5) { create(:product) }
+    let!(:product_5) { create(:product, stores: [store]) }
     let!(:classification_5_1) { create(:classification, position: 1, product: product_5, taxon: child_taxon_1_1) }
 
-    let!(:product_6) { create(:product) }
+    let!(:product_6) { create(:product, stores: [store]) }
     let!(:classification_6_1) { create(:classification, position: 6, product: product_6, taxon: child_taxon_2) }
     let!(:classification_6_2) { create(:classification, position: 3, product: product_6, taxon: child_taxon_1) }
 
     before do
-      create_list(:product, 3, taxons: [create(:taxon)])
+      create_list(:product, 3, taxons: [create(:taxon)], stores: [store])
     end
 
     it 'orders products by ascending taxons minimum position' do
@@ -309,17 +310,12 @@ describe 'Product scopes', type: :model do
   describe '#for_store' do
     subject(:products_by_store) { Spree::Product.for_store(store) }
 
-    let(:store) { create(:store) }
-
-    let!(:product_1) { create(:product, stores: [store]) }
-    let!(:product_2) { create(:product, stores: [store]) }
-
     before do
       create_list(:product, 3, stores: [create(:store)])
     end
 
     it 'returns products assigned to a store' do
-      expect(products_by_store).to contain_exactly(product_1, product_2)
+      expect(products_by_store).to contain_exactly(product)
     end
   end
 end

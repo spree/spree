@@ -6,7 +6,7 @@ module Spree
       taxon = create(:taxon)
 
       3.times do
-        product = create(:product)
+        product = create(:product, stores: Spree::Store.all)
         product.taxons << taxon
       end
       taxon

@@ -7,7 +7,7 @@ describe 'Product Taxons', type: :feature, js: true do
     it 'allows an admin to manage taxons' do
       taxon_1 = create(:taxon)
       taxon_2 = create(:taxon, name: 'Clothing')
-      product = create(:product)
+      product = create(:product, stores: Spree::Store.all)
       product.taxons << taxon_1
 
       visit spree.admin_products_path

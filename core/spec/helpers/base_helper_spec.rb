@@ -180,7 +180,7 @@ describe Spree::BaseHelper, type: :helper do
       # controller_name is used by this method to infer what it is supposed
       # to be generating meta_data_tags for
       text = FFaker::Lorem.paragraphs(2).join(' ')
-      @test = Spree::Product.new(description: text)
+      @test = Spree::Product.new(description: text, stores: [current_store])
       tags = Nokogiri::HTML.parse(meta_data_tags)
       content = tags.css('meta[name=description]').first['content']
       assert content.length <= 160, 'content length is not truncated to 160 characters'
@@ -191,7 +191,7 @@ describe Spree::BaseHelper, type: :helper do
     let(:current_currency) { 'USD' }
     let(:image) { create(:image, position: 1) }
     let(:product) do
-      create(:product).tap { |product| product.master.images << image }
+      create(:product, stores: [current_store]).tap { |product| product.master.images << image }
     end
 
     it 'renders open graph meta data tags for PDP' do
@@ -244,7 +244,7 @@ describe Spree::BaseHelper, type: :helper do
   end
 
   describe '#display_price' do
-    let!(:product) { create(:product) }
+    let!(:product) { create(:product, stores: [current_store]) }
     let(:current_currency) { 'USD' }
     let(:current_price_options) { { tax_zone: current_tax_zone } }
 
@@ -307,7 +307,7 @@ describe Spree::BaseHelper, type: :helper do
   end
 
   describe '#default_image_for_product_or_variant' do
-    let(:product) { build :product }
+    let(:product) { build :product, stores: [current_store] }
     let(:variant) { build :variant, product: product }
 
     subject(:default_image) { default_image_for_product_or_variant(product_or_variant) }
