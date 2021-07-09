@@ -4,7 +4,7 @@ module Spree
       module Platform
         class OrdersController < ResourceController
           before_action -> { doorkeeper_authorize! :write, :admin }, only: WRITE_ACTIONS << :advance
-          before_action :find_order
+          before_action :load_order_with_lock, only: [:advance]
 
           include Spree::Api::V2::Storefront::OrderConcern
 
@@ -26,8 +26,12 @@ module Spree
             [:line_items]
           end
 
-          def find_order
-            @order = model_class.find_by(number: params[:id])
+          def load_order(lock: false)
+            @order = Spree::Order.lock(lock).find_by!(number: params[:id])
+          end
+
+          def load_order_with_lock
+            load_order(lock: true)
           end
 
           def advance_service

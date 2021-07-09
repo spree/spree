@@ -33,5 +33,5 @@ env:
 
 rules:
   space-before-function-paren: off
-  no-var: 1
+  no-var: off
   semi: off

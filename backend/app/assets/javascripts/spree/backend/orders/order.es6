@@ -9,16 +9,18 @@ window.Spree.advanceOrder = function() {
     }
   })
     .then(response => {
-      window.location.reload()
-      if (response.ok !== true) {
-        console.log(response)
+      if (response.ok === true) {
+        window.location.reload()
+      } else {
+        console.log(`Response: ${response}`)
       }
     })
     .catch(err => {
-      console.error(err);
+      console.error(`Error: ${err}`);
     })
 }
 
+// eslint-disable-next-line no-unused-vars
 function addVariant () {
   $('#stock_details').hide()
   const variantId = $('select.variant_autocomplete').val()
