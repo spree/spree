@@ -3,8 +3,7 @@ require 'spec_helper'
 describe 'Orders Listing', type: :feature do
   stub_authorization!
 
-  let(:other_store_a) { create(:store) }
-  let(:other_store_b) { create(:store) }
+  let(:other_store) { create(:store, url: 'another-store.lvh.me') }
 
   let(:order1) do
     create :order_with_line_items,
@@ -23,7 +22,7 @@ describe 'Orders Listing', type: :feature do
 
   let(:order3) do
     create :order,
-           store: other_store_a,
+           store: other_store,
            created_at: 1.day.ago,
            completed_at: 1.day.ago,
            number: 'R300'
@@ -31,7 +30,7 @@ describe 'Orders Listing', type: :feature do
 
   let(:order4) do
     create :order,
-           store: other_store_b,
+           store: other_store,
            created_at: 1.day.ago,
            completed_at: 1.day.ago,
            number: 'R400'
@@ -85,6 +84,23 @@ describe 'Orders Listing', type: :feature do
     end
   end
 
+  describe 'switching store' do
+    before do
+      Capybara.app_host = 'http://another-store.lvh.me'
+      visit spree.admin_orders_path
+    end
+
+    after { Capybara.app_host = nil }
+
+    it 'shows orders from the current store only' do
+      expect(page).to have_content('R300')
+      expect(page).to have_content('R400')
+
+      expect(page).not_to have_content('R100')
+      expect(page).not_to have_content('R200')
+    end
+  end
+
   describe 'searching orders' do
     it 'is able to search orders' do
       fill_in 'q_number_cont', with: 'R200'
@@ -120,15 +136,6 @@ describe 'Orders Listing', type: :feature do
       end
       # Insure the non risky order is not present
       expect(page).not_to have_content('R200')
-    end
-
-    it 'is able to show orders from all stores' do
-      check 'q_all_stores'
-      click_on 'Filter Results'
-
-      expect(page).to have_checked_field(id: 'q_all_stores')
-      expect(page).to have_content('R300')
-      expect(page).to have_content('R400')
     end
 
     it 'is able to filter on variant_sku' do

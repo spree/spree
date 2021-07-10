@@ -6,7 +6,7 @@ describe 'Customer Details', type: :feature, js: true do
   let(:store) { Spree::Store.default }
   let!(:country) { store.default_country }
   let!(:state) { create(:state, name: 'Alabama', country: country, abbr: 'AL') }
-  let!(:order) { create(:order, state: 'complete', completed_at: '2011-02-01 12:36:15') }
+  let!(:order) { create(:order, state: 'complete', completed_at: '2011-02-01 12:36:15', store: store) }
   let!(:product) { create(:product_in_stock, stores: [store]) }
   # We need a unique name that will appear for the customer dropdown
   let!(:ship_address) { create(:address, country: country, state: state, first_name: 'Rumpelstiltskin') }

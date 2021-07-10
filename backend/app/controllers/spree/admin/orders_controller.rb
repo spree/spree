@@ -1,6 +1,8 @@
 module Spree
   module Admin
     class OrdersController < Spree::Admin::BaseController
+      include Spree::Admin::OrderConcern
+
       before_action :initialize_order_events
       before_action :load_order, only: %i[
         edit update cancel resume approve resend open_adjustments
@@ -45,11 +47,7 @@ module Spree
           params[:q][:completed_at_lt] = params[:q].delete(:created_at_lt)
         end
 
-        @search = if params[:q][:all_stores] == '1'
-                    Spree::Order.preload(:user).accessible_by(current_ability, :index).ransack(params[:q])
-                  else
-                    Spree::Order.preload(:user).where(store_id: current_store.id).accessible_by(current_ability, :index).ransack(params[:q])
-                  end
+        @search = scope.preload(:user).accessible_by(current_ability, :index).ransack(params[:q])
 
         # lazy loading other models here (via includes) may result in an invalid query
         # e.g. SELECT  DISTINCT DISTINCT "spree_orders".id, "spree_orders"."created_at" AS alias_0 FROM "spree_orders"
@@ -160,7 +158,7 @@ module Spree
       private
 
       def scope
-        current_store.orders
+        current_store.orders.accessible_by(current_ability, :index)
       end
 
       def order_params
@@ -169,7 +167,7 @@ module Spree
       end
 
       def load_order
-        @order = Spree::Order.includes(:adjustments).find_by!(number: params[:id])
+        @order = scope.includes(:adjustments).find_by!(number: params[:id])
         authorize! action, @order
       end
 

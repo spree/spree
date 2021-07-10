@@ -6,7 +6,8 @@ describe Spree::Admin::Orders::CustomerDetailsController, type: :controller do
   context 'with authorization' do
     stub_authorization!
 
-    let(:user) { mock_model(Spree.user_class) }
+    let(:store) { Spree::Store.default }
+    let(:user) { create(:user) }
 
     let(:order) do
       mock_model(
@@ -15,10 +16,7 @@ describe Spree::Admin::Orders::CustomerDetailsController, type: :controller do
         number: 'R123456789',
         billing_address: mock_model(Spree::Address)
       )
-    end
-
-    before do
-      allow(Spree::Order).to receive_message_chain(:includes, find_by!: order)
+      create(:order, total: 100, number: 'R123456789', store: store)
     end
 
     describe '#update' do

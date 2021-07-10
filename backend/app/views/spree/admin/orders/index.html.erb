@@ -136,13 +136,6 @@
       </div>
 
       <div class="col-12">
-        <%= f.field_container :all_stores do %>
-          <div class="custom-control custom-checkbox">
-            <%= f.check_box :all_stores, {checked: params[:q][:all_stores] == '1', class: 'custom-control-input'}, '1', '0' %>
-            <%= f.label :all_stores, Spree.t('admin.show_orders_for_all_stores'), class: 'custom-control-label' %>
-          </div>
-        <% end %>
-
         <%= f.field_container :completed_at_not_null do %>
           <div class="custom-control custom-checkbox">
             <%= f.check_box :completed_at_not_null, {checked: @show_only_completed, class: 'custom-control-input'}, '1', '0' %>

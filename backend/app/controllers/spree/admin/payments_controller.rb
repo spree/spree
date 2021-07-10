@@ -2,8 +2,9 @@ module Spree
   module Admin
     class PaymentsController < Spree::Admin::BaseController
       include Spree::Backend::Callbacks
+      include Spree::Admin::OrderConcern
 
-      before_action :load_order, only: [:create, :new, :index, :fire]
+      before_action :load_order
       before_action :load_payment, except: [:create, :new, :index]
       before_action :load_data
       before_action :can_not_transition_without_customer_info
@@ -99,14 +100,8 @@ module Spree
         end
       end
 
-      def load_order
-        @order = Order.find_by!(number: params[:order_id])
-        authorize! action, @order
-        @order
-      end
-
       def load_payment
-        @payment = Payment.find_by!(number: params[:id])
+        @payment = @order.payments.find_by!(number: params[:id])
       end
 
       def model_class

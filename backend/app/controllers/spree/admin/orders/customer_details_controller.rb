@@ -2,6 +2,8 @@ module Spree
   module Admin
     module Orders
       class CustomerDetailsController < Spree::Admin::BaseController
+        include Spree::Admin::OrderConcern
+
         before_action :load_order
         before_action :load_user, only: :update, unless: :guest_checkout?
 
@@ -40,10 +42,6 @@ module Spree
             bill_address_attributes: permitted_address_attributes,
             ship_address_attributes: permitted_address_attributes
           )
-        end
-
-        def load_order
-          @order = Order.includes(:adjustments).find_by!(number: params[:order_id])
         end
 
         def model_class
