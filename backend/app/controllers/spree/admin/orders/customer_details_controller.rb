@@ -18,6 +18,7 @@ module Spree
         end
 
         def update
+          params[:order][:user_id] = nil if guest_checkout?
           if @order.update(order_params)
             @order.associate_user!(@user, @order.email.blank?) unless guest_checkout?
             @order.next if @order.address?
