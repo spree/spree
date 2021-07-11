@@ -76,7 +76,7 @@ module Spree
         @order.refresh_shipment_rates(ShippingMethod::DISPLAY_ON_BACK_END) unless @order.completed?
 
         if @order.shipments.shipped.exists?
-          redirect_to edit_admin_order_url(@order)
+          redirect_to spree.edit_admin_order_url(@order)
         end
       end
 
@@ -85,7 +85,7 @@ module Spree
           @order.update_with_updater!
           unless @order.completed?
             # Jump to next step if order is not completed.
-            redirect_to admin_order_customer_path(@order) and return
+            redirect_to spree.admin_order_customer_path(@order) and return
           end
         elsif @order.line_items.empty?
           @order.errors.add(:line_items, Spree.t('errors.messages.blank'))

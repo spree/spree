@@ -19,7 +19,7 @@ module Spree
           end
         end
         flash[:success] = Spree.t('notice_messages.prices_saved')
-        redirect_to admin_product_path(parent)
+        redirect_to spree.admin_product_path(parent)
       end
     end
   end

@@ -25,7 +25,7 @@ module Spree
 
             if @order.errors.empty?
               flash[:success] = Spree.t('customer_details_updated')
-              redirect_to edit_admin_order_url(@order)
+              redirect_to spree.edit_admin_order_url(@order)
             else
               render action: :edit
             end

@@ -17,7 +17,7 @@ module Spree
         end
 
         respond_with(@variant) do |format|
-          format.html { redirect_to admin_product_variants_url(params[:product_id]) }
+          format.html { redirect_to spree.admin_product_variants_url(params[:product_id]) }
           format.js { render_js_for_destroy }
         end
       end
@@ -60,7 +60,7 @@ module Spree
       end
 
       def redirect_on_empty_option_values
-        redirect_to admin_product_variants_url(params[:product_id]) if @product.empty_option_values?
+        redirect_to spree.admin_product_variants_url(params[:product_id]) if @product.empty_option_values?
       end
     end
   end

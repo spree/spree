@@ -68,15 +68,15 @@ module Spree
 
         if @new.persisted?
           flash[:success] = Spree.t('notice_messages.product_cloned')
-          redirect_to edit_admin_product_url(@new)
+          redirect_to spree.edit_admin_product_url(@new)
         else
           flash[:error] = Spree.t('notice_messages.product_not_cloned', error: @new.errors.full_messages.to_sentence)
-          redirect_to admin_products_url
+          redirect_to spree.admin_products_url
         end
       rescue ActiveRecord::RecordInvalid => e
         # Handle error on uniqueness validation on product fields
         flash[:error] = Spree.t('notice_messages.product_not_cloned', error: e.message)
-        redirect_to admin_products_url
+        redirect_to spree.admin_products_url
       end
 
       def stock
@@ -85,7 +85,7 @@ module Spree
         @stock_locations = StockLocation.accessible_by(current_ability)
         if @stock_locations.empty?
           flash[:error] = Spree.t(:stock_management_requires_a_stock_location)
-          redirect_to admin_stock_locations_path
+          redirect_to spree.admin_stock_locations_path
         end
       end
 

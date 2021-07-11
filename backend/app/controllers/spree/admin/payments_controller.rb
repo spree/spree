@@ -49,7 +49,7 @@ module Spree
 
             saved_payments.each { |payment| payment.process! if payment.reload.checkout? && @order.complete? }
             flash[:success] = flash_message_for(saved_payments.first, :successfully_created)
-            redirect_to admin_order_payments_path(@order)
+            redirect_to spree.admin_order_payments_path(@order)
           else
             @payment ||= @order.payments.build(object_params)
             invoke_callbacks(:create, :fails)
@@ -76,7 +76,7 @@ module Spree
       rescue Spree::Core::GatewayError => ge
         flash[:error] = ge.message.to_s
       ensure
-        redirect_to admin_order_payments_path(@order)
+        redirect_to spree.admin_order_payments_path(@order)
       end
 
       private
