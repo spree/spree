@@ -1,7 +1,7 @@
 module Spree
   class Order < Spree::Base
     module CurrencyUpdater
-      extend ActiveSupport::Concern
+      extend ActiveSupport::Concern # FIXME: this module is not required to be a concern
 
       included do
         def homogenize_line_item_currencies
