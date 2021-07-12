@@ -11,7 +11,7 @@
     </thead>
     <tbody>
       <tr>
-        <td>{{variant.name}}</td>
+        <td>{{ variant.attributes.name }} ({{ variant.attributes.sku }})</td>
         {{#if variant.track_inventory }}
           {{#if variant.purchasable }}
             <td class="text-center">

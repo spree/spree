@@ -210,13 +210,16 @@ Spree::Core::Engine.add_routes do
         # Order API
         resources :orders do
           member do
-            put :next
-            put :advance
-            put :approve
-            put :cancel
-            put :empty
-            put :apply_coupon_code
-            put :remove_coupon_code
+            post    :add_item
+            delete  :remove_line_item
+            delete  :remove_coupon_code
+            patch   :set_quantity
+            patch   :apply_coupon_code
+            put     :advance
+            put     :next
+            put     :approve
+            put     :cancel
+            put     :empty
           end
         end
         resources :line_items

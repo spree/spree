@@ -23,7 +23,6 @@
 //= require spree
 //= require spree/backend/spree-select2
 //= require spree/backend/address_states
-//= require spree/backend/adjustments
 //= require spree/backend/admin
 //= require spree/backend/global/_index
 //= require spree/backend/calculator
@@ -31,8 +30,6 @@
 //= require spree/backend/gateway
 //= require spree/backend/general_settings
 //= require spree/backend/handlebar_extensions
-//= require spree/backend/line_items
-//= require spree/backend/line_items_on_order_edit
 //= require spree/backend/multi_currency
 //= require spree/backend/option_type_autocomplete
 //= require spree/backend/option_value_picker

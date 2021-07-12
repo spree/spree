@@ -49,7 +49,6 @@ $.fn.variantAutocomplete = function() {
       },
       processResults: function(json) {
         formatDataForVariants(json.included)
-
         window.variants = json.included
         return { results: json.included }
       }

@@ -1,3 +1,3 @@
 //= require spree/backend/variants/variant_data_formatting
-//= require spree/backend/variant_autocomplete
-//= require spree/backend/variant_management
+//= require spree/backend/variants/variant_autocomplete
+//= require spree/backend/variants/variant_management
