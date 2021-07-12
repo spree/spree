@@ -45,7 +45,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Add line Item to order
 function addVariant () {
-  $('#stock_details').hide()
   var variantId = $('select.variant_autocomplete').val()
   var quantity = $('input#variant_quantity').val()
 

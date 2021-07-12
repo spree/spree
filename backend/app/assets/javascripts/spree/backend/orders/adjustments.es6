@@ -2,6 +2,8 @@
 
 document.addEventListener('DOMContentLoaded', function() {
   const applyCouponButton = document.querySelector('[data-hook=adjustments_new_coupon_code] #add_coupon_code')
+  if (applyCouponButton == null) return
+
   applyCouponButton.addEventListener('click', processCoupon)
 })
 

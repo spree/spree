@@ -50,7 +50,7 @@ const addLineItem = (variantId, quantity) => {
       if (response.ok === true) {
         window.Spree.advanceOrder()
       } else {
-        console.log(`Response: ${response}`)
+        flashAlertErrorResponse(response)
       }
     })
     .catch(err => console.error(`Error: ${err}`))
@@ -84,7 +84,7 @@ const adjustLineItemQuantity = function(lineItemId, quantity) {
       if (response.ok === true) {
         window.Spree.advanceOrder()
       } else {
-        console.log(`Response: ${response}`)
+        flashAlertErrorResponse(response)
       }
     })
     .catch(err => console.error(`Error: ${err}`))
