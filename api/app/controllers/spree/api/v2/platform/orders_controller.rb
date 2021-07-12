@@ -12,7 +12,7 @@ module Spree
           before_action :load_order_with_lock, only: %i[next advance complete update
                                                         add_item empty remove_line_item
                                                         apply_coupon_code set_quantity
-                                                        remove_coupon_code]
+                                                        remove_coupon_code approve]
 
           def create
             spree_authorize! :create, Spree::Order
@@ -88,6 +88,13 @@ module Spree
             result = complete_service.call(order: @order)
 
             render_order(result)
+          end
+
+          def approve
+            spree_authorize! :update, @order
+            @order.approved_by(spree_current_user)
+
+            render_serialized_payload { serialize_resource(@order) }
           end
 
           def empty
