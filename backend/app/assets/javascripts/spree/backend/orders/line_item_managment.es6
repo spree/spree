@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var variant = _.find(window.variants, function (variant) {
       return variant.id === variantId
     })
-    $('#stock_details').html(variantLineItemTemplate({ variant: variant }))
+    $('#stock_details').html(variantLineItemTemplate({ variant: variant.attributes }))
     $('#stock_details').show()
     $('button.add_variant').click(addVariant)
   })

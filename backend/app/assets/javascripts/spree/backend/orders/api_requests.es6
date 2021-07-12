@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
 /* global order_number */
 
@@ -139,10 +140,13 @@ const addCoupon = function(couponCode) {
       if (response.ok === true) {
         window.location.reload()
       } else {
-        console.log(`Response: ${response}`)
+        flashAlertErrorResponse(response)
       }
     })
-    .catch(err => console.error(`Error: ${err}`))
+    .catch(err => {
+      show_flash('error', 'There was a problem adding this coupon code.')
+      console.error(`Error: ${err}`)
+    })
 }
 
 //
