@@ -25,4 +25,20 @@
   </div>
 </div>
 
+<% if @user.addresses.present? %>
+  <div data-hook="admin_user_existing_addresses" id="admin_user_edit_existing_addresses">
+    <div data-hook="admin_user_addresses_edit_form">
+      <%= form_for [:admin, @user], as: :user, url: update_addresses_admin_user_url(@user), method: :put do |f| %>
+        <%= render partial: 'existing_addresses', locals: { f: f } %>
+
+        <div class="form-actions text-center card bg-light mb-3" data-hook="admin_user_addresses_edit_form_button">
+          <div class="card-body">
+            <%= render partial: 'spree/admin/shared/edit_resource_links', locals: { collection_url: spree.admin_users_url } %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>
+
 <%= render 'spree/admin/users/lifetime_stats' %>
