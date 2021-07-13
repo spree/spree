@@ -2,6 +2,7 @@ module Spree
   class StoreController < Spree::BaseController
     include Spree::Core::ControllerHelpers::Order
     include Spree::LocaleUrls
+    include Spree::CacheHelper
 
     helper 'spree/locale'
     helper 'spree/currency'
