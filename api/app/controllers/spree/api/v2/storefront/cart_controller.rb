@@ -50,9 +50,13 @@ module Spree
           def empty
             spree_authorize! :update, spree_current_order, order_token
 
-            empty_cart_service.call(order: spree_current_order)
-
-            render_serialized_payload { serialized_current_order }
+            result = empty_cart_service.call(order: spree_current_order)
+            
+            if result.success?
+              render_serialized_payload { serialized_current_order }
+            else
+              render_error_payload(result.error)
+            end
           end
 
           def set_quantity
