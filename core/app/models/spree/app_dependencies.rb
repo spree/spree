@@ -13,7 +13,7 @@ module Spree
       :completed_order_finder, :order_sorter, :cart_compare_line_items_service, :collection_paginator, :products_sorter,
       :products_finder, :taxon_finder, :line_item_by_variant_finder, :cart_estimate_shipping_rates_service,
       :account_create_address_service, :account_update_address_service, :account_create_service, :account_update_service,
-      :address_finder, :collection_sorter, :error_handler, :current_store_finder
+      :address_finder, :collection_sorter, :error_handler, :current_store_finder, :cart_empty_service
     ].freeze
 
     attr_accessor *INJECTION_POINTS
@@ -41,6 +41,7 @@ module Spree
       @cart_remove_line_item_service = 'Spree::Cart::RemoveLineItem'
       @cart_set_item_quantity_service = 'Spree::Cart::SetQuantity'
       @cart_estimate_shipping_rates_service = 'Spree::Cart::EstimateShippingRates'
+      @cart_empty_service = 'Spree::Cart::Empty'
 
       # checkout
       @checkout_next_service = 'Spree::Checkout::Next'

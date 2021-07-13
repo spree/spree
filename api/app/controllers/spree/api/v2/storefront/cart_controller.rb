@@ -50,9 +50,7 @@ module Spree
           def empty
             spree_authorize! :update, spree_current_order, order_token
 
-            # TODO: we should extract this logic into service and let
-            # developers overwrite it
-            spree_current_order.empty!
+            empty_cart_service.call(order: spree_current_order)
 
             render_serialized_payload { serialized_current_order }
           end
@@ -126,6 +124,10 @@ module Spree
 
           def add_item_service
             Spree::Api::Dependencies.storefront_cart_add_item_service.constantize
+          end
+
+          def empty_cart_service
+            Spree::Api::Dependencies.storefront_cart_empty_service.constantize
           end
 
           def set_item_quantity_service
