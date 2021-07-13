@@ -3,8 +3,6 @@ module Spree
     extend ActiveSupport::Concern
 
     included do
-      scope :for_store, ->(store) { joins(:stores).where(Store.table_name => { id: store.id }) }
-
       validate :must_have_one_store, unless: :disable_store_presence_validation?
     end
 

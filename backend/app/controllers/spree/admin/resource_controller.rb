@@ -64,9 +64,11 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
   end
 
   def update_positions
+    base_scope = model_class.try(:for_store, current_store) || model_class
+
     ApplicationRecord.transaction do
       params[:positions].each do |id, index|
-        model_class.find(id).set_list_position(index)
+        base_scope.find(id).set_list_position(index)
       end
     end
 
@@ -154,7 +156,9 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
 
   def parent
     if parent_data.present?
-      @parent ||= parent_data[:model_class].
+      base_scope = parent_data[:model_class].try(:for_store, current_store) || parent_data[:model_class]
+
+      @parent ||= base_scope.
                   # Don't use `find_by_attribute_name` to workaround globalize/globalize#423 bug
                   send(:find_by, parent_data[:find_by].to_s => params["#{resource.model_name}_id"])
       instance_variable_set("@#{resource.model_name}", @parent)
@@ -165,7 +169,8 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
     if parent_data.present?
       parent.send(controller_name).find(params[:id])
     else
-      model_class.find(params[:id])
+      base_scope = model_class.try(:for_store, current_store) || model_class
+      base_scope.find(params[:id])
     end
   end
 
