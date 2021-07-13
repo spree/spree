@@ -145,7 +145,7 @@ module Spree
       sign_in_as_admin!
 
       it 'can create' do
-        api_post :create, taxonomy_id: taxonomy.id, taxon: { name: 'Colors' }
+        api_post :create, taxonomy_id: taxonomy.id, taxon: { name: 'Colors', position: 1 }
         expect(json_response).to have_attributes(attributes)
         expect(response.status).to eq(201)
 
@@ -154,14 +154,19 @@ module Spree
 
         expect(taxon.parent_id).to eq taxonomy.root.id
         expect(taxon.taxonomy_id).to eq taxonomy.id
+        expect(taxon.position).to eq 1
       end
 
       it 'can update the position in the list' do
         taxonomy.root.children << taxon2
-        api_put :update, taxonomy_id: taxonomy.id, id: taxon.id, taxon: { parent_id: taxon.parent_id, child_index: 2 }
+        api_put :update, taxonomy_id: taxonomy.id, id: taxon.id, taxon: { parent_id: taxon.parent_id, child_index: 2, position: 2 }
+
+        taxon_positions = taxonomy.reload.root.children.map { |taxon| [taxon.name, taxon.position] }
+
         expect(response.status).to eq(200)
         expect(taxonomy.reload.root.children[0]).to eql rust_taxon
         expect(taxonomy.reload.root.children[1]).to eql taxon2
+        expect(taxon_positions).to eql [['Rust', 0], ['Rails', 1], ['Ruby', 2]]
       end
 
       it 'cannot create a new taxon with invalid attributes' do

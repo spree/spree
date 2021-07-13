@@ -49,6 +49,7 @@ module Spree
         def update
           authorize! :update, taxon
           if taxon.update(taxon_params)
+            update_positions(taxon.parent.children)
             respond_with(taxon, status: 200, default_template: :show)
           else
             invalid_resource!(taxon)
@@ -92,6 +93,12 @@ module Spree
             params.require(:taxon).permit(permitted_taxon_attributes)
           else
             {}
+          end
+        end
+
+        def update_positions(taxons)
+          taxons.each_with_index do |taxon, index|
+            taxon.update(position: index)
           end
         end
       end

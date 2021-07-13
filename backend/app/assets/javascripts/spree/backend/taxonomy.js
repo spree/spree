@@ -23,6 +23,7 @@ function handleMove (e, data) {
       _method: 'put',
       'taxon[parent_id]': newParent.prop('id'),
       'taxon[child_index]': position,
+      'taxon[position]': position,
       token: Spree.api_key
     }
   }).fail(function () {
@@ -45,6 +46,7 @@ function handleCreate (e, data) {
       'taxon[name]': name,
       'taxon[parent_id]': newParent.prop('id'),
       'taxon[child_index]': position,
+      'taxon[position]': position,
       token: Spree.api_key
     }
   }).done(function (data) {
