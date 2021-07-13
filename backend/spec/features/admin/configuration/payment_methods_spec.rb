@@ -66,43 +66,39 @@ describe 'Payment Methods', type: :feature do
 
       expect(page).to have_select('payment_method_store_ids', selected: store.unique_name)
     end
-
-    it 'is able to create a new payment method with 2 stores' do
-      within find('#contentHeader') do
-        click_link 'admin_new_payment_methods_link'
-      end
-
-      expect(page).to have_content('New Payment Method')
-      fill_in 'payment_method_name', with: 'check90'
-      fill_in 'payment_method_description', with: 'check90 desc'
-      select 'PaymentMethod::Check', from: 'gtwy-type'
-
-      select2 store_1.unique_name, from: 'Stores'
-      select2 store_3.unique_name, from: 'Stores'
-
-      click_button 'Create'
-      expect(page).to have_content('successfully created!')
-      expect(page).to have_selector('li.select2-selection__choice', text: store_1.unique_name)
-      expect(page).not_to have_selector('li.select2-selection__choice', text: store_2.unique_name)
-      expect(page).to have_selector('li.select2-selection__choice', text: store_3.unique_name)
-    end
   end
 
   context 'admin editing a payment method', js: true do
     before do
-      create(:check_payment_method)
-      refresh
-
-      within('table#listing_payment_methods') do
-        click_icon(:edit)
-      end
+      visit spree.edit_admin_payment_method_path(check_payment_method)
     end
+
+    let!(:check_payment_method) { create(:check_payment_method, name: 'Check') }
 
     it 'is able to edit an existing payment method' do
       fill_in 'payment_method_name', with: 'Payment 99'
       click_button 'Update'
       expect(page).to have_content('successfully updated!')
       expect(page).to have_field('payment_method_name', with: 'Payment 99')
+
+      expect(check_payment_method.reload.stores).to contain_exactly(store)
+    end
+
+    it 'is able to associate payment method with 2 stores' do
+      expect(page).to have_content('Check')
+
+      select2_open label: 'Stores'
+      select2_search store_1.unique_name, from: 'Stores'
+      select2_select store_1.unique_name, from: 'Stores', match: :first
+
+      select2_open label: 'Stores'
+      select2_search store_3.unique_name, from: 'Stores'
+      select2_select store_3.unique_name, from: 'Stores', match: :first
+
+      click_button 'Update'
+      expect(page).to have_content('successfully updated!')
+
+      expect(check_payment_method.reload.stores).to contain_exactly(store, store_1, store_3)
     end
 
     it 'displays validation errors' do

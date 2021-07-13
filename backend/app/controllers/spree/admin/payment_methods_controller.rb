@@ -10,7 +10,7 @@ module Spree
       def create
         @payment_method = params[:payment_method].delete(:type).constantize.new(payment_method_params)
         @object = @payment_method
-        set_store
+        ensure_current_store
         invoke_callbacks(:create, :before)
         if @payment_method.save
           invoke_callbacks(:create, :after)
@@ -30,7 +30,7 @@ module Spree
             type: payment_method_type,
             updated_at: Time.current
           )
-          @payment_method = PaymentMethod.find(params[:id])
+          @payment_method = scope.find(params[:id])
         end
 
         attributes = payment_method_params.merge(preferences_params)
@@ -39,6 +39,7 @@ module Spree
         end
 
         if @payment_method.update(attributes)
+          ensure_current_store
           invoke_callbacks(:update, :after)
           flash[:success] = Spree.t(:successfully_updated, resource: Spree.t(:payment_method))
           redirect_to spree.edit_admin_payment_method_path(@payment_method)
