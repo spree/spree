@@ -37,7 +37,9 @@ module Spree
           user = try_spree_current_user
           return unless user
 
-          @current_oauth_token ||= Doorkeeper::AccessToken.active_for(user).where(expires_in: nil).last || Doorkeeper::AccessToken.create!(resource_owner_id: user.id)
+          @current_oauth_token ||= 
+            Doorkeeper::AccessToken.active_for(user).where(expires_in: nil).last || 
+              Doorkeeper::AccessToken.create!(resource_owner_id: user.id)
         end
 
         def store_location
