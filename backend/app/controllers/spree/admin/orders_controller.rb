@@ -6,7 +6,7 @@ module Spree
       before_action :initialize_order_events
       before_action :load_order, only: %i[
         edit update cancel resume approve resend open_adjustments
-        close_adjustments cart store set_store channel set_channel
+        close_adjustments cart channel set_channel
       ]
 
       respond_to :html
@@ -133,16 +133,6 @@ module Spree
         flash[:success] = Spree.t(:all_adjustments_closed)
 
         respond_with(@order) { |format| format.html { redirect_back fallback_location: spree.admin_order_adjustments_url(@order) } }
-      end
-
-      def set_store
-        if @order.update(store_id: params[:order][:store_id])
-          flash[:success] = flash_message_for(@order, :successfully_updated)
-        else
-          flash[:error] = @order.errors.full_messages.join(', ')
-        end
-
-        redirect_to store_admin_order_url(@order)
       end
 
       def set_channel
