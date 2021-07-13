@@ -96,7 +96,7 @@
 <script>
   window.addEventListener('DOMContentLoaded', function() {
     Spree.current_order_token = "<%= @order.token %>"
-    <% if flash.any? %>
+    <% if flash[:error].present? %>
       document.getElementById('overlay').classList.add('shown');
       document.getElementById('no-product-available').classList.add('shown');
       window.scrollTo(0, 0);
