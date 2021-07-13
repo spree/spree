@@ -19,7 +19,7 @@ module Spree
           def title
             title_string = @title.present? ? @title : accurate_title
             if title_string.present?
-              if Spree::Config[:always_put_site_name_in_title]
+              if Spree::Config[:always_put_site_name_in_title] && !title_string.include?(default_title)
                 [title_string, default_title].join(" #{Spree::Config[:title_site_name_separator]} ")
               else
                 title_string
