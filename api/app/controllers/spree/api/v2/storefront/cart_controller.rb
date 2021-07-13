@@ -51,7 +51,7 @@ module Spree
             spree_authorize! :update, spree_current_order, order_token
 
             result = empty_cart_service.call(order: spree_current_order)
-            
+
             if result.success?
               render_serialized_payload { serialized_current_order }
             else
