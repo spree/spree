@@ -6,10 +6,10 @@ describe 'Payment Methods', type: :feature do
   let(:store) { Spree::Store.default }
   let!(:store_1) { create(:store) }
   let!(:store_2) { create(:store) }
-  let!(:store_3) { create(:store) }
+  let!(:store_3) { create(:store, url: 'another-store.lvh.me') }
 
-  let!(:payment_method_one) { create(:payment_method) }
-  let!(:payment_method_two) { create(:payment_method, name: 'Should Be MIA' ,stores: [store_3]) }
+  let!(:payment_method_one) { create(:payment_method, stores: [store]) }
+  let!(:payment_method_two) { create(:payment_method, name: 'Should Be MIA', stores: [store_3]) }
 
   before do
     visit spree.admin_payment_methods_path
@@ -20,16 +20,16 @@ describe 'Payment Methods', type: :feature do
       within('table#listing_payment_methods') do
         expect(page).to have_content(payment_method_one.name)
         expect(page).not_to have_content(payment_method_two.name)
+
+        Capybara.app_host = 'http://another-store.lvh.me'
+
+        visit spree.admin_payment_methods_path
+
+        expect(page).not_to have_content(payment_method_one.name)
+        expect(page).to have_content(payment_method_two.name)
+
+        Capybara.app_host = nil
       end
-    end
-
-    it 'is able to show payment methods for all stores using filter' do
-      check 'q_all_stores'
-      click_on 'Search'
-
-      expect(page).to have_checked_field(id: 'q_all_stores')
-      expect(page).to have_content(payment_method_one.name)
-      expect(page).to have_content(payment_method_two.name)
     end
   end
 

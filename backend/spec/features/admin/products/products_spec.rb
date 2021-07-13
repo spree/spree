@@ -3,7 +3,7 @@ require 'spec_helper'
 
 describe 'Products', type: :feature do
   let(:store) { Spree::Store.default }
-  let(:other_store) { create(:store)}
+  let(:other_store) { create(:store, name: 'Other Store', url: 'another-store.lvh.me') }
 
   context 'as admin user' do
     stub_authorization!
@@ -53,6 +53,18 @@ describe 'Products', type: :feature do
 
           expect(page).not_to have_content('Long T-Shirt')
         end
+
+        it 'lists product from the current store' do
+          Capybara.app_host = 'http://another-store.lvh.me'
+
+          visit spree.admin_products_path
+
+          expect(page).not_to have_content('apache baseball cap')
+          expect(page).not_to have_content('zomg shirt')
+          expect(page).to have_content('Long T-Shirt')
+
+          Capybara.app_host = nil
+        end
       end
 
       context 'currency displaying' do
@@ -94,24 +106,6 @@ describe 'Products', type: :feature do
 
         expect(page).to have_content('zomg shirt')
         expect(page).not_to have_content('apache baseball cap')
-      end
-
-      it 'filter is able to show products for all stores' do
-        create(:product, name: 'apache baseball cap')
-        create(:product, name: 'zomg shirt')
-        create(:product, name: 'Long T-Shirt', price: 15, stores: [other_store])
-
-        visit spree.admin_products_path
-        expect(page).to have_content('zomg shirt')
-        expect(page).to have_content('apache baseball cap')
-        expect(page).not_to have_content('Long T-Shirt')
-
-        find('label', text: 'Show Products for all stores').click
-        click_on 'Search'
-
-        expect(page).to have_content('zomg shirt')
-        expect(page).to have_content('apache baseball cap')
-        expect(page).to have_content('Long T-Shirt')
       end
 
       it 'is able to search products by their properties' do

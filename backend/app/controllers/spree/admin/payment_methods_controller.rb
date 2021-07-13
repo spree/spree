@@ -60,11 +60,7 @@ module Spree
         params[:q] ||= {}
         @collection = super.order(position: :asc)
 
-        @collection = if params[:q][:all_stores] == '1'
-                        super.order(position: :asc)
-                      else
-                        scope.order(position: :asc)
-                      end
+        @collection = scope.order(position: :asc)
 
         @search = @collection.ransack(params[:q])
         @collection = @search.result.page(params[:page]).per(params[:per_page])

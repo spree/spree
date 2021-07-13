@@ -11,19 +11,9 @@
     <%= search_form_for [:admin, @search] do |f| %>
       <%- locals = {f: f} %>
       <div data-hook="admin_payment_methods_index_search" class="row">
-        <div class="col-12">
-          <div class="form-group">
-            <%= f.label :name_cont, Spree.t('name') %>
-            <%= f.text_field :name_cont, size: 15, class: "form-control js-quick-search-target js-filterable" %>
-          </div>
-        </div>
-        <div class="col-12">
-          <%= f.field_container :all_stores do %>
-            <div class="custom-control custom-checkbox">
-              <%= f.check_box :all_stores, {checked: params[:q][:all_stores] == '1', class: 'custom-control-input'}, '1', '0' %>
-              <%= f.label :all_stores, Spree.t('admin.show_payment_methods_for_all_stores'), class: 'custom-control-label' %>
-            </div>
-          <% end %>
+        <div class="form-group">
+          <%= f.label :name_cont, Spree.t('name') %>
+          <%= f.text_field :name_cont, size: 15, class: "form-control js-quick-search-target js-filterable" %>
         </div>
       </div>
       <div data-hook="admin_products_index_search_buttons" class="form-actions">

@@ -96,7 +96,7 @@ module Spree
       end
 
       def find_resource
-        Product.with_deleted.friendly.find(params[:id])
+        current_store.products.with_deleted.friendly.find(params[:id])
       end
 
       def location_after_save
@@ -119,13 +119,7 @@ module Spree
 
         params[:q][:s] ||= 'name asc'
 
-        # Do not scope by store if the params filter is set to :all_stores,
-        # or we are looking to show deleted products. Deleted products do not have any stores attahced.
-        @collection = if params[:q][:all_stores] == '1' || params[:q][:deleted_at_null] == '0'
-                        super
-                      else
-                        scope
-                      end
+        @collection = scope
 
         # Don't delete params[:q][:deleted_at_null] here because it is used in view to check the
         # checkbox for 'q[deleted_at_null]'. This also messed with pagination when deleted_at_null is checked.

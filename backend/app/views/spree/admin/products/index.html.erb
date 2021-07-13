@@ -25,13 +25,6 @@
           </div>
         </div>
         <div class="col-12">
-          <%= f.field_container :all_stores do %>
-            <div class="custom-control custom-checkbox">
-              <%= f.check_box :all_stores, {checked: params[:q][:all_stores] == '1', class: 'custom-control-input'}, '1', '0' %>
-              <%= f.label :all_stores, Spree.t('admin.show_products_for_all_stores'), class: 'custom-control-label' %>
-            </div>
-          <% end %>
-
           <%= f.field_container :deleted_at_null do %>
             <div class="custom-control custom-checkbox">
               <%= f.check_box :deleted_at_null, {checked: params[:q][:deleted_at_null] == '0', class: 'custom-control-input'}, '0', '1' %>
