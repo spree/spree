@@ -243,6 +243,8 @@ describe 'Products', type: :feature do
         end
       end
 
+      let(:product) { Spree::Product.last }
+
       it 'allows an admin to create a new product' do
         fill_in 'product_name', with: 'Baseball Cap'
         fill_in 'product_sku', with: 'B100'
@@ -250,11 +252,14 @@ describe 'Products', type: :feature do
         fill_in 'product_available_on', with: '2012/01/24'
         select @shipping_category.name, from: 'product_shipping_category_id'
         click_button 'Create'
+
         expect(page).to have_content('successfully created!')
         expect(page).to have_field('product_price', with: '100.00')
-        expect(page).to have_select('product_store_ids', selected: store.name)
         expect(page).to have_select('product_cost_currency', selected: 'Euro (EUR)')
-        expect(Spree::Product.last.master.prices.last.currency).to eq('EUR')
+
+        expect(product.master.prices.last.currency).to eq('EUR')
+        expect(product.stores).to eq([store])
+
         click_button 'Update'
         expect(page).to have_content('successfully updated!')
       end

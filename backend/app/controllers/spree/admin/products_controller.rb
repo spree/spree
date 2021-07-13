@@ -97,7 +97,7 @@ module Spree
       end
 
       def find_resource
-        current_store.products.with_deleted.friendly.find(params[:id])
+        scope.with_deleted.friendly.find(params[:id])
       end
 
       def location_after_save
