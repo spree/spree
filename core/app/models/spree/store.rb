@@ -98,7 +98,7 @@ module Spree
       @formatted_url ||= if url.match(/http:\/\/|https:\/\//)
                            url
                          else
-                           Rails.env.development? ? "http://#{url}" : "https://#{url}"
+                           Rails.env.development? || Rails.env.test? ? "http://#{url}" : "https://#{url}"
                          end
     end
 

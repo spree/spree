@@ -3,7 +3,7 @@ require 'spec_helper'
 describe 'Orders Listing', type: :feature do
   stub_authorization!
 
-  let(:other_store) { create(:store, url: 'another-store.lvh.me') }
+  let(:other_store) { create(:store, name: 'Other Store', url: "another-store.lvh.me") }
 
   let(:order1) do
     create :order_with_line_items,
@@ -84,20 +84,27 @@ describe 'Orders Listing', type: :feature do
     end
   end
 
-  describe 'switching store' do
-    before do
-      Capybara.app_host = 'http://another-store.lvh.me'
-      visit spree.admin_orders_path
-    end
-
-    after { Capybara.app_host = nil }
-
+  describe 'switching store', js: true do
     it 'shows orders from the current store only' do
+      expect(page).to have_content('R100')
+      expect(page).to have_content('R200')
+
+      visit spree.admin_orders_path
+
+      Capybara.app_host = 'http://another-store.lvh.me'
+
+      find('a#storeSelectorDropdown').click
+      within('.dropdown-menu') { click_link other_store.unique_name }
+
+      expect(current_url).to match('another-store.lvh.me')
+
       expect(page).to have_content('R300')
       expect(page).to have_content('R400')
 
       expect(page).not_to have_content('R100')
       expect(page).not_to have_content('R200')
+
+      Capybara.app_host = nil
     end
   end
 
