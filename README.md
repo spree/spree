@@ -8,6 +8,7 @@
 * [Documentation](http://guides.spreecommerce.org)
 * [Integrations](https://spreecommerce.org/integrations/)
 * [Join our Slack community](http://slack.spreecommerce.org/)
+* [Support](https://guides.spreecommerce.org/support)
 
 [![Gem Version](https://badge.fury.io/rb/spree.svg)](https://badge.fury.io/rb/spree) [![Circle CI](https://circleci.com/gh/spree/spree.svg?style=shield)](https://circleci.com/gh/spree/spree/tree/master) [![Test Coverage](https://api.codeclimate.com/v1/badges/8277fc2bb0b1f777084f/test_coverage)](https://codeclimate.com/github/spree/spree/test_coverage)
 
@@ -17,11 +18,12 @@
 
 ![admin panel](guides/src/images/features/admin_panel_978@2x.jpg)
 
-* **[Headless Commerce](https://spreecommerce.org/use-cases/headless-ecommerce-api/)** - build mobile apps or custom storefronts in any technology
+* **[Headless Commerce](https://spreecommerce.org/use-cases/headless-ecommerce-api/)** - build mobile apps or custom storefronts in any technology, [JS/TS SDK available](https://github.com/spree/spree-storefront-api-v2-js-sdk)
 * **[PWA](https://spreecommerce.org/use-cases/spree-pwa-progressive-web-application/)** - offline shopping experiences like native mobile apps
 * **[Mobile-first Storefront](https://spreecommerce.org/spree-commerce-demo-explainer/)** - modern, ultra fast and responsive storefront designed for great UX as well as SEO
-* **Global Commerce** - multi currency and multi language support out of the box, different shipping methods / costs for different regions, advanced tax calculation
+* **[Global Commerce](https://spreecommerce.org/use-cases/international-sales-demo/)** - multi currency and multi language support out of the box, different shipping methods / costs for different regions, advanced tax calculation
 * **Multi-Store** - host multiple brands / stores on one Spree instance with different branding, configuration, payment methods, shipping options, product catalogs etc
+* **[Multi-vendor marketplace](https://spreecommerce.org/use-cases/multi-vendor-marketplace-demo/)** - run your own marketplace with multiple suppliers with dedicated Supplier Dashboard
 * **Responsive Admin Panel** - manage and curate products, users, orders, returns, shipments & more
 * **Orders** - robust system for orders, shipments, returns and refunds
 * **Carts** -  comprehensive and advanced discounts system
