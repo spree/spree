@@ -1,5 +1,7 @@
 module Spree
   class Store < Spree::Base
+    acts_as_paranoid
+
     MAILER_LOGO_CONTENT_TYPES = ['image/png', 'image/jpg', 'image/jpeg'].freeze
     FAVICON_CONTENT_TYPES = ['image/png', 'image/x-icon', 'image/vnd.microsoft.icon'].freeze
 

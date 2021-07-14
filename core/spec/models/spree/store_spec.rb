@@ -1,6 +1,17 @@
 require 'spec_helper'
 
 describe Spree::Store, type: :model do
+  describe 'deleting' do
+    subject { store.destroy }
+    let(:store) { build(:store) }
+
+    it 'is soft deleted' do
+      expect(subject.deleted_at).not_to be_nil
+    end
+    context 'there is a store with the shared products' do
+      it 'does not remove the shared products'
+    end
+  end
   describe 'validations' do
     describe 'favicon image' do
       it 'validates image properties' do
