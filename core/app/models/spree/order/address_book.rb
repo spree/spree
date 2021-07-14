@@ -2,7 +2,7 @@
 module Spree
   class Order < Spree::Base
     module AddressBook
-      extend ActiveSupport::Concern
+      extend ActiveSupport::Concern # FIXME: this module is not required to be a concern
 
       def clone_shipping_address
         if ship_address

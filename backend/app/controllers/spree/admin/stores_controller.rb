@@ -40,7 +40,7 @@ module Spree
 
         if @store.save
           flash[:success] = flash_message_for(@store, :successfully_created)
-          redirect_to admin_stores_path
+          redirect_to spree.admin_stores_path
         else
           flash[:error] = "#{Spree.t('store_errors.unable_to_create')}: #{@store.errors.full_messages.join(', ')}"
           render :new
@@ -52,7 +52,7 @@ module Spree
 
         if @store.save
           flash[:success] = flash_message_for(@store, :successfully_updated)
-          redirect_to admin_stores_path
+          redirect_to spree.admin_stores_path
         else
           flash[:error] = "#{Spree.t('store_errors.unable_to_update')}: #{@store.errors.full_messages.join(', ')}"
           redirect_to spree.edit_admin_store_path(@store)
@@ -65,7 +65,7 @@ module Spree
         if @store.destroy
           flash[:success] = flash_message_for(@store, :successfully_removed)
           respond_with(@store) do |format|
-            format.html { redirect_to admin_stores_path }
+            format.html { redirect_to spree.admin_stores_path }
             format.js { render_js_for_destroy }
           end
         else
@@ -88,7 +88,7 @@ module Spree
           flash[:error] = "#{Spree.t(:store_not_set_as_default, store: store.name)} #{store.errors.full_messages.join(', ')}"
         end
 
-        redirect_to admin_stores_path
+        redirect_to spree.admin_stores_path
       end
 
       protected

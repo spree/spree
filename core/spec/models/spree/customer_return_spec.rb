@@ -11,7 +11,7 @@ describe Spree::CustomerReturn, type: :model do
 
       let(:customer_return) { build(:customer_return) }
 
-      let(:inventory_unit)  { build(:inventory_unit) }
+      let(:inventory_unit)  { create(:inventory_unit) }
       let(:return_item)     { build(:return_item, inventory_unit: inventory_unit) }
 
       before do
@@ -45,10 +45,10 @@ describe Spree::CustomerReturn, type: :model do
 
       let(:customer_return)       { build(:customer_return) }
 
-      let(:first_inventory_unit)  { build(:inventory_unit) }
+      let(:first_inventory_unit)  { create(:inventory_unit) }
       let(:first_return_item)     { build(:return_item, inventory_unit: first_inventory_unit) }
 
-      let(:second_inventory_unit) { build(:inventory_unit, order: second_order) }
+      let(:second_inventory_unit) { create(:inventory_unit, order: second_order) }
       let(:second_return_item)    { build(:return_item, inventory_unit: second_inventory_unit) }
 
       before do

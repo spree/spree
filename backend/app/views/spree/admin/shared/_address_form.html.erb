@@ -37,8 +37,9 @@
 
 <% content_for :head do %>
   <script>
-    $(document).ready(function(){
+    document.addEventListener('DOMContentLoaded', function() {
+      updateAddressState('<%= s_or_b %>');
       $('#<%= s_or_b %>country select').on('change', function() { updateAddressState('<%= s_or_b %>'); });
-    });
+    })
   </script>
 <% end %>

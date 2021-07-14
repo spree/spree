@@ -22,7 +22,7 @@ module Spree
 
         if @store_credit.save
           flash[:success] = flash_message_for(@store_credit, :successfully_created)
-          redirect_to admin_user_store_credits_path(@user)
+          redirect_to spree.admin_user_store_credits_path(@user)
         else
           load_categories
           flash[:error] = Spree.t('store_credit.errors.unable_to_create')
@@ -36,7 +36,7 @@ module Spree
 
         if @store_credit.save
           flash[:success] = flash_message_for(@store_credit, :successfully_updated)
-          redirect_to admin_user_store_credits_path(@user)
+          redirect_to spree.admin_user_store_credits_path(@user)
         else
           load_categories
           flash[:error] = Spree.t('store_credit.errors.unable_to_update')
@@ -51,7 +51,7 @@ module Spree
         if @store_credit.destroy
           flash[:success] = flash_message_for(@store_credit, :successfully_removed)
           respond_with(@store_credit) do |format|
-            format.html { redirect_to admin_user_store_credits_path(@user) }
+            format.html { redirect_to spree.admin_user_store_credits_path(@user) }
             format.js { render_js_for_destroy }
           end
         else
@@ -72,7 +72,7 @@ module Spree
 
         unless @user
           flash[:error] = Spree.t(:user_not_found)
-          redirect_to admin_path
+          redirect_to spree.admin_path
         end
       end
 

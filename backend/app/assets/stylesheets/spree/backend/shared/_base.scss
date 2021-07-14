@@ -43,8 +43,8 @@
 [data-show-info] {
   color:  $primary;
   cursor: pointer;
+}
 
-  &:hover {
-    color: darken($primary, 10) !important;
-  }
+#contentHeaderRow {
+  min-height: 51px;
 }

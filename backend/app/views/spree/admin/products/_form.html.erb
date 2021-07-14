@@ -237,6 +237,13 @@
     <% end %>
   </div>
 
+  <p data-hook="admin_product_form_stores" class="omega two columns">
+    <%= f.field_container :stores, class: ['form-group'] do %>
+      <%= f.label :product_stores, Spree.t(:stores) %>
+      <%= collection_select(:product, :store_ids, @stores, :id, :unique_name, {}, { multiple: true, class: 'select2' }) %>
+    <% end %>
+  </p>
+
   <div data-hook="admin_product_form_meta">
     <div data-hook="admin_product_form_meta_title">
       <%= f.field_container :meta_title, class: ['form-group'] do %>
@@ -258,14 +265,6 @@
         <%= f.text_area :meta_description, class: 'form-control' %>
       <% end %>
     </div>
-
-    <p data-hook="admin_product_form_stores" class="omega two columns">
-      <%= f.field_container :stores, class: ['form-group'] do %>
-        <%= f.label :store_ids, Spree.t(:stores) %>
-        <%= f.select :store_ids, @stores.pluck(:name, :id), { include_blank: true }, { class: 'select2', multiple: true, "data-placeholder" => Spree.t(:select_stores) } %>
-      <% end %>
-    </p>
-
 
     <div data-hook="admin_product_form_additional_fields"></div>
 

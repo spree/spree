@@ -3,8 +3,9 @@ require 'spec_helper'
 describe 'Order Risk Analysis', type: :feature do
   stub_authorization!
 
+  let(:store) { Spree::Store.default }
   let!(:order) do
-    create(:completed_order_with_pending_payment)
+    create(:completed_order_with_pending_payment, store: store)
   end
 
   def visit_order
@@ -32,7 +33,7 @@ describe 'Order Risk Analysis', type: :feature do
       within find('#contentHeader') do
         click_button('Approve')
       end
-      
+
       expect(page).to have_content 'Approver'
       expect(page).to have_content 'Approved at'
       expect(page).to have_content 'Status: complete'

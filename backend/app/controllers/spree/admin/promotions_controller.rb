@@ -13,10 +13,10 @@ module Spree
 
         if @new_promo.errors.empty?
           flash[:success] = Spree.t('promotion_cloned')
-          redirect_to edit_admin_promotion_url(@new_promo)
+          redirect_to spree.edit_admin_promotion_url(@new_promo)
         else
           flash[:error] = Spree.t('promotion_not_cloned', error: @new_promo.errors.full_messages.to_sentence)
-          redirect_to admin_promotions_url(@new_promo)
+          redirect_to spree.admin_promotions_url(@new_promo)
         end
       end
 

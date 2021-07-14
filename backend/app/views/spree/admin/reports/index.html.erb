@@ -1,5 +1,5 @@
 <% content_for :page_title do %>
-  <%= Spree.t(:reports) %>
+  <%= Spree.t(:reports) %> <%= Spree.t('admin.reports.for', store_name: current_store.unique_name) %>
 <% end %>
 <div class="table-responsive">
   <table class="table">

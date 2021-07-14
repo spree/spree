@@ -1,5 +1,5 @@
 <% content_for :page_title do %>
-  <%= link_to Spree.t(:orders), admin_orders_path %> /
+  <%= link_to Spree.t(:orders), spree.admin_orders_path %> /
   <%= link_to @order.number, spree.edit_admin_order_path(@order) %>
 <% end %>
 
@@ -11,15 +11,6 @@
           Spree.t(:cart),
           cart_admin_order_url(@order),
           class: "#{'active' if current == :cart} nav-link" %>
-      </li>
-    <% end %>
-
-    <% if ((can?(:update, @order) && can?(:read, Spree::Store)) && (@order.shipments.size.zero? || @order.shipments.shipped.size.zero?)) %>
-      <li data-hook='admin_order_tabs_store_details'>
-        <%= link_to_with_icon 'store.svg',
-          Spree.t(:store),
-          store_admin_order_url(@order),
-          class: "#{'active' if current == :store} nav-link" %>
       </li>
     <% end %>
 

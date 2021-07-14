@@ -9,7 +9,7 @@ module Spree
         @stock_location.country = current_store.default_country
         unless @stock_location.country
           flash[:error] = Spree.t(:stock_locations_need_a_default_country)
-          redirect_to admin_stock_locations_path
+          redirect_to spree.admin_stock_locations_path
         end
       end
     end

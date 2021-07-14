@@ -734,7 +734,7 @@ module Spree
       end
       store ||= self.store
 
-      PaymentMethod.for_store(store).available_on_front_end.select { |pm| pm.available_for_order?(self) }
+      store.payment_methods.available_on_front_end.select { |pm| pm.available_for_order?(self) }
     end
 
     def credit_card_nil_payment?(attributes)

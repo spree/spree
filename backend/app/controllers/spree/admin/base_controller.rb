@@ -38,7 +38,7 @@ module Spree
 
       def flash_message_for(object, event_sym)
         resource_desc  = object.class.model_name.human
-        resource_desc += " \"#{object.name}\"" if object.respond_to?(:name) && object.name.present?
+        resource_desc += " \"#{object.name}\"" if (object.persisted? || object.destroyed?) && object.respond_to?(:name) && object.name.present? && !object.is_a?(Spree::Order)
         Spree.t(event_sym, resource: resource_desc)
       end
 
@@ -61,7 +61,7 @@ module Spree
       def can_not_transition_without_customer_info
         unless @order.billing_address.present?
           flash[:notice] = Spree.t(:fill_in_customer_info)
-          redirect_to edit_admin_order_customer_url(@order)
+          redirect_to spree.edit_admin_order_customer_url(@order)
         end
       end
 
