@@ -316,6 +316,8 @@ describe Spree::Order, type: :model do
     let(:order) { Spree::Order.create(email: 'test@example.com') }
     let(:promotion) { create :promotion, code: '10off' }
 
+    subject(:result) { order.empty! }
+
     before do
       promotion.orders << order
     end
@@ -325,8 +327,9 @@ describe Spree::Order, type: :model do
         order.update_columns(state: 'complete', completed_at: Time.current)
       end
 
-      it 'raises an exception' do
-        expect { order.empty! }.to raise_error(RuntimeError, Spree.t(:cannot_empty_completed_order))
+      it 'returns failure' do
+        expect(result.success?).to be false
+        expect(result.error.value).to eq Spree.t(:cannot_empty_completed_order)
       end
     end
 
@@ -342,7 +345,8 @@ describe Spree::Order, type: :model do
         expect(order.order_promotions.count).to be_zero
         expect(order.promo_total).to be_zero
         expect(order.item_total).to be_zero
-        expect(order.empty!).to eq(order)
+        expect(order.empty!.success?).to be true
+        expect(order.empty!.value).to eq(order)
       end
     end
   end
