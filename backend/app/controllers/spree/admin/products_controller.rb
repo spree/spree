@@ -1,6 +1,8 @@
 module Spree
   module Admin
     class ProductsController < ResourceController
+      include Spree::Admin::ProductConcern
+
       helper 'spree/products'
 
       before_action :load_data, except: :index
@@ -45,7 +47,7 @@ module Spree
       end
 
       def destroy
-        @product = Product.friendly.find(params[:id])
+        @product = product_scope.friendly.find(params[:id])
 
         begin
           # TODO: why is @product.destroy raising ActiveRecord::RecordNotDestroyed instead of failing with false result
@@ -92,12 +94,8 @@ module Spree
 
       protected
 
-      def scope
-        current_store.products.accessible_by(current_ability, :index)
-      end
-
       def find_resource
-        scope.with_deleted.friendly.find(params[:id])
+        product_scope.with_deleted.friendly.find(params[:id])
       end
 
       def location_after_save
@@ -120,7 +118,7 @@ module Spree
 
         params[:q][:s] ||= 'name asc'
 
-        @collection = scope
+        @collection = product_scope
 
         # Don't delete params[:q][:deleted_at_null] here because it is used in view to check the
         # checkbox for 'q[deleted_at_null]'. This also messed with pagination when deleted_at_null is checked.

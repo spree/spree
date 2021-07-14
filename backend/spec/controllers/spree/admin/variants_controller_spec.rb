@@ -11,12 +11,14 @@ module Spree
       describe '#index' do
         let!(:variant_1) { create(:variant, product: product) }
         let!(:variant_2) { create(:variant, product: product) }
+        let!(:variant_3) { create(:variant, product: create(:product)) }
 
         context 'deleted is not requested' do
           it 'assigns the variants for a requested product' do
             get :index, params: { product_id: product.slug }
             expect(assigns(:collection)).to include variant_1
             expect(assigns(:collection)).to include variant_2
+            expect(assigns(:collection)).not_to include variant_3
           end
         end
 
@@ -37,8 +39,6 @@ module Spree
         end
 
         let(:variant) { create(:variant, product: product) }
-        let(:variants) { double(ActiveRecord::Relation) }
-        let(:products) { double(ActiveRecord::Relation) }
 
         shared_examples 'correct response' do
           it { expect(assigns(:variant)).to eq(variant) }
@@ -52,6 +52,24 @@ module Spree
             it_behaves_like 'correct response'
             it { expect(flash[:success]).to eq(Spree.t('notice_messages.variant_deleted')) }
           end
+        end
+
+        context 'cannot destroy variant of other product' do
+          let(:other_product) { create(:product, stores: [store]) }
+          let(:variant) { create(:variant, product: other_product) }
+
+          it { expect(send_request).to redirect_to(spree.admin_product_variants_path(product)) }
+
+          it do
+            send_request
+            expect(flash[:error]).to eq('Variant is not found')
+          end
+        end
+
+        context 'cannot destroy variant of product from different store' do
+          let(:product) { create(:product, stores: [create(:store)]) }
+
+          it { expect { send_request }.to raise_error(ActiveRecord::RecordNotFound) }
         end
       end
     end

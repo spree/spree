@@ -162,6 +162,10 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
                   # Don't use `find_by_attribute_name` to workaround globalize/globalize#423 bug
                   send(:find_by, parent_data[:find_by].to_s => params["#{resource.model_name}_id"])
       instance_variable_set("@#{resource.model_name}", @parent)
+
+      raise ActiveRecord::RecordNotFound if @parent.nil?
+
+      @parent
     end
   end
 

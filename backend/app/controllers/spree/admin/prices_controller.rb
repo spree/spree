@@ -8,7 +8,7 @@ module Spree
         params[:vp].each do |variant_id, prices|
           next unless variant_id
 
-          variant = Spree::Variant.find(variant_id)
+          variant = parent.variants_including_master.find(variant_id)
           next unless variant
 
           supported_currencies_for_all_stores.each do |currency|
