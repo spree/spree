@@ -5,7 +5,7 @@ describe Spree::ProductProperty, type: :model do
     let!(:product_property) { create(:product_property) }
 
     it 'should not create duplicated property for product' do
-      duplicated_property = described_class.new(product_id: product_property.product_id, property_id: product_property.id)
+      duplicated_property = product_property.product.product_properties.new(property: product_property.property)
 
       expect(duplicated_property.save).to be_falsy
       expect(duplicated_property.errors.messages).to have_key(:property_id)
