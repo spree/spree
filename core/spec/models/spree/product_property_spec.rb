@@ -1,6 +1,17 @@
 require 'spec_helper'
 
 describe Spree::ProductProperty, type: :model do
+  describe '#validations' do
+    let!(:product_property) { create(:product_property) }
+
+    it 'should not create duplicated property for product' do
+      duplicated_property = described_class.new(product_id: product_property.product_id, property_id: product_property.id)
+
+      expect(duplicated_property.save).to be_falsy
+      expect(duplicated_property.errors.messages).to have_key(:property_id)
+    end
+  end
+
   context 'touching' do
     let(:product_property) { create(:product_property) }
 
