@@ -1,6 +1,36 @@
 require 'spec_helper'
 
 describe Spree::Store, type: :model do
+  describe 'deleting' do
+    let!(:default_store) { create(:store, default: true) }
+    let!(:store) { create(:store, default: false) }
+
+    before { create(:store, default: true) }
+
+    it 'is soft deleted' do
+      store.destroy!
+      expect(store.deleted_at).not_to be_nil
+    end
+
+    context 'there is a store with the shared products' do
+      let(:store2) { create(:store) }
+      let(:shared_product) { build(:product) }
+      let(:not_shared_product) { build(:product) }
+
+      before do
+        Spree::Config[:disable_store_presence_validation] = true
+        store.products << shared_product
+        store.products << not_shared_product
+        store2.products << shared_product
+      end
+
+      it 'does not remove the shared products' do
+        expect { store.destroy! }.to change { Spree::Product.without_deleted.reload.count }.by(-1).
+          and change { store2.products.reload.count }.by(0).
+          and change { not_shared_product.deleted? }.from(false).to(true)
+      end
+    end
+  end
   describe 'validations' do
     describe 'favicon image' do
       it 'validates image properties' do
