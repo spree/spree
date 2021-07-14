@@ -12,6 +12,7 @@ module Spree
     end
 
     validates :property, presence: true
+    validates :property_id, uniqueness: { scope: :product_id }
 
     default_scope { order(:position) }
 

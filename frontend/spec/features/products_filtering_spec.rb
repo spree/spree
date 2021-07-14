@@ -203,6 +203,7 @@ describe 'Products filtering', :js do
   context 'with cached filters' do
     context 'when after visiting products page new filters were added or deleted' do
       let(:jersey_manufacturer) { create(:product_property, value: 'Jerseys', property: manufacturer) }
+      let!(:product_3) { create(:product, name: 'Third shirt', taxons: [taxon], stores: [store]) }
       let(:beta_brand) { create(:product_property, value: 'Beta', property: brand) }
 
       let(:xl_size) { create(:option_value, option_type: size, name: 'xl', presentation: 'XL') }
@@ -219,7 +220,7 @@ describe 'Products filtering', :js do
         expect(page).to have_filter_with(value: 'Alpha')
 
         product_1.product_properties << jersey_manufacturer
-        product_2.product_properties << beta_brand
+        product_3.product_properties << beta_brand
 
         visit_taxons_page(taxon)
 
