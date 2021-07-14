@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe Spree::Menu, type: :model do
+  let!(:location_header) { create(:menu_location) }
+
   it 'responds to for_header' do
     expect(described_class).to respond_to(:for_header)
   end

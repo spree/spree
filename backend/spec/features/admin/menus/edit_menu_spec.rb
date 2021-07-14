@@ -4,15 +4,16 @@ describe 'Menu Edit', type: :feature do
   stub_authorization!
 
   let!(:store_1) { create(:store) }
+  let!(:location_header) { create(:menu_location) }
   let!(:main_menu) { create(:menu, name: 'Main Menu', store: store_1) }
   let!(:menu_item) { create(:menu_item, menu: main_menu, parent: main_menu.root) }
   let(:file_path) { Rails.root + '../../spec/support/ror_ringer.jpeg' }
 
-  context 'when link to URL the user can' do
-    before do
-      visit spree.edit_admin_menu_menu_item_path(main_menu, menu_item)
-    end
+  before do
+    visit spree.edit_admin_menu_menu_item_path(main_menu, menu_item)
+  end
 
+  context 'when link to URL the user can' do
     it 'set to open in a new window' do
       find('label', text: 'Open this link in a new window').click
       click_on 'Update'
@@ -23,10 +24,6 @@ describe 'Menu Edit', type: :feature do
   end
 
   context 'setting a home page link', js: true do
-    before do
-      visit spree.edit_admin_menu_menu_item_path(main_menu, menu_item)
-    end
-
     it 'allows you to switch to home page link' do
       select2 'Home Page', from: 'Link To'
       expect(page).to have_text 'Click the Update button below to change the link field.'
@@ -41,10 +38,6 @@ describe 'Menu Edit', type: :feature do
     let!(:product_1) { create(:product, name: 'Blue Shoes') }
     let!(:product_2) { create(:product, name: 'Black Socks') }
     let!(:product_3) { create(:product, name: 'Green Shirt') }
-
-    before do
-      visit spree.edit_admin_menu_menu_item_path(main_menu, menu_item)
-    end
 
     it 'allows you to switch to select a product and save' do
       select2 'Product', from: 'Link To'
@@ -65,10 +58,6 @@ describe 'Menu Edit', type: :feature do
     let!(:taxon_2) { create(:taxon) }
     let!(:taxon_3) { create(:taxon) }
 
-    before do
-      visit spree.edit_admin_menu_menu_item_path(main_menu, menu_item)
-    end
-
     it 'allows you to select a Taxon and save' do
       select2 'Taxon', from: 'Link To'
       expect(page).to have_text 'Click the Update button below to change the link field.'
@@ -84,10 +73,6 @@ describe 'Menu Edit', type: :feature do
   end
 
   context 'trying to save a menu item without a name' do
-    before do
-      visit spree.edit_admin_menu_menu_item_path(main_menu, menu_item)
-    end
-
     it 'prompts you to enter a name' do
       fill_in 'Name', with: ''
 
@@ -98,10 +83,6 @@ describe 'Menu Edit', type: :feature do
   end
 
   context 'when admin adds and removes an image icon' do
-    before do
-      visit spree.edit_admin_menu_menu_item_path(main_menu, menu_item)
-    end
-
     it 'adds menu_item icon and removes when clicked' do
       attach_file('menu_item_icon_attributes_attachment', file_path)
 

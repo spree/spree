@@ -3,6 +3,9 @@ require 'spec_helper'
 describe 'Menus Index', type: :feature do
   stub_authorization!
 
+  let!(:location_header) { create(:menu_location) }
+  let!(:location_footer) { create(:menu_location, name: 'Footer') }
+
   context 'when no menus are present' do
     before do
       visit spree.admin_menus_path

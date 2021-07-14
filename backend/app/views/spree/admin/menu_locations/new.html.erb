@@ -1,0 +1,11 @@
+<% content_for :page_title do %>
+  <%= link_to Spree.t('admin.navigation.all_menu_locations'), spree.admin_menu_locations_path %> /
+  <%= Spree.t('admin.navigation.new_menu_location') %>
+<% end %>
+
+<%= render partial: 'spree/admin/shared/error_messages', locals: { target: @menu_location} %>
+
+<%= form_for [:admin, @menu_location] do |f| %>
+  <%= render partial: 'form', locals: { f: f } %>
+  <%= render partial: 'spree/admin/shared/new_resource_links' %>
+<% end %>

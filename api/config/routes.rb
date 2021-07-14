@@ -257,6 +257,7 @@ Spree::Core::Engine.add_routes do
 
         # Menu API
         resources :menus
+        resources :menu_locations
         resource :menu_items do
           member do
             patch :reposition

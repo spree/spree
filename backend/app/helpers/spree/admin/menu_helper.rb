@@ -36,18 +36,6 @@ module Spree
         formatted_resouces
       end
 
-      def menu_locations_dropdown_values
-        menu_items_for_select = []
-
-        Spree::Menu::MENU_LOCATIONS.each do |location|
-          parameterized_location = location.parameterize(separator: '_')
-
-          menu_items_for_select << [location, parameterized_location]
-        end
-
-        menu_items_for_select
-      end
-
       def default_menu_for_store?(menu)
         menu.store.default_locale == menu.locale
       end

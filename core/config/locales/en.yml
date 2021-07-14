@@ -592,8 +592,10 @@ en:
         available_store_credit: User has %{amount} in Store Credit available.
       navigation:
         all_menus: All Menus
+        all_menu_locations: All Menu Locations
         add_new_menu: Add New Menu
         add_new_item: 'Add New Item'
+        add_new_menu_location: Add New Menu Location
         code: Code
         default_menus_info:
           title: Default Menus
@@ -613,6 +615,7 @@ en:
         move_could_not_be_saved: 'ERROR: This move could not be saved.'
         new_menu_item: New Menu Item
         new_menu: New Menu
+        new_menu_location: New Menu Location
         nested_under: Nested under
         no_menu_items: '<b>%{menu}</b> has no items. Click the <b>Add New Item</b> button to begin adding links to this menu.'
         nested_under_info: Quickly nest your Menu Item if you already know where it needs to be.
@@ -624,6 +627,8 @@ en:
         <br><br> For an indepth guide to building the main menu see the documenttation page <a href='https://guides.spreecommerce.org/user/navigation/building_the_main_menu.html' target='_blank' class='alert-link'>Building The Main Menu</a>"
         menus: Menus
         menu_items: '%{menu_name} Items'
+        menu_locations: Menu Locations
+        manage_locations: Manage Locations
         public_details: Public Details
         subtitle: Subtitle
         url_info: 'The URL field can link to an external website using <b>https://example.com</b>, link to an otherwise unreachable internal path using <b>/policies/privacy</b>,
