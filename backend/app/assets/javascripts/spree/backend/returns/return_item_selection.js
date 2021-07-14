@@ -14,7 +14,10 @@ $(document).ready(function () {
       var returnQuantity = parseInt(returnItemRow.find('.refund-quantity-input').val(), 10)
       var purchasedQuantity = parseInt(returnItemRow.find('.purchased-quantity').text(), 10)
       var amount = (returnQuantity / purchasedQuantity) * parseFloat(returnItemRow.find('.charged-amount').data('chargedAmount'))
-      returnItemRow.find('.refund-amount-input').val(amount.toFixed(2))
+      var preTaxRefundAmountValue = returnItemRow.find('.refund-amount-input')[0].value
+      if (amount < preTaxRefundAmountValue || isNaN(preTaxRefundAmountValue)) {
+        returnItemRow.find('.refund-amount-input').val(amount.toFixed(2))
+      }
       totalPretaxRefund += amount
     })
 
