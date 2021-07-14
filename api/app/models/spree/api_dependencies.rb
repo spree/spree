@@ -17,8 +17,7 @@ module Spree
       :storefront_cart_estimate_shipping_rates_service, :storefront_estimated_shipment_serializer,
       :storefront_store_serializer, :storefront_address_serializer, :storefront_order_serializer,
       :storefront_account_create_address_service, :storefront_account_update_address_service, :storefront_address_finder,
-      :storefront_account_create_service, :storefront_account_update_service, :storefront_collection_sorter, :error_handler,
-      :storefront_cart_empty_service
+      :storefront_account_create_service, :storefront_account_update_service, :storefront_collection_sorter, :error_handler
     ].freeze
 
     attr_accessor *INJECTION_POINTS
@@ -40,7 +39,6 @@ module Spree
       @storefront_cart_set_item_quantity_service = Spree::Dependencies.cart_set_item_quantity_service
       @storefront_cart_recalculate_service = Spree::Dependencies.cart_recalculate_service
       @storefront_cart_estimate_shipping_rates_service = Spree::Dependencies.cart_estimate_shipping_rates_service
-      @storefront_cart_empty_service = Spree::Dependencies.cart_empty_service
 
       # coupon code handler
       @storefront_coupon_handler = Spree::Dependencies.coupon_handler
