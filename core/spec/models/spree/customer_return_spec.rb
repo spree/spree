@@ -126,7 +126,7 @@ describe Spree::CustomerReturn, type: :model do
     let(:return_item) { create(:return_item) }
     let(:customer_return) { build(:customer_return, return_items: [return_item]) }
     let(:order) { create(:order, currency: test_currency) }
-    let(:test_currency) { 'TEST' }
+    let(:test_currency) { 'EUR' }
 
     before { return_item.inventory_unit.update(order: order)}
 
