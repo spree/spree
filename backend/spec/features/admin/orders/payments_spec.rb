@@ -225,7 +225,7 @@ describe 'Payments', type: :feature, js: true do
       let!(:category) { create(:store_credit_category, name: 'Default') }
 
       before do
-        create(:store_credit, user: order.user, category: category, amount: 500)
+        create(:store_credit, user: order.user, category: category, amount: 500, store: order.store)
         visit spree.new_admin_order_payment_path(order.reload)
         choose("payment_payment_method_id_#{payment_method.id}")
         click_button 'Continue'

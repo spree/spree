@@ -40,7 +40,13 @@ describe 'Store credits admin', type: :feature do
     end
 
     describe 'with default currency' do
-      it 'creates store credit and associate it with the user' do
+      let!(:store) { create(:store) }
+
+      before do
+        allow_any_instance_of(Spree::Admin::StoreCreditsController).to receive(:current_store).and_return(store)
+      end
+
+      it 'creates store credit and associate it with the user and store' do
         within find('#contentHeader') do
           click_link 'Add Store Credit'
         end
@@ -54,6 +60,7 @@ describe 'Store credits admin', type: :feature do
         store_credit_table = page.find('table', match: :first)
         expect(store_credit_table).to have_css('tr').twice
         expect(Spree::StoreCredit.count).to eq 2
+        expect(Spree::StoreCredit.last.store).to eq(store)
       end
     end
 
@@ -62,7 +69,7 @@ describe 'Store credits admin', type: :feature do
         within find('#contentHeader') do
           click_link 'Add Store Credit'
         end
-        
+
         page.fill_in 'store_credit_amount', with: '100.00'
         select 'EUR', from: 'store_credit_currency'
         select 'Exchange', from: 'store_credit_category_id'

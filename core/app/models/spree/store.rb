@@ -15,6 +15,7 @@ module Spree
     has_many :variants, through: :products, foreign_key: :prodyct, class_name: 'Spree::Variant',
                         source: :variants_including_master
     has_many :stock_items, through: :variants, class_name: 'Spree::StockItem'
+    has_many :store_credits, class_name: 'Spree::StoreCredit'
 
     belongs_to :default_country, class_name: 'Spree::Country'
     belongs_to :checkout_zone, class_name: 'Spree::Zone'

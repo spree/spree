@@ -16,9 +16,10 @@ module Spree
     belongs_to :category, class_name: 'Spree::StoreCreditCategory'
     belongs_to :created_by, class_name: Spree.user_class.to_s, foreign_key: 'created_by_id'
     belongs_to :credit_type, class_name: 'Spree::StoreCreditType', foreign_key: 'type_id'
+    belongs_to :store, class_name: 'Spree::Store'
     has_many :store_credit_events
 
-    validates :user, :category, :credit_type, :created_by, :currency, presence: true
+    validates :user, :category, :credit_type, :created_by, :currency, :store, presence: true
     validates :amount, numericality: { greater_than: 0 }
     validates :amount_used, numericality: { greater_than_or_equal_to: 0 }
     validate :amount_used_less_than_or_equal_to_amount
@@ -188,7 +189,8 @@ module Spree
         created_by_id: created_by_id,
         currency: currency,
         type_id: type_id,
-        memo: credit_allocation_memo
+        memo: credit_allocation_memo,
+        store: store
       }
     end
 
