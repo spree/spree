@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'Stores admin', type: :feature, js: true do
+describe 'Stores admin', type: :feature do
   stub_authorization!
 
   let(:store) { Spree::Store.default }
@@ -9,7 +9,7 @@ describe 'Stores admin', type: :feature, js: true do
 
   before { store.update!(checkout_zone: zone) }
 
-  describe 'visiting the stores page' do
+  describe 'visiting the stores page', js: true do
     before do
       I18n.backend.store_translations(:fr,
         spree: {
@@ -41,7 +41,7 @@ describe 'Stores admin', type: :feature, js: true do
   end
 
   describe 'creating store' do
-    context 'with checkout_zone set as preference in spree config file' do
+    context 'with checkout_zone set as preference in spree config file', js: true do
       let!(:zone) { create(:zone, name: 'Asia') }
 
       before do
@@ -59,7 +59,7 @@ describe 'Stores admin', type: :feature, js: true do
       end
     end
 
-    context 'without checkout_zone set as preference in spree config file' do
+    context 'without checkout_zone set as preference in spree config file', js: true do
       before do
         store.update(checkout_zone_id: nil)
         Spree::Config.preference_default(:checkout_zone)
@@ -75,7 +75,7 @@ describe 'Stores admin', type: :feature, js: true do
       end
     end
 
-    it 'sets default currency value' do
+    it 'sets default currency value', js: true do
       visit spree.admin_stores_path
 
       click_link 'New Store'
@@ -87,26 +87,28 @@ describe 'Stores admin', type: :feature, js: true do
     it 'saving store' do
       visit spree.admin_stores_path
 
-      click_link 'New Store'
+      within '#contentHeaderRow' do
+        click_link 'New Store'
+      end
       page.fill_in 'store_name', with: 'Spree Example Test'
       page.fill_in 'store_url', with: 'test.localhost'
       page.fill_in 'store_code', with: 'spree'
       page.fill_in 'store_mail_from_address', with: 'no-reply@example.com'
       page.fill_in 'store_customer_support_email', with: 'support@example.com'
-      select2 'EUR', from: 'Default currency'
-      select2_clear from: 'Supported Currencies'
-      select2_search 'GBP', from: 'Supported Currencies'
-      select2_select 'GBP', from: 'Supported Currencies'
+      select 'EUR', from: 'Default currency'
+      select 'GBP', from: 'Supported Currencies'
+      unselect 'USD', from: 'Supported Currencies'
+      select 'GBP', from: 'Supported Currencies'
 
-      select2 'English (US)', from: 'Default locale'
+      select 'English (US)', from: 'Default locale'
 
       click_button 'Create'
 
       expect(page).to have_current_path spree.admin_stores_path
-      expect(page).to have_content('successfully created!')
+      expect(page).to have_content('Spree Example Test (spree)')
 
       row_count = page.all(:css, 'table tr').size
-      expect(row_count).to eq 3
+      expect(row_count).to eq 2
       expect(Spree::Store.count).to eq 2
 
       store = Spree::Store.last
@@ -117,7 +119,7 @@ describe 'Stores admin', type: :feature, js: true do
     end
   end
 
-  describe 'updating store' do
+  describe 'updating store', js: true do
     let(:updated_name) { 'New Store Name' }
     let(:new_currency) { 'EUR' }
 
@@ -182,7 +184,7 @@ describe 'Stores admin', type: :feature, js: true do
     end
   end
 
-  describe 'deleting store' do
+  describe 'deleting store', js: true do
     let!(:second_store) { create(:store) }
 
     it 'updates store in lifetime stats' do
@@ -197,7 +199,7 @@ describe 'Stores admin', type: :feature, js: true do
     end
   end
 
-  describe 'setting default store' do
+  describe 'setting default store', js: true do
     let!(:store1) { create(:store, default: false) }
 
     it 'sets a store as default' do
