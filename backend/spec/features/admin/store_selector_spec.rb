@@ -48,6 +48,8 @@ describe 'Admin store switcher', type: :feature, js: true do
     end
 
     it 'takes you to the add new store page when clicked' do
+      expect(page).not_to have_text('Stores / New Store')
+
       find('a#storeSelectorDropdown').click
       find('a#addNewStoreLink').click
 
