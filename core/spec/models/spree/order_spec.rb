@@ -312,11 +312,9 @@ describe Spree::Order, type: :model do
     end
   end
 
-  context 'empty!' do
+  shared_examples 'empty order' do
     let(:order) { Spree::Order.create(email: 'test@example.com') }
     let(:promotion) { create :promotion, code: '10off' }
-
-    subject(:result) { order.empty! }
 
     before do
       promotion.orders << order
@@ -338,6 +336,11 @@ describe Spree::Order, type: :model do
         order.empty!
       end
 
+      it 'returns success' do
+        expect(result.success?).to be true
+        expect(result.value).to eq(order)
+      end
+
       it 'clears out line items, adjustments and update totals' do
         expect(order.line_items.count).to be_zero
         expect(order.adjustments.count).to be_zero
@@ -345,9 +348,26 @@ describe Spree::Order, type: :model do
         expect(order.order_promotions.count).to be_zero
         expect(order.promo_total).to be_zero
         expect(order.item_total).to be_zero
-        expect(order.empty!.success?).to be true
-        expect(order.empty!.value).to eq(order)
+        expect(order.ship_total).to be_zero
       end
+    end
+  end
+
+  describe 'empty!' do
+    subject(:result) { order.empty! }
+
+    it_behaves_like 'empty order'
+  end
+
+  describe 'destroy!' do
+    subject(:result) { order.destroy! }
+
+    it_behaves_like 'empty order'
+
+    it 'destroys the order' do
+      result
+
+      expect(order.destroyed?).to be true
     end
   end
 

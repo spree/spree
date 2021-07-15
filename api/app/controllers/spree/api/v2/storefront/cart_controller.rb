@@ -59,6 +59,18 @@ module Spree
             end
           end
 
+          def delete
+            spree_authorize! :update, spree_current_order, order_token
+
+            result = spree_current_order.destroy!
+
+            if result.success?
+              head 204
+            else
+              render_error_payload(result.error)
+            end
+          end
+
           def set_quantity
             return render_error_item_quantity unless params[:quantity].to_i > 0
 

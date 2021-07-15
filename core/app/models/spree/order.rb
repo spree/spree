@@ -427,6 +427,10 @@ module Spree
       Spree::Dependencies.cart_empty_service.constantize.new.call(order: self)
     end
 
+    def destroy!
+      Spree::Dependencies.cart_destroy_service.constantize.new.call(order: self)
+    end
+
     def has_step?(step)
       checkout_steps.include?(step)
     end
