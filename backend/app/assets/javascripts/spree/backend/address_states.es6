@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-unused-vars
 function updateAddressState(region, successCallback) {
   const countryId = $('#' + region + 'country select').val()
   const stateContainer = $('#' + region + 'state').parent()

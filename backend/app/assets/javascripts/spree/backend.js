@@ -43,6 +43,7 @@
 //= require spree/backend/menus/_index
 //= require spree/backend/returns/expedited_exchanges_warning
 //= require spree/backend/returns/return_item_selection
+//= require spree/backend/shipments/_index
 //= require spree/backend/shipments
 //= require spree/backend/states
 //= require spree/backend/stock_location
@@ -95,6 +96,7 @@ Spree.routes.option_types_api_v2 = Spree.pathFor('api/v2/platform/option_types')
 Spree.routes.option_values_api_v2 = Spree.pathFor('api/v2/platform/option_values')
 Spree.routes.orders_api_v2 = Spree.pathFor('api/v2/platform/orders')
 Spree.routes.products_api_v2 = Spree.pathFor('/api/v2/platform/products')
+Spree.routes.shipments_api_v2 = Spree.pathFor('/api/v2/platform/shipments')
 Spree.routes.taxons_api_v2 = Spree.pathFor('/api/v2/platform/taxons')
 Spree.routes.users_api_v2 = Spree.pathFor('api/v2/platform/users')
 
