@@ -312,7 +312,9 @@ describe Spree::Order, type: :model do
     end
   end
 
-  shared_examples 'empty order' do
+  describe 'empty!' do
+    subject(:result) { order.empty! }
+
     let(:order) { Spree::Order.create(email: 'test@example.com') }
     let(:promotion) { create :promotion, code: '10off' }
 
@@ -353,16 +355,10 @@ describe Spree::Order, type: :model do
     end
   end
 
-  describe 'empty!' do
-    subject(:result) { order.empty! }
-
-    it_behaves_like 'empty order'
-  end
-
   describe 'destroy!' do
     subject(:result) { order.destroy! }
 
-    it_behaves_like 'empty order'
+    before { order.empty! }
 
     it 'destroys the order' do
       result

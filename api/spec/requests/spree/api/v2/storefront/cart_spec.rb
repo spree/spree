@@ -292,7 +292,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
   end
 
   describe 'cart#delete' do
-    let(:execute) { patch '/api/v2/storefront/cart/delete', headers: headers }
+    let(:execute) { delete '/api/v2/storefront/cart/delete', headers: headers }
 
     shared_examples 'deleting order' do
       it 'deletes the order' do

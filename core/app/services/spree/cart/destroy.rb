@@ -5,7 +5,7 @@ module Spree
 
       def call(order:)
         run :check_if_can_be_empty
-        run :empty_order
+        run :destroy_order
       end
 
       private
@@ -16,20 +16,10 @@ module Spree
         success(order: order)
       end
 
-      def empty_order(order:)
-        ActiveRecord::Base.transaction do
-          order.line_items.destroy_all
-          order.updater.update_item_count
-          order.adjustments.destroy_all
-          order.shipments.destroy_all
-          order.state_changes.destroy_all
-          order.order_promotions.destroy_all
-          order.update_totals
-          order.persist_totals
-          order.restart_checkout_flow
-          order.delete
-          success(order)
-        end
+      def destroy_order(order:)
+        order.destroy
+
+        success(order)
       end
     end
   end
