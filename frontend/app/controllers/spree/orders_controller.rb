@@ -5,8 +5,6 @@ module Spree
 
     helper 'spree/products', 'spree/orders'
 
-    respond_to :html
-
     before_action :assign_order_with_lock, only: :update
 
     def show

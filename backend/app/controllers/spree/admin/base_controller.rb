@@ -1,6 +1,16 @@
 module Spree
   module Admin
-    class BaseController < Spree::BaseController
+    class BaseController < ApplicationController
+      include Spree::Core::ControllerHelpers::Auth
+      include Spree::Core::ControllerHelpers::Search
+      include Spree::Core::ControllerHelpers::Store
+      include Spree::Core::ControllerHelpers::StrongParameters
+      include Spree::Core::ControllerHelpers::Locale
+      include Spree::Core::ControllerHelpers::Currency
+
+      respond_to :html
+
+      helper 'spree/base'
       helper 'spree/admin/navigation'
       helper 'spree/locale'
       helper 'spree/currency'
@@ -26,6 +36,24 @@ module Spree
                  end
         authorize! :admin, record
         authorize! action, record
+      end
+
+      def redirect_unauthorized_access
+        if try_spree_current_user
+          flash[:error] = Spree.t(:authorization_failure)
+          redirect_to spree.admin_forbidden_path
+        else
+          store_location
+          if defined?(spree.admin_login_path)
+            redirect_to spree.admin_login_path
+          elsif respond_to?(:spree_login_path)
+            redirect_to spree_login_path
+          elsif spree.respond_to?(:root_path)
+            redirect_to spree.root_path
+          else
+            redirect_to main_app.respond_to?(:root_path) ? main_app.root_path : '/'
+          end
+        end
       end
 
       # Need to generate an API key for a user due to some backend actions

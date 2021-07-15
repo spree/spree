@@ -45,6 +45,12 @@ echo "* Setup Spree Frontend and running RSpec..."
 echo "*******************************************"
 cd ../frontend; prepare_app; bundle exec rspec spec
 
+# Spree Emails
+echo "*******************************************"
+echo "* Setup Spree Emails and running RSpec..."
+echo "*******************************************"
+cd ../emails; prepare_app; bundle exec rspec spec
+
 # Spree Sample
 echo "*****************************************"
 echo "* Setup Spree Sample and running RSpec..."
