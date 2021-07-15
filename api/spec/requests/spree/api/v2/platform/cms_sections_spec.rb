@@ -4,7 +4,7 @@ describe 'Platform API v2 CmsSections', type: :request do
   include_context 'API v2 tokens'
   include_context 'Platform API v2'
 
-  let(:store) { create(:store, default: true) }
+  let(:store) { Spree::Store.default }
   let(:page) { create(:cms_homepage, store: store) }
   let(:section_a) { create(:cms_section, cms_page: page) }
   let(:section_b) { create(:cms_section, cms_page: page) }

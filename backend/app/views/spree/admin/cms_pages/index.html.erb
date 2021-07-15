@@ -11,33 +11,25 @@
     <%= search_form_for [:admin, @search] do |f| %>
       <%- locals = {f: f} %>
       <div class="row">
-        <div class="col-12 col-lg-6">
+        <div class="col-12 col-lg-4">
           <div class="form-group">
             <%= f.label :title_cont, Spree.t('admin.cms.title') %>
             <%= f.text_field :title_cont, size: 15, class: "form-control js-quick-search-target js-filterable" %>
           </div>
         </div>
 
-        <div class="col-12 col-lg-6">
+        <div class="col-12 col-lg-4">
           <div class="form-group">
             <%= label_tag :q_type_eq, Spree.t(:type) %>
             <%= f.select(:type_eq, spree_humanize_dropdown_values('Spree::CmsPage', {const: 'TYPES'}), {include_blank: true}, class: 'select2-clear js-filterable') %>
           </div>
         </div>
-      </div>
 
-      <div class="row">
-        <div class="col-12 col-lg-6">
+        <div class="col-12 col-lg-4">
          <div class="form-group">
            <%= label_tag :q_locale_eq, Spree.t(:language) %>
            <%= f.select :locale_eq, all_locales_options, { include_blank: true }, class: 'select2-clear js-filterable' %>
          </div>
-        </div>
-        <div class="col-12 col-lg-6">
-          <div class="form-group">
-            <%= label_tag :q_store_id_in, Spree.t(:store) %>
-            <%= f.collection_select(:store_id_in, @stores, :id, :unique_name,  { include_blank: true }, { class: 'select2-clear js-filterable' }) %>
-          </div>
         </div>
       </div>
 
