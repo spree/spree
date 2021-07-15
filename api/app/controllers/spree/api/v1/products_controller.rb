@@ -64,7 +64,7 @@ module Spree
           params[:product][:available_on] ||= Time.current
           set_up_shipping_category
 
-          options = { variants_attrs: variants_params, options_attrs: option_types_params }
+          options = { store: current_store, variants_attrs: variants_params, options_attrs: option_types_params }
           @product = Core::Importer::Product.new(nil, product_params, options).create
 
           if @product.persisted?
@@ -77,7 +77,7 @@ module Spree
         def update
           authorize! :update, @product
 
-          options = { variants_attrs: variants_params, options_attrs: option_types_params }
+          options = { store: current_store, variants_attrs: variants_params, options_attrs: option_types_params }
           @product = Core::Importer::Product.new(@product, product_params, options).update
 
           if @product.errors.empty?

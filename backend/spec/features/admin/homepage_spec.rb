@@ -13,16 +13,16 @@ describe 'Homepage', type: :feature do
         within('h1') { expect(page).to have_content('Orders') }
       end
 
-      it 'has a link to overview' do
-        within('header') { page.find(:xpath, "//a[@href='/admin']") }
-      end
-
       it 'has a link to orders' do
         expect(page).to have_link('Orders', href: '/admin/orders')
       end
 
       it 'has a link to products' do
         expect(page).to have_link('Products', href: '/admin/products')
+      end
+
+      it 'has a link to stock' do
+        expect(page).to have_link('Stock', href: '#sidebar-stock')
       end
 
       it 'has a link to reports' do
@@ -76,6 +76,20 @@ describe 'Homepage', type: :feature do
 
       it 'has a link to prototypes' do
         within('.sidebar') { expect(page).to have_link('Prototypes', href: '/admin/prototypes') }
+      end
+    end
+
+    context 'visiting the stock tab' do
+      before do
+        visit spree.admin_stock_transfers_path
+      end
+
+      it 'has a link to stock transfers' do
+        within('.sidebar') { expect(page).to have_link('Stock Transfers', href: '/admin/stock_transfers') }
+      end
+
+      it 'has a link to stock locations' do
+        within('.sidebar') { expect(page).to have_link('Stock Locations', href: '/admin/stock_locations') }
       end
     end
   end

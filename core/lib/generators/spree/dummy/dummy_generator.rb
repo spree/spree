@@ -137,7 +137,7 @@ end
     end
 
     def gemfile_path
-      core_gems = ['spree/core', 'spree/api', 'spree/backend', 'spree/frontend', 'spree/sample']
+      core_gems = ['spree/core', 'spree/api']
 
       if core_gems.include?(lib_name)
         '../../../../../Gemfile'

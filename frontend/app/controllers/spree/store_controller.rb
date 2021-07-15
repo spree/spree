@@ -1,8 +1,18 @@
 module Spree
-  class StoreController < Spree::BaseController
+  class StoreController < ApplicationController
+    include Spree::Core::ControllerHelpers::Auth
+    include Spree::Core::ControllerHelpers::Common
+    include Spree::Core::ControllerHelpers::Search
+    include Spree::Core::ControllerHelpers::Store
+    include Spree::Core::ControllerHelpers::StrongParameters
+    include Spree::Core::ControllerHelpers::Locale
+    include Spree::Core::ControllerHelpers::Currency
     include Spree::Core::ControllerHelpers::Order
     include Spree::LocaleUrls
 
+    respond_to :html
+
+    helper 'spree/base'
     helper 'spree/locale'
     helper 'spree/currency'
 
@@ -49,6 +59,20 @@ module Spree
 
     def store_last_modified
       (current_store.updated_at || Time.current).utc
+    end
+
+    def redirect_unauthorized_access
+      if try_spree_current_user
+        flash[:error] = Spree.t(:authorization_failure)
+        redirect_to spree.forbidden_path
+      else
+        store_location
+        if respond_to?(:spree_login_path)
+          redirect_to spree_login_path
+        else
+          redirect_to spree.root_path
+        end
+      end
     end
   end
 end

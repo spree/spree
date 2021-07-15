@@ -3,7 +3,7 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
 
   helper_method :new_object_url, :edit_object_url, :object_url, :collection_url
   before_action :load_resource, except: :update_positions
-  before_action :set_currency, :set_store, only: [:new, :create]
+  before_action :set_currency, :ensure_current_store, only: [:new, :create]
   rescue_from ActiveRecord::RecordNotFound, with: :resource_not_found
 
   respond_to :html
@@ -26,6 +26,7 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
   def update
     invoke_callbacks(:update, :before)
     if @object.update(permitted_resource_params)
+      ensure_current_store
       invoke_callbacks(:update, :after)
       respond_with(@object) do |format|
         format.html do
@@ -63,9 +64,11 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
   end
 
   def update_positions
+    base_scope = model_class.try(:for_store, current_store) || model_class
+
     ApplicationRecord.transaction do
       params[:positions].each do |id, index|
-        model_class.find(id).set_list_position(index)
+        base_scope.find(id).set_list_position(index)
       end
     end
 
@@ -153,10 +156,16 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
 
   def parent
     if parent_data.present?
-      @parent ||= parent_data[:model_class].
+      base_scope = parent_data[:model_class].try(:for_store, current_store) || parent_data[:model_class]
+
+      @parent ||= base_scope.
                   # Don't use `find_by_attribute_name` to workaround globalize/globalize#423 bug
                   send(:find_by, parent_data[:find_by].to_s => params["#{resource.model_name}_id"])
       instance_variable_set("@#{resource.model_name}", @parent)
+
+      raise ActiveRecord::RecordNotFound if @parent.nil?
+
+      @parent
     end
   end
 
@@ -164,7 +173,8 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
     if parent_data.present?
       parent.send(controller_name).find(params[:id])
     else
-      model_class.find(params[:id])
+      base_scope = model_class.try(:for_store, current_store) || model_class
+      base_scope.find(params[:id])
     end
   end
 
@@ -202,12 +212,12 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
     @object.cost_currency = current_currency if model_class.method_defined?(:cost_currency=)
   end
 
-  def set_store
+  def ensure_current_store
     return if @object.nil?
 
     if @object.has_attribute?(:store_id)
       @object.store = current_store
-    elsif model_class.method_defined?(:stores)
+    elsif model_class.method_defined?(:stores) && @object.stores.exclude?(current_store)
       @object.stores << current_store
     end
   end

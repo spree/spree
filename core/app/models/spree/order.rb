@@ -2,6 +2,7 @@ require_dependency 'spree/order/checkout'
 require_dependency 'spree/order/currency_updater'
 require_dependency 'spree/order/payments'
 require_dependency 'spree/order/store_credit'
+require_dependency 'spree/order/emails'
 
 module Spree
   class Order < Spree::Base
@@ -13,6 +14,7 @@ module Spree
     include Spree::Order::Payments
     include Spree::Order::StoreCredit
     include Spree::Order::AddressBook
+    include Spree::Order::Emails
     include Spree::Core::NumberGenerator.new(prefix: 'R')
     include Spree::Core::TokenGenerator
 
@@ -366,7 +368,6 @@ module Spree
       touch :completed_at
 
       deliver_order_confirmation_email unless confirmation_delivered?
-
       deliver_store_owner_order_notification_email if deliver_store_owner_order_notification_email?
 
       consider_risk
@@ -378,17 +379,16 @@ module Spree
       save!
     end
 
-    def deliver_order_confirmation_email
-      OrderMailer.confirm_email(id).deliver_later
-      update_column(:confirmation_delivered, true)
-    end
-
     # Helper methods for checkout steps
     def paid?
       payment_state == 'paid' || payment_state == 'credit_owed'
     end
 
     def available_payment_methods(store = nil)
+      if store.present?
+        ActiveSupport::Deprecation.warn('The `store` parameter is deprecated and will be removed in Spree 5. Order is already associated with Store')
+      end
+
       @available_payment_methods ||= collect_payment_methods(store)
     end
 
@@ -627,12 +627,12 @@ module Spree
 
     def validate_payments_attributes(attributes)
       # Ensure the payment methods specified are allowed for this user
-      payment_methods = Spree::PaymentMethod.where(id: available_payment_methods.map(&:id))
-      attributes.each do |payment_attributes|
-        payment_method_id = payment_attributes[:payment_method_id]
+      payment_method_ids = available_payment_methods.map(&:id)
 
-        # raise RecordNotFound unless it is an allowed payment method
-        payment_methods.find(payment_method_id) if payment_method_id
+      attributes.each do |payment_attributes|
+        payment_method_id = payment_attributes[:payment_method_id].to_i
+
+        raise ActiveRecord::RecordNotFound unless payment_method_ids.include?(payment_method_id)
       end
     end
 
@@ -703,10 +703,6 @@ module Spree
       update_with_updater!
     end
 
-    def send_cancel_email
-      OrderMailer.cancel_email(id).deliver_later
-    end
-
     def after_resume
       shipments.each(&:resume!)
       consider_risk
@@ -725,23 +721,16 @@ module Spree
     end
 
     def collect_payment_methods(store = nil)
-      PaymentMethod.available_on_front_end.select { |pm| pm.available_for_order?(self) && pm.available_for_store?(store) }
+      if store.present?
+        ActiveSupport::Deprecation.warn('The `store` parameter is deprecated and will be removed in Spree 5. Order is already associated with Store')
+      end
+      store ||= self.store
+
+      store.payment_methods.available_on_front_end.select { |pm| pm.available_for_order?(self) }
     end
 
     def credit_card_nil_payment?(attributes)
       payments.store_credits.present? && attributes[:amount].to_f.zero?
-    end
-
-    # Returns true if:
-    #   1. an email address is set for new order notifications AND
-    #   2. no notification for this order has been sent yet.
-    def deliver_store_owner_order_notification_email?
-      store.new_order_notifications_email.present? && !store_owner_notification_delivered?
-    end
-
-    def deliver_store_owner_order_notification_email
-      OrderMailer.store_owner_notification_email(id).deliver_later
-      update_column(:store_owner_notification_delivered, true)
     end
 
     def uppercase_number

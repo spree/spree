@@ -9,7 +9,7 @@ module Spree
   class InstallGenerator < Rails::Generators::Base
     class_option :migrate, type: :boolean, default: true, banner: 'Run Spree migrations'
     class_option :seed, type: :boolean, default: true, banner: 'load seed data (migrations must be run)'
-    class_option :sample, type: :boolean, default: true, banner: 'load sample data (migrations must be run)'
+    class_option :sample, type: :boolean, default: false, banner: 'load sample data (migrations must be run)'
     class_option :install_storefront, type: :boolean, default: false, banner: 'installs default rails storefront'
     class_option :install_admin, type: :boolean, default: false, banner: 'installs default rails admin'
     class_option :copy_storefront, type: :boolean, default: false, banner: 'copy all storefront views and stylesheets'
@@ -171,6 +171,8 @@ module Spree
     end
 
     def load_sample_data
+      return unless Spree::Core::Engine.sample_available?
+
       if @load_sample_data
         say_status :loading, 'sample data'
         silence_stream(STDOUT) do

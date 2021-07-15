@@ -33,7 +33,7 @@ module Spree
             private
 
             def collection
-              collection_finder.new(scope: scope, params: params).execute
+              collection_finder.new(scope: scope, params: finder_params).execute
             end
 
             def scope

@@ -25,5 +25,40 @@
       }
     }
 
+    #storeSwitcherDropdown {
+      .dropdown-menu.show {
+        min-width:250px;
+        width: fit-content;
+        max-width: 90vw;
+        max-height: 70vh;
+        overflow-y: scroll !important;
+        top:110%;
+        left: 50%;
+        right: 50%;
+        translate: -50% 0%;
+        box-shadow: 0 1rem 2.5rem rgba(18,38,63,.1),0 .5rem 1rem -.75rem rgba(18,38,63,.1);
+
+        @include media-breakpoint-up(lg) {
+          left: 0%;
+          right: 0%;
+          translate: 0% 0%;
+        }
+
+        a {
+          white-space: nowrap;
+          overflow-x: hidden;
+          text-overflow: ellipsis;
+
+          svg {
+            vertical-align: text-top;
+            margin-right: 1em;
+          }
+
+          &.disabled svg {
+            color: $success;
+          }
+        }
+      }
+    }
   }
 }

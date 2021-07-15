@@ -5,12 +5,12 @@ module Spree
     describe Package, type: :model do
       subject { Package.new(stock_location) }
 
-      let(:variant) { build(:variant, weight: 25.0) }
+      let(:variant) { create(:variant, weight: 25.0) }
       let(:stock_location) { build(:stock_location) }
-      let(:order) { build(:order) }
+      let(:order) { create(:order) }
 
       def build_inventory_unit
-        build(:inventory_unit, variant: variant)
+        build(:inventory_unit, variant: variant, order: order)
       end
 
       it 'calculates the weight of all the contents' do

@@ -6,8 +6,8 @@ module Spree
 
         def initialize(params)
           @properties = {}
-          @current_currency = Spree::Config[:currency]
-          @current_store = params[:current_store]
+          @current_store = params[:current_store] || Spree::Store.default
+          @current_currency = @current_store.default_currency
           @taxon = params[:taxon]
 
           prepare(params)
@@ -28,8 +28,7 @@ module Spree
         protected
 
         def extended_base_scope
-          base_scope = Spree::Product.spree_base_scopes
-          base_scope = base_scope.by_store(current_store) if current_store.present?
+          base_scope = current_store.products.spree_base_scopes
           base_scope = get_products_conditions_for(base_scope, keywords)
           base_scope = Spree::Dependencies.products_finder.constantize.new(
             scope: base_scope,
@@ -38,11 +37,11 @@ module Spree
                 price: price,
                 option_value_ids: option_value_ids,
                 properties: product_properties,
-                taxons: taxon&.id
+                taxons: taxon&.id,
+                currency: current_currency
               },
               sort_by: sort_by
-            },
-            current_currency: current_currency
+            }
           ).execute
           base_scope = add_search_scopes(base_scope)
           add_eagerload_scopes(base_scope)

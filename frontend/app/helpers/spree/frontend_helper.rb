@@ -8,6 +8,22 @@ module Spree
       @body_class
     end
 
+    def logo(image_path = nil, options = {})
+      image_path ||= if current_store.logo.attached? && current_store.logo.variable?
+                       main_app.url_for(current_store.logo.variant(resize: '244x104>'))
+                     elsif current_store.logo.attached? && current_store.logo.image?
+                       main_app.url_for(current_store.logo)
+                     else
+                       Spree::Config[:logo]
+                     end
+
+      path = spree.respond_to?(:root_path) ? spree.root_path : main_app.root_path
+
+      link_to path, 'aria-label': current_store.name, method: options[:method] do
+        image_tag image_path, alt: current_store.name, title: current_store.name
+      end
+    end
+
     def spree_breadcrumbs(taxon, _separator = '', product = nil)
       return '' if current_page?('/') || taxon.nil?
 
@@ -344,7 +360,7 @@ module Spree
     end
 
     def checkout_available_payment_methods
-      @checkout_available_payment_methods ||= @order.available_payment_methods(current_store)
+      @checkout_available_payment_methods ||= @order.available_payment_methods
     end
 
     def color_option_type_name
@@ -384,15 +400,17 @@ module Spree
     end
 
     def products_for_filters
-      Product.for_filters(current_currency, taxon: @taxon, store: current_store)
+      @products_for_filters ||= current_store.products.for_filters(current_currency, taxon: @taxon)
     end
 
     def products_for_filters_cache_key
-      [
-        products_for_filters.maximum(:updated_at).to_f,
-        base_cache_key,
-        @taxon&.permalink
-      ].flatten.compact
+      @products_for_filters_cache_key ||= begin
+        [
+          products_for_filters.maximum(:updated_at).to_f,
+          base_cache_key,
+          @taxon&.permalink
+        ].flatten.compact
+      end
     end
   end
 end

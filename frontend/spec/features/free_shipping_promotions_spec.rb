@@ -21,7 +21,7 @@ describe 'Free shipping promotions', type: :feature, js: true do
   end
 
   context 'free shipping promotion automatically applied' do
-    let!(:mug) { create(:product, name: 'RoR Mug', price: 20) }
+    let!(:mug) { create(:product, name: 'RoR Mug', price: 20, stores: [store]) }
     let(:promotion) do
       create(:promotion,
              name: 'Free Shipping',
@@ -51,7 +51,7 @@ describe 'Free shipping promotions', type: :feature, js: true do
     include_context 'proceed to payment step'
 
     context 'when order total is less than defined range' do
-      let!(:mug) { create(:product, name: 'RoR Mug', price: 5) }
+      let!(:mug) { create(:product, name: 'RoR Mug', price: 5, stores: [store]) }
 
       it 'does not apply the free shipping promotion' do
         page.has_text? 'SHIPPING: $10.00'
@@ -60,7 +60,7 @@ describe 'Free shipping promotions', type: :feature, js: true do
     end
 
     context 'when order total is greater than defined range' do
-      let!(:mug) { create(:product, name: 'RoR Mug', price: 60) }
+      let!(:mug) { create(:product, name: 'RoR Mug', price: 60, stores: [store]) }
 
       it 'applies the free shipping promotion' do
         page.has_text? 'SHIPPING: FREE'

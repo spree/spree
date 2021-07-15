@@ -12,7 +12,7 @@ module Spree
       :completed_order_finder, :order_sorter, :cart_compare_line_items_service, :collection_paginator, :products_sorter,
       :products_finder, :taxon_finder, :line_item_by_variant_finder, :cart_estimate_shipping_rates_service,
       :account_create_address_service, :account_update_address_service, :account_create_service, :account_update_service,
-      :address_finder, :collection_sorter, :error_handler
+      :address_finder, :collection_sorter, :error_handler, :current_store_finder
     ].freeze
 
     attr_accessor *INJECTION_POINTS
@@ -77,6 +77,7 @@ module Spree
       @cms_page_finder_finder = 'Spree::CmsPage::Find'
       @menu_finder = 'Spree::Menus::Find'
       @current_order_finder = 'Spree::Orders::FindCurrent'
+      @current_store_finder = 'Spree::Stores::FindCurrent'
       @completed_order_finder = 'Spree::Orders::FindComplete'
       @credit_card_finder = 'Spree::CreditCards::Find'
       @products_finder = 'Spree::Products::Find'

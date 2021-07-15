@@ -25,19 +25,19 @@
           </div>
         </div>
         <div class="col-12">
-          <div class="field checkbox mb-2">
-            <label>
-              <%= f.check_box :deleted_at_null, {checked: params[:q][:deleted_at_null] == '0'}, '0', '1' %>
-              <%= Spree.t(:show_deleted) %>
-            </label>
-          </div>
+          <%= f.field_container :deleted_at_null do %>
+            <div class="custom-control custom-checkbox">
+              <%= f.check_box :deleted_at_null, {checked: params[:q][:deleted_at_null] == '0', class: 'custom-control-input'}, '0', '1' %>
+              <%= f.label :deleted_at_null, Spree.t(:show_deleted), class: 'custom-control-label' %>
+            </div>
+          <% end %>
 
-          <div class="field checkbox mb-2">
-            <label>
-              <%= f.check_box :not_discontinued, {checked: params[:q][:not_discontinued] == '0'}, '0', '1' %>
-              <%= Spree.t(:show_discontinued ) %>
-            </label>
-          </div>
+          <%= f.field_container :not_discontinued do %>
+            <div class="custom-control custom-checkbox">
+              <%= f.check_box :not_discontinued, {checked: params[:q][:not_discontinued] == '0', class: 'custom-control-input'}, '0', '1' %>
+              <%= f.label :not_discontinued, Spree.t(:show_discontinued ), class: 'custom-control-label' %>
+            </div>
+          <% end %>
         </div>
       </div>
       <div data-hook="admin_products_index_search_buttons" class="form-actions">
@@ -59,7 +59,6 @@
         <th scope="col" class="text-center">
           <%= sort_link @search, :master_default_price_amount, Spree.t(:master_price), {}, {title: 'admin_products_listing_price_title'} %>
         </th>
-        <th><%= Spree.t(:stores) %></th>
         <th scope="col" data-hook="admin_products_index_header_actions" class="actions"></th>
       </tr>
     </thead>

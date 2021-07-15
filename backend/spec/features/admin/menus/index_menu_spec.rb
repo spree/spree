@@ -14,20 +14,12 @@ describe 'Menus Index', type: :feature do
   end
 
   context 'when menus are present' do
-    let!(:store_1) { create(:store) }
-    let!(:store_2) { create(:store) }
-    let!(:store_3) { create(:store) }
-    let!(:store_4) { create(:store) }
+    let!(:other_store) { create(:store) }
+    let!(:main_menu) { create(:menu, name: 'Main Menu') }
+    let!(:main_menu_fr) { create(:menu, name: 'Main Menu FR', locale: 'fr') }
+    let!(:footer_menu) { create(:menu, name: 'Footer Menu', location: 'footer') }
 
-    let!(:main_menu) { create(:menu, name: 'Main Menu', store: store_1) }
-    let!(:main_menu_fr) { create(:menu, name: 'Main Menu FR', store: store_1, locale: 'fr') }
-
-    let!(:main_menu_a) { create(:menu, name: 'MA', store: store_2) }
-    let!(:main_menu_b) { create(:menu, name: 'MB', store: store_3) }
-
-    let!(:footer_menu) { create(:menu, name: 'Footer Menu', location: 'footer', store: store_3) }
-    let!(:footer_menu_a) { create(:menu, name: 'FA', location: 'footer', store: store_1) }
-    let!(:footer_menu_b) { create(:menu, name: 'FB', location: 'footer', store: store_2) }
+    let!(:main_menu_other_store) { create(:menu, name: 'Other Store Main Menu', store: other_store) }
 
     before do
       visit spree.admin_menus_path
@@ -39,18 +31,16 @@ describe 'Menus Index', type: :feature do
                                       })
     end
 
-    it 'lists each menu with stores' do
+    it 'lists each menu' do
       within_table('menusTable') do
         expect(page).to have_text 'Main Menu'
         expect(page).to have_text 'Footer Menu'
-        expect(page).to have_text 'MA'
-        expect(page).to have_text 'MB'
-        expect(page).to have_text 'FA'
-        expect(page).to have_text 'FB'
-        expect(page).to have_text store_1.unique_name
-        expect(page).to have_text store_2.unique_name
-        expect(page).to have_text store_3.unique_name
-        expect(page).not_to have_text store_4.unique_name
+      end
+    end
+
+    it 'does not list menus from other store' do
+      within_table('menusTable') do
+        expect(page).not_to have_text 'Other Store Main Menu'
       end
     end
 
@@ -87,22 +77,7 @@ describe 'Menus Index', type: :feature do
         click_on 'Search'
 
         expect(page).to have_text 'Footer Menu'
-        expect(page).to have_text 'FA'
-        expect(page).to have_text 'FB'
         expect(page).not_to have_text 'Main Menu'
-        expect(page).not_to have_text 'MA'
-        expect(page).not_to have_text 'MB'
-      end
-
-      it 'is able to filter by store' do
-        click_on 'Filter'
-        select2 store_2.unique_name, from: 'Store'
-        click_on 'Search'
-
-        expect(page).to have_text 'MA'
-        expect(page).to have_text 'FB'
-        expect(page).not_to have_text 'Main Menu'
-        expect(page).not_to have_text 'MB'
       end
     end
   end

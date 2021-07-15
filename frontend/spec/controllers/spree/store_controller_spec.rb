@@ -1,5 +1,11 @@
 require 'spec_helper'
 
+class StorefrontFakesController < Spree::StoreController
+  def index
+    render plain: 'index'
+  end
+end
+
 describe Spree::StoreController, type: :controller do
   describe '#store_etag' do
     let!(:store) { create(:store, default: true, default_locale: 'es', default_currency: 'EUR') }
@@ -50,6 +56,41 @@ describe Spree::StoreController, type: :controller do
             true
           ]
         end
+      end
+    end
+  end
+
+  describe '#redirect_unauthorized_access' do
+    controller(StorefrontFakesController) do
+      def index
+        redirect_unauthorized_access
+      end
+    end
+    context 'when logged in' do
+      before do
+        allow(controller).to receive_messages(try_spree_current_user: double('User', id: 1, last_incomplete_spree_order: nil))
+      end
+
+      it 'redirects forbidden path' do
+        get :index
+        expect(response).to redirect_to('/forbidden')
+      end
+    end
+
+    context 'when guest user' do
+      before do
+        allow(controller).to receive_messages(try_spree_current_user: nil)
+      end
+
+      it 'redirects login path' do
+        allow(controller).to receive_messages(spree_login_path: '/login')
+        get :index
+        expect(response).to redirect_to('/login')
+      end
+
+      it 'redirects root path' do
+        get :index
+        expect(response).to redirect_to('/')
       end
     end
   end

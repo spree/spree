@@ -5,6 +5,9 @@ end
 
 describe Spree::Api::BaseController, type: :controller do
   render_views
+
+  let(:store) { Spree::Store.default }
+
   controller(Spree::Api::BaseController) do
     def index
       render plain: { 'products' => [] }.to_json
@@ -71,7 +74,7 @@ describe Spree::Api::BaseController, type: :controller do
   it 'handles record invalid exceptions' do
     expect(subject).to receive(:authenticate_user).and_return(true)
     expect(subject).to receive(:load_user_roles).and_return(true)
-    resource = Spree::Product.new
+    resource = Spree::Product.new(stores: [store])
     resource.valid? # get some errors
     expect(subject).to receive(:index).and_raise(ActiveRecord::RecordInvalid.new(resource))
     get :index, params: { token: 'exception-message' }

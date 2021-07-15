@@ -25,7 +25,9 @@ gem 'spree', '~> 4.3'
 
 ## Remove SpreeMultiDomain (optional)
 
-If you used that gem in the past you need to remove. Multi Store is now incorporated into Spree core and you cannot use that gem anymore.
+If you used that gem in the past you need to remove it. 
+
+Multi Store is now incorporated into Spree core and you cannot use that gem anymore.
 
 1. Remove `spree_multi_domain` from your `Gemfile`
 2. Remove `//= require spree/frontend/spree_multi_domain` from `vendor/assets/javascripts/spree/frontend/all.js`
@@ -37,6 +39,22 @@ If you used that gem in the past you need to remove. Multi Store is now incorpor
 
 ```ruby
 gem 'spree_frontend'
+```
+
+## Add `spree_backend` gem (optional)
+
+`spree` gem now does not include the `spree_backend` gem anymore. If you use the default Spree Admin Panel you need to add it to your `Gemfile`.
+
+```ruby
+gem 'spree_backend'
+```
+
+## Add `spree_emails` gem (optional)
+
+Transactional emails once part of `spree_core` were extracted into their own gem called `spree_emails`. If you would like to still use this feature you'll need to include this new gem in your `Gemfile`.
+
+```ruby
+gem 'spree_emails'
 ```
 
 ## Update gems

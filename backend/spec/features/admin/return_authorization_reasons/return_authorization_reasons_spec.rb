@@ -3,7 +3,8 @@ require 'spec_helper'
 describe 'ReturnAuthorizationReason', type: :feature, js: true do
   stub_authorization!
 
-  let!(:order) { create(:shipped_order) }
+  let(:store) { Spree::Store.default }
+  let!(:order) { create(:shipped_order, store: store) }
   let!(:stock_location) { create(:stock_location) }
   let!(:rma_reason) { create(:return_authorization_reason, name: 'Defect #1', mutable: true) }
   let!(:rma_reason2) { create(:return_authorization_reason, name: 'Defect #2', mutable: true) }

@@ -5,7 +5,7 @@ describe Spree::LegacyUser, type: :model do # rubocop:disable RSpec/MultipleDesc
   context '#last_incomplete_order' do
     let!(:user) { create(:user) }
     let!(:order) { create(:order, bill_address: create(:address), ship_address: create(:address)) }
-    let(:current_store) { create :store }
+    let(:current_store) { Spree::Store.default }
 
     let(:order_1) { create(:order, created_at: 1.day.ago, user: user, created_by: user, store: current_store) }
     let(:order_2) { create(:order, user: user, created_by: user, store: current_store) }

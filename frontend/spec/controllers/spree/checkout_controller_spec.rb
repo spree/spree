@@ -302,6 +302,7 @@ describe Spree::CheckoutController, type: :controller do
             end
 
             context 'when addresses are the same but have different ids' do
+              let(:ship_address) { create(:address, bill_address.attributes.except('id')) }
               let(:use_billing) { false }
               let(:bill_address_params) { default_bill_address.attributes.except(:user_id, :created_at, :updated_at) }
               let(:ship_address_params) { default_ship_address.attributes.except(:user_id, :created_at, :updated_at) }

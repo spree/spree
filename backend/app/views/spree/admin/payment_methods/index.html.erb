@@ -6,6 +6,23 @@
   <%= button_link_to Spree.t(:new_payment_method), new_object_url, class: "btn-success", icon: 'add.svg', id: 'admin_new_payment_methods_link' %>
 <% end if can? :create, Spree::PaymentMethod %>
 
+<% content_for :table_filter do %>
+  <div data-hook="admin_payment_methods_filter_table">
+    <%= search_form_for [:admin, @search] do |f| %>
+      <%- locals = {f: f} %>
+      <div data-hook="admin_payment_methods_index_search" class="row">
+        <div class="form-group">
+          <%= f.label :name_cont, Spree.t('name') %>
+          <%= f.text_field :name_cont, size: 15, class: "form-control js-quick-search-target js-filterable" %>
+        </div>
+      </div>
+      <div data-hook="admin_products_index_search_buttons" class="form-actions">
+        <%= button Spree.t(:search), 'search.svg' %>
+      </div>
+    <% end %>
+  </div>
+<% end %>
+
 <% if @payment_methods.any? %>
 <div class="table-responsive">
   <table class="table sortable" id='listing_payment_methods' data-hook data-sortable-link="<%= update_positions_admin_payment_methods_url %>">

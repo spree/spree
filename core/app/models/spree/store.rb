@@ -4,13 +4,18 @@ module Spree
     FAVICON_CONTENT_TYPES = ['image/png', 'image/x-icon', 'image/vnd.microsoft.icon'].freeze
 
     has_many :orders, class_name: 'Spree::Order'
-    has_many :payment_methods, class_name: 'Spree::PaymentMethod'
+
+    has_many :store_payment_methods, class_name: 'Spree::StorePaymentMethod'
+    has_many :payment_methods, through: :store_payment_methods, class_name: 'Spree::PaymentMethod'
 
     has_many :menus
     has_many :cms_pages
 
     has_many :store_products, class_name: 'Spree::StoreProduct', dependent: :destroy
     has_many :products, through: :store_products, class_name: 'Spree::Product'
+    has_many :variants, through: :products, foreign_key: :prodyct, class_name: 'Spree::Variant',
+                        source: :variants_including_master
+    has_many :stock_items, through: :variants, class_name: 'Spree::StockItem'
 
     belongs_to :default_country, class_name: 'Spree::Country'
     belongs_to :checkout_zone, class_name: 'Spree::Zone'
@@ -27,6 +32,8 @@ module Spree
         connection.column_exists?(:spree_stores, :new_order_notifications_email)
       validates :new_order_notifications_email, email: { allow_blank: true }
     end
+
+    default_scope { order(created_at: :asc) }
 
     has_one_attached :logo
     has_one_attached :mailer_logo
@@ -48,9 +55,12 @@ module Spree
 
     alias_attribute :contact_email, :customer_support_email
 
-    def self.current(domain = nil)
-      current_store = domain ? Store.by_url(domain).first : nil
-      current_store || Store.default
+    def self.current(url = nil)
+      ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
+        `Spree::Store.current` is deprecated and will be removed in Spree 5
+        Spree::Stores::FindCurrent.new(url: "http://example.com") instead
+      DEPRECATION
+      Stores::FindCurrent.new(url: url).execute
     end
 
     def self.default
@@ -98,7 +108,7 @@ module Spree
       @formatted_url ||= if url.match(/http:\/\/|https:\/\//)
                            url
                          else
-                           Rails.env.development? ? "http://#{url}" : "https://#{url}"
+                           Rails.env.development? || Rails.env.test? ? "http://#{url}" : "https://#{url}"
                          end
     end
 

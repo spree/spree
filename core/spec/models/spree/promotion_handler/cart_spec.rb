@@ -34,7 +34,7 @@ module Spree
         end
 
         context 'promotion has item total rule' do
-          let(:shirt) { create(:product) }
+          let(:shirt) { create(:product, stores: [order.store]) }
           let!(:rule) { Promotion::Rules::ItemTotal.create(preferred_operator_min: 'gt', preferred_amount_min: 50, preferred_operator_max: 'lt', preferred_amount_max: 150, promotion: promotion) }
 
           before do
@@ -70,7 +70,7 @@ module Spree
         end
 
         context 'promotion has item total rule' do
-          let(:shirt) { create(:product) }
+          let(:shirt) { create(:product, stores: [order.store]) }
           let!(:rule) { Promotion::Rules::ItemTotal.create(preferred_operator_min: 'gt', preferred_amount_min: 50, preferred_operator_max: 'lt', preferred_amount_max: 150, promotion: promotion) }
 
           before do

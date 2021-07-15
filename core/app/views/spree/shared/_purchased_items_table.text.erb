@@ -16,7 +16,7 @@
 <% end %>
 
 <% if order.additional_tax_total != 0 %>
-  <%= Spree.t(:tax) %>: <%= label %> <%= order.display_additional_tax_total.to_html %>
+  <%= Spree.t(:tax) %>: <%= order.display_additional_tax_total.to_html %>
 <% end %>
 
 <% order.adjustments.eligible.each do |adjustment| %>

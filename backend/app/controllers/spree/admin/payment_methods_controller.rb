@@ -10,11 +10,12 @@ module Spree
       def create
         @payment_method = params[:payment_method].delete(:type).constantize.new(payment_method_params)
         @object = @payment_method
+        ensure_current_store
         invoke_callbacks(:create, :before)
         if @payment_method.save
           invoke_callbacks(:create, :after)
           flash[:success] = Spree.t(:successfully_created, resource: Spree.t(:payment_method))
-          redirect_to edit_admin_payment_method_path(@payment_method)
+          redirect_to spree.edit_admin_payment_method_path(@payment_method)
         else
           invoke_callbacks(:create, :fails)
           respond_with(@payment_method)
@@ -29,7 +30,7 @@ module Spree
             type: payment_method_type,
             updated_at: Time.current
           )
-          @payment_method = PaymentMethod.find(params[:id])
+          @payment_method = scope.find(params[:id])
         end
 
         attributes = payment_method_params.merge(preferences_params)
@@ -38,9 +39,10 @@ module Spree
         end
 
         if @payment_method.update(attributes)
+          ensure_current_store
           invoke_callbacks(:update, :after)
           flash[:success] = Spree.t(:successfully_updated, resource: Spree.t(:payment_method))
-          redirect_to edit_admin_payment_method_path(@payment_method)
+          redirect_to spree.edit_admin_payment_method_path(@payment_method)
         else
           invoke_callbacks(:update, :fails)
           respond_with(@payment_method)
@@ -49,8 +51,20 @@ module Spree
 
       private
 
+      def scope
+        current_store.payment_methods.accessible_by(current_ability, :index)
+      end
+
       def collection
+        return @collection if @collection.present?
+
+        params[:q] ||= {}
         @collection = super.order(position: :asc)
+
+        @collection = scope.order(position: :asc)
+
+        @search = @collection.ransack(params[:q])
+        @collection = @search.result.page(params[:page]).per(params[:per_page])
       end
 
       def load_data

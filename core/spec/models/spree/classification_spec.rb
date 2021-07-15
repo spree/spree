@@ -2,18 +2,20 @@ require 'spec_helper'
 
 module Spree
   describe Classification, type: :model do
+    let(:store) { create(:store) }
+
     # Regression test for #3494
     let(:taxon_with_5_products) do
       products = []
       5.times do
-        products << create(:base_product)
+        products << create(:base_product, stores: [store])
       end
 
       create(:taxon, products: products)
     end
 
     it 'cannot link the same taxon to the same product more than once' do
-      product = create(:product)
+      product = create(:product, stores: [store])
       taxon = create(:taxon)
       expect { product.taxons << taxon }.not_to raise_error
       expect { product.taxons << taxon }.to raise_error(ActiveRecord::RecordInvalid)

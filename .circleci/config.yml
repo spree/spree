@@ -240,10 +240,11 @@ jobs:
             ./tmp/cc-test-reporter format-coverage -t simplecov -o tmp/codeclimate.backend.json /tmp/workspace/simplecov/backend/.resultset.json
             ./tmp/cc-test-reporter format-coverage -t simplecov -o tmp/codeclimate.core.json /tmp/workspace/simplecov/core/.resultset.json
             ./tmp/cc-test-reporter format-coverage -t simplecov -o tmp/codeclimate.frontend.json /tmp/workspace/simplecov/frontend/.resultset.json
+            ./tmp/cc-test-reporter format-coverage -t simplecov -o tmp/codeclimate.emails.json /tmp/workspace/simplecov/emails/.resultset.json
       - run:
           name: Upload coverage results to Code Climate
           command: |
-            ./tmp/cc-test-reporter sum-coverage tmp/codeclimate.*.json -p 4 -o tmp/codeclimate.total.json
+            ./tmp/cc-test-reporter sum-coverage tmp/codeclimate.*.json -p 5 -o tmp/codeclimate.total.json
             ./tmp/cc-test-reporter upload-coverage -i tmp/codeclimate.total.json
 
   update_staging_repository:
@@ -259,7 +260,7 @@ jobs:
       - run: ssh-add ~/.ssh/id_rsa_54505e4e806d2e2643c699bd39b271dc
       - run: git clone -b master git@github.com:spark-solutions/spree-designs.git
       - run:
-          command: bundle update spree spree_frontend spree_backend
+          command: bundle update spree spree_frontend spree_backend spree_emails
           working_directory: ~/project/spree-designs
       - run:
           command: bundle exec rails spree:install:migrations

@@ -1,5 +1,4 @@
 //= require spree/backend/global/alerts
-//= require spree/backend/global/api_functions
 //= require spree/backend/global/bootstrap
 //= require spree/backend/global/flatpickr
 //= require spree/backend/global/ransack
@@ -9,4 +8,4 @@
 //= require spree/backend/global/select2_autocomplete
 //= require spree/backend/global/select2_populate
 //= require spree/backend/global/sortable
-//= require spree/backend/global/tinymce
+//= require spree/backend/global/side_scroll_indication

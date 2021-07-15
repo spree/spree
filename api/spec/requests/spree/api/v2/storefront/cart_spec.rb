@@ -5,7 +5,8 @@ describe 'API V2 Storefront Cart Spec', type: :request do
   let(:currency) { store.default_currency }
   let(:user)  { create(:user) }
   let(:order) { create(:order, user: user, store: store, currency: currency) }
-  let(:variant) { create(:variant) }
+  let(:product) { create(:product, stores: [store]) }
+  let(:variant) { create(:variant, product: product) }
 
   include_context 'API v2 tokens'
 
@@ -188,12 +189,40 @@ describe 'API V2 Storefront Cart Spec', type: :request do
       end
     end
 
+    shared_examples 'doesnt add item from different store' do
+      before do
+        variant.product.stores = [create(:store)]
+        execute
+      end
+
+      it_behaves_like 'returns 404 HTTP status'
+
+      it 'returns an error' do
+        expect(json_response[:error]).to eq('The resource you were looking for could not be found.')
+      end
+    end
+
+    shared_examples 'doesnt add non-existing item' do
+      before do
+        variant.destroy
+        execute
+      end
+
+      it_behaves_like 'returns 404 HTTP status'
+
+      it 'returns an error' do
+        expect(json_response[:error]).to eq('The resource you were looking for could not be found.')
+      end
+    end
+
     context 'as a signed in user' do
       include_context 'creates order with line item'
 
       context 'with existing order' do
         it_behaves_like 'adds item'
         it_behaves_like 'doesnt add item with quantity unnavailble'
+        it_behaves_like 'doesnt add item from different store'
+        it_behaves_like 'doesnt add non-existing item'
       end
 
       it_behaves_like 'no current order'
@@ -205,6 +234,8 @@ describe 'API V2 Storefront Cart Spec', type: :request do
       context 'with existing order' do
         it_behaves_like 'adds item'
         it_behaves_like 'doesnt add item with quantity unnavailble'
+        it_behaves_like 'doesnt add item from different store'
+        it_behaves_like 'doesnt add non-existing item'
       end
 
       it_behaves_like 'no current order'

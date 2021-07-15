@@ -1,6 +1,16 @@
 module Spree
   module Admin
-    class BaseController < Spree::BaseController
+    class BaseController < ApplicationController
+      include Spree::Core::ControllerHelpers::Auth
+      include Spree::Core::ControllerHelpers::Search
+      include Spree::Core::ControllerHelpers::Store
+      include Spree::Core::ControllerHelpers::StrongParameters
+      include Spree::Core::ControllerHelpers::Locale
+      include Spree::Core::ControllerHelpers::Currency
+
+      respond_to :html
+
+      helper 'spree/base'
       helper 'spree/admin/navigation'
       helper 'spree/locale'
       helper 'spree/currency'
@@ -28,6 +38,24 @@ module Spree
         authorize! action, record
       end
 
+      def redirect_unauthorized_access
+        if try_spree_current_user
+          flash[:error] = Spree.t(:authorization_failure)
+          redirect_to spree.admin_forbidden_path
+        else
+          store_location
+          if defined?(spree.admin_login_path)
+            redirect_to spree.admin_login_path
+          elsif respond_to?(:spree_login_path)
+            redirect_to spree_login_path
+          elsif spree.respond_to?(:root_path)
+            redirect_to spree.root_path
+          else
+            redirect_to main_app.respond_to?(:root_path) ? main_app.root_path : '/'
+          end
+        end
+      end
+
       # Need to generate an API key for a user due to some backend actions
       # requiring authentication to the Spree API
       def generate_admin_api_key
@@ -38,7 +66,7 @@ module Spree
 
       def flash_message_for(object, event_sym)
         resource_desc  = object.class.model_name.human
-        resource_desc += " \"#{object.name}\"" if object.respond_to?(:name) && object.name.present?
+        resource_desc += " \"#{object.name}\"" if (object.persisted? || object.destroyed?) && object.respond_to?(:name) && object.name.present? && !object.is_a?(Spree::Order)
         Spree.t(event_sym, resource: resource_desc)
       end
 
@@ -61,7 +89,7 @@ module Spree
       def can_not_transition_without_customer_info
         unless @order.billing_address.present?
           flash[:notice] = Spree.t(:fill_in_customer_info)
-          redirect_to edit_admin_order_customer_url(@order)
+          redirect_to spree.edit_admin_order_customer_url(@order)
         end
       end
 

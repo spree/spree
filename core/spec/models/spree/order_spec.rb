@@ -8,10 +8,10 @@ end
 
 describe Spree::Order, type: :model do
   let(:user) { stub_model(Spree::LegacyUser, email: 'spree@example.com') }
-  let(:order) { stub_model(Spree::Order, user: user) }
+  let!(:store) { create(:store, default: true) }
+  let(:order) { stub_model(Spree::Order, user: user, store: store) }
 
   before do
-    create(:store)
     allow(Spree::LegacyUser).to receive_messages(current: mock_model(Spree::LegacyUser, id: 123))
   end
 
@@ -47,7 +47,7 @@ describe Spree::Order, type: :model do
   end
 
   context '#cancel' do
-    let(:order) { create(:completed_order_with_totals) }
+    let(:order) { create(:completed_order_with_totals, store: store) }
     let!(:payment) do
       create(
         :payment,
@@ -125,7 +125,7 @@ describe Spree::Order, type: :model do
   end
 
   context '#finalize!' do
-    let(:order) { Spree::Order.create(email: 'test@example.com') }
+    let(:order) { Spree::Order.create(email: 'test@example.com', store: store) }
 
     before do
       order.update_column :state, 'complete'
@@ -169,46 +169,7 @@ describe Spree::Order, type: :model do
       order.finalize!
     end
 
-    it 'sends an order confirmation email to customer' do
-      mail_message = double 'Mail::Message'
-      expect(Spree::OrderMailer).to receive(:confirm_email).with(order.id).and_return mail_message
-      expect(mail_message).to receive :deliver_later
-      order.finalize!
-    end
-
-    it 'sets confirmation delivered when finalizing' do
-      expect(order.confirmation_delivered?).to be false
-      order.finalize!
-      expect(order.confirmation_delivered?).to be true
-    end
-
-    it 'does not send duplicate confirmation emails' do
-      allow(order).to receive_messages(confirmation_delivered?: true)
-      expect(Spree::OrderMailer).not_to receive(:confirm_email)
-      order.finalize!
-    end
-
-    context 'new order notifications' do
-      it 'sends a new order notification email to store owner when notification email address is set' do
-        # NOTE: 'store' factory has new_order_notifications_email set by default
-        mail_message = double 'Mail::Message'
-        expect(Spree::OrderMailer).to receive(:store_owner_notification_email).with(order.id).and_return mail_message
-        expect(mail_message).to receive :deliver_later
-        order.finalize!
-      end
-
-      it 'does not send a new order notification email to store owner when notification email address is blank' do
-        store = order.store
-        store.update(new_order_notifications_email: '')
-
-        mail_message = double 'Mail::Message'
-        expect(Spree::OrderMailer).to_not receive(:store_owner_notification_email)
-        order.finalize!
-      end
-    end
-
     it 'freezes all adjustments' do
-      allow(Spree::OrderMailer).to receive_message_chain :confirm_email, :deliver_later
       adjustments = [double]
       expect(order).to receive(:all_adjustments).and_return(adjustments)
       expect(adjustments).to all(receive(:close))
@@ -511,28 +472,35 @@ describe Spree::Order, type: :model do
 
   # Regression test for #4199
   context '#available_payment_methods' do
-    let(:ok_method) { double :payment_method, available_for_order?: true, available_for_store?: true }
-    let(:no_method) { double :payment_method, available_for_order?: false, available_for_store?: true }
+    let(:ok_method) { double :payment_method, available_for_order?: true, available_for_store?: true, stores: [store] }
+    let(:no_method) { double :payment_method, available_for_order?: false, available_for_store?: true, stores: [store] }
     let(:methods) { [ok_method, no_method] }
+    let(:store_2) { create(:store) }
 
     it 'includes frontend payment methods' do
       payment_method = Spree::PaymentMethod.create!(name: 'Fake',
                                                     active: true,
-                                                    display_on: 'front_end')
+                                                    display_on: 'front_end',
+                                                    stores: [store]
+                                                   )
       expect(order.available_payment_methods).to include(payment_method)
     end
 
     it "includes 'both' payment methods" do
       payment_method = Spree::PaymentMethod.create!(name: 'Fake',
                                                     active: true,
-                                                    display_on: 'both')
+                                                    display_on: 'both',
+                                                    stores: [store]
+                                                   )
       expect(order.available_payment_methods).to include(payment_method)
     end
 
     it 'does not include a payment method twice if display_on is blank' do
       payment_method = Spree::PaymentMethod.create!(name: 'Fake',
                                                     active: true,
-                                                    display_on: 'both')
+                                                    display_on: 'both',
+                                                    stores: [store]
+                                                   )
       expect(order.available_payment_methods.count).to eq(1)
       expect(order.available_payment_methods).to include(payment_method)
     end
@@ -541,6 +509,18 @@ describe Spree::Order, type: :model do
       allow(Spree::PaymentMethod).to receive(:available_on_front_end).and_return(methods)
 
       expect(order.available_payment_methods).to match_array [ok_method]
+    end
+
+    it 'does not include a payment method from different stores' do
+      payment_method = Spree::PaymentMethod.create!(name: 'Fake',
+                                                    active: true,
+                                                    display_on: 'both',
+                                                    stores: [store_2]
+                                                   )
+      expect(order.available_payment_methods).not_to include(payment_method)
+
+      order = stub_model(Spree::Order, user: user, store: store_2)
+      expect(order.available_payment_methods).to include(payment_method)
     end
   end
 
@@ -689,7 +669,7 @@ describe Spree::Order, type: :model do
     end
 
     context 'when the user is not persisted' do
-      let(:user) { FactoryBot.build(:user_with_addreses) }
+      let(:user) { build(:user) }
 
       it 'does not persist the user' do
         expect { order.associate_user!(user) }.
@@ -1107,7 +1087,7 @@ describe Spree::Order, type: :model do
   end
 
   describe '#validate_payments_attributes' do
-    let(:payment_method) { create(:credit_card_payment_method) }
+    let(:payment_method) { create(:credit_card_payment_method, stores: [store]) }
     let(:attributes) do
       [{ amount: 50, payment_method_id: payment_method.id }]
     end
@@ -1119,7 +1099,7 @@ describe Spree::Order, type: :model do
     end
 
     context 'not existing payment method' do
-      let(:payment_method) { create(:credit_card_payment_method, display_on: 'backend') }
+      let(:payment_method) { create(:credit_card_payment_method, display_on: 'backend', stores: [store]) }
 
       it 'raises RecordNotFound' do
         expect { order.validate_payments_attributes(attributes) }.to raise_error(ActiveRecord::RecordNotFound)
@@ -1150,8 +1130,8 @@ describe Spree::Order, type: :model do
   end
 
   describe 'credit_card_nil_payment' do
-    let!(:order) { create(:order_with_line_items, line_items_count: 2) }
-    let!(:credit_card_payment_method) { create(:simple_credit_card_payment_method) }
+    let!(:order) { create(:order_with_line_items, line_items_count: 2, store: store) }
+    let!(:credit_card_payment_method) { create(:simple_credit_card_payment_method, stores: [store]) }
     let!(:store_credits) { create(:store_credit_payment, order: order) }
 
     def attributes(amount = 0)
@@ -1172,8 +1152,8 @@ describe Spree::Order, type: :model do
 
   describe '#collect_backend_payment_methods' do
     let!(:order) { create(:order_with_line_items, line_items_count: 2) }
-    let!(:credit_card_payment_method) { create(:simple_credit_card_payment_method, display_on: 'both') }
-    let!(:store_credit_payment_method) { create(:store_credit_payment_method, display_on: 'both') }
+    let!(:credit_card_payment_method) { create(:simple_credit_card_payment_method, display_on: 'both', stores: [store]) }
+    let!(:store_credit_payment_method) { create(:store_credit_payment_method, display_on: 'both', stores: [store]) }
 
     it { expect(order.collect_backend_payment_methods).to include(credit_card_payment_method) }
     it { expect(order.collect_backend_payment_methods).not_to include(store_credit_payment_method) }
@@ -1420,5 +1400,135 @@ describe Spree::Order, type: :model do
     let(:order) { build(:order, number: 'r1234') }
 
     it { expect { order.valid? }.to change(order, :number).to('R1234') }
+  end
+
+  describe "bill_address_id=" do
+    let(:user) { create(:user) }
+    let(:order) { create(:order, user: user) }
+    let(:address) { create(:address, user: user) }
+
+    subject { order.bill_address_id = address.id }
+
+    context 'when assigned address exist' do
+      context 'when assigned address belongs to user' do
+        it 'assigns address to order as bill address' do
+          expect(order.bill_address_id).not_to eq address.id
+          subject
+          expect(order.bill_address_id).to eq address.id
+        end
+
+        it 'does not set address as user default bill address' do
+          subject
+          expect(user.bill_address_id).not_to eq address.id
+        end
+      end
+    end
+  end
+
+  describe '#bill_address_attributes=' do
+    let(:order) { create(:order, user: user) }
+    let(:address_attributes) { attributes_for(:address) }
+
+    subject { order.bill_address_attributes = address_attributes }
+
+    context 'when user has default bill address' do
+      let!(:user) { create(:user_with_addresses) }
+
+      it 'does not change user default bill addresss' do
+        expect(user.bill_address_id).not_to be nil
+
+        expect { subject }.not_to change { user.bill_address_id }
+      end
+    end
+
+    context 'when user does not have any addresses' do
+      let!(:user) { create(:user) }
+
+      it 'changes user default bill addresss' do
+        expect(user.bill_address_id).to be nil
+        expect(user.addresses).to be_empty
+
+        expect { subject }.to change { user.bill_address_id }
+      end
+    end
+
+    context 'when user has address but without default bill address' do
+      let(:address) { create(:address, user: user) }
+      let(:user) { create(:user_with_addresses, bill_address: nil) }
+
+      before { user.addresses << address }
+
+      it 'changes user default bill addresss' do
+        expect(user.bill_address_id).to be nil
+        expect(user.addresses).not_to be_empty
+
+        expect { subject }.to change { user.bill_address_id }
+      end
+    end
+  end
+
+  describe "ship_address_id=" do
+    let(:user) { create(:user) }
+    let(:order) { create(:order, user: user) }
+    let(:address) { create(:address, user: user) }
+
+    subject { order.ship_address_id = address.id }
+
+    context 'when assigned address exist' do
+      context 'when assigned address belongs to user' do
+        it 'assigns address to order as ship address' do
+          expect(order.ship_address_id).not_to eq address.id
+          subject
+          expect(order.ship_address_id).to eq address.id
+        end
+
+        it 'does not set address as user default ship address' do
+          subject
+          expect(user.ship_address_id).not_to eq address.id
+        end
+      end
+    end
+  end
+
+  describe '#ship_address_attributes=' do
+    let(:order) { create(:order, user: user) }
+    let(:address_attributes) { attributes_for(:address) }
+
+    subject { order.ship_address_attributes = address_attributes }
+
+    context 'when user has default ship address' do
+      let!(:user) { create(:user_with_addresses) }
+
+      it 'does not change user default ship addresss' do
+        expect(user.ship_address_id).not_to be nil
+
+        expect { subject }.not_to change { user.ship_address_id }
+      end
+    end
+
+    context 'when user does not have any addresses' do
+      let!(:user) { create(:user) }
+
+      it 'changes user default ship addresss' do
+        expect(user.ship_address_id).to be nil
+        expect(user.addresses).to be_empty
+
+        expect { subject }.to change { user.ship_address_id }
+      end
+    end
+
+    context 'when user has address but without default ship address' do
+      let(:address) { create(:address, user: user) }
+      let(:user) { create(:user_with_addresses, ship_address: nil) }
+
+      before { user.addresses << address }
+
+      it 'changes user default ship addresss' do
+        expect(user.ship_address_id).to be nil
+        expect(user.addresses).not_to be_empty
+
+        expect { subject }.to change { user.ship_address_id }
+      end
+    end
   end
 end

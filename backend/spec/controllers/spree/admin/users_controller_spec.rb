@@ -48,7 +48,7 @@ describe Spree::Admin::UsersController, type: :controller do
     it 'deny access to users without an admin role' do
       allow(user).to receive_messages has_spree_role?: false
       post :index
-      expect(response).to redirect_to(spree.forbidden_path)
+      expect(response).to redirect_to(spree.admin_forbidden_path)
     end
 
     describe 'deny access to users with an bar role' do
@@ -57,14 +57,18 @@ describe Spree::Admin::UsersController, type: :controller do
         Spree::Ability.register_ability(BarAbility)
       end
 
+      after do
+        Spree::Ability.remove_ability(BarAbility)
+      end
+
       it '#index' do
         post :index
-        expect(response).to redirect_to(spree.forbidden_path)
+        expect(response).to redirect_to(spree.admin_forbidden_path)
       end
 
       it '#update' do
         post :update, params: { id: '9' }
-        expect(response).to redirect_to(spree.forbidden_path)
+        expect(response).to redirect_to(spree.admin_forbidden_path)
       end
     end
   end

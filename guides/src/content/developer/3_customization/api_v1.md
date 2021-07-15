@@ -135,7 +135,7 @@ module Spree
 
     # 8.00 it's a example value. Use any other value that your wish!
     let!(:product) { create(:product, sale_price: 8.00) }
-    let!(:other_product) { create(:product) }
+    let!(:other_product) { create(:product, stores: Spree::Store.all) }
     let!(:user) { create(:user) }
 
     before do

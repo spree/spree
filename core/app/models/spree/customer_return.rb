@@ -17,7 +17,7 @@ module Spree
     accepts_nested_attributes_for :return_items
 
     extend DisplayMoney
-    money_methods pre_tax_total: { currency: Spree::Config[:currency] }
+    money_methods :pre_tax_total
 
     self.whitelisted_ransackable_attributes = ['number']
 
@@ -29,6 +29,10 @@ module Spree
 
     def fully_reimbursed?
       completely_decided? && return_items.accepted.includes(:reimbursement).all? { |return_item| return_item.reimbursement.try(:reimbursed?) }
+    end
+
+    def currency
+      order&.currency
     end
 
     # Temporarily tie a customer_return to one order
