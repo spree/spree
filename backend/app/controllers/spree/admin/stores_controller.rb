@@ -40,7 +40,7 @@ module Spree
 
         if @store.save
           flash[:success] = flash_message_for(@store, :successfully_created)
-          redirect_to spree.admin_stores_path
+          redirect_to @store.formatted_url + spree.admin_stores_path
         else
           flash[:error] = "#{Spree.t('store_errors.unable_to_create')}: #{@store.errors.full_messages.join(', ')}"
           render :new
