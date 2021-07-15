@@ -59,7 +59,7 @@ module Spree
             end
           end
 
-          def delete
+          def destroy
             spree_authorize! :update, spree_current_order, order_token
 
             result = spree_current_order.destroy!

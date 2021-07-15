@@ -291,11 +291,11 @@ describe 'API V2 Storefront Cart Spec', type: :request do
     end
   end
 
-  describe 'cart#delete' do
-    let(:execute) { delete '/api/v2/storefront/cart/delete', headers: headers }
+  describe 'cart#destroy' do
+    let(:execute) { delete '/api/v2/storefront/cart', headers: headers }
 
-    shared_examples 'deleting order' do
-      it 'deletes the order' do
+    shared_examples 'destroying order' do
+      it 'destroys the order' do
         expect{ execute }.to change { Spree::Order.count }.by(-1)
       end
     end
@@ -310,7 +310,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
       context 'with existing order with line item' do
         include_context 'creates order with line item'
 
-        it_behaves_like 'deleting order'
+        it_behaves_like 'destroying order'
         it_behaves_like '204 status returned'
         it_behaves_like 'no current order'
       end
@@ -320,7 +320,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
       context 'with existing guest order with line item' do
         include_context 'creates guest order with guest token'
 
-        it_behaves_like 'deleting order'
+        it_behaves_like 'destroying order'
         it_behaves_like '204 status returned'
         it_behaves_like 'no current order'
       end
