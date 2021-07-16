@@ -17,6 +17,7 @@ class CreateSpreeStores < ActiveRecord::Migration[4.2]
         t.string :default_currency
         t.string :code
         t.boolean :default, default: false, null: false
+        t.datetime :deleted_at
 
         t.timestamps null: false, precision: 6
       end

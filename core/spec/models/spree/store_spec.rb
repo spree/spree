@@ -2,14 +2,39 @@ require 'spec_helper'
 
 describe Spree::Store, type: :model do
   describe 'deleting' do
-    subject { store.destroy }
-    let(:store) { build(:store) }
+    # subject { store.destroy! }
+    let!(:store) { create(:store, default: false) }
+
+    before { create(:store, default: true) }
 
     it 'is soft deleted' do
-      expect(subject.deleted_at).not_to be_nil
+      store.destroy!
+      expect(store.deleted_at).not_to be_nil
     end
+
     context 'there is a store with the shared products' do
-      it 'does not remove the shared products'
+      let(:store2) { create(:store) }
+      let(:shared_product) { build(:product) }
+      let(:not_shared_product) { build(:product) }
+
+      before do
+        store.products << shared_product
+        store.products << not_shared_product
+        store2.products << shared_product
+        # shared_product.stores << store
+        # not_shared_product.stores << store
+        # shared_product.stores << store2
+      end
+
+      it 'does not remove the shared products' do
+        p 'debtu store2', Spree::StoreProduct.pluck(:product_id, :store_id)
+        expect { store.destroy! }.to change{ store.products.reload.count }.by(-1)
+                                                      .and change{ store2.products.reload.count }.by(0)
+
+        p 'debtu', Spree::Product.count, Spree::Product.with_deleted.count
+        # expect(shared_product.deleted?).to eq(false)
+        # expect(not_shared_product.deleted?).to eq(true)
+      end
     end
   end
   describe 'validations' do

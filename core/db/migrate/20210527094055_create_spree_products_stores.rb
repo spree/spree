@@ -3,7 +3,7 @@ class CreateSpreeProductsStores < ActiveRecord::Migration[5.2]
     unless table_exists?(:spree_products_stores)
       create_table :spree_products_stores do |t|
         t.references :product, index: true
-        t.references :store,  index: true
+        t.references :store, index: true
         t.timestamps
 
         t.index [:product_id, :store_id], unique: true
