@@ -273,7 +273,9 @@ describe Spree::Order, type: :model do
     end
   end
 
-  context 'empty!' do
+  describe 'empty!' do
+    subject(:result) { order.empty! }
+
     let(:order) { Spree::Order.create(email: 'test@example.com') }
     let(:promotion) { create :promotion, code: '10off' }
 
@@ -286,14 +288,20 @@ describe Spree::Order, type: :model do
         order.update_columns(state: 'complete', completed_at: Time.current)
       end
 
-      it 'raises an exception' do
-        expect { order.empty! }.to raise_error(RuntimeError, Spree.t(:cannot_empty_completed_order))
+      it 'returns failure' do
+        expect(result.success?).to be false
+        expect(result.error.value).to eq Spree.t(:cannot_empty_completed_order)
       end
     end
 
     context 'incomplete order' do
       before do
         order.empty!
+      end
+
+      it 'returns success' do
+        expect(result.success?).to be true
+        expect(result.value).to eq(order)
       end
 
       it 'clears out line items, adjustments and update totals' do
@@ -303,8 +311,20 @@ describe Spree::Order, type: :model do
         expect(order.order_promotions.count).to be_zero
         expect(order.promo_total).to be_zero
         expect(order.item_total).to be_zero
-        expect(order.empty!).to eq(order)
+        expect(order.ship_total).to be_zero
       end
+    end
+  end
+
+  describe 'destroy!' do
+    subject(:result) { order.destroy! }
+
+    before { order.empty! }
+
+    it 'destroys the order' do
+      result
+
+      expect(order.destroyed?).to be true
     end
   end
 

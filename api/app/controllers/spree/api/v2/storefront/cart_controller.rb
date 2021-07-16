@@ -50,11 +50,25 @@ module Spree
           def empty
             spree_authorize! :update, spree_current_order, order_token
 
-            # TODO: we should extract this logic into service and let
-            # developers overwrite it
-            spree_current_order.empty!
+            result = spree_current_order.empty!
 
-            render_serialized_payload { serialized_current_order }
+            if result.success?
+              render_serialized_payload { serialized_current_order }
+            else
+              render_error_payload(result.error)
+            end
+          end
+
+          def destroy
+            spree_authorize! :update, spree_current_order, order_token
+
+            result = spree_current_order.destroy!
+
+            if result.success?
+              head 204
+            else
+              render_error_payload(result.error)
+            end
           end
 
           def set_quantity

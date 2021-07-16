@@ -420,21 +420,11 @@ module Spree
     end
 
     def empty!
-      if completed?
-        raise Spree.t(:cannot_empty_completed_order)
-      else
-        line_items.destroy_all
-        updater.update_item_count
-        adjustments.destroy_all
-        shipments.destroy_all
-        state_changes.destroy_all
-        order_promotions.destroy_all
+      Spree::Dependencies.cart_empty_service.constantize.new.call(order: self)
+    end
 
-        update_totals
-        persist_totals
-        restart_checkout_flow
-        self
-      end
+    def destroy!
+      Spree::Dependencies.cart_destroy_service.constantize.new.call(order: self)
     end
 
     def has_step?(step)
