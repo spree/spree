@@ -6,6 +6,7 @@ $(function () {
     this.name = this.variant[0].variant.name + ' - ' + this.variant[0].variant.sku
     this.quantity = 0
   }
+
   TransferVariant.prototype.add = function (quantity) {
     this.quantity += quantity
     return this.quantity
@@ -128,7 +129,7 @@ $(function () {
   }
 
   function formattedVariantList(obj) {
-   return { id: obj.id, text: obj.name, name: obj.name, sku: obj.sku, options_text: obj.options_text, variant: obj }
+    return { id: obj.id, text: obj.name, name: obj.name, sku: obj.sku, options_text: obj.options_text, variant: obj }
   }
 
   function formattedStockItemsList(obj) {

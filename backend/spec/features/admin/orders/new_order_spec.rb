@@ -102,15 +102,17 @@ describe 'New Order', type: :feature do
 
     context 'on increase in quantity the product should be removed from order' do
       before do
-        accept_alert do
-          within('table.stock-levels') do
-            fill_in 'variant_quantity', with: 2
-            click_icon :add
-          end
+        within('table.stock-levels') do
+          fill_in 'variant_quantity', with: 2
+          click_icon :add
         end
       end
 
-      it { expect(page).not_to have_css('#stock_details') }
+      it 'alerts the quantity is not available' do
+        assert_admin_flash_alert_notice("Quantity selected of \"#{product.name}\" is not available.")
+      end
+
+      it { expect(page).to have_css('#stock_details') }
     end
   end
 

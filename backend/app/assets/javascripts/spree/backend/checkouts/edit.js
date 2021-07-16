@@ -78,7 +78,7 @@ $.fn.customerAutocomplete = function() {
       data: function (params) {
         return {
           filter: {
-            'm': 'or',
+            m: 'or',
             email_i_cont: params.term,
             addresses_firstname_start: params.term,
             addresses_lastname_start: params.term

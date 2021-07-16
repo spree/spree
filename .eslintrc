@@ -14,6 +14,8 @@ globals:
   Raphael: true
   SpreeAPI: true
   SpreePaths: true
+  showProgressIndicator: true
+  hideProgressIndicator: true
   CouponManager: true
   ThumbnailsCarousel: true
   Turbolinks: true
@@ -33,4 +35,5 @@ env:
 
 rules:
   space-before-function-paren: off
+  no-var: off
   semi: off

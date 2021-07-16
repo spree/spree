@@ -1,6 +1,13 @@
 <div class="card-body">
   <div class="form-group mb-0">
     <%= label_tag Spree.t('user_rule.choose_users') %>
-    <%= select "#{param_prefix}", 'user_ids_string', options_from_collection_for_select(promotion_rule.users, :id, :email, promotion_rule.users.pluck(:id)), { include_hidden: true }, multiple: true, class: 'user_picker d-block w-100' %>
+    <%= select "#{param_prefix}", 'user_ids_string', options_from_collection_for_select(promotion_rule.users, :id, :email, promotion_rule.users.pluck(:id)),
+                { include_hidden: true }, multiple: true, class: 'd-block w-100',
+                data: {
+                  'autocomplete-url-value': 'users_api_v2',
+                  'autocomplete-search-query-value': 'email_i_cont',
+                  'autocomplete-return-attr-value': 'email',
+                  'autocomplete-multiple-value': true
+                } %>
   </div>
 </div>

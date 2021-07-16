@@ -3,30 +3,103 @@ module Spree
     include Spree::DependenciesHelper
 
     INJECTION_POINTS = [
+      ##
+      # Store Front API v2
+      ##
+      # Cart
       :storefront_cart_create_service, :storefront_cart_add_item_service, :storefront_cart_remove_line_item_service,
       :storefront_cart_remove_item_service, :storefront_cart_set_item_quantity_service, :storefront_cart_recalculate_service,
-      :storefront_cart_update, :storefront_coupon_handler, :storefront_checkout_next_service, :storefront_checkout_advance_service,
-      :storefront_checkout_update_service, :storefront_checkout_complete_service, :storefront_checkout_add_store_credit_service,
-      :storefront_checkout_remove_store_credit_service, :storefront_checkout_get_shipping_rates_service,
-      :storefront_cart_compare_line_items_service, :storefront_cart_serializer, :storefront_credit_card_serializer,
-      :storefront_credit_card_finder, :storefront_shipment_serializer, :storefront_payment_method_serializer, :storefront_country_finder,
-      :storefront_country_serializer, :storefront_menu_serializer, :storefront_menu_finder, :storefront_current_order_finder,
-      :storefront_completed_order_finder, :storefront_order_sorter, :storefront_collection_paginator, :storefront_user_serializer,
-      :storefront_products_sorter, :storefront_products_finder, :storefront_product_serializer, :storefront_taxon_serializer,
-      :storefront_taxon_finder, :storefront_find_by_variant_finder, :storefront_cart_update_service,
+      :storefront_cart_update, :storefront_cart_compare_line_items_service, :storefront_cart_serializer,
+      :storefront_cart_update_service,
+
+      # Coupon
+      :storefront_coupon_handler,
+
+      # Checkout
+      :storefront_checkout_next_service, :storefront_checkout_advance_service, :storefront_checkout_update_service,
+      :storefront_checkout_complete_service, :storefront_checkout_add_store_credit_service, :storefront_checkout_remove_store_credit_service,
+      :storefront_checkout_get_shipping_rates_service,
+
+      # Credit Card
+      :storefront_credit_card_serializer, :storefront_credit_card_finder,
+
+      # Shipment
+      :storefront_shipment_serializer,
+
+      # Payment Method
+      :storefront_payment_method_serializer,
+
+      # Country
+      :storefront_country_finder, :storefront_country_serializer,
+
+      # Menu
+      :storefront_menu_serializer, :storefront_menu_finder,
+
+      # Order
+      :storefront_current_order_finder, :storefront_completed_order_finder, :storefront_order_sorter, :storefront_order_serializer,
+
+      # Collection
+      :storefront_collection_paginator, :storefront_collection_sorter,
+
+      # User
+      :storefront_user_serializer,
+
+      # Products
+      :storefront_products_sorter, :storefront_products_finder, :storefront_product_serializer,
+
+      # Taxon
+      :storefront_taxon_serializer, :storefront_taxon_finder,
+
+      # Variant
+      :storefront_find_by_variant_finder,
+
+      # Shipping
       :storefront_cart_estimate_shipping_rates_service, :storefront_estimated_shipment_serializer,
-      :storefront_store_serializer, :storefront_address_serializer, :storefront_order_serializer,
-      :storefront_account_create_address_service, :storefront_account_update_address_service, :storefront_address_finder,
-      :storefront_account_create_service, :storefront_account_update_service, :storefront_collection_sorter, :error_handler
+
+      # Store
+      :storefront_store_serializer,
+
+      # Account / Address
+      :storefront_address_serializer, :storefront_address_finder, :storefront_account_create_address_service,
+      :storefront_account_update_address_service, :storefront_account_create_service, :storefront_account_update_service,
+
+      # Errors
+      :error_handler,
+
+      ##
+      # Platform API v2
+      ##
+      # Order
+      :platform_order_create_service, :platform_order_add_item_service, :platform_order_remove_line_item_service, :platform_order_next_service,
+      :platform_order_advance_service, :platform_order_complete_service, :platform_order_update_service, :platform_order_set_item_quantity_service,
+
+      # Coupon
+      :platform_coupon_handler
     ].freeze
 
-    attr_accessor *INJECTION_POINTS
+    attr_accessor(*INJECTION_POINTS)
 
     def initialize
       set_storefront_defaults
+      set_platform_defaults
     end
 
     private
+
+    def set_platform_defaults
+      # Order Services
+      @platform_order_create_service = Spree::Dependencies.cart_create_service
+      @platform_order_add_item_service = Spree::Dependencies.cart_add_item_service
+      @platform_order_remove_line_item_service = Spree::Dependencies.cart_remove_line_item_service
+      @platform_order_next_service = Spree::Dependencies.checkout_next_service
+      @platform_order_advance_service = Spree::Dependencies.checkout_advance_service
+      @platform_order_complete_service = Spree::Dependencies.checkout_complete_service
+      @platform_order_update_service = Spree::Dependencies.checkout_update_service
+      @platform_order_set_item_quantity_service = Spree::Dependencies.cart_set_item_quantity_service
+
+      # Coupon Code Handler
+      @platform_coupon_handler = Spree::Dependencies.coupon_handler
+    end
 
     def set_storefront_defaults
       # cart services

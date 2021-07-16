@@ -1,5 +1,5 @@
 <script type='text/template' id='product_template'>
-  <li id="product_{{ product.id }}" data-product-id='{{ product.id }}' data-taxons="{{ product.taxon_ids }}" class="product p-2 col-6 col-md-3 col-lg-2">
+  <li id="product_{{ product.id }}" data-classification-id='{{ classification.id }}' data-product-id='{{ product.id }}' class="product p-2 col-6 col-md-3 col-lg-2">
     <div class="m-1 p-2 card bg-light">
       <nav class="navbar navbar-light bg-light justify-content-between px-0 pt-0" style="background-color:transparent !important;">
         <a class=" sort-handle js-sort-handle">
@@ -16,15 +16,15 @@
         </div>
       </nav>
       <div class='image'>
-        {{#if product.image }}
-          <img src='{{product.image}}' alt='{{ product.name }}' class='thumbnail rounded border border' />
+        {{#if image }}
+          <img src='{{image}}' alt='{{ product.attributes.name }}' class='thumbnail rounded border border' />
         {{ else }}
           <img src='<%= image_path("noimage/small.png") %>' alt='{{product.name }}' class='thumbnail' />
         {{/if}}
       </div>
       <div class="p-0 pt-1 text-center product-info">
-        <p class="name card-text">{{ product.name }}</p>
-        <p class="price card-text">{{ product.display_current_currency_price }}</p>
+        <p class="name card-text">{{ product.attributes.name }}</p>
+        <p class="price card-text">{{ product.attributes.display_price }}</p>
       </div>
     </div>
   </li>
