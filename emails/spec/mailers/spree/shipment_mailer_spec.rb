@@ -7,36 +7,28 @@ describe Spree::ShipmentMailer, type: :mailer do
 
   let!(:store) { create(:store) }
 
-  let(:order) { stub_model(Spree::Order, number: 'R12345', store: store, email: 'test@example.com') }
-  let(:shipping_method) { stub_model(Spree::ShippingMethod, name: 'USPS') }
-  let(:product) { stub_model(Spree::Product, name: %{The "BEST" product}, sku: 'SKU0001') }
-  let(:variant) { stub_model(Spree::Variant, product: product) }
-  let(:line_item) { stub_model(Spree::LineItem, variant: variant, order: order, quantity: 1, price: 5) }
-  let(:shipment) do
-    shipment = stub_model(Spree::Shipment)
-    allow(shipment).to receive_messages(line_items: [line_item], order: order)
-    allow(shipment).to receive_messages(tracking_url: 'http://track.com/me')
-    allow(shipment).to receive_messages(shipping_method: shipping_method)
-    shipment
-  end
+  let(:order) { create(:shipped_order, store: store, email: 'test@example.com', user: nil) }
+  let(:shipment) { order.shipments.first }
+  let(:shipping_method) { shipment.shipping_method }
+
+  before { shipping_method.update(tracking_url: 'http://example.com/tracking') }
 
   context ':from not set explicitly' do
     it 'falls back to spree config' do
-      message = Spree::ShipmentMailer.shipped_email(shipment)
+      message = described_class.shipped_email(shipment)
       expect(message.from).to eq([store.mail_from_address])
     end
   end
 
   # Regression test for #2196
   it "doesn't include out of stock in the email body" do
-    shipment_email = Spree::ShipmentMailer.shipped_email(shipment)
+    shipment_email = described_class.shipped_email(shipment)
     expect(shipment_email.body).not_to include(%q{Out of Stock})
   end
 
   it 'shipment_email accepts an shipment id as an alternative to an Shipment object' do
-    expect(Spree::Shipment).to receive(:find).with(shipment.id).and_return(shipment)
     expect do
-      Spree::ShipmentMailer.shipped_email(shipment.id).body
+      described_class.shipped_email(shipment.id).body
     end.not_to raise_error
   end
 
@@ -55,7 +47,7 @@ describe Spree::ShipmentMailer, type: :mailer do
         end
 
         specify do
-          shipped_email = Spree::ShipmentMailer.shipped_email(shipment)
+          shipped_email = described_class.shipped_email(shipment)
           expect(shipped_email).to have_body_text('Caro Cliente,')
         end
       end
@@ -63,7 +55,7 @@ describe Spree::ShipmentMailer, type: :mailer do
   end
 
   context 'shipped_email' do
-    let(:shipped_email) { Spree::ShipmentMailer.shipped_email(shipment) }
+    let(:shipped_email) { described_class.shipped_email(shipment) }
 
     specify do
       expect(shipped_email).to have_body_text(order.number)
@@ -77,16 +69,8 @@ describe Spree::ShipmentMailer, type: :mailer do
       expect(shipped_email).to have_body_text("href=\"#{shipment.tracking_url}\"")
     end
 
-    specify do
-      expect(shipped_email).to have_body_text('Dear Customer')
-    end
-
-    context 'when order has customer\'s name' do
-      before { allow(order).to receive(:name).and_return('Test User') }
-
-      specify 'shows order\'s user name in email body' do
-        expect(shipped_email).to have_body_text('Dear Test User')
-      end
+    specify 'shows order\'s user name in email body' do
+      expect(shipped_email).to have_body_text("Dear #{order.name}")
     end
   end
 
