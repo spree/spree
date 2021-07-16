@@ -8,16 +8,16 @@ describe 'Users', type: :feature do
   let!(:user_a) { create(:user_with_addresses, email: 'a@example.com') }
   let!(:user_b) { create(:user_with_addresses, email: 'b@example.com') }
 
-  let(:order) { create(:completed_order_with_totals, user: user_a, number: 'R123') }
+  let!(:order) { create(:completed_order_with_totals, store: Spree::Store.default, user: user_a, number: 'R123') }
 
-  let(:order_2) do
-    create(:completed_order_with_totals, user: user_a, number: 'R456').tap do |o|
+  let!(:order_2) do
+    create(:completed_order_with_totals, store: Spree::Store.default, user: user_a, number: 'R456').tap do |o|
       li = o.line_items.last
       li.update_column(:price, li.price + 10)
     end
   end
 
-  let(:orders) { [order, order_2] }
+  let!(:orders) { Spree::Order.where(id: [order.id, order_2.id]) }
 
   shared_examples_for 'a user page' do
     it 'has lifetime stats' do
@@ -27,9 +27,9 @@ describe 'Users', type: :feature do
         [:total_sales, :num_orders, :average_order_value, :member_since].each do |stat_name|
           expect(page).to have_content Spree.t(stat_name)
         end
-        expect(page).to have_content (order.total + order_2.total)
+        expect(page).to have_content(order.total + order_2.total)
         expect(page).to have_content orders.count
-        expect(page).to have_content (orders.sum(&:total) / orders.count)
+        expect(page).to have_content(orders.sum(&:total) / orders.count)
         expect(page).to have_content pretty_time(user_a.created_at).gsub(/[[:space:]]+/, ' ')
       end
     end

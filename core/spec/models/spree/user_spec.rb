@@ -69,74 +69,60 @@ end
 
 describe Spree.user_class, type: :model do
   context 'reporting' do
+    let!(:orders) { create_list(:order, order_count, user: subject, store: current_store, total: order_value, completed_at: Date.today) }
+    let(:current_store) { create :store }
     let(:order_value) { BigDecimal('80.94') }
     let(:order_count) { 4 }
-    let(:orders) { Array.new(order_count, double(total: order_value)) }
-
-    before do
-      allow(orders).to receive(:sum).with(:total).and_return(orders.sum(&:total))
-      allow(orders).to receive(:count).and_return(orders.length)
-    end
-
-    def load_orders
-      allow(subject).to receive(:orders).and_return(double(complete: orders))
-    end
 
     describe '#lifetime_value' do
       context 'with orders' do
-        before { load_orders }
-
         it 'returns the total of completed orders for the user' do
-          expect(subject.lifetime_value).to eq (order_count * order_value)
+          expect(subject.lifetime_value(current_store)).to eq(order_count * order_value)
         end
       end
 
       context 'without orders' do
+        let(:orders) {}
+
         it 'returns 0.00' do
-          expect(subject.lifetime_value).to eq BigDecimal('0.00')
+          expect(subject.lifetime_value(current_store)).to eq BigDecimal('0.00')
         end
       end
     end
 
     describe '#display_lifetime_value' do
       it 'returns a Spree::Money version of lifetime_value' do
-        value = BigDecimal('500.05')
-        allow(subject).to receive(:lifetime_value).and_return(value)
-        expect(subject.display_lifetime_value).to eq Spree::Money.new(value)
+        expect(subject.display_lifetime_value(current_store)).to eq Spree::Money.new(order_count * order_value)
       end
     end
 
     describe '#order_count' do
-      before { load_orders }
-
       it 'returns the count of completed orders for the user' do
-        expect(subject.order_count).to eq order_count
+        expect(subject.order_count(current_store)).to eq order_count
       end
     end
 
     describe '#average_order_value' do
       context 'with orders' do
-        before { load_orders }
-
         it 'returns the average completed order price for the user' do
-          expect(subject.average_order_value).to eq order_value
+          expect(subject.average_order_value(current_store)).to eq order_value
         end
       end
 
       context 'without orders' do
+        let(:orders) {}
+
         it 'returns 0.00' do
-          expect(subject.average_order_value).to eq BigDecimal('0.00')
+          expect(subject.average_order_value(current_store)).to eq BigDecimal('0.00')
         end
       end
     end
 
     describe '#display_average_order_value' do
-      before { load_orders }
-
       it 'returns a Spree::Money version of average_order_value' do
         value = BigDecimal('500.05')
         allow(subject).to receive(:average_order_value).and_return(value)
-        expect(subject.display_average_order_value).to eq Spree::Money.new(value)
+        expect(subject.display_average_order_value(current_store)).to eq Spree::Money.new(value)
       end
     end
   end
@@ -362,7 +348,7 @@ describe Spree.user_class, type: :model do
         end
 
         context 'when default ship address is associated to uncompleted order' do
-          let!(:uncompleted_order) { create(:order, user: user, ship_address: address, ship_address: address) }
+          let!(:uncompleted_order) { create(:order, user: user, ship_address: address) }
 
           it_should_behave_like 'valid'
         end

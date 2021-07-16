@@ -1,22 +1,28 @@
 module Spree
   module UserReporting
-    extend DisplayMoney
-    money_methods :lifetime_value, :average_order_value
-
-    def lifetime_value
-      orders.complete.sum(:total)
+    def display_lifetime_value(store)
+      store ||= Store.default
+      Spree::Money.new(lifetime_value(store), currency: store.default_currency)
     end
 
-    def order_count
-      orders.complete.size
+    def lifetime_value(store = nil)
+      store ||= Store.default
+      orders.complete.where(store: store).sum(:total)
     end
 
-    def average_order_value
-      if order_count > 0
-        lifetime_value / order_count
-      else
-        BigDecimal('0.00')
-      end
+    def display_average_order_value(store = nil)
+      store ||= Store.default
+      Spree::Money.new(average_order_value(store), currency: store.default_currency)
+    end
+
+    def average_order_value(store = nil)
+      store ||= Store.default
+      orders.complete.where(store: store).average(:total).to_f
+    end
+
+    def order_count(store = nil)
+      store ||= Store.default
+      orders.complete.where(store: store).size.to_f
     end
   end
 end
