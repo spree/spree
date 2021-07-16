@@ -11,8 +11,7 @@
                                             id_holder, name_holder, active_id_holder || nil),
          { include_blank: true },
          class: 'select2autocomplete',
-         data: { autocomplete_name_value: 'products',
-                 autocomplete_placeholder_value: Spree.t('admin.navigation.seach_for_a_product'),
+         data: { autocomplete_placeholder_value: Spree.t('admin.navigation.seach_for_a_product'),
                  autocomplete_clear_value: true,
                  autocomplete_url_value: 'products_api_v2' } %>
 

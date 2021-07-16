@@ -34,6 +34,8 @@ Spree::Core::Engine.add_routes do
     get '/api_tokens', to: 'store#api_tokens'
     post '/ensure_cart', to: 'store#ensure_cart'
 
+    get "#{Spree::Config[:storefront_pages_path]}/:slug", to: 'cms_pages#show', as: :page
+
     get '/forbidden', to: 'errors#forbidden', as: :forbidden
     get '/unauthorized', to: 'errors#unauthorized', as: :unauthorized
   end

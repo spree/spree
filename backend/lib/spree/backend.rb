@@ -12,6 +12,7 @@ require 'glyphicons'
 require 'popper_js'
 require 'inline_svg'
 require 'responders'
+require 'tinymce-rails'
 
 require 'spree/backend/action_callbacks'
 require 'spree/backend/callbacks'

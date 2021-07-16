@@ -18,6 +18,16 @@ module Spree
       end.sort_by { |c| c.name.parameterize }
     end
 
+    def spree_resource_path(resource)
+      last_word = resource.class.name.split('::', 10).last
+
+      spree_class_name_as_path(last_word)
+    end
+
+    def spree_class_name_as_path(class_name)
+      class_name.underscore.humanize.parameterize(separator: '_')
+    end
+
     def display_price(product_or_variant)
       product_or_variant.
         price_in(current_currency).
@@ -113,7 +123,7 @@ module Spree
                               description: [object.name, current_store.meta_description].reject(&:blank?).join(', '))
         else
           meta.reverse_merge!(keywords: (current_store.meta_keywords || current_store.seo_title),
-                              description: (current_store.meta_description || current_store.seo_title))
+                              description: (current_store.homepage(I18n.locale)&.seo_meta_description || current_store.seo_meta_description))
         end
       end
       meta
@@ -189,7 +199,7 @@ module Spree
 
     def base_cache_key
       [I18n.locale, current_currency, defined?(try_spree_current_user) && try_spree_current_user.present?,
-        defined?(try_spree_current_user) && try_spree_current_user.try(:has_spree_role?, 'admin')]
+       defined?(try_spree_current_user) && try_spree_current_user.try(:has_spree_role?, 'admin')]
     end
 
     def maximum_quantity

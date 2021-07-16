@@ -1,0 +1,69 @@
+<div data-hook="admin_cms_section_form_fields">
+  <div class="row">
+    <div class="col-12 col-md-6">
+      <%= f.field_container :name, class: ['form-group'] do %>
+        <%= f.label :name, raw(Spree.t(:name) + required_span_tag) %>
+        <%= f.text_field :name, class: 'form-control', required: true, autocomplete: false %>
+        <%= f.error_message_on :name %>
+      <% end %>
+    </div>
+    <div class="col-12 col-md-6">
+      <%= f.field_container :type, class: ['form-group'] do %>
+        <%= f.label :type, Spree.t('admin.cms.section_type') %>
+        <%= f.select(:type, spree_humanize_dropdown_values('Spree::CmsSection', {const: 'TYPES'}), {include_blank: false}) %>
+        <%= f.error_message_on :type %>
+      <% end %>
+    </div>
+  </div>
+
+  <div id="alertToClickUpdate" class="d-none">
+    <div class="row">
+      <div class="col-12">
+        <div class="alert alert-warning mt-3">
+          <% if %w[new create].include? controller.action_name %>
+            <%= raw Spree.t('admin.cms.click_create_to_load_new_link') %>
+          <% else %>
+            <%= raw Spree.t('admin.cms.click_update_to_load_new_link') %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <% if @cms_section.type.present? %>
+    <div id="CmsSectionType"
+         data-hook="admin_cms_section_form_fields"
+         data-panel-section-type="<%= @cms_section.type %>">
+      <div class="row">
+        <div class="col-12">
+          <div class="card mb-3">
+            <div class="card-header d-flex">
+              <div class="d-flex flex-grow-1">
+                <h5 class="mb-0">
+                  <%= raw Spree.t('admin.cms.settings_for', section: spree_humanize_type(@cms_section.type)) %>
+                </h5>
+              </div>
+              <div class="d-flex">
+                <span data-show-info
+                          data-alert-kind="info"
+                          data-alert-title="<%= spree_humanize_type(@cms_section.type) %>"
+                          data-alert-html="<%= raw I18n.t("spree.admin.cms.info_#{spree_resource_path(@cms_section)}_body") %>">
+                          <%= svg_icon name: "info.svg", width: '25', height: '25' %>
+                </span>
+              </div>
+            </div>
+            <div class="card-body">
+              <% if @cms_section.type.present? %>
+              <div class="row pb-0">
+                <div class="col-12">
+                  <%= render "spree/admin/cms_sections/types/#{spree_resource_path(@cms_section)}", f: f %>
+                </div>
+              </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>

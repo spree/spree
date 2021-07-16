@@ -22,9 +22,9 @@ describe Spree::Menu, type: :model do
   end
 
   describe 'by_locale' do
-    let!(:store_milti) { create(:store) }
-    let!(:menu_en) { create(:menu, store: store_milti, locale: 'en') }
-    let!(:menu_fr) { create(:menu, store: store_milti, locale: 'fr') }
+    let!(:store_multi) { create(:store) }
+    let!(:menu_en) { create(:menu, store: store_multi, locale: 'en') }
+    let!(:menu_fr) { create(:menu, store: store_multi, locale: 'fr') }
 
     it 'returns menus for the requested locale' do
       expect(described_class.by_locale('fr')).to eq([menu_fr])
@@ -62,11 +62,11 @@ describe Spree::Menu, type: :model do
     let!(:menu) { create(:menu, name: 'Footer Menu', location: 'Footer', store: store_1) }
 
     it 'validates presence of name' do
-      expect(described_class.new(name: '', location: 'Header', store: store_3)).not_to be_valid
+      expect(described_class.new(name: nil, location: 'Header', store: store_3)).not_to be_valid
     end
 
     it 'validates presence of store' do
-      expect(described_class.new(name: 'Got Name', location: 'Header', store_id: nil)).not_to be_valid
+      expect(described_class.new(name: 'Got Name', location: 'Header', store: nil)).not_to be_valid
     end
 
     it 'validates presence of locale' do

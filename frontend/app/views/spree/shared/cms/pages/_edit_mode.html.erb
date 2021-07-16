@@ -1,0 +1,13 @@
+<% if edit_mode %>
+  <div class="fixed-bottom text-center">
+    <div class="row">
+      <div id="draftNotice" class="col-12 d-flex w-100 p-4 justify-content-center align-items-center bg-dark">
+        <span class="text-white">
+          <h5 class="mb-0">
+            <%= Spree.t('draft_mode') %>
+          </h5>
+        </span>
+      </div>
+    </div>
+  </div>
+<% end %>

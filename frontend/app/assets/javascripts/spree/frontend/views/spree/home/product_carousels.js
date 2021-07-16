@@ -23,13 +23,13 @@ Spree.loadCarousel = function (element, div) {
 }
 
 Spree.loadsCarouselElements = function () {
-  $('div[data-product-carousel]').each(function (_index, element) { Spree.loadCarousel(element, this) })
+  $('div[data-product-carousel-taxon-id]').each(function (_index, element) { Spree.loadCarousel(element, this) })
 }
 
 document.addEventListener('turbolinks:load', function () {
-  var homePage = $('body#home')
+  var carouselPresent = $('div[data-product-carousel-taxon-id]')
 
-  if (homePage.length) {
+  if (carouselPresent.length) {
     // load Carousels straight away if they are in the viewport
     Spree.loadsCarouselElements()
 

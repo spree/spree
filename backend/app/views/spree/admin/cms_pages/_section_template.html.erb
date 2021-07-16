@@ -1,0 +1,16 @@
+<div class="col-12 p-0 removable-dom-element" data-section-id="<%= section.id %>">
+  <div class="row m-0 mb-1 pb-0 border border-secondary bg-white">
+    <div class="col move-handle d-flex pr-0 truncate">
+      <div class="py-3 align-items-center overflow-hidden w-100">
+          <h6 class="m-0 truncate"><%= section.name %></h6>
+          <small class="form-text mt-0 text-muted"><%= spree_humanize_type(section.type) %></small>
+      </div>
+    </div>
+    <div>
+      <div class="col h-100 d-flex flex-column align-self-sm-stretch p-0 justify-content-between actions cms_section_action_col">
+        <%= link_to_edit(section, no_text: true, url: spree.edit_admin_cms_page_cms_section_path(@cms_page, section)) %>
+        <%= link_to_delete(section, no_text: true, url: spree.admin_cms_page_cms_section_path(@cms_page, section)) if can?(:destroy, section) %>
+      </div>
+    </div>
+  </div>
+</div>

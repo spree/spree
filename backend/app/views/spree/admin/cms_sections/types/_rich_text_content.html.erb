@@ -1,0 +1,4 @@
+<%= f.field_container :rte_content, class: ['form-group mb-0'] do %>
+  <%= f.text_area :rte_content, { rows: "20", class: 'form-control spree-rte' } %>
+  <%= f.error_message_on :rte_content %>
+<% end %>
