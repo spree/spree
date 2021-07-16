@@ -16,7 +16,8 @@ module Spree
         @store_credit = @user.store_credits.build(
           permitted_store_credit_params.merge(
             created_by: try_spree_current_user,
-            action_originator: try_spree_current_user
+            action_originator: try_spree_current_user,
+            store: current_store
           )
         )
 

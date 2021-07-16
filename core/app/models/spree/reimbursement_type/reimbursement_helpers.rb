@@ -51,7 +51,8 @@ module Spree
         category: category,
         created_by: Spree::StoreCredit.default_created_by,
         memo: "Refund for uncreditable payments on order #{reimbursement.order.number}",
-        currency: reimbursement.order.currency
+        currency: reimbursement.order.currency,
+        store: reimbursement.order.store
       }
     end
 

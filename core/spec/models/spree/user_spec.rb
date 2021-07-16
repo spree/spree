@@ -157,7 +157,7 @@ describe Spree.user_class, type: :model do
       let(:amount) { 120.25 }
       let(:additional_amount) { 55.75 }
       let(:store_credit) { create(:store_credit, user: user, amount: amount, amount_used: 0.0) }
-      let!(:additional_store_credit) { create(:store_credit, user: user, amount: additional_amount, amount_used: 0.0) }
+      let!(:additional_store_credit) { create(:store_credit, user: user, amount: additional_amount, amount_used: 0.0, store: store_credit.store) }
 
       context 'part of the store credit has been used' do
         let(:amount_used) { 35.00 }
