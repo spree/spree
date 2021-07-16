@@ -1,6 +1,123 @@
 require 'spec_helper'
 
 describe Spree::Store, type: :model do
+  describe 'associations' do
+    subject { create(:store) }
+
+    describe '#products' do
+      let!(:product) { create(:product, stores: [subject]) }
+      let!(:product_2) { create(:product, stores: [create(:store)]) }
+
+      it { expect(subject.products).to eq([product]) }
+
+      describe '#product_properties' do
+        let!(:product_property) { create(:product_property, product: product) }
+        let!(:product_property_2) { create(:product_property, product: product_2) }
+
+        it { expect(subject.product_properties).to eq([product_property]) }
+      end
+
+      describe '#variants' do
+        let!(:variant) { create(:variant, product: product) }
+        let!(:variant_2) { create(:variant, product: product_2) }
+
+        it { expect(subject.variants).to eq([product.master, variant]) }
+
+        describe '#stock_items' do
+          let!(:stock_items) { product.stock_items }
+          let!(:stock_items_2) { product_2.stock_items }
+
+          it { expect(stock_items).not_to be_empty }
+          it { expect(stock_items_2).not_to be_empty }
+          it { expect(subject.stock_items).to eq(stock_items) }
+        end
+      end
+    end
+
+    describe '#payment_methods' do
+      let!(:payment_method) { create(:payment_method, stores: [subject]) }
+      let!(:payment_method_2) { create(:payment_method, stores: [create(:store)]) }
+
+      it { expect(subject.payment_methods).to eq([payment_method]) }
+    end
+
+    describe '#orders' do
+      let!(:order) { create(:order, store: subject) }
+      let!(:order_2) { create(:order, store: create(:store)) }
+
+      it { expect(subject.orders).to eq([order]) }
+
+      describe '#line_items' do
+        let!(:line_item) { create(:line_item, order: order) }
+        let!(:line_item_2) { create(:line_item, order: order_2) }
+
+        it { expect(subject.line_items).to eq([line_item]) }
+      end
+
+      describe '#payments' do
+        let!(:payment) { create(:payment, order: order) }
+        let!(:payment_2) { create(:payment, order: order_2) }
+
+        it { expect(subject.payments).to eq([payment]) }
+      end
+
+      describe '#shipments' do
+        let!(:shipment) { create(:shipment, order: order) }
+        let!(:shipment_2) { create(:shipment, order: order_2) }
+
+        it { expect(subject.shipments).to eq([shipment]) }
+      end
+
+      describe '#return_authorizations' do
+        let!(:order) { create(:shipped_order, store: subject) }
+        let!(:order_2) { create(:shipped_order, store: create(:store)) }
+        let!(:return_authorization) { create(:return_authorization, order: order) }
+        let!(:return_authorization_2) { create(:return_authorization, order: order_2) }
+
+        it { expect(subject.return_authorizations).to eq([return_authorization]) }
+      end
+
+      describe '#inventory_units' do
+        let(:product) { create(:product, stores: [subject]) }
+        let(:product_2) { create(:product, stores: [create(:store)]) }
+        let!(:inventory_unit) { create(:inventory_unit, variant: product.master, order: order) }
+        let!(:inventory_unit_2) { create(:inventory_unit, variant: product_2.master, order: order_2) }
+
+        it { expect(subject.inventory_units).to eq([inventory_unit]) }
+      end
+    end
+
+    describe '#store_credits' do
+      let!(:store_credit) { create(:store_credit, store: subject) }
+      let!(:store_credit_2) { create(:store_credit, store: create(:store)) }
+
+      it { expect(subject.store_credits).to eq([store_credit]) }
+
+      describe '#store_credit_events' do
+        let!(:store_credit_event) { store_credit.store_credit_events.first }
+        let!(:store_credit_event_2) { store_credit_2.store_credit_events.first }
+
+        it { expect(store_credit_event).not_to be_nil }
+        it { expect(store_credit_event_2).not_to be_nil }
+        it { expect(subject.store_credit_events).to eq([store_credit_event]) }
+      end
+    end
+
+    describe '#menus' do
+      let!(:menu) { create(:menu, store: subject) }
+      let!(:menu_2) { create(:menu, store: create(:store)) }
+
+      it { expect(subject.menus).to eq([menu]) }
+
+      describe '#menu_items' do
+        let!(:menu_item) { menu.menu_items.first }
+        let!(:menu_item_2) { menu_2.menu_items.first }
+
+        it { expect(subject.menu_items).to eq([menu_item]) }
+      end
+    end
+  end
+
   describe 'validations' do
     describe 'favicon image' do
       it 'validates image properties' do

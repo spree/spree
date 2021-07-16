@@ -8,8 +8,8 @@ module Spree
       MENU_LOCATIONS_PARAMETERIZED << parameterize_location
     end
 
-    has_many :menu_items, dependent: :destroy
-    belongs_to :store, touch: true
+    has_many :menu_items, dependent: :destroy, class_name: 'Spree::MenuItem'
+    belongs_to :store, touch: true, class_name: 'Spree::Store'
 
     before_validation :parameterize_location
     after_create :set_root
@@ -46,7 +46,7 @@ module Spree
     end
 
     def set_root
-      self.root ||= MenuItem.create!(menu_id: id, name: name, item_type: 'Container')
+      self.root ||= menu_items.create!(name: name, item_type: 'Container')
     end
 
     def update_root_name
