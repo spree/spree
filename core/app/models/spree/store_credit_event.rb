@@ -8,7 +8,7 @@ module Spree
     scope :exposed_events, -> { where.not(action: [Spree::StoreCredit::ELIGIBLE_ACTION, Spree::StoreCredit::AUTHORIZE_ACTION]) }
     scope :reverse_chronological, -> { order(created_at: :desc) }
 
-    delegate :currency, to: :store_credit
+    delegate :currency, :store, to: :store_credit
 
     def display_amount
       Spree::Money.new(amount, currency: currency)
@@ -32,7 +32,7 @@ module Spree
     end
 
     def order
-      Spree::Payment.find_by(response_code: authorization_code).try(:order)
+      store.payments.find_by(response_code: authorization_code).try(:order)
     end
   end
 end
