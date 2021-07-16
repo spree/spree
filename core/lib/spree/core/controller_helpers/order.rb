@@ -56,8 +56,8 @@ module Spree
 
           orders_scope = try_spree_current_user.orders.
                          incomplete.
-                         where.not(id: current_order.id).
-                         where(store_id: current_store.id)
+                         for_store(current_store).
+                         where.not(id: current_order.id)
 
           orders_scope.each do |order|
             current_order.merge!(order, try_spree_current_user)

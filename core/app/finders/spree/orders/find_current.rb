@@ -2,20 +2,19 @@ module Spree
   module Orders
     class FindCurrent
       def execute(user:, store:, **params)
-        params = params.merge(store_id: store.id)
-
-        order = incomplete_orders.find_by(params)
+        currency = params[:currency] || store.default_currency
+        order = incomplete_orders(store: store, currency: currency).find_by(params)
 
         return order unless order.nil?
         return if user.nil?
 
-        incomplete_orders.order(created_at: :desc).find_by(store: store, user: user, currency: params[:currency])
+        incomplete_orders(store: store, currency: currency).find_by(user: user).order(created_at: :desc)
       end
 
       private
 
-      def incomplete_orders
-        Spree::Order.incomplete.not_canceled.includes(scope_includes)
+      def incomplete_orders(store:, currency:)
+        store.orders.where(currency: currency).incomplete.not_canceled.includes(scope_includes)
       end
 
       def scope_includes
