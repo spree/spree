@@ -136,7 +136,7 @@ $(function () {
   }
 
   TransferVariants.prototype.build_select = function (url, query) {
-    return $('#transfer_variant').select2({
+    return $('#transfer_variant').empty().select2({
       minimumInputLength: 3,
       ajax: {
         url: url,
