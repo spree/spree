@@ -8,7 +8,7 @@ module Spree
         return order unless order.nil?
         return if user.nil?
 
-        incomplete_orders(store: store, currency: currency).find_by(user: user).order(created_at: :desc)
+        incomplete_orders(store: store, currency: currency).order(created_at: :desc).find_by(user: user)
       end
 
       private
