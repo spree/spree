@@ -11,10 +11,10 @@ module Spree
       end
 
       def execute
-        orders = by_user(scope)
+        orders = by_store(scope)
+        orders = by_user(orders)
         orders = by_number(orders)
         orders = by_token(orders)
-        orders = by_store(orders)
 
         orders
       end
@@ -62,7 +62,7 @@ module Spree
       def by_store(orders)
         return orders unless store?
 
-        orders.where(store: store)
+        store.orders
       end
 
       def scope_includes

@@ -9,7 +9,7 @@ describe Spree::Menu, type: :model do
     expect(described_class).not_to respond_to(:for_some_other_location)
   end
 
-  describe 'by_store' do
+  describe '.for_store' do
     let!(:store) { create(:store) }
     let!(:store_b) { create(:store) }
 
@@ -17,11 +17,11 @@ describe Spree::Menu, type: :model do
     let!(:menu_b) { create(:menu, store: store_b) }
 
     it 'returns menus for the requested store' do
-      expect(described_class.by_store(store)).to eq([menu_a])
+      expect(described_class.for_store(store)).to eq([menu_a])
     end
   end
 
-  describe 'by_locale' do
+  describe '.by_locale' do
     let!(:store_milti) { create(:store) }
     let!(:menu_en) { create(:menu, store: store_milti, locale: 'en') }
     let!(:menu_fr) { create(:menu, store: store_milti, locale: 'fr') }

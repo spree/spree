@@ -24,7 +24,6 @@ module Spree
 
     default_scope { order(created_at: :asc) }
 
-    scope :by_store, ->(store) { where(store: store) }
     scope :by_locale, ->(locale) { where(locale: locale) }
 
     self.whitelisted_ransackable_attributes = %w[name location locale store_id]
