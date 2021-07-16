@@ -4,6 +4,8 @@ require 'spree/core/version'
 
 module Spree
   class DummyGenerator < Rails::Generators::Base
+    SPREE_GEMS = %w(spree_backend spree_frontend spree_api spree_emails).freeze
+
     desc 'Creates blank Rails application, installs Spree and all sample data'
 
     class_option :lib_name, default: ''
@@ -61,10 +63,14 @@ module Spree
 
     def test_dummy_inject_extension_requirements
       if DummyGeneratorHelper.inject_extension_requirements
-        inside dummy_path do
-          inject_require_for('spree_frontend')
-          inject_require_for('spree_backend')
-          inject_require_for('spree_api')
+        SPREE_GEMS.each do |gem|
+          begin
+            require "#{gem}"
+            inside dummy_path do
+              inject_require_for(gem)
+            end
+          rescue
+          end
         end
       end
     end

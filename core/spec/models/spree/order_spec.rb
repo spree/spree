@@ -1454,9 +1454,9 @@ describe Spree::Order, type: :model do
 
     context 'when user has address but without default bill address' do
       let(:address) { create(:address, user: user) }
-      let(:user) { create(:user_with_addresses, bill_address: nil) }
+      let(:user) { create(:user_with_addresses) }
 
-      before { user.addresses << address }
+      before { user.bill_address = nil }
 
       it 'changes user default bill addresss' do
         expect(user.bill_address_id).to be nil
@@ -1519,9 +1519,9 @@ describe Spree::Order, type: :model do
 
     context 'when user has address but without default ship address' do
       let(:address) { create(:address, user: user) }
-      let(:user) { create(:user_with_addresses, ship_address: nil) }
+      let(:user) { create(:user_with_addresses) }
 
-      before { user.addresses << address }
+      before { user.update(ship_address: nil) }
 
       it 'changes user default ship addresss' do
         expect(user.ship_address_id).to be nil
