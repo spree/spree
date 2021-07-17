@@ -9,7 +9,7 @@ module Spree
       before_action :ensure_unused_store_credit, only: [:update]
 
       def index
-        @store_credits = @user.store_credits.includes(:credit_type, :category).reverse_order
+        @store_credits = @user.store_credits.for_store(current_store).includes(:credit_type, :category).reverse_order
       end
 
       def create
@@ -46,7 +46,7 @@ module Spree
       end
 
       def destroy
-        @store_credit = @user.store_credits.find(params[:id])
+        @store_credit = @user.store_credits.for_store(current_store).find(params[:id])
         ensure_unused_store_credit
 
         if @store_credit.destroy
@@ -82,7 +82,11 @@ module Spree
       end
 
       def load_store_credit
-        @store_credit = Spree::StoreCredit.find_by(id: params[:id]) || Spree::StoreCredit.new
+        @store_credit = scope.find_by(id: params[:id]) || scope.new
+      end
+
+      def scope
+        current_store.store_credits
       end
 
       def ensure_unused_store_credit

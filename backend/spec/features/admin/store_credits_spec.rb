@@ -3,8 +3,9 @@ require 'spec_helper'
 describe 'Store credits admin', type: :feature do
   stub_authorization!
 
+  let(:store) { Spree::Store.default }
   let!(:admin_user) { create(:admin_user) }
-  let!(:store_credit) { create(:store_credit) }
+  let!(:store_credit) { create(:store_credit, store: store) }
 
   before do
     allow(Spree.user_class).to receive(:find_by).and_return(store_credit.user)
