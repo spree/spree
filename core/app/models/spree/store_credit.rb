@@ -1,5 +1,7 @@
 module Spree
   class StoreCredit < Spree::Base
+    include SingleStoreResource
+
     acts_as_paranoid
 
     VOID_ACTION       = 'void'.freeze

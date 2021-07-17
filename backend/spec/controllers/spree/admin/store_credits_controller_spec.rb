@@ -12,12 +12,14 @@ module Spree
         let!(:store_credit_1) { create(:store_credit, user: user, store: store) }
         let!(:store_credit_2) { create(:store_credit, user: user, amount_used: 10, store: store) }
         let!(:store_credit_3) { create(:store_credit, user: user) }
+        let!(:store_credit_4) { create(:store_credit, store: store, user: create(:user)) }
 
         it 'should assign only the store credits for user and current store' do
           get :index, params: { user_id: user.id }
           expect(assigns(:store_credits)).to include store_credit_1
           expect(assigns(:store_credits)).to include store_credit_2
           expect(assigns(:store_credits)).not_to include store_credit_3
+          expect(assigns(:store_credits)).not_to include store_credit_4
         end
       end
 
