@@ -4,18 +4,27 @@ module Spree
     FAVICON_CONTENT_TYPES = ['image/png', 'image/x-icon', 'image/vnd.microsoft.icon'].freeze
 
     has_many :orders, class_name: 'Spree::Order'
+    has_many :line_items, through: :orders, class_name: 'Spree::LineItem'
+    has_many :shipments, through: :orders, class_name: 'Spree::Shipment'
+    has_many :payments, through: :orders, class_name: 'Spree::Payment'
+    has_many :return_authorizations, through: :orders, class_name: 'Spree::ReturnAuthorization'
+    # has_many :reimbursements, through: :orders, class_name: 'Spree::Reimbursement' FIXME: we should fetch this via Customer Return
 
     has_many :store_payment_methods, class_name: 'Spree::StorePaymentMethod'
     has_many :payment_methods, through: :store_payment_methods, class_name: 'Spree::PaymentMethod'
 
-    has_many :menus
+    has_many :menus, class_name: 'Spree::Menu'
+    has_many :menu_items, through: :menus, class_name: 'Spree::MenuItem'
 
     has_many :store_products, class_name: 'Spree::StoreProduct', dependent: :destroy
     has_many :products, through: :store_products, class_name: 'Spree::Product'
-    has_many :variants, through: :products, foreign_key: :prodyct, class_name: 'Spree::Variant',
-                        source: :variants_including_master
+    has_many :product_properties, through: :products, class_name: 'Spree::ProductProperty'
+    has_many :variants, through: :products, class_name: 'Spree::Variant', source: :variants_including_master
     has_many :stock_items, through: :variants, class_name: 'Spree::StockItem'
+    has_many :inventory_units, through: :variants, class_name: 'InventoryUnit'
+
     has_many :store_credits, class_name: 'Spree::StoreCredit'
+    has_many :store_credit_events, through: :store_credits, class_name: 'Spree::StoreCreditEvent'
 
     belongs_to :default_country, class_name: 'Spree::Country'
     belongs_to :checkout_zone, class_name: 'Spree::Zone'
