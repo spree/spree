@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* global Swal */
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -63,14 +64,4 @@ function appendToFlashAlertsContainer (message, type) {
   node.appendChild(textNode)
 
   parnetNode.appendChild(node);
-}
-
-// eslint-disable-next-line no-unused-vars
-const flashAlertErrorResponse = function(response, type = 'info') {
-  response.json().then(data => ({
-    data: data
-  })
-  ).then(res => {
-    show_flash(type, res.data.error)
-  })
 }

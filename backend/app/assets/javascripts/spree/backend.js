@@ -21,6 +21,7 @@
 
 // Spree JavaScript
 //= require spree
+//= require spree/backend/api_requests/_index
 //= require spree/backend/spree-select2
 //= require spree/backend/address_states
 //= require spree/backend/admin
@@ -44,7 +45,6 @@
 //= require spree/backend/returns/expedited_exchanges_warning
 //= require spree/backend/returns/return_item_selection
 //= require spree/backend/shipments/_index
-//= require spree/backend/shipments
 //= require spree/backend/states
 //= require spree/backend/stock_location
 //= require spree/backend/stock_management

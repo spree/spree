@@ -1,5 +1,5 @@
 /* eslint-disable no-undef */
-/* global toggleItemEdit, variantLineItemTemplate */
+/* global variantLineItemTemplate */
 
 document.addEventListener('DOMContentLoaded', function() {
   // Search variants to add to order line items.
@@ -28,7 +28,6 @@ document.addEventListener('DOMContentLoaded', function() {
     var save = $(this)
     var lineItemId = save.data('line-item-id')
     var quantity = parseInt(save.parents('tr').find('input.line_item_quantity').val())
-    toggleItemEdit()
     adjustLineItemQuantity(lineItemId, quantity)
   })
 
@@ -37,7 +36,6 @@ document.addEventListener('DOMContentLoaded', function() {
     if (confirm(Spree.translations.are_you_sure_delete)) {
       var del = $(this)
       var lineItemId = del.data('line-item-id')
-      toggleItemEdit()
       deleteLineItem(lineItemId)
     }
   })
@@ -49,7 +47,6 @@ function addVariant () {
   var quantity = $('input#variant_quantity').val()
 
   addLineItem(variantId, quantity)
-  return 1
 }
 
 function toggleLineItemEdit () {

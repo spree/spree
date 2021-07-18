@@ -30,42 +30,6 @@ module Spree
             render_serialized_payload(201) { serialize_resource(order) }
           end
 
-          def add_item
-            spree_authorize! :update, @order
-            spree_authorize! :show, @variant
-            load_variant
-
-            result = add_item_service.call(
-              order: @order,
-              variant: @variant,
-              quantity: params[:quantity],
-              options: params[:options]
-            )
-
-            render_order(result)
-          end
-
-          def remove_line_item
-            spree_authorize! :update, @order
-
-            result = remove_line_item_service.call(
-              order: @order,
-              line_item: line_item
-            )
-
-            render_order(result)
-          end
-
-          def set_quantity
-            return render_error_item_quantity unless params[:quantity].to_i > 0
-
-            spree_authorize! :update, @order
-
-            result = set_item_quantity_service.call(order: spree_current_order, line_item: line_item, quantity: params[:quantity])
-
-            render_order(result)
-          end
-
           def next
             spree_authorize! :update, @order
 

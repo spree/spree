@@ -12,7 +12,7 @@ const hideProgressIndicator = () => {
 
   progressBar.addEventListener('animationend', () => {
     progressBar.classList.remove('d-block')
-  });
+  })
 }
 
 const animateCSS = (element, animation, speed, prefix = 'animate__') =>
@@ -32,3 +32,11 @@ const animateCSS = (element, animation, speed, prefix = 'animate__') =>
 
     node.addEventListener('animationend', handleAnimationEnd, { once: true })
   })
+
+const spreeHandleResponse = function(response) {
+  hideProgressIndicator()
+
+  if (!response.ok) show_flash('info', response.statusText)
+
+  return response.json()
+}

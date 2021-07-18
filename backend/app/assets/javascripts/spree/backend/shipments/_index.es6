@@ -1,2 +1,2 @@
-//= require spree/backend/shipments/api_requests
 //= require spree/backend/shipments/shipment_managment
+//= require spree/backend/shipments/ui_manipulation

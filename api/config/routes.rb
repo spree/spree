@@ -221,8 +221,11 @@ Spree::Core::Engine.add_routes do
             put     :cancel
             put     :empty
           end
+          # Line Item API
+          resources :line_items
         end
-        resources :line_items
+
+        # Payment API
         resources :payments do
           member do
             put :authorize
@@ -232,11 +235,6 @@ Spree::Core::Engine.add_routes do
             put :credit
           end
         end
-
-        # Geo API
-        resources :zones
-        resources :countries, only: [:index, :show]
-        resources :states, only: [:index, :show]
 
         # Shipment API
         resources :shipments do
@@ -251,6 +249,11 @@ Spree::Core::Engine.add_routes do
             put :remove
           end
         end
+
+        # Geo API
+        resources :zones
+        resources :countries, only: [:index, :show]
+        resources :states, only: [:index, :show]
 
         # Inventory API
         resources :inventory_units

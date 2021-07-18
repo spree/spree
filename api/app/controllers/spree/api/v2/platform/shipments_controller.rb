@@ -3,6 +3,9 @@ module Spree
     module V2
       module Platform
         class ShipmentsController < ResourceController
+          ORDER_WRITE_ACTIONS = %i[create update destroy add remove]
+
+          before_action -> { doorkeeper_authorize! :write, :admin }, only: ORDER_WRITE_ACTIONS
           before_action :find_and_update_shipment, only: [:ship, :ready, :add, :remove]
 
           def create
@@ -20,7 +23,29 @@ module Spree
             render_serialized_payload(201) { serialize_resource(@shipment) }
           end
 
+          def update
+            @shipment = Spree::Shipment.accessible_by(current_ability, :update).readonly(false).find_by!(number: params[:id])
+            @shipment.update_attributes_and_order(shipment_params)
+
+            render_serialized_payload(201) { serialize_resource(@shipment) }
+          end
+
+          def add
+            spree_authorize! :update, @shipment
+
+            quantity = params[:quantity].to_i
+
+            result = Spree::Dependencies.cart_add_item_service.constantize.call(order: @shipment.order,
+                                                                                variant: variant,
+                                                                                quantity: quantity,
+                                                                                options: { shipment: @shipment })
+
+            render_shipment(result)
+          end
+
           def remove
+            spree_authorize! :update, @shipment
+
             quantity = if params.key?(:quantity)
                          params[:quantity].to_i
                        else
@@ -88,7 +113,7 @@ module Spree
           end
 
           def scope_includes
-            [:line_items]
+            [:shipping_methods]
           end
         end
       end
