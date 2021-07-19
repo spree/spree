@@ -13,7 +13,8 @@ module Spree
     has_many :store_payment_methods, class_name: 'Spree::StorePaymentMethod'
     has_many :payment_methods, through: :store_payment_methods, class_name: 'Spree::PaymentMethod'
 
-    has_many :cms_pages, class_name: 'Spree::CMSPage'
+    has_many :cms_pages, class_name: 'Spree::CmsPage'
+
     has_many :menus, class_name: 'Spree::Menu'
     has_many :menu_items, through: :menus, class_name: 'Spree::MenuItem'
 
