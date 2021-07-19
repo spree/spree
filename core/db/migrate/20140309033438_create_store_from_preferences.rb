@@ -1,14 +1,16 @@
 class CreateStoreFromPreferences < ActiveRecord::Migration[4.2]
   def change
-    # workaround for spree_i18n and Store translations
     Spree::Store.class_eval do
+      # workaround for spree_i18n and Store translations
       def self.translated?(name)
         false
       end
+      # workaround for paranoia gem's validation for Store created in this file; it could be any of the existing columns
+      self.paranoia_column = :id
     end
 
     preference_store = Spree::Preferences::Store.instance
-    if store = Spree::Store.where(default: true).first
+    if store = Spree::Store.with_deleted.where(default: true).first
       store.meta_description = preference_store.get('spree/app_configuration/default_meta_description') {}
       store.meta_keywords    = preference_store.get('spree/app_configuration/default_meta_keywords') {}
       store.seo_title        = preference_store.get('spree/app_configuration/default_seo_title') {}
