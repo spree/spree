@@ -7,7 +7,7 @@ module Spree
 
     def lifetime_value(store = nil)
       store ||= Store.default
-      orders.complete.where(store: store).sum(:total)
+      store.orders.complete.sum(:total)
     end
 
     def display_average_order_value(store = nil)
@@ -17,12 +17,12 @@ module Spree
 
     def average_order_value(store = nil)
       store ||= Store.default
-      orders.complete.where(store: store).average(:total).to_f
+      store.orders.complete.average(:total).to_f
     end
 
     def order_count(store = nil)
       store ||= Store.default
-      orders.complete.where(store: store).size.to_f
+      store.orders.complete.size.to_f
     end
   end
 end
