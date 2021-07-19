@@ -2,9 +2,6 @@
 /* global variantLineItemTemplate */
 
 document.addEventListener('DOMContentLoaded', function() {
-  // Search variants to add to order line items.
-  $('[data-hook="add_product_name"]').find('.variant_autocomplete').variantAutocomplete()
-
   // Handle variant selection, show stock level.
   $('#add_line_item_variant_id').change(function () {
     var variantId = $(this).val()
@@ -27,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function() {
   $('a.save-line-item').click(function () {
     var save = $(this)
     var lineItemId = save.data('line-item-id')
-    var quantity = parseInt(save.parents('tr').find('input.line_item_quantity').val())
+    var quantity = parseInt(save.parents('tr').find('input.line_item_quantity').val(), 10)
     adjustLineItemQuantity(lineItemId, quantity)
   })
 

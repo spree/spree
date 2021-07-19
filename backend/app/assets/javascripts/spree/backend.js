@@ -102,6 +102,7 @@ Spree.routes.users_api_v2 = Spree.pathFor('api/v2/platform/users')
 
 Spree.apiV2Authentication = function() {
   return {
-    Authorization: 'Bearer ' + OAUTH_TOKEN
+    Authorization: 'Bearer ' + OAUTH_TOKEN,
+    'Content-Type': 'application/json'
   }
 }

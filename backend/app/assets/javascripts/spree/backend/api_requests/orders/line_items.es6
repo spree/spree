@@ -19,13 +19,12 @@ const addLineItem = (variantId, quantity) => {
 
   fetch(ordersLineItemsUri(), {
     method: 'POST',
-    headers: {
-      Authorization: 'Bearer ' + OAUTH_TOKEN,
-      'Content-Type': 'application/json'
-    },
+    headers: Spree.apiV2Authentication(),
     body: JSON.stringify(data)
   })
-    .then((response) => spreeHandleResponse(response).then(window.location.reload()))
+    .then((response) => spreeHandleResponse(response)
+      .then(window.Spree.advanceOrder())
+      .then(window.location.reload()))
     .catch(err => console.log(err))
 }
 
@@ -48,13 +47,12 @@ const adjustLineItemQuantity = function(lineItemId, quantity) {
 
   fetch(ordersLineItemsUri(formattedLineItemId), {
     method: 'PUT',
-    headers: {
-      Authorization: 'Bearer ' + OAUTH_TOKEN,
-      'Content-Type': 'application/json'
-    },
+    headers: Spree.apiV2Authentication(),
     body: JSON.stringify(data)
   })
-    .then((response) => spreeHandleResponse(response).then(window.location.reload()))
+    .then((response) => spreeHandleResponse(response)
+      .then(window.Spree.advanceOrder())
+      .then(window.location.reload()))
     .catch(err => console.log(err))
 }
 
@@ -66,11 +64,10 @@ const deleteLineItem = function(lineItemId) {
 
   fetch(ordersLineItemsUri(formattedLineItemId), {
     method: 'DELETE',
-    headers: {
-      Authorization: 'Bearer ' + OAUTH_TOKEN,
-      'Content-Type': 'application/json'
-    }
+    headers: Spree.apiV2Authentication()
   })
-    .then((response) => spreeHandleResponse(response).then(window.location.reload()))
+    .then((response) => spreeHandleResponse(response)
+      .then(window.Spree.advanceOrder())
+      .then(window.location.reload()))
     .catch(err => console.log(err))
 }

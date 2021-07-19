@@ -8,12 +8,12 @@
       <option></option>
       <optgroup label="<%=Spree.t('existing_shipments')%>">
         {{#each shipments}}
-        <option data-shipment-number='{{this.number}}' value='{{this.stock_location_id}}'>{{this.stock_location.name}}({{this.number}})</option>
+          <option data-shipment-number='{{this.number}}' value='{{this.stock_location_id}}'>{{this.stock_location.name}} ({{this.number}})</option>
         {{/each}}
       </optgroup>
       <optgroup label="<%=Spree.t('new_shipment_at_location')%>">
         {{#each variant.attributes.stock_items}}
-          <option data-new-shipment='true' value='{{this.stock_location_id}}'>{{this.stock_location_name}}&nbsp({{this.count_on_hand}} on hand)</option>
+          <option data-new-shipment='true' value='{{this.stock_location_id}}'>{{this.stock_location_name}} ({{this.count_on_hand}} on hand)</option>
         {{/each}}
       </optgroup>
       </select>

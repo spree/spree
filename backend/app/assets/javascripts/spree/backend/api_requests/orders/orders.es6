@@ -11,10 +11,7 @@ const ordersUri = (action) => `${Spree.routes.orders_api_v2}/${order_number}/${a
 window.Spree.advanceOrder = function() {
   fetch(ordersUri('advance'), {
     method: 'PUT',
-    headers: {
-      Authorization: 'Bearer ' + OAUTH_TOKEN,
-      'Content-Type': 'application/json'
-    }
+    headers: Spree.apiV2Authentication()
   })
     .then((response) => spreeHandleResponse(response).then(window.location.reload()))
     .catch(err => console.log(err))
@@ -32,10 +29,7 @@ const addCoupon = function(couponCode) {
 
   fetch(ordersUri('apply_coupon_code'), {
     method: 'PATCH',
-    headers: {
-      Authorization: 'Bearer ' + OAUTH_TOKEN,
-      'Content-Type': 'application/json'
-    },
+    headers: Spree.apiV2Authentication(),
     body: JSON.stringify(data)
   })
     .then((response) => spreeHandleResponse(response).then(window.location.reload()))
@@ -52,10 +46,7 @@ const deleteCoupon = function(couponCode) {
 
   fetch(ordersUri('remove_coupon_code'), {
     method: 'DELETE',
-    headers: {
-      Authorization: 'Bearer ' + OAUTH_TOKEN,
-      'Content-Type': 'application/json'
-    },
+    headers: Spree.apiV2Authentication(),
     body: JSON.stringify(data)
   })
     .then((response) => spreeHandleResponse(response).then(window.location.reload()))

@@ -43,8 +43,8 @@ const handleSaveChangeToLineItemClick = function() {
       const inputValue = parentTableRow.querySelector('input.line_item_quantity').value
 
       const shipmentNumber = this.dataset.shipmentNumber
-      const variantId = parseInt(this.dataset.variantId)
-      const quantity = parseInt(inputValue)
+      const variantId = parseInt(this.dataset.variantId, 10)
+      const quantity = parseInt(inputValue, 10)
 
       adjustShipmentItems(shipmentNumber, variantId, quantity)
     })
@@ -93,7 +93,7 @@ const handleTrackingNumberSaveClick = function() {
   })
 }
 
-// Initiate click handelers above
+// Initiate click handeler functions listed above
 document.addEventListener('DOMContentLoaded', function() {
   handleShipButtonClick()
   handleDeleteLineItemFromShipmentClick()
@@ -134,4 +134,75 @@ const createTrackingValueContent = function(data) {
     return '<a target="_blank" href="' + shipmentTrackingUrl + '">' + data.tracking + '<a>'
   }
   return data.tracking
+}
+
+const addVariantFromStockLocation = function(event) {
+  event.preventDefault()
+  const variantId = document.querySelector('select.variant_autocomplete').value
+  const stockLocationId = this.dataset.stockLocationId
+  const quantity = document.querySelector("input.quantity[data-stock-location-id='" + stockLocationId + "']").value
+
+  const shipment = _.find(shipments, function (shipment) {
+    return shipment.stock_location_id === parseInt(stockLocationId, 10) && (shipment.state === 'ready' || shipment.state === 'pending')
+  })
+
+  if (shipment === undefined) {
+    // Create A New Shipment
+    const data = {
+      order_id: order_number,
+      variant_id: parseInt(variantId, 10),
+      quantity: parseInt(quantity, 10),
+      stock_location_id: parseInt(stockLocationId, 10)
+    }
+    createShipment(data)
+  } else {
+    // add to existing shipment
+    adjustShipmentItems(shipment.number, variantId, quantity)
+  }
+}
+
+const completeItemSplit = function(event) {
+  event.preventDefault()
+
+  // TODO: REMOVE JQUERY
+  // TODO: Translate flash message
+  if (document.querySelector('#item_stock_location').value === '') {
+    show_flash('info', 'Please select the split destination.')
+    return false
+  }
+
+  const link = $(this)
+  const stockItemRow = link.closest('tr')
+  const variantId = stockItemRow.data('variant-id')
+  const quantity = stockItemRow.find('#item_quantity').val()
+
+  const stockLocationId = stockItemRow.find('#item_stock_location').val()
+  const originalShipmentNumber = link.closest('tbody').data('shipment-number')
+
+  const selectedShipment = stockItemRow.find('#item_stock_location option:selected')
+  const targetShipmentNumber = selectedShipment.data('shipment-number')
+  const newShipment = selectedShipment.data('new-shipment')
+
+  // eslint-disable-next-line eqeqeq
+  if (stockLocationId != 'new_shipment') {
+    let path, additionalData
+    if (newShipment !== undefined) {
+      // transfer to a new location data
+      path = '/transfer_to_location'
+      additionalData = { stock_location_id: stockLocationId }
+    } else {
+      // transfer to an existing shipment data
+      path = '/transfer_to_shipment'
+      additionalData = { target_shipment_number: targetShipmentNumber }
+    }
+
+    const data = {
+      original_shipment_number: originalShipmentNumber,
+      variant_id: variantId,
+      quantity: quantity
+    }
+
+    const combinedData = Object.assign({}, data, additionalData)
+    transferShipment(combinedData, path)
+  }
 }

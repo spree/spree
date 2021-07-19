@@ -7,11 +7,13 @@ module Spree
 
           before_action -> { doorkeeper_authorize! :write, :admin }, only: ORDER_WRITE_ACTIONS
           before_action :find_and_update_shipment, only: [:ship, :ready, :add, :remove]
+          before_action :load_transfer_params, only: [:transfer_to_location, :transfer_to_shipment]
 
           def create
             @order = Spree::Order.find_by!(number: params.fetch(:shipment).fetch(:order_id))
             spree_authorize! :show, @order
             spree_authorize! :create, Shipment
+
             quantity = params[:quantity].to_i
             @shipment = @order.shipments.create(stock_location_id: params.fetch(:stock_location_id))
 
@@ -28,6 +30,23 @@ module Spree
             @shipment.update_attributes_and_order(shipment_params)
 
             render_serialized_payload(201) { serialize_resource(@shipment) }
+          end
+
+          def ready
+            unless @shipment.ready?
+              if @shipment.can_ready?
+                @shipment.ready!
+              else
+                return render_error_payload(Spree.t('v2.shipment.cannot_ready_shipment', scope: 'api'))
+              end
+            end
+            render_serialized_payload(200) { serialize_resource(@shipment) }
+          end
+
+          def ship
+            @shipment.ship! unless @shipment.shipped?
+
+            render_serialized_payload(200) { serialize_resource(@shipment) }
           end
 
           def add
@@ -66,13 +85,57 @@ module Spree
             render_shipment(result)
           end
 
-          def ship
-            @shipment.ship! unless @shipment.shipped?
+          def transfer_to_location
+            @stock_location = Spree::StockLocation.find(params[:stock_location_id])
 
-            render_serialized_payload(200) { serialize_resource(@shipment) }
+            unless @quantity > 0
+              unprocessable_entity("#{Spree.t(:shipment_transfer_errors_occurred, scope: 'api')} \n #{Spree.t(:negative_quantity, scope: 'api')}")
+              return
+            end
+
+            transfer = @original_shipment.transfer_to_location(@variant, @quantity, @stock_location)
+            if transfer.valid?
+              transfer.run!
+              render json: { message: Spree.t(:shipment_transfer_success) }, status: 201
+            else
+              render json: { message: transfer.errors.full_messages.to_sentence }, status: 422
+            end
+          end
+
+          def transfer_to_shipment
+            @target_shipment = Spree::Shipment.find_by!(number: params[:target_shipment_number])
+
+            error =
+              if @quantity < 0 && @target_shipment == @original_shipment
+                "#{Spree.t(:negative_quantity, scope: 'api')}, \n#{Spree.t('wrong_shipment_target', scope: 'api')}"
+              elsif @target_shipment == @original_shipment
+                Spree.t(:wrong_shipment_target, scope: 'api')
+              elsif @quantity < 0
+                Spree.t(:negative_quantity, scope: 'api')
+              end
+
+            if error
+              unprocessable_entity("#{Spree.t(:shipment_transfer_errors_occurred, scope: 'api')} \n#{error}")
+            else
+              transfer = @original_shipment.transfer_to_shipment(@variant, @quantity, @target_shipment)
+              if transfer.valid?
+                transfer.run!
+                render json: { message: Spree.t(:shipment_transfer_success) }, status: 201
+              else
+                render json: { message: transfer.errors.full_messages }, status: 422
+              end
+            end
           end
 
           private
+
+          def load_transfer_params
+            @original_shipment         = Spree::Shipment.find_by!(number: params[:original_shipment_number])
+            @variant                   = Spree::Variant.find(params[:variant_id])
+            @quantity                  = params[:quantity].to_i
+            authorize! :show, @original_shipment
+            authorize! :create, Shipment
+          end
 
           def find_and_update_shipment
             @shipment = Spree::Shipment.accessible_by(current_ability, :update).readonly(false).find_by!(number: params[:id])

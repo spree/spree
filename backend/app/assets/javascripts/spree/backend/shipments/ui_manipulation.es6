@@ -155,17 +155,17 @@ document.addEventListener('DOMContentLoaded', function() {
   })
 
   //
-  // TODO: Convert to ES6 when not using Select2
   // handle variant selection, show stock level.
   $('#add_variant_id').change(function () {
-    var variantId = parseInt($(this).val())
-    var variant = _.find(window.variants, function (variant) {
-      return parseInt(variant.id) === variantId
+    const variantId = parseInt($(this).val(), 10)
+    const variant = _.find(window.variants, function (variant) {
+      return parseInt(variant.id, 10) === variantId
     })
 
-    $('#stock_details').html(variantStockTemplate({ variant: variant.attributes }))
-    $('#stock_details').show()
+    const stockDetails = document.querySelector('#stock_details')
+    stockDetails.innerHTML = variantStockTemplate({ variant: variant.attributes })
 
-    $('button.add_variant').click(addVariantFromStockLocation)
+    const addVariantButton = document.querySelectorAll('button.add_variant')
+    addVariantButton.addEventListener('click', addVariantFromStockLocation)
   })
 })
