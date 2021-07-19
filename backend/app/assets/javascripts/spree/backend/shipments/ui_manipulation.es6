@@ -165,7 +165,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const stockDetails = document.querySelector('#stock_details')
     stockDetails.innerHTML = variantStockTemplate({ variant: variant.attributes })
 
-    const addVariantButton = document.querySelectorAll('button.add_variant')
+    const addVariantButton = document.querySelector('button.add_variant')
     addVariantButton.addEventListener('click', addVariantFromStockLocation)
   })
 })
