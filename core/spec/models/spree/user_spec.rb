@@ -5,11 +5,11 @@ describe Spree::LegacyUser, type: :model do # rubocop:disable RSpec/MultipleDesc
   context '#last_incomplete_order' do
     let!(:user) { create(:user) }
     let!(:order) { create(:order, bill_address: create(:address), ship_address: create(:address)) }
-    let(:current_store) { Spree::Store.default }
+    let(:store) { create :store }
 
-    let(:order_1) { create(:order, created_at: 1.day.ago, user: user, created_by: user, store: current_store) }
-    let(:order_2) { create(:order, user: user, created_by: user, store: current_store) }
-    let(:order_3) { create(:order, user: user, created_by: create(:user), store: current_store) }
+    let(:order_1) { create(:order, created_at: 1.day.ago, user: user, created_by: user, store: store) }
+    let(:order_2) { create(:order, user: user, created_by: user, store: store) }
+    let(:order_3) { create(:order, user: user, created_by: create(:user), store: store) }
 
     it 'returns correct order' do
       Timecop.scale(3600) do
@@ -17,7 +17,7 @@ describe Spree::LegacyUser, type: :model do # rubocop:disable RSpec/MultipleDesc
         order_2
         order_3
 
-        expect(user.last_incomplete_spree_order(current_store)).to eq order_3
+        expect(user.last_incomplete_spree_order(store)).to eq order_3
       end
     end
 
@@ -69,15 +69,15 @@ end
 
 describe Spree.user_class, type: :model do
   context 'reporting' do
-    let!(:orders) { create_list(:order, order_count, user: subject, store: current_store, total: order_value, completed_at: Date.today) }
-    let(:current_store) { create :store }
+    let!(:orders) { create_list(:order, order_count, user: subject, store: store, total: order_value, completed_at: Date.today) }
+    let(:store) { create :store }
     let(:order_value) { BigDecimal('80.94') }
     let(:order_count) { 4 }
 
     describe '#lifetime_value' do
       context 'with orders' do
         it 'returns the total of completed orders for the user' do
-          expect(subject.lifetime_value(current_store)).to eq(order_count * order_value)
+          expect(subject.lifetime_value(store)).to eq(order_count * order_value)
         end
       end
 
@@ -85,27 +85,27 @@ describe Spree.user_class, type: :model do
         let(:orders) {}
 
         it 'returns 0.00' do
-          expect(subject.lifetime_value(current_store)).to eq BigDecimal('0.00')
+          expect(subject.lifetime_value(store)).to eq BigDecimal('0.00')
         end
       end
     end
 
     describe '#display_lifetime_value' do
       it 'returns a Spree::Money version of lifetime_value' do
-        expect(subject.display_lifetime_value(current_store)).to eq Spree::Money.new(order_count * order_value)
+        expect(subject.display_lifetime_value(store).money.fractional).to eq(order_count * order_value * 100)
       end
     end
 
     describe '#order_count' do
       it 'returns the count of completed orders for the user' do
-        expect(subject.order_count(current_store)).to eq order_count
+        expect(subject.order_count(store)).to eq order_count
       end
     end
 
     describe '#average_order_value' do
       context 'with orders' do
         it 'returns the average completed order price for the user' do
-          expect(subject.average_order_value(current_store)).to eq order_value
+          expect(subject.average_order_value(store)).to eq order_value
         end
       end
 
@@ -113,7 +113,7 @@ describe Spree.user_class, type: :model do
         let(:orders) {}
 
         it 'returns 0.00' do
-          expect(subject.average_order_value(current_store)).to eq BigDecimal('0.00')
+          expect(subject.average_order_value(store)).to eq BigDecimal('0.00')
         end
       end
     end
@@ -122,7 +122,7 @@ describe Spree.user_class, type: :model do
       it 'returns a Spree::Money version of average_order_value' do
         value = BigDecimal('500.05')
         allow(subject).to receive(:average_order_value).and_return(value)
-        expect(subject.display_average_order_value(current_store)).to eq Spree::Money.new(value)
+        expect(subject.display_average_order_value(store).money.fractional).to eq(value * 100)
       end
     end
   end
