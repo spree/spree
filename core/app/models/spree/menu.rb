@@ -1,5 +1,7 @@
 module Spree
   class Menu < Spree::Base
+    include SingleStoreResource
+
     MENU_LOCATIONS = ['Header', 'Footer']
     MENU_LOCATIONS_PARAMETERIZED = []
 
@@ -8,8 +10,8 @@ module Spree
       MENU_LOCATIONS_PARAMETERIZED << parameterize_location
     end
 
-    has_many :menu_items, dependent: :destroy
-    belongs_to :store, touch: true
+    has_many :menu_items, dependent: :destroy, class_name: 'Spree::MenuItem'
+    belongs_to :store, touch: true, class_name: 'Spree::Store'
 
     before_validation :parameterize_location
     after_create :set_root
@@ -24,7 +26,6 @@ module Spree
 
     default_scope { order(created_at: :asc) }
 
-    scope :by_store, ->(store) { where(store: store) }
     scope :by_locale, ->(locale) { where(locale: locale) }
 
     self.whitelisted_ransackable_attributes = %w[name location locale store_id]
@@ -46,7 +47,7 @@ module Spree
     end
 
     def set_root
-      self.root ||= MenuItem.create!(menu_id: id, name: name, item_type: 'Container')
+      self.root ||= menu_items.create!(name: name, item_type: 'Container')
     end
 
     def update_root_name

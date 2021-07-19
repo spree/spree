@@ -19,6 +19,7 @@ module Spree
     include Spree::Core::TokenGenerator
 
     include NumberAsParam
+    include SingleStoreResource
 
     extend Spree::DisplayMoney
     money_methods :outstanding_balance, :item_total,           :adjustment_total,

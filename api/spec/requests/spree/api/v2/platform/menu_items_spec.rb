@@ -1,11 +1,11 @@
 require 'spec_helper'
 
-describe 'Platform API v2 MenuItems', type: :request do
+describe 'Platform API v2 Menu Items spec', type: :request do
   include_context 'API v2 tokens'
   include_context 'Platform API v2'
 
-  let(:store) { Spree::Store.default }
-  let(:menu) { create(:menu, store: store) }
+  let!(:store) { Spree::Store.default }
+  let!(:menu) { create(:menu, store: store) }
   let!(:menu_item_a) { create(:menu_item, menu: menu) }
   let!(:menu_item_b) { create(:menu_item, menu: menu) }
   let!(:menu_item_c) { create(:menu_item, menu: menu, parent: menu_item_b) }

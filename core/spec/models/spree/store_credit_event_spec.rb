@@ -75,8 +75,11 @@ describe 'StoreCreditEvent' do
   end
 
   describe '#order' do
+    let(:store) { create(:store) }
+    let(:store_credit) { create(:store_credit, store: store) }
+
     context 'there is no associated payment with the event' do
-      subject { create(:store_credit_auth_event) }
+      subject { create(:store_credit_auth_event, store_credit: store_credit) }
 
       it 'returns nil' do
         expect(subject.order).to be_nil
@@ -86,16 +89,26 @@ describe 'StoreCreditEvent' do
     context 'there is an associated payment with the event' do
       subject do
         create(:store_credit_auth_event, action: Spree::StoreCredit::CAPTURE_ACTION,
-                                         authorization_code: authorization_code)
+                                         authorization_code: authorization_code,
+                                         store_credit: store_credit)
       end
 
       let(:authorization_code) { '1-SC-TEST' }
-      let(:order) { create(:order) }
+      let(:order) { create(:order, store: store) }
       let!(:payment) { create(:store_credit_payment, order: order, response_code: authorization_code) }
 
       it 'returns the order associated with the payment' do
         expect(subject.order).to eq order
       end
     end
+  end
+
+  describe '#store' do
+    let(:store) { create(:store) }
+    let(:store_credit) { create(:store_credit, store: store) }
+
+    subject { build(:store_credit_auth_event, store_credit: store_credit) }
+
+    it { expect(subject.store).to eq(store) }
   end
 end

@@ -85,6 +85,36 @@ describe 'Order' do
       it "returns the user's available store credit" do
         expect(subject.total_available_store_credit).to eq available_store_credit
       end
+
+      context 'when store is provided' do
+        let!(:store) { create(:store) }
+        let!(:second_store) { create(:store) }
+        let!(:store_credit) { create(:store_credit, amount: '100', user: user, store: store) }
+
+        before do
+          allow(user).to receive(:total_available_store_credit).and_call_original
+        end
+
+        context 'and has store credits associated' do
+          before do
+            expect(subject).to receive(:store).and_return(store)
+          end
+
+          it "returns the user's available store credit" do
+            expect(subject.total_available_store_credit).to eq(100)
+          end
+        end
+
+        context 'and has no store credits associated' do
+          before do
+            expect(subject).to receive(:store).and_return(second_store)
+          end
+
+          it "returns the user's available store credit" do
+            expect(subject.total_available_store_credit).to eq(0)
+          end
+        end
+      end
     end
   end
 
