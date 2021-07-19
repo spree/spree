@@ -1,5 +1,6 @@
 module Spree
   class CmsPage < Spree::Base
+    include SingleStoreResource
     include Spree::DisplayLink
 
     TYPES = ['Spree::Cms::Pages::StandardPage',
@@ -17,7 +18,6 @@ module Spree
     validates :slug, uniqueness: { scope: :store, allow_nil: true, case_sensitive: true }
 
     scope :visible, -> { where(visible: true) }
-    scope :by_store, ->(store) { where(store: store) }
     scope :by_locale, ->(locale) { where(locale: locale) }
     scope :by_slug, ->(slug) { where(slug: slug) }
     scope :linkable, -> { where.not(slug: nil, type: 'Spree::Cms::Pages::Homepage') }

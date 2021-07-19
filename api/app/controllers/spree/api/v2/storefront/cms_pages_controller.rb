@@ -10,7 +10,7 @@ module Spree
           end
 
           def resource
-            @resource ||= scope.find_by(slug: params[:slug])
+            @resource ||= scope.friendly.find(params[:slug])
           end
 
           def resource_serializer
@@ -22,7 +22,7 @@ module Spree
           end
 
           def scope
-            super.by_store(current_store).by_locale(I18n.locale).linkable
+            super.by_locale(I18n.locale).linkable
           end
         end
       end

@@ -7,7 +7,7 @@ module Spree
         return @collection if @collection.present?
 
         params[:q] ||= {}
-        @collection = scope
+        @collection = super
 
         @search = @collection.ransack(params[:q])
         @collection = @search.result.page(params[:page]).per(params[:per_page])
@@ -15,14 +15,6 @@ module Spree
 
       def location_after_save
         spree.edit_admin_cms_page_path(@cms_page)
-      end
-
-      def scope
-        current_store.cms_pages
-      end
-
-      def find_resource
-        scope.find(params[:id])
       end
     end
   end

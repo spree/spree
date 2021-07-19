@@ -168,7 +168,7 @@ Spree::Core::Engine.add_routes do
         get '/menus/:location', to: 'menus#show', as: :menu
 
         resources :cms_pages, only: %i[index], path: '/pages'
-        get '/pages/:slug', to: 'cms_pages#show', as: :page
+        get '/cms_pages/:slug', to: 'cms_pages#show', as: :page
       end
 
       namespace :platform do

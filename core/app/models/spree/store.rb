@@ -97,6 +97,22 @@ module Spree
       end.uniq.compact
     end
 
+    def homepage(requested_locale)
+      Spree::CmsPage.find_by(store_id: id, locale: requested_locale, type: 'Spree::Cms::Pages::Homepage') ||
+      Spree::CmsPage.find_by(store_id: id, locale: default_locale, type: 'Spree::Cms::Pages::Homepage') ||
+      Spree::CmsPage.find_by(store_id: id, type: 'Spree::Cms::Pages::Homepage')
+    end
+
+    def seo_meta_description
+     if meta_description.present?
+       meta_description
+     elsif seo_title.present?
+       seo_title
+     else
+       name
+     end
+   end
+
     def supported_locales_list
       # TODO: add support of multiple supported languages to a single Store
       @supported_locales_list ||= (read_attribute(:supported_locales).to_s.split(',') << default_locale).compact.uniq.sort
