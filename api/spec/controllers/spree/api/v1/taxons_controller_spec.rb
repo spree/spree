@@ -13,11 +13,13 @@ module Spree
     let!(:taxon) { create(:taxon, name: 'Ruby', taxonomy: taxonomy, parent_id: taxonomy.root.id) }
     let!(:rust_taxon) { create(:taxon, name: 'Rust', taxonomy: taxonomy, parent_id: taxonomy.root.id) }
     let!(:taxon2) { create(:taxon, name: 'Rails', taxonomy: taxonomy, parent_id: taxon.id) }
+    let(:current_store) { taxonomy.store }
     let(:attributes) { ['id', 'name', 'pretty_name', 'permalink', 'parent_id', 'taxonomy_id', 'meta_title', 'meta_description'] }
 
     before do
       create(:taxon, name: 'React', taxonomy: taxonomy, parent_id: taxon2.id) # taxon3
       stub_authentication!
+      allow_any_instance_of(described_class).to receive(:current_store).and_return(current_store)
     end
 
     context 'as a normal user' do
@@ -139,6 +141,39 @@ module Spree
         api_delete :destroy, taxonomy_id: taxonomy.id, id: taxon.id
         assert_unauthorized!
       end
+
+      context 'for another store' do
+        let!(:new_store) { create(:store) }
+
+        before do
+          allow_any_instance_of(described_class).to receive(:current_store).and_return(new_store)
+        end
+
+        it 'gets no taxons for a taxonomy' do
+          api_get :index, taxonomy_id: taxonomy.id
+          assert_not_found!
+        end
+
+        it 'gets a single taxon' do
+          api_get :show, id: taxon.id, taxonomy_id: taxonomy.id
+          assert_not_found!
+        end
+
+        it 'cannot create a new taxon if not an admin' do
+          api_post :create, taxonomy_id: taxonomy.id, taxon: { name: 'Location' }
+          assert_unauthorized!
+        end
+
+        it 'cannot update a taxon' do
+          api_put :update, taxonomy_id: taxonomy.id, id: taxon.id, taxon: { name: 'I hacked your store!' }
+          assert_not_found!
+        end
+
+        it 'cannot delete a taxon' do
+          api_delete :destroy, taxonomy_id: taxonomy.id, id: taxon.id
+          assert_not_found!
+        end
+      end
     end
 
     context 'as an admin' do
@@ -148,6 +183,7 @@ module Spree
         api_post :create, taxonomy_id: taxonomy.id, taxon: { name: 'Colors' }
         expect(json_response).to have_attributes(attributes)
         expect(response.status).to eq(201)
+        expect(Spree::Taxon.find_by(id: JSON.parse(response.body)['id']).taxonomy.store).to eq(current_store)
 
         expect(taxonomy.reload.root.children.count).to eq 3
         taxon = Spree::Taxon.where(name: 'Colors').first
@@ -191,6 +227,24 @@ module Spree
       it 'can destroy' do
         api_delete :destroy, taxonomy_id: taxonomy.id, id: taxon.id
         expect(response.status).to eq(204)
+      end
+
+      context 'for another store' do
+        let!(:new_store) { create(:store) }
+
+        before do
+          allow_any_instance_of(described_class).to receive(:current_store).and_return(new_store)
+        end
+
+        it 'gets no taxons for a taxonomy' do
+          api_get :index, taxonomy_id: taxonomy.id
+          assert_not_found!
+        end
+
+        it 'gets a single taxon' do
+          api_get :show, id: taxon.id, taxonomy_id: taxonomy.id
+          assert_not_found!
+        end
       end
     end
   end

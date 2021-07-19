@@ -6,9 +6,9 @@ module Spree
           @taxons = if taxonomy
                       taxonomy.root.children
                     elsif params[:ids]
-                      Spree::Taxon.includes(:children).accessible_by(current_ability).where(id: params[:ids].split(','))
+                      Spree::Taxon.for_store(current_store).includes(:children).accessible_by(current_ability).where(id: params[:ids].split(','))
                     else
-                      Spree::Taxon.includes(:children).accessible_by(current_ability).order(:taxonomy_id, :lft)
+                      Spree::Taxon.for_store(current_store).includes(:children).accessible_by(current_ability).order(:taxonomy_id, :lft)
                     end
           @taxons = @taxons.ransack(params[:q]).result
           @taxons = @taxons.page(params[:page]).per(params[:per_page])
@@ -30,7 +30,7 @@ module Spree
           authorize! :create, Taxon
           @taxon = Spree::Taxon.new(taxon_params)
           @taxon.taxonomy_id = params[:taxonomy_id]
-          taxonomy = Spree::Taxonomy.find_by(id: params[:taxonomy_id])
+          taxonomy = Spree::Taxonomy.for_store(current_store).find_by(id: params[:taxonomy_id])
 
           if taxonomy.nil?
             @taxon.errors.add(:taxonomy_id, I18n.t('spree.api.invalid_taxonomy_id'))
@@ -76,9 +76,12 @@ module Spree
           if params[:taxonomy_id].present?
             @taxonomy ||=
               if defined?(SpreeGlobalize)
-                Spree::Taxonomy.includes(:translations, taxons: [:translations]).accessible_by(current_ability, :show).find(params[:taxonomy_id])
+                Spree::Taxonomy.for_store(current_store).
+                  includes(:translations, taxons: [:translations]).
+                  accessible_by(current_ability, :show).
+                  find(params[:taxonomy_id])
               else
-                Spree::Taxonomy.accessible_by(current_ability, :show).find(params[:taxonomy_id])
+                Spree::Taxonomy.for_store(current_store).accessible_by(current_ability, :show).find(params[:taxonomy_id])
               end
           end
         end
