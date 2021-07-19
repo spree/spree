@@ -14,6 +14,7 @@ module Spree
     has_many :payment_methods, through: :store_payment_methods, class_name: 'Spree::PaymentMethod'
 
     has_many :cms_pages, class_name: 'Spree::CmsPage'
+    has_many :cms_sections, through: :cms_pages, class_name: 'Spree::CmsSection'
 
     has_many :menus, class_name: 'Spree::Menu'
     has_many :menu_items, through: :menus, class_name: 'Spree::MenuItem'
@@ -99,20 +100,20 @@ module Spree
     end
 
     def homepage(requested_locale)
-      Spree::CmsPage.find_by(store_id: id, locale: requested_locale, type: 'Spree::Cms::Pages::Homepage') ||
-      Spree::CmsPage.find_by(store_id: id, locale: default_locale, type: 'Spree::Cms::Pages::Homepage') ||
-      Spree::CmsPage.find_by(store_id: id, type: 'Spree::Cms::Pages::Homepage')
+      cms_pages.by_locale(requested_locale).find_by(type: 'Spree::Cms::Pages::Homepage') ||
+        cms_pages.by_locale(default_locale).find_by(type: 'Spree::Cms::Pages::Homepage') ||
+        cms_pages.find_by(type: 'Spree::Cms::Pages::Homepage')
     end
 
     def seo_meta_description
-     if meta_description.present?
-       meta_description
-     elsif seo_title.present?
-       seo_title
-     else
-       name
-     end
-   end
+      if meta_description.present?
+        meta_description
+      elsif seo_title.present?
+        seo_title
+      else
+        name
+      end
+    end
 
     def supported_locales_list
       # TODO: add support of multiple supported languages to a single Store

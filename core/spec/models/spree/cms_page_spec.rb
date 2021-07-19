@@ -100,17 +100,6 @@ describe Spree::CmsPage, type: :model do
     end
   end
 
-  describe 'by_store' do
-    let!(:homepage_a) { create(:cms_homepage, store: store_a) }
-    let!(:homepage_b) { create(:cms_homepage, store: store_b) }
-
-    it 'returns homepage for the requested store' do
-      result_a = described_class.find(homepage_a.id)
-
-      expect(described_class.by_store(store_a)).to eq([result_a])
-    end
-  end
-
   describe 'by_locale' do
     let!(:homepage_en) { create(:cms_homepage, store: store_a, locale: 'en') }
     let!(:homepage_de) { create(:cms_homepage, store: store_a, locale: 'de') }
