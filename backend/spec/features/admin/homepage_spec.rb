@@ -13,10 +13,6 @@ describe 'Homepage', type: :feature do
         within('h1') { expect(page).to have_content('Orders') }
       end
 
-      it 'has a link to overview' do
-        within('header') { page.find(:xpath, "//a[@href='/admin']") }
-      end
-
       it 'has a link to orders' do
         expect(page).to have_link('Orders', href: '/admin/orders')
       end

@@ -11,7 +11,7 @@ describe Spree::CustomerReturn, type: :model do
 
       let(:customer_return) { build(:customer_return) }
 
-      let(:inventory_unit)  { build(:inventory_unit) }
+      let(:inventory_unit)  { create(:inventory_unit) }
       let(:return_item)     { build(:return_item, inventory_unit: inventory_unit) }
 
       before do
@@ -45,10 +45,10 @@ describe Spree::CustomerReturn, type: :model do
 
       let(:customer_return)       { build(:customer_return) }
 
-      let(:first_inventory_unit)  { build(:inventory_unit) }
+      let(:first_inventory_unit)  { create(:inventory_unit) }
       let(:first_return_item)     { build(:return_item, inventory_unit: first_inventory_unit) }
 
-      let(:second_inventory_unit) { build(:inventory_unit, order: second_order) }
+      let(:second_inventory_unit) { create(:inventory_unit, order: second_order) }
       let(:second_return_item)    { build(:return_item, inventory_unit: second_inventory_unit) }
 
       before do
@@ -83,6 +83,19 @@ describe Spree::CustomerReturn, type: :model do
     it { expect(Spree::CustomerReturn.whitelisted_ransackable_attributes).to eq(%w(number)) }
   end
 
+  describe '#display_pre_tax_total' do
+    subject { customer_return.display_pre_tax_total.to_s }
+
+    let(:pre_tax_amount)  { 15.0 }
+    let(:customer_return) { create(:customer_return, line_items_count: 2) }
+
+    before do
+      Spree::ReturnItem.where(customer_return_id: customer_return.id).update_all(pre_tax_amount: pre_tax_amount)
+    end
+
+    it { is_expected.to eq '$30.00' }
+  end
+
   describe '#pre_tax_total' do
     subject { customer_return.pre_tax_total }
 
@@ -105,6 +118,19 @@ describe Spree::CustomerReturn, type: :model do
       allow(customer_return).to receive_messages(pre_tax_total: 21.22)
       expect(customer_return.display_pre_tax_total).to eq(Spree::Money.new(21.22))
     end
+  end
+
+  describe '#currency' do
+    subject { customer_return.currency }
+
+    let(:return_item) { create(:return_item) }
+    let(:customer_return) { build(:customer_return, return_items: [return_item]) }
+    let(:order) { create(:order, currency: test_currency) }
+    let(:test_currency) { 'EUR' }
+
+    before { return_item.inventory_unit.update(order: order)}
+
+    it { is_expected.to eq test_currency }
   end
 
   describe '#order' do

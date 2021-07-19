@@ -9,8 +9,6 @@ module Spree
 
     before_action :can_show_product?, only: :show
 
-    respond_to :html
-
     def index
       @searcher = build_searcher(params.merge(include_images: true, current_store: current_store))
       @products = @searcher.retrieve_products

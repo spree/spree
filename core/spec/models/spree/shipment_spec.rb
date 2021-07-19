@@ -558,20 +558,6 @@ describe Spree::Shipment, type: :model do
           expect(shipment.shipped_at).not_to be_nil
         end
 
-        it 'sends a shipment email' do
-          mail_message = double 'Mail::Message'
-          shipment_id = nil
-          expect(Spree::ShipmentMailer).to receive(:shipped_email) { |*args|
-            shipment_id = args[0]
-            mail_message
-          }
-          expect(mail_message).to receive :deliver_later
-          allow_any_instance_of(Spree::ShipmentHandler).to receive(:update_order_shipment_state)
-
-          shipment.ship!
-          expect(shipment_id).to eq(shipment.id)
-        end
-
         it 'finalizes adjustments' do
           allow_any_instance_of(Spree::ShipmentHandler).to receive(:update_order_shipment_state)
           allow_any_instance_of(Spree::ShipmentHandler).to receive(:send_shipped_email)

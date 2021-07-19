@@ -304,8 +304,7 @@ module Spree
           :product,
           product_properties: [
             create(:product_property, property: brand, value: 'Alpha'),
-            create(:product_property, property: manufacturer, value: 'Wilson'),
-            create(:product_property, property: manufacturer, value: 'Wannabe')
+            create(:product_property, property: manufacturer, value: 'Wilson')
           ]
         )
       end
@@ -324,15 +323,13 @@ module Spree
         create(
           :product,
           product_properties: [
-            create(:product_property, property: brand, value: 'Alpha'),
-            create(:product_property, property: brand, value: 'Gamma')
+            create(:product_property, property: brand, value: 'Alpha')
           ]
         )
       end
 
       before do
         create(:product, product_properties: [create(:product_property, property: manufacturer, value: 'Jerseys')])
-        create(:product, product_properties: [create(:product_property, property: manufacturer, value: 'Wilson')])
         create(:product, product_properties: [create(:product_property, property: material, value: '100% Cotton')])
       end
 

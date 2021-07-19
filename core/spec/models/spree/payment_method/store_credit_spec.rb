@@ -293,9 +293,10 @@ describe Spree::PaymentMethod::StoreCredit do
     let!(:store_credit_payment_method) { create(:store_credit_payment_method, display_on: 'both') }
 
     context 'when user have store credits' do
+      let(:store) { create(:store) }
       let!(:user_with_store_credits) { create(:user) }
-      let!(:store_credit) { create(:store_credit, user: user_with_store_credits) }
-      let!(:order_with_store_credit) { create(:order, user: user_with_store_credits) }
+      let!(:store_credit) { create(:store_credit, user: user_with_store_credits, store: store) }
+      let!(:order_with_store_credit) { create(:order, user: user_with_store_credits, store: store) }
 
       it { expect(store_credit_payment_method.available_for_order?(order_with_store_credit)).to be true }
     end

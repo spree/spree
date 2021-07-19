@@ -7,7 +7,7 @@ Gem::Specification.new do |s|
   s.version     = Spree.version
   s.authors     = ['Sean Schofield', 'Spark Solutions']
   s.email       = 'hello@spreecommerce.org'
-  s.summary     = 'Frontend e-commerce functionality for the Spree project.'
+  s.summary     = 'The default Storefront built with Rails and Turbolinks for Spree eCommerce platform'
   s.description = s.summary
   s.homepage    = 'https://spreecommerce.org'
   s.license     = 'BSD-3-Clause'

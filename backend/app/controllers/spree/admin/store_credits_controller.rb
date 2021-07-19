@@ -9,20 +9,21 @@ module Spree
       before_action :ensure_unused_store_credit, only: [:update]
 
       def index
-        @store_credits = @user.store_credits.includes(:credit_type, :category).reverse_order
+        @store_credits = @user.store_credits.for_store(current_store).includes(:credit_type, :category).reverse_order
       end
 
       def create
         @store_credit = @user.store_credits.build(
           permitted_store_credit_params.merge(
             created_by: try_spree_current_user,
-            action_originator: try_spree_current_user
+            action_originator: try_spree_current_user,
+            store: current_store
           )
         )
 
         if @store_credit.save
           flash[:success] = flash_message_for(@store_credit, :successfully_created)
-          redirect_to admin_user_store_credits_path(@user)
+          redirect_to spree.admin_user_store_credits_path(@user)
         else
           load_categories
           flash[:error] = Spree.t('store_credit.errors.unable_to_create')
@@ -36,7 +37,7 @@ module Spree
 
         if @store_credit.save
           flash[:success] = flash_message_for(@store_credit, :successfully_updated)
-          redirect_to admin_user_store_credits_path(@user)
+          redirect_to spree.admin_user_store_credits_path(@user)
         else
           load_categories
           flash[:error] = Spree.t('store_credit.errors.unable_to_update')
@@ -45,13 +46,13 @@ module Spree
       end
 
       def destroy
-        @store_credit = @user.store_credits.find(params[:id])
+        @store_credit = @user.store_credits.for_store(current_store).find(params[:id])
         ensure_unused_store_credit
 
         if @store_credit.destroy
           flash[:success] = flash_message_for(@store_credit, :successfully_removed)
           respond_with(@store_credit) do |format|
-            format.html { redirect_to admin_user_store_credits_path(@user) }
+            format.html { redirect_to spree.admin_user_store_credits_path(@user) }
             format.js { render_js_for_destroy }
           end
         else
@@ -72,7 +73,7 @@ module Spree
 
         unless @user
           flash[:error] = Spree.t(:user_not_found)
-          redirect_to admin_path
+          redirect_to spree.admin_path
         end
       end
 
@@ -81,7 +82,11 @@ module Spree
       end
 
       def load_store_credit
-        @store_credit = Spree::StoreCredit.find_by(id: params[:id]) || Spree::StoreCredit.new
+        @store_credit = scope.find_by(id: params[:id]) || scope.new
+      end
+
+      def scope
+        current_store.store_credits
       end
 
       def ensure_unused_store_credit

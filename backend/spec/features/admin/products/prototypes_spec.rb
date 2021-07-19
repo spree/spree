@@ -98,6 +98,8 @@ describe 'Prototypes', type: :feature, js: true do
     click_link 'Products'
     click_link 'Prototypes'
 
+    expect(page).to have_content('Shirt')
+
     accept_confirm do
       within("#spree_prototype_#{shirt_prototype.id}") do
         page.find('.delete-resource').click

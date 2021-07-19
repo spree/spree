@@ -3,7 +3,9 @@ require 'spec_helper'
 describe 'Log entries', type: :feature do
   stub_authorization!
 
-  let!(:payment) { create(:payment) }
+  let(:store) { Spree::Store.default }
+  let(:order) { create(:order, store: store) }
+  let!(:payment) { create(:payment, order: order) }
 
   context 'with a successful log entry' do
     before do
@@ -20,7 +22,7 @@ describe 'Log entries', type: :feature do
     end
 
     it 'shows a successful attempt' do
-      visit spree.admin_order_payments_path(payment.order)
+      visit spree.admin_order_payments_path(order)
       find("#payment_#{payment.id} a", text: payment.number).click
       within find('#contentHeader') do
         click_link 'Logs'
@@ -47,12 +49,12 @@ describe 'Log entries', type: :feature do
     end
 
     it 'shows a failed attempt' do
-      visit spree.admin_order_payments_path(payment.order)
+      visit spree.admin_order_payments_path(order)
       find("#payment_#{payment.id} a", text: payment.number).click
       within find('#contentHeader') do
         click_link 'Logs'
       end
-      
+
       within('#listing_log_entries') do
         expect(page).to have_content('Transaction failed')
       end

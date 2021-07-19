@@ -2,6 +2,7 @@ require_dependency 'spree/order/checkout'
 require_dependency 'spree/order/currency_updater'
 require_dependency 'spree/order/payments'
 require_dependency 'spree/order/store_credit'
+require_dependency 'spree/order/emails'
 
 module Spree
   class Order < Spree::Base
@@ -13,10 +14,12 @@ module Spree
     include Spree::Order::Payments
     include Spree::Order::StoreCredit
     include Spree::Order::AddressBook
+    include Spree::Order::Emails
     include Spree::Core::NumberGenerator.new(prefix: 'R')
     include Spree::Core::TokenGenerator
 
     include NumberAsParam
+    include SingleStoreResource
 
     extend Spree::DisplayMoney
     money_methods :outstanding_balance, :item_total,           :adjustment_total,
@@ -366,7 +369,6 @@ module Spree
       touch :completed_at
 
       deliver_order_confirmation_email unless confirmation_delivered?
-
       deliver_store_owner_order_notification_email if deliver_store_owner_order_notification_email?
 
       consider_risk
@@ -376,11 +378,6 @@ module Spree
       shipments.each { |shipment| shipment.update!(self) if shipment.persisted? }
       updater.update_shipment_state
       save!
-    end
-
-    def deliver_order_confirmation_email
-      OrderMailer.confirm_email(id).deliver_later
-      update_column(:confirmation_delivered, true)
     end
 
     # Helper methods for checkout steps
@@ -707,10 +704,6 @@ module Spree
       update_with_updater!
     end
 
-    def send_cancel_email
-      OrderMailer.cancel_email(id).deliver_later
-    end
-
     def after_resume
       shipments.each(&:resume!)
       consider_risk
@@ -734,23 +727,11 @@ module Spree
       end
       store ||= self.store
 
-      PaymentMethod.for_store(store).available_on_front_end.select { |pm| pm.available_for_order?(self) }
+      store.payment_methods.available_on_front_end.select { |pm| pm.available_for_order?(self) }
     end
 
     def credit_card_nil_payment?(attributes)
       payments.store_credits.present? && attributes[:amount].to_f.zero?
-    end
-
-    # Returns true if:
-    #   1. an email address is set for new order notifications AND
-    #   2. no notification for this order has been sent yet.
-    def deliver_store_owner_order_notification_email?
-      store.new_order_notifications_email.present? && !store_owner_notification_delivered?
-    end
-
-    def deliver_store_owner_order_notification_email
-      OrderMailer.store_owner_notification_email(id).deliver_later
-      update_column(:store_owner_notification_delivered, true)
     end
 
     def uppercase_number

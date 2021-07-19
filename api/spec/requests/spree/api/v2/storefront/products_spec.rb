@@ -16,8 +16,9 @@ describe 'API V2 Storefront Products Spec', type: :request do
   let!(:discontinued_product)  { create(:product, discontinue_on: Time.current - 1.day, stores: [store]) }
   let!(:not_available_product) { create(:product, available_on: nil, stores: [store]) }
   let!(:property)              { create(:property) }
+  let!(:new_property)          { create(:property) }
   let!(:product_with_property) { create(:product, properties: [property], stores: [store]) }
-  let!(:product_property)      { create(:product_property, property: property, product: product_with_property, value: 'Some Value') }
+  let!(:product_property)      { create(:product_property, property: new_property, product: product_with_property, value: 'Some Value') }
 
   before { Spree::Api::Config[:api_v2_per_page_limit] = 4 }
 

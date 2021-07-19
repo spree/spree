@@ -5,11 +5,19 @@ module Spree
 
       private
 
+      def scope
+        current_store.menus
+      end
+
+      def find_resource
+        scope.find(params[:id])
+      end
+
       def collection
         return @collection if @collection.present?
 
         params[:q] ||= {}
-        @collection = super
+        @collection = scope
 
         @search = @collection.ransack(params[:q])
         @collection = @search.result.page(params[:page]).

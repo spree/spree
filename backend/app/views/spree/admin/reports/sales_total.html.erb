@@ -1,6 +1,6 @@
 <% content_for :page_title do %>
   <%= link_to Spree.t(:reports), spree.admin_reports_url %> /
-  <%= Spree.t(:sales_totals) %>
+  <%= Spree.t(:sales_totals) %> <%= Spree.t('admin.reports.for', store_name: current_store.unique_name) %>
 <% end %>
 
 <div class="card bg-light mb-3">

@@ -35,8 +35,7 @@ describe 'New Menu', type: :feature do
   end
 
   context 'when a user tries to create a menu with a duplicate location within scope of stores and language', js: true do
-    let!(:store_1) { create(:store) }
-    let!(:main_menu) { create(:menu, name: 'Main Menu', store: store_1) }
+    let!(:main_menu) { create(:menu, name: 'Main Menu') }
 
     before do
       visit spree.new_admin_menu_path
@@ -46,16 +45,12 @@ describe 'New Menu', type: :feature do
       fill_in 'Name', with: 'Main Menu'
 
       select2 'Header', from: 'Location'
-      select2 store_1.unique_name, from: 'Stores'
       click_on 'Create'
       expect(page).to have_text ('Location has already been taken')
     end
   end
 
   context 'user can create a new menu', js: true do
-    let!(:store_1) { create(:store) }
-    let!(:store_2) { create(:store) }
-
     before do
       visit spree.new_admin_menu_path
     end
@@ -64,7 +59,6 @@ describe 'New Menu', type: :feature do
       fill_in 'Name', with: 'Main Menu'
 
       select2 'Footer', from: 'Location'
-      select2 store_2.unique_name, from: 'Stores'
       click_on 'Create'
 
       assert_admin_flash_alert_success('Menu "Main Menu" has been successfully created!')

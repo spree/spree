@@ -5,7 +5,6 @@ describe 'Product Variants', type: :feature, js: true do
 
   before do
     create(:product, stores: Spree::Store.all)
-    create(:store, default: true, default_currency: 'USD')
     visit spree.admin_products_path
   end
 

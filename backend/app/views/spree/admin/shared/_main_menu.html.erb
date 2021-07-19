@@ -1,18 +1,21 @@
 <nav>
-  <div class="text-right d-lg-none p-2 border-bottom">
+  <div class="text-right d-lg-none pl-3 py-2 border-bottom d-flex align-items-center">
+    <div class="d-flex flex-grow-1 text-primary">
+      <%= svg_icon name: "spree-logo.svg", width: '70', height: '30' %>
+    </div>
     <button
       id="sidebar-close"
-      class="btn btn-link"
+      class="btn btn-link d-flex"
       type="button"
       aria-expanded="false"
       aria-label="Toggle navigation">
-      <%= svg_icon name: "cancel.svg", width: '20', height: '20' %>
+      <%= svg_icon name: "cancel.svg", width: '20', height: '20', classes: 'p-0 m-0' %>
     </button>
   </div>
 
   <% if can? :admin, Spree::Order %>
     <ul class="nav nav-sidebar border-bottom" id="sidebarOrder">
-      <%= tab *Spree::BackendConfiguration::ORDER_TABS, icon: 'list.svg' %>
+      <%= tab *Spree::BackendConfiguration::ORDER_TABS, url: admin_orders_path, icon: 'list.svg' %>
     </ul>
   <% end %>
 

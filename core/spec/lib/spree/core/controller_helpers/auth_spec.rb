@@ -91,8 +91,9 @@ describe Spree::Core::ControllerHelpers::Auth, type: :controller do
       end
 
       it 'redirects forbidden path' do
+        allow(controller).to receive_message_chain(:spree, :forbidden_path).and_return('/forbidden')
         get :index
-        expect(response).to redirect_to(spree.forbidden_path)
+        expect(response).to redirect_to('/forbidden')
       end
     end
 

@@ -2,13 +2,22 @@ FactoryBot.define do
   factory :order, class: Spree::Order do
     user
     bill_address
-    store
     completed_at { nil }
     email        { user&.email }
     currency     { 'USD' }
 
     transient do
       line_items_price { BigDecimal(10) }
+      attach_to_default_store { true }
+    end
+
+    before(:create) do |order|
+      unless order.store.present?
+        default_store = Spree::Store.default.persisted? ? Spree::Store.default : nil
+        store = default_store || create(:store)
+
+        order.store = store
+      end
     end
 
     factory :order_with_totals do

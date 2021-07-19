@@ -549,6 +549,8 @@ en:
     adjustment_total: Adjustment Total
     adjustments: Adjustments
     admin:
+      show_products_for_all_stores: Show Products for all stores
+      show_payment_methods_for_all_stores: Show Payment Methods for all stores
       tab:
         configuration: Configuration
         content: Content
@@ -568,6 +570,8 @@ en:
         return_authorizations: Return Authorizations
         customer_returns: Customer Returns
       order:
+        changing_store_warning: If you change the store this order belongs to, the order will be reset.
+        once_an_order_is_complete_you_can_not_change_store: 'Sorry, once an order is complete, you can no longer change the store that the order belongs to.'
         events:
           approve: approve
           cancel: cancel
@@ -575,6 +579,8 @@ en:
           resend: Resend
       orders:
         cart: Cart
+      reports:
+        for: For %{store_name}
       return_authorization:
         product: Product
       user:
@@ -611,6 +617,8 @@ en:
         image_alt_text: Add alt text to your image
         image_asset: Add a Promotion image or Link icon.
         move_could_not_be_saved: 'ERROR: This move could not be saved.'
+        managing_by_store_title: 'Managing Menus By Store'
+        managing_by_store: <p>You are managing the menus for <b>%{store}</b>. To manage menus for other stores, change the global store using the drop-down in the main navbar found at the top of the screen.</p>
         new_menu_item: New Menu Item
         new_menu: New Menu
         nested_under: Nested under
@@ -648,6 +656,7 @@ en:
     all_items_have_been_returned: All items have been returned
     all_rights_reserved: All rights reserved
     already_have_account: Already have an account?
+    all_stores: All Stores
     alt_text: Alternative Text
     alternative_phone: Alternative Phone
     amount: Amount
@@ -884,6 +893,7 @@ en:
     error: error
     errors:
       messages:
+        once_an_order_is_complete_you_can_not_change_store: Once an order is complete, you can not change the store.
         blank: can't be blank
         could_not_create_taxon: Could not create taxon
         no_shipping_methods_available: No shipping methods available for selected location, please change your address and try again.
@@ -1534,6 +1544,7 @@ en:
     scope: Scope
     search: Search
     search_by: 'Search by:'
+    search_order_number: Order Number
     search_results: Search results for '%{keywords}'
     searching: Searching
     secure_connection_type: Secure Connection Type

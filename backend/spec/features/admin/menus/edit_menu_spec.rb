@@ -3,8 +3,7 @@ require 'spec_helper'
 describe 'Menu Edit', type: :feature do
   stub_authorization!
 
-  let!(:store_1) { create(:store) }
-  let!(:main_menu) { create(:menu, name: 'Main Menu', store: store_1) }
+  let!(:main_menu) { create(:menu, name: 'Main Menu') }
   let!(:menu_item) { create(:menu_item, menu: main_menu, parent: main_menu.root) }
   let(:file_path) { Rails.root + '../../spec/support/ror_ringer.jpeg' }
 

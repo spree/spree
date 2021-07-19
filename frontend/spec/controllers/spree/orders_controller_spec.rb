@@ -1,13 +1,13 @@
 require 'spec_helper'
 
 describe Spree::OrdersController, type: :controller do
+  let(:store) { Spree::Store.default }
   let(:user) { create(:user) }
+  let(:product) { create(:product, stores: [store]) }
+  let(:variant) { create(:variant, product: product) }
 
   context 'Order model mock' do
-    let(:order) do
-      Spree::Order.create!
-    end
-    let(:variant) { create(:variant) }
+    let(:order) { create(:order, store: store) }
 
     before do
       allow(controller).to receive_messages(try_spree_current_user: user)
@@ -64,8 +64,7 @@ describe Spree::OrdersController, type: :controller do
   end
 
   context 'line items quantity is 0' do
-    let(:order) { Spree::Order.create }
-    let(:variant) { create(:variant) }
+    let(:order) { create(:order, store: store) }
     let!(:line_item) { Spree::Cart::AddItem.call(order: order, variant: variant).value }
 
     before do
@@ -77,6 +76,26 @@ describe Spree::OrdersController, type: :controller do
       expect(order.line_items.count).to eq 1
       put :update, params: { order: { line_items_attributes: { '0' => { id: line_item.id, quantity: 0 } } } }
       expect(order.reload.line_items.count).to eq 0
+    end
+  end
+
+  describe '#show' do
+    before do
+      allow(controller).to receive(:check_authorization)
+    end
+
+    context 'order from current store' do
+      let(:order) { create(:order, store: store) }
+
+      let(:response) { get :show, params: { id: order.number } }
+
+      it { expect(response).to render_template(:show) }
+    end
+
+    context 'order from different store' do
+      let(:order) { create(:order, store: create(:store)) }
+
+      it { expect { get :show, params: { id: order.number } }.to raise_error(ActiveRecord::RecordNotFound) }
     end
   end
 end

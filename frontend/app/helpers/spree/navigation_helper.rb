@@ -35,7 +35,6 @@ module Spree
       keys = base_cache_key + [
         current_store.cache_key_with_version,
         spree_menu(section)&.cache_key_with_version,
-        Spree::Config[:logo],
         stores&.maximum(:updated_at),
         section
       ]

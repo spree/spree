@@ -211,6 +211,12 @@ describe Spree::Address, type: :model do
           expect(address.errors['zipcode']).not_to include('is invalid')
         end
 
+        it 'zipcode is nil' do
+          address.zipcode = nil
+          address.valid?
+          expect(address.errors['zipcode']).not_to include('is invalid')
+        end
+
         it 'does not have a supported country iso' do
           allow(address.country).to receive(:iso).and_return('XX')
           address.valid?

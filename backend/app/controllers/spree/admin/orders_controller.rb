@@ -1,10 +1,12 @@
 module Spree
   module Admin
     class OrdersController < Spree::Admin::BaseController
+      include Spree::Admin::OrderConcern
+
       before_action :initialize_order_events
       before_action :load_order, only: %i[
         edit update cancel resume approve resend open_adjustments
-        close_adjustments cart store set_store channel set_channel
+        close_adjustments cart channel set_channel
       ]
 
       respond_to :html
@@ -26,18 +28,18 @@ module Spree
 
         if params[:q][:created_at_gt].present?
           params[:q][:created_at_gt] = begin
-                                         Time.zone.parse(params[:q][:created_at_gt]).beginning_of_day
-                                       rescue StandardError
-                                         ''
-                                       end
+            Time.zone.parse(params[:q][:created_at_gt]).beginning_of_day
+          rescue StandardError
+            ''
+          end
         end
 
         if params[:q][:created_at_lt].present?
           params[:q][:created_at_lt] = begin
-                                         Time.zone.parse(params[:q][:created_at_lt]).end_of_day
-                                       rescue StandardError
-                                         ''
-                                       end
+            Time.zone.parse(params[:q][:created_at_lt]).end_of_day
+          rescue StandardError
+            ''
+          end
         end
 
         if @show_only_completed
@@ -45,7 +47,7 @@ module Spree
           params[:q][:completed_at_lt] = params[:q].delete(:created_at_lt)
         end
 
-        @search = Spree::Order.preload(:user).accessible_by(current_ability, :index).ransack(params[:q])
+        @search = scope.preload(:user).accessible_by(current_ability, :index).ransack(params[:q])
 
         # lazy loading other models here (via includes) may result in an invalid query
         # e.g. SELECT  DISTINCT DISTINCT "spree_orders".id, "spree_orders"."created_at" AS alias_0 FROM "spree_orders"
@@ -60,7 +62,7 @@ module Spree
       end
 
       def new
-        @order = Spree::Order.create(order_params)
+        @order = scope.create(order_params)
         redirect_to cart_admin_order_url(@order)
       end
 
@@ -74,21 +76,19 @@ module Spree
         @order.refresh_shipment_rates(ShippingMethod::DISPLAY_ON_BACK_END) unless @order.completed?
 
         if @order.shipments.shipped.exists?
-          redirect_to edit_admin_order_url(@order)
+          redirect_to spree.edit_admin_order_url(@order)
         end
       end
-
-      def store; end
 
       def update
         if @order.update(params[:order]) && @order.line_items.present?
           @order.update_with_updater!
           unless @order.completed?
             # Jump to next step if order is not completed.
-            redirect_to admin_order_customer_path(@order) and return
+            redirect_to spree.admin_order_customer_path(@order) and return
           end
-        else
-          @order.errors.add(:line_items, Spree.t('errors.messages.blank')) if @order.line_items.empty?
+        elsif @order.line_items.empty?
+          @order.errors.add(:line_items, Spree.t('errors.messages.blank'))
         end
 
         render action: :edit
@@ -135,16 +135,6 @@ module Spree
         respond_with(@order) { |format| format.html { redirect_back fallback_location: spree.admin_order_adjustments_url(@order) } }
       end
 
-      def set_store
-        if @order.update(store_id: params[:order][:store_id])
-          flash[:success] = flash_message_for(@order, :successfully_updated)
-        else
-          flash[:error] = @order.errors.full_messages.join(', ')
-        end
-
-        redirect_to store_admin_order_url(@order)
-      end
-
       def set_channel
         if @order.update(order_params)
           flash[:success] = flash_message_for(@order, :successfully_updated)
@@ -157,13 +147,17 @@ module Spree
 
       private
 
+      def scope
+        current_store.orders.accessible_by(current_ability, :index)
+      end
+
       def order_params
         params[:created_by_id] = try_spree_current_user.try(:id)
         params.permit(:created_by_id, :user_id, :store_id, :channel)
       end
 
       def load_order
-        @order = Spree::Order.includes(:adjustments).find_by!(number: params[:id])
+        @order = scope.includes(:adjustments).find_by!(number: params[:id])
         authorize! action, @order
       end
 

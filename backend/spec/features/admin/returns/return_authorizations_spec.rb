@@ -116,7 +116,7 @@ describe 'Return Authorizations', type: :feature do
 
       it 'only shows authorized return authorizations' do
         visit spree.admin_return_authorizations_path
-        within('.nav-tabs') do
+        within('#spreePageTabs') do
           click_link 'Authorized'
         end
 
@@ -126,7 +126,7 @@ describe 'Return Authorizations', type: :feature do
 
       it 'preselects authorized status in filter' do
         visit spree.admin_return_authorizations_path
-        within('.nav-tabs') do
+        within('#spreePageTabs') do
           click_link 'Authorized'
         end
 
@@ -143,7 +143,7 @@ describe 'Return Authorizations', type: :feature do
 
       it 'only shows canceled return authorizations' do
         visit spree.admin_return_authorizations_path
-        within('.nav-tabs') do
+        within('#spreePageTabs') do
           click_link 'Canceled'
         end
 
@@ -153,7 +153,7 @@ describe 'Return Authorizations', type: :feature do
 
       it 'preselects canceled status in filter' do
         visit spree.admin_return_authorizations_path
-        within('.nav-tabs') do
+        within('#spreePageTabs') do
           click_link 'Canceled'
         end
 

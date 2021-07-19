@@ -5,7 +5,7 @@ describe Spree::LegacyUser, type: :model do # rubocop:disable RSpec/MultipleDesc
   context '#last_incomplete_order' do
     let!(:user) { create(:user) }
     let!(:order) { create(:order, bill_address: create(:address), ship_address: create(:address)) }
-    let(:current_store) { create :store }
+    let(:current_store) { Spree::Store.default }
 
     let(:order_1) { create(:order, created_at: 1.day.ago, user: user, created_by: user, store: current_store) }
     let(:order_2) { create(:order, user: user, created_by: user, store: current_store) }
@@ -157,7 +157,7 @@ describe Spree.user_class, type: :model do
       let(:amount) { 120.25 }
       let(:additional_amount) { 55.75 }
       let(:store_credit) { create(:store_credit, user: user, amount: amount, amount_used: 0.0) }
-      let!(:additional_store_credit) { create(:store_credit, user: user, amount: additional_amount, amount_used: 0.0) }
+      let!(:additional_store_credit) { create(:store_credit, user: user, amount: additional_amount, amount_used: 0.0, store: store_credit.store) }
 
       context 'part of the store credit has been used' do
         let(:amount_used) { 35.00 }

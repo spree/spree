@@ -149,7 +149,7 @@ module Spree
           end
 
           def load_variant
-            @variant = Spree::Variant.find(params[:variant_id])
+            @variant = current_store.variants.find(params[:variant_id])
           end
 
           def render_error_item_quantity

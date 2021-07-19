@@ -460,7 +460,7 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
     end
 
     context 'for user with store credits' do
-      let!(:store_credit) { create(:store_credit, amount: order_total) }
+      let!(:store_credit) { create(:store_credit, amount: order_total, store: store) }
       let!(:order) { create(:order, user: store_credit.user, total: order_total, store: store) }
 
       shared_examples 'valid payload' do |amount|

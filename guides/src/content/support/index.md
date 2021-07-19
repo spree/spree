@@ -13,7 +13,7 @@ Want Spree Core team to audit your application?
 
 We're here to help!
 
-[Contact us directly](https://spreecommerce.org/contact/) and request a quote for our constulting services.
+[Contact us directly](https://spreecommerce.org/contact/) and request a quote for our consulting services.
 
 ## Community Support
 
