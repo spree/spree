@@ -1,6 +1,6 @@
 module Spree
   module UserReporting
-    def display_lifetime_value(store)
+    def display_lifetime_value(store = nil)
       store ||= Store.default
       Spree::Money.new(lifetime_value(store), currency: store.default_currency)
     end
