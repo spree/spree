@@ -130,7 +130,6 @@ module Spree
       end
 
       initializer 'spree.core.checking_deprecated_preferences' do
-        require 'active_support'
         Spree::Config.deprecated_preferences.each do |pref|
           warn "[DEPRECATION] #{pref[:name]} is deprecated #{pref[:message]}"
         end
