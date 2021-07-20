@@ -1,3 +1,4 @@
+Rails.cache.delete('default_store')
 default_store = Spree::Store.default
 
 if default_store.persisted?
