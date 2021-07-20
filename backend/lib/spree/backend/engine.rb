@@ -11,6 +11,12 @@ module Spree
       initializer 'spree.params.filter' do |app|
         app.config.filter_parameters += [:password, :password_confirmation, :number]
       end
+
+      initializer 'spree.core.checking_deprecated_preferences' do
+        Spree::Backend::Config.deprecated_preferences.each do |pref|
+          warn "[DEPRECATION] #{pref[:name]} is deprecated #{pref[:message]}"
+        end
+      end
     end
   end
 end

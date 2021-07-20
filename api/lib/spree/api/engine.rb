@@ -22,6 +22,12 @@ module Spree
         Migrations.new(config, engine_name).check
       end
 
+      initializer 'spree.core.checking_deprecated_preferences' do
+        Spree::Api::Config.deprecated_preferences.each do |pref|
+          warn "[DEPRECATION] #{pref[:name]} is deprecated #{pref[:message]}"
+        end
+      end
+
       def self.root
         @root ||= Pathname.new(File.expand_path('../../..', __dir__))
       end

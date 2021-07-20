@@ -129,6 +129,13 @@ module Spree
         Migrations.new(config, engine_name).check
       end
 
+      initializer 'spree.core.checking_deprecated_preferences' do
+        require 'active_support'
+        Spree::Config.deprecated_preferences.each do |pref|
+          warn "[DEPRECATION] #{pref[:name]} is deprecated #{pref[:message]}"
+        end
+      end
+
       config.to_prepare do
         # Ensure spree locale paths are present before decorators
         I18n.load_path.unshift(*(Dir.glob(

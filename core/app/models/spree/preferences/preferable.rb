@@ -58,6 +58,11 @@ module Spree::Preferences::Preferable
     send self.class.preference_default_getter_method(name)
   end
 
+  def preference_deprecated(name)
+    has_preference! name
+    send self.class.preference_deprecated_getter_method(name)
+  end
+
   def has_preference!(name)
     raise NoMethodError, "#{name} preference not defined" unless has_preference? name
   end
@@ -70,6 +75,17 @@ module Spree::Preferences::Preferable
     methods.grep(/\Apreferred_.*=\Z/).map do |pref_method|
       pref_method.to_s.gsub(/\Apreferred_|=\Z/, '').to_sym
     end
+  end
+
+  def deprecated_preferences
+    all_deprecated = []
+    defined_preferences.each do |pref_name|
+      deprecated_message = preference_deprecated(pref_name)
+      unless deprecated_message.nil?
+        all_deprecated << { name: pref_name, message: deprecated_message }
+      end
+    end
+    all_deprecated
   end
 
   def default_preferences
