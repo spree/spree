@@ -10,7 +10,7 @@ module Spree
           end
 
           def resource
-            @resource ||= scope.friendly.find(params[:slug])
+            @resource ||= scope.find_by(slug: params[:id]) || scope.find(params[:id])
           end
 
           def resource_serializer
