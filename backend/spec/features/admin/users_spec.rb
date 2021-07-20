@@ -5,13 +5,14 @@ describe 'Users', type: :feature do
   stub_authorization!
   include Spree::Admin::BaseHelper
 
+  let(:store) { Spree::Store.default }
   let!(:user_a) { create(:user_with_addresses, email: 'a@example.com') }
   let!(:user_b) { create(:user_with_addresses, email: 'b@example.com') }
 
-  let!(:order) { create(:completed_order_with_totals, store: Spree::Store.default, user: user_a, number: 'R123') }
+  let!(:order) { create(:completed_order_with_totals, store: store, user: user_a, number: 'R123') }
 
   let!(:order_2) do
-    create(:completed_order_with_totals, store: Spree::Store.default, user: user_a, number: 'R456').tap do |o|
+    create(:completed_order_with_totals, store: store, user: user_a, number: 'R456').tap do |o|
       li = o.line_items.last
       li.update_column(:price, li.price + 10)
     end
