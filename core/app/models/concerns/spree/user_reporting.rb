@@ -1,8 +1,8 @@
 module Spree
   module UserReporting
-    def display_lifetime_value(store = nil)
+    def display_lifetime_value(store = nil, currency = nil)
       store ||= Store.default
-      Spree::Money.new(lifetime_value(store), currency: store.default_currency)
+      Spree::Money.new(lifetime_value(store), currency: currency || store.default_currency)
     end
 
     def lifetime_value(store = nil)
@@ -10,9 +10,9 @@ module Spree
       store.orders.complete.sum(:total)
     end
 
-    def display_average_order_value(store = nil)
+    def display_average_order_value(store = nil, currency = nil)
       store ||= Store.default
-      Spree::Money.new(average_order_value(store), currency: store.default_currency)
+      Spree::Money.new(average_order_value(store), currency: currency || store.default_currency)
     end
 
     def average_order_value(store = nil)

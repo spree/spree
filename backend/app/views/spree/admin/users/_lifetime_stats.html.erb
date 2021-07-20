@@ -8,7 +8,11 @@
     <table class="table" id="user-lifetime-stats" data-hook>
       <tr>
         <td width="30%"><%= Spree.t(:total_sales) %>:</td>
-        <td><%= @user.display_lifetime_value(current_store).to_html %></td>
+        <td>
+          <% current_store.supported_currencies.split(',').each do |currency| %>
+            <div><%= @user.display_lifetime_value(current_store, currency).to_html %></div>
+          <% end %>
+        </td>
       </tr>
       <tr>
         <td><%= Spree.t(:num_orders) %>:</td>
@@ -16,11 +20,19 @@
       </tr>
       <tr>
         <td><%= Spree.t(:average_order_value) %>:</td>
-        <td><%= @user.display_average_order_value(current_store).to_html %></td>
+        <td>
+          <% current_store.supported_currencies.split(',').each do |currency| %>
+            <div><%= @user.display_average_order_value(current_store, currency).to_html %></div>
+          <% end %>
+        </td>
       </tr>
       <tr>
         <td><%= Spree.t('admin.user.store_credits') %>:</td>
-        <td id="store_credit"><%= Spree::Money.new(@user.total_available_store_credit(current_currency)) %></td>
+        <td id="store_credit">
+          <% current_store.supported_currencies.split(',').each do |currency| %>
+            <div><%= Spree::Money.new(@user.total_available_store_credit(currency, current_store), currency: currency) %></div>
+          <% end %>
+        </td>
       </tr>
       <tr>
         <td><%= Spree.t(:member_since) %>:</td>
