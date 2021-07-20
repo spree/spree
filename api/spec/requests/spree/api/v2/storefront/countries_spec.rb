@@ -114,6 +114,22 @@ describe 'Storefront API v2 Countries spec', type: :request do
       end
     end
 
+    context 'when different current store' do
+      let!(:second_country) { create(:country) }
+      let!(:second_store) { create(:store, name: 'Second Store', default_country: second_country) }
+
+      before do
+        allow_any_instance_of(Spree::Api::V2::Storefront::CountriesController).to receive(:current_store).and_return(second_store)
+        get '/api/v2/storefront/countries/default'
+      end
+
+      it 'should return second_country' do
+        expect(json_response['data']).to have_id(second_country.id.to_s)
+        expect(json_response['data']).to have_attribute(:iso).with_value(second_country.iso)
+        expect(json_response['data']).to have_attribute(:default).with_value(true)
+      end
+    end
+
     context 'with specified options' do
       before { get "/api/v2/storefront/countries/#{country.iso}?include=states" }
 

@@ -21,7 +21,7 @@ module Spree
           end
 
           def resource
-            return scope.default if params[:iso] == 'default'
+            return current_store.default_country if params[:iso] == 'default'
 
             scope.find_by(iso: params[:iso]&.upcase) ||
               scope.find_by(id: params[:iso]&.upcase) ||
