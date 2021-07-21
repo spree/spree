@@ -116,6 +116,22 @@ describe Spree::Store, type: :model do
         it { expect(subject.menu_items).to eq([menu_item]) }
       end
     end
+
+    describe '#taxonomies' do
+      let!(:taxonomy) { create(:taxonomy, store: subject) }
+      let!(:taxonomy_2) { create(:taxonomy, store: create(:store)) }
+
+      it { expect(subject.taxonomies).to eq([taxonomy]) }
+
+      describe '#taxons' do
+        let!(:taxon) { create(:taxon, taxonomy: taxonomy) }
+        let!(:taxon_2) { create(:taxon, taxonomy: taxonomy_2) }
+
+        it { expect(taxon).not_to be_nil }
+        it { expect(taxon_2).not_to be_nil }
+        it { expect(subject.taxons).to match_array([taxonomy.root, taxon]) }
+      end
+    end
   end
 
   describe 'validations' do

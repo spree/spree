@@ -22,7 +22,7 @@ module Spree
     has_many :promotion_rules, through: :promotion_rule_taxons, class_name: 'Spree::PromotionRule'
 
     validates :name, presence: true, uniqueness: { scope: [:parent_id, :taxonomy_id], allow_blank: true, case_sensitive: false }
-    validates :permalink, uniqueness: { case_sensitive: false }
+    validates :permalink, uniqueness: { case_sensitive: false, scope: [:parent_id, :taxonomy_id] }
     validates :hide_from_nav, inclusion: { in: [true, false] }
     validates_associated :icon
     validate :check_for_root, on: :create
