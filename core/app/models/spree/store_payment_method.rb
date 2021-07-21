@@ -6,6 +6,6 @@ module Spree
     belongs_to :payment_method, class_name: 'Spree::PaymentMethod', touch: true
 
     validates :store, :payment_method, presence: true
-    validates :store_id, uniqueness: { scope: :product_id }
+    validates :store_id, uniqueness: { scope: :payment_method_id }
   end
 end
