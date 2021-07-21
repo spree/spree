@@ -10,7 +10,7 @@
         <td width="30%"><%= Spree.t(:total_sales) %>:</td>
         <td>
           <% current_store.supported_currencies.split(',').each do |currency| %>
-            <div><%= @user.display_lifetime_value(current_store, currency).to_html %></div>
+            <div><%= @user.display_lifetime_value(store: current_store, currency: currency).to_html %></div>
           <% end %>
         </td>
       </tr>
@@ -22,7 +22,7 @@
         <td><%= Spree.t(:average_order_value) %>:</td>
         <td>
           <% current_store.supported_currencies.split(',').each do |currency| %>
-            <div><%= @user.display_average_order_value(current_store, currency).to_html %></div>
+            <div><%= @user.display_average_order_value(store: current_store, currency: currency).to_html %></div>
           <% end %>
         </td>
       </tr>
