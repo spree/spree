@@ -42,9 +42,17 @@ const addVariantToShipment = function(shipmentNumber, variantId, quantity = null
 const removeVariantFromShipment = function(shipmentNumber, variantId, quantity = null) {
   showProgressIndicator()
 
-  const data = {
-    quantity: quantity,
-    variant_id: parseInt(variantId, 10)
+  let data = {}
+
+  if (quantity == null) {
+    data = {
+      variant_id: parseInt(variantId, 10)
+    }
+  } else {
+    data = {
+      quantity: quantity,
+      variant_id: parseInt(variantId, 10)
+    }
   }
 
   fetch(shipmentUri(shipmentNumber, 'remove'), {
