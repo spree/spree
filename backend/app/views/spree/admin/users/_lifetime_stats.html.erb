@@ -30,7 +30,7 @@
         <td><%= Spree.t('admin.user.store_credits') %>:</td>
         <td id="store_credit">
           <% current_store.supported_currencies.split(',').each do |currency| %>
-            <div><%= Spree::Money.new(@user.total_available_store_credit(currency, current_store), currency: currency) %></div>
+            <div><%= @user.display_total_available_store_credit(store: current_store, currency: currency) %></div>
           <% end %>
         </td>
       </tr>

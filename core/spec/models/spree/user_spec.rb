@@ -69,7 +69,8 @@ end
 
 describe Spree.user_class, type: :model do
   context 'reporting' do
-    let!(:orders) { create_list(:order, order_count, user: subject, store: store, total: order_value, completed_at: Date.today) }
+    let!(:orders) { create_list(:order, order_count, user: subject, store: store, total: order_value, completed_at: Date.today, currency: currency) }
+    let(:currency) { 'USD' }
     let(:store) { create :store }
     let(:order_value) { BigDecimal('80.94') }
     let(:order_count) { 4 }
@@ -77,7 +78,7 @@ describe Spree.user_class, type: :model do
     describe '#lifetime_value' do
       context 'with orders' do
         it 'returns the total of completed orders for the user' do
-          expect(subject.lifetime_value(store)).to eq(order_count * order_value)
+          expect(subject.lifetime_value(store: store, currency: currency)).to eq(order_count * order_value)
         end
       end
 
@@ -85,14 +86,14 @@ describe Spree.user_class, type: :model do
         let(:orders) {}
 
         it 'returns 0.00' do
-          expect(subject.lifetime_value(store)).to eq BigDecimal('0.00')
+          expect(subject.lifetime_value(store: store, currency: currency)).to eq BigDecimal('0.00')
         end
       end
     end
 
     describe '#display_lifetime_value' do
       it 'returns a Spree::Money version of lifetime_value' do
-        expect(subject.display_lifetime_value(store).money.fractional).to eq(order_count * order_value * 100)
+        expect(subject.display_lifetime_value(store: store, currency: currency).money.fractional).to eq(order_count * order_value * 100)
       end
     end
 
@@ -105,7 +106,7 @@ describe Spree.user_class, type: :model do
     describe '#average_order_value' do
       context 'with orders' do
         it 'returns the average completed order price for the user' do
-          expect(subject.average_order_value(store)).to eq order_value
+          expect(subject.average_order_value(store: store, currency: currency)).to eq order_value
         end
       end
 
@@ -113,7 +114,7 @@ describe Spree.user_class, type: :model do
         let(:orders) {}
 
         it 'returns 0.00' do
-          expect(subject.average_order_value(store)).to eq BigDecimal('0.00')
+          expect(subject.average_order_value(store: store, currency: currency)).to eq BigDecimal('0.00')
         end
       end
     end
@@ -122,7 +123,7 @@ describe Spree.user_class, type: :model do
       it 'returns a Spree::Money version of average_order_value' do
         value = BigDecimal('500.05')
         allow(subject).to receive(:average_order_value).and_return(value)
-        expect(subject.display_average_order_value(store).money.fractional).to eq(value * 100)
+        expect(subject.display_average_order_value(store: store, currency: currency).money.fractional).to eq(value * 100)
       end
     end
   end

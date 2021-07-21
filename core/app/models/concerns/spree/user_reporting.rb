@@ -28,8 +28,10 @@ module Spree
                       column: :all)
     end
 
+    private
+
     def order_calculate(store:, currency:, operation:, column:)
-      store.orders.complete.where(currency: currency).calculate(operation, column)
+      store.orders.complete.where(currency: currency).calculate(operation, column) || BigDecimal('0.00')
     end
   end
 end
