@@ -6,6 +6,8 @@ describe Spree::PromotionHandler::PromotionDuplicator do
   let!(:promo_category) { create(:promotion_category) }
   let!(:calculator) { create(:calculator) }
 
+  let(:store) { create(:store) }
+  let(:store_2) { create(:store) }
   let!(:promotion) do
     create(:promotion_with_item_total_rule,
            description: 'Test description',
@@ -16,7 +18,8 @@ describe Spree::PromotionHandler::PromotionDuplicator do
            code: 'test1',
            advertise: true,
            path: 'test1',
-           promotion_category: promo_category)
+           promotion_category: promo_category,
+           stores: [store, store_2])
   end
 
   before do
@@ -68,6 +71,10 @@ describe Spree::PromotionHandler::PromotionDuplicator do
 
       it 'copies all promotion actions' do
         expect(promotion.promotion_actions.size).to eq new_promotion.promotion_actions.size
+      end
+
+      it 'copies promotion stores' do
+        expect(promotion.store_ids).to eq new_promotion.store_ids
       end
 
       it "promotion action's fields (except promotion_id) are the same" do

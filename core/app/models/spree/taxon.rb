@@ -39,6 +39,8 @@ module Spree
 
     self.whitelisted_ransackable_associations = %w[taxonomy]
 
+    scope :for_stores, ->(stores) { joins(:taxonomy).where(spree_taxonomies: { store_id: stores.ids }) }
+
     # indicate which filters should be used for a taxon
     # this method should be customized to your own site
     def applicable_filters

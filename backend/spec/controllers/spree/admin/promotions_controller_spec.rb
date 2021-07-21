@@ -3,11 +3,15 @@ require 'spec_helper'
 describe Spree::Admin::PromotionsController, type: :controller do
   stub_authorization!
 
-  let!(:promotion1) { create(:promotion, name: 'name1', code: 'code1', path: 'path1') }
-  let!(:promotion2) { create(:promotion, name: 'name2', code: 'code2', path: 'path2') }
+  let(:store) { Spree::Store.default }
+  let(:store_2) { create(:store) }
+
+  let!(:promotion1) { create(:promotion, name: 'name1', code: 'code1', path: 'path1', stores: [store, store_2]) }
+  let!(:promotion2) { create(:promotion, name: 'name2', code: 'code2', path: 'path2', stores: [store]) }
+  let!(:promotion3) { create(:promotion, name: 'name3', code: 'code3', path: 'path3', stores: [store_2]) }
   let!(:category) { create :promotion_category }
 
-  context '#index' do
+  describe '#index' do
     it 'succeeds' do
       get :index
       expect(assigns[:promotions]).to match_array [promotion2, promotion1]
@@ -41,7 +45,7 @@ describe Spree::Admin::PromotionsController, type: :controller do
     end
   end
 
-  context '#clone' do
+  describe '#clone' do
     context 'cloning valid promotion' do
       subject do
         post :clone, params: { id: promotion1.id }
@@ -62,15 +66,15 @@ describe Spree::Admin::PromotionsController, type: :controller do
 
     context 'cloning invalid promotion' do
       subject do
-        post :clone, params: { id: promotion3.id }
+        post :clone, params: { id: promotion4.id }
       end
 
-      let!(:promotion3) { create(:promotion, name: 'Name3', code: 'code3', path: '') }
+      let(:promotion4) { create(:promotion, stores: [store]) }
 
       before do
-        promotion_duplicator_mock = Spree::PromotionHandler::PromotionDuplicator.new(promotion3, random_string: "ABCD")
+        promotion_duplicator_mock = Spree::PromotionHandler::PromotionDuplicator.new(promotion4, random_string: "ABCD")
         allow(Spree::PromotionHandler::PromotionDuplicator).to receive(:new).
-          with(promotion3).and_return(promotion_duplicator_mock)
+          with(promotion4).and_return(promotion_duplicator_mock)
 
         create(:promotion, name: 'Name4', code: 'code4', path: '_ABCD') # promotion 4
       end
@@ -84,6 +88,31 @@ describe Spree::Admin::PromotionsController, type: :controller do
         expected_error = Spree.t('promotion_not_cloned', error: assigns(:new_promo).errors.full_messages.to_sentence)
         expect(flash[:error]).to eq(expected_error)
       end
+    end
+  end
+
+  describe '#destroy' do
+    subject(:send_request) do
+      delete :destroy, params: { id: promotion, format: :js }
+    end
+
+    context 'will successfully destroy promotion' do
+      let!(:promotion) { create(:promotion, stores: [store, store_2]) }
+
+      describe 'returns response' do
+        before { send_request }
+
+        it { expect(assigns(:promotion)).to eq(promotion) }
+        it { expect(response).to have_http_status(:ok) }
+        it { expect(flash[:success]).to eq("Promotion \"#{promotion.name}\" has been successfully removed!") }
+      end
+    end
+
+    context 'cannot destroy promotion from different store' do
+      let!(:promotion) { create(:promotion, stores: [store_2]) }
+
+      it { expect(send_request).to redirect_to(spree.admin_promotions_path) }
+      it { expect { send_request }.not_to change { Spree::Promotion.count } }
     end
   end
 end

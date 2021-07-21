@@ -66,7 +66,7 @@ module Spree
       end
 
       context 'existing coupon code promotion' do
-        let!(:promotion) { create(:promotion, :with_line_item_adjustment, adjustment_rate: 10, code: '10off') }
+        let!(:promotion) { create(:promotion, :with_line_item_adjustment, adjustment_rate: 10, code: '10off', stores: [store]) }
 
         it 'fetches with given code' do
           expect(subject.promotion).to eq promotion
@@ -121,7 +121,7 @@ module Spree
             before do
               allow(order).to receive_messages coupon_code: '10off'
               calculator = Calculator::FlatRate.new(preferred_amount: 10)
-              general_promo = Promotion.create name: 'General Promo'
+              general_promo = create(:promotion, name: 'General Promo', stores: [order.store])
               Promotion::Actions::CreateItemAdjustments.create(promotion: general_promo, calculator: calculator) # general_action
 
               Spree::Cart::AddItem.call(order: order, variant: create(:variant))
@@ -260,7 +260,7 @@ module Spree
           end
 
           context 'and multiple quantity per line item' do
-            let(:promotion)    { create(:promotion, :with_line_item_adjustment, adjustment_rate: 20, code: '20off') }
+            let(:promotion)    { create(:promotion, :with_line_item_adjustment, adjustment_rate: 20, code: '20off', stores: [store]) }
             let(:product_list) { create_list(:product, 3, tax_category: tax_category, price: 10.0, stores: [store]) }
 
             before do

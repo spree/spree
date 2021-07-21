@@ -30,7 +30,12 @@ module Spree
         end
 
         def actionable?(line_item)
-          taxon_product_ids.include? line_item.variant.product_id
+          store = line_item.order.store
+
+          store.products.
+            joins(:classifications).
+            where(Spree::Classification.table_name => { taxon_id: taxon_ids, product_id: line_item.product_id }).
+            exists?
         end
 
         def taxon_ids_string
@@ -39,14 +44,16 @@ module Spree
 
         def taxon_ids_string=(s)
           ids = s.to_s.split(',').map(&:strip)
-          self.taxons = Spree::Taxon.find(ids)
+          self.taxons = Spree::Taxon.for_stores(stores).find(ids)
         end
 
         private
 
         # All taxons in an order
         def order_taxons(order)
-          Spree::Taxon.joins(products: { variants_including_master: :line_items }).where(spree_line_items: { order_id: order.id }).distinct
+          taxon_ids = Spree::Classification.where(product_id: order.product_ids).pluck(:taxon_id).uniq
+
+          order.store.taxons.where(id: taxon_ids)
         end
 
         # ids of taxons rules and taxons rules children
@@ -61,10 +68,6 @@ module Spree
 
         def taxons_in_order_including_parents(order)
           order_taxons_in_taxons_and_children(order).inject([]) { |taxons, taxon| taxons << taxon.self_and_ancestors }.flatten.uniq
-        end
-
-        def taxon_product_ids
-          Spree::Product.joins(:taxons).where(spree_taxons: { id: taxons.pluck(:id) }).pluck(:id).uniq
         end
       end
     end

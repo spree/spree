@@ -132,6 +132,13 @@ describe Spree::Store, type: :model do
         it { expect(subject.taxons).to match_array([taxonomy.root, taxon]) }
       end
     end
+
+    describe '#promotions' do
+      let!(:promotion) { create(:promotion, stores: [subject, create(:store)]) }
+      let!(:promotion_2) { create(:promotion, stores: [create(:store)]) }
+
+      it { expect(subject.promotions).to eq([promotion]) }
+    end
   end
 
   describe 'validations' do

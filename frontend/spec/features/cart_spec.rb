@@ -52,7 +52,7 @@ describe 'Cart', type: :feature, inaccessible: true, js: true do
   end
 
   describe 'add promotion coupon on cart page' do
-    let!(:promotion) { Spree::Promotion.create!(name: 'Huhuhu', code: 'huhu') }
+    let!(:promotion) { create(:promotion, name: 'Huhuhu', code: 'huhu') }
     let!(:calculator) { Spree::Calculator::FlatPercentItemTotal.create!(preferred_flat_percent: '10') }
     let!(:action) { Spree::Promotion::Actions::CreateAdjustment.create!(calculator: calculator) }
 
@@ -103,7 +103,7 @@ describe 'Cart', type: :feature, inaccessible: true, js: true do
   end
 
   describe 'subtotal' do
-    let!(:promotion) { Spree::Promotion.create!(name: 'Huhuhu', code: 'huhu') }
+    let!(:promotion) { create(:promotion, name: 'Huhuhu', code: 'huhu') }
     let!(:calculator) { Spree::Calculator::FlatPercentItemTotal.create!(preferred_flat_percent: '10') }
     let!(:action) { Spree::Promotion::Actions::CreateAdjustment.create!(calculator: calculator) }
 
