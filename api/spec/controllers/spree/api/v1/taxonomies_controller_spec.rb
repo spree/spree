@@ -7,7 +7,6 @@ module Spree
     let(:taxonomy) { create(:taxonomy) }
     let(:taxon) { create(:taxon, name: 'Ruby', taxonomy: taxonomy) }
     let(:taxon2) { create(:taxon, name: 'Rails', taxonomy: taxonomy) }
-    let(:current_store) { taxonomy.store }
     let(:attributes) { [:id, :name] }
 
     before do
@@ -15,11 +14,10 @@ module Spree
       taxon2.children << create(:taxon, name: '3.2.2', taxonomy: taxonomy)
       taxon.children << taxon2
       taxonomy.root.children << taxon
-      allow_any_instance_of(described_class).to receive(:current_store).and_return(current_store)
     end
 
     context 'as a normal user' do
-      it 'gets all store taxonomies' do
+      it 'gets all taxonomies' do
         api_get :index
 
         expect(json_response['taxonomies'].first['name']).to eq taxonomy.name
@@ -89,39 +87,6 @@ module Spree
         api_delete :destroy, id: taxonomy.id
         assert_unauthorized!
       end
-
-      context 'for another store' do
-        let!(:new_store) { create(:store, name: 'Test') }
-
-        before do
-          allow_any_instance_of(described_class).to receive(:current_store).and_return(new_store)
-        end
-
-        it 'gets no store taxonomies' do
-          api_get :index
-          expect(json_response['taxonomies']).to be_empty
-        end
-
-        it 'gets a single taxonomy' do
-          api_get :show, id: taxonomy.id
-          assert_not_found!
-        end
-
-        it 'cannot create a new taxonomy if not an admin' do
-          api_post :create, taxonomy: { name: 'Location' }
-          assert_unauthorized!
-        end
-
-        it 'cannot update a taxonomy' do
-          api_put :update, id: taxonomy.id, taxonomy: { name: 'I hacked your store!' }
-          assert_not_found!
-        end
-
-        it 'cannot delete a taxonomy' do
-          api_delete :destroy, id: taxonomy.id
-          assert_not_found!
-        end
-      end
     end
 
     context 'as an admin' do
@@ -131,7 +96,6 @@ module Spree
         api_post :create, taxonomy: { name: 'Colors' }
         expect(json_response).to have_attributes(attributes)
         expect(response.status).to eq(201)
-        expect(Spree::Taxonomy.find_by(id: JSON.parse(response.body)['root']['taxonomy_id']).store).to eq(current_store)
       end
 
       it 'cannot create a new taxonomy with invalid attributes' do
@@ -143,19 +107,6 @@ module Spree
       it 'can destroy' do
         api_delete :destroy, id: taxonomy.id
         expect(response.status).to eq(204)
-      end
-
-      context 'for another store' do
-        let!(:new_store) { create(:store, name: 'Test') }
-
-        before do
-          allow_any_instance_of(described_class).to receive(:current_store).and_return(new_store)
-        end
-
-        it 'cannot destroy' do
-          api_delete :destroy, id: taxonomy.id
-          assert_not_found!
-        end
       end
     end
   end
