@@ -29,14 +29,24 @@ document.addEventListener('DOMContentLoaded', function() {
 })
 
 function handleTogglePageVisibility(obj) {
+  let checkedState = null
+  if (obj.checked) checkedState = true
+
   const pageId = parseInt(obj.dataset.cmsPageId, 10)
 
-  fetch(Spree.routes.pages_api_v2 + `/${pageId}/toggle_visibility`, {
+  const data = {
+    cms_page: {
+      visible: checkedState
+    }
+  }
+
+  fetch(Spree.routes.pages_api_v2 + `/${pageId}`, {
     method: 'PATCH',
     headers: {
       Authorization: 'Bearer ' + OAUTH_TOKEN,
       'Content-Type': 'application/json'
-    }
+    },
+    body: JSON.stringify(data)
   })
     .then(response => {
       if (response.ok) {
