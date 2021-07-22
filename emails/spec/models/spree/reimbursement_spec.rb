@@ -16,7 +16,7 @@ describe Spree::Reimbursement, type: :model do
     let(:inventory_unit)          { line_item.inventory_units.first }
     let(:payment)                 { order.payments.first }
     let(:payment_amount)          { order.total }
-    let(:customer_return)         { build(:customer_return, return_items: [return_item]) }
+    let(:customer_return)         { build(:customer_return, return_items: [return_item], store: store) }
     let(:return_item)             { build(:return_item, inventory_unit: inventory_unit) }
 
     let!(:default_refund_reason) { Spree::RefundReason.find_or_create_by!(name: Spree::RefundReason::RETURN_PROCESSING_REASON, mutable: false) }

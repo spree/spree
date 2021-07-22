@@ -13,14 +13,28 @@ module Spree
         let(:order)           { customer_return.order }
         let(:customer_return) { create(:customer_return) }
 
-        before { subject }
-
         it 'loads the order' do
+          subject
           expect(assigns(:order)).to eq order
         end
 
         it 'loads the customer return' do
+          subject
           expect(assigns(:customer_returns)).to include(customer_return)
+        end
+
+        context 'for different store' do
+          let!(:new_store) { create(:store) }
+
+          before { allow_any_instance_of(described_class).to receive(:current_store).and_return(new_store) }
+
+          it 'should not load any orders' do
+            expect { subject }.to raise_error(ActiveRecord::RecordNotFound)
+          end
+
+          it 'should not load any customer returns' do
+            expect { subject }.to raise_error(ActiveRecord::RecordNotFound)
+          end
         end
       end
 
@@ -120,8 +134,11 @@ module Spree
           post :create, params: customer_return_params
         end
 
-        let(:order) { create(:shipped_order, line_items_count: 1) }
+        let(:current_store) { Spree::Store.default }
+        let(:order) { create(:shipped_order, line_items_count: 1, store: current_store) }
         let!(:return_authorization) { create :return_authorization, order: order, return_items: [create(:return_item, inventory_unit: order.inventory_units.shipped.last)] }
+
+        before { allow_any_instance_of(described_class).to receive(:current_store).and_return(current_store) }
 
         context 'valid customer return' do
           let(:stock_location) { order.shipments.last.stock_location }
@@ -144,7 +161,7 @@ module Spree
           end
 
           it 'creates a customer return' do
-            expect { subject }.to change { Spree::CustomerReturn.count }.by(1)
+            expect { subject }.to change { current_store.customer_returns.count }.by(1)
           end
 
           it 'redirects to the index page' do
@@ -171,7 +188,7 @@ module Spree
           end
 
           it "doesn't create a customer return" do
-            expect { subject }.not_to change { Spree::CustomerReturn.count }
+            expect { subject }.not_to change { current_store.customer_returns.count }
           end
 
           it 'renders the new page' do
