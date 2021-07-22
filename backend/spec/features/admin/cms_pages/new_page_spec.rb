@@ -44,7 +44,6 @@ describe 'New Page', type: :feature do
 
     it 'warns the user that the slug has already been taken', js: true do
       fill_in 'Title *', with: 'About Us'
-      select2 store_1.unique_name, from: 'Stores'
 
       click_on 'Create'
       expect(page).to have_text ('Slug has already been taken')
