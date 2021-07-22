@@ -6,6 +6,9 @@ module Spree
     include Spree::UserReporting
     include Spree::RansackableAttributes
 
+    extend DisplayMoney
+    money_methods :total_available_store_credit
+
     included do
       # we need to have this callback before any dependent: :destroy associations
       # https://github.com/rails/rails/issues/3458
