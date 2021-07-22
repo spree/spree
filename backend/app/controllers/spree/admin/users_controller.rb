@@ -47,13 +47,13 @@ module Spree
 
       def orders
         params[:q] ||= {}
-        @search = Spree::Order.reverse_chronological.ransack(params[:q].merge(user_id_eq: @user.id))
+        @search = current_store.orders.reverse_chronological.ransack(params[:q].merge(user_id_eq: @user.id))
         @orders = @search.result.page(params[:page])
       end
 
       def items
         params[:q] ||= {}
-        @search = Spree::Order.includes(
+        @search = current_store.orders.includes(
           line_items: {
             variant: [:product, { option_values: :option_type }]
           }
