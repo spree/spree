@@ -41,10 +41,6 @@ module Spree
       type == 'Spree::Cms::Pages::Homepage'
     end
 
-    def visible?
-      visible
-    end
-
     def draft_mode?
       !visible
     end
