@@ -110,6 +110,10 @@ Spree::Core::Engine.add_routes do
       resources :inventory_units, only: [:show, :update]
 
       resources :users do
+        member do
+          put :clear_api_key
+          put :generate_api_key
+        end
         resources :credit_cards, only: [:index]
       end
 

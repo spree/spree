@@ -80,6 +80,20 @@ module Spree
           respond_with(user, status: 204)
         end
 
+        def generate_api_key
+          if user.generate_spree_api_key!
+            respond_with(user, status: 200, default_template: :show)
+          else
+            invalid_resource!(user)
+        end
+  
+        def clear_api_key
+          if user.clear_spree_api_key!
+            respond_with(user, status: 200, default_template: :show)
+          else
+            invalid_resource!(user)
+        end
+
         private
 
         def user
