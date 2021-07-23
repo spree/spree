@@ -8,6 +8,7 @@ module Spree
     let!(:option_value)         { create(:option_value) }
     let!(:deleted_product)      { create(:product, deleted_at: Time.current - 1.day) }
     let!(:discontinued_product) { create(:product, discontinue_on: Time.current - 1.day) }
+    let(:store)                 { product.stores.first }
 
     context 'include discontinued' do
       it 'returns products with discontinued' do
@@ -37,8 +38,6 @@ module Spree
 
     context 'include deleted' do
       it 'returns products with deleted' do
-        params = { filter: { show_deleted: true } }
-
         params = {
           filter: {
             ids: '',
@@ -161,16 +160,17 @@ module Spree
     describe 'filter by taxons' do
       subject(:products) do
         described_class.new(
-            scope: Spree::Product.all,
-            params: params
+          scope: scope,
+          params: params
         ).execute
       end
 
+      let!(:scope) { Spree::Product.all }
       let(:parent_taxon) { child_taxon.parent }
       let(:child_taxon) { create(:taxon) }
 
       context 'one taxon is requested in params' do
-        let(:params) { { filter: { taxons: parent_taxon.id } } }
+        let(:params) { { store: store, filter: { taxons: parent_taxon.id } } }
 
         shared_examples 'returns distinct products associated both to self and descendants' do
           it { expect(products).to match_array [product, product_2] }
@@ -191,7 +191,7 @@ module Spree
       end
 
       context 'multiple taxons are requested' do
-        let(:params) { { filter: { taxons: "#{taxon.id},#{taxon_2.id}" } } }
+        let(:params) { { store: store, filter: { taxons: "#{taxon.id},#{taxon_2.id}" } } }
         let(:taxon) { create(:taxon) }
         let(:taxon_2) { create(:taxon) }
 
@@ -204,7 +204,7 @@ module Spree
       end
 
       context 'multiple taxons + 1 concat_taxons are requested' do
-        let(:params) { { filter: { taxons: "#{taxon.id},#{taxon_2.id}", concat_taxons: "#{taxon_3.id}" } } }
+        let(:params) { { store: store, filter: { taxons: "#{taxon.id},#{taxon_2.id}", concat_taxons: "#{taxon_3.id}" } } }
         let(:taxon) { create(:taxon) }
         let(:taxon_2) { create(:taxon) }
         let(:taxon_3) { create(:taxon) }
@@ -220,7 +220,7 @@ module Spree
       end
 
       context 'only multiple concat_taxons are requested' do
-        let(:params) { { filter: {concat_taxons: "#{taxon_2.id},#{taxon_3.id}" } } }
+        let(:params) { { store: store, filter: {concat_taxons: "#{taxon_2.id},#{taxon_3.id}" } } }
         let(:taxon) { create(:taxon) }
         let(:taxon_2) { create(:taxon) }
         let(:taxon_3) { create(:taxon) }
@@ -236,7 +236,7 @@ module Spree
       end
 
       context 'only one concat_taxons is requested' do
-        let(:params) { { filter: {concat_taxons: "#{taxon_3.id}" } } }
+        let(:params) { { store: store, filter: {concat_taxons: "#{taxon_3.id}" } } }
         let(:taxon) { create(:taxon) }
         let(:taxon_2) { create(:taxon) }
         let(:taxon_3) { create(:taxon) }
@@ -249,6 +249,21 @@ module Spree
         end
 
         it { expect(products).to match_array [product_2,product_3] }
+      end
+
+      context 'products scope is another store' do
+        let!(:scope) { store.products }
+
+        context 'passed store has no taxons' do
+          let(:store) { create(:store) }
+          let(:params) { { store: store, filter: { taxons: parent_taxon.id } } }
+
+          before do
+            parent_taxon.products << product
+          end
+
+          it { expect(products).to be_empty }
+        end
       end
     end
 
@@ -369,7 +384,7 @@ module Spree
 
         context 'when filtering by taxons' do
           let(:params) do
-            { sort_by: 'default', filter: { taxons: taxonomy.root.id } }
+            { store: store, sort_by: 'default', filter: { taxons: taxonomy.root.id } }
           end
 
           let(:taxonomy) { create(:taxonomy) }
