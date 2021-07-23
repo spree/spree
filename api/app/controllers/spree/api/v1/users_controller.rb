@@ -85,6 +85,7 @@ module Spree
             respond_with(user, status: 200, default_template: :show)
           else
             invalid_resource!(user)
+          end
         end
   
         def clear_api_key
@@ -92,6 +93,7 @@ module Spree
             respond_with(user, status: 200, default_template: :show)
           else
             invalid_resource!(user)
+          end
         end
 
         private
