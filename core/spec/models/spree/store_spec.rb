@@ -14,20 +14,13 @@ describe Spree::Store, type: :model do
 
     context 'there is a store with the shared products' do
       let(:store2) { create(:store) }
-      let(:shared_product) { build(:product) }
-      let(:not_shared_product) { build(:product) }
-
-      before do
-        Spree::Config[:disable_store_presence_validation] = true
-        store.products << shared_product
-        store.products << not_shared_product
-        store2.products << shared_product
-      end
+      let!(:shared_product) { create(:product, stores: [store, store2]) }
+      let!(:not_shared_product) { create(:product, stores: [store]) }
 
       it 'does not remove the shared products' do
         expect { store.destroy! }.to change { Spree::Product.without_deleted.reload.count }.by(-1).
           and change { store2.products.reload.count }.by(0).
-          and change { not_shared_product.deleted? }.from(false).to(true)
+          and change { not_shared_product.reload.deleted? }.from(false).to(true)
       end
     end
   end

@@ -183,7 +183,7 @@ describe 'Stores admin', type: :feature, js: true do
   end
 
   describe 'deleting store' do
-    let!(:second_store) { create(:store) }
+    let!(:second_store) { create(:store, products: [create(:product)]) }
 
     it 'updates store in lifetime stats' do
       visit spree.admin_stores_path
