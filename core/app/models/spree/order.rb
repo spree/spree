@@ -568,6 +568,10 @@ module Spree
       !approved?
     end
 
+    def can_be_destroyed?
+      !completed? && payments.completed.empty?
+    end
+
     def consider_risk
       considered_risky! if is_risky? && !approved?
     end

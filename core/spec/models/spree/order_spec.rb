@@ -747,6 +747,32 @@ describe Spree::Order, type: :model do
     end
   end
 
+  context '#can_be_destroyed?' do
+    shared_examples 'cannot be destroyed' do
+      it { expect(order.can_be_destroyed?).to be false }
+    end
+
+    context 'when order is completed' do
+      let(:order) { create(:completed_order_with_pending_payment) }
+
+      it_behaves_like 'cannot be destroyed'
+    end
+
+    context 'when order has finalized payments' do
+      let(:order) { create(:order_ready_to_ship) }
+
+      it_behaves_like 'cannot be destroyed'
+    end
+
+    context 'when order is not completed and does not have finalized payments' do
+      let(:order) { create(:order) }
+
+      it 'can be destroyed' do
+        expect(order.can_be_destroyed?).to be true
+      end
+    end
+  end
+
   context '#uneditable?' do
     let(:order) { Spree::Order.create }
 
