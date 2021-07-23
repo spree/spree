@@ -56,7 +56,7 @@ module Spree
 
         def empty
           authorize! :update, @order, order_token
-          Spree::Dependencies.cart_empty_service.constantize.call(order: @order)
+          cart_empty_service
           render plain: nil, status: 204
         end
 
@@ -149,6 +149,10 @@ module Spree
 
         def order_id
           super || params[:id]
+        end
+
+        def cart_empty_service
+          Spree::Dependencies.cart_empty_service.constantize.call(order: @order)
         end
       end
     end
