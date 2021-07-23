@@ -105,9 +105,7 @@ module Spree
         def user_params
           params.require(:user).permit(permitted_user_attributes |
                                          [bill_address_attributes: permitted_address_attributes,
-                                          ship_address_attributes: permitted_address_attributes,
-                                          spree_role_ids: [],
-                                          spree_api_key: permitted_user_attributes])
+                                          ship_address_attributes: permitted_address_attributes])
         end
       end
     end
