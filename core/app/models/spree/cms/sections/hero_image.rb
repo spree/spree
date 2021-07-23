@@ -12,10 +12,28 @@ module Spree::Cms::Sections
       gutters == 'Gutters'
     end
 
+    def img_one_sm(dimensions = '600x250>')
+      super
+    end
+
+    def img_one_md(dimensions = '1200x500>')
+      super
+    end
+
+    def img_one_lg(dimensions = '2400x1000>')
+      super
+    end
+
+    def img_one_xl(dimensions = '4800x2000>')
+      super
+    end
+
     private
 
     def reset_link_attributes
       if linked_resource_type_changed?
+        return if linked_resource_id_was.nil?
+
         self.linked_resource_id = nil
       end
     end

@@ -6,45 +6,14 @@ module Spree
 
         attributes :name, :content, :settings, :link, :fit, :type, :position
 
-        attribute :image_one_path do |section|
-          if section.image_one.attached?
-            url_helpers = Rails.application.routes.url_helpers
-            url_helpers.rails_blob_path(section.image_one, only_path: true)
-          end
-        end
-
-        attribute :image_two_path do |section|
-          if section.image_two.attached?
-            url_helpers = Rails.application.routes.url_helpers
-            url_helpers.rails_blob_path(section.image_two, only_path: true)
-          end
-        end
-
-        attribute :image_three_path do |section|
-          if section.image_three.attached?
-            url_helpers = Rails.application.routes.url_helpers
-            url_helpers.rails_blob_path(section.image_three, only_path: true)
-          end
-        end
-
-        attribute :image_four_path do |section|
-          if section.image_four.attached?
-            url_helpers = Rails.application.routes.url_helpers
-            url_helpers.rails_blob_path(section.image_four, only_path: true)
-          end
-        end
-
-        attribute :image_five_path do |section|
-          if section.image_five.attached?
-            url_helpers = Rails.application.routes.url_helpers
-            url_helpers.rails_blob_path(section.image_five, only_path: true)
-          end
-        end
-
-        attribute :image_six_path do |section|
-          if section.image_six.attached?
-            url_helpers = Rails.application.routes.url_helpers
-            url_helpers.rails_blob_path(section.image_six, only_path: true)
+        Spree::CmsSection::IMAGE_COUNT.each do |count|
+          Spree::CmsSection::IMAGE_SIZE.each do |size|
+            attribute "img_#{count}_#{size}".to_sym do |section|
+              if section.send("image_#{count}").attached? && section.send("img_#{count}_#{size}").present?
+                url_helpers = Rails.application.routes.url_helpers
+                url_helpers.rails_representation_path(section.send("img_#{count}_#{size}"), only_path: true)
+              end
+            end
           end
         end
 

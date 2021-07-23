@@ -58,6 +58,10 @@ button#cmsSectionEditorFullScreen {
   }
 }
 
+#draggableSectionsHolder {
+  max-height: 750px;
+}
+
 #cmsPagesectionsArea {
   overflow-x: hidden;
   overflow-y: scroll;

@@ -14,16 +14,48 @@ module Spree::Cms::Sections
       gutters == 'Gutters'
     end
 
+    #
+    # img_one sizing
+    def img_one_md(dimensions = '387x250>')
+      super
+    end
+
+    def img_one_lg(dimensions = '540x390>')
+      super
+    end
+
+    def img_one_xl(dimensions = '1468x952>')
+      super
+    end
+
+    #
+    # img_two sizing
+    def img_two_md(dimensions = '387x250>')
+      super
+    end
+
+    def img_two_lg(dimensions = '734x476>')
+      super
+    end
+
+    def img_two_xl(dimensions = '1468x952>')
+      super
+    end
+
     private
 
     def reset_link_attributes
       return if Rails::VERSION::STRING < '6.0'
 
       if link_type_one_changed?
+        return if link_type_one_was.nil?
+
         self.link_one = nil
       end
 
       if link_type_two_changed?
+        return if link_type_two_was.nil?
+
         self.link_two = nil
       end
     end
