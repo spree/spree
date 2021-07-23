@@ -20,17 +20,43 @@ describe 'Users', type: :feature do
   let(:orders) { [order, order_2] }
 
   shared_examples_for 'a user page' do
-    it 'has lifetime stats' do
-      orders
-      refresh # need to refresh after creating the orders for specs that did not require orders
-      within('#user-lifetime-stats') do
-        [:total_sales, :num_orders, :average_order_value, :member_since].each do |stat_name|
-          expect(page).to have_content Spree.t(stat_name)
+    context 'lifetime stats' do
+      shared_examples 'should display correct stats' do
+        it 'should display correct stats' do
+          orders
+          refresh # need to refresh after creating the orders for specs that did not require orders
+          within('#user-lifetime-stats') do
+            [:total_sales, :num_orders, :average_order_value, :member_since].each do |stat_name|
+              expect(page).to have_content Spree.t(stat_name)
+            end
+            expect(page).to have_content (order.total + order_2.total)
+            expect(page).to have_content orders.count
+            expect(page).to have_content (orders.sum(&:total) / orders.count)
+            expect(page).to have_content pretty_time(user_a.created_at).gsub(/[[:space:]]+/, ' ')
+            within("td#store_credit") { expect(page).to have_content(expected_store_credits_amount) }
+          end
         end
-        expect(page).to have_content (order.total + order_2.total)
-        expect(page).to have_content orders.count
-        expect(page).to have_content (orders.sum(&:total) / orders.count)
-        expect(page).to have_content pretty_time(user_a.created_at).gsub(/[[:space:]]+/, ' ')
+      end
+
+      let(:store_credits_amount) { '123.00' }
+
+      before do
+        create(:store_credit, user: user_a, amount: store_credits_amount, store: order.store)
+      end
+
+      context 'current store is default one' do
+        let(:expected_store_credits_amount) { store_credits_amount }
+
+        it_behaves_like 'should display correct stats'
+      end
+
+      context 'current store is not default one' do
+        let(:store) { create(:store) }
+        let(:expected_store_credits_amount) { 0.00 }
+
+        before { allow_any_instance_of(Spree::Admin::UsersController).to receive(:current_store).and_return(store) }
+
+        it_behaves_like 'should display correct stats'
       end
     end
 
