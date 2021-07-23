@@ -634,6 +634,20 @@ paths:
         - $ref: '#/components/parameters/CartIncludeParam'
         - $ref: '#/components/parameters/SparseFieldsParam'
       summary: Empty the Cart
+  /api/v2/storefront/cart:
+    delete:
+      description: 'Destroys current Order.'
+      tags:
+        - Order
+      operationId: Destroy Order
+      responses:
+        '204':
+          description: Current Order has been removed.
+        '404':
+          $ref: '#/components/responses/404NotFound'
+      security:
+        - bearerAuth: [ ]
+      summary: Destroy Order
   /api/v2/storefront/cart/apply_coupon_code:
     patch:
       description: Applies a coupon code to the Cart
