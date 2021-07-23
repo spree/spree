@@ -49,7 +49,7 @@ module Spree
         has_many :product_properties
 
         has_many :taxons do |object, params|
-          params[:store].taxons.joins(:products).where(products: { id: object.id })
+          object.taxons.for_store(params[:store])
         end
 
         # all images from all variants

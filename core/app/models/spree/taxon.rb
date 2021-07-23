@@ -37,6 +37,8 @@ module Spree
 
     has_one :icon, as: :viewable, dependent: :destroy, class_name: 'Spree::TaxonImage'
 
+    scope :for_store, ->(store) { joins(:taxonomy).where(spree_taxonomies: { store_id: store.id }) }
+
     self.whitelisted_ransackable_associations = %w[taxonomy]
 
     # indicate which filters should be used for a taxon
