@@ -63,8 +63,20 @@ describe Spree::Cms::Sections::SideBySideImages, type: :model do
         section.reload
       end
 
-      it 'link_one and link_two are reset to nil' do
+      it 'link_one and link_two save the values correctly' do
         section = Spree::CmsSection.find(side_by_side_images_section.id)
+
+        expect(section.link_one).to eql 'Shirt 1'
+        expect(section.link_two).to eql 'Shirt 2'
+      end
+
+      it 'link_one and link_two are reset to nil when type is changed' do
+        section = Spree::CmsSection.find(side_by_side_images_section.id)
+
+        section.content[:link_type_one] = 'Spree::Taxon'
+        section.content[:link_type_two] = 'Spree::Taxon'
+        section.save!
+        section.reload
 
         expect(section.link_one).to be nil
         expect(section.link_two).to be nil

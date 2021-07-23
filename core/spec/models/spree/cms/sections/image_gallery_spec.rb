@@ -77,8 +77,22 @@ describe Spree::Cms::Sections::ImageGallery, type: :model do
         section.reload
       end
 
+      it 'link_one, link_two and save the initail values' do
+        section = Spree::CmsSection.find(image_gallery_section.id)
+
+        expect(section.link_one).to eql 'Shirt 1'
+        expect(section.link_two).to eql 'Shirt 2'
+        expect(section.link_three).to eql 'Shirt 3'
+      end
+
       it 'link_one, link_two and link_three are reset to nil' do
         section = Spree::CmsSection.find(image_gallery_section.id)
+
+        section.content[:link_type_one] = 'Spree::Taxon'
+        section.content[:link_type_two] = 'Spree::Taxon'
+        section.content[:link_type_three] = 'Spree::Taxon'
+        section.save!
+        section.reload
 
         expect(section.link_one).to be nil
         expect(section.link_two).to be nil
