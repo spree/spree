@@ -1,5 +1,5 @@
 module Spree
-  module MultipleStoresResource
+  module MultiStoreResource
     extend ActiveSupport::Concern
 
     included do

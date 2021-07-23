@@ -1,3 +1,5 @@
+Spree::Sample.load_sample('stores')
+
 taxonomies = [
   {
     name: I18n.t('spree.taxonomy_categories_name'),

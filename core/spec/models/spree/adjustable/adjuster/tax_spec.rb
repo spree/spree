@@ -13,7 +13,7 @@ describe Spree::Adjustable::Adjuster::Tax, type: :model do
     end
 
     let!(:promotion) do
-      Spree::Promotion.create(name: '$10 off')
+      create(:promotion, name: '$10 off')
     end
 
     let!(:promotion_action) do

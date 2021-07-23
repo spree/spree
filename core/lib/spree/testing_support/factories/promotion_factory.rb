@@ -19,6 +19,15 @@ FactoryBot.define do
   factory :promotion, class: Spree::Promotion do
     name { 'Promo' }
 
+    before(:create) do |promotion, _evaluator|
+      if promotion.stores.empty?
+        default_store = Spree::Store.default.persisted? ? Spree::Store.default : nil
+        store = default_store || create(:store)
+
+        promotion.stores << [store]
+      end
+    end
+
     trait :with_line_item_adjustment do
       transient do
         adjustment_rate { 10 }
@@ -57,17 +66,17 @@ FactoryBot.define do
 
     factory :promotion_with_order_adjustment, traits: [:with_order_adjustment]
     factory :promotion_with_item_total_rule, traits: [:with_item_total_rule]
-  end
 
-  factory :free_shipping_promotion, class: Spree::Promotion do
-    name { 'Free Shipping Promotion' }
+    factory :free_shipping_promotion do
+      name { 'Free Shipping Promotion' }
 
-    after(:create) do |promotion|
-      action = Spree::Promotion::Actions::FreeShipping.new
-      action.promotion = promotion
-      action.save
+      after(:create) do |promotion|
+        action = Spree::Promotion::Actions::FreeShipping.new
+        action.promotion = promotion
+        action.save
+      end
+
+      factory :free_shipping_promotion_with_item_total_rule, traits: [:with_item_total_rule]
     end
-
-    factory :free_shipping_promotion_with_item_total_rule, traits: [:with_item_total_rule]
   end
 end

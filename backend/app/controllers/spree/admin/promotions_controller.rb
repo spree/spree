@@ -6,7 +6,7 @@ module Spree
       helper 'spree/admin/promotion_rules'
 
       def clone
-        promotion = Spree::Promotion.find(params[:id])
+        promotion = current_store.promotions.find(params[:id])
         duplicator = Spree::PromotionHandler::PromotionDuplicator.new(promotion)
 
         @new_promo = duplicator.duplicate
