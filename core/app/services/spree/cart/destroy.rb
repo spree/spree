@@ -4,15 +4,14 @@ module Spree
       prepend Spree::ServiceModule::Base
 
       def call(order:)
-        run :check_if_can_be_empty
+        run :check_if_can_be_destroyed
         run :destroy_order
       end
 
       private
 
-      def check_if_can_be_empty(order:)
-        return failure(Spree.t(:no_order_given)) if order.nil?
-        return failure(order, Spree.t(:cannot_be_destroyed)) if order.can_be_destroyed?
+      def check_if_can_be_destroyed(order:)
+        return failure(Spree.t(:cannot_be_destroyed)) unless order&.can_be_destroyed?
 
         success(order: order)
       end

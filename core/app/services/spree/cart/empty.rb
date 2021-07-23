@@ -11,8 +11,7 @@ module Spree
       private
 
       def check_if_can_be_empty(order:)
-        return failure(Spree.t(:no_order_given)) if order.nil?
-        return failure(order, Spree.t(:cannot_empty_completed_order)) if order.completed?
+        return failure(Spree.t(:cannot_empty)) if order.nil? || order.completed?
 
         success(order: order)
       end
