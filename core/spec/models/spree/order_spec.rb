@@ -312,61 +312,6 @@ describe Spree::Order, type: :model do
     end
   end
 
-  describe 'empty!' do
-    subject(:result) { order.empty! }
-
-    let(:order) { Spree::Order.create(email: 'test@example.com') }
-    let(:promotion) { create :promotion, code: '10off' }
-
-    before do
-      promotion.orders << order
-    end
-
-    context 'completed order' do
-      before do
-        order.update_columns(state: 'complete', completed_at: Time.current)
-      end
-
-      it 'returns failure' do
-        expect(result.success?).to be false
-        expect(result.error.value).to eq Spree.t(:cannot_empty_completed_order)
-      end
-    end
-
-    context 'incomplete order' do
-      before do
-        order.empty!
-      end
-
-      it 'returns success' do
-        expect(result.success?).to be true
-        expect(result.value).to eq(order)
-      end
-
-      it 'clears out line items, adjustments and update totals' do
-        expect(order.line_items.count).to be_zero
-        expect(order.adjustments.count).to be_zero
-        expect(order.shipments.count).to be_zero
-        expect(order.order_promotions.count).to be_zero
-        expect(order.promo_total).to be_zero
-        expect(order.item_total).to be_zero
-        expect(order.ship_total).to be_zero
-      end
-    end
-  end
-
-  describe 'destroy!' do
-    subject(:result) { order.destroy! }
-
-    before { order.empty! }
-
-    it 'destroys the order' do
-      result
-
-      expect(order.destroyed?).to be true
-    end
-  end
-
   context '#display_outstanding_balance' do
     it 'returns the value as a spree money' do
       allow(order).to receive(:outstanding_balance).and_return(10.55)

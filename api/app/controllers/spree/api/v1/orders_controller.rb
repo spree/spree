@@ -56,7 +56,7 @@ module Spree
 
         def empty
           authorize! :update, @order, order_token
-          @order.empty!
+          Spree::Dependencies.cart_empty_service.constantize.call(order: @order)
           render plain: nil, status: 204
         end
 

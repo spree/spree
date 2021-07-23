@@ -40,7 +40,7 @@ module Spree
     end
 
     def empty
-      current_order.try(:empty!)
+      Spree::Dependencies.cart_empty_service.constantize.call(order: current_order)
 
       redirect_to spree.cart_path
     end

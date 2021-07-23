@@ -424,11 +424,13 @@ module Spree
     end
 
     def empty!
-      Spree::Dependencies.cart_empty_service.constantize.new.call(order: self)
-    end
+      ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
+        `Order#empty!` is deprecated and will be removed in Spree 5.0.
+        Please use `Spree::Cart::Empty.call(order: order)` instead.
+      DEPRECATION
 
-    def destroy!
-      Spree::Dependencies.cart_destroy_service.constantize.new.call(order: self)
+      result = Spree::Dependencies.cart_empty_service.constantize.call(order: self)
+      result.value
     end
 
     def has_step?(step)

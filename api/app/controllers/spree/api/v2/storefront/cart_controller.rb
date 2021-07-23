@@ -50,7 +50,7 @@ module Spree
           def empty
             spree_authorize! :update, spree_current_order, order_token
 
-            result = spree_current_order.empty!
+            result = empty_cart_service.call(order: spree_current_order)
 
             if result.success?
               render_serialized_payload { serialized_current_order }
@@ -62,7 +62,7 @@ module Spree
           def destroy
             spree_authorize! :update, spree_current_order, order_token
 
-            result = spree_current_order.destroy!
+            result = destroy_cart_service.call(order: spree_current_order)
 
             if result.success?
               head 204
@@ -140,6 +140,14 @@ module Spree
 
           def add_item_service
             Spree::Api::Dependencies.storefront_cart_add_item_service.constantize
+          end
+
+          def empty_cart_service
+            Spree::Api::Dependencies.storefront_cart_empty_service.constantize
+          end
+
+          def destroy_cart_service
+            Spree::Api::Dependencies.storefront_cart_destroy_service.constantize
           end
 
           def set_item_quantity_service
