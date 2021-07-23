@@ -15,6 +15,7 @@ module Spree
 
         @ids              = String(params.dig(:filter, :ids)).split(',')
         @skus             = String(params.dig(:filter, :skus)).split(',')
+        @store            = params[:store] || Spree::Store.default
         @price            = map_prices(String(params.dig(:filter, :price)).split(','))
         @currency         = current_currency || params.dig(:filter, :currency) || params[:currency]
         @taxons           = taxon_ids(params.dig(:filter, :taxons))
@@ -49,7 +50,7 @@ module Spree
       private
 
       attr_reader :ids, :skus, :price, :currency, :taxons, :concat_taxons, :name, :options,
-                  :option_value_ids, :scope, :sort_by, :deleted, :discontinued, :properties
+                  :option_value_ids, :scope, :sort_by, :deleted, :discontinued, :properties, :store
 
       def ids?
         ids.present?
@@ -243,7 +244,7 @@ module Spree
       def taxon_ids(taxons_ids)
         return if taxons_ids.nil? || taxons_ids.to_s.blank?
 
-        taxons = Spree::Taxon.where(id: taxons_ids.to_s.split(','))
+        taxons = store.taxons.where(id: taxons_ids.to_s.split(','))
         taxons.map(&:cached_self_and_descendants_ids).flatten.compact.uniq.map(&:to_s)
       end
     end

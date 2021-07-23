@@ -3,7 +3,8 @@ require 'spec_helper'
 describe 'API V2 Storefront Products Spec', type: :request do
   let!(:store)                 { Spree::Store.default }
   let!(:products)              { create_list(:product, 5, stores: [store]) }
-  let(:taxon)                  { create(:taxon) }
+  let(:taxonomy)               { create(:taxonomy, store: store) }
+  let!(:taxon)                  { taxonomy.root }
   let(:product_with_taxon)     { create(:product, taxons: [taxon], stores: [store]) }
   let(:product_with_name)      { create(:product, name: 'Test Product', stores: [store]) }
   let(:product_with_price)     { create(:product, price: 13.44, stores: [store]) }
@@ -31,6 +32,49 @@ describe 'API V2 Storefront Products Spec', type: :request do
       it 'returns all products' do
         expect(json_response['data'].count).to eq store.products.available.count
         expect(json_response['data'].first).to have_type('product')
+      end
+    end
+
+    context 'when product associated with two stores' do
+      let!(:new_store_taxonomy) { create(:taxonomy, store: store) }
+      let(:store2) { create(:store) }
+      let(:taxonomy2) { create(:taxonomy, store: store2) }
+      let!(:taxon2) { taxonomy2.root }
+
+      before do
+        product_with_taxon.stores << store2
+        product_with_taxon.taxons << taxon2
+      end
+
+      shared_examples 'should not return not related taxon' do
+        it do
+          expect(json_response['data'][0]).not_to have_relationship(:taxons).with_data([{'id' => new_store_taxonomy.id.to_s, 'type' => 'taxon'}])
+        end
+      end
+
+      context 'when current store is store' do
+        before { get "/api/v2/storefront/products?filter[ids]=#{product_with_taxon.id}" }
+
+        it 'should return only store taxons ralated to product', aggregate_failures: true do
+          expect(json_response['data'][0]).to have_relationship(:taxons).with_data([{'id' => taxon.id.to_s, 'type' => 'taxon'}])
+          expect(json_response['data'][0]).not_to have_relationship(:taxons).with_data([{'id' => taxon2.id.to_s, 'type' => 'taxon'}])
+        end
+
+        it_behaves_like 'should not return not related taxon'
+      end
+
+      context 'when current store is store2' do
+        before do
+          allow_any_instance_of(Spree::Api::V2::Storefront::ProductsController).to receive(:current_store).and_return(store2)
+          get "/api/v2/storefront/products?filter[ids]=#{product_with_taxon.id}"
+        end
+
+        it 'should return only store2 taxons ralated to product', aggregate_failures: true do
+          expect(json_response['data'][0]).to have_relationship(:taxons).with_data([{'id' => taxon2.id.to_s, 'type' => 'taxon'}])
+          expect(json_response['data'][0]).not_to have_relationship(:taxons).with_data([{'id' => taxon.id.to_s, 'type' => 'taxon'}])
+        end
+
+        it_behaves_like 'should not return not related taxon'
       end
     end
 
