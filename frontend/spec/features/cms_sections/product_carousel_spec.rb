@@ -3,11 +3,11 @@ require 'spec_helper'
 describe 'Visiting the homepage', type: :feature, js: true do
   let!(:store) { Spree::Store.default }
 
-  let!(:taxonomy_a) { create(:taxonomy, name: 'Bestsellers') }
-  let!(:bestsellers) { taxonomy_a.root.children.create(name: 'Bestsellers') }
+  let!(:taxonomy_a) { create(:taxonomy, name: 'Bestsellers', store: store) }
+  let!(:bestsellers) { create(:taxon, taxonomy: taxonomy_a, name: 'Bestsellers') }
 
-  let!(:product_a) { create(:product, name: 'Superman T-Shirt', taxons: [bestsellers]) }
-  let!(:product_b) { create(:product, name: 'Batman Socks', taxons: [bestsellers]) }
+  let!(:product_a) { create(:product, name: 'Superman T-Shirt', taxons: [bestsellers], stores: [store]) }
+  let!(:product_b) { create(:product, name: 'Batman Socks', taxons: [bestsellers], stores: [store]) }
 
   let!(:homepage) { create(:cms_homepage, store: store) }
   let!(:hp_section) { create(:cms_product_carousel_section, cms_page: homepage, linked_resource: bestsellers) }
