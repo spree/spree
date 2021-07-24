@@ -1,7 +1,9 @@
 module Spree
-  class CmsPage < Spree::Base
+  class CmsPage < Base
     include SingleStoreResource
-    include Spree::DisplayLink
+    include DisplayLink
+
+    acts_as_paranoid
 
     TYPES = ['Spree::Cms::Pages::StandardPage',
              'Spree::Cms::Pages::FeaturePage',
@@ -9,13 +11,13 @@ module Spree
 
     belongs_to :store, touch: true
 
-    has_many :cms_sections, dependent: :destroy, class_name: 'Spree::CmsSection'
+    has_many :cms_sections, class_name: 'Spree::CmsSection'
     has_many :menu_items, as: :linked_resource
 
     before_validation :handle_slug
 
     validates :title, :store, :locale, presence: true
-    validates :slug, uniqueness: { scope: :store, allow_nil: true, case_sensitive: true }
+    validates :slug, uniqueness: { scope: :store_id, allow_nil: true, case_sensitive: true }
 
     scope :visible, -> { where(visible: true) }
     scope :by_locale, ->(locale) { where(locale: locale) }
