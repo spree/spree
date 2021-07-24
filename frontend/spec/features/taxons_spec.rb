@@ -1,17 +1,19 @@
 require 'spec_helper'
 
 describe 'viewing products', type: :feature, inaccessible: true do
-  let!(:taxonomy) { create(:taxonomy, name: 'Category') }
-  let!(:super_clothing) { taxonomy.root.children.create(name: 'Super Clothing') }
-  let!(:t_shirts) { super_clothing.children.create(name: 'T-Shirts') }
+  let(:store) { Spree::Store.default }
+  let!(:taxonomy) { create(:taxonomy, name: 'Category', store: store) }
+  let!(:super_clothing) { taxonomy.root.children.create(name: 'Super Clothing', taxonomy_id: taxonomy.id) }
+  let!(:t_shirts) { super_clothing.children.create(name: 'T-Shirts', taxonomy_id: taxonomy.id) }
   let(:metas) { { meta_description: 'Brand new Ruby on Rails TShirts', meta_title: 'Ruby On Rails TShirt', meta_keywords: 'ror, tshirt, ruby' } }
-  let(:store_name) { ((first_store = Spree::Store.first) && first_store.name).to_s }
+  let(:store_name) { store.name.to_s }
 
   before do
     t_shirts.children.create(name: 'XXL') # xxl
 
     product = create(:product, name: 'Superman T-Shirt')
     product.taxons << t_shirts
+    allow_any_instance_of(Spree::StoreController).to receive(:current_store).and_return(store)
   end
 
   # Regression test for #1796

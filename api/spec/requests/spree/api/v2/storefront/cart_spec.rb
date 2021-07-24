@@ -21,7 +21,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
   shared_context 'coupon codes' do
     let!(:line_item) { create(:line_item, order: order) }
     let!(:shipment) { create(:shipment, order: order) }
-    let!(:promotion) { Spree::Promotion.create(name: 'Free shipping', code: 'freeship') }
+    let!(:promotion) { create(:promotion, name: 'Free shipping', code: 'freeship', stores: [store]) }
     let(:coupon_code) { promotion.code }
     let!(:promotion_action) { Spree::PromotionAction.create(promotion_id: promotion.id, type: 'Spree::Promotion::Actions::FreeShipping') }
   end

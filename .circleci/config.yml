@@ -260,7 +260,7 @@ jobs:
       - run: ssh-add ~/.ssh/id_rsa_54505e4e806d2e2643c699bd39b271dc
       - run: git clone -b master git@github.com:spark-solutions/spree-designs.git
       - run:
-          command: bundle update spree spree_frontend spree_backend spree_emails
+          command: bundle update
           working_directory: ~/project/spree-designs
       - run:
           command: bundle exec rails spree:install:migrations

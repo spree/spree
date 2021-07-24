@@ -11,7 +11,7 @@ describe 'Automatic promotions', type: :feature, js: true do
     create(:shipping_method)
     create(:check_payment_method)
 
-    promotion = Spree::Promotion.create!(name: '$10 off when you spend more than $100')
+    promotion = create(:promotion, name: '$10 off when you spend more than $100')
 
     calculator = Spree::Calculator::FlatRate.new
     calculator.preferred_amount = 10

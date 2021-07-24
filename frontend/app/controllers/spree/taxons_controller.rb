@@ -30,7 +30,7 @@ module Spree
     end
 
     def load_taxon
-      @taxon = Spree::Taxon.friendly.find(params[:id])
+      @taxon = current_store.taxons.friendly.find(params[:id])
     end
 
     def load_products
