@@ -7,7 +7,6 @@ module Spree
         attributes :title, :content, :locale, :meta_description, :meta_title,
                    :slug, :type
 
-        belongs_to :store
         has_many :cms_sections
       end
     end

@@ -6,7 +6,6 @@ module Spree
 
         attributes :name, :location, :locale
 
-        belongs_to :store
         has_many :menu_items
       end
     end
