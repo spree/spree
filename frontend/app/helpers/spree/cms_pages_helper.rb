@@ -5,7 +5,7 @@ module Spree
     end
 
     def section_tags(section, &block)
-      inner_content = content_tag(:div, class: section.css_classes , &block)
+      inner_content = content_tag(:div, class: section.css_classes, &block)
 
       if section.fullscreen?
         inner_content
