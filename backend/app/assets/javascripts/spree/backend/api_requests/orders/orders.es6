@@ -13,7 +13,8 @@ window.Spree.advanceOrder = function() {
     method: 'PUT',
     headers: Spree.apiV2Authentication()
   })
-    .then((response) => spreeHandleResponse(response).then(window.location.reload()))
+    .then((response) => spreeHandleResponse(response)
+      .then(window.location.reload()))
     .catch(err => console.log(err))
 }
 
@@ -32,7 +33,8 @@ const addCoupon = function(couponCode) {
     headers: Spree.apiV2Authentication(),
     body: JSON.stringify(data)
   })
-    .then((response) => spreeHandleResponse(response).then(window.location.reload()))
+    .then((response) => spreeHandleResponse(response)
+      .then(window.location.reload()))
     .catch(err => console.log(err))
 }
 
@@ -49,6 +51,7 @@ const deleteCoupon = function(couponCode) {
     headers: Spree.apiV2Authentication(),
     body: JSON.stringify(data)
   })
-    .then((response) => spreeHandleResponse(response).then(window.location.reload()))
+    .then((response) => spreeHandleResponse(response)
+      .then(window.location.reload()))
     .catch(err => console.log(err))
 }

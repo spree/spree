@@ -23,8 +23,7 @@ const addLineItem = (variantId, quantity) => {
     body: JSON.stringify(data)
   })
     .then((response) => spreeHandleResponse(response)
-      .then(window.Spree.advanceOrder())
-      .then(window.location.reload()))
+      .then(window.Spree.advanceOrder()))
     .catch(err => console.log(err))
 }
 
@@ -51,8 +50,7 @@ const adjustLineItemQuantity = function(lineItemId, quantity) {
     body: JSON.stringify(data)
   })
     .then((response) => spreeHandleResponse(response)
-      .then(window.Spree.advanceOrder())
-      .then(window.location.reload()))
+      .then(window.Spree.advanceOrder()))
     .catch(err => console.log(err))
 }
 
@@ -67,7 +65,6 @@ const deleteLineItem = function(lineItemId) {
     headers: Spree.apiV2Authentication()
   })
     .then((response) => spreeHandleResponse(response)
-      .then(window.Spree.advanceOrder())
-      .then(window.location.reload()))
+      .then(window.Spree.advanceOrder()))
     .catch(err => console.log(err))
 }

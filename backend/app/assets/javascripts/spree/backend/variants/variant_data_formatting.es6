@@ -26,15 +26,12 @@ function formatDataForVariants (jsonDataItems) {
   }
 
   function stockLocationName (stockLocationId, obj) {
-    const sln = []
-    const stockLocations = obj.attributes.stock_locations
+    const allStockLocations = obj.attributes.stock_locations
 
-    stockLocations.forEach(function (sl) {
-      if (sl.id === stockLocationId) {
-        sln.push(sl.name)
-      }
+    const stockLocation = allStockLocations.find((location) => {
+      return location.id === stockLocationId
     })
-    return sln[0]
+    return stockLocation.name
   }
 
   function addAvailabiltyToStockItems (obj) {
