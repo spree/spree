@@ -36,4 +36,24 @@ describe 'Admin store switcher', type: :feature, js: true do
       expect(page).to have_selector(:css, "a[href*='#{store_three.formatted_url}:#{port}/admin/products']")
     end
   end
+
+  context 'can add new store using + Add New Store link' do
+    before do
+      visit spree.admin_path
+    end
+
+    it 'displays the link in the store selector dropdown' do
+      find('a#storeSelectorDropdown').click
+      expect(page).to have_selector(:css, "a[href*='#{spree.new_admin_store_path(@user)}']")
+    end
+
+    it 'takes you to the add new store page when clicked' do
+      expect(page).not_to have_text('Stores / New Store')
+
+      find('a#storeSelectorDropdown').click
+      find('a#addNewStoreLink').click
+
+      expect(page).to have_text('Stores / New Store')
+    end
+  end
 end
