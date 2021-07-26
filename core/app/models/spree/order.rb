@@ -96,6 +96,7 @@ module Spree
     has_many :reimbursements, inverse_of: :order, class_name: 'Spree::Reimbursement'
     has_many :line_item_adjustments, through: :line_items, source: :adjustments
     has_many :inventory_units, inverse_of: :order, class_name: 'Spree::InventoryUnit'
+    has_many :return_items, through: :inventory_units, class_name: 'Spree::ReturnItem'
     has_many :variants, through: :line_items
     has_many :products, through: :variants
     has_many :refunds, through: :payments

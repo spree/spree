@@ -7,7 +7,7 @@ module Spree
       end
 
       def customer_returns
-        collection(Spree::CustomerReturn)
+        collection(current_store.customer_returns)
         respond_with(@collection)
       end
 
