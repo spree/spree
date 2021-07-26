@@ -636,7 +636,10 @@ paths:
       summary: Empty the Cart
   /api/v2/storefront/cart:
     delete:
-      description: 'Destroys current Order.'
+      description: |-
+        Destroys current Order.
+        Endpoint can be called after PATCH /api/v2/storefront/cart/empty, or individually.
+        Shipments are canceled, payments are voided, then Line Items, Shipments & Payments are destroyed.
       tags:
         - Order
       operationId: Destroy Order
