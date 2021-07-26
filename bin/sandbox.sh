@@ -41,7 +41,7 @@ cd ./sandbox
 if [ "$SPREE_AUTH_DEVISE_PATH" != "" ]; then
   SPREE_AUTH_DEVISE_GEM="gem 'spree_auth_devise', path: '$SPREE_AUTH_DEVISE_PATH'"
 else
-  SPREE_AUTH_DEVISE_GEM="gem 'spree_auth_devise', github: 'spree/spree_auth_devise', branch: 'master'"
+  SPREE_AUTH_DEVISE_GEM="gem 'spree_auth_devise', '~> 4.3'"
 fi
 
 if [ "$SPREE_GATEWAY_PATH" != "" ]; then
