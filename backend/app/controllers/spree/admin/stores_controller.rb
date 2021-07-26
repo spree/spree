@@ -8,7 +8,7 @@ module Spree
       before_action :normalize_supported_locales, only: [:create, :update]
       before_action :set_default_country_id, only: :new
       before_action :load_all_countries, only: [:new, :edit, :update, :create]
-      before_action :load_all_zones, only: [:new, :edit, :create]
+      before_action :load_all_zones, only: [:new, :edit, :update, :create]
 
       def index
         if params[:ids]
