@@ -9,19 +9,16 @@ FactoryBot.define do
     deleted_at        { nil }
     shipping_category { |r| Spree::ShippingCategory.first || r.association(:shipping_category) }
 
-    transient do
-      with_store { true }
-    end
-
     # ensure stock item will be created for this products master
-    before(:create) { create(:stock_location) unless Spree::StockLocation.any? }
+    # also attach this product to the default store if no stores are passed in
+    before(:create) do |product|
+      create(:stock_location) unless Spree::StockLocation.any?
 
-    before(:create) do |product, evaluator|
-      if evaluator.with_store && product.stores.empty?
+      if product.stores.empty?
         default_store = Spree::Store.default.persisted? ? Spree::Store.default : nil
-        store = default_store || create(:store, default: true)
+        store = default_store || create(:store)
 
-        product.stores << store
+        product.stores << [store]
       end
     end
 

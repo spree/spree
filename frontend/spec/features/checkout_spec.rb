@@ -448,7 +448,7 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
   end
 
   context 'if coupon promotion, submits coupon along with payment', js: true do
-    let!(:promotion) { Spree::Promotion.create(name: 'Huhuhu', code: 'huhu') }
+    let!(:promotion) { create(:promotion, name: 'Huhuhu', code: 'huhu') }
     let!(:calculator) { Spree::Calculator::FlatPercentItemTotal.create(preferred_flat_percent: '10') }
     let!(:action) { Spree::Promotion::Actions::CreateItemAdjustments.create(calculator: calculator) }
 
@@ -495,7 +495,7 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
     end
 
     context 'the promotion makes order free (downgrade it total to 0.0)' do
-      let(:promotion2) { Spree::Promotion.create(name: 'test-7450', code: 'test-7450') }
+      let(:promotion2) { create(:promotion, name: 'test-7450', code: 'test-7450') }
       let(:calculator2) do
         Spree::Calculator::FlatRate.create(preferences: { currency: 'USD', amount: BigDecimal('99999') })
       end
@@ -728,8 +728,8 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
     end
 
     context 'when not all Store Credits are used' do
-      let!(:store_credit) { create(:store_credit, user: user) }
-      let!(:additional_store_credit) { create(:store_credit, user: user, amount: 13) }
+      let!(:store_credit) { create(:store_credit, user: user, store: order.store) }
+      let!(:additional_store_credit) { create(:store_credit, user: user, amount: 13, store: order.store) }
 
       before { prepare_checkout! }
 

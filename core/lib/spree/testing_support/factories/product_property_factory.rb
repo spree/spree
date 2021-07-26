@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :product_property, class: Spree::ProductProperty do
-    product
+    product { create(:product, stores: [create(:store)]) }
     property
   end
 end

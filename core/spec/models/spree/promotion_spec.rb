@@ -1,11 +1,12 @@
 require 'spec_helper'
 
 describe Spree::Promotion, type: :model do
-  let(:promotion) { Spree::Promotion.new }
+  let(:store) { create(:store) }
+  let(:promotion) { create(:promotion) }
 
   describe 'validations' do
     before do
-      @valid_promotion = Spree::Promotion.new name: 'A promotion'
+      @valid_promotion = build(:promotion, name: 'A promotion', stores: [create(:store)])
     end
 
     it 'valid_promotion is valid' do
@@ -37,7 +38,7 @@ describe Spree::Promotion, type: :model do
       end
 
       context 'code is not unique' do
-        let!(:promotion_with_code) { Spree::Promotion.create! name: 'test1', code: code }
+        let!(:promotion_with_code) { create :promotion,  name: 'test1', code: code }
 
         context 'code is identical' do
           before do
@@ -98,8 +99,8 @@ describe Spree::Promotion, type: :model do
     describe '.coupons' do
       subject { Spree::Promotion.coupons }
 
-      let!(:promotion_without_code) { Spree::Promotion.create! name: 'test', code: '' }
-      let!(:promotion_with_code) { Spree::Promotion.create! name: 'test1', code: 'code' }
+      let!(:promotion_without_code) { create :promotion,  name: 'test', code: '' }
+      let!(:promotion_with_code) { create :promotion,  name: 'test1', code: 'code' }
 
       it 'is expected to not include promotion without code' do
         expect(subject).not_to include(promotion_without_code)
@@ -113,10 +114,10 @@ describe Spree::Promotion, type: :model do
     describe '.applied' do
       subject { Spree::Promotion.applied }
 
-      let!(:promotion_not_applied) { Spree::Promotion.create! name: 'test', code: '' }
+      let!(:promotion_not_applied) { create :promotion,  name: 'test', code: '' }
       let(:order) { create(:order) }
       let!(:promotion_applied) do
-        promotion = Spree::Promotion.create!(name: 'test1', code: '')
+        promotion = create(:promotion, name: 'test1', code: '')
         promotion.orders << order
         promotion
       end
@@ -133,8 +134,8 @@ describe Spree::Promotion, type: :model do
     describe '.advertised' do
       subject { Spree::Promotion.advertised }
 
-      let!(:promotion_not_advertised) { Spree::Promotion.create! name: 'test', advertise: false }
-      let!(:promotion_advertised) { Spree::Promotion.create! name: 'test1', advertise: true }
+      let!(:promotion_not_advertised) { create :promotion,  name: 'test', advertise: false }
+      let!(:promotion_advertised) { create :promotion,  name: 'test1', advertise: true }
 
       it 'is expected to not include promotion not advertised' do
         expect(subject).not_to include(promotion_not_advertised)
@@ -147,7 +148,7 @@ describe Spree::Promotion, type: :model do
   end
 
   describe '#destroy' do
-    let(:promotion) { Spree::Promotion.create(name: 'delete me') }
+    let(:promotion) { create(:promotion, name: 'delete me') }
 
     before do
       promotion.actions << Spree::Promotion::Actions::CreateAdjustment.new
@@ -166,7 +167,7 @@ describe Spree::Promotion, type: :model do
   end
 
   describe '#save' do
-    let(:promotion) { Spree::Promotion.create(name: 'delete me') }
+    let(:promotion) { create(:promotion, name: 'delete me') }
 
     before do
       promotion.actions << Spree::Promotion::Actions::CreateAdjustment.new
@@ -300,12 +301,7 @@ describe Spree::Promotion, type: :model do
   end
 
   context '#credits_count' do
-    let!(:promotion) do
-      promotion = Spree::Promotion.new
-      promotion.name = 'Foo'
-      promotion.code = 'XXX'
-      promotion.tap(&:save)
-    end
+    let!(:promotion) { create(:promotion, name: 'Foo', code: 'XXX') }
 
     let!(:action) do
       calculator = Spree::Calculator::FlatRate.new
@@ -341,7 +337,7 @@ describe Spree::Promotion, type: :model do
   context '#adjusted_credits_count' do
     let(:order) { create :order }
     let(:line_item) { create :line_item, order: order }
-    let(:promotion) { Spree::Promotion.create name: 'promo', code: '10off' }
+    let(:promotion) { create(:promotion, name: 'promo', code: '10off') }
     let(:order_action) do
       action = Spree::Promotion::Actions::CreateAdjustment.create(calculator: Spree::Calculator::FlatPercentItemTotal.new)
       promotion.actions << action
@@ -385,7 +381,7 @@ describe Spree::Promotion, type: :model do
   end
 
   context '#products' do
-    let(:product) { create(:product) }
+    let(:product) { create(:product, stores: [store]) }
     let(:promotion) { create(:promotion) }
 
     context 'when it has product rules with products associated' do
@@ -524,7 +520,7 @@ describe Spree::Promotion, type: :model do
     end
 
     context "with 'any' match policy" do
-      let(:promotion) { Spree::Promotion.create(name: 'Promo', match_policy: 'any') }
+      let(:promotion) { create(:promotion, name: 'Promo', match_policy: 'any') }
       let(:promotable) { double('Promotable') }
 
       it 'has eligible rules if any of the rules are eligible' do
@@ -623,7 +619,7 @@ describe Spree::Promotion, type: :model do
   # admin form posts the code and path as empty string
   describe 'normalize blank values for code & path' do
     it 'will save blank value as nil value instead' do
-      promotion = Spree::Promotion.create(name: 'A promotion', code: '', path: '')
+      promotion = create(:promotion, name: 'A promotion', code: '', path: '')
       expect(promotion.code).to be_nil
       expect(promotion.path).to be_nil
     end

@@ -9,8 +9,6 @@ module Spree
 
     before_action :can_show_product?, only: :show
 
-    respond_to :html
-
     def index
       @searcher = build_searcher(params.merge(include_images: true, current_store: current_store))
       @products = @searcher.retrieve_products
@@ -23,7 +21,7 @@ module Spree
     def show
       redirect_if_legacy_path
 
-      @taxon = params[:taxon_id].present? ? Spree::Taxon.find_by(id: params[:taxon_id]) : nil
+      @taxon = params[:taxon_id].present? ? taxons_scope.find_by(id: params[:taxon_id]) : nil
       @taxon = @product.taxons.first unless @taxon.present?
 
       if !http_cache_enabled? || stale?(etag: etag_show, last_modified: last_modified_show, public: true)
@@ -58,7 +56,7 @@ module Spree
     end
 
     def load_taxon
-      @taxon = Spree::Taxon.find(params[:taxon]) if params[:taxon].present?
+      @taxon = taxons_scope.find(params[:taxon]) if params[:taxon].present?
     end
 
     def can_show_product?
@@ -120,6 +118,10 @@ module Spree
       current_store_last_modified = current_store.updated_at.utc
 
       [product_last_modified, current_store_last_modified].compact.max
+    end
+
+    def taxons_scope
+      current_store.taxons
     end
   end
 end

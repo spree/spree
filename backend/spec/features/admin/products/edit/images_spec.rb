@@ -5,6 +5,9 @@ describe 'Product Images', type: :feature, js: true do
 
   let(:file_path) { Rails.root + '../../spec/support/ror_ringer.jpeg' }
 
+  let(:store) { Spree::Store.default }
+  let(:product) { create(:product, stores: [store]) }
+
   before do
     # Ensure attachment style keys are symbolized before running all tests
     # Otherwise this would result in this error:
@@ -15,8 +18,7 @@ describe 'Product Images', type: :feature, js: true do
 
   context 'uploading, editing, and deleting an image' do
     it 'allows an admin to upload and edit an image for a product' do
-      create(:product)
-
+      product
       visit spree.admin_products_path
       click_icon(:edit)
       click_link 'Images'
@@ -42,9 +44,9 @@ describe 'Product Images', type: :feature, js: true do
 
   # Regression test for #2228
   it 'sees variant images', js: false do
-    variant = create(:variant)
+    variant = create(:variant, product: product)
     create_image(variant, File.open(file_path))
-    visit spree.admin_product_images_path(variant.product)
+    visit spree.admin_product_images_path(product)
 
     expect(page).not_to have_content('No Images Found.')
     within('table.table') do
@@ -66,7 +68,6 @@ describe 'Product Images', type: :feature, js: true do
   end
 
   it 'does not see variant column when product has no variants', js: false do
-    product = create(:product)
     create_image(product, File.open(file_path))
     visit spree.admin_product_images_path(product)
 

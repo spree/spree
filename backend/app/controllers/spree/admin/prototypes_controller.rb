@@ -5,7 +5,7 @@ module Spree
         if request.xhr?
           render layout: false
         else
-          redirect_to admin_prototypes_path
+          redirect_to spree.admin_prototypes_path
         end
       end
 

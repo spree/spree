@@ -8,7 +8,7 @@ module Spree
       let(:line_item) { create(:line_item) }
       let(:order) { line_item.order }
 
-      let(:promotion) { Promotion.create(name: 'At line items') }
+      let(:promotion) { create(:promotion, name: 'At line items', stores: [order.store]) }
       let(:calculator) { Calculator::FlatPercentItemTotal.new(preferred_flat_percent: 10) }
 
       context 'activates in LineItem level' do
@@ -34,7 +34,7 @@ module Spree
         end
 
         context 'promotion has item total rule' do
-          let(:shirt) { create(:product) }
+          let(:shirt) { create(:product, stores: [order.store]) }
           let!(:rule) { Promotion::Rules::ItemTotal.create(preferred_operator_min: 'gt', preferred_amount_min: 50, preferred_operator_max: 'lt', preferred_amount_max: 150, promotion: promotion) }
 
           before do
@@ -70,7 +70,7 @@ module Spree
         end
 
         context 'promotion has item total rule' do
-          let(:shirt) { create(:product) }
+          let(:shirt) { create(:product, stores: [order.store]) }
           let!(:rule) { Promotion::Rules::ItemTotal.create(preferred_operator_min: 'gt', preferred_amount_min: 50, preferred_operator_max: 'lt', preferred_amount_max: 150, promotion: promotion) }
 
           before do

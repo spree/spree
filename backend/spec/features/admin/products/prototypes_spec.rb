@@ -62,6 +62,36 @@ describe 'Prototypes', type: :feature, js: true do
       expect(page).to have_content('successfully updated!')
       expect(page).to have_content('Shirt 99')
     end
+
+    context 'selecting taxons' do
+      let(:prototype_name) { 'shirts' }
+      let!(:store1) { Spree::Store.default }
+      let!(:taxonomy1) { create(:taxonomy, name: 'Shirts', store: store1) }
+      let!(:store2) { create(:store) }
+      let!(:taxonomy2) { create(:taxonomy, name: 'Bags', store: store2) }
+
+      it 'should be able to select only current store taxons' do
+        visit spree.admin_path
+        click_link 'Products'
+        click_link 'Prototypes'
+
+        click_link 'new_prototype_link'
+        within('.content-header') do
+          expect(page).to have_content('New Prototype')
+        end
+        fill_in 'prototype_name', with: prototype_name
+
+        select2_open label: 'Taxons'
+        expect(page).to have_content('Shirts')
+        expect(page).not_to have_content('Bags')
+        select2_select 'Shirts', from: 'Taxons'
+
+        click_button 'Create'
+
+        expect(page).to have_content('successfully created!')
+        expect(Spree::Prototype.find_by(name: prototype_name).taxons).to match_array([taxonomy1.root])
+      end
+    end
   end
 
   context 'editing a prototype' do
@@ -97,6 +127,8 @@ describe 'Prototypes', type: :feature, js: true do
     visit spree.admin_path
     click_link 'Products'
     click_link 'Prototypes'
+
+    expect(page).to have_content('Shirt')
 
     accept_confirm do
       within("#spree_prototype_#{shirt_prototype.id}") do

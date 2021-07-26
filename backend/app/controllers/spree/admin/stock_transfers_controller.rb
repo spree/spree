@@ -36,7 +36,7 @@ module Spree
                                   variants)
 
           flash[:success] = Spree.t(:stock_successfully_transferred)
-          redirect_to admin_stock_transfer_path(stock_transfer)
+          redirect_to spree.admin_stock_transfer_path(stock_transfer)
         end
       end
 

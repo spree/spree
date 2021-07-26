@@ -22,6 +22,16 @@ class Spree::Base < ApplicationRecord
     false
   end
 
+  def self.for_store(store)
+    plural_model_name = model_name.plural.gsub(/spree_/, '').to_sym
+
+    if store.respond_to?(plural_model_name)
+      store.send(plural_model_name)
+    else
+      self
+    end
+  end
+
   def self.spree_base_scopes
     where(nil)
   end

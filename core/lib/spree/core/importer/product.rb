@@ -2,10 +2,12 @@ module Spree
   module Core
     module Importer
       class Product
-        attr_reader :product, :product_attrs, :variants_attrs, :options_attrs
+        attr_reader :product, :product_attrs, :variants_attrs, :options_attrs, :store
 
         def initialize(product, product_params, options = {})
+          @store = options[:store] || Spree::Store.default
           @product = product || Spree::Product.new(product_params)
+          @product.stores << @store if @product.stores.exclude?(@store)
 
           @product_attrs = product_params.to_h
           @variants_attrs = (options[:variants_attrs] || []).map(&:to_h)

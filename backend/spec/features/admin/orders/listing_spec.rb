@@ -3,6 +3,8 @@ require 'spec_helper'
 describe 'Orders Listing', type: :feature do
   stub_authorization!
 
+  let(:other_store) { create(:store, name: 'Other Store', url: "another-store.lvh.me") }
+
   let(:order1) do
     create :order_with_line_items,
            created_at: 1.day.from_now,
@@ -18,11 +20,29 @@ describe 'Orders Listing', type: :feature do
            number: 'R200'
   end
 
+  let(:order3) do
+    create :order,
+           store: other_store,
+           created_at: 1.day.ago,
+           completed_at: 1.day.ago,
+           number: 'R300'
+  end
+
+  let(:order4) do
+    create :order,
+           store: other_store,
+           created_at: 1.day.ago,
+           completed_at: 1.day.ago,
+           number: 'R400'
+  end
+
   before do
     allow_any_instance_of(Spree::OrderInventory).to receive(:add_to_shipment)
     # create the order instances after stubbing the `add_to_shipment` method
     order1
     order2
+    order3
+    order4
     visit spree.admin_orders_path
   end
 
@@ -38,6 +58,11 @@ describe 'Orders Listing', type: :feature do
         expect(column_text(1)).to eq 'R200'
         expect(find('td:nth-child(3)')).to have_css '.badge-considered_safe'
       end
+    end
+
+    it 'does not show the order that belongs to the other_store' do
+      expect(page).not_to have_content('R300')
+      expect(page).not_to have_content('R400')
     end
 
     it 'is able to sort the orders listing' do
@@ -56,6 +81,30 @@ describe 'Orders Listing', type: :feature do
       # number asc
       within_row(1) { expect(page).to have_content('R100') }
       within_row(2) { expect(page).to have_content('R200') }
+    end
+  end
+
+  describe 'switching store', js: true do
+    it 'shows orders from the current store only' do
+      expect(page).to have_content('R100')
+      expect(page).to have_content('R200')
+
+      visit spree.admin_orders_path
+
+      Capybara.app_host = 'http://another-store.lvh.me'
+
+      find('a#storeSelectorDropdown').click
+      within('.dropdown-menu') { click_link other_store.unique_name }
+
+      expect(current_url).to match('another-store.lvh.me')
+
+      expect(page).to have_content('R300')
+      expect(page).to have_content('R400')
+
+      expect(page).not_to have_content('R100')
+      expect(page).not_to have_content('R200')
+
+      Capybara.app_host = nil
     end
   end
 
@@ -202,7 +251,7 @@ describe 'Orders Listing', type: :feature do
       end
 
       it 'adds per_page parameter to url' do
-        expect(page).to have_current_path(/per_page\=50/)
+        expect(page).to have_current_path(/per_page=50/)
       end
 
       it 'can be used with search filtering' do
@@ -211,12 +260,12 @@ describe 'Orders Listing', type: :feature do
         click_on 'Filter Results'
         expect(page).not_to have_content('R100')
         within_row(1) { expect(page).to have_content('R200') }
-        expect(page).to have_current_path(/per_page\=50/)
+        expect(page).to have_current_path(/per_page=50/)
         expect(page).to have_select('per_page', selected: '50')
         within('div.index-pagination-row', match: :first) do
           select '75', from: 'per_page'
         end
-        expect(page).to have_current_path(/per_page\=75/)
+        expect(page).to have_current_path(/per_page=75/)
         expect(page).to have_select('per_page', selected: '75')
         expect(page).to have_selector(:css, 'select.per-page-selected-75')
         expect(page).not_to have_content('R100')
@@ -245,14 +294,13 @@ describe 'Orders Listing', type: :feature do
           fill_in 'q_line_items_variant_sku_eq', with: 'BAG-00001'
           select2 'Promo', from: 'Promotion'
           fill_in 'q_bill_address_firstname_start', with: 'John'
-          select2 'Spree Test Store', from: 'Store', match: :first
           fill_in 'q_bill_address_lastname_start', with: 'Smith'
           select2 'spree', from: 'Channel'
 
           # Can not test these in the filter dropdown
           # With current implementation of flatpickr test support.
-          #fill_in_date_picker('q_created_at_gt', with: '2018-01-01')
-          #fill_in_date_picker('q_created_at_lt', with: '2018-01-01')
+          # fill_in_date_picker('q_created_at_gt', with: '2018-01-01')
+          # fill_in_date_picker('q_created_at_lt', with: '2018-01-01')
         end
 
         click_on 'Filter Results'
@@ -269,7 +317,6 @@ describe 'Orders Listing', type: :feature do
           expect(page).to have_content('Promotion: Promo')
           expect(page).to have_content('Email: john_smith@example.com')
           expect(page).to have_content('SKU: BAG-00001')
-          expect(page).to have_content('Store: Spree Test Store')
           expect(page).to have_content('Channel: spree')
         end
       end

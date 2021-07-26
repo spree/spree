@@ -8,7 +8,7 @@ end
 
 describe Spree::Order, type: :model do
   let(:user) { stub_model(Spree::LegacyUser, email: 'spree@example.com') }
-  let(:store) { create(:store, default: true) }
+  let!(:store) { create(:store, default: true) }
   let(:order) { stub_model(Spree::Order, user: user, store: store) }
 
   before do
@@ -169,46 +169,7 @@ describe Spree::Order, type: :model do
       order.finalize!
     end
 
-    it 'sends an order confirmation email to customer' do
-      mail_message = double 'Mail::Message'
-      expect(Spree::OrderMailer).to receive(:confirm_email).with(order.id).and_return mail_message
-      expect(mail_message).to receive :deliver_later
-      order.finalize!
-    end
-
-    it 'sets confirmation delivered when finalizing' do
-      expect(order.confirmation_delivered?).to be false
-      order.finalize!
-      expect(order.confirmation_delivered?).to be true
-    end
-
-    it 'does not send duplicate confirmation emails' do
-      allow(order).to receive_messages(confirmation_delivered?: true)
-      expect(Spree::OrderMailer).not_to receive(:confirm_email)
-      order.finalize!
-    end
-
-    context 'new order notifications' do
-      it 'sends a new order notification email to store owner when notification email address is set' do
-        # NOTE: 'store' factory has new_order_notifications_email set by default
-        mail_message = double 'Mail::Message'
-        expect(Spree::OrderMailer).to receive(:store_owner_notification_email).with(order.id).and_return mail_message
-        expect(mail_message).to receive :deliver_later
-        order.finalize!
-      end
-
-      it 'does not send a new order notification email to store owner when notification email address is blank' do
-        store = order.store
-        store.update(new_order_notifications_email: '')
-
-        mail_message = double 'Mail::Message'
-        expect(Spree::OrderMailer).to_not receive(:store_owner_notification_email)
-        order.finalize!
-      end
-    end
-
     it 'freezes all adjustments' do
-      allow(Spree::OrderMailer).to receive_message_chain :confirm_email, :deliver_later
       adjustments = [double]
       expect(order).to receive(:all_adjustments).and_return(adjustments)
       expect(adjustments).to all(receive(:close))
@@ -1191,8 +1152,8 @@ describe Spree::Order, type: :model do
 
   describe '#collect_backend_payment_methods' do
     let!(:order) { create(:order_with_line_items, line_items_count: 2) }
-    let!(:credit_card_payment_method) { create(:simple_credit_card_payment_method, display_on: 'both') }
-    let!(:store_credit_payment_method) { create(:store_credit_payment_method, display_on: 'both') }
+    let!(:credit_card_payment_method) { create(:simple_credit_card_payment_method, display_on: 'both', stores: [store]) }
+    let!(:store_credit_payment_method) { create(:store_credit_payment_method, display_on: 'both', stores: [store]) }
 
     it { expect(order.collect_backend_payment_methods).to include(credit_card_payment_method) }
     it { expect(order.collect_backend_payment_methods).not_to include(store_credit_payment_method) }

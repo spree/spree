@@ -48,7 +48,7 @@ module Spree
 
         params[:q][:s] ||= 'completed_at desc'
 
-        @search = Order.complete.ransack(params[:q])
+        @search = scope.complete.ransack(params[:q])
         @orders = @search.result
 
         @totals = {}
@@ -61,6 +61,10 @@ module Spree
       end
 
       private
+
+      def scope
+        current_store.orders.accessible_by(current_ability, :index)
+      end
 
       def model_class
         Spree::Admin::ReportsController

@@ -11,32 +11,25 @@
     <%= search_form_for [:admin, @search] do |f| %>
       <%- locals = {f: f} %>
       <div class="row">
-        <div class="col-12 col-lg-6">
+
+        <div class="col-12 col-lg-4">
           <div class="form-group">
             <%= f.label :name_cont, Spree.t('name') %>
             <%= f.text_field :name_cont, size: 15, class: "form-control js-quick-search-target js-filterable" %>
           </div>
         </div>
-        <div class="col-12 col-lg-6">
+        <div class="col-12 col-lg-4">
           <div class="form-group">
             <%= label_tag :q_location_eq, Spree.t(:location) %>
             <%= f.select :location_eq, menu_locations_dropdown_values, { include_blank: true }, class: 'select2-clear js-filterable' %>
           </div>
         </div>
-      </div>
 
-      <div class="row">
-        <div class="col-12 col-lg-6">
+        <div class="col-12 col-lg-4">
          <div class="form-group">
            <%= label_tag :q_locale_eq, Spree.t(:language) %>
            <%= f.select :locale_eq, all_locales_options, { include_blank: true }, class: 'select2-clear js-filterable' %>
          </div>
-        </div>
-        <div class="col-12 col-lg-6">
-          <div class="form-group">
-            <%= label_tag :q_store_id_in, Spree.t(:store) %>
-            <%= f.select :store_id_in, stores_dropdown_values, { include_blank: true }, class: 'select2-clear js-filterable' %>
-          </div>
         </div>
       </div>
 
@@ -53,7 +46,6 @@
     <thead>
       <th scope="col"><%= Spree.t(:name) %></th>
       <th scope="col"><%= Spree.t('location') %></th>
-      <th scope="col"><%= Spree.t('store') %></th>
       <th scope="col"><%= Spree.t('language') %></th>
       <th class="text-center" scope="col"><%= Spree.t('default') %>
         <span data-show-info
@@ -75,9 +67,6 @@
             <%= menu.location.titleize %>
           </td>
           <td>
-            <%= menu.store.unique_name %>
-          </td>
-          <td>
             <%= locale_full_name(menu.locale) %>
           </td>
           <td class="text-center">
@@ -94,6 +83,7 @@
     </tbody>
   </table>
 </div>
+<%= render 'spree/admin/shared/index_table_options', collection: @menus, simple: true %>
 <% else %>
   <div class="alert alert-info no-objects-found">
     <%= Spree.t('admin.navigation.you_have_no_menus') %>

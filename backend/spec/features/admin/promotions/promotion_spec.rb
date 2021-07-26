@@ -3,6 +3,9 @@ require 'spec_helper'
 describe 'Create New Promotion', type: :feature, js: true do
   stub_authorization!
 
+  let(:store) { Spree::Store.default }
+  let!(:store_2) { create(:store) }
+
   context 'coupon promotions' do
     before do
       visit spree.new_admin_promotion_path
@@ -14,8 +17,9 @@ describe 'Create New Promotion', type: :feature, js: true do
 
       click_button 'Create'
 
-      promotion = Spree::Promotion.find_by(name: 'Promotion 1')
+      promotion = store.promotions.find_by!(name: 'Promotion 1')
       expect(page).to have_field(id: 'promotion_code', with: promotion.code)
+      expect(promotion.stores).to eq([store])
     end
 
     it 'Allows you to set a promotion with start and end time' do
@@ -29,6 +33,18 @@ describe 'Create New Promotion', type: :feature, js: true do
 
       expect(page).to have_field(id: 'promotion_starts_at', type: :hidden, with: '2012-01-24 16:45')
       expect(page).to have_field(id: 'promotion_expires_at', type: :hidden, with: '2012-01-25 22:10')
+    end
+
+    it 'allows assigning multiple stores' do
+      fill_in 'Name', with: 'Promotion 3'
+      select2 store_2.unique_name, from: 'Stores'
+
+      click_button 'Create'
+
+      expect(page).to have_content('successfully created')
+
+      promotion = store.promotions.find_by!(name: 'Promotion 3')
+      expect(promotion.stores).to contain_exactly(store, store_2)
     end
   end
 end

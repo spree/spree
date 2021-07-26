@@ -33,6 +33,7 @@ module Spree
           base_scope = Spree::Dependencies.products_finder.constantize.new(
             scope: base_scope,
             params: {
+              store: current_store,
               filter: {
                 price: price,
                 option_value_ids: option_value_ids,

@@ -16,6 +16,10 @@ table.table {
     padding: 0.5rem;
   }
 
+  td.move-handle {
+    width:45px;
+  }
+
   .badge {
     text-transform: uppercase;
   }
@@ -54,7 +58,6 @@ table.table {
 
 .table-active-filters {
   display: none;
-  margin: -.5em 0 .9em;
 
   .js-filter {
     .icon {

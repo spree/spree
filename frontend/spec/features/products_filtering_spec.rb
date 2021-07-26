@@ -1,6 +1,7 @@
 require 'spec_helper'
 
 describe 'Products filtering', :js do
+  let(:store) { Spree::Store.default }
   let!(:taxon) { create :taxon }
 
   let!(:size) { create :option_type, name: 'size', presentation: 'Size' }
@@ -19,10 +20,10 @@ describe 'Products filtering', :js do
 
   let!(:property_3) { create :property, name: 'collection', presentation: 'Collection', filterable: true }
 
-  let!(:product_1) { create :product, name: 'First shirt', option_types: [size, color], product_properties: [zeta_brand], taxons: [taxon] }
+  let!(:product_1) { create :product, name: 'First shirt', option_types: [size, color], product_properties: [zeta_brand], taxons: [taxon], stores: [store] }
   let!(:variant_1_1) { create :variant, product: product_1, option_values: [s_size, green_color] }
 
-  let!(:product_2) { create :product, name: 'Second shirt', option_types: [size], product_properties: [wilson_manufacturer, alpha_brand], taxons: [taxon] }
+  let!(:product_2) { create :product, name: 'Second shirt', option_types: [size], product_properties: [wilson_manufacturer, alpha_brand], taxons: [taxon], stores: [store] }
   let!(:variant_2_1) { create :variant, product: product_2, option_values: [m_size] }
 
   def visit_taxons_page(taxon)
@@ -131,7 +132,7 @@ describe 'Products filtering', :js do
     let!(:length) { create :option_type, name: 'length', presentation: 'Length', filterable: true }
     let!(:mini_length) { create :option_value, option_type: length, name: 'mini', presentation: 'MINI' }
 
-    let!(:product_3) { create :product, stores: [create(:store)], taxons: [taxon], option_types: [length] }
+    let!(:product_3) { create :product, taxons: [taxon], stores: [create(:store)], option_types: [length] }
     let!(:variant_3) { create :variant, product: product_3, option_values: [mini_length] }
 
     it 'does not display option types for products assigned to the other store' do
@@ -160,7 +161,7 @@ describe 'Products filtering', :js do
     let!(:material) { create :property, :material, filterable: true }
     let!(:cotton_material) { create :product_property, value: 'Cotton', property: material }
 
-    let!(:product_3) { create :product, stores: [create(:store)], taxons: [taxon], product_properties: [cotton_material] }
+    let!(:product_3) { create :product, taxons: [taxon], stores: [create(:store)], product_properties: [cotton_material] }
 
     it 'does not display properties for products assigned to the other store' do
       visit spree.nested_taxons_path(taxon)
@@ -202,6 +203,7 @@ describe 'Products filtering', :js do
   context 'with cached filters' do
     context 'when after visiting products page new filters were added or deleted' do
       let(:jersey_manufacturer) { create(:product_property, value: 'Jerseys', property: manufacturer) }
+      let!(:product_3) { create(:product, name: 'Third shirt', taxons: [taxon], stores: [store]) }
       let(:beta_brand) { create(:product_property, value: 'Beta', property: brand) }
 
       let(:xl_size) { create(:option_value, option_type: size, name: 'xl', presentation: 'XL') }
@@ -218,7 +220,7 @@ describe 'Products filtering', :js do
         expect(page).to have_filter_with(value: 'Alpha')
 
         product_1.product_properties << jersey_manufacturer
-        product_2.product_properties << beta_brand
+        product_3.product_properties << beta_brand
 
         visit_taxons_page(taxon)
 
@@ -266,7 +268,7 @@ describe 'Products filtering', :js do
       let!(:gamma_brand) { create(:product_property, value: 'Gamma', property: brand) }
       let!(:xl_size) { create(:option_value, option_type: size, name: 'xl', presentation: 'XL') }
 
-      let!(:product_3) { create(:product, name: '3rd shirt', product_properties: [gamma_brand], taxons: [taxon], currency: eur) }
+      let!(:product_3) { create(:product, name: '3rd shirt', product_properties: [gamma_brand], taxons: [taxon], stores: [store], currency: eur) }
       let!(:variant_3) { create(:variant, product: product_3, currency: eur, option_values: [xl_size]) }
 
       it 'correctly displays filterable properties' do
@@ -379,7 +381,7 @@ describe 'Products filtering', :js do
         expect(page).to have_filter_with(value: 'Zeta')
         expect(page).to have_filter_with(value: 'Alpha')
 
-        create(:product, name: '3rd shirt', product_properties: [cotton_material], taxons: [taxon])
+        create(:product, name: '3rd shirt', product_properties: [cotton_material], taxons: [taxon], stores: [store])
 
         visit_taxons_page(taxon)
 
@@ -396,7 +398,7 @@ describe 'Products filtering', :js do
         expect(page).to have_filter_with(value: 'S')
         expect(page).to have_filter_with(value: 'M')
 
-        product = create(:product, name: '3rd shirt', taxons: [taxon])
+        product = create(:product, name: '3rd shirt', taxons: [taxon], stores: [store])
         create(:variant, product: product, option_values: [xl_size])
 
         visit_taxons_page(taxon)

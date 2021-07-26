@@ -8,6 +8,7 @@ FactoryBot.define do
     amount { 150.00 }
     currency { 'USD' }
     credit_type { create(:primary_credit_type) }
+    store { create(:store) }
   end
 
   factory :store_credits_order_without_user, class: Spree::Order do

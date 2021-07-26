@@ -30,7 +30,7 @@ describe 'Taxonomies and taxons', type: :feature, js: true do
 
   it 'admin should be able to remove a product from a taxon', js: true do
     taxon_1 = create(:taxon, name: 'Clothing')
-    product = create(:product)
+    product = create(:product, stores: Spree::Store.all)
     product.taxons << taxon_1
 
     visit spree.admin_taxons_path

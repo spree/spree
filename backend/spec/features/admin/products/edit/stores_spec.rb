@@ -1,27 +1,24 @@
 require 'spec_helper'
 
-describe 'Product Stores', type: :feature, js: true do
+describe 'Edit Product Stores', type: :feature, js: true do
   stub_authorization!
 
+  let(:store) { Spree::Store.default }
+  let(:product) { create(:product, stores: [store]) }
+  let!(:store_2) { create(:store) }
+  let!(:store_3) { create(:store) }
+
   before do
-    create(:product)
-    create(:store, name: 'First store', code: 'first')
-    create(:store, name: 'Second store', code: 'second')
-
-    visit spree.admin_products_path
-
-    within_row(1) { click_icon :edit }
+    visit spree.edit_admin_product_path(product)
   end
 
-  it 'allows assigning products' do
-    select2 'First store', from: 'Stores'
-    select2 'Second store', from: 'Stores'
+  it 'allows assigning multiple stores' do
+    select2 store_3.unique_name, from: 'Stores'
 
     click_button 'Update'
 
     expect(page).to have_content('successfully updated')
 
-    expect(page).to have_content('First store')
-    expect(page).to have_content('Second store')
+    expect(product.reload.stores).to contain_exactly(store, store_3)
   end
 end

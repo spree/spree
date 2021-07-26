@@ -1,6 +1,8 @@
 module Spree
   module Admin
     class ProductsController < ResourceController
+      include Spree::Admin::ProductConcern
+
       helper 'spree/products'
 
       before_action :load_data, except: :index
@@ -28,11 +30,12 @@ module Spree
         end
         invoke_callbacks(:update, :before)
         if @object.update(permitted_resource_params)
+          ensure_current_store
           invoke_callbacks(:update, :after)
           flash[:success] = flash_message_for(@object, :successfully_updated)
           respond_with(@object) do |format|
             format.html { redirect_to location_after_save }
-            format.js   { render layout: false }
+            format.js { render layout: false }
           end
         else
           # Stops people submitting blank slugs, causing errors when they try to
@@ -44,7 +47,7 @@ module Spree
       end
 
       def destroy
-        @product = Product.friendly.find(params[:id])
+        @product = product_scope.friendly.find(params[:id])
 
         begin
           # TODO: why is @product.destroy raising ActiveRecord::RecordNotDestroyed instead of failing with false result
@@ -68,15 +71,15 @@ module Spree
 
         if @new.persisted?
           flash[:success] = Spree.t('notice_messages.product_cloned')
-          redirect_to edit_admin_product_url(@new)
+          redirect_to spree.edit_admin_product_url(@new)
         else
           flash[:error] = Spree.t('notice_messages.product_not_cloned', error: @new.errors.full_messages.to_sentence)
-          redirect_to admin_products_url
+          redirect_to spree.admin_products_url
         end
       rescue ActiveRecord::RecordInvalid => e
         # Handle error on uniqueness validation on product fields
         flash[:error] = Spree.t('notice_messages.product_not_cloned', error: e.message)
-        redirect_to admin_products_url
+        redirect_to spree.admin_products_url
       end
 
       def stock
@@ -85,14 +88,14 @@ module Spree
         @stock_locations = StockLocation.accessible_by(current_ability)
         if @stock_locations.empty?
           flash[:error] = Spree.t(:stock_management_requires_a_stock_location)
-          redirect_to admin_stock_locations_path
+          redirect_to spree.admin_stock_locations_path
         end
       end
 
       protected
 
       def find_resource
-        Product.with_deleted.friendly.find(params[:id])
+        product_scope.with_deleted.friendly.find(params[:id])
       end
 
       def location_after_save
@@ -114,7 +117,9 @@ module Spree
         params[:q][:not_discontinued] ||= '1'
 
         params[:q][:s] ||= 'name asc'
-        @collection = super
+
+        @collection = product_scope
+
         # Don't delete params[:q][:deleted_at_null] here because it is used in view to check the
         # checkbox for 'q[deleted_at_null]'. This also messed with pagination when deleted_at_null is checked.
         if params[:q][:deleted_at_null] == '0'
@@ -138,7 +143,7 @@ module Spree
       end
 
       def update_before
-        # note: we only reset the product properties if we're receiving a post
+        # NOTE: we only reset the product properties if we're receiving a post
         #       from the form on that tab
         return unless params[:clear_product_properties]
 

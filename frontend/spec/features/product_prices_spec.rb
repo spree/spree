@@ -4,7 +4,7 @@ describe 'Product with prices in multiple currencies', type: :feature, js: true 
   context 'currency switcher' do
     context 'with USD, EUR and GBP as currencies' do
       let!(:store) { create(:store, default: true, supported_currencies: 'USD,EUR,GBP') }
-      let!(:product) { create(:product) }
+      let!(:product) { create(:product, stores: Spree::Store.all) }
 
       before do
         create(:price, variant: product.master, currency: 'EUR', amount: 16.00)

@@ -3,7 +3,8 @@ require 'spec_helper'
 describe 'Order - State Changes', type: :feature do
   stub_authorization!
 
-  let!(:order) { create(:order_with_line_items) }
+  let(:store) { Spree::Store.default }
+  let!(:order) { create(:order_with_line_items, store: store) }
 
   context 'for completed order' do
     before do

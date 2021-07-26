@@ -26,10 +26,20 @@ module Spree
 
         let(:customer_return) { create(:customer_return) }
 
-        before { subject }
-
         it 'loads customer returns' do
+          subject
           expect(assigns(:collection)).to include(customer_return)
+        end
+
+        context 'when current store is different than customer return order store' do
+          let(:new_store) { create(:store) }
+
+          before { allow_any_instance_of(described_class).to receive(:current_store).and_return(new_store) }
+
+          it 'should not load customer returns' do
+            subject
+            expect(assigns(:collection)).to be_empty
+          end
         end
       end
     end

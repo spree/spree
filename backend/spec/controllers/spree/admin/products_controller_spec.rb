@@ -3,21 +3,32 @@ require 'spec_helper'
 describe Spree::Admin::ProductsController, type: :controller do
   stub_authorization!
 
+  let(:store) { Spree::Store.default }
+
   context '#index' do
     let(:ability_user) { stub_model(Spree::LegacyUser, has_spree_role?: true) }
 
     # Regression test for #1259
     it 'can find a product by SKU' do
-      product = create(:product, sku: 'ABC123')
+      product = create(:product, sku: 'ABC123', stores: [store])
       get :index, params: { q: { sku_start: 'ABC123' } }
       expect(assigns[:collection]).not_to be_empty
       expect(assigns[:collection]).to include(product)
     end
+
+    it 'cannot find products from different stores' do
+      product = create(:product, sku: 'ABC123', stores: [create(:store)])
+      get :index, params: { q: { sku_start: 'ABC123' } }
+      expect(assigns[:collection]).to be_empty
+      expect(assigns[:collection]).not_to include(product)
+    end
   end
+
+
 
   # regression test for #1370
   context 'adding properties to a product' do
-    let!(:product) { create(:product) }
+    let!(:product) { create(:product, stores: [store]) }
 
     specify do
       put :update, params: {
@@ -101,6 +112,17 @@ describe Spree::Admin::ProductsController, type: :controller do
         end
       end
     end
+
+    context 'cannot destroy product from different store' do
+      let(:product) { create(:product, stores: [create(:store)]) }
+
+      it { expect(send_request).to redirect_to(spree.admin_products_path) }
+
+      it do
+        send_request
+        expect(flash[:error]).to eq('Product is not found')
+      end
+    end
   end
 
   describe '#clone' do
@@ -147,14 +169,57 @@ describe Spree::Admin::ProductsController, type: :controller do
         end
       end
     end
+
+    context 'cannot clone product from different store' do
+      let(:product) { create(:product, stores: [create(:store)]) }
+
+      it { expect(send_request).to redirect_to(spree.admin_products_path) }
+
+      it do
+        send_request
+        expect(flash[:error]).to eq('Product is not found')
+      end
+    end
   end
 
-  context 'stock' do
-    let(:product) { create(:product) }
+  describe '#show' do
+    let(:product) { create(:product, stores: [store]) }
+    let(:send_request) { get :stock, params: { id: product } }
+
+    it { expect(send_request).to have_http_status(:ok) }
+
+    context 'cannot see product from different store' do
+      let(:product) { create(:product, stores: [create(:store)]) }
+
+      it { expect(send_request).to redirect_to(spree.admin_products_path) }
+
+      it do
+        send_request
+        expect(flash[:error]).to eq('Product is not found')
+      end
+    end
+  end
+
+  describe '#stock' do
+    let(:product) { create(:product, stores: [store]) }
+    let(:send_request) { get :stock, params: { id: product } }
 
     it 'restricts stock location based on accessible attributes' do
       expect(Spree::StockLocation).to receive(:accessible_by).and_return([])
-      get :stock, params: { id: product }
+      send_request
+    end
+
+    it { expect(send_request).to have_http_status(:ok) }
+
+    context 'cannot see stock of product from different store' do
+      let(:product) { create(:product, stores: [create(:store)]) }
+
+      it { expect(send_request).to redirect_to(spree.admin_products_path) }
+
+      it do
+        send_request
+        expect(flash[:error]).to eq('Product is not found')
+      end
     end
   end
 end

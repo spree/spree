@@ -51,7 +51,7 @@ module Spree
           rename_child_taxons if @update_children
 
           respond_with(@taxon) do |format|
-            format.html { redirect_to edit_admin_taxonomy_url(@taxonomy) }
+            format.html { redirect_to spree.edit_admin_taxonomy_url(@taxonomy) }
             format.json { render json: @taxon.to_json }
           end
         else
@@ -65,7 +65,7 @@ module Spree
       def remove_icon
         if @taxon.icon.destroy
           flash[:success] = Spree.t('notice_messages.icon_removed')
-          redirect_to edit_admin_taxonomy_taxon_url(@taxonomy.id, @taxon.id)
+          redirect_to spree.edit_admin_taxonomy_taxon_url(@taxonomy.id, @taxon.id)
         else
           flash[:error] = Spree.t('errors.messages.cannot_remove_icon')
           render :edit
@@ -90,9 +90,9 @@ module Spree
 
       def load_taxonomy
         @taxonomy = if defined?(SpreeGlobalize)
-                      Taxonomy.includes(:translations, taxons: [:translations]).find(params[:taxonomy_id])
+                      scope.includes(:translations, taxons: [:translations]).find(params[:taxonomy_id])
                     else
-                      Taxonomy.find(params[:taxonomy_id])
+                      scope.find(params[:taxonomy_id])
                     end
       end
 
@@ -102,7 +102,7 @@ module Spree
       end
 
       def set_parent(parent_id)
-        @taxon.parent = Taxon.find(parent_id.to_i) if parent_id
+        @taxon.parent = current_store.taxons.find(parent_id.to_i) if parent_id
       end
 
       def set_permalink_params
@@ -126,6 +126,10 @@ module Spree
         taxon.reload
         taxon.set_permalink
         taxon.save!
+      end
+
+      def scope
+        current_store.taxonomies
       end
     end
   end
