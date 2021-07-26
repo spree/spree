@@ -164,8 +164,7 @@ Spree::Core::Engine.add_routes do
         resources :taxons,   only: %i[index show], id: /.+/
         get '/stores/:code', to: 'stores#show', as: :store
 
-        resources :menus, only: %i[index]
-        get '/menus/:location', to: 'menus#show', as: :menu
+        resources :menus, only: %i[index show]
 
         resources :cms_pages, only: %i[index show], path: '/pages'
       end
