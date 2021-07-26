@@ -429,6 +429,7 @@ module Spree
         Please use `Spree::Cart::Empty.call(order: order)` instead.
       DEPRECATION
 
+      raise Spree.t(:cannot_empty_completed_order) if completed?
       result = Spree::Dependencies.cart_empty_service.constantize.call(order: self)
       result.value
     end
