@@ -637,20 +637,20 @@ paths:
   /api/v2/storefront/cart:
     delete:
       description: |-
-        Destroys current Order.
+        Deletes Cart.
         Endpoint can be called after PATCH /api/v2/storefront/cart/empty, or individually.
-        Shipments are canceled, payments are voided, then Line Items, Shipments & Payments are destroyed.
+        Shipments are canceled, payments are voided, then Line Items, Shipments & Payments are deleted.
       tags:
-        - Order
-      operationId: Destroy Order
+        - Cart
+      operationId: Deletes Cart
       responses:
         '204':
-          description: Current Order has been removed.
+          description: Current Cart has been removed.
         '404':
           $ref: '#/components/responses/404NotFound'
       security:
         - bearerAuth: [ ]
-      summary: Destroy Order
+      summary: Deletes Cart
   /api/v2/storefront/cart/apply_coupon_code:
     patch:
       description: Applies a coupon code to the Cart
