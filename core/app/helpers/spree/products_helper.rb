@@ -46,7 +46,7 @@ module Spree
 
     # converts line breaks in product description into <p> tags (for html display purposes)
     def product_description(product)
-      description = if Spree::Config[:show_raw_product_description]
+      description = if Spree::Config[:show_raw_product_description] || Spree::Config[:use_rte_for_product_description]
                       product.description
                     else
                       product.description.to_s.gsub(/(.*?)\r?\n\r?\n/m, '<p>\1</p>')
