@@ -5,14 +5,11 @@ module Spree
         class OrdersController < ResourceController
           include Spree::Api::V2::Storefront::OrderConcern
 
-          ORDER_WRITE_ACTIONS = %i[create update destroy advance
-                                   next add_item complete remove_line_item]
+          ORDER_WRITE_ACTIONS = %i[create update destroy advance next complete]
 
           before_action -> { doorkeeper_authorize! :write, :admin }, only: ORDER_WRITE_ACTIONS
-          before_action :load_order_with_lock, only: %i[next advance complete update
-                                                        add_item empty remove_line_item
-                                                        apply_coupon_code set_quantity
-                                                        remove_coupon_code approve]
+          before_action :load_order_with_lock, only: %i[next advance complete update empty approve
+                                                        apply_coupon_code remove_coupon_code ]
 
           def create
             spree_authorize! :create, Spree::Order
@@ -75,7 +72,6 @@ module Spree
             result = update_service.call(
               order: @order,
               params: params,
-              # defined in https://github.com/spree/spree/blob/master/core/lib/spree/core/controller_helpers/strong_parameters.rb#L19
               permitted_attributes: permitted_checkout_attributes,
               request_env: request.headers.env
             )
@@ -129,7 +125,7 @@ module Spree
           end
 
           def load_order(lock: false)
-            @order = Spree::Order.lock(lock).find_by!(number: params[:id])
+            @order = current_store.orders.lock(lock).find_by!(number: params[:id])
           end
 
           def load_order_with_lock
@@ -140,18 +136,10 @@ module Spree
             @spree_current_order ||= @order
           end
 
-          def load_variant
-            @variant = Spree::Variant.find(params[:variant_id])
-          end
-
           def load_user
             @user = if params[:user_id]
                       Spree::User.find(params[:user_id])
                     end
-          end
-
-          def line_item
-            @line_item ||= @order.line_items.find(params[:line_item_id])
           end
 
           def set_order_currency
@@ -170,14 +158,6 @@ module Spree
             Spree::Api::Dependencies.platform_order_create_service.constantize
           end
 
-          def add_item_service
-            Spree::Api::Dependencies.platform_order_add_item_service.constantize
-          end
-
-          def remove_line_item_service
-            Spree::Api::Dependencies.platform_order_remove_line_item_service.constantize
-          end
-
           def next_service
             Spree::Api::Dependencies.platform_order_next_service.constantize
           end
@@ -186,24 +166,12 @@ module Spree
             Spree::Api::Dependencies.platform_order_advance_service.constantize
           end
 
-          def add_store_credit_service
-            Spree::Api::Dependencies.platform_order_add_store_credit_service.constantize
-          end
-
-          def remove_store_credit_service
-            Spree::Api::Dependencies.platform_order_remove_store_credit_service.constantize
-          end
-
           def complete_service
             Spree::Api::Dependencies.platform_order_complete_service.constantize
           end
 
           def update_service
             Spree::Api::Dependencies.platform_order_update_service.constantize
-          end
-
-          def set_item_quantity_service
-            Spree::Api::Dependencies.platform_order_set_item_quantity_service.constantize
           end
 
           def coupon_handler

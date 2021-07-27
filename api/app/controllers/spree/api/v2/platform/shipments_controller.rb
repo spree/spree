@@ -139,7 +139,7 @@ module Spree
           end
 
           def find_and_update_shipment
-            @shipment = Spree::Shipment.find_by!(number: params[:id])
+            @shipment = current_store.shipments.find_by!(number: params[:id])
             @shipment.update(shipment_params)
             @shipment.reload
           end

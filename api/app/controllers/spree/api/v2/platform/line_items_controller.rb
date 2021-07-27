@@ -27,7 +27,13 @@ module Spree
           end
 
           def destroy
-            remove_item_service.call(order: @order, line_item: @line_item)
+            spree_authorize! :update, @order
+
+            remove_line_item_service.call(
+              order: @order,
+              line_item: @line_item
+            )
+
             render_serialized_payload { @line_item }
           end
 
@@ -38,15 +44,15 @@ module Spree
           end
 
           def add_item_service
-            Spree::Api::Dependencies.platform_line_item_add_item_service.constantize
+            Spree::Api::Dependencies.platform_line_item_add_service.constantize
           end
 
-          def remove_item_service
-            Spree::Dependencies.cart_remove_line_item_service.constantize
+          def remove_line_item_service
+            Spree::Api::Dependencies.platform_line_item_remove_service.constantize
           end
 
           def adjust_quantity_service
-            Spree::Api::Dependencies.platform_line_item_set_item_quantity_service.constantize
+            Spree::Api::Dependencies.platform_line_item_set_quantity_service.constantize
           end
 
           def render_line_item(result)
@@ -58,7 +64,7 @@ module Spree
           end
 
           def find_order
-            @order ||= Spree::Order.includes(:line_items).find_by!(number: params[:order_id])
+            @order ||= current_store.orders.includes(:line_items).find_by!(number: params[:order_id])
             spree_authorize! :update, @order
           end
 

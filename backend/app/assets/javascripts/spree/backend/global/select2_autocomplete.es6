@@ -36,6 +36,8 @@
 document.addEventListener('DOMContentLoaded', function() {
   const select2Autocompletes = document.querySelectorAll('select.select2autocomplete')
   select2Autocompletes.forEach(element => buildParamsFromDataAttrs(element))
+
+  loadAutoCompleteParams()
 })
 
 // eslint-disable-next-line no-unused-vars

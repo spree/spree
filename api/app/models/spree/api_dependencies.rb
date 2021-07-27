@@ -73,12 +73,12 @@ module Spree
       # Platform API v2 #
       ###################
       # Order
-      :platform_order_create_service, :platform_order_remove_line_item_service, :platform_order_next_service,
-      :platform_order_advance_service, :platform_order_complete_service, :platform_order_update_service,
+      :platform_order_create_service, :platform_order_next_service, :platform_order_advance_service, :platform_order_complete_service,
+      :platform_order_update_service,
 
       #
       # Line Item
-      :platform_line_item_add_item_service, :platform_line_item_set_item_quantity_service,
+      :platform_line_item_remove_service, :platform_line_item_add_service, :platform_line_item_set_quantity_service,
 
       # Coupon
       :platform_coupon_handler
@@ -96,7 +96,6 @@ module Spree
     def set_platform_defaults
       # Order Services
       @platform_order_create_service = Spree::Dependencies.cart_create_service
-      @platform_order_remove_line_item_service = Spree::Dependencies.cart_remove_line_item_service
       @platform_order_next_service = Spree::Dependencies.checkout_next_service
       @platform_order_advance_service = Spree::Dependencies.checkout_advance_service
       @platform_order_complete_service = Spree::Dependencies.checkout_complete_service
@@ -104,8 +103,9 @@ module Spree
       @platform_order_set_item_quantity_service = Spree::Dependencies.cart_set_item_quantity_service
 
       # Line Item
-      @platform_line_item_add_item_service = Spree::Dependencies.cart_add_item_service
-      @platform_line_item_set_item_quantity_service = Spree::Dependencies.cart_set_item_quantity_service
+      @platform_line_item_remove_service = Spree::Dependencies.cart_remove_line_item_service
+      @platform_line_item_add_service = Spree::Dependencies.cart_add_item_service
+      @platform_line_item_set_quantity_service = Spree::Dependencies.cart_set_item_quantity_service
 
       # Coupon Code Handler
       @platform_coupon_handler = Spree::Dependencies.coupon_handler

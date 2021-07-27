@@ -6,9 +6,10 @@ module Spree
           before_action -> { doorkeeper_authorize! :write, :admin }, only: WRITE_ACTIONS << :reposition
 
           def reposition
+            @moved_section = scope.find(params[:section_id])
+
             spree_authorize! :update, @moved_section if spree_current_user.present?
 
-            @moved_section = scope.find(params[:section_id])
             new_index = params[:new_position_idx].to_i + 1
 
             if @moved_section && new_index
