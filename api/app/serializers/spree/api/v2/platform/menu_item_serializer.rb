@@ -15,6 +15,7 @@ module Spree
           belongs_to :parent, record_type: :menu_item, serializer: :menu_item
           belongs_to :linked_resource, polymorphic: true
           has_many   :children, record_type: :menu_item, serializer: :menu_item
+        end
       end
     end
   end
