@@ -3,10 +3,15 @@ module Spree
     ATTRIBUTES = [
       :address_attributes,
       :checkout_attributes,
+      :classification_attributes,
+      :cms_page_attributes,
+      :cms_section_attributes,
       :customer_return_attributes,
       :image_attributes,
       :inventory_unit_attributes,
       :line_item_attributes,
+      :menu_attributes,
+      :menu_item_attributes,
       :option_type_attributes,
       :option_value_attributes,
       :payment_attributes,
@@ -24,20 +29,18 @@ module Spree
       :taxon_attributes,
       :taxonomy_attributes,
       :user_attributes,
-      :variant_attributes,
-      :cms_page_attributes,
-      :cms_section_attributes
+      :variant_attributes
     ]
 
-    mattr_reader *ATTRIBUTES
+    mattr_reader(*ATTRIBUTES)
 
     @@address_attributes = [
       :id, :firstname, :lastname, :first_name, :last_name,
       :address1, :address2, :city, :country_iso, :country_id, :state_id,
       :zipcode, :phone, :state_name, :alternative_phone, :company,
       :user_id, :deleted_at, :label,
-      country: [:iso, :name, :iso3, :iso_name],
-      state: [:name, :abbr]
+      { country: [:iso, :name, :iso3, :iso_name],
+        state: [:name, :abbr] }
     ]
 
     @@checkout_attributes = [
@@ -53,13 +56,20 @@ module Spree
 
     @@cms_section_attributes = [:name, :content, :settings, :fit, :destination]
 
-    @@customer_return_attributes = [:stock_location_id, return_items_attributes: [:id, :inventory_unit_id, :return_authorization_id, :returned, :pre_tax_amount, :acceptance_status, :exchange_variant_id, :resellable]]
+    @@customer_return_attributes = [:stock_location_id, {
+      return_items_attributes: [:id, :inventory_unit_id, :return_authorization_id, :returned, :pre_tax_amount, :acceptance_status, :exchange_variant_id, :resellable]
+    }]
 
     @@image_attributes = [:alt, :attachment, :position, :viewable_type, :viewable_id]
 
     @@inventory_unit_attributes = [:shipment, :shipment_id, :variant_id]
 
     @@line_item_attributes = [:id, :variant_id, :quantity]
+
+    @@menu_attributes = [:name, :location, :locale, :store_id]
+
+    @@menu_item_attributes = [:name, :subtitle, :destination, :new_window, :item_type, :code, :parent_id,
+                              :linked_resource_type, :linked_resource_id, :menu_id, :lft, :rgt, :depth]
 
     @@option_type_attributes = [:name, :presentation, :option_values_attributes]
 
@@ -75,7 +85,7 @@ module Spree
       :option_values_hash, :weight, :height, :width, :depth,
       :shipping_category_id, :tax_category_id,
       :cost_currency, :cost_price, :compare_at_price,
-      option_type_ids: [], taxon_ids: []
+      { option_type_ids: [], taxon_ids: [] }
     ]
 
     @@property_attributes = [:name, :presentation]
@@ -130,7 +140,7 @@ module Spree
       :position, :track_inventory,
       :product_id, :product, :option_values_attributes, :price, :compare_at_price,
       :weight, :height, :width, :depth, :sku, :cost_currency,
-      options: [:name, :value], option_value_ids: []
+      { options: [:name, :value], option_value_ids: [] }
     ]
   end
 end
