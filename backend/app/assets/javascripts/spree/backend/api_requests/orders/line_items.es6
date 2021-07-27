@@ -4,7 +4,7 @@
 
 //
 // BUILD URI
-const ordersLineItemsUri = (lineItemId = '') => `${Spree.routes.orders_api_v2}/${order_number}/line_items/${lineItemId}`
+const ordersLineItemsUri = (lineItemId = '') => `${Spree.routes.line_items_api_v2}/${lineItemId}`
 
 //
 // POST -> Create Line Item
@@ -13,6 +13,7 @@ const addLineItem = (variantId, quantity) => {
 
   showProgressIndicator()
   const data = {
+    order_id: order_number,
     variant_id: parseInt(variantId, 10),
     quantity: parseInt(quantity, 10)
   }
@@ -23,7 +24,13 @@ const addLineItem = (variantId, quantity) => {
     body: JSON.stringify(data)
   })
     .then((response) => spreeHandleResponse(response)
-      .then(window.Spree.advanceOrder()))
+      .then((data) => {
+        if (response.ok) {
+          window.Spree.advanceOrder()
+        } else {
+          show_flash('info', data.error)
+        }
+      }))
     .catch(err => console.log(err))
 }
 
@@ -41,6 +48,7 @@ const adjustLineItemQuantity = function(lineItemId, quantity) {
 
   showProgressIndicator()
   const data = {
+    order_id: order_number,
     quantity: parseInt(quantity, 10)
   }
 
@@ -50,7 +58,13 @@ const adjustLineItemQuantity = function(lineItemId, quantity) {
     body: JSON.stringify(data)
   })
     .then((response) => spreeHandleResponse(response)
-      .then(window.Spree.advanceOrder()))
+      .then((data) => {
+        if (response.ok) {
+          window.Spree.advanceOrder()
+        } else {
+          show_flash('info', data.error)
+        }
+      }))
     .catch(err => console.log(err))
 }
 
@@ -59,12 +73,22 @@ const adjustLineItemQuantity = function(lineItemId, quantity) {
 const deleteLineItem = function(lineItemId) {
   const formattedLineItemId = parseInt(lineItemId, 10)
   showProgressIndicator()
+  const data = {
+    order_id: order_number
+  }
 
   fetch(ordersLineItemsUri(formattedLineItemId), {
     method: 'DELETE',
-    headers: Spree.apiV2Authentication()
+    headers: Spree.apiV2Authentication(),
+    body: JSON.stringify(data)
   })
     .then((response) => spreeHandleResponse(response)
-      .then(window.Spree.advanceOrder()))
+      .then((data) => {
+        if (response.ok) {
+          window.Spree.advanceOrder()
+        } else {
+          show_flash('info', data.error)
+        }
+      }))
     .catch(err => console.log(err))
 }

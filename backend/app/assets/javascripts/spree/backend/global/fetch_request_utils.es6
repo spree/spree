@@ -34,10 +34,9 @@ const animateCSS = (element, animation, speed, prefix = 'animate__') =>
     node.addEventListener('animationend', handleAnimationEnd, { once: true })
   })
 
-const spreeHandleResponse = function(response, handleError = true) {
+const spreeHandleResponse = function(response, handleError = false) {
   hideProgressIndicator()
 
   if (!response.ok && handleError === true) show_flash('info', response.statusText)
-
   return response.json()
 }

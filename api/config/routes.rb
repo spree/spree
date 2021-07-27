@@ -221,8 +221,6 @@ Spree::Core::Engine.add_routes do
             put     :cancel
             put     :empty
           end
-          # Line Item API
-          resources :line_items
         end
 
         # Payment API
@@ -235,6 +233,9 @@ Spree::Core::Engine.add_routes do
             put :credit
           end
         end
+
+        # Line Item API
+        resources :line_items
 
         # Shipment API
         resources :shipments do

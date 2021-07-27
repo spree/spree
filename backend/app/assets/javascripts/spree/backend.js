@@ -89,8 +89,9 @@ Spree.routes.stock_items_api = function (stockLocationId) {
 }
 
 // API v2
-Spree.routes.countries_api_v2 = Spree.pathFor('api/v2/platform/countries')
 Spree.routes.classifications_api_v2 = Spree.pathFor('api/v2/platform/classifications')
+Spree.routes.countries_api_v2 = Spree.pathFor('api/v2/platform/countries')
+Spree.routes.line_items_api_v2 = Spree.pathFor('api/v2/platform/line_items')
 Spree.routes.menus_api_v2 = Spree.pathFor('api/v2/platform/menus')
 Spree.routes.menus_items_api_v2 = Spree.pathFor('api/v2/platform/menu_items')
 Spree.routes.option_types_api_v2 = Spree.pathFor('api/v2/platform/option_types')
