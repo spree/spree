@@ -13,7 +13,7 @@ module Spree
     protected
 
     def destroy_associated_product
-      return unless Spree::StoreProduct.where(product_id: product.id).not(store_id: store.id).any?
+      return if Spree::StoreProduct.where.not(store_id: store.id).exists?(product_id: product.id)
 
       product.destroy!
     end
