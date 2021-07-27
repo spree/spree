@@ -2,58 +2,102 @@
 /* global variantLineItemTemplate */
 
 document.addEventListener('DOMContentLoaded', function() {
-  // Handle variant selection, show stock level.
-  $('#add_line_item_variant_id').change(function () {
-    var variantId = $(this).val()
+  $('#add_line_item_variant_id').change(handleVariantSelection)
 
-    var variant = _.find(window.variants, function (variant) {
-      return variant.id === variantId
+  //
+  // Handle edit click
+  const editLineItemButtons = document.querySelectorAll('a.edit-line-item')
+  if (editLineItemButtons == null) return
+
+  editLineItemButtons.forEach(function(el) {
+    el.addEventListener('click', function(event) {
+      event.preventDefault()
+
+      toggleLineItemEdit(el)
     })
-    $('#stock_details').html(variantLineItemTemplate({ variant: variant.attributes }))
-    $('#stock_details').show()
-    $('button.add_variant').click(addVariant)
   })
 
-  // handle edit click
-  $('a.edit-line-item').click(toggleLineItemEdit)
+  //
+  // Handle cancel click
+  const cancelLineItemButtons = document.querySelectorAll('a.cancel-line-item')
+  if (cancelLineItemButtons == null) return
 
-  // handle cancel click
-  $('a.cancel-line-item').click(toggleLineItemEdit)
+  cancelLineItemButtons.forEach(function(el) {
+    el.addEventListener('click', function(event) {
+      event.preventDefault()
 
-  // handle save click
-  $('a.save-line-item').click(function () {
-    var save = $(this)
-    var lineItemId = save.data('line-item-id')
-    var quantity = parseInt(save.parents('tr').find('input.line_item_quantity').val(), 10)
-    adjustLineItemQuantity(lineItemId, quantity)
+      toggleLineItemEdit(el)
+    })
   })
 
-  // handle delete click
-  $('a.delete-line-item').click(function () {
-    if (confirm(Spree.translations.are_you_sure_delete)) {
-      var del = $(this)
-      var lineItemId = del.data('line-item-id')
-      deleteLineItem(lineItemId)
-    }
+  //
+  // Handle save click
+  const saveLineItemButtons = document.querySelectorAll('a.save-line-item')
+  if (saveLineItemButtons == null) return
+
+  saveLineItemButtons.forEach(function(el) {
+    el.addEventListener('click', function(event) {
+      event.preventDefault()
+
+      const qty = el.closest('tr').querySelector('input.line_item_quantity').value
+      const lineItemId = parseInt(el.dataset.lineItemId, 10)
+      const quantity = parseInt(qty, 10)
+
+      adjustLineItemQuantity(lineItemId, quantity)
+    })
+  })
+
+  //
+  // Handle delete click
+  const deleteLineItemButtons = document.querySelectorAll('a.delete-line-item')
+  if (deleteLineItemButtons == null) return
+
+  deleteLineItemButtons.forEach(function(el) {
+    el.addEventListener('click', function(event) {
+      event.preventDefault()
+
+      if (confirm(Spree.translations.are_you_sure_delete)) {
+        const lineItemId = parseInt(el.dataset.lineItemId, 10)
+        deleteLineItem(lineItemId)
+      }
+    })
   })
 })
 
+//
 // Add line Item to order
-function addVariant () {
-  var variantId = $('select.variant_autocomplete').val()
-  var quantity = $('input#variant_quantity').val()
+const addVariant = function () {
+  const variantId = document.querySelector('select.variant_autocomplete').value
+  const quantity = document.querySelector('input#variant_quantity').value
 
   addLineItem(variantId, quantity)
 }
 
-function toggleLineItemEdit () {
-  var link = $(this)
-  var parent = link.parent()
-  var tr = link.parents('tr')
-  parent.find('a.edit-line-item').toggle()
-  parent.find('a.cancel-line-item').toggle()
-  parent.find('a.save-line-item').toggle()
-  parent.find('a.delete-line-item').toggle()
-  tr.find('td.line-item-qty-show').toggle()
-  tr.find('td.line-item-qty-edit').toggle()
+//
+// Toggle line item edit
+const toggleLineItemEdit = function (el) {
+  const parent = el.closest('tr')
+
+  parent.querySelector('a.edit-line-item').classList.toggle('is-hidden')
+  parent.querySelector('a.cancel-line-item').classList.toggle('is-hidden')
+  parent.querySelector('a.save-line-item').classList.toggle('is-hidden')
+  parent.querySelector('a.delete-line-item').classList.toggle('is-hidden')
+  parent.querySelector('td.line-item-qty-show').classList.toggle('is-hidden')
+  parent.querySelector('td.line-item-qty-edit').classList.toggle('is-hidden')
+}
+
+//
+// Adds selected variant to page.
+const handleVariantSelection = function () {
+  const variantId = this.value
+
+  const variant = _.find(window.variants, function (variant) {
+    return variant.id === variantId
+  })
+
+  const stockDetails = document.querySelector('#stock_details')
+  stockDetails.innerHTML = variantLineItemTemplate({ variant: variant.attributes })
+
+  const addVariantButton = document.querySelector('button.add_variant')
+  addVariantButton.addEventListener('click', addVariant)
 }

@@ -3,7 +3,7 @@ module Spree
     module V2
       module Platform
         class LineItemsController < ResourceController
-          before_action :find_order, only: [:create, :update, :destroy]
+          before_action :find_order, only: [:new, :create, :update, :destroy]
           before_action :find_line_item, only: [:update, :destroy]
 
           def create

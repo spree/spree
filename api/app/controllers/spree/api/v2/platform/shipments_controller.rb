@@ -133,8 +133,9 @@ module Spree
             @original_shipment         = Spree::Shipment.find_by!(number: params[:original_shipment_number])
             @variant                   = Spree::Variant.find(params[:variant_id])
             @quantity                  = params[:quantity].to_i
-            authorize! :show, @original_shipment
-            authorize! :create, Shipment
+
+            spree_authorize! :show, @original_shipment
+            spree_authorize! :create, Shipment
           end
 
           def find_and_update_shipment
