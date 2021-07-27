@@ -7,7 +7,7 @@ module Spree
         attributes :title, :content, :locale, :meta_description, :meta_title,
                    :slug, :type
 
-        has_many :cms_sections
+        has_many :cms_sections, serializer: :cms_section
       end
     end
   end

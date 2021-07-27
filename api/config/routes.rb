@@ -165,8 +165,7 @@ Spree::Core::Engine.add_routes do
         get '/stores/:code', to: 'stores#show', as: :store
 
         resources :menus, only: %i[index show]
-
-        resources :cms_pages, only: %i[index show], path: '/pages'
+        resources :cms_pages, only: %i[index show]
       end
 
       namespace :platform do

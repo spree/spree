@@ -22,7 +22,10 @@ module Spree
     scope :visible, -> { where(visible: true) }
     scope :by_locale, ->(locale) { where(locale: locale) }
     scope :by_slug, ->(slug) { where(slug: slug) }
-    scope :linkable, -> { where.not(slug: nil, type: 'Spree::Cms::Pages::Homepage') }
+
+    scope :home, -> { where(type: 'Spree::Cms::Pages::Homepage') }
+    scope :standard, -> { where(type: 'Spree::Cms::Pages::StandardPage') }
+    scope :feature, -> { where(type: 'Spree::Cms::Pages::FeaturePage') }
 
     self.whitelisted_ransackable_attributes = %w[title type locale store_id]
 

@@ -74,7 +74,7 @@ module Spree
     def set_default_finders
       @address_finder = 'Spree::Addresses::Find'
       @country_finder = 'Spree::Countries::Find'
-      @cms_page_finder_finder = 'Spree::CmsPage::Find'
+      @cms_page_finder = 'Spree::CmsPages::Find'
       @menu_finder = 'Spree::Menus::Find'
       @current_order_finder = 'Spree::Orders::FindCurrent'
       @current_store_finder = 'Spree::Stores::FindCurrent'

@@ -21,8 +21,18 @@ module Spree
             Spree::Api::Dependencies.storefront_cms_page_serializer.constantize
           end
 
+          def collection_finder
+            Spree::Api::Dependencies.storefront_cms_page_finder.constantize
+          end
+
           def scope
-            super.by_locale(I18n.locale).linkable
+            super.by_locale(I18n.locale)
+          end
+
+          def scope_includes
+            {
+              cms_sections: :linked_resource
+            }
           end
         end
       end

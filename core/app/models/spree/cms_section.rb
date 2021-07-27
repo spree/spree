@@ -1,6 +1,6 @@
 module Spree
-  class CmsSection < Spree::Base
-    include Spree::DisplayLink
+  class CmsSection < Base
+    include DisplayLink
 
     acts_as_list scope: :cms_page
     belongs_to :cms_page, touch: true

@@ -100,7 +100,7 @@ describe Spree::CmsPage, type: :model do
     end
   end
 
-  describe 'by_locale' do
+  describe '.by_locale' do
     let!(:homepage_en) { create(:cms_homepage, store: store_a, locale: 'en') }
     let!(:homepage_de) { create(:cms_homepage, store: store_a, locale: 'de') }
 
@@ -111,7 +111,7 @@ describe Spree::CmsPage, type: :model do
     end
   end
 
-  describe 'by_slug' do
+  describe '.by_slug' do
     let!(:standard_page_slug_a) { create(:cms_standard_page, store: store_a, title: 'Little Page') }
     let!(:standard_page_slug_b) { create(:cms_standard_page, store: store_a, title: 'Big Page') }
 
@@ -119,19 +119,6 @@ describe Spree::CmsPage, type: :model do
       result_slug_a = described_class.find(standard_page_slug_a.id)
 
       expect(described_class.by_slug('little-page')).to eq([result_slug_a])
-    end
-  end
-
-  describe 'linkable' do
-    let!(:homepage_not_linkable) { create(:cms_homepage, store: store_a, title: 'homepage-a') }
-    let!(:feature_page_linkable) { create(:cms_feature_page, title: 'This New Product', store: store_a) }
-    let!(:standard_page_linkable) { create(:cms_standard_page, store: store_a, title: 'Big Page') }
-
-    it 'returns standard_page_slug_a for the requested locale' do
-      result_feature_page_linkable = described_class.find(feature_page_linkable.id)
-      result_standard_page_linkable = described_class.find(standard_page_linkable.id)
-
-      expect(described_class.linkable).to eq([result_feature_page_linkable, result_standard_page_linkable])
     end
   end
 
