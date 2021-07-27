@@ -68,7 +68,7 @@ $(document).ready(function() {
           el.closest('.removable-dom-element').fadeOut('hide', function() {
             $(this).remove()
           })
-          const livePreview = document.getElementById('pageLivePreview')
+          var livePreview = document.getElementById('pageLivePreview')
           if (livePreview) { livePreview.contentWindow.location.reload() }
         }
       }).fail(function(response) {
