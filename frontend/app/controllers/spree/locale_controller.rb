@@ -1,5 +1,7 @@
 module Spree
   class LocaleController < Spree::StoreController
+    REDIRECT_TO_ROOT = /\/(#{Spree::Config[:storefront_pages_path]})\//.freeze
+
     def index
       render :index, layout: false
     end
@@ -25,7 +27,11 @@ module Spree
     private
 
     def should_build_new_url?
-      request.env['HTTP_REFERER'].present? && request.env['HTTP_REFERER'] != request.env['REQUEST_URI']
+      if request.env['HTTP_REFERER'].match(REDIRECT_TO_ROOT)
+        false
+      else
+        request.env['HTTP_REFERER'].present? && request.env['HTTP_REFERER'] != request.env['REQUEST_URI']
+      end
     end
   end
 end

@@ -10,6 +10,7 @@
 //= require rails-ujs
 //= require sortable
 //= require sweetalert2
+//= require tinymce
 //= require underscore-min.js
 
 // 3rd party JavaScript libraries requiring jQuery

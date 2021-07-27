@@ -53,6 +53,9 @@ module Spree
       # Variant
       :storefront_find_by_variant_finder,
 
+      # CMS Pages
+      :storefront_cms_page_serializer, :storefront_cms_page_finder,
+
       # Shipping
       :storefront_cart_estimate_shipping_rates_service, :storefront_estimated_shipment_serializer,
 
@@ -134,6 +137,7 @@ module Spree
       # serializers
       @storefront_address_serializer = 'Spree::V2::Storefront::AddressSerializer'
       @storefront_cart_serializer = 'Spree::V2::Storefront::CartSerializer'
+      @storefront_cms_page_serializer = 'Spree::V2::Storefront::CmsPageSerializer'
       @storefront_credit_card_serializer = 'Spree::V2::Storefront::CreditCardSerializer'
       @storefront_country_serializer = 'Spree::V2::Storefront::CountrySerializer'
       @storefront_menu_serializer = 'Spree::V2::Storefront::MenuSerializer'
@@ -157,6 +161,7 @@ module Spree
       # finders
       @storefront_address_finder = Spree::Dependencies.address_finder
       @storefront_country_finder = Spree::Dependencies.country_finder
+      @storefront_cms_page_finder = Spree::Dependencies.cms_page_finder
       @storefront_menu_finder = Spree::Dependencies.menu_finder
       @storefront_current_order_finder = Spree::Dependencies.current_order_finder
       @storefront_completed_order_finder = Spree::Dependencies.completed_order_finder

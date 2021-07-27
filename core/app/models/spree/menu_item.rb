@@ -8,7 +8,8 @@ module Spree
     belongs_to :linked_resource, polymorphic: true
 
     before_create :ensure_item_belongs_to_root
-    before_save :reset_link_attributes, :paremeterize_code
+    before_update :reset_link_attributes
+    before_save :paremeterize_code
 
     after_save :touch_ancestors_and_menu
     after_touch :touch_ancestors_and_menu
@@ -17,13 +18,12 @@ module Spree
 
     LINKED_RESOURCE_TYPE = ['URL']
     STATIC_RESOURCE_TYPE = ['Home Page']
-    DYNAMIC_RESOURCE_TYPE = ['Spree::Product', 'Spree::Taxon']
+    DYNAMIC_RESOURCE_TYPE = ['Spree::Product', 'Spree::Taxon', 'Spree::CmsPage']
 
     LINKED_RESOURCE_TYPE.unshift(*STATIC_RESOURCE_TYPE)
     LINKED_RESOURCE_TYPE.push(*DYNAMIC_RESOURCE_TYPE)
 
-    validates :name, presence: true
-    validates :menu, presence: true
+    validates :name, :menu, presence: true
     validates :item_type, inclusion: { in: ITEM_TYPE }
     validates :linked_resource_type, inclusion: { in: LINKED_RESOURCE_TYPE }
 
