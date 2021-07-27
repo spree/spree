@@ -13,6 +13,9 @@
 //= require jquery-ui/widgets/autocomplete
 //= require select2-full
 //= require sweetalert2
+//= require tinymce
+//= require spree/backend/global/tinymce
+
 //= require underscore-min.js
 //= require jsonapi-serializer.min
 
@@ -93,7 +96,9 @@ Spree.routes.menus_api_v2 = Spree.pathFor('api/v2/platform/menus')
 Spree.routes.menus_items_api_v2 = Spree.pathFor('api/v2/platform/menu_items')
 Spree.routes.option_types_api_v2 = Spree.pathFor('api/v2/platform/option_types')
 Spree.routes.option_values_api_v2 = Spree.pathFor('api/v2/platform/option_values')
+Spree.routes.pages_api_v2 = Spree.pathFor('api/v2/platform/cms_pages')
 Spree.routes.products_api_v2 = Spree.pathFor('/api/v2/platform/products')
+Spree.routes.sections_api_v2 = Spree.pathFor('/api/v2/platform/cms_sections')
 Spree.routes.taxons_api_v2 = Spree.pathFor('/api/v2/platform/taxons')
 Spree.routes.users_api_v2 = Spree.pathFor('api/v2/platform/users')
 

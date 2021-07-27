@@ -1,0 +1,171 @@
+<% if section.fullscreen? %>
+  <% if section.default_layout? %>
+    <% section_one_padding = 'pl-3' %>
+    <% section_two_padding = 'pr-3' %>
+  <% else %>
+    <% section_one_padding = 'pr-3 order-2' %>
+    <% section_two_padding = 'pl-3 order-1' %>
+  <% end %>
+<% else %>
+  <% if section.default_layout? %>
+    <% section_one_padding = '' %>
+    <% section_two_padding = '' %>
+  <% else %>
+    <% section_one_padding = 'order-2' %>
+    <% section_two_padding = 'order-1' %>
+  <% end %>
+<% end %>
+
+<% if section.show_labels? %>
+  <% labels_class = 'homepage-taxon-box-text' %>
+<% else %>
+  <% labels_class = 'd-none' %>
+<% end %>
+
+<% if section.link_one.present? && section.link_type_one == 'Spree::Taxon' %>
+  <% link_one = spree.nested_taxons_path(section.link_one) %>
+  <% link_one_classes = 'homepage-taxon-box bg-light' %>
+<% elsif section.link_one.present? && section.link_type_one == 'Spree::Product' %>
+  <% link_one = spree.product_path(section.link_one) %>
+  <% link_one_classes = 'homepage-taxon-box bg-light' %>
+<% else %>
+  <% link_one = nil %>
+  <% link_one_classes = 'homepage-taxon-box bg-light pointer-events-none cursor-default' %>
+<% end %>
+
+<% if section.link_two.present? && section.link_type_two == 'Spree::Taxon' %>
+  <% link_two = spree.nested_taxons_path(section.link_two) %>
+  <% link_two_classes = 'homepage-taxon-box bg-light' %>
+<% elsif section.link_two.present? && section.link_type_two == 'Spree::Product' %>
+  <% link_two = spree.product_path(section.link_two) %>
+  <% link_two_classes = 'homepage-taxon-box bg-light' %>
+<% else %>
+  <% link_two = nil %>
+  <% link_two_classes = 'homepage-taxon-box bg-light pointer-events-none cursor-default' %>
+<% end %>
+
+<% if section.link_three.present? && section.link_type_three == 'Spree::Taxon' %>
+  <% link_three = spree.nested_taxons_path(section.link_three) %>
+  <% link_three_classes = 'homepage-taxon-box bg-light' %>
+<% elsif section.link_three.present? && section.link_type_three == 'Spree::Product' %>
+  <% link_three = spree.product_path(section.link_three) %>
+  <% link_three_classes = 'homepage-taxon-box bg-light' %>
+<% else %>
+  <% link_three = nil %>
+  <% link_three_classes = 'homepage-taxon-box bg-light pointer-events-none cursor-default' %>
+<% end %>
+
+<!-- Left Block -->
+<div class="col-6 <%= section_one_padding %>">
+
+  <!-- Top Left Block SQUARE -->
+  <!-- margin-bottom: 3.7% is important for keeping the bottom of the sections aligned -->
+  <div class="row" style="margin-bottom: 3.7%;">
+    <div class="col-12">
+
+      <%= link_to link_one, class: link_one_classes, style: '--aspect-ratio:18/13;' do %>
+        <% if section.image_one.attached? && section.image_one.variable? %>
+
+            <!-- XS to MD -->
+            <img class="d-md-none lazyload"
+              data-src="<%= main_app.url_for(section.img_one_md) %>"
+              data-srcset="<%= main_app.url_for(section.img_one_md) %>"
+              alt="<%= section&.title_one %>">
+
+            <!-- MD to XL -->
+            <img class="d-none d-md-block d-xl-none lazyload"
+              data-src="<%= main_app.url_for(section.img_one_lg) %>"
+              data-srcset="<%= main_app.url_for(section.img_one_lg) %>"
+              alt="<%= section&.title_one %>">
+
+            <!-- XL UP -->
+            <img class="d-none d-xl-block lazyload"
+              data-src="<%= main_app.url_for(section.img_one_xl) %>"
+              data-srcset="<%= main_app.url_for(section.img_one_xl) %>"
+              alt="<%= section&.title_one %>">
+        <% else %>
+          <%= icon( name: 'card-image',
+                    classes: 'homepage-taxon-box text-black-50',
+                    width: 26,
+                    height: 26) %>
+        <% end %>
+        <div class="<%= labels_class %>" aria-label="<%= section&.title_one %>">
+          <h3 class="homepage-hpb"><%= section&.title_one %></h3>
+        </div>
+      <% end %>
+
+    </div>
+  </div>
+
+  <!-- Bottom Left Block SQUARE -->
+  <div class="row">
+    <div class="col-12">
+
+      <%= link_to link_three, class: link_three_classes, style: '--aspect-ratio:18/13;' do %>
+        <% if section.image_three.attached? && section.image_three.variable? %>
+
+            <!-- XS to MD -->
+            <img class="d-md-none lazyload"
+              data-src="<%= main_app.url_for(section.img_three_md) %>"
+              data-srcset="<%= main_app.url_for(section.img_three_md) %>"
+              alt="<%= section&.title_three %>">
+
+            <!-- MD to XL -->
+            <img class="d-none d-md-block d-xl-none lazyload"
+              data-src="<%= main_app.url_for(section.img_three_lg) %>"
+              data-srcset="<%= main_app.url_for(section.img_three_lg) %>"
+              alt="<%= section&.title_three %>">
+
+            <!-- XL UP -->
+            <img class="d-none d-xl-block lazyload"
+              data-src="<%= main_app.url_for(section.img_three_xl) %>"
+              data-srcset="<%= main_app.url_for(section.img_three_xl) %>"
+              alt="<%= section&.title_three %>">
+        <% else %>
+          <%= icon( name: 'card-image',
+                    classes: 'homepage-taxon-box text-black-50',
+                    width: 26,
+                    height: 26) %>
+        <% end %>
+        <div class="<%= labels_class %>" aria-label="<%= section&.title_three %>">
+          <h3 class="homepage-hpb"><%= section&.title_three %></h3>
+        </div>
+      <% end %>
+
+    </div>
+  </div>
+</div>
+
+<!-- Right Block TALL -->
+<div class="col-6 <%= section_two_padding %>">
+  <%= link_to link_two, class: link_two_classes, style: '--aspect-ratio:27/40;' do %>
+    <% if section.image_two.attached? && section.image_two.variable? %>
+
+        <!-- XS to MD -->
+        <img class="d-md-none lazyload"
+          data-src="<%= main_app.url_for(section.img_two_md) %>"
+          data-srcset="<%= main_app.url_for(section.img_two_md) %>"
+          alt="<%= section&.title_two %>">
+
+        <!-- MD to XL -->
+        <img class="d-none d-md-block d-xl-none lazyload"
+          data-src="<%= main_app.url_for(section.img_two_lg) %>"
+          data-srcset="<%= main_app.url_for(section.img_two_lg) %>"
+          alt="<%= section&.title_two %>">
+
+        <!-- XL UP -->
+        <img class="d-none d-xl-block lazyload"
+          data-src="<%= main_app.url_for(section.img_two_xl) %>"
+          data-srcset="<%= main_app.url_for(section.img_two_xl) %>"
+          alt="<%= section&.title_two %>">
+    <% else %>
+      <%= icon( name: 'file-image',
+                classes: 'homepage-taxon-box text-black-50',
+                width: 26,
+                height: 26) %>
+    <% end %>
+    <div class="<%= labels_class %>" aria-label="<%= section&.title_two %>">
+      <h3 class="homepage-hpb"><%= section&.title_two %></h3>
+    </div>
+  <% end %>
+</div>

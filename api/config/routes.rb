@@ -164,8 +164,8 @@ Spree::Core::Engine.add_routes do
         resources :taxons,   only: %i[index show], id: /.+/
         get '/stores/:code', to: 'stores#show', as: :store
 
-        resources :menus, only: %i[index]
-        get '/menus/:location', to: 'menus#show', as: :menu
+        resources :menus, only: %i[index show]
+        resources :cms_pages, only: %i[index show]
       end
 
       namespace :platform do
@@ -258,6 +258,19 @@ Spree::Core::Engine.add_routes do
         # Menu API
         resources :menus
         resource :menu_items do
+          member do
+            patch :reposition
+          end
+        end
+
+        # CMS Pages API
+        resources :cms_pages do
+          member do
+            patch :toggle_visibility
+          end
+        end
+
+        resource :cms_sections do
           member do
             patch :reposition
           end

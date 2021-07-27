@@ -1,0 +1,19 @@
+<% content_for :page_title do %>
+  <%= link_to Spree.t('admin.cms.all_pages'), spree.admin_cms_pages_path %> /
+  <%= link_to @cms_page.title, spree.edit_admin_cms_page_path(@cms_page) %> / <%= @cms_section.name %>
+<% end %>
+
+<% content_for :page_actions do %>
+<%= button_link_to(
+          Spree.t('admin.cms.go_to_fullscreen_section_manager'),
+          spree.edit_admin_cms_page_path(@cms_page) + '?section_editor_full_screen_mode=true',
+          class: 'btn-outline-secondary', icon: 'fullscreen.svg', id: 'admin_preview_product'
+        ) %>
+<% end %>
+
+<%= render partial: 'spree/admin/shared/error_messages', locals: { target: @cms_section } %>
+
+<%= form_for [:admin, @cms_page, @cms_section], as: :cms_section, url: spree.admin_cms_page_cms_section_path(@cms_page, @cms_section) do |f| %>
+  <%= render partial: 'form', locals: { f: f } %>
+  <%= render partial: 'spree/admin/shared/edit_resource_links' %>
+<% end %>
