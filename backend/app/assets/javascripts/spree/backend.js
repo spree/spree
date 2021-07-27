@@ -90,6 +90,8 @@ Spree.routes.stock_items_api = function (stockLocationId) {
 
 // API v2
 Spree.routes.classifications_api_v2 = Spree.pathFor('api/v2/platform/classifications')
+Spree.routes.cms_pages_api_v2 = Spree.pathFor('api/v2/platform/cms_pages')
+Spree.routes.cms_sections_api_v2 = Spree.pathFor('/api/v2/platform/cms_sections')
 Spree.routes.countries_api_v2 = Spree.pathFor('api/v2/platform/countries')
 Spree.routes.line_items_api_v2 = Spree.pathFor('api/v2/platform/line_items')
 Spree.routes.menus_api_v2 = Spree.pathFor('api/v2/platform/menus')

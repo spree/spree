@@ -40,7 +40,7 @@ function handleTogglePageVisibility(obj) {
     }
   }
 
-  fetch(Spree.routes.pages_api_v2 + `/${pageId}`, {
+  fetch(Spree.routes.cms_pages_api_v2 + `/${pageId}`, {
     method: 'PATCH',
     headers: {
       Authorization: 'Bearer ' + OAUTH_TOKEN,
@@ -54,7 +54,7 @@ function handleTogglePageVisibility(obj) {
         toggleVisibilityState(obj)
       } else {
         // eslint-disable-next-line no-undef
-        spreeHandleApiRequestError(response)
+        spreeHandleResponse(response)
       }
     })
     .catch(err => { console.error(err) })
@@ -88,7 +88,7 @@ function handleSectionReposition(evt) {
     new_position_idx: parseInt(evt.newIndex, 10)
   }
 
-  fetch(Spree.routes.sections_api_v2 + '/reposition', {
+  fetch(Spree.routes.cms_sections_api_v2 + '/reposition', {
     method: 'PATCH',
     headers: {
       Authorization: 'Bearer ' + OAUTH_TOKEN,
@@ -101,7 +101,7 @@ function handleSectionReposition(evt) {
         reloadPreview()
       } else {
         // eslint-disable-next-line no-undef
-        spreeHandleApiRequestError(response.status)
+        spreeHandleResponse(response)
       }
     })
     .catch(err => { console.error(err) })
