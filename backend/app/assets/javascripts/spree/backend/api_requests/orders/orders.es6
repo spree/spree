@@ -33,8 +33,14 @@ const addCoupon = function(couponCode) {
     headers: Spree.apiV2Authentication(),
     body: JSON.stringify(data)
   })
-    .then((response) => spreeHandleResponse(response)
-      .then(window.location.reload()))
+    .then((response) => spreeHandleResponse(response, true)
+      .then((data) => {
+        if (response.ok) {
+          window.location.reload()
+        } else {
+          show_flash('info', data.error)
+        }
+      }))
     .catch(err => console.log(err))
 }
 
