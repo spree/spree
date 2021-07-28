@@ -3,5 +3,6 @@ FactoryBot.define do
     name { 'Link To Somewhere' }
     item_type { 'Link' }
     linked_resource_type { 'URL' }
+    menu
   end
 end
