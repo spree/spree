@@ -22,35 +22,35 @@ module Spree
           lower_limit_condition = item_total.send(preferred_operator_min == 'gte' ? :>= : :>, BigDecimal(preferred_amount_min.to_s))
           upper_limit_condition = item_total.send(preferred_operator_max == 'lte' ? :<= : :<, BigDecimal(preferred_amount_max.to_s))
 
-          eligibility_errors.add(:base, ineligible_message_max) unless upper_limit_condition
-          eligibility_errors.add(:base, ineligible_message_min) unless lower_limit_condition
+          eligibility_errors.add(:base, ineligible_message_max(order.currency)) unless upper_limit_condition
+          eligibility_errors.add(:base, ineligible_message_min(order.currency)) unless lower_limit_condition
 
           eligibility_errors.empty?
         end
 
         private
 
-        def formatted_amount_min
-          Spree::Money.new(preferred_amount_min).to_s
+        def formatted_amount_min(currency)
+          Spree::Money.new(preferred_amount_min, currency: currency).to_s
         end
 
-        def formatted_amount_max
-          Spree::Money.new(preferred_amount_max).to_s
+        def formatted_amount_max(currency)
+          Spree::Money.new(preferred_amount_max, currency: currency).to_s
         end
 
-        def ineligible_message_max
+        def ineligible_message_max(currency)
           if preferred_operator_max == 'lt'
-            eligibility_error_message(:item_total_more_than_or_equal, amount: formatted_amount_max)
+            eligibility_error_message(:item_total_more_than_or_equal, amount: formatted_amount_max(currency))
           else
-            eligibility_error_message(:item_total_more_than, amount: formatted_amount_max)
+            eligibility_error_message(:item_total_more_than, amount: formatted_amount_max(currency))
           end
         end
 
-        def ineligible_message_min
+        def ineligible_message_min(currency)
           if preferred_operator_min == 'gte'
-            eligibility_error_message(:item_total_less_than, amount: formatted_amount_min)
+            eligibility_error_message(:item_total_less_than, amount: formatted_amount_min(currency))
           else
-            eligibility_error_message(:item_total_less_than_or_equal, amount: formatted_amount_min)
+            eligibility_error_message(:item_total_less_than_or_equal, amount: formatted_amount_min(currency))
           end
         end
       end
