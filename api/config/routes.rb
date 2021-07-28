@@ -282,6 +282,7 @@ Spree::Core::Engine.add_routes do
           end
         end
 
+        # CMS Sections API
         resource :cms_sections do
           member do
             patch :reposition

@@ -1,50 +1,66 @@
-// eslint-disable-next-line no-unused-vars
-function formatDataForVariants (jsonDataItems) {
-  jsonDataItems.forEach(item => addImagesToVariants(item))
-  jsonDataItems.forEach(item => addStockLocationNameToStockItems(item))
-  jsonDataItems.forEach(item => addAvailabiltyToStockItems(item))
+/* eslint-disable no-unused-vars */
 
-  function addImagesToVariants (obj) {
-    if (obj.type === 'variant' && obj.relationships.images.data[0]) {
-      const attachedImageId = obj.relationships.images.data[0].id
-      const imgPath = _.find(jsonDataItems, function (item) {
-        return item.type === 'image' && item.id === attachedImageId
-      })
-      obj.attributes.image_path = imgPath.attributes.styles[2].url
-    }
+function buildVariantData (json) {
+  json.data.forEach(variant => addImagesToVariants(variant, json.included))
+  json.data.forEach(variant => addStockItems(variant, json.included))
+  json.data.forEach(variant => addStockLocationToStockItem(variant.attributes.stock_items, json.included))
+
+  return json.data
+}
+
+//
+// Add image to varaint
+function addImagesToVariants (variant, included) {
+  if (variant.relationships.images.data[0] != null) {
+    const attachedImageId = variant.relationships.images.data[0].id
+    const imgPath = included.find((image) => image.type === 'image' && image.id === attachedImageId)
+
+    variant.attributes.image = imgPath.attributes.styles[2].url
   }
+}
 
-  function addStockLocationNameToStockItems (obj) {
-    if (obj.type === 'variant' && obj.relationships.stock_items.data) {
-      const stockItems = obj.attributes.stock_items
+//
+// Loop through variant -> stock_item relationships
+function addStockItems (variant, included) {
+  const stockItemsArray = []
 
-      stockItems.forEach(function (si) {
-        const stocklocationName = stockLocationName(si.stock_location_id, obj)
-        si.stock_location_name = stocklocationName
-      })
-    }
-  }
+  if (variant.relationships.stock_items != null) {
+    const stockItems = variant.relationships.stock_items.data
 
-  function stockLocationName (stockLocationId, obj) {
-    const allStockLocations = obj.attributes.stock_locations
+    stockItems.forEach(function (si) {
+      const stockItem = findStockItem(si.id, included)
 
-    const stockLocation = allStockLocations.find((location) => {
-      return location.id === stockLocationId
+      stockItemsArray.push(stockItem)
     })
-    return stockLocation.name
   }
+  variant.attributes.stock_items = stockItemsArray
+}
 
-  function addAvailabiltyToStockItems (obj) {
-    if (obj.type === 'variant' && obj.relationships.stock_items.data) {
-      const stockItems = obj.attributes.stock_items
+//
+// Find appropriate stock item
+function findStockItem (stockItemId, included) {
+  const stockItem = included.find((stockItem) => stockItem.type === 'stock_item' && stockItem.id === stockItemId)
 
-      stockItems.forEach(function (stockItem) {
-        if (stockItem.count_on_hand > 0 || stockItem.backorderable === true) {
-          stockItem.is_available = true
-        } else {
-          stockItem.is_available = false
-        }
-      })
-    }
-  }
+  return stockItem
+}
+
+//
+// Loop through stock_item relationships and add
+// stock_location details to stock_item.
+function addStockLocationToStockItem (stockItems, included) {
+  stockItems.forEach(function (si) {
+    const stockLocationId = si.relationships.stock_location.data.id
+    const stockLocation = findStockLocation(stockLocationId, included)
+
+    si.attributes.stock_location_id = stockLocation.id
+    si.attributes.stock_location_name = stockLocation.attributes.name
+  })
+}
+
+//
+// Find appropriate stock location
+function findStockLocation (stockLocationId, included) {
+  const stockLocation = included.find((stockLocation) => stockLocation.type === 'stock_location' && stockLocation.id === stockLocationId)
+
+  return stockLocation
 }

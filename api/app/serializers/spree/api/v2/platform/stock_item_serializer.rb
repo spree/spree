@@ -3,7 +3,11 @@ module Spree
     module V2
       module Platform
         class StockItemSerializer < BaseSerializer
-          attributes :is_available do |stock_item|
+          include ::Spree::Api::V2::ResourceSerializerConcern
+
+          set_type :stock_item
+
+          attribute :is_available do |stock_item|
             stock_item.available?
           end
 

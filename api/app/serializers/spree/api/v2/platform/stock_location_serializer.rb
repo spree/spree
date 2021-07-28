@@ -7,7 +7,7 @@ module Spree
 
           attributes :name
 
-          has_many :variants
+          has_many :shipments
           has_many :stock_items
         end
       end

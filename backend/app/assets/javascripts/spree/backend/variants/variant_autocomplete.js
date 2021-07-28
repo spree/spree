@@ -1,4 +1,4 @@
-/* global variantTemplate formatDataForVariants */
+/* global variantTemplate buildVariantData */
 
 $(function() {
   var variantAutocompleteTemplate = $('#variant_autocomplete_template')
@@ -37,20 +37,23 @@ $.fn.variantAutocomplete = function() {
     placeholder: Spree.translations.variant_placeholder,
     minimumInputLength: 3,
     ajax: {
-      url: Spree.routes.products_api_v2 + '?include=default_variant%2Cvariants%2Cimages',
+      url: Spree.routes.variants_api_v2 + '?include=stock_items,images,stock_locations',
       headers: Spree.apiV2Authentication(),
       data: function(params) {
         var query = {
           filter: {
-            name_i_cont: params.term
+            product_name_or_sku_cont: params.term
           }
         }
         return query;
       },
       processResults: function(json) {
-        formatDataForVariants(json.included)
-        window.variants = json.included
-        return { results: json.included }
+        var completeVariantData = buildVariantData(json)
+
+        console.log(completeVariantData[0].attributes)
+
+        window.variants = completeVariantData[0].attributes
+        return { results: completeVariantData[0].attributes}
       }
     },
     templateResult: formatVariantResult,
