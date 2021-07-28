@@ -322,6 +322,42 @@ describe 'API V2 Storefront Cart Spec', type: :request do
     end
   end
 
+  describe 'cart#destroy' do
+    let(:execute) { delete '/api/v2/storefront/cart', headers: headers }
+
+    shared_examples 'destroying order' do
+      it 'destroys the order' do
+        expect{ execute }.to change { Spree::Order.count }.by(-1)
+      end
+    end
+
+    shared_examples '204 status returned' do
+      before { execute }
+
+      it_behaves_like 'returns 204 HTTP status'
+    end
+
+    context 'as a signed in user' do
+      context 'with existing order with line item' do
+        include_context 'creates order with line item'
+
+        it_behaves_like 'destroying order'
+        it_behaves_like '204 status returned'
+        it_behaves_like 'no current order'
+      end
+    end
+
+    context 'as a guest user' do
+      context 'with existing guest order with line item' do
+        include_context 'creates guest order with guest token'
+
+        it_behaves_like 'destroying order'
+        it_behaves_like '204 status returned'
+        it_behaves_like 'no current order'
+      end
+    end
+  end
+
   describe 'cart#set_quantity' do
     let(:line_item) { create(:line_item, order: order) }
     let(:params) { { order: order, line_item_id: line_item.id, quantity: 5 } }

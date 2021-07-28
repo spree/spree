@@ -128,7 +128,7 @@ Spree::Core::Engine.add_routes do
 
     namespace :v2 do
       namespace :storefront do
-        resource :cart, controller: :cart, only: %i[show create] do
+        resource :cart, controller: :cart, only: %i[show create destroy] do
           post   :add_item
           patch  :empty
           delete 'remove_line_item/:line_item_id', to: 'cart#remove_line_item', as: :cart_remove_line_item
