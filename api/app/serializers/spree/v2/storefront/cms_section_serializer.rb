@@ -17,6 +17,10 @@ module Spree
           end
         end
 
+        attribute :img_one_lg do |section|
+          section.img_one_lg('100x100')
+        end
+
         attribute :is_fullscreen do |section|
           section.fullscreen?
         end

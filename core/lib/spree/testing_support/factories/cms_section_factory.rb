@@ -1,5 +1,7 @@
 FactoryBot.define do
   factory :cms_section, class: Spree::CmsSection do
+    association :cms_page, factory: :cms_standard_page
+
     name { generate(:random_string) }
 
     factory :cms_hero_image_section do
@@ -24,6 +26,11 @@ FactoryBot.define do
 
     factory :cms_rich_text_content_section do
       type { 'Spree::Cms::Sections::RichTextContent' }
+    end
+
+    trait :with_cms_page do
+      before(:create) do
+      end
     end
   end
 end
