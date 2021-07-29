@@ -10,7 +10,7 @@ module Spree
       :storefront_cart_create_service, :storefront_cart_add_item_service, :storefront_cart_remove_line_item_service,
       :storefront_cart_remove_item_service, :storefront_cart_set_item_quantity_service, :storefront_cart_recalculate_service,
       :storefront_cart_update, :storefront_cart_compare_line_items_service, :storefront_cart_serializer,
-      :storefront_cart_update_service,
+      :storefront_cart_update_service, :storefront_cart_empty_service, :storefront_cart_destroy_service,
 
       # Coupon
       :storefront_coupon_handler,
@@ -122,6 +122,8 @@ module Spree
       @storefront_cart_set_item_quantity_service = Spree::Dependencies.cart_set_item_quantity_service
       @storefront_cart_recalculate_service = Spree::Dependencies.cart_recalculate_service
       @storefront_cart_estimate_shipping_rates_service = Spree::Dependencies.cart_estimate_shipping_rates_service
+      @storefront_cart_empty_service = Spree::Dependencies.cart_empty_service
+      @storefront_cart_destroy_service = Spree::Dependencies.cart_destroy_service
 
       # coupon code handler
       @storefront_coupon_handler = Spree::Dependencies.coupon_handler

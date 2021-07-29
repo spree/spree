@@ -422,21 +422,15 @@ module Spree
     end
 
     def empty!
-      if completed?
-        raise Spree.t(:cannot_empty_completed_order)
-      else
-        line_items.destroy_all
-        updater.update_item_count
-        adjustments.destroy_all
-        shipments.destroy_all
-        state_changes.destroy_all
-        order_promotions.destroy_all
+      ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
+        `Order#empty!` is deprecated and will be removed in Spree 5.0.
+        Please use `Spree::Cart::Empty.call(order: order)` instead.
+      DEPRECATION
 
-        update_totals
-        persist_totals
-        restart_checkout_flow
-        self
-      end
+      raise Spree.t(:cannot_empty_completed_order) if completed?
+      
+      result = Spree::Dependencies.cart_empty_service.constantize.call(order: self)
+      result.value
     end
 
     def has_step?(step)
@@ -572,6 +566,10 @@ module Spree
 
     def can_approve?
       !approved?
+    end
+
+    def can_be_destroyed?
+      !completed? && payments.completed.empty?
     end
 
     def consider_risk
