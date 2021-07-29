@@ -12,7 +12,8 @@ module Spree
       :completed_order_finder, :order_sorter, :cart_compare_line_items_service, :collection_paginator, :products_sorter,
       :products_finder, :taxon_finder, :line_item_by_variant_finder, :cart_estimate_shipping_rates_service,
       :account_create_address_service, :account_update_address_service, :account_create_service, :account_update_service,
-      :address_finder, :collection_sorter, :error_handler, :current_store_finder, :cart_empty_service, :cart_destroy_service, :credit_cards_destroy_service
+      :address_finder, :collection_sorter, :error_handler, :current_store_finder, :cart_empty_service, :cart_destroy_service,
+      :credit_cards_destroy_service
     ].freeze
 
     attr_accessor *INJECTION_POINTS
