@@ -62,7 +62,7 @@ module Spree
         first
     end
 
-    def total_available_store_credit(currency = nil, store = nil)
+    def total_available_store_credit(store: nil, currency: nil)
       store ||= Store.default
       currency ||= store.default_currency
       store_credits.for_store(store).where(currency: currency).reload.to_a.sum(&:amount_remaining)
