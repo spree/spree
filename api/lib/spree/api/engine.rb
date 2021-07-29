@@ -22,9 +22,9 @@ module Spree
         Migrations.new(config, engine_name).check
       end
 
-      initializer 'spree.core.checking_deprecated_preferences' do
+      initializer 'spree.api.checking_deprecated_preferences' do
         Spree::Api::Config.deprecated_preferences.each do |pref|
-          warn "[DEPRECATION] Spree::Api::Config[:#{pref[:name]}] is deprecated #{pref[:message]}"
+          warn "[DEPRECATION] Spree::Api::Config[:#{pref[:name]}] is deprecated. #{pref[:message]}"
         end
       end
 

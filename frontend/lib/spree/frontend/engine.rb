@@ -18,9 +18,9 @@ module Spree
         Spree::Frontend::Config = Spree::FrontendConfiguration.new
       end
 
-      initializer 'spree.core.checking_deprecated_preferences' do
+      initializer 'spree.frontend.checking_deprecated_preferences' do
         Spree::Frontend::Config.deprecated_preferences.each do |pref|
-          warn "[DEPRECATION] Spree::Frontend::Config[:#{pref[:name]}] is deprecated #{pref[:message]}"
+          warn "[DEPRECATION] Spree::Frontend::Config[:#{pref[:name]}] is deprecated. #{pref[:message]}"
         end
       end
     end
