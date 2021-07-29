@@ -96,8 +96,8 @@ const handleVariantSelection = function () {
   })
 
   const stockDetails = document.querySelector('#stock_details')
-  stockDetails.innerHTML = variantLineItemTemplate({ variant: variant.attributes })
+  if (stockDetails != null) stockDetails.innerHTML = variantLineItemTemplate({ variant: variant.attributes })
 
   const addVariantButton = document.querySelector('button.add_variant')
-  addVariantButton.addEventListener('click', addVariant)
+  if (addVariantButton != null) addVariantButton.addEventListener('click', addVariant)
 }

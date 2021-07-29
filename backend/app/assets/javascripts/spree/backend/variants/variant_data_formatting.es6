@@ -1,16 +1,31 @@
 /* eslint-disable no-unused-vars */
 
 function buildVariantData (json) {
-  json.data.forEach(variant => addImagesToVariants(variant, json.included))
-  json.data.forEach(variant => addStockItems(variant, json.included))
-  json.data.forEach(variant => addStockLocationToStockItem(variant.attributes.stock_items, json.included))
+  if (json.data[0]) {
+    json.data.forEach(variant => addIdToVariant(variant))
+    json.data.forEach(variant => addImagesToVariants(variant, json.included))
+    json.data.forEach(variant => addStockItems(variant, json.included))
+    json.data.forEach(variant => addStockLocationToStockItem(variant.attributes.stock_items, json.included))
+  } else {
+    addIdToVariant(json.data)
+    // addImagesToVariants(json.data, json.included)
+    addStockItems(json.data, json.included)
+    addStockLocationToStockItem(json.data.attributes.stock_items, json.included)
+  }
 
   return json.data
 }
 
 //
+// Add ID to varaint
+function addIdToVariant (variant) {
+  variant.attributes.id = parseInt(variant.id, 10)
+}
+
+//
 // Add image to varaint
 function addImagesToVariants (variant, included) {
+  console.log(included)
   if (variant.relationships.images.data[0] != null) {
     const attachedImageId = variant.relationships.images.data[0].id
     const imgPath = included.find((image) => image.type === 'image' && image.id === attachedImageId)

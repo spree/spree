@@ -13,7 +13,7 @@
       <tr>
         <td>{{ variant.name }} ({{ variant.sku }})</td>
         {{#if variant.track_inventory }}
-          {{#if variant.purchasable }}
+          {{#if variant.in_stock }}
             <td class="text-center">
               {{ variant.total_on_hand }}
             </td>

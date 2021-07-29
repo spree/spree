@@ -15,10 +15,7 @@ function formatVariantResult(results) {
   if (results.type === 'variant') {
     var options = results.attributes.options_text.split(',')
 
-    return $(variantTemplate({
-      options: options,
-      variant: results.attributes
-    }))
+    return $(variantTemplate({ options: options, variant: results.attributes }))
   }
 }
 
@@ -50,10 +47,8 @@ $.fn.variantAutocomplete = function() {
       processResults: function(json) {
         var completeVariantData = buildVariantData(json)
 
-        console.log(completeVariantData[0].attributes)
-
-        window.variants = completeVariantData[0].attributes
-        return { results: completeVariantData[0].attributes}
+        window.variants = completeVariantData
+        return { results: completeVariantData }
       }
     },
     templateResult: formatVariantResult,

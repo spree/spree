@@ -89,7 +89,7 @@ module Spree
             @stock_location = Spree::StockLocation.find(params[:stock_location_id])
 
             unless @quantity > 0
-              unprocessable_entity("#{Spree.t(:shipment_transfer_errors_occurred, scope: 'api')} \n #{Spree.t(:negative_quantity, scope: 'api')}")
+              render json: { error: "#{Spree.t(:negative_quantity, scope: 'api')}" }, status: 422
               return
             end
 
@@ -105,17 +105,16 @@ module Spree
           def transfer_to_shipment
             @target_shipment = Spree::Shipment.find_by!(number: params[:target_shipment_number])
 
-            error =
-              if @quantity < 0 && @target_shipment == @original_shipment
-                "#{Spree.t(:negative_quantity, scope: 'api')}, \n#{Spree.t('wrong_shipment_target', scope: 'api')}"
-              elsif @target_shipment == @original_shipment
-                Spree.t(:wrong_shipment_target, scope: 'api')
-              elsif @quantity < 0
-                Spree.t(:negative_quantity, scope: 'api')
-              end
+            error = if @quantity < 0 && @target_shipment == @original_shipment
+                      "#{Spree.t(:negative_quantity, scope: 'api')}, \n#{Spree.t('wrong_shipment_target', scope: 'api')}"
+                    elsif @target_shipment == @original_shipment
+                      Spree.t(:wrong_shipment_target, scope: 'api')
+                    elsif @quantity < 0
+                      Spree.t(:negative_quantity, scope: 'api')
+                    end
 
             if error
-              unprocessable_entity("#{Spree.t(:shipment_transfer_errors_occurred, scope: 'api')} \n#{error}")
+              render json: { error: error }, status: 422
             else
               transfer = @original_shipment.transfer_to_shipment(@variant, @quantity, @target_shipment)
               if transfer.valid?

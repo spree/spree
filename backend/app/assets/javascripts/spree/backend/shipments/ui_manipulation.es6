@@ -50,7 +50,7 @@ const toggleItemEdit = function(event) {
 
 //
 // Start Line Item Split
-const sartLineItemSplit = function(event) {
+const startLineItemSplit = function(event) {
   event.preventDefault()
 
   const linkParent = this.closest('span')
@@ -73,8 +73,8 @@ const sartLineItemSplit = function(event) {
   startItemSplit(this, variantId, formatReturnedDataFromStartLineItemSpit)
 }
 const formatReturnedDataFromStartLineItemSpit = function(data, clickedLink) {
-  formatDataForVariants(data.included)
-  const variant = data.included[0]
+  const formattedData = buildVariantData(data)
+  const variant = formattedData
 
   const maxQuantity = clickedLink.closest('tr').dataset.itemQuantity
   const variantSplitTemplate = document.querySelector('#variant_split_template').innerHTML
@@ -115,7 +115,7 @@ document.addEventListener('DOMContentLoaded', function() {
   // Handle Split Click
   const splitItemButtons = document.querySelectorAll('a.split-item')
   splitItemButtons.forEach(function(el) {
-    el.addEventListener('click', sartLineItemSplit)
+    el.addEventListener('click', startLineItemSplit)
   })
 
   //
@@ -163,9 +163,9 @@ document.addEventListener('DOMContentLoaded', function() {
     })
 
     const stockDetails = document.querySelector('#stock_details')
-    stockDetails.innerHTML = variantStockTemplate({ variant: variant.attributes })
+    if (stockDetails != null) stockDetails.innerHTML = variantStockTemplate({ variant: variant.attributes })
 
     const addVariantButton = document.querySelector('button.add_variant')
-    addVariantButton.addEventListener('click', addVariantFromStockLocation)
+    if (addVariantButton != null) addVariantButton.addEventListener('click', addVariantFromStockLocation)
   })
 })

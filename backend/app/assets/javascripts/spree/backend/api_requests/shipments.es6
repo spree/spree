@@ -68,12 +68,17 @@ const removeVariantFromShipment = function(shipmentNumber, variantId, quantity =
 const startItemSplit = function(clickedLink, variantId, succeed) {
   showProgressIndicator()
 
-  fetch(`${Spree.routes.products_api_v2}?include=default_variant%2Cvariants&filter[variants_id_eq]=${variantId}`, {
+  fetch(`${Spree.routes.variants_api_v2}/${variantId}/?include=stock_items,stock_locations`, {
     headers: Spree.apiV2Authentication()
   })
-    .then((response) => spreeHandleResponse(response))
-    .then((data) => succeed(data, clickedLink))
-    .catch(err => console.log(err))
+    .then((response) => spreeHandleResponse(response)
+      .then((data) => {
+        if (response.ok) {
+          succeed(data, clickedLink)
+        } else {
+          show_flash('info', data.error)
+        }
+      }))
 }
 
 //
@@ -100,7 +105,14 @@ const updateShipment = function(shipmentNumber, data) {
     headers: Spree.apiV2Authentication(),
     body: JSON.stringify(data)
   })
-    .then((response) => spreeHandleResponse(response).then(window.location.reload()))
+    .then((response) => spreeHandleResponse(response)
+      .then((data) => {
+        if (response.ok) {
+          window.location.reload()
+        } else {
+          show_flash('info', data.error)
+        }
+      }))
     .catch(err => console.log(err))
 }
 
@@ -114,6 +126,12 @@ const transferShipment = function(data, path) {
     headers: Spree.apiV2Authentication(),
     body: JSON.stringify(data)
   })
-    .then((response) => spreeHandleResponse(response).then(window.location.reload()))
-    .catch(err => console.log(err))
+    .then((response) => spreeHandleResponse(response)
+      .then((data) => {
+        if (response.ok) {
+          window.location.reload()
+        } else {
+          show_flash('error', data.error)
+        }
+      }))
 }

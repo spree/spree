@@ -5,6 +5,7 @@ describe 'Order Details', type: :feature, js: true do
   let!(:stock_location) { create(:stock_location_with_items) }
   let!(:product) { create(:product, name: 'spree t-shirt', price: 20.00, stores: [store]) }
   let(:order) { create(:order, state: 'complete', completed_at: '2011-02-01 12:36:15', number: 'R100', store: store) }
+  let(:order_ready_to_ship) { create(:order_ready_to_ship) }
   let(:fresh_order) { create(:order, store: store) }
   let(:state) { create(:state) }
 
@@ -79,7 +80,7 @@ describe 'Order Details', type: :feature, js: true do
       end
 
       it 'can add tracking information' do
-        visit spree.edit_admin_order_path(order)
+        visit spree.edit_admin_order_path(order_ready_to_ship)
 
         within('.show-tracking') do
           click_icon :edit
@@ -218,10 +219,13 @@ describe 'Order Details', type: :feature, js: true do
         before { visit spree.edit_admin_order_path(order) }
 
         it 'should warn you if you have not selected a location or shipment' do
-          within_row(1) { click_icon :split }
-          accept_alert 'Please select the split destination' do
-            click_icon :save
+          within_row(1) do
+            click_icon :split
           end
+
+          click_icon 'save-split'
+
+          assert_admin_flash_alert_notice('Please select the split destination')
         end
 
         context 'there is enough stock at the other location' do
@@ -284,9 +288,11 @@ describe 'Order Details', type: :feature, js: true do
             select2 stock_location2.name, css: '.stock-item-split', search: true, match: :first
             fill_in 'item_quantity', with: 'ff'
 
-            page.accept_confirm 'quantity is negative' do
-              click_icon :save
-            end
+            click_icon :save
+
+            wait_for_ajax
+
+            assert_admin_flash_alert_error('quantity is negative')
 
             expect(order.shipments.count).to eq(1)
             expect(order.shipments.first.inventory_units_for(product.master).sum(&:quantity)).to eq(2)
@@ -300,9 +306,7 @@ describe 'Order Details', type: :feature, js: true do
             select2 stock_location2.name, css: '.stock-item-split', search: true, match: :first
             fill_in 'item_quantity', with: 0
 
-            page.accept_confirm 'quantity is negative' do
-              click_icon :save
-            end
+            click_icon :save
 
             expect(order.shipments.count).to eq(1)
             expect(order.shipments.first.inventory_units_for(product.master).sum(&:quantity)).to eq(2)
@@ -310,9 +314,9 @@ describe 'Order Details', type: :feature, js: true do
 
             fill_in 'item_quantity', with: -1
 
-            page.accept_confirm 'quantity is negative' do
-              click_icon :save
-            end
+            wait_for_ajax
+
+            assert_admin_flash_alert_error('quantity is negative')
 
             expect(order.shipments.count).to eq(1)
             expect(order.shipments.first.inventory_units_for(product.master).sum(&:quantity)).to eq(2)
@@ -339,13 +343,16 @@ describe 'Order Details', type: :feature, js: true do
               product.master.stock_items.last.update_column(:count_on_hand, 0)
 
               within_row(1) { click_icon 'split' }
+
               select2 stock_location2.name, css: '.stock-item-split', search: true, match: :first
               fill_in 'item_quantity', with: 2
 
-              click_icon :save
-              alert_text = page.driver.browser.switch_to.alert.text
-              expect(alert_text).to eq('Desired shipment has not enough stock in desired stock location')
-              accept_alert { order.reload }
+              click_icon 'save-split'
+              click_icon 'save-split'
+
+              wait_for_ajax
+
+              assert_admin_flash_alert_error('Desired shipment has not enough stock in desired stock location')
 
               expect(order.shipments.count).to eq(1)
               expect(order.shipments.first.inventory_units_for(product.master).sum(&:quantity)).to eq(2)
@@ -491,16 +498,16 @@ describe 'Order Details', type: :feature, js: true do
             fill_in 'item_quantity', with: 1
 
             click_icon :save
+
             expect(page).not_to have_css('tr.stock-item-split')
 
             within_row(1) { click_icon 'split' }
+
             select2 @shipment2.number, css: '.stock-item-split', search: true, match: :first
+
             fill_in 'item_quantity', with: 200
 
             click_icon :save
-            alert_text = page.driver.browser.switch_to.alert.text
-            expect(alert_text).to eq('Desired shipment has not enough stock in desired stock location')
-            accept_alert { order.reload }
 
             expect(order.shipments.count).to eq(2)
             expect(order.shipments.first.inventory_units_for(product.master).sum(&:quantity)).to eq(1)
@@ -512,11 +519,12 @@ describe 'Order Details', type: :feature, js: true do
             select2 order.shipments.first.number, css: '.stock-item-split', search: true, match: :first
             fill_in 'item_quantity', with: 1
 
-            page.accept_confirm 'target shipment is the same as original shipment' do
-              click_icon :save
-            end
+            click_icon :save
 
-            order.reload
+            wait_for_ajax
+
+            assert_admin_flash_alert_error('target shipment is the same as original shipment')
+
             expect(order.shipments.count).to eq(2)
             expect(order.shipments.first.inventory_units_for(product.master).sum(&:quantity)).to eq(2)
           end
@@ -651,6 +659,7 @@ describe 'Order Details', type: :feature, js: true do
         click_icon :edit
       end
       fill_in 'tracking', with: 'FOOBAR'
+
       click_icon :save
 
       expect(page).not_to have_css('input[name=tracking]')

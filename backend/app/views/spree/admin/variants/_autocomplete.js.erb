@@ -1,8 +1,8 @@
 <script type='text/template' id='variant_autocomplete_template'>
   <div class='variant-autocomplete-item media align-items-center'>
     <figure class='select2-result mb-0 mr-3'>
-      {{#if variant.image_path }}
-        <img src='{{ variant.image_path }}' class="thumbnail mb-0" />
+      {{#if variant.image }}
+        <img src='{{ variant.image }}' class="thumbnail mb-0" />
       {{ else }}
         <img src='<%= image_path("noimage/no-image.svg") %>' class="thumbnail mb-0 no-zoom" />
       {{/if}}

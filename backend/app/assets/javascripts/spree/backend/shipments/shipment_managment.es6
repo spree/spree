@@ -183,9 +183,9 @@ const completeItemSplit = function(event) {
   const targetShipmentNumber = selectedShipment.data('shipment-number')
   const newShipment = selectedShipment.data('new-shipment')
 
-  // eslint-disable-next-line eqeqeq
-  if (stockLocationId != 'new_shipment') {
+  if (stockLocationId !== 'new_shipment') {
     let path, additionalData
+
     if (newShipment !== undefined) {
       // transfer to a new location data
       path = '/transfer_to_location'

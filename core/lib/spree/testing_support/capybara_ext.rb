@@ -32,12 +32,26 @@ module CapybaraExt
     end
   end
 
-  # arg delay in seconds
-  def wait_for_ajax(delay = Capybara.default_max_wait_time)
-    Timeout.timeout(delay) do
-      active = page.evaluate_script('typeof jQuery !== "undefined" && jQuery.active')
-      active = page.evaluate_script('typeof jQuery !== "undefined" && jQuery.active') until active.nil? || active.zero?
+  def wait_for_ajax
+    max_time = Capybara::Helpers.monotonic_time + Capybara.default_max_wait_time
+    while Capybara::Helpers.monotonic_time < max_time
+      finished = finished_all_ajax_requests?
+      if finished
+        break
+      else
+        sleep 0.1
+      end
     end
+    raise 'wait_for_ajax timeout' unless finished
+  end
+
+  def finished_all_ajax_requests?
+    page.evaluate_script(<<~JSX
+      ((typeof window.jQuery === 'undefined') || (typeof window.jQuery.active === 'undefined') || (window.jQuery.active === 0))
+      && ((typeof window.injectedJQueryFromNode === 'undefined') || (typeof window.injectedJQueryFromNode.active === 'undefined') || (window.injectedJQueryFromNode.active === 0))
+      && ((typeof window.httpClients === 'undefined') || (window.httpClients.every(function (client) { return (client.activeRequestCount === 0); })))
+    JSX
+                        )
   end
 
   def wait_for_condition(delay = Capybara.default_max_wait_time)
@@ -55,10 +69,10 @@ module CapybaraExt
   end
 end
 
-def wait_for(options = {})
+def wait_for(options = {}, &block)
   default_options = { error: nil, seconds: 5 }.merge(options)
 
-  Selenium::WebDriver::Wait.new(timeout: default_options[:seconds]).until { yield }
+  Selenium::WebDriver::Wait.new(timeout: default_options[:seconds]).until(&block)
 rescue Selenium::WebDriver::Error::TimeOutError
   default_options[:error].nil? ? false : raise(default_options[:error])
 end
