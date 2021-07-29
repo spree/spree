@@ -60,7 +60,7 @@ module Spree::Preferences::Preferable
 
   def preference_deprecated(name)
     has_preference! name
-    send self.class.preference_deprecated_getter_method(name)
+    send(self.class.preference_deprecated_getter_method(name))
   end
 
   def has_preference!(name)
@@ -78,14 +78,10 @@ module Spree::Preferences::Preferable
   end
 
   def deprecated_preferences
-    all_deprecated = []
-    defined_preferences.each do |pref_name|
+    defined_preferences.each_with_object([]) do |pref_name, array|
       deprecated_message = preference_deprecated(pref_name)
-      unless deprecated_message.nil?
-        all_deprecated << { name: pref_name, message: deprecated_message }
-      end
+      array << { name: pref_name, message: deprecated_message } unless deprecated_message.nil?
     end
-    all_deprecated
   end
 
   def default_preferences
