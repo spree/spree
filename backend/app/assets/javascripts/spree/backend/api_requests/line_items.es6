@@ -7,7 +7,7 @@
 const ordersLineItemsUri = (lineItemId = '') => `${Spree.routes.line_items_api_v2}/${lineItemId}`
 
 //
-// POST -> Create Line Item
+// CREATE LINE ITEM
 const addLineItem = (variantId, quantity) => {
   if (variantId == null || quantity <= 0) return
 
@@ -35,7 +35,7 @@ const addLineItem = (variantId, quantity) => {
 }
 
 //
-// PUT -> Update Line Item Quantity
+// UPDATE LINE ITEM QTY
 const adjustLineItemQuantity = function(lineItemId, quantity) {
   if (lineItemId == null) return
 
@@ -69,7 +69,7 @@ const adjustLineItemQuantity = function(lineItemId, quantity) {
 }
 
 //
-// DELETE -> Deletes Line Item
+// DELETE LINE ITEM
 const deleteLineItem = function(lineItemId) {
   const formattedLineItemId = parseInt(lineItemId, 10)
   showProgressIndicator()

@@ -6,7 +6,7 @@
 const shipmentUri = (shipmentNumber, action = '') => `${Spree.routes.shipments_api_v2}/${shipmentNumber}/${action}`
 
 //
-// SHIP
+// MARK AS SHIPPED
 const shipShipment = function(shipmentNumber) {
   showProgressIndicator()
 
@@ -14,12 +14,19 @@ const shipShipment = function(shipmentNumber) {
     method: 'PUT',
     headers: Spree.apiV2Authentication()
   })
-    .then((response) => spreeHandleResponse(response).then(window.location.reload()))
+    .then((response) => spreeHandleResponse(response, true)
+      .then((data) => {
+        if (response.ok) {
+          window.location.reload()
+        } else {
+          show_flash('info', data.error)
+        }
+      }))
     .catch(err => console.log(err))
 }
 
 //
-// ADD
+// ADD VARIANT TO SHIPMENT
 const addVariantToShipment = function(shipmentNumber, variantId, quantity = null) {
   showProgressIndicator()
 
@@ -33,12 +40,19 @@ const addVariantToShipment = function(shipmentNumber, variantId, quantity = null
     headers: Spree.apiV2Authentication(),
     body: JSON.stringify(data)
   })
-    .then((response) => spreeHandleResponse(response).then(window.location.reload()))
+    .then((response) => spreeHandleResponse(response, true)
+      .then((data) => {
+        if (response.ok) {
+          window.location.reload()
+        } else {
+          show_flash('info', data.error)
+        }
+      }))
     .catch(err => console.log(err))
 }
 
 //
-// REMOVE
+// REMOVE VARIANT FROM SHIPMENT
 const removeVariantFromShipment = function(shipmentNumber, variantId, quantity = null) {
   showProgressIndicator()
 
@@ -59,7 +73,15 @@ const removeVariantFromShipment = function(shipmentNumber, variantId, quantity =
     method: 'PUT',
     headers: Spree.apiV2Authentication(),
     body: JSON.stringify(data)
-  }).then((response) => spreeHandleResponse(response).then(window.location.reload()))
+  })
+    .then((response) => spreeHandleResponse(response, true)
+      .then((data) => {
+        if (response.ok) {
+          window.location.reload()
+        } else {
+          show_flash('info', data.error)
+        }
+      }))
     .catch(err => console.log(err))
 }
 
@@ -79,10 +101,11 @@ const startItemSplit = function(clickedLink, variantId, succeed) {
           show_flash('info', data.error)
         }
       }))
+    .catch(err => console.log(err))
 }
 
 //
-// CREATE
+// CREATE NEW SHIPMENT
 const createShipment = function(data) {
   showProgressIndicator()
 
@@ -91,21 +114,7 @@ const createShipment = function(data) {
     headers: Spree.apiV2Authentication(),
     body: JSON.stringify(data)
   })
-    .then((response) => spreeHandleResponse(response).then(window.location.reload()))
-    .catch(err => console.log(err))
-}
-
-//
-// UPDATE
-const updateShipment = function(shipmentNumber, data) {
-  showProgressIndicator()
-
-  fetch(shipmentUri(shipmentNumber), {
-    method: 'PUT',
-    headers: Spree.apiV2Authentication(),
-    body: JSON.stringify(data)
-  })
-    .then((response) => spreeHandleResponse(response)
+    .then((response) => spreeHandleResponse(response, true)
       .then((data) => {
         if (response.ok) {
           window.location.reload()
@@ -117,7 +126,28 @@ const updateShipment = function(shipmentNumber, data) {
 }
 
 //
-// TRANSFER
+// UPDATE EXISTING SHIPMENT
+const updateShipment = function(shipmentNumber, data) {
+  showProgressIndicator()
+
+  fetch(shipmentUri(shipmentNumber), {
+    method: 'PUT',
+    headers: Spree.apiV2Authentication(),
+    body: JSON.stringify(data)
+  })
+    .then((response) => spreeHandleResponse(response, true)
+      .then((data) => {
+        if (response.ok) {
+          window.location.reload()
+        } else {
+          show_flash('info', data.error)
+        }
+      }))
+    .catch(err => console.log(err))
+}
+
+//
+// TRANSFER STOCK
 const transferShipment = function(data, path) {
   showProgressIndicator()
 
@@ -126,12 +156,13 @@ const transferShipment = function(data, path) {
     headers: Spree.apiV2Authentication(),
     body: JSON.stringify(data)
   })
-    .then((response) => spreeHandleResponse(response)
+    .then((response) => spreeHandleResponse(response, true)
       .then((data) => {
         if (response.ok) {
           window.location.reload()
         } else {
-          show_flash('error', data.error)
+          show_flash('info', data.error)
         }
       }))
+    .catch(err => console.log(err))
 }

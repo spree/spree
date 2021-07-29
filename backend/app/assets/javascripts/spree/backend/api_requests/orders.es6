@@ -7,19 +7,25 @@
 const ordersUri = (action) => `${Spree.routes.orders_api_v2}/${order_number}/${action}`
 
 //
-// ADVANCE ORDER
+// ADVANCE ORDER STATE
 window.Spree.advanceOrder = function() {
   fetch(ordersUri('advance'), {
     method: 'PUT',
     headers: Spree.apiV2Authentication()
   })
-    .then((response) => spreeHandleResponse(response)
-      .then(window.location.reload()))
+    .then((response) => spreeHandleResponse(response, true)
+      .then((data) => {
+        if (response.ok) {
+          window.location.reload()
+        } else {
+          show_flash('info', data.error)
+        }
+      }))
     .catch(err => console.log(err))
 }
 
 //
-// ADD COUPON
+// ADD COUPON TO ORDER
 const addCoupon = function(couponCode) {
   if (couponCode == null) return
 
@@ -45,7 +51,7 @@ const addCoupon = function(couponCode) {
 }
 
 //
-// DELETE COUPON
+// DELETE COUPON FROM ORDER
 const deleteCoupon = function(couponCode) {
   showProgressIndicator()
   const data = {
@@ -57,7 +63,13 @@ const deleteCoupon = function(couponCode) {
     headers: Spree.apiV2Authentication(),
     body: JSON.stringify(data)
   })
-    .then((response) => spreeHandleResponse(response)
-      .then(window.location.reload()))
+    .then((response) => spreeHandleResponse(response, true)
+      .then((data) => {
+        if (response.ok) {
+          window.location.reload()
+        } else {
+          show_flash('info', data.error)
+        }
+      }))
     .catch(err => console.log(err))
 }

@@ -74,6 +74,7 @@ const startLineItemSplit = function(event) {
 }
 const formatReturnedDataFromStartLineItemSpit = function(data, clickedLink) {
   const formattedData = buildVariantData(data)
+
   const variant = formattedData
 
   const maxQuantity = clickedLink.closest('tr').dataset.itemQuantity

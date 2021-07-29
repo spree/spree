@@ -17,14 +17,12 @@ const hideProgressIndicator = () => {
 }
 
 const animateCSS = (element, animation, speed, prefix = 'animate__') =>
-  // We create a Promise and return it
   new Promise((resolve) => {
     const animationName = `${prefix}${animation}`
     const node = document.querySelector(element)
 
     node.classList.add(`${prefix}animated`, animationName, prefix + speed);
 
-    // When the animation ends, we clean the classes and resolve the Promise
     function handleAnimationEnd(event) {
       event.stopPropagation()
       node.classList.remove(`${prefix}animated`, animationName)
@@ -34,9 +32,7 @@ const animateCSS = (element, animation, speed, prefix = 'animate__') =>
     node.addEventListener('animationend', handleAnimationEnd, { once: true })
   })
 
-const spreeHandleResponse = function(response, handleError = false) {
+const spreeHandleResponse = function(response) {
   hideProgressIndicator()
-
-  if (!response.ok && handleError === true) show_flash('info', response.statusText)
   return response.json()
 }

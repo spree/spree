@@ -8,7 +8,7 @@ function buildVariantData (json) {
     json.data.forEach(variant => addStockLocationToStockItem(variant.attributes.stock_items, json.included))
   } else {
     addIdToVariant(json.data)
-    // addImagesToVariants(json.data, json.included)
+    addImagesToVariants(json.data, json.included)
     addStockItems(json.data, json.included)
     addStockLocationToStockItem(json.data.attributes.stock_items, json.included)
   }
@@ -25,12 +25,11 @@ function addIdToVariant (variant) {
 //
 // Add image to varaint
 function addImagesToVariants (variant, included) {
-  console.log(included)
   if (variant.relationships.images.data[0] != null) {
     const attachedImageId = variant.relationships.images.data[0].id
     const imgPath = included.find((image) => image.type === 'image' && image.id === attachedImageId)
 
-    variant.attributes.image = imgPath.attributes.styles[2].url
+    if (imgPath != null) variant.attributes.image = imgPath.attributes.styles[2].url
   }
 }
 
@@ -45,7 +44,7 @@ function addStockItems (variant, included) {
     stockItems.forEach(function (si) {
       const stockItem = findStockItem(si.id, included)
 
-      stockItemsArray.push(stockItem)
+      if (stockItem != null) stockItemsArray.push(stockItem)
     })
   }
   variant.attributes.stock_items = stockItemsArray
@@ -67,8 +66,10 @@ function addStockLocationToStockItem (stockItems, included) {
     const stockLocationId = si.relationships.stock_location.data.id
     const stockLocation = findStockLocation(stockLocationId, included)
 
-    si.attributes.stock_location_id = stockLocation.id
-    si.attributes.stock_location_name = stockLocation.attributes.name
+    if (stockLocation != null) {
+      si.attributes.stock_location_id = stockLocation.id
+      si.attributes.stock_location_name = stockLocation.attributes.name
+    }
   })
 }
 
