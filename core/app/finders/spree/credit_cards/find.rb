@@ -7,9 +7,7 @@ module Spree
       end
 
       def execute
-        credit_cards = by_payment_method_id(scope)
-
-        credit_cards
+        by_payment_method_id(scope)
       end
 
       private
