@@ -71,6 +71,8 @@ module Spree
       @account_create_address_service = 'Spree::Account::Addresses::Create'
       @account_update_address_service = 'Spree::Account::Addresses::Update'
 
+      @classification_reposition_service = 'Spree::Classifications::Reposition'
+
       @error_handler = 'Spree::ErrorReporter'
     end
 
