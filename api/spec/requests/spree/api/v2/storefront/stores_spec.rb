@@ -20,12 +20,27 @@ describe 'Storefront API v2 Stores spec', type: :request do
         expect(json_response['data']).to have_attribute(:twitter).with_value(store.twitter)
         expect(json_response['data']).to have_attribute(:instagram).with_value(store.instagram)
         expect(json_response['data']).to have_attribute(:default_locale).with_value(store.default_locale)
+        expect(json_response['data']).to have_attribute(:supported_locales).with_value(store.supported_locales)
         expect(json_response['data']).to have_attribute(:description).with_value(store.description)
         expect(json_response['data']).to have_attribute(:address).with_value(store.address)
         expect(json_response['data']).to have_attribute(:contact_phone).with_value(store.contact_phone)
 
         expect(json_response['data']).to have_relationship(:default_country)
         expect(json_response['data']).to have_relationship(:default_country).with_data('id' => store.default_country_id.to_s, 'type' => 'country')
+      end
+
+      describe 'favicon_path attribute' do
+        context 'with favicon attached' do
+          let!(:store) { create(:store, :with_favicon) }
+
+          it 'returns store favicon path' do
+            expect(json_response.dig(:data, :attributes, :favicon_path)).to end_with('favicon.ico')
+          end
+        end
+
+        context 'with no favicon attached' do
+          it { expect(json_response['data']).to have_attribute(:favicon_path).with_value(nil) }
+        end
       end
     end
 

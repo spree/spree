@@ -1,24 +1,21 @@
 <header class="header logged-in">
-  <nav class="navbar fixed-top navbar-dark align-items-middle">
-    <div class="col-3 col-sm-4 p-0 d-lg-none">
+  <nav class="navbar fixed-top navbar-dark flex-nowrap">
+    <div class="col p-0 d-lg-none">
       <button
         id="sidebar-open"
-        class="navbar-toggler h-100 text-light"
+        class="navbar-toggler h-100 text-light px-3"
         type="button"
         aria-expanded="false"
         aria-label="Toggle navigation">
         <%= svg_icon name: "menu.svg", width: '20', height: '20' %>
       </button>
     </div>
-    <div class="col text-center text-lg-left">
-      <%= link_to(
-        image_tag(Spree::Config[:admin_interface_logo], id: 'logo', alt: current_store.name),
-        spree.admin_path,
-        class: "logo navbar-brand"
-      ) %>
+
+    <div id="storeSwitcherDropdown" class="col-auto text-center text-lg-left px-0 px-lg-2 align-items-center dropdown">
+      <%= render partial: 'spree/admin/shared/store_switcher' %>
     </div>
 
-    <div class="col-3 col-sm-4 text-right p-0">
+    <div class="col text-right p-0">
       <%= render partial: 'spree/admin/shared/account_nav' %>
     </div>
   </nav>

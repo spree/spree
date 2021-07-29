@@ -1,6 +1,7 @@
 ---
 title: "All Upgrade Guides"
 section: upgrades
+hidden: true
 ---
 
 ## Upgrade Guides

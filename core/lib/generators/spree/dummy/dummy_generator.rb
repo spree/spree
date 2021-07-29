@@ -32,7 +32,6 @@ module Spree
       opts[:skip_bundle] = true
       opts[:skip_gemfile] = true
       opts[:skip_git] = true
-      opts[:skip_keeps] = true
       opts[:skip_listen] = true
       opts[:skip_rc] = true
       opts[:skip_spring] = true
@@ -138,7 +137,7 @@ end
     end
 
     def gemfile_path
-      core_gems = ['spree/core', 'spree/api', 'spree/backend', 'spree/frontend', 'spree/sample']
+      core_gems = ['spree/core', 'spree/api']
 
       if core_gems.include?(lib_name)
         '../../../../../Gemfile'

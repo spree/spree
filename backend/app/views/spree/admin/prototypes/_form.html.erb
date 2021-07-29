@@ -22,7 +22,7 @@
   <div id='taxons' data-hook>
     <%= f.field_container :taxon_ids, class: ['form-group'] do %>
       <%= f.label :taxon_ids, Spree.t(:taxons) %><br>
-      <%= f.select :taxon_ids, Spree::Taxon.all.map { |t| [t.name, t.id] }, {}, { multiple: true, class: "select2" } %>
+      <%= f.select :taxon_ids, current_store.taxons.pluck(:name, :id), {}, { multiple: true, class: "select2" } %>
     <% end %>
   </div>
 </div>

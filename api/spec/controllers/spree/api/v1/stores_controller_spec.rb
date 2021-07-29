@@ -5,7 +5,8 @@ module Spree
     render_views
 
     let!(:store) do
-      create(:store, name: 'My Spree Store', url: 'spreestore.example.com')
+      Spree::Store.default.update!(name: 'My Spree Store', url: 'spreestore.example.com')
+      Spree::Store.default
     end
 
     before do
@@ -37,6 +38,8 @@ module Spree
               'customer_support_email' => 'support@example.com',
               'default_currency' => 'USD',
               'supported_currencies' => 'USD,EUR,GBP',
+              'default_locale' => 'en',
+              'supported_locales' => 'en',
               'code' => store.code,
               'default' => true,
               'facebook' => 'spreecommerce',
@@ -54,6 +57,8 @@ module Spree
               'customer_support_email' => 'support@example.com',
               'default_currency' => 'USD',
               'supported_currencies' => 'USD,EUR,GBP',
+              'default_locale' => 'en',
+              'supported_locales' => 'en',
               'code' => non_default_store.code,
               'default' => false,
               'facebook' => 'spreecommerce',
@@ -76,7 +81,9 @@ module Spree
           'mail_from_address' => 'no-reply@example.com',
           'customer_support_email' => 'support@example.com',
           'default_currency' => 'USD',
+          'default_locale' => 'en',
           'supported_currencies' => 'USD,EUR,GBP',
+          'supported_locales' => 'en',
           'code' => store.code,
           'default' => true,
           'facebook' => 'spreecommerce',

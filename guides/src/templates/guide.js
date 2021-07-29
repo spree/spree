@@ -3,6 +3,7 @@ import * as React from 'react'
 import PropTypes from 'prop-types'
 import { graphql } from 'gatsby'
 import RehypeReact from 'rehype-react'
+import { css } from '@emotion/core'
 
 // --- Components
 import Layout from '../components/Layout'
@@ -58,17 +59,26 @@ export default function Template({ data }) {
 
   let pageTitle = guide.frontmatter.title
 
-  if (guide.fields.section) {
-    pageTitle += ` | ${capitalize(guide.fields.section.replace(/_/, ' '))}`
+  if (guide.fields.section && guide.fields.section !== guide.fields.rootSection) {
+    pageTitle += ` | ${capitalize(guide.fields.section.replace('_', ' ').replace(/^\d+/, ''))}`
   }
-  if (guide.fields.rootSection) {
-    pageTitle += ` | ${capitalize(guide.fields.rootSection.replace(/_/, ' '))}`
+  if (guide.fields.rootSection && guide.fields.rootSection !== pageTitle) {
+    pageTitle += ` | ${capitalize(guide.fields.rootSection.replace('_', ' '))}`
   }
 
   let pageDescription = guide.frontmatter.description
   if (!pageDescription) {
     const removalRegexp = /Overview|Introduction|Major\/New Features/
     pageDescription = guide.excerpt.replace(removalRegexp, '').trim()
+  }
+
+  let articleStyles = ''
+  if (guide.headings.length > 0) {
+    articleStyles = css`
+      @media screen and (min-width: 60em) {
+        margin-right: 16rem
+      }
+    `
   }
 
   return (
@@ -79,8 +89,8 @@ export default function Template({ data }) {
       activeSection={guide.fields.section}
       activeRootSection={guide.fields.rootSection}
     >
-      {guide.headings.length > 0 && <Toc headings={guide.headings} />}
-      <article className="nested-links">
+      <article className="nested-links" css={articleStyles}>
+        {guide.headings.length > 0 && <Toc headings={guide.headings} />}
         <H1>{guide.frontmatter.title}</H1>
         {renderAst(guide.htmlAst)}
         <MarkdownPageFooter

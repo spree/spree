@@ -1,0 +1,19 @@
+<div data-hook="admin_menu_form_fields" class="row">
+  <%= f.field_container :name, class: ['form-group col-12 col-md-4'] do %>
+    <%= f.label :name, raw(Spree.t(:name) + required_span_tag) %>
+    <%= f.text_field :name, class: 'form-control', required: true %>
+    <%= f.error_message_on :name %>
+  <% end %>
+
+  <%= f.field_container :location, class: ['form-group col-12 col-md-4'] do %>
+    <%= f.label :location, Spree.t('location') %>
+    <%= f.select(:location, spree_humanize_dropdown_values('Spree::Menu', { const: 'MENU_LOCATIONS', paramterize_values: true }), {include_blank: false}, class: 'select2') %>
+    <%= f.error_message_on :location %>
+  <% end %>
+
+  <%= f.field_container :locale, class: ['form-group col-12 col-md-4'] do %>
+    <%= f.label :language %>
+    <%= f.select :locale, options_from_collection_for_select(all_locales_options, :last, :first, @menu.locale || I18n.locale), {}, { class: 'select2' } %>
+    <%= f.error_message_on :default_locale %>
+  <% end %>
+</div>

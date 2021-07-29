@@ -5,8 +5,9 @@ describe 'Cart', type: :feature, inaccessible: true, js: true do
 
   after { Timecop.return }
 
-  let!(:variant) { create(:variant) }
-  let!(:product) { variant.product }
+  let(:store) { Spree::Store.default }
+  let(:product) { create(:product, stores: [store]) }
+  let!(:variant) { create(:variant, product: product) }
   let(:order) { Spree::Order.incomplete.last }
 
   def apply_coupon(code)
@@ -51,7 +52,7 @@ describe 'Cart', type: :feature, inaccessible: true, js: true do
   end
 
   describe 'add promotion coupon on cart page' do
-    let!(:promotion) { Spree::Promotion.create!(name: 'Huhuhu', code: 'huhu') }
+    let!(:promotion) { create(:promotion, name: 'Huhuhu', code: 'huhu') }
     let!(:calculator) { Spree::Calculator::FlatPercentItemTotal.create!(preferred_flat_percent: '10') }
     let!(:action) { Spree::Promotion::Actions::CreateAdjustment.create!(calculator: calculator) }
 
@@ -102,7 +103,7 @@ describe 'Cart', type: :feature, inaccessible: true, js: true do
   end
 
   describe 'subtotal' do
-    let!(:promotion) { Spree::Promotion.create!(name: 'Huhuhu', code: 'huhu') }
+    let!(:promotion) { create(:promotion, name: 'Huhuhu', code: 'huhu') }
     let!(:calculator) { Spree::Calculator::FlatPercentItemTotal.create!(preferred_flat_percent: '10') }
     let!(:action) { Spree::Promotion::Actions::CreateAdjustment.create!(calculator: calculator) }
 
@@ -116,6 +117,25 @@ describe 'Cart', type: :feature, inaccessible: true, js: true do
       expect(page).to have_content('SUBTOTAL')
       expect(page).to have_content(order.item_total)
       expect(page).not_to have_content(order.total)
+    end
+  end
+
+  context 'switching currency' do
+    before do
+      store.update!(supported_currencies: 'USD,EUR,GBP')
+      create(:price, variant: variant, currency: 'EUR', amount: 16.00)
+      create(:price, variant: variant, currency: 'GBP', amount: 23.00)
+      add_to_cart(product)
+    end
+
+    it 'will change order currency and recalulate prices' do
+      expect(page).to have_text '$19.99'
+      switch_to_currency('EUR')
+      expect(page).to have_text '€16.00'
+      expect(order.reload.currency).to eq('EUR')
+      switch_to_currency('GBP')
+      expect(page).to have_text '£23.00'
+      expect(order.reload.currency).to eq('GBP')
     end
   end
 end

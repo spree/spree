@@ -34,11 +34,11 @@ Read through the following explanatory text to add one of the supported payment 
 
 #### Select Provider
 
-To configure one of the supported payment gateways, you must first install the [Spree_Gateway](https://github.com/spree/spree_gateway) extension on your store. More than likely, you will want to ask someone from your technical team to do this. Once this extension has been installed, you can configure one of the supported gateways in the Admin Interface by clicking the "Configuration" tab and then clicking the "New Payment Method" button.
+To configure one of the supported payment gateways, you must first install the [Spree Gateway](https://github.com/spree/spree_gateway) extension on your store. More than likely, you will want to ask someone from your technical team to do this. Once this extension has been installed, you can configure one of the supported gateways in the Admin Interface by clicking the "Configuration" tab and then clicking the "New Payment Method" button.
 
 ![New Payment Method Form](../../../images/user/payments/new_payment_method.jpg)
 
-If you installed the [Spree_Gateway](https://github.com/spree/spree_gateway) extension, you will see a long list of gateways in the "Provider" drop down menu. Select the one that you would like to add.
+If you installed the [Spree Gateway](https://github.com/spree/spree_gateway) extension, you will see a long list of gateways in the "Provider" drop down menu. Select the one that you would like to add.
 
 ![Select Payment Gateway Provider](../../../images/user/payments/add_payment_provider.jpg)
 

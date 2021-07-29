@@ -1,9 +1,22 @@
 ---
-title: REST API v1 guide
+title: Spree API reference
 ---
 
-This site covers the inner working of Spree\'s RESTful API. It assumes a basic understanding of the principles of REST.
+Currently Spree has two REST APIs and in the future we will add GraphQL as well.
 
-The REST API is designed to give developers a convenient way to access data contained within Spree. With a standard read/write interface to store data, it is now very simple to write third party applications (eg. iPhone) that can talk to your Spree store. It is also possible to build sophisticated middleware applications that can serve as a bridge between Spree and a warehouse or inventory system.
+## [REST API v2](https://api.spreecommerce.org/docs/api-v2/api/docs/v2/storefront/index.yaml)
 
-For a comprehensive list of API functions, start browsing the resources in the above diagram.
+* Modern lightweight REST API based on JSON API schema built
+* OAuth 2.0 authentication
+* Recommended for building Storefronts and mobile apps
+* [JavaScript / TypeScript SDK](https://github.com/spree/spree-storefront-api-v2-js-sdk) available
+
+## [REST API v1](/api/v1/summary.html)
+
+* Older REST API that requires API key authentication for access
+* Full feature set of Admin Panel
+* Recommended for building System integrations
+
+## GraphQL
+GraphQL support is coming soon!
+

@@ -1,0 +1,115 @@
+<div data-hook="admin_menu_item_form_fields">
+  <div class="row">
+    <div class="col-12 col-md-6">
+      <div class="card mb-3">
+        <div class="card-header">
+          <h5 class="mb-0"><%= Spree.t('admin.navigation.settings') %></h5>
+        </div>
+        <div class="card-body">
+          <%= f.field_container :item_type, class: ['form-group'] do %>
+            <%= f.label :item_type, Spree.t('admin.navigation.item_type') %>
+            <%= f.select(:item_type, @menu_item_types, {include_blank: false}) %>
+            <%= f.error_message_on :item_type %>
+          <% end %>
+
+          <%= f.field_container :code, class: ['form-group'] do %>
+            <%= f.label :code, Spree.t('admin.navigation.code') %>
+            <%= f.text_field :code, class: 'form-control' %>
+            <%= f.error_message_on :code %>
+            <small class="form-text text-muted">
+              <%= raw Spree.t('admin.navigation.set_a_code') %>
+            </small>
+          <% end %>
+
+          <%= f.field_container :parent_id, class: ['form-group'] do %>
+            <%= f.label :parent_id, Spree.t('admin.navigation.nested_under') %>
+            <%= f.select :parent_id, nested_set_options(@menu.menu_items, @menu_item) {|i| "#{'-' * i.level} #{i.name}" }, {include_blank: false}, {class: 'select2'} %>
+            <%= f.error_message_on :parent_id %>
+            <small class="form-text text-muted">
+              <%= Spree.t('admin.navigation.nested_under_info') %>
+            </small>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-6">
+      <div class="card mb-3">
+        <div class="card-header">
+          <h5 class="mb-0"><%= Spree.t('admin.navigation.public_details') %></h5>
+        </div>
+        <div class="card-body">
+          <%= f.field_container :name, class: ['form-group'] do %>
+            <%= f.label :name, raw(Spree.t(:name) + required_span_tag) %>
+            <%= f.text_field :name, class: 'form-control', required: true %>
+            <%= f.error_message_on :name %>
+          <% end %>
+
+          <%= f.field_container :subtitle, class: ['form-group'] do %>
+            <%= f.label :subtitle, Spree.t('admin.navigation.subtitle') %>
+            <%= f.text_field :subtitle, class: 'form-control' %>
+            <%= f.error_message_on :subtitle %>
+          <% end %>
+
+          <% @menu_item.build_icon unless @menu_item.icon %>
+            <%= f.fields_for :icon do |icon_field| %>
+              <%= f.field_container :icon_attachment do %>
+                <% unless @menu_item.icon.new_record? %>
+                  <div id="menuItemImgContainer" class="my-3 ">
+                    <%= image_tag(main_app.url_for(@menu_item.icon.attachment)) %>
+                    <%= link_to Spree.t(:remove_image), remove_icon_admin_menu_menu_item_path(@menu, @menu_item), method: :delete %>
+                  </div>
+                <% end %>
+              <div id="<% unless @menu_item.icon.new_record? %>MenuItemImageButton<% end %>">
+                <%= icon_field.file_field :attachment %>
+              </div>
+              <small class="form-text text-muted">
+                <%= raw Spree.t('admin.navigation.image_info') %>
+              </small>
+            <% end %>
+
+            <%= f.field_container :icon_alt do %>
+              <% unless @menu_item.icon.new_record? %>
+                <div class="form-group my-3">
+                  <%= icon_field.label :alt, Spree.t('admin.navigation.image_alt_text') %>
+                  <%= icon_field.text_field :alt, class: 'form-control' %>
+                </div>
+              <% end %>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-12">
+
+      <div id="LinkSettings">
+        <div class="card mb-3">
+          <div class="card-header">
+            <h5 class="mb-0"><%= Spree.t('admin.navigation.link_settings') %></h5>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-12 col-md-6">
+                <%= f.field_container :linked_resource_type, class: ['form-group'] do %>
+                  <%= f.label :linked_resource_type, Spree.t('admin.navigation.link_to') %>
+                  <%= f.select(:linked_resource_type, spree_humanize_dropdown_values('Spree::MenuItem', {const: 'LINKED_RESOURCE_TYPE'}), {include_blank: false}, class: 'link_switcher') %>
+                  <%= f.error_message_on :linked_resource_type %>
+                <% end %>
+              </div>
+              <div class="col-12 col-md-6">
+                <%= render "spree/admin/shared/link_fields", resource: @menu_item, f: f %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="usingContainerInfo" class="alert alert-info">
+        <%= raw Spree.t('admin.navigation.menu_item_type_container_message') %>
+      </div>
+    </div>
+  </div>
+</div>

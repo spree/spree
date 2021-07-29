@@ -1,4 +1,4 @@
-version: 2 # use CircleCI 2.0
+version: 2.1 # use CircleCI 2.0
 
 defaults: &defaults
   environment: &environment
@@ -23,11 +23,11 @@ run_tests: &run_tests
     - checkout
     - restore_cache:
         keys:
-          - spree-bundle-v7-{{ checksum ".ruby-version" }}-{{ .Branch }}
-          - spree-bundle-v7-{{ checksum ".ruby-version" }}
+          - spree-bundle-v8-ruby-2-7-{{ .Branch }}
+          - spree-bundle-v8-ruby-2-7
     - run:
         name: Run rspec in parallel
-        command: BUNDLE_GEMFILE=../Gemfile ./build-ci.rb test
+        command: ./bin/build-ci.rb test
     - store_artifacts:
         path: /tmp/test-artifacts
         destination: test-artifacts
@@ -44,11 +44,11 @@ run_tests_3_0: &run_tests_3_0
     - checkout
     - restore_cache:
         keys:
-          - spree-bundle-v7-ruby-3-0-{{ .Branch }}
-          - spree-bundle-v7-ruby-3-0
+          - spree-bundle-v8-ruby-3-0-{{ .Branch }}
+          - spree-bundle-v8-ruby-3-0
     - run:
         name: Run rspec in parallel
-        command: BUNDLE_GEMFILE=../Gemfile ./build-ci.rb test
+        command: ./bin/build-ci.rb test
     - store_artifacts:
         path: /tmp/test-artifacts
         destination: test-artifacts
@@ -65,15 +65,15 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - spree-bundle-v7-{{ checksum ".ruby-version" }}-{{ .Branch }}
-            - spree-bundle-v7-{{ checksum ".ruby-version" }}
+            - spree-bundle-v8-ruby-2-7-{{ .Branch }}
+            - spree-bundle-v8-ruby-2-7
       - run:
           name: Bundle Install
           command: |
             bundle check || bundle install
-            ./build-ci.rb install
+            ./bin/build-ci.rb install
       - save_cache:
-          key: spree-bundle-v7-{{ checksum ".ruby-version" }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+          key: spree-bundle-v8-ruby-2-7-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
           paths:
             - ~/spree/vendor/bundle
 
@@ -83,15 +83,15 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - spree-bundle-v7-ruby-3-0-{{ .Branch }}
-            - spree-bundle-v7-ruby-3-0
+            - spree-bundle-v8-ruby-3-0-{{ .Branch }}
+            - spree-bundle-v8-ruby-3-0
       - run:
           name: Bundle Install
           command: |
             bundle check || bundle install
-            ./build-ci.rb install
+            ./bin/build-ci.rb install
       - save_cache:
-          key: spree-bundle-v7-ruby-3-0-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+          key: spree-bundle-v8-ruby-3-0-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
           paths:
             - ~/spree/vendor/bundle
 
@@ -125,16 +125,44 @@ jobs:
     - checkout
     - restore_cache:
         keys:
-          - spree-bundle-v7-{{ checksum ".ruby-version" }}-{{ .Branch }}
-          - spree-bundle-v7-{{ checksum ".ruby-version" }}
+          - spree-bundle-v8-ruby-2-7-{{ .Branch }}
+          - spree-bundle-v8-ruby-2-7
     - run:
         name: Ensure Bundle Install
         command: |
           bundle install
-          ./build-ci.rb install
+          ./bin/build-ci.rb install
     - run:
         name: Run rspec in parallel
-        command: BUNDLE_GEMFILE=../Gemfile ./build-ci.rb test
+        command: ./bin/build-ci.rb test
+    - store_artifacts:
+        path: /tmp/test-artifacts
+        destination: test-artifacts
+    - store_artifacts:
+        path: /tmp/test-results
+        destination: raw-test-output
+    - store_test_results:
+        path: /tmp/test-results
+
+  tests_postgres_rails_5_2:
+    <<: *tests_postgres
+    environment:
+      <<: *postgres_environment
+      RAILS_VERSION: '~> 5.2.0'
+    steps:
+    - checkout
+    - restore_cache:
+        keys:
+          - spree-bundle-v8-ruby-2-7-{{ .Branch }}
+          - spree-bundle-v8-ruby-2-7
+    - run:
+        name: Ensure Bundle Install
+        command: |
+          bundle install
+          ./bin/build-ci.rb install
+    - run:
+        name: Run rspec in parallel
+        command: ./bin/build-ci.rb test
     - store_artifacts:
         path: /tmp/test-artifacts
         destination: test-artifacts
@@ -169,11 +197,11 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - spree-bundle-v7-ruby-3-0-{{ .Branch }}
-            - spree-bundle-v7-ruby-3-0
+            - spree-bundle-v8-ruby-3-0-{{ .Branch }}
+            - spree-bundle-v8-ruby-3-0
       - run:
           name: Run rspec in parallel
-          command: BUNDLE_GEMFILE=../Gemfile ./build-ci.rb test
+          command: ./bin/build-ci.rb test
       - store_artifacts:
           path: /tmp/test-artifacts
           destination: test-artifacts
@@ -212,10 +240,11 @@ jobs:
             ./tmp/cc-test-reporter format-coverage -t simplecov -o tmp/codeclimate.backend.json /tmp/workspace/simplecov/backend/.resultset.json
             ./tmp/cc-test-reporter format-coverage -t simplecov -o tmp/codeclimate.core.json /tmp/workspace/simplecov/core/.resultset.json
             ./tmp/cc-test-reporter format-coverage -t simplecov -o tmp/codeclimate.frontend.json /tmp/workspace/simplecov/frontend/.resultset.json
+            ./tmp/cc-test-reporter format-coverage -t simplecov -o tmp/codeclimate.emails.json /tmp/workspace/simplecov/emails/.resultset.json
       - run:
           name: Upload coverage results to Code Climate
           command: |
-            ./tmp/cc-test-reporter sum-coverage tmp/codeclimate.*.json -p 4 -o tmp/codeclimate.total.json
+            ./tmp/cc-test-reporter sum-coverage tmp/codeclimate.*.json -p 5 -o tmp/codeclimate.total.json
             ./tmp/cc-test-reporter upload-coverage -i tmp/codeclimate.total.json
 
   update_staging_repository:
@@ -231,7 +260,7 @@ jobs:
       - run: ssh-add ~/.ssh/id_rsa_54505e4e806d2e2643c699bd39b271dc
       - run: git clone -b master git@github.com:spark-solutions/spree-designs.git
       - run:
-          command: bundle update spree
+          command: bundle update
           working_directory: ~/project/spree-designs
       - run:
           command: bundle exec rails spree:install:migrations
@@ -263,6 +292,9 @@ workflows:
           requires:
             - bundle_ruby_3_0
       - tests_postgres_rails_6_0:
+          requires:
+            - bundle
+      - tests_postgres_rails_5_2:
           requires:
             - bundle
       - tests_mysql_ruby_3_0:

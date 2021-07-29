@@ -1,121 +1,22 @@
-<% @body_id = 'home' %>
-
-<div class="homepage-hero-image mb-3 position-relative">
-  <img class="lazyload hero-image position-absolute"
-    data-src="<%= asset_path('homepage/main_banner.jpg') %>"
-    data-srcset="<%= image_source_set('homepage/main_banner') %>"
-    alt="Summer Collection">
-
-  <div class="hero-content">
-    <div class="homepage-hero-image-text mb-2 mx-auto pb-3 pb-md-4">
-      Summer Collection
-    </div>
-    <div>
-      <%= link_to 'SHOP NOW', spree.products_path, class: 'btn btn-primary spree-btn px-5' %>
-    </div>
-  </div>
-</div>
-
-<div class="container">
-  <div class="row">
-    <div class="col-6">
-
-      <%= link_to spree.nested_taxons_path('men'), class: "homepage-taxon-box mb-3" do %>
-        <img class="w-100 lazyload"
-          data-src="<%= asset_path('homepage/category_banner_upper.jpg') %>"
-          data-srcset="<%= image_source_set('homepage/category_banner_upper') %>"
-          alt="Men">
-
-        <div class="homepage-taxon-box-text">
-          <h3>Men</h3>
-        </div>
-      <% end %>
-
-      <%= link_to spree.nested_taxons_path('sportswear'), class: "homepage-taxon-box" do %>
-        <img class="w-100 lazyload"
-          data-src="<%= asset_path('homepage/category_banner_lower.jpg') %>"
-          data-srcset="<%= image_source_set('homepage/category_banner_lower') %>"
-          alt="Sportswear">
-
-        <div class="homepage-taxon-box-text" role="img" aria-label="Sportswear">
-          <h3>Sportswear</h3>
-        </div>
-      <% end %>
-
-    </div>
-
-    <div class="col-6 d-flex flex-column">
-
-      <%= link_to spree.nested_taxons_path('women'), class: "homepage-taxon-box flex-grow-1" do %>
-        <img class="w-100 lazyload"
-          data-src="<%= asset_path('homepage/big_category_banner.jpg') %>"
-          data-srcset="<%= image_source_set('homepage/big_category_banner') %>"
-          alt="Women">
-
-        <div class="homepage-taxon-box-text">
-          <h3>Women</h3>
-        </div>
-      <% end %>
-
+<% if @homepage %>
+    <% @homepage.cms_sections.each do |section| %>
+      <%= build_section(section) %>
+    <% end %>
+<% else %>
+  <div id="missingHomepage" class="container my-5">
+    <div class="row my-5">
+      <div class="col-12">
+        <figure class="logo mx-auto missing-homepage-logo-container">
+          <%= logo %>
+        </figure>
+      </div>
+      <div class="col-12 mb-5 text-center">
+        <h1 class="mb-3"><%= Spree.t('we_will_be_back') %></h1>
+        <h4 class="text-dark"><%= Spree.t('we_are_busy_updating', store_name: current_store.name) %></h4>
+        <h4 class="text-dark"><%= Spree.t('please_check_back_soon') %></h4>
+      </div>
     </div>
   </div>
-</div>
+<% end %>
 
-<div data-product-carousel data-product-carousel-taxon-id='bestsellers' class="my-3"></div>
-
-<div class="homepage-fashion-trends-box mb-3">
-  <div class="text-center">
-    <div class="homepage-fashion-trends-box-summer-text mb-1">Summer 2021</div>
-    <div class="homepage-fashion-trends-box-fashion-trends-text mb-2">FASHION TRENDS</div>
-    <div class="homepage-fashion-trends-box-description-text text-center mb-3">
-      Want to rock this season’s hottest trend in style? These are the top fashion from Summer 2020 Fashion Weeks that are coming our way this season.
-    </div>
-    <%= link_to 'READ MORE', spree.nested_taxons_path('trending'), class: 'btn px-5 spree-btn btn-outline-primary' %>
-  </div>
-</div>
-
-<div data-product-carousel data-product-carousel-taxon-id='trending' class="mb-3"></div>
-
-<div class="container">
-  <div class="row">
-    <div class="col-12 col-lg-6">
-      <%= link_to spree.nested_taxons_path('streetstyle') do %>
-        <div class="homepage-bottom-box text-center mb-3">
-          <img class="w-100 lazyload"
-            data-src="<%= asset_path('homepage/promo_banner_left.jpg') %>"
-            data-srcset="<%= image_source_set('homepage/promo_banner_left') %>"
-            alt="NEW COLLECTION">
-
-          <div class="homepage-bottom-box-inner" role="img" aria-label="New Collection">
-            <div class="homepage-bottom-box-inner-small-text">
-              New Collection
-            </div>
-            <div class="homepage-bottom-box-inner-big-text">
-              Streetstyle
-            </div>
-          </div>
-        </div>
-      <% end %>
-    </div>
-
-    <div class="col-12 col-lg-6">
-      <%= link_to spree.nested_taxons_path('summer-sale') do %>
-        <div class="homepage-bottom-box text-center mb-3">
-          <img class="w-100 lazyload"
-            data-src="<%= asset_path('homepage/promo_banner_right.jpg') %>"
-            data-srcset="<%= image_source_set('homepage/promo_banner_right') %>"
-            alt="Summer Sale">
-
-          <div class="homepage-bottom-box-inner">
-            <div class="homepage-bottom-box-inner-small-text">
-              Summer Sale
-            </div>
-            <div class="homepage-bottom-box-inner-big-text">
-              Up To 60%
-            </div>
-          </div>
-        </div>
-      <% end %>
-    </div>
-  </div>
-</div>
+<%= render "spree/shared/cms/pages/edit_mode", edit_mode: @edit_mode %>

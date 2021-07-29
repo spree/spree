@@ -5,7 +5,7 @@ describe Spree::LegacyUser, type: :model do # rubocop:disable RSpec/MultipleDesc
   context '#last_incomplete_order' do
     let!(:user) { create(:user) }
     let!(:order) { create(:order, bill_address: create(:address), ship_address: create(:address)) }
-    let(:current_store) { create :store }
+    let(:current_store) { Spree::Store.default }
 
     let(:order_1) { create(:order, created_at: 1.day.ago, user: user, created_by: user, store: current_store) }
     let(:order_2) { create(:order, user: user, created_by: user, store: current_store) }
@@ -157,7 +157,7 @@ describe Spree.user_class, type: :model do
       let(:amount) { 120.25 }
       let(:additional_amount) { 55.75 }
       let(:store_credit) { create(:store_credit, user: user, amount: amount, amount_used: 0.0) }
-      let!(:additional_store_credit) { create(:store_credit, user: user, amount: additional_amount, amount_used: 0.0) }
+      let!(:additional_store_credit) { create(:store_credit, user: user, amount: additional_amount, amount_used: 0.0, store: store_credit.store) }
 
       context 'part of the store credit has been used' do
         let(:amount_used) { 35.00 }
@@ -222,6 +222,174 @@ describe Spree.user_class, type: :model do
     it 'has many addresses' do
       expect(subject).to respond_to(:addresses)
       expect(subject.addresses).to eq [address2, address]
+    end
+  end
+
+  describe 'validations' do
+    shared_examples 'valid' do
+      it 'is valid' do
+        expect(subject.valid?).to be true
+      end
+    end
+
+    describe '#address_not_associated_with_other_user' do
+      subject { user }
+
+      let!(:user) { create(:user_with_addresses) }
+      let!(:other_user) { create(:user_with_addresses) }
+      let(:bill_address) { create(:address, user: assigned_user) }
+      let(:ship_address) { create(:address, user: assigned_user) }
+
+      shared_examples 'invalid' do
+        it 'is invalid' do
+          expect(subject.valid?).to be false
+          expect(subject.errors.messages.values.flatten).to include('belongs to other user')
+        end
+      end
+
+      context 'bill_address' do
+        before { subject.update(bill_address: bill_address) }
+
+        context 'when default bill address does not belong to any user' do
+          let(:assigned_user) { nil }
+
+          it_should_behave_like 'valid'
+        end
+
+        context 'when default bill address belongs to user' do
+          let(:assigned_user) { user }
+
+          it_should_behave_like 'valid'
+        end
+
+        context 'when associated bill address belongs to other user' do
+          let(:assigned_user) { other_user }
+
+          it_should_behave_like 'invalid'
+
+          it 'assigns error to bill address' do
+            expect(subject.errors.messages.keys).to include(:bill_address_id)
+          end
+        end
+      end
+
+      context 'ship_address' do
+        before { subject.update(ship_address: ship_address) }
+
+        context 'when default ship address does not belong to any user' do
+          let(:assigned_user) { nil }
+
+          it_should_behave_like 'valid'
+        end
+
+        context 'when default ship address belongs to user' do
+          let(:assigned_user) { user }
+
+          it_should_behave_like 'valid'
+        end
+
+        context 'when associated ship address belongs to other user' do
+          let(:assigned_user) { other_user }
+
+          it_should_behave_like 'invalid'
+
+          it 'assigns error to ship address' do
+            expect(subject.errors.messages.keys).to include(:ship_address_id)
+          end
+        end
+      end
+    end
+
+    describe '#address_not_deprecated_in_completed_order' do
+      subject { user }
+
+      let!(:user) { create(:user_with_addresses) }
+      let(:address) { create(:address, user: user) }
+
+      shared_examples 'invalid' do
+        it 'is invalid' do
+          expect(subject.valid?).to be false
+          expect(subject.errors.messages.values.flatten).to include('deprecated in completed order')
+        end
+      end
+
+      context 'bill_address' do
+        before { subject.update(bill_address: address) }
+
+        context 'when default bill address is not associated to completed order' do
+          let!(:completed_order) { create(:completed_order_with_totals, user: user) }
+
+          it_should_behave_like 'valid'
+        end
+
+        context 'when default bill address is associated to uncompleted order' do
+          let!(:uncompleted_order) { create(:order, user: user, bill_address: address, ship_address: address) }
+
+          it_should_behave_like 'valid'
+        end
+
+        context 'when default bill address is associated to completed order' do
+          let!(:completed_order) { create(:completed_order_with_totals, user: user, bill_address: address, ship_address: address) }
+
+          context 'when default bill address is the same as associated to order' do
+            it { expect(user.addresses).to include(address) }
+
+            it_should_behave_like 'valid'
+          end
+
+          context 'when user changed bill address which was used in completed order so the old one is deprecated' do
+            before { address.update(deleted_at: Time.now) }
+
+            it { expect(user.addresses).not_to include(address) }
+
+            it_should_behave_like 'invalid'
+
+            it 'assigns error to bill address' do
+              expect(subject.valid?).to be false
+              expect(subject.errors.messages.keys).to include(:bill_address_id)
+            end
+          end
+        end
+      end
+
+      context 'ship_address' do
+        before { subject.update(ship_address: address) }
+
+        context 'when default ship address is not associated to completed order' do
+          let!(:completed_order) { create(:completed_order_with_totals, user: user) }
+
+          it_should_behave_like 'valid'
+        end
+
+        context 'when default ship address is associated to uncompleted order' do
+          let!(:uncompleted_order) { create(:order, user: user, ship_address: address, ship_address: address) }
+
+          it_should_behave_like 'valid'
+        end
+
+        context 'when default ship address is associated to completed order' do
+          let!(:completed_order) { create(:completed_order_with_totals, user: user, bill_address: address, ship_address: address) }
+
+          context 'when default ship address is the same as associated to order' do
+            it { expect(user.addresses).to include(address) }
+
+            it_should_behave_like 'valid'
+          end
+
+          context 'when user changed ship address which was used in completed order so the old one is deprecated' do
+            before { address.update(deleted_at: Time.now) }
+
+            it { expect(user.addresses).not_to include(address) }
+
+            it_should_behave_like 'invalid'
+
+            it 'assigns error to ship address' do
+              expect(subject.valid?).to be false
+              expect(subject.errors.messages.keys).to include(:ship_address_id)
+            end
+          end
+        end
+      end
     end
   end
 end

@@ -1,15 +1,23 @@
 module Spree
   module Admin
     module BaseHelper
+      SELECT2_SUPPORTED_LOCALES = %w[
+        af ar az bg bn bs ca cs da de dsb el en eo es et eu fa fi fr gl he
+        hi hr hsb hu hy id is it ja ka km ko lt lv mk ms nb ne nl pa pl ps
+        pt pt-BR ro ru sk sl sq sr sr-Cyrl sv th tk tr uk vi zh-CN zh-TW
+      ].freeze
+
+      FLATPICKR_SUPPORTED_LOCALES = %w[
+        ar at az be bg bn bs cs cy da de eo es et fa fi fo fr ga gr he
+        hi hr hu id is it ja ka km ko kz lv mk mn ms my nl no pa pl pt ro ru
+        si sk sl sq sr sv th tr uk uz vn zh
+      ].freeze
+
       def flash_alert(flash)
         if flash.present?
-          message = flash[:error] || flash[:notice] || flash[:success]
-          flash_class = 'danger' if flash[:error]
-          flash_class = 'info' if flash[:notice]
-          flash_class = 'success' if flash[:success]
-          flash_div = content_tag(:div, message, class: "alert alert-#{flash_class} mx-2")
-          content_tag(:div, flash_div,
-                      class: 'd-flex justify-content-center position-fixed flash-alert ')
+          type = flash.first[0]
+          message = flash.first[1]
+          content_tag(:span, message, class: 'd-none', data: { alert_type: type })
         end
       end
 
@@ -21,6 +29,46 @@ module Spree
           :div, capture(&block),
           options.merge(class: css_classes.join(' '), id: "#{model}_#{method}_field")
         )
+      end
+
+      # Returns Humanized Dropdown Values From a Constant In the Model
+      # Pass the model name as a string and then a hash containing the constant name
+      # and the option to paramatize the return value.
+      #
+      # Example:
+      #
+      #   spree_humanize_dropdown_values('Spree::CmsPage', { const: 'TYPES' })
+      #   spree_humanize_dropdown_values('Spree::Menu', { const: 'MENU_TYPES', paramterize_values: true })
+      #
+      def spree_humanize_dropdown_values(model_name, options = {})
+        formatted_option_values = []
+
+        const = options[:const] || nil
+        paramterize_values = options[:paramterize_values] || false
+
+        return unless const.present?
+
+        model_name.constantize.const_get(const).map do |type|
+          return_value = if paramterize_values
+                           type.parameterize(separator: '_')
+                         else
+                           type
+                         end
+
+          formatted_option_values << [spree_humanize_type(type), return_value]
+        end
+
+        formatted_option_values
+      end
+
+      def spree_humanize_type(obj)
+        last_word = obj.split('::', 10).last
+
+        if last_word.starts_with?('Cms')
+          last_word.slice(3, 100).gsub(/(?<=[a-z])(?=[A-Z])/, ' ')
+        else
+          last_word.gsub(/(?<=[a-z])(?=[A-Z])/, ' ')
+        end
       end
 
       def error_message_on(object, method, _options = {})
@@ -46,11 +94,17 @@ module Spree
 
       def datepicker_field_value(date)
         unless date.blank?
-          l(date, format: Spree.t('date_picker.format', default: '%Y/%m/%d'))
+          l(date, format: '%Y/%m/%d')
         end
       end
 
       def preference_field_tag(name, value, options)
+        if options[:key] == :currency
+          return select_tag(name,
+                            options_from_collection_for_select(supported_currencies_for_all_stores, :iso_code, :iso_code, value),
+                            class: 'select2')
+        end
+
         case options[:type]
         when :integer
           text_field_tag(name, value, preference_field_options(options))
@@ -135,7 +189,7 @@ module Spree
                 (form.select "preferred_#{key}", currency_options(object.preferences[key]), {}, { class: 'form-control select2' }),
                           class: 'form-group', id: [object.class.to_s.parameterize, 'preference', key].join('-'))
             else
-              if object.preference_type(key) == :boolean
+              if object.preference_type(key).to_sym == :boolean
                 content_tag(:div, preference_field_for(form, "preferred_#{key}", type: object.preference_type(key)) +
                   form.label("preferred_#{key}", Spree.t(key), class: 'form-check-label'),
                             class: 'form-group form-check', id: [object.class.to_s.parameterize, 'preference', key].join('-'))
@@ -207,6 +261,32 @@ module Spree
           admin_logout_path
         elsif defined?(spree_logout_path)
           spree_logout_path
+        end
+      end
+
+      def select2_local_fallback
+        stripped_locale = I18n.locale.to_s.split('-').first
+
+        if ['zh-CN', 'zh-TW', 'sr-Cyrl', 'pt-BR'].include?(I18n.locale.to_s)
+          I18n.locale
+        elsif SELECT2_SUPPORTED_LOCALES.include? stripped_locale
+          stripped_locale
+        else
+          'en'
+        end
+      end
+
+      def flatpickr_local_fallback
+        stripped_locale = I18n.locale.to_s.split('-').first
+
+        if I18n.locale.to_s == 'zh-TW'
+          # Taiwanese is a popular language in Spree,
+          # it has been well translated.
+          'zh-tw'
+        elsif FLATPICKR_SUPPORTED_LOCALES.include? stripped_locale
+          stripped_locale
+        else
+          'default'
         end
       end
     end

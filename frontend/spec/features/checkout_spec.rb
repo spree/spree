@@ -3,7 +3,7 @@ require 'spec_helper'
 describe 'Checkout', type: :feature, inaccessible: true, js: true do
   include_context 'checkout setup'
 
-  let(:country) { create(:country, name: 'United States of America', iso_name: 'UNITED STATES') }
+  let(:country) { store.default_country }
   let(:state) { create(:state, name: 'Alabama', abbr: 'AL', country: country) }
   let(:store) { Spree::Store.default }
 
@@ -230,6 +230,24 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
 
       expect(page).to have_selector('input.btn-primary.checkout-content-save-continue-button[data-disable-with]')
     end
+
+    it 'checks if link to checkout address step will be displayed' do
+      visit spree.checkout_state_path(:confirm)
+
+      expect(page).to have_link(href: spree.checkout_state_path(:address))
+    end
+
+    it 'checks if link to checkout delivery step will be displayed' do
+      visit spree.checkout_state_path(:confirm)
+
+      expect(page).to have_link(href: spree.checkout_state_path(:delivery))
+    end
+
+    it 'checks if link to checkout payment step will be displayed' do
+      visit spree.checkout_state_path(:confirm)
+
+      expect(page).to have_link(href: spree.checkout_state_path(:payment))
+    end
   end
 
   context 'when several payment methods are available', js: true do
@@ -430,7 +448,7 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
   end
 
   context 'if coupon promotion, submits coupon along with payment', js: true do
-    let!(:promotion) { Spree::Promotion.create(name: 'Huhuhu', code: 'huhu') }
+    let!(:promotion) { create(:promotion, name: 'Huhuhu', code: 'huhu') }
     let!(:calculator) { Spree::Calculator::FlatPercentItemTotal.create(preferred_flat_percent: '10') }
     let!(:action) { Spree::Promotion::Actions::CreateItemAdjustments.create(calculator: calculator) }
 
@@ -477,7 +495,7 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
     end
 
     context 'the promotion makes order free (downgrade it total to 0.0)' do
-      let(:promotion2) { Spree::Promotion.create(name: 'test-7450', code: 'test-7450') }
+      let(:promotion2) { create(:promotion, name: 'test-7450', code: 'test-7450') }
       let(:calculator2) do
         Spree::Calculator::FlatRate.create(preferences: { currency: 'USD', amount: BigDecimal('99999') })
       end
@@ -578,7 +596,7 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
 
   context 'when order is completed' do
     let!(:user) { create(:user) }
-    let!(:order) { create(:order) }
+    let!(:order) { create(:order, store: store) }
 
     before do
       add_mug_to_cart
@@ -710,8 +728,8 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
     end
 
     context 'when not all Store Credits are used' do
-      let!(:store_credit) { create(:store_credit, user: user) }
-      let!(:additional_store_credit) { create(:store_credit, user: user, amount: 13) }
+      let!(:store_credit) { create(:store_credit, user: user, store: order.store) }
+      let!(:additional_store_credit) { create(:store_credit, user: user, amount: 13, store: order.store) }
 
       before { prepare_checkout! }
 

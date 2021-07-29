@@ -3,28 +3,18 @@ require 'spec_helper'
 module Spree
   module Core
     describe Importer::Order do
-      let!(:country) { create(:country, iso: 'US', iso3: 'USA') }
+      let(:store) { create(:store, default_country: create(:country, iso: 'US')) }
+      let!(:country) { store.default_country }
       let!(:state) { country.states.first || create(:state, country: country) }
       let!(:stock_location) { create(:stock_location, admin_name: 'Admin Name') }
 
-      let(:user) { stub_model(LegacyUser, email: 'fox@mudler.com') }
+      let(:user) { create(:user) }
       let(:shipping_method) { create(:shipping_method) }
-      let(:payment_method) { create(:check_payment_method) }
+      let(:payment_method) { create(:check_payment_method, stores: [store]) }
 
-      let(:product) do
-        product = Spree::Product.create(name: 'Test',
-                                        sku: 'TEST-1',
-                                        price: 33.22, available_on: Time.current - 1.day)
-        product.shipping_category = create(:shipping_category)
-        product.save
-        product
-      end
+      let(:product) { create(:product_in_stock, stores: [store], name: 'Test', sku: 'TEST-1', price: 33.22) }
 
-      let(:variant) do
-        variant = product.master
-        variant.stock_items.each { |si| si.update_attribute(:count_on_hand, 10) }
-        variant
-      end
+      let(:variant) { product.master }
 
       let(:sku) { variant.sku }
       let(:variant_id) { variant.id }
@@ -100,7 +90,6 @@ module Spree
         expect(Importer::Order).to receive(:ensure_variant_id_from_params).and_return(variant_id: variant.id,
                                                                                       quantity: 5)
         order = Importer::Order.import(user, params)
-        expect(order.user).to eq(nil)
         line_item = order.line_items.first
         expect(line_item.quantity).to eq(5)
         expect(line_item.variant_id).to eq(variant_id)

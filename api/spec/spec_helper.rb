@@ -21,7 +21,7 @@ ENV['RAILS_ENV'] ||= 'test'
 begin
   require File.expand_path('../dummy/config/environment', __FILE__)
 rescue LoadError
-  puts 'Could not load dummy application. Please ensure you have run `BUNDLE_GEMFILE=../Gemfile bundle exec rake test_app`'
+  puts 'Could not load dummy application. Please ensure you have run `bundle exec rake test_app`'
   exit
 end
 
@@ -35,12 +35,14 @@ Dir[File.dirname(__FILE__) + '/support/**/*.rb'].each { |f| require f }
 require 'spree/testing_support/factories'
 require 'spree/testing_support/preferences'
 require 'spree/testing_support/image_helpers'
+require 'spree/testing_support/next_instance_of'
 
 require 'spree/api/testing_support/caching'
 require 'spree/api/testing_support/helpers'
 require 'spree/api/testing_support/setup'
 require 'spree/api/testing_support/v2/base'
 require 'spree/api/testing_support/v2/current_order'
+require 'spree/api/testing_support/v2/platform_contexts'
 
 RSpec.configure do |config|
   config.backtrace_exclusion_patterns = [/gems\/activesupport/, /gems\/actionpack/, /gems\/rspec/]
@@ -61,6 +63,11 @@ RSpec.configure do |config|
 
   config.before do
     Spree::Api::Config[:requires_authentication] = true
+
+    country = create(:country, name: 'United States of America', iso_name: 'UNITED STATES', iso: 'US', states_required: true)
+    Spree::Config[:default_country_id] = country.id
+
+    create(:store, default: true)
   end
 
   config.order = :random

@@ -4,10 +4,11 @@ module Spree
   describe Products::Find do
     let!(:product)              { create(:product, price: 15.99) }
     let!(:product_2)            { create(:product, discontinue_on: Time.current + 1.day, price: 23.99) }
-    let!(:product_3)            { create(:variant).product }
+    let!(:product_3)            { create(:variant, price: 19.99).product }
     let!(:option_value)         { create(:option_value) }
     let!(:deleted_product)      { create(:product, deleted_at: Time.current - 1.day) }
     let!(:discontinued_product) { create(:product, discontinue_on: Time.current - 1.day) }
+    let(:store)                 { product.stores.first }
 
     context 'include discontinued' do
       it 'returns products with discontinued' do
@@ -16,7 +17,7 @@ module Spree
             ids: '',
             skus: '',
             price: '',
-            currency: false,
+            currency: 'USD',
             taxons: '',
             concat_taxons: '',
             name: false,
@@ -29,8 +30,7 @@ module Spree
         expect(
           described_class.new(
             scope: Spree::Product.all,
-            params: params,
-            current_currency: 'USD'
+            params: params
           ).execute
         ).to include(product, product_2, discontinued_product)
       end
@@ -38,15 +38,13 @@ module Spree
 
     context 'include deleted' do
       it 'returns products with deleted' do
-        params = { filter: { show_deleted: true } }
-
         params = {
           filter: {
             ids: '',
             skus: '',
             price: '',
-            currency: false,
             taxons: '',
+            currency: 'USD',
             concat_taxons: '',
             name: false,
             options: false,
@@ -58,8 +56,7 @@ module Spree
         expect(
           described_class.new(
             scope: Spree::Product.all,
-            params: params,
-            current_currency: 'USD'
+            params: params
           ).execute
         ).to include(product, product_2, deleted_product)
       end
@@ -72,7 +69,7 @@ module Spree
             ids: '',
             skus: '',
             price: '',
-            currency: false,
+            currency: 'USD',
             taxons: '',
             concat_taxons: '',
             name: false,
@@ -85,19 +82,17 @@ module Spree
         expect(
           described_class.new(
             scope: Spree::Product.all,
-            params: params,
-            current_currency: 'USD'
+            params: params
           ).execute
         ).to include(product, product_2)
       end
     end
 
-    describe 'filter by option values' do
+    describe 'filter by options and option values' do
       subject(:products) do
         described_class.new(
           scope: Spree::Product.all,
-          params: params,
-          current_currency: 'USD'
+          params: params
         ).execute
       end
 
@@ -117,28 +112,47 @@ module Spree
       let!(:variant_2) { create :variant, product: product_2, option_values: [option_value_1_2, option_value_2_2] }
       let!(:variant_3) { create :variant, product: product_3, option_values: [option_value_1_1, option_value_2_2] }
 
-      let(:option_value_ids) { [] }
-      let(:params) do
-        {
-          filter: {
-            option_value_ids: option_value_ids
+      context 'for options' do
+        let(:params) do
+          {
+            filter: {
+              options: ActionController::Parameters.new(
+                size: 's',
+                state: 'old'
+              )
+            }
           }
-        }
-      end
+        end
 
-      context 'filtering by one option' do
-        let(:option_value_ids) { [option_value_1_1.id] }
-
-        it 'returns products with proper option values' do
-          expect(products).to match_array([product_1, product_3])
+        it 'returns products matching all given options' do
+          expect(products).to contain_exactly(product_1)
         end
       end
 
-      context 'filtering by several options' do
-        let(:option_value_ids) { [option_value_1_1.id, option_value_2_2.id] }
+      context 'for option values' do
+        let(:option_value_ids) { [] }
+        let(:params) do
+          {
+            filter: {
+              option_value_ids: option_value_ids
+            }
+          }
+        end
 
-        it 'returns products that have both options' do
-          expect(products).to match_array([product_3])
+        context 'filtering by one option' do
+          let(:option_value_ids) { [option_value_1_1.id] }
+
+          it 'returns products with proper option values' do
+            expect(products).to match_array([product_1, product_3])
+          end
+        end
+
+        context 'filtering by several options' do
+          let(:option_value_ids) { [option_value_1_1.id, option_value_2_2.id] }
+
+          it 'returns products that have both options' do
+            expect(products).to match_array([product_3])
+          end
         end
       end
     end
@@ -146,17 +160,17 @@ module Spree
     describe 'filter by taxons' do
       subject(:products) do
         described_class.new(
-            scope: Spree::Product.all,
-            params: params,
-            current_currency: 'USD'
+          scope: scope,
+          params: params
         ).execute
       end
 
+      let!(:scope) { Spree::Product.all }
       let(:parent_taxon) { child_taxon.parent }
       let(:child_taxon) { create(:taxon) }
 
       context 'one taxon is requested in params' do
-        let(:params) { { filter: { taxons: parent_taxon.id } } }
+        let(:params) { { store: store, filter: { taxons: parent_taxon.id } } }
 
         shared_examples 'returns distinct products associated both to self and descendants' do
           it { expect(products).to match_array [product, product_2] }
@@ -177,7 +191,7 @@ module Spree
       end
 
       context 'multiple taxons are requested' do
-        let(:params) { { filter: { taxons: "#{taxon.id},#{taxon_2.id}" } } }
+        let(:params) { { store: store, filter: { taxons: "#{taxon.id},#{taxon_2.id}" } } }
         let(:taxon) { create(:taxon) }
         let(:taxon_2) { create(:taxon) }
 
@@ -190,7 +204,7 @@ module Spree
       end
 
       context 'multiple taxons + 1 concat_taxons are requested' do
-        let(:params) { { filter: { taxons: "#{taxon.id},#{taxon_2.id}", concat_taxons: "#{taxon_3.id}" } } }
+        let(:params) { { store: store, filter: { taxons: "#{taxon.id},#{taxon_2.id}", concat_taxons: "#{taxon_3.id}" } } }
         let(:taxon) { create(:taxon) }
         let(:taxon_2) { create(:taxon) }
         let(:taxon_3) { create(:taxon) }
@@ -206,7 +220,7 @@ module Spree
       end
 
       context 'only multiple concat_taxons are requested' do
-        let(:params) { { filter: {concat_taxons: "#{taxon_2.id},#{taxon_3.id}" } } }
+        let(:params) { { store: store, filter: {concat_taxons: "#{taxon_2.id},#{taxon_3.id}" } } }
         let(:taxon) { create(:taxon) }
         let(:taxon_2) { create(:taxon) }
         let(:taxon_3) { create(:taxon) }
@@ -222,7 +236,7 @@ module Spree
       end
 
       context 'only one concat_taxons is requested' do
-        let(:params) { { filter: {concat_taxons: "#{taxon_3.id}" } } }
+        let(:params) { { store: store, filter: {concat_taxons: "#{taxon_3.id}" } } }
         let(:taxon) { create(:taxon) }
         let(:taxon_2) { create(:taxon) }
         let(:taxon_3) { create(:taxon) }
@@ -236,6 +250,119 @@ module Spree
 
         it { expect(products).to match_array [product_2,product_3] }
       end
+
+      context 'products scope is another store' do
+        let!(:scope) { store.products }
+
+        context 'passed store has no taxons' do
+          let(:store) { create(:store) }
+          let(:params) { { store: store, filter: { taxons: parent_taxon.id } } }
+
+          before do
+            parent_taxon.products << product
+          end
+
+          it { expect(products).to be_empty }
+        end
+      end
+    end
+
+    describe 'filter by prices' do
+      subject(:products) do
+        described_class.new(
+          scope: Spree::Product.all,
+          params: params
+        ).execute
+      end
+
+      let(:params) { { filter: { price: price_param } } }
+
+      context 'for a price less than 20' do
+        let(:price_param) { '0,20' }
+
+        it { is_expected.to contain_exactly(product, product_3) }
+      end
+
+      context 'for a price between 16 and 24' do
+        let(:price_param) { '16,24' }
+
+        it { is_expected.to contain_exactly(product_2, product_3) }
+      end
+
+      context 'for a price more than 23' do
+        let(:price_param) { '23,Infinity' }
+
+        it do
+          is_expected.to contain_exactly(product_2)
+        end
+      end
+    end
+
+    describe 'filter by properties' do
+      subject(:products) do
+        described_class.new(
+          scope: Spree::Product.all,
+          params: params
+        ).execute
+      end
+
+      let(:params) do
+        { filter: { properties: ActionController::Parameters.new(properties_param) } }
+      end
+
+      let(:brand) { create(:property, :brand) }
+      let(:manufacturer) { create(:property, :manufacturer) }
+      let(:material) { create(:property, :material) }
+
+      let!(:product_1) do
+        create(
+          :product,
+          product_properties: [
+            create(:product_property, property: brand, value: 'Alpha'),
+            create(:product_property, property: manufacturer, value: 'Wilson')
+          ]
+        )
+      end
+
+      let!(:product_2) do
+        create(
+          :product,
+          product_properties: [
+            create(:product_property, property: brand, value: 'Beta'),
+            create(:product_property, property: manufacturer, value: 'Jerseys')
+          ]
+        )
+      end
+
+      let(:product_3) do
+        create(
+          :product,
+          product_properties: [
+            create(:product_property, property: brand, value: 'Alpha')
+          ]
+        )
+      end
+
+      before do
+        create(:product, product_properties: [create(:product_property, property: manufacturer, value: 'Jerseys')])
+        create(:product, product_properties: [create(:product_property, property: material, value: '100% Cotton')])
+      end
+
+      context 'when filtering by one Property' do
+        let(:properties_param) { { brand: 'alpha,beta,gamma' } }
+
+        it 'finds Products matching any of Property values' do
+          expect(products).to contain_exactly(product_1, product_2, product_3)
+        end
+      end
+
+      context 'when filtering by many Properties' do
+        let(:properties_param) { { brand: 'alpha,beta,gamma', manufacturer: 'wilson,jerseys' } }
+
+        it 'finds Products matching any of Property values, but for all given Properties' do
+          expect(products).to contain_exactly(product_1, product_2)
+        end
+      end
     end
 
     context 'ordered' do
@@ -243,8 +370,7 @@ module Spree
         subject(:products) do
           described_class.new(
             scope: Spree::Product.all,
-            params: params,
-            current_currency: 'USD'
+            params: params
           ).execute
         end
 
@@ -257,22 +383,27 @@ module Spree
         end
 
         context 'when filtering by taxons' do
-          let(:taxonomy) { create(:taxonomy) }
-          let(:child_taxon) { create(:taxon, taxonomy: taxonomy) }
-
-          before do
-            product.taxons << child_taxon
-            product_2.taxons << child_taxon
-
-            # swap products positions
-            product.classifications.find_by(taxon: child_taxon).update(position: 2)
-            product_2.classifications.find_by(taxon: child_taxon).update(position: 1)
+          let(:params) do
+            { store: store, sort_by: 'default', filter: { taxons: taxonomy.root.id } }
           end
 
-          let(:params) { { sort_by: 'default', filter: { taxons: taxonomy.root.id } } }
+          let(:taxonomy) { create(:taxonomy) }
+          let(:child_taxon_1) { create(:taxon, taxonomy: taxonomy) }
+          let(:child_taxon_2) { create(:taxon, taxonomy: taxonomy) }
+
+          before do
+            product.taxons << child_taxon_1
+            product_2.taxons << child_taxon_1
+            product_3.taxons << child_taxon_2
+
+            # swap products positions
+            product.classifications.find_by(taxon: child_taxon_1).update(position: 3)
+            product_3.classifications.find_by(taxon: child_taxon_2).update(position: 2)
+            product_2.classifications.find_by(taxon: child_taxon_1).update(position: 1)
+          end
 
           it 'returns products ordered by associated taxon position' do
-            expect(products).to match_array [product_2, product]
+            expect(products).to eq [product_2, product_3, product]
           end
         end
       end
@@ -284,11 +415,10 @@ module Spree
 
         product_ids = described_class.new(
           scope: Spree::Product.all,
-          params: params,
-          current_currency: 'USD'
+          params: params
         ).execute.map(&:id)
 
-        expect(product_ids).to match_array Spree::Product.available.order(available_on: :desc).map(&:id)
+        expect(product_ids).to eq Spree::Product.available.order(available_on: :desc).map(&:id)
       end
 
       it 'returns products in price-high-to-low order' do
@@ -298,11 +428,10 @@ module Spree
 
         products = described_class.new(
           scope: Spree::Product.all,
-          params: params,
-          current_currency: 'USD'
+          params: params
         ).execute.to_a
 
-        expect(products).to match_array [product_2, product_3, product]
+        expect(products).to eq [product_2, product_3, product]
       end
 
       it 'returns products in price-low-to-high order' do
@@ -312,11 +441,36 @@ module Spree
 
         products = described_class.new(
           scope: Spree::Product.all,
-          params: params,
-          current_currency: 'USD'
+          params: params
         ).execute
 
-        expect(products).to match_array [product, product_3, product_2]
+        expect(products).to eq [product, product_3, product_2]
+      end
+
+      it 'returns products in name-a-z order' do
+        params = {
+          sort_by: 'name-a-z'
+        }
+
+        products = described_class.new(
+          scope: Spree::Product.all,
+          params: params
+        ).execute
+
+        expect(products).to eq [product, product_2, product_3]
+      end
+
+      it 'returns products in name-z-a order' do
+        params = {
+          sort_by: 'name-z-a'
+        }
+
+        products = described_class.new(
+          scope: Spree::Product.all,
+          params: params
+        ).execute
+
+        expect(products).to eq [product_3, product_2, product]
       end
     end
   end

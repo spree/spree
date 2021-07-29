@@ -2,6 +2,8 @@ module Spree
   module Admin
     module Orders
       class CustomerDetailsController < Spree::Admin::BaseController
+        include Spree::Admin::OrderConcern
+
         before_action :load_order
         before_action :load_user, only: :update, unless: :guest_checkout?
 
@@ -11,15 +13,12 @@ module Spree
         end
 
         def edit
-          country_id = Address.default.country_id
-          @order.build_bill_address(country_id: country_id) if @order.bill_address.nil?
-          @order.build_ship_address(country_id: country_id) if @order.ship_address.nil?
-
-          @order.bill_address.country_id = country_id if @order.bill_address.country.nil?
-          @order.ship_address.country_id = country_id if @order.ship_address.country.nil?
+          @order.build_bill_address(country: current_store.default_country) if @order.bill_address.nil?
+          @order.build_ship_address(country: current_store.default_country) if @order.ship_address.nil?
         end
 
         def update
+          params[:order][:user_id] = nil if guest_checkout?
           if @order.update(order_params)
             @order.associate_user!(@user, @order.email.blank?) unless guest_checkout?
             @order.next if @order.address?
@@ -27,7 +26,7 @@ module Spree
 
             if @order.errors.empty?
               flash[:success] = Spree.t('customer_details_updated')
-              redirect_to edit_admin_order_url(@order)
+              redirect_to spree.edit_admin_order_url(@order)
             else
               render action: :edit
             end
@@ -44,10 +43,6 @@ module Spree
             bill_address_attributes: permitted_address_attributes,
             ship_address_attributes: permitted_address_attributes
           )
-        end
-
-        def load_order
-          @order = Order.includes(:adjustments).find_by!(number: params[:order_id])
         end
 
         def model_class

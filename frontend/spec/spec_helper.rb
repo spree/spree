@@ -20,7 +20,7 @@ ENV['RAILS_ENV'] ||= 'test'
 begin
   require File.expand_path('../dummy/config/environment', __FILE__)
 rescue LoadError
-  puts 'Could not load dummy application. Please ensure you have run `BUNDLE_GEMFILE=../Gemfile bundle exec rake test_app`'
+  puts 'Could not load dummy application. Please ensure you have run `bundle exec rake test_app`'
   exit
 end
 
@@ -30,7 +30,6 @@ require 'ffaker'
 require 'database_cleaner'
 
 require 'spree/testing_support/i18n' if ENV['CHECK_TRANSLATIONS']
-
 require 'spree/testing_support/authorization_helpers'
 require 'spree/testing_support/capybara_ext'
 require 'spree/testing_support/factories'
@@ -42,6 +41,7 @@ require 'spree/testing_support/order_walkthrough'
 require 'spree/testing_support/caching'
 require 'spree/testing_support/capybara_config'
 require 'spree/testing_support/image_helpers'
+require 'spree/testing_support/locale_helpers'
 require 'webdrivers'
 
 # Requires supporting files with custom matchers and macros, etc,
@@ -90,6 +90,9 @@ RSpec.configure do |config|
     DatabaseCleaner.start
     reset_spree_preferences
 
+    country = create(:country, name: 'United States of America', iso_name: 'UNITED STATES', iso: 'US', states_required: true)
+    Spree::Config[:default_country_id] = country.id
+
     create(:store, default: true)
     create(:taxon, permalink: 'trending')
     create(:taxon, permalink: 'bestsellers')
@@ -114,6 +117,7 @@ RSpec.configure do |config|
   config.include Spree::TestingSupport::ControllerRequests, type: :controller
   config.include Spree::TestingSupport::Flash
   config.include Spree::TestingSupport::ImageHelpers
+  config.include Spree::TestingSupport::LocaleHelpers
 
   config.order = :random
   Kernel.srand config.seed

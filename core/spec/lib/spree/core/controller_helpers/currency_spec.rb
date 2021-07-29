@@ -26,4 +26,20 @@ describe Spree::Core::ControllerHelpers::Currency, type: :controller do
       expect(controller.supported_currencies).to include(::Money::Currency.find(currency))
     end
   end
+
+  describe '#currency_param' do
+    let!(:store) { create :store, default: true, default_currency: 'EUR', supported_currencies: 'EUR,GBP' }
+
+    context 'same as store default locale' do
+      before { controller.params = { currency: 'EUR' } }
+
+      it { expect(controller.currency_param).to eq(nil) }
+    end
+
+    context 'different than store locale' do
+      before { controller.params = { currency: 'GBP' } }
+
+      it { expect(controller.currency_param).to eq('GBP') }
+    end
+  end
 end

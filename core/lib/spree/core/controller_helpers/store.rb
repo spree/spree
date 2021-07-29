@@ -7,10 +7,15 @@ module Spree
         included do
           helper_method :current_store
           helper_method :current_price_options
+          helper_method :available_menus
         end
 
         def current_store
-          @current_store ||= Spree::Store.current(request.env['SERVER_NAME'])
+          @current_store ||= current_store_finder.new(url: request.env['SERVER_NAME']).execute
+        end
+
+        def available_menus
+          @available_menus ||= current_store.menus
         end
 
         def store_locale
@@ -43,6 +48,10 @@ module Spree
 
         def current_tax_zone
           @current_tax_zone ||= @current_order&.tax_zone || Spree::Zone.default_tax
+        end
+
+        def current_store_finder
+          Spree::Dependencies.current_store_finder.constantize
         end
       end
     end

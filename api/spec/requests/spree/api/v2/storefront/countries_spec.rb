@@ -1,13 +1,11 @@
 require 'spec_helper'
 
 describe 'Storefront API v2 Countries spec', type: :request do
+  let(:store) { Spree::Store.default }
+  let(:default_country) { store.default_country }
   let!(:country) { create(:country) }
   let!(:states)    { create_list(:state, 2, country: country) }
-  let!(:default_country) do
-    country = create(:country, iso3: 'GBR')
-    Spree::Config[:default_country_id] = country.id
-    country
-  end
+
   shared_examples 'returns valid country resource JSON' do
     it 'returns a valid country resource JSON response' do
       expect(response.status).to eq(200)
@@ -83,7 +81,7 @@ describe 'Storefront API v2 Countries spec', type: :request do
         expect(json_response['data']).to have_attribute(:iso3).with_value(country.iso3)
         expect(json_response['data']).to have_attribute(:iso_name).with_value(country.iso_name)
         expect(json_response['data']).to have_attribute(:name).with_value(country.name)
-        expect(json_response['data']).to have_attribute(:default).with_value(country == Spree::Country.default)
+        expect(json_response['data']).to have_attribute(:default).with_value(country == store.default_country)
         expect(json_response['data']).to have_attribute(:states_required).with_value(country.states_required)
         expect(json_response['data']).to have_attribute(:zipcode_required).with_value(country.zipcode_required)
       end
@@ -112,6 +110,22 @@ describe 'Storefront API v2 Countries spec', type: :request do
       it 'returns default country' do
         expect(json_response['data']).to have_id(default_country.id.to_s)
         expect(json_response['data']).to have_attribute(:iso).with_value(default_country.iso)
+        expect(json_response['data']).to have_attribute(:default).with_value(true)
+      end
+    end
+
+    context 'when different current store' do
+      let!(:second_country) { create(:country) }
+      let!(:second_store) { create(:store, name: 'Second Store', default_country: second_country) }
+
+      before do
+        allow_any_instance_of(Spree::Api::V2::Storefront::CountriesController).to receive(:current_store).and_return(second_store)
+        get '/api/v2/storefront/countries/default'
+      end
+
+      it 'should return second_country' do
+        expect(json_response['data']).to have_id(second_country.id.to_s)
+        expect(json_response['data']).to have_attribute(:iso).with_value(second_country.iso)
         expect(json_response['data']).to have_attribute(:default).with_value(true)
       end
     end

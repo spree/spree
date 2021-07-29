@@ -1,12 +1,12 @@
 require 'spec_helper'
 
 describe 'API V2 Storefront Cart Spec', type: :request do
-  let(:default_currency) { 'USD' }
-  let!(:store) { create(:store, default_currency: default_currency) }
+  let!(:store) { Spree::Store.default }
   let(:currency) { store.default_currency }
   let(:user)  { create(:user) }
   let(:order) { create(:order, user: user, store: store, currency: currency) }
-  let(:variant) { create(:variant) }
+  let(:product) { create(:product, stores: [store]) }
+  let(:variant) { create(:variant, product: product) }
 
   include_context 'API v2 tokens'
 
@@ -21,7 +21,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
   shared_context 'coupon codes' do
     let!(:line_item) { create(:line_item, order: order) }
     let!(:shipment) { create(:shipment, order: order) }
-    let!(:promotion) { Spree::Promotion.create(name: 'Free shipping', code: 'freeship') }
+    let!(:promotion) { create(:promotion, name: 'Free shipping', code: 'freeship', stores: [store]) }
     let(:coupon_code) { promotion.code }
     let!(:promotion_action) { Spree::PromotionAction.create(promotion_id: promotion.id, type: 'Spree::Promotion::Actions::FreeShipping') }
   end
@@ -189,12 +189,40 @@ describe 'API V2 Storefront Cart Spec', type: :request do
       end
     end
 
+    shared_examples 'doesnt add item from different store' do
+      before do
+        variant.product.stores = [create(:store)]
+        execute
+      end
+
+      it_behaves_like 'returns 404 HTTP status'
+
+      it 'returns an error' do
+        expect(json_response[:error]).to eq('The resource you were looking for could not be found.')
+      end
+    end
+
+    shared_examples 'doesnt add non-existing item' do
+      before do
+        variant.destroy
+        execute
+      end
+
+      it_behaves_like 'returns 404 HTTP status'
+
+      it 'returns an error' do
+        expect(json_response[:error]).to eq('The resource you were looking for could not be found.')
+      end
+    end
+
     context 'as a signed in user' do
       include_context 'creates order with line item'
 
       context 'with existing order' do
         it_behaves_like 'adds item'
         it_behaves_like 'doesnt add item with quantity unnavailble'
+        it_behaves_like 'doesnt add item from different store'
+        it_behaves_like 'doesnt add non-existing item'
       end
 
       it_behaves_like 'no current order'
@@ -206,6 +234,8 @@ describe 'API V2 Storefront Cart Spec', type: :request do
       context 'with existing order' do
         it_behaves_like 'adds item'
         it_behaves_like 'doesnt add item with quantity unnavailble'
+        it_behaves_like 'doesnt add item from different store'
+        it_behaves_like 'doesnt add non-existing item'
       end
 
       it_behaves_like 'no current order'
@@ -289,6 +319,42 @@ describe 'API V2 Storefront Cart Spec', type: :request do
       end
 
       it_behaves_like 'no current order'
+    end
+  end
+
+  describe 'cart#destroy' do
+    let(:execute) { delete '/api/v2/storefront/cart', headers: headers }
+
+    shared_examples 'destroying order' do
+      it 'destroys the order' do
+        expect{ execute }.to change { Spree::Order.count }.by(-1)
+      end
+    end
+
+    shared_examples '204 status returned' do
+      before { execute }
+
+      it_behaves_like 'returns 204 HTTP status'
+    end
+
+    context 'as a signed in user' do
+      context 'with existing order with line item' do
+        include_context 'creates order with line item'
+
+        it_behaves_like 'destroying order'
+        it_behaves_like '204 status returned'
+        it_behaves_like 'no current order'
+      end
+    end
+
+    context 'as a guest user' do
+      context 'with existing guest order with line item' do
+        include_context 'creates guest order with guest token'
+
+        it_behaves_like 'destroying order'
+        it_behaves_like '204 status returned'
+        it_behaves_like 'no current order'
+      end
     end
   end
 
@@ -775,16 +841,19 @@ describe 'API V2 Storefront Cart Spec', type: :request do
     let(:country) { create(:country, iso: 'USA') }
     let(:zone) { create(:zone, name: 'US') }
     let(:shipping_method) { create(:shipping_method) }
+    let(:shipping_method_2) { create(:shipping_method) }
     let(:address) { create(:address, country: country) }
 
     let(:shipment) { order.shipments.first }
     let(:shipping_rate) { shipment.selected_shipping_rate }
+    let(:shipping_rate_2) { shipment.shipping_rates.where(selected: false).first }
 
     shared_examples 'returns a list of shipments with shipping rates' do
       before do
         order.shipping_address = address
         zone.countries << country
         shipping_method.zones = [zone]
+        shipping_method_2.zones = [zone]
         order.create_proposed_shipments
         execute
       end
@@ -792,20 +861,18 @@ describe 'API V2 Storefront Cart Spec', type: :request do
       it_behaves_like 'returns 200 HTTP status'
 
       it 'returns valid shipments JSON' do
-        expect(json_response['data']).not_to be_empty
-        expect(json_response['data'][0]).to have_type('shipping_rate')
-        expect(json_response['data'][0]['attributes']).to be_present
-        expect(json_response['data'][0]).to have_type('shipping_rate')
-        expect(json_response['data'][0]).to have_attribute(:name).with_value(shipping_method.name)
-        expect(json_response['data'][0]).to have_attribute(:cost).with_value(shipping_rate.cost.to_s)
-        expect(json_response['data'][0]).to have_attribute(:tax_amount).with_value(shipping_rate.tax_amount.to_s)
-        expect(json_response['data'][0]).to have_attribute(:shipping_method_id).with_value(shipping_method.id)
-        expect(json_response['data'][0]).to have_attribute(:selected).with_value(shipping_rate.selected)
-        expect(json_response['data'][0]).to have_attribute(:final_price).with_value(shipping_rate.final_price.to_s)
-        expect(json_response['data'][0]).to have_attribute(:free).with_value(shipping_rate.free?)
-        expect(json_response['data'][0]).to have_attribute(:display_final_price).with_value(shipping_rate.display_final_price.to_s)
-        expect(json_response['data'][0]).to have_attribute(:display_cost).with_value(shipping_rate.display_cost.to_s)
-        expect(json_response['data'][0]).to have_attribute(:display_tax_amount).with_value(shipping_rate.display_tax_amount.to_s)
+        [{shipping_method: shipping_method, shipping_rate: shipping_rate}, {shipping_method: shipping_method_2, shipping_rate: shipping_rate_2}].each do |shipping|
+          expect(json_response['data']).to include(have_type('shipping_rate').and have_attribute(:name).with_value(shipping[:shipping_method].name))
+          expect(json_response['data']).to include(have_type('shipping_rate').and have_attribute(:shipping_method_id).with_value(shipping[:shipping_method].id))
+          expect(json_response['data']).to include(have_type('shipping_rate').and have_attribute(:cost).with_value(shipping[:shipping_rate].cost.to_s))
+          expect(json_response['data']).to include(have_type('shipping_rate').and have_attribute(:tax_amount).with_value(shipping[:shipping_rate].tax_amount.to_s))
+          expect(json_response['data']).to include(have_type('shipping_rate').and have_attribute(:selected).with_value(shipping[:shipping_rate].selected))
+          expect(json_response['data']).to include(have_type('shipping_rate').and have_attribute(:final_price).with_value(shipping[:shipping_rate].final_price.to_s))
+          expect(json_response['data']).to include(have_type('shipping_rate').and have_attribute(:free).with_value(shipping[:shipping_rate].free?))
+          expect(json_response['data']).to include(have_type('shipping_rate').and have_attribute(:display_final_price).with_value(shipping[:shipping_rate].display_final_price.to_s))
+          expect(json_response['data']).to include(have_type('shipping_rate').and have_attribute(:display_cost).with_value(shipping[:shipping_rate].display_cost.to_s))
+          expect(json_response['data']).to include(have_type('shipping_rate').and have_attribute(:display_tax_amount).with_value(shipping[:shipping_rate].display_tax_amount.to_s))
+        end
       end
     end
 

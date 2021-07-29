@@ -6,11 +6,10 @@
     </div>
       <div class="form-group previous_cards card-body mb-0" data-hook="previous_cards">
         <ul class="m-0 p-0">
-
             <% previous_cards.each do |card| %>
               <li>
                 <label>
-                  <%= radio_button_tag :card, card.id, card == previous_cards.first %> <%= card.brand.upcase + ' - ' + card.display_number %>
+                  <%= radio_button_tag :card, card.id, card == previous_cards.first %> <%= card.display_brand + ' - ' + card.display_number %>
                 </label>
               </li>
             <% end %>

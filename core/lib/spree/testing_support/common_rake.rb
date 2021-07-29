@@ -8,14 +8,25 @@ require 'generators/spree/dummy_model/dummy_model_generator'
 desc 'Generates a dummy app for testing'
 namespace :common do
   task :test_app, :user_class do |_t, args|
-    args.with_defaults(user_class: 'Spree::LegacyUser')
+    args.with_defaults(user_class: 'Spree::LegacyUser', install_storefront: 'false', install_admin: 'false')
     require ENV['LIB_NAME'].to_s
 
     ENV['RAILS_ENV'] = 'test'
     Rails.env = 'test'
 
     Spree::DummyGenerator.start ["--lib_name=#{ENV['LIB_NAME']}", '--quiet']
-    Spree::InstallGenerator.start ["--lib_name=#{ENV['LIB_NAME']}", '--auto-accept', '--migrate=false', '--seed=false', '--sample=false', '--quiet', '--copy_storefront=false', "--user_class=#{args[:user_class]}"]
+    Spree::InstallGenerator.start [
+      "--lib_name=#{ENV['LIB_NAME']}",
+      '--auto-accept',
+      '--migrate=false',
+      '--seed=false',
+      '--sample=false',
+      '--quiet',
+      '--copy_storefront=false',
+      "--install_storefront=#{args[:install_storefront]}",
+      "--install_admin=#{args[:install_admin]}",
+      "--user_class=#{args[:user_class]}"
+    ]
 
     puts 'Setting up dummy database...'
     system("bundle exec rake db:drop db:create > #{File::NULL}")
@@ -30,8 +41,10 @@ namespace :common do
       puts 'Skipping installation no generator to run...'
     end
 
-    puts 'Precompiling assets...'
-    system("bundle exec rake assets:precompile > #{File::NULL}")
+    unless ['spree/api', 'spree/core', 'spree/sample'].include?(ENV['LIB_NAME'])
+      puts 'Precompiling assets...'
+      system("bundle exec rake assets:precompile > #{File::NULL}")
+    end
   end
 
   task :seed do |_t|

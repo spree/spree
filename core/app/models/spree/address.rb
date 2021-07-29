@@ -1,6 +1,6 @@
 module Spree
   class Address < Spree::Base
-    require 'twitter_cldr'
+    require 'validates_zipcode'
 
     if Rails::VERSION::STRING >= '6.1'
       serialize :preferences, Hash, default: {}
@@ -24,6 +24,8 @@ module Spree
     # those attributes depending of the logic of their applications
     ADDRESS_FIELDS = %w(firstname lastname company address1 address2 city state zipcode country phone)
     EXCLUDED_KEYS_FOR_COMPARISION = %w(id updated_at created_at deleted_at label user_id)
+
+    scope :not_deleted, -> { where(deleted_at: nil) }
 
     belongs_to :country, class_name: 'Spree::Country'
     belongs_to :state, class_name: 'Spree::State', optional: true
@@ -53,13 +55,21 @@ module Spree
     alias_attribute :first_name, :firstname
     alias_attribute :last_name, :lastname
 
-    self.whitelisted_ransackable_attributes = %w[firstname lastname company]
+    self.whitelisted_ransackable_attributes = ADDRESS_FIELDS
+    self.whitelisted_ransackable_associations = %w[country state user]
 
     def self.build_default
+      ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
+        `Address#build_default` is deprecated and will be removed in Spree 5.0.
+        Please use standard rails `Address.new(country: current_store.default_country)`
+      DEPRECATION
       new(country: Spree::Country.default)
     end
 
     def self.default(user = nil, kind = 'bill')
+      ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
+        `Address#default` is deprecated and will be removed in Spree 5.0.
+      DEPRECATION
       if user && user_address = user.public_send(:"#{kind}_address")
         user_address.clone
       else
@@ -155,6 +165,7 @@ module Spree
         super
       else
         update_column :deleted_at, Time.current
+        assign_new_default_address_to_user
       end
     end
 
@@ -212,11 +223,23 @@ module Spree
     end
 
     def postal_code_validate
-      return if country.blank? || country.iso.blank? || !require_zipcode?
-      return unless TwitterCldr::Shared::PostalCodes.territories.include?(country.iso.downcase.to_sym)
+      return if country.blank? || country_iso.blank? || !require_zipcode? || zipcode.blank?
+      return unless ::ValidatesZipcode::CldrRegexpCollection::ZIPCODES_REGEX.keys.include?(country_iso.upcase.to_sym)
 
-      postal_code = TwitterCldr::Shared::PostalCodes.for_territory(country.iso)
-      errors.add(:zipcode, :invalid) unless postal_code.valid?(zipcode.to_s.strip)
+      formatted_zip = ::ValidatesZipcode::Formatter.new(
+        zipcode: zipcode.to_s.strip,
+        country_alpha2: country_iso.upcase
+      ).format
+
+      errors.add(:zipcode, :invalid) unless ::ValidatesZipcode.valid?(formatted_zip, country_iso.upcase)
+    end
+
+    def assign_new_default_address_to_user
+      return unless user
+
+      user.bill_address = user.addresses.last if user.bill_address == self
+      user.ship_address = user.addresses.last if user.ship_address == self
+      user.save!
     end
   end
 end

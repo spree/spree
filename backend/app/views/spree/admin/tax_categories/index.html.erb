@@ -28,9 +28,11 @@
           <td><%= tax_category.tax_code %></td>
           <td><%= tax_category.description %></td>
           <td><%= active_badge(tax_category.is_default?) %></td>
-          <td class="actions actions-2 text-right">
-            <%= link_to_edit(tax_category, no_text: true) if can? :edit, tax_category %>
-            <%= link_to_delete(tax_category, no_text: true) if can? :delete, tax_category %>
+          <td class="actions">
+            <span class="d-flex justify-content-end">
+              <%= link_to_edit(tax_category, no_text: true) if can? :edit, tax_category %>
+              <%= link_to_delete(tax_category, no_text: true) if can? :delete, tax_category %>
+            </span>
         </tr>
       <% end %>
     </tbody>

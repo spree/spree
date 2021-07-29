@@ -2,7 +2,8 @@ require 'spec_helper'
 
 module Spree
   describe Spree::ProductDuplicator, type: :model do
-    let!(:product) { create(:product, properties: [create(:property, name: 'MyProperty')]) }
+    let(:store) { create(:store) }
+    let!(:product) { create(:product, properties: [create(:property, name: 'MyProperty')], stores: [store]) }
     let!(:duplicator) { Spree::ProductDuplicator.new(product) }
 
     let(:file) { File.open(File.expand_path('../../fixtures/thinking-cat.jpg', __dir__)) }
@@ -82,6 +83,12 @@ module Spree
         expect(new_product.product_properties.count).to be 1
         expect(new_product.product_properties.first.property.name).to eql 'MyProperty'
       end
+    end
+
+    context 'stores' do
+      let!(:new_product) { duplicator.duplicate }
+
+      it { expect(new_product.stores).to eq [store] }
     end
 
     context 'with variants' do

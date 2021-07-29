@@ -1,5 +1,5 @@
-<% cache spree_nav_cache_key('footer') do %>
-  <footer id="footer" class="pt-2 mx-auto border-top footer-spree" data-turbolinks-permanent>
+<% cache spree_menu_cache_key('footer') do %>
+  <footer id="footer" class="pt-2 mx-auto border-top footer-spree">
     <div class="container">
       <div class="row d-xl-flex justify-content-xl-around pb-xl-5">
         <div class="d-flex d-xl-block flex-xl-grow-0 col-xl-4">
@@ -48,27 +48,33 @@
         </div>
       </div>
       <div class="row d-none d-xl-flex border-top py-5 text-uppercase footer-spree-menu-links">
-        <% if spree_navigation_data.any? %>
-          <% spree_navigation_data.first(3).each do |root| %>
+
+        <% if spree_menu('footer').present? %>
+          <% spree_menu('footer').children.each do |parent| %>
             <div class="col-3">
               <div class="footer-spree-label">
-                <%= link_to root[:title], root[:url] %>
-              </div>
-              <% if  root[:items].present? %>
-                <% root[:items].each do |item| %>
-                  <div class="pt-2"><%= link_to item[:title], item[:url] %></div>
+                <% if parent.container? %>
+                  <%= parent.name %>
+                <% else %>
+                  <%= spree_nav_link_tag(parent) %>
                 <% end %>
+              </div>
+              <% parent.children.each do |child| %>
+                <div class="pt-2">
+                  <%= spree_nav_link_tag(child) %>
+                </div>
               <% end %>
             </div>
           <% end %>
         <% end %>
+
         <% if spree.respond_to?(:account_path) %>
           <div class="col-3">
             <div class="footer-spree-label">
               <%= Spree.t('nav_bar.my_account') %>
             </div>
             <div class="pt-2">
-              <%= link_to Spree.t('nav_bar.my_orders'), spree.account_path(anchor: "account-my-orders") %>
+              <%= link_to Spree.t(:my_orders).upcase, spree.account_path(anchor: "account-my-orders") %>
             </div>
           </div>
         <% end %>

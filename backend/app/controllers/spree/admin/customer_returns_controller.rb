@@ -31,15 +31,14 @@ module Spree
       end
 
       def find_resource
-        Spree::CustomerReturn.accessible_by(current_ability, :show).find(params[:id])
+        current_store.customer_returns.accessible_by(current_ability, :show).find(params[:id])
       end
 
       def collection
         parent # trigger loading the order
-        @collection ||= Spree::ReturnItem.
-                        accessible_by(current_ability).
-                        where(inventory_unit_id: @order.inventory_units.pluck(:id)).
-                        map(&:customer_return).uniq.compact
+
+        order_customer_return_ids = @order.return_items.accessible_by(current_ability).pluck(:customer_return_id).uniq.compact
+        @collection ||= current_store.customer_returns.where(id: order_customer_return_ids)
         @customer_returns = @collection
       end
 

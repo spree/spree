@@ -166,6 +166,7 @@ describe 'Users', type: :feature do
       end
 
       expect(user_a.reload.ship_address.address1).to eq '1313 Mockingbird Ln'
+      expect(user_a.ship_address.user_id).to eq user_a.id
     end
 
     it 'can edit user billing address' do
@@ -178,6 +179,7 @@ describe 'Users', type: :feature do
       end
 
       expect(user_a.reload.bill_address.address1).to eq '1313 Mockingbird Ln'
+      expect(user_a.bill_address.user_id).to eq user_a.id
     end
 
     it 'can set shipping address to be the same as billing address' do

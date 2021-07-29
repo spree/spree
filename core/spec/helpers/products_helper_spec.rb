@@ -4,7 +4,9 @@ module Spree
   describe ProductsHelper, type: :helper do
     include ProductsHelper
 
-    let(:product) { create(:product) }
+    let(:store) { create(:store) }
+
+    let(:product) { create(:product, stores: [store]) }
     let(:currency) { 'USD' }
 
     before do
@@ -199,13 +201,15 @@ THIS IS THE BEST PRODUCT EVER!
 
       let(:zone) { Spree::Zone.new }
       let(:price_options) { { tax_zone: zone } }
-      let!(:products) { create_list(:product, 5) }
+      let!(:products) { create_list(:product, 5, stores: [store]) }
       let(:product_ids) { products.map(&:id).join('-') }
       let(:taxon) { create(:taxon) }
 
       before do
         allow(helper).to receive(:params).and_return(page: 10)
         allow(helper).to receive(:current_price_options) { price_options }
+
+        allow(products).to receive(:except).with(:group, :order).and_return(products)
       end
 
       context 'when there is a maximum updated date' do
@@ -257,7 +261,7 @@ THIS IS THE BEST PRODUCT EVER!
     context '#cache_key_for_product' do
       subject(:cache_key) { helper.cache_key_for_product(product) }
 
-      let(:product) { Spree::Product.new }
+      let(:product) { store.products.new }
       let(:price_options) { { tax_zone: zone } }
 
       before do
@@ -333,7 +337,7 @@ THIS IS THE BEST PRODUCT EVER!
     context '#available_status' do
       subject(:status) { helper.available_status(product) }
 
-      let(:product) { create(:product) }
+      let(:product) { create(:product, stores: [store]) }
 
       context 'product is available' do
         it 'has available status' do

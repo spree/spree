@@ -69,7 +69,7 @@ A customer whose order subtotal equals $35 would be offered a shipping cost of $
 
 ### Custom Calculators
 
-You can define your own calculator if you have more complex needs. In that case, check out the [Calculators Guide](/developer/core/calculators.html).
+You can define your own calculator if you have more complex needs. In that case, check out the [Calculators Guide](/developer/internals/calculators.html).
 
 ## Next Step
 

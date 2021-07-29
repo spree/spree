@@ -1,0 +1,84 @@
+<% content_for :page_title do %>
+  <%= Spree.t('admin.cms.all_pages') %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <%= button_link_to Spree.t('admin.cms.add_new_page'), new_object_url, { class: "btn-success", icon: 'add.svg', id: 'new_page' } %>
+<% end if can?(:create, Spree::CmsPage) %>
+
+<% content_for :table_filter do %>
+  <div data-hook="admin_menus_sidebar">
+    <%= search_form_for [:admin, @search] do |f| %>
+      <%- locals = {f: f} %>
+      <div class="row">
+        <div class="col-12 col-lg-4">
+          <div class="form-group">
+            <%= f.label :title_cont, Spree.t('admin.cms.title') %>
+            <%= f.text_field :title_cont, size: 15, class: "form-control js-quick-search-target js-filterable" %>
+          </div>
+        </div>
+
+        <div class="col-12 col-lg-4">
+          <div class="form-group">
+            <%= label_tag :q_type_eq, Spree.t(:type) %>
+            <%= f.select(:type_eq, spree_humanize_dropdown_values('Spree::CmsPage', {const: 'TYPES'}), {include_blank: true}, class: 'select2-clear js-filterable') %>
+          </div>
+        </div>
+
+        <div class="col-12 col-lg-4">
+         <div class="form-group">
+           <%= label_tag :q_locale_eq, Spree.t(:language) %>
+           <%= f.select :locale_eq, all_locales_options, { include_blank: true }, class: 'select2-clear js-filterable' %>
+         </div>
+        </div>
+      </div>
+
+      <div data-hook="admin_menus_index_search_buttons" class="form-actions">
+        <%= button Spree.t(:search), 'search.svg' %>
+      </div>
+    <% end %>
+  </div>
+<% end %>
+
+<% if @cms_pages.any? %>
+<div class="table-responsive">
+  <table class="table" id="pagesTable">
+    <thead>
+      <th scope="col"><%= Spree.t('admin.cms.title') %></th>
+      <th scope="col"><%= Spree.t('admin.cms.visible') %></th>
+      <th scope="col"><%= Spree.t('admin.cms.page_type') %></th>
+      <th scope="col"><%= Spree.t('language') %></th>
+      <th scope="col"></th>
+    </thead>
+    <tbody>
+      <% @cms_pages.each do |page| %>
+        <tr>
+          <td>
+            <%= page.title %>
+          </td>
+          <td>
+            <%= active_badge(page.visible?) %>
+          </td>
+          <td>
+            <%= spree_humanize_type(page.type) %>
+          </td>
+          <td>
+            <%= locale_full_name(page.locale) %>
+          </td>
+          <td class="actions" data-hook="admin_pages_index_row_actions">
+             <span class="d-flex justify-content-end">
+             <%= link_to_edit(page, no_text: true) %>
+             <%= link_to_delete page, no_text: true, url: spree.admin_cms_page_path(page) if can?(:destroy, page) %>
+            </span>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+<%= render 'spree/admin/shared/index_table_options', collection: @cms_pages, simple: true %>
+<% else %>
+  <div class="alert alert-info no-objects-found">
+    <%= raw Spree.t('admin.cms.you_have_no_pages') %>
+  </div>
+<% end %>

@@ -3,7 +3,8 @@ require 'spec_helper'
 describe 'Adjustments', type: :feature do
   stub_authorization!
 
-  let!(:order) { create(:completed_order_with_totals, line_items_count: 5) }
+  let(:store) { Spree::Store.default }
+  let!(:order) { create(:completed_order_with_totals, line_items_count: 5, store: store) }
   let!(:line_item) do
     line_item = order.line_items.first
     # so we can be sure of a determinate price in our assertions
@@ -13,11 +14,11 @@ describe 'Adjustments', type: :feature do
 
   before do
     create(:tax_adjustment,
-            adjustable: line_item,
-            state: 'closed',
-            order: order,
-            label: 'VAT 5%',
-            amount: 10)
+           adjustable: line_item,
+           state: 'closed',
+           order: order,
+           label: 'VAT 5%',
+           amount: 10)
 
     order.adjustments.create!(order: order, label: 'Rebate', amount: 10)
 

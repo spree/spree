@@ -11,7 +11,7 @@ module Spree
       end
 
       def create
-        variant = Variant.find(params[:variant_id])
+        variant = current_store.variants.find(params[:variant_id])
         stock_location = StockLocation.find(params[:stock_location_id])
         stock_movement = stock_location.stock_movements.build(stock_movement_params)
         stock_movement.stock_item = stock_location.set_up_stock_item(variant)
@@ -41,7 +41,7 @@ module Spree
       end
 
       def stock_item
-        @stock_item ||= StockItem.find(params[:id])
+        @stock_item ||= current_store.stock_items.find(params[:id])
       end
 
       def determine_backorderable

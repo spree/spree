@@ -9,12 +9,11 @@
 <% content_for :table_filter do %>
   <div data-hook="admin_orders_index_search">
     <%= search_form_for @q, url: admin_stock_transfers_path do |f| %>
-
       <div class="row mb-0">
         <div class="col-12 col-lg-4">
           <div class="form-group">
             <%= f.label :reference_cont, Spree.t(:reference_contains) %>
-            <%= f.text_field :reference_cont, class: 'form-control' %>
+            <%= f.text_field :reference_cont, class: 'form-control js-filterable js-quick-search-target' %>
           </div>
         </div>
 
@@ -73,8 +72,10 @@
             <% end %>
           </td>
           <td><%= stock_transfer.created_at.strftime('%F %T %Z') %></td>
-          <td class="actions actions-1">
-            <%= link_to_with_icon 'show', Spree.t(:show), admin_stock_transfer_path(stock_transfer), class: 'btn btn-outline-secondary btn-sm', no_text: true, data: {action: 'view'} %>
+          <td class="actions">
+            <span class="d-flex justify-content-end">
+              <%= link_to_with_icon 'view.svg', Spree.t(:show), admin_stock_transfer_path(stock_transfer), class: 'btn btn-outline-secondary btn-sm', no_text: true, data: {action: 'view'} %>
+            </span>
           </td>
         </tr>
       <% end %>

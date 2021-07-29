@@ -74,7 +74,7 @@ CouponManager.prototype.sendRemoveRequest = function () {
   return $.ajax({
     async: false,
     method: 'DELETE',
-    url: Spree.routes.api_v2_storefront_cart_remove_coupon_code + '/' + this.couponCode,
+    url: Spree.routes.api_v2_storefront_cart_remove_coupon_code(this.couponCode),
     dataType: 'json',
     headers: {
       'X-Spree-Order-Token': SpreeAPI.orderToken

@@ -26,10 +26,10 @@ module Spree
         has_many   :products, record_type: :product
 
         has_one    :image,
-          object_method_name: :icon,
-          id_method_name: :icon_id,
-          record_type: :taxon_image,
-          serializer: :taxon_image
+                   object_method_name: :icon,
+                   id_method_name: :icon_id,
+                   record_type: :taxon_image,
+                   serializer: :taxon_image
       end
     end
   end

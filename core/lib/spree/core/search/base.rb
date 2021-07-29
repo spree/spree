@@ -2,25 +2,19 @@ module Spree
   module Core
     module Search
       class Base
-        attr_accessor :properties
-        attr_accessor :current_user
-        attr_accessor :current_currency
+        attr_accessor :properties, :current_user, :current_currency, :current_store, :taxon
 
         def initialize(params)
-          self.current_currency = Spree::Config[:currency]
           @properties = {}
+          @current_store = params[:current_store] || Spree::Store.default
+          @current_currency = @current_store.default_currency
+          @taxon = params[:taxon]
+
           prepare(params)
         end
 
         def retrieve_products
-          @products = extended_base_scope&.available
-          curr_page = page || 1
-
-          unless Spree::Config.show_products_without_price
-            @products = @products.where('spree_prices.amount IS NOT NULL').
-                        where('spree_prices.currency' => current_currency)
-          end
-          @products = @products.page(curr_page).per(per_page)
+          @products = extended_base_scope.page(page || 1).per(per_page)
         end
 
         def method_missing(name)
@@ -34,27 +28,28 @@ module Spree
         protected
 
         def extended_base_scope
-          base_scope = Spree::Product.spree_base_scopes.active
+          base_scope = current_store.products.spree_base_scopes
           base_scope = get_products_conditions_for(base_scope, keywords)
           base_scope = Spree::Dependencies.products_finder.constantize.new(
             scope: base_scope,
             params: {
+              store: current_store,
               filter: {
                 price: price,
                 option_value_ids: option_value_ids,
-                taxons: taxon&.id
+                properties: product_properties,
+                taxons: taxon&.id,
+                currency: current_currency
               },
               sort_by: sort_by
-            },
-            current_currency: current_currency
+            }
           ).execute
           base_scope = add_search_scopes(base_scope)
-          base_scope = add_eagerload_scopes(base_scope)
-          base_scope
+          add_eagerload_scopes(base_scope)
         end
 
         def add_eagerload_scopes(scope)
-          scope = scope.includes(
+          scope.includes(
             :tax_category,
             variants: [
               { images: { attachment_attachment: :blob } }
@@ -64,7 +59,6 @@ module Spree
               { images: { attachment_attachment: :blob } }
             ]
           )
-          scope
         end
 
         def add_search_scopes(base_scope)
@@ -107,13 +101,14 @@ module Spree
             high_price = Monetize.parse(price_param.remove("#{less_than_string} ")).to_i
           else
             low_price, high_price = Monetize.parse_collection(price_param).map(&:to_i)
+            high_price = Float::INFINITY if high_price&.zero?
           end
 
           "#{low_price},#{high_price}"
         end
 
         def build_option_value_ids(params)
-          filter_params = Spree::OptionType.all.map(&:filter_param)
+          filter_params = Spree::OptionType.filterable.map(&:filter_param)
 
           filter_params.reduce([]) do |acc, filter_param|
             acc + params[filter_param].to_s.split(',')
@@ -121,7 +116,6 @@ module Spree
         end
 
         def prepare(params)
-          @properties[:taxon] = params[:taxon].blank? ? nil : Spree::Taxon.find(params[:taxon])
           @properties[:keywords] = params[:keywords]
           @properties[:option_value_ids] = build_option_value_ids(params)
           @properties[:price] = get_price_range(params[:price])
@@ -136,6 +130,7 @@ module Spree
                                else
                                  1
                                end
+          @properties[:product_properties] = params[:properties]
         end
       end
     end

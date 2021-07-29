@@ -1,20 +1,27 @@
 require 'spec_helper'
 
 describe 'API V2 Storefront Products Spec', type: :request do
-  let!(:store)                 { create(:store, default: true) }
-  let!(:products)              { create_list(:product, 5) }
-  let(:taxon)                  { create(:taxon) }
-  let(:product_with_taxon)     { create(:product, taxons: [taxon]) }
-  let(:product_with_name)      { create(:product, name: 'Test Product') }
-  let(:product_with_price)     { create(:product, price: 13.44) }
+  let!(:store)                 { Spree::Store.default }
+  let!(:products)              { create_list(:product, 5, stores: [store]) }
+  let(:taxonomy)               { create(:taxonomy, store: store) }
+  let!(:taxon)                  { taxonomy.root }
+  let(:product_with_taxon)     { create(:product, taxons: [taxon], stores: [store]) }
+  let(:product_with_name)      { create(:product, name: 'Test Product', stores: [store]) }
+  let(:product_with_price)     { create(:product, price: 13.44, stores: [store]) }
   let!(:option_type)           { create(:option_type) }
   let!(:option_value)          { create(:option_value, option_type: option_type) }
-  let(:product_with_option)    { create(:product, option_types: [option_type]) }
+  let(:product_with_option)    { create(:product, option_types: [option_type], stores: [store]) }
   let!(:variant)               { create(:variant, product: product_with_option, option_values: [option_value]) }
-  let(:product)                { create(:product) }
-  let!(:deleted_product)       { create(:product, deleted_at: Time.current - 1.day) }
-  let!(:discontinued_product)  { create(:product, discontinue_on: Time.current - 1.day) }
-  let!(:not_available_product) { create(:product, available_on: nil) }
+  let(:product)                { create(:product, stores: [store]) }
+  let!(:deleted_product)       { create(:product, deleted_at: Time.current - 1.day, stores: [store]) }
+  let!(:discontinued_product)  { create(:product, discontinue_on: Time.current - 1.day, stores: [store]) }
+  let!(:not_available_product) { create(:product, available_on: nil, stores: [store]) }
+  let!(:property)              { create(:property) }
+  let!(:new_property)          { create(:property) }
+  let!(:product_with_property) { create(:product, properties: [property], stores: [store]) }
+  let!(:product_property)      { create(:product_property, property: new_property, product: product_with_property, value: 'Some Value') }
+
+  before { Spree::Api::Config[:api_v2_per_page_limit] = 4 }
 
   describe 'products#index' do
     context 'with no params' do
@@ -23,8 +30,66 @@ describe 'API V2 Storefront Products Spec', type: :request do
       it_behaves_like 'returns 200 HTTP status'
 
       it 'returns all products' do
-        expect(json_response['data'].count).to eq Spree::Product.available.count
+        expect(json_response['data'].count).to eq store.products.available.count
         expect(json_response['data'].first).to have_type('product')
+      end
+    end
+
+    context 'when product associated with two stores' do
+      let!(:new_store_taxonomy) { create(:taxonomy, store: store) }
+      let(:store2) { create(:store) }
+      let(:taxonomy2) { create(:taxonomy, store: store2) }
+      let!(:taxon2) { taxonomy2.root }
+
+      before do
+        product_with_taxon.stores << store2
+        product_with_taxon.taxons << taxon2
+      end
+
+      shared_examples 'should not return not related taxon' do
+        it do
+          expect(json_response['data'][0]).not_to have_relationship(:taxons).with_data([{'id' => new_store_taxonomy.id.to_s, 'type' => 'taxon'}])
+        end
+      end
+
+      context 'when current store is store' do
+        before { get "/api/v2/storefront/products?filter[ids]=#{product_with_taxon.id}" }
+
+        it 'should return only store taxons ralated to product', aggregate_failures: true do
+          expect(json_response['data'][0]).to have_relationship(:taxons).with_data([{'id' => taxon.id.to_s, 'type' => 'taxon'}])
+          expect(json_response['data'][0]).not_to have_relationship(:taxons).with_data([{'id' => taxon2.id.to_s, 'type' => 'taxon'}])
+        end
+
+        it_behaves_like 'should not return not related taxon'
+      end
+
+      context 'when current store is store2' do
+        before do
+          allow_any_instance_of(Spree::Api::V2::Storefront::ProductsController).to receive(:current_store).and_return(store2)
+          get "/api/v2/storefront/products?filter[ids]=#{product_with_taxon.id}"
+        end
+
+        it 'should return only store2 taxons ralated to product', aggregate_failures: true do
+          expect(json_response['data'][0]).to have_relationship(:taxons).with_data([{'id' => taxon2.id.to_s, 'type' => 'taxon'}])
+          expect(json_response['data'][0]).not_to have_relationship(:taxons).with_data([{'id' => taxon.id.to_s, 'type' => 'taxon'}])
+        end
+
+        it_behaves_like 'should not return not related taxon'
+      end
+    end
+
+    context 'current store' do
+      let(:store_2) { create(:store) }
+      let!(:product_from_another_store) { create(:product, stores: [store_2]) }
+
+      before { get '/api/v2/storefront/products' }
+
+      it 'returns products from this store only' do
+        expect(json_response['data'].count).to eq store.products.available.count
+        product_ids = json_response['data'].map(&:first).map(&:last)
+
+        expect(product_ids).not_to include(product_from_another_store.id)
+        expect(product_ids).to eq(store.products.available.ids.map(&:to_s))
       end
     end
 
@@ -94,6 +159,89 @@ describe 'API V2 Storefront Products Spec', type: :request do
       end
     end
 
+    context 'with multiple specified options' do
+      let!(:color) { create(:option_type, :color) }
+      let!(:green_color) { create(:option_value, option_type: color, name: 'green') }
+      let!(:white_color) { create(:option_value, option_type: color, name: 'white') }
+
+      let!(:size) { create(:option_type, :size) }
+      let!(:s_size) { create(:option_value, option_type: size, name: 's') }
+      let!(:m_size) { create(:option_value, option_type: size, name: 'm') }
+
+      let(:product_1) { create(:product, option_types: [color, size], stores: [store]) }
+      let!(:variant_1) { create(:variant, product: product_1, option_values: [white_color, m_size]) }
+
+      let(:product_2) { create(:product, option_types: [color, size], stores: [store]) }
+      let!(:variant_2_1) { create(:variant, product: product_2, option_values: [green_color, s_size]) }
+      let!(:variant_2_2) { create(:variant, product: product_2, option_values: [white_color, s_size]) }
+
+      context 'for filters with products' do
+        let(:options_filter) do
+          [
+            "filter[options][#{color.name}]=#{white_color.name}",
+            "filter[options][#{size.name}]=#{m_size.name}"
+          ].join('&')
+        end
+
+        before { get "/api/v2/storefront/products?#{options_filter}&include=option_types,variants.option_values" }
+
+        it_behaves_like 'returns 200 HTTP status'
+
+        it 'returns products with specified options' do
+          expect(json_response['data']).to include(have_id(product_1.id.to_s))
+          expect(json_response['data']).not_to include(have_id(product_2.id.to_s))
+
+          expect(json_response['included']).to include(have_type('option_type').and(have_attribute(:name).with_value(color.name)))
+          expect(json_response['included']).to include(have_type('option_value').and(have_attribute(:name).with_value(white_color.name)))
+
+          expect(json_response['included']).to include(have_type('option_type').and(have_attribute(:name).with_value(size.name)))
+          expect(json_response['included']).to include(have_type('option_value').and(have_attribute(:name).with_value(m_size.name)))
+        end
+      end
+
+      context 'for excluding filters' do
+        let(:options_filter) do
+          [
+            "filter[options][#{color.name}]=#{green_color.name}",
+            "filter[options][#{size.name}]=#{m_size.name}"
+          ].join('&')
+        end
+
+        before { get "/api/v2/storefront/products?#{options_filter}&include=option_types,variants.option_values" }
+
+        it_behaves_like 'returns 200 HTTP status'
+
+        it 'returns no products' do
+          expect(json_response['data']).to be_empty
+        end
+      end
+    end
+
+    context 'with specified properties' do
+      context 'using proper filter params' do
+        before { get "/api/v2/storefront/products?filter[properties][#{property.filter_param}]=#{product_property.filter_param}&include=product_properties" }
+
+        it_behaves_like 'returns 200 HTTP status'
+
+        it 'returns products with specified options' do
+          expect(json_response['data'].first).to have_id(product_with_property.id.to_s)
+          expect(json_response['included']).to include(have_type('product_property').and(have_attribute(:name).with_value(property.name)))
+          expect(json_response['included']).to include(have_type('product_property').and(have_attribute(:value).with_value(product_property.value)))
+          expect(json_response['included']).to include(have_type('product_property').and(have_attribute(:filter_param).with_value(product_property.filter_param)))
+        end
+      end
+
+      context 'using property names and values' do
+        before { get "/api/v2/storefront/products?filter[properties][#{property.name}]=#{product_property.value}&include=product_properties" }
+
+        it_behaves_like 'returns 200 HTTP status'
+
+        it 'returns products with specified options' do
+          expect(json_response['data'].first).to have_id(product_with_property.id.to_s)
+        end
+      end
+    end
+
     context 'with specified multiple filters' do
       before { get "/api/v2/storefront/products?filter[name]=#{product_with_name.name}&filter[price]=#{product_with_name.price.to_f - 0.02},#{product_with_name.price.to_f + 0.02}" }
 
@@ -111,7 +259,7 @@ describe 'API V2 Storefront Products Spec', type: :request do
       it_behaves_like 'returns 200 HTTP status'
 
       it 'returns products with deleted products' do
-        expect(json_response['data'].count).to eq 7
+        expect(json_response['data'].count).to eq 8
         expect(json_response['data'].pluck(:id)).to include(deleted_product.id.to_s)
       end
     end
@@ -122,7 +270,7 @@ describe 'API V2 Storefront Products Spec', type: :request do
       it_behaves_like 'returns 200 HTTP status'
 
       it 'returns products with discontinued products' do
-        expect(json_response['data'].count).to eq 8
+        expect(json_response['data'].count).to eq 9
         expect(json_response['data'].pluck(:id)).to include(discontinued_product.id.to_s)
       end
     end
@@ -135,7 +283,7 @@ describe 'API V2 Storefront Products Spec', type: :request do
       it_behaves_like 'returns 200 HTTP status'
 
       it 'returns available, deleted and discontinued products' do
-        expect(json_response['data'].count).to eq 9
+        expect(json_response['data'].count).to eq 10
         expect(json_response['data'].pluck(:id)).to include(deleted_product.id.to_s, discontinued_product.id.to_s)
       end
     end
@@ -148,8 +296,8 @@ describe 'API V2 Storefront Products Spec', type: :request do
           it_behaves_like 'returns 200 HTTP status'
 
           it 'returns products sorted by price' do
-            expect(json_response['data'].count).to      eq Spree::Product.available.count
-            expect(json_response['data'].pluck(:id)).to eq Spree::Product.available.joins(master: :prices).select("#{Spree::Product.table_name}.*, #{Spree::Price.table_name}.amount").distinct.order("#{Spree::Price.table_name}.amount").map(&:id).map(&:to_s)
+            expect(json_response['data'].count).to      eq store.products.available.count
+            expect(json_response['data'].pluck(:id)).to eq store.products.available.joins(master: :prices).select("#{store.products.table_name}.*, #{Spree::Price.table_name}.amount").distinct.order("#{Spree::Price.table_name}.amount").map(&:id).map(&:to_s)
           end
         end
 
@@ -159,8 +307,32 @@ describe 'API V2 Storefront Products Spec', type: :request do
           it_behaves_like 'returns 200 HTTP status'
 
           it 'returns products sorted by price with descending order' do
-            expect(json_response['data'].count).to      eq Spree::Product.available.count
-            expect(json_response['data'].pluck(:id)).to eq Spree::Product.available.joins(master: :prices).select("#{Spree::Product.table_name}.*, #{Spree::Price.table_name}.amount").distinct.order("#{Spree::Price.table_name}.amount DESC").map(&:id).map(&:to_s)
+            expect(json_response['data'].count).to      eq store.products.available.count
+            expect(json_response['data'].pluck(:id)).to eq store.products.available.joins(master: :prices).select("#{store.products.table_name}.*, #{Spree::Price.table_name}.amount").distinct.order("#{Spree::Price.table_name}.amount DESC").map(&:id).map(&:to_s)
+          end
+        end
+      end
+
+      context 'sorting by name' do
+        context 'A-Z' do
+          before { get '/api/v2/storefront/products?sort=name' }
+
+          it_behaves_like 'returns 200 HTTP status'
+
+          it 'returns products sorted by name' do
+            expect(json_response['data'].count).to      eq store.products.available.count
+            expect(json_response['data'].pluck(:id)).to eq store.products.available.order(:name).map(&:id).map(&:to_s)
+          end
+        end
+
+        context 'Z-A' do
+          before { get '/api/v2/storefront/products?sort=-name' }
+
+          it_behaves_like 'returns 200 HTTP status'
+
+          it 'returns products sorted by name with descending order' do
+            expect(json_response['data'].count).to      eq store.products.available.count
+            expect(json_response['data'].pluck(:id)).to eq store.products.available.order(name: :desc).map(&:id).map(&:to_s)
           end
         end
       end
@@ -172,8 +344,8 @@ describe 'API V2 Storefront Products Spec', type: :request do
           it_behaves_like 'returns 200 HTTP status'
 
           it 'returns products sorted by updated_at' do
-            expect(json_response['data'].count).to      eq Spree::Product.available.count
-            expect(json_response['data'].pluck(:id)).to eq Spree::Product.available.order(:updated_at).pluck(:id).map(&:to_s)
+            expect(json_response['data'].count).to      eq store.products.available.count
+            expect(json_response['data'].pluck(:id)).to eq store.products.available.order(:updated_at).map(&:id).map(&:to_s)
           end
         end
 
@@ -183,8 +355,8 @@ describe 'API V2 Storefront Products Spec', type: :request do
           it_behaves_like 'returns 200 HTTP status'
 
           it 'returns products sorted by updated_at with descending order' do
-            expect(json_response['data'].count).to      eq Spree::Product.available.count
-            expect(json_response['data'].pluck(:id)).to eq Spree::Product.available.order(updated_at: :desc).pluck(:id).map(&:to_s)
+            expect(json_response['data'].count).to      eq store.products.available.count
+            expect(json_response['data'].pluck(:id)).to eq store.products.available.order(updated_at: :desc).map(&:id).map(&:to_s)
           end
         end
       end
@@ -192,23 +364,49 @@ describe 'API V2 Storefront Products Spec', type: :request do
 
     context 'paginate products' do
       context 'with specified pagination params' do
-        before { get '/api/v2/storefront/products?page=1&per_page=2' }
+        context 'when per_page is between 1 and default value' do
+          before { get '/api/v2/storefront/products?page=1&per_page=2' }
 
-        it_behaves_like 'returns 200 HTTP status'
+          it_behaves_like 'returns 200 HTTP status'
 
-        it 'returns specified amount products' do
-          expect(json_response['data'].count).to eq 2
+          it 'returns the default number of products' do
+            expect(json_response['data'].count).to eq 2
+          end
+
+          it 'returns proper meta data' do
+            expect(json_response['meta']['count']).to       eq 2
+            expect(json_response['meta']['total_count']).to eq store.products.available.count
+          end
+
+          it 'returns proper links data' do
+            expect(json_response['links']['self']).to include('/api/v2/storefront/products?page=1&per_page=2')
+            expect(json_response['links']['next']).to include('/api/v2/storefront/products?page=2&per_page=2')
+            expect(json_response['links']['prev']).to include('/api/v2/storefront/products?page=1&per_page=2')
+          end
         end
 
-        it 'returns proper meta data' do
-          expect(json_response['meta']['count']).to       eq 2
-          expect(json_response['meta']['total_count']).to eq Spree::Product.available.count
+        context 'when per_page is above the default value' do
+          before { get '/api/v2/storefront/products?page=1&per_page=10' }
+
+          it 'returns the default number of products' do
+            expect(json_response['data'].count).to eq 7
+          end
         end
 
-        it 'returns proper links data' do
-          expect(json_response['links']['self']).to include('/api/v2/storefront/products?page=1&per_page=2')
-          expect(json_response['links']['next']).to include('/api/v2/storefront/products?page=2&per_page=2')
-          expect(json_response['links']['prev']).to include('/api/v2/storefront/products?page=1&per_page=2')
+        context 'when per_page is less than 0' do
+          before { get '/api/v2/storefront/products?page=1&per_page=-1' }
+
+          it 'returns the default number of products' do
+            expect(json_response['data'].count).to eq 7
+          end
+        end
+
+        context 'when per_page is equal 0' do
+          before { get '/api/v2/storefront/products?page=1&per_page=0' }
+
+          it 'returns the default number of products' do
+            expect(json_response['data'].count).to eq 7
+          end
         end
       end
 
@@ -218,12 +416,12 @@ describe 'API V2 Storefront Products Spec', type: :request do
         it_behaves_like 'returns 200 HTTP status'
 
         it 'returns specified amount products' do
-          expect(json_response['data'].count).to eq Spree::Product.available.count
+          expect(json_response['data'].count).to eq store.products.available.count
         end
 
         it 'returns proper meta data' do
           expect(json_response['meta']['count']).to       eq json_response['data'].count
-          expect(json_response['meta']['total_count']).to eq Spree::Product.available.count
+          expect(json_response['meta']['total_count']).to eq store.products.available.count
         end
 
         it 'returns proper links data' do
@@ -235,7 +433,7 @@ describe 'API V2 Storefront Products Spec', type: :request do
     end
 
     context 'fetch products by curency param' do
-      let!(:store) { create(:store, default: true, supported_currencies: 'USD,EUR,GBP', default_currency: 'USD' ) }
+      before { store.update(supported_currencies: 'USD,EUR,GBP') }
 
       context 'with default currency' do
         before { get '/api/v2/storefront/products?currency=USD' }
@@ -243,7 +441,7 @@ describe 'API V2 Storefront Products Spec', type: :request do
         it 'returns products' do
           expect(json_response['data']).not_to be_empty
           expect(json_response['data'][0]['attributes']['currency']).to eq 'USD'
-          expect(json_response['data'].count).to eq Spree::Product.available.count
+          expect(json_response['data'].count).to eq store.products.available.count
         end
       end
 
@@ -277,9 +475,10 @@ describe 'API V2 Storefront Products Spec', type: :request do
       context 'without supported currency' do
         before { get '/api/v2/storefront/products?currency=PLN' }
 
-        it 'returns empty result' do
-          expect(json_response['data']).to be_empty
-          expect(json_response['data'].count).to be_zero
+        it 'returns results with default currency' do
+          expect(json_response['data']).not_to be_empty
+          expect(json_response['data'][0]['attributes']['currency']).to eq 'USD'
+          expect(json_response['data'][0]['attributes']['display_price']).to match('$')
         end
       end
     end
@@ -299,9 +498,10 @@ describe 'API V2 Storefront Products Spec', type: :request do
     end
 
     context 'with supported currency but without prices in that currency' do
-      let!(:store) { create(:store, default: true, supported_currencies: 'USD,EUR,GBP', default_currency: 'USD') }
-
-      before { get "/api/v2/storefront/products/#{product.slug}?currency=EUR&include=default_variant" }
+      before do
+        store.update(supported_currencies: 'USD,EUR,GBP')
+        get "/api/v2/storefront/products/#{product.slug}?currency=EUR&include=default_variant"
+      end
 
       it_behaves_like 'returns 200 HTTP status'
 
@@ -367,6 +567,15 @@ describe 'API V2 Storefront Products Spec', type: :request do
           :variants, :option_types, :product_properties, :default_variant
         )
       end
+    end
+
+    context 'with product from another store' do
+      let(:store_2) { create(:store) }
+      let(:product_from_another_store) { create(:product, stores: [store_2]) }
+
+      before { get "/api/v2/storefront/products/#{product_from_another_store.slug}" }
+
+      it_behaves_like 'returns 404 HTTP status'
     end
   end
 end

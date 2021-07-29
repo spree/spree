@@ -33,11 +33,13 @@
           </td>
           <td><%= return_authorization.display_pre_tax_total.to_html %></td>
           <td><%= pretty_time(return_authorization.created_at) %></td>
-          <td class="actions actions-2">
-            <%= link_to_edit(return_authorization, no_text: true, class: 'edit') if can?(:edit, return_authorization) %>
-            <% if can?(:delete, return_authorization) && !return_authorization.customer_returned_items? %>
-              <%= link_to_delete return_authorization, no_text: true %>
-            <% end %>
+          <td class="actions">
+            <span class="d-flex justify-content-end">
+              <%= link_to_edit(return_authorization, no_text: true, class: 'edit') if can?(:edit, return_authorization) %>
+              <% if can?(:delete, return_authorization) && !return_authorization.customer_returned_items? %>
+                <%= link_to_delete return_authorization, no_text: true %>
+              <% end %>
+            </span>
           </td>
         </tr>
       <% end %>

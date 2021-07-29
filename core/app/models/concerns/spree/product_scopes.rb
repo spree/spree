@@ -43,23 +43,23 @@ module Spree
       add_simple_scopes simple_scopes
 
       add_search_scope :ascend_by_master_price do
-        joins(master: :default_price).order("#{price_table_name}.amount ASC")
+        order("#{price_table_name}.amount ASC")
       end
 
       add_search_scope :descend_by_master_price do
-        joins(master: :default_price).order("#{price_table_name}.amount DESC")
+        order("#{price_table_name}.amount DESC")
       end
 
       add_search_scope :price_between do |low, high|
-        joins(master: :default_price).where(Price.table_name => { amount: low..high })
+        where(Price.table_name => { amount: low..high })
       end
 
       add_search_scope :master_price_lte do |price|
-        joins(master: :default_price).where("#{price_table_name}.amount <= ?", price)
+        where("#{price_table_name}.amount <= ?", price)
       end
 
       add_search_scope :master_price_gte do |price|
-        joins(master: :default_price).where("#{price_table_name}.amount >= ?", price)
+        where("#{price_table_name}.amount >= ?", price)
       end
 
       # This scope selects products in taxon AND all its descendants
@@ -94,6 +94,19 @@ module Spree
         taxons.first ? prepare_taxon_conditions(taxons) : where(nil)
       end
 
+      add_search_scope :ascend_by_taxons_min_position do |taxon_ids|
+        joins(:classifications).
+          where(Classification.table_name => { taxon_id: taxon_ids }).
+          select(
+            [
+              "#{Product.table_name}.*",
+              "MIN(#{Classification.table_name}.position) AS min_position"
+            ].join(', ')
+          ).
+          group(:id).
+          order(min_position: :asc)
+      end
+
       # a scope that finds all products having property specified by name, object or id
       add_search_scope :with_property do |property|
         joins(:properties).where(property_conditions(property))
@@ -105,6 +118,12 @@ module Spree
         joins(:properties).
           where("#{ProductProperty.table_name}.value = ?", value).
           where(property_conditions(property))
+      end
+
+      add_search_scope :with_property_values do |property_filter_param, property_values|
+        joins(product_properties: :property).
+          where(Property.table_name => { filter_param: property_filter_param }).
+          where(ProductProperty.table_name => { filter_param: property_values.map(&:parameterize) })
       end
 
       add_search_scope :with_option do |option|
@@ -198,10 +217,27 @@ module Spree
         end
       end
       search_scopes << :not_discontinued
+
+      def self.with_currency(currency)
+        joins(variants_including_master: :prices).
+          where(Price.table_name => { currency: currency.upcase }).
+          where.not(Price.table_name => { amount: nil }).
+          distinct
+      end
+      search_scopes << :with_currency
+
       # Can't use add_search_scope for this as it needs a default argument
-      def self.available(available_on = nil, _currency = nil)
+      def self.available(available_on = nil, currency = nil)
         available_on ||= Time.current
-        not_discontinued.joins(master: :prices).where("#{Product.quoted_table_name}.available_on <= ?", available_on)
+
+        scope = not_discontinued.where("#{Product.quoted_table_name}.available_on <= ?", available_on)
+
+        unless Spree::Config.show_products_without_price
+          currency ||= Spree::Config[:currency]
+          scope = scope.with_currency(currency)
+        end
+
+        scope
       end
       search_scopes << :available
 
@@ -209,6 +245,21 @@ module Spree
         available(nil, currency)
       end
       search_scopes << :active
+
+      def self.for_filters(currency, taxon: nil)
+        scope = active(currency)
+        scope = scope.in_taxon(taxon) if taxon.present?
+        scope
+      end
+      search_scopes << :for_filters
+
+      def self.for_user(user = nil)
+        if user.try(:has_spree_role?, 'admin')
+          with_deleted
+        else
+          not_deleted.not_discontinued.where("#{Product.quoted_table_name}.available_on <= ?", Time.current)
+        end
+      end
 
       add_search_scope :taxons_name_eq do |name|
         group('spree_products.id').joins(:taxons).where(Taxon.arel_table[:name].eq(name))

@@ -3,8 +3,6 @@ module Spree
     # Don't serve local files or static assets
     after_action :fire_visited_path, except: :cvv
 
-    respond_to :html
-
     def test; end
 
     def cvv

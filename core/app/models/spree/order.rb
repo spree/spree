@@ -2,6 +2,7 @@ require_dependency 'spree/order/checkout'
 require_dependency 'spree/order/currency_updater'
 require_dependency 'spree/order/payments'
 require_dependency 'spree/order/store_credit'
+require_dependency 'spree/order/emails'
 
 module Spree
   class Order < Spree::Base
@@ -13,10 +14,12 @@ module Spree
     include Spree::Order::Payments
     include Spree::Order::StoreCredit
     include Spree::Order::AddressBook
+    include Spree::Order::Emails
     include Spree::Core::NumberGenerator.new(prefix: 'R')
     include Spree::Core::TokenGenerator
 
     include NumberAsParam
+    include SingleStoreResource
 
     extend Spree::DisplayMoney
     money_methods :outstanding_balance, :item_total,           :adjustment_total,
@@ -93,6 +96,7 @@ module Spree
     has_many :reimbursements, inverse_of: :order, class_name: 'Spree::Reimbursement'
     has_many :line_item_adjustments, through: :line_items, source: :adjustments
     has_many :inventory_units, inverse_of: :order, class_name: 'Spree::InventoryUnit'
+    has_many :return_items, through: :inventory_units, class_name: 'Spree::ReturnItem'
     has_many :variants, through: :line_items
     has_many :products, through: :variants
     has_many :refunds, through: :payments
@@ -121,6 +125,8 @@ module Spree
     # Needs to happen before save_permalink is called
     before_validation :ensure_store_presence
     before_validation :ensure_currency_presence
+    before_validation :uppercase_number
+
     before_validation :clone_billing_address, if: :use_billing?
     attr_accessor :use_billing
 
@@ -129,7 +135,9 @@ module Spree
     before_update :homogenize_line_item_currencies, if: :currency_changed?
 
     with_options presence: true do
-      validates :number, length: { maximum: 32, allow_blank: true }, uniqueness: { allow_blank: true, case_sensitive: false }
+      # we want to have this case_sentive: true as changing it to false causes all SQL to use LOWER(slug)
+      # which is very costly and slow on large set of records
+      validates :number, length: { maximum: 32, allow_blank: true }, uniqueness: { allow_blank: true, case_sensitive: true }
       validates :email, length: { maximum: 254, allow_blank: true }, email: { allow_blank: true }, if: :require_email
       validates :item_count, numericality: { greater_than_or_equal_to: 0, less_than: 2**31, only_integer: true, allow_blank: true }
       validates :store
@@ -158,6 +166,8 @@ module Spree
     scope :complete, -> { where.not(completed_at: nil) }
     scope :incomplete, -> { where(completed_at: nil) }
     scope :not_canceled, -> { where.not(state: 'canceled') }
+    scope :with_deleted_bill_address, -> { joins(:bill_address).where.not(Address.table_name => { deleted_at: nil }) }
+    scope :with_deleted_ship_address, -> { joins(:ship_address).where.not(Address.table_name => { deleted_at: nil }) }
 
     # shows completed orders first, by their completed_at date, then uncompleted orders by their created_at
     scope :reverse_chronological, -> { order(Arel.sql('spree_orders.completed_at IS NULL'), completed_at: :desc, created_at: :desc) }
@@ -326,6 +336,10 @@ module Spree
       complete? || resumed? || awaiting_return? || returned?
     end
 
+    def uneditable?
+      complete? || canceled? || returned?
+    end
+
     def credit_cards
       credit_card_ids = payments.from_credit_card.pluck(:source_id).uniq
       CreditCard.where(id: credit_card_ids)
@@ -356,7 +370,6 @@ module Spree
       touch :completed_at
 
       deliver_order_confirmation_email unless confirmation_delivered?
-
       deliver_store_owner_order_notification_email if deliver_store_owner_order_notification_email?
 
       consider_risk
@@ -368,17 +381,16 @@ module Spree
       save!
     end
 
-    def deliver_order_confirmation_email
-      OrderMailer.confirm_email(id).deliver_later
-      update_column(:confirmation_delivered, true)
-    end
-
     # Helper methods for checkout steps
     def paid?
       payment_state == 'paid' || payment_state == 'credit_owed'
     end
 
     def available_payment_methods(store = nil)
+      if store.present?
+        ActiveSupport::Deprecation.warn('The `store` parameter is deprecated and will be removed in Spree 5. Order is already associated with Store')
+      end
+
       @available_payment_methods ||= collect_payment_methods(store)
     end
 
@@ -410,21 +422,15 @@ module Spree
     end
 
     def empty!
-      if completed?
-        raise Spree.t(:cannot_empty_completed_order)
-      else
-        line_items.destroy_all
-        updater.update_item_count
-        adjustments.destroy_all
-        shipments.destroy_all
-        state_changes.destroy_all
-        order_promotions.destroy_all
+      ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
+        `Order#empty!` is deprecated and will be removed in Spree 5.0.
+        Please use `Spree::Cart::Empty.call(order: order)` instead.
+      DEPRECATION
 
-        update_totals
-        persist_totals
-        restart_checkout_flow
-        self
-      end
+      raise Spree.t(:cannot_empty_completed_order) if completed?
+      
+      result = Spree::Dependencies.cart_empty_service.constantize.call(order: self)
+      result.value
     end
 
     def has_step?(step)
@@ -562,6 +568,10 @@ module Spree
       !approved?
     end
 
+    def can_be_destroyed?
+      !completed? && payments.completed.empty?
+    end
+
     def consider_risk
       considered_risky! if is_risky? && !approved?
     end
@@ -617,12 +627,12 @@ module Spree
 
     def validate_payments_attributes(attributes)
       # Ensure the payment methods specified are allowed for this user
-      payment_methods = Spree::PaymentMethod.where(id: available_payment_methods.map(&:id))
-      attributes.each do |payment_attributes|
-        payment_method_id = payment_attributes[:payment_method_id]
+      payment_method_ids = available_payment_methods.map(&:id)
 
-        # raise RecordNotFound unless it is an allowed payment method
-        payment_methods.find(payment_method_id) if payment_method_id
+      attributes.each do |payment_attributes|
+        payment_method_id = payment_attributes[:payment_method_id].to_i
+
+        raise ActiveRecord::RecordNotFound unless payment_method_ids.include?(payment_method_id)
       end
     end
 
@@ -693,10 +703,6 @@ module Spree
       update_with_updater!
     end
 
-    def send_cancel_email
-      OrderMailer.cancel_email(id).deliver_later
-    end
-
     def after_resume
       shipments.each(&:resume!)
       consider_risk
@@ -715,23 +721,20 @@ module Spree
     end
 
     def collect_payment_methods(store = nil)
-      PaymentMethod.available_on_front_end.select { |pm| pm.available_for_order?(self) && pm.available_for_store?(store) }
+      if store.present?
+        ActiveSupport::Deprecation.warn('The `store` parameter is deprecated and will be removed in Spree 5. Order is already associated with Store')
+      end
+      store ||= self.store
+
+      store.payment_methods.available_on_front_end.select { |pm| pm.available_for_order?(self) }
     end
 
     def credit_card_nil_payment?(attributes)
       payments.store_credits.present? && attributes[:amount].to_f.zero?
     end
 
-    # Returns true if:
-    #   1. an email address is set for new order notifications AND
-    #   2. no notification for this order has been sent yet.
-    def deliver_store_owner_order_notification_email?
-      store.new_order_notifications_email.present? && !store_owner_notification_delivered?
-    end
-
-    def deliver_store_owner_order_notification_email
-      OrderMailer.store_owner_notification_email(id).deliver_later
-      update_column(:store_owner_notification_delivered, true)
+    def uppercase_number
+      number&.upcase!
     end
   end
 end

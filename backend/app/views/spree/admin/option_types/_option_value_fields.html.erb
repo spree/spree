@@ -5,5 +5,9 @@
   </td>
   <td class="name"><%= f.text_field :name, class: "form-control" %></td>
   <td class="presentation"><%= f.text_field :presentation, class: "form-control" %></td>
-  <td class="actions actions-1 text-center"><%= link_to_icon_remove_fields f %></td>
+  <td class="actions">
+    <span class="d-flex justify-content-end">
+      <%= link_to_icon_remove_fields f %>
+    </span>
+  </td>
 </tr>

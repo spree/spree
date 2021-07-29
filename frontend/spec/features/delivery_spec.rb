@@ -3,7 +3,8 @@ require 'spec_helper'
 describe 'Delivery', type: :feature, inaccessible: true, js: true do
   include_context 'checkout setup'
 
-  let(:country) { create(:country, name: 'United States of America', iso_name: 'UNITED STATES', iso: 'US') }
+  let(:store) { Spree::Store.default }
+  let(:country) { store.default_country }
   let(:state) { create(:state, name: 'Alabama', abbr: 'AL', country: country) }
   let(:user) { create(:user) }
   let(:promotion) { create(:promotion, name: 'Free Shipping', starts_at: 1.day.ago, expires_at: 1.day.from_now) }
@@ -26,7 +27,7 @@ describe 'Delivery', type: :feature, inaccessible: true, js: true do
   end
 
   before do
-    create(:product) # product 2
+    create(:product, stores: Spree::Store.all) # product 2
     shipping_method.calculator.preferred_amount = 10
     shipping_method.calculator.save
   end

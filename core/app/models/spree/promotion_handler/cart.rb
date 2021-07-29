@@ -13,12 +13,13 @@ module Spree
     # the promotions system accurate and performant. Here they can plug custom
     # handler to activate promos as they wish once an item is added to cart
     class Cart
-      attr_reader :line_item, :order
+      attr_reader :line_item, :order, :store
       attr_accessor :error, :success
 
       def initialize(order, line_item = nil)
         @order = order
         @line_item = line_item
+        @store = order.store
       end
 
       def activate
@@ -34,7 +35,11 @@ module Spree
       private
 
       def promotions
-        Promotion.find_by_sql("#{order.promotions.active.to_sql} UNION #{Promotion.active.where(code: nil, path: nil).to_sql}")
+        promotion_scope.find_by_sql("#{order.promotions.active.to_sql} UNION #{promotion_scope.active.where(code: nil, path: nil).to_sql}")
+      end
+
+      def promotion_scope
+        ::Spree::Promotion.for_store(store)
       end
     end
   end

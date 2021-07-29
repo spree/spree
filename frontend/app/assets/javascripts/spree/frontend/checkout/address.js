@@ -8,7 +8,7 @@ Spree.ready(function($) {
             $.ajax({
               async: false,
               method: 'GET',
-              url: Spree.pathFor('/api/v2/storefront/countries/' + countryId + '?include=checkout_zone_applicable_states'),
+              url: Spree.localizedPathFor('/api/v2/storefront/countries/' + countryId + '?include=checkout_zone_applicable_states'),
               dataType: 'json'
             }).done(function(data) {
               var json = data.included;

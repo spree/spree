@@ -15,14 +15,17 @@
   z-index: $zindex-dropdown;
 }
 
-// No-margin and no-padding helper classes
-@each $side in top bottom left right {
-  .no-margin-#{$side}  { margin-#{side}: 0; }
-  .no-padding-#{$side} { padding-#{side}: 0; }
-}
+figure.admin-img-holder {
+  max-width: 275px;
+  border: 2px dashed grey;
+  border-radius: $border-radius;
+  overflow: hidden;
+  display: inline-block;
 
-.alert-error {
-  @extend .alert-danger;
+  img {
+    max-width: 100%;
+    height: auto;
+  }
 }
 
 .js-remove-promo-rule-option-value {
@@ -32,30 +35,29 @@
   }
 }
 
-.flash-alert {
-  z-index: 0;
-  opacity: 0;
-  bottom: -50px;
-  left:0;
-  right:0;
-
-  .alert {
-    z-index: 500;
-    opacity: 0.98;
-    border-width: 3px;
-    margin-bottom: 0;
-  }
-}
-
-.flash-alert.animate__animated {
-  opacity: 1;
-  bottom: 30px;
-}
-
-.resize-animation-stopper * {
-  transition: none !important;
-}
-
 .button_to {
   display: inline-block;
+}
+
+.move-handle {
+  cursor: grab;
+}
+
+.badge-light-muted-text {
+  color: rgba(0, 0, 0, 0.50);
+}
+
+.truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+[data-show-info] {
+  color:  $primary;
+  cursor: pointer;
+}
+
+#contentHeaderRow {
+  min-height: 51px;
 }

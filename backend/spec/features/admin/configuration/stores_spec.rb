@@ -1,13 +1,31 @@
 require 'spec_helper'
 
-describe 'Stores admin', type: :feature, js: true do
+describe 'Stores admin', type: :feature do
   stub_authorization!
 
-  let!(:store) { create(:store, checkout_zone_id: zone.id) }
-  let!(:zone) { create(:zone, name: 'EU_VAT') }
+  let(:store) { Spree::Store.default }
+  let(:zone) { create(:zone, name: 'EU_VAT') }
   let!(:no_limits) { create(:zone, name: 'No Limits') }
 
-  describe 'visiting the stores page' do
+  before { store.update!(checkout_zone: zone) }
+
+  describe 'visiting the stores page', js: true do
+    before do
+      I18n.backend.store_translations(:fr,
+        spree: {
+          i18n: {
+            this_file_language: 'Français (FR)'
+          }
+        })
+      store.update(
+        name: 'My Store',
+        url: 'example.com',
+        supported_currencies: 'USD,EUR',
+        default_locale: 'en',
+        supported_locales: 'en,fr'
+      )
+    end
+
     it 'is on the stores page' do
       visit spree.admin_stores_path
 
@@ -15,13 +33,15 @@ describe 'Stores admin', type: :feature, js: true do
       row_count = store_table.all(:css, 'tr').size
       expect(row_count).to eq 2
       expect(Spree::Store.count).to eq 1
-      expect(store_table).to have_content(store.name)
-      expect(store_table).to have_content(store.url)
+      expect(store_table).to have_content('My Store')
+      expect(store_table).to have_content('example.com')
+      expect(store_table).to have_content('EUR, USD')
+      expect(store_table).to have_content('English (US), Français (FR)')
     end
   end
 
   describe 'creating store' do
-    context 'with checkout_zone set as preference in spree config file' do
+    context 'with checkout_zone set as preference in spree config file', js: true do
       let!(:zone) { create(:zone, name: 'Asia') }
 
       before do
@@ -39,7 +59,7 @@ describe 'Stores admin', type: :feature, js: true do
       end
     end
 
-    context 'without checkout_zone set as preference in spree config file' do
+    context 'without checkout_zone set as preference in spree config file', js: true do
       before do
         store.update(checkout_zone_id: nil)
         Spree::Config.preference_default(:checkout_zone)
@@ -55,7 +75,7 @@ describe 'Stores admin', type: :feature, js: true do
       end
     end
 
-    it 'sets default currency value' do
+    it 'sets default currency value', js: true do
       visit spree.admin_stores_path
 
       click_link 'New Store'
@@ -67,24 +87,39 @@ describe 'Stores admin', type: :feature, js: true do
     it 'saving store' do
       visit spree.admin_stores_path
 
-      click_link 'New Store'
+      within '#contentHeaderRow' do
+        click_link 'New Store'
+      end
       page.fill_in 'store_name', with: 'Spree Example Test'
       page.fill_in 'store_url', with: 'test.localhost'
       page.fill_in 'store_code', with: 'spree'
       page.fill_in 'store_mail_from_address', with: 'no-reply@example.com'
       page.fill_in 'store_customer_support_email', with: 'support@example.com'
-      select2 'EUR', from: 'Currency'
+      select 'EUR', from: 'Default currency'
+      select 'GBP', from: 'Supported Currencies'
+      unselect 'USD', from: 'Supported Currencies'
+      select 'GBP', from: 'Supported Currencies'
+
+      select 'English (US)', from: 'Default locale'
+
       click_button 'Create'
 
       expect(page).to have_current_path spree.admin_stores_path
+      expect(page).to have_content('Spree Example Test (spree)')
 
       row_count = page.all(:css, 'table tr').size
-      expect(row_count).to eq 3
+      expect(row_count).to eq 2
       expect(Spree::Store.count).to eq 2
+
+      store = Spree::Store.last
+
+      expect(store.default_currency).to eq 'EUR'
+      expect(store.supported_currencies_list.map(&:iso_code)).to contain_exactly('EUR', 'GBP')
+      expect(store.default_locale).to eq 'en'
     end
   end
 
-  describe 'updating store' do
+  describe 'updating store', js: true do
     let(:updated_name) { 'New Store Name' }
     let(:new_currency) { 'EUR' }
 
@@ -95,7 +130,7 @@ describe 'Stores admin', type: :feature, js: true do
         click_icon :edit
       end
       page.fill_in 'store_name', with: updated_name
-      select2 new_currency, from: 'Currency'
+      select2 new_currency, from: 'Default currency'
       click_button 'Update'
 
       expect(page).to have_current_path spree.admin_stores_path
@@ -120,9 +155,36 @@ describe 'Stores admin', type: :feature, js: true do
       store.reload
       expect(store.new_order_notifications_email).to eq(store_owner_email)
     end
+
+    describe 'uploading a favicon' do
+      let(:favicon) { file_fixture('favicon.ico') }
+
+      before do
+        visit spree.admin_stores_path
+
+        within_row(1) { click_icon :edit }
+        attach_file('Favicon', favicon)
+
+        click_on 'Update'
+      end
+
+      it 'allows uploading a favicon' do
+        expect(page).to have_content('Store "Spree Test Store" has been successfully updated!')
+        expect(store.reload.favicon_image.attached?).to be(true)
+      end
+
+      context 'when a favicon is invalid' do
+        let(:favicon) { file_fixture('icon_512x512.png') }
+
+        it 'prevents uploading a favicon and displays an error message' do
+          expect(page).to have_content('Unable to update store.: Favicon image must be less than or equal to 256 x 256 pixel')
+          expect(store.reload.favicon_image.attached?).to be(false) if Rails.version.to_f > 5.2
+        end
+      end
+    end
   end
 
-  describe 'deleting store' do
+  describe 'deleting store', js: true do
     let!(:second_store) { create(:store) }
 
     it 'updates store in lifetime stats' do
@@ -137,7 +199,7 @@ describe 'Stores admin', type: :feature, js: true do
     end
   end
 
-  describe 'setting default store' do
+  describe 'setting default store', js: true do
     let!(:store1) { create(:store, default: false) }
 
     it 'sets a store as default' do

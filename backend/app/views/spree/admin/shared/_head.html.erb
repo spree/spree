@@ -15,13 +15,14 @@
 
 <%= stylesheet_link_tag 'spree/backend/all', media: :all %>
 
-<%= render 'spree/shared/paths' %>
+<%= render 'spree/admin/shared/paths' %>
 <%= javascript_include_tag 'spree/backend/all' %>
 <%= render "spree/admin/shared/translations" %>
 
 <script>
   <%== "var AUTH_TOKEN = #{form_authenticity_token.inspect};" %>
   <%== "Spree.api_key = '#{try_spree_current_user.spree_api_key}';" if try_spree_current_user %>
+  <%== "var OAUTH_TOKEN = '#{admin_oauth_token}';" if defined?(admin_oauth_token) %>
   <%== "var ADDRESS_FIELDS = #{Spree::Address::ADDRESS_FIELDS}" %>
   <% if Rails.env.test? %>
   jQuery.fx.off = false

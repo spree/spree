@@ -1,0 +1,13 @@
+<% if should_render_locale_dropdown? %>
+  <%= form_tag spree.set_locale_path, method: :get, class: 'px-4 py-3 w-100 locale-select' do %>
+    <div class="form-group">
+      <label for="switch_to_locale" class="dropdown-header text-center">
+        <%= Spree.t('i18n.language') %>
+      </label>
+      <%= select_tag(:switch_to_locale,
+        options_for_select(supported_locales_options, I18n.locale),
+        class: 'custom-select w-100') %>
+      <noscript><%= submit_tag %></noscript>
+    </div>
+  <% end %>
+<% end %>

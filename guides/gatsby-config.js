@@ -17,7 +17,14 @@ module.exports = {
         noQueryString: true
       },
     },
-    'gatsby-transformer-remark',
+    {
+      resolve: 'gatsby-transformer-remark',
+      options: {
+        plugins: [
+          'gatsby-remark-check-links'
+        ]
+      }
+    },
     'gatsby-plugin-robots-txt',
     {
       resolve: `gatsby-plugin-google-gtag`,
@@ -65,8 +72,15 @@ module.exports = {
             resolve: `gatsby-remark-images`,
             options: {
               quality: 100,
-              maxWidth: 600,
-              withWebp: true
+              maxWidth: 1200,
+              linkImagesToOriginal: false,
+              showCaptions: true
+            }
+          },
+          {
+            resolve: `gatsby-remark-images-medium-zoom`, // Important!
+            options: {
+              margin: 10
             }
           },
           {

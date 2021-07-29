@@ -4,7 +4,7 @@ shared_context 'API v2 tokens' do
   let(:headers_order_token) { { 'X-Spree-Order-Token' => order.token } }
 end
 
-[200, 201, 400, 401, 404, 403, 422].each do |status_code|
+[200, 201, 204, 400, 401, 404, 403, 422].each do |status_code|
   shared_examples "returns #{status_code} HTTP status" do
     it "returns #{status_code}" do
       expect(response.status).to eq(status_code)

@@ -44,6 +44,7 @@ describe Spree::ProductsController, type: :controller do
       context 'when rails application default locale is set' do
         context 'and in available_locales' do
           before do
+            Spree::Store.default.update(default_locale: nil, supported_locales: nil)
             Rails.application.config.i18n.default_locale = available_locale
           end
 
@@ -79,32 +80,6 @@ describe Spree::ProductsController, type: :controller do
           get :index
           expect(I18n.locale).to eq(available_locale)
         end
-      end
-    end
-  end
-
-  context 'when session locale is set' do
-    context 'and not in available_locales' do
-      before do
-        session[:locale] = unavailable_locale
-      end
-
-      it 'sets the I18n default locale' do
-        get :index
-        expect(I18n.locale).to eq(I18n.default_locale)
-      end
-    end
-
-    context 'and in available_locales' do
-      before do
-        session[:locale] = available_locale
-      end
-
-      # FIXME: after adding supported_locales to Store this should be testable again
-      xit 'sets the session locale' do
-        expect(I18n.locale).to eq(:en)
-        get :index
-        expect(I18n.locale).to eq(available_locale)
       end
     end
   end

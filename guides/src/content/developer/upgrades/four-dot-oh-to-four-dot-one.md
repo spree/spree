@@ -41,10 +41,10 @@ rails db:migrate
 
 ## Decide what to do next
 
-Now you have two options:
+You have two options:
 
   1. Migrate to the new Storefront UI
-  1. Stay at the current UI
+  2. Stay at the current UI
 
 ## Migrate to the new Storefront UI
 
@@ -99,19 +99,19 @@ If you wish to not move to the new Storefront UI it's still an option. Just proc
 
     Copy over views from: https://github.com/spree/spree/tree/4-0-stable/frontend/app/views to your application views directory: `app/views`
 
-    **WARNING** remember to not overwrite your custom changes!
+    **WARNING** remember to not overwrite your customizations!
 
 3. Copy over all Stylesheets from Spree 4.0
 
     Copy over stylesheets from: https://github.com/spree/spree/tree/4-0-stable/frontend/app/assets/stylesheets to `app/stylesheets`
 
-    **WARNING** remember to not overwrite your custom changes!
+    **WARNING** remember to not overwrite your customizations!
 
 4. Copy over all JavaScript from Spree 4.0
 
     Copy over stylesheets from: https://github.com/spree/spree/tree/4-0-stable/frontend/app/assets/javascripts to `app/javascripts`
 
-    **WARNING** remember to not overwrite your custom changes!  
+    **WARNING** remember to not overwrite your customizations!  
 
 ## Read the release notes
 

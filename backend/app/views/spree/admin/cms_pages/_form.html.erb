@@ -1,0 +1,135 @@
+<div id="<% if @cms_page.type == 'Spree::Cms::Pages::StandardPage' %>standardPage<% end %>" data-hook="admin_page_form_fields">
+  <div class="row sp-pb-0">
+    <div class="col-12">
+      <div class="card sp-card">
+        <% unless %w[new create].include? controller.action_name %>
+        <div class="card-header col-12">
+          <div class="row no-gutters pb-0">
+            <div class="col d-flex justify-content-start align-items-center">
+              <%= f.field_container :visible, class: ['form-group pb-0 mb-0'] do %>
+                <div class="custom-control custom-switch custom-switch-md">
+                  <%= f.check_box :visible, class: 'custom-control-input', data: {cms_page_id: @cms_page.id} %>
+                  <label class="custom-control-label" for="cms_page_visible"></label>
+                  <%= f.error_message_on :visible %>
+                </div>
+              <% end %>
+
+              <span id="visibilityStatus" class="d-flex align-items-center">
+                <span class="page_hidden badge badge-secondary <% if @cms_page.visible? %>d-none<% end %>">
+                  <%= svg_icon name: "eye-slash-fill.svg", width: '18', height: '18' %> <%= Spree.t('admin.cms.draft_mode') %>
+                </span>
+
+                <span class="page_visible badge badge-primary <% if @cms_page.draft_mode? %>d-none<% end %>">
+                  <%= svg_icon name: "view.svg", width: '18', height: '18' %> <%= Spree.t('admin.cms.visible') %>
+                </span>
+              </span>
+            </div>
+            <div class="col-auto d-flex align-items-center">
+              <span class="badge badge-secondary">
+                  <%= svg_icon name: "translate.svg", width: '18', height: '18' %> <%= locale_full_name(@cms_page.locale) %>
+              </span>
+            </div>
+          </div>
+        </div>
+        <% end %>
+
+        <div class="card-body pb-2">
+          <div class="row pb-0">
+
+            <%= f.field_container :title, class: ['form-group col-12 col-md-6'] do %>
+              <%= f.label :title, raw(Spree.t('admin.cms.title') + required_span_tag) %>
+              <%= f.text_field :title, class: 'form-control', required: true %>
+              <%= f.error_message_on :title %>
+            <% end %>
+
+            <%= f.field_container :type, class: ['form-group col-12 col-md-6'] do %>
+              <%= f.label :type, Spree.t('admin.cms.page_type') %>
+              <%= f.select(:type, spree_humanize_dropdown_values('Spree::CmsPage', {const: 'TYPES'}), {include_blank: false}, class: 'select2') %>
+              <%= f.error_message_on :type %>
+            <% end %>
+
+            <% unless %w[new create].include? controller.action_name %>
+              <div class="col-12 mt-3">
+                <div id="updatePageType" data-page-type="<%= @cms_page.type %>" class="alert alert-info d-none">
+                  <% button_type = Spree.t('update') %>
+                  <%= raw Spree.t('admin.cms.click_button_to_change_page_type', button_type: button_type) %>
+                </div>
+              </div>
+            <% end %>
+          </div>
+
+          <div class="<% unless %w[new create].include? controller.action_name %>collapse<% end %>" id="cmsPageSettings">
+            <div class="row pb-0">
+              <div class="col-12"><hr></div>
+              <%= f.field_container :locale, class: ['form-group col-12 col-md-4'] do %>
+                <%= f.label :language %>
+                <%= f.select :locale, options_from_collection_for_select(supported_locales_options, :last, :first, @cms_page.locale || I18n.locale), {}, { class: 'select2' } %>
+                <%= f.error_message_on :default_locale %>
+              <% end %>
+
+              <%= f.field_container :meta_title, class: ['form-group col-12 col-md-4'] do %>
+                <%= f.label :meta_title, Spree.t('admin.cms.meta_title') %>
+                <%= f.text_field :meta_title, class: 'form-control' %>
+                <%= f.error_message_on :meta_title %>
+              <% end %>
+
+              <%= f.field_container :slug, class: ['form-group col-12 col-md-4'] do %>
+                <div id="noHomePage">
+                  <%= f.label :slug, Spree.t('slug') %>
+                  <%= f.text_field :slug, class: 'form-control', disabled: @cms_page.homepage? %>
+                  <%= f.error_message_on :slug %>
+                </div>
+              <% end %>
+
+              <%= f.field_container :meta_description, class: ['form-group col-12'] do %>
+                <%= f.label :meta_description, Spree.t('admin.cms.meta_description') %>
+                <%= f.text_area :meta_description, { rows: 3, class: 'form-control' } %>
+                <%= f.error_message_on :meta_description %>
+              <% end %>
+            </div>
+          </div>
+
+          <% unless %w[new create].include? controller.action_name %>
+            <div class="row pb-0">
+              <% if @cms_page.type != 'Spree::Cms::Pages::StandardPage' %>
+                <div class="col-12 col-sm-7">
+                    <%= render partial: 'spree/admin/shared/edit_resource_links' %>
+                </div>
+              <% else %>
+                <div class="col"></div>
+              <% end %>
+
+              <div class="col-12 col-sm text-right pt-3 pt-sm-0">
+                <button id="toggleMorePageSettingsButton" class="btn btn-outline-secondary" type="button" data-toggle="collapse" data-target="#cmsPageSettings" aria-expanded="false" aria-controls="collapsePageSettings">
+                  <%= raw Spree.t('admin.cms.more_page_settings') %>
+                </button>
+              </div>
+            </div>
+          <% end %>
+
+          <% if %w[new create].include? controller.action_name %>
+            <div class="row pb-0">
+              <div class="col-6">
+                <%= render partial: 'spree/admin/shared/new_resource_links' %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<% if @cms_page.type == 'Spree::Cms::Pages::StandardPage' %>
+  <div class="row">
+    <div class="col-12">
+      <%= f.field_container :content, class: ['form-group']  do %>
+        <%= f.text_area :content, { rows: 22, class: 'spree-rte'} %>
+        <%= f.error_message_on :content %>
+      <% end %>
+    </div>
+  </div>
+  <div class="d-flex ">
+    <%= render partial: 'spree/admin/shared/edit_resource_links' %>
+  </div>
+<% end %>

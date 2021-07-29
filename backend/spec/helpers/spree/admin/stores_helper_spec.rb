@@ -1,11 +1,10 @@
 require 'spec_helper'
 
 describe Spree::Admin::StoresHelper, type: :helper do
-
   describe '#selected_checkout_zone' do
-    let!(:store) { create(:store) }
-    let!(:country) { create(:country) }
-    let!(:country_zone) { create(:zone, name: 'CountryZone') }
+    let!(:store) { Spree::Store.default }
+    let!(:country) { store.default_country }
+    let!(:country_zone) { create(:zone, name: 'CountryZone', kind: 'country') }
 
     context 'with set preference checkout_zone in spree config file' do
       before do

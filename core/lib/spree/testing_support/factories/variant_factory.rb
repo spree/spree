@@ -12,7 +12,7 @@ FactoryBot.define do
     is_master       { 0 }
     track_inventory { true }
 
-    product       { |p| p.association(:base_product) }
+    product       { |p| p.association(:base_product, stores: [create(:store)]) }
     option_values { [create(:option_value)] }
 
     # ensure stock item will be created for this variant
@@ -20,7 +20,7 @@ FactoryBot.define do
 
     factory :variant do
       # on_hand 5
-      product { |p| p.association(:product) }
+      product { |p| p.association(:product, stores: [create(:store)]) }
     end
 
     factory :master_variant do

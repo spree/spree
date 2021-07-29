@@ -1,0 +1,30 @@
+<div class="container-item-row d-flex flex-nowrap">
+  <div class="move-handle d-flex align-items-center p-3">
+    <%= svg_icon(name: 'sort.svg', width: '20', height: '20') %>
+  </div>
+
+  <div class="d-flex align-items-center overflow-hidden w-100">
+    <div class="overflow-hidden">
+      <%= item.name %>
+      <% if item.link.present? %>
+        <span class="badge badge-light badge-light-muted-text">-> <%= item.link %></span>
+      <% end %>
+      <small class="form-text text-muted mt-0">
+        <%= "#{Spree.t('admin.navigation.type')}: #{item.item_type}" %>
+        <%= "| #{Spree.t('admin.navigation.code')}: #{item.code}" if item.code.present? %>
+      </small>
+    </div>
+      <% if item.icon.present? %>
+        <div class="ml-2">
+          <div class="menu_items_image_holder">
+            <%= image_tag main_app.url_for(item.icon.attachment) %>
+          </div>
+        </div>
+      <% end %>
+  </div>
+
+  <div class="d-flex align-items-center space-buttons px-2">
+    <%= link_to_edit(item, no_text: true, url: spree.edit_admin_menu_menu_item_path(menu, item)) %>
+    <%= link_to_delete(item, no_text: true, url: spree.admin_menu_menu_item_path(menu, item)) if can?(:destroy, item) %>
+  </div>
+</div>

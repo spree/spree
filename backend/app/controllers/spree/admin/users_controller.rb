@@ -6,14 +6,14 @@ module Spree
       after_action :sign_in_if_change_own_password, only: :update
 
       def show
-        redirect_to edit_admin_user_path(@user)
+        redirect_to spree.edit_admin_user_path(@user)
       end
 
       def create
         @user = Spree.user_class.new(user_params)
         if @user.save
           flash[:success] = flash_message_for(@user, :successfully_created)
-          redirect_to edit_admin_user_path(@user)
+          redirect_to spree.edit_admin_user_path(@user)
         else
           render :new
         end
@@ -27,7 +27,7 @@ module Spree
 
         if @user.update(user_params)
           flash[:success] = Spree.t(:account_updated)
-          redirect_to edit_admin_user_path(@user)
+          redirect_to spree.edit_admin_user_path(@user)
         else
           render :edit
         end
@@ -35,6 +35,8 @@ module Spree
 
       def addresses
         if request.put?
+          params[:user][:bill_address_attributes][:user_id] = @user.id if params[:user][:bill_address_attributes].present?
+          params[:user][:ship_address_attributes][:user_id] = @user.id if params[:user][:ship_address_attributes].present?
           if @user.update(user_params)
             flash.now[:success] = Spree.t(:account_updated)
           end
@@ -45,13 +47,13 @@ module Spree
 
       def orders
         params[:q] ||= {}
-        @search = Spree::Order.reverse_chronological.ransack(params[:q].merge(user_id_eq: @user.id))
+        @search = current_store.orders.reverse_chronological.ransack(params[:q].merge(user_id_eq: @user.id))
         @orders = @search.result.page(params[:page])
       end
 
       def items
         params[:q] ||= {}
-        @search = Spree::Order.includes(
+        @search = current_store.orders.includes(
           line_items: {
             variant: [:product, { option_values: :option_type }]
           }
@@ -63,14 +65,14 @@ module Spree
         if @user.generate_spree_api_key!
           flash[:success] = Spree.t('api.key_generated')
         end
-        redirect_to edit_admin_user_path(@user)
+        redirect_to spree.edit_admin_user_path(@user)
       end
 
       def clear_api_key
         if @user.clear_spree_api_key!
           flash[:success] = Spree.t('api.key_cleared')
         end
-        redirect_to edit_admin_user_path(@user)
+        redirect_to spree.edit_admin_user_path(@user)
       end
 
       def model_class

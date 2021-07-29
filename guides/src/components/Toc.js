@@ -13,14 +13,10 @@ const styleToc = css`
   max-height: calc(100% - 120px);
   overflow-y: auto;
   overflow-x: hidden;
-  border-radius: 6px;
-  padding: 0.5em 1em;
-  background: #f4f4f4;
-
-  @media screen and (min-width: 60em) {
-    & + article {
-      margin-right: 16rem;
-    }
+  right: 3rem;
+  @media screen and (min-width: 96em) {
+    right: auto;
+    margin-left: 51rem;
   }
 `
 
@@ -37,12 +33,13 @@ const getMarginDepth = depth => ([1, 2].includes(depth) ? 0 : depth)
  */
 
 const Toc = ({ headings }) => (
-  <aside className="ml3 mw5 fixed dn db-l overflow-auto right-1" css={styleToc}>
+  <aside className="ml3 mw5 fixed dn db-l overflow-auto" css={styleToc}>
     <h3 className="mt0 mb1">Table Of Contents</h3>
 
     <nav>
       {headings.map(heading => {
-        const slug = getSlugHref(heading.value)
+        const title = heading.value.replace(/(<([^>]+)>)/gi, '')
+        const slug = getSlugHref(title)
         const margin = `ml${getMarginDepth(heading.depth)}`
 
         if (heading.depth >= 4) return
@@ -50,10 +47,10 @@ const Toc = ({ headings }) => (
         return (
           <a
             key={slug}
-            className={`db gray hover-spree-green mb1 pointer link ${margin}`}
+            className={`db gray hover-spree-green mb1 pointer link f6 ${margin}`}
             href={slug}
           >
-            <span dangerouslySetInnerHTML={{ __html: heading.value }} />
+            {title}
           </a>
         )
       })}

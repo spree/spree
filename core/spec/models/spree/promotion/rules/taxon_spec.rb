@@ -3,10 +3,13 @@ require 'spec_helper'
 describe Spree::Promotion::Rules::Taxon, type: :model do
   let(:rule) { subject }
 
+  let(:store) { create(:store) }
+
   context '#elegible?(order)' do
-    let(:taxon) { create :taxon, name: 'first' }
-    let(:taxon2) { create :taxon, name: 'second' }
-    let(:order) { create :order_with_line_items }
+    let(:taxonomy) { create(:taxonomy, store: store) }
+    let(:taxon) { create :taxon, name: 'first', taxonomy: taxonomy }
+    let(:taxon2) { create :taxon, name: 'second', taxonomy: taxonomy }
+    let(:order) { create :order_with_line_items, store: store }
 
     before do
       rule.save
@@ -34,7 +37,7 @@ describe Spree::Promotion::Rules::Taxon, type: :model do
         end
 
         it 'does not act on a product in another taxon' do
-          order.line_items << create(:line_item, product: create(:product, taxons: [taxon2]))
+          order.line_items << create(:line_item, product: create(:product, taxons: [taxon2], stores: [store]))
           expect(rule).not_to be_actionable(order.line_items.last)
         end
       end
@@ -87,7 +90,7 @@ describe Spree::Promotion::Rules::Taxon, type: :model do
       end
 
       context 'when a product has a taxon child of a taxon rule' do
-        let(:taxon3) { create :taxon }
+        let(:taxon3) { create :taxon, taxonomy: taxonomy }
 
         before do
           taxon.children << taxon2

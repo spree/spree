@@ -6,8 +6,6 @@ module Spree
 
     before_action :load_taxon
 
-    respond_to :html
-
     def show
       if !http_cache_enabled? || stale?(etag: etag, last_modified: last_modified, public: true)
         load_products
@@ -32,11 +30,17 @@ module Spree
     end
 
     def load_taxon
-      @taxon = Spree::Taxon.friendly.find(params[:id])
+      @taxon = current_store.taxons.friendly.find(params[:id])
     end
 
     def load_products
-      @searcher = build_searcher(params.merge(taxon: @taxon.id, include_images: true))
+      search_params = params.merge(
+        current_store: current_store,
+        taxon: @taxon,
+        include_images: true
+      )
+
+      @searcher = build_searcher(search_params)
       @products = @searcher.retrieve_products
     end
 
@@ -57,7 +61,10 @@ module Spree
     end
 
     def last_modified
-      @taxon.updated_at&.utc
+      taxon_last_modified = @taxon&.updated_at&.utc
+      current_store_last_modified = current_store.updated_at.utc
+
+      [taxon_last_modified, current_store_last_modified].compact.max
     end
   end
 end

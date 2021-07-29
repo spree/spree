@@ -19,9 +19,11 @@
       <% @shipping_categories.each do |shipping_category| %>
       <tr id="<%= spree_dom_id shipping_category %>" data-hook="category_row">
         <td><%= shipping_category.name %></td>
-        <td class="actions actions-2 text-right">
-          <%= link_to_edit(shipping_category, no_text: true) if can? :edit, shipping_category %>
-          <%= link_to_delete(shipping_category, no_text: true) if can? :edit, shipping_category %>
+        <td class="actions">
+          <span class="d-flex justify-content-end">
+            <%= link_to_edit(shipping_category, no_text: true) if can? :edit, shipping_category %>
+            <%= link_to_delete(shipping_category, no_text: true) if can? :edit, shipping_category %>
+          </span>
         </td>
       </tr>
       <% end %>

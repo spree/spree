@@ -3,7 +3,8 @@ require 'spec_helper'
 describe 'Address', type: :feature, inaccessible: true do
   stub_authorization!
 
-  let!(:mug) { create(:product, name: 'RoR Mug') }
+  let!(:mug) { create(:product, name: 'RoR Mug', stores: [store]) }
+  let(:store) { create(:store, default: true) }
 
   before do
     create(:order_with_totals, state: 'cart')
@@ -17,7 +18,6 @@ describe 'Address', type: :feature, inaccessible: true do
   end
 
   context 'store checkout_zone', js: true do
-    let!(:store) { create(:store, default: true) }
     let!(:asia_zone) do
       hk = create(:country, name: 'Hong Kong', iso_name: 'HK')
       create(:zone, name: 'Asia', kind: 'country', default_tax: true).tap do |zone|
@@ -110,7 +110,7 @@ describe 'Address', type: :feature, inaccessible: true do
     let!(:canada) { create(:country, name: 'Canada', states_required: true, iso: 'CA', zipcode_required: true) }
     let!(:uk) { create(:country, name: 'United Kingdom', states_required: false, iso: 'UK', zipcode_required: true) }
 
-    before { Spree::Config[:default_country_id] = uk.id }
+    before { store.update(default_country: uk) }
 
     context 'but has no states in the database' do
       before do
@@ -204,7 +204,7 @@ describe 'Address', type: :feature, inaccessible: true do
     let!(:ug) { create(:country, name: 'Uganda', states_required: false, iso: 'UG', zipcode_required: false) }
 
     before do
-      Spree::Config[:default_country_id] = canada.id
+      store.update(default_country: canada)
 
       add_to_cart(mug) do
         click_link 'Checkout'
@@ -231,7 +231,7 @@ describe 'Address', type: :feature, inaccessible: true do
     let!(:ug) { create(:country, name: 'Uganda', states_required: false, iso: 'UG', zipcode_required: false) }
 
     before do
-      Spree::Config[:default_country_id] = ug.id
+      store.update!(default_country: ug)
 
       add_to_cart(mug) do
         click_link 'Checkout'

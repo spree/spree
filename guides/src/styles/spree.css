@@ -1,11 +1,13 @@
 pre[class*='language-'] {
-  word-spacing: 1px;
-  color: #495057;
-  background-color: #f8f9fa;
-  border-radius: 6px;
+  word-spacing: 1px !important;
+  border-radius: 6px !important;
   overflow: auto;
   position: relative;
   z-index: 3;
+}
+
+p {
+  line-height: 1.6em;
 }
 
 code[class*='language-'],
@@ -52,8 +54,7 @@ code[class*='language-'] ::selection {
 
 /* Code blocks */
 pre[class*='language-'] {
-  padding: 1em;
-  margin: 0.8em 0 1em 0;
+  padding: .8571429em 1.1428571em !important;
   overflow: auto;
 }
 
@@ -61,6 +62,7 @@ pre[class*='language-'] {
 :not(pre) > code[class*='language-'] {
   padding: 0.1em;
   border-radius: 0.3em;
+  background-color: #4d5169 !important;
 }
 
 .token.comment,
@@ -184,6 +186,6 @@ pre > code.highlight {
   );
 }
 
-.nested-links a {
-  text-decoration: none;
+.nested-links p > a {
+  text-decoration: underline;
 }

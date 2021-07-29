@@ -1,0 +1,16 @@
+<% if @cms_page %>
+  <% if simple_page?(@cms_page) %>
+  <div class="container">
+    <div class="row my-5">
+      <div class="col-12">
+        <%= @cms_page.content.html_safe %>
+      </div>
+    </div>
+  </div>
+  <% else %>
+      <% @cms_page.cms_sections.each do |section| %>
+        <%= build_section(section) %>
+      <% end %>
+  <% end %>
+<% end %>
+<%= render "spree/shared/cms/pages/edit_mode", edit_mode: @edit_mode %>

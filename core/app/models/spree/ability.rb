@@ -61,6 +61,8 @@ module Spree
 
     def apply_user_permissions(user)
       can :read, ::Spree::Country
+      can :read, ::Spree::Menu
+      can :read, ::Spree::CmsPage
       can :read, ::Spree::OptionType
       can :read, ::Spree::OptionValue
       can :create, ::Spree::Order

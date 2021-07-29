@@ -45,6 +45,7 @@ module Spree
     preference :currency, :string, default: 'USD'
     preference :default_country_id, :integer
     preference :disable_sku_validation, :boolean, default: false # when turned off disables the built-in SKU uniqueness validation
+    preference :disable_store_presence_validation, :boolean, default: false # when turned off disables Store presence validation for Products and Payment Methods
     preference :expedited_exchanges, :boolean, default: false # NOTE this requires payment profiles to be supported on your gateway of choice as well as a delayed job handler to be configured with activejob. kicks off an exchange shipment upon return authorization save. charge customer if they do not return items within timely manner.
     preference :expedited_exchanges_days_window, :integer, default: 14 # the amount of days the customer has to return their item after the expedited exchange is shipped in order to avoid being charged
     preference :layout, :string, default: 'spree/layouts/spree_application'
@@ -69,12 +70,17 @@ module Spree
     preference :credit_to_new_allocation, :boolean, default: false
 
     # Multi store configurations
-    preference :show_store_selector, :boolean, default: true
+    preference :show_store_selector, :boolean, default: false
 
     # searcher_class allows spree extension writers to provide their own Search class
     def searcher_class
       @searcher_class ||= Spree::Core::Search::Base
     end
+
+    # Sets the path used for products, taxons and pages.
+    preference :storefront_products_path, :string, default: 'products'
+    preference :storefront_taxons_path, :string, default: 't'
+    preference :storefront_pages_path, :string, default: 'pages'
 
     attr_writer :searcher_class
   end

@@ -123,7 +123,7 @@ Spree.ready(function ($) {
 
 Spree.fetchCart = function () {
   return $.ajax({
-    url: Spree.pathFor('cart_link')
+    url: Spree.localizedPathFor('cart_link')
   }).done(function (data) {
     Spree.cartFetched = true
     return $('#link-to-cart').html(data)

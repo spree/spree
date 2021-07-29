@@ -18,16 +18,19 @@ Gem::Specification.new do |s|
     "source_code_uri"   => "https://github.com/spree/spree/tree/v#{s.version}",
   }
 
-  s.required_ruby_version = '>= 2.5.0'
+  s.required_ruby_version = '>= 2.5'
 
   s.files         = `git ls-files`.split($\).reject { |f| f.match(/^spec/) && !f.match(/^spec\/fixtures/) }
   s.executables   = s.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
 
   s.add_development_dependency 'jsonapi-rspec'
+  s.add_development_dependency 'rswag-specs'
+  s.add_development_dependency 'multi_json'
 
   s.add_dependency 'spree_core', s.version
-  s.add_dependency 'rabl', '~> 0.14.2'
+  s.add_dependency 'rabl', '~> 0.14', '>= 0.14.2'
   s.add_dependency 'jsonapi-serializer', '~> 2.1'
   s.add_dependency 'doorkeeper', '~> 5.2', '>= 5.2.1'
+  s.add_dependency 'responders'
 end

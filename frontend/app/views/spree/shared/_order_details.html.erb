@@ -75,11 +75,11 @@
           <div class="checkout-confirm-order-details-line-items-line-item-name d-table-cell align-middle py-3 py-sm-4">
             <div class="d-flex align-items-lg-center">
               <div class="checkout-confirm-order-details-line-items-line-item-name-image" data-hook="order_item_image">
-                <%= link_to product_image(item.variant), item.product %>
+                <%= link_to product_image(item.variant), spree.product_path(item.product) %>
               </div>
               <div class="d-flex flex-column mt-2 mt-lg-0" data-hook="order_item_description">
                 <div data-hook="order_item_name">
-                  <%= link_to item.name, item.product, class: 'checkout-confirm-order-details-line-items-line-item-name-link' %>
+                  <%= link_to item.name, spree.product_path(item.product), class: 'checkout-confirm-order-details-line-items-line-item-name-link' %>
                 </div>
                 <% unless item.variant.is_master? %>
                   <ul class="checkout-confirm-order-details-line-items-line-item-name-options text-uppercase list-unstyled mb-0">
@@ -117,7 +117,7 @@
 
   <div class="mt-5" id="checkout-summary" data-hook="checkout_summary_box">
     <%= render partial: 'spree/checkout/summary', locals: { order: @order } %>
-    <% unless @order.complete? %>
+    <% unless @order.uneditable? %>
       <div data-hook="buttons">
         <% submit_label_key = @order.confirm? ? :place_order : :save_and_continue %>
         <%= submit_tag Spree.t(submit_label_key), class: 'btn btn-primary text-uppercase font-weight-bold w-100 checkout-content-save-continue-button' %>

@@ -6,27 +6,22 @@ module Spree
           private
 
           def serialize_collection(collection)
-            collection_serializer.new(collection).serializable_hash
-          end
-
-          def serialize_resource(resource)
-            resource_serializer.new(
-              resource,
-              include: resource_includes,
-              fields: sparse_fields,
-              params: resource_serializer_params
+            collection_serializer.new(
+              collection,
+              collection_options(collection).merge(params: collection_serializer_params)
             ).serializable_hash
           end
 
-          def resource_serializer_params
-            {
-              include_states: true,
-              current_store: current_store
-            }
+          def serializer_params
+            super.merge(include_states: true)
+          end
+
+          def collection_serializer_params
+            serializer_params.merge(include_states: false)
           end
 
           def resource
-            return scope.default if params[:iso] == 'default'
+            return current_store.default_country if params[:iso] == 'default'
 
             scope.find_by(iso: params[:iso]&.upcase) ||
               scope.find_by(id: params[:iso]&.upcase) ||

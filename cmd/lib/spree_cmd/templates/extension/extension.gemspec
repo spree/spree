@@ -2,15 +2,15 @@
 lib = File.expand_path('../lib/', __FILE__)
 $LOAD_PATH.unshift lib unless $LOAD_PATH.include?(lib)
 
-require '<%=file_name%>/version'
+require '<%= file_name %>/version'
 
 Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.name        = '<%= file_name %>'
-  s.version     = <%= class_name %>.version
+  s.version     = '<%= class_name %>.version'
   s.summary     = 'Add extension summary here'
   s.description = 'Add (optional) extension description here'
-  s.required_ruby_version = '>= 2.2.7'
+  s.required_ruby_version = '>= 2.5'
 
   s.author    = 'You'
   s.email     = 'you@example.com'
@@ -21,10 +21,9 @@ Gem::Specification.new do |s|
   s.require_path = 'lib'
   s.requirements << 'none'
 
-  spree_version = '>= 3.2.0', '< 5.0'
-  s.add_dependency 'spree_core', spree_version
-  s.add_dependency 'spree_api', spree_version
-  s.add_dependency 'spree_backend', spree_version
+  s.add_dependency 'spree', '>= <%= Spree.version %>'
+  # s.add_dependency 'spree_backend' # uncomment to include Admin Panel changes 
+  # s.add_dependency 'spree_frontend' # uncomment to include Storefront changes
   s.add_dependency 'spree_extension'
 
   s.add_development_dependency 'spree_dev_tools'

@@ -29,7 +29,7 @@ module Spree
     end
 
     has_many :option_value_variants, class_name: 'Spree::OptionValueVariant'
-    has_many :option_values, through: :option_value_variants, class_name: 'Spree::OptionValue'
+    has_many :option_values, through: :option_value_variants, dependent: :destroy, class_name: 'Spree::OptionValue'
 
     has_many :images, -> { order(:position) }, as: :viewable, dependent: :destroy, class_name: 'Spree::Image'
 
@@ -192,11 +192,15 @@ module Spree
     end
 
     def price_in(currency)
-      prices.detect { |price| price.currency == currency } || prices.build(currency: currency)
+      prices.detect { |price| price.currency == currency&.upcase } || prices.build(currency: currency&.upcase)
     end
 
     def amount_in(currency)
       price_in(currency).try(:amount)
+    end
+
+    def compare_at_amount_in(currency)
+      price_in(currency).try(:compare_at_amount)
     end
 
     def price_modifier_amount_in(currency, options = {})

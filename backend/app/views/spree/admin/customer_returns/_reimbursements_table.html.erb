@@ -26,10 +26,12 @@
             </span>
           </td>
           <td><%= pretty_time(reimbursement.created_at) %></td>
-          <td class="actions actions-1">
-            <% if !reimbursement.reimbursed? %>
-              <%= link_to_edit_url(url_for([:edit, :admin, @order, reimbursement]), title: "admin_edit_#{dom_id(reimbursement)}", no_text: true) if can?(:edit, reimbursement) %>
-            <% end %>
+          <td class="actions">
+            <span class="d-flex justify-content-end">
+              <% if !reimbursement.reimbursed? %>
+                <%= link_to_edit_url(url_for([:edit, :admin, @order, reimbursement]), title: "admin_edit_#{dom_id(reimbursement)}", no_text: true) if can?(:edit, reimbursement) %>
+              <% end %>
+            </span>
           </td>
         </tr>
       <% end %>

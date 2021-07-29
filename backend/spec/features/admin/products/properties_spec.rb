@@ -92,7 +92,7 @@ describe 'Properties', type: :feature, js: true do
 
   context 'linking a property to a product' do
     before do
-      create(:product)
+      create(:product, stores: Spree::Store.all)
       visit spree.admin_products_path
       click_icon :edit
       within('#sidebar') do

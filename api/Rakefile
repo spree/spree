@@ -3,7 +3,6 @@ require 'rake'
 require 'rake/testtask'
 require 'rspec/core/rake_task'
 require 'spree/testing_support/common_rake'
-require 'rails/all'
 
 RSpec::Core::RakeTask.new
 
@@ -13,4 +12,18 @@ desc "Generates a dummy app for testing"
 task :test_app do
   ENV['LIB_NAME'] = 'spree/api'
   Rake::Task['common:test_app'].invoke
+end
+
+namespace :rswag do
+  namespace :specs do
+    desc 'Generate Swagger JSON files from integration specs'
+    RSpec::Core::RakeTask.new('swaggerize') do |t|
+      t.pattern = ENV.fetch(
+        'PATTERN',
+        'spec/integration/**/*_spec.rb'
+      )
+
+      t.rspec_opts = ['--format Rswag::Specs::SwaggerFormatter', '--order defined']
+    end
+  end
 end

@@ -63,7 +63,7 @@ export default class Sidebar extends React.PureComponent {
           <aside
             className={cx(
               {
-                'dn db-l fixed-l br bg-near-white b--light-gray ph4 pt4 vh-100': !this
+                'dn db-l fixed-l pr4 pt4 vh-100': !this
                   .props.isMobile
               },
               { 'db pt2 bg-white': this.props.isMobile },
@@ -81,7 +81,7 @@ export default class Sidebar extends React.PureComponent {
                       <li key={index}>
                         <SidebarRootLink
                           isSingleRoot={length(this.props.nav) < 2}
-                          title={capitalize(startCase(item.section))}
+                          title={capitalize(startCase(item.section)).replace(/^\d+ /, '')}
                           isOpen={this.sectionIsOpen(item.section)}
                           toggleSection={() =>
                             this._toggleSection(item.section)

@@ -1,8 +1,7 @@
 require 'spec_helper'
 
 describe 'API V2 Storefront Checkout Spec', type: :request do
-  let(:default_currency) { 'USD' }
-  let(:store) { create(:store, default_currency: default_currency) }
+  let(:store) { Spree::Store.default }
   let(:currency) { store.default_currency }
   let(:user)  { create(:user) }
   let(:order) { create(:order, user: user, store: store, currency: currency) }
@@ -224,7 +223,7 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
     let!(:stock_location) { create(:stock_location) }
 
     let!(:shipping_method) { create(:shipping_method, zones: [country_zone]) }
-    let!(:payment_method)  { create(:credit_card_payment_method) }
+    let!(:payment_method)  { create(:credit_card_payment_method, stores: [store]) }
 
     let(:execute) { patch '/api/v2/storefront/checkout', params: params, headers: headers }
 
@@ -455,14 +454,14 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
     end
 
     context 'for guest or user without store credit' do
-      let!(:order) { create(:order, total: order_total) }
+      let!(:order) { create(:order, total: order_total, store: store) }
 
       it_behaves_like 'returns 422 HTTP status'
     end
 
     context 'for user with store credits' do
-      let!(:store_credit) { create(:store_credit, amount: order_total) }
-      let!(:order) { create(:order, user: store_credit.user, total: order_total) }
+      let!(:store_credit) { create(:store_credit, amount: order_total, store: store) }
+      let!(:order) { create(:order, user: store_credit.user, total: order_total, store: store) }
 
       shared_examples 'valid payload' do |amount|
         it 'returns StoreCredit payment' do
@@ -527,8 +526,7 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
     let(:order_total) { 500.00 }
     let(:params) { { order_token: order.token, include: 'payments', fields: { payment: 'state' } } }
     let(:execute) { post '/api/v2/storefront/checkout/remove_store_credit', params: params, headers: headers }
-    let!(:store_credit) { create(:store_credit, amount: order_total) }
-    let!(:order) { create(:order, user: store_credit.user, total: order_total) }
+    let!(:store_credit) { create(:store_credit, amount: order_total, user: user) }
 
     before do
       create(:store_credit_payment_method)
@@ -545,7 +543,7 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
 
   describe 'checkout#payment_methods' do
     let(:execute) { get '/api/v2/storefront/checkout/payment_methods', headers: headers }
-    let!(:payment_method) { create(:credit_card_payment_method) }
+    let!(:payment_method) { create(:credit_card_payment_method, stores: [store]) }
     let(:payment_methods) { order.available_payment_methods }
 
     shared_examples 'returns a list of available payment methods' do
@@ -579,13 +577,15 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
   describe 'checkout#shipping_rates' do
     let(:execute) { get '/api/v2/storefront/checkout/shipping_rates', headers: headers }
 
-    let(:country) { Spree::Country.default }
+    let(:country) { store.default_country }
     let(:zone) { create(:zone, name: 'US') }
     let(:shipping_method) { create(:shipping_method) }
+    let(:shipping_method_2) { create(:shipping_method) }
     let(:address) { create(:address, country: country) }
 
     let(:shipment) { order.shipments.first }
     let(:shipping_rate) { shipment.selected_shipping_rate }
+    let(:shipping_rate_2) { shipment.shipping_rates.where(selected: false).first }
 
     shared_examples 'returns a list of shipments with shipping rates' do
       before do
@@ -593,6 +593,7 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
         order.save!
         zone.countries << country
         shipping_method.zones = [zone]
+        shipping_method_2.zones = [zone]
         order.create_proposed_shipments
         execute
         order.reload
@@ -608,22 +609,19 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
         expect(json_response['data'][0]).to have_relationships(:shipping_rates)
         expect(json_response['included']).to be_present
         expect(json_response['included'].size).to eq(shipment.shipping_rates.count + 1)
-        shipment.shipping_rates.each do |shipping_rate|
-          expect(json_response['included']).to include(have_type('shipping_rate').and have_id(shipping_rate.id.to_s))
+        [{shipping_method: shipping_method, shipping_rate: shipping_rate}, {shipping_method: shipping_method_2, shipping_rate: shipping_rate_2}].each do |shipping|
+          expect(json_response['included']).to include(have_type('shipping_rate').and have_attribute(:name).with_value(shipping[:shipping_method].name))
+          expect(json_response['included']).to include(have_type('shipping_rate').and have_attribute(:shipping_method_id).with_value(shipping[:shipping_method].id))
+          expect(json_response['included']).to include(have_type('shipping_rate').and have_id(shipping[:shipping_rate].id.to_s))
+          expect(json_response['included']).to include(have_type('shipping_rate').and have_attribute(:cost).with_value(shipping[:shipping_rate].cost.to_s))
+          expect(json_response['included']).to include(have_type('shipping_rate').and have_attribute(:tax_amount).with_value(shipping[:shipping_rate].tax_amount.to_s))
+          expect(json_response['included']).to include(have_type('shipping_rate').and have_attribute(:selected).with_value(shipping[:shipping_rate].selected))
+          expect(json_response['included']).to include(have_type('shipping_rate').and have_attribute(:final_price).with_value(shipping[:shipping_rate].final_price.to_s))
+          expect(json_response['included']).to include(have_type('shipping_rate').and have_attribute(:free).with_value(shipping[:shipping_rate].free?))
+          expect(json_response['included']).to include(have_type('shipping_rate').and have_attribute(:display_final_price).with_value(shipping[:shipping_rate].display_final_price.to_s))
+          expect(json_response['included']).to include(have_type('shipping_rate').and have_attribute(:display_cost).with_value(shipping[:shipping_rate].display_cost.to_s))
+          expect(json_response['included']).to include(have_type('shipping_rate').and have_attribute(:display_tax_amount).with_value(shipping[:shipping_rate].display_tax_amount.to_s))
         end
-        expect(json_response['included'][0]).to have_id(shipping_rate.id.to_s)
-        expect(json_response['included'][0]).to have_type('shipping_rate')
-        expect(json_response['included'][0]).to have_attribute(:name).with_value(shipping_method.name)
-        expect(json_response['included'][0]).to have_attribute(:final_price).with_value(shipping_rate.final_price.to_s)
-        expect(json_response['included'][0]).to have_attribute(:display_final_price).with_value(shipping_rate.display_final_price.to_s)
-        expect(json_response['included'][0]).to have_attribute(:cost).with_value(shipping_rate.cost.to_s)
-        expect(json_response['included'][0]).to have_attribute(:display_cost).with_value(shipping_rate.display_cost.to_s)
-        expect(json_response['included'][0]).to have_attribute(:tax_amount).with_value(shipping_rate.tax_amount.to_s)
-        expect(json_response['included'][0]).to have_attribute(:display_tax_amount).with_value(shipping_rate.display_tax_amount.to_s)
-        expect(json_response['included'][0]).to have_attribute(:shipping_method_id).with_value(shipping_method.id)
-        expect(json_response['included'][0]).to have_attribute(:selected).with_value(shipping_rate.selected)
-        expect(json_response['included'][0]).to have_attribute(:free).with_value(shipping_rate.free?)
-
         expect(json_response['included']).to include(have_type('stock_location').and have_id(shipment.stock_location_id.to_s))
         expect(json_response['included']).to include(have_type('stock_location').and have_attribute(:name).with_value(shipment.stock_location.name))
       end
@@ -652,7 +650,7 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
     end
     let!(:zone) { create(:zone) }
     let!(:zone_member) { create(:zone_member, zone: zone, zoneable: country) }
-    let!(:payment_method) { create(:credit_card_payment_method) }
+    let!(:payment_method) { create(:credit_card_payment_method, stores: [store]) }
 
     let(:customer_params) do
       {

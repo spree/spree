@@ -27,7 +27,7 @@ module Spree
     self.whitelisted_ransackable_attributes = ['amount', 'compare_at_amount']
 
     def money
-      Spree::Money.new(amount || 0, currency: currency)
+      Spree::Money.new(amount || 0, currency: currency.upcase)
     end
 
     def amount=(amount)

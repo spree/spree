@@ -37,10 +37,13 @@ module Spree
             ability_class.register_ability(ability)
           end
 
+          let(:admin_token) { Doorkeeper::AccessToken.create!(scopes: 'admin read write').token }
+
           before do
-            allow(Spree.user_class).to receive(:find_by).
-              with(hash_including(:spree_api_key)).
-              and_return(Spree.user_class.new)
+            allow(Spree.user_class).to receive(:find_by).and_return(Spree.user_class.new)
+            if defined?(Spree::Admin)
+              allow_any_instance_of(Spree::Admin::BaseController).to receive(:admin_oauth_token).and_return(admin_token)
+            end
           end
         end
 

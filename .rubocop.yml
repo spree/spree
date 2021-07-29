@@ -1,7 +1,5 @@
 require: rubocop-rspec
 
-inherit_from: '.rubocop-disabled.yml'
-
 AllCops:
   TargetRubyVersion: 2.5
   Exclude:
@@ -64,6 +62,11 @@ Style/StringLiterals:
 Layout/DotPosition:
   EnforcedStyle: trailing
   Enabled: true
+
+Layout/SpaceInsideArrayLiteralBrackets:
+  Exclude:
+    - 'api/spec/integration/**/*.rb'
+    - 'api/lib/spree/api/testing_support/v2/platform_contexts.rb'
 
 Style/FrozenStringLiteralComment:
   Enabled: false
@@ -144,4 +147,52 @@ Lint/AmbiguousBlockAssociation:
     - '**/spec/**/*'
 
 Style/NumericLiterals:
+  Enabled: false
+
+RSpec/DescribeClass:
+  Enabled: false
+
+RSpec/VerifiedDoubles:
+  Enabled: false
+
+RSpec/MessageChain:
+  Enabled: false
+
+RSpec/AnyInstance:
+  Enabled: false
+
+RSpec/InstanceVariable:
+  Enabled: false
+
+RSpec/ContextWording:
+  Enabled: false
+
+RSpec/ExpectInHook:
+  Enabled: false
+
+RSpec/ExampleLength:
+  Enabled: false
+
+RSpec/MessageSpies:
+  Enabled: false
+
+RSpec/NamedSubject:
+  Enabled: false
+
+RSpec/MultipleExpectations:
+  Enabled: false
+
+RSpec/FilePath:
+  Enabled: false
+
+RSpec/LetSetup:
+  Enabled: false
+
+RSpec/SubjectStub:
+  Enabled: false
+
+RSpec/VoidExpect:
+  Enabled: false
+
+RSpec/BeforeAfterAll:
   Enabled: false
