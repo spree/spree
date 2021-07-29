@@ -53,6 +53,7 @@ module Spree
     preference :mailer_logo, :string, default: 'logo/spree_50.png'
     preference :max_level_in_taxons_menu, :integer, default: 1 # maximum nesting level in taxons menu
     preference :products_per_page, :integer, default: 12
+    preference :product_wysiwyg_editor_enabled, :boolean, default: true
     preference :require_master_price, :boolean, default: true
     preference :restock_inventory, :boolean, default: true # Determines if a return item is restocked automatically once it has been received
     preference :return_eligibility_number_of_days, :integer, default: 365
@@ -64,7 +65,6 @@ module Spree
     preference :show_raw_product_description, :boolean, default: false
     preference :tax_using_ship_address, :boolean, default: true
     preference :track_inventory_levels, :boolean, default: true # Determines whether to track on_hand values for variants / products.
-    preference :use_rte_for_product_description, :boolean, default: true
 
     # Store credits configurations
     preference :non_expiring_credit_types, :array, default: []

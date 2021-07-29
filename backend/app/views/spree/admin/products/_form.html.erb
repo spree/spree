@@ -21,7 +21,7 @@
       <div data-hook="admin_product_form_description">
         <%= f.field_container :description, class: ['form-group'] do %>
           <%= f.label :description, Spree.t(:description) %>
-          <%= f.text_area :description, { rows: "#{unless @product.has_variants? then '29' else '30' end}", class: "form-control #{"spree-rte" if Spree::Config[:use_rte_for_product_description] }" } %>
+          <%= f.text_area :description, { rows: "#{unless @product.has_variants? then '29' else '30' end}", class: "form-control #{"spree-rte" if product_wysiwyg_editor_enabled? }" } %>
           <%= f.error_message_on :description %>
         <% end %>
       </div>

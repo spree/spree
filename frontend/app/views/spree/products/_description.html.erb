@@ -1,6 +1,6 @@
 <h3 class="pt-4 font-weight-bold text-uppercase product-details-subtitle"><%= Spree.t(:description) %></h3>
 
-<% if Spree::Config[:show_raw_product_description] || Spree::Config[:use_rte_for_product_description] %>
+<% if Spree::Config[:show_raw_product_description] || product_wysiwyg_editor_enabled? %>
   <div id="product-description-long" class="m-0 text-break product-description" data-hook="description">
     <%= raw product_description(@product) %>
   </div>
