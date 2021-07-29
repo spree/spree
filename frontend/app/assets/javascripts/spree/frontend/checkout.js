@@ -64,7 +64,7 @@ $('.js-remove-credit-card').click(function() {
   return $.ajax({
     async: false,
     method: 'DELETE',
-    url: Spree.routes.remove_credit_card(this.dataset.id),
+    url: Spree.routes.api_v2_storefront_destroy_credit_card(this.dataset.id),
     dataType: 'json',
     headers: {
       'Authorization': 'Bearer ' + SpreeAPI.oauthToken
