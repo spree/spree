@@ -26,38 +26,6 @@ describe Spree::Promotion, type: :model do
       expect(@valid_promotion).not_to be_valid
     end
 
-    describe 'code should be unique' do
-      let(:code) { 'code' }
-
-      context 'code is unique' do
-        before do
-          @valid_promotion.code = code
-        end
-
-        it { expect(@valid_promotion).to be_valid }
-      end
-
-      context 'code is not unique' do
-        let!(:promotion_with_code) { create :promotion,  name: 'test1', code: code }
-
-        context 'code is identical' do
-          before do
-            @valid_promotion.code = code
-          end
-
-          it { expect(@valid_promotion).not_to be_valid }
-        end
-
-        context 'code is identical with whitespace' do
-          before do
-            @valid_promotion.code = code + ' '
-          end
-
-          it { expect(@valid_promotion).not_to be_valid }
-        end
-      end
-    end
-
     describe 'expires_at_must_be_later_than_starts_at' do
       before do
         @valid_promotion.starts_at = Date.today
@@ -97,7 +65,7 @@ describe Spree::Promotion, type: :model do
 
   describe 'scopes' do
     describe '.coupons' do
-      subject { Spree::Promotion.coupons }
+      subject { described_class.coupons }
 
       let!(:promotion_without_code) { create :promotion,  name: 'test', code: '' }
       let!(:promotion_with_code) { create :promotion,  name: 'test1', code: 'code' }
@@ -112,7 +80,7 @@ describe Spree::Promotion, type: :model do
     end
 
     describe '.applied' do
-      subject { Spree::Promotion.applied }
+      subject { described_class.applied }
 
       let!(:promotion_not_applied) { create :promotion,  name: 'test', code: '' }
       let(:order) { create(:order) }
@@ -132,7 +100,7 @@ describe Spree::Promotion, type: :model do
     end
 
     describe '.advertised' do
-      subject { Spree::Promotion.advertised }
+      subject { described_class.advertised }
 
       let!(:promotion_not_advertised) { create :promotion,  name: 'test', advertise: false }
       let!(:promotion_advertised) { create :promotion,  name: 'test1', advertise: true }
@@ -631,7 +599,7 @@ describe Spree::Promotion, type: :model do
       let!(:promotion) { create(:promotion, :with_order_adjustment, code: 'MY-COUPON-123') }
 
       it 'finds the code with lowercase' do
-        expect(Spree::Promotion.with_coupon_code('my-coupon-123')).to eql promotion
+        expect(described_class.with_coupon_code('my-coupon-123')).to eql promotion
       end
     end
 
@@ -639,7 +607,7 @@ describe Spree::Promotion, type: :model do
       let!(:promotion_without_actions) { create(:promotion, code: 'MY-COUPON-123').actions.clear }
 
       it 'then returns the one with an action' do
-        expect(Spree::Promotion.with_coupon_code('MY-COUPON-123')).to be_nil
+        expect(described_class.with_coupon_code('MY-COUPON-123')).to be_nil
       end
     end
   end
