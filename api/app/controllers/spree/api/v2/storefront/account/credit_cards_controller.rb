@@ -13,7 +13,7 @@ module Spree
             end
 
             def scope
-              super.where(user: spree_current_user)
+              super.where(user: spree_current_user, payment_method: current_store.payment_methods.available_on_front_end)
             end
 
             def collection_serializer
