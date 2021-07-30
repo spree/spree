@@ -1,9 +1,10 @@
 FactoryBot.define do
   factory :menu_item, class: Spree::MenuItem do
-    name { 'Link To Somewhere' }
+    sequence(:name) { |n| "Link no. #{n} To Somewhere" }
     item_type { 'Link' }
     linked_resource_type { 'URL' }
 
     menu
+    icon
   end
 end
