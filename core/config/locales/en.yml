@@ -880,6 +880,7 @@ en:
     created_by: Created By
     credit: Credit
     credit_card: Credit Card
+    credit_card_remove_confirmation: Are you sure you want to delete the credit card?
     credit_cards: Credit Cards
     credit_owed: Credit Owed
     credited: Credited
