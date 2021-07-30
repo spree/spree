@@ -38,12 +38,19 @@ describe Spree::OrdersController, type: :controller do
     context '#empty' do
       before do
         allow(controller).to receive :check_authorization
+        allow(controller).to receive(:current_order).and_return(order)
+        put :empty
       end
 
       it 'destroys line items in the current order' do
-        allow(controller).to receive(:current_order).and_return(order)
-        expect(order).to receive(:empty!)
-        put :empty
+        expect(order.reload.line_items).to be_empty
+      end
+
+      it 'destroys adjustments' do
+        expect(order.reload.adjustments).to be_empty
+      end
+
+      it 'redirects to spree cart path' do
         expect(response).to redirect_to(spree.cart_path)
       end
     end

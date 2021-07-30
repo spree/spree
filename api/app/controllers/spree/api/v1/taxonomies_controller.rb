@@ -19,7 +19,7 @@ module Spree
 
         def create
           authorize! :create, Taxonomy
-          @taxonomy = Taxonomy.new(taxonomy_params)
+          @taxonomy = current_store.taxonomies.new(taxonomy_params)
           if @taxonomy.save
             respond_with(@taxonomy, status: 201, default_template: :show)
           else

@@ -8,7 +8,7 @@ module Spree
       before_action :normalize_supported_locales, only: [:create, :update]
       before_action :set_default_country_id, only: :new
       before_action :load_all_countries, only: [:new, :edit, :update, :create]
-      before_action :load_all_zones, only: %i[new edit]
+      before_action :load_all_zones, only: [:new, :edit, :update, :create]
 
       def index
         if params[:ids]
@@ -40,7 +40,7 @@ module Spree
 
         if @store.save
           flash[:success] = flash_message_for(@store, :successfully_created)
-          redirect_to spree.admin_stores_path
+          redirect_to @store.formatted_url + spree.admin_stores_path
         else
           flash[:error] = "#{Spree.t('store_errors.unable_to_create')}: #{@store.errors.full_messages.join(', ')}"
           render :new

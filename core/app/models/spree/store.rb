@@ -15,6 +15,9 @@ module Spree
     has_many :store_payment_methods, class_name: 'Spree::StorePaymentMethod'
     has_many :payment_methods, through: :store_payment_methods, class_name: 'Spree::PaymentMethod'
 
+    has_many :cms_pages, class_name: 'Spree::CmsPage'
+    has_many :cms_sections, through: :cms_pages, class_name: 'Spree::CmsSection'
+
     has_many :menus, class_name: 'Spree::Menu'
     has_many :menu_items, through: :menus, class_name: 'Spree::MenuItem'
 
@@ -23,10 +26,17 @@ module Spree
     has_many :product_properties, through: :products, class_name: 'Spree::ProductProperty'
     has_many :variants, through: :products, class_name: 'Spree::Variant', source: :variants_including_master
     has_many :stock_items, through: :variants, class_name: 'Spree::StockItem'
-    has_many :inventory_units, through: :variants, class_name: 'InventoryUnit'
+    has_many :inventory_units, through: :variants, class_name: 'Spree::InventoryUnit'
+    has_many :customer_returns, class_name: 'Spree::CustomerReturn', inverse_of: :store
 
     has_many :store_credits, class_name: 'Spree::StoreCredit'
     has_many :store_credit_events, through: :store_credits, class_name: 'Spree::StoreCreditEvent'
+
+    has_many :taxonomies, class_name: 'Spree::Taxonomy'
+    has_many :taxons, through: :taxonomies, class_name: 'Spree::Taxon'
+
+    has_many :store_promotions, class_name: 'Spree::StorePromotion'
+    has_many :promotions, through: :store_promotions, class_name: 'Spree::Promotion'
 
     belongs_to :default_country, class_name: 'Spree::Country'
     belongs_to :checkout_zone, class_name: 'Spree::Zone'
@@ -96,6 +106,22 @@ module Spree
       @supported_currencies_list ||= (read_attribute(:supported_currencies).to_s.split(',') << default_currency).sort.map(&:to_s).map do |code|
         ::Money::Currency.find(code.strip)
       end.uniq.compact
+    end
+
+    def homepage(requested_locale)
+      cms_pages.by_locale(requested_locale).find_by(type: 'Spree::Cms::Pages::Homepage') ||
+        cms_pages.by_locale(default_locale).find_by(type: 'Spree::Cms::Pages::Homepage') ||
+        cms_pages.find_by(type: 'Spree::Cms::Pages::Homepage')
+    end
+
+    def seo_meta_description
+      if meta_description.present?
+        meta_description
+      elsif seo_title.present?
+        seo_title
+      else
+        name
+      end
     end
 
     def supported_locales_list

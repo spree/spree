@@ -189,11 +189,13 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
   def collection
     return parent.send(controller_name) if parent_data.present?
 
+    base_scope = model_class.try(:for_store, current_store) || model_class
+
     if model_class.respond_to?(:accessible_by) &&
         !current_ability.has_block?(params[:action], model_class)
-      model_class.accessible_by(current_ability, action)
+      base_scope.accessible_by(current_ability, action)
     else
-      model_class.where(nil)
+      base_scope.where(nil)
     end
   end
 

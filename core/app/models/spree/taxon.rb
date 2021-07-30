@@ -14,6 +14,7 @@ module Spree
     has_many :products, through: :classifications
 
     has_many :menu_items, as: :linked_resource
+    has_many :cms_sections, as: :linked_resource
 
     has_many :prototype_taxons, class_name: 'Spree::PrototypeTaxon', dependent: :destroy
     has_many :prototypes, through: :prototype_taxons, class_name: 'Spree::Prototype'
@@ -22,7 +23,7 @@ module Spree
     has_many :promotion_rules, through: :promotion_rule_taxons, class_name: 'Spree::PromotionRule'
 
     validates :name, presence: true, uniqueness: { scope: [:parent_id, :taxonomy_id], allow_blank: true, case_sensitive: false }
-    validates :permalink, uniqueness: { case_sensitive: false }
+    validates :permalink, uniqueness: { case_sensitive: false, scope: [:parent_id, :taxonomy_id] }
     validates :hide_from_nav, inclusion: { in: [true, false] }
     validates_associated :icon
     validate :check_for_root, on: :create
@@ -37,7 +38,11 @@ module Spree
 
     has_one :icon, as: :viewable, dependent: :destroy, class_name: 'Spree::TaxonImage'
 
+    scope :for_store, ->(store) { joins(:taxonomy).where(spree_taxonomies: { store_id: store.id }) }
+
     self.whitelisted_ransackable_associations = %w[taxonomy]
+
+    scope :for_stores, ->(stores) { joins(:taxonomy).where(spree_taxonomies: { store_id: stores.ids }) }
 
     # indicate which filters should be used for a taxon
     # this method should be customized to your own site

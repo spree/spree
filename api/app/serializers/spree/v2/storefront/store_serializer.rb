@@ -9,6 +9,8 @@ module Spree
                    :address, :contact_phone, :supported_locales
 
         has_many :menus
+        has_many :cms_pages
+
         has_one :default_country, serializer: :country, record_type: :country, id_method_name: :default_country_id
 
         attribute :favicon_path do |store|

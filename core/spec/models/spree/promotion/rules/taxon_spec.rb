@@ -6,8 +6,9 @@ describe Spree::Promotion::Rules::Taxon, type: :model do
   let(:store) { create(:store) }
 
   context '#elegible?(order)' do
-    let(:taxon) { create :taxon, name: 'first' }
-    let(:taxon2) { create :taxon, name: 'second' }
+    let(:taxonomy) { create(:taxonomy, store: store) }
+    let(:taxon) { create :taxon, name: 'first', taxonomy: taxonomy }
+    let(:taxon2) { create :taxon, name: 'second', taxonomy: taxonomy }
     let(:order) { create :order_with_line_items, store: store }
 
     before do
@@ -89,7 +90,7 @@ describe Spree::Promotion::Rules::Taxon, type: :model do
       end
 
       context 'when a product has a taxon child of a taxon rule' do
-        let(:taxon3) { create :taxon }
+        let(:taxon3) { create :taxon, taxonomy: taxonomy }
 
         before do
           taxon.children << taxon2

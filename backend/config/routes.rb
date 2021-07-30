@@ -186,6 +186,10 @@ Spree::Core::Engine.add_routes do
       resources :store_credits
     end
 
+    resources :cms_pages do
+      resources :cms_sections, except: :index
+    end
+
     resources :menus do
       resources :menu_items, except: :index do
         member do

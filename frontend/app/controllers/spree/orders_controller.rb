@@ -38,7 +38,7 @@ module Spree
     end
 
     def empty
-      current_order.try(:empty!)
+      cart_empty_service.call(order: current_order)
 
       redirect_to spree.cart_path
     end
@@ -84,6 +84,10 @@ module Spree
 
     def cart_add_item_service
       Spree::Dependencies.cart_add_item_service.constantize
+    end
+
+    def cart_empty_service
+      Spree::Dependencies.cart_empty_service.constantize
     end
   end
 end

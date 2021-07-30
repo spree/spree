@@ -31,6 +31,46 @@ module Spree
         )
       end
 
+      # Returns Humanized Dropdown Values From a Constant In the Model
+      # Pass the model name as a string and then a hash containing the constant name
+      # and the option to paramatize the return value.
+      #
+      # Example:
+      #
+      #   spree_humanize_dropdown_values('Spree::CmsPage', { const: 'TYPES' })
+      #   spree_humanize_dropdown_values('Spree::Menu', { const: 'MENU_TYPES', paramterize_values: true })
+      #
+      def spree_humanize_dropdown_values(model_name, options = {})
+        formatted_option_values = []
+
+        const = options[:const] || nil
+        paramterize_values = options[:paramterize_values] || false
+
+        return unless const.present?
+
+        model_name.constantize.const_get(const).map do |type|
+          return_value = if paramterize_values
+                           type.parameterize(separator: '_')
+                         else
+                           type
+                         end
+
+          formatted_option_values << [spree_humanize_type(type), return_value]
+        end
+
+        formatted_option_values
+      end
+
+      def spree_humanize_type(obj)
+        last_word = obj.split('::', 10).last
+
+        if last_word.starts_with?('Cms')
+          last_word.slice(3, 100).gsub(/(?<=[a-z])(?=[A-Z])/, ' ')
+        else
+          last_word.gsub(/(?<=[a-z])(?=[A-Z])/, ' ')
+        end
+      end
+
       def error_message_on(object, method, _options = {})
         object = convert_to_model(object)
         obj = object.respond_to?(:errors) ? object : instance_variable_get("@#{object}")

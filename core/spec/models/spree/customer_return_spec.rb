@@ -9,7 +9,7 @@ describe Spree::CustomerReturn, type: :model do
     describe '#must_have_return_authorization' do
       subject { customer_return.valid? }
 
-      let(:customer_return) { build(:customer_return) }
+      let(:customer_return) { build(:customer_return, store: create(:store)) }
 
       let(:inventory_unit)  { create(:inventory_unit) }
       let(:return_item)     { build(:return_item, inventory_unit: inventory_unit) }
@@ -43,7 +43,7 @@ describe Spree::CustomerReturn, type: :model do
     describe '#return_items_belong_to_same_order' do
       subject { customer_return.valid? }
 
-      let(:customer_return)       { build(:customer_return) }
+      let(:customer_return)       { build(:customer_return, store: create(:store)) }
 
       let(:first_inventory_unit)  { create(:inventory_unit) }
       let(:first_return_item)     { build(:return_item, inventory_unit: first_inventory_unit) }

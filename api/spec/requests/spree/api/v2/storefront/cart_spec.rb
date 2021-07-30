@@ -21,7 +21,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
   shared_context 'coupon codes' do
     let!(:line_item) { create(:line_item, order: order) }
     let!(:shipment) { create(:shipment, order: order) }
-    let!(:promotion) { Spree::Promotion.create(name: 'Free shipping', code: 'freeship') }
+    let!(:promotion) { create(:promotion, name: 'Free shipping', code: 'freeship', stores: [store]) }
     let(:coupon_code) { promotion.code }
     let!(:promotion_action) { Spree::PromotionAction.create(promotion_id: promotion.id, type: 'Spree::Promotion::Actions::FreeShipping') }
   end
@@ -319,6 +319,42 @@ describe 'API V2 Storefront Cart Spec', type: :request do
       end
 
       it_behaves_like 'no current order'
+    end
+  end
+
+  describe 'cart#destroy' do
+    let(:execute) { delete '/api/v2/storefront/cart', headers: headers }
+
+    shared_examples 'destroying order' do
+      it 'destroys the order' do
+        expect{ execute }.to change { Spree::Order.count }.by(-1)
+      end
+    end
+
+    shared_examples '204 status returned' do
+      before { execute }
+
+      it_behaves_like 'returns 204 HTTP status'
+    end
+
+    context 'as a signed in user' do
+      context 'with existing order with line item' do
+        include_context 'creates order with line item'
+
+        it_behaves_like 'destroying order'
+        it_behaves_like '204 status returned'
+        it_behaves_like 'no current order'
+      end
+    end
+
+    context 'as a guest user' do
+      context 'with existing guest order with line item' do
+        include_context 'creates guest order with guest token'
+
+        it_behaves_like 'destroying order'
+        it_behaves_like '204 status returned'
+        it_behaves_like 'no current order'
+      end
     end
   end
 

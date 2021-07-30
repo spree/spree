@@ -3,7 +3,7 @@ module Spree
     acts_as_paranoid
     acts_as_list
 
-    include MultipleStoresResource
+    include MultiStoreResource
 
     DISPLAY = [:both, :front_end, :back_end].freeze
 

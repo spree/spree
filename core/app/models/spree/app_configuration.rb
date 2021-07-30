@@ -77,9 +77,10 @@ module Spree
       @searcher_class ||= Spree::Core::Search::Base
     end
 
-    # Sets the path used for products and taxons.
+    # Sets the path used for products, taxons and pages.
     preference :storefront_products_path, :string, default: 'products'
     preference :storefront_taxons_path, :string, default: 't'
+    preference :storefront_pages_path, :string, default: 'pages'
 
     attr_writer :searcher_class
   end

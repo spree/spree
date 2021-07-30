@@ -90,9 +90,9 @@ module Spree
 
       def load_taxonomy
         @taxonomy = if defined?(SpreeGlobalize)
-                      Taxonomy.includes(:translations, taxons: [:translations]).find(params[:taxonomy_id])
+                      scope.includes(:translations, taxons: [:translations]).find(params[:taxonomy_id])
                     else
-                      Taxonomy.find(params[:taxonomy_id])
+                      scope.find(params[:taxonomy_id])
                     end
       end
 
@@ -102,7 +102,7 @@ module Spree
       end
 
       def set_parent(parent_id)
-        @taxon.parent = Taxon.find(parent_id.to_i) if parent_id
+        @taxon.parent = current_store.taxons.find(parent_id.to_i) if parent_id
       end
 
       def set_permalink_params
@@ -126,6 +126,10 @@ module Spree
         taxon.reload
         taxon.set_permalink
         taxon.save!
+      end
+
+      def scope
+        current_store.taxonomies
       end
     end
   end

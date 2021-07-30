@@ -172,7 +172,7 @@ describe Spree::MenuItem, type: :model do
     end
 
     it 'is level 1' do
-      expect(item_x.level).to eql 1
+      expect(item_x.level).to be 1
     end
   end
 

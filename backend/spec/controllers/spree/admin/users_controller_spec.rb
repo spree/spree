@@ -2,6 +2,7 @@ require 'spec_helper'
 require 'spree/testing_support/bar_ability'
 
 describe Spree::Admin::UsersController, type: :controller do
+  let(:store) { Spree::Store.default }
   let(:user) { create(:user) }
   let(:mock_user) { mock_model Spree.user_class }
 
@@ -138,10 +139,10 @@ describe Spree::Admin::UsersController, type: :controller do
   end
 
   describe '#orders' do
-    let(:order) { create(:order) }
+    let!(:order) { create(:order, user: user, store: store) }
+    let!(:order_2) { create(:order, user: user, store: create(:store)) }
 
     before do
-      user.orders << order
       user.spree_roles << Spree::Role.find_or_create_by(name: 'admin')
     end
 
@@ -159,10 +160,10 @@ describe Spree::Admin::UsersController, type: :controller do
   end
 
   describe '#items' do
-    let(:order) { create(:order) }
+    let!(:order) { create(:order, user: user, store: store) }
+    let!(:order_2) { create(:order, user: user, store: create(:store)) }
 
     before do
-      user.orders << order
       user.spree_roles << Spree::Role.find_or_create_by(name: 'admin')
     end
 

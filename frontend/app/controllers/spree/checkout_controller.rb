@@ -161,7 +161,9 @@ module Spree
         end
       end
 
-      @payment_sources = try_spree_current_user.payment_sources if try_spree_current_user&.respond_to?(:payment_sources)
+      return unless try_spree_current_user.respond_to?(:payment_sources)
+
+      @payment_sources = try_spree_current_user.payment_sources.where(payment_method: @order.available_payment_methods)
     end
 
     def add_store_credit_payments
