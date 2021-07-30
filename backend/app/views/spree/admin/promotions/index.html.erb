@@ -59,7 +59,7 @@
       <tbody>
         <% @promotions.each do |promotion| %>
           <tr id="<%= spree_dom_id promotion %>">
-            <td><%= link_to promotion.name, edit_admin_promotion_path(promotion) %></td>
+            <td><%= link_to promotion.name, spree.edit_admin_promotion_path(promotion) %></td>
             <td><%= promotion.code %></td>
             <td><%= promotion.description %></td>
             <td><%= promotion.usage_limit.nil? ? "∞" : promotion.usage_limit %></td>
