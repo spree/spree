@@ -45,7 +45,7 @@ module Spree
     def self.with_coupon_code(coupon_code)
       where("lower(#{table_name}.code) = ?", coupon_code.strip.downcase).
         includes(:promotion_actions).where.not(spree_promotion_actions: { id: nil }).
-        first
+        last
     end
 
     def self.active
