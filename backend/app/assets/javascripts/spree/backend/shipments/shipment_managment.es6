@@ -21,12 +21,14 @@ const handleDeleteLineItemFromShipmentClick = function() {
 
   deleteLineItemButtons.forEach(function(el) {
     el.addEventListener('click', function(event) {
-      event.preventDefault()
+      if (confirm(Spree.translations.are_you_sure_delete)) {
+        event.preventDefault()
 
-      const shipmentNumber = this.dataset.shipmentNumber
-      const variantId = this.dataset.variantId
+        const shipmentNumber = this.dataset.shipmentNumber
+        const variantId = this.dataset.variantId
 
-      removeVariantFromShipment(shipmentNumber, variantId)
+        removeVariantFromShipment(shipmentNumber, variantId)
+      }
     })
   })
 }

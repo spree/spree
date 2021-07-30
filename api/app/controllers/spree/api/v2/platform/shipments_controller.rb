@@ -89,7 +89,7 @@ module Spree
             @stock_location = Spree::StockLocation.find(params[:stock_location_id])
 
             unless @quantity > 0
-              render json: { error: "#{Spree.t(:negative_quantity, scope: 'api')}" }, status: 422
+              render json: { exception: "#{Spree.t(:negative_quantity, scope: 'api')}" }, status: 422
               return
             end
 
@@ -114,7 +114,7 @@ module Spree
                     end
 
             if error
-              render json: { error: error }, status: 422
+              render json: { exception: error }, status: 422
             else
               transfer = @original_shipment.transfer_to_shipment(@variant, @quantity, @target_shipment)
               if transfer.valid?

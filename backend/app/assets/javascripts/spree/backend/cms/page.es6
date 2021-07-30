@@ -54,7 +54,7 @@ function handleTogglePageVisibility(obj) {
         toggleVisibilityState(obj)
       } else {
         // eslint-disable-next-line no-undef
-        spreeHandleResponse(response)
+        spreeHandleFetchRequestResponse(response)
       }
     })
     .catch(err => { console.error(err) })
@@ -101,7 +101,7 @@ function handleSectionReposition(evt) {
         reloadPreview()
       } else {
         // eslint-disable-next-line no-undef
-        spreeHandleResponse(response)
+        spreeHandleFetchRequestResponse(response)
       }
     })
     .catch(err => { console.error(err) })

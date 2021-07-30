@@ -292,7 +292,7 @@ describe 'Order Details', type: :feature, js: true do
 
             wait_for_ajax
 
-            assert_admin_flash_alert_error('quantity is negative')
+            assert_admin_flash_alert_notice('quantity is negative')
 
             expect(order.shipments.count).to eq(1)
             expect(order.shipments.first.inventory_units_for(product.master).sum(&:quantity)).to eq(2)
@@ -316,7 +316,7 @@ describe 'Order Details', type: :feature, js: true do
 
             wait_for_ajax
 
-            assert_admin_flash_alert_error('quantity is negative')
+            assert_admin_flash_alert_notice('quantity is negative')
 
             expect(order.shipments.count).to eq(1)
             expect(order.shipments.first.inventory_units_for(product.master).sum(&:quantity)).to eq(2)
@@ -348,11 +348,10 @@ describe 'Order Details', type: :feature, js: true do
               fill_in 'item_quantity', with: 2
 
               click_icon 'save-split'
-              click_icon 'save-split'
 
               wait_for_ajax
 
-              assert_admin_flash_alert_error('Desired shipment has not enough stock in desired stock location')
+              assert_admin_flash_alert_notice('Desired shipment has not enough stock in desired stock location')
 
               expect(order.shipments.count).to eq(1)
               expect(order.shipments.first.inventory_units_for(product.master).sum(&:quantity)).to eq(2)
@@ -523,7 +522,7 @@ describe 'Order Details', type: :feature, js: true do
 
             wait_for_ajax
 
-            assert_admin_flash_alert_error('target shipment is the same as original shipment')
+            assert_admin_flash_alert_notice('target shipment is the same as original shipment')
 
             expect(order.shipments.count).to eq(2)
             expect(order.shipments.first.inventory_units_for(product.master).sum(&:quantity)).to eq(2)

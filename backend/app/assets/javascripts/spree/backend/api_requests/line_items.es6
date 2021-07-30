@@ -23,12 +23,12 @@ const addLineItem = (variantId, quantity) => {
     headers: Spree.apiV2Authentication(),
     body: JSON.stringify(data)
   })
-    .then((response) => spreeHandleResponse(response)
+    .then((response) => spreeHandleFetchRequestResponse(response)
       .then((data) => {
         if (response.ok) {
           window.Spree.advanceOrder()
         } else {
-          show_flash('info', data.error)
+          spreeHandleFetchRequestError(data)
         }
       }))
     .catch(err => console.log(err))
@@ -57,12 +57,12 @@ const adjustLineItemQuantity = function(lineItemId, quantity) {
     headers: Spree.apiV2Authentication(),
     body: JSON.stringify(data)
   })
-    .then((response) => spreeHandleResponse(response)
+    .then((response) => spreeHandleFetchRequestResponse(response)
       .then((data) => {
         if (response.ok) {
           window.Spree.advanceOrder()
         } else {
-          show_flash('info', data.error)
+          spreeHandleFetchRequestError(data)
         }
       }))
     .catch(err => console.log(err))
@@ -82,12 +82,12 @@ const deleteLineItem = function(lineItemId) {
     headers: Spree.apiV2Authentication(),
     body: JSON.stringify(data)
   })
-    .then((response) => spreeHandleResponse(response)
+    .then((response) => spreeHandleFetchRequestResponse(response)
       .then((data) => {
         if (response.ok) {
           window.Spree.advanceOrder()
         } else {
-          show_flash('info', data.error)
+          spreeHandleFetchRequestError(data)
         }
       }))
     .catch(err => console.log(err))

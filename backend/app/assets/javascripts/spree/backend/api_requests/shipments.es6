@@ -14,12 +14,12 @@ const shipShipment = function(shipmentNumber) {
     method: 'PUT',
     headers: Spree.apiV2Authentication()
   })
-    .then((response) => spreeHandleResponse(response, true)
+    .then((response) => spreeHandleFetchRequestResponse(response, true)
       .then((data) => {
         if (response.ok) {
           window.location.reload()
         } else {
-          show_flash('info', data.error)
+          spreeHandleFetchRequestError(data)
         }
       }))
     .catch(err => console.log(err))
@@ -40,12 +40,12 @@ const addVariantToShipment = function(shipmentNumber, variantId, quantity = null
     headers: Spree.apiV2Authentication(),
     body: JSON.stringify(data)
   })
-    .then((response) => spreeHandleResponse(response, true)
+    .then((response) => spreeHandleFetchRequestResponse(response, true)
       .then((data) => {
         if (response.ok) {
           window.location.reload()
         } else {
-          show_flash('info', data.error)
+          spreeHandleFetchRequestError(data)
         }
       }))
     .catch(err => console.log(err))
@@ -74,12 +74,12 @@ const removeVariantFromShipment = function(shipmentNumber, variantId, quantity =
     headers: Spree.apiV2Authentication(),
     body: JSON.stringify(data)
   })
-    .then((response) => spreeHandleResponse(response, true)
+    .then((response) => spreeHandleFetchRequestResponse(response, true)
       .then((data) => {
         if (response.ok) {
           window.location.reload()
         } else {
-          show_flash('info', data.error)
+          spreeHandleFetchRequestError(data)
         }
       }))
     .catch(err => console.log(err))
@@ -93,12 +93,12 @@ const startItemSplit = function(clickedLink, variantId, succeed) {
   fetch(`${Spree.routes.variants_api_v2}/${variantId}/?include=stock_items,stock_locations`, {
     headers: Spree.apiV2Authentication()
   })
-    .then((response) => spreeHandleResponse(response)
+    .then((response) => spreeHandleFetchRequestResponse(response)
       .then((data) => {
         if (response.ok) {
           succeed(data, clickedLink)
         } else {
-          show_flash('info', data.error)
+          spreeHandleFetchRequestError(data)
         }
       }))
     .catch(err => console.log(err))
@@ -114,12 +114,12 @@ const createShipment = function(data) {
     headers: Spree.apiV2Authentication(),
     body: JSON.stringify(data)
   })
-    .then((response) => spreeHandleResponse(response, true)
+    .then((response) => spreeHandleFetchRequestResponse(response, true)
       .then((data) => {
         if (response.ok) {
           window.location.reload()
         } else {
-          show_flash('info', data.error)
+          spreeHandleFetchRequestError(data)
         }
       }))
     .catch(err => console.log(err))
@@ -135,12 +135,12 @@ const updateShipment = function(shipmentNumber, data) {
     headers: Spree.apiV2Authentication(),
     body: JSON.stringify(data)
   })
-    .then((response) => spreeHandleResponse(response, true)
+    .then((response) => spreeHandleFetchRequestResponse(response, true)
       .then((data) => {
         if (response.ok) {
           window.location.reload()
         } else {
-          show_flash('info', data.error)
+          spreeHandleFetchRequestError(data)
         }
       }))
     .catch(err => console.log(err))
@@ -156,12 +156,12 @@ const transferShipment = function(data, path) {
     headers: Spree.apiV2Authentication(),
     body: JSON.stringify(data)
   })
-    .then((response) => spreeHandleResponse(response, true)
+    .then((response) => spreeHandleFetchRequestResponse(response, true)
       .then((data) => {
         if (response.ok) {
           window.location.reload()
         } else {
-          show_flash('info', data.error)
+          spreeHandleFetchRequestError(data)
         }
       }))
     .catch(err => console.log(err))
