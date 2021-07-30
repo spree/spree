@@ -40,7 +40,7 @@ module Spree
       include Spree::LocaleHelper
 
       context 'when link is passed with no arguments' do
-        let(:menu_item) { create(:menu_item, menu: menu, destination: 'https://my-website.com') }
+        let(:menu_item) { create(:menu_item, name: 'Link To Somewhere', menu: menu, destination: 'https://my-website.com') }
 
         it 'returns the link destination with no unexpected attributes' do
           expect(spree_nav_link_tag(menu_item)).to eq('<a href="https://my-website.com">Link To Somewhere</a>')
@@ -48,7 +48,7 @@ module Spree
       end
 
       context 'when link is passed with setting to open in a new window' do
-        let(:menu_item) { create(:menu_item, menu: menu, destination: 'https://my-website.com', new_window: true) }
+        let(:menu_item) { create(:menu_item, name: 'Link To Somewhere', menu: menu, destination: 'https://my-website.com', new_window: true) }
 
         it 'returns the link destination with target="_blank" rel="noopener noreferrer"' do
           expect(spree_nav_link_tag(menu_item)).to eq('<a target="_blank" rel="noopener noreferrer" href="https://my-website.com">Link To Somewhere</a>')
@@ -56,7 +56,7 @@ module Spree
       end
 
       context 'when link is passed with setting to open in a new window, and passed custom attributes' do
-        let(:menu_item) { create(:menu_item, menu: menu, destination: 'https://my-website.com', new_window: true) }
+        let(:menu_item) { create(:menu_item, name: 'Link To Somewhere', menu: menu, destination: 'https://my-website.com', new_window: true) }
 
         it 'returns the link destination with a full set of cutstom attributes' do
           expect(spree_nav_link_tag(menu_item, { class: 'custom-class', id: 'custonId', target: '_not_so_blank', rel: 'related', data: 'custom-data', aria: 'custom-aria' })).
