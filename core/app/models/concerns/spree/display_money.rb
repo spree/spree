@@ -17,14 +17,21 @@ module Spree
     # Decorate a method, but with some additional options
     #     extend Spree::DisplayMoney
     #     money_methods tax_amount: { currency: "CAD", no_cents: true }, :price
+    # Use generated method with the same arguments as in wrapped methiod (can use both positional and keyword arguments)
+    #     def tax_amount(order, country)
+    #     display_tax_amount(order, country)
     def money_methods(*args)
       args.each do |money_method|
         money_method = { money_method => {} } unless money_method.is_a? Hash
         money_method.each do |method_name, opts|
-          define_method("display_#{method_name}") do |**args2|
+          define_method("display_#{method_name}") do |*args_list|
             default_opts = respond_to?(:currency) ? { currency: currency } : {}
-            Spree::Money.new(method(method_name).arity == 0 ? send(method_name) : send(method_name, **args2),
-                             default_opts.merge(opts).merge(args2.slice(:currency)))
+            method_parameters_to_h = method(method_name).parameters.zip(args_list).each_with_object({}) do |(parameter, argument), hash|
+              hash[parameter[1]] = argument
+            end
+
+            Spree::Money.new(send(method_name, *args_list),
+            method_parameters_to_h.slice(:currency).merge(default_opts).merge(opts))
           end
         end
       end
