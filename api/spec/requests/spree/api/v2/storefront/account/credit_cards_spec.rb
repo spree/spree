@@ -50,6 +50,7 @@ describe 'Storefront API v2 CreditCards spec', type: :request do
           expect(response.status).to eq(200)
           expect(json_response['data'].size).to eq(0)
         end
+        
         context 'user has a credit cards available on the front end but in different store' do
           let(:stores) { [create(:store)] }
           let(:display_on) { :front_end }
