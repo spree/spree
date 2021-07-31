@@ -20,6 +20,7 @@ describe Spree::Api::V2::Platform::CountrySerializer do
             name: country.name,
             numcode: country.numcode,
             states_required: country.states_required,
+            created_at: country.created_at,
             updated_at: country.updated_at,
             zipcode_required: country.zipcode_required
           },

@@ -3,7 +3,8 @@ require 'spec_helper'
 describe Spree::Api::V2::Platform::ImageSerializer do
   subject { described_class.new(image) }
 
-  let(:image) { create(:image) }
+  let(:variant) { create(:variant) }
+  let(:image) { create(:image, viewable: variant) }
 
   it { expect(subject.serializable_hash).to be_kind_of(Hash) }
 
@@ -14,7 +15,7 @@ describe Spree::Api::V2::Platform::ImageSerializer do
           id: image.id.to_s,
           type: :image,
           attributes: {
-            viewable_type: image.viewable_type,
+            viewable_type: 'Spree::Variant',
             attachment_height: image.attachment_height,
             attachment_file_size: image.attachment_file_size,
             position: image.position,
