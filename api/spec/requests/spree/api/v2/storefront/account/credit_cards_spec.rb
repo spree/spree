@@ -2,7 +2,6 @@ require 'spec_helper'
 
 describe 'Storefront API v2 CreditCards spec', type: :request do
   let!(:user) { create(:user) }
-  let!(:params) { { user_id: user.id } }
   let!(:credit_cards) { create_list(:credit_card, 3, user_id: user.id) }
 
   shared_examples 'returns valid user credit cards resource JSON' do
@@ -39,6 +38,28 @@ describe 'Storefront API v2 CreditCards spec', type: :request do
       it 'returns all user credit_cards' do
         expect(json_response['data'][0]).to have_type('credit_card')
         expect(json_response['data'].size).to eq(credit_cards.count)
+      end
+
+      context 'user has credit cards that are not available on the front end' do
+        let!(:credit_cards) { create_list(:credit_card, 3, user_id: user.id, payment_method: payment_method) }
+        let(:payment_method) { create(:credit_card_payment_method, display_on: display_on, stores: stores) }
+        let(:stores) { [Spree::Store.default] }
+        let(:display_on) { :none }
+
+        it 'does not return any' do
+          expect(response.status).to eq(200)
+          expect(json_response['data'].size).to eq(0)
+        end
+        
+        context 'user has a credit cards available on the front end but in different store' do
+          let(:stores) { [create(:store)] }
+          let(:display_on) { :front_end }
+
+          it 'does not return any' do
+            expect(response.status).to eq(200)
+            expect(json_response['data'].size).to eq(0)
+          end
+        end
       end
     end
 

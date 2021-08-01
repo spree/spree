@@ -3,7 +3,9 @@ module Spree
     module V2
       module Platform
         class TaxonImageSerializer < BaseSerializer
-          include ::Spree::Api::V2::ResourceSerializerConcern
+          set_type :taxon_image
+
+          attributes :styles, :alt, :created_at, :updated_at
         end
       end
     end

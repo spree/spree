@@ -3,6 +3,8 @@ FactoryBot.define do
     title { generate(:random_string) }
     locale { 'en' }
 
+    store
+
     factory :cms_homepage do
       type { 'Spree::Cms::Pages::Homepage' }
     end

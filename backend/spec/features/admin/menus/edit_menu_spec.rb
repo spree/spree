@@ -4,7 +4,7 @@ describe 'Menu Edit', type: :feature do
   stub_authorization!
 
   let!(:main_menu) { create(:menu, name: 'Main Menu') }
-  let!(:menu_item) { create(:menu_item, menu: main_menu, parent: main_menu.root) }
+  let!(:menu_item) { create(:menu_item, name: 'Link To Somewhere', menu: main_menu, parent: main_menu.root) }
   let(:file_path) { Rails.root + '../../spec/support/ror_ringer.jpeg' }
 
   context 'when link to URL the user can' do
