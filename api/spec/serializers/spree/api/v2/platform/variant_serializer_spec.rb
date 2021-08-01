@@ -1,9 +1,11 @@
 require 'spec_helper'
 
 describe Spree::Api::V2::Platform::VariantSerializer do
-  subject { described_class.new(variant) }
+  include_context 'API v2 serializers params'
 
-  let(:variant) { create(:variant, images: create_list(:image, 2)) }
+  subject { described_class.new(variant, params: serializer_params) }
+
+  let!(:variant) { create(:variant, price: 10, compare_at_price: 15, images: create_list(:image, 2), tax_category: create(:tax_category)) }
 
   it { expect(subject.serializable_hash).to be_kind_of(Hash) }
 
@@ -24,15 +26,33 @@ describe Spree::Api::V2::Platform::VariantSerializer do
             position: variant.position,
             cost_currency: variant.cost_currency,
             track_inventory: variant.track_inventory,
-            created_at: variant.created_at,
             updated_at: variant.updated_at,
-            discontinue_on: variant.discontinue_on
+            discontinue_on: variant.discontinue_on,
+            created_at: variant.created_at,
+            name: variant.name,
+            options_text: variant.options_text,
+            total_on_hand: variant.total_on_hand,
+            purchasable: variant.purchasable?,
+            in_stock: variant.in_stock?,
+            backorderable: variant.backorderable?,
+            available: variant.available?,
+            currency: currency,
+            price: BigDecimal(10),
+            display_price: '$10.00',
+            compare_at_price: BigDecimal(15),
+            display_compare_at_price: '$15.00'
           },
           relationships: {
             product: {
               data: {
                 id: variant.product.id.to_s,
                 type: :product
+              }
+            },
+            tax_category: {
+              data: {
+                id: variant.tax_category.id.to_s,
+                type: :tax_category
               }
             },
             option_values: {
@@ -52,6 +72,22 @@ describe Spree::Api::V2::Platform::VariantSerializer do
                 {
                   id: variant.images.second.id.to_s,
                   type: :image
+                }
+              ]
+            },
+            stock_locations: {
+              data: [
+                {
+                  id: variant.stock_locations.first.id.to_s,
+                  type: :stock_location
+                }
+              ]
+            },
+            stock_items: {
+              data: [
+                {
+                  id: variant.stock_items.first.id.to_s,
+                  type: :stock_item
                 }
               ]
             }

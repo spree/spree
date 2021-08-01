@@ -6,52 +6,46 @@ module Spree
           include ::Spree::Api::V2::ResourceSerializerConcern
           include ::Spree::Api::V2::DisplayMoneyHelper
 
-          set_type :variant
+          attributes :name, :options_text, :total_on_hand
 
-          attributes :name, :sku, :weight, :height, :width, :depth, :is_master,
-                     :slug, :options_text, :description
-
-          attribute :purchasable do |variant|
-            variant.purchasable?
+          attribute :purchasable do |product|
+            product.purchasable?
           end
 
-          attribute :in_stock do |variant|
-            variant.in_stock?
+          attribute :in_stock do |product|
+            product.in_stock?
           end
 
-          attribute :is_destroyed do |variant|
-            variant.destroyed?
+          attribute :backorderable do |product|
+            product.backorderable?
           end
 
-          attribute :is_backorderable do |variant|
-            variant.backorderable?
-          end
-
-          attribute :total_on_hand do |variant|
-            variant.total_on_hand
+          attribute :available do |product|
+            product.available?
           end
 
           attribute :currency do |_product, params|
             params[:currency]
           end
 
-          attribute :price do |product, params|
-            price(product, params[:currency])
+          attribute :price do |object, params|
+            price(object, params[:currency])
           end
 
-          attribute :display_price do |product, params|
-            display_price(product, params[:currency])
+          attribute :display_price do |object, params|
+            display_price(object, params[:currency])
           end
 
-          attribute :compare_at_price do |product, params|
-            compare_at_price(product, params[:currency])
+          attribute :compare_at_price do |object, params|
+            compare_at_price(object, params[:currency])
           end
 
-          attribute :display_compare_at_price do |product, params|
-            display_compare_at_price(product, params[:currency])
+          attribute :display_compare_at_price do |object, params|
+            display_compare_at_price(object, params[:currency])
           end
 
           belongs_to :product
+          belongs_to :tax_category
           has_many :images
           has_many :option_values
           has_many :stock_locations

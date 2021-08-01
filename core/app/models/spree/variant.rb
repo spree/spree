@@ -93,6 +93,7 @@ module Spree
       not_discontinued.not_deleted.
         for_currency_and_available_price_amount(currency)
     end
+    # FIXME: cost price should be represented with DisplayMoney class
     LOCALIZED_NUMBERS = %w(cost_price weight depth width height)
 
     LOCALIZED_NUMBERS.each do |m|
