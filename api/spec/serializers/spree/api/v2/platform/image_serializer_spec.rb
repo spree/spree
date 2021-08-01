@@ -15,17 +15,19 @@ describe Spree::Api::V2::Platform::ImageSerializer do
           id: image.id.to_s,
           type: :image,
           attributes: {
-            viewable_type: 'Spree::Variant',
-            attachment_height: image.attachment_height,
-            attachment_file_size: image.attachment_file_size,
+            styles: image.styles,
             position: image.position,
-            attachment_content_type: image.attachment_content_type,
-            attachment_file_name: image.attachment_file_name,
-            type: image.type,
-            attachment_updated_at: image.attachment_updated_at,
             alt: image.alt,
             created_at: image.created_at,
             updated_at: image.updated_at
+          },
+          relationships: {
+            viewable: {
+              data: {
+                id: variant.id.to_s,
+                type: :variant
+              }
+            }
           },
         }
       }
