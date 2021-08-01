@@ -4,26 +4,48 @@ module Spree
       module Platform
         class VariantSerializer < BaseSerializer
           include ::Spree::Api::V2::ResourceSerializerConcern
+          include ::Spree::Api::V2::DisplayMoneyHelper
 
-          attributes :name, :width, :options_text, :option_values, :total_on_hand
+          attributes :name, :options_text, :total_on_hand
 
-          attribute :stock_items do |variant|
-            variant.stock_items
+          attribute :purchasable do |product|
+            product.purchasable?
           end
 
-          attribute :stock_locations do |variant|
-            variant.stock_locations
+          attribute :in_stock do |product|
+            product.in_stock?
           end
 
-          attribute :in_stock do |variant|
-            variant.in_stock?
+          attribute :backorderable do |product|
+            product.backorderable?
           end
 
-          attribute :purchasable do |variant|
-            variant.purchasable?
+          attribute :available do |product|
+            product.available?
+          end
+
+          attribute :currency do |_product, params|
+            params[:currency]
+          end
+
+          attribute :price do |object, params|
+            price(object, params[:currency])
+          end
+
+          attribute :display_price do |object, params|
+            display_price(object, params[:currency])
+          end
+
+          attribute :compare_at_price do |object, params|
+            compare_at_price(object, params[:currency])
+          end
+
+          attribute :display_compare_at_price do |object, params|
+            display_compare_at_price(object, params[:currency])
           end
 
           belongs_to :product
+          belongs_to :tax_category
           has_many :images
           has_many :option_values
           has_many :stock_locations
