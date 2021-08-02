@@ -6,11 +6,32 @@ describe 'Taxonomies and taxons', type: :feature, js: true do
   let(:taxonomy) { create(:taxonomy, name: 'Hello') }
   let(:file_path) { Rails.root + '../../spec/support/ror_ringer.jpeg' }
 
+  context 'when WYSIWYG editor is in enabled' do
+    it 'displays the WYSIWYG editor for the taxon description input' do
+      visit spree.edit_admin_taxonomy_taxon_path(taxonomy, taxonomy.root.id)
+
+      expect(page).not_to have_css('#taxon_description')
+      expect(page).to have_css('#taxon_description_ifr')
+    end
+  end
+
+  context 'when WYSIWYG editor is disabled' do
+    before { Spree::Config.taxon_wysiwyg_editor_enabled = false }
+
+    after { Spree::Config.taxon_wysiwyg_editor_enabled = true }
+
+    it 'displays the taxon description as a standard input field' do
+      visit spree.edit_admin_taxonomy_taxon_path(taxonomy, taxonomy.root.id)
+
+      expect(page).to have_css('#taxon_description')
+      expect(page).not_to have_css('#taxon_description_ifr')
+    end
+  end
+
   it 'admin should be able to edit taxon' do
     visit spree.edit_admin_taxonomy_taxon_path(taxonomy, taxonomy.root.id)
 
     fill_in 'taxon_name', with: 'Shirt'
-    fill_in 'taxon_description', with: 'Discover our new rails shirts'
 
     fill_in 'permalink_part', with: 'shirt-rails'
     click_button 'Update'
@@ -21,7 +42,6 @@ describe 'Taxonomies and taxons', type: :feature, js: true do
     visit spree.edit_admin_taxonomy_taxon_path(taxonomy, taxonomy.root.id)
 
     fill_in 'taxon_name', with: ''
-    fill_in 'taxon_description', with: 'Discover our new rails shirts'
 
     fill_in 'permalink_part', with: 'shirt-rails'
     click_button 'Update'
