@@ -239,5 +239,9 @@ module Spree
 
       tag('meta', name: 'robots', content: current_store.seo_robots)
     end
+
+    def taxon_wysiwyg_editor_enabled?
+      Spree::Config[:taxon_wysiwyg_editor_enabled]
+    end
   end
 end
