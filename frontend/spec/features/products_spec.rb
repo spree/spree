@@ -407,7 +407,11 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
     end
   end
 
-  context 'when rendering the product description' do
+  context 'when rendering the product description with product_wysiwyg_editor_enabled = false' do
+    before { Spree::Config.product_wysiwyg_editor_enabled = false }
+
+    after { Spree::Config.product_wysiwyg_editor_enabled = true }
+
     context 'when <script> tag exists' do
       it 'prevents the script from running', js: true do
         description = '<script>window.alert("Message")</script>'
@@ -452,6 +456,29 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
         within('[data-hook=product_description]') do
           node = first('[data-hook=description]')
           expect(node).to have_selector 'p'
+        end
+      end
+    end
+  end
+
+  context 'when rendering the product description with product_wysiwyg_editor_enabled' do
+    before { Spree::Config.product_wysiwyg_editor_enabled = true }
+
+    context 'when <table> tag exists' do
+      it 'returns <table> tag in html' do
+        description = '<table style="border-collapse: collapse; width: 100%; height: 66px;" border="1">
+                        <tbody>
+                          <tr style="height: 22px;">
+                            <td style="width: 17.341967680608363%; height: 22px;">This is the table</td>
+                          </tr>
+                        </tbody>
+                      </table>'
+        product = FactoryBot.create(:base_product, description: description, name: 'Sample', price: '19.99')
+        visit spree.product_path(product)
+
+        within('[data-hook=product_description]') do
+          node = first('[data-hook=description]')
+          expect(node).to have_selector 'table'
         end
       end
     end

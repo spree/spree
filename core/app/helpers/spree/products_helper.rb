@@ -44,9 +44,13 @@ module Spree
       variants_option_types_presenter(variants, product).options
     end
 
+    def product_wysiwyg_editor_enabled?
+      Spree::Config[:product_wysiwyg_editor_enabled]
+    end
+
     # converts line breaks in product description into <p> tags (for html display purposes)
     def product_description(product)
-      description = if Spree::Config[:show_raw_product_description]
+      description = if Spree::Config[:show_raw_product_description] || product_wysiwyg_editor_enabled?
                       product.description
                     else
                       product.description.to_s.gsub(/(.*?)\r?\n\r?\n/m, '<p>\1</p>')
