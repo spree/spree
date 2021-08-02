@@ -1,11 +1,11 @@
 require 'spec_helper'
 
-describe Spree::Api::V2::Platform::TaxonomySerializer do
+describe Spree::Api::V2::Platform::TaxonomySerializer, retry: 3 do
   subject { described_class.new(taxonomy) }
 
   let(:taxonomy) { create(:taxonomy) }
+  let!(:root) { taxonomy.root }
   let!(:taxon) { create(:taxon, taxonomy: taxonomy) }
-  let(:root) { taxonomy.root }
 
   it { expect(subject.serializable_hash).to be_kind_of(Hash) }
 

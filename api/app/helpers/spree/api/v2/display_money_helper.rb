@@ -13,7 +13,7 @@ module Spree
             price = find_price(product_or_variant, currency)
             return nil if price.new_record?
 
-            format('%.2f', price.amount)
+            price.amount
           end
 
           def display_price(product_or_variant, currency)
@@ -27,7 +27,7 @@ module Spree
             price = find_price(product_or_variant, currency)
             return nil if price.new_record? || price.compare_at_amount.blank?
 
-            format('%.2f', price.compare_at_amount)
+            price.compare_at_amount
           end
 
           def display_compare_at_price(product_or_variant, currency)
