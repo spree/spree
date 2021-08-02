@@ -38,6 +38,10 @@ module Spree
               collection_serializer.new(collection).serializable_hash
             end
 
+            def scope
+              super.where(user: spree_current_user, payment_method: current_store.payment_methods.available_on_front_end)
+            end
+
             def collection_serializer
               Spree::Api::Dependencies.storefront_credit_card_serializer.constantize
             end
@@ -48,10 +52,6 @@ module Spree
 
             def resource_serializer
               Spree::Api::Dependencies.storefront_credit_card_serializer.constantize
-            end
-
-            def scope
-              spree_current_user.credit_cards.accessible_by(current_ability, :show)
             end
 
             def destroy_service

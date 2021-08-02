@@ -3,26 +3,45 @@ require 'spec_helper'
 describe 'Product Details', type: :feature, js: true do
   stub_authorization!
 
-  context 'editing a product' do
+  context 'editing a product with wysiwyg disabled' do
     before do
-      create(:product, name: 'Bún thịt nướng', sku: 'A100',
-                       description: 'lorem ipsum', available_on: '2013-08-14 01:02:03')
+      Spree::Config.product_wysiwyg_editor_enabled = false
+      create(:product, name: 'Bún thịt nướng', sku: 'A100', description: 'lorem ipsum', available_on: '2013-08-14 01:02:03')
+      visit spree.admin_products_path
+      within_row(1) { click_icon :edit }
+    end
 
+    after { Spree::Config.product_wysiwyg_editor_enabled = true }
+
+    it 'lists the product description in standard input' do
+      expect(page).to have_field(id: 'product_description', with: 'lorem ipsum')
+      expect(page).not_to have_css('#product_description_ifr')
+    end
+  end
+
+  context 'editing a product with wysiwyg editer on' do
+    before do
+      Spree::Config.product_wysiwyg_editor_enabled = true
+      create(:product, name: 'Bún thịt nướng', sku: 'A100', description: 'lorem ipsum', available_on: '2013-08-14 01:02:03')
       visit spree.admin_products_path
       within_row(1) { click_icon :edit }
     end
 
     it 'lists the product details' do
-      click_link 'Details'
-
       expect(page).to have_css('.content-header h1', text: 'Products / Bún thịt nướng')
       expect(page).to have_field(id: 'product_name', with: 'Bún thịt nướng')
       expect(page).to have_field(id: 'product_slug', with: 'bun-th-t-n-ng')
-      expect(page).to have_field(id: 'product_description', with: 'lorem ipsum')
+      expect(page).not_to have_field(id: 'product_description', with: 'lorem ipsum')
+      expect(page).to have_css('#product_description_ifr')
       expect(page).to have_field(id: 'product_price', with: '19.99')
       expect(page).to have_field(id: 'product_cost_price', with: '17.00')
       expect(page).to have_field(id: 'product_available_on', type: :hidden, with: '2013-08-14')
       expect(page).to have_field(id: 'product_sku', with: 'A100')
+    end
+
+    it 'shows product description using wysiwyg editor' do
+      expect(page).not_to have_field(id: 'product_description', with: 'lorem ipsum')
+      expect(page).to have_css('#product_description_ifr')
     end
 
     it 'handles slug changes' do
