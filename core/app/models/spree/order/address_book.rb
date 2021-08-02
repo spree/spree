@@ -2,7 +2,7 @@
 module Spree
   class Order < Spree::Base
     module AddressBook
-      extend ActiveSupport::Concern
+      extend ActiveSupport::Concern # FIXME: this module is not required to be a concern
 
       def clone_shipping_address
         if ship_address
@@ -22,7 +22,6 @@ module Spree
         address = Spree::Address.find_by(id: id)
         if address && address.user_id == user_id
           self['bill_address_id'] = address.id
-          user.update_attribute(:bill_address_id, address.id)
           bill_address.reload
         else
           self['bill_address_id'] = nil
@@ -31,14 +30,13 @@ module Spree
 
       def bill_address_attributes=(attributes)
         self.bill_address = update_or_create_address(attributes)
-        user.bill_address = bill_address if user
+        user.bill_address = bill_address if user && user.bill_address.nil?
       end
 
       def ship_address_id=(id)
         address = Spree::Address.find_by(id: id)
         if address && address.user_id == user_id
           self['ship_address_id'] = address.id
-          user.update_attribute(:ship_address_id, address.id)
           ship_address.reload
         else
           self['ship_address_id'] = nil
@@ -47,7 +45,7 @@ module Spree
 
       def ship_address_attributes=(attributes)
         self.ship_address = update_or_create_address(attributes)
-        user.ship_address = ship_address if user
+        user.ship_address = ship_address if user && user.ship_address.nil?
       end
 
       private

@@ -65,6 +65,11 @@ $(document).ready(function() {
           el.parents('tr').fadeOut('hide', function() {
             $(this).remove()
           })
+          el.closest('.removable-dom-element').fadeOut('hide', function() {
+            $(this).remove()
+          })
+          var livePreview = document.getElementById('pageLivePreview')
+          if (livePreview) { livePreview.contentWindow.location.reload() }
         }
       }).fail(function(response) {
         show_flash('error', response.responseText)

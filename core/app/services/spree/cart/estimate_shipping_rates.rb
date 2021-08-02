@@ -4,7 +4,7 @@ module Spree
       prepend Spree::ServiceModule::Base
 
       def call(order:, country_iso: nil)
-        country_id = country_id(country_iso)
+        country_id = country_id(order.store, country_iso)
         dummy_order = generate_dummy_order(order, country_id)
 
         packages = ::Spree::Stock::Coordinator.new(dummy_order).packages
@@ -20,11 +20,11 @@ module Spree
 
       private
 
-      def country_id(country_iso)
+      def country_id(store, country_iso)
         if country_iso.present?
           ::Spree::Country.by_iso(country_iso)&.id
         else
-          Spree::Config[:default_country_id]
+          store.default_country_id
         end
       end
 

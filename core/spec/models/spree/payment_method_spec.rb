@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe Spree::PaymentMethod, type: :model do
+  let(:store) { create(:store) }
+
   context 'visibility scopes' do
     before do
       [nil, '', 'both', 'front_end', 'back_end'].each do |display_on|
@@ -8,7 +10,8 @@ describe Spree::PaymentMethod, type: :model do
           name: 'Display Both',
           display_on: display_on,
           active: true,
-          description: 'foofah'
+          description: 'foofah',
+          stores: [store]
         )
       end
     end
@@ -38,6 +41,21 @@ describe Spree::PaymentMethod, type: :model do
         methods = Spree::PaymentMethod.available_on_back_end
         expect(methods.size).to eq(2)
         expect(methods.pluck(:display_on)).to eq(['both', 'back_end'])
+      end
+    end
+
+    describe '#for_store' do
+      it 'returns all methods available to front-end/back-end for a store' do
+        store_2 = create(:store)
+        method_from_other_store = Spree::Gateway::Test.create(
+          name: 'Display Both',
+          active: true,
+          description: 'foofah',
+          stores: [store_2]
+        )
+        methods = Spree::PaymentMethod.for_store(store)
+        expect(methods).not_to include(method_from_other_store)
+        expect(methods.size).to eq(5)
       end
     end
   end
@@ -118,6 +136,30 @@ describe Spree::PaymentMethod, type: :model do
     it 'returns true if currenct store id is included' do
       eligible = pm.available_for_store?(store)
       expect(eligible).to be true
+    end
+  end
+
+  describe '#ensure_store_presence' do
+    let(:valid_record) { build(:payment_method, stores: [create(:store)]) }
+    let(:invalid_record) { build(:payment_method, stores: []) }
+
+    it { expect(valid_record).to be_valid }
+    it { expect(invalid_record).not_to be_valid }
+
+    context 'validation disabled' do
+      context 'method overwrite' do
+        before { allow_any_instance_of(described_class).to receive(:disable_store_presence_validation?).and_return(true) }
+
+        it { expect(valid_record).to be_valid }
+        it { expect(invalid_record).to be_valid }
+      end
+
+      context 'preference set' do
+        before { Spree::Config[:disable_store_presence_validation] = true }
+
+        it { expect(valid_record).to be_valid }
+        it { expect(invalid_record).to be_valid }
+      end
     end
   end
 end

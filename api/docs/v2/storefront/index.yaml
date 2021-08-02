@@ -172,6 +172,12 @@ paths:
                     email:
                       type: string
                       example: john@snow.org
+                    bill_address_id:
+                      type: integer
+                      example: 1
+                    ship_address_id:
+                      type: integer
+                      example: 1
                     password:
                       type: string
                       example: spree123
@@ -238,20 +244,29 @@ paths:
       security:
         - bearerAuth: []
   '/api/v2/storefront/account/addresses/{id}':
+    delete:
+      description: 'Removes selected Address for the signed in User. It uses soft-delete for addresses with shipments and orders.'
+      tags:
+        - Account
+      operationId: Remove Address
+      parameters:
+        - $ref: '#/components/parameters/AddressId'
+      responses:
+        '204':
+          description: Requested Address has been removed from the User Account
+        '404':
+          $ref: '#/components/responses/404NotFound'
+      security:
+        - bearerAuth: []
+      summary: Remove Address
     patch:
       description: Update selected Address for the signed in User
-      summary: List of Addresses
+      summary: Update Address
       tags:
         - Account
       operationId: Update Address
       parameters:
-        - name: id
-          in: path
-          required: true
-          description: Selected Address for update
-          schema:
-            type: string
-          example: '1'
+        - $ref: '#/components/parameters/AddressId'
       requestBody:
         required: true
         content:
@@ -619,6 +634,23 @@ paths:
         - $ref: '#/components/parameters/CartIncludeParam'
         - $ref: '#/components/parameters/SparseFieldsParam'
       summary: Empty the Cart
+  /api/v2/storefront/cart:
+    delete:
+      description: |-
+        Deletes Cart.
+        Endpoint can be called after PATCH /api/v2/storefront/cart/empty, or individually.
+        Shipments are canceled, payments are voided, then Line Items, Shipments & Payments are deleted.
+      tags:
+        - Cart
+      operationId: Deletes Cart
+      responses:
+        '204':
+          description: Current Cart has been removed.
+        '404':
+          $ref: '#/components/responses/404NotFound'
+      security:
+        - bearerAuth: [ ]
+      summary: Deletes Cart
   /api/v2/storefront/cart/apply_coupon_code:
     patch:
       description: Applies a coupon code to the Cart
@@ -1093,6 +1125,12 @@ paths:
           example: Red
           description: 'Find Prodcuts with Variants that have the specified option (eg. color, size) and value (eg. red, XS)'
         - in: query
+          name: 'filter[properties][brand-name]'
+          schema:
+            type: string
+          example: alpha
+          description: 'Find Prodcuts with Property Brand Name with value Alpha'
+        - in: query
           name: 'filter[show_deleted]'
           schema:
             type: boolean
@@ -1108,11 +1146,12 @@ paths:
           name: sort
           schema:
             type: string
-          example: '-updated_at,price'
+          example: '-updated_at,price,-name'
           description: |-
             Sort products based on: <ul>
               <li>price (ascending/descenging)</li>
               <li>updated_at (ascending/descenging)</li>
+              <li>name (ascending/descenging)</li>
             </ul> Use <q>-</q> sign to set descenging sort, eg. <q>-updated_at</q>
         - $ref: '#/components/parameters/PageParam'
         - $ref: '#/components/parameters/PerPageParam'
@@ -5380,6 +5419,14 @@ components:
         - state_name
         - country_iso
   parameters:
+    AddressId:
+      name: address_id
+      in: path
+      required: true
+      description: Address ID
+      schema:
+        type: string
+      example: '1'
     CreditCardIncludeParam:
       name: include
       in: query

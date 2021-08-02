@@ -2,6 +2,7 @@ module Spree
   class CustomerReturn < Spree::Base
     include Spree::Core::NumberGenerator.new(prefix: 'CR', length: 9)
     belongs_to :stock_location
+    belongs_to :store, class_name: 'Spree::Store', inverse_of: :customer_returns
 
     has_many :reimbursements, inverse_of: :customer_return
     has_many :return_items, inverse_of: :customer_return
@@ -9,6 +10,7 @@ module Spree
 
     after_create :process_return!
 
+    validates :store, presence: true
     validates :number, uniqueness: { case_sensitive: true }
     validates :return_items, :stock_location, presence: true
     validate :must_have_return_authorization, on: :create
@@ -17,7 +19,7 @@ module Spree
     accepts_nested_attributes_for :return_items
 
     extend DisplayMoney
-    money_methods pre_tax_total: { currency: Spree::Config[:currency] }
+    money_methods :pre_tax_total
 
     self.whitelisted_ransackable_attributes = ['number']
 
@@ -29,6 +31,10 @@ module Spree
 
     def fully_reimbursed?
       completely_decided? && return_items.accepted.includes(:reimbursement).all? { |return_item| return_item.reimbursement.try(:reimbursed?) }
+    end
+
+    def currency
+      order&.currency
     end
 
     # Temporarily tie a customer_return to one order
@@ -49,7 +55,7 @@ module Spree
     end
 
     def must_have_return_authorization
-      if item = return_items.find { |ri| ri.return_authorization.blank? }
+      if (item = return_items.find { |ri| ri.return_authorization.blank? })
         errors.add(:base, Spree.t(:missing_return_authorization, item_name: item.inventory_unit.variant.name))
       end
     end

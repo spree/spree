@@ -1,6 +1,188 @@
 require 'spec_helper'
 
 describe Spree::Store, type: :model do
+  describe 'associations' do
+    subject { create(:store) }
+
+    describe '#products' do
+      let!(:product) { create(:product, stores: [subject]) }
+      let!(:product_2) { create(:product, stores: [create(:store)]) }
+
+      it { expect(subject.products).to eq([product]) }
+
+      describe '#product_properties' do
+        let!(:product_property) { create(:product_property, product: product) }
+        let!(:product_property_2) { create(:product_property, product: product_2) }
+
+        it { expect(subject.product_properties).to eq([product_property]) }
+      end
+
+      describe '#variants' do
+        let!(:variant) { create(:variant, product: product) }
+        let!(:variant_2) { create(:variant, product: product_2) }
+
+        it { expect(subject.variants).to eq([product.master, variant]) }
+
+        describe '#stock_items' do
+          let!(:stock_items) { product.stock_items }
+          let!(:stock_items_2) { product_2.stock_items }
+
+          it { expect(stock_items).not_to be_empty }
+          it { expect(stock_items_2).not_to be_empty }
+          it { expect(subject.stock_items).to eq(stock_items) }
+        end
+      end
+    end
+
+    describe '#payment_methods' do
+      let!(:payment_method) { create(:payment_method, stores: [subject]) }
+      let!(:payment_method_2) { create(:payment_method, stores: [create(:store)]) }
+
+      it { expect(subject.payment_methods).to eq([payment_method]) }
+    end
+
+    describe '#orders' do
+      let!(:order) { create(:order, store: subject) }
+      let!(:order_2) { create(:order, store: create(:store)) }
+
+      it { expect(subject.orders).to eq([order]) }
+
+      describe '#line_items' do
+        let!(:line_item) { create(:line_item, order: order) }
+        let!(:line_item_2) { create(:line_item, order: order_2) }
+
+        it { expect(subject.line_items).to eq([line_item]) }
+      end
+
+      describe '#payments' do
+        let!(:payment) { create(:payment, order: order) }
+        let!(:payment_2) { create(:payment, order: order_2) }
+
+        it { expect(subject.payments).to eq([payment]) }
+      end
+
+      describe '#shipments' do
+        let!(:shipment) { create(:shipment, order: order) }
+        let!(:shipment_2) { create(:shipment, order: order_2) }
+
+        it { expect(subject.shipments).to eq([shipment]) }
+      end
+
+      describe '#return_authorizations' do
+        let!(:order) { create(:shipped_order, store: subject) }
+        let!(:order_2) { create(:shipped_order, store: create(:store)) }
+        let!(:return_authorization) { create(:return_authorization, order: order) }
+        let!(:return_authorization_2) { create(:return_authorization, order: order_2) }
+
+        it { expect(subject.return_authorizations).to eq([return_authorization]) }
+      end
+
+      describe '#inventory_units' do
+        let(:product) { create(:product, stores: [subject]) }
+        let(:product_2) { create(:product, stores: [create(:store)]) }
+        let!(:inventory_unit) { create(:inventory_unit, variant: product.master, order: order) }
+        let!(:inventory_unit_2) { create(:inventory_unit, variant: product_2.master, order: order_2) }
+
+        it { expect(subject.inventory_units).to eq([inventory_unit]) }
+      end
+    end
+
+    describe '#store_credits' do
+      let!(:store_credit) { create(:store_credit, store: subject) }
+      let!(:store_credit_2) { create(:store_credit, store: create(:store)) }
+
+      it { expect(subject.store_credits).to eq([store_credit]) }
+
+      describe '#store_credit_events' do
+        let!(:store_credit_event) { store_credit.store_credit_events.first }
+        let!(:store_credit_event_2) { store_credit_2.store_credit_events.first }
+
+        it { expect(store_credit_event).not_to be_nil }
+        it { expect(store_credit_event_2).not_to be_nil }
+        it { expect(subject.store_credit_events).to eq([store_credit_event]) }
+      end
+    end
+
+    describe '#menus' do
+      let!(:menu) { create(:menu, store: subject) }
+      let!(:menu_2) { create(:menu, store: create(:store)) }
+
+      it { expect(subject.menus).to eq([menu]) }
+
+      describe '#menu_items' do
+        let!(:menu_item) { menu.menu_items.first }
+        let!(:menu_item_2) { menu_2.menu_items.first }
+
+        it { expect(subject.menu_items).to eq([menu_item]) }
+      end
+    end
+
+    describe '#taxonomies' do
+      let!(:taxonomy) { create(:taxonomy, store: subject) }
+      let!(:taxonomy_2) { create(:taxonomy, store: create(:store)) }
+
+      it { expect(subject.taxonomies).to eq([taxonomy]) }
+
+      describe '#taxons' do
+        let!(:taxon) { create(:taxon, taxonomy: taxonomy) }
+        let!(:taxon_2) { create(:taxon, taxonomy: taxonomy_2) }
+
+        it { expect(taxon).not_to be_nil }
+        it { expect(taxon_2).not_to be_nil }
+        it { expect(subject.taxons).to match_array([taxonomy.root, taxon]) }
+      end
+    end
+
+    describe '#promotions' do
+      let!(:promotion) { create(:promotion, stores: [subject, create(:store)]) }
+      let!(:promotion_2) { create(:promotion, stores: [create(:store)]) }
+
+      it { expect(subject.promotions).to eq([promotion]) }
+    end
+  end
+
+  describe 'validations' do
+    describe 'favicon image' do
+      it 'validates image properties' do
+        expect(build(:store, :with_favicon, filepath: file_fixture('icon_256x256.png'))).to be_valid
+
+        expect(build(:store, :with_favicon, filepath: file_fixture('icon_512x512.png'))).not_to be_valid
+        expect(build(:store, :with_favicon, filepath: file_fixture('icon_256x256.gif'))).not_to be_valid
+        expect(build(:store, :with_favicon, filepath: file_fixture('img_256x128.png'))).not_to be_valid
+      end
+
+      context 'file size' do
+        let(:store) do
+          store = build(:store)
+          store.favicon_image.attach(io: file, filename: 'favicon.png')
+          store
+        end
+
+        let(:file) { File.open(file_fixture('icon_256x256.png')) }
+
+        before do
+          allow(file).to receive(:size).and_return(size)
+        end
+
+        context 'when size is 1 megabyte' do
+          let(:size) { 1.megabyte }
+
+          it 'is valid' do
+            expect(store.valid?).to be(true)
+          end
+        end
+
+        context 'when size is over 1 megabyte' do
+          let(:size) { 1.megabyte + 1 }
+
+          it 'is invalid' do
+            expect(store.valid?).to be(false)
+          end
+        end
+      end
+    end
+  end
+
   describe '.by_url' do
     let!(:store)    { create(:store, url: "website1.com\nwww.subdomain.com") }
     let!(:store_2)  { create(:store, url: 'freethewhales.com') }
@@ -80,6 +262,29 @@ describe Spree::Store, type: :model do
     let!(:store_3) { create(:store, default_locale: 'en') }
 
     it { expect(described_class.available_locales).to contain_exactly('en', 'de') }
+  end
+
+  describe '.default_menu' do
+    let!(:store_a) { create(:store, default_locale: 'en') }
+    let!(:store_b) { create(:store, default_locale: 'en') }
+
+    context 'when default menu is available' do
+      let!(:menu_a) { create(:menu, store: store_a, locale: 'en') }
+      let!(:menu_b) { create(:menu, store: store_a, locale: 'de') }
+
+      it 'returns the default menu root' do
+        expect(store_a.default_menu('header')).to eq(menu_a.root)
+      end
+    end
+
+    context 'when default menu is not available' do
+      let!(:menu_c) { create(:menu, store: store_b, locale: 'de') }
+      let!(:menu_d) { create(:menu, store: store_b, locale: 'pl') }
+
+      it 'returns the first created menu root' do
+        expect(store_b.default_menu('header')).to eq(menu_c.root)
+      end
+    end
   end
 
   shared_context 'with checkout zone set' do
@@ -187,7 +392,6 @@ describe Spree::Store, type: :model do
         end
 
         it 'returns list of states associated to country' do
-
           checkout_available_states_ids3 = subject.states_available_for_checkout(country_with_states).pluck(:id)
           all_countries_ids              = country_with_states.states.pluck(:id)
 
@@ -224,6 +428,82 @@ describe Spree::Store, type: :model do
 
         it 'returns nil' do
           expect(subject.checkout_zone_or_default).to be_nil
+        end
+      end
+    end
+  end
+
+  describe '#ensure_default_country' do
+    subject { build(:store) }
+
+    let!(:default_country) { create(:country) }
+    let!(:other_country) { create(:country) }
+    let!(:other_country_2) { create(:country) }
+
+    before { Spree::Config[:default_country_id] = default_country.id }
+
+    context 'checkout zone not set' do
+      before { subject.save! }
+
+      context 'with default country' do
+        before { subject.default_country = other_country }
+
+        it { expect(subject.default_country).to eq(other_country) }
+      end
+
+      it { expect(subject.default_country).to eq(default_country) }
+    end
+
+    context 'checkout zone set' do
+      let!(:zone) { create(:zone, kind: 'country') }
+
+      before do
+        zone.members.create(zoneable: other_country_2)
+        subject.checkout_zone = zone
+      end
+
+      context 'with default country set' do
+        before { subject.default_country = other_country }
+
+        context 'no zone members' do
+          before do
+            zone.members.delete_all
+            subject.save!
+          end
+
+          it { expect(subject.default_country).to eq(other_country) }
+        end
+
+        context 'default country is a zone member' do
+          before do
+            zone.members.create(zoneable: other_country)
+            subject.save!
+          end
+
+          it { expect(subject.default_country).to eq(other_country) }
+        end
+
+        context 'default country is not a zone member' do
+          before { subject.save! }
+
+          it { expect(subject.default_country).to eq(other_country_2) }
+        end
+      end
+
+      context 'without default country set' do
+        context 'no zone members' do
+          before do
+            zone.members.delete_all
+            subject.save!
+          end
+
+          it { expect(subject.default_country).to eq(default_country) }
+        end
+
+        context 'with zone members' do
+          before { subject.save! }
+
+          it { expect(subject.default_country).to eq(other_country_2) }
         end
       end
     end
@@ -311,6 +591,28 @@ describe Spree::Store, type: :model do
       let(:store) { build(:store, default_currency: 'EUR', supported_currencies: 'EUR,GBP') }
 
       it { expect { store.save! }.not_to change(store, :supported_currencies) }
+    end
+  end
+
+  describe '#favicon' do
+    subject(:favicon) { store.favicon }
+
+    context 'with an attached favicon image' do
+      let(:store) { create(:store, :with_favicon) }
+      let(:favicon_variation) { favicon.processed.variation }
+
+      it 'returns a resized favicon' do
+        expect(favicon_variation).to be_present
+        expect(favicon_variation.transformations.fetch(:resize)).to eq('32x32')
+      end
+    end
+
+    context 'without an attached favicon image' do
+      let(:store) { create(:store) }
+
+      it 'returns a blank favicon' do
+        expect(favicon).to be(nil)
+      end
     end
   end
 end

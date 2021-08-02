@@ -1,4 +1,4 @@
-class MigrateDataPaymentMethodsStores < ActiveRecord::Migration[6.0]
+class MigrateDataPaymentMethodsStores < ActiveRecord::Migration[5.2]
   def up
     Spree::PaymentMethod.all.each do |payment_method|
       next if payment_method.store_ids.any?

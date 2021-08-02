@@ -6,14 +6,13 @@ module Spree
       :ability_class,
       :cart_create_service, :cart_add_item_service, :cart_remove_item_service,
       :cart_remove_line_item_service, :cart_set_item_quantity_service, :cart_recalculate_service,
-      :cart_update_service, :checkout_next_service, :checkout_advance_service, :checkout_update_service,
-      :checkout_complete_service, :checkout_add_store_credit_service,
-      :checkout_remove_store_credit_service, :checkout_get_shipping_rates_service,
-      :coupon_handler, :country_finder, :current_order_finder, :credit_card_finder,
+      :cms_page_finder, :cart_update_service, :checkout_next_service, :checkout_advance_service, :checkout_update_service,
+      :checkout_complete_service, :checkout_add_store_credit_service, :checkout_remove_store_credit_service, :checkout_get_shipping_rates_service,
+      :coupon_handler, :menu_finder, :country_finder, :current_order_finder, :credit_card_finder,
       :completed_order_finder, :order_sorter, :cart_compare_line_items_service, :collection_paginator, :products_sorter,
       :products_finder, :taxon_finder, :line_item_by_variant_finder, :cart_estimate_shipping_rates_service,
-      :account_create_address_service, :account_update_address_service, :address_finder,
-      :collection_sorter, :error_handler
+      :account_create_address_service, :account_update_address_service, :account_create_service, :account_update_service,
+      :address_finder, :collection_sorter, :error_handler, :current_store_finder, :cart_empty_service, :cart_destroy_service
     ].freeze
 
     attr_accessor *INJECTION_POINTS
@@ -41,6 +40,8 @@ module Spree
       @cart_remove_line_item_service = 'Spree::Cart::RemoveLineItem'
       @cart_set_item_quantity_service = 'Spree::Cart::SetQuantity'
       @cart_estimate_shipping_rates_service = 'Spree::Cart::EstimateShippingRates'
+      @cart_empty_service = 'Spree::Cart::Empty'
+      @cart_destroy_service = 'Spree::Cart::Destroy'
 
       # checkout
       @checkout_next_service = 'Spree::Checkout::Next'
@@ -64,6 +65,8 @@ module Spree
       @coupon_handler = 'Spree::PromotionHandler::Coupon'
 
       # account
+      @account_create_service = 'Spree::Account::Create'
+      @account_update_service = 'Spree::Account::Update'
       @account_create_address_service = 'Spree::Account::Addresses::Create'
       @account_update_address_service = 'Spree::Account::Addresses::Update'
 
@@ -73,7 +76,10 @@ module Spree
     def set_default_finders
       @address_finder = 'Spree::Addresses::Find'
       @country_finder = 'Spree::Countries::Find'
+      @cms_page_finder = 'Spree::CmsPages::Find'
+      @menu_finder = 'Spree::Menus::Find'
       @current_order_finder = 'Spree::Orders::FindCurrent'
+      @current_store_finder = 'Spree::Stores::FindCurrent'
       @completed_order_finder = 'Spree::Orders::FindComplete'
       @credit_card_finder = 'Spree::CreditCards::Find'
       @products_finder = 'Spree::Products::Find'

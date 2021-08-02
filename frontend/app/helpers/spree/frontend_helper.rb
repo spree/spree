@@ -1,10 +1,27 @@
 module Spree
   module FrontendHelper
+    include BaseHelper
     include InlineSvg::ActionView::Helpers
 
     def body_class
       @body_class ||= content_for?(:sidebar) ? 'two-col' : 'one-col'
       @body_class
+    end
+
+    def logo(image_path = nil, options = {})
+      image_path ||= if current_store.logo.attached? && current_store.logo.variable?
+                       main_app.url_for(current_store.logo.variant(resize: '244x104>'))
+                     elsif current_store.logo.attached? && current_store.logo.image?
+                       main_app.url_for(current_store.logo)
+                     else
+                       Spree::Config[:logo]
+                     end
+
+      path = spree.respond_to?(:root_path) ? spree.root_path : main_app.root_path
+
+      link_to path, 'aria-label': current_store.name, method: options[:method] do
+        image_tag image_path, alt: current_store.name, title: current_store.name
+      end
     end
 
     def spree_breadcrumbs(taxon, _separator = '', product = nil)
@@ -150,7 +167,7 @@ module Spree
       image_url = if image.present?
                     main_app.url_for(image.url('plp'))
                   else
-                    asset_path('noimage/plp.png')
+                    asset_path('noimage/plp.svg')
                   end
 
       image_style = image&.style(:plp)
@@ -228,6 +245,11 @@ module Spree
     end
 
     def price_filter_values
+      ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
+        `FrontendHelper#price_filter_values` is deprecated and will be removed in Spree 5.0.
+        Please use `ProductsFiltersHelper#price_filters` method
+      DEPRECATION
+
       @price_filter_values ||= [
         "#{I18n.t('activerecord.attributes.spree/product.less_than')} #{formatted_price(50)}",
         "#{formatted_price(50)} - #{formatted_price(100)}",
@@ -250,18 +272,81 @@ module Spree
     end
 
     def filtering_params_cache_key
-      @filtering_params_cache_key ||= params.permit(*filtering_params)&.reject { |_, v| v.blank? }&.to_param
+      @filtering_params_cache_key ||= begin
+        cache_key_parts = []
+
+        permitted_products_params.each do |key, value|
+          next if value.blank?
+
+          if value.is_a?(String)
+            cache_key_parts << [key, value].join('-')
+          else
+            value.each do |part_key, part_value|
+              next if part_value.blank?
+
+              cache_key_parts << [part_key, part_value].join('-')
+            end
+          end
+        end
+
+        cache_key_parts.join('-').parameterize
+      end
+    end
+
+    def filters_cache_key(kind)
+      base_cache_key + [
+        kind,
+        available_option_types_cache_key,
+        available_properties_cache_key,
+        filtering_params_cache_key,
+        @taxon&.id,
+        params[:menu_open]
+      ].flatten
+    end
+
+    def permitted_products_params
+      @permitted_products_params ||= begin
+        params.permit(*filtering_params, properties: available_properties.map(&:filter_param))
+      end
+    end
+
+    def option_type_cache_key(option_type)
+      filter_param = option_type.filter_param
+      filtered_params = params[filter_param]
+
+      [
+        available_option_types_cache_key,
+        filter_param,
+        filtered_params
+      ]
     end
 
     def available_option_types_cache_key
-      @available_option_types_cache_key ||= Spree::OptionType.filterable.maximum(:updated_at)&.utc&.to_i
+      @available_option_types_cache_key ||= [
+        Spree::OptionType.filterable.maximum(:updated_at).to_f,
+        products_for_filters_cache_key
+      ].flatten.join('/')
     end
 
     def available_option_types
       @available_option_types ||= Rails.cache.fetch("available-option-types/#{available_option_types_cache_key}") do
-        Spree::OptionType.includes(:option_values).filterable.to_a
+        option_values = OptionValues::FindAvailable.new(products_scope: products_for_filters).execute
+        Filters::OptionsPresenter.new(option_values_scope: option_values).to_a
       end
-      @available_option_types
+    end
+
+    def available_properties_cache_key
+      @available_properties_cache_key ||= [
+        Spree::Property.filterable.maximum(:updated_at).to_f,
+        products_for_filters_cache_key
+      ].flatten.join('/')
+    end
+
+    def available_properties
+      @available_properties ||= Rails.cache.fetch("available-properties/#{available_properties_cache_key}") do
+        product_properties = ProductProperties::FindAvailable.new(products_scope: products_for_filters).execute
+        Filters::PropertiesPresenter.new(product_properties_scope: product_properties).to_a
+      end
     end
 
     def spree_social_link(service)
@@ -275,7 +360,7 @@ module Spree
     end
 
     def checkout_available_payment_methods
-      @checkout_available_payment_methods ||= @order.available_payment_methods(current_store)
+      @checkout_available_payment_methods ||= @order.available_payment_methods
     end
 
     def color_option_type_name
@@ -311,6 +396,20 @@ module Spree
 
       link_to spree.checkout_state_path(step), class: classes, method: :get do
         inline_svg_tag 'edit.svg'
+      end
+    end
+
+    def products_for_filters
+      @products_for_filters ||= current_store.products.for_filters(current_currency, taxon: @taxon)
+    end
+
+    def products_for_filters_cache_key
+      @products_for_filters_cache_key ||= begin
+        [
+          products_for_filters.maximum(:updated_at).to_f,
+          base_cache_key,
+          @taxon&.permalink
+        ].flatten.compact
       end
     end
   end

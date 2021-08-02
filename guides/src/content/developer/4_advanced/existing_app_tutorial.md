@@ -18,7 +18,7 @@ in your project root directory.
 
 1. Add Spree gems to your `Gemfile`
 
-    **Rails 6.0 and 6.1**
+    **Rails 5.2, 6.0 and 6.1**
 
     ```ruby
     gem 'spree', '~> 4.2'
@@ -26,14 +26,6 @@ in your project root directory.
     gem 'spree_gateway', '~> 3.9'
     gem 'spree_i18n', '~> 5.0'
     gem 'sassc', github: 'sass/sassc-ruby', branch: 'master' # only needed for MacOS and Ruby 3.0
-    ```
-
-    **Rails 5.2**
-
-    ```ruby
-    gem 'spree', '~> 3.7.0'
-    gem 'spree_auth_devise', '~> 3.5'
-    gem 'spree_gateway', '~> 3.4'
     ```
 
     **Rails 5.1**

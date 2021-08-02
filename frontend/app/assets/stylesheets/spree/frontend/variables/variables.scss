@@ -21,7 +21,7 @@ $spree-header-tablet-height: 75px;
 $spree-header-desktop-height: 75px;
 
 // bootstrap overrides
-$grid-gutter-width: 19px;
+$grid-gutter-width: 1rem;
 $body-color: $font-color;
 $theme-colors: (
   // standard bootstrap colors
@@ -62,7 +62,7 @@ $container-max-widths: (
 );
 
 // helper variables
-$container-padding: 17px;
+$container-padding: $grid-gutter-width / 2;
 $photo-width-to-height-ratio: 30001/ 37500;
 $photo-width-to-height-ratio-zoom: 28015 / 37500;
 $thumbnails-carousel-single-height: 100% / $photo-width-to-height-ratio;

@@ -1,0 +1,22 @@
+<% content_for :page_title do %>
+  <%= link_to Spree.t('admin.navigation.all_menus'), spree.admin_menus_path %> / <%= Spree.t('admin.navigation.new_menu') %>
+<% end %>
+
+<div class="row">
+    <div class="col-12">
+      <div class="card mb-3">
+        <div class="card-header">
+          <h5 class="mb-0"><%= Spree.t('settings') %></h5>
+        </div>
+        <div class="card-body">
+          <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @menu } %>
+          <%= form_for [:admin, @menu] do |f| %>
+            <%= render partial: 'form', locals: { f: f } %>
+            <div class="d-flex ">
+              <%= render partial: 'spree/admin/shared/new_resource_links' %>
+            </div>
+          <% end %>
+        </div>
+    </div>
+  </div>
+</div>

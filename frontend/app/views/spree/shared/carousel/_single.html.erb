@@ -43,7 +43,7 @@
     <% images.each_with_index do |image, imageIndex| %>
       <div
         class="carousel-item product-carousel-item<%= ' active' if imageIndex == 0 %>"
-        data-variant-is-master="<%= image.viewable_id == @product.master_id %>"
+        data-variant-is-master="<%= image.viewable_id == @product.master.id %>"
         data-variant-id="<%= image.viewable_id %>">
         <div class="product-carousel-item-squared <%= 'product-carousel-item-squared-only' if images.length == 1 %>">
           <% image_attrs = {

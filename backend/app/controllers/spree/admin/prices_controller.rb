@@ -8,7 +8,7 @@ module Spree
         params[:vp].each do |variant_id, prices|
           next unless variant_id
 
-          variant = Spree::Variant.find(variant_id)
+          variant = parent.variants_including_master.find(variant_id)
           next unless variant
 
           supported_currencies_for_all_stores.each do |currency|
@@ -19,7 +19,7 @@ module Spree
           end
         end
         flash[:success] = Spree.t('notice_messages.prices_saved')
-        redirect_to admin_product_path(parent)
+        redirect_to spree.admin_product_path(parent)
       end
     end
   end

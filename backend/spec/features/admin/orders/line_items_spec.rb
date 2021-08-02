@@ -10,8 +10,10 @@ describe 'Order Line Items', type: :feature, js: true do
     allow(Spree::Order).to receive_messages checkout_step_names: [:address, :payment, :confirm, :complete]
   end
 
+  let(:store) { Spree::Store.default }
+
   let!(:order) do
-    order = create(:order_with_line_items, line_items_count: 1)
+    order = create(:order_with_line_items, line_items_count: 1, store: store)
     order.shipments.destroy_all
     order
   end

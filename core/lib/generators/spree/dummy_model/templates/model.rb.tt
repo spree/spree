@@ -1,5 +1,5 @@
 module Spree
-  class Spree::DummyModel < ApplicationRecord
+  class DummyModel < Spree::Base
     acts_as_list
     validates :name, presence: true
   end

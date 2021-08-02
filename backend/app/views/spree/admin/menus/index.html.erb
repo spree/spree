@@ -1,0 +1,90 @@
+<% content_for :page_title do %>
+  <%= Spree.t('admin.navigation.menus') %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <%= button_link_to Spree.t('admin.navigation.add_new_menu'), new_object_url, { class: "btn-success", icon: 'add.svg', id: 'new_menu' } %>
+<% end if can?(:create, Spree::Menu) %>
+
+<% content_for :table_filter do %>
+  <div data-hook="admin_menus_sidebar">
+    <%= search_form_for [:admin, @search] do |f| %>
+      <%- locals = {f: f} %>
+      <div class="row">
+
+        <div class="col-12 col-lg-4">
+          <div class="form-group">
+            <%= f.label :name_cont, Spree.t('name') %>
+            <%= f.text_field :name_cont, size: 15, class: "form-control js-quick-search-target js-filterable" %>
+          </div>
+        </div>
+        <div class="col-12 col-lg-4">
+          <div class="form-group">
+            <%= label_tag :q_location_eq, Spree.t(:location) %><%= f.select :location_eq, spree_humanize_dropdown_values('Spree::Menu', { const: 'MENU_LOCATIONS', paramterize_values: true }), { include_blank: true }, class: 'select2-clear js-filterable' %>
+          </div>
+        </div>
+
+        <div class="col-12 col-lg-4">
+         <div class="form-group">
+           <%= label_tag :q_locale_eq, Spree.t(:language) %>
+           <%= f.select :locale_eq, all_locales_options, { include_blank: true }, class: 'select2-clear js-filterable' %>
+         </div>
+        </div>
+      </div>
+
+      <div data-hook="admin_menus_index_search_buttons" class="form-actions">
+        <%= button Spree.t(:search), 'search.svg' %>
+      </div>
+    <% end %>
+  </div>
+<% end %>
+
+<% if @menus.any? %>
+<div class="table-responsive">
+  <table class="table" id="menusTable">
+    <thead>
+      <th scope="col"><%= Spree.t(:name) %></th>
+      <th scope="col"><%= Spree.t('location') %></th>
+      <th scope="col"><%= Spree.t('language') %></th>
+      <th class="text-center" scope="col"><%= Spree.t('default') %>
+        <span data-show-info
+              data-alert-kind="info"
+              data-alert-title="<%= Spree.t('admin.navigation.default_menus_info.title') %>"
+              data-alert-html="<%= Spree.t('admin.navigation.default_menus_info.body') %>">
+          <%= svg_icon name: "info.svg", width: '15', height: '15' %>
+        </span>
+      </th>
+      <th scope="col"></th>
+    </thead>
+    <tbody>
+      <% @menus.each do |menu| %>
+        <tr>
+          <td>
+            <%= menu.name %>
+          </td>
+          <td>
+            <%= menu.location.titleize %>
+          </td>
+          <td>
+            <%= locale_full_name(menu.locale) %>
+          </td>
+          <td class="text-center">
+            <%= active_badge(default_menu_for_store?(menu)) %>
+          </td>
+          <td class="actions" data-hook="admin_menus_index_row_actions">
+             <span class="d-flex justify-content-end">
+             <%= link_to_edit(menu, no_text: true) %>
+             <%= link_to_delete menu, no_text: true, url: spree.admin_menu_path(menu) if can?(:destroy, menu) %>
+            </span>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+<%= render 'spree/admin/shared/index_table_options', collection: @menus, simple: true %>
+<% else %>
+  <div class="alert alert-info no-objects-found">
+    <%= Spree.t('admin.navigation.you_have_no_menus') %>
+  </div>
+<% end %>

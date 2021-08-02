@@ -1,12 +1,33 @@
 require 'spec_helper'
 
 describe 'setting locale', type: :feature, js: true do
-  let(:store) { Spree::Store.default }
-  let(:locale) { :fr }
+  let!(:store) { Spree::Store.default }
+  let!(:locale) { :fr }
+
+  let!(:en_main_menu) { create(:menu, name: 'Main Menu', store_id: store.id) }
+  let!(:fr_main_menu) { create(:menu, name: 'Main Menu', locale: 'fr', store_id: store.id) }
+
+  let!(:en_menu_item_url) { create(:menu_item, name: 'URL in English', menu_id: en_main_menu.id, destination: 'https://spree.com') }
+  let!(:en_menu_item_home) { create(:menu_item, name: 'Home in English', menu_id: en_main_menu.id, linked_resource_type: 'Home Page') }
+  let!(:en_menu_item_taxon) { create(:menu_item, name: 'Taxon in English', menu_id: en_main_menu.id, linked_resource_type: 'Spree::Taxon') }
+  let!(:en_menu_item_product) { create(:menu_item, name: 'Product in English', menu_id: en_main_menu.id, linked_resource_type: 'Spree::Product') }
+
+  let!(:fr_menu_item_url) { create(:menu_item, name: 'URL in French', menu_id: fr_main_menu.id, destination: 'https://spree.com') }
+  let!(:fr_menu_item_home) { create(:menu_item, name: 'Home in French', menu_id: fr_main_menu.id, linked_resource_type: 'Home Page') }
+  let!(:fr_menu_item_taxon) { create(:menu_item, name: 'Taxon in French', menu_id: fr_main_menu.id, linked_resource_type: 'Spree::Taxon') }
+  let!(:fr_menu_item_product) { create(:menu_item, name: 'Product in French', menu_id: fr_main_menu.id, linked_resource_type: 'Spree::Product') }
+
+  let!(:taxon_x) { create(:taxon) }
+  let!(:prod_x) { create(:product_in_stock, taxons: [taxon_x], stores: [store]) }
 
   before do
     store.update(default_locale: 'en', supported_locales: 'en,fr')
     add_french_locales
+    en_menu_item_taxon.update(linked_resource_id: taxon_x.id)
+    en_menu_item_product.update(linked_resource_id: prod_x.id)
+
+    fr_menu_item_taxon.update(linked_resource_id: taxon_x.id)
+    fr_menu_item_product.update(linked_resource_id: prod_x.id)
   end
 
   context 'checkout form validation messages' do
@@ -47,7 +68,8 @@ describe 'setting locale', type: :feature, js: true do
   shared_examples 'generates proper URLs' do
     it 'has localized links', retry: 3 do
       expect(page).to have_link(store.name, href: '/fr')
-      expect(page).to have_link('Femmes', href: '/fr/t/women')
+      expect(page).to have_link(fr_menu_item_taxon.name, href: spree.nested_taxons_path(fr_menu_item_taxon.linked_resource, locale: 'fr'))
+      expect(page).to have_link(fr_menu_item_product.name, href: spree.product_path(fr_menu_item_product.linked_resource, locale: 'fr'))
     end
   end
 
@@ -109,7 +131,7 @@ describe 'setting locale', type: :feature, js: true do
 
   context 'via URL' do
     let!(:taxon) { create(:taxon) }
-    let!(:product) { create(:product_in_stock, taxons: [taxon]) }
+    let!(:product) { create(:product_in_stock, taxons: [taxon], stores: [store]) }
 
     context 'cart page' do
       before do

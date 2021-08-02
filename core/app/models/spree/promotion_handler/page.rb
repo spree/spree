@@ -1,10 +1,11 @@
 module Spree
   module PromotionHandler
     class Page
-      attr_reader :order, :path
+      attr_reader :order, :path, :store
 
       def initialize(order, path)
         @order = order
+        @store = order.store
         @path = path.gsub(/\A\//, '')
       end
 
@@ -17,7 +18,7 @@ module Spree
       private
 
       def promotion
-        @promotion ||= Promotion.active.find_by(path: path)
+        @promotion ||= store.promotions.active.find_by(path: path)
       end
     end
   end

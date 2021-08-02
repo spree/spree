@@ -4,6 +4,8 @@ module Spree
       module Platform
         class OptionValueSerializer < BaseSerializer
           include ::Spree::Api::V2::ResourceSerializerConcern
+
+          belongs_to :option_type
         end
       end
     end

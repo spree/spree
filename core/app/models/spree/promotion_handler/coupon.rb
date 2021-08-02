@@ -1,18 +1,19 @@
 module Spree
   module PromotionHandler
     class Coupon
-      attr_reader :order
+      attr_reader :order, :store
       attr_accessor :error, :success, :status_code
 
       def initialize(order)
         @order = order
+        @store = order.store
       end
 
       def apply
         if order.coupon_code.present?
           if promotion.present? && promotion.actions.exists?
             handle_present_promotion
-          elsif Promotion.with_coupon_code(order.coupon_code).try(:expired?)
+          elsif store.promotions.with_coupon_code(order.coupon_code).try(:expired?)
             set_error_code :coupon_code_expired
           else
             set_error_code :coupon_code_not_found
@@ -51,7 +52,7 @@ module Spree
       end
 
       def promotion
-        @promotion ||= Promotion.active.includes(
+        @promotion ||= store.promotions.active.includes(
           :promotion_rules, :promotion_actions
         ).with_coupon_code(order.coupon_code)
       end
@@ -75,7 +76,7 @@ module Spree
           line_item = order.find_line_item_by_variant(item.variant)
           next if line_item.blank?
 
-          Spree::Dependencies.cart_remove_item_service.constantize.call(order: order, item: item.variant, quantity: item.quantity)
+          Spree::Dependencies.cart_remove_item_service.constantize.call(order: order, variant: item.variant, quantity: item.quantity)
         end
       end
 

@@ -101,6 +101,7 @@ en:
         shipping_category: Shipping Category
         tax_category: Tax Category
         less_than: Less than
+        more_than: More than
       spree/promotion:
         advertise: Advertise
         code: Code
@@ -324,6 +325,22 @@ en:
             base:
               card_expired: "Card has expired"
               expiry_invalid: "Card expiration is invalid"
+        spree/legacy_user:
+          attributes:
+            bill_address_id:
+              belongs_to_other_user: belongs to other user
+              deprecated_in_completed_order: deprecated in completed order
+            ship_address_id:
+              belongs_to_other_user: belongs to other user
+              deprecated_in_completed_order: deprecated in completed order
+        spree/user:
+          attributes:
+            bill_address_id:
+              belongs_to_other_user: belongs to other user
+              deprecated_in_completed_order: deprecated in completed order
+            ship_address_id:
+              belongs_to_other_user: belongs to other user
+              deprecated_in_completed_order: deprecated in completed order
         spree/line_item:
           attributes:
             currency:
@@ -532,23 +549,96 @@ en:
     adjustment_total: Adjustment Total
     adjustments: Adjustments
     admin:
+      cms:
+        all_pages: All Pages
+        add_new_page: Add New Page
+        add_new_section: Add New Section
+        content: Content
+        click_here: click here
+        draft_mode: Draft Mode
+        full_width: Full width
+        link_to_taxon: Link to Taxon
+        title: Title
+        fit: Fit To
+        info_hero_image_body: "<p>The Hero Image section adds a large image with a button and tagline text to your page.</p>
+        <p>The button can link to a Product, Taxon or Page. This section can be set to fit within the central container or to the edges of the screen.</p>
+        <p><b>Tip:</b> Use a hero image with no button text or title, and then set the <b>Fit:</b> to <b>Container</b> and <b>Gutters</b> to <b>Use Gutters</b> this creates an image section that looks great above a Side-by-Side Images section, or an Image Gallery section.</p>
+        <p>Experiment with the settings, and don't be afraid to use more than one Hero Image section per page.</p>"
+        info_image_gallery_body: "<p>The Image Gallery section can be configured in several ways. For example, each image can link to a product or taxon. If you do not provide a link, you can display three images. Additionally, you can also use labels to add text to your images.</p>
+        <p>There are two layout configurations for the Image Gallery section, with the taller image used on the left or the right. You can also set this section to fit the edges of the screen or the central container to match your website's style.</p>"
+        info_product_carousel_body: "<p>Product Carousel is a simple section to use. Search for the taxon you wish to display, save the changes, and the products in your chosen taxon will be displayed on your page.</p>"
+        info_featured_article_body: "<p>The Feature Article section allows you to add rich text to your page with a set title subtitle and linking button.</p>
+        <p>This section can be set to use full screen or container and also use gutters.</p>"
+        info_side_by_side_images_body: "<p>The Side-by-Side Images section can be configured in several ways, you have the option of using them as plane images, images with text, and either of those options can be clickable links if a link is set.</p>
+        <p><b>Tip:</b> You can blow these images out to the edge of the screen and remove the gutters to create a completely different look.</p>"
+        info_rich_text_content_body: "<p>The Rich Text Content section is simply a section that offers nothing more than an area of rich text editor content to be displayed on your page.</p>"
+        brand_bar:
+          uses_menu: This section uses your Spree Menu named <b>%{menu}</b> to manage the images and links,
+          vist_menu_to_edit: to edit this menu.
+        full_width_on_small: Full width on small devices
+        button_text: Button Text
+        go_to_fullscreen_section_manager: Go To Fullscreen Section Manager
+        page_type: Page Type
+        gutters: Gutters
+        you_have_no_pages: You have no Pages, click the <b>+ Add New Page</b> button to get started.
+        new_page: New Page
+        toggle_page_visibility: Toggle page visibility
+        meta_title: Meta Title
+        meta_description: Meta Description
+        preview_page: Preview Page
+        full_screen_mode: '<span class="exit">Exit </span>Full Screen Mode'
+        hero:
+          aspect_ratio: Please use an image with the aspect ratio of 12:5 (2400px x 1000px)
+        select_page_type: Select a page type
+        section_type: Section Type
+        subtitle: Subtitle
+        set_gutters: Set Gutters
+        click_button_to_change_page_type: Click the <b>%{button_type}</b> button to load the options for this page type.
+        more_page_settings: '<span class="more">More</span><span class="less">Less</span> Page Settings'
+        seo_settings: SEO Settings
+        no_sections_found_please_add_one: Add your first section to this page by clicking the <b>+ Add New Section</b> button above.
+        click_create_to_load_new_link: 'Click the <b>Create</b> button below to save your new page section, and load the section settings.'
+        click_update_to_load_new_link: 'Click the <b>Update</b> button below to load the new section settings.'
+        settings_for: 'Options For: <b>%{section}</b>'
+        page_sections: '%{page_name} Sections'
+        page_sections_info: 'The area below represents your %{page_type} displayed in %{store}, add sections and drag them into position'
+        visible: Visible
+        side_by_side:
+          left_image: Left Image
+          right_image: Right Image
+          image_info: 'Please use an image with an aspect ratio of 54:35 (1468px x 952px).'
+        image_gallery:
+          display_labels: Display labels
+          image_a: Image A
+          image_b: Image B
+          image_c: Image C
+          layout_style: Layout Style
+          square_image: Please use an image with an aspect ratio of 18:13 (1080px x 780px).
+          tall_image: Please use an image with an aspect ratio of 27:40 (1080px x 1600px).
+      linkable:
+        seach_for_a_page: Search for a page
       tab:
         configuration: Configuration
+        content: Content
         option_types: Option Types
         orders: Orders
         overview: Overview
+        pages: Pages
         products: Products
         promotions: Promotions
         promotion_categories: Promotion Categories
         properties: Properties
         prototypes: Prototypes
         reports: Reports
+        navigation: Navigation
         taxonomies: Taxonomies
         taxons: Taxons
         users: Users
         return_authorizations: Return Authorizations
         customer_returns: Customer Returns
       order:
+        changing_store_warning: If you change the store this order belongs to, the order will be reset.
+        once_an_order_is_complete_you_can_not_change_store: 'Sorry, once an order is complete, you can no longer change the store that the order belongs to.'
         events:
           approve: approve
           cancel: cancel
@@ -556,6 +646,8 @@ en:
           resend: Resend
       orders:
         cart: Cart
+      reports:
+        for: For %{store_name}
       return_authorization:
         product: Product
       user:
@@ -571,7 +663,57 @@ en:
         store_credits: Store Credits
         no_store_credit: User has no Store Credit available.
         available_store_credit: User has %{amount} in Store Credit available.
+      navigation:
+        all_menus: All Menus
+        add_new_menu: Add New Menu
+        add_new_item: 'Add New Item'
+        code: Code
+        default_menus_info:
+          title: Default Menus
+          body: "Default menus are menus whose language matches the associated store's default language.<br><br>
+          <h5>Example</h5>If you have a store that uses Spanish as the default language but also offers the options of German and French; your default header menu for this store would be set to use <b>Español (es)</b> for the language and <b>Header</b> as the location.<br><br>
+          <h5>Why Are Default Menus Important?</h5> Default menus are displayed to your visitor if no menu is available in the current language they are browsing. It is recommended that you create a default menu for each menu location within each store.<br><br>
+          <h5>More Information</h5>To learn more about menus, view the official Spree user documentation by <a href='https://guides.spreecommerce.org/user/navigation/building_the_main_menu.html' target='_blank' class='alert-link'>clicking here</a>."
+          allow_this_menu_item_to_contain_nested_menu_items: Allow this Menu Item to contain nested items
+        back_to_all_menus: Back To All Menus
+        click_create_to_load_new_link: 'Click the <b>Create</b> button below to change the link field.'
+        click_update_to_load_new_link: 'Click the <b>Update</b> button below to change the link field.'
+        give_your_menu_a_unique_name: 'Use the unique code to identify your menu: spree-eu-main'
+        link_settings: Link Settings
+        link_to: Link To
+        image_alt_text: Add alt text to your image
+        image_asset: Add a Promotion image or Link icon.
+        move_could_not_be_saved: 'ERROR: This move could not be saved.'
+        managing_by_store_title: 'Managing Menus By Store'
+        managing_by_store: <p>You are managing the menus for <b>%{store}</b>. To manage menus for other stores, change the global store using the drop-down in the main navbar found at the top of the screen.</p>
+        new_menu_item: New Menu Item
+        new_menu: New Menu
+        nested_under: Nested under
+        no_menu_items: '<b>%{menu}</b> has no items. Click the <b>Add New Item</b> button to begin adding links to this menu.'
+        nested_under_info: Quickly nest your Menu Item if you already know where it needs to be.
+        item_type: Item Type
+        image_info: '<b>NOTE:</b> You can attach an image to any menu item, but your image will only be displayed in the main menu when nested inside a container with the code <b>promo</b>.<br><br> For best results use images with a width of 540px and height of 350px.'
+        open_link_in_new_window: Open this link in a new window
+        menu_item_type_container_message: "Containers are menu items that do not link to a destination. If you are building the Spree Main Menu
+        create containers with the code: <b>category</b> or <b>promo</b>, and then nest your links inside these containers build out your menu.
+        <br><br> For an indepth guide to building the main menu see the documenttation page <a href='https://guides.spreecommerce.org/user/navigation/building_the_main_menu.html' target='_blank' class='alert-link'>Building The Main Menu</a>"
+        menus: Menus
+        menu_items: '%{menu_name} Items'
+        public_details: Public Details
+        subtitle: Subtitle
+        url_info: 'The URL field can link to an external website using <b>https://example.com</b>, link to an otherwise unreachable internal path using <b>/policies/privacy</b>,
+        launch an email client using <b>mailto:sales@example.com</b> or used to create a clickable phone number with <b>tel:123456789</b>'
+        seach_for_a_product: Search for a Product
+        seach_for_a_taxon: Search for a Taxon
+        settings: Settings
+        set_a_code: "Adding a code is optional but can be useful if you need to identify this menu item. When building
+        the Spree main menu use the code <b>category</b> or <b>promo</b> to create the containers that organize links and promotions appropriately. To learn more view the documentation by <a href='https://guides.spreecommerce.org/user/navigation/add_menu_items.html' target='_blank' class='alert-link'>clicking here</a>."
+        type: Type
+        used_in: Used In
+        you_have_no_menus: You have no Menus, click the Add New Menu button to create your first Menu.
+        this_link_takes_you_to_your_stores_home_page: This link takes you to your stores home page.
     administration: Administration
+    add_new_store: Add New Store
     advertise: Advertise
     agree_to_privacy_policy: Agree to Privacy Policy
     agree_to_terms_of_service: Agree to Terms of Service
@@ -629,6 +771,8 @@ en:
     canceled: Canceled
     canceler: Canceler
     canceled_at: Canceled at
+    cannot_be_destroyed: Order cannot be destroyed.
+    cannot_empty: Cannot empty order.
     cannot_empty_completed_order: Order has already been processed so it cannot be emptied
     cannot_create_payment_without_payment_methods: You cannot create a payment for an order without any payment methods defined.
     cannot_create_customer_returns: Cannot create customer returns as this order has no shipped units.
@@ -669,7 +813,7 @@ en:
     checkout_page:
       main_navigation: Main navigation
       checkout_navigation: Checkout navigation
-      back_to_cart: back to the cart
+      back_to_cart: back to cart
       delivery_method: delivery method
       header: Checkout
       product: Product
@@ -788,6 +932,7 @@ en:
     display: Display
     doesnt_track_inventory: It doesn't track inventory
     dont_have_account: No account?
+    draft_mode: Draft Mode
     edit: Edit
     editing_resource: 'Editing %{resource}'
     editing_rma_reason: Editing RMA Reason
@@ -856,6 +1001,8 @@ en:
     existing_shipments: Existing shipments
     facebook: Facebook
     failed_payment_attempts: Failed Payment Attempts
+    favicon: 'Favicon'
+    favicon_upload_info: "File format: PNG or ICO. File resolution: up to 256x256. File size: up to 1MB"
     filename: Filename
     fill_in_customer_info: Please fill in customer info
     filter: Filter
@@ -915,6 +1062,7 @@ en:
     icon: Icon
     image: Image
     images: Images
+    image_alt_text: Add Alt text to your image
     implement_eligible_for_return: "Must implement #eligible_for_return? for your EligibilityValidator."
     implement_requires_manual_intervention: "Must implement #requires_manual_intervention? for your EligibilityValidator."
     in_stock: In Stock
@@ -964,6 +1112,7 @@ en:
     items_to_be_reimbursed: Items to be reimbursed
     items_reimbursed: Items reimbursed
     join_slack: Join Slack
+    language: Language
     last_name: Last Name
     lastname: Last Name
     last_name_begins_with: Last Name Begins With
@@ -1005,6 +1154,7 @@ en:
     match_choices:
       all: All
       none: None
+    max: 'Max'
     max_items: Max Items
     member_since: Member Since
     memo: Memo
@@ -1013,6 +1163,7 @@ en:
     meta_title: Meta Title
     metadata: Metadata
     mutable: Mutable
+    min: 'Min'
     minimal_amount: Minimal Amount
     missing_return_authorization: ! 'Missing Return Authorization for %{item_name}.'
     month: Month
@@ -1121,6 +1272,7 @@ en:
     open: Open
     open_all_adjustments: Open All Adjustments
     option_type: Option Type
+    option_type_filterable_info: 'When an option type is set to Filterable, your storefront visitors are presented with the option to filter a taxon of products based on the option type. A typical example of this would be to filter clothing by size and color.<br><br><b>Please Note:</b> Filters will only be visible in the storefront taxons that contain products with this option type set.'
     option_type_placeholder: Choose an option type
     option_types: Option Types
     option_value: Option Value
@@ -1257,6 +1409,8 @@ en:
       price: price
       price_high_to_low: PRICE (HIGH - LOW)
       price_low_to_high: PRICE (LOW - HIGH)
+      name_a_z: NAME (A-Z)
+      name_z_a: NAME (Z-A)
       result: RESULT
       results_for: RESULTS FOR
       size: SIZE
@@ -1459,6 +1613,7 @@ en:
     scope: Scope
     search: Search
     search_by: 'Search by:'
+    search_order_number: Order Number
     search_results: Search results for '%{keywords}'
     searching: Searching
     secure_connection_type: Secure Connection Type
@@ -1472,6 +1627,7 @@ en:
     select_a_store_credit_reason: Select a reason for the store credit
     select_an_option: Select an option
     select_stock: Select stock
+    select_stores: Select Store(s)
     selected_quantity_not_available: ! 'selected of %{item} is not available.'
     send_copy_of_all_mails_to: Send Copy of All Mails To
     send_mails_as: Send Mails As
@@ -1671,6 +1827,7 @@ en:
     successfully_removed: ! '%{resource} has been successfully removed!'
     successfully_updated: ! '%{resource} has been successfully updated!'
     summary: Summary
+    support: Support
     supported_currencies: Supported Currencies
     supported_currencies_long: A comma separated list of supported currencies
     supported_locales: Supported Locales
@@ -1707,6 +1864,7 @@ en:
         message: If you have received this email, then your email settings are correct.
         subject: Test Mail
     test_mode: Test Mode
+    this_menu_already_has_a_root_item: This Menu already has a root item
     thank_you_for_your_order: Thank you for your business.  Please print out a copy of this confirmation page for your records.
     there_are_no_items_for_this_order: There are no items for this order. Please add an item to the order to continue.
     there_were_problems_with_the_following_fields: There were problems with the following fields
@@ -1771,6 +1929,10 @@ en:
     variants: Variants
     version: Version
     void: Void
+    we_will_be_back: We will be back.
+    we_are_busy_updating: "We're updating the %{store_name} homepage."
+    we_are_busy_updating_page: "We're busy updating this page."
+    please_check_back_soon: Please check back soon.
     weight: Weight
     what_is_a_cvv: What is a (CVV) Credit Card Code?
     what_is_this: What's This?

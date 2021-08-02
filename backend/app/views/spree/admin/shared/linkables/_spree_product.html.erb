@@ -1,0 +1,20 @@
+<% if resource.linked_resource %>
+   <% resorce_holder = [resource.linked_resource] %>
+   <% id_holder = :id %>
+   <% name_holder = :name %>
+   <% active_id_holder = resource.linked_resource.id %>
+ <% end %>
+ <%= f.field_container :linked_resource_id, class: ['form-group'] do %>
+    <%= f.label :linked_resource_id, Spree.t('product') %>
+    <%= f.select :linked_resource_id,
+         options_from_collection_for_select(resorce_holder || [],
+                                            id_holder, name_holder, active_id_holder || nil),
+         { include_blank: true },
+         class: 'select2autocomplete',
+         data: { autocomplete_placeholder_value: Spree.t('admin.navigation.seach_for_a_product'),
+                 autocomplete_clear_value: true,
+                 autocomplete_url_value: 'products_api_v2' } %>
+
+   <%= f.error_message_on :linked_resource_id %>
+   <small class="form-text text-muted"><%= resource.link %></small>
+<% end %>

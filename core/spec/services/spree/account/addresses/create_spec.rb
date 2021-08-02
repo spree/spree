@@ -33,6 +33,52 @@ module Spree
           expect(value.country).to eq(country)
           expect(value.state).to eq(state)
         end
+
+        context 'user default address' do
+          context 'when created address is first user address' do
+            before { result }
+
+            it 'assigns created address as default user bill address' do
+              expect(user.reload.bill_address).to have_attributes(address_params)
+            end
+
+            it 'assigns created address as default user ship address' do
+              expect(user.reload.ship_address).to have_attributes(address_params)
+            end
+          end
+
+          context 'when user has some address already' do
+            let!(:address) { create(:address, user: user) }
+
+            context 'with default bill and ship address' do
+              before do
+                user.update(bill_address: address, ship_address: address)
+
+                result
+              end
+
+              it 'does not assign created address as default user bill address' do
+                expect(user.reload.bill_address).not_to have_attributes(address_params)
+              end
+
+              it 'does not assign created address as default user ship address' do
+                expect(user.reload.ship_address).not_to have_attributes(address_params)
+              end
+            end
+
+            context 'without default bill and ship address' do
+              before { result }
+
+              it 'does not assign created address as default user bill address' do
+                expect(user.reload.bill_address).to be nil
+              end
+
+              it 'does not assign created address as default user ship address' do
+                expect(user.reload.ship_address).to be nil
+              end
+            end
+          end
+        end
       end
 
       context 'with invalid params' do

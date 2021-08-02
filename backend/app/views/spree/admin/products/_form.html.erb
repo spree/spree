@@ -21,7 +21,7 @@
       <div data-hook="admin_product_form_description">
         <%= f.field_container :description, class: ['form-group'] do %>
           <%= f.label :description, Spree.t(:description) %>
-          <%= f.text_area :description, { rows: "#{unless @product.has_variants? then '20' else '13' end}", class: 'form-control' } %>
+          <%= f.text_area :description, { rows: "#{unless @product.has_variants? then '29' else '30' end}", class: "form-control #{"spree-rte" if product_wysiwyg_editor_enabled? }" } %>
           <%= f.error_message_on :description %>
         <% end %>
       </div>
@@ -31,7 +31,12 @@
       <div data-hook="admin_product_form_price">
         <%= f.field_container :price, class: ['form-group'] do %>
           <%= f.label :price, raw(Spree.t(:master_price) + required_span_tag) %>
-          <%= f.text_field :price, value: number_to_currency(@product.price, unit: ''), class: 'form-control', disabled: (cannot? :update, @product.master.default_price) %>
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <span class="input-group-text"><%= currency_symbol(current_currency) %></span>
+            </div>
+            <%= f.text_field :price, value: number_to_currency(@product.amount_in(current_currency), unit: ''), class: 'form-control', disabled: (cannot? :update, @product.master.default_price) %>
+          </div>
           <%= f.error_message_on :price %>
         <% end %>
       </div>
@@ -39,7 +44,12 @@
       <div>
         <%= f.field_container :compare_at_price, class: ['form-group'] do %>
           <%= f.label :compare_at_price, Spree.t(:compare_at_price) %>
-          <%= f.text_field :compare_at_price, value: number_to_currency(@product.compare_at_price, unit: ''), class: 'form-control' %>
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <span class="input-group-text"><%= currency_symbol(current_currency) %></span>
+            </div>
+            <%= f.text_field :compare_at_price, value: number_to_currency(@product.compare_at_amount_in(current_currency), unit: ''), class: 'form-control' %>
+          </div>
           <%= f.error_message_on :compare_at_price %>
         <% end %>
       </div>
@@ -224,6 +234,13 @@
         <div class="alert alert-info"><%= Spree.t(:no_resource_found, resource: :option_types) %></div>
       <% end %>
 
+    <% end %>
+  </div>
+
+  <div data-hook="admin_product_form_stores">
+    <%= f.field_container :stores, class: ['form-group'] do %>
+      <%= f.label :product_stores, Spree.t(:stores) %>
+      <%= collection_select(:product, :store_ids, @stores, :id, :unique_name, {}, { multiple: true, class: 'select2' }) %>
     <% end %>
   </div>
 

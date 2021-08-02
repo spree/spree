@@ -390,10 +390,6 @@ Spree.config do |config|
 end
 ```
 
-`logo`
-
-The logo to display on your frontend. Defaults to `logo/spree_50.png`.
-
 `max_level_in_taxons_menu`
 
 The number of levels to descend when viewing a taxon menu. Defaults to `1`.

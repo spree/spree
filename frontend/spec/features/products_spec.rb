@@ -291,6 +291,78 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
                              'Ruby on Rails Stein'])
   end
 
+  context 'filtering by giving a price range', js: true do
+    let(:min_price_input) { "$ #{Spree.t(:min)}" }
+    let(:max_price_input) { "$ #{Spree.t(:max)}" }
+
+    it 'is able to display products between 55 and 103 dollars' do
+      within(:css, '.plp-filters-scroller') do
+        click_on Spree.t('plp.price')
+
+        fill_in min_price_input, with: '55'
+        fill_in max_price_input, with: '103'
+        click_on Spree.t('plp.done')
+      end
+
+      expect(page).to have_css('.product-component-name').exactly(3).times
+
+      product_names = page.all('.product-component-name').map(&:text).flatten.compact
+      expect(product_names).to contain_exactly(
+        'Ruby on Rails Bag',
+        'Ruby on Rails Mug',
+        'Ruby on Rails Tote'
+      )
+
+      expect(page).to have_field(min_price_input, with: '55')
+      expect(page).to have_field(max_price_input, with: '103')
+    end
+
+    it 'is able to display products when providing only min amount of 55 dollars' do
+      within(:css, '.plp-filters-scroller') do
+        click_on Spree.t('plp.price')
+
+        fill_in min_price_input, with: '56'
+        click_on Spree.t('plp.done')
+      end
+
+      expect(page).to have_css('.product-component-name').exactly(7).times
+
+      product_names = page.all('.product-component-name').map(&:text).flatten.compact
+      expect(product_names).to contain_exactly(
+        'Ruby on Rails Ringer T-Shirt',
+        'Ruby on Rails Bag',
+        'Ruby on Rails Baseball Jersey',
+        'Ruby on Rails Stein',
+        'Ruby on Rails Jr. Spaghetti',
+        'Ruby Baseball Jersey',
+        'Apache Baseball Jersey'
+      )
+
+      expect(page).to have_field(min_price_input, with: '56')
+      expect(page).to have_field(max_price_input, with: '')
+    end
+
+    it 'is able to display products when providing only max amount of 56 dollars' do
+      within(:css, '.plp-filters-scroller') do
+        click_on Spree.t('plp.price')
+
+        fill_in max_price_input, with: '56'
+        click_on Spree.t('plp.done')
+      end
+
+      expect(page).to have_css('.product-component-name').exactly(2).times
+
+      product_names = page.all('.product-component-name').map(&:text).flatten.compact
+      expect(product_names).to contain_exactly(
+        'Ruby on Rails Mug',
+        'Ruby on Rails Tote'
+      )
+
+      expect(page).to have_field(min_price_input, with: '')
+      expect(page).to have_field(max_price_input, with: '56')
+    end
+  end
+
   context 'pagination' do
     before { Spree::Config.products_per_page = 3 }
 
@@ -335,7 +407,11 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
     end
   end
 
-  context 'when rendering the product description' do
+  context 'when rendering the product description with product_wysiwyg_editor_enabled = false' do
+    before { Spree::Config.product_wysiwyg_editor_enabled = false }
+
+    after { Spree::Config.product_wysiwyg_editor_enabled = true }
+
     context 'when <script> tag exists' do
       it 'prevents the script from running', js: true do
         description = '<script>window.alert("Message")</script>'
@@ -380,6 +456,29 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
         within('[data-hook=product_description]') do
           node = first('[data-hook=description]')
           expect(node).to have_selector 'p'
+        end
+      end
+    end
+  end
+
+  context 'when rendering the product description with product_wysiwyg_editor_enabled' do
+    before { Spree::Config.product_wysiwyg_editor_enabled = true }
+
+    context 'when <table> tag exists' do
+      it 'returns <table> tag in html' do
+        description = '<table style="border-collapse: collapse; width: 100%; height: 66px;" border="1">
+                        <tbody>
+                          <tr style="height: 22px;">
+                            <td style="width: 17.341967680608363%; height: 22px;">This is the table</td>
+                          </tr>
+                        </tbody>
+                      </table>'
+        product = FactoryBot.create(:base_product, description: description, name: 'Sample', price: '19.99')
+        visit spree.product_path(product)
+
+        within('[data-hook=product_description]') do
+          node = first('[data-hook=description]')
+          expect(node).to have_selector 'table'
         end
       end
     end
@@ -526,6 +625,34 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
     it "not show the propery if show_property is unchecked" do
       expect(page).not_to have_content('amazon_dataset_catagory')
       expect(page).not_to have_content('9377-AMZ-1837')
+    end
+  end
+
+  context 'for multiple stores' do
+    let(:other_store) { create(:store) }
+
+    before do
+      create(:product, stores: [other_store], name: 'Other Store Product 1')
+      create(:product, stores: [other_store], name: 'Other Store Product 2')
+    end
+
+    it 'shows products from the current store only' do
+      visit spree.products_path
+
+      expect(page).to have_css('.product-component-name').exactly(9).times
+
+      product_names = page.all('.product-component-name').map(&:text).flatten.compact
+      expect(product_names).to contain_exactly(
+        'Ruby on Rails Ringer T-Shirt',
+        'Ruby on Rails Mug',
+        'Ruby on Rails Tote',
+        'Ruby on Rails Bag',
+        'Ruby on Rails Baseball Jersey',
+        'Ruby on Rails Stein',
+        'Ruby on Rails Jr. Spaghetti',
+        'Ruby Baseball Jersey',
+        'Apache Baseball Jersey'
+      )
     end
   end
 end

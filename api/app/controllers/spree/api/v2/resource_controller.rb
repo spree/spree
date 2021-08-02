@@ -26,8 +26,11 @@ module Spree
           [:id, :name, :number, :updated_at, :created_at]
         end
 
-        def scope
-          model_class.accessible_by(current_ability, :show).includes(scope_includes)
+        def scope(skip_cancancan: false)
+          base_scope = model_class.for_store(current_store)
+          base_scope = base_scope.accessible_by(current_ability, :show) unless skip_cancancan
+          base_scope = base_scope.includes(scope_includes) if scope_includes.any?
+          base_scope
         end
 
         def scope_includes
@@ -36,7 +39,7 @@ module Spree
 
         def resource
           @resource ||= if defined?(resource_finder)
-                          resource_finder.new(scope: scope, params: params).execute
+                          resource_finder.new(scope: scope, params: finder_params).execute
                         else
                           scope.find(params[:id])
                         end
@@ -44,10 +47,19 @@ module Spree
 
         def collection
           @collection ||= if defined?(collection_finder)
-                            collection_finder.new(scope: scope, params: params).execute
+                            collection_finder.new(scope: scope, params: finder_params).execute
                           else
                             scope
                           end
+        end
+
+        def finder_params
+          params.merge(
+            store: current_store,
+            locale: current_locale,
+            currency: current_currency,
+            user: spree_current_user
+          )
         end
 
         def collection_sorter

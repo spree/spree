@@ -12,7 +12,7 @@ prepare_app(){
   set_gemfile
   bundle update --quiet
   echo "Preparing test app..."
-  BUNDLE_GEMFILE=../Gemfile bundle exec rake test_app
+  bundle exec rake test_app
 }
 # Target postgres. Override with: `DB=sqlite bash bin/build.sh`
 export DB=${DB:-postgres}
@@ -44,6 +44,12 @@ echo "*******************************************"
 echo "* Setup Spree Frontend and running RSpec..."
 echo "*******************************************"
 cd ../frontend; prepare_app; bundle exec rspec spec
+
+# Spree Emails
+echo "*******************************************"
+echo "* Setup Spree Emails and running RSpec..."
+echo "*******************************************"
+cd ../emails; prepare_app; bundle exec rspec spec
 
 # Spree Sample
 echo "*****************************************"

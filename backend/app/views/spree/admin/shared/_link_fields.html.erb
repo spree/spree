@@ -1,0 +1,22 @@
+<% save_to = save_to || 'menu_item_link' %>
+<% linked_type = linked_type || nil %>
+
+<% if linked_type.present? %>
+  <div data-panel-type="<%= linked_type %>" data-panel-id="<%= save_to %>">
+    <%= render "spree/admin/shared/cms/#{spree_class_name_as_path(linked_type)}", resource: resource, save_to: save_to, f: f %>
+  </div>
+<% elsif resource.linked_resource_type.present? %>
+  <div data-panel-type="<%= resource.linked_resource_type %>" data-panel-id="<%= save_to %>">
+    <%= render "spree/admin/shared/linkables/#{spree_class_name_as_path(resource.linked_resource_type)}", resource: resource, f: f %>
+  </div>
+<% end %>
+
+<div class="d-none" data-target-message-pannel="<%= save_to %>">
+  <div class="alert alert-warning mt-3">
+    <% if %w[new create].include? controller.action_name %>
+      <%= raw Spree.t('admin.navigation.click_create_to_load_new_link') %>
+    <% else %>
+      <%= raw Spree.t('admin.navigation.click_update_to_load_new_link') %>
+    <% end %>
+  </div>
+</div>

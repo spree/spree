@@ -16,3 +16,5 @@ properties = {
 properties.each do |name, presentation|
   Spree::Property.where(name: name, presentation: presentation).first_or_create!
 end
+
+Spree::Property.where(name: %w[brand manufacturer]).update(filterable: true)

@@ -44,9 +44,13 @@ module Spree
       variants_option_types_presenter(variants, product).options
     end
 
+    def product_wysiwyg_editor_enabled?
+      Spree::Config[:product_wysiwyg_editor_enabled]
+    end
+
     # converts line breaks in product description into <p> tags (for html display purposes)
     def product_description(product)
-      description = if Spree::Config[:show_raw_product_description]
+      description = if Spree::Config[:show_raw_product_description] || product_wysiwyg_editor_enabled?
                       product.description
                     else
                       product.description.to_s.gsub(/(.*?)\r?\n\r?\n/m, '<p>\1</p>')
@@ -63,7 +67,7 @@ module Spree
     end
 
     def cache_key_for_products(products = @products, additional_cache_key = nil)
-      max_updated_at = (products.maximum(:updated_at) || Date.today).to_s(:number)
+      max_updated_at = (products.except(:group, :order).maximum(:updated_at) || Date.today).to_s(:number)
       products_cache_keys = "spree/products/#{products.map(&:id).join('-')}-#{params[:page]}-#{params[:sort_by]}-#{max_updated_at}-#{@taxon&.id}"
       (common_product_cache_keys + [products_cache_keys] + [additional_cache_key]).compact.join('/')
     end
@@ -131,7 +135,7 @@ module Spree
 
       return [] if product_ids.empty?
 
-      Spree::Product.
+      current_store.products.
         available.not_discontinued.distinct.
         where(id: product_ids).
         includes(

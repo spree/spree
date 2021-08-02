@@ -24,10 +24,12 @@
             <%= text_area :payment_method, :description, { cols: 60, rows: 6, class: 'form-control' } %>
           <% end %>
 
-          <div data-hook="store" class="form-group">
-            <%= label_tag :payment_method_stores, Spree.t(:stores) %>
-            <%= collection_select(:payment_method, :store_ids, @stores, :id, :unique_name, {}, { multiple: true, class: 'select2' }) %>
-          </div>
+          <% if @payment_method.persisted? %>
+            <div data-hook="store" class="form-group">
+              <%= label_tag :payment_method_stores, Spree.t(:stores) %>
+              <%= collection_select(:payment_method, :store_ids, @stores, :id, :unique_name, {}, { multiple: true, class: 'select2' }) %>
+            </div>
+          <% end %>
 
           <div data-hook="display" class="form-group">
             <%= label_tag :payment_method_display_on, Spree.t(:display) %>

@@ -1,7 +1,7 @@
 <% is_visible = params[:menu_open] ? 'block' : 'none' %>
 
 <div id="filter-by-overlay" class="d-lg-none plp-overlay" style="display: <%= is_visible %>;">
-  <% cache base_cache_key + [available_option_types_cache_key, filtering_params_cache_key, @taxon&.id] do %>
+  <% cache filters_cache_key('mobile') do %>
     <div class="plp-scroll">
       <div class="container">
         <div class="plp-overlay-header">
@@ -30,6 +30,32 @@
           </div>
         <% end %>
 
+        <% available_properties.each do |property| %>
+          <% if property.uniq_values.present? %>
+            <% property_name = property.name %>
+            <% collapsed = params.dig(:properties, property.filter_param).blank? %>
+            <div class="card plp-overlay-card">
+              <div class="card-header text-uppercase <%= 'collapsed' if collapsed %> plp-overlay-card-header" data-toggle="collapse" id="filtersMobile<%= property_name %>" data-target="#collapseFilterMobile<%= property_name %>" aria-expanded="true" aria-controls="collapseFilterMobile<%= property_name %>" role="heading" aria-level="3">
+                <%= property_name %>
+                <%= icon(name: 'arrow-right',
+                         classes: 'spree-icon-arrow spree-icon-arrow-right mt-1 float-right arrow plp-overlay-card-header-arrow',
+                         width: 16,
+                         height: 16) %>
+              </div>
+              <div id="collapseFilterMobile<%= property_name %>" class="collapse <%= 'show' unless collapsed %>" aria-labelledby="filtersMobile<%= property_name %>" data-parent="#filters-accordion">
+                <div class="card-body pt-1">
+                  <%= render 'spree/shared/properties',
+                             params_property_name: params[property_name],
+                             property: property,
+                             permitted_params: permitted_params,
+                             property_name: property_name
+                  %>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        <% end %>
+
         <div class="card plp-overlay-card">
           <div class="card-header text-uppercase <%= 'collapsed' if params[:price].blank? %> plp-overlay-card-header" id="headingFour" data-toggle="collapse" data-target="#collapseFour" aria-expanded="true" aria-controls="collapseFour" role="heading" aria-level="3">
             <%= Spree.t('plp.price') %>
@@ -40,14 +66,16 @@
           </div>
           <div id="collapseFour" class="collapse <%= 'show' unless params[:price].blank? %>" aria-labelledby="headingFour" data-parent="#filters-accordion">
             <div class="card-body pt-1">
-              <% price_filter_values.each do |name| %>
-                <% price_param = params[:price] == name ? '' : name %>
-                <%= link_to permitted_params.merge(price: price_param, menu_open: 1), data: { params: permitted_params.merge(price: price_param, menu_open: 1), filter_name: 'price' } do %>
-                  <div class="d-inline-block py-1 px-2 m-1 text-uppercase plp-overlay-card-item <%= 'plp-overlay-card-item--selected' if params[:price] == name %>">
-                    <%= name %>
-                  </div>
-                <% end %>
+              <% price_filters.each do |price_range| %>
+                <%= price_filter_link(price_range, permitted_params) %>
               <% end %>
+
+              <div id="filterPriceRangeMobile" class="m-1">
+                <div class="d-inline-flex">
+                  <%= min_price_filter_input class: 'w-50 p-2 mr-1' %>
+                  <%= max_price_filter_input class: 'w-50 p-2' %>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -60,7 +88,7 @@
   <% end %>
 
   <div class="container position-absolute text-center plp-overlay-buttons pt-3">
-    <%= link_to Spree.t('plp.clear_all'), permitted_params.select { |key, value| key == "sort_by"}, class: 'btn spree-btn btn-outline-primary w-100 mb-4', data: { params: permitted_params.select { |key, value| key == "sort_by"} } %>
-    <%= link_to Spree.t('plp.done'), permitted_params, class: 'btn btn-primary spree-btn w-100 done-btn', data: { params: permitted_params } %>
+    <%= clear_all_filters_link(permitted_params) %>
+    <%= link_to Spree.t('plp.done'), permitted_params, id: 'filterProductsButtonMobile', class: 'btn btn-primary spree-btn w-100 done-btn', data: { params: permitted_params } %>
   </div>
 </div>

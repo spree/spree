@@ -1,13 +1,23 @@
 module Spree
   module Products
     class Find
-      def initialize(scope:, params:, current_currency:)
+      def initialize(scope:, params:, current_currency: nil)
         @scope = scope
+
+        ActiveSupport::Deprecation.warn('`current_currency` param is deprecated and will be removed in Spree 5') if current_currency
+
+        if current_currency.present?
+          ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
+            `current_currency` param is deprecated and will be removed in Spree 5.
+            Please pass `:currency` in `params` hash instead.
+          DEPRECATION
+        end
 
         @ids              = String(params.dig(:filter, :ids)).split(',')
         @skus             = String(params.dig(:filter, :skus)).split(',')
-        @price            = String(params.dig(:filter, :price)).split(',').map(&:to_f)
-        @currency         = current_currency
+        @store            = params[:store] || Spree::Store.default
+        @price            = map_prices(String(params.dig(:filter, :price)).split(','))
+        @currency         = current_currency || params.dig(:filter, :currency) || params[:currency]
         @taxons           = taxon_ids(params.dig(:filter, :taxons))
         @concat_taxons    = taxon_ids(params.dig(:filter, :concat_taxons))
         @name             = params.dig(:filter, :name)
@@ -16,6 +26,7 @@ module Spree
         @sort_by          = params.dig(:sort_by)
         @deleted          = params.dig(:filter, :show_deleted)
         @discontinued     = params.dig(:filter, :show_discontinued)
+        @properties       = params.dig(:filter, :properties)
       end
 
       def execute
@@ -28,6 +39,7 @@ module Spree
         products = by_name(products)
         products = by_options(products)
         products = by_option_value_ids(products)
+        products = by_properties(products)
         products = include_deleted(products)
         products = include_discontinued(products)
         products = ordered(products)
@@ -38,7 +50,7 @@ module Spree
       private
 
       attr_reader :ids, :skus, :price, :currency, :taxons, :concat_taxons, :name, :options,
-                  :option_value_ids, :scope, :sort_by, :deleted, :discontinued
+                  :option_value_ids, :scope, :sort_by, :deleted, :discontinued, :properties, :store
 
       def ids?
         ids.present?
@@ -80,6 +92,10 @@ module Spree
         sort_by.present?
       end
 
+      def properties?
+        properties.present? && properties.values.reject(&:empty?).present?
+      end
+
       def name_matcher
         Spree::Product.arel_table[:name].matches("%#{name}%")
       end
@@ -99,19 +115,13 @@ module Spree
       def by_price(products)
         return products unless price?
 
-        products.joins(master: :prices).
-          where(
-            spree_prices: {
-              amount: price.min..price.max,
-              currency: currency&.upcase
-            }
-          )
+        products.price_between(price.min, price.max)
       end
 
       def by_currency(products)
         return products unless currency?
 
-        products.joins(master: :prices).where(spree_prices: { currency: currency.upcase })
+        products.with_currency(currency)
       end
 
       def by_taxons(products)
@@ -142,11 +152,8 @@ module Spree
       def by_options(products)
         return products unless options?
 
-        products.where(
-          id: options.map do |key, value|
-            products.with_option_value(key, value).ids
-          end.flatten.compact.uniq
-        )
+        products_ids = options.map { |key, value| products.with_option_value(key, value).ids }
+        products.where(id: products_ids.reduce(&:intersection))
       end
 
       def by_option_value_ids(products)
@@ -159,6 +166,27 @@ module Spree
                       having('COUNT(spree_option_values.option_type_id) = ?', option_types_count(option_value_ids)).
                       distinct.
                       ids
+
+        products.where(id: product_ids)
+      end
+
+      def by_properties(products)
+        return products unless properties?
+
+        product_ids = []
+        index = 0
+
+        properties.to_unsafe_hash.each do |property_filter_param, product_properties_values|
+          next if property_filter_param.blank? || product_properties_values.empty?
+
+          values = product_properties_values.split(',').reject(&:empty?).uniq.map(&:parameterize)
+
+          next if values.empty?
+
+          ids = products.with_property_values(property_filter_param, values).ids
+          product_ids = index == 0 ? ids : product_ids & ids
+          index += 1
+        end
 
         products.where(id: product_ids)
       end
@@ -176,12 +204,14 @@ module Spree
         case sort_by
         when 'default'
           if taxons?
-            products.
-              select("#{Product.table_name}.*, #{Classification.table_name}.position").
-              order("#{Classification.table_name}.position" => :asc)
+            products.ascend_by_taxons_min_position(taxons)
           else
             products
           end
+        when 'name-a-z'
+          products.order(name: :asc)
+        when 'name-z-a'
+          products.order(name: :desc)
         when 'newest-first'
           products.order(available_on: :desc)
         when 'price-high-to-low'
@@ -202,13 +232,19 @@ module Spree
       end
 
       def include_discontinued(products)
-        discontinued ? products : products.available
+        discontinued ? products : products.active(currency)
+      end
+
+      def map_prices(prices)
+        prices.map do |price|
+          price == 'Infinity' ? Float::INFINITY : price.to_f
+        end
       end
 
       def taxon_ids(taxons_ids)
         return if taxons_ids.nil? || taxons_ids.to_s.blank?
 
-        taxons = Spree::Taxon.where(id: taxons_ids.to_s.split(','))
+        taxons = store.taxons.where(id: taxons_ids.to_s.split(','))
         taxons.map(&:cached_self_and_descendants_ids).flatten.compact.uniq.map(&:to_s)
       end
     end

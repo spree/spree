@@ -1,5 +1,5 @@
 <% content_for :page_title do %>
-  <%= link_to Spree.t(:payment_methods), spree.admin_payment_methods_url %> /
+  <%= link_to Spree.t(:payment_methods), spree.admin_payment_methods_path %> /
   <%= @payment_method.name %>
 <% end %>
 

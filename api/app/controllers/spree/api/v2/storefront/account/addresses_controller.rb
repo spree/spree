@@ -7,19 +7,37 @@ module Spree
             before_action :require_spree_current_user
 
             def create
+              spree_authorize! :create, model_class
+
               result = create_service.call(user: spree_current_user, address_params: address_params)
               render_result(result)
             end
 
             def update
+              spree_authorize! :update, resource
+
               result = update_service.call(address: resource, address_params: address_params)
               render_result(result)
+            end
+
+            def destroy
+              spree_authorize! :destroy, resource
+
+              if resource.destroy
+                head 204
+              else
+                render_error_payload(resource.errors)
+              end
             end
 
             private
 
             def collection
-              collection_finder.new(scope: scope, params: params).execute
+              collection_finder.new(scope: scope, params: finder_params).execute
+            end
+
+            def scope
+              super.where(user: spree_current_user).not_deleted
             end
 
             def model_class
@@ -48,14 +66,6 @@ module Spree
 
             def address_params
               params.require(:address).permit(permitted_address_attributes)
-            end
-
-            def render_result(result)
-              if result.success?
-                render_serialized_payload { serialize_resource(result.value) }
-              else
-                render_error_payload(result.error)
-              end
             end
           end
         end

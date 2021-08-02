@@ -1,4 +1,4 @@
-<% if spree_navigation_data.any? %>
+<% if spree_menu.present? %>
   <div class="position-fixed text-uppercase d-xl-none mobile-navigation" role="navigation" aria-label="<%= Spree.t('nav_bar.mobile') %>">
     <div class="container d-flex align-items-center justify-content-between header-spree" data-hook>
       <button class="m-0 p-0" id="mobile-navigation-back-button" aria-label="<%= Spree.t('nav_bar.go_to_previous_menu') %>">
@@ -18,30 +18,41 @@
     </div>
 
     <ul class="list-unstyled position-relative h-100 mobile-navigation-list">
-      <% spree_navigation_data.each do |root| %>
-        <li class="d-flex justify-content-between align-items-center mobile-navigation-list-item">
-          <%= link_to root[:title], root[:url], class: 'w-75' %>
-          <% if root[:items].present? %>
-            <a class="w-25 text-right mobile-navigation-category-link" data-category="<%= root[:title].parameterize %>" href="#" aria-label="<%= Spree.t('go_to_category') %>">
+      <% spree_menu.children.each do |parent| %>
+          <li class="d-flex justify-content-between align-items-center mobile-navigation-list-item">
+          <% if parent.container? %>
+            <%= content_tag :span, parent.name %>
+          <% else %>
+            <%= spree_nav_link_tag(parent, {class: 'w-75'}) %>
+          <% end %>
+
+          <% if parent.children.present? %>
+            <a class="w-25 text-right mobile-navigation-category-link" data-category="<%= parent.name.parameterize %>" href="#" aria-label="<%= Spree.t('go_to_category') %>">
               <%= icon(name: 'arrow-right',
                        classes: 'd-inline spree-icon-arrow spree-icon-arrow-right',
                        width: 14,
                        height: 27) %>
             </a>
-            <ul class="list-unstyled position-absolute mobile-navigation-sublist" data-category="<%= root[:title].parameterize %>">
-              <li class="text-center font-weight-bold mobile-navigation-sublist-header">
-                <%= root[:title] %>
-              </li>
-              <% root[:items].each do |item| %>
-                <li class="d-flex justify-content-between align-items-center mobile-navigation-list-item">
-                  <%= link_to item[:title], item[:url], class: 'w-75' %>
+              <ul class="list-unstyled position-absolute mobile-navigation-sublist" data-category="<%= parent.name.parameterize %>">
+                <li class="text-center font-weight-bold mobile-navigation-sublist-header">
+                  <%= parent.name %>
                 </li>
-              <% end %>
-            </ul>
-          <% end %>
-        </li>
+
+                <% parent.children.each do |child| %>
+                  <% if child.container? && child.code?('category') %>
+                  <li class="text-muted mt-2"><%= child.name %></li>
+                    <% if child.children.present? %>
+                      <% child.children.each do |category_link| %>
+                        <li class="d-flex justify-content-between align-items-center mobile-navigation-list-item">
+                          <%= spree_nav_link_tag(category_link, {class: 'w-75'}) %>
+                        </li>
+                      <% end %>
+                    <% end %>
+                  <% end %>
+                <% end %>
+              </ul>
+            <% end %>
+          </li>
       <% end %>
-      <%= render partial: 'spree/shared/mobile_internationalization_options' %>
     </ul>
-  </div>
 <% end %>

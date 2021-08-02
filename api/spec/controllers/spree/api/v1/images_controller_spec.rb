@@ -4,7 +4,7 @@ module Spree
   describe Api::V1::ImagesController, type: :controller do
     render_views
 
-    let!(:product) { create(:product) }
+    let!(:product) { create(:product, stores: Spree::Store.all) }
     let!(:attributes) do
       [:id, :position, :attachment_content_type,
        :attachment_file_name, :type, :attachment_updated_at, :attachment_width,

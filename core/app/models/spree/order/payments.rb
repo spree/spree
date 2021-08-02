@@ -1,7 +1,7 @@
 module Spree
   class Order < Spree::Base
     module Payments
-      extend ActiveSupport::Concern
+      extend ActiveSupport::Concern # FIXME: this module is not required to be a concern
       included do
         # processes any pending payments and must return a boolean as it's
         # return value is used by the checkout state_machine to determine

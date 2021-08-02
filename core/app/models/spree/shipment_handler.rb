@@ -25,10 +25,12 @@ module Spree
       send_shipped_email
     end
 
-    private
+    protected
 
     def send_shipped_email
-      ShipmentMailer.shipped_email(@shipment.id).deliver_later
+      # you can overwrite this method in your application / extension to send out the confirmation email
+      # or use `spree_emails` gem
+      # YourEmailVendor.deliver_shipment_notification_email(@shipment.id)
     end
 
     def update_order_shipment_state

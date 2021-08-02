@@ -1,6 +1,8 @@
 module Spree
   module Admin
     class VariantsController < ResourceController
+      include Spree::Admin::ProductConcern
+
       belongs_to 'spree/product', find_by: :slug
       new_action.before :new_before
       before_action :redirect_on_empty_option_values, only: [:new]
@@ -9,7 +11,7 @@ module Spree
       # override the destroy method to set deleted_at value
       # instead of actually deleting the product.
       def destroy
-        @variant = Variant.find(params[:id])
+        @variant = parent.variants.find(params[:id])
         if @variant.destroy
           flash[:success] = Spree.t('notice_messages.variant_deleted')
         else
@@ -17,7 +19,7 @@ module Spree
         end
 
         respond_with(@variant) do |format|
-          format.html { redirect_to admin_product_variants_url(params[:product_id]) }
+          format.html { redirect_to spree.admin_product_variants_url(params[:product_id]) }
           format.js { render_js_for_destroy }
         end
       end
@@ -34,20 +36,19 @@ module Spree
         @object.default_price = master.default_price.clone if master.default_price.present?
       end
 
-      def parent
-        @product = Product.with_deleted.friendly.find(params[:product_id])
-      end
-
       def collection
-        @deleted = params.key?(:deleted) && params[:deleted] == 'on' ? 'checked' : ''
+        return @collection if @collection.present?
 
-        @collection ||=
-          if @deleted.blank?
-            super.includes(:default_price, option_values: :option_type)
-          else
-            Variant.only_deleted.where(product_id: parent.id)
-          end
-        @collection
+        params[:q] ||= {}
+        @deleted = params.dig(:q, :deleted_at_null) || '0'
+
+        @collection = super
+        @collection = @collection.deleted if @deleted == '1'
+        # @search needs to be defined as this is passed to search_link
+        @search = @collection.ransack(params[:q])
+        @collection = @search.result.
+                      page(params[:page]).
+                      per(params[:per_page] || Spree::Backend::Config[:variants_per_page])
       end
 
       private
@@ -57,7 +58,7 @@ module Spree
       end
 
       def redirect_on_empty_option_values
-        redirect_to admin_product_variants_url(params[:product_id]) if @product.empty_option_values?
+        redirect_to spree.admin_product_variants_url(params[:product_id]) if @product.empty_option_values?
       end
     end
   end

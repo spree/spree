@@ -25,19 +25,19 @@
           </div>
         </div>
         <div class="col-12">
-          <div class="field checkbox mb-2">
-            <label>
-              <%= f.check_box :deleted_at_null, {checked: params[:q][:deleted_at_null] == '0'}, '0', '1' %>
-              <%= Spree.t(:show_deleted) %>
-            </label>
-          </div>
+          <%= f.field_container :deleted_at_null do %>
+            <div class="custom-control custom-checkbox">
+              <%= f.check_box :deleted_at_null, {checked: params[:q][:deleted_at_null] == '0', class: 'custom-control-input'}, '0', '1' %>
+              <%= f.label :deleted_at_null, Spree.t(:show_deleted), class: 'custom-control-label' %>
+            </div>
+          <% end %>
 
-          <div class="field checkbox mb-2">
-            <label>
-              <%= f.check_box :not_discontinued, {checked: params[:q][:not_discontinued] == '0'}, '0', '1' %>
-              <%= Spree.t(:show_discontinued ) %>
-            </label>
-          </div>
+          <%= f.field_container :not_discontinued do %>
+            <div class="custom-control custom-checkbox">
+              <%= f.check_box :not_discontinued, {checked: params[:q][:not_discontinued] == '0', class: 'custom-control-input'}, '0', '1' %>
+              <%= f.label :not_discontinued, Spree.t(:show_discontinued ), class: 'custom-control-label' %>
+            </div>
+          <% end %>
         </div>
       </div>
       <div data-hook="admin_products_index_search_buttons" class="form-actions">
@@ -75,6 +75,7 @@
             <td class="sku"><%= product.sku rescue '' %></td>
             <td class="status"><%= active_badge(available_status == Spree.t(:available), label: available_status) %></td>
             <td class="text-center"><%= display_price(product) %></td>
+
             <td class="actions " data-hook="admin_products_index_row_actions">
               <span class="d-flex justify-content-end">
                 <%= link_to_edit product, no_text: true, class: 'edit' if can?(:edit, product) && !product.deleted? %>

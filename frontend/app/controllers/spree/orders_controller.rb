@@ -5,12 +5,10 @@ module Spree
 
     helper 'spree/products', 'spree/orders'
 
-    respond_to :html
-
     before_action :assign_order_with_lock, only: :update
 
     def show
-      @order = Order.includes(line_items: [variant: [:option_values, :images, :product]], bill_address: :state, ship_address: :state).find_by!(number: params[:id])
+      @order = current_store.orders.includes(line_items: [variant: [:option_values, :images, :product]], bill_address: :state, ship_address: :state).find_by!(number: params[:id])
     end
 
     def update
@@ -20,7 +18,8 @@ module Spree
         https://api.spreecommerce.org/docs/api-v2/api/docs/v2/storefront/index.yaml/paths/~1api~1v2~1storefront~1cart~1remove_line_item~1%7Bline_item_id%7D/delete
       DEPRECATION
 
-      @variant = Spree::Variant.find(params[:variant_id]) if params[:variant_id]
+      @variant = curret_store.variants.find(params[:variant_id]) if params[:variant_id]
+      
       if Cart::Update.call(order: @order, params: order_params).success?
         respond_with(@order) do |format|
           format.html do
@@ -39,7 +38,7 @@ module Spree
 
     # Shows the current incomplete order from the session
     def edit
-      @order = current_order || Order.incomplete.
+      @order = current_order || current_store.orders.incomplete.
                includes(line_items: [variant: [:images, :product, option_values: :option_type]]).
                find_or_initialize_by(token: cookies.signed[:token])
       associate_user
@@ -51,7 +50,8 @@ module Spree
         Please use API v2 Storefront Cart Empty action
         https://api.spreecommerce.org/docs/api-v2/api/docs/v2/storefront/index.yaml/paths/~1api~1v2~1storefront~1cart~1empty/patch
       DEPRECATION
-      current_order.try(:empty!)
+      
+      cart_empty_service.call(order: current_order)
 
       redirect_to spree.cart_path
     end
@@ -67,7 +67,7 @@ module Spree
     end
 
     def check_authorization
-      order = Spree::Order.find_by(number: params[:id]) if params[:id].present?
+      order = current_store.orders.find_by(number: params[:id]) if params[:id].present?
       order ||= current_order
 
       if order && action_name.to_sym == :show
@@ -97,6 +97,10 @@ module Spree
 
     def cart_add_item_service
       Spree::Dependencies.cart_add_item_service.constantize
+    end
+
+    def cart_empty_service
+      Spree::Dependencies.cart_empty_service.constantize
     end
   end
 end

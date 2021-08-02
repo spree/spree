@@ -7,8 +7,8 @@ Gem::Specification.new do |s|
   s.version     = Spree.version
   s.authors     = ['Sean Schofield', 'Spark Solutions']
   s.email       = 'hello@spreecommerce.org'
-  s.summary     = 'Full-stack e-commerce framework for Ruby on Rails.'
-  s.description = 'Spree is an open source e-commerce framework for Ruby on Rails. Join us on http://slack.spreecommerce.org'
+  s.summary     = 'Headless API-first open source eCommerce platform'
+  s.description = 'A complete open source e-commerce solution with multi-store, multi-currency and multi-language capabilities'
   s.homepage    = 'https://spreecommerce.org'
   s.license     = 'BSD-3-Clause'
 
@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
     "source_code_uri"   => "https://github.com/spree/spree/tree/v#{s.version}",
   }
 
-  s.required_ruby_version = '>= 2.5.0'
+  s.required_ruby_version = '>= 2.5'
 
   s.files        = Dir['README.md', 'lib/**/*']
   s.require_path = 'lib'
@@ -27,8 +27,4 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'spree_core', s.version
   s.add_dependency 'spree_api', s.version
-  s.add_dependency 'spree_backend', s.version
-  s.add_dependency 'spree_frontend', s.version
-  s.add_dependency 'spree_sample', s.version
-  s.add_dependency 'spree_cmd', s.version
 end

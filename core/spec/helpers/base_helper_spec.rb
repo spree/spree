@@ -128,6 +128,51 @@ describe Spree::BaseHelper, type: :helper do
     end
   end
 
+  context 'base_cache_key' do
+    let(:current_currency) { 'USD' }
+
+    context 'when try_spree_current_user defined' do
+      before do
+        I18n.locale = I18n.default_locale
+        allow_any_instance_of(described_class).to receive(:try_spree_current_user).and_return(user)
+      end
+
+      context 'when admin user' do
+        let!(:user) { create(:admin_user) }
+
+        it 'returns base cache key' do
+          expect(base_cache_key).to eq [:en, 'USD', true, true]
+        end
+      end
+
+      context 'when user without admin role' do
+        let!(:user) { create(:user) }
+
+        it 'returns base cache key' do
+          expect(base_cache_key).to eq [:en, 'USD', true, false]
+        end
+      end
+
+      context 'when spree_current_user is nil' do
+        let!(:user) { nil }
+
+        it 'returns base cache key' do
+          expect(base_cache_key).to eq [:en, 'USD', false, nil]
+        end
+      end
+    end
+
+    context 'when try_spree_current_user is undefined' do
+      let(:current_currency) { 'USD' }
+
+      before { I18n.locale = I18n.default_locale }
+
+      it 'returns base cache key' do
+        expect(base_cache_key).to eq [:en, 'USD', nil, nil]
+      end
+    end
+  end
+
   # Regression test for #2396
   context 'meta_data_tags' do
     it 'truncates a product description to 160 characters' do
@@ -135,7 +180,7 @@ describe Spree::BaseHelper, type: :helper do
       # controller_name is used by this method to infer what it is supposed
       # to be generating meta_data_tags for
       text = FFaker::Lorem.paragraphs(2).join(' ')
-      @test = Spree::Product.new(description: text)
+      @test = Spree::Product.new(description: text, stores: [current_store])
       tags = Nokogiri::HTML.parse(meta_data_tags)
       content = tags.css('meta[name=description]').first['content']
       assert content.length <= 160, 'content length is not truncated to 160 characters'
@@ -146,7 +191,7 @@ describe Spree::BaseHelper, type: :helper do
     let(:current_currency) { 'USD' }
     let(:image) { create(:image, position: 1) }
     let(:product) do
-      create(:product).tap { |product| product.master.images << image }
+      create(:product, stores: [current_store]).tap { |product| product.master.images << image }
     end
 
     it 'renders open graph meta data tags for PDP' do
@@ -199,7 +244,7 @@ describe Spree::BaseHelper, type: :helper do
   end
 
   describe '#display_price' do
-    let!(:product) { create(:product) }
+    let!(:product) { create(:product, stores: [current_store]) }
     let(:current_currency) { 'USD' }
     let(:current_price_options) { { tax_zone: current_tax_zone } }
 
@@ -262,7 +307,7 @@ describe Spree::BaseHelper, type: :helper do
   end
 
   describe '#default_image_for_product_or_variant' do
-    let(:product) { build :product }
+    let(:product) { build :product, stores: [current_store] }
     let(:variant) { build :variant, product: product }
 
     subject(:default_image) { default_image_for_product_or_variant(product_or_variant) }
@@ -323,6 +368,23 @@ describe Spree::BaseHelper, type: :helper do
         let!(:image_2) { create :image, viewable: variant_2 }
 
         it { is_expected.to eq(image_1) }
+      end
+    end
+  end
+
+  describe '#spree_favicon_path' do
+    context 'when a store has its own favicon' do
+      let(:current_store) { create(:store, :with_favicon) }
+
+      it do
+        expect(spree_favicon_path).to end_with('favicon.ico')
+        expect(URI.parse(spree_favicon_path).host).to be_present
+      end
+    end
+
+    context 'when a store has no favicon' do
+      it do
+        expect(spree_favicon_path).to eq('favicon.ico')
       end
     end
   end

@@ -52,15 +52,9 @@ fi
 
 if [ "$SPREE_HEADLESS" != "" ]; then
 cat <<RUBY >> Gemfile
-gem 'spree_core', path: '..'
-gem 'spree_api', path: '..'
-gem 'spree_backend', path: '..'
-gem 'spree_sample', path: '..'
-gem 'spree_cmd', path: '..'
-
+gem 'spree', path: '..'
 $SPREE_AUTH_DEVISE_GEM
 $SPREE_GATEWAY_GEM
-
 gem 'spree_i18n', github: 'spree-contrib/spree_i18n', branch: 'master'
 
 group :test, :development do
@@ -74,12 +68,14 @@ RUBY
 else
 cat <<RUBY >> Gemfile
 gem 'spree', path: '..'
+gem 'spree_frontend', path: '../frontend'
+gem 'spree_backend', path: '../backend'
+gem 'spree_emails', path: '../emails'
+gem 'spree_sample', path: '../sample/'
 $SPREE_AUTH_DEVISE_GEM
 $SPREE_GATEWAY_GEM
 gem 'spree_i18n', github: 'spree-contrib/spree_i18n', branch: 'master'
-gem 'spree_static_content', github: 'spree-contrib/spree_static_content', branch: 'master'
 gem 'spree_related_products', github: 'spree-contrib/spree_related_products', branch: 'master'
-gem 'spree_multi_domain', github: 'spree-contrib/spree-multi-domain', branch: 'master'
 
 group :test, :development do
   gem 'bullet'
@@ -106,13 +102,15 @@ RUBY
 bundle install --gemfile Gemfile
 bundle exec rails db:drop || true
 bundle exec rails db:create
-bundle exec rails g spree:install --auto-accept --user_class=Spree::User --enforce_available_locales=true --copy_storefront=false
-bundle exec rails g spree:mailers_preview
+bundle exec rails g spree:install --auto-accept --user_class=Spree::User --sample=true
+if [ "$SPREE_HEADLESS" == "" ]; then
+  bundle exec rails g spree:frontend:install
+  bundle exec rails g spree:backend:install
+  bundle exec rails g spree:emails:install
+fi
 bundle exec rails g spree:auth:install
 bundle exec rails g spree_gateway:install
 
 if [ "$SPREE_HEADLESS" == "" ]; then
   bundle exec rails g spree_related_products:install
-  bundle exec rails g spree_static_content:install
-  bundle exec rails g spree_multi_domain:install
 fi

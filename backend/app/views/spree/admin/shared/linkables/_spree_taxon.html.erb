@@ -1,0 +1,22 @@
+<% if resource.linked_resource %>
+   <% resource_holder = [resource.linked_resource] %>
+   <% id_holder = :id %>
+   <% name_holder = :pretty_name %>
+   <% active_id_holder = resource.linked_resource.id %>
+ <% end %>
+
+ <%= f.field_container :linked_resource_field, class: ['form-group'] do %>
+   <%= f.label :linked_resource_id, Spree.t('taxon') %>
+   <%= f.select :linked_resource_id,
+        options_from_collection_for_select(resource_holder || [],
+                                           id_holder, name_holder, active_id_holder || nil),
+        { include_blank: true },
+        class: 'select2autocomplete',
+        data: { autocomplete_placeholder_value: Spree.t('admin.navigation.seach_for_a_taxon'),
+                autocomplete_clear_value: true,
+                autocomplete_url_value: 'taxons_api_v2',
+                autocomplete_return_attr_value: 'pretty_name' } %>
+
+   <%= f.error_message_on :linked_resource_id %>
+   <small class="form-text text-muted"><%= resource.link %></small>
+ <% end %>

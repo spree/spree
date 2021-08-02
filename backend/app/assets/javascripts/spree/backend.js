@@ -13,16 +13,13 @@
 //= require jquery-ui/widgets/autocomplete
 //= require select2-full
 //= require sweetalert2
+//= require tinymce
+//= require spree/backend/global/tinymce
+
 //= require underscore-min.js
 //= require jsonapi-serializer.min
 
-//= require spree/backend/global/alerts
-//= require spree/backend/global/bootstrap
-//= require spree/backend/global/flatpickr
-//= require spree/backend/global/ransack
-//= require spree/backend/global/radio_panel_toggle
-//= require spree/backend/global/responsive_menus
-//= require spree/backend/global/sortable
+//= require spree/backend/global/_index
 
 //= require spree
 //= require spree/backend/spree-select2
@@ -45,6 +42,8 @@
 //= require spree/backend/product_picker
 //= require spree/backend/progress
 //= require spree/backend/promotions
+//= require spree/backend/cms/_index
+//= require spree/backend/menus/_index
 //= require spree/backend/returns/expedited_exchanges_warning
 //= require spree/backend/returns/return_item_selection
 //= require spree/backend/shipments
@@ -92,12 +91,15 @@ Spree.routes.stock_items_api = function (stockLocationId) {
 }
 
 // API v2
-
 Spree.routes.countries_api_v2 = Spree.pathFor('api/v2/platform/countries')
-
+Spree.routes.menus_api_v2 = Spree.pathFor('api/v2/platform/menus')
+Spree.routes.menus_items_api_v2 = Spree.pathFor('api/v2/platform/menu_items')
 Spree.routes.option_types_api_v2 = Spree.pathFor('api/v2/platform/option_types')
 Spree.routes.option_values_api_v2 = Spree.pathFor('api/v2/platform/option_values')
-
+Spree.routes.pages_api_v2 = Spree.pathFor('api/v2/platform/cms_pages')
+Spree.routes.products_api_v2 = Spree.pathFor('/api/v2/platform/products')
+Spree.routes.sections_api_v2 = Spree.pathFor('/api/v2/platform/cms_sections')
+Spree.routes.taxons_api_v2 = Spree.pathFor('/api/v2/platform/taxons')
 Spree.routes.users_api_v2 = Spree.pathFor('api/v2/platform/users')
 
 Spree.apiV2Authentication = function() {

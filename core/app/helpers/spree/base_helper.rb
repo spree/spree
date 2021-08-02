@@ -18,6 +18,16 @@ module Spree
       end.sort_by { |c| c.name.parameterize }
     end
 
+    def spree_resource_path(resource)
+      last_word = resource.class.name.split('::', 10).last
+
+      spree_class_name_as_path(last_word)
+    end
+
+    def spree_class_name_as_path(class_name)
+      class_name.underscore.humanize.parameterize(separator: '_')
+    end
+
     def display_price(product_or_variant)
       product_or_variant.
         price_in(current_currency).
@@ -45,6 +55,11 @@ module Spree
     end
 
     def logo(image_path = nil, options = {})
+      ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
+        `BaseHelper#logo` is deprecated and will be removed in Spree 5.0.
+        Please use `FrontendHelper#logo` instead
+      DEPRECATION
+
       image_path ||= if current_store.logo.attached? && current_store.logo.variable?
                        main_app.url_for(current_store.logo.variant(resize: '244x104>'))
                      elsif current_store.logo.attached? && current_store.logo.image?
@@ -58,6 +73,10 @@ module Spree
       link_to path, 'aria-label': current_store.name, method: options[:method] do
         image_tag image_path, alt: current_store.name, title: current_store.name
       end
+    end
+
+    def spree_favicon_path
+      main_app.url_for(current_store.favicon || 'favicon.ico')
     end
 
     def object
@@ -104,7 +123,7 @@ module Spree
                               description: [object.name, current_store.meta_description].reject(&:blank?).join(', '))
         else
           meta.reverse_merge!(keywords: (current_store.meta_keywords || current_store.seo_title),
-                              description: (current_store.meta_description || current_store.seo_title))
+                              description: (current_store.homepage(I18n.locale)&.seo_meta_description || current_store.seo_meta_description))
         end
       end
       meta
@@ -179,7 +198,8 @@ module Spree
     end
 
     def base_cache_key
-      [I18n.locale, current_currency]
+      [I18n.locale, current_currency, defined?(try_spree_current_user) && try_spree_current_user.present?,
+       defined?(try_spree_current_user) && try_spree_current_user.try(:has_spree_role?, 'admin')]
     end
 
     def maximum_quantity

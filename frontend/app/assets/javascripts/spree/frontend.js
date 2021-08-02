@@ -11,6 +11,7 @@
 //= require spree/api/main
 //= require ./lazysizes.config
 //= require lazysizes.min
+//= require accounting.min
 //= require turbolinks
 //= require spree/frontend/account
 //= require spree/frontend/api_tokens
@@ -30,6 +31,7 @@
 //= require spree/frontend/views/spree/products/description
 //= require spree/frontend/views/spree/products/index
 //= require spree/frontend/views/spree/products/modal_carousel
+//= require spree/frontend/views/spree/products/price_filters
 //= require spree/frontend/views/spree/shared/carousel
 //= require spree/frontend/views/spree/shared/carousel/single
 //= require spree/frontend/views/spree/shared/carousel/swipes

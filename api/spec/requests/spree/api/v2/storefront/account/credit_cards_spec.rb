@@ -2,7 +2,6 @@ require 'spec_helper'
 
 describe 'Storefront API v2 CreditCards spec', type: :request do
   let!(:user) { create(:user) }
-  let!(:params) { { user_id: user.id } }
   let!(:credit_cards) { create_list(:credit_card, 3, user_id: user.id) }
 
   shared_examples 'returns valid user credit cards resource JSON' do
@@ -40,12 +39,48 @@ describe 'Storefront API v2 CreditCards spec', type: :request do
         expect(json_response['data'][0]).to have_type('credit_card')
         expect(json_response['data'].size).to eq(credit_cards.count)
       end
+
+      context 'user has credit cards that are not available on the front end' do
+        let!(:credit_cards) { create_list(:credit_card, 3, user_id: user.id, payment_method: payment_method) }
+        let(:payment_method) { create(:credit_card_payment_method, display_on: display_on, stores: stores) }
+        let(:stores) { [Spree::Store.default] }
+        let(:display_on) { :none }
+
+        it 'does not return any' do
+          expect(response.status).to eq(200)
+          expect(json_response['data'].size).to eq(0)
+        end
+        
+        context 'user has a credit cards available on the front end but in different store' do
+          let(:stores) { [create(:store)] }
+          let(:display_on) { :front_end }
+
+          it 'does not return any' do
+            expect(response.status).to eq(200)
+            expect(json_response['data'].size).to eq(0)
+          end
+        end
+      end
     end
 
     context 'with missing authorization token' do
       before { get '/api/v2/storefront/account/credit_cards' }
 
       it_behaves_like 'returns 403 HTTP status'
+    end
+
+    context 'when user has admin privileges' do
+      let!(:user) { create(:admin_user) }
+      let!(:new_user) { create(:user) }
+      let!(:new_credit_card) { create(:credit_card, user_id: new_user.id, last_digits: '2222') }
+
+      before { get '/api/v2/storefront/account/credit_cards', headers: headers_bearer }
+
+      it 'should return user credit cards only' do
+        expect(json_response['data'][0]).to have_type('credit_card')
+        expect(json_response['data'].size).to eq(credit_cards.count)
+        expect(json_response['data'].map { |card| card['attributes']['last_digits'] }).not_to include(new_credit_card.last_digits)
+      end
     end
   end
 
