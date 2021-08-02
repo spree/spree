@@ -74,11 +74,11 @@ module Spree
     end
 
     belongs_to :bill_address, foreign_key: :bill_address_id, class_name: 'Spree::Address',
-                              optional: true, dependent: :destroy
+                              optional: true
     alias_attribute :billing_address, :bill_address
 
     belongs_to :ship_address, foreign_key: :ship_address_id, class_name: 'Spree::Address',
-                              optional: true, dependent: :destroy
+                              optional: true
     alias_attribute :shipping_address, :ship_address
 
     belongs_to :store, class_name: 'Spree::Store'
