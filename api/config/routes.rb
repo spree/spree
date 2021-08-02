@@ -232,8 +232,8 @@ Spree::Core::Engine.add_routes do
 
         # Geo API
         resources :zones
-        resources :countries
-        resources :states
+        resources :countries, only: [:index, :show]
+        resources :states, only: [:index, :show]
 
         # Shipment API
         resources :shipments do
