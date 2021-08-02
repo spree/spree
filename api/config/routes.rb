@@ -185,6 +185,11 @@ Spree::Core::Engine.add_routes do
 
         # Product Catalog API
         resources :products
+        resources :classifications do
+          member do
+            put :reposition
+          end
+        end
         resources :images
         resources :variants
         resources :properties

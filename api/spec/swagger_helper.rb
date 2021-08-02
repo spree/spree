@@ -60,6 +60,14 @@ RSpec.configure do |config|
               user_id: { type: :integer }
             }
           },
+          classification_params: {
+            type: :object,
+            properties: {
+              product_id: { type: :integer },
+              taxon_id: { type: :integer },
+              position: { type: :integer }
+            }
+          },
           resources_list: {
             type: :object,
             properties: {

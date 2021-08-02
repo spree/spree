@@ -2,6 +2,7 @@ module Spree
   module PermittedAttributes
     ATTRIBUTES = [
       :address_attributes,
+      :classification_attributes,
       :checkout_attributes,
       :customer_return_attributes,
       :image_attributes,
@@ -43,6 +44,10 @@ module Spree
     @@checkout_attributes = [
       :coupon_code, :email, :shipping_method_id, :special_instructions, :use_billing,
       :user_id, :bill_address_id, :ship_address_id
+    ]
+
+    @@classification_attributes = [
+      :position, :taxon_id, :product_id
     ]
 
     @@cms_page_attributes = [:title, :meta_title, :content, :meta_description, :visible, :slug, :locale]
