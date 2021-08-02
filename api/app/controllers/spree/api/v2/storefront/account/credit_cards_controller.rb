@@ -6,14 +6,6 @@ module Spree
           class CreditCardsController < ::Spree::Api::V2::ResourceController
             before_action :require_spree_current_user
 
-            def index
-              render_serialized_payload { serialize_collection(collection) }
-            end
-
-            def show
-              render_serialized_payload { serialize_resource(resource) }
-            end
-
             def destroy
               spree_authorize! :destroy, resource, resource
 
@@ -30,12 +22,8 @@ module Spree
               end
             end
 
-            def collection
-              collection_finder.new(scope: scope, params: params).execute
-            end
-
-            def serialize_collection(collection)
-              collection_serializer.new(collection).serializable_hash
+            def model_class
+              Spree::CreditCard
             end
 
             def scope
