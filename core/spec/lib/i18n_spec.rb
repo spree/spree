@@ -45,7 +45,7 @@ describe 'i18n' do
       it 'returns just default locales' do
         locales = Spree.available_locales
 
-        expected_locales = ([Rails.application.config.i18n.default_locale, I18n.locale, :en] + I18n.available_locales).uniq.compact
+        expected_locales = [:en, :ar, :az, :bg, :ca, :cs, :da, :de, :el, :es, :fa, :fi, :fr, :hu, :id, :it, :ja, :nl, :"pt-BR", :ro, :ru, :sk, :tr, :"zh-CN", :"zh-TW", :pl, :uk, :vi]
 
         expect(locales).to eq expected_locales
       end
