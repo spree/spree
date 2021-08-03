@@ -1,15 +1,21 @@
 require 'spec_helper'
 
 describe Spree::Api::V2::Platform::ProductSerializer do
-  subject { described_class.new(product) }
+  include_context 'API v2 serializers params'
+
+  subject { described_class.new(product, params: serializer_params) }
 
   let!(:images) { create_list(:image, 2) }
   let(:product) do
-    create(:product,
+    create(:product_in_stock,
+           name: 'Test Product',
+           price: 10.00,
+           compare_at_price: 15.00,
            variants_including_master: [create(:variant, images: images), create(:variant)],
            option_types: create_list(:option_type, 2),
            product_properties: create_list(:product_property, 2),
-           taxons: create_list(:taxon, 2))
+           taxons: create_list(:taxon, 2),
+           tax_category: create(:tax_category))
   end
 
   it { expect(subject.serializable_hash).to be_kind_of(Hash) }
@@ -32,9 +38,30 @@ describe Spree::Api::V2::Platform::ProductSerializer do
             updated_at: product.updated_at,
             promotionable: product.promotionable,
             meta_title: product.meta_title,
-            discontinue_on: product.discontinue_on
+            discontinue_on: product.discontinue_on,
+            purchasable: product.purchasable?,
+            in_stock: product.in_stock?,
+            backorderable: product.backorderable?,
+            available: product.available?,
+            currency: currency,
+            price: BigDecimal(10),
+            display_price: '$10.00',
+            compare_at_price: BigDecimal(15),
+            display_compare_at_price: '$15.00'
           },
           relationships: {
+            tax_category: {
+              data: {
+                id: product.tax_category.id.to_s,
+                type: :tax_category
+              }
+            },
+            master_variant: {
+              data: {
+                id: product.master.id.to_s,
+                type: :variant
+              }
+            },
             default_variant: {
               data: {
                 id: product.default_variant.id.to_s,
@@ -100,7 +127,7 @@ describe Spree::Api::V2::Platform::ProductSerializer do
                   type: :image
                 }
               ]
-            }
+            },
           }
         }
       }

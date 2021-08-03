@@ -185,6 +185,11 @@ Spree::Core::Engine.add_routes do
 
         # Product Catalog API
         resources :products
+        resources :classifications do
+          member do
+            put :reposition
+          end
+        end
         resources :images
         resources :variants
         resources :properties
@@ -227,8 +232,8 @@ Spree::Core::Engine.add_routes do
 
         # Geo API
         resources :zones
-        resources :countries
-        resources :states
+        resources :countries, only: [:index, :show]
+        resources :states, only: [:index, :show]
 
         # Shipment API
         resources :shipments do
