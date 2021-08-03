@@ -29,7 +29,7 @@ module Spree
         def scope(skip_cancancan: false)
           base_scope = model_class.for_store(current_store)
           base_scope = base_scope.accessible_by(current_ability, :show) unless skip_cancancan
-          base_scope = base_scope.includes(scope_includes) if scope_includes.any?
+          base_scope = base_scope.includes(scope_includes) if scope_includes.any? && action_name == 'index'
           base_scope
         end
 
