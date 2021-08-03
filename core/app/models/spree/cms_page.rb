@@ -18,6 +18,7 @@ module Spree
 
     validates :title, :store, :locale, presence: true
     validates :slug, uniqueness: { scope: :store_id, allow_nil: true, case_sensitive: true }
+    validates :locale, uniqueness: { scope: [:store, :type] }, if: :homepage?
 
     scope :visible, -> { where(visible: true) }
     scope :by_locale, ->(locale) { where(locale: locale) }

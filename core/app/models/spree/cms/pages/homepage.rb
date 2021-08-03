@@ -3,8 +3,6 @@ module Spree::Cms::Pages
     before_create :empty_slug
     after_save :empty_slug
 
-    validates :type, uniqueness: { scope: [:store, :locale] }
-
     def sections?
       true
     end

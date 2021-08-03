@@ -16,8 +16,16 @@ describe Spree::CmsPage, type: :model do
     expect(described_class.new(title: 'Got Name', store: store_a, locale: nil)).not_to be_valid
   end
 
+  describe 'validates uniqueness of homepage by locale' do
+    let!(:homepage) { create(:cms_homepage, store: store_a, locale: 'en') }
+
+    it 'valid' do
+      expect(described_class.new(title: 'Got Name', store: store_a, locale: 'en', type: 'Spree::Cms::Pages::Homepage')).not_to be_valid
+    end
+  end
+
   describe 'Spree::Cms::Pages::Homepage' do
-    let(:homepage) { create(:cms_homepage, store: store_a) }
+    let(:homepage) { create(:cms_homepage, store: store_a, locale: 'en') }
 
     it 'has a type of Spree::Cms::Pages::Homepage' do
       expect(homepage.type).to eq('Spree::Cms::Pages::Homepage')
