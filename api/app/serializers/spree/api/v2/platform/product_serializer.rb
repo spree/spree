@@ -59,7 +59,9 @@ module Spree
           has_many :variants
           has_many :option_types
           has_many :product_properties
-          has_many :taxons
+          has_many :taxons do |object, params|
+            object.taxons_for_store(params[:store])
+          end
 
           has_many :images,
                    object_method_name: :variant_images,
