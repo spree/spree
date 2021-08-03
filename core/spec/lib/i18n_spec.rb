@@ -28,14 +28,13 @@ describe 'i18n' do
 
       it 'returns all locales from the SpreeI18n' do
         locales = Spree.available_locales
-        expected_locales = ([:en, :de, :nl] + I18n.available_locales)
+        expected_locales = [:en, :de, :nl, :ar, :az, :bg, :ca, :cs, :da, :el, :es, :fa, :fi, :fr, :hu, :id, :it, :ja, :"pt-BR", :ro, :ru, :sk, :tr, :"zh-CN", :"zh-TW", :pl, :uk, :vi]
 
-        expect(locales).to eq expected_locales.compact.uniq
+        expect(locales).to eq expected_locales
       end
 
       it 'returns an array with the string "en" removed' do
         locales = Spree.available_locales
-        expected_locales = ([:en, :de, :nl] + I18n.available_locales)
 
         expect(locales).not_to include('en')
       end
