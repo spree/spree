@@ -1,27 +1,11 @@
 module Spree
   module CreditCards
-    class Find
-      def initialize(scope:, params:)
-        @scope = scope
-        @payment_method_id = params.dig(:filter, :payment_method_id)
-      end
-
+    class Find < ::Spree::BaseFinder
       def execute
-        by_payment_method_id(scope)
-      end
+        return scope.default.take if params[:id].eql?('default')
+        return scope.where(payment_method_id: params[:filter]['payment_method_id']) if params[:filter].present?
 
-      private
-
-      attr_reader :payment_method_id, :scope
-
-      def payment_method_id?
-        payment_method_id.present?
-      end
-
-      def by_payment_method_id(scope)
-        return scope unless payment_method_id?
-
-        scope.where(payment_method_id: payment_method_id)
+        scope
       end
     end
   end

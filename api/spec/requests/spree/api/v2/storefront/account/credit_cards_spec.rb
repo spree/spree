@@ -52,7 +52,7 @@ describe 'Storefront API v2 CreditCards spec', type: :request do
           expect(response.status).to eq(200)
           expect(json_response['data'].size).to eq(0)
         end
-        
+
         context 'user has a credit cards available on the front end but in different store' do
           let(:stores) { [create(:store)] }
           let(:display_on) { :front_end }
@@ -60,6 +60,14 @@ describe 'Storefront API v2 CreditCards spec', type: :request do
           it 'does not return any' do
             expect(response.status).to eq(200)
             expect(json_response['data'].size).to eq(0)
+          end
+        end
+
+        context 'deleted credit cards are omitted' do
+          let!(:deleted_credit_card) { create(:credit_card, user_id: user.id, payment_method: payment_method, deleted_at: Time.current) }
+
+          it 'returns all user credit_cards' do
+            expect(json_response['data'].map(&:id)).not_to include(deleted_credit_card.id)
           end
         end
       end
@@ -121,15 +129,43 @@ describe 'Storefront API v2 CreditCards spec', type: :request do
 
       it_behaves_like 'returns 403 HTTP status'
     end
+
+    context 'deleted credit card' do
+      let!(:credit_card) { create(:credit_card, user_id: user.id, default: false) }
+
+      before { credit_card.destroy }
+
+      it 'returns 404 HTTP status' do
+        get "/api/v2/storefront/account/credit_cards/#{credit_card.id}", headers: headers_bearer
+        expect(response.status).to eq(404)
+      end
+    end
   end
 
   describe 'credit_cards#destroy' do
-    let!(:credit_card) { create(:credit_card, user_id: user.id) }
+    context 'when credit card exist' do
+      let!(:credit_card) { create(:credit_card, user_id: user.id) }
 
-    it 'deletes a credit card' do
-      delete "/api/v2/storefront/account/credit_cards/#{credit_card.id}", headers: headers_bearer
+      it 'deletes a credit card' do
+        delete "/api/v2/storefront/account/credit_cards/#{credit_card.id}", headers: headers_bearer
 
-      expect(response.status).to eq(204)
+        expect(credit_card.reload.deleted_at).not_to be_nil
+        expect(response.status).to eq(204)
+      end
+
+      context 'with missing authorization token' do
+        before { delete "/api/v2/storefront/account/credit_cards/#{credit_card.id}" }
+
+        it_behaves_like 'returns 403 HTTP status'
+      end
+    end
+
+    context 'when credit card does not exist' do
+      it 'should not find a credit card' do
+        delete "/api/v2/storefront/account/credit_cards/dummy_id", headers: headers_bearer
+
+        expect(response.status).to eq(404)
+      end
     end
   end
 end

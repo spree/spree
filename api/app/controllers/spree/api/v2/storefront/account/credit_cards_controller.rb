@@ -15,11 +15,7 @@ module Spree
             private
 
             def resource
-              if params[:id].eql?('default')
-                scope.default.first!
-              else
-                scope.find(params[:id])
-              end
+              params[:id].eql?('default') ? scope.default.first! : scope.find(params[:id])
             end
 
             def model_class

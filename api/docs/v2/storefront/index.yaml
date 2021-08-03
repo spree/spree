@@ -314,6 +314,23 @@ paths:
           description: Filter based on payment method ID
         - $ref: '#/components/parameters/CreditCardIncludeParam'
         - $ref: '#/components/parameters/SparseFieldsParam'
+  '/api/v2/storefront/account/credit_cards/{id}':
+    delete:
+      description: 'Removes selected credit card for the signed in User. It uses soft-delete.'
+      tags:
+        - Account
+      operationId: Remove Credit Card
+      parameters:
+        - $ref: '#/components/parameters/CreditCardIncludeParam'
+        - $ref: '#/components/parameters/SparseFieldsParam'
+      responses:
+        '204':
+          description: Requested Credit Card has been removed from the User Account
+        '404':
+          $ref: '#/components/responses/404NotFound'
+      security:
+        - bearerAuth: []
+      summary: Remove Credit Card
   /api/v2/storefront/account/credit_cards/default:
     get:
       description: Return the User's default Credit Card
