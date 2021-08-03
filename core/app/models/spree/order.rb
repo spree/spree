@@ -20,6 +20,9 @@ module Spree
 
     include NumberAsParam
     include SingleStoreResource
+    include MemoizedData
+
+    MEMOIZED_METHODS = %w(tax_zone)
 
     extend Spree::DisplayMoney
     money_methods :outstanding_balance, :item_total,           :adjustment_total,
@@ -428,7 +431,7 @@ module Spree
       DEPRECATION
 
       raise Spree.t(:cannot_empty_completed_order) if completed?
-      
+
       result = Spree::Dependencies.cart_empty_service.constantize.call(order: self)
       result.value
     end
@@ -582,11 +585,6 @@ module Spree
 
     def approve!
       update_column(:considered_risky, false)
-    end
-
-    def reload(options = nil)
-      remove_instance_variable(:@tax_zone) if defined?(@tax_zone)
-      super
     end
 
     def tax_total
