@@ -23,15 +23,21 @@ describe 'i18n' do
       before do
         class_double('SpreeI18n').
           as_stubbed_const(transfer_nested_constants: true)
-        class_double('SpreeI18n::Locale', all: [:en, :de, :nl]).as_stubbed_const(transfer_nested_constants: true)
+        class_double('SpreeI18n::Locale', all: ['en',:en, :de, :nl]).as_stubbed_const(transfer_nested_constants: true)
       end
 
       it 'returns all locales from the SpreeI18n' do
         locales = Spree.available_locales
+        expected_locales = ([:en, :de, :nl] + I18n.available_locales)
 
-        expected_locales = (['en', 'de', 'nl'] + I18n.available_locales).uniq.compact
+        expect(locales).to eq expected_locales.compact.uniq
+      end
 
-        expect(locales).to eq expected_locales
+      it 'returns an array with the string "en" removed' do
+        locales = Spree.available_locales
+        expected_locales = ([:en, :de, :nl] + I18n.available_locales)
+
+        expect(locales).not_to include('en')
       end
     end
 
