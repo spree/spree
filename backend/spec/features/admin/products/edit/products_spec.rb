@@ -3,7 +3,7 @@ require 'spec_helper'
 describe 'Product Details', type: :feature, js: true do
   stub_authorization!
 
-  context 'editing a product with wysiwyg disabled' do
+  context 'editing a product with WYSIWYG disabled' do
     before do
       Spree::Config.product_wysiwyg_editor_enabled = false
       create(:product, name: 'Bún thịt nướng', sku: 'A100', description: 'lorem ipsum', available_on: '2013-08-14 01:02:03')
@@ -13,13 +13,13 @@ describe 'Product Details', type: :feature, js: true do
 
     after { Spree::Config.product_wysiwyg_editor_enabled = true }
 
-    it 'lists the product description in standard input' do
+    it 'displays the product description as a standard input field' do
       expect(page).to have_field(id: 'product_description', with: 'lorem ipsum')
       expect(page).not_to have_css('#product_description_ifr')
     end
   end
 
-  context 'editing a product with wysiwyg editer on' do
+  context 'editing a product with WYSIWYG editer enabled' do
     before do
       Spree::Config.product_wysiwyg_editor_enabled = true
       create(:product, name: 'Bún thịt nướng', sku: 'A100', description: 'lorem ipsum', available_on: '2013-08-14 01:02:03')
@@ -27,11 +27,11 @@ describe 'Product Details', type: :feature, js: true do
       within_row(1) { click_icon :edit }
     end
 
-    it 'lists the product details' do
+    it 'displays the product details with a WYSIWYG editor for the product description input' do
       expect(page).to have_css('.content-header h1', text: 'Products / Bún thịt nướng')
       expect(page).to have_field(id: 'product_name', with: 'Bún thịt nướng')
       expect(page).to have_field(id: 'product_slug', with: 'bun-th-t-n-ng')
-      expect(page).not_to have_field(id: 'product_description', with: 'lorem ipsum')
+      expect(page).not_to have_field(id: 'product_description')
       expect(page).to have_css('#product_description_ifr')
       expect(page).to have_field(id: 'product_price', with: '19.99')
       expect(page).to have_field(id: 'product_cost_price', with: '17.00')

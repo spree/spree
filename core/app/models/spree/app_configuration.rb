@@ -64,6 +64,7 @@ module Spree
     preference :show_products_without_price, :boolean, default: false
     preference :show_raw_product_description, :boolean, default: false
     preference :tax_using_ship_address, :boolean, default: true
+    preference :taxon_wysiwyg_editor_enabled, :boolean, default: true
     preference :track_inventory_levels, :boolean, default: true # Determines whether to track on_hand values for variants / products.
 
     # Store credits configurations
