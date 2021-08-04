@@ -3,6 +3,8 @@ module Spree
     module V2
       module Platform
         class ProductsController < ResourceController
+          include ::Spree::Api::V2::ProductListIncludes
+
           private
 
           def model_class
@@ -10,15 +12,7 @@ module Spree
           end
 
           def scope_includes
-            {
-              master: :default_price,
-              variants: [],
-              variant_images: [],
-              taxons: [],
-              product_properties: :property,
-              option_types: :option_values,
-              variants_including_master: %i[default_price option_values]
-            }
+            product_list_includes
           end
         end
       end
