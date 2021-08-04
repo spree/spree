@@ -52,7 +52,7 @@
 
       <% if section.link.present? && section.button_text.present? %>
         <div>
-          <%= link_to section.button_text, section.link, class: 'btn btn-primary spree-btn px-5' %>
+          <%= link_to section.button_text, spree_localized_link(section), class: 'btn btn-primary spree-btn px-5' %>
         </div>
       <% end %>
     </div>

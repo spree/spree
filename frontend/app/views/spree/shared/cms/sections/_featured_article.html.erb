@@ -20,7 +20,7 @@
       </div>
 
       <% if section.button_text.present? && section.link.present? %>
-        <%= link_to section.button_text, section.link, class: 'btn text-center spree-btn btn-outline-primary w-75' %>
+        <%= link_to section.button_text, spree_localized_link(section), class: 'btn text-center spree-btn btn-outline-primary w-75' %>
       <% end %>
     </div>
   </div>
