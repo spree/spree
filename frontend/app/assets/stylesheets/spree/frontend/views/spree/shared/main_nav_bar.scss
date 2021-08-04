@@ -43,6 +43,10 @@
       &:hover, &:focus {
         background-color: transparent;
       }
+      &.active {
+        color: $header-font-color;
+        text-decoration: underline;
+      }
     }
 
     &-button {
