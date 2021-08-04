@@ -185,6 +185,8 @@ Spree::Core::Engine.add_routes do
 
         # Product Catalog API
         resources :products
+        resources :taxonomies
+        resources :taxons
         resources :classifications do
           member do
             put :reposition
@@ -194,16 +196,6 @@ Spree::Core::Engine.add_routes do
         resources :variants
         resources :properties
         resources :product_properties
-        resources :taxonomies do
-          member do
-            get :jstree
-          end
-        end
-        resources :taxons do
-          member do
-            get :jstree
-          end
-        end
         resources :option_types
         resources :option_values
 

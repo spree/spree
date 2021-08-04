@@ -45,8 +45,8 @@ RSpec.configure do |config|
           address_params: {
             type: :object,
             properties: {
-              country_id: { type: :integer },
-              state_id: { type: :integer },
+              country_id: { type: :string },
+              state_id: { type: :string },
               state_name: { type: :string },
               address1: { type: :string },
               city: { type: :string },
@@ -57,16 +57,25 @@ RSpec.configure do |config|
               lastname: { type: :string },
               label: { type: :string },
               company: { type: :string },
-              user_id: { type: :integer }
+              user_id: { type: :string }
             }
           },
           classification_params: {
             type: :object,
             properties: {
-              product_id: { type: :integer },
-              taxon_id: { type: :integer },
+              product_id: { type: :string },
+              taxon_id: { type: :string },
               position: { type: :integer }
             }
+          },
+          taxon_params: {
+            type: :object,
+            properties: {
+              taxonomy_id: { type: :string },
+              parent_id: { type: :string },
+              name: { type: :string }
+            },
+            required: %w[name taxonomy_id]
           },
           resources_list: {
             type: :object,
@@ -151,8 +160,12 @@ RSpec.configure do |config|
     next if response.nil? || response.body.blank?
 
     example.metadata[:response][:content] = {
-      'application/json' => {
-        example: JSON.parse(response.body, symbolize_names: true)
+      'application/vnd.api+json' => {
+        examples: {
+          'Example': {
+            value: JSON.parse(response.body, symbolize_names: true)
+          }
+        }
       }
     }
   end

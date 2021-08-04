@@ -5,6 +5,7 @@ class String
 end
 
 shared_context 'Platform API v2' do
+  let(:store) { Spree::Store.default }
   let(:admin_app) { Doorkeeper::Application.find_or_create_by!(name: 'Admin Panel', scopes: 'admin', redirect_uri: '') }
   let(:read_app) { Doorkeeper::Application.find_or_create_by!(name: 'Read App', scopes: 'read', redirect_uri: '') }
   let(:oauth_token) do
