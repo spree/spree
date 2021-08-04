@@ -79,7 +79,7 @@
               class: "d-flex align-items-end justify-content-center bg-light text-center overflow-hidden homepage-bottom-box #{'pointer-events-none cursor-default' unless link_two}",
               style: '--aspect-ratio:54/35;' do %>
 
-      <% if section.image_two.present? %>
+      <% if section.image_two.attached? %>
         <!-- XS to MD -->
           <img class="d-md-none lazyload"
             data-src="<%= main_app.url_for(section.img_two_md) %>"
