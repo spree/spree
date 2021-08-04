@@ -3,11 +3,11 @@ module Spree::Cms::Sections
     after_initialize :default_values
     before_save :reset_link_attributes
 
-    if Rails::VERSION::STRING < '6.0'
-      LINKED_RESOURCE_TYPE = ['Spree::Taxon'].freeze
-    else
-      LINKED_RESOURCE_TYPE = ['Spree::Taxon', 'Spree::Product'].freeze
-    end
+    LINKED_RESOURCE_TYPE = if Rails::VERSION::STRING < '6.0'
+                             ['Spree::Taxon'].freeze
+                           else
+                             ['Spree::Taxon', 'Spree::Product'].freeze
+                           end
 
     LAYOUT_OPTIONS = ['Default', 'Reversed'].freeze
     LABEL_OPTIONS = ['Show', 'Hide'].freeze
