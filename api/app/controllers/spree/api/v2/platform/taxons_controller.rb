@@ -10,15 +10,18 @@ module Spree
           end
 
           def scope_includes
-            node_includes = %i[icon products parent taxonomy]
+            node_includes = %i[icon parent taxonomy]
 
             {
               parent: node_includes,
               children: node_includes,
               taxonomy: [root: node_includes],
-              products: [],
               icon: [attachment_attachment: :blob]
             }
+          end
+
+          def serializer_params
+            super.merge(include_products: action_name == 'show')
           end
         end
       end

@@ -783,4 +783,22 @@ describe Spree::Product, type: :model do
       end
     end
   end
+
+  describe '#taxons_for_store' do
+    let(:store) { create(:store) }
+    let(:store_2) { create(:store) }
+    let(:product) { create(:product, stores: [store, store_2], taxons: [taxon, taxon_2]) }
+    let(:taxonomy) { create(:taxonomy, store: store) }
+    let(:taxonomy_2) { create(:taxonomy, store: store_2) }
+    let(:taxon) { create(:taxon, taxonomy: taxonomy) }
+    let(:taxon_2) { create(:taxon, taxonomy: taxonomy_2) }
+    let(:taxon_3) { create(:taxon, taxonomy: taxonomy) }
+
+    it 'returns product taxons for specified store' do
+      expect(product.taxons_for_store(store)).to eq([taxon])
+      expect(product.taxons_for_store(store_2)).to eq([taxon_2])
+    end
+
+    it { expect(product.taxons_for_store(store)).to be_a(ActiveRecord::Relation) }
+  end
 end

@@ -63,7 +63,7 @@ group :test, :development do
   gem 'awesome_print'
 end
 
-gem 'rack-cache'
+gem 'oj'
 RUBY
 else
 cat <<RUBY >> Gemfile
@@ -92,11 +92,30 @@ gem 'mini_racer'
 gem 'sassc', github: 'sass/sassc-ruby', branch: 'master'
 
 gem 'rack-cache'
+gem 'oj'
 RUBY
 fi
 
 cat <<RUBY >> config/environments/development.rb
 Rails.application.config.hosts << /.*\.lvh\.me/
+RUBY
+
+touch config/initializers/oj.rb
+
+cat <<RUBY >> config/initializers/oj.rb
+require 'oj'
+
+Oj.optimize_rails
+RUBY
+
+touch config/initializers/bullet.rb
+
+cat <<RUBY >> config/initializers/bullet.rb
+if Rails.env.development? && defined?(Bullet)
+  Bullet.enable = true
+  Bullet.rails_logger = true
+  Bullet.stacktrace_includes = [ 'spree_core', 'spree_frontend', 'spree_api', 'spree_backend', 'spree_emails' ]
+end
 RUBY
 
 bundle install --gemfile Gemfile

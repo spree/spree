@@ -23,7 +23,8 @@ module Spree
         belongs_to :taxonomy, record_type: :taxonomy
 
         has_many   :children, record_type: :taxon, serializer: :taxon
-        has_many   :products, record_type: :product
+        has_many   :products, record_type: :product,
+                              if: proc { |_taxon, params| params && params[:include_products] == true }
 
         has_one    :image,
                    object_method_name: :icon,
