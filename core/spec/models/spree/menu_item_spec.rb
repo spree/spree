@@ -107,16 +107,33 @@ describe Spree::MenuItem, type: :model do
   describe '#link' do
     let(:product) { create(:product, stores: [store]) }
     let(:taxon) { create(:taxon) }
+    let(:cms_page) { create(:cms_standard_page) }
+    let(:cms_page_with_no_slug) { create(:cms_homepage) }
+
     let(:item_url) { create(:menu_item, name: 'URL To Random Site', item_type: 'Link', menu: menu, linked_resource_type: 'URL', destination: 'https://some-other-website.com') }
     let(:item_empty_url) { create(:menu_item, name: 'URL To Random Site', item_type: 'Link', menu: menu, linked_resource_type: 'URL', destination: nil) }
     let(:item_home) { create(:menu_item, name: 'Home', item_type: 'Link', menu: menu, linked_resource_type: 'Home Page') }
     let(:item_product) { create(:menu_item, name: product.name, item_type: 'Link', menu: menu, linked_resource_type: 'Spree::Product') }
     let(:item_taxon) { create(:menu_item, name: taxon.name, item_type: 'Link', menu: menu, linked_resource_type: 'Spree::Taxon') }
+    let(:item_cms_page) { create(:menu_item, name: cms_page.title, item_type: 'Link', menu: menu, linked_resource_type: 'Spree::CmsPage') }
+    let(:item_cms_page_with_no_slug) { create(:menu_item, name: cms_page_with_no_slug.title, item_type: 'Link', menu: menu, linked_resource_type: 'Spree::CmsPage') }
 
     it 'returns correct taxon path' do
       item_taxon.update(linked_resource: taxon)
 
       expect(item_taxon.link).to eql "/t/#{taxon.permalink}"
+    end
+
+    it 'returns correct cms_standard_page path' do
+      item_cms_page.update(linked_resource: cms_page)
+
+      expect(item_cms_page.link).to eql "/pages/#{cms_page.slug}"
+    end
+
+    it 'returns nil if no slug is present' do
+      item_cms_page_with_no_slug.update(linked_resource: cms_page_with_no_slug)
+
+      expect(item_cms_page_with_no_slug.link).to be nil
     end
 
     it 'returns nil for destination when taxon is removed' do
