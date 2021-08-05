@@ -3519,6 +3519,51 @@ paths:
         '404':
           $ref: '#/components/responses/404NotFound'
       summary: Get Product Details
+  /api/v2/storefront/menus:
+    get:
+      description: Returns a list of all Menus available for the current store.
+      tags:
+        - Menus
+      operationId: Menus List
+      responses:
+        '200':
+          description: Returns a list of all Menus available for the current store.
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/MenusList'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+      summary: List of Menus
+  '/api/v2/storefront/menus/{location}':
+    get:
+      description: |-
+        To get a single menu by the menu location:
+
+        ```
+        GET /api/v2/storefront/menus/header
+        ```
+
+        To get a single menu by ID:
+
+        ```
+        GET /api/v2/storefront/menus/1
+        ```
+      tags:
+        - Menus
+      operationId: Show Menu
+      parameters:
+        - $ref: '#/components/parameters/MenuLocation'
+      responses:
+        '200':
+          description: Returns the requested Menu
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Menu'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+      summary: Get a single Menu by location
   /api/v2/storefront/taxons:
     get:
       description: 'Returns a list of Taxons. [Read more about Taxons](https://guides.spreecommerce.org/developer/core/products.html#taxons-and-taxonomies)'
@@ -4486,6 +4531,123 @@ components:
               properties:
                 data:
                   $ref: '#/components/schemas/Relation'
+    Menu:
+      required:
+        - data
+        - included
+      properties:
+        data:
+          $ref: '#/components/schemas/MenuAttributesAndRelationships'
+        included:
+          type: array
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/MenuItem'
+      description: Menu
+    MenusList:
+      required:
+        - data
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/MenuAttributesAndRelationships'
+      title: List of Menus
+    MenuAttributes:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Main Menu"
+        location:
+          type: string
+          example: "header"
+        locale:
+          type: string
+          example: "en"
+    MenuRelationships:
+      type: object
+      properties:
+        menu_items:
+          type: object
+          description: Menu Items associated with this Menu
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/MenuToMenuItemRelation'
+    MenuToMenuItemRelation:
+      properties:
+        id:
+          type: string
+          example: 3
+        type:
+          type: string
+          example: menu_item
+    MenuAttributesAndRelationships:
+      properties:
+        id:
+          type: string
+          example: '1'
+        type:
+          type: string
+          default: menu
+        attributes:
+          $ref: '#/components/schemas/MenuAttributes'
+        relationships:
+          $ref: '#/components/schemas/MenuRelationships'
+    MenuItem:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 3
+          description: Menu Item Id
+        type:
+          type: string
+          example: menu_item
+          description: Menu Item
+        attributes:
+          $ref: '#/components/schemas/MenuItemAttributes'
+    MenuItemAttributes:
+      type: object
+      properties:
+        code:
+          type: string
+          example: top-link
+        name:
+          type: string
+          example: View Baseball Bat
+        subtitle:
+          type: string
+          example: null
+        link:
+          type: string
+          example: /products/louisville-slugger
+        new_window:
+          type: boolean
+          example: false
+        lft:
+          type: integer
+          example: 3
+        rgt:
+          type: integer
+          example: 4
+        depth:
+          type: integer
+          example: 0
+        is_container:
+          type: boolean
+          example: true
+        is_root:
+          type: boolean
+          example: false
+        is_child:
+          type: boolean
+          example: true
+        is_leaf:
+          type: boolean
+          example: true
     Promotion:
       properties:
         id:
@@ -5536,6 +5698,20 @@ components:
         type: string
       description: Pass `states` as value to include States / Regions for each Country
       example: states
+    MenuLocation:
+      name: location
+      in: path
+      required: true
+      description: Location of the Menu within the website. `header`, `footer`
+      schema:
+        type: string
+    MenuItemIncludeParam:
+      name: include
+      in: query
+      schema:
+        type: string
+      description: Pass `menu_items` as value to include Menu Items for each menu
+      example: menu_items
     AccountIncludeParam:
       name: include
       in: query
