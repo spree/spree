@@ -5,6 +5,10 @@ module Spree
         class MenusController < ::Spree::Api::V2::ResourceController
           private
 
+          def resource
+            @resource ||= scope.find_by(location: params[:id]) || scope.find(params[:id])
+          end
+
           def resource_serializer
             Spree::Api::Dependencies.storefront_menu_serializer.constantize
           end
