@@ -27,7 +27,7 @@ PAGES.each do |page|
     button_txt = 'Compra ahora'
   end
 
-  summer_collection = Spree::Taxon.find_by!(permalink: "new-collection/summer-#{Date.today.year}")
+  summer_collection = Spree::Taxon.find_by!(permalink: "categories/new-collection/summer-#{Date.today.year}")
 
   hero_section = Spree::CmsSection.where(
     name: name_txt,
@@ -44,9 +44,9 @@ end
 
 # Three Taxons
 PAGES.each do |page|
-  link_one = 'men'
-  link_two = 'women'
-  link_three = 'sportswear'
+  link_one = 'categories/men'
+  link_two = 'categories/women'
+  link_three = 'categories/sportswear'
 
   case page.locale
   when 'en'
@@ -106,7 +106,7 @@ PAGES.each do |page|
     name_txt = 'Carrusel de los más vendidos'
   end
 
-  bestsellers = Spree::Taxon.find_by!(permalink: 'bestsellers')
+  bestsellers = Spree::Taxon.find_by!(permalink: 'categories/bestsellers')
 
   product_carousel = Spree::CmsSection.where(
     name: name_txt,
@@ -144,7 +144,7 @@ PAGES.each do |page|
     button_txt = 'Lee mas'
   end
 
-  trending = Spree::Taxon.find_by!(permalink: 'trending')
+  trending = Spree::Taxon.find_by!(permalink: 'categories/trending')
 
   featured_article = Spree::CmsSection.where(
     name: name_txt,
@@ -174,7 +174,7 @@ PAGES.each do |page|
     name_txt = 'Carrusel de tendencias'
   end
 
-  trending = Spree::Taxon.find_by!(permalink: 'trending')
+  trending = Spree::Taxon.find_by!(permalink: 'categories/trending')
 
   trending_section = Spree::CmsSection.where(
     name: name_txt,
@@ -189,8 +189,8 @@ end
 
 # Side-by-Side Promotions
 PAGES.each do |page|
-  link_one = 'streetstyle'
-  link_two = 'special-offers/30-percent-off'
+  link_one = 'categories/streetstyle'
+  link_two = 'categories/special-offers/30-percent-off'
 
   case page.locale
   when 'en'
