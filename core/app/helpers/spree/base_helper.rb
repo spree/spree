@@ -171,6 +171,10 @@ module Spree
       Spree::Core::Engine.frontend_available?
     end
 
+    def rails_5?
+      Rails::VERSION::STRING < '6.0'
+    end
+
     # we should always try to render image of the default variant
     # same as it's done on PDP
     def default_image_for_product(product)

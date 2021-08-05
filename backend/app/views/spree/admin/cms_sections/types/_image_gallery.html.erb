@@ -50,7 +50,7 @@
       <% end %>
 
       <div class="col-12"><hr></div>
-      <% if Rails::VERSION::STRING > '5.9' %>
+      <% unless rails_5? %>
         <%= f.field_container :link_type_one, class: ['form-group'] do %>
           <%= f.label :link_type_one, Spree.t('admin.navigation.link_to') %>
           <%= f.select(:link_type_one,
@@ -95,7 +95,7 @@
       <% end %>
 
       <div class="col-12"><hr></div>
-      <% if Rails::VERSION::STRING > '5.9' %>
+      <% unless rails_5? %>
         <%= f.field_container :link_type_two, class: ['form-group'] do %>
           <%= f.label :link_type_two, Spree.t('admin.navigation.link_to') %>
           <%= f.select(:link_type_two,
@@ -140,7 +140,7 @@
       <% end %>
 
       <div class="col-12"><hr></div>
-      <% if Rails::VERSION::STRING > '5.9' %>
+      <% unless rails_5? %>
         <%= f.field_container :link_type_three, class: ['form-group'] do %>
           <%= f.label :link_type_three, Spree.t('admin.navigation.link_to') %>
           <%= f.select(:link_type_three,
