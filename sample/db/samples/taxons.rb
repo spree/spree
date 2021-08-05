@@ -17,7 +17,6 @@ categories_taxon = Spree::Taxon.where(name: I18n.t('spree.taxonomy_categories_na
 
 TAXON_NAMES.each do |taxon_name|
   taxon = categories_taxon.children.where(name: taxon_name).first_or_create!
-  taxon.permalink = taxon.permalink.gsub('categories/', '')
   taxon.taxonomy = categories
   taxon.save!
 end
