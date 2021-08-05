@@ -237,12 +237,14 @@
     <% end %>
   </div>
 
-  <div data-hook="admin_product_form_stores">
-    <%= f.field_container :stores, class: ['form-group'] do %>
-      <%= f.label :product_stores, Spree.t(:stores) %>
-      <%= collection_select(:product, :store_ids, @stores, :id, :unique_name, {}, { multiple: true, class: 'select2' }) %>
-    <% end %>
-  </div>
+  <% if @stores.count > 1 %>
+    <div data-hook="admin_product_form_stores">
+      <%= f.field_container :stores, class: ['form-group'] do %>
+        <%= f.label :product_stores, Spree.t(:stores) %>
+        <%= collection_select(:product, :store_ids, @stores, :id, :unique_name, {}, { multiple: true, class: 'select2' }) %>
+      <% end %>
+    </div>
+  <% end %>
 
   <div data-hook="admin_product_form_meta">
     <div data-hook="admin_product_form_meta_title">

@@ -22,7 +22,7 @@ else
     driver.browser.save_screenshot(path)
   end
 end
-Capybara.default_max_wait_time = 45
+Capybara.default_max_wait_time = ENV.fetch('CAPYBARA_MAX_WAIT_TIME', 45).to_i
 Capybara.server = :puma
 
 Capybara.always_include_port = true
