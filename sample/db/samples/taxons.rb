@@ -24,31 +24,26 @@ end
 CHILDREN_TAXON_NAMES.each do |(parent_name, taxon_name)|
   parent = Spree::Taxon.where(name: parent_name).first
   taxon = parent.children.where(name: taxon_name).first_or_create!
-  taxon.permalink = taxon.permalink.gsub('categories/', '')
   taxon.taxonomy = categories
   taxon.save!
 end
 
 taxon = categories_taxon.children.where(name: 'New', permalink: 'newest').first_or_create!
-taxon.permalink = taxon.permalink.gsub('categories/', '')
 taxon.taxonomy = categories
 taxon.save!
 
 ADDITIONAL_TAXONS.each do |taxon_name|
   taxon = categories_taxon.children.where(name: taxon_name).first_or_create!
-  taxon.permalink = taxon.permalink.gsub('categories/', '')
   taxon.taxonomy = categories
   taxon.save!
 end
 
 SPECIAL_TAXONS.each do |parent_name, taxon_name|
   parent = categories_taxon.children.where(name: parent_name.to_s).first_or_create!
-  parent.permalink = parent.permalink.gsub('categories/', '')
   parent.taxonomy = categories
   parent.save!
 
   taxon = parent.children.where(name: taxon_name).first_or_create!
-  taxon.permalink = taxon.permalink.gsub('categories/', '')
   taxon.taxonomy = categories
   taxon.save!
 end
