@@ -24,7 +24,7 @@
             <%= text_area :payment_method, :description, { cols: 60, rows: 6, class: 'form-control' } %>
           <% end %>
 
-          <% if @payment_method.persisted? %>
+          <% if @stores.count > 1 %>
             <div data-hook="store" class="form-group">
               <%= label_tag :payment_method_stores, Spree.t(:stores) %>
               <%= collection_select(:payment_method, :store_ids, @stores, :id, :unique_name, {}, { multiple: true, class: 'select2' }) %>
