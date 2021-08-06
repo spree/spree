@@ -3,7 +3,6 @@ require 'spec_helper'
 describe Spree::Taxon, type: :model do
   let(:taxonomy) { create(:taxonomy) }
   let(:taxon) { build(:taxon, name: 'Ruby on Rails', parent_id: nil) }
-  let(:valid_taxon) { build(:taxon, name: 'Vaild Rails', parent_id: 1, taxonomy_id: taxonomy.id) }
 
   describe '#to_param' do
     subject { super().to_param }
@@ -11,13 +10,30 @@ describe Spree::Taxon, type: :model do
     it { is_expected.to eql taxon.permalink }
   end
 
-  context 'check_for_root' do
-    it 'does not validate the taxon' do
-      expect(taxon.valid?).to eq false
+  context 'validations' do
+    describe '#check_for_root' do
+      let(:valid_taxon) { build(:taxon, name: 'Vaild Rails', parent_id: 1, taxonomy: taxonomy) }
+
+      it 'does not validate the taxon' do
+        expect(taxon.valid?).to eq false
+      end
+
+      it 'validates the taxon' do
+        expect(valid_taxon.valid?).to eq true
+      end
     end
 
-    it 'validates the taxon' do
-      expect(valid_taxon.valid?).to eq true
+    describe '#parent_belongs_to_same_taxonomy' do
+      let(:valid_parent) { create(:taxon, name: 'Valid Parent', taxonomy: taxonomy) }
+      let(:invalid_parent) { create(:taxon, name: 'Invalid Parent', taxonomy: create(:taxonomy)) }
+
+      it 'does not validate the taxon' do
+        expect(build(:taxon, taxonomy: taxonomy, parent: invalid_parent).valid?).to eq false
+      end
+
+      it 'validates the taxon' do
+        expect(build(:taxon, taxonomy: taxonomy, parent: valid_parent).valid?).to eq true
+      end
     end
   end
 

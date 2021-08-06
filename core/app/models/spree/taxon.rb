@@ -28,6 +28,7 @@ module Spree
     validates :hide_from_nav, inclusion: { in: [true, false] }
     validates_associated :icon
     validate :check_for_root, on: :create
+    validate :parent_belongs_to_same_taxonomy
     with_options length: { maximum: 255 }, allow_blank: true do
       validates :meta_keywords
       validates :meta_description
@@ -110,6 +111,12 @@ module Spree
     def check_for_root
       if taxonomy.try(:root).present? && parent_id.nil?
         errors.add(:root_conflict, 'this taxonomy already has a root taxon')
+      end
+    end
+
+    def parent_belongs_to_same_taxonomy
+      if parent.present? && parent.taxonomy_id != taxonomy_id
+        errors.add(:parent, 'must belong to the same taxonomy')
       end
     end
   end
