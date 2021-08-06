@@ -112,6 +112,13 @@ module Spree
       end
     end
 
+    def source
+      return super if payment_method.nil?
+      return super unless payment_method.source_required?
+
+      payment_method.payment_source_class.unscoped { super }
+    end
+
     def money
       Spree::Money.new(amount, currency: currency)
     end

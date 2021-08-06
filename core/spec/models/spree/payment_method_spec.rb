@@ -162,4 +162,16 @@ describe Spree::PaymentMethod, type: :model do
       end
     end
   end
+
+  describe '#source_required?' do
+    let(:payment_method) { create(:credit_card_payment_method) }
+
+    it { expect(payment_method.source_required?).to be true }
+  end
+
+  describe '#payment_source_class' do
+    let(:payment_method) { create(:credit_card_payment_method) }
+
+    it { expect(payment_method.payment_source_class).to eq(Spree::CreditCard) }
+  end
 end
