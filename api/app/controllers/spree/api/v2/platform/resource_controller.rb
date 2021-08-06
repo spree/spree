@@ -103,7 +103,7 @@ module Spree
           end
 
           def allowed_sort_attributes
-            super << spree_permitted_attributes
+            (super << spree_permitted_attributes).uniq.compact
           end
         end
       end

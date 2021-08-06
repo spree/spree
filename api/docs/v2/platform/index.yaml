@@ -6,7 +6,7 @@ info:
 paths:
   "/api/v2/platform/addresses":
     get:
-      summary: Returns a list of an Addresses
+      summary: Returns a list of Addresses
       tags:
       - Addresses
       security:
@@ -39,81 +39,85 @@ paths:
         '200':
           description: Records returned
           content:
-            application/json:
-              example:
-                data:
-                - id: '1'
-                  type: address
-                  attributes:
-                    firstname: John
-                    lastname: Doe
-                    address1: 10 Lovely Street
-                    address2: Northwest
-                    city: Herndon
-                    zipcode: '35005'
-                    phone: 555-555-0199
-                    state_name:
-                    alternative_phone: 555-555-0199
-                    company: Company
-                    created_at: '2021-04-01T18:55:03.630Z'
-                    updated_at: '2021-04-01T18:55:03.630Z'
-                    deleted_at:
-                    label:
-                  relationships:
-                    country:
-                      data:
-                        id: '1'
-                        type: country
-                    state:
-                      data:
-                        id: '1'
-                        type: state
-                    user:
-                      data:
-                - id: '2'
-                  type: address
-                  attributes:
-                    firstname: John
-                    lastname: Doe
-                    address1: 10 Lovely Street
-                    address2: Northwest
-                    city: Herndon
-                    zipcode: '35005'
-                    phone: 555-555-0199
-                    state_name:
-                    alternative_phone: 555-555-0199
-                    company: Company
-                    created_at: '2021-04-01T18:55:03.634Z'
-                    updated_at: '2021-04-01T18:55:03.634Z'
-                    deleted_at:
-                    label:
-                  relationships:
-                    country:
-                      data:
-                        id: '1'
-                        type: country
-                    state:
-                      data:
-                        id: '2'
-                        type: state
-                    user:
-                      data:
-                meta:
-                  count: 2
-                  total_count: 2
-                  total_pages: 1
-                links:
-                  self: http://www.example.com/api/v2/platform/addresses?page=1&per_page=&include=&filter=
-                  next: http://www.example.com/api/v2/platform/addresses?include=&page=1&per_page=
-                  prev: http://www.example.com/api/v2/platform/addresses?include=&page=1&per_page=
-                  last: http://www.example.com/api/v2/platform/addresses?include=&page=1&per_page=
-                  first: http://www.example.com/api/v2/platform/addresses?include=&page=1&per_page=
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    data:
+                    - id: '1'
+                      type: address
+                      attributes:
+                        firstname: John
+                        lastname: Doe
+                        address1: 1 Lovely Street
+                        address2: Northwest
+                        city: Herndon
+                        zipcode: '35005'
+                        phone: 555-555-0199
+                        state_name:
+                        alternative_phone: 555-555-0199
+                        company: Company
+                        created_at: '2021-08-06T06:53:18.846Z'
+                        updated_at: '2021-08-06T06:53:18.846Z'
+                        deleted_at:
+                        label:
+                      relationships:
+                        country:
+                          data:
+                            id: '1'
+                            type: country
+                        state:
+                          data:
+                            id: '1'
+                            type: state
+                        user:
+                          data:
+                    - id: '2'
+                      type: address
+                      attributes:
+                        firstname: John
+                        lastname: Doe
+                        address1: 2 Lovely Street
+                        address2: Northwest
+                        city: Herndon
+                        zipcode: '35005'
+                        phone: 555-555-0199
+                        state_name:
+                        alternative_phone: 555-555-0199
+                        company: Company
+                        created_at: '2021-08-06T06:53:18.853Z'
+                        updated_at: '2021-08-06T06:53:18.853Z'
+                        deleted_at:
+                        label:
+                      relationships:
+                        country:
+                          data:
+                            id: '1'
+                            type: country
+                        state:
+                          data:
+                            id: '2'
+                            type: state
+                        user:
+                          data:
+                    meta:
+                      count: 2
+                      total_count: 2
+                      total_pages: 1
+                    links:
+                      self: http://www.example.com/api/v2/platform/addresses?page=1&per_page=&include=&filter=
+                      next: http://www.example.com/api/v2/platform/addresses?include=&page=1&per_page=
+                      prev: http://www.example.com/api/v2/platform/addresses?include=&page=1&per_page=
+                      last: http://www.example.com/api/v2/platform/addresses?include=&page=1&per_page=
+                      first: http://www.example.com/api/v2/platform/addresses?include=&page=1&per_page=
         '401':
           description: Authentication Failed
           content:
-            application/json:
-              example:
-                error: The access token is invalid
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The access token is invalid
     post:
       summary: Creates an Address
       tags:
@@ -132,62 +136,66 @@ paths:
         '201':
           description: record created
           content:
-            application/json:
-              example:
-                data:
-                  id: '1'
-                  type: address
-                  attributes:
-                    firstname: John
-                    lastname: Doe
-                    address1: 10 Lovely Street
-                    address2: Northwest
-                    city: Herndon
-                    zipcode: '35005'
-                    phone: 555-555-0199
-                    state_name:
-                    alternative_phone: 555-555-0199
-                    company: Company
-                    created_at: '2021-04-01T18:55:03.796Z'
-                    updated_at: '2021-04-01T18:55:03.796Z'
-                    deleted_at:
-                    label:
-                  relationships:
-                    country:
-                      data:
-                        id: '1'
-                        type: country
-                    state:
-                      data:
-                        id: '1'
-                        type: state
-                    user:
-                      data:
-                        id: '1'
-                        type: user
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    data:
+                      id: '5'
+                      type: address
+                      attributes:
+                        firstname: John
+                        lastname: Doe
+                        address1: 5 Lovely Street
+                        address2: Northwest
+                        city: Herndon
+                        zipcode: '35005'
+                        phone: 555-555-0199
+                        state_name:
+                        alternative_phone: 555-555-0199
+                        company: Company
+                        created_at: '2021-08-06T06:53:19.077Z'
+                        updated_at: '2021-08-06T06:53:19.077Z'
+                        deleted_at:
+                        label:
+                      relationships:
+                        country:
+                          data:
+                            id: '4'
+                            type: country
+                        state:
+                          data:
+                            id: '5'
+                            type: state
+                        user:
+                          data:
+                            id: '1'
+                            type: user
         '422':
           description: invalid request
           content:
-            application/json:
-              example:
-                error: First Name can't be blank, Last Name can't be blank, Address
-                  can't be blank, City can't be blank, Country can't be blank, Zip
-                  Code can't be blank, and Phone can't be blank
-                errors:
-                  firstname:
-                  - can't be blank
-                  lastname:
-                  - can't be blank
-                  address1:
-                  - can't be blank
-                  city:
-                  - can't be blank
-                  country:
-                  - can't be blank
-                  zipcode:
-                  - can't be blank
-                  phone:
-                  - can't be blank
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: First Name can't be blank, Last Name can't be blank, Address
+                      can't be blank, City can't be blank, Country can't be blank,
+                      Zip Code can't be blank, and Phone can't be blank
+                    errors:
+                      firstname:
+                      - can't be blank
+                      lastname:
+                      - can't be blank
+                      address1:
+                      - can't be blank
+                      city:
+                      - can't be blank
+                      country:
+                      - can't be blank
+                      zipcode:
+                      - can't be blank
+                      phone:
+                      - can't be blank
       requestBody:
         content:
           application/json:
@@ -217,49 +225,55 @@ paths:
         '200':
           description: Record found
           content:
-            application/json:
-              example:
-                data:
-                  id: '1'
-                  type: address
-                  attributes:
-                    firstname: John
-                    lastname: Doe
-                    address1: 10 Lovely Street
-                    address2: Northwest
-                    city: Herndon
-                    zipcode: '35005'
-                    phone: 555-555-0199
-                    state_name:
-                    alternative_phone: 555-555-0199
-                    company: Company
-                    created_at: '2021-04-01T18:55:03.828Z'
-                    updated_at: '2021-04-01T18:55:03.828Z'
-                    deleted_at:
-                    label:
-                  relationships:
-                    country:
-                      data:
-                        id: '1'
-                        type: country
-                    state:
-                      data:
-                        id: '1'
-                        type: state
-                    user:
-                      data:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    data:
+                      id: '6'
+                      type: address
+                      attributes:
+                        firstname: John
+                        lastname: Doe
+                        address1: 6 Lovely Street
+                        address2: Northwest
+                        city: Herndon
+                        zipcode: '35005'
+                        phone: 555-555-0199
+                        state_name:
+                        alternative_phone: 555-555-0199
+                        company: Company
+                        created_at: '2021-08-06T06:53:19.150Z'
+                        updated_at: '2021-08-06T06:53:19.150Z'
+                        deleted_at:
+                        label:
+                      relationships:
+                        country:
+                          data:
+                            id: '6'
+                            type: country
+                        state:
+                          data:
+                            id: '6'
+                            type: state
+                        user:
+                          data:
         '404':
           description: Record not found
           content:
-            application/json:
-              example:
-                error: The resource you were looking for could not be found.
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The resource you were looking for could not be found.
         '401':
           description: Authentication Failed
           content:
-            application/json:
-              example:
-                error: The access token is invalid
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The access token is invalid
     put:
       summary: Updates an Address
       tags:
@@ -283,60 +297,68 @@ paths:
         '200':
           description: record updated
           content:
-            application/json:
-              example:
-                data:
-                  id: '1'
-                  type: address
-                  attributes:
-                    firstname: Jack
-                    lastname: Doe
-                    address1: 10 Lovely Street
-                    address2: Northwest
-                    city: Herndon
-                    zipcode: '35005'
-                    phone: 555-555-0199
-                    state_name:
-                    alternative_phone: 555-555-0199
-                    company: Company
-                    created_at: '2021-04-01T18:55:03.885Z'
-                    updated_at: '2021-04-01T18:55:03.895Z'
-                    deleted_at:
-                    label:
-                  relationships:
-                    country:
-                      data:
-                        id: '1'
-                        type: country
-                    state:
-                      data:
-                        id: '1'
-                        type: state
-                    user:
-                      data:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    data:
+                      id: '8'
+                      type: address
+                      attributes:
+                        firstname: Jack
+                        lastname: Doe
+                        address1: 8 Lovely Street
+                        address2: Northwest
+                        city: Herndon
+                        zipcode: '35005'
+                        phone: 555-555-0199
+                        state_name:
+                        alternative_phone: 555-555-0199
+                        company: Company
+                        created_at: '2021-08-06T06:53:19.236Z'
+                        updated_at: '2021-08-06T06:53:19.247Z'
+                        deleted_at:
+                        label:
+                      relationships:
+                        country:
+                          data:
+                            id: '9'
+                            type: country
+                        state:
+                          data:
+                            id: '8'
+                            type: state
+                        user:
+                          data:
         '422':
           description: invalid request
           content:
-            application/json:
-              example:
-                error: First Name can't be blank and Last Name can't be blank
-                errors:
-                  firstname:
-                  - can't be blank
-                  lastname:
-                  - can't be blank
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: First Name can't be blank and Last Name can't be blank
+                    errors:
+                      firstname:
+                      - can't be blank
+                      lastname:
+                      - can't be blank
         '404':
           description: Record not found
           content:
-            application/json:
-              example:
-                error: The resource you were looking for could not be found.
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The resource you were looking for could not be found.
         '401':
           description: Authentication Failed
           content:
-            application/json:
-              example:
-                error: The access token is invalid
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The access token is invalid
       requestBody:
         content:
           application/json:
@@ -360,15 +382,403 @@ paths:
         '404':
           description: Record not found
           content:
-            application/json:
-              example:
-                error: The resource you were looking for could not be found.
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The resource you were looking for could not be found.
         '401':
           description: Authentication Failed
           content:
-            application/json:
-              example:
-                error: The access token is invalid
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The access token is invalid
+  "/api/v2/platform/classifications":
+    get:
+      summary: Returns a list of Classifications
+      tags:
+      - Classifications
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: page
+        in: query
+        example: 1
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        example: 50
+        schema:
+          type: integer
+      - name: include
+        in: query
+        descripton: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: product,taxon
+        schema:
+          type: string
+      - name: filter
+        in: query
+        descripton: ''
+        example: taxon_id_eq=1
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Records returned
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    data:
+                    - id: '1'
+                      type: classification
+                      attributes:
+                        position: 1
+                        created_at: '2021-08-06T06:53:19.739Z'
+                        updated_at: '2021-08-06T06:53:19.739Z'
+                      relationships:
+                        product:
+                          data:
+                            id: '1'
+                            type: product
+                        taxon:
+                          data:
+                            id: '2'
+                            type: taxon
+                    - id: '2'
+                      type: classification
+                      attributes:
+                        position: 1
+                        created_at: '2021-08-06T06:53:19.836Z'
+                        updated_at: '2021-08-06T06:53:19.836Z'
+                      relationships:
+                        product:
+                          data:
+                            id: '2'
+                            type: product
+                        taxon:
+                          data:
+                            id: '4'
+                            type: taxon
+                    meta:
+                      count: 2
+                      total_count: 2
+                      total_pages: 1
+                    links:
+                      self: http://www.example.com/api/v2/platform/classifications?page=1&per_page=&include=&filter=
+                      next: http://www.example.com/api/v2/platform/classifications?include=&page=1&per_page=
+                      prev: http://www.example.com/api/v2/platform/classifications?include=&page=1&per_page=
+                      last: http://www.example.com/api/v2/platform/classifications?include=&page=1&per_page=
+                      first: http://www.example.com/api/v2/platform/classifications?include=&page=1&per_page=
+        '401':
+          description: Authentication Failed
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The access token is invalid
+    post:
+      summary: Creates a Classification
+      tags:
+      - Classifications
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: include
+        in: query
+        descripton: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: product,taxon
+        schema:
+          type: string
+      responses:
+        '201':
+          description: record created
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    data:
+                      id: '5'
+                      type: classification
+                      attributes:
+                        position: 1
+                        created_at: '2021-08-06T06:53:20.242Z'
+                        updated_at: '2021-08-06T06:53:20.242Z'
+                      relationships:
+                        product:
+                          data:
+                            id: '5'
+                            type: product
+                        taxon:
+                          data:
+                            id: '10'
+                            type: taxon
+        '422':
+          description: invalid request
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: Taxon can't be blank and Product can't be blank
+                    errors:
+                      taxon:
+                      - can't be blank
+                      product:
+                      - can't be blank
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/classification_params"
+  "/api/v2/platform/classifications/{id}":
+    get:
+      summary: Returns a Classification
+      tags:
+      - Classifications
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: include
+        in: query
+        descripton: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: product,taxon
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Record found
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    data:
+                      id: '6'
+                      type: classification
+                      attributes:
+                        position: 1
+                        created_at: '2021-08-06T06:53:20.399Z'
+                        updated_at: '2021-08-06T06:53:20.399Z'
+                      relationships:
+                        product:
+                          data:
+                            id: '6'
+                            type: product
+                        taxon:
+                          data:
+                            id: '12'
+                            type: taxon
+        '404':
+          description: Record not found
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The resource you were looking for could not be found.
+        '401':
+          description: Authentication Failed
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The access token is invalid
+    put:
+      summary: Updates a Classification
+      tags:
+      - Classifications
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: include
+        in: query
+        descripton: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: product,taxon
+        schema:
+          type: string
+      responses:
+        '200':
+          description: record updated
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    data:
+                      id: '8'
+                      type: classification
+                      attributes:
+                        position: 1
+                        created_at: '2021-08-06T06:53:20.705Z'
+                        updated_at: '2021-08-06T06:53:20.705Z'
+                      relationships:
+                        product:
+                          data:
+                            id: '8'
+                            type: product
+                        taxon:
+                          data:
+                            id: '16'
+                            type: taxon
+        '422':
+          description: invalid request
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: Product can't be blank
+                    errors:
+                      product:
+                      - can't be blank
+        '404':
+          description: Record not found
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The resource you were looking for could not be found.
+        '401':
+          description: Authentication Failed
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The access token is invalid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/classification_params"
+    delete:
+      summary: Deletes a Classification
+      tags:
+      - Classifications
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Record deleted
+        '404':
+          description: Record not found
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The resource you were looking for could not be found.
+        '401':
+          description: Authentication Failed
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The access token is invalid
+  "/api/v2/platform/classifications/{id}/reposition":
+    put:
+      summary: Reposition a Classification
+      tags:
+      - Classifications
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: include
+        in: query
+        descripton: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: product,taxon
+        schema:
+          type: string
+      responses:
+        '200':
+          description: record updated
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    data:
+                      id: '13'
+                      type: classification
+                      attributes:
+                        position: 2
+                        created_at: '2021-08-06T06:53:21.437Z'
+                        updated_at: '2021-08-06T06:53:21.461Z'
+                      relationships:
+                        product:
+                          data:
+                            id: '13'
+                            type: product
+                        taxon:
+                          data:
+                            id: '26'
+                            type: taxon
+        '422':
+          description: invalid request
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: is not a number
+                    errors: {}
+        '404':
+          description: Record not found
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The resource you were looking for could not be found.
+        '401':
+          description: Authentication Failed
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The access token is invalid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/classification_params"
   "/api/v2/platform/countries":
     get:
       summary: Returns a list of Countries
@@ -380,53 +790,74 @@ paths:
         '200':
           description: Records returned
           content:
-            application/json:
-              example:
-                data:
-                - id: '1'
-                  type: country
-                  attributes:
-                    iso_name: ISO_NAME_11
-                    iso: I11
-                    iso3: IS11
-                    name: NAME_11
-                    numcode: 840
-                    states_required: false
-                    updated_at: '2021-04-01T18:55:04.007Z'
-                    zipcode_required: true
-                  relationships:
-                    states:
-                      data: []
-                - id: '2'
-                  type: country
-                  attributes:
-                    iso_name: ISO_NAME_12
-                    iso: I12
-                    iso3: IS12
-                    name: NAME_12
-                    numcode: 840
-                    states_required: false
-                    updated_at: '2021-04-01T18:55:04.009Z'
-                    zipcode_required: true
-                  relationships:
-                    states:
-                      data: []
-                meta:
-                  count: 2
-                  total_count: 2
-                  total_pages: 1
-                links:
-                  self: http://www.example.com/api/v2/platform/countries
-                  next: http://www.example.com/api/v2/platform/countries?page=1
-                  prev: http://www.example.com/api/v2/platform/countries?page=1
-                  last: http://www.example.com/api/v2/platform/countries?page=1
-                  first: http://www.example.com/api/v2/platform/countries?page=1
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    data:
+                    - id: '34'
+                      type: country
+                      attributes:
+                        iso_name: UNITED STATES
+                        iso: US
+                        iso3: IS34
+                        name: United States of America
+                        numcode: 840
+                        states_required: true
+                        updated_at: '2021-08-06T06:53:21.782Z'
+                        zipcode_required: true
+                        created_at: '2021-08-06T06:53:21.782Z'
+                      relationships:
+                        states:
+                          data: []
+                    - id: '35'
+                      type: country
+                      attributes:
+                        iso_name: ISO_NAME_2
+                        iso: I2
+                        iso3: IS35
+                        name: NAME_2
+                        numcode: 840
+                        states_required: false
+                        updated_at: '2021-08-06T06:53:21.793Z'
+                        zipcode_required: true
+                        created_at: '2021-08-06T06:53:21.793Z'
+                      relationships:
+                        states:
+                          data: []
+                    - id: '36'
+                      type: country
+                      attributes:
+                        iso_name: ISO_NAME_3
+                        iso: I3
+                        iso3: IS36
+                        name: NAME_3
+                        numcode: 840
+                        states_required: false
+                        updated_at: '2021-08-06T06:53:21.796Z'
+                        zipcode_required: true
+                        created_at: '2021-08-06T06:53:21.796Z'
+                      relationships:
+                        states:
+                          data: []
+                    meta:
+                      count: 3
+                      total_count: 3
+                      total_pages: 1
+                    links:
+                      self: http://www.example.com/api/v2/platform/countries
+                      next: http://www.example.com/api/v2/platform/countries?page=1
+                      prev: http://www.example.com/api/v2/platform/countries?page=1
+                      last: http://www.example.com/api/v2/platform/countries?page=1
+                      first: http://www.example.com/api/v2/platform/countries?page=1
         '401':
           description: Authentication Failed
           content:
-            application/json:
-              example:
-                error: The access token is invalid
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The access token is invalid
   "/api/v2/platform/countries/{id}":
     get:
       summary: Returns a Country
@@ -444,35 +875,487 @@ paths:
         '200':
           description: Record found
           content:
-            application/json:
-              example:
-                data:
-                  id: '1'
-                  type: country
-                  attributes:
-                    iso_name: ISO_NAME_15
-                    iso: I15
-                    iso3: IS15
-                    name: NAME_15
-                    numcode: 840
-                    states_required: false
-                    updated_at: '2021-04-01T18:55:04.046Z'
-                    zipcode_required: true
-                  relationships:
-                    states:
-                      data: []
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    data:
+                      id: '41'
+                      type: country
+                      attributes:
+                        iso_name: ISO_NAME_6
+                        iso: I6
+                        iso3: IS41
+                        name: NAME_6
+                        numcode: 840
+                        states_required: false
+                        updated_at: '2021-08-06T06:53:21.864Z'
+                        zipcode_required: true
+                        created_at: '2021-08-06T06:53:21.864Z'
+                      relationships:
+                        states:
+                          data: []
         '404':
           description: Record not found
           content:
-            application/json:
-              example:
-                error: The resource you were looking for could not be found.
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The resource you were looking for could not be found.
         '401':
           description: Authentication Failed
           content:
-            application/json:
-              example:
-                error: The access token is invalid
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The access token is invalid
+  "/api/v2/platform/taxons":
+    get:
+      summary: Returns a list of Taxons
+      tags:
+      - Taxons
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: page
+        in: query
+        example: 1
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        example: 50
+        schema:
+          type: integer
+      - name: include
+        in: query
+        descripton: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: taxonomy,parent,children
+        schema:
+          type: string
+      - name: filter
+        in: query
+        descripton: ''
+        example: taxonomy_id_eq=1&name_cont=Shirts
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Records returned
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    data:
+                    - id: '32'
+                      type: taxon
+                      attributes:
+                        position: 0
+                        name: taxon_16
+                        permalink: taxonomy-16/taxon-16
+                        lft: 2
+                        rgt: 3
+                        description:
+                        created_at: '2021-08-06T06:53:21.978Z'
+                        updated_at: '2021-08-06T06:53:21.982Z'
+                        meta_title:
+                        meta_description:
+                        meta_keywords:
+                        depth: 1
+                        pretty_name: taxonomy_16 -> taxon_16
+                        seo_title: taxon_16
+                        is_root: false
+                        is_child: true
+                        is_leaf: true
+                      relationships:
+                        parent:
+                          data:
+                            id: '31'
+                            type: taxon
+                        taxonomy:
+                          data:
+                            id: '16'
+                            type: taxonomy
+                        children:
+                          data: []
+                        image:
+                          data:
+                            id: '16'
+                            type: taxon_image
+                    - id: '33'
+                      type: taxon
+                      attributes:
+                        position: 0
+                        name: taxon_17
+                        permalink: taxonomy-16/taxon-17
+                        lft: 4
+                        rgt: 5
+                        description:
+                        created_at: '2021-08-06T06:53:22.008Z'
+                        updated_at: '2021-08-06T06:53:22.013Z'
+                        meta_title:
+                        meta_description:
+                        meta_keywords:
+                        depth: 1
+                        pretty_name: taxonomy_16 -> taxon_17
+                        seo_title: taxon_17
+                        is_root: false
+                        is_child: true
+                        is_leaf: true
+                      relationships:
+                        parent:
+                          data:
+                            id: '31'
+                            type: taxon
+                        taxonomy:
+                          data:
+                            id: '16'
+                            type: taxonomy
+                        children:
+                          data: []
+                        image:
+                          data:
+                            id: '17'
+                            type: taxon_image
+                    - id: '31'
+                      type: taxon
+                      attributes:
+                        position: 0
+                        name: taxonomy_16
+                        permalink: taxonomy-16
+                        lft: 1
+                        rgt: 6
+                        description:
+                        created_at: '2021-08-06T06:53:21.950Z'
+                        updated_at: '2021-08-06T06:53:22.027Z'
+                        meta_title:
+                        meta_description:
+                        meta_keywords:
+                        depth: 0
+                        pretty_name: taxonomy_16
+                        seo_title: taxonomy_16
+                        is_root: true
+                        is_child: false
+                        is_leaf: false
+                      relationships:
+                        parent:
+                          data:
+                        taxonomy:
+                          data:
+                            id: '16'
+                            type: taxonomy
+                        children:
+                          data:
+                          - id: '32'
+                            type: taxon
+                          - id: '33'
+                            type: taxon
+                        image:
+                          data:
+                    meta:
+                      count: 3
+                      total_count: 3
+                      total_pages: 1
+                    links:
+                      self: http://www.example.com/api/v2/platform/taxons?page=1&per_page=&include=&filter=
+                      next: http://www.example.com/api/v2/platform/taxons?include=&page=1&per_page=
+                      prev: http://www.example.com/api/v2/platform/taxons?include=&page=1&per_page=
+                      last: http://www.example.com/api/v2/platform/taxons?include=&page=1&per_page=
+                      first: http://www.example.com/api/v2/platform/taxons?include=&page=1&per_page=
+        '401':
+          description: Authentication Failed
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The access token is invalid
+    post:
+      summary: Creates a Taxon
+      tags:
+      - Taxons
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: include
+        in: query
+        descripton: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: taxonomy,parent,children
+        schema:
+          type: string
+      responses:
+        '201':
+          description: record created
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    data:
+                      id: '38'
+                      type: taxon
+                      attributes:
+                        position: 0
+                        name: taxon_20
+                        permalink: taxonomy-18/taxon-20
+                        lft: 2
+                        rgt: 3
+                        description:
+                        created_at: '2021-08-06T06:53:22.225Z'
+                        updated_at: '2021-08-06T06:53:22.231Z'
+                        meta_title:
+                        meta_description:
+                        meta_keywords:
+                        depth: 1
+                        pretty_name: taxonomy_18 -> taxon_20
+                        seo_title: taxon_20
+                        is_root: false
+                        is_child: true
+                        is_leaf: true
+                      relationships:
+                        parent:
+                          data:
+                            id: '37'
+                            type: taxon
+                        taxonomy:
+                          data:
+                            id: '18'
+                            type: taxonomy
+                        children:
+                          data: []
+                        image:
+                          data:
+        '422':
+          description: invalid request
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: Name can't be blank and Taxonomy can't be blank
+                    errors:
+                      name:
+                      - can't be blank
+                      taxonomy:
+                      - can't be blank
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/taxon_params"
+  "/api/v2/platform/taxons/{id}":
+    get:
+      summary: Returns a Taxon
+      tags:
+      - Taxons
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: include
+        in: query
+        descripton: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: taxonomy,parent,children
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Record found
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    data:
+                      id: '40'
+                      type: taxon
+                      attributes:
+                        position: 0
+                        name: taxon_21
+                        permalink: taxonomy-19/taxon-21
+                        lft: 2
+                        rgt: 3
+                        description:
+                        created_at: '2021-08-06T06:53:22.320Z'
+                        updated_at: '2021-08-06T06:53:22.324Z'
+                        meta_title:
+                        meta_description:
+                        meta_keywords:
+                        depth: 1
+                        pretty_name: taxonomy_19 -> taxon_21
+                        seo_title: taxon_21
+                        is_root: false
+                        is_child: true
+                        is_leaf: true
+                      relationships:
+                        parent:
+                          data:
+                            id: '39'
+                            type: taxon
+                        taxonomy:
+                          data:
+                            id: '19'
+                            type: taxonomy
+                        children:
+                          data: []
+                        products:
+                          data: []
+                        image:
+                          data:
+                            id: '20'
+                            type: taxon_image
+        '404':
+          description: Record not found
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The resource you were looking for could not be found.
+        '401':
+          description: Authentication Failed
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The access token is invalid
+    put:
+      summary: Updates a Taxon
+      tags:
+      - Taxons
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: include
+        in: query
+        descripton: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: taxonomy,parent,children
+        schema:
+          type: string
+      responses:
+        '200':
+          description: record updated
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    data:
+                      id: '44'
+                      type: taxon
+                      attributes:
+                        position: 0
+                        name: T-Shirts
+                        permalink: taxonomy-21/taxon-23
+                        lft: 2
+                        rgt: 3
+                        description:
+                        created_at: '2021-08-06T06:53:22.511Z'
+                        updated_at: '2021-08-06T06:53:22.542Z'
+                        meta_title:
+                        meta_description:
+                        meta_keywords:
+                        depth: 1
+                        pretty_name: taxonomy_21 -> T-Shirts
+                        seo_title: T-Shirts
+                        is_root: false
+                        is_child: true
+                        is_leaf: true
+                      relationships:
+                        parent:
+                          data:
+                            id: '43'
+                            type: taxon
+                        taxonomy:
+                          data:
+                            id: '21'
+                            type: taxonomy
+                        children:
+                          data: []
+                        image:
+                          data:
+                            id: '22'
+                            type: taxon_image
+        '422':
+          description: invalid request
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: Name can't be blank
+                    errors:
+                      name:
+                      - can't be blank
+        '404':
+          description: Record not found
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The resource you were looking for could not be found.
+        '401':
+          description: Authentication Failed
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The access token is invalid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/taxon_params"
+    delete:
+      summary: Deletes a Taxon
+      tags:
+      - Taxons
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Record deleted
+        '404':
+          description: Record not found
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The resource you were looking for could not be found.
+        '401':
+          description: Authentication Failed
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The access token is invalid
 servers:
 - url: https://{defaultHost}
   variables:
@@ -488,9 +1371,9 @@ components:
       type: object
       properties:
         country_id:
-          type: integer
+          type: string
         state_id:
-          type: integer
+          type: string
         state_name:
           type: string
         address1:
@@ -512,7 +1395,26 @@ components:
         company:
           type: string
         user_id:
+          type: string
+    classification_params:
+      type: object
+      properties:
+        product_id:
+          type: string
+        taxon_id:
+          type: string
+        position:
           type: integer
+    taxon_params:
+      type: object
+      properties:
+        taxonomy_id:
+          type: string
+        name:
+          type: string
+      required:
+      - name
+      - taxonomy_id
     resources_list:
       type: object
       properties:
