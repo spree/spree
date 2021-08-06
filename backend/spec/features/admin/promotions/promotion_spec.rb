@@ -31,7 +31,7 @@ describe 'Create New Promotion', type: :feature, js: true do
 
       click_button 'Create'
 
-      promotion = store.promotions.find_by!(name: 'Promotion 2')
+      promotion = store.promotions.last
       expect(promotion.starts_at).to eq(DateTime.new(2012, 1, 24, 16, 45))
       expect(promotion.expires_at).to eq(DateTime.new(2012, 1, 25, 22, 10))
     end
