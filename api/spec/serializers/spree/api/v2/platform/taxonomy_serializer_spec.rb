@@ -5,11 +5,11 @@ describe Spree::Api::V2::Platform::TaxonomySerializer, retry: 3 do
 
   let(:taxonomy) { create(:taxonomy) }
   let!(:root) { taxonomy.root }
-  let!(:taxon) { create(:taxon, taxonomy: taxonomy) }
 
   it { expect(subject.serializable_hash).to be_kind_of(Hash) }
 
   it do
+    taxon = create(:taxon, taxonomy: taxonomy)
     expect(subject.serializable_hash).to eq(
       {
         data: {
