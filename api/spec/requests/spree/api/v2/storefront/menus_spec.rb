@@ -66,7 +66,7 @@ describe 'Storefront API v2 Menus spec', type: :request do
           have_type('menu_item').
             and(
               have_id(menu_item.id.to_s).
-              and(have_relationship(:image, :menu, :parent, :children, :linked_resource)).
+              and(have_relationship(:icon, :menu, :parent, :children, :linked_resource)).
               and(have_jsonapi_attributes(:name, :code, :subtitle, :link, :new_window, :lft, :rgt, :depth, :is_container, :is_root, :is_child, :is_leaf))
             )
         )
@@ -102,7 +102,7 @@ describe 'Storefront API v2 Menus spec', type: :request do
         expect(json_response['data']['attributes']['locale']).to eq menu.locale
 
         expect(json_response['included']).to include(have_type('taxon').and(have_id(taxon.id.to_s)))
-        expect(json_response['included']).to include(have_type('menu_item').and(have_id(menu_item.id.to_s).and(have_relationship(:image, :menu, :parent, :children, :linked_resource))))
+        expect(json_response['included']).to include(have_type('menu_item').and(have_id(menu_item.id.to_s).and(have_relationship(:icon, :menu, :parent, :children, :linked_resource))))
       end
     end
 

@@ -3525,6 +3525,10 @@ paths:
       tags:
         - Menus
       operationId: Menus List
+      parameters:
+        - $ref: '#/components/parameters/FilterByLocation'
+        - $ref: '#/components/parameters/MenuIncludeParam'
+        - $ref: '#/components/parameters/MenItemIncludeIconParam'
       responses:
         '200':
           description: Returns a list of all Menus available for the current store.
@@ -3534,26 +3538,20 @@ paths:
                 $ref: '#/components/schemas/MenusList'
         '404':
           $ref: '#/components/responses/404NotFound'
-      summary: List of Menus
-  '/api/v2/storefront/menus/{location}':
+      summary: List of Menus for current store
+  '/api/v2/storefront/menus/{menuId}':
     get:
       description: |-
-        To get a single menu by the menu location:
-
-        ```
-        GET /api/v2/storefront/menus/header
-        ```
-
         To get a single menu by ID:
-
         ```
-        GET /api/v2/storefront/menus/1
+        GET /api/v2/storefront/menus/37
         ```
       tags:
         - Menus
-      operationId: Show Menu
+      operationId: Get Menu By ID
       parameters:
-        - $ref: '#/components/parameters/MenuLocation'
+        - $ref: '#/components/parameters/MenuId'
+        - $ref: '#/components/parameters/MenuIncludeParam'
       responses:
         '200':
           description: Returns the requested Menu
@@ -3563,7 +3561,7 @@ paths:
                 $ref: '#/components/schemas/Menu'
         '404':
           $ref: '#/components/responses/404NotFound'
-      summary: Get a single Menu by location
+      summary: Returns a single Menu by ID
   /api/v2/storefront/taxons:
     get:
       description: 'Returns a list of Taxons. [Read more about Taxons](https://guides.spreecommerce.org/developer/core/products.html#taxons-and-taxonomies)'
@@ -4577,6 +4575,7 @@ components:
               items:
                 $ref: '#/components/schemas/MenuToMenuItemRelation'
     MenuToMenuItemRelation:
+      type: object
       properties:
         id:
           type: string
@@ -4585,6 +4584,7 @@ components:
           type: string
           example: menu_item
     MenuAttributesAndRelationships:
+      type: object
       properties:
         id:
           type: string
@@ -4609,21 +4609,26 @@ components:
           description: Menu Item
         attributes:
           $ref: '#/components/schemas/MenuItemAttributes'
+        included:
+          type: array
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/Icon'
     MenuItemAttributes:
       type: object
       properties:
         code:
           type: string
-          example: top-link
+          example: promo
         name:
           type: string
-          example: View Baseball Bat
+          example: View T-Shirts
         subtitle:
           type: string
-          example: null
+          example: special offers
         link:
           type: string
-          example: /products/louisville-slugger
+          example: /t/categories/mens/t-shirts
         new_window:
           type: boolean
           example: false
@@ -4648,6 +4653,29 @@ components:
         is_leaf:
           type: boolean
           example: true
+    Icon:
+      type: object
+      properties:
+        id:
+          type: string
+          example: '1'
+        type:
+          type: string
+          default: icon
+        attributes:
+          $ref: '#/components/schemas/IconAttributes'
+    IconAttributes:
+      type: object
+      properties:
+        viewable_type:
+          type: string
+          example: Spree::MenuItem
+        viewable_id:
+          type: string
+          example: 22
+        url:
+          type: string
+          example: "/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBCZz09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--0a0f32c46a4f6c05456e960a920ea34db9e9d685/promo-image-one.jpg"
     Promotion:
       properties:
         id:
@@ -5698,20 +5726,42 @@ components:
         type: string
       description: Pass `states` as value to include States / Regions for each Country
       example: states
-    MenuLocation:
-      name: location
+    MenuId:
+      name: menuId
       in: path
       required: true
-      description: Location of the Menu within the website. `header`, `footer`
+      description: Menu ID
       schema:
         type: string
-    MenuItemIncludeParam:
+        example: '1'
+    FilterByLocation:
+      name: 'filter[location]'
+      in: query
+      description: 'Find resources with matching location'
+      schema:
+        type: string
+        example: header
+    MenuIncludeParam:
       name: include
       in: query
+      description: Pass `menu_items` as value to include Menu Items for each menu
       schema:
         type: string
-      description: Pass `menu_items` as value to include Menu Items for each menu
-      example: menu_items
+        example: menu_items
+    MenItemIncludeIconParam:
+      name: include
+      in: query
+      description: Pass `icon` as value to include Menu Items for each menu
+      schema:
+        type: string
+        example: icon
+    MenItemIncludeLinkedResourcesParam:
+      name: include
+      in: query
+      description: Pass `linked_resource` as value to include linked resoures such as Taxon, Product or Page.
+      schema:
+        type: string
+        example: linked_resource
     AccountIncludeParam:
       name: include
       in: query
