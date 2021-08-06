@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Spree::Taxon, type: :model do
   let(:taxonomy) { create(:taxonomy) }
-  let(:taxon) { build(:taxon, name: 'Ruby on Rails', parent_id: nil) }
+  let(:taxon) { build(:taxon, name: 'Ruby on Rails', parent: nil) }
 
   describe '#to_param' do
     subject { super().to_param }
@@ -113,5 +113,13 @@ describe Spree::Taxon, type: :model do
 
   describe '#cached_self_and_descendants_ids' do
     it { expect(taxon.cached_self_and_descendants_ids).to eq(taxon.self_and_descendants.ids) }
+  end
+
+  describe '#copy_taxonomy_from_parent' do
+    let!(:parent) { create(:taxon, taxonomy: taxonomy) }
+    let(:taxon) { build(:taxon, parent: parent, taxonomy: nil) }
+
+    it { expect(taxon.valid?).to eq(true) }
+    it { expect { taxon.save }.to change(taxon, :taxonomy).to(taxonomy) }
   end
 end

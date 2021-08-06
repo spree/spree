@@ -3,7 +3,7 @@ require 'spec_helper'
 describe 'Taxons Spec', type: :request do
   let!(:default_store) { taxonomy.store }
   let!(:taxonomy) { create(:taxonomy) }
-  let!(:taxons) { create_list(:taxon, 2, taxonomy: taxonomy, parent_id: taxonomy.root.id) }
+  let!(:taxons) { create_list(:taxon, 2, taxonomy: taxonomy, parent: taxonomy.root) }
 
   let(:store2)     { create(:store)}
   let!(:taxonomy2)  { create(:taxonomy, store: store2) }

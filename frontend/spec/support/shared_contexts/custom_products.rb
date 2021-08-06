@@ -2,16 +2,16 @@ shared_context 'custom products' do
   before do
     taxonomy = FactoryBot.create(:taxonomy, name: 'Categories')
     root = taxonomy.root
-    clothing_taxon = FactoryBot.create(:taxon, name: 'Clothing', parent_id: root.id)
+    clothing_taxon = FactoryBot.create(:taxon, name: 'Clothing', parent: root, taxonomy: taxonomy)
     trending_taxon = FactoryBot.create(:taxon, name: 'Trending')
-    bags_taxon = FactoryBot.create(:taxon, name: 'Bags', parent_id: root.id)
-    mugs_taxon = FactoryBot.create(:taxon, name: 'Mugs', parent_id: root.id)
+    bags_taxon = FactoryBot.create(:taxon, name: 'Bags', parent: root, taxonomy: taxonomy)
+    mugs_taxon = FactoryBot.create(:taxon, name: 'Mugs', parent: root, taxonomy: taxonomy)
 
     taxonomy = FactoryBot.create(:taxonomy, name: 'Brands')
     root = taxonomy.root
-    apache_taxon = FactoryBot.create(:taxon, name: 'Apache', parent_id: root.id)
-    rails_taxon = FactoryBot.create(:taxon, name: 'Ruby on Rails', parent_id: root.id)
-    ruby_taxon = FactoryBot.create(:taxon, name: 'Ruby', parent_id: root.id)
+    apache_taxon = FactoryBot.create(:taxon, name: 'Apache', parent: root, taxonomy: taxonomy)
+    rails_taxon = FactoryBot.create(:taxon, name: 'Ruby on Rails', parent: root, taxonomy: taxonomy)
+    ruby_taxon = FactoryBot.create(:taxon, name: 'Ruby', parent: root, taxonomy: taxonomy)
     store = Spree::Store.default
 
     FactoryBot.create(:custom_product, name: 'Ruby on Rails Ringer T-Shirt', price: '159.99', taxons: [rails_taxon, clothing_taxon], stores: [store])

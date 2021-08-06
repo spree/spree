@@ -35,6 +35,7 @@ module Spree
       validates :meta_title
     end
 
+    before_validation :copy_taxonomy_from_parent
     after_save :touch_ancestors_and_taxonomy
     after_touch :touch_ancestors_and_taxonomy
 
@@ -118,6 +119,10 @@ module Spree
       if parent.present? && parent.taxonomy_id != taxonomy_id
         errors.add(:parent, 'must belong to the same taxonomy')
       end
+    end
+
+    def copy_taxonomy_from_parent
+      self.taxonomy = parent.taxonomy if parent.present? && taxonomy.blank?
     end
   end
 end

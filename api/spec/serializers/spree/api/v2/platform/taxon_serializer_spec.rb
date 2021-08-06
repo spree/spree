@@ -5,8 +5,9 @@ describe Spree::Api::V2::Platform::TaxonSerializer do
 
   subject { described_class.new(taxon, params: serializer_params) }
 
-  let(:taxon) { create(:taxon, products: create_list(:product, 2)) }
-  let!(:children) { [create(:taxon, parent_id: taxon.id), create(:taxon, parent_id: taxon.id)] }
+  let(:taxonomy) { create(:taxonomy, store: store) }
+  let(:taxon) { create(:taxon, products: create_list(:product, 2, stores: [store]), taxonomy: taxonomy) }
+  let!(:children) { [create(:taxon, parent: taxon, taxonomy: taxonomy), create(:taxon, parent: taxon, taxonomy: taxonomy)] }
 
   it { expect(subject.serializable_hash).to be_kind_of(Hash) }
 
