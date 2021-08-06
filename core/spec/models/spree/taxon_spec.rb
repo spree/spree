@@ -1,8 +1,9 @@
 require 'spec_helper'
 
 describe Spree::Taxon, type: :model do
-  let(:taxon) { FactoryBot.build(:taxon, name: 'Ruby on Rails', parent_id: nil) }
-  let(:valid_taxon) { FactoryBot.build(:taxon, name: 'Vaild Rails', parent_id: 1, taxonomy_id: 2) }
+  let(:taxonomy) { create(:taxonomy) }
+  let(:taxon) { build(:taxon, name: 'Ruby on Rails', parent_id: nil) }
+  let(:valid_taxon) { build(:taxon, name: 'Vaild Rails', parent_id: 1, taxonomy_id: taxonomy.id) }
 
   describe '#to_param' do
     subject { super().to_param }
