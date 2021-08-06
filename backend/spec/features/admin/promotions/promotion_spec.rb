@@ -31,8 +31,9 @@ describe 'Create New Promotion', type: :feature, js: true do
 
       click_button 'Create'
 
-      expect(page).to have_field(id: 'promotion_starts_at', type: :hidden, with: '2012-01-24 16:45')
-      expect(page).to have_field(id: 'promotion_expires_at', type: :hidden, with: '2012-01-25 22:10')
+      promotion = store.promotions.last
+      expect(promotion.starts_at).to eq(DateTime.new(2012, 1, 24, 16, 45))
+      expect(promotion.expires_at).to eq(DateTime.new(2012, 1, 25, 22, 10))
     end
 
     it 'allows assigning multiple stores' do
