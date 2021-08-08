@@ -175,6 +175,24 @@ module Spree
       Rails::VERSION::STRING < '6.0'
     end
 
+    def spree_storefront_resource_url(resource, options = {})
+      if locale_param
+        options.merge!(locale: locale_param)
+      end
+
+      localize = if options[:locale].present?
+                   "/#{options[:locale]}"
+                 else
+                   ''
+                 end
+
+      if resource.instance_of?(Spree::Product)
+        "#{current_store.formatted_url}#{localize}/#{Spree::Config[:storefront_products_path]}/#{resource.slug}"
+      elsif resource.instance_of?(Spree::Taxon)
+        "#{current_store.formatted_url}#{localize}/#{Spree::Config[:storefront_taxons_path]}/#{resource.permalink}"
+      end
+    end
+
     # we should always try to render image of the default variant
     # same as it's done on PDP
     def default_image_for_product(product)
