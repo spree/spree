@@ -19,20 +19,12 @@
     <% @reimbursement.return_items.exchange_requested.each do |return_item| %>
       <tr>
         <td class="purchase_image">
-          <% if frontend_available? %>
-            <%= link_to(image_tag(variant_image_url(return_item.variant)), spree.product_url(return_item.variant.product)) %>
-          <% else %>
-            <%= image_tag(variant_image_url(return_item.variant)) %>
-          <% end %>
+          <%= link_to(image_tag(variant_image_url(return_item.variant)), spree_storefront_resource_url(return_item.variant.product)) %>
         </td>
         <td class="purchase_item">
           <strong>
             <span class="f-fallback">
-              <% if frontend_available? %>
-                <%= link_to raw(return_item.variant.name), spree.product_url(return_item.variant.product) %>
-              <% else %>
-                <%= raw(return_item.variant.name) %>
-              <% end %>
+              <%= link_to raw(return_item.variant.name), spree_storefront_resource_url(return_item.variant.product) %>
             </span>
           </strong>
           <p class="purchase_item--additional">
