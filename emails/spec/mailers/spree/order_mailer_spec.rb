@@ -5,10 +5,6 @@ describe Spree::OrderMailer, type: :mailer do
   include EmailSpec::Helpers
   include EmailSpec::Matchers
 
-  before do
-    allow_any_instance_of(Spree::BaseHelper).to receive(:locale_param)
-  end
-
   let(:first_store) { create(:store, name: 'First Store') }
   let(:second_store) { create(:store, name: 'Second Store', url: 'other.example.com') }
 
