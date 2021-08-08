@@ -24,14 +24,6 @@ module Spree
       spree_class_name_as_path(last_word)
     end
 
-    def spree_storefront_product_url(product)
-      if frontend_available?
-        spree.product_url(product)
-      else
-        "#{current_store.formatted_url}/#{Spree::Config[:storefront_products_path]}/#{product.slug}"
-      end
-    end
-
     def spree_class_name_as_path(class_name)
       class_name.underscore.humanize.parameterize(separator: '_')
     end
@@ -181,6 +173,40 @@ module Spree
 
     def rails_5?
       Rails::VERSION::STRING < '6.0'
+    end
+
+    def spree_storefront_product_url(product, options = {})
+      if locale_param
+        options.merge!(locale: locale_param)
+      end
+
+      if frontend_available?
+        spree.product_url(product, options)
+      else
+        localize = if options[:locale].present?
+                     "/#{options[:locale]}"
+                   else
+                     ''
+                   end
+        "#{current_store.formatted_url}#{localize}/#{Spree::Config[:storefront_products_path]}/#{product.slug}"
+      end
+    end
+
+    def spree_storefront_taxon_url(taxon, options = {})
+      if locale_param
+        options.merge!(locale: locale_param)
+      end
+
+      if frontend_available?
+        spree.nested_taxons_url(taxon.permalink, options)
+      else
+        localize = if options[:locale].present?
+                     "/#{options[:locale]}"
+                   else
+                     ''
+                   end
+        "#{current_store.formatted_url}#{localize}/#{Spree::Config[:storefront_taxons_path]}/#{taxon.permalink}"
+      end
     end
 
     # we should always try to render image of the default variant

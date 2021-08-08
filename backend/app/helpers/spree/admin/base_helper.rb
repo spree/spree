@@ -245,11 +245,9 @@ module Spree
       end
 
       def taxon_preview_link(taxon)
-        return unless frontend_available?
-
         button_link_to(
           Spree.t(:preview_taxon),
-          seo_url(taxon),
+          spree_storefront_taxon_url(taxon),
           class: 'btn-outline-secondary', icon: 'view.svg', id: 'admin_preview_taxon', target: :blank
         )
       end
