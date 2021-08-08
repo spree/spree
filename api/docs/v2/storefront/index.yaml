@@ -94,18 +94,6 @@ paths:
                           state_code: NY
         '403':
           $ref: '#/components/responses/403Forbidden'
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  '':
-                    type: string
-              examples:
-                example-1:
-                  value:
-                    error: You are not authorized to access this page.
       security:
         - bearerAuth: []
     post:
@@ -250,7 +238,7 @@ paths:
         - Account
       operationId: Remove Address
       parameters:
-        - $ref: '#/components/parameters/AddressId'
+        - $ref: '#/components/parameters/Id'
       responses:
         '204':
           description: Requested Address has been removed from the User Account
@@ -266,7 +254,7 @@ paths:
         - Account
       operationId: Update Address
       parameters:
-        - $ref: '#/components/parameters/AddressId'
+        - $ref: '#/components/parameters/Id'
       requestBody:
         required: true
         content:
@@ -695,7 +683,7 @@ paths:
       parameters:
         - name: coupon_code
           in: path
-          required: false
+          required: true
           description: Selected Coupon code for removal
           schema:
             type: string
@@ -3527,8 +3515,7 @@ paths:
       operationId: Menus List
       parameters:
         - $ref: '#/components/parameters/FilterByLocation'
-        - $ref: '#/components/parameters/MenuIncludeParam'
-        - $ref: '#/components/parameters/MenItemIncludeIconParam'
+        - $ref: '#/components/parameters/SparseFieldsParam'
       responses:
         '200':
           description: Returns a list of all Menus available for the current store.
@@ -3538,8 +3525,8 @@ paths:
                 $ref: '#/components/schemas/MenusList'
         '404':
           $ref: '#/components/responses/404NotFound'
-      summary: List of Menus for current store
-  '/api/v2/storefront/menus/{menuId}':
+      summary: List of Menus
+  '/api/v2/storefront/menus/{id}':
     get:
       description: |-
         To get a single menu by ID:
@@ -3550,8 +3537,9 @@ paths:
         - Menus
       operationId: Get Menu By ID
       parameters:
-        - $ref: '#/components/parameters/MenuId'
+        - $ref: '#/components/parameters/Id'
         - $ref: '#/components/parameters/MenuIncludeParam'
+        - $ref: '#/components/parameters/SparseFieldsParam'
       responses:
         '200':
           description: Returns the requested Menu
@@ -3561,7 +3549,7 @@ paths:
                 $ref: '#/components/schemas/Menu'
         '404':
           $ref: '#/components/responses/404NotFound'
-      summary: Returns a single Menu by ID
+      summary: Get Menu Details
   /api/v2/storefront/taxons:
     get:
       description: 'Returns a list of Taxons. [Read more about Taxons](https://guides.spreecommerce.org/developer/core/products.html#taxons-and-taxonomies)'
@@ -3948,6 +3936,63 @@ paths:
               schema:
                 $ref: '#/components/schemas/Country'
       summary: Get Default Country
+
+  /api/v2/storefront/cms_pages:
+    get:
+      description: Returns a list of all CMS Pages available in the current store.
+      tags:
+        - CMS Pages
+      operationId: CMS Pages List
+      parameters:
+        - $ref: '#/components/parameters/FilterByType'
+        - $ref: '#/components/parameters/FilterByTitle'
+        - $ref: '#/components/parameters/CmsPageIncludeSectionsParam'
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/PerPageParam'
+        - $ref: '#/components/parameters/SparseFieldsParam'
+      responses:
+        '200':
+          description: Returns a list of all CMS Pages available for the current store.
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/CmsPagesList'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+      summary: List of CMS Pages
+  '/api/v2/storefront/cms_pages/{id}':
+    get:
+      description: |-
+        To return a single CMS Page you can use CMS Page slug:
+
+        ```
+        GET /api/v2/storefront/cms_pages/about-us
+        ```
+
+        Or CMS Page ID:
+
+        ```
+        GET /api/v2/storefront/cms_pages/37
+        ```
+
+        **Note** API will attempt a Slug lookup before an ID lookup.
+      tags:
+        - CMS Pages
+      operationId: Get CMS Page By ID
+      parameters:
+        - $ref: '#/components/parameters/IdOrSlug'
+        - $ref: '#/components/parameters/CmsPageIncludeSectionsParam'
+        - $ref: '#/components/parameters/SparseFieldsParam'
+      responses:
+        '200':
+          description: Returns the requested CMS Page
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/CmsPage'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+      summary: Get CMS Page Details
 components:
   securitySchemes:
     bearerAuth:
@@ -4070,8 +4115,9 @@ components:
     Cart:
       properties:
         data:
-          type: object
-          $ref: '#/components/schemas/CartAttributesWithRelationships'
+          type: array
+          items:
+            $ref: '#/components/schemas/CartAttributesWithRelationships'
         included:
           type: array
           items:
@@ -4328,8 +4374,9 @@ components:
         - included
       properties:
         data:
-          type: object
-          $ref: '#/components/schemas/CreditCardAttributesWithRelationships'
+          type: array
+          items:
+            $ref: '#/components/schemas/CreditCardAttributesWithRelationships'
         included:
           type: array
           items:
@@ -4375,8 +4422,9 @@ components:
           type: string
           example: credit_card
         attributes:
-          type: object
-          $ref: '#/components/schemas/CreditCardAttributes'
+          type: array
+          items:
+            $ref: '#/components/schemas/CreditCardAttributes'
         relationships:
           type: object
           properties:
@@ -5607,6 +5655,693 @@ components:
         - zipcode
         - state_name
         - country_iso
+    CmsPage:
+      required:
+        - data
+        - included
+      properties:
+        data:
+          $ref: '#/components/schemas/CmsFeaturePageAttributesAndRelationships'
+        included:
+          type: array
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/CmsHeroImageSection'
+              - $ref: '#/components/schemas/CmsFeaturedAtricleSection'
+              - $ref: '#/components/schemas/CmsProductCarouselSection'
+              - $ref: '#/components/schemas/CmsSideBySideImagesSection'
+              - $ref: '#/components/schemas/CmsImageGallerySection'
+      description: CMS Page
+    CmsPagesList:
+      required:
+        - data
+      properties:
+        data:
+          type: array
+          items:
+            anyOf:
+            - $ref: '#/components/schemas/CmsStandardPageAttributesAndRelationships'
+            - $ref: '#/components/schemas/CmsFeaturePageAttributesAndRelationships'
+            - $ref: '#/components/schemas/CmsHomePageAttributesAndRelationships'
+      title: List of CMS Pages
+    CmsStandardPageAttributes:
+      type: object
+      properties:
+        title:
+          type: string
+          example: "About Us"
+        content:
+          type: string
+          example: "This is the about us page, we do all sorts at this store, come and shop with us."
+        locale:
+          type: string
+          example: "en"
+        meta_description:
+          type: string
+          example: "Example Store Ltd - About Us - We sell everything less than everyone else and ship faster."
+        meta_title:
+          type: string
+          example: "Example Streo Lts | The Super Discount Store"
+        slug:
+          type: string
+          example: "about-us"
+        type:
+          type: string
+          example: "Spree::Cms::Pages::StandardPage"
+    CmsFeaturePageAttributes:
+      type: object
+      properties:
+        title:
+          type: string
+          example: "Baseball Cap Overview"
+        content:
+          type: string
+          example: ""
+        locale:
+          type: string
+          example: "en"
+        meta_description:
+          type: string
+          example: "Example Store Ltd - Baseball Cap Overview"
+        meta_title:
+          type: string
+          example: "Example Streo Lts | The Super Discount Store | Baseball Cap Overview"
+        slug:
+          type: string
+          example: "product-overview"
+        type:
+          type: string
+          example: "Spree::Cms::Pages::FeaturePage"
+    CmsHomePageAttributes:
+      type: object
+      properties:
+        title:
+          type: string
+          example: "English Home Page"
+        content:
+          type: string
+          example: ''
+        locale:
+          type: string
+          example: "en"
+        meta_description:
+          type: string
+          example: "Example Store Ltd - Home Page - Welcome, we sell everything less than everyone else and ship faster."
+        meta_title:
+          type: string
+          example: "Example Streo Lts | The Super Discount Store | Home Page"
+        slug:
+          type: string
+          example: ''
+        type:
+          type: string
+          example: "Spree::Cms::Pages::HomePage"
+    CmsStandardPageRelationships:
+      type: object
+      properties:
+        cms_sections:
+          type: object
+          description: CMS Sections associated with this CMS Page
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/CmsStandardPageToCmsSectionsRelation'
+    CmsStandardPageToCmsSectionsRelation:
+      type: object
+    CmsSectionedPageRelationships:
+      type: object
+      properties:
+        cms_sections:
+          type: object
+          description: CMS Sections associated with this CMS Page
+          properties:
+            data:
+              type: array
+              items:
+                oneOf:
+                  - $ref: '#/components/schemas/CmsPageWithSectionsToCmsSectionRelation'
+                  - $ref: '#/components/schemas/CmsPageWithSectionsToCmsSectionRelation'
+                  - $ref: '#/components/schemas/CmsPageWithSectionsToCmsSectionRelation'
+                  - $ref: '#/components/schemas/CmsPageWithSectionsToCmsSectionRelation'
+                  - $ref: '#/components/schemas/CmsPageWithSectionsToCmsSectionRelation'
+    CmsPageWithSectionsToCmsSectionRelation:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          example: cms_section
+    CmsStandardPageAttributesAndRelationships:
+      type: object
+      properties:
+        id:
+          type: string
+          example: '1'
+        type:
+          type: string
+          default: cms_page
+        attributes:
+          $ref: '#/components/schemas/CmsStandardPageAttributes'
+        relationships:
+          $ref: '#/components/schemas/CmsStandardPageRelationships'
+    CmsFeaturePageAttributesAndRelationships:
+      type: object
+      properties:
+        id:
+          type: string
+          example: '2'
+        type:
+          type: string
+          default: cms_page
+        attributes:
+          $ref: '#/components/schemas/CmsFeaturePageAttributes'
+        relationships:
+          $ref: '#/components/schemas/CmsSectionedPageRelationships'
+    CmsHomePageAttributesAndRelationships:
+      type: object
+      properties:
+        id:
+          type: string
+          example: '3'
+        type:
+          type: string
+          default: cms_page
+        attributes:
+          $ref: '#/components/schemas/CmsHomePageAttributes'
+        relationships:
+          $ref: '#/components/schemas/CmsSectionedPageRelationships'
+    CmsHeroImageSection:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 1
+          description: CMS Section ID
+        type:
+          type: string
+          example: cms_section
+          description: CMS Section
+        attributes:
+          $ref: '#/components/schemas/CmsHeroSectionAttributes'
+        included:
+          type: array
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/ProductAttributesAndRelationships'
+              - $ref: '#/components/schemas/TaxonAttributesAndRelationships'
+    CmsFeaturedAtricleSection:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 2
+          description: CMS Section ID
+        type:
+          type: string
+          example: cms_section
+          description: CMS Section
+        attributes:
+          $ref: '#/components/schemas/CmsFeaturedAtricleSectionAttributes'
+        included:
+          type: array
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/ProductAttributesAndRelationships'
+              - $ref: '#/components/schemas/TaxonAttributesAndRelationships'
+    CmsProductCarouselSection:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 3
+          description: CMS Section ID
+        type:
+          type: string
+          example: cms_section
+          description: CMS Section
+        attributes:
+          $ref: '#/components/schemas/CmsProductCarouselSectionAttributes'
+        included:
+          type: array
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/ProductAttributesAndRelationships'
+              - $ref: '#/components/schemas/TaxonAttributesAndRelationships'
+    CmsSideBySideImagesSection:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 4
+          description: CMS Section ID
+        type:
+          type: string
+          example: cms_section
+          description: CMS Section
+        attributes:
+          $ref: '#/components/schemas/CmsSideBySideImagesSectionAttributes'
+        included:
+          type: array
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/ProductAttributesAndRelationships'
+              - $ref: '#/components/schemas/TaxonAttributesAndRelationships'
+    CmsImageGallerySection:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 5
+          description: CMS Section ID
+        type:
+          type: string
+          example: cms_section
+          description: CMS Section
+        attributes:
+          $ref: '#/components/schemas/CmsImageGallerySectionAttributes'
+        included:
+          type: array
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/ProductAttributesAndRelationships'
+              - $ref: '#/components/schemas/TaxonAttributesAndRelationships'
+    CmsHeroSectionAttributes:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Main Hero"
+        content:
+          $ref: '#/components/schemas/CmsHeroSectionContent'
+        settings:
+          $ref: '#/components/schemas/CmsHeroSectionSettings'
+        link:
+          type: string
+          example: "/t/categories/summer-collection"
+        fit:
+          type: string
+          example: "Screen"
+        type:
+          type: string
+          example: "Spree::Cms::Sections::HeroImage"
+        position:
+          type: integer
+          example: 1
+        image_one_sm:
+          type: string
+          example: "/rails/active_storage/representations/redirect/eyJfc--eldkxjen/main_hero.jpg"
+        image_one_md:
+          type: string
+          example: "/rails/active_storage/representations/redirect/eyJfc--jhusbxnd/main_hero.jpg"
+        image_one_lg:
+          type: string
+          example: "/rails/active_storage/representations/redirect/eyJfc--uzggzusx/main_hero.jpg"
+        image_one_xl:
+          type: string
+          example: "/rails/active_storage/representations/redirect/eyJfc--lxpshbbc/main_hero.jpg"
+        image_two_sm:
+          type: string
+          example: null
+        image_two_md:
+          type: string
+          example: null
+        image_two_lg:
+          type: string
+          example: null
+        image_two_xl:
+          type: string
+          example: null
+        image_three_sm:
+          type: string
+          example: null
+        image_three_md:
+          type: string
+          example: null
+        image_three_lg:
+          type: string
+          example: null
+        image_three_xl:
+          type: string
+          example: null
+        is_full_screen:
+          type: boolean
+          example: true
+    CmsFeaturedAtricleSectionAttributes:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Fashion Trends"
+        content:
+          $ref: '#/components/schemas/CmsFeaturedAtricleSectionContent'
+        settings:
+          $ref: '#/components/schemas/CmsFeaturedAtricleSectionSettings'
+        link:
+          type: string
+          example: "/t/categories/trending"
+        fit:
+          type: string
+          example: "Screen"
+        type:
+          type: string
+          example: "Spree::Cms::Sections::FeaturedArticle"
+        position:
+          type: integer
+          example: 2
+        image_one_sm:
+          type: string
+          example: null
+        image_one_md:
+          type: string
+          example: null
+        image_one_lg:
+          type: string
+          example: null
+        image_one_xl:
+          type: string
+          example: null
+        image_two_sm:
+          type: string
+          example: null
+        image_two_md:
+          type: string
+          example: null
+        image_two_lg:
+          type: string
+          example: null
+        image_two_xl:
+          type: string
+          example: null
+        image_three_sm:
+          type: string
+          example: null
+        image_three_md:
+          type: string
+          example: null
+        image_three_lg:
+          type: string
+          example: null
+        image_three_xl:
+          type: string
+          example: null
+        is_full_screen:
+          type: boolean
+          example: true
+    CmsProductCarouselSectionAttributes:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Best Sellers Carousel"
+        content:
+          type: string
+          example: null
+        settings:
+          type: string
+          example: null
+        link:
+          type: string
+          example: "/t/categories/bestsellers"
+        fit:
+          type: string
+          example: "Screen"
+        type:
+          type: string
+          example: "Spree::Cms::Sections::ProductCarousel"
+        position:
+          type: integer
+          example: 3
+        image_one_sm:
+          type: string
+          example: null
+        image_one_md:
+          type: string
+          example: null
+        image_one_lg:
+          type: string
+          example: null
+        image_one_xl:
+          type: string
+          example: null
+        image_two_sm:
+          type: string
+          example: null
+        image_two_md:
+          type: string
+          example: null
+        image_two_lg:
+          type: string
+          example: null
+        image_two_xl:
+          type: string
+          example: null
+        image_three_sm:
+          type: string
+          example: null
+        image_three_md:
+          type: string
+          example: null
+        image_three_lg:
+          type: string
+          example: null
+        image_three_xl:
+          type: string
+          example: null
+        is_full_screen:
+          type: boolean
+          example: true
+    CmsSideBySideImagesSectionAttributes:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Promotions"
+        content:
+          $ref: '#/components/schemas/CmsSideBySideImagesSectionContent'
+        settings:
+          $ref: '#/components/schemas/CmsSideBySideImagesSectionSettings'
+        link:
+          type: string
+          example: "/t/categories/summer-collection"
+        fit:
+          type: string
+          example: "Container"
+        type:
+          type: string
+          example: "Spree::Cms::Sections::SideBySideImages"
+        position:
+          type: integer
+          example: 4
+        image_one_sm:
+          type: string
+          example: null
+        image_one_md:
+          type: string
+          example: "/rails/active_storage/representations/redirect/eyJfc--jhusbxnd/promo_left.jpg"
+        image_one_lg:
+          type: string
+          example: "/rails/active_storage/representations/redirect/eyJfc--uzggzusx/promo_left.jpg"
+        image_one_xl:
+          type: string
+          example: "/rails/active_storage/representations/redirect/eyJfc--lxpshbbc/promo_left.jpg"
+        image_two_sm:
+          type: string
+          example: null
+        image_two_md:
+          type: string
+          example: "/rails/active_storage/representations/redirect/eyJfc--jhusbxnd/promo_right.jpg"
+        image_two_lg:
+          type: string
+          example: "/rails/active_storage/representations/redirect/eyJfc--jhusbxnd/promo_right.jpg"
+        image_two_xl:
+          type: string
+          example: "/rails/active_storage/representations/redirect/eyJfc--jhusbxnd/promo_right.jpg"
+        image_three_sm:
+          type: string
+          example: null
+        image_three_md:
+          type: string
+          example: null
+        image_three_lg:
+          type: string
+          example: null
+        image_three_xl:
+          type: string
+          example: null
+        is_full_screen:
+          type: boolean
+          example: false
+    CmsImageGallerySectionAttributes:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Main Taxons"
+        content:
+          $ref: '#/components/schemas/CmsImageGallerySectionContent'
+        settings:
+          $ref: '#/components/schemas/CmsImageGallerySectionSettings'
+        link:
+          type: string
+          example: null
+        fit:
+          type: string
+          example: "Container"
+        type:
+          type: string
+          example: "Spree::Cms::Sections::ImageGallery"
+        position:
+          type: integer
+          example: 5
+        image_one_sm:
+          type: string
+          example: null
+        image_one_md:
+          type: string
+          example: "/rails/active_storage/representations/redirect/eyJfc--jhusbxnd/top_img.jpg"
+        image_one_lg:
+          type: string
+          example: "/rails/active_storage/representations/redirect/eyJfc--uzggzusx/top_img.jpg"
+        image_one_xl:
+          type: string
+          example: "/rails/active_storage/representations/redirect/eyJfc--lxpshbbc/top_img.jpg"
+        image_two_sm:
+          type: string
+          example: null
+        image_two_md:
+          type: string
+          example: "/rails/active_storage/representations/redirect/eyJfc--lxpshbbc/tall_img.jpg"
+        image_two_lg:
+          type: string
+          example: "/rails/active_storage/representations/redirect/eyJfc--lxpshbbc/tall_img.jpg"
+        image_two_xl:
+          type: string
+          example: "/rails/active_storage/representations/redirect/eyJfc--lxpshbbc/tall_img.jpg"
+        image_three_sm:
+          type: string
+          example: null
+        image_three_md:
+          type: string
+          example: "/rails/active_storage/representations/redirect/eyJfc--lxpshbbc/bottom_img.jpg"
+        image_three_lg:
+          type: string
+          example: "/rails/active_storage/representations/redirect/eyJfc--lxpshbbc/bottom_img.jpg"
+        image_three_xl:
+          type: string
+          example: "/rails/active_storage/representations/redirect/eyJfc--lxpshbbc/bottom_img.jpg"
+        is_full_screen:
+          type: boolean
+          example: false
+    CmsHeroSectionContent:
+      type: object
+      properties:
+        title:
+          type: string
+          example: "Summer Collection"
+        button_text:
+          type: string
+          example: "Shop Now"
+    CmsHeroSectionSettings:
+      type: object
+      properties:
+        gutters:
+          type: string
+          example: "No Gutters"
+    CmsFeaturedAtricleSectionContent:
+      type: object
+      properties:
+        title:
+          type: string
+          example: "Summer 2021"
+        subtitle:
+          type: string
+          example: "Fashion Trends"
+        button_text:
+          type: string
+          example: "Read More"
+        rte_content:
+          type: string
+          example: "\u003cdiv style=\"text-center\"\u003eLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.\u003c/div\u003e"
+    CmsFeaturedAtricleSectionSettings:
+      type: object
+      properties:
+        gutters:
+          type: string
+          example: "No Gutters"
+    CmsSideBySideImagesSectionContent:
+      type: object
+      properties:
+        link_type_one:
+          type: string
+          example: "Spree::Taxon"
+        link_type_two:
+          type: string
+          example: "Spree::Taxon"
+        title_one:
+          type: string
+          example: "New Collection"
+        subtitle_one:
+          type: string
+          example: "Street Style"
+        link_one:
+          type: string
+          example: "categories/streetstyle"
+        title_two:
+          type: string
+          example: "Summer Sale"
+        subtitle_two:
+          type: string
+          example: "Up To 30% OFF"
+        link_two:
+          type: string
+          example: "categories/special-offers/30-percent-off"
+    CmsSideBySideImagesSectionSettings:
+      type: object
+      properties:
+        gutters:
+          type: string
+          example: "Gutters"
+    CmsImageGallerySectionContent:
+      type: object
+      properties:
+        link_type_one:
+          type: string
+          example: "Spree::Taxon"
+        link_type_two:
+          type: string
+          example: "Spree::Taxon"
+        link_type_three:
+          type: string
+          example: "Spree::Taxon"
+        link_one:
+          type: string
+          example: "categories/men"
+        link_two:
+          type: string
+          example: "categories/women"
+        link_three:
+          type: string
+          example: "categories/sportswear"
+        title_one:
+          type: string
+          example: "Men"
+        title_two:
+          type: string
+          example: "Women"
+        title_three:
+          type: string
+          example: "Sportswear"
+    CmsImageGallerySectionSettings:
+      type: object
+      properties:
+        layout_style:
+          type: string
+          example: "Default"
+        display_labels:
+          type: string
+          example: "Show"
   parameters:
     AddressId:
       name: address_id
@@ -5639,6 +6374,14 @@ components:
       schema:
         type: string
       example: knitted-high-neck-sweater
+    IdOrSlug:
+      name: id
+      in: path
+      required: true
+      description: ID or Slug
+      schema:
+        type: string
+      example: "about-us"
     LineItemId:
       name: line_item_id
       in: path
@@ -5726,28 +6469,38 @@ components:
         type: string
       description: Pass `states` as value to include States / Regions for each Country
       example: states
-    MenuId:
-      name: menuId
+    CmsPageIncludeSectionsParam:
+      name: include
+      in: query
+      description: Pass `cms_sections` as value to include the CMS Sections for each CMS Page. To return a linked resource associated with a CMS Section, such as a Taxon, Product or other CMS Page pass `cms_sections.linked_resource`
+      schema:
+        type: string
+        example: 'cms_sections.linked_resource'
+    CmsSectionIncludeLinkedResourceParam:
+      name: include
+      in: query
+      description: Pass `linked_resource` as value to include Menu Items for each menu
+      schema:
+        type: string
+        example: linked_resource
+    Id:
+      name: id
       in: path
       required: true
-      description: Menu ID
+      description: Resource ID
       schema:
         type: string
         example: '1'
-    FilterByLocation:
-      name: 'filter[location]'
-      in: query
-      description: 'Find resources with matching location'
-      schema:
-        type: string
-        example: header
     MenuIncludeParam:
       name: include
       in: query
-      description: Pass `menu_items` as value to include Menu Items for each menu
+      description: |-
+        Pass `menu_items` as value to include the Menu Items for each Menu.<br>
+        To return the Icon associated with each Menu Item pass `menu_items.icon`.<br>
+        To return a linked resource associated with a Menu Item, such as a Taxon, Product or CMS Page pass `menu_items.linked_resource`.
       schema:
         type: string
-        example: menu_items
+        example: "menu_items.icon.linked_resource"
     MenItemIncludeIconParam:
       name: include
       in: query
@@ -5769,6 +6522,34 @@ components:
         type: string
       description: Pass `default_billing_address` and/or `default_shipping_address` as value to include selected addresses information
       example: 'default_billing_address,default_shipping_address'
+    FilterBySlug:
+      name: 'filter[slug]'
+      in: query
+      description: 'Fetch only resources with corresponding Slug'
+      schema:
+        type: string
+        example: "about-us"
+    FilterByTitle:
+      name: 'filter[title]'
+      in: query
+      description: 'Fetch only resources with correspondingTitle'
+      schema:
+        type: string
+        example: "About Us"
+    FilterByType:
+      name: 'filter[type]'
+      in: query
+      description: 'Fetch only resources with corresponding Type'
+      schema:
+        type: string
+        example: "home"
+    FilterByLocation:
+      name: 'filter[location]'
+      in: query
+      description: 'Fetch only resources with corresponding Location'
+      schema:
+        type: string
+        example: header
     FilterByIds:
       in: query
       name: 'filter[ids]'
