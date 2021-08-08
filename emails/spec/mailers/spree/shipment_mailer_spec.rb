@@ -11,7 +11,10 @@ describe Spree::ShipmentMailer, type: :mailer do
   let(:shipment) { order.shipments.first }
   let(:shipping_method) { shipment.shipping_method }
 
-  before { shipping_method.update(tracking_url: 'http://example.com/tracking') }
+  before do
+    shipping_method.update(tracking_url: 'http://example.com/tracking')
+    allow_any_instance_of(Spree::BaseHelper).to receive(:locale_param)
+  end
 
   context ':from not set explicitly' do
     it 'falls back to spree config' do
