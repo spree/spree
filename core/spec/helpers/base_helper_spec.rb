@@ -76,31 +76,25 @@ describe Spree::BaseHelper, type: :helper do
     let!(:taxon) { create(:taxon) }
     let!(:product) { create(:product) }
 
+    before do
+      allow(helper).to receive(:frontend_available?).and_return(false)
+      allow(helper).to receive(:current_store).and_return(store)
+      allow(helper).to receive(:locale_param)
+    end
+
     context 'for Product URL' do
-      context 'when storefront is not used' do
-        before do
-          allow(helper).to receive(:frontend_available?).and_return(false)
-          allow(helper).to receive(:current_store).and_return(store)
-          allow(helper).to receive(:locale_param)
-        end
+      it { expect(helper.spree_storefront_resource_url(product)).to eq("http://www.example.com/products/#{product.slug}") }
 
-        it { expect(helper.spree_storefront_resource_url(product)).to eq("http://www.example.com/products/#{product.slug}") }
-      end
-
-      context 'when storefront is not used and locale is passed' do
+      context 'when a locale is passed' do
         before do
-          allow(helper).to receive(:frontend_available?).and_return(false)
           allow(helper).to receive(:current_store).and_return(store)
-          allow(helper).to receive(:locale_param)
         end
 
         it { expect(helper.spree_storefront_resource_url(product, locale: :de)).to eq("http://www.example.com/de/products/#{product.slug}") }
       end
 
-      context 'when storefront is not used and admin is being viewed in none default locale' do
+      context 'when locale_param is present' do
         before do
-          allow(helper).to receive(:frontend_available?).and_return(false)
-          allow(helper).to receive(:current_store).and_return(store)
           allow(helper).to receive(:locale_param).and_return(:fr)
         end
 
@@ -109,30 +103,14 @@ describe Spree::BaseHelper, type: :helper do
     end
 
     context 'for Taxon URL' do
-      context 'when storefront is not used' do
-        before do
-          allow(helper).to receive(:frontend_available?).and_return(false)
-          allow(helper).to receive(:current_store).and_return(store)
-          allow(helper).to receive(:locale_param)
-        end
+      it { expect(helper.spree_storefront_resource_url(taxon)).to eq("http://www.example.com/t/#{taxon.permalink}") }
 
-        it { expect(helper.spree_storefront_resource_url(taxon)).to eq("http://www.example.com/t/#{taxon.permalink}") }
-      end
-
-      context 'when storefront is not used and locale is passed' do
-        before do
-          allow(helper).to receive(:frontend_available?).and_return(false)
-          allow(helper).to receive(:current_store).and_return(store)
-          allow(helper).to receive(:locale_param)
-        end
-
+      context 'when a locale is passed' do
         it { expect(helper.spree_storefront_resource_url(taxon, locale: :de)).to eq("http://www.example.com/de/t/#{taxon.permalink}") }
       end
 
-      context 'when storefront is not used and admin is being viewed in none default locale' do
+      context 'when locale_param is present' do
         before do
-          allow(helper).to receive(:frontend_available?).and_return(false)
-          allow(helper).to receive(:current_store).and_return(store)
           allow(helper).to receive(:locale_param).and_return(:fr)
         end
 
