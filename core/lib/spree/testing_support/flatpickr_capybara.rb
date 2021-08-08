@@ -59,7 +59,7 @@ module Spree
 
       def within_open_flatpickr(label_text, &block)
         with_open_flatpickr(label_text) do
-          within find(:xpath, "/html/body/div[contains(@class, 'flatpickr-calendar')]", &block)
+          within find(:xpath, "/html/body/div[contains(@class, 'flatpickr-calendar') and contains(@class, 'open')]", &block)
         end
       end
 
@@ -81,7 +81,7 @@ module Spree
 
       def click_on_flatpickr_day(day)
         within_flatpickr_days do
-          find('span', text: day).click
+          find('.flatpickr-day', text: day).click
         end
       end
 
