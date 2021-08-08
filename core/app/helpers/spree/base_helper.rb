@@ -175,37 +175,21 @@ module Spree
       Rails::VERSION::STRING < '6.0'
     end
 
-    def spree_storefront_product_url(product, options = {})
+    def spree_storefront_resource_url(resource, options = {})
       if locale_param
         options.merge!(locale: locale_param)
       end
 
-      if frontend_available?
-        spree.product_url(product, options)
-      else
-        localize = if options[:locale].present?
-                     "/#{options[:locale]}"
-                   else
-                     ''
-                   end
-        "#{current_store.formatted_url}#{localize}/#{Spree::Config[:storefront_products_path]}/#{product.slug}"
-      end
-    end
+      localize = if options[:locale].present?
+                   "/#{options[:locale]}"
+                 else
+                   ''
+                 end
 
-    def spree_storefront_taxon_url(taxon, options = {})
-      if locale_param
-        options.merge!(locale: locale_param)
-      end
-
-      if frontend_available?
-        spree.nested_taxons_url(taxon.permalink, options)
-      else
-        localize = if options[:locale].present?
-                     "/#{options[:locale]}"
-                   else
-                     ''
-                   end
-        "#{current_store.formatted_url}#{localize}/#{Spree::Config[:storefront_taxons_path]}/#{taxon.permalink}"
+      if resource.instance_of?(Spree::Product)
+        "#{current_store.formatted_url}#{localize}/#{Spree::Config[:storefront_products_path]}/#{resource.slug}"
+      elsif resource.instance_of?(Spree::Taxon)
+        "#{current_store.formatted_url}#{localize}/#{Spree::Config[:storefront_taxons_path]}/#{resource.permalink}"
       end
     end
 

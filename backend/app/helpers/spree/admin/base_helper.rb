@@ -239,7 +239,7 @@ module Spree
       def product_preview_link(product)
         button_link_to(
           Spree.t(:preview_product),
-          spree_storefront_product_url(product),
+          spree_storefront_resource_url(product),
           class: 'btn-outline-secondary', icon: 'view.svg', id: 'admin_preview_product', target: :blank
         )
       end
@@ -247,7 +247,7 @@ module Spree
       def taxon_preview_link(taxon)
         button_link_to(
           Spree.t(:preview_taxon),
-          spree_storefront_taxon_url(taxon),
+          spree_storefront_resource_url(taxon),
           class: 'btn-outline-secondary', icon: 'view.svg', id: 'admin_preview_taxon', target: :blank
         )
       end
