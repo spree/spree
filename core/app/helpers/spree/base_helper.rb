@@ -176,7 +176,7 @@ module Spree
     end
 
     def spree_storefront_resource_url(resource, options = {})
-      if locale_param
+      if defined?(locale_param) && locale_param.present?
         options.merge!(locale: locale_param)
       end
 
