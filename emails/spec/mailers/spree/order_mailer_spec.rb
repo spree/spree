@@ -115,7 +115,6 @@ describe Spree::OrderMailer, type: :mailer do
 
   context 'only shows eligible adjustments in emails' do
     before do
-      allow(Spree::BaseHelper).to receive(:locale_param)
       create(:adjustment, order: order, eligible: true, label: 'Eligible Adjustment')
       create(:adjustment, order: order, eligible: false, label: 'Ineligible Adjustment')
     end
