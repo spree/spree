@@ -24,6 +24,14 @@ module Spree
       spree_class_name_as_path(last_word)
     end
 
+    def spree_storefront_product_url(product)
+      if frontend_available?
+        spree.product_url(product)
+      else
+        "#{current_store.formatted_url}/#{Spree::Config[:storefront_products_path]}/#{product.slug}"
+      end
+    end
+
     def spree_class_name_as_path(class_name)
       class_name.underscore.humanize.parameterize(separator: '_')
     end

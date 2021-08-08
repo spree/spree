@@ -71,6 +71,20 @@ describe Spree::BaseHelper, type: :helper do
     end
   end
 
+  describe '#spree_storefront_product_url' do
+    let!(:product) { create(:product) }
+    let!(:store) { Spree::Store.default }
+
+    context 'when storefront is not used' do
+      before do
+        allow(helper).to receive(:frontend_available?).and_return(false)
+        allow(helper).to receive(:current_store).and_return(store)
+      end
+
+      it { expect(helper.spree_storefront_product_url(product)).to eq("http://www.example.com/products/#{product.slug}") }
+    end
+  end
+
   # Regression test for #1436
   context 'defining custom image helpers' do
     let(:product) { build(:product) }
