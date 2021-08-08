@@ -236,12 +236,18 @@ module Spree
         content_tag(:span, ' *', class: 'required font-weight-bold text-danger')
       end
 
-      def product_preview_link(product)
-        return unless frontend_available?
+      def storefront_product_url(product)
+        if frontend_available?
+          spree.product_url(product)
+        else
+          "#{current_store.formatted_url}/#{Spree::Config[:storefront_products_path]}/#{product.slug}"
+        end
+      end
 
+      def product_preview_link(product)
         button_link_to(
           Spree.t(:preview_product),
-          spree.product_url(product),
+          storefront_product_url(product),
           class: 'btn-outline-secondary', icon: 'view.svg', id: 'admin_preview_product', target: :blank
         )
       end

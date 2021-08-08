@@ -33,6 +33,20 @@ describe Spree::Admin::BaseHelper, type: :helper do
     end
   end
 
+  describe '#storefront_product_url' do
+    let(:product) { create(:product) }
+    let(:store) { Spree::Store.default }
+
+    context 'when storefront is not used' do
+      before do
+        allow(helper).to receive(:frontend_available?).and_return(false)
+        allow(helper).to receive(:current_store).and_return(store)
+      end
+
+      it { expect(helper.storefront_product_url(product)).to eq("http://www.example.com/products/#{product.slug}") }
+    end
+  end
+
   describe '#admin_logout_link' do
     it 'returns nil if no logout route is defined' do
       expect(helper.admin_logout_link).to be_nil
