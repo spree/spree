@@ -81,12 +81,12 @@ module Spree
 
       def click_on_flatpickr_day(day)
         within_flatpickr_days do
-          find('.flatpickr-day', text: day).click
+          find('.flatpickr-day:not(.prevMonthDay):not(.nextMonthDay)', text: day).click
         end
       end
 
       def within_flatpickr_days(&block)
-        within find('.flatpickr-innerContainer > .flatpickr-rContainer > .flatpickr-days', &block)
+        within find('.flatpickr-innerContainer > .flatpickr-rContainer > .flatpickr-days > .dayContainer', &block)
       end
 
       def select_flatpickr_hour(hour)
