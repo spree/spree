@@ -50,21 +50,23 @@ module Spree
         field_label = find_field(id: label_text, type: :hidden)
 
         date_field = field_label.sibling('.flatpickr-alt-input')
-        date_field.click # Open the widget
+        date_field.click            # Open the widget
 
-        yield(date_field)
+        sleep(0.25)                 # Pause to let JavaScript populate DOM
 
-        date_field.send_keys :tab # Close the date picker widget
+        yield(date_field)           # Complete required action
+
+        date_field.send_keys :tab   # Close the date picker widget
       end
 
       def within_open_flatpickr(label_text, &block)
         with_open_flatpickr(label_text) do
-          within find(:xpath, "/html/body/div[contains(@class, 'flatpickr-calendar') and contains(@class, 'open')]", &block)
+          within find('.flatpickr-calendar.open', &block)
         end
       end
 
       def within_flatpickr_months(&block)
-        within find('.flatpickr-months .flatpickr-month .flatpickr-current-month', &block)
+        within find('.flatpickr-months > .flatpickr-month > .flatpickr-current-month', &block)
       end
 
       def within_flatpickr_time(&block)
@@ -72,7 +74,9 @@ module Spree
       end
 
       def select_flatpickr_month(month)
-        find("select.flatpickr-monthDropdown-months > option:nth-child(#{month.to_i})").select_option
+        accurate_month = (month.to_i - 1)
+
+        find("select.flatpickr-monthDropdown-months > option[value='#{accurate_month}']").select_option
       end
 
       def fill_in_flatpickr_year(year)
@@ -81,7 +85,7 @@ module Spree
 
       def click_on_flatpickr_day(day)
         within_flatpickr_days do
-          find('.flatpickr-day:not(.prevMonthDay):not(.nextMonthDay)', text: day).click
+          find('.flatpickr-day:not(.prevMonthDay):not(.nextMonthDay)', text: day, exact_text: true).click
         end
       end
 
