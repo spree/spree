@@ -75,18 +75,11 @@ describe Spree::BaseHelper, type: :helper do
     let!(:store) { create(:store) }
     let!(:taxon) { create(:taxon) }
     let!(:product) { create(:product) }
-    let!(:standard_page) { create(:cms_standard_page) }
-    let!(:feature_page) { create(:cms_feature_page) }
-    let!(:home_page) { create(:cms_homepage) }
 
     before do
       allow(helper).to receive(:frontend_available?).and_return(false)
       allow(helper).to receive(:current_store).and_return(store)
       allow(helper).to receive(:locale_param)
-
-      @standard_page = Spree::CmsPage.find(standard_page.id)
-      @feature_page = Spree::CmsPage.find(feature_page.id)
-      @home_page = Spree::CmsPage.find(home_page.id)
     end
 
     context 'for Product URL' do
@@ -122,54 +115,6 @@ describe Spree::BaseHelper, type: :helper do
         end
 
         it { expect(helper.spree_storefront_resource_url(taxon)).to eq("http://www.example.com/fr/t/#{taxon.permalink}") }
-      end
-    end
-
-    context 'for CMS Standard Page URL' do
-      it { expect(helper.spree_storefront_resource_url(@standard_page)).to eq("http://www.example.com/pages/#{@standard_page.slug}") }
-
-      context 'when a locale is passed' do
-        it { expect(helper.spree_storefront_resource_url(@standard_page, locale: :de)).to eq("http://www.example.com/de/pages/#{@standard_page.slug}") }
-      end
-
-      context 'when locale_param is present' do
-        before do
-          allow(helper).to receive(:locale_param).and_return(:fr)
-        end
-
-        it { expect(helper.spree_storefront_resource_url(@standard_page)).to eq("http://www.example.com/fr/pages/#{@standard_page.slug}") }
-      end
-    end
-
-    context 'for CMS Feature Page URL' do
-      it { expect(helper.spree_storefront_resource_url(@feature_page)).to eq("http://www.example.com/pages/#{@feature_page.slug}") }
-
-      context 'when a locale is passed' do
-        it { expect(helper.spree_storefront_resource_url(@feature_page, locale: :de)).to eq("http://www.example.com/de/pages/#{@feature_page.slug}") }
-      end
-
-      context 'when locale_param is present' do
-        before do
-          allow(helper).to receive(:locale_param).and_return(:fr)
-        end
-
-        it { expect(helper.spree_storefront_resource_url(@feature_page)).to eq("http://www.example.com/fr/pages/#{@feature_page.slug}") }
-      end
-    end
-
-    context 'for CMS Home Page URL' do
-      it { expect(helper.spree_storefront_resource_url(@home_page)).to eq("http://www.example.com") }
-
-      context 'when a locale is passed' do
-        it { expect(helper.spree_storefront_resource_url(@home_page, locale: :de)).to eq("http://www.example.com/de") }
-      end
-
-      context 'when locale_param is present' do
-        before do
-          allow(helper).to receive(:locale_param).and_return(:fr)
-        end
-
-        it { expect(helper.spree_storefront_resource_url(@home_page)).to eq("http://www.example.com/fr") }
       end
     end
   end
