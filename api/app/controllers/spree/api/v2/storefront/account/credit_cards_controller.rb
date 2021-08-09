@@ -6,7 +6,17 @@ module Spree
           class CreditCardsController < ::Spree::Api::V2::ResourceController
             before_action :require_spree_current_user
 
+            def destroy
+              spree_authorize! :destroy, resource, resource
+
+              destroy_service.call(card: resource)
+            end
+
             private
+
+            def resource
+              params[:id].eql?('default') ? scope.default.first! : scope.find(params[:id])
+            end
 
             def model_class
               Spree::CreditCard
@@ -28,8 +38,8 @@ module Spree
               Spree::Api::Dependencies.storefront_credit_card_serializer.constantize
             end
 
-            def resource_finder
-              Spree::Api::Dependencies.storefront_credit_card_finder.constantize
+            def destroy_service
+              Spree::Api::Dependencies.storefront_credit_cards_destroy_service.constantize
             end
           end
         end
