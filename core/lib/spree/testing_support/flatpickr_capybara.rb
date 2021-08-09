@@ -50,7 +50,7 @@ module Spree
         field_label = find_field(id: label_text, type: :hidden)
 
         date_field = field_label.sibling('.flatpickr-alt-input')
-        date_field.click            # Open the widget.
+        date_field.click            # Open the flatpcikr cal.
 
         sleep(0.25)                 # Pause to let JavaScript populate DOM.
 
