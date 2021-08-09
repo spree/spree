@@ -56,7 +56,7 @@ module Spree
 
         yield(date_field)           # Complete required action.
 
-        date_field.send_keys :tab   # Close the date picker widget
+        date_field.send_keys :tab   # Close the date picker widget.
       end
 
       def within_open_flatpickr(label_text, &block)
