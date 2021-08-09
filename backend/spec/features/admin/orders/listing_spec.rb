@@ -296,18 +296,11 @@ describe 'Orders Listing', type: :feature do
           fill_in 'q_bill_address_firstname_start', with: 'John'
           fill_in 'q_bill_address_lastname_start', with: 'Smith'
           select2 'spree', from: 'Channel'
-
-          # Can not test these in the filter dropdown
-          # With current implementation of flatpickr test support.
-          # fill_in_date_picker('q_created_at_gt', with: '2018-01-01')
-          # fill_in_date_picker('q_created_at_lt', with: '2018-01-01')
         end
 
         click_on 'Filter Results'
 
         within('.table-active-filters') do
-          # expect(page).to have_content('Start: 2018-01-01')
-          # expect(page).to have_content('Stop: 2018-06-30')
           expect(page).to have_content('Order Number: R100')
           expect(page).to have_content('Status: cart')
           expect(page).to have_content('Payment State: paid')
