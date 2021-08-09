@@ -2,55 +2,52 @@ module Spree
   module TestingSupport
     module FlatpickrCapybara
       def fill_in_date_manually(label_text, options = {})
-        string_date = if options[:hour].present? && options[:minute].present?
-                        "#{options[:year]}-#{options[:month]}-#{options[:day]}-#{options[:hour]}-#{options[:minute]}"
-                      else
-                        "#{options[:year]}-#{options[:month]}-#{options[:day]}"
-                      end
-
         with_open_flatpickr(label_text) do |field|
-          fill_in field[:id], with: string_date
+          fill_in field[:id], with: string_date(options)
         end
       end
 
       def fill_in_date_picker(label_text, options = {})
-        within_open_flatpickr(label_text) do
-
-
-          if options[:hour].blank? && options[:minute].blank?
-            within_flatpickr_months do
-              fill_in_flatpickr_year(options[:year].to_i)
-              select_flatpickr_month(options[:month].to_i)
-              click_on_flatpickr_day(options[:day].to_i)
-            end
-          else
-            within_flatpickr_months do
-              fill_in_flatpickr_year(options[:year].to_i)
-              select_flatpickr_month(options[:month].to_i)
-              click_on_flatpickr_day(options[:day].to_i)
-            end
-            within_flatpickr_time do
-              select_flatpickr_hour(options[:hour].to_i)
-              select_flatpickr_min(options[:minute].to_i)
-            end
-          end
+        if options[:hour].blank? && options[:minute].blank?
+          flatpickr_date_only(label_text, options)
+        else
+          flatpickr_date_time(label_text, options)
         end
       end
 
-      def fill_in_date_with_js(label_text, options ={})
-        string_date = if options[:hour].present? && options[:minute].present?
-                "#{options[:year]}-#{options[:month]}-#{options[:day]}-#{options[:hour]}-#{options[:minute]}"
-              else
-                "#{options[:year]}-#{options[:month]}-#{options[:day]}"
-              end
-
+      def fill_in_date_with_js(label_text, options = {})
         date_field = find("input[id='#{label_text}']")
-        script = "document.querySelector('#{date_field}').flatpickr().setDate('#{string_date}');"
+        script = "document.querySelector('#{date_field}').flatpickr().setDate('#{string_date(options)}');"
 
         page.execute_script(script)
       end
 
       private
+
+      def flatpickr_date_only(label_text, options = {})
+        within_open_flatpickr(label_text) do
+          within_flatpickr_months do
+            fill_in_flatpickr_year(options[:year].to_i)
+            select_flatpickr_month(options[:month].to_i)
+            click_on_flatpickr_day(options[:day].to_i)
+          end
+        end
+      end
+
+      def flatpickr_date_time(label_text, options = {})
+        within_open_flatpickr(label_text) do
+          within_flatpickr_months do
+            fill_in_flatpickr_year(options[:year].to_i)
+            select_flatpickr_month(options[:month].to_i)
+            click_on_flatpickr_day(options[:day].to_i)
+          end
+
+          within_flatpickr_time do
+            select_flatpickr_hour(options[:hour].to_i)
+            select_flatpickr_min(options[:minute].to_i)
+          end
+        end
+      end
 
       def with_open_flatpickr(label_text)
         field_label = find_field(id: label_text, type: :hidden)
@@ -105,6 +102,14 @@ module Spree
 
       def select_flatpickr_min(min)
         find('input.flatpickr-minute').set(min)
+      end
+
+      def string_date(options)
+        if options[:hour].present? && options[:minute].present?
+          "#{options[:year]}-#{options[:month]}-#{options[:day]}-#{options[:hour]}-#{options[:minute]}"
+        else
+          "#{options[:year]}-#{options[:month]}-#{options[:day]}"
+        end
       end
     end
   end
