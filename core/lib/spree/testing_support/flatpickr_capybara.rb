@@ -54,7 +54,7 @@ module Spree
 
         sleep(0.25)                 # Pause to let JavaScript populate DOM.
 
-        yield(date_field)           # Complete required action
+        yield(date_field)           # Complete required action.
 
         date_field.send_keys :tab   # Close the date picker widget
       end
