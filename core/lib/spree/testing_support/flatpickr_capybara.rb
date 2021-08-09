@@ -52,7 +52,7 @@ module Spree
         date_field = field_label.sibling('.flatpickr-alt-input')
         date_field.click            # Open the widget.
 
-        sleep(0.25)                 # Pause to let JavaScript populate DOM
+        sleep(0.25)                 # Pause to let JavaScript populate DOM.
 
         yield(date_field)           # Complete required action
 
