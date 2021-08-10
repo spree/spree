@@ -28,7 +28,11 @@ module Spree
         within_open_flatpickr(label_text) do
           within_flatpickr_months do
             fill_in_flatpickr_year(options[:year].to_i)
+            sleep(0.25) # Pause to let JavaScript adjust DOM.
+
             select_flatpickr_month(options[:month].to_i)
+            sleep(0.25) # Pause to let JavaScript adjust DOM.
+
             click_on_flatpickr_day(options[:day].to_i)
           end
         end
@@ -38,7 +42,11 @@ module Spree
         within_open_flatpickr(label_text) do
           within_flatpickr_months do
             fill_in_flatpickr_year(options[:year].to_i)
+            sleep(0.25) # Pause to let JavaScript adjust DOM.
+
             select_flatpickr_month(options[:month].to_i)
+            sleep(0.25) # Pause to let JavaScript adjust DOM.
+
             click_on_flatpickr_day(options[:day].to_i)
           end
 
@@ -54,7 +62,6 @@ module Spree
 
         date_field = field_label.sibling('.flatpickr-alt-input')
         date_field.click            # Open the flatpcikr cal.
-
         sleep(0.25)                 # Pause to let JavaScript populate DOM.
 
         yield(date_field)           # Complete required action.
