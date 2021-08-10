@@ -2,13 +2,7 @@ module Spree
   class CreditCard < Spree::Base
     include ActiveMerchant::Billing::CreditCardMethods
 
-    # to migrate safely from older Spree versions that din't provide safe deletion for CCs
-    # we need to ensure that we have a connection to the DB and that the `deleted_at` column exists
-    if !ENV['SPREE_DISABLE_DB_CONNECTION'] &&
-        table_exists? &&
-        connection.column_exists?(:spree_credit_cards, :deleted_at)
-      acts_as_paranoid
-    end
+    acts_as_paranoid
 
     belongs_to :payment_method
     belongs_to :user, class_name: Spree.user_class.to_s, foreign_key: 'user_id',
