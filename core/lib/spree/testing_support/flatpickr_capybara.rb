@@ -28,7 +28,7 @@ module Spree
         within_open_flatpickr(label_text) do
           within_flatpickr_months do
             fill_in_flatpickr_year(options[:year].to_i)
-            sleep(0.25) # Pause to let JavaScript adjust DOM.
+            sleep(0.25) # Pause to let JavaScript adjust the DOM.
 
             select_flatpickr_month(options[:month].to_i)
             sleep(0.25) # Pause to let JavaScript adjust DOM.
