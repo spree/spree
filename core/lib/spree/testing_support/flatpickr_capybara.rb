@@ -28,10 +28,10 @@ module Spree
         within_open_flatpickr(label_text) do
           within_flatpickr_months do
             fill_in_flatpickr_year(options[:year].to_i)
-            sleep(0.25) # Pause to let JavaScript adjust the DOM.
+            sleep(0.25) # Pause to let JavaScript adjust the month selector in the flatpickr cal in relation to any related FROM...TO cal.
 
             select_flatpickr_month(options[:month].to_i)
-            sleep(0.25) # Pause to let JavaScript adjust DOM.
+            sleep(0.25) # Pause to let JavaScript adjust the day selection area in the flatpickr cal in relation to any related FROM...TO cal.
 
             click_on_flatpickr_day(options[:day].to_i)
           end
@@ -42,10 +42,10 @@ module Spree
         within_open_flatpickr(label_text) do
           within_flatpickr_months do
             fill_in_flatpickr_year(options[:year].to_i)
-            sleep(0.25) # Pause to let JavaScript adjust DOM.
+            sleep(0.25) # Pause to let JavaScript adjust the month selector in the flatpickr cal in relation to any related FROM...TO cal.
 
             select_flatpickr_month(options[:month].to_i)
-            sleep(0.25) # Pause to let JavaScript adjust DOM.
+            sleep(0.25) # Pause to let JavaScript adjust the day selection area in the flatpickr cal in relation to any related FROM...TO cal.
 
             click_on_flatpickr_day(options[:day].to_i)
           end
@@ -61,12 +61,13 @@ module Spree
         field_label = find_field(id: label_text, type: :hidden)
 
         date_field = field_label.sibling('.flatpickr-alt-input')
-        date_field.click            # Open the flatpcikr cal.
-        sleep(0.25)                 # Pause to let JavaScript populate DOM.
+        date_field.click # Open the flatpickr cal.
+        sleep(0.25) # Pause to let JavaScript populate DOM with an open flatpickr cal.
 
-        yield(date_field)           # Complete required action.
+        yield(date_field) # Complete required action within the open flatpickr cal.
 
-        date_field.send_keys :tab   # Close the date picker widget.
+        date_field.send_keys :tab # Close the date flatpickr cal.
+        sleep(0.25) # Pause to let JavaScript adjust any DOM values in relation to any related FROM...TO cal.
       end
 
       def within_open_flatpickr(label_text, &block)
