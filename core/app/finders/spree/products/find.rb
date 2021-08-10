@@ -96,10 +96,6 @@ module Spree
         properties.present? && properties.values.reject(&:empty?).present?
       end
 
-      def name_matcher
-        Spree::Product.arel_table[:name].matches("%#{name}%")
-      end
-
       def by_ids(products)
         return products unless ids?
 
@@ -146,7 +142,7 @@ module Spree
       def by_name(products)
         return products unless name?
 
-        products.where(name_matcher)
+        products.like_any([:name], [name])
       end
 
       def by_options(products)
