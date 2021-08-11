@@ -77,7 +77,7 @@ module Spree
 
           if Cart::Update.call(order: @order, params: order_params).success?
             user_id = params[:order][:user_id]
-            if current_api_user.has_spree_role?('admin') && user_id
+            if current_api_user&.has_spree_role?('admin') && user_id
               @order.associate_user!(Spree.user_class.find(user_id))
             end
             respond_with(@order, default_template: :show)
