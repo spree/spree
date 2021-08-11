@@ -94,18 +94,6 @@ paths:
                           state_code: NY
         '403':
           $ref: '#/components/responses/403Forbidden'
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  '':
-                    type: string
-              examples:
-                example-1:
-                  value:
-                    error: You are not authorized to access this page.
       security:
         - bearerAuth: []
     post:
@@ -243,7 +231,7 @@ paths:
           $ref: '#/components/responses/403Forbidden'
       security:
         - bearerAuth: []
-  '/api/v2/storefront/account/addresses/{id}':
+  '/api/v2/storefront/account/addresses/{address_id}':
     delete:
       description: 'Removes selected Address for the signed in User. It uses soft-delete for addresses with shipments and orders.'
       tags:
@@ -314,13 +302,14 @@ paths:
           description: Filter based on payment method ID
         - $ref: '#/components/parameters/CreditCardIncludeParam'
         - $ref: '#/components/parameters/SparseFieldsParam'
-  '/api/v2/storefront/account/credit_cards/{id}':
+  '/api/v2/storefront/account/credit_cards/{card_id}':
     delete:
       description: 'Removes selected credit card for the signed in User. It uses soft-delete.'
       tags:
         - Account
       operationId: Remove Credit Card
       parameters:
+        - $ref: '#/components/parameters/CardId'
         - $ref: '#/components/parameters/CreditCardIncludeParam'
         - $ref: '#/components/parameters/SparseFieldsParam'
       responses:
@@ -375,7 +364,7 @@ paths:
         - $ref: '#/components/parameters/PerPageParam'
       security:
         - bearerAuth: []
-  '/api/v2/storefront/account/orders/{number}':
+  '/api/v2/storefront/account/orders/{order_number}':
     get:
       description: Return the User's completed Order
       summary: Get an Order
@@ -397,7 +386,7 @@ paths:
         - $ref: '#/components/parameters/SparseFieldsParam'
       security:
         - bearerAuth: []
-  '/api/v2/storefront/order_status/{number}':
+  '/api/v2/storefront/order_status/{order_number}':
     get:
       description: |-
         Returns placed Order information. This endpoint is useful for fetching Order information for non-signed in Users. This way customers without an account can check their Order status (shipment/paymnet/processing/etc).
@@ -712,7 +701,7 @@ paths:
       parameters:
         - name: coupon_code
           in: path
-          required: false
+          required: true
           description: Selected Coupon code for removal
           schema:
             type: string
@@ -1181,7 +1170,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProductsList'
       summary: List of Products
-  '/api/v2/storefront/products/{id}':
+  '/api/v2/storefront/products/{product_slug}':
     get:
       description: |-
         Returns Product details. You can use product permalink:
@@ -1201,7 +1190,7 @@ paths:
         - Products
       operationId: Show Product
       parameters:
-        - $ref: '#/components/parameters/IdOrPermalink'
+        - $ref: '#/components/parameters/ProductSlug'
         - $ref: '#/components/parameters/ProductIncludeParam'
         - $ref: '#/components/parameters/SparseFieldsParam'
       responses:
@@ -3575,7 +3564,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/TaxonsList'
       summary: List of Taxons
-  '/api/v2/storefront/taxons/{id}':
+  '/api/v2/storefront/taxons/{taxon_permalink}':
     get:
       description: |-
         Returns Taxon details.
@@ -3595,7 +3584,7 @@ paths:
         - Taxons
       operationId: Show Taxon
       parameters:
-        - $ref: '#/components/parameters/IdOrPermalink'
+        - $ref: '#/components/parameters/TaxonPermalink'
         - $ref: '#/components/parameters/TaxonIncludeParam'
         - $ref: '#/components/parameters/SparseFieldsParam'
       responses:
@@ -4044,7 +4033,6 @@ components:
     Cart:
       properties:
         data:
-          type: object
           $ref: '#/components/schemas/CartAttributesWithRelationships'
         included:
           type: array
@@ -4080,7 +4068,7 @@ components:
           items:
             type: object
             oneOf:
-              - $ref: '#/components/schemas/VariantAttributesAndRelationships'
+              - $ref: '#/components/schemas/Variant'
               - $ref: '#/components/schemas/LineItem'
               - $ref: '#/components/schemas/Promotion'
               - $ref: '#/components/schemas/User'
@@ -4302,7 +4290,6 @@ components:
         - included
       properties:
         data:
-          type: object
           $ref: '#/components/schemas/CreditCardAttributesWithRelationships'
         included:
           type: array
@@ -4349,7 +4336,6 @@ components:
           type: string
           example: credit_card
         attributes:
-          type: object
           $ref: '#/components/schemas/CreditCardAttributes'
         relationships:
           type: object
@@ -4541,7 +4527,7 @@ components:
               - $ref: '#/components/schemas/OptionValue'
               - $ref: '#/components/schemas/ProductProperty'
               - $ref: '#/components/schemas/Property'
-              - $ref: '#/components/schemas/VariantAttributesAndRelationships'
+              - $ref: '#/components/schemas/Variant'
               - $ref: '#/components/schemas/Image'
               - $ref: '#/components/schemas/TaxonAttributesAndRelationships'
     ProductsList:
@@ -4566,7 +4552,7 @@ components:
               - $ref: '#/components/schemas/OptionValue'
               - $ref: '#/components/schemas/ProductProperty'
               - $ref: '#/components/schemas/Property'
-              - $ref: '#/components/schemas/VariantAttributesAndRelationships'
+              - $ref: '#/components/schemas/Variant'
               - $ref: '#/components/schemas/Image'
               - $ref: '#/components/schemas/TaxonAttributesAndRelationships'
     ProductAttributes:
@@ -5443,6 +5429,14 @@ components:
       schema:
         type: string
       example: '1'
+    CardId:
+      name: card_id
+      in: path
+      required: true
+      description: Card ID
+      schema:
+        type: string
+      example: '1'
     CreditCardIncludeParam:
       name: include
       in: query
@@ -5458,14 +5452,22 @@ components:
         ```
 
         [More information](https://jsonapi.org/format/#fetching-includes)
-    IdOrPermalink:
-      name: id
+    ProductSlug:
+      name: product_slug
       in: path
       required: true
-      description: ID or a permalink
+      description: Product Slug
       schema:
         type: string
       example: knitted-high-neck-sweater
+    TaxonPermalink:
+      name: taxon_permalink
+      in: path
+      required: true
+      description: Taxon Permalink
+      schema:
+        type: string
+      example: "categories/women"
     LineItemId:
       name: line_item_id
       in: path
@@ -5489,7 +5491,7 @@ components:
         type: integer
       example: null
     OrderParam:
-      name: number
+      name: order_number
       in: path
       required: true
       description: Number of Order
