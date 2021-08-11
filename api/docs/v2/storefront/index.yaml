@@ -5,7 +5,7 @@ servers:
   - url: 'http://localhost:3000'
     description: localhost
 info:
-  version: 2.0.1
+  version: 2.0.0
   title: Storefront API v2
   description: |-
     Storefront API v2 is a modern REST API based on the [JSON API spec](https://jsonapi.org/) which provides you with necessary endpoints to build amazing user intefaces either in JavaScript frameworks or native mobile libraries.
