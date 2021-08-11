@@ -452,7 +452,7 @@ paths:
                         currency: USD
                         state: cart
                         token: zdmOIe5GUtZhZdh0zeFv9w1581837294588
-                        email: null
+                        email: example@example.com
                         display_item_total: $0.00
                         display_ship_total: $0.00
                         display_adjustment_total: $0.00
@@ -479,6 +479,45 @@ paths:
                           data: null
                         shipping_address:
                           data: null
+                    included:
+                      - id: "2"
+                        type: "promotion"
+                        attributes:
+                          name: "10% Discount"
+                          description: "Super discount for you"
+                          amount: "-22.0"
+                          display_amount: "$22.00"
+                      - id: "4"
+                        type: "user"
+                        attributes:
+                          email: "example@example.com"
+                      - id: "1"
+                        type: "address"
+                        attributes:
+                          firstname: "Bob"
+                          lastname: "Billerson"
+                          address1: "1600 Clear View Pkwy"
+                          address2: "Mountain View"
+                          city: "LA"
+                          zipcode: '94043'
+                          phone: "(+1) 123 456 789"
+                          state_name: "California"
+                          state_code: "CA"
+                          country_name: "United States of America"
+                          country_iso3: "USA"
+                          company: null
+                      - id: "2832"
+                        type: "shipment"
+                        attributes:
+                          number: "H121354"
+                          free: false
+                          final_price: '10.0'
+                          display_final_price: '$10.00'
+                          tracking_url: 'https://tools.usps.com/go/TrackConfirmAction?tRef=fullpage&tLc=2&text28777=&tLabels=4123412434%2C'
+                          state: "shipped"
+                          shipped_at: '2019-01-02 13:42:12'
+
+
       parameters:
         - $ref: '#/components/parameters/CartIncludeParam'
         - $ref: '#/components/parameters/SparseFieldsParam'
@@ -4038,7 +4077,7 @@ components:
         included:
           type: array
           items:
-            oneOf:
+            anyOf:
               - $ref: '#/components/schemas/Promotion'
               - $ref: '#/components/schemas/User'
               - $ref: '#/components/schemas/Address'
@@ -4068,7 +4107,7 @@ components:
           type: array
           items:
             type: object
-            oneOf:
+            anyOf:
               - $ref: '#/components/schemas/Variant'
               - $ref: '#/components/schemas/LineItem'
               - $ref: '#/components/schemas/Promotion'
@@ -4218,6 +4257,7 @@ components:
           minimum: 0
         special_instructions:
           type: string
+          nullable: true
           example: Please wrap it as a gift
           description: Message added by the Customer
         currency:
@@ -4283,7 +4323,7 @@ components:
           type: array
           items:
             type: object
-            oneOf:
+            anyOf:
               - $ref: '#/components/schemas/PaymentMethod'
     CreditCard:
       required:
@@ -4296,7 +4336,7 @@ components:
           type: array
           items:
             type: object
-            oneOf:
+            anyOf:
               - $ref: '#/components/schemas/PaymentMethod'
     CreditCardAttributes:
       type: object
@@ -4504,7 +4544,7 @@ components:
             name:
               type: string
               example: 10% Discount
-            descriptiom:
+            description:
               type: string
               example: Super discount for you
             amount:
@@ -4523,7 +4563,7 @@ components:
         included:
           type: array
           items:
-            oneOf:
+            anyOf:
               - $ref: '#/components/schemas/OptionType'
               - $ref: '#/components/schemas/OptionValue'
               - $ref: '#/components/schemas/ProductProperty'
@@ -4548,7 +4588,7 @@ components:
         included:
           type: array
           items:
-            oneOf:
+            anyOf:
               - $ref: '#/components/schemas/OptionType'
               - $ref: '#/components/schemas/OptionValue'
               - $ref: '#/components/schemas/ProductProperty'
@@ -4672,7 +4712,7 @@ components:
         included:
           type: array
           items:
-            oneOf:
+            anyOf:
               - $ref: '#/components/schemas/ProductAttributesAndRelationships'
               - $ref: '#/components/schemas/TaxonAttributesAndRelationships'
               - $ref: '#/components/schemas/TaxonomyAttributesAndRelationships'
@@ -4799,7 +4839,7 @@ components:
         included:
           type: array
           items:
-            oneOf:
+            anyOf:
               - $ref: '#/components/schemas/TaxonAttributesAndRelationships'
               - $ref: '#/components/schemas/TaxonImage'
               - $ref: '#/components/schemas/TaxonomyAttributesAndRelationships'
@@ -4969,7 +5009,7 @@ components:
         included:
           type: array
           items:
-            oneOf:
+            anyOf:
               - $ref: '#/components/schemas/Image'
               - $ref: '#/components/schemas/OptionValue'
               - $ref: '#/components/schemas/OptionType'
@@ -5069,7 +5109,7 @@ components:
         included:
           type: array
           items:
-            oneOf:
+            anyOf:
               - $ref: '#/components/schemas/State'
       description: 'Countries within Spree are used as a container for states. Countries can be zone members, and also link to an address. The difference between one country and another on an address record can determine which tax rates and shipping methods are used for the order.[Read more about Countries in Spree](https://guides.spreecommerce.org/developer/core/addresses.html#countries)'
     CountriesList:
@@ -5254,7 +5294,7 @@ components:
         included:
           type: array
           items:
-            oneOf:
+            anyOf:
               - $ref: '#/components/schemas/ShippingRate'
               - $ref: '#/components/schemas/StockLocation'
     EstimateShippingRatesList:
@@ -5333,7 +5373,7 @@ components:
         included:
           type: array
           items:
-            oneOf:
+            anyOf:
               - $ref: '#/components/schemas/Address'
       required:
         - data
