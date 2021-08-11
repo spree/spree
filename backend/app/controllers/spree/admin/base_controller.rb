@@ -104,14 +104,7 @@ module Spree
         user = try_spree_current_user
         return unless user
 
-        @admin_oauth_token ||= begin
-          Doorkeeper::AccessToken.active_for(user).where(application_id: admin_oauth_application.id).last ||
-            Doorkeeper::AccessToken.create!(
-              resource_owner_id: user.id,
-              application_id: admin_oauth_application.id,
-              scopes: admin_oauth_application.scopes
-            )
-        end.token
+        @admin_oauth_token ||= Spree::Api::Oauth::GenerateToken.call(app: admin_oauth_application, user: user).result.token
       end
     end
   end
