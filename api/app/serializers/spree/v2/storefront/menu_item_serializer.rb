@@ -4,7 +4,7 @@ module Spree
       class MenuItemSerializer < BaseSerializer
         set_type :menu_item
 
-        attributes :code, :name, :subtitle, :link, :new_window, :lft, :rgt, :depth
+        attributes :code, :name, :subtitle, :link, :destination, :item_type, :new_window, :lft, :rgt, :depth
 
         attribute :is_container do |menu_item|
           menu_item.container?

@@ -5,6 +5,24 @@ module Spree
         class MenuItemSerializer < BaseSerializer
           include ::Spree::Api::V2::ResourceSerializerConcern
 
+          attributes :link
+
+          attribute :is_container do |menu_item|
+            menu_item.container?
+          end
+
+          attribute :is_root do |menu_item|
+            menu_item.root?
+          end
+
+          attribute :is_child do |menu_item|
+            menu_item.child?
+          end
+
+          attribute :is_leaf do |menu_item|
+            menu_item.leaf?
+          end
+
           has_one :icon,
                   object_method_name: :icon,
                   id_method_name: :icon_id,
