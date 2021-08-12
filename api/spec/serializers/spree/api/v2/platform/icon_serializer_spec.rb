@@ -17,8 +17,8 @@ describe Spree::Api::V2::Platform::IconSerializer do
           type: :icon,
           attributes: {
             url: Rails.application.routes.url_helpers.polymorphic_url(icon.attachment, only_path: true),
-            viewable_id: icon.id,
-            viewable_type: 'Spree::MenuItem'
+            viewable_id: icon.viewable_id,
+            viewable_type: icon.viewable_type
           }
         }
       }
