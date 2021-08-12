@@ -7,7 +7,7 @@ module Spree
     include Spree::RansackableAttributes
 
     extend DisplayMoney
-    money_methods :total_available_store_credit
+    money_methods :available_store_credit
 
     included do
       # we need to have this callback before any dependent: :destroy associations
@@ -62,10 +62,14 @@ module Spree
         first
     end
 
-   def total_available_store_credit(store = nil, currency = nil)
+    def total_available_store_credit(currency = nil, store = nil)
       store ||= Store.default
       currency ||= store.default_currency
       store_credits.for_store(store).where(currency: currency).reload.to_a.sum(&:amount_remaining)
+    end
+
+    def available_store_credit(store:, currency:)
+      total_available_store_credit(currency, store)
     end
 
     private

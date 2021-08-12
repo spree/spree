@@ -46,7 +46,7 @@ module Spree
           end
           let(:currency) { 'GBP' }
           it 'defined method passes the received keyword argument to the wrapped method' do
-            expect(test_class.new.display_total(currency)).to eq Spree::Money.new(10.0, currency: currency)
+            expect(test_class.new.display_total(currency: currency)).to eq Spree::Money.new(10.0, currency: currency)
           end
         end
       end

@@ -11,7 +11,7 @@ module Spree
       def total_available_store_credit
         return 0.0 unless user
 
-        user.total_available_store_credit(store, currency)
+        user.total_available_store_credit(currency, store)
       end
 
       def could_use_store_credit?

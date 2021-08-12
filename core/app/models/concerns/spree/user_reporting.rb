@@ -25,10 +25,10 @@ module Spree
 
     private
 
-    def order_calculate(store: nil, currency: nil, operation:, column:)
+    def order_calculate(operation:, column:, store: nil, currency: nil)
       store ||= Store.default
       currency ||= store.default_currency
-      store.orders.complete.where(currency: currency).calculate(operation, column) || BigDecimal('0.00')
+      orders.for_store(store).complete.where(currency: currency).calculate(operation, column) || BigDecimal('0.00')
     end
   end
 end
