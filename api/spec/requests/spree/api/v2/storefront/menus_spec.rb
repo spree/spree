@@ -51,9 +51,18 @@ describe 'Storefront API v2 Menus spec', type: :request do
     end
 
     context 'including menu items with linked resources' do
+      let(:product) { create(:product, stores: [store]) }
       let(:taxonomy) { create(:taxonomy, store: store) }
       let(:taxon) { create(:taxon, taxonomy: taxonomy) }
+      let(:standard_page) { create(:cms_standard_page, store: store) }
+      let(:feature_page) { create(:cms_feature_page, store: store) }
+      let(:homepage) { create(:cms_homepage, store: store) }
+
       let!(:menu_item) { create(:menu_item, menu: header_en, linked_resource: taxon) }
+      let!(:menu_item_product) { create(:menu_item, menu: header_en, linked_resource: product) }
+      let!(:menu_item_standard_page) { create(:menu_item, menu: header_en, linked_resource: standard_page) }
+      let!(:menu_item_feature_page) { create(:menu_item, menu: header_en, linked_resource: feature_page) }
+      let!(:menu_item_homepage) { create(:menu_item, menu: header_en, linked_resource: homepage) }
 
       before { get '/api/v2/storefront/menus?include=menu_items.linked_resource' }
 
