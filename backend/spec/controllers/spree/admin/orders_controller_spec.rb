@@ -98,6 +98,15 @@ describe Spree::Admin::OrdersController, type: :controller do
       end
     end
 
+    describe '#resend' do
+      let(:order) { create(:order, state: 'canceled', store: store) }
+
+      it 'resends oder mailer' do
+        put :resend, params: { id: order.number }
+        expect(flash[:success]).to eq Spree.t(:order_email_resent)
+      end
+    end
+
     context 'pagination' do
       it 'can page through the orders' do
         get :index, params: { page: 2, per_page: 10 }

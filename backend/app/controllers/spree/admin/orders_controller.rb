@@ -113,7 +113,7 @@ module Spree
       end
 
       def resend
-        OrderMailer.confirm_email(@order.id, true).deliver_later
+        @order.deliver_order_confirmation_email
         flash[:success] = Spree.t(:order_email_resent)
 
         redirect_back fallback_location: spree.edit_admin_order_url(@order)
