@@ -9,9 +9,8 @@
       <tr>
         <td width="30%"><%= Spree.t(:total_sales) %>:</td>
         <td>
-          <!-- TODO: We should display values for currencies that have been used, not only for supported ones, they can change. -->
-          <% current_store.supported_currencies.split(',').each do |currency| %>
-            <div><%= @user.display_lifetime_value(store: current_store, currency: currency) %></div>
+          <% @user.report_values_for(:lifetime_value, current_store).each do |value| %>
+            <div><%= value %></div>
           <% end %>
         </td>
       </tr>
@@ -22,16 +21,16 @@
       <tr>
         <td><%= Spree.t(:average_order_value) %>:</td>
         <td>
-          <% current_store.supported_currencies.split(',').each do |currency| %>
-            <div><%= @user.display_average_order_value(store: current_store, currency: currency).to_html %></div>
+          <% @user.report_values_for(:average_order_value, current_store).each do |value| %>
+            <div><%= value %></div>
           <% end %>
         </td>
       </tr>
       <tr>
         <td><%= Spree.t('admin.user.store_credits') %>:</td>
         <td id="store_credit">
-          <% current_store.supported_currencies.split(',').each do |currency| %>
-            <div><%= @user.display_available_store_credit(store: current_store, currency: currency) %></div>
+          <% @user.available_store_credits(current_store).each do |value| %>
+            <div><%= value %></div>
           <% end %>
         </td>
       </tr>

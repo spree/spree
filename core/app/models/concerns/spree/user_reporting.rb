@@ -3,6 +3,14 @@ module Spree
     extend DisplayMoney
     money_methods :lifetime_value, :average_order_value
 
+    def report_values_for(report_name, store)
+      store ||= Store.default
+
+      completed_orders(store).pluck(:currency).uniq.each_with_object([]) do |currency, arr|
+        arr << send("display_#{report_name}", store: store, currency: currency).to_s
+      end
+    end
+
     def lifetime_value(**args)
       order_calculate(operation: :sum,
                       column: :total,
@@ -28,7 +36,12 @@ module Spree
     def order_calculate(operation:, column:, store: nil, currency: nil)
       store ||= Store.default
       currency ||= store.default_currency
-      orders.for_store(store).complete.where(currency: currency).calculate(operation, column) || BigDecimal('0.00')
+
+      completed_orders(store).where(currency: currency).calculate(operation, column) || BigDecimal('0.00')
+    end
+
+    def completed_orders(store)
+      orders.for_store(store).complete
     end
   end
 end
