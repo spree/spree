@@ -459,15 +459,15 @@ describe 'API V2 Storefront Products Spec', type: :request do
           expect(json_response['data'].count).to eq(1)
           expect(json_response['data'][0]['id']).to eq(product.id.to_s)
           expect(json_response['data'][0]['attributes']['currency']).to eq currency
-          expect(json_response['data'][0]['attributes']['price']).to eq('99.90')
+          expect(json_response['data'][0]['attributes']['price']).to eq('99.9')
           expect(json_response['data'][0]['attributes']['display_price']).to eq('€99.90')
-          expect(json_response['data'][0]['attributes']['compare_at_price']).to eq('129.90')
+          expect(json_response['data'][0]['attributes']['compare_at_price']).to eq('129.9')
           expect(json_response['data'][0]['attributes']['display_compare_at_price']).to eq('€129.90')
           expect(json_response['included'][0]['id']).to eq(product.default_variant_id.to_s)
           expect(json_response['included'][0]['type']).to eq('variant')
-          expect(json_response['included'][0]['attributes']['price']).to eq('99.90')
+          expect(json_response['included'][0]['attributes']['price']).to eq('99.9')
           expect(json_response['included'][0]['attributes']['display_price']).to eq('€99.90')
-          expect(json_response['included'][0]['attributes']['compare_at_price']).to eq('129.90')
+          expect(json_response['included'][0]['attributes']['compare_at_price']).to eq('129.9')
           expect(json_response['included'][0]['attributes']['display_compare_at_price']).to eq('€129.90')
         end
       end

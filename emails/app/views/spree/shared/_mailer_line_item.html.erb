@@ -1,11 +1,7 @@
 <tr>
   <td class="six sub-columns">
     <strong>
-      <% if frontend_available? %>
-        <%= link_to raw(line_item.variant.product.name), spree.product_url(line_item.variant.product) %>
-      <% else %>
-        <%= raw(line_item.variant.product.name) %>
-      <% end %>
+      <%= link_to raw(line_item.variant.product.name), spree_storefront_resource_url(line_item.variant.product) %>
     </strong>
     <%= raw(line_item.variant.options_text) -%>
     (<%= line_item.variant.sku %>)

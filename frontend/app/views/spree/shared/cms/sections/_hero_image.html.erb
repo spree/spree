@@ -10,7 +10,7 @@
 <div class="col-12 homepage-hero-image position-relative p-0 <%= section_padding %>">
 
   <div class="bg-light" style="--aspect-ratio:12/5;">
-    <% if section.image_one.present? %>
+    <% if section.image_one.attached? %>
 
         <!-- SM to MD -->
         <img class="d-block d-md-none lazyload"
@@ -52,7 +52,7 @@
 
       <% if section.link.present? && section.button_text.present? %>
         <div>
-          <%= link_to section.button_text, section.link, class: 'btn btn-primary spree-btn px-5' %>
+          <%= link_to section.button_text, spree_localized_link(section), class: 'btn btn-primary spree-btn px-5' %>
         </div>
       <% end %>
     </div>

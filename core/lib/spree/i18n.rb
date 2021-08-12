@@ -20,7 +20,7 @@ module Spree
       locales_from_i18n = I18n.available_locales
       locales =
         if defined?(SpreeI18n)
-          (SpreeI18n::Locale.all << :en).map(&:to_s)
+          (SpreeI18n::Locale.all << :en).map(&:to_sym)
         else
           [Rails.application.config.i18n.default_locale, I18n.locale, :en]
         end

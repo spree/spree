@@ -14,7 +14,7 @@ describe Spree::Preferences::Preferable, type: :model do
         @preferences ||= default_preferences
       end
 
-      preference :color, :string, default: 'green'
+      preference :color, :string, default: 'green', deprecated: 'Please use colour instead'
     end
 
     class B < A
@@ -72,6 +72,11 @@ describe Spree::Preferences::Preferable, type: :model do
       expect(@a.preference_default(:color)).to eq 'green'
     end
 
+    it 'can have a deprecation message' do
+      expect(@a.preferred_color_deprecated).to eq 'Please use colour instead'
+      expect(@a.preference_deprecated(:color)).to eq 'Please use colour instead'
+    end
+
     it 'raises if not defined' do
       expect do
         @a.get_preference :flavor
@@ -108,6 +113,11 @@ describe Spree::Preferences::Preferable, type: :model do
     it 'builds a hash of preference defaults' do
       expect(@b.default_preferences).to eq(flavor: nil,
                                            color: 'green')
+    end
+
+    it 'builds a array of deprecated preferences' do
+      expect(@b.deprecated_preferences).to eq([{ name: :color,
+                                                 message: 'Please use colour instead' }])
     end
 
     context 'converts integer preferences to integer values' do

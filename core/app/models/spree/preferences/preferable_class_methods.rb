@@ -2,9 +2,10 @@ module Spree::Preferences
   module PreferableClassMethods
     def preference(name, type, *args)
       options = args.extract_options!
-      options.assert_valid_keys(:default)
+      options.assert_valid_keys(:default, :deprecated)
       default = options[:default]
       default = -> { options[:default] } unless default.is_a?(Proc)
+      deprecated = options[:deprecated]
 
       # cache_key will be nil for new objects, then if we check if there
       # is a pending preference before going to default
@@ -29,6 +30,10 @@ module Spree::Preferences
       define_method preference_type_getter_method(name) do
         type
       end
+
+      define_method preference_deprecated_getter_method(name) do
+        deprecated
+      end
     end
 
     def preference_getter_method(name)
@@ -41,6 +46,10 @@ module Spree::Preferences
 
     def preference_default_getter_method(name)
       "preferred_#{name}_default".to_sym
+    end
+
+    def preference_deprecated_getter_method(name)
+      "preferred_#{name}_deprecated".to_sym
     end
 
     def preference_type_getter_method(name)

@@ -171,6 +171,34 @@ module Spree
       Spree::Core::Engine.frontend_available?
     end
 
+    def rails_5?
+      Rails::VERSION::STRING < '6.0'
+    end
+
+    def spree_storefront_resource_url(resource, options = {})
+      if defined?(locale_param) && locale_param.present?
+        options.merge!(locale: locale_param)
+      end
+
+      localize = if options[:locale].present?
+                   "/#{options[:locale]}"
+                 else
+                   ''
+                 end
+
+      if resource.instance_of?(Spree::Product)
+        "#{current_store.formatted_url + localize}/#{Spree::Config[:storefront_products_path]}/#{resource.slug}"
+      elsif resource.instance_of?(Spree::Taxon)
+        "#{current_store.formatted_url + localize}/#{Spree::Config[:storefront_taxons_path]}/#{resource.permalink}"
+      elsif resource.instance_of?(Spree::Cms::Pages::FeaturePage) || resource.instance_of?(Spree::Cms::Pages::StandardPage)
+        "#{current_store.formatted_url + localize}/#{Spree::Config[:storefront_pages_path]}/#{resource.slug}"
+      elsif localize.blank?
+        current_store.formatted_url
+      else
+        current_store.formatted_url + localize
+      end
+    end
+
     # we should always try to render image of the default variant
     # same as it's done on PDP
     def default_image_for_product(product)
@@ -238,6 +266,10 @@ module Spree
       return if current_store.seo_robots.blank?
 
       tag('meta', name: 'robots', content: current_store.seo_robots)
+    end
+
+    def taxon_wysiwyg_editor_enabled?
+      Spree::Config[:taxon_wysiwyg_editor_enabled]
     end
   end
 end

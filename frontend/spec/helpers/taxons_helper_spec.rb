@@ -4,7 +4,7 @@ describe Spree::TaxonsHelper, type: :helper do
   # Regression test for #4382
   it '#taxon_preview' do
     taxon = create(:taxon)
-    child_taxon = create(:taxon, parent: taxon)
+    child_taxon = create(:taxon, parent: taxon, taxonomy: taxon.taxonomy)
     product_1 = create(:product, stores: Spree::Store.all)
     product_2 = create(:product, stores: Spree::Store.all)
     product_3 = create(:product, stores: Spree::Store.all)

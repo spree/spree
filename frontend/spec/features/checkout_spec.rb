@@ -177,6 +177,50 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
     end
   end
 
+  context 'when credit card already added and available' do
+    let(:bogus) { create(:credit_card_payment_method) }
+    let(:user) { create(:user) }
+    let!(:credit_card) { create(:credit_card, user_id: user.id, payment_method: bogus, gateway_customer_profile_id: 'BGS-WEFWF', name: 'New Credit Card') }
+
+    before do
+      order = OrderWalkthrough.up_to(:payment)
+      allow(order).to receive_messages confirmation_required?: true
+      allow(order).to receive_messages(available_payment_methods: [bogus])
+
+      order.user = user
+      order.update_with_updater!
+
+      allow_any_instance_of(Spree::CheckoutController).to receive_messages(current_order: order)
+      allow_any_instance_of(Spree::CheckoutController).to receive_messages(try_spree_current_user: user)
+      allow_any_instance_of(Spree::OrdersController).to receive_messages(try_spree_current_user: user)
+
+      allow_any_instance_of(Spree::Api::V2::Storefront::Account::CreditCardsController).to receive(:spree_current_user).and_return(user)
+
+      expect_any_instance_of(Spree::CreditCards::Destroy) do |instance|
+        expect(instance).to receive(:call).with(card: credit_card).and_call_original
+      end
+    end
+
+    it 'should be able to remove credit card' do
+      visit spree.checkout_state_path(:payment)
+
+      within("#spree_credit_card_#{credit_card.id}") do
+        expect(page).to have_content(credit_card.name)
+        expect(page).to have_button('Remove')
+
+        accept_confirm do
+          click_button 'Remove'
+        end
+
+        wait_for_ajax
+
+        expect(credit_card.reload.deleted_at).not_to be_nil
+      end
+
+      expect(page).not_to have_content(credit_card.name)
+    end
+  end
+
   # regression test for #3945
   context 'when Spree::Config[:always_include_confirm_step] is true' do
     before do

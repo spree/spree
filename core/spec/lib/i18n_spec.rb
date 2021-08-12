@@ -23,15 +23,20 @@ describe 'i18n' do
       before do
         class_double('SpreeI18n').
           as_stubbed_const(transfer_nested_constants: true)
-        class_double('SpreeI18n::Locale', all: [:en, :de, :nl]).as_stubbed_const(transfer_nested_constants: true)
+        class_double('SpreeI18n::Locale', all: ['en',:en, :de, :nl]).as_stubbed_const(transfer_nested_constants: true)
       end
 
       it 'returns all locales from the SpreeI18n' do
         locales = Spree.available_locales
-
-        expected_locales = (['en', 'de', 'nl'] + I18n.available_locales).uniq.compact
+        expected_locales = [:en, :de, :nl, :ar, :az, :bg, :ca, :cs, :da, :el, :es, :fa, :fi, :fr, :hu, :id, :it, :ja, :"pt-BR", :ro, :ru, :sk, :tr, :"zh-CN", :"zh-TW", :pl, :uk, :vi]
 
         expect(locales).to eq expected_locales
+      end
+
+      it 'returns an array with the string "en" removed' do
+        locales = Spree.available_locales
+
+        expect(locales).not_to include('en')
       end
     end
 
@@ -39,7 +44,7 @@ describe 'i18n' do
       it 'returns just default locales' do
         locales = Spree.available_locales
 
-        expected_locales = ([Rails.application.config.i18n.default_locale, I18n.locale, :en] + I18n.available_locales).uniq.compact
+        expected_locales = [:en, :ar, :az, :bg, :ca, :cs, :da, :de, :el, :es, :fa, :fi, :fr, :hu, :id, :it, :ja, :nl, :"pt-BR", :ro, :ru, :sk, :tr, :"zh-CN", :"zh-TW", :pl, :uk, :vi]
 
         expect(locales).to eq expected_locales
       end

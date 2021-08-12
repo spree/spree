@@ -50,16 +50,17 @@
       <% end %>
 
       <div class="col-12"><hr></div>
-
-      <%= f.field_container :link_type_one, class: ['form-group'] do %>
-        <%= f.label :link_type_one, Spree.t('admin.navigation.link_to') %>
-        <%= f.select(:link_type_one,
-            spree_humanize_dropdown_values('Spree::Cms::Sections::ImageGallery',
-                                            { const: 'LINKED_RESOURCE_TYPE' }),
-                                            { include_blank: false },
-                                            class: 'link_switcher',
-                                            data: { target_field: :link_one}) %>
-        <%= f.error_message_on :link_type_one %>
+      <% unless rails_5? %>
+        <%= f.field_container :link_type_one, class: ['form-group'] do %>
+          <%= f.label :link_type_one, Spree.t('admin.navigation.link_to') %>
+          <%= f.select(:link_type_one,
+              spree_humanize_dropdown_values('Spree::Cms::Sections::ImageGallery',
+                                              { const: 'LINKED_RESOURCE_TYPE' }),
+                                              { include_blank: false },
+                                              class: 'link_switcher',
+                                              data: { target_field: :link_one}) %>
+          <%= f.error_message_on :link_type_one %>
+        <% end %>
       <% end %>
       <%= render "spree/admin/shared/link_fields", resource: @cms_section, linked_type: @cms_section.link_type_one, save_to: :link_one, f: f %>
     </div>
@@ -94,16 +95,17 @@
       <% end %>
 
       <div class="col-12"><hr></div>
-
-      <%= f.field_container :link_type_two, class: ['form-group'] do %>
-        <%= f.label :link_type_two, Spree.t('admin.navigation.link_to') %>
-        <%= f.select(:link_type_two,
-            spree_humanize_dropdown_values('Spree::Cms::Sections::ImageGallery',
-                                            { const: 'LINKED_RESOURCE_TYPE' }),
-                                            { include_blank: false },
-                                            class: 'link_switcher',
-                                            data: { target_field: :link_two}) %>
-        <%= f.error_message_on :link_type_two %>
+      <% unless rails_5? %>
+        <%= f.field_container :link_type_two, class: ['form-group'] do %>
+          <%= f.label :link_type_two, Spree.t('admin.navigation.link_to') %>
+          <%= f.select(:link_type_two,
+              spree_humanize_dropdown_values('Spree::Cms::Sections::ImageGallery',
+                                              { const: 'LINKED_RESOURCE_TYPE' }),
+                                              { include_blank: false },
+                                              class: 'link_switcher',
+                                              data: { target_field: :link_two}) %>
+          <%= f.error_message_on :link_type_two %>
+        <% end %>
       <% end %>
       <%= render "spree/admin/shared/link_fields", resource: @cms_section, linked_type: @cms_section.link_type_two, save_to: :link_two, f: f %>
     </div>
@@ -138,16 +140,17 @@
       <% end %>
 
       <div class="col-12"><hr></div>
-
-      <%= f.field_container :link_type_three, class: ['form-group'] do %>
-        <%= f.label :link_type_three, Spree.t('admin.navigation.link_to') %>
-        <%= f.select(:link_type_three,
-            spree_humanize_dropdown_values('Spree::Cms::Sections::ImageGallery',
-                                            { const: 'LINKED_RESOURCE_TYPE' }),
-                                            { include_blank: false },
-                                            class: 'link_switcher',
-                                            data: { target_field: :link_three}) %>
-        <%= f.error_message_on :link_type_three %>
+      <% unless rails_5? %>
+        <%= f.field_container :link_type_three, class: ['form-group'] do %>
+          <%= f.label :link_type_three, Spree.t('admin.navigation.link_to') %>
+          <%= f.select(:link_type_three,
+              spree_humanize_dropdown_values('Spree::Cms::Sections::ImageGallery',
+                                              { const: 'LINKED_RESOURCE_TYPE' }),
+                                              { include_blank: false },
+                                              class: 'link_switcher',
+                                              data: { target_field: :link_three}) %>
+          <%= f.error_message_on :link_type_three %>
+        <% end %>
       <% end %>
       <%= render "spree/admin/shared/link_fields", resource: @cms_section, linked_type: @cms_section.link_type_three, save_to: :link_three, f: f %>
     </div>

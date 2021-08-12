@@ -198,7 +198,7 @@ Spree::Core::Engine.add_routes do
       end
     end
 
-    get '/forbidden', to: 'admin/errors#forbidden', as: :forbidden
+    get '/forbidden', to: 'errors#forbidden', as: :forbidden
   end
 
   spree_path = Rails.application.routes.url_helpers.try(:spree_path, trailing_slash: true) || '/'

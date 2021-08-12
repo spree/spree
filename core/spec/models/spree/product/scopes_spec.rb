@@ -263,11 +263,11 @@ describe 'Product scopes', type: :model do
 
     let(:parent_taxon) { create(:taxon) }
 
-    let(:child_taxon_1) { create(:taxon, parent: parent_taxon) }
-    let(:child_taxon_1_1) { create(:taxon, parent: child_taxon_1) }
+    let(:child_taxon_1) { create(:taxon, parent: parent_taxon, taxonomy: parent_taxon.taxonomy) }
+    let(:child_taxon_1_1) { create(:taxon, parent: child_taxon_1, taxonomy: child_taxon_1.taxonomy) }
 
-    let(:child_taxon_2) { create(:taxon, parent: parent_taxon) }
-    let(:child_taxon_2_1) { create(:taxon, parent: child_taxon_2) }
+    let(:child_taxon_2) { create(:taxon, parent: parent_taxon, taxonomy: parent_taxon.taxonomy) }
+    let(:child_taxon_2_1) { create(:taxon, parent: child_taxon_2,taxonomy: child_taxon_2.taxonomy) }
 
     let!(:product_1) { create(:product, stores: [store]) }
     let!(:classification_1_1) { create(:classification, position: 5, product: product_1, taxon: parent_taxon) }

@@ -23,6 +23,11 @@ module Spree
     extend FriendlyId
     include ProductScopes
     include MultiStoreResource
+    include MemoizedData
+
+    MEMOIZED_METHODS = %w(total_on_hand taxonomy_ids taxon_and_ancestors category
+                          default_variant_id tax_category default_variant
+                          purchasable? in_stock? backorderable?)
 
     friendly_id :slug_candidates, use: :history
 
@@ -96,10 +101,6 @@ module Spree
     after_save :reset_nested_changes
     after_touch :touch_taxons
 
-    # reset cache on save inside trasaction and transaction commit
-    after_save :reset_memoized_data
-    after_commit :reset_memoized_data
-
     before_validation :downcase_slug
     before_validation :normalize_slug, on: :update
     before_validation :validate_master
@@ -139,13 +140,6 @@ module Spree
 
     alias master_images images
 
-    def reload
-      %w(total_on_hand taxonomy_ids taxon_and_ancestors category category default_variant_id tax_category default_variant).each do |v|
-        instance_variable_set(:"@#{v}", nil)
-      end
-      super
-    end
-
     # Cant use short form block syntax due to https://github.com/Netflix/fast_jsonapi/issues/259
     def purchasable?
       variants_including_master.any?(&:purchasable?)
@@ -180,8 +174,8 @@ module Spree
     # @return [Spree::Variant]
     def default_variant
       @default_variant ||= Rails.cache.fetch(default_variant_cache_key) do
-        if Spree::Config[:track_inventory_levels] && variants.in_stock_or_backorderable.any?
-          variants.in_stock_or_backorderable.first
+        if Spree::Config[:track_inventory_levels] && available_variant = variants.detect(&:purchasable?)
+          available_variant
         else
           has_variants? ? variants.first : master
         end
@@ -327,6 +321,12 @@ module Spree
 
     def category
       @category ||= taxons.joins(:taxonomy).order(depth: :desc).find_by(spree_taxonomies: { name: Spree.t(:taxonomy_categories_name) })
+    end
+
+    def taxons_for_store(store)
+      Rails.cache.fetch("#{cache_key_with_version}/taxons-per-store/#{store.id}") do
+        taxons.for_store(store)
+      end
     end
 
     private
@@ -485,12 +485,6 @@ module Spree
     def discontinue_on_must_be_later_than_available_on
       if discontinue_on < available_on
         errors.add(:discontinue_on, :invalid_date_range)
-      end
-    end
-
-    def reset_memoized_data
-      %w(total_on_hand taxonomy_ids taxon_and_ancestors category default_variant_id tax_category default_variant).each do |v|
-        instance_variable_set(:"@#{v}", nil)
       end
     end
 

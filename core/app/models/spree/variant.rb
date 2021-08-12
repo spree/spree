@@ -3,6 +3,10 @@ module Spree
     acts_as_paranoid
     acts_as_list scope: :product
 
+    include MemoizedData
+
+    MEMOIZED_METHODS = %w(purchasable in_stock backorderable tax_category options_text compare_at_price)
+
     belongs_to :product, -> { with_deleted }, touch: true, class_name: 'Spree::Product', inverse_of: :variants
     belongs_to :tax_category, class_name: 'Spree::TaxCategory', optional: true
 
@@ -93,6 +97,7 @@ module Spree
       not_discontinued.not_deleted.
         for_currency_and_available_price_amount(currency)
     end
+    # FIXME: cost price should be represented with DisplayMoney class
     LOCALIZED_NUMBERS = %w(cost_price weight depth width height)
 
     LOCALIZED_NUMBERS.each do |m|
@@ -246,7 +251,7 @@ module Spree
       # Check if model responds to cache version and fall back to updated_at for older rails versions
       # This makes sure a version is supplied when recyclable cache keys are disabled.
       version = respond_to?(:cache_version) ? cache_version : updated_at.to_i
-      Rails.cache.fetch(in_stock_cache_key, version: version) do
+      @in_stock ||= Rails.cache.fetch(in_stock_cache_key, version: version) do
         total_on_hand > 0
       end
     end
@@ -256,7 +261,7 @@ module Spree
     alias is_backorderable? backorderable?
 
     def purchasable?
-      in_stock? || backorderable?
+      @purchasable ||= in_stock? || backorderable?
     end
 
     # Shortcut method to determine if inventory tracking is enabled for this variant
@@ -286,7 +291,7 @@ module Spree
     end
 
     def backordered?
-      total_on_hand <= 0 && stock_items.exists?(backorderable: true)
+      @backordered ||= total_on_hand <= 0 && stock_items.exists?(backorderable: true)
     end
 
     private

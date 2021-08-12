@@ -308,4 +308,16 @@ describe Spree::PaymentMethod::StoreCredit do
       it { expect(store_credit_payment_method.available_for_order?(order_without_store_credit)).to be false }
     end
   end
+
+  describe '#source_required?' do
+    let(:store_credit_payment_method) { create(:store_credit_payment_method) }
+
+    it { expect(store_credit_payment_method.source_required?).to be true }
+  end
+
+  describe '#payment_source_class' do
+    let(:store_credit_payment_method) { create(:store_credit_payment_method) }
+
+    it { expect(store_credit_payment_method.payment_source_class).to eq(Spree::StoreCredit) }
+  end
 end

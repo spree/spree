@@ -49,7 +49,7 @@
             <div class="embed-responsive embed-responsive-4by3">
               <iframe class="embed-responsive-item"
                       id="pageLivePreview"
-                      src="<%= preview_url(@cms_page) %>"
+                      src="<%= cms_page_preview_url(@cms_page) + "?no_cache=#{rand(1...10000)}" %>"
                       sandbox="allow-same-origin allow-forms allow-popups allow-scripts allow-modals">
               </iframe>
             </div>

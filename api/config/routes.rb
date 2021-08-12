@@ -153,7 +153,7 @@ Spree::Core::Engine.add_routes do
 
         namespace :account do
           resources :addresses, controller: :addresses
-          resources :credit_cards, controller: :credit_cards, only: %i[index show]
+          resources :credit_cards, controller: :credit_cards, only: %i[index show destroy]
           resources :orders, controller: :orders, only: %i[index show]
         end
 
@@ -185,20 +185,17 @@ Spree::Core::Engine.add_routes do
 
         # Product Catalog API
         resources :products
+        resources :taxonomies
+        resources :taxons
+        resources :classifications do
+          member do
+            put :reposition
+          end
+        end
         resources :images
         resources :variants
         resources :properties
         resources :product_properties
-        resources :taxonomies do
-          member do
-            get :jstree
-          end
-        end
-        resources :taxons do
-          member do
-            get :jstree
-          end
-        end
         resources :option_types
         resources :option_values
 
@@ -227,8 +224,8 @@ Spree::Core::Engine.add_routes do
 
         # Geo API
         resources :zones
-        resources :countries
-        resources :states
+        resources :countries, only: [:index, :show]
+        resources :states, only: [:index, :show]
 
         # Shipment API
         resources :shipments do

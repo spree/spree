@@ -9,7 +9,7 @@ module Spree
       before_action :ensure_unused_store_credit, only: [:update]
 
       def index
-        @store_credits = @user.store_credits.for_store(current_store).includes(:credit_type, :category).reverse_order
+        @store_credits = @user.store_credits.for_store(current_store).includes(:category).reverse_order
       end
 
       def create

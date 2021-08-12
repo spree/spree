@@ -6,8 +6,8 @@ servers:
     description: localhost
 info:
   version: 1.0.0
-  title: Spree OAuth 2.0 Authentication
-  description: "For API v2 Spree uses [Doorkeeper](https://github.com/doorkeeper-gem/doorkeeper) gem for handling OAuth athentication. \n\nSpree supports new token creation and refreshing of existing tokens."
+  title: Authentication
+  description: "Spree uses oAuth based Authentication via short-lived Bearer tokens. You can either create a new one or refresh existing token."
   contact:
     name: Spark Solutions
     url: 'https://sparksolutions.co'

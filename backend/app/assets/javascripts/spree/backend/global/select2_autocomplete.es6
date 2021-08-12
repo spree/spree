@@ -92,27 +92,52 @@ $.fn.select2Autocomplete = function(params) {
     }
   }
 
-  this.select2({
-    multiple: select2Multiple,
-    allowClear: select2allowClear,
-    placeholder: select2placeHolder,
-    minimumInputLength: minimumInput,
-    ajax: {
-      url: apiUrl,
-      headers: Spree.apiV2Authentication(),
-      data: function (params) {
-        return {
-          filter: {
-            [searchQuery]: params.term,
-            [additionalQuery]: additionalTerm
+  if (additionalQuery == null && additionalTerm == null) {
+    this.select2({
+      multiple: select2Multiple,
+      allowClear: select2allowClear,
+      placeholder: select2placeHolder,
+      minimumInputLength: minimumInput,
+      ajax: {
+        url: apiUrl,
+        headers: Spree.apiV2Authentication(),
+        data: function (params) {
+          return {
+            filter: {
+              [searchQuery]: params.term
+            }
+          }
+        },
+        processResults: function(json) {
+          return {
+            results: formatList(json.data)
           }
         }
-      },
-      processResults: function(json) {
-        return {
-          results: formatList(json.data)
+      }
+    })
+  } else {
+    this.select2({
+      multiple: select2Multiple,
+      allowClear: select2allowClear,
+      placeholder: select2placeHolder,
+      minimumInputLength: minimumInput,
+      ajax: {
+        url: apiUrl,
+        headers: Spree.apiV2Authentication(),
+        data: function (params) {
+          return {
+            filter: {
+              [searchQuery]: params.term,
+              [additionalQuery]: additionalTerm
+            }
+          }
+        },
+        processResults: function(json) {
+          return {
+            results: formatList(json.data)
+          }
         }
       }
-    }
-  })
+    })
+  }
 }

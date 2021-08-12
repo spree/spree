@@ -25,14 +25,11 @@ module Spree
     validates_associated :rules
 
     validates :name, presence: true
-    validates :path, :code, uniqueness: { case_sensitive: false, allow_blank: true }
     validates :usage_limit, numericality: { greater_than: 0, allow_nil: true }
     validates :description, length: { maximum: 255 }, allow_blank: true
     validate :expires_at_must_be_later_than_starts_at, if: -> { starts_at && expires_at }
 
-    before_save :normalize_blank_values
-
-    before_validation :normalize_code
+    auto_strip_attributes :code, :path, :name
 
     scope :coupons, -> { where.not(code: nil) }
     scope :advertised, -> { where(advertise: true) }
@@ -48,7 +45,7 @@ module Spree
     def self.with_coupon_code(coupon_code)
       where("lower(#{table_name}.code) = ?", coupon_code.strip.downcase).
         includes(:promotion_actions).where.not(spree_promotion_actions: { id: nil }).
-        first
+        last
     end
 
     def self.active
@@ -214,16 +211,6 @@ module Spree
         promotable.line_items.any? &&
           promotable.line_items.joins(:product).where(spree_products: { promotionable: true }).none?
       end
-    end
-
-    def normalize_blank_values
-      [:code, :path].each do |column|
-        self[column] = nil if self[column].blank?
-      end
-    end
-
-    def normalize_code
-      self.code = code.strip if code.present?
     end
 
     def match_all?

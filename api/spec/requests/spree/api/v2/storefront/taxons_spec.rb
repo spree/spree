@@ -3,7 +3,7 @@ require 'spec_helper'
 describe 'Taxons Spec', type: :request do
   let!(:default_store) { taxonomy.store }
   let!(:taxonomy) { create(:taxonomy) }
-  let!(:taxons) { create_list(:taxon, 2, taxonomy: taxonomy, parent_id: taxonomy.root.id) }
+  let!(:taxons) { create_list(:taxon, 2, taxonomy: taxonomy, parent: taxonomy.root) }
 
   let(:store2)     { create(:store)}
   let!(:taxonomy2)  { create(:taxonomy, store: store2) }
@@ -30,7 +30,8 @@ describe 'Taxons Spec', type: :request do
       it 'returns all taxons' do
         expect(json_response['data'].size).to eq(3)
         expect(json_response['data'][0]).to have_type('taxon')
-        expect(json_response['data'][0]).to have_relationships(:parent, :children)
+        expect(json_response['data'][0]).to have_relationships(:parent, :taxonomy, :children, :image)
+        expect(json_response['data'][0]).not_to have_relationships(:produts)
       end
 
       it 'should return only default store taxons' do
@@ -48,7 +49,7 @@ describe 'Taxons Spec', type: :request do
         expect(json_response['data'][0]).to have_type('taxon')
         expect(json_response['data'][0]).to have_id(taxonomy.root.id.to_s)
         expect(json_response['data'][0]).to have_relationship(:parent).with_data(nil)
-        expect(json_response['data'][0]).to have_relationships(:parent, :taxonomy, :children, :products, :image)
+        expect(json_response['data'][0]).to have_relationships(:parent, :taxonomy, :children, :image)
       end
     end
 
