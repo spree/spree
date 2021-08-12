@@ -18,7 +18,8 @@ module Spree
             Spree::Cms::Pages::FeaturePage => :cms_page,
             Spree::Cms::Pages::Homepage => :cms_page
           }
-          has_many   :children, record_type: :menu_item, serializer: :menu_item
+
+          has_many :children, record_type: :menu_item, serializer: :menu_item
         end
       end
     end
