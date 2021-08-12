@@ -184,6 +184,12 @@ en:
       spree/address:
         one: Address
         other: Addresses
+      spree/cms_page:
+        one: Page
+        other: Pages
+      spree/cms_section:
+        one: Section
+        other: Sections
       spree/country:
         one: Country
         other: Countries
