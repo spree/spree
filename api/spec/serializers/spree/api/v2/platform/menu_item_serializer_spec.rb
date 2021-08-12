@@ -35,10 +35,10 @@ describe Spree::Api::V2::Platform::MenuItemSerializer do
             updated_at: menu_item.updated_at
           },
           relationships: {
-            image: {
+            icon: {
               data: {
                 id: menu_item.icon.id.to_s,
-                type: :image
+                type: :icon
               }
             },
             menu: {
