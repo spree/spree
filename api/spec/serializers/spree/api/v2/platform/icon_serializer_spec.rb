@@ -24,4 +24,10 @@ describe Spree::Api::V2::Platform::IconSerializer do
       }
     )
   end
+
+  it { expect(subject.serializable_hash[:data][:id]).to be_kind_of(String) }
+  it { expect(subject.serializable_hash[:data][:type]).to be(:icon) }
+  it { expect(subject.serializable_hash[:data][:attributes][:url]).to include('thinking-cat.jpg') }
+  it { expect(subject.serializable_hash[:data][:attributes][:viewable_id]).to be_kind_of(Integer) }
+  it { expect(subject.serializable_hash[:data][:attributes][:viewable_type]).to eql('Spree::MenuItem') }
 end
