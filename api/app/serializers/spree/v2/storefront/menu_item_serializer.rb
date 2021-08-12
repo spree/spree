@@ -22,11 +22,11 @@ module Spree
           menu_item.leaf?
         end
 
-        has_one :image,
+        has_one :icon,
                 object_method_name: :icon,
                 id_method_name: :icon_id,
-                record_type: :image,
-                serializer: :image
+                record_type: :icon,
+                serializer: :icon
 
         belongs_to :menu, serializer: :menu
         belongs_to :parent, record_type: :menu_item, serializer: :menu_item
