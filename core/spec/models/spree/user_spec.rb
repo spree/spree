@@ -126,6 +126,34 @@ describe Spree.user_class, type: :model do
         expect(subject.display_average_order_value(store: store, currency: currency).money.fractional).to eq(value * 100)
       end
     end
+
+    describe '#report_values_for' do
+      context 'when order purchases in other currencies exist' do
+        let(:eur_currency) { 'EUR' }
+        let(:eur_order_value) { BigDecimal('12.34') }
+        let(:eur_order_count) { 2 }
+
+        before do
+          create_list(:order, eur_order_count, user: subject, store: store, total: eur_order_value, completed_at: Date.today, currency: eur_currency)
+        end
+
+        context 'lifetime_value' do
+          it 'returns a list of store lifetime values' do
+            expect(subject.report_values_for(:lifetime_value, store)).to eq([Spree::Money.new((order_count * order_value), currency: currency).to_s,
+                                                                             Spree::Money.new((eur_order_count * eur_order_value), currency: eur_currency).to_s])
+          end
+        end
+
+        context 'average_order_value' do
+          context 'with orders' do
+            it 'returns a list of average completed order prices for the user' do
+              expect(subject.report_values_for(:average_order_value, store)).to eq([Spree::Money.new((order_value), currency: currency).to_s,
+                                                                                    Spree::Money.new((eur_order_value), currency: eur_currency).to_s])
+            end
+          end
+        end
+      end
+    end
   end
 
   describe '#total_available_store_credit' do
@@ -190,6 +218,49 @@ describe Spree.user_class, type: :model do
       context 'all store credits have never been used or authorized' do
         it 'returns sum of amounts' do
           expect(subject.total_available_store_credit.to_f).to eq (amount + additional_amount)
+        end
+      end
+    end
+  end
+
+  describe '#available_store_credits' do
+    let(:store) { create(:store) }
+
+    context 'user does not have any associated store credits' do
+      subject { create(:user) }
+
+      it 'returns empty array' do
+        expect(subject.available_store_credits(store)).to be_empty
+      end
+    end
+
+    context 'user has several associated store credits' do
+      subject { store_credit.user }
+
+      let(:user) { create(:user) }
+      let(:usd_amount) { 120.25 }
+      let(:additional_amount) { 55.75 }
+      let(:store_credit) { create(:store_credit, user: user, amount: usd_amount, amount_used: 0.0, store: store) }
+
+      context 'store credits have never been used' do
+        it 'returns store credit amount' do
+          expect(subject.available_store_credits(store)).to eq([Spree::Money.new(usd_amount, currency: 'USD')])
+        end
+      end
+
+      context 'store credits in different currencies exits' do
+        let(:gbp_amount) { '123.12' }
+        let(:eur_amount) { '321.31' }
+
+        before do
+          create(:store_credit, user: user, amount: gbp_amount, amount_used: 0.0, store: store, currency: 'GBP')
+          create(:store_credit, user: user, amount: eur_amount, amount_used: 0.0, store: store, currency: 'EUR')
+        end
+
+        it 'returns sum of amounts' do
+          expect(subject.available_store_credits(store)).to match_array([Spree::Money.new(usd_amount, currency: 'USD'),
+                                                                         Spree::Money.new(gbp_amount, currency: 'GBP'),
+                                                                         Spree::Money.new(eur_amount, currency: 'EUR')])
         end
       end
     end
