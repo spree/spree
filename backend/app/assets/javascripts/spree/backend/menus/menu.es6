@@ -29,12 +29,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function handleMenuItemMove(evt) {
   const data = {
-    moved_item_id: parseInt(evt.item.dataset.itemId, 10),
     new_parent_id: parseInt(evt.to.dataset.parentId, 10) || null,
     new_position_idx: parseInt(evt.newIndex, 10)
   }
 
-  fetch(Spree.routes.menus_items_api_v2 + '/reposition', {
+  fetch(`${Spree.routes.menus_items_api_v2}/${parseInt(evt.item.dataset.itemId, 10)}/reposition`, {
     method: 'PATCH',
     headers: {
       Authorization: 'Bearer ' + OAUTH_TOKEN,

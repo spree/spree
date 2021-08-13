@@ -57,8 +57,8 @@ paths:
                         state_name:
                         alternative_phone: 555-555-0199
                         company: Company
-                        created_at: '2021-08-13T14:12:00.514Z'
-                        updated_at: '2021-08-13T14:12:00.514Z'
+                        created_at: '2021-08-13T21:43:25.483Z'
+                        updated_at: '2021-08-13T21:43:25.483Z'
                         deleted_at:
                         label:
                       relationships:
@@ -85,8 +85,8 @@ paths:
                         state_name:
                         alternative_phone: 555-555-0199
                         company: Company
-                        created_at: '2021-08-13T14:12:00.516Z'
-                        updated_at: '2021-08-13T14:12:00.516Z'
+                        created_at: '2021-08-13T21:43:25.485Z'
+                        updated_at: '2021-08-13T21:43:25.485Z'
                         deleted_at:
                         label:
                       relationships:
@@ -154,8 +154,8 @@ paths:
                         state_name:
                         alternative_phone: 555-555-0199
                         company: Company
-                        created_at: '2021-08-13T14:12:00.679Z'
-                        updated_at: '2021-08-13T14:12:00.679Z'
+                        created_at: '2021-08-13T21:43:25.645Z'
+                        updated_at: '2021-08-13T21:43:25.645Z'
                         deleted_at:
                         label:
                       relationships:
@@ -243,8 +243,8 @@ paths:
                         state_name:
                         alternative_phone: 555-555-0199
                         company: Company
-                        created_at: '2021-08-13T14:12:00.702Z'
-                        updated_at: '2021-08-13T14:12:00.702Z'
+                        created_at: '2021-08-13T21:43:25.667Z'
+                        updated_at: '2021-08-13T21:43:25.667Z'
                         deleted_at:
                         label:
                       relationships:
@@ -315,8 +315,8 @@ paths:
                         state_name:
                         alternative_phone: 555-555-0199
                         company: Company
-                        created_at: '2021-08-13T14:12:00.736Z'
-                        updated_at: '2021-08-13T14:12:00.740Z'
+                        created_at: '2021-08-13T21:43:25.699Z'
+                        updated_at: '2021-08-13T21:43:25.703Z'
                         deleted_at:
                         label:
                       relationships:
@@ -439,8 +439,8 @@ paths:
                       type: classification
                       attributes:
                         position: 1
-                        created_at: '2021-08-13T14:12:00.944Z'
-                        updated_at: '2021-08-13T14:12:00.944Z'
+                        created_at: '2021-08-13T21:43:25.899Z'
+                        updated_at: '2021-08-13T21:43:25.899Z'
                       relationships:
                         product:
                           data:
@@ -454,8 +454,8 @@ paths:
                       type: classification
                       attributes:
                         position: 1
-                        created_at: '2021-08-13T14:12:00.980Z'
-                        updated_at: '2021-08-13T14:12:00.980Z'
+                        created_at: '2021-08-13T21:43:25.934Z'
+                        updated_at: '2021-08-13T21:43:25.934Z'
                       relationships:
                         product:
                           data:
@@ -510,8 +510,8 @@ paths:
                       type: classification
                       attributes:
                         position: 1
-                        created_at: '2021-08-13T14:12:01.137Z'
-                        updated_at: '2021-08-13T14:12:01.137Z'
+                        created_at: '2021-08-13T21:43:26.092Z'
+                        updated_at: '2021-08-13T21:43:26.092Z'
                       relationships:
                         product:
                           data:
@@ -572,8 +572,8 @@ paths:
                       type: classification
                       attributes:
                         position: 1
-                        created_at: '2021-08-13T14:12:01.199Z'
-                        updated_at: '2021-08-13T14:12:01.199Z'
+                        created_at: '2021-08-13T21:43:26.153Z'
+                        updated_at: '2021-08-13T21:43:26.153Z'
                       relationships:
                         product:
                           data:
@@ -631,8 +631,8 @@ paths:
                       type: classification
                       attributes:
                         position: 1
-                        created_at: '2021-08-13T14:12:01.314Z'
-                        updated_at: '2021-08-13T14:12:01.314Z'
+                        created_at: '2021-08-13T21:43:26.270Z'
+                        updated_at: '2021-08-13T21:43:26.270Z'
                       relationships:
                         product:
                           data:
@@ -738,8 +738,8 @@ paths:
                       type: classification
                       attributes:
                         position: 2
-                        created_at: '2021-08-13T14:12:01.600Z'
-                        updated_at: '2021-08-13T14:12:01.609Z'
+                        created_at: '2021-08-13T21:43:26.563Z'
+                        updated_at: '2021-08-13T21:43:26.572Z'
                       relationships:
                         product:
                           data:
@@ -804,9 +804,9 @@ paths:
                         name: United States of America
                         numcode: 840
                         states_required: true
-                        updated_at: '2021-08-13T14:12:01.740Z'
+                        updated_at: '2021-08-13T21:43:26.697Z'
                         zipcode_required: true
-                        created_at: '2021-08-13T14:12:01.740Z'
+                        created_at: '2021-08-13T21:43:26.697Z'
                       relationships:
                         states:
                           data: []
@@ -819,9 +819,9 @@ paths:
                         name: NAME_2
                         numcode: 840
                         states_required: false
-                        updated_at: '2021-08-13T14:12:01.744Z'
+                        updated_at: '2021-08-13T21:43:26.701Z'
                         zipcode_required: true
-                        created_at: '2021-08-13T14:12:01.744Z'
+                        created_at: '2021-08-13T21:43:26.701Z'
                       relationships:
                         states:
                           data: []
@@ -834,9 +834,9 @@ paths:
                         name: NAME_3
                         numcode: 840
                         states_required: false
-                        updated_at: '2021-08-13T14:12:01.745Z'
+                        updated_at: '2021-08-13T21:43:26.702Z'
                         zipcode_required: true
-                        created_at: '2021-08-13T14:12:01.745Z'
+                        created_at: '2021-08-13T21:43:26.702Z'
                       relationships:
                         states:
                           data: []
@@ -889,9 +889,9 @@ paths:
                         name: NAME_6
                         numcode: 840
                         states_required: false
-                        updated_at: '2021-08-13T14:12:01.778Z'
+                        updated_at: '2021-08-13T21:43:26.731Z'
                         zipcode_required: true
-                        created_at: '2021-08-13T14:12:01.778Z'
+                        created_at: '2021-08-13T21:43:26.731Z'
                       relationships:
                         states:
                           data: []
@@ -911,6 +911,697 @@ paths:
                 Example:
                   value:
                     error: The access token is invalid
+  "/api/v2/platform/menu_items":
+    get:
+      summary: Returns a list of Menu Items
+      tags:
+      - Menu Items
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: page
+        in: query
+        example: 1
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        example: 50
+        schema:
+          type: integer
+      - name: include
+        in: query
+        descripton: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: linked_resource
+        schema:
+          type: string
+      - name: filter
+        in: query
+        descripton: ''
+        example:
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Records returned
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    data:
+                    - id: '1'
+                      type: menu_item
+                      attributes:
+                        name: Deserunt dolorum suscipit voluptas voluptates nihil
+                          architecto.
+                        subtitle:
+                        destination:
+                        new_window: false
+                        item_type: Container
+                        linked_resource_type: URL
+                        code:
+                        lft: 1
+                        rgt: 16
+                        depth: 0
+                        created_at: '2021-08-13T21:43:26.776Z'
+                        updated_at: '2021-08-13T21:43:26.855Z'
+                        link:
+                        is_container: true
+                        is_root: true
+                        is_child: false
+                        is_leaf: false
+                      relationships:
+                        icon:
+                          data:
+                        menu:
+                          data:
+                            id: '1'
+                            type: menu
+                        parent:
+                          data:
+                        linked_resource:
+                          data:
+                        children:
+                          data:
+                          - id: '2'
+                            type: menu_item
+                          - id: '3'
+                            type: menu_item
+                          - id: '4'
+                            type: menu_item
+                          - id: '5'
+                            type: menu_item
+                          - id: '6'
+                            type: menu_item
+                          - id: '7'
+                            type: menu_item
+                          - id: '8'
+                            type: menu_item
+                    - id: '2'
+                      type: menu_item
+                      attributes:
+                        name: Link no. 1 To Somewhere
+                        subtitle:
+                        destination:
+                        new_window: false
+                        item_type: Link
+                        linked_resource_type: URL
+                        code:
+                        lft: 2
+                        rgt: 3
+                        depth: 1
+                        created_at: '2021-08-13T21:43:26.787Z'
+                        updated_at: '2021-08-13T21:43:26.789Z'
+                        link:
+                        is_container: false
+                        is_root: false
+                        is_child: true
+                        is_leaf: true
+                      relationships:
+                        icon:
+                          data:
+                            id: '1'
+                            type: icon
+                        menu:
+                          data:
+                            id: '1'
+                            type: menu
+                        parent:
+                          data:
+                            id: '1'
+                            type: menu_item
+                        linked_resource:
+                          data:
+                        children:
+                          data: []
+                    - id: '3'
+                      type: menu_item
+                      attributes:
+                        name: Link no. 2 To Somewhere
+                        subtitle:
+                        destination:
+                        new_window: false
+                        item_type: Link
+                        linked_resource_type: URL
+                        code:
+                        lft: 4
+                        rgt: 5
+                        depth: 1
+                        created_at: '2021-08-13T21:43:26.798Z'
+                        updated_at: '2021-08-13T21:43:26.799Z'
+                        link:
+                        is_container: false
+                        is_root: false
+                        is_child: true
+                        is_leaf: true
+                      relationships:
+                        icon:
+                          data:
+                            id: '2'
+                            type: icon
+                        menu:
+                          data:
+                            id: '1'
+                            type: menu
+                        parent:
+                          data:
+                            id: '1'
+                            type: menu_item
+                        linked_resource:
+                          data:
+                        children:
+                          data: []
+                    - id: '4'
+                      type: menu_item
+                      attributes:
+                        name: Link no. 3 To Somewhere
+                        subtitle:
+                        destination:
+                        new_window: false
+                        item_type: Link
+                        linked_resource_type: URL
+                        code:
+                        lft: 6
+                        rgt: 7
+                        depth: 1
+                        created_at: '2021-08-13T21:43:26.808Z'
+                        updated_at: '2021-08-13T21:43:26.810Z'
+                        link:
+                        is_container: false
+                        is_root: false
+                        is_child: true
+                        is_leaf: true
+                      relationships:
+                        icon:
+                          data:
+                            id: '3'
+                            type: icon
+                        menu:
+                          data:
+                            id: '1'
+                            type: menu
+                        parent:
+                          data:
+                            id: '1'
+                            type: menu_item
+                        linked_resource:
+                          data:
+                        children:
+                          data: []
+                    - id: '5'
+                      type: menu_item
+                      attributes:
+                        name: Link no. 4 To Somewhere
+                        subtitle:
+                        destination:
+                        new_window: false
+                        item_type: Link
+                        linked_resource_type: URL
+                        code:
+                        lft: 8
+                        rgt: 9
+                        depth: 1
+                        created_at: '2021-08-13T21:43:26.818Z'
+                        updated_at: '2021-08-13T21:43:26.820Z'
+                        link:
+                        is_container: false
+                        is_root: false
+                        is_child: true
+                        is_leaf: true
+                      relationships:
+                        icon:
+                          data:
+                            id: '4'
+                            type: icon
+                        menu:
+                          data:
+                            id: '1'
+                            type: menu
+                        parent:
+                          data:
+                            id: '1'
+                            type: menu_item
+                        linked_resource:
+                          data:
+                        children:
+                          data: []
+                    - id: '6'
+                      type: menu_item
+                      attributes:
+                        name: Link no. 5 To Somewhere
+                        subtitle:
+                        destination:
+                        new_window: false
+                        item_type: Link
+                        linked_resource_type: URL
+                        code:
+                        lft: 10
+                        rgt: 11
+                        depth: 1
+                        created_at: '2021-08-13T21:43:26.828Z'
+                        updated_at: '2021-08-13T21:43:26.830Z'
+                        link:
+                        is_container: false
+                        is_root: false
+                        is_child: true
+                        is_leaf: true
+                      relationships:
+                        icon:
+                          data:
+                            id: '5'
+                            type: icon
+                        menu:
+                          data:
+                            id: '1'
+                            type: menu
+                        parent:
+                          data:
+                            id: '1'
+                            type: menu_item
+                        linked_resource:
+                          data:
+                        children:
+                          data: []
+                    - id: '7'
+                      type: menu_item
+                      attributes:
+                        name: Link no. 6 To Somewhere
+                        subtitle:
+                        destination:
+                        new_window: false
+                        item_type: Link
+                        linked_resource_type: URL
+                        code:
+                        lft: 12
+                        rgt: 13
+                        depth: 1
+                        created_at: '2021-08-13T21:43:26.840Z'
+                        updated_at: '2021-08-13T21:43:26.841Z'
+                        link:
+                        is_container: false
+                        is_root: false
+                        is_child: true
+                        is_leaf: true
+                      relationships:
+                        icon:
+                          data:
+                            id: '6'
+                            type: icon
+                        menu:
+                          data:
+                            id: '1'
+                            type: menu
+                        parent:
+                          data:
+                            id: '1'
+                            type: menu_item
+                        linked_resource:
+                          data:
+                        children:
+                          data: []
+                    - id: '8'
+                      type: menu_item
+                      attributes:
+                        name: Link no. 7 To Somewhere
+                        subtitle:
+                        destination:
+                        new_window: false
+                        item_type: Link
+                        linked_resource_type: URL
+                        code:
+                        lft: 14
+                        rgt: 15
+                        depth: 1
+                        created_at: '2021-08-13T21:43:26.849Z'
+                        updated_at: '2021-08-13T21:43:26.851Z'
+                        link:
+                        is_container: false
+                        is_root: false
+                        is_child: true
+                        is_leaf: true
+                      relationships:
+                        icon:
+                          data:
+                            id: '7'
+                            type: icon
+                        menu:
+                          data:
+                            id: '1'
+                            type: menu
+                        parent:
+                          data:
+                            id: '1'
+                            type: menu_item
+                        linked_resource:
+                          data:
+                        children:
+                          data: []
+                    meta:
+                      count: 8
+                      total_count: 8
+                      total_pages: 1
+                    links:
+                      self: http://www.example.com/api/v2/platform/menu_items?page=1&per_page=&include=&filter=
+                      next: http://www.example.com/api/v2/platform/menu_items?include=&page=1&per_page=
+                      prev: http://www.example.com/api/v2/platform/menu_items?include=&page=1&per_page=
+                      last: http://www.example.com/api/v2/platform/menu_items?include=&page=1&per_page=
+                      first: http://www.example.com/api/v2/platform/menu_items?include=&page=1&per_page=
+        '401':
+          description: Authentication Failed
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The access token is invalid
+    post:
+      summary: Creates a Menu Item
+      tags:
+      - Menu Items
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: include
+        in: query
+        descripton: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: linked_resource
+        schema:
+          type: string
+      responses:
+        '201':
+          description: record created
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    data:
+                      id: '5'
+                      type: menu_item
+                      attributes:
+                        name: Link no. 18 To Somewhere
+                        subtitle:
+                        destination:
+                        new_window: false
+                        item_type: Link
+                        linked_resource_type: URL
+                        code:
+                        lft: 8
+                        rgt: 9
+                        depth: 1
+                        created_at: '2021-08-13T21:43:27.019Z'
+                        updated_at: '2021-08-13T21:43:27.020Z'
+                        link:
+                        is_container: false
+                        is_root: false
+                        is_child: true
+                        is_leaf: true
+                      relationships:
+                        icon:
+                          data:
+                        menu:
+                          data:
+                            id: '1'
+                            type: menu
+                        parent:
+                          data:
+                            id: '1'
+                            type: menu_item
+                        linked_resource:
+                          data:
+                        children:
+                          data: []
+        '422':
+          description: invalid request
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: Name can't be blank, Menu can't be blank, and Item type
+                      is not included in the list
+                    errors:
+                      name:
+                      - can't be blank
+                      menu:
+                      - can't be blank
+                      item_type:
+                      - is not included in the list
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/menu_item_params"
+  "/api/v2/platform/menu_items/{id}":
+    get:
+      summary: Returns a Menu Item
+      tags:
+      - Menu Items
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: include
+        in: query
+        descripton: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: linked_resource
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Record found
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    data:
+                      id: '5'
+                      type: menu_item
+                      attributes:
+                        name: Link no. 25 To Somewhere
+                        subtitle:
+                        destination:
+                        new_window: false
+                        item_type: Link
+                        linked_resource_type: URL
+                        code:
+                        lft: 8
+                        rgt: 9
+                        depth: 1
+                        created_at: '2021-08-13T21:43:27.124Z'
+                        updated_at: '2021-08-13T21:43:27.125Z'
+                        link:
+                        is_container: false
+                        is_root: false
+                        is_child: true
+                        is_leaf: true
+                      relationships:
+                        icon:
+                          data:
+                            id: '4'
+                            type: icon
+                        menu:
+                          data:
+                            id: '1'
+                            type: menu
+                        parent:
+                          data:
+                            id: '1'
+                            type: menu_item
+                        linked_resource:
+                          data:
+                        children:
+                          data: []
+        '404':
+          description: Record not found
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The resource you were looking for could not be found.
+        '401':
+          description: Authentication Failed
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The access token is invalid
+    put:
+      summary: Updates a Menu Item
+      tags:
+      - Menu Items
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: include
+        in: query
+        descripton: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: linked_resource
+        schema:
+          type: string
+      responses:
+        '200':
+          description: record updated
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    data:
+                      id: '5'
+                      type: menu_item
+                      attributes:
+                        name: Menu Item One
+                        subtitle:
+                        destination:
+                        new_window: false
+                        item_type: Link
+                        linked_resource_type: URL
+                        code:
+                        lft: 8
+                        rgt: 9
+                        depth: 1
+                        created_at: '2021-08-13T21:43:27.284Z'
+                        updated_at: '2021-08-13T21:43:27.295Z'
+                        link:
+                        is_container: false
+                        is_root: false
+                        is_child: true
+                        is_leaf: true
+                      relationships:
+                        icon:
+                          data:
+                            id: '4'
+                            type: icon
+                        menu:
+                          data:
+                            id: '1'
+                            type: menu
+                        parent:
+                          data:
+                            id: '1'
+                            type: menu_item
+                        linked_resource:
+                          data:
+                        children:
+                          data: []
+        '422':
+          description: invalid request
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: Name can't be blank
+                    errors:
+                      name:
+                      - can't be blank
+        '404':
+          description: Record not found
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The resource you were looking for could not be found.
+        '401':
+          description: Authentication Failed
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The access token is invalid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/menu_item_params"
+    delete:
+      summary: Deletes a Menu Item
+      tags:
+      - Menu Items
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Record deleted
+        '404':
+          description: Record not found
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The resource you were looking for could not be found.
+        '401':
+          description: Authentication Failed
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The access token is invalid
+  "/api/v2/platform/menu_items/{id}/reposition":
+    patch:
+      summary: Reposition a Menu Item
+      tags:
+      - Menu Items
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Record updated - no content returned
+        '404':
+          description: Record not found
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The resource you were looking for could not be found.
+        '401':
+          description: Authentication Failed
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The access token is invalid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/menu_item_reposition_params"
   "/api/v2/platform/menus":
     get:
       summary: Returns a list of Menus
@@ -957,8 +1648,8 @@ paths:
                         name: Main Menu
                         location: header
                         locale: en
-                        created_at: '2021-08-13T14:12:01.813Z'
-                        updated_at: '2021-08-13T14:12:01.852Z'
+                        created_at: '2021-08-13T21:43:27.794Z'
+                        updated_at: '2021-08-13T21:43:27.822Z'
                       relationships:
                         menu_items:
                           data:
@@ -974,8 +1665,8 @@ paths:
                         name: Footer Menu
                         location: footer
                         locale: en
-                        created_at: '2021-08-13T14:12:01.823Z'
-                        updated_at: '2021-08-13T14:12:01.872Z'
+                        created_at: '2021-08-13T21:43:27.798Z'
+                        updated_at: '2021-08-13T21:43:27.842Z'
                       relationships:
                         menu_items:
                           data:
@@ -1032,8 +1723,8 @@ paths:
                         name: Main Menu
                         location: header
                         locale: en
-                        created_at: '2021-08-13T14:12:01.961Z'
-                        updated_at: '2021-08-13T14:12:01.964Z'
+                        created_at: '2021-08-13T21:43:27.929Z'
+                        updated_at: '2021-08-13T21:43:27.932Z'
                       relationships:
                         menu_items:
                           data:
@@ -1097,8 +1788,8 @@ paths:
                         name: Main Menu
                         location: header
                         locale: en
-                        created_at: '2021-08-13T14:12:01.988Z'
-                        updated_at: '2021-08-13T14:12:01.992Z'
+                        created_at: '2021-08-13T21:43:27.955Z'
+                        updated_at: '2021-08-13T21:43:27.959Z'
                       relationships:
                         menu_items:
                           data:
@@ -1154,8 +1845,8 @@ paths:
                         name: Main Menu
                         location: header
                         locale: en
-                        created_at: '2021-08-13T14:12:02.030Z'
-                        updated_at: '2021-08-13T14:12:02.033Z'
+                        created_at: '2021-08-13T21:43:27.996Z'
+                        updated_at: '2021-08-13T21:43:27.999Z'
                       relationships:
                         menu_items:
                           data:
@@ -1278,8 +1969,8 @@ paths:
                         lft: 1
                         rgt: 6
                         description:
-                        created_at: '2021-08-13T14:12:02.141Z'
-                        updated_at: '2021-08-13T14:12:02.173Z'
+                        created_at: '2021-08-13T21:43:28.109Z'
+                        updated_at: '2021-08-13T21:43:28.136Z'
                         meta_title:
                         meta_description:
                         meta_keywords:
@@ -1313,8 +2004,8 @@ paths:
                         lft: 2
                         rgt: 3
                         description:
-                        created_at: '2021-08-13T14:12:02.152Z'
-                        updated_at: '2021-08-13T14:12:02.154Z'
+                        created_at: '2021-08-13T21:43:28.120Z'
+                        updated_at: '2021-08-13T21:43:28.121Z'
                         meta_title:
                         meta_description:
                         meta_keywords:
@@ -1348,8 +2039,8 @@ paths:
                         lft: 4
                         rgt: 5
                         description:
-                        created_at: '2021-08-13T14:12:02.167Z'
-                        updated_at: '2021-08-13T14:12:02.169Z'
+                        created_at: '2021-08-13T21:43:28.131Z'
+                        updated_at: '2021-08-13T21:43:28.132Z'
                         meta_title:
                         meta_description:
                         meta_keywords:
@@ -1424,8 +2115,8 @@ paths:
                         lft: 2
                         rgt: 3
                         description:
-                        created_at: '2021-08-13T14:12:02.254Z'
-                        updated_at: '2021-08-13T14:12:02.257Z'
+                        created_at: '2021-08-13T21:43:28.219Z'
+                        updated_at: '2021-08-13T21:43:28.222Z'
                         meta_title:
                         meta_description:
                         meta_keywords:
@@ -1504,8 +2195,8 @@ paths:
                         lft: 2
                         rgt: 3
                         description:
-                        created_at: '2021-08-13T14:12:02.294Z'
-                        updated_at: '2021-08-13T14:12:02.295Z'
+                        created_at: '2021-08-13T21:43:28.258Z'
+                        updated_at: '2021-08-13T21:43:28.260Z'
                         meta_title:
                         meta_description:
                         meta_keywords:
@@ -1585,8 +2276,8 @@ paths:
                         lft: 2
                         rgt: 3
                         description:
-                        created_at: '2021-08-13T14:12:02.373Z'
-                        updated_at: '2021-08-13T14:12:02.385Z'
+                        created_at: '2021-08-13T21:43:28.333Z'
+                        updated_at: '2021-08-13T21:43:28.345Z'
                         meta_title:
                         meta_description:
                         meta_keywords:
@@ -1748,6 +2439,36 @@ components:
       - name
       - location
       - locale
+    menu_item_params:
+      type: object
+      properties:
+        name:
+          type: string
+        code:
+          type: string
+        subtitle:
+          type: string
+        destination:
+          type: string
+        new_window:
+          type: boolean
+        item_type:
+          type: string
+        linked_resource_type:
+          type: string
+        linked_resource_id:
+          type: integer
+      required:
+      - name
+    menu_item_reposition_params:
+      type: object
+      properties:
+        new_parent_id:
+          type: integer
+        new_position_idx:
+          type: integer
+      required:
+      - name
     resources_list:
       type: object
       properties:

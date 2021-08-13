@@ -87,6 +87,12 @@ shared_examples 'record deleted' do
   end
 end
 
+shared_examples 'no content' do
+  response '204', 'Record updated - no content returned' do
+    run_test!
+  end
+end
+
 shared_examples 'records returned' do
   response '200', 'Records returned' do
     schema '$ref' => '#/components/schemas/resources_list'
@@ -148,7 +154,7 @@ end
 
 # create
 shared_examples 'POST create record' do |resource_name, include_example|
-  param_name = resource_name.parameterize.to_sym
+  param_name = resource_name.parameterize(separator: '_').to_sym
 
   post "Creates #{resource_name.articleize}" do
     tags resource_name.pluralize
@@ -166,7 +172,7 @@ end
 
 # update
 shared_examples 'PUT update record' do |resource_name, include_example|
-  param_name = resource_name.parameterize.to_sym
+  param_name = resource_name.parameterize(separator: '_').to_sym
 
   put "Updates #{resource_name.articleize}" do
     tags resource_name.pluralize
@@ -199,7 +205,7 @@ shared_examples 'DELETE record' do |resource_name|
 end
 
 shared_examples 'CRUD examples' do |resource_name, include_example, filter_example|
-  resource_path = resource_name.pluralize.parameterize
+  resource_path = resource_name.pluralize.parameterize(separator: '_')
 
   path "/api/v2/platform/#{resource_path}" do
     include_examples 'GET records list', resource_name, include_example, filter_example

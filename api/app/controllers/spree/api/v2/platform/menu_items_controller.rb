@@ -8,7 +8,7 @@ module Spree
           def reposition
             spree_authorize! :update, @moved_item if spree_current_user.present?
 
-            @moved_item = scope.find(params[:moved_item_id])
+            @moved_item = scope.find(params[:id])
             @new_parent = scope.find(params[:new_parent_id])
             new_index = params[:new_position_idx].to_i
 
