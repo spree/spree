@@ -8,9 +8,9 @@ describe 'Menu Items API', swagger: true do
 
   let(:menu) { create(:menu, store: store) }
   let(:id) { create(:menu_item, menu: menu).id }
-  let!(:menu_item_one) { create(:menu_item, menu: menu).id }
-  let!(:menu_item_two) { create(:menu_item, menu: menu).id }
-  let!(:menu_item_three) { create(:menu_item, menu: menu).id }
+  let!(:menu_item_one) { create(:menu_item, menu: menu) }
+  let!(:menu_item_two) { create(:menu_item, menu: menu) }
+  let!(:menu_item_three) { create(:menu_item, menu: menu) }
 
   let(:records_list) { create_list(:menu_item, 4, menu: menu) }
   let(:valid_create_param_value) { build(:menu_item, menu: menu).attributes }
@@ -26,7 +26,7 @@ describe 'Menu Items API', swagger: true do
   end
   let(:valid_update_position_param_value) do
     {
-      new_parent_id: 3,
+      new_parent_id: menu_item_two.id,
       new_position_idx: 0
     }
   end
