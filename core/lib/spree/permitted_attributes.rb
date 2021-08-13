@@ -8,6 +8,8 @@ module Spree
       :image_attributes,
       :inventory_unit_attributes,
       :line_item_attributes,
+      :menu_attributes,
+      :menu_item_attributes,
       :option_type_attributes,
       :option_value_attributes,
       :payment_attributes,
@@ -61,6 +63,11 @@ module Spree
     @@inventory_unit_attributes = [:shipment, :shipment_id, :variant_id]
 
     @@line_item_attributes = [:id, :variant_id, :quantity]
+
+    @@menu_attributes = [:name, :locale, :location, :store_id]
+
+    @@menu_item_attributes = [:name, :subtite, :destination, :new_window, :item_type,
+                              :linked_resource_type, :linked_resource_id, :code, :menu_id]
 
     @@option_type_attributes = [:name, :presentation, :option_values_attributes]
 

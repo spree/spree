@@ -57,8 +57,8 @@ paths:
                         state_name:
                         alternative_phone: 555-555-0199
                         company: Company
-                        created_at: '2021-08-12T17:53:59.923Z'
-                        updated_at: '2021-08-12T17:53:59.923Z'
+                        created_at: '2021-08-13T12:36:25.702Z'
+                        updated_at: '2021-08-13T12:36:25.702Z'
                         deleted_at:
                         label:
                       relationships:
@@ -85,8 +85,8 @@ paths:
                         state_name:
                         alternative_phone: 555-555-0199
                         company: Company
-                        created_at: '2021-08-12T17:53:59.925Z'
-                        updated_at: '2021-08-12T17:53:59.925Z'
+                        created_at: '2021-08-13T12:36:25.705Z'
+                        updated_at: '2021-08-13T12:36:25.705Z'
                         deleted_at:
                         label:
                       relationships:
@@ -154,8 +154,8 @@ paths:
                         state_name:
                         alternative_phone: 555-555-0199
                         company: Company
-                        created_at: '2021-08-12T17:54:00.089Z'
-                        updated_at: '2021-08-12T17:54:00.089Z'
+                        created_at: '2021-08-13T12:36:25.874Z'
+                        updated_at: '2021-08-13T12:36:25.874Z'
                         deleted_at:
                         label:
                       relationships:
@@ -243,8 +243,8 @@ paths:
                         state_name:
                         alternative_phone: 555-555-0199
                         company: Company
-                        created_at: '2021-08-12T17:54:00.112Z'
-                        updated_at: '2021-08-12T17:54:00.112Z'
+                        created_at: '2021-08-13T12:36:25.897Z'
+                        updated_at: '2021-08-13T12:36:25.897Z'
                         deleted_at:
                         label:
                       relationships:
@@ -315,8 +315,8 @@ paths:
                         state_name:
                         alternative_phone: 555-555-0199
                         company: Company
-                        created_at: '2021-08-12T17:54:00.144Z'
-                        updated_at: '2021-08-12T17:54:00.148Z'
+                        created_at: '2021-08-13T12:36:25.931Z'
+                        updated_at: '2021-08-13T12:36:25.935Z'
                         deleted_at:
                         label:
                       relationships:
@@ -439,8 +439,8 @@ paths:
                       type: classification
                       attributes:
                         position: 1
-                        created_at: '2021-08-12T17:54:00.349Z'
-                        updated_at: '2021-08-12T17:54:00.349Z'
+                        created_at: '2021-08-13T12:36:26.137Z'
+                        updated_at: '2021-08-13T12:36:26.137Z'
                       relationships:
                         product:
                           data:
@@ -454,8 +454,8 @@ paths:
                       type: classification
                       attributes:
                         position: 1
-                        created_at: '2021-08-12T17:54:00.384Z'
-                        updated_at: '2021-08-12T17:54:00.384Z'
+                        created_at: '2021-08-13T12:36:26.172Z'
+                        updated_at: '2021-08-13T12:36:26.172Z'
                       relationships:
                         product:
                           data:
@@ -510,8 +510,8 @@ paths:
                       type: classification
                       attributes:
                         position: 1
-                        created_at: '2021-08-12T17:54:00.543Z'
-                        updated_at: '2021-08-12T17:54:00.543Z'
+                        created_at: '2021-08-13T12:36:26.342Z'
+                        updated_at: '2021-08-13T12:36:26.342Z'
                       relationships:
                         product:
                           data:
@@ -572,8 +572,8 @@ paths:
                       type: classification
                       attributes:
                         position: 1
-                        created_at: '2021-08-12T17:54:00.605Z'
-                        updated_at: '2021-08-12T17:54:00.605Z'
+                        created_at: '2021-08-13T12:36:26.405Z'
+                        updated_at: '2021-08-13T12:36:26.405Z'
                       relationships:
                         product:
                           data:
@@ -631,8 +631,8 @@ paths:
                       type: classification
                       attributes:
                         position: 1
-                        created_at: '2021-08-12T17:54:00.716Z'
-                        updated_at: '2021-08-12T17:54:00.716Z'
+                        created_at: '2021-08-13T12:36:26.515Z'
+                        updated_at: '2021-08-13T12:36:26.515Z'
                       relationships:
                         product:
                           data:
@@ -738,8 +738,8 @@ paths:
                       type: classification
                       attributes:
                         position: 2
-                        created_at: '2021-08-12T17:54:01.027Z'
-                        updated_at: '2021-08-12T17:54:01.040Z'
+                        created_at: '2021-08-13T12:36:26.824Z'
+                        updated_at: '2021-08-13T12:36:26.833Z'
                       relationships:
                         product:
                           data:
@@ -804,9 +804,9 @@ paths:
                         name: United States of America
                         numcode: 840
                         states_required: true
-                        updated_at: '2021-08-12T17:54:01.159Z'
+                        updated_at: '2021-08-13T12:36:26.962Z'
                         zipcode_required: true
-                        created_at: '2021-08-12T17:54:01.159Z'
+                        created_at: '2021-08-13T12:36:26.962Z'
                       relationships:
                         states:
                           data: []
@@ -819,9 +819,9 @@ paths:
                         name: NAME_2
                         numcode: 840
                         states_required: false
-                        updated_at: '2021-08-12T17:54:01.162Z'
+                        updated_at: '2021-08-13T12:36:26.967Z'
                         zipcode_required: true
-                        created_at: '2021-08-12T17:54:01.162Z'
+                        created_at: '2021-08-13T12:36:26.967Z'
                       relationships:
                         states:
                           data: []
@@ -834,9 +834,9 @@ paths:
                         name: NAME_3
                         numcode: 840
                         states_required: false
-                        updated_at: '2021-08-12T17:54:01.163Z'
+                        updated_at: '2021-08-13T12:36:26.968Z'
                         zipcode_required: true
-                        created_at: '2021-08-12T17:54:01.163Z'
+                        created_at: '2021-08-13T12:36:26.968Z'
                       relationships:
                         states:
                           data: []
@@ -889,12 +889,330 @@ paths:
                         name: NAME_6
                         numcode: 840
                         states_required: false
-                        updated_at: '2021-08-12T17:54:01.195Z'
+                        updated_at: '2021-08-13T12:36:27.005Z'
                         zipcode_required: true
-                        created_at: '2021-08-12T17:54:01.195Z'
+                        created_at: '2021-08-13T12:36:27.005Z'
                       relationships:
                         states:
                           data: []
+        '404':
+          description: Record not found
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The resource you were looking for could not be found.
+        '401':
+          description: Authentication Failed
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The access token is invalid
+  "/api/v2/platform/menus":
+    get:
+      summary: Returns a list of Menus
+      tags:
+      - Menus
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: page
+        in: query
+        example: 1
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        example: 50
+        schema:
+          type: integer
+      - name: include
+        in: query
+        descripton: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: menu_items
+        schema:
+          type: string
+      - name: filter
+        in: query
+        descripton: ''
+        example: location=header
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Records returned
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    data:
+                    - id: '1'
+                      type: menu
+                      attributes:
+                        name: Main Menu
+                        location: header
+                        locale: en
+                        created_at: '2021-08-13T12:36:27.047Z'
+                        updated_at: '2021-08-13T12:36:27.093Z'
+                      relationships:
+                        menu_items:
+                          data:
+                          - id: '1'
+                            type: menu_item
+                          - id: '3'
+                            type: menu_item
+                          - id: '4'
+                            type: menu_item
+                    - id: '2'
+                      type: menu
+                      attributes:
+                        name: Footer Menu
+                        location: footer
+                        locale: en
+                        created_at: '2021-08-13T12:36:27.060Z'
+                        updated_at: '2021-08-13T12:36:27.115Z'
+                      relationships:
+                        menu_items:
+                          data:
+                          - id: '2'
+                            type: menu_item
+                          - id: '5'
+                            type: menu_item
+                          - id: '6'
+                            type: menu_item
+                    meta:
+                      count: 2
+                      total_count: 2
+                      total_pages: 1
+                    links:
+                      self: http://www.example.com/api/v2/platform/menus?page=1&per_page=&include=&filter=
+                      next: http://www.example.com/api/v2/platform/menus?include=&page=1&per_page=
+                      prev: http://www.example.com/api/v2/platform/menus?include=&page=1&per_page=
+                      last: http://www.example.com/api/v2/platform/menus?include=&page=1&per_page=
+                      first: http://www.example.com/api/v2/platform/menus?include=&page=1&per_page=
+        '401':
+          description: Authentication Failed
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The access token is invalid
+    post:
+      summary: Creates a Menu
+      tags:
+      - Menus
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: include
+        in: query
+        descripton: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: menu_items
+        schema:
+          type: string
+      responses:
+        '201':
+          description: record created
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    data:
+                      id: '1'
+                      type: menu
+                      attributes:
+                        name: Main Menu
+                        location: header
+                        locale: en
+                        created_at: '2021-08-13T12:36:27.201Z'
+                        updated_at: '2021-08-13T12:36:27.204Z'
+                      relationships:
+                        menu_items:
+                          data:
+                          - id: '1'
+                            type: menu_item
+        '422':
+          description: invalid request
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: Name can't be blank, Store can't be blank, Locale can't
+                      be blank, and Location is not included in the list
+                    errors:
+                      name:
+                      - can't be blank
+                      store:
+                      - can't be blank
+                      locale:
+                      - can't be blank
+                      location:
+                      - is not included in the list
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/menu_params"
+  "/api/v2/platform/menus/{id}":
+    get:
+      summary: Returns a Menu
+      tags:
+      - Menus
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: include
+        in: query
+        descripton: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: menu_items
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Record found
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    data:
+                      id: '1'
+                      type: menu
+                      attributes:
+                        name: Main Menu
+                        location: header
+                        locale: en
+                        created_at: '2021-08-13T12:36:27.232Z'
+                        updated_at: '2021-08-13T12:36:27.235Z'
+                      relationships:
+                        menu_items:
+                          data:
+                          - id: '1'
+                            type: menu_item
+        '404':
+          description: Record not found
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The resource you were looking for could not be found.
+        '401':
+          description: Authentication Failed
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The access token is invalid
+    put:
+      summary: Updates a Menu
+      tags:
+      - Menus
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: include
+        in: query
+        descripton: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: menu_items
+        schema:
+          type: string
+      responses:
+        '200':
+          description: record updated
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    data:
+                      id: '1'
+                      type: menu
+                      attributes:
+                        name: Main Menu
+                        location: header
+                        locale: en
+                        created_at: '2021-08-13T12:36:27.273Z'
+                        updated_at: '2021-08-13T12:36:27.276Z'
+                      relationships:
+                        menu_items:
+                          data:
+                          - id: '1'
+                            type: menu_item
+        '422':
+          description: invalid request
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: Name can't be blank, Locale can't be blank, and Location
+                      is not included in the list
+                    errors:
+                      name:
+                      - can't be blank
+                      locale:
+                      - can't be blank
+                      location:
+                      - is not included in the list
+        '404':
+          description: Record not found
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The resource you were looking for could not be found.
+        '401':
+          description: Authentication Failed
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The access token is invalid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/menu_params"
+    delete:
+      summary: Deletes a Menu
+      tags:
+      - Menus
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Record deleted
         '404':
           description: Record not found
           content:
@@ -960,8 +1278,8 @@ paths:
                         lft: 1
                         rgt: 6
                         description:
-                        created_at: '2021-08-12T17:54:01.229Z'
-                        updated_at: '2021-08-12T17:54:01.256Z'
+                        created_at: '2021-08-13T12:36:27.380Z'
+                        updated_at: '2021-08-13T12:36:27.411Z'
                         meta_title:
                         meta_description:
                         meta_keywords:
@@ -995,8 +1313,8 @@ paths:
                         lft: 2
                         rgt: 3
                         description:
-                        created_at: '2021-08-12T17:54:01.240Z'
-                        updated_at: '2021-08-12T17:54:01.241Z'
+                        created_at: '2021-08-13T12:36:27.390Z'
+                        updated_at: '2021-08-13T12:36:27.392Z'
                         meta_title:
                         meta_description:
                         meta_keywords:
@@ -1030,8 +1348,8 @@ paths:
                         lft: 4
                         rgt: 5
                         description:
-                        created_at: '2021-08-12T17:54:01.250Z'
-                        updated_at: '2021-08-12T17:54:01.252Z'
+                        created_at: '2021-08-13T12:36:27.401Z'
+                        updated_at: '2021-08-13T12:36:27.403Z'
                         meta_title:
                         meta_description:
                         meta_keywords:
@@ -1106,8 +1424,8 @@ paths:
                         lft: 2
                         rgt: 3
                         description:
-                        created_at: '2021-08-12T17:54:01.334Z'
-                        updated_at: '2021-08-12T17:54:01.337Z'
+                        created_at: '2021-08-13T12:36:27.489Z'
+                        updated_at: '2021-08-13T12:36:27.491Z'
                         meta_title:
                         meta_description:
                         meta_keywords:
@@ -1186,8 +1504,8 @@ paths:
                         lft: 2
                         rgt: 3
                         description:
-                        created_at: '2021-08-12T17:54:01.373Z'
-                        updated_at: '2021-08-12T17:54:01.375Z'
+                        created_at: '2021-08-13T12:36:27.530Z'
+                        updated_at: '2021-08-13T12:36:27.532Z'
                         meta_title:
                         meta_description:
                         meta_keywords:
@@ -1267,8 +1585,8 @@ paths:
                         lft: 2
                         rgt: 3
                         description:
-                        created_at: '2021-08-12T17:54:01.452Z'
-                        updated_at: '2021-08-12T17:54:01.464Z'
+                        created_at: '2021-08-13T12:36:27.614Z'
+                        updated_at: '2021-08-13T12:36:27.627Z'
                         meta_title:
                         meta_description:
                         meta_keywords:
