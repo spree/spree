@@ -77,6 +77,15 @@ RSpec.configure do |config|
             },
             required: %w[name taxonomy_id]
           },
+          menu_params: {
+            type: :object,
+            properties: {
+              name: { type: :string },
+              location: { type: :string },
+              locale: { type: :string }
+            },
+            required: %w[name location locale]
+          },
           resources_list: {
             type: :object,
             properties: {
