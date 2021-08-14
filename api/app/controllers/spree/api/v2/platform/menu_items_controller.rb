@@ -19,7 +19,7 @@ module Spree
             end
 
             if @moved_item.save
-              head :no_content
+              render_serialized_payload { serialize_resource(resource) }
             end
           end
 

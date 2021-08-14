@@ -87,12 +87,6 @@ shared_examples 'record deleted' do
   end
 end
 
-shared_examples 'no content' do
-  response '204', 'Record updated - no content returned' do
-    run_test!
-  end
-end
-
 shared_examples 'records returned' do
   response '200', 'Records returned' do
     schema '$ref' => '#/components/schemas/resources_list'

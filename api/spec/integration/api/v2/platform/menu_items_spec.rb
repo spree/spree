@@ -49,7 +49,7 @@ describe 'Menu Items API', swagger: true do
         }
       end
 
-      it_behaves_like 'no content'
+      it_behaves_like 'record updated'
       it_behaves_like 'record not found', :menu_item
       it_behaves_like 'authentication failed'
     end

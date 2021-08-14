@@ -28,7 +28,7 @@ describe 'Platform API v2 Menu Items spec', type: :request do
         patch "/api/v2/platform/menu_items/#{menu_item_a.id}/reposition", headers: bearer_token, params: params
       end
 
-      it_behaves_like 'returns 204 HTTP status'
+      it_behaves_like 'returns 200 HTTP status'
 
       it 'can be nested inside another item' do
         menu_item_a.reload
@@ -48,7 +48,7 @@ describe 'Platform API v2 Menu Items spec', type: :request do
         patch "/api/v2/platform/menu_items/#{menu_item_a.id}/reposition", headers: bearer_token, params: params
       end
 
-      it_behaves_like 'returns 204 HTTP status'
+      it_behaves_like 'returns 200 HTTP status'
 
       it 're-indexes the item' do
         menu_item_a.reload
