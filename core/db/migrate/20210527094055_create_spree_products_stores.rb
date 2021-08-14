@@ -1,6 +1,13 @@
 class CreateSpreeProductsStores < ActiveRecord::Migration[5.2]
   def up
-    unless table_exists?(:spree_products_stores)
+    if table_exists?(:spree_products_stores)
+      unless index_exists?(:spree_products_stores, [:product_id, :store_id], unique: true)
+        add_index :spree_products_stores, [:product_id, :store_id], unique: true
+      end
+      unless column_exists?(:spree_products_stores, :created_at)
+        add_timestamps :spree_products_stores
+      end
+    else
       create_table :spree_products_stores do |t|
         t.references :product, index: true
         t.references :store,  index: true
@@ -12,13 +19,13 @@ class CreateSpreeProductsStores < ActiveRecord::Migration[5.2]
       stores = Spree::Store.all
       product_ids = Spree::Product.with_deleted.order(:id).ids
 
-      stores.find_each do |store|
-        prepared_values = product_ids.map { |id| "(#{id}, #{store.id}, '#{Time.current.to_s(:db)}', '#{Time.current.to_s(:db)}')" }.join(', ')
-        next if prepared_values.empty?
+      if product_ids.any? && Spree::StoreProduct.respond_to?(:insert_all)
+        stores.find_each do |store|
+          records = product_ids.map { |product_id| { product_id: product_id, store_id: store.id } }
 
-        begin
-          execute "INSERT INTO spree_products_stores (product_id, store_id, created_at, updated_at) VALUES #{prepared_values};"
-        rescue ActiveRecord::RecordNotUnique; end
+          # Rails 5 does not have insert_all
+          Spree::StoreProduct.insert_all(records)
+        end
       end
     end
   end
