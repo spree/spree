@@ -5,7 +5,7 @@ describe 'Menus API', swagger: true do
 
   resource_name = 'Menu'
   include_example = 'menu_items'
-  filter_example = 'location=header'
+  filter_example = 'location_eq=header'
 
   let(:id) { create(:menu, name: 'Main Menu').id }
   let(:records_list) do

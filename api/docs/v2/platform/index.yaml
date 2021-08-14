@@ -57,8 +57,8 @@ paths:
                         state_name:
                         alternative_phone: 555-555-0199
                         company: Company
-                        created_at: '2021-08-13T22:25:36.841Z'
-                        updated_at: '2021-08-13T22:25:36.841Z'
+                        created_at: '2021-08-14T16:45:40.119Z'
+                        updated_at: '2021-08-14T16:45:40.119Z'
                         deleted_at:
                         label:
                       relationships:
@@ -85,8 +85,8 @@ paths:
                         state_name:
                         alternative_phone: 555-555-0199
                         company: Company
-                        created_at: '2021-08-13T22:25:36.843Z'
-                        updated_at: '2021-08-13T22:25:36.843Z'
+                        created_at: '2021-08-14T16:45:40.121Z'
+                        updated_at: '2021-08-14T16:45:40.121Z'
                         deleted_at:
                         label:
                       relationships:
@@ -154,8 +154,8 @@ paths:
                         state_name:
                         alternative_phone: 555-555-0199
                         company: Company
-                        created_at: '2021-08-13T22:25:37.004Z'
-                        updated_at: '2021-08-13T22:25:37.004Z'
+                        created_at: '2021-08-14T16:45:40.281Z'
+                        updated_at: '2021-08-14T16:45:40.281Z'
                         deleted_at:
                         label:
                       relationships:
@@ -243,8 +243,8 @@ paths:
                         state_name:
                         alternative_phone: 555-555-0199
                         company: Company
-                        created_at: '2021-08-13T22:25:37.026Z'
-                        updated_at: '2021-08-13T22:25:37.026Z'
+                        created_at: '2021-08-14T16:45:40.303Z'
+                        updated_at: '2021-08-14T16:45:40.303Z'
                         deleted_at:
                         label:
                       relationships:
@@ -315,8 +315,8 @@ paths:
                         state_name:
                         alternative_phone: 555-555-0199
                         company: Company
-                        created_at: '2021-08-13T22:25:37.058Z'
-                        updated_at: '2021-08-13T22:25:37.063Z'
+                        created_at: '2021-08-14T16:45:40.336Z'
+                        updated_at: '2021-08-14T16:45:40.340Z'
                         deleted_at:
                         label:
                       relationships:
@@ -439,8 +439,8 @@ paths:
                       type: classification
                       attributes:
                         position: 1
-                        created_at: '2021-08-13T22:25:37.258Z'
-                        updated_at: '2021-08-13T22:25:37.258Z'
+                        created_at: '2021-08-14T16:45:40.535Z'
+                        updated_at: '2021-08-14T16:45:40.535Z'
                       relationships:
                         product:
                           data:
@@ -454,8 +454,8 @@ paths:
                       type: classification
                       attributes:
                         position: 1
-                        created_at: '2021-08-13T22:25:37.293Z'
-                        updated_at: '2021-08-13T22:25:37.293Z'
+                        created_at: '2021-08-14T16:45:40.569Z'
+                        updated_at: '2021-08-14T16:45:40.569Z'
                       relationships:
                         product:
                           data:
@@ -510,8 +510,8 @@ paths:
                       type: classification
                       attributes:
                         position: 1
-                        created_at: '2021-08-13T22:25:37.455Z'
-                        updated_at: '2021-08-13T22:25:37.455Z'
+                        created_at: '2021-08-14T16:45:40.728Z'
+                        updated_at: '2021-08-14T16:45:40.728Z'
                       relationships:
                         product:
                           data:
@@ -572,8 +572,8 @@ paths:
                       type: classification
                       attributes:
                         position: 1
-                        created_at: '2021-08-13T22:25:37.516Z'
-                        updated_at: '2021-08-13T22:25:37.516Z'
+                        created_at: '2021-08-14T16:45:40.789Z'
+                        updated_at: '2021-08-14T16:45:40.789Z'
                       relationships:
                         product:
                           data:
@@ -631,8 +631,8 @@ paths:
                       type: classification
                       attributes:
                         position: 1
-                        created_at: '2021-08-13T22:25:37.633Z'
-                        updated_at: '2021-08-13T22:25:37.633Z'
+                        created_at: '2021-08-14T16:45:40.906Z'
+                        updated_at: '2021-08-14T16:45:40.906Z'
                       relationships:
                         product:
                           data:
@@ -738,8 +738,8 @@ paths:
                       type: classification
                       attributes:
                         position: 2
-                        created_at: '2021-08-13T22:25:37.917Z'
-                        updated_at: '2021-08-13T22:25:37.927Z'
+                        created_at: '2021-08-14T16:45:41.189Z'
+                        updated_at: '2021-08-14T16:45:41.198Z'
                       relationships:
                         product:
                           data:
@@ -804,9 +804,9 @@ paths:
                         name: United States of America
                         numcode: 840
                         states_required: true
-                        updated_at: '2021-08-13T22:25:38.059Z'
+                        updated_at: '2021-08-14T16:45:41.330Z'
                         zipcode_required: true
-                        created_at: '2021-08-13T22:25:38.059Z'
+                        created_at: '2021-08-14T16:45:41.330Z'
                       relationships:
                         states:
                           data: []
@@ -819,9 +819,9 @@ paths:
                         name: NAME_2
                         numcode: 840
                         states_required: false
-                        updated_at: '2021-08-13T22:25:38.063Z'
+                        updated_at: '2021-08-14T16:45:41.334Z'
                         zipcode_required: true
-                        created_at: '2021-08-13T22:25:38.063Z'
+                        created_at: '2021-08-14T16:45:41.334Z'
                       relationships:
                         states:
                           data: []
@@ -834,9 +834,9 @@ paths:
                         name: NAME_3
                         numcode: 840
                         states_required: false
-                        updated_at: '2021-08-13T22:25:38.064Z'
+                        updated_at: '2021-08-14T16:45:41.335Z'
                         zipcode_required: true
-                        created_at: '2021-08-13T22:25:38.064Z'
+                        created_at: '2021-08-14T16:45:41.335Z'
                       relationships:
                         states:
                           data: []
@@ -889,9 +889,9 @@ paths:
                         name: NAME_6
                         numcode: 840
                         states_required: false
-                        updated_at: '2021-08-13T22:25:38.092Z'
+                        updated_at: '2021-08-14T16:45:41.363Z'
                         zipcode_required: true
-                        created_at: '2021-08-13T22:25:38.092Z'
+                        created_at: '2021-08-14T16:45:41.363Z'
                       relationships:
                         states:
                           data: []
@@ -954,7 +954,7 @@ paths:
                     - id: '1'
                       type: menu_item
                       attributes:
-                        name: Vitae ut saepe sit perspiciatis sequi corporis.
+                        name: Officia dolores temporibus quos dolorum cum ex.
                         subtitle:
                         destination:
                         new_window: false
@@ -964,8 +964,8 @@ paths:
                         lft: 1
                         rgt: 16
                         depth: 0
-                        created_at: '2021-08-13T22:25:38.134Z'
-                        updated_at: '2021-08-13T22:25:38.211Z'
+                        created_at: '2021-08-14T16:45:41.403Z'
+                        updated_at: '2021-08-14T16:45:41.479Z'
                         link:
                         is_container: true
                         is_root: true
@@ -1011,8 +1011,8 @@ paths:
                         lft: 2
                         rgt: 3
                         depth: 1
-                        created_at: '2021-08-13T22:25:38.145Z'
-                        updated_at: '2021-08-13T22:25:38.147Z'
+                        created_at: '2021-08-14T16:45:41.415Z'
+                        updated_at: '2021-08-14T16:45:41.417Z'
                         link:
                         is_container: false
                         is_root: false
@@ -1048,8 +1048,8 @@ paths:
                         lft: 4
                         rgt: 5
                         depth: 1
-                        created_at: '2021-08-13T22:25:38.156Z'
-                        updated_at: '2021-08-13T22:25:38.158Z'
+                        created_at: '2021-08-14T16:45:41.426Z'
+                        updated_at: '2021-08-14T16:45:41.427Z'
                         link:
                         is_container: false
                         is_root: false
@@ -1085,8 +1085,8 @@ paths:
                         lft: 6
                         rgt: 7
                         depth: 1
-                        created_at: '2021-08-13T22:25:38.166Z'
-                        updated_at: '2021-08-13T22:25:38.168Z'
+                        created_at: '2021-08-14T16:45:41.435Z'
+                        updated_at: '2021-08-14T16:45:41.437Z'
                         link:
                         is_container: false
                         is_root: false
@@ -1122,8 +1122,8 @@ paths:
                         lft: 8
                         rgt: 9
                         depth: 1
-                        created_at: '2021-08-13T22:25:38.176Z'
-                        updated_at: '2021-08-13T22:25:38.178Z'
+                        created_at: '2021-08-14T16:45:41.445Z'
+                        updated_at: '2021-08-14T16:45:41.446Z'
                         link:
                         is_container: false
                         is_root: false
@@ -1159,8 +1159,8 @@ paths:
                         lft: 10
                         rgt: 11
                         depth: 1
-                        created_at: '2021-08-13T22:25:38.186Z'
-                        updated_at: '2021-08-13T22:25:38.187Z'
+                        created_at: '2021-08-14T16:45:41.454Z'
+                        updated_at: '2021-08-14T16:45:41.456Z'
                         link:
                         is_container: false
                         is_root: false
@@ -1196,8 +1196,8 @@ paths:
                         lft: 12
                         rgt: 13
                         depth: 1
-                        created_at: '2021-08-13T22:25:38.195Z'
-                        updated_at: '2021-08-13T22:25:38.197Z'
+                        created_at: '2021-08-14T16:45:41.464Z'
+                        updated_at: '2021-08-14T16:45:41.465Z'
                         link:
                         is_container: false
                         is_root: false
@@ -1233,8 +1233,8 @@ paths:
                         lft: 14
                         rgt: 15
                         depth: 1
-                        created_at: '2021-08-13T22:25:38.205Z'
-                        updated_at: '2021-08-13T22:25:38.207Z'
+                        created_at: '2021-08-14T16:45:41.473Z'
+                        updated_at: '2021-08-14T16:45:41.475Z'
                         link:
                         is_container: false
                         is_root: false
@@ -1311,8 +1311,8 @@ paths:
                         lft: 8
                         rgt: 9
                         depth: 1
-                        created_at: '2021-08-13T22:25:38.371Z'
-                        updated_at: '2021-08-13T22:25:38.373Z'
+                        created_at: '2021-08-14T16:45:41.640Z'
+                        updated_at: '2021-08-14T16:45:41.642Z'
                         link:
                         is_container: false
                         is_root: false
@@ -1396,8 +1396,8 @@ paths:
                         lft: 8
                         rgt: 9
                         depth: 1
-                        created_at: '2021-08-13T22:25:38.485Z'
-                        updated_at: '2021-08-13T22:25:38.486Z'
+                        created_at: '2021-08-14T16:45:41.742Z'
+                        updated_at: '2021-08-14T16:45:41.744Z'
                         link:
                         is_container: false
                         is_root: false
@@ -1477,8 +1477,8 @@ paths:
                         lft: 8
                         rgt: 9
                         depth: 1
-                        created_at: '2021-08-13T22:25:38.647Z'
-                        updated_at: '2021-08-13T22:25:38.658Z'
+                        created_at: '2021-08-14T16:45:41.903Z'
+                        updated_at: '2021-08-14T16:45:41.914Z'
                         link:
                         is_container: false
                         is_root: false
@@ -1578,8 +1578,51 @@ paths:
         schema:
           type: string
       responses:
-        '204':
-          description: Record updated - no content returned
+        '200':
+          description: record updated
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    data:
+                      id: '5'
+                      type: menu_item
+                      attributes:
+                        name: Link no. 62 To Somewhere
+                        subtitle:
+                        destination:
+                        new_window: false
+                        item_type: Link
+                        linked_resource_type: URL
+                        code:
+                        lft: 5
+                        rgt: 6
+                        depth: 2
+                        created_at: '2021-08-14T16:45:42.283Z'
+                        updated_at: '2021-08-14T16:45:42.295Z'
+                        link:
+                        is_container: false
+                        is_root: false
+                        is_child: true
+                        is_leaf: true
+                      relationships:
+                        icon:
+                          data:
+                            id: '4'
+                            type: icon
+                        menu:
+                          data:
+                            id: '1'
+                            type: menu
+                        parent:
+                          data:
+                            id: '3'
+                            type: menu_item
+                        linked_resource:
+                          data:
+                        children:
+                          data: []
         '404':
           description: Record not found
           content:
@@ -1629,7 +1672,7 @@ paths:
       - name: filter
         in: query
         descripton: ''
-        example: location=header
+        example: location_eq=header
         schema:
           type: string
       responses:
@@ -1647,8 +1690,8 @@ paths:
                         name: Main Menu
                         location: header
                         locale: en
-                        created_at: '2021-08-13T22:25:39.161Z'
-                        updated_at: '2021-08-13T22:25:39.190Z'
+                        created_at: '2021-08-14T16:45:42.413Z'
+                        updated_at: '2021-08-14T16:45:42.441Z'
                       relationships:
                         menu_items:
                           data:
@@ -1664,8 +1707,8 @@ paths:
                         name: Footer Menu
                         location: footer
                         locale: en
-                        created_at: '2021-08-13T22:25:39.166Z'
-                        updated_at: '2021-08-13T22:25:39.213Z'
+                        created_at: '2021-08-14T16:45:42.417Z'
+                        updated_at: '2021-08-14T16:45:42.466Z'
                       relationships:
                         menu_items:
                           data:
@@ -1722,8 +1765,8 @@ paths:
                         name: Main Menu
                         location: header
                         locale: en
-                        created_at: '2021-08-13T22:25:39.297Z'
-                        updated_at: '2021-08-13T22:25:39.301Z'
+                        created_at: '2021-08-14T16:45:42.546Z'
+                        updated_at: '2021-08-14T16:45:42.549Z'
                       relationships:
                         menu_items:
                           data:
@@ -1787,8 +1830,8 @@ paths:
                         name: Main Menu
                         location: header
                         locale: en
-                        created_at: '2021-08-13T22:25:39.325Z'
-                        updated_at: '2021-08-13T22:25:39.328Z'
+                        created_at: '2021-08-14T16:45:42.572Z'
+                        updated_at: '2021-08-14T16:45:42.575Z'
                       relationships:
                         menu_items:
                           data:
@@ -1844,8 +1887,8 @@ paths:
                         name: Main Menu
                         location: header
                         locale: en
-                        created_at: '2021-08-13T22:25:39.367Z'
-                        updated_at: '2021-08-13T22:25:39.370Z'
+                        created_at: '2021-08-14T16:45:42.614Z'
+                        updated_at: '2021-08-14T16:45:42.621Z'
                       relationships:
                         menu_items:
                           data:
@@ -1968,8 +2011,8 @@ paths:
                         lft: 1
                         rgt: 6
                         description:
-                        created_at: '2021-08-13T22:25:39.483Z'
-                        updated_at: '2021-08-13T22:25:39.509Z'
+                        created_at: '2021-08-14T16:45:42.724Z'
+                        updated_at: '2021-08-14T16:45:42.751Z'
                         meta_title:
                         meta_description:
                         meta_keywords:
@@ -2003,8 +2046,8 @@ paths:
                         lft: 2
                         rgt: 3
                         description:
-                        created_at: '2021-08-13T22:25:39.493Z'
-                        updated_at: '2021-08-13T22:25:39.495Z'
+                        created_at: '2021-08-14T16:45:42.735Z'
+                        updated_at: '2021-08-14T16:45:42.736Z'
                         meta_title:
                         meta_description:
                         meta_keywords:
@@ -2038,8 +2081,8 @@ paths:
                         lft: 4
                         rgt: 5
                         description:
-                        created_at: '2021-08-13T22:25:39.504Z'
-                        updated_at: '2021-08-13T22:25:39.505Z'
+                        created_at: '2021-08-14T16:45:42.745Z'
+                        updated_at: '2021-08-14T16:45:42.747Z'
                         meta_title:
                         meta_description:
                         meta_keywords:
@@ -2114,8 +2157,8 @@ paths:
                         lft: 2
                         rgt: 3
                         description:
-                        created_at: '2021-08-13T22:25:39.592Z'
-                        updated_at: '2021-08-13T22:25:39.595Z'
+                        created_at: '2021-08-14T16:45:42.835Z'
+                        updated_at: '2021-08-14T16:45:42.837Z'
                         meta_title:
                         meta_description:
                         meta_keywords:
@@ -2194,8 +2237,8 @@ paths:
                         lft: 2
                         rgt: 3
                         description:
-                        created_at: '2021-08-13T22:25:39.633Z'
-                        updated_at: '2021-08-13T22:25:39.634Z'
+                        created_at: '2021-08-14T16:45:42.874Z'
+                        updated_at: '2021-08-14T16:45:42.876Z'
                         meta_title:
                         meta_description:
                         meta_keywords:
@@ -2275,8 +2318,8 @@ paths:
                         lft: 2
                         rgt: 3
                         description:
-                        created_at: '2021-08-13T22:25:39.711Z'
-                        updated_at: '2021-08-13T22:25:39.723Z'
+                        created_at: '2021-08-14T16:45:42.952Z'
+                        updated_at: '2021-08-14T16:45:42.964Z'
                         meta_title:
                         meta_description:
                         meta_keywords:
