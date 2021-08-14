@@ -64,7 +64,7 @@ module Spree
 
     @@line_item_attributes = [:id, :variant_id, :quantity]
 
-    @@menu_attributes = [:name, :locale, :location, :store_id]
+    @@menu_attributes = [:name, :locale, :location]
 
     @@menu_item_attributes = [:name, :subtite, :destination, :new_window, :item_type,
                               :linked_resource_type, :linked_resource_id, :code, :menu_id]

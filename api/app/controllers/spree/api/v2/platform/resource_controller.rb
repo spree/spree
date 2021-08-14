@@ -18,6 +18,8 @@ module Spree
           def create
             resource = model_class.new(permitted_resource_params)
 
+            ensure_current_store(resource)
+
             if resource.save
               render_serialized_payload(201) { serialize_resource(resource) }
             else
@@ -42,6 +44,16 @@ module Spree
           end
 
           protected
+
+          def ensure_current_store(resource)
+            return if resource.nil?
+
+            if resource.has_attribute?(:store_id)
+              resource.store = current_store
+            elsif model_class.method_defined?(:stores) && resource.stores.exclude?(current_store)
+              resource.stores << current_store
+            end
+          end
 
           def resource_serializer
             "Spree::Api::V2::Platform::#{model_class.to_s.demodulize}Serializer".constantize

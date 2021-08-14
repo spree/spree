@@ -30,13 +30,12 @@ describe 'Menus API', swagger: true do
     create(:menu_item, menu: menu_2)
     create(:menu_item, menu: menu_2)
   end
-  let(:valid_create_param_value) { build(:menu, name: 'Main Menu', store: store).attributes }
+  let(:valid_create_param_value) { build(:menu, name: 'Main Menu').attributes }
   let(:valid_update_param_value) do
     {
       name: 'Main Menu',
       location: 'header',
-      locale: 'en',
-      store: store
+      locale: 'en'
     }
   end
   let(:invalid_param_value) do
