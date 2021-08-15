@@ -83,8 +83,10 @@
     <%#-------------------------------------------------%>
     <div id="progress">
       <div class="alert alert-info alert-progress">
-        <div class="spinner"><%= Spree.t(:loading) %>...</div>
-        <div class="progress-message"><%= Spree.t(:loading) %>...</div>
+        <div class="progress-message">
+          <span class="spinner-border spinner-border-sm mr-2" style="width: 1.2em;height: 1.2em;" role="status" aria-hidden="true"></span>
+          <span style="font-size: 1.2em;"><%= Spree.t(:loading) %>...</span>
+        </div>
       </div>
     </div>
   </body>

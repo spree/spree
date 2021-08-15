@@ -198,7 +198,6 @@ Spree::Core::Engine.add_routes do
       end
     end
 
-    post 'uploader/image', to: 'uploader#image'
     get '/forbidden', to: 'errors#forbidden', as: :forbidden
   end
 

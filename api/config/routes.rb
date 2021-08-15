@@ -275,6 +275,9 @@ Spree::Core::Engine.add_routes do
 
         # Store API
         resources :stores
+
+        # Images API
+        post 'images/upload', to: 'images#upload'
       end
     end
 
