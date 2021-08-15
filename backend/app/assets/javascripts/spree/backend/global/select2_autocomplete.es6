@@ -34,11 +34,16 @@
 //  data-autocomplete-additional-term-value="Spree::Cms::Pages::Homepage"   <- Additional hard coded term | DEFAULT: null (not used)
 
 document.addEventListener('DOMContentLoaded', function() {
-  const select2Autocompletes = document.querySelectorAll('select.select2autocomplete')
-  select2Autocompletes.forEach(element => buildParamsFromDataAttrs(element))
+  loadAutoCompleteParams()
 })
 
-function buildParamsFromDataAttrs (element) {
+// eslint-disable-next-line no-unused-vars
+function loadAutoCompleteParams() {
+  const select2Autocompletes = document.querySelectorAll('select[data-autocomplete-url-value]')
+  select2Autocompletes.forEach(element => buildParamsFromDataAttrs(element))
+}
+
+function buildParamsFromDataAttrs(element) {
   $(element).select2Autocomplete({
     // Required Attributes
     apiUrl: Spree.routes[element.dataset.autocompleteUrlValue],
@@ -62,6 +67,8 @@ function buildParamsFromDataAttrs (element) {
 $.fn.select2Autocomplete = function(params) {
   // Required params
   const apiUrl = params.apiUrl || null
+  const resourcePlural = apiUrl.match(/([^/]*)\/*$/)[1]
+  const resourceSingular = resourcePlural.slice(0, -1)
 
   // Optional Params
   const select2placeHolder = params.placeholder || Spree.translations.search
@@ -76,14 +83,14 @@ $.fn.select2Autocomplete = function(params) {
 
   function formatList(values) {
     if (customReturnId) {
-      return values.map(function (obj) {
+      return values.map(function(obj) {
         return {
           id: obj.attributes[customReturnId],
           text: obj.attributes[returnAttribute]
         }
       })
     } else {
-      return values.map(function (obj) {
+      return values.map(function(obj) {
         return {
           id: obj.id,
           text: obj.attributes[returnAttribute]
@@ -101,8 +108,11 @@ $.fn.select2Autocomplete = function(params) {
       ajax: {
         url: apiUrl,
         headers: Spree.apiV2Authentication(),
-        data: function (params) {
+        data: function(params) {
           return {
+            fields: {
+              [resourceSingular]: returnAttribute
+            },
             filter: {
               [searchQuery]: params.term
             }
@@ -124,8 +134,11 @@ $.fn.select2Autocomplete = function(params) {
       ajax: {
         url: apiUrl,
         headers: Spree.apiV2Authentication(),
-        data: function (params) {
+        data: function(params) {
           return {
+            fields: {
+              [resourceSingular]: returnAttribute
+            },
             filter: {
               [searchQuery]: params.term,
               [additionalQuery]: additionalTerm
