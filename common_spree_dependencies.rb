@@ -46,6 +46,7 @@ end
 group :test, :development do
   gem 'awesome_print'
   gem 'gem-release'
+  gem 'redis'
   gem 'rubocop', '~> 1.0.0', require: false # bumped
   gem 'rubocop-rspec', require: false
   gem 'pry-byebug'

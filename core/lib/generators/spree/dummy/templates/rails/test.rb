@@ -36,5 +36,5 @@ Dummy::Application.configure do
 
   config.active_job.queue_adapter = :test
 
-  config.cache_store = :memory_store
+  config.cache_store = :redis_cache_store
 end

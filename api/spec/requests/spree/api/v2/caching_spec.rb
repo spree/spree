@@ -6,14 +6,15 @@ describe 'API v2 Caching spec', type: :request do
   let!(:product) { create(:product, name: 'Some name', stores: [store]) }
   let(:store) { Spree::Store.default }
 
+  before(:all) { ActionController::Base.perform_caching = true }
+  after(:all) { ActionController::Base.perform_caching = false }
+
   before do
     store.update!(supported_currencies: 'USD,CAD')
-    ActionController::Base.perform_caching = true
     Rails.cache.clear
   end
 
   after do
-    ActionController::Base.perform_caching = false
     Rails.cache.clear
   end
 
@@ -22,13 +23,13 @@ describe 'API v2 Caching spec', type: :request do
     let!(:products) { create_list(:product_in_stock, 5, stores: [store]) }
     let(:user) { create(:user) }
 
-    def cache_entries
-      Rails.cache.instance_variable_get(:@data).keys.find_all { |k| k.start_with?(cache_namespace) }
-    end
-
     before do
       products.each { |product| product.update_columns(updated_at: 1.day.ago, created_at: 1.day.ago) }
       products.last.update(name: 'Updated name')
+    end
+
+    def cache_entries
+      Rails.cache.redis.keys.find_all { |k| k.start_with?(cache_namespace) }
     end
 
     it 'caches collection' do
@@ -70,7 +71,7 @@ describe 'API v2 Caching spec', type: :request do
       expect(cache_entries.size).to eq(7)
     end
 
-    it 'auto expires cache', retry: 3 do
+    it 'auto expires cache when store is updated' do
       get '/api/v2/storefront/products'
       expect(cache_entries.size).to eq(1)
 
@@ -79,18 +80,28 @@ describe 'API v2 Caching spec', type: :request do
 
       get '/api/v2/storefront/products'
       expect(cache_entries.size).to eq(2)
+    end
+
+    it 'auto expires when new record is added to collection' do
+      get '/api/v2/storefront/products'
+      expect(cache_entries.size).to eq(1)
+
+      create(:product, name: 'Updated name', stores: [store])
 
       get '/api/v2/storefront/products'
       expect(cache_entries.size).to eq(2)
+    end
 
-      # expire all cache when one of the related resources is updated
-      products.last.update!(name: "new name #{rand(9999)}")
+    it 'auto expires when record is updated' do
+      get '/api/v2/storefront/products'
+      expect(cache_entries.size).to eq(1)
+
+      Timecop.travel Time.current + 1.day do
+        products.last.touch
+      end
 
       get '/api/v2/storefront/products'
-      expect(cache_entries.size).to eq(3)
-
-      get '/api/v2/storefront/products'
-      expect(cache_entries.size).to eq(3)
+      expect(cache_entries.size).to eq(2)
     end
   end
 
