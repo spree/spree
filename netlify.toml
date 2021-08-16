@@ -329,7 +329,7 @@ ID = "49ded9cc-27d3-4e02-b186-4fd7fd334ed8"
 
 [[redirects]]
   from = "/api/overview"
-  to = "/api/"
+  to = "https://api.spreecommerce.org"
 
 # core -> internals redirects
 [[redirects]]
@@ -342,3 +342,27 @@ ID = "49ded9cc-27d3-4e02-b186-4fd7fd334ed8"
 [[redirects]]
   from = "/developer/tutorials/existing_app_tutorial.html"
   to = "/developer/advanced/existing_app_tutorial.html"
+
+[[redirects]]
+  from = "/developer/upgrades/*"
+  to = "https://dev-docs.spreecommerce.org/upgrades/upgrades/:splat"
+
+[[redirects]]
+  from = "/developer/*"
+  to = "https://dev-docs.spreecommerce.org/:splat"
+
+[[redirects]]
+  from = "/api"
+  to = "https://api.spreecommerce.org"
+
+[[redirects]]
+  from = "/release_notes"
+  to = "https://github.com/spree/spree/releases"
+
+[[redirects]]
+  from = "/support"
+  to = "https://spreecommerce.org/contact"
+
+[[redirects]]
+  from = "/extensions"
+  to = "https://dev-docs.spreecommerce.org/extensions/extensions"
