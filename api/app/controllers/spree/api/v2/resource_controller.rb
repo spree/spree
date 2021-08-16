@@ -3,9 +3,14 @@ module Spree
     module V2
       class ResourceController < ::Spree::Api::V2::BaseController
         include Spree::Api::V2::CollectionOptionsHelpers
+        include Spree::Api::V2::Caching
 
         def index
-          render_serialized_payload { serialize_collection(paginated_collection) }
+          render_serialized_payload do
+            Rails.cache.fetch(collection_cache_key(paginated_collection), collection_cache_opts) do
+              serialize_collection(paginated_collection)
+            end
+          end
         end
 
         def show
