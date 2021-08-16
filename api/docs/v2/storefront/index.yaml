@@ -535,7 +535,7 @@ paths:
   /api/v2/storefront/cart/add_item:
     post:
       description: |-
-        Additional parameters passed in **options** hash must be registered in `config/initialiers/spree.rb`, eg.
+        Additional parameters passed in **options** hash must be registered in `config/initializers/spree.rb`, eg.
 
         ```
           Spree::PermittedAttributes.line_item_attributes << :foo
@@ -571,7 +571,7 @@ paths:
                   type: integer
                 options:
                   type: object
-                  description: 'Additional custom options. You need to add them via `Spree::PermittedAttributes.line_item_attributes << :foo` in `config/initialiers/spree.rb`'
+                  description: 'Additional custom options. You need to add them via `Spree::PermittedAttributes.line_item_attributes << :foo` in `config/initializers/spree.rb`'
               example:
                 variant_id: '1'
                 quantity: 5

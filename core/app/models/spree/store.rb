@@ -76,8 +76,8 @@ module Spree
 
     def self.current(url = nil)
       ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
-        `Spree::Store.current` is deprecated and will be removed in Spree 5
-        Spree::Stores::FindCurrent.new(url: "http://example.com") instead
+        `Spree::Store.current` is deprecated and will be removed in Spree 5.0
+        Please use `Spree::Stores::FindCurrent.new(url: "https://example.com").execute` instead
       DEPRECATION
       Stores::FindCurrent.new(url: url).execute
     end
