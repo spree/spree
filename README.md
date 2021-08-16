@@ -12,7 +12,7 @@
 
 [![Gem Version](https://badge.fury.io/rb/spree.svg)](https://badge.fury.io/rb/spree) [![Circle CI](https://circleci.com/gh/spree/spree.svg?style=shield)](https://circleci.com/gh/spree/spree/tree/master) [![Test Coverage](https://api.codeclimate.com/v1/badges/8277fc2bb0b1f777084f/test_coverage)](https://codeclimate.com/github/spree/spree/test_coverage)
 
-**Spree** is a headless open source e-commerce platform for global brands. It was started by Sean Schofield and is now developed by [Spark Solutions][spark]. We're open to [contributions](https://guides.spreecommerce.org/developer/contributing/).
+**Spree** is a headless open source e-commerce platform for global brands. It was started by Sean Schofield and is now developed by [Spark Solutions][spark]. We're open to [contributions](https://dev-docs.spreecommerce.org/contributing/index).
 
 ## Key Features
 
@@ -58,7 +58,7 @@ Admin panel credentials for your own Heroku demo:
 
 ### Option B - add Spree to an existing Ruby on Rails application
 
-1. [Please follow Add Spree to an existing Ruby on Rails application tutorial](https://guides.spreecommerce.org/developer/advanced/existing_app_tutorial.html)
+1. [Please follow Add Spree to an existing Ruby on Rails application tutorial](https://dev-docs.spreecommerce.org/advanced/existing_app_tutorial)
 
 ## Documentation
 
@@ -84,7 +84,7 @@ Spree is released under the [New BSD License](https://github.com/spree/spree/blo
 
 [![Spark Solutions](http://sparksolutions.co/wp-content/uploads/2015/01/logo-ss-tr-221x100.png)][spark]
 
-[Spark Solutions][spark] is a full stack eCommerce agency specialized in Spree Commerce, Ruby on Rails and JavaScript. We’ve been leading Spree open-source efforts since 2016 as its core team. We also do client work. Our project teams consist of Designers, Software Engineers, Testers and Project Managers practicing agile project delivery. We’ll integrate our team with yours to jointly architect, deliver, maintain and scale the software products you need. You drive the project with requirements and acceptance testing and we help you deliver faster using industry-standard project management and comms best practices.
+[Spark Solutions][spark] is a full stack eCommerce agency. We’ve been leading Spree open-source efforts since 2016 as its core team. We also do client work. Our project teams consist of Designers, Software Engineers, Testers and Project Managers practicing agile project delivery. We’ll integrate our team with yours to jointly architect, deliver, maintain and scale the software products you need. You drive the project with requirements and acceptance testing and we help you deliver faster using industry-standard project management and comms best practices.
 
 We are passionate about open source software.
 We are [available for hire][spark].

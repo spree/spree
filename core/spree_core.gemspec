@@ -16,7 +16,7 @@ Gem::Specification.new do |s|
   s.metadata = {
     "bug_tracker_uri"   => "https://github.com/spree/spree/issues",
     "changelog_uri"     => "https://github.com/spree/spree/releases/tag/v#{s.version}",
-    "documentation_uri" => "https://guides.spreecommerce.org/",
+    "documentation_uri" => "https://dev-docs.spreecommerce.org/",
     "source_code_uri"   => "https://github.com/spree/spree/tree/v#{s.version}",
   }
 
