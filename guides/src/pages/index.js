@@ -29,17 +29,17 @@ import Section from 'components/Section'
       <h1 className="lh-copy f3 tc ph4 pv2">
         <a href="https://spreecommerce.org" className="spree-blue fw6">
           Spree Commerce
-        </a> is a complete, modular, API-driven open source e-commerce solution built with Ruby on Rails
+        </a> is an Open Source modular headless multi-language/multi-currency/multi-store e-commerce platform
       </h1>
 
       <p class="tc mb3">
         <strong>First time?</strong> We recommend you read the&nbsp;
-        <a href="/developer/getting_started/installation.html">Getting Started</a> tutorial
+        <a href="https://dev-docs.spreecommerce.org/getting-started">Getting Started</a> tutorial
       </p>
 
       <div className="mw8 center">
         <div className="flex flex-column flex-wrap flex-row-ns mv4 w-100">
-          <Section path="/api/" title="API Reference" className="w-50-ns">
+          <Section path="https://api.spreecommerce.org" title="API Reference" className="w-50-ns">
             <p>
               The REST API is designed to give developers a convenient way to
               access data contained within Spree. With a standard read/write
@@ -49,7 +49,7 @@ import Section from 'components/Section'
             </p>
             <ul className="list ph0 mb0">
               <li className="dib mr2"><a href="/api/v1/summary.html">REST API v1</a></li>
-              <li className="dib mr2"><a href="https://api.spreecommerce.org/docs/api-v2/api/docs/v2/storefront/index.yaml">REST API v2</a></li>
+              <li className="dib mr2"><a href="https://api.spreecommerce.org">REST API v2</a></li>
             </ul>
           </Section>
 
@@ -61,7 +61,7 @@ import Section from 'components/Section'
           </Section>
 
           <Section
-            path="/developer"
+            path="https://dev-docs.spreecommerce.org"
             title="Developer Guides"
             className="w-50-ns"
           >
@@ -70,14 +70,6 @@ import Section from 'components/Section'
               Spree. If you are working with Rails and are building a Spree store,
               this is the documentation for you.
             </p>
-            <ul className="list ph0 mb0">
-              <li className="dib mr2"><a href="/developer/customization/storefront.html">Customization</a></li>
-              <li className="dib mr2"><a href="/developer/internals">Internals</a></li>
-              <li className="dib mr2"><a href="/developer/deployment">Deployment</a></li>
-              <li className="dib mr2"><a href="/developer/security">Security</a></li>
-              <li className="dib mr2"><a href="/developer/upgrades">Upgrades</a></li>
-            </ul>
-
           </Section>
 
           <Section path="/user" title="User Guides" className="w-50-ns">
@@ -87,7 +79,7 @@ import Section from 'components/Section'
           </Section>
 
           <Section
-            path="/release_notes"
+            path="https://github.com/spree/spree/releases"
             title="Release Notes"
             className="w-50-ns"
           >

@@ -344,6 +344,10 @@ ID = "49ded9cc-27d3-4e02-b186-4fd7fd334ed8"
   to = "/developer/advanced/existing_app_tutorial.html"
 
 [[redirects]]
+  from = "/developer/upgrades/*"
+  to = "https://dev-docs.spreecommerce.org/upgrades/upgrades/:splat"
+
+[[redirects]]
   from = "/developer/*"
   to = "https://dev-docs.spreecommerce.org/:splat"
 

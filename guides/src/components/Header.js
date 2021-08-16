@@ -70,26 +70,18 @@ export default class Header extends React.PureComponent {
           <DocSearch isOpen={this.state.searchIsOpen} />
 
           <nav className="h-100 w-100 tr dn flex-l items-center justify-end">
-            <NavItem text="API" url="/api/" isActive={this.isActive('api')} />
-            <NavItem text="Extensions" url="/extensions" isActive={this.isActive('extensions')} />
-            <NavItem
-              text="Developer"
-              isActive={this.isActive('developer')}
-              url="/developer/"
-            />
+            <NavItem url="https://api.spreecommerce.org">API</NavItem>
+            <NavItem url="https://dev-docs.spreecommerce.org/extensions">Extensions</NavItem>
+            <NavItem url="https://dev-docs.spreecommerce.org">Developer</NavItem>
             <NavItem
               text="User"
               isActive={this.isActive('user')}
               url="/user/"
             />
-            <NavItem
-              text="Releases"
-              isActive={this.isActive('release_notes')}
-              url="/release_notes/"
-            />
+            <NavItem url="https://github.com/spree/spree/releases">Release Notes</NavItem>
             <NavItem url="https://demo.spreecommerce.org/">Demo</NavItem>
 
-            <NavItem text="Support" url="/support" isActive={this.isActive('support')} />
+            <NavItem url="https://spreecommerce.org/contact">Support</NavItem>
 
             <NavItem url="http://slack.spreecommerce.org/" title="Join our Slack">
               <IconSlack />
@@ -140,17 +132,9 @@ export default class Header extends React.PureComponent {
             }}
           >
             <nav className="flex flex-column overflow-auto mr4 mr0-l">
-              <NavItem text="API" url="/api/" isActive={this.isActive('api')} />
-              <NavItem text="Extensions" url="/extensions" isActive={this.isActive('extensions')} />
-              <NavItem
-                text="Developer"
-                isActive={this.isActive('developer')}
-                url="/developer/"
-              >
-                {this.isActive('developer') && (
-                  <Sidebar nav={this.props.nav} isMobile />
-                )}
-              </NavItem>
+              <NavItem url="https://api.spreecommerce.org">API</NavItem>
+              <NavItem url="https://dev-docs.spreecommerce.org/extensions/extensions">Extensions</NavItem>
+              <NavItem url="https://dev-docs.spreecommerce.org">Developer</NavItem>
               <NavItem
                 text="User"
                 isActive={this.isActive('user')}
@@ -160,17 +144,8 @@ export default class Header extends React.PureComponent {
                   <Sidebar nav={this.props.nav} isMobile />
                 )}
               </NavItem>
-              <NavItem
-                text="Releases"
-                isActive={this.isActive('release_notes')}
-                url="/release_notes/"
-              >
-                {this.isActive('release_notes') && (
-                  <Sidebar nav={this.props.nav} isMobile />
-                )}
-              </NavItem>
-
-              <NavItem text="Support" url="/support" isActive={this.isActive('support')} />
+              <NavItem url="https://github.com/spree/spree/releases">Release Notes</NavItem>
+              <NavItem url="https://spreecommerce.org/contact">Support</NavItem>
             </nav>
           </div>
         )}
