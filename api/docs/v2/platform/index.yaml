@@ -24,14 +24,14 @@ paths:
           type: integer
       - name: include
         in: query
-        descripton: 'Select which associated resources you would like to fetch, see:
+        description: 'Select which associated resources you would like to fetch, see:
           <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
         example: user,country,state
         schema:
           type: string
       - name: filter
         in: query
-        descripton: ''
+        description: ''
         example: user_id_eq=1&firstname_cont=Joh
         schema:
           type: string
@@ -127,7 +127,7 @@ paths:
       parameters:
       - name: include
         in: query
-        descripton: 'Select which associated resources you would like to fetch, see:
+        description: 'Select which associated resources you would like to fetch, see:
           <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
         example: user,country,state
         schema:
@@ -216,7 +216,7 @@ paths:
           type: string
       - name: include
         in: query
-        descripton: 'Select which associated resources you would like to fetch, see:
+        description: 'Select which associated resources you would like to fetch, see:
           <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
         example: user,country,state
         schema:
@@ -288,7 +288,7 @@ paths:
           type: string
       - name: include
         in: query
-        descripton: 'Select which associated resources you would like to fetch, see:
+        description: 'Select which associated resources you would like to fetch, see:
           <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
         example: user,country,state
         schema:
@@ -415,14 +415,14 @@ paths:
           type: integer
       - name: include
         in: query
-        descripton: 'Select which associated resources you would like to fetch, see:
+        description: 'Select which associated resources you would like to fetch, see:
           <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
         example: product,taxon
         schema:
           type: string
       - name: filter
         in: query
-        descripton: ''
+        description: ''
         example: taxon_id_eq=1
         schema:
           type: string
@@ -492,7 +492,7 @@ paths:
       parameters:
       - name: include
         in: query
-        descripton: 'Select which associated resources you would like to fetch, see:
+        description: 'Select which associated resources you would like to fetch, see:
           <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
         example: product,taxon
         schema:
@@ -554,7 +554,7 @@ paths:
           type: string
       - name: include
         in: query
-        descripton: 'Select which associated resources you would like to fetch, see:
+        description: 'Select which associated resources you would like to fetch, see:
           <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
         example: product,taxon
         schema:
@@ -613,7 +613,7 @@ paths:
           type: string
       - name: include
         in: query
-        descripton: 'Select which associated resources you would like to fetch, see:
+        description: 'Select which associated resources you would like to fetch, see:
           <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
         example: product,taxon
         schema:
@@ -720,7 +720,7 @@ paths:
           type: string
       - name: include
         in: query
-        descripton: 'Select which associated resources you would like to fetch, see:
+        description: 'Select which associated resources you would like to fetch, see:
           <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
         example: product,taxon
         schema:
@@ -931,14 +931,14 @@ paths:
           type: integer
       - name: include
         in: query
-        descripton: 'Select which associated resources you would like to fetch, see:
+        description: 'Select which associated resources you would like to fetch, see:
           <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
         example: taxonomy,parent,children
         schema:
           type: string
       - name: filter
         in: query
-        descripton: ''
+        description: ''
         example: taxonomy_id_eq=1&name_cont=Shirts
         schema:
           type: string
@@ -1083,7 +1083,7 @@ paths:
       parameters:
       - name: include
         in: query
-        descripton: 'Select which associated resources you would like to fetch, see:
+        description: 'Select which associated resources you would like to fetch, see:
           <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
         example: taxonomy,parent,children
         schema:
@@ -1163,7 +1163,7 @@ paths:
           type: string
       - name: include
         in: query
-        descripton: 'Select which associated resources you would like to fetch, see:
+        description: 'Select which associated resources you would like to fetch, see:
           <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
         example: taxonomy,parent,children
         schema:
@@ -1244,7 +1244,7 @@ paths:
           type: string
       - name: include
         in: query
-        descripton: 'Select which associated resources you would like to fetch, see:
+        description: 'Select which associated resources you would like to fetch, see:
           <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
         example: taxonomy,parent,children
         schema:

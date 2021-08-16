@@ -50,12 +50,12 @@ JSON_API_FILTER_DESCRIPTION = ''
 
 def json_api_include_parameter(example = '')
   let(:include) { nil }
-  parameter name: :include, in: :query, type: :string, descripton: JSON_API_INCLUDES_DESCRIPTION, example: example
+  parameter name: :include, in: :query, type: :string, description: JSON_API_INCLUDES_DESCRIPTION, example: example
 end
 
 def json_api_filter_parameter(example = '')
   let(:filter) { nil }
-  parameter name: :filter, in: :query, type: :string, descripton: JSON_API_FILTER_DESCRIPTION, example: example
+  parameter name: :filter, in: :query, type: :string, description: JSON_API_FILTER_DESCRIPTION, example: example
 end
 
 shared_examples 'authentication failed' do
