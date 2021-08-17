@@ -40,7 +40,7 @@ PRODUCTS.each do |(parent_name, taxon_name, product_name)|
   end
 end
 
-Spree::Taxon.where(name: ['Bestsellers', 'New', 'Trending', 'Streetstyle', 'Summer Sale']).each do |taxon|
+Spree::Taxon.where(name: ['Bestsellers', 'New', 'Trending', 'Streetstyle', 'Summer Sale', "Summer #{Date.today.year}", '30% Off']).each do |taxon|
   next if taxon.products.any?
 
   taxon.products << Spree::Product.all.sample(30)
