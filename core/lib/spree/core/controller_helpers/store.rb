@@ -23,12 +23,12 @@ module Spree
           current_store.default_locale
         end
 
-        def set_current_store(object, model_class)
-          return if object.nil? || model_class.nil?
+        def set_current_store(object)
+          return if object.nil?
 
           if object.has_attribute?(:store_id)
             object.store = current_store
-          elsif model_class.method_defined?(:stores) && object.stores.exclude?(current_store)
+          elsif object.class.method_defined?(:stores) && object.stores.exclude?(current_store)
             object.stores << current_store
           end
         end
