@@ -3,7 +3,7 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
 
   helper_method :new_object_url, :edit_object_url, :object_url, :collection_url
   before_action :load_resource, except: :update_positions
-  before_action :set_currency, :ensure_current_store, only: [:new, :create]
+  before_action :set_currency, :set_current_store, only: [:new, :create]
   rescue_from ActiveRecord::RecordNotFound, with: :resource_not_found
 
   respond_to :html
@@ -214,14 +214,8 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
     @object.cost_currency = current_currency if model_class.method_defined?(:cost_currency=)
   end
 
-  def ensure_current_store
-    return if @object.nil?
-
-    if @object.has_attribute?(:store_id)
-      @object.store = current_store
-    elsif model_class.method_defined?(:stores) && @object.stores.exclude?(current_store)
-      @object.stores << current_store
-    end
+  def set_current_store
+    ensure_current_store(@object, model_class)
   end
 
   # URL helpers
