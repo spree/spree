@@ -231,14 +231,14 @@ paths:
           $ref: '#/components/responses/403Forbidden'
       security:
         - bearerAuth: []
-  '/api/v2/storefront/account/addresses/{address_id}':
+  '/api/v2/storefront/account/addresses/{id}':
     delete:
       description: 'Removes selected Address for the signed in User. It uses soft-delete for addresses with shipments and orders.'
       tags:
         - Account
       operationId: remove-address
       parameters:
-        - $ref: '#/components/parameters/AddressId'
+        - $ref: '#/components/parameters/Id'
       responses:
         '204':
           description: Requested Address has been removed from the User Account
@@ -254,7 +254,7 @@ paths:
         - Account
       operationId: update-address
       parameters:
-        - $ref: '#/components/parameters/AddressId'
+        - $ref: '#/components/parameters/Id'
       requestBody:
         required: true
         content:
@@ -302,14 +302,14 @@ paths:
           description: Filter based on payment method ID
         - $ref: '#/components/parameters/CreditCardIncludeParam'
         - $ref: '#/components/parameters/SparseFieldsParam'
-  '/api/v2/storefront/account/credit_cards/{card_id}':
+  '/api/v2/storefront/account/credit_cards/{id}':
     delete:
       description: 'Removes selected credit card for the signed in User. It uses soft-delete.'
       tags:
         - Account
       operationId: remove-credit-card
       parameters:
-        - $ref: '#/components/parameters/CardId'
+        - $ref: '#/components/parameters/Id'
         - $ref: '#/components/parameters/CreditCardIncludeParam'
         - $ref: '#/components/parameters/SparseFieldsParam'
       responses:
@@ -644,7 +644,7 @@ paths:
                 line_item_id: '1'
                 quantity: 5
       summary: Set Quantity of a Line Item
-  '/api/v2/storefront/cart/remove_line_item/{line_item_id}':
+  '/api/v2/storefront/cart/remove_line_item/{id}':
     delete:
       description: |-
         Removes Line Item from Cart. After removing Item system will re-calculate taxes, promotions, shipments etc.
@@ -654,7 +654,7 @@ paths:
         - Cart
       operationId: remove-line-item
       parameters:
-        - $ref: '#/components/parameters/LineItemId'
+        - $ref: '#/components/parameters/Id'
         - $ref: '#/components/parameters/CartIncludeParam'
         - $ref: '#/components/parameters/SparseFieldsParam'
       responses:
@@ -4568,7 +4568,7 @@ components:
               - $ref: '#/components/schemas/OptionValue'
               - $ref: '#/components/schemas/ProductProperty'
               - $ref: '#/components/schemas/Property'
-              - $ref: '#/components/schemas/Variant'
+              - $ref: '#/components/schemas/VariantAttributesAndRelationships'
               - $ref: '#/components/schemas/Image'
               - $ref: '#/components/schemas/TaxonAttributesAndRelationships'
     ProductsList:
@@ -4593,7 +4593,7 @@ components:
               - $ref: '#/components/schemas/OptionValue'
               - $ref: '#/components/schemas/ProductProperty'
               - $ref: '#/components/schemas/Property'
-              - $ref: '#/components/schemas/Variant'
+              - $ref: '#/components/schemas/VariantAttributesAndRelationships'
               - $ref: '#/components/schemas/Image'
               - $ref: '#/components/schemas/TaxonAttributesAndRelationships'
     ProductAttributes:
@@ -5466,19 +5466,11 @@ components:
         - state_name
         - country_iso
   parameters:
-    AddressId:
-      name: address_id
+    Id:
+      name: id
       in: path
       required: true
-      description: Address ID
-      schema:
-        type: string
-      example: '1'
-    CardId:
-      name: card_id
-      in: path
-      required: true
-      description: Card ID
+      description: id
       schema:
         type: string
       example: '1'
@@ -5513,14 +5505,6 @@ components:
       schema:
         type: string
       example: "categories/women"
-    LineItemId:
-      name: line_item_id
-      in: path
-      required: true
-      description: Line Item ID
-      schema:
-        type: string
-      example: '1'
     PageParam:
       name: page
       in: query
