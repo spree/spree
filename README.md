@@ -1,5 +1,5 @@
 <a href="https://spreecommerce.org">
-   <img src="https://raw.githubusercontent.com/spree/spree-dev-docs/master/.gitbook/assets/spree_header%402x.png" alt="Spree Commerce - a headless multi-language, multi-currency, multi-store open source e-commerce platform" />
+   <img src="https://raw.githubusercontent.com/spree/spree-dev-docs/master/.gitbook/assets/spree_header_978-2x.png" alt="Spree Commerce - a headless multi-language, multi-currency, multi-store open source e-commerce platform" />
 </a>
 
 # Spree Commerce
