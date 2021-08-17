@@ -215,6 +215,8 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
   end
 
   def ensure_current_store
+    return if @object.nil?
+
     set_current_store(@object, model_class)
   end
 

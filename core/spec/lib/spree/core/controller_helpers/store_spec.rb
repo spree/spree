@@ -49,38 +49,49 @@ describe Spree::Core::ControllerHelpers::Store, type: :controller do
     let!(:store) { create :store, default: true }
     let!(:store_2) { create :store }
 
-    context 'sets current store on a resource that accepts multiple stores' do
+    context 'on an object that accepts multiple stores' do
       before { allow(controller).to receive(:current_store).and_return(store) }
 
-      resource = Spree::Product.new
+      object = Spree::Product.new
 
-      it 'sets only the current store' do
-        controller.set_current_store(resource, Spree::Product)
-        expect(resource.stores).to contain_exactly(store)
-        expect(resource.stores).not_to contain_exactly(store_2)
+      it 'object has only the current store set' do
+        controller.set_current_store(object, Spree::Product)
+        expect(object.stores).to contain_exactly(store)
+        expect(object.stores).not_to contain_exactly(store_2)
       end
     end
 
-    context 'sets current store on a resource that accepts one store' do
+    context 'on a object that accepts a single store' do
       before { allow(controller).to receive(:current_store).and_return(store) }
 
-      resource = Spree::Menu.new
+      object = Spree::Menu.new
 
-      it 'applies the current store' do
-        controller.set_current_store(resource, Spree::Menu)
-        expect(resource.store).to eql(store)
-        expect(resource.store).not_to eql(store_2)
+      it 'object has the current store set' do
+        controller.set_current_store(object, Spree::Menu)
+        expect(object.store).to eql(store)
+        expect(object.store).not_to eql(store_2)
       end
     end
 
-    context 'when instance is not matching the model class' do
+    context 'when object is nil' do
       before { allow(controller).to receive(:current_store).and_return(store) }
 
-      resource = Spree::Menu.new
+      object = nil
 
       it 'returns nil' do
-        controller.set_current_store(resource, Spree::Taxon)
-        expect(resource.store).to be_nil
+        expect(controller.set_current_store(object, Spree::Taxon)).to be_nil
+      end
+    end
+
+    context 'when model_class is nil' do
+      before { allow(controller).to receive(:current_store).and_return(store) }
+
+      object = Spree::Menu.new
+
+      it 'returns nil' do
+        controller.set_current_store(object, nil)
+        expect(object.store).to be_nil
+        expect(controller.set_current_store(object, nil)).to be_nil
       end
     end
   end
