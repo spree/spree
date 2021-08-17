@@ -199,7 +199,7 @@ shared_examples 'DELETE record' do |resource_name|
 end
 
 shared_examples 'CRUD examples' do |resource_name, include_example, filter_example|
-  resource_path = resource_name.pluralize.parameterize
+  resource_path = resource_name.tableize.pluralize
 
   path "/api/v2/platform/#{resource_path}" do
     include_examples 'GET records list', resource_name, include_example, filter_example
