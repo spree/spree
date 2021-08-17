@@ -45,7 +45,7 @@ describe Spree::Core::ControllerHelpers::Store, type: :controller do
     end
   end
 
-  describe '#ensure_current_store' do
+  describe '#set_current_store' do
     let!(:store) { create :store, default: true }
     let!(:store_2) { create :store }
 
@@ -55,7 +55,7 @@ describe Spree::Core::ControllerHelpers::Store, type: :controller do
       resource = Spree::Product.new
 
       it 'sets only the current store' do
-        controller.ensure_current_store(resource, Spree::Product)
+        controller.set_current_store(resource, Spree::Product)
         expect(resource.stores).to contain_exactly(store)
         expect(resource.stores).not_to contain_exactly(store_2)
       end
@@ -67,7 +67,7 @@ describe Spree::Core::ControllerHelpers::Store, type: :controller do
       resource = Spree::Menu.new
 
       it 'applies the current store' do
-        controller.ensure_current_store(resource, Spree::Menu)
+        controller.set_current_store(resource, Spree::Menu)
         expect(resource.store).to eql(store)
         expect(resource.store).not_to eql(store_2)
       end
@@ -79,7 +79,7 @@ describe Spree::Core::ControllerHelpers::Store, type: :controller do
       resource = Spree::Menu.new
 
       it 'returns nil' do
-        controller.ensure_current_store(resource, Spree::Taxon)
+        controller.set_current_store(resource, Spree::Taxon)
         expect(resource.store).to be_nil
       end
     end
