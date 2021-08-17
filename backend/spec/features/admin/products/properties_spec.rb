@@ -9,8 +9,8 @@ describe 'Properties', type: :feature, js: true do
 
   context 'Property index' do
     before do
-      create(:property, name: 'shirt size', presentation: 'size')
-      create(:property, name: 'shirt fit', presentation: 'fit')
+      create(:property, name: 'shirt size', presentation: 'size', filterable: true)
+      create(:property, name: 'shirt fit', presentation: 'fit', filterable: false)
       visit spree.admin_properties_path
     end
 
@@ -32,6 +32,16 @@ describe 'Properties', type: :feature, js: true do
       it 'lists properties matching search query' do
         click_on 'Filter'
         fill_in 'q_name_cont', with: 'size'
+        click_on 'Search'
+
+        expect(page).to have_content('shirt size')
+        expect(page).not_to have_content('shirt fit')
+      end
+
+      it 'search by filterable status' do
+        click_on 'Filter'
+        select 'Filterable', from: 'Filterable Status'
+
         click_on 'Search'
 
         expect(page).to have_content('shirt size')
