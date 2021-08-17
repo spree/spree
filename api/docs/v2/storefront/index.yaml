@@ -4108,7 +4108,7 @@ components:
           items:
             type: object
             anyOf:
-              - $ref: '#/components/schemas/Variant'
+              - $ref: '#/components/schemas/VariantAttributesAndRelationships'
               - $ref: '#/components/schemas/LineItem'
               - $ref: '#/components/schemas/Promotion'
               - $ref: '#/components/schemas/User'
