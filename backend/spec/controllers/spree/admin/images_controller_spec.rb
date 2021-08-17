@@ -22,42 +22,83 @@ module Spree
       end
 
       describe '#destroy' do
-        subject(:send_request) do
-          delete :destroy, params: { product_id: product, id: image, format: :js }
-        end
+        context 'when request format is javascript' do
+          subject(:send_request) do
+            delete :destroy, params: { product_id: product, id: image, format: :js }
+          end
 
-        let(:image) { create(:image, viewable: product.master) }
+          let(:image) { create(:image, viewable: product.master) }
 
-        shared_examples 'correct response' do
-          it { expect(assigns(:image)).to eq(image) }
-          it { expect(response).to have_http_status(:ok) }
-        end
+          shared_examples 'correct response' do
+            it { expect(assigns(:image)).to eq(image) }
+            it { expect(response).to have_http_status(:ok) }
+          end
 
-        context 'will successfully destroy image' do
-          describe 'returns response' do
-            before { send_request }
+          context 'will successfully destroy image' do
+            describe 'returns response' do
+              before { send_request }
 
-            it_behaves_like 'correct response'
-            it { expect(flash[:success]).to eq('Image has been successfully removed!') }
+              it_behaves_like 'correct response'
+              it { expect(flash[:success]).to eq('Image has been successfully removed!') }
+            end
+          end
+
+          context 'cannot destroy image of other product' do
+            let(:other_product) { create(:product, stores: [store]) }
+            let(:image) { create(:image, viewable: other_product) }
+
+            it { expect(send_request).to redirect_to(spree.admin_product_images_path(product)) }
+
+            it do
+              send_request
+              expect(flash[:error]).to eq('Image is not found')
+            end
+          end
+
+          context 'cannot destroy image of product from different store' do
+            let(:product) { create(:product, stores: [create(:store)]) }
+
+            it { expect { send_request }.to raise_error(ActiveRecord::RecordNotFound) }
           end
         end
 
-        context 'cannot destroy image of other product' do
-          let(:other_product) { create(:product, stores: [store]) }
-          let(:image) { create(:image, viewable: other_product) }
-
-          it { expect(send_request).to redirect_to(spree.admin_product_images_path(product)) }
-
-          it do
-            send_request
-            expect(flash[:error]).to eq('Image is not found')
+        context 'when request format is html' do
+          subject(:send_request) do
+            delete :destroy, params: { product_id: product, id: image, format: :html }
           end
-        end
 
-        context 'cannot destroy image of product from different store' do
-          let(:product) { create(:product, stores: [create(:store)]) }
+          let(:image) { create(:image, viewable: product.master) }
 
-          it { expect { send_request }.to raise_error(ActiveRecord::RecordNotFound) }
+          shared_examples 'correct response' do
+            it { expect(assigns(:image)).to eq(image) }
+            it { expect(response).to have_http_status(:ok) }
+          end
+
+          context 'will successfully destroy image' do
+            describe 'returns response' do
+              before { send_request }
+
+              it { expect(send_request).to redirect_to(spree.admin_product_images_path(product)) }
+            end
+          end
+
+          context 'cannot destroy image of other product' do
+            let(:other_product) { create(:product, stores: [store]) }
+            let(:image) { create(:image, viewable: other_product) }
+
+            it { expect(send_request).to redirect_to(spree.admin_product_images_path(product)) }
+
+            it do
+              send_request
+              expect(flash[:error]).to eq('Image is not found')
+            end
+          end
+
+          context 'cannot destroy image of product from different store' do
+            let(:product) { create(:product, stores: [create(:store)]) }
+
+            it { expect { send_request }.to raise_error(ActiveRecord::RecordNotFound) }
+          end
         end
       end
     end
