@@ -3,10 +3,7 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
 
   helper_method :new_object_url, :edit_object_url, :object_url, :collection_url
   before_action :load_resource, except: :update_positions
-  before_action only: [:new, :create] do
-    set_currency
-    ensure_current_store(@object)
-  end
+  before_action :set_currency, :set_current_store, only: [:new, :create]
 
   rescue_from ActiveRecord::RecordNotFound, with: :resource_not_found
 
@@ -30,7 +27,7 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
   def update
     invoke_callbacks(:update, :before)
     if @object.update(permitted_resource_params)
-      ensure_current_store(@object)
+      set_current_store
       invoke_callbacks(:update, :after)
       respond_with(@object) do |format|
         format.html do
@@ -209,6 +206,12 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
 
   def location_after_save
     collection_url
+  end
+
+  def set_current_store
+    return if @object.nil?
+
+    ensure_current_store(@object)
   end
 
   def set_currency
