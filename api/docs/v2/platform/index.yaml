@@ -57,8 +57,8 @@ paths:
                         state_name:
                         alternative_phone: 555-555-0199
                         company: Company
-                        created_at: '2021-08-06T06:53:18.846Z'
-                        updated_at: '2021-08-06T06:53:18.846Z'
+                        created_at: '2021-08-18T07:08:27.889Z'
+                        updated_at: '2021-08-18T07:08:27.889Z'
                         deleted_at:
                         label:
                       relationships:
@@ -85,8 +85,8 @@ paths:
                         state_name:
                         alternative_phone: 555-555-0199
                         company: Company
-                        created_at: '2021-08-06T06:53:18.853Z'
-                        updated_at: '2021-08-06T06:53:18.853Z'
+                        created_at: '2021-08-18T07:08:27.894Z'
+                        updated_at: '2021-08-18T07:08:27.894Z'
                         deleted_at:
                         label:
                       relationships:
@@ -141,7 +141,7 @@ paths:
                 Example:
                   value:
                     data:
-                      id: '5'
+                      id: '1'
                       type: address
                       attributes:
                         firstname: John
@@ -154,18 +154,18 @@ paths:
                         state_name:
                         alternative_phone: 555-555-0199
                         company: Company
-                        created_at: '2021-08-06T06:53:19.077Z'
-                        updated_at: '2021-08-06T06:53:19.077Z'
+                        created_at: '2021-08-18T07:08:28.218Z'
+                        updated_at: '2021-08-18T07:08:28.218Z'
                         deleted_at:
                         label:
                       relationships:
                         country:
                           data:
-                            id: '4'
+                            id: '2'
                             type: country
                         state:
                           data:
-                            id: '5'
+                            id: '1'
                             type: state
                         user:
                           data:
@@ -230,7 +230,7 @@ paths:
                 Example:
                   value:
                     data:
-                      id: '6'
+                      id: '1'
                       type: address
                       attributes:
                         firstname: John
@@ -243,18 +243,18 @@ paths:
                         state_name:
                         alternative_phone: 555-555-0199
                         company: Company
-                        created_at: '2021-08-06T06:53:19.150Z'
-                        updated_at: '2021-08-06T06:53:19.150Z'
+                        created_at: '2021-08-18T07:08:28.277Z'
+                        updated_at: '2021-08-18T07:08:28.277Z'
                         deleted_at:
                         label:
                       relationships:
                         country:
                           data:
-                            id: '6'
+                            id: '1'
                             type: country
                         state:
                           data:
-                            id: '6'
+                            id: '1'
                             type: state
                         user:
                           data:
@@ -302,7 +302,7 @@ paths:
                 Example:
                   value:
                     data:
-                      id: '8'
+                      id: '1'
                       type: address
                       attributes:
                         firstname: Jack
@@ -315,18 +315,18 @@ paths:
                         state_name:
                         alternative_phone: 555-555-0199
                         company: Company
-                        created_at: '2021-08-06T06:53:19.236Z'
-                        updated_at: '2021-08-06T06:53:19.247Z'
+                        created_at: '2021-08-18T07:08:28.357Z'
+                        updated_at: '2021-08-18T07:08:28.369Z'
                         deleted_at:
                         label:
                       relationships:
                         country:
                           data:
-                            id: '9'
+                            id: '1'
                             type: country
                         state:
                           data:
-                            id: '8'
+                            id: '1'
                             type: state
                         user:
                           data:
@@ -439,8 +439,8 @@ paths:
                       type: classification
                       attributes:
                         position: 1
-                        created_at: '2021-08-06T06:53:19.739Z'
-                        updated_at: '2021-08-06T06:53:19.739Z'
+                        created_at: '2021-08-18T07:08:28.791Z'
+                        updated_at: '2021-08-18T07:08:28.791Z'
                       relationships:
                         product:
                           data:
@@ -454,8 +454,8 @@ paths:
                       type: classification
                       attributes:
                         position: 1
-                        created_at: '2021-08-06T06:53:19.836Z'
-                        updated_at: '2021-08-06T06:53:19.836Z'
+                        created_at: '2021-08-18T07:08:28.872Z'
+                        updated_at: '2021-08-18T07:08:28.872Z'
                       relationships:
                         product:
                           data:
@@ -506,20 +506,20 @@ paths:
                 Example:
                   value:
                     data:
-                      id: '5'
+                      id: '1'
                       type: classification
                       attributes:
                         position: 1
-                        created_at: '2021-08-06T06:53:20.242Z'
-                        updated_at: '2021-08-06T06:53:20.242Z'
+                        created_at: '2021-08-18T07:08:29.237Z'
+                        updated_at: '2021-08-18T07:08:29.237Z'
                       relationships:
                         product:
                           data:
-                            id: '5'
+                            id: '1'
                             type: product
                         taxon:
                           data:
-                            id: '10'
+                            id: '2'
                             type: taxon
         '422':
           description: invalid request
@@ -568,20 +568,20 @@ paths:
                 Example:
                   value:
                     data:
-                      id: '6'
+                      id: '1'
                       type: classification
                       attributes:
                         position: 1
-                        created_at: '2021-08-06T06:53:20.399Z'
-                        updated_at: '2021-08-06T06:53:20.399Z'
+                        created_at: '2021-08-18T07:08:29.378Z'
+                        updated_at: '2021-08-18T07:08:29.378Z'
                       relationships:
                         product:
                           data:
-                            id: '6'
+                            id: '1'
                             type: product
                         taxon:
                           data:
-                            id: '12'
+                            id: '2'
                             type: taxon
         '404':
           description: Record not found
@@ -627,20 +627,20 @@ paths:
                 Example:
                   value:
                     data:
-                      id: '8'
+                      id: '1'
                       type: classification
                       attributes:
                         position: 1
-                        created_at: '2021-08-06T06:53:20.705Z'
-                        updated_at: '2021-08-06T06:53:20.705Z'
+                        created_at: '2021-08-18T07:08:29.657Z'
+                        updated_at: '2021-08-18T07:08:29.657Z'
                       relationships:
                         product:
                           data:
-                            id: '8'
+                            id: '1'
                             type: product
                         taxon:
                           data:
-                            id: '16'
+                            id: '2'
                             type: taxon
         '422':
           description: invalid request
@@ -734,20 +734,20 @@ paths:
                 Example:
                   value:
                     data:
-                      id: '13'
+                      id: '1'
                       type: classification
                       attributes:
                         position: 2
-                        created_at: '2021-08-06T06:53:21.437Z'
-                        updated_at: '2021-08-06T06:53:21.461Z'
+                        created_at: '2021-08-18T07:08:30.317Z'
+                        updated_at: '2021-08-18T07:08:30.336Z'
                       relationships:
                         product:
                           data:
-                            id: '13'
+                            id: '1'
                             type: product
                         taxon:
                           data:
-                            id: '26'
+                            id: '2'
                             type: taxon
         '422':
           description: invalid request
@@ -795,7 +795,7 @@ paths:
                 Example:
                   value:
                     data:
-                    - id: '34'
+                    - id: '1'
                       type: country
                       attributes:
                         iso_name: UNITED STATES
@@ -804,13 +804,13 @@ paths:
                         name: United States of America
                         numcode: 840
                         states_required: true
-                        updated_at: '2021-08-06T06:53:21.782Z'
+                        updated_at: '2021-08-18T07:08:30.636Z'
                         zipcode_required: true
-                        created_at: '2021-08-06T06:53:21.782Z'
+                        created_at: '2021-08-18T07:08:30.636Z'
                       relationships:
                         states:
                           data: []
-                    - id: '35'
+                    - id: '2'
                       type: country
                       attributes:
                         iso_name: ISO_NAME_2
@@ -819,13 +819,13 @@ paths:
                         name: NAME_2
                         numcode: 840
                         states_required: false
-                        updated_at: '2021-08-06T06:53:21.793Z'
+                        updated_at: '2021-08-18T07:08:30.645Z'
                         zipcode_required: true
-                        created_at: '2021-08-06T06:53:21.793Z'
+                        created_at: '2021-08-18T07:08:30.645Z'
                       relationships:
                         states:
                           data: []
-                    - id: '36'
+                    - id: '3'
                       type: country
                       attributes:
                         iso_name: ISO_NAME_3
@@ -834,9 +834,9 @@ paths:
                         name: NAME_3
                         numcode: 840
                         states_required: false
-                        updated_at: '2021-08-06T06:53:21.796Z'
+                        updated_at: '2021-08-18T07:08:30.647Z'
                         zipcode_required: true
-                        created_at: '2021-08-06T06:53:21.796Z'
+                        created_at: '2021-08-18T07:08:30.647Z'
                       relationships:
                         states:
                           data: []
@@ -880,7 +880,7 @@ paths:
                 Example:
                   value:
                     data:
-                      id: '41'
+                      id: '2'
                       type: country
                       attributes:
                         iso_name: ISO_NAME_6
@@ -889,12 +889,605 @@ paths:
                         name: NAME_6
                         numcode: 840
                         states_required: false
-                        updated_at: '2021-08-06T06:53:21.864Z'
+                        updated_at: '2021-08-18T07:08:30.713Z'
                         zipcode_required: true
-                        created_at: '2021-08-06T06:53:21.864Z'
+                        created_at: '2021-08-18T07:08:30.713Z'
                       relationships:
                         states:
                           data: []
+        '404':
+          description: Record not found
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The resource you were looking for could not be found.
+        '401':
+          description: Authentication Failed
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The access token is invalid
+  "/api/v2/platform/option_types":
+    get:
+      summary: Returns a list of OptionTypes
+      tags:
+      - OptionTypes
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: page
+        in: query
+        example: 1
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        example: 50
+        schema:
+          type: integer
+      - name: include
+        in: query
+        description: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: ''
+        schema:
+          type: string
+      - name: filter
+        in: query
+        description: ''
+        example: option_type_id_eq=1&name_cont=Size
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Records returned
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    data:
+                    - id: '1'
+                      type: option_type
+                      attributes:
+                        name: foo-size-1
+                        presentation: Size
+                        position: 1
+                        created_at: '2021-08-18T07:08:30.787Z'
+                        updated_at: '2021-08-18T07:08:30.787Z'
+                        filterable: true
+                      relationships:
+                        option_values:
+                          data: []
+                    - id: '2'
+                      type: option_type
+                      attributes:
+                        name: foo-size-2
+                        presentation: Size
+                        position: 2
+                        created_at: '2021-08-18T07:08:30.790Z'
+                        updated_at: '2021-08-18T07:08:30.790Z'
+                        filterable: true
+                      relationships:
+                        option_values:
+                          data: []
+                    meta:
+                      count: 2
+                      total_count: 2
+                      total_pages: 1
+                    links:
+                      self: http://www.example.com/api/v2/platform/option_types?page=1&per_page=&include=&filter=
+                      next: http://www.example.com/api/v2/platform/option_types?include=&page=1&per_page=
+                      prev: http://www.example.com/api/v2/platform/option_types?include=&page=1&per_page=
+                      last: http://www.example.com/api/v2/platform/option_types?include=&page=1&per_page=
+                      first: http://www.example.com/api/v2/platform/option_types?include=&page=1&per_page=
+        '401':
+          description: Authentication Failed
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The access token is invalid
+    post:
+      summary: Creates an OptionType
+      tags:
+      - OptionTypes
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: include
+        in: query
+        description: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: ''
+        schema:
+          type: string
+      responses:
+        '201':
+          description: record created
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    data:
+                      id: '1'
+                      type: option_type
+                      attributes:
+                        name: foo-size-5
+                        presentation: Size
+                        position: 1
+                        created_at: '2021-08-18T07:08:30.866Z'
+                        updated_at: '2021-08-18T07:08:30.866Z'
+                        filterable: true
+                      relationships:
+                        option_values:
+                          data: []
+        '422':
+          description: invalid request
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: Name can't be blank and Presentation can't be blank
+                    errors:
+                      name:
+                      - can't be blank
+                      presentation:
+                      - can't be blank
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/optiontype_params"
+  "/api/v2/platform/option_types/{id}":
+    get:
+      summary: Returns an OptionType
+      tags:
+      - OptionTypes
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: include
+        in: query
+        description: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Record found
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    data:
+                      id: '1'
+                      type: option_type
+                      attributes:
+                        name: foo-size-6
+                        presentation: Size
+                        position: 1
+                        created_at: '2021-08-18T07:08:30.920Z'
+                        updated_at: '2021-08-18T07:08:30.920Z'
+                        filterable: true
+                      relationships:
+                        option_values:
+                          data: []
+        '404':
+          description: Record not found
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The resource you were looking for could not be found.
+        '401':
+          description: Authentication Failed
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The access token is invalid
+    put:
+      summary: Updates an OptionType
+      tags:
+      - OptionTypes
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: include
+        in: query
+        description: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          description: record updated
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    data:
+                      id: '1'
+                      type: option_type
+                      attributes:
+                        name: Size-X
+                        presentation: Size
+                        position: 1
+                        created_at: '2021-08-18T07:08:31.000Z'
+                        updated_at: '2021-08-18T07:08:31.009Z'
+                        filterable: true
+                      relationships:
+                        option_values:
+                          data: []
+        '422':
+          description: invalid request
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: Name can't be blank
+                    errors:
+                      name:
+                      - can't be blank
+        '404':
+          description: Record not found
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The resource you were looking for could not be found.
+        '401':
+          description: Authentication Failed
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The access token is invalid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/optiontype_params"
+    delete:
+      summary: Deletes an OptionType
+      tags:
+      - OptionTypes
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Record deleted
+        '404':
+          description: Record not found
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The resource you were looking for could not be found.
+        '401':
+          description: Authentication Failed
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The access token is invalid
+  "/api/v2/platform/option_values":
+    get:
+      summary: Returns a list of OptionValues
+      tags:
+      - OptionValues
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: page
+        in: query
+        example: 1
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        example: 50
+        schema:
+          type: integer
+      - name: include
+        in: query
+        description: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: option_type
+        schema:
+          type: string
+      - name: filter
+        in: query
+        description: ''
+        example: option_type_id_eq=1&name_cont=M
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Records returned
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    data:
+                    - id: '1'
+                      type: option_value
+                      attributes:
+                        position: 1
+                        name: Size-1
+                        presentation: S
+                        created_at: '2021-08-18T07:08:31.178Z'
+                        updated_at: '2021-08-18T07:08:31.178Z'
+                      relationships:
+                        option_type:
+                          data:
+                            id: '1'
+                            type: option_type
+                    - id: '2'
+                      type: option_value
+                      attributes:
+                        position: 1
+                        name: Size-2
+                        presentation: S
+                        created_at: '2021-08-18T07:08:31.184Z'
+                        updated_at: '2021-08-18T07:08:31.184Z'
+                      relationships:
+                        option_type:
+                          data:
+                            id: '2'
+                            type: option_type
+                    meta:
+                      count: 2
+                      total_count: 2
+                      total_pages: 1
+                    links:
+                      self: http://www.example.com/api/v2/platform/option_values?page=1&per_page=&include=&filter=
+                      next: http://www.example.com/api/v2/platform/option_values?include=&page=1&per_page=
+                      prev: http://www.example.com/api/v2/platform/option_values?include=&page=1&per_page=
+                      last: http://www.example.com/api/v2/platform/option_values?include=&page=1&per_page=
+                      first: http://www.example.com/api/v2/platform/option_values?include=&page=1&per_page=
+        '401':
+          description: Authentication Failed
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The access token is invalid
+    post:
+      summary: Creates an OptionValue
+      tags:
+      - OptionValues
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: include
+        in: query
+        description: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: option_type
+        schema:
+          type: string
+      responses:
+        '201':
+          description: record created
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    data:
+                      id: '1'
+                      type: option_value
+                      attributes:
+                        position: 1
+                        name: Size-5
+                        presentation: S
+                        created_at: '2021-08-18T07:08:31.265Z'
+                        updated_at: '2021-08-18T07:08:31.265Z'
+                      relationships:
+                        option_type:
+                          data:
+        '422':
+          description: invalid request
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: Name can't be blank and Presentation can't be blank
+                    errors:
+                      name:
+                      - can't be blank
+                      presentation:
+                      - can't be blank
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/optionvalue_params"
+  "/api/v2/platform/option_values/{id}":
+    get:
+      summary: Returns an OptionValue
+      tags:
+      - OptionValues
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: include
+        in: query
+        description: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: option_type
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Record found
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    data:
+                      id: '1'
+                      type: option_value
+                      attributes:
+                        position: 1
+                        name: Size-6
+                        presentation: S
+                        created_at: '2021-08-18T07:08:31.313Z'
+                        updated_at: '2021-08-18T07:08:31.313Z'
+                      relationships:
+                        option_type:
+                          data:
+                            id: '1'
+                            type: option_type
+        '404':
+          description: Record not found
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The resource you were looking for could not be found.
+        '401':
+          description: Authentication Failed
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The access token is invalid
+    put:
+      summary: Updates an OptionValue
+      tags:
+      - OptionValues
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: include
+        in: query
+        description: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: option_type
+        schema:
+          type: string
+      responses:
+        '200':
+          description: record updated
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    data:
+                      id: '1'
+                      type: option_value
+                      attributes:
+                        position: 1
+                        name: M
+                        presentation: S
+                        created_at: '2021-08-18T07:08:31.392Z'
+                        updated_at: '2021-08-18T07:08:31.403Z'
+                      relationships:
+                        option_type:
+                          data:
+                            id: '1'
+                            type: option_type
+        '422':
+          description: invalid request
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: Name can't be blank
+                    errors:
+                      name:
+                      - can't be blank
+        '404':
+          description: Record not found
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The resource you were looking for could not be found.
+        '401':
+          description: Authentication Failed
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The access token is invalid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/optionvalue_params"
+    delete:
+      summary: Deletes an OptionValue
+      tags:
+      - OptionValues
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Record deleted
         '404':
           description: Record not found
           content:
@@ -951,77 +1544,7 @@ paths:
                 Example:
                   value:
                     data:
-                    - id: '32'
-                      type: taxon
-                      attributes:
-                        position: 0
-                        name: taxon_16
-                        permalink: taxonomy-16/taxon-16
-                        lft: 2
-                        rgt: 3
-                        description:
-                        created_at: '2021-08-06T06:53:21.978Z'
-                        updated_at: '2021-08-06T06:53:21.982Z'
-                        meta_title:
-                        meta_description:
-                        meta_keywords:
-                        depth: 1
-                        pretty_name: taxonomy_16 -> taxon_16
-                        seo_title: taxon_16
-                        is_root: false
-                        is_child: true
-                        is_leaf: true
-                      relationships:
-                        parent:
-                          data:
-                            id: '31'
-                            type: taxon
-                        taxonomy:
-                          data:
-                            id: '16'
-                            type: taxonomy
-                        children:
-                          data: []
-                        image:
-                          data:
-                            id: '16'
-                            type: taxon_image
-                    - id: '33'
-                      type: taxon
-                      attributes:
-                        position: 0
-                        name: taxon_17
-                        permalink: taxonomy-16/taxon-17
-                        lft: 4
-                        rgt: 5
-                        description:
-                        created_at: '2021-08-06T06:53:22.008Z'
-                        updated_at: '2021-08-06T06:53:22.013Z'
-                        meta_title:
-                        meta_description:
-                        meta_keywords:
-                        depth: 1
-                        pretty_name: taxonomy_16 -> taxon_17
-                        seo_title: taxon_17
-                        is_root: false
-                        is_child: true
-                        is_leaf: true
-                      relationships:
-                        parent:
-                          data:
-                            id: '31'
-                            type: taxon
-                        taxonomy:
-                          data:
-                            id: '16'
-                            type: taxonomy
-                        children:
-                          data: []
-                        image:
-                          data:
-                            id: '17'
-                            type: taxon_image
-                    - id: '31'
+                    - id: '1'
                       type: taxon
                       attributes:
                         position: 0
@@ -1030,8 +1553,8 @@ paths:
                         lft: 1
                         rgt: 6
                         description:
-                        created_at: '2021-08-06T06:53:21.950Z'
-                        updated_at: '2021-08-06T06:53:22.027Z'
+                        created_at: '2021-08-18T07:08:31.598Z'
+                        updated_at: '2021-08-18T07:08:31.660Z'
                         meta_title:
                         meta_description:
                         meta_keywords:
@@ -1046,16 +1569,86 @@ paths:
                           data:
                         taxonomy:
                           data:
-                            id: '16'
+                            id: '1'
                             type: taxonomy
                         children:
                           data:
-                          - id: '32'
+                          - id: '2'
                             type: taxon
-                          - id: '33'
+                          - id: '3'
                             type: taxon
                         image:
                           data:
+                    - id: '2'
+                      type: taxon
+                      attributes:
+                        position: 0
+                        name: taxon_16
+                        permalink: taxonomy-16/taxon-16
+                        lft: 2
+                        rgt: 3
+                        description:
+                        created_at: '2021-08-18T07:08:31.623Z'
+                        updated_at: '2021-08-18T07:08:31.626Z'
+                        meta_title:
+                        meta_description:
+                        meta_keywords:
+                        depth: 1
+                        pretty_name: taxonomy_16 -> taxon_16
+                        seo_title: taxon_16
+                        is_root: false
+                        is_child: true
+                        is_leaf: true
+                      relationships:
+                        parent:
+                          data:
+                            id: '1'
+                            type: taxon
+                        taxonomy:
+                          data:
+                            id: '1'
+                            type: taxonomy
+                        children:
+                          data: []
+                        image:
+                          data:
+                            id: '1'
+                            type: taxon_image
+                    - id: '3'
+                      type: taxon
+                      attributes:
+                        position: 0
+                        name: taxon_17
+                        permalink: taxonomy-16/taxon-17
+                        lft: 4
+                        rgt: 5
+                        description:
+                        created_at: '2021-08-18T07:08:31.647Z'
+                        updated_at: '2021-08-18T07:08:31.651Z'
+                        meta_title:
+                        meta_description:
+                        meta_keywords:
+                        depth: 1
+                        pretty_name: taxonomy_16 -> taxon_17
+                        seo_title: taxon_17
+                        is_root: false
+                        is_child: true
+                        is_leaf: true
+                      relationships:
+                        parent:
+                          data:
+                            id: '1'
+                            type: taxon
+                        taxonomy:
+                          data:
+                            id: '1'
+                            type: taxonomy
+                        children:
+                          data: []
+                        image:
+                          data:
+                            id: '2'
+                            type: taxon_image
                     meta:
                       count: 3
                       total_count: 3
@@ -1097,7 +1690,7 @@ paths:
                 Example:
                   value:
                     data:
-                      id: '38'
+                      id: '2'
                       type: taxon
                       attributes:
                         position: 0
@@ -1106,8 +1699,8 @@ paths:
                         lft: 2
                         rgt: 3
                         description:
-                        created_at: '2021-08-06T06:53:22.225Z'
-                        updated_at: '2021-08-06T06:53:22.231Z'
+                        created_at: '2021-08-18T07:08:31.823Z'
+                        updated_at: '2021-08-18T07:08:31.827Z'
                         meta_title:
                         meta_description:
                         meta_keywords:
@@ -1120,11 +1713,11 @@ paths:
                       relationships:
                         parent:
                           data:
-                            id: '37'
+                            id: '1'
                             type: taxon
                         taxonomy:
                           data:
-                            id: '18'
+                            id: '1'
                             type: taxonomy
                         children:
                           data: []
@@ -1177,7 +1770,7 @@ paths:
                 Example:
                   value:
                     data:
-                      id: '40'
+                      id: '2'
                       type: taxon
                       attributes:
                         position: 0
@@ -1186,8 +1779,8 @@ paths:
                         lft: 2
                         rgt: 3
                         description:
-                        created_at: '2021-08-06T06:53:22.320Z'
-                        updated_at: '2021-08-06T06:53:22.324Z'
+                        created_at: '2021-08-18T07:08:31.918Z'
+                        updated_at: '2021-08-18T07:08:31.921Z'
                         meta_title:
                         meta_description:
                         meta_keywords:
@@ -1200,11 +1793,11 @@ paths:
                       relationships:
                         parent:
                           data:
-                            id: '39'
+                            id: '1'
                             type: taxon
                         taxonomy:
                           data:
-                            id: '19'
+                            id: '1'
                             type: taxonomy
                         children:
                           data: []
@@ -1212,7 +1805,7 @@ paths:
                           data: []
                         image:
                           data:
-                            id: '20'
+                            id: '1'
                             type: taxon_image
         '404':
           description: Record not found
@@ -1258,7 +1851,7 @@ paths:
                 Example:
                   value:
                     data:
-                      id: '44'
+                      id: '2'
                       type: taxon
                       attributes:
                         position: 0
@@ -1267,8 +1860,8 @@ paths:
                         lft: 2
                         rgt: 3
                         description:
-                        created_at: '2021-08-06T06:53:22.511Z'
-                        updated_at: '2021-08-06T06:53:22.542Z'
+                        created_at: '2021-08-18T07:08:32.084Z'
+                        updated_at: '2021-08-18T07:08:32.108Z'
                         meta_title:
                         meta_description:
                         meta_keywords:
@@ -1281,17 +1874,17 @@ paths:
                       relationships:
                         parent:
                           data:
-                            id: '43'
+                            id: '1'
                             type: taxon
                         taxonomy:
                           data:
-                            id: '21'
+                            id: '1'
                             type: taxonomy
                         children:
                           data: []
                         image:
                           data:
-                            id: '22'
+                            id: '1'
                             type: taxon_image
         '422':
           description: invalid request
@@ -1329,6 +1922,305 @@ paths:
       summary: Deletes a Taxon
       tags:
       - Taxons
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Record deleted
+        '404':
+          description: Record not found
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The resource you were looking for could not be found.
+        '401':
+          description: Authentication Failed
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The access token is invalid
+  "/api/v2/platform/users":
+    get:
+      summary: Returns a list of Users
+      tags:
+      - Users
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: page
+        in: query
+        example: 1
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        example: 50
+        schema:
+          type: integer
+      - name: include
+        in: query
+        description: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: ship_address,bill_address
+        schema:
+          type: string
+      - name: filter
+        in: query
+        description: ''
+        example: user_id_eq=1&email_cont=spree@example.com
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Records returned
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    data:
+                    - id: '1'
+                      type: user
+                      attributes:
+                        email: luke@reilly.ca
+                        created_at: '2021-08-18T07:08:32.466Z'
+                        updated_at: '2021-08-18T07:08:32.466Z'
+                      relationships:
+                        bill_address:
+                          data:
+                        ship_address:
+                          data:
+                    - id: '2'
+                      type: user
+                      attributes:
+                        email: renna@gleichner.ca
+                        created_at: '2021-08-18T07:08:32.475Z'
+                        updated_at: '2021-08-18T07:08:32.475Z'
+                      relationships:
+                        bill_address:
+                          data:
+                        ship_address:
+                          data:
+                    - id: '3'
+                      type: user
+                      attributes:
+                        email: lauryn.dare@lockman.co.uk
+                        created_at: '2021-08-18T07:08:32.477Z'
+                        updated_at: '2021-08-18T07:08:32.477Z'
+                      relationships:
+                        bill_address:
+                          data:
+                        ship_address:
+                          data:
+                    meta:
+                      count: 3
+                      total_count: 3
+                      total_pages: 1
+                    links:
+                      self: http://www.example.com/api/v2/platform/users?page=1&per_page=&include=&filter=
+                      next: http://www.example.com/api/v2/platform/users?include=&page=1&per_page=
+                      prev: http://www.example.com/api/v2/platform/users?include=&page=1&per_page=
+                      last: http://www.example.com/api/v2/platform/users?include=&page=1&per_page=
+                      first: http://www.example.com/api/v2/platform/users?include=&page=1&per_page=
+        '401':
+          description: Authentication Failed
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The access token is invalid
+    post:
+      summary: Creates an User
+      tags:
+      - Users
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: include
+        in: query
+        description: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: ship_address,bill_address
+        schema:
+          type: string
+      responses:
+        '201':
+          description: record created
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    data:
+                      id: '2'
+                      type: user
+                      attributes:
+                        email: hermila_jast@padberg.name
+                        created_at: '2021-08-18T07:08:32.569Z'
+                        updated_at: '2021-08-18T07:08:32.569Z'
+                      relationships:
+                        bill_address:
+                          data:
+                        ship_address:
+                          data:
+        '422':
+          description: invalid request
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: Bill address belongs to other user
+                    errors:
+                      bill_address_id:
+                      - belongs to other user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/user_params"
+  "/api/v2/platform/users/{id}":
+    get:
+      summary: Returns an User
+      tags:
+      - Users
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: include
+        in: query
+        description: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: ship_address,bill_address
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Record found
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    data:
+                      id: '2'
+                      type: user
+                      attributes:
+                        email: monique@feest.com
+                        created_at: '2021-08-18T07:08:32.634Z'
+                        updated_at: '2021-08-18T07:08:32.634Z'
+                      relationships:
+                        bill_address:
+                          data:
+                        ship_address:
+                          data:
+        '404':
+          description: Record not found
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The resource you were looking for could not be found.
+        '401':
+          description: Authentication Failed
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The access token is invalid
+    put:
+      summary: Updates an User
+      tags:
+      - Users
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: include
+        in: query
+        description: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: ship_address,bill_address
+        schema:
+          type: string
+      responses:
+        '200':
+          description: record updated
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    data:
+                      id: '2'
+                      type: user
+                      attributes:
+                        email: john@example.com
+                        created_at: '2021-08-18T07:08:32.732Z'
+                        updated_at: '2021-08-18T07:08:32.742Z'
+                      relationships:
+                        bill_address:
+                          data:
+                        ship_address:
+                          data:
+        '422':
+          description: invalid request
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: Bill address belongs to other user
+                    errors:
+                      bill_address_id:
+                      - belongs to other user
+        '404':
+          description: Record not found
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The resource you were looking for could not be found.
+        '401':
+          description: Authentication Failed
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The access token is invalid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/user_params"
+    delete:
+      summary: Deletes an User
+      tags:
+      - Users
       security:
       - bearer_auth: []
       parameters:
@@ -1405,10 +2297,51 @@ components:
           type: string
         position:
           type: integer
+    option_type_params:
+      type: object
+      properties:
+        name:
+          type: string
+        presentation:
+          type: string
+      required:
+      - name
+      - presentation
+    option_value_params:
+      type: object
+      properties:
+        name:
+          type: string
+        presentation:
+          type: string
+        option_values_attributes:
+          type: string
+      required:
+      - name
+      - presentation
+    user_params:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+        password_confirmation:
+          type: string
+        ship_address_id:
+          type: string
+        bill_address_id:
+          type: string
+      required:
+      - email
+      - password
+      - password_confirmation
     taxon_params:
       type: object
       properties:
         taxonomy_id:
+          type: string
+        parent_id:
           type: string
         name:
           type: string

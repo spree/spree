@@ -68,6 +68,34 @@ RSpec.configure do |config|
               position: { type: :integer }
             }
           },
+          option_type_params: {
+            type: :object,
+            properties: {
+              name: { type: :string },
+              presentation: { type: :string }
+            },
+            required: %w[name presentation]
+          },
+          option_value_params: {
+          type: :object,
+            properties: {
+              name: { type: :string },
+              presentation: { type: :string },
+              option_values_attributes: { type: :string }
+            },
+            required: %w[name presentation]
+          },
+          user_params: {
+            type: :object,
+            properties: {
+              email: { type: :string },
+              password: { type: :string },
+              password_confirmation: { type: :string },
+              ship_address_id: { type: :string },
+              bill_address_id: { type: :string },
+            },
+            required: %w[email password password_confirmation]
+          },
           taxon_params: {
             type: :object,
             properties: {
