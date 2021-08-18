@@ -18,13 +18,13 @@ info:
 paths:
   /spree_oauth/token:
     post:
-      description: Creates or refreshes a Bearer token required to authorize calls API calls
+      description: Creates or refreshes a Bearer token required to authorize API calls
       tags:
         - Token
       operationId: Create or Refresh Token
       responses:
         '200':
-          description: Token was succesfully created or refreshed
+          description: Token was successfully created or refreshed
           content:
             application/json:
               schema:

@@ -2,6 +2,8 @@ $.fn.taxonAutocomplete = function() {
   'use strict'
 
   function formatTaxonList(values) {
+    console.warn('taxonAutocomplete is deprecated and will be removed in Spree 5.0')
+
     return values.map(function (obj) {
       return {
         id: obj.id,
@@ -20,7 +22,7 @@ $.fn.taxonAutocomplete = function() {
       data: function (params) {
         return {
           q: {
-            name_cont: params.term,
+            name_cont: params.term
           },
           token: Spree.api_key
         }
@@ -35,5 +37,9 @@ $.fn.taxonAutocomplete = function() {
 }
 
 $(document).ready(function () {
+  var productTaxonSelector = document.getElementById('product_taxon_ids')
+  if (productTaxonSelector == null) return
+  if (productTaxonSelector.hasAttribute('data-autocomplete-url-value')) return
+
   $('#product_taxon_ids').taxonAutocomplete()
 })

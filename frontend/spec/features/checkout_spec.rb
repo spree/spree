@@ -556,7 +556,7 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
           allow_any_instance_of(Spree::CheckoutController).to receive_messages(current_order: order)
         end
 
-        it 'move user to order succesfully placed page' do
+        it 'move user to order successfully placed page' do
           find('#order_coupon_code').fill_in(with: promotion2.code)
           find('#shopping-cart-coupon-code-button').click
           click_on 'checkout'

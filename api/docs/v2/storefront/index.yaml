@@ -535,7 +535,7 @@ paths:
   /api/v2/storefront/cart/add_item:
     post:
       description: |-
-        Additional parameters passed in **options** hash must be registered in `config/initialiers/spree.rb`, eg.
+        Additional parameters passed in **options** hash must be registered in `config/initializers/spree.rb`, eg.
 
         ```
           Spree::PermittedAttributes.line_item_attributes << :foo
@@ -571,7 +571,7 @@ paths:
                   type: integer
                 options:
                   type: object
-                  description: 'Additional custom options. You need to add them via `Spree::PermittedAttributes.line_item_attributes << :foo` in `config/initialiers/spree.rb`'
+                  description: 'Additional custom options. You need to add them via `Spree::PermittedAttributes.line_item_attributes << :foo` in `config/initializers/spree.rb`'
               example:
                 variant_id: '1'
                 quantity: 5
@@ -869,7 +869,7 @@ paths:
         PATCH /checkout/complete
         ```
 
-        This will complete the Checkout and mark the Order as completed. You cannot execute any operations on this Order anymore via Storefront API. Further operations on the Order are possible via [Spree API v1](https://guides.spreecommerce.org/api/).
+        This will complete the Checkout and mark the Order as completed. You cannot execute any operations on this Order anymore via Storefront API. Further operations on the Order are possible via Platform API.
       tags:
         - Checkout
       operationId: Update Checkout
@@ -1009,7 +1009,7 @@ paths:
       summary: Complete Checkout
   /api/v2/storefront/checkout/add_store_credit:
     post:
-      description: 'Adds Store Credit payment if the currently signed in User has any available. [Read more about Store Credits](https://guides.spreecommerce.org/user/users/editing_users.html#store-credits)'
+      description: 'Adds Store Credit payment if the currently signed in User has any available.'
       tags:
         - Checkout
       operationId: Add Store Credit
@@ -3538,7 +3538,7 @@ paths:
       summary: Get Product Details
   /api/v2/storefront/taxons:
     get:
-      description: 'Returns a list of Taxons. [Read more about Taxons](https://guides.spreecommerce.org/developer/core/products.html#taxons-and-taxonomies)'
+      description: 'Returns a list of Taxons. [Read more about Taxons](https://dev-docs.spreecommerce.org/internals/products#taxons-and-taxonomies)'
       tags:
         - Taxons
       operationId: Taxons List
@@ -4060,7 +4060,7 @@ components:
         - included
       x-examples: {}
       type: object
-      description: 'Cart provides a central place around which to collect information about a customer order - including line items, adjustments, payments, addresses, return authorizations, and shipments. [Read more in Spree docs](https://guides.spreecommerce.org/developer/core/orders.html)'
+      description: 'Cart provides a central place around which to collect information about a customer order - including line items, adjustments, payments, addresses, return authorizations, and shipments. [Read more in Spree docs](https://dev-docs.spreecommerce.org/internals/orders)'
     CartList:
       required:
         - data
@@ -4245,7 +4245,7 @@ components:
             - confirm
             - complete
           description: |-
-            State of the Cart in the Checkout flow. Please see <a href="https://guides.spreecommerce.org/developer/core/orders.html#the-order-state-machine">
+            State of the Cart in the Checkout flow. Please see <a href="https://dev-docs.spreecommerce.org/internals/orders#the-order-state-machine">
               The Order State machine
             </a> for a full list with description.
         payment_state:
@@ -4258,7 +4258,7 @@ components:
             - paid
             - void
           description: |-
-            Overall state of the Payments. Please see <a href="https://guides.spreecommerce.org/developer/core/orders.html#order-payment-states">
+            Overall state of the Payments. Please see <a href="https://dev-docs.spreecommerce.org/internals/orders#order-payment-states">
               Order Payments states
             </a> for a full list with description.
         shipment_state:
@@ -4272,16 +4272,14 @@ components:
             - ready
             - shipped
           description: |-
-            Overall state of the Shipments. Please see <a href="https://guides.spreecommerce.org/developer/core/orders.html#order-shipment-states">
+            Overall state of the Shipments. Please see <a href="https://dev-docs.spreecommerce.org/internals/orders#order-shipment-states-1">
               Order Shipments states
             </a> for a full list with description.
         token:
           type: string
           example: abcdef123456
           description: |-
-            Used for authorizing any action for an Order within Spree’s API. Please see <a href="https://guides.spreecommerce.org/api/v2/storefront#section/Authentication/orderToken">
-              Order Token Authentication
-            </a> for more information.
+            Used for authorizing any action for an Order within Spree’s API.
     CreditCardList:
       required:
         - included
@@ -5080,7 +5078,7 @@ components:
           items:
             oneOf:
               - $ref: '#/components/schemas/State'
-      description: 'Countries within Spree are used as a container for states. Countries can be zone members, and also link to an address. The difference between one country and another on an address record can determine which tax rates and shipping methods are used for the order.[Read more about Countries in Spree](https://guides.spreecommerce.org/developer/core/addresses.html#countries)'
+      description: 'Countries within Spree are used as a container for states. Countries can be zone members, and also link to an address. The difference between one country and another on an address record can determine which tax rates and shipping methods are used for the order.[Read more about Countries in Spree](https://dev-docs.spreecommerce.org/internals/addresses#countries)'
     CountriesList:
       required:
         - data
@@ -5243,7 +5241,7 @@ components:
             - shipped
             - canceled
           description: |-
-            Status of the Shipment. For a list of all available statuses please refer: <a href="https://guides.spreecommerce.org/developer/shipments.html#overview" target="_blank" rel="noopener">
+            Status of the Shipment. For a list of all available statuses please refer: <a href="https://dev-docs.spreecommerce.org/internals/shipments" target="_blank" rel="noopener">
               Shipment section in Spree Guides
             </a>
         shipped_at:

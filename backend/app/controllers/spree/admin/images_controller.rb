@@ -13,7 +13,7 @@ module Spree
       private
 
       def location_after_destroy
-        spree.admin_product_images_url(@arent)
+        spree.admin_product_images_url(parent)
       end
 
       def location_after_save

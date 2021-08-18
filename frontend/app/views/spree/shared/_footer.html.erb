@@ -47,11 +47,11 @@
           </div>
         </div>
       </div>
-      <div class="row d-none d-xl-flex border-top py-5 text-uppercase footer-spree-menu-links">
+      <div class="row d-none d-xl-flex border-top pt-5 text-uppercase footer-spree-menu-links">
 
         <% if spree_menu('footer').present? %>
           <% spree_menu('footer').children.each do |parent| %>
-            <div class="col-3">
+            <div class="col-3 mb-5">
               <div class="footer-spree-label">
                 <% if parent.container? %>
                   <%= parent.name %>
@@ -69,7 +69,7 @@
         <% end %>
 
         <% if spree.respond_to?(:account_path) %>
-          <div class="col-3">
+          <div class="col-3 mb-5">
             <div class="footer-spree-label">
               <%= Spree.t('nav_bar.my_account') %>
             </div>
