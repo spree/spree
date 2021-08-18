@@ -12,7 +12,6 @@ module Spree
 
     def ensure_store_association_is_not_changed
       if store_id_changed? && persisted?
-
         errors.add(:store, Spree.t('errors.messages.store_association_can_not_be_changed'))
       end
     end
