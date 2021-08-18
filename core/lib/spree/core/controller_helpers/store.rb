@@ -26,7 +26,7 @@ module Spree
           return if object.nil?
 
           if object.has_attribute?(:store_id)
-            if object.store.present?
+            if object.store.present? && object.store != current_store
               raise Spree.t('errors.messages.store_is_already_set')
             else
               object.store = current_store
