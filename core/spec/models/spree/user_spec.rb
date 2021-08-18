@@ -244,7 +244,7 @@ describe Spree.user_class, type: :model do
 
       context 'store credits have never been used' do
         it 'returns store credit amount' do
-          expect(subject.available_store_credits(store)).to eq([Spree::Money.new(usd_amount, currency: 'USD')])
+          expect(subject.available_store_credits(store)).to eq([Spree::Money.new(usd_amount, currency: 'USD').to_s])
         end
       end
 
@@ -258,9 +258,9 @@ describe Spree.user_class, type: :model do
         end
 
         it 'returns sum of amounts' do
-          expect(subject.available_store_credits(store)).to match_array([Spree::Money.new(usd_amount, currency: 'USD'),
-                                                                         Spree::Money.new(gbp_amount, currency: 'GBP'),
-                                                                         Spree::Money.new(eur_amount, currency: 'EUR')])
+          expect(subject.available_store_credits(store)).to match_array([Spree::Money.new(usd_amount, currency: 'USD').to_s,
+                                                                         Spree::Money.new(gbp_amount, currency: 'GBP').to_s,
+                                                                         Spree::Money.new(eur_amount, currency: 'EUR').to_s])
         end
       end
     end
