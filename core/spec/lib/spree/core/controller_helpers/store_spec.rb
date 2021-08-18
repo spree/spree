@@ -110,6 +110,17 @@ describe Spree::Core::ControllerHelpers::Store, type: :controller do
           expect { controller.ensure_current_store(object) }.to raise_error('Store is already set')
         end
       end
+
+      context 'when an object already has a store assigned and the same store is re-assigned' do
+        object = Spree::Menu.new
+
+        it 'no exception is raised' do
+          object.store = store
+          object.save
+
+          expect { controller.ensure_current_store(object) }.not_to raise_error
+        end
+      end
     end
 
     context 'when an object that does not have store association is passed in' do
