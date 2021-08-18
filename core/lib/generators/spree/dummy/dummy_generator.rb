@@ -68,7 +68,7 @@ module Spree
             inside dummy_path do
               inject_require_for(gem)
             end
-          rescue
+          rescue StandardError, LoadError
           end
         end
       end

@@ -3,7 +3,8 @@ require 'spec_helper'
 describe Spree::Api::V2::Platform::StoreSerializer do
   subject { described_class.new(store) }
 
-  let(:store) { create(:store, menus: [create(:menu), create(:menu, location: 'Footer')]) }
+  let!(:store) { Spree::Store.default }
+  let!(:menus) { [create(:menu, store: store), create(:menu, location: 'Footer', store: store)] }
 
   it { expect(subject.serializable_hash).to be_kind_of(Hash) }
 

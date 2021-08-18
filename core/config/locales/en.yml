@@ -184,6 +184,12 @@ en:
       spree/address:
         one: Address
         other: Addresses
+      spree/cms_page:
+        one: Page
+        other: Pages
+      spree/cms_section:
+        one: Section
+        other: Sections
       spree/country:
         one: Country
         other: Countries
@@ -964,6 +970,8 @@ en:
     error: error
     errors:
       messages:
+        store_association_can_not_be_changed: The store association can not be changed
+        store_is_already_set: Store is already set
         blank: can't be blank
         could_not_create_taxon: Could not create taxon
         no_shipping_methods_available: No shipping methods available for selected location, please change your address and try again.
@@ -1132,7 +1140,7 @@ en:
     log_in_to_continue: Log in to continue
     logs: "Logs"
     logged_in_as: Logged in as
-    logged_in_succesfully: Logged in successfully
+    logged_in_successfully: Logged in successfully
     logged_out: You have been logged out.
     login: Login
     login_as_existing: Login as Existing Customer

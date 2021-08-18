@@ -1,1 +1,1 @@
-Please see [Spree Guides Security section](https://guides.spreecommerce.org/developer/security/).
+Please see [Spree Guides Security section](https://dev-docs.spreecommerce.org/security/index).

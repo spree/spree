@@ -56,13 +56,3 @@ vendor/bundle
 */vendor/bundle
 .ignore
 TODO
-
-# new guides
-guides/output
-guides/logs
-guides/.cache
-guides/public
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.yarn-integrity
