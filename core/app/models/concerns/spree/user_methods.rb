@@ -58,6 +58,14 @@ module Spree
       store_credits.for_store(store).where(currency: currency).reload.to_a.sum(&:amount_remaining)
     end
 
+    def available_store_credits(store)
+      store ||= Store.default
+
+      store_credits.for_store(store).pluck(:currency).uniq.each_with_object([]) do |currency, arr|
+        arr << Spree::Money.new(total_available_store_credit(currency, store), currency: currency)
+      end
+    end
+
     private
 
     def check_completed_orders

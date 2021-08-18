@@ -5,32 +5,55 @@ describe 'Users', type: :feature do
   stub_authorization!
   include Spree::Admin::BaseHelper
 
+  let(:store) { Spree::Store.default }
   let!(:user_a) { create(:user_with_addresses, email: 'a@example.com') }
   let!(:user_b) { create(:user_with_addresses, email: 'b@example.com') }
 
-  let(:order) { create(:completed_order_with_totals, user: user_a, number: 'R123') }
-
-  let(:order_2) do
-    create(:completed_order_with_totals, user: user_a, number: 'R456').tap do |o|
+  let!(:order) { create(:completed_order_with_totals, store: store, user: user_a, number: 'R123') }
+  let!(:order_2) do
+    create(:completed_order_with_totals, store: store, user: user_a, number: 'R456').tap do |o|
       li = o.line_items.last
       li.update_column(:price, li.price + 10)
     end
   end
+  let!(:order_eur) { create(:completed_order_with_totals, store: store, user: user_a, currency: 'EUR') }
+  let!(:order_gbp) { create(:completed_order_with_totals, store: store, user: user_a, currency: 'GBP') }
+  let!(:orders) { Spree::Order.where(id: [order.id, order_2.id, order_eur.id, order_gbp.id]) }
 
-  let(:orders) { [order, order_2] }
+  let!(:store_credit_usd) { create(:store_credit, amount: '100', store: store, user: user_a, currency: 'USD') }
+  let!(:store_credit_eur) { create(:store_credit, amount: '90', store: store, user: user_a, currency: 'EUR') }
+  let!(:store_credit_gbp) { create(:store_credit, amount: '80', store: store, user: user_a, currency: 'GBP') }
 
   shared_examples_for 'a user page' do
-    it 'has lifetime stats' do
-      orders
-      refresh # need to refresh after creating the orders for specs that did not require orders
-      within('#user-lifetime-stats') do
-        [:total_sales, :num_orders, :average_order_value, :member_since].each do |stat_name|
-          expect(page).to have_content Spree.t(stat_name)
+    context 'lifetime stats' do
+      shared_examples_for 'has lifetime stats' do
+        it 'has lifetime stats' do
+          within('#user-lifetime-stats') do
+            [:total_sales, :num_orders, :average_order_value, :member_since].each do |stat_name|
+              expect(page).to have_content Spree.t(stat_name)
+            end
+
+            total_sales = "$#{order.total.to_i + order_2.total.to_i}.00 €#{order_eur.total.to_i}.00 £#{order_gbp.total.to_i}.00"
+            total_average = "$#{(order.total.to_i + order_2.total.to_i)/2}.00 €#{order_eur.total.to_i}.00 £#{order_gbp.total.to_i}.00"
+            total_credits = "$#{store_credit_usd.amount.to_i}.00 €#{store_credit_eur.amount.to_i}.00 £#{store_credit_gbp.amount.to_i}.00"
+            expect(page).to have_content("Total Sales: #{total_sales}", normalize_ws: true)
+            expect(page).to have_content("Average Order Value: #{total_average}", normalize_ws: true)
+            expect(page).to have_content("Store Credits: #{total_credits}", normalize_ws: true)
+            expect(page).to have_content("# Orders: #{orders.count}", normalize_ws: true)
+            expect(page).to have_content("Member Since: #{pretty_time(user_a.created_at).gsub(/[[:space:]]+/, ' ')}", normalize_ws: true)
+          end
         end
-        expect(page).to have_content (order.total + order_2.total)
-        expect(page).to have_content orders.count
-        expect(page).to have_content (orders.sum(&:total) / orders.count)
-        expect(page).to have_content pretty_time(user_a.created_at).gsub(/[[:space:]]+/, ' ')
+      end
+
+      it_behaves_like 'has lifetime stats'
+
+      context 'when other store order exits' do
+        let(:new_store) { create(:store) }
+        let!(:new_order) { create(:completed_order_with_totals, store: new_store, number: 'K999') }
+
+        it { expect(Spree::Order.count).not_to eq(store.orders.count) }
+
+        it_behaves_like 'has lifetime stats'
       end
     end
 

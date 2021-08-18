@@ -57,8 +57,8 @@ paths:
                         state_name:
                         alternative_phone: 555-555-0199
                         company: Company
-                        created_at: '2021-08-18T07:08:27.889Z'
-                        updated_at: '2021-08-18T07:08:27.889Z'
+                        created_at: '2021-08-18T13:45:53.182Z'
+                        updated_at: '2021-08-18T13:45:53.182Z'
                         deleted_at:
                         label:
                       relationships:
@@ -85,8 +85,8 @@ paths:
                         state_name:
                         alternative_phone: 555-555-0199
                         company: Company
-                        created_at: '2021-08-18T07:08:27.894Z'
-                        updated_at: '2021-08-18T07:08:27.894Z'
+                        created_at: '2021-08-18T13:45:53.188Z'
+                        updated_at: '2021-08-18T13:45:53.188Z'
                         deleted_at:
                         label:
                       relationships:
@@ -154,8 +154,8 @@ paths:
                         state_name:
                         alternative_phone: 555-555-0199
                         company: Company
-                        created_at: '2021-08-18T07:08:28.218Z'
-                        updated_at: '2021-08-18T07:08:28.218Z'
+                        created_at: '2021-08-18T13:45:53.540Z'
+                        updated_at: '2021-08-18T13:45:53.540Z'
                         deleted_at:
                         label:
                       relationships:
@@ -243,8 +243,8 @@ paths:
                         state_name:
                         alternative_phone: 555-555-0199
                         company: Company
-                        created_at: '2021-08-18T07:08:28.277Z'
-                        updated_at: '2021-08-18T07:08:28.277Z'
+                        created_at: '2021-08-18T13:45:53.599Z'
+                        updated_at: '2021-08-18T13:45:53.599Z'
                         deleted_at:
                         label:
                       relationships:
@@ -315,8 +315,8 @@ paths:
                         state_name:
                         alternative_phone: 555-555-0199
                         company: Company
-                        created_at: '2021-08-18T07:08:28.357Z'
-                        updated_at: '2021-08-18T07:08:28.369Z'
+                        created_at: '2021-08-18T13:45:53.677Z'
+                        updated_at: '2021-08-18T13:45:53.688Z'
                         deleted_at:
                         label:
                       relationships:
@@ -439,8 +439,8 @@ paths:
                       type: classification
                       attributes:
                         position: 1
-                        created_at: '2021-08-18T07:08:28.791Z'
-                        updated_at: '2021-08-18T07:08:28.791Z'
+                        created_at: '2021-08-18T13:45:54.112Z'
+                        updated_at: '2021-08-18T13:45:54.112Z'
                       relationships:
                         product:
                           data:
@@ -454,8 +454,8 @@ paths:
                       type: classification
                       attributes:
                         position: 1
-                        created_at: '2021-08-18T07:08:28.872Z'
-                        updated_at: '2021-08-18T07:08:28.872Z'
+                        created_at: '2021-08-18T13:45:54.187Z'
+                        updated_at: '2021-08-18T13:45:54.187Z'
                       relationships:
                         product:
                           data:
@@ -510,8 +510,8 @@ paths:
                       type: classification
                       attributes:
                         position: 1
-                        created_at: '2021-08-18T07:08:29.237Z'
-                        updated_at: '2021-08-18T07:08:29.237Z'
+                        created_at: '2021-08-18T13:45:54.545Z'
+                        updated_at: '2021-08-18T13:45:54.545Z'
                       relationships:
                         product:
                           data:
@@ -572,8 +572,8 @@ paths:
                       type: classification
                       attributes:
                         position: 1
-                        created_at: '2021-08-18T07:08:29.378Z'
-                        updated_at: '2021-08-18T07:08:29.378Z'
+                        created_at: '2021-08-18T13:45:54.675Z'
+                        updated_at: '2021-08-18T13:45:54.675Z'
                       relationships:
                         product:
                           data:
@@ -631,8 +631,8 @@ paths:
                       type: classification
                       attributes:
                         position: 1
-                        created_at: '2021-08-18T07:08:29.657Z'
-                        updated_at: '2021-08-18T07:08:29.657Z'
+                        created_at: '2021-08-18T13:45:54.951Z'
+                        updated_at: '2021-08-18T13:45:54.951Z'
                       relationships:
                         product:
                           data:
@@ -738,8 +738,8 @@ paths:
                       type: classification
                       attributes:
                         position: 2
-                        created_at: '2021-08-18T07:08:30.317Z'
-                        updated_at: '2021-08-18T07:08:30.336Z'
+                        created_at: '2021-08-18T13:45:55.595Z'
+                        updated_at: '2021-08-18T13:45:55.614Z'
                       relationships:
                         product:
                           data:
@@ -804,9 +804,9 @@ paths:
                         name: United States of America
                         numcode: 840
                         states_required: true
-                        updated_at: '2021-08-18T07:08:30.636Z'
+                        updated_at: '2021-08-18T13:45:55.899Z'
                         zipcode_required: true
-                        created_at: '2021-08-18T07:08:30.636Z'
+                        created_at: '2021-08-18T13:45:55.899Z'
                       relationships:
                         states:
                           data: []
@@ -819,9 +819,9 @@ paths:
                         name: NAME_2
                         numcode: 840
                         states_required: false
-                        updated_at: '2021-08-18T07:08:30.645Z'
+                        updated_at: '2021-08-18T13:45:55.908Z'
                         zipcode_required: true
-                        created_at: '2021-08-18T07:08:30.645Z'
+                        created_at: '2021-08-18T13:45:55.908Z'
                       relationships:
                         states:
                           data: []
@@ -834,9 +834,9 @@ paths:
                         name: NAME_3
                         numcode: 840
                         states_required: false
-                        updated_at: '2021-08-18T07:08:30.647Z'
+                        updated_at: '2021-08-18T13:45:55.910Z'
                         zipcode_required: true
-                        created_at: '2021-08-18T07:08:30.647Z'
+                        created_at: '2021-08-18T13:45:55.910Z'
                       relationships:
                         states:
                           data: []
@@ -889,9 +889,9 @@ paths:
                         name: NAME_6
                         numcode: 840
                         states_required: false
-                        updated_at: '2021-08-18T07:08:30.713Z'
+                        updated_at: '2021-08-18T13:45:55.975Z'
                         zipcode_required: true
-                        created_at: '2021-08-18T07:08:30.713Z'
+                        created_at: '2021-08-18T13:45:55.975Z'
                       relationships:
                         states:
                           data: []
@@ -957,8 +957,8 @@ paths:
                         name: foo-size-1
                         presentation: Size
                         position: 1
-                        created_at: '2021-08-18T07:08:30.787Z'
-                        updated_at: '2021-08-18T07:08:30.787Z'
+                        created_at: '2021-08-18T13:45:56.048Z'
+                        updated_at: '2021-08-18T13:45:56.048Z'
                         filterable: true
                       relationships:
                         option_values:
@@ -969,8 +969,8 @@ paths:
                         name: foo-size-2
                         presentation: Size
                         position: 2
-                        created_at: '2021-08-18T07:08:30.790Z'
-                        updated_at: '2021-08-18T07:08:30.790Z'
+                        created_at: '2021-08-18T13:45:56.050Z'
+                        updated_at: '2021-08-18T13:45:56.050Z'
                         filterable: true
                       relationships:
                         option_values:
@@ -1022,8 +1022,8 @@ paths:
                         name: foo-size-5
                         presentation: Size
                         position: 1
-                        created_at: '2021-08-18T07:08:30.866Z'
-                        updated_at: '2021-08-18T07:08:30.866Z'
+                        created_at: '2021-08-18T13:45:56.126Z'
+                        updated_at: '2021-08-18T13:45:56.126Z'
                         filterable: true
                       relationships:
                         option_values:
@@ -1081,8 +1081,8 @@ paths:
                         name: foo-size-6
                         presentation: Size
                         position: 1
-                        created_at: '2021-08-18T07:08:30.920Z'
-                        updated_at: '2021-08-18T07:08:30.920Z'
+                        created_at: '2021-08-18T13:45:56.169Z'
+                        updated_at: '2021-08-18T13:45:56.169Z'
                         filterable: true
                       relationships:
                         option_values:
@@ -1137,8 +1137,8 @@ paths:
                         name: Size-X
                         presentation: Size
                         position: 1
-                        created_at: '2021-08-18T07:08:31.000Z'
-                        updated_at: '2021-08-18T07:08:31.009Z'
+                        created_at: '2021-08-18T13:45:56.247Z'
+                        updated_at: '2021-08-18T13:45:56.257Z'
                         filterable: true
                       relationships:
                         option_values:
@@ -1252,8 +1252,8 @@ paths:
                         position: 1
                         name: Size-1
                         presentation: S
-                        created_at: '2021-08-18T07:08:31.178Z'
-                        updated_at: '2021-08-18T07:08:31.178Z'
+                        created_at: '2021-08-18T13:45:56.421Z'
+                        updated_at: '2021-08-18T13:45:56.421Z'
                       relationships:
                         option_type:
                           data:
@@ -1265,8 +1265,8 @@ paths:
                         position: 1
                         name: Size-2
                         presentation: S
-                        created_at: '2021-08-18T07:08:31.184Z'
-                        updated_at: '2021-08-18T07:08:31.184Z'
+                        created_at: '2021-08-18T13:45:56.426Z'
+                        updated_at: '2021-08-18T13:45:56.426Z'
                       relationships:
                         option_type:
                           data:
@@ -1319,8 +1319,8 @@ paths:
                         position: 1
                         name: Size-5
                         presentation: S
-                        created_at: '2021-08-18T07:08:31.265Z'
-                        updated_at: '2021-08-18T07:08:31.265Z'
+                        created_at: '2021-08-18T13:45:56.507Z'
+                        updated_at: '2021-08-18T13:45:56.507Z'
                       relationships:
                         option_type:
                           data:
@@ -1377,8 +1377,8 @@ paths:
                         position: 1
                         name: Size-6
                         presentation: S
-                        created_at: '2021-08-18T07:08:31.313Z'
-                        updated_at: '2021-08-18T07:08:31.313Z'
+                        created_at: '2021-08-18T13:45:56.554Z'
+                        updated_at: '2021-08-18T13:45:56.554Z'
                       relationships:
                         option_type:
                           data:
@@ -1434,8 +1434,8 @@ paths:
                         position: 1
                         name: M
                         presentation: S
-                        created_at: '2021-08-18T07:08:31.392Z'
-                        updated_at: '2021-08-18T07:08:31.403Z'
+                        created_at: '2021-08-18T13:45:56.630Z'
+                        updated_at: '2021-08-18T13:45:56.640Z'
                       relationships:
                         option_type:
                           data:
@@ -1553,8 +1553,8 @@ paths:
                         lft: 1
                         rgt: 6
                         description:
-                        created_at: '2021-08-18T07:08:31.598Z'
-                        updated_at: '2021-08-18T07:08:31.660Z'
+                        created_at: '2021-08-18T13:45:56.837Z'
+                        updated_at: '2021-08-18T13:45:56.897Z'
                         meta_title:
                         meta_description:
                         meta_keywords:
@@ -1588,8 +1588,8 @@ paths:
                         lft: 2
                         rgt: 3
                         description:
-                        created_at: '2021-08-18T07:08:31.623Z'
-                        updated_at: '2021-08-18T07:08:31.626Z'
+                        created_at: '2021-08-18T13:45:56.860Z'
+                        updated_at: '2021-08-18T13:45:56.863Z'
                         meta_title:
                         meta_description:
                         meta_keywords:
@@ -1623,8 +1623,8 @@ paths:
                         lft: 4
                         rgt: 5
                         description:
-                        created_at: '2021-08-18T07:08:31.647Z'
-                        updated_at: '2021-08-18T07:08:31.651Z'
+                        created_at: '2021-08-18T13:45:56.884Z'
+                        updated_at: '2021-08-18T13:45:56.888Z'
                         meta_title:
                         meta_description:
                         meta_keywords:
@@ -1699,8 +1699,8 @@ paths:
                         lft: 2
                         rgt: 3
                         description:
-                        created_at: '2021-08-18T07:08:31.823Z'
-                        updated_at: '2021-08-18T07:08:31.827Z'
+                        created_at: '2021-08-18T13:45:57.054Z'
+                        updated_at: '2021-08-18T13:45:57.058Z'
                         meta_title:
                         meta_description:
                         meta_keywords:
@@ -1779,8 +1779,8 @@ paths:
                         lft: 2
                         rgt: 3
                         description:
-                        created_at: '2021-08-18T07:08:31.918Z'
-                        updated_at: '2021-08-18T07:08:31.921Z'
+                        created_at: '2021-08-18T13:45:57.148Z'
+                        updated_at: '2021-08-18T13:45:57.151Z'
                         meta_title:
                         meta_description:
                         meta_keywords:
@@ -1860,8 +1860,8 @@ paths:
                         lft: 2
                         rgt: 3
                         description:
-                        created_at: '2021-08-18T07:08:32.084Z'
-                        updated_at: '2021-08-18T07:08:32.108Z'
+                        created_at: '2021-08-18T13:45:57.300Z'
+                        updated_at: '2021-08-18T13:45:57.324Z'
                         meta_title:
                         meta_description:
                         meta_keywords:
@@ -1992,9 +1992,12 @@ paths:
                     - id: '1'
                       type: user
                       attributes:
-                        email: luke@reilly.ca
-                        created_at: '2021-08-18T07:08:32.466Z'
-                        updated_at: '2021-08-18T07:08:32.466Z'
+                        email: christoper@douglasschiller.biz
+                        created_at: '2021-08-18T13:45:57.670Z'
+                        updated_at: '2021-08-18T13:45:57.670Z'
+                        average_order_value: []
+                        lifetime_value: []
+                        store_credits: []
                       relationships:
                         bill_address:
                           data:
@@ -2003,9 +2006,12 @@ paths:
                     - id: '2'
                       type: user
                       attributes:
-                        email: renna@gleichner.ca
-                        created_at: '2021-08-18T07:08:32.475Z'
-                        updated_at: '2021-08-18T07:08:32.475Z'
+                        email: latrina.hayes@nader.us
+                        created_at: '2021-08-18T13:45:57.680Z'
+                        updated_at: '2021-08-18T13:45:57.680Z'
+                        average_order_value: []
+                        lifetime_value: []
+                        store_credits: []
                       relationships:
                         bill_address:
                           data:
@@ -2014,9 +2020,12 @@ paths:
                     - id: '3'
                       type: user
                       attributes:
-                        email: lauryn.dare@lockman.co.uk
-                        created_at: '2021-08-18T07:08:32.477Z'
-                        updated_at: '2021-08-18T07:08:32.477Z'
+                        email: apolonia.boyle@hamill.com
+                        created_at: '2021-08-18T13:45:57.682Z'
+                        updated_at: '2021-08-18T13:45:57.682Z'
+                        average_order_value: []
+                        lifetime_value: []
+                        store_credits: []
                       relationships:
                         bill_address:
                           data:
@@ -2066,9 +2075,12 @@ paths:
                       id: '2'
                       type: user
                       attributes:
-                        email: hermila_jast@padberg.name
-                        created_at: '2021-08-18T07:08:32.569Z'
-                        updated_at: '2021-08-18T07:08:32.569Z'
+                        email: gertie_konopelski@raynorglover.com
+                        created_at: '2021-08-18T13:45:57.800Z'
+                        updated_at: '2021-08-18T13:45:57.800Z'
+                        average_order_value: []
+                        lifetime_value: []
+                        store_credits: []
                       relationships:
                         bill_address:
                           data:
@@ -2122,9 +2134,12 @@ paths:
                       id: '2'
                       type: user
                       attributes:
-                        email: monique@feest.com
-                        created_at: '2021-08-18T07:08:32.634Z'
-                        updated_at: '2021-08-18T07:08:32.634Z'
+                        email: demetrius_ortiz@mclaughlin.biz
+                        created_at: '2021-08-18T13:45:57.881Z'
+                        updated_at: '2021-08-18T13:45:57.881Z'
+                        average_order_value: []
+                        lifetime_value: []
+                        store_credits: []
                       relationships:
                         bill_address:
                           data:
@@ -2178,8 +2193,11 @@ paths:
                       type: user
                       attributes:
                         email: john@example.com
-                        created_at: '2021-08-18T07:08:32.732Z'
-                        updated_at: '2021-08-18T07:08:32.742Z'
+                        created_at: '2021-08-18T13:45:57.992Z'
+                        updated_at: '2021-08-18T13:45:58.002Z'
+                        average_order_value: []
+                        lifetime_value: []
+                        store_credits: []
                       relationships:
                         bill_address:
                           data:
