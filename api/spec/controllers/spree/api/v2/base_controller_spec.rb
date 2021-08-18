@@ -129,13 +129,14 @@ describe Spree::Api::V2::BaseController, type: :controller do
 
     shared_examples 'returns proper values' do
       before do
+        allow(dummy_controller).to receive(:params).and_return(ActionController::Parameters.new)
         allow(dummy_controller).to receive(:current_store).and_return(store)
         allow(dummy_controller).to receive(:current_currency).and_return(currency)
         allow(dummy_controller).to receive(:current_locale).and_return(locale)
         allow(dummy_controller).to receive(:spree_current_user).and_return(user)
       end
 
-      it { expect(dummy_controller.send(:serializer_params).keys).to eq(%i[currency locale store user]) }
+      it { expect(dummy_controller.send(:serializer_params).keys).to eq(%i[currency locale store user image_transformation]) }
 
       it do
         expect(dummy_controller.send(:serializer_params)).to eq(
@@ -143,7 +144,8 @@ describe Spree::Api::V2::BaseController, type: :controller do
             store: store,
             currency: currency,
             user: user,
-            locale: locale
+            locale: locale,
+            image_transformation: nil
           }
         )
       end
