@@ -4,7 +4,7 @@ module Spree
       class ImageSerializer < BaseSerializer
         set_type :image
 
-        attributes :viewable_type, :viewable_id, :styles
+        attributes :viewable_type, :viewable_id, :styles, :original_url
 
         attribute :transformed_url do |image, params|
           image.generate_url(size: params.dig(:image_transformation, :size))
