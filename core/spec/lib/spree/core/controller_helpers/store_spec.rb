@@ -107,7 +107,7 @@ describe Spree::Core::ControllerHelpers::Store, type: :controller do
           object.store = store_2
           object.save
 
-          expect { controller.ensure_current_store(object) }.to raise_error("Store is already set")
+          expect { controller.ensure_current_store(object) }.to raise_error('Store is already set')
         end
       end
     end
