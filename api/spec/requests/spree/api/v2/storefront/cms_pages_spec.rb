@@ -17,6 +17,8 @@ describe 'Storefront API v2 CMS Pages spec', type: :request do
 
     shared_examples 'returns proper JSON structure' do
       it 'with page attributes and relationships' do
+        page.reload
+
         expect(json_response['data'][0]).to have_type('cms_page')
         expect(json_response['data'][0]).to have_relationships(:cms_sections)
         expect(json_response['data'][0]['id']).to eq(page.id.to_s)
