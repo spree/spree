@@ -970,6 +970,8 @@ en:
     error: error
     errors:
       messages:
+        store_association_can_not_be_changed: The store association can not be changed
+        store_is_already_set: Store is already set
         blank: can't be blank
         could_not_create_taxon: Could not create taxon
         no_shipping_methods_available: No shipping methods available for selected location, please change your address and try again.

@@ -3,7 +3,8 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
 
   helper_method :new_object_url, :edit_object_url, :object_url, :collection_url
   before_action :load_resource, except: :update_positions
-  before_action :set_currency, :ensure_current_store, only: [:new, :create]
+  before_action :set_currency, :set_current_store, only: [:new, :create]
+
   rescue_from ActiveRecord::RecordNotFound, with: :resource_not_found
 
   respond_to :html
@@ -26,7 +27,7 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
   def update
     invoke_callbacks(:update, :before)
     if @object.update(permitted_resource_params)
-      ensure_current_store
+      set_current_store
       invoke_callbacks(:update, :after)
       respond_with(@object) do |format|
         format.html do
@@ -207,21 +208,17 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
     collection_url
   end
 
+  def set_current_store
+    return if @object.nil?
+
+    ensure_current_store(@object)
+  end
+
   def set_currency
     return if @object.nil?
 
     @object.currency = current_currency if model_class.method_defined?(:currency=)
     @object.cost_currency = current_currency if model_class.method_defined?(:cost_currency=)
-  end
-
-  def ensure_current_store
-    return if @object.nil?
-
-    if @object.has_attribute?(:store_id)
-      @object.store = current_store
-    elsif model_class.method_defined?(:stores) && @object.stores.exclude?(current_store)
-      @object.stores << current_store
-    end
   end
 
   # URL helpers

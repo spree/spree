@@ -30,7 +30,7 @@ module Spree
         end
         invoke_callbacks(:update, :before)
         if @object.update(permitted_resource_params)
-          ensure_current_store
+          set_current_store
           invoke_callbacks(:update, :after)
           flash[:success] = flash_message_for(@object, :successfully_updated)
           respond_with(@object) do |format|

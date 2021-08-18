@@ -22,6 +22,20 @@ module Spree
           current_store.default_locale
         end
 
+        def ensure_current_store(object)
+          return if object.nil?
+
+          if object.has_attribute?(:store_id)
+            if object.store.present? && object.store != current_store
+              raise Spree.t('errors.messages.store_is_already_set')
+            else
+              object.store = current_store
+            end
+          elsif object.class.method_defined?(:stores) && object.stores.exclude?(current_store)
+            object.stores << current_store
+          end
+        end
+
         # Return a Hash of things that influence the prices displayed in your shop.
         #
         # By default, the only thing that influences prices that is the current order's +tax_zone+
