@@ -103,13 +103,11 @@ describe Spree::Core::ControllerHelpers::Store, type: :controller do
       context 'when an object already has a store assigned' do
         object = Spree::Menu.new
 
-        it 'overrides the store with current_store' do
+        it 'raises an exception' do
           object.store = store_2
           object.save
 
-          controller.ensure_current_store(object)
-          expect(object.store).to eql(store)
-          expect(object.store).not_to eql(store_2)
+          expect { controller.ensure_current_store(object) }.to raise_error("Store is already set")
         end
       end
     end
