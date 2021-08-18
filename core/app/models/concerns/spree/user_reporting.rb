@@ -7,7 +7,7 @@ module Spree
       store ||= Store.default
 
       completed_orders(store).pluck(:currency).uniq.each_with_object([]) do |currency, arr|
-        arr << send("display_#{report_name}", store: store, currency: currency).to_s
+        arr << send("display_#{report_name}", store: store, currency: currency)
       end
     end
 

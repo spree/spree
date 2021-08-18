@@ -139,16 +139,16 @@ describe Spree.user_class, type: :model do
 
         context 'lifetime_value' do
           it 'returns a list of store lifetime values' do
-            expect(subject.report_values_for(:lifetime_value, store)).to eq([Spree::Money.new((order_count * order_value), currency: currency).to_s,
-                                                                             Spree::Money.new((eur_order_count * eur_order_value), currency: eur_currency).to_s])
+            expect(subject.report_values_for(:lifetime_value, store)).to eq([Spree::Money.new((order_count * order_value), currency: currency),
+                                                                             Spree::Money.new((eur_order_count * eur_order_value), currency: eur_currency)])
           end
         end
 
         context 'average_order_value' do
           context 'with orders' do
             it 'returns a list of average completed order prices for the user' do
-              expect(subject.report_values_for(:average_order_value, store)).to eq([Spree::Money.new((order_value), currency: currency).to_s,
-                                                                                    Spree::Money.new((eur_order_value), currency: eur_currency).to_s])
+              expect(subject.report_values_for(:average_order_value, store)).to eq([Spree::Money.new((order_value), currency: currency),
+                                                                                    Spree::Money.new((eur_order_value), currency: eur_currency)])
             end
           end
         end
@@ -244,7 +244,7 @@ describe Spree.user_class, type: :model do
 
       context 'store credits have never been used' do
         it 'returns store credit amount' do
-          expect(subject.available_store_credits(store)).to eq([Spree::Money.new(usd_amount, currency: 'USD').to_s])
+          expect(subject.available_store_credits(store)).to eq([Spree::Money.new(usd_amount, currency: 'USD')])
         end
       end
 
@@ -258,9 +258,9 @@ describe Spree.user_class, type: :model do
         end
 
         it 'returns sum of amounts' do
-          expect(subject.available_store_credits(store)).to match_array([Spree::Money.new(usd_amount, currency: 'USD').to_s,
-                                                                         Spree::Money.new(gbp_amount, currency: 'GBP').to_s,
-                                                                         Spree::Money.new(eur_amount, currency: 'EUR').to_s])
+          expect(subject.available_store_credits(store)).to match_array([Spree::Money.new(usd_amount, currency: 'USD'),
+                                                                         Spree::Money.new(gbp_amount, currency: 'GBP'),
+                                                                         Spree::Money.new(eur_amount, currency: 'EUR')])
         end
       end
     end

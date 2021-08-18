@@ -53,9 +53,9 @@ describe Spree::Api::V2::Platform::UserSerializer do
     it do
       expect(subject.serializable_hash[:data][:attributes]).to eq({
         email: user.email,
-        average_order_value: ["$110.00", "€110.00"],
-        lifetime_value: ["$110.00", "€110.00"],
-        store_credits: ["$100.00", "€90.00"],
+        average_order_value: [{ amount: '110.00', currency: 'USD' }, { amount: '110.00', currency: 'EUR' }],
+        lifetime_value: [{ amount: '110.00', currency: 'USD' }, { amount: '110.00', currency: 'EUR' }],
+        store_credits: [{ amount: '100.00', currency: 'USD' }, { amount: '90.00', currency: 'EUR' }],
         created_at: user.created_at,
         updated_at: user.updated_at
       })

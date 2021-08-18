@@ -69,7 +69,7 @@ module Spree
       store ||= Store.default
 
       store_credits.for_store(store).pluck(:currency).uniq.each_with_object([]) do |currency, arr|
-        arr << Spree::Money.new(total_available_store_credit(currency, store), currency: currency).to_s
+        arr << Spree::Money.new(total_available_store_credit(currency, store), currency: currency)
       end
     end
 
