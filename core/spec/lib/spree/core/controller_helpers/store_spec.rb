@@ -52,24 +52,73 @@ describe Spree::Core::ControllerHelpers::Store, type: :controller do
     context 'on an object that accepts multiple stores' do
       before { allow(controller).to receive(:current_store).and_return(store) }
 
-      object = Spree::Product.new
+      context 'when the object has no stores associated' do
+        object = Spree::Product.new
 
-      it 'object has only the current store set' do
-        controller.ensure_current_store(object)
-        expect(object.stores).to contain_exactly(store)
-        expect(object.stores).not_to contain_exactly(store_2)
+        it 'associates the object with the current_store' do
+          controller.ensure_current_store(object)
+          expect(object.stores).to contain_exactly(store)
+          expect(object.stores).not_to contain_exactly(store_2)
+        end
+      end
+
+      context 'when the object has a store pre assigned' do
+        object = Spree::Product.new
+
+        it 'adds the new store without removing the orgional store' do
+          object.stores << store_2
+          object.save
+
+          controller.ensure_current_store(object)
+          expect(object.stores).to contain_exactly(store, store_2)
+        end
+      end
+
+      context 'when the object has a store and the same store is attempted to be added' do
+        object = Spree::Product.new
+
+        it 'object is not changed' do
+          object.stores << store
+          object.save
+
+          controller.ensure_current_store(object)
+          expect(object.stores).to contain_exactly(store)
+        end
       end
     end
 
     context 'on a object that accepts a single store' do
       before { allow(controller).to receive(:current_store).and_return(store) }
 
-      object = Spree::Menu.new
+      context 'when no store is present' do
+        object = Spree::Menu.new
 
-      it 'object has the current store set' do
-        controller.ensure_current_store(object)
-        expect(object.store).to eql(store)
-        expect(object.store).not_to eql(store_2)
+        it 'sets the current_store' do
+          controller.ensure_current_store(object)
+          expect(object.store).to eql(store)
+          expect(object.store).not_to eql(store_2)
+        end
+      end
+
+      context 'when an object already has a store assigned' do
+        object = Spree::Menu.new
+
+        it 'overrides the store with current_store' do
+          object.store = store_2
+          object.save
+
+          controller.ensure_current_store(object)
+          expect(object.store).to eql(store)
+          expect(object.store).not_to eql(store_2)
+        end
+      end
+    end
+
+    context 'when an object that does not have store association is passed in' do
+      object = Spree::CmsSection.new
+
+      it 'returns nil' do
+        expect(controller.ensure_current_store(object)).to be_nil
       end
     end
 
