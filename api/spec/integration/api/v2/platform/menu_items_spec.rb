@@ -3,7 +3,7 @@ require 'swagger_helper'
 describe 'Menu Items API', swagger: true do
   include_context 'Platform API v2'
 
-  resource_name = 'Menu Item'
+  resource_name = 'MenuItem'
   include_example = 'linked_resource'
 
   let(:menu) { create(:menu, store: store) }

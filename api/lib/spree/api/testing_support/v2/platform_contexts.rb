@@ -148,7 +148,7 @@ end
 
 # create
 shared_examples 'POST create record' do |resource_name, include_example|
-  param_name = resource_name.parameterize.to_sym
+  param_name = resource_name.tableize.to_sym
 
   post "Creates #{resource_name.articleize}" do
     tags resource_name.pluralize
@@ -166,7 +166,7 @@ end
 
 # update
 shared_examples 'PUT update record' do |resource_name, include_example|
-  param_name = resource_name.parameterize.to_sym
+  param_name = resource_name.tableize.to_sym
 
   put "Updates #{resource_name.articleize}" do
     tags resource_name.pluralize

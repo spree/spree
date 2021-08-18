@@ -57,8 +57,8 @@ paths:
                         state_name:
                         alternative_phone: 555-555-0199
                         company: Company
-                        created_at: '2021-08-18T13:45:53.182Z'
-                        updated_at: '2021-08-18T13:45:53.182Z'
+                        created_at: '2021-08-18T20:53:28.803Z'
+                        updated_at: '2021-08-18T20:53:28.803Z'
                         deleted_at:
                         label:
                       relationships:
@@ -85,8 +85,8 @@ paths:
                         state_name:
                         alternative_phone: 555-555-0199
                         company: Company
-                        created_at: '2021-08-18T13:45:53.188Z'
-                        updated_at: '2021-08-18T13:45:53.188Z'
+                        created_at: '2021-08-18T20:53:28.805Z'
+                        updated_at: '2021-08-18T20:53:28.805Z'
                         deleted_at:
                         label:
                       relationships:
@@ -154,8 +154,8 @@ paths:
                         state_name:
                         alternative_phone: 555-555-0199
                         company: Company
-                        created_at: '2021-08-18T13:45:53.540Z'
-                        updated_at: '2021-08-18T13:45:53.540Z'
+                        created_at: '2021-08-18T20:53:28.913Z'
+                        updated_at: '2021-08-18T20:53:28.913Z'
                         deleted_at:
                         label:
                       relationships:
@@ -200,7 +200,7 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/address_params"
+              "$ref": "#/components/schemas/addresses_params"
   "/api/v2/platform/addresses/{id}":
     get:
       summary: Returns an Address
@@ -243,8 +243,8 @@ paths:
                         state_name:
                         alternative_phone: 555-555-0199
                         company: Company
-                        created_at: '2021-08-18T13:45:53.599Z'
-                        updated_at: '2021-08-18T13:45:53.599Z'
+                        created_at: '2021-08-18T20:53:28.935Z'
+                        updated_at: '2021-08-18T20:53:28.935Z'
                         deleted_at:
                         label:
                       relationships:
@@ -315,8 +315,8 @@ paths:
                         state_name:
                         alternative_phone: 555-555-0199
                         company: Company
-                        created_at: '2021-08-18T13:45:53.677Z'
-                        updated_at: '2021-08-18T13:45:53.688Z'
+                        created_at: '2021-08-18T20:53:28.966Z'
+                        updated_at: '2021-08-18T20:53:28.971Z'
                         deleted_at:
                         label:
                       relationships:
@@ -363,7 +363,7 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/address_params"
+              "$ref": "#/components/schemas/addresses_params"
     delete:
       summary: Deletes an Address
       tags:
@@ -439,8 +439,8 @@ paths:
                       type: classification
                       attributes:
                         position: 1
-                        created_at: '2021-08-18T13:45:54.112Z'
-                        updated_at: '2021-08-18T13:45:54.112Z'
+                        created_at: '2021-08-18T20:53:29.169Z'
+                        updated_at: '2021-08-18T20:53:29.169Z'
                       relationships:
                         product:
                           data:
@@ -454,8 +454,8 @@ paths:
                       type: classification
                       attributes:
                         position: 1
-                        created_at: '2021-08-18T13:45:54.187Z'
-                        updated_at: '2021-08-18T13:45:54.187Z'
+                        created_at: '2021-08-18T20:53:29.205Z'
+                        updated_at: '2021-08-18T20:53:29.205Z'
                       relationships:
                         product:
                           data:
@@ -510,8 +510,8 @@ paths:
                       type: classification
                       attributes:
                         position: 1
-                        created_at: '2021-08-18T13:45:54.545Z'
-                        updated_at: '2021-08-18T13:45:54.545Z'
+                        created_at: '2021-08-18T20:53:29.364Z'
+                        updated_at: '2021-08-18T20:53:29.364Z'
                       relationships:
                         product:
                           data:
@@ -538,7 +538,7 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/classification_params"
+              "$ref": "#/components/schemas/classifications_params"
   "/api/v2/platform/classifications/{id}":
     get:
       summary: Returns a Classification
@@ -572,8 +572,8 @@ paths:
                       type: classification
                       attributes:
                         position: 1
-                        created_at: '2021-08-18T13:45:54.675Z'
-                        updated_at: '2021-08-18T13:45:54.675Z'
+                        created_at: '2021-08-18T20:53:29.429Z'
+                        updated_at: '2021-08-18T20:53:29.429Z'
                       relationships:
                         product:
                           data:
@@ -631,8 +631,8 @@ paths:
                       type: classification
                       attributes:
                         position: 1
-                        created_at: '2021-08-18T13:45:54.951Z'
-                        updated_at: '2021-08-18T13:45:54.951Z'
+                        created_at: '2021-08-18T20:53:29.543Z'
+                        updated_at: '2021-08-18T20:53:29.543Z'
                       relationships:
                         product:
                           data:
@@ -673,7 +673,7 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/classification_params"
+              "$ref": "#/components/schemas/classifications_params"
     delete:
       summary: Deletes a Classification
       tags:
@@ -738,8 +738,8 @@ paths:
                       type: classification
                       attributes:
                         position: 2
-                        created_at: '2021-08-18T13:45:55.595Z'
-                        updated_at: '2021-08-18T13:45:55.614Z'
+                        created_at: '2021-08-18T20:53:29.856Z'
+                        updated_at: '2021-08-18T20:53:29.865Z'
                       relationships:
                         product:
                           data:
@@ -804,9 +804,9 @@ paths:
                         name: United States of America
                         numcode: 840
                         states_required: true
-                        updated_at: '2021-08-18T13:45:55.899Z'
+                        updated_at: '2021-08-18T20:53:29.986Z'
                         zipcode_required: true
-                        created_at: '2021-08-18T13:45:55.899Z'
+                        created_at: '2021-08-18T20:53:29.986Z'
                       relationships:
                         states:
                           data: []
@@ -819,9 +819,9 @@ paths:
                         name: NAME_2
                         numcode: 840
                         states_required: false
-                        updated_at: '2021-08-18T13:45:55.908Z'
+                        updated_at: '2021-08-18T20:53:29.990Z'
                         zipcode_required: true
-                        created_at: '2021-08-18T13:45:55.908Z'
+                        created_at: '2021-08-18T20:53:29.990Z'
                       relationships:
                         states:
                           data: []
@@ -834,9 +834,9 @@ paths:
                         name: NAME_3
                         numcode: 840
                         states_required: false
-                        updated_at: '2021-08-18T13:45:55.910Z'
+                        updated_at: '2021-08-18T20:53:29.991Z'
                         zipcode_required: true
-                        created_at: '2021-08-18T13:45:55.910Z'
+                        created_at: '2021-08-18T20:53:29.991Z'
                       relationships:
                         states:
                           data: []
@@ -889,12 +889,1061 @@ paths:
                         name: NAME_6
                         numcode: 840
                         states_required: false
-                        updated_at: '2021-08-18T13:45:55.975Z'
+                        updated_at: '2021-08-18T20:53:30.019Z'
                         zipcode_required: true
-                        created_at: '2021-08-18T13:45:55.975Z'
+                        created_at: '2021-08-18T20:53:30.019Z'
                       relationships:
                         states:
                           data: []
+        '404':
+          description: Record not found
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The resource you were looking for could not be found.
+        '401':
+          description: Authentication Failed
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The access token is invalid
+  "/api/v2/platform/menu_items":
+    get:
+      summary: Returns a list of MenuItems
+      tags:
+      - MenuItems
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: page
+        in: query
+        example: 1
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        example: 50
+        schema:
+          type: integer
+      - name: include
+        in: query
+        description: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: linked_resource
+        schema:
+          type: string
+      - name: filter
+        in: query
+        description: ''
+        example:
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Records returned
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    data:
+                    - id: '1'
+                      type: menu_item
+                      attributes:
+                        name: Repellendus atque dolores sapiente eaque vero hic.
+                        subtitle:
+                        destination:
+                        new_window: false
+                        item_type: Container
+                        linked_resource_type: URL
+                        code:
+                        lft: 1
+                        rgt: 16
+                        depth: 0
+                        created_at: '2021-08-18T20:53:30.065Z'
+                        updated_at: '2021-08-18T20:53:30.145Z'
+                        link:
+                        is_container: true
+                        is_root: true
+                        is_child: false
+                        is_leaf: false
+                      relationships:
+                        icon:
+                          data:
+                        menu:
+                          data:
+                            id: '1'
+                            type: menu
+                        parent:
+                          data:
+                        linked_resource:
+                          data:
+                        children:
+                          data:
+                          - id: '2'
+                            type: menu_item
+                          - id: '3'
+                            type: menu_item
+                          - id: '4'
+                            type: menu_item
+                          - id: '5'
+                            type: menu_item
+                          - id: '6'
+                            type: menu_item
+                          - id: '7'
+                            type: menu_item
+                          - id: '8'
+                            type: menu_item
+                    - id: '2'
+                      type: menu_item
+                      attributes:
+                        name: Link no. 1 To Somewhere
+                        subtitle:
+                        destination:
+                        new_window: false
+                        item_type: Link
+                        linked_resource_type: URL
+                        code:
+                        lft: 2
+                        rgt: 3
+                        depth: 1
+                        created_at: '2021-08-18T20:53:30.077Z'
+                        updated_at: '2021-08-18T20:53:30.079Z'
+                        link:
+                        is_container: false
+                        is_root: false
+                        is_child: true
+                        is_leaf: true
+                      relationships:
+                        icon:
+                          data:
+                            id: '1'
+                            type: icon
+                        menu:
+                          data:
+                            id: '1'
+                            type: menu
+                        parent:
+                          data:
+                            id: '1'
+                            type: menu_item
+                        linked_resource:
+                          data:
+                        children:
+                          data: []
+                    - id: '3'
+                      type: menu_item
+                      attributes:
+                        name: Link no. 2 To Somewhere
+                        subtitle:
+                        destination:
+                        new_window: false
+                        item_type: Link
+                        linked_resource_type: URL
+                        code:
+                        lft: 4
+                        rgt: 5
+                        depth: 1
+                        created_at: '2021-08-18T20:53:30.088Z'
+                        updated_at: '2021-08-18T20:53:30.090Z'
+                        link:
+                        is_container: false
+                        is_root: false
+                        is_child: true
+                        is_leaf: true
+                      relationships:
+                        icon:
+                          data:
+                            id: '2'
+                            type: icon
+                        menu:
+                          data:
+                            id: '1'
+                            type: menu
+                        parent:
+                          data:
+                            id: '1'
+                            type: menu_item
+                        linked_resource:
+                          data:
+                        children:
+                          data: []
+                    - id: '4'
+                      type: menu_item
+                      attributes:
+                        name: Link no. 3 To Somewhere
+                        subtitle:
+                        destination:
+                        new_window: false
+                        item_type: Link
+                        linked_resource_type: URL
+                        code:
+                        lft: 6
+                        rgt: 7
+                        depth: 1
+                        created_at: '2021-08-18T20:53:30.098Z'
+                        updated_at: '2021-08-18T20:53:30.100Z'
+                        link:
+                        is_container: false
+                        is_root: false
+                        is_child: true
+                        is_leaf: true
+                      relationships:
+                        icon:
+                          data:
+                            id: '3'
+                            type: icon
+                        menu:
+                          data:
+                            id: '1'
+                            type: menu
+                        parent:
+                          data:
+                            id: '1'
+                            type: menu_item
+                        linked_resource:
+                          data:
+                        children:
+                          data: []
+                    - id: '5'
+                      type: menu_item
+                      attributes:
+                        name: Link no. 4 To Somewhere
+                        subtitle:
+                        destination:
+                        new_window: false
+                        item_type: Link
+                        linked_resource_type: URL
+                        code:
+                        lft: 8
+                        rgt: 9
+                        depth: 1
+                        created_at: '2021-08-18T20:53:30.109Z'
+                        updated_at: '2021-08-18T20:53:30.110Z'
+                        link:
+                        is_container: false
+                        is_root: false
+                        is_child: true
+                        is_leaf: true
+                      relationships:
+                        icon:
+                          data:
+                            id: '4'
+                            type: icon
+                        menu:
+                          data:
+                            id: '1'
+                            type: menu
+                        parent:
+                          data:
+                            id: '1'
+                            type: menu_item
+                        linked_resource:
+                          data:
+                        children:
+                          data: []
+                    - id: '6'
+                      type: menu_item
+                      attributes:
+                        name: Link no. 5 To Somewhere
+                        subtitle:
+                        destination:
+                        new_window: false
+                        item_type: Link
+                        linked_resource_type: URL
+                        code:
+                        lft: 10
+                        rgt: 11
+                        depth: 1
+                        created_at: '2021-08-18T20:53:30.119Z'
+                        updated_at: '2021-08-18T20:53:30.120Z'
+                        link:
+                        is_container: false
+                        is_root: false
+                        is_child: true
+                        is_leaf: true
+                      relationships:
+                        icon:
+                          data:
+                            id: '5'
+                            type: icon
+                        menu:
+                          data:
+                            id: '1'
+                            type: menu
+                        parent:
+                          data:
+                            id: '1'
+                            type: menu_item
+                        linked_resource:
+                          data:
+                        children:
+                          data: []
+                    - id: '7'
+                      type: menu_item
+                      attributes:
+                        name: Link no. 6 To Somewhere
+                        subtitle:
+                        destination:
+                        new_window: false
+                        item_type: Link
+                        linked_resource_type: URL
+                        code:
+                        lft: 12
+                        rgt: 13
+                        depth: 1
+                        created_at: '2021-08-18T20:53:30.129Z'
+                        updated_at: '2021-08-18T20:53:30.131Z'
+                        link:
+                        is_container: false
+                        is_root: false
+                        is_child: true
+                        is_leaf: true
+                      relationships:
+                        icon:
+                          data:
+                            id: '6'
+                            type: icon
+                        menu:
+                          data:
+                            id: '1'
+                            type: menu
+                        parent:
+                          data:
+                            id: '1'
+                            type: menu_item
+                        linked_resource:
+                          data:
+                        children:
+                          data: []
+                    - id: '8'
+                      type: menu_item
+                      attributes:
+                        name: Link no. 7 To Somewhere
+                        subtitle:
+                        destination:
+                        new_window: false
+                        item_type: Link
+                        linked_resource_type: URL
+                        code:
+                        lft: 14
+                        rgt: 15
+                        depth: 1
+                        created_at: '2021-08-18T20:53:30.139Z'
+                        updated_at: '2021-08-18T20:53:30.141Z'
+                        link:
+                        is_container: false
+                        is_root: false
+                        is_child: true
+                        is_leaf: true
+                      relationships:
+                        icon:
+                          data:
+                            id: '7'
+                            type: icon
+                        menu:
+                          data:
+                            id: '1'
+                            type: menu
+                        parent:
+                          data:
+                            id: '1'
+                            type: menu_item
+                        linked_resource:
+                          data:
+                        children:
+                          data: []
+                    meta:
+                      count: 8
+                      total_count: 8
+                      total_pages: 1
+                    links:
+                      self: http://www.example.com/api/v2/platform/menu_items?page=1&per_page=&include=&filter=
+                      next: http://www.example.com/api/v2/platform/menu_items?include=&page=1&per_page=
+                      prev: http://www.example.com/api/v2/platform/menu_items?include=&page=1&per_page=
+                      last: http://www.example.com/api/v2/platform/menu_items?include=&page=1&per_page=
+                      first: http://www.example.com/api/v2/platform/menu_items?include=&page=1&per_page=
+        '401':
+          description: Authentication Failed
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The access token is invalid
+    post:
+      summary: Creates a MenuItem
+      tags:
+      - MenuItems
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: include
+        in: query
+        description: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: linked_resource
+        schema:
+          type: string
+      responses:
+        '201':
+          description: record created
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    data:
+                      id: '5'
+                      type: menu_item
+                      attributes:
+                        name: Link no. 18 To Somewhere
+                        subtitle:
+                        destination:
+                        new_window: false
+                        item_type: Link
+                        linked_resource_type: URL
+                        code:
+                        lft: 8
+                        rgt: 9
+                        depth: 1
+                        created_at: '2021-08-18T20:53:30.305Z'
+                        updated_at: '2021-08-18T20:53:30.307Z'
+                        link:
+                        is_container: false
+                        is_root: false
+                        is_child: true
+                        is_leaf: true
+                      relationships:
+                        icon:
+                          data:
+                        menu:
+                          data:
+                            id: '1'
+                            type: menu
+                        parent:
+                          data:
+                            id: '1'
+                            type: menu_item
+                        linked_resource:
+                          data:
+                        children:
+                          data: []
+        '422':
+          description: invalid request
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: Name can't be blank, Menu can't be blank, and Item type
+                      is not included in the list
+                    errors:
+                      name:
+                      - can't be blank
+                      menu:
+                      - can't be blank
+                      item_type:
+                      - is not included in the list
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/menu_items_params"
+  "/api/v2/platform/menu_items/{id}":
+    get:
+      summary: Returns a MenuItem
+      tags:
+      - MenuItems
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: include
+        in: query
+        description: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: linked_resource
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Record found
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    data:
+                      id: '5'
+                      type: menu_item
+                      attributes:
+                        name: Link no. 25 To Somewhere
+                        subtitle:
+                        destination:
+                        new_window: false
+                        item_type: Link
+                        linked_resource_type: URL
+                        code:
+                        lft: 8
+                        rgt: 9
+                        depth: 1
+                        created_at: '2021-08-18T20:53:30.405Z'
+                        updated_at: '2021-08-18T20:53:30.407Z'
+                        link:
+                        is_container: false
+                        is_root: false
+                        is_child: true
+                        is_leaf: true
+                      relationships:
+                        icon:
+                          data:
+                            id: '4'
+                            type: icon
+                        menu:
+                          data:
+                            id: '1'
+                            type: menu
+                        parent:
+                          data:
+                            id: '1'
+                            type: menu_item
+                        linked_resource:
+                          data:
+                        children:
+                          data: []
+        '404':
+          description: Record not found
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The resource you were looking for could not be found.
+        '401':
+          description: Authentication Failed
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The access token is invalid
+    put:
+      summary: Updates a MenuItem
+      tags:
+      - MenuItems
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: include
+        in: query
+        description: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: linked_resource
+        schema:
+          type: string
+      responses:
+        '200':
+          description: record updated
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    data:
+                      id: '5'
+                      type: menu_item
+                      attributes:
+                        name: Menu Item One
+                        subtitle:
+                        destination:
+                        new_window: false
+                        item_type: Link
+                        linked_resource_type: URL
+                        code:
+                        lft: 8
+                        rgt: 9
+                        depth: 1
+                        created_at: '2021-08-18T20:53:30.570Z'
+                        updated_at: '2021-08-18T20:53:30.580Z'
+                        link:
+                        is_container: false
+                        is_root: false
+                        is_child: true
+                        is_leaf: true
+                      relationships:
+                        icon:
+                          data:
+                            id: '4'
+                            type: icon
+                        menu:
+                          data:
+                            id: '1'
+                            type: menu
+                        parent:
+                          data:
+                            id: '1'
+                            type: menu_item
+                        linked_resource:
+                          data:
+                        children:
+                          data: []
+        '422':
+          description: invalid request
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: Name can't be blank
+                    errors:
+                      name:
+                      - can't be blank
+        '404':
+          description: Record not found
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The resource you were looking for could not be found.
+        '401':
+          description: Authentication Failed
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The access token is invalid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/menu_items_params"
+    delete:
+      summary: Deletes a MenuItem
+      tags:
+      - MenuItems
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Record deleted
+        '404':
+          description: Record not found
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The resource you were looking for could not be found.
+        '401':
+          description: Authentication Failed
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The access token is invalid
+  "/api/v2/platform/menu_items/{id}/reposition":
+    patch:
+      summary: Reposition a Menu Item
+      tags:
+      - MenuItems
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: record updated
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    data:
+                      id: '5'
+                      type: menu_item
+                      attributes:
+                        name: Link no. 62 To Somewhere
+                        subtitle:
+                        destination:
+                        new_window: false
+                        item_type: Link
+                        linked_resource_type: URL
+                        code:
+                        lft: 5
+                        rgt: 6
+                        depth: 2
+                        created_at: '2021-08-18T20:53:30.973Z'
+                        updated_at: '2021-08-18T20:53:30.988Z'
+                        link:
+                        is_container: false
+                        is_root: false
+                        is_child: true
+                        is_leaf: true
+                      relationships:
+                        icon:
+                          data:
+                            id: '4'
+                            type: icon
+                        menu:
+                          data:
+                            id: '1'
+                            type: menu
+                        parent:
+                          data:
+                            id: '3'
+                            type: menu_item
+                        linked_resource:
+                          data:
+                        children:
+                          data: []
+        '404':
+          description: Record not found
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The resource you were looking for could not be found.
+        '401':
+          description: Authentication Failed
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The access token is invalid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/menu_item_reposition_params"
+  "/api/v2/platform/menus":
+    get:
+      summary: Returns a list of Menus
+      tags:
+      - Menus
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: page
+        in: query
+        example: 1
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        example: 50
+        schema:
+          type: integer
+      - name: include
+        in: query
+        description: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: menu_items
+        schema:
+          type: string
+      - name: filter
+        in: query
+        description: ''
+        example: location_eq=header
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Records returned
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    data:
+                    - id: '1'
+                      type: menu
+                      attributes:
+                        name: Main Menu
+                        location: header
+                        locale: en
+                        created_at: '2021-08-18T20:53:31.104Z'
+                        updated_at: '2021-08-18T20:53:31.133Z'
+                      relationships:
+                        menu_items:
+                          data:
+                          - id: '1'
+                            type: menu_item
+                          - id: '3'
+                            type: menu_item
+                          - id: '4'
+                            type: menu_item
+                    - id: '2'
+                      type: menu
+                      attributes:
+                        name: Footer Menu
+                        location: footer
+                        locale: en
+                        created_at: '2021-08-18T20:53:31.109Z'
+                        updated_at: '2021-08-18T20:53:31.157Z'
+                      relationships:
+                        menu_items:
+                          data:
+                          - id: '2'
+                            type: menu_item
+                          - id: '5'
+                            type: menu_item
+                          - id: '6'
+                            type: menu_item
+                    meta:
+                      count: 2
+                      total_count: 2
+                      total_pages: 1
+                    links:
+                      self: http://www.example.com/api/v2/platform/menus?page=1&per_page=&include=&filter=
+                      next: http://www.example.com/api/v2/platform/menus?include=&page=1&per_page=
+                      prev: http://www.example.com/api/v2/platform/menus?include=&page=1&per_page=
+                      last: http://www.example.com/api/v2/platform/menus?include=&page=1&per_page=
+                      first: http://www.example.com/api/v2/platform/menus?include=&page=1&per_page=
+        '401':
+          description: Authentication Failed
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The access token is invalid
+    post:
+      summary: Creates a Menu
+      tags:
+      - Menus
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: include
+        in: query
+        description: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: menu_items
+        schema:
+          type: string
+      responses:
+        '201':
+          description: record created
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    data:
+                      id: '1'
+                      type: menu
+                      attributes:
+                        name: Main Menu
+                        location: header
+                        locale: en
+                        created_at: '2021-08-18T20:53:31.239Z'
+                        updated_at: '2021-08-18T20:53:31.242Z'
+                      relationships:
+                        menu_items:
+                          data:
+                          - id: '1'
+                            type: menu_item
+        '422':
+          description: invalid request
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: Name can't be blank, Locale can't be blank, and Location
+                      is not included in the list
+                    errors:
+                      name:
+                      - can't be blank
+                      locale:
+                      - can't be blank
+                      location:
+                      - is not included in the list
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/menus_params"
+  "/api/v2/platform/menus/{id}":
+    get:
+      summary: Returns a Menu
+      tags:
+      - Menus
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: include
+        in: query
+        description: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: menu_items
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Record found
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    data:
+                      id: '1'
+                      type: menu
+                      attributes:
+                        name: Main Menu
+                        location: header
+                        locale: en
+                        created_at: '2021-08-18T20:53:31.264Z'
+                        updated_at: '2021-08-18T20:53:31.267Z'
+                      relationships:
+                        menu_items:
+                          data:
+                          - id: '1'
+                            type: menu_item
+        '404':
+          description: Record not found
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The resource you were looking for could not be found.
+        '401':
+          description: Authentication Failed
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The access token is invalid
+    put:
+      summary: Updates a Menu
+      tags:
+      - Menus
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: include
+        in: query
+        description: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: menu_items
+        schema:
+          type: string
+      responses:
+        '200':
+          description: record updated
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    data:
+                      id: '1'
+                      type: menu
+                      attributes:
+                        name: Main Menu
+                        location: header
+                        locale: en
+                        created_at: '2021-08-18T20:53:31.310Z'
+                        updated_at: '2021-08-18T20:53:31.313Z'
+                      relationships:
+                        menu_items:
+                          data:
+                          - id: '1'
+                            type: menu_item
+        '422':
+          description: invalid request
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: Name can't be blank, Locale can't be blank, and Location
+                      is not included in the list
+                    errors:
+                      name:
+                      - can't be blank
+                      locale:
+                      - can't be blank
+                      location:
+                      - is not included in the list
+        '404':
+          description: Record not found
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The resource you were looking for could not be found.
+        '401':
+          description: Authentication Failed
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The access token is invalid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/menus_params"
+    delete:
+      summary: Deletes a Menu
+      tags:
+      - Menus
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Record deleted
         '404':
           description: Record not found
           content:
@@ -957,8 +2006,8 @@ paths:
                         name: foo-size-1
                         presentation: Size
                         position: 1
-                        created_at: '2021-08-18T13:45:56.048Z'
-                        updated_at: '2021-08-18T13:45:56.048Z'
+                        created_at: '2021-08-18T20:53:31.414Z'
+                        updated_at: '2021-08-18T20:53:31.414Z'
                         filterable: true
                       relationships:
                         option_values:
@@ -969,8 +2018,8 @@ paths:
                         name: foo-size-2
                         presentation: Size
                         position: 2
-                        created_at: '2021-08-18T13:45:56.050Z'
-                        updated_at: '2021-08-18T13:45:56.050Z'
+                        created_at: '2021-08-18T20:53:31.415Z'
+                        updated_at: '2021-08-18T20:53:31.415Z'
                         filterable: true
                       relationships:
                         option_values:
@@ -1022,8 +2071,8 @@ paths:
                         name: foo-size-5
                         presentation: Size
                         position: 1
-                        created_at: '2021-08-18T13:45:56.126Z'
-                        updated_at: '2021-08-18T13:45:56.126Z'
+                        created_at: '2021-08-18T20:53:31.452Z'
+                        updated_at: '2021-08-18T20:53:31.452Z'
                         filterable: true
                       relationships:
                         option_values:
@@ -1045,7 +2094,7 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/optiontype_params"
+              "$ref": "#/components/schemas/option_types_params"
   "/api/v2/platform/option_types/{id}":
     get:
       summary: Returns an OptionType
@@ -1081,8 +2130,8 @@ paths:
                         name: foo-size-6
                         presentation: Size
                         position: 1
-                        created_at: '2021-08-18T13:45:56.169Z'
-                        updated_at: '2021-08-18T13:45:56.169Z'
+                        created_at: '2021-08-18T20:53:31.473Z'
+                        updated_at: '2021-08-18T20:53:31.473Z'
                         filterable: true
                       relationships:
                         option_values:
@@ -1137,8 +2186,8 @@ paths:
                         name: Size-X
                         presentation: Size
                         position: 1
-                        created_at: '2021-08-18T13:45:56.247Z'
-                        updated_at: '2021-08-18T13:45:56.257Z'
+                        created_at: '2021-08-18T20:53:31.504Z'
+                        updated_at: '2021-08-18T20:53:31.508Z'
                         filterable: true
                       relationships:
                         option_values:
@@ -1174,7 +2223,7 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/optiontype_params"
+              "$ref": "#/components/schemas/option_types_params"
     delete:
       summary: Deletes an OptionType
       tags:
@@ -1252,8 +2301,8 @@ paths:
                         position: 1
                         name: Size-1
                         presentation: S
-                        created_at: '2021-08-18T13:45:56.421Z'
-                        updated_at: '2021-08-18T13:45:56.421Z'
+                        created_at: '2021-08-18T20:53:31.586Z'
+                        updated_at: '2021-08-18T20:53:31.586Z'
                       relationships:
                         option_type:
                           data:
@@ -1265,8 +2314,8 @@ paths:
                         position: 1
                         name: Size-2
                         presentation: S
-                        created_at: '2021-08-18T13:45:56.426Z'
-                        updated_at: '2021-08-18T13:45:56.426Z'
+                        created_at: '2021-08-18T20:53:31.589Z'
+                        updated_at: '2021-08-18T20:53:31.589Z'
                       relationships:
                         option_type:
                           data:
@@ -1319,8 +2368,8 @@ paths:
                         position: 1
                         name: Size-5
                         presentation: S
-                        created_at: '2021-08-18T13:45:56.507Z'
-                        updated_at: '2021-08-18T13:45:56.507Z'
+                        created_at: '2021-08-18T20:53:31.624Z'
+                        updated_at: '2021-08-18T20:53:31.624Z'
                       relationships:
                         option_type:
                           data:
@@ -1341,7 +2390,7 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/optionvalue_params"
+              "$ref": "#/components/schemas/option_values_params"
   "/api/v2/platform/option_values/{id}":
     get:
       summary: Returns an OptionValue
@@ -1377,8 +2426,8 @@ paths:
                         position: 1
                         name: Size-6
                         presentation: S
-                        created_at: '2021-08-18T13:45:56.554Z'
-                        updated_at: '2021-08-18T13:45:56.554Z'
+                        created_at: '2021-08-18T20:53:31.645Z'
+                        updated_at: '2021-08-18T20:53:31.645Z'
                       relationships:
                         option_type:
                           data:
@@ -1434,8 +2483,8 @@ paths:
                         position: 1
                         name: M
                         presentation: S
-                        created_at: '2021-08-18T13:45:56.630Z'
-                        updated_at: '2021-08-18T13:45:56.640Z'
+                        created_at: '2021-08-18T20:53:31.680Z'
+                        updated_at: '2021-08-18T20:53:31.684Z'
                       relationships:
                         option_type:
                           data:
@@ -1472,7 +2521,7 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/optionvalue_params"
+              "$ref": "#/components/schemas/option_values_params"
     delete:
       summary: Deletes an OptionValue
       tags:
@@ -1553,8 +2602,8 @@ paths:
                         lft: 1
                         rgt: 6
                         description:
-                        created_at: '2021-08-18T13:45:56.837Z'
-                        updated_at: '2021-08-18T13:45:56.897Z'
+                        created_at: '2021-08-18T20:53:31.772Z'
+                        updated_at: '2021-08-18T20:53:31.800Z'
                         meta_title:
                         meta_description:
                         meta_keywords:
@@ -1588,8 +2637,8 @@ paths:
                         lft: 2
                         rgt: 3
                         description:
-                        created_at: '2021-08-18T13:45:56.860Z'
-                        updated_at: '2021-08-18T13:45:56.863Z'
+                        created_at: '2021-08-18T20:53:31.783Z'
+                        updated_at: '2021-08-18T20:53:31.784Z'
                         meta_title:
                         meta_description:
                         meta_keywords:
@@ -1623,8 +2672,8 @@ paths:
                         lft: 4
                         rgt: 5
                         description:
-                        created_at: '2021-08-18T13:45:56.884Z'
-                        updated_at: '2021-08-18T13:45:56.888Z'
+                        created_at: '2021-08-18T20:53:31.794Z'
+                        updated_at: '2021-08-18T20:53:31.796Z'
                         meta_title:
                         meta_description:
                         meta_keywords:
@@ -1699,8 +2748,8 @@ paths:
                         lft: 2
                         rgt: 3
                         description:
-                        created_at: '2021-08-18T13:45:57.054Z'
-                        updated_at: '2021-08-18T13:45:57.058Z'
+                        created_at: '2021-08-18T20:53:31.884Z'
+                        updated_at: '2021-08-18T20:53:31.886Z'
                         meta_title:
                         meta_description:
                         meta_keywords:
@@ -1740,7 +2789,7 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/taxon_params"
+              "$ref": "#/components/schemas/taxons_params"
   "/api/v2/platform/taxons/{id}":
     get:
       summary: Returns a Taxon
@@ -1779,8 +2828,8 @@ paths:
                         lft: 2
                         rgt: 3
                         description:
-                        created_at: '2021-08-18T13:45:57.148Z'
-                        updated_at: '2021-08-18T13:45:57.151Z'
+                        created_at: '2021-08-18T20:53:31.924Z'
+                        updated_at: '2021-08-18T20:53:31.925Z'
                         meta_title:
                         meta_description:
                         meta_keywords:
@@ -1860,8 +2909,8 @@ paths:
                         lft: 2
                         rgt: 3
                         description:
-                        created_at: '2021-08-18T13:45:57.300Z'
-                        updated_at: '2021-08-18T13:45:57.324Z'
+                        created_at: '2021-08-18T20:53:32.002Z'
+                        updated_at: '2021-08-18T20:53:32.013Z'
                         meta_title:
                         meta_description:
                         meta_keywords:
@@ -1917,7 +2966,7 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/taxon_params"
+              "$ref": "#/components/schemas/taxons_params"
     delete:
       summary: Deletes a Taxon
       tags:
@@ -1992,9 +3041,9 @@ paths:
                     - id: '1'
                       type: user
                       attributes:
-                        email: christoper@douglasschiller.biz
-                        created_at: '2021-08-18T13:45:57.670Z'
-                        updated_at: '2021-08-18T13:45:57.670Z'
+                        email: luigi@feeney.ca
+                        created_at: '2021-08-18T20:53:32.178Z'
+                        updated_at: '2021-08-18T20:53:32.178Z'
                         average_order_value: []
                         lifetime_value: []
                         store_credits: []
@@ -2006,9 +3055,9 @@ paths:
                     - id: '2'
                       type: user
                       attributes:
-                        email: latrina.hayes@nader.us
-                        created_at: '2021-08-18T13:45:57.680Z'
-                        updated_at: '2021-08-18T13:45:57.680Z'
+                        email: echo@terry.biz
+                        created_at: '2021-08-18T20:53:32.181Z'
+                        updated_at: '2021-08-18T20:53:32.181Z'
                         average_order_value: []
                         lifetime_value: []
                         store_credits: []
@@ -2020,9 +3069,9 @@ paths:
                     - id: '3'
                       type: user
                       attributes:
-                        email: apolonia.boyle@hamill.com
-                        created_at: '2021-08-18T13:45:57.682Z'
-                        updated_at: '2021-08-18T13:45:57.682Z'
+                        email: makeda@rippinblick.co.uk
+                        created_at: '2021-08-18T20:53:32.182Z'
+                        updated_at: '2021-08-18T20:53:32.182Z'
                         average_order_value: []
                         lifetime_value: []
                         store_credits: []
@@ -2075,9 +3124,9 @@ paths:
                       id: '2'
                       type: user
                       attributes:
-                        email: gertie_konopelski@raynorglover.com
-                        created_at: '2021-08-18T13:45:57.800Z'
-                        updated_at: '2021-08-18T13:45:57.800Z'
+                        email: phyllis_deckow@kemmer.co.uk
+                        created_at: '2021-08-18T20:53:32.232Z'
+                        updated_at: '2021-08-18T20:53:32.232Z'
                         average_order_value: []
                         lifetime_value: []
                         store_credits: []
@@ -2101,7 +3150,7 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/user_params"
+              "$ref": "#/components/schemas/users_params"
   "/api/v2/platform/users/{id}":
     get:
       summary: Returns an User
@@ -2134,9 +3183,9 @@ paths:
                       id: '2'
                       type: user
                       attributes:
-                        email: demetrius_ortiz@mclaughlin.biz
-                        created_at: '2021-08-18T13:45:57.881Z'
-                        updated_at: '2021-08-18T13:45:57.881Z'
+                        email: scottie_ernser@roobwilliamson.com
+                        created_at: '2021-08-18T20:53:32.319Z'
+                        updated_at: '2021-08-18T20:53:32.319Z'
                         average_order_value: []
                         lifetime_value: []
                         store_credits: []
@@ -2193,8 +3242,8 @@ paths:
                       type: user
                       attributes:
                         email: john@example.com
-                        created_at: '2021-08-18T13:45:57.992Z'
-                        updated_at: '2021-08-18T13:45:58.002Z'
+                        created_at: '2021-08-18T20:53:32.362Z'
+                        updated_at: '2021-08-18T20:53:32.367Z'
                         average_order_value: []
                         lifetime_value: []
                         store_credits: []
@@ -2234,7 +3283,7 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/user_params"
+              "$ref": "#/components/schemas/users_params"
     delete:
       summary: Deletes an User
       tags:
@@ -2366,6 +3415,49 @@ components:
       required:
       - name
       - taxonomy_id
+    menu_params:
+      type: object
+      properties:
+        name:
+          type: string
+        location:
+          type: string
+        locale:
+          type: string
+      required:
+      - name
+      - location
+      - locale
+    menu_item_params:
+      type: object
+      properties:
+        name:
+          type: string
+        code:
+          type: string
+        subtitle:
+          type: string
+        destination:
+          type: string
+        new_window:
+          type: boolean
+        item_type:
+          type: string
+        linked_resource_type:
+          type: string
+        linked_resource_id:
+          type: integer
+      required:
+      - name
+    menu_item_reposition_params:
+      type: object
+      properties:
+        new_parent_id:
+          type: integer
+        new_position_idx:
+          type: integer
+      required:
+      - name
     resources_list:
       type: object
       properties:
