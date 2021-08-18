@@ -29,7 +29,7 @@ paths:
       summary: Get an Account
       tags:
         - Account
-      operationId: Account Information
+      operationId: account-information
       parameters:
         - $ref: '#/components/parameters/AccountIncludeParam'
         - $ref: '#/components/parameters/SparseFieldsParam'
@@ -94,18 +94,6 @@ paths:
                           state_code: NY
         '403':
           $ref: '#/components/responses/403Forbidden'
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  '':
-                    type: string
-              examples:
-                example-1:
-                  value:
-                    error: You are not authorized to access this page.
       security:
         - bearerAuth: []
     post:
@@ -116,7 +104,7 @@ paths:
       summary: Create an Account
       tags:
         - Account
-      operationId: Account Creation
+      operationId: account-creation
       requestBody:
         required: true
         content:
@@ -158,7 +146,7 @@ paths:
       summary: Update an Account
       tags:
         - Account
-      operationId: Account Updates
+      operationId: account-updates
       requestBody:
         required: true
         content:
@@ -205,7 +193,7 @@ paths:
       summary: List of Addresses
       tags:
         - Account
-      operationId: Addresses list
+      operationId: addresses-list
       responses:
         '200':
           description: Listing user addresses.
@@ -222,7 +210,7 @@ paths:
       summary: Create an Address
       tags:
         - Account
-      operationId: Create Address
+      operationId: create-address
       requestBody:
         required: true
         content:
@@ -248,9 +236,9 @@ paths:
       description: 'Removes selected Address for the signed in User. It uses soft-delete for addresses with shipments and orders.'
       tags:
         - Account
-      operationId: Remove Address
+      operationId: remove-address
       parameters:
-        - $ref: '#/components/parameters/AddressId'
+        - $ref: '#/components/parameters/Id'
       responses:
         '204':
           description: Requested Address has been removed from the User Account
@@ -264,9 +252,9 @@ paths:
       summary: Update Address
       tags:
         - Account
-      operationId: Update Address
+      operationId: update-address
       parameters:
-        - $ref: '#/components/parameters/AddressId'
+        - $ref: '#/components/parameters/Id'
       requestBody:
         required: true
         content:
@@ -293,7 +281,7 @@ paths:
       summary: List of Credit Cards
       tags:
         - Account
-      operationId: Credit Cards list
+      operationId: credit-cards-list
       responses:
         '200':
           description: Listing user credit cards.
@@ -310,7 +298,7 @@ paths:
           name: 'filter[payment_method_id]'
           schema:
             type: string
-          example: 2
+          example: "2"
           description: Filter based on payment method ID
         - $ref: '#/components/parameters/CreditCardIncludeParam'
         - $ref: '#/components/parameters/SparseFieldsParam'
@@ -319,8 +307,9 @@ paths:
       description: 'Removes selected credit card for the signed in User. It uses soft-delete.'
       tags:
         - Account
-      operationId: Remove Credit Card
+      operationId: remove-credit-card
       parameters:
+        - $ref: '#/components/parameters/Id'
         - $ref: '#/components/parameters/CreditCardIncludeParam'
         - $ref: '#/components/parameters/SparseFieldsParam'
       responses:
@@ -337,7 +326,7 @@ paths:
       summary: Get Default Credit Card
       tags:
         - Account
-      operationId: Default Credit Card
+      operationId: default-credit-card
       responses:
         '200':
           description: Listing user default credit card.
@@ -358,7 +347,7 @@ paths:
       summary: List of Orders
       tags:
         - Account
-      operationId: Completed Orders
+      operationId: completed-orders
       responses:
         '200':
           description: Listing user completed orders.
@@ -375,13 +364,13 @@ paths:
         - $ref: '#/components/parameters/PerPageParam'
       security:
         - bearerAuth: []
-  '/api/v2/storefront/account/orders/{number}':
+  '/api/v2/storefront/account/orders/{order_number}':
     get:
       description: Return the User's completed Order
       summary: Get an Order
       tags:
         - Account
-      operationId: Completed User Order
+      operationId: completed-user-order
       responses:
         '200':
           description: Listing user completed order.
@@ -397,7 +386,7 @@ paths:
         - $ref: '#/components/parameters/SparseFieldsParam'
       security:
         - bearerAuth: []
-  '/api/v2/storefront/order_status/{number}':
+  '/api/v2/storefront/order_status/{order_number}':
     get:
       description: |-
         Returns placed Order information. This endpoint is useful for fetching Order information for non-signed in Users. This way customers without an account can check their Order status (shipment/paymnet/processing/etc).
@@ -406,7 +395,7 @@ paths:
       summary: Get an Order Status
       tags:
         - Order Status
-      operationId: Order Status
+      operationId: order-status
       responses:
         '200':
           description: Requested Order information
@@ -432,7 +421,7 @@ paths:
         It is required to create a Cart before adding items to the Cart. After completing the Checkout you will need to create a new Cart.
       tags:
         - Cart
-      operationId: Create Cart
+      operationId: create-cart
       responses:
         '201':
           description: Cart was successfully created
@@ -463,7 +452,7 @@ paths:
                         currency: USD
                         state: cart
                         token: zdmOIe5GUtZhZdh0zeFv9w1581837294588
-                        email: null
+                        email: example@example.com
                         display_item_total: $0.00
                         display_ship_total: $0.00
                         display_adjustment_total: $0.00
@@ -490,6 +479,45 @@ paths:
                           data: null
                         shipping_address:
                           data: null
+                    included:
+                      - id: "2"
+                        type: "promotion"
+                        attributes:
+                          name: "10% Discount"
+                          description: "Super discount for you"
+                          amount: "-22.0"
+                          display_amount: "$22.00"
+                      - id: "4"
+                        type: "user"
+                        attributes:
+                          email: "example@example.com"
+                      - id: "1"
+                        type: "address"
+                        attributes:
+                          firstname: "Bob"
+                          lastname: "Billerson"
+                          address1: "1600 Clear View Pkwy"
+                          address2: "Mountain View"
+                          city: "LA"
+                          zipcode: '94043'
+                          phone: "(+1) 123 456 789"
+                          state_name: "California"
+                          state_code: "CA"
+                          country_name: "United States of America"
+                          country_iso3: "USA"
+                          company: null
+                      - id: "2832"
+                        type: "shipment"
+                        attributes:
+                          number: "H121354"
+                          free: false
+                          final_price: '10.0'
+                          display_final_price: '$10.00'
+                          tracking_url: 'https://tools.usps.com/go/TrackConfirmAction?tRef=fullpage&tLc=2&text28777=&tLabels=4123412434%2C'
+                          state: "shipped"
+                          shipped_at: '2019-01-02 13:42:12'
+
+
       parameters:
         - $ref: '#/components/parameters/CartIncludeParam'
         - $ref: '#/components/parameters/SparseFieldsParam'
@@ -501,7 +529,7 @@ paths:
         Shipments are canceled, payments are voided, then Line Items, Shipments & Payments are deleted.
       tags:
         - Cart
-      operationId: Deletes Cart
+      operationId: deletes-cart
       responses:
         '204':
           description: Current Cart has been removed.
@@ -514,7 +542,7 @@ paths:
       description: Returns contents of the currently used Cart
       tags:
         - Cart
-      operationId: Get Cart
+      operationId: get-cart
       responses:
         '200':
           description: Correct cart was returned
@@ -542,7 +570,7 @@ paths:
         ```
       tags:
         - Cart
-      operationId: Add Item
+      operationId: add-item
       responses:
         '200':
           description: Item was added to the Cart successfully
@@ -581,7 +609,7 @@ paths:
       description: Sets the quantity of a given line item. It has to be a positive integer greater than 0.
       tags:
         - Cart
-      operationId: Set Quantity
+      operationId: set-quantity
       responses:
         '200':
           description: New quantity has been successfully set for a requested Line Item
@@ -616,7 +644,7 @@ paths:
                 line_item_id: '1'
                 quantity: 5
       summary: Set Quantity of a Line Item
-  '/api/v2/storefront/cart/remove_line_item/{line_item_id}':
+  '/api/v2/storefront/cart/remove_line_item/{id}':
     delete:
       description: |-
         Removes Line Item from Cart. After removing Item system will re-calculate taxes, promotions, shipments etc.
@@ -624,9 +652,9 @@ paths:
         Updated Cart will be returned.
       tags:
         - Cart
-      operationId: Remove Line Item
+      operationId: remove-line-item
       parameters:
-        - $ref: '#/components/parameters/LineItemId'
+        - $ref: '#/components/parameters/Id'
         - $ref: '#/components/parameters/CartIncludeParam'
         - $ref: '#/components/parameters/SparseFieldsParam'
       responses:
@@ -650,7 +678,7 @@ paths:
         Returns updated Cart.
       tags:
         - Cart
-      operationId: Empty Cart
+      operationId: empty-cart
       responses:
         '200':
           description: Cart has been successfully emptied
@@ -672,7 +700,7 @@ paths:
       description: Applies a coupon code to the Cart
       tags:
         - Cart
-      operationId: Apply Coupon Code
+      operationId: apply-coupon-code
       responses:
         '200':
           description: Coupon code was applied successfully
@@ -708,11 +736,11 @@ paths:
       description: 'Removes a coupon code from the Cart. If no `coupon_code` aprameter is passed , it will remove all applied coupon codes.'
       tags:
         - Cart
-      operationId: Remove Coupon Code
+      operationId: remove-coupon-code
       parameters:
         - name: coupon_code
           in: path
-          required: false
+          required: true
           description: Selected Coupon code for removal
           schema:
             type: string
@@ -741,7 +769,7 @@ paths:
       description: Returns a list of Estimated Shipping Rates for Cart. Those are only estimates and can vary from the final shipping rates.
       tags:
         - Cart
-      operationId: Estimate Shipping Rates
+      operationId: estimate-shipping-rates
       parameters:
         - name: country_iso
           in: query
@@ -872,7 +900,7 @@ paths:
         This will complete the Checkout and mark the Order as completed. You cannot execute any operations on this Order anymore via Storefront API. Further operations on the Order are possible via Platform API.
       tags:
         - Checkout
-      operationId: Update Checkout
+      operationId: update-checkout
       responses:
         '200':
           description: Checkout was updated
@@ -929,7 +957,7 @@ paths:
       description: Goes to the next Checkout step
       tags:
         - Checkout
-      operationId: Checkout Next
+      operationId: checkout-next
       responses:
         '200':
           description: Checkout transitioned to the next step
@@ -957,7 +985,7 @@ paths:
       description: 'Advances Checkout to the furthest Checkout step validation allows, until the Complete step'
       tags:
         - Checkout
-      operationId: Advance Checkout
+      operationId: advance-checkout
       responses:
         '200':
           description: Checkout was advanced to the furthest step
@@ -985,7 +1013,7 @@ paths:
       description: Completes the Checkout
       tags:
         - Checkout
-      operationId: Complete Checkout
+      operationId: complete-checkout
       responses:
         '200':
           description: Checkout was completed
@@ -1012,7 +1040,7 @@ paths:
       description: 'Adds Store Credit payment if the currently signed in User has any available.'
       tags:
         - Checkout
-      operationId: Add Store Credit
+      operationId: add-store-credit
       responses:
         '200':
           description: Store Credit payment created
@@ -1037,7 +1065,7 @@ paths:
           description: Amount of Store Credit to use. As much as possible Store Credit will be applied if no amount is passed.
           schema:
             type: string
-          example: 100
+          example: "100"
         - $ref: '#/components/parameters/CartIncludeParam'
         - $ref: '#/components/parameters/SparseFieldsParam'
       summary: Add Store Credit
@@ -1046,7 +1074,7 @@ paths:
       description: Remove Store Credit payments if any applied
       tags:
         - Checkout
-      operationId: Remove Store Credit
+      operationId: remove-store-credit
       responses:
         '200':
           description: Store Credit payment removed
@@ -1074,7 +1102,7 @@ paths:
       description: Returns a list of available Payment Methods for this Checkout
       tags:
         - Checkout
-      operationId: Payment Methods
+      operationId: payment-methods
       responses:
         '200':
           description: Returns a list of available Payment Methods
@@ -1093,7 +1121,7 @@ paths:
       description: Returns a list of available Shipping Rates for Checkout. Shipping Rates are grouped against Shipments. Each checkout can have multiple Shipments eg. some products are available in stock and will be send out instantly and some needs to be backordered.
       tags:
         - Checkout
-      operationId: Shipping Rates
+      operationId: shipping-rates
       responses:
         '200':
           description: Returns a list of available Shipping Rates for Checkout
@@ -1112,7 +1140,7 @@ paths:
       description: Returns a list of Products for the current Store.
       tags:
         - Products
-      operationId: Products List
+      operationId: products-list
       parameters:
         - $ref: '#/components/parameters/FilterByIds'
         - $ref: '#/components/parameters/FilterBySKUs'
@@ -1181,7 +1209,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProductsList'
       summary: List of Products
-  '/api/v2/storefront/products/{id}':
+  '/api/v2/storefront/products/{product_slug}':
     get:
       description: |-
         Returns Product details. You can use product permalink:
@@ -1199,9 +1227,9 @@ paths:
         **Note** API will attempt a permalink lookup before an ID lookup.
       tags:
         - Products
-      operationId: Show Product
+      operationId: show-product
       parameters:
-        - $ref: '#/components/parameters/IdOrPermalink'
+        - $ref: '#/components/parameters/ProductSlug'
         - $ref: '#/components/parameters/ProductIncludeParam'
         - $ref: '#/components/parameters/SparseFieldsParam'
       responses:
@@ -3541,7 +3569,7 @@ paths:
       description: 'Returns a list of Taxons. [Read more about Taxons](https://dev-docs.spreecommerce.org/internals/products#taxons-and-taxonomies)'
       tags:
         - Taxons
-      operationId: Taxons List
+      operationId: taxons-list
       parameters:
         - $ref: '#/components/parameters/FilterByIds'
         - $ref: '#/components/parameters/FilterByName'
@@ -3575,7 +3603,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/TaxonsList'
       summary: List of Taxons
-  '/api/v2/storefront/taxons/{id}':
+  '/api/v2/storefront/taxons/{taxon_permalink}':
     get:
       description: |-
         Returns Taxon details.
@@ -3593,9 +3621,9 @@ paths:
         **Note** API will attempt a permalink lookup before an ID lookup.
       tags:
         - Taxons
-      operationId: Show Taxon
+      operationId: show-taxon
       parameters:
-        - $ref: '#/components/parameters/IdOrPermalink'
+        - $ref: '#/components/parameters/TaxonPermalink'
         - $ref: '#/components/parameters/TaxonIncludeParam'
         - $ref: '#/components/parameters/SparseFieldsParam'
       responses:
@@ -3863,7 +3891,7 @@ paths:
       description: Returns a list of all Countries
       tags:
         - Countries
-      operationId: Countries List
+      operationId: countries-list
       responses:
         '200':
           description: Returns a list of all Countries
@@ -3890,7 +3918,7 @@ paths:
         **Note** API will attempt a iso lookup before an iso3 lookup.
       tags:
         - Countries
-      operationId: Show Country
+      operationId: show-country
       parameters:
         - $ref: '#/components/parameters/IsoOrIso3'
         - $ref: '#/components/parameters/CountryIncludeParam'
@@ -3910,7 +3938,7 @@ paths:
       description: Returns the default Country for the application. By default this will be the US.
       tags:
         - Countries
-      operationId: Default Country
+      operationId: default-country
       parameters:
         - $ref: '#/components/parameters/CountryIncludeParam'
         - $ref: '#/components/parameters/SparseFieldsParam'
@@ -4032,6 +4060,7 @@ components:
               description: Country ISO3 code
             company:
               type: string
+              nullable: true
               example: Google Inc.
     AddressList:
       required:
@@ -4044,12 +4073,11 @@ components:
     Cart:
       properties:
         data:
-          type: object
           $ref: '#/components/schemas/CartAttributesWithRelationships'
         included:
           type: array
           items:
-            oneOf:
+            anyOf:
               - $ref: '#/components/schemas/Promotion'
               - $ref: '#/components/schemas/User'
               - $ref: '#/components/schemas/Address'
@@ -4079,7 +4107,7 @@ components:
           type: array
           items:
             type: object
-            oneOf:
+            anyOf:
               - $ref: '#/components/schemas/VariantAttributesAndRelationships'
               - $ref: '#/components/schemas/LineItem'
               - $ref: '#/components/schemas/Promotion'
@@ -4229,6 +4257,7 @@ components:
           minimum: 0
         special_instructions:
           type: string
+          nullable: true
           example: Please wrap it as a gift
           description: Message added by the Customer
         currency:
@@ -4292,7 +4321,7 @@ components:
           type: array
           items:
             type: object
-            oneOf:
+            anyOf:
               - $ref: '#/components/schemas/PaymentMethod'
     CreditCard:
       required:
@@ -4300,13 +4329,12 @@ components:
         - included
       properties:
         data:
-          type: object
           $ref: '#/components/schemas/CreditCardAttributesWithRelationships'
         included:
           type: array
           items:
             type: object
-            oneOf:
+            anyOf:
               - $ref: '#/components/schemas/PaymentMethod'
     CreditCardAttributes:
       type: object
@@ -4347,7 +4375,6 @@ components:
           type: string
           example: credit_card
         attributes:
-          type: object
           $ref: '#/components/schemas/CreditCardAttributes'
         relationships:
           type: object
@@ -4403,7 +4430,7 @@ components:
       properties:
         id:
           type: string
-          example: 1
+          example: "1"
         type:
           type: string
           default: user
@@ -4515,7 +4542,7 @@ components:
             name:
               type: string
               example: 10% Discount
-            descriptiom:
+            description:
               type: string
               example: Super discount for you
             amount:
@@ -4534,7 +4561,7 @@ components:
         included:
           type: array
           items:
-            oneOf:
+            anyOf:
               - $ref: '#/components/schemas/OptionType'
               - $ref: '#/components/schemas/OptionValue'
               - $ref: '#/components/schemas/ProductProperty'
@@ -4559,7 +4586,7 @@ components:
         included:
           type: array
           items:
-            oneOf:
+            anyOf:
               - $ref: '#/components/schemas/OptionType'
               - $ref: '#/components/schemas/OptionValue'
               - $ref: '#/components/schemas/ProductProperty'
@@ -4683,7 +4710,7 @@ components:
         included:
           type: array
           items:
-            oneOf:
+            anyOf:
               - $ref: '#/components/schemas/ProductAttributesAndRelationships'
               - $ref: '#/components/schemas/TaxonAttributesAndRelationships'
               - $ref: '#/components/schemas/TaxonomyAttributesAndRelationships'
@@ -4705,12 +4732,15 @@ components:
           example: Clothes - T-shirts
         meta_title:
           type: string
+          nullable: true
           example: T-shirts
         meta_description:
           type: string
+          nullable: true
           example: 'A list of cool t-shirts '
         meta_keywords:
           type: string
+          nullable: true
           example: 't-shirts, cool'
         left:
           type: integer
@@ -4723,6 +4753,7 @@ components:
           example: 0
         depth:
           type: integer
+          nullable: true
           example: 1
         is_root:
           type: boolean
@@ -4806,7 +4837,7 @@ components:
         included:
           type: array
           items:
-            oneOf:
+            anyOf:
               - $ref: '#/components/schemas/TaxonAttributesAndRelationships'
               - $ref: '#/components/schemas/TaxonImage'
               - $ref: '#/components/schemas/TaxonomyAttributesAndRelationships'
@@ -4976,7 +5007,7 @@ components:
         included:
           type: array
           items:
-            oneOf:
+            anyOf:
               - $ref: '#/components/schemas/Image'
               - $ref: '#/components/schemas/OptionValue'
               - $ref: '#/components/schemas/OptionType'
@@ -5076,7 +5107,7 @@ components:
         included:
           type: array
           items:
-            oneOf:
+            anyOf:
               - $ref: '#/components/schemas/State'
       description: 'Countries within Spree are used as a container for states. Countries can be zone members, and also link to an address. The difference between one country and another on an address record can determine which tax rates and shipping methods are used for the order.[Read more about Countries in Spree](https://dev-docs.spreecommerce.org/internals/addresses#countries)'
     CountriesList:
@@ -5247,7 +5278,7 @@ components:
         shipped_at:
           type: string
           format: date-time
-          example: '2019-01-02 13:42:12 UTC'
+          example: '2019-01-02 13:42:12'
           description: Date when Shipment was being sent from the warehouse
     ShippingRatesList:
       required:
@@ -5261,7 +5292,7 @@ components:
         included:
           type: array
           items:
-            oneOf:
+            anyOf:
               - $ref: '#/components/schemas/ShippingRate'
               - $ref: '#/components/schemas/StockLocation'
     EstimateShippingRatesList:
@@ -5340,7 +5371,7 @@ components:
         included:
           type: array
           items:
-            oneOf:
+            anyOf:
               - $ref: '#/components/schemas/Address'
       required:
         - data
@@ -5433,11 +5464,11 @@ components:
         - state_name
         - country_iso
   parameters:
-    AddressId:
-      name: address_id
+    Id:
+      name: id
       in: path
       required: true
-      description: Address ID
+      description: id
       schema:
         type: string
       example: '1'
@@ -5456,22 +5487,22 @@ components:
         ```
 
         [More information](https://jsonapi.org/format/#fetching-includes)
-    IdOrPermalink:
-      name: id
+    ProductSlug:
+      name: product_slug
       in: path
       required: true
-      description: ID or a permalink
+      description: Product Slug
       schema:
         type: string
       example: knitted-high-neck-sweater
-    LineItemId:
-      name: line_item_id
+    TaxonPermalink:
+      name: taxon_permalink
       in: path
       required: true
-      description: Line Item ID
+      description: Taxon Permalink
       schema:
         type: string
-      example: '1'
+      example: "categories/women"
     PageParam:
       name: page
       in: query
@@ -5485,9 +5516,9 @@ components:
       description: Number of requested records per page when paginating collection
       schema:
         type: integer
-      example: null
+      example: 25
     OrderParam:
-      name: number
+      name: order_number
       in: path
       required: true
       description: Number of Order
@@ -5592,7 +5623,7 @@ components:
         [More information](https://jsonapi.org/format/#fetching-sparse-fieldsets)
       example: '[cart]=total,currency,number'
       schema:
-        type: object
+        type: string
   responses:
     404NotFound:
       description: Resource not found
@@ -5614,3 +5645,12 @@ components:
                 type: string
                 example: You are not authorized to access this page.
                 default: You are not authorized to access this page.
+
+tags:
+  - name: Account
+  - name: Cart
+  - name: Checkout
+  - name: Countries
+  - name: Order Status
+  - name: Products
+  - name: Taxons
