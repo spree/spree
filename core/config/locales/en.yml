@@ -564,6 +564,9 @@ en:
         draft_mode: Draft Mode
         full_width: Full width
         link_to_taxon: Link to Taxon
+        mobile: Mobile
+        tablet: Tablet
+        desktop: Desktop
         title: Title
         fit: Fit To
         info_hero_image_body: "<p>The Hero Image section adds a large image with a button and tagline text to your page.</p>

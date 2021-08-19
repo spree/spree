@@ -3,8 +3,6 @@ module Spree
     class MenuItemsController < ResourceController
       belongs_to 'spree/menu'
 
-      before_action :load_data
-
       def collection_url
         spree.edit_admin_menu_path(@menu)
       end
@@ -21,12 +19,6 @@ module Spree
           flash[:error] = Spree.t('errors.messages.cannot_remove_icon')
           render :edit
         end
-      end
-
-      private
-
-      def load_data
-        @menu_item_types = Spree::MenuItem::ITEM_TYPE
       end
     end
   end

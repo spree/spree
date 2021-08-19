@@ -8,7 +8,7 @@
         <div class="card-body">
           <%= f.field_container :item_type, class: ['form-group'] do %>
             <%= f.label :item_type, Spree.t('admin.navigation.item_type') %>
-            <%= f.select(:item_type, @menu_item_types, {include_blank: false}) %>
+            <%= f.select(:item_type, spree_humanize_dropdown_values('Spree::MenuItem', { const: 'ITEM_TYPE' }), { include_blank: false }) %>
             <%= f.error_message_on :item_type %>
           <% end %>
 
@@ -23,7 +23,7 @@
 
           <%= f.field_container :parent_id, class: ['form-group'] do %>
             <%= f.label :parent_id, Spree.t('admin.navigation.nested_under') %>
-            <%= f.select :parent_id, nested_set_options(@menu.menu_items, @menu_item) {|i| "#{'-' * i.level} #{i.name}" }, {include_blank: false}, {class: 'select2'} %>
+            <%= f.select :parent_id, nested_set_options(@menu.menu_items, @menu_item) {|i| "#{'-' * i.level} #{i.name}" }, { include_blank: false }, { class: 'select2' } %>
             <%= f.error_message_on :parent_id %>
             <small class="form-text text-muted">
               <%= Spree.t('admin.navigation.nested_under_info') %>
@@ -95,7 +95,7 @@
               <div class="col-12 col-md-6">
                 <%= f.field_container :linked_resource_type, class: ['form-group'] do %>
                   <%= f.label :linked_resource_type, Spree.t('admin.navigation.link_to') %>
-                  <%= f.select(:linked_resource_type, spree_humanize_dropdown_values('Spree::MenuItem', {const: 'LINKED_RESOURCE_TYPE'}), {include_blank: false}, class: 'link_switcher') %>
+                  <%= f.select(:linked_resource_type, spree_humanize_dropdown_values('Spree::MenuItem', { const: 'LINKED_RESOURCE_TYPE' }), { include_blank: false }, class: 'link_switcher') %>
                   <%= f.error_message_on :linked_resource_type %>
                 <% end %>
               </div>

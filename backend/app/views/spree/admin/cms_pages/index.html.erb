@@ -7,7 +7,7 @@
 <% end if can?(:create, Spree::CmsPage) %>
 
 <% content_for :table_filter do %>
-  <div data-hook="admin_menus_sidebar">
+  <div data-hook="admin_cms_pages_sidebar">
     <%= search_form_for [:admin, @search] do |f| %>
       <%- locals = {f: f} %>
       <div class="row">
@@ -21,7 +21,7 @@
         <div class="col-12 col-lg-4">
           <div class="form-group">
             <%= label_tag :q_type_eq, Spree.t(:type) %>
-            <%= f.select(:type_eq, spree_humanize_dropdown_values('Spree::CmsPage', {const: 'TYPES'}), {include_blank: true}, class: 'select2-clear js-filterable') %>
+            <%= f.select(:type_eq, spree_humanize_dropdown_values('Spree::CmsPage', { const: 'TYPES' }), { include_blank: true }, class: 'select2-clear js-filterable') %>
           </div>
         </div>
 
@@ -33,7 +33,7 @@
         </div>
       </div>
 
-      <div data-hook="admin_menus_index_search_buttons" class="form-actions">
+      <div data-hook="admin_cms_pages_index_search_buttons" class="form-actions">
         <%= button Spree.t(:search), 'search.svg' %>
       </div>
     <% end %>

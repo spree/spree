@@ -9,13 +9,13 @@
         <div class="col d-none d-md-flex justify-content-end">
           <div id="LiveViewSwitcher" class="btn-group btn-group-toggle" data-toggle="buttons">
             <label class="btn btn-outline-primary active">
-              <input type="radio" name="options" id="mobileLiveView" autocomplete="off"> Mobile
+              <input type="radio" name="options" id="mobileLiveView" autocomplete="off"> <%= Spree.t('admin.cms.mobile') %>
             </label>
             <label class="btn btn-outline-primary">
-              <input type="radio" name="options" id="tabletLiveView" autocomplete="off"> Tablet
+              <input type="radio" name="options" id="tabletLiveView" autocomplete="off"> <%= Spree.t('admin.cms.tablet') %>
             </label>
             <label class="btn btn-outline-primary">
-              <input type="radio" name="options" id="desktopLiveView" autocomplete="off" checked> Desktop
+              <input type="radio" name="options" id="desktopLiveView" autocomplete="off" checked> <%= Spree.t('admin.cms.desktop') %>
             </label>
           </div>
 
