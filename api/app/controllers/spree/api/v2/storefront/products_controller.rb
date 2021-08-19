@@ -42,6 +42,10 @@ module Spree
           def scope_includes
             product_list_includes
           end
+
+          def allowed_sort_attributes
+            super << :available_on
+          end
         end
       end
     end
