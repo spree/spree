@@ -29,7 +29,7 @@ paths:
       summary: Get an Account
       tags:
         - Account
-      operationId: Account Information
+      operationId: account-information
       parameters:
         - $ref: '#/components/parameters/AccountIncludeParam'
         - $ref: '#/components/parameters/SparseFieldsParam'
@@ -94,18 +94,6 @@ paths:
                           state_code: NY
         '403':
           $ref: '#/components/responses/403Forbidden'
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  '':
-                    type: string
-              examples:
-                example-1:
-                  value:
-                    error: You are not authorized to access this page.
       security:
         - bearerAuth: []
     post:
@@ -116,7 +104,7 @@ paths:
       summary: Create an Account
       tags:
         - Account
-      operationId: Account Creation
+      operationId: account-creation
       requestBody:
         required: true
         content:
@@ -158,7 +146,7 @@ paths:
       summary: Update an Account
       tags:
         - Account
-      operationId: Account Updates
+      operationId: account-updates
       requestBody:
         required: true
         content:
@@ -205,7 +193,7 @@ paths:
       summary: List of Addresses
       tags:
         - Account
-      operationId: Addresses list
+      operationId: addresses-list
       responses:
         '200':
           description: Listing user addresses.
@@ -222,7 +210,7 @@ paths:
       summary: Create an Address
       tags:
         - Account
-      operationId: Create Address
+      operationId: create-address
       requestBody:
         required: true
         content:
@@ -248,9 +236,9 @@ paths:
       description: 'Removes selected Address for the signed in User. It uses soft-delete for addresses with shipments and orders.'
       tags:
         - Account
-      operationId: Remove Address
+      operationId: remove-address
       parameters:
-        - $ref: '#/components/parameters/AddressId'
+        - $ref: '#/components/parameters/Id'
       responses:
         '204':
           description: Requested Address has been removed from the User Account
@@ -261,12 +249,12 @@ paths:
       summary: Remove Address
     patch:
       description: Update selected Address for the signed in User
-      summary: List of Addresses
+      summary: Update Address
       tags:
         - Account
-      operationId: Update Address
+      operationId: update-address
       parameters:
-        - $ref: '#/components/parameters/AddressId'
+        - $ref: '#/components/parameters/Id'
       requestBody:
         required: true
         content:
@@ -293,7 +281,7 @@ paths:
       summary: List of Credit Cards
       tags:
         - Account
-      operationId: Credit Cards list
+      operationId: credit-cards-list
       responses:
         '200':
           description: Listing user credit cards.
@@ -310,17 +298,35 @@ paths:
           name: 'filter[payment_method_id]'
           schema:
             type: string
-          example: 2
+          example: "2"
           description: Filter based on payment method ID
         - $ref: '#/components/parameters/CreditCardIncludeParam'
         - $ref: '#/components/parameters/SparseFieldsParam'
+  '/api/v2/storefront/account/credit_cards/{id}':
+    delete:
+      description: 'Removes selected credit card for the signed in User. It uses soft-delete.'
+      tags:
+        - Account
+      operationId: remove-credit-card
+      parameters:
+        - $ref: '#/components/parameters/Id'
+        - $ref: '#/components/parameters/CreditCardIncludeParam'
+        - $ref: '#/components/parameters/SparseFieldsParam'
+      responses:
+        '204':
+          description: Requested Credit Card has been removed from the User Account
+        '404':
+          $ref: '#/components/responses/404NotFound'
+      security:
+        - bearerAuth: []
+      summary: Remove Credit Card
   /api/v2/storefront/account/credit_cards/default:
     get:
       description: Return the User's default Credit Card
       summary: Get Default Credit Card
       tags:
         - Account
-      operationId: Default Credit Card
+      operationId: default-credit-card
       responses:
         '200':
           description: Listing user default credit card.
@@ -341,7 +347,7 @@ paths:
       summary: List of Orders
       tags:
         - Account
-      operationId: Completed Orders
+      operationId: completed-orders
       responses:
         '200':
           description: Listing user completed orders.
@@ -358,13 +364,13 @@ paths:
         - $ref: '#/components/parameters/PerPageParam'
       security:
         - bearerAuth: []
-  '/api/v2/storefront/account/orders/{number}':
+  '/api/v2/storefront/account/orders/{order_number}':
     get:
       description: Return the User's completed Order
       summary: Get an Order
       tags:
         - Account
-      operationId: Completed User Order
+      operationId: completed-user-order
       responses:
         '200':
           description: Listing user completed order.
@@ -380,7 +386,7 @@ paths:
         - $ref: '#/components/parameters/SparseFieldsParam'
       security:
         - bearerAuth: []
-  '/api/v2/storefront/order_status/{number}':
+  '/api/v2/storefront/order_status/{order_number}':
     get:
       description: |-
         Returns placed Order information. This endpoint is useful for fetching Order information for non-signed in Users. This way customers without an account can check their Order status (shipment/paymnet/processing/etc).
@@ -389,7 +395,7 @@ paths:
       summary: Get an Order Status
       tags:
         - Order Status
-      operationId: Order Status
+      operationId: order-status
       responses:
         '200':
           description: Requested Order information
@@ -415,7 +421,7 @@ paths:
         It is required to create a Cart before adding items to the Cart. After completing the Checkout you will need to create a new Cart.
       tags:
         - Cart
-      operationId: Create Cart
+      operationId: create-cart
       responses:
         '201':
           description: Cart was successfully created
@@ -446,7 +452,7 @@ paths:
                         currency: USD
                         state: cart
                         token: zdmOIe5GUtZhZdh0zeFv9w1581837294588
-                        email: null
+                        email: example@example.com
                         display_item_total: $0.00
                         display_ship_total: $0.00
                         display_adjustment_total: $0.00
@@ -473,15 +479,70 @@ paths:
                           data: null
                         shipping_address:
                           data: null
+                    included:
+                      - id: "2"
+                        type: "promotion"
+                        attributes:
+                          name: "10% Discount"
+                          description: "Super discount for you"
+                          amount: "-22.0"
+                          display_amount: "$22.00"
+                      - id: "4"
+                        type: "user"
+                        attributes:
+                          email: "example@example.com"
+                      - id: "1"
+                        type: "address"
+                        attributes:
+                          firstname: "Bob"
+                          lastname: "Billerson"
+                          address1: "1600 Clear View Pkwy"
+                          address2: "Mountain View"
+                          city: "LA"
+                          zipcode: '94043'
+                          phone: "(+1) 123 456 789"
+                          state_name: "California"
+                          state_code: "CA"
+                          country_name: "United States of America"
+                          country_iso3: "USA"
+                          company: null
+                      - id: "2832"
+                        type: "shipment"
+                        attributes:
+                          number: "H121354"
+                          free: false
+                          final_price: '10.0'
+                          display_final_price: '$10.00'
+                          tracking_url: 'https://tools.usps.com/go/TrackConfirmAction?tRef=fullpage&tLc=2&text28777=&tLabels=4123412434%2C'
+                          state: "shipped"
+                          shipped_at: '2019-01-02 13:42:12'
+
+
       parameters:
         - $ref: '#/components/parameters/CartIncludeParam'
         - $ref: '#/components/parameters/SparseFieldsParam'
       summary: Create a Cart
+    delete:
+      description: |-
+        Deletes Cart.
+        Endpoint can be called after PATCH /api/v2/storefront/cart/empty, or individually.
+        Shipments are canceled, payments are voided, then Line Items, Shipments & Payments are deleted.
+      tags:
+        - Cart
+      operationId: deletes-cart
+      responses:
+        '204':
+          description: Current Cart has been removed.
+        '404':
+          $ref: '#/components/responses/404NotFound'
+      security:
+        - bearerAuth: [ ]
+      summary: Deletes Cart
     get:
       description: Returns contents of the currently used Cart
       tags:
         - Cart
-      operationId: Get Cart
+      operationId: get-cart
       responses:
         '200':
           description: Correct cart was returned
@@ -502,14 +563,14 @@ paths:
   /api/v2/storefront/cart/add_item:
     post:
       description: |-
-        Additional parameters passed in **options** hash must be registered in `config/initialiers/spree.rb`, eg.
+        Additional parameters passed in **options** hash must be registered in `config/initializers/spree.rb`, eg.
 
         ```
           Spree::PermittedAttributes.line_item_attributes << :foo
         ```
       tags:
         - Cart
-      operationId: Add Item
+      operationId: add-item
       responses:
         '200':
           description: Item was added to the Cart successfully
@@ -538,7 +599,7 @@ paths:
                   type: integer
                 options:
                   type: object
-                  description: 'Additional custom options. You need to add them via `Spree::PermittedAttributes.line_item_attributes << :foo` in `config/initialiers/spree.rb`'
+                  description: 'Additional custom options. You need to add them via `Spree::PermittedAttributes.line_item_attributes << :foo` in `config/initializers/spree.rb`'
               example:
                 variant_id: '1'
                 quantity: 5
@@ -548,7 +609,7 @@ paths:
       description: Sets the quantity of a given line item. It has to be a positive integer greater than 0.
       tags:
         - Cart
-      operationId: Set Quantity
+      operationId: set-quantity
       responses:
         '200':
           description: New quantity has been successfully set for a requested Line Item
@@ -583,7 +644,7 @@ paths:
                 line_item_id: '1'
                 quantity: 5
       summary: Set Quantity of a Line Item
-  '/api/v2/storefront/cart/remove_line_item/{line_item_id}':
+  '/api/v2/storefront/cart/remove_line_item/{id}':
     delete:
       description: |-
         Removes Line Item from Cart. After removing Item system will re-calculate taxes, promotions, shipments etc.
@@ -591,9 +652,9 @@ paths:
         Updated Cart will be returned.
       tags:
         - Cart
-      operationId: Remove Line Item
+      operationId: remove-line-item
       parameters:
-        - $ref: '#/components/parameters/LineItemId'
+        - $ref: '#/components/parameters/Id'
         - $ref: '#/components/parameters/CartIncludeParam'
         - $ref: '#/components/parameters/SparseFieldsParam'
       responses:
@@ -617,7 +678,7 @@ paths:
         Returns updated Cart.
       tags:
         - Cart
-      operationId: Empty Cart
+      operationId: empty-cart
       responses:
         '200':
           description: Cart has been successfully emptied
@@ -639,7 +700,7 @@ paths:
       description: Applies a coupon code to the Cart
       tags:
         - Cart
-      operationId: Apply Coupon Code
+      operationId: apply-coupon-code
       responses:
         '200':
           description: Coupon code was applied successfully
@@ -675,11 +736,11 @@ paths:
       description: 'Removes a coupon code from the Cart. If no `coupon_code` aprameter is passed , it will remove all applied coupon codes.'
       tags:
         - Cart
-      operationId: Remove Coupon Code
+      operationId: remove-coupon-code
       parameters:
         - name: coupon_code
           in: path
-          required: false
+          required: true
           description: Selected Coupon code for removal
           schema:
             type: string
@@ -708,7 +769,7 @@ paths:
       description: Returns a list of Estimated Shipping Rates for Cart. Those are only estimates and can vary from the final shipping rates.
       tags:
         - Cart
-      operationId: Estimate Shipping Rates
+      operationId: estimate-shipping-rates
       parameters:
         - name: country_iso
           in: query
@@ -836,10 +897,10 @@ paths:
         PATCH /checkout/complete
         ```
 
-        This will complete the Checkout and mark the Order as completed. You cannot execute any operations on this Order anymore via Storefront API. Further operations on the Order are possible via [Spree API v1](https://guides.spreecommerce.org/api/).
+        This will complete the Checkout and mark the Order as completed. You cannot execute any operations on this Order anymore via Storefront API. Further operations on the Order are possible via Platform API.
       tags:
         - Checkout
-      operationId: Update Checkout
+      operationId: update-checkout
       responses:
         '200':
           description: Checkout was updated
@@ -896,7 +957,7 @@ paths:
       description: Goes to the next Checkout step
       tags:
         - Checkout
-      operationId: Checkout Next
+      operationId: checkout-next
       responses:
         '200':
           description: Checkout transitioned to the next step
@@ -924,7 +985,7 @@ paths:
       description: 'Advances Checkout to the furthest Checkout step validation allows, until the Complete step'
       tags:
         - Checkout
-      operationId: Advance Checkout
+      operationId: advance-checkout
       responses:
         '200':
           description: Checkout was advanced to the furthest step
@@ -952,7 +1013,7 @@ paths:
       description: Completes the Checkout
       tags:
         - Checkout
-      operationId: Complete Checkout
+      operationId: complete-checkout
       responses:
         '200':
           description: Checkout was completed
@@ -976,10 +1037,10 @@ paths:
       summary: Complete Checkout
   /api/v2/storefront/checkout/add_store_credit:
     post:
-      description: 'Adds Store Credit payment if the currently signed in User has any available. [Read more about Store Credits](https://guides.spreecommerce.org/user/users/editing_users.html#store-credits)'
+      description: 'Adds Store Credit payment if the currently signed in User has any available.'
       tags:
         - Checkout
-      operationId: Add Store Credit
+      operationId: add-store-credit
       responses:
         '200':
           description: Store Credit payment created
@@ -1004,7 +1065,7 @@ paths:
           description: Amount of Store Credit to use. As much as possible Store Credit will be applied if no amount is passed.
           schema:
             type: string
-          example: 100
+          example: "100"
         - $ref: '#/components/parameters/CartIncludeParam'
         - $ref: '#/components/parameters/SparseFieldsParam'
       summary: Add Store Credit
@@ -1013,7 +1074,7 @@ paths:
       description: Remove Store Credit payments if any applied
       tags:
         - Checkout
-      operationId: Remove Store Credit
+      operationId: remove-store-credit
       responses:
         '200':
           description: Store Credit payment removed
@@ -1041,7 +1102,7 @@ paths:
       description: Returns a list of available Payment Methods for this Checkout
       tags:
         - Checkout
-      operationId: Payment Methods
+      operationId: payment-methods
       responses:
         '200':
           description: Returns a list of available Payment Methods
@@ -1060,7 +1121,7 @@ paths:
       description: Returns a list of available Shipping Rates for Checkout. Shipping Rates are grouped against Shipments. Each checkout can have multiple Shipments eg. some products are available in stock and will be send out instantly and some needs to be backordered.
       tags:
         - Checkout
-      operationId: Shipping Rates
+      operationId: shipping-rates
       responses:
         '200':
           description: Returns a list of available Shipping Rates for Checkout
@@ -1079,7 +1140,7 @@ paths:
       description: Returns a list of Products for the current Store.
       tags:
         - Products
-      operationId: Products List
+      operationId: products-list
       parameters:
         - $ref: '#/components/parameters/FilterByIds'
         - $ref: '#/components/parameters/FilterBySKUs'
@@ -1088,31 +1149,31 @@ paths:
           schema:
             type: string
           example: '10,100'
-          description: 'Filter Prodcuts based on price (minimum, maximum range)'
+          description: 'Filter Products based on price (minimum, maximum range)'
         - in: query
           name: 'filter[taxons]'
           schema:
             type: string
           example: '1,2,3,4,5,6,7,8,9,10,11'
-          description: 'Filter Prodcuts based on taxons (IDs of categories, brands, etc)'
+          description: 'Filter Products based on taxons (IDs of categories, brands, etc)'
         - in: query
           name: 'filter[name]'
           schema:
             type: string
           example: rails
-          description: 'Find Prodcuts with matching name (supports wild-card, partial-word match search)'
+          description: 'Find Products with matching name (supports wild-card, partial-word match search)'
         - in: query
           name: 'filter[options][tshirt-color]'
           schema:
             type: string
           example: Red
-          description: 'Find Prodcuts with Variants that have the specified option (eg. color, size) and value (eg. red, XS)'
+          description: 'Find Products with Variants that have the specified option (eg. color, size) and value (eg. red, XS)'
         - in: query
           name: 'filter[properties][brand-name]'
           schema:
             type: string
           example: alpha
-          description: 'Find Prodcuts with Property Brand Name with value Alpha'
+          description: 'Find Products with Property Brand Name with value Alpha'
         - in: query
           name: 'filter[show_deleted]'
           schema:
@@ -1125,6 +1186,24 @@ paths:
             type: boolean
           example: true
           description: Returns also discontinued products
+        - in: query
+          name: 'filter[in_stock]'
+          schema:
+            type: boolean
+          example: true
+          description: Returns only in stock products
+        - in: query
+          name: 'filter[backorderable]'
+          schema:
+            type: boolean
+          example: true
+          description: Returns only backorderable products
+        - in: query
+          name: 'filter[purchasable]'
+          schema:
+            type: boolean
+          example: true
+          description: Returns only in stock or backorderable products
         - in: query
           name: sort
           schema:
@@ -1148,7 +1227,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProductsList'
       summary: List of Products
-  '/api/v2/storefront/products/{id}':
+  '/api/v2/storefront/products/{product_slug}':
     get:
       description: |-
         Returns Product details. You can use product permalink:
@@ -1166,9 +1245,9 @@ paths:
         **Note** API will attempt a permalink lookup before an ID lookup.
       tags:
         - Products
-      operationId: Show Product
+      operationId: show-product
       parameters:
-        - $ref: '#/components/parameters/IdOrPermalink'
+        - $ref: '#/components/parameters/ProductSlug'
         - $ref: '#/components/parameters/ProductIncludeParam'
         - $ref: '#/components/parameters/SparseFieldsParam'
       responses:
@@ -3505,10 +3584,10 @@ paths:
       summary: Get Product Details
   /api/v2/storefront/taxons:
     get:
-      description: 'Returns a list of Taxons. [Read more about Taxons](https://guides.spreecommerce.org/developer/core/products.html#taxons-and-taxonomies)'
+      description: 'Returns a list of Taxons. [Read more about Taxons](https://dev-docs.spreecommerce.org/internals/products#taxons-and-taxonomies)'
       tags:
         - Taxons
-      operationId: Taxons List
+      operationId: taxons-list
       parameters:
         - $ref: '#/components/parameters/FilterByIds'
         - $ref: '#/components/parameters/FilterByName'
@@ -3542,7 +3621,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/TaxonsList'
       summary: List of Taxons
-  '/api/v2/storefront/taxons/{id}':
+  '/api/v2/storefront/taxons/{taxon_permalink}':
     get:
       description: |-
         Returns Taxon details.
@@ -3560,9 +3639,9 @@ paths:
         **Note** API will attempt a permalink lookup before an ID lookup.
       tags:
         - Taxons
-      operationId: Show Taxon
+      operationId: show-taxon
       parameters:
-        - $ref: '#/components/parameters/IdOrPermalink'
+        - $ref: '#/components/parameters/TaxonPermalink'
         - $ref: '#/components/parameters/TaxonIncludeParam'
         - $ref: '#/components/parameters/SparseFieldsParam'
       responses:
@@ -3830,7 +3909,7 @@ paths:
       description: Returns a list of all Countries
       tags:
         - Countries
-      operationId: Countries List
+      operationId: countries-list
       responses:
         '200':
           description: Returns a list of all Countries
@@ -3857,7 +3936,7 @@ paths:
         **Note** API will attempt a iso lookup before an iso3 lookup.
       tags:
         - Countries
-      operationId: Show Country
+      operationId: show-country
       parameters:
         - $ref: '#/components/parameters/IsoOrIso3'
         - $ref: '#/components/parameters/CountryIncludeParam'
@@ -3877,7 +3956,7 @@ paths:
       description: Returns the default Country for the application. By default this will be the US.
       tags:
         - Countries
-      operationId: Default Country
+      operationId: default-country
       parameters:
         - $ref: '#/components/parameters/CountryIncludeParam'
         - $ref: '#/components/parameters/SparseFieldsParam'
@@ -3889,6 +3968,1377 @@ paths:
               schema:
                 $ref: '#/components/schemas/Country'
       summary: Get Default Country
+  /api/v2/storefront/cms_pages:
+    get:
+      description: Returns a list of all CMS Pages available in the current store.
+      tags:
+        - CMS Pages
+      operationId: get-cms-pages
+      parameters:
+        - $ref: '#/components/parameters/FilterByType'
+        - $ref: '#/components/parameters/FilterByTitle'
+        - $ref: '#/components/parameters/CmsPageIncludeParam'
+        - $ref: '#/components/parameters/PerPageParam'
+      responses:
+        '200':
+          description: Returns a list of all CMS Pages available for the current store.
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/CmsPagesList'
+              examples:
+                Base Response:
+                  value:
+                    data:
+                      - id: '2'
+                        type: cms_page
+                        attributes:
+                          title: Privacy Policy
+                          content: Quaerat ratione perspiciatis molestias illum corporis. Molestiae architecto at molestias aperiam autem enim. Debitis architecto harum alias aut molestiae dolores veniam adipisci. Dolorum porro neque assumenda ab molestias provident magnam nihil. Accusantium earum molestias eius ipsam. Deserunt provident maiores illum expedita mollitia quo ut inventore. Dolores doloremque ab beatae aperiam ipsum cum et in. Quas harum facilis libero impedit. Non suscipit tenetur beatae neque fugit.
+                          locale: en
+                          meta_description: null
+                          meta_title: null
+                          slug: privacy-policy
+                          type: 'Spree::Cms::Pages::StandardPage'
+                        relationships:
+                          cms_sections:
+                            data: []
+                      - id: '3'
+                        type: cms_page
+                        attributes:
+                          title: Shipping Policy
+                          content: Dicta quos culpa autem corrupti debitis impedit labore nam. Architecto minus ipsa laboriosam facilis. Perspiciatis delectus laborum fugiat sed nemo. Eaque minus excepturi ex quod. Delectus cupiditate accusantium consectetur esse blanditiis similique itaque a. Facilis maxime nisi atque distinctio sapiente inventore eaque iste. Fugit voluptate vel doloribus vero dicta temporibus asperiores. Aut ad sunt pariatur atque rerum reprehenderit minima occaecati.
+                          locale: en
+                          meta_description: null
+                          meta_title: null
+                          slug: shipping-policy
+                          type: 'Spree::Cms::Pages::StandardPage'
+                        relationships:
+                          cms_sections:
+                            data: []
+                      - id: '4'
+                        type: cms_page
+                        attributes:
+                          title: Returns Policy
+                          content: Occaecati ipsa recusandae iure illum perferendis sit nisi. Perferendis vel assumenda repudiandae sunt. Incidunt doloribus suscipit culpa at quam consequatur doloremque. Aperiam sint sequi laborum iste. Neque veritatis dignissimos sit asperiores. Ut placeat tempora nisi optio. Culpa voluptatibus soluta distinctio quasi sed ut saepe. Facilis cum iusto illo eos repellendus. Sapiente placeat nobis inventore officia aperiam suscipit quisquam. Ipsa id quae voluptates perspiciatis dicta.
+                          locale: en
+                          meta_description: null
+                          meta_title: null
+                          slug: returns-policy
+                          type: 'Spree::Cms::Pages::StandardPage'
+                        relationships:
+                          cms_sections:
+                            data: []
+                      - id: '31'
+                        type: cms_page
+                        attributes:
+                          title: Homepage (English)
+                          content: null
+                          locale: en
+                          meta_description: null
+                          meta_title: null
+                          slug: null
+                          type: 'Spree::Cms::Pages::Homepage'
+                        relationships:
+                          cms_sections:
+                            data:
+                              - id: '7'
+                                type: cms_section
+                              - id: '19'
+                                type: cms_section
+                              - id: '31'
+                                type: cms_section
+                              - id: '43'
+                                type: cms_section
+                              - id: '55'
+                                type: cms_section
+                              - id: '67'
+                                type: cms_section
+                      - id: '1'
+                        type: cms_page
+                        attributes:
+                          title: About Us
+                          content: Culpa cupiditate deserunt ipsam distinctio. Hic ipsa nihil minima veritatis assumenda atque aspernatur corrupti. Tempora blanditiis optio hic deleniti labore soluta quis quod. In omnis sit blanditiis repudiandae impedit non sed tenetur. Porro incidunt molestias ipsum quos tenetur similique recusandae vitae. Sunt commodi ipsam quibusdam unde modi. Tempore illo laudantium harum ipsa. Fuga quam magni nemo doloribus.
+                          locale: en
+                          meta_description: null
+                          meta_title: null
+                          slug: about-us
+                          type: 'Spree::Cms::Pages::StandardPage'
+                        relationships:
+                          cms_sections:
+                            data: []
+                      - id: '25'
+                        type: cms_page
+                        attributes:
+                          title: Feature Page
+                          content: null
+                          locale: en
+                          meta_description: null
+                          meta_title: null
+                          slug: feature-page
+                          type: 'Spree::Cms::Pages::FeaturePage'
+                        relationships:
+                          cms_sections:
+                            data:
+                              - id: '1'
+                                type: cms_section
+                              - id: '13'
+                                type: cms_section
+                              - id: '25'
+                                type: cms_section
+                              - id: '37'
+                                type: cms_section
+                              - id: '49'
+                                type: cms_section
+                              - id: '61'
+                                type: cms_section
+                    meta:
+                      count: 6
+                      total_count: 6
+                      total_pages: 1
+                    links:
+                      self: 'http://localhost:3000/api/v2/storefront/cms_pages'
+                      next: 'http://localhost:3000/api/v2/storefront/cms_pages?page=1'
+                      prev: 'http://localhost:3000/api/v2/storefront/cms_pages?page=1'
+                      last: 'http://localhost:3000/api/v2/storefront/cms_pages?page=1'
+                      first: 'http://localhost:3000/api/v2/storefront/cms_pages?page=1'
+                '?include=cms_sections':
+                  value:
+                    data:
+                      - id: '2'
+                        type: cms_page
+                        attributes:
+                          title: Privacy Policy
+                          content: Quaerat ratione perspiciatis molestias illum corporis. Molestiae architecto at molestias aperiam autem enim. Debitis architecto harum alias aut molestiae dolores veniam adipisci. Dolorum porro neque assumenda ab molestias provident magnam nihil. Accusantium earum molestias eius ipsam. Deserunt provident maiores illum expedita mollitia quo ut inventore. Dolores doloremque ab beatae aperiam ipsum cum et in. Quas harum facilis libero impedit. Non suscipit tenetur beatae neque fugit.
+                          locale: en
+                          meta_description: null
+                          meta_title: null
+                          slug: privacy-policy
+                          type: 'Spree::Cms::Pages::StandardPage'
+                        relationships:
+                          cms_sections:
+                            data: []
+                      - id: '3'
+                        type: cms_page
+                        attributes:
+                          title: Shipping Policy
+                          content: Dicta quos culpa autem corrupti debitis impedit labore nam. Architecto minus ipsa laboriosam facilis. Perspiciatis delectus laborum fugiat sed nemo. Eaque minus excepturi ex quod. Delectus cupiditate accusantium consectetur esse blanditiis similique itaque a. Facilis maxime nisi atque distinctio sapiente inventore eaque iste. Fugit voluptate vel doloribus vero dicta temporibus asperiores. Aut ad sunt pariatur atque rerum reprehenderit minima occaecati.
+                          locale: en
+                          meta_description: null
+                          meta_title: null
+                          slug: shipping-policy
+                          type: 'Spree::Cms::Pages::StandardPage'
+                        relationships:
+                          cms_sections:
+                            data: []
+                      - id: '4'
+                        type: cms_page
+                        attributes:
+                          title: Returns Policy
+                          content: Occaecati ipsa recusandae iure illum perferendis sit nisi. Perferendis vel assumenda repudiandae sunt. Incidunt doloribus suscipit culpa at quam consequatur doloremque. Aperiam sint sequi laborum iste. Neque veritatis dignissimos sit asperiores. Ut placeat tempora nisi optio. Culpa voluptatibus soluta distinctio quasi sed ut saepe. Facilis cum iusto illo eos repellendus. Sapiente placeat nobis inventore officia aperiam suscipit quisquam. Ipsa id quae voluptates perspiciatis dicta.
+                          locale: en
+                          meta_description: null
+                          meta_title: null
+                          slug: returns-policy
+                          type: 'Spree::Cms::Pages::StandardPage'
+                        relationships:
+                          cms_sections:
+                            data: []
+                      - id: '31'
+                        type: cms_page
+                        attributes:
+                          title: Homepage (English)
+                          content: null
+                          locale: en
+                          meta_description: null
+                          meta_title: null
+                          slug: null
+                          type: 'Spree::Cms::Pages::Homepage'
+                        relationships:
+                          cms_sections:
+                            data:
+                              - id: '7'
+                                type: cms_section
+                              - id: '19'
+                                type: cms_section
+                              - id: '31'
+                                type: cms_section
+                              - id: '43'
+                                type: cms_section
+                              - id: '55'
+                                type: cms_section
+                              - id: '67'
+                                type: cms_section
+                      - id: '1'
+                        type: cms_page
+                        attributes:
+                          title: About Us
+                          content: Culpa cupiditate deserunt ipsam distinctio. Hic ipsa nihil minima veritatis assumenda atque aspernatur corrupti. Tempora blanditiis optio hic deleniti labore soluta quis quod. In omnis sit blanditiis repudiandae impedit non sed tenetur. Porro incidunt molestias ipsum quos tenetur similique recusandae vitae. Sunt commodi ipsam quibusdam unde modi. Tempore illo laudantium harum ipsa. Fuga quam magni nemo doloribus.
+                          locale: en
+                          meta_description: null
+                          meta_title: null
+                          slug: about-us
+                          type: 'Spree::Cms::Pages::StandardPage'
+                        relationships:
+                          cms_sections:
+                            data: []
+                      - id: '25'
+                        type: cms_page
+                        attributes:
+                          title: Feature Page
+                          content: null
+                          locale: en
+                          meta_description: null
+                          meta_title: null
+                          slug: feature-page
+                          type: 'Spree::Cms::Pages::FeaturePage'
+                        relationships:
+                          cms_sections:
+                            data:
+                              - id: '1'
+                                type: cms_section
+                              - id: '13'
+                                type: cms_section
+                              - id: '25'
+                                type: cms_section
+                              - id: '37'
+                                type: cms_section
+                              - id: '49'
+                                type: cms_section
+                              - id: '61'
+                                type: cms_section
+                    included:
+                      - id: '7'
+                        type: cms_section
+                        attributes:
+                          name: Hero Image
+                          content:
+                            title: Summer Collection
+                            button_text: Shop Now
+                          settings:
+                            gutters: No Gutters
+                          link: /t/categories/new-collection/summer-2021
+                          fit: Screen
+                          type: 'Spree::Cms::Sections::HeroImage'
+                          position: 1
+                          img_one_sm: null
+                          img_one_md: null
+                          img_one_lg: null
+                          img_one_xl: null
+                          img_two_sm: null
+                          img_two_md: null
+                          img_two_lg: null
+                          img_two_xl: null
+                          img_three_sm: null
+                          img_three_md: null
+                          img_three_lg: null
+                          img_three_xl: null
+                          is_fullscreen: true
+                        relationships:
+                          linked_resource:
+                            data:
+                              id: '24'
+                              type: taxon
+                      - id: '19'
+                        type: cms_section
+                        attributes:
+                          name: Main Taxons
+                          content:
+                            link_type_one: 'Spree::Taxon'
+                            link_type_two: 'Spree::Taxon'
+                            link_type_three: 'Spree::Taxon'
+                            link_one: categories/men
+                            link_two: categories/women
+                            link_three: categories/sportswear
+                            title_one: Men
+                            title_two: Women
+                            title_three: Sportswear
+                          settings:
+                            layout_style: Default
+                          link: null
+                          fit: Container
+                          type: 'Spree::Cms::Sections::ImageGallery'
+                          position: 2
+                          img_one_sm: null
+                          img_one_md: null
+                          img_one_lg: null
+                          img_one_xl: null
+                          img_two_sm: null
+                          img_two_md: null
+                          img_two_lg: null
+                          img_two_xl: null
+                          img_three_sm: null
+                          img_three_md: null
+                          img_three_lg: null
+                          img_three_xl: null
+                          is_fullscreen: false
+                        relationships:
+                          linked_resource:
+                            data: null
+                      - id: '31'
+                        type: cms_section
+                        attributes:
+                          name: Best Sellers Carousel
+                          content: null
+                          settings: null
+                          link: /t/categories/bestsellers
+                          fit: Screen
+                          type: 'Spree::Cms::Sections::ProductCarousel'
+                          position: 3
+                          img_one_sm: null
+                          img_one_md: null
+                          img_one_lg: null
+                          img_one_xl: null
+                          img_two_sm: null
+                          img_two_md: null
+                          img_two_lg: null
+                          img_two_xl: null
+                          img_three_sm: null
+                          img_three_md: null
+                          img_three_lg: null
+                          img_three_xl: null
+                          is_fullscreen: true
+                        relationships:
+                          linked_resource:
+                            data:
+                              id: '19'
+                              type: taxon
+                      - id: '43'
+                        type: cms_section
+                        attributes:
+                          name: Fashion Trends
+                          content:
+                            title: Summer 2021
+                            subtitle: Fashion Trends
+                            button_text: Read More
+                            rte_content: '<div style="text-center">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.</div>'
+                          settings:
+                            gutters: No Gutters
+                          link: /t/categories/trending
+                          fit: Screen
+                          type: 'Spree::Cms::Sections::FeaturedArticle'
+                          position: 4
+                          img_one_sm: null
+                          img_one_md: null
+                          img_one_lg: null
+                          img_one_xl: null
+                          img_two_sm: null
+                          img_two_md: null
+                          img_two_lg: null
+                          img_two_xl: null
+                          img_three_sm: null
+                          img_three_md: null
+                          img_three_lg: null
+                          img_three_xl: null
+                          is_fullscreen: true
+                        relationships:
+                          linked_resource:
+                            data:
+                              id: '20'
+                              type: taxon
+                      - id: '55'
+                        type: cms_section
+                        attributes:
+                          name: Trending Carousel
+                          content: null
+                          settings: null
+                          link: /t/categories/trending
+                          fit: Screen
+                          type: 'Spree::Cms::Sections::ProductCarousel'
+                          position: 5
+                          img_one_sm: null
+                          img_one_md: null
+                          img_one_lg: null
+                          img_one_xl: null
+                          img_two_sm: null
+                          img_two_md: null
+                          img_two_lg: null
+                          img_two_xl: null
+                          img_three_sm: null
+                          img_three_md: null
+                          img_three_lg: null
+                          img_three_xl: null
+                          is_fullscreen: true
+                        relationships:
+                          linked_resource:
+                            data:
+                              id: '20'
+                              type: taxon
+                      - id: '67'
+                        type: cms_section
+                        attributes:
+                          name: Promotions
+                          content:
+                            link_type_one: 'Spree::Taxon'
+                            link_type_two: 'Spree::Taxon'
+                            title_one: New Collection
+                            subtitle_one: Street Style
+                            link_one: categories/streetstyle
+                            title_two: Summer Sale
+                            subtitle_two: Up To 30% OFF
+                            link_two: categories/special-offers/30-percent-off
+                          settings:
+                            gutters: Gutters
+                          link: null
+                          fit: Container
+                          type: 'Spree::Cms::Sections::SideBySideImages'
+                          position: 6
+                          img_one_sm: null
+                          img_one_md: null
+                          img_one_lg: null
+                          img_one_xl: null
+                          img_two_sm: null
+                          img_two_md: null
+                          img_two_lg: null
+                          img_two_xl: null
+                          img_three_sm: null
+                          img_three_md: null
+                          img_three_lg: null
+                          img_three_xl: null
+                          is_fullscreen: false
+                        relationships:
+                          linked_resource:
+                            data: null
+                      - id: '1'
+                        type: cms_section
+                        attributes:
+                          name: Hero Image
+                          content:
+                            title: Summer Collection
+                            button_text: Shop Now
+                          settings:
+                            gutters: No Gutters
+                          link: /t/categories/new-collection/summer-2021
+                          fit: Screen
+                          type: 'Spree::Cms::Sections::HeroImage'
+                          position: 1
+                          img_one_sm: /rails/active_storage/representations/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBHUT09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--c76ac244dba53c84c84fbf0cd26ef842cbebc214/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCem9MWm05eWJXRjBTU0lJYW5CbkJqb0dSVlE2QzNKbGMybDZaVWtpRFRZd01IZ3lOVEErQmpzR1ZBPT0iLCJleHAiOm51bGwsInB1ciI6InZhcmlhdGlvbiJ9fQ==--92b360476c0e8d22f5df6c55757810c83e60c146/main_banner.jpg
+                          img_one_md: /rails/active_storage/representations/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBHUT09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--c76ac244dba53c84c84fbf0cd26ef842cbebc214/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCem9MWm05eWJXRjBTU0lJYW5CbkJqb0dSVlE2QzNKbGMybDZaVWtpRGpFeU1EQjROVEF3UGdZN0JsUT0iLCJleHAiOm51bGwsInB1ciI6InZhcmlhdGlvbiJ9fQ==--866962ae8b1b41c71aa857e7a34710c797b8dd55/main_banner.jpg
+                          img_one_lg: /rails/active_storage/representations/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBHUT09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--c76ac244dba53c84c84fbf0cd26ef842cbebc214/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCem9MWm05eWJXRjBTU0lJYW5CbkJqb0dSVlE2QzNKbGMybDZaVWtpRHpJME1EQjRNVEF3TUQ0R093WlUiLCJleHAiOm51bGwsInB1ciI6InZhcmlhdGlvbiJ9fQ==--43c8982ec49eb906ac30cd2849eeef756c35d9f9/main_banner.jpg
+                          img_one_xl: /rails/active_storage/representations/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBHUT09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--c76ac244dba53c84c84fbf0cd26ef842cbebc214/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCem9MWm05eWJXRjBTU0lJYW5CbkJqb0dSVlE2QzNKbGMybDZaVWtpRHpRNE1EQjRNakF3TUQ0R093WlUiLCJleHAiOm51bGwsInB1ciI6InZhcmlhdGlvbiJ9fQ==--fbf0ebd65ea1bfbb6b7a336d16f72468316a7268/main_banner.jpg
+                          img_two_sm: null
+                          img_two_md: null
+                          img_two_lg: null
+                          img_two_xl: null
+                          img_three_sm: null
+                          img_three_md: null
+                          img_three_lg: null
+                          img_three_xl: null
+                          is_fullscreen: true
+                        relationships:
+                          linked_resource:
+                            data:
+                              id: '24'
+                              type: taxon
+                      - id: '13'
+                        type: cms_section
+                        attributes:
+                          name: Main Taxons
+                          content:
+                            link_type_one: 'Spree::Taxon'
+                            link_type_two: 'Spree::Taxon'
+                            link_type_three: 'Spree::Taxon'
+                            link_one: categories/men
+                            link_two: categories/women
+                            link_three: categories/sportswear
+                            title_one: Men
+                            title_two: Women
+                            title_three: Sportswear
+                          settings:
+                            layout_style: Default
+                            display_labels: Show
+                          link: null
+                          fit: Container
+                          type: 'Spree::Cms::Sections::ImageGallery'
+                          position: 2
+                          img_one_sm: null
+                          img_one_md: /rails/active_storage/representations/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBIQT09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--2a2e94d7ccc9fe5f1b441d439a9fd0cdca055575/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCem9MWm05eWJXRjBTU0lJYW5CbkJqb0dSVlE2QzNKbGMybDZaVWtpRFRJM01IZ3hPVFUrQmpzR1ZBPT0iLCJleHAiOm51bGwsInB1ciI6InZhcmlhdGlvbiJ9fQ==--b2e2fea52d03266ca8a46f7514cbb837dc2baaf3/category_banner_upper-.jpg
+                          img_one_lg: /rails/active_storage/representations/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBIQT09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--2a2e94d7ccc9fe5f1b441d439a9fd0cdca055575/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCem9MWm05eWJXRjBTU0lJYW5CbkJqb0dSVlE2QzNKbGMybDZaVWtpRFRVME1IZ3pPVEErQmpzR1ZBPT0iLCJleHAiOm51bGwsInB1ciI6InZhcmlhdGlvbiJ9fQ==--7557ce0ba9a84d082ef5244eda86bc51c04a4193/category_banner_upper-.jpg
+                          img_one_xl: /rails/active_storage/representations/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBIQT09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--2a2e94d7ccc9fe5f1b441d439a9fd0cdca055575/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCem9MWm05eWJXRjBTU0lJYW5CbkJqb0dSVlE2QzNKbGMybDZaVWtpRGpFd09EQjROemd3UGdZN0JsUT0iLCJleHAiOm51bGwsInB1ciI6InZhcmlhdGlvbiJ9fQ==--9822104a9af260c8d4c21bc404394a1c8fc81166/category_banner_upper-.jpg
+                          img_two_sm: null
+                          img_two_md: /rails/active_storage/representations/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBIUT09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--4562b9d3531f1e3fb9a714036d7f5b9df94b7230/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCem9MWm05eWJXRjBTU0lJYW5CbkJqb0dSVlE2QzNKbGMybDZaVWtpRFRJM01IZzBNREErQmpzR1ZBPT0iLCJleHAiOm51bGwsInB1ciI6InZhcmlhdGlvbiJ9fQ==--e3678be2a363fb280cc072202d99de407350cac5/big_category_banner.jpg
+                          img_two_lg: /rails/active_storage/representations/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBIUT09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--4562b9d3531f1e3fb9a714036d7f5b9df94b7230/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCem9MWm05eWJXRjBTU0lJYW5CbkJqb0dSVlE2QzNKbGMybDZaVWtpRFRVME1IZzRNREErQmpzR1ZBPT0iLCJleHAiOm51bGwsInB1ciI6InZhcmlhdGlvbiJ9fQ==--a1154d8790a13282cf2c9df685546187765b724c/big_category_banner.jpg
+                          img_two_xl: /rails/active_storage/representations/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBIUT09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--4562b9d3531f1e3fb9a714036d7f5b9df94b7230/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCem9MWm05eWJXRjBTU0lJYW5CbkJqb0dSVlE2QzNKbGMybDZaVWtpRHpFd09EQjRNVFl3TUQ0R093WlUiLCJleHAiOm51bGwsInB1ciI6InZhcmlhdGlvbiJ9fQ==--6ad282583fd31c01e5051b524b6da7a0b116daf7/big_category_banner.jpg
+                          img_three_sm: null
+                          img_three_md: /rails/active_storage/representations/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBIZz09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--cafc42d36293797e051ddb1b1a35fa1fa83767c0/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCem9MWm05eWJXRjBTU0lJYW5CbkJqb0dSVlE2QzNKbGMybDZaVWtpRFRJM01IZ3hPVFUrQmpzR1ZBPT0iLCJleHAiOm51bGwsInB1ciI6InZhcmlhdGlvbiJ9fQ==--b2e2fea52d03266ca8a46f7514cbb837dc2baaf3/category_banner_lower.jpg
+                          img_three_lg: /rails/active_storage/representations/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBIZz09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--cafc42d36293797e051ddb1b1a35fa1fa83767c0/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCem9MWm05eWJXRjBTU0lJYW5CbkJqb0dSVlE2QzNKbGMybDZaVWtpRFRVME1IZ3pPVEErQmpzR1ZBPT0iLCJleHAiOm51bGwsInB1ciI6InZhcmlhdGlvbiJ9fQ==--7557ce0ba9a84d082ef5244eda86bc51c04a4193/category_banner_lower.jpg
+                          img_three_xl: /rails/active_storage/representations/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBIZz09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--cafc42d36293797e051ddb1b1a35fa1fa83767c0/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCem9MWm05eWJXRjBTU0lJYW5CbkJqb0dSVlE2QzNKbGMybDZaVWtpRGpFd09EQjROemd3UGdZN0JsUT0iLCJleHAiOm51bGwsInB1ciI6InZhcmlhdGlvbiJ9fQ==--9822104a9af260c8d4c21bc404394a1c8fc81166/category_banner_lower.jpg
+                          is_fullscreen: false
+                        relationships:
+                          linked_resource:
+                            data: null
+                      - id: '25'
+                        type: cms_section
+                        attributes:
+                          name: Best Sellers Carousel
+                          content: null
+                          settings: null
+                          link: /t/categories/bestsellers
+                          fit: Screen
+                          type: 'Spree::Cms::Sections::ProductCarousel'
+                          position: 3
+                          img_one_sm: null
+                          img_one_md: null
+                          img_one_lg: null
+                          img_one_xl: null
+                          img_two_sm: null
+                          img_two_md: null
+                          img_two_lg: null
+                          img_two_xl: null
+                          img_three_sm: null
+                          img_three_md: null
+                          img_three_lg: null
+                          img_three_xl: null
+                          is_fullscreen: true
+                        relationships:
+                          linked_resource:
+                            data:
+                              id: '19'
+                              type: taxon
+                      - id: '37'
+                        type: cms_section
+                        attributes:
+                          name: Fashion Trends
+                          content:
+                            title: Summer 2021
+                            subtitle: Fashion Trends
+                            button_text: Read More
+                            rte_content: '<div style="text-center">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.</div>'
+                          settings:
+                            gutters: No Gutters
+                          link: /t/categories/trending
+                          fit: Screen
+                          type: 'Spree::Cms::Sections::FeaturedArticle'
+                          position: 4
+                          img_one_sm: null
+                          img_one_md: null
+                          img_one_lg: null
+                          img_one_xl: null
+                          img_two_sm: null
+                          img_two_md: null
+                          img_two_lg: null
+                          img_two_xl: null
+                          img_three_sm: null
+                          img_three_md: null
+                          img_three_lg: null
+                          img_three_xl: null
+                          is_fullscreen: true
+                        relationships:
+                          linked_resource:
+                            data:
+                              id: '20'
+                              type: taxon
+                      - id: '49'
+                        type: cms_section
+                        attributes:
+                          name: Trending Carousel
+                          content: null
+                          settings: null
+                          link: /t/categories/trending
+                          fit: Screen
+                          type: 'Spree::Cms::Sections::ProductCarousel'
+                          position: 5
+                          img_one_sm: null
+                          img_one_md: null
+                          img_one_lg: null
+                          img_one_xl: null
+                          img_two_sm: null
+                          img_two_md: null
+                          img_two_lg: null
+                          img_two_xl: null
+                          img_three_sm: null
+                          img_three_md: null
+                          img_three_lg: null
+                          img_three_xl: null
+                          is_fullscreen: true
+                        relationships:
+                          linked_resource:
+                            data:
+                              id: '20'
+                              type: taxon
+                      - id: '61'
+                        type: cms_section
+                        attributes:
+                          name: Promotions
+                          content:
+                            link_type_one: 'Spree::Taxon'
+                            link_type_two: 'Spree::Taxon'
+                            title_one: New Collection
+                            subtitle_one: Street Style
+                            link_one: categories/streetstyle
+                            title_two: Summer Sale
+                            subtitle_two: Up To 30% OFF
+                            link_two: categories/special-offers/30-percent-off
+                          settings:
+                            gutters: Gutters
+                          link: null
+                          fit: Container
+                          type: 'Spree::Cms::Sections::SideBySideImages'
+                          position: 6
+                          img_one_sm: null
+                          img_one_md: /rails/active_storage/representations/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBKUT09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--632caf08076c85627ba64ac3d373a2be52084313/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCem9MWm05eWJXRjBTU0lJYW5CbkJqb0dSVlE2QzNKbGMybDZaVWtpRFRNNE4zZ3lOVEErQmpzR1ZBPT0iLCJleHAiOm51bGwsInB1ciI6InZhcmlhdGlvbiJ9fQ==--b2d3125a8d17dbf5fa8e82623b175796667a83ac/promo_banner_left-third.jpg
+                          img_one_lg: /rails/active_storage/representations/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBKUT09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--632caf08076c85627ba64ac3d373a2be52084313/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCem9MWm05eWJXRjBTU0lJYW5CbkJqb0dSVlE2QzNKbGMybDZaVWtpRFRVME1IZ3pPVEErQmpzR1ZBPT0iLCJleHAiOm51bGwsInB1ciI6InZhcmlhdGlvbiJ9fQ==--7557ce0ba9a84d082ef5244eda86bc51c04a4193/promo_banner_left-third.jpg
+                          img_one_xl: /rails/active_storage/representations/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBKUT09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--632caf08076c85627ba64ac3d373a2be52084313/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCem9MWm05eWJXRjBTU0lJYW5CbkJqb0dSVlE2QzNKbGMybDZaVWtpRGpFME5qaDRPVFV5UGdZN0JsUT0iLCJleHAiOm51bGwsInB1ciI6InZhcmlhdGlvbiJ9fQ==--9e18a740824becd8c6796a1b7da4ece49a754925/promo_banner_left-third.jpg
+                          img_two_sm: null
+                          img_two_md: /rails/active_storage/representations/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBKZz09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--58b807e007e081dcc885829c4db76d4366d4319a/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCem9MWm05eWJXRjBTU0lJYW5CbkJqb0dSVlE2QzNKbGMybDZaVWtpRFRNNE4zZ3lOVEErQmpzR1ZBPT0iLCJleHAiOm51bGwsInB1ciI6InZhcmlhdGlvbiJ9fQ==--b2d3125a8d17dbf5fa8e82623b175796667a83ac/promo_banner_right-third-category.jpg
+                          img_two_lg: /rails/active_storage/representations/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBKZz09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--58b807e007e081dcc885829c4db76d4366d4319a/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCem9MWm05eWJXRjBTU0lJYW5CbkJqb0dSVlE2QzNKbGMybDZaVWtpRFRjek5IZzBOelkrQmpzR1ZBPT0iLCJleHAiOm51bGwsInB1ciI6InZhcmlhdGlvbiJ9fQ==--78346a2fa6c60344b83ea2ecc89e453916888411/promo_banner_right-third-category.jpg
+                          img_two_xl: /rails/active_storage/representations/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBKZz09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--58b807e007e081dcc885829c4db76d4366d4319a/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCem9MWm05eWJXRjBTU0lJYW5CbkJqb0dSVlE2QzNKbGMybDZaVWtpRGpFME5qaDRPVFV5UGdZN0JsUT0iLCJleHAiOm51bGwsInB1ciI6InZhcmlhdGlvbiJ9fQ==--9e18a740824becd8c6796a1b7da4ece49a754925/promo_banner_right-third-category.jpg
+                          img_three_sm: null
+                          img_three_md: null
+                          img_three_lg: null
+                          img_three_xl: null
+                          is_fullscreen: false
+                        relationships:
+                          linked_resource:
+                            data: null
+                    meta:
+                      count: 6
+                      total_count: 6
+                      total_pages: 1
+                    links:
+                      self: 'http://localhost:3000/api/v2/storefront/cms_pages?include=cms_sections'
+                      next: 'http://localhost:3000/api/v2/storefront/cms_pages?include=cms_sections&page=1'
+                      prev: 'http://localhost:3000/api/v2/storefront/cms_pages?include=cms_sections&page=1'
+                      last: 'http://localhost:3000/api/v2/storefront/cms_pages?include=cms_sections&page=1'
+                      first: 'http://localhost:3000/api/v2/storefront/cms_pages?include=cms_sections&page=1'
+                '?include=cms_sections.linked_resource':
+                  value:
+                    data:
+                      - id: '2'
+                        type: cms_page
+                        attributes:
+                          title: Privacy Policy
+                          content: Quaerat ratione perspiciatis molestias illum corporis. Molestiae architecto at molestias aperiam autem enim. Debitis architecto harum alias aut molestiae dolores veniam adipisci. Dolorum porro neque assumenda ab molestias provident magnam nihil. Accusantium earum molestias eius ipsam. Deserunt provident maiores illum expedita mollitia quo ut inventore. Dolores doloremque ab beatae aperiam ipsum cum et in. Quas harum facilis libero impedit. Non suscipit tenetur beatae neque fugit.
+                          locale: en
+                          meta_description: null
+                          meta_title: null
+                          slug: privacy-policy
+                          type: 'Spree::Cms::Pages::StandardPage'
+                        relationships:
+                          cms_sections:
+                            data: []
+                      - id: '3'
+                        type: cms_page
+                        attributes:
+                          title: Shipping Policy
+                          content: Dicta quos culpa autem corrupti debitis impedit labore nam. Architecto minus ipsa laboriosam facilis. Perspiciatis delectus laborum fugiat sed nemo. Eaque minus excepturi ex quod. Delectus cupiditate accusantium consectetur esse blanditiis similique itaque a. Facilis maxime nisi atque distinctio sapiente inventore eaque iste. Fugit voluptate vel doloribus vero dicta temporibus asperiores. Aut ad sunt pariatur atque rerum reprehenderit minima occaecati.
+                          locale: en
+                          meta_description: null
+                          meta_title: null
+                          slug: shipping-policy
+                          type: 'Spree::Cms::Pages::StandardPage'
+                        relationships:
+                          cms_sections:
+                            data: []
+                      - id: '4'
+                        type: cms_page
+                        attributes:
+                          title: Returns Policy
+                          content: Occaecati ipsa recusandae iure illum perferendis sit nisi. Perferendis vel assumenda repudiandae sunt. Incidunt doloribus suscipit culpa at quam consequatur doloremque. Aperiam sint sequi laborum iste. Neque veritatis dignissimos sit asperiores. Ut placeat tempora nisi optio. Culpa voluptatibus soluta distinctio quasi sed ut saepe. Facilis cum iusto illo eos repellendus. Sapiente placeat nobis inventore officia aperiam suscipit quisquam. Ipsa id quae voluptates perspiciatis dicta.
+                          locale: en
+                          meta_description: null
+                          meta_title: null
+                          slug: returns-policy
+                          type: 'Spree::Cms::Pages::StandardPage'
+                        relationships:
+                          cms_sections:
+                            data: []
+                      - id: '31'
+                        type: cms_page
+                        attributes:
+                          title: Homepage (English)
+                          content: null
+                          locale: en
+                          meta_description: null
+                          meta_title: null
+                          slug: null
+                          type: 'Spree::Cms::Pages::Homepage'
+                        relationships:
+                          cms_sections:
+                            data:
+                              - id: '7'
+                                type: cms_section
+                              - id: '19'
+                                type: cms_section
+                              - id: '31'
+                                type: cms_section
+                              - id: '43'
+                                type: cms_section
+                              - id: '55'
+                                type: cms_section
+                              - id: '67'
+                                type: cms_section
+                      - id: '1'
+                        type: cms_page
+                        attributes:
+                          title: About Us
+                          content: Culpa cupiditate deserunt ipsam distinctio. Hic ipsa nihil minima veritatis assumenda atque aspernatur corrupti. Tempora blanditiis optio hic deleniti labore soluta quis quod. In omnis sit blanditiis repudiandae impedit non sed tenetur. Porro incidunt molestias ipsum quos tenetur similique recusandae vitae. Sunt commodi ipsam quibusdam unde modi. Tempore illo laudantium harum ipsa. Fuga quam magni nemo doloribus.
+                          locale: en
+                          meta_description: null
+                          meta_title: null
+                          slug: about-us
+                          type: 'Spree::Cms::Pages::StandardPage'
+                        relationships:
+                          cms_sections:
+                            data: []
+                      - id: '25'
+                        type: cms_page
+                        attributes:
+                          title: Feature Page
+                          content: null
+                          locale: en
+                          meta_description: null
+                          meta_title: null
+                          slug: feature-page
+                          type: 'Spree::Cms::Pages::FeaturePage'
+                        relationships:
+                          cms_sections:
+                            data:
+                              - id: '1'
+                                type: cms_section
+                              - id: '13'
+                                type: cms_section
+                              - id: '25'
+                                type: cms_section
+                              - id: '37'
+                                type: cms_section
+                              - id: '49'
+                                type: cms_section
+                              - id: '61'
+                                type: cms_section
+                    included:
+                      - id: '24'
+                        type: taxon
+                        attributes:
+                          name: Summer 2021
+                          pretty_name: Categories -> New Collection -> Summer 2021
+                          permalink: categories/new-collection/summer-2021
+                          seo_title: Summer 2021
+                          description: null
+                          meta_title: null
+                          meta_description: null
+                          meta_keywords: null
+                          left: 45
+                          right: 46
+                          position: 0
+                          depth: 2
+                          updated_at: '2021-08-05T17:34:24.878Z'
+                          is_root: false
+                          is_child: true
+                          is_leaf: true
+                        relationships:
+                          parent:
+                            data:
+                              id: '23'
+                              type: taxon
+                          taxonomy:
+                            data:
+                              id: '1'
+                              type: taxonomy
+                          children:
+                            data: []
+                          image:
+                            data: null
+                      - id: '7'
+                        type: cms_section
+                        attributes:
+                          name: Hero Image
+                          content:
+                            title: Summer Collection
+                            button_text: Shop Now
+                          settings:
+                            gutters: No Gutters
+                          link: /t/categories/new-collection/summer-2021
+                          fit: Screen
+                          type: 'Spree::Cms::Sections::HeroImage'
+                          position: 1
+                          img_one_sm: null
+                          img_one_md: null
+                          img_one_lg: null
+                          img_one_xl: null
+                          img_two_sm: null
+                          img_two_md: null
+                          img_two_lg: null
+                          img_two_xl: null
+                          img_three_sm: null
+                          img_three_md: null
+                          img_three_lg: null
+                          img_three_xl: null
+                          is_fullscreen: true
+                        relationships:
+                          linked_resource:
+                            data:
+                              id: '24'
+                              type: taxon
+                      - id: '19'
+                        type: cms_section
+                        attributes:
+                          name: Main Taxons
+                          content:
+                            link_type_one: 'Spree::Taxon'
+                            link_type_two: 'Spree::Taxon'
+                            link_type_three: 'Spree::Taxon'
+                            link_one: categories/men
+                            link_two: categories/women
+                            link_three: categories/sportswear
+                            title_one: Men
+                            title_two: Women
+                            title_three: Sportswear
+                          settings:
+                            layout_style: Default
+                          link: null
+                          fit: Container
+                          type: 'Spree::Cms::Sections::ImageGallery'
+                          position: 2
+                          img_one_sm: null
+                          img_one_md: null
+                          img_one_lg: null
+                          img_one_xl: null
+                          img_two_sm: null
+                          img_two_md: null
+                          img_two_lg: null
+                          img_two_xl: null
+                          img_three_sm: null
+                          img_three_md: null
+                          img_three_lg: null
+                          img_three_xl: null
+                          is_fullscreen: false
+                        relationships:
+                          linked_resource:
+                            data: null
+                      - id: '19'
+                        type: taxon
+                        attributes:
+                          name: Bestsellers
+                          pretty_name: Categories -> Bestsellers
+                          permalink: categories/bestsellers
+                          seo_title: Bestsellers
+                          description: null
+                          meta_title: null
+                          meta_description: null
+                          meta_keywords: null
+                          left: 36
+                          right: 37
+                          position: 0
+                          depth: 1
+                          updated_at: '2021-08-05T17:35:05.960Z'
+                          is_root: false
+                          is_child: true
+                          is_leaf: true
+                        relationships:
+                          parent:
+                            data:
+                              id: '1'
+                              type: taxon
+                          taxonomy:
+                            data:
+                              id: '1'
+                              type: taxonomy
+                          children:
+                            data: []
+                          image:
+                            data: null
+                      - id: '31'
+                        type: cms_section
+                        attributes:
+                          name: Best Sellers Carousel
+                          content: null
+                          settings: null
+                          link: /t/categories/bestsellers
+                          fit: Screen
+                          type: 'Spree::Cms::Sections::ProductCarousel'
+                          position: 3
+                          img_one_sm: null
+                          img_one_md: null
+                          img_one_lg: null
+                          img_one_xl: null
+                          img_two_sm: null
+                          img_two_md: null
+                          img_two_lg: null
+                          img_two_xl: null
+                          img_three_sm: null
+                          img_three_md: null
+                          img_three_lg: null
+                          img_three_xl: null
+                          is_fullscreen: true
+                        relationships:
+                          linked_resource:
+                            data:
+                              id: '19'
+                              type: taxon
+                      - id: '20'
+                        type: taxon
+                        attributes:
+                          name: Trending
+                          pretty_name: Categories -> Trending
+                          permalink: categories/trending
+                          seo_title: Trending
+                          description: null
+                          meta_title: null
+                          meta_description: null
+                          meta_keywords: null
+                          left: 38
+                          right: 39
+                          position: 0
+                          depth: 1
+                          updated_at: '2021-08-05T17:35:05.865Z'
+                          is_root: false
+                          is_child: true
+                          is_leaf: true
+                        relationships:
+                          parent:
+                            data:
+                              id: '1'
+                              type: taxon
+                          taxonomy:
+                            data:
+                              id: '1'
+                              type: taxonomy
+                          children:
+                            data: []
+                          image:
+                            data: null
+                      - id: '43'
+                        type: cms_section
+                        attributes:
+                          name: Fashion Trends
+                          content:
+                            title: Summer 2021
+                            subtitle: Fashion Trends
+                            button_text: Read More
+                            rte_content: '<div style="text-center">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.</div>'
+                          settings:
+                            gutters: No Gutters
+                          link: /t/categories/trending
+                          fit: Screen
+                          type: 'Spree::Cms::Sections::FeaturedArticle'
+                          position: 4
+                          img_one_sm: null
+                          img_one_md: null
+                          img_one_lg: null
+                          img_one_xl: null
+                          img_two_sm: null
+                          img_two_md: null
+                          img_two_lg: null
+                          img_two_xl: null
+                          img_three_sm: null
+                          img_three_md: null
+                          img_three_lg: null
+                          img_three_xl: null
+                          is_fullscreen: true
+                        relationships:
+                          linked_resource:
+                            data:
+                              id: '20'
+                              type: taxon
+                      - id: '55'
+                        type: cms_section
+                        attributes:
+                          name: Trending Carousel
+                          content: null
+                          settings: null
+                          link: /t/categories/trending
+                          fit: Screen
+                          type: 'Spree::Cms::Sections::ProductCarousel'
+                          position: 5
+                          img_one_sm: null
+                          img_one_md: null
+                          img_one_lg: null
+                          img_one_xl: null
+                          img_two_sm: null
+                          img_two_md: null
+                          img_two_lg: null
+                          img_two_xl: null
+                          img_three_sm: null
+                          img_three_md: null
+                          img_three_lg: null
+                          img_three_xl: null
+                          is_fullscreen: true
+                        relationships:
+                          linked_resource:
+                            data:
+                              id: '20'
+                              type: taxon
+                      - id: '67'
+                        type: cms_section
+                        attributes:
+                          name: Promotions
+                          content:
+                            link_type_one: 'Spree::Taxon'
+                            link_type_two: 'Spree::Taxon'
+                            title_one: New Collection
+                            subtitle_one: Street Style
+                            link_one: categories/streetstyle
+                            title_two: Summer Sale
+                            subtitle_two: Up To 30% OFF
+                            link_two: categories/special-offers/30-percent-off
+                          settings:
+                            gutters: Gutters
+                          link: null
+                          fit: Container
+                          type: 'Spree::Cms::Sections::SideBySideImages'
+                          position: 6
+                          img_one_sm: null
+                          img_one_md: null
+                          img_one_lg: null
+                          img_one_xl: null
+                          img_two_sm: null
+                          img_two_md: null
+                          img_two_lg: null
+                          img_two_xl: null
+                          img_three_sm: null
+                          img_three_md: null
+                          img_three_lg: null
+                          img_three_xl: null
+                          is_fullscreen: false
+                        relationships:
+                          linked_resource:
+                            data: null
+                      - id: '1'
+                        type: cms_section
+                        attributes:
+                          name: Hero Image
+                          content:
+                            title: Summer Collection
+                            button_text: Shop Now
+                          settings:
+                            gutters: No Gutters
+                          link: /t/categories/new-collection/summer-2021
+                          fit: Screen
+                          type: 'Spree::Cms::Sections::HeroImage'
+                          position: 1
+                          img_one_sm: /rails/active_storage/representations/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBHUT09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--c76ac244dba53c84c84fbf0cd26ef842cbebc214/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCem9MWm05eWJXRjBTU0lJYW5CbkJqb0dSVlE2QzNKbGMybDZaVWtpRFRZd01IZ3lOVEErQmpzR1ZBPT0iLCJleHAiOm51bGwsInB1ciI6InZhcmlhdGlvbiJ9fQ==--92b360476c0e8d22f5df6c55757810c83e60c146/main_banner.jpg
+                          img_one_md: /rails/active_storage/representations/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBHUT09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--c76ac244dba53c84c84fbf0cd26ef842cbebc214/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCem9MWm05eWJXRjBTU0lJYW5CbkJqb0dSVlE2QzNKbGMybDZaVWtpRGpFeU1EQjROVEF3UGdZN0JsUT0iLCJleHAiOm51bGwsInB1ciI6InZhcmlhdGlvbiJ9fQ==--866962ae8b1b41c71aa857e7a34710c797b8dd55/main_banner.jpg
+                          img_one_lg: /rails/active_storage/representations/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBHUT09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--c76ac244dba53c84c84fbf0cd26ef842cbebc214/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCem9MWm05eWJXRjBTU0lJYW5CbkJqb0dSVlE2QzNKbGMybDZaVWtpRHpJME1EQjRNVEF3TUQ0R093WlUiLCJleHAiOm51bGwsInB1ciI6InZhcmlhdGlvbiJ9fQ==--43c8982ec49eb906ac30cd2849eeef756c35d9f9/main_banner.jpg
+                          img_one_xl: /rails/active_storage/representations/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBHUT09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--c76ac244dba53c84c84fbf0cd26ef842cbebc214/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCem9MWm05eWJXRjBTU0lJYW5CbkJqb0dSVlE2QzNKbGMybDZaVWtpRHpRNE1EQjRNakF3TUQ0R093WlUiLCJleHAiOm51bGwsInB1ciI6InZhcmlhdGlvbiJ9fQ==--fbf0ebd65ea1bfbb6b7a336d16f72468316a7268/main_banner.jpg
+                          img_two_sm: null
+                          img_two_md: null
+                          img_two_lg: null
+                          img_two_xl: null
+                          img_three_sm: null
+                          img_three_md: null
+                          img_three_lg: null
+                          img_three_xl: null
+                          is_fullscreen: true
+                        relationships:
+                          linked_resource:
+                            data:
+                              id: '24'
+                              type: taxon
+                      - id: '13'
+                        type: cms_section
+                        attributes:
+                          name: Main Taxons
+                          content:
+                            link_type_one: 'Spree::Taxon'
+                            link_type_two: 'Spree::Taxon'
+                            link_type_three: 'Spree::Taxon'
+                            link_one: categories/men
+                            link_two: categories/women
+                            link_three: categories/sportswear
+                            title_one: Men
+                            title_two: Women
+                            title_three: Sportswear
+                          settings:
+                            layout_style: Default
+                            display_labels: Show
+                          link: null
+                          fit: Container
+                          type: 'Spree::Cms::Sections::ImageGallery'
+                          position: 2
+                          img_one_sm: null
+                          img_one_md: /rails/active_storage/representations/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBIQT09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--2a2e94d7ccc9fe5f1b441d439a9fd0cdca055575/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCem9MWm05eWJXRjBTU0lJYW5CbkJqb0dSVlE2QzNKbGMybDZaVWtpRFRJM01IZ3hPVFUrQmpzR1ZBPT0iLCJleHAiOm51bGwsInB1ciI6InZhcmlhdGlvbiJ9fQ==--b2e2fea52d03266ca8a46f7514cbb837dc2baaf3/category_banner_upper-.jpg
+                          img_one_lg: /rails/active_storage/representations/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBIQT09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--2a2e94d7ccc9fe5f1b441d439a9fd0cdca055575/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCem9MWm05eWJXRjBTU0lJYW5CbkJqb0dSVlE2QzNKbGMybDZaVWtpRFRVME1IZ3pPVEErQmpzR1ZBPT0iLCJleHAiOm51bGwsInB1ciI6InZhcmlhdGlvbiJ9fQ==--7557ce0ba9a84d082ef5244eda86bc51c04a4193/category_banner_upper-.jpg
+                          img_one_xl: /rails/active_storage/representations/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBIQT09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--2a2e94d7ccc9fe5f1b441d439a9fd0cdca055575/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCem9MWm05eWJXRjBTU0lJYW5CbkJqb0dSVlE2QzNKbGMybDZaVWtpRGpFd09EQjROemd3UGdZN0JsUT0iLCJleHAiOm51bGwsInB1ciI6InZhcmlhdGlvbiJ9fQ==--9822104a9af260c8d4c21bc404394a1c8fc81166/category_banner_upper-.jpg
+                          img_two_sm: null
+                          img_two_md: /rails/active_storage/representations/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBIUT09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--4562b9d3531f1e3fb9a714036d7f5b9df94b7230/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCem9MWm05eWJXRjBTU0lJYW5CbkJqb0dSVlE2QzNKbGMybDZaVWtpRFRJM01IZzBNREErQmpzR1ZBPT0iLCJleHAiOm51bGwsInB1ciI6InZhcmlhdGlvbiJ9fQ==--e3678be2a363fb280cc072202d99de407350cac5/big_category_banner.jpg
+                          img_two_lg: /rails/active_storage/representations/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBIUT09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--4562b9d3531f1e3fb9a714036d7f5b9df94b7230/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCem9MWm05eWJXRjBTU0lJYW5CbkJqb0dSVlE2QzNKbGMybDZaVWtpRFRVME1IZzRNREErQmpzR1ZBPT0iLCJleHAiOm51bGwsInB1ciI6InZhcmlhdGlvbiJ9fQ==--a1154d8790a13282cf2c9df685546187765b724c/big_category_banner.jpg
+                          img_two_xl: /rails/active_storage/representations/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBIUT09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--4562b9d3531f1e3fb9a714036d7f5b9df94b7230/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCem9MWm05eWJXRjBTU0lJYW5CbkJqb0dSVlE2QzNKbGMybDZaVWtpRHpFd09EQjRNVFl3TUQ0R093WlUiLCJleHAiOm51bGwsInB1ciI6InZhcmlhdGlvbiJ9fQ==--6ad282583fd31c01e5051b524b6da7a0b116daf7/big_category_banner.jpg
+                          img_three_sm: null
+                          img_three_md: /rails/active_storage/representations/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBIZz09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--cafc42d36293797e051ddb1b1a35fa1fa83767c0/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCem9MWm05eWJXRjBTU0lJYW5CbkJqb0dSVlE2QzNKbGMybDZaVWtpRFRJM01IZ3hPVFUrQmpzR1ZBPT0iLCJleHAiOm51bGwsInB1ciI6InZhcmlhdGlvbiJ9fQ==--b2e2fea52d03266ca8a46f7514cbb837dc2baaf3/category_banner_lower.jpg
+                          img_three_lg: /rails/active_storage/representations/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBIZz09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--cafc42d36293797e051ddb1b1a35fa1fa83767c0/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCem9MWm05eWJXRjBTU0lJYW5CbkJqb0dSVlE2QzNKbGMybDZaVWtpRFRVME1IZ3pPVEErQmpzR1ZBPT0iLCJleHAiOm51bGwsInB1ciI6InZhcmlhdGlvbiJ9fQ==--7557ce0ba9a84d082ef5244eda86bc51c04a4193/category_banner_lower.jpg
+                          img_three_xl: /rails/active_storage/representations/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBIZz09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--cafc42d36293797e051ddb1b1a35fa1fa83767c0/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCem9MWm05eWJXRjBTU0lJYW5CbkJqb0dSVlE2QzNKbGMybDZaVWtpRGpFd09EQjROemd3UGdZN0JsUT0iLCJleHAiOm51bGwsInB1ciI6InZhcmlhdGlvbiJ9fQ==--9822104a9af260c8d4c21bc404394a1c8fc81166/category_banner_lower.jpg
+                          is_fullscreen: false
+                        relationships:
+                          linked_resource:
+                            data: null
+                      - id: '25'
+                        type: cms_section
+                        attributes:
+                          name: Best Sellers Carousel
+                          content: null
+                          settings: null
+                          link: /t/categories/bestsellers
+                          fit: Screen
+                          type: 'Spree::Cms::Sections::ProductCarousel'
+                          position: 3
+                          img_one_sm: null
+                          img_one_md: null
+                          img_one_lg: null
+                          img_one_xl: null
+                          img_two_sm: null
+                          img_two_md: null
+                          img_two_lg: null
+                          img_two_xl: null
+                          img_three_sm: null
+                          img_three_md: null
+                          img_three_lg: null
+                          img_three_xl: null
+                          is_fullscreen: true
+                        relationships:
+                          linked_resource:
+                            data:
+                              id: '19'
+                              type: taxon
+                      - id: '37'
+                        type: cms_section
+                        attributes:
+                          name: Fashion Trends
+                          content:
+                            title: Summer 2021
+                            subtitle: Fashion Trends
+                            button_text: Read More
+                            rte_content: '<div style="text-center">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.</div>'
+                          settings:
+                            gutters: No Gutters
+                          link: /t/categories/trending
+                          fit: Screen
+                          type: 'Spree::Cms::Sections::FeaturedArticle'
+                          position: 4
+                          img_one_sm: null
+                          img_one_md: null
+                          img_one_lg: null
+                          img_one_xl: null
+                          img_two_sm: null
+                          img_two_md: null
+                          img_two_lg: null
+                          img_two_xl: null
+                          img_three_sm: null
+                          img_three_md: null
+                          img_three_lg: null
+                          img_three_xl: null
+                          is_fullscreen: true
+                        relationships:
+                          linked_resource:
+                            data:
+                              id: '20'
+                              type: taxon
+                      - id: '49'
+                        type: cms_section
+                        attributes:
+                          name: Trending Carousel
+                          content: null
+                          settings: null
+                          link: /t/categories/trending
+                          fit: Screen
+                          type: 'Spree::Cms::Sections::ProductCarousel'
+                          position: 5
+                          img_one_sm: null
+                          img_one_md: null
+                          img_one_lg: null
+                          img_one_xl: null
+                          img_two_sm: null
+                          img_two_md: null
+                          img_two_lg: null
+                          img_two_xl: null
+                          img_three_sm: null
+                          img_three_md: null
+                          img_three_lg: null
+                          img_three_xl: null
+                          is_fullscreen: true
+                        relationships:
+                          linked_resource:
+                            data:
+                              id: '20'
+                              type: taxon
+                      - id: '61'
+                        type: cms_section
+                        attributes:
+                          name: Promotions
+                          content:
+                            link_type_one: 'Spree::Taxon'
+                            link_type_two: 'Spree::Taxon'
+                            title_one: New Collection
+                            subtitle_one: Street Style
+                            link_one: categories/streetstyle
+                            title_two: Summer Sale
+                            subtitle_two: Up To 30% OFF
+                            link_two: categories/special-offers/30-percent-off
+                          settings:
+                            gutters: Gutters
+                          link: null
+                          fit: Container
+                          type: 'Spree::Cms::Sections::SideBySideImages'
+                          position: 6
+                          img_one_sm: null
+                          img_one_md: /rails/active_storage/representations/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBKUT09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--632caf08076c85627ba64ac3d373a2be52084313/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCem9MWm05eWJXRjBTU0lJYW5CbkJqb0dSVlE2QzNKbGMybDZaVWtpRFRNNE4zZ3lOVEErQmpzR1ZBPT0iLCJleHAiOm51bGwsInB1ciI6InZhcmlhdGlvbiJ9fQ==--b2d3125a8d17dbf5fa8e82623b175796667a83ac/promo_banner_left-third.jpg
+                          img_one_lg: /rails/active_storage/representations/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBKUT09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--632caf08076c85627ba64ac3d373a2be52084313/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCem9MWm05eWJXRjBTU0lJYW5CbkJqb0dSVlE2QzNKbGMybDZaVWtpRFRVME1IZ3pPVEErQmpzR1ZBPT0iLCJleHAiOm51bGwsInB1ciI6InZhcmlhdGlvbiJ9fQ==--7557ce0ba9a84d082ef5244eda86bc51c04a4193/promo_banner_left-third.jpg
+                          img_one_xl: /rails/active_storage/representations/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBKUT09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--632caf08076c85627ba64ac3d373a2be52084313/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCem9MWm05eWJXRjBTU0lJYW5CbkJqb0dSVlE2QzNKbGMybDZaVWtpRGpFME5qaDRPVFV5UGdZN0JsUT0iLCJleHAiOm51bGwsInB1ciI6InZhcmlhdGlvbiJ9fQ==--9e18a740824becd8c6796a1b7da4ece49a754925/promo_banner_left-third.jpg
+                          img_two_sm: null
+                          img_two_md: /rails/active_storage/representations/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBKZz09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--58b807e007e081dcc885829c4db76d4366d4319a/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCem9MWm05eWJXRjBTU0lJYW5CbkJqb0dSVlE2QzNKbGMybDZaVWtpRFRNNE4zZ3lOVEErQmpzR1ZBPT0iLCJleHAiOm51bGwsInB1ciI6InZhcmlhdGlvbiJ9fQ==--b2d3125a8d17dbf5fa8e82623b175796667a83ac/promo_banner_right-third-category.jpg
+                          img_two_lg: /rails/active_storage/representations/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBKZz09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--58b807e007e081dcc885829c4db76d4366d4319a/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCem9MWm05eWJXRjBTU0lJYW5CbkJqb0dSVlE2QzNKbGMybDZaVWtpRFRjek5IZzBOelkrQmpzR1ZBPT0iLCJleHAiOm51bGwsInB1ciI6InZhcmlhdGlvbiJ9fQ==--78346a2fa6c60344b83ea2ecc89e453916888411/promo_banner_right-third-category.jpg
+                          img_two_xl: /rails/active_storage/representations/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBKZz09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--58b807e007e081dcc885829c4db76d4366d4319a/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCem9MWm05eWJXRjBTU0lJYW5CbkJqb0dSVlE2QzNKbGMybDZaVWtpRGpFME5qaDRPVFV5UGdZN0JsUT0iLCJleHAiOm51bGwsInB1ciI6InZhcmlhdGlvbiJ9fQ==--9e18a740824becd8c6796a1b7da4ece49a754925/promo_banner_right-third-category.jpg
+                          img_three_sm: null
+                          img_three_md: null
+                          img_three_lg: null
+                          img_three_xl: null
+                          is_fullscreen: false
+                        relationships:
+                          linked_resource:
+                            data: null
+                    meta:
+                      count: 6
+                      total_count: 6
+                      total_pages: 1
+                    links:
+                      self: 'http://localhost:3000/api/v2/storefront/cms_pages?include=cms_sections.linked_resource'
+                      next: 'http://localhost:3000/api/v2/storefront/cms_pages?include=cms_sections.linked_resource&page=1'
+                      prev: 'http://localhost:3000/api/v2/storefront/cms_pages?include=cms_sections.linked_resource&page=1'
+                      last: 'http://localhost:3000/api/v2/storefront/cms_pages?include=cms_sections.linked_resource&page=1'
+                      first: 'http://localhost:3000/api/v2/storefront/cms_pages?include=cms_sections.linked_resource&page=1'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+      summary: List of CMS Pages
+  '/api/v2/storefront/cms_pages/{cms_page_slug}':
+    get:
+      description: |-
+        To return a single CMS Page you can use the CMS Page slug:
+
+        ```
+        GET /api/v2/storefront/cms_pages/about-us
+        ```
+
+        or CMS Page ID:
+
+        ```
+        GET /api/v2/storefront/cms_pages/37
+        ```
+
+        **Note:** API will attempt a Slug lookup before an ID lookup.
+      tags:
+        - CMS Pages
+      operationId: get-cms-page
+      parameters:
+        - $ref: '#/components/parameters/CmsPageSlug'
+        - $ref: '#/components/parameters/CmsPageIncludeParam'
+      responses:
+        '200':
+          description: Returns the requested CMS Page
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/CmsPage'
+              examples:
+                CMS Standard Page:
+                  value:
+                    data:
+                      id: '1'
+                      type: cms_page
+                      attributes:
+                        title: About US
+                        content: <p>This is the rich text for our about us page</p>
+                        locale: en
+                        meta_description: 'Learn about us, by reading out About Us page.'
+                        meta_title: Example Strore Ltd | About Us Page
+                        slug: about-us
+                        type: 'Spree::Cms::Pages::StandardPage'
+                      relationships:
+                        cms_sections:
+                          data: []
+                    included: []
+                'CMS Homepage ':
+                  value:
+                    data:
+                      id: '2'
+                      type: cms_page
+                      attributes:
+                        title: Baseball Cap Overview
+                        content: null
+                        locale: en
+                        meta_description: Example Store Ltd - Baseball Cap Overview
+                        meta_title: Example Store Ltd | The Super Discount Store | Baseball Cap Overview
+                        slug: null
+                        type: 'Spree::Cms::Pages::Homepage'
+                      relationships:
+                        cms_sections:
+                          data:
+                            - id: string
+                              type: cms_section
+                    included:
+                      - id: '1'
+                        type: cms_section
+                        attributes:
+                          name: Main Hero
+                          content:
+                            title: Summer Collection
+                            button_text: Shop Now
+                          settings:
+                            gutters: No Gutters
+                          link: /t/categories/summer-collection
+                          fit: Screen
+                          type: 'Spree::Cms::Sections::HeroImage'
+                          position: 1
+                          image_one_sm: /rails/active_storage/representations/redirect/eyJfc--eldkxjen/main_hero.jpg
+                          image_one_md: /rails/active_storage/representations/redirect/eyJfc--jhusbxnd/main_hero.jpg
+                          image_one_lg: /rails/active_storage/representations/redirect/eyJfc--uzggzusx/main_hero.jpg
+                          image_one_xl: /rails/active_storage/representations/redirect/eyJfc--lxpshbbc/main_hero.jpg
+                          image_two_sm: null
+                          image_two_md: null
+                          image_two_lg: null
+                          image_two_xl: null
+                          image_three_sm: null
+                          image_three_md: null
+                          image_three_lg: null
+                          image_three_xl: null
+                          is_full_screen: true
+                CMS Feature Page:
+                  value:
+                    data:
+                      id: '3'
+                      type: cms_page
+                      attributes:
+                        title: Baseball Cap Overview
+                        content: null
+                        locale: en
+                        meta_description: Example Store Ltd - Baseball Cap Overview
+                        meta_title: Example Store Ltd | The Super Discount Store | Baseball Cap Overview
+                        slug: product-overview
+                        type: 'Spree::Cms::Pages::FeaturePage'
+                      relationships:
+                        cms_sections:
+                          data:
+                            - id: string
+                              type: cms_section
+                    included:
+                      - id: '1'
+                        type: cms_section
+                        attributes:
+                          name: Main Hero
+                          content:
+                            title: Summer Collection
+                            button_text: Shop Now
+                          settings:
+                            gutters: No Gutters
+                          link: /t/categories/summer-collection
+                          fit: Screen
+                          type: 'Spree::Cms::Sections::HeroImage'
+                          position: 1
+                          image_one_sm: /rails/active_storage/representations/redirect/eyJfc--eldkxjen/main_hero.jpg
+                          image_one_md: /rails/active_storage/representations/redirect/eyJfc--jhusbxnd/main_hero.jpg
+                          image_one_lg: /rails/active_storage/representations/redirect/eyJfc--uzggzusx/main_hero.jpg
+                          image_one_xl: /rails/active_storage/representations/redirect/eyJfc--lxpshbbc/main_hero.jpg
+                          image_two_sm: null
+                          image_two_md: null
+                          image_two_lg: null
+                          image_two_xl: null
+                          image_three_sm: null
+                          image_three_md: null
+                          image_three_lg: null
+                          image_three_xl: null
+                          is_full_screen: true
+        '404':
+          $ref: '#/components/responses/404NotFound'
+      summary: Get CMS Page Details
 components:
   securitySchemes:
     bearerAuth:
@@ -3999,6 +5449,7 @@ components:
               description: Country ISO3 code
             company:
               type: string
+              nullable: true
               example: Google Inc.
     AddressList:
       required:
@@ -4011,12 +5462,11 @@ components:
     Cart:
       properties:
         data:
-          type: object
           $ref: '#/components/schemas/CartAttributesWithRelationships'
         included:
           type: array
           items:
-            oneOf:
+            anyOf:
               - $ref: '#/components/schemas/Promotion'
               - $ref: '#/components/schemas/User'
               - $ref: '#/components/schemas/Address'
@@ -4027,7 +5477,7 @@ components:
         - included
       x-examples: {}
       type: object
-      description: 'Cart provides a central place around which to collect information about a customer order - including line items, adjustments, payments, addresses, return authorizations, and shipments. [Read more in Spree docs](https://guides.spreecommerce.org/developer/core/orders.html)'
+      description: 'Cart provides a central place around which to collect information about a customer order - including line items, adjustments, payments, addresses, return authorizations, and shipments. [Read more in Spree docs](https://dev-docs.spreecommerce.org/internals/orders)'
     CartList:
       required:
         - data
@@ -4046,7 +5496,7 @@ components:
           type: array
           items:
             type: object
-            oneOf:
+            anyOf:
               - $ref: '#/components/schemas/VariantAttributesAndRelationships'
               - $ref: '#/components/schemas/LineItem'
               - $ref: '#/components/schemas/Promotion'
@@ -4196,6 +5646,7 @@ components:
           minimum: 0
         special_instructions:
           type: string
+          nullable: true
           example: Please wrap it as a gift
           description: Message added by the Customer
         currency:
@@ -4212,7 +5663,7 @@ components:
             - confirm
             - complete
           description: |-
-            State of the Cart in the Checkout flow. Please see <a href="https://guides.spreecommerce.org/developer/core/orders.html#the-order-state-machine">
+            State of the Cart in the Checkout flow. Please see <a href="https://dev-docs.spreecommerce.org/internals/orders#the-order-state-machine">
               The Order State machine
             </a> for a full list with description.
         payment_state:
@@ -4225,7 +5676,7 @@ components:
             - paid
             - void
           description: |-
-            Overall state of the Payments. Please see <a href="https://guides.spreecommerce.org/developer/core/orders.html#order-payment-states">
+            Overall state of the Payments. Please see <a href="https://dev-docs.spreecommerce.org/internals/orders#order-payment-states">
               Order Payments states
             </a> for a full list with description.
         shipment_state:
@@ -4239,16 +5690,14 @@ components:
             - ready
             - shipped
           description: |-
-            Overall state of the Shipments. Please see <a href="https://guides.spreecommerce.org/developer/core/orders.html#order-shipment-states">
+            Overall state of the Shipments. Please see <a href="https://dev-docs.spreecommerce.org/internals/orders#order-shipment-states-1">
               Order Shipments states
             </a> for a full list with description.
         token:
           type: string
           example: abcdef123456
           description: |-
-            Used for authorizing any action for an Order within Spree’s API. Please see <a href="https://guides.spreecommerce.org/api/v2/storefront#section/Authentication/orderToken">
-              Order Token Authentication
-            </a> for more information.
+            Used for authorizing any action for an Order within Spree’s API.
     CreditCardList:
       required:
         - included
@@ -4261,7 +5710,7 @@ components:
           type: array
           items:
             type: object
-            oneOf:
+            anyOf:
               - $ref: '#/components/schemas/PaymentMethod'
     CreditCard:
       required:
@@ -4269,13 +5718,12 @@ components:
         - included
       properties:
         data:
-          type: object
           $ref: '#/components/schemas/CreditCardAttributesWithRelationships'
         included:
           type: array
           items:
             type: object
-            oneOf:
+            anyOf:
               - $ref: '#/components/schemas/PaymentMethod'
     CreditCardAttributes:
       type: object
@@ -4316,7 +5764,6 @@ components:
           type: string
           example: credit_card
         attributes:
-          type: object
           $ref: '#/components/schemas/CreditCardAttributes'
         relationships:
           type: object
@@ -4372,7 +5819,7 @@ components:
       properties:
         id:
           type: string
-          example: 1
+          example: "1"
         type:
           type: string
           default: user
@@ -4484,7 +5931,7 @@ components:
             name:
               type: string
               example: 10% Discount
-            descriptiom:
+            description:
               type: string
               example: Super discount for you
             amount:
@@ -4503,7 +5950,7 @@ components:
         included:
           type: array
           items:
-            oneOf:
+            anyOf:
               - $ref: '#/components/schemas/OptionType'
               - $ref: '#/components/schemas/OptionValue'
               - $ref: '#/components/schemas/ProductProperty'
@@ -4528,7 +5975,7 @@ components:
         included:
           type: array
           items:
-            oneOf:
+            anyOf:
               - $ref: '#/components/schemas/OptionType'
               - $ref: '#/components/schemas/OptionValue'
               - $ref: '#/components/schemas/ProductProperty'
@@ -4652,7 +6099,7 @@ components:
         included:
           type: array
           items:
-            oneOf:
+            anyOf:
               - $ref: '#/components/schemas/ProductAttributesAndRelationships'
               - $ref: '#/components/schemas/TaxonAttributesAndRelationships'
               - $ref: '#/components/schemas/TaxonomyAttributesAndRelationships'
@@ -4674,12 +6121,15 @@ components:
           example: Clothes - T-shirts
         meta_title:
           type: string
+          nullable: true
           example: T-shirts
         meta_description:
           type: string
+          nullable: true
           example: 'A list of cool t-shirts '
         meta_keywords:
           type: string
+          nullable: true
           example: 't-shirts, cool'
         left:
           type: integer
@@ -4692,6 +6142,7 @@ components:
           example: 0
         depth:
           type: integer
+          nullable: true
           example: 1
         is_root:
           type: boolean
@@ -4775,7 +6226,7 @@ components:
         included:
           type: array
           items:
-            oneOf:
+            anyOf:
               - $ref: '#/components/schemas/TaxonAttributesAndRelationships'
               - $ref: '#/components/schemas/TaxonImage'
               - $ref: '#/components/schemas/TaxonomyAttributesAndRelationships'
@@ -4945,7 +6396,7 @@ components:
         included:
           type: array
           items:
-            oneOf:
+            anyOf:
               - $ref: '#/components/schemas/Image'
               - $ref: '#/components/schemas/OptionValue'
               - $ref: '#/components/schemas/OptionType'
@@ -5045,9 +6496,9 @@ components:
         included:
           type: array
           items:
-            oneOf:
+            anyOf:
               - $ref: '#/components/schemas/State'
-      description: 'Countries within Spree are used as a container for states. Countries can be zone members, and also link to an address. The difference between one country and another on an address record can determine which tax rates and shipping methods are used for the order.[Read more about Countries in Spree](https://guides.spreecommerce.org/developer/core/addresses.html#countries)'
+      description: 'Countries within Spree are used as a container for states. Countries can be zone members, and also link to an address. The difference between one country and another on an address record can determine which tax rates and shipping methods are used for the order.[Read more about Countries in Spree](https://dev-docs.spreecommerce.org/internals/addresses#countries)'
     CountriesList:
       required:
         - data
@@ -5210,13 +6661,13 @@ components:
             - shipped
             - canceled
           description: |-
-            Status of the Shipment. For a list of all available statuses please refer: <a href="https://guides.spreecommerce.org/developer/shipments.html#overview" target="_blank" rel="noopener">
+            Status of the Shipment. For a list of all available statuses please refer: <a href="https://dev-docs.spreecommerce.org/internals/shipments" target="_blank" rel="noopener">
               Shipment section in Spree Guides
             </a>
         shipped_at:
           type: string
           format: date-time
-          example: '2019-01-02 13:42:12 UTC'
+          example: '2019-01-02 13:42:12'
           description: Date when Shipment was being sent from the warehouse
     ShippingRatesList:
       required:
@@ -5230,7 +6681,7 @@ components:
         included:
           type: array
           items:
-            oneOf:
+            anyOf:
               - $ref: '#/components/schemas/ShippingRate'
               - $ref: '#/components/schemas/StockLocation'
     EstimateShippingRatesList:
@@ -5309,7 +6760,7 @@ components:
         included:
           type: array
           items:
-            oneOf:
+            anyOf:
               - $ref: '#/components/schemas/Address'
       required:
         - data
@@ -5401,15 +6852,679 @@ components:
         - zipcode
         - state_name
         - country_iso
+    CmsPage:
+      required:
+        - data
+        - included
+      properties:
+        data:
+          $ref: '#/components/schemas/CmsPageAttributesAndRelationships'
+        included:
+          type: array
+          items:
+            anyOf:
+              - $ref: '#/components/schemas/CmsHeroImageSection'
+              - $ref: '#/components/schemas/CmsFeaturedAtricleSection'
+              - $ref: '#/components/schemas/CmsProductCarouselSection'
+              - $ref: '#/components/schemas/CmsSideBySideImagesSection'
+              - $ref: '#/components/schemas/CmsImageGallerySection'
+      description: CMS Page
+    CmsPagesList:
+      description: CMS Page List
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/CmsPageAttributesAndRelationships'
+        included:
+          type: array
+          items:
+            anyOf:
+              - $ref: '#/components/schemas/CmsHeroImageSection'
+              - $ref: '#/components/schemas/CmsFeaturedAtricleSection'
+              - $ref: '#/components/schemas/CmsProductCarouselSection'
+              - $ref: '#/components/schemas/CmsSideBySideImagesSection'
+              - $ref: '#/components/schemas/CmsImageGallerySection'
+      required:
+        - data
+    CmsPageAttributes:
+      type: object
+      properties:
+        title:
+          type: string
+        content:
+          type: string
+          nullable: true
+        locale:
+          type: string
+        meta_description:
+          nullable: true
+          type: string
+        meta_title:
+          nullable: true
+          type: string
+        slug:
+          type: string
+          nullable: true
+        type:
+          type: string
+    CmsPageAttributesAndRelationships:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+        attributes:
+          $ref: '#/components/schemas/CmsPageAttributes'
+        relationships:
+          type: object
+          properties:
+            cms_sections:
+              type: object
+              properties:
+                data:
+                  type: array
+                  items:
+                    oneOf:
+                    - $ref: '#/components/schemas/Relation'
+    CmsHeroImageSection:
+      type: object
+      properties:
+        id:
+          type: string
+          example: '1'
+          description: CMS Section ID
+        type:
+          type: string
+          example: cms_section
+          description: CMS Section
+        attributes:
+          $ref: '#/components/schemas/CmsHeroSectionAttributes'
+        included:
+          type: array
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/ProductAttributesAndRelationships'
+              - $ref: '#/components/schemas/TaxonAttributesAndRelationships'
+    CmsFeaturedAtricleSection:
+      type: object
+      properties:
+        id:
+          type: string
+          example: '2'
+          description: CMS Section ID
+        type:
+          type: string
+          example: cms_section
+          description: CMS Section
+        attributes:
+          $ref: '#/components/schemas/CmsFeaturedAtricleSectionAttributes'
+        included:
+          type: array
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/ProductAttributesAndRelationships'
+              - $ref: '#/components/schemas/TaxonAttributesAndRelationships'
+              - $ref: '#/components/schemas/CmsPageAttributesAndRelationships'
+    CmsProductCarouselSection:
+      type: object
+      properties:
+        id:
+          type: string
+          example: '3'
+          description: CMS Section ID
+        type:
+          type: string
+          example: cms_section
+          description: CMS Section
+        attributes:
+          $ref: '#/components/schemas/CmsProductCarouselSectionAttributes'
+        included:
+          type: array
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/ProductAttributesAndRelationships'
+              - $ref: '#/components/schemas/TaxonAttributesAndRelationships'
+    CmsSideBySideImagesSection:
+      type: object
+      properties:
+        id:
+          type: string
+          example: '4'
+          description: CMS Section ID
+        type:
+          type: string
+          example: cms_section
+          description: CMS Section
+        attributes:
+          $ref: '#/components/schemas/CmsSideBySideImagesSectionAttributes'
+        included:
+          type: array
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/ProductAttributesAndRelationships'
+              - $ref: '#/components/schemas/TaxonAttributesAndRelationships'
+    CmsImageGallerySection:
+      type: object
+      properties:
+        id:
+          type: string
+          example: '5'
+          description: CMS Section ID
+        type:
+          type: string
+          example: cms_section
+          description: CMS Section
+        attributes:
+          $ref: '#/components/schemas/CmsImageGallerySectionAttributes'
+        included:
+          type: array
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/ProductAttributesAndRelationships'
+              - $ref: '#/components/schemas/TaxonAttributesAndRelationships'
+    CmsHeroSectionAttributes:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Main Hero
+        content:
+          $ref: '#/components/schemas/CmsHeroSectionContent'
+        settings:
+          $ref: '#/components/schemas/CmsHeroSectionSettings'
+        link:
+          type: string
+          example: /t/categories/summer-collection
+        fit:
+          type: string
+          example: Screen
+        type:
+          type: string
+          example: 'Spree::Cms::Sections::HeroImage'
+        position:
+          type: integer
+          example: 1
+        image_one_sm:
+          type: string
+          example: /rails/active_storage/representations/redirect/eyJfc--eldkxjen/main_hero.jpg
+        image_one_md:
+          type: string
+          example: /rails/active_storage/representations/redirect/eyJfc--jhusbxnd/main_hero.jpg
+        image_one_lg:
+          type: string
+          example: /rails/active_storage/representations/redirect/eyJfc--uzggzusx/main_hero.jpg
+        image_one_xl:
+          type: string
+          example: /rails/active_storage/representations/redirect/eyJfc--lxpshbbc/main_hero.jpg
+        image_two_sm:
+          type: string
+          nullable: true
+          example: null
+        image_two_md:
+          type: string
+          nullable: true
+          example: null
+        image_two_lg:
+          type: string
+          nullable: true
+          example: null
+        image_two_xl:
+          type: string
+          nullable: true
+          example: null
+        image_three_sm:
+          type: string
+          nullable: true
+          example: null
+        image_three_md:
+          type: string
+          nullable: true
+          example: null
+        image_three_lg:
+          type: string
+          nullable: true
+          example: null
+        image_three_xl:
+          type: string
+          nullable: true
+          example: null
+        is_full_screen:
+          type: boolean
+          example: true
+    CmsFeaturedAtricleSectionAttributes:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Fashion Trends
+        content:
+          $ref: '#/components/schemas/CmsFeaturedAtricleSectionContent'
+        settings:
+          $ref: '#/components/schemas/CmsFeaturedAtricleSectionSettings'
+        link:
+          type: string
+          example: /t/categories/trending
+        fit:
+          type: string
+          example: Screen
+        type:
+          type: string
+          example: 'Spree::Cms::Sections::FeaturedArticle'
+        position:
+          type: integer
+          example: 2
+        image_one_sm:
+          type: string
+          nullable: true
+          example: null
+        image_one_md:
+          type: string
+          nullable: true
+          example: null
+        image_one_lg:
+          type: string
+          nullable: true
+          example: null
+        image_one_xl:
+          type: string
+          nullable: true
+          example: null
+        image_two_sm:
+          type: string
+          nullable: true
+          example: null
+        image_two_md:
+          type: string
+          nullable: true
+          example: null
+        image_two_lg:
+          type: string
+          nullable: true
+          example: null
+        image_two_xl:
+          type: string
+          nullable: true
+          example: null
+        image_three_sm:
+          type: string
+          nullable: true
+          example: null
+        image_three_md:
+          type: string
+          nullable: true
+          example: null
+        image_three_lg:
+          type: string
+          nullable: true
+          example: null
+        image_three_xl:
+          type: string
+          nullable: true
+          example: null
+        is_full_screen:
+          type: boolean
+          example: true
+    CmsProductCarouselSectionAttributes:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Best Sellers Carousel
+        content:
+          type: string
+          nullable: true
+          example: null
+        settings:
+          type: string
+          nullable: true
+          example: null
+        link:
+          type: string
+          example: /t/categories/bestsellers
+        fit:
+          type: string
+          example: Screen
+        type:
+          type: string
+          example: 'Spree::Cms::Sections::ProductCarousel'
+        position:
+          type: integer
+          example: 3
+        image_one_sm:
+          type: string
+          nullable: true
+          example: null
+        image_one_md:
+          type: string
+          nullable: true
+          example: null
+        image_one_lg:
+          type: string
+          nullable: true
+          example: null
+        image_one_xl:
+          type: string
+          nullable: true
+          example: null
+        image_two_sm:
+          type: string
+          nullable: true
+          example: null
+        image_two_md:
+          type: string
+          nullable: true
+          example: null
+        image_two_lg:
+          type: string
+          nullable: true
+          example: null
+        image_two_xl:
+          type: string
+          nullable: true
+          example: null
+        image_three_sm:
+          type: string
+          nullable: true
+          example: null
+        image_three_md:
+          type: string
+          nullable: true
+          example: null
+        image_three_lg:
+          type: string
+          nullable: true
+          example: null
+        image_three_xl:
+          type: string
+          nullable: true
+          example: null
+        is_full_screen:
+          type: boolean
+          example: true
+    CmsSideBySideImagesSectionAttributes:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Promotions
+        content:
+          $ref: '#/components/schemas/CmsSideBySideImagesSectionContent'
+        settings:
+          $ref: '#/components/schemas/CmsSideBySideImagesSectionSettings'
+        link:
+          type: string
+          example: /t/categories/summer-collection
+        fit:
+          type: string
+          example: Container
+        type:
+          type: string
+          example: 'Spree::Cms::Sections::SideBySideImages'
+        position:
+          type: integer
+          example: 4
+        image_one_sm:
+          type: string
+          nullable: true
+          example: null
+        image_one_md:
+          type: string
+          nullable: true
+          example: /rails/active_storage/representations/redirect/eyJfc--jhusbxnd/promo_left.jpg
+        image_one_lg:
+          type: string
+          nullable: true
+          example: /rails/active_storage/representations/redirect/eyJfc--uzggzusx/promo_left.jpg
+        image_one_xl:
+          type: string
+          nullable: true
+          example: /rails/active_storage/representations/redirect/eyJfc--lxpshbbc/promo_left.jpg
+        image_two_sm:
+          type: string
+          nullable: true
+          example: null
+        image_two_md:
+          type: string
+          nullable: true
+          example: /rails/active_storage/representations/redirect/eyJfc--jhusbxnd/promo_right.jpg
+        image_two_lg:
+          type: string
+          nullable: true
+          example: /rails/active_storage/representations/redirect/eyJfc--jhusbxnd/promo_right.jpg
+        image_two_xl:
+          type: string
+          nullable: true
+          example: /rails/active_storage/representations/redirect/eyJfc--jhusbxnd/promo_right.jpg
+        image_three_sm:
+          type: string
+          nullable: true
+          example: null
+        image_three_md:
+          type: string
+          nullable: true
+          example: null
+        image_three_lg:
+          type: string
+          nullable: true
+          example: null
+        image_three_xl:
+          type: string
+          nullable: true
+          example: null
+        is_full_screen:
+          type: boolean
+          example: false
+    CmsImageGallerySectionAttributes:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Main Taxons
+        content:
+          $ref: '#/components/schemas/CmsImageGallerySectionContent'
+        settings:
+          $ref: '#/components/schemas/CmsImageGallerySectionSettings'
+        link:
+          type: string
+          nullable: true
+          example: null
+        fit:
+          type: string
+          example: Container
+        type:
+          type: string
+          example: 'Spree::Cms::Sections::ImageGallery'
+        position:
+          type: integer
+          example: 5
+        image_one_sm:
+          type: string
+          nullable: true
+          example: null
+        image_one_md:
+          type: string
+          nullable: true
+          example: /rails/active_storage/representations/redirect/eyJfc--jhusbxnd/top_img.jpg
+        image_one_lg:
+          type: string
+          nullable: true
+          example: /rails/active_storage/representations/redirect/eyJfc--uzggzusx/top_img.jpg
+        image_one_xl:
+          type: string
+          nullable: true
+          example: /rails/active_storage/representations/redirect/eyJfc--lxpshbbc/top_img.jpg
+        image_two_sm:
+          type: string
+          nullable: true
+          example: null
+        image_two_md:
+          type: string
+          nullable: true
+          example: /rails/active_storage/representations/redirect/eyJfc--lxpshbbc/tall_img.jpg
+        image_two_lg:
+          type: string
+          nullable: true
+          example: /rails/active_storage/representations/redirect/eyJfc--lxpshbbc/tall_img.jpg
+        image_two_xl:
+          type: string
+          nullable: true
+          example: /rails/active_storage/representations/redirect/eyJfc--lxpshbbc/tall_img.jpg
+        image_three_sm:
+          type: string
+          nullable: true
+          example: null
+        image_three_md:
+          type: string
+          nullable: true
+          example: /rails/active_storage/representations/redirect/eyJfc--lxpshbbc/bottom_img.jpg
+        image_three_lg:
+          type: string
+          nullable: true
+          example: /rails/active_storage/representations/redirect/eyJfc--lxpshbbc/bottom_img.jpg
+        image_three_xl:
+          type: string
+          nullable: true
+          example: /rails/active_storage/representations/redirect/eyJfc--lxpshbbc/bottom_img.jpg
+        is_full_screen:
+          type: boolean
+          example: false
+    CmsHeroSectionContent:
+      type: object
+      properties:
+        title:
+          type: string
+          example: Summer Collection
+        button_text:
+          type: string
+          example: Shop Now
+    CmsHeroSectionSettings:
+      type: object
+      properties:
+        gutters:
+          type: string
+          example: No Gutters
+    CmsFeaturedAtricleSectionContent:
+      type: object
+      properties:
+        title:
+          type: string
+          example: Summer 2021
+        subtitle:
+          type: string
+          example: Fashion Trends
+        button_text:
+          type: string
+          example: Read More
+        rte_content:
+          type: string
+          example: '<div style="text-center">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.</div>'
+    CmsFeaturedAtricleSectionSettings:
+      type: object
+      properties:
+        gutters:
+          type: string
+          example: No Gutters
+    CmsSideBySideImagesSectionContent:
+      type: object
+      properties:
+        link_type_one:
+          type: string
+          example: 'Spree::Taxon'
+        link_type_two:
+          type: string
+          example: 'Spree::Taxon'
+        title_one:
+          type: string
+          example: New Collection
+        subtitle_one:
+          type: string
+          example: Street Style
+        link_one:
+          type: string
+          example: categories/streetstyle
+        title_two:
+          type: string
+          example: Summer Sale
+        subtitle_two:
+          type: string
+          example: Up To 30% OFF
+        link_two:
+          type: string
+          example: categories/special-offers/30-percent-off
+    CmsSideBySideImagesSectionSettings:
+      type: object
+      properties:
+        gutters:
+          type: string
+          example: Gutters
+    CmsImageGallerySectionContent:
+      type: object
+      properties:
+        link_type_one:
+          type: string
+          example: 'Spree::Taxon'
+        link_type_two:
+          type: string
+          example: 'Spree::Taxon'
+        link_type_three:
+          type: string
+          example: 'Spree::Taxon'
+        link_one:
+          type: string
+          example: categories/men
+        link_two:
+          type: string
+          example: categories/women
+        link_three:
+          type: string
+          example: categories/sportswear
+        title_one:
+          type: string
+          example: Men
+        title_two:
+          type: string
+          example: Women
+        title_three:
+          type: string
+          example: Sportswear
+    CmsImageGallerySectionSettings:
+      type: object
+      properties:
+        layout_style:
+          type: string
+          example: Default
+        display_labels:
+          type: string
+          example: Show
+
+
   parameters:
-    AddressId:
-      name: address_id
+    Id:
+      name: id
       in: path
       required: true
-      description: Address ID
+      description: id
       schema:
         type: string
       example: '1'
+    CmsPageSlug:
+        name: cms_page_slug
+        in: path
+        required: true
+        description: CMS Page Slug
+        schema:
+          type: string
+        example: about-us
+    CmsPageIncludeParam:
+      name: include
+      in: query
+      description: 'Pass `cms_sections` as an include value to fetch the CMS Sections associated with each CMS Page. If you need to fetch the CMS Sections Linked Resource, you can pass `cms_sections.linked_resource`.'
+      schema:
+        type: string
+        example: cms_sections.linked_resource
     CreditCardIncludeParam:
       name: include
       in: query
@@ -5425,22 +7540,22 @@ components:
         ```
 
         [More information](https://jsonapi.org/format/#fetching-includes)
-    IdOrPermalink:
-      name: id
+    ProductSlug:
+      name: product_slug
       in: path
       required: true
-      description: ID or a permalink
+      description: Product Slug
       schema:
         type: string
       example: knitted-high-neck-sweater
-    LineItemId:
-      name: line_item_id
+    TaxonPermalink:
+      name: taxon_permalink
       in: path
       required: true
-      description: Line Item ID
+      description: Taxon Permalink
       schema:
         type: string
-      example: '1'
+      example: "categories/women"
     PageParam:
       name: page
       in: query
@@ -5454,9 +7569,9 @@ components:
       description: Number of requested records per page when paginating collection
       schema:
         type: integer
-      example: null
+      example: 25
     OrderParam:
-      name: number
+      name: order_number
       in: path
       required: true
       description: Number of Order
@@ -5548,6 +7663,20 @@ components:
         type: string
       example: rails
       description: 'Find resources with matching name (supports wild-card, partial-word match search)'
+    FilterByTitle:
+      name: 'filter[title]'
+      in: query
+      description: Fetch only resources with correspondingTitle
+      schema:
+        type: string
+        example: About Us
+    FilterByType:
+      name: 'filter[type]'
+      in: query
+      description: Fetch only resources with corresponding Type
+      schema:
+        type: string
+        example: home
     SparseFieldsParam:
       in: query
       name: fields
@@ -5561,7 +7690,7 @@ components:
         [More information](https://jsonapi.org/format/#fetching-sparse-fieldsets)
       example: '[cart]=total,currency,number'
       schema:
-        type: object
+        type: string
   responses:
     404NotFound:
       description: Resource not found
@@ -5583,3 +7712,13 @@ components:
                 type: string
                 example: You are not authorized to access this page.
                 default: You are not authorized to access this page.
+
+tags:
+  - name: Account
+  - name: Cart
+  - name: Checkout
+  - name: Countries
+  - name: CMS Pages
+  - name: Order Status
+  - name: Products
+  - name: Taxons

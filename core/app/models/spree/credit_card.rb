@@ -2,14 +2,7 @@ module Spree
   class CreditCard < Spree::Base
     include ActiveMerchant::Billing::CreditCardMethods
 
-    # to migrate safely from older Spree versions that din't provide safe deletion for CCs
-    # we need to ensure that we have a connection to the DB and that the `deleted_at` column exists
-    if !ENV['SPREE_DISABLE_DB_CONNECTION'] &&
-        connected? &&
-        table_exists? &&
-        connection.column_exists?(:spree_credit_cards, :deleted_at)
-      acts_as_paranoid
-    end
+    acts_as_paranoid
 
     belongs_to :payment_method
     belongs_to :user, class_name: Spree.user_class.to_s, foreign_key: 'user_id',
@@ -42,6 +35,7 @@ module Spree
         or(where('CAST(spree_credit_cards.year AS DECIMAL) = ?', Time.current.year).
            where('CAST(spree_credit_cards.month AS DECIMAL) >= ?', Time.current.month))
     }
+    scope :not_removed, -> { where(deleted_at: nil) }
 
     # needed for some of the ActiveMerchant gateways (eg. SagePay)
     alias_attribute :brand, :cc_type

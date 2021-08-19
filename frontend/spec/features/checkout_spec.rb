@@ -177,6 +177,50 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
     end
   end
 
+  context 'when credit card already added and available' do
+    let(:bogus) { create(:credit_card_payment_method) }
+    let(:user) { create(:user) }
+    let!(:credit_card) { create(:credit_card, user_id: user.id, payment_method: bogus, gateway_customer_profile_id: 'BGS-WEFWF', name: 'New Credit Card') }
+
+    before do
+      order = OrderWalkthrough.up_to(:payment)
+      allow(order).to receive_messages confirmation_required?: true
+      allow(order).to receive_messages(available_payment_methods: [bogus])
+
+      order.user = user
+      order.update_with_updater!
+
+      allow_any_instance_of(Spree::CheckoutController).to receive_messages(current_order: order)
+      allow_any_instance_of(Spree::CheckoutController).to receive_messages(try_spree_current_user: user)
+      allow_any_instance_of(Spree::OrdersController).to receive_messages(try_spree_current_user: user)
+
+      allow_any_instance_of(Spree::Api::V2::Storefront::Account::CreditCardsController).to receive(:spree_current_user).and_return(user)
+
+      expect_any_instance_of(Spree::CreditCards::Destroy) do |instance|
+        expect(instance).to receive(:call).with(card: credit_card).and_call_original
+      end
+    end
+
+    it 'should be able to remove credit card' do
+      visit spree.checkout_state_path(:payment)
+
+      within("#spree_credit_card_#{credit_card.id}") do
+        expect(page).to have_content(credit_card.name)
+        expect(page).to have_button('Remove')
+
+        accept_confirm do
+          click_button 'Remove'
+        end
+
+        wait_for_ajax
+
+        expect(credit_card.reload.deleted_at).not_to be_nil
+      end
+
+      expect(page).not_to have_content(credit_card.name)
+    end
+  end
+
   # regression test for #3945
   context 'when Spree::Config[:always_include_confirm_step] is true' do
     before do
@@ -448,7 +492,7 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
   end
 
   context 'if coupon promotion, submits coupon along with payment', js: true do
-    let!(:promotion) { Spree::Promotion.create(name: 'Huhuhu', code: 'huhu') }
+    let!(:promotion) { create(:promotion, name: 'Huhuhu', code: 'huhu') }
     let!(:calculator) { Spree::Calculator::FlatPercentItemTotal.create(preferred_flat_percent: '10') }
     let!(:action) { Spree::Promotion::Actions::CreateItemAdjustments.create(calculator: calculator) }
 
@@ -495,7 +539,7 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
     end
 
     context 'the promotion makes order free (downgrade it total to 0.0)' do
-      let(:promotion2) { Spree::Promotion.create(name: 'test-7450', code: 'test-7450') }
+      let(:promotion2) { create(:promotion, name: 'test-7450', code: 'test-7450') }
       let(:calculator2) do
         Spree::Calculator::FlatRate.create(preferences: { currency: 'USD', amount: BigDecimal('99999') })
       end
@@ -512,7 +556,7 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
           allow_any_instance_of(Spree::CheckoutController).to receive_messages(current_order: order)
         end
 
-        it 'move user to order succesfully placed page' do
+        it 'move user to order successfully placed page' do
           find('#order_coupon_code').fill_in(with: promotion2.code)
           find('#shopping-cart-coupon-code-button').click
           click_on 'checkout'
@@ -728,8 +772,8 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
     end
 
     context 'when not all Store Credits are used' do
-      let!(:store_credit) { create(:store_credit, user: user) }
-      let!(:additional_store_credit) { create(:store_credit, user: user, amount: 13) }
+      let!(:store_credit) { create(:store_credit, user: user, store: order.store) }
+      let!(:additional_store_credit) { create(:store_credit, user: user, amount: 13, store: order.store) }
 
       before { prepare_checkout! }
 

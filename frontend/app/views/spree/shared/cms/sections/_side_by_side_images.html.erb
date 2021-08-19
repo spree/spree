@@ -1,0 +1,118 @@
+<% if section.gutters? %>
+  <% section_one_padding = 'pr-md-2' %>
+  <% section_two_padding = 'pl-md-2' %>
+  <% if section.fullscreen? %>
+    <% section_one_padding = 'px-3 pr-md-2' %>
+    <% section_two_padding = 'px-3 pl-md-2' %>
+  <% end %>
+<% else %>
+  <% if section.fullscreen? %>
+    <% section_one_padding = 'px-0' %>
+    <% section_two_padding = 'px-0' %>
+  <% else %>
+    <% section_one_padding = 'pr-md-0' %>
+    <% section_two_padding = 'pl-md-0' %>
+  <% end %>
+<% end %>
+
+<% if section.link_one.present? && section.link_type_one == 'Spree::Taxon' %>
+  <% link_one = spree.nested_taxons_path(section.link_one) %>
+<% elsif section.link_one.present? && section.link_type_one == 'Spree::Product' %>
+  <% link_one = spree.product_path(section.link_one) %>
+<% else %>
+  <% link_one = nil %>
+<% end %>
+
+<% if section.link_two.present? && section.link_type_two == 'Spree::Taxon' %>
+  <% link_two = spree.nested_taxons_path(section.link_two) %>
+<% elsif section.link_two.present? && section.link_type_two == 'Spree::Product' %>
+  <% link_two = spree.product_path(section.link_two) %>
+<% else %>
+  <% link_two = nil %>
+<% end %>
+
+<div class="col-12 col-md-6 mb-3 mb-md-0 <%= section_one_padding %>">
+  <%= link_to link_one,
+              class: "d-flex align-items-end justify-content-center bg-light text-center overflow-hidden homepage-bottom-box #{'pointer-events-none cursor-default' unless link_one}",
+              style: '--aspect-ratio:54/35;' do %>
+
+      <% if section.image_one.attached? %>
+        <!-- XS to MD -->
+        <img class="d-md-none lazyload"
+          data-src="<%= main_app.url_for(section.img_one_md) %>"
+          data-srcset="<%= main_app.url_for(section.img_one_md) %>"
+          alt="<%= section&.title_one %>">
+
+        <!-- MD to XL -->
+        <img class="d-none d-md-block d-xl-none lazyload"
+          data-src="<%= main_app.url_for(section.img_one_lg) %>"
+          data-srcset="<%= main_app.url_for(section.img_one_lg) %>"
+          alt="<%= section&.title_one %>">
+
+        <!-- XL UP -->
+        <img class="d-none d-xl-block lazyload"
+          data-src="<%= main_app.url_for(section.img_one_xl) %>"
+          data-srcset="<%= main_app.url_for(section.img_one_xl) %>"
+          alt="<%= section&.title_one %>">
+       <% else %>
+        <%= icon( name: 'card-image',
+                  classes: 'text-black-50',
+                  width: 26,
+                  height: 26) %>
+       <% end %>
+
+       <% if section.title_one.present? || section.subtitle_one.present? %>
+        <div class="homepage-bottom-box-inner p-1 p-sm-2 p-md-4 homepage-hpb" role="img" aria-label="New Collection">
+          <div class="homepage-bottom-box-inner-small-text">
+            <%= section&.title_one %>
+          </div>
+          <div class="homepage-bottom-box-inner-big-text">
+            <%= section.subtitle_one %>
+          </div>
+        </div>
+      <% end %>
+  <% end %>
+</div>
+
+<div class="col-12 col-md-6 <%= section_two_padding %>">
+  <%= link_to link_two,
+              class: "d-flex align-items-end justify-content-center bg-light text-center overflow-hidden homepage-bottom-box #{'pointer-events-none cursor-default' unless link_two}",
+              style: '--aspect-ratio:54/35;' do %>
+
+      <% if section.image_two.attached? %>
+        <!-- XS to MD -->
+          <img class="d-md-none lazyload"
+            data-src="<%= main_app.url_for(section.img_two_md) %>"
+            data-srcset="<%= main_app.url_for(section.img_two_md) %>"
+            alt="<%= section&.title_two %>">
+
+        <!-- MD to XL -->
+          <img class="d-none d-md-block d-xl-none lazyload"
+            data-src="<%= main_app.url_for(section.img_two_lg) %>"
+            data-srcset="<%= main_app.url_for(section.img_two_lg) %>"
+            alt="<%= section&.title_two %>">
+
+        <!-- XL UP -->
+          <img class="d-none d-xl-block lazyload"
+            data-src="<%= main_app.url_for(section.img_two_xl) %>"
+            data-srcset="<%= main_app.url_for(section.img_two_xl) %>"
+            alt="<%= section&.title_two %>">
+       <% else %>
+        <%= icon( name: 'card-image',
+                  classes: 'text-black-50',
+                  width: 26,
+                  height: 26) %>
+       <% end %>
+
+       <% if section.title_two.present? || section.subtitle_two.present? %>
+        <div class="homepage-bottom-box-inner p-1 p-sm-2 p-md-4 homepage-hpb" role="img" aria-label="New Collection">
+          <div class="homepage-bottom-box-inner-small-text">
+            <%= section&.title_two %>
+          </div>
+          <div class="homepage-bottom-box-inner-big-text">
+            <%= section.subtitle_two %>
+          </div>
+        </div>
+      <% end %>
+  <% end %>
+</div>

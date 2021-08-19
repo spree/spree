@@ -841,7 +841,7 @@ describe Spree::CheckoutController, type: :controller do
 
       before do
         create(:store_credit_payment_method)
-        create(:store_credit, user: user, amount: credit_amount)
+        create(:store_credit, user: user, amount: credit_amount, store: order.store)
       end
 
       def expect_one_store_credit_payment(order, amount)
@@ -896,7 +896,7 @@ describe Spree::CheckoutController, type: :controller do
 
       before do
         create(:store_credit_payment_method)
-        create(:store_credit, user: user, amount: credit_amount)
+        create(:store_credit, user: user, amount: credit_amount, store: order.store)
         Spree::Checkout::AddStoreCredit.call(order: order)
       end
 

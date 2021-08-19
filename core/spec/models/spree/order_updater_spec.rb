@@ -3,7 +3,7 @@ require 'spree/testing_support/order_walkthrough'
 
 module Spree
   describe OrderUpdater, type: :model do
-    let(:order) { Spree::Order.create }
+    let(:order) { create(:order) }
     let(:updater) { Spree::OrderUpdater.new(order) }
 
     context 'order totals' do
@@ -29,7 +29,7 @@ module Spree
       end
 
       context 'with order promotion followed by line item addition' do
-        let(:promotion) { Spree::Promotion.create!(name: '10% off') }
+        let(:promotion) { create(:promotion, name: '10% off') }
         let(:calculator) { Calculator::FlatPercentItemTotal.new(preferred_flat_percent: 10) }
 
         let(:promotion_action) do
@@ -202,7 +202,7 @@ module Spree
         previous_state: nil,
         next_state: 'shipped',
         name: 'shipment',
-        user_id: nil
+        user_id: order.user_id
       )
 
       order.state_changed('shipment')

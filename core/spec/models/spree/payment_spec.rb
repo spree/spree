@@ -926,4 +926,35 @@ describe Spree::Payment, type: :model do
                                      ])
     end
   end
+
+  describe '#source' do
+    context 'with source required enabled' do
+      let(:payment) { create(:payment, payment_method: payment_method, source: card, state: 'completed') }
+      let(:card) { create(:credit_card) }
+      let(:payment_method) { card.payment_method }
+
+      before do
+        allow(payment_method).to receive_messages source_required: true
+      end
+
+      it { expect(payment_method.source_required?).to eq(true) }
+      it { expect(payment.source).to eq(card) }
+
+      context 'when credit card is removed' do
+        before do
+          card.destroy!
+          payment.reload
+        end
+
+        it { expect(payment.source).to eq(card) }
+        it { expect(payment.source.deleted_at).not_to be_nil }
+      end
+    end
+
+    context 'with source required disabled' do
+      let(:payment) { create(:check_payment) }
+
+      it { expect(payment.source).to be_nil }
+    end
+  end
 end

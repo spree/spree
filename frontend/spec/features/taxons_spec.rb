@@ -1,17 +1,19 @@
 require 'spec_helper'
 
 describe 'viewing products', type: :feature, inaccessible: true do
-  let!(:taxonomy) { create(:taxonomy, name: 'Category') }
-  let!(:super_clothing) { taxonomy.root.children.create(name: 'Super Clothing') }
-  let!(:t_shirts) { super_clothing.children.create(name: 'T-Shirts') }
+  let(:store) { Spree::Store.default }
+  let!(:taxonomy) { create(:taxonomy, name: 'Category', store: store) }
+  let!(:super_clothing) { taxonomy.root.children.create(name: 'Super Clothing', taxonomy_id: taxonomy.id) }
+  let!(:t_shirts) { super_clothing.children.create(name: 'T-Shirts', taxonomy_id: taxonomy.id, description: '<h1>Super T-shirts</h1><table style="border-collapse: collapse; width: 100%;" border="1"><tbody><tr><td style="width: 98.66353978300181%;">I can display html tables.</td></tr></tbody></table>') }
   let(:metas) { { meta_description: 'Brand new Ruby on Rails TShirts', meta_title: 'Ruby On Rails TShirt', meta_keywords: 'ror, tshirt, ruby' } }
-  let(:store_name) { ((first_store = Spree::Store.first) && first_store.name).to_s }
+  let(:store_name) { store.name.to_s }
 
   before do
     t_shirts.children.create(name: 'XXL') # xxl
 
     product = create(:product, name: 'Superman T-Shirt')
     product.taxons << t_shirts
+    allow_any_instance_of(Spree::StoreController).to receive(:current_store).and_return(store)
   end
 
   # Regression test for #1796
@@ -39,6 +41,29 @@ describe 'viewing products', type: :feature, inaccessible: true do
 
     it 'renders breadcrumbs' do
       expect(page.find('#breadcrumbs')).to have_link('T-Shirts')
+    end
+  end
+
+  describe 'viewing taxon when WYSIWYG is enabled' do
+    before do
+      visit '/t/category/super-clothing/t-shirts'
+    end
+
+    it 'renders the html tables in the taxon description' do
+      expect(page).to have_selector 'table'
+    end
+  end
+
+  describe 'viewing taxon when WYSIWYG is disabled' do
+    before do
+      Spree::Config.taxon_wysiwyg_editor_enabled = false
+      visit '/t/category/super-clothing/t-shirts'
+    end
+
+    after { Spree::Config.taxon_wysiwyg_editor_enabled = true }
+
+    it 'strips out the html tables tags from the description' do
+      expect(page).not_to have_selector 'table'
     end
   end
 

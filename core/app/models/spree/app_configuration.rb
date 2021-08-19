@@ -45,6 +45,7 @@ module Spree
     preference :currency, :string, default: 'USD'
     preference :default_country_id, :integer
     preference :disable_sku_validation, :boolean, default: false # when turned off disables the built-in SKU uniqueness validation
+    preference :disable_store_presence_validation, :boolean, default: false # when turned off disables Store presence validation for Products and Payment Methods
     preference :expedited_exchanges, :boolean, default: false # NOTE this requires payment profiles to be supported on your gateway of choice as well as a delayed job handler to be configured with activejob. kicks off an exchange shipment upon return authorization save. charge customer if they do not return items within timely manner.
     preference :expedited_exchanges_days_window, :integer, default: 14 # the amount of days the customer has to return their item after the expedited exchange is shipped in order to avoid being charged
     preference :layout, :string, default: 'spree/layouts/spree_application'
@@ -52,6 +53,7 @@ module Spree
     preference :mailer_logo, :string, default: 'logo/spree_50.png'
     preference :max_level_in_taxons_menu, :integer, default: 1 # maximum nesting level in taxons menu
     preference :products_per_page, :integer, default: 12
+    preference :product_wysiwyg_editor_enabled, :boolean, default: true
     preference :require_master_price, :boolean, default: true
     preference :restock_inventory, :boolean, default: true # Determines if a return item is restocked automatically once it has been received
     preference :return_eligibility_number_of_days, :integer, default: 365
@@ -62,6 +64,7 @@ module Spree
     preference :show_products_without_price, :boolean, default: false
     preference :show_raw_product_description, :boolean, default: false
     preference :tax_using_ship_address, :boolean, default: true
+    preference :taxon_wysiwyg_editor_enabled, :boolean, default: true
     preference :track_inventory_levels, :boolean, default: true # Determines whether to track on_hand values for variants / products.
 
     # Store credits configurations
@@ -76,9 +79,10 @@ module Spree
       @searcher_class ||= Spree::Core::Search::Base
     end
 
-    # Sets the path used for products and taxons.
+    # Sets the path used for products, taxons and pages.
     preference :storefront_products_path, :string, default: 'products'
     preference :storefront_taxons_path, :string, default: 't'
+    preference :storefront_pages_path, :string, default: 'pages'
 
     attr_writer :searcher_class
   end

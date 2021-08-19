@@ -739,9 +739,11 @@ describe 'StoreCredit' do
     end
 
     describe '#store_events' do
+      let(:store) { create(:store) }
+
       context 'create' do
         context 'user has one store credit' do
-          subject { create(:store_credit, amount: store_credit_amount) }
+          subject { create(:store_credit, amount: store_credit_amount, store: store) }
 
           let(:store_credit_amount) { 100.0 }
 
@@ -759,13 +761,13 @@ describe 'StoreCredit' do
         end
 
         context 'user has multiple store credits' do
-          subject { create(:store_credit, user: user, amount: additional_store_credit_amount) }
+          subject { create(:store_credit, user: user, amount: additional_store_credit_amount, store: store) }
 
           let(:store_credit_amount) { 100.0 }
           let(:additional_store_credit_amount) { 200.0 }
 
           let(:user) { create(:user) }
-          let!(:store_credit) { create(:store_credit, user: user, amount: store_credit_amount) }
+          let!(:store_credit) { create(:store_credit, user: user, amount: store_credit_amount, store: store) }
 
           it "saves the user's total store credit in the event" do
             amount = store_credit_amount + additional_store_credit_amount

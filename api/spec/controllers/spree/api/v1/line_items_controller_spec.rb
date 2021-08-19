@@ -17,7 +17,7 @@ module Spree
 
     let!(:order) { create(:order_with_line_items, line_items_count: 1) }
 
-    let(:product) { create(:product) }
+    let(:product) { create(:product, stores: Spree::Store.all) }
     let(:attributes) { [:id, :quantity, :price, :variant, :total, :display_amount, :single_display_amount] }
     let(:resource_scoping) { { order_id: order.to_param } }
     let(:admin_role) { create(:admin_role) }

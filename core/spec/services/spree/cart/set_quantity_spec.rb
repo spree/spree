@@ -4,8 +4,9 @@ module Spree
   describe Cart::SetQuantity do
     subject { described_class }
 
-    let!(:order) { Spree::Order.create }
-    let!(:line_item) { create(:line_item, order: order) }
+    let(:store) { create(:store) }
+    let(:order) { create(:order, store: store) }
+    let(:line_item) { create(:line_item, order: order) }
 
     context 'with non-backorderable item' do
       before do

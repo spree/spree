@@ -1,0 +1,27 @@
+<% if section.gutters? %>
+  <% section_padding = 'px-3' %>
+<% else %>
+  <% section_padding = 'px-0' %>
+<% end %>
+
+<div class="col-12 <%= section_padding %>">
+  <div class="text-center homepage-fashion-trends-box">
+    <% if section.title.present? %>
+      <div class="homepage-fashion-trends-box-summer-text mb-1"><%= section.title %></div>
+    <% end %>
+
+    <% if section.subtitle.present? %>
+      <div class="homepage-fashion-trends-box-fashion-trends-text mb-2"><%= section.subtitle %></div>
+    <% end %>
+
+    <div class="homepage-fashion-trends-box-description-text text-center mb-3">
+      <div class="mb-3">
+        <%= raw section.rte_content %>
+      </div>
+
+      <% if section.button_text.present? && section.link.present? %>
+        <%= link_to section.button_text, spree_localized_link(section), class: 'btn text-center spree-btn btn-outline-primary w-75' %>
+      <% end %>
+    </div>
+  </div>
+</div>

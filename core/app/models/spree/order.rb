@@ -2,6 +2,7 @@ require_dependency 'spree/order/checkout'
 require_dependency 'spree/order/currency_updater'
 require_dependency 'spree/order/payments'
 require_dependency 'spree/order/store_credit'
+require_dependency 'spree/order/emails'
 
 module Spree
   class Order < Spree::Base
@@ -13,10 +14,15 @@ module Spree
     include Spree::Order::Payments
     include Spree::Order::StoreCredit
     include Spree::Order::AddressBook
+    include Spree::Order::Emails
     include Spree::Core::NumberGenerator.new(prefix: 'R')
     include Spree::Core::TokenGenerator
 
     include NumberAsParam
+    include SingleStoreResource
+    include MemoizedData
+
+    MEMOIZED_METHODS = %w(tax_zone)
 
     extend Spree::DisplayMoney
     money_methods :outstanding_balance, :item_total,           :adjustment_total,
@@ -93,6 +99,7 @@ module Spree
     has_many :reimbursements, inverse_of: :order, class_name: 'Spree::Reimbursement'
     has_many :line_item_adjustments, through: :line_items, source: :adjustments
     has_many :inventory_units, inverse_of: :order, class_name: 'Spree::InventoryUnit'
+    has_many :return_items, through: :inventory_units, class_name: 'Spree::ReturnItem'
     has_many :variants, through: :line_items
     has_many :products, through: :variants
     has_many :refunds, through: :payments
@@ -366,7 +373,6 @@ module Spree
       touch :completed_at
 
       deliver_order_confirmation_email unless confirmation_delivered?
-
       deliver_store_owner_order_notification_email if deliver_store_owner_order_notification_email?
 
       consider_risk
@@ -376,11 +382,6 @@ module Spree
       shipments.each { |shipment| shipment.update!(self) if shipment.persisted? }
       updater.update_shipment_state
       save!
-    end
-
-    def deliver_order_confirmation_email
-      OrderMailer.confirm_email(id).deliver_later
-      update_column(:confirmation_delivered, true)
     end
 
     # Helper methods for checkout steps
@@ -424,21 +425,15 @@ module Spree
     end
 
     def empty!
-      if completed?
-        raise Spree.t(:cannot_empty_completed_order)
-      else
-        line_items.destroy_all
-        updater.update_item_count
-        adjustments.destroy_all
-        shipments.destroy_all
-        state_changes.destroy_all
-        order_promotions.destroy_all
+      ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
+        `Order#empty!` is deprecated and will be removed in Spree 5.0.
+        Please use `Spree::Cart::Empty.call(order: order)` instead.
+      DEPRECATION
 
-        update_totals
-        persist_totals
-        restart_checkout_flow
-        self
-      end
+      raise Spree.t(:cannot_empty_completed_order) if completed?
+
+      result = Spree::Dependencies.cart_empty_service.constantize.call(order: self)
+      result.value
     end
 
     def has_step?(step)
@@ -576,6 +571,10 @@ module Spree
       !approved?
     end
 
+    def can_be_destroyed?
+      !completed? && payments.completed.empty?
+    end
+
     def consider_risk
       considered_risky! if is_risky? && !approved?
     end
@@ -586,11 +585,6 @@ module Spree
 
     def approve!
       update_column(:considered_risky, false)
-    end
-
-    def reload(options = nil)
-      remove_instance_variable(:@tax_zone) if defined?(@tax_zone)
-      super
     end
 
     def tax_total
@@ -707,10 +701,6 @@ module Spree
       update_with_updater!
     end
 
-    def send_cancel_email
-      OrderMailer.cancel_email(id).deliver_later
-    end
-
     def after_resume
       shipments.each(&:resume!)
       consider_risk
@@ -734,23 +724,11 @@ module Spree
       end
       store ||= self.store
 
-      PaymentMethod.for_store(store).available_on_front_end.select { |pm| pm.available_for_order?(self) }
+      store.payment_methods.available_on_front_end.select { |pm| pm.available_for_order?(self) }
     end
 
     def credit_card_nil_payment?(attributes)
       payments.store_credits.present? && attributes[:amount].to_f.zero?
-    end
-
-    # Returns true if:
-    #   1. an email address is set for new order notifications AND
-    #   2. no notification for this order has been sent yet.
-    def deliver_store_owner_order_notification_email?
-      store.new_order_notifications_email.present? && !store_owner_notification_delivered?
-    end
-
-    def deliver_store_owner_order_notification_email
-      OrderMailer.store_owner_notification_email(id).deliver_later
-      update_column(:store_owner_notification_delivered, true)
     end
 
     def uppercase_number

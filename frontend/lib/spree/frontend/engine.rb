@@ -17,6 +17,12 @@ module Spree
       initializer 'spree.frontend.environment', before: :load_config_initializers do |_app|
         Spree::Frontend::Config = Spree::FrontendConfiguration.new
       end
+
+      initializer 'spree.frontend.checking_deprecated_preferences' do
+        Spree::Frontend::Config.deprecated_preferences.each do |pref|
+          warn "[DEPRECATION] Spree::Frontend::Config[:#{pref[:name]}] is deprecated. #{pref[:message]}"
+        end
+      end
     end
   end
 end

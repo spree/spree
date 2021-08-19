@@ -62,6 +62,7 @@ module Spree
     def apply_user_permissions(user)
       can :read, ::Spree::Country
       can :read, ::Spree::Menu
+      can :read, ::Spree::CmsPage
       can :read, ::Spree::OptionType
       can :read, ::Spree::OptionValue
       can :create, ::Spree::Order
@@ -72,7 +73,7 @@ module Spree
         !order.completed? && (order.user == user || order.token && token == order.token)
       end
       can :manage, ::Spree::Address, user_id: user.id
-      can :read, ::Spree::CreditCard, user_id: user.id
+      can [:read, :destroy], ::Spree::CreditCard, user_id: user.id
       can :read, ::Spree::Product
       can :read, ::Spree::ProductProperty
       can :read, ::Spree::Property

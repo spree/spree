@@ -11,10 +11,15 @@ module Spree
                   record_type: :image,
                   serializer: :image
 
-          belongs_to :menu
+          belongs_to :menu, serializer: :menu
           belongs_to :parent, record_type: :menu_item, serializer: :menu_item
+          belongs_to :linked_resource, polymorphic: {
+            Spree::Cms::Pages::StandardPage => :cms_page,
+            Spree::Cms::Pages::FeaturePage => :cms_page,
+            Spree::Cms::Pages::Homepage => :cms_page
+          }
 
-          has_many   :children, record_type: :menu_item, serializer: :menu_item
+          has_many :children, record_type: :menu_item, serializer: :menu_item
         end
       end
     end

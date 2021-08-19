@@ -8,7 +8,7 @@ end
 
 describe Spree::Order, type: :model do
   let(:user) { stub_model(Spree::LegacyUser, email: 'spree@example.com') }
-  let(:store) { create(:store, default: true) }
+  let!(:store) { create(:store, default: true) }
   let(:order) { stub_model(Spree::Order, user: user, store: store) }
 
   before do
@@ -169,46 +169,7 @@ describe Spree::Order, type: :model do
       order.finalize!
     end
 
-    it 'sends an order confirmation email to customer' do
-      mail_message = double 'Mail::Message'
-      expect(Spree::OrderMailer).to receive(:confirm_email).with(order.id).and_return mail_message
-      expect(mail_message).to receive :deliver_later
-      order.finalize!
-    end
-
-    it 'sets confirmation delivered when finalizing' do
-      expect(order.confirmation_delivered?).to be false
-      order.finalize!
-      expect(order.confirmation_delivered?).to be true
-    end
-
-    it 'does not send duplicate confirmation emails' do
-      allow(order).to receive_messages(confirmation_delivered?: true)
-      expect(Spree::OrderMailer).not_to receive(:confirm_email)
-      order.finalize!
-    end
-
-    context 'new order notifications' do
-      it 'sends a new order notification email to store owner when notification email address is set' do
-        # NOTE: 'store' factory has new_order_notifications_email set by default
-        mail_message = double 'Mail::Message'
-        expect(Spree::OrderMailer).to receive(:store_owner_notification_email).with(order.id).and_return mail_message
-        expect(mail_message).to receive :deliver_later
-        order.finalize!
-      end
-
-      it 'does not send a new order notification email to store owner when notification email address is blank' do
-        store = order.store
-        store.update(new_order_notifications_email: '')
-
-        mail_message = double 'Mail::Message'
-        expect(Spree::OrderMailer).to_not receive(:store_owner_notification_email)
-        order.finalize!
-      end
-    end
-
     it 'freezes all adjustments' do
-      allow(Spree::OrderMailer).to receive_message_chain :confirm_email, :deliver_later
       adjustments = [double]
       expect(order).to receive(:all_adjustments).and_return(adjustments)
       expect(adjustments).to all(receive(:close))
@@ -782,6 +743,32 @@ describe Spree::Order, type: :model do
     end
   end
 
+  context '#can_be_destroyed?' do
+    shared_examples 'cannot be destroyed' do
+      it { expect(order.can_be_destroyed?).to be false }
+    end
+
+    context 'when order is completed' do
+      let(:order) { create(:completed_order_with_pending_payment) }
+
+      it_behaves_like 'cannot be destroyed'
+    end
+
+    context 'when order has finalized payments' do
+      let(:order) { create(:order_ready_to_ship) }
+
+      it_behaves_like 'cannot be destroyed'
+    end
+
+    context 'when order is not completed and does not have finalized payments' do
+      let(:order) { create(:order) }
+
+      it 'can be destroyed' do
+        expect(order.can_be_destroyed?).to be true
+      end
+    end
+  end
+
   context '#uneditable?' do
     let(:order) { Spree::Order.create }
 
@@ -1107,8 +1094,10 @@ describe Spree::Order, type: :model do
   end
 
   describe '#promo_code' do
+    let(:new_order_x) { create(:order) }
+
     context 'without promo_code applied' do
-      it { expect(order.promo_code).to eq nil }
+      it { expect(new_order_x.promo_code).to eq nil }
     end
 
     context 'with_promo_code applied' do
@@ -1116,11 +1105,11 @@ describe Spree::Order, type: :model do
       let(:promotion) { create :promotion, code: promo_code }
 
       before do
-        promotion.orders << order
+        promotion.orders << new_order_x
       end
 
       it 'returns applied promo_code' do
-        expect(order.promo_code).to eq promo_code
+        expect(new_order_x.promo_code).to eq promo_code
       end
     end
   end
@@ -1191,8 +1180,8 @@ describe Spree::Order, type: :model do
 
   describe '#collect_backend_payment_methods' do
     let!(:order) { create(:order_with_line_items, line_items_count: 2) }
-    let!(:credit_card_payment_method) { create(:simple_credit_card_payment_method, display_on: 'both') }
-    let!(:store_credit_payment_method) { create(:store_credit_payment_method, display_on: 'both') }
+    let!(:credit_card_payment_method) { create(:simple_credit_card_payment_method, display_on: 'both', stores: [store]) }
+    let!(:store_credit_payment_method) { create(:store_credit_payment_method, display_on: 'both', stores: [store]) }
 
     it { expect(order.collect_backend_payment_methods).to include(credit_card_payment_method) }
     it { expect(order.collect_backend_payment_methods).not_to include(store_credit_payment_method) }
@@ -1493,9 +1482,9 @@ describe Spree::Order, type: :model do
 
     context 'when user has address but without default bill address' do
       let(:address) { create(:address, user: user) }
-      let(:user) { create(:user_with_addresses, bill_address: nil) }
+      let(:user) { create(:user_with_addresses) }
 
-      before { user.addresses << address }
+      before { user.bill_address = nil }
 
       it 'changes user default bill addresss' do
         expect(user.bill_address_id).to be nil
@@ -1558,9 +1547,9 @@ describe Spree::Order, type: :model do
 
     context 'when user has address but without default ship address' do
       let(:address) { create(:address, user: user) }
-      let(:user) { create(:user_with_addresses, ship_address: nil) }
+      let(:user) { create(:user_with_addresses) }
 
-      before { user.addresses << address }
+      before { user.update(ship_address: nil) }
 
       it 'changes user default ship addresss' do
         expect(user.ship_address_id).to be nil

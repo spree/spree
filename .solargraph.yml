@@ -8,7 +8,6 @@ exclude:
 - vendor/**/*
 - ".bundle/**/*"
 - sample/**/*
-- guides/**/*
 - sandbox/**/*
 - pkg/**/*
 - cmd/**/*.gemspec

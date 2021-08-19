@@ -36,6 +36,7 @@ require 'spree/testing_support/factories'
 require 'spree/testing_support/preferences'
 require 'spree/testing_support/image_helpers'
 require 'spree/testing_support/next_instance_of'
+require 'spree/testing_support/rspec_retry_config'
 
 require 'spree/api/testing_support/caching'
 require 'spree/api/testing_support/helpers'
@@ -43,6 +44,7 @@ require 'spree/api/testing_support/setup'
 require 'spree/api/testing_support/v2/base'
 require 'spree/api/testing_support/v2/current_order'
 require 'spree/api/testing_support/v2/platform_contexts'
+require 'spree/api/testing_support/v2/serializers_params'
 
 RSpec.configure do |config|
   config.backtrace_exclusion_patterns = [/gems\/activesupport/, /gems\/actionpack/, /gems\/rspec/]

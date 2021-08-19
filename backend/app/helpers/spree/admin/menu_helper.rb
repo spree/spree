@@ -17,31 +17,13 @@ module Spree
         info_row = menu_item_bar(menu, item)
         menu_container = content_tag(:div, raw(decendents.join), class: 'menu-container', data: { parent_id: item.id })
 
-        content_tag(:div, info_row + menu_container, class: 'menu-item menu-container-item dragable', data: { item_id: item.id })
-      end
-
-      def resorce_types_dropdown_values
-        formatted_resouces = []
-
-        Spree::MenuItem::LINKED_RESOURCE_TYPE.each do |resource_type|
-          formatted = if Spree::MenuItem::DYNAMIC_RESOURCE_TYPE.include? resource_type
-                        resource_type.split('::', 3).last
-                      else
-                        resource_type
-                      end
-
-          formatted_resouces << [formatted, resource_type]
-        end
-
-        formatted_resouces
+        content_tag(:div, info_row + menu_container,
+                    class: 'menu-item menu-container-item dragable removable-dom-element',
+                    data: { item_id: item.id })
       end
 
       def default_menu_for_store?(menu)
         menu.store.default_locale == menu.locale
-      end
-
-      def to_path_format(string)
-        string.parameterize(separator: '_')
       end
     end
   end

@@ -45,8 +45,8 @@ RSpec.configure do |config|
           address_params: {
             type: :object,
             properties: {
-              country_id: { type: :integer },
-              state_id: { type: :integer },
+              country_id: { type: :string },
+              state_id: { type: :string },
               state_name: { type: :string },
               address1: { type: :string },
               city: { type: :string },
@@ -57,8 +57,53 @@ RSpec.configure do |config|
               lastname: { type: :string },
               label: { type: :string },
               company: { type: :string },
-              user_id: { type: :integer }
+              user_id: { type: :string }
             }
+          },
+          classification_params: {
+            type: :object,
+            properties: {
+              product_id: { type: :string },
+              taxon_id: { type: :string },
+              position: { type: :integer }
+            }
+          },
+          option_type_params: {
+            type: :object,
+            properties: {
+              name: { type: :string },
+              presentation: { type: :string }
+            },
+            required: %w[name presentation]
+          },
+          option_value_params: {
+          type: :object,
+            properties: {
+              name: { type: :string },
+              presentation: { type: :string },
+              option_values_attributes: { type: :string }
+            },
+            required: %w[name presentation]
+          },
+          user_params: {
+            type: :object,
+            properties: {
+              email: { type: :string },
+              password: { type: :string },
+              password_confirmation: { type: :string },
+              ship_address_id: { type: :string },
+              bill_address_id: { type: :string },
+            },
+            required: %w[email password password_confirmation]
+          },
+          taxon_params: {
+            type: :object,
+            properties: {
+              taxonomy_id: { type: :string },
+              parent_id: { type: :string },
+              name: { type: :string }
+            },
+            required: %w[name taxonomy_id]
           },
           resources_list: {
             type: :object,
@@ -143,8 +188,12 @@ RSpec.configure do |config|
     next if response.nil? || response.body.blank?
 
     example.metadata[:response][:content] = {
-      'application/json' => {
-        example: JSON.parse(response.body, symbolize_names: true)
+      'application/vnd.api+json' => {
+        examples: {
+          'Example': {
+            value: JSON.parse(response.body, symbolize_names: true)
+          }
+        }
       }
     }
   end

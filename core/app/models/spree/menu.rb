@@ -1,5 +1,7 @@
 module Spree
   class Menu < Spree::Base
+    include SingleStoreResource
+    
     has_many :menu_items, dependent: :destroy
     belongs_to :store, touch: true
 
@@ -18,7 +20,6 @@ module Spree
 
     default_scope { order(created_at: :asc) }
 
-    scope :by_store, ->(store) { where(store: store) }
     scope :by_locale, ->(locale) { where(locale: locale) }
 
     self.whitelisted_ransackable_attributes = %w[name location locale store_id]
@@ -46,7 +47,7 @@ module Spree
     end
 
     def set_root
-      self.root ||= MenuItem.create!(menu_id: id, name: name, item_type: 'Container')
+      self.root ||= menu_items.create!(name: name, item_type: 'Container')
     end
 
     def update_root_name

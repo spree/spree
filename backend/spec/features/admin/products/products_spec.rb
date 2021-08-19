@@ -3,6 +3,7 @@ require 'spec_helper'
 
 describe 'Products', type: :feature do
   let(:store) { Spree::Store.default }
+  let(:other_store) { create(:store, name: 'Other Store', url: 'another-store.lvh.me') }
 
   context 'as admin user' do
     stub_authorization!
@@ -20,6 +21,7 @@ describe 'Products', type: :feature do
         before do
           create(:product, name: 'apache baseball cap', price: 10)
           create(:product, name: 'zomg shirt', price: 5)
+          create(:product, name: 'Long T-Shirt', price: 15, stores: [other_store])
         end
 
         it 'lists existing products with correct sorting by name' do
@@ -44,6 +46,24 @@ describe 'Products', type: :feature do
           click_link 'admin_products_listing_price_title'
           within_row(1) { expect(page).to have_content('zomg shirt') }
           within_row(2) { expect(page).to have_content('apache baseball cap') }
+        end
+
+        it 'does not list the product that belongs to other store' do
+          visit spree.admin_products_path
+
+          expect(page).not_to have_content('Long T-Shirt')
+        end
+
+        it 'lists product from the current store' do
+          Capybara.app_host = 'http://another-store.lvh.me'
+
+          visit spree.admin_products_path
+
+          expect(page).not_to have_content('apache baseball cap')
+          expect(page).not_to have_content('zomg shirt')
+          expect(page).to have_content('Long T-Shirt')
+
+          Capybara.app_host = nil
         end
       end
 
@@ -75,13 +95,13 @@ describe 'Products', type: :feature do
         expect(page).to have_content('zomg shirt')
         expect(page).not_to have_content('apache baseball cap')
 
-        check 'Show Deleted'
+        find('label', text: 'Show Deleted').click
         click_on 'Search'
 
         expect(page).to have_content('zomg shirt')
         expect(page).to have_content('apache baseball cap')
 
-        uncheck 'Show Deleted'
+        find('label', text: 'Show Deleted').click
         click_on 'Search'
 
         expect(page).to have_content('zomg shirt')
@@ -156,11 +176,14 @@ describe 'Products', type: :feature do
         fill_in 'product_sku', with: 'B100'
         fill_in 'product_price', with: '100'
 
-        fill_in_date_picker('product_available_on', with: '2012-01-24')
+        fill_in_date_picker('product_available_on', { year: 2012, month: 1, day: 24 })
+
         select2 'Size', from: 'Prototype'
         check 'Large'
         select2 @shipping_category.name, css: '#product_shipping_category_field'
+
         click_button 'Create'
+
         expect(page).to have_content('successfully created!')
         expect(page).to have_field(id: 'product_available_on', type: :hidden, with: '2012-01-24')
         expect(Spree::Product.last.variants.length).to eq(1)
@@ -223,6 +246,8 @@ describe 'Products', type: :feature do
         end
       end
 
+      let(:product) { Spree::Product.last }
+
       it 'allows an admin to create a new product' do
         fill_in 'product_name', with: 'Baseball Cap'
         fill_in 'product_sku', with: 'B100'
@@ -230,11 +255,14 @@ describe 'Products', type: :feature do
         fill_in 'product_available_on', with: '2012/01/24'
         select @shipping_category.name, from: 'product_shipping_category_id'
         click_button 'Create'
+
         expect(page).to have_content('successfully created!')
         expect(page).to have_field('product_price', with: '100.00')
-        expect(page).to have_select('product_store_ids', selected: store.name)
         expect(page).to have_select('product_cost_currency', selected: 'Euro (EUR)')
-        expect(Spree::Product.last.master.prices.last.currency).to eq('EUR')
+
+        expect(product.master.prices.last.currency).to eq('EUR')
+        expect(product.stores).to eq([store])
+
         click_button 'Update'
         expect(page).to have_content('successfully updated!')
       end
@@ -295,7 +323,7 @@ describe 'Products', type: :feature do
 
     context 'cloning a product', js: true do
       it 'allows an admin to clone a product' do
-        create(:product)
+        create(:product, stores: Spree::Store.all)
 
         visit spree.admin_products_path
         within_row(1) do
@@ -311,7 +339,7 @@ describe 'Products', type: :feature do
 
           visit spree.admin_products_path
           click_on 'Filter'
-          check 'Show Deleted'
+          find('label', text: 'Show Deleted').click
           click_on 'Search'
 
           expect(page).to have_content('apache baseball cap')
@@ -326,7 +354,7 @@ describe 'Products', type: :feature do
     end
 
     context 'updating a product' do
-      let(:product) { create(:product) }
+      let(:product) { create(:product, stores: Spree::Store.all) }
 
       let(:prototype) do
         size = build_option_type_with_values('size', %w(Small Medium Large))
@@ -413,7 +441,7 @@ describe 'Products', type: :feature do
     end
 
     context 'deleting a product', js: true do
-      let!(:product) { create(:product) }
+      let!(:product) { create(:product, stores: Spree::Store.all) }
 
       it 'is still viewable' do
         visit spree.admin_products_path
@@ -424,7 +452,7 @@ describe 'Products', type: :feature do
 
         click_on 'Filter'
         # This will show our deleted product
-        check 'Show Deleted'
+        find('label', text: 'Show Deleted').click
         click_on 'Search'
         click_link(product.name, match: :first)
         expect(page).to have_field(id: 'product_price') do |field|
@@ -454,7 +482,7 @@ describe 'Products', type: :feature do
     end
 
     context 'editing product compare at price', js: true do
-      let!(:product) { create(:product) }
+      let!(:product) { create(:product, stores: Spree::Store.all) }
 
       it 'lets admin edit compare at price for product' do
         visit spree.admin_products_path
@@ -476,7 +504,7 @@ describe 'Products', type: :feature do
     custom_authorization! do |_user|
       can [:admin, :update, :read], Spree::Product
     end
-    let!(:product) { create(:product) }
+    let!(:product) { create(:product, stores: Spree::Store.all) }
 
     it 'only displays accessible links on index' do
       visit spree.admin_products_path

@@ -223,7 +223,7 @@ module Spree
     end
 
     def postal_code_validate
-      return if country.blank? || country_iso.blank? || !require_zipcode?
+      return if country.blank? || country_iso.blank? || !require_zipcode? || zipcode.blank?
       return unless ::ValidatesZipcode::CldrRegexpCollection::ZIPCODES_REGEX.keys.include?(country_iso.upcase.to_sym)
 
       formatted_zip = ::ValidatesZipcode::Formatter.new(

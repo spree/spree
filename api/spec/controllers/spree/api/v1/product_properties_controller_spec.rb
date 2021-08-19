@@ -5,7 +5,7 @@ module Spree
   describe Api::V1::ProductPropertiesController, type: :controller do
     render_views
 
-    let!(:product) { create(:product) }
+    let!(:product) { create(:product, stores: Spree::Store.all) }
     let!(:property_1) { product.product_properties.create(property_name: 'My Property 1', value: 'my value 1', position: 0) }
 
     let(:attributes) { [:id, :product_id, :property_id, :value, :property_name] }

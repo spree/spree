@@ -1,0 +1,60 @@
+<% if section.fullscreen? %>
+  <% if section.gutters? %>
+    <% section_padding = 'px-3' %>
+  <% else %>
+    <% section_padding = 'px-0' %>
+  <% end %>
+<% else %>
+  <% section_padding = 'px-2' %>
+<% end %>
+<div class="col-12 homepage-hero-image position-relative p-0 <%= section_padding %>">
+
+  <div class="bg-light" style="--aspect-ratio:12/5;">
+    <% if section.image_one.attached? %>
+
+        <!-- SM to MD -->
+        <img class="d-block d-md-none lazyload"
+          data-src="<%= main_app.url_for(section.img_one_sm) %>"
+          data-srcset="<%= main_app.url_for(section.img_one_sm) %>"
+          alt="<%= section&.title %>">
+
+        <!-- MD to LG -->
+        <img class="d-none d-md-block d-lg-none lazyload"
+          data-src="<%= main_app.url_for(section.img_one_md) %>"
+          data-srcset="<%= main_app.url_for(section.img_one_md) %>"
+          alt="<%= section&.title %>">
+
+        <!-- LG to XL -->
+        <img class="d-none d-lg-block d-xl-none lazyload"
+          data-src="<%= main_app.url_for(section.img_one_lg) %>"
+          data-srcset="<%= main_app.url_for(section.img_one_lg) %>"
+          alt="<%= section&.title %>">
+
+        <!-- XL UP -->
+        <img class="d-none d-xl-block lazyload"
+          data-src="<%= main_app.url_for(section.img_one_xl) %>"
+          data-srcset="<%= main_app.url_for(section.img_one_xl) %>"
+          alt="<%= section&.title %>">
+
+     <% else %>
+       <%= icon( name: 'card-image',
+                 classes: 'text-black-50',
+                 width: 26,
+                 height: 26) %>
+     <% end %>
+
+    <div class="hero-content position-absolute-y-center">
+      <% if section.title.present? %>
+        <div class="homepage-hero-image-text mx-auto pb-0 pb-sm-2 pb-md-3">
+          <%= section.title %>
+        </div>
+      <% end %>
+
+      <% if section.link.present? && section.button_text.present? %>
+        <div>
+          <%= link_to section.button_text, spree_localized_link(section), class: 'btn btn-primary spree-btn px-5' %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

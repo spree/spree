@@ -51,7 +51,7 @@ describe 'Stock Transfers', type: :feature, js: true do
     create(:stock_location_with_items, name: 'NY') # source_location
     create(:stock_location, name: 'SF') # destination_location
 
-    product = create(:product)
+    product = create(:product, stores: Spree::Store.all)
     Spree::StockLocation.first.stock_items.where(variant_id: product.master.id).first.adjust_count_on_hand(0)
 
     visit spree.admin_stock_transfers_path

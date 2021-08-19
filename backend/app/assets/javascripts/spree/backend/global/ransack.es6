@@ -75,7 +75,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
       var cleanLabel = DOMPurify.sanitize(label)
 
-      filter = '<span class="js-filter badge badge-secondary" data-ransack-field="' + ransackFieldId + '">' + cleanLabel + '<i class="icon icon-cancel ml-2 js-delete-filter"></i></span>'
+      filter = '<span class="js-filter badge badge-secondary d-inline-flex align-items-center" data-ransack-field="' + ransackFieldId + '">' + cleanLabel + '<i class="icon icon-cancel ml-2 js-delete-filter"></i></span>'
       $('.js-filters').append(filter).show()
     }
   })

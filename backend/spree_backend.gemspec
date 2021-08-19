@@ -7,15 +7,15 @@ Gem::Specification.new do |s|
   s.version     = Spree.version
   s.authors     = ['Sean Schofield', 'Spark Solutions']
   s.email       = 'hello@spreecommerce.org'
-  s.summary     = 'backend e-commerce functionality for the Spree project.'
-  s.description = 'Required dependency for Spree'
+  s.summary     = 'Admin Dashboard for Spree eCommerce platform'
+  s.description = 'Admin Dashboard for Spree eCommerce platform'
   s.homepage    = 'https://spreecommerce.org'
   s.license     = 'BSD-3-Clause'
 
   s.metadata = {
     "bug_tracker_uri"   => "https://github.com/spree/spree/issues",
     "changelog_uri"     => "https://github.com/spree/spree/releases/tag/v#{s.version}",
-    "documentation_uri" => "https://guides.spreecommerce.org/",
+    "documentation_uri" => "https://dev-docs.spreecommerce.org/",
     "source_code_uri"   => "https://github.com/spree/spree/tree/v#{s.version}",
   }
 
@@ -39,4 +39,5 @@ Gem::Specification.new do |s|
   s.add_dependency 'sass-rails', '>= 5'
   s.add_dependency 'select2-rails',   '~> 4.0'
   s.add_dependency 'sprockets', '~> 4.0'
+  s.add_dependency 'tinymce-rails'
 end

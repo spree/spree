@@ -3,7 +3,7 @@ module Spree
     acts_as_paranoid
     acts_as_list
 
-    include MultipleStoresResource
+    include MultiStoreResource
 
     DISPLAY = [:both, :front_end, :back_end].freeze
 
@@ -33,6 +33,8 @@ module Spree
     # e.g. CreditCard in the case of a the Gateway payment type
     # nil means the payment method doesn't require a source e.g. check
     def payment_source_class
+      return unless source_required?
+
       raise ::NotImplementedError, 'You must implement payment_source_class method for this gateway.'
     end
 

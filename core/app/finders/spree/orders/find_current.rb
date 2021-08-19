@@ -15,19 +15,7 @@ module Spree
       private
 
       def incomplete_orders
-        Spree::Order.incomplete.not_canceled.includes(scope_includes)
-      end
-
-      def scope_includes
-        {
-          line_items: [
-            variant: [
-              :images,
-              option_values: :option_type,
-              product: :product_properties,
-            ]
-          ]
-        }
+        Spree::Order.incomplete.not_canceled
       end
     end
   end

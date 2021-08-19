@@ -15,10 +15,17 @@
   z-index: $zindex-dropdown;
 }
 
-// No-margin and no-padding helper classes
-@each $side in top bottom left right {
-  .no-margin-#{$side}  { margin-#{side}: 0; }
-  .no-padding-#{$side} { padding-#{side}: 0; }
+figure.admin-img-holder {
+  max-width: 275px;
+  border: 2px dashed grey;
+  border-radius: $border-radius;
+  overflow: hidden;
+  display: inline-block;
+
+  img {
+    max-width: 100%;
+    height: auto;
+  }
 }
 
 .js-remove-promo-rule-option-value {
@@ -40,11 +47,17 @@
   color: rgba(0, 0, 0, 0.50);
 }
 
+.truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 [data-show-info] {
   color:  $primary;
   cursor: pointer;
+}
 
-  &:hover {
-    color: darken($primary, 10) !important;
-  }
+#contentHeaderRow {
+  min-height: 51px;
 }

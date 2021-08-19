@@ -13,7 +13,10 @@
 
       <div class="d-lg-inline-block account-page-user-info-item-store-credits">
         <p class="my-0 text-uppercase text-center">
-          <%= Spree.t(:store_credit_name) %>: <b class="account-page-user-info-item-store-credits-amount"><%= Spree::Money.new(@user.total_available_store_credit(current_currency), currency: current_currency).to_s.gsub('.00', '') %></b>
+          <%= Spree.t(:store_credit_name) %>
+          <% @user.available_store_credits(current_store).each do |value| %>
+            <br><b class="account-page-user-info-item-store-credits-amount"><%= value %></b>
+          <% end %>
         </p>
       </div>
     </div>

@@ -2,6 +2,7 @@ module Spree
   module PermittedAttributes
     ATTRIBUTES = [
       :address_attributes,
+      :classification_attributes,
       :checkout_attributes,
       :customer_return_attributes,
       :image_attributes,
@@ -24,7 +25,9 @@ module Spree
       :taxon_attributes,
       :taxonomy_attributes,
       :user_attributes,
-      :variant_attributes
+      :variant_attributes,
+      :cms_page_attributes,
+      :cms_section_attributes
     ]
 
     mattr_reader *ATTRIBUTES
@@ -42,6 +45,14 @@ module Spree
       :coupon_code, :email, :shipping_method_id, :special_instructions, :use_billing,
       :user_id, :bill_address_id, :ship_address_id
     ]
+
+    @@classification_attributes = [
+      :position, :taxon_id, :product_id
+    ]
+
+    @@cms_page_attributes = [:title, :meta_title, :content, :meta_description, :visible, :slug, :locale]
+
+    @@cms_section_attributes = [:name, :content, :settings, :fit, :destination]
 
     @@customer_return_attributes = [:stock_location_id, return_items_attributes: [:id, :inventory_unit_id, :return_authorization_id, :returned, :pre_tax_amount, :acceptance_status, :exchange_variant_id, :resellable]]
 

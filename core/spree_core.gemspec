@@ -8,15 +8,15 @@ Gem::Specification.new do |s|
   s.version     = Spree.version
   s.authors     = ['Sean Schofield', 'Spark Solutions']
   s.email       = 'hello@spreecommerce.org'
-  s.summary     = 'The bare bones necessary for Spree.'
-  s.description = 'The bare bones necessary for Spree.'
+  s.summary     = 'The bare bones necessary for Spree'
+  s.description = 'Spree Models, Helpers, Services and core libraries'
   s.homepage    = 'https://spreecommerce.org'
   s.license     = 'BSD-3-Clause'
 
   s.metadata = {
     "bug_tracker_uri"   => "https://github.com/spree/spree/issues",
     "changelog_uri"     => "https://github.com/spree/spree/releases/tag/v#{s.version}",
-    "documentation_uri" => "https://guides.spreecommerce.org/",
+    "documentation_uri" => "https://dev-docs.spreecommerce.org/",
     "source_code_uri"   => "https://github.com/spree/spree/tree/v#{s.version}",
   }
 
@@ -27,7 +27,7 @@ Gem::Specification.new do |s|
   s.require_path = 'lib'
 
   %w[
-    actionmailer actionpack actionview activejob activemodel activerecord
+    actionpack actionview activejob activemodel activerecord
     activestorage activesupport railties
   ].each do |rails_gem|
     s.add_dependency rails_gem, '>= 5.2'
@@ -54,6 +54,4 @@ Gem::Specification.new do |s|
   s.add_dependency 'mini_magick', '~> 4.9', '>= 4.9.4'
   s.add_dependency 'image_processing', '~> 1.2'
   s.add_dependency 'active_storage_validations', '~> 0.9'
-
-  s.add_development_dependency 'email_spec', '~> 2.2'
 end

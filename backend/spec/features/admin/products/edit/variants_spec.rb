@@ -4,8 +4,7 @@ describe 'Product Variants', type: :feature, js: true do
   stub_authorization!
 
   before do
-    create(:product)
-    create(:store, default: true, default_currency: 'USD')
+    create(:product, stores: Spree::Store.all)
     visit spree.admin_products_path
   end
 

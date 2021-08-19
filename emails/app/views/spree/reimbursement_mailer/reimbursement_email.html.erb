@@ -1,0 +1,48 @@
+<h1>
+  <%= Spree.t('reimbursement_mailer.reimbursement_email.dear_customer', name: name_for(@order)) %>
+</h1>
+<p>
+  <%= Spree.t('reimbursement_mailer.reimbursement_email.instructions') %>
+</p>
+<p>
+  <%= Spree.t('reimbursement_mailer.reimbursement_email.refund_summary') %>
+</p>
+<p>
+  <%= Spree.t('reimbursement_mailer.reimbursement_email.total_refunded', total: @reimbursement.display_total) %>
+</p>
+<% if @reimbursement.return_items.exchange_requested.present? %>
+  <p>
+    <%= Spree.t('reimbursement_mailer.reimbursement_email.exchange_summary') %>
+  </p>
+
+  <table class="purchase_content">
+    <% @reimbursement.return_items.exchange_requested.each do |return_item| %>
+      <tr>
+        <td class="purchase_image">
+          <%= link_to(image_tag(variant_image_url(return_item.variant)), spree_storefront_resource_url(return_item.variant.product)) %>
+        </td>
+        <td class="purchase_item">
+          <strong>
+            <span class="f-fallback">
+              <%= link_to raw(return_item.variant.name), spree_storefront_resource_url(return_item.variant.product) %>
+            </span>
+          </strong>
+          <p class="purchase_item--additional">
+            <%= "(#{raw(return_item.exchange_variant.options_text)})" if return_item.exchange_variant.options_text.present? -%>
+          </p>
+        </td>
+      </tr>
+    <% end %>
+  </table>
+  <% if @reimbursement.return_items.awaiting_return.present? && Spree::Config[:expedited_exchanges] %>
+    <p>
+      <%= Spree.t('reimbursement_mailer.reimbursement_email.days_to_send', days: Spree::Config[:expedited_exchanges_days_window]) %>
+    </p>
+  <% end %>
+<% end %>
+
+<p>
+  <%= Spree.t('reimbursement_mailer.reimbursement_email.thanks') %>
+  <br />
+  <%= Spree.t('reimbursement_mailer.reimbursement_email.store_team', store_name: current_store.name) %>
+</p>

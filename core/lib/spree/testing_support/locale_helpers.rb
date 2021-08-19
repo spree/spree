@@ -48,7 +48,7 @@ module Spree
             remember_me: 'Se souvenir de moi',
             my_account: 'Mon compte',
             my_orders: 'Mes commandes',
-            logged_in_succesfully: 'Connexion réussie'
+            logged_in_successfully: 'Connexion réussie'
           })
       end
       # rubocop:enable Layout/ArgumentAlignment

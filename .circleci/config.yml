@@ -10,11 +10,13 @@ defaults: &defaults
   working_directory: ~/spree
   docker:
     - image: &ruby_image circleci/ruby:2.7-node-browsers
+    - image: &redis_image circleci/redis:6.2-alpine
 
 defaults_3_0: &defaults_3_0
   <<: *defaults
   docker:
     - image: &ruby_3_0_image circleci/ruby:3.0-node-browsers
+    - image: *redis_image
 
 run_tests: &run_tests
   <<: *defaults
@@ -104,6 +106,7 @@ jobs:
       DB_USERNAME: postgres
     docker:
       - image: *ruby_image
+      - image: *redis_image
       - image: &postgres_image circleci/postgres:12-alpine
         environment:
           POSTGRES_USER: postgres
@@ -115,6 +118,7 @@ jobs:
     docker:
       - image: *ruby_3_0_image
       - image: *postgres_image
+      - image: *redis_image
 
   tests_postgres_rails_6_0:
     <<: *tests_postgres
@@ -183,6 +187,7 @@ jobs:
       COVERAGE_DIR: /tmp/workspace/simplecov
     docker:
       - image: *ruby_image
+      - image: *redis_image
       - image: &mysql_image circleci/mysql:8-ram
 
   tests_mysql_ruby_3_0:
@@ -191,6 +196,7 @@ jobs:
       <<: *mysql_environment
     docker:
       - image: *ruby_3_0_image
+      - image: *redis_image
       - image: *mysql_image
         command: [--default-authentication-plugin=mysql_native_password]
     steps:
@@ -240,10 +246,11 @@ jobs:
             ./tmp/cc-test-reporter format-coverage -t simplecov -o tmp/codeclimate.backend.json /tmp/workspace/simplecov/backend/.resultset.json
             ./tmp/cc-test-reporter format-coverage -t simplecov -o tmp/codeclimate.core.json /tmp/workspace/simplecov/core/.resultset.json
             ./tmp/cc-test-reporter format-coverage -t simplecov -o tmp/codeclimate.frontend.json /tmp/workspace/simplecov/frontend/.resultset.json
+            ./tmp/cc-test-reporter format-coverage -t simplecov -o tmp/codeclimate.emails.json /tmp/workspace/simplecov/emails/.resultset.json
       - run:
           name: Upload coverage results to Code Climate
           command: |
-            ./tmp/cc-test-reporter sum-coverage tmp/codeclimate.*.json -p 4 -o tmp/codeclimate.total.json
+            ./tmp/cc-test-reporter sum-coverage tmp/codeclimate.*.json -p 5 -o tmp/codeclimate.total.json
             ./tmp/cc-test-reporter upload-coverage -i tmp/codeclimate.total.json
 
   update_staging_repository:
@@ -259,7 +266,7 @@ jobs:
       - run: ssh-add ~/.ssh/id_rsa_54505e4e806d2e2643c699bd39b271dc
       - run: git clone -b master git@github.com:spark-solutions/spree-designs.git
       - run:
-          command: bundle update spree spree_frontend spree_backend
+          command: bundle update
           working_directory: ~/project/spree-designs
       - run:
           command: bundle exec rails spree:install:migrations

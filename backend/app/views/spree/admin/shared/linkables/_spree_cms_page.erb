@@ -1,0 +1,28 @@
+<% if resource.linked_resource %>
+   <% resorce_holder = [resource.linked_resource] %>
+   <% id_holder = :id %>
+   <% name_holder = :title %>
+   <% active_id_holder = resource.linked_resource.id %>
+ <% end %>
+ <%= f.field_container :linked_resource_id, class: ['form-group'] do %>
+    <%= f.label :linked_resource_id, Spree.t('page') %>
+    <%= f.select :linked_resource_id,
+         options_from_collection_for_select(resorce_holder || [],
+                                            id_holder, name_holder, active_id_holder || nil),
+         { include_blank: true },
+         class: 'select2autocomplete',
+         data: { autocomplete_placeholder_value: Spree.t('admin.linkable.seach_for_a_page'),
+                 autocomplete_clear_value: true,
+                 autocomplete_url_value: 'pages_api_v2',
+                 autocomplete_return_attr_value: 'title',
+                 autocomplete_search_query_value: 'title_i_cont',
+
+                 # Hard coded additional filter to filter out homepages from
+                 # the results. Homepages don't have a slug, and we already have
+                 # a dedicated Home Page link_to type.
+                 autocomplete_additional_query_value: 'type_not_eq',
+                 autocomplete_additional_term_value: 'Spree::Cms::Pages::Homepage' } %>
+
+   <%= f.error_message_on :linked_resource_id %>
+   <small class="form-text text-muted"><%= resource.link %></small>
+<% end %>

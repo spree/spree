@@ -4,6 +4,7 @@ module Spree
 
     include Spree::UserPaymentSource
     include Spree::UserReporting
+    include Spree::UserRoles
     include Spree::RansackableAttributes
 
     included do
@@ -14,9 +15,6 @@ module Spree
       after_destroy :nullify_approver_id_in_approved_orders
 
       attr_accessor :use_billing
-
-      has_many :role_users, class_name: 'Spree::RoleUser', foreign_key: :user_id, dependent: :destroy
-      has_many :spree_roles, through: :role_users, class_name: 'Spree::Role', source: :role
 
       has_many :promotion_rule_users, class_name: 'Spree::PromotionRuleUser', foreign_key: :user_id, dependent: :destroy
       has_many :promotion_rules, through: :promotion_rule_users, class_name: 'Spree::PromotionRule'
@@ -47,11 +45,6 @@ module Spree
       end
     end
 
-    # has_spree_role? simply needs to return true or false whether a user has a role or not.
-    def has_spree_role?(role_in_question)
-      spree_roles.any? { |role| role.name == role_in_question.to_s }
-    end
-
     def last_incomplete_spree_order(store, options = {})
       orders.where(store: store).incomplete.
         includes(options[:includes]).
@@ -59,9 +52,18 @@ module Spree
         first
     end
 
-    def total_available_store_credit(currency = nil)
-      currency ||= Spree::Config[:currency]
-      store_credits.where(currency: currency).reload.to_a.sum(&:amount_remaining)
+    def total_available_store_credit(currency = nil, store = nil)
+      store ||= Store.default
+      currency ||= store.default_currency
+      store_credits.for_store(store).where(currency: currency).reload.to_a.sum(&:amount_remaining)
+    end
+
+    def available_store_credits(store)
+      store ||= Store.default
+
+      store_credits.for_store(store).pluck(:currency).uniq.each_with_object([]) do |currency, arr|
+        arr << Spree::Money.new(total_available_store_credit(currency, store), currency: currency)
+      end
     end
 
     private

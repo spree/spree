@@ -38,6 +38,10 @@ module Spree
             def resource_finder
               Spree::Api::Dependencies.storefront_completed_order_finder.constantize
             end
+
+            def model_class
+              Spree::Order
+            end
           end
         end
       end

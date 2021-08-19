@@ -6,7 +6,12 @@ source 'https://rubygems.org'
 gem 'sqlite3', '~> 1.4.0', platforms: [:ruby, :mingw, :mswin, :x64_mingw]
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw]
 
-gem 'rails', ENV.fetch('RAILS_VERSION', '~> 6.1.0'), require: false
+%w[
+  actionmailer actionpack actionview activejob activemodel activerecord
+  activestorage activesupport railties
+].each do |rails_gem|
+  gem rails_gem, ENV.fetch('RAILS_VERSION', '~> 6.1.0'), require: false
+end
 
 platforms :jruby do
   gem 'jruby-openssl'
@@ -39,7 +44,9 @@ group :test do
 end
 
 group :test, :development do
+  gem 'awesome_print'
   gem 'gem-release'
+  gem 'redis'
   gem 'rubocop', '~> 1.0.0', require: false # bumped
   gem 'rubocop-rspec', require: false
   gem 'pry-byebug'

@@ -1,3 +1,4 @@
+Spree::Sample.load_sample('stores')
 Spree::Sample.load_sample('option_values')
 Spree::Sample.load_sample('products')
 
@@ -12,7 +13,9 @@ promotion = Spree::Promotion.where(
   path: nil,
   match_policy: 'any',
   description: ''
-).first_or_create!
+).first_or_create do |promo|
+  promo.stores = Spree::Store.all
+end
 
 Spree::PromotionRule.where(
   promotion_id: promotion.id,

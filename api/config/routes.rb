@@ -128,7 +128,7 @@ Spree::Core::Engine.add_routes do
 
     namespace :v2 do
       namespace :storefront do
-        resource :cart, controller: :cart, only: %i[show create] do
+        resource :cart, controller: :cart, only: %i[show create destroy] do
           post   :add_item
           patch  :empty
           delete 'remove_line_item/:line_item_id', to: 'cart#remove_line_item', as: :cart_remove_line_item
@@ -153,7 +153,7 @@ Spree::Core::Engine.add_routes do
 
         namespace :account do
           resources :addresses, controller: :addresses
-          resources :credit_cards, controller: :credit_cards, only: %i[index show]
+          resources :credit_cards, controller: :credit_cards, only: %i[index show destroy]
           resources :orders, controller: :orders, only: %i[index show]
         end
 
@@ -164,8 +164,8 @@ Spree::Core::Engine.add_routes do
         resources :taxons,   only: %i[index show], id: /.+/
         get '/stores/:code', to: 'stores#show', as: :store
 
-        resources :menus, only: %i[index]
-        get '/menus/:location', to: 'menus#show', as: :menu
+        resources :menus, only: %i[index show]
+        resources :cms_pages, only: %i[index show]
       end
 
       namespace :platform do
@@ -185,20 +185,17 @@ Spree::Core::Engine.add_routes do
 
         # Product Catalog API
         resources :products
+        resources :taxonomies
+        resources :taxons
+        resources :classifications do
+          member do
+            put :reposition
+          end
+        end
         resources :images
         resources :variants
         resources :properties
         resources :product_properties
-        resources :taxonomies do
-          member do
-            get :jstree
-          end
-        end
-        resources :taxons do
-          member do
-            get :jstree
-          end
-        end
         resources :option_types
         resources :option_values
 
@@ -227,8 +224,8 @@ Spree::Core::Engine.add_routes do
 
         # Geo API
         resources :zones
-        resources :countries
-        resources :states
+        resources :countries, only: [:index, :show]
+        resources :states, only: [:index, :show]
 
         # Shipment API
         resources :shipments do
@@ -259,6 +256,19 @@ Spree::Core::Engine.add_routes do
         resources :menus
         resources :menu_locations
         resource :menu_items do
+          member do
+            patch :reposition
+          end
+        end
+
+        # CMS Pages API
+        resources :cms_pages do
+          member do
+            patch :toggle_visibility
+          end
+        end
+
+        resource :cms_sections do
           member do
             patch :reposition
           end

@@ -4,6 +4,8 @@ require 'spree/core/version'
 
 module Spree
   class DummyGenerator < Rails::Generators::Base
+    SPREE_GEMS = %w(spree_backend spree_frontend spree_api spree_emails).freeze
+
     desc 'Creates blank Rails application, installs Spree and all sample data'
 
     class_option :lib_name, default: ''
@@ -56,15 +58,18 @@ module Spree
       template 'rails/test.rb', "#{dummy_path}/config/environments/test.rb", force: true
       template 'rails/script/rails', "#{dummy_path}/spec/dummy/script/rails", force: true
       template 'initializers/devise.rb', "#{dummy_path}/config/initializers/devise.rb", force: true
-      template 'initializers/bullet.rb', "#{dummy_path}/config/initializers/bullet.rb", force: true
     end
 
     def test_dummy_inject_extension_requirements
       if DummyGeneratorHelper.inject_extension_requirements
-        inside dummy_path do
-          inject_require_for('spree_frontend')
-          inject_require_for('spree_backend')
-          inject_require_for('spree_api')
+        SPREE_GEMS.each do |gem|
+          begin
+            require "#{gem}"
+            inside dummy_path do
+              inject_require_for(gem)
+            end
+          rescue StandardError, LoadError
+          end
         end
       end
     end
@@ -137,7 +142,7 @@ end
     end
 
     def gemfile_path
-      core_gems = ['spree/core', 'spree/api', 'spree/backend', 'spree/frontend', 'spree/sample']
+      core_gems = ['spree/core', 'spree/api']
 
       if core_gems.include?(lib_name)
         '../../../../../Gemfile'

@@ -39,7 +39,7 @@
 
   <%= f.field_container :description, class: ['form-group'] do %>
     <%= f.label :description, Spree.t(:description) %>
-    <%= f.text_area :description, class: 'form-control', rows: 6 %>
+    <%= f.text_area :description, class: "form-control #{'spree-rte' if taxon_wysiwyg_editor_enabled? }", rows: 20 %>
   <% end %>
 
   <%= f.field_container :meta_title, class: ['form-group'] do %>

@@ -9,6 +9,8 @@ module Spree
 
           has_one_attached :attachment
 
+          default_scope { includes(attachment_attachment: :blob) }
+
           def self.styles
             @styles ||= {
               mini: '32x32>',

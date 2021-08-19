@@ -7,7 +7,7 @@ Gem::Specification.new do |s|
   s.version     = Spree.version
   s.authors     = ['Sean Schofield', 'Spark Solutions']
   s.email       = 'hello@spreecommerce.org'
-  s.summary     = 'Frontend e-commerce functionality for the Spree project.'
+  s.summary     = 'The default Storefront built with Rails and Turbolinks for Spree eCommerce platform'
   s.description = s.summary
   s.homepage    = 'https://spreecommerce.org'
   s.license     = 'BSD-3-Clause'
@@ -15,7 +15,7 @@ Gem::Specification.new do |s|
   s.metadata = {
     "bug_tracker_uri"   => "https://github.com/spree/spree/issues",
     "changelog_uri"     => "https://github.com/spree/spree/releases/tag/v#{s.version}",
-    "documentation_uri" => "https://guides.spreecommerce.org/",
+    "documentation_uri" => "https://dev-docs.spreecommerce.org/",
     "source_code_uri"   => "https://github.com/spree/spree/tree/v#{s.version}",
   }
 

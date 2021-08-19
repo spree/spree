@@ -45,6 +45,13 @@
       <%= f.label :promotion_category %>
       <%= f.collection_select(:promotion_category_id, @promotion_categories, :id, :name, { include_blank: Spree.t('match_choices.none') }, { class: 'select2 w-100' }) %>
     <% end %>
+
+    <% if @stores.count > 1 %>
+      <%= f.field_container :stores, class: ['form-group'] do %>
+        <%= f.label :promotion_stores, Spree.t(:stores) %>
+        <%= collection_select(:promotion, :store_ids, @stores, :id, :unique_name, {}, { multiple: true, class: 'select2' }) %>
+      <% end %>
+    <% end %>
   </div>
 
   <div id="expiry_fields" class="col-12 col-lg-4">

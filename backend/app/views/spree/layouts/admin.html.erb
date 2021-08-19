@@ -27,15 +27,14 @@
           id="main-sidebar"
           data-hook="admin_tabs">
           <%= render partial: 'spree/admin/shared/main_menu' %>
-
           <%= render partial: 'spree/admin/shared/version' %>
         </aside>
 
         <%#-------------------------------------------------%>
         <%# Content                                         %>
         <%#-------------------------------------------------%>
-        <main class="col-12 col-lg-9 col-xl-10 offset-lg-3 offset-xl-2 main" id="main-part">
-          <div class="container">
+        <main class="col-12 col-lg-9 col-xl-10 offset-lg-3 offset-xl-2 main pt-2" id="main-part">
+          <div class="container-lg">
 
             <%#-------------------------------------------------%>
             <%# Content header (page title/actions)             %>
@@ -46,7 +45,7 @@
               <%#-------------------------------------------------%>
               <%# Main content                                    %>
               <%#-------------------------------------------------%>
-              <div class="<%= content_for?(:sidebar) ? 'with-sidebar col-12 col-lg-9' : 'col-12' %>" id="content" data-hook>
+              <div class="<%= content_for?(:sidebar) ? 'with-sidebar col-12 col-lg-9 px-0' : 'col-12 px-0' %>" id="content" data-hook>
                 <%= render partial: 'spree/admin/shared/table_filter' if content_for?(:table_filter) %>
                 <%= yield %>
               </div>

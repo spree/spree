@@ -1,7 +1,9 @@
 module Spree
   module Admin
     class LogEntriesController < Spree::Admin::BaseController
-      before_action :find_order_and_payment
+      include Spree::Admin::OrderConcern
+      before_action :load_order
+      before_action :load_payment
 
       def index
         @log_entries = @payment.log_entries
@@ -9,8 +11,7 @@ module Spree
 
       private
 
-      def find_order_and_payment
-        @order = Spree::Order.find_by!(number: params[:order_id])
+      def load_payment
         @payment = @order.payments.find_by!(number: params[:payment_id])
       end
     end

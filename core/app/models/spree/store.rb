@@ -4,12 +4,37 @@ module Spree
     FAVICON_CONTENT_TYPES = ['image/png', 'image/x-icon', 'image/vnd.microsoft.icon'].freeze
 
     has_many :orders, class_name: 'Spree::Order'
-    has_many :payment_methods, class_name: 'Spree::PaymentMethod'
+    has_many :line_items, through: :orders, class_name: 'Spree::LineItem'
+    has_many :shipments, through: :orders, class_name: 'Spree::Shipment'
+    has_many :payments, through: :orders, class_name: 'Spree::Payment'
+    has_many :return_authorizations, through: :orders, class_name: 'Spree::ReturnAuthorization'
+    # has_many :reimbursements, through: :orders, class_name: 'Spree::Reimbursement' FIXME: we should fetch this via Customer Return
 
-    has_many :menus
+    has_many :store_payment_methods, class_name: 'Spree::StorePaymentMethod'
+    has_many :payment_methods, through: :store_payment_methods, class_name: 'Spree::PaymentMethod'
+
+    has_many :cms_pages, class_name: 'Spree::CmsPage'
+    has_many :cms_sections, through: :cms_pages, class_name: 'Spree::CmsSection'
+
+    has_many :menus, class_name: 'Spree::Menu'
+    has_many :menu_items, through: :menus, class_name: 'Spree::MenuItem'
 
     has_many :store_products, class_name: 'Spree::StoreProduct', dependent: :destroy
     has_many :products, through: :store_products, class_name: 'Spree::Product'
+    has_many :product_properties, through: :products, class_name: 'Spree::ProductProperty'
+    has_many :variants, through: :products, class_name: 'Spree::Variant', source: :variants_including_master
+    has_many :stock_items, through: :variants, class_name: 'Spree::StockItem'
+    has_many :inventory_units, through: :variants, class_name: 'Spree::InventoryUnit'
+    has_many :customer_returns, class_name: 'Spree::CustomerReturn', inverse_of: :store
+
+    has_many :store_credits, class_name: 'Spree::StoreCredit'
+    has_many :store_credit_events, through: :store_credits, class_name: 'Spree::StoreCreditEvent'
+
+    has_many :taxonomies, class_name: 'Spree::Taxonomy'
+    has_many :taxons, through: :taxonomies, class_name: 'Spree::Taxon'
+
+    has_many :store_promotions, class_name: 'Spree::StorePromotion'
+    has_many :promotions, through: :store_promotions, class_name: 'Spree::Promotion'
 
     belongs_to :default_country, class_name: 'Spree::Country'
     belongs_to :checkout_zone, class_name: 'Spree::Zone'
@@ -26,6 +51,8 @@ module Spree
         connection.column_exists?(:spree_stores, :new_order_notifications_email)
       validates :new_order_notifications_email, email: { allow_blank: true }
     end
+
+    default_scope { order(created_at: :asc) }
 
     has_one_attached :logo
     has_one_attached :mailer_logo
@@ -49,8 +76,8 @@ module Spree
 
     def self.current(url = nil)
       ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
-        `Spree::Store.current` is deprecated and will be removed in Spree 5
-        Spree::Stores::FindCurrent.new(url: "http://example.com") instead
+        `Spree::Store.current` is deprecated and will be removed in Spree 5.0
+        Please use `Spree::Stores::FindCurrent.new(url: "https://example.com").execute` instead
       DEPRECATION
       Stores::FindCurrent.new(url: url).execute
     end
@@ -79,6 +106,22 @@ module Spree
       end.uniq.compact
     end
 
+    def homepage(requested_locale)
+      cms_pages.by_locale(requested_locale).find_by(type: 'Spree::Cms::Pages::Homepage') ||
+        cms_pages.by_locale(default_locale).find_by(type: 'Spree::Cms::Pages::Homepage') ||
+        cms_pages.find_by(type: 'Spree::Cms::Pages::Homepage')
+    end
+
+    def seo_meta_description
+      if meta_description.present?
+        meta_description
+      elsif seo_title.present?
+        seo_title
+      else
+        name
+      end
+    end
+
     def supported_locales_list
       # TODO: add support of multiple supported languages to a single Store
       @supported_locales_list ||= (read_attribute(:supported_locales).to_s.split(',') << default_locale).compact.uniq.sort
@@ -94,7 +137,7 @@ module Spree
       @formatted_url ||= if url.match(/http:\/\/|https:\/\//)
                            url
                          else
-                           Rails.env.development? ? "http://#{url}" : "https://#{url}"
+                           Rails.env.development? || Rails.env.test? ? "http://#{url}" : "https://#{url}"
                          end
     end
 

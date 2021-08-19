@@ -2,8 +2,9 @@ module Spree
   module Admin
     class PaymentsController < Spree::Admin::BaseController
       include Spree::Backend::Callbacks
+      include Spree::Admin::OrderConcern
 
-      before_action :load_order, only: [:create, :new, :index, :fire]
+      before_action :load_order
       before_action :load_payment, except: [:create, :new, :index]
       before_action :load_data
       before_action :can_not_transition_without_customer_info
@@ -48,7 +49,7 @@ module Spree
 
             saved_payments.each { |payment| payment.process! if payment.reload.checkout? && @order.complete? }
             flash[:success] = flash_message_for(saved_payments.first, :successfully_created)
-            redirect_to admin_order_payments_path(@order)
+            redirect_to spree.admin_order_payments_path(@order)
           else
             @payment ||= @order.payments.build(object_params)
             invoke_callbacks(:create, :fails)
@@ -75,7 +76,7 @@ module Spree
       rescue Spree::Core::GatewayError => ge
         flash[:error] = ge.message.to_s
       ensure
-        redirect_to admin_order_payments_path(@order)
+        redirect_to spree.admin_order_payments_path(@order)
       end
 
       private
@@ -99,14 +100,8 @@ module Spree
         end
       end
 
-      def load_order
-        @order = Order.find_by!(number: params[:order_id])
-        authorize! action, @order
-        @order
-      end
-
       def load_payment
-        @payment = Payment.find_by!(number: params[:id])
+        @payment = @order.payments.find_by!(number: params[:id])
       end
 
       def model_class

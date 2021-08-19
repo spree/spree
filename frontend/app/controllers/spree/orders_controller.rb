@@ -5,8 +5,6 @@ module Spree
 
     helper 'spree/products', 'spree/orders'
 
-    respond_to :html
-
     before_action :assign_order_with_lock, only: :update
 
     def show
@@ -14,7 +12,7 @@ module Spree
     end
 
     def update
-      @variant = Spree::Variant.find(params[:variant_id]) if params[:variant_id]
+      @variant = curret_store.variants.find(params[:variant_id]) if params[:variant_id]
       if Cart::Update.call(order: @order, params: order_params).success?
         respond_with(@order) do |format|
           format.html do
@@ -40,7 +38,7 @@ module Spree
     end
 
     def empty
-      current_order.try(:empty!)
+      cart_empty_service.call(order: current_order)
 
       redirect_to spree.cart_path
     end
@@ -86,6 +84,10 @@ module Spree
 
     def cart_add_item_service
       Spree::Dependencies.cart_add_item_service.constantize
+    end
+
+    def cart_empty_service
+      Spree::Dependencies.cart_empty_service.constantize
     end
   end
 end

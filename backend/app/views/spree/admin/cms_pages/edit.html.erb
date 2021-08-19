@@ -1,0 +1,21 @@
+<% content_for :page_title do %>
+  <%= link_to Spree.t('admin.cms.all_pages'), spree.admin_cms_pages_path %> / <%= @cms_page.title %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <%= button_link_to(Spree.t('admin.cms.preview_page'),
+                       cms_page_preview_url(@cms_page),
+                       class: 'btn-outline-secondary',
+                       icon: 'view.svg',
+                       id: 'admin_preview_product',
+                       target: :blank) %>
+<% end %>
+
+<%= render partial: 'spree/admin/shared/error_messages', locals: { target: @cms_page } %>
+<%= form_for [:admin, @cms_page], as: :cms_page, url: spree.admin_cms_page_path do |f| %>
+  <%= render partial: 'form', locals: { f: f } %>
+<% end %>
+
+<% if @cms_page.sections? %>
+  <%= render partial: 'live_preview_area' %>
+<% end %>

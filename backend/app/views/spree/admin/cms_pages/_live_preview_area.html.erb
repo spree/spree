@@ -1,0 +1,61 @@
+ <div class="row">
+    <div id="pageSectionsArea" class="col-12">
+
+      <hr class="mt-4 hide-on-full-screen-mode">
+      <div class="row">
+        <div class="col d-flex justify-content-start">
+          <%= button_link_to Spree.t('admin.cms.add_new_section'), spree.new_admin_cms_page_cms_section_path(@cms_page), icon: 'add.svg', class: 'no-wrap btn btn-success align-self-center' %>
+        </div>
+        <div class="col d-none d-md-flex justify-content-end">
+          <div id="LiveViewSwitcher" class="btn-group btn-group-toggle" data-toggle="buttons">
+            <label class="btn btn-outline-primary active">
+              <input type="radio" name="options" id="mobileLiveView" autocomplete="off"> Mobile
+            </label>
+            <label class="btn btn-outline-primary">
+              <input type="radio" name="options" id="tabletLiveView" autocomplete="off"> Tablet
+            </label>
+            <label class="btn btn-outline-primary">
+              <input type="radio" name="options" id="desktopLiveView" autocomplete="off" checked> Desktop
+            </label>
+          </div>
+
+          <div class="ml-2">
+              <button id="cmsSectionEditorFullScreen" type="button" class="btn btn-outline-primary no-wrap" data-toggle="button" autocomplete="off"><%= raw Spree.t('admin.cms.full_screen_mode') %></button>
+          </div>
+        </div>
+      </div>
+      <div class="row no-gutters">
+        <div id="draggableSectionsHolder" class="col-12 col-md-3 bg-light border">
+          <% if @cms_page.cms_sections.any? %>
+            <div id="cmsPagesectionsArea" class="card-body row m-0 p-1 no-gutters">
+              <% @cms_page.cms_sections.each do |section| %>
+                <%= render 'spree/admin/cms_pages/section_template', section: section %>
+              <% end %>
+            </div>
+
+          <% else %>
+            <div class="row">
+              <div class="col-12">
+                <div class="alert alert-info no-objects-found m-4">
+                  <%= raw Spree.t('admin.cms.no_sections_found_please_add_one') %>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+
+        <div class="d-none d-md-block col bg-secondary border border-left-0">
+          <div id="liveViewCont" class="desktopLiveView">
+            <div class="embed-responsive embed-responsive-4by3">
+              <iframe class="embed-responsive-item"
+                      id="pageLivePreview"
+                      src="<%= cms_page_preview_url(@cms_page) + "?no_cache=#{rand(1...10000)}" %>"
+                      sandbox="allow-same-origin allow-forms allow-popups allow-scripts allow-modals">
+              </iframe>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>

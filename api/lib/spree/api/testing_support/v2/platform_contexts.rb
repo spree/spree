@@ -5,6 +5,7 @@ class String
 end
 
 shared_context 'Platform API v2' do
+  let(:store) { Spree::Store.default }
   let(:admin_app) { Doorkeeper::Application.find_or_create_by!(name: 'Admin Panel', scopes: 'admin', redirect_uri: '') }
   let(:read_app) { Doorkeeper::Application.find_or_create_by!(name: 'Read App', scopes: 'read', redirect_uri: '') }
   let(:oauth_token) do
@@ -49,12 +50,12 @@ JSON_API_FILTER_DESCRIPTION = ''
 
 def json_api_include_parameter(example = '')
   let(:include) { nil }
-  parameter name: :include, in: :query, type: :string, descripton: JSON_API_INCLUDES_DESCRIPTION, example: example
+  parameter name: :include, in: :query, type: :string, description: JSON_API_INCLUDES_DESCRIPTION, example: example
 end
 
 def json_api_filter_parameter(example = '')
   let(:filter) { nil }
-  parameter name: :filter, in: :query, type: :string, descripton: JSON_API_FILTER_DESCRIPTION, example: example
+  parameter name: :filter, in: :query, type: :string, description: JSON_API_FILTER_DESCRIPTION, example: example
 end
 
 shared_examples 'authentication failed' do
@@ -198,7 +199,7 @@ shared_examples 'DELETE record' do |resource_name|
 end
 
 shared_examples 'CRUD examples' do |resource_name, include_example, filter_example|
-  resource_path = resource_name.pluralize.parameterize
+  resource_path = resource_name.tableize.pluralize
 
   path "/api/v2/platform/#{resource_path}" do
     include_examples 'GET records list', resource_name, include_example, filter_example
