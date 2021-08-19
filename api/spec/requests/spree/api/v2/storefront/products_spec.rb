@@ -50,7 +50,7 @@ describe 'API V2 Storefront Products Spec', type: :request do
 
       shared_examples 'should not return not related taxon' do
         it do
-          expect(json_response['data'][0]).not_to have_relationship(:taxons).with_data([{'id' => new_store_taxonomy.id.to_s, 'type' => 'taxon'}])
+          expect(json_response['data'][0]).not_to have_relationship(:taxons).with_data([{ 'id' => new_store_taxonomy.id.to_s, 'type' => 'taxon' }])
         end
       end
 
@@ -58,8 +58,8 @@ describe 'API V2 Storefront Products Spec', type: :request do
         before { get "/api/v2/storefront/products?filter[ids]=#{product_with_taxon.id}" }
 
         it 'should return only store taxons ralated to product', aggregate_failures: true do
-          expect(json_response['data'][0]).to have_relationship(:taxons).with_data([{'id' => taxon.id.to_s, 'type' => 'taxon'}])
-          expect(json_response['data'][0]).not_to have_relationship(:taxons).with_data([{'id' => taxon2.id.to_s, 'type' => 'taxon'}])
+          expect(json_response['data'][0]).to have_relationship(:taxons).with_data([{ 'id' => taxon.id.to_s, 'type' => 'taxon' }])
+          expect(json_response['data'][0]).not_to have_relationship(:taxons).with_data([{ 'id' => taxon2.id.to_s, 'type' => 'taxon' }])
         end
 
         it_behaves_like 'should not return not related taxon'
@@ -72,8 +72,8 @@ describe 'API V2 Storefront Products Spec', type: :request do
         end
 
         it 'should return only store2 taxons ralated to product', aggregate_failures: true do
-          expect(json_response['data'][0]).to have_relationship(:taxons).with_data([{'id' => taxon2.id.to_s, 'type' => 'taxon'}])
-          expect(json_response['data'][0]).not_to have_relationship(:taxons).with_data([{'id' => taxon.id.to_s, 'type' => 'taxon'}])
+          expect(json_response['data'][0]).to have_relationship(:taxons).with_data([{ 'id' => taxon2.id.to_s, 'type' => 'taxon' }])
+          expect(json_response['data'][0]).not_to have_relationship(:taxons).with_data([{ 'id' => taxon.id.to_s, 'type' => 'taxon' }])
         end
 
         it_behaves_like 'should not return not related taxon'
@@ -256,7 +256,7 @@ describe 'API V2 Storefront Products Spec', type: :request do
     end
 
     context 'with included deleted' do
-      before { get "/api/v2/storefront/products?filter[show_deleted]=#{true}" }
+      before { get '/api/v2/storefront/products?filter[show_deleted]=true' }
 
       it_behaves_like 'returns 200 HTTP status'
 
@@ -267,7 +267,7 @@ describe 'API V2 Storefront Products Spec', type: :request do
     end
 
     context 'with included discontinued' do
-      before { get "/api/v2/storefront/products?filter[show_discontinued]=#{true}" }
+      before { get '/api/v2/storefront/products?filter[show_discontinued]=true' }
 
       it_behaves_like 'returns 200 HTTP status'
 
@@ -279,7 +279,7 @@ describe 'API V2 Storefront Products Spec', type: :request do
 
     context 'with included discontinued and deleted' do
       before do
-        get "/api/v2/storefront/products?filter[show_deleted]=#{true}&filter[show_discontinued]=#{true}"
+        get '/api/v2/storefront/products?filter[show_deleted]=true&filter[show_discontinued]=true'
       end
 
       it_behaves_like 'returns 200 HTTP status'
@@ -292,7 +292,7 @@ describe 'API V2 Storefront Products Spec', type: :request do
 
     context 'with show only stock' do
       before do
-        get "/api/v2/storefront/products?filter[in_stock]=#{true}"
+        get '/api/v2/storefront/products?filter[in_stock]=true'
       end
 
       it_behaves_like 'returns 200 HTTP status'
@@ -305,7 +305,7 @@ describe 'API V2 Storefront Products Spec', type: :request do
 
     context 'with show only backorderable' do
       before do
-        get "/api/v2/storefront/products?filter[backorderable]=#{true}"
+        get '/api/v2/storefront/products?filter[backorderable]=true'
       end
 
       it_behaves_like 'returns 200 HTTP status'
@@ -318,7 +318,7 @@ describe 'API V2 Storefront Products Spec', type: :request do
 
     context 'with show only purchasable' do
       before do
-        get "/api/v2/storefront/products?filter[purchasable]=#{true}"
+        get '/api/v2/storefront/products?filter[purchasable]=true'
       end
 
       it_behaves_like 'returns 200 HTTP status'

@@ -293,7 +293,7 @@ module Spree
       end
 
       context 'multiple taxons + 1 concat_taxons are requested' do
-        let(:params) { { store: store, filter: { taxons: "#{taxon.id},#{taxon_2.id}", concat_taxons: "#{taxon_3.id}" } } }
+        let(:params) { { store: store, filter: { taxons: "#{taxon.id},#{taxon_2.id}", concat_taxons: taxon_3.id.to_s } } }
         let(:taxon) { create(:taxon) }
         let(:taxon_2) { create(:taxon) }
         let(:taxon_3) { create(:taxon) }
@@ -309,7 +309,7 @@ module Spree
       end
 
       context 'only multiple concat_taxons are requested' do
-        let(:params) { { store: store, filter: {concat_taxons: "#{taxon_2.id},#{taxon_3.id}" } } }
+        let(:params) { { store: store, filter: { concat_taxons: "#{taxon_2.id},#{taxon_3.id}" } } }
         let(:taxon) { create(:taxon) }
         let(:taxon_2) { create(:taxon) }
         let(:taxon_3) { create(:taxon) }
@@ -325,7 +325,7 @@ module Spree
       end
 
       context 'only one concat_taxons is requested' do
-        let(:params) { { store: store, filter: {concat_taxons: "#{taxon_3.id}" } } }
+        let(:params) { { store: store, filter: { concat_taxons: taxon_3.id.to_s } } }
         let(:taxon) { create(:taxon) }
         let(:taxon_2) { create(:taxon) }
         let(:taxon_3) { create(:taxon) }
@@ -337,7 +337,7 @@ module Spree
           taxon_3.products << product_3
         end
 
-        it { expect(products).to match_array [product_2,product_3] }
+        it { expect(products).to match_array [product_2, product_3] }
       end
 
       context 'products scope is another store' do
