@@ -1175,7 +1175,7 @@ paths:
           schema:
             type: boolean
           example: true
-          description: Returns only in stock and backorderable products
+          description: Returns only in stock or backorderable products
         - in: query
           name: sort
           schema:
