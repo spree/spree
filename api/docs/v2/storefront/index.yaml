@@ -5567,11 +5567,11 @@ components:
         Specify what related resources (relationships) you would like to receive in the response body. Eg.
 
         ```
-        default_variant,variants,option_types,product_properties,taxons,images
+        default_variant,variants,option_types,product_properties,taxons,images,primary_variant
         ```
 
         [More information](https://jsonapi.org/format/#fetching-includes)
-      example: 'default_variant,variants,option_types,product_properties,taxons,images'
+      example: 'default_variant,variants,option_types,product_properties,taxons,images,primary_variant'
     TaxonIncludeParam:
       name: include
       in: query
