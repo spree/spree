@@ -1149,31 +1149,31 @@ paths:
           schema:
             type: string
           example: '10,100'
-          description: 'Filter Prodcuts based on price (minimum, maximum range)'
+          description: 'Filter Products based on price (minimum, maximum range)'
         - in: query
           name: 'filter[taxons]'
           schema:
             type: string
           example: '1,2,3,4,5,6,7,8,9,10,11'
-          description: 'Filter Prodcuts based on taxons (IDs of categories, brands, etc)'
+          description: 'Filter Products based on taxons (IDs of categories, brands, etc)'
         - in: query
           name: 'filter[name]'
           schema:
             type: string
           example: rails
-          description: 'Find Prodcuts with matching name (supports wild-card, partial-word match search)'
+          description: 'Find Products with matching name (supports wild-card, partial-word match search)'
         - in: query
           name: 'filter[options][tshirt-color]'
           schema:
             type: string
           example: Red
-          description: 'Find Prodcuts with Variants that have the specified option (eg. color, size) and value (eg. red, XS)'
+          description: 'Find Products with Variants that have the specified option (eg. color, size) and value (eg. red, XS)'
         - in: query
           name: 'filter[properties][brand-name]'
           schema:
             type: string
           example: alpha
-          description: 'Find Prodcuts with Property Brand Name with value Alpha'
+          description: 'Find Products with Property Brand Name with value Alpha'
         - in: query
           name: 'filter[show_deleted]'
           schema:
@@ -1186,6 +1186,24 @@ paths:
             type: boolean
           example: true
           description: Returns also discontinued products
+        - in: query
+          name: 'filter[in_stock]'
+          schema:
+            type: boolean
+          example: true
+          description: Returns only in stock products
+        - in: query
+          name: 'filter[backorderable]'
+          schema:
+            type: boolean
+          example: true
+          description: Returns only backorderable products
+        - in: query
+          name: 'filter[purchasable]'
+          schema:
+            type: boolean
+          example: true
+          description: Returns only in stock or backorderable products
         - in: query
           name: sort
           schema:

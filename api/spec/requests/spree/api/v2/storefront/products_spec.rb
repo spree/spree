@@ -1,25 +1,27 @@
 require 'spec_helper'
 
 describe 'API V2 Storefront Products Spec', type: :request do
-  let!(:store)                 { Spree::Store.default }
-  let!(:products)              { create_list(:product, 5, stores: [store]) }
-  let(:taxonomy)               { create(:taxonomy, store: store) }
-  let!(:taxon)                  { taxonomy.root }
-  let(:product_with_taxon)     { create(:product, taxons: [taxon], stores: [store]) }
-  let(:product_with_name)      { create(:product, name: 'Test Product', stores: [store]) }
-  let(:product_with_price)     { create(:product, price: 13.44, stores: [store]) }
-  let!(:option_type)           { create(:option_type) }
-  let!(:option_value)          { create(:option_value, option_type: option_type) }
-  let(:product_with_option)    { create(:product, option_types: [option_type], stores: [store]) }
-  let!(:variant)               { create(:variant, product: product_with_option, option_values: [option_value]) }
-  let(:product)                { create(:product, stores: [store]) }
-  let!(:deleted_product)       { create(:product, deleted_at: Time.current - 1.day, stores: [store]) }
-  let!(:discontinued_product)  { create(:product, discontinue_on: Time.current - 1.day, stores: [store]) }
-  let!(:not_available_product) { create(:product, available_on: nil, stores: [store]) }
-  let!(:property)              { create(:property) }
-  let!(:new_property)          { create(:property) }
-  let!(:product_with_property) { create(:product, properties: [property], stores: [store]) }
-  let!(:product_property)      { create(:product_property, property: new_property, product: product_with_property, value: 'Some Value') }
+  let!(:store)                     { Spree::Store.default }
+  let!(:products)                  { create_list(:product, 5, stores: [store]) }
+  let(:taxonomy)                   { create(:taxonomy, store: store) }
+  let!(:taxon)                     { taxonomy.root }
+  let(:product_with_taxon)         { create(:product, taxons: [taxon], stores: [store]) }
+  let(:product_with_name)          { create(:product, name: 'Test Product', stores: [store]) }
+  let(:product_with_price)         { create(:product, price: 13.44, stores: [store]) }
+  let!(:option_type)               { create(:option_type) }
+  let!(:option_value)              { create(:option_value, option_type: option_type) }
+  let(:product_with_option)        { create(:product, option_types: [option_type], stores: [store]) }
+  let!(:variant)                   { create(:variant, product: product_with_option, option_values: [option_value]) }
+  let(:product)                    { create(:product, stores: [store]) }
+  let!(:deleted_product)           { create(:product, deleted_at: Time.current - 1.day, stores: [store]) }
+  let!(:discontinued_product)      { create(:product, discontinue_on: Time.current - 1.day, stores: [store]) }
+  let!(:not_available_product)     { create(:product, available_on: nil, stores: [store]) }
+  let!(:in_stock_product)          { create(:product_in_stock, stores: [store]) }
+  let!(:not_backorderable_product) { create(:product_in_stock, :without_backorder, stores: [store]) }
+  let!(:property)                  { create(:property) }
+  let!(:new_property)              { create(:property) }
+  let!(:product_with_property)     { create(:product, properties: [property], stores: [store]) }
+  let!(:product_property)          { create(:product_property, property: new_property, product: product_with_property, value: 'Some Value') }
 
   before { Spree::Api::Config[:api_v2_per_page_limit] = 4 }
 
@@ -48,7 +50,7 @@ describe 'API V2 Storefront Products Spec', type: :request do
 
       shared_examples 'should not return not related taxon' do
         it do
-          expect(json_response['data'][0]).not_to have_relationship(:taxons).with_data([{'id' => new_store_taxonomy.id.to_s, 'type' => 'taxon'}])
+          expect(json_response['data'][0]).not_to have_relationship(:taxons).with_data([{ 'id' => new_store_taxonomy.id.to_s, 'type' => 'taxon' }])
         end
       end
 
@@ -56,8 +58,8 @@ describe 'API V2 Storefront Products Spec', type: :request do
         before { get "/api/v2/storefront/products?filter[ids]=#{product_with_taxon.id}" }
 
         it 'should return only store taxons ralated to product', aggregate_failures: true do
-          expect(json_response['data'][0]).to have_relationship(:taxons).with_data([{'id' => taxon.id.to_s, 'type' => 'taxon'}])
-          expect(json_response['data'][0]).not_to have_relationship(:taxons).with_data([{'id' => taxon2.id.to_s, 'type' => 'taxon'}])
+          expect(json_response['data'][0]).to have_relationship(:taxons).with_data([{ 'id' => taxon.id.to_s, 'type' => 'taxon' }])
+          expect(json_response['data'][0]).not_to have_relationship(:taxons).with_data([{ 'id' => taxon2.id.to_s, 'type' => 'taxon' }])
         end
 
         it_behaves_like 'should not return not related taxon'
@@ -70,8 +72,8 @@ describe 'API V2 Storefront Products Spec', type: :request do
         end
 
         it 'should return only store2 taxons ralated to product', aggregate_failures: true do
-          expect(json_response['data'][0]).to have_relationship(:taxons).with_data([{'id' => taxon2.id.to_s, 'type' => 'taxon'}])
-          expect(json_response['data'][0]).not_to have_relationship(:taxons).with_data([{'id' => taxon.id.to_s, 'type' => 'taxon'}])
+          expect(json_response['data'][0]).to have_relationship(:taxons).with_data([{ 'id' => taxon2.id.to_s, 'type' => 'taxon' }])
+          expect(json_response['data'][0]).not_to have_relationship(:taxons).with_data([{ 'id' => taxon.id.to_s, 'type' => 'taxon' }])
         end
 
         it_behaves_like 'should not return not related taxon'
@@ -254,37 +256,76 @@ describe 'API V2 Storefront Products Spec', type: :request do
     end
 
     context 'with included deleted' do
-      before { get "/api/v2/storefront/products?filter[show_deleted]=#{true}" }
+      before { get '/api/v2/storefront/products?filter[show_deleted]=true' }
 
       it_behaves_like 'returns 200 HTTP status'
 
       it 'returns products with deleted products' do
-        expect(json_response['data'].count).to eq 8
+        expect(json_response['data'].count).to eq 10
         expect(json_response['data'].pluck(:id)).to include(deleted_product.id.to_s)
       end
     end
 
     context 'with included discontinued' do
-      before { get "/api/v2/storefront/products?filter[show_discontinued]=#{true}" }
+      before { get '/api/v2/storefront/products?filter[show_discontinued]=true' }
 
       it_behaves_like 'returns 200 HTTP status'
 
       it 'returns products with discontinued products' do
-        expect(json_response['data'].count).to eq 9
+        expect(json_response['data'].count).to eq 11
         expect(json_response['data'].pluck(:id)).to include(discontinued_product.id.to_s)
       end
     end
 
     context 'with included discontinued and deleted' do
       before do
-        get "/api/v2/storefront/products?filter[show_deleted]=#{true}&filter[show_discontinued]=#{true}"
+        get '/api/v2/storefront/products?filter[show_deleted]=true&filter[show_discontinued]=true'
       end
 
       it_behaves_like 'returns 200 HTTP status'
 
       it 'returns available, deleted and discontinued products' do
-        expect(json_response['data'].count).to eq 10
+        expect(json_response['data'].count).to eq 12
         expect(json_response['data'].pluck(:id)).to include(deleted_product.id.to_s, discontinued_product.id.to_s)
+      end
+    end
+
+    context 'with show only stock' do
+      before do
+        get '/api/v2/storefront/products?filter[in_stock]=true'
+      end
+
+      it_behaves_like 'returns 200 HTTP status'
+
+      it 'returns products in stock' do
+        expect(json_response['data'].count).to eq 2
+        expect(json_response['data'].pluck(:id)).to include(in_stock_product.id.to_s, not_backorderable_product.id.to_s)
+      end
+    end
+
+    context 'with show only backorderable' do
+      before do
+        get '/api/v2/storefront/products?filter[backorderable]=true'
+      end
+
+      it_behaves_like 'returns 200 HTTP status'
+
+      it 'returns products in stock' do
+        expect(json_response['data'].count).to eq 8
+        expect(json_response['data'].pluck(:id)).not_to include(not_backorderable_product.id.to_s)
+      end
+    end
+
+    context 'with show only purchasable' do
+      before do
+        get '/api/v2/storefront/products?filter[purchasable]=true'
+      end
+
+      it_behaves_like 'returns 200 HTTP status'
+
+      it 'returns only purchasable products' do
+        expect(json_response['data'].count).to eq 9
+        expect(json_response['data'].pluck(:id)).to include(in_stock_product.id.to_s, not_backorderable_product.id.to_s)
       end
     end
 
@@ -389,7 +430,7 @@ describe 'API V2 Storefront Products Spec', type: :request do
           before { get '/api/v2/storefront/products?page=1&per_page=10' }
 
           it 'returns the default number of products' do
-            expect(json_response['data'].count).to eq 7
+            expect(json_response['data'].count).to eq 9
           end
         end
 
@@ -397,7 +438,7 @@ describe 'API V2 Storefront Products Spec', type: :request do
           before { get '/api/v2/storefront/products?page=1&per_page=-1' }
 
           it 'returns the default number of products' do
-            expect(json_response['data'].count).to eq 7
+            expect(json_response['data'].count).to eq 9
           end
         end
 
@@ -405,7 +446,7 @@ describe 'API V2 Storefront Products Spec', type: :request do
           before { get '/api/v2/storefront/products?page=1&per_page=0' }
 
           it 'returns the default number of products' do
-            expect(json_response['data'].count).to eq 7
+            expect(json_response['data'].count).to eq 9
           end
         end
       end

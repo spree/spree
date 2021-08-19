@@ -62,6 +62,18 @@ module Spree
         where("#{price_table_name}.amount >= ?", price)
       end
 
+      add_search_scope :in_stock do
+        joins(:variants_including_master).merge(Spree::Variant.in_stock)
+      end
+
+      add_search_scope :backorderable do
+        joins(:variants_including_master).merge(Spree::Variant.backorderable)
+      end
+
+      add_search_scope :in_stock_or_backorderable do
+        joins(:variants_including_master).merge(Spree::Variant.in_stock_or_backorderable)
+      end
+
       # This scope selects products in taxon AND all its descendants
       # If you need products only within one taxon use
       #

@@ -27,6 +27,9 @@ module Spree
         @deleted          = params.dig(:filter, :show_deleted)
         @discontinued     = params.dig(:filter, :show_discontinued)
         @properties       = params.dig(:filter, :properties)
+        @in_stock         = params.dig(:filter, :in_stock)
+        @backorderable    = params.dig(:filter, :backorderable)
+        @purchasable      = params.dig(:filter, :purchasable)
       end
 
       def execute
@@ -42,6 +45,9 @@ module Spree
         products = by_properties(products)
         products = include_deleted(products)
         products = include_discontinued(products)
+        products = show_only_stock(products)
+        products = show_only_backorderable(products)
+        products = show_only_purchasable(products)
         products = ordered(products)
 
         products.distinct
@@ -49,8 +55,8 @@ module Spree
 
       private
 
-      attr_reader :ids, :skus, :price, :currency, :taxons, :concat_taxons, :name, :options,
-                  :option_value_ids, :scope, :sort_by, :deleted, :discontinued, :properties, :store
+      attr_reader :ids, :skus, :price, :currency, :taxons, :concat_taxons, :name, :options, :option_value_ids, :scope,
+                  :sort_by, :deleted, :discontinued, :properties, :store, :in_stock, :backorderable, :purchasable
 
       def ids?
         ids.present?
@@ -229,6 +235,24 @@ module Spree
 
       def include_discontinued(products)
         discontinued ? products : products.active(currency)
+      end
+
+      def show_only_stock(products)
+        return products unless in_stock.to_s == 'true'
+
+        products.in_stock
+      end
+
+      def show_only_backorderable(products)
+        return products unless backorderable.to_s == 'true'
+
+        products.backorderable
+      end
+
+      def show_only_purchasable(products)
+        return products unless purchasable.to_s == 'true'
+
+        products.in_stock_or_backorderable
       end
 
       def map_prices(prices)
