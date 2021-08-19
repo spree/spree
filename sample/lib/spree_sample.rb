@@ -37,7 +37,7 @@ module SpreeSample
       Spree::Sample.load_sample('cms_feature_pages')
       Spree::Sample.load_sample('cms_homepages')
       Spree::Sample.load_sample('cms_sections')
-      
+
       Spree::Sample.load_sample('menu_locations')
       Spree::Sample.load_sample('menus')
       Spree::Sample.load_sample('menu_items')

@@ -1,7 +1,7 @@
 module Spree
   class Menu < Spree::Base
     include SingleStoreResource
-    
+
     has_many :menu_items, dependent: :destroy
     belongs_to :store, touch: true
 
