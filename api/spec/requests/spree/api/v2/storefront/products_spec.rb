@@ -451,6 +451,58 @@ describe 'API V2 Storefront Products Spec', type: :request do
           end
         end
       end
+
+      context 'sorting by sku' do
+        shared_examples 'returning products in ascending sku order' do
+          before { get "/api/v2/storefront/products?sort=sku#{params}" }
+
+          it_behaves_like 'returns 200 HTTP status'
+
+          it 'returns products sorted by master variant sku' do
+            expect(skus_array).to eq(skus_array.sort)
+            expect(json_response['data'].count).to eq(store.products.available.count)
+            expect(json_response['data'].map { |p| p['attributes']['sku'] }).to eq(available_products_with_master.map(&:sku).sort)
+          end
+        end
+
+        shared_examples 'returning products in descending sku order' do
+          before { get "/api/v2/storefront/products?sort=-sku#{params}" }
+
+          it_behaves_like 'returns 200 HTTP status'
+
+          it 'returns products sorted by master variant sku with descending order' do
+            expect(skus_array).to eq(skus_array.sort.reverse)
+            expect(json_response['data'].count).to eq(store.products.available.count)
+            expect(json_response['data'].map { |p| p['attributes']['sku'] }).to eq(available_products_with_master.map(&:sku).sort.reverse)
+          end
+        end
+
+        let(:skus_array) { json_response['data'].map { |p| p['attributes']['sku']} }
+        let(:available_products_with_master) { products + [product_with_option, in_stock_product, not_backorderable_product, product_with_property] }
+        let(:params) { '' }
+
+        it_behaves_like 'returning products in ascending sku order'
+        it_behaves_like 'returning products in descending sku order'
+
+        context 'with variants' do
+          let(:params) { '&include=variants' }
+
+          it_behaves_like 'returning products in ascending sku order'
+          it_behaves_like 'returning products in descending sku order'
+        end
+
+        context 'with other sort' do
+          let(:params) { ',updated_at' }
+
+          before do
+            time = Time.current
+            store.products.each { |p| p.update(updated_at: time) }
+          end
+
+          it_behaves_like 'returning products in ascending sku order'
+          it_behaves_like 'returning products in descending sku order'
+        end
+      end
     end
 
     context 'paginate products' do
@@ -653,6 +705,7 @@ describe 'API V2 Storefront Products Spec', type: :request do
         expect(json_response['data']).to have_attribute(:purchasable).with_value(product.purchasable?)
         expect(json_response['data']).to have_attribute(:in_stock).with_value(product.in_stock?)
         expect(json_response['data']).to have_attribute(:backorderable).with_value(product.backorderable?)
+        expect(json_response['data']).to have_attribute(:sku).with_value(product.sku)
 
         expect(json_response['data']).to have_relationships(
           :variants, :option_types, :product_properties, :default_variant
