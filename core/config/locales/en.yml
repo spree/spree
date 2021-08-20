@@ -597,7 +597,7 @@ en:
         preview_page: Preview Page
         full_screen_mode: '<span class="exit">Exit </span>Full Screen Mode'
         hero:
-          aspect_ratio: Please use an image with the aspect ratio of 12:5 (2400px x 1000px)
+          aspect_ratio: Please use an image with the aspect ratio of 12:5 (4800px x 2000px)
         select_page_type: Select a page type
         section_type: Section Type
         subtitle: Subtitle
