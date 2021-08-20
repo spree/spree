@@ -56,7 +56,7 @@ describe Spree::Api::V2::Platform::ProductSerializer do
                 type: :tax_category
               }
             },
-            master_variant: {
+            primary_variant: {
               data: {
                 id: product.master.id.to_s,
                 type: :variant

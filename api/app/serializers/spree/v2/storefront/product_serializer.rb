@@ -54,16 +54,22 @@ module Spree
 
         # all images from all variants
         has_many :images,
-          object_method_name: :variant_images,
-          id_method_name: :variant_image_ids,
-          record_type: :image,
-          serializer: :image
+                 object_method_name: :variant_images,
+                 id_method_name: :variant_image_ids,
+                 record_type: :image,
+                 serializer: :image
 
-        has_one  :default_variant,
-          object_method_name: :default_variant,
-          id_method_name: :default_variant_id,
-          record_type: :variant,
-          serializer: :variant
+        has_one :default_variant,
+                object_method_name: :default_variant,
+                id_method_name: :default_variant_id,
+                record_type: :variant,
+                serializer: :variant
+
+        has_one :primary_variant,
+                object_method_name: :master,
+                id_method_name: :master_id,
+                record_type: :variant,
+                serializer: :variant
       end
     end
   end
