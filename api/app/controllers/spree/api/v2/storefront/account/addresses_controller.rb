@@ -4,6 +4,8 @@ module Spree
       module Storefront
         module Account
           class AddressesController < ::Spree::Api::V2::ResourceController
+            include Spree::BaseHelper
+
             before_action :require_spree_current_user
 
             def create
@@ -37,7 +39,7 @@ module Spree
             end
 
             def scope
-              super.where(user: spree_current_user).not_deleted
+              super.where(user: spree_current_user, country: available_countries).not_deleted
             end
 
             def model_class
