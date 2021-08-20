@@ -4,8 +4,6 @@ describe 'Platform API v2 Menu Items spec', type: :request do
   include_context 'API v2 tokens'
   include_context 'Platform API v2'
 
-  let!(:store) { create(:store, default: true) }
-  let!(:location_header) { create(:menu_location) }
   let!(:menu) { create(:menu, store: store) }
   let!(:menu_item_a) { create(:menu_item, menu: menu) }
   let!(:menu_item_b) { create(:menu_item, menu: menu) }
