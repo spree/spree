@@ -44,17 +44,17 @@ module Spree
 
           belongs_to :tax_category
 
-          has_one  :master_variant,
-                   object_method_name: :master,
-                   id_method_name: :master_id,
-                   record_type: :variant,
-                   serializer: :variant
+          has_one :primary_variant,
+                  object_method_name: :master,
+                  id_method_name: :master_id,
+                  record_type: :variant,
+                  serializer: :variant
 
-          has_one  :default_variant,
-                   object_method_name: :default_variant,
-                   id_method_name: :default_variant_id,
-                   record_type: :variant,
-                   serializer: :variant
+          has_one :default_variant,
+                  object_method_name: :default_variant,
+                  id_method_name: :default_variant_id,
+                  record_type: :variant,
+                  serializer: :variant
 
           has_many :variants
           has_many :option_types
