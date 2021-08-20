@@ -401,6 +401,54 @@ describe 'API V2 Storefront Products Spec', type: :request do
           end
         end
       end
+
+      context 'sorting by created_at' do
+        context 'ascending order' do
+          before { get '/api/v2/storefront/products?sort=created_at' }
+
+          it_behaves_like 'returns 200 HTTP status'
+
+          it 'returns products sorted by created_at' do
+            expect(json_response['data'].count).to      eq store.products.available.count
+            expect(json_response['data'].pluck(:id)).to eq store.products.available.order(:created_at).map(&:id).map(&:to_s)
+          end
+        end
+
+        context 'descending order' do
+          before { get '/api/v2/storefront/products?sort=-created_at' }
+
+          it_behaves_like 'returns 200 HTTP status'
+
+          it 'returns products sorted by created_at with descending order' do
+            expect(json_response['data'].count).to      eq store.products.available.count
+            expect(json_response['data'].pluck(:id)).to eq store.products.available.order(created_at: :desc).map(&:id).map(&:to_s)
+          end
+        end
+      end
+
+      context 'sorting by available_on' do
+        context 'ascending order' do
+          before { get '/api/v2/storefront/products?sort=available_on' }
+
+          it_behaves_like 'returns 200 HTTP status'
+
+          it 'returns products sorted by available_on' do
+            expect(json_response['data'].count).to      eq store.products.available.count
+            expect(json_response['data'].pluck(:id)).to eq store.products.available.order(:available_on).map(&:id).map(&:to_s)
+          end
+        end
+
+        context 'descending order' do
+          before { get '/api/v2/storefront/products?sort=-available_on' }
+
+          it_behaves_like 'returns 200 HTTP status'
+
+          it 'returns products sorted by available_on with descending order' do
+            expect(json_response['data'].count).to      eq store.products.available.count
+            expect(json_response['data'].pluck(:id)).to eq store.products.available.order(available_on: :desc).map(&:id).map(&:to_s)
+          end
+        end
+      end
     end
 
     context 'paginate products' do
