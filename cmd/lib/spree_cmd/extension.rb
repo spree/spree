@@ -16,7 +16,6 @@ module SpreeCmd
       directory 'lib',      "#{file_name}/lib"
       directory 'bin',      "#{file_name}/bin"
       directory 'spec',     "#{file_name}/spec"
-      directory 'gemfiles', "#{file_name}/gemfiles"
 
       chmod "#{file_name}/bin/rails", 0o755
 
@@ -30,7 +29,6 @@ module SpreeCmd
       template 'config/locales/en.yml', "#{file_name}/config/locales/en.yml"
       template 'rspec', "#{file_name}/.rspec"
       template 'travis.yml', "#{file_name}/.travis.yml"
-      template 'Appraisals', "#{file_name}/Appraisals"
       template '.rubocop.yml', "#{file_name}/.rubocop.yml"
     end
 
@@ -38,7 +36,11 @@ module SpreeCmd
       say %{
         #{'*' * 80}
 
-        Your extension has been generated with a gemspec dependency on Spree #{spree_version}.
+        Congrats, Your extension has been generated :rocket:
+
+        Next steps:
+        * Read Spree Developer Documentation at: https://dev-docs.spreecommerce.org/customization
+        * Start your extension at: https://dev-docs.spreecommerce.org/extensions/extensions
 
         #{'*' * 80}
       }
@@ -47,10 +49,6 @@ module SpreeCmd
     no_tasks do
       def class_name
         Thor::Util.camel_case file_name
-      end
-
-      def spree_version
-        Gem.loaded_specs['spree_cmd'].version.to_s
       end
 
       def use_prefix(prefix)
