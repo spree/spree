@@ -90,7 +90,7 @@ RSpec.configure do |config|
     DatabaseCleaner.start
     reset_spree_preferences
 
-    country = create(:country, name: 'United States of America', iso_name: 'UNITED STATES', iso: 'US', states_required: true)
+    country = create(:country, name: 'United States', iso_name: 'UNITED STATES', iso: 'US', states_required: true)
     Spree::Config[:default_country_id] = country.id
 
     create(:store, default: true)

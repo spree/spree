@@ -11,7 +11,7 @@ module Spree
             internationalization: 'Internationalisation',
             i18n: {
               language: 'Langue',
-              this_file_language: 'Français (FR)'
+              this_file_language: 'Français (fr)'
             },
             cart_page: {
               header: 'Votre panier',

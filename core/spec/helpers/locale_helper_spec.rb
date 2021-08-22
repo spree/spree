@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Spree::LocaleHelper, type: :helper do
-  let(:germany) { create(:country, name: 'Germany', iso: 'GR') }
+  let(:germany) { create(:country, name: 'Germany', iso: 'DE') }
   let(:eu_store) { create(:store, default_currency: 'EUR', default_locale: 'de', default_country: germany, supported_locales: 'fr,de') }
   let(:available_locales) { Spree::Store.available_locales }
   let(:supported_locales_for_all_stores) { [:en, :de, :fr] }
@@ -10,19 +10,19 @@ describe Spree::LocaleHelper, type: :helper do
     I18n.backend.store_translations(:de,
       spree: {
         i18n: {
-          this_file_language: 'Deutsch (DE)'
+          this_file_language: 'Deutsch (de)'
         }
       })
     I18n.backend.store_translations(:fr,
       spree: {
         i18n: {
-          this_file_language: 'Français (FR)'
+          this_file_language: 'Français (fr)'
         }
       })
   end
 
   describe '#all_locales_options' do
-    it { expect(all_locales_options).to contain_exactly(['English (US)', 'en'], ['Deutsch (DE)', 'de'], ['Français (FR)', 'fr']) }
+    it { expect(all_locales_options).to contain_exactly(['English (en)', 'en'], ['Deutsch (de)', 'de'], ['Français (fr)', 'fr']) }
   end
 
   describe '#available_locales_options' do
@@ -31,17 +31,17 @@ describe Spree::LocaleHelper, type: :helper do
       create(:store, supported_locales: 'en')
     end
 
-    it { expect(available_locales_options).to contain_exactly(['English (US)', 'en'], ['Deutsch (DE)', 'de']) }
+    it { expect(available_locales_options).to contain_exactly(['English (en)', 'en'], ['Deutsch (de)', 'de']) }
   end
 
   describe '#supported_locales_options' do
     let(:current_store) { eu_store }
 
-    it { expect(supported_locales_options).to contain_exactly(['Deutsch (DE)', 'de'], ['Français (FR)', 'fr']) }
+    it { expect(supported_locales_options).to contain_exactly(['Deutsch (de)', 'de'], ['Français (fr)', 'fr']) }
   end
 
   describe '#locale_presentation' do
-    it { expect(locale_presentation(:fr)).to eq( ['Français (FR)', 'fr']) }
+    it { expect(locale_presentation(:fr)).to eq( ['Français (fr)', 'fr']) }
   end
 
   describe '#should_render_locale_dropdown?' do

@@ -44,7 +44,7 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
 
     context 'store checkout_zone' do
       let!(:north_america_zone) do
-        usa = Spree::Country.find_by(name: 'United States of America')
+        usa = Spree::Country.find_by(name: 'United States')
         create(:zone, name: 'North America', kind: 'country', default_tax: true).tap do |zone|
           zone.members << create(:zone_member, zoneable: usa)
         end
@@ -66,7 +66,7 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
         end
 
         it 'address form contain selected zone' do
-          expect(page.find('#order_bill_address_attributes_country_id').text).to eq 'United States of America'
+          expect(page.find('#order_bill_address_attributes_country_id').text).to eq 'United States'
         end
       end
 
@@ -672,7 +672,7 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
       let!(:default_tax_category) { create(:tax_category, name: 'Default', is_default: true) }
 
       before do
-        usa = Spree::Country.find_by(name: 'United States of America')
+        usa = Spree::Country.find_by(name: 'United States')
         north_america_zone = create(:zone,
                                     name: 'North America',
                                     kind: 'country',

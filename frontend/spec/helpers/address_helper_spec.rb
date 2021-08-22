@@ -11,12 +11,12 @@ describe Spree::AddressesHelper, type: :helper do
     let!(:user)    { create(:user) }
     let!(:store)   { create(:store) }
 
-    let(:new_york) { create(:state, name: 'New York') }
+    let(:queensland) { create(:state, name: 'Queensland') }
 
     # countries
-    let!(:united_states) do
-      create(:country, name: 'United States').tap do |usa|
-        usa.states << new_york
+    let!(:australia) do
+      create(:country, name: 'Australia', iso: 'AU').tap do |au|
+        au.states << queensland
       end
     end
     let!(:china)   { create(:country, name: 'China') }
@@ -25,8 +25,9 @@ describe Spree::AddressesHelper, type: :helper do
     # addresses
     let!(:usa_address) do
       create(:address,
-             country_id: united_states.id,
-             state_id: new_york.id,
+             country_id: australia.id,
+             state_id: queensland.id,
+             zipcode: '4001',
              user: user)
     end
     let!(:china_address) do

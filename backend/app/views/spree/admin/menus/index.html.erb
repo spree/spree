@@ -27,7 +27,7 @@
         <div class="col-12 col-lg-4">
          <div class="form-group">
            <%= label_tag :q_locale_eq, Spree.t(:language) %>
-           <%= f.select :locale_eq, all_locales_options, { include_blank: true }, class: 'select2-clear js-filterable' %>
+           <%= f.select :locale_eq, all_locales_options(current_locale), { include_blank: true }, class: 'select2-clear js-filterable' %>
          </div>
         </div>
       </div>
@@ -66,7 +66,7 @@
             <%= menu.location.titleize %>
           </td>
           <td>
-            <%= locale_full_name(menu.locale) %>
+            <%= localized_language_name(menu.locale) %>
           </td>
           <td class="text-center">
             <%= active_badge(default_menu_for_store?(menu)) %>

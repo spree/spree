@@ -26,7 +26,7 @@
             </div>
             <div class="col-auto d-flex align-items-center">
               <span class="badge badge-secondary">
-                  <%= svg_icon name: "translate.svg", width: '18', height: '18' %> <%= locale_full_name(@cms_page.locale) %>
+                <%= svg_icon name: "translate.svg", width: '18', height: '18' %> <%= localized_language_name(@cms_page.locale, current_locale) %>
               </span>
             </div>
           </div>
@@ -63,7 +63,7 @@
               <div class="col-12"><hr></div>
               <%= f.field_container :locale, class: ['form-group col-12 col-md-4'] do %>
                 <%= f.label :language %>
-                <%= f.select :locale, options_from_collection_for_select(supported_locales_options, :last, :first, @cms_page.locale || I18n.locale), {}, { class: 'select2' } %>
+                <%= f.select :locale, options_from_collection_for_select(supported_locales_options(current_locale), :last, :first, @cms_page.locale || I18n.locale), {}, { class: 'select2' } %>
                 <%= f.error_message_on :default_locale %>
               <% end %>
 

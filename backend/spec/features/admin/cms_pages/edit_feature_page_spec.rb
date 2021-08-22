@@ -4,15 +4,11 @@ describe 'Edit Feature Page', type: :feature do
   stub_authorization!
 
   context 'when a user creates a Feature Page' do
-    let!(:store_fp) { create(:store, default: true, name: 'Super Store', supported_locales: 'en,fr') }
+    let!(:store_fp) {
+      create(:store, default: true, name: 'Super Store', supported_locales: 'en,fr')
+    }
 
     before do
-      I18n.backend.store_translations(:fr,
-                                      spree: {
-                                        i18n: {
-                                          this_file_language: 'Français (FR)'
-                                        }
-                                      })
       visit spree.new_admin_cms_page_path
       fill_in 'Title *', with: 'Homepage (English)'
       select 'Feature Page', from: 'cms_page[type]'
@@ -40,7 +36,7 @@ describe 'Edit Feature Page', type: :feature do
     end
 
     it 'displays the language of the page' do
-      expect(page).to have_text ('English (US)')
+      expect(page).to have_text ('English (en)')
     end
 
     it 'allows user to toggle visability' do
@@ -54,11 +50,11 @@ describe 'Edit Feature Page', type: :feature do
     it 'allows user to switch language', js: true do
       find('[aria-controls="collapsePageSettings"]').click
 
-      select2 'Français (FR)', from: 'Language'
+      select2 'French (fr)', from: 'Language'
 
       click_on 'Update'
 
-      expect(page).to have_text('Français (FR)')
+      expect(page).to have_text('French (fr)')
     end
   end
 end

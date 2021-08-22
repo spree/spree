@@ -5,7 +5,7 @@
       <%= field_container (s_or_b + '_' + field), nil, class: ["form-group", "#{type}-row"] do %>
         <%= f.label :country_id, Spree.t(:country) %>
         <div id="<%= s_or_b %>country">
-          <%= f.collection_select :country_id, all_countries, :id, :name, {}, { class: 'select2 w-100' } %>
+          <%= f.collection_select :country_id, all_country_options, :last, :first, {}, { class: 'select2 w-100' } %>
         </div>
       <% end %>
     <% elsif field == "state" %>

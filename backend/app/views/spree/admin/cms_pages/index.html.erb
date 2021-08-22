@@ -28,7 +28,7 @@
         <div class="col-12 col-lg-4">
          <div class="form-group">
            <%= label_tag :q_locale_eq, Spree.t(:language) %>
-           <%= f.select :locale_eq, all_locales_options, { include_blank: true }, class: 'select2-clear js-filterable' %>
+           <%= f.select :locale_eq, supported_locales_options(current_locale), { include_blank: true }, class: 'select2-clear js-filterable' %>
          </div>
         </div>
       </div>
@@ -63,7 +63,7 @@
             <%= spree_humanize_type(page.type) %>
           </td>
           <td>
-            <%= locale_full_name(page.locale) %>
+            <%= localized_language_name(page.locale, current_locale) %>
           </td>
           <td class="actions" data-hook="admin_pages_index_row_actions">
              <span class="d-flex justify-content-end">
