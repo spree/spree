@@ -14,5 +14,9 @@ module Spree
         }
       end
     end
+
+    def original_url
+      polymorphic_path(attachment, only_path: true)
+    end
   end
 end
