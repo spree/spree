@@ -1,7 +1,6 @@
 module Spree
-  class TaxonImage < Asset
+  class TaxonImage < ImageAsset
     include Configuration::ActiveStorage
-    include Rails.application.routes.url_helpers
 
     def styles
       self.class.styles.map do |_, size|
@@ -13,10 +12,6 @@ module Spree
           height: height
         }
       end
-    end
-
-    def original_url
-      polymorphic_path(attachment, only_path: true)
     end
   end
 end

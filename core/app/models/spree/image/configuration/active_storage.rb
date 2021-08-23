@@ -1,5 +1,5 @@
 module Spree
-  class Image < Asset
+  class Image < ImageAsset
     module Configuration
       module ActiveStorage
         extend ActiveSupport::Concern

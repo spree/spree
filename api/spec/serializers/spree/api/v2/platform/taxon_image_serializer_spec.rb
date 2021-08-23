@@ -14,10 +14,10 @@ describe Spree::Api::V2::Platform::TaxonImageSerializer do
           id: image.id.to_s,
           type: :taxon_image,
           attributes: {
-            styles: image.styles,
             alt: image.alt,
             created_at: image.created_at,
             updated_at: image.updated_at,
+            transformed_url: image.generate_url(size: {}),
             original_url: image.original_url
           },
         }

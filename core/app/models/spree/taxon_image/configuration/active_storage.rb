@@ -1,5 +1,5 @@
 module Spree
-  class TaxonImage < Asset
+  class TaxonImage < ImageAsset
     module Configuration
       module ActiveStorage
         extend ActiveSupport::Concern
