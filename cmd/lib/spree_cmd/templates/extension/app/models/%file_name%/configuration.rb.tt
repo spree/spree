@@ -4,7 +4,7 @@ module <%= class_name %>
    # Some example preferences are shown below, for more information visit:
    # https://dev-docs.spreecommerce.org/internals/preferences
 
-   # preference :visible, :boolean
+   preference :enabled, :boolean, default: true
    # preference :dark_chocolate, :boolean, default: true
    # preference :color, :string, default: 'Red'
    # preference :favorite_number, :integer

@@ -73,6 +73,8 @@ describe 'API V2 Platform Products Spec' do
 
     context 'sort products' do
       context 'sorting by price' do
+        before { store.products.each_with_index { |p, i| p.update(price: p.price + i) } }
+
         context 'ascending order' do
           before { get '/api/v2/platform/products?sort=price', headers: bearer_token }
 
@@ -169,6 +171,8 @@ describe 'API V2 Platform Products Spec' do
       end
 
       context 'sorting by available_on' do
+        before { store.products.each_with_index { |p, i| p.update(available_on: Time.current - i.days) } }
+
         context 'ascending order' do
           before { get '/api/v2/platform/products?sort=available_on', headers: bearer_token }
 

@@ -427,6 +427,8 @@ describe 'API V2 Storefront Products Spec', type: :request do
       end
 
       context 'sorting by available_on' do
+        before { store.products.each_with_index { |p, i| p.update(available_on: Time.current - i.days) } }
+
         context 'ascending order' do
           before { get '/api/v2/storefront/products?sort=available_on' }
 
