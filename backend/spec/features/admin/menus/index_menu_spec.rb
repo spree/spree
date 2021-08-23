@@ -14,6 +14,7 @@ describe 'Menus Index', type: :feature do
   end
 
   context 'when menus are present' do
+    let!(:main_store) { Spree::Store.default }
     let!(:other_store) { create(:store) }
     let!(:main_menu) { create(:menu, name: 'Main Menu') }
     let!(:main_menu_fr) { create(:menu, name: 'Main Menu FR', locale: 'fr') }
@@ -22,6 +23,7 @@ describe 'Menus Index', type: :feature do
     let!(:main_menu_other_store) { create(:menu, name: 'Other Store Main Menu', store: other_store) }
 
     before do
+      main_store.update(supported_locales: 'en,fr')
       visit spree.admin_menus_path
     end
 
