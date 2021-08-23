@@ -18,7 +18,7 @@ module Spree
     after_touch :touch_all_products
     after_save :ensure_product_properties_have_filter_params
 
-    self.whitelisted_ransackable_attributes = ['presentation']
+    self.whitelisted_ransackable_attributes = ['presentation', 'filterable']
 
     def uniq_values(product_properties_scope: nil)
       with_uniq_values_cache_key(product_properties_scope) do

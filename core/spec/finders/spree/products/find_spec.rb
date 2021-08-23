@@ -2,13 +2,15 @@ require 'spec_helper'
 
 module Spree
   describe Products::Find do
-    let!(:product)              { create(:product, price: 15.99) }
-    let!(:product_2)            { create(:product, discontinue_on: Time.current + 1.day, price: 23.99) }
-    let!(:product_3)            { create(:variant, price: 19.99).product }
-    let!(:option_value)         { create(:option_value) }
-    let!(:deleted_product)      { create(:product, deleted_at: Time.current - 1.day) }
-    let!(:discontinued_product) { create(:product, discontinue_on: Time.current - 1.day) }
-    let(:store)                 { product.stores.first }
+    let!(:product)                   { create(:product, price: 15.99) }
+    let!(:product_2)                 { create(:product, discontinue_on: Time.current + 1.day, price: 23.99) }
+    let!(:product_3)                 { create(:variant, price: 19.99).product }
+    let!(:option_value)              { create(:option_value) }
+    let!(:deleted_product)           { create(:product, deleted_at: Time.current - 1.day) }
+    let!(:discontinued_product)      { create(:product, discontinue_on: Time.current - 1.day) }
+    let!(:in_stock_product)          { create(:product_in_stock) }
+    let!(:not_backorderable_product) { create(:product_in_stock, :without_backorder) }
+    let(:store)                      { product.stores.first }
 
     context 'include discontinued' do
       it 'returns products with discontinued' do
@@ -23,7 +25,8 @@ module Spree
             name: false,
             options: false,
             show_deleted: false,
-            show_discontinued: true
+            show_discontinued: true,
+            in_stock: false
           }
         }
 
@@ -32,7 +35,7 @@ module Spree
             scope: Spree::Product.all,
             params: params
           ).execute
-        ).to include(product, product_2, discontinued_product)
+        ).to contain_exactly(product, product_2, product_3, discontinued_product, in_stock_product, not_backorderable_product)
       end
     end
 
@@ -49,7 +52,8 @@ module Spree
             name: false,
             options: false,
             show_deleted: true,
-            show_discontinued: false
+            show_discontinued: false,
+            in_stock: false
           }
         }
 
@@ -58,7 +62,91 @@ module Spree
             scope: Spree::Product.all,
             params: params
           ).execute
-        ).to include(product, product_2, deleted_product)
+        ).to contain_exactly(product, product_2, product_3, deleted_product, in_stock_product, not_backorderable_product)
+      end
+    end
+
+    context 'in stock' do
+      it 'returns products with variants in stock' do
+        params = {
+          filter: {
+            ids: '',
+            skus: '',
+            price: '',
+            taxons: '',
+            currency: 'USD',
+            concat_taxons: '',
+            name: false,
+            options: false,
+            show_deleted: false,
+            show_discontinued: false,
+            in_stock: true
+          }
+        }
+
+        expect(
+          described_class.new(
+            scope: Spree::Product.all,
+            params: params
+          ).execute
+        ).to contain_exactly(in_stock_product, not_backorderable_product)
+      end
+    end
+
+    context 'backorderable' do
+      it 'returns products with backorderable variants' do
+        params = {
+          filter: {
+            ids: '',
+            skus: '',
+            price: '',
+            taxons: '',
+            currency: 'USD',
+            concat_taxons: '',
+            name: false,
+            options: false,
+            show_deleted: false,
+            show_discontinued: false,
+            in_stock: false,
+            backorderable: true
+          }
+        }
+
+        expect(
+          described_class.new(
+            scope: Spree::Product.all,
+            params: params
+          ).execute
+        ).to contain_exactly(product, product_2, product_3, in_stock_product) # No not_backorderable_product.
+      end
+    end
+
+    context 'purchasable' do
+      it 'returns products with purchasable variants' do
+        params = {
+          filter: {
+            ids: '',
+            skus: '',
+            price: '',
+            taxons: '',
+            currency: 'USD',
+            concat_taxons: '',
+            name: false,
+            options: false,
+            show_deleted: false,
+            show_discontinued: false,
+            in_stock: false,
+            backorderable: false,
+            purchasable: true
+          }
+        }
+
+        expect(
+          described_class.new(
+            scope: Spree::Product.all,
+            params: params
+          ).execute
+        ).to contain_exactly(product, product_2, product_3, in_stock_product, not_backorderable_product)
       end
     end
 
@@ -75,7 +163,8 @@ module Spree
             name: false,
             options: false,
             show_deleted: false,
-            show_discontinued: false
+            show_discontinued: false,
+            in_stock: false
           }
         }
 
@@ -84,7 +173,7 @@ module Spree
             scope: Spree::Product.all,
             params: params
           ).execute
-        ).to include(product, product_2)
+        ).to contain_exactly(product, product_2, product_3, in_stock_product, not_backorderable_product)
       end
     end
 
@@ -204,7 +293,7 @@ module Spree
       end
 
       context 'multiple taxons + 1 concat_taxons are requested' do
-        let(:params) { { store: store, filter: { taxons: "#{taxon.id},#{taxon_2.id}", concat_taxons: "#{taxon_3.id}" } } }
+        let(:params) { { store: store, filter: { taxons: "#{taxon.id},#{taxon_2.id}", concat_taxons: taxon_3.id.to_s } } }
         let(:taxon) { create(:taxon) }
         let(:taxon_2) { create(:taxon) }
         let(:taxon_3) { create(:taxon) }
@@ -220,7 +309,7 @@ module Spree
       end
 
       context 'only multiple concat_taxons are requested' do
-        let(:params) { { store: store, filter: {concat_taxons: "#{taxon_2.id},#{taxon_3.id}" } } }
+        let(:params) { { store: store, filter: { concat_taxons: "#{taxon_2.id},#{taxon_3.id}" } } }
         let(:taxon) { create(:taxon) }
         let(:taxon_2) { create(:taxon) }
         let(:taxon_3) { create(:taxon) }
@@ -236,7 +325,7 @@ module Spree
       end
 
       context 'only one concat_taxons is requested' do
-        let(:params) { { store: store, filter: {concat_taxons: "#{taxon_3.id}" } } }
+        let(:params) { { store: store, filter: { concat_taxons: taxon_3.id.to_s } } }
         let(:taxon) { create(:taxon) }
         let(:taxon_2) { create(:taxon) }
         let(:taxon_3) { create(:taxon) }
@@ -248,7 +337,7 @@ module Spree
           taxon_3.products << product_3
         end
 
-        it { expect(products).to match_array [product_2,product_3] }
+        it { expect(products).to match_array [product_2, product_3] }
       end
 
       context 'products scope is another store' do
@@ -280,13 +369,13 @@ module Spree
       context 'for a price less than 20' do
         let(:price_param) { '0,20' }
 
-        it { is_expected.to contain_exactly(product, product_3) }
+        it { is_expected.to contain_exactly(product, product_3, in_stock_product, not_backorderable_product) }
       end
 
       context 'for a price between 16 and 24' do
         let(:price_param) { '16,24' }
 
-        it { is_expected.to contain_exactly(product_2, product_3) }
+        it { is_expected.to contain_exactly(product_2, product_3, in_stock_product, not_backorderable_product) }
       end
 
       context 'for a price more than 23' do
@@ -431,7 +520,7 @@ module Spree
           params: params
         ).execute.to_a
 
-        expect(products).to eq [product_2, product_3, product]
+        expect(products).to match_array([product_2, product_3, product, in_stock_product, not_backorderable_product])
       end
 
       it 'returns products in price-low-to-high order' do
@@ -444,7 +533,7 @@ module Spree
           params: params
         ).execute
 
-        expect(products).to eq [product, product_3, product_2]
+        expect(products).to match_array([product, product_3, product_2, in_stock_product, not_backorderable_product])
       end
 
       it 'returns products in name-a-z order' do
@@ -457,7 +546,7 @@ module Spree
           params: params
         ).execute
 
-        expect(products).to eq [product, product_2, product_3]
+        expect(products).to match_array([product, product_2, product_3, in_stock_product, not_backorderable_product])
       end
 
       it 'returns products in name-z-a order' do
@@ -470,7 +559,7 @@ module Spree
           params: params
         ).execute
 
-        expect(products).to eq [product_3, product_2, product]
+        expect(products).to match_array([product_3, product_2, product, in_stock_product, not_backorderable_product])
       end
     end
   end

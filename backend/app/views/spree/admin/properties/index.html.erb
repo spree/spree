@@ -28,6 +28,16 @@
         </div>
       </div>
 
+      <div class="row">
+        <div class="col-12 col-lg-6">
+          <div class="form-group">
+            <%= label_tag :q_filterable_eq, Spree.t(:filterable_status) %>
+            <%= f.select :filterable_eq, options_for_select([[Spree.t(:filterable), true], [Spree.t(:non_filterable), false]]), { include_blank: true }, class: 'select2-clear js-filterable' %>
+          </div>
+        </div>
+      </div>
+    </div>
+
       <div class="form-actions" data-hook="admin_pproperties_index_search_buttons">
         <%= button Spree.t(:search), 'search.svg' %>
       </div>

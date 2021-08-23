@@ -77,13 +77,42 @@ RSpec.configure do |config|
             required: %w[name presentation]
           },
           option_value_params: {
-          type: :object,
+            type: :object,
             properties: {
               name: { type: :string },
               presentation: { type: :string },
               option_values_attributes: { type: :string }
             },
             required: %w[name presentation]
+          },
+          product_params: {
+            type: :object,
+            properties: {
+              name: { type: :string },
+              description: { type: :string },
+              available_on: { type: :string },
+              discontinue_on: { type: :string },
+              permalink: { type: :string },
+              meta_description: { type: :string },
+              meta_keywords: { type: :string },
+              price: { type: :string },
+              sku: { type: :string },
+              deleted_at: { type: :string },
+              prototype_id: { type: :string },
+              option_values_hash: { type: :string },
+              weight: { type: :string },
+              height: { type: :string },
+              width: { type: :string },
+              depth: { type: :string },
+              shipping_category_id: { type: :string },
+              tax_category_id: { type: :string },
+              cost_currency: { type: :string },
+              cost_price: { type: :string },
+              compare_at_price: { type: :string },
+              option_type_ids: { type: :string },
+              taxon_ids: { type: :string }
+            },
+            required: %w[name price shipping_category_id]
           },
           user_params: {
             type: :object,

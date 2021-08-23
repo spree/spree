@@ -36,6 +36,12 @@ FactoryBot.define do
         after :create do |product|
           product.master.stock_items.first.adjust_count_on_hand(10)
         end
+
+        trait :without_backorder do
+          after :create do |product|
+            product.master.stock_items.update_all(backorderable: false)
+          end
+        end
       end
 
       factory :product_with_option_types do

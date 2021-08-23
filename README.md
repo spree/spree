@@ -2,17 +2,22 @@
    <img src="https://raw.githubusercontent.com/spree/spree-dev-docs/master/.gitbook/assets/spree_header_978-2x.png" alt="Spree Commerce - a headless multi-language, multi-currency, multi-store open source e-commerce platform" />
 </a>
 
-# Spree Commerce
+# [Spree Commerce](https://spreecommerce.org) [![Gem Version](https://badge.fury.io/rb/spree.svg)](https://badge.fury.io/rb/spree) [![Circle CI](https://circleci.com/gh/spree/spree.svg?style=shield)](https://circleci.com/gh/spree/spree/tree/master) [![Test Coverage](https://api.codeclimate.com/v1/badges/8277fc2bb0b1f777084f/test_coverage)](https://codeclimate.com/github/spree/spree/test_coverage)
 
 * [Success Stories](https://spreecommerce.org/stories/)
 * [Documentation](https://dev-docs.spreecommerce.org/)
+* [API Reference](https://api.spreecommerce.org)
 * [Integrations](https://spreecommerce.org/integrations/)
 * [Join our Slack community](http://slack.spreecommerce.org/)
 * [Support](https://spreecommerce.org/contact/)
 
-[![Gem Version](https://badge.fury.io/rb/spree.svg)](https://badge.fury.io/rb/spree) [![Circle CI](https://circleci.com/gh/spree/spree.svg?style=shield)](https://circleci.com/gh/spree/spree/tree/master) [![Test Coverage](https://api.codeclimate.com/v1/badges/8277fc2bb0b1f777084f/test_coverage)](https://codeclimate.com/github/spree/spree/test_coverage)
-
 **Spree** is a headless open source e-commerce platform for global brands. It was started by Sean Schofield and is now developed by [Spark Solutions][spark]. We're open to [contributions](https://dev-docs.spreecommerce.org/contributing).
+
+## Sponsored by
+
+[![Spark Solutions](http://sparksolutions.co/wp-content/uploads/2015/01/logo-ss-tr-221x100.png)][spark]
+
+[Spark Solutions][spark] is a full stack eCommerce agency. Our project teams consist of Designers, Software Engineers, Testers and Project Managers practicing agile project delivery. We’ll integrate our team with yours to jointly architect, deliver, maintain and scale the software products you need. You drive the project with requirements and acceptance testing and we help you deliver faster using industry-standard project management and comms best practices. [Contact us to launch your new eCommerce project](https://sparksolutions.co/contact/).
 
 ## Key Features
 
@@ -64,6 +69,11 @@ Admin panel credentials for your own Heroku demo:
 
 [Developer Documentation](https://dev-docs.spreecommerce.org/)
 
+## API
+
+* [API Reference](https://api.spreecommerce.org/)
+* [Javascript / TypeScript SDK](https://github.com/spree/spree-storefront-api-v2-js-sdk)
+
 ## Extensions
 
 Extensions provide additional features and integrations for your Spree application
@@ -79,14 +89,5 @@ Please review the [Contributing Guide](https://dev-docs.spreecommerce.org/contri
 ## License
 
 Spree is released under the [New BSD License](https://github.com/spree/spree/blob/master/license.md).
-
-## About Spark Solutions
-
-[![Spark Solutions](http://sparksolutions.co/wp-content/uploads/2015/01/logo-ss-tr-221x100.png)][spark]
-
-[Spark Solutions][spark] is a full stack eCommerce agency. We’ve been leading Spree open-source efforts since 2016 as its core team. We also do client work. Our project teams consist of Designers, Software Engineers, Testers and Project Managers practicing agile project delivery. We’ll integrate our team with yours to jointly architect, deliver, maintain and scale the software products you need. You drive the project with requirements and acceptance testing and we help you deliver faster using industry-standard project management and comms best practices.
-
-We are passionate about open source software.
-We are [available for hire][spark].
 
 [spark]:https://sparksolutions.co?utm_source=github
