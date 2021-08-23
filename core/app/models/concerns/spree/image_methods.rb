@@ -1,6 +1,6 @@
 module Spree
-  class ImageAsset < Asset
-    include Rails.application.routes.url_helpers
+  module ImageMethods
+    extend ActiveSupport::Concern
 
     def generate_url(size:, gravity: 'center', quality: 80, background: 'show')
       return if size.blank?
