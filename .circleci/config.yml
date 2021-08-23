@@ -25,8 +25,8 @@ run_tests: &run_tests
     - checkout
     - restore_cache:
         keys:
-          - spree-bundle-v8-ruby-2-7-{{ .Branch }}
-          - spree-bundle-v8-ruby-2-7
+          - spree-bundle-v9-ruby-2-7-{{ .Branch }}
+          - spree-bundle-v9-ruby-2-7
     - run:
         name: Run rspec in parallel
         command: ./bin/build-ci.rb test
@@ -46,8 +46,8 @@ run_tests_3_0: &run_tests_3_0
     - checkout
     - restore_cache:
         keys:
-          - spree-bundle-v8-ruby-3-0-{{ .Branch }}
-          - spree-bundle-v8-ruby-3-0
+          - spree-bundle-v9-ruby-3-0-{{ .Branch }}
+          - spree-bundle-v9-ruby-3-0
     - run:
         name: Run rspec in parallel
         command: ./bin/build-ci.rb test
@@ -67,15 +67,15 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - spree-bundle-v8-ruby-2-7-{{ .Branch }}
-            - spree-bundle-v8-ruby-2-7
+            - spree-bundle-v9-ruby-2-7-{{ .Branch }}
+            - spree-bundle-v9-ruby-2-7
       - run:
           name: Bundle Install
           command: |
             bundle check || bundle install
             ./bin/build-ci.rb install
       - save_cache:
-          key: spree-bundle-v8-ruby-2-7-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+          key: spree-bundle-v9-ruby-2-7-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
           paths:
             - ~/spree/vendor/bundle
 
@@ -85,15 +85,15 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - spree-bundle-v8-ruby-3-0-{{ .Branch }}
-            - spree-bundle-v8-ruby-3-0
+            - spree-bundle-v9-ruby-3-0-{{ .Branch }}
+            - spree-bundle-v9-ruby-3-0
       - run:
           name: Bundle Install
           command: |
             bundle check || bundle install
             ./bin/build-ci.rb install
       - save_cache:
-          key: spree-bundle-v8-ruby-3-0-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+          key: spree-bundle-v9-ruby-3-0-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
           paths:
             - ~/spree/vendor/bundle
 
@@ -129,8 +129,8 @@ jobs:
     - checkout
     - restore_cache:
         keys:
-          - spree-bundle-v8-ruby-2-7-{{ .Branch }}
-          - spree-bundle-v8-ruby-2-7
+          - spree-bundle-v9-ruby-2-7-{{ .Branch }}
+          - spree-bundle-v9-ruby-2-7
     - run:
         name: Ensure Bundle Install
         command: |
@@ -157,8 +157,8 @@ jobs:
     - checkout
     - restore_cache:
         keys:
-          - spree-bundle-v8-ruby-2-7-{{ .Branch }}
-          - spree-bundle-v8-ruby-2-7
+          - spree-bundle-v9-ruby-2-7-{{ .Branch }}
+          - spree-bundle-v9-ruby-2-7
     - run:
         name: Ensure Bundle Install
         command: |
@@ -203,8 +203,8 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - spree-bundle-v8-ruby-3-0-{{ .Branch }}
-            - spree-bundle-v8-ruby-3-0
+            - spree-bundle-v9-ruby-3-0-{{ .Branch }}
+            - spree-bundle-v9-ruby-3-0
       - run:
           name: Run rspec in parallel
           command: ./bin/build-ci.rb test
