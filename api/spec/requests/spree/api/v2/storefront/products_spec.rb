@@ -491,16 +491,41 @@ describe 'API V2 Storefront Products Spec', type: :request do
           it_behaves_like 'returning products in descending sku order'
         end
 
-        context 'with other sort' do
+        context 'with updated_at sort' do
           let(:params) { ',updated_at' }
+          let!(:time) { Time.current }
 
-          before do
-            time = Time.current
-            store.products.each { |p| p.update(updated_at: time) }
+          context 'when updated_at date is same for each product' do
+            before { store.products.each { |p| p.update(updated_at: time) } }
+
+            it_behaves_like 'returning products in ascending sku order'
+            it_behaves_like 'returning products in descending sku order'
           end
 
-          it_behaves_like 'returning products in ascending sku order'
-          it_behaves_like 'returning products in descending sku order'
+          context 'when updated_at date is different for each product' do
+            shared_examples 'returns products in ascending updated_at order' do
+              it 'returns products in ascending updated_at order' do
+                expect(json_response['data'].count).to eq(store.products.available.count)
+                expect(json_response['data'].map { |p| p['attributes']['sku'] }).to eq(available_products_with_master.sort { |a, b| a.updated_at <=> b.updated_at }.map(&:sku))
+              end
+            end
+
+            before { available_products_with_master.each_with_index { |p, i| p.update(updated_at: time - i.day) } }
+
+            context 'when sku sort order direction is ascending' do
+              before { get "/api/v2/storefront/products?sort=sku#{params}" }
+
+              it_behaves_like 'returns 200 HTTP status'
+              it_behaves_like 'returns products in ascending updated_at order'
+            end
+
+            context 'when sku sort order direction is descending' do
+              before { get "/api/v2/storefront/products?sort=-sku#{params}" }
+
+              it_behaves_like 'returns 200 HTTP status'
+              it_behaves_like 'returns products in ascending updated_at order'
+            end
+          end
         end
       end
     end
