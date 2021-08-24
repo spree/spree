@@ -1222,6 +1222,8 @@ paths:
         - $ref: '#/components/parameters/PerPageParam'
         - $ref: '#/components/parameters/ProductIncludeParam'
         - $ref: '#/components/parameters/SparseFieldsParam'
+        - $ref: '#/components/parameters/ProductImageTransformationSizeParam'
+        - $ref: '#/components/parameters/ProductImageTransformationQualityParam'
       responses:
         '200':
           description: Returns a list of Products
@@ -1253,6 +1255,8 @@ paths:
         - $ref: '#/components/parameters/ProductSlug'
         - $ref: '#/components/parameters/ProductIncludeParam'
         - $ref: '#/components/parameters/SparseFieldsParam'
+        - $ref: '#/components/parameters/ProductImageTransformationSizeParam'
+        - $ref: '#/components/parameters/ProductImageTransformationQualityParam'
       responses:
         '200':
           description: Returns the requested Product
@@ -2407,6 +2411,7 @@ paths:
                         attributes:
                           viewable_type: 'Spree::Variant'
                           viewable_id: 264
+                          original_url: /rails/active_storage/representations/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBc3NDIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--343406ebe6fad9bcecd53789e87b50a923406578/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCam9VWTI5dFltbHVaVjl2Y0hScGIyNXpld282REdkeVlYWnBkSGxKSWd0alpXNTBaWElHT2daRlZEb0xjbVZ6YVhwbFNTSU5NalF3ZURJME1ENEdPd2RVT2d0bGVIUmxiblJBQ0RvUFltRmphMmR5YjNWdVpFa2lDbk51YjNjeUJqc0hWRG9NY1hWaGJHbDBlV2xWIiwiZXhwIjpudWxsLCJwdXIiOiJ2YXJpYXRpb24ifX0=--55d2b874f2b92848762f5542a52d8a1a60ee41ed/db-seeds-photos-products-Women-Sweaters-knitted%20high%20neck%20sweater-white-AdobeStock_239920052.jpg
                           styles:
                             - url: /rails/active_storage/representations/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBc3NDIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--343406ebe6fad9bcecd53789e87b50a923406578/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCam9VWTI5dFltbHVaVjl2Y0hScGIyNXpld282REdkeVlYWnBkSGxKSWd0alpXNTBaWElHT2daRlZEb0xjbVZ6YVhwbFNTSUxORGg0TkRnK0Jqc0hWRG9MWlhoMFpXNTBRQWc2RDJKaFkydG5jbTkxYm1SSklncHpibTkzTWdZN0IxUTZESEYxWVd4cGRIbHBWUT09IiwiZXhwIjpudWxsLCJwdXIiOiJ2YXJpYXRpb24ifX0=--f00c53aec20b49aed5454c7e73da262bb7de03cb/db-seeds-photos-products-Women-Sweaters-knitted%20high%20neck%20sweater-white-AdobeStock_239920052.jpg
                               width: '48'
@@ -2449,6 +2454,7 @@ paths:
                         attributes:
                           viewable_type: 'Spree::Variant'
                           viewable_id: 265
+                          original_url: /rails/active_storage/representations/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBc3NDIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--343406ebe6fad9bcecd53789e87b50a923406578/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCam9VWTI5dFltbHVaVjl2Y0hScGIyNXpld282REdkeVlYWnBkSGxKSWd0alpXNTBaWElHT2daRlZEb0xjbVZ6YVhwbFNTSU5NalF3ZURJME1ENEdPd2RVT2d0bGVIUmxiblJBQ0RvUFltRmphMmR5YjNWdVpFa2lDbk51YjNjeUJqc0hWRG9NY1hWaGJHbDBlV2xWIiwiZXhwIjpudWxsLCJwdXIiOiJ2YXJpYXRpb24ifX0=--55d2b874f2b92848762f5542a52d8a1a60ee41ed/db-seeds-photos-products-Women-Sweaters-knitted%20high%20neck%20sweater-white-AdobeStock_239920052.jpg
                           styles:
                             - url: /rails/active_storage/representations/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBc3dDIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--37afff6f9d41f8d5cbc5e520ea3f2e6577a086a0/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCam9VWTI5dFltbHVaVjl2Y0hScGIyNXpld282REdkeVlYWnBkSGxKSWd0alpXNTBaWElHT2daRlZEb0xjbVZ6YVhwbFNTSUxORGg0TkRnK0Jqc0hWRG9MWlhoMFpXNTBRQWc2RDJKaFkydG5jbTkxYm1SSklncHpibTkzTWdZN0IxUTZESEYxWVd4cGRIbHBWUT09IiwiZXhwIjpudWxsLCJwdXIiOiJ2YXJpYXRpb24ifX0=--f00c53aec20b49aed5454c7e73da262bb7de03cb/db-seeds-photos-products-Women-Sweaters-knitted%20high%20neck%20sweater-white-AdobeStock_239920052.jpg
                               width: '48'
@@ -2491,6 +2497,7 @@ paths:
                         attributes:
                           viewable_type: 'Spree::Variant'
                           viewable_id: 266
+                          original_url: /rails/active_storage/representations/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBc3NDIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--343406ebe6fad9bcecd53789e87b50a923406578/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCam9VWTI5dFltbHVaVjl2Y0hScGIyNXpld282REdkeVlYWnBkSGxKSWd0alpXNTBaWElHT2daRlZEb0xjbVZ6YVhwbFNTSU5NalF3ZURJME1ENEdPd2RVT2d0bGVIUmxiblJBQ0RvUFltRmphMmR5YjNWdVpFa2lDbk51YjNjeUJqc0hWRG9NY1hWaGJHbDBlV2xWIiwiZXhwIjpudWxsLCJwdXIiOiJ2YXJpYXRpb24ifX0=--55d2b874f2b92848762f5542a52d8a1a60ee41ed/db-seeds-photos-products-Women-Sweaters-knitted%20high%20neck%20sweater-white-AdobeStock_239920052.jpg
                           styles:
                             - url: /rails/active_storage/representations/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBczBDIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--50667041a9006fe5a351c0571b55435a04fe2201/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCam9VWTI5dFltbHVaVjl2Y0hScGIyNXpld282REdkeVlYWnBkSGxKSWd0alpXNTBaWElHT2daRlZEb0xjbVZ6YVhwbFNTSUxORGg0TkRnK0Jqc0hWRG9MWlhoMFpXNTBRQWc2RDJKaFkydG5jbTkxYm1SSklncHpibTkzTWdZN0IxUTZESEYxWVd4cGRIbHBWUT09IiwiZXhwIjpudWxsLCJwdXIiOiJ2YXJpYXRpb24ifX0=--f00c53aec20b49aed5454c7e73da262bb7de03cb/db-seeds-photos-products-Women-Sweaters-knitted%20high%20neck%20sweater-white-AdobeStock_239920052.jpg
                               width: '48'
@@ -2533,6 +2540,7 @@ paths:
                         attributes:
                           viewable_type: 'Spree::Variant'
                           viewable_id: 267
+                          original_url: /rails/active_storage/representations/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBc3NDIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--343406ebe6fad9bcecd53789e87b50a923406578/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCam9VWTI5dFltbHVaVjl2Y0hScGIyNXpld282REdkeVlYWnBkSGxKSWd0alpXNTBaWElHT2daRlZEb0xjbVZ6YVhwbFNTSU5NalF3ZURJME1ENEdPd2RVT2d0bGVIUmxiblJBQ0RvUFltRmphMmR5YjNWdVpFa2lDbk51YjNjeUJqc0hWRG9NY1hWaGJHbDBlV2xWIiwiZXhwIjpudWxsLCJwdXIiOiJ2YXJpYXRpb24ifX0=--55d2b874f2b92848762f5542a52d8a1a60ee41ed/db-seeds-photos-products-Women-Sweaters-knitted%20high%20neck%20sweater-white-AdobeStock_239920052.jpg
                           styles:
                             - url: /rails/active_storage/representations/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBczRDIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--14b0b8ac2b15dbc14d5db438c938bf2178d0bd49/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCam9VWTI5dFltbHVaVjl2Y0hScGIyNXpld282REdkeVlYWnBkSGxKSWd0alpXNTBaWElHT2daRlZEb0xjbVZ6YVhwbFNTSUxORGg0TkRnK0Jqc0hWRG9MWlhoMFpXNTBRQWc2RDJKaFkydG5jbTkxYm1SSklncHpibTkzTWdZN0IxUTZESEYxWVd4cGRIbHBWUT09IiwiZXhwIjpudWxsLCJwdXIiOiJ2YXJpYXRpb24ifX0=--f00c53aec20b49aed5454c7e73da262bb7de03cb/db-seeds-photos-products-Women-Sweaters-knitted%20high%20neck%20sweater-white-AdobeStock_239920052.jpg
                               width: '48'
@@ -2575,6 +2583,7 @@ paths:
                         attributes:
                           viewable_type: 'Spree::Variant'
                           viewable_id: 268
+                          original_url: /rails/active_storage/representations/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBc3NDIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--343406ebe6fad9bcecd53789e87b50a923406578/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCam9VWTI5dFltbHVaVjl2Y0hScGIyNXpld282REdkeVlYWnBkSGxKSWd0alpXNTBaWElHT2daRlZEb0xjbVZ6YVhwbFNTSU5NalF3ZURJME1ENEdPd2RVT2d0bGVIUmxiblJBQ0RvUFltRmphMmR5YjNWdVpFa2lDbk51YjNjeUJqc0hWRG9NY1hWaGJHbDBlV2xWIiwiZXhwIjpudWxsLCJwdXIiOiJ2YXJpYXRpb24ifX0=--55d2b874f2b92848762f5542a52d8a1a60ee41ed/db-seeds-photos-products-Women-Sweaters-knitted%20high%20neck%20sweater-white-AdobeStock_239920052.jpg
                           styles:
                             - url: /rails/active_storage/representations/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBczhDIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--8802498a509c9a51765c3329dc10505e45a6f854/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCam9VWTI5dFltbHVaVjl2Y0hScGIyNXpld282REdkeVlYWnBkSGxKSWd0alpXNTBaWElHT2daRlZEb0xjbVZ6YVhwbFNTSUxORGg0TkRnK0Jqc0hWRG9MWlhoMFpXNTBRQWc2RDJKaFkydG5jbTkxYm1SSklncHpibTkzTWdZN0IxUTZESEYxWVd4cGRIbHBWUT09IiwiZXhwIjpudWxsLCJwdXIiOiJ2YXJpYXRpb24ifX0=--f00c53aec20b49aed5454c7e73da262bb7de03cb/db-seeds-photos-products-Women-Sweaters-knitted%20high%20neck%20sweater-white-AdobeStock_239920052.jpg
                               width: '48'
@@ -2617,6 +2626,7 @@ paths:
                         attributes:
                           viewable_type: 'Spree::Variant'
                           viewable_id: 269
+                          original_url: /rails/active_storage/representations/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBc3NDIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--343406ebe6fad9bcecd53789e87b50a923406578/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCam9VWTI5dFltbHVaVjl2Y0hScGIyNXpld282REdkeVlYWnBkSGxKSWd0alpXNTBaWElHT2daRlZEb0xjbVZ6YVhwbFNTSU5NalF3ZURJME1ENEdPd2RVT2d0bGVIUmxiblJBQ0RvUFltRmphMmR5YjNWdVpFa2lDbk51YjNjeUJqc0hWRG9NY1hWaGJHbDBlV2xWIiwiZXhwIjpudWxsLCJwdXIiOiJ2YXJpYXRpb24ifX0=--55d2b874f2b92848762f5542a52d8a1a60ee41ed/db-seeds-photos-products-Women-Sweaters-knitted%20high%20neck%20sweater-white-AdobeStock_239920052.jpg
                           styles:
                             - url: /rails/active_storage/representations/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBdEFDIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--b802fdfa4bd158a77411df945ba229a647e0ab06/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCam9VWTI5dFltbHVaVjl2Y0hScGIyNXpld282REdkeVlYWnBkSGxKSWd0alpXNTBaWElHT2daRlZEb0xjbVZ6YVhwbFNTSUxORGg0TkRnK0Jqc0hWRG9MWlhoMFpXNTBRQWc2RDJKaFkydG5jbTkxYm1SSklncHpibTkzTWdZN0IxUTZESEYxWVd4cGRIbHBWUT09IiwiZXhwIjpudWxsLCJwdXIiOiJ2YXJpYXRpb24ifX0=--f00c53aec20b49aed5454c7e73da262bb7de03cb/db-seeds-photos-products-Women-Sweaters-knitted%20high%20neck%20sweater-blue-AdobeStock_241930912.jpg
                               width: '48'
@@ -2659,6 +2669,7 @@ paths:
                         attributes:
                           viewable_type: 'Spree::Variant'
                           viewable_id: 269
+                          original_url: /rails/active_storage/representations/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBc3NDIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--343406ebe6fad9bcecd53789e87b50a923406578/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCam9VWTI5dFltbHVaVjl2Y0hScGIyNXpld282REdkeVlYWnBkSGxKSWd0alpXNTBaWElHT2daRlZEb0xjbVZ6YVhwbFNTSU5NalF3ZURJME1ENEdPd2RVT2d0bGVIUmxiblJBQ0RvUFltRmphMmR5YjNWdVpFa2lDbk51YjNjeUJqc0hWRG9NY1hWaGJHbDBlV2xWIiwiZXhwIjpudWxsLCJwdXIiOiJ2YXJpYXRpb24ifX0=--55d2b874f2b92848762f5542a52d8a1a60ee41ed/db-seeds-photos-products-Women-Sweaters-knitted%20high%20neck%20sweater-white-AdobeStock_239920052.jpg
                           styles:
                             - url: /rails/active_storage/representations/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBdEVDIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--e2319bef5351e8e0f736cf32510e58a9f9bf78b7/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCam9VWTI5dFltbHVaVjl2Y0hScGIyNXpld282REdkeVlYWnBkSGxKSWd0alpXNTBaWElHT2daRlZEb0xjbVZ6YVhwbFNTSUxORGg0TkRnK0Jqc0hWRG9MWlhoMFpXNTBRQWc2RDJKaFkydG5jbTkxYm1SSklncHpibTkzTWdZN0IxUTZESEYxWVd4cGRIbHBWUT09IiwiZXhwIjpudWxsLCJwdXIiOiJ2YXJpYXRpb24ifX0=--f00c53aec20b49aed5454c7e73da262bb7de03cb/db-seeds-photos-products-Women-Sweaters-knitted%20high%20neck%20sweater-blue-AdobeStock_241930885.jpg
                               width: '48'
@@ -2701,6 +2712,7 @@ paths:
                         attributes:
                           viewable_type: 'Spree::Variant'
                           viewable_id: 270
+                          original_url: /rails/active_storage/representations/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBc3NDIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--343406ebe6fad9bcecd53789e87b50a923406578/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCam9VWTI5dFltbHVaVjl2Y0hScGIyNXpld282REdkeVlYWnBkSGxKSWd0alpXNTBaWElHT2daRlZEb0xjbVZ6YVhwbFNTSU5NalF3ZURJME1ENEdPd2RVT2d0bGVIUmxiblJBQ0RvUFltRmphMmR5YjNWdVpFa2lDbk51YjNjeUJqc0hWRG9NY1hWaGJHbDBlV2xWIiwiZXhwIjpudWxsLCJwdXIiOiJ2YXJpYXRpb24ifX0=--55d2b874f2b92848762f5542a52d8a1a60ee41ed/db-seeds-photos-products-Women-Sweaters-knitted%20high%20neck%20sweater-white-AdobeStock_239920052.jpg
                           styles:
                             - url: /rails/active_storage/representations/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBdElDIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--e045fd64f04cbbce7249de79033e15827216b59a/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCam9VWTI5dFltbHVaVjl2Y0hScGIyNXpld282REdkeVlYWnBkSGxKSWd0alpXNTBaWElHT2daRlZEb0xjbVZ6YVhwbFNTSUxORGg0TkRnK0Jqc0hWRG9MWlhoMFpXNTBRQWc2RDJKaFkydG5jbTkxYm1SSklncHpibTkzTWdZN0IxUTZESEYxWVd4cGRIbHBWUT09IiwiZXhwIjpudWxsLCJwdXIiOiJ2YXJpYXRpb24ifX0=--f00c53aec20b49aed5454c7e73da262bb7de03cb/db-seeds-photos-products-Women-Sweaters-knitted%20high%20neck%20sweater-blue-AdobeStock_241930912.jpg
                               width: '48'
@@ -2743,6 +2755,7 @@ paths:
                         attributes:
                           viewable_type: 'Spree::Variant'
                           viewable_id: 270
+                          original_url: /rails/active_storage/representations/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBc3NDIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--343406ebe6fad9bcecd53789e87b50a923406578/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCam9VWTI5dFltbHVaVjl2Y0hScGIyNXpld282REdkeVlYWnBkSGxKSWd0alpXNTBaWElHT2daRlZEb0xjbVZ6YVhwbFNTSU5NalF3ZURJME1ENEdPd2RVT2d0bGVIUmxiblJBQ0RvUFltRmphMmR5YjNWdVpFa2lDbk51YjNjeUJqc0hWRG9NY1hWaGJHbDBlV2xWIiwiZXhwIjpudWxsLCJwdXIiOiJ2YXJpYXRpb24ifX0=--55d2b874f2b92848762f5542a52d8a1a60ee41ed/db-seeds-photos-products-Women-Sweaters-knitted%20high%20neck%20sweater-white-AdobeStock_239920052.jpg
                           styles:
                             - url: /rails/active_storage/representations/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBdE1DIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--3d057b37bb4298608b4baba1922bbaf63223ae1d/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCam9VWTI5dFltbHVaVjl2Y0hScGIyNXpld282REdkeVlYWnBkSGxKSWd0alpXNTBaWElHT2daRlZEb0xjbVZ6YVhwbFNTSUxORGg0TkRnK0Jqc0hWRG9MWlhoMFpXNTBRQWc2RDJKaFkydG5jbTkxYm1SSklncHpibTkzTWdZN0IxUTZESEYxWVd4cGRIbHBWUT09IiwiZXhwIjpudWxsLCJwdXIiOiJ2YXJpYXRpb24ifX0=--f00c53aec20b49aed5454c7e73da262bb7de03cb/db-seeds-photos-products-Women-Sweaters-knitted%20high%20neck%20sweater-blue-AdobeStock_241930885.jpg
                               width: '48'
@@ -2785,6 +2798,7 @@ paths:
                         attributes:
                           viewable_type: 'Spree::Variant'
                           viewable_id: 271
+                          original_url: /rails/active_storage/representations/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBc3NDIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--343406ebe6fad9bcecd53789e87b50a923406578/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCam9VWTI5dFltbHVaVjl2Y0hScGIyNXpld282REdkeVlYWnBkSGxKSWd0alpXNTBaWElHT2daRlZEb0xjbVZ6YVhwbFNTSU5NalF3ZURJME1ENEdPd2RVT2d0bGVIUmxiblJBQ0RvUFltRmphMmR5YjNWdVpFa2lDbk51YjNjeUJqc0hWRG9NY1hWaGJHbDBlV2xWIiwiZXhwIjpudWxsLCJwdXIiOiJ2YXJpYXRpb24ifX0=--55d2b874f2b92848762f5542a52d8a1a60ee41ed/db-seeds-photos-products-Women-Sweaters-knitted%20high%20neck%20sweater-white-AdobeStock_239920052.jpg
                           styles:
                             - url: /rails/active_storage/representations/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBdFFDIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--ad0fb21a098cfe1bb0e23dd79655b457db3ef94f/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCam9VWTI5dFltbHVaVjl2Y0hScGIyNXpld282REdkeVlYWnBkSGxKSWd0alpXNTBaWElHT2daRlZEb0xjbVZ6YVhwbFNTSUxORGg0TkRnK0Jqc0hWRG9MWlhoMFpXNTBRQWc2RDJKaFkydG5jbTkxYm1SSklncHpibTkzTWdZN0IxUTZESEYxWVd4cGRIbHBWUT09IiwiZXhwIjpudWxsLCJwdXIiOiJ2YXJpYXRpb24ifX0=--f00c53aec20b49aed5454c7e73da262bb7de03cb/db-seeds-photos-products-Women-Sweaters-knitted%20high%20neck%20sweater-blue-AdobeStock_241930912.jpg
                               width: '48'
@@ -2827,6 +2841,7 @@ paths:
                         attributes:
                           viewable_type: 'Spree::Variant'
                           viewable_id: 271
+                          original_url: /rails/active_storage/representations/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBc3NDIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--343406ebe6fad9bcecd53789e87b50a923406578/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCam9VWTI5dFltbHVaVjl2Y0hScGIyNXpld282REdkeVlYWnBkSGxKSWd0alpXNTBaWElHT2daRlZEb0xjbVZ6YVhwbFNTSU5NalF3ZURJME1ENEdPd2RVT2d0bGVIUmxiblJBQ0RvUFltRmphMmR5YjNWdVpFa2lDbk51YjNjeUJqc0hWRG9NY1hWaGJHbDBlV2xWIiwiZXhwIjpudWxsLCJwdXIiOiJ2YXJpYXRpb24ifX0=--55d2b874f2b92848762f5542a52d8a1a60ee41ed/db-seeds-photos-products-Women-Sweaters-knitted%20high%20neck%20sweater-white-AdobeStock_239920052.jpg
                           styles:
                             - url: /rails/active_storage/representations/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBdFVDIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--bd2c34a00dc5051b6ae2a1e4a614624fbf660649/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCam9VWTI5dFltbHVaVjl2Y0hScGIyNXpld282REdkeVlYWnBkSGxKSWd0alpXNTBaWElHT2daRlZEb0xjbVZ6YVhwbFNTSUxORGg0TkRnK0Jqc0hWRG9MWlhoMFpXNTBRQWc2RDJKaFkydG5jbTkxYm1SSklncHpibTkzTWdZN0IxUTZESEYxWVd4cGRIbHBWUT09IiwiZXhwIjpudWxsLCJwdXIiOiJ2YXJpYXRpb24ifX0=--f00c53aec20b49aed5454c7e73da262bb7de03cb/db-seeds-photos-products-Women-Sweaters-knitted%20high%20neck%20sweater-blue-AdobeStock_241930885.jpg
                               width: '48'
@@ -2869,6 +2884,7 @@ paths:
                         attributes:
                           viewable_type: 'Spree::Variant'
                           viewable_id: 272
+                          original_url: /rails/active_storage/representations/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBc3NDIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--343406ebe6fad9bcecd53789e87b50a923406578/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCam9VWTI5dFltbHVaVjl2Y0hScGIyNXpld282REdkeVlYWnBkSGxKSWd0alpXNTBaWElHT2daRlZEb0xjbVZ6YVhwbFNTSU5NalF3ZURJME1ENEdPd2RVT2d0bGVIUmxiblJBQ0RvUFltRmphMmR5YjNWdVpFa2lDbk51YjNjeUJqc0hWRG9NY1hWaGJHbDBlV2xWIiwiZXhwIjpudWxsLCJwdXIiOiJ2YXJpYXRpb24ifX0=--55d2b874f2b92848762f5542a52d8a1a60ee41ed/db-seeds-photos-products-Women-Sweaters-knitted%20high%20neck%20sweater-white-AdobeStock_239920052.jpg
                           styles:
                             - url: /rails/active_storage/representations/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBdFlDIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--1eb20e64553b88419a6167f3ad3e807bf25546b4/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCam9VWTI5dFltbHVaVjl2Y0hScGIyNXpld282REdkeVlYWnBkSGxKSWd0alpXNTBaWElHT2daRlZEb0xjbVZ6YVhwbFNTSUxORGg0TkRnK0Jqc0hWRG9MWlhoMFpXNTBRQWc2RDJKaFkydG5jbTkxYm1SSklncHpibTkzTWdZN0IxUTZESEYxWVd4cGRIbHBWUT09IiwiZXhwIjpudWxsLCJwdXIiOiJ2YXJpYXRpb24ifX0=--f00c53aec20b49aed5454c7e73da262bb7de03cb/db-seeds-photos-products-Women-Sweaters-knitted%20high%20neck%20sweater-blue-AdobeStock_241930912.jpg
                               width: '48'
@@ -2911,6 +2927,7 @@ paths:
                         attributes:
                           viewable_type: 'Spree::Variant'
                           viewable_id: 272
+                          original_url: /rails/active_storage/representations/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBc3NDIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--343406ebe6fad9bcecd53789e87b50a923406578/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCam9VWTI5dFltbHVaVjl2Y0hScGIyNXpld282REdkeVlYWnBkSGxKSWd0alpXNTBaWElHT2daRlZEb0xjbVZ6YVhwbFNTSU5NalF3ZURJME1ENEdPd2RVT2d0bGVIUmxiblJBQ0RvUFltRmphMmR5YjNWdVpFa2lDbk51YjNjeUJqc0hWRG9NY1hWaGJHbDBlV2xWIiwiZXhwIjpudWxsLCJwdXIiOiJ2YXJpYXRpb24ifX0=--55d2b874f2b92848762f5542a52d8a1a60ee41ed/db-seeds-photos-products-Women-Sweaters-knitted%20high%20neck%20sweater-white-AdobeStock_239920052.jpg
                           styles:
                             - url: /rails/active_storage/representations/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBdGNDIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--7a958320a02d38a82dce8c988c5cc47ce45d9ac4/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCam9VWTI5dFltbHVaVjl2Y0hScGIyNXpld282REdkeVlYWnBkSGxKSWd0alpXNTBaWElHT2daRlZEb0xjbVZ6YVhwbFNTSUxORGg0TkRnK0Jqc0hWRG9MWlhoMFpXNTBRQWc2RDJKaFkydG5jbTkxYm1SSklncHpibTkzTWdZN0IxUTZESEYxWVd4cGRIbHBWUT09IiwiZXhwIjpudWxsLCJwdXIiOiJ2YXJpYXRpb24ifX0=--f00c53aec20b49aed5454c7e73da262bb7de03cb/db-seeds-photos-products-Women-Sweaters-knitted%20high%20neck%20sweater-blue-AdobeStock_241930885.jpg
                               width: '48'
@@ -2953,6 +2970,7 @@ paths:
                         attributes:
                           viewable_type: 'Spree::Variant'
                           viewable_id: 273
+                          original_url: /rails/active_storage/representations/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBc3NDIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--343406ebe6fad9bcecd53789e87b50a923406578/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCam9VWTI5dFltbHVaVjl2Y0hScGIyNXpld282REdkeVlYWnBkSGxKSWd0alpXNTBaWElHT2daRlZEb0xjbVZ6YVhwbFNTSU5NalF3ZURJME1ENEdPd2RVT2d0bGVIUmxiblJBQ0RvUFltRmphMmR5YjNWdVpFa2lDbk51YjNjeUJqc0hWRG9NY1hWaGJHbDBlV2xWIiwiZXhwIjpudWxsLCJwdXIiOiJ2YXJpYXRpb24ifX0=--55d2b874f2b92848762f5542a52d8a1a60ee41ed/db-seeds-photos-products-Women-Sweaters-knitted%20high%20neck%20sweater-white-AdobeStock_239920052.jpg
                           styles:
                             - url: /rails/active_storage/representations/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBdGdDIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--b24f9375daacc204f9beda36794cc3f576e2397a/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCam9VWTI5dFltbHVaVjl2Y0hScGIyNXpld282REdkeVlYWnBkSGxKSWd0alpXNTBaWElHT2daRlZEb0xjbVZ6YVhwbFNTSUxORGg0TkRnK0Jqc0hWRG9MWlhoMFpXNTBRQWc2RDJKaFkydG5jbTkxYm1SSklncHpibTkzTWdZN0IxUTZESEYxWVd4cGRIbHBWUT09IiwiZXhwIjpudWxsLCJwdXIiOiJ2YXJpYXRpb24ifX0=--f00c53aec20b49aed5454c7e73da262bb7de03cb/db-seeds-photos-products-Women-Sweaters-knitted%20high%20neck%20sweater-blue-AdobeStock_241930912.jpg
                               width: '48'
@@ -2995,6 +3013,7 @@ paths:
                         attributes:
                           viewable_type: 'Spree::Variant'
                           viewable_id: 273
+                          original_url: /rails/active_storage/representations/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBc3NDIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--343406ebe6fad9bcecd53789e87b50a923406578/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCam9VWTI5dFltbHVaVjl2Y0hScGIyNXpld282REdkeVlYWnBkSGxKSWd0alpXNTBaWElHT2daRlZEb0xjbVZ6YVhwbFNTSU5NalF3ZURJME1ENEdPd2RVT2d0bGVIUmxiblJBQ0RvUFltRmphMmR5YjNWdVpFa2lDbk51YjNjeUJqc0hWRG9NY1hWaGJHbDBlV2xWIiwiZXhwIjpudWxsLCJwdXIiOiJ2YXJpYXRpb24ifX0=--55d2b874f2b92848762f5542a52d8a1a60ee41ed/db-seeds-photos-products-Women-Sweaters-knitted%20high%20neck%20sweater-white-AdobeStock_239920052.jpg
                           styles:
                             - url: /rails/active_storage/representations/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBdGtDIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--2ae280f152564042bf96496168688f51e2ac832a/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCam9VWTI5dFltbHVaVjl2Y0hScGIyNXpld282REdkeVlYWnBkSGxKSWd0alpXNTBaWElHT2daRlZEb0xjbVZ6YVhwbFNTSUxORGg0TkRnK0Jqc0hWRG9MWlhoMFpXNTBRQWc2RDJKaFkydG5jbTkxYm1SSklncHpibTkzTWdZN0IxUTZESEYxWVd4cGRIbHBWUT09IiwiZXhwIjpudWxsLCJwdXIiOiJ2YXJpYXRpb24ifX0=--f00c53aec20b49aed5454c7e73da262bb7de03cb/db-seeds-photos-products-Women-Sweaters-knitted%20high%20neck%20sweater-blue-AdobeStock_241930885.jpg
                               width: '48'
@@ -3037,6 +3056,7 @@ paths:
                         attributes:
                           viewable_type: 'Spree::Variant'
                           viewable_id: 274
+                          original_url: /rails/active_storage/representations/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBc3NDIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--343406ebe6fad9bcecd53789e87b50a923406578/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCam9VWTI5dFltbHVaVjl2Y0hScGIyNXpld282REdkeVlYWnBkSGxKSWd0alpXNTBaWElHT2daRlZEb0xjbVZ6YVhwbFNTSU5NalF3ZURJME1ENEdPd2RVT2d0bGVIUmxiblJBQ0RvUFltRmphMmR5YjNWdVpFa2lDbk51YjNjeUJqc0hWRG9NY1hWaGJHbDBlV2xWIiwiZXhwIjpudWxsLCJwdXIiOiJ2YXJpYXRpb24ifX0=--55d2b874f2b92848762f5542a52d8a1a60ee41ed/db-seeds-photos-products-Women-Sweaters-knitted%20high%20neck%20sweater-white-AdobeStock_239920052.jpg
                           styles:
                             - url: /rails/active_storage/representations/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBdG9DIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--5c2b0a4ec39eea7f52e83634994de198636c9cb4/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCam9VWTI5dFltbHVaVjl2Y0hScGIyNXpld282REdkeVlYWnBkSGxKSWd0alpXNTBaWElHT2daRlZEb0xjbVZ6YVhwbFNTSUxORGg0TkRnK0Jqc0hWRG9MWlhoMFpXNTBRQWc2RDJKaFkydG5jbTkxYm1SSklncHpibTkzTWdZN0IxUTZESEYxWVd4cGRIbHBWUT09IiwiZXhwIjpudWxsLCJwdXIiOiJ2YXJpYXRpb24ifX0=--f00c53aec20b49aed5454c7e73da262bb7de03cb/db-seeds-photos-products-Women-Sweaters-knitted%20high%20neck%20sweater-pink-AdobeStock_239920055.jpg
                               width: '48'
@@ -3079,6 +3099,7 @@ paths:
                         attributes:
                           viewable_type: 'Spree::Variant'
                           viewable_id: 274
+                          original_url: /rails/active_storage/representations/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBc3NDIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--343406ebe6fad9bcecd53789e87b50a923406578/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCam9VWTI5dFltbHVaVjl2Y0hScGIyNXpld282REdkeVlYWnBkSGxKSWd0alpXNTBaWElHT2daRlZEb0xjbVZ6YVhwbFNTSU5NalF3ZURJME1ENEdPd2RVT2d0bGVIUmxiblJBQ0RvUFltRmphMmR5YjNWdVpFa2lDbk51YjNjeUJqc0hWRG9NY1hWaGJHbDBlV2xWIiwiZXhwIjpudWxsLCJwdXIiOiJ2YXJpYXRpb24ifX0=--55d2b874f2b92848762f5542a52d8a1a60ee41ed/db-seeds-photos-products-Women-Sweaters-knitted%20high%20neck%20sweater-white-AdobeStock_239920052.jpg
                           styles:
                             - url: /rails/active_storage/representations/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBdHNDIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--6807575570f4355cba90191d8a8010bdb51011e8/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCam9VWTI5dFltbHVaVjl2Y0hScGIyNXpld282REdkeVlYWnBkSGxKSWd0alpXNTBaWElHT2daRlZEb0xjbVZ6YVhwbFNTSUxORGg0TkRnK0Jqc0hWRG9MWlhoMFpXNTBRQWc2RDJKaFkydG5jbTkxYm1SSklncHpibTkzTWdZN0IxUTZESEYxWVd4cGRIbHBWUT09IiwiZXhwIjpudWxsLCJwdXIiOiJ2YXJpYXRpb24ifX0=--f00c53aec20b49aed5454c7e73da262bb7de03cb/db-seeds-photos-products-Women-Sweaters-knitted%20high%20neck%20sweater-pink-AdobeStock_239920056.jpg
                               width: '48'
@@ -3121,6 +3142,7 @@ paths:
                         attributes:
                           viewable_type: 'Spree::Variant'
                           viewable_id: 275
+                          original_url: /rails/active_storage/representations/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBc3NDIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--343406ebe6fad9bcecd53789e87b50a923406578/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCam9VWTI5dFltbHVaVjl2Y0hScGIyNXpld282REdkeVlYWnBkSGxKSWd0alpXNTBaWElHT2daRlZEb0xjbVZ6YVhwbFNTSU5NalF3ZURJME1ENEdPd2RVT2d0bGVIUmxiblJBQ0RvUFltRmphMmR5YjNWdVpFa2lDbk51YjNjeUJqc0hWRG9NY1hWaGJHbDBlV2xWIiwiZXhwIjpudWxsLCJwdXIiOiJ2YXJpYXRpb24ifX0=--55d2b874f2b92848762f5542a52d8a1a60ee41ed/db-seeds-photos-products-Women-Sweaters-knitted%20high%20neck%20sweater-white-AdobeStock_239920052.jpg
                           styles:
                             - url: /rails/active_storage/representations/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBdHdDIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--5c06798a1bfaa198563c0276e49c27aedbc2a96d/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCam9VWTI5dFltbHVaVjl2Y0hScGIyNXpld282REdkeVlYWnBkSGxKSWd0alpXNTBaWElHT2daRlZEb0xjbVZ6YVhwbFNTSUxORGg0TkRnK0Jqc0hWRG9MWlhoMFpXNTBRQWc2RDJKaFkydG5jbTkxYm1SSklncHpibTkzTWdZN0IxUTZESEYxWVd4cGRIbHBWUT09IiwiZXhwIjpudWxsLCJwdXIiOiJ2YXJpYXRpb24ifX0=--f00c53aec20b49aed5454c7e73da262bb7de03cb/db-seeds-photos-products-Women-Sweaters-knitted%20high%20neck%20sweater-pink-AdobeStock_239920055.jpg
                               width: '48'
@@ -3163,6 +3185,7 @@ paths:
                         attributes:
                           viewable_type: 'Spree::Variant'
                           viewable_id: 275
+                          original_url: /rails/active_storage/representations/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBc3NDIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--343406ebe6fad9bcecd53789e87b50a923406578/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCam9VWTI5dFltbHVaVjl2Y0hScGIyNXpld282REdkeVlYWnBkSGxKSWd0alpXNTBaWElHT2daRlZEb0xjbVZ6YVhwbFNTSU5NalF3ZURJME1ENEdPd2RVT2d0bGVIUmxiblJBQ0RvUFltRmphMmR5YjNWdVpFa2lDbk51YjNjeUJqc0hWRG9NY1hWaGJHbDBlV2xWIiwiZXhwIjpudWxsLCJwdXIiOiJ2YXJpYXRpb24ifX0=--55d2b874f2b92848762f5542a52d8a1a60ee41ed/db-seeds-photos-products-Women-Sweaters-knitted%20high%20neck%20sweater-white-AdobeStock_239920052.jpg
                           styles:
                             - url: /rails/active_storage/representations/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBdDBDIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--b18a2c5f8e70a283eb72a771ed50cb465a0c160e/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCam9VWTI5dFltbHVaVjl2Y0hScGIyNXpld282REdkeVlYWnBkSGxKSWd0alpXNTBaWElHT2daRlZEb0xjbVZ6YVhwbFNTSUxORGg0TkRnK0Jqc0hWRG9MWlhoMFpXNTBRQWc2RDJKaFkydG5jbTkxYm1SSklncHpibTkzTWdZN0IxUTZESEYxWVd4cGRIbHBWUT09IiwiZXhwIjpudWxsLCJwdXIiOiJ2YXJpYXRpb24ifX0=--f00c53aec20b49aed5454c7e73da262bb7de03cb/db-seeds-photos-products-Women-Sweaters-knitted%20high%20neck%20sweater-pink-AdobeStock_239920056.jpg
                               width: '48'
@@ -3205,6 +3228,7 @@ paths:
                         attributes:
                           viewable_type: 'Spree::Variant'
                           viewable_id: 276
+                          original_url: /rails/active_storage/representations/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBc3NDIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--343406ebe6fad9bcecd53789e87b50a923406578/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCam9VWTI5dFltbHVaVjl2Y0hScGIyNXpld282REdkeVlYWnBkSGxKSWd0alpXNTBaWElHT2daRlZEb0xjbVZ6YVhwbFNTSU5NalF3ZURJME1ENEdPd2RVT2d0bGVIUmxiblJBQ0RvUFltRmphMmR5YjNWdVpFa2lDbk51YjNjeUJqc0hWRG9NY1hWaGJHbDBlV2xWIiwiZXhwIjpudWxsLCJwdXIiOiJ2YXJpYXRpb24ifX0=--55d2b874f2b92848762f5542a52d8a1a60ee41ed/db-seeds-photos-products-Women-Sweaters-knitted%20high%20neck%20sweater-white-AdobeStock_239920052.jpg
                           styles:
                             - url: /rails/active_storage/representations/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBdDRDIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--6b04877594f2041624cc897a193ea25690d93212/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCam9VWTI5dFltbHVaVjl2Y0hScGIyNXpld282REdkeVlYWnBkSGxKSWd0alpXNTBaWElHT2daRlZEb0xjbVZ6YVhwbFNTSUxORGg0TkRnK0Jqc0hWRG9MWlhoMFpXNTBRQWc2RDJKaFkydG5jbTkxYm1SSklncHpibTkzTWdZN0IxUTZESEYxWVd4cGRIbHBWUT09IiwiZXhwIjpudWxsLCJwdXIiOiJ2YXJpYXRpb24ifX0=--f00c53aec20b49aed5454c7e73da262bb7de03cb/db-seeds-photos-products-Women-Sweaters-knitted%20high%20neck%20sweater-pink-AdobeStock_239920055.jpg
                               width: '48'
@@ -3247,6 +3271,7 @@ paths:
                         attributes:
                           viewable_type: 'Spree::Variant'
                           viewable_id: 276
+                          original_url: /rails/active_storage/representations/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBc3NDIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--343406ebe6fad9bcecd53789e87b50a923406578/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCam9VWTI5dFltbHVaVjl2Y0hScGIyNXpld282REdkeVlYWnBkSGxKSWd0alpXNTBaWElHT2daRlZEb0xjbVZ6YVhwbFNTSU5NalF3ZURJME1ENEdPd2RVT2d0bGVIUmxiblJBQ0RvUFltRmphMmR5YjNWdVpFa2lDbk51YjNjeUJqc0hWRG9NY1hWaGJHbDBlV2xWIiwiZXhwIjpudWxsLCJwdXIiOiJ2YXJpYXRpb24ifX0=--55d2b874f2b92848762f5542a52d8a1a60ee41ed/db-seeds-photos-products-Women-Sweaters-knitted%20high%20neck%20sweater-white-AdobeStock_239920052.jpg
                           styles:
                             - url: /rails/active_storage/representations/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBdDhDIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--0df0052367365be8bda84cab76d747390668a3ea/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCam9VWTI5dFltbHVaVjl2Y0hScGIyNXpld282REdkeVlYWnBkSGxKSWd0alpXNTBaWElHT2daRlZEb0xjbVZ6YVhwbFNTSUxORGg0TkRnK0Jqc0hWRG9MWlhoMFpXNTBRQWc2RDJKaFkydG5jbTkxYm1SSklncHpibTkzTWdZN0IxUTZESEYxWVd4cGRIbHBWUT09IiwiZXhwIjpudWxsLCJwdXIiOiJ2YXJpYXRpb24ifX0=--f00c53aec20b49aed5454c7e73da262bb7de03cb/db-seeds-photos-products-Women-Sweaters-knitted%20high%20neck%20sweater-pink-AdobeStock_239920056.jpg
                               width: '48'
@@ -3289,6 +3314,7 @@ paths:
                         attributes:
                           viewable_type: 'Spree::Variant'
                           viewable_id: 277
+                          original_url: /rails/active_storage/representations/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBc3NDIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--343406ebe6fad9bcecd53789e87b50a923406578/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCam9VWTI5dFltbHVaVjl2Y0hScGIyNXpld282REdkeVlYWnBkSGxKSWd0alpXNTBaWElHT2daRlZEb0xjbVZ6YVhwbFNTSU5NalF3ZURJME1ENEdPd2RVT2d0bGVIUmxiblJBQ0RvUFltRmphMmR5YjNWdVpFa2lDbk51YjNjeUJqc0hWRG9NY1hWaGJHbDBlV2xWIiwiZXhwIjpudWxsLCJwdXIiOiJ2YXJpYXRpb24ifX0=--55d2b874f2b92848762f5542a52d8a1a60ee41ed/db-seeds-photos-products-Women-Sweaters-knitted%20high%20neck%20sweater-white-AdobeStock_239920052.jpg
                           styles:
                             - url: /rails/active_storage/representations/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBdUFDIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--79839a72cf1cff9581bd0b895686e49f1b881149/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCam9VWTI5dFltbHVaVjl2Y0hScGIyNXpld282REdkeVlYWnBkSGxKSWd0alpXNTBaWElHT2daRlZEb0xjbVZ6YVhwbFNTSUxORGg0TkRnK0Jqc0hWRG9MWlhoMFpXNTBRQWc2RDJKaFkydG5jbTkxYm1SSklncHpibTkzTWdZN0IxUTZESEYxWVd4cGRIbHBWUT09IiwiZXhwIjpudWxsLCJwdXIiOiJ2YXJpYXRpb24ifX0=--f00c53aec20b49aed5454c7e73da262bb7de03cb/db-seeds-photos-products-Women-Sweaters-knitted%20high%20neck%20sweater-pink-AdobeStock_239920055.jpg
                               width: '48'
@@ -3331,6 +3357,7 @@ paths:
                         attributes:
                           viewable_type: 'Spree::Variant'
                           viewable_id: 277
+                          original_url: /rails/active_storage/representations/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBc3NDIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--343406ebe6fad9bcecd53789e87b50a923406578/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCam9VWTI5dFltbHVaVjl2Y0hScGIyNXpld282REdkeVlYWnBkSGxKSWd0alpXNTBaWElHT2daRlZEb0xjbVZ6YVhwbFNTSU5NalF3ZURJME1ENEdPd2RVT2d0bGVIUmxiblJBQ0RvUFltRmphMmR5YjNWdVpFa2lDbk51YjNjeUJqc0hWRG9NY1hWaGJHbDBlV2xWIiwiZXhwIjpudWxsLCJwdXIiOiJ2YXJpYXRpb24ifX0=--55d2b874f2b92848762f5542a52d8a1a60ee41ed/db-seeds-photos-products-Women-Sweaters-knitted%20high%20neck%20sweater-white-AdobeStock_239920052.jpg
                           styles:
                             - url: /rails/active_storage/representations/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBdUVDIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--8b0076bf32bb773050774895284b6acf3c7b8c26/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCam9VWTI5dFltbHVaVjl2Y0hScGIyNXpld282REdkeVlYWnBkSGxKSWd0alpXNTBaWElHT2daRlZEb0xjbVZ6YVhwbFNTSUxORGg0TkRnK0Jqc0hWRG9MWlhoMFpXNTBRQWc2RDJKaFkydG5jbTkxYm1SSklncHpibTkzTWdZN0IxUTZESEYxWVd4cGRIbHBWUT09IiwiZXhwIjpudWxsLCJwdXIiOiJ2YXJpYXRpb24ifX0=--f00c53aec20b49aed5454c7e73da262bb7de03cb/db-seeds-photos-products-Women-Sweaters-knitted%20high%20neck%20sweater-pink-AdobeStock_239920056.jpg
                               width: '48'
@@ -3373,6 +3400,7 @@ paths:
                         attributes:
                           viewable_type: 'Spree::Variant'
                           viewable_id: 278
+                          original_url: /rails/active_storage/representations/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBc3NDIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--343406ebe6fad9bcecd53789e87b50a923406578/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCam9VWTI5dFltbHVaVjl2Y0hScGIyNXpld282REdkeVlYWnBkSGxKSWd0alpXNTBaWElHT2daRlZEb0xjbVZ6YVhwbFNTSU5NalF3ZURJME1ENEdPd2RVT2d0bGVIUmxiblJBQ0RvUFltRmphMmR5YjNWdVpFa2lDbk51YjNjeUJqc0hWRG9NY1hWaGJHbDBlV2xWIiwiZXhwIjpudWxsLCJwdXIiOiJ2YXJpYXRpb24ifX0=--55d2b874f2b92848762f5542a52d8a1a60ee41ed/db-seeds-photos-products-Women-Sweaters-knitted%20high%20neck%20sweater-white-AdobeStock_239920052.jpg
                           styles:
                             - url: /rails/active_storage/representations/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBdUlDIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--43553bba970e93469bcef6b143d6bb0bdc9f61a5/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCam9VWTI5dFltbHVaVjl2Y0hScGIyNXpld282REdkeVlYWnBkSGxKSWd0alpXNTBaWElHT2daRlZEb0xjbVZ6YVhwbFNTSUxORGg0TkRnK0Jqc0hWRG9MWlhoMFpXNTBRQWc2RDJKaFkydG5jbTkxYm1SSklncHpibTkzTWdZN0IxUTZESEYxWVd4cGRIbHBWUT09IiwiZXhwIjpudWxsLCJwdXIiOiJ2YXJpYXRpb24ifX0=--f00c53aec20b49aed5454c7e73da262bb7de03cb/db-seeds-photos-products-Women-Sweaters-knitted%20high%20neck%20sweater-pink-AdobeStock_239920055.jpg
                               width: '48'
@@ -3415,6 +3443,7 @@ paths:
                         attributes:
                           viewable_type: 'Spree::Variant'
                           viewable_id: 278
+                          original_url: /rails/active_storage/representations/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBc3NDIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--343406ebe6fad9bcecd53789e87b50a923406578/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCam9VWTI5dFltbHVaVjl2Y0hScGIyNXpld282REdkeVlYWnBkSGxKSWd0alpXNTBaWElHT2daRlZEb0xjbVZ6YVhwbFNTSU5NalF3ZURJME1ENEdPd2RVT2d0bGVIUmxiblJBQ0RvUFltRmphMmR5YjNWdVpFa2lDbk51YjNjeUJqc0hWRG9NY1hWaGJHbDBlV2xWIiwiZXhwIjpudWxsLCJwdXIiOiJ2YXJpYXRpb24ifX0=--55d2b874f2b92848762f5542a52d8a1a60ee41ed/db-seeds-photos-products-Women-Sweaters-knitted%20high%20neck%20sweater-white-AdobeStock_239920052.jpg
                           styles:
                             - url: /rails/active_storage/representations/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBdU1DIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--e07f4fbc82bc628e436ce77860e7d2b66ef91137/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCam9VWTI5dFltbHVaVjl2Y0hScGIyNXpld282REdkeVlYWnBkSGxKSWd0alpXNTBaWElHT2daRlZEb0xjbVZ6YVhwbFNTSUxORGg0TkRnK0Jqc0hWRG9MWlhoMFpXNTBRQWc2RDJKaFkydG5jbTkxYm1SSklncHpibTkzTWdZN0IxUTZESEYxWVd4cGRIbHBWUT09IiwiZXhwIjpudWxsLCJwdXIiOiJ2YXJpYXRpb24ifX0=--f00c53aec20b49aed5454c7e73da262bb7de03cb/db-seeds-photos-products-Women-Sweaters-knitted%20high%20neck%20sweater-pink-AdobeStock_239920056.jpg
                               width: '48'
@@ -3457,6 +3486,7 @@ paths:
                         attributes:
                           viewable_type: 'Spree::Variant'
                           viewable_id: 21
+                          original_url: /rails/active_storage/representations/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBc3NDIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--343406ebe6fad9bcecd53789e87b50a923406578/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCam9VWTI5dFltbHVaVjl2Y0hScGIyNXpld282REdkeVlYWnBkSGxKSWd0alpXNTBaWElHT2daRlZEb0xjbVZ6YVhwbFNTSU5NalF3ZURJME1ENEdPd2RVT2d0bGVIUmxiblJBQ0RvUFltRmphMmR5YjNWdVpFa2lDbk51YjNjeUJqc0hWRG9NY1hWaGJHbDBlV2xWIiwiZXhwIjpudWxsLCJwdXIiOiJ2YXJpYXRpb24ifX0=--55d2b874f2b92848762f5542a52d8a1a60ee41ed/db-seeds-photos-products-Women-Sweaters-knitted%20high%20neck%20sweater-white-AdobeStock_239920052.jpg
                           styles:
                             - url: /rails/active_storage/representations/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBc29DIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--ca850d7ca83a87131c63c1de4281565ed576aded/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCam9VWTI5dFltbHVaVjl2Y0hScGIyNXpld282REdkeVlYWnBkSGxKSWd0alpXNTBaWElHT2daRlZEb0xjbVZ6YVhwbFNTSUxORGg0TkRnK0Jqc0hWRG9MWlhoMFpXNTBRQWc2RDJKaFkydG5jbTkxYm1SSklncHpibTkzTWdZN0IxUTZESEYxWVd4cGRIbHBWUT09IiwiZXhwIjpudWxsLCJwdXIiOiJ2YXJpYXRpb24ifX0=--f00c53aec20b49aed5454c7e73da262bb7de03cb/db-seeds-photos-products-Women-Sweaters-knitted%20high%20neck%20sweater-white-AdobeStock_239920052.jpg
                               width: '48'
@@ -15492,7 +15522,6 @@ components:
         display_labels:
           type: string
           example: Show
-
     Menu:
       required:
         - data
@@ -15657,8 +15686,6 @@ components:
       properties:
         url:
           type: string
-
-
   parameters:
     Id:
       name: id
@@ -15779,6 +15806,20 @@ components:
 
         [More information](https://jsonapi.org/format/#fetching-includes)
       example: 'default_variant,variants,option_types,product_properties,taxons,images,primary_variant'
+    ProductImageTransformationSizeParam:
+      in: query
+      name: 'image_transformation[size]'
+      schema:
+        type: string
+      example: 100x50
+      description: Specyfies dimensions for included images at transformed_url attribute.
+    ProductImageTransformationQualityParam:
+      in: query
+      name: 'image_transformation[quality]'
+      schema:
+        type: string
+      example: 70
+      description: Specyfies quality for included images at transformed_url attribute
     TaxonIncludeParam:
       name: include
       in: query
