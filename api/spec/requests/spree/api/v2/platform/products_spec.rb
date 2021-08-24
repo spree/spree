@@ -64,10 +64,10 @@ describe 'API V2 Platform Products Spec' do
 
       it 'returns products from this store only' do
         expect(json_response['data'].count).to eq store.products.count
-        product_ids = json_response['data'].map(&:first).map(&:last)
+        product_ids = json_response['data'].pluck(:id)
 
         expect(product_ids).not_to include(product_from_another_store.id)
-        expect(product_ids).to eq(store.products.ids.map(&:to_s))
+        expect(product_ids).to match_array(store.products.ids.map(&:to_s))
       end
     end
 
