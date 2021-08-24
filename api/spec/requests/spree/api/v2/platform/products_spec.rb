@@ -67,7 +67,7 @@ describe 'API V2 Platform Products Spec' do
         product_ids = json_response['data'].map(&:first).map(&:last)
 
         expect(product_ids).not_to include(product_from_another_store.id)
-        expect(product_ids).to eq(store.products.ids.map(&:to_s))
+        expect(product_ids.map(&:to_i).sort).to eql(store.products.ids.map(&:to_i).sort)
       end
     end
 
