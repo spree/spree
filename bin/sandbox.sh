@@ -41,13 +41,13 @@ cd ./sandbox
 if [ "$SPREE_AUTH_DEVISE_PATH" != "" ]; then
   SPREE_AUTH_DEVISE_GEM="gem 'spree_auth_devise', path: '$SPREE_AUTH_DEVISE_PATH'"
 else
-  SPREE_AUTH_DEVISE_GEM="gem 'spree_auth_devise', github: 'spree/spree_auth_devise', branch: 'master'"
+  SPREE_AUTH_DEVISE_GEM="gem 'spree_auth_devise', github: 'spree/spree_auth_devise', branch: 'main'"
 fi
 
 if [ "$SPREE_GATEWAY_PATH" != "" ]; then
   SPREE_GATEWAY_GEM="gem 'spree_gateway', path: '$SPREE_GATEWAY_PATH'"
 else
-  SPREE_GATEWAY_GEM="gem 'spree_gateway', github: 'spree/spree_gateway', branch: 'master'"
+  SPREE_GATEWAY_GEM="gem 'spree_gateway', github: 'spree/spree_gateway', branch: 'main'"
 fi
 
 if [ "$SPREE_HEADLESS" != "" ]; then
@@ -122,7 +122,7 @@ bundle install --gemfile Gemfile
 bundle exec rails db:drop || true
 bundle exec rails db:create
 bundle exec rails g spree:install --auto-accept --user_class=Spree::User --sample=true
-if [ "$SPREE_HEADLESS" == "" ]; then
+if [ "$SPREE_HEADLESS" = "" ]; then
   bundle exec rails g spree:frontend:install
   bundle exec rails g spree:backend:install
   bundle exec rails g spree:emails:install
@@ -130,6 +130,6 @@ fi
 bundle exec rails g spree:auth:install
 bundle exec rails g spree_gateway:install
 
-if [ "$SPREE_HEADLESS" == "" ]; then
+if [ "$SPREE_HEADLESS" = "" ]; then
   bundle exec rails g spree_related_products:install
 fi
