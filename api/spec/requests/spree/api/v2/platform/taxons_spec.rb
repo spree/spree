@@ -1,4 +1,4 @@
-require 'swagger_helper'
+require 'spec_helper'
 
 describe 'Platform API v2 Taxons API' do
   include_context 'Platform API v2'
