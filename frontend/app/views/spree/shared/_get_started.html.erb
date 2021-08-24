@@ -1,0 +1,46 @@
+<!-- Styles And Script In A View Partial
+  If this view partial is removed from the spree_application.html.erb layout file, the storefront
+  will instantly snap back to the original look and feel with no hangover CSS or JavaScript related
+  to this partial.
+
+  Please do not transfer styles and JavaScript found here
+  into the main stylesheets or JavaScript files.
+-->
+<style>
+  #getStartedBar {
+    // background: #0074c2;
+    background: #33ba6f;
+    color: white;
+    z-index: 10;
+  }
+</style>
+
+<script>
+  document.addEventListener('turbolinks:load', function(event) {
+    setHeight()
+  })
+
+  window.addEventListener('resize', function() {
+    setHeight()
+  })
+
+  function setHeight () {
+    var startedBar = document.querySelector('#getStartedBar')
+    var bodyEl = document.querySelector('body')
+    var headerNavEl = document.querySelector('header.header-spree')
+    var combinedHeight = startedBar.clientHeight + headerNavEl.clientHeight
+
+    headerNavEl.style.top = startedBar.clientHeight + 'px'
+    bodyEl.style.paddingTop = combinedHeight + 'px'
+  }
+</script>
+
+<div id="getStartedBar" class="position-fixed fixed-top d-flex justify-content-center align-items-center p-1">
+  <div class="row">
+    <div class="col-12 text-center">
+      <h5 class="m-0">
+        <span>Create your own Spree project</span> <a href="https://spreecommerce.org/contact/" class="btn btn-outline-light btn-sm m-2" style="font-size: 0.9em;">Get Started</a>
+      </h5>
+    </div>
+  </div>
+</div>
