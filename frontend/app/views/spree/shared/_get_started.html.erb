@@ -8,10 +8,13 @@
 -->
 <style>
   #getStartedBar {
-    // background: #0074c2;
     background: #33ba6f;
     color: white;
     z-index: 10;
+  }
+
+  #getStartedBar svg {
+    vertical-align: text-top;
   }
 </style>
 
@@ -39,7 +42,10 @@
   <div class="row">
     <div class="col-12 text-center">
       <h5 class="m-0">
-        <span>Create your own Spree project</span> <a href="https://spreecommerce.org/contact/" class="btn btn-outline-light btn-sm m-2" style="font-size: 0.9em;">Get Started</a>
+        <span style="font-weight: 200;">Create your own Spree project</span> <a href="https://spreecommerce.org/contact/" class="btn btn-outline-light btn-sm m-2" style="font-size: 1em; font-weight:800;">Get Started
+             <%= icon(name: 'arrow-right-circle-fill',
+                      width: 22,
+                      height: 22) %></a>
       </h5>
     </div>
   </div>
