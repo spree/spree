@@ -25,13 +25,14 @@ describe 'Storefront API v2 Countries spec', type: :request do
 
   describe 'countries#index' do
     context 'general' do
+      let!(:countries_list) { create_list(:country, 238) }
 
       before { get '/api/v2/storefront/countries' }
 
       it_behaves_like 'returns 200 HTTP status'
 
       it 'returns all countries' do
-        expect(json_response['data'].size).to eq(Spree::Country.count)
+        expect(json_response['data'].size).to eq(240)
         expect(json_response['data'][0]).to have_type('country')
         expect(json_response['data'][0]).not_to have_relationships(:states)
       end
