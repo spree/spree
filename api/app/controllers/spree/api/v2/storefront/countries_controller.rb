@@ -3,6 +3,8 @@ module Spree
     module V2
       module Storefront
         class CountriesController < ::Spree::Api::V2::ResourceController
+          before_action :set_default_per_page
+
           private
 
           def serialize_collection(collection)
@@ -42,6 +44,11 @@ module Spree
 
           def model_class
             Spree::Country
+          end
+
+          # by default we want to return all countries on a single page
+          def set_default_per_page
+            params[:per_page] ||= Spree::Country.count
           end
         end
       end
