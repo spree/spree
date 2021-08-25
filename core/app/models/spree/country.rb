@@ -49,7 +49,7 @@ module Spree
     private
 
     def ensure_not_default
-      if id.eql?(Spree::Config[:default_country_id])
+      if id.eql?(Spree::Country.find_by(iso: Spree::Config[:default_country_iso])&.id)
         errors.add(:base, Spree.t(:default_country_cannot_be_deleted))
         throw(:abort)
       end

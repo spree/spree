@@ -62,7 +62,7 @@ describe 'Customer Details', type: :feature, js: true do
   context 'editing an order' do
     before do
       configure_spree_preferences do |config|
-        config.default_country_id = country.id
+        config.default_country_iso = country.iso
         config.company = true
       end
 

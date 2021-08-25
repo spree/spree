@@ -440,7 +440,7 @@ describe Spree::Store, type: :model do
     let!(:other_country) { create(:country) }
     let!(:other_country_2) { create(:country) }
 
-    before { Spree::Config[:default_country_id] = default_country.id }
+    before { Spree::Config[:default_country_iso] = default_country.iso }
 
     context 'checkout zone not set' do
       before { subject.save! }

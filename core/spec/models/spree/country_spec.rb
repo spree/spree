@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Spree::Country, type: :model do
   let(:store) { create(:store, default: true, default_country: america) }
-  let(:america) { create :country }
+  let(:america) { create :country, iso: 'US' }
   let(:canada)  { create :country, name: 'Canada', iso_name: 'CANADA', iso: 'CA', iso3: 'CAN', numcode: '124' }
 
   it 'validates uniqueness' do
@@ -31,11 +31,11 @@ describe Spree::Country, type: :model do
   end
 
   describe '.default' do
-    context 'when default_country_id config is set' do
-      before { Spree::Config[:default_country_id] = canada.id }
+    context 'when default_country_iso config is set' do
+      before { Spree::Config[:default_country_iso] = canada.iso }
 
       it 'will return the country from the config' do
-        expect(described_class.default.id).to eql canada.id
+        expect(described_class.default.iso).to eql canada.iso
       end
     end
 
@@ -43,7 +43,7 @@ describe Spree::Country, type: :model do
       before { america.touch }
 
       it 'will return the US' do
-        expect(described_class.default.id).to eql america.id
+        expect(described_class.default.iso).to eql america.iso
       end
     end
 
@@ -58,7 +58,7 @@ describe Spree::Country, type: :model do
 
   describe 'ensure proper country deletion' do
     context 'when deleting default country' do
-      before { Spree::Config[:default_country_id] = america.id }
+      before { Spree::Config[:default_country_iso] = america.iso }
 
       it 'does not destroy country' do
         expect(america.destroy).to be_falsy

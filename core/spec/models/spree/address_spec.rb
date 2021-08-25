@@ -247,24 +247,16 @@ describe Spree::Address, type: :model do
   end
 
   context '.default' do
+    let!(:country) { create(:country, iso: 'US') }
+
     context 'no user given' do
-      before do
-        @default_country_id = Spree::Config[:default_country_id]
-        new_country = create(:country)
-        Spree::Config[:default_country_id] = new_country.id
-      end
-
-      after do
-        Spree::Config[:default_country_id] = @default_country_id
-      end
-
-      it 'sets up a new record with Spree::Config[:default_country_id]' do
-        expect(Spree::Address.default.country).to eq(Spree::Country.find(Spree::Config[:default_country_id]))
+      it 'sets up a new record with Spree::Config[:default_country_iso]' do
+        expect(Spree::Address.default.country).to eq(Spree::Country.find_by(iso: Spree::Config[:default_country_iso]))
       end
 
       # Regression test for #1142
-      it 'uses the first available country if :default_country_id is set to an invalid value' do
-        Spree::Config[:default_country_id] = '0'
+      it 'uses the first available country if :default_country_iso is set to an invalid value' do
+        Spree::Config[:default_country_iso] = 'US'
         expect(Spree::Address.default.country).to eq(Spree::Country.first)
       end
     end
