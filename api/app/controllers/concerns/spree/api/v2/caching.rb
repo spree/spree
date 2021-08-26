@@ -14,8 +14,8 @@ module Spree
             sparse_fields,
             serializer_params,
             params[:sort]&.strip,
-            params[:page]&.strip,
-            params[:per_page]&.strip,
+            params[:page]&.to_s&.strip,
+            params[:per_page]&.to_s&.strip,
           ].flatten.join('-')
 
           Digest::MD5.hexdigest(cache_key_parts)
