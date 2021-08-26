@@ -3,16 +3,18 @@ module Spree
     class Find
       def initialize(scope:, params:)
         @scope = scope
-        @ids      = String(params.dig(:filter, :ids)).split(',')
-        @parent   = params.dig(:filter, :parent_id)
-        @taxonomy = params.dig(:filter, :taxonomy_id)
-        @name     = params.dig(:filter, :name)
-        @roots    = params.dig(:filter, :roots)
+        @ids              = String(params.dig(:filter, :ids)).split(',')
+        @parent           = params.dig(:filter, :parent_id)
+        @parent_permalink = params.dig(:filter, :parent_permalink)
+        @taxonomy         = params.dig(:filter, :taxonomy_id)
+        @name             = params.dig(:filter, :name)
+        @roots            = params.dig(:filter, :roots)
       end
 
       def execute
         taxons = by_ids(scope)
         taxons = by_parent(taxons)
+        taxons = by_parent_permalink(taxons)
         taxons = by_taxonomy(taxons)
         taxons = by_roots(taxons)
         taxons = by_name(taxons)
@@ -22,7 +24,7 @@ module Spree
 
       private
 
-      attr_reader :ids, :parent, :taxonomy, :roots, :name, :scope
+      attr_reader :ids, :parent, :parent_permalink, :taxonomy, :roots, :name, :scope
 
       def ids?
         ids.present?
@@ -30,6 +32,10 @@ module Spree
 
       def parent?
         parent.present?
+      end
+
+      def parent_permalink?
+        parent_permalink.present?
       end
 
       def taxonomy?
@@ -58,6 +64,16 @@ module Spree
         return taxons unless parent?
 
         taxons.where(parent_id: parent)
+      end
+
+      def by_parent_permalink(taxons)
+        return taxons unless parent_permalink?
+
+        if Rails::VERSION::STRING >= '6.1'
+          taxons.joins(:parent).where(parent: { permalink: parent_permalink })
+        else
+          taxons.joins("INNER JOIN #{Spree::Taxon.table_name} AS parent_taxon ON parent_taxon.id = #{Spree::Taxon.table_name}.parent_id").where(["parent_taxon.permalink = ?", parent_permalink])
+        end
       end
 
       def by_taxonomy(taxons)

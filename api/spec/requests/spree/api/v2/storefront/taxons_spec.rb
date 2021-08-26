@@ -65,6 +65,21 @@ describe 'Taxons Spec', type: :request do
       end
     end
 
+    context 'by parent permalink' do
+      let!(:taxonomy_3) { create(:taxonomy, store: taxonomy.store) }
+      let!(:taxon_3) { create(:taxon, taxonomy: taxonomy_3, parent: taxonomy_3.root) }
+
+      before { get "/api/v2/storefront/taxons?filter[parent_permalink]=#{taxonomy.root.permalink}" }
+
+      it_behaves_like 'returns 200 HTTP status'
+
+      it 'returns children taxons by parent' do
+        expect(json_response['data'].size).to eq(2)
+        expect(json_response['data'][0]).to have_relationship(:parent).with_data('id' => taxonomy.root.id.to_s, 'type' => 'taxon')
+        expect(json_response['data'][1]).to have_relationship(:parent).with_data('id' => taxonomy.root.id.to_s, 'type' => 'taxon')
+      end
+    end
+
     context 'by taxonomy' do
       before { get "/api/v2/storefront/taxons?taxonomy_id=#{taxonomy.id}" }
 

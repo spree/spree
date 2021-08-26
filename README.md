@@ -52,22 +52,13 @@ Admin panel credentials for your own Heroku demo:
 * login: `spree@example.com`
 * password: `spree123`
 
-## Installation
+## Getting Started
 
-### Option A - use Spree Starter with Docker
-
-1. [Install Docker](https://docs.docker.com/get-docker/)
-2. Download [Spree Starter](https://github.com/spree/spree_starter/archive/main.zip)
-3. Unzip it
-4. Run `bin/setup` in `spree_starter-main` directory
-
-### Option B - add Spree to an existing Ruby on Rails application
-
-1. [Please follow Add Spree to an existing Ruby on Rails application tutorial](https://dev-docs.spreecommerce.org/advanced/existing_app_tutorial)
+* [Please follow **Getting Started** guide](https://dev-docs.spreecommerce.org/getting-started/installation)
 
 ## Documentation
 
-[Developer Documentation](https://dev-docs.spreecommerce.org/)
+* [Developer Documentation](https://dev-docs.spreecommerce.org/)
 
 ## API
 
