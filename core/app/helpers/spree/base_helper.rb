@@ -14,7 +14,7 @@ module Spree
       localized_countries.sort_by { |c| c.name.parameterize }
     end
 
-    def all_countries
+    def all_country_options
       Spree::Country.all.map { |country| country_presentation(country) }
     end
 
