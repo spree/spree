@@ -106,27 +106,7 @@ module Spree
     private
 
     def create_stock_items
-      variants_scope = Spree::Variant
-
-      if self.class.method_defined?(:insert_all) && self.class.method_defined?(:touch_all)
-        prepared_stock_items = variants_scope.ids.map do |variant_id|
-          Hash[
-            'stock_location_id', id,
-            'variant_id', variant_id,
-            'backorderable', backorderable_default,
-            'created_at', Time.current,
-            'updated_at', Time.current
-          ]
-        end
-        if prepared_stock_items.any?
-          stock_items.insert_all(prepared_stock_items)
-          variants_scope.touch_all
-        end
-      else
-        variants_scope.find_each do |variant|
-          propagate_variant(variant)
-        end
-      end
+      Spree::StockLocations::StockItems::Create.call(stock_location: self)
     end
 
     def ensure_one_default
