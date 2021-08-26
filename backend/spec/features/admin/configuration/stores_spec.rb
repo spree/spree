@@ -11,12 +11,6 @@ describe 'Stores admin', type: :feature do
 
   describe 'visiting the stores page', js: true do
     before do
-      I18n.backend.store_translations(:fr,
-        spree: {
-          i18n: {
-            this_file_language: 'Français (fr)'
-          }
-        })
       store.update(
         name: 'My Store',
         url: 'example.com',
@@ -36,7 +30,7 @@ describe 'Stores admin', type: :feature do
       expect(store_table).to have_content('My Store')
       expect(store_table).to have_content('example.com')
       expect(store_table).to have_content('EUR, USD')
-      expect(store_table).to have_content('English (en), Français (fr)')
+      expect(store_table).to have_content('English (en), French (fr)')
     end
   end
 
