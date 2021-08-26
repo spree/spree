@@ -3600,6 +3600,12 @@ paths:
           example: '1'
           description: Fetch children nodes of specified Taxon
         - in: query
+          name: 'filter[parent_permalink]'
+          schema:
+            type: string
+          example: 'clothes'
+          description: Fetch children nodes of specified Taxon permalink
+        - in: query
           name: 'filter[taxonomy_id]'
           schema:
             type: string
