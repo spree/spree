@@ -18,27 +18,7 @@
   }
 </style>
 
-<script>
-  document.addEventListener('turbolinks:load', function(event) {
-    setHeight()
-  })
-
-  window.addEventListener('resize', function() {
-    setHeight()
-  })
-
-  function setHeight () {
-    var startedBar = document.querySelector('#getStartedBar')
-    var bodyEl = document.querySelector('body')
-    var headerNavEl = document.querySelector('header.header-spree')
-    var combinedHeight = startedBar.clientHeight + headerNavEl.clientHeight
-
-    headerNavEl.style.top = startedBar.clientHeight + 'px'
-    bodyEl.style.paddingTop = combinedHeight + 'px'
-  }
-</script>
-
-<div id="getStartedBar" class="position-fixed fixed-top d-flex justify-content-center align-items-center p-1">
+<div id="getStartedBar" class="d-flex justify-content-center align-items-center p-1">
   <div class="row">
     <div class="col-12 text-center">
       <h5 class="m-0">
