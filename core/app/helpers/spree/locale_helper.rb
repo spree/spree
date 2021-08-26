@@ -18,7 +18,7 @@ module Spree
 
     def locale_presentation(locale, set_locale = nil)
       formatted_locale = locale.to_s
-        [localized_language_name(formatted_locale, set_locale), formatted_locale]
+      [localized_language_name(formatted_locale, set_locale), formatted_locale]
     end
 
     def should_render_locale_dropdown?
