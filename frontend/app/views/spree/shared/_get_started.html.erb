@@ -1,0 +1,32 @@
+<!-- Styles And Script In A View Partial
+  If this view partial is removed from the spree_application.html.erb layout file, the storefront
+  will instantly snap back to the original look and feel with no hangover CSS or JavaScript related
+  to this partial.
+
+  Please do not transfer styles and JavaScript found here
+  into the main stylesheets or JavaScript files.
+-->
+<style>
+  #getStartedBar {
+    background: #33ba6f;
+    color: white;
+    z-index: 10;
+  }
+
+  #getStartedBar svg {
+    vertical-align: text-top;
+  }
+</style>
+
+<div id="getStartedBar" class="d-flex justify-content-center align-items-center p-1">
+  <div class="row">
+    <div class="col-12 text-center">
+      <h5 class="m-0">
+        <span style="font-weight: 200;">Create your own Spree project</span> <a href="https://spreecommerce.org/contact/" class="btn btn-outline-light btn-sm m-2" style="font-size: 1em; font-weight:800;">Get Started
+             <%= icon(name: 'arrow-right-circle-fill',
+                      width: 22,
+                      height: 22) %></a>
+      </h5>
+    </div>
+  </div>
+</div>
