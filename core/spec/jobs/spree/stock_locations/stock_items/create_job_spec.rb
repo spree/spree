@@ -5,7 +5,9 @@ module Spree
     let!(:stock_location) { create :stock_location }
 
     it 'enqueues the creation of the stock location stock items' do
-      expect { described_class.perform_later(stock_location) }.to have_enqueued_job.on_queue('default')
+      expect { described_class.perform_later(stock_location) }.to(
+        have_enqueued_job.on_queue('spree_stock_location_stock_items')
+      )
     end
   end
 end
