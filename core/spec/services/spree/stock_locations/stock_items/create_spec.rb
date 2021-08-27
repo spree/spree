@@ -7,31 +7,28 @@ module Spree
     let!(:stock_location) { create :stock_location_with_items }
     let!(:unrelated_variant) { create(:variant) }
     let(:result) { subject.call(stock_location: stock_location) }
-    let(:klass_dbl) { stock_location.class }
+    let(:stock_location_class) { stock_location.class }
 
     describe '#call' do
       after { allow(stock_location).to(receive(:class).and_call_original) }
 
       context 'when Spree::StockLocation does not respond to insert_all' do
         before do
-          allow(klass_dbl).to(receive(:method_defined?).with(:insert_all).and_return(false))
-          allow(stock_location).to(receive(:class).and_return(klass_dbl))
+          allow(stock_location_class).to(receive(:method_defined?).with(:insert_all).and_return(false))
+          allow(stock_location).to(receive(:class).and_return(stock_location_class))
         end
 
         context 'with variants to propagate' do
-          before { unrelated_variant.stock_items.where(id: stock_location.stock_items.ids).destroy_all }
+          before { stock_location.stock_items.destroy_all }
 
-          it 'propagates the variants still not related to the given stock location stock items' do
-            expect { result }.to change { stock_location.stock_items.count }.from(3).to(4)
-          end
-
-          it 'creates the stock items with the right variant' do
-            result
-            expect(stock_location.stock_items.order(created_at: :desc).first.variant_id).to eq(unrelated_variant.id)
+          it 'propagates the variants' do
+            expect { result }.to change { stock_location.stock_items.count }.from(0).to(4)
           end
         end
 
         context 'without variants to propagate' do
+          before { Variant.destroy_all }
+
           it 'does not propagate stock location variants' do
             expect(stock_location).not_to receive(:propagate_variant)
             result
@@ -39,33 +36,21 @@ module Spree
         end
       end
 
-      context 'when Spree::StockLocation does not respond to touch_all' do
-        before do
-          allow(klass_dbl).to(receive(:method_defined?).with(:insert_all).and_return(true))
-          allow(klass_dbl).to(receive(:method_defined?).with(:touch_all).and_return(false))
-          allow(stock_location).to(receive(:class).and_return(klass_dbl))
-          unrelated_variant.stock_items.where(id: stock_location.stock_items.ids).destroy_all
-        end
-
-        it 'propagates the variants still not related to the stock items from the stock location' do
-          expect { result }.to change { stock_location.stock_items.count }.from(3).to(4)
-        end
-
-        it 'creates the stock items with the right variant' do
-          result
-          expect(stock_location.stock_items.order(created_at: :desc).first.variant_id).to eq(unrelated_variant.id)
-        end
-      end
-
       context 'when Spree::StockLocation responds to insert_all and touch_all' do
         before do
-          allow(klass_dbl).to(receive(:method_defined?).with(:insert_all).and_return(true))
-          allow(klass_dbl).to(receive(:method_defined?).with(:touch_all).and_return(true))
-          allow(stock_location).to(receive(:class).and_return(klass_dbl))
+          allow(stock_location_class).to(receive(:method_defined?).with(:insert_all).and_return(true))
+          allow(stock_location_class).to(receive(:method_defined?).with(:touch_all).and_return(true))
+          allow(stock_location).to(receive(:class).and_return(stock_location_class))
         end
 
         context 'with prepared stock items' do
           let(:time_current) { Time.local(1990) }
+          let(:created_stock_item) { stock_location.stock_items.order(:id).last }
+          let(:created_stock_item_attrs) do
+            created_stock_item.attributes.values_at(
+              'stock_location_id', 'variant_id', 'backorderable', 'created_at', 'updated_at'
+            )
+          end
 
           it 'inserts the stock location stock items' do
             expect { result }.to change { stock_location.stock_items.count }.from(4).to(8)
@@ -74,7 +59,15 @@ module Spree
           it 'sets the stock location data necessary for the inserted stock items' do
             Timecop.freeze(time_current)
             result
-            expect(stock_location.stock_items.order(:id).last.attributes.values_at('stock_location_id', 'variant_id', 'backorderable', 'created_at', 'updated_at')).to eq([stock_location.id, unrelated_variant.id, stock_location.backorderable_default, time_current, time_current])
+            expect(created_stock_item_attrs).to(
+              eq([
+                stock_location.id,
+                unrelated_variant.id,
+                stock_location.backorderable_default,
+                time_current,
+                time_current
+              ])
+            )
             Timecop.return
           end
 

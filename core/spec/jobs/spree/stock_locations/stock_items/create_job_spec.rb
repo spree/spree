@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Spree
-  describe StockLocations::StockItems::CreateJob do
+  describe StockLocations::StockItems::CreateJob, :inline_jobs do
     let!(:stock_location) { create :stock_location }
 
     it 'enqueues the creation of the stock location stock items' do

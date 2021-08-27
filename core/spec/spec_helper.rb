@@ -74,6 +74,15 @@ RSpec.configure do |config|
   # Clean out the database state before the tests run
   config.before(:suite) do
     DatabaseCleaner.clean_with(:truncation)
+    ActiveJob::Base.queue_adapter = :inline
+  end
+
+  config.before(:each, :inline_jobs) do
+    ActiveJob::Base.queue_adapter = :test
+  end
+
+  config.after(:each, :inline_jobs) do
+    ActiveJob::Base.queue_adapter = :inline
   end
 
   config.order = :random
