@@ -134,6 +134,37 @@ RSpec.configure do |config|
             },
             required: %w[name taxonomy_id]
           },
+          menu_params: {
+            type: :object,
+            properties: {
+              name: { type: :string },
+              location: { type: :string },
+              locale: { type: :string }
+            },
+            required: %w[name location locale]
+          },
+          menu_item_params: {
+            type: :object,
+            properties: {
+              name: { type: :string },
+              code: { type: :string },
+              subtitle: { type: :string },
+              destination: { type: :string },
+              new_window: { type: :boolean },
+              item_type: { type: :string },
+              linked_resource_type: {type: :string},
+              linked_resource_id: {type: :integer}
+            },
+            required: %w[name]
+          },
+          menu_item_reposition_params: {
+            type: :object,
+            properties: {
+              new_parent_id: {type: :integer},
+              new_position_idx: {type: :integer}
+            },
+            required: %w[name]
+          },
           resources_list: {
             type: :object,
             properties: {

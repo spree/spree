@@ -4,6 +4,7 @@ describe 'Platform API v2 Resources spec', type: :request do
   include_context 'API v2 tokens'
   include_context 'Platform API v2'
 
+  let!(:store) { Spree::Store.default }
   let(:bearer_token) { { 'Authorization' => valid_authorization } }
   let(:resource_params) { {} }
   let(:params) { { address: resource_params } }
@@ -311,6 +312,20 @@ describe 'Platform API v2 Resources spec', type: :request do
     end
 
     it_behaves_like 'returns auth token errors'
+
+    context '#ensure_current_store' do
+      let(:execute) { post '/api/v2/platform/menus', params: menu_resource_params, headers: bearer_token }
+      let(:menu_resource_params) { { menu: build(:menu, name: 'Ensure-MenuTest', location: 'Header', locale: 'en').attributes.symbolize_keys } }
+
+      before { execute }
+
+      it_behaves_like 'returns 201 HTTP status'
+
+      it 'adds the current store to the newly created resource' do
+        new_menu = Spree::Menu.find_by(name: 'Ensure-MenuTest')
+        expect(new_menu.store).to eql(store)
+      end
+    end
   end
 
   describe '#update' do
@@ -408,6 +423,26 @@ describe 'Platform API v2 Resources spec', type: :request do
           'city' => ["can't be blank"],
           'zipcode' => ["can't be blank"]
         )
+      end
+    end
+
+    context '#ensure_current_store' do
+      let!(:product) { create(:product) }
+      let(:execute_product) { put "/api/v2/platform/products/#{product.id}", params: product_params, headers: bearer_token }
+      let(:product_params) do
+        {
+          product: {
+            stores: []
+          }
+        }
+      end
+
+      before { execute_product }
+
+      it_behaves_like 'returns 200 HTTP status'
+
+      it 'will not let you remove the current store from a resource that accepts multiple stores' do
+        expect(product.stores).to contain_exactly(store)
       end
     end
 

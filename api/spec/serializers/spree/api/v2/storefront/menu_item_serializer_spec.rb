@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::Api::V2::Platform::MenuItemSerializer do
+describe Spree::V2::Storefront::MenuItemSerializer do
   subject { described_class.new(menu_item) }
 
   let(:menu) { create(:menu) }
@@ -32,12 +32,9 @@ describe Spree::Api::V2::Platform::MenuItemSerializer do
             is_leaf: menu_item.leaf?,
             is_root: menu_item.root?,
             link: menu_item.link,
-            linked_resource_type: menu_item.linked_resource_type,
             lft: menu_item.lft,
             rgt: menu_item.rgt,
-            depth: menu_item.depth,
-            created_at: menu_item.created_at,
-            updated_at: menu_item.updated_at
+            depth: menu_item.depth
           },
           relationships: {
             icon: {
@@ -82,4 +79,3 @@ describe Spree::Api::V2::Platform::MenuItemSerializer do
     )
   end
 end
-

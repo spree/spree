@@ -12,6 +12,10 @@ module Spree
           def scope_includes
             [:menu_items]
           end
+
+          def scope
+            current_store.menus
+          end
         end
       end
     end
