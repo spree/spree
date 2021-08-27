@@ -136,7 +136,7 @@ describe Spree::Api::V2::BaseController, type: :controller do
         allow(dummy_controller).to receive(:spree_current_user).and_return(user)
       end
 
-      it { expect(dummy_controller.send(:serializer_params).keys).to eq(%i[currency locale store user image_transformation]) }
+      it { expect(dummy_controller.send(:serializer_params).keys).to eq(%i[currency locale store user image_transformation taxon_image_transformation]) }
 
       it do
         expect(dummy_controller.send(:serializer_params)).to eq(
@@ -145,7 +145,8 @@ describe Spree::Api::V2::BaseController, type: :controller do
             currency: currency,
             user: user,
             locale: locale,
-            image_transformation: nil
+            image_transformation: nil,
+            taxon_image_transformation: nil
           }
         )
       end
