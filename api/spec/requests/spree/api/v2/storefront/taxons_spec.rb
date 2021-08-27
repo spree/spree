@@ -190,16 +190,18 @@ describe 'Taxons Spec', type: :request do
   end
 
   describe 'taxons#show' do
+    let(:taxon) { taxons.first }
+
     context 'by id' do
       before do
-        get "/api/v2/storefront/taxons/#{taxons.first.id}"
+        get "/api/v2/storefront/taxons/#{taxon.id}"
       end
 
       it_behaves_like 'returns valid taxon resource JSON'
 
       it 'returns taxon by id' do
-        expect(json_response['data']).to have_id(taxons.first.id.to_s)
-        expect(json_response['data']).to have_attribute(:name).with_value(taxons.first.name)
+        expect(json_response['data']).to have_id(taxon.id.to_s)
+        expect(json_response['data']).to have_attribute(:name).with_value(taxon.name)
       end
     end
 
@@ -213,6 +215,42 @@ describe 'Taxons Spec', type: :request do
       it 'returns taxon by permalink' do
         expect(json_response['data']).to have_id(default_store.taxons.first.id.to_s)
         expect(json_response['data']).to have_attribute(:name).with_value(default_store.taxons.first.name)
+      end
+    end
+
+    context 'with taxon image data' do
+      shared_examples 'returns taxon image data' do
+        it 'returns taxon image data' do
+          expect(json_response['included'].count).to eq(1)
+          expect(json_response['included'].first['type']).to eq('taxon_image')
+        end
+      end
+
+      let!(:image) { create(:taxon_image, viewable: taxon) }
+      let(:image_json_data) { json_response['included'].first['attributes'] }
+
+      before { get "/api/v2/storefront/taxons/#{taxon.id}?include=image#{taxon_image_transformation_params}" }
+
+      context 'when no image transformation params are passed' do
+        let(:taxon_image_transformation_params) { '' }
+
+        it_behaves_like 'returns 200 HTTP status'
+        it_behaves_like 'returns taxon image data'
+
+        it 'returns taxon image' do
+          expect(image_json_data['transformed_url']).to be_nil
+        end
+      end
+
+      context 'when taxon image json returned' do
+        let(:taxon_image_transformation_params) { '&taxon_image_transformation[size]=100x50&taxon_image_transformation[quality]=50' }
+
+        it_behaves_like 'returns 200 HTTP status'
+        it_behaves_like 'returns taxon image data'
+
+        it 'returns taxon image' do
+          expect(image_json_data['transformed_url']).not_to be_nil
+        end
       end
     end
   end
