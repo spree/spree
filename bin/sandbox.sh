@@ -55,7 +55,7 @@ cat <<RUBY >> Gemfile
 gem 'spree', path: '..'
 $SPREE_AUTH_DEVISE_GEM
 $SPREE_GATEWAY_GEM
-gem 'spree_i18n', github: 'spree-contrib/spree_i18n', branch: 'master'
+gem 'spree_i18n', github: 'spree-contrib/spree_i18n', branch: 'main'
 
 group :test, :development do
   gem 'bullet'
@@ -71,11 +71,10 @@ gem 'spree', path: '..'
 gem 'spree_frontend', path: '../frontend'
 gem 'spree_backend', path: '../backend'
 gem 'spree_emails', path: '../emails'
-gem 'spree_sample', path: '../sample/'
+gem 'spree_sample', path: '../sample'
 $SPREE_AUTH_DEVISE_GEM
 $SPREE_GATEWAY_GEM
-gem 'spree_i18n', github: 'spree-contrib/spree_i18n', branch: 'master'
-gem 'spree_related_products', github: 'spree-contrib/spree_related_products', branch: 'master'
+gem 'spree_i18n', github: 'spree-contrib/spree_i18n', branch: 'main'
 
 group :test, :development do
   gem 'bullet'
@@ -129,7 +128,3 @@ if [ "$SPREE_HEADLESS" = "" ]; then
 fi
 bundle exec rails g spree:auth:install
 bundle exec rails g spree_gateway:install
-
-if [ "$SPREE_HEADLESS" = "" ]; then
-  bundle exec rails g spree_related_products:install
-fi
