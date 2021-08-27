@@ -7,8 +7,9 @@ module Spree
       end
 
       def call
-        products = by_param_attribute(scope)
+        products = by_param_attributes(scope)
         products = by_price(products)
+        products = by_sku(products)
 
         products.distinct
       end
@@ -17,18 +18,27 @@ module Spree
 
       attr_reader :sort, :scope, :currency, :allowed_sort_attributes
 
-      def price?
-        sort_field == 'price'
-      end
-
       def by_price(scope)
-        return scope unless price?
+        return scope unless (value = sort_by?('price'))
 
         scope.joins(master: :prices).
           select("#{Spree::Product.table_name}.*, #{Spree::Price.table_name}.amount").
           distinct.
           where(spree_prices: { currency: currency }).
-          order("#{Spree::Price.table_name}.amount #{order_direction}")
+          order("#{Spree::Price.table_name}.amount #{value[1]}")
+      end
+
+      def by_sku(scope)
+        return scope unless (value = sort_by?('sku'))
+
+        scope.joins(:master).
+          select("#{Spree::Product.table_name}.*, #{Spree::Variant.table_name}.sku").
+          where(Spree::Variant.table_name.to_s => { is_master: true }).
+          order("#{Spree::Variant.table_name}.sku #{value[1]}")
+      end
+
+      def sort_by?(field)
+        sort.detect { |s| s[0] == field }
       end
     end
   end

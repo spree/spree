@@ -6,7 +6,7 @@ module Spree
 
         set_type :product
 
-        attributes :name, :description, :available_on, :slug, :meta_description, :meta_keywords, :updated_at
+        attributes :name, :description, :available_on, :slug, :meta_description, :meta_keywords, :updated_at, :sku
 
         attribute :purchasable do |product|
           product.purchasable?
