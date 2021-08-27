@@ -106,7 +106,7 @@ module Spree
     private
 
     def create_stock_items
-      Spree::StockLocations::StockItems::Create.call(stock_location: self)
+      Spree::StockLocations::StockItems::CreateJob.perform_later(self)
     end
 
     def ensure_one_default

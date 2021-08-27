@@ -22,7 +22,6 @@ module Spree
           before { unrelated_variant.stock_items.where(id: stock_location.stock_items.ids).destroy_all }
 
           it 'propagates the variants still not related to the given stock location stock items' do
-            # [TODO]: check why it should change from 3 to 4, and not from 2 to 3
             expect { result }.to change { stock_location.stock_items.count }.from(3).to(4)
           end
 
@@ -65,15 +64,11 @@ module Spree
           allow(stock_location).to(receive(:class).and_return(klass_dbl))
         end
 
-        context 'with variants' do
-          before do
-            unrelated_variant.stock_items.where(id: stock_location.stock_items.ids).destroy_all
-          end
-
+        context 'with prepared stock items' do
           let(:time_current) { Time.local(1990) }
 
           it 'inserts the stock location stock items' do
-            expect { result }.to change { stock_location.stock_items.count }.from(3).to(4)
+            expect { result }.to change { stock_location.stock_items.count }.from(4).to(8)
           end
 
           it 'sets the stock location data necessary for the inserted stock items' do
@@ -84,19 +79,21 @@ module Spree
           end
 
           it 'invalidates the Variant cache' do
-            expect(described_class.const_get(:VARIANTS_SCOPE)).to receive(:touch_all).once
+            expect(Spree::Variant).to receive(:touch_all).once
             result
           end
         end
 
-        context 'without variants' do
+        context 'without prepared stock items' do
+          before { Spree::Variant.destroy_all }
+
           it 'does not insert stock items' do
             expect(stock_location.stock_items).not_to receive(:insert_all)
             result
           end
 
           it 'does not invalidates the Variant cache' do
-            expect(described_class.const_get(:VARIANTS_SCOPE)).not_to receive(:touch_all)
+            expect(Spree::Variant).not_to receive(:touch_all)
             result
           end
         end
