@@ -133,7 +133,8 @@ module Spree
             locale: current_locale,
             store: current_store,
             user: spree_current_user,
-            image_transformation: params[:image_transformation]
+            image_transformation: params[:image_transformation],
+            taxon_image_transformation: params[:taxon_image_transformation]
           }
         end
 
