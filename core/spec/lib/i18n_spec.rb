@@ -19,35 +19,12 @@ describe 'i18n' do
   end
 
   describe '#available_locales' do
-    context 'when SpreeI18n is defined' do
-      before do
-        class_double('SpreeI18n').
-          as_stubbed_const(transfer_nested_constants: true)
-        class_double('SpreeI18n::Locale', all: ['en',:en, :de, :nl]).as_stubbed_const(transfer_nested_constants: true)
-      end
+    it 'returns locales from Spree and other gems / extansions' do
+      locales = Spree.available_locales
 
-      it 'returns all locales from the SpreeI18n' do
-        locales = Spree.available_locales
-        expected_locales = [:en, :de, :nl, :ar, :az, :bg, :ca, :cs, :da, :el, :es, :fa, :fi, :fr, :hu, :id, :it, :ja, :"pt-BR", :ro, :ru, :sk, :tr, :"zh-CN", :"zh-TW", :pl, :uk, :vi]
+      expected_locales = [:en, :ar, :az, :bg, :ca, :cs, :da, :de, :el, :es, :fa, :fi, :fr, :hu, :id, :it, :ja, :nl, :"pt-BR", :ro, :ru, :sk, :tr, :"zh-CN", :"zh-TW", :pl, :uk, :vi]
 
-        expect(locales).to eq expected_locales
-      end
-
-      it 'returns an array with the string "en" removed' do
-        locales = Spree.available_locales
-
-        expect(locales).not_to include('en')
-      end
-    end
-
-    context 'when SpreeI18n is not defined' do
-      it 'returns just default locales' do
-        locales = Spree.available_locales
-
-        expected_locales = [:en, :ar, :az, :bg, :ca, :cs, :da, :de, :el, :es, :fa, :fi, :fr, :hu, :id, :it, :ja, :nl, :"pt-BR", :ro, :ru, :sk, :tr, :"zh-CN", :"zh-TW", :pl, :uk, :vi]
-
-        expect(locales).to eq expected_locales
-      end
+      expect(locales).to eq expected_locales
     end
   end
 
