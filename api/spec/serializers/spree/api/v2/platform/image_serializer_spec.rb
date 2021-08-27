@@ -19,7 +19,9 @@ describe Spree::Api::V2::Platform::ImageSerializer do
             position: image.position,
             alt: image.alt,
             created_at: image.created_at,
-            updated_at: image.updated_at
+            updated_at: image.updated_at,
+            transformed_url: image.generate_url(size: ''),
+            original_url: image.original_url
           },
           relationships: {
             viewable: {

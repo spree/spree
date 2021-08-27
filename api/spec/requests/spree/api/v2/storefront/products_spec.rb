@@ -746,5 +746,42 @@ describe 'API V2 Storefront Products Spec', type: :request do
 
       it_behaves_like 'returns 404 HTTP status'
     end
+
+    context 'with product image data' do
+      shared_examples 'returns product image data' do
+        it 'returns product image data' do
+          expect(json_response['data']['relationships']['images'].count).to eq(1)
+          expect(json_response['included'].count).to eq(1)
+          expect(json_response['included'].first['type']).to eq('image')
+        end
+      end
+
+      let!(:image) { create(:image, viewable: product.master) }
+      let(:image_json_data) { json_response['included'].first['attributes'] }
+
+      before { get "/api/v2/storefront/products/#{product.slug}?include=images#{image_transformation_params}" }
+
+      context 'when no image transformation params are passed' do
+        let(:image_transformation_params) { '' }
+
+        it_behaves_like 'returns 200 HTTP status'
+        it_behaves_like 'returns product image data'
+
+        it 'returns product image' do
+          expect(image_json_data['transformed_url']).to be_nil
+        end
+      end
+
+      context 'when product image json returned' do
+        let(:image_transformation_params) { '&image_transformation[size]=100x50&image_transformation[quality]=50' }
+
+        it_behaves_like 'returns 200 HTTP status'
+        it_behaves_like 'returns product image data'
+
+        it 'returns product image' do
+          expect(image_json_data['transformed_url']).not_to be_nil
+        end
+      end
+    end
   end
 end

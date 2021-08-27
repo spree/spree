@@ -2,6 +2,7 @@ module Spree
   class Image < Asset
     include Configuration::ActiveStorage
     include Rails.application.routes.url_helpers
+    include ::Spree::ImageMethods
 
     # In Rails 5.x class constants are being undefined/redefined during the code reloading process
     # in a rails development environment, after which the actual ruby objects stored in those class constants
@@ -15,13 +16,8 @@ module Spree
         width, height = size.chop.split('x')
 
         {
-          url: polymorphic_path(attachment.variant(
-                                  gravity: 'center',
-                                  resize: size,
-                                  extent: size,
-                                  background: 'snow2',
-                                  quality: 80
-                                ), only_path: true),
+          url: generate_url(size: size),
+          size: size,
           width: width,
           height: height
         }
@@ -35,13 +31,7 @@ module Spree
       width, height = size.chop.split('x')
 
       {
-        url: polymorphic_path(attachment.variant(
-                                gravity: 'center',
-                                resize: size,
-                                extent: size,
-                                background: 'snow2',
-                                quality: 80
-                              ), only_path: true),
+        url: generate_url(size: size),
         size: size,
         width: width,
         height: height
@@ -59,16 +49,7 @@ module Spree
     end
 
     def plp_url
-      size = self.class.styles[:plp_and_carousel]
-      variant = attachment.variant(
-        gravity: 'center',
-        resize: size,
-        extent: size,
-        background: 'snow2',
-        quality: 80
-      )
-
-      polymorphic_path(variant, only_path: true)
+      generate_url(size: self.class.styles[:plp_and_carousel])
     end
   end
 end

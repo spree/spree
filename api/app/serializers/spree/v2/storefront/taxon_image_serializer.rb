@@ -2,9 +2,11 @@ module Spree
   module V2
     module Storefront
       class TaxonImageSerializer < BaseSerializer
+        include ::Spree::Api::V2::TaxonImageTransformationConcern
+
         set_type   :taxon_image
 
-        attributes :viewable_type, :viewable_id, :styles
+        attributes :styles, :alt, :original_url
       end
     end
   end
