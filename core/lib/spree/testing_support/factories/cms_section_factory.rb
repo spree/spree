@@ -20,6 +20,10 @@ FactoryBot.define do
       type { 'Spree::Cms::Sections::ImageGallery' }
     end
 
+    factory :cms_image_carousel_section do
+      type { 'Spree::Cms::Sections::ImageCarousel' }
+    end
+
     factory :cms_side_by_side_images_section do
       type { 'Spree::Cms::Sections::SideBySideImages' }
     end

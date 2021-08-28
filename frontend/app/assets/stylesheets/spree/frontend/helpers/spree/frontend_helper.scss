@@ -52,7 +52,9 @@
 
 // Aspect Ratios
 [style*="--aspect-ratio"] > img,
-[style*="--aspect-ratio"] > svg {
+[style*="--aspect-ratio"] > svg,
+[style*="--aspect-ratio"] > a > img,
+[style*="--aspect-ratio"] > a > svg {
   width: 100%;
   height: 100%;
   position: absolute;

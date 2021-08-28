@@ -9,6 +9,9 @@
   <div data-panel-type="<%= resource.linked_resource_type %>" data-panel-id="<%= save_to %>">
     <%= render "spree/admin/shared/linkables/#{spree_class_name_as_path(resource.linked_resource_type)}", resource: resource, f: f %>
   </div>
+<% else %>
+  <div data-panel-type="<%= linked_type %>" data-panel-id="<%= save_to %>">
+  </div>
 <% end %>
 
 <div class="d-none" data-target-message-pannel="<%= save_to %>">

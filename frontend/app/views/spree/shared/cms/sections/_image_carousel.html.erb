@@ -1,0 +1,72 @@
+<% id = "image_carousel_#{section.id}" %>
+
+<% crossfade_class = section.active_setting?(:crossfade) ? 'carousel-fade' : '' %>
+
+<div class="col-12 position-relative p-0">
+  <div id="<%= id %>" class="carousel slide <%= crossfade_class %>" <%= section.data_attributes %>>
+    <% if section.active_setting?(:indicators) %>
+      <ol class="carousel-indicators">
+        <% section.attached_images.each_with_index do |image, index| %>
+          <li data-target="#<%= id %>"
+              data-slide-to="<%= index %>"
+              class="<%= index.zero? ? 'active' : '' %>">
+          </li>
+        <% end %>
+      </ol>
+    <% end %>
+
+    <div class="carousel-inner">
+      <% section.attached_images.each_with_index do |image, index| %>
+        <div class="carousel-item <%= index.zero? ? 'active' : '' %>" style="--aspect-ratio:12/5;">
+          <% if image[:link_type] == 'Spree::Taxon' %>
+            <% link = spree.nested_taxons_path(image[:link]) %>
+          <% elsif image[:link_type] == 'Spree::Product' %>
+            <% link = spree.product_path(image[:link]) %>
+          <% else %>
+            <% link = nil %>
+          <% end %>
+
+          <% if link %><a href="<%= link %>"><% end %>
+
+            <!-- XS to MD -->
+            <img class="d-md-none lazyload"
+              data-src="<%= main_app.url_for(image[:file].variant(resize: '600x250>')) %>"
+              data-srcset="<%= main_app.url_for(image[:file].variant(resize: '600x250>')) %>"
+              alt="<%= image[:title] %>">
+
+            <!-- MD to XL -->
+            <img class="d-none d-md-block d-xl-none lazyload"
+              data-src="<%= main_app.url_for(image[:file].variant(resize: '1200x500>')) %>"
+              data-srcset="<%= main_app.url_for(image[:file].variant(resize: '1200x500>')) %>"
+              alt="<%= image[:title] %>">
+
+            <!-- XL UP -->
+            <img class="d-none d-xl-block lazyload"
+              data-src="<%= main_app.url_for(image[:file].variant(resize: '2400x1000>')) %>"
+              data-srcset="<%= main_app.url_for(image[:file].variant(resize: '2400x1000>')) %>"
+              alt="<%= image[:title] %>">
+
+          <% if link %></a><% end %>
+
+          <% if section.active_setting?(:captions) %>
+            <div class="carousel-caption d-none d-md-block">
+              <h4><%= image[:title] %></h5>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+
+    <% if section.active_setting?(:controls) %>
+      <a class="carousel-control-prev" href="#<%= id %>" role="button" data-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="sr-only">Previous</span>
+      </a>
+
+      <a class="carousel-control-next" href="#<%= id %>" role="button" data-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="sr-only">Next</span>
+      </a>
+    <% end %>
+  </div>
+</div>

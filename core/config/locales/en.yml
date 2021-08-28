@@ -578,6 +578,8 @@ en:
         info_side_by_side_images_body: "<p>The Side-by-Side Images section can be configured in several ways, you have the option of using them as plane images, images with text, and either of those options can be clickable links if a link is set.</p>
         <p><b>Tip:</b> You can blow these images out to the edge of the screen and remove the gutters to create a completely different look.</p>"
         info_rich_text_content_body: "<p>The Rich Text Content section is simply a section that offers nothing more than an area of rich text editor content to be displayed on your page.</p>"
+        info_image_carousel_body: "<p>The Image Carousel section allows you to add a slideshow component for cycling through images.</p>
+        <p>Each image can link to a product or taxon.</p>"
         brand_bar:
           uses_menu: This section uses your Spree Menu named <b>%{menu}</b> to manage the images and links,
           vist_menu_to_edit: to edit this menu.
@@ -621,6 +623,19 @@ en:
           layout_style: Layout Style
           square_image: Please use an image with an aspect ratio of 18:13 (1080px x 780px).
           tall_image: Please use an image with an aspect ratio of 27:40 (1080px x 1600px).
+        image_carousel:
+          image_0: Image A
+          image_1: Image B
+          image_2: Image C
+          aspect_ratio: Please use an image with the aspect ratio of 12:5 (2400px x 1000px)
+          wrap: Wrap
+          controls: Controls
+          captions: Captions
+          autoplay: Autoplay
+          indicators: Indicators
+          crossfade: Crossfade
+          pause: Pause
+          interval: Interval
       linkable:
         seach_for_a_page: Search for a page
       tab:
