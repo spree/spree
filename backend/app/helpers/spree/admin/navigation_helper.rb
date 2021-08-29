@@ -1,6 +1,8 @@
 module Spree
   module Admin
     module NavigationHelper
+      ICON_SIZE = 16
+
       # Makes an admin navigation tab (<li> tag) that links to a routing resource under /admin.
       # The arguments should be a list of symbolized controller names that will cause this tab to
       # be highlighted, with the first being the name of the resouce to link (uses URL helpers).
@@ -15,9 +17,6 @@ module Spree
       # Example:
       #   # Link to /admin/orders, also highlight tab for ProductsController and ShipmentsController
       #   tab :orders, :products, :shipments
-
-      ICON_SIZE = 16
-
       def tab(*args)
         options = { label: args.first.to_s }
 
