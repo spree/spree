@@ -240,6 +240,11 @@ module Spree
       end
 
       def configurations_sidebar_menu_item(link_text, url, options = {})
+        ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
+          NavigationHelper#configurations_sidebar_menu_item is deprecated and will be removed in Spree 5.0.
+          Please use NavigationHelper#tab.
+        DEPRECATION
+
         is_selected = url.ends_with?(controller.controller_name) ||
           url.ends_with?("#{controller.controller_name}/edit") ||
           url.ends_with?("#{controller.controller_name.singularize}/edit")
