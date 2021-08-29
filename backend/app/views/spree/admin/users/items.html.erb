@@ -27,7 +27,7 @@
             <tr class="stock-item" data-item-quantity="<%= item.quantity %>">
               <td class="order-completed-at"><%= order_time(order.completed_at) if order.completed_at %></td>
               <td class="item-image">
-                <%= mini_image(item.variant) %>
+                <%= small_image(item.variant) %>
               </td>
               <td class="item-name">
                 <%= item.name %>

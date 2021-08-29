@@ -17,9 +17,13 @@
       </nav>
       <div class='image'>
         {{#if image }}
-          <img src='{{image}}' alt='{{ product.attributes.name }}' class='thumbnail rounded border border' />
+          <div class="admin-product-image-container small-img">
+            <img src='{{image}}' alt='{{ product.attributes.name }}' class='thumbnail rounded border border' />
+          </div>
         {{ else }}
-          <img src='<%= image_path("noimage/small.png") %>' alt='{{product.name }}' class='thumbnail' />
+          <div class="admin-product-image-container small-img">
+            <%= inline_svg_tag "noimage/backend-missing-image.svg", class: "noimage", size: "60%*60%" %>
+          </div>
         {{/if}}
       </div>
       <div class="p-0 pt-1 text-center product-info">
