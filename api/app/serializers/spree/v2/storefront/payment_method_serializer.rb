@@ -4,7 +4,11 @@ module Spree
       class PaymentMethodSerializer < BaseSerializer
         set_type :payment_method
 
-        attributes :type, :name, :description, :publishable_preferences
+        attributes :type, :name, :description
+
+        attribute :preferences do |object|
+          object.public_preferences.as_json
+        end
       end
     end
   end
