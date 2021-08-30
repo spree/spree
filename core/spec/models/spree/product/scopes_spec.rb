@@ -318,4 +318,11 @@ describe 'Product scopes', type: :model do
       expect(products_by_store).to contain_exactly(product)
     end
   end
+
+  # Regression test for SD-1439 ambiguous column name: count_on_hand
+  describe '#in_stock.in_stock_or_backorderable' do
+    it do
+      expect { Spree::Product.in_stock.in_stock_or_backorderable.count }.not_to raise_error
+    end
+  end
 end

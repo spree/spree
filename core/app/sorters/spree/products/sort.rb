@@ -31,8 +31,14 @@ module Spree
       def by_sku(scope)
         return scope unless (value = sort_by?('sku'))
 
+        select_product_attributes = if scope.to_sql.include?("#{Spree::Product.table_name}.*")
+                                      ''
+                                    else
+                                      "#{Spree::Product.table_name}.*, "
+                                    end
+
         scope.joins(:master).
-          select("#{Spree::Product.table_name}.*, #{Spree::Variant.table_name}.sku").
+          select("#{select_product_attributes}#{Spree::Variant.table_name}.sku").
           where(Spree::Variant.table_name.to_s => { is_master: true }).
           order("#{Spree::Variant.table_name}.sku #{value[1]}")
       end
