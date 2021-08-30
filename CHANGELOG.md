@@ -4,6 +4,13 @@ All notable, unreleased changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+- Add public preferences to payment methods Storefront API [#11301](https://github.com/spree/spree/pull/11301) ([damianlegawiec](https://github.com/damianlegawiec))
+- ADMIN UI - Use svg for missing image [#11296](https://github.com/spree/spree/pull/11296) ([MatthewKennedy](https://github.com/MatthewKennedy))
+- Storefront Countries API returns all countries on a single page [#11289](https://github.com/spree/spree/pull/11289) ([damianlegawiec](https://github.com/damianlegawiec))
+- [NX-7] Filter taxons by taxonomies' permalinks [#11288](https://github.com/spree/spree/pull/11288) ([pmilewski](https://github.com/pmilewski))
+- Allow to sort products by sku [#11270](https://github.com/spree/spree/pull/11270) ([szymoniwacz](https://github.com/szymoniwacz))
+- Allow to specify image dimensions/quality in API URLs to get the transformed image [#11264](https://github.com/spree/spree/pull/11264) ([damianlegawiec](https://github.com/damianlegawiec))
+- Use icon serializer for menu_item. [#11236](https://github.com/spree/spree/pull/11236) ([MatthewKennedy](https://github.com/MatthewKennedy))
 - Fix API V2 Platform products by price sorting [#11276](https://github.com/spree/spree/pull/11276) ([szymoniwacz](https://github.com/szymoniwacz))
 - Fix api v2 products available on specs [#11273](https://github.com/spree/spree/pull/11273) ([szymoniwacz](https://github.com/szymoniwacz))
 - Updated Extension Generator for Spree 4.3 [#11272](https://github.com/spree/spree/pull/11272) ([damianlegawiec](https://github.com/damianlegawiec))

@@ -55,4 +55,7 @@ group :test, :development do
   gem 'ffaker'
 end
 
-gem 'solargraph', group: :development
+group :development do
+  gem 'github_fast_changelog'
+  gem 'solargraph'
+end
