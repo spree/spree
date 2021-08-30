@@ -5,7 +5,7 @@ module Spree
         prepend Spree::ServiceModule::Base
 
         def call(stock_location:, variants_scope: Spree::Variant)
-          if stock_location.class.method_defined?(:insert_all) && stock_location.class.method_defined?(:touch_all)
+          if Rails::VERSION::MAJOR >= 6
             prepared_stock_items = variants_scope.ids.map do |variant_id|
               Hash[
                 'stock_location_id', stock_location.id,

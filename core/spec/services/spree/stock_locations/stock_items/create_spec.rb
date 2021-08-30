@@ -10,14 +10,7 @@ module Spree
     let(:stock_location_class) { stock_location.class }
 
     describe '#call' do
-      after { allow(stock_location).to(receive(:class).and_call_original) }
-
-      context 'when Spree::StockLocation does not respond to insert_all' do
-        before do
-          allow(stock_location_class).to(receive(:method_defined?).with(:insert_all).and_return(false))
-          allow(stock_location).to(receive(:class).and_return(stock_location_class))
-        end
-
+      context 'Rails < 6', if: Rails::VERSION::MAJOR < 6 do
         context 'with variants to propagate' do
           before { stock_location.stock_items.destroy_all }
 
@@ -36,13 +29,7 @@ module Spree
         end
       end
 
-      context 'when Spree::StockLocation responds to insert_all and touch_all' do
-        before do
-          allow(stock_location_class).to(receive(:method_defined?).with(:insert_all).and_return(true))
-          allow(stock_location_class).to(receive(:method_defined?).with(:touch_all).and_return(true))
-          allow(stock_location).to(receive(:class).and_return(stock_location_class))
-        end
-
+      context 'Rails >= 6', if: Rails::VERSION::MAJOR >= 6 do
         context 'with prepared stock items' do
           let(:time_current) { Time.local(1990) }
           let(:created_stock_item) { stock_location.stock_items.order(:id).last }
