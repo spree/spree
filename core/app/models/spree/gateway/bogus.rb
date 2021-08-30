@@ -9,12 +9,10 @@ module Spree
 
     attr_accessor :test
 
+    preference :dummy_key, :string, default: 'PUBLICKEY123'
+
     def provider_class
       self.class
-    end
-
-    def preferences
-      {}
     end
 
     def create_profile(payment)
@@ -87,6 +85,10 @@ module Spree
         record = CreditCard.find_by(gateway_customer_profile_id: random)
       end
       random
+    end
+
+    def public_preference_keys
+      [:dummy_key]
     end
   end
 end
