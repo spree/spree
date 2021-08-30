@@ -44,6 +44,7 @@ module Spree
     scope :for_store, ->(store) { joins(:taxonomy).where(spree_taxonomies: { store_id: store.id }) }
 
     self.whitelisted_ransackable_associations = %w[taxonomy]
+    self.whitelisted_ransackable_attributes = %w[name permalink]
 
     scope :for_stores, ->(stores) { joins(:taxonomy).where(spree_taxonomies: { store_id: stores.ids }) }
 
