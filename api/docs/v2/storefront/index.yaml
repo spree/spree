@@ -763,6 +763,38 @@ paths:
         - orderToken: []
         - bearerAuth: []
       summary: Get estimated Shipping Rates
+  /api/v2/storefront/cart/associate:
+    patch:
+      description: Associates a guest cart with the currently signed in user.
+      tags:
+        - Cart
+      operationId: Associate
+      parameters:
+        - name: guest_order_token
+          in: query
+          description: Token of the guest cart to be associated with user
+          schema:
+            type: string
+        - $ref: '#/components/parameters/CartIncludeParam'
+        - $ref: '#/components/parameters/SparseFieldsParam'
+      responses:
+        '200':
+          description: Cart has been successfully associated
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+        '422':
+          description: Returned for already assigned cart
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - bearerAuth: []
+      summary: Associate a guest cart to a user
   /api/v2/storefront/checkout:
     patch:
       description: |-
