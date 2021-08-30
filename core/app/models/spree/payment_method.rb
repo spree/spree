@@ -87,5 +87,17 @@ module Spree
 
       store_ids.include?(store.id)
     end
+
+    def publishable_preferences
+      publishable_preference_keys.each_with_object({}) do |key, hash|
+        hash[key] = preferences[key]
+      end
+    end
+
+    private
+
+    def publishable_preference_keys
+      []
+    end
   end
 end
