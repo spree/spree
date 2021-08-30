@@ -67,6 +67,8 @@ RSpec.configure do |config|
   config.before :suite do
     Capybara.match = :smart
     DatabaseCleaner.clean_with :truncation
+    # Force jobs to be executed in a synchronous way
+    ActiveJob::Base.queue_adapter = :inline
   end
 
   config.before do
