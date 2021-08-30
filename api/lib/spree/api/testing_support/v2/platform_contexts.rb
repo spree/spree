@@ -201,8 +201,6 @@ end
 shared_examples 'CRUD examples' do |resource_name, include_example, filter_example|
   resource_path = resource_name.parameterize(separator: '_').pluralize
 
-  puts resource_path
-
   path "/api/v2/platform/#{resource_path}" do
     include_examples 'GET records list', resource_name, include_example, filter_example
     include_examples 'POST create record', resource_name, include_example
