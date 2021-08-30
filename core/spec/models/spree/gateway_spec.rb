@@ -18,7 +18,7 @@ describe Spree::Gateway, type: :model do
 
     private
 
-    def publishable_preference_keys
+    def public_preference_keys
       [:publishable_preference1, :publishable_preference2]
     end
   end
@@ -66,13 +66,13 @@ describe Spree::Gateway, type: :model do
     expect(gateway.exchange_multiplier).to eq rate
   end
 
-  it 'returns publishable preferences' do
+  it 'returns public preferences' do
     gateway = TestGateway.new
     gateway.preferences[:publishable_preference1] = 'public1'
     gateway.preferences[:publishable_preference2] = 'public2'
     gateway.preferences[:private_preference] = 'secret'
 
-    expect(gateway.publishable_preferences).to eq({
+    expect(gateway.public_preferences).to eq({
       publishable_preference1: 'public1',
       publishable_preference2: 'public2'
     })

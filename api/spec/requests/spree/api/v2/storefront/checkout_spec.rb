@@ -558,6 +558,7 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
         expect(json_response['data'][0]).to have_attribute(:name).with_value(payment_method.name)
         expect(json_response['data'][0]).to have_attribute(:description).with_value(payment_method.description)
         expect(json_response['data'][0]).to have_attribute(:type).with_value(payment_method.type)
+        expect(json_response['data'][0]).to have_attribute(:preferences).with_value(payment_method.public_preferences.as_json)
       end
     end
 
