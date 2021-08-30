@@ -22,16 +22,9 @@
 //  data-autocomplete-min-input-value="4"                <- Minimum input for search | DEFAULT is: 3
 //  data-autocomplete-search-query-value="title_i_cont"  <- Custom search query | DEFAULT is: 'name_i_cont'
 //  data-autocomplete-custom-return-id-value="permalink" <- Return a custom attribute rather than the ID | DEFAULT: returns id
-//
-// SECOND HARD CODED FILTER - (OPTIONAL)
-// Use a second hard coded search filter param and term if you require a little more curation
-// than just all results returning, an example of this in use can be seen in the menu_item search for Pages,
-// here we only want to retuen Pages that have linkable slugs, not homepages, and so we filter those using the
-// data attributes shown below.
-//
-//  Examples:
-//  data-autocomplete-additional-query-value="type_not_eq"                  <- Additional hard coded query | DEFAULT: null (not used)
-//  data-autocomplete-additional-term-value="Spree::Cms::Pages::Homepage"   <- Additional hard coded term | DEFAULT: null (not used)
+
+//  You can add your own custom URL params to the request as needed
+//  data-autocomplete-additional-url-params-value="filter[type_not_eq]=Spree::Cms::Pages::Homepage"
 
 document.addEventListener('DOMContentLoaded', function() {
   loadAutoCompleteParams()
@@ -56,20 +49,20 @@ function buildParamsFromDataAttrs(element) {
     minimum_input: element.dataset.autocompleteMinInputValue,
     search_query: element.dataset.autocompleteSearchQueryValue,
     custom_return_id: element.dataset.autocompleteCustomReturnIdValue,
-
-    // Hard coded additional filter for those edge cases.
-    additional_query: element.dataset.autocompleteAdditionalQueryValue,
-    additional_term: element.dataset.autocompleteAdditionalTermValue
+    additional_url_params: element.dataset.autocompleteAdditionalUrlParamsValue
   })
 }
 
 // Can also be called directly as javastript.
 $.fn.select2Autocomplete = function(params) {
   // Required params
-  const apiUrl = params.apiUrl || null
-  const resourcePlural = apiUrl.match(/([^/]*)\/*$/)[1]
+  let apiUrl = null
+  let returnedFields
+
+  const resourcePlural = params.apiUrl.match(/([^/]*)\/*$/)[1]
   const resourceSingular = resourcePlural.slice(0, -1)
 
+  //
   // Optional Params
   const select2placeHolder = params.placeholder || Spree.translations.search
   const select2Multiple = params.multiple || false
@@ -78,9 +71,26 @@ $.fn.select2Autocomplete = function(params) {
   const minimumInput = params.minimum_input || 3
   const searchQuery = params.search_query || 'name_i_cont'
   const customReturnId = params.custom_return_id || null
-  const additionalQuery = params.additional_query || null
-  const additionalTerm = params.additional_term || null
+  const additionalUrlParams = params.additional_url_params || null
 
+  //
+  // Set up a clean URL with based on additional Url Params presence.
+  if (additionalUrlParams == null) {
+    apiUrl = params.apiUrl
+  } else {
+    apiUrl = `${params.apiUrl}?${additionalUrlParams}`
+  }
+
+  //
+  // Set up a clean URL with based on custom return id presence.
+  if (customReturnId == null) {
+    returnedFields = returnAttribute
+  } else {
+    returnedFields = `${returnAttribute},${customReturnId}`
+  }
+
+  //
+  // Formats returned values.
   function formatList(values) {
     if (customReturnId) {
       return values.map(function(obj) {
@@ -99,58 +109,29 @@ $.fn.select2Autocomplete = function(params) {
     }
   }
 
-  if (additionalQuery == null && additionalTerm == null) {
-    this.select2({
-      multiple: select2Multiple,
-      allowClear: select2allowClear,
-      placeholder: select2placeHolder,
-      minimumInputLength: minimumInput,
-      ajax: {
-        url: apiUrl,
-        headers: Spree.apiV2Authentication(),
-        data: function(params) {
-          return {
-            fields: {
-              [resourceSingular]: returnAttribute
-            },
-            filter: {
-              [searchQuery]: params.term
-            }
-          }
-        },
-        processResults: function(json) {
-          return {
-            results: formatList(json.data)
+  this.select2({
+    multiple: select2Multiple,
+    allowClear: select2allowClear,
+    placeholder: select2placeHolder,
+    minimumInputLength: minimumInput,
+    ajax: {
+      url: apiUrl,
+      headers: Spree.apiV2Authentication(),
+      data: function(params) {
+        return {
+          fields: {
+            [resourceSingular]: returnedFields
+          },
+          filter: {
+            [searchQuery]: params.term
           }
         }
-      }
-    })
-  } else {
-    this.select2({
-      multiple: select2Multiple,
-      allowClear: select2allowClear,
-      placeholder: select2placeHolder,
-      minimumInputLength: minimumInput,
-      ajax: {
-        url: apiUrl,
-        headers: Spree.apiV2Authentication(),
-        data: function(params) {
-          return {
-            fields: {
-              [resourceSingular]: returnAttribute
-            },
-            filter: {
-              [searchQuery]: params.term,
-              [additionalQuery]: additionalTerm
-            }
-          }
-        },
-        processResults: function(json) {
-          return {
-            results: formatList(json.data)
-          }
+      },
+      processResults: function(json) {
+        return {
+          results: formatList(json.data)
         }
       }
-    })
-  }
+    }
+  })
 }
