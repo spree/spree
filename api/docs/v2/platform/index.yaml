@@ -57,8 +57,8 @@ paths:
                         state_name:
                         alternative_phone: 555-555-0199
                         company: Company
-                        created_at: '2021-08-23T21:28:22.108Z'
-                        updated_at: '2021-08-23T21:28:22.108Z'
+                        created_at: '2021-08-30T21:32:47.164Z'
+                        updated_at: '2021-08-30T21:32:47.164Z'
                         deleted_at:
                         label:
                       relationships:
@@ -85,8 +85,8 @@ paths:
                         state_name:
                         alternative_phone: 555-555-0199
                         company: Company
-                        created_at: '2021-08-23T21:28:22.134Z'
-                        updated_at: '2021-08-23T21:28:22.134Z'
+                        created_at: '2021-08-30T21:32:47.166Z'
+                        updated_at: '2021-08-30T21:32:47.166Z'
                         deleted_at:
                         label:
                       relationships:
@@ -154,8 +154,8 @@ paths:
                         state_name:
                         alternative_phone: 555-555-0199
                         company: Company
-                        created_at: '2021-08-23T21:28:22.275Z'
-                        updated_at: '2021-08-23T21:28:22.275Z'
+                        created_at: '2021-08-30T21:32:47.270Z'
+                        updated_at: '2021-08-30T21:32:47.270Z'
                         deleted_at:
                         label:
                       relationships:
@@ -200,7 +200,7 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/addresses_params"
+              "$ref": "#/components/schemas/address_params"
   "/api/v2/platform/addresses/{id}":
     get:
       summary: Returns an Address
@@ -243,8 +243,8 @@ paths:
                         state_name:
                         alternative_phone: 555-555-0199
                         company: Company
-                        created_at: '2021-08-23T21:28:22.297Z'
-                        updated_at: '2021-08-23T21:28:22.297Z'
+                        created_at: '2021-08-30T21:32:47.294Z'
+                        updated_at: '2021-08-30T21:32:47.294Z'
                         deleted_at:
                         label:
                       relationships:
@@ -315,8 +315,8 @@ paths:
                         state_name:
                         alternative_phone: 555-555-0199
                         company: Company
-                        created_at: '2021-08-23T21:28:22.331Z'
-                        updated_at: '2021-08-23T21:28:22.336Z'
+                        created_at: '2021-08-30T21:32:47.325Z'
+                        updated_at: '2021-08-30T21:32:47.329Z'
                         deleted_at:
                         label:
                       relationships:
@@ -363,7 +363,7 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/addresses_params"
+              "$ref": "#/components/schemas/address_params"
     delete:
       summary: Deletes an Address
       tags:
@@ -439,8 +439,8 @@ paths:
                       type: classification
                       attributes:
                         position: 1
-                        created_at: '2021-08-23T21:28:22.534Z'
-                        updated_at: '2021-08-23T21:28:22.534Z'
+                        created_at: '2021-08-30T21:32:47.529Z'
+                        updated_at: '2021-08-30T21:32:47.529Z'
                       relationships:
                         product:
                           data:
@@ -454,8 +454,8 @@ paths:
                       type: classification
                       attributes:
                         position: 1
-                        created_at: '2021-08-23T21:28:22.569Z'
-                        updated_at: '2021-08-23T21:28:22.569Z'
+                        created_at: '2021-08-30T21:32:47.573Z'
+                        updated_at: '2021-08-30T21:32:47.573Z'
                       relationships:
                         product:
                           data:
@@ -510,8 +510,8 @@ paths:
                       type: classification
                       attributes:
                         position: 1
-                        created_at: '2021-08-23T21:28:22.728Z'
-                        updated_at: '2021-08-23T21:28:22.728Z'
+                        created_at: '2021-08-30T21:32:47.724Z'
+                        updated_at: '2021-08-30T21:32:47.724Z'
                       relationships:
                         product:
                           data:
@@ -538,7 +538,7 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/classifications_params"
+              "$ref": "#/components/schemas/classification_params"
   "/api/v2/platform/classifications/{id}":
     get:
       summary: Returns a Classification
@@ -572,8 +572,8 @@ paths:
                       type: classification
                       attributes:
                         position: 1
-                        created_at: '2021-08-23T21:28:22.787Z'
-                        updated_at: '2021-08-23T21:28:22.787Z'
+                        created_at: '2021-08-30T21:32:47.790Z'
+                        updated_at: '2021-08-30T21:32:47.790Z'
                       relationships:
                         product:
                           data:
@@ -631,8 +631,8 @@ paths:
                       type: classification
                       attributes:
                         position: 1
-                        created_at: '2021-08-23T21:28:22.904Z'
-                        updated_at: '2021-08-23T21:28:22.904Z'
+                        created_at: '2021-08-30T21:32:47.905Z'
+                        updated_at: '2021-08-30T21:32:47.905Z'
                       relationships:
                         product:
                           data:
@@ -673,7 +673,7 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/classifications_params"
+              "$ref": "#/components/schemas/classification_params"
     delete:
       summary: Deletes a Classification
       tags:
@@ -738,8 +738,8 @@ paths:
                       type: classification
                       attributes:
                         position: 2
-                        created_at: '2021-08-23T21:28:23.191Z'
-                        updated_at: '2021-08-23T21:28:23.199Z'
+                        created_at: '2021-08-30T21:32:48.199Z'
+                        updated_at: '2021-08-30T21:32:48.212Z'
                       relationships:
                         product:
                           data:
@@ -804,9 +804,9 @@ paths:
                         name: United States of America
                         numcode: 840
                         states_required: true
-                        updated_at: '2021-08-23T21:28:23.328Z'
+                        updated_at: '2021-08-30T21:32:48.342Z'
                         zipcode_required: true
-                        created_at: '2021-08-23T21:28:23.328Z'
+                        created_at: '2021-08-30T21:32:48.342Z'
                       relationships:
                         states:
                           data: []
@@ -819,9 +819,9 @@ paths:
                         name: NAME_2
                         numcode: 840
                         states_required: false
-                        updated_at: '2021-08-23T21:28:23.332Z'
+                        updated_at: '2021-08-30T21:32:48.345Z'
                         zipcode_required: true
-                        created_at: '2021-08-23T21:28:23.332Z'
+                        created_at: '2021-08-30T21:32:48.345Z'
                       relationships:
                         states:
                           data: []
@@ -834,9 +834,9 @@ paths:
                         name: NAME_3
                         numcode: 840
                         states_required: false
-                        updated_at: '2021-08-23T21:28:23.333Z'
+                        updated_at: '2021-08-30T21:32:48.346Z'
                         zipcode_required: true
-                        created_at: '2021-08-23T21:28:23.333Z'
+                        created_at: '2021-08-30T21:32:48.346Z'
                       relationships:
                         states:
                           data: []
@@ -889,9 +889,9 @@ paths:
                         name: NAME_6
                         numcode: 840
                         states_required: false
-                        updated_at: '2021-08-23T21:28:23.362Z'
+                        updated_at: '2021-08-30T21:32:48.380Z'
                         zipcode_required: true
-                        created_at: '2021-08-23T21:28:23.362Z'
+                        created_at: '2021-08-30T21:32:48.380Z'
                       relationships:
                         states:
                           data: []
@@ -913,9 +913,9 @@ paths:
                     error: The access token is invalid
   "/api/v2/platform/menu_items":
     get:
-      summary: Returns a list of MenuItems
+      summary: Returns a list of Menu Items
       tags:
-      - MenuItems
+      - Menu Items
       security:
       - bearer_auth: []
       parameters:
@@ -954,7 +954,7 @@ paths:
                     - id: '1'
                       type: menu_item
                       attributes:
-                        name: Quia ea unde minus sunt voluptatum iste repellendus.
+                        name: Aperiam non in expedita nostrum odit.
                         subtitle:
                         destination:
                         new_window: false
@@ -964,8 +964,8 @@ paths:
                         lft: 1
                         rgt: 16
                         depth: 0
-                        created_at: '2021-08-23T21:28:23.403Z'
-                        updated_at: '2021-08-23T21:28:23.479Z'
+                        created_at: '2021-08-30T21:32:48.422Z'
+                        updated_at: '2021-08-30T21:32:48.500Z'
                         link:
                         is_container: true
                         is_root: true
@@ -1011,8 +1011,8 @@ paths:
                         lft: 2
                         rgt: 3
                         depth: 1
-                        created_at: '2021-08-23T21:28:23.414Z'
-                        updated_at: '2021-08-23T21:28:23.416Z'
+                        created_at: '2021-08-30T21:32:48.433Z'
+                        updated_at: '2021-08-30T21:32:48.435Z'
                         link:
                         is_container: false
                         is_root: false
@@ -1048,8 +1048,8 @@ paths:
                         lft: 4
                         rgt: 5
                         depth: 1
-                        created_at: '2021-08-23T21:28:23.425Z'
-                        updated_at: '2021-08-23T21:28:23.426Z'
+                        created_at: '2021-08-30T21:32:48.444Z'
+                        updated_at: '2021-08-30T21:32:48.445Z'
                         link:
                         is_container: false
                         is_root: false
@@ -1085,8 +1085,8 @@ paths:
                         lft: 6
                         rgt: 7
                         depth: 1
-                        created_at: '2021-08-23T21:28:23.435Z'
-                        updated_at: '2021-08-23T21:28:23.436Z'
+                        created_at: '2021-08-30T21:32:48.454Z'
+                        updated_at: '2021-08-30T21:32:48.455Z'
                         link:
                         is_container: false
                         is_root: false
@@ -1122,8 +1122,8 @@ paths:
                         lft: 8
                         rgt: 9
                         depth: 1
-                        created_at: '2021-08-23T21:28:23.444Z'
-                        updated_at: '2021-08-23T21:28:23.446Z'
+                        created_at: '2021-08-30T21:32:48.463Z'
+                        updated_at: '2021-08-30T21:32:48.465Z'
                         link:
                         is_container: false
                         is_root: false
@@ -1159,8 +1159,8 @@ paths:
                         lft: 10
                         rgt: 11
                         depth: 1
-                        created_at: '2021-08-23T21:28:23.454Z'
-                        updated_at: '2021-08-23T21:28:23.456Z'
+                        created_at: '2021-08-30T21:32:48.473Z'
+                        updated_at: '2021-08-30T21:32:48.475Z'
                         link:
                         is_container: false
                         is_root: false
@@ -1196,8 +1196,8 @@ paths:
                         lft: 12
                         rgt: 13
                         depth: 1
-                        created_at: '2021-08-23T21:28:23.464Z'
-                        updated_at: '2021-08-23T21:28:23.465Z'
+                        created_at: '2021-08-30T21:32:48.484Z'
+                        updated_at: '2021-08-30T21:32:48.486Z'
                         link:
                         is_container: false
                         is_root: false
@@ -1233,8 +1233,8 @@ paths:
                         lft: 14
                         rgt: 15
                         depth: 1
-                        created_at: '2021-08-23T21:28:23.474Z'
-                        updated_at: '2021-08-23T21:28:23.475Z'
+                        created_at: '2021-08-30T21:32:48.494Z'
+                        updated_at: '2021-08-30T21:32:48.496Z'
                         link:
                         is_container: false
                         is_root: false
@@ -1276,9 +1276,9 @@ paths:
                   value:
                     error: The access token is invalid
     post:
-      summary: Creates a MenuItem
+      summary: Creates a Menu Item
       tags:
-      - MenuItems
+      - Menu Items
       security:
       - bearer_auth: []
       parameters:
@@ -1311,8 +1311,8 @@ paths:
                         lft: 8
                         rgt: 9
                         depth: 1
-                        created_at: '2021-08-23T21:28:23.637Z'
-                        updated_at: '2021-08-23T21:28:23.639Z'
+                        created_at: '2021-08-30T21:32:48.663Z'
+                        updated_at: '2021-08-30T21:32:48.665Z'
                         link:
                         is_container: false
                         is_root: false
@@ -1353,12 +1353,12 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/menu_items_params"
+              "$ref": "#/components/schemas/menu_item_params"
   "/api/v2/platform/menu_items/{id}":
     get:
-      summary: Returns a MenuItem
+      summary: Returns a Menu Item
       tags:
-      - MenuItems
+      - Menu Items
       security:
       - bearer_auth: []
       parameters:
@@ -1396,8 +1396,8 @@ paths:
                         lft: 8
                         rgt: 9
                         depth: 1
-                        created_at: '2021-08-23T21:28:23.746Z'
-                        updated_at: '2021-08-23T21:28:23.748Z'
+                        created_at: '2021-08-30T21:32:48.770Z'
+                        updated_at: '2021-08-30T21:32:48.772Z'
                         link:
                         is_container: false
                         is_root: false
@@ -1437,9 +1437,9 @@ paths:
                   value:
                     error: The access token is invalid
     put:
-      summary: Updates a MenuItem
+      summary: Updates a Menu Item
       tags:
-      - MenuItems
+      - Menu Items
       security:
       - bearer_auth: []
       parameters:
@@ -1477,8 +1477,8 @@ paths:
                         lft: 8
                         rgt: 9
                         depth: 1
-                        created_at: '2021-08-23T21:28:23.926Z'
-                        updated_at: '2021-08-23T21:28:23.937Z'
+                        created_at: '2021-08-30T21:32:48.936Z'
+                        updated_at: '2021-08-30T21:32:48.948Z'
                         link:
                         is_container: false
                         is_root: false
@@ -1532,11 +1532,11 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/menu_items_params"
+              "$ref": "#/components/schemas/menu_item_params"
     delete:
-      summary: Deletes a MenuItem
+      summary: Deletes a Menu Item
       tags:
-      - MenuItems
+      - Menu Items
       security:
       - bearer_auth: []
       parameters:
@@ -1568,7 +1568,7 @@ paths:
     patch:
       summary: Reposition a Menu Item
       tags:
-      - MenuItems
+      - Menu Items
       security:
       - bearer_auth: []
       parameters:
@@ -1599,8 +1599,8 @@ paths:
                         lft: 5
                         rgt: 6
                         depth: 2
-                        created_at: '2021-08-23T21:28:24.309Z'
-                        updated_at: '2021-08-23T21:28:24.321Z'
+                        created_at: '2021-08-30T21:32:49.367Z'
+                        updated_at: '2021-08-30T21:32:49.378Z'
                         link:
                         is_container: false
                         is_root: false
@@ -1690,8 +1690,8 @@ paths:
                         name: Main Menu
                         location: header
                         locale: en
-                        created_at: '2021-08-23T21:28:24.436Z'
-                        updated_at: '2021-08-23T21:28:24.464Z'
+                        created_at: '2021-08-30T21:32:49.499Z'
+                        updated_at: '2021-08-30T21:32:49.528Z'
                       relationships:
                         menu_items:
                           data:
@@ -1707,8 +1707,8 @@ paths:
                         name: Footer Menu
                         location: footer
                         locale: en
-                        created_at: '2021-08-23T21:28:24.440Z'
-                        updated_at: '2021-08-23T21:28:24.484Z'
+                        created_at: '2021-08-30T21:32:49.504Z'
+                        updated_at: '2021-08-30T21:32:49.548Z'
                       relationships:
                         menu_items:
                           data:
@@ -1765,8 +1765,8 @@ paths:
                         name: Main Menu
                         location: header
                         locale: en
-                        created_at: '2021-08-23T21:28:24.595Z'
-                        updated_at: '2021-08-23T21:28:24.598Z'
+                        created_at: '2021-08-30T21:32:49.629Z'
+                        updated_at: '2021-08-30T21:32:49.636Z'
                       relationships:
                         menu_items:
                           data:
@@ -1792,7 +1792,7 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/menus_params"
+              "$ref": "#/components/schemas/menu_params"
   "/api/v2/platform/menus/{id}":
     get:
       summary: Returns a Menu
@@ -1828,8 +1828,8 @@ paths:
                         name: Main Menu
                         location: header
                         locale: en
-                        created_at: '2021-08-23T21:28:24.622Z'
-                        updated_at: '2021-08-23T21:28:24.625Z'
+                        created_at: '2021-08-30T21:32:49.659Z'
+                        updated_at: '2021-08-30T21:32:49.663Z'
                       relationships:
                         menu_items:
                           data:
@@ -1885,8 +1885,8 @@ paths:
                         name: Main Menu
                         location: header
                         locale: en
-                        created_at: '2021-08-23T21:28:24.664Z'
-                        updated_at: '2021-08-23T21:28:24.667Z'
+                        created_at: '2021-08-30T21:32:49.701Z'
+                        updated_at: '2021-08-30T21:32:49.704Z'
                       relationships:
                         menu_items:
                           data:
@@ -1928,7 +1928,7 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/menus_params"
+              "$ref": "#/components/schemas/menu_params"
     delete:
       summary: Deletes a Menu
       tags:
@@ -1962,9 +1962,9 @@ paths:
                     error: The access token is invalid
   "/api/v2/platform/option_types":
     get:
-      summary: Returns a list of OptionTypes
+      summary: Returns a list of Option Types
       tags:
-      - OptionTypes
+      - Option Types
       security:
       - bearer_auth: []
       parameters:
@@ -2006,8 +2006,8 @@ paths:
                         name: foo-size-1
                         presentation: Size
                         position: 1
-                        created_at: '2021-08-23T21:28:24.774Z'
-                        updated_at: '2021-08-23T21:28:24.774Z'
+                        created_at: '2021-08-30T21:32:49.810Z'
+                        updated_at: '2021-08-30T21:32:49.810Z'
                         filterable: true
                       relationships:
                         option_values:
@@ -2018,8 +2018,8 @@ paths:
                         name: foo-size-2
                         presentation: Size
                         position: 2
-                        created_at: '2021-08-23T21:28:24.775Z'
-                        updated_at: '2021-08-23T21:28:24.775Z'
+                        created_at: '2021-08-30T21:32:49.811Z'
+                        updated_at: '2021-08-30T21:32:49.811Z'
                         filterable: true
                       relationships:
                         option_values:
@@ -2043,9 +2043,9 @@ paths:
                   value:
                     error: The access token is invalid
     post:
-      summary: Creates an OptionType
+      summary: Creates an Option Type
       tags:
-      - OptionTypes
+      - Option Types
       security:
       - bearer_auth: []
       parameters:
@@ -2071,8 +2071,8 @@ paths:
                         name: foo-size-5
                         presentation: Size
                         position: 1
-                        created_at: '2021-08-23T21:28:24.807Z'
-                        updated_at: '2021-08-23T21:28:24.807Z'
+                        created_at: '2021-08-30T21:32:49.844Z'
+                        updated_at: '2021-08-30T21:32:49.844Z'
                         filterable: true
                       relationships:
                         option_values:
@@ -2094,12 +2094,12 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/option_types_params"
+              "$ref": "#/components/schemas/option_type_params"
   "/api/v2/platform/option_types/{id}":
     get:
-      summary: Returns an OptionType
+      summary: Returns an Option Type
       tags:
-      - OptionTypes
+      - Option Types
       security:
       - bearer_auth: []
       parameters:
@@ -2130,8 +2130,8 @@ paths:
                         name: foo-size-6
                         presentation: Size
                         position: 1
-                        created_at: '2021-08-23T21:28:24.829Z'
-                        updated_at: '2021-08-23T21:28:24.829Z'
+                        created_at: '2021-08-30T21:32:49.864Z'
+                        updated_at: '2021-08-30T21:32:49.864Z'
                         filterable: true
                       relationships:
                         option_values:
@@ -2153,9 +2153,9 @@ paths:
                   value:
                     error: The access token is invalid
     put:
-      summary: Updates an OptionType
+      summary: Updates an Option Type
       tags:
-      - OptionTypes
+      - Option Types
       security:
       - bearer_auth: []
       parameters:
@@ -2186,8 +2186,8 @@ paths:
                         name: Size-X
                         presentation: Size
                         position: 1
-                        created_at: '2021-08-23T21:28:24.867Z'
-                        updated_at: '2021-08-23T21:28:24.871Z'
+                        created_at: '2021-08-30T21:32:49.896Z'
+                        updated_at: '2021-08-30T21:32:49.903Z'
                         filterable: true
                       relationships:
                         option_values:
@@ -2223,11 +2223,11 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/option_types_params"
+              "$ref": "#/components/schemas/option_type_params"
     delete:
-      summary: Deletes an OptionType
+      summary: Deletes an Option Type
       tags:
-      - OptionTypes
+      - Option Types
       security:
       - bearer_auth: []
       parameters:
@@ -2257,9 +2257,9 @@ paths:
                     error: The access token is invalid
   "/api/v2/platform/option_values":
     get:
-      summary: Returns a list of OptionValues
+      summary: Returns a list of Option Values
       tags:
-      - OptionValues
+      - Option Values
       security:
       - bearer_auth: []
       parameters:
@@ -2301,8 +2301,8 @@ paths:
                         position: 1
                         name: Size-1
                         presentation: S
-                        created_at: '2021-08-23T21:28:24.950Z'
-                        updated_at: '2021-08-23T21:28:24.950Z'
+                        created_at: '2021-08-30T21:32:49.979Z'
+                        updated_at: '2021-08-30T21:32:49.979Z'
                       relationships:
                         option_type:
                           data:
@@ -2314,8 +2314,8 @@ paths:
                         position: 1
                         name: Size-2
                         presentation: S
-                        created_at: '2021-08-23T21:28:24.952Z'
-                        updated_at: '2021-08-23T21:28:24.952Z'
+                        created_at: '2021-08-30T21:32:49.982Z'
+                        updated_at: '2021-08-30T21:32:49.982Z'
                       relationships:
                         option_type:
                           data:
@@ -2340,9 +2340,9 @@ paths:
                   value:
                     error: The access token is invalid
     post:
-      summary: Creates an OptionValue
+      summary: Creates an Option Value
       tags:
-      - OptionValues
+      - Option Values
       security:
       - bearer_auth: []
       parameters:
@@ -2368,8 +2368,8 @@ paths:
                         position: 1
                         name: Size-5
                         presentation: S
-                        created_at: '2021-08-23T21:28:24.988Z'
-                        updated_at: '2021-08-23T21:28:24.988Z'
+                        created_at: '2021-08-30T21:32:50.016Z'
+                        updated_at: '2021-08-30T21:32:50.016Z'
                       relationships:
                         option_type:
                           data:
@@ -2390,12 +2390,12 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/option_values_params"
+              "$ref": "#/components/schemas/option_value_params"
   "/api/v2/platform/option_values/{id}":
     get:
-      summary: Returns an OptionValue
+      summary: Returns an Option Value
       tags:
-      - OptionValues
+      - Option Values
       security:
       - bearer_auth: []
       parameters:
@@ -2426,8 +2426,8 @@ paths:
                         position: 1
                         name: Size-6
                         presentation: S
-                        created_at: '2021-08-23T21:28:25.015Z'
-                        updated_at: '2021-08-23T21:28:25.015Z'
+                        created_at: '2021-08-30T21:32:50.041Z'
+                        updated_at: '2021-08-30T21:32:50.041Z'
                       relationships:
                         option_type:
                           data:
@@ -2450,9 +2450,9 @@ paths:
                   value:
                     error: The access token is invalid
     put:
-      summary: Updates an OptionValue
+      summary: Updates an Option Value
       tags:
-      - OptionValues
+      - Option Values
       security:
       - bearer_auth: []
       parameters:
@@ -2483,8 +2483,8 @@ paths:
                         position: 1
                         name: M
                         presentation: S
-                        created_at: '2021-08-23T21:28:25.052Z'
-                        updated_at: '2021-08-23T21:28:25.056Z'
+                        created_at: '2021-08-30T21:32:50.076Z'
+                        updated_at: '2021-08-30T21:32:50.080Z'
                       relationships:
                         option_type:
                           data:
@@ -2521,11 +2521,11 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/option_values_params"
+              "$ref": "#/components/schemas/option_value_params"
     delete:
-      summary: Deletes an OptionValue
+      summary: Deletes an Option Value
       tags:
-      - OptionValues
+      - Option Values
       security:
       - bearer_auth: []
       parameters:
@@ -2602,8 +2602,8 @@ paths:
                         lft: 1
                         rgt: 6
                         description:
-                        created_at: '2021-08-23T21:28:25.145Z'
-                        updated_at: '2021-08-23T21:28:25.172Z'
+                        created_at: '2021-08-30T21:32:50.164Z'
+                        updated_at: '2021-08-30T21:32:50.190Z'
                         meta_title:
                         meta_description:
                         meta_keywords:
@@ -2637,8 +2637,8 @@ paths:
                         lft: 2
                         rgt: 3
                         description:
-                        created_at: '2021-08-23T21:28:25.156Z'
-                        updated_at: '2021-08-23T21:28:25.157Z'
+                        created_at: '2021-08-30T21:32:50.175Z'
+                        updated_at: '2021-08-30T21:32:50.176Z'
                         meta_title:
                         meta_description:
                         meta_keywords:
@@ -2672,8 +2672,8 @@ paths:
                         lft: 4
                         rgt: 5
                         description:
-                        created_at: '2021-08-23T21:28:25.167Z'
-                        updated_at: '2021-08-23T21:28:25.168Z'
+                        created_at: '2021-08-30T21:32:50.185Z'
+                        updated_at: '2021-08-30T21:32:50.187Z'
                         meta_title:
                         meta_description:
                         meta_keywords:
@@ -2748,8 +2748,8 @@ paths:
                         lft: 2
                         rgt: 3
                         description:
-                        created_at: '2021-08-23T21:28:25.251Z'
-                        updated_at: '2021-08-23T21:28:25.254Z'
+                        created_at: '2021-08-30T21:32:50.268Z'
+                        updated_at: '2021-08-30T21:32:50.274Z'
                         meta_title:
                         meta_description:
                         meta_keywords:
@@ -2789,7 +2789,7 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/taxons_params"
+              "$ref": "#/components/schemas/taxon_params"
   "/api/v2/platform/taxons/{id}":
     get:
       summary: Returns a Taxon
@@ -2828,8 +2828,8 @@ paths:
                         lft: 2
                         rgt: 3
                         description:
-                        created_at: '2021-08-23T21:28:25.291Z'
-                        updated_at: '2021-08-23T21:28:25.293Z'
+                        created_at: '2021-08-30T21:32:50.316Z'
+                        updated_at: '2021-08-30T21:32:50.317Z'
                         meta_title:
                         meta_description:
                         meta_keywords:
@@ -2909,8 +2909,8 @@ paths:
                         lft: 2
                         rgt: 3
                         description:
-                        created_at: '2021-08-23T21:28:25.371Z'
-                        updated_at: '2021-08-23T21:28:25.383Z'
+                        created_at: '2021-08-30T21:32:50.389Z'
+                        updated_at: '2021-08-30T21:32:50.404Z'
                         meta_title:
                         meta_description:
                         meta_keywords:
@@ -2966,7 +2966,7 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/taxons_params"
+              "$ref": "#/components/schemas/taxon_params"
     delete:
       summary: Deletes a Taxon
       tags:
@@ -3041,9 +3041,9 @@ paths:
                     - id: '1'
                       type: user
                       attributes:
-                        email: vernetta@huels.co.uk
-                        created_at: '2021-08-23T21:28:25.546Z'
-                        updated_at: '2021-08-23T21:28:25.546Z'
+                        email: eldridge_gusikowski@jacobswalker.biz
+                        created_at: '2021-08-30T21:32:50.633Z'
+                        updated_at: '2021-08-30T21:32:50.633Z'
                         average_order_value: []
                         lifetime_value: []
                         store_credits: []
@@ -3055,9 +3055,9 @@ paths:
                     - id: '2'
                       type: user
                       attributes:
-                        email: pansy_hirthe@smitham.us
-                        created_at: '2021-08-23T21:28:25.549Z'
-                        updated_at: '2021-08-23T21:28:25.549Z'
+                        email: violet.corwin@skiles.ca
+                        created_at: '2021-08-30T21:32:50.636Z'
+                        updated_at: '2021-08-30T21:32:50.636Z'
                         average_order_value: []
                         lifetime_value: []
                         store_credits: []
@@ -3069,9 +3069,9 @@ paths:
                     - id: '3'
                       type: user
                       attributes:
-                        email: carmen.kerluke@kossschulist.com
-                        created_at: '2021-08-23T21:28:25.550Z'
-                        updated_at: '2021-08-23T21:28:25.550Z'
+                        email: asuncion@weimann.info
+                        created_at: '2021-08-30T21:32:50.637Z'
+                        updated_at: '2021-08-30T21:32:50.637Z'
                         average_order_value: []
                         lifetime_value: []
                         store_credits: []
@@ -3124,9 +3124,9 @@ paths:
                       id: '2'
                       type: user
                       attributes:
-                        email: marx_feil@borer.info
-                        created_at: '2021-08-23T21:28:25.597Z'
-                        updated_at: '2021-08-23T21:28:25.597Z'
+                        email: lloyd@blandapowlowski.biz
+                        created_at: '2021-08-30T21:32:50.679Z'
+                        updated_at: '2021-08-30T21:32:50.679Z'
                         average_order_value: []
                         lifetime_value: []
                         store_credits: []
@@ -3150,7 +3150,7 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/users_params"
+              "$ref": "#/components/schemas/user_params"
   "/api/v2/platform/users/{id}":
     get:
       summary: Returns an User
@@ -3183,9 +3183,9 @@ paths:
                       id: '2'
                       type: user
                       attributes:
-                        email: stefany@leannon.biz
-                        created_at: '2021-08-23T21:28:25.626Z'
-                        updated_at: '2021-08-23T21:28:25.626Z'
+                        email: laraine@rathhuel.name
+                        created_at: '2021-08-30T21:32:50.708Z'
+                        updated_at: '2021-08-30T21:32:50.708Z'
                         average_order_value: []
                         lifetime_value: []
                         store_credits: []
@@ -3242,8 +3242,8 @@ paths:
                       type: user
                       attributes:
                         email: john@example.com
-                        created_at: '2021-08-23T21:28:25.669Z'
-                        updated_at: '2021-08-23T21:28:25.673Z'
+                        created_at: '2021-08-30T21:32:50.753Z'
+                        updated_at: '2021-08-30T21:32:50.758Z'
                         average_order_value: []
                         lifetime_value: []
                         store_credits: []
@@ -3283,7 +3283,7 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/users_params"
+              "$ref": "#/components/schemas/user_params"
     delete:
       summary: Deletes an User
       tags:

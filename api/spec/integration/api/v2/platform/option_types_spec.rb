@@ -3,7 +3,7 @@ require 'swagger_helper'
 describe 'Option Types API', swagger: true do
   include_context 'Platform API v2'
 
-  resource_name = 'OptionType'
+  resource_name = 'Option Type'
   include_example = ''
   filter_example = 'option_type_id_eq=1&name_cont=Size'
 

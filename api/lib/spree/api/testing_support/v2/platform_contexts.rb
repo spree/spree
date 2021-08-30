@@ -148,7 +148,7 @@ end
 
 # create
 shared_examples 'POST create record' do |resource_name, include_example|
-  param_name = resource_name.tableize.to_sym
+  param_name = resource_name.parameterize(separator: '_').to_sym
 
   post "Creates #{resource_name.articleize}" do
     tags resource_name.pluralize
@@ -166,7 +166,7 @@ end
 
 # update
 shared_examples 'PUT update record' do |resource_name, include_example|
-  param_name = resource_name.tableize.to_sym
+  param_name = resource_name.parameterize(separator: '_').to_sym
 
   put "Updates #{resource_name.articleize}" do
     tags resource_name.pluralize
@@ -199,7 +199,9 @@ shared_examples 'DELETE record' do |resource_name|
 end
 
 shared_examples 'CRUD examples' do |resource_name, include_example, filter_example|
-  resource_path = resource_name.tableize.pluralize
+  resource_path = resource_name.parameterize(separator: '_').pluralize
+
+  puts resource_path
 
   path "/api/v2/platform/#{resource_path}" do
     include_examples 'GET records list', resource_name, include_example, filter_example
