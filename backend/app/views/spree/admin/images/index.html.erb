@@ -41,7 +41,9 @@
             <% end %>
           </td>
           <td class="image">
-            <%= link_to image_tag(main_app.url_for(image.url(:mini))), main_app.rails_blob_url(image.attachment) %>
+            <div class="admin-product-image-container small-img">
+              <%= link_to image_tag(main_app.url_for(image.url(:mini))), main_app.rails_blob_url(image.attachment) %>
+            </div>
           </td>
           <% if has_variants %>
             <td><%= options_text_for(image) %></td>

@@ -68,7 +68,7 @@
           <tr <%== "style='color: red;'" if product.deleted? %> id="<%= spree_dom_id product %>" data-hook="admin_products_index_rows" class="<%= cycle('odd', 'even') %>">
             <td scope="row" class="image">
               <%= link_to edit_admin_product_path(product) do %>
-                <%= mini_image product %>
+                <%= small_image product %>
               <% end %>
             </td>
             <td><%= link_to product.try(:name), edit_admin_product_path(product) %></td>

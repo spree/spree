@@ -2,9 +2,13 @@
   <div class='variant-autocomplete-item media align-items-center'>
     <figure class='variant-image media-left mb-0 mr-3'>
       {{#if variant.image }}
-        <img src='{{variant.image}}' class="thumbnail mb-0" />
+        <div class="admin-product-image-container small-img">
+          <img src='{{variant.image}}' class="thumbnail mb-0" />
+        </div>
       {{ else }}
-        <img src='<%= image_path("noimage/mini.png") %>' class="thumbnail mb-0" />
+        <div class="admin-product-image-container small-img">
+          <%= inline_svg_tag "noimage/backend-missing-image.svg", class: "noimage", size: "60%*60%" %>
+        </div>
       {{/if}}
     </figure>
 

@@ -1,7 +1,7 @@
 <% shipment.manifest.each do |item| %>
   <tr class="stock-item" data-item-quantity="<%= item.quantity %>">
     <td class="item-image image text-center">
-      <%= link_to mini_image(item.variant), edit_admin_product_path(item.variant.product) %>
+      <%= link_to small_image(item.variant), edit_admin_product_path(item.variant.product) %>
     </td>
 
     <td class="item-name">

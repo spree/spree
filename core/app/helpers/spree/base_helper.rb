@@ -246,11 +246,13 @@ module Spree
         options = options.first || {}
         options[:alt] ||= product.name
         image_path = default_image_for_product_or_variant(product)
-        if image_path.present?
-          create_product_image_tag image_path, product, options, style
-        else
-          image_tag "noimage/#{style}.png", options
-        end
+        img = if image_path.present?
+                create_product_image_tag image_path, product, options, style
+              else
+               inline_svg_tag "noimage/backend-missing-image.svg", class: "noimage", size: "60%*60%"
+              end
+
+        content_tag(:div, img, class: "admin-product-image-container #{style}-img")
       end
     end
 

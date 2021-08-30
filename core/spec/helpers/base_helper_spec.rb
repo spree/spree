@@ -128,6 +128,7 @@ describe Spree::BaseHelper, type: :helper do
         styles[:very_strange] = '1x1'
         styles.merge!(foobar: '2x2')
       end
+      allow_any_instance_of(described_class).to receive(:inline_svg_tag).and_return('<svg></svg>')
     end
 
     it 'does not raise errors when style exists' do
