@@ -18,7 +18,7 @@ describe 'Product Carousel section', type: :feature do
     it 'loads with correct defaults setings' do
       expect(page).to have_field('Name *', with: "Test #{section_type}")
       expect(page).to have_select('Section Type', selected: section_type)
-      expect(page).to have_content("Options For: #{ section_type}")
+      expect(page).to have_content("Options For: #{section_type}")
     end
 
     it 'saves taxon path and loads it back into the view' do

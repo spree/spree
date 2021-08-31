@@ -21,7 +21,7 @@ describe 'Featured Article section', type: :feature do
     it 'loads with correct defaults setings' do
       expect(page).to have_field('Name *', with: "Test #{section_type}")
       expect(page).to have_select('Section Type', selected: section_type)
-      expect(page).to have_content("Options For: #{ section_type}")
+      expect(page).to have_content("Options For: #{section_type}")
       expect(page).to have_select('Gutters', selected: 'No Gutters')
     end
 
@@ -57,7 +57,6 @@ describe 'Featured Article section', type: :feature do
       expect(page).to have_content(product.slug)
       assert_admin_flash_alert_success('Section "Test Featured Article" has been successfully updated!')
     end
-
 
     it 'saves page path and loads it back into the view' do
       select2 'Page', from: 'Link To'
@@ -98,7 +97,6 @@ describe 'Featured Article section', type: :feature do
       expect(page).to have_field('Button Text', with: 'Learn More')
       expect(page).to have_select('Gutters', selected: 'Gutters')
     end
-
 
     it 'allows changing of the section name' do
       fill_in 'Name *', with: 'My New Section Name'

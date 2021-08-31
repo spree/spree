@@ -12,7 +12,6 @@ describe 'Image Gallery section', type: :feature do
   let!(:product) { create(:product, name: 'Zomg Shirt', slug: 'black-zomg-shirt') }
   let(:file_path) { Rails.root + '../../spec/support/ror_ringer.jpeg' }
 
-
   before do
     visit spree.edit_admin_cms_page_cms_section_path(feature_page, section)
   end
@@ -21,7 +20,7 @@ describe 'Image Gallery section', type: :feature do
     it 'loads with correct defaults setings' do
       expect(page).to have_field('Name *', with: "Test #{section_type}")
       expect(page).to have_select('Section Type', selected: section_type)
-      expect(page).to have_content("Options For: #{ section_type}")
+      expect(page).to have_content("Options For: #{section_type}")
 
       within 'div#image_a_details' do
         expect(page).to have_content('Image A')
