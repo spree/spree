@@ -9,8 +9,8 @@ module Spree
       let(:product) { create(:product, stores: [store]) }
 
       describe '#index' do
-        let!(:image_1) { create(:image, viewable: product.master) }
-        let!(:image_2) { create(:image, viewable: product.master) }
+        let!(:image_1) { create(:image, viewable: product.primary) }
+        let!(:image_2) { create(:image, viewable: product.primary) }
         let!(:image_3) { create(:image, viewable: create(:variant)) }
 
         it 'assigns the images for a requested product' do
@@ -27,7 +27,7 @@ module Spree
             delete :destroy, params: { product_id: product, id: image, format: :js }
           end
 
-          let(:image) { create(:image, viewable: product.master) }
+          let(:image) { create(:image, viewable: product.primary) }
 
           shared_examples 'correct response' do
             it { expect(assigns(:image)).to eq(image) }
@@ -67,7 +67,7 @@ module Spree
             delete :destroy, params: { product_id: product, id: image, format: :html }
           end
 
-          let(:image) { create(:image, viewable: product.master) }
+          let(:image) { create(:image, viewable: product.primary) }
 
           shared_examples 'correct response' do
             it { expect(assigns(:image)).to eq(image) }

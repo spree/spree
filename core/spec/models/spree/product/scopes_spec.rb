@@ -30,7 +30,7 @@ describe 'Product scopes', type: :model do
     end
 
     context 'different currency' do
-      let!(:price_eur) { create(:price, variant: product.master, currency: 'EUR') }
+      let!(:price_eur) { create(:price, variant: product.primary, currency: 'EUR') }
       let!(:product_2) { create(:product, stores: [store]) }
 
       it { expect(Spree::Product.available(nil, 'EUR')).to include(product) }

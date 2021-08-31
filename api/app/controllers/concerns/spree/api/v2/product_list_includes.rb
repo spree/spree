@@ -13,7 +13,7 @@ module Spree
             product_properties: [],
             option_types: [],
             variant_images: [],
-            master: variant_includes,
+            primary: variant_includes,
             variants: variant_includes
           }
         end

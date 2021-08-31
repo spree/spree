@@ -140,7 +140,7 @@ module Spree
         where(id: product_ids).
         includes(
           :tax_category,
-          master: [
+          primary: [
             :prices,
             { images: { attachment_attachment: :blob } },
           ]

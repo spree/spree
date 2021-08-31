@@ -260,7 +260,7 @@ describe 'Products', type: :feature do
         expect(page).to have_field('product_price', with: '100.00')
         expect(page).to have_select('product_cost_currency', selected: 'Euro (EUR)')
 
-        expect(product.master.prices.last.currency).to eq('EUR')
+        expect(product.primary.prices.last.currency).to eq('EUR')
         expect(product.stores).to eq([store])
 
         click_button 'Update'

@@ -67,7 +67,7 @@ module Spree
       end
 
       context 'product has more than one price' do
-        before { product.master.prices.create currency: 'EUR', amount: 22 }
+        before { product.primary.prices.create currency: 'EUR', amount: 22 }
 
         it 'returns distinct products only' do
           api_get :index
@@ -132,7 +132,7 @@ module Spree
       end
 
       it 'gets a single product' do
-        create_image(product.master, image('thinking-cat.jpg'))
+        create_image(product.primary, image('thinking-cat.jpg'))
         create(:variant, product: product)
         create_image(product.variants.first, image('thinking-cat.jpg'))
         product.set_property('spree', 'rocks')

@@ -16,13 +16,13 @@ FactoryBot.define do
     factory :stock_location_with_items do
       after(:create) do |stock_location, _evaluator|
         # variant will add itself to all stock_locations in an after_create
-        # creating a product will automatically create a master variant
+        # creating a product will automatically create a primary variant
         store = create(:store)
         product_1 = create(:product, stores: [store])
         product_2 = create(:product, stores: [store])
 
-        stock_location.stock_items.where(variant_id: product_1.master.id).first.adjust_count_on_hand(10)
-        stock_location.stock_items.where(variant_id: product_2.master.id).first.adjust_count_on_hand(20)
+        stock_location.stock_items.where(variant_id: product_1.primary.id).first.adjust_count_on_hand(10)
+        stock_location.stock_items.where(variant_id: product_2.primary.id).first.adjust_count_on_hand(20)
       end
     end
   end

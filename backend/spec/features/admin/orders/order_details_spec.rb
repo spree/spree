@@ -11,7 +11,7 @@ describe 'Order Details', type: :feature, js: true do
   before do
     create(:shipping_method, name: 'Default')
     order.shipments.create!(stock_location_id: stock_location.id)
-    Spree::Cart::AddItem.call(order: order, variant: product.master, quantity: 2)
+    Spree::Cart::AddItem.call(order: order, variant: product.primary, quantity: 2)
   end
 
   context 'as Admin' do
@@ -19,7 +19,7 @@ describe 'Order Details', type: :feature, js: true do
 
     context 'cart edit page' do
       before do
-        product.master.stock_items.first.update_column(:count_on_hand, 100)
+        product.primary.stock_items.first.update_column(:count_on_hand, 100)
         visit spree.cart_admin_order_path(order)
       end
 
@@ -144,9 +144,9 @@ describe 'Order Details', type: :feature, js: true do
 
         context "variant doesn't track inventory" do
           before do
-            tote.master.update_column :track_inventory, false
+            tote.primary.update_column :track_inventory, false
             # make sure there's no stock level for any item
-            tote.master.stock_items.update_all count_on_hand: 0, backorderable: false
+            tote.primary.stock_items.update_all count_on_hand: 0, backorderable: false
           end
 
           it 'adds variant to order just fine' do
@@ -166,9 +166,9 @@ describe 'Order Details', type: :feature, js: true do
         context "site doesn't track inventory" do
           before do
             Spree::Config[:track_inventory_levels] = false
-            tote.master.update_column(:track_inventory, true)
+            tote.primary.update_column(:track_inventory, true)
             # make sure there's no stock level for any item
-            tote.master.stock_items.update_all count_on_hand: 0, backorderable: true
+            tote.primary.stock_items.update_all count_on_hand: 0, backorderable: true
           end
 
           after { Spree::Config[:track_inventory_levels] = true }
@@ -191,8 +191,8 @@ describe 'Order Details', type: :feature, js: true do
         let(:tote) { create(:product, name: 'Tote', price: 15.00) }
 
         before do
-          tote.master.stock_items.first.update(backorderable: false)
-          tote.master.stock_items.first.update(count_on_hand: 0)
+          tote.primary.stock_items.first.update(backorderable: false)
+          tote.primary.stock_items.first.update(count_on_hand: 0)
         end
 
         it 'does not add a product to the order' do
@@ -209,9 +209,9 @@ describe 'Order Details', type: :feature, js: true do
       let!(:stock_location2) { create(:stock_location_with_items, name: 'Clarksville') }
 
       before do
-        product.master.stock_items.first.update_column(:backorderable, true)
-        product.master.stock_items.first.update_column(:count_on_hand, 100)
-        product.master.stock_items.last.update_column(:count_on_hand, 100)
+        product.primary.stock_items.first.update_column(:backorderable, true)
+        product.primary.stock_items.first.update_column(:count_on_hand, 100)
+        product.primary.stock_items.last.update_column(:count_on_hand, 100)
       end
 
       context 'splitting to location' do
@@ -227,7 +227,7 @@ describe 'Order Details', type: :feature, js: true do
         context 'there is enough stock at the other location' do
           it 'allows me to make a split' do
             expect(order.shipments.count).to eq(1)
-            expect(order.shipments.first.inventory_units_for(product.master).sum(&:quantity)).to eq(2)
+            expect(order.shipments.first.inventory_units_for(product.primary).sum(&:quantity)).to eq(2)
 
             within_row(1) { click_icon 'split' }
             select2 stock_location2.name, css: '.stock-item-split', search: true, match: :first
@@ -239,8 +239,8 @@ describe 'Order Details', type: :feature, js: true do
 
             expect(order.shipments.count).to eq(2)
             expect(order.shipments.last.backordered?).to eq(false)
-            expect(order.shipments.first.inventory_units_for(product.master).sum(&:quantity)).to eq(1)
-            expect(order.shipments.last.inventory_units_for(product.master).sum(&:quantity)).to eq(1)
+            expect(order.shipments.first.inventory_units_for(product.primary).sum(&:quantity)).to eq(1)
+            expect(order.shipments.last.inventory_units_for(product.primary).sum(&:quantity)).to eq(1)
           end
 
           it 'allows me to make a transfer via splitting off all stock' do
@@ -256,7 +256,7 @@ describe 'Order Details', type: :feature, js: true do
 
             expect(order.shipments.count).to eq(1)
             expect(order.shipments.last.backordered?).to eq(false)
-            expect(order.shipments.first.inventory_units_for(product.master).sum(&:quantity)).to eq(2)
+            expect(order.shipments.first.inventory_units_for(product.primary).sum(&:quantity)).to eq(2)
             expect(order.shipments.first.stock_location.id).to eq(stock_location2.id)
           end
 
@@ -273,7 +273,7 @@ describe 'Order Details', type: :feature, js: true do
 
             expect(order.shipments.count).to eq(1)
             expect(order.shipments.last.backordered?).to eq(false)
-            expect(order.shipments.first.inventory_units_for(product.master).sum(&:quantity)).to eq(2)
+            expect(order.shipments.first.inventory_units_for(product.primary).sum(&:quantity)).to eq(2)
             expect(order.shipments.first.stock_location.id).to eq(stock_location2.id)
           end
 
@@ -289,7 +289,7 @@ describe 'Order Details', type: :feature, js: true do
             end
 
             expect(order.shipments.count).to eq(1)
-            expect(order.shipments.first.inventory_units_for(product.master).sum(&:quantity)).to eq(2)
+            expect(order.shipments.first.inventory_units_for(product.primary).sum(&:quantity)).to eq(2)
             expect(order.shipments.first.stock_location.id).to eq(stock_location.id)
           end
 
@@ -305,7 +305,7 @@ describe 'Order Details', type: :feature, js: true do
             end
 
             expect(order.shipments.count).to eq(1)
-            expect(order.shipments.first.inventory_units_for(product.master).sum(&:quantity)).to eq(2)
+            expect(order.shipments.first.inventory_units_for(product.primary).sum(&:quantity)).to eq(2)
             expect(order.shipments.first.stock_location.id).to eq(stock_location.id)
 
             fill_in 'item_quantity', with: -1
@@ -315,7 +315,7 @@ describe 'Order Details', type: :feature, js: true do
             end
 
             expect(order.shipments.count).to eq(1)
-            expect(order.shipments.first.inventory_units_for(product.master).sum(&:quantity)).to eq(2)
+            expect(order.shipments.first.inventory_units_for(product.primary).sum(&:quantity)).to eq(2)
             expect(order.shipments.first.stock_location.id).to eq(stock_location.id)
           end
 
@@ -335,8 +335,8 @@ describe 'Order Details', type: :feature, js: true do
         context 'there is not enough stock at the other location' do
           context 'and it cannot backorder' do
             it 'does not allow me to split stock' do
-              product.master.stock_items.last.update_column(:backorderable, false)
-              product.master.stock_items.last.update_column(:count_on_hand, 0)
+              product.primary.stock_items.last.update_column(:backorderable, false)
+              product.primary.stock_items.last.update_column(:count_on_hand, 0)
 
               within_row(1) { click_icon 'split' }
               select2 stock_location2.name, css: '.stock-item-split', search: true, match: :first
@@ -348,15 +348,15 @@ describe 'Order Details', type: :feature, js: true do
               accept_alert { order.reload }
 
               expect(order.shipments.count).to eq(1)
-              expect(order.shipments.first.inventory_units_for(product.master).sum(&:quantity)).to eq(2)
+              expect(order.shipments.first.inventory_units_for(product.primary).sum(&:quantity)).to eq(2)
               expect(order.shipments.first.stock_location.id).to eq(stock_location.id)
             end
           end
 
           context 'but it can backorder' do
             it 'allows me to split and backorder the stock' do
-              product.master.stock_items.last.update_column(:count_on_hand, 0)
-              product.master.stock_items.last.update_column(:backorderable, true)
+              product.primary.stock_items.last.update_column(:count_on_hand, 0)
+              product.primary.stock_items.last.update_column(:backorderable, true)
 
               within_row(1) { click_icon 'split' }
               select2 stock_location2.name, css: '.stock-item-split', search: true, match: :first
@@ -367,7 +367,7 @@ describe 'Order Details', type: :feature, js: true do
 
               order.reload
               expect(order.shipments.count).to eq(1)
-              expect(order.shipments.first.inventory_units_for(product.master).sum(&:quantity)).to eq(2)
+              expect(order.shipments.first.inventory_units_for(product.primary).sum(&:quantity)).to eq(2)
               expect(order.shipments.first.stock_location.id).to eq(stock_location2.id)
             end
           end
@@ -388,8 +388,8 @@ describe 'Order Details', type: :feature, js: true do
             order.reload
             expect(order.shipments.count).to eq(2)
             expect(order.shipments.last.backordered?).to eq(false)
-            expect(order.shipments.first.inventory_units_for(product.master).sum(&:quantity)).to eq(1)
-            expect(order.shipments.last.inventory_units_for(product.master).sum(&:quantity)).to eq(1)
+            expect(order.shipments.first.inventory_units_for(product.primary).sum(&:quantity)).to eq(1)
+            expect(order.shipments.last.inventory_units_for(product.primary).sum(&:quantity)).to eq(1)
           end
         end
 
@@ -398,9 +398,9 @@ describe 'Order Details', type: :feature, js: true do
 
           context "variant doesn't track inventory" do
             before do
-              tote.master.update_column :track_inventory, false
+              tote.primary.update_column :track_inventory, false
               # make sure there's no stock level for any item
-              tote.master.stock_items.update_all count_on_hand: 0, backorderable: false
+              tote.primary.stock_items.update_all count_on_hand: 0, backorderable: false
             end
 
             it 'adds variant to order just fine' do
@@ -422,9 +422,9 @@ describe 'Order Details', type: :feature, js: true do
           context "site doesn't track inventory" do
             before do
               Spree::Config[:track_inventory_levels] = false
-              tote.master.update_column(:track_inventory, true)
+              tote.primary.update_column(:track_inventory, true)
               # make sure there's no stock level for any item
-              tote.master.stock_items.update_all count_on_hand: 0, backorderable: true
+              tote.primary.stock_items.update_all count_on_hand: 0, backorderable: true
             end
 
             after { Spree::Config[:track_inventory_levels] = true }
@@ -445,8 +445,8 @@ describe 'Order Details', type: :feature, js: true do
 
         context 'variant out of stock and not backorderable' do
           before do
-            product.master.stock_items.first.update_column(:backorderable, false)
-            product.master.stock_items.first.update_column(:count_on_hand, 0)
+            product.primary.stock_items.first.update_column(:backorderable, false)
+            product.primary.stock_items.first.update_column(:count_on_hand, 0)
           end
 
           it 'displays out of stock instead of add button' do
@@ -477,11 +477,11 @@ describe 'Order Details', type: :feature, js: true do
           expect(page).to have_css('#order-form-wrapper div', id: /^shipment_\d$/).once
           order.reload
           expect(order.shipments.count).to eq(1)
-          expect(order.shipments.last.inventory_units_for(product.master).sum(&:quantity)).to eq(2)
+          expect(order.shipments.last.inventory_units_for(product.primary).sum(&:quantity)).to eq(2)
         end
 
         context 'receiving shipment can not backorder' do
-          before { product.master.stock_items.last.update_column(:backorderable, false) }
+          before { product.primary.stock_items.last.update_column(:backorderable, false) }
 
           it 'does not allow a split if the receiving shipment qty plus the incoming is greater than the count_on_hand' do
             expect(order.shipments.count).to eq(2)
@@ -503,8 +503,8 @@ describe 'Order Details', type: :feature, js: true do
             accept_alert { order.reload }
 
             expect(order.shipments.count).to eq(2)
-            expect(order.shipments.first.inventory_units_for(product.master).sum(&:quantity)).to eq(1)
-            expect(order.shipments.last.inventory_units_for(product.master).sum(&:quantity)).to eq(1)
+            expect(order.shipments.first.inventory_units_for(product.primary).sum(&:quantity)).to eq(1)
+            expect(order.shipments.last.inventory_units_for(product.primary).sum(&:quantity)).to eq(1)
           end
 
           it 'does not allow a shipment to split stock to itself' do
@@ -518,7 +518,7 @@ describe 'Order Details', type: :feature, js: true do
 
             order.reload
             expect(order.shipments.count).to eq(2)
-            expect(order.shipments.first.inventory_units_for(product.master).sum(&:quantity)).to eq(2)
+            expect(order.shipments.first.inventory_units_for(product.primary).sum(&:quantity)).to eq(2)
           end
 
           it 'splits fine if more than one line_item is in the receiving shipment' do
@@ -533,8 +533,8 @@ describe 'Order Details', type: :feature, js: true do
             expect(page).to have_css("#shipment_#{@shipment2.id} tr.stock-item").twice
 
             expect(order.shipments.count).to eq(2)
-            expect(order.shipments.first.inventory_units_for(product.master).sum(&:quantity)).to eq 1
-            expect(order.shipments.last.inventory_units_for(product.master).sum(&:quantity)).to eq 1
+            expect(order.shipments.first.inventory_units_for(product.primary).sum(&:quantity)).to eq 1
+            expect(order.shipments.last.inventory_units_for(product.primary).sum(&:quantity)).to eq 1
             expect(order.shipments.first.inventory_units_for(variant2).sum(&:quantity)).to eq 0
             expect(order.shipments.last.inventory_units_for(variant2).sum(&:quantity)).to eq 2
           end
@@ -542,8 +542,8 @@ describe 'Order Details', type: :feature, js: true do
 
         context 'receiving shipment can backorder' do
           it 'adds more to the backorder' do
-            product.master.stock_items.last.update_column(:backorderable, true)
-            product.master.stock_items.last.update_column(:count_on_hand, 0)
+            product.primary.stock_items.last.update_column(:backorderable, true)
+            product.primary.stock_items.last.update_column(:count_on_hand, 0)
             expect(@shipment2.reload.backordered?).to eq(false)
 
             within_row(1) { click_icon 'split' }
@@ -563,7 +563,7 @@ describe 'Order Details', type: :feature, js: true do
             expect(page).to have_css('#order-form-wrapper div', id: /^shipment_\d$/).once
 
             expect(order.shipments.count).to eq(1)
-            expect(order.shipments.last.inventory_units_for(product.master).sum(&:quantity)).to eq(2)
+            expect(order.shipments.last.inventory_units_for(product.primary).sum(&:quantity)).to eq(2)
             expect(@shipment2.reload.backordered?).to eq(true)
           end
         end

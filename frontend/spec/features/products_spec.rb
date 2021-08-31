@@ -75,7 +75,7 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
 
     let!(:product) do
       product = Spree::Product.find_by(name: 'Ruby on Rails Ringer T-Shirt')
-      product.master.prices.create(amount: 19.99, currency: 'RUB')
+      product.primary.prices.create(amount: 19.99, currency: 'RUB')
       product.tap(&:save)
     end
 
@@ -151,7 +151,7 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
     end
 
     it "doesn't display out of stock for master product" do
-      product.master.stock_items.update_all count_on_hand: 0, backorderable: false
+      product.primary.stock_items.update_all count_on_hand: 0, backorderable: false
 
       click_link product.name
       within('#product-price') do
@@ -207,7 +207,7 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
     let(:product) { Spree::Product.find_by(name: 'Ruby on Rails Tote') }
 
     before do
-      product.master.stock_items.update_all count_on_hand: 0, backorderable: false
+      product.primary.stock_items.update_all count_on_hand: 0, backorderable: false
     end
 
     it 'does display out of stock for master product' do
@@ -507,8 +507,8 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
       price2.save
       price3.save
 
-      product.master.prices.first.update(compare_at_amount: 29.99)
-      product.master.stock_items.update_all count_on_hand: 10, backorderable: true
+      product.primary.prices.first.update(compare_at_amount: 29.99)
+      product.primary.stock_items.update_all count_on_hand: 10, backorderable: true
       product.option_types << option_type
       product.variants << [variant1, variant2, variant3]
       product.tap(&:save)

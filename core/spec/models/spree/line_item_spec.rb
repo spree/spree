@@ -174,8 +174,8 @@ describe Spree::LineItem, type: :model do
     let(:currency)  { 'EUR' }
     let(:order)     { create(:order, currency: currency) }
     let(:product)   { create(:product_in_stock, stores: [store]) }
-    let!(:line_item) { create(:line_item, order_id: order.id, currency: currency, product: product, variant: product.master) }
-    let!(:price)     { create(:price, currency: currency, variant: product.master, amount: 12) }
+    let!(:line_item) { create(:line_item, order_id: order.id, currency: currency, product: product, variant: product.primary) }
+    let!(:price)     { create(:price, currency: currency, variant: product.primary, amount: 12) }
 
     it 'copies over a variants differing price for another vat zone' do
       line_item.price = 10

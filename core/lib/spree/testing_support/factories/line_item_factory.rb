@@ -11,6 +11,6 @@ FactoryBot.define do
         create(:product)
       end
     end
-    variant { product.master }
+    variant { product.primary }
   end
 end

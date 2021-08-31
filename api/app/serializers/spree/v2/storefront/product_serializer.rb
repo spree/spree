@@ -66,8 +66,8 @@ module Spree
                 serializer: :variant
 
         has_one :primary_variant,
-                object_method_name: :master,
-                id_method_name: :master_id,
+                object_method_name: :primary,
+                id_method_name: :primary_id,
                 record_type: :variant,
                 serializer: :variant
       end

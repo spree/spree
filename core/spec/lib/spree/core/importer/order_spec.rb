@@ -14,7 +14,7 @@ module Spree
 
       let(:product) { create(:product_in_stock, stores: [store], name: 'Test', sku: 'TEST-1', price: 33.22) }
 
-      let(:variant) { product.master }
+      let(:variant) { product.primary }
 
       let(:sku) { variant.sku }
       let(:variant_id) { variant.id }
@@ -294,7 +294,7 @@ module Spree
           shipment = order.shipments.first
 
           expect(shipment.cost.to_f).to eq 14.99
-          expect(shipment.inventory_units.first.variant_id).to eq product.master.id
+          expect(shipment.inventory_units.first.variant_id).to eq product.primary.id
           expect(shipment.tracking).to eq '123456789'
           expect(shipment.shipping_rates.first.cost).to eq 14.99
           expect(shipment.selected_shipping_rate).to eq(shipment.shipping_rates.first)
@@ -360,7 +360,7 @@ module Spree
             shipment = order.shipments.first
 
             expect(shipment.cost.to_f).to eq 4.99
-            expect(shipment.inventory_units.first.variant_id).to eq product.master.id
+            expect(shipment.inventory_units.first.variant_id).to eq product.primary.id
             expect(shipment.tracking).to eq '123456789'
             expect(shipment.shipped_at).to be_present
             expect(shipment.shipping_rates.first.cost).to eq 4.99

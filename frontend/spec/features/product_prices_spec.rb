@@ -7,8 +7,8 @@ describe 'Product with prices in multiple currencies', type: :feature, js: true 
       let!(:product) { create(:product, stores: Spree::Store.all) }
 
       before do
-        create(:price, variant: product.master, currency: 'EUR', amount: 16.00)
-        create(:price, variant: product.master, currency: 'GBP', amount: 23.00)
+        create(:price, variant: product.primary, currency: 'EUR', amount: 16.00)
+        create(:price, variant: product.primary, currency: 'GBP', amount: 23.00)
       end
 
       it 'can switch by currency', :js do
@@ -35,7 +35,7 @@ describe 'Product with prices in multiple currencies', type: :feature, js: true 
 
     context 'product with price in GBP' do
       before do
-        create(:price, variant: product.master, amount: 8.99, currency: 'GBP')
+        create(:price, variant: product.primary, amount: 8.99, currency: 'GBP')
       end
 
       it 'renders the GBP price' do

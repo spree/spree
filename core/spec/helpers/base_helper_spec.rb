@@ -240,7 +240,7 @@ describe Spree::BaseHelper, type: :helper do
     let(:current_currency) { 'USD' }
     let(:image) { create(:image, position: 1) }
     let(:product) do
-      create(:product, stores: [current_store]).tap { |product| product.master.images << image }
+      create(:product, stores: [current_store]).tap { |product| product.primary.images << image }
     end
 
     it 'renders open graph meta data tags for PDP' do
@@ -263,7 +263,7 @@ describe Spree::BaseHelper, type: :helper do
       expect(meta_title).to eq(product.name)
       expect(meta_description).to eq(product.description)
 
-      default_price = product.master.default_price
+      default_price = product.primary.default_price
       expect(meta_price_amount).to eq(default_price.amount.to_s)
       expect(meta_price_currency).to eq(default_price.currency)
     end
@@ -366,17 +366,17 @@ describe Spree::BaseHelper, type: :helper do
 
       it { is_expected.to eq(nil) }
 
-      context 'with master and variants' do
-        context 'master and variants with images' do
-          let!(:master_image_1) { create :image, viewable: product.master }
-          let!(:master_image_2) { create :image, viewable: product.master }
+      context 'with primary and variants' do
+        context 'primary and variants with images' do
+          let!(:primary_image_1) { create :image, viewable: product.primary }
+          let!(:primary_image_2) { create :image, viewable: product.primary }
           let!(:variant_image_1) { create :image, viewable: variant }
           let!(:variant_image_2) { create :image, viewable: variant }
 
-          it { is_expected.to eq(master_image_1) }
+          it { is_expected.to eq(primary_image_1) }
         end
 
-        context 'master without images' do
+        context 'primary without images' do
           let!(:variant_image_1) { create :image, viewable: variant }
           let!(:variant_image_2) { create :image, viewable: variant }
 
@@ -384,16 +384,16 @@ describe Spree::BaseHelper, type: :helper do
         end
 
         context 'variants without images' do
-          let!(:master_image_1) { create :image, viewable: product.master }
-          let!(:master_image_2) { create :image, viewable: product.master }
+          let!(:primary_image_1) { create :image, viewable: product.primary }
+          let!(:primary_image_2) { create :image, viewable: product.primary }
 
-          it { is_expected.to eq(master_image_1) }
+          it { is_expected.to eq(primary_image_1) }
         end
       end
 
-      context 'only with master' do
-        let!(:image_1) { create :image, viewable: product.master }
-        let!(:image_2) { create :image, viewable: product.master }
+      context 'only with primary' do
+        let!(:image_1) { create :image, viewable: product.primary }
+        let!(:image_2) { create :image, viewable: product.primary }
 
         it { is_expected.to eq(image_1) }
       end

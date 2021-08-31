@@ -52,15 +52,15 @@ describe 'Stock Transfers', type: :feature, js: true do
     create(:stock_location, name: 'SF') # destination_location
 
     product = create(:product, stores: Spree::Store.all)
-    Spree::StockLocation.first.stock_items.where(variant_id: product.master.id).first.adjust_count_on_hand(0)
+    Spree::StockLocation.first.stock_items.where(variant_id: product.primary.id).first.adjust_count_on_hand(0)
 
     visit spree.admin_stock_transfers_path
     click_on 'New Stock Transfer'
     fill_in 'reference', with: 'PO 666'
 
     select2_open label: 'Variant'
-    select2_search product.master.name, from: 'Variant'
-    select2_select product.master.name, from: 'Variant', match: :first
+    select2_search product.primary.name, from: 'Variant'
+    select2_select product.primary.name, from: 'Variant', match: :first
 
     click_button 'Add'
     click_button 'Transfer Stock'

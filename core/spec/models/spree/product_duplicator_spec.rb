@@ -9,7 +9,7 @@ module Spree
     let(:file) { File.open(File.expand_path('../../fixtures/thinking-cat.jpg', __dir__)) }
     let(:params) do
       {
-        viewable_id: product.master.id,
+        viewable_id: product.primary.id,
         viewable_type: 'Spree::Variant',
         alt: 'position 1',
         position: 1
@@ -100,7 +100,7 @@ module Spree
       let!(:variant2) { create(:variant, product: product, option_values: [option_value2]) }
 
       it 'will duplciate the variants' do
-        # will change the count by 3, since there will be a master variant as well
+        # will change the count by 3, since there will be a primary variant as well
         expect { duplicator.duplicate }.to change { Spree::Variant.count }.by(3)
       end
 

@@ -254,7 +254,7 @@ describe Spree::TaxRate, type: :model do
 
       context 'a download' do
         before do
-          Spree::Cart::AddItem.call(order: order, variant: download.master)
+          Spree::Cart::AddItem.call(order: order, variant: download.primary)
         end
 
         it 'without an adress costs 100 euros including tax' do
@@ -296,7 +296,7 @@ describe Spree::TaxRate, type: :model do
       context 'a t-shirt' do
         it 'to germany costs 100 euros including tax' do
           allow(order).to receive(:tax_zone).and_return(germany_zone)
-          Spree::Cart::AddItem.call(order: order, variant: tshirt.master)
+          Spree::Cart::AddItem.call(order: order, variant: tshirt.primary)
           Spree::TaxRate.adjust(order, order.line_items)
           order.update_with_updater!
           expect(order.display_total).to eq(Spree::Money.new(100))
@@ -305,7 +305,7 @@ describe Spree::TaxRate, type: :model do
 
         it 'to france costs 100 euros including tax' do
           allow(order).to receive(:tax_zone).and_return(france_zone)
-          Spree::Cart::AddItem.call(order: order, variant: tshirt.master)
+          Spree::Cart::AddItem.call(order: order, variant: tshirt.primary)
           order.update_line_item_prices!
           Spree::TaxRate.adjust(order, order.line_items)
           order.update_with_updater!
@@ -316,7 +316,7 @@ describe Spree::TaxRate, type: :model do
 
         it 'to somewhere else costs the net amount' do
           allow(order).to receive(:tax_zone).and_return(india_zone)
-          Spree::Cart::AddItem.call(order: order, variant: tshirt.master)
+          Spree::Cart::AddItem.call(order: order, variant: tshirt.primary)
           order.update_line_item_prices!
           Spree::TaxRate.adjust(order, order.line_items)
           order.update_with_updater!
@@ -401,7 +401,7 @@ describe Spree::TaxRate, type: :model do
     end
 
     context 'not taxable line item ' do
-      let!(:line_item) { Spree::Cart::AddItem.call(order: @order, variant: @nontaxable.master).value }
+      let!(:line_item) { Spree::Cart::AddItem.call(order: @order, variant: @nontaxable.primary).value }
 
       it 'does not create a tax adjustment' do
         Spree::TaxRate.adjust(@order, @order.line_items)
@@ -415,7 +415,7 @@ describe Spree::TaxRate, type: :model do
     end
 
     context 'taxable line item' do
-      let!(:line_item) { Spree::Cart::AddItem.call(order: @order, variant: @taxable.master).value }
+      let!(:line_item) { Spree::Cart::AddItem.call(order: @order, variant: @taxable.primary).value }
 
       context 'when price includes tax' do
         before do

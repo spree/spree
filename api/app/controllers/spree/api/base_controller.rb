@@ -155,7 +155,7 @@ module Spree
       end
 
       def product_includes
-        [:option_types, :taxons, product_properties: :property, variants: variants_associations, master: variants_associations]
+        [:option_types, :taxons, product_properties: :property, variants: variants_associations, primary: variants_associations]
       end
 
       def order_id

@@ -4,7 +4,7 @@ describe Spree::Core::Search::Base do
   let(:product1) { create(:product, name: 'RoR Mug', price: 9.00) }
   let!(:product2) { create(:product, name: 'RoR Shirt', price: 11.00) }
   let(:taxon) { create(:taxon, name: 'Ruby on Rails') }
-  let(:pln_price) { create(:price, variant_id: product1.master.id, price: 5, currency: 'PLN') }
+  let(:pln_price) { create(:price, variant_id: product1.primary.id, price: 5, currency: 'PLN') }
 
   before do
     include Spree::Core::ProductFilters
@@ -24,14 +24,14 @@ describe Spree::Core::Search::Base do
     let(:params) { { include_images: true, keyword: product1.name, taxon: taxon } }
 
     before do
-      product1.master.images << create(:image, position: 2)
-      product1.master.images << create(:image, position: 1)
+      product1.primary.images << create(:image, position: 2)
+      product1.primary.images << create(:image, position: 1)
       product1.reload
     end
 
     it 'returns images in correct order' do
       expect(subject.first).to eq product1
-      expect(subject.first.images).to eq product1.master.images
+      expect(subject.first.images).to eq product1.primary.images
     end
   end
 
@@ -88,7 +88,7 @@ describe Spree::Core::Search::Base do
   end
 
   it 'finds products in alternate currencies' do
-    create(:price, currency: 'EUR', variant: product1.master)
+    create(:price, currency: 'EUR', variant: product1.primary)
     searcher = described_class.new({})
     searcher.current_currency = 'EUR'
     expect(searcher.retrieve_products).to eq([product1])

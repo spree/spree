@@ -9,7 +9,7 @@ FactoryBot.define do
     deleted_at        { nil }
     shipping_category { |r| Spree::ShippingCategory.first || r.association(:shipping_category) }
 
-    # ensure stock item will be created for this products master
+    # ensure stock item will be created for this products primary
     # also attach this product to the default store if no stores are passed in
     before(:create) do |product|
       create(:stock_location) unless Spree::StockLocation.any?
@@ -34,12 +34,12 @@ FactoryBot.define do
 
       factory :product_in_stock do
         after :create do |product|
-          product.master.stock_items.first.adjust_count_on_hand(10)
+          product.primary.stock_items.first.adjust_count_on_hand(10)
         end
 
         trait :without_backorder do
           after :create do |product|
-            product.master.stock_items.update_all(backorderable: false)
+            product.primary.stock_items.update_all(backorderable: false)
           end
         end
       end

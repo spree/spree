@@ -154,7 +154,7 @@ module Spree
         {
           variant_images: [],
           tax_category: [],
-          master: [],
+          primary: [],
           variants: [:prices]
         }
       end

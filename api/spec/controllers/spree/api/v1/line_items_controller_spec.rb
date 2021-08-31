@@ -35,7 +35,7 @@ module Spree
 
     context 'authenticating with a token' do
       it 'can add a new line item to an existing order' do
-        api_post :create, line_item: { variant_id: product.master.to_param, quantity: 1 }, order_token: order.token
+        api_post :create, line_item: { variant_id: product.primary.to_param, quantity: 1 }, order_token: order.token
         expect(response.status).to eq(201)
         expect(json_response).to have_attributes(attributes)
         expect(json_response['variant']['name']).not_to be_blank
@@ -43,7 +43,7 @@ module Spree
 
       it 'can add a new line item to an existing order with token in header' do
         request.headers['X-Spree-Order-Token'] = order.token
-        api_post :create, line_item: { variant_id: product.master.to_param, quantity: 1 }
+        api_post :create, line_item: { variant_id: product.primary.to_param, quantity: 1 }
         expect(response.status).to eq(201)
         expect(json_response).to have_attributes(attributes)
         expect(json_response['variant']['name']).not_to be_blank
@@ -56,7 +56,7 @@ module Spree
       end
 
       it 'can add a new line item to an existing order' do
-        api_post :create, line_item: { variant_id: product.master.to_param, quantity: 1 }
+        api_post :create, line_item: { variant_id: product.primary.to_param, quantity: 1 }
         expect(response.status).to eq(201)
         expect(json_response).to have_attributes(attributes)
         expect(json_response['variant']['name']).not_to be_blank
@@ -66,7 +66,7 @@ module Spree
         expect_any_instance_of(LineItem).to receive(:some_option=).with('foo')
         api_post :create,
                  line_item: {
-                   variant_id: product.master.to_param,
+                   variant_id: product.primary.to_param,
                    quantity: 1,
                    options: { some_option: 'foo' }
                  }
@@ -74,15 +74,15 @@ module Spree
       end
 
       it 'default quantity to 1 if none is given' do
-        api_post :create, line_item: { variant_id: product.master.to_param }
+        api_post :create, line_item: { variant_id: product.primary.to_param }
         expect(response.status).to eq(201)
         expect(json_response).to have_attributes(attributes)
         expect(json_response[:quantity]).to eq 1
       end
 
       it "increases a line item's quantity if it exists already" do
-        order.line_items.create(variant_id: product.master.id, quantity: 10)
-        api_post :create, line_item: { variant_id: product.master.to_param, quantity: 1 }
+        order.line_items.create(variant_id: product.primary.id, quantity: 10)
+        api_post :create, line_item: { variant_id: product.primary.to_param, quantity: 1 }
         expect(response.status).to eq(201)
         order.reload
         expect(order.line_items.count).to eq(2) # 1 original due to factory, + 1 in this test
@@ -120,13 +120,13 @@ module Spree
 
       context 'order contents changed after shipments were created' do
         let!(:order) { create(:order) }
-        let!(:line_item) { Spree::Cart::AddItem.call(order: order, variant: product.master).value }
+        let!(:line_item) { Spree::Cart::AddItem.call(order: order, variant: product.primary).value }
 
         before { order.create_proposed_shipments }
 
         it 'clear out shipments on create' do
           expect(order.reload.shipments).not_to be_empty
-          api_post :create, line_item: { variant_id: product.master.to_param, quantity: 1 }
+          api_post :create, line_item: { variant_id: product.primary.to_param, quantity: 1 }
           expect(order.reload.shipments).to be_empty
         end
 
@@ -152,7 +152,7 @@ module Spree
 
           it "doesn't destroy shipments or restart checkout flow" do
             expect(order.reload.shipments).not_to be_empty
-            api_post :create, line_item: { variant_id: product.master.to_param, quantity: 1 }
+            api_post :create, line_item: { variant_id: product.primary.to_param, quantity: 1 }
             expect(order.reload.shipments).not_to be_empty
           end
 
@@ -184,7 +184,7 @@ module Spree
       before { create(:user) }
 
       it 'cannot add a new line item to the order' do
-        api_post :create, line_item: { variant_id: product.master.to_param, quantity: 1 }
+        api_post :create, line_item: { variant_id: product.primary.to_param, quantity: 1 }
         assert_unauthorized!
       end
 

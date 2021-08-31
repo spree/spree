@@ -7,7 +7,7 @@ module Spree
     let(:option_value) { create(:option_value) }
     let!(:product) { create(:product, stores: Spree::Store.all) }
     let!(:variant) do
-      variant = product.master
+      variant = product.primary
       variant.option_values << option_value
       variant
     end

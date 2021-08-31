@@ -59,10 +59,19 @@ module Spree
     belongs_to :tax_category, class_name: 'Spree::TaxCategory'
     belongs_to :shipping_category, class_name: 'Spree::ShippingCategory', inverse_of: :products
 
-    has_one :master,
+    has_one :primary,
             -> { where is_master: true },
             inverse_of: :product,
             class_name: 'Spree::Variant'
+
+    ActiveSupport::Deprecation.allow do
+      ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
+        `master` association is now called `primary` and will stop working in Spree 5.0.
+        Please use `#primary` instead
+      DEPRECATION
+
+      alias_attribute :master, :primary
+    end
 
     has_many :variants,
              -> { where(is_master: false).order(:position) },
@@ -124,7 +133,7 @@ module Spree
 
     alias options product_option_types
 
-    self.whitelisted_ransackable_associations = %w[taxons stores variants_including_master master variants]
+    self.whitelisted_ransackable_associations = %w[taxons stores variants_including_master primary variants]
     self.whitelisted_ransackable_attributes = %w[description name slug discontinue_on]
     self.whitelisted_ransackable_scopes = %w[not_discontinued search_by_name]
 
@@ -156,7 +165,7 @@ module Spree
     end
 
     def find_or_build_master
-      master || build_master
+      primary || build_primary
     end
 
     # the master variant is not a member of the variants array
@@ -313,7 +322,7 @@ module Spree
     # Master variant may be deleted (i.e. when the product is deleted)
     # which would make AR's default finder return nil.
     # This is a stopgap for that little problem.
-    def master
+    def primary
       super || variants_including_master.with_deleted.find_by(is_master: true)
     end
 
@@ -375,7 +384,7 @@ module Spree
     def ensure_master
       return unless new_record?
 
-      self.master ||= build_master
+      self.primary ||= build_primary
     end
 
     def normalize_slug

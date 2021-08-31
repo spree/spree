@@ -230,7 +230,7 @@ module Spree
           context 'and the product price is less than promo discount' do
             let(:product_list) { create_list(:product, 3, tax_category: tax_category, price: 9.0, stores: [store]) }
 
-            before { product_list.each { |item| Spree::Cart::AddItem.call(order: order, variant: item.master) } }
+            before { product_list.each { |item| Spree::Cart::AddItem.call(order: order, variant: item.primary) } }
 
             it 'successfully applies the promo' do
               # 3 * (9 + 0.9)
@@ -246,7 +246,7 @@ module Spree
           context 'and the product price is greater than promo discount' do
             let(:product_list) { create_list(:product, 3, tax_category: tax_category, price: 11.0, stores: [store]) }
 
-            before { product_list.each { |item| Spree::Cart::AddItem.call(order: order, variant: item.master, quantity: 2) } }
+            before { product_list.each { |item| Spree::Cart::AddItem.call(order: order, variant: item.primary, quantity: 2) } }
 
             it 'successfully applies the promo' do
               # 3 * (22 + 2.2)
@@ -265,7 +265,7 @@ module Spree
 
             before do
               allow(order).to receive(:coupon_code).and_return '20off'
-              product_list.each { |item| Spree::Cart::AddItem.call(order: order, variant: item.master, quantity: 2) }
+              product_list.each { |item| Spree::Cart::AddItem.call(order: order, variant: item.primary, quantity: 2) }
             end
 
             it 'successfully applies the promo' do

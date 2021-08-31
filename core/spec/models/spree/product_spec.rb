@@ -53,6 +53,14 @@ describe Spree::Product, type: :model do
       end
     end
 
+    context 'master alias' do
+      let(:product) { create(:product) }
+
+      it 'should return master and primary variant' do
+        expect(product.primary).to eq product.master
+      end
+    end
+
     context '#duplicate' do
       before do
         allow(product).to receive_messages taxons: [create(:taxon)], stores: [store]
@@ -61,7 +69,7 @@ describe Spree::Product, type: :model do
       it 'duplicates product' do
         clone = product.duplicate
         expect(clone.name).to eq('COPY OF ' + product.name)
-        expect(clone.master.sku).to eq('COPY OF ' + product.master.sku)
+        expect(clone.primary.sku).to eq('COPY OF ' + product.primary.sku)
         expect(clone.taxons).to eq(product.taxons)
         expect(clone.stores).to eq(product.stores)
         expect(clone.images.size).to eq(product.images.size)
@@ -75,40 +83,40 @@ describe Spree::Product, type: :model do
       end
     end
 
-    context 'master variant' do
-      context 'when master variant changed' do
+    context 'primary variant' do
+      context 'when primary variant changed' do
         before do
-          product.master.sku = 'Something changed'
+          product.primary.sku = 'Something changed'
         end
 
-        it 'saves the master' do
-          expect(product.master).to receive(:save!)
+        it 'saves the primary' do
+          expect(product.primary).to receive(:save!)
           product.save
         end
       end
 
-      context 'when master default price changed' do
+      context 'when primary default price changed' do
         before do
-          master = product.master
-          master.default_price.price = 11
-          master.save!
-          product.master.default_price.price = 12
+          primary = product.primary
+          primary.default_price.price = 11
+          primary.save!
+          product.primary.default_price.price = 12
         end
 
-        it 'saves the master' do
-          expect(product.master).to receive(:save!)
+        it 'saves the primary' do
+          expect(product.primary).to receive(:save!)
           product.save
         end
 
         it 'saves the default price' do
-          expect(product.master.default_price).to receive(:save)
+          expect(product.primary.default_price).to receive(:save)
           product.save
         end
       end
 
-      context "when master variant and price haven't changed" do
-        it 'does not save the master' do
-          expect(product.master).not_to receive(:save!)
+      context "when primary variant and price haven't changed" do
+        it 'does not save the primary' do
+          expect(product.primary).not_to receive(:save!)
           product.save
         end
       end
@@ -119,7 +127,7 @@ describe Spree::Product, type: :model do
         it 'sets deleted_at value' do
           product.destroy
           expect(product.deleted_at).not_to be_nil
-          expect(product.master.reload.deleted_at).not_to be_nil
+          expect(product.primary.reload.deleted_at).not_to be_nil
         end
       end
     end
@@ -155,8 +163,8 @@ describe Spree::Product, type: :model do
 
       context 'with currency set to JPY' do
         before do
-          product.master.default_price.currency = 'JPY'
-          product.master.default_price.save!
+          product.primary.default_price.currency = 'JPY'
+          product.primary.default_price.save!
           Spree::Config[:currency] = 'JPY'
         end
 
@@ -209,7 +217,7 @@ describe Spree::Product, type: :model do
     end
 
     context 'has stock movements' do
-      let(:variant) { product.master }
+      let(:variant) { product.primary }
       let(:stock_item) { variant.stock_items.first }
 
       it 'doesnt raise ReadOnlyRecord error' do
@@ -221,7 +229,7 @@ describe Spree::Product, type: :model do
     # Regression test for #3737
     context 'has stock items' do
       it 'can retrieve stock items' do
-        expect(product.master.stock_items.first).not_to be_nil
+        expect(product.primary.stock_items.first).not_to be_nil
         expect(product.stock_items.first).not_to be_nil
       end
     end
@@ -517,7 +525,7 @@ describe Spree::Product, type: :model do
   context '#images' do
     let(:product) { create(:product, stores: [store]) }
     let(:file) { File.open(File.expand_path('../../fixtures/thinking-cat.jpg', __dir__)) }
-    let(:params) { { viewable_id: product.master.id, viewable_type: 'Spree::Variant', alt: 'position 2', position: 2 } }
+    let(:params) { { viewable_id: product.primary.id, viewable_type: 'Spree::Variant', alt: 'position 2', position: 2 } }
 
     before do
       images = [
@@ -589,9 +597,9 @@ describe Spree::Product, type: :model do
     it { is_expected.to be_invalid }
   end
 
-  it 'initializes a master variant when building a product' do
+  it 'initializes a primary variant when building a product' do
     product = store.products.new
-    expect(product.master.is_master).to be true
+    expect(product.primary.is_master).to be true
   end
 
   context '#discontinue!' do
@@ -661,7 +669,7 @@ describe Spree::Product, type: :model do
 
   describe '#ensure_no_line_items' do
     let(:product) { create(:product, stores: [store]) }
-    let!(:line_item) { create(:line_item, variant: product.master, product: product) }
+    let!(:line_item) { create(:line_item, variant: product.primary, product: product) }
 
     it 'adds error on product destroy' do
       expect(product.destroy).to eq false
@@ -685,7 +693,7 @@ describe Spree::Product, type: :model do
         context 'in stock' do
           before { variant_2.stock_items.first.adjust_count_on_hand(1) }
 
-          it 'returns first non-master in stock variant' do
+          it 'returns first non-primary in stock variant' do
             expect(product.default_variant).to eq(variant_2)
           end
         end
@@ -693,13 +701,13 @@ describe Spree::Product, type: :model do
         context 'backorderable' do
           before { variant_2.stock_items.first.update(backorderable: true) }
 
-          it 'returns first non-master backorderable variant' do
+          it 'returns first non-primary backorderable variant' do
             expect(product.default_variant).to eq(variant_2)
           end
         end
 
         context 'product without variants in stock or backorerable' do
-          it 'returns first non-master variant' do
+          it 'returns first non-primary variant' do
             expect(product.default_variant).to eq(variant_1)
           end
         end
@@ -717,14 +725,14 @@ describe Spree::Product, type: :model do
 
         after { Spree::Config[:track_inventory_levels] = true }
 
-        it 'returns first non-master variant' do
+        it 'returns first non-primary variant' do
           expect(product.default_variant).to eq(variant_1)
         end
       end
 
       context 'product without variants' do
-        it 'returns master variant' do
-          expect(product.default_variant).to eq(product.master)
+        it 'returns primary variant' do
+          expect(product.default_variant).to eq(product.primary)
         end
       end
     end
@@ -736,14 +744,14 @@ describe Spree::Product, type: :model do
     context 'product has variants' do
       let!(:variant) { create(:variant, product: product) }
 
-      it 'returns first non-master variant ID' do
+      it 'returns first non-primary variant ID' do
         expect(product.default_variant_id).to eq(variant.id)
       end
     end
 
     context 'product without variants' do
-      it 'returns master variant ID' do
-        expect(product.default_variant_id).to eq(product.master.id)
+      it 'returns primary variant ID' do
+        expect(product.default_variant_id).to eq(product.primary.id)
       end
     end
   end

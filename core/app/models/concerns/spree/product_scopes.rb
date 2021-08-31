@@ -200,7 +200,7 @@ module Spree
       # joins: "LEFT OUTER JOIN (SELECT line_items.variant_id as vid, COUNT(*) as cnt FROM line_items GROUP BY line_items.variant_id) AS popularity_count ON variants.id = vid",
       # order: 'COALESCE(cnt, 0) DESC'
       add_search_scope :descend_by_popularity do
-        joins(:master).
+        joins(:primary).
           order(%Q{
              COALESCE((
                SELECT

@@ -54,7 +54,7 @@ module Spree
             variants: [
               { images: { attachment_attachment: :blob } }
             ],
-            master: [
+            primary: [
               :prices,
               { images: { attachment_attachment: :blob } }
             ]

@@ -6,7 +6,7 @@ describe 'API v2 JSON API Resource Includes Spec', type: :request do
   let!(:product) { create(:product, stores: [store]) }
   let!(:product_option_type) { create(:product_option_type, product: product) }
   let!(:option_value) { create(:option_value, option_type: product_option_type.option_type) }
-  let(:primary_variant) { product.master }
+  let(:primary_variant) { product.primary }
   let!(:default_variant) { create(:variant, product: product) }
 
   shared_examples 'requested resources' do

@@ -92,17 +92,17 @@ describe Spree::Variant, type: :model do
 
     describe 'mark_master_out_of_stock' do
       before do
-        product.master.stock_items.first.set_count_on_hand(5)
+        product.primary.stock_items.first.set_count_on_hand(5)
       end
 
       context 'when product is created without variants but with stock' do
-        it { expect(product.master).to be_in_stock }
+        it { expect(product.primary).to be_in_stock }
       end
 
       context 'when a variant is created' do
         let!(:new_variant) { create(:variant, product: product) }
 
-        it { expect(product.master).not_to be_in_stock }
+        it { expect(product.primary).not_to be_in_stock }
       end
     end
   end
@@ -114,8 +114,8 @@ describe Spree::Variant, type: :model do
         let!(:product_2) { create(:product, stores: [store]) }
 
         it 'returns all of them' do
-          expect(Spree::Variant.eligible).to include(product_1.master)
-          expect(Spree::Variant.eligible).to include(product_2.master)
+          expect(Spree::Variant.eligible).to include(product_1.primary)
+          expect(Spree::Variant.eligible).to include(product_2.primary)
         end
       end
 
@@ -125,7 +125,7 @@ describe Spree::Variant, type: :model do
 
         it 'filters master variant out' do
           expect(Spree::Variant.eligible).to include(variant)
-          expect(Spree::Variant.eligible).not_to include(product.master)
+          expect(Spree::Variant.eligible).not_to include(product.primary)
         end
       end
     end
@@ -903,7 +903,7 @@ describe Spree::Variant, type: :model do
           context 'check variant price' do
             before { variant.send(:check_price) }
 
-            it { expect(variant.price).to eq(variant.product.master.price) }
+            it { expect(variant.price).to eq(variant.product.primary.price) }
           end
         end
 
@@ -913,7 +913,7 @@ describe Spree::Variant, type: :model do
             variant.send(:check_price)
           end
 
-          it { expect(variant.price).to eq(variant.product.master.price) }
+          it { expect(variant.price).to eq(variant.product.primary.price) }
           it { expect(variant.currency).to eq(Spree::Config[:currency]) }
         end
       end

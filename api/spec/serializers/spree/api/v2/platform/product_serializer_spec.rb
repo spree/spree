@@ -58,7 +58,7 @@ describe Spree::Api::V2::Platform::ProductSerializer do
             },
             primary_variant: {
               data: {
-                id: product.master.id.to_s,
+                id: product.primary.id.to_s,
                 type: :variant
               }
             },

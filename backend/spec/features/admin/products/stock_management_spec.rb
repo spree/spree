@@ -6,7 +6,7 @@ describe 'Stock Management', type: :feature, js: true do
   context 'given a product with a variant and a stock location' do
     let!(:stock_location) { create(:stock_location, name: 'Default') }
     let!(:product) { create(:product, name: 'apache baseball cap', price: 10) }
-    let!(:variant) { product.master }
+    let!(:variant) { product.primary }
 
     before do
       stock_location.stock_item(variant).update_column(:count_on_hand, 10)

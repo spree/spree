@@ -338,7 +338,7 @@ describe 'API V2 Storefront Products Spec', type: :request do
 
           it 'returns products sorted by price' do
             expect(json_response['data'].count).to      eq store.products.available.count
-            expect(json_response['data'].pluck(:id)).to eq store.products.available.joins(master: :prices).select("#{store.products.table_name}.*, #{Spree::Price.table_name}.amount").distinct.order("#{Spree::Price.table_name}.amount").map(&:id).map(&:to_s)
+            expect(json_response['data'].pluck(:id)).to eq store.products.available.joins(primary: :prices).select("#{store.products.table_name}.*, #{Spree::Price.table_name}.amount").distinct.order("#{Spree::Price.table_name}.amount").map(&:id).map(&:to_s)
           end
         end
 
@@ -349,7 +349,7 @@ describe 'API V2 Storefront Products Spec', type: :request do
 
           it 'returns products sorted by price with descending order' do
             expect(json_response['data'].count).to      eq store.products.available.count
-            expect(json_response['data'].pluck(:id)).to eq store.products.available.joins(master: :prices).select("#{store.products.table_name}.*, #{Spree::Price.table_name}.amount").distinct.order("#{Spree::Price.table_name}.amount DESC").map(&:id).map(&:to_s)
+            expect(json_response['data'].pluck(:id)).to eq store.products.available.joins(primary: :prices).select("#{store.products.table_name}.*, #{Spree::Price.table_name}.amount").distinct.order("#{Spree::Price.table_name}.amount DESC").map(&:id).map(&:to_s)
           end
         end
       end
@@ -791,7 +791,7 @@ describe 'API V2 Storefront Products Spec', type: :request do
         let(:currency) { 'EUR' }
 
         before do
-          product.master.prices.create(currency: currency, amount: 99.90, compare_at_amount: 129.90)
+          product.primary.prices.create(currency: currency, amount: 99.90, compare_at_amount: 129.90)
           get "/api/v2/storefront/products?currency=#{currency}&include=default_variant"
         end
 
@@ -955,7 +955,7 @@ describe 'API V2 Storefront Products Spec', type: :request do
         end
       end
 
-      let!(:image) { create(:image, viewable: product.master) }
+      let!(:image) { create(:image, viewable: product.primary) }
       let(:image_json_data) { json_response['included'].first['attributes'] }
 
       before { get "/api/v2/storefront/products/#{product.slug}?include=images#{image_transformation_params}" }
@@ -990,7 +990,7 @@ describe 'API V2 Storefront Products Spec', type: :request do
 
       describe 'purchasable attribute value' do
         before do
-          product.master.stock_items.update_all(backorderable: true)
+          product.primary.stock_items.update_all(backorderable: true)
           variant.stock_items.update_all(backorderable: false)
           request
         end
@@ -1002,7 +1002,7 @@ describe 'API V2 Storefront Products Spec', type: :request do
 
       describe 'backorderable attribute value' do
         before do
-          product.master.stock_items.update_all(backorderable: true)
+          product.primary.stock_items.update_all(backorderable: true)
           variant.stock_items.update_all(backorderable: false)
           request
         end
@@ -1014,7 +1014,7 @@ describe 'API V2 Storefront Products Spec', type: :request do
 
       describe 'in_stock attribute value' do
         before do
-          product.master.stock_items.update_all(count_on_hand: 10)
+          product.primary.stock_items.update_all(count_on_hand: 10)
           variant.stock_items.update_all(count_on_hand: 0)
           request
         end

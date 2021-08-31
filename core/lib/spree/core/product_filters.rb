@@ -58,7 +58,7 @@ module Spree
         conds.each do |new_scope|
           scope = scope.or(new_scope)
         end
-        Spree::Product.joins(master: :default_price).where(scope)
+        Spree::Product.joins(primary: :default_price).where(scope)
       end
 
       def self.format_price(amount)

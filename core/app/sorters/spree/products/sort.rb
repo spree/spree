@@ -21,7 +21,7 @@ module Spree
       def by_price(scope)
         return scope unless (value = sort_by?('price'))
 
-        scope.joins(master: :prices).
+        scope.joins(primary: :prices).
           select("#{Spree::Product.table_name}.*, #{Spree::Price.table_name}.amount").
           distinct.
           where(spree_prices: { currency: currency }).
@@ -37,7 +37,7 @@ module Spree
                                       "#{Spree::Product.table_name}.*, "
                                     end
 
-        scope.joins(:master).
+        scope.joins(:primary).
           select("#{select_product_attributes}#{Spree::Variant.table_name}.sku").
           where(Spree::Variant.table_name.to_s => { is_master: true }).
           order("#{Spree::Variant.table_name}.sku #{value[1]}")

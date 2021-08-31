@@ -917,7 +917,7 @@ describe Spree::CheckoutController, type: :controller do
 
   context 'Address Book' do
     let!(:user) { create(:user) }
-    let!(:variant) { create(:product, sku: 'Demo-SKU').master }
+    let!(:variant) { create(:product, sku: 'Demo-SKU').primary }
     let!(:address) { create(:address, user: user, country: country, state: state) }
     let!(:order) { create(:order, store: store, bill_address_id: nil, ship_address_id: nil, user: user, state: 'address') }
     let(:address_params) { address.value_attributes.merge(firstname: 'Something Else') }

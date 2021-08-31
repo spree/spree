@@ -29,7 +29,7 @@ module Spree
           api_post :create,
                    image: { attachment: upload_image('thinking-cat.jpg'),
                             viewable_type: 'Spree::Variant',
-                            viewable_id: product.master.to_param },
+                            viewable_id: product.primary.to_param },
                    product_id: product.id
           expect(response.status).to eq(201)
           expect(json_response).to have_attributes(attributes)
@@ -39,13 +39,13 @@ module Spree
       it "can't upload a new image for a variant without attachment" do
         api_post :create,
                  image: { viewable_type: 'Spree::Variant',
-                          viewable_id: product.master.to_param },
+                          viewable_id: product.primary.to_param },
                  product_id: product.id
         expect(response.status).to eq(422)
       end
 
       context 'working with an existing image' do
-        let!(:product_image) { create_image(product.master, image('thinking-cat.jpg')) }
+        let!(:product_image) { create_image(product.primary, image('thinking-cat.jpg')) }
 
         it 'can get a single product image' do
           api_get :show, id: product_image.id, product_id: product.id
@@ -54,7 +54,7 @@ module Spree
         end
 
         it 'can get a single variant image' do
-          api_get :show, id: product_image.id, variant_id: product.master.id
+          api_get :show, id: product_image.id, variant_id: product.primary.id
           expect(response.status).to eq(200)
           expect(json_response).to have_attributes(attributes)
         end
@@ -67,7 +67,7 @@ module Spree
         end
 
         it 'can get a list of variant images' do
-          api_get :index, variant_id: product.master.id
+          api_get :index, variant_id: product.primary.id
           expect(response.status).to eq(200)
           expect(json_response).to have_key('images')
           expect(json_response['images'].first).to have_attributes(attributes)

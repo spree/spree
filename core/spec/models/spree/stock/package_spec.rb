@@ -65,8 +65,8 @@ module Spree
         method2   = create(:shipping_method)
         method1.shipping_categories = [category1, category2]
         method2.shipping_categories = [category1]
-        variant1 = create(:product, shipping_category: category1).master
-        variant2 = create(:product, shipping_category: category2).master
+        variant1 = create(:product, shipping_category: category1).primary
+        variant2 = create(:product, shipping_category: category2).primary
         contents = [ContentItem.new(build(:inventory_unit, variant_id: variant1.id)),
                     ContentItem.new(build(:inventory_unit, variant_id: variant1.id)),
                     ContentItem.new(build(:inventory_unit, variant_id: variant2.id))]
