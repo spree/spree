@@ -142,7 +142,7 @@ module Spree
 
         expect(json_response).to have_attributes(show_attributes)
         expect(json_response['variants'].first).to have_attributes([:name,
-                                                                    :is_master,
+                                                                    :is_primary,
                                                                     :price,
                                                                     :images,
                                                                     :in_stock])
@@ -356,7 +356,7 @@ module Spree
           expect(response.status).to eq 200
           expect(json_response['variants'].count).to eq(2) # 2 variants
 
-          variants = json_response['variants'].reject { |v| v['is_master'] }
+          variants = json_response['variants'].reject { |v| v['is_primary'] }
           expect(variants.last['option_values'][0]['name']).to eq('small')
           expect(variants.last['option_values'][0]['option_type_name']).to eq('size')
 
@@ -380,7 +380,7 @@ module Spree
           }
 
           expect(json_response['variants'].count).to eq(1)
-          variants = json_response['variants'].reject { |v| v['is_master'] }
+          variants = json_response['variants'].reject { |v| v['is_primary'] }
           expect(variants.last['option_values'][0]['name']).to eq('large')
           expect(variants.last['sku']).to eq('456')
           expect(variants.count).to eq(1)

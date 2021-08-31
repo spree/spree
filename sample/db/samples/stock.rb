@@ -18,7 +18,7 @@ product_1.master.stock_items.find_by!(stock_location: location).update!(count_on
 product_2.master.stock_items.find_by!(stock_location: location).update!(count_on_hand: 1)
 
 Spree::Variant.all.each do |variant|
-  next if variant.is_master? && variant.product.has_variants?
+  next if variant.is_primary? && variant.product.has_variants?
 
   variant.stock_items.each do |stock_item|
     Spree::StockMovement.create(quantity: rand(20..50), stock_item: stock_item)

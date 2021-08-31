@@ -9,7 +9,7 @@ FactoryBot.define do
     height          { generate(:random_float) }
     width           { generate(:random_float) }
     depth           { generate(:random_float) }
-    is_master       { 0 }
+    is_primary       { 0 }
     track_inventory { true }
 
     product       { |p| p.association(:base_product, stores: [create(:store)]) }
@@ -24,14 +24,14 @@ FactoryBot.define do
     end
 
     factory :master_variant do
-      is_master { 1 }
+      is_primary { 1 }
     end
 
     factory :on_demand_variant do
       track_inventory { false }
 
       factory :on_demand_master_variant do
-        is_master { 1 }
+        is_primary { 1 }
       end
     end
   end

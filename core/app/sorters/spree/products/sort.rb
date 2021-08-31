@@ -33,7 +33,7 @@ module Spree
 
         scope.joins(:master).
           select("#{Spree::Product.table_name}.*, #{Spree::Variant.table_name}.sku").
-          where(Spree::Variant.table_name.to_s => { is_master: true }).
+          where(Spree::Variant.table_name.to_s => { is_primary: true }).
           order("#{Spree::Variant.table_name}.sku #{value[1]}")
       end
 

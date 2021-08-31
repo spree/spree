@@ -570,7 +570,7 @@ describe Spree::Product, type: :model do
 
   it 'initializes a master variant when building a product' do
     product = store.products.new
-    expect(product.master.is_master).to be true
+    expect(product.master.is_primary).to be true
   end
 
   context '#discontinue!' do

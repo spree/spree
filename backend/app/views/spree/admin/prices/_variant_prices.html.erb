@@ -17,7 +17,7 @@
             <% price = variant.price_in(code) %>
             <tr id="variant_prices_row" data-hook="variant_prices_row">
               <td class="panel">
-                <%= variant.is_master? ? Spree.t(:master) : variant.options_text.blank? ? Spree.t(:variant) : variant.options_text %>
+                <%= variant.is_primary? ? Spree.t(:master) : variant.options_text.blank? ? Spree.t(:variant) : variant.options_text %>
               </td>
               <td class="panel-title"><%= variant.sku %></td>
               <td><%= label_tag "vp[#{variant.id}][#{code}]", code %></td>

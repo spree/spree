@@ -21,7 +21,7 @@ describe Spree::Api::V2::Platform::VariantSerializer do
             height: variant.height,
             depth: variant.depth,
             deleted_at: variant.deleted_at,
-            is_master: variant.is_master,
+            is_primary: variant.is_primary,
             cost_price: variant.cost_price,
             position: variant.position,
             cost_currency: variant.cost_currency,

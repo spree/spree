@@ -184,7 +184,7 @@ function CartForm($, $cartForm) {
       })
     }
 
-    if (this.variants.length === 1 && this.variants[0].is_master) {
+    if (this.variants.length === 1 && this.variants[0].is_primary) {
       return this.variants[0]
     }
 

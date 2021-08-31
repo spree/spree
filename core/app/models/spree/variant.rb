@@ -46,7 +46,7 @@ module Spree
 
     validate :check_price
 
-    validates :option_values, presence: true, unless: :is_master?
+    validates :option_values, presence: true, unless: :is_primary?
 
     with_options numericality: { greater_than_or_equal_to: 0, allow_nil: true } do
       validates :cost_price
@@ -56,7 +56,7 @@ module Spree
                     allow_blank: true, unless: :disable_sku_validation?
 
     after_create :create_stock_items
-    after_create :set_master_out_of_stock, unless: :is_master?
+    after_create :set_master_out_of_stock, unless: :is_primary?
 
     after_touch :clear_in_stock_cache
 
@@ -65,7 +65,7 @@ module Spree
     scope :in_stock_or_backorderable, -> { in_stock.or(backorderable) }
 
     scope :eligible, -> {
-      where(is_master: false).or(
+      where(is_primary: false).or(
         where(
           <<-SQL
             #{Variant.quoted_table_name}.id IN (
@@ -141,11 +141,11 @@ module Spree
 
     # Default to master name
     def exchange_name
-      is_master? ? name : options_text
+      is_primary? ? name : options_text
     end
 
     def descriptive_name
-      is_master? ? name + ' - Master' : name + ' - ' + options_text
+      is_primary? ? name + ' - Master' : name + ' - ' + options_text
     end
 
     # use deleted? rather than checking the attribute directly. this
@@ -163,7 +163,7 @@ module Spree
 
     def set_option_value(opt_name, opt_value)
       # no option values on master
-      return if is_master
+      return if is_primary
 
       option_type = Spree::OptionType.where(name: opt_name).first_or_initialize do |o|
         o.presentation = opt_name

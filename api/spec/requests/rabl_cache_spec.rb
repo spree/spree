@@ -15,16 +15,16 @@ describe 'Rabl Cache', type: :request, caching: true do
 
     # Make sure we get a non master variant
     variant_a = JSON.parse(response.body)['variants'].reject do |v|
-      v['is_master']
+      v['is_primary']
     end.first
 
-    expect(variant_a['is_master']).to be false
+    expect(variant_a['is_primary']).to be false
     expect(variant_a['stock_items']).not_to be_nil
 
     get "/api/v1/products/#{Spree::Product.first.id}", params: { token: user.spree_api_key }
     expect(response.status).to eq(200)
     variant_b = JSON.parse(response.body)['variants'].last
-    expect(variant_b['is_master']).to be false
+    expect(variant_b['is_primary']).to be false
 
     expect(variant_a['id']).to eq(variant_b['id'])
     expect(variant_b['stock_items']).to be_nil

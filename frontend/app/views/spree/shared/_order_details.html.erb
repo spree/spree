@@ -81,7 +81,7 @@
                 <div data-hook="order_item_name">
                   <%= link_to item.name, spree.product_path(item.product), class: 'checkout-confirm-order-details-line-items-line-item-name-link' %>
                 </div>
-                <% unless item.variant.is_master? %>
+                <% unless item.variant.is_primary? %>
                   <ul class="checkout-confirm-order-details-line-items-line-item-name-options text-uppercase list-unstyled mb-0">
                     <% item.variant.option_values.sort { |ov| ov.option_type.position }.each do |ov| %>
                     <li>

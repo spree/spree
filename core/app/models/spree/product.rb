@@ -60,12 +60,12 @@ module Spree
     belongs_to :shipping_category, class_name: 'Spree::ShippingCategory', inverse_of: :products
 
     has_one :master,
-            -> { where is_master: true },
+            -> { where is_primary: true },
             inverse_of: :product,
             class_name: 'Spree::Variant'
 
     has_many :variants,
-             -> { where(is_master: false).order(:position) },
+             -> { where(is_primary: false).order(:position) },
              inverse_of: :product,
              class_name: 'Spree::Variant'
 
@@ -129,7 +129,7 @@ module Spree
     self.whitelisted_ransackable_scopes = %w[not_discontinued search_by_name]
 
     [
-      :sku, :price, :currency, :weight, :height, :width, :depth, :is_master,
+      :sku, :price, :currency, :weight, :height, :width, :depth, :is_primary,
       :cost_currency, :price_in, :amount_in, :cost_price, :compare_at_price, :compare_at_amount_in
     ].each do |method_name|
       delegate method_name, :"#{method_name}=", to: :find_or_build_master
@@ -312,7 +312,7 @@ module Spree
     # which would make AR's default finder return nil.
     # This is a stopgap for that little problem.
     def master
-      super || variants_including_master.with_deleted.find_by(is_master: true)
+      super || variants_including_master.with_deleted.find_by(is_primary: true)
     end
 
     def brand

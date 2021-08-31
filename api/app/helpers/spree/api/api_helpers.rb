@@ -60,7 +60,7 @@ module Spree
       ]
 
       @@variant_attributes = [
-        :id, :name, :sku, :price, :weight, :height, :width, :depth, :is_master,
+        :id, :name, :sku, :price, :weight, :height, :width, :depth, :is_primary,
         :slug, :description, :track_inventory
       ]
 
