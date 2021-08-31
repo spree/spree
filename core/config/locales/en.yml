@@ -1350,6 +1350,7 @@ en:
     backordered_confirm_info: Selected item is backordered so expect delays. Are you sure you want to order it?
     overview: Overview
     package_from: package from
+    page: Page
     page_not_found: Sorry! Page you are looking can’t be found.
     pagination:
       next_page: next page &raquo;
