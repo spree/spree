@@ -60,6 +60,8 @@ const createRequest = function(params, succeed, fail) {
 }
 
 const updateSelectSuccess = function(parsedData, returnValueFromAttributes, returnOptionText, selectEl, selectedOption) {
+  const selectedOpt = selectEl.querySelector('option[selected]')
+
   parsedData.forEach((object) => {
     const optionEl = document.createElement('option')
 
@@ -68,7 +70,11 @@ const updateSelectSuccess = function(parsedData, returnValueFromAttributes, retu
       if (parseInt(selectedOption, 10) === parseInt(object.id, 10)) optionEl.selected = true
     } else {
       optionEl.value = object.attributes[returnValueFromAttributes]
-      if (selectedOption === object.attributes[returnValueFromAttributes]) optionEl.selected = true
+      if (selectedOpt.value === object.attributes[returnValueFromAttributes]) {
+        selectedOpt.remove()
+
+        optionEl.setAttribute('selected', 'selected')
+      }
     }
 
     optionEl.innerHTML = object.attributes[returnOptionText]

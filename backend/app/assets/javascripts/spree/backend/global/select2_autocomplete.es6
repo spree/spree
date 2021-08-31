@@ -104,7 +104,7 @@ $.fn.select2Autocomplete = function(params) {
   }
 
   //
-  // Make AJAX request
+  // Set-up Select2 and make AJAX request.
   this.select2({
     multiple: select2Multiple,
     allowClear: select2allowClear,
