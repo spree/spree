@@ -37,10 +37,9 @@
           <%= image_tag main_app.url_for(@cms_section.image_one) %>
         </figure>
       <% end %>
-      <%= f.field_container :image_one, class: ['form-group mb-0'] do %>
-        <%= f.file_field :image_one %>
-        <%= f.error_message_on :image_one %>
-      <% end %>
+
+      <%= f.file_field :image_one %>
+      <%= f.error_message_on :image_one %>
     <% end %>
     <small class="form-text text-muted"><%= Spree.t('admin.cms.hero.aspect_ratio') %></small>
   </div>
