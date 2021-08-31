@@ -46,7 +46,7 @@ describe Spree::Cms::Sections::SideBySideImages, type: :model do
     end
   end
 
-  if Rails::VERSION::STRING >= '6.1'
+  if Rails::VERSION::STRING >= '6.0'
     context 'when changing the link types for links one and two' do
       let!(:side_by_side_images_section) { create(:cms_side_by_side_images_section, cms_page: homepage) }
 

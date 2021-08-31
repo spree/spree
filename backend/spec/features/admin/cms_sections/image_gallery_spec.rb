@@ -24,19 +24,28 @@ describe 'Image Gallery section', type: :feature do
       within 'div#image_a_details' do
         expect(page).to have_content('Image A')
         expect(page).to have_content('Title')
-        expect(page).to have_select('Link To', selected: 'Taxon')
+
+        if Rails::VERSION::STRING >= '6.0'
+          expect(page).to have_select('Link To', selected: 'Taxon')
+        end
       end
 
       within 'div#image_b_details' do
         expect(page).to have_content('Image B')
         expect(page).to have_content('Title')
-        expect(page).to have_select('Link To', selected: 'Taxon')
+
+        if Rails::VERSION::STRING >= '6.0'
+          expect(page).to have_select('Link To', selected: 'Taxon')
+        end
       end
 
       within 'div#image_c_details' do
         expect(page).to have_content('Image C')
         expect(page).to have_content('Title')
-        expect(page).to have_select('Link To', selected: 'Taxon')
+
+        if Rails::VERSION::STRING >= '6.0'
+          expect(page).to have_select('Link To', selected: 'Taxon')
+        end
       end
 
       expect(page).to have_select('Layout Style', selected: 'Default')
