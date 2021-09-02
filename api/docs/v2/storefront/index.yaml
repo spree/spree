@@ -3975,6 +3975,55 @@ paths:
         '404':
           $ref: '#/components/responses/404NotFound'
       summary: Get a Taxon
+  /api/v2/storefront/option_types:
+    get:
+      description: 'Returns a list of Option Types.'
+      tags:
+        - Option Types
+      operationId: Option Types List
+      parameters:
+        - in: query
+          name: 'filter[filterable]'
+          schema:
+            type: boolean
+          example: 'true'
+          description: Fetch only option types marked as filterable
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/PerPageParam'
+        - $ref: '#/components/parameters/OptionTypeIncludeParam'
+        - $ref: '#/components/parameters/SparseFieldsParam'
+      responses:
+        '200':
+          description: Returns a list of Option Types
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/OptionTypesList'
+      summary: List of Option Types
+  '/api/v2/storefront/option_types/{id}':
+    get:
+      description: |-
+        Returns Option Type details.
+        ```
+        GET /api/v2/storefront/option_types/1
+        ```
+      tags:
+        - Option Types
+      operationId: Show Option Type
+      parameters:
+        - $ref: '#/components/parameters/Id'
+        - $ref: '#/components/parameters/OptionTypeIncludeParam'
+        - $ref: '#/components/parameters/SparseFieldsParam'
+      responses:
+        '200':
+          description: Returns the reqested Option Type
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/OptionType'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+      summary: Get an Option Type
   /api/v2/storefront/countries:
     get:
       description: Returns a list of all Countries
@@ -14356,6 +14405,49 @@ components:
                 position:
                   type: integer
                   example: 1
+      OptionTypeRelationships:
+      type: object
+      option_values:
+        children:
+          type: object
+          description: List of option values
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/Relation'
+    OptionTypeAttributesAndRelationships:
+      properties:
+        id:
+          type: string
+          example: '1'
+        type:
+          type: string
+          default: option_type
+        attributes:
+          $ref: '#/components/schemas/OptionTypeAttributes'
+        relationships:
+          $ref: '#/components/schemas/OptionTypeRelationships'
+      x-examples: {}
+    OptionTypesList:
+      required:
+        - links
+        - data
+        - included
+      properties:
+        links:
+          $ref: '#/components/schemas/ListLinks'
+        meta:
+          $ref: '#/components/schemas/ListMeta'
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/OptionTypeAttributesAndRelationships'
+        included:
+          type: array
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/OptionValue'
     OptionValue:
       required:
         - data
@@ -15866,6 +15958,18 @@ components:
 
         [More information](https://jsonapi.org/format/#fetching-includes)
       example: 'parent,taxonomy,children,image,products'
+    OptionTypeIncludeParam:
+      name: include
+      in: query
+      schema:
+        type: string
+      description: |-
+        Specify what related resources (relationships) you would like to receive in the response body. Eg.
+        ```
+        option_values
+        ```
+        [More information](https://jsonapi.org/format/#fetching-includes)
+      example: 'option_values'
     IsoOrIso3:
       name: iso
       in: path
