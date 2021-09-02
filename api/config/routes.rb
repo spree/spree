@@ -163,6 +163,7 @@ Spree::Core::Engine.add_routes do
         get '/order_status/:number', to: 'order_status#show', as: :order_status
         resources :products, only: %i[index show]
         resources :taxons,   only: %i[index show], id: /.+/
+        resources :option_types, only: %i[index show]
         get '/stores/:code', to: 'stores#show', as: :store
 
         resources :menus, only: %i[index show]

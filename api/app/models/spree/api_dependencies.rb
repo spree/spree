@@ -14,6 +14,7 @@ module Spree
       :storefront_country_serializer, :storefront_menu_serializer, :storefront_menu_finder, :storefront_current_order_finder,
       :storefront_completed_order_finder, :storefront_order_sorter, :storefront_collection_paginator, :storefront_user_serializer,
       :storefront_products_sorter, :storefront_products_finder, :storefront_product_serializer, :storefront_taxon_serializer,
+      :storefront_option_type_serializer, :storefront_option_type_finder,
       :storefront_taxon_finder, :storefront_find_by_variant_finder, :storefront_cart_update_service, :storefront_cart_associate_service,
       :storefront_cart_estimate_shipping_rates_service, :storefront_estimated_shipment_serializer,
       :storefront_store_serializer, :storefront_address_serializer, :storefront_order_serializer,
@@ -81,6 +82,7 @@ module Spree
       @storefront_estimated_shipment_serializer = 'Spree::V2::Storefront::EstimatedShippingRateSerializer'
       @storefront_store_serializer = 'Spree::V2::Storefront::StoreSerializer'
       @storefront_order_serializer = 'Spree::V2::Storefront::CartSerializer'
+      @storefront_option_type_serializer = 'Spree::V2::Storefront::OptionTypeSerializer'
 
       # sorters
       @storefront_collection_sorter = Spree::Dependencies.collection_sorter
@@ -102,6 +104,7 @@ module Spree
       @storefront_find_by_variant_finder = Spree::Dependencies.line_item_by_variant_finder
       @storefront_products_finder = Spree::Dependencies.products_finder
       @storefront_taxon_finder = Spree::Dependencies.taxon_finder
+      @storefront_option_type_finder = Spree::Dependencies.option_type_finder
 
       @error_handler = 'Spree::Api::ErrorHandler'
     end

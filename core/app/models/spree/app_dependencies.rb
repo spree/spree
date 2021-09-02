@@ -13,7 +13,7 @@ module Spree
       :products_finder, :taxon_finder, :line_item_by_variant_finder, :cart_estimate_shipping_rates_service,
       :account_create_address_service, :account_update_address_service, :account_create_service, :account_update_service,
       :address_finder, :collection_sorter, :error_handler, :current_store_finder, :cart_empty_service, :cart_destroy_service,
-      :classification_reposition_service, :credit_cards_destroy_service, :cart_associate_service
+      :classification_reposition_service, :credit_cards_destroy_service, :cart_associate_service, :option_type_finder
     ].freeze
 
     attr_accessor *INJECTION_POINTS
@@ -91,6 +91,7 @@ module Spree
       @credit_card_finder = 'Spree::CreditCards::Find'
       @products_finder = 'Spree::Products::Find'
       @taxon_finder = 'Spree::Taxons::Find'
+      @option_type_finder = 'Spree::OptionTypes::Find'
       @line_item_by_variant_finder = 'Spree::LineItems::FindByVariant'
     end
   end
