@@ -1,7 +1,8 @@
 class CreateSpreeWishlists < ActiveRecord::Migration[5.2]
   def change
     create_table :spree_wishlists, if_not_exists: true do |t|
-      t.references :user
+      t.belongs_to :user
+      t.belongs_to :store
 
       t.column :name, :string
       t.column :token, :string
