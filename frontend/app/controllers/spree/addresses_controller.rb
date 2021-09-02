@@ -4,10 +4,6 @@ module Spree
     helper Spree::AddressesHelper
     load_and_authorize_resource class: Spree::Address
 
-    def index
-      @addresses = try_spree_current_user.addresses
-    end
-
     def create
       @address = try_spree_current_user.addresses.build(address_params)
       if create_service.call(user: try_spree_current_user, address_params: @address.attributes).success?
