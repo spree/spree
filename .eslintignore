@@ -4,4 +4,4 @@
 *-min.js
 *.min.js
 jquery*.js
-/cmd/lib/spree_cmd/templates/**
+/cli/lib/spree_cli/templates/**

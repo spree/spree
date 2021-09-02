@@ -1,4 +1,4 @@
 **/vendor/**
 **/dummy/**
 **/sandbox/**
-/cmd/lib/spree_cmd/templates/**
+/cli/lib/spree_cli/templates/**

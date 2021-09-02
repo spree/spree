@@ -1,2 +1,2 @@
 #!/usr/bin/env ruby
-require 'spree_cmd'
+require 'spree_cli'
