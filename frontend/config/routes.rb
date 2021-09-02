@@ -16,7 +16,7 @@ Spree::Core::Engine.add_routes do
 
     resources :orders, except: [:index, :new, :create, :destroy]
 
-    resources :addresses, except: [:show]
+    resources :addresses, except: [:index, :show]
 
     get '/cart', to: 'orders#edit', as: :cart
     patch '/cart', to: 'orders#update', as: :update_cart
