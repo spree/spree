@@ -14,7 +14,7 @@ module Spree
       :storefront_country_serializer, :storefront_menu_serializer, :storefront_menu_finder, :storefront_current_order_finder,
       :storefront_completed_order_finder, :storefront_order_sorter, :storefront_collection_paginator, :storefront_user_serializer,
       :storefront_products_sorter, :storefront_products_finder, :storefront_product_serializer, :storefront_taxon_serializer,
-      :storefront_taxon_finder, :storefront_find_by_variant_finder, :storefront_cart_update_service,
+      :storefront_taxon_finder, :storefront_find_by_variant_finder, :storefront_cart_update_service, :storefront_cart_associate_service,
       :storefront_cart_estimate_shipping_rates_service, :storefront_estimated_shipment_serializer,
       :storefront_store_serializer, :storefront_address_serializer, :storefront_order_serializer,
       :storefront_account_create_address_service, :storefront_account_update_address_service, :storefront_address_finder,
@@ -43,6 +43,7 @@ module Spree
       @storefront_cart_estimate_shipping_rates_service = Spree::Dependencies.cart_estimate_shipping_rates_service
       @storefront_cart_empty_service = Spree::Dependencies.cart_empty_service
       @storefront_cart_destroy_service = Spree::Dependencies.cart_destroy_service
+      @storefront_cart_associate_service = Spree::Dependencies.cart_associate_service
 
       # coupon code handler
       @storefront_coupon_handler = Spree::Dependencies.coupon_handler
