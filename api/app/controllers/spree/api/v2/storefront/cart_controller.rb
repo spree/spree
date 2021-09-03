@@ -132,14 +132,14 @@ module Spree
 
           def associate
             guest_order_token = params[:guest_order_token]
-            guest_order = ::Spree::Orders::FindCurrent.new.execute(
+            guest_order = ::Spree::Api::Dependencies.storefront_current_order_finder.constantize.new.execute(
               store: current_store,
               user: nil,
               token: guest_order_token,
               currency: current_currency
             )
 
-            spree_authorize! :show, guest_order, guest_order_token
+            spree_authorize! :update, guest_order, guest_order_token
 
             result = associate_service.call(guest_order: guest_order, user: spree_current_user)
 
