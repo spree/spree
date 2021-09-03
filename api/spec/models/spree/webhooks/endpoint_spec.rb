@@ -13,12 +13,11 @@ module Spree
       end
 
       context 'mysql', if: ActiveRecord::Base.connection.adapter_name == 'Mysql2' do
-
         context 'without subscriptions when initializing an endpoint' do
           let(:subscriptions) { nil }
 
           it 'sets the default subscriptions' do
-            expect(subject.subscriptions).to eq(default_all_subscriptions) 
+            expect(subject.subscriptions).to eq(default_all_subscriptions)
           end
         end
 
@@ -28,7 +27,7 @@ module Spree
           let(:subscriptions) { ['model.event'] }
 
           it 'after-save does not set default subscriptions' do
-            expect(subject.subscriptions).to eq(subscriptions) 
+            expect(subject.subscriptions).to eq(subscriptions)
           end
         end
       end
@@ -40,7 +39,7 @@ module Spree
           # Although an empty string isn't a working subscription
           # what's being tested is setting default susbcriptions,
           # since MySQL does not support default values for JSON.
-          expect(subject.subscriptions).to eq(subscriptions) 
+          expect(subject.subscriptions).to eq(subscriptions)
         end
       end
     end
