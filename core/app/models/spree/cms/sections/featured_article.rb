@@ -1,6 +1,5 @@
 module Spree::Cms::Sections
   class FeaturedArticle < Spree::CmsSection
-    before_save :reset_link_attributes
     after_initialize :default_values
 
     store :content, accessors: [:title, :subtitle, :button_text, :rte_content], coder: JSON
@@ -13,12 +12,6 @@ module Spree::Cms::Sections
     end
 
     private
-
-    def reset_link_attributes
-      if linked_resource_type_changed?
-        self.linked_resource_id = nil
-      end
-    end
 
     def default_values
       self.gutters ||= 'No Gutters'

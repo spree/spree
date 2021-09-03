@@ -22,7 +22,7 @@
 
 <div class="row">
   <div class="col-12 col-md-4 mb-3">
-    <div class="card p-3">
+    <div id="image_a_details" class="card p-3">
       <div class="text-center">
         <h4 class="pb-2"><%= Spree.t('admin.cms.image_gallery.image_a') %></h4>
         <%= f.field_container :image_one, class: ['form-group'] do %>
@@ -35,10 +35,9 @@
               <%= image_tag main_app.url_for(@cms_section.image_one) %>
             </figure>
           <% end %>
-          <%= f.field_container :image_one, class: ['form-group mb-0'] do %>
-            <%= f.file_field :image_one %>
-            <%= f.error_message_on :image_one %>
-          <% end %>
+
+          <%= f.file_field :image_one %>
+          <%= f.error_message_on :image_one %>
         <% end %>
       </div>
       <small class="text-muted mb-4"><%= Spree.t('admin.cms.image_gallery.square_image') %></small>
@@ -67,7 +66,7 @@
   </div>
 
   <div class="col-12 col-md-4 mb-3">
-    <div class="card p-3">
+    <div id="image_b_details" class="card p-3">
       <div class="text-center">
         <h4 class="pb-2"><%= Spree.t('admin.cms.image_gallery.image_b') %></h4>
         <%= f.field_container :image_two, class: ['form-group'] do %>
@@ -80,10 +79,9 @@
               <%= image_tag main_app.url_for(@cms_section.image_two) %>
             </figure>
           <% end %>
-          <%= f.field_container :image_two, class: ['form-group mb-0'] do %>
-            <%= f.file_field :image_two %>
-            <%= f.error_message_on :image_two %>
-          <% end %>
+
+          <%= f.file_field :image_two %>
+          <%= f.error_message_on :image_two %>
         <% end %>
       </div>
       <small class="text-muted mb-4"><%= Spree.t('admin.cms.image_gallery.tall_image') %></small>
@@ -112,7 +110,7 @@
   </div>
 
   <div class="col-12 col-md-4 mb-3">
-    <div class="card p-3">
+    <div id="image_c_details" class="card p-3">
       <div class="text-center">
         <h4 class="pb-2"><%= Spree.t('admin.cms.image_gallery.image_c') %></h4>
         <%= f.field_container :image_three, class: ['form-group'] do %>
@@ -125,10 +123,9 @@
               <%= image_tag main_app.url_for(@cms_section.image_three) %>
             </figure>
           <% end %>
-          <%= f.field_container :image_three, class: ['form-group mb-0'] do %>
-            <%= f.file_field :image_three %>
-            <%= f.error_message_on :image_three %>
-          <% end %>
+
+          <%= f.file_field :image_three %>
+          <%= f.error_message_on :image_three %>
         <% end %>
       </div>
       <small class="text-muted mb-4"><%= Spree.t('admin.cms.image_gallery.square_image') %></small>

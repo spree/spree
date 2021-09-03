@@ -564,6 +564,7 @@ en:
         draft_mode: Draft Mode
         full_width: Full width
         link_to_taxon: Link to Taxon
+        link_to_product: Link to Product
         title: Title
         fit: Fit To
         info_hero_image_body: "<p>The Hero Image section adds a large image with a button and tagline text to your page.</p>
@@ -1349,6 +1350,7 @@ en:
     backordered_confirm_info: Selected item is backordered so expect delays. Are you sure you want to order it?
     overview: Overview
     package_from: package from
+    page: Page
     page_not_found: Sorry! Page you are looking can’t be found.
     pagination:
       next_page: next page &raquo;
