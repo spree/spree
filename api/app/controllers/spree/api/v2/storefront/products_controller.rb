@@ -46,6 +46,24 @@ module Spree
           def allowed_sort_attributes
             super << :available_on
           end
+
+          def collection_meta(collection)
+            super(collection).merge(filters: serialized_filters)
+          end
+
+          def serialized_filters
+            option_values = Spree::OptionValues::FindAvailable.new(products_scope: products_for_filters).execute
+            product_properties = Spree::ProductProperties::FindAvailable.new(products_scope: products_for_filters).execute
+
+            {
+              option_types: Spree::Products::OptionTypeFiltersPresenter.new(option_values).to_a,
+              product_properties: Spree::Products::PropertyFiltersPresenter.new(product_properties).to_a
+            }
+          end
+
+          def products_for_filters
+            @products_for_filters ||= current_store.products.for_filters(current_currency, taxon: nil)
+          end
         end
       end
     end
