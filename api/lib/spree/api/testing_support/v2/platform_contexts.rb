@@ -121,6 +121,8 @@ shared_examples 'GET records list' do |resource_name, include_example, filter_ex
   get "Returns a list of #{resource_name.pluralize}" do
     tags resource_name.pluralize
     security [ bearer_auth: [] ]
+    description "Returns a list of #{resource_name.pluralize}"
+    operationId "#{resource_name.parameterize.pluralize.to_sym}-list"
     include_context 'jsonapi pagination'
     json_api_include_parameter(include_example)
     json_api_filter_parameter(filter_example)
@@ -137,6 +139,8 @@ shared_examples 'GET record' do |resource_name, include_example|
   get "Returns #{resource_name.articleize}" do
     tags resource_name.pluralize
     security [ bearer_auth: [] ]
+    description "Returns #{resource_name.articleize}"
+    operationId "show-#{resource_name.parameterize.to_sym}"
     parameter name: :id, in: :path, type: :string
     json_api_include_parameter(include_example)
 
@@ -148,12 +152,14 @@ end
 
 # create
 shared_examples 'POST create record' do |resource_name, include_example|
-  param_name = resource_name.tableize.to_sym
+  param_name = resource_name.parameterize(separator: '_').to_sym
 
   post "Creates #{resource_name.articleize}" do
     tags resource_name.pluralize
     consumes 'application/json'
     security [ bearer_auth: [] ]
+    description "Creates #{resource_name.articleize}"
+    operationId "create-#{resource_name.parameterize.to_sym}"
     parameter name: param_name, in: :body, schema: { '$ref' => "#/components/schemas/#{param_name}_params" }
     json_api_include_parameter(include_example)
 
@@ -166,11 +172,13 @@ end
 
 # update
 shared_examples 'PUT update record' do |resource_name, include_example|
-  param_name = resource_name.tableize.to_sym
+  param_name = resource_name.parameterize(separator: '_').to_sym
 
   put "Updates #{resource_name.articleize}" do
     tags resource_name.pluralize
     security [ bearer_auth: [] ]
+    description "Updates #{resource_name.articleize}"
+    operationId "update-#{resource_name.parameterize.to_sym}"
     consumes 'application/json'
     parameter name: :id, in: :path, type: :string
     parameter name: param_name, in: :body, schema: { '$ref' => "#/components/schemas/#{param_name}_params" }
@@ -190,6 +198,8 @@ shared_examples 'DELETE record' do |resource_name|
   delete "Deletes #{resource_name.articleize}" do
     tags resource_name.pluralize
     security [ bearer_auth: [] ]
+    description "Deletes #{resource_name.articleize}"
+    operationId "delete-#{resource_name.parameterize.to_sym}"
     parameter name: :id, in: :path, type: :string
 
     it_behaves_like 'record deleted'
@@ -199,7 +209,7 @@ shared_examples 'DELETE record' do |resource_name|
 end
 
 shared_examples 'CRUD examples' do |resource_name, include_example, filter_example|
-  resource_path = resource_name.tableize.pluralize
+  resource_path = resource_name.parameterize(separator: '_').pluralize
 
   path "/api/v2/platform/#{resource_path}" do
     include_examples 'GET records list', resource_name, include_example, filter_example

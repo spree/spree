@@ -21,6 +21,11 @@ RSpec.configure do |config|
       openapi: '3.0.1',
       info: {
         title: 'Platform API V2',
+        contact: {
+          name: 'Spark Solutions',
+          url: 'https://sparksolutions.co',
+          email: 'we@sparksolutions.co',
+        },
         version: 'v2'
       },
       paths: {},
@@ -33,6 +38,17 @@ RSpec.configure do |config|
             }
           }
         }
+      ],
+      tags: [
+        { name: 'Addresses'},
+        { name: 'Classifications'},
+        { name: 'Countries'},
+        { name: 'Menu Items'},
+        { name: 'Menus'},
+        { name: 'Option Types'},
+        { name: 'Option Values'},
+        { name: 'Taxons'},
+        { name: 'Users'}
       ],
       components: {
         securitySchemes: {

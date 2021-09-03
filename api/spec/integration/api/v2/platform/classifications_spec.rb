@@ -29,6 +29,8 @@ describe 'Classifications API', swagger: true do
     put 'Reposition a Classification' do
       tags resource_name.pluralize
       security [ bearer_auth: [] ]
+      operationId 'reposition-classification'
+      description 'Reposition a Classification'
       consumes 'application/json'
       parameter name: :id, in: :path, type: :string
       parameter name: :classification, in: :body, schema: { '$ref' => '#/components/schemas/classification_params' }
