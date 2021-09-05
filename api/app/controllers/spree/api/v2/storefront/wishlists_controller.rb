@@ -2,7 +2,7 @@ module Spree
   module Api
     module V2
       module Storefront
-        class WishlistsController < ::Spree::Api::V2::BaseController
+        class WishlistsController < ::Spree::Api::V2::ResourceController
           include Spree::Api::V2::CollectionOptionsHelpers
 
           before_action :require_spree_current_user

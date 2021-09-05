@@ -2,7 +2,7 @@ module Spree
   module Api
     module V2
       module Storefront
-        class WishedProductsController < ::Spree::Api::V2::BaseController
+        class WishedProductsController < ::Spree::Api::V2::ResourceController
 
           def create
             spree_authorize! :create, Spree::WishedProduct
@@ -52,7 +52,7 @@ module Spree
           end
 
           def wishlist
-            @wishlist ||= Spree::Wishlist.find_by!(access_hash: params[:wishlist_id])
+            @wishlist ||= Spree::Wishlist.find_by!(token: params[:wishlist_id])
           end
 
           def wished_product_attributes
