@@ -166,6 +166,11 @@ Spree::Core::Engine.add_routes do
 
         resources :menus, only: %i[index show]
         resources :cms_pages, only: %i[index show]
+
+        resources :wishlists do
+          get 'default', on: :collection
+          resources :wished_products, only: [:create, :update, :destroy]
+        end
       end
 
       namespace :platform do

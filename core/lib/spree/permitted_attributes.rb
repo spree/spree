@@ -29,7 +29,9 @@ module Spree
       :user_attributes,
       :variant_attributes,
       :cms_page_attributes,
-      :cms_section_attributes
+      :cms_section_attributes,
+      :wishlist_attributes,
+      :wished_product_attributes
     ]
 
     mattr_reader *ATTRIBUTES
@@ -140,5 +142,9 @@ module Spree
       :weight, :height, :width, :depth, :sku, :cost_currency,
       options: [:name, :value], option_value_ids: []
     ]
+
+    @@wishlist_attributes = [ :name, :is_default, :is_private ]
+
+    @@wished_product_attributes = [ :variant_id, :remark, :quantity ]
   end
 end

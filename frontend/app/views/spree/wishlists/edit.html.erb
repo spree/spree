@@ -1,0 +1,9 @@
+<h1 class="row"><%= Spree.t(:editing_wishlist) %></h1>
+<%= form_for @wishlist do |f| %>
+  <p><%= f.label :name, Spree.t(:name) %>:&nbsp;<%= f.text_field :name %></p>
+  <p><%= f.check_box :is_private %>&nbsp;<%= f.label :is_private, Spree.t(:is_private) %></p>
+  <p><%= f.check_box :is_default %>&nbsp;<%= f.label :is_default, Spree.t(:is_default) %></p>
+  <%= f.submit Spree.t(:update) %>
+  <%= Spree.t(:or) %>
+  <%= link_to Spree.t(:delete_wishlist), @wishlist, method: :delete, data: { confirm: Spree.t(:are_you_sure_wishlist) }, class: 'button' %>
+<% end -%>

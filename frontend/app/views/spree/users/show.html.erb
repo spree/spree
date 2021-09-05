@@ -78,6 +78,16 @@
     <% end %>
     <br>
   </div>
+
+  <h3><%= Spree.t(:my_wishlists) %></h3>
+  <ul>
+    <% @user.wishlists.each do |wl| %>
+      <% if !wl.is_private? || @user == spree_current_user %>
+      <li><%= link_to wl.name, wl %></li>
+      <% end -%>
+    <% end -%>
+  </ul>
+
   <div id="delete-address-popup" class="delete-address-popup-dropdown hide-on-esc">
     <%= render 'spree/shared/delete_address_popup' %>
   </div>

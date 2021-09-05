@@ -1,0 +1,14 @@
+<%= mail.recipient_name %>,
+
+<%= Spree.t(:take_a_look_at_my_wishlist) %>
+
+  * <%= wishlist.name %>
+
+<% unless mail.message.blank? -%>
+<%= mail.message %>
+<% end -%>
+
+<%= mail.sender_name %>
+
+<%= Spree.t(:click_link_to_view_wishlist, name: wishlist.name) %>
+<%= wishlist_url(wishlist) %>

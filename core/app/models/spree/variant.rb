@@ -42,6 +42,8 @@ module Spree
              dependent: :destroy,
              inverse_of: :variant
 
+    has_many :wished_products, dependent: :destroy
+
     before_validation :set_cost_currency
 
     validate :check_price

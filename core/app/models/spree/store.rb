@@ -36,6 +36,8 @@ module Spree
     has_many :store_promotions, class_name: 'Spree::StorePromotion'
     has_many :promotions, through: :store_promotions, class_name: 'Spree::Promotion'
 
+    has_many :wishlists, class_name: 'Spree::Wishlist'
+
     belongs_to :default_country, class_name: 'Spree::Country'
     belongs_to :checkout_zone, class_name: 'Spree::Zone'
 

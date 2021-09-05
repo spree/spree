@@ -1,0 +1,8 @@
+<h1 class="row"><%= Spree.t(:wishlists) %></h1>
+<%= content_tag :ul do %>
+  <% @wishlists.each do |wishlist| %>
+    <%= content_tag :li do %>
+      <%= link_to(wishlist.name, wishlist) %> - <%= wishlist.is_private ? Spree.t(:private) : Spree.t(:public) %>
+    <% end %>
+  <% end %>
+<% end %>
