@@ -9,18 +9,22 @@ module Spree
 
           def index
             spree_authorize! :index, Spree::Wishlist
-            wishlists = spree_current_user.wishlists.page(params[:page]).per(params[:per_page])
+            wishlists = spree_current_user.wishlists.where(store_id: current_store.id).page(params[:page]).per(params[:per_page])
+
             render_serialized_payload { serialize_collection(wishlists) }
           end
 
           def create
             spree_authorize! :create, Spree::Wishlist
             wishlist = Spree::Wishlist.new( wishlist_attributes )
+
+            ensure_current_store(wishlist)
+
             wishlist.user = spree_current_user
             wishlist.save
 
             if wishlist.persisted?
-              render_serialized_payload { serialize_resource(wishlist) }
+              render_serialized_payload(201) { serialize_resource(wishlist) }
             else
               render_error_payload(wishlist.errors.full_messages.to_sentence)
             end
@@ -52,7 +56,7 @@ module Spree
 
           def default
             spree_authorize! :create, Spree::Wishlist
-            wishlist = spree_current_user.wishlist
+            wishlist = spree_current_user.wishlist(current_store.id)
 
             render_serialized_payload { serialize_resource(wishlist) }
           end
@@ -64,7 +68,11 @@ module Spree
           end
 
           def resource
-            @resource ||= Spree::Wishlist.find_by!(access_hash: params[:id])
+            @resource ||= scope.find_by!(token: params[:id])
+          end
+
+          def scope
+            current_store.wishlists
           end
 
           def resource_serializer
