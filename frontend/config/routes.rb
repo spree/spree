@@ -18,11 +18,6 @@ Spree::Core::Engine.add_routes do
 
     resources :addresses, except: [:index, :show]
 
-    resources :wishlists
-    resources :wished_products, only: [:create, :update, :destroy]
-
-    get '/wishlist', to: "wishlists#default", as: :default_wishlist
-
     get '/cart', to: 'orders#edit', as: :cart
     patch '/cart', to: 'orders#update', as: :update_cart
     put '/cart/empty', to: 'orders#empty', as: :empty_cart

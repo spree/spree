@@ -15,18 +15,6 @@
           </h1>
           <div id="cart-form" data-hook="cart_form">
             <%= render 'cart_form', variant_change_identifier: 'productCarousel' %>
-
-            <% if spree_current_user %>
-              <div id="wishlist-form">
-                <%= form_for Spree::WishedProduct.new do |f| %>
-                  <%= f.hidden_field :variant_id, value: @product.master.id %>
-                  <%= f.hidden_field :quantity %>
-                  <button type="submit" class="btn btn-outline-primary w-100 font-weight-bold text-uppercase mt-2">
-                    <%= Spree.t(:add_to_wishlist) %>
-                  </button>
-                <% end %>
-              </div>
-            <% end %>
           </div>
         </div>
       </div>
