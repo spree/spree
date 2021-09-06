@@ -48,21 +48,11 @@ module Spree
           end
 
           def collection_meta(collection)
-            super(collection).merge(filters: serialized_filters)
+            super(collection).merge(filters: filters_meta)
           end
 
-          def serialized_filters
-            option_values = Spree::OptionValues::FindAvailable.new(products_scope: products_for_filters).execute
-            product_properties = Spree::ProductProperties::FindAvailable.new(products_scope: products_for_filters).execute
-
-            {
-              option_types: Spree::Products::OptionTypeFiltersPresenter.new(option_values).to_a,
-              product_properties: Spree::Products::PropertyFiltersPresenter.new(product_properties).to_a
-            }
-          end
-
-          def products_for_filters
-            @products_for_filters ||= current_store.products.for_filters(current_currency, taxon: nil)
+          def filters_meta
+            Spree::Products::FiltersPresenter.new(current_store, current_currency, params).to_h
           end
         end
       end

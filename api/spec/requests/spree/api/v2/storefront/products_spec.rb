@@ -741,13 +741,18 @@ describe 'API V2 Storefront Products Spec', type: :request do
       end
 
       context 'when filter by taxon is applied' do
-        before { get "/api/v2/storefront/products?filter[taxons]=#{product_with_taxon.taxons.first.id}" }
+        let(:product_with_taxon_and_options) { create(:product, taxons: [taxon], option_types: [option_type2], stores: [store]) }
+        let!(:product_with_taxon_and_options_property) { create(:product_property, property: property3, product: product_with_taxon_and_options, value: 'Test') }
+        let!(:product_with_taxon_and_options_variant1) { create(:variant, product: product_with_taxon_and_options, option_values: [option_type2_value1]) }
+        let!(:product_with_taxon_and_options_variant2) { create(:variant, product: product_with_taxon_and_options, option_values: [option_type2_value2]) }
+
+        before { get "/api/v2/storefront/products?filter[taxons]=#{taxon.id}" }
 
         it 'returns list of available filters for given taxon' do
           expect(json_response['meta']['filters']['option_types'].count).to eq 1
-          expect(json_response['meta']['filters']['option_types']).to include(option_type1_response)
+          expect(json_response['meta']['filters']['option_types']).to include(option_type2_response)
           expect(json_response['meta']['filters']['product_properties'].count).to eq 1
-          expect(json_response['meta']['filters']['product_properties']).to include(property1_response)
+          expect(json_response['meta']['filters']['product_properties']).to include(property3_response)
         end
       end
     end
