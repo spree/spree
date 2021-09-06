@@ -161,11 +161,11 @@ paths:
                       type: string
                       example: john@snow.org
                     bill_address_id:
-                      type: integer
-                      example: 1
+                      type: string
+                      example: '1'
                     ship_address_id:
-                      type: integer
-                      example: 1
+                      type: string
+                      example: '1'
                     password:
                       type: string
                       example: spree123
