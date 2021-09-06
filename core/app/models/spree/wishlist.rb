@@ -10,6 +10,7 @@ module Spree
     has_many :wished_products, dependent: :destroy
 
     validates :name, presence: true
+    validates :is_default, uniqueness: { scope: [:store] }
 
     def include?(variant_id)
       wished_products.map(&:variant_id).include? variant_id.to_i
