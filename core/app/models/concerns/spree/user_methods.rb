@@ -69,7 +69,10 @@ module Spree
     end
 
     def default_wishlist_for_store(current_store)
-      wishlists.find_or_create_by(name: Spree.t(:default_wishlist_name), is_default: true, store_id: current_store.id)
+      wishlists.find_or_create_by(is_default: true, store_id: current_store.id) do |wishlist|
+        wishlist.name = Spree.t(:default_wishlist_name)
+        wishlist.save
+      end
     end
 
     private
