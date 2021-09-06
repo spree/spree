@@ -1,5 +1,5 @@
 module Spree
-  class WishedProduct < Spree::Base
+  class WishedVariant < Spree::Base
     extend DisplayMoney
     money_methods :total, :price
 

@@ -169,7 +169,7 @@ Spree::Core::Engine.add_routes do
 
         resources :wishlists do
           get 'default', on: :collection
-          resources :wished_products, only: [:create, :update, :destroy]
+          resources :wished_variants, only: [:create, :update, :destroy]
         end
       end
 

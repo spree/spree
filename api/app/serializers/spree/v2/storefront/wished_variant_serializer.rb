@@ -1,8 +1,8 @@
 module Spree
   module V2
     module Storefront
-      class WishedProductSerializer < BaseSerializer
-        set_type :wished_product
+      class WishedVariantSerializer < BaseSerializer
+        set_type :wished_variant
 
         attributes :remark, :quantity
 

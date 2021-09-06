@@ -9,12 +9,12 @@ module Spree
 
     after_commit :ensure_default_exists_and_is_unique
 
-    has_many :wished_products, dependent: :destroy
+    has_many :wished_variants, dependent: :destroy
 
     validates :name, :store, :user, presence: true
 
     def include?(variant_id)
-      wished_products.map(&:variant_id).include? variant_id.to_i
+      wished_variants.map(&:variant_id).include? variant_id.to_i
     end
 
     def to_param

@@ -2,31 +2,31 @@ module Spree
   module Api
     module V2
       module Storefront
-        class WishedProductsController < ::Spree::Api::V2::ResourceController
+        class WishedVariantsController < ::Spree::Api::V2::ResourceController
           def create
-            spree_authorize! :create, Spree::WishedProduct
+            spree_authorize! :create, Spree::WishedVariant
             spree_authorize! :update, wishlist
 
-            wished_product = Spree::WishedProduct.new(wished_product_attributes)
+            wished_variant = Spree::WishedVariant.new(wished_variant_attributes)
 
-            if wishlist.include? params[:wished_product][:variant_id]
-              wished_product = wishlist.wished_products.detect { |wp| wp.variant_id == params[:wished_product][:variant_id].to_i }
+            if wishlist.include? params[:wished_variant][:variant_id]
+              wished_variant = wishlist.wished_variants.detect { |wp| wp.variant_id == params[:wished_variant][:variant_id].to_i }
             else
-              wished_product.wishlist = wishlist
-              wished_product.save
+              wished_variant.wishlist = wishlist
+              wished_variant.save
             end
 
             wishlist.reload
-            if wished_product.persisted?
-              render_serialized_payload { serialize_resource(wished_product) }
+            if wished_variant.persisted?
+              render_serialized_payload { serialize_resource(wished_variant) }
             else
-              render_error_payload(wished_product.errors.full_messages.to_sentence)
+              render_error_payload(wished_variant.errors.full_messages.to_sentence)
             end
           end
 
           def update
             spree_authorize! :update, resource
-            resource.update(wished_product_attributes)
+            resource.update(wished_variant_attributes)
 
             if resource.errors.empty?
               render_serialized_payload { serialize_resource(resource) }
@@ -47,19 +47,19 @@ module Spree
           private
 
           def resource
-            @resource ||= wishlist.wished_products.find(params[:id])
+            @resource ||= wishlist.wished_variants.find(params[:id])
           end
 
           def wishlist
             @wishlist ||= current_store.wishlists.find_by!(token: params[:wishlist_id])
           end
 
-          def wished_product_attributes
-            params.require(:wished_product).permit(permitted_wished_product_attributes)
+          def wished_variant_attributes
+            params.require(:wished_variant).permit(permitted_wished_variant_attributes)
           end
 
           def resource_serializer
-            ::Spree::V2::Storefront::WishedProductSerializer
+            ::Spree::V2::Storefront::WishedVariantSerializer
           end
         end
       end
