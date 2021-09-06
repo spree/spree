@@ -38,15 +38,15 @@ module Spree
         let(:time_current) { Time.local(1990) }
 
         context 'with prepared stock items' do
-          context 'with duplicate stock itms by stock_location_id, variant and backorderable' do
-            it 'skips the insertion of duplicated records' do
+          context 'with duplicate stock items by stock_location_id and variant' do
+            it 'skips the insertion of duplicate records' do
               # Make a call of Spree::Variant to obtain the ids, return duplicated records.
               expect(Spree::Variant).to receive(:ids).and_return([1, 1])
               expect { result }.to change { stock_location.stock_items.count }.from(0).to(1)
             end
           end
 
-          context 'without duplicate stock items by stock_location_id, variant and/or backorderable' do
+          context 'without duplicate stock items to insert' do
             let(:created_stock_item) { stock_location.stock_items.order(:id).last }
             let(:created_stock_item_attrs) do
               created_stock_item.attributes.values_at(
