@@ -88,8 +88,8 @@ describe 'Storefront API v2 Account spec', type: :request do
         email: 'new@email.com',
         password: 'newpassword123',
         password_confirmation: 'newpassword123',
-        bill_address_id: default_bill_address.id,
-        ship_address_id: default_ship_address.id
+        bill_address_id: default_bill_address.id.to_s,
+        ship_address_id: default_ship_address.id.to_s
       }
     end
     let(:params) { { user: new_attributes } }
@@ -152,8 +152,8 @@ describe 'Storefront API v2 Account spec', type: :request do
         email: 'new@email.com',
         password: 'newpassword123',
         password_confirmation: 'newpassword123',
-        bill_address_id: new_default_bill_address.id,
-        ship_address_id: new_default_ship_address.id
+        bill_address_id: new_default_bill_address.id.to_s,
+        ship_address_id: new_default_ship_address.id.to_s
       }
     end
     let(:params) { { user: new_attributes } }
