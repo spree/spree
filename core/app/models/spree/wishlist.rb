@@ -7,10 +7,11 @@ module Spree
     belongs_to :user, class_name: Spree.user_class.to_s
     belongs_to :store, touch: true
 
+    after_commit :ensure_default_exists_and_is_unique
+
     has_many :wished_products, dependent: :destroy
 
-    validates :name, presence: true
-    validates :is_default, uniqueness: { scope: [:store] }
+    validates :name, :store, :user, presence: true
 
     def include?(variant_id)
       wished_products.map(&:variant_id).include? variant_id.to_i
@@ -28,15 +29,16 @@ module Spree
       public? || user == self.user
     end
 
-    def is_default=(value)
-      self[:is_default] = value
-      return unless is_default?
-
-      Spree::Wishlist.where(is_default: true, user_id: user_id).where.not(id: id).update_all(is_default: false)
-    end
-
     def public?
       !is_private?
+    end
+
+    private
+
+    def ensure_default_exists_and_is_unique
+      if is_default?
+        Wishlist.where(is_default: true, user_id: user_id, store_id: store_id).where.not(id: id).update_all(is_default: false)
+      end
     end
   end
 end

@@ -143,8 +143,8 @@ module Spree
       options: [:name, :value], option_value_ids: []
     ]
 
-    @@wishlist_attributes = [ :name, :is_default, :is_private ]
+    @@wishlist_attributes = [:name, :is_default, :is_private]
 
-    @@wished_product_attributes = [ :variant_id, :remark, :quantity ]
+    @@wished_product_attributes = [:variant_id, :remark, :quantity]
   end
 end

@@ -55,7 +55,7 @@ module Spree
           end
 
           def wished_product_attributes
-            params.require(:wished_product).permit(:variant_id, :quantity, :remark)
+            params.require(:wished_product).permit(permitted_wished_product_attributes)
           end
 
           def resource_serializer

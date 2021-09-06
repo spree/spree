@@ -64,7 +64,7 @@ module Spree
           private
 
           def wishlist_attributes
-            params.require(:wishlist).permit(:name, :is_default, :is_private)
+            params.require(:wishlist).permit(permitted_wishlist_attributes)
           end
 
           def resource
