@@ -3,11 +3,10 @@
   color: $footer-font-color;
   border-color: $global-border-style !important;
   .logo img {
-    height: 27px;
-    width: 62px;
+    max-width: 62px;
+    height: auto;
     @include media-breakpoint-up(xl) {
-      height: 52px;
-      width: 122px;
+      max-width: 122px;
     }
   }
   .spree-icon path {
