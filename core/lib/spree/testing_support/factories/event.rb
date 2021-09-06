@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :event, class: Spree::Webhooks::Event do
     enabled { true }
-    name { 'resource.create' }
+    name { 'order.create' }
   end
 end
