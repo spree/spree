@@ -3,7 +3,6 @@ module Spree
     module V2
       module Storefront
         class WishedProductsController < ::Spree::Api::V2::ResourceController
-
           def create
             spree_authorize! :create, Spree::WishedProduct
             spree_authorize! :update, wishlist
@@ -11,7 +10,7 @@ module Spree
             wished_product = Spree::WishedProduct.new(wished_product_attributes)
 
             if wishlist.include? params[:wished_product][:variant_id]
-              wished_product = wishlist.wished_products.detect {|wp| wp.variant_id == params[:wished_product][:variant_id].to_i }
+              wished_product = wishlist.wished_products.detect { |wp| wp.variant_id == params[:wished_product][:variant_id].to_i }
             else
               wished_product.wishlist = wishlist
               wished_product.save
@@ -52,7 +51,7 @@ module Spree
           end
 
           def wishlist
-            @wishlist ||= Spree::Wishlist.find_by!(token: params[:wishlist_id])
+            @wishlist ||= current_store.wishlists.find_by!(token: params[:wishlist_id])
           end
 
           def wished_product_attributes

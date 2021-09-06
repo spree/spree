@@ -68,12 +68,8 @@ module Spree
       end
     end
 
-    def wishlist(current_store_id)
-      default_wishlist = wishlists.where(is_default: true).first
-      default_wishlist ||= wishlists.first
-      default_wishlist ||= wishlists.create(name: Spree.t(:default_wishlist_name), is_default: true, store_id: current_store_id)
-      default_wishlist.update_attribute(:is_default, true) unless default_wishlist.is_default?
-      default_wishlist
+    def default_wishlist_for_store(current_store)
+      wishlists.find_or_create_by(name: Spree.t(:default_wishlist_name), is_default: true, store_id: current_store.id)
     end
 
     private
