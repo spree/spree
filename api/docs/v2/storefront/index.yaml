@@ -550,7 +550,6 @@ paths:
             application/vnd.api+json:
               schema:
                 $ref: '#/components/schemas/Cart'
-              examples: {}
         '404':
           $ref: '#/components/responses/404NotFound'
       security:
@@ -13526,7 +13525,6 @@ components:
               - $ref: '#/components/schemas/User'
               - $ref: '#/components/schemas/Address'
               - $ref: '#/components/schemas/ShipmentAttributesWithoutRelationsips'
-            type: object
       required:
         - data
         - included
@@ -15850,7 +15848,7 @@ components:
       name: 'image_transformation[quality]'
       schema:
         type: string
-      example: 70
+      example: '70'
       description: Specifies quality for included images at transformed_url attribute
     TaxonIncludeParam:
       name: include
