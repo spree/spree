@@ -550,6 +550,174 @@ paths:
             application/vnd.api+json:
               schema:
                 $ref: '#/components/schemas/Cart'
+              examples:
+                example:
+                  value:
+                    data:
+                      id: '511'
+                      type: cart
+                      attributes:
+                        number: R869429838
+                        item_total: '71.99'
+                        total: '71.99'
+                        ship_total: '0.0'
+                        adjustment_total: '0.0'
+                        created_at: '2021-09-08T05:34:22.890-05:00'
+                        updated_at: '2021-09-08T05:34:22.890-05:00'
+                        completed_at: null
+                        included_tax_total: '0.0'
+                        additional_tax_total: '0.0'
+                        display_additional_tax_total: $0.00
+                        display_included_tax_total: $0.00
+                        tax_total: '0.0'
+                        currency: USD
+                        state: cart
+                        token: U5B2bubbqA_UfAisxSTDvQ1631010862885
+                        email: example@example.com
+                        display_item_total: $71.99
+                        display_ship_total: $0.00
+                        display_adjustment_total: $0.00
+                        display_tax_total: $0.00
+                        promo_total: '0.0'
+                        display_promo_total: $0.00
+                        item_count: 1
+                        special_instructions: null
+                        display_total: $71.99
+                        pre_tax_item_amount: '71.99'
+                        display_pre_tax_item_amount: $71.99
+                        pre_tax_total: '71.99'
+                        display_pre_tax_total: $71.99
+                        shipment_state: null
+                        payment_state: null
+                      relationships:
+                        line_items:
+                          data:
+                            - id: '474'
+                              type: line_item
+                        variants:
+                          data:
+                            - id: '162'
+                              type: variant
+                        promotions:
+                          data: []
+                        payments:
+                          data: []
+                        shipments:
+                          data: []
+                        user:
+                          data:
+                            id: '153'
+                            type: user
+                        billing_address:
+                          data: null
+                        shipping_address:
+                          data: null
+                    included:
+                      - id: '474'
+                        type: line_item
+                        attributes:
+                          name: Floral Wrap Dress
+                          quantity: 1
+                          price: '71.99'
+                          slug: floral-wrap-dress
+                          options_text: 'Color: black, Length: Mini, and Size: XS'
+                          currency: USD
+                          display_price: $71.99
+                          total: '71.99'
+                          display_total: $71.99
+                          adjustment_total: '0.0'
+                          display_adjustment_total: $0.00
+                          additional_tax_total: '0.0'
+                          discounted_amount: '71.99'
+                          display_discounted_amount: $71.99
+                          display_additional_tax_total: $0.00
+                          promo_total: '0.0'
+                          display_promo_total: $0.00
+                          included_tax_total: '0.0'
+                          display_included_tax_total: $0.00
+                          pre_tax_amount: '71.99'
+                          display_pre_tax_amount: $71.99
+                        relationships:
+                          variant:
+                            data:
+                              id: '162'
+                              type: variant
+                      - id: '162'
+                        type: variant
+                        attributes:
+                          sku: 'Dresses_floralwrapdress_71.99_black_mini_xs'
+                          weight: '0.0'
+                          height: null
+                          width: null
+                          depth: null
+                          is_master: false
+                          options_text: 'Color: black, Length: Mini, and Size: XS'
+                          purchasable: true
+                          in_stock: true
+                          backorderable: true
+                          currency: USD
+                          price: '71.99'
+                          display_price: $71.99
+                          compare_at_price: null
+                          display_compare_at_price: null
+                        relationships:
+                          product:
+                            data:
+                              id: '46'
+                              type: product
+                          images:
+                            data: []
+                          option_values:
+                            data:
+                              - id: '4'
+                                type: option_value
+                              - id: '20'
+                                type: option_value
+                              - id: '23'
+                                type: option_value
+                      - id: '153'
+                        type: user
+                        attributes:
+                          email: example@example.com
+                          store_credits: 0
+                          completed_orders: 0
+                        relationships:
+                          default_billing_address:
+                            data: null
+                          default_shipping_address:
+                            data: null
+                      - id: '2'
+                        type: promotion
+                        attributes:
+                          name: 10% Discount
+                          description: Super discount for you
+                          amount: '-22.0'
+                          display_amount: $22.00
+                      - id: '1'
+                        type: address
+                        attributes:
+                          firstname: Bob
+                          lastname: Billerson
+                          address1: 1600 Clear View Pkwy
+                          address2: Mountain View
+                          city: LA
+                          zipcode: '94043'
+                          phone: (+1) 123 456 789
+                          state_name: California
+                          state_code: CA
+                          country_name: United States of America
+                          country_iso3: USA
+                          company: null
+                      - id: '2832'
+                        type: shipment
+                        attributes:
+                          number: H121354
+                          free: false
+                          final_price: '10.0'
+                          display_final_price: $10.00
+                          tracking_url: 'https://tools.usps.com/go/TrackConfirmAction?tRef=fullpage&tLc=2&text28777=&tLabels=4123412434%2C'
+                          state: shipped
+                          shipped_at: '2021-09-06 13:42:12'
         '404':
           $ref: '#/components/responses/404NotFound'
       security:
