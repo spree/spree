@@ -15844,14 +15844,14 @@ components:
       schema:
         type: string
       example: 100x50
-      description: Specyfies dimensions for included images at transformed_url attribute.
+      description: Specifies dimensions for included images at transformed_url attribute.
     ProductImageTransformationQualityParam:
       in: query
       name: 'image_transformation[quality]'
       schema:
         type: string
       example: 70
-      description: Specyfies quality for included images at transformed_url attribute
+      description: Specifies quality for included images at transformed_url attribute
     TaxonIncludeParam:
       name: include
       in: query
