@@ -12,7 +12,7 @@ module Spree
     describe '#call' do
       context 'Rails < 6', if: Rails::VERSION::MAJOR < 6 do
         context 'with variants to propagate' do
-          before { stock_location.stock_items.destroy_all }
+          before { stock_location.stock_items.delete_all }
 
           it 'propagates the variants' do
             expect { result }.to change { stock_location.stock_items.count }.from(0).to(4)
