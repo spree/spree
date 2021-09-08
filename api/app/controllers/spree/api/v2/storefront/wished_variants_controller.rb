@@ -10,7 +10,7 @@ module Spree
             wished_variant = Spree::WishedVariant.new(wished_variant_attributes)
 
             if wishlist.include? params[:wished_variant][:variant_id]
-              wished_variant = wishlist.wished_variants.detect { |wp| wp.variant_id == params[:wished_variant][:variant_id].to_i }
+              wished_variant = wishlist.wished_variants.detect { |item| item.variant_id.to_s == params[:wished_product][:variant_id] }
             else
               wished_variant.wishlist = wishlist
               wished_variant.save
