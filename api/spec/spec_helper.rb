@@ -60,10 +60,12 @@ RSpec.configure do |config|
   config.include Spree::Api::TestingSupport::Helpers, type: :controller
   config.include Spree::Api::TestingSupport::Helpers, type: :request
   config.extend Spree::Api::TestingSupport::Setup, type: :controller
-  config.include Spree::TestingSupport::Preferences, type: :controller
+  config.include Spree::TestingSupport::Preferences
   config.include Spree::TestingSupport::ImageHelpers
 
   config.before do
+    reset_spree_preferences
+
     Spree::Api::Config[:requires_authentication] = true
 
     country = create(:country, name: 'United States of America', iso_name: 'UNITED STATES', iso: 'US', states_required: true)
