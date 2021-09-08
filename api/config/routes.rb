@@ -148,6 +148,7 @@ Spree::Core::Engine.add_routes do
           post :remove_store_credit
           get :payment_methods
           get :shipping_rates
+          get :unshippable_items
         end
 
         resource :account, controller: :account, only: %i[show create update]

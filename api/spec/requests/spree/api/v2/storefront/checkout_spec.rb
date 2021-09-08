@@ -641,6 +641,148 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
     end
   end
 
+  describe 'checkout#unshippable_items' do
+    let(:execute) { get '/api/v2/storefront/checkout/unshippable_items', headers: headers }
+
+    let(:country) { store.default_country }
+    let(:zone) { create(:zone, name: 'US') }
+    let(:shipping_method) { create(:shipping_method) }
+    let(:shipment) { order.shipments.first }
+
+    shared_examples 'showing only not shippable line items' do
+      shared_examples 'returns valid line item JSON' do
+        it 'returns valid line item JSON' do
+          expect(json_response['data'][0]['id']).to eq(check_item.id.to_s)
+          expect(json_response['data'][0]['type']).to eq('line_item')
+          expect(json_response['data'][0]).to have_attribute(:name).with_value(check_item.name)
+          expect(json_response['data'][0]).to have_attribute(:quantity).with_value(check_item.quantity)
+          expect(json_response['data'][0]).to have_attribute(:slug).with_value(check_item.slug)
+          expect(json_response['data'][0]).to have_attribute(:options_text).with_value(check_item.options_text)
+          expect(json_response['data'][0]).to have_attribute(:currency).with_value(check_item.currency)
+          expect(json_response['data'][0]).to have_attribute(:price).with_value(check_item.price.to_s)
+          expect(json_response['data'][0]).to have_attribute(:display_price).with_value(check_item.display_price.to_s)
+          expect(json_response['data'][0]).to have_attribute(:total).with_value(check_item.total.to_s)
+          expect(json_response['data'][0]).to have_attribute(:display_total).with_value(check_item.display_total.to_s)
+          expect(json_response['data'][0]).to have_attribute(:adjustment_total).with_value(check_item.adjustment_total.to_s)
+          expect(json_response['data'][0]).to have_attribute(:display_adjustment_total).with_value(check_item.display_adjustment_total.to_s)
+          expect(json_response['data'][0]).to have_attribute(:additional_tax_total).with_value(check_item.additional_tax_total.to_s)
+          expect(json_response['data'][0]).to have_attribute(:discounted_amount).with_value(check_item.discounted_amount.to_s)
+          expect(json_response['data'][0]).to have_attribute(:display_discounted_amount).with_value(check_item.display_discounted_amount.to_s)
+          expect(json_response['data'][0]).to have_attribute(:display_additional_tax_total).with_value(check_item.display_additional_tax_total.to_s)
+          expect(json_response['data'][0]).to have_attribute(:promo_total).with_value(check_item.promo_total.to_s)
+          expect(json_response['data'][0]).to have_attribute(:display_promo_total).with_value(check_item.display_promo_total.to_s)
+          expect(json_response['data'][0]).to have_attribute(:included_tax_total).with_value(check_item.included_tax_total.to_s)
+          expect(json_response['data'][0]).to have_attribute(:display_included_tax_total).with_value(check_item.display_included_tax_total.to_s)
+          expect(json_response['data'][0]).to have_attribute(:pre_tax_amount).with_value(check_item.pre_tax_amount.to_s)
+          expect(json_response['data'][0]).to have_attribute(:display_pre_tax_amount).with_value(check_item.display_pre_tax_amount.to_s)
+          expect(json_response['data'][0]).to have_relationship(:variant).with_data({ 'id' => check_item.variant.id.to_s, 'type' => 'variant' })
+        end
+      end
+
+      shared_examples 'returns empty collection' do
+        it_behaves_like 'returns 200 HTTP status'
+
+        it 'should not return any line items' do
+          expect(json_response['data']).to be_empty
+        end
+      end
+
+      before do
+        order.shipping_address = address
+        order.save!
+        zone.countries << country
+        shipping_method.zones = [zone]
+      end
+
+      context 'when all order items are shippable' do
+        let(:address) { create(:address, country: country) }
+
+        before { execute }
+
+        it_behaves_like 'returns empty collection'
+      end
+
+      context 'when all order items are not shippable' do
+        let(:address) { create(:address, country: create(:country, iso: 'AD'), zipcode: 'AD500') }
+        let(:check_item) { line_item }
+
+        before { execute }
+
+        it_behaves_like 'returns 200 HTTP status'
+
+        it 'should return one line item', aggregate_failures: true do
+          expect(order.line_items.count).to eq(1)
+        end
+
+        it_behaves_like 'returns valid line item JSON'
+      end
+
+      context 'when one order item is not shippable' do
+        let(:zw_shipping_category) { create(:shipping_category) }
+        let(:zw_shipping_method) { create(:shipping_method, shipping_categories: [zw_shipping_category]) }
+        let(:zw_zone) { create(:zone, name: 'ZW') }
+        let(:zw_country) { create(:country, iso: 'ZW') }
+        let(:zw_product) { create(:product, shipping_category: zw_shipping_category) }
+        let!(:zw_line_item) { create(:line_item, order: order, product: zw_product, currency: currency) }
+        let(:address) { create(:address, country: country) }
+        let(:check_item) { zw_line_item }
+
+        before do
+          zw_zone.countries << zw_country
+          zw_shipping_method.zones = [zw_zone]
+          ensure_order_totals
+          execute
+        end
+
+        it_behaves_like 'returns 200 HTTP status'
+
+        it 'should return all line items', aggregate_failures: true do
+          expect(order.line_items.count).to eq(2)
+          expect(json_response['data'].count).to eq(1)
+        end
+
+        it_behaves_like 'returns valid line item JSON'
+      end
+
+      context 'when shipping address zone not found' do
+        let(:address) { create(:address, country: country) }
+
+        before do
+          allow(Spree::Zone).to receive(:match).with(address).and_return(nil)
+          execute
+        end
+
+        it_behaves_like 'returns empty collection'
+      end
+    end
+
+    shared_examples 'showing 404' do
+      before do
+        get '/api/v2/storefront/checkout/unshippable_items', headers: headers
+      end
+
+      it_behaves_like 'returns 404 HTTP status'
+    end
+
+    context 'without existing order' do
+      let!(:headers) { headers_bearer }
+
+      it_behaves_like 'showing 404'
+    end
+
+    context 'with existing user order with line item' do
+      include_context 'creates order with line item'
+
+      it_behaves_like 'showing only not shippable line items'
+    end
+
+    context 'with existing guest order' do
+      include_context 'creates guest order with guest token'
+
+      it_behaves_like 'showing only not shippable line items'
+    end
+  end
+
   describe 'full checkout flow' do
     let!(:country) { create(:country) }
     let(:state) { create(:state, country: country) }

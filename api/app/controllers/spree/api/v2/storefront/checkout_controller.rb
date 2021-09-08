@@ -72,6 +72,16 @@ module Spree
             end
           end
 
+          def unshippable_items
+            result = unshippable_items_service.call(order: spree_current_order)
+
+            if result.success?
+              render_serialized_payload { serialize_unshippable_items(result.value) }
+            else
+              render_error_payload(result.error)
+            end
+          end
+
           def payment_methods
             render_serialized_payload { serialize_payment_methods(spree_current_order.available_payment_methods) }
           end
@@ -127,6 +137,21 @@ module Spree
               shipments,
               params: serializer_params,
               include: [:shipping_rates, :stock_location]
+            ).serializable_hash
+          end
+
+          def unshippable_items_service
+            Spree::Api::Dependencies.storefront_checkout_get_unshippable_items_service.constantize
+          end
+
+          def line_items_serializer
+            Spree::V2::Storefront::LineItemSerializer
+          end
+
+          def serialize_unshippable_items(line_items)
+            line_items_serializer.new(
+              line_items,
+              params: serializer_params
             ).serializable_hash
           end
         end

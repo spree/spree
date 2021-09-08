@@ -981,6 +981,9 @@ en:
         get_shipping_rates:
           no_shipping_address: To generate Shipping Rates Order needs to have a Shipping Address
           no_line_items: To generate Shipping Rates you need to add some Line Items to Order
+        get_unshippable_items:
+          no_shipping_address: To look for Unshippable Items Order needs to have a Shipping Address
+          no_line_items: To look for Unshippable Items you need to add some Line Items to Order
     errors_prohibited_this_record_from_being_saved:
       one: 1 error prohibited this record from being saved
       other: ! '%{count} errors prohibited this record from being saved'
