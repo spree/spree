@@ -52,7 +52,7 @@ module Spree
           end
 
           def filters_meta
-            Spree::Products::FiltersPresenter.new(current_store, current_currency, params).to_h
+            Spree::Api::Products::FiltersPresenter.new(current_store, current_currency, params).to_h
           end
         end
       end
