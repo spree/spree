@@ -115,7 +115,7 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
       click_button 'Save and Continue'
       choose 'Credit Card'
       fill_in 'Card Number', with: '123'
-      fill_in 'card_expiry', with: '04 / 20'
+      fill_in_with_force 'card_expiry', with: '04 / 20'
       fill_in 'Card Code', with: '123'
       click_button 'Save and Continue'
       click_button 'Place Order'
@@ -456,7 +456,7 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
         it 'move user to confirmation checkout step' do
           fill_in 'Name on card', with: 'Spree Commerce'
           fill_in 'Card Number', with: '4111111111111111'
-          fill_in 'card_expiry', with: '04 / 20'
+          fill_in_with_force 'card_expiry', with: '04 / 20'
           fill_in 'Card Code', with: '123'
 
           fill_in 'Coupon Code', with: promotion2.code
@@ -497,7 +497,7 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
       choose 'Credit Card'
       fill_in 'Name on card', with: 'Spree Commerce'
       fill_in 'Card Number', with: '4111111111111111'
-      fill_in 'card_expiry', with: '04 / 20'
+      fill_in_with_force 'card_expiry', with: '04 / 20'
       fill_in 'Card Code', with: '123'
       click_button 'Save and Continue'
 

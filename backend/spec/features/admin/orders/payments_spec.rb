@@ -169,7 +169,7 @@ describe 'Payments', type: :feature, js: true do
       it 'is able to create a new credit card payment with valid information' do
         fill_in 'Card Number', with: '4111 1111 1111 1111'
         fill_in 'Name', with: 'Test User'
-        fill_in 'Expiration', with: "09 / #{Time.current.year + 1}"
+        fill_in_with_force 'Expiration', with: "09 / #{Time.current.year + 1}"
         fill_in 'Card Code', with: '007'
         # Regression test for #4277
         expect(page).to have_field(class: 'ccType', type: :hidden, with: 'visa')
