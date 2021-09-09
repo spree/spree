@@ -1167,6 +1167,25 @@ paths:
         - orderToken: []
         - bearerAuth: []
       summary: List of Shipping Rates
+  /api/v2/storefront/checkout/unshippable_items:
+    get:
+      description: Returns a list of not shippable Line Items for Checkout.
+      tags:
+        - Checkout
+      operationId: unshippable-items
+      responses:
+        '200':
+          description: Returns a list of not shippable Line Items for Checkout.
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/LineItemsList'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+      security:
+        - orderToken: [ ]
+        - bearerAuth: [ ]
+      summary: List of Line Items
   /api/v2/storefront/products:
     get:
       description: Returns a list of Products for the current Store.
@@ -14724,6 +14743,85 @@ components:
           format: date-time
           example: '2019-01-02 13:42:12'
           description: Date when Shipment was being sent from the warehouse
+    LineItems:
+      properties:
+        id:
+          type: string
+          example: '1'
+        type:
+          type: string
+          default: line_item
+        attributes:
+          $ref: '#/components/schemas/LineItemAttributes'
+    LineItemAttributes:
+      properties:
+        name:
+          type: string
+          example: T-Shirt
+        quantity:
+          type: integer
+          example: 1
+        price:
+          type: string
+          example: '10.0'
+          description: Price to be presented for the Customer
+        slug:
+          type: string
+          example: t-shirt
+        "options_text"=>"",
+        currency:
+          type: string
+          example: USD
+
+#        Example data:
+#        "display_price"=>"$10.00",
+#        "total"=>"10.0",
+#        "display_total"=>"$10.00",
+#        "adjustment_total"=>"0.0",
+#        "display_adjustment_total"=>"$0.00",
+#        "additional_tax_total"=>"0.0",
+#        "discounted_amount"=>"10.0",
+#        "display_discounted_amount"=>"$10.00",
+#        "display_additional_tax_total"=>"$0.00",
+#        "promo_total"=>"0.0",
+#        "display_promo_total"=>"$0.00",
+#        "included_tax_total"=>"0.0",
+#        "display_included_tax_total"=>"$0.00",
+#        "pre_tax_amount"=>"10.0",
+#        "display_pre_tax_amount"=>"$10.00"},
+
+        free:
+          type: boolean
+          example: true
+          description: 'Indicates if the Shipping Rate is free, eg. when Free shipping promo applied to Cart'
+        final_price:
+          type: string
+          example: '10.0'
+          description: Price to be presented for the Customer
+        display_final_price:
+          type: string
+          example: $10.00
+        tracking_url:
+          type: string
+          example: 'https://tools.usps.com/go/TrackConfirmAction?tRef=fullpage&tLc=2&text28777=&tLabels=4123412434%2C'
+          description: Tracking URL to the service provider website
+        state:
+          type: string
+          example: shipped
+          enum:
+            - pending
+            - ready
+            - shipped
+            - canceled
+          description: |-
+            Status of the Shipment. For a list of all available statuses please refer: <a href="https://dev-docs.spreecommerce.org/internals/shipments" target="_blank" rel="noopener">
+              Shipment section in Spree Guides
+            </a>
+        shipped_at:
+          type: string
+          format: date-time
+          example: '2019-01-02 13:42:12'
+          description: Date when Shipment was being sent from the warehouse
     ShippingRatesList:
       required:
         - data
@@ -14739,6 +14837,12 @@ components:
             anyOf:
               - $ref: '#/components/schemas/ShippingRate'
               - $ref: '#/components/schemas/StockLocation'
+    LineItemsList:
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/LineItems'
     EstimateShippingRatesList:
       required:
         - data
