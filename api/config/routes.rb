@@ -172,7 +172,7 @@ Spree::Core::Engine.add_routes do
 
           member do
             post :add_item
-            patch 'update_item/:wished_variant_id', to: 'wishlists#update_item', as: :update_item
+            patch 'update_item_quantity/:wished_variant_id', to: 'wishlists#update_item_quantity', as: :update_item_quantity
             delete 'remove_item/:wished_variant_id', to: 'wishlists#remove_item', as: :remove_item
           end
         end

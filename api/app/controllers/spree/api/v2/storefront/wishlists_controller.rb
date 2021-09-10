@@ -78,19 +78,21 @@ module Spree
             resource.reload
 
             if wished_variant.persisted?
-              render_serialized_payload { serialize_resource(resource) }
+              render_serialized_payload { serialize_wished_variant(wished_variant) }
             else
               render_error_payload(resource.errors.full_messages.to_sentence)
             end
           end
 
-          def update_item
+          def update_item_quantity
+            return render_error_item_quantity unless params[:quantity].to_i > 0
+
             spree_authorize! :update, wished_variant
 
-            wished_variant.update(params.permit(:quantity, :remark))
+            wished_variant.update(params.permit(:quantity))
 
             if wished_variant.errors.empty?
-              render_serialized_payload { serialize_resource(resource) }
+              render_serialized_payload { serialize_wished_variant(wished_variant) }
             else
               render_error_payload(resource.errors.full_messages.to_sentence)
             end
@@ -100,13 +102,25 @@ module Spree
             spree_authorize! :update, wished_variant
 
             if wished_variant.destroy
-              render_serialized_payload { serialize_resource(resource) }
+              render_serialized_payload { serialize_wished_variant(wished_variant) }
             else
               render_error_payload('Something went wrong')
             end
           end
 
           private
+
+          def resource
+            @resource ||= current_store.wishlists.find_by!(token: params[:id])
+          end
+
+          def resource_serializer
+            ::Spree::V2::Storefront::WishlistSerializer
+          end
+
+          def collection_serializer
+            ::Spree::V2::Storefront::WishlistSerializer
+          end
 
           def wishlist_attributes
             params.require(:wishlist).permit(permitted_wishlist_attributes)
@@ -116,20 +130,25 @@ module Spree
             params.permit(permitted_wished_variant_attributes)
           end
 
-          def resource
-            @resource ||= current_store.wishlists.find_by!(token: params[:id])
-          end
-
           def wished_variant
             @wished_variant ||= resource.wished_variants.find(params[:wished_variant_id])
           end
 
-          def resource_serializer
-            ::Spree::V2::Storefront::WishlistSerializer
+          def serialize_wished_variant(wished_variant)
+            wished_variant_serializer.new(
+              wished_variant,
+              params: serializer_params,
+              include: resource_includes,
+              fields: sparse_fields
+            ).serializable_hash
           end
 
-          def collection_serializer
-            ::Spree::V2::Storefront::WishlistSerializer
+          def wished_variant_serializer
+            ::Spree::V2::Storefront::WishedVariantSerializer
+          end
+
+          def render_error_item_quantity
+            render json: { error: I18n.t('spree.api.v2.wishlist.wrong_quantity') }, status: 422
           end
         end
       end

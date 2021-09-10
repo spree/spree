@@ -145,6 +145,6 @@ module Spree
 
     @@wishlist_attributes = [:name, :is_default, :is_private]
 
-    @@wished_variant_attributes = [:variant_id, :remark, :quantity]
+    @@wished_variant_attributes = [:variant_id, :quantity]
   end
 end

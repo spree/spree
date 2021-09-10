@@ -4,7 +4,7 @@ module Spree
       class WishedVariantSerializer < BaseSerializer
         set_type :wished_variant
 
-        attributes :remark, :quantity
+        attributes :quantity
 
         attribute :price do |wished_variant, params|
           wished_variant.price(currency: params[:currency])
