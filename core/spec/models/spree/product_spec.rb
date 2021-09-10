@@ -16,18 +16,39 @@ describe Spree::Product, type: :model do
 
     %w[purchasable backorderable in_stock].each do |method_name|
       describe "#{method_name}?" do
-        before { allow(product).to receive(:variants_including_master) { [product.master, variant] } }
+        context 'with variants' do
+          it "returns false if no variant is #{method_name.humanize.downcase} even if master is" do
+            variant.stock_items.update_all(backorderable: false) if %w[purchasable backorderable].include?(method_name)
+            variant.stock_items.update_all(count_on_hand: 0) if method_name == 'in_stock'
 
-        it "returns false if no variant is #{method_name.humanize.downcase}" do
-          allow_any_instance_of(Spree::Variant).to receive("#{method_name}?").and_return(false)
+            product.master.stock_items.where(variant: product.master).update_all(backorderable: true) if %w[purchasable backorderable].include?(method_name)
+            product.master.stock_items.where(variant: product.master).update_all(count_on_hand: 10) if method_name == 'in_stock'
 
-          expect(product.send("#{method_name}?")).to eq false
+            expect(product.send("#{method_name}?")).to eq false
+          end
+
+          it "returns true if variant is #{method_name.humanize.downcase}" do
+            variant.stock_items.update_all(backorderable: true) if %w[purchasable backorderable].include?(method_name)
+            variant.stock_items.update_all(count_on_hand: 10) if method_name == 'in_stock'
+
+            expect(product.send("#{method_name}?")).to eq true
+          end
         end
 
-        it "returns true if variant that is #{method_name.humanize.downcase} exists" do
-          allow(variant).to receive("#{method_name}?").and_return(true)
+        context 'without variants' do
+          it "returns false if master is not #{method_name.humanize.downcase}" do
+            product.master.stock_items.update_all(backorderable: false) if %w[purchasable backorderable].include?(method_name)
+            product.master.stock_items.update_all(count_on_hand: 0) if method_name == 'in_stock'
 
-          expect(product.send("#{method_name}?")).to eq true
+            expect(product.send("#{method_name}?")).to eq false
+          end
+
+          it "returns true if master is #{method_name.humanize.downcase}" do
+            product.master.stock_items.update_all(backorderable: true) if %w[purchasable backorderable].include?(method_name)
+            product.master.stock_items.update_all(count_on_hand: 10) if method_name == 'in_stock'
+
+            expect(product.send("#{method_name}?")).to eq true
+          end
         end
       end
     end

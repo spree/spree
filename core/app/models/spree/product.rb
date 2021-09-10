@@ -142,17 +142,17 @@ module Spree
 
     # Cant use short form block syntax due to https://github.com/Netflix/fast_jsonapi/issues/259
     def purchasable?
-      variants_including_master.any?(&:purchasable?)
+      default_variant.purchasable? || variants.any?(&:purchasable?)
     end
 
     # Cant use short form block syntax due to https://github.com/Netflix/fast_jsonapi/issues/259
     def in_stock?
-      variants_including_master.any?(&:in_stock?)
+      default_variant.in_stock? || variants.any?(&:in_stock?)
     end
 
     # Cant use short form block syntax due to https://github.com/Netflix/fast_jsonapi/issues/259
     def backorderable?
-      variants_including_master.any?(&:backorderable?)
+      default_variant.backorderable? || variants.any?(&:backorderable?)
     end
 
     def find_or_build_master
