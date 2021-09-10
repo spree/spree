@@ -8,6 +8,7 @@
 * [Documentation](https://dev-docs.spreecommerce.org/)
 * [API Reference](https://api.spreecommerce.org)
 * [Integrations](https://spreecommerce.org/integrations/)
+* [Roadmap](https://github.com/spree/spree/milestones?direction=asc&sort=due_date&state=open)
 * [Join our Slack community](http://slack.spreecommerce.org/)
 * [Support](https://spreecommerce.org/contact/)
 
