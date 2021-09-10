@@ -19,7 +19,8 @@ module Spree
       :storefront_store_serializer, :storefront_address_serializer, :storefront_order_serializer,
       :storefront_account_create_address_service, :storefront_account_update_address_service, :storefront_address_finder,
       :storefront_account_create_service, :storefront_account_update_service, :storefront_collection_sorter, :error_handler,
-      :storefront_cart_empty_service, :storefront_cart_destroy_service, :storefront_credit_cards_destroy_service, :platform_products_sorter
+      :storefront_cart_empty_service, :storefront_cart_destroy_service, :storefront_credit_cards_destroy_service, :platform_products_sorter,
+      :storefront_cart_change_currency_service
     ].freeze
 
     attr_accessor *INJECTION_POINTS
@@ -44,6 +45,7 @@ module Spree
       @storefront_cart_empty_service = Spree::Dependencies.cart_empty_service
       @storefront_cart_destroy_service = Spree::Dependencies.cart_destroy_service
       @storefront_cart_associate_service = Spree::Dependencies.cart_associate_service
+      @storefront_cart_change_currency_service = Spree::Dependencies.cart_change_currency_service
 
       # coupon code handler
       @storefront_coupon_handler = Spree::Dependencies.coupon_handler

@@ -138,6 +138,7 @@ Spree::Core::Engine.add_routes do
           delete 'remove_coupon_code', to: 'cart#remove_coupon_code', as: :cart_remove_coupon_code_without_code
           get :estimate_shipping_rates
           patch :associate
+          patch :change_currency
         end
 
         resource :checkout, controller: :checkout, only: %i[update] do
