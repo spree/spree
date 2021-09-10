@@ -168,8 +168,13 @@ Spree::Core::Engine.add_routes do
         resources :cms_pages, only: %i[index show]
 
         resources :wishlists do
-          get 'default', on: :collection
-          resources :wished_variants, only: [:create, :update, :destroy]
+          get :default, on: :collection
+
+          member do
+            post :add_item
+            patch 'update_item/:wished_variant_id', to: 'wishlists#update_item', as: :update_item
+            delete 'remove_item/:wished_variant_id', to: 'wishlists#remove_item', as: :remove_item
+          end
         end
       end
 

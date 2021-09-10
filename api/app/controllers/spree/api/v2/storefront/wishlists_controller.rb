@@ -5,7 +5,7 @@ module Spree
         class WishlistsController < ::Spree::Api::V2::ResourceController
           include Spree::Api::V2::CollectionOptionsHelpers
 
-          before_action :require_spree_current_user
+          before_action :require_spree_current_user, except: [:show]
 
           def index
             spree_authorize! :index, Spree::Wishlist
@@ -56,9 +56,54 @@ module Spree
 
           def default
             spree_authorize! :create, Spree::Wishlist
+
             default_wishlist = spree_current_user.default_wishlist_for_store(current_store)
 
             render_serialized_payload { serialize_resource(default_wishlist) }
+          end
+
+          def add_item
+            spree_authorize! :create, Spree::WishedVariant
+            spree_authorize! :update, resource
+
+            wished_variant = Spree::WishedVariant.new(params.permit(:quantity, :remark, :variant_id))
+
+            if resource.include? params[:variant_id]
+              wished_variant = resource.wished_variants.detect { |wv| wv.variant_id == params[:variant_id] }
+            else
+              wished_variant.wishlist = resource
+              wished_variant.save
+            end
+
+            resource.reload
+
+            if wished_variant.persisted?
+              render_serialized_payload { serialize_resource(resource) }
+            else
+              render_error_payload(resource.errors.full_messages.to_sentence)
+            end
+          end
+
+          def update_item
+            spree_authorize! :update, wished_variant
+
+            wished_variant.update(params.permit(:quantity, :remark))
+
+            if wished_variant.errors.empty?
+              render_serialized_payload { serialize_resource(resource) }
+            else
+              render_error_payload(resource.errors.full_messages.to_sentence)
+            end
+          end
+
+          def remove_item
+            spree_authorize! :update, wished_variant
+
+            if wished_variant.destroy
+              render_serialized_payload { serialize_resource(resource) }
+            else
+              render_error_payload('Something went wrong')
+            end
           end
 
           private
@@ -67,12 +112,16 @@ module Spree
             params.require(:wishlist).permit(permitted_wishlist_attributes)
           end
 
-          def resource
-            @resource ||= scope.find_by!(token: params[:id])
+          def wished_variant_attributes
+            params.permit(permitted_wished_variant_attributes)
           end
 
-          def scope
-            current_store.wishlists
+          def resource
+            @resource ||= current_store.wishlists.find_by!(token: params[:id])
+          end
+
+          def wished_variant
+            @wished_variant ||= resource.wished_variants.find(params[:wished_variant_id])
           end
 
           def resource_serializer
