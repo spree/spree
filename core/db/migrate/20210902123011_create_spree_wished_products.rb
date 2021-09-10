@@ -5,7 +5,6 @@ class CreateSpreeWishedProducts < ActiveRecord::Migration[5.2]
       t.belongs_to :wishlist
 
       t.column :quantity, :integer, default: 1, null: false
-      t.column :remark, :text
 
       t.timestamps
     end
