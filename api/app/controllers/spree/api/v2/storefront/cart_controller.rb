@@ -4,8 +4,10 @@ module Spree
       module Storefront
         class CartController < ::Spree::Api::V2::BaseController
           include Spree::Api::V2::Storefront::OrderConcern
-          before_action :ensure_order, except: :create
+          before_action :ensure_order, except: %i[create associate]
           before_action :load_variant, only: :add_item
+          before_action :require_spree_current_user, only: :associate
+
 
           def create
             spree_authorize! :create, Spree::Order
@@ -128,6 +130,34 @@ module Spree
             end
           end
 
+          def associate
+            guest_order_token = params[:guest_order_token]
+            guest_order = ::Spree::Api::Dependencies.storefront_current_order_finder.constantize.new.execute(
+              store: current_store,
+              user: nil,
+              token: guest_order_token,
+              currency: current_currency
+            )
+
+            spree_authorize! :update, guest_order, guest_order_token
+
+            result = associate_service.call(guest_order: guest_order, user: spree_current_user)
+
+            if result.success?
+              render_serialized_payload { serialize_resource(guest_order) }
+            else
+              render_error_payload(result.error)
+            end
+          end
+
+          def change_currency
+            spree_authorize! :update, spree_current_order, order_token
+
+            result = change_currency_service.call(order: spree_current_order, new_currency: params[:new_currency])
+
+            render_order(result)
+          end
+
           private
 
           def resource_serializer
@@ -164,6 +194,14 @@ module Spree
 
           def estimate_shipping_rates_service
             Spree::Api::Dependencies.storefront_cart_estimate_shipping_rates_service.constantize
+          end
+
+          def associate_service
+            Spree::Api::Dependencies.storefront_cart_associate_service.constantize
+          end
+
+          def change_currency_service
+            Spree::Api::Dependencies.storefront_cart_change_currency_service.constantize
           end
 
           def line_item

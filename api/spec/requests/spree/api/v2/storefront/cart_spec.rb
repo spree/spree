@@ -888,4 +888,71 @@ describe 'API V2 Storefront Cart Spec', type: :request do
       it_behaves_like 'returns a list of shipments with shipping rates'
     end
   end
+
+  describe 'cart#associate' do
+    let(:order) { create(:order, user: assigned_user, store: store, currency: currency) }
+
+    before do
+      patch '/api/v2/storefront/cart/associate', params: { guest_order_token: guest_order_token}, headers: headers
+    end
+
+    context 'as a signed in user' do
+      let(:headers) { headers_bearer }
+
+      context 'when order was not assigned' do
+        let(:assigned_user) { nil }
+        let(:guest_order_token) { order.token }
+
+        it_behaves_like 'returns valid cart JSON'
+      end
+
+      context 'when order was already assigned' do
+        let(:assigned_user) { create(:user) }
+        let(:guest_order_token) { order.token }
+
+        it_behaves_like 'returns 422 HTTP status'
+      end
+
+      context 'when order token is invalid' do
+        let(:assigned_user) { nil }
+        let(:guest_order_token) { 'invalid' }
+
+        it_behaves_like 'returns 403 HTTP status'
+      end
+    end
+
+    context 'as a guest user' do
+      let(:headers) {}
+      let(:assigned_user) { nil }
+      let(:guest_order_token) { order.token }
+
+      it_behaves_like 'returns 403 HTTP status'
+    end
+  end
+
+  describe 'cart#change_currency' do
+    let(:order) { create(:order, store: store, currency: currency) }
+    let!(:line_item) { create(:line_item, order: order) }
+    let!(:price) { create(:price, currency: 'EUR', variant: order.line_items.first.variant)}
+
+    before do
+      patch '/api/v2/storefront/cart/change_currency', params: { currency: currency, new_currency: new_currency, order_token: order.token }, headers: headers
+    end
+
+    context 'when switching to supported currency' do
+      let(:new_currency) { 'EUR' }
+
+      it_behaves_like 'returns valid cart JSON'
+
+      it 'sets cart currency to new currency' do
+        expect(json_response['data']).to have_attribute(:currency).with_value('EUR')
+      end
+    end
+
+    context 'when switching to unsupported currency' do
+      let(:new_currency) { 'XOF' }
+
+      it_behaves_like 'returns 422 HTTP status'
+    end
+  end
 end

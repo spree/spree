@@ -8,6 +8,7 @@
 * [Documentation](https://dev-docs.spreecommerce.org/)
 * [API Reference](https://api.spreecommerce.org)
 * [Integrations](https://spreecommerce.org/integrations/)
+* [Roadmap](https://github.com/spree/spree/milestones?direction=asc&sort=due_date&state=open)
 * [Join our Slack community](http://slack.spreecommerce.org/)
 * [Support](https://spreecommerce.org/contact/)
 
@@ -43,11 +44,15 @@
 
 See Spree in action: [demo.spreecommerce.org](https://demo.spreecommerce.org/)
 
-Or fire up your own demo on Heroku:
+Or fire up your own demo in the cloud:
 
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/spree/spree_starter)
 
-Admin panel credentials for your own Heroku demo:
+<a href="https://render.com/deploy?repo=https://github.com/spree/spree_starter/tree/main">
+  <img src="https://render.com/images/deploy-to-render-button.svg" alt="Deploy to Render" height=32>
+</a>
+
+Admin panel credentials for your own Heroku/Render demo:
 
 * login: `spree@example.com`
 * password: `spree123`

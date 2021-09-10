@@ -6,6 +6,7 @@ describe 'Storefront API v2 Addresses spec', type: :request do
   let!(:addresses) { create_list(:address, 3, user_id: user.id) }
   let!(:country) { create(:country, iso: 'GBR') }
   let!(:state) { create(:state, country: country) }
+  let(:store) { Spree::Store.default }
 
   shared_examples 'returns valid user addresses resource JSON' do
     it 'returns a valid user addresses resource JSON response' do
@@ -64,6 +65,40 @@ describe 'Storefront API v2 Addresses spec', type: :request do
         expect(address.deleted_at).not_to be_nil
         expect(json_response['data'][0]).to have_type('address')
         expect(json_response['data'].size).to eq(addresses.count)
+      end
+    end
+
+    context 'when address from countries that are supported in the current store' do
+      let(:country) { create(:country, name: 'France') }
+      let(:zone) { create(:zone, name: 'EU_VAT', countries: [country], kind: 'country') }
+      let!(:eu_address) { create(:address, user_id: user.id, country: country) }
+
+      before do
+        store.update(checkout_zone: zone)
+        get '/api/v2/storefront/account/addresses', headers: headers_bearer
+      end
+
+      it 'should return addresses from supported countries' do
+        expect(user.addresses.size).to eq 4
+        expect(json_response['data'].size).to eq 1
+        expect(json_response['data'][0]).to have_attribute(:country_name).with_value(eu_address.country.name)
+      end
+    end
+
+    context 'when address from countries that are not supported in the current store' do
+      let(:eu_country) { create(:country, name: 'France') }
+      let(:zone) { create(:zone, name: 'EU_VAT', countries: [eu_country], kind: 'country') }
+      let(:country) { create(:country) }
+      let!(:us_address) { create(:address, user_id: user.id, country: country) }
+
+      before do
+        store.update(checkout_zone: zone)
+        get '/api/v2/storefront/account/addresses', headers: headers_bearer
+      end
+
+      it 'should not return addresses from not supported countries' do
+        expect(user.addresses.size).to eq 4
+        expect(json_response['data'].size).to eq 0
       end
     end
 

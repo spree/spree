@@ -1,7 +1,7 @@
 module Spree::Cms::Sections
   class ImageGallery < Spree::CmsSection
     after_initialize :default_values
-    before_save :reset_link_attributes
+    validate :reset_multiple_link_attributes
 
     LINKED_RESOURCE_TYPE = if Rails::VERSION::STRING < '6.0'
                              ['Spree::Taxon'].freeze
@@ -70,7 +70,7 @@ module Spree::Cms::Sections
 
     private
 
-    def reset_link_attributes
+    def reset_multiple_link_attributes
       return if Rails::VERSION::STRING < '6.0'
 
       if link_type_one_changed?

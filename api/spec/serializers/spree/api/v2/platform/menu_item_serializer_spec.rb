@@ -82,4 +82,3 @@ describe Spree::Api::V2::Platform::MenuItemSerializer do
     )
   end
 end
-

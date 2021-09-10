@@ -7,6 +7,8 @@ describe 'Countries API', swagger: true do
     get 'Returns a list of Countries' do
       tags 'Countries'
       security [ bearer_auth: [] ]
+      operationId 'countries-list'
+      description 'Returns a list of Countries'
       before { create_list(:country, 2) }
 
       it_behaves_like 'records returned'
@@ -20,6 +22,8 @@ describe 'Countries API', swagger: true do
     get 'Returns a Country' do
       tags 'Countries'
       security [ bearer_auth: [] ]
+      operationId 'show-country'
+      description 'Returns a Country'
       parameter name: :id, in: :path, type: :string
 
       it_behaves_like 'record found'

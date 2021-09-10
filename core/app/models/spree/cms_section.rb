@@ -5,6 +5,8 @@ module Spree
     acts_as_list scope: :cms_page
     belongs_to :cms_page, touch: true
 
+    validate :reset_link_attributes
+
     IMAGE_COUNT = ['one', 'two', 'three']
     IMAGE_TYPES = ['image/png', 'image/jpg', 'image/jpeg', 'image/gif'].freeze
     IMAGE_SIZE = ['sm', 'md', 'lg', 'xl']
@@ -52,6 +54,16 @@ module Spree
 
     def fullscreen?
       fit == 'Screen'
+    end
+
+    private
+
+    def reset_link_attributes
+      if linked_resource_type_changed?
+        return if linked_resource_id_was.nil?
+
+        self.linked_resource_id = nil
+      end
     end
   end
 end

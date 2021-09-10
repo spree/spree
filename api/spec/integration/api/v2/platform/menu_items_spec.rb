@@ -3,8 +3,9 @@ require 'swagger_helper'
 describe 'Menu Items API', swagger: true do
   include_context 'Platform API v2'
 
-  resource_name = 'MenuItem'
+  resource_name = 'Menu Item'
   include_example = 'linked_resource'
+  filter_example = 'menu_item_name_eq=Women'
 
   let(:menu) { create(:menu, store: store) }
   let(:id) { create(:menu_item, menu: menu).id }
@@ -31,12 +32,14 @@ describe 'Menu Items API', swagger: true do
     }
   end
 
-  include_examples 'CRUD examples', resource_name, include_example
+  include_examples 'CRUD examples', resource_name, include_example, filter_example
 
   path '/api/v2/platform/menu_items/{id}/reposition' do
     patch 'Reposition a Menu Item' do
       tags resource_name.pluralize
       security [ bearer_auth: [] ]
+      operationId 'reposition-menu-item'
+      description 'Reposition a Menu Item'
       consumes 'application/json'
       parameter name: :id, in: :path, type: :string
       parameter name: :menu_item, in: :body, schema: { '$ref' => '#/components/schemas/menu_item_reposition_params' }

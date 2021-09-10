@@ -58,7 +58,7 @@ describe Spree::Cms::Sections::ImageGallery, type: :model do
     end
   end
 
-  if Rails::VERSION::STRING >= '6.1'
+  if Rails::VERSION::STRING >= '6.0'
     context 'when changing the link types for links one two and three' do
       let!(:image_gallery_section) { create(:cms_image_gallery_section, cms_page: homepage) }
 

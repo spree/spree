@@ -62,7 +62,7 @@ module Spree
 
     after_touch :clear_in_stock_cache
 
-    scope :in_stock, -> { joins(:stock_items).where('count_on_hand > ? OR track_inventory = ?', 0, false) }
+    scope :in_stock, -> { joins(:stock_items).where("#{Spree::StockItem.table_name}.count_on_hand > ? OR #{Spree::Variant.table_name}.track_inventory = ?", 0, false) }
     scope :backorderable, -> { joins(:stock_items).where(spree_stock_items: { backorderable: true }) }
     scope :in_stock_or_backorderable, -> { in_stock.or(backorderable) }
 

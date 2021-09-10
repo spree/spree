@@ -528,6 +528,19 @@ describe 'API V2 Storefront Products Spec', type: :request do
           end
         end
       end
+
+      context 'sorting by both price and sku' do
+        let(:skus_array) { json_response['data'].map { |p| p['attributes']['sku'] } }
+
+        before { get "/api/v2/storefront/products?sort=-sku,price" }
+
+        it_behaves_like 'returns 200 HTTP status'
+
+        it do
+          expect(skus_array).to eq(skus_array.sort.reverse)
+          expect(json_response['data'].count).to eq(store.products.available.count)
+        end
+      end
     end
 
     context 'paginate products' do
@@ -649,6 +662,32 @@ describe 'API V2 Storefront Products Spec', type: :request do
           expect(json_response['data'][0]['attributes']['display_price']).to match('$')
         end
       end
+    end
+
+    # Regression test for SD-1439 ambiguous column name: count_on_hand
+    context 'with multiple params' do
+      before do
+        get '/api/v2/storefront/products?filter[backorderable]=true'\
+          '&filter[ids]=130'\
+          '&filter[in_stock]=true'\
+          '&filter[name]=rails'\
+          '&filter[options][tshirt-color]=Red'\
+          '&filter[price]=10,100'\
+          '&filter[properties][brand-name]=alpha'\
+          '&filter[purchasable]=true'\
+          '&filter[show_deleted]=true'\
+          '&filter[show_discontinued]=true'\
+          '&filter[skus]=SKU-123,SKU-345'\
+          '&filter[taxons]=1,2,3,4,5,6,7,8,9,10,11'\
+          '&image_transformation[quality]=anim consequat fugiat sed'\
+          '&image_transformation[size]=100x50'\
+          '&include=default_variant,variants,option_types,product_properties,taxons,images,primary_variant'\
+          '&page=1'\
+          '&per_page=25'\
+          '&sort=-updated_at,price,-name,created_at,-available_on,sku'
+      end
+
+      it_behaves_like 'returns 200 HTTP status'
     end
   end
 
@@ -780,6 +819,48 @@ describe 'API V2 Storefront Products Spec', type: :request do
 
         it 'returns product image' do
           expect(image_json_data['transformed_url']).not_to be_nil
+        end
+      end
+    end
+
+    # Regression test for SD-1462 - shouldn't use master variant if there are any non master variants
+    context 'with variants' do
+      let(:variant) { create(:variant, product: product) }
+      let(:request) { get "/api/v2/storefront/products/#{product.slug}" }
+
+      describe 'purchasable attribute value' do
+        before do
+          product.master.stock_items.update_all(backorderable: true)
+          variant.stock_items.update_all(backorderable: false)
+          request
+        end
+
+        it 'uses variants purchasability only' do
+          expect(json_response['data']['attributes']['backorderable']).to eq(false)
+        end
+      end
+
+      describe 'backorderable attribute value' do
+        before do
+          product.master.stock_items.update_all(backorderable: true)
+          variant.stock_items.update_all(backorderable: false)
+          request
+        end
+
+        it 'uses variants backorderability only' do
+          expect(json_response['data']['attributes']['backorderable']).to eq(false)
+        end
+      end
+
+      describe 'in_stock attribute value' do
+        before do
+          product.master.stock_items.update_all(count_on_hand: 10)
+          variant.stock_items.update_all(count_on_hand: 0)
+          request
+        end
+
+        it 'uses variants #in_stock? only' do
+          expect(json_response['data']['attributes']['in_stock']).to eq(false)
         end
       end
     end
