@@ -749,6 +749,28 @@ describe 'API V2 Storefront Products Spec', type: :request do
           expect(json_response['meta']['filters']['product_properties']).to contain_exactly(property3_response)
         end
       end
+
+      context 'when filter by multiple taxons is applied' do
+        let(:product_with_taxon_and_options) { create(:product, taxons: [taxon], option_types: [option_type2], stores: [store]) }
+        let!(:product_with_taxon_and_options_property) { create(:product_property, property: property3, product: product_with_taxon_and_options, value: 'Test') }
+        let!(:product_with_taxon_and_options_variant1) { create(:variant, product: product_with_taxon_and_options, option_values: [option_type2_value1]) }
+        let!(:product_with_taxon_and_options_variant2) { create(:variant, product: product_with_taxon_and_options, option_values: [option_type2_value2]) }
+
+        let(:taxonomy2) { create(:taxonomy, store: store) }
+        let(:taxon2) { taxonomy2.root }
+        let(:product_with_taxon2_and_options) { create(:product, taxons: [taxon2], option_types: [option_type2], stores: [store]) }
+        let!(:product_with_taxon2_and_options_property) { create(:product_property, property: property3, product: product_with_taxon2_and_options, value: 'Test') }
+        let!(:product_with_taxon2_and_options_variant1) { create(:variant, product: product_with_taxon2_and_options, option_values: [option_value]) }
+
+        before { get "/api/v2/storefront/products?filter[taxons]=#{taxon.id},#{taxon2.id}" }
+
+        it 'returns list of available filters for given taxons' do
+          expect(json_response['meta']['filters']['option_types'].count).to eq 2
+          expect(json_response['meta']['filters']['option_types']).to contain_exactly(option_type1_response, option_type2_response)
+          expect(json_response['meta']['filters']['product_properties'].count).to eq 1
+          expect(json_response['meta']['filters']['product_properties']).to contain_exactly(property3_response)
+        end
+      end
     end
 
     context 'fetch products by curency param' do

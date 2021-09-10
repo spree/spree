@@ -22,15 +22,16 @@ module Spree
         attr_reader :products_for_filters
 
         def find_products_for_filters(current_store, current_currency, params)
-          current_taxons = find_current_taxon(current_store, params)
+          current_taxons = find_current_taxons(current_store, params)
           current_store.products.active(current_currency).in_taxons(current_taxons)
         end
 
-        def find_current_taxon(current_store, params)
+        def find_current_taxons(current_store, params)
           taxons_param = params.dig(:filter, :taxons)
           return nil if taxons_param.nil? || taxons_param.to_s.blank?
 
-          current_store.taxons.find_by(id: taxons_param)
+          taxon_ids = taxons_param.to_s.split(',')
+          current_store.taxons.where(id: taxon_ids)
         end
       end
     end
