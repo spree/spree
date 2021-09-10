@@ -9,6 +9,7 @@ module Spree
     has_one :product, class_name: 'Spree::Product', through: :variant
 
     validates :variant, :wishlist, presence: true
+    validates :variant, uniqueness: { scope: [:wishlist] }
 
     def price(currency)
       variant.amount_in(currency[:currency])

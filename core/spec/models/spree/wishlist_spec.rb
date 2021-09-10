@@ -8,7 +8,7 @@ describe Spree::Wishlist, type: :model do
     expect(wishlist).to be_valid
   end
 
-  context '.include?' do
+  describe '.include?' do
     let(:variant) { create(:variant) }
 
     before do
@@ -22,13 +22,13 @@ describe Spree::Wishlist, type: :model do
     end
   end
 
-  context '.to_param' do
+  describe '.to_param' do
     it 'returns the wishlists token' do
       expect(wishlist.to_param).to eq wishlist.token
     end
   end
 
-  context '.get_by_param' do
+  describe '.get_by_param' do
     it 'returns the wishlist of the token' do
       hash = wishlist.token
       result = described_class.get_by_param(hash)
@@ -41,7 +41,7 @@ describe Spree::Wishlist, type: :model do
     end
   end
 
-  context '.can_be_read_by?' do
+  describe '.can_be_read_by?' do
     context 'when the wishlist is private' do
       it 'is true when the user owns the wishlist' do
         wishlist.is_private = true
@@ -64,7 +64,7 @@ describe Spree::Wishlist, type: :model do
     end
   end
 
-  context '.public?' do
+  describe '.public?' do
     it 'is true when the wishlist is public' do
       wishlist.is_private = false
       expect(wishlist.public?).to be true
@@ -76,7 +76,7 @@ describe Spree::Wishlist, type: :model do
     end
   end
 
-  context '#destroy' do
+  describe '#destroy' do
     let!(:wished_variant) { create(:wished_variant) }
 
     it 'deletes associated wished products' do
