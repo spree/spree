@@ -150,6 +150,14 @@ module Spree
             end
           end
 
+          def change_currency
+            spree_authorize! :update, spree_current_order, order_token
+
+            result = change_currency_service.call(order: spree_current_order, new_currency: params[:new_currency])
+
+            render_order(result)
+          end
+
           private
 
           def resource_serializer
@@ -190,6 +198,10 @@ module Spree
 
           def associate_service
             Spree::Api::Dependencies.storefront_cart_associate_service.constantize
+          end
+
+          def change_currency_service
+            Spree::Api::Dependencies.storefront_cart_change_currency_service.constantize
           end
 
           def line_item
