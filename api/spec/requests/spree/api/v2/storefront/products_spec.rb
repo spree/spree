@@ -706,11 +706,9 @@ describe 'API V2 Storefront Products Spec', type: :request do
 
         it 'returns list of available filters for all products' do
           expect(json_response['meta']['filters']['option_types'].count).to eq 2
-          expect(json_response['meta']['filters']['option_types']).to include(option_type1_response)
-          expect(json_response['meta']['filters']['option_types']).to include(option_type2_response)
+          expect(json_response['meta']['filters']['option_types']).to contain_exactly(option_type1_response, option_type2_response)
           expect(json_response['meta']['filters']['product_properties'].count).to eq 2
-          expect(json_response['meta']['filters']['product_properties']).to include(property2_response)
-          expect(json_response['meta']['filters']['product_properties']).to include(property3_response)
+          expect(json_response['meta']['filters']['product_properties']).to contain_exactly(property2_response, property3_response)
         end
       end
 
@@ -719,11 +717,9 @@ describe 'API V2 Storefront Products Spec', type: :request do
 
         it 'returns list of all available filters for products' do
           expect(json_response['meta']['filters']['option_types'].count).to eq 2
-          expect(json_response['meta']['filters']['option_types']).to include(option_type1_response)
-          expect(json_response['meta']['filters']['option_types']).to include(option_type2_response)
+          expect(json_response['meta']['filters']['option_types']).to contain_exactly(option_type1_response, option_type2_response)
           expect(json_response['meta']['filters']['product_properties'].count).to eq 2
-          expect(json_response['meta']['filters']['product_properties']).to include(property2_response)
-          expect(json_response['meta']['filters']['product_properties']).to include(property3_response)
+          expect(json_response['meta']['filters']['product_properties']).to contain_exactly(property2_response, property3_response)
         end
       end
 
@@ -732,11 +728,9 @@ describe 'API V2 Storefront Products Spec', type: :request do
 
         it 'returns list of all available filters for products' do
           expect(json_response['meta']['filters']['option_types'].count).to eq 2
-          expect(json_response['meta']['filters']['option_types']).to include(option_type1_response)
-          expect(json_response['meta']['filters']['option_types']).to include(option_type2_response)
+          expect(json_response['meta']['filters']['option_types']).to contain_exactly(option_type1_response, option_type2_response)
           expect(json_response['meta']['filters']['product_properties'].count).to eq 2
-          expect(json_response['meta']['filters']['product_properties']).to include(property2_response)
-          expect(json_response['meta']['filters']['product_properties']).to include(property3_response)
+          expect(json_response['meta']['filters']['product_properties']).to contain_exactly(property2_response, property3_response)
         end
       end
 
@@ -750,9 +744,9 @@ describe 'API V2 Storefront Products Spec', type: :request do
 
         it 'returns list of available filters for given taxon' do
           expect(json_response['meta']['filters']['option_types'].count).to eq 1
-          expect(json_response['meta']['filters']['option_types']).to include(option_type2_response)
+          expect(json_response['meta']['filters']['option_types']).to contain_exactly(option_type2_response)
           expect(json_response['meta']['filters']['product_properties'].count).to eq 1
-          expect(json_response['meta']['filters']['product_properties']).to include(property3_response)
+          expect(json_response['meta']['filters']['product_properties']).to contain_exactly(property3_response)
         end
       end
     end
