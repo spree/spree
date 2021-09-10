@@ -112,6 +112,8 @@ module Spree
 
           def resource
             @resource ||= current_store.wishlists.find_by!(token: params[:id])
+
+            return @resource if @resource.can_be_read_by?(spree_current_user)
           end
 
           def resource_serializer
