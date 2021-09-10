@@ -822,6 +822,38 @@ paths:
       security:
         - bearerAuth: []
       summary: Associate a guest cart to a user
+  /api/v2/storefront/cart/change_currency:
+    patch:
+      description: Changes cart currency and recalculates its value.
+      tags:
+        - Cart
+      operationId: change-currency
+      parameters:
+        - name: new_currency
+          in: query
+          description: Currency to change the cart to
+          schema:
+            type: string
+        - $ref: '#/components/parameters/CartIncludeParam'
+        - $ref: '#/components/parameters/SparseFieldsParam'
+      responses:
+        '200':
+          description: Currency has been successfully changed
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+        '422':
+          description: Returned when currency is not supported or cart cannot be updated
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - bearerAuth: []
+      summary: Change cart currency
   /api/v2/storefront/checkout:
     patch:
       description: |-
