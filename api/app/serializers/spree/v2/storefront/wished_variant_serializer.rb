@@ -15,11 +15,11 @@ module Spree
         end
 
         attribute :display_price do |wished_variant, params|
-          wished_variant.display_price(currency: params[:currency])
+          wished_variant.display_price(currency: params[:currency]).to_s
         end
 
         attribute :display_total do |wished_variant, params|
-          wished_variant.display_total(currency: params[:currency])
+          wished_variant.display_total(currency: params[:currency]).to_s
         end
 
         belongs_to :variant
