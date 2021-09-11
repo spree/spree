@@ -46,6 +46,14 @@ module Spree
           def allowed_sort_attributes
             super << :available_on
           end
+
+          def collection_meta(collection)
+            super(collection).merge(filters: filters_meta)
+          end
+
+          def filters_meta
+            Spree::Api::Products::FiltersPresenter.new(current_store, current_currency, params).to_h
+          end
         end
       end
     end
