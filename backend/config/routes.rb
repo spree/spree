@@ -37,7 +37,13 @@ Spree::Core::Engine.add_routes do
       end
       member do
         post :clone
+        get :related
         get :stock
+      end
+      resources :relations do
+        collection do
+          post :update_positions
+        end
       end
       resources :variants do
         collection do
@@ -47,6 +53,8 @@ Spree::Core::Engine.add_routes do
       resources :variants_including_master, only: [:update]
       resources :prices, only: [:index, :create]
     end
+
+    resources :relation_types
 
     resources :option_types do
       collection do

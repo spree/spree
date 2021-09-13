@@ -24,8 +24,6 @@ describe Spree::Admin::ProductsController, type: :controller do
     end
   end
 
-
-
   # regression test for #1370
   context 'adding properties to a product' do
     let!(:product) { create(:product, stores: [store]) }
@@ -220,6 +218,22 @@ describe Spree::Admin::ProductsController, type: :controller do
         send_request
         expect(flash[:error]).to eq('Product is not found')
       end
+    end
+  end
+
+  describe '#related' do
+    let(:user) { create(:user) }
+    let(:product) { create(:product) }
+
+    before { allow(controller).to receive(:spree_current_user).and_return(user) }
+
+    it 'is not routable' do
+      get :related, params: { id: product.id }
+      expect(response.status).to be(200)
+    end
+
+    it 'responds to model_class as Spree::Relation' do
+      expect(controller.send(:model_class)).to eq Spree::Product
     end
   end
 end

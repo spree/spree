@@ -1,0 +1,46 @@
+<table class="table sortable" data-hook="products_table" data-sortable-link="<%= update_positions_admin_product_relations_url(@product) %>">
+  <colgroup>
+    <col style="width: 5%" />
+    <col style="width: 35%" />
+    <col style="width: 30%" />
+    <col style="width: 25%" />
+    <col style="width: 5%" />
+  </colgroup>
+  <thead>
+  <tr data-hook="products_header">
+    <th></th>
+    <th><%= Spree.t(:name) %></th>
+    <th><%= Spree.t(:type) %></th>
+    <th><%= Spree.t(:discount_amount) %></th>
+    <th class="actions"></th>
+  </tr>
+  </thead>
+  <tbody>
+  <% product.relations.each do |relation| %>
+    <tr id="<%= spree_dom_id relation %>" data-hook="products_row">
+      <td class="handle move-handle">
+        <%= svg_icon name: "sort.svg", width: '18', height: '18' %>
+      </td>
+      <% if defined? Spree::Frontend %>
+        <td><%= link_to relation.related_to.name, relation.related_to %></td>
+      <% else %>
+        <td><%= link_to relation.related_to.name, admin_product_path(relation.related_to) %></td>
+      <% end %>
+      <td><%= relation.relation_type.name %></td>
+      <td>
+        <%= form_for relation, url: admin_product_relation_path(relation.relatable, relation) do |f| %>
+          <div class="input-group justify-content-center">
+            <%= f.text_field :discount_amount, class: 'form-control text-center my-1 w-50' %>
+            <span class="input-group-btn">
+                <%= f.button Spree.t(:update), type: 'submit', class: 'btn btn-primary m-1' %>
+              </span>
+          </div>
+        <% end %>
+      </td>
+      <td class="actions">
+        <%= link_to_delete relation, url: admin_product_relation_url(relation.relatable, relation), no_text: true %>
+      </td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>

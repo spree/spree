@@ -52,5 +52,19 @@
         class: "nav-link #{'active' if current == :prices}" %>
 
     <% end if can?(:admin, Spree::Price) && !@product.deleted? %>
+
+    <%= content_tag :li do %>
+      <% active_class = 'active' if current == 'Related Products' %>
+      <%= link_to_with_icon 'resize-small',
+                            Spree.t(:related_products),
+                            related_admin_product_url(@product),
+                            class: "nav-link #{active_class}" %>
+
+      <%= link_to_with_icon 'money.svg',
+                            Spree.t(:prices),
+                            admin_product_prices_path(@product),
+                            class: "nav-link #{'active' if current == :prices}" %>
+
+    <% end if can?(:admin, Spree::Relation) && !@product.deleted? %>
   </ul>
 <% end %>

@@ -244,6 +244,12 @@ en:
       spree/reimbursement_type:
         one: Reimbursement Type
         other: Reimbursement Types
+      spree/relation:
+        one: Relation
+        other: Relations
+      spree/relation_type:
+        one: Relation Type
+        other: Relation Types
       spree/return_authorization:
         one: Return Authorization
         other: Return Authorizations
@@ -543,6 +549,7 @@ en:
       successfully_updated: "Updated successfully"
       unsuccessfully_updated: "There was an update while trying to update your address."
       save: "Save"
+    add_related_product: Add Related Product
     adjustable: Adjustable
     adjustment: Adjustment
     adjustment_amount: Amount
@@ -735,6 +742,7 @@ en:
     alternative_phone: Alternative Phone
     amount: Amount
     and: and
+    applies_to: Applies To
     approve: approve
     approver: Approver
     approved_at: Approved at
@@ -1184,6 +1192,7 @@ en:
     name: Name
     name_on_card: Name on card
     name_or_sku: Name or SKU (enter at least first 3 characters of product name)
+    name_or_sku_short: Name or SKU
     nav_bar:
       admin_panel: Admin Panel
       change_country: Change country
@@ -1220,6 +1229,7 @@ en:
     new_reimbursement_type: New Reimbursement Type
     new_rma_reason: New RMA Reason
     new_return_authorization: New Return Authorization
+    new_relation_type: New Relation Type
     new_role: New Role
     new_shipping_category: New Shipping Category
     new_shipping_method: New Shipping Method
@@ -1250,6 +1260,7 @@ en:
       for_this_quantity: Sorry, it looks like some products are not available in selected quantity.
       opps: Oops!
     no_products_found: No products found
+    no_relation_types: You need to configure Relation Types before you can use this feature.
     no_results: No results
     no_rules_added: No rules added
     no_resource_found: 'No %{resource} found'
@@ -1556,6 +1567,8 @@ en:
     reimbursements: Reimbursements
     reject: Reject
     rejected: Rejected
+    related_products: Related Products
+    related_product_discount: Related Product Discount
     remember_me: Remember me
     remove: Remove
     remove_image: Remove Image

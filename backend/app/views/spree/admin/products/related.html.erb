@@ -1,0 +1,84 @@
+<%= render partial: 'spree/admin/shared/product_tabs', locals: { current: 'Related Products' } %>
+<%= render partial: 'spree/admin/variants/autocomplete', formats: :js %>
+
+<%= csrf_meta_tag %>
+
+<% if frontend_available? %>
+  <%= content_for :page_actions do %>
+    <%=
+      button_link_to(
+          Spree.t(:preview_product),
+          spree.product_url(@product),
+          class: 'btn-outline-secondary', icon: 'eye-open', id: 'admin_preview_product', target: :blank
+      )
+    %>
+  <% end %>
+<% end %>
+
+<% if @relation_types.empty? %>
+  <div class="alert alert-warning no-objects-found">
+    <%= Spree.t(:no_relation_types) %>
+  </div>
+<% else %>
+  <div id="add-line-item">
+    <fieldset>
+      <legend><%= Spree.t(:add_related_product) %></legend>
+      <div class="row">
+        <div id="related_product_name" class="col-md-12 col-xl-5">
+          <div class="form-group">
+            <%= label_tag :add_variant_name, Spree.t(:name_or_sku_short) %>
+            <%= select_tag :add_variant_name, nil , class: 'variant_autocomplete d-block w-100' %>
+          </div>
+        </div>
+        <div id="related_product_type" class="col-md-7 col-xl-4">
+          <div class="form-group">
+            <%= label_tag :add_type, Spree.t(:type) %>
+            <%= select_tag :add_type, options_for_select(@relation_types.map { |rt| [rt.name, rt.id] }), class: 'select2' %>
+          </div>
+        </div>
+        <div id="related_product_discount" class="col-md-5 col-xl-3">
+          <div class="form-group">
+            <%= label_tag :add_discount, Spree.t(:discount_amount) %>
+            <div class="input-group">
+              <%= text_field_tag :add_discount, 0.0, class: 'form-control text-center' %>
+              <span class="input-group-btn">
+                <%= button_link_to Spree.t(:add), admin_product_relations_url(@product), icon: 'add', class: 'btn-success my-0', id: 'add_related_product', data: { update: 'products-table-wrapper' } %>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </fieldset>
+  </div>
+
+  <div id="products-table-wrapper">
+    <%= render 'related_products_table', product: @product %>
+  </div>
+
+  <%= content_for :head do %>
+    <script type="text/javascript">
+        var expand_variants = false;
+        $(document).on('click', '#add_related_product', function(){
+            if($('#add_variant_name').val() == '') { return false; }
+            update_target = $(this).data('update');
+            $.ajax({
+                dataType: 'script',
+                beforeSend: function(xhr) {xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))},
+                url: this.href,
+                type: 'POST',
+                data: {
+                    'relation[related_to_type]' : 'Product',
+                    'relation[related_to_id]': $('#add_variant_name').val(),
+                    'relation[relation_type_id]': $('#add_type').val(),
+                    'relation[discount_amount]' : $('#add_discount').val()
+                }
+            });
+            return false;
+        });
+
+        $(function () {
+            $('#add_variant_name.variant_autocomplete').variantAutocomplete();
+        });
+    </script>
+  <% end %>
+<% end %>
