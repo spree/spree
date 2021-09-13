@@ -59,8 +59,12 @@ module Spree
 
           context 'cannot destroy image of product from different store' do
             let(:product) { create(:product, stores: [create(:store)]) }
+            before { send_request }
 
-            it { expect { send_request }.to raise_error(ActiveRecord::RecordNotFound) }
+            it do
+              expect(send_request).to redirect_to(spree.admin_product_images_path(product))
+              expect(flash[:error]).to eq('Image is not found')
+            end
           end
         end
 
@@ -98,8 +102,12 @@ module Spree
 
           context 'cannot destroy image of product from different store' do
             let(:product) { create(:product, stores: [create(:store)]) }
+            before { send_request }
 
-            it { expect { send_request }.to raise_error(ActiveRecord::RecordNotFound) }
+            it do
+              expect(send_request).to redirect_to(spree.admin_product_images_path(product))
+              expect(flash[:error]).to eq('Image is not found')
+            end
           end
         end
       end
