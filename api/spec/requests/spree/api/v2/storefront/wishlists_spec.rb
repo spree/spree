@@ -3,6 +3,8 @@ require 'spec_helper'
 RSpec.describe Spree::Api::V2::Storefront::WishlistsController, type: :request do
   let!(:store) { Spree::Store.default }
   let!(:other_store) { create(:store) }
+  let!(:other_user) { create(:user) }
+
   let(:wishlist) { create(:wishlist) }
   let(:user) { wishlist.user }
 
@@ -54,7 +56,8 @@ RSpec.describe Spree::Api::V2::Storefront::WishlistsController, type: :request d
 
   describe '#index' do
     let!(:wishlists) { create_list(:wishlist, 30, user: user) }
-    let!(:wishlists_other_store) { create_list(:wishlist, 5, user: user, store: other_store ) }
+    let!(:wishlist_for_other_user) { create_list(:wishlist, 5, user: other_user) }
+    let!(:wishlists_other_store) { create_list(:wishlist, 5, user: user, store: other_store) }
 
     it 'must return a list of wishlists paged' do
       get '/api/v2/storefront/wishlists', headers: headers_bearer
@@ -79,11 +82,14 @@ RSpec.describe Spree::Api::V2::Storefront::WishlistsController, type: :request d
   end
 
   describe '#show' do
+    let!(:wishlist_private) { create(:wishlist, user: other_user, is_private: true) }
+    let!(:wishlist_public) { create(:wishlist, user: other_user, is_private: false) }
+
     let!(:wished_variant) do
       wishlist.wished_variants.create({ variant: create(:variant) })
     end
 
-    it 'returns wish list details' do
+    it 'returns wishlist details' do
       get "/api/v2/storefront/wishlists/#{wishlist.token}?include=wished_variants", headers: headers_bearer
 
       expect(response).to have_http_status(:ok)
@@ -92,6 +98,21 @@ RSpec.describe Spree::Api::V2::Storefront::WishlistsController, type: :request d
       expect(json_response['data']['attributes']['is_private']).to eq (wishlist.is_private?)
       expect(json_response['data']['attributes']['is_default']).to eq (wishlist.is_default?)
       expect(json_response['data']['relationships']['wished_variants']['data'].first['id']).to eq(wished_variant.id.to_s)
+    end
+
+    context 'when a request is sent by random with no auth' do
+      it 'returns 404 when wishlist is set to private' do
+        get "/api/v2/storefront/wishlists/#{wishlist_private.token}"
+        expect(response).to have_http_status(:not_found)
+      end
+
+      it 'returns wishlist when requested by public but is_private: false' do
+        get "/api/v2/storefront/wishlists/#{wishlist_public.token}"
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['data']['attributes']['token']).to eq (wishlist_public.token)
+        expect(json_response['data']['attributes']['name']).to eq (wishlist_public.name)
+      end
     end
   end
 
@@ -138,6 +159,70 @@ RSpec.describe Spree::Api::V2::Storefront::WishlistsController, type: :request d
       delete "/api/v2/storefront/wishlists/#{user.wishlists.first.token}", headers: headers_bearer
       expect(response.status).to      eq (200)
       expect(user.wishlists.count).to eq (0)
+    end
+  end
+
+  describe '#add_item' do
+    let!(:item) { create(:variant) }
+
+    it 'must permit update wishlist name' do
+      post "/api/v2/storefront/wishlists/#{user.wishlists.first.token}/add_item", headers: headers_bearer,
+                                                                                  params: {
+                                                                                    variant_id: item.id,
+                                                                                    quantity: 3
+                                                                                  }
+      expect(response.status).to eq(200)
+
+      user.wishlists.reload
+
+      expect(json_response['data']['type']).to eql ('wished_variant')
+      expect(json_response['data']['attributes']['quantity']).to eql (3)
+      expect(json_response['data']['attributes']['price']).to eql ('19.99')
+      expect(json_response['data']['attributes']['total']).to eql ('59.97')
+      expect(json_response['data']['attributes']['display_price']).to eql ('$19.99')
+      expect(json_response['data']['attributes']['display_total']).to eql ('$59.97')
+      expect(json_response['data']['relationships']['variant']['data']['id']).to eql (item.id.to_s)
+      expect(json_response['data']['relationships']['variant']['data']['type']).to eql ('variant')
+      expect(json_response['data']['relationships']['wishlist']['data']['id']).to eql (user.wishlists.first.id.to_s)
+      expect(json_response['data']['relationships']['wishlist']['data']['type']).to eql ('wishlist')
+    end
+  end
+
+  describe '#update_item_quantity' do
+    let!(:wished_variant) do
+      wishlist.wished_variants.create({ variant: create(:variant) })
+    end
+
+    it 'must permit update wishlist name' do
+      patch "/api/v2/storefront/wishlists/#{user.wishlists.first.token}/update_item_quantity/#{wishlist.wished_variants.first.id}",
+            headers: headers_bearer,
+            params: {
+              quantity: 17
+            }
+
+      expect(response.status).to eq(200)
+      expect(json_response['data']['attributes']['quantity']).to eql (17)
+    end
+  end
+
+  describe '#remove_item' do
+    let!(:wished_variant) do
+      wishlist.wished_variants.create({ variant: create(:variant) })
+    end
+
+    it 'must permit update wishlist name' do
+      delete "/api/v2/storefront/wishlists/#{user.wishlists.first.token}/remove_item/#{wishlist.wished_variants.first.id}", headers: headers_bearer
+
+      expect(response.status).to eq(200)
+      expect(json_response['data']['type']).to eql ('wished_variant')
+    end
+
+    context 'user not authorised to access this action' do
+      it 'can not delete item from other users wishlist' do
+        delete "/api/v2/storefront/wishlists/#{user.wishlists.first.token}/remove_item/#{wishlist.wished_variants.first.id}"
+
+        expect(response.status).to eq(403)
+      end
     end
   end
 end
