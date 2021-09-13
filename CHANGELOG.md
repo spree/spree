@@ -2,8 +2,19 @@
 
 All notable, unreleased changes to this project will be documented in this file. For the released changes, please visit the [Releases](https://github.com/spree/spree/releases) page.
 
-## [Unreleased]
+## [4.3.0] - 2021-09-14
 
+- Improve `Product#total_on_hand` & `Variant#backordered?` performance [#11335](https://github.com/spree/spree/pull/11335) ([damianlegawiec](https://github.com/damianlegawiec))
+- Add API endpoint for changing cart currency [#11331](https://github.com/spree/spree/pull/11331) ([rafalcymerys](https://github.com/rafalcymerys))
+- SD-1462 Product #purchasable?, #in_stock?, #backorderable? will use defau… [#11329](https://github.com/spree/spree/pull/11329) ([kgorazd](https://github.com/kgorazd))
+- Add missing spree preferences reset in API specs [#11324](https://github.com/spree/spree/pull/11324) ([damianlegawiec](https://github.com/damianlegawiec))
+- Return filter options with products [#11318](https://github.com/spree/spree/pull/11318) ([rafalcymerys](https://github.com/rafalcymerys))
+- [SD-1456] Default Bill Address ID / Ship Address ID in Account Update endpoint should be strings, not integers [#11317](https://github.com/spree/spree/pull/11317) ([pmilewski](https://github.com/pmilewski))
+- Move leftover email template from core to emails gem [#11316](https://github.com/spree/spree/pull/11316) ([damianlegawiec](https://github.com/damianlegawiec))
+- Use Pretty Name in section Links + Bug Fix [#11300](https://github.com/spree/spree/pull/11300) ([MatthewKennedy](https://github.com/MatthewKennedy))
+- [SD-1439] Invalid-SQL-statement-when-filtering-Products-via-Storefront-API [#11298](https://github.com/spree/spree/pull/11298) ([kgorazd](https://github.com/kgorazd))
+- API for associating order with user [#11297](https://github.com/spree/spree/pull/11297) ([rafalcymerys](https://github.com/rafalcymerys))
+- [SD-1377] Display addresses from countries supported in the current store [#11271](https://github.com/spree/spree/pull/11271) ([v10110](https://github.com/v10110))
 - Add public preferences to payment methods Storefront API [#11301](https://github.com/spree/spree/pull/11301) ([damianlegawiec](https://github.com/damianlegawiec))
 - ADMIN UI - Use svg for missing image [#11296](https://github.com/spree/spree/pull/11296) ([MatthewKennedy](https://github.com/MatthewKennedy))
 - Storefront Countries API returns all countries on a single page [#11289](https://github.com/spree/spree/pull/11289) ([damianlegawiec](https://github.com/damianlegawiec))
@@ -721,5 +732,5 @@ All notable, unreleased changes to this project will be documented in this file.
 - Update rubocop version [#9666](https://github.com/spree/spree/pull/9666) ([hmtanbir](https://github.com/hmtanbir))
 - Multi Currency Improvements [#9415](https://github.com/spree/spree/pull/9415) ([PSzyszkaSpark](https://github.com/PSzyszkaSpark))
 
-[Unreleased]: https://github.com/spree/spree/compare/v4.2.0...HEAD
+[4.3.0]: https://github.com/spree/spree/compare/v4.2.0...v4.3.0
 [4.2.0]: https://github.com/spree/spree/compare/v4.1.0...v4.2.0
