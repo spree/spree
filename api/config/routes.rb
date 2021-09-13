@@ -161,6 +161,7 @@ Spree::Core::Engine.add_routes do
         resources :countries, only: %i[index]
         get '/countries/:iso', to: 'countries#show', as: :country
         get '/order_status/:number', to: 'order_status#show', as: :order_status
+        resources :products, only: %i[index show]
         # resources :products, only: %i[index show] do
         #   get :related, on: :member
         # end
@@ -187,6 +188,7 @@ Spree::Core::Engine.add_routes do
         end
 
         # Product Catalog API
+        resources :products
         # resources :products do
         #   resources :relations do
         #     collection do
