@@ -3,39 +3,35 @@ module Spree
     module V2
       module Storefront
         class WishlistsController < ::Spree::Api::V2::ResourceController
-          include Spree::Api::V2::CollectionOptionsHelpers
-
           before_action :require_spree_current_user, except: [:show]
 
-          def index
-            spree_authorize! :index, Spree::Wishlist
+          def show
+            @resource ||= current_store.wishlists.find_by!(token: params[:id])
 
-            wishlists = spree_current_user.wishlists.for_store(current_store).page(params[:page]).per(params[:per_page])
+            raise ActiveRecord::RecordNotFound unless @resource.viewable?(spree_current_user)
 
-            render_serialized_payload { serialize_collection(wishlists) }
+            render_serialized_payload { serialize_resource(@resource) }
           end
 
           def create
             spree_authorize! :create, Spree::Wishlist
-            wishlist = spree_current_user.wishlists.new(wishlist_attributes)
 
-            ensure_current_store(wishlist)
+            @wishlist = spree_current_user.wishlists.new(wishlist_attributes)
 
-            wishlist.save
+            ensure_current_store(@wishlist)
 
-            if wishlist.persisted?
-              render_serialized_payload(201) { serialize_resource(wishlist) }
+            @wishlist.save
+
+            if @wishlist.persisted?
+              render_serialized_payload(201) { serialize_resource(@wishlist) }
             else
-              render_error_payload(wishlist.errors.full_messages.to_sentence)
+              render_error_payload(@wishlist.errors.full_messages.to_sentence)
             end
-          end
-
-          def show
-            render_serialized_payload { serialize_resource(resource) }
           end
 
           def update
             authorize! :update, resource
+
             resource.update wishlist_attributes
 
             if resource.errors.empty?
@@ -47,6 +43,7 @@ module Spree
 
           def destroy
             authorize! :destroy, resource
+
             if resource.destroy
               render_serialized_payload { serialize_resource(resource) }
             else
@@ -57,37 +54,36 @@ module Spree
           def default
             spree_authorize! :create, Spree::Wishlist
 
-            default_wishlist = spree_current_user.default_wishlist_for_store(current_store)
+            @default_wishlist = spree_current_user.default_wishlist_for_store(current_store)
 
-            render_serialized_payload { serialize_resource(default_wishlist) }
+            render_serialized_payload { serialize_resource(@default_wishlist) }
           end
 
           def add_item
             spree_authorize! :create, Spree::WishedVariant
-            spree_authorize! :update, resource
 
-            wished_variant = Spree::WishedVariant.new(params.permit(:quantity, :remark, :variant_id))
+            @wished_variant = Spree::WishedVariant.new(params.permit(:quantity, :variant_id))
 
             if resource.include? params[:variant_id]
-              wished_variant = resource.wished_variants.detect { |wv| wv.variant_id == params[:variant_id] }
+              @wished_variant = resource.wished_variants.detect { |wv| wv.variant_id == params[:variant_id] }
             else
-              wished_variant.wishlist = resource
-              wished_variant.save
+              @wished_variant.wishlist = resource
+              @wished_variant.save
             end
 
             resource.reload
 
-            if wished_variant.persisted?
-              render_serialized_payload { serialize_wished_variant(wished_variant) }
+            if @wished_variant.persisted?
+              render_serialized_payload { serialize_wished_variant(@wished_variant) }
             else
               render_error_payload(resource.errors.full_messages.to_sentence)
             end
           end
 
           def update_item_quantity
-            return render_error_item_quantity unless params[:quantity].to_i > 0
-
             spree_authorize! :update, wished_variant
+
+            return render_error_item_quantity unless params[:quantity].to_i > 0
 
             wished_variant.update(params.permit(:quantity))
 
@@ -99,7 +95,7 @@ module Spree
           end
 
           def remove_item
-            spree_authorize! :update, wished_variant
+            spree_authorize! :destroy, wished_variant
 
             if wished_variant.destroy
               render_serialized_payload { serialize_wished_variant(wished_variant) }
@@ -110,10 +106,16 @@ module Spree
 
           private
 
-          def resource
-            @resource ||= current_store.wishlists.find_by!(token: params[:id])
+          def scope
+            super.where(user: spree_current_user)
+          end
 
-            return @resource if @resource.can_be_read_by?(spree_current_user)
+          def resource
+            @resource ||= scope.find_by(token: params[:id])
+          end
+
+          def model_class
+            Spree::Wishlist
           end
 
           def resource_serializer
@@ -121,7 +123,7 @@ module Spree
           end
 
           def collection_serializer
-            ::Spree::V2::Storefront::WishlistSerializer
+            resource_serializer
           end
 
           def wishlist_attributes
@@ -137,16 +139,12 @@ module Spree
           end
 
           def serialize_wished_variant(wished_variant)
-            wished_variant_serializer.new(
+            ::Spree::V2::Storefront::WishedVariantSerializer.new(
               wished_variant,
               params: serializer_params,
               include: resource_includes,
               fields: sparse_fields
             ).serializable_hash
-          end
-
-          def wished_variant_serializer
-            ::Spree::V2::Storefront::WishedVariantSerializer
           end
 
           def render_error_item_quantity

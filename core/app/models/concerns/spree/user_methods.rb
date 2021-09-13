@@ -25,7 +25,7 @@ module Spree
       belongs_to :ship_address, class_name: 'Spree::Address', optional: true
       belongs_to :bill_address, class_name: 'Spree::Address', optional: true
 
-      has_many :wishlists, class_name: 'Spree::Wishlist'
+      has_many :wishlists, class_name: 'Spree::Wishlist', foreign_key: :user_id
 
       self.whitelisted_ransackable_associations = %w[bill_address ship_address addresses]
       self.whitelisted_ransackable_attributes = %w[id email]

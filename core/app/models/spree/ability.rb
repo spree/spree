@@ -1,8 +1,9 @@
-# Implementation class for Cancan gem.  Instead of overriding this class, consider adding new permissions
+# Implementation class for Cancan gem. Instead of overriding this class, consider adding new permissions
 # using the special +register_ability+ method which allows extensions to add their own abilities.
 #
-# See http://github.com/ryanb/cancan for more details on cancan.
+# See https://github.com/CanCanCommunity/cancancan for more details.
 require 'cancan'
+
 module Spree
   class Ability
     include CanCan::Ability
@@ -85,6 +86,10 @@ module Spree
       can :read, ::Spree::Taxonomy
       can :read, ::Spree::Variant
       can :read, ::Spree::Zone
+      can :manage, ::Spree::Wishlist, user_id: user.id
+      can [:create, :update, :destroy], Spree::WishedVariant do |wished_variant|
+        wished_variant.wishlist.user == user
+      end
     end
 
     def protect_admin_role

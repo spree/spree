@@ -4,7 +4,7 @@ module Spree
 
     has_secure_token
 
-    belongs_to :user, class_name: Spree.user_class.to_s, touch: true
+    belongs_to :user, class_name: Spree.user_class.name, touch: true
     belongs_to :store, class_name: 'Spree::Store'
 
     has_many :wished_variants, class_name: 'Spree::WishedVariant', dependent: :destroy
@@ -24,7 +24,7 @@ module Spree
       find_by(token: param)
     end
 
-    def can_be_read_by?(user)
+    def viewable?(user)
       public? || user == self.user
     end
 

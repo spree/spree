@@ -87,17 +87,17 @@ describe Spree::Wishlist, type: :model do
     end
   end
 
-  describe '.can_be_read_by?' do
+  describe '.viewable?' do
     context 'when the wishlist is private' do
       it 'is true when the user owns the wishlist' do
         wishlist.is_private = true
-        expect(wishlist.can_be_read_by?(user)).to be true
+        expect(wishlist.viewable?(user)).to be true
       end
 
       it 'is false when the user does not own the wishlist' do
         wishlist.is_private = true
         other_user = create(:user)
-        expect(wishlist.can_be_read_by?(other_user)).to be false
+        expect(wishlist.viewable?(other_user)).to be false
       end
     end
 
@@ -105,7 +105,7 @@ describe Spree::Wishlist, type: :model do
       it 'is true for any user' do
         wishlist.is_private = false
         other_user = create(:user)
-        expect(wishlist.can_be_read_by?(other_user)).to be true
+        expect(wishlist.viewable?(other_user)).to be true
       end
     end
   end

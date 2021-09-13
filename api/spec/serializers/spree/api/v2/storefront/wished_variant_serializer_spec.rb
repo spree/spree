@@ -4,7 +4,7 @@ describe Spree::V2::Storefront::WishedVariantSerializer do
   subject { described_class.new(wished_variant, params: { currency: 'USD' }) }
 
   let!(:wishlist) { create(:wishlist) }
-  let!(:wished_variant) { create(:wished_variant, wishlist: wishlist, variant: create(:variant), quantity: 5 ) }
+  let!(:wished_variant) { create(:wished_variant, wishlist: wishlist, variant: create(:variant), quantity: 5) }
 
   it { expect(subject.serializable_hash).to be_kind_of(Hash) }
 
