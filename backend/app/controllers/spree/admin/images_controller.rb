@@ -44,6 +44,10 @@ module Spree
       def modle_class
         Spree::Image
       end
+
+      def collection
+        @collection ||= scope.friendly.find(params[:product_id]).variant_images
+      end
     end
   end
 end

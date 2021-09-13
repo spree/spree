@@ -7,17 +7,19 @@ module Spree
 
       let(:store) { Spree::Store.default }
       let(:product) { create(:product, stores: [store]) }
+      let(:product_in_other_store) { create(:product, stores: [create(:store)]) }
 
       describe '#index' do
         let!(:image_1) { create(:image, viewable: product.master) }
         let!(:image_2) { create(:image, viewable: product.master) }
         let!(:image_3) { create(:image, viewable: create(:variant)) }
+        let!(:image_4) { create(:image, viewable: product_in_other_store.master) }
 
         it 'assigns the images for a requested product' do
           get :index, params: { product_id: product.slug }
           expect(assigns(:collection)).to include image_1
           expect(assigns(:collection)).to include image_2
-          expect(assigns(:collection)).not_to include image_3
+          expect(assigns(:collection)).not_to include image_4
         end
       end
 
