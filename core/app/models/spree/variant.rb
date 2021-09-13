@@ -256,7 +256,13 @@ module Spree
       end
     end
 
-    delegate :total_on_hand, :can_supply?, :backorderable?, to: :quantifier
+    def backorderable?
+      @backorderable ||= Rails.cache.fetch(['variant-backorderable', cache_key_with_version]) do
+        quantifier.backorderable?
+      end
+    end
+
+    delegate :total_on_hand, :can_supply?, to: :quantifier
 
     alias is_backorderable? backorderable?
 
@@ -291,7 +297,7 @@ module Spree
     end
 
     def backordered?
-      @backordered ||= total_on_hand <= 0 && stock_items.exists?(backorderable: true)
+      @backordered ||= !in_stock? && stock_items.exists?(backorderable: true)
     end
 
     private
