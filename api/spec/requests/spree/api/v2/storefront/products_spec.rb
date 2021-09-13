@@ -613,6 +613,166 @@ describe 'API V2 Storefront Products Spec', type: :request do
       end
     end
 
+    context 'return filter metadata' do
+      let!(:option_type2) { create(:option_type) }
+      let!(:option_type2_value1) { create(:option_value, option_type: option_type2 )}
+      let!(:option_type2_value2) { create(:option_value, option_type: option_type2 )}
+
+      let(:product_with_option_type2) { create(:product, option_types: [option_type2], stores: [store]) }
+      let!(:product_with_option_type2_variant1) { create(:variant, product: product_with_option_type2, option_values: [option_type2_value1]) }
+      let!(:product_with_option_type2_variant2) { create(:variant, product: product_with_option_type2, option_values: [option_type2_value2]) }
+
+      let!(:property2) { create(:property, :filterable) }
+      let!(:property3) { create(:property, :filterable) }
+      let!(:product_property2) { create(:product_property, property: property2, product: product_with_property, value: 'A property') }
+      let!(:product2_property2) { create(:product_property, property: property2, product: product_with_option_type2, value: 'Test') }
+      let!(:product2_property3) { create(:product_property, property: property3, product: product_with_option_type2, value: 'Test') }
+
+      let!(:unused_option_type) { create(:option_type) }
+      let!(:unused_option_value) { create(:option_value) }
+
+      let(:option_type1_response) do
+        {
+          id: option_type.id,
+          name: option_type.name,
+          presentation: option_type.presentation,
+          option_values: [
+            {
+              id: option_value.id,
+              name: option_value.name,
+              presentation: option_value.presentation,
+              position: option_value.position
+            }
+          ]
+        }
+      end
+
+      let(:option_type2_response) do
+        {
+          id: option_type2.id,
+          name: option_type2.name,
+          presentation: option_type2.presentation,
+          option_values: [
+            {
+              id: option_type2_value1.id,
+              name: option_type2_value1.name,
+              presentation: option_type2_value1.presentation,
+              position: option_type2_value1.position
+            },
+            {
+              id: option_type2_value2.id,
+              name: option_type2_value2.name,
+              presentation: option_type2_value2.presentation,
+              position: option_type2_value2.position
+            }
+          ]
+        }
+      end
+
+      let(:property2_response) do
+        {
+          id: property2.id,
+          name: property2.name,
+          presentation: property2.presentation,
+          values: [
+            {
+              value: product_property2.value,
+              filter_param: product_property2.filter_param,
+            },
+            {
+              value: product2_property2.value,
+              filter_param: product2_property2.filter_param,
+            }
+          ]
+        }
+      end
+
+      let(:property3_response) do
+        {
+          id: property3.id,
+          name: property3.name,
+          presentation: property3.presentation,
+          values: [
+            {
+              value: product2_property3.value,
+              filter_param: product2_property3.filter_param
+            }
+          ]
+        }
+      end
+
+      context 'when no filters are applied' do
+        before { get '/api/v2/storefront/products' }
+
+        it 'returns list of available filters for all products' do
+          expect(json_response['meta']['filters']['option_types'].count).to eq 2
+          expect(json_response['meta']['filters']['option_types']).to contain_exactly(option_type1_response, option_type2_response)
+          expect(json_response['meta']['filters']['product_properties'].count).to eq 2
+          expect(json_response['meta']['filters']['product_properties']).to contain_exactly(property2_response, property3_response)
+        end
+      end
+
+      context 'when filter by option type is applied' do
+        before { get "/api/v2/storefront/products?filter[options][#{option_type.name}]=#{option_value.name}" }
+
+        it 'returns list of all available filters for products' do
+          expect(json_response['meta']['filters']['option_types'].count).to eq 2
+          expect(json_response['meta']['filters']['option_types']).to contain_exactly(option_type1_response, option_type2_response)
+          expect(json_response['meta']['filters']['product_properties'].count).to eq 2
+          expect(json_response['meta']['filters']['product_properties']).to contain_exactly(property2_response, property3_response)
+        end
+      end
+
+      context 'when filter by product property is applied' do
+        before { get "/api/v2/storefront/products?filter[properties][#{property.filter_param}]=#{product_property.filter_param}" }
+
+        it 'returns list of all available filters for products' do
+          expect(json_response['meta']['filters']['option_types'].count).to eq 2
+          expect(json_response['meta']['filters']['option_types']).to contain_exactly(option_type1_response, option_type2_response)
+          expect(json_response['meta']['filters']['product_properties'].count).to eq 2
+          expect(json_response['meta']['filters']['product_properties']).to contain_exactly(property2_response, property3_response)
+        end
+      end
+
+      context 'when filter by taxon is applied' do
+        let(:product_with_taxon_and_options) { create(:product, taxons: [taxon], option_types: [option_type2], stores: [store]) }
+        let!(:product_with_taxon_and_options_property) { create(:product_property, property: property3, product: product_with_taxon_and_options, value: 'Test') }
+        let!(:product_with_taxon_and_options_variant1) { create(:variant, product: product_with_taxon_and_options, option_values: [option_type2_value1]) }
+        let!(:product_with_taxon_and_options_variant2) { create(:variant, product: product_with_taxon_and_options, option_values: [option_type2_value2]) }
+
+        before { get "/api/v2/storefront/products?filter[taxons]=#{taxon.id}" }
+
+        it 'returns list of available filters for given taxon' do
+          expect(json_response['meta']['filters']['option_types'].count).to eq 1
+          expect(json_response['meta']['filters']['option_types']).to contain_exactly(option_type2_response)
+          expect(json_response['meta']['filters']['product_properties'].count).to eq 1
+          expect(json_response['meta']['filters']['product_properties']).to contain_exactly(property3_response)
+        end
+      end
+
+      context 'when filter by multiple taxons is applied' do
+        let(:product_with_taxon_and_options) { create(:product, taxons: [taxon], option_types: [option_type2], stores: [store]) }
+        let!(:product_with_taxon_and_options_property) { create(:product_property, property: property3, product: product_with_taxon_and_options, value: 'Test') }
+        let!(:product_with_taxon_and_options_variant1) { create(:variant, product: product_with_taxon_and_options, option_values: [option_type2_value1]) }
+        let!(:product_with_taxon_and_options_variant2) { create(:variant, product: product_with_taxon_and_options, option_values: [option_type2_value2]) }
+
+        let(:taxonomy2) { create(:taxonomy, store: store) }
+        let(:taxon2) { taxonomy2.root }
+        let(:product_with_taxon2_and_options) { create(:product, taxons: [taxon2], option_types: [option_type2], stores: [store]) }
+        let!(:product_with_taxon2_and_options_property) { create(:product_property, property: property3, product: product_with_taxon2_and_options, value: 'Test') }
+        let!(:product_with_taxon2_and_options_variant1) { create(:variant, product: product_with_taxon2_and_options, option_values: [option_value]) }
+
+        before { get "/api/v2/storefront/products?filter[taxons]=#{taxon.id},#{taxon2.id}" }
+
+        it 'returns list of available filters for given taxons' do
+          expect(json_response['meta']['filters']['option_types'].count).to eq 2
+          expect(json_response['meta']['filters']['option_types']).to contain_exactly(option_type1_response, option_type2_response)
+          expect(json_response['meta']['filters']['product_properties'].count).to eq 1
+          expect(json_response['meta']['filters']['product_properties']).to contain_exactly(property3_response)
+        end
+      end
+    end
+
     context 'fetch products by curency param' do
       before { store.update(supported_currencies: 'USD,EUR,GBP') }
 
