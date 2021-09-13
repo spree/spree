@@ -100,7 +100,7 @@ module Spree
             if wished_variant.destroy
               render_serialized_payload { serialize_wished_variant(wished_variant) }
             else
-              render_error_payload('Something went wrong')
+              render_error_payload(resource.errors.full_messages.to_sentence)
             end
           end
 
