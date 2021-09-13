@@ -301,11 +301,13 @@ module Spree
     end
 
     def total_on_hand
-      @total_on_hand ||= if any_variants_not_track_inventory?
-                           Float::INFINITY
-                         else
-                           stock_items.sum(:count_on_hand)
-                         end
+      @total_on_hand ||= Rails.cache.fetch(['product-total-on-hand', cache_key_with_version]) do
+        if any_variants_not_track_inventory?
+          Float::INFINITY
+        else
+          stock_items.sum(:count_on_hand)
+        end
+      end
     end
 
     # Master variant may be deleted (i.e. when the product is deleted)
