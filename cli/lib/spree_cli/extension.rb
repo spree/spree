@@ -1,4 +1,4 @@
-module SpreeCmd
+module SpreeCli
   class Extension < Thor::Group
     include Thor::Actions
 

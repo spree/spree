@@ -21,7 +21,7 @@ Gem::Specification.new do |s|
   s.require_path = 'lib'
   s.requirements << 'none'
 
-  s.add_dependency 'spree', '>= <%= Gem.loaded_specs['spree_cmd'].version %>'
+  s.add_dependency 'spree', '>= <%= Gem.loaded_specs['spree_cli'].version %>'
   # s.add_dependency 'spree_backend' # uncomment to include Admin Panel changes
   s.add_dependency 'spree_extension'
 

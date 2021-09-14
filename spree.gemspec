@@ -27,4 +27,5 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'spree_core', s.version
   s.add_dependency 'spree_api', s.version
+  s.add_dependency 'spree_cli', s.version
 end
