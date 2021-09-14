@@ -45,6 +45,24 @@ module Spree
             end
           end
 
+          context 'can destroy image belonging to a variant not master_variant' do
+            let(:variant) { create(:variant) }
+            let(:product) { variant.product }
+            let(:image) { create(:image, viewable: variant) }
+
+            before do
+              product.update(stores: [store])
+              product.save
+              product.reload
+            end
+
+            it do
+              send_request
+              expect(flash[:error]).not_to eq('Image is not found')
+              expect(flash[:success]).to eq('Image has been successfully removed!')
+            end
+          end
+
           context 'cannot destroy image of other product' do
             let(:other_product) { create(:product, stores: [store]) }
             let(:image) { create(:image, viewable: other_product) }
@@ -88,6 +106,25 @@ module Spree
             end
           end
 
+          context 'can destroy image belonging to a variant not master_variant' do
+            let(:variant) { create(:variant) }
+            let(:product) { variant.product }
+            let(:image) { create(:image, viewable: variant) }
+
+            before do
+              product.update(stores: [store])
+              product.save
+              product.reload
+            end
+
+            it do
+              send_request
+              expect(flash[:error]).not_to eq('Image is not found')
+              expect(flash[:success]).to eq('Image has been successfully removed!')
+              expect(send_request).to redirect_to(spree.admin_product_images_path(product))
+            end
+          end
+
           context 'cannot destroy image of other product' do
             let(:other_product) { create(:product, stores: [store]) }
             let(:image) { create(:image, viewable: other_product) }
@@ -102,6 +139,7 @@ module Spree
 
           context 'cannot destroy image of product from different store' do
             let(:product) { create(:product, stores: [create(:store)]) }
+
             before { send_request }
 
             it do
