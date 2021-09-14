@@ -63,6 +63,23 @@ module Spree
             end
           end
 
+          context 'can not destroy image belonging to a variant not master_variant but also belongs to other store' do
+            let(:variant) { create(:variant) }
+            let(:product) { variant.product }
+            let(:image) { create(:image, viewable: variant) }
+
+            before do
+              product.update(stores: [create(:store)])
+              product.save
+              product.reload
+            end
+
+            it do
+              send_request
+              expect(flash[:error]).to eq('Image is not found')
+            end
+          end
+
           context 'cannot destroy image of other product' do
             let(:other_product) { create(:product, stores: [store]) }
             let(:image) { create(:image, viewable: other_product) }
@@ -122,6 +139,23 @@ module Spree
               expect(flash[:error]).not_to eq('Image is not found')
               expect(flash[:success]).to eq('Image has been successfully removed!')
               expect(send_request).to redirect_to(spree.admin_product_images_path(product))
+            end
+          end
+
+          context 'can not destroy image belonging to a variant not master_variant but also belongs to other store' do
+            let(:variant) { create(:variant) }
+            let(:product) { variant.product }
+            let(:image) { create(:image, viewable: variant) }
+
+            before do
+              product.update(stores: [create(:store)])
+              product.save
+              product.reload
+            end
+
+            it do
+              send_request
+              expect(flash[:error]).to eq('Image is not found')
             end
           end
 
