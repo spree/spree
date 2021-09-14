@@ -48,10 +48,6 @@ module Spree
       def collection
         @collection ||= load_product.variant_images
       end
-
-      # def find_resource
-      #   load_product.variant_images.where(variant_id: )
-      # end
     end
   end
 end
