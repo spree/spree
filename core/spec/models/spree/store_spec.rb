@@ -615,4 +615,26 @@ describe Spree::Store, type: :model do
       end
     end
   end
+
+  describe 'soft deletion' do
+    let!(:default_store) { create(:store) }
+
+    let(:store) { create(:store) }
+
+    it 'soft-deletes when destroy is called' do
+      store.destroy!
+      expect(store.deleted_at).not_to be_nil
+    end
+
+    context 'with associations' do
+      before do
+        store.products << create(:product)
+      end
+
+      it "doesn't destroy associations" do
+        associations = described_class.reflect_on_all_associations(:has_many)
+        expect(associations.select { |a| a.options[:dependent] }).to be_empty
+      end
+    end
+  end
 end

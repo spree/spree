@@ -37,7 +37,8 @@ describe Spree::Api::V2::Platform::StoreSerializer do
             contact_phone: store.contact_phone,
             new_order_notifications_email: store.new_order_notifications_email,
             seo_robots: store.seo_robots,
-            supported_locales: store.supported_locales
+            supported_locales: store.supported_locales,
+            deleted_at: store.deleted_at
           },
           relationships: {
             default_country: {
