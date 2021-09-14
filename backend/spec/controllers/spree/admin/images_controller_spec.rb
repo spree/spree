@@ -7,17 +7,19 @@ module Spree
 
       let(:store) { Spree::Store.default }
       let(:product) { create(:product, stores: [store]) }
+      let(:product_in_other_store) { create(:product, stores: [create(:store)]) }
 
       describe '#index' do
         let!(:image_1) { create(:image, viewable: product.master) }
         let!(:image_2) { create(:image, viewable: product.master) }
         let!(:image_3) { create(:image, viewable: create(:variant)) }
+        let!(:image_4) { create(:image, viewable: product_in_other_store.master) }
 
         it 'assigns the images for a requested product' do
           get :index, params: { product_id: product.slug }
           expect(assigns(:collection)).to include image_1
           expect(assigns(:collection)).to include image_2
-          expect(assigns(:collection)).not_to include image_3
+          expect(assigns(:collection)).not_to include image_4
         end
       end
 
@@ -43,6 +45,41 @@ module Spree
             end
           end
 
+          context 'can destroy image belonging to a variant not master_variant' do
+            let(:variant) { create(:variant) }
+            let(:product) { variant.product }
+            let(:image) { create(:image, viewable: variant) }
+
+            before do
+              product.update(stores: [store])
+              product.save
+              product.reload
+            end
+
+            it do
+              send_request
+              expect(flash[:error]).not_to eq('Image is not found')
+              expect(flash[:success]).to eq('Image has been successfully removed!')
+            end
+          end
+
+          context 'can not destroy image belonging to a variant not master_variant but also belongs to other store' do
+            let(:variant) { create(:variant) }
+            let(:product) { variant.product }
+            let(:image) { create(:image, viewable: variant) }
+
+            before do
+              product.update(stores: [create(:store)])
+              product.save
+              product.reload
+            end
+
+            it do
+              send_request
+              expect(flash[:error]).to eq('Image is not found')
+            end
+          end
+
           context 'cannot destroy image of other product' do
             let(:other_product) { create(:product, stores: [store]) }
             let(:image) { create(:image, viewable: other_product) }
@@ -57,8 +94,12 @@ module Spree
 
           context 'cannot destroy image of product from different store' do
             let(:product) { create(:product, stores: [create(:store)]) }
+            before { send_request }
 
-            it { expect { send_request }.to raise_error(ActiveRecord::RecordNotFound) }
+            it do
+              expect(send_request).to redirect_to(spree.admin_product_images_path(product))
+              expect(flash[:error]).to eq('Image is not found')
+            end
           end
         end
 
@@ -82,6 +123,42 @@ module Spree
             end
           end
 
+          context 'can destroy image belonging to a variant not master_variant' do
+            let(:variant) { create(:variant) }
+            let(:product) { variant.product }
+            let(:image) { create(:image, viewable: variant) }
+
+            before do
+              product.update(stores: [store])
+              product.save
+              product.reload
+            end
+
+            it do
+              send_request
+              expect(flash[:error]).not_to eq('Image is not found')
+              expect(flash[:success]).to eq('Image has been successfully removed!')
+              expect(send_request).to redirect_to(spree.admin_product_images_path(product))
+            end
+          end
+
+          context 'can not destroy image belonging to a variant not master_variant but also belongs to other store' do
+            let(:variant) { create(:variant) }
+            let(:product) { variant.product }
+            let(:image) { create(:image, viewable: variant) }
+
+            before do
+              product.update(stores: [create(:store)])
+              product.save
+              product.reload
+            end
+
+            it do
+              send_request
+              expect(flash[:error]).to eq('Image is not found')
+            end
+          end
+
           context 'cannot destroy image of other product' do
             let(:other_product) { create(:product, stores: [store]) }
             let(:image) { create(:image, viewable: other_product) }
@@ -97,7 +174,12 @@ module Spree
           context 'cannot destroy image of product from different store' do
             let(:product) { create(:product, stores: [create(:store)]) }
 
-            it { expect { send_request }.to raise_error(ActiveRecord::RecordNotFound) }
+            before { send_request }
+
+            it do
+              expect(send_request).to redirect_to(spree.admin_product_images_path(product))
+              expect(flash[:error]).to eq('Image is not found')
+            end
           end
         end
       end
