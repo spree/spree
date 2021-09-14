@@ -38,7 +38,7 @@ module Spree
       end
 
       def collection_url
-        admin_product_images_url
+        spree.admin_product_images_url
       end
 
       def modle_class
