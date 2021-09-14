@@ -1,5 +1,4 @@
 require 'rails/engine'
-require 'spree/webhooks/has_webhooks'
 
 module Spree
   module Api
@@ -20,12 +19,6 @@ module Spree
         Spree::Api::Config.deprecated_preferences.each do |pref|
           # FIXME: we should only notify about deprecated preferences that are in use, not all of them
           # warn "[DEPRECATION] Spree::Api::Config[:#{pref[:name]}] is deprecated. #{pref[:message]}"
-        end
-      end
-
-      initializer 'extend ActiveRecord with Spree::Webhooks' do |_app|
-        ActiveSupport.on_load(:active_record) do
-          Spree::Base.send :include, Spree::Webhooks::HasSpreeWebhooks
         end
       end
 
