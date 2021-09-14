@@ -10,11 +10,11 @@ module Spree
       private
 
       def location_after_destroy
-        admin_product_images_url(@product)
+        spree.admin_product_images_url(@product)
       end
 
       def location_after_save
-        admin_product_images_url(@product)
+        spree.admin_product_images_url(@product)
       end
 
       def load_edit_data
