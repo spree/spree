@@ -22,6 +22,10 @@ describe Spree::Shipment, type: :model do
   let(:variant) { mock_model(Spree::Variant) }
   let(:line_item) { mock_model(Spree::LineItem, variant: variant) }
 
+  before(:all) do
+    stub_request(:any, 'https://google.com')
+  end
+
   def create_shipment(order, stock_location)
     order.shipments.create(stock_location_id: stock_location.id).inventory_units.create(
       order_id: order.id,
@@ -367,6 +371,18 @@ describe Spree::Shipment, type: :model do
         allow(shipment).to receive_messages determine_state: 'shipped'
         expect(shipment).to receive(:update_columns).with(state: 'shipped', updated_at: kind_of(Time))
         shipment.update!(order)
+      end
+
+      it 'executes a webhook callback' do
+        allow(shipment).to receive_messages determine_state: 'shipped'
+        shipment.update!(order)
+
+        expect(WebMock).to(
+          have_requested(:post, 'https://google.com').with(
+            body: {foo: :bar}.to_json,
+            headers: {'Content-Type' => 'application/json'}
+          ).times(13)
+        )
       end
 
       context 'when using the default shipment handler' do

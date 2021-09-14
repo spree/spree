@@ -23,6 +23,7 @@ module Spree
       @shipment.touch :shipped_at
       update_order_shipment_state
       send_shipped_email
+      @shipment.execute_webhook_logic!
     end
 
     protected

@@ -97,6 +97,7 @@ module Spree
       event :void do
         transition from: [:pending, :processing, :completed, :checkout], to: :void
       end
+      after_transition to: :void, do: :after_void
       # when the card brand isnt supported
       event :invalidate do
         transition from: [:checkout], to: :invalid
@@ -194,6 +195,10 @@ module Spree
     end
 
     private
+
+    def after_void
+      execute_webhook_logic!
+    end
 
     def has_invalid_state?
       INVALID_STATES.include?(state)

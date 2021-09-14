@@ -375,6 +375,8 @@ module Spree
       deliver_store_owner_order_notification_email if deliver_store_owner_order_notification_email?
 
       consider_risk
+
+      execute_webhook_logic!
     end
 
     def fulfill!
@@ -698,6 +700,8 @@ module Spree
 
       send_cancel_email
       update_with_updater!
+
+      execute_webhook_logic!
     end
 
     def after_resume

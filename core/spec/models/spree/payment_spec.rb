@@ -36,6 +36,10 @@ describe Spree::Payment, type: :model do
     ActiveMerchant::Billing::Response.new(false, '', {}, {})
   end
 
+  before(:all) do
+    stub_request(:any, 'https://google.com')
+  end
+
   before do
     # Rails >= 5.0.3 returns new object for association so we ugly mock it
     allow(payment).to receive(:log_entries).and_return(payment.log_entries)
@@ -955,6 +959,68 @@ describe Spree::Payment, type: :model do
       let(:payment) { create(:check_payment) }
 
       it { expect(payment.source).to be_nil }
+    end
+  end
+
+  describe 'event void' do
+    context 'when transitioning from pending to void' do
+      before do
+        payment.pend
+      end
+
+      it 'executes a webhook callback' do
+        payment.void
+        expect(WebMock).to(
+          have_requested(:post, 'https://google.com').with(
+            body: {foo: :bar}.to_json,
+            headers: {'Content-Type' => 'application/json'}
+          ).times(12)
+        )
+      end
+    end
+
+    context 'when transitioning from processing to void' do
+      before do
+        payment.started_processing
+      end
+
+      it 'executes a webhook callback' do
+        payment.void
+        expect(WebMock).to(
+          have_requested(:post, 'https://google.com').with(
+            body: {foo: :bar}.to_json,
+            headers: {'Content-Type' => 'application/json'}
+          ).times(12)
+        )
+      end
+    end
+
+    context 'when transitioning from completed to void' do
+      before do
+        payment.complete
+      end
+
+      it 'executes a webhook callback' do
+        payment.void
+        expect(WebMock).to(
+          have_requested(:post, 'https://google.com').with(
+            body: {foo: :bar}.to_json,
+            headers: {'Content-Type' => 'application/json'}
+          ).times(12)
+        )
+      end
+    end
+
+    context 'when transitioning from checkout to void' do
+      it 'executes a webhook callback' do
+        payment.void
+        expect(WebMock).to(
+          have_requested(:post, 'https://google.com').with(
+            body: {foo: :bar}.to_json,
+            headers: {'Content-Type' => 'application/json'}
+          ).times(9)
+        )
+      end
     end
   end
 end
