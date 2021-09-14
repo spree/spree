@@ -37,6 +37,10 @@ div.admin-product-image-container {
   justify-content: center;
   margin: auto;
 
+  a {
+    display: flex
+  }
+
   img {
     max-width: 100%;
     height: auto;
