@@ -21,12 +21,6 @@ describe Spree::V2::Storefront::WishlistSerializer do
             is_default: wishlist.is_default
           },
           relationships: {
-            user: {
-              data: {
-                id: wishlist.user.id.to_s,
-                type: :user
-              }
-            },
             wished_variants: {
               data: [
                 {
