@@ -68,7 +68,6 @@ RUBY
 else
 cat <<RUBY >> Gemfile
 gem 'spree', path: '..'
-gem 'spree_frontend', path: '../frontend'
 gem 'spree_backend', path: '../backend'
 gem 'spree_emails', path: '../emails'
 gem 'spree_sample', path: '../sample'
@@ -113,7 +112,7 @@ cat <<RUBY >> config/initializers/bullet.rb
 if Rails.env.development? && defined?(Bullet)
   Bullet.enable = true
   Bullet.rails_logger = true
-  Bullet.stacktrace_includes = [ 'spree_core', 'spree_frontend', 'spree_api', 'spree_backend', 'spree_emails' ]
+  Bullet.stacktrace_includes = [ 'spree_core', 'spree_api', 'spree_backend', 'spree_emails' ]
 end
 RUBY
 
@@ -122,7 +121,6 @@ bundle exec rails db:drop || true
 bundle exec rails db:create
 bundle exec rails g spree:install --auto-accept --user_class=Spree::User --sample=true
 if [ "$SPREE_HEADLESS" = "" ]; then
-  bundle exec rails g spree:frontend:install
   bundle exec rails g spree:backend:install
   bundle exec rails g spree:emails:install
 fi

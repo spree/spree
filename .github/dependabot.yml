@@ -6,11 +6,6 @@ updates:
     interval: daily
   open-pull-requests-limit: 10
 - package-ecosystem: bundler
-  directory: "/frontend"
-  schedule:
-    interval: daily
-  open-pull-requests-limit: 10
-- package-ecosystem: bundler
   directory: "/core"
   schedule:
     interval: daily

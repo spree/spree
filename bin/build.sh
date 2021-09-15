@@ -39,12 +39,6 @@ echo "* Setup Spree Core and running RSpec..."
 echo "***************************************"
 cd ../core; prepare_app; bundle exec rspec spec
 
-# Spree Frontend
-echo "*******************************************"
-echo "* Setup Spree Frontend and running RSpec..."
-echo "*******************************************"
-cd ../frontend; prepare_app; bundle exec rspec spec
-
 # Spree Emails
 echo "*******************************************"
 echo "* Setup Spree Emails and running RSpec..."
