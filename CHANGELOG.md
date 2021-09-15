@@ -2,6 +2,11 @@
 
 All notable, unreleased changes to this project will be documented in this file. For the released changes, please visit the [Releases](https://github.com/spree/spree/releases) page.
 
+## [Unreleased]
+
+- [SD-1358] As a Admin I should not be able to permanently delete Store [#11315](https://github.com/spree/spree/pull/11315) ([damianlegawiec](https://github.com/damianlegawiec))
+- [SD-1429] Rename Spree CMD to Spree CLI and make it a dependency of spree gem [#11307](https://github.com/spree/spree/pull/11307) ([pmilewski](https://github.com/pmilewski))
+
 ## [4.3.0] - 2021-09-14
 
 - Improve `Product#total_on_hand` & `Variant#backordered?` performance [#11335](https://github.com/spree/spree/pull/11335) ([damianlegawiec](https://github.com/damianlegawiec))
@@ -732,5 +737,6 @@ All notable, unreleased changes to this project will be documented in this file.
 - Update rubocop version [#9666](https://github.com/spree/spree/pull/9666) ([hmtanbir](https://github.com/hmtanbir))
 - Multi Currency Improvements [#9415](https://github.com/spree/spree/pull/9415) ([PSzyszkaSpark](https://github.com/PSzyszkaSpark))
 
+[Unreleased]: https://github.com/spree/spree/compare/v4.3.0...main
 [4.3.0]: https://github.com/spree/spree/compare/v4.2.0...v4.3.0
 [4.2.0]: https://github.com/spree/spree/compare/v4.1.0...v4.2.0
