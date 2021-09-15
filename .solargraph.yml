@@ -10,7 +10,7 @@ exclude:
 - sample/**/*
 - sandbox/**/*
 - pkg/**/*
-- cmd/**/*.gemspec
+- cli/**/*.gemspec
 require: []
 domains: []
 reporters:

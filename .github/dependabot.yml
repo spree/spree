@@ -16,7 +16,7 @@ updates:
     interval: daily
   open-pull-requests-limit: 10
 - package-ecosystem: bundler
-  directory: "/cmd"
+  directory: "/cli"
   schedule:
     interval: daily
   open-pull-requests-limit: 10

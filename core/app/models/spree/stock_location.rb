@@ -2,6 +2,7 @@ module Spree
   class StockLocation < Spree::Base
     has_many :shipments
     has_many :stock_items, dependent: :delete_all, inverse_of: :stock_location
+    has_many :variants, through: :stock_items
     has_many :stock_movements, through: :stock_items
 
     belongs_to :state, class_name: 'Spree::State', optional: true
@@ -14,6 +15,7 @@ module Spree
 
     after_create :create_stock_items, if: :propagate_all_variants?
     after_save :ensure_one_default
+    after_update :conditional_touch_records
 
     def state_text
       state.try(:abbr) || state.try(:name) || state_name
@@ -133,6 +135,13 @@ module Spree
       if default
         StockLocation.where(default: true).where.not(id: id).update_all(default: false)
       end
+    end
+
+    def conditional_touch_records
+      return unless active_changed?
+
+      stock_items.update_all(updated_at: Time.current)
+      variants.update_all(updated_at: Time.current)
     end
   end
 end

@@ -3,6 +3,8 @@ module Spree
     MAILER_LOGO_CONTENT_TYPES = ['image/png', 'image/jpg', 'image/jpeg'].freeze
     FAVICON_CONTENT_TYPES = ['image/png', 'image/x-icon', 'image/vnd.microsoft.icon'].freeze
 
+    acts_as_paranoid
+
     has_many :orders, class_name: 'Spree::Order'
     has_many :line_items, through: :orders, class_name: 'Spree::LineItem'
     has_many :shipments, through: :orders, class_name: 'Spree::Shipment'
@@ -19,7 +21,7 @@ module Spree
     has_many :menus, class_name: 'Spree::Menu'
     has_many :menu_items, through: :menus, class_name: 'Spree::MenuItem'
 
-    has_many :store_products, class_name: 'Spree::StoreProduct', dependent: :destroy
+    has_many :store_products, class_name: 'Spree::StoreProduct'
     has_many :products, through: :store_products, class_name: 'Spree::Product'
     has_many :product_properties, through: :products, class_name: 'Spree::ProductProperty'
     has_many :variants, through: :products, class_name: 'Spree::Variant', source: :variants_including_master

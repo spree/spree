@@ -253,5 +253,19 @@ module Spree
         specify { expect(subject.state_text).to eq('virginia') }
       end
     end
+
+    describe '#conditionally_touch_records' do
+      let(:item) { subject.items.last }
+      let(:variant) { subject.variants.last }
+
+      context 'active has changed' do
+        it { expect { subject.update(active: false).to change(variant, :updated_at) } }
+        it { expect { subject.update(active: false).to change(item, :updated_at) } }
+      end
+
+      context 'active has not changed' do
+        it { expect { subject.update(name: 'my other warehouse').to change(variant, :updated_at) } }
+      end
+    end
   end
 end
