@@ -6,6 +6,7 @@ describe Spree::Variant, type: :model do
   let(:master_variant) { create(:master_variant) }
 
   it_behaves_like 'default_price'
+  it_behaves_like 'metadata'
 
   context 'sorting' do
     it 'responds to set_list_position' do
