@@ -24,7 +24,6 @@ module Spree
     let(:url) { 'https://google.com' }
 
     before do
-      WebMock.disable_net_connect!
       stub_request(:any, url)
       connection.create_table :test_products, force: true do |table|
         table.string :name
@@ -32,7 +31,6 @@ module Spree
     end
 
     after do
-      WebMock.allow_net_connect!
       connection.drop_table :test_products, if_exists: true
     end
 

@@ -24,7 +24,7 @@ class CreateSpreeWebhooksTables < ActiveRecord::Migration[6.1]
     when 'Mysql2'
       table.json :subscriptions
     when 'PostgreSQL'
-      table.jsonb :subscriptions, default: ['*']
+      table.jsonb :subscriptions
     end
   end
 end
