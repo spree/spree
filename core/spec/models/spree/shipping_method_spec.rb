@@ -9,6 +9,8 @@ describe Spree::ShippingMethod, type: :model do
   let(:backend_shipping_method) { create :shipping_method, display_on: 'back_end' }
   let(:front_and_back_end_shipping_method) { create :shipping_method, display_on: 'both' }
 
+  it_behaves_like 'metadata'
+
   context 'calculators' do
     it "rejects calculators that don't inherit from Spree::ShippingCalculator" do
       allow(Spree::ShippingMethod).to receive_message_chain(:spree_calculators, :shipping_methods).and_return([

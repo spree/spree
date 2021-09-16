@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe Spree::OptionValue, type: :model do
+  it_behaves_like 'metadata'
+
   context 'touching' do
     it 'touches a variant' do
       variant = create(:variant)
