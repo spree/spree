@@ -45,7 +45,7 @@ module Spree
       validates :name, :url, :mail_from_address, :default_currency, :code
     end
 
-    validates :code, uniqueness: true
+    validates :code, uniqueness: { conditions: -> { with_deleted } }
 
     if !ENV['SPREE_DISABLE_DB_CONNECTION'] &&
         connected? &&
