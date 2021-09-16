@@ -181,6 +181,23 @@ describe Spree::Store, type: :model do
         end
       end
     end
+
+    describe 'code uniqueness' do
+      context 'selected code was already used in a deleted store' do
+        let(:store_code) { 'store_code' }
+
+        let!(:default_store) { create(:store) }
+        let!(:deleted_store) { create(:store, code: store_code).destroy! }
+
+        it 'does not cause error related to unique constrains in DB' do
+          expect { create(:store, code: store_code) }.not_to raise_error(ActiveRecord::RecordNotUnique)
+        end
+
+        it 'shows accurate validation error' do
+          expect { create(:store, code: store_code) }.to raise_error(ActiveRecord::RecordInvalid, 'Validation failed: Code has already been taken')
+        end
+      end
+    end
   end
 
   describe '.by_url' do
