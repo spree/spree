@@ -59,14 +59,13 @@ module Spree
             render_serialized_payload { serialize_resource(@default_wishlist) }
           end
 
-          def add_item
+          def add_wished_variant
             spree_authorize! :create, Spree::WishedVariant
 
-            @wished_variant = Spree::WishedVariant.new(params.permit(:quantity, :variant_id))
-
-            if resource.include? params[:variant_id]
+            if resource.wished_variants.present? && resource.wished_variants.detect { |wv| wv.variant_id == params[:variant_id] }.present?
               @wished_variant = resource.wished_variants.detect { |wv| wv.variant_id == params[:variant_id] }
             else
+              @wished_variant = Spree::WishedVariant.new(params.permit(:quantity, :variant_id))
               @wished_variant.wishlist = resource
               @wished_variant.save
             end
@@ -80,7 +79,7 @@ module Spree
             end
           end
 
-          def update_item_quantity
+          def update_wished_variant_quantity
             spree_authorize! :update, wished_variant
 
             return render_error_item_quantity unless params[:quantity].to_i > 0
@@ -94,7 +93,7 @@ module Spree
             end
           end
 
-          def remove_item
+          def remove_wished_variant
             spree_authorize! :destroy, wished_variant
 
             if wished_variant.destroy
