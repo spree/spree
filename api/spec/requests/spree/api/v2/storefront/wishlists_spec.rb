@@ -12,7 +12,7 @@ RSpec.describe Spree::Api::V2::Storefront::WishlistsController, type: :request d
 
   describe '#default' do
     context 'no wishlist' do
-      it 'must create default wishlist' do
+      it 'must create a new default wishlist' do
         expect { get '/api/v2/storefront/wishlists/default', headers: headers_bearer }.to change { Spree::Wishlist.count }.from(0).to(2)
       end
     end
@@ -35,7 +35,7 @@ RSpec.describe Spree::Api::V2::Storefront::WishlistsController, type: :request d
       end
     end
 
-    context 'has default wishlist in other store' do
+    context 'has default wishlist in another store' do
       before do
         wishlist.update(is_default: true, store: other_store)
         wishlist.save
@@ -101,12 +101,12 @@ RSpec.describe Spree::Api::V2::Storefront::WishlistsController, type: :request d
     end
 
     context 'when a request is sent by random user with no auth' do
-      it 'returns 404 when wishlist is set to private' do
+      it 'returns 404 when wishlist is set to is_private: true' do
         get "/api/v2/storefront/wishlists/#{wishlist_private.token}"
         expect(response).to have_http_status(:not_found)
       end
 
-      it 'returns wishlist when requested by public but is_private: false' do
+      it 'returns 200 when wishlist is set to is_private: false' do
         get "/api/v2/storefront/wishlists/#{wishlist_public.token}"
 
         expect(response).to have_http_status(:ok)
@@ -142,7 +142,7 @@ RSpec.describe Spree::Api::V2::Storefront::WishlistsController, type: :request d
   end
 
   describe '#update' do
-    it 'must permit update wishlist name' do
+    it 'must permit updating of the wishlist name' do
       patch "/api/v2/storefront/wishlists/#{user.wishlists.first.token}", headers: headers_bearer, params: {
         wishlist: {
           name: 'books'
@@ -155,7 +155,7 @@ RSpec.describe Spree::Api::V2::Storefront::WishlistsController, type: :request d
   end
 
   describe '#destroy' do
-    it 'must permite remove a wishlist' do
+    it 'must permite destroying a wishlist' do
       delete "/api/v2/storefront/wishlists/#{user.wishlists.first.token}", headers: headers_bearer
       expect(response.status).to      eq (200)
       expect(user.wishlists.count).to eq (0)
@@ -165,7 +165,7 @@ RSpec.describe Spree::Api::V2::Storefront::WishlistsController, type: :request d
   describe '#add_item' do
     let!(:variant) { create(:variant) }
 
-    it 'must permit create wished_item' do
+    it 'must allow creation of a wished_item' do
       post "/api/v2/storefront/wishlists/#{user.wishlists.first.token}/add_item", headers: headers_bearer,
                                                                                   params: {
                                                                                     variant_id: variant.id.to_s,
@@ -186,11 +186,11 @@ RSpec.describe Spree::Api::V2::Storefront::WishlistsController, type: :request d
       expect(json_response['data']['relationships']['wishlist']['data']['type']).to eql ('wishlist')
     end
 
-    context 'when variant is already in the wishlist' do
+    context 'when a variant is already in the wishlist' do
       let!(:set_variant) { create(:variant)}
       let!(:wi) { create(:wished_item, wishlist: user.wishlists.first, variant: set_variant, quantity: 1) }
 
-      it 'quantity set must return the existing wished item' do
+      it 'return the existing wished_item - quantity atribute passed in' do
         post "/api/v2/storefront/wishlists/#{user.wishlists.first.token}/add_item", headers: headers_bearer,
                                                                                     params: {
                                                                                       variant_id: set_variant.id.to_s,
@@ -204,7 +204,7 @@ RSpec.describe Spree::Api::V2::Storefront::WishlistsController, type: :request d
         expect(json_response['data']['attributes']['quantity']).to eql (1)
       end
 
-      it 'quantity omitted must return existing wished item with quantity 1' do
+      it 'return the existing wished_item - quantity atribute ommited' do
         post "/api/v2/storefront/wishlists/#{user.wishlists.first.token}/add_item", headers: headers_bearer,
                                                                                     params: {
                                                                                       variant_id: set_variant.id.to_s
@@ -218,7 +218,7 @@ RSpec.describe Spree::Api::V2::Storefront::WishlistsController, type: :request d
       end
     end
 
-    it 'must permit create wished_item when omitting the quantity attribute' do
+    it 'must permit creation of a wished_item when omitting the quantity attribute' do
       post "/api/v2/storefront/wishlists/#{user.wishlists.first.token}/add_item", headers: headers_bearer,
                                                                                   params: {
                                                                                     variant_id: variant.id.to_s
@@ -228,7 +228,7 @@ RSpec.describe Spree::Api::V2::Storefront::WishlistsController, type: :request d
       expect(json_response['data']['attributes']['quantity']).to eql (1)
     end
 
-    it 'must not permit create new wished_item omitting the variant_id attribute' do
+    it 'must not permit the creation of a new wished_item witout the variant_id attribute' do
       post "/api/v2/storefront/wishlists/#{user.wishlists.first.token}/add_item", headers: headers_bearer,
                                                                                   params: {
                                                                                     bad_variant_id: variant.id.to_s
@@ -236,7 +236,7 @@ RSpec.describe Spree::Api::V2::Storefront::WishlistsController, type: :request d
       expect(response.status).to eq(422)
     end
 
-    it 'must not permit create new wished_item with a quantity of 0' do
+    it 'must not permit the creattion of a new wished_item with a quantity of 0' do
       post "/api/v2/storefront/wishlists/#{user.wishlists.first.token}/add_item", headers: headers_bearer,
                                                                                   params: {
                                                                                     variant_id: variant.id.to_s,
@@ -251,7 +251,7 @@ RSpec.describe Spree::Api::V2::Storefront::WishlistsController, type: :request d
       wishlist.wished_items.create({ variant: create(:variant) })
     end
 
-    it 'must permit update wishlist name' do
+    it 'must allow setting the quantity when an integer value is passed in' do
       patch "/api/v2/storefront/wishlists/#{user.wishlists.first.token}/set_item_quantity/#{wishlist.wished_items.first.id}",
             headers: headers_bearer,
             params: {
@@ -261,6 +261,47 @@ RSpec.describe Spree::Api::V2::Storefront::WishlistsController, type: :request d
       expect(response.status).to eq(200)
       expect(json_response['data']['attributes']['quantity']).to eql (17)
     end
+
+    it 'must allow setting the quantity when an integer value is passed in' do
+      patch "/api/v2/storefront/wishlists/#{user.wishlists.first.token}/set_item_quantity/#{wishlist.wished_items.first.id}",
+            headers: headers_bearer,
+            params: {
+              quantity: '18'
+            }
+
+      expect(response.status).to eq(200)
+      expect(json_response['data']['attributes']['quantity']).to eql (18)
+    end
+
+    it 'must return error 422 if a random string is passed in as the quantity value' do
+      patch "/api/v2/storefront/wishlists/#{user.wishlists.first.token}/set_item_quantity/#{wishlist.wished_items.first.id}",
+            headers: headers_bearer,
+            params: {
+              quantity: 'some string'
+            }
+
+      expect(response.status).to eq(422)
+    end
+
+    it 'must return error 422 if 0 is passed in as the quantity value' do
+      patch "/api/v2/storefront/wishlists/#{user.wishlists.first.token}/set_item_quantity/#{wishlist.wished_items.first.id}",
+            headers: headers_bearer,
+            params: {
+              quantity: 0
+            }
+
+      expect(response.status).to eq(422)
+    end
+
+    it 'must return error 422 if "0" is passed in as the quantity value' do
+      patch "/api/v2/storefront/wishlists/#{user.wishlists.first.token}/set_item_quantity/#{wishlist.wished_items.first.id}",
+            headers: headers_bearer,
+            params: {
+              quantity: '0'
+            }
+
+      expect(response.status).to eq(422)
+    end
   end
 
   describe '#remove_item' do
@@ -268,7 +309,7 @@ RSpec.describe Spree::Api::V2::Storefront::WishlistsController, type: :request d
       wishlist.wished_items.create({ variant: create(:variant) })
     end
 
-    it 'must permit update wishlist name' do
+    it 'must permit deletion of a wishlist' do
       delete "/api/v2/storefront/wishlists/#{user.wishlists.first.token}/remove_item/#{wishlist.wished_items.first.id}", headers: headers_bearer
 
       expect(response.status).to eq(200)
@@ -276,7 +317,7 @@ RSpec.describe Spree::Api::V2::Storefront::WishlistsController, type: :request d
     end
 
     context 'user not authorised to access this action' do
-      it 'can not delete item from other users wishlist' do
+      it 'can not delete an item from another users wishlist' do
         delete "/api/v2/storefront/wishlists/#{user.wishlists.first.token}/remove_item/#{wishlist.wished_items.first.id}"
 
         expect(response.status).to eq(403)

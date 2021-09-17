@@ -19,6 +19,17 @@ RSpec.describe Spree::WishedItem, type: :model do
       expect(described_class.new(quantity: 3, wishlist: wishlist, variant: nil)).not_to be_valid
     end
 
+    it 'validates numericality of quantity' do
+      expect(described_class.new(quantity: nil, wishlist: wishlist, variant: variant)).not_to be_valid
+      expect(described_class.new(quantity: 'string', wishlist: wishlist, variant: variant)).not_to be_valid
+      expect(described_class.new(quantity: 0.5, wishlist: wishlist, variant: variant)).not_to be_valid
+    end
+
+    it 'validates numericality must be greater than 0' do
+      expect(described_class.new(quantity: 0, wishlist: wishlist, variant: variant)).not_to be_valid
+      expect(described_class.new(quantity: -1, wishlist: wishlist, variant: variant)).not_to be_valid
+    end
+
     describe 'when wished_item is alread associated with the wishlist' do
       let!(:existing_wished_item) { create(:wished_item, quantity: 3, wishlist: wishlist, variant: variant) }
 

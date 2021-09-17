@@ -4,6 +4,7 @@ module Spree
       module Storefront
         class WishlistsController < ::Spree::Api::V2::ResourceController
           before_action :require_spree_current_user, except: [:show]
+          before_action :ensure_valid_quantity, only: [:add_item, :set_item_quantity]
 
           def show
             @resource ||= current_store.wishlists.find_by!(token: params[:id])
@@ -62,12 +63,6 @@ module Spree
           def add_item
             spree_authorize! :create, Spree::WishedItem
 
-            if params[:quantity].present?
-              params[:quantity] = params[:quantity].to_i
-            else
-              params[:quantity] = 1
-            end
-
             if resource.wished_items.present? && resource.wished_items.detect { |wv| wv.variant_id.to_s == params[:variant_id].to_s }.present?
               @wished_item = resource.wished_items.detect { |wi| wi.variant_id.to_s == params[:variant_id].to_s }
               @wished_item.quantity = params[:quantity]
@@ -88,8 +83,6 @@ module Spree
 
           def set_item_quantity
             spree_authorize! :update, wished_item
-
-            return render_error_item_quantity unless params[:quantity].to_i > 0
 
             wished_item.update(params.permit(:quantity))
 
@@ -155,6 +148,16 @@ module Spree
 
           def render_error_item_quantity
             render json: { error: I18n.t('spree.api.v2.wishlist.wrong_quantity') }, status: 422
+          end
+
+          def ensure_valid_quantity
+            return render_error_item_quantity if params[:quantity].present? && params[:quantity].to_i <= 0
+
+            params[:quantity] = if params[:quantity].present?
+                                  params[:quantity].to_i
+                                else
+                                  1
+                                end
           end
         end
       end
