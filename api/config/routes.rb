@@ -279,8 +279,5 @@ Spree::Core::Engine.add_routes do
         resources :stores
       end
     end
-
-    get '/404', to: 'errors#render_404'
-    match '*path', to: 'errors#render_404', via: [:get, :post, :put, :patch, :delete]
   end
 end
