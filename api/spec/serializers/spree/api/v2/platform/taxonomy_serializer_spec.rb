@@ -25,7 +25,9 @@ describe Spree::Api::V2::Platform::TaxonomySerializer, retry: 3 do
             name: taxonomy.name,
             created_at: taxonomy.created_at,
             updated_at: taxonomy.updated_at,
-            position: taxonomy.position
+            position: taxonomy.position,
+            public_metadata: {},
+            private_metadata: {}
           },
           relationships: {
             root: {
