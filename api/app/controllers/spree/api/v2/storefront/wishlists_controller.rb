@@ -59,45 +59,52 @@ module Spree
             render_serialized_payload { serialize_resource(@default_wishlist) }
           end
 
-          def add_wished_variant
-            spree_authorize! :create, Spree::WishedVariant
+          def add_item
+            spree_authorize! :create, Spree::WishedItem
 
-            if resource.wished_variants.present? && resource.wished_variants.detect { |wv| wv.variant_id == params[:variant_id] }.present?
-              @wished_variant = resource.wished_variants.detect { |wv| wv.variant_id == params[:variant_id] }
+            if params[:quantity].present?
+              params[:quantity] = params[:quantity].to_i
             else
-              @wished_variant = Spree::WishedVariant.new(params.permit(:quantity, :variant_id))
-              @wished_variant.wishlist = resource
-              @wished_variant.save
+              params[:quantity] = 1
+            end
+
+            if resource.wished_items.present? && resource.wished_items.detect { |wv| wv.variant_id.to_s == params[:variant_id].to_s }.present?
+              @wished_item = resource.wished_items.detect { |wi| wi.variant_id.to_s == params[:variant_id].to_s }
+              @wished_item.quantity = params[:quantity]
+            else
+              @wished_item = Spree::WishedItem.new(params.permit(:quantity, :variant_id))
+              @wished_item.wishlist = resource
+              @wished_item.save
             end
 
             resource.reload
 
-            if @wished_variant.persisted?
-              render_serialized_payload { serialize_wished_variant(@wished_variant) }
+            if @wished_item.persisted?
+              render_serialized_payload { serialize_wished_item(@wished_item) }
             else
               render_error_payload(resource.errors.full_messages.to_sentence)
             end
           end
 
-          def update_wished_variant_quantity
-            spree_authorize! :update, wished_variant
+          def set_item_quantity
+            spree_authorize! :update, wished_item
 
             return render_error_item_quantity unless params[:quantity].to_i > 0
 
-            wished_variant.update(params.permit(:quantity))
+            wished_item.update(params.permit(:quantity))
 
-            if wished_variant.errors.empty?
-              render_serialized_payload { serialize_wished_variant(wished_variant) }
+            if wished_item.errors.empty?
+              render_serialized_payload { serialize_wished_item(wished_item) }
             else
               render_error_payload(resource.errors.full_messages.to_sentence)
             end
           end
 
-          def remove_wished_variant
-            spree_authorize! :destroy, wished_variant
+          def remove_item
+            spree_authorize! :destroy, wished_item
 
-            if wished_variant.destroy
-              render_serialized_payload { serialize_wished_variant(wished_variant) }
+            if wished_item.destroy
+              render_serialized_payload { serialize_wished_item(wished_item) }
             else
               render_error_payload(resource.errors.full_messages.to_sentence)
             end
@@ -129,17 +136,17 @@ module Spree
             params.require(:wishlist).permit(permitted_wishlist_attributes)
           end
 
-          def wished_variant_attributes
-            params.permit(permitted_wished_variant_attributes)
+          def wished_item_attributes
+            params.permit(permitted_wished_item_attributes)
           end
 
-          def wished_variant
-            @wished_variant ||= resource.wished_variants.find(params[:wished_variant_id])
+          def wished_item
+            @wished_item ||= resource.wished_items.find(params[:item_id])
           end
 
-          def serialize_wished_variant(wished_variant)
-            ::Spree::V2::Storefront::WishedVariantSerializer.new(
-              wished_variant,
+          def serialize_wished_item(wished_item)
+            ::Spree::V2::Storefront::WishedItemSerializer.new(
+              wished_item,
               params: serializer_params,
               include: resource_includes,
               fields: sparse_fields

@@ -173,9 +173,9 @@ Spree::Core::Engine.add_routes do
           get :default, on: :collection
 
           member do
-            post :add_wished_variant
-            patch 'update_wished_variant_quantity/:wished_variant_id', to: 'wishlists#update_wished_variant_quantity', as: :update_wished_variant_quantity
-            delete 'remove_wished_variant/:wished_variant_id', to: 'wishlists#remove_wished_variant', as: :remove_wished_variant
+            post :add_item
+            patch 'set_item_quantity/:item_id', to: 'wishlists#set_item_quantity', as: :set_item_quantity
+            delete 'remove_item/:item_id', to: 'wishlists#remove_item', as: :remove_item
           end
         end
       end

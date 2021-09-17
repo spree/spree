@@ -1,5 +1,5 @@
 FactoryBot.define do
-  factory :wished_variant, class: Spree::WishedVariant do
+  factory :wished_item, class: Spree::WishedItem do
     variant
     wishlist
   end

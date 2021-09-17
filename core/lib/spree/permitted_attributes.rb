@@ -31,7 +31,7 @@ module Spree
       :cms_page_attributes,
       :cms_section_attributes,
       :wishlist_attributes,
-      :wished_variant_attributes
+      :wished_item_attributes
     ]
 
     mattr_reader *ATTRIBUTES
@@ -145,6 +145,6 @@ module Spree
 
     @@wishlist_attributes = [:name, :is_default, :is_private]
 
-    @@wished_variant_attributes = [:variant_id, :quantity]
+    @@wished_item_attributes = [:variant_id, :quantity]
   end
 end

@@ -58,8 +58,8 @@ describe Spree::Wishlist, type: :model do
     let(:variant) { create(:variant) }
 
     before do
-      wished_variant = create(:wished_variant, variant: variant)
-      wishlist.wished_variants << wished_variant
+      wished_item = create(:wished_item, variant: variant)
+      wishlist.wished_items << wished_item
       wishlist.save
     end
 
@@ -123,12 +123,12 @@ describe Spree::Wishlist, type: :model do
   end
 
   describe '#destroy' do
-    let!(:wished_variant) { create(:wished_variant) }
+    let!(:wished_item) { create(:wished_item) }
 
     it 'deletes associated wished variants' do
       expect do
-        wished_variant.wishlist.destroy
-      end.to change(Spree::WishedVariant, :count).by(-1)
+        wished_item.wishlist.destroy
+      end.to change(Spree::WishedItem, :count).by(-1)
     end
   end
 end

@@ -1,5 +1,5 @@
 module Spree
-  class WishedVariant < Spree::Base
+  class WishedItem < Spree::Base
     extend DisplayMoney
     money_methods :total, :price
 
@@ -10,6 +10,7 @@ module Spree
 
     validates :variant, :wishlist, presence: true
     validates :variant, uniqueness: { scope: [:wishlist] }
+    validates :quantity, numericality: { only_integer: true, greater_than: 0 }
 
     def price(currency)
       variant.amount_in(currency[:currency])

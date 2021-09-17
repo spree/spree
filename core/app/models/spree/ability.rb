@@ -87,8 +87,8 @@ module Spree
       can :read, ::Spree::Variant
       can :read, ::Spree::Zone
       can :manage, ::Spree::Wishlist, user_id: user.id
-      can [:create, :update, :destroy], Spree::WishedVariant do |wished_variant|
-        wished_variant.wishlist.user == user
+      can [:create, :update, :destroy], Spree::WishedItem do |wished_item|
+        wished_item.wishlist.user == user
       end
     end
 

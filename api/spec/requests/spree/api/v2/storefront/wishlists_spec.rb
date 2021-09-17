@@ -30,7 +30,7 @@ RSpec.describe Spree::Api::V2::Storefront::WishlistsController, type: :request d
         wishlist.reload
       end
 
-      it 'must return wishlist' do
+      it 'must return the existing default wishlist' do
         expect { get '/api/v2/storefront/wishlists/default', headers: headers_bearer }.not_to change { Spree::Wishlist.count }
       end
     end
@@ -48,7 +48,7 @@ RSpec.describe Spree::Api::V2::Storefront::WishlistsController, type: :request d
         wishlist.reload
       end
 
-      it 'creates a default wishlist for the current store' do
+      it 'creates a new default wishlist for the current store' do
         expect { get '/api/v2/storefront/wishlists/default', headers: headers_bearer }.to change { Spree::Wishlist.count }.from(1).to(2)
       end
     end
@@ -85,22 +85,22 @@ RSpec.describe Spree::Api::V2::Storefront::WishlistsController, type: :request d
     let!(:wishlist_private) { create(:wishlist, user: other_user, is_private: true) }
     let!(:wishlist_public) { create(:wishlist, user: other_user, is_private: false) }
 
-    let!(:wished_variant) do
-      wishlist.wished_variants.create({ variant: create(:variant) })
+    let!(:wished_item) do
+      wishlist.wished_items.create({ variant: create(:variant) })
     end
 
     it 'returns wishlist details' do
-      get "/api/v2/storefront/wishlists/#{wishlist.token}?include=wished_variants", headers: headers_bearer
+      get "/api/v2/storefront/wishlists/#{wishlist.token}?include=wished_items", headers: headers_bearer
 
       expect(response).to have_http_status(:ok)
       expect(json_response['data']['attributes']['token']).to eq (wishlist.token)
       expect(json_response['data']['attributes']['name']).to eq (wishlist.name)
       expect(json_response['data']['attributes']['is_private']).to eq (wishlist.is_private?)
       expect(json_response['data']['attributes']['is_default']).to eq (wishlist.is_default?)
-      expect(json_response['data']['relationships']['wished_variants']['data'].first['id']).to eq(wished_variant.id.to_s)
+      expect(json_response['data']['relationships']['wished_items']['data'].first['id']).to eq(wished_item.id.to_s)
     end
 
-    context 'when a request is sent by random with no auth' do
+    context 'when a request is sent by random user with no auth' do
       it 'returns 404 when wishlist is set to private' do
         get "/api/v2/storefront/wishlists/#{wishlist_private.token}"
         expect(response).to have_http_status(:not_found)
@@ -163,38 +163,96 @@ RSpec.describe Spree::Api::V2::Storefront::WishlistsController, type: :request d
   end
 
   describe '#add_item' do
-    let!(:item) { create(:variant) }
+    let!(:variant) { create(:variant) }
 
-    it 'must permit update wishlist name' do
+    it 'must permit create wished_item' do
       post "/api/v2/storefront/wishlists/#{user.wishlists.first.token}/add_item", headers: headers_bearer,
                                                                                   params: {
-                                                                                    variant_id: item.id,
+                                                                                    variant_id: variant.id.to_s,
                                                                                     quantity: 3
                                                                                   }
       expect(response.status).to eq(200)
-
       user.wishlists.reload
 
-      expect(json_response['data']['type']).to eql ('wished_variant')
+      expect(json_response['data']['type']).to eql ('wished_item')
       expect(json_response['data']['attributes']['quantity']).to eql (3)
       expect(json_response['data']['attributes']['price']).to eql ('19.99')
       expect(json_response['data']['attributes']['total']).to eql ('59.97')
       expect(json_response['data']['attributes']['display_price']).to eql ('$19.99')
       expect(json_response['data']['attributes']['display_total']).to eql ('$59.97')
-      expect(json_response['data']['relationships']['variant']['data']['id']).to eql (item.id.to_s)
+      expect(json_response['data']['relationships']['variant']['data']['id']).to eql (variant.id.to_s)
       expect(json_response['data']['relationships']['variant']['data']['type']).to eql ('variant')
       expect(json_response['data']['relationships']['wishlist']['data']['id']).to eql (user.wishlists.first.id.to_s)
       expect(json_response['data']['relationships']['wishlist']['data']['type']).to eql ('wishlist')
     end
+
+    context 'when variant is already in the wishlist' do
+      let!(:set_variant) { create(:variant)}
+      let!(:wi) { create(:wished_item, wishlist: user.wishlists.first, variant: set_variant, quantity: 1) }
+
+      it 'quantity set must return the existing wished item' do
+        post "/api/v2/storefront/wishlists/#{user.wishlists.first.token}/add_item", headers: headers_bearer,
+                                                                                    params: {
+                                                                                      variant_id: set_variant.id.to_s,
+                                                                                      quantity: 1
+                                                                                    }
+
+        expect(response.status).to eq(200)
+        user.wishlists.reload
+
+        expect(json_response['data']['id']).to eql (wi.id.to_s)
+        expect(json_response['data']['attributes']['quantity']).to eql (1)
+      end
+
+      it 'quantity omitted must return existing wished item with quantity 1' do
+        post "/api/v2/storefront/wishlists/#{user.wishlists.first.token}/add_item", headers: headers_bearer,
+                                                                                    params: {
+                                                                                      variant_id: set_variant.id.to_s
+                                                                                    }
+
+        expect(response.status).to eq(200)
+        user.wishlists.reload
+
+        expect(json_response['data']['id']).to eql (wi.id.to_s)
+        expect(json_response['data']['attributes']['quantity']).to eql (1)
+      end
+    end
+
+    it 'must permit create wished_item when omitting the quantity attribute' do
+      post "/api/v2/storefront/wishlists/#{user.wishlists.first.token}/add_item", headers: headers_bearer,
+                                                                                  params: {
+                                                                                    variant_id: variant.id.to_s
+                                                                                  }
+      expect(response.status).to eq(200)
+      user.wishlists.reload
+      expect(json_response['data']['attributes']['quantity']).to eql (1)
+    end
+
+    it 'must not permit create new wished_item omitting the variant_id attribute' do
+      post "/api/v2/storefront/wishlists/#{user.wishlists.first.token}/add_item", headers: headers_bearer,
+                                                                                  params: {
+                                                                                    bad_variant_id: variant.id.to_s
+                                                                                  }
+      expect(response.status).to eq(422)
+    end
+
+    it 'must not permit create new wished_item with a quantity of 0' do
+      post "/api/v2/storefront/wishlists/#{user.wishlists.first.token}/add_item", headers: headers_bearer,
+                                                                                  params: {
+                                                                                    variant_id: variant.id.to_s,
+                                                                                    quantity: 0
+                                                                                  }
+      expect(response.status).to eq(422)
+    end
   end
 
-  describe '#update_item_quantity' do
-    let!(:wished_variant) do
-      wishlist.wished_variants.create({ variant: create(:variant) })
+  describe '#set_item_quantity' do
+    let!(:wished_item) do
+      wishlist.wished_items.create({ variant: create(:variant) })
     end
 
     it 'must permit update wishlist name' do
-      patch "/api/v2/storefront/wishlists/#{user.wishlists.first.token}/update_item_quantity/#{wishlist.wished_variants.first.id}",
+      patch "/api/v2/storefront/wishlists/#{user.wishlists.first.token}/set_item_quantity/#{wishlist.wished_items.first.id}",
             headers: headers_bearer,
             params: {
               quantity: 17
@@ -206,20 +264,20 @@ RSpec.describe Spree::Api::V2::Storefront::WishlistsController, type: :request d
   end
 
   describe '#remove_item' do
-    let!(:wished_variant) do
-      wishlist.wished_variants.create({ variant: create(:variant) })
+    let!(:wished_item) do
+      wishlist.wished_items.create({ variant: create(:variant) })
     end
 
     it 'must permit update wishlist name' do
-      delete "/api/v2/storefront/wishlists/#{user.wishlists.first.token}/remove_item/#{wishlist.wished_variants.first.id}", headers: headers_bearer
+      delete "/api/v2/storefront/wishlists/#{user.wishlists.first.token}/remove_item/#{wishlist.wished_items.first.id}", headers: headers_bearer
 
       expect(response.status).to eq(200)
-      expect(json_response['data']['type']).to eql ('wished_variant')
+      expect(json_response['data']['type']).to eql ('wished_item')
     end
 
     context 'user not authorised to access this action' do
       it 'can not delete item from other users wishlist' do
-        delete "/api/v2/storefront/wishlists/#{user.wishlists.first.token}/remove_item/#{wishlist.wished_variants.first.id}"
+        delete "/api/v2/storefront/wishlists/#{user.wishlists.first.token}/remove_item/#{wishlist.wished_items.first.id}"
 
         expect(response.status).to eq(403)
       end

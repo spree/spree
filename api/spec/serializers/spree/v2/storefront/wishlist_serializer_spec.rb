@@ -4,7 +4,7 @@ describe Spree::V2::Storefront::WishlistSerializer do
   subject { described_class.new(wishlist) }
 
   let!(:wishlist) { create(:wishlist) }
-  let!(:wished_variant) { create(:wished_variant, wishlist: wishlist, variant: create(:variant), quantity: 1) }
+  let!(:wished_item) { create(:wished_item, wishlist: wishlist, variant: create(:variant), quantity: 1) }
 
   it { expect(subject.serializable_hash).to be_kind_of(Hash) }
 
@@ -21,11 +21,11 @@ describe Spree::V2::Storefront::WishlistSerializer do
             is_default: wishlist.is_default
           },
           relationships: {
-            wished_variants: {
+            wished_items: {
               data: [
                 {
-                  id: wishlist.wished_variants.first.id.to_s,
-                  type: :wished_variant
+                  id: wishlist.wished_items.first.id.to_s,
+                  type: :wished_item
                 }
               ]
             }

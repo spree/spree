@@ -6,7 +6,7 @@ module Spree
 
         attributes :token, :name, :is_private, :is_default
 
-        has_many :wished_variants
+        has_many :wished_items
       end
     end
   end
