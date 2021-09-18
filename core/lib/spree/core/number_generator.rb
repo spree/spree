@@ -16,8 +16,6 @@ module Spree
         generator_instance = self
 
         host.class_eval do
-          validates(:number, presence: true, uniqueness: { allow_blank: true })
-
           before_validation do |instance|
             instance.number ||= generate_permalink(host)
           end
