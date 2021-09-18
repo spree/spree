@@ -45,7 +45,7 @@ module Spree
         country.states.where(
           name: subregion.name,
           abbr: subregion.code
-        ).first_or_create
+        ).first_or_create!
       end
 
       def province_level(country, subregion)
@@ -53,7 +53,7 @@ module Spree
           country.states.where(
             name: province.name,
             abbr: province.code
-          ).first_or_create
+          ).first_or_create!
         end
       end
     end

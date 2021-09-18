@@ -19,7 +19,7 @@ module Spree
               iso: country.alpha_2_code,
               iso_name: country.name.upcase,
               numcode: country.numeric_code
-            ).first_or_create
+            ).first_or_create!
           end
 
           # Find countries that do not use postal codes (by iso) and set 'zipcode_required' to false for them.
