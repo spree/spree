@@ -95,7 +95,7 @@ module Spree
 
       def admin_oauth_application
         @admin_oauth_application ||= begin
-          Doorkeeper::Application.find_or_create_by!(name: 'Admin Panel', scopes: 'admin', redirect_uri: '')
+          Spree::OauthApplication.find_or_create_by!(name: 'Admin Panel', scopes: 'admin', redirect_uri: '')
         end
       end
 
@@ -105,8 +105,8 @@ module Spree
         return unless user
 
         @admin_oauth_token ||= begin
-          Doorkeeper::AccessToken.active_for(user).where(application_id: admin_oauth_application.id).last ||
-            Doorkeeper::AccessToken.create!(
+          Spree::OauthAccessToken.active_for(user).where(application_id: admin_oauth_application.id).last ||
+            Spree::OauthAccessToken.create!(
               resource_owner_id: user.id,
               application_id: admin_oauth_application.id,
               scopes: admin_oauth_application.scopes

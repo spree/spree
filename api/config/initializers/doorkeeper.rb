@@ -33,16 +33,8 @@ Doorkeeper.configure do
   access_token_methods :from_bearer_authorization, :from_access_token_param
 
   optional_scopes :admin, :write, :read
-end
 
-Doorkeeper::AccessGrant.class_eval do
-  self.table_name = 'spree_oauth_access_grants'
-end
-
-Doorkeeper::AccessToken.class_eval do
-  self.table_name = 'spree_oauth_access_tokens'
-end
-
-Doorkeeper::Application.class_eval do
-  self.table_name = 'spree_oauth_applications'
+  access_token_class 'Spree::OauthAccessToken'
+  access_grant_class 'Spree::OauthAccessGrant'
+  application_class 'Spree::OauthApplication'
 end
