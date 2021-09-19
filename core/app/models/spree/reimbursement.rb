@@ -1,6 +1,7 @@
 module Spree
   class Reimbursement < Spree::Base
     include Spree::Core::NumberGenerator.new(prefix: 'RI', length: 9)
+    include NumberIdentifier
 
     class IncompleteReimbursementError < StandardError; end
 
@@ -15,7 +16,6 @@ module Spree
       has_many :return_items
     end
 
-    validates :number, uniqueness: true
     validates :order, presence: true
     validate :validate_return_items_belong_to_same_order
 

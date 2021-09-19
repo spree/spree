@@ -3,10 +3,10 @@ require_dependency 'spree/payment/processing'
 module Spree
   class Payment < Spree::Base
     include Spree::Core::NumberGenerator.new(prefix: 'P', letters: true, length: 7)
+    include NumberIdentifier
+    include NumberAsParam
 
     include Spree::Payment::Processing
-
-    include NumberAsParam
 
     NON_RISKY_AVS_CODES = ['B', 'D', 'H', 'J', 'M', 'Q', 'T', 'V', 'X', 'Y'].freeze
     RISKY_AVS_CODES     = ['A', 'C', 'E', 'F', 'G', 'I', 'K', 'L', 'N', 'O', 'P', 'R', 'S', 'U', 'W', 'Z'].freeze
@@ -25,7 +25,6 @@ module Spree
     has_many :refunds, inverse_of: :payment
 
     validates :payment_method, presence: true
-    validates :number, uniqueness: { case_sensitive: true }
     validates :source, presence: true, if: -> { payment_method&.source_required? }
 
     before_validation :validate_source
