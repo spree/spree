@@ -16,7 +16,7 @@ module Spree
              foreign_key: :zoneable_id
     has_many :zones, through: :zone_members, class_name: 'Spree::Zone'
 
-    validates :name, :iso_name, :iso, :iso3, presence: true, uniqueness: { case_sensitive: false }
+    validates :name, :iso_name, :iso, :iso3, presence: true, uniqueness: { case_sensitive: false, scope: spree_base_uniqueness_scope }
 
     def self.default(store = nil)
       ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)

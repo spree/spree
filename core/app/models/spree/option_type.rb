@@ -1,5 +1,7 @@
 module Spree
   class OptionType < Spree::Base
+    include UniqueName
+
     acts_as_list
 
     with_options dependent: :destroy, inverse_of: :option_type do
@@ -12,10 +14,7 @@ module Spree
     has_many :option_type_prototypes, class_name: 'Spree::OptionTypePrototype'
     has_many :prototypes, through: :option_type_prototypes, class_name: 'Spree::Prototype'
 
-    with_options presence: true do
-      validates :name, uniqueness: { case_sensitive: false, allow_blank: true }
-      validates :presentation
-    end
+    validates :presentation, presence: true
 
     default_scope { order(:position) }
 
