@@ -1,5 +1,7 @@
 module Spree
   class Zone < Spree::Base
+    include UniqueName
+
     with_options dependent: :destroy, inverse_of: :zone do
       has_many :zone_members, class_name: 'Spree::ZoneMember'
       has_many :tax_rates
@@ -11,8 +13,6 @@ module Spree
 
     has_many :shipping_method_zones, class_name: 'Spree::ShippingMethodZone'
     has_many :shipping_methods, through: :shipping_method_zones, class_name: 'Spree::ShippingMethod'
-
-    validates :name, presence: true, uniqueness: { case_sensitive: false, allow_blank: true }
 
     scope :with_default_tax, -> { where(default_tax: true) }
 

@@ -36,6 +36,10 @@ class Spree::Base < ApplicationRecord
     where(nil)
   end
 
+  def self.spree_base_uniqueness_scope
+    ApplicationRecord.try(:spree_base_uniqueness_scope) || []
+  end
+
   # FIXME: https://github.com/rails/rails/issues/40943
   def self.has_many_inversing
     false

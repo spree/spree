@@ -5,7 +5,8 @@ module Spree
     included do
       before_validation :uppercase_number
 
-      validates :number, presence: true, length: { maximum: 32, allow_blank: true }, uniqueness: { allow_blank: true, case_sensitive: true }
+      validates :number, presence: true, length: { maximum: 32, allow_blank: true },
+                         uniqueness: { allow_blank: true, case_sensitive: true, scope: spree_base_uniqueness_scope }
     end
 
     protected
