@@ -7,11 +7,8 @@ module Spree
           before_action :ensure_valid_quantity, only: [:add_item, :set_item_quantity]
 
           def show
-            @resource ||= current_store.wishlists.find_by!(token: params[:id])
-
-            spree_authorize! :read, @resource
-
-            render_serialized_payload { serialize_resource(@resource) }
+            spree_authorize! :show, resource
+            super
           end
 
           def create
@@ -105,8 +102,12 @@ module Spree
 
           private
 
-          def scope
-            super.where(user: spree_current_user)
+          def scope(skip_cancancan: true)
+            if action_name == 'show'
+              super
+            else
+              super.where(user: spree_current_user)
+            end
           end
 
           def resource
