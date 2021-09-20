@@ -1,5 +1,5 @@
 shared_context 'API v2 tokens' do
-  let(:token) { Spree::OauthAccessToken.create!(resource_owner_id: user.id, expires_in: nil) }
+  let(:token) { Spree::OauthAccessToken.create!(resource_owner: user, expires_in: nil) }
   let(:headers_bearer) { { 'Authorization' => "Bearer #{token.token}" } }
   let(:headers_order_token) { { 'X-Spree-Order-Token' => order.token } }
 end

@@ -107,7 +107,7 @@ module Spree
         @admin_oauth_token ||= begin
           Spree::OauthAccessToken.active_for(user).where(application_id: admin_oauth_application.id).last ||
             Spree::OauthAccessToken.create!(
-              resource_owner_id: user.id,
+              resource_owner: user,
               application_id: admin_oauth_application.id,
               scopes: admin_oauth_application.scopes
             )

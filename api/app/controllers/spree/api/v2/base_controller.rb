@@ -78,7 +78,7 @@ module Spree
 
           doorkeeper_authorize!
 
-          @spree_current_user ||= Spree.user_class.find_by(id: doorkeeper_token.resource_owner_id)
+          @spree_current_user ||= doorkeeper_token.resource_owner
         end
 
         def spree_authorize!(action, subject, *args)
