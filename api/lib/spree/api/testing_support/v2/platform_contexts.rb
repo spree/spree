@@ -22,7 +22,7 @@ shared_context 'Platform API v2' do
   end
   let(:user_oauth_token) do
     Spree::OauthAccessToken.create!(
-      resource_owner_id: user.id,
+      resource_owner: user,
       application_id: admin_app.id,
       scopes: admin_app.scopes
     )
