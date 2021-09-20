@@ -148,8 +148,8 @@ class SpreeFourThree < ActiveRecord::Migration[5.2]
       t.datetime "updated_at"
       t.boolean "zipcode_required", default: true
       t.datetime "created_at"
-      t.index "lower((iso_name)::text)", name: "index_spree_countries_on_lower_iso_name", unique: true
-      t.index "lower((name)::text)", name: "index_spree_countries_on_lower_name", unique: true
+      t.index ["iso_name"], name: "index_spree_countries_on_iso_name", unique: true
+      t.index ["name"], name: "index_spree_countries_on_name", unique: true
       t.index ["iso"], name: "index_spree_countries_on_iso", unique: true
       t.index ["iso3"], name: "index_spree_countries_on_iso3", unique: true
     end
@@ -686,7 +686,7 @@ class SpreeFourThree < ActiveRecord::Migration[5.2]
       t.boolean "mutable", default: true
       t.datetime "created_at", precision: 6, null: false
       t.datetime "updated_at", precision: 6, null: false
-      t.index "lower((name)::text)", name: "index_spree_refund_reasons_on_lower_name", unique: true
+      t.index ["name"], name: "index_spree_refund_reasons_on_name", unique: true
     end
 
     create_table "spree_refunds", force: :cascade do |t|
@@ -720,7 +720,7 @@ class SpreeFourThree < ActiveRecord::Migration[5.2]
       t.datetime "created_at", precision: 6, null: false
       t.datetime "updated_at", precision: 6, null: false
       t.string "type"
-      t.index "lower((name)::text)", name: "index_spree_reimbursement_types_on_lower_name", unique: true
+      t.index ["name"], name: "index_spree_reimbursement_types_on_name", unique: true
       t.index ["type"], name: "index_spree_reimbursement_types_on_type"
     end
 
@@ -743,7 +743,7 @@ class SpreeFourThree < ActiveRecord::Migration[5.2]
       t.boolean "mutable", default: true
       t.datetime "created_at", precision: 6, null: false
       t.datetime "updated_at", precision: 6, null: false
-      t.index "lower((name)::text)", name: "index_spree_return_authorization_reasons_on_lower_name", unique: true
+      t.index ["name"], name: "index_spree_return_authorization_reasons_on_name", unique: true
     end
 
     create_table "spree_return_authorizations", force: :cascade do |t|
@@ -800,7 +800,7 @@ class SpreeFourThree < ActiveRecord::Migration[5.2]
       t.string "name"
       t.datetime "created_at"
       t.datetime "updated_at"
-      t.index "lower((name)::text)", name: "index_spree_roles_on_lower_name", unique: true
+      t.index ["name"], name: "index_spree_roles_on_name", unique: true
     end
 
     create_table "spree_shipments", force: :cascade do |t|
@@ -1045,7 +1045,7 @@ class SpreeFourThree < ActiveRecord::Migration[5.2]
       t.bigint "checkout_zone_id"
       t.string "seo_robots"
       t.string "supported_locales"
-      t.index "lower((code)::text)", name: "index_spree_stores_on_lower_code", unique: true
+      t.index ["code"], name: "index_spree_stores_on_code", unique: true
       t.index ["default"], name: "index_spree_stores_on_default"
       t.index ["url"], name: "index_spree_stores_on_url"
     end
