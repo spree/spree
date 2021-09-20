@@ -1,7 +1,6 @@
 require 'csv'
 
 Spree::Sample.load_sample('tax_categories')
-Spree::Sample.load_sample('shipping_categories')
 Spree::Sample.load_sample('option_types')
 Spree::Sample.load_sample('taxons')
 Spree::Sample.load_sample('stores')
