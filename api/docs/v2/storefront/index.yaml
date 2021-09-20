@@ -13642,7 +13642,10 @@ paths:
                   is_default: true
   '/api/v2/storefront/wishlists/{token}':
     get:
-      description: 'Retrieves the details of an existing wishlist. Supply the unique wishlist token, and the API will return the corresponding wishlist information.'
+      description: |-
+        Retrieves a wishlist using the wishlist token.
+
+        If the wishlist is publicly viewable, the endpoint will return the requested wishlist regardless of the user. If the wishlist is private, only the wishlist owner can access the wishlist.
       summary: Retrieve a Wishlist
       tags:
         - Wishlists
@@ -16723,7 +16726,7 @@ components:
       schema:
         type: string
       example: wished_items.variant
-      description: 'Specify the related resources you would like to receive in the `included` section of the response body. You can also retrieve related resources of included resources by using the dot notation, eg. `wished_items.variant`. [More information](https://jsonapi.org/format/#fetching-includes)'
+      description: 'Specify the related resources you would like to receive in the `included` section of the response body. You can also retrieve related resources of included resources by using the dot notation, eg. `wished_items.variant`. [More information](https://jsonapi.org/format/#fetching-includes).'
     WishlistIsVariantIncludedParam:
       name: is_variant_included
       in: query
@@ -16789,9 +16792,9 @@ components:
         type: string
     WishlistSparseFieldsParam:
       in: query
-      name: fields
-      description: Specify the attributes you would like returned for the given types in the response body.
-      example: '[wishlist]=name,is_default'
+      name: 'fields[wishlist]'
+      description: Specify the attributes you would like returned in the response body. [More information](https://jsonapi.org/format/#fetching-sparse-fieldsets).
+      example: 'name,is_default'
       schema:
         type: string
   responses:

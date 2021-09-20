@@ -109,7 +109,7 @@ RSpec.describe Spree::Api::V2::Storefront::WishlistsController, type: :request d
     end
 
     context 'when a request is sent by random user with no auth' do
-      it 'returns 404 when wishlist is set to is_private: true' do
+      it 'returns 403 when wishlist is set to is_private: true' do
         get "/api/v2/storefront/wishlists/#{wishlist_private.token}"
         expect(response).to have_http_status(:forbidden)
       end
