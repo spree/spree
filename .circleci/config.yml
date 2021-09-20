@@ -272,7 +272,7 @@ jobs:
           command: bundle update
           working_directory: ~/project/spree-designs
       - run:
-          command: bundle exec rails spree:install:migrations
+          command: bundle exec rake railties:install:migrations
           working_directory: ~/project/spree-designs
       - run:
           command: |
