@@ -49,11 +49,22 @@ module Spree
       end
 
       def province_level(country, subregion)
-        subregion.subregions.each do |province|
-          country.states.where(
-            name: province.name,
-            abbr: province.code
-          ).first_or_create!
+        if Rails::VERSION::MAJOR >= 6
+          new_states = subregion.subregions.map do |province|
+            Hash[
+              name: province.name,
+              abbr: province.code,
+              country_id: country.id
+            ]
+          end.compact.uniq
+          Spree::State.insert_all(new_states)
+        else
+          subregion.subregions.each do |province|
+            country.states.where(
+              name: province.name,
+              abbr: province.code
+            ).first_or_create!
+          end
         end
       end
     end

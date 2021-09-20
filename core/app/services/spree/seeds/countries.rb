@@ -9,17 +9,33 @@ module Spree
 
       def call
         ApplicationRecord.transaction do
-          Carmen::Country.all.each do |country|
-            # Skip the creation of some territories, uninhabited islands and the Antarctic.
-            next if EXCLUDED_COUNTRIES.include?(country.alpha_2_code)
+          if Rails::VERSION::MAJOR >= 6
+            new_countries = Carmen::Country.all.map do |country|
+              # Skip the creation of some territories, uninhabited islands and the Antarctic.
+              next if EXCLUDED_COUNTRIES.include?(country.alpha_2_code)
 
-            Spree::Country.where(
-              name: country.name,
-              iso3: country.alpha_3_code,
-              iso: country.alpha_2_code,
-              iso_name: country.name.upcase,
-              numcode: country.numeric_code
-            ).first_or_create!
+              Hash[
+                'name': country.name,
+                'iso3': country.alpha_3_code,
+                'iso': country.alpha_2_code,
+                'iso_name': country.name.upcase,
+                'numcode': country.numeric_code,
+              ]
+            end.compact.uniq
+            Spree::Country.insert_all(new_countries)
+          else
+            Carmen::Country.all.each do |country|
+              # Skip the creation of some territories, uninhabited islands and the Antarctic.
+              next if EXCLUDED_COUNTRIES.include?(country.alpha_2_code)
+
+              Spree::Country.where(
+                name: country.name,
+                iso3: country.alpha_3_code,
+                iso: country.alpha_2_code,
+                iso_name: country.name.upcase,
+                numcode: country.numeric_code
+              ).first_or_create!
+            end
           end
 
           # Find countries that do not use postal codes (by iso) and set 'zipcode_required' to false for them.
