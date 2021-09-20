@@ -8,6 +8,7 @@ module Spree
         DefaultReimbursementType.call
         Roles.call
         States.call
+        ShippingCategories.call
         StoreCreditCategories.call
         Stores.call
         Zones.call
