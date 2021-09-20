@@ -97,7 +97,15 @@ RSpec.describe Spree::Api::V2::Storefront::WishlistsController, type: :request d
       expect(json_response['data']['attributes']['name']).to eq (wishlist.name)
       expect(json_response['data']['attributes']['is_private']).to eq (wishlist.is_private?)
       expect(json_response['data']['attributes']['is_default']).to eq (wishlist.is_default?)
+      expect(json_response['data']['attributes']['variant_included']).to be false
       expect(json_response['data']['relationships']['wished_items']['data'].first['id']).to eq(wished_item.id.to_s)
+    end
+
+    it 'returns is_variant_included true when the variant is already added to the wishlist' do
+      get "/api/v2/storefront/wishlists/#{wishlist.token}?is_variant_included=#{wished_item.variant_id}", headers: headers_bearer
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['data']['attributes']['variant_included']).to be true
     end
 
     context 'when a request is sent by random user with no auth' do

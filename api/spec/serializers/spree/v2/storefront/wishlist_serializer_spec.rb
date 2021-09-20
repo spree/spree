@@ -18,7 +18,8 @@ describe Spree::V2::Storefront::WishlistSerializer do
             name: wishlist.name,
             token: wishlist.token,
             is_private: wishlist.is_private,
-            is_default: wishlist.is_default
+            is_default: wishlist.is_default,
+            variant_included: false
           },
           relationships: {
             wished_items: {

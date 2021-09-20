@@ -146,6 +146,10 @@ module Spree
             ).serializable_hash
           end
 
+          def serializer_params
+            super.merge(is_variant_included: params[:is_variant_included])
+          end
+
           def render_error_item_quantity
             render json: { error: I18n.t('spree.api.v2.wishlist.wrong_quantity') }, status: 422
           end
