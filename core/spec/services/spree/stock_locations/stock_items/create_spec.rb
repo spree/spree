@@ -39,7 +39,7 @@ module Spree
 
         context 'with prepared stock items' do
           context 'with duplicate stock items by stock_location_id and variant' do
-            it 'skips the insertion of duplicate records' do
+            it 'removes duplicate stock_items before inserting to avoid duplicate ones' do
               # Make a call of Spree::Variant to obtain the ids, return duplicated records.
               expect(Spree::Variant).to receive(:ids).and_return([1, 1])
               expect { result }.to change { stock_location.stock_items.count }.from(0).to(1)
