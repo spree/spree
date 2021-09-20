@@ -9,7 +9,7 @@ module Spree
           def show
             @resource ||= current_store.wishlists.find_by!(token: params[:id])
 
-            raise ActiveRecord::RecordNotFound unless @resource.viewable?(spree_current_user)
+            spree_authorize! :read, @resource
 
             render_serialized_payload { serialize_resource(@resource) }
           end

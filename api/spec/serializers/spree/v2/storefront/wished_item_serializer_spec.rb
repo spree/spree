@@ -27,12 +27,6 @@ describe Spree::V2::Storefront::WishedItemSerializer do
                 id: wished_item.variant.id.to_s,
                 type: :variant
               }
-            },
-            wishlist: {
-              data: {
-                id: wishlist.id.to_s,
-                type: :wishlist
-              }
             }
           }
         }

@@ -23,7 +23,6 @@ module Spree
         end
 
         belongs_to :variant
-        belongs_to :wishlist, serializer: ::Spree::V2::Storefront::WishlistSerializer
       end
     end
   end

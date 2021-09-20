@@ -103,7 +103,7 @@ RSpec.describe Spree::Api::V2::Storefront::WishlistsController, type: :request d
     context 'when a request is sent by random user with no auth' do
       it 'returns 404 when wishlist is set to is_private: true' do
         get "/api/v2/storefront/wishlists/#{wishlist_private.token}"
-        expect(response).to have_http_status(:not_found)
+        expect(response).to have_http_status(:forbidden)
       end
 
       it 'returns 200 when wishlist is set to is_private: false' do
@@ -182,8 +182,6 @@ RSpec.describe Spree::Api::V2::Storefront::WishlistsController, type: :request d
       expect(json_response['data']['attributes']['display_total']).to eql ('$59.97')
       expect(json_response['data']['relationships']['variant']['data']['id']).to eql (variant.id.to_s)
       expect(json_response['data']['relationships']['variant']['data']['type']).to eql ('variant')
-      expect(json_response['data']['relationships']['wishlist']['data']['id']).to eql (user.wishlists.first.id.to_s)
-      expect(json_response['data']['relationships']['wishlist']['data']['type']).to eql ('wishlist')
     end
 
     context 'when a variant is already in the wishlist' do

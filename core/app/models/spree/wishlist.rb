@@ -24,14 +24,6 @@ module Spree
       find_by(token: param)
     end
 
-    def viewable?(user)
-      public? || user == self.user
-    end
-
-    def public?
-      !is_private?
-    end
-
     private
 
     def ensure_default_exists_and_is_unique
