@@ -47,6 +47,8 @@ describe Spree::Payment, type: :model do
     allow(payment).to receive(:payment_method_available_for_order).and_return(nil)
   end
 
+  it_behaves_like 'metadata'
+
   describe 'Constants' do
     it { expect(Spree::Payment::INVALID_STATES).to eq(%w(failed invalid)) }
   end
