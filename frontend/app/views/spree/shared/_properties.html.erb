@@ -1,4 +1,0 @@
-<% selected_properties = params.dig(:properties, "#{property.filter_param}")&.split(',') || [] %>
-<% property.uniq_values.each do |value| %>
-  <%= property_value_filter_link(property, value, permitted_params) %>
-<% end %>
