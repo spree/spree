@@ -55,5 +55,61 @@ module Spree
       it { expect(country_flag_icon('US')).to eq('<span class="flag-icon flag-icon-us"></span>') }
       it { expect { country_flag_icon(nil) }.not_to raise_error }
     end
+
+    describe '#product_description' do
+      let(:store) { create(:store) }
+      let(:product) { create(:product, stores: [store]) }
+
+      context 'when configuration is set to sanitize output' do
+        before { Spree::Config.product_wysiwyg_editor_enabled = false }
+
+        after { Spree::Config.product_wysiwyg_editor_enabled = true }
+
+        # Regression test for #1607
+        it 'renders a product description without excessive paragraph breaks' do
+          product.description = %Q{
+<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus a ligula leo. Proin eu arcu at ipsum dapibus ullamcorper. Pellentesque egestas orci nec magna condimentum luctus. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Ut ac ante et mauris bibendum ultricies non sed massa. Fusce facilisis dui eget lacus scelerisque eget aliquam urna ultricies. Duis et rhoncus quam. Praesent tellus nisi, ultrices sed iaculis quis, euismod interdum ipsum.</p>
+<ul>
+<li>Lorem ipsum dolor sit amet</li>
+<li>Lorem ipsum dolor sit amet</li>
+</ul>
+          }
+          description = product_description(product)
+          expect(description.strip).to eq(product.description.strip)
+        end
+
+        it 'renders a product description with automatic paragraph breaks' do
+          product.description = %Q{
+THIS IS THE BEST PRODUCT EVER!
+
+"IT CHANGED MY LIFE" - Sue, MD}
+
+          description = product_description(product)
+          expect(description.strip).to eq(%Q{<p>\nTHIS IS THE BEST PRODUCT EVER!</p>"IT CHANGED MY LIFE" - Sue, MD})
+        end
+
+        it 'renders a product description without any formatting based on configuration' do
+          initial_description = %Q{
+              <p>hello world</p>
+
+              <p>tihs is completely awesome and it works</p>
+
+              <p>why so many spaces in the code. and why some more formatting afterwards?</p>
+          }
+
+          product.description = initial_description
+
+          Spree::Frontend::Config[:show_raw_product_description] = true
+          description = product_description(product)
+          expect(description).to eq(initial_description)
+        end
+
+        context 'renders a product description default description incase description is blank' do
+          before { product.description = '' }
+
+          it { expect(product_description(product)).to eq(Spree.t(:product_has_no_description)) }
+        end
+      end
+    end
   end
 end
