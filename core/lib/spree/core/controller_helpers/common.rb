@@ -68,7 +68,9 @@ module Spree
             ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
               ControllerHelpers::Common is deprecated and will be removed in Spree 5.0.
             DEPRECATION
-            layout ||= Spree::Config[:layout]
+            return unless defined?(Spree::Frontend)
+
+            layout ||= Spree::Frontend::Config[:layout]
           end
         end
       end

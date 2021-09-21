@@ -11,6 +11,8 @@ module Spree
 
     respond_to :html
 
+    layout :get_layout
+
     helper 'spree/base'
     helper 'spree/locale'
     helper 'spree/currency'
@@ -74,6 +76,16 @@ module Spree
 
     def config_locale
       Spree::Frontend::Config[:locale]
+    end
+
+    # Returns which layout to render.
+    #
+    # You can set the layout you want to render inside your Spree configuration with the +:layout+ option.
+    #
+    # Default layout is: +app/views/spree/layouts/spree_application+
+    #
+    def get_layout
+      layout ||= Spree::Frontend::Config[:layout]
     end
 
     def store_etag
