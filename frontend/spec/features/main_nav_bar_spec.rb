@@ -12,9 +12,7 @@ describe 'Main navigation bar', type: :feature do
       let!(:stores) { create_list(:store, stores_number, default_country: create(:country)) }
 
       before do
-        reset_spree_preferences do |config|
-          config.show_store_selector = true
-        end
+        Spree::Frontend::Config[:show_store_selector] = true
 
         visit spree.root_path
       end
@@ -51,9 +49,7 @@ describe 'Main navigation bar', type: :feature do
       let!(:stores) { create_list(:store, stores_number) }
 
       before do
-        reset_spree_preferences do |config|
-          config.show_store_selector = false
-        end
+        Spree::Frontend::Config[:show_store_selector] = false
 
         visit spree.root_path
       end

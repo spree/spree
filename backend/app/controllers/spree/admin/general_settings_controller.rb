@@ -26,11 +26,6 @@ module Spree
         head :no_content
       end
 
-      def render(*args)
-        @preferences_currency |= [:show_store_selector]
-        super
-      end
-
       private
 
       def update_currency_settings
