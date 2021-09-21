@@ -71,9 +71,19 @@ RSpec.configure do |config|
   config.include Spree::TestingSupport::Preferences
   config.include Spree::TestingSupport::Kernel
 
-  # Clean out the database state before the tests run
   config.before(:suite) do
+    # Clean out the database state before the tests run
     DatabaseCleaner.clean_with(:truncation)
+    # Force jobs to be executed in a synchronous way
+    ActiveJob::Base.queue_adapter = :inline
+  end
+
+  config.before(:each, :inline_jobs) do
+    ActiveJob::Base.queue_adapter = :test
+  end
+
+  config.after(:each, :inline_jobs) do
+    ActiveJob::Base.queue_adapter = :inline
   end
 
   config.order = :random
