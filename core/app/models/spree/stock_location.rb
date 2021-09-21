@@ -1,5 +1,7 @@
 module Spree
   class StockLocation < Spree::Base
+    include UniqueName
+
     has_many :shipments
     has_many :stock_items, dependent: :delete_all, inverse_of: :stock_location
     has_many :variants, through: :stock_items
@@ -7,8 +9,6 @@ module Spree
 
     belongs_to :state, class_name: 'Spree::State', optional: true
     belongs_to :country, class_name: 'Spree::Country'
-
-    validates :name, presence: true, uniqueness: { allow_blank: true, case_sensitive: false }
 
     scope :active, -> { where(active: true) }
     scope :order_default, -> { order(default: :desc, name: :asc) }
@@ -108,27 +108,7 @@ module Spree
     private
 
     def create_stock_items
-      variants_scope = Spree::Variant
-
-      if self.class.method_defined?(:insert_all) && self.class.method_defined?(:touch_all)
-        prepared_stock_items = variants_scope.ids.map do |variant_id|
-          Hash[
-            'stock_location_id', id,
-            'variant_id', variant_id,
-            'backorderable', backorderable_default,
-            'created_at', Time.current,
-            'updated_at', Time.current
-          ]
-        end
-        if prepared_stock_items.any?
-          stock_items.insert_all(prepared_stock_items)
-          variants_scope.touch_all
-        end
-      else
-        variants_scope.find_each do |variant|
-          propagate_variant(variant)
-        end
-      end
+      Spree::StockLocations::StockItems::CreateJob.perform_later(self)
     end
 
     def ensure_one_default

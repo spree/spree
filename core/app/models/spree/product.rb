@@ -115,7 +115,7 @@ module Spree
       validates :price, if: :requires_price?
     end
 
-    validates :slug, presence: true, uniqueness: { allow_blank: true, case_sensitive: true }
+    validates :slug, presence: true, uniqueness: { allow_blank: true, case_sensitive: true, scope: spree_base_uniqueness_scope }
     validate :discontinue_on_must_be_later_than_available_on, if: -> { available_on && discontinue_on }
 
     attr_accessor :option_values_hash

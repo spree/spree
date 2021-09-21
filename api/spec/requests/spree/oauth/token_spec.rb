@@ -37,6 +37,12 @@ describe 'Spree OAuth', type: :request do
 
         context 'when the user is confirmed' do
           let(:active_value) { true }
+          let(:token) { Spree::OauthAccessToken.active_for(user).last }
+
+          it 'creates new token' do
+            expect(token.resource_owner_id).to eq(user.id)
+            expect(token.resource_owner_type).to eq('Spree::LegacyUser')
+          end
 
           it 'returns new token' do
             expect(response.status).to eq(200)

@@ -54,7 +54,7 @@ module Spree
       validates :cost_price
       validates :price
     end
-    validates :sku, uniqueness: { conditions: -> { where(deleted_at: nil) }, case_sensitive: false },
+    validates :sku, uniqueness: { conditions: -> { where(deleted_at: nil) }, case_sensitive: false, scope: spree_base_uniqueness_scope },
                     allow_blank: true, unless: :disable_sku_validation?
 
     after_create :create_stock_items

@@ -3,7 +3,7 @@ require 'ostruct'
 module Spree
   class Shipment < Spree::Base
     include Spree::Core::NumberGenerator.new(prefix: 'H', length: 11)
-
+    include NumberIdentifier
     include NumberAsParam
 
     with_options inverse_of: :shipments do
@@ -26,7 +26,6 @@ module Spree
     before_validation :set_cost_zero_when_nil
 
     validates :stock_location, presence: true
-    validates :number, uniqueness: { case_sensitive: true }
 
     attr_accessor :special_instructions
 
