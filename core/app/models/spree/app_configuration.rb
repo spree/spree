@@ -22,15 +22,14 @@ module Spree
     # Alphabetized to more easily lookup particular preferences
     preference :address_requires_state, :boolean, default: true # should state/state_name be required
     preference :address_requires_phone, :boolean, default: true # Determines whether we require phone in address
-    preference :admin_interface_logo, :string, default: 'admin/logo.png'
-    preference :admin_path, :string, default: '/admin'
-    preference :admin_products_per_page, :integer, default: Kaminari.config.default_per_page
-    preference :admin_orders_per_page, :integer, default: Kaminari.config.default_per_page
-    preference :admin_properties_per_page, :integer, default: Kaminari.config.default_per_page
-    preference :admin_promotions_per_page, :integer, default: Kaminari.config.default_per_page
-    preference :admin_customer_returns_per_page, :integer, default: Kaminari.config.default_per_page
-    preference :admin_users_per_page, :integer, default: Kaminari.config.default_per_page
-    preference :admin_show_version, :boolean, default: true
+    preference :admin_path, :string, deprecated: true
+    preference :admin_products_per_page, :integer, deprecated: true
+    preference :admin_orders_per_page, :integer, deprecated: true
+    preference :admin_properties_per_page, :integer, deprecated: true
+    preference :admin_promotions_per_page, :integer, deprecated: true
+    preference :admin_customer_returns_per_page, :integer, deprecated: true
+    preference :admin_users_per_page, :integer, deprecated: true
+    preference :admin_show_version, :boolean, deprecated: true
     preference :allow_checkout_on_gateway_error, :boolean, default: false
     preference :allow_guest_checkout, :boolean, default: true
     preference :alternative_shipping_phone, :boolean, default: false # Request extra phone for ship addr
@@ -58,7 +57,7 @@ module Spree
     preference :return_eligibility_number_of_days, :integer, default: 365
     preference :send_core_emails, :boolean, default: true # Default mail headers settings
     preference :shipping_instructions, :boolean, deprecated: true
-    preference :show_only_complete_orders_by_default, :boolean, default: true
+    preference :show_only_complete_orders_by_default, :boolean, deprecated: true
     preference :show_variant_full_price, :boolean, default: false # Displays variant full price or difference with product price. Default false to be compatible with older behavior
     preference :show_products_without_price, :boolean, default: false
     preference :show_raw_product_description, :boolean, deprecated: true

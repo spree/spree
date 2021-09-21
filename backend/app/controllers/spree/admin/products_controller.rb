@@ -132,7 +132,7 @@ module Spree
         @collection = @search.result.
                       includes(product_includes).
                       page(params[:page]).
-                      per(params[:per_page] || Spree::Config[:admin_products_per_page])
+                      per(params[:per_page] || Spree::Backend::Config[:admin_products_per_page])
         @collection
       end
 

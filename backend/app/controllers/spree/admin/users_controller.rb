@@ -86,7 +86,7 @@ module Spree
 
         @collection = super
         @search = @collection.ransack(params[:q])
-        @collection = @search.result.page(params[:page]).per(Spree::Config[:admin_users_per_page])
+        @collection = @search.result.page(params[:page]).per(Spree::Backend::Config[:admin_users_per_page])
       end
 
       private

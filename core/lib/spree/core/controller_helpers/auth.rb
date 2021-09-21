@@ -82,7 +82,7 @@ module Spree
             redirect_to spree.forbidden_path
           else
             store_location
-            if request.fullpath.match(Spree.admin_path) && defined?(spree.admin_login_path)
+            if Spree.respond_to?(:admin_path) && request.fullpath.match(Spree.admin_path) && defined?(spree.admin_login_path)
               redirect_to spree.admin_login_path
             elsif respond_to?(:spree_login_path)
               redirect_to spree_login_path
