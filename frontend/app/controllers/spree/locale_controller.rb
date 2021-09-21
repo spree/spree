@@ -1,6 +1,6 @@
 module Spree
   class LocaleController < Spree::StoreController
-    REDIRECT_TO_ROOT = /\/(#{Spree::Config[:storefront_pages_path]})\//.freeze
+    REDIRECT_TO_ROOT = /\/(pages)\//.freeze
 
     def index
       render :index, layout: false

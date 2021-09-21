@@ -6,7 +6,7 @@ module Spree
 
     LOCALE_REGEX = /^\/[A-Za-z]{2}\/|^\/[A-Za-z]{2}-[A-Za-z]{2}\/|^\/[A-Za-z]{2}$|^\/[A-Za-z]{2}-[A-Za-z]{2}$/.freeze
 
-    SUPPORTED_PATHS_REGEX = /\/(#{Spree::Config[:storefront_products_path]}|#{Spree::Config[:storefront_taxons_path]}\/|cart|checkout|addresses|content|#{Spree::Config[:storefront_pages_path]})/.freeze
+    SUPPORTED_PATHS_REGEX = /\/(products|t\/|cart|checkout|addresses|content|pages)/.freeze
 
     # rubocop:disable Lint/UnusedMethodArgument
     def call(url:, locale:, default_locale: nil)
