@@ -65,7 +65,7 @@ module Spree
                      elsif current_store.logo.attached? && current_store.logo.image?
                        main_app.url_for(current_store.logo)
                      else
-                       Spree::Config[:logo]
+                      'logo/spree_50.png'
                      end
 
       path = spree.respond_to?(:root_path) ? spree.root_path : main_app.root_path
