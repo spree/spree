@@ -407,33 +407,6 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
     end
   end
 
-    context 'when <a> tag exists' do
-      it 'returns <a> tag in html' do
-        description = '<a href="example.com">link</a>'
-        product = FactoryBot.create(:base_product, description: description, name: 'Sample', price: '19.99')
-        visit spree.product_path(product)
-
-        within('[data-hook=product_description]') do
-          node = first('[data-hook=description]')
-          expect(node).to have_selector 'a'
-        end
-      end
-    end
-
-    context 'when there are multiple lines' do
-      it 'returns <p> tag in html' do
-        description = "first paragraph\n\nsecond paragraph"
-        product = FactoryBot.create(:base_product, description: description, name: 'Sample', price: '19.99')
-        visit spree.product_path(product)
-
-        within('[data-hook=product_description]') do
-          node = first('[data-hook=description]')
-          expect(node).to have_selector 'p'
-        end
-      end
-    end
-  end
-
   context 'product is on sale', js: true do
     let(:product) do
       FactoryBot.create(:base_product, description: 'Testing sample', name: 'Sample', price: '19.99')
