@@ -7,11 +7,11 @@ describe 'Product Details', type: :feature, js: true do
 
   context 'editing a product with WYSIWYG disabled' do
     before do
-      Spree::Config.product_wysiwyg_editor_enabled = false
+      Spree::Backend::Config.product_wysiwyg_editor_enabled = false
       visit spree.admin_product_path(product)
     end
 
-    after { Spree::Config.product_wysiwyg_editor_enabled = true }
+    after { Spree::Backend::Config.product_wysiwyg_editor_enabled = true }
 
     it 'displays the product description as a standard input field' do
       expect(page).to have_field(id: 'product_description', with: product.description)
@@ -21,7 +21,7 @@ describe 'Product Details', type: :feature, js: true do
 
   context 'editing a product with WYSIWYG editer enabled' do
     before do
-      Spree::Config.product_wysiwyg_editor_enabled = true
+      Spree::Backend::Config.product_wysiwyg_editor_enabled = true
       visit spree.admin_product_path(product)
     end
 

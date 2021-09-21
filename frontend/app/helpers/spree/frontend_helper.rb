@@ -374,7 +374,7 @@ module Spree
     end
 
     def product_wysiwyg_editor_enabled?
-      Spree::Config[:product_wysiwyg_editor_enabled]
+      defined?(Spree::Backend) && Spree::Backend::Config[:product_wysiwyg_editor_enabled]
     end
 
     # converts line breaks in product description into <p> tags (for html display purposes)

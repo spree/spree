@@ -60,24 +60,6 @@ module Spree
       let(:store) { create(:store) }
       let(:product) { create(:product, stores: [store]) }
 
-      context 'when configuration is set to sanitize output' do
-        before { Spree::Config.product_wysiwyg_editor_enabled = false }
-
-        after { Spree::Config.product_wysiwyg_editor_enabled = true }
-
-        # Regression test for #1607
-        it 'renders a product description without excessive paragraph breaks' do
-          product.description = %Q{
-<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus a ligula leo. Proin eu arcu at ipsum dapibus ullamcorper. Pellentesque egestas orci nec magna condimentum luctus. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Ut ac ante et mauris bibendum ultricies non sed massa. Fusce facilisis dui eget lacus scelerisque eget aliquam urna ultricies. Duis et rhoncus quam. Praesent tellus nisi, ultrices sed iaculis quis, euismod interdum ipsum.</p>
-<ul>
-<li>Lorem ipsum dolor sit amet</li>
-<li>Lorem ipsum dolor sit amet</li>
-</ul>
-          }
-          description = product_description(product)
-          expect(description.strip).to eq(product.description.strip)
-        end
-
         it 'renders a product description with automatic paragraph breaks' do
           product.description = %Q{
 THIS IS THE BEST PRODUCT EVER!

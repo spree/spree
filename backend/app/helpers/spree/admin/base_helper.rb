@@ -285,6 +285,14 @@ module Spree
           'default'
         end
       end
+
+      def product_wysiwyg_editor_enabled?
+        Spree::Backend::Config[:product_wysiwyg_editor_enabled]
+      end
+
+      def taxon_wysiwyg_editor_enabled?
+        Spree::Backend::Config[:taxon_wysiwyg_editor_enabled]
+      end
     end
   end
 end

@@ -44,10 +44,6 @@ module Spree
       variants_option_types_presenter(variants, product).options
     end
 
-    def product_wysiwyg_editor_enabled?
-      Spree::Config[:product_wysiwyg_editor_enabled]
-    end
-
     def line_item_description_text(description_text)
       if description_text.present?
         truncate(strip_tags(description_text.gsub('&nbsp;', ' ').squish), length: 100)
