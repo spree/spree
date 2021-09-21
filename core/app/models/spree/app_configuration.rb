@@ -51,7 +51,7 @@ module Spree
     preference :layout, :string, deprecated: 'Please use Spree::Frontend::Config[:layout] instead'
     preference :logo, :string, deprecated: true
     preference :mailer_logo, :string, deprecated: true
-    preference :max_level_in_taxons_menu, :integer, default: 1 # maximum nesting level in taxons menu
+    preference :max_level_in_taxons_menu, :integer, deprecated: true
     preference :products_per_page, :integer, default: 12
     preference :product_wysiwyg_editor_enabled, :boolean, default: true
     preference :require_master_price, :boolean, default: true
