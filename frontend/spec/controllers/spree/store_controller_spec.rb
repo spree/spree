@@ -94,4 +94,32 @@ describe Spree::StoreController, type: :controller do
       end
     end
   end
+
+  describe '#title' do
+    before do
+      Spree::Frontend::Config[:always_put_site_name_in_title] = true
+      Spree::Frontend::Config[:title_site_name_separator] = '-'
+    end
+
+    context 'when title with current store name is present' do
+      let!(:store) { create(:store, name: 'Spree Test Store', seo_title: 'Spree - Spree Test Store') }
+
+      it 'returns that title' do
+        allow(controller).to receive(:current_store).and_return(store)
+
+        expect(controller.send(:title)).to eq store.seo_title
+      end
+    end
+
+    context 'when title without current store name is present' do
+      let!(:store) { create(:store, name: 'Spree Test Store', seo_title: 'Spree') }
+
+      it 'returns title with current store name' do
+        allow(controller).to receive(:current_store).and_return(store)
+
+        title = store.seo_title + ' - ' + store.name
+        expect(controller.send(:title)).to eq title
+      end
+    end
+  end
 end

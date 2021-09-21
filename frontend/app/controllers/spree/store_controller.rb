@@ -1,7 +1,6 @@
 module Spree
   class StoreController < ApplicationController
     include Spree::Core::ControllerHelpers::Auth
-    include Spree::Core::ControllerHelpers::Common
     include Spree::Core::ControllerHelpers::Search
     include Spree::Core::ControllerHelpers::Store
     include Spree::Core::ControllerHelpers::StrongParameters
@@ -15,6 +14,10 @@ module Spree
     helper 'spree/base'
     helper 'spree/locale'
     helper 'spree/currency'
+
+    helper_method :title
+    helper_method :title=
+    helper_method :accurate_title
 
     skip_before_action :verify_authenticity_token, only: :ensure_cart, raise: false
 
@@ -42,6 +45,32 @@ module Spree
     end
 
     protected
+
+    # can be used in views as well as controllers.
+    # e.g. <% self.title = 'This is a custom title for this view' %>
+    attr_writer :title
+
+    def title
+      title_string = @title.present? ? @title : accurate_title
+      if title_string.present?
+        if Spree::Frontend::Config[:always_put_site_name_in_title] && !title_string.include?(default_title)
+          [title_string, default_title].join(" #{Spree::Frontend::Config[:title_site_name_separator]} ")
+        else
+          title_string
+        end
+      else
+        default_title
+      end
+    end
+
+    def default_title
+      current_store.name
+    end
+
+    # this is a hook for subclasses to provide title
+    def accurate_title
+      current_store.seo_title
+    end
 
     def config_locale
       Spree::Frontend::Config[:locale]
