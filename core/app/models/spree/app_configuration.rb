@@ -58,7 +58,7 @@ module Spree
     preference :restock_inventory, :boolean, default: true # Determines if a return item is restocked automatically once it has been received
     preference :return_eligibility_number_of_days, :integer, default: 365
     preference :send_core_emails, :boolean, default: true # Default mail headers settings
-    preference :shipping_instructions, :boolean, default: false # Request instructions/info for shipping
+    preference :shipping_instructions, :boolean, deprecated: true
     preference :show_only_complete_orders_by_default, :boolean, default: true
     preference :show_variant_full_price, :boolean, default: false # Displays variant full price or difference with product price. Default false to be compatible with older behavior
     preference :show_products_without_price, :boolean, default: false
