@@ -88,13 +88,13 @@ module Spree
       # this method generates the select_tag
       def per_page_dropdown
         # there is a config setting for admin_products_per_page, only for the orders page
-        if @products && per_page_default = Spree::Config.admin_products_per_page
+        if @products && per_page_default = Spree::Backend::Config.admin_products_per_page
           per_page_options = []
           5.times do |amount|
-            per_page_options << (amount + 1) * Spree::Config.admin_products_per_page
+            per_page_options << (amount + 1) * Spree::Backend::Config.admin_products_per_page
           end
         else
-          per_page_default = Spree::Config.admin_orders_per_page
+          per_page_default = Spree::Backend::Config.admin_orders_per_page
           per_page_options = %w{25 50 75}
         end
 

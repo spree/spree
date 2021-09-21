@@ -47,7 +47,7 @@ describe 'Homepage', type: :feature do
         end
 
         context 'if turned off' do
-          before { Spree::Config[:admin_show_version] = false }
+          before { Spree::Backend::Config[:admin_show_version] = false }
 
           it 'is not displayed' do
             visit spree.admin_path

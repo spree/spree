@@ -13,7 +13,7 @@ module Spree
 
       def index
         params[:q] ||= {}
-        params[:q][:completed_at_not_null] ||= '1' if Spree::Config[:show_only_complete_orders_by_default]
+        params[:q][:completed_at_not_null] ||= '1' if Spree::Backend::Config[:show_only_complete_orders_by_default]
         @show_only_completed = params[:q][:completed_at_not_null] == '1'
         params[:q][:s] ||= @show_only_completed ? 'completed_at desc' : 'created_at desc'
         params[:q][:completed_at_not_null] = '' unless @show_only_completed
@@ -54,7 +54,7 @@ module Spree
         # see https://github.com/spree/spree/pull/3919
         @orders = @search.result(distinct: true).
                   page(params[:page]).
-                  per(params[:per_page] || Spree::Config[:admin_orders_per_page])
+                  per(params[:per_page] || Spree::Backend::Config[:admin_orders_per_page])
 
         # Restore dates
         params[:q][:created_at_gt] = created_at_gt
