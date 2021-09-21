@@ -13,7 +13,7 @@ describe Spree::Webhooks::HasWebhooks do
   let(:url) { 'https://google.com' }
 
   before do
-    stub_request(:any, url)
+    stub_request(:post, url)
     connection.create_table :test_products, force: true do |t|
       t.string :name
     end
@@ -54,12 +54,13 @@ describe Spree::Webhooks::HasWebhooks do
     end
 
     context 'when able to infer the serializer from the class' do
+      let!(:images) { create_list(:image, 2) }
       let!(:product) do
         create(:product_in_stock,
                name: 'Test Product',
                price: 10.00,
                compare_at_price: 15.00,
-               variants_including_master: [create(:variant)])
+               variants_including_master: [create(:variant, images: images), create(:variant)])
       end
       let(:payload) do
         Spree::Api::V2::Platform::ProductSerializer.new(
@@ -69,21 +70,32 @@ describe Spree::Webhooks::HasWebhooks do
       end
       let(:queue_requests) { instance_double(Spree::Webhooks::Endpoints::QueueRequests) }
 
+      context 'when the class name contains more than one word' do
+        let(:product_property) { create(:product_property) }
+        let(:payload) do
+          Spree::Api::V2::Platform::ProductPropertySerializer.new(product_property).serializable_hash
+        end
+
+        it 'splits the words and joins them with an underscore to create the event_name' do
+          expect(queue_requests).to have_received(:call).with(event: 'product_property.create', payload: payload).once
+        end
+      end
+
       context 'after commit on create' do
-        it 'does not queue HTTP requests' do
+        it 'executes QueueRequests.call with a create event and the product serializer as the payload' do
           expect(queue_requests).to have_received(:call).with(event: 'product.create', payload: payload).once
         end
       end
 
       context 'after commit on destroy' do
-        it 'does not queue HTTP requests' do
+        it 'executes QueueRequests.call with a destroy event and the product serializer as the payload' do
           product.destroy
           expect(queue_requests).to have_received(:call).with(event: 'product.destroy', payload: payload).once
         end
       end
 
       context 'after commit on update' do
-        it 'does not queue HTTP requests' do
+        it 'executes QueueRequests.call with an update event and the product serializer as the payload' do
           product.update(name: 'updated')
           expect(queue_requests).to have_received(:call).with(event: 'product.update', payload: payload).once
         end

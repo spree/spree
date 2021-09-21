@@ -197,7 +197,7 @@ module Spree
     private
 
     def after_void
-      execute_webhook_logic!
+      # this method is prepended in api/ to queue Webhooks requests
     end
 
     def has_invalid_state?

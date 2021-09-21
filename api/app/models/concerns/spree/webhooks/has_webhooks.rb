@@ -20,7 +20,7 @@ module Spree
         private
 
         def event_name(operation)
-          "#{self.class.name.demodulize.downcase}.#{operation}"
+          "#{self.class.name.demodulize.tableize.singularize}.#{operation}"
         end
 
         def webhooks_descendant?
@@ -28,7 +28,7 @@ module Spree
         end
 
         def payload
-          resource_serializer.new(self, params: { store: Spree::Store.default }).serializable_hash
+          resource_serializer.new(self).serializable_hash
         rescue NameError, NoMethodError
           {}
         end
