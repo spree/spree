@@ -14,9 +14,6 @@ module Spree
           end
 
           def permitted_resource_params
-            # TODO:
-            # Are we allowing the Platform API to set the user for a wishlist?
-            # but not expose this for the storefront API?
             params.require(model_param_name).permit(spree_permitted_attributes << :user_id)
           end
         end
