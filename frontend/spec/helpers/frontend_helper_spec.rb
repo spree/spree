@@ -60,6 +60,7 @@ module Spree
       let(:store) { create(:store) }
       let(:product) { create(:product, stores: [store]) }
 
+      context 'when configuration is set to sanitize output' do
         it 'renders a product description with automatic paragraph breaks' do
           product.description = %Q{
 THIS IS THE BEST PRODUCT EVER!
