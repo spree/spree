@@ -7,7 +7,9 @@ $(document).ready(function () {
       var selectedCountryId = $('#country option:selected').prop('value')
       var newLink = newStateLinkHref.replace(/countries\/(\d+)/,
         'countries/' + selectedCountryId)
-      $('#new_state_link').attr('href', newLink)
+
+      $('#contentHeader').find('#new_state_link').attr('href', newLink)
+      $('#contextualSideMenu').find('#new_state_link').attr('href', newLink)
     })
   };
 })
