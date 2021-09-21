@@ -934,18 +934,16 @@ paths:
             "order": {
               "payments_attributes": [
                 {
-                  "payment_method_id": "1"
+                  "payment_method_id": "1",
+                  "source_attributes": {
+                      "number": "4111111111111111",
+                      "month": "10",
+                      "year": "2022",
+                      "verification_value": "123",
+                      "name": "John Doe"
+                  }
                 }
               ]
-            },
-            "payment_source": {
-              1: {
-                "number": "4111111111111111",
-                "month": "01",
-                "year": "2022",
-                "verification_value": "123",
-                "name": "John Doe"
-              }
             }
           }
         ```
