@@ -285,6 +285,10 @@ Spree::Core::Engine.add_routes do
           end
         end
 
+        # Wishlists
+        resources :wishlists
+        resources :wished_items
+
         # Store API
         resources :stores
       end
