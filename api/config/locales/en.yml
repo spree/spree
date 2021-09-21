@@ -34,3 +34,7 @@ en:
         cart:
           wrong_quantity: "Quantity has to be greater than 0"
           no_coupon_code: "No coupon code provided and the Order doesn't have any coupon code promotions applied"
+        wishlist:
+          wrong_quantity: "Quantity has to be greater than 0"
+          pass_variant_id: "Pass the variant id that you want to add to this wishlist, eg.{ variant_id: 20 }"
+          must_be_an_integer: "Sorry, you must pass an integer value, eg. 5"
