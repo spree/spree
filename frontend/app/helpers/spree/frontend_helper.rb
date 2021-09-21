@@ -377,6 +377,10 @@ module Spree
       defined?(Spree::Backend) && Spree::Backend::Config[:product_wysiwyg_editor_enabled]
     end
 
+    def taxon_wysiwyg_editor_enabled?
+      defined?(Spree::Backend) && Spree::Backend::Config[:taxon_wysiwyg_editor_enabled]
+    end
+
     # converts line breaks in product description into <p> tags (for html display purposes)
     def product_description(product)
       description = if Spree::Frontend::Config[:show_raw_product_description] || product_wysiwyg_editor_enabled?
