@@ -28,7 +28,7 @@ module Spree
     end
 
     def should_render_store_chooser?
-      Spree::Config.show_store_selector && stores.size > 1
+      Spree::Frontend::Config[:show_store_selector] && stores.size > 1
     end
 
     def store_link(store = nil, html_opts = {})

@@ -16,9 +16,9 @@ describe 'Taxonomies and taxons', type: :feature, js: true do
   end
 
   context 'when WYSIWYG editor is disabled' do
-    before { Spree::Config.taxon_wysiwyg_editor_enabled = false }
+    before { Spree::Backend::Config.taxon_wysiwyg_editor_enabled = false }
 
-    after { Spree::Config.taxon_wysiwyg_editor_enabled = true }
+    after { Spree::Backend::Config.taxon_wysiwyg_editor_enabled = true }
 
     it 'displays the taxon description as a standard input field' do
       visit spree.edit_admin_taxonomy_taxon_path(taxonomy, taxonomy.root.id)

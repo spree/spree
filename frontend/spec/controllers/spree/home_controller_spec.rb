@@ -14,7 +14,7 @@ describe Spree::HomeController, type: :controller do
     end
 
     context 'different layout specified in config' do
-      before { Spree::Config.layout = 'layouts/application' }
+      before { Spree::Frontend::Config.layout = 'layouts/application' }
 
       it 'renders specified layout' do
         get :index

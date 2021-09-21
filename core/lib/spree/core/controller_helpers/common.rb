@@ -17,6 +17,9 @@ module Spree
           attr_writer :title
 
           def title
+            ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
+              ControllerHelpers::Common is deprecated and will be removed in Spree 5.0.
+            DEPRECATION
             title_string = @title.present? ? @title : accurate_title
             if title_string.present?
               if Spree::Config[:always_put_site_name_in_title] && !title_string.include?(default_title)
@@ -30,11 +33,17 @@ module Spree
           end
 
           def default_title
+            ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
+              ControllerHelpers::Common is deprecated and will be removed in Spree 5.0.
+            DEPRECATION
             current_store.name
           end
 
           # this is a hook for subclasses to provide title
           def accurate_title
+            ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
+              ControllerHelpers::Common is deprecated and will be removed in Spree 5.0.
+            DEPRECATION
             current_store.seo_title
           end
 
@@ -56,7 +65,12 @@ module Spree
           # Default layout is: +app/views/spree/layouts/spree_application+
           #
           def get_layout
-            layout ||= Spree::Config[:layout]
+            ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
+              ControllerHelpers::Common is deprecated and will be removed in Spree 5.0.
+            DEPRECATION
+            return unless defined?(Spree::Frontend)
+
+            layout ||= Spree::Frontend::Config[:layout]
           end
         end
       end

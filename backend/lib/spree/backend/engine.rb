@@ -14,7 +14,8 @@ module Spree
 
       initializer 'spree.backend.checking_deprecated_preferences' do
         Spree::Backend::Config.deprecated_preferences.each do |pref|
-          warn "[DEPRECATION] Spree::Backend::Config[:#{pref[:name]}] is deprecated. #{pref[:message]}"
+          # FIXME: we should only notify about deprecated preferences that are in use, not all of them
+          # warn "[DEPRECATION] Spree::Backend::Config[:#{pref[:name]}] is deprecated. #{pref[:message]}"
         end
       end
     end

@@ -14,7 +14,7 @@ module Spree
                      elsif current_store.logo.attached? && current_store.logo.image?
                        main_app.url_for(current_store.logo)
                      else
-                       Spree::Config[:logo]
+                      'logo/spree_50.png'
                      end
 
       path = spree.respond_to?(:root_path) ? spree.root_path : main_app.root_path
@@ -371,6 +371,24 @@ module Spree
       return if country_iso_code.blank?
 
       content_tag :span, nil, class: "flag-icon flag-icon-#{country_iso_code.downcase}"
+    end
+
+    def product_wysiwyg_editor_enabled?
+      defined?(Spree::Backend) && Spree::Backend::Config[:product_wysiwyg_editor_enabled]
+    end
+
+    def taxon_wysiwyg_editor_enabled?
+      defined?(Spree::Backend) && Spree::Backend::Config[:taxon_wysiwyg_editor_enabled]
+    end
+
+    # converts line breaks in product description into <p> tags (for html display purposes)
+    def product_description(product)
+      description = if Spree::Frontend::Config[:show_raw_product_description] || product_wysiwyg_editor_enabled?
+                      product.description
+                    else
+                      product.description.to_s.gsub(/(.*?)\r?\n\r?\n/m, '<p>\1</p>')
+                    end
+      description.blank? ? Spree.t(:product_has_no_description) : description
     end
 
     private

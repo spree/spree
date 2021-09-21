@@ -57,12 +57,6 @@ module Spree
         allow(helper).to receive(:current_store) { store }
       end
 
-      context 'when no custom logo attached' do
-        it 'shows default mailer logo' do
-          expect(subject).to eq Spree::Config[:mailer_logo]
-        end
-      end
-
       context 'when @order exists' do
         let(:logo_image) { File.open(File.expand_path('../../../app/assets/images/logo/spree_50.png', __dir__)) }
 

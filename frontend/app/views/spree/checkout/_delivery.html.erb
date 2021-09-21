@@ -35,7 +35,7 @@
       <% end %>
     </div>
 
-    <% if Spree::Config[:shipping_instructions] %>
+    <% if Spree::Frontend::Config[:shipping_instructions] %>
       <div id="minstrs" data-hook>
         <h4 class="h5">
           <%= Spree.t(:shipping_instructions) %>

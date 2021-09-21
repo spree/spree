@@ -44,29 +44,6 @@ describe 'viewing products', type: :feature, inaccessible: true do
     end
   end
 
-  describe 'viewing taxon when WYSIWYG is enabled' do
-    before do
-      visit '/t/category/super-clothing/t-shirts'
-    end
-
-    it 'renders the html tables in the taxon description' do
-      expect(page).to have_selector 'table'
-    end
-  end
-
-  describe 'viewing taxon when WYSIWYG is disabled' do
-    before do
-      Spree::Config.taxon_wysiwyg_editor_enabled = false
-      visit '/t/category/super-clothing/t-shirts'
-    end
-
-    after { Spree::Config.taxon_wysiwyg_editor_enabled = true }
-
-    it 'strips out the html tables tags from the description' do
-      expect(page).not_to have_selector 'table'
-    end
-  end
-
   describe 'meta tags and title' do
     it 'displays metas' do
       t_shirts.update metas
