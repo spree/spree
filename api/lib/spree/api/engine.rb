@@ -20,6 +20,10 @@ module Spree
           # FIXME: we should only notify about deprecated preferences that are in use, not all of them
           # warn "[DEPRECATION] Spree::Api::Config[:#{pref[:name]}] is deprecated. #{pref[:message]}"
         end
+      end
+
+      initializer 'Spree::Webhooks' do
+        Spree::Base.include(Spree::Webhooks::HasWebhooks)
         Spree::Order.prepend(Spree::Api::Order)
         Spree::Payment.prepend(Spree::Api::Payment)
         Spree::Shipment.prepend(Spree::Api::Shipment)

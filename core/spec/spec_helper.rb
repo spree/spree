@@ -34,7 +34,6 @@ end
 require 'rspec/rails'
 require 'database_cleaner'
 require 'ffaker'
-require 'webmock/rspec'
 
 Dir['./spec/support/**/*.rb'].sort.each { |f| require f }
 

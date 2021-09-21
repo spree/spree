@@ -4,12 +4,7 @@ class TextFormatter
 end
 
 describe Spree::Payment do
-  let(:payment) do
-    create(:payment,
-           source: build(:credit_card),
-           order: build(:order),
-           payment_method: Spree::Gateway::Bogus.create(active: true))
-  end
+  let(:payment) { create(:payment) }
 
   describe '#after_void' do
     let(:payload) { {} }

@@ -4,16 +4,7 @@ class TextFormatter
 end
 
 describe Spree::Shipment do
-  let(:order) do
-    mock_model Spree::Order, backordered?: false,
-                             canceled?: false,
-                             can_ship?: true,
-                             currency: 'USD',
-                             number: 'S12345',
-                             paid?: false,
-                             touch_later: false
-  end
-  let(:shipment) { create(:shipment, stock_location: create(:stock_location)) }
+  let(:shipment) { create(:shipment) }
 
   context '#after_ship' do
     before do
@@ -24,10 +15,8 @@ describe Spree::Shipment do
         end
       end
 
-      allow_any_instance_of(Spree::ShipmentHandler).to receive(:update_order_shipment_state)
       allow(Spree::Webhooks::Endpoints::QueueRequests).to receive(:new).and_return(queue_requests)
       allow(queue_requests).to receive(:call).with(any_args)
-      allow(shipment).to receive(:determine_state).and_return('shipped')
     end
 
     let(:payload) { {} }
@@ -39,7 +28,8 @@ describe Spree::Shipment do
           double(:scope).tap { |scope| expect(scope).to receive(:to_s) }
         )
       )
-      shipment.update!(order)
+      shipment.cancel # previous state that allows the object be shipped
+      shipment.ship
       expect(queue_requests).to have_received(:call).with(event: 'shipment.ship', payload: payload).once
     end
   end

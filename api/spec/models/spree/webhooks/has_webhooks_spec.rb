@@ -10,10 +10,8 @@ end
 
 describe Spree::Webhooks::HasWebhooks do
   let(:connection) { ActiveRecord::Base.connection }
-  let(:url) { 'https://google.com' }
 
   before do
-    stub_request(:post, url)
     connection.create_table :test_products, force: true do |t|
       t.string :name
     end
@@ -56,11 +54,10 @@ describe Spree::Webhooks::HasWebhooks do
     context 'when able to infer the serializer from the class' do
       let!(:images) { create_list(:image, 2) }
       let!(:product) do
-        create(:product_in_stock,
-               name: 'Test Product',
-               price: 10.00,
-               compare_at_price: 15.00,
-               variants_including_master: [create(:variant, images: images), create(:variant)])
+        create(
+          :product_in_stock,
+          variants_including_master: [create(:variant, images: images), build(:variant)]
+        )
       end
       let(:payload) do
         Spree::Api::V2::Platform::ProductSerializer.new(

@@ -5,7 +5,7 @@ end
 
 describe Spree::Order do
   describe 'sending webhooks after transitioning from states' do
-    let(:order) { Spree::Order.create(store: build(:store, default: true)) }
+    let(:order) { Spree::Order.create }
     let(:payload) { {} }
     let(:queue_requests) { instance_double(Spree::Webhooks::Endpoints::QueueRequests) }
 

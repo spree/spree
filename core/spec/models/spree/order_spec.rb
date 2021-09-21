@@ -10,11 +10,6 @@ describe Spree::Order, type: :model do
   let(:user) { stub_model(Spree::LegacyUser, email: 'spree@example.com') }
   let!(:store) { create(:store, default: true) }
   let(:order) { stub_model(Spree::Order, user: user, store: store) }
-  let(:url) { 'https://google.com' }
-
-  before(:all) do
-    stub_request(:any, 'https://google.com')
-  end
 
   before do
     allow(Spree::LegacyUser).to receive_messages(current: mock_model(Spree::LegacyUser, id: 123))
@@ -69,16 +64,6 @@ describe Spree::Order, type: :model do
       order.reload
 
       expect(order.payments.first).to be_void
-    end
-
-    it 'executes a webhook callback' do
-      order.cancel
-      expect(WebMock).to(
-        have_requested(:post, 'https://google.com').with(
-          body: {foo: :bar}.to_json,
-          headers: {'Content-Type' => 'application/json'}
-        ).times(72)
-      )
     end
   end
 
@@ -189,16 +174,6 @@ describe Spree::Order, type: :model do
       expect(order).to receive(:all_adjustments).and_return(adjustments)
       expect(adjustments).to all(receive(:close))
       order.finalize!
-    end
-
-    it 'executes a webhook callback' do
-      order.finalize!
-      expect(WebMock).to(
-        have_requested(:post, 'https://google.com').with(
-          body: {foo: :bar}.to_json,
-          headers: {'Content-Type' => 'application/json'}
-        ).times(6)
-      )
     end
 
     context 'order is considered risky' do
