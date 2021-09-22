@@ -40,15 +40,16 @@
 
 ![multi store](https://raw.githubusercontent.com/spree/spree-dev-docs/master/.gitbook/assets/mulit_store_978x2.png)
 
-## Demo
+## Storefronts
 
-See Spree in action: [demo.spreecommerce.org](https://demo.spreecommerce.org/)
+* [Next.js Commerce online demo](https://spree.vercel.app/) - [Setup instructions](https://dev-docs.spreecommerce.org/storefronts/next.js-commerce)
+* Vue Storefront 2 - coming soon!
 
-Or fire up your own demo in the cloud:
+## Admin Dashboard
 
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/spree/spree_starter)
+Fire up your own instance in the cloud:
 
-<a href="https://render.com/deploy?repo=https://github.com/spree/spree_starter/tree/main">
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/spree/spree_starter) <a href="https://render.com/deploy?repo=https://github.com/spree/spree_starter/tree/main">
   <img src="https://render.com/images/deploy-to-render-button.svg" alt="Deploy to Render" height=32>
 </a>
 

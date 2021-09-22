@@ -108,13 +108,6 @@ describe Spree::Core::ControllerHelpers::Auth, type: :controller do
         expect(response).to redirect_to('/login')
       end
 
-      it 'redirects admin login path when admin controller' do
-        allow(controller).to receive_message_chain(:spree, :admin_login_path).and_return('/admin/login')
-        allow_any_instance_of(ActionController::TestRequest).to receive(:fullpath).and_return('http://test.host/admin/fakes')
-        get :index
-        expect(response).to redirect_to('/admin/login')
-      end
-
       it 'redirects root path' do
         allow(controller).to receive_message_chain(:spree, :root_path).and_return('/root_path')
         get :index

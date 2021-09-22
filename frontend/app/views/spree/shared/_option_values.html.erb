@@ -1,5 +1,0 @@
-<% cache option_type_cache_key(option_type) do %>
-  <% option_type.option_values.each do |option_value| %>
-    <%= option_value_filter_link(option_value, permitted_params) %>
-  <% end %>
-<% end %>

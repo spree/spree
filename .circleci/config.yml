@@ -20,7 +20,7 @@ defaults_3_0: &defaults_3_0
 
 run_tests: &run_tests
   <<: *defaults
-  parallelism: 4
+  parallelism: 2
   steps:
     - checkout
     - restore_cache:
@@ -41,7 +41,7 @@ run_tests: &run_tests
 
 run_tests_3_0: &run_tests_3_0
   <<: *defaults_3_0
-  parallelism: 4
+  parallelism: 2
   steps:
     - checkout
     - restore_cache:
@@ -243,14 +243,12 @@ jobs:
           name: Format test coverage
           command: |
             ./tmp/cc-test-reporter format-coverage -t simplecov -o tmp/codeclimate.api.json /tmp/workspace/simplecov/api/.resultset.json
-            ./tmp/cc-test-reporter format-coverage -t simplecov -o tmp/codeclimate.backend.json /tmp/workspace/simplecov/backend/.resultset.json
             ./tmp/cc-test-reporter format-coverage -t simplecov -o tmp/codeclimate.core.json /tmp/workspace/simplecov/core/.resultset.json
-            ./tmp/cc-test-reporter format-coverage -t simplecov -o tmp/codeclimate.frontend.json /tmp/workspace/simplecov/frontend/.resultset.json
             ./tmp/cc-test-reporter format-coverage -t simplecov -o tmp/codeclimate.emails.json /tmp/workspace/simplecov/emails/.resultset.json
       - run:
           name: Upload coverage results to Code Climate
           command: |
-            ./tmp/cc-test-reporter sum-coverage tmp/codeclimate.*.json -p 5 -o tmp/codeclimate.total.json
+            ./tmp/cc-test-reporter sum-coverage tmp/codeclimate.*.json -p 3 -o tmp/codeclimate.total.json
             ./tmp/cc-test-reporter upload-coverage -i tmp/codeclimate.total.json
 
   update_staging_repository:
