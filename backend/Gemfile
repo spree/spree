@@ -1,6 +1,0 @@
-eval_gemfile('../common_spree_dependencies.rb')
-
-gem 'spree_core', path: '../core'
-gem 'spree_api', path: '../api'
-
-gemspec

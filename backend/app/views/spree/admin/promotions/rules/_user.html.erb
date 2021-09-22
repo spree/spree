@@ -1,6 +1,0 @@
-<div class="card-body">
-  <div class="form-group mb-0">
-    <%= label_tag Spree.t('user_rule.choose_users') %>
-    <%= select "#{param_prefix}", 'user_ids_string', options_from_collection_for_select(promotion_rule.users, :id, :email, promotion_rule.users.pluck(:id)), { include_hidden: true }, multiple: true, class: 'user_picker d-block w-100' %>
-  </div>
-</div>
