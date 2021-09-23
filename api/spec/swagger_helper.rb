@@ -40,15 +40,17 @@ RSpec.configure do |config|
         }
       ],
       tags: [
-        { name: 'Addresses'},
-        { name: 'Classifications'},
-        { name: 'Countries'},
-        { name: 'Menu Items'},
-        { name: 'Menus'},
-        { name: 'Option Types'},
-        { name: 'Option Values'},
-        { name: 'Taxons'},
-        { name: 'Users'}
+        { name: 'Addresses' },
+        { name: 'Classifications' },
+        { name: 'Countries' },
+        { name: 'Menu Items' },
+        { name: 'Menus' },
+        { name: 'Option Types' },
+        { name: 'Option Values' },
+        { name: 'Taxons' },
+        { name: 'Users' },
+        { name: 'Wishlists' },
+        { name: 'Wished Items' }
       ],
       components: {
         securitySchemes: {
@@ -168,16 +170,33 @@ RSpec.configure do |config|
               destination: { type: :string },
               new_window: { type: :boolean },
               item_type: { type: :string },
-              linked_resource_type: {type: :string},
-              linked_resource_id: {type: :integer}
+              linked_resource_type: { type: :string },
+              linked_resource_id: { type: :integer }
             },
             required: %w[name]
           },
           menu_item_reposition_params: {
             type: :object,
             properties: {
-              new_parent_id: {type: :integer},
-              new_position_idx: {type: :integer}
+              new_parent_id: { type: :integer },
+              new_position_idx: { type: :integer }
+            },
+            required: %w[name]
+          },
+          wishlist_params: {
+            type: :object,
+            properties: {
+              user_id: { type: :string },
+              name: { type: :string }
+            },
+            required: %w[name]
+          },
+          wished_item_params: {
+            type: :object,
+            properties: {
+              wishlist_id: { type: :string },
+              variant_id: { type: :string },
+              quantity: { type: :integer }
             },
             required: %w[name]
           },

@@ -125,7 +125,10 @@ shared_examples 'GET records list' do |resource_name, include_example, filter_ex
     operationId "#{resource_name.parameterize.pluralize.to_sym}-list"
     include_context 'jsonapi pagination'
     json_api_include_parameter(include_example)
-    json_api_filter_parameter(filter_example)
+
+    if filter_example.present?
+      json_api_filter_parameter(filter_example)
+    end
 
     before { records_list }
 
