@@ -1,4 +1,4 @@
-class UpdateSpreeRelationTypes < ActiveRecord::Migration[6.0]
+class UpdateSpreeRelationTypes < ActiveRecord::Migration[5.2]
   def up
     Spree::RelationType.where(applies_to: 'Product').update_all(applies_to: 'Spree::Product')
   end

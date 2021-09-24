@@ -1,4 +1,4 @@
-class CreateSpreeRelations < ActiveRecord::Migration[6.0]
+class CreateSpreeRelations < ActiveRecord::Migration[5.2]
   def change
     create_table :spree_relations, force: true do |t|
       t.decimal :discount_amount, precision: 8, scale: 2, default: 0.0
