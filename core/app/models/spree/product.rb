@@ -198,6 +198,7 @@ module Spree
 
     # Adding properties and option types on creation based on a chosen prototype
     attr_reader :prototype_id
+
     def prototype_id=(value)
       @prototype_id = value.to_i
     end
@@ -297,10 +298,10 @@ module Spree
     # This could also feasibly be overridden to sort the result in a
     # particular order, or restrict the number of items returned.
     def self.relation_filter
-      where('spree_products.deleted_at' => nil)
-        .where('spree_products.available_on IS NOT NULL')
-        .where('spree_products.available_on <= ?', Time.now)
-        .references(self)
+      where('spree_products.deleted_at' => nil).
+        where('spree_products.available_on IS NOT NULL').
+        where('spree_products.available_on <= ?', Time.now).
+        references(self)
     end
 
     # Decides if there is a relevant Spree::RelationType related to this class
@@ -538,7 +539,7 @@ module Spree
 
     def remove_taxon(taxon)
       removed_classifications = classifications.where(taxon: taxon)
-      removed_classifications.each &:remove_from_list
+      removed_classifications.each(&:remove_from_list)
     end
 
     def discontinue_on_must_be_later_than_available_on
@@ -576,9 +577,9 @@ module Spree
     # them using +Product.relation_filter+ to remove unwanted items.
     def relations_for_relation_type(relation_type)
       # Find all the relations that belong to us for this RelationType, ordered by position
-      related_ids = relations.where(relation_type_id: relation_type.id)
-                      .order(:position)
-                      .select(:related_to_id)
+      related_ids = relations.where(relation_type_id: relation_type.id).
+                    order(:position).
+                    select(:related_to_id)
 
       # Construct a query for all these records
       result = self.class.where(id: related_ids)
