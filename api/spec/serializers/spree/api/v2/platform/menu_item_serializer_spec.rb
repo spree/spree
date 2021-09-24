@@ -12,6 +12,8 @@ describe Spree::Api::V2::Platform::MenuItemSerializer do
     ]
   end
 
+  before { menu_item.reload }
+
   it { expect(subject.serializable_hash).to be_kind_of(Hash) }
 
   it do

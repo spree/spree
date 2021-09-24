@@ -3,8 +3,13 @@ require 'spec_helper'
 describe 'Storefront API v2 Account spec', type: :request do
   include_context 'API v2 tokens'
 
-  let!(:user)  { create(:user_with_addresses) }
+  let(:user)  { create(:user_with_addresses) }
   let(:headers) { headers_bearer }
+
+  before do
+    allow_any_instance_of(Spree::Base).to receive(:queue_webhooks_requests!)
+    user
+  end
 
   shared_examples 'mock tests for failed user saving' do
     it { expect(service).to receive(:call).with(permitted_params).and_return(result) }

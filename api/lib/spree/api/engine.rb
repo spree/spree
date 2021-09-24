@@ -23,10 +23,13 @@ module Spree
       end
 
       initializer 'Spree::Webhooks' do
-        Spree::Base.include(Spree::Webhooks::HasWebhooks)
-        Spree::Order.prepend(Spree::Api::Webhooks::Order)
-        Spree::Payment.prepend(Spree::Api::Webhooks::Payment)
-        Spree::Shipment.prepend(Spree::Api::Webhooks::Shipment)
+        ActiveSupport.on_load(:spree_base) do
+          include Spree::Webhooks::HasWebhooks
+
+          Spree::Order.prepend(Spree::Api::Webhooks::Order)
+          Spree::Payment.prepend(Spree::Api::Webhooks::Payment)
+          Spree::Shipment.prepend(Spree::Api::Webhooks::Shipment)
+        end
       end
 
       def self.root

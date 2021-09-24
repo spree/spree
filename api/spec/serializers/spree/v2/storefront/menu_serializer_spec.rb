@@ -3,7 +3,9 @@ require 'spec_helper'
 describe Spree::V2::Storefront::MenuSerializer do
   subject { described_class.new(menu) }
 
-  let(:menu) { create(:menu) }
+  let!(:menu) { create(:menu) }
+
+  before { Rails.cache.clear }
 
   it { expect(subject.serializable_hash).to be_kind_of(Hash) }
 

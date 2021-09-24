@@ -7,6 +7,8 @@ describe Spree::V2::Storefront::MenuItemSerializer do
   let(:menu_item) { create(:menu_item, menu: menu, linked_resource: create(:taxon)) }
   let!(:children) { create(:menu_item, parent_id: menu_item.id, menu: menu) }
 
+  before { menu_item.reload }
+
   it { expect(subject.serializable_hash).to be_kind_of(Hash) }
 
   it do

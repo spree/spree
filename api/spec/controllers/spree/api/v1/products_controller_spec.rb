@@ -134,6 +134,7 @@ module Spree
       it 'gets a single product' do
         create_image(product.master, image('thinking-cat.jpg'))
         create(:variant, product: product)
+        product.reload
         create_image(product.variants.first, image('thinking-cat.jpg'))
         product.set_property('spree', 'rocks')
         product.taxons << create(:taxon)
