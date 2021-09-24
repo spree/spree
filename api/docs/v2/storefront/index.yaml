@@ -909,7 +909,8 @@ paths:
         ```
 
         ```json
-          "order": {
+        {
+            "order": {
             "shipments_attributes": [
               {
                 "id": "1",
@@ -917,6 +918,7 @@ paths:
               }
             ]
           }
+        }
         ```
 
         `selected_shipping_rate_id` is the ID of a Shipping Rate. `id` is the ID of the Shipment itself. You can update multiple
