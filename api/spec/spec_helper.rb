@@ -65,6 +65,8 @@ RSpec.configure do |config|
   config.include Spree::TestingSupport::ImageHelpers
 
   config.before do
+    Rails.cache.clear
+
     reset_spree_preferences
 
     Spree::Api::Config[:requires_authentication] = true

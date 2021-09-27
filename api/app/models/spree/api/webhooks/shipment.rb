@@ -2,9 +2,7 @@ module Spree
   module Api
     module Webhooks
       module Shipment
-        private
-
-        def after_ship
+        def ship
           super
           Spree::Webhooks::Endpoints::QueueRequests.call(event: 'shipment.ship', payload: {})
         end

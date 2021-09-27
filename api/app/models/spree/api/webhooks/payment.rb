@@ -2,9 +2,7 @@ module Spree
   module Api
     module Webhooks
       module Payment
-        private
-
-        def after_void
+        def void
           super
           Spree::Webhooks::Endpoints::QueueRequests.call(event: 'payment.void', payload: {})
         end

@@ -3,9 +3,12 @@ require 'spec_helper'
 describe Spree::V2::Storefront::MenuSerializer do
   subject { described_class.new(menu) }
 
-  let!(:menu) { create(:menu) }
+  let(:menu) { create(:menu) }
 
-  before { Rails.cache.clear }
+  before do
+    allow_any_instance_of(Spree::Base).to receive(:queue_webhooks_requests!)
+    menu
+  end
 
   it { expect(subject.serializable_hash).to be_kind_of(Hash) }
 
