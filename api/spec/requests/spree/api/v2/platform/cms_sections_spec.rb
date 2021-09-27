@@ -20,7 +20,7 @@ describe 'Platform API v2 CmsSections', type: :request do
         patch "/api/v2/platform/cms_sections/x/reposition", headers: bearer_token, params: params
       end
 
-      it_behaves_like 'returns 404 HTTP status'
+      it_behaves_like 'returns 422 HTTP status'
     end
 
     context 'with correct params' do
@@ -30,7 +30,7 @@ describe 'Platform API v2 CmsSections', type: :request do
         patch "/api/v2/platform/cms_sections/#{section_d.id}/reposition", headers: bearer_token, params: params
       end
 
-      it_behaves_like 'returns 204 HTTP status'
+      it_behaves_like 'returns 200 HTTP status'
 
       it 'repositions section from position 4 to position 1' do
         # acts_as_list is not zero indexed so moving to
@@ -47,7 +47,7 @@ describe 'Platform API v2 CmsSections', type: :request do
         patch "/api/v2/platform/cms_sections/#{section_a.id}/reposition", headers: bearer_token, params: params
       end
 
-      it_behaves_like 'returns 204 HTTP status'
+      it_behaves_like 'returns 200 HTTP status'
 
       it 'moves item from position 1 to position 4' do
         # acts_as_list is not zero indexed so moving to

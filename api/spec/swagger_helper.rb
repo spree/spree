@@ -233,6 +233,13 @@ RSpec.configure do |config|
             },
             required: %w[name cms_page_id]
           },
+          cms_section_reposition_params: {
+            type: :object,
+            properties: {
+              new_position_idx: { type: :integer }
+            },
+            required: %w[new_position_idx]
+          },
           resources_list: {
             type: :object,
             properties: {
