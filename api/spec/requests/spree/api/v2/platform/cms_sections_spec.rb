@@ -17,17 +17,17 @@ describe 'Platform API v2 CmsSections', type: :request do
       let(:params) { nil }
 
       before do
-        patch '/api/v2/platform/cms_sections/reposition', headers: bearer_token, params: params
+        patch "/api/v2/platform/cms_sections/x/reposition", headers: bearer_token, params: params
       end
 
       it_behaves_like 'returns 404 HTTP status'
     end
 
     context 'with correct params' do
-      let(:params) { { section_id: section_d.id, new_position_idx: 0 } }
+      let(:params) { { new_position_idx: 0 } }
 
       before do
-        patch '/api/v2/platform/cms_sections/reposition', headers: bearer_token, params: params
+        patch "/api/v2/platform/cms_sections/#{section_d.id}/reposition", headers: bearer_token, params: params
       end
 
       it_behaves_like 'returns 204 HTTP status'
@@ -41,10 +41,10 @@ describe 'Platform API v2 CmsSections', type: :request do
     end
 
     context 'with correct params' do
-      let(:params) { { section_id: section_a.id, new_position_idx: 3 } }
+      let(:params) { { new_position_idx: 3 } }
 
       before do
-        patch '/api/v2/platform/cms_sections/reposition', headers: bearer_token, params: params
+        patch "/api/v2/platform/cms_sections/#{section_a.id}/reposition", headers: bearer_token, params: params
       end
 
       it_behaves_like 'returns 204 HTTP status'

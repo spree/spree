@@ -43,6 +43,8 @@ RSpec.configure do |config|
         { name: 'Addresses' },
         { name: 'Classifications' },
         { name: 'Countries' },
+        { name: 'CMS Pages' },
+        { name: 'CMS Sections' },
         { name: 'Menu Items' },
         { name: 'Menus' },
         { name: 'Option Types' },
@@ -168,12 +170,13 @@ RSpec.configure do |config|
               code: { type: :string },
               subtitle: { type: :string },
               destination: { type: :string },
+              menu_id: { type: :string },
               new_window: { type: :boolean },
               item_type: { type: :string },
               linked_resource_type: { type: :string },
               linked_resource_id: { type: :integer }
             },
-            required: %w[name]
+            required: %w[name menu_id]
           },
           menu_item_reposition_params: {
             type: :object,
@@ -181,24 +184,54 @@ RSpec.configure do |config|
               new_parent_id: { type: :integer },
               new_position_idx: { type: :integer }
             },
-            required: %w[name]
+            required: %w[new_parent_id new_position_idx]
           },
           wishlist_params: {
             type: :object,
             properties: {
+              name: { type: :string },
               user_id: { type: :string },
-              name: { type: :string }
+              is_default: { type: :boolean },
+              is_private: { type: :boolean }
             },
-            required: %w[name]
+            required: %w[name user_id]
           },
           wished_item_params: {
             type: :object,
             properties: {
               wishlist_id: { type: :string },
               variant_id: { type: :string },
-              quantity: { type: :integer }
+              quantity: {
+                type: :integer,
+                description: 'Must be an integer greater than 0'
+              }
             },
-            required: %w[name]
+            required: %w[wishlist_id variant_id quantity]
+          },
+          cms_page_params: {
+            type: :object,
+            properties: {
+              title: { type: :string },
+              meta_title: { type: :string },
+              content: { type: :string, },
+              meta_description: { type: :string },
+              visible: { type: :string },
+              slug: { type: :string },
+              locale: { type: :string }
+            },
+            required: %w[title locale]
+          },
+          cms_section_params: {
+            type: :object,
+            properties: {
+              name: { type: :string },
+              cms_page_id: { type: :string },
+              content: { type: :object, },
+              settings: { type: :object },
+              fit: { type: :string },
+              destination: { type: :string },
+            },
+            required: %w[name cms_page_id]
           },
           resources_list: {
             type: :object,
