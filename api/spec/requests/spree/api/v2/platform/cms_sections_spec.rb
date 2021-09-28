@@ -14,10 +14,10 @@ describe 'Platform API v2 CmsSections', type: :request do
 
   describe 'cms_section#reposition' do
     context 'with no params' do
-      let(:params) { nil }
+      let(:params) { }
 
       before do
-        patch "/api/v2/platform/cms_sections/x/reposition", headers: bearer_token, params: params
+        patch "/api/v2/platform/cms_sections/#{section_a.id}/reposition", headers: bearer_token, params: params
       end
 
       it_behaves_like 'returns 422 HTTP status'
