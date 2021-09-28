@@ -14,7 +14,7 @@ describe Spree::Order do
     context '#cancel' do
       let(:order) { create(:completed_order_with_totals, store: store) }
 
-      it 'executes QueueRequests.call with a order.cancel event and {} payload after calling super' do
+      it 'executes QueueRequests.call with a order.cancel event and {} payload after invoking cancel' do
         order.cancel
         expect(queue_requests).to have_received(:call).with(event: 'order.cancel', payload: payload).once
       end
@@ -23,9 +23,7 @@ describe Spree::Order do
     context '#finalize!' do
       let(:order) { Spree::Order.create(email: 'test@example.com', store: store) }
 
-      it 'executes QueueRequests.call with a order.complete event and {} payload after calling super' do
-        # check the last statement in the method body is actually
-        # executed, because Order doesn't have a complete method.
+      it 'executes QueueRequests.call with a order.complete event and {} payload after invoking finalize!' do
         order.finalize!
         expect(queue_requests).to have_received(:call).with(event: 'order.complete', payload: payload).once
       end

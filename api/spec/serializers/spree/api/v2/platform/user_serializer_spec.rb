@@ -5,7 +5,10 @@ describe Spree::Api::V2::Platform::UserSerializer do
 
   subject { described_class.new(user, params: serializer_params) }
 
-  before { allow_any_instance_of(Spree::Order).to receive(:queue_webhooks_requests!); user }
+  before do
+    allow_any_instance_of(Spree::Order).to receive(:queue_webhooks_requests!)
+    user
+  end
 
   let(:user) { create(:user_with_addresses) }
 
