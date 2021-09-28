@@ -4060,7 +4060,7 @@ paths:
 
         ### Update the Customer information
 
-        ```texttext
+        ```request
         PATCH /checkout
         ```
 
@@ -4092,7 +4092,7 @@ paths:
 
         ###  Fetch Shipping Rates
 
-        ```text
+        ```request
         GET /checkout/shipping_rates
         ```
 
@@ -4104,7 +4104,7 @@ paths:
 
         ### Select shipping method(s)
 
-        ```text
+        ```request
         PATCH /checkout
         ```
 
@@ -4127,7 +4127,7 @@ paths:
 
         ### Add Payment Source(s)
 
-        ```text
+        ```request
         PATCH /checkout
         ```
 
@@ -4154,7 +4154,7 @@ paths:
 
         ### Complete checkout
 
-        ```text
+        ```request
         PATCH /checkout/complete
         ```
 
@@ -19711,31 +19711,33 @@ components:
           example: $20.00
         shipment_state:
           type: string
-          example: pending
           enum:
+            - pending
             - backorder
             - canceled
             - partial
-            - pending
             - ready
             - shipped
+            - null
           description: |-
             Overall state of the Shipments. Please see <a href="https://dev-docs.spreecommerce.org/internals/orders#order-shipment-states-1">
               Order Shipments states
             </a> for a full list with description.
+          nullable: true
         payment_state:
           type: string
-          example: balance_due
           enum:
             - balance_due
             - credit_owed
             - failed
             - paid
             - void
+            - null
           description: |-
             Overall state of the Payments. Please see <a href="https://dev-docs.spreecommerce.org/internals/orders#order-payment-states">
               Order Payments states
             </a> for a full list with description.
+          nullable: true
     CreditCardList:
       required:
         - included
