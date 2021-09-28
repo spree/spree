@@ -2,7 +2,7 @@ class CreateSpreeWebhooksTables < ActiveRecord::Migration[6.1]
   def change
     create_table :spree_webhooks_endpoints do |t|
       t.string :url, null: false
-      t.boolean :enabled, default: false
+      t.boolean :enabled, default: false, index: true
 
       create_subscriptions_column!(t)
 
