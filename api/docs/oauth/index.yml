@@ -152,7 +152,7 @@ components:
           type: string
           enum:
             - admin
-          description: Pass the value `admin` to create a token for use in the Platform API v2.
+          description: Pass the value `admin` to create a token for use in the Platform API.
           nullable: true
       required:
         - grant_type
