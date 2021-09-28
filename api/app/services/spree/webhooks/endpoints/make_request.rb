@@ -1,5 +1,7 @@
 module Spree
-  class Webhooks::Endpoints::MakeRequest
+  module Webhooks
+    module Endpoints
+      class MakeRequest
     prepend Spree::ServiceModule::Base
 
     def call(url:)
