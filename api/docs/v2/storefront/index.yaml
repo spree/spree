@@ -20,8 +20,8 @@ info:
     url: 'https://sparksolutions.co'
     email: we@sparksolutions.co
   license:
-    name: 'https://github.com/spree/spree/blob/master/license.md'
-    url: BSD-3-Clause
+    name: BSD-3-Clause
+    url: 'https://github.com/spree/spree/blob/master/license.md'
 paths:
   /api/v2/storefront/account:
     get:
@@ -5338,8 +5338,8 @@ paths:
                         title: About US
                         content: <p>This is the rich text for our about us page</p>
                         locale: en
-                        meta_description: 'Learn about us, by reading out About Us page.'
-                        meta_title: Example Strore Ltd | About Us Page
+                        meta_description: 'Learn about us, by reading our About Us page.'
+                        meta_title: Example Store Ltd | About Us Page
                         slug: about-us
                         type: 'Spree::Cms::Pages::StandardPage'
                       relationships:
