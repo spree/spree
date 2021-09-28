@@ -181,6 +181,23 @@ describe Spree::Store, type: :model do
         end
       end
     end
+
+    describe 'code uniqueness' do
+      context 'selected code was already used in a deleted store' do
+        let(:store_code) { 'store_code' }
+
+        let!(:default_store) { create(:store) }
+        let!(:deleted_store) { create(:store, code: store_code).destroy! }
+
+        it 'does not cause error related to unique constrains in DB' do
+          expect { create(:store, code: store_code) }.not_to raise_error(ActiveRecord::RecordNotUnique)
+        end
+
+        it 'shows accurate validation error' do
+          expect { create(:store, code: store_code) }.to raise_error(ActiveRecord::RecordInvalid, 'Validation failed: Code has already been taken')
+        end
+      end
+    end
   end
 
   describe '.by_url' do
@@ -612,6 +629,28 @@ describe Spree::Store, type: :model do
 
       it 'returns a blank favicon' do
         expect(favicon).to be(nil)
+      end
+    end
+  end
+
+  describe 'soft deletion' do
+    let!(:default_store) { create(:store) }
+
+    let(:store) { create(:store) }
+
+    it 'soft-deletes when destroy is called' do
+      store.destroy!
+      expect(store.deleted_at).not_to be_nil
+    end
+
+    context 'with associations' do
+      before do
+        store.products << create(:product)
+      end
+
+      it "doesn't destroy associations" do
+        associations = described_class.reflect_on_all_associations(:has_many)
+        expect(associations.select { |a| a.options[:dependent] }).to be_empty
       end
     end
   end

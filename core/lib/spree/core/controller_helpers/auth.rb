@@ -34,8 +34,8 @@ module Spree
         end
 
         def current_oauth_token
-          get_last_access_token = ->(user) { Doorkeeper::AccessToken.active_for(user).where(expires_in: nil).last }
-          create_access_token = ->(user) { Doorkeeper::AccessToken.create!(resource_owner_id: user.id) }
+          get_last_access_token = ->(user) { Spree::OauthAccessToken.active_for(user).where(expires_in: nil).last }
+          create_access_token = ->(user) { Spree::OauthAccessToken.create!(resource_owner: user) }
           user = try_spree_current_user
           return unless user
 
@@ -82,7 +82,7 @@ module Spree
             redirect_to spree.forbidden_path
           else
             store_location
-            if request.fullpath.match(Spree.admin_path) && defined?(spree.admin_login_path)
+            if Spree.respond_to?(:admin_path) && request.fullpath.match(Spree.admin_path) && defined?(spree.admin_login_path)
               redirect_to spree.admin_login_path
             elsif respond_to?(:spree_login_path)
               redirect_to spree_login_path

@@ -63,8 +63,8 @@ paths:
                         state_name:
                         alternative_phone: 555-555-0199
                         company: Company
-                        created_at: '2021-08-30T22:29:07.024Z'
-                        updated_at: '2021-08-30T22:29:07.024Z'
+                        created_at: '2021-09-21T20:47:27.913Z'
+                        updated_at: '2021-09-21T20:47:27.913Z'
                         deleted_at:
                         label:
                       relationships:
@@ -91,8 +91,8 @@ paths:
                         state_name:
                         alternative_phone: 555-555-0199
                         company: Company
-                        created_at: '2021-08-30T22:29:07.026Z'
-                        updated_at: '2021-08-30T22:29:07.026Z'
+                        created_at: '2021-09-21T20:47:27.915Z'
+                        updated_at: '2021-09-21T20:47:27.915Z'
                         deleted_at:
                         label:
                       relationships:
@@ -162,8 +162,8 @@ paths:
                         state_name:
                         alternative_phone: 555-555-0199
                         company: Company
-                        created_at: '2021-08-30T22:29:07.137Z'
-                        updated_at: '2021-08-30T22:29:07.137Z'
+                        created_at: '2021-09-21T20:47:28.023Z'
+                        updated_at: '2021-09-21T20:47:28.023Z'
                         deleted_at:
                         label:
                       relationships:
@@ -253,8 +253,8 @@ paths:
                         state_name:
                         alternative_phone: 555-555-0199
                         company: Company
-                        created_at: '2021-08-30T22:29:07.160Z'
-                        updated_at: '2021-08-30T22:29:07.160Z'
+                        created_at: '2021-09-21T20:47:28.044Z'
+                        updated_at: '2021-09-21T20:47:28.044Z'
                         deleted_at:
                         label:
                       relationships:
@@ -327,8 +327,8 @@ paths:
                         state_name:
                         alternative_phone: 555-555-0199
                         company: Company
-                        created_at: '2021-08-30T22:29:07.192Z'
-                        updated_at: '2021-08-30T22:29:07.196Z'
+                        created_at: '2021-09-21T20:47:28.083Z'
+                        updated_at: '2021-09-21T20:47:28.089Z'
                         deleted_at:
                         label:
                       relationships:
@@ -455,8 +455,8 @@ paths:
                       type: classification
                       attributes:
                         position: 1
-                        created_at: '2021-08-30T22:29:07.400Z'
-                        updated_at: '2021-08-30T22:29:07.400Z'
+                        created_at: '2021-09-21T20:47:28.323Z'
+                        updated_at: '2021-09-21T20:47:28.323Z'
                       relationships:
                         product:
                           data:
@@ -470,8 +470,8 @@ paths:
                       type: classification
                       attributes:
                         position: 1
-                        created_at: '2021-08-30T22:29:07.447Z'
-                        updated_at: '2021-08-30T22:29:07.447Z'
+                        created_at: '2021-09-21T20:47:28.404Z'
+                        updated_at: '2021-09-21T20:47:28.404Z'
                       relationships:
                         product:
                           data:
@@ -528,8 +528,8 @@ paths:
                       type: classification
                       attributes:
                         position: 1
-                        created_at: '2021-08-30T22:29:07.600Z'
-                        updated_at: '2021-08-30T22:29:07.600Z'
+                        created_at: '2021-09-21T20:47:28.653Z'
+                        updated_at: '2021-09-21T20:47:28.653Z'
                       relationships:
                         product:
                           data:
@@ -592,8 +592,8 @@ paths:
                       type: classification
                       attributes:
                         position: 1
-                        created_at: '2021-08-30T22:29:07.667Z'
-                        updated_at: '2021-08-30T22:29:07.667Z'
+                        created_at: '2021-09-21T20:47:28.756Z'
+                        updated_at: '2021-09-21T20:47:28.756Z'
                       relationships:
                         product:
                           data:
@@ -653,8 +653,8 @@ paths:
                       type: classification
                       attributes:
                         position: 1
-                        created_at: '2021-08-30T22:29:07.783Z'
-                        updated_at: '2021-08-30T22:29:07.783Z'
+                        created_at: '2021-09-21T20:47:28.939Z'
+                        updated_at: '2021-09-21T20:47:28.939Z'
                       relationships:
                         product:
                           data:
@@ -764,8 +764,8 @@ paths:
                       type: classification
                       attributes:
                         position: 2
-                        created_at: '2021-08-30T22:29:08.086Z'
-                        updated_at: '2021-08-30T22:29:08.095Z'
+                        created_at: '2021-09-21T20:47:29.407Z'
+                        updated_at: '2021-09-21T20:47:29.417Z'
                       relationships:
                         product:
                           data:
@@ -832,9 +832,9 @@ paths:
                         name: United States of America
                         numcode: 840
                         states_required: true
-                        updated_at: '2021-08-30T22:29:08.218Z'
+                        updated_at: '2021-09-21T20:47:29.609Z'
                         zipcode_required: true
-                        created_at: '2021-08-30T22:29:08.218Z'
+                        created_at: '2021-09-21T20:47:29.609Z'
                       relationships:
                         states:
                           data: []
@@ -847,9 +847,9 @@ paths:
                         name: NAME_2
                         numcode: 840
                         states_required: false
-                        updated_at: '2021-08-30T22:29:08.222Z'
+                        updated_at: '2021-09-21T20:47:29.613Z'
                         zipcode_required: true
-                        created_at: '2021-08-30T22:29:08.222Z'
+                        created_at: '2021-09-21T20:47:29.613Z'
                       relationships:
                         states:
                           data: []
@@ -862,9 +862,9 @@ paths:
                         name: NAME_3
                         numcode: 840
                         states_required: false
-                        updated_at: '2021-08-30T22:29:08.223Z'
+                        updated_at: '2021-09-21T20:47:29.613Z'
                         zipcode_required: true
-                        created_at: '2021-08-30T22:29:08.223Z'
+                        created_at: '2021-09-21T20:47:29.613Z'
                       relationships:
                         states:
                           data: []
@@ -919,9 +919,9 @@ paths:
                         name: NAME_6
                         numcode: 840
                         states_required: false
-                        updated_at: '2021-08-30T22:29:08.259Z'
+                        updated_at: '2021-09-21T20:47:29.642Z'
                         zipcode_required: true
-                        created_at: '2021-08-30T22:29:08.259Z'
+                        created_at: '2021-09-21T20:47:29.642Z'
                       relationships:
                         states:
                           data: []
@@ -986,7 +986,7 @@ paths:
                     - id: '1'
                       type: menu_item
                       attributes:
-                        name: Corporis deleniti vel necessitatibus laborum aliquid.
+                        name: Possimus deserunt similique asperiores eveniet.
                         subtitle:
                         destination:
                         new_window: false
@@ -996,8 +996,8 @@ paths:
                         lft: 1
                         rgt: 16
                         depth: 0
-                        created_at: '2021-08-30T22:29:08.302Z'
-                        updated_at: '2021-08-30T22:29:08.383Z'
+                        created_at: '2021-09-21T20:47:29.680Z'
+                        updated_at: '2021-09-21T20:47:29.972Z'
                         link:
                         is_container: true
                         is_root: true
@@ -1043,8 +1043,8 @@ paths:
                         lft: 2
                         rgt: 3
                         depth: 1
-                        created_at: '2021-08-30T22:29:08.314Z'
-                        updated_at: '2021-08-30T22:29:08.316Z'
+                        created_at: '2021-09-21T20:47:29.721Z'
+                        updated_at: '2021-09-21T20:47:29.724Z'
                         link:
                         is_container: false
                         is_root: false
@@ -1080,8 +1080,8 @@ paths:
                         lft: 4
                         rgt: 5
                         depth: 1
-                        created_at: '2021-08-30T22:29:08.325Z'
-                        updated_at: '2021-08-30T22:29:08.327Z'
+                        created_at: '2021-09-21T20:47:29.761Z'
+                        updated_at: '2021-09-21T20:47:29.764Z'
                         link:
                         is_container: false
                         is_root: false
@@ -1117,8 +1117,8 @@ paths:
                         lft: 6
                         rgt: 7
                         depth: 1
-                        created_at: '2021-08-30T22:29:08.336Z'
-                        updated_at: '2021-08-30T22:29:08.337Z'
+                        created_at: '2021-09-21T20:47:29.800Z'
+                        updated_at: '2021-09-21T20:47:29.802Z'
                         link:
                         is_container: false
                         is_root: false
@@ -1154,8 +1154,8 @@ paths:
                         lft: 8
                         rgt: 9
                         depth: 1
-                        created_at: '2021-08-30T22:29:08.346Z'
-                        updated_at: '2021-08-30T22:29:08.348Z'
+                        created_at: '2021-09-21T20:47:29.838Z'
+                        updated_at: '2021-09-21T20:47:29.840Z'
                         link:
                         is_container: false
                         is_root: false
@@ -1191,8 +1191,8 @@ paths:
                         lft: 10
                         rgt: 11
                         depth: 1
-                        created_at: '2021-08-30T22:29:08.356Z'
-                        updated_at: '2021-08-30T22:29:08.358Z'
+                        created_at: '2021-09-21T20:47:29.877Z'
+                        updated_at: '2021-09-21T20:47:29.880Z'
                         link:
                         is_container: false
                         is_root: false
@@ -1228,8 +1228,8 @@ paths:
                         lft: 12
                         rgt: 13
                         depth: 1
-                        created_at: '2021-08-30T22:29:08.367Z'
-                        updated_at: '2021-08-30T22:29:08.369Z'
+                        created_at: '2021-09-21T20:47:29.917Z'
+                        updated_at: '2021-09-21T20:47:29.920Z'
                         link:
                         is_container: false
                         is_root: false
@@ -1265,8 +1265,8 @@ paths:
                         lft: 14
                         rgt: 15
                         depth: 1
-                        created_at: '2021-08-30T22:29:08.377Z'
-                        updated_at: '2021-08-30T22:29:08.379Z'
+                        created_at: '2021-09-21T20:47:29.957Z'
+                        updated_at: '2021-09-21T20:47:29.959Z'
                         link:
                         is_container: false
                         is_root: false
@@ -1345,8 +1345,8 @@ paths:
                         lft: 8
                         rgt: 9
                         depth: 1
-                        created_at: '2021-08-30T22:29:08.554Z'
-                        updated_at: '2021-08-30T22:29:08.556Z'
+                        created_at: '2021-09-21T20:47:30.427Z'
+                        updated_at: '2021-09-21T20:47:30.429Z'
                         link:
                         is_container: false
                         is_root: false
@@ -1432,8 +1432,8 @@ paths:
                         lft: 8
                         rgt: 9
                         depth: 1
-                        created_at: '2021-08-30T22:29:08.665Z'
-                        updated_at: '2021-08-30T22:29:08.667Z'
+                        created_at: '2021-09-21T20:47:30.745Z'
+                        updated_at: '2021-09-21T20:47:30.748Z'
                         link:
                         is_container: false
                         is_root: false
@@ -1515,8 +1515,8 @@ paths:
                         lft: 8
                         rgt: 9
                         depth: 1
-                        created_at: '2021-08-30T22:29:08.831Z'
-                        updated_at: '2021-08-30T22:29:08.843Z'
+                        created_at: '2021-09-21T20:47:31.244Z'
+                        updated_at: '2021-09-21T20:47:31.257Z'
                         link:
                         is_container: false
                         is_root: false
@@ -1641,8 +1641,8 @@ paths:
                         lft: 5
                         rgt: 6
                         depth: 2
-                        created_at: '2021-08-30T22:29:09.230Z'
-                        updated_at: '2021-08-30T22:29:09.241Z'
+                        created_at: '2021-09-21T20:47:32.441Z'
+                        updated_at: '2021-09-21T20:47:32.456Z'
                         link:
                         is_container: false
                         is_root: false
@@ -1734,8 +1734,8 @@ paths:
                         name: Main Menu
                         location: header
                         locale: en
-                        created_at: '2021-08-30T22:29:09.361Z'
-                        updated_at: '2021-08-30T22:29:09.390Z'
+                        created_at: '2021-09-21T20:47:32.789Z'
+                        updated_at: '2021-09-21T20:47:32.878Z'
                       relationships:
                         menu_items:
                           data:
@@ -1751,8 +1751,8 @@ paths:
                         name: Footer Menu
                         location: footer
                         locale: en
-                        created_at: '2021-08-30T22:29:09.365Z'
-                        updated_at: '2021-08-30T22:29:09.411Z'
+                        created_at: '2021-09-21T20:47:32.794Z'
+                        updated_at: '2021-09-21T20:47:32.961Z'
                       relationships:
                         menu_items:
                           data:
@@ -1811,8 +1811,8 @@ paths:
                         name: Main Menu
                         location: header
                         locale: en
-                        created_at: '2021-08-30T22:29:09.492Z'
-                        updated_at: '2021-08-30T22:29:09.495Z'
+                        created_at: '2021-09-21T20:47:33.175Z'
+                        updated_at: '2021-09-21T20:47:33.179Z'
                       relationships:
                         menu_items:
                           data:
@@ -1876,8 +1876,8 @@ paths:
                         name: Main Menu
                         location: header
                         locale: en
-                        created_at: '2021-08-30T22:29:09.523Z'
-                        updated_at: '2021-08-30T22:29:09.527Z'
+                        created_at: '2021-09-21T20:47:33.200Z'
+                        updated_at: '2021-09-21T20:47:33.203Z'
                       relationships:
                         menu_items:
                           data:
@@ -1935,8 +1935,8 @@ paths:
                         name: Main Menu
                         location: header
                         locale: en
-                        created_at: '2021-08-30T22:29:09.565Z'
-                        updated_at: '2021-08-30T22:29:09.568Z'
+                        created_at: '2021-09-21T20:47:33.239Z'
+                        updated_at: '2021-09-21T20:47:33.242Z'
                       relationships:
                         menu_items:
                           data:
@@ -2060,8 +2060,8 @@ paths:
                         name: foo-size-1
                         presentation: Size
                         position: 1
-                        created_at: '2021-08-30T22:29:09.672Z'
-                        updated_at: '2021-08-30T22:29:09.672Z'
+                        created_at: '2021-09-21T20:47:33.339Z'
+                        updated_at: '2021-09-21T20:47:33.339Z'
                         filterable: true
                       relationships:
                         option_values:
@@ -2072,8 +2072,8 @@ paths:
                         name: foo-size-2
                         presentation: Size
                         position: 2
-                        created_at: '2021-08-30T22:29:09.673Z'
-                        updated_at: '2021-08-30T22:29:09.673Z'
+                        created_at: '2021-09-21T20:47:33.340Z'
+                        updated_at: '2021-09-21T20:47:33.340Z'
                         filterable: true
                       relationships:
                         option_values:
@@ -2127,8 +2127,8 @@ paths:
                         name: foo-size-5
                         presentation: Size
                         position: 1
-                        created_at: '2021-08-30T22:29:09.706Z'
-                        updated_at: '2021-08-30T22:29:09.706Z'
+                        created_at: '2021-09-21T20:47:33.369Z'
+                        updated_at: '2021-09-21T20:47:33.369Z'
                         filterable: true
                       relationships:
                         option_values:
@@ -2188,8 +2188,8 @@ paths:
                         name: foo-size-6
                         presentation: Size
                         position: 1
-                        created_at: '2021-08-30T22:29:09.726Z'
-                        updated_at: '2021-08-30T22:29:09.726Z'
+                        created_at: '2021-09-21T20:47:33.387Z'
+                        updated_at: '2021-09-21T20:47:33.387Z'
                         filterable: true
                       relationships:
                         option_values:
@@ -2246,8 +2246,8 @@ paths:
                         name: Size-X
                         presentation: Size
                         position: 1
-                        created_at: '2021-08-30T22:29:09.758Z'
-                        updated_at: '2021-08-30T22:29:09.762Z'
+                        created_at: '2021-09-21T20:47:33.421Z'
+                        updated_at: '2021-09-21T20:47:33.425Z'
                         filterable: true
                       relationships:
                         option_values:
@@ -2365,8 +2365,8 @@ paths:
                         position: 1
                         name: Size-1
                         presentation: S
-                        created_at: '2021-08-30T22:29:09.842Z'
-                        updated_at: '2021-08-30T22:29:09.842Z'
+                        created_at: '2021-09-21T20:47:33.493Z'
+                        updated_at: '2021-09-21T20:47:33.493Z'
                       relationships:
                         option_type:
                           data:
@@ -2378,8 +2378,8 @@ paths:
                         position: 1
                         name: Size-2
                         presentation: S
-                        created_at: '2021-08-30T22:29:09.845Z'
-                        updated_at: '2021-08-30T22:29:09.845Z'
+                        created_at: '2021-09-21T20:47:33.496Z'
+                        updated_at: '2021-09-21T20:47:33.496Z'
                       relationships:
                         option_type:
                           data:
@@ -2434,8 +2434,8 @@ paths:
                         position: 1
                         name: Size-5
                         presentation: S
-                        created_at: '2021-08-30T22:29:09.880Z'
-                        updated_at: '2021-08-30T22:29:09.880Z'
+                        created_at: '2021-09-21T20:47:33.595Z'
+                        updated_at: '2021-09-21T20:47:33.595Z'
                       relationships:
                         option_type:
                           data:
@@ -2494,8 +2494,8 @@ paths:
                         position: 1
                         name: Size-6
                         presentation: S
-                        created_at: '2021-08-30T22:29:09.906Z'
-                        updated_at: '2021-08-30T22:29:09.906Z'
+                        created_at: '2021-09-21T20:47:33.616Z'
+                        updated_at: '2021-09-21T20:47:33.616Z'
                       relationships:
                         option_type:
                           data:
@@ -2553,8 +2553,8 @@ paths:
                         position: 1
                         name: M
                         presentation: S
-                        created_at: '2021-08-30T22:29:09.941Z'
-                        updated_at: '2021-08-30T22:29:09.946Z'
+                        created_at: '2021-09-21T20:47:33.647Z'
+                        updated_at: '2021-09-21T20:47:33.652Z'
                       relationships:
                         option_type:
                           data:
@@ -2676,8 +2676,8 @@ paths:
                         lft: 1
                         rgt: 6
                         description:
-                        created_at: '2021-08-30T22:29:10.032Z'
-                        updated_at: '2021-08-30T22:29:10.059Z'
+                        created_at: '2021-09-21T20:47:33.731Z'
+                        updated_at: '2021-09-21T20:47:33.825Z'
                         meta_title:
                         meta_description:
                         meta_keywords:
@@ -2711,8 +2711,8 @@ paths:
                         lft: 2
                         rgt: 3
                         description:
-                        created_at: '2021-08-30T22:29:10.043Z'
-                        updated_at: '2021-08-30T22:29:10.044Z'
+                        created_at: '2021-09-21T20:47:33.777Z'
+                        updated_at: '2021-09-21T20:47:33.779Z'
                         meta_title:
                         meta_description:
                         meta_keywords:
@@ -2746,8 +2746,8 @@ paths:
                         lft: 4
                         rgt: 5
                         description:
-                        created_at: '2021-08-30T22:29:10.053Z'
-                        updated_at: '2021-08-30T22:29:10.055Z'
+                        created_at: '2021-09-21T20:47:33.818Z'
+                        updated_at: '2021-09-21T20:47:33.820Z'
                         meta_title:
                         meta_description:
                         meta_keywords:
@@ -2824,8 +2824,8 @@ paths:
                         lft: 2
                         rgt: 3
                         description:
-                        created_at: '2021-08-30T22:29:10.139Z'
-                        updated_at: '2021-08-30T22:29:10.141Z'
+                        created_at: '2021-09-21T20:47:33.967Z'
+                        updated_at: '2021-09-21T20:47:33.970Z'
                         meta_title:
                         meta_description:
                         meta_keywords:
@@ -2906,8 +2906,8 @@ paths:
                         lft: 2
                         rgt: 3
                         description:
-                        created_at: '2021-08-30T22:29:10.185Z'
-                        updated_at: '2021-08-30T22:29:10.186Z'
+                        created_at: '2021-09-21T20:47:34.035Z'
+                        updated_at: '2021-09-21T20:47:34.036Z'
                         meta_title:
                         meta_description:
                         meta_keywords:
@@ -2989,8 +2989,8 @@ paths:
                         lft: 2
                         rgt: 3
                         description:
-                        created_at: '2021-08-30T22:29:10.259Z'
-                        updated_at: '2021-08-30T22:29:10.270Z'
+                        created_at: '2021-09-21T20:47:34.179Z'
+                        updated_at: '2021-09-21T20:47:34.193Z'
                         meta_title:
                         meta_description:
                         meta_keywords:
@@ -3125,9 +3125,9 @@ paths:
                     - id: '1'
                       type: user
                       attributes:
-                        email: delmy@little.name
-                        created_at: '2021-08-30T22:29:10.502Z'
-                        updated_at: '2021-08-30T22:29:10.502Z'
+                        email: sherryl.christiansen@schiller.com
+                        created_at: '2021-09-21T20:47:34.489Z'
+                        updated_at: '2021-09-21T20:47:34.489Z'
                         average_order_value: []
                         lifetime_value: []
                         store_credits: []
@@ -3139,9 +3139,9 @@ paths:
                     - id: '2'
                       type: user
                       attributes:
-                        email: yoko_brakus@walker.com
-                        created_at: '2021-08-30T22:29:10.506Z'
-                        updated_at: '2021-08-30T22:29:10.506Z'
+                        email: carol@wiza.biz
+                        created_at: '2021-09-21T20:47:34.492Z'
+                        updated_at: '2021-09-21T20:47:34.492Z'
                         average_order_value: []
                         lifetime_value: []
                         store_credits: []
@@ -3153,9 +3153,9 @@ paths:
                     - id: '3'
                       type: user
                       attributes:
-                        email: florida.stoltenberg@legros.com
-                        created_at: '2021-08-30T22:29:10.507Z'
-                        updated_at: '2021-08-30T22:29:10.507Z'
+                        email: hilario_hirthe@gorczanymcclure.info
+                        created_at: '2021-09-21T20:47:34.493Z'
+                        updated_at: '2021-09-21T20:47:34.493Z'
                         average_order_value: []
                         lifetime_value: []
                         store_credits: []
@@ -3210,9 +3210,9 @@ paths:
                       id: '2'
                       type: user
                       attributes:
-                        email: marcie@ondrickavandervort.com
-                        created_at: '2021-08-30T22:29:10.549Z'
-                        updated_at: '2021-08-30T22:29:10.549Z'
+                        email: madalyn@damore.info
+                        created_at: '2021-09-21T20:47:34.534Z'
+                        updated_at: '2021-09-21T20:47:34.534Z'
                         average_order_value: []
                         lifetime_value: []
                         store_credits: []
@@ -3271,9 +3271,9 @@ paths:
                       id: '2'
                       type: user
                       attributes:
-                        email: anita@hilll.name
-                        created_at: '2021-08-30T22:29:10.578Z'
-                        updated_at: '2021-08-30T22:29:10.578Z'
+                        email: shameka.botsford@braun.us
+                        created_at: '2021-09-21T20:47:34.562Z'
+                        updated_at: '2021-09-21T20:47:34.562Z'
                         average_order_value: []
                         lifetime_value: []
                         store_credits: []
@@ -3332,8 +3332,8 @@ paths:
                       type: user
                       attributes:
                         email: john@example.com
-                        created_at: '2021-08-30T22:29:10.622Z'
-                        updated_at: '2021-08-30T22:29:10.627Z'
+                        created_at: '2021-09-21T20:47:34.602Z'
+                        updated_at: '2021-09-21T20:47:34.612Z'
                         average_order_value: []
                         lifetime_value: []
                         store_credits: []
@@ -3407,6 +3407,671 @@ paths:
                 Example:
                   value:
                     error: The access token is invalid
+  "/api/v2/platform/wished_items":
+    get:
+      summary: Returns a list of Wished Items
+      tags:
+      - Wished Items
+      security:
+      - bearer_auth: []
+      description: Returns a list of Wished Items
+      operationId: wished-items-list
+      parameters:
+      - name: page
+        in: query
+        example: 1
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        example: 50
+        schema:
+          type: integer
+      - name: include
+        in: query
+        description: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: variant
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Records returned
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    data:
+                    - id: '1'
+                      type: wished_item
+                      attributes:
+                        quantity: 1
+                        created_at: '2021-09-21T20:47:34.780Z'
+                        updated_at: '2021-09-21T20:47:34.780Z'
+                        price: '19.99'
+                        total: '19.99'
+                        display_price: "$19.99"
+                        display_total: "$19.99"
+                      relationships:
+                        variant:
+                          data:
+                            id: '4'
+                            type: variant
+                    - id: '2'
+                      type: wished_item
+                      attributes:
+                        quantity: 1
+                        created_at: '2021-09-21T20:47:34.808Z'
+                        updated_at: '2021-09-21T20:47:34.808Z'
+                        price: '19.99'
+                        total: '19.99'
+                        display_price: "$19.99"
+                        display_total: "$19.99"
+                      relationships:
+                        variant:
+                          data:
+                            id: '6'
+                            type: variant
+                    - id: '3'
+                      type: wished_item
+                      attributes:
+                        quantity: 1
+                        created_at: '2021-09-21T20:47:34.835Z'
+                        updated_at: '2021-09-21T20:47:34.835Z'
+                        price: '19.99'
+                        total: '19.99'
+                        display_price: "$19.99"
+                        display_total: "$19.99"
+                      relationships:
+                        variant:
+                          data:
+                            id: '8'
+                            type: variant
+                    - id: '4'
+                      type: wished_item
+                      attributes:
+                        quantity: 1
+                        created_at: '2021-09-21T20:47:34.860Z'
+                        updated_at: '2021-09-21T20:47:34.860Z'
+                        price: '19.99'
+                        total: '19.99'
+                        display_price: "$19.99"
+                        display_total: "$19.99"
+                      relationships:
+                        variant:
+                          data:
+                            id: '10'
+                            type: variant
+                    meta:
+                      count: 4
+                      total_count: 4
+                      total_pages: 1
+                    links:
+                      self: http://www.example.com/api/v2/platform/wished_items?page=1&per_page=&include=
+                      next: http://www.example.com/api/v2/platform/wished_items?include=&page=1&per_page=
+                      prev: http://www.example.com/api/v2/platform/wished_items?include=&page=1&per_page=
+                      last: http://www.example.com/api/v2/platform/wished_items?include=&page=1&per_page=
+                      first: http://www.example.com/api/v2/platform/wished_items?include=&page=1&per_page=
+        '401':
+          description: Authentication Failed
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The access token is invalid
+    post:
+      summary: Creates a Wished Item
+      tags:
+      - Wished Items
+      security:
+      - bearer_auth: []
+      description: Creates a Wished Item
+      operationId: create-wished-item
+      parameters:
+      - name: include
+        in: query
+        description: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: variant
+        schema:
+          type: string
+      responses:
+        '201':
+          description: record created
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    data:
+                      id: '1'
+                      type: wished_item
+                      attributes:
+                        quantity: 1
+                        created_at: '2021-09-21T20:47:35.079Z'
+                        updated_at: '2021-09-21T20:47:35.079Z'
+                        price: '19.99'
+                        total: '19.99'
+                        display_price: "$19.99"
+                        display_total: "$19.99"
+                      relationships:
+                        variant:
+                          data:
+                            id: '2'
+                            type: variant
+        '422':
+          description: invalid request
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: Variant can't be blank, Wishlist can't be blank, and Quantity
+                      is not a number
+                    errors:
+                      variant:
+                      - can't be blank
+                      wishlist:
+                      - can't be blank
+                      quantity:
+                      - is not a number
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/wished_item_params"
+  "/api/v2/platform/wished_items/{id}":
+    get:
+      summary: Returns a Wished Item
+      tags:
+      - Wished Items
+      security:
+      - bearer_auth: []
+      description: Returns a Wished Item
+      operationId: show-wished-item
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: include
+        in: query
+        description: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: variant
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Record found
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    data:
+                      id: '1'
+                      type: wished_item
+                      attributes:
+                        quantity: 1
+                        created_at: '2021-09-21T20:47:35.206Z'
+                        updated_at: '2021-09-21T20:47:35.206Z'
+                        price: '19.99'
+                        total: '19.99'
+                        display_price: "$19.99"
+                        display_total: "$19.99"
+                      relationships:
+                        variant:
+                          data:
+                            id: '4'
+                            type: variant
+        '404':
+          description: Record not found
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The resource you were looking for could not be found.
+        '401':
+          description: Authentication Failed
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The access token is invalid
+    put:
+      summary: Updates a Wished Item
+      tags:
+      - Wished Items
+      security:
+      - bearer_auth: []
+      description: Updates a Wished Item
+      operationId: update-wished-item
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: include
+        in: query
+        description: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: variant
+        schema:
+          type: string
+      responses:
+        '200':
+          description: record updated
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    data:
+                      id: '1'
+                      type: wished_item
+                      attributes:
+                        quantity: 3
+                        created_at: '2021-09-21T20:47:35.413Z'
+                        updated_at: '2021-09-21T20:47:35.417Z'
+                        price: '19.99'
+                        total: '59.97'
+                        display_price: "$19.99"
+                        display_total: "$59.97"
+                      relationships:
+                        variant:
+                          data:
+                            id: '4'
+                            type: variant
+        '422':
+          description: invalid request
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: Quantity is not a number
+                    errors:
+                      quantity:
+                      - is not a number
+        '404':
+          description: Record not found
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The resource you were looking for could not be found.
+        '401':
+          description: Authentication Failed
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The access token is invalid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/wished_item_params"
+    delete:
+      summary: Deletes a Wished Item
+      tags:
+      - Wished Items
+      security:
+      - bearer_auth: []
+      description: Deletes a Wished Item
+      operationId: delete-wished-item
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Record deleted
+        '404':
+          description: Record not found
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The resource you were looking for could not be found.
+        '401':
+          description: Authentication Failed
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The access token is invalid
+  "/api/v2/platform/wishlists":
+    get:
+      summary: Returns a list of Wishlists
+      tags:
+      - Wishlists
+      security:
+      - bearer_auth: []
+      description: Returns a list of Wishlists
+      operationId: wishlists-list
+      parameters:
+      - name: page
+        in: query
+        example: 1
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        example: 50
+        schema:
+          type: integer
+      - name: include
+        in: query
+        description: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: wished_items
+        schema:
+          type: string
+      - name: filter
+        in: query
+        description: ''
+        example: name_cont=Birthday
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Records returned
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    data:
+                    - id: '1'
+                      type: wishlist
+                      attributes:
+                        name: Black Friday
+                        is_private: true
+                        is_default: false
+                        created_at: '2021-09-21T20:47:35.895Z'
+                        updated_at: '2021-09-21T20:47:35.895Z'
+                        token: pJr3H1bG436ZJWwPdhCescuZ
+                        variant_included: false
+                      relationships:
+                        wished_items:
+                          data:
+                          - id: '1'
+                            type: wished_item
+                          - id: '2'
+                            type: wished_item
+                    - id: '2'
+                      type: wishlist
+                      attributes:
+                        name: Birthday
+                        is_private: true
+                        is_default: false
+                        created_at: '2021-09-21T20:47:35.896Z'
+                        updated_at: '2021-09-21T20:47:35.896Z'
+                        token: g73YVuAfDcznufS7BfkT7Dgv
+                        variant_included: false
+                      relationships:
+                        wished_items:
+                          data:
+                          - id: '3'
+                            type: wished_item
+                          - id: '4'
+                            type: wished_item
+                    meta:
+                      count: 2
+                      total_count: 2
+                      total_pages: 1
+                    links:
+                      self: http://www.example.com/api/v2/platform/wishlists?page=1&per_page=&include=&filter=
+                      next: http://www.example.com/api/v2/platform/wishlists?include=&page=1&per_page=
+                      prev: http://www.example.com/api/v2/platform/wishlists?include=&page=1&per_page=
+                      last: http://www.example.com/api/v2/platform/wishlists?include=&page=1&per_page=
+                      first: http://www.example.com/api/v2/platform/wishlists?include=&page=1&per_page=
+        '401':
+          description: Authentication Failed
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The access token is invalid
+    post:
+      summary: Creates a Wishlist
+      tags:
+      - Wishlists
+      security:
+      - bearer_auth: []
+      description: Creates a Wishlist
+      operationId: create-wishlist
+      parameters:
+      - name: include
+        in: query
+        description: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: wished_items
+        schema:
+          type: string
+      responses:
+        '201':
+          description: record created
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    data:
+                      id: '1'
+                      type: wishlist
+                      attributes:
+                        name: Wishlist_26
+                        is_private: true
+                        is_default: false
+                        created_at: '2021-09-21T20:47:36.169Z'
+                        updated_at: '2021-09-21T20:47:36.169Z'
+                        token: RzyRAZhruHGocmvdDhEEkK3y
+                        variant_included: false
+                      relationships:
+                        wished_items:
+                          data: []
+        '422':
+          description: invalid request
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: Name can't be blank and User can't be blank
+                    errors:
+                      name:
+                      - can't be blank
+                      user:
+                      - can't be blank
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/wishlist_params"
+  "/api/v2/platform/wishlists/{id}":
+    get:
+      summary: Returns a Wishlist
+      tags:
+      - Wishlists
+      security:
+      - bearer_auth: []
+      description: Returns a Wishlist
+      operationId: show-wishlist
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: include
+        in: query
+        description: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: wished_items
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Record found
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    data:
+                      id: '1'
+                      type: wishlist
+                      attributes:
+                        name: My Wishlist
+                        is_private: true
+                        is_default: false
+                        created_at: '2021-09-21T20:47:36.191Z'
+                        updated_at: '2021-09-21T20:47:36.191Z'
+                        token: zTKLwrNBQkM1L8FKiCkqFpxX
+                        variant_included: false
+                      relationships:
+                        wished_items:
+                          data: []
+        '404':
+          description: Record not found
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The resource you were looking for could not be found.
+        '401':
+          description: Authentication Failed
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The access token is invalid
+    put:
+      summary: Updates a Wishlist
+      tags:
+      - Wishlists
+      security:
+      - bearer_auth: []
+      description: Updates a Wishlist
+      operationId: update-wishlist
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: include
+        in: query
+        description: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: wished_items
+        schema:
+          type: string
+      responses:
+        '200':
+          description: record updated
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    data:
+                      id: '1'
+                      type: wishlist
+                      attributes:
+                        name: My Super Wishlist
+                        is_private: true
+                        is_default: false
+                        created_at: '2021-09-21T20:47:36.228Z'
+                        updated_at: '2021-09-21T20:47:36.232Z'
+                        token: xVvmNoXkzi8i7fvG5i3moE7T
+                        variant_included: false
+                      relationships:
+                        wished_items:
+                          data: []
+        '422':
+          description: invalid request
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: Name can't be blank
+                    errors:
+                      name:
+                      - can't be blank
+        '404':
+          description: Record not found
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The resource you were looking for could not be found.
+        '401':
+          description: Authentication Failed
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The access token is invalid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/wishlist_params"
+    delete:
+      summary: Deletes a Wishlist
+      tags:
+      - Wishlists
+      security:
+      - bearer_auth: []
+      description: Deletes a Wishlist
+      operationId: delete-wishlist
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Record deleted
+        '404':
+          description: Record not found
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The resource you were looking for could not be found.
+        '401':
+          description: Authentication Failed
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The access token is invalid
 servers:
 - url: https://{defaultHost}
   variables:
@@ -3422,6 +4087,8 @@ tags:
 - name: Option Values
 - name: Taxons
 - name: Users
+- name: Wishlists
+- name: Wished Items
 components:
   securitySchemes:
     bearer_auth:
@@ -3610,6 +4277,26 @@ components:
         new_parent_id:
           type: integer
         new_position_idx:
+          type: integer
+      required:
+      - name
+    wishlist_params:
+      type: object
+      properties:
+        user_id:
+          type: string
+        name:
+          type: string
+      required:
+      - name
+    wished_item_params:
+      type: object
+      properties:
+        wishlist_id:
+          type: string
+        variant_id:
+          type: string
+        quantity:
           type: integer
       required:
       - name

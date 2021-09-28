@@ -3,6 +3,8 @@ module Spree
     MAILER_LOGO_CONTENT_TYPES = ['image/png', 'image/jpg', 'image/jpeg'].freeze
     FAVICON_CONTENT_TYPES = ['image/png', 'image/x-icon', 'image/vnd.microsoft.icon'].freeze
 
+    acts_as_paranoid
+
     has_many :orders, class_name: 'Spree::Order'
     has_many :line_items, through: :orders, class_name: 'Spree::LineItem'
     has_many :shipments, through: :orders, class_name: 'Spree::Shipment'
@@ -19,7 +21,7 @@ module Spree
     has_many :menus, class_name: 'Spree::Menu'
     has_many :menu_items, through: :menus, class_name: 'Spree::MenuItem'
 
-    has_many :store_products, class_name: 'Spree::StoreProduct', dependent: :destroy
+    has_many :store_products, class_name: 'Spree::StoreProduct'
     has_many :products, through: :store_products, class_name: 'Spree::Product'
     has_many :product_properties, through: :products, class_name: 'Spree::ProductProperty'
     has_many :variants, through: :products, class_name: 'Spree::Variant', source: :variants_including_master
@@ -36,6 +38,8 @@ module Spree
     has_many :store_promotions, class_name: 'Spree::StorePromotion'
     has_many :promotions, through: :store_promotions, class_name: 'Spree::Promotion'
 
+    has_many :wishlists, class_name: 'Spree::Wishlist'
+
     belongs_to :default_country, class_name: 'Spree::Country'
     belongs_to :checkout_zone, class_name: 'Spree::Zone'
 
@@ -43,7 +47,7 @@ module Spree
       validates :name, :url, :mail_from_address, :default_currency, :code
     end
 
-    validates :code, uniqueness: true
+    validates :code, uniqueness: { conditions: -> { with_deleted } }
 
     if !ENV['SPREE_DISABLE_DB_CONNECTION'] &&
         connected? &&

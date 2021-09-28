@@ -7,8 +7,22 @@ module Spree
     let(:stock_item) { subject.stock_items.order(:id).first }
     let(:variant) { stock_item.variant }
 
-    it 'creates stock_items for all variants' do
-      expect(subject.stock_items.count).to eq Variant.count
+    context 'handling the stock items creation after create' do
+      let!(:variant) { create(:variant) }
+
+      before { StockLocation.destroy_all }
+
+      it 'creates stock_items for all variants' do
+        expect do
+          create(:stock_location)
+        end.to(
+          change { Variant.count }.by(0).and(
+            change { StockLocation.count }.from(0).to(1).and(
+              change { StockItem.count }.from(0).to(2)
+            )
+          )
+        )
+      end
     end
 
     it 'validates uniqueness' do
@@ -68,7 +82,10 @@ module Spree
             before { subject.propagate_all_variants = true }
 
             specify do
-              expect(subject).to receive(:create_stock_items)
+              expect(subject).to receive(:create_stock_items).and_call_original
+              expect(Spree::StockLocations::StockItems::CreateJob).to(
+                receive(:perform_later).once.with(subject)
+              )
               subject.save!
             end
           end
@@ -77,7 +94,7 @@ module Spree
             before { subject.propagate_all_variants = false }
 
             specify do
-              expect(subject).not_to receive(:propagate_variant)
+              expect(subject).not_to receive(:create_stock_items)
               subject.save!
             end
           end
@@ -251,6 +268,20 @@ module Spree
         let(:state) { stub_model(Spree::State, name: 'virginia', abbr: nil) }
 
         specify { expect(subject.state_text).to eq('virginia') }
+      end
+    end
+
+    describe '#conditionally_touch_records' do
+      let(:item) { subject.items.last }
+      let(:variant) { subject.variants.last }
+
+      context 'active has changed' do
+        it { expect { subject.update(active: false).to change(variant, :updated_at) } }
+        it { expect { subject.update(active: false).to change(item, :updated_at) } }
+      end
+
+      context 'active has not changed' do
+        it { expect { subject.update(name: 'my other warehouse').to change(variant, :updated_at) } }
       end
     end
   end

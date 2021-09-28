@@ -21,7 +21,7 @@ module Spree
         Please upload a Store logo instead
       DEPRECATION
 
-      Spree::Config.mailer_logo || Spree::Config.logo
+      'logo/spree_50.png'
     end
 
     def logo_path

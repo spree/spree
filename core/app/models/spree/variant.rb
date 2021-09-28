@@ -42,6 +42,8 @@ module Spree
              dependent: :destroy,
              inverse_of: :variant
 
+    has_many :wished_items, dependent: :destroy
+
     before_validation :set_cost_currency
 
     validate :check_price
@@ -52,7 +54,7 @@ module Spree
       validates :cost_price
       validates :price
     end
-    validates :sku, uniqueness: { conditions: -> { where(deleted_at: nil) }, case_sensitive: false },
+    validates :sku, uniqueness: { conditions: -> { where(deleted_at: nil) }, case_sensitive: false, scope: spree_base_uniqueness_scope },
                     allow_blank: true, unless: :disable_sku_validation?
 
     after_create :create_stock_items
@@ -256,7 +258,13 @@ module Spree
       end
     end
 
-    delegate :total_on_hand, :can_supply?, :backorderable?, to: :quantifier
+    def backorderable?
+      @backorderable ||= Rails.cache.fetch(['variant-backorderable', cache_key_with_version]) do
+        quantifier.backorderable?
+      end
+    end
+
+    delegate :total_on_hand, :can_supply?, to: :quantifier
 
     alias is_backorderable? backorderable?
 
@@ -291,7 +299,7 @@ module Spree
     end
 
     def backordered?
-      @backordered ||= total_on_hand <= 0 && stock_items.exists?(backorderable: true)
+      @backordered ||= !in_stock? && stock_items.exists?(backorderable: true)
     end
 
     private

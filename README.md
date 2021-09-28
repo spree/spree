@@ -1,5 +1,5 @@
 <a href="https://spreecommerce.org">
-   <img src="https://raw.githubusercontent.com/spree/spree-dev-docs/master/.gitbook/assets/spree_header_978-2x.png" alt="Spree Commerce - a headless multi-language, multi-currency, multi-store open source e-commerce platform" />
+   <img src="https://raw.githubusercontent.com/spree/spree-dev-docs/master/.gitbook/assets/linkedin_cover_profile-2x.png" alt="Spree Commerce - a headless open-source ecommerce platform for multi-store, marketplace, or B2B global brands" />
 </a>
 
 # [Spree Commerce](https://spreecommerce.org) [![Gem Version](https://badge.fury.io/rb/spree.svg)](https://badge.fury.io/rb/spree) [![Circle CI](https://circleci.com/gh/spree/spree.svg?style=shield)](https://circleci.com/gh/spree/spree/tree/master) [![Test Coverage](https://api.codeclimate.com/v1/badges/8277fc2bb0b1f777084f/test_coverage)](https://codeclimate.com/github/spree/spree/test_coverage)
@@ -8,10 +8,15 @@
 * [Documentation](https://dev-docs.spreecommerce.org/)
 * [API Reference](https://api.spreecommerce.org)
 * [Integrations](https://spreecommerce.org/integrations/)
+* [Roadmap](https://github.com/spree/spree/milestones?direction=asc&sort=due_date&state=open)
 * [Join our Slack community](http://slack.spreecommerce.org/)
 * [Support](https://spreecommerce.org/contact/)
 
 **Spree** is a headless open source e-commerce platform for global brands. It was started by Sean Schofield and is now developed by [Spark Solutions][spark]. We're open to [contributions](https://dev-docs.spreecommerce.org/contributing).
+
+<a href="https://dev-docs.spreecommerce.org/getting-started/headless-commerce">
+   <img src="https://raw.githubusercontent.com/spree/spree-dev-docs/master/.gitbook/assets/spree_commerce_spree_api_3-2x.png" alt="Spree Commerce - a headless open-source ecommerce platform for multi-store, marketplace, or B2B global brands" />
+</a>
 
 ## Sponsored by
 
@@ -21,7 +26,7 @@
 
 ## Key Features
 
-![admin panel](https://raw.githubusercontent.com/spree/spree-dev-docs/master/.gitbook/assets/admin_panel_978-2x.jpg)
+![admin panel](https://raw.githubusercontent.com/spree/spree-dev-docs/master/.gitbook/assets/spree_commerce_home_header_2-2x-1-.png)
 
 * **[Headless Commerce](https://spreecommerce.org/use-cases/headless-ecommerce-api/)** - build mobile apps or custom storefronts in any technology, [JS/TS SDK available](https://github.com/spree/spree-storefront-api-v2-js-sdk)
 * **[PWA](https://spreecommerce.org/use-cases/spree-pwa-progressive-web-application/)** - offline shopping experiences like native mobile apps
@@ -39,15 +44,20 @@
 
 ![multi store](https://raw.githubusercontent.com/spree/spree-dev-docs/master/.gitbook/assets/mulit_store_978x2.png)
 
-## Demo
+## Storefronts
 
-See Spree in action: [demo.spreecommerce.org](https://demo.spreecommerce.org/)
+* [Next.js Commerce online demo](https://spree.vercel.app/) - [Setup instructions](https://dev-docs.spreecommerce.org/storefronts/next.js-commerce)
+* Vue Storefront 2 - coming soon!
 
-Or fire up your own demo on Heroku:
+## Admin Dashboard
 
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/spree/spree_starter)
+Fire up your own instance in the cloud:
 
-Admin panel credentials for your own Heroku demo:
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/spree/spree_starter) <a href="https://render.com/deploy?repo=https://github.com/spree/spree_starter/tree/main">
+  <img src="https://render.com/images/deploy-to-render-button.svg" alt="Deploy to Render" height=32>
+</a>
+
+Admin panel credentials for your own Heroku/Render demo:
 
 * login: `spree@example.com`
 * password: `spree123`

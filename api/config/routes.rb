@@ -138,6 +138,7 @@ Spree::Core::Engine.add_routes do
           delete 'remove_coupon_code', to: 'cart#remove_coupon_code', as: :cart_remove_coupon_code_without_code
           get :estimate_shipping_rates
           patch :associate
+          patch :change_currency
         end
 
         resource :checkout, controller: :checkout, only: %i[update] do
@@ -167,6 +168,16 @@ Spree::Core::Engine.add_routes do
 
         resources :menus, only: %i[index show]
         resources :cms_pages, only: %i[index show]
+
+        resources :wishlists do
+          get :default, on: :collection
+
+          member do
+            post :add_item
+            patch 'set_item_quantity/:item_id', to: 'wishlists#set_item_quantity', as: :set_item_quantity
+            delete 'remove_item/:item_id', to: 'wishlists#remove_item', as: :remove_item
+          end
+        end
       end
 
       namespace :platform do
@@ -274,33 +285,13 @@ Spree::Core::Engine.add_routes do
           end
         end
 
+        # Wishlists
+        resources :wishlists
+        resources :wished_items
+
         # Store API
         resources :stores
       end
     end
-
-    get '/404', to: 'errors#render_404'
-
-    match 'v:api/*path', to: redirect { |params, request|
-      format = ".#{params[:format]}" unless params[:format].blank?
-      query  = "?#{request.query_string}" unless request.query_string.blank?
-
-      if request.path == "#{spree_path}api/v1/#{params[:path]}#{format}#{query}"
-        "#{spree_path}api/404"
-      else
-        "#{spree_path}api/v1/#{params[:path]}#{format}#{query}"
-      end
-    }, via: [:get, :post, :put, :patch, :delete]
-
-    match '*path', to: redirect { |params, request|
-      format = ".#{params[:format]}" unless params[:format].blank?
-      query  = "?#{request.query_string}" unless request.query_string.blank?
-
-      if request.path == "#{spree_path}api/v1/#{params[:path]}#{format}#{query}"
-        "#{spree_path}api/404"
-      else
-        "#{spree_path}api/v1/#{params[:path]}#{format}#{query}"
-      end
-    }, via: [:get, :post, :put, :patch, :delete]
   end
 end

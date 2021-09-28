@@ -74,7 +74,7 @@ module Spree
             return nil if doorkeeper_token.resource_owner_id.nil?
             return @spree_current_user if @spree_current_user
 
-            @spree_current_user ||= Spree.user_class.find_by(id: doorkeeper_token.resource_owner_id)
+            @spree_current_user ||= doorkeeper_token.resource_owner
           end
 
           def access_denied(exception)

@@ -4,9 +4,12 @@ Doorkeeper.configure do
   api_only
   base_controller 'ActionController::API'
 
+  # FIXME: we should only skip this for Storefront API until v5
+  # we should not skip this for Platform API
   skip_client_authentication_for_password_grant { true } if defined?(skip_client_authentication_for_password_grant)
 
   resource_owner_authenticator { current_spree_user }
+  use_polymorphic_resource_owner
 
   resource_owner_from_credentials do
     user = Spree.user_class.find_for_database_authentication(email: params[:username])
@@ -33,16 +36,8 @@ Doorkeeper.configure do
   access_token_methods :from_bearer_authorization, :from_access_token_param
 
   optional_scopes :admin, :write, :read
-end
 
-Doorkeeper::AccessGrant.class_eval do
-  self.table_name = 'spree_oauth_access_grants'
-end
-
-Doorkeeper::AccessToken.class_eval do
-  self.table_name = 'spree_oauth_access_tokens'
-end
-
-Doorkeeper::Application.class_eval do
-  self.table_name = 'spree_oauth_applications'
+  access_token_class 'Spree::OauthAccessToken'
+  access_grant_class 'Spree::OauthAccessGrant'
+  application_class 'Spree::OauthApplication'
 end

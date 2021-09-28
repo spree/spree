@@ -25,6 +25,8 @@ module Spree
       belongs_to :ship_address, class_name: 'Spree::Address', optional: true
       belongs_to :bill_address, class_name: 'Spree::Address', optional: true
 
+      has_many :wishlists, class_name: 'Spree::Wishlist', foreign_key: :user_id
+
       self.whitelisted_ransackable_associations = %w[bill_address ship_address addresses]
       self.whitelisted_ransackable_attributes = %w[id email]
 
@@ -63,6 +65,13 @@ module Spree
 
       store_credits.for_store(store).pluck(:currency).uniq.each_with_object([]) do |currency, arr|
         arr << Spree::Money.new(total_available_store_credit(currency, store), currency: currency)
+      end
+    end
+
+    def default_wishlist_for_store(current_store)
+      wishlists.find_or_create_by(is_default: true, store_id: current_store.id) do |wishlist|
+        wishlist.name = Spree.t(:default_wishlist_name)
+        wishlist.save
       end
     end
 

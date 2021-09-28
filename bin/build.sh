@@ -27,33 +27,15 @@ echo "* Setup Spree API and running RSpec..."
 echo "**************************************"
 cd api; prepare_app; bundle exec rspec spec
 
-# Spree Backend
-echo "******************************************"
-echo "* Setup Spree Backend and running RSpec..."
-echo "******************************************"
-cd ../backend; prepare_app; bundle exec rspec spec
-
 # Spree Core
 echo "***************************************"
 echo "* Setup Spree Core and running RSpec..."
 echo "***************************************"
 cd ../core; prepare_app; bundle exec rspec spec
 
-# Spree Frontend
-echo "*******************************************"
-echo "* Setup Spree Frontend and running RSpec..."
-echo "*******************************************"
-cd ../frontend; prepare_app; bundle exec rspec spec
-
 # Spree Emails
 echo "*******************************************"
 echo "* Setup Spree Emails and running RSpec..."
 echo "*******************************************"
 cd ../emails; prepare_app; bundle exec rspec spec
-
-# Spree Sample
-echo "*****************************************"
-echo "* Setup Spree Sample and running RSpec..."
-echo "*****************************************"
-cd ../sample; prepare_app; bundle exec rspec spec
 

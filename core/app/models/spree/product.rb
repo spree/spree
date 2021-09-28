@@ -115,7 +115,7 @@ module Spree
       validates :price, if: :requires_price?
     end
 
-    validates :slug, presence: true, uniqueness: { allow_blank: true, case_sensitive: true }
+    validates :slug, presence: true, uniqueness: { allow_blank: true, case_sensitive: true, scope: spree_base_uniqueness_scope }
     validate :discontinue_on_must_be_later_than_available_on, if: -> { available_on && discontinue_on }
 
     attr_accessor :option_values_hash
@@ -142,17 +142,17 @@ module Spree
 
     # Cant use short form block syntax due to https://github.com/Netflix/fast_jsonapi/issues/259
     def purchasable?
-      variants_including_master.any?(&:purchasable?)
+      default_variant.purchasable? || variants.any?(&:purchasable?)
     end
 
     # Cant use short form block syntax due to https://github.com/Netflix/fast_jsonapi/issues/259
     def in_stock?
-      variants_including_master.any?(&:in_stock?)
+      default_variant.in_stock? || variants.any?(&:in_stock?)
     end
 
     # Cant use short form block syntax due to https://github.com/Netflix/fast_jsonapi/issues/259
     def backorderable?
-      variants_including_master.any?(&:backorderable?)
+      default_variant.backorderable? || variants.any?(&:backorderable?)
     end
 
     def find_or_build_master
@@ -301,11 +301,13 @@ module Spree
     end
 
     def total_on_hand
-      @total_on_hand ||= if any_variants_not_track_inventory?
-                           Float::INFINITY
-                         else
-                           stock_items.sum(:count_on_hand)
-                         end
+      @total_on_hand ||= Rails.cache.fetch(['product-total-on-hand', cache_key_with_version]) do
+        if any_variants_not_track_inventory?
+          Float::INFINITY
+        else
+          stock_items.sum(:count_on_hand)
+        end
+      end
     end
 
     # Master variant may be deleted (i.e. when the product is deleted)

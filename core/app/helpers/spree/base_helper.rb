@@ -65,7 +65,7 @@ module Spree
                      elsif current_store.logo.attached? && current_store.logo.image?
                        main_app.url_for(current_store.logo)
                      else
-                       Spree::Config[:logo]
+                      'logo/spree_50.png'
                      end
 
       path = spree.respond_to?(:root_path) ? spree.root_path : main_app.root_path
@@ -268,10 +268,6 @@ module Spree
       return if current_store.seo_robots.blank?
 
       tag('meta', name: 'robots', content: current_store.seo_robots)
-    end
-
-    def taxon_wysiwyg_editor_enabled?
-      Spree::Config[:taxon_wysiwyg_editor_enabled]
     end
   end
 end
