@@ -20,8 +20,8 @@ info:
     url: 'https://sparksolutions.co'
     email: we@sparksolutions.co
   license:
-    name: 'https://github.com/spree/spree/blob/master/license.md'
-    url: BSD-3-Clause
+    name: BSD-3-Clause
+    url: 'https://github.com/spree/spree/blob/master/license.md'
 paths:
   /api/v2/storefront/account:
     get:
@@ -233,7 +233,7 @@ paths:
         - bearerAuth: []
   '/api/v2/storefront/account/addresses/{id}':
     delete:
-      description: 'Removes selected Address for the signed in User. It uses soft-delete for addresses with shipments and orders.'
+      description: Removes selected Address for the signed in User. It uses soft-delete for addresses with shipments and orders.
       tags:
         - Account
       operationId: remove-address
@@ -298,13 +298,13 @@ paths:
           name: 'filter[payment_method_id]'
           schema:
             type: string
-          example: "2"
+          example: '2'
           description: Filter based on payment method ID
         - $ref: '#/components/parameters/CreditCardIncludeParam'
         - $ref: '#/components/parameters/SparseFieldsParam'
   '/api/v2/storefront/account/credit_cards/{id}':
     delete:
-      description: 'Removes selected credit card for the signed in User. It uses soft-delete.'
+      description: Removes selected credit card for the signed in User. It uses soft-delete.
       tags:
         - Account
       operationId: remove-credit-card
@@ -430,94 +430,326 @@ paths:
               schema:
                 $ref: '#/components/schemas/Cart'
               examples:
-                example:
+                Standard response:
                   value:
                     data:
-                      id: '4'
+                      id: '11'
                       type: cart
                       attributes:
-                        number: R247540734
-                        item_total: '0.0'
-                        total: '0.0'
-                        ship_total: '0.0'
-                        adjustment_total: '0.0'
-                        created_at: '2020-02-16T07:14:54.617Z'
-                        updated_at: '2020-02-16T07:14:54.617Z'
+                        number: R823511564
+                        item_total: '287.97'
+                        total: '316.0'
+                        ship_total: '5.0'
+                        adjustment_total: '23.03'
+                        created_at: '2021-09-28T12:57:15.148Z'
+                        updated_at: '2021-09-28T13:06:02.689Z'
                         completed_at: null
-                        included_tax_total: '0.0'
-                        additional_tax_total: '0.0'
-                        display_additional_tax_total: $0.00
-                        display_included_tax_total: $0.00
-                        tax_total: '0.0'
+                        included_tax_total: '26.18'
+                        additional_tax_total: '51.83'
+                        display_additional_tax_total: $51.83
+                        display_included_tax_total: $26.18
+                        tax_total: '78.01'
                         currency: USD
-                        state: cart
-                        token: zdmOIe5GUtZhZdh0zeFv9w1581837294588
-                        email: example@example.com
-                        display_item_total: $0.00
-                        display_ship_total: $0.00
-                        display_adjustment_total: $0.00
-                        display_tax_total: $0.00
-                        promo_total: '0.0'
-                        display_promo_total: $0.00
-                        item_count: 0
+                        state: payment
+                        token: VDK_6q_NNdWFc81VZRpUfQ1632833835148
+                        email: spree@example.com
+                        display_item_total: $287.97
+                        display_ship_total: $5.00
+                        display_adjustment_total: $23.03
+                        display_tax_total: $78.01
+                        promo_total: '-28.8'
+                        display_promo_total: '-$28.80'
+                        item_count: 3
                         special_instructions: null
-                        display_total: $0.00
+                        display_total: $316.00
+                        pre_tax_item_amount: '261.7909'
+                        display_pre_tax_item_amount: $261.79
+                        pre_tax_total: '266.7909'
+                        display_pre_tax_total: $266.79
+                        shipment_state: null
+                        payment_state: null
                       relationships:
                         line_items:
-                          data: []
+                          data:
+                            - id: '6'
+                              type: line_item
                         variants:
-                          data: []
+                          data:
+                            - id: '130'
+                              type: variant
                         promotions:
-                          data: []
+                          data:
+                            - id: '2'
+                              type: promotion
                         payments:
                           data: []
                         shipments:
-                          data: []
+                          data:
+                            - id: '7'
+                              type: shipment
                         user:
-                          data: null
+                          data:
+                            id: '1'
+                            type: user
                         billing_address:
-                          data: null
+                          data:
+                            id: '25'
+                            type: address
                         shipping_address:
-                          data: null
+                          data:
+                            id: '25'
+                            type: address
+                Including all related objects:
+                  value:
+                    data:
+                      id: '11'
+                      type: cart
+                      attributes:
+                        number: R823511564
+                        item_total: '287.97'
+                        total: '316.0'
+                        ship_total: '5.0'
+                        adjustment_total: '23.03'
+                        created_at: '2021-09-28T12:57:15.148Z'
+                        updated_at: '2021-09-28T13:06:02.689Z'
+                        completed_at: null
+                        included_tax_total: '26.18'
+                        additional_tax_total: '51.83'
+                        display_additional_tax_total: $51.83
+                        display_included_tax_total: $26.18
+                        tax_total: '78.01'
+                        currency: USD
+                        state: payment
+                        token: VDK_6q_NNdWFc81VZRpUfQ1632833835148
+                        email: spree@example.com
+                        display_item_total: $287.97
+                        display_ship_total: $5.00
+                        display_adjustment_total: $23.03
+                        display_tax_total: $78.01
+                        promo_total: '-28.8'
+                        display_promo_total: '-$28.80'
+                        item_count: 3
+                        special_instructions: null
+                        display_total: $316.00
+                        pre_tax_item_amount: '261.7909'
+                        display_pre_tax_item_amount: $261.79
+                        pre_tax_total: '266.7909'
+                        display_pre_tax_total: $266.79
+                        shipment_state: null
+                        payment_state: null
+                      relationships:
+                        line_items:
+                          data:
+                            - id: '6'
+                              type: line_item
+                        variants:
+                          data:
+                            - id: '130'
+                              type: variant
+                        promotions:
+                          data:
+                            - id: '2'
+                              type: promotion
+                        payments:
+                          data: []
+                        shipments:
+                          data:
+                            - id: '7'
+                              type: shipment
+                        user:
+                          data:
+                            id: '1'
+                            type: user
+                        billing_address:
+                          data:
+                            id: '25'
+                            type: address
+                        shipping_address:
+                          data:
+                            id: '25'
+                            type: address
                     included:
-                      - id: "2"
-                        type: "promotion"
+                      - id: '6'
+                        type: line_item
                         attributes:
-                          name: "10% Discount"
-                          description: "Super discount for you"
-                          amount: "-22.0"
-                          display_amount: "$22.00"
-                      - id: "4"
-                        type: "user"
+                          name: 3 4 Sleeve T Shirt
+                          quantity: 3
+                          price: '95.99'
+                          slug: 3-4-sleeve-t-shirt
+                          options_text: 'Color: white, Size: XS'
+                          currency: USD
+                          display_price: $95.99
+                          total: '311.0'
+                          display_total: $311.00
+                          adjustment_total: '23.03'
+                          display_adjustment_total: $23.03
+                          additional_tax_total: '51.83'
+                          discounted_amount: '259.17'
+                          display_discounted_amount: $259.17
+                          display_additional_tax_total: $51.83
+                          promo_total: '-28.8'
+                          display_promo_total: '-$28.80'
+                          included_tax_total: '26.18'
+                          display_included_tax_total: $26.18
+                          pre_tax_amount: '261.7909'
+                          display_pre_tax_amount: $261.79
+                        relationships:
+                          variant:
+                            data:
+                              id: '130'
+                              type: variant
+                      - id: '1'
+                        type: image
                         attributes:
-                          email: "example@example.com"
-                      - id: "1"
-                        type: "address"
+                          transformed_url: null
+                          styles:
+                            - url: /rails/active_storage/representations/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBCZz09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--940b84e3b5df01c826fbc382e751046c8aaafaec/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdDem9MWm05eWJXRjBTU0lJY0c1bkJqb0dSVlE2REdkeVlYWnBkSGxKSWd0alpXNTBaWElHT3daVU9ndHlaWE5wZW1WSklnczBPSGcwT0Q0R093WlVPZ3RsZUhSbGJuUkFDRG9QWW1GamEyZHliM1Z1WkVraUNYTm9iM2NHT3daVU9neHhkV0ZzYVhSNWFWVT0iLCJleHAiOm51bGwsInB1ciI6InZhcmlhdGlvbiJ9fQ==--5f94074b42f94dcde26991ebc0fa266f4136b5c5/3-4-shirt-red.png
+                              size: 48x48>
+                              width: '48'
+                              height: '48'
+                            - url: /rails/active_storage/representations/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBCZz09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--940b84e3b5df01c826fbc382e751046c8aaafaec/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdDem9MWm05eWJXRjBTU0lJY0c1bkJqb0dSVlE2REdkeVlYWnBkSGxKSWd0alpXNTBaWElHT3daVU9ndHlaWE5wZW1WSklnMHhNREI0TVRBd1BnWTdCbFE2QzJWNGRHVnVkRUFJT2c5aVlXTnJaM0p2ZFc1a1NTSUpjMmh2ZHdZN0JsUTZESEYxWVd4cGRIbHBWUT09IiwiZXhwIjpudWxsLCJwdXIiOiJ2YXJpYXRpb24ifX0=--f4c0ccb3ebc15c5becf44fd2b9dc9526bb2bf552/3-4-shirt-red.png
+                              size: 100x100>
+                              width: '100'
+                              height: '100'
+                            - url: /rails/active_storage/representations/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBCZz09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--940b84e3b5df01c826fbc382e751046c8aaafaec/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdDem9MWm05eWJXRjBTU0lJY0c1bkJqb0dSVlE2REdkeVlYWnBkSGxKSWd0alpXNTBaWElHT3daVU9ndHlaWE5wZW1WSklnMHlOREI0TWpRd1BnWTdCbFE2QzJWNGRHVnVkRUFJT2c5aVlXTnJaM0p2ZFc1a1NTSUpjMmh2ZHdZN0JsUTZESEYxWVd4cGRIbHBWUT09IiwiZXhwIjpudWxsLCJwdXIiOiJ2YXJpYXRpb24ifX0=--23c27823d8d23107f80822c67372ac3f36595dee/3-4-shirt-red.png
+                              size: 240x240>
+                              width: '240'
+                              height: '240'
+                            - url: /rails/active_storage/representations/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBCZz09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--940b84e3b5df01c826fbc382e751046c8aaafaec/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdDem9MWm05eWJXRjBTU0lJY0c1bkJqb0dSVlE2REdkeVlYWnBkSGxKSWd0alpXNTBaWElHT3daVU9ndHlaWE5wZW1WSklnMHhOakI0TWpBd1BnWTdCbFE2QzJWNGRHVnVkRUFJT2c5aVlXTnJaM0p2ZFc1a1NTSUpjMmh2ZHdZN0JsUTZESEYxWVd4cGRIbHBWUT09IiwiZXhwIjpudWxsLCJwdXIiOiJ2YXJpYXRpb24ifX0=--38efb9fba02d35b716d55de13df775845624d150/3-4-shirt-red.png
+                              size: 160x200>
+                              width: '160'
+                              height: '200'
+                            - url: /rails/active_storage/representations/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBCZz09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--940b84e3b5df01c826fbc382e751046c8aaafaec/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdDem9MWm05eWJXRjBTU0lJY0c1bkJqb0dSVlE2REdkeVlYWnBkSGxKSWd0alpXNTBaWElHT3daVU9ndHlaWE5wZW1WSklnMDBORGg0TmpBd1BnWTdCbFE2QzJWNGRHVnVkRUFJT2c5aVlXTnJaM0p2ZFc1a1NTSUpjMmh2ZHdZN0JsUTZESEYxWVd4cGRIbHBWUT09IiwiZXhwIjpudWxsLCJwdXIiOiJ2YXJpYXRpb24ifX0=--899ad54650e27f9fea5e3904ec628b273b4c89a6/3-4-shirt-red.png
+                              size: 448x600>
+                              width: '448'
+                              height: '600'
+                            - url: /rails/active_storage/representations/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBCZz09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--940b84e3b5df01c826fbc382e751046c8aaafaec/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdDem9MWm05eWJXRjBTU0lJY0c1bkJqb0dSVlE2REdkeVlYWnBkSGxKSWd0alpXNTBaWElHT3daVU9ndHlaWE5wZW1WSklnMHlOVFI0TXpRd1BnWTdCbFE2QzJWNGRHVnVkRUFJT2c5aVlXTnJaM0p2ZFc1a1NTSUpjMmh2ZHdZN0JsUTZESEYxWVd4cGRIbHBWUT09IiwiZXhwIjpudWxsLCJwdXIiOiJ2YXJpYXRpb24ifX0=--3afb6d475a0cef62acf388c777c996366de12d1b/3-4-shirt-red.png
+                              size: 254x340>
+                              width: '254'
+                              height: '340'
+                            - url: /rails/active_storage/representations/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBCZz09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--940b84e3b5df01c826fbc382e751046c8aaafaec/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdDem9MWm05eWJXRjBTU0lJY0c1bkJqb0dSVlE2REdkeVlYWnBkSGxKSWd0alpXNTBaWElHT3daVU9ndHlaWE5wZW1WSklnMHpOVEI0TkRZNFBnWTdCbFE2QzJWNGRHVnVkRUFJT2c5aVlXTnJaM0p2ZFc1a1NTSUpjMmh2ZHdZN0JsUTZESEYxWVd4cGRIbHBWUT09IiwiZXhwIjpudWxsLCJwdXIiOiJ2YXJpYXRpb24ifX0=--dbc0d7d9522d385998e8e40e0b54da5d0970f16f/3-4-shirt-red.png
+                              size: 350x468>
+                              width: '350'
+                              height: '468'
+                            - url: /rails/active_storage/representations/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBCZz09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--940b84e3b5df01c826fbc382e751046c8aaafaec/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdDem9MWm05eWJXRjBTU0lJY0c1bkJqb0dSVlE2REdkeVlYWnBkSGxKSWd0alpXNTBaWElHT3daVU9ndHlaWE5wZW1WSklnMHlNako0TWprM1BnWTdCbFE2QzJWNGRHVnVkRUFJT2c5aVlXTnJaM0p2ZFc1a1NTSUpjMmh2ZHdZN0JsUTZESEYxWVd4cGRIbHBWUT09IiwiZXhwIjpudWxsLCJwdXIiOiJ2YXJpYXRpb24ifX0=--d1708c5d0787e793e900e2ca752fd02d862b1b9b/3-4-shirt-red.png
+                              size: 222x297>
+                              width: '222'
+                              height: '297'
+                            - url: /rails/active_storage/representations/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBCZz09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--940b84e3b5df01c826fbc382e751046c8aaafaec/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdDem9MWm05eWJXRjBTU0lJY0c1bkJqb0dSVlE2REdkeVlYWnBkSGxKSWd0alpXNTBaWElHT3daVU9ndHlaWE5wZW1WSklnMHlOemg0TXpjeFBnWTdCbFE2QzJWNGRHVnVkRUFJT2c5aVlXTnJaM0p2ZFc1a1NTSUpjMmh2ZHdZN0JsUTZESEYxWVd4cGRIbHBWUT09IiwiZXhwIjpudWxsLCJwdXIiOiJ2YXJpYXRpb24ifX0=--071e560ce1ac34723119e27e00030c89a05b57da/3-4-shirt-red.png
+                              size: 278x371>
+                              width: '278'
+                              height: '371'
+                            - url: /rails/active_storage/representations/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBCZz09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--940b84e3b5df01c826fbc382e751046c8aaafaec/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdDem9MWm05eWJXRjBTU0lJY0c1bkJqb0dSVlE2REdkeVlYWnBkSGxKSWd0alpXNTBaWElHT3daVU9ndHlaWE5wZW1WSklnMDJNREI0TmpBd1BnWTdCbFE2QzJWNGRHVnVkRUFJT2c5aVlXTnJaM0p2ZFc1a1NTSUpjMmh2ZHdZN0JsUTZESEYxWVd4cGRIbHBWUT09IiwiZXhwIjpudWxsLCJwdXIiOiJ2YXJpYXRpb24ifX0=--ac2e6c29e35e5b56a28a5e9c85f84b9797cc4156/3-4-shirt-red.png
+                              size: 600x600>
+                              width: '600'
+                              height: '600'
+                            - url: /rails/active_storage/representations/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBCZz09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--940b84e3b5df01c826fbc382e751046c8aaafaec/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdDem9MWm05eWJXRjBTU0lJY0c1bkJqb0dSVlE2REdkeVlYWnBkSGxKSWd0alpXNTBaWElHT3daVU9ndHlaWE5wZW1WSklnMHlOemg0TXpjeFBnWTdCbFE2QzJWNGRHVnVkRUFJT2c5aVlXTnJaM0p2ZFc1a1NTSUpjMmh2ZHdZN0JsUTZESEYxWVd4cGRIbHBWUT09IiwiZXhwIjpudWxsLCJwdXIiOiJ2YXJpYXRpb24ifX0=--071e560ce1ac34723119e27e00030c89a05b57da/3-4-shirt-red.png
+                              size: 278x371>
+                              width: '278'
+                              height: '371'
+                            - url: /rails/active_storage/representations/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBCZz09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--940b84e3b5df01c826fbc382e751046c8aaafaec/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdDem9MWm05eWJXRjBTU0lJY0c1bkJqb0dSVlE2REdkeVlYWnBkSGxKSWd0alpXNTBaWElHT3daVU9ndHlaWE5wZW1WSklnMDJOVEI0T0Rjd1BnWTdCbFE2QzJWNGRHVnVkRUFJT2c5aVlXTnJaM0p2ZFc1a1NTSUpjMmh2ZHdZN0JsUTZESEYxWVd4cGRIbHBWUT09IiwiZXhwIjpudWxsLCJwdXIiOiJ2YXJpYXRpb24ifX0=--54c1c6d442b3f7663ec0052aff4aaeb4f08d24e1/3-4-shirt-red.png
+                              size: 650x870>
+                              width: '650'
+                              height: '870'
+                          position: 1
+                          alt: ''
+                          original_url: /rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBCZz09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--940b84e3b5df01c826fbc382e751046c8aaafaec/3-4-shirt-red.png
+                      - id: '130'
+                        type: variant
                         attributes:
-                          firstname: "Bob"
-                          lastname: "Billerson"
-                          address1: "1600 Clear View Pkwy"
-                          address2: "Mountain View"
-                          city: "LA"
-                          zipcode: '94043'
-                          phone: "(+1) 123 456 789"
-                          state_name: "California"
-                          state_code: "CA"
-                          country_name: "United States of America"
-                          country_iso3: "USA"
-                          company: null
-                      - id: "2832"
-                        type: "shipment"
+                          sku: T-shirts_3_4sleevet-shirt_95.99_white_xs
+                          weight: '60.0'
+                          height: '10.0'
+                          width: '16.0'
+                          depth: '5.0'
+                          is_master: false
+                          options_text: 'Color: white, Size: XS'
+                          purchasable: true
+                          in_stock: true
+                          backorderable: true
+                          currency: USD
+                          price: '95.99'
+                          display_price: $95.99
+                          compare_at_price: '100.0'
+                          display_compare_at_price: $100.00
+                        relationships:
+                          product:
+                            data:
+                              id: '14'
+                              type: product
+                          images:
+                            data:
+                              - id: '1'
+                                type: image
+                          option_values:
+                            data:
+                              - id: '1'
+                                type: option_value
+                              - id: '23'
+                                type: option_value
+                      - id: '25'
+                        type: address
                         attributes:
-                          number: "H121354"
+                          firstname: ' Tyler'
+                          lastname: Durden
+                          address1: 3029 Street Way Drive
+                          address2: Basement Entrance
+                          city: LA
+                          zipcode: '90210'
+                          phone: '09128386372'
+                          state_name: California
+                          company: Paper Street Soap Co.
+                          country_name: United States
+                          country_iso3: USA
+                          country_iso: US
+                          label: null
+                          state_code: CA
+                      - id: '1'
+                        type: user
+                        attributes:
+                          email: spree@example.com
+                          store_credits: 0
+                          completed_orders: 0
+                        relationships:
+                          default_billing_address:
+                            data:
+                              id: '11'
+                              type: address
+                          default_shipping_address:
+                            data:
+                              id: '11'
+                              type: address
+                      - id: '7'
+                        type: shipment
+                        attributes:
+                          number: H72371700543
+                          final_price: '5.0'
+                          display_final_price: $5.00
+                          state: pending
+                          shipped_at: null
+                          tracking_url: null
                           free: false
-                          final_price: '10.0'
-                          display_final_price: '$10.00'
-                          tracking_url: 'https://tools.usps.com/go/TrackConfirmAction?tRef=fullpage&tLc=2&text28777=&tLabels=4123412434%2C'
-                          state: "shipped"
-                          shipped_at: '2019-01-02 13:42:12'
-
-
+                        relationships:
+                          shipping_rates:
+                            data:
+                              - id: '97'
+                                type: shipping_rate
+                              - id: '98'
+                                type: shipping_rate
+                              - id: '99'
+                                type: shipping_rate
+                          stock_location:
+                            data:
+                              id: '1'
+                              type: stock_location
+                      - id: '2'
+                        type: promotion
+                        attributes:
+                          name: Black Friday
+                          description: ''
+                          amount: '-28.8'
+                          display_amount: '-$28.80'
+                          code: BLKFRI
       parameters:
         - $ref: '#/components/parameters/CartIncludeParam'
         - $ref: '#/components/parameters/SparseFieldsParam'
@@ -536,7 +768,7 @@ paths:
         '404':
           $ref: '#/components/responses/404NotFound'
       security:
-        - bearerAuth: [ ]
+        - bearerAuth: []
       summary: Deletes Cart
     get:
       description: Returns contents of the currently used Cart
@@ -550,174 +782,6 @@ paths:
             application/vnd.api+json:
               schema:
                 $ref: '#/components/schemas/Cart'
-              examples:
-                example:
-                  value:
-                    data:
-                      id: '511'
-                      type: cart
-                      attributes:
-                        number: R869429838
-                        item_total: '71.99'
-                        total: '71.99'
-                        ship_total: '0.0'
-                        adjustment_total: '0.0'
-                        created_at: '2021-09-08T05:34:22.890-05:00'
-                        updated_at: '2021-09-08T05:34:22.890-05:00'
-                        completed_at: null
-                        included_tax_total: '0.0'
-                        additional_tax_total: '0.0'
-                        display_additional_tax_total: $0.00
-                        display_included_tax_total: $0.00
-                        tax_total: '0.0'
-                        currency: USD
-                        state: cart
-                        token: U5B2bubbqA_UfAisxSTDvQ1631010862885
-                        email: example@example.com
-                        display_item_total: $71.99
-                        display_ship_total: $0.00
-                        display_adjustment_total: $0.00
-                        display_tax_total: $0.00
-                        promo_total: '0.0'
-                        display_promo_total: $0.00
-                        item_count: 1
-                        special_instructions: null
-                        display_total: $71.99
-                        pre_tax_item_amount: '71.99'
-                        display_pre_tax_item_amount: $71.99
-                        pre_tax_total: '71.99'
-                        display_pre_tax_total: $71.99
-                        shipment_state: null
-                        payment_state: null
-                      relationships:
-                        line_items:
-                          data:
-                            - id: '474'
-                              type: line_item
-                        variants:
-                          data:
-                            - id: '162'
-                              type: variant
-                        promotions:
-                          data: []
-                        payments:
-                          data: []
-                        shipments:
-                          data: []
-                        user:
-                          data:
-                            id: '153'
-                            type: user
-                        billing_address:
-                          data: null
-                        shipping_address:
-                          data: null
-                    included:
-                      - id: '474'
-                        type: line_item
-                        attributes:
-                          name: Floral Wrap Dress
-                          quantity: 1
-                          price: '71.99'
-                          slug: floral-wrap-dress
-                          options_text: 'Color: black, Length: Mini, and Size: XS'
-                          currency: USD
-                          display_price: $71.99
-                          total: '71.99'
-                          display_total: $71.99
-                          adjustment_total: '0.0'
-                          display_adjustment_total: $0.00
-                          additional_tax_total: '0.0'
-                          discounted_amount: '71.99'
-                          display_discounted_amount: $71.99
-                          display_additional_tax_total: $0.00
-                          promo_total: '0.0'
-                          display_promo_total: $0.00
-                          included_tax_total: '0.0'
-                          display_included_tax_total: $0.00
-                          pre_tax_amount: '71.99'
-                          display_pre_tax_amount: $71.99
-                        relationships:
-                          variant:
-                            data:
-                              id: '162'
-                              type: variant
-                      - id: '162'
-                        type: variant
-                        attributes:
-                          sku: 'Dresses_floralwrapdress_71.99_black_mini_xs'
-                          weight: '0.0'
-                          height: null
-                          width: null
-                          depth: null
-                          is_master: false
-                          options_text: 'Color: black, Length: Mini, and Size: XS'
-                          purchasable: true
-                          in_stock: true
-                          backorderable: true
-                          currency: USD
-                          price: '71.99'
-                          display_price: $71.99
-                          compare_at_price: null
-                          display_compare_at_price: null
-                        relationships:
-                          product:
-                            data:
-                              id: '46'
-                              type: product
-                          images:
-                            data: []
-                          option_values:
-                            data:
-                              - id: '4'
-                                type: option_value
-                              - id: '20'
-                                type: option_value
-                              - id: '23'
-                                type: option_value
-                      - id: '153'
-                        type: user
-                        attributes:
-                          email: example@example.com
-                          store_credits: 0
-                          completed_orders: 0
-                        relationships:
-                          default_billing_address:
-                            data: null
-                          default_shipping_address:
-                            data: null
-                      - id: '2'
-                        type: promotion
-                        attributes:
-                          name: 10% Discount
-                          description: Super discount for you
-                          amount: '-22.0'
-                          display_amount: $22.00
-                      - id: '1'
-                        type: address
-                        attributes:
-                          firstname: Bob
-                          lastname: Billerson
-                          address1: 1600 Clear View Pkwy
-                          address2: Mountain View
-                          city: LA
-                          zipcode: '94043'
-                          phone: (+1) 123 456 789
-                          state_name: California
-                          state_code: CA
-                          country_name: United States of America
-                          country_iso3: USA
-                          company: null
-                      - id: '2832'
-                        type: shipment
-                        attributes:
-                          number: H121354
-                          free: false
-                          final_price: '10.0'
-                          display_final_price: $10.00
-                          tracking_url: 'https://tools.usps.com/go/TrackConfirmAction?tRef=fullpage&tLc=2&text28777=&tLabels=4123412434%2C'
-                          state: shipped
-                          shipped_at: '2021-09-06 13:42:12'
         '404':
           $ref: '#/components/responses/404NotFound'
       security:
@@ -990,6 +1054,38 @@ paths:
       security:
         - bearerAuth: []
       summary: Associate a guest cart to a user
+  /api/v2/storefront/cart/change_currency:
+    patch:
+      description: Changes cart currency and recalculates its value.
+      tags:
+        - Cart
+      operationId: change-currency
+      parameters:
+        - name: new_currency
+          in: query
+          description: Currency to change the cart to
+          schema:
+            type: string
+        - $ref: '#/components/parameters/CartIncludeParam'
+        - $ref: '#/components/parameters/SparseFieldsParam'
+      responses:
+        '200':
+          description: Currency has been successfully changed
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+        '422':
+          description: Returned when currency is not supported or cart cannot be updated
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - bearerAuth: []
+      summary: Change cart currency
   /api/v2/storefront/checkout:
     patch:
       description: |-
@@ -1047,7 +1143,8 @@ paths:
         ```
 
         ```json
-          "order": {
+        {
+            "order": {
             "shipments_attributes": [
               {
                 "id": "1",
@@ -1055,6 +1152,7 @@ paths:
               }
             ]
           }
+        }
         ```
 
         `selected_shipping_rate_id` is the ID of a Shipping Rate. `id` is the ID of the Shipment itself. You can update multiple
@@ -1072,18 +1170,16 @@ paths:
             "order": {
               "payments_attributes": [
                 {
-                  "payment_method_id": "1"
+                  "payment_method_id": "1",
+                  "source_attributes": {
+                      "number": "4111111111111111",
+                      "month": "10",
+                      "year": "2022",
+                      "verification_value": "123",
+                      "name": "John Doe"
+                  }
                 }
               ]
-            },
-            "payment_source": {
-              1: {
-                "number": "4111111111111111",
-                "month": "01",
-                "year": "2022",
-                "verification_value": "123",
-                "name": "John Doe"
-              }
             }
           }
         ```
@@ -1144,7 +1240,7 @@ paths:
                         properties:
                           payment_method_id:
                             type: string
-                            example: "1"
+                            example: '1'
                             description: ID of selected payment method
                     shipments_attributes:
                       type: object
@@ -1236,7 +1332,7 @@ paths:
       summary: Complete Checkout
   /api/v2/storefront/checkout/add_store_credit:
     post:
-      description: 'Adds Store Credit payment if the currently signed in User has any available.'
+      description: Adds Store Credit payment if the currently signed in User has any available.
       tags:
         - Checkout
       operationId: add-store-credit
@@ -1264,7 +1360,7 @@ paths:
           description: Amount of Store Credit to use. As much as possible Store Credit will be applied if no amount is passed.
           schema:
             type: string
-          example: "100"
+          example: '100'
         - $ref: '#/components/parameters/CartIncludeParam'
         - $ref: '#/components/parameters/SparseFieldsParam'
       summary: Add Store Credit
@@ -1372,7 +1468,7 @@ paths:
           schema:
             type: string
           example: alpha
-          description: 'Find Products with Property Brand Name with value Alpha'
+          description: Find Products with Property Brand Name with value Alpha
         - in: query
           name: 'filter[show_deleted]'
           schema:
@@ -3833,7 +3929,7 @@ paths:
           name: 'filter[parent_permalink]'
           schema:
             type: string
-          example: 'clothes'
+          example: clothes
           description: Fetch children nodes of specified Taxon permalink
         - in: query
           name: 'filter[taxonomy_id]'
@@ -5476,8 +5572,8 @@ paths:
                         title: About US
                         content: <p>This is the rich text for our about us page</p>
                         locale: en
-                        meta_description: 'Learn about us, by reading out About Us page.'
-                        meta_title: Example Strore Ltd | About Us Page
+                        meta_description: 'Learn about us, by reading our About Us page.'
+                        meta_title: Example Store Ltd | About Us Page
                         slug: about-us
                         type: 'Spree::Cms::Pages::StandardPage'
                       relationships:
@@ -13561,6 +13657,687 @@ paths:
         '404':
           $ref: '#/components/responses/404NotFound'
       summary: Get Menu Details
+  /api/v2/storefront/wishlists:
+    get:
+      description: 'Returns all wishlists available to the current user, in the current store.'
+      summary: List all Wishlists
+      tags:
+        - Wishlists
+      operationId: list-wishlists-for-current-user
+      parameters:
+        - $ref: '#/components/parameters/WishlistIncludeParam'
+        - $ref: '#/components/parameters/WishlistSparseFieldsParam'
+        - $ref: '#/components/parameters/PerPageParam'
+        - $ref: '#/components/parameters/WishlistIsVariantIncludedParam'
+      responses:
+        '200':
+          description: |-
+            A successful response returns a `data` array containing each **wishlist** object.
+
+            If you requested specific fields to be returned through the **fields** query parameter, your response body might differ from the one shown in the schema below.
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Wishlists'
+              examples:
+                Standard response:
+                  value:
+                    data:
+                      - id: '4'
+                        type: wishlist
+                        attributes:
+                          token: gD1QP6SybtooojnxtkXPvcvh
+                          name: My Wishlist
+                          is_private: false
+                          is_default: false
+                          variant_included: true
+                        relationships:
+                          wished_items:
+                            data:
+                              - id: '4'
+                                type: wished_item
+                              - id: '5'
+                                type: wished_item
+                      - id: '8'
+                        type: wishlist
+                        attributes:
+                          token: LKWCxupq2gsN9DRhwuNBCrf5
+                          name: Fathers Day
+                          is_private: true
+                          is_default: true
+                          variant_included: false
+                        relationships:
+                          wished_items:
+                            data:
+                              - id: '6'
+                                type: wished_item
+                      - id: '7'
+                        type: wishlist
+                        attributes:
+                          token: QHnjcCvz21Dtzc6isWyiyBxM
+                          name: Black Friday
+                          is_private: false
+                          is_default: false
+                          variant_included: false
+                        relationships:
+                          wished_items:
+                            data: []
+                    meta:
+                      count: 3
+                      total_count: 3
+                      total_pages: 1
+                    links:
+                      self: 'http://localhost:3000/api/v2/storefront/wishlists?is_variant_included=150'
+                      next: 'http://localhost:3000/api/v2/storefront/wishlists?page=1'
+                      prev: 'http://localhost:3000/api/v2/storefront/wishlists?page=1'
+                      last: 'http://localhost:3000/api/v2/storefront/wishlists?page=1'
+                      first: 'http://localhost:3000/api/v2/storefront/wishlists?page=1'
+                is_variant_included=150:
+                  value:
+                    data:
+                      - id: '4'
+                        type: wishlist
+                        attributes:
+                          token: gD1QP6SybtooojnxtkXPvcvh
+                          name: My Wishlist
+                          is_private: false
+                          is_default: false
+                          variant_included: true
+                        relationships:
+                          wished_items:
+                            data:
+                              - id: '4'
+                                type: wished_item
+                              - id: '5'
+                                type: wished_item
+                      - id: '8'
+                        type: wishlist
+                        attributes:
+                          token: LKWCxupq2gsN9DRhwuNBCrf5
+                          name: Fathers Day
+                          is_private: true
+                          is_default: true
+                          variant_included: true
+                        relationships:
+                          wished_items:
+                            data:
+                              - id: '6'
+                                type: wished_item
+                      - id: '7'
+                        type: wishlist
+                        attributes:
+                          token: QHnjcCvz21Dtzc6isWyiyBxM
+                          name: Black Friday
+                          is_private: false
+                          is_default: false
+                          variant_included: false
+                        relationships:
+                          wished_items:
+                            data: []
+                    meta:
+                      count: 3
+                      total_count: 3
+                      total_pages: 1
+                    links:
+                      self: 'http://localhost:3000/api/v2/storefront/wishlists?is_variant_included=150'
+                      next: 'http://localhost:3000/api/v2/storefront/wishlists?page=1'
+                      prev: 'http://localhost:3000/api/v2/storefront/wishlists?page=1'
+                      last: 'http://localhost:3000/api/v2/storefront/wishlists?page=1'
+                      first: 'http://localhost:3000/api/v2/storefront/wishlists?page=1'
+                'fields[wishlist]=name':
+                  value:
+                    data:
+                      - id: '4'
+                        type: wishlist
+                        attributes:
+                          name: My Wishlist
+                        relationships: {}
+                      - id: '8'
+                        type: wishlist
+                        attributes:
+                          name: Fathers Day
+                        relationships: {}
+                      - id: '7'
+                        type: wishlist
+                        attributes:
+                          name: Black Friday
+                        relationships: {}
+                    meta:
+                      count: 3
+                      total_count: 3
+                      total_pages: 1
+                    links:
+                      self: 'http://localhost:3000/api/v2/storefront/wishlists?fields[wishlist]=name'
+                      next: 'http://localhost:3000/api/v2/storefront/wishlists?page=1'
+                      prev: 'http://localhost:3000/api/v2/storefront/wishlists?page=1'
+                      last: 'http://localhost:3000/api/v2/storefront/wishlists?page=1'
+                      first: 'http://localhost:3000/api/v2/storefront/wishlists?page=1'
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+      security:
+        - bearerAuth: []
+    post:
+      description: Creates a new wishlist for the current user in the current store.
+      summary: Create a Wishlist
+      tags:
+        - Wishlists
+      operationId: create-wishlist
+      responses:
+        '200':
+          description: |-
+            A successful response returns a `data` object containing the **wishlist**.
+
+            If you requested specific fields to be returned through the **fields** query parameter, your response body might differ from the one shown in the schema below.
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Wishlist'
+              examples:
+                Standard response:
+                  value:
+                    data:
+                      id: '28'
+                      type: wishlist
+                      attributes:
+                        token: 1inBHcJnxBrVEMAZb9esRqZP
+                        name: My Wishlist
+                        is_private: false
+                        is_default: true
+                        variant_included: false
+                      relationships:
+                        wished_items:
+                          data: []
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: The Wishlist name.
+                is_private:
+                  type: boolean
+                  description: Set the Wishlist to public or private. Defaults to true (private).
+                is_default:
+                  type: boolean
+                  description: Whether the wishlist is set to the users default wishlist for the current store. Defaults to false.
+              required:
+                - name
+            examples:
+              Create wishlist:
+                value:
+                  name: My Wishlist
+                  is_private: false
+                  is_default: true
+  '/api/v2/storefront/wishlists/{token}':
+    get:
+      description: |-
+        Retrieves a wishlist using the wishlist token.
+
+        If the wishlist is publicly viewable, the endpoint will return the requested wishlist regardless of the user. If the wishlist is private, only the wishlist owner can access the wishlist.
+      summary: Retrieve a Wishlist
+      tags:
+        - Wishlists
+      operationId: get-wishlist-details
+      parameters:
+        - $ref: '#/components/parameters/Token'
+        - $ref: '#/components/parameters/WishlistIncludeParam'
+        - $ref: '#/components/parameters/WishlistSparseFieldsParam'
+        - $ref: '#/components/parameters/WishlistIsVariantIncludedParam'
+      responses:
+        '200':
+          description: |-
+            A successful response returns a `data` object containing the **wishlist**.
+
+            If you requested specific fields to be returned through the **fields** query parameter, your response body might differ from the one shown in the schema below.
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Wishlist'
+              examples:
+                Standard response:
+                  value:
+                    data:
+                      id: '28'
+                      type: wishlist
+                      attributes:
+                        token: 1inBHcJnxBrVEMAZb9esRqZP
+                        name: My Wishlist
+                        is_private: false
+                        is_default: true
+                        variant_included: false
+                      relationships:
+                        wished_items:
+                          data:
+                            - id: '14'
+                              type: wished_variant
+                include=wished_items:
+                  value:
+                    data:
+                      id: '28'
+                      type: wishlist
+                      attributes:
+                        token: 1inBHcJnxBrVEMAZb9esRqZP
+                        name: My Wishlist
+                        is_private: false
+                        is_default: true
+                        variant_included: false
+                      relationships:
+                        wished_items:
+                          data:
+                            - id: '14'
+                              type: wished_variant
+                    included:
+                      - id: '14'
+                        type: wished_variant
+                        attributes:
+                          quantity: 7
+                          price: '26.99'
+                          total: '188.93'
+                          display_price: $26.99
+                          display_total: $188.93
+                        relationships:
+                          variant:
+                            data:
+                              id: '149'
+                              type: variant
+                          wishlist:
+                            data:
+                              id: '28'
+                              type: wishlist
+                'fields[wishlist]=name,is_private':
+                  value:
+                    data:
+                      id: '29'
+                      type: wishlist
+                      attributes:
+                        name: Birthday Ideas!
+                        is_private: true
+                      relationships: {}
+                include=wished_items.variant:
+                  value:
+                    data:
+                      id: '29'
+                      type: wishlist
+                      attributes:
+                        token: vmJtMiMozBdFtn1VkdJ8dYen
+                        name: Birthday Ideas!
+                        is_private: true
+                        is_default: true
+                      relationships:
+                        wished_items:
+                          data:
+                            - id: '15'
+                              type: wished_variant
+                    included:
+                      - id: '149'
+                        type: variant
+                        attributes:
+                          sku: JacketsandCoats_downjacketwithhood_26.99_dark_blue_xs
+                          weight: '0.0'
+                          height: null
+                          width: null
+                          depth: null
+                          is_master: false
+                          options_text: 'Color: dark_blue, Size: XS'
+                          purchasable: true
+                          in_stock: true
+                          backorderable: true
+                          currency: USD
+                          price: '26.99'
+                          display_price: $26.99
+                          compare_at_price: null
+                          display_compare_at_price: null
+                        relationships:
+                          product:
+                            data:
+                              id: '33'
+                              type: product
+                          images:
+                            data: []
+                          option_values:
+                            data:
+                              - id: '13'
+                                type: option_value
+                              - id: '23'
+                                type: option_value
+                      - id: '15'
+                        type: wished_variant
+                        attributes:
+                          quantity: 7
+                          price: '26.99'
+                          total: '188.93'
+                          display_price: $26.99
+                          display_total: $188.93
+                        relationships:
+                          variant:
+                            data:
+                              id: '149'
+                              type: variant
+                          wishlist:
+                            data:
+                              id: '29'
+                              type: wishlist
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+    put:
+      description: Updates the specific Wishlist by setting the values passed in the request body. Any parameters not provided will be left unchanged.
+      summary: Update a Wishlist
+      tags:
+        - Wishlists
+      operationId: update-wishlist
+      requestBody:
+        required: true
+        content:
+          application/vnd.api+json:
+            schema:
+              type: object
+              properties:
+                wishlist:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                      description: Change the wishlist name.
+                    is_private:
+                      type: boolean
+                      description: Set the wishlist to public or private.
+                    is_default:
+                      type: boolean
+                      description: Make this wishlist the default wishlist.
+            examples:
+              Update Name:
+                value:
+                  wishlist:
+                    name: Birthday Ideas
+              Set to Private:
+                value:
+                  wishlist:
+                    is_private: true
+              Make Default:
+                value:
+                  wishlist:
+                    is_default: true
+        description: ''
+      parameters:
+        - $ref: '#/components/parameters/Token'
+      responses:
+        '200':
+          description: |-
+            A successful response returns a `data` object containing the **wishlist**.
+
+            If you requested specific fields to be returned through the **fields** query parameter, your response body might differ from the one shown in the schema below.
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Wishlist'
+              examples:
+                Standard Response:
+                  value:
+                    data:
+                      id: '28'
+                      type: wishlist
+                      attributes:
+                        token: 1inBHcJnxBrVEMAZb9esRqZP
+                        name: Birthday Ideas
+                        is_private: true
+                        is_default: true
+                      relationships:
+                        wished_items:
+                          data:
+                            - id: '14'
+                              type: wished_variant
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+      security:
+        - bearerAuth: []
+    delete:
+      description: This operation deletes the wishlist identified in the URI `token`.
+      summary: Delete a Wishlist
+      tags:
+        - Wishlists
+      operationId: delete-wishlist
+      parameters:
+        - $ref: '#/components/parameters/Token'
+      responses:
+        '200':
+          description: |-
+            A successful response returns a `data` object containing the **wishlist**.
+
+            If you requested specific fields to be returned through the **fields** query parameter, your response body might differ from the one shown in the schema below.
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Wishlist'
+              examples:
+                Standard Response:
+                  value:
+                    data:
+                      id: '26'
+                      type: wishlist
+                      attributes:
+                        token: tAnaaejJ199JQF3qFWfXLgoE
+                        name: My Wishlist
+                        is_private: false
+                        is_default: true
+                        variant_included: false
+                      relationships:
+                        wished_items:
+                          data: []
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+      security:
+        - bearerAuth: []
+  /api/v2/storefront/wishlists/default:
+    get:
+      description: 'Returns the default wishlist for the current user, in the current store. If the user does not have a default wishlist in the current store one will be created.'
+      summary: Retrieve the Default Wishlist
+      tags:
+        - Wishlists
+      operationId: get-default-wishlist
+      parameters:
+        - $ref: '#/components/parameters/WishlistIncludeParam'
+        - $ref: '#/components/parameters/WishlistSparseFieldsParam'
+        - $ref: '#/components/parameters/WishlistIsVariantIncludedParam'
+      responses:
+        '200':
+          description: |-
+            A successful response returns a `data` object containing the **wishlist**.
+
+            If you requested specific fields to be returned through the **fields** query parameter, your response body might differ from the one shown in the schema below.
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Wishlist'
+              examples:
+                Standard response:
+                  value:
+                    data:
+                      id: '29'
+                      type: wishlist
+                      attributes:
+                        token: vmJtMiMozBdFtn1VkdJ8dYen
+                        name: My Wishlist
+                        is_private: false
+                        is_default: true
+                        variant_included: false
+                      relationships:
+                        wished_items:
+                          data: []
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+      security:
+        - bearerAuth: []
+  '/api/v2/storefront/wishlists/{token}/add_item':
+    post:
+      summary: Add Item to Wishlist
+      description: |-
+        The Add Item to Wishlist endpoint adds a variant to an existing wishlist by creating a new `wished_item`. A wished item in a wishlist is comparable to a line item in a cart.
+
+        Each wished item references a single variant, holds the desired quantity and returns price information determined by the variant price in current currency, and desired quantity.
+      tags:
+        - Wishlists
+      operationId: add-item-to-wishlist
+      parameters:
+        - $ref: '#/components/parameters/Token'
+      requestBody:
+        required: true
+        content:
+          application/vnd.api+json:
+            schema:
+              type: object
+              properties:
+                variant_id:
+                  type: string
+                  description: The variant ID that is to be added to the wishlist.
+                quantity:
+                  type: number
+                  description: 'Set a quantity greater than 0, or omit the quantity param if your wishlist does not support quantities.'
+              required:
+                - variant_id
+            examples:
+              Add a variant:
+                value:
+                  variant_id: '149'
+                  quantity: 3
+        description: |-
+          Passing a quantity value is optional for those wishlist systems that do not support quantities. In this scenario, the retuned quantity value will always be `1`, allowing the add-to-cart and pricing to reflect the single representation of the wished item accurately.
+
+          If the wishlist system you are building allows for setting quantity, add the quantity attribute to the request body with an integer value greater than zero.
+      responses:
+        '200':
+          description: A successful response returns a `data` object containing the **wished_item**.
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/WishedItem'
+              examples:
+                Standard response:
+                  value:
+                    data:
+                      id: '9'
+                      type: wished_variant
+                      attributes:
+                        quantity: 7
+                        price: '28.99'
+                        total: '202.93'
+                        display_price: $28.99
+                        display_total: $202.93
+                      relationships:
+                        variant:
+                          data:
+                            id: '149'
+                            type: variant
+                        wishlist:
+                          data:
+                            id: '4'
+                            type: wishlist
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+      security:
+        - bearerAuth: []
+    parameters:
+      - schema:
+          type: string
+        name: token
+        in: path
+        required: true
+  '/api/v2/storefront/wishlists/{token}/set_item_quantity/{item_id}':
+    patch:
+      description: This endpoint sets the wished item quantity.
+      summary: Set Item Quantity
+      tags:
+        - Wishlists
+      operationId: update-wished-variant-quantity
+      parameters:
+        - $ref: '#/components/parameters/Token'
+        - $ref: '#/components/parameters/ItemId'
+      requestBody:
+        required: true
+        content:
+          application/vnd.api+json:
+            schema:
+              type: object
+              properties:
+                quantity:
+                  type: number
+                  description: Set the quantity value to an integer greater than 0
+              required:
+                - quantity
+            examples:
+              Add a variant:
+                value:
+                  quantity: 7
+        description: ''
+      responses:
+        '200':
+          description: A successful response returns a `data` object containing the **wished_item**.
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/WishedItem'
+              examples:
+                Standard response:
+                  value:
+                    data:
+                      id: '16'
+                      type: wished_variant
+                      attributes:
+                        quantity: 5
+                        price: '26.99'
+                        total: '134.95'
+                        display_price: $26.99
+                        display_total: $134.95
+                      relationships:
+                        variant:
+                          data:
+                            id: '149'
+                            type: variant
+                        wishlist:
+                          data:
+                            id: '30'
+                            type: wishlist
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+      security:
+        - bearerAuth: []
+  '/api/v2/storefront/wishlists/{token}/remove_item/{item_id}':
+    delete:
+      description: Removes a wished item from a wishlist.
+      summary: Delete Item from Wishlist
+      tags:
+        - Wishlists
+      operationId: delete-wished-variant-from-wishlist
+      parameters:
+        - $ref: '#/components/parameters/Token'
+        - $ref: '#/components/parameters/ItemId'
+      responses:
+        '200':
+          description: A successful response returns a `data` object containing the **wished_item**.
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/WishedItem'
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+      security:
+        - bearerAuth: []
+    parameters:
+      - schema:
+          type: string
+        name: token
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: item_id
+        in: path
+        required: true
 components:
   securitySchemes:
     bearerAuth:
@@ -13624,6 +14401,7 @@ components:
       example: '2020-02-16T07:14:54.617Z'
     Address:
       type: object
+      title: Address
       properties:
         id:
           type: string
@@ -13671,8 +14449,15 @@ components:
               description: Country ISO3 code
             company:
               type: string
-              nullable: true
               example: Google Inc.
+              nullable: true
+            label:
+              type: string
+              nullable: true
+      required:
+        - id
+        - type
+        - attributes
     AddressList:
       required:
         - data
@@ -13682,6 +14467,9 @@ components:
           items:
             $ref: '#/components/schemas/Address'
     Cart:
+      x-examples: {}
+      type: object
+      description: 'Cart provides a central place around which to collect information about a customer order - including line items, adjustments, payments, addresses, return authorizations, and shipments. [Read more in Spree docs](https://dev-docs.spreecommerce.org/internals/orders)'
       properties:
         data:
           $ref: '#/components/schemas/CartAttributesWithRelationships'
@@ -13692,13 +14480,11 @@ components:
               - $ref: '#/components/schemas/Promotion'
               - $ref: '#/components/schemas/User'
               - $ref: '#/components/schemas/Address'
-              - $ref: '#/components/schemas/ShipmentAttributesWithoutRelationsips'
+              - $ref: '#/components/schemas/ShipmentAttributesAndRelationsips'
+              - $ref: '#/components/schemas/VariantAttributesAndRelationships'
+              - $ref: '#/components/schemas/LineItem'
       required:
         - data
-        - included
-      x-examples: {}
-      type: object
-      description: 'Cart provides a central place around which to collect information about a customer order - including line items, adjustments, payments, addresses, return authorizations, and shipments. [Read more in Spree docs](https://dev-docs.spreecommerce.org/internals/orders)'
     CartList:
       required:
         - data
@@ -13741,6 +14527,11 @@ components:
           $ref: '#/components/schemas/CartAttributes'
         relationships:
           $ref: '#/components/schemas/CartRelationships'
+      required:
+        - id
+        - type
+        - attributes
+        - relationships
     CartRelationships:
       type: object
       properties:
@@ -13749,17 +14540,37 @@ components:
           description: ''
           properties:
             data:
-              $ref: '#/components/schemas/Relation'
-        promotions:
-          type: object
-          properties:
-            data:
-              $ref: '#/components/schemas/Relation'
+              type: array
+              items:
+                $ref: '#/components/schemas/Relation'
         variants:
           type: object
           properties:
             data:
-              $ref: '#/components/schemas/Relation'
+              type: array
+              items:
+                $ref: '#/components/schemas/Relation'
+        promotions:
+          type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/Relation'
+        payments:
+          type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/Relation'
+        shipments:
+          type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/Relation'
         user:
           type: object
           properties:
@@ -13775,16 +14586,6 @@ components:
           properties:
             data:
               $ref: '#/components/schemas/Relation'
-        payments:
-          type: object
-          properties:
-            data:
-              $ref: '#/components/schemas/Relation'
-        shipments:
-          type: object
-          properties:
-            data:
-              $ref: '#/components/schemas/Relation'
     CartAttributes:
       type: object
       properties:
@@ -13792,44 +14593,26 @@ components:
           type: string
           example: R123456789
           pattern: ^R\d+$
-        email:
-          type: string
-          format: email
-          example: spree@example.com
         item_total:
           type: string
           example: '19.99'
-        display_item_total:
-          type: string
-          example: $19.99
         total:
           type: string
           example: '29.99'
-        display_total:
-          type: string
-          example: $29.99
         ship_total:
           type: string
           example: '0.0'
-        display_ship_total:
-          type: string
-          example: $19.99
         adjustment_total:
           type: string
           example: '10.0'
-        display_adjustment_total:
-          type: string
-          example: $10.00
-        promo_total:
-          type: string
-          example: '-10.0'
-        display_promo_total:
-          type: string
-          example: '-$10.00'
         created_at:
           $ref: '#/components/schemas/Timestamp'
         updated_at:
           $ref: '#/components/schemas/Timestamp'
+        completed_at:
+          type: string
+          format: date-time
+          nullable: true
         included_tax_total:
           type: string
           example: '5.00'
@@ -13839,37 +14622,9 @@ components:
         display_additional_tax_total:
           type: string
           example: $5.00
-        display_included_tax_total:
-          type: string
-          example: $5.00
         tax_total:
           type: string
           example: '10.0'
-        display_tax_total:
-          type: string
-          example: $10.00
-        pre_tax_item_amount:
-          type: string
-          example: '17.00'
-        display_pre_tax_item_amount:
-          type: string
-          example: $17.00
-        pre_tax_total:
-          type: string
-          example: '20.00'
-        display_pre_tax_total:
-          type: string
-          example: $20.00
-        item_count:
-          type: number
-          description: Total quantity number of all items added to the Cart
-          example: 2
-          minimum: 0
-        special_instructions:
-          type: string
-          nullable: true
-          example: Please wrap it as a gift
-          description: Message added by the Customer
         currency:
           type: string
           example: USD
@@ -13887,19 +14642,60 @@ components:
             State of the Cart in the Checkout flow. Please see <a href="https://dev-docs.spreecommerce.org/internals/orders#the-order-state-machine">
               The Order State machine
             </a> for a full list with description.
-        payment_state:
+        token:
           type: string
-          example: balance_due
-          enum:
-            - balance_due
-            - credit_owed
-            - failed
-            - paid
-            - void
-          description: |-
-            Overall state of the Payments. Please see <a href="https://dev-docs.spreecommerce.org/internals/orders#order-payment-states">
-              Order Payments states
-            </a> for a full list with description.
+          example: abcdef123456
+          description: Used for authorizing any action for an Order within Spree’s API.
+        email:
+          type: string
+          format: email
+          example: spree@example.com
+        display_item_total:
+          type: string
+          example: $19.99
+        display_ship_total:
+          type: string
+          example: $19.99
+        display_adjustment_total:
+          type: string
+          example: $10.00
+        display_included_tax_total:
+          type: string
+          example: $5.00
+        promo_total:
+          type: string
+          example: '-10.0'
+        display_promo_total:
+          type: string
+          example: '-$10.00'
+        item_count:
+          type: number
+          description: Total quantity number of all items added to the Cart
+          example: 2
+          minimum: 0
+        special_instructions:
+          type: string
+          example: Please wrap it as a gift
+          description: Message added by the Customer
+          nullable: true
+        display_total:
+          type: string
+          example: $29.99
+        pre_tax_item_amount:
+          type: string
+          example: '17.00'
+        display_pre_tax_item_amount:
+          type: string
+          example: $17.00
+        pre_tax_total:
+          type: string
+          example: '20.00'
+        display_tax_total:
+          type: string
+          example: $10.00
+        display_pre_tax_total:
+          type: string
+          example: $20.00
         shipment_state:
           type: string
           example: pending
@@ -13914,11 +14710,19 @@ components:
             Overall state of the Shipments. Please see <a href="https://dev-docs.spreecommerce.org/internals/orders#order-shipment-states-1">
               Order Shipments states
             </a> for a full list with description.
-        token:
+        payment_state:
           type: string
-          example: abcdef123456
+          example: balance_due
+          enum:
+            - balance_due
+            - credit_owed
+            - failed
+            - paid
+            - void
           description: |-
-            Used for authorizing any action for an Order within Spree’s API.
+            Overall state of the Payments. Please see <a href="https://dev-docs.spreecommerce.org/internals/orders#order-payment-states">
+              Order Payments states
+            </a> for a full list with description.
     CreditCardList:
       required:
         - included
@@ -14040,7 +14844,7 @@ components:
       properties:
         id:
           type: string
-          example: "1"
+          example: '1'
         type:
           type: string
           default: user
@@ -14051,6 +14855,11 @@ components:
               type: string
               format: email
               example: spree@example.com
+      required:
+        - id
+        - type
+        - attributes
+      title: User
     LineItem:
       properties:
         id:
@@ -14138,7 +14947,9 @@ components:
               properties:
                 data:
                   $ref: '#/components/schemas/Relation'
+      title: Line Item
     Promotion:
+      type: object
       properties:
         id:
           type: string
@@ -14161,6 +14972,11 @@ components:
             display_amount:
               type: string
               example: '-$10.00'
+      required:
+        - id
+        - type
+        - attributes
+      title: Promotion
     Product:
       required:
         - data
@@ -14707,6 +15523,7 @@ components:
           $ref: '#/components/schemas/VariantAttributes'
         relationships:
           $ref: '#/components/schemas/VariantRelationships'
+      title: Variant
     Country:
       required:
         - data
@@ -14829,6 +15646,7 @@ components:
         relationships:
           type: object
     ShipmentAttributesAndRelationsips:
+      type: object
       properties:
         id:
           type: string
@@ -14839,6 +15657,7 @@ components:
         attributes:
           $ref: '#/components/schemas/ShipmentAttributes'
         relationships:
+          type: object
           properties:
             stock_location:
               type: object
@@ -14846,13 +15665,21 @@ components:
                 data:
                   $ref: '#/components/schemas/Relation'
             shipping_rates:
+              type: object
               properties:
                 data:
                   type: array
                   items:
-                    oneOf:
+                    allOf:
                       - $ref: '#/components/schemas/Relation'
+      required:
+        - id
+        - type
+        - attributes
+        - relationships
+      title: Shipment
     ShipmentAttributes:
+      type: object
       properties:
         number:
           type: string
@@ -14873,6 +15700,7 @@ components:
           type: string
           example: 'https://tools.usps.com/go/TrackConfirmAction?tRef=fullpage&tLc=2&text28777=&tLabels=4123412434%2C'
           description: Tracking URL to the service provider website
+          nullable: true
         state:
           type: string
           example: shipped
@@ -14890,6 +15718,7 @@ components:
           format: date-time
           example: '2019-01-02 13:42:12'
           description: Date when Shipment was being sent from the warehouse
+          nullable: true
     ShippingRatesList:
       required:
         - data
@@ -15149,7 +15978,7 @@ components:
                   type: array
                   items:
                     oneOf:
-                    - $ref: '#/components/schemas/Relation'
+                      - $ref: '#/components/schemas/Relation'
     CmsHeroImageSection:
       type: object
       properties:
@@ -15884,6 +16713,115 @@ components:
       properties:
         url:
           type: string
+    Wishlist:
+      properties:
+        data:
+          $ref: '#/components/schemas/WishlistAttributesAndRelationships'
+        included:
+          type: array
+          items:
+            allOf:
+              - $ref: '#/components/schemas/WishedItemAttributesAndRelationships'
+      required:
+        - data
+    Wishlists:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/WishlistAttributesAndRelationships'
+        included:
+          type: array
+          items:
+            allOf:
+              - $ref: '#/components/schemas/WishedItemAttributesAndRelationships'
+        meta:
+          $ref: '#/components/schemas/ListMeta'
+        links:
+          $ref: '#/components/schemas/ListLinks'
+      required:
+        - data
+        - meta
+        - links
+    WishlistAttributes:
+      type: object
+      properties:
+        token:
+          type: string
+        name:
+          type: string
+        is_private:
+          type: boolean
+        is_default:
+          type: boolean
+        variant_included:
+          type: boolean
+          description: Returns `true` or `false` depending on the variant ID passed in through the `is_variant_included` query param.
+    WishlistAttributesAndRelationships:
+      description: ''
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          default: wishlist
+        attributes:
+          $ref: '#/components/schemas/WishlistAttributes'
+        relationships:
+          type: object
+          properties:
+            wished_items:
+              type: object
+              properties:
+                data:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '#/components/schemas/Relation'
+    WishedItem:
+      properties:
+        data:
+          $ref: '#/components/schemas/WishedItemAttributesAndRelationships'
+        included:
+          type: array
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/VariantAttributesAndRelationships'
+      required:
+        - data
+    WishedItemAttributes:
+      type: object
+      properties:
+        quantity:
+          type: integer
+        price:
+          type: string
+        total:
+          type: string
+        display_price:
+          type: string
+        display_total:
+          type: string
+    WishedItemAttributesAndRelationships:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          default: wished_item
+        attributes:
+          $ref: '#/components/schemas/WishedItemAttributes'
+        relationships:
+          type: object
+          properties:
+            variant:
+              type: object
+              properties:
+                data:
+                  $ref: '#/components/schemas/Relation'
   parameters:
     Id:
       name: id
@@ -15893,14 +16831,30 @@ components:
       schema:
         type: string
       example: '1'
+    Token:
+      name: token
+      in: path
+      required: true
+      description: The token is a unique string used to identify the target resource.
+      schema:
+        type: string
+      example: vmJtMiMozBdFtn1VkdJ8dYen
+    ItemId:
+      name: item_id
+      in: path
+      required: true
+      description: The wished item id
+      schema:
+        type: string
+      example: '3'
     CmsPageSlug:
-        name: cms_page_slug
-        in: path
-        required: true
-        description: CMS Page Slug
-        schema:
-          type: string
-        example: about-us
+      name: cms_page_slug
+      in: path
+      required: true
+      description: CMS Page Slug
+      schema:
+        type: string
+      example: about-us
     CmsPageIncludeParam:
       name: include
       in: query
@@ -15933,7 +16887,7 @@ components:
     LocaleParam:
       name: locale
       in: query
-      description: "Pass `locale` as value to fetch the resources with the matching locale for example `?locale=fr`."
+      description: Pass `locale` as value to fetch the resources with the matching locale for example `?locale=fr`.
       schema:
         type: string
         example: en
@@ -15952,7 +16906,7 @@ components:
       description: Taxon Permalink
       schema:
         type: string
-      example: "categories/women"
+      example: categories/women
     PageParam:
       name: page
       in: query
@@ -16053,6 +17007,20 @@ components:
         type: string
       description: Pass `default_billing_address` and/or `default_shipping_address` as value to include selected addresses information
       example: 'default_billing_address,default_shipping_address'
+    WishlistIncludeParam:
+      name: include
+      in: query
+      schema:
+        type: string
+      example: wished_items.variant
+      description: 'Specify the related resources you would like to receive in the `included` section of the response body. You can also retrieve related resources of included resources by using the dot notation, eg. `wished_items.variant`. [More information](https://jsonapi.org/format/#fetching-includes).'
+    WishlistIsVariantIncludedParam:
+      name: is_variant_included
+      in: query
+      schema:
+        type: string
+      example: '150'
+      description: 'Check for the presence of a variant in a wishlist by passing the variant ID, if the variant is present in the wishlist, the `variant_included` attribute will return `true`'
     FilterByIds:
       in: query
       name: 'filter[ids]'
@@ -16109,6 +17077,13 @@ components:
       example: '[cart]=total,currency,number'
       schema:
         type: string
+    WishlistSparseFieldsParam:
+      in: query
+      name: 'fields[wishlist]'
+      description: 'Specify the attributes you would like returned in the response body. [More information](https://jsonapi.org/format/#fetching-sparse-fieldsets).'
+      example: 'name,is_default'
+      schema:
+        type: string
   responses:
     404NotFound:
       description: Resource not found
@@ -16130,7 +17105,6 @@ components:
                 type: string
                 example: You are not authorized to access this page.
                 default: You are not authorized to access this page.
-
 tags:
   - name: Account
   - name: Cart
@@ -16141,3 +17115,4 @@ tags:
   - name: Menus
   - name: Products
   - name: Taxons
+  - name: Wishlists
