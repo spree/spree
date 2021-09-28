@@ -14677,14 +14677,16 @@ components:
         relationships:
           $ref: '#/components/schemas/ProductRelationships'
     Relation:
-      required:
-        - id
-        - type
+      type: object
+      nullable: true
       properties:
         id:
           type: string
         type:
           type: string
+      required:
+        - id
+        - type
     Taxon:
       required:
         - data
@@ -16727,7 +16729,7 @@ components:
     Cart:
       description: 200 Success - Returns the Cart object.
       content:
-        application/json:
+        application/vnd.api+json:
           schema:
             type: object
             properties:
@@ -17200,7 +17202,7 @@ components:
     CartList:
       description: 200 Success - Returns an array of Cart objects.
       content:
-        application/json:
+        application/vnd.api+json:
           schema:
             type: object
             properties:
