@@ -37,7 +37,7 @@ paths:
                     expires_in: 7200
                     refresh_token: SqJDIwX00fehqHxS6xmb-kzqAlrYe_0EHgekMexVT8k
                     created_at: 1581873931
-                Admin Token:
+                Application Token:
                   value:
                     access_token: 2480c16561d1391ea81ca5336b651e9a29f4524f6dee8c7f3f02a600159189c3
                     token_type: Bearer
