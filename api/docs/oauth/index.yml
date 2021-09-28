@@ -130,7 +130,7 @@ components:
           grant_type: password
           username: spree@example.com
           password: spree123
-        Admin Token:
+        Application Token:
           grant_type: password
           username: spree@example.com
           password: spree123
