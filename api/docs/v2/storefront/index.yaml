@@ -132,11 +132,7 @@ paths:
       operationId: addresses-list
       responses:
         '200':
-          description: Listing user addresses.
-          content:
-            application/vnd.api+json:
-              schema:
-                $ref: '#/components/schemas/AddressList'
+          $ref: '#/components/responses/AddressList'
         '403':
           $ref: '#/components/responses/403Forbidden'
       security:
@@ -156,13 +152,24 @@ paths:
               properties:
                 address:
                   $ref: '#/components/schemas/AddressPayload'
+            examples:
+              Create a Address:
+                value:
+                  address:
+                    firstname: Mark
+                    lastname: Winterburn
+                    company: Paper Street Soap Co.
+                    address1: 775 Old Georgetown Road
+                    address2: 3nd Floor
+                    city: Qethesda
+                    phone: '3488545445002'
+                    zipcode: '90210'
+                    state_name: CA
+                    country_iso: US
+                    label: Work
       responses:
         '200':
-          description: Created Address.
-          content:
-            application/vnd.api+json:
-              schema:
-                $ref: '#/components/schemas/AddressList'
+          $ref: '#/components/responses/Address'
         '403':
           $ref: '#/components/responses/403Forbidden'
       security:
@@ -200,13 +207,24 @@ paths:
               properties:
                 address:
                   $ref: '#/components/schemas/AddressPayload'
+            examples:
+              Update an Address:
+                value:
+                  address:
+                    firstname: Stephen
+                    lastname: Smith
+                    company: Woodbank School
+                    address1: 234 Old Georgetown Road
+                    address2: 1nd Floor
+                    city: Aethesda
+                    phone: '34885493845002'
+                    zipcode: '90211'
+                    state_name: CA
+                    country_iso: US
+                    label: Office
       responses:
         '200':
-          description: Updated Address.
-          content:
-            application/vnd.api+json:
-              schema:
-                $ref: '#/components/schemas/AddressList'
+          $ref: '#/components/responses/Address'
         '403':
           $ref: '#/components/responses/403Forbidden'
       security:
@@ -13909,6 +13927,7 @@ components:
         error:
           type: string
       x-internal: true
+      title: Error
     ListLinks:
       x-internal: true
       type: object
@@ -13934,6 +13953,7 @@ components:
         - prev
         - last
         - first
+      title: Pagination Meta Links
     ListMeta:
       type: object
       properties:
@@ -13954,10 +13974,13 @@ components:
         - total_count
         - total_pages
       x-internal: true
+      title: Pagination Meta
     Timestamp:
       type: string
       format: date-time
       example: '2020-02-16T07:14:54.617Z'
+      x-internal: true
+      title: Time Stamp
     Address:
       type: object
       title: Address
@@ -14009,22 +14032,16 @@ components:
             company:
               type: string
               example: Google Inc.
+              description: Company name
               nullable: true
             label:
               type: string
+              description: 'The internal name for this address (Work, Home)'
               nullable: true
       required:
         - id
         - type
         - attributes
-    AddressList:
-      required:
-        - data
-      properties:
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/Address'
     Cart:
       description: 'The Cart provides a central place to collect information about an order, including line items, adjustments, payments, addresses, return authorizations, and shipments. [Read more in Spree docs](https://dev-docs.spreecommerce.org/internals/orders)'
       type: object
@@ -15346,6 +15363,10 @@ components:
         state_name: MD
         country_iso: US
       type: object
+      x-internal: true
+      title: Address Payload
+      x-examples: {}
+      description: ''
       properties:
         firstname:
           type: string
@@ -15371,6 +15392,14 @@ components:
         country_iso:
           type: string
           description: 'Country ISO (2-chars) or ISO3 (3-chars) code. [List of all codes](https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes)'
+        company:
+          type: string
+          example: Paper Street Soap Co.
+          description: Company name
+        label:
+          type: string
+          example: Work
+          description: 'The internal name for this address (Work, Home)'
       required:
         - firstname
         - lastname
@@ -17526,7 +17555,7 @@ components:
     User:
       description: 200 Success - Returns the User object.
       content:
-        application/json:
+        application/vnd.api+json:
           schema:
             type: object
             properties:
@@ -17607,6 +17636,55 @@ components:
                       country_iso3: USA
                       country_iso: US
                       state_code: NY
+    AddressList:
+      description: 200 Success - Returns an array containing one or more Address objects.
+      content:
+        application/vnd.api+json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Address'
+              meta:
+                $ref: '#/components/schemas/ListMeta'
+              links:
+                $ref: '#/components/schemas/ListLinks'
+            required:
+              - data
+              - meta
+              - links
+    Address:
+      description: 200 Success - Returns a data object containing the Address object.
+      content:
+        application/vnd.api+json:
+          schema:
+            type: object
+            properties:
+              data:
+                $ref: '#/components/schemas/Address'
+          examples:
+            Standard response:
+              value:
+                data:
+                  id: '29'
+                  type: address
+                  attributes:
+                    firstname: Mark
+                    lastname: Winterburn
+                    address1: 775645 Old Georgetown Road
+                    address2: 3nd Floor
+                    city: Qethesda
+                    zipcode: '90210'
+                    phone: '3488545445002'
+                    state_name: California
+                    company: Paper Street Soap Co.
+                    country_name: United States
+                    country_iso3: USA
+                    country_iso: US
+                    label: Work
+                    state_code: CA
 tags:
   - name: Account
   - name: Cart
