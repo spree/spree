@@ -8,6 +8,10 @@ module Spree
     end
     belongs_to :tax_category, class_name: 'Spree::TaxCategory'
 
+    has_many :digital_links, dependent: :destroy
+    after_save :create_digital_links, if: :digital?
+    delegate :digital?, to: :variant
+
     has_one :product, through: :variant
 
     has_many :adjustments, as: :adjustable, dependent: :destroy
@@ -118,6 +122,26 @@ module Spree
     end
 
     private
+
+    # TODO: there is no reason to create the digital links until the order is complete
+    # TODO: PMG - Shouldn't we only do this if the quantity changed?
+    def create_digital_links
+      digital_links.delete_all
+
+      # include master variant digitals
+      master = variant.product.master
+      create_digital_links_for_variant(master) if master.digital?
+
+      create_digital_links_for_variant(variant) unless variant.is_master?
+    end
+
+    def create_digital_links_for_variant(variant)
+      variant.digitals.each do |digital|
+        quantity.times do
+          digital_links.create!(digital: digital)
+        end
+      end
+    end
 
     def ensure_valid_quantity
       self.quantity = 0 if quantity.nil? || quantity < 0
