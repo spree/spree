@@ -14006,6 +14006,7 @@ components:
             address2:
               type: string
               example: Suite 1
+              nullable: true
             city:
               type: string
               example: Mountain View
@@ -14015,6 +14016,7 @@ components:
             phone:
               type: string
               example: (+1) 123 456 789
+              nullable: true
             state_name:
               type: string
               example: California
@@ -17655,6 +17657,71 @@ components:
               - data
               - meta
               - links
+          examples:
+            Standard response:
+              value:
+                data:
+                  - id: '11'
+                    type: address
+                    attributes:
+                      firstname: Tyler
+                      lastname: Durden
+                      address1: 12312 Street
+                      address2: Basment Entrance
+                      city: LA
+                      zipcode: '90210'
+                      phone: '08173762736'
+                      state_name: California
+                      company: Paper Street Soap Co
+                      country_name: United States
+                      country_iso3: USA
+                      country_iso: US
+                      label: Home
+                      state_code: CA
+                  - id: '28'
+                    type: address
+                    attributes:
+                      firstname: John
+                      lastname: Snow
+                      address1: 7735 Old Georgetown Road
+                      address2: 2nd Floor
+                      city: Bethesda
+                      zipcode: '20814'
+                      phone: '3014445002'
+                      state_name: Maryland
+                      company: null
+                      country_name: United States
+                      country_iso3: USA
+                      country_iso: US
+                      label: null
+                      state_code: MD
+                  - id: '29'
+                    type: address
+                    attributes:
+                      firstname: Emma
+                      lastname: Carragher
+                      address1: 775645 Old Georgetown Road
+                      address2: 3nd Floor
+                      city: Qethesda
+                      zipcode: '90210'
+                      phone: '3488545445002'
+                      state_name: California
+                      company: null
+                      country_name: United States
+                      country_iso3: USA
+                      country_iso: US
+                      label: Work
+                      state_code: CA
+                meta:
+                  count: 3
+                  total_count: 3
+                  total_pages: 1
+                links:
+                  self: 'http://localhost:3000/api/v2/storefront/account/addresses'
+                  next: 'http://localhost:3000/api/v2/storefront/account/addresses?page=1'
+                  prev: 'http://localhost:3000/api/v2/storefront/account/addresses?page=1'
+                  last: 'http://localhost:3000/api/v2/storefront/account/addresses?page=1'
+                  first: 'http://localhost:3000/api/v2/storefront/account/addresses?page=1'
     Address:
       description: 200 Success - Returns a data object containing the Address object.
       content:
