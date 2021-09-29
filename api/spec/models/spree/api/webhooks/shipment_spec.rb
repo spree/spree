@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Spree::Shipment do
   let(:shipment) { create(:shipment) }
 
-  context '#ship' do
+  context '#after_ship' do
     before do
       allow(Spree::Webhooks::Endpoints::QueueRequests).to receive(:new).and_return(queue_requests)
       allow(queue_requests).to receive(:call).with(any_args)

@@ -2,7 +2,7 @@ module Spree
   module Api
     module Webhooks
       module Order
-        def cancel
+        def after_cancel
           super
           Spree::Webhooks::Endpoints::QueueRequests.call(event: 'order.cancel', payload: {})
         end

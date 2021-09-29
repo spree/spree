@@ -1,7 +1,7 @@
 module Spree
   module Webhooks
-    class Endpoint < Spree::Base
-      self.table_name = 'spree_webhooks_endpoints'
+    class Endpoint < Spree::Webhooks::Base
+      validates :url, presence: true
     end
   end
 end

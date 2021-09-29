@@ -11,7 +11,7 @@ describe Spree::Order do
       allow(queue_requests).to receive(:call).with(any_args)
     end
 
-    context '#cancel' do
+    context '#after_cancel' do
       let(:order) { create(:completed_order_with_totals, store: store) }
 
       it 'executes QueueRequests.call with a order.cancel event and {} payload after invoking cancel' do
