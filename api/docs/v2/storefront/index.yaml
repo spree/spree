@@ -4060,39 +4060,41 @@ paths:
 
         ### Update the Customer information
 
-        ```texttext
+        ```request
         PATCH /checkout
         ```
 
         ```json
-          "order": {
-            "email": "john@snow.org",
-            "bill_address_attributes": {
-              "firstname": "John",
-              "lastname": "Snow",
-              "address1": "7735 Old Georgetown Road",
-              "city": "Bethesda",
-              "phone": "3014445002",
-              "zipcode": "20814",
-              "state_name": "MD",
-              "country_iso": "US"
-            },
-            "ship_address_attributes": {
-              "firstname": "John",
-              "lastname": "Snow",
-              "address1": "7735 Old Georgetown Road",
-              "city": "Bethesda",
-              "phone": "3014445002",
-              "zipcode": "20814",
-              "state_name": "MD",
-              "country_iso": "US"
+          {
+            "order": {
+              "email": "john@snow.org",
+              "bill_address_attributes": {
+                "firstname": "John",
+                "lastname": "Snow",
+                "address1": "7735 Old Georgetown Road",
+                "city": "Bethesda",
+                "phone": "3014445002",
+                "zipcode": "20814",
+                "state_name": "MD",
+                "country_iso": "US"
+              },
+              "ship_address_attributes": {
+                "firstname": "John",
+                "lastname": "Snow",
+                "address1": "7735 Old Georgetown Road",
+                "city": "Bethesda",
+                "phone": "3014445002",
+                "zipcode": "20814",
+                "state_name": "MD",
+                "country_iso": "US"
+              }
             }
           }
         ```
 
         ###  Fetch Shipping Rates
 
-        ```text
+        ```request
         GET /checkout/shipping_rates
         ```
 
@@ -4104,7 +4106,7 @@ paths:
 
         ### Select shipping method(s)
 
-        ```text
+        ```request
         PATCH /checkout
         ```
 
@@ -4127,7 +4129,7 @@ paths:
 
         ### Add Payment Source(s)
 
-        ```text
+        ```request
         PATCH /checkout
         ```
 
@@ -4154,7 +4156,7 @@ paths:
 
         ### Complete checkout
 
-        ```text
+        ```request
         PATCH /checkout/complete
         ```
 
