@@ -35,63 +35,7 @@ paths:
         - $ref: '#/components/parameters/SparseFieldsParam'
       responses:
         '200':
-          description: ok
-          content:
-            application/vnd.api+json:
-              schema:
-                $ref: '#/components/schemas/Account'
-              examples:
-                example-1:
-                  value:
-                    data:
-                      id: '1'
-                      type: user
-                      attributes:
-                        email: spree@example.com
-                        store_credits: 0
-                        completed_orders: 0
-                      relationships:
-                        default_billing_address:
-                          data:
-                            id: '2'
-                            type: address
-                        default_shipping_address:
-                          data:
-                            id: '1'
-                            type: address
-                    included:
-                      - id: '2'
-                        type: address
-                        attributes:
-                          firstname: Destiny
-                          lastname: Maggio
-                          address1: 12775 Runolfsdottir Greens
-                          address2: Apt. 704
-                          city: Kochmouth
-                          zipcode: '16804'
-                          phone: 1-257-860-8433
-                          state_name: New York
-                          company: null
-                          country_name: United States
-                          country_iso3: USA
-                          country_iso: US
-                          state_code: NY
-                      - id: '1'
-                        type: address
-                        attributes:
-                          firstname: Aimee
-                          lastname: Jast
-                          address1: 56593 Baumbach Meadows
-                          address2: Suite 632
-                          city: Port Michaelafort
-                          zipcode: '16804'
-                          phone: (846)556-4478
-                          state_name: New York
-                          company: null
-                          country_name: United States
-                          country_iso3: USA
-                          country_iso: US
-                          state_code: NY
+          $ref: '#/components/responses/User'
         '403':
           $ref: '#/components/responses/403Forbidden'
       security:
@@ -127,11 +71,7 @@ paths:
         description: ''
       responses:
         '200':
-          description: ok
-          content:
-            application/vnd.api+json:
-              schema:
-                $ref: '#/components/schemas/Account'
+          $ref: '#/components/responses/User'
         '422':
           description: Validation errors
           content:
@@ -174,11 +114,7 @@ paths:
                       example: spree123
       responses:
         '200':
-          description: ok
-          content:
-            application/vnd.api+json:
-              schema:
-                $ref: '#/components/schemas/Account'
+          $ref: '#/components/responses/User'
         '422':
           description: Validation errors
           content:
@@ -945,7 +881,10 @@ paths:
       summary: Complete Checkout
   /api/v2/storefront/checkout/add_store_credit:
     post:
-      description: Adds Store Credit payment if the currently signed in User has any available.
+      description: |-
+        The Add Store Credit endpoint takes the users existing store credit from their account and adds a set amount of this store credit to the current Cart.
+
+        In essence, by adding the user's store credit to a Cart, the user's store credit is being spent.
       tags:
         - Checkout
       operationId: add-store-credit
@@ -14400,27 +14339,6 @@ components:
           type: integer
           example: 1080
           description: Actual height of image
-    User:
-      type: object
-      properties:
-        id:
-          type: string
-          example: '1'
-        type:
-          type: string
-          default: user
-        attributes:
-          type: object
-          properties:
-            email:
-              type: string
-              format: email
-              example: spree@example.com
-      required:
-        - id
-        - type
-        - attributes
-      title: User
     LineItem:
       properties:
         id:
@@ -14511,6 +14429,7 @@ components:
       title: Line Item
     Promotion:
       type: object
+      title: Promotion
       properties:
         id:
           type: string
@@ -14533,11 +14452,13 @@ components:
             display_amount:
               type: string
               example: '-$10.00'
+            code:
+              type: string
+              example: BLK-FRI
       required:
         - id
         - type
         - attributes
-      title: Promotion
     Product:
       required:
         - data
@@ -15367,48 +15288,9 @@ components:
             name:
               type: string
               example: Main Warehouse
-    Account:
-      properties:
-        data:
-          $ref: '#/components/schemas/AccountAttributesAndRelationships'
-        included:
-          type: array
-          items:
-            anyOf:
-              - $ref: '#/components/schemas/Address'
-      required:
-        - data
-        - included
+    User:
       type: object
-    AccountAttributes:
-      type: object
-      properties:
-        email:
-          type: string
-          example: spree@example.com
-        store_credits:
-          type: number
-          example: 150.75
-        completed_orders:
-          type: number
-          example: 3
-          description: Number of placed Orders by this User
-    AccountRelationships:
-      type: object
-      properties:
-        default_billing_address:
-          type: object
-          description: Default billing address associated with this Account
-          properties:
-            data:
-              $ref: '#/components/schemas/Relation'
-        default_shipping_address:
-          type: object
-          description: Default shipping address associated with this Account
-          properties:
-            data:
-              $ref: '#/components/schemas/Relation'
-    AccountAttributesAndRelationships:
+      title: User
       properties:
         id:
           type: string
@@ -15417,9 +15299,33 @@ components:
           type: string
           default: user
         attributes:
-          $ref: '#/components/schemas/AccountAttributes'
+          type: object
+          properties:
+            email:
+              type: string
+              example: spree@example.com
+            store_credits:
+              type: number
+              example: 150.75
+            completed_orders:
+              type: number
+              example: 3
+              description: Number of placed Orders by this User
         relationships:
-          $ref: '#/components/schemas/AccountRelationships'
+          type: object
+          properties:
+            default_billing_address:
+              type: object
+              description: Default billing address associated with this Account
+              properties:
+                data:
+                  $ref: '#/components/schemas/Relation'
+            default_shipping_address:
+              type: object
+              description: Default shipping address associated with this Account
+              properties:
+                data:
+                  $ref: '#/components/schemas/Relation'
     AddressPayload:
       example:
         firstname: John
@@ -16747,7 +16653,6 @@ components:
                   anyOf:
                     - $ref: '#/components/schemas/Promotion'
                     - $ref: '#/components/schemas/User'
-                    - $ref: '#/components/schemas/Address'
                     - $ref: '#/components/schemas/ShipmentAttributesAndRelationsips'
                     - $ref: '#/components/schemas/VariantAttributesAndRelationships'
                     - $ref: '#/components/schemas/LineItem'
@@ -16927,7 +16832,9 @@ components:
                         - id: '131'
                           type: variant
                     promotions:
-                      data: []
+                      data:
+                        - id: '2'
+                          type: promotion
                     payments:
                       data:
                         - id: '1'
@@ -16996,7 +16903,9 @@ components:
                         - id: '131'
                           type: variant
                     promotions:
-                      data: []
+                      data:
+                        - id: '2'
+                          type: promotion
                     payments:
                       data:
                         - id: '1'
@@ -17164,6 +17073,14 @@ components:
                         data: null
                       default_shipping_address:
                         data: null
+                  - id: '2'
+                    type: promotion
+                    attributes:
+                      name: Black Friday
+                      description: ''
+                      amount: '-9.6'
+                      display_amount: '-$9.60'
+                      code: BLKFRI
                   - id: '1'
                     type: payment
                     attributes:
@@ -17284,7 +17201,9 @@ components:
                           - id: '131'
                             type: variant
                       promotions:
-                        data: []
+                        data:
+                          - id: '2'
+                            type: promotion
                       payments:
                         data:
                           - id: '1'
@@ -17506,15 +17425,15 @@ components:
                   - id: '5'
                     type: address
                     attributes:
-                      firstname: Matthew
-                      lastname: Kennedy
-                      address1: 123 Street
-                      address2: null
+                      firstname: ' Tyler'
+                      lastname: Durden
+                      address1: 3029 Street Way Drive
+                      address2: Basement Entrance
                       city: LA
                       zipcode: '90210'
-                      phone: '18189712983723'
+                      phone: '09128386372'
                       state_name: California
-                      company: null
+                      company: Paper Street Soap Co.
                       country_name: United States
                       country_iso3: USA
                       country_iso: US
@@ -17531,6 +17450,14 @@ components:
                         data: null
                       default_shipping_address:
                         data: null
+                  - id: '2'
+                    type: promotion
+                    attributes:
+                      name: Black Friday
+                      description: ''
+                      amount: '-9.6'
+                      display_amount: '-$9.60'
+                      code: BLKFRI
                   - id: '1'
                     type: payment
                     attributes:
@@ -17582,6 +17509,90 @@ components:
                   prev: 'http://localhost:3000/api/v2/storefront/account/orders?include=line_items%2Cvariants%2Cvariants.images%2Cbilling_address%2Cshipping_address%2Cuser%2Cpayments%2Cshipments%2Cpromotions&page=1'
                   last: 'http://localhost:3000/api/v2/storefront/account/orders?include=line_items%2Cvariants%2Cvariants.images%2Cbilling_address%2Cshipping_address%2Cuser%2Cpayments%2Cshipments%2Cpromotions&page=1'
                   first: 'http://localhost:3000/api/v2/storefront/account/orders?include=line_items%2Cvariants%2Cvariants.images%2Cbilling_address%2Cshipping_address%2Cuser%2Cpayments%2Cshipments%2Cpromotions&page=1'
+    User:
+      description: 200 Success - Returns the User object.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                $ref: '#/components/schemas/User'
+              included:
+                type: array
+                items:
+                  allOf:
+                    - $ref: '#/components/schemas/Address'
+          examples:
+            Standard response:
+              value:
+                data:
+                  id: '1'
+                  type: user
+                  attributes:
+                    email: spree@example.com
+                    store_credits: 0
+                    completed_orders: 0
+                  relationships:
+                    default_billing_address:
+                      data:
+                        id: '2'
+                        type: address
+                    default_shipping_address:
+                      data:
+                        id: '1'
+                        type: address
+            Including Addresses:
+              value:
+                data:
+                  id: '1'
+                  type: user
+                  attributes:
+                    email: spree@example.com
+                    store_credits: 0
+                    completed_orders: 0
+                  relationships:
+                    default_billing_address:
+                      data:
+                        id: '2'
+                        type: address
+                    default_shipping_address:
+                      data:
+                        id: '1'
+                        type: address
+                included:
+                  - id: '2'
+                    type: address
+                    attributes:
+                      firstname: Destiny
+                      lastname: Maggio
+                      address1: 12775 Runolfsdottir Greens
+                      address2: Apt. 704
+                      city: Kochmouth
+                      zipcode: '16804'
+                      phone: 1-257-860-8433
+                      state_name: New York
+                      company: null
+                      country_name: United States
+                      country_iso3: USA
+                      country_iso: US
+                      state_code: NY
+                  - id: '1'
+                    type: address
+                    attributes:
+                      firstname: Aimee
+                      lastname: Jast
+                      address1: 56593 Baumbach Meadows
+                      address2: Suite 632
+                      city: Port Michaelafort
+                      zipcode: '16804'
+                      phone: (846)556-4478
+                      state_name: New York
+                      company: null
+                      country_name: United States
+                      country_iso3: USA
+                      country_iso: US
+                      state_code: NY
 tags:
   - name: Account
   - name: Cart
