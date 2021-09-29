@@ -1,5 +1,5 @@
 module Spree
-  class DigitalLink < ActiveRecord::Base
+  class DigitalLink < Spree::Base
     belongs_to :digital
     validates :digital, presence: true
 
