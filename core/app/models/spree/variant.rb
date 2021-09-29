@@ -43,6 +43,7 @@ module Spree
              inverse_of: :variant
 
     has_many :wished_items, dependent: :destroy
+    has_many :digitals
 
     before_validation :set_cost_currency
 
@@ -59,6 +60,7 @@ module Spree
 
     after_create :create_stock_items
     after_create :set_master_out_of_stock, unless: :is_master?
+    after_save :destroy_digital, if: :deleted?
 
     after_touch :clear_in_stock_cache
 
@@ -302,7 +304,21 @@ module Spree
       @backordered ||= !in_stock? && stock_items.exists?(backorderable: true)
     end
 
+    # Is this variant to be downloaded by the customer?
+    def digital?
+      digitals.present?
+    end
+
     private
+
+    # :dependent => :destroy needs to be handled manually
+    # spree does not delete variants, just marks them as deleted?
+    # optionally keep digitals around for customers who require continued access to their purchases
+    def destroy_digital
+      return if Spree::DigitalConfiguration[:keep_digitals]
+
+      digitals.map(&:destroy)
+    end
 
     def ensure_no_line_items
       if line_items.any?
