@@ -726,27 +726,29 @@ paths:
         ```
 
         ```json
-          "order": {
-            "email": "john@snow.org",
-            "bill_address_attributes": {
-              "firstname": "John",
-              "lastname": "Snow",
-              "address1": "7735 Old Georgetown Road",
-              "city": "Bethesda",
-              "phone": "3014445002",
-              "zipcode": "20814",
-              "state_name": "MD",
-              "country_iso": "US"
-            },
-            "ship_address_attributes": {
-              "firstname": "John",
-              "lastname": "Snow",
-              "address1": "7735 Old Georgetown Road",
-              "city": "Bethesda",
-              "phone": "3014445002",
-              "zipcode": "20814",
-              "state_name": "MD",
-              "country_iso": "US"
+          {
+            "order": {
+              "email": "john@snow.org",
+              "bill_address_attributes": {
+                "firstname": "John",
+                "lastname": "Snow",
+                "address1": "7735 Old Georgetown Road",
+                "city": "Bethesda",
+                "phone": "3014445002",
+                "zipcode": "20814",
+                "state_name": "MD",
+                "country_iso": "US"
+              },
+              "ship_address_attributes": {
+                "firstname": "John",
+                "lastname": "Snow",
+                "address1": "7735 Old Georgetown Road",
+                "city": "Bethesda",
+                "phone": "3014445002",
+                "zipcode": "20814",
+                "state_name": "MD",
+                "country_iso": "US"
+              }
             }
           }
         ```
@@ -16726,6 +16728,10 @@ components:
                 type: string
                 example: You are not authorized to access this page.
                 default: You are not authorized to access this page.
+          examples:
+            403 Example:
+              value:
+                error: You are not authorized to access this page.
     Cart:
       description: 200 Success - Returns the Cart object.
       content:
