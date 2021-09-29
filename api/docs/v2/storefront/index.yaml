@@ -13908,7 +13908,10 @@ components:
       properties:
         error:
           type: string
+      x-internal: true
     ListLinks:
+      x-internal: true
+      type: object
       properties:
         self:
           type: string
@@ -13925,7 +13928,14 @@ components:
         first:
           type: string
           description: URL to the first page of the listing
+      required:
+        - self
+        - next
+        - prev
+        - last
+        - first
     ListMeta:
+      type: object
       properties:
         count:
           type: number
@@ -13939,6 +13949,11 @@ components:
           type: number
           example: 10
           description: Number of all pages containing items matching the criteria
+      required:
+        - count
+        - total_count
+        - total_pages
+      x-internal: true
     Timestamp:
       type: string
       format: date-time
