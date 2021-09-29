@@ -14474,7 +14474,7 @@ components:
               - $ref: '#/components/schemas/OptionValue'
               - $ref: '#/components/schemas/ProductProperty'
               - $ref: '#/components/schemas/Property'
-              - $ref: '#/components/schemas/VariantAttributesAndRelationships'
+              - $ref: '#/components/schemas/Variant'
               - $ref: '#/components/schemas/Image'
               - $ref: '#/components/schemas/TaxonAttributesAndRelationships'
     ProductsList:
@@ -14499,7 +14499,7 @@ components:
               - $ref: '#/components/schemas/OptionValue'
               - $ref: '#/components/schemas/ProductProperty'
               - $ref: '#/components/schemas/Property'
-              - $ref: '#/components/schemas/VariantAttributesAndRelationships'
+              - $ref: '#/components/schemas/Variant'
               - $ref: '#/components/schemas/Image'
               - $ref: '#/components/schemas/TaxonAttributesAndRelationships'
     ProductAttributes:
@@ -14908,94 +14908,13 @@ components:
                     data:
                       $ref: '#/components/schemas/Property'
     Variant:
-      required:
-        - data
-        - included
-      properties:
-        data:
-          $ref: '#/components/schemas/VariantAttributesAndRelationships'
-        included:
-          type: array
-          items:
-            anyOf:
-              - $ref: '#/components/schemas/Image'
-              - $ref: '#/components/schemas/OptionValue'
-              - $ref: '#/components/schemas/OptionType'
+      title: Variant
       description: |-
         Variant records track the individual variants of a Product. Variants are of two types: master variants and normal variants.
 
         Variant records can track some individual properties regarding a variant, such as height, width, depth, and cost price. These properties are unique to each variant, and so are different from Product Properties, which apply to all variants of that product.
-    VariantAttributes:
+      x-examples: {}
       type: object
-      properties:
-        sku:
-          type: string
-          example: SKU-1001
-        price:
-          type: string
-          example: '15.99'
-        currency:
-          type: string
-          example: USD
-        display_price:
-          type: string
-          example: $15.99
-        weight:
-          type: string
-          example: '10'
-        height:
-          type: string
-          example: '10'
-        width:
-          type: string
-          example: '10'
-        depth:
-          type: string
-          example: '10'
-        is_master:
-          type: boolean
-          example: false
-          description: Indicates if Variant is the master Variant
-        options_text:
-          type: string
-          example: 'Size: small, Color: red'
-        purchasable:
-          type: boolean
-          example: true
-          description: Indicates if Variant is in stock or backorderable
-        in_stock:
-          type: boolean
-          example: true
-          description: Indicates if Variant is in stock
-        backorderable:
-          type: boolean
-          example: true
-          description: Indicates if Variant is backorderable
-      title: Variant
-      description: ''
-    VariantRelationships:
-      type: object
-      properties:
-        product:
-          type: object
-          properties:
-            data:
-              $ref: '#/components/schemas/Relation'
-        images:
-          type: object
-          properties:
-            data:
-              type: array
-              items:
-                $ref: '#/components/schemas/Relation'
-        option_values:
-          type: object
-          properties:
-            data:
-              type: array
-              items:
-                $ref: '#/components/schemas/Relation'
-    VariantAttributesAndRelationships:
       properties:
         id:
           type: string
@@ -15004,10 +14923,77 @@ components:
           type: string
           default: variant
         attributes:
-          $ref: '#/components/schemas/VariantAttributes'
+          type: object
+          properties:
+            sku:
+              type: string
+              example: SKU-1001
+            price:
+              type: string
+              example: '15.99'
+            currency:
+              type: string
+              example: USD
+            display_price:
+              type: string
+              example: $15.99
+            weight:
+              type: string
+              example: '10'
+            height:
+              type: string
+              example: '10'
+            width:
+              type: string
+              example: '10'
+            depth:
+              type: string
+              example: '10'
+            is_master:
+              type: boolean
+              example: false
+              description: Indicates if Variant is the master Variant
+            options_text:
+              type: string
+              example: 'Size: small, Color: red'
+            purchasable:
+              type: boolean
+              example: true
+              description: Indicates if Variant is in stock or backorderable
+            in_stock:
+              type: boolean
+              example: true
+              description: Indicates if Variant is in stock
+            backorderable:
+              type: boolean
+              example: true
         relationships:
-          $ref: '#/components/schemas/VariantRelationships'
-      title: Variant
+          type: object
+          properties:
+            product:
+              type: object
+              properties:
+                data:
+                  $ref: '#/components/schemas/Relation'
+            images:
+              type: object
+              properties:
+                data:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Relation'
+            option_values:
+              type: object
+              properties:
+                data:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Relation'
+      required:
+        - id
+        - type
+        - attributes
+        - relationships
     Country:
       required:
         - data
@@ -15291,6 +15277,7 @@ components:
     User:
       type: object
       title: User
+      description: ' '
       properties:
         id:
           type: string
@@ -15326,6 +15313,11 @@ components:
               properties:
                 data:
                   $ref: '#/components/schemas/Relation'
+      required:
+        - id
+        - type
+        - attributes
+        - relationships
     AddressPayload:
       example:
         firstname: John
@@ -16258,7 +16250,7 @@ components:
           type: array
           items:
             oneOf:
-              - $ref: '#/components/schemas/VariantAttributesAndRelationships'
+              - $ref: '#/components/schemas/Variant'
       required:
         - data
     WishedItemAttributes:
@@ -16654,7 +16646,7 @@ components:
                     - $ref: '#/components/schemas/Promotion'
                     - $ref: '#/components/schemas/User'
                     - $ref: '#/components/schemas/ShipmentAttributesAndRelationsips'
-                    - $ref: '#/components/schemas/VariantAttributesAndRelationships'
+                    - $ref: '#/components/schemas/Variant'
                     - $ref: '#/components/schemas/LineItem'
                     - $ref: '#/components/schemas/Payment'
             required:
@@ -17137,7 +17129,7 @@ components:
                 type: array
                 items:
                   anyOf:
-                    - $ref: '#/components/schemas/VariantAttributesAndRelationships'
+                    - $ref: '#/components/schemas/Variant'
                     - $ref: '#/components/schemas/LineItem'
                     - $ref: '#/components/schemas/Promotion'
                     - $ref: '#/components/schemas/User'
