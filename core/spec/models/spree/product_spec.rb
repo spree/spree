@@ -929,35 +929,38 @@ describe Spree::Product, type: :model do
         end
       end
 
-      before do
-        store.update(default: true)
-        store_2.update(default: false)
+      context 'when some arguments are nil' do
+        let(:store_2) { create(:store, default: false) }
 
-        other1.stores.clear
-        other2.stores.clear
-        other1.stores << store
-        other2.stores << store_2
+        before do
+          store.update(default: true)
 
-        create(:relation, relatable: @product, related_to: other2, relation_type: @relation_type)
-      end
+          other1.stores.clear
+          other2.stores.clear
+          other1.stores << store
+          other2.stores << store_2
 
-      context 'when store param for Product.relation_filter is nil' do
-        let!(:store) { create(:store) }
-        let!(:store_2) { create(:store) }
-
-        it 'returns Products only from default store' do
-          expect(described_class.relation_filter).to include(other1)
-          expect(described_class.relation_filter).not_to include(other2)
+          create(:relation, relatable: @product, related_to: other2, relation_type: @relation_type)
         end
-      end
 
-      context 'when currency param for Product.relation_filter is nil' do
-        let!(:store) { create(:store, default_currency: 'USD') }
-        let!(:store_2) { create(:store, default_currency: 'EUR') }
+        context 'when store param for Product.relation_filter is nil' do
+          let!(:store) { create(:store) }
+          let!(:store_2) { create(:store) }
 
-        it 'returns Products only with default currency' do
-          expect(described_class.relation_filter).to include(other1)
-          expect(described_class.relation_filter).not_to include(other2)
+          it 'returns Products only from default store' do
+            expect(described_class.relation_filter).to include(other1)
+            expect(described_class.relation_filter).not_to include(other2)
+          end
+        end
+
+        context 'when currency param for Product.relation_filter is nil' do
+          let!(:store) { create(:store, default_currency: 'USD') }
+          let!(:store_2) { create(:store, default_currency: 'EUR') }
+
+          it 'returns Products only with default currency' do
+            expect(described_class.relation_filter).to include(other1)
+            expect(described_class.relation_filter).not_to include(other2)
+          end
         end
       end
     end
