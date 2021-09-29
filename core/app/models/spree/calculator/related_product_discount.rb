@@ -21,7 +21,7 @@ module Spree
           order.line_items.each do |li|
             next unless discount_applies_to.include? li.variant.product
 
-            discount = relations.detect { |rel| rel.related_to.master.product == li.variant.product }.discount_amount
+            discount = relations.find_by(related_to_id: li.variant.product_id).discount_amount
             sum += if li.quantity < line_item.quantity
                      (discount * li.quantity)
                    else
@@ -46,7 +46,7 @@ module Spree
       [
         'discount_amount <> 0.0 AND relatable_type = ? AND relatable_id = ?',
         'Spree::Product',
-        line_item.variant.product.id
+        line_item.variant.product_id
       ]
     end
   end

@@ -5,7 +5,10 @@ module Spree
     included do
       validate :ensure_store_association_is_not_changed
 
-      scope :for_store, ->(store) { where(store_id: store.id) }
+      scope :for_store, ->(store) do
+        store ||= Store.default
+        where(store_id: store.id)
+      end
     end
 
     protected

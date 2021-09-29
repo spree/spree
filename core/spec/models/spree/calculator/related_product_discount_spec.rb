@@ -29,6 +29,7 @@ describe Spree::Calculator::RelatedProductDiscount, type: :model do
         line_item = double('Spree::LineItem', variant: variant, order: @order, quantity: 1, price: 4.99)
 
         allow(variant).to receive(:default_price).and_return(price)
+        allow(variant).to receive(:product_id).and_return(product.id)
         allow(@order).to receive(:line_items).and_return([line_item])
 
         related_product = create(:product)
@@ -57,6 +58,7 @@ describe Spree::Calculator::RelatedProductDiscount, type: :model do
         @two_line_item = double('Spree::LineItem', variant: variant, order: @order, quantity: 2, price: 4.99)
 
         allow(variant).to receive(:default_price).and_return(price)
+        allow(variant).to receive(:product_id).and_return(product.id)
 
         related_product = create(:product)
         related_variant   = double('Spree::Variant', product: related_product)
@@ -65,6 +67,7 @@ describe Spree::Calculator::RelatedProductDiscount, type: :model do
         @two_related_line_item = double('Spree::LineItem', variant: related_variant, order: @order, quantity: 2, price: 4.99)
 
         allow(related_variant).to receive(:default_price).and_return(related_price)
+        allow(related_variant).to receive(:product_id).and_return(related_product.id)
 
         related_product_2 = create(:product)
         relation_type   = create(:relation_type)

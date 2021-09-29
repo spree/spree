@@ -308,14 +308,30 @@ describe 'Product scopes', type: :model do
   end
 
   describe '#for_store' do
-    subject(:products_by_store) { Spree::Product.for_store(store) }
+    subject(:products_by_store) { Spree::Product.for_store(given_store) }
 
-    before do
-      create_list(:product, 3, stores: [create(:store)])
+    context 'when store param is given' do
+      let(:given_store) { store }
+
+      before do
+        create_list(:product, 3, stores: [create(:store, default: false)])
+      end
+
+      it 'returns products assigned to a store' do
+        expect(products_by_store).to contain_exactly(product)
+      end
     end
 
-    it 'returns products assigned to a store' do
-      expect(products_by_store).to contain_exactly(product)
+    context 'when store param is nil' do
+      let(:given_store) { nil }
+
+      before do
+        product.stores << create(:store, default: true)
+      end
+
+      it 'returns products assigned to default store' do
+        expect(products_by_store).to contain_exactly(product)
+      end
     end
   end
 

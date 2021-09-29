@@ -245,7 +245,7 @@ module Spree
         scope = not_discontinued.where("#{Product.quoted_table_name}.available_on <= ?", available_on)
 
         unless Spree::Config.show_products_without_price
-          currency ||= Spree::Config[:currency]
+          currency ||= Spree::Store.default.default_currency || Spree::Config[:currency]
           scope = scope.with_currency(currency)
         end
 

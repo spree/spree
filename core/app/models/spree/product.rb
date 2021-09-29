@@ -297,10 +297,9 @@ module Spree
     #
     # This could also feasibly be overridden to sort the result in a
     # particular order, or restrict the number of items returned.
-    def self.relation_filter
-      where('spree_products.deleted_at' => nil).
-        where('spree_products.available_on IS NOT NULL').
-        where('spree_products.available_on <= ?', Time.now).
+    def self.relation_filter(store: nil, currency: nil)
+      active(currency).
+        for_store(store).
         references(self)
     end
 

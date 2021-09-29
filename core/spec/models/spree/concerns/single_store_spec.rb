@@ -38,5 +38,28 @@ module Spree
         end
       end
     end
+
+    describe '.for_store' do
+      subject { Spree::Order.for_store(given_store) }
+
+      let(:order_1) { create :order, store: store }
+      let(:order_2) { create :order, store: store_2 }
+
+      context 'when store param is given' do
+        let(:given_store) { store_2 }
+
+        it 'returns products assigned to a store' do
+          expect(subject).to contain_exactly order_2
+        end
+      end
+
+      context 'when store param is nil' do
+        let(:given_store) { nil }
+
+        it 'returns products assigned to default store' do
+          expect(subject).to contain_exactly order_1
+        end
+      end
+    end
   end
 end
