@@ -16162,6 +16162,8 @@ components:
           type: boolean
           example: true
     Icon:
+      type: object
+      description: 'The Icon object contains a url attribute pointing to an Active Storage asset. '
       properties:
         id:
           type: string
@@ -16170,12 +16172,16 @@ components:
           type: string
           default: icon
         attributes:
-          $ref: '#/components/schemas/IconAttributes'
-    IconAttributes:
-      type: object
-      properties:
-        url:
-          type: string
+          type: object
+          required:
+            - url
+          properties:
+            url:
+              type: string
+      required:
+        - id
+        - type
+        - attributes
     Wishlist:
       properties:
         data:
