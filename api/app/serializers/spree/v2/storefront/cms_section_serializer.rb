@@ -21,7 +21,11 @@ module Spree
           section.fullscreen?
         end
 
-        belongs_to :linked_resource, polymorphic: true
+        belongs_to :linked_resource, polymorphic: {
+          Spree::Cms::Pages::StandardPage => :cms_page,
+          Spree::Cms::Pages::FeaturePage => :cms_page,
+          Spree::Cms::Pages::Homepage => :cms_page
+        }
       end
     end
   end

@@ -63,8 +63,8 @@ paths:
                         state_name:
                         alternative_phone: 555-555-0199
                         company: Company
-                        created_at: '2021-09-21T20:47:27.913Z'
-                        updated_at: '2021-09-21T20:47:27.913Z'
+                        created_at: '2021-09-27T22:41:57.860Z'
+                        updated_at: '2021-09-27T22:41:57.860Z'
                         deleted_at:
                         label:
                       relationships:
@@ -91,8 +91,8 @@ paths:
                         state_name:
                         alternative_phone: 555-555-0199
                         company: Company
-                        created_at: '2021-09-21T20:47:27.915Z'
-                        updated_at: '2021-09-21T20:47:27.915Z'
+                        created_at: '2021-09-27T22:41:57.862Z'
+                        updated_at: '2021-09-27T22:41:57.862Z'
                         deleted_at:
                         label:
                       relationships:
@@ -162,8 +162,8 @@ paths:
                         state_name:
                         alternative_phone: 555-555-0199
                         company: Company
-                        created_at: '2021-09-21T20:47:28.023Z'
-                        updated_at: '2021-09-21T20:47:28.023Z'
+                        created_at: '2021-09-27T22:41:57.976Z'
+                        updated_at: '2021-09-27T22:41:57.976Z'
                         deleted_at:
                         label:
                       relationships:
@@ -253,8 +253,8 @@ paths:
                         state_name:
                         alternative_phone: 555-555-0199
                         company: Company
-                        created_at: '2021-09-21T20:47:28.044Z'
-                        updated_at: '2021-09-21T20:47:28.044Z'
+                        created_at: '2021-09-27T22:41:57.997Z'
+                        updated_at: '2021-09-27T22:41:57.997Z'
                         deleted_at:
                         label:
                       relationships:
@@ -327,8 +327,8 @@ paths:
                         state_name:
                         alternative_phone: 555-555-0199
                         company: Company
-                        created_at: '2021-09-21T20:47:28.083Z'
-                        updated_at: '2021-09-21T20:47:28.089Z'
+                        created_at: '2021-09-27T22:41:58.028Z'
+                        updated_at: '2021-09-27T22:41:58.033Z'
                         deleted_at:
                         label:
                       relationships:
@@ -455,8 +455,8 @@ paths:
                       type: classification
                       attributes:
                         position: 1
-                        created_at: '2021-09-21T20:47:28.323Z'
-                        updated_at: '2021-09-21T20:47:28.323Z'
+                        created_at: '2021-09-27T22:41:58.287Z'
+                        updated_at: '2021-09-27T22:41:58.287Z'
                       relationships:
                         product:
                           data:
@@ -470,8 +470,8 @@ paths:
                       type: classification
                       attributes:
                         position: 1
-                        created_at: '2021-09-21T20:47:28.404Z'
-                        updated_at: '2021-09-21T20:47:28.404Z'
+                        created_at: '2021-09-27T22:41:58.356Z'
+                        updated_at: '2021-09-27T22:41:58.356Z'
                       relationships:
                         product:
                           data:
@@ -528,8 +528,8 @@ paths:
                       type: classification
                       attributes:
                         position: 1
-                        created_at: '2021-09-21T20:47:28.653Z'
-                        updated_at: '2021-09-21T20:47:28.653Z'
+                        created_at: '2021-09-27T22:41:58.641Z'
+                        updated_at: '2021-09-27T22:41:58.641Z'
                       relationships:
                         product:
                           data:
@@ -592,8 +592,8 @@ paths:
                       type: classification
                       attributes:
                         position: 1
-                        created_at: '2021-09-21T20:47:28.756Z'
-                        updated_at: '2021-09-21T20:47:28.756Z'
+                        created_at: '2021-09-27T22:41:58.746Z'
+                        updated_at: '2021-09-27T22:41:58.746Z'
                       relationships:
                         product:
                           data:
@@ -653,8 +653,8 @@ paths:
                       type: classification
                       attributes:
                         position: 1
-                        created_at: '2021-09-21T20:47:28.939Z'
-                        updated_at: '2021-09-21T20:47:28.939Z'
+                        created_at: '2021-09-27T22:41:58.964Z'
+                        updated_at: '2021-09-27T22:41:58.964Z'
                       relationships:
                         product:
                           data:
@@ -764,8 +764,8 @@ paths:
                       type: classification
                       attributes:
                         position: 2
-                        created_at: '2021-09-21T20:47:29.407Z'
-                        updated_at: '2021-09-21T20:47:29.417Z'
+                        created_at: '2021-09-27T22:41:59.461Z'
+                        updated_at: '2021-09-27T22:41:59.472Z'
                       relationships:
                         product:
                           data:
@@ -805,6 +805,831 @@ paths:
           application/json:
             schema:
               "$ref": "#/components/schemas/classification_params"
+  "/api/v2/platform/cms_pages":
+    get:
+      summary: Returns a list of CMS Pages
+      tags:
+      - CMS Pages
+      security:
+      - bearer_auth: []
+      description: Returns a list of CMS Pages
+      operationId: cms-pages-list
+      parameters:
+      - name: page
+        in: query
+        example: 1
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        example: 50
+        schema:
+          type: integer
+      - name: include
+        in: query
+        description: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: cms_sections
+        schema:
+          type: string
+      - name: filter
+        in: query
+        description: ''
+        example: type=homepage
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Records returned
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    data:
+                    - id: '1'
+                      type: cms_page
+                      attributes:
+                        title: Quae illum sed aut aliquam nulla enim.
+                        meta_title:
+                        content:
+                        meta_description:
+                        visible: true
+                        slug: quae-illum-sed-aut-aliquam-nulla-enim
+                        type: Spree::Cms::Pages::StandardPage
+                        locale: en
+                        deleted_at:
+                        created_at: '2021-09-27T22:41:59.683Z'
+                        updated_at: '2021-09-27T22:41:59.683Z'
+                      relationships:
+                        cms_sections:
+                          data: []
+                    - id: '2'
+                      type: cms_page
+                      attributes:
+                        title: Unde a reprehenderit ad similique recusandae quos laboriosam.
+                        meta_title:
+                        content:
+                        meta_description:
+                        visible: true
+                        slug: unde-a-reprehenderit-ad-similique-recusandae-quos-laboriosam
+                        type: Spree::Cms::Pages::StandardPage
+                        locale: en
+                        deleted_at:
+                        created_at: '2021-09-27T22:41:59.686Z'
+                        updated_at: '2021-09-27T22:41:59.686Z'
+                      relationships:
+                        cms_sections:
+                          data: []
+                    meta:
+                      count: 2
+                      total_count: 2
+                      total_pages: 1
+                    links:
+                      self: http://www.example.com/api/v2/platform/cms_pages?page=1&per_page=&include=&filter=
+                      next: http://www.example.com/api/v2/platform/cms_pages?include=&page=1&per_page=
+                      prev: http://www.example.com/api/v2/platform/cms_pages?include=&page=1&per_page=
+                      last: http://www.example.com/api/v2/platform/cms_pages?include=&page=1&per_page=
+                      first: http://www.example.com/api/v2/platform/cms_pages?include=&page=1&per_page=
+        '401':
+          description: Authentication Failed
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The access token is invalid
+    post:
+      summary: Creates a CMS Page
+      tags:
+      - CMS Pages
+      security:
+      - bearer_auth: []
+      description: Creates a CMS Page
+      operationId: create-cms-page
+      parameters:
+      - name: include
+        in: query
+        description: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: cms_sections
+        schema:
+          type: string
+      responses:
+        '201':
+          description: record created
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    data:
+                      id: '1'
+                      type: cms_page
+                      attributes:
+                        title: Exercitationem fugit architecto aspernatur consectetur
+                          voluptatem perferendis.
+                        meta_title:
+                        content:
+                        meta_description:
+                        visible: true
+                        slug: exercitationem-fugit-architecto-aspernatur-consectetur-voluptatem-perferendis
+                        type:
+                        locale: en
+                        deleted_at:
+                        created_at: '2021-09-27T22:41:59.728Z'
+                        updated_at: '2021-09-27T22:41:59.728Z'
+                      relationships:
+                        cms_sections:
+                          data: []
+        '422':
+          description: invalid request
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: Title can't be blank and Locale can't be blank
+                    errors:
+                      title:
+                      - can't be blank
+                      locale:
+                      - can't be blank
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/cms_page_params"
+  "/api/v2/platform/cms_pages/{id}":
+    get:
+      summary: Returns a CMS Page
+      tags:
+      - CMS Pages
+      security:
+      - bearer_auth: []
+      description: Returns a CMS Page
+      operationId: show-cms-page
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: include
+        in: query
+        description: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: cms_sections
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Record found
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    data:
+                      id: '1'
+                      type: cms_page
+                      attributes:
+                        title: Magni earum enim deleniti architecto inventore illo
+                          perferendis.
+                        meta_title:
+                        content:
+                        meta_description:
+                        visible: true
+                        slug: magni-earum-enim-deleniti-architecto-inventore-illo-perferendis
+                        type: Spree::Cms::Pages::StandardPage
+                        locale: en
+                        deleted_at:
+                        created_at: '2021-09-27T22:41:59.753Z'
+                        updated_at: '2021-09-27T22:41:59.753Z'
+                      relationships:
+                        cms_sections:
+                          data: []
+        '404':
+          description: Record not found
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The resource you were looking for could not be found.
+        '401':
+          description: Authentication Failed
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The access token is invalid
+    put:
+      summary: Updates a CMS Page
+      tags:
+      - CMS Pages
+      security:
+      - bearer_auth: []
+      description: Updates a CMS Page
+      operationId: update-cms-page
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: include
+        in: query
+        description: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: cms_sections
+        schema:
+          type: string
+      responses:
+        '200':
+          description: record updated
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    data:
+                      id: '1'
+                      type: cms_page
+                      attributes:
+                        title: My Super Page
+                        meta_title:
+                        content:
+                        meta_description:
+                        visible: true
+                        slug: ipsam-magnam-laboriosam-id-architecto
+                        type: Spree::Cms::Pages::StandardPage
+                        locale: en
+                        deleted_at:
+                        created_at: '2021-09-27T22:41:59.795Z'
+                        updated_at: '2021-09-27T22:41:59.801Z'
+                      relationships:
+                        cms_sections:
+                          data: []
+        '422':
+          description: invalid request
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: Title can't be blank
+                    errors:
+                      title:
+                      - can't be blank
+        '404':
+          description: Record not found
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The resource you were looking for could not be found.
+        '401':
+          description: Authentication Failed
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The access token is invalid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/cms_page_params"
+    delete:
+      summary: Deletes a CMS Page
+      tags:
+      - CMS Pages
+      security:
+      - bearer_auth: []
+      description: Deletes a CMS Page
+      operationId: delete-cms-page
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Record deleted
+        '404':
+          description: Record not found
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The resource you were looking for could not be found.
+        '401':
+          description: Authentication Failed
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The access token is invalid
+  "/api/v2/platform/cms_sections":
+    get:
+      summary: Returns a list of CMS Sections
+      tags:
+      - CMS Sections
+      security:
+      - bearer_auth: []
+      description: Returns a list of CMS Sections
+      operationId: cms-sections-list
+      parameters:
+      - name: page
+        in: query
+        example: 1
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        example: 50
+        schema:
+          type: integer
+      - name: include
+        in: query
+        description: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: product
+        schema:
+          type: string
+      - name: filter
+        in: query
+        description: ''
+        example: name_eq=Hero
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Records returned
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    data:
+                    - id: '1'
+                      type: cms_section
+                      attributes:
+                        name: Neque excepturi minima consequuntur vero eligendi.
+                        content: {}
+                        settings:
+                          gutters: No Gutters
+                        fit: Screen
+                        destination:
+                        type: Spree::Cms::Sections::HeroImage
+                        position: 1
+                        linked_resource_type: Spree::Taxon
+                        created_at: '2021-09-27T22:41:59.900Z'
+                        updated_at: '2021-09-27T22:41:59.900Z'
+                      relationships:
+                        cms_page:
+                          data:
+                            id: '1'
+                            type: cms_page
+                        linked_resource:
+                          data:
+                    - id: '2'
+                      type: cms_section
+                      attributes:
+                        name: Qui voluptate nesciunt animi nemo similique numquam.
+                        content:
+                          link_type_one: Spree::Taxon
+                          link_type_two: Spree::Taxon
+                          link_type_three: Spree::Taxon
+                        settings:
+                          layout_style: Default
+                        fit: Container
+                        destination:
+                        type: Spree::Cms::Sections::ImageGallery
+                        position: 2
+                        linked_resource_type:
+                        created_at: '2021-09-27T22:41:59.902Z'
+                        updated_at: '2021-09-27T22:41:59.902Z'
+                      relationships:
+                        cms_page:
+                          data:
+                            id: '1'
+                            type: cms_page
+                        linked_resource:
+                          data:
+                    - id: '3'
+                      type: cms_section
+                      attributes:
+                        name: Quibusdam voluptas consequuntur fugiat iste doloribus
+                          quidem ab facilis.
+                        content: {}
+                        settings:
+                          gutters: No Gutters
+                        fit: Screen
+                        destination:
+                        type: Spree::Cms::Sections::FeaturedArticle
+                        position: 3
+                        linked_resource_type: Spree::Taxon
+                        created_at: '2021-09-27T22:41:59.909Z'
+                        updated_at: '2021-09-27T22:41:59.909Z'
+                      relationships:
+                        cms_page:
+                          data:
+                            id: '1'
+                            type: cms_page
+                        linked_resource:
+                          data:
+                    - id: '4'
+                      type: cms_section
+                      attributes:
+                        name: Rerum occaecati blanditiis quia hic laborum natus.
+                        content: {}
+                        settings:
+                          gutters: No Gutters
+                        fit: Screen
+                        destination:
+                        type: Spree::Cms::Sections::HeroImage
+                        position: 4
+                        linked_resource_type: Spree::Product
+                        created_at: '2021-09-27T22:41:59.915Z'
+                        updated_at: '2021-09-27T22:41:59.915Z'
+                      relationships:
+                        cms_page:
+                          data:
+                            id: '1'
+                            type: cms_page
+                        linked_resource:
+                          data:
+                            id: '1'
+                            type: product
+                    - id: '5'
+                      type: cms_section
+                      attributes:
+                        name: Cumque expedita repellendus occaecati ex magni.
+                        content: {}
+                        settings:
+                          gutters: No Gutters
+                        fit: Screen
+                        destination:
+                        type: Spree::Cms::Sections::HeroImage
+                        position: 5
+                        linked_resource_type: Spree::Product
+                        created_at: '2021-09-27T22:41:59.920Z'
+                        updated_at: '2021-09-27T22:41:59.920Z'
+                      relationships:
+                        cms_page:
+                          data:
+                            id: '1'
+                            type: cms_page
+                        linked_resource:
+                          data:
+                            id: '1'
+                            type: product
+                    meta:
+                      count: 5
+                      total_count: 5
+                      total_pages: 1
+                    links:
+                      self: http://www.example.com/api/v2/platform/cms_sections?page=1&per_page=&include=&filter=
+                      next: http://www.example.com/api/v2/platform/cms_sections?include=&page=1&per_page=
+                      prev: http://www.example.com/api/v2/platform/cms_sections?include=&page=1&per_page=
+                      last: http://www.example.com/api/v2/platform/cms_sections?include=&page=1&per_page=
+                      first: http://www.example.com/api/v2/platform/cms_sections?include=&page=1&per_page=
+        '401':
+          description: Authentication Failed
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The access token is invalid
+    post:
+      summary: Creates a CMS Section
+      tags:
+      - CMS Sections
+      security:
+      - bearer_auth: []
+      description: Creates a CMS Section
+      operationId: create-cms-section
+      parameters:
+      - name: include
+        in: query
+        description: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: product
+        schema:
+          type: string
+      responses:
+        '201':
+          description: record created
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    data:
+                      id: '4'
+                      type: cms_section
+                      attributes:
+                        name: Illo ipsam officia magni molestiae doloribus culpa at
+                          eligendi.
+                        content:
+                        settings:
+                        fit:
+                        destination:
+                        type:
+                        position: 4
+                        linked_resource_type:
+                        created_at: '2021-09-27T22:42:00.021Z'
+                        updated_at: '2021-09-27T22:42:00.021Z'
+                      relationships:
+                        cms_page:
+                          data:
+                            id: '1'
+                            type: cms_page
+                        linked_resource:
+                          data:
+        '422':
+          description: invalid request
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: Name can't be blank and Cms page can't be blank
+                    errors:
+                      name:
+                      - can't be blank
+                      cms_page:
+                      - can't be blank
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/cms_section_params"
+  "/api/v2/platform/cms_sections/{id}":
+    get:
+      summary: Returns a CMS Section
+      tags:
+      - CMS Sections
+      security:
+      - bearer_auth: []
+      description: Returns a CMS Section
+      operationId: show-cms-section
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: include
+        in: query
+        description: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: product
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Record found
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    data:
+                      id: '4'
+                      type: cms_section
+                      attributes:
+                        name: Labore commodi minima eos officiis ea.
+                        content: {}
+                        settings:
+                          gutters: No Gutters
+                        fit: Screen
+                        destination:
+                        type: Spree::Cms::Sections::HeroImage
+                        position: 4
+                        linked_resource_type: Spree::Product
+                        created_at: '2021-09-27T22:42:00.096Z'
+                        updated_at: '2021-09-27T22:42:00.096Z'
+                      relationships:
+                        cms_page:
+                          data:
+                            id: '1'
+                            type: cms_page
+                        linked_resource:
+                          data:
+                            id: '1'
+                            type: product
+        '404':
+          description: Record not found
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The resource you were looking for could not be found.
+        '401':
+          description: Authentication Failed
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The access token is invalid
+    put:
+      summary: Updates a CMS Section
+      tags:
+      - CMS Sections
+      security:
+      - bearer_auth: []
+      description: Updates a CMS Section
+      operationId: update-cms-section
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: include
+        in: query
+        description: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: product
+        schema:
+          type: string
+      responses:
+        '200':
+          description: record updated
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    data:
+                      id: '4'
+                      type: cms_section
+                      attributes:
+                        name: Super Hero
+                        content: {}
+                        settings:
+                          gutters: No Gutters
+                        fit: Screen
+                        destination:
+                        type: Spree::Cms::Sections::HeroImage
+                        position: 4
+                        linked_resource_type: Spree::Product
+                        created_at: '2021-09-27T22:42:00.215Z'
+                        updated_at: '2021-09-27T22:42:00.222Z'
+                      relationships:
+                        cms_page:
+                          data:
+                            id: '1'
+                            type: cms_page
+                        linked_resource:
+                          data:
+                            id: '1'
+                            type: product
+        '422':
+          description: invalid request
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: Name can't be blank
+                    errors:
+                      name:
+                      - can't be blank
+        '404':
+          description: Record not found
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The resource you were looking for could not be found.
+        '401':
+          description: Authentication Failed
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The access token is invalid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/cms_section_params"
+    delete:
+      summary: Deletes a CMS Section
+      tags:
+      - CMS Sections
+      security:
+      - bearer_auth: []
+      description: Deletes a CMS Section
+      operationId: delete-cms-section
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Record deleted
+        '404':
+          description: Record not found
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The resource you were looking for could not be found.
+        '401':
+          description: Authentication Failed
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The access token is invalid
+  "/api/v2/platform/cms_sections/{id}/reposition":
+    patch:
+      summary: Reposition a CMS Section
+      tags:
+      - CMS Sections
+      security:
+      - bearer_auth: []
+      operationId: reposition-cms-section
+      description: Reposition a Menu Item
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: record updated
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    data:
+                      id: '4'
+                      type: cms_section
+                      attributes:
+                        name: Eos iste adipisci laudantium beatae amet eius.
+                        content: {}
+                        settings:
+                          gutters: No Gutters
+                        fit: Screen
+                        destination:
+                        type: Spree::Cms::Sections::HeroImage
+                        position: 3
+                        linked_resource_type: Spree::Product
+                        created_at: '2021-09-27T22:42:00.499Z'
+                        updated_at: '2021-09-27T22:42:00.506Z'
+                      relationships:
+                        cms_page:
+                          data:
+                            id: '1'
+                            type: cms_page
+                        linked_resource:
+                          data:
+                            id: '1'
+                            type: product
+        '404':
+          description: Record not found
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The resource you were looking for could not be found.
+        '401':
+          description: Authentication Failed
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The access token is invalid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/cms_section_reposition_params"
   "/api/v2/platform/countries":
     get:
       summary: Returns a list of Countries
@@ -828,13 +1653,13 @@ paths:
                       attributes:
                         iso_name: UNITED STATES
                         iso: US
-                        iso3: IS34
+                        iso3: IS65
                         name: United States of America
                         numcode: 840
                         states_required: true
-                        updated_at: '2021-09-21T20:47:29.609Z'
+                        updated_at: '2021-09-27T22:42:00.594Z'
                         zipcode_required: true
-                        created_at: '2021-09-21T20:47:29.609Z'
+                        created_at: '2021-09-27T22:42:00.594Z'
                       relationships:
                         states:
                           data: []
@@ -843,13 +1668,13 @@ paths:
                       attributes:
                         iso_name: ISO_NAME_2
                         iso: I2
-                        iso3: IS35
+                        iso3: IS66
                         name: NAME_2
                         numcode: 840
                         states_required: false
-                        updated_at: '2021-09-21T20:47:29.613Z'
+                        updated_at: '2021-09-27T22:42:00.598Z'
                         zipcode_required: true
-                        created_at: '2021-09-21T20:47:29.613Z'
+                        created_at: '2021-09-27T22:42:00.598Z'
                       relationships:
                         states:
                           data: []
@@ -858,13 +1683,13 @@ paths:
                       attributes:
                         iso_name: ISO_NAME_3
                         iso: I3
-                        iso3: IS36
+                        iso3: IS67
                         name: NAME_3
                         numcode: 840
                         states_required: false
-                        updated_at: '2021-09-21T20:47:29.613Z'
+                        updated_at: '2021-09-27T22:42:00.598Z'
                         zipcode_required: true
-                        created_at: '2021-09-21T20:47:29.613Z'
+                        created_at: '2021-09-27T22:42:00.598Z'
                       relationships:
                         states:
                           data: []
@@ -915,13 +1740,13 @@ paths:
                       attributes:
                         iso_name: ISO_NAME_6
                         iso: I6
-                        iso3: IS41
+                        iso3: IS72
                         name: NAME_6
                         numcode: 840
                         states_required: false
-                        updated_at: '2021-09-21T20:47:29.642Z'
+                        updated_at: '2021-09-27T22:42:00.626Z'
                         zipcode_required: true
-                        created_at: '2021-09-21T20:47:29.642Z'
+                        created_at: '2021-09-27T22:42:00.626Z'
                       relationships:
                         states:
                           data: []
@@ -986,7 +1811,8 @@ paths:
                     - id: '1'
                       type: menu_item
                       attributes:
-                        name: Possimus deserunt similique asperiores eveniet.
+                        name: Perspiciatis cupiditate quae quas incidunt nostrum alias
+                          vitae.
                         subtitle:
                         destination:
                         new_window: false
@@ -996,8 +1822,8 @@ paths:
                         lft: 1
                         rgt: 16
                         depth: 0
-                        created_at: '2021-09-21T20:47:29.680Z'
-                        updated_at: '2021-09-21T20:47:29.972Z'
+                        created_at: '2021-09-27T22:42:00.664Z'
+                        updated_at: '2021-09-27T22:42:00.969Z'
                         link:
                         is_container: true
                         is_root: true
@@ -1043,8 +1869,8 @@ paths:
                         lft: 2
                         rgt: 3
                         depth: 1
-                        created_at: '2021-09-21T20:47:29.721Z'
-                        updated_at: '2021-09-21T20:47:29.724Z'
+                        created_at: '2021-09-27T22:42:00.704Z'
+                        updated_at: '2021-09-27T22:42:00.707Z'
                         link:
                         is_container: false
                         is_root: false
@@ -1080,8 +1906,8 @@ paths:
                         lft: 4
                         rgt: 5
                         depth: 1
-                        created_at: '2021-09-21T20:47:29.761Z'
-                        updated_at: '2021-09-21T20:47:29.764Z'
+                        created_at: '2021-09-27T22:42:00.745Z'
+                        updated_at: '2021-09-27T22:42:00.748Z'
                         link:
                         is_container: false
                         is_root: false
@@ -1117,8 +1943,8 @@ paths:
                         lft: 6
                         rgt: 7
                         depth: 1
-                        created_at: '2021-09-21T20:47:29.800Z'
-                        updated_at: '2021-09-21T20:47:29.802Z'
+                        created_at: '2021-09-27T22:42:00.786Z'
+                        updated_at: '2021-09-27T22:42:00.789Z'
                         link:
                         is_container: false
                         is_root: false
@@ -1154,8 +1980,8 @@ paths:
                         lft: 8
                         rgt: 9
                         depth: 1
-                        created_at: '2021-09-21T20:47:29.838Z'
-                        updated_at: '2021-09-21T20:47:29.840Z'
+                        created_at: '2021-09-27T22:42:00.835Z'
+                        updated_at: '2021-09-27T22:42:00.838Z'
                         link:
                         is_container: false
                         is_root: false
@@ -1191,8 +2017,8 @@ paths:
                         lft: 10
                         rgt: 11
                         depth: 1
-                        created_at: '2021-09-21T20:47:29.877Z'
-                        updated_at: '2021-09-21T20:47:29.880Z'
+                        created_at: '2021-09-27T22:42:00.877Z'
+                        updated_at: '2021-09-27T22:42:00.880Z'
                         link:
                         is_container: false
                         is_root: false
@@ -1228,8 +2054,8 @@ paths:
                         lft: 12
                         rgt: 13
                         depth: 1
-                        created_at: '2021-09-21T20:47:29.917Z'
-                        updated_at: '2021-09-21T20:47:29.920Z'
+                        created_at: '2021-09-27T22:42:00.919Z'
+                        updated_at: '2021-09-27T22:42:00.922Z'
                         link:
                         is_container: false
                         is_root: false
@@ -1265,8 +2091,8 @@ paths:
                         lft: 14
                         rgt: 15
                         depth: 1
-                        created_at: '2021-09-21T20:47:29.957Z'
-                        updated_at: '2021-09-21T20:47:29.959Z'
+                        created_at: '2021-09-27T22:42:00.961Z'
+                        updated_at: '2021-09-27T22:42:00.964Z'
                         link:
                         is_container: false
                         is_root: false
@@ -1345,8 +2171,8 @@ paths:
                         lft: 8
                         rgt: 9
                         depth: 1
-                        created_at: '2021-09-21T20:47:30.427Z'
-                        updated_at: '2021-09-21T20:47:30.429Z'
+                        created_at: '2021-09-27T22:42:01.441Z'
+                        updated_at: '2021-09-27T22:42:01.443Z'
                         link:
                         is_container: false
                         is_root: false
@@ -1432,8 +2258,8 @@ paths:
                         lft: 8
                         rgt: 9
                         depth: 1
-                        created_at: '2021-09-21T20:47:30.745Z'
-                        updated_at: '2021-09-21T20:47:30.748Z'
+                        created_at: '2021-09-27T22:42:01.802Z'
+                        updated_at: '2021-09-27T22:42:01.805Z'
                         link:
                         is_container: false
                         is_root: false
@@ -1515,8 +2341,8 @@ paths:
                         lft: 8
                         rgt: 9
                         depth: 1
-                        created_at: '2021-09-21T20:47:31.244Z'
-                        updated_at: '2021-09-21T20:47:31.257Z'
+                        created_at: '2021-09-27T22:42:02.322Z'
+                        updated_at: '2021-09-27T22:42:02.341Z'
                         link:
                         is_container: false
                         is_root: false
@@ -1641,8 +2467,8 @@ paths:
                         lft: 5
                         rgt: 6
                         depth: 2
-                        created_at: '2021-09-21T20:47:32.441Z'
-                        updated_at: '2021-09-21T20:47:32.456Z'
+                        created_at: '2021-09-27T22:42:03.595Z'
+                        updated_at: '2021-09-27T22:42:03.610Z'
                         link:
                         is_container: false
                         is_root: false
@@ -1734,8 +2560,8 @@ paths:
                         name: Main Menu
                         location: header
                         locale: en
-                        created_at: '2021-09-21T20:47:32.789Z'
-                        updated_at: '2021-09-21T20:47:32.878Z'
+                        created_at: '2021-09-27T22:42:03.961Z'
+                        updated_at: '2021-09-27T22:42:04.051Z'
                       relationships:
                         menu_items:
                           data:
@@ -1751,8 +2577,8 @@ paths:
                         name: Footer Menu
                         location: footer
                         locale: en
-                        created_at: '2021-09-21T20:47:32.794Z'
-                        updated_at: '2021-09-21T20:47:32.961Z'
+                        created_at: '2021-09-27T22:42:03.966Z'
+                        updated_at: '2021-09-27T22:42:04.135Z'
                       relationships:
                         menu_items:
                           data:
@@ -1811,8 +2637,8 @@ paths:
                         name: Main Menu
                         location: header
                         locale: en
-                        created_at: '2021-09-21T20:47:33.175Z'
-                        updated_at: '2021-09-21T20:47:33.179Z'
+                        created_at: '2021-09-27T22:42:04.360Z'
+                        updated_at: '2021-09-27T22:42:04.364Z'
                       relationships:
                         menu_items:
                           data:
@@ -1876,8 +2702,8 @@ paths:
                         name: Main Menu
                         location: header
                         locale: en
-                        created_at: '2021-09-21T20:47:33.200Z'
-                        updated_at: '2021-09-21T20:47:33.203Z'
+                        created_at: '2021-09-27T22:42:04.389Z'
+                        updated_at: '2021-09-27T22:42:04.392Z'
                       relationships:
                         menu_items:
                           data:
@@ -1935,8 +2761,8 @@ paths:
                         name: Main Menu
                         location: header
                         locale: en
-                        created_at: '2021-09-21T20:47:33.239Z'
-                        updated_at: '2021-09-21T20:47:33.242Z'
+                        created_at: '2021-09-27T22:42:04.503Z'
+                        updated_at: '2021-09-27T22:42:04.506Z'
                       relationships:
                         menu_items:
                           data:
@@ -2060,8 +2886,8 @@ paths:
                         name: foo-size-1
                         presentation: Size
                         position: 1
-                        created_at: '2021-09-21T20:47:33.339Z'
-                        updated_at: '2021-09-21T20:47:33.339Z'
+                        created_at: '2021-09-27T22:42:04.605Z'
+                        updated_at: '2021-09-27T22:42:04.605Z'
                         filterable: true
                       relationships:
                         option_values:
@@ -2072,8 +2898,8 @@ paths:
                         name: foo-size-2
                         presentation: Size
                         position: 2
-                        created_at: '2021-09-21T20:47:33.340Z'
-                        updated_at: '2021-09-21T20:47:33.340Z'
+                        created_at: '2021-09-27T22:42:04.606Z'
+                        updated_at: '2021-09-27T22:42:04.606Z'
                         filterable: true
                       relationships:
                         option_values:
@@ -2127,8 +2953,8 @@ paths:
                         name: foo-size-5
                         presentation: Size
                         position: 1
-                        created_at: '2021-09-21T20:47:33.369Z'
-                        updated_at: '2021-09-21T20:47:33.369Z'
+                        created_at: '2021-09-27T22:42:04.638Z'
+                        updated_at: '2021-09-27T22:42:04.638Z'
                         filterable: true
                       relationships:
                         option_values:
@@ -2188,8 +3014,8 @@ paths:
                         name: foo-size-6
                         presentation: Size
                         position: 1
-                        created_at: '2021-09-21T20:47:33.387Z'
-                        updated_at: '2021-09-21T20:47:33.387Z'
+                        created_at: '2021-09-27T22:42:04.658Z'
+                        updated_at: '2021-09-27T22:42:04.658Z'
                         filterable: true
                       relationships:
                         option_values:
@@ -2246,8 +3072,8 @@ paths:
                         name: Size-X
                         presentation: Size
                         position: 1
-                        created_at: '2021-09-21T20:47:33.421Z'
-                        updated_at: '2021-09-21T20:47:33.425Z'
+                        created_at: '2021-09-27T22:42:04.708Z'
+                        updated_at: '2021-09-27T22:42:04.714Z'
                         filterable: true
                       relationships:
                         option_values:
@@ -2365,8 +3191,8 @@ paths:
                         position: 1
                         name: Size-1
                         presentation: S
-                        created_at: '2021-09-21T20:47:33.493Z'
-                        updated_at: '2021-09-21T20:47:33.493Z'
+                        created_at: '2021-09-27T22:42:04.850Z'
+                        updated_at: '2021-09-27T22:42:04.850Z'
                       relationships:
                         option_type:
                           data:
@@ -2378,8 +3204,8 @@ paths:
                         position: 1
                         name: Size-2
                         presentation: S
-                        created_at: '2021-09-21T20:47:33.496Z'
-                        updated_at: '2021-09-21T20:47:33.496Z'
+                        created_at: '2021-09-27T22:42:04.854Z'
+                        updated_at: '2021-09-27T22:42:04.854Z'
                       relationships:
                         option_type:
                           data:
@@ -2434,8 +3260,8 @@ paths:
                         position: 1
                         name: Size-5
                         presentation: S
-                        created_at: '2021-09-21T20:47:33.595Z'
-                        updated_at: '2021-09-21T20:47:33.595Z'
+                        created_at: '2021-09-27T22:42:04.895Z'
+                        updated_at: '2021-09-27T22:42:04.895Z'
                       relationships:
                         option_type:
                           data:
@@ -2494,8 +3320,8 @@ paths:
                         position: 1
                         name: Size-6
                         presentation: S
-                        created_at: '2021-09-21T20:47:33.616Z'
-                        updated_at: '2021-09-21T20:47:33.616Z'
+                        created_at: '2021-09-27T22:42:04.922Z'
+                        updated_at: '2021-09-27T22:42:04.922Z'
                       relationships:
                         option_type:
                           data:
@@ -2553,8 +3379,8 @@ paths:
                         position: 1
                         name: M
                         presentation: S
-                        created_at: '2021-09-21T20:47:33.647Z'
-                        updated_at: '2021-09-21T20:47:33.652Z'
+                        created_at: '2021-09-27T22:42:04.968Z'
+                        updated_at: '2021-09-27T22:42:04.974Z'
                       relationships:
                         option_type:
                           data:
@@ -2676,8 +3502,8 @@ paths:
                         lft: 1
                         rgt: 6
                         description:
-                        created_at: '2021-09-21T20:47:33.731Z'
-                        updated_at: '2021-09-21T20:47:33.825Z'
+                        created_at: '2021-09-27T22:42:05.071Z'
+                        updated_at: '2021-09-27T22:42:05.161Z'
                         meta_title:
                         meta_description:
                         meta_keywords:
@@ -2711,8 +3537,8 @@ paths:
                         lft: 2
                         rgt: 3
                         description:
-                        created_at: '2021-09-21T20:47:33.777Z'
-                        updated_at: '2021-09-21T20:47:33.779Z'
+                        created_at: '2021-09-27T22:42:05.113Z'
+                        updated_at: '2021-09-27T22:42:05.114Z'
                         meta_title:
                         meta_description:
                         meta_keywords:
@@ -2746,8 +3572,8 @@ paths:
                         lft: 4
                         rgt: 5
                         description:
-                        created_at: '2021-09-21T20:47:33.818Z'
-                        updated_at: '2021-09-21T20:47:33.820Z'
+                        created_at: '2021-09-27T22:42:05.154Z'
+                        updated_at: '2021-09-27T22:42:05.156Z'
                         meta_title:
                         meta_description:
                         meta_keywords:
@@ -2824,8 +3650,8 @@ paths:
                         lft: 2
                         rgt: 3
                         description:
-                        created_at: '2021-09-21T20:47:33.967Z'
-                        updated_at: '2021-09-21T20:47:33.970Z'
+                        created_at: '2021-09-27T22:42:05.317Z'
+                        updated_at: '2021-09-27T22:42:05.320Z'
                         meta_title:
                         meta_description:
                         meta_keywords:
@@ -2906,8 +3732,8 @@ paths:
                         lft: 2
                         rgt: 3
                         description:
-                        created_at: '2021-09-21T20:47:34.035Z'
-                        updated_at: '2021-09-21T20:47:34.036Z'
+                        created_at: '2021-09-27T22:42:05.388Z'
+                        updated_at: '2021-09-27T22:42:05.390Z'
                         meta_title:
                         meta_description:
                         meta_keywords:
@@ -2989,8 +3815,8 @@ paths:
                         lft: 2
                         rgt: 3
                         description:
-                        created_at: '2021-09-21T20:47:34.179Z'
-                        updated_at: '2021-09-21T20:47:34.193Z'
+                        created_at: '2021-09-27T22:42:05.559Z'
+                        updated_at: '2021-09-27T22:42:05.575Z'
                         meta_title:
                         meta_description:
                         meta_keywords:
@@ -3125,9 +3951,9 @@ paths:
                     - id: '1'
                       type: user
                       attributes:
-                        email: sherryl.christiansen@schiller.com
-                        created_at: '2021-09-21T20:47:34.489Z'
-                        updated_at: '2021-09-21T20:47:34.489Z'
+                        email: delena@buckridge.ca
+                        created_at: '2021-09-27T22:42:05.876Z'
+                        updated_at: '2021-09-27T22:42:05.876Z'
                         average_order_value: []
                         lifetime_value: []
                         store_credits: []
@@ -3139,9 +3965,9 @@ paths:
                     - id: '2'
                       type: user
                       attributes:
-                        email: carol@wiza.biz
-                        created_at: '2021-09-21T20:47:34.492Z'
-                        updated_at: '2021-09-21T20:47:34.492Z'
+                        email: bobby@torphygoyette.co.uk
+                        created_at: '2021-09-27T22:42:05.880Z'
+                        updated_at: '2021-09-27T22:42:05.880Z'
                         average_order_value: []
                         lifetime_value: []
                         store_credits: []
@@ -3153,9 +3979,9 @@ paths:
                     - id: '3'
                       type: user
                       attributes:
-                        email: hilario_hirthe@gorczanymcclure.info
-                        created_at: '2021-09-21T20:47:34.493Z'
-                        updated_at: '2021-09-21T20:47:34.493Z'
+                        email: joselyn@kohlercrist.com
+                        created_at: '2021-09-27T22:42:05.881Z'
+                        updated_at: '2021-09-27T22:42:05.881Z'
                         average_order_value: []
                         lifetime_value: []
                         store_credits: []
@@ -3210,9 +4036,9 @@ paths:
                       id: '2'
                       type: user
                       attributes:
-                        email: madalyn@damore.info
-                        created_at: '2021-09-21T20:47:34.534Z'
-                        updated_at: '2021-09-21T20:47:34.534Z'
+                        email: rebekah_rohan@ondricka.name
+                        created_at: '2021-09-27T22:42:05.931Z'
+                        updated_at: '2021-09-27T22:42:05.931Z'
                         average_order_value: []
                         lifetime_value: []
                         store_credits: []
@@ -3271,9 +4097,9 @@ paths:
                       id: '2'
                       type: user
                       attributes:
-                        email: shameka.botsford@braun.us
-                        created_at: '2021-09-21T20:47:34.562Z'
-                        updated_at: '2021-09-21T20:47:34.562Z'
+                        email: tonisha_oconner@okeefe.us
+                        created_at: '2021-09-27T22:42:05.959Z'
+                        updated_at: '2021-09-27T22:42:05.959Z'
                         average_order_value: []
                         lifetime_value: []
                         store_credits: []
@@ -3332,8 +4158,8 @@ paths:
                       type: user
                       attributes:
                         email: john@example.com
-                        created_at: '2021-09-21T20:47:34.602Z'
-                        updated_at: '2021-09-21T20:47:34.612Z'
+                        created_at: '2021-09-27T22:42:06.001Z'
+                        updated_at: '2021-09-27T22:42:06.005Z'
                         average_order_value: []
                         lifetime_value: []
                         store_credits: []
@@ -3447,8 +4273,8 @@ paths:
                       type: wished_item
                       attributes:
                         quantity: 1
-                        created_at: '2021-09-21T20:47:34.780Z'
-                        updated_at: '2021-09-21T20:47:34.780Z'
+                        created_at: '2021-09-27T22:42:06.193Z'
+                        updated_at: '2021-09-27T22:42:06.193Z'
                         price: '19.99'
                         total: '19.99'
                         display_price: "$19.99"
@@ -3462,8 +4288,8 @@ paths:
                       type: wished_item
                       attributes:
                         quantity: 1
-                        created_at: '2021-09-21T20:47:34.808Z'
-                        updated_at: '2021-09-21T20:47:34.808Z'
+                        created_at: '2021-09-27T22:42:06.219Z'
+                        updated_at: '2021-09-27T22:42:06.219Z'
                         price: '19.99'
                         total: '19.99'
                         display_price: "$19.99"
@@ -3477,8 +4303,8 @@ paths:
                       type: wished_item
                       attributes:
                         quantity: 1
-                        created_at: '2021-09-21T20:47:34.835Z'
-                        updated_at: '2021-09-21T20:47:34.835Z'
+                        created_at: '2021-09-27T22:42:06.248Z'
+                        updated_at: '2021-09-27T22:42:06.248Z'
                         price: '19.99'
                         total: '19.99'
                         display_price: "$19.99"
@@ -3492,8 +4318,8 @@ paths:
                       type: wished_item
                       attributes:
                         quantity: 1
-                        created_at: '2021-09-21T20:47:34.860Z'
-                        updated_at: '2021-09-21T20:47:34.860Z'
+                        created_at: '2021-09-27T22:42:06.283Z'
+                        updated_at: '2021-09-27T22:42:06.283Z'
                         price: '19.99'
                         total: '19.99'
                         display_price: "$19.99"
@@ -3550,8 +4376,8 @@ paths:
                       type: wished_item
                       attributes:
                         quantity: 1
-                        created_at: '2021-09-21T20:47:35.079Z'
-                        updated_at: '2021-09-21T20:47:35.079Z'
+                        created_at: '2021-09-27T22:42:06.544Z'
+                        updated_at: '2021-09-27T22:42:06.544Z'
                         price: '19.99'
                         total: '19.99'
                         display_price: "$19.99"
@@ -3617,8 +4443,8 @@ paths:
                       type: wished_item
                       attributes:
                         quantity: 1
-                        created_at: '2021-09-21T20:47:35.206Z'
-                        updated_at: '2021-09-21T20:47:35.206Z'
+                        created_at: '2021-09-27T22:42:06.680Z'
+                        updated_at: '2021-09-27T22:42:06.680Z'
                         price: '19.99'
                         total: '19.99'
                         display_price: "$19.99"
@@ -3678,8 +4504,8 @@ paths:
                       type: wished_item
                       attributes:
                         quantity: 3
-                        created_at: '2021-09-21T20:47:35.413Z'
-                        updated_at: '2021-09-21T20:47:35.417Z'
+                        created_at: '2021-09-27T22:42:06.886Z'
+                        updated_at: '2021-09-27T22:42:06.890Z'
                         price: '19.99'
                         total: '59.97'
                         display_price: "$19.99"
@@ -3802,9 +4628,9 @@ paths:
                         name: Black Friday
                         is_private: true
                         is_default: false
-                        created_at: '2021-09-21T20:47:35.895Z'
-                        updated_at: '2021-09-21T20:47:35.895Z'
-                        token: pJr3H1bG436ZJWwPdhCescuZ
+                        created_at: '2021-09-27T22:42:07.394Z'
+                        updated_at: '2021-09-27T22:42:07.394Z'
+                        token: Nr8hjLVZCvWRa8WAAytPNK9E
                         variant_included: false
                       relationships:
                         wished_items:
@@ -3819,9 +4645,9 @@ paths:
                         name: Birthday
                         is_private: true
                         is_default: false
-                        created_at: '2021-09-21T20:47:35.896Z'
-                        updated_at: '2021-09-21T20:47:35.896Z'
-                        token: g73YVuAfDcznufS7BfkT7Dgv
+                        created_at: '2021-09-27T22:42:07.396Z'
+                        updated_at: '2021-09-27T22:42:07.396Z'
+                        token: YzviFd1H6FqmzmYYoKzgkek6
                         variant_included: false
                       relationships:
                         wished_items:
@@ -3879,9 +4705,9 @@ paths:
                         name: Wishlist_26
                         is_private: true
                         is_default: false
-                        created_at: '2021-09-21T20:47:36.169Z'
-                        updated_at: '2021-09-21T20:47:36.169Z'
-                        token: RzyRAZhruHGocmvdDhEEkK3y
+                        created_at: '2021-09-27T22:42:07.677Z'
+                        updated_at: '2021-09-27T22:42:07.677Z'
+                        token: YtspLEk3GWr7gioBmsBCw7tf
                         variant_included: false
                       relationships:
                         wished_items:
@@ -3941,9 +4767,9 @@ paths:
                         name: My Wishlist
                         is_private: true
                         is_default: false
-                        created_at: '2021-09-21T20:47:36.191Z'
-                        updated_at: '2021-09-21T20:47:36.191Z'
-                        token: zTKLwrNBQkM1L8FKiCkqFpxX
+                        created_at: '2021-09-27T22:42:07.700Z'
+                        updated_at: '2021-09-27T22:42:07.700Z'
+                        token: AJNdSqCxTup2bzES8DNnwzsJ
                         variant_included: false
                       relationships:
                         wished_items:
@@ -4000,9 +4826,9 @@ paths:
                         name: My Super Wishlist
                         is_private: true
                         is_default: false
-                        created_at: '2021-09-21T20:47:36.228Z'
-                        updated_at: '2021-09-21T20:47:36.232Z'
-                        token: xVvmNoXkzi8i7fvG5i3moE7T
+                        created_at: '2021-09-27T22:42:07.735Z'
+                        updated_at: '2021-09-27T22:42:07.740Z'
+                        token: DqLANX4PY9o2RCQiEnFnG8Nb
                         variant_included: false
                       relationships:
                         wished_items:
@@ -4081,6 +4907,8 @@ tags:
 - name: Addresses
 - name: Classifications
 - name: Countries
+- name: CMS Pages
+- name: CMS Sections
 - name: Menu Items
 - name: Menus
 - name: Option Types
@@ -4261,6 +5089,8 @@ components:
           type: string
         destination:
           type: string
+        menu_id:
+          type: string
         new_window:
           type: boolean
         item_type:
@@ -4271,6 +5101,7 @@ components:
           type: integer
       required:
       - name
+      - menu_id
     menu_item_reposition_params:
       type: object
       properties:
@@ -4279,16 +5110,22 @@ components:
         new_position_idx:
           type: integer
       required:
-      - name
+      - new_parent_id
+      - new_position_idx
     wishlist_params:
       type: object
       properties:
-        user_id:
-          type: string
         name:
           type: string
+        user_id:
+          type: string
+        is_default:
+          type: boolean
+        is_private:
+          type: boolean
       required:
       - name
+      - user_id
     wished_item_params:
       type: object
       properties:
@@ -4298,8 +5135,56 @@ components:
           type: string
         quantity:
           type: integer
+          description: Must be an integer greater than 0
+      required:
+      - wishlist_id
+      - variant_id
+      - quantity
+    cms_page_params:
+      type: object
+      properties:
+        title:
+          type: string
+        meta_title:
+          type: string
+        content:
+          type: string
+        meta_description:
+          type: string
+        visible:
+          type: string
+        slug:
+          type: string
+        locale:
+          type: string
+      required:
+      - title
+      - locale
+    cms_section_params:
+      type: object
+      properties:
+        name:
+          type: string
+        cms_page_id:
+          type: string
+        content:
+          type: object
+        settings:
+          type: object
+        fit:
+          type: string
+        destination:
+          type: string
       required:
       - name
+      - cms_page_id
+    cms_section_reposition_params:
+      type: object
+      properties:
+        new_position_idx:
+          type: integer
+      required:
+      - new_position_idx
     resources_list:
       type: object
       properties:
