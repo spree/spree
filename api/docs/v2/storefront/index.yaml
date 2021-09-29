@@ -14339,6 +14339,7 @@ components:
           type: integer
           example: 1080
           description: Actual height of image
+      x-internal: true
     LineItem:
       properties:
         id:
