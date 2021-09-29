@@ -8,14 +8,11 @@ module Spree
     end
     belongs_to :tax_category, class_name: 'Spree::TaxCategory'
 
-    has_many :digital_links, dependent: :destroy
-    after_save :create_digital_links, if: :digital?
-    delegate :digital?, to: :variant
-
     has_one :product, through: :variant
 
     has_many :adjustments, as: :adjustable, dependent: :destroy
     has_many :inventory_units, inverse_of: :line_item
+    has_many :digital_links, dependent: :destroy
 
     before_validation :copy_price
     before_validation :copy_tax_category
@@ -40,12 +37,14 @@ module Spree
 
     after_save :update_inventory
     after_save :update_adjustments
+    after_save :create_digital_links, if: :digital?
 
     after_create :update_tax_charge
 
     delegate :name, :description, :sku, :should_track_inventory?, :product, :options_text, :slug, :product_id, to: :variant
     delegate :brand, :category, to: :product
     delegate :tax_zone, to: :order
+    delegate :digital?, to: :variant
 
     attr_accessor :target_shipment
 
@@ -121,7 +120,7 @@ module Spree
       assign_attributes opts
     end
 
-    private
+    protected
 
     # TODO: there is no reason to create the digital links until the order is complete
     # TODO: PMG - Shouldn't we only do this if the quantity changed?
@@ -142,6 +141,8 @@ module Spree
         end
       end
     end
+
+    private
 
     def ensure_valid_quantity
       self.quantity = 0 if quantity.nil? || quantity < 0
