@@ -129,8 +129,8 @@ module Spree
 
       # include master variant digitals
       master = variant.product.master
-      create_digital_links_for_variant(master) if master.digital?
 
+      create_digital_links_for_variant(master) if master.digital?
       create_digital_links_for_variant(variant) unless variant.is_master?
     end
 

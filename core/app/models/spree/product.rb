@@ -55,7 +55,6 @@ module Spree
     has_many :possible_promotions, -> { advertised.active }, through: :promotion_rules,
                                                              class_name: 'Spree::Promotion',
                                                              source: :promotion
-    has_many :digitals, through: :variants_including_master
 
     belongs_to :tax_category, class_name: 'Spree::TaxCategory'
     belongs_to :shipping_category, class_name: 'Spree::ShippingCategory', inverse_of: :products
@@ -88,6 +87,7 @@ module Spree
 
     has_many :store_products, class_name: 'Spree::StoreProduct'
     has_many :stores, through: :store_products, class_name: 'Spree::Store'
+    has_many :digitals, through: :variants_including_master
 
     after_create :add_associations_from_prototype
     after_create :build_variants_from_option_values_hash, if: :option_values_hash

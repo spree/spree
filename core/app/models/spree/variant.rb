@@ -43,6 +43,7 @@ module Spree
              inverse_of: :variant
 
     has_many :wished_items, dependent: :destroy
+
     has_many :digitals
 
     before_validation :set_cost_currency
