@@ -27,7 +27,7 @@ module Spree
           define_method("display_#{method_name}") do |**args_list|
             default_opts = respond_to?(:currency) ? { currency: currency } : {}
 
-            Spree::Money.new(send(method_name, **args_list), default_opts.merge(opts).merge(args_list.slice(:currency)))
+            Spree::Money.new(send(*[method_name, **args_list].reject(&:blank?)), default_opts.merge(opts).merge(args_list.slice(:currency)))
           end
         end
       end
