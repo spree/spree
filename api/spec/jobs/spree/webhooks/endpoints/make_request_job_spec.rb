@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::Webhooks::Endpoints::MakeRequestJob, :inline_jobs do
+describe Spree::Webhooks::Endpoints::MakeRequestJob, :job do
   let(:url) { 'http://url.com/' }
 
   it 'it enqueues a HTTP request using Spree::Webhooks::Endpoints::MakeRequest' do

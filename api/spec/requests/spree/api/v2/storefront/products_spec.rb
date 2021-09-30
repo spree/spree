@@ -23,7 +23,10 @@ describe 'API V2 Storefront Products Spec', type: :request do
   let!(:product_with_property)     { create(:product, properties: [property], stores: [store]) }
   let!(:product_property)          { create(:product_property, property: new_property, product: product_with_property, value: 'Some Value') }
 
-  before { Spree::Api::Config[:api_v2_per_page_limit] = 4 }
+  before do
+    Spree::Api::Config[:api_v2_per_page_limit] = 4
+    Rails.cache.clear
+  end
 
   describe 'products#index' do
     context 'with no params' do

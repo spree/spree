@@ -1,5 +1,10 @@
 require 'spec_helper'
 
+FactoryBot.define do
+  factory :endpoint, class: Spree::Webhooks::Endpoint do
+  end
+end
+
 describe Spree::Store do
   describe 'validations' do
     context 'url presence' do

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::Webhooks::Endpoints::QueueRequests do
+describe Spree::Webhooks::Endpoints::QueueRequests, :job do
   describe '#call' do
     let(:event) { 'order.finalize' }
     let(:payload) { {} }

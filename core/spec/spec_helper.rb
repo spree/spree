@@ -78,11 +78,11 @@ RSpec.configure do |config|
     ActiveJob::Base.queue_adapter = :inline
   end
 
-  config.before(:each, :inline_jobs) do
+  config.before(:each, :job) do
     ActiveJob::Base.queue_adapter = :test
   end
 
-  config.after(:each, :inline_jobs) do
+  config.after(:each, :job) do
     ActiveJob::Base.queue_adapter = :inline
   end
 

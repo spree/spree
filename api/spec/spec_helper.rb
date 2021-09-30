@@ -65,8 +65,6 @@ RSpec.configure do |config|
   config.include Spree::TestingSupport::ImageHelpers
 
   config.before do
-    Rails.cache.clear
-
     reset_spree_preferences
 
     Spree::Api::Config[:requires_authentication] = true
@@ -84,6 +82,14 @@ RSpec.configure do |config|
     example.run
     (ActiveJob::Base.descendants << ActiveJob::Base).each { |a| a.enable_test_adapter(ActiveJob::QueueAdapters::TestAdapter.new) }
     ActiveJob::Base.queue_adapter = :test
+  end
+
+  config.before(:each, :job) do
+    ActiveJob::Base.queue_adapter = :test
+  end
+
+  config.after(:each, :job) do
+    ActiveJob::Base.queue_adapter = :inline
   end
 
   config.order = :random

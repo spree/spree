@@ -5,6 +5,11 @@ describe Spree::V2::Storefront::CmsSectionSerializer do
 
   let(:cms_section) { create(:cms_section) }
 
+  before do
+    allow_any_instance_of(Spree::Base).to receive(:queue_webhooks_requests!)
+    cms_section
+  end
+
   shared_examples 'returns proper hash' do
     it { expect(subject.serializable_hash).to be_kind_of(Hash) }
 
