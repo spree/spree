@@ -30,7 +30,8 @@ module Spree
           Spree::Calculator::Shipping::FlatRate,
           Spree::Calculator::Shipping::FlexiRate,
           Spree::Calculator::Shipping::PerItem,
-          Spree::Calculator::Shipping::PriceSack
+          Spree::Calculator::Shipping::PriceSack,
+          Spree::Calculator::Shipping::DigitalDelivery,
         ]
 
         app.config.spree.calculators.tax_rates = [
