@@ -4,7 +4,9 @@ module Spree
       class MakeRequest
         prepend Spree::ServiceModule::Base
 
-        def call(url:)
+        def call(body:, url:)
+          return failure(false) if body == ''
+
           run :make_request
         end
 
@@ -13,16 +15,17 @@ module Spree
         HEADERS = { 'Content-Type' => 'application/json' }.freeze
         private_constant :HEADERS
 
-        def make_request(url:)
+        def make_request(body:, url:)
           uri = URI(url)
           if uri.path == '' && uri.host.nil? && uri.port.nil?
             failure(false)
           else
             request = Net::HTTP::Post.new(uri.path, HEADERS)
-            request.body = { foo: :bar }.to_json
+            request.body = body
             http = Net::HTTP.new(uri.host, uri.port)
             http.use_ssl = true
-            success(http.request(request))
+            code_type = http.request(request).code_type
+            success(code_type == Net::HTTPOK)
           end
         end
       end

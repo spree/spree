@@ -24,7 +24,7 @@ describe Spree::Webhooks::Endpoints::QueueRequests, :job do
         it 'makes a HTTP request to its URL' do
           expect { subject.call(event: event, payload: payload) }.to(
             have_enqueued_job(Spree::Webhooks::Endpoints::MakeRequestJob)
-              .with(endpoint.url)
+              .with(payload, endpoint.url)
               .on_queue('spree_webhooks')
           )
         end
@@ -40,7 +40,7 @@ describe Spree::Webhooks::Endpoints::QueueRequests, :job do
         it 'makes a HTTP request to its URL' do
           expect { subject.call(event: event, payload: payload) }.to(
             have_enqueued_job(Spree::Webhooks::Endpoints::MakeRequestJob)
-              .with(endpoint.url)
+              .with(payload, endpoint.url)
               .on_queue('spree_webhooks')
           )
         end
@@ -54,7 +54,7 @@ describe Spree::Webhooks::Endpoints::QueueRequests, :job do
         it 'does not make a HTTP request' do
           expect { subject.call(event: event, payload: payload) }.not_to(
             have_enqueued_job(Spree::Webhooks::Endpoints::MakeRequestJob)
-              .with(endpoint.url)
+              .with(payload, endpoint.url)
               .on_queue('spree_webhooks')
           )
         end

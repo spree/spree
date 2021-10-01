@@ -59,6 +59,7 @@ module Spree
             end
 
             it 'sets the stock location data necessary for the inserted stock items' do
+              unrelated_variant.reload
               Timecop.freeze(time_current)
               result
               expect(created_stock_item_attrs).to(
