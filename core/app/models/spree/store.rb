@@ -1,6 +1,5 @@
 module Spree
   class Store < Spree::Base
-    # Spree Store Settings
     typed_store :settings do |s|
       # Spree Digital Asset Configurations
       s.integer :digital_asset_authorized_clicks, default: 3, null: false # number of times a customer can download a digital file.

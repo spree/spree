@@ -93,7 +93,8 @@ module Spree
 
     @@property_attributes = [:name, :presentation]
 
-    @@return_authorization_attributes = [:amount, :memo, :stock_location_id, :inventory_units_attributes, :return_authorization_reason_id]
+    @@return_authorization_attributes = [:amount, :memo, :stock_location_id, :inventory_units_attributes,
+                                         :return_authorization_reason_id]
 
     @@shipment_attributes = [
       :order, :special_instructions, :stock_location_id, :id,
@@ -124,7 +125,9 @@ module Spree
                           :customer_support_email, :facebook, :twitter, :instagram,
                           :description, :address, :contact_phone, :supported_locales,
                           :default_locale, :default_country_id, :supported_currencies,
-                          :new_order_notifications_email, :mailer_logo, :favicon_image, :checkout_zone_id, :seo_robots]
+                          :new_order_notifications_email, :mailer_logo, :favicon_image,
+                          :checkout_zone_id, :seo_robots, :digital_asset_authorized_clicks,
+                          :digital_asset_authorized_days]
 
     @@store_credit_attributes = %i[amount currency category_id memo]
 

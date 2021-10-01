@@ -8,18 +8,16 @@ module Spree
     before_validation :set_defaults, on: :create
     validates :digital, presence: true
 
-    # Can this link stil be used? It is valid if it's less than 24 hours
-    # old and was not accessed more than 3 times
     def authorizable?
       !(expired? || access_limit_exceeded?)
     end
 
     def expired?
-      created_at <= Spree::DigitalConfiguration[:authorized_days].day.ago
+      created_at <= line_item.order.store.digital_asset_authorized_days.day.ago
     end
 
     def access_limit_exceeded?
-      access_counter >= Spree::DigitalConfiguration[:authorized_clicks]
+      access_counter >= line_item.order.store.digital_asset_authorized_clicks
     end
 
     # This method should be called when a download is initiated.
