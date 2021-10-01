@@ -14,7 +14,7 @@ module Spree
                 'created_at', Time.current,
                 'updated_at', Time.current
               ]
-            end.uniq { |stock_item| stock_item.values_at('stock_location_id', 'variant_id', 'backorderable') }
+            end
             if prepared_stock_items.any?
               stock_location.stock_items.insert_all(prepared_stock_items)
               variants_scope.touch_all

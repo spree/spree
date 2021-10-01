@@ -28,7 +28,7 @@ CHILDREN_TAXON_NAMES.each do |(parent_name, taxon_name)|
   taxon.save!
 end
 
-taxon = categories_taxon.children.where(name: 'New', permalink: 'newest').first_or_create!
+taxon = categories_taxon.children.where(name: 'New').first_or_create!
 taxon.taxonomy = categories
 taxon.save!
 
