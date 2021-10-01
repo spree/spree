@@ -29,9 +29,9 @@ namespace :common do
     ]
 
     puts 'Setting up dummy database...'
-    system("bundle exec rake db:drop db:create > #{File::NULL}")
+    system('bundle exec rake db:drop db:create')
     Spree::DummyModelGenerator.start
-    system("bundle exec rake db:migrate > #{File::NULL}")
+    system('bundle exec rake db:migrate')
 
     begin
       require "generators/#{ENV['LIB_NAME']}/install/install_generator"
@@ -43,12 +43,12 @@ namespace :common do
 
     unless ['spree/api', 'spree/core', 'spree/sample'].include?(ENV['LIB_NAME'])
       puts 'Precompiling assets...'
-      system("bundle exec rake assets:precompile > #{File::NULL}")
+      system('bundle exec rake assets:precompile')
     end
   end
 
   task :seed do |_t|
     puts 'Seeding ...'
-    system("bundle exec rake db:seed RAILS_ENV=test > #{File::NULL}")
+    system('bundle exec rake db:seed RAILS_ENV=test')
   end
 end

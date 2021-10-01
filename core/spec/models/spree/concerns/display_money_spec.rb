@@ -35,6 +35,7 @@ module Spree
             expect(test_class.new.display_total(currency: currency)).to eq Spree::Money.new(10.0, currency: currency)
           end
         end
+
         context 'wrapped method accepts `currency` argument' do
           let(:test_class) do
             Class.new do

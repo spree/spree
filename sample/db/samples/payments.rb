@@ -1,3 +1,5 @@
+Spree::Sample.load_sample('payment_methods')
+
 # create payments based on the totals since they can't be known in YAML (quantities are random)
 method = Spree::PaymentMethod.where(name: 'Credit Card', active: true).first
 
