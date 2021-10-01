@@ -81,12 +81,6 @@ module Spree
     preference :storefront_taxons_path, :string, default: 't'
     preference :storefront_pages_path, :string, default: 'pages'
 
-    # Spree Digital Asset Configurations
-    preference :authorized_clicks, :integer, default: 3 # number of times a customer can download a digital file
-    preference :authorized_days, :integer, default: 2 # number of days after initial purchase the customer can download a file
-    preference :keep_digitals, :boolean, default: false # should digitals be kept around after the associated product is destroyed
-    preference :s3_expiration_seconds, :integer, default: 10 # number of seconds before an s3 link expires
-
     attr_writer :searcher_class
   end
 end

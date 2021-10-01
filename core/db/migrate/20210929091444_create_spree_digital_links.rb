@@ -8,6 +8,6 @@ class CreateSpreeDigitalLinks < ActiveRecord::Migration[5.2]
 
       t.timestamps
     end
-    add_index :spree_digital_links, :secret unless index_exists?(:spree_digital_links, :secret)
+    add_index :spree_digital_links, :secret, unique: true unless index_exists?(:spree_digital_links, :secret)
   end
 end

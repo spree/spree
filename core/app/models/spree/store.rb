@@ -1,5 +1,12 @@
 module Spree
   class Store < Spree::Base
+    # Spree Store Settings
+    typed_store :settings do |s|
+      # Spree Digital Asset Configurations
+      s.integer :digital_asset_authorized_clicks, default: 3, null: false # number of times a customer can download a digital file.
+      s.integer :digital_asset_authorized_days, default: 2, null: false # number of days after initial purchase the customer can download a file.
+    end
+
     MAILER_LOGO_CONTENT_TYPES = ['image/png', 'image/jpg', 'image/jpeg'].freeze
     FAVICON_CONTENT_TYPES = ['image/png', 'image/x-icon', 'image/vnd.microsoft.icon'].freeze
 
