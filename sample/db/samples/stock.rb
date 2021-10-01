@@ -1,7 +1,7 @@
 Spree::Sample.load_sample('variants')
 
 country =  Spree::Country.find_by(iso: 'US')
-location = Spree::StockLocation.find_or_create_by!(name: 'default')
+location = Spree::StockLocation.find_or_create_by!(name: 'default', propagate_all_variants: false)
 location.update(
   address1: 'Example Street',
   city: 'City',
@@ -10,6 +10,8 @@ location.update(
   state: country.states.first,
   active: true
 )
+
+Spree::StockLocations::StockItems::Create.call(stock_location: location)
 
 product_1 = Spree::Product.find_by!(name: 'Denim Shirt')
 product_2 = Spree::Product.find_by!(name: 'Checked Shirt')

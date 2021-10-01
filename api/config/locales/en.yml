@@ -38,3 +38,5 @@ en:
           wrong_quantity: "Quantity has to be greater than 0"
           pass_variant_id: "Pass the variant id that you want to add to this wishlist, eg.{ variant_id: 20 }"
           must_be_an_integer: "Sorry, you must pass an integer value, eg. 5"
+        cms_sections:
+          pass_position_index: "Pass 'new_position_idx' with an interger value in the request body"

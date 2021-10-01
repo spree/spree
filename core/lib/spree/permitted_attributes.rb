@@ -4,6 +4,8 @@ module Spree
       :address_attributes,
       :classification_attributes,
       :checkout_attributes,
+      :cms_page_attributes,
+      :cms_section_attributes,
       :customer_return_attributes,
       :image_attributes,
       :inventory_unit_attributes,
@@ -28,21 +30,19 @@ module Spree
       :taxonomy_attributes,
       :user_attributes,
       :variant_attributes,
-      :cms_page_attributes,
-      :cms_section_attributes,
       :wishlist_attributes,
       :wished_item_attributes
     ]
 
-    mattr_reader *ATTRIBUTES
+    mattr_reader(*ATTRIBUTES)
 
     @@address_attributes = [
       :id, :firstname, :lastname, :first_name, :last_name,
       :address1, :address2, :city, :country_iso, :country_id, :state_id,
       :zipcode, :phone, :state_name, :alternative_phone, :company,
       :user_id, :deleted_at, :label,
-      country: [:iso, :name, :iso3, :iso_name],
-      state: [:name, :abbr]
+      { country: [:iso, :name, :iso3, :iso_name],
+        state: [:name, :abbr] }
     ]
 
     @@checkout_attributes = [
@@ -56,9 +56,12 @@ module Spree
 
     @@cms_page_attributes = [:title, :meta_title, :content, :meta_description, :visible, :slug, :locale]
 
-    @@cms_section_attributes = [:name, :content, :settings, :fit, :destination]
+    @@cms_section_attributes = [:name, :cms_page_id, :fit, :destination, { content: {}, settings: {} }]
 
-    @@customer_return_attributes = [:stock_location_id, return_items_attributes: [:id, :inventory_unit_id, :return_authorization_id, :returned, :pre_tax_amount, :acceptance_status, :exchange_variant_id, :resellable]]
+    @@customer_return_attributes = [:stock_location_id, {
+      return_items_attributes: [:id, :inventory_unit_id, :return_authorization_id, :returned, :pre_tax_amount,
+                                :acceptance_status, :exchange_variant_id, :resellable]
+    }]
 
     @@image_attributes = [:alt, :attachment, :position, :viewable_type, :viewable_id]
 
@@ -85,7 +88,7 @@ module Spree
       :option_values_hash, :weight, :height, :width, :depth,
       :shipping_category_id, :tax_category_id,
       :cost_currency, :cost_price, :compare_at_price,
-      option_type_ids: [], taxon_ids: []
+      { option_type_ids: [], taxon_ids: [] }
     ]
 
     @@property_attributes = [:name, :presentation]
@@ -140,7 +143,7 @@ module Spree
       :position, :track_inventory,
       :product_id, :product, :option_values_attributes, :price, :compare_at_price,
       :weight, :height, :width, :depth, :sku, :cost_currency,
-      options: [:name, :value], option_value_ids: []
+      { options: [:name, :value], option_value_ids: [] }
     ]
 
     @@wishlist_attributes = [:name, :is_default, :is_private]

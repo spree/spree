@@ -30,23 +30,26 @@ module Spree
       end
 
       context 'Rails >= 6', if: Rails::VERSION::MAJOR >= 6 do
-        before do
-          # Delete all stock_location.stock_items to start counting from 0.
-          stock_location.stock_items.unscope(:where).delete_all
-        end
-
         let(:time_current) { Time.local(1990) }
 
         context 'with prepared stock items' do
-          context 'with duplicate stock items by stock_location_id and variant' do
-            it 'inserts the stock location stock items without duplicates' do
-              # Make a call of Spree::Variant to obtain the ids, return duplicated records.
-              expect(Spree::Variant).to receive(:ids).and_return([1, 1])
-              expect { result }.to change { stock_location.stock_items.count }.from(0).to(1)
+          context 'with stock items in the db' do
+            before { Spree::StockItem.find(Spree::StockItem.ids.sample).delete }
+
+            it 'inserts stock items without duplicates' do
+              total_stock_items = Spree::StockItem.count
+              expect { result }.to change {
+                stock_location.stock_items.count
+              }.from(total_stock_items).to(total_stock_items + 1)
             end
           end
 
-          context 'without duplicate stock items to insert' do
+          context 'without stock items in the db' do
+            before do
+              # Delete all stock_location.stock_items to start counting from 0.
+              stock_location.stock_items.unscope(:where).delete_all
+            end
+
             let(:created_stock_item) { stock_location.stock_items.order(:id).last }
             let(:created_stock_item_attrs) do
               created_stock_item.attributes.values_at(
