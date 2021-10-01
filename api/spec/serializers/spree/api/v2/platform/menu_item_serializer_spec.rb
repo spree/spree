@@ -5,14 +5,17 @@ describe Spree::Api::V2::Platform::MenuItemSerializer do
 
   let(:menu) { create(:menu) }
   let(:menu_item) { create(:menu_item, menu: menu, linked_resource: create(:taxon)) }
-  let!(:children) do
+  let(:children) do
     [
       create(:menu_item, parent_id: menu_item.id, menu: menu),
       create(:menu_item, parent_id: menu_item.id, menu: menu)
     ]
   end
 
-  before { menu_item.reload }
+  before do
+    allow_any_instance_of(Spree::Base).to receive(:queue_webhooks_requests!)
+    children
+  end
 
   it { expect(subject.serializable_hash).to be_kind_of(Hash) }
 

@@ -3,7 +3,6 @@ module Spree
     prepend Spree::ServiceModule::Base
 
     def call(event:, payload:)
-      p payload
       urls_subscribed_to(event).each do |url|
         Spree::Webhooks::Endpoints::MakeRequestJob.perform_later(url)
       end

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
-module Spree
-  class Webhooks::Product < ActiveRecord::Base
+module Test
+  class Product < ActiveRecord::Base
     self.table_name = 'test_products'
 
     include Spree::Webhooks::HasWebhooks
@@ -9,20 +9,18 @@ module Spree
 end
 
 describe Spree::Webhooks::HasWebhooks do
-  let(:connection) { ActiveRecord::Base.connection }
-
-  before do
-    connection.create_table :test_products, force: true do |t|
+  before(:all) do
+    ActiveRecord::Base.connection.create_table :test_products, force: true do |t|
       t.string :name
     end
   end
 
-  after do
-    connection.drop_table :test_products, if_exists: true
+  after(:all) do
+    ActiveRecord::Base.connection.drop_table :test_products, if_exists: true
   end
 
   context 'with a Spree::Webhooks class including the module' do
-    let!(:product) { Spree::Webhooks::Product.create(name: 'test') }
+    let!(:product) { Test::Product.create(name: 'test') }
 
     context 'after commit on create' do
       it 'does not execute the webhook callback' do

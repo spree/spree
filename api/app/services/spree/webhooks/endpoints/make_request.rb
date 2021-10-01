@@ -5,7 +5,6 @@ module Spree
         prepend Spree::ServiceModule::Base
 
         def call(url:)
-          p url
           run :make_request
         end
 
