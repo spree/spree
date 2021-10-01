@@ -1,4 +1,3 @@
-# https://github.com/spree/spree/issues/1439
 require_dependency 'spree/shipping_calculator'
 
 module Spree
@@ -8,7 +7,7 @@ module Spree
       preference :currency, :string, default: -> { Spree::Config[:currency] }
 
       def self.description
-        Spree.t(:digital_delivery, scope: 'digital')
+        Spree.t('digital.digital_delivery')
       end
 
       def compute_package(_package = nil)
