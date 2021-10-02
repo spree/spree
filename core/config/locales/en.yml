@@ -1625,6 +1625,11 @@ en:
     say_no: 'No'
     say_yes: 'Yes'
     scope: Scope
+    seed:
+      shipping:
+        categories:
+          default: Default
+          digital: Digital
     search: Search
     search_by: 'Search by:'
     search_order_number: Order Number

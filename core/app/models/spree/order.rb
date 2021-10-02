@@ -1,5 +1,6 @@
 require_dependency 'spree/order/checkout'
 require_dependency 'spree/order/currency_updater'
+require_dependency 'spree/order/digital'
 require_dependency 'spree/order/payments'
 require_dependency 'spree/order/store_credit'
 require_dependency 'spree/order/emails'
@@ -11,6 +12,7 @@ module Spree
 
     include Spree::Order::Checkout
     include Spree::Order::CurrencyUpdater
+    include Spree::Order::Digital
     include Spree::Order::Payments
     include Spree::Order::StoreCredit
     include Spree::Order::AddressBook
@@ -661,27 +663,6 @@ module Spree
         joins(:promotion_action).
         where(spree_adjustments: { eligible: true, source_type: 'Spree::PromotionAction' },
               spree_promotion_actions: { type: 'Spree::Promotion::Actions::FreeShipping' }).exists?
-    end
-
-    # all products are digital
-    def digital?
-      line_items.all?(&:digital?)
-    end
-
-    def some_digital?
-      line_items.any?(&:digital?)
-    end
-
-    def digital_line_items
-      line_items.select(&:digital?)
-    end
-
-    def digital_links
-      digital_line_items.map(&:digital_links).flatten
-    end
-
-    def reset_digital_links!
-      digital_links.each(&:reset!)
     end
 
     private
