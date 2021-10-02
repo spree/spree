@@ -98,7 +98,7 @@ module Spree
           end
 
           def spree_permitted_attributes
-            Spree::PermittedAttributes.try("#{model_param_name}_attributes") || {}
+            model_class.json_api_permitted_attributes
           end
 
           def permitted_resource_params
