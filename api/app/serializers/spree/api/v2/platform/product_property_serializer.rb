@@ -3,7 +3,7 @@ module Spree
     module V2
       module Platform
         class ProductPropertySerializer < BaseSerializer
-          include ::Spree::Api::V2::ResourceSerializerConcern
+          include ResourceSerializerConcern
         end
       end
     end

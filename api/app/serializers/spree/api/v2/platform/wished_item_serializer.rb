@@ -3,7 +3,7 @@ module Spree
     module V2
       module Platform
         class WishedItemSerializer < BaseSerializer
-          include ::Spree::Api::V2::ResourceSerializerConcern
+          include ResourceSerializerConcern
 
           attribute :price do |wished_item, params|
             wished_item.price(currency: params[:currency])

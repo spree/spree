@@ -3,7 +3,7 @@ module Spree
     module V2
       module Platform
         class TaxonomySerializer < BaseSerializer
-          include ::Spree::Api::V2::ResourceSerializerConcern
+          include ResourceSerializerConcern
 
           has_many :taxons
           has_one :root, serializer: :taxon
