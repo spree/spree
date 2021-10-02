@@ -3,6 +3,7 @@ module Spree
     module Storefront
       class EstimatedShippingRateSerializer < BaseSerializer
         set_type :shipping_rate
+        set_id :shipping_method_id
 
         cache_options store: nil
 
