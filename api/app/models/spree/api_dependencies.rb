@@ -20,13 +20,16 @@ module Spree
       :storefront_account_create_address_service, :storefront_account_update_address_service, :storefront_address_finder,
       :storefront_account_create_service, :storefront_account_update_service, :storefront_collection_sorter, :error_handler,
       :storefront_cart_empty_service, :storefront_cart_destroy_service, :storefront_credit_cards_destroy_service, :platform_products_sorter,
-      :storefront_cart_change_currency_service
+      :storefront_cart_change_currency_service,
+
+      :platform_admin_user_serializer
     ].freeze
 
     attr_accessor *INJECTION_POINTS
 
     def initialize
       set_storefront_defaults
+      set_platform_defaults
     end
 
     private
@@ -106,6 +109,10 @@ module Spree
       @storefront_taxon_finder = Spree::Dependencies.taxon_finder
 
       @error_handler = 'Spree::Api::ErrorHandler'
+    end
+
+    def set_platform_defaults
+      @platform_admin_user_serializer = 'Spree::Api::V2::Platform::UserSerializer'
     end
   end
 end
