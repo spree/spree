@@ -219,8 +219,11 @@ Spree::Core::Engine.add_routes do
             put :approve
             put :cancel
             put :empty
-            put :apply_coupon_code
-            put :remove_coupon_code
+            patch :apply_coupon_code
+            # delete 'remove_coupon_code/:coupon_code'
+            put :complete
+            post :add_store_credit
+            post :remove_store_credit
           end
         end
         resources :line_items

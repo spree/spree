@@ -7,11 +7,11 @@ module Spree
           WRITE_ACTIONS = %i[create update destroy]
 
           # doorkeeper scopes usage: https://github.com/doorkeeper-gem/doorkeeper/wiki/Using-Scopes
-          before_action -> { doorkeeper_authorize! :read, :admin }, only: READ_ACTIONS
-          before_action -> { doorkeeper_authorize! :write, :admin }, only: WRITE_ACTIONS
+          before_action -> { doorkeeper_authorize! :read, :admin }, if: -> { READ_ACTIONS.include?(action_name.to_sym) }
+          before_action -> { doorkeeper_authorize! :write, :admin }, if: -> { WRITE_ACTIONS.include?(action_name.to_sym) }
 
           # optional authorization if using a user token instead of app token
-          before_action :authorize_spree_user, only: WRITE_ACTIONS
+          before_action :authorize_spree_user, if: -> { WRITE_ACTIONS.include?(action_name.to_sym) }
 
           # index and show acrtions are defined in Spree::Api::V2::ResourceController
 

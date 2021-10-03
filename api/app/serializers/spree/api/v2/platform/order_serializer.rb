@@ -19,7 +19,9 @@ module Spree
 
           has_many :state_changes
           has_many :return_authorizations
+          has_many :reimbursements
           has_many :adjustments
+          has_many :all_adjustments, serializer: :adjustments, type: :adjustment
 
           has_many :order_promotions
         end
