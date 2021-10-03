@@ -50,7 +50,13 @@ class Spree::Base < ApplicationRecord
   end
 
   def self.json_api_permitted_attributes
-    column_names.reject { |c| c == 'id' }
+    skipped_attributes = %w[id]
+
+    if included_modules.include?(CollectiveIdea::Acts::NestedSet::Model)
+      skipped_attributes.push('lft', 'rgt', 'depth')
+    end
+
+    column_names.reject { |c| skipped_attributes.include?(c.to_s) }
   end
 
   def self.json_api_type
