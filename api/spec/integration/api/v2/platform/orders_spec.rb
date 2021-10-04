@@ -80,7 +80,7 @@ describe 'Orders API', swagger: true do
   end
 
   path "/api/v2/platform/#{resource_path}/{id}/advance" do
-    put "Advances #{resource_name.articleize}" do
+    patch "Advances #{resource_name.articleize}" do
       tags resource_name.pluralize
       security [ bearer_auth: [] ]
       description "Advances #{resource_name.articleize}"
@@ -98,7 +98,7 @@ describe 'Orders API', swagger: true do
   end
 
   path "/api/v2/platform/#{resource_path}/{id}/next" do
-    put "Next #{resource_name.articleize}" do
+    patch "Next #{resource_name.articleize}" do
       tags resource_name.pluralize
       security [ bearer_auth: [] ]
       description "Moves #{resource_name.articleize} to the next state"
@@ -120,7 +120,7 @@ describe 'Orders API', swagger: true do
       create(:payment, amount: persisted_order.total, order: persisted_order)
     end
 
-    put "Completes #{resource_name.articleize}" do
+    patch "Completes #{resource_name.articleize}" do
       tags resource_name.pluralize
       security [ bearer_auth: [] ]
       description "Marks #{resource_name.articleize} as completed"
@@ -138,7 +138,7 @@ describe 'Orders API', swagger: true do
   end
 
   path "/api/v2/platform/#{resource_path}/{id}/empty" do
-    put "Empties #{resource_name.articleize}" do
+    patch "Empties #{resource_name.articleize}" do
       tags resource_name.pluralize
       security [ bearer_auth: [] ]
       description "Removes all line items, promotions, shipment and payments from #{resource_name.articleize}"
