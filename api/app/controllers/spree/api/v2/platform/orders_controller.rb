@@ -7,6 +7,16 @@ module Spree
 
           include CouponCodesHelper
 
+          def create
+            resource = current_store.orders.new(permitted_resource_params)
+
+            if resource.save
+              render_serialized_payload(201) { serialize_resource(resource) }
+            else
+              render_error_payload(resource.errors)
+            end
+          end
+
           def update
             result = update_service.call(
               order: resource,
@@ -164,7 +174,9 @@ module Spree
               bill_address_attributes: Spree::Address.json_api_permitted_attributes,
               ship_address_attributes: Spree::Address.json_api_permitted_attributes,
               line_items_attributes: Spree::LineItem.json_api_permitted_attributes,
-              payments_attributes: Spree::Payment.json_api_permitted_attributes,
+              payments_attributes: Spree::Payment.json_api_permitted_attributes + [
+                source_attributes: Spree::CreditCard.json_api_permitted_attributes
+              ],
               shipments_attributes: Spree::Shipment.json_api_permitted_attributes
             ]
           end

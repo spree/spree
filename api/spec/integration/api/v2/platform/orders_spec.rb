@@ -11,7 +11,35 @@ describe 'Orders API', swagger: true do
   let(:persisted_order) { create(:order_with_line_items, state: :delivery) }
   let(:id) { persisted_order.number }
   let(:records_list) { create_list(:order, 2) }
-  let(:valid_create_param_value) { build(:order).attributes }
+  let(:store) { Spree::Store.default }
+  let(:product) { create(:product, price: 10.0, stores: [store]) }
+  let(:country) { create(:country, states_required: true) }
+  let(:state) { create(:state, country: country) }
+  let(:address_attributes) { build(:address, country: country, state: state).attributes }
+  let(:order_attibutes) { attributes_for(:order) }
+  let(:payment_method) { create(:credit_card_payment_method, stores: [store]) }
+  let(:valid_create_param_value) do
+    order_attibutes.merge(
+      currency: 'USD',
+      bill_address_attributes: address_attributes,
+      ship_address_attributes: address_attributes,
+      line_items_attributes: [
+        attributes_for(:line_item, variant_id: product.master.id, currency: 'USD', quantity: 2)
+      ],
+      payments_attributes: [
+        {
+          payment_method_id: payment_method.id,
+          source_attributes: {
+            number: '4111111111111111',
+            month: 12,
+            year: Time.current.year + 1,
+            verification_value: '123',
+            name: 'Spree Commerce'
+          }
+        }
+      ]
+    )
+  end
   let(:valid_update_param_value) do
     {
       total: 10.00,
