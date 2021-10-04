@@ -4,11 +4,11 @@ module Test
   class Product < ActiveRecord::Base
     self.table_name = 'test_products'
 
-    validates :url, :'spree/webhooks/validators/url' => true
+    validates :url, url: true
   end
 end
 
-describe Spree::Webhooks::Validators::UrlValidator do
+describe UrlValidator do
   before(:all) do
     ActiveRecord::Base.connection.create_table :test_products, force: true do |t|
       t.string :url
@@ -46,14 +46,14 @@ describe Spree::Webhooks::Validators::UrlValidator do
       it 'adds the given message to the record url errors array' do
         # Remove the validation set at the beginning
         Test::Product.clear_validators!
-        Test::Product.validates(:url, :'spree/webhooks/validators/url' => { message: message })
+        Test::Product.validates(:url, url: { message: message })
 
         test_product.valid?
         expect(test_product.errors.messages).to eq(url: [message])
 
         # Add back the validation removed previously
         Test::Product.clear_validators!
-        Test::Product.validates(:url, :'spree/webhooks/validators/url' => true)
+        Test::Product.validates(:url, url: true)
       end
     end
 
