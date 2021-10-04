@@ -25,7 +25,7 @@ module Spree
       end
 
       def webhooks_descendant?
-        self.class.module_parents.include?(Spree::Webhooks)
+        self.class.ancestors.include?(Spree::Webhooks)
       end
 
       def payload

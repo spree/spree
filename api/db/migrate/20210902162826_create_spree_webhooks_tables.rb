@@ -1,4 +1,4 @@
-class CreateSpreeWebhooksTables < ActiveRecord::Migration[6.1]
+class CreateSpreeWebhooksTables < ActiveRecord::Migration[5.2]
   def change
     create_table :spree_webhooks_endpoints do |t|
       t.string :url, null: false
