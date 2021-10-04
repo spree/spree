@@ -617,12 +617,9 @@ module Spree
       promotions.pluck(:code).compact.first
     end
 
-    def payments_attributes=(attributes)
-      validate_payments_attributes(attributes)
-      super(attributes)
-    end
-
     def validate_payments_attributes(attributes)
+      ActiveSupport::Deprecation.warn('`Order#validate_payments_attributes` is deprecated and will be removed in Spree 5')
+
       # Ensure the payment methods specified are allowed for this user
       payment_method_ids = available_payment_methods.map(&:id)
 

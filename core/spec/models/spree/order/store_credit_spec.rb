@@ -214,8 +214,9 @@ describe 'Order' do
       context 'the associated user has store credits' do
         subject { order }
 
-        let(:store_credit) { create(:store_credit) }
-        let(:order) { create(:order, user: store_credit.user) }
+        let(:store) { create(:store) }
+        let(:store_credit) { create(:store_credit, store: store) }
+        let(:order) { create(:order, user: store_credit.user, store: store) }
 
         context 'the store credit is more than the order total' do
           let(:order_total) { store_credit.amount - 1 }

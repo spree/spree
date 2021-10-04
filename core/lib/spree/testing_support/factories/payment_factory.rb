@@ -5,7 +5,7 @@ FactoryBot.define do
     state         { 'checkout' }
     response_code { '12345' }
 
-    association(:payment_method, factory: :credit_card_payment_method)
+    payment_method { create(:credit_card_payment_method, stores: [order.store]) }
     association(:source, factory: :credit_card)
 
     factory :payment_with_refund do
@@ -24,7 +24,7 @@ FactoryBot.define do
   end
 
   factory :store_credit_payment, class: Spree::Payment, parent: :payment do
-    association(:payment_method, factory: :store_credit_payment_method)
-    association(:source, factory: :store_credit)
+    payment_method { create(:store_credit_payment_method, stores: [order.store]) }
+    source { create(:store_credit, store: order.store, user: order.user) }
   end
 end
