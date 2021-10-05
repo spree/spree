@@ -5,6 +5,8 @@ module Spree
         class OptionTypeSerializer < BaseSerializer
           include ::Spree::Api::V2::ResourceSerializerConcern
 
+          attributes :name
+
           has_many :option_values
         end
       end
