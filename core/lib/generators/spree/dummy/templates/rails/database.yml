@@ -8,18 +8,7 @@ end %>
 <% db_username = ENV['DB_USERNAME'] %>
 <% db_host = ENV['DB_HOST'] %>
 <% case ENV['DB']
-  when 'sqlite' %>
-development:
-  adapter: sqlite3
-  database: db/spree_development.sqlite3
-test:
-  adapter: sqlite3
-  database: db/spree_test.sqlite3
-  timeout: 10000
-production:
-  adapter: sqlite3
-  database: db/spree_production.sqlite3
-<% when 'mysql' %>
+  when 'mysql' %>
 mysql: &mysql
   adapter: mysql2
   encoding: utf8
@@ -68,13 +57,26 @@ production:
   <<: *postgres
   database: <%= database_prefix %><%= lib_name %>_spree_production
 <% else %>
+postgres: &postgres
+  adapter: postgresql
+  <% unless db_username.blank? %>
+  username: <%= db_username || 'postgres' %>
+  <% end %>
+  <% unless db_password.blank? %>
+  password: <%= db_password %>
+  <% end %>
+  <% unless db_host.blank? %>
+  host: <%= db_host %>
+  <% end %>
+  min_messages: warning
+
 development:
-  adapter: sqlite3
-  database: db/spree_development.sqlite3
+  <<: *postgres
+  database: <%= database_prefix %><%= lib_name %>_spree_development
 test:
-  adapter: sqlite3
-  database: db/spree_test.sqlite3
+  <<: *postgres
+  database: <%= database_prefix %><%= lib_name %>_spree_test
 production:
-  adapter: sqlite3
-  database: db/spree_production.sqlite3
+  <<: *postgres
+  database: <%= database_prefix %><%= lib_name %>_spree_production
 <% end %>

@@ -14,7 +14,7 @@ prepare_app(){
   echo "Preparing test app..."
   bundle exec rake test_app
 }
-# Target postgres. Override with: `DB=sqlite bash bin/build.sh`
+# Target postgres. Override with: `DB=mysql bash bin/build.sh`
 export DB=${DB:-postgres}
 
 # Spree defaults
