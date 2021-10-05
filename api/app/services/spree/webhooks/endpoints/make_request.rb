@@ -4,11 +4,13 @@ module Spree
       class MakeRequest
         prepend Spree::ServiceModule::Base
 
+        # rubocop:disable Lint/UnusedMethodArgument
         def call(body:, url:)
           return failure(false) if body == ''
 
           run :make_request
         end
+        # rubocop:enable Lint/UnusedMethodArgument
 
         private
 

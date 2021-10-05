@@ -16,6 +16,6 @@ class UrlValidator < ActiveModel::EachValidator
           rescue URI::InvalidURIError
             return false
           end
-    uri.host.present? && uri.kind_of?(URI::HTTP)
+    uri.host.present? && uri.is_a?(URI::HTTP)
   end
 end

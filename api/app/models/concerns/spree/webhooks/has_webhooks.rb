@@ -30,7 +30,7 @@ module Spree
 
       def payload
         resource_serializer.new(self).serializable_hash
-      rescue NameError, NoMethodError
+      rescue NameError
         {}
       end
 
