@@ -3,7 +3,7 @@ module Spree
     module V2
       module Platform
         class OrdersController < ResourceController
-          WRITE_ACTIONS.push(:add_store_credit, :remove_store_credit, :apply_coupon_code, :remove_coupon_code, :next, :advance, :complete, :empty)
+          WRITE_ACTIONS.push(:use_store_credit, :remove_store_credit, :apply_coupon_code, :remove_coupon_code, :next, :advance, :complete, :empty)
 
           include CouponCodesHelper
 
@@ -83,8 +83,8 @@ module Spree
             end
           end
 
-          def add_store_credit
-            result = add_store_credit_service.call(
+          def use_store_credit
+            result = use_store_credit_service.call(
               order: resource,
               amount: params[:amount].try(:to_f)
             )
@@ -145,8 +145,8 @@ module Spree
             Spree::Api::Dependencies.platform_order_advance_service.constantize
           end
 
-          def add_store_credit_service
-            Spree::Api::Dependencies.platform_order_add_store_credit_service.constantize
+          def use_store_credit_service
+            Spree::Api::Dependencies.platform_order_use_store_credit_service.constantize
           end
 
           def remove_store_credit_service

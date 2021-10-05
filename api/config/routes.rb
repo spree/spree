@@ -222,7 +222,7 @@ Spree::Core::Engine.add_routes do
             patch :apply_coupon_code
             # delete 'remove_coupon_code/:coupon_code'
             patch :complete
-            post :add_store_credit
+            post :use_store_credit
             post :remove_store_credit
           end
         end

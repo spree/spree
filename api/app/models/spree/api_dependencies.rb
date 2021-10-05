@@ -23,7 +23,7 @@ module Spree
       :storefront_cart_change_currency_service,
 
       :platform_admin_user_serializer, :platform_coupon_handler, :platform_order_update_service,
-      :platform_order_add_store_credit_service, :platform_order_remove_store_credit_service,
+      :platform_order_use_store_credit_service, :platform_order_remove_store_credit_service,
       :platform_order_complete_service, :platform_order_empty_service, :platform_order_destroy_service,
       :platform_order_next_service, :platform_order_advance_service
     ].freeze
@@ -128,7 +128,7 @@ module Spree
       @platform_order_next_service = Spree::Dependencies.checkout_next_service
       @platform_order_advance_service = Spree::Dependencies.checkout_advance_service
       @platform_order_complete_service = Spree::Dependencies.checkout_complete_service
-      @platform_order_add_store_credit_service = Spree::Dependencies.checkout_add_store_credit_service
+      @platform_order_use_store_credit_service = Spree::Dependencies.checkout_add_store_credit_service
       @platform_order_remove_store_credit_service = Spree::Dependencies.checkout_remove_store_credit_service
     end
   end

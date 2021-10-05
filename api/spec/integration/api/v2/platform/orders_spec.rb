@@ -154,4 +154,31 @@ describe 'Orders API', swagger: true do
       it_behaves_like 'authentication failed'
     end
   end
+
+  path "/api/v2/platform/#{resource_path}/{id}/use_store_credit" do
+    post "Use Store Credit for #{resource_name.articleize}" do
+      tags resource_name.pluralize
+      security [ bearer_auth: [] ]
+      description "Creates Store Credit payment for #{resource_name.articleize}"
+      operationId "use-store-credit-#{resource_name.parameterize.to_sym}"
+      consumes 'application/json'
+      parameter name: :id, in: :path, type: :string
+      parameter name: :amount, in: :body, type: :number
+      json_api_include_parameter(include_example)
+
+      let!(:store_credit_payment_method) { create(:store_credit_payment_method) }
+
+      let(:amount) { 15.0 }
+
+      response '200', 'store credit payment created' do
+        let!(:store_credit) { create(:store_credit, user: persisted_order.user, store: store, amount: 15.0) }
+        run_test!
+      end
+      response '422', 'user does not have store credit available' do
+        run_test!
+      end
+      it_behaves_like 'record not found'
+      it_behaves_like 'authentication failed'
+    end
+  end
 end
