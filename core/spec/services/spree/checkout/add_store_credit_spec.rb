@@ -24,6 +24,11 @@ describe Spree::Checkout::AddStoreCredit, type: :service do
       it 'does not create a store credit payment' do
         expect(order.payments.count).to eq 0
       end
+
+      it 'returns error' do
+        expect(subject.success?).to eq(false)
+        expect(subject.error.to_s).to eq('User does not have any Store Credits available')
+      end
     end
 
     context 'there is enough store credit to pay for the entire order' do
