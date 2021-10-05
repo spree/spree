@@ -3,8 +3,8 @@ module Spree
     module V2
       module Platform
         class ProductSerializer < BaseSerializer
-          include ::Spree::Api::V2::ResourceSerializerConcern
-          include ::Spree::Api::V2::DisplayMoneyHelper
+          include ResourceSerializerConcern
+          include DisplayMoneyHelper
 
           attribute :purchasable do |product|
             product.purchasable?

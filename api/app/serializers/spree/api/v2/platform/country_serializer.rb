@@ -3,7 +3,7 @@ module Spree
     module V2
       module Platform
         class CountrySerializer < BaseSerializer
-          include ::Spree::Api::V2::ResourceSerializerConcern
+          include ResourceSerializerConcern
 
           has_many :states
         end

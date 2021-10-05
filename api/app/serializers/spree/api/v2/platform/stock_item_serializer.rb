@@ -3,7 +3,7 @@ module Spree
     module V2
       module Platform
         class StockItemSerializer < BaseSerializer
-          include ::Spree::Api::V2::ResourceSerializerConcern
+          include ResourceSerializerConcern
 
           set_type :stock_item
 

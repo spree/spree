@@ -3,7 +3,7 @@ module Spree
     module V2
       module Platform
         class TaxonSerializer < BaseSerializer
-          include ::Spree::Api::V2::ResourceSerializerConcern
+          include ResourceSerializerConcern
 
           attributes :pretty_name, :seo_title
 

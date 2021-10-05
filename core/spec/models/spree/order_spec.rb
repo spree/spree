@@ -948,6 +948,7 @@ describe Spree::Order, type: :model do
       let!(:refund_payment) do
         build(:payment, amount: -1, order: order, state: 'completed', source: payment).tap do |p|
           allow(p).to receive_messages(profiles_supported?: false)
+          allow(p).to receive_messages(payment_method_available_for_order: nil)
           p.save!
         end
       end
@@ -1157,7 +1158,7 @@ describe Spree::Order, type: :model do
     end
   end
 
-  describe 'credit_card_nil_payment' do
+  describe '#credit_card_nil_payment' do
     let!(:order) { create(:order_with_line_items, line_items_count: 2, store: store) }
     let!(:credit_card_payment_method) { create(:simple_credit_card_payment_method, stores: [store]) }
     let!(:store_credits) { create(:store_credit_payment, order: order) }

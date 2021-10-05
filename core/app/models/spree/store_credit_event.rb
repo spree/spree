@@ -10,13 +10,8 @@ module Spree
 
     delegate :currency, :store, to: :store_credit
 
-    def display_amount
-      Spree::Money.new(amount, currency: currency)
-    end
-
-    def display_user_total_amount
-      Spree::Money.new(user_total_amount, currency: currency)
-    end
+    extend DisplayMoney
+    money_methods :amount, :user_total_amount
 
     def display_action
       case action

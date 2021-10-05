@@ -214,23 +214,25 @@ Spree::Core::Engine.add_routes do
         # Order API
         resources :orders do
           member do
-            put :next
-            put :advance
-            put :approve
-            put :cancel
-            put :empty
-            put :apply_coupon_code
-            put :remove_coupon_code
+            patch :next
+            patch :advance
+            patch :approve
+            patch :cancel
+            patch :empty
+            patch :apply_coupon_code
+            patch :complete
+            patch :use_store_credit
           end
         end
         resources :line_items
+        resources :adjustments
         resources :payments do
           member do
-            put :authorize
-            put :capture
-            put :purchase
-            put :void
-            put :credit
+            patch :authorize
+            patch :capture
+            patch :purchase
+            patch :void
+            patch :credit
           end
         end
 
@@ -246,10 +248,10 @@ Spree::Core::Engine.add_routes do
             post 'transfer_to_shipment'
           end
           member do
-            put :ready
-            put :ship
-            put :add
-            put :remove
+            patch :ready
+            patch :ship
+            patch :add
+            patch :remove
           end
         end
 

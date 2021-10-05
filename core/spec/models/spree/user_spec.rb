@@ -166,13 +166,14 @@ describe Spree.user_class, type: :model do
     end
 
     context 'user has several associated store credits' do
-      subject { store_credit.user }
+      subject { user }
 
-      let(:user) { create(:user) }
+      let!(:store) { create(:store, default: true) }
+      let!(:user) { create(:user) }
       let(:amount) { 120.25 }
       let(:additional_amount) { 55.75 }
-      let(:store_credit) { create(:store_credit, user: user, amount: amount, amount_used: 0.0) }
-      let!(:additional_store_credit) { create(:store_credit, user: user, amount: additional_amount, amount_used: 0.0, store: store_credit.store) }
+      let!(:store_credit) { create(:store_credit, user: user, amount: amount, amount_used: 0.0, store: store) }
+      let!(:additional_store_credit) { create(:store_credit, user: user, amount: additional_amount, amount_used: 0.0, store: store) }
 
       context 'part of the store credit has been used' do
         let(:amount_used) { 35.00 }

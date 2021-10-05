@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Spree::Order, type: :model do
-  let(:order) { build(:order) }
+  let(:order) { create(:order) }
 
   before do
     # Ensure state machine has been re-defined correctly
