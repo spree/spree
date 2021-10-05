@@ -47,7 +47,7 @@
 ## Storefronts
 
 * [Next.js Commerce online demo](https://spree.vercel.app/) - [Setup instructions](https://dev-docs.spreecommerce.org/storefronts/next.js-commerce)
-* Vue Storefront 2 - coming soon!
+* [Vue Storefront 2 online demo](https://vuestorefront-spree.upsidelab.io/) - [Setup instructions](https://dev-docs.spreecommerce.org/storefronts/vue-storefront)
 
 ## Admin Dashboard
 

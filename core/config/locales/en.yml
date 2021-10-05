@@ -988,6 +988,7 @@ en:
       one: 1 error prohibited this record from being saved
       other: ! '%{count} errors prohibited this record from being saved'
     error_user_destroy_with_orders: User associated with orders cannot be destroyed
+    error_user_does_not_have_any_store_credits: 'User does not have any Store Credits available'
     event: Event
     events:
       spree:

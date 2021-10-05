@@ -50,7 +50,7 @@ module Spree
             create(
               :store_credit_payment,
               amount: store_credit_amount,
-              payment_method: create(:store_credit_payment_method, auto_capture: false)
+              payment_method: create(:store_credit_payment_method, auto_capture: false, stores: [payment.order.store])
             )
           end
 

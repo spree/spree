@@ -1,7 +1,8 @@
 require 'spec_helper'
 
 describe Spree::PaymentMethod::StoreCredit do
-  let(:order) { create(:order) }
+  let(:store) { create(:store) }
+  let(:order) { create(:order, store: store) }
   let(:payment) { create(:payment, order: order) }
   let(:gateway_options) { payment.gateway_options }
 
@@ -11,7 +12,7 @@ describe Spree::PaymentMethod::StoreCredit do
     end
 
     let(:auth_amount) { store_credit.amount_remaining * 100 }
-    let(:store_credit) { create(:store_credit) }
+    let(:store_credit) { create(:store_credit, store: store) }
     let(:gateway_options) { super().merge(originator: originator) }
     let(:originator) { nil }
 
@@ -72,7 +73,7 @@ describe Spree::PaymentMethod::StoreCredit do
 
     let(:authorized_amount) { capture_amount / 100.0 }
     let(:auth_event) { create(:store_credit_auth_event, store_credit: store_credit, amount: authorized_amount) }
-    let(:store_credit) { create(:store_credit, amount_authorized: authorized_amount) }
+    let(:store_credit) { create(:store_credit, amount_authorized: authorized_amount, store: store) }
     let(:originator) { nil }
 
     context 'with an invalid auth code' do
@@ -98,7 +99,7 @@ describe Spree::PaymentMethod::StoreCredit do
     end
 
     context 'when the currency does not match the order currency' do
-      let(:store_credit) { create(:store_credit, currency: 'AUD', amount_authorized: authorized_amount) }
+      let(:store_credit) { create(:store_credit, currency: 'AUD', amount_authorized: authorized_amount, store: store) }
 
       it 'declines the credit' do
         expect(subject.success?).to be false
@@ -127,7 +128,7 @@ describe Spree::PaymentMethod::StoreCredit do
 
   context '#void' do
     subject do
-      described_class.new.void(auth_code, gateway_options)
+      described_class.new(stores: [store]).void(auth_code, gateway_options)
     end
 
     let(:auth_code) { auth_event.authorization_code }
@@ -171,7 +172,7 @@ describe Spree::PaymentMethod::StoreCredit do
   context '#purchase' do
     it "declines a purchase if it can't find a pending credit for the correct amount" do
       amount = 100.0
-      store_credit = create(:store_credit)
+      store_credit = create(:store_credit, store: store)
       auth_code = store_credit.generate_authorization_code
       store_credit.store_credit_events.create!(action: Spree::StoreCredit::ELIGIBLE_ACTION,
                                                amount: amount,
@@ -186,7 +187,7 @@ describe Spree::PaymentMethod::StoreCredit do
 
     it 'captures a purchase if it can find a pending credit for the correct amount' do
       amount = 100.0
-      store_credit = create(:store_credit)
+      store_credit = create(:store_credit, store: store)
       auth_code = store_credit.generate_authorization_code
       store_credit.store_credit_events.create!(action: Spree::StoreCredit::ELIGIBLE_ACTION,
                                                amount: amount, authorization_code: auth_code)
@@ -252,7 +253,7 @@ describe Spree::PaymentMethod::StoreCredit do
       described_class.new.cancel(auth_code)
     end
 
-    let(:store_credit) { create(:store_credit, amount_used: captured_amount) }
+    let(:store_credit) { create(:store_credit, amount_used: captured_amount, store: store) }
     let(:auth_code) { '1-SC-20141111111111' }
     let(:captured_amount) { 10.0 }
 

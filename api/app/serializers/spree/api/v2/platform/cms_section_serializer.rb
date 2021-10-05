@@ -3,7 +3,7 @@ module Spree
     module V2
       module Platform
         class CmsSectionSerializer < BaseSerializer
-          include ::Spree::Api::V2::ResourceSerializerConcern
+          include ResourceSerializerConcern
 
           belongs_to :cms_page, serializer: :cms_page
           belongs_to :linked_resource, polymorphic: {

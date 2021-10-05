@@ -77,7 +77,10 @@ FactoryBot.define do
 
         factory :completed_order_with_store_credit_payment do
           after(:create) do |order|
-            create(:store_credit_payment, amount: order.total, order: order)
+            store_credit = create(:store_credit, amount: order.total, store: order.store, user: order.user)
+            payment_method = create(:store_credit_payment_method, stores: [order.store])
+
+            create(:store_credit_payment, amount: order.total, order: order, source: store_credit, payment_method: payment_method)
           end
         end
 

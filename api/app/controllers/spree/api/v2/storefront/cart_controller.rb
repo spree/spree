@@ -3,7 +3,9 @@ module Spree
     module V2
       module Storefront
         class CartController < ::Spree::Api::V2::BaseController
-          include Spree::Api::V2::Storefront::OrderConcern
+          include OrderConcern
+          include CouponCodesHelper
+
           before_action :ensure_order, except: %i[create associate]
           before_action :load_variant, only: :add_item
           before_action :require_spree_current_user, only: :associate
@@ -225,28 +227,6 @@ module Spree
               shipping_rates,
               params: serializer_params
             ).serializable_hash
-          end
-
-          def select_coupon_codes
-            params[:coupon_code].present? ? [params[:coupon_code]] : check_coupon_codes
-          end
-
-          def check_coupon_codes
-            spree_current_order.promotions.coupons.map(&:code)
-          end
-
-          def select_error(coupon_codes)
-            result = coupon_handler.new(spree_current_order).remove(coupon_codes.first)
-            result.error
-          end
-
-          def select_errors(coupon_codes)
-            results = []
-            coupon_codes.each do |coupon_code|
-              results << coupon_handler.new(spree_current_order).remove(coupon_code)
-            end
-
-            results.select(&:error)
           end
         end
       end

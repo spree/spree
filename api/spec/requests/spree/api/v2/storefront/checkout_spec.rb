@@ -449,7 +449,7 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
     let(:execute) { post '/api/v2/storefront/checkout/add_store_credit', params: params, headers: headers }
 
     before do
-      create(:store_credit_payment_method)
+      create(:store_credit_payment_method, stores: [store])
       execute
     end
 
@@ -529,7 +529,7 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
     let!(:store_credit) { create(:store_credit, amount: order_total, user: user) }
 
     before do
-      create(:store_credit_payment_method)
+      create(:store_credit_payment_method, stores: [store])
       Spree::Checkout::AddStoreCredit.call(order: order)
       execute
     end

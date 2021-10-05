@@ -4,14 +4,11 @@
 set -e
 
 case "$DB" in
-postgres)
-  RAILSDB="postgresql"
-  ;;
 mysql)
   RAILSDB="mysql"
   ;;
-sqlite|'')
-  RAILSDB="sqlite3"
+postgres|'')
+  RAILSDB="postgresql"
   ;;
 *)
   echo "Invalid DB specified: $DB"

@@ -1,11 +1,12 @@
 require 'spec_helper'
 
 describe Spree::Payment, type: :model do
-  let(:order) { Spree::Order.create }
+  let(:store) { create(:store) }
+  let(:order) { store.orders.create }
   let(:refund_reason) { create(:refund_reason) }
 
   let(:gateway) do
-    gateway = Spree::Gateway::Bogus.new(active: true)
+    gateway = Spree::Gateway::Bogus.new(active: true, stores: [store])
     allow(gateway).to receive_messages source_required: true
     gateway
   end
@@ -42,6 +43,8 @@ describe Spree::Payment, type: :model do
 
     # So it doesn't create log entries every time a processing method is called
     allow(payment.log_entries).to receive(:create!)
+
+    allow(payment).to receive(:payment_method_available_for_order).and_return(nil)
   end
 
   describe 'Constants' do
@@ -355,6 +358,7 @@ describe Spree::Payment, type: :model do
             let(:capture_amount) { original_amount - 100 }
 
             before do
+              allow_any_instance_of(Spree::Payment).to receive(:payment_method_available_for_order).and_return(nil)
               expect(payment.payment_method).to receive(:capture).with(capture_amount, payment.response_code, anything).and_return(success_response)
             end
 
