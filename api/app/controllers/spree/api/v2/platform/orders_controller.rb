@@ -66,20 +66,10 @@ module Spree
             resource.coupon_code = params[:coupon_code]
             result = coupon_handler.new(resource).apply
 
-            render_order(result)
-          end
-
-          def remove_coupon_code
-            coupon_codes = select_coupon_codes
-
-            return render_error_payload(Spree.t('v2.cart.no_coupon_code', scope: 'api')) if coupon_codes.empty?
-
-            result_errors = coupon_codes.count > 1 ? select_errors(coupon_codes) : select_error(coupon_codes)
-
-            if result_errors.blank?
-              render_serialized_payload { resource }
+            if result.error.blank?
+              render_serialized_payload { serialize_resource(resource) }
             else
-              render_error_payload(result_errors)
+              render_error_payload(result.error)
             end
           end
 
@@ -89,11 +79,6 @@ module Spree
               amount: params[:amount].try(:to_f)
             )
 
-            render_order(result)
-          end
-
-          def remove_store_credit
-            result = remove_store_credit_service.call(order: resource)
             render_order(result)
           end
 
@@ -147,10 +132,6 @@ module Spree
 
           def use_store_credit_service
             Spree::Api::Dependencies.platform_order_use_store_credit_service.constantize
-          end
-
-          def remove_store_credit_service
-            Spree::Api::Dependencies.platform_order_remove_store_credit_service.constantize
           end
 
           def complete_service

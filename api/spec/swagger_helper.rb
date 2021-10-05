@@ -283,6 +283,18 @@ RSpec.configure do |config|
             },
             required: %w[new_position_idx]
           },
+          amount_param: {
+            type: :object,
+            properties: {
+              amount: { type: :number }
+            }
+          },
+          coupon_code_param: {
+            type: :object,
+            properties: {
+              coupon_code: { type: :string }
+            }
+          },
           resources_list: {
             type: :object,
             properties: {
