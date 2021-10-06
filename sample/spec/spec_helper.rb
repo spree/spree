@@ -27,7 +27,6 @@ RSpec.configure do |config|
 
   config.before(:suite) do
     DatabaseCleaner.start
-    Spree::Seeds::All.call
   end
 
   config.append_after do
