@@ -24,4 +24,13 @@ RSpec.configure do |config|
 
   config.order = :random
   Kernel.srand config.seed
+
+  config.before(:suite) do
+    DatabaseCleaner.start
+    Spree::Seeds::All.call
+  end
+
+  config.append_after do
+    DatabaseCleaner.clean
+  end
 end
