@@ -5,11 +5,21 @@ module Spree
         class DigitalSerializer < BaseSerializer
           set_type :digital
 
-          attributes :attachment_file_name, :attachment_file_size, :attachment_content_type
-
           attribute :url do |digital|
             url_helpers = Rails.application.routes.url_helpers
             url_helpers.polymorphic_url(digital.attachment, only_path: true)
+          end
+
+          attribute :content_type do |digital|
+            digital.attachment.content_type
+          end
+
+          attribute :filename do |digital|
+            digital.attachment.filename
+          end
+
+          attribute :byte_size do |digital|
+            digital.attachment.byte_size
           end
 
           belongs_to :variant

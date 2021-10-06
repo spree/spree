@@ -8,8 +8,8 @@ module Spree
               if digital_link.authorize!
                 send_file(
                   ActiveStorage::Blob.service.path_for(attachment.key),
-                  filename: attachment.record.attachment_file_name,
-                  type: attachment.record.attachment_content_type,
+                  filename: attachment.filename.to_s,
+                  type: attachment.content_type.to_s,
                   status: :ok
                 ) and return
               end
