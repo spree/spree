@@ -3,7 +3,6 @@
 # the one component of Spree.
 source 'https://rubygems.org'
 
-gem 'sqlite3', '~> 1.4.0', platforms: [:ruby, :mingw, :mswin, :x64_mingw]
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw]
 
 %w[
@@ -15,7 +14,6 @@ end
 
 platforms :jruby do
   gem 'jruby-openssl'
-  gem 'activerecord-jdbcsqlite3-adapter'
 end
 
 platforms :ruby do

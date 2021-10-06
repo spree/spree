@@ -171,6 +171,15 @@ module Spree
       )
     end
 
+    def self.json_api_permitted_attributes
+      [
+        'number', 'month', 'year', 'expiry', 'verification_value', 'first_name', 'last_name', 
+        'cc_type', 'gateway_customer_profile_id', 'gateway_payment_profile_id', 'last_digits', 
+        'name', 'encrypted_data', 'address_id', 'created_at', 'updated_at', 'user_id', 
+        'payment_method_id', 'default', 'deleted_at'
+      ]
+    end
+
     private
 
     def require_card_numbers?

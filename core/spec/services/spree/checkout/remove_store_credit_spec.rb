@@ -12,7 +12,7 @@ describe Spree::Checkout::RemoveStoreCredit, type: :service do
       let(:store_credit) { create(:store_credit, amount: order_total - 1, store: store) }
 
       before do
-        create(:store_credit_payment_method)
+        create(:store_credit_payment_method, stores: [store])
         Spree::Checkout::AddStoreCredit.call(order: order)
       end
 

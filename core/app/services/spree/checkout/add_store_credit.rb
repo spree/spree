@@ -9,9 +9,12 @@ module Spree
 
         remaining_total = amount ? [amount, @order.outstanding_balance].min : @order.outstanding_balance
 
+        return failure(nil, Spree.t(:error_user_does_not_have_any_store_credits)) unless @order.user&.store_credits&.any?
+
         ApplicationRecord.transaction do
           @order.payments.store_credits.where(state: :checkout).map(&:invalidate!)
-          apply_store_credits(remaining_total) if @order.user&.store_credits&.any?
+
+          apply_store_credits(remaining_total)
         end
 
         @order.reload.payments.store_credits.valid.any? ? success(@order) : failure(@order)

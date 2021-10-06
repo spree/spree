@@ -26,6 +26,7 @@ module Spree
 
     validates :payment_method, presence: true
     validates :source, presence: true, if: -> { payment_method&.source_required? }
+    validate :payment_method_available_for_order, on: :create
 
     before_validation :validate_source
 
@@ -221,6 +222,13 @@ module Spree
         end
       end
       !errors.present?
+    end
+
+    def payment_method_available_for_order
+      return if payment_method.blank?
+      return if order.blank?
+
+      errors.add(:payment_method, :invalid) if !payment_method.available_for_order?(order) || !payment_method.available_for_store?(order.store)
     end
 
     def add_source_error(field, message)

@@ -1,13 +1,14 @@
 require 'spec_helper'
 
 describe Spree::Checkout::AddStoreCredit, type: :service do
+  let(:store) { create(:store) }
 
   describe '#call' do
     subject { described_class.call(order: order) }
 
     let(:order_total) { 500.00 }
 
-    before { create(:store_credit_payment_method) }
+    before { create(:store_credit_payment_method, stores: [store]) }
 
     context 'there is no store credit' do
       let(:order) { create(:store_credits_order_without_user, total: order_total) }
@@ -23,10 +24,14 @@ describe Spree::Checkout::AddStoreCredit, type: :service do
       it 'does not create a store credit payment' do
         expect(order.payments.count).to eq 0
       end
+
+      it 'returns error' do
+        expect(subject.success?).to eq(false)
+        expect(subject.error.to_s).to eq('User does not have any Store Credits available')
+      end
     end
 
     context 'there is enough store credit to pay for the entire order' do
-      let(:store) { create(:store) }
       let(:store_credit) { create(:store_credit, amount: order_total, store: store) }
       let(:order) { create(:order, user: store_credit.user, total: order_total, store: store) }
 
@@ -59,7 +64,6 @@ describe Spree::Checkout::AddStoreCredit, type: :service do
     end
 
     context 'the available store credit is not enough to pay for the entire order' do
-      let(:store) { create(:store) }
       let(:expected_cc_total) { 100.0 }
       let(:store_credit_total) { order_total - expected_cc_total }
       let(:store_credit) { create(:store_credit, amount: store_credit_total, store: store) }
@@ -83,7 +87,6 @@ describe Spree::Checkout::AddStoreCredit, type: :service do
 
     context 'there are multiple store credits' do
       context 'they have different credit type priorities' do
-        let(:store) { create(:store) }
         let(:amount_difference) { 100 }
         let!(:primary_store_credit) { create(:store_credit, amount: (order_total - amount_difference), store: store) }
         let!(:secondary_store_credit) do

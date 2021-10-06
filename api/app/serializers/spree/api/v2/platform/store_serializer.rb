@@ -3,7 +3,7 @@ module Spree
     module V2
       module Platform
         class StoreSerializer < BaseSerializer
-          include ::Spree::Api::V2::ResourceSerializerConcern
+          include ResourceSerializerConcern
 
           has_many :menus
           has_one :default_country, serializer: :country, record_type: :country, id_method_name: :default_country_id
