@@ -6,5 +6,6 @@ module Spree
     has_one_attached :attachment
 
     validates :attachment, attached: true
+    validates :variant, presence: true
   end
 end

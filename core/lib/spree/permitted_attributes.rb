@@ -2,11 +2,12 @@ module Spree
   module PermittedAttributes
     ATTRIBUTES = [
       :address_attributes,
-      :classification_attributes,
       :checkout_attributes,
+      :classification_attributes,
       :cms_page_attributes,
       :cms_section_attributes,
       :customer_return_attributes,
+      :digital_attributes,
       :image_attributes,
       :inventory_unit_attributes,
       :line_item_attributes,
@@ -62,6 +63,8 @@ module Spree
       return_items_attributes: [:id, :inventory_unit_id, :return_authorization_id, :returned, :pre_tax_amount,
                                 :acceptance_status, :exchange_variant_id, :resellable]
     }]
+
+    @@digital_attributes = [:attachment, :variant_id]
 
     @@image_attributes = [:alt, :attachment, :position, :viewable_type, :viewable_id]
 

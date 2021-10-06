@@ -294,6 +294,9 @@ Spree::Core::Engine.add_routes do
         resources :wishlists
         resources :wished_items
 
+        # Digitals
+        resources :digitals
+
         # Store API
         resources :stores
       end
