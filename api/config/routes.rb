@@ -178,6 +178,8 @@ Spree::Core::Engine.add_routes do
             delete 'remove_item/:item_id', to: 'wishlists#remove_item', as: :remove_item
           end
         end
+
+        get '/digitals/:token', to: 'digitals#download', as: 'digital'
       end
 
       namespace :platform do
