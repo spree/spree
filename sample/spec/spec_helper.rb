@@ -7,6 +7,8 @@ require 'rspec/rails'
 require 'ffaker'
 require 'spree_sample'
 
+require 'spree/testing_support/preferences'
+
 RSpec.configure do |config|
   config.color = true
   config.default_formatter = 'doc'
@@ -24,6 +26,21 @@ RSpec.configure do |config|
 
   config.order = :random
   Kernel.srand config.seed
+
+  config.include Spree::TestingSupport::Preferences
+
+  config.before do
+    begin
+      Rails.cache.clear
+      reset_spree_preferences
+    rescue Errno::ENOTEMPTY
+    end
+  end
+
+  config.before(:suite) do
+    DatabaseCleaner.strategy = :transaction
+    DatabaseCleaner.clean_with(:truncation)
+  end
 
   config.before(:suite) do
     DatabaseCleaner.start
