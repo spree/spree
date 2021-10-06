@@ -5,19 +5,12 @@ module Spree
         prepend Spree::ServiceModule::Base
 
         def call(event:, payload:)
-          return failure(false) if ENV['DISABLE_SPREE_WEBHOOKS'] == 'true'
-
-          run :queue_requests
-        end
-
-        private
-
-        def queue_requests(event:, payload:)
           urls_subscribed_to(event).each do |url|
             Spree::Webhooks::Endpoints::MakeRequestJob.perform_later(payload, url)
           end
-          success(true)
         end
+
+        private
 
         def urls_subscribed_to(event)
           Spree::Webhooks::Endpoint.

@@ -10,6 +10,8 @@ module Spree
   end
 end
 
+Spree::TestProduct = Spree::Webhooks::TestProduct
+
 describe Spree::Webhooks::HasWebhooks do
   before(:all) do
     ActiveRecord::Base.connection.create_table :test_products, force: true do |t|
@@ -37,13 +39,8 @@ describe Spree::Webhooks::HasWebhooks do
   let(:store) { create(:store) }
   let(:queue_requests) { instance_double(Spree::Webhooks::Endpoints::QueueRequests) }
 
-  context 'with DISABLE_SPREE_WEBHOOKS equals "true"' do
-    before do
-      ENV['DISABLE_SPREE_WEBHOOKS'] = 'true'
-      product.save
-    end
-
-    after { ENV['DISABLE_SPREE_WEBHOOKS'] = nil }
+  context 'with DISABLE_SPREE_WEBHOOKS equals "true" (set in spec_helper)' do
+    before { product.save }
 
     context 'after_create_commit' do
       it 'does not queue a request' do
@@ -66,10 +63,11 @@ describe Spree::Webhooks::HasWebhooks do
     end
   end
 
-  context 'without DISABLE_SPREE_WEBHOOKS' do
-    before { ENV['DISABLE_SPREE_WEBHOOKS'] = nil; product.save }
-
-    after { ENV['DISABLE_SPREE_WEBHOOKS'] = 'true' }
+  context 'without DISABLE_SPREE_WEBHOOKS', :spree_webhooks do
+    before do
+      ENV['DISABLE_SPREE_WEBHOOKS'] = nil
+      product.save
+    end
 
     context 'with a Spree::Webhooks descendant class' do
       let(:product) { Spree::Webhooks::TestProduct.new(name: 'test') }
@@ -97,7 +95,7 @@ describe Spree::Webhooks::HasWebhooks do
 
     context 'without a Spree::Webhooks descendant class' do
       context 'with a resource serializer' do
-        let(:payload) { Spree::Api::V2::Platform::ProductSerializer.new(product).serializable_hash }
+        let(:payload) { Spree::Api::V2::Platform::ProductSerializer.new(product).serializable_hash.to_json }
 
         context 'after_create_commit' do
           it 'queues a request through QueueRequests for product.create' do
@@ -122,7 +120,7 @@ describe Spree::Webhooks::HasWebhooks do
         context 'with a class name with multiple words' do
           let!(:cms_page) { create(:cms_homepage, store: store, locale: 'en') }
           let(:payload) do
-            Spree::Api::V2::Platform::CmsPageSerializer.new(cms_page).serializable_hash
+            Spree::Api::V2::Platform::CmsPageSerializer.new(cms_page).serializable_hash.to_json
           end
           let(:underscore_event) { 'cms_page.create' }
 
@@ -132,26 +130,26 @@ describe Spree::Webhooks::HasWebhooks do
         end
       end
 
-      context 'without a resource serializer' do
-        let!(:shipment) { create(:shipment) }
+      context 'without a resource serializer - blank payload' do
+        let(:product) { Spree::TestProduct.new(name: 'test') }
 
         context 'after_create_commit' do
           it 'does not queue a request' do
-            expect(queue_requests).not_to have_received(:call).with(hash_including(event: 'shipment.create'))
+            expect(queue_requests).not_to have_received(:call).with(hash_including(event: 'test_product.create'))
           end
         end
 
         context 'after_destroy_commit' do
           it 'does not queue a request' do
-            shipment.destroy
-            expect(queue_requests).not_to have_received(:call).with(hash_including(event: 'shipment.destroy'))
+            product.destroy
+            expect(queue_requests).not_to have_received(:call).with(hash_including(event: 'test_product.destroy'))
           end
         end
 
         context 'after_update_commit' do
           it 'does not queue a request' do
-            shipment.update(tracking: 'U10001')
-            expect(queue_requests).not_to have_received(:call).with(hash_including(event: 'shipment.update'))
+            product.update(name: 'new name')
+            expect(queue_requests).not_to have_received(:call).with(hash_including(event: 'test_product.update'))
           end
         end
       end

@@ -4,12 +4,12 @@ module Spree
       module Order
         def after_cancel
           super
-          Spree::Webhooks::Endpoints::QueueRequests.call(event: 'order.cancel', payload: {})
+          queue_webhooks_requests!('order.cancel')
         end
 
         def finalize!
           super
-          Spree::Webhooks::Endpoints::QueueRequests.call(event: 'order.complete', payload: {})
+          queue_webhooks_requests!('order.complete')
         end
       end
     end

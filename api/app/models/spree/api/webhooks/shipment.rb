@@ -4,7 +4,7 @@ module Spree
       module Shipment
         def after_ship
           super
-          Spree::Webhooks::Endpoints::QueueRequests.call(event: 'shipment.ship', payload: {})
+          queue_webhooks_requests!('shipment.ship')
         end
       end
     end

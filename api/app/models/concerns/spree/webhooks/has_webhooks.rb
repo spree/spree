@@ -4,9 +4,9 @@ module Spree
       extend ActiveSupport::Concern
 
       included do
-        after_create_commit proc { queue_webhooks_requests!(event_name(:create)) }
-        after_destroy_commit proc { queue_webhooks_requests!(event_name(:destroy)) }
-        after_update_commit proc { queue_webhooks_requests!(event_name(:update)) }
+        after_create_commit(proc { queue_webhooks_requests!(event_name(:create)) })
+        after_destroy_commit(proc { queue_webhooks_requests!(event_name(:destroy)) })
+        after_update_commit(proc { queue_webhooks_requests!(event_name(:update)) })
 
         def queue_webhooks_requests!(event)
           return if disable_spree_webhooks?
@@ -24,17 +24,17 @@ module Spree
       end
 
       def webhooks_descendant?
-        if Rails::VERSION::MAJOR < 6
-          self.class.parent == Spree::Webhooks
-        else
+        if Rails::VERSION::MAJOR >= 6
           self.class.module_parent == Spree::Webhooks
+        else
+          self.class.parent == Spree::Webhooks
         end
       end
 
       def payload
-        resource_serializer.new(self).serializable_hash
+        resource_serializer.new(self).serializable_hash.to_json
       rescue NameError
-        {}
+        ''
       end
 
       def resource_serializer

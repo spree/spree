@@ -2,14 +2,21 @@ require 'spec_helper'
 
 describe Spree::Shipment do
   let(:shipment) { create(:shipment) }
+  let(:payload) { Spree::Api::V2::Platform::ShipmentSerializer.new(shipment).serializable_hash.to_json }
 
-  context '#after_ship' do
+  describe '#after_ship' do
     before do
+      ENV['DISABLE_SPREE_WEBHOOKS'] = nil
+      # Avoid creating a new state change after transitioning as is defined in the model
+      # because after_void queues the HTTP request before finishing the transition, hence
+      # the total state changes that are sent in the payload is one less.
+      allow(shipment).to receive_message_chain(:state_changes, :create!)
       allow(Spree::Webhooks::Endpoints::QueueRequests).to receive(:new).and_return(queue_requests)
       allow(queue_requests).to receive(:call).with(any_args)
     end
 
-    let(:payload) { {} }
+    after { ENV['DISABLE_SPREE_WEBHOOKS'] = 'true' }
+
     let(:queue_requests) { instance_double(Spree::Webhooks::Endpoints::QueueRequests) }
 
     it 'executes QueueRequests.call with a shipment.ship event and {} payload after invoking ship' do

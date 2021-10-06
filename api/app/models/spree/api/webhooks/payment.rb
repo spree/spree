@@ -4,7 +4,7 @@ module Spree
       module Payment
         def after_void
           super
-          Spree::Webhooks::Endpoints::QueueRequests.call(event: 'payment.void', payload: {})
+          queue_webhooks_requests!('payment.void')
         end
       end
     end
