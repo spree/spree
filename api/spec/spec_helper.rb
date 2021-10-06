@@ -40,6 +40,7 @@ require 'spree/testing_support/next_instance_of'
 require 'spree/testing_support/rspec_retry_config'
 
 require 'spree/api/testing_support/caching'
+require 'spree/api/testing_support/jobs'
 require 'spree/api/testing_support/helpers'
 require 'spree/api/testing_support/setup'
 require 'spree/api/testing_support/v2/base'
@@ -65,6 +66,8 @@ RSpec.configure do |config|
   config.include Spree::TestingSupport::ImageHelpers
 
   config.before do
+    ENV['DISABLE_SPREE_WEBHOOKS'] = 'true'
+
     reset_spree_preferences
 
     Spree::Api::Config[:requires_authentication] = true
@@ -73,23 +76,6 @@ RSpec.configure do |config|
     Spree::Config[:default_country_id] = country.id
 
     create(:store, default: true)
-  end
-
-  # Force jobs to be executed in a synchronous way (see http://archive.today/xcb1E)
-  config.around do |example|
-    (ActiveJob::Base.descendants << ActiveJob::Base).each(&:disable_test_adapter)
-    ActiveJob::Base.queue_adapter = :inline
-    example.run
-    (ActiveJob::Base.descendants << ActiveJob::Base).each { |a| a.enable_test_adapter(ActiveJob::QueueAdapters::TestAdapter.new) }
-    ActiveJob::Base.queue_adapter = :test
-  end
-
-  config.before(:each, :job) do
-    ActiveJob::Base.queue_adapter = :test
-  end
-
-  config.after(:each, :job) do
-    ActiveJob::Base.queue_adapter = :inline
   end
 
   config.order = :random

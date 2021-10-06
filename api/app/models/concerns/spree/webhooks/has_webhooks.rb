@@ -4,17 +4,16 @@ module Spree
       extend ActiveSupport::Concern
 
       included do
-        after_create_commit proc { queue_webhooks_requests!(event_name(:create)) },
-                            unless: proc { webhooks_descendant? }
-        after_destroy_commit proc { queue_webhooks_requests!(event_name(:destroy)) },
-                             unless: proc { webhooks_descendant? }
-        after_update_commit proc { queue_webhooks_requests!(event_name(:update)) },
-                            unless: proc { webhooks_descendant? }
+        after_create_commit proc { queue_webhooks_requests!(event_name(:create)) }
+        after_destroy_commit proc { queue_webhooks_requests!(event_name(:destroy)) }
+        after_update_commit proc { queue_webhooks_requests!(event_name(:update)) }
 
         def queue_webhooks_requests!(event)
-          unless payload.blank?
-            Spree::Webhooks::Endpoints::QueueRequests.call(event: event, payload: payload)
-          end
+          return if disable_spree_webhooks?
+          return if webhooks_descendant?
+          return if payload.blank?
+
+          Spree::Webhooks::Endpoints::QueueRequests.call(event: event, payload: payload)
         end
       end
 
@@ -25,7 +24,11 @@ module Spree
       end
 
       def webhooks_descendant?
-        self.class.ancestors.include?(Spree::Webhooks)
+        if Rails::VERSION::MAJOR < 6
+          self.class.parent == Spree::Webhooks
+        else
+          self.class.module_parent == Spree::Webhooks
+        end
       end
 
       def payload
@@ -37,6 +40,10 @@ module Spree
       def resource_serializer
         demodulized_class_name = self.class.to_s.demodulize
         "Spree::Api::V2::Platform::#{demodulized_class_name}Serializer".constantize
+      end
+
+      def disable_spree_webhooks?
+        ENV['DISABLE_SPREE_WEBHOOKS'] == 'true'
       end
     end
   end

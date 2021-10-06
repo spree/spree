@@ -3,14 +3,9 @@ require 'spec_helper'
 describe Spree::Api::V2::Platform::WishlistSerializer do
   subject { described_class.new(wishlist) }
 
-  let(:user) { create(:user) }
-  let(:wishlist) { create(:wishlist, user: user) }
-  let(:wished_item) { create(:wished_item, wishlist: wishlist) }
-
-  before do
-    allow_any_instance_of(Spree::Base).to receive(:queue_webhooks_requests!)
-    wished_item
-  end
+  let!(:user) { create(:user) }
+  let!(:wishlist) { create(:wishlist, user: user) }
+  let!(:wished_item) { create(:wished_item, wishlist: wishlist) }
 
   it { expect(subject.serializable_hash).to be_kind_of(Hash) }
 

@@ -5,11 +5,6 @@ describe Spree::V2::Storefront::MenuSerializer do
 
   let(:menu) { create(:menu) }
 
-  before do
-    allow_any_instance_of(Spree::Base).to receive(:queue_webhooks_requests!)
-    menu
-  end
-
   it { expect(subject.serializable_hash).to be_kind_of(Hash) }
 
   it do

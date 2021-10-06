@@ -40,6 +40,7 @@ Dir['./spec/support/**/*.rb'].sort.each { |f| require f }
 require 'spree/testing_support/i18n' if ENV['CHECK_TRANSLATIONS']
 
 require 'spree/testing_support/factories'
+require 'spree/testing_support/jobs'
 require 'spree/testing_support/preferences'
 require 'spree/testing_support/url_helpers'
 require 'spree/testing_support/kernel'

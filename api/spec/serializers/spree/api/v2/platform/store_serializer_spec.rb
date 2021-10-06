@@ -6,8 +6,6 @@ describe Spree::Api::V2::Platform::StoreSerializer do
   let!(:store) { Spree::Store.default }
   let!(:menus) { [create(:menu, store: store), create(:menu, location: 'Footer', store: store)] }
 
-  before { store.reload }
-
   it { expect(subject.serializable_hash).to be_kind_of(Hash) }
 
   it do

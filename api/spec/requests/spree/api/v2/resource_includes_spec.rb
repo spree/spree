@@ -7,12 +7,7 @@ describe 'API v2 JSON API Resource Includes Spec', type: :request do
   let!(:product_option_type) { create(:product_option_type, product: product) }
   let!(:option_value) { create(:option_value, option_type: product_option_type.option_type) }
   let(:primary_variant) { product.master }
-  let(:default_variant) { create(:variant, product: product) }
-
-  before do
-    allow_any_instance_of(Spree::Base).to receive(:queue_webhooks_requests!)
-    default_variant
-  end
+  let!(:default_variant) { create(:variant, product: product) }
 
   shared_examples 'requested resources' do
     it 'are returned' do
