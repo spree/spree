@@ -8,6 +8,7 @@ module Spree
       :cms_section_attributes,
       :customer_return_attributes,
       :digital_attributes,
+      :digital_link_attributes,
       :image_attributes,
       :inventory_unit_attributes,
       :line_item_attributes,
@@ -65,6 +66,8 @@ module Spree
     }]
 
     @@digital_attributes = [:attachment, :variant_id]
+
+    @@digital_link_attributes = [:access_counter]
 
     @@image_attributes = [:alt, :attachment, :position, :viewable_type, :viewable_id]
 

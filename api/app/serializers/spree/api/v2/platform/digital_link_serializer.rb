@@ -5,7 +5,7 @@ module Spree
         class DigitalLinkSerializer < BaseSerializer
           set_type :digital_link
 
-          attributes :token
+          attributes :token, :access_counter
 
           belongs_to :line_item
         end

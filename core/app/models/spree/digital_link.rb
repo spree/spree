@@ -6,7 +6,7 @@ module Spree
     belongs_to :line_item
 
     before_validation :set_defaults, on: :create
-    validates :digital, presence: true
+    validates :digital, :line_item, presence: true
 
     def authorizable?
       !(expired? || access_limit_exceeded?)

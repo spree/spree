@@ -297,6 +297,13 @@ Spree::Core::Engine.add_routes do
         # Digitals
         resources :digitals
 
+        # Digtal links
+        # TODO: digital_links are automaticly created, should never be deleted
+        # but should be able to be updated to reset the access_counter
+
+        # is this okay? or do you want full CRUD?
+        resources :digital_links, only: [:show, :index, :update]
+
         # Store API
         resources :stores
       end
