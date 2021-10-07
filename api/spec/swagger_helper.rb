@@ -45,6 +45,7 @@ RSpec.configure do |config|
         { name: 'Countries' },
         { name: 'CMS Pages' },
         { name: 'CMS Sections' },
+        { name: 'Line Items' },
         { name: 'Menu Items' },
         { name: 'Menus' },
         { name: 'Option Types' },
@@ -88,6 +89,26 @@ RSpec.configure do |config|
               taxon_id: { type: :string },
               position: { type: :integer }
             }
+          },
+          line_item_params: {
+            type: :object,
+            properties: {
+              order_id: { type: :string },
+              variant_id: { type: :string },
+              quantity: { type: :integer },
+              price: { type: :number },
+              cost_price: { type: :number },
+              currency: { type: :string },
+              tax_category_id: { type: :string },
+              adjustment_total: { type: :number },
+              additional_tax_total: { type: :number },
+              promo_total: { type: :number },
+              included_tax_total: { type: :number },
+              pre_tax_amount: { type: :number },
+              taxable_adjustment_total: { type: :number },
+              non_taxable_adjustment_total: { type: :number }
+            },
+            required: %w[order_id variant_id quantity]
           },
           option_type_params: {
             type: :object,
