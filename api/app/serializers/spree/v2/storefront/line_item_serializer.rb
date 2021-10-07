@@ -13,6 +13,7 @@ module Spree
                    :pre_tax_amount, :display_pre_tax_amount
 
         belongs_to :variant
+        has_many :digital_links
       end
     end
   end
