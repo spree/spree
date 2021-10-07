@@ -133,7 +133,7 @@ module Spree
                           :default_locale, :default_country_id, :supported_currencies,
                           :new_order_notifications_email, :mailer_logo, :favicon_image,
                           :checkout_zone_id, :seo_robots, :digital_asset_authorized_clicks,
-                          :digital_asset_authorized_days]
+                          :digital_asset_authorized_days, :limit_digital_download_count, :limit_digital_download_days]
 
     @@store_credit_attributes = %i[amount currency category_id memo]
 

@@ -13,10 +13,14 @@ module Spree
     end
 
     def expired?
+      return unless line_item.order.store.limit_digital_download_days
+
       created_at <= line_item.order.store.digital_asset_authorized_days.day.ago
     end
 
     def access_limit_exceeded?
+      return unless line_item.order.store.limit_digital_download_count
+
       access_counter >= line_item.order.store.digital_asset_authorized_clicks
     end
 
