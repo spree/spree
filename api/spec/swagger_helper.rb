@@ -52,6 +52,7 @@ RSpec.configure do |config|
         { name: 'Option Types' },
         { name: 'Option Values' },
         { name: 'Orders' },
+        { name: 'Shipping Categories' },
         { name: 'Taxons' },
         { name: 'Users' },
         { name: 'Wishlists' },
@@ -270,6 +271,15 @@ RSpec.configure do |config|
             },
             required: %w[new_parent_id new_position_idx]
           },
+          shipping_category_params: {
+            type: :object,
+            properties: {
+              name: { type: :string, example: 'Another Category' },
+              created_at: { type: :string, example: Time.current, default: Time.current },
+              updated_at: { type: :string, example: Time.current, default: Time.current },
+            },
+            required: %w[name]
+          },
           wishlist_params: {
             type: :object,
             properties: {
@@ -378,7 +388,7 @@ RSpec.configure do |config|
               attributes: { type: :object },
               relationships: { type: :object }
             },
-            required: %w[id type attributes relationships]
+            required: %w[id type attributes]
           },
           resource: {
             type: :object,
