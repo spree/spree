@@ -25,7 +25,7 @@ module Spree
             request = Net::HTTP::Post.new(uri.path, HEADERS)
             request.body = body
             http = Net::HTTP.new(uri.host, uri.port)
-            http.use_ssl = true
+            http.use_ssl = true unless Rails.env.development? || Rails.env.test?
             code_type = http.request(request).code_type
             success(code_type == Net::HTTPOK)
           end

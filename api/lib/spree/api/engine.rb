@@ -25,10 +25,18 @@ module Spree
       initializer 'Spree::Webhooks' do
         ActiveSupport.on_load(:spree_base) do
           include Spree::Webhooks::HasWebhooks
+        end
 
-          Spree::Order.prepend(Spree::Api::Webhooks::Order)
-          Spree::Payment.prepend(Spree::Api::Webhooks::Payment)
-          Spree::Shipment.prepend(Spree::Api::Webhooks::Shipment)
+        ActiveSupport.on_load(:spree_order) do
+          prepend Spree::Api::Webhooks::Order
+        end
+
+        ActiveSupport.on_load(:spree_payment) do
+          prepend Spree::Api::Webhooks::Payment
+        end
+
+        ActiveSupport.on_load(:spree_shipment) do
+          prepend Spree::Api::Webhooks::Shipment
         end
       end
 

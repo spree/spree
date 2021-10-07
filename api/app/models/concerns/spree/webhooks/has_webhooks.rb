@@ -9,11 +9,9 @@ module Spree
         after_update_commit(proc { queue_webhooks_requests!(event_name(:update)) })
 
         def queue_webhooks_requests!(event)
-          return if disable_spree_webhooks?
-          return if webhooks_descendant?
-          return if payload.blank?
+          return if disable_spree_webhooks? || webhooks_descendant? || body.blank?
 
-          Spree::Webhooks::Endpoints::QueueRequests.call(event: event, payload: payload)
+          Spree::Webhooks::Endpoints::QueueRequests.call(event: event, body: body)
         end
       end
 
@@ -31,7 +29,7 @@ module Spree
         end
       end
 
-      def payload
+      def body
         resource_serializer.new(self).serializable_hash.to_json
       rescue NameError
         ''

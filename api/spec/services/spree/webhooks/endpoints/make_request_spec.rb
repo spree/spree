@@ -4,7 +4,7 @@ describe Spree::Webhooks::Endpoints::MakeRequest do
   describe '#call' do
     subject { described_class.call(body: body, url: url) }
 
-    let(:url) { 'https://google.com/' }
+    let(:url) { 'http://google.com/' }
     let(:body) { { foo: :bar }.to_json }
 
     shared_examples 'returns a failure without making a request' do
@@ -56,12 +56,11 @@ describe Spree::Webhooks::Endpoints::MakeRequest do
         context 'when request code_type is not Net::HTTPOK' do
           before do
             http_double = instance_double(Net::HTTP)
-            expect(Net::HTTP).to receive(:new).and_return(http_double)
-            expect(http_double).to receive(:use_ssl=)
-            expect(http_double).to(
+            allow(Net::HTTP).to receive(:new).and_return(http_double)
+            allow(http_double).to(
               receive(:request).and_return(
                 double(:request).tap do |request|
-                  expect(request).to receive(:code_type).and_return(Net::HTTPClientError)
+                  allow(request).to receive(:code_type).and_return(Net::HTTPClientError)
                 end
               )
             )

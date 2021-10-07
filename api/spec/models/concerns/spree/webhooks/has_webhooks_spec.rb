@@ -95,42 +95,42 @@ describe Spree::Webhooks::HasWebhooks do
 
     context 'without a Spree::Webhooks descendant class' do
       context 'with a resource serializer' do
-        let(:payload) { Spree::Api::V2::Platform::ProductSerializer.new(product).serializable_hash.to_json }
+        let(:body) { Spree::Api::V2::Platform::ProductSerializer.new(product).serializable_hash.to_json }
 
         context 'after_create_commit' do
           it 'queues a request through QueueRequests for product.create' do
-            expect(queue_requests).to have_received(:call).with(event: 'product.create', payload: payload).once
+            expect(queue_requests).to have_received(:call).with(event: 'product.create', body: body).once
           end
         end
 
         context 'after_destroy_commit' do
           it 'queues a request through QueueRequests for product.destroy' do
             product.destroy
-            expect(queue_requests).to have_received(:call).with(event: 'product.destroy', payload: payload).once
+            expect(queue_requests).to have_received(:call).with(event: 'product.destroy', body: body).once
           end
         end
 
         context 'after_update_commit' do
           it 'queues a request through QueueRequests for product.update' do
             product.update(name: 'updated')
-            expect(queue_requests).to have_received(:call).with(event: 'product.update', payload: payload).once
+            expect(queue_requests).to have_received(:call).with(event: 'product.update', body: body).once
           end
         end
 
         context 'with a class name with multiple words' do
           let!(:cms_page) { create(:cms_homepage, store: store, locale: 'en') }
-          let(:payload) do
+          let(:body) do
             Spree::Api::V2::Platform::CmsPageSerializer.new(cms_page).serializable_hash.to_json
           end
           let(:underscore_event) { 'cms_page.create' }
 
           it 'underscorize the event name' do
-            expect(queue_requests).to have_received(:call).with(event: underscore_event, payload: payload).once
+            expect(queue_requests).to have_received(:call).with(event: underscore_event, body: body).once
           end
         end
       end
 
-      context 'without a resource serializer - blank payload' do
+      context 'without a resource serializer - blank body' do
         let(:product) { Spree::TestProduct.new(name: 'test') }
 
         context 'after_create_commit' do

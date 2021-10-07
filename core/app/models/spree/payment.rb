@@ -302,3 +302,5 @@ module Spree
     end
   end
 end
+
+ActiveSupport.run_load_hooks(:spree_payment, Spree::Payment)

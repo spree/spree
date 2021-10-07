@@ -4,9 +4,9 @@ module Spree
       class QueueRequests
         prepend Spree::ServiceModule::Base
 
-        def call(event:, payload:)
+        def call(body:, event:)
           urls_subscribed_to(event).each do |url|
-            Spree::Webhooks::Endpoints::MakeRequestJob.perform_later(payload, url)
+            Spree::Webhooks::Endpoints::MakeRequestJob.perform_later(body, url)
           end
         end
 

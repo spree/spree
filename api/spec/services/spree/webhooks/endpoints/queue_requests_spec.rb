@@ -2,10 +2,10 @@ require 'spec_helper'
 
 describe Spree::Webhooks::Endpoints::QueueRequests, :job, :spree_webhooks do
   describe '#call' do
-    subject { described_class.call(event: event, payload: payload) }
+    subject { described_class.call(event: event, body: body) }
 
     let(:event) { 'order.finalize' }
-    let(:payload) { {} }
+    let(:body) { {} }
     let(:queue) { 'spree_webhooks' }
     let(:make_request_job) { Spree::Webhooks::Endpoints::MakeRequestJob }
 
@@ -31,7 +31,7 @@ describe Spree::Webhooks::Endpoints::QueueRequests, :job, :spree_webhooks do
 
         it 'queues a job to make a request' do
           expect { subject }.to(
-            have_enqueued_job(make_request_job).with(payload, endpoint.url).on_queue(queue)
+            have_enqueued_job(make_request_job).with(body, endpoint.url).on_queue(queue)
           )
         end
       end
@@ -49,7 +49,7 @@ describe Spree::Webhooks::Endpoints::QueueRequests, :job, :spree_webhooks do
 
         it 'queues a job to make a request' do
           expect { subject }.to(
-            have_enqueued_job(make_request_job).with(payload, endpoint.url).on_queue(queue)
+            have_enqueued_job(make_request_job).with(body, endpoint.url).on_queue(queue)
           )
         end
       end
@@ -65,7 +65,7 @@ describe Spree::Webhooks::Endpoints::QueueRequests, :job, :spree_webhooks do
 
         it 'does not queue a job to make a request' do
           expect { subject }.not_to(
-            have_enqueued_job(make_request_job).with(payload, endpoint.url).on_queue(queue)
+            have_enqueued_job(make_request_job).with(body, endpoint.url).on_queue(queue)
           )
         end
       end
@@ -81,7 +81,7 @@ describe Spree::Webhooks::Endpoints::QueueRequests, :job, :spree_webhooks do
 
         it 'does not queue a job to make a request' do
           expect { subject }.not_to(
-            have_enqueued_job(make_request_job).with(payload, endpoint.url).on_queue(queue)
+            have_enqueued_job(make_request_job).with(body, endpoint.url).on_queue(queue)
           )
         end
       end

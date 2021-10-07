@@ -4,7 +4,7 @@ describe Spree::Order do
   describe 'sending webhooks after transitioning from states' do
     let(:queue_requests) { instance_double(Spree::Webhooks::Endpoints::QueueRequests) }
     let(:store) { create(:store, default: true) }
-    let(:payload) do
+    let(:body) do
       Spree::Api::V2::Platform::OrderSerializer.new(order).serializable_hash.to_json
     end
 
@@ -19,10 +19,10 @@ describe Spree::Order do
     describe '#after_cancel' do
       let(:order) { create(:completed_order_with_totals, store: store) }
 
-      it 'executes QueueRequests.call with a order.cancel event and {} payload after invoking cancel' do
+      it 'executes QueueRequests.call with a order.cancel event and {} body after invoking cancel' do
         Timecop.freeze(Time.local(1990)) do
           order.cancel
-          expect(queue_requests).to have_received(:call).with(event: 'order.cancel', payload: payload).once
+          expect(queue_requests).to have_received(:call).with(event: 'order.cancel', body: body).once
         end
       end
     end
@@ -30,9 +30,9 @@ describe Spree::Order do
     describe '#finalize!' do
       let(:order) { described_class.create(email: 'test@example.com', store: store) }
 
-      it 'executes QueueRequests.call with a order.complete event and {} payload after invoking finalize!' do
+      it 'executes QueueRequests.call with a order.complete event and {} body after invoking finalize!' do
         order.finalize!
-        expect(queue_requests).to have_received(:call).with(event: 'order.complete', payload: payload).once
+        expect(queue_requests).to have_received(:call).with(event: 'order.complete', body: body).once
       end
     end
   end
