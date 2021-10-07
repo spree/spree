@@ -41,6 +41,7 @@ RSpec.configure do |config|
       ],
       tags: [
         { name: 'Addresses' },
+        { name: 'Adjustments' },
         { name: 'Classifications' },
         { name: 'Countries' },
         { name: 'CMS Pages' },
@@ -81,6 +82,25 @@ RSpec.configure do |config|
               company: { type: :string },
               user_id: { type: :string }
             }
+          },
+          adjustment_params: {
+            type: :object,
+            properties: {
+              order_id: { type: :string },
+              lebal: { type: :string, example: 'Shipping costs' },
+              adjustable_id: { type: :string },
+              adjustable_type: { type: :string, example: 'Spree::LineItem' },
+              source_id: { type: :string },
+              source_type: { type: :string, example: 'Spree::TaxRate' },
+              amount: { type: :number, example: 10.90 },
+              mandatory: { type: :boolean },
+              eligible: { type: :boolean },
+              state: { type: :string, example: 'closed', default: 'open' },
+              included: { type: :boolean, example: true, default: false },
+              created_at: { type: :string, example: Time.current },
+              updated_at: { type: :string, example: Time.current }
+            },
+            required: %w[order_id label adjustable_id adjustable_type]
           },
           classification_params: {
             type: :object,

@@ -226,6 +226,8 @@ Spree::Core::Engine.add_routes do
         end
         resources :line_items
         resources :adjustments
+
+        # Payments API
         resources :payments do
           member do
             patch :authorize
