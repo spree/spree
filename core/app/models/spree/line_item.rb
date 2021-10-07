@@ -27,7 +27,7 @@ module Spree
 
     validates :price, numericality: true
 
-    validates_with Spree::Stock::AvailabilityValidator
+    validates_with Spree::Stock::AvailabilityValidator, if: -> { variant.present? }
     validate :ensure_proper_currency, if: -> { order.present? }
 
     before_destroy :verify_order_inventory_before_destroy, if: -> { order.has_checkout_step?('delivery') }
