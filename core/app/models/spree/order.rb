@@ -57,7 +57,7 @@ module Spree
 
     checkout_flow do
       go_to_state :address
-      go_to_state :delivery
+      go_to_state :delivery, if: ->(order) { order.delivery_required? }
       go_to_state :payment, if: ->(order) { order.payment? || order.payment_required? }
       go_to_state :confirm, if: ->(order) { order.confirmation_required? }
       go_to_state :complete
@@ -211,6 +211,11 @@ module Spree
     # own application if you require additional steps before allowing a checkout.
     def checkout_allowed?
       line_items.exists?
+    end
+
+    # Does this order require a phisical delivery.
+    def delivery_required?
+      !digital?
     end
 
     # Is this a free order in which case the payment step should be skipped
