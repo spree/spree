@@ -11,9 +11,7 @@ describe Spree::Webhooks::Endpoints::QueueRequests, :job, :spree_webhooks do
 
     context 'without subscriptions for the given event' do
       it 'does not queue a job to make a request' do
-        expect { subject }.not_to(
-          have_enqueued_job(Spree::Webhooks::Endpoints::MakeRequest).on_queue(queue)
-        )
+        expect { subject }.not_to have_enqueued_job(make_request_job).on_queue(queue)
       end
     end
 

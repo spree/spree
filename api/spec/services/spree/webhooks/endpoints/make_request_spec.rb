@@ -47,6 +47,42 @@ describe Spree::Webhooks::Endpoints::MakeRequest do
           )
         end
 
+        it 'debug logs before the request' do
+          allow(Rails.logger).to receive(:debug)
+          subject
+          expect(Rails.logger).to have_received(:debug).with('logging')
+        end
+
+        context 'logging after the request' do
+          context 'when fail' do
+            before do
+              http_double = instance_double(Net::HTTP)
+              allow(Net::HTTP).to receive(:new).and_return(http_double)
+              allow(http_double).to(
+                receive(:request).and_return(
+                  double(:request).tap do |request|
+                    allow(request).to receive(:code_type).and_return(Net::HTTPClientError)
+                  end
+                )
+              )
+            end
+
+            it 'warn logs after the request' do
+              allow(Rails.logger).to receive(:warn)
+              subject
+              expect(Rails.logger).to have_received(:warn).with('webhook request finished with errors')
+            end
+          end
+
+          context 'when success' do
+            it 'debug logs after the request' do
+              allow(Rails.logger).to receive(:debug)
+              subject
+              expect(Rails.logger).to have_received(:debug).with('webhook sent successfully')
+            end
+          end
+        end
+
         context 'when request code_type is Net::HTTPOK' do
           it 'returns true wrapped into a success' do
             expect(subject.value).to eq(true)

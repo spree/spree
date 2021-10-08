@@ -9,8 +9,6 @@ describe Spree::Api::V2::Platform::TaxonSerializer do
   let(:taxon) { create(:taxon, products: create_list(:product, 2, stores: [store]), taxonomy: taxonomy) }
   let!(:children) { [create(:taxon, parent: taxon, taxonomy: taxonomy), create(:taxon, parent: taxon, taxonomy: taxonomy)] }
 
-  before { taxon.reload }
-
   it { expect(subject.serializable_hash).to be_kind_of(Hash) }
 
   context 'without products' do

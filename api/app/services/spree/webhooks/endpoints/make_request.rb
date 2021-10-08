@@ -19,16 +19,35 @@ module Spree
 
         def make_request(body:, url:)
           uri = URI(url)
+          Rails.logger.debug('logging')
           if uri.path == '' && uri.host.nil? && uri.port.nil?
+            Rails.logger.debug('webhook request finished with errors')
             failure(false)
           else
-            request = Net::HTTP::Post.new(uri.path, HEADERS)
-            request.body = body
-            http = Net::HTTP.new(uri.host, uri.port)
-            http.use_ssl = true unless Rails.env.development? || Rails.env.test?
-            code_type = http.request(request).code_type
-            success(code_type == Net::HTTPOK)
+            if request_code_type(body, uri) == Net::HTTPOK
+              Rails.logger.debug('webhook sent successfully')
+              success(true)
+            else
+              Rails.logger.warn('webhook request finished with errors')
+              success(false)
+            end
           end
+        end
+
+        def request_code_type(body, uri)
+          http = Net::HTTP.new(uri.host, uri.port)
+          http.use_ssl = true if ssl?
+          http.request(request(body, uri.path)).code_type
+        end
+
+        def request(body, uri_path)
+          req = Net::HTTP::Post.new(uri_path, HEADERS)
+          req.body = body
+          req
+        end
+
+        def ssl?
+          !(Rails.env.development? || Rails.env.test?)
         end
       end
     end
