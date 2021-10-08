@@ -1,53 +1,66 @@
+# frozen_string_literal: true
+
 module Spree
   module Webhooks
     module Endpoints
       class MakeRequest
-        prepend Spree::ServiceModule::Base
-
-        # rubocop:disable Lint/UnusedMethodArgument
-        def call(body:, url:)
-          return failure(false) if body == ''
-
-          run :make_request
+        def initialize(body:, url:)
+          @body = body
+          @url = url
         end
-        # rubocop:enable Lint/UnusedMethodArgument
+
+        def call
+          return if body == ''
+
+          Rails.logger.debug("Making a request to #{url} with body #{body}")
+
+          if unprocessable_uri?
+            Rails.logger.warn(UNPROCESSABLE_MSG)
+            return
+          end
+
+          if failed_request?
+            Rails.logger.warn(FAIL_MSG)
+            return
+          end
+
+          Rails.logger.debug(SUCCESS_MSG)
+        end
 
         private
 
+        attr_reader :body, :url
+
+        FAIL_MSG = 'Webhook request finished with errors'
         HEADERS = { 'Content-Type' => 'application/json' }.freeze
-        private_constant :HEADERS
+        SUCCESS_MSG = 'Webhook request completed successfully'
+        UNPROCESSABLE_MSG = 'Can not make a request to the given URL'
+        private_constant :FAIL_MSG, :HEADERS, :SUCCESS_MSG, :UNPROCESSABLE_MSG
 
-        def make_request(body:, url:)
-          uri = URI(url)
-          Rails.logger.debug('logging')
-          if uri.path == '' && uri.host.nil? && uri.port.nil?
-            Rails.logger.debug('webhook request finished with errors')
-            failure(false)
-          else
-            if request_code_type(body, uri) == Net::HTTPOK
-              Rails.logger.debug('webhook sent successfully')
-              success(true)
-            else
-              Rails.logger.warn('webhook request finished with errors')
-              success(false)
-            end
-          end
+        delegate :host, :path, :port, to: :uri, prefix: true
+
+        def unprocessable_uri?
+          uri_path == '' && uri_host.nil? && uri_port.nil?
         end
 
-        def request_code_type(body, uri)
-          http = Net::HTTP.new(uri.host, uri.port)
-          http.use_ssl = true if ssl?
-          http.request(request(body, uri.path)).code_type
+        def failed_request?
+          request_code_type != Net::HTTPOK
         end
 
-        def request(body, uri_path)
+        def request_code_type
+          http = Net::HTTP.new(uri_host, uri_port)
+          http.use_ssl = true unless Rails.env.development? || Rails.env.test?
+          http.request(request).code_type
+        end
+
+        def request
           req = Net::HTTP::Post.new(uri_path, HEADERS)
           req.body = body
           req
         end
 
-        def ssl?
-          !(Rails.env.development? || Rails.env.test?)
+        def uri
+          URI(url)
         end
       end
     end

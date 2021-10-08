@@ -5,7 +5,7 @@ module Spree
         queue_as :spree_webhooks
 
         def perform(body, url)
-          Spree::Webhooks::Endpoints::MakeRequest.call(body: body, url: url)
+          Spree::Webhooks::Endpoints::MakeRequest.new(body: body, url: url).call
         end
       end
     end
