@@ -2,9 +2,11 @@ module Spree
   class Order < Spree::Base
     module Digital
       def digital?
-        return if line_items.empty?
-
-        line_items.all?(&:digital?)
+        if line_items.empty?
+          false
+        else
+          line_items.all?(&:digital?)
+        end
       end
 
       def some_digital?
@@ -17,10 +19,6 @@ module Spree
 
       def digital_links
         digital_line_items.map(&:digital_links).flatten
-      end
-
-      def reset_digital_links!
-        digital_links.each(&:reset!)
       end
 
       def create_digital_links
