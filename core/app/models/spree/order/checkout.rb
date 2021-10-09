@@ -83,7 +83,8 @@ module Spree
                     order.process_payments!
                   end
 
-                  order.create_digital_links if order.some_digital?
+                  #TODO: Why is this causing issues.
+                  #order.create_digital_links if order.some_digital?
                 end
                 after_transition to: :complete, do: :persist_user_credit_card
                 before_transition to: :payment, do: :set_shipments_cost
