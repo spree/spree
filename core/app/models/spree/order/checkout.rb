@@ -82,10 +82,12 @@ module Spree
                   elsif order.payment_required?
                     order.process_payments!
                   end
-
-                  #TODO: Why is this causing issues.
-                  #order.create_digital_links if order.some_digital?
                 end
+
+                before_transition to: :complete do |order|
+                  order.create_digital_links if order.some_digital?
+                end
+
                 after_transition to: :complete, do: :persist_user_credit_card
                 before_transition to: :payment, do: :set_shipments_cost
                 before_transition to: :payment, do: :create_tax_charge!
