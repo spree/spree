@@ -2,6 +2,8 @@ module Spree
   class Order < Spree::Base
     module Digital
       def digital?
+        return if line_items.empty?
+
         line_items.all?(&:digital?)
       end
 
