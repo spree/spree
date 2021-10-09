@@ -11,18 +11,16 @@ module Spree
           end
 
           attribute :content_type do |digital|
-            digital.attachment.content_type
+            digital.attachment.content_type.to_s
           end
 
           attribute :filename do |digital|
-            digital.attachment.filename
+            digital.attachment.filename.to_s
           end
 
           attribute :byte_size do |digital|
-            digital.attachment.byte_size
+            digital.attachment.byte_size.to_i
           end
-
-          belongs_to :variant
         end
       end
     end
