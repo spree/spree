@@ -160,6 +160,8 @@ describe 'API V2 Storefront Cart Spec', type: :request do
       it_behaves_like 'returns valid cart JSON'
 
       it 'with success' do
+        order.reload
+
         expect(order.line_items.count).to eq(2)
         expect(order.line_items.last.variant).to eq(variant)
         expect(order.line_items.last.quantity).to eq(5)
@@ -170,6 +172,8 @@ describe 'API V2 Storefront Cart Spec', type: :request do
         let(:options) { { cost_price: 1.99 } }
 
         it 'sets custom attributes values' do
+          order.reload
+
           expect(order.line_items.last.cost_price).to eq(1.99)
         end
       end
