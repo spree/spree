@@ -292,24 +292,18 @@ Spree::Core::Engine.add_routes do
           end
         end
 
-        # Wishlists
+        # Wishlists API
         resources :wishlists
         resources :wished_items
 
-        # Digitals
+        # Digitals API
         resources :digitals
-
-        # Digtal links
-        # TODO: digital_links are automaticly created, should never be deleted
-        # but should be able to be updated to reset the access_counter
-
-        # is this okay? or do you want full CRUD?
-        resources :digital_links, only: [:show, :index, :update]
+        resources :digital_links
 
         # Store API
         resources :stores
 
-        # Configurations
+        # Configurations API
         resources :shipping_categories
       end
     end

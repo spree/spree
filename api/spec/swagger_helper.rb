@@ -18,7 +18,7 @@ RSpec.configure do |config|
   # the root example_group in your specs, e.g. describe '...', swagger_doc: 'v2/swagger.json'
   config.swagger_docs = {
     'v2/platform/index.yaml' => {
-      openapi: '3.0.1',
+      openapi: '3.0.3',
       info: {
         title: 'Platform API V2',
         contact: {
@@ -345,6 +345,20 @@ RSpec.configure do |config|
             },
             required: %w[new_position_idx]
           },
+          digital_params: {
+            type: :object,
+            properties: {
+              'digital[attachment]': { type: :string, format: :binary },
+              "digital[variant_id]": { type: :string, example: '123' }
+            },
+            required: ['digital[attachment]', 'digital[variant_id]']
+          },
+          digital_link_params: {
+            type: :object,
+            properties: {
+              access_counter: { type: :integer }
+            }
+          },
           amount_param: {
             type: :object,
             properties: {
@@ -356,14 +370,6 @@ RSpec.configure do |config|
             properties: {
               coupon_code: { type: :string }
             }
-          },
-          digital_params: {
-            type: :object,
-            properties: {
-              'digital[attachment]': { type: :string, format: :binary },
-              "digital[variant_id]": { type: :string, example: '123' }
-            },
-            required: ['digital[attachment]', 'digital[variant_id]']
           },
           resources_list: {
             type: :object,

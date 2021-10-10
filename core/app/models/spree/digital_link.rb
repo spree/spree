@@ -7,6 +7,7 @@ module Spree
 
     before_validation :set_defaults, on: :create
     validates :digital, :line_item, presence: true
+    validates :access_counter, numericality: { greater_than_or_equal_to: 0 }
 
     def authorizable?
       !(expired? || access_limit_exceeded?)
