@@ -1,13 +1,14 @@
 module Spree
   module Stock
     module Splitter
-      class Digital < Base
+      class Digital < Spree::Stock::Splitter::Base
         def split(packages)
           split_packages = []
           packages.each do |package|
             split_packages += split_by_digital(package)
           end
-          return_next split_packages
+
+          return_next(split_packages)
         end
 
         private
@@ -17,6 +18,7 @@ module Spree
           package.contents.each do |item|
             digitals[item.variant.digital?] << item
           end
+
           hash_to_packages(digitals)
         end
 
