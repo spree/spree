@@ -124,7 +124,7 @@ shared_examples 'GET records list' do |resource_name, include_example, filter_ex
     description "Returns a list of #{resource_name.pluralize}"
     operationId "#{resource_name.parameterize.pluralize.to_sym}-list"
     include_context 'jsonapi pagination'
-    json_api_include_parameter(include_example)
+    json_api_include_parameter(include_example) unless include_example.nil?
 
     if filter_example.present?
       json_api_filter_parameter(filter_example)
@@ -145,7 +145,7 @@ shared_examples 'GET record' do |resource_name, include_example|
     description "Returns #{resource_name.articleize}"
     operationId "show-#{resource_name.parameterize.to_sym}"
     parameter name: :id, in: :path, type: :string
-    json_api_include_parameter(include_example)
+    json_api_include_parameter(include_example) unless include_example.nil?
 
     it_behaves_like 'record found'
     it_behaves_like 'record not found'
@@ -154,17 +154,23 @@ shared_examples 'GET record' do |resource_name, include_example|
 end
 
 # create
-shared_examples 'POST create record' do |resource_name, include_example|
+shared_examples 'POST create record' do |resource_name, include_example, consumes_kind = 'application/json'|
   param_name = resource_name.parameterize(separator: '_').to_sym
+  request_data_type = case consumes_kind
+                      when 'multipart/form-data'
+                        :formData
+                      else
+                        :body
+                      end
 
   post "Creates #{resource_name.articleize}" do
     tags resource_name.pluralize
-    consumes 'application/json'
+    consumes consumes_kind
     security [ bearer_auth: [] ]
     description "Creates #{resource_name.articleize}"
     operationId "create-#{resource_name.parameterize.to_sym}"
-    parameter name: param_name, in: :body, schema: { '$ref' => "#/components/schemas/#{param_name}_params" }
-    json_api_include_parameter(include_example)
+    parameter name: param_name, in: request_data_type, schema: { '$ref' => "#/components/schemas/#{param_name}_params" }
+    json_api_include_parameter(include_example) unless include_example.nil?
 
     let(param_name) { valid_create_param_value }
 
@@ -174,18 +180,24 @@ shared_examples 'POST create record' do |resource_name, include_example|
 end
 
 # update
-shared_examples 'PUT update record' do |resource_name, include_example|
+shared_examples 'PUT update record' do |resource_name, include_example, consumes_kind = 'application/json'|
   param_name = resource_name.parameterize(separator: '_').to_sym
+  request_data_type = case consumes_kind
+                      when 'multipart/form-data'
+                        :formData
+                      else
+                        :body
+                      end
 
   put "Updates #{resource_name.articleize}" do
     tags resource_name.pluralize
     security [ bearer_auth: [] ]
     description "Updates #{resource_name.articleize}"
     operationId "update-#{resource_name.parameterize.to_sym}"
-    consumes 'application/json'
+    consumes consumes_kind
     parameter name: :id, in: :path, type: :string
-    parameter name: param_name, in: :body, schema: { '$ref' => "#/components/schemas/#{param_name}_params" }
-    json_api_include_parameter(include_example)
+    parameter name: param_name, in: request_data_type, schema: { '$ref' => "#/components/schemas/#{param_name}_params" }
+    json_api_include_parameter(include_example) unless include_example.nil?
 
     let(param_name) { valid_update_param_value }
 

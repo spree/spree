@@ -357,7 +357,7 @@ RSpec.configure do |config|
               coupon_code: { type: :string }
             }
           },
-          digital_param: {
+          digital_params: {
             type: :object,
             properties: {
               'digital[attachment]': { type: :string, format: :binary },
