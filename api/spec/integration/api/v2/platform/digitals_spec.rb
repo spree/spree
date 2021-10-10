@@ -42,11 +42,14 @@ describe 'Digitals API', swagger: true do
   end
 
   path '/api/v2/platform/digitals' do
-    post 'body is required' do
+    post 'Creates a Digital' do
       tags resource_name.pluralize
       consumes 'multipart/form-data'
       security [ bearer_auth: [] ]
-      parameter name: :digital, in: :formData, type: :digital, required: true
+      description 'Creates a Digital'
+      operationId 'create-digital'
+      parameter name: :digital, in: :formData, schema: { '$ref' => '#/components/schemas/digital_param' }
+      parameter name: :digital, in: :formData, type: :object, required: true
 
       let(:digital) do
         {

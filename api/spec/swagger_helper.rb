@@ -46,9 +46,11 @@ RSpec.configure do |config|
         { name: 'Countries' },
         { name: 'CMS Pages' },
         { name: 'CMS Sections' },
+        { name: 'Digitals' },
+        { name: 'Digital Links' },
         { name: 'Line Items' },
-        { name: 'Menu Items' },
         { name: 'Menus' },
+        { name: 'Menu Items' },
         { name: 'Option Types' },
         { name: 'Option Values' },
         { name: 'Orders' },
@@ -354,6 +356,14 @@ RSpec.configure do |config|
             properties: {
               coupon_code: { type: :string }
             }
+          },
+          digital_param: {
+            type: :object,
+            properties: {
+              'digital[attachment]': { type: :string, format: :binary },
+              "digital[variant_id]": { type: :string, example: '123' }
+            },
+            required: ['digital[attachment]', 'digital[variant_id]']
           },
           resources_list: {
             type: :object,
