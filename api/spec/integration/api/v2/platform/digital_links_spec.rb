@@ -28,4 +28,17 @@ describe 'Digital Link API', swagger: true do
   end
 
   include_examples 'CRUD examples', resource_name, include_example, filter_example
+
+  path '/api/v2/platform/digital_links/{id}/reset' do
+    patch 'Reset a Digital Link' do
+      tags resource_name.pluralize
+      security [ bearer_auth: [] ]
+      operationId 'reset-digital-link'
+      description 'Resets a digital link, allowing further downloads'
+      consumes 'application/json'
+      parameter name: :id, in: :path, type: :string
+
+      it_behaves_like 'record updated'
+    end
+  end
 end

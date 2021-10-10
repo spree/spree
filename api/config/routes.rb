@@ -298,7 +298,11 @@ Spree::Core::Engine.add_routes do
 
         # Digitals API
         resources :digitals
-        resources :digital_links
+        resources :digital_links do
+          member do
+            patch :reset
+          end
+        end
 
         # Store API
         resources :stores
