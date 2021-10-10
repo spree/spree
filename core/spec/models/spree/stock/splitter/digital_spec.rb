@@ -3,7 +3,7 @@ require 'spec_helper'
 module Spree
   module Stock
     module Splitter
-      RSpec.describe Digital do
+      RSpec.describe Spree::Digital do
         subject { described_class.new(packer) }
 
         let(:packer) { build(:stock_packer) }

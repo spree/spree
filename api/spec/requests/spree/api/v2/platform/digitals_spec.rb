@@ -1,11 +1,11 @@
 require 'spec_helper'
 
 describe 'Platform API v2 Digitals spec', type: :request do
+  subject { post '/api/v2/platform/digitals', headers: bearer_token, params: params }
+
   include_context 'API v2 tokens'
   include_context 'Platform API v2'
   include ActionDispatch::TestProcess::FixtureFile
-
-  subject { post '/api/v2/platform/digitals', headers: bearer_token, params: params }
 
   let(:bearer_token) { { 'Authorization' => valid_authorization } }
   let(:params) { { digital: { variant_id: variant.id.to_s, attachment: file_upload } } }
