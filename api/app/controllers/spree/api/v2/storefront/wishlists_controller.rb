@@ -45,7 +45,7 @@ module Spree
             if resource.destroy
               head 204
             else
-              render_error_payload('Something went wrong')
+              render_error_payload(resource.errors.full_messages.to_sentence)
             end
           end
 
