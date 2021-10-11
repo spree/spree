@@ -155,6 +155,46 @@ describe 'Orders API', swagger: true do
     end
   end
 
+  path "/api/v2/platform/#{resource_path}/{id}/approve" do
+    patch "Approves #{resource_name.articleize}" do
+      tags resource_name.pluralize
+      security [ bearer_auth: [] ]
+      description "Approves #{resource_name.articleize}, when using a token created for a user, it will save this user as the approver"
+      operationId "approve-#{resource_name.parameterize.to_sym}"
+      consumes 'application/json'
+      parameter name: :id, in: :path, type: :string
+      json_api_include_parameter(include_example)
+
+      response '200', 'record approved' do
+        run_test!
+      end
+      it_behaves_like 'record not found'
+      it_behaves_like 'authentication failed'
+    end
+  end
+
+  path "/api/v2/platform/#{resource_path}/{id}/cancel" do
+    patch "Cancels #{resource_name.articleize}" do
+      tags resource_name.pluralize
+      security [ bearer_auth: [] ]
+      description "Cancels #{resource_name.articleize}, when using a token created for a user, it will save this user as the canceler"
+      operationId "cancel-#{resource_name.parameterize.to_sym}"
+      consumes 'application/json'
+      parameter name: :id, in: :path, type: :string
+      json_api_include_parameter(include_example)
+
+      response '200', 'record cancelled' do
+        let(:id) { create(:completed_order_with_totals).id }
+        run_test!
+      end
+      response '422', 'cannot be cancelled' do
+        run_test!
+      end
+      it_behaves_like 'record not found'
+      it_behaves_like 'authentication failed'
+    end
+  end
+
   path "/api/v2/platform/#{resource_path}/{id}/use_store_credit" do
     patch "Use Store Credit for #{resource_name.articleize}" do
       tags resource_name.pluralize
