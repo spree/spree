@@ -4,7 +4,7 @@ module Spree
       class DigitalLinkSerializer < BaseSerializer
         set_type :digital_link
 
-        attributes :token
+        attribute :token
       end
     end
   end

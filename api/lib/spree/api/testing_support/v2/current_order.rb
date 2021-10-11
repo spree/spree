@@ -3,11 +3,40 @@ def ensure_order_totals
   order.persist_totals
 end
 
-shared_context 'creates order with line item' do
+shared_context 'creates an order with a phisical line item' do
   let!(:line_item) { create(:line_item, order: order, currency: currency) }
   let!(:headers)   { headers_bearer }
 
-  before { ensure_order_totals }
+  before do
+    order.reload
+    ensure_order_totals
+  end
+end
+
+shared_context 'creates an order with a digital line item' do
+  let!(:digital) { create(:digital) }
+  let!(:variant_digital) { digital.variant }
+  let!(:line_item) { create(:line_item, variant: variant_digital, order: order, currency: currency) }
+  let!(:headers) { headers_bearer }
+
+  before do
+    order.reload
+    ensure_order_totals
+  end
+end
+
+shared_context 'creates an order with a phisical and digital line item' do
+  let!(:digital) { create(:digital) }
+  let!(:variant_digital) { digital.variant }
+  let!(:digital_line_item) { create(:line_item, variant: variant_digital, order: order, currency: currency) }
+  let!(:phisical_line_item) { create(:line_item, order: order, currency: currency) }
+
+  let!(:headers) { headers_bearer }
+
+  before do
+    order.reload
+    ensure_order_totals
+  end
 end
 
 shared_context 'creates guest order with guest token' do
