@@ -25,7 +25,7 @@ bundle check || bundle update --quiet
 echo "**************************************"
 echo "* Setup Spree API and running RSpec..."
 echo "**************************************"
-cd api; prepare_app; bundle exec rspec spec
+cd ../api; prepare_app; bundle exec rspec spec
 
 # Spree Core
 echo "***************************************"
