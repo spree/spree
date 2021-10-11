@@ -191,9 +191,9 @@ Spree::Core::Engine.add_routes do
         resources :reimbursements
         resources :return_authorizations do
           member do
-            put :add
-            put :cancel
-            put :receive
+            patch :add
+            patch :cancel
+            patch :receive
           end
         end
 
@@ -203,7 +203,7 @@ Spree::Core::Engine.add_routes do
         resources :taxons
         resources :classifications do
           member do
-            put :reposition
+            patch :reposition
           end
         end
         resources :images

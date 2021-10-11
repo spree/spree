@@ -24,7 +24,7 @@ Doorkeeper.configure do
   end
 
   admin_authenticator do |routes|
-    current_spree_user&.has_spree_role?('admin') || redirect_to(routes.root_url)
+    current_spree_user&.spree_admin? || redirect_to(routes.root_url)
   end
 
   grant_flows %w[password client_credentials]

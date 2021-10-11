@@ -72,11 +72,14 @@ module Spree
 
     if Spree.user_class
       belongs_to :user, class_name: Spree.user_class.to_s, optional: true
-      belongs_to :created_by, class_name: Spree.user_class.to_s, optional: true
-      belongs_to :approver, class_name: Spree.user_class.to_s, optional: true
-      belongs_to :canceler, class_name: Spree.user_class.to_s, optional: true
     else
       belongs_to :user, optional: true
+    end
+    if Spree.admin_user_class
+      belongs_to :created_by, class_name: Spree.admin_user_class.to_s, optional: true
+      belongs_to :approver, class_name: Spree.admin_user_class.to_s, optional: true
+      belongs_to :canceler, class_name: Spree.admin_user_class.to_s, optional: true
+    else
       belongs_to :created_by, optional: true
       belongs_to :approver, optional: true
       belongs_to :canceler, optional: true

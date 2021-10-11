@@ -10,7 +10,7 @@ info:
 paths:
   "/api/v2/platform/addresses":
     get:
-      summary: Returns a list of Addresses
+      summary: Return a list of Addresses
       tags:
       - Addresses
       security:
@@ -63,8 +63,8 @@ paths:
                         state_name:
                         alternative_phone: 555-555-0199
                         company: Company
-                        created_at: '2021-10-11T15:47:34.950Z'
-                        updated_at: '2021-10-11T15:47:34.950Z'
+                        created_at: '2021-10-11T17:34:32.279Z'
+                        updated_at: '2021-10-11T17:34:32.279Z'
                         deleted_at:
                         label:
                       relationships:
@@ -91,8 +91,8 @@ paths:
                         state_name:
                         alternative_phone: 555-555-0199
                         company: Company
-                        created_at: '2021-10-11T15:47:34.953Z'
-                        updated_at: '2021-10-11T15:47:34.953Z'
+                        created_at: '2021-10-11T17:34:32.282Z'
+                        updated_at: '2021-10-11T17:34:32.282Z'
                         deleted_at:
                         label:
                       relationships:
@@ -125,7 +125,7 @@ paths:
                   value:
                     error: The access token is invalid
     post:
-      summary: Creates an Address
+      summary: Create an Address
       tags:
       - Addresses
       security:
@@ -162,8 +162,8 @@ paths:
                         state_name:
                         alternative_phone: 555-555-0199
                         company: Company
-                        created_at: '2021-10-11T15:47:35.104Z'
-                        updated_at: '2021-10-11T15:47:35.104Z'
+                        created_at: '2021-10-11T17:34:32.424Z'
+                        updated_at: '2021-10-11T17:34:32.424Z'
                         deleted_at:
                         label:
                       relationships:
@@ -211,7 +211,7 @@ paths:
               "$ref": "#/components/schemas/address_params"
   "/api/v2/platform/addresses/{id}":
     get:
-      summary: Returns an Address
+      summary: Return an Address
       tags:
       - Addresses
       security:
@@ -253,8 +253,8 @@ paths:
                         state_name:
                         alternative_phone: 555-555-0199
                         company: Company
-                        created_at: '2021-10-11T15:47:35.147Z'
-                        updated_at: '2021-10-11T15:47:35.147Z'
+                        created_at: '2021-10-11T17:34:32.456Z'
+                        updated_at: '2021-10-11T17:34:32.456Z'
                         deleted_at:
                         label:
                       relationships:
@@ -284,8 +284,8 @@ paths:
                 Example:
                   value:
                     error: The access token is invalid
-    put:
-      summary: Updates an Address
+    patch:
+      summary: Update an Address
       tags:
       - Addresses
       security:
@@ -327,8 +327,8 @@ paths:
                         state_name:
                         alternative_phone: 555-555-0199
                         company: Company
-                        created_at: '2021-10-11T15:47:35.199Z'
-                        updated_at: '2021-10-11T15:47:35.207Z'
+                        created_at: '2021-10-11T17:34:32.517Z'
+                        updated_at: '2021-10-11T17:34:32.525Z'
                         deleted_at:
                         label:
                       relationships:
@@ -377,7 +377,7 @@ paths:
             schema:
               "$ref": "#/components/schemas/address_params"
     delete:
-      summary: Deletes an Address
+      summary: Delete an Address
       tags:
       - Addresses
       security:
@@ -411,7 +411,7 @@ paths:
                     error: The access token is invalid
   "/api/v2/platform/adjustments":
     get:
-      summary: Returns a list of Adjustments
+      summary: Return a list of Adjustments
       tags:
       - Adjustments
       security:
@@ -460,8 +460,8 @@ paths:
                         label: Shipping
                         mandatory:
                         eligible: true
-                        created_at: '2021-10-11T15:47:35.434Z'
-                        updated_at: '2021-10-11T15:47:35.434Z'
+                        created_at: '2021-10-11T17:34:32.748Z'
+                        updated_at: '2021-10-11T17:34:32.748Z'
                         state: open
                         included: false
                         display_amount: "$100.00"
@@ -487,8 +487,8 @@ paths:
                         label: Shipping
                         mandatory:
                         eligible: true
-                        created_at: '2021-10-11T15:47:35.458Z'
-                        updated_at: '2021-10-11T15:47:35.458Z'
+                        created_at: '2021-10-11T17:34:32.767Z'
+                        updated_at: '2021-10-11T17:34:32.767Z'
                         state: open
                         included: false
                         display_amount: "$100.00"
@@ -524,7 +524,7 @@ paths:
                   value:
                     error: The access token is invalid
     post:
-      summary: Creates an Adjustment
+      summary: Create an Adjustment
       tags:
       - Adjustments
       security:
@@ -557,8 +557,8 @@ paths:
                         label: Shipping
                         mandatory:
                         eligible: true
-                        created_at: '2021-10-11T15:47:35.739Z'
-                        updated_at: '2021-10-11T15:47:35.739Z'
+                        created_at: '2021-10-11T17:34:33.045Z'
+                        updated_at: '2021-10-11T17:34:33.045Z'
                         state: open
                         included: false
                         display_amount: "$100.00"
@@ -598,7 +598,7 @@ paths:
               "$ref": "#/components/schemas/adjustment_params"
   "/api/v2/platform/adjustments/{id}":
     get:
-      summary: Returns an Adjustment
+      summary: Return an Adjustment
       tags:
       - Adjustments
       security:
@@ -636,8 +636,8 @@ paths:
                         label: Shipping
                         mandatory:
                         eligible: true
-                        created_at: '2021-10-11T15:47:35.840Z'
-                        updated_at: '2021-10-11T15:47:35.844Z'
+                        created_at: '2021-10-11T17:34:33.136Z'
+                        updated_at: '2021-10-11T17:34:33.140Z'
                         state: open
                         included: false
                         display_amount: "$1.00"
@@ -670,8 +670,8 @@ paths:
                 Example:
                   value:
                     error: The access token is invalid
-    put:
-      summary: Updates an Adjustment
+    patch:
+      summary: Update an Adjustment
       tags:
       - Adjustments
       security:
@@ -709,8 +709,8 @@ paths:
                         label: New label
                         mandatory:
                         eligible: true
-                        created_at: '2021-10-11T15:47:36.030Z'
-                        updated_at: '2021-10-11T15:47:36.044Z'
+                        created_at: '2021-10-11T17:34:33.323Z'
+                        updated_at: '2021-10-11T17:34:33.338Z'
                         state: open
                         included: false
                         display_amount: "$15.00"
@@ -760,7 +760,7 @@ paths:
             schema:
               "$ref": "#/components/schemas/adjustment_params"
     delete:
-      summary: Deletes an Adjustment
+      summary: Delete an Adjustment
       tags:
       - Adjustments
       security:
@@ -794,7 +794,7 @@ paths:
                     error: The access token is invalid
   "/api/v2/platform/classifications":
     get:
-      summary: Returns a list of Classifications
+      summary: Return a list of Classifications
       tags:
       - Classifications
       security:
@@ -838,8 +838,8 @@ paths:
                       type: classification
                       attributes:
                         position: 1
-                        created_at: '2021-10-11T15:47:36.637Z'
-                        updated_at: '2021-10-11T15:47:36.637Z'
+                        created_at: '2021-10-11T17:34:33.898Z'
+                        updated_at: '2021-10-11T17:34:33.898Z'
                       relationships:
                         product:
                           data:
@@ -853,8 +853,8 @@ paths:
                       type: classification
                       attributes:
                         position: 1
-                        created_at: '2021-10-11T15:47:36.742Z'
-                        updated_at: '2021-10-11T15:47:36.742Z'
+                        created_at: '2021-10-11T17:34:34.022Z'
+                        updated_at: '2021-10-11T17:34:34.022Z'
                       relationships:
                         product:
                           data:
@@ -883,7 +883,7 @@ paths:
                   value:
                     error: The access token is invalid
     post:
-      summary: Creates a Classification
+      summary: Create a Classification
       tags:
       - Classifications
       security:
@@ -911,8 +911,8 @@ paths:
                       type: classification
                       attributes:
                         position: 1
-                        created_at: '2021-10-11T15:47:37.135Z'
-                        updated_at: '2021-10-11T15:47:37.135Z'
+                        created_at: '2021-10-11T17:34:34.411Z'
+                        updated_at: '2021-10-11T17:34:34.411Z'
                       relationships:
                         product:
                           data:
@@ -942,7 +942,7 @@ paths:
               "$ref": "#/components/schemas/classification_params"
   "/api/v2/platform/classifications/{id}":
     get:
-      summary: Returns a Classification
+      summary: Return a Classification
       tags:
       - Classifications
       security:
@@ -975,8 +975,8 @@ paths:
                       type: classification
                       attributes:
                         position: 1
-                        created_at: '2021-10-11T15:47:37.291Z'
-                        updated_at: '2021-10-11T15:47:37.291Z'
+                        created_at: '2021-10-11T17:34:34.561Z'
+                        updated_at: '2021-10-11T17:34:34.561Z'
                       relationships:
                         product:
                           data:
@@ -1002,8 +1002,8 @@ paths:
                 Example:
                   value:
                     error: The access token is invalid
-    put:
-      summary: Updates a Classification
+    patch:
+      summary: Update a Classification
       tags:
       - Classifications
       security:
@@ -1036,8 +1036,8 @@ paths:
                       type: classification
                       attributes:
                         position: 1
-                        created_at: '2021-10-11T15:47:37.575Z'
-                        updated_at: '2021-10-11T15:47:37.575Z'
+                        created_at: '2021-10-11T17:34:34.847Z'
+                        updated_at: '2021-10-11T17:34:34.847Z'
                       relationships:
                         product:
                           data:
@@ -1080,7 +1080,7 @@ paths:
             schema:
               "$ref": "#/components/schemas/classification_params"
     delete:
-      summary: Deletes a Classification
+      summary: Delete a Classification
       tags:
       - Classifications
       security:
@@ -1113,7 +1113,7 @@ paths:
                   value:
                     error: The access token is invalid
   "/api/v2/platform/classifications/{id}/reposition":
-    put:
+    patch:
       summary: Reposition a Classification
       tags:
       - Classifications
@@ -1147,8 +1147,8 @@ paths:
                       type: classification
                       attributes:
                         position: 2
-                        created_at: '2021-10-11T15:47:38.300Z'
-                        updated_at: '2021-10-11T15:47:38.321Z'
+                        created_at: '2021-10-11T17:34:35.558Z'
+                        updated_at: '2021-10-11T17:34:35.582Z'
                       relationships:
                         product:
                           data:
@@ -1190,7 +1190,7 @@ paths:
               "$ref": "#/components/schemas/classification_params"
   "/api/v2/platform/cms_pages":
     get:
-      summary: Returns a list of CMS Pages
+      summary: Return a list of CMS Pages
       tags:
       - CMS Pages
       security:
@@ -1233,34 +1233,35 @@ paths:
                     - id: '1'
                       type: cms_page
                       attributes:
-                        title: Aliquid iure suscipit ut ipsum deleniti.
+                        title: Ea nostrum esse quibusdam quod fugit.
                         meta_title:
                         content:
                         meta_description:
                         visible: true
-                        slug: aliquid-iure-suscipit-ut-ipsum-deleniti
+                        slug: ea-nostrum-esse-quibusdam-quod-fugit
                         type: Spree::Cms::Pages::StandardPage
                         locale: en
                         deleted_at:
-                        created_at: '2021-10-11T15:47:38.652Z'
-                        updated_at: '2021-10-11T15:47:38.652Z'
+                        created_at: '2021-10-11T17:34:35.893Z'
+                        updated_at: '2021-10-11T17:34:35.893Z'
                       relationships:
                         cms_sections:
                           data: []
                     - id: '2'
                       type: cms_page
                       attributes:
-                        title: Culpa ad sed velit reprehenderit voluptatibus.
+                        title: Praesentium dolorem laudantium voluptates facere quos
+                          quis provident.
                         meta_title:
                         content:
                         meta_description:
                         visible: true
-                        slug: culpa-ad-sed-velit-reprehenderit-voluptatibus
+                        slug: praesentium-dolorem-laudantium-voluptates-facere-quos-quis-provident
                         type: Spree::Cms::Pages::StandardPage
                         locale: en
                         deleted_at:
-                        created_at: '2021-10-11T15:47:38.657Z'
-                        updated_at: '2021-10-11T15:47:38.657Z'
+                        created_at: '2021-10-11T17:34:35.898Z'
+                        updated_at: '2021-10-11T17:34:35.898Z'
                       relationships:
                         cms_sections:
                           data: []
@@ -1283,7 +1284,7 @@ paths:
                   value:
                     error: The access token is invalid
     post:
-      summary: Creates a CMS Page
+      summary: Create a CMS Page
       tags:
       - CMS Pages
       security:
@@ -1310,17 +1311,17 @@ paths:
                       id: '5'
                       type: cms_page
                       attributes:
-                        title: Assumenda iste laboriosam quos nam optio expedita.
+                        title: Itaque neque sequi fugit eos.
                         meta_title:
                         content:
                         meta_description:
                         visible: true
-                        slug: assumenda-iste-laboriosam-quos-nam-optio-expedita
+                        slug: itaque-neque-sequi-fugit-eos
                         type: Spree::Cms::Pages::StandardPage
                         locale: en
                         deleted_at:
-                        created_at: '2021-10-11T15:47:38.728Z'
-                        updated_at: '2021-10-11T15:47:38.728Z'
+                        created_at: '2021-10-11T17:34:35.978Z'
+                        updated_at: '2021-10-11T17:34:35.978Z'
                       relationships:
                         cms_sections:
                           data: []
@@ -1344,7 +1345,7 @@ paths:
               "$ref": "#/components/schemas/cms_page_params"
   "/api/v2/platform/cms_pages/{id}":
     get:
-      summary: Returns a CMS Page
+      summary: Return a CMS Page
       tags:
       - CMS Pages
       security:
@@ -1376,17 +1377,17 @@ paths:
                       id: '6'
                       type: cms_page
                       attributes:
-                        title: Consequatur quos rerum blanditiis labore incidunt.
+                        title: Tempore earum cumque ab officia officiis aspernatur.
                         meta_title:
                         content:
                         meta_description:
                         visible: true
-                        slug: consequatur-quos-rerum-blanditiis-labore-incidunt
+                        slug: tempore-earum-cumque-ab-officia-officiis-aspernatur
                         type: Spree::Cms::Pages::StandardPage
                         locale: en
                         deleted_at:
-                        created_at: '2021-10-11T15:47:38.762Z'
-                        updated_at: '2021-10-11T15:47:38.762Z'
+                        created_at: '2021-10-11T17:34:36.011Z'
+                        updated_at: '2021-10-11T17:34:36.011Z'
                       relationships:
                         cms_sections:
                           data: []
@@ -1406,8 +1407,8 @@ paths:
                 Example:
                   value:
                     error: The access token is invalid
-    put:
-      summary: Updates a CMS Page
+    patch:
+      summary: Update a CMS Page
       tags:
       - CMS Pages
       security:
@@ -1444,12 +1445,12 @@ paths:
                         content:
                         meta_description:
                         visible: true
-                        slug: adipisci-accusantium-ad-libero-cum-aliquam-quos-repudiandae-magni
+                        slug: dolorum-facere-aspernatur-sint-officia-voluptate-ab-rerum
                         type: Spree::Cms::Pages::StandardPage
                         locale: en
                         deleted_at:
-                        created_at: '2021-10-11T15:47:38.817Z'
-                        updated_at: '2021-10-11T15:47:38.831Z'
+                        created_at: '2021-10-11T17:34:36.066Z'
+                        updated_at: '2021-10-11T17:34:36.076Z'
                       relationships:
                         cms_sections:
                           data: []
@@ -1486,7 +1487,7 @@ paths:
             schema:
               "$ref": "#/components/schemas/cms_page_params"
     delete:
-      summary: Deletes a CMS Page
+      summary: Delete a CMS Page
       tags:
       - CMS Pages
       security:
@@ -1520,7 +1521,7 @@ paths:
                     error: The access token is invalid
   "/api/v2/platform/cms_sections":
     get:
-      summary: Returns a list of CMS Sections
+      summary: Return a list of CMS Sections
       tags:
       - CMS Sections
       security:
@@ -1563,7 +1564,7 @@ paths:
                     - id: '1'
                       type: cms_section
                       attributes:
-                        name: Repellat ratione qui nihil esse.
+                        name: Maxime corporis impedit at corrupti enim omnis.
                         content: {}
                         settings:
                           gutters: No Gutters
@@ -1572,8 +1573,8 @@ paths:
                         type: Spree::Cms::Sections::HeroImage
                         position: 1
                         linked_resource_type: Spree::Taxon
-                        created_at: '2021-10-11T15:47:38.997Z'
-                        updated_at: '2021-10-11T15:47:38.997Z'
+                        created_at: '2021-10-11T17:34:36.243Z'
+                        updated_at: '2021-10-11T17:34:36.243Z'
                       relationships:
                         cms_page:
                           data:
@@ -1584,7 +1585,7 @@ paths:
                     - id: '2'
                       type: cms_section
                       attributes:
-                        name: Fuga voluptas soluta mollitia earum.
+                        name: Est veniam provident animi impedit.
                         content:
                           link_type_one: Spree::Taxon
                           link_type_two: Spree::Taxon
@@ -1596,8 +1597,8 @@ paths:
                         type: Spree::Cms::Sections::ImageGallery
                         position: 2
                         linked_resource_type:
-                        created_at: '2021-10-11T15:47:39.001Z'
-                        updated_at: '2021-10-11T15:47:39.001Z'
+                        created_at: '2021-10-11T17:34:36.248Z'
+                        updated_at: '2021-10-11T17:34:36.248Z'
                       relationships:
                         cms_page:
                           data:
@@ -1608,7 +1609,8 @@ paths:
                     - id: '3'
                       type: cms_section
                       attributes:
-                        name: Molestias ipsam porro a aliquid rem aperiam.
+                        name: Porro aliquam cumque perferendis modi voluptate architecto
+                          accusamus aliquid.
                         content: {}
                         settings:
                           gutters: No Gutters
@@ -1617,8 +1619,8 @@ paths:
                         type: Spree::Cms::Sections::FeaturedArticle
                         position: 3
                         linked_resource_type: Spree::Taxon
-                        created_at: '2021-10-11T15:47:39.010Z'
-                        updated_at: '2021-10-11T15:47:39.010Z'
+                        created_at: '2021-10-11T17:34:36.256Z'
+                        updated_at: '2021-10-11T17:34:36.256Z'
                       relationships:
                         cms_page:
                           data:
@@ -1629,7 +1631,7 @@ paths:
                     - id: '4'
                       type: cms_section
                       attributes:
-                        name: Doloremque magni eos provident qui quaerat.
+                        name: Voluptates similique aut repudiandae dolore.
                         content: {}
                         settings:
                           gutters: No Gutters
@@ -1638,8 +1640,8 @@ paths:
                         type: Spree::Cms::Sections::HeroImage
                         position: 4
                         linked_resource_type: Spree::Product
-                        created_at: '2021-10-11T15:47:39.023Z'
-                        updated_at: '2021-10-11T15:47:39.023Z'
+                        created_at: '2021-10-11T17:34:36.264Z'
+                        updated_at: '2021-10-11T17:34:36.264Z'
                       relationships:
                         cms_page:
                           data:
@@ -1652,7 +1654,7 @@ paths:
                     - id: '5'
                       type: cms_section
                       attributes:
-                        name: Modi voluptatum nam facere amet veritatis ex cum placeat.
+                        name: Nobis natus libero corrupti quo vel nihil et.
                         content: {}
                         settings:
                           gutters: No Gutters
@@ -1661,8 +1663,8 @@ paths:
                         type: Spree::Cms::Sections::HeroImage
                         position: 5
                         linked_resource_type: Spree::Product
-                        created_at: '2021-10-11T15:47:39.031Z'
-                        updated_at: '2021-10-11T15:47:39.031Z'
+                        created_at: '2021-10-11T17:34:36.271Z'
+                        updated_at: '2021-10-11T17:34:36.271Z'
                       relationships:
                         cms_page:
                           data:
@@ -1691,7 +1693,7 @@ paths:
                   value:
                     error: The access token is invalid
     post:
-      summary: Creates a CMS Section
+      summary: Create a CMS Section
       tags:
       - CMS Sections
       security:
@@ -1718,8 +1720,7 @@ paths:
                       id: '14'
                       type: cms_section
                       attributes:
-                        name: Suscipit impedit fugit ducimus dolores porro tempora
-                          in.
+                        name: Molestias esse sed sapiente iure itaque.
                         content: {}
                         settings:
                           gutters: No Gutters
@@ -1728,8 +1729,8 @@ paths:
                         type: Spree::Cms::Sections::HeroImage
                         position: 4
                         linked_resource_type: Spree::Product
-                        created_at: '2021-10-11T15:47:39.188Z'
-                        updated_at: '2021-10-11T15:47:39.188Z'
+                        created_at: '2021-10-11T17:34:36.431Z'
+                        updated_at: '2021-10-11T17:34:36.431Z'
                       relationships:
                         cms_page:
                           data:
@@ -1759,7 +1760,7 @@ paths:
               "$ref": "#/components/schemas/cms_section_params"
   "/api/v2/platform/cms_sections/{id}":
     get:
-      summary: Returns a CMS Section
+      summary: Return a CMS Section
       tags:
       - CMS Sections
       security:
@@ -1791,7 +1792,8 @@ paths:
                       id: '21'
                       type: cms_section
                       attributes:
-                        name: Magni nam voluptatum facilis nobis molestias quisquam.
+                        name: Animi fugiat assumenda expedita repudiandae sequi laborum
+                          voluptatem perspiciatis.
                         content: {}
                         settings:
                           gutters: No Gutters
@@ -1800,8 +1802,8 @@ paths:
                         type: Spree::Cms::Sections::HeroImage
                         position: 4
                         linked_resource_type: Spree::Product
-                        created_at: '2021-10-11T15:47:39.386Z'
-                        updated_at: '2021-10-11T15:47:39.386Z'
+                        created_at: '2021-10-11T17:34:36.563Z'
+                        updated_at: '2021-10-11T17:34:36.563Z'
                       relationships:
                         cms_page:
                           data:
@@ -1827,8 +1829,8 @@ paths:
                 Example:
                   value:
                     error: The access token is invalid
-    put:
-      summary: Updates a CMS Section
+    patch:
+      summary: Update a CMS Section
       tags:
       - CMS Sections
       security:
@@ -1869,8 +1871,8 @@ paths:
                         type: Spree::Cms::Sections::HeroImage
                         position: 4
                         linked_resource_type: Spree::Product
-                        created_at: '2021-10-11T15:47:39.596Z'
-                        updated_at: '2021-10-11T15:47:39.608Z'
+                        created_at: '2021-10-11T17:34:36.769Z'
+                        updated_at: '2021-10-11T17:34:36.781Z'
                       relationships:
                         cms_page:
                           data:
@@ -1913,7 +1915,7 @@ paths:
             schema:
               "$ref": "#/components/schemas/cms_section_params"
     delete:
-      summary: Deletes a CMS Section
+      summary: Delete a CMS Section
       tags:
       - CMS Sections
       security:
@@ -1972,7 +1974,7 @@ paths:
                       id: '58'
                       type: cms_section
                       attributes:
-                        name: Pariatur dolore quibusdam ut aut voluptatibus officiis.
+                        name: Iste fugit labore nemo at tempore dolorum natus ut.
                         content: {}
                         settings:
                           gutters: No Gutters
@@ -1981,8 +1983,8 @@ paths:
                         type: Spree::Cms::Sections::HeroImage
                         position: 3
                         linked_resource_type: Spree::Product
-                        created_at: '2021-10-11T15:47:40.239Z'
-                        updated_at: '2021-10-11T15:47:40.253Z'
+                        created_at: '2021-10-11T17:34:37.282Z'
+                        updated_at: '2021-10-11T17:34:37.314Z'
                       relationships:
                         cms_page:
                           data:
@@ -2040,9 +2042,9 @@ paths:
                         name: United States of America
                         numcode: 840
                         states_required: true
-                        updated_at: '2021-10-11T15:47:40.421Z'
+                        updated_at: '2021-10-11T17:34:37.516Z'
                         zipcode_required: true
-                        created_at: '2021-10-11T15:47:40.421Z'
+                        created_at: '2021-10-11T17:34:37.516Z'
                       relationships:
                         states:
                           data: []
@@ -2055,9 +2057,9 @@ paths:
                         name: NAME_2
                         numcode: 840
                         states_required: false
-                        updated_at: '2021-10-11T15:47:40.428Z'
+                        updated_at: '2021-10-11T17:34:37.522Z'
                         zipcode_required: true
-                        created_at: '2021-10-11T15:47:40.428Z'
+                        created_at: '2021-10-11T17:34:37.522Z'
                       relationships:
                         states:
                           data: []
@@ -2070,9 +2072,9 @@ paths:
                         name: NAME_3
                         numcode: 840
                         states_required: false
-                        updated_at: '2021-10-11T15:47:40.431Z'
+                        updated_at: '2021-10-11T17:34:37.524Z'
                         zipcode_required: true
-                        created_at: '2021-10-11T15:47:40.431Z'
+                        created_at: '2021-10-11T17:34:37.524Z'
                       relationships:
                         states:
                           data: []
@@ -2127,9 +2129,9 @@ paths:
                         name: NAME_6
                         numcode: 840
                         states_required: false
-                        updated_at: '2021-10-11T15:47:40.477Z'
+                        updated_at: '2021-10-11T17:34:37.567Z'
                         zipcode_required: true
-                        created_at: '2021-10-11T15:47:40.477Z'
+                        created_at: '2021-10-11T17:34:37.567Z'
                       relationships:
                         states:
                           data: []
@@ -2149,614 +2151,9 @@ paths:
                 Example:
                   value:
                     error: The access token is invalid
-  "/api/v2/platform/digital_links":
-    get:
-      summary: Returns a list of Digital Links
-      tags:
-      - Digital Links
-      security:
-      - bearer_auth: []
-      description: Returns a list of Digital Links
-      operationId: digital-links-list
-      parameters:
-      - name: page
-        in: query
-        example: 1
-        schema:
-          type: integer
-      - name: per_page
-        in: query
-        example: 50
-        schema:
-          type: integer
-      responses:
-        '200':
-          description: Records returned
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    data:
-                    - id: '1'
-                      type: digital_link
-                      attributes:
-                        token: QEVR9rwwbs3i4ZmsbUmdZHhT
-                        access_counter: 0
-                      relationships:
-                        digital:
-                          data:
-                            id: '1'
-                            type: digital
-                        line_item:
-                          data:
-                            id: '9'
-                            type: line_item
-                    - id: '2'
-                      type: digital_link
-                      attributes:
-                        token: gck6YKkFUJFgWhJeneiqmTGq
-                        access_counter: 0
-                      relationships:
-                        digital:
-                          data:
-                            id: '2'
-                            type: digital
-                        line_item:
-                          data:
-                            id: '10'
-                            type: line_item
-                    meta:
-                      count: 2
-                      total_count: 2
-                      total_pages: 1
-                    links:
-                      self: http://www.example.com/api/v2/platform/digital_links?page=1&per_page=
-                      next: http://www.example.com/api/v2/platform/digital_links?page=1&per_page=
-                      prev: http://www.example.com/api/v2/platform/digital_links?page=1&per_page=
-                      last: http://www.example.com/api/v2/platform/digital_links?page=1&per_page=
-                      first: http://www.example.com/api/v2/platform/digital_links?page=1&per_page=
-        '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-    post:
-      summary: Creates a Digital Link
-      tags:
-      - Digital Links
-      security:
-      - bearer_auth: []
-      description: Creates a Digital Link
-      operationId: create-digital-link
-      parameters: []
-      responses:
-        '201':
-          description: record created
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    data:
-                      id: '5'
-                      type: digital_link
-                      attributes:
-                        token: VtDhJHGWJi5EdGjjXREJwaPj
-                        access_counter: 0
-                      relationships:
-                        digital:
-                          data:
-                            id: '5'
-                            type: digital
-                        line_item:
-                          data:
-                            id: '13'
-                            type: line_item
-        '422':
-          description: invalid request
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: Digital can't be blank, Line item can't be blank, and Access
-                      counter is not a number
-                    errors:
-                      digital:
-                      - can't be blank
-                      line_item:
-                      - can't be blank
-                      access_counter:
-                      - is not a number
-      requestBody:
-        content:
-          application/json:
-            schema:
-              "$ref": "#/components/schemas/digital_link_params"
-  "/api/v2/platform/digital_links/{id}":
-    get:
-      summary: Returns a Digital Link
-      tags:
-      - Digital Links
-      security:
-      - bearer_auth: []
-      description: Returns a Digital Link
-      operationId: show-digital-link
-      parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: string
-      responses:
-        '200':
-          description: Record found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    data:
-                      id: '6'
-                      type: digital_link
-                      attributes:
-                        token: 5K7HRyEVvpr3QFKMerBCQnB4
-                        access_counter: 0
-                      relationships:
-                        digital:
-                          data:
-                            id: '6'
-                            type: digital
-                        line_item:
-                          data:
-                            id: '14'
-                            type: line_item
-        '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-        '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-    put:
-      summary: Updates a Digital Link
-      tags:
-      - Digital Links
-      security:
-      - bearer_auth: []
-      description: Updates a Digital Link
-      operationId: update-digital-link
-      parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: string
-      responses:
-        '200':
-          description: record updated
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    data:
-                      id: '8'
-                      type: digital_link
-                      attributes:
-                        token: 2TFGZtYxUJABT1kDPivuQeLZ
-                        access_counter: 0
-                      relationships:
-                        digital:
-                          data:
-                            id: '8'
-                            type: digital
-                        line_item:
-                          data:
-                            id: '16'
-                            type: line_item
-        '422':
-          description: invalid request
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: Access counter is not a number
-                    errors:
-                      access_counter:
-                      - is not a number
-        '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-        '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-      requestBody:
-        content:
-          application/json:
-            schema:
-              "$ref": "#/components/schemas/digital_link_params"
-    delete:
-      summary: Deletes a Digital Link
-      tags:
-      - Digital Links
-      security:
-      - bearer_auth: []
-      description: Deletes a Digital Link
-      operationId: delete-digital-link
-      parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: string
-      responses:
-        '204':
-          description: Record deleted
-        '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-        '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-  "/api/v2/platform/digital_links/{id}/reset":
-    patch:
-      summary: Reset a Digital Link
-      tags:
-      - Digital Links
-      security:
-      - bearer_auth: []
-      operationId: reset-digital-link
-      description: Resets a digital link, allowing further downloads
-      parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: string
-      responses:
-        '200':
-          description: record updated
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    data:
-                      id: '13'
-                      type: digital_link
-                      attributes:
-                        token: qVCBvXjXQFQUDQFL4n9ZYZ78
-                        access_counter: 0
-                      relationships:
-                        digital:
-                          data:
-                            id: '13'
-                            type: digital
-                        line_item:
-                          data:
-                            id: '21'
-                            type: line_item
-  "/api/v2/platform/digitals":
-    get:
-      summary: Returns a list of Digitals
-      tags:
-      - Digitals
-      security:
-      - bearer_auth: []
-      description: Returns a list of Digitals
-      operationId: digitals-list
-      parameters:
-      - name: page
-        in: query
-        example: 1
-        schema:
-          type: integer
-      - name: per_page
-        in: query
-        example: 50
-        schema:
-          type: integer
-      responses:
-        '200':
-          description: Records returned
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    data:
-                    - id: '14'
-                      type: digital
-                      attributes:
-                        url: "/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBJZz09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--6c02e9ec8f004d052becb50e7fcc54f9c99b2df5/thinking-cat.jpg"
-                        content_type: image/jpeg
-                        filename: thinking-cat.jpg
-                        byte_size: 18090
-                      relationships:
-                        variant:
-                          data:
-                            id: '83'
-                            type: variant
-                    - id: '15'
-                      type: digital
-                      attributes:
-                        url: "/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBJdz09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--927a49277b240016a5103d40e713c6456d0d53ec/thinking-cat.jpg"
-                        content_type: image/jpeg
-                        filename: thinking-cat.jpg
-                        byte_size: 18090
-                      relationships:
-                        variant:
-                          data:
-                            id: '85'
-                            type: variant
-                    - id: '16'
-                      type: digital
-                      attributes:
-                        url: "/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBKQT09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--4d97d12ab027b7bc8fc342f95656ad9edd69a3b1/thinking-cat.jpg"
-                        content_type: image/jpeg
-                        filename: thinking-cat.jpg
-                        byte_size: 18090
-                      relationships:
-                        variant:
-                          data:
-                            id: '87'
-                            type: variant
-                    meta:
-                      count: 3
-                      total_count: 3
-                      total_pages: 1
-                    links:
-                      self: http://www.example.com/api/v2/platform/digitals?page=1&per_page=
-                      next: http://www.example.com/api/v2/platform/digitals?page=1&per_page=
-                      prev: http://www.example.com/api/v2/platform/digitals?page=1&per_page=
-                      last: http://www.example.com/api/v2/platform/digitals?page=1&per_page=
-                      first: http://www.example.com/api/v2/platform/digitals?page=1&per_page=
-        '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-    post:
-      summary: Creates a Digital
-      tags:
-      - Digitals
-      security:
-      - bearer_auth: []
-      description: Creates a Digital
-      operationId: create-digital
-      parameters: []
-      responses:
-        '201':
-          description: record created
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    data:
-                      id: '23'
-                      type: digital
-                      attributes:
-                        url: "/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBLdz09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--6f3bdef01fb09e651ae684add9f27e22803d96ef/icon_256x256.jpg"
-                        content_type: image/png
-                        filename: icon_256x256.jpg
-                        byte_size: 818
-                      relationships:
-                        variant:
-                          data:
-                            id: '97'
-                            type: variant
-        '422':
-          description: invalid request
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: Attachment can't be blank and Variant can't be blank
-                    errors:
-                      attachment:
-                      - can't be blank
-                      variant:
-                      - can't be blank
-      requestBody:
-        content:
-          multipart/form-data:
-            schema:
-              "$ref": "#/components/schemas/digital_params"
-  "/api/v2/platform/digitals/{id}":
-    get:
-      summary: Returns a Digital
-      tags:
-      - Digitals
-      security:
-      - bearer_auth: []
-      description: Returns a Digital
-      operationId: show-digital
-      parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: string
-      responses:
-        '200':
-          description: Record found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    data:
-                      id: '27'
-                      type: digital
-                      attributes:
-                        url: "/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBMdz09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--cd8884ff4dfd8dbbc9a0df9d53d710d22fe34a77/thinking-cat.jpg"
-                        content_type: image/jpeg
-                        filename: thinking-cat.jpg
-                        byte_size: 18090
-                      relationships:
-                        variant:
-                          data:
-                            id: '115'
-                            type: variant
-        '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-        '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-    put:
-      summary: Updates a Digital
-      tags:
-      - Digitals
-      security:
-      - bearer_auth: []
-      description: Updates a Digital
-      operationId: update-digital
-      parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: string
-      responses:
-        '200':
-          description: record updated
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    data:
-                      id: '35'
-                      type: digital
-                      attributes:
-                        url: "/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBPZz09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--d728da5484299ca0d43c9a3001688faa9786f9e2/icon_256x256.jpg"
-                        content_type: image/png
-                        filename: icon_256x256.jpg
-                        byte_size: 818
-                      relationships:
-                        variant:
-                          data:
-                            id: '137'
-                            type: variant
-        '422':
-          description: invalid request
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: Variant can't be blank
-                    errors:
-                      variant:
-                      - can't be blank
-        '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-        '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-      requestBody:
-        content:
-          multipart/form-data:
-            schema:
-              "$ref": "#/components/schemas/digital_params"
-    delete:
-      summary: Deletes a Digital
-      tags:
-      - Digitals
-      security:
-      - bearer_auth: []
-      description: Deletes a Digital
-      operationId: delete-digital
-      parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: string
-      responses:
-        '204':
-          description: Record deleted
-        '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-        '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
   "/api/v2/platform/line_items":
     get:
-      summary: Returns a list of Line Items
+      summary: Return a list of Line Items
       tags:
       - Line Items
       security:
@@ -2796,13 +2193,13 @@ paths:
                 Example:
                   value:
                     data:
-                    - id: '22'
+                    - id: '9'
                       type: line_item
                       attributes:
                         quantity: 1
                         price: '10.0'
-                        created_at: '2021-10-11T15:47:47.477Z'
-                        updated_at: '2021-10-11T15:47:47.487Z'
+                        created_at: '2021-10-11T17:34:37.664Z'
+                        updated_at: '2021-10-11T17:34:37.670Z'
                         currency: USD
                         cost_price: '17.0'
                         adjustment_total: '0.0'
@@ -2812,6 +2209,7 @@ paths:
                         pre_tax_amount: '10.0'
                         taxable_adjustment_total: '0.0'
                         non_taxable_adjustment_total: '0.0'
+                        display_amount: "$10.00"
                         display_price: "$10.00"
                         single_display_amount: "$10.00"
                         display_discounted_amount: "$10.00"
@@ -2823,33 +2221,30 @@ paths:
                         display_promo_total: "$0.00"
                         display_included_tax_total: "$0.00"
                         display_pre_tax_amount: "$10.00"
-                        display_amount: "$10.00"
                       relationships:
                         order:
                           data:
-                            id: '28'
+                            id: '15'
                             type: order
                         tax_category:
                           data:
-                            id: '75'
+                            id: '50'
                             type: tax_category
                         variant:
                           data:
-                            id: '186'
+                            id: '41'
                             type: variant
                         adjustments:
                           data: []
                         inventory_units:
                           data: []
-                        digital_links:
-                          data: []
-                    - id: '23'
+                    - id: '10'
                       type: line_item
                       attributes:
                         quantity: 1
                         price: '10.0'
-                        created_at: '2021-10-11T15:47:47.529Z'
-                        updated_at: '2021-10-11T15:47:47.537Z'
+                        created_at: '2021-10-11T17:34:37.699Z'
+                        updated_at: '2021-10-11T17:34:37.704Z'
                         currency: USD
                         cost_price: '17.0'
                         adjustment_total: '0.0'
@@ -2859,6 +2254,7 @@ paths:
                         pre_tax_amount: '10.0'
                         taxable_adjustment_total: '0.0'
                         non_taxable_adjustment_total: '0.0'
+                        display_amount: "$10.00"
                         display_price: "$10.00"
                         single_display_amount: "$10.00"
                         display_discounted_amount: "$10.00"
@@ -2870,25 +2266,22 @@ paths:
                         display_promo_total: "$0.00"
                         display_included_tax_total: "$0.00"
                         display_pre_tax_amount: "$10.00"
-                        display_amount: "$10.00"
                       relationships:
                         order:
                           data:
-                            id: '28'
+                            id: '15'
                             type: order
                         tax_category:
                           data:
-                            id: '75'
+                            id: '50'
                             type: tax_category
                         variant:
                           data:
-                            id: '187'
+                            id: '42'
                             type: variant
                         adjustments:
                           data: []
                         inventory_units:
-                          data: []
-                        digital_links:
                           data: []
                     meta:
                       count: 2
@@ -2909,7 +2302,7 @@ paths:
                   value:
                     error: The access token is invalid
     post:
-      summary: Creates a Line Item
+      summary: Create a Line Item
       tags:
       - Line Items
       security:
@@ -2933,13 +2326,13 @@ paths:
                 Example:
                   value:
                     data:
-                      id: '26'
+                      id: '13'
                       type: line_item
                       attributes:
                         quantity: 1
                         price: '10.0'
-                        created_at: '2021-10-11T15:47:47.767Z'
-                        updated_at: '2021-10-11T15:47:47.870Z'
+                        created_at: '2021-10-11T17:34:37.895Z'
+                        updated_at: '2021-10-11T17:34:37.929Z'
                         currency: USD
                         cost_price: '17.0'
                         adjustment_total: '0.0'
@@ -2949,6 +2342,7 @@ paths:
                         pre_tax_amount: '10.0'
                         taxable_adjustment_total: '0.0'
                         non_taxable_adjustment_total: '0.0'
+                        display_amount: "$10.00"
                         display_price: "$10.00"
                         single_display_amount: "$10.00"
                         display_discounted_amount: "$10.00"
@@ -2960,25 +2354,22 @@ paths:
                         display_promo_total: "$0.00"
                         display_included_tax_total: "$0.00"
                         display_pre_tax_amount: "$10.00"
-                        display_amount: "$10.00"
                       relationships:
                         order:
                           data:
-                            id: '30'
+                            id: '17'
                             type: order
                         tax_category:
                           data:
-                            id: '77'
+                            id: '52'
                             type: tax_category
                         variant:
                           data:
-                            id: '190'
+                            id: '45'
                             type: variant
                         adjustments:
                           data: []
                         inventory_units:
-                          data: []
-                        digital_links:
                           data: []
         '422':
           description: invalid request
@@ -3003,7 +2394,7 @@ paths:
               "$ref": "#/components/schemas/line_item_params"
   "/api/v2/platform/line_items/{id}":
     get:
-      summary: Returns a Line Item
+      summary: Return a Line Item
       tags:
       - Line Items
       security:
@@ -3032,13 +2423,13 @@ paths:
                 Example:
                   value:
                     data:
-                      id: '27'
+                      id: '14'
                       type: line_item
                       attributes:
                         quantity: 1
                         price: '10.0'
-                        created_at: '2021-10-11T15:47:48.012Z'
-                        updated_at: '2021-10-11T15:47:48.019Z'
+                        created_at: '2021-10-11T17:34:38.077Z'
+                        updated_at: '2021-10-11T17:34:38.083Z'
                         currency: USD
                         cost_price: '17.0'
                         adjustment_total: '0.0'
@@ -3048,6 +2439,7 @@ paths:
                         pre_tax_amount: '10.0'
                         taxable_adjustment_total: '0.0'
                         non_taxable_adjustment_total: '0.0'
+                        display_amount: "$10.00"
                         display_price: "$10.00"
                         single_display_amount: "$10.00"
                         display_discounted_amount: "$10.00"
@@ -3059,25 +2451,22 @@ paths:
                         display_promo_total: "$0.00"
                         display_included_tax_total: "$0.00"
                         display_pre_tax_amount: "$10.00"
-                        display_amount: "$10.00"
                       relationships:
                         order:
                           data:
-                            id: '32'
+                            id: '19'
                             type: order
                         tax_category:
                           data:
-                            id: '78'
+                            id: '53'
                             type: tax_category
                         variant:
                           data:
-                            id: '191'
+                            id: '46'
                             type: variant
                         adjustments:
                           data: []
                         inventory_units:
-                          data: []
-                        digital_links:
                           data: []
         '404':
           description: Record not found
@@ -3095,8 +2484,8 @@ paths:
                 Example:
                   value:
                     error: The access token is invalid
-    put:
-      summary: Updates a Line Item
+    patch:
+      summary: Update a Line Item
       tags:
       - Line Items
       security:
@@ -3125,13 +2514,13 @@ paths:
                 Example:
                   value:
                     data:
-                      id: '29'
+                      id: '16'
                       type: line_item
                       attributes:
                         quantity: 4
                         price: '10.0'
-                        created_at: '2021-10-11T15:47:48.242Z'
-                        updated_at: '2021-10-11T15:47:48.278Z'
+                        created_at: '2021-10-11T17:34:38.309Z'
+                        updated_at: '2021-10-11T17:34:38.347Z'
                         currency: USD
                         cost_price: '17.0'
                         adjustment_total: '0.0'
@@ -3141,6 +2530,7 @@ paths:
                         pre_tax_amount: '40.0'
                         taxable_adjustment_total: '0.0'
                         non_taxable_adjustment_total: '0.0'
+                        display_amount: "$40.00"
                         display_price: "$10.00"
                         single_display_amount: "$10.00"
                         display_discounted_amount: "$40.00"
@@ -3152,25 +2542,22 @@ paths:
                         display_promo_total: "$0.00"
                         display_included_tax_total: "$0.00"
                         display_pre_tax_amount: "$40.00"
-                        display_amount: "$40.00"
                       relationships:
                         order:
                           data:
-                            id: '34'
+                            id: '21'
                             type: order
                         tax_category:
                           data:
-                            id: '80'
+                            id: '55'
                             type: tax_category
                         variant:
                           data:
-                            id: '195'
+                            id: '50'
                             type: variant
                         adjustments:
                           data: []
                         inventory_units:
-                          data: []
-                        digital_links:
                           data: []
         '422':
           description: invalid request
@@ -3179,10 +2566,10 @@ paths:
               examples:
                 Example:
                   value:
-                    error: 'Quantity selected of "Product #131 - 8765" is not available.'
+                    error: 'Quantity selected of "Product #52 - 2890" is not available.'
                     errors:
                       quantity:
-                      - 'selected of "Product #131 - 8765" is not available.'
+                      - 'selected of "Product #52 - 2890" is not available.'
         '404':
           description: Record not found
           content:
@@ -3205,7 +2592,7 @@ paths:
             schema:
               "$ref": "#/components/schemas/line_item_params"
     delete:
-      summary: Deletes a Line Item
+      summary: Delete a Line Item
       tags:
       - Line Items
       security:
@@ -3239,7 +2626,7 @@ paths:
                     error: The access token is invalid
   "/api/v2/platform/menu_items":
     get:
-      summary: Returns a list of Menu Items
+      summary: Return a list of Menu Items
       tags:
       - Menu Items
       security:
@@ -3292,8 +2679,8 @@ paths:
                         lft: 2
                         rgt: 3
                         depth: 1
-                        created_at: '2021-10-11T15:47:48.879Z'
-                        updated_at: '2021-10-11T15:47:48.883Z'
+                        created_at: '2021-10-11T17:34:38.942Z'
+                        updated_at: '2021-10-11T17:34:38.946Z'
                         link:
                         is_container: false
                         is_root: false
@@ -3329,8 +2716,8 @@ paths:
                         lft: 4
                         rgt: 5
                         depth: 1
-                        created_at: '2021-10-11T15:47:48.931Z'
-                        updated_at: '2021-10-11T15:47:48.935Z'
+                        created_at: '2021-10-11T17:34:38.991Z'
+                        updated_at: '2021-10-11T17:34:38.995Z'
                         link:
                         is_container: false
                         is_root: false
@@ -3366,8 +2753,8 @@ paths:
                         lft: 6
                         rgt: 7
                         depth: 1
-                        created_at: '2021-10-11T15:47:48.981Z'
-                        updated_at: '2021-10-11T15:47:48.985Z'
+                        created_at: '2021-10-11T17:34:39.040Z'
+                        updated_at: '2021-10-11T17:34:39.044Z'
                         link:
                         is_container: false
                         is_root: false
@@ -3403,8 +2790,8 @@ paths:
                         lft: 8
                         rgt: 9
                         depth: 1
-                        created_at: '2021-10-11T15:47:49.031Z'
-                        updated_at: '2021-10-11T15:47:49.036Z'
+                        created_at: '2021-10-11T17:34:39.089Z'
+                        updated_at: '2021-10-11T17:34:39.093Z'
                         link:
                         is_container: false
                         is_root: false
@@ -3440,8 +2827,8 @@ paths:
                         lft: 10
                         rgt: 11
                         depth: 1
-                        created_at: '2021-10-11T15:47:49.090Z'
-                        updated_at: '2021-10-11T15:47:49.094Z'
+                        created_at: '2021-10-11T17:34:39.136Z'
+                        updated_at: '2021-10-11T17:34:39.140Z'
                         link:
                         is_container: false
                         is_root: false
@@ -3477,8 +2864,8 @@ paths:
                         lft: 12
                         rgt: 13
                         depth: 1
-                        created_at: '2021-10-11T15:47:49.141Z'
-                        updated_at: '2021-10-11T15:47:49.145Z'
+                        created_at: '2021-10-11T17:34:39.185Z'
+                        updated_at: '2021-10-11T17:34:39.189Z'
                         link:
                         is_container: false
                         is_root: false
@@ -3514,8 +2901,8 @@ paths:
                         lft: 14
                         rgt: 15
                         depth: 1
-                        created_at: '2021-10-11T15:47:49.192Z'
-                        updated_at: '2021-10-11T15:47:49.196Z'
+                        created_at: '2021-10-11T17:34:39.236Z'
+                        updated_at: '2021-10-11T17:34:39.240Z'
                         link:
                         is_container: false
                         is_root: false
@@ -3541,7 +2928,8 @@ paths:
                     - id: '1'
                       type: menu_item
                       attributes:
-                        name: Assumenda quos unde omnis sit temporibus.
+                        name: Reiciendis enim consectetur earum quaerat voluptas a
+                          sunt distinctio.
                         subtitle:
                         destination:
                         new_window: false
@@ -3551,8 +2939,8 @@ paths:
                         lft: 1
                         rgt: 16
                         depth: 0
-                        created_at: '2021-10-11T15:47:48.820Z'
-                        updated_at: '2021-10-11T15:47:49.207Z'
+                        created_at: '2021-10-11T17:34:38.890Z'
+                        updated_at: '2021-10-11T17:34:39.250Z'
                         link:
                         is_container: true
                         is_root: true
@@ -3604,7 +2992,7 @@ paths:
                   value:
                     error: The access token is invalid
     post:
-      summary: Creates a Menu Item
+      summary: Create a Menu Item
       tags:
       - Menu Items
       security:
@@ -3641,8 +3029,8 @@ paths:
                         lft: 8
                         rgt: 9
                         depth: 1
-                        created_at: '2021-10-11T15:47:49.815Z'
-                        updated_at: '2021-10-11T15:47:49.819Z'
+                        created_at: '2021-10-11T17:34:39.831Z'
+                        updated_at: '2021-10-11T17:34:39.834Z'
                         link:
                         is_container: false
                         is_root: false
@@ -3686,7 +3074,7 @@ paths:
               "$ref": "#/components/schemas/menu_item_params"
   "/api/v2/platform/menu_items/{id}":
     get:
-      summary: Returns a Menu Item
+      summary: Return a Menu Item
       tags:
       - Menu Items
       security:
@@ -3728,8 +3116,8 @@ paths:
                         lft: 8
                         rgt: 9
                         depth: 1
-                        created_at: '2021-10-11T15:47:50.295Z'
-                        updated_at: '2021-10-11T15:47:50.298Z'
+                        created_at: '2021-10-11T17:34:40.234Z'
+                        updated_at: '2021-10-11T17:34:40.239Z'
                         link:
                         is_container: false
                         is_root: false
@@ -3768,8 +3156,8 @@ paths:
                 Example:
                   value:
                     error: The access token is invalid
-    put:
-      summary: Updates a Menu Item
+    patch:
+      summary: Update a Menu Item
       tags:
       - Menu Items
       security:
@@ -3811,8 +3199,8 @@ paths:
                         lft: 8
                         rgt: 9
                         depth: 1
-                        created_at: '2021-10-11T15:47:50.929Z'
-                        updated_at: '2021-10-11T15:47:50.956Z'
+                        created_at: '2021-10-11T17:34:40.857Z'
+                        updated_at: '2021-10-11T17:34:40.880Z'
                         link:
                         is_container: false
                         is_root: false
@@ -3868,7 +3256,7 @@ paths:
             schema:
               "$ref": "#/components/schemas/menu_item_params"
     delete:
-      summary: Deletes a Menu Item
+      summary: Delete a Menu Item
       tags:
       - Menu Items
       security:
@@ -3937,8 +3325,8 @@ paths:
                         lft: 5
                         rgt: 6
                         depth: 2
-                        created_at: '2021-10-11T15:47:52.492Z'
-                        updated_at: '2021-10-11T15:47:52.516Z'
+                        created_at: '2021-10-11T17:34:42.447Z'
+                        updated_at: '2021-10-11T17:34:42.468Z'
                         link:
                         is_container: false
                         is_root: false
@@ -3984,7 +3372,7 @@ paths:
               "$ref": "#/components/schemas/menu_item_reposition_params"
   "/api/v2/platform/menus":
     get:
-      summary: Returns a list of Menus
+      summary: Return a list of Menus
       tags:
       - Menus
       security:
@@ -4030,16 +3418,16 @@ paths:
                         name: Main Menu
                         location: header
                         locale: en
-                        created_at: '2021-10-11T15:47:52.968Z'
-                        updated_at: '2021-10-11T15:47:53.089Z'
+                        created_at: '2021-10-11T17:34:42.886Z'
+                        updated_at: '2021-10-11T17:34:43.001Z'
                       relationships:
                         menu_items:
                           data:
-                          - id: '89'
-                            type: menu_item
                           - id: '87'
                             type: menu_item
                           - id: '90'
+                            type: menu_item
+                          - id: '89'
                             type: menu_item
                     - id: '19'
                       type: menu
@@ -4047,8 +3435,8 @@ paths:
                         name: Footer Menu
                         location: footer
                         locale: en
-                        created_at: '2021-10-11T15:47:52.978Z'
-                        updated_at: '2021-10-11T15:47:53.189Z'
+                        created_at: '2021-10-11T17:34:42.894Z'
+                        updated_at: '2021-10-11T17:34:43.099Z'
                       relationships:
                         menu_items:
                           data:
@@ -4077,7 +3465,7 @@ paths:
                   value:
                     error: The access token is invalid
     post:
-      summary: Creates a Menu
+      summary: Create a Menu
       tags:
       - Menus
       security:
@@ -4107,8 +3495,8 @@ paths:
                         name: Main Menu
                         location: header
                         locale: en
-                        created_at: '2021-10-11T15:47:53.477Z'
-                        updated_at: '2021-10-11T15:47:53.484Z'
+                        created_at: '2021-10-11T17:34:43.375Z'
+                        updated_at: '2021-10-11T17:34:43.381Z'
                       relationships:
                         menu_items:
                           data:
@@ -4137,7 +3525,7 @@ paths:
               "$ref": "#/components/schemas/menu_params"
   "/api/v2/platform/menus/{id}":
     get:
-      summary: Returns a Menu
+      summary: Return a Menu
       tags:
       - Menus
       security:
@@ -4172,8 +3560,8 @@ paths:
                         name: Main Menu
                         location: header
                         locale: en
-                        created_at: '2021-10-11T15:47:53.520Z'
-                        updated_at: '2021-10-11T15:47:53.527Z'
+                        created_at: '2021-10-11T17:34:43.415Z'
+                        updated_at: '2021-10-11T17:34:43.422Z'
                       relationships:
                         menu_items:
                           data:
@@ -4195,8 +3583,8 @@ paths:
                 Example:
                   value:
                     error: The access token is invalid
-    put:
-      summary: Updates a Menu
+    patch:
+      summary: Update a Menu
       tags:
       - Menus
       security:
@@ -4231,8 +3619,8 @@ paths:
                         name: Main Menu
                         location: header
                         locale: en
-                        created_at: '2021-10-11T15:47:53.669Z'
-                        updated_at: '2021-10-11T15:47:53.676Z'
+                        created_at: '2021-10-11T17:34:43.484Z'
+                        updated_at: '2021-10-11T17:34:43.491Z'
                       relationships:
                         menu_items:
                           data:
@@ -4276,7 +3664,7 @@ paths:
             schema:
               "$ref": "#/components/schemas/menu_params"
     delete:
-      summary: Deletes a Menu
+      summary: Delete a Menu
       tags:
       - Menus
       security:
@@ -4310,7 +3698,7 @@ paths:
                     error: The access token is invalid
   "/api/v2/platform/option_types":
     get:
-      summary: Returns a list of Option Types
+      summary: Return a list of Option Types
       tags:
       - Option Types
       security:
@@ -4350,26 +3738,26 @@ paths:
                 Example:
                   value:
                     data:
-                    - id: '67'
+                    - id: '1'
                       type: option_type
                       attributes:
-                        name: foo-size-67
+                        name: foo-size-1
                         presentation: Size
                         position: 1
-                        created_at: '2021-10-11T15:47:53.846Z'
-                        updated_at: '2021-10-11T15:47:53.846Z'
+                        created_at: '2021-10-11T17:34:43.677Z'
+                        updated_at: '2021-10-11T17:34:43.677Z'
                         filterable: true
                       relationships:
                         option_values:
                           data: []
-                    - id: '68'
+                    - id: '2'
                       type: option_type
                       attributes:
-                        name: foo-size-68
+                        name: foo-size-2
                         presentation: Size
                         position: 2
-                        created_at: '2021-10-11T15:47:53.847Z'
-                        updated_at: '2021-10-11T15:47:53.847Z'
+                        created_at: '2021-10-11T17:34:43.680Z'
+                        updated_at: '2021-10-11T17:34:43.680Z'
                         filterable: true
                       relationships:
                         option_values:
@@ -4393,7 +3781,7 @@ paths:
                   value:
                     error: The access token is invalid
     post:
-      summary: Creates an Option Type
+      summary: Create an Option Type
       tags:
       - Option Types
       security:
@@ -4417,14 +3805,14 @@ paths:
                 Example:
                   value:
                     data:
-                      id: '71'
+                      id: '5'
                       type: option_type
                       attributes:
-                        name: foo-size-71
+                        name: foo-size-5
                         presentation: Size
                         position: 1
-                        created_at: '2021-10-11T15:47:53.902Z'
-                        updated_at: '2021-10-11T15:47:53.902Z'
+                        created_at: '2021-10-11T17:34:43.729Z'
+                        updated_at: '2021-10-11T17:34:43.729Z'
                         filterable: true
                       relationships:
                         option_values:
@@ -4449,7 +3837,7 @@ paths:
               "$ref": "#/components/schemas/option_type_params"
   "/api/v2/platform/option_types/{id}":
     get:
-      summary: Returns an Option Type
+      summary: Return an Option Type
       tags:
       - Option Types
       security:
@@ -4478,14 +3866,14 @@ paths:
                 Example:
                   value:
                     data:
-                      id: '72'
+                      id: '6'
                       type: option_type
                       attributes:
-                        name: foo-size-72
+                        name: foo-size-6
                         presentation: Size
                         position: 1
-                        created_at: '2021-10-11T15:47:53.933Z'
-                        updated_at: '2021-10-11T15:47:53.933Z'
+                        created_at: '2021-10-11T17:34:43.756Z'
+                        updated_at: '2021-10-11T17:34:43.756Z'
                         filterable: true
                       relationships:
                         option_values:
@@ -4506,8 +3894,8 @@ paths:
                 Example:
                   value:
                     error: The access token is invalid
-    put:
-      summary: Updates an Option Type
+    patch:
+      summary: Update an Option Type
       tags:
       - Option Types
       security:
@@ -4536,14 +3924,14 @@ paths:
                 Example:
                   value:
                     data:
-                      id: '74'
+                      id: '8'
                       type: option_type
                       attributes:
                         name: Size-X
                         presentation: Size
                         position: 1
-                        created_at: '2021-10-11T15:47:53.981Z'
-                        updated_at: '2021-10-11T15:47:53.988Z'
+                        created_at: '2021-10-11T17:34:43.810Z'
+                        updated_at: '2021-10-11T17:34:43.817Z'
                         filterable: true
                       relationships:
                         option_values:
@@ -4581,7 +3969,7 @@ paths:
             schema:
               "$ref": "#/components/schemas/option_type_params"
     delete:
-      summary: Deletes an Option Type
+      summary: Delete an Option Type
       tags:
       - Option Types
       security:
@@ -4615,7 +4003,7 @@ paths:
                     error: The access token is invalid
   "/api/v2/platform/option_values":
     get:
-      summary: Returns a list of Option Values
+      summary: Return a list of Option Values
       tags:
       - Option Values
       security:
@@ -4655,31 +4043,31 @@ paths:
                 Example:
                   value:
                     data:
-                    - id: '67'
+                    - id: '1'
                       type: option_value
                       attributes:
                         position: 1
-                        name: Size-67
+                        name: Size-1
                         presentation: S
-                        created_at: '2021-10-11T15:47:54.116Z'
-                        updated_at: '2021-10-11T15:47:54.116Z'
+                        created_at: '2021-10-11T17:34:43.935Z'
+                        updated_at: '2021-10-11T17:34:43.935Z'
                       relationships:
                         option_type:
                           data:
-                            id: '79'
+                            id: '13'
                             type: option_type
-                    - id: '68'
+                    - id: '2'
                       type: option_value
                       attributes:
                         position: 1
-                        name: Size-68
+                        name: Size-2
                         presentation: S
-                        created_at: '2021-10-11T15:47:54.123Z'
-                        updated_at: '2021-10-11T15:47:54.123Z'
+                        created_at: '2021-10-11T17:34:43.942Z'
+                        updated_at: '2021-10-11T17:34:43.942Z'
                       relationships:
                         option_type:
                           data:
-                            id: '80'
+                            id: '14'
                             type: option_type
                     meta:
                       count: 2
@@ -4700,7 +4088,7 @@ paths:
                   value:
                     error: The access token is invalid
     post:
-      summary: Creates an Option Value
+      summary: Create an Option Value
       tags:
       - Option Values
       security:
@@ -4724,14 +4112,14 @@ paths:
                 Example:
                   value:
                     data:
-                      id: '71'
+                      id: '5'
                       type: option_value
                       attributes:
                         position: 1
-                        name: Size-71
+                        name: Size-5
                         presentation: S
-                        created_at: '2021-10-11T15:47:54.178Z'
-                        updated_at: '2021-10-11T15:47:54.178Z'
+                        created_at: '2021-10-11T17:34:44.002Z'
+                        updated_at: '2021-10-11T17:34:44.002Z'
                       relationships:
                         option_type:
                           data:
@@ -4755,7 +4143,7 @@ paths:
               "$ref": "#/components/schemas/option_value_params"
   "/api/v2/platform/option_values/{id}":
     get:
-      summary: Returns an Option Value
+      summary: Return an Option Value
       tags:
       - Option Values
       security:
@@ -4784,18 +4172,18 @@ paths:
                 Example:
                   value:
                     data:
-                      id: '72'
+                      id: '6'
                       type: option_value
                       attributes:
                         position: 1
-                        name: Size-72
+                        name: Size-6
                         presentation: S
-                        created_at: '2021-10-11T15:47:54.211Z'
-                        updated_at: '2021-10-11T15:47:54.211Z'
+                        created_at: '2021-10-11T17:34:44.033Z'
+                        updated_at: '2021-10-11T17:34:44.033Z'
                       relationships:
                         option_type:
                           data:
-                            id: '83'
+                            id: '17'
                             type: option_type
         '404':
           description: Record not found
@@ -4813,8 +4201,8 @@ paths:
                 Example:
                   value:
                     error: The access token is invalid
-    put:
-      summary: Updates an Option Value
+    patch:
+      summary: Update an Option Value
       tags:
       - Option Values
       security:
@@ -4843,18 +4231,18 @@ paths:
                 Example:
                   value:
                     data:
-                      id: '74'
+                      id: '8'
                       type: option_value
                       attributes:
                         position: 1
                         name: M
                         presentation: S
-                        created_at: '2021-10-11T15:47:54.274Z'
-                        updated_at: '2021-10-11T15:47:54.283Z'
+                        created_at: '2021-10-11T17:34:44.087Z'
+                        updated_at: '2021-10-11T17:34:44.096Z'
                       relationships:
                         option_type:
                           data:
-                            id: '85'
+                            id: '19'
                             type: option_type
         '422':
           description: invalid request
@@ -4889,7 +4277,7 @@ paths:
             schema:
               "$ref": "#/components/schemas/option_value_params"
     delete:
-      summary: Deletes an Option Value
+      summary: Delete an Option Value
       tags:
       - Option Values
       security:
@@ -4923,7 +4311,7 @@ paths:
                     error: The access token is invalid
   "/api/v2/platform/orders":
     get:
-      summary: Returns a list of Orders
+      summary: Return a list of Orders
       tags:
       - Orders
       security:
@@ -4963,10 +4351,10 @@ paths:
                 Example:
                   value:
                     data:
-                    - id: '39'
+                    - id: '26'
                       type: order
                       attributes:
-                        number: R033330146
+                        number: R721982537
                         item_total: '0.0'
                         total: '0.0'
                         state: cart
@@ -4975,10 +4363,10 @@ paths:
                         payment_total: '0.0'
                         shipment_state:
                         payment_state:
-                        email: kandis@mannortiz.info
+                        email: tammi@spencer.info
                         special_instructions:
-                        created_at: '2021-10-11T15:47:54.428Z'
-                        updated_at: '2021-10-11T15:47:54.428Z'
+                        created_at: '2021-10-11T17:34:44.243Z'
+                        updated_at: '2021-10-11T17:34:44.243Z'
                         currency: USD
                         last_ip_address:
                         shipment_total: '0.0'
@@ -4994,6 +4382,10 @@ paths:
                         taxable_adjustment_total: '0.0'
                         non_taxable_adjustment_total: '0.0'
                         store_owner_notification_delivered:
+                        display_pre_tax_total: "$0.00"
+                        display_ship_total: "$0.00"
+                        display_shipment_total: "$0.00"
+                        display_total: "$0.00"
                         display_outstanding_balance: "$0.00"
                         display_item_total: "$0.00"
                         display_tax_total: "$0.00"
@@ -5003,19 +4395,15 @@ paths:
                         display_additional_tax_total: "$0.00"
                         display_promo_total: "$0.00"
                         display_included_tax_total: "$0.00"
-                        display_pre_tax_total: "$0.00"
-                        display_ship_total: "$0.00"
-                        display_shipment_total: "$0.00"
-                        display_total: "$0.00"
                         display_total_applicable_store_credit: "$0.00"
-                        display_total_applied_store_credit: "$0.00"
                         display_order_total_after_store_credit: "$0.00"
                         display_total_available_store_credit: "$0.00"
+                        display_total_applied_store_credit: "$0.00"
                         display_store_credit_remaining_after_capture: "$0.00"
                       relationships:
                         user:
                           data:
-                            id: '40'
+                            id: '27'
                             type: user
                         created_by:
                           data:
@@ -5025,7 +4413,7 @@ paths:
                           data:
                         bill_address:
                           data:
-                            id: '51'
+                            id: '38'
                             type: address
                         ship_address:
                           data:
@@ -5047,10 +4435,10 @@ paths:
                           data: []
                         order_promotions:
                           data: []
-                    - id: '40'
+                    - id: '27'
                       type: order
                       attributes:
-                        number: R207931619
+                        number: R322446046
                         item_total: '0.0'
                         total: '0.0'
                         state: cart
@@ -5059,10 +4447,10 @@ paths:
                         payment_total: '0.0'
                         shipment_state:
                         payment_state:
-                        email: linnea@nienow.co.uk
+                        email: dorine_konopelski@konopelski.info
                         special_instructions:
-                        created_at: '2021-10-11T15:47:54.437Z'
-                        updated_at: '2021-10-11T15:47:54.437Z'
+                        created_at: '2021-10-11T17:34:44.251Z'
+                        updated_at: '2021-10-11T17:34:44.251Z'
                         currency: USD
                         last_ip_address:
                         shipment_total: '0.0'
@@ -5078,6 +4466,10 @@ paths:
                         taxable_adjustment_total: '0.0'
                         non_taxable_adjustment_total: '0.0'
                         store_owner_notification_delivered:
+                        display_pre_tax_total: "$0.00"
+                        display_ship_total: "$0.00"
+                        display_shipment_total: "$0.00"
+                        display_total: "$0.00"
                         display_outstanding_balance: "$0.00"
                         display_item_total: "$0.00"
                         display_tax_total: "$0.00"
@@ -5087,19 +4479,15 @@ paths:
                         display_additional_tax_total: "$0.00"
                         display_promo_total: "$0.00"
                         display_included_tax_total: "$0.00"
-                        display_pre_tax_total: "$0.00"
-                        display_ship_total: "$0.00"
-                        display_shipment_total: "$0.00"
-                        display_total: "$0.00"
                         display_total_applicable_store_credit: "$0.00"
-                        display_total_applied_store_credit: "$0.00"
                         display_order_total_after_store_credit: "$0.00"
                         display_total_available_store_credit: "$0.00"
+                        display_total_applied_store_credit: "$0.00"
                         display_store_credit_remaining_after_capture: "$0.00"
                       relationships:
                         user:
                           data:
-                            id: '41'
+                            id: '28'
                             type: user
                         created_by:
                           data:
@@ -5109,7 +4497,7 @@ paths:
                           data:
                         bill_address:
                           data:
-                            id: '52'
+                            id: '39'
                             type: address
                         ship_address:
                           data:
@@ -5174,10 +4562,10 @@ paths:
                 Example:
                   value:
                     data:
-                      id: '43'
+                      id: '30'
                       type: order
                       attributes:
-                        number: R434017196
+                        number: R384974337
                         item_total: '0.0'
                         total: '0.0'
                         state: cart
@@ -5188,8 +4576,8 @@ paths:
                         payment_state:
                         email:
                         special_instructions:
-                        created_at: '2021-10-11T15:47:54.842Z'
-                        updated_at: '2021-10-11T15:47:54.857Z'
+                        created_at: '2021-10-11T17:34:44.620Z'
+                        updated_at: '2021-10-11T17:34:44.639Z'
                         currency: USD
                         last_ip_address:
                         shipment_total: '0.0'
@@ -5205,6 +4593,10 @@ paths:
                         taxable_adjustment_total: '0.0'
                         non_taxable_adjustment_total: '0.0'
                         store_owner_notification_delivered:
+                        display_pre_tax_total: "$20.00"
+                        display_ship_total: "$0.00"
+                        display_shipment_total: "$0.00"
+                        display_total: "$0.00"
                         display_outstanding_balance: "$0.00"
                         display_item_total: "$0.00"
                         display_tax_total: "$0.00"
@@ -5214,14 +4606,10 @@ paths:
                         display_additional_tax_total: "$0.00"
                         display_promo_total: "$0.00"
                         display_included_tax_total: "$0.00"
-                        display_pre_tax_total: "$20.00"
-                        display_ship_total: "$0.00"
-                        display_shipment_total: "$0.00"
-                        display_total: "$0.00"
                         display_total_applicable_store_credit: "$0.00"
-                        display_total_applied_store_credit: "$0.00"
                         display_order_total_after_store_credit: "$0.00"
                         display_total_available_store_credit: "$0.00"
+                        display_total_applied_store_credit: "$0.00"
                         display_store_credit_remaining_after_capture: "$0.00"
                       relationships:
                         user:
@@ -5234,15 +4622,15 @@ paths:
                           data:
                         bill_address:
                           data:
-                            id: '55'
+                            id: '42'
                             type: address
                         ship_address:
                           data:
-                            id: '55'
+                            id: '42'
                             type: address
                         line_items:
                           data:
-                          - id: '34'
+                          - id: '21'
                             type: line_item
                         payments:
                           data:
@@ -5269,7 +4657,7 @@ paths:
               "$ref": "#/components/schemas/order_params"
   "/api/v2/platform/orders/{id}":
     get:
-      summary: Returns an Order
+      summary: Return an Order
       tags:
       - Orders
       security:
@@ -5298,10 +4686,10 @@ paths:
                 Example:
                   value:
                     data:
-                      id: '44'
+                      id: '31'
                       type: order
                       attributes:
-                        number: R847789377
+                        number: R142969980
                         item_total: '10.0'
                         total: '110.0'
                         state: delivery
@@ -5310,10 +4698,10 @@ paths:
                         payment_total: '0.0'
                         shipment_state:
                         payment_state:
-                        email: morgan@boyleabbott.biz
+                        email: granville@kuhic.biz
                         special_instructions:
-                        created_at: '2021-10-11T15:47:54.897Z'
-                        updated_at: '2021-10-11T15:47:55.043Z'
+                        created_at: '2021-10-11T17:34:44.693Z'
+                        updated_at: '2021-10-11T17:34:44.859Z'
                         currency: USD
                         last_ip_address:
                         shipment_total: '100.0'
@@ -5329,6 +4717,10 @@ paths:
                         taxable_adjustment_total: '0.0'
                         non_taxable_adjustment_total: '0.0'
                         store_owner_notification_delivered:
+                        display_pre_tax_total: "$10.00"
+                        display_ship_total: "$100.00"
+                        display_shipment_total: "$100.00"
+                        display_total: "$110.00"
                         display_outstanding_balance: "$110.00"
                         display_item_total: "$10.00"
                         display_tax_total: "$0.00"
@@ -5338,19 +4730,15 @@ paths:
                         display_additional_tax_total: "$0.00"
                         display_promo_total: "$0.00"
                         display_included_tax_total: "$0.00"
-                        display_pre_tax_total: "$10.00"
-                        display_ship_total: "$100.00"
-                        display_shipment_total: "$100.00"
-                        display_total: "$110.00"
                         display_total_applicable_store_credit: "$0.00"
-                        display_total_applied_store_credit: "$0.00"
                         display_order_total_after_store_credit: "$110.00"
                         display_total_available_store_credit: "$0.00"
+                        display_total_applied_store_credit: "$0.00"
                         display_store_credit_remaining_after_capture: "$0.00"
                       relationships:
                         user:
                           data:
-                            id: '44'
+                            id: '31'
                             type: user
                         created_by:
                           data:
@@ -5360,15 +4748,15 @@ paths:
                           data:
                         bill_address:
                           data:
-                            id: '56'
+                            id: '43'
                             type: address
                         ship_address:
                           data:
-                            id: '57'
+                            id: '44'
                             type: address
                         line_items:
                           data:
-                          - id: '35'
+                          - id: '22'
                             type: line_item
                         payments:
                           data: []
@@ -5404,8 +4792,8 @@ paths:
                 Example:
                   value:
                     error: The access token is invalid
-    put:
-      summary: Updates an Order
+    patch:
+      summary: Update an Order
       tags:
       - Orders
       security:
@@ -5434,10 +4822,10 @@ paths:
                 Example:
                   value:
                     data:
-                      id: '46'
+                      id: '33'
                       type: order
                       attributes:
-                        number: R629186988
+                        number: R253518115
                         item_total: '10.0'
                         total: '110.0'
                         state: delivery
@@ -5448,8 +4836,8 @@ paths:
                         payment_state:
                         email: new@example.com
                         special_instructions:
-                        created_at: '2021-10-11T15:47:55.287Z'
-                        updated_at: '2021-10-11T15:47:55.387Z'
+                        created_at: '2021-10-11T17:34:45.114Z'
+                        updated_at: '2021-10-11T17:34:45.206Z'
                         currency: USD
                         last_ip_address:
                         shipment_total: '100.0'
@@ -5465,6 +4853,10 @@ paths:
                         taxable_adjustment_total: '0.0'
                         non_taxable_adjustment_total: '0.0'
                         store_owner_notification_delivered:
+                        display_pre_tax_total: "$10.00"
+                        display_ship_total: "$100.00"
+                        display_shipment_total: "$100.00"
+                        display_total: "$110.00"
                         display_outstanding_balance: "$110.00"
                         display_item_total: "$10.00"
                         display_tax_total: "$0.00"
@@ -5474,19 +4866,15 @@ paths:
                         display_additional_tax_total: "$0.00"
                         display_promo_total: "$0.00"
                         display_included_tax_total: "$0.00"
-                        display_pre_tax_total: "$10.00"
-                        display_ship_total: "$100.00"
-                        display_shipment_total: "$100.00"
-                        display_total: "$110.00"
                         display_total_applicable_store_credit: "$0.00"
-                        display_total_applied_store_credit: "$0.00"
                         display_order_total_after_store_credit: "$110.00"
                         display_total_available_store_credit: "$0.00"
+                        display_total_applied_store_credit: "$0.00"
                         display_store_credit_remaining_after_capture: "$0.00"
                       relationships:
                         user:
                           data:
-                            id: '46'
+                            id: '33'
                             type: user
                         created_by:
                           data:
@@ -5496,15 +4884,15 @@ paths:
                           data:
                         bill_address:
                           data:
-                            id: '60'
+                            id: '47'
                             type: address
                         ship_address:
                           data:
-                            id: '61'
+                            id: '48'
                             type: address
                         line_items:
                           data:
-                          - id: '37'
+                          - id: '24'
                             type: line_item
                         payments:
                           data: []
@@ -5557,7 +4945,7 @@ paths:
             schema:
               "$ref": "#/components/schemas/order_params"
     delete:
-      summary: Deletes an Order
+      summary: Delete an Order
       tags:
       - Orders
       security:
@@ -5620,10 +5008,10 @@ paths:
                 Example:
                   value:
                     data:
-                      id: '51'
+                      id: '38'
                       type: order
                       attributes:
-                        number: R776357843
+                        number: R122527885
                         item_total: '10.0'
                         total: '110.0'
                         state: payment
@@ -5632,10 +5020,10 @@ paths:
                         payment_total: '0.0'
                         shipment_state:
                         payment_state:
-                        email: hilma@jacobimraz.biz
+                        email: diedre_crona@harveymurray.co.uk
                         special_instructions:
-                        created_at: '2021-10-11T15:47:55.950Z'
-                        updated_at: '2021-10-11T15:47:56.081Z'
+                        created_at: '2021-10-11T17:34:45.778Z'
+                        updated_at: '2021-10-11T17:34:45.914Z'
                         currency: USD
                         last_ip_address:
                         shipment_total: '100.0'
@@ -5651,6 +5039,10 @@ paths:
                         taxable_adjustment_total: '0.0'
                         non_taxable_adjustment_total: '0.0'
                         store_owner_notification_delivered:
+                        display_pre_tax_total: "$110.00"
+                        display_ship_total: "$100.00"
+                        display_shipment_total: "$100.00"
+                        display_total: "$110.00"
                         display_outstanding_balance: "$110.00"
                         display_item_total: "$10.00"
                         display_tax_total: "$0.00"
@@ -5660,19 +5052,15 @@ paths:
                         display_additional_tax_total: "$0.00"
                         display_promo_total: "$0.00"
                         display_included_tax_total: "$0.00"
-                        display_pre_tax_total: "$110.00"
-                        display_ship_total: "$100.00"
-                        display_shipment_total: "$100.00"
-                        display_total: "$110.00"
                         display_total_applicable_store_credit: "$0.00"
-                        display_total_applied_store_credit: "$0.00"
                         display_order_total_after_store_credit: "$110.00"
                         display_total_available_store_credit: "$0.00"
+                        display_total_applied_store_credit: "$0.00"
                         display_store_credit_remaining_after_capture: "$0.00"
                       relationships:
                         user:
                           data:
-                            id: '51'
+                            id: '38'
                             type: user
                         created_by:
                           data:
@@ -5682,15 +5070,15 @@ paths:
                           data:
                         bill_address:
                           data:
-                            id: '70'
+                            id: '57'
                             type: address
                         ship_address:
                           data:
-                            id: '71'
+                            id: '58'
                             type: address
                         line_items:
                           data:
-                          - id: '42'
+                          - id: '29'
                             type: line_item
                         payments:
                           data: []
@@ -5759,10 +5147,10 @@ paths:
                 Example:
                   value:
                     data:
-                      id: '53'
+                      id: '40'
                       type: order
                       attributes:
-                        number: R823906949
+                        number: R894056203
                         item_total: '10.0'
                         total: '110.0'
                         state: payment
@@ -5771,10 +5159,10 @@ paths:
                         payment_total: '0.0'
                         shipment_state:
                         payment_state:
-                        email: carroll@paucekjohns.com
+                        email: cornelius@moen.com
                         special_instructions:
-                        created_at: '2021-10-11T15:47:56.261Z'
-                        updated_at: '2021-10-11T15:47:56.399Z'
+                        created_at: '2021-10-11T17:34:46.083Z'
+                        updated_at: '2021-10-11T17:34:46.216Z'
                         currency: USD
                         last_ip_address:
                         shipment_total: '100.0'
@@ -5790,6 +5178,10 @@ paths:
                         taxable_adjustment_total: '0.0'
                         non_taxable_adjustment_total: '0.0'
                         store_owner_notification_delivered:
+                        display_pre_tax_total: "$110.00"
+                        display_ship_total: "$100.00"
+                        display_shipment_total: "$100.00"
+                        display_total: "$110.00"
                         display_outstanding_balance: "$110.00"
                         display_item_total: "$10.00"
                         display_tax_total: "$0.00"
@@ -5799,19 +5191,15 @@ paths:
                         display_additional_tax_total: "$0.00"
                         display_promo_total: "$0.00"
                         display_included_tax_total: "$0.00"
-                        display_pre_tax_total: "$110.00"
-                        display_ship_total: "$100.00"
-                        display_shipment_total: "$100.00"
-                        display_total: "$110.00"
                         display_total_applicable_store_credit: "$0.00"
-                        display_total_applied_store_credit: "$0.00"
                         display_order_total_after_store_credit: "$110.00"
                         display_total_available_store_credit: "$0.00"
+                        display_total_applied_store_credit: "$0.00"
                         display_store_credit_remaining_after_capture: "$0.00"
                       relationships:
                         user:
                           data:
-                            id: '53'
+                            id: '40'
                             type: user
                         created_by:
                           data:
@@ -5821,15 +5209,15 @@ paths:
                           data:
                         bill_address:
                           data:
-                            id: '74'
+                            id: '61'
                             type: address
                         ship_address:
                           data:
-                            id: '75'
+                            id: '62'
                             type: address
                         line_items:
                           data:
-                          - id: '44'
+                          - id: '31'
                             type: line_item
                         payments:
                           data: []
@@ -5898,22 +5286,22 @@ paths:
                 Example:
                   value:
                     data:
-                      id: '55'
+                      id: '42'
                       type: order
                       attributes:
-                        number: R451461982
+                        number: R924136930
                         item_total: '10.0'
                         total: '110.0'
                         state: complete
                         adjustment_total: '0.0'
-                        completed_at: '2021-10-11T15:47:56.771Z'
+                        completed_at: '2021-10-11T17:34:46.656Z'
                         payment_total: '0.0'
                         shipment_state: pending
                         payment_state: balance_due
-                        email: sachiko@ferry.co.uk
+                        email: alec@crist.us
                         special_instructions:
-                        created_at: '2021-10-11T15:47:56.564Z'
-                        updated_at: '2021-10-11T15:47:56.771Z'
+                        created_at: '2021-10-11T17:34:46.452Z'
+                        updated_at: '2021-10-11T17:34:46.656Z'
                         currency: USD
                         last_ip_address:
                         shipment_total: '100.0'
@@ -5929,6 +5317,10 @@ paths:
                         taxable_adjustment_total: '0.0'
                         non_taxable_adjustment_total: '0.0'
                         store_owner_notification_delivered:
+                        display_pre_tax_total: "$110.00"
+                        display_ship_total: "$100.00"
+                        display_shipment_total: "$100.00"
+                        display_total: "$110.00"
                         display_outstanding_balance: "$110.00"
                         display_item_total: "$10.00"
                         display_tax_total: "$0.00"
@@ -5938,19 +5330,15 @@ paths:
                         display_additional_tax_total: "$0.00"
                         display_promo_total: "$0.00"
                         display_included_tax_total: "$0.00"
-                        display_pre_tax_total: "$110.00"
-                        display_ship_total: "$100.00"
-                        display_shipment_total: "$100.00"
-                        display_total: "$110.00"
                         display_total_applicable_store_credit: "$0.00"
-                        display_total_applied_store_credit: "$0.00"
                         display_order_total_after_store_credit: "$110.00"
                         display_total_available_store_credit: "$0.00"
+                        display_total_applied_store_credit: "$0.00"
                         display_store_credit_remaining_after_capture: "$0.00"
                       relationships:
                         user:
                           data:
-                            id: '55'
+                            id: '42'
                             type: user
                         created_by:
                           data:
@@ -5960,15 +5348,15 @@ paths:
                           data:
                         bill_address:
                           data:
-                            id: '78'
+                            id: '65'
                             type: address
                         ship_address:
                           data:
-                            id: '79'
+                            id: '66'
                             type: address
                         line_items:
                           data:
-                          - id: '46'
+                          - id: '33'
                             type: line_item
                         payments:
                           data:
@@ -6048,10 +5436,10 @@ paths:
                 Example:
                   value:
                     data:
-                      id: '58'
+                      id: '45'
                       type: order
                       attributes:
-                        number: R236763839
+                        number: R725072563
                         item_total: '0.0'
                         total: '0.0'
                         state: cart
@@ -6060,10 +5448,10 @@ paths:
                         payment_total: '0.0'
                         shipment_state:
                         payment_state:
-                        email: flavia@gutmann.com
+                        email: lasonya@beahan.com
                         special_instructions:
-                        created_at: '2021-10-11T15:47:57.067Z'
-                        updated_at: '2021-10-11T15:47:57.172Z'
+                        created_at: '2021-10-11T17:34:46.954Z'
+                        updated_at: '2021-10-11T17:34:47.050Z'
                         currency: USD
                         last_ip_address:
                         shipment_total: '0.0'
@@ -6079,6 +5467,10 @@ paths:
                         taxable_adjustment_total: '0.0'
                         non_taxable_adjustment_total: '0.0'
                         store_owner_notification_delivered:
+                        display_pre_tax_total: "$0.00"
+                        display_ship_total: "$0.00"
+                        display_shipment_total: "$0.00"
+                        display_total: "$0.00"
                         display_outstanding_balance: "$0.00"
                         display_item_total: "$0.00"
                         display_tax_total: "$0.00"
@@ -6088,19 +5480,15 @@ paths:
                         display_additional_tax_total: "$0.00"
                         display_promo_total: "$0.00"
                         display_included_tax_total: "$0.00"
-                        display_pre_tax_total: "$0.00"
-                        display_ship_total: "$0.00"
-                        display_shipment_total: "$0.00"
-                        display_total: "$0.00"
                         display_total_applicable_store_credit: "$0.00"
-                        display_total_applied_store_credit: "$0.00"
                         display_order_total_after_store_credit: "$0.00"
                         display_total_available_store_credit: "$0.00"
+                        display_total_applied_store_credit: "$0.00"
                         display_store_credit_remaining_after_capture: "$0.00"
                       relationships:
                         user:
                           data:
-                            id: '58'
+                            id: '45'
                             type: user
                         created_by:
                           data:
@@ -6110,11 +5498,11 @@ paths:
                           data:
                         bill_address:
                           data:
-                            id: '84'
+                            id: '71'
                             type: address
                         ship_address:
                           data:
-                            id: '85'
+                            id: '72'
                             type: address
                         line_items:
                           data: []
@@ -6181,10 +5569,10 @@ paths:
                 Example:
                   value:
                     data:
-                      id: '60'
+                      id: '47'
                       type: order
                       attributes:
-                        number: R190044219
+                        number: R539422355
                         item_total: '10.0'
                         total: '110.0'
                         state: delivery
@@ -6193,10 +5581,10 @@ paths:
                         payment_total: '0.0'
                         shipment_state:
                         payment_state:
-                        email: marianna@dietrich.biz
+                        email: zena.kozey@nikolaus.info
                         special_instructions:
-                        created_at: '2021-10-11T15:47:57.334Z'
-                        updated_at: '2021-10-11T15:47:57.479Z'
+                        created_at: '2021-10-11T17:34:47.220Z'
+                        updated_at: '2021-10-11T17:34:47.376Z'
                         currency: USD
                         last_ip_address:
                         shipment_total: '100.0'
@@ -6212,6 +5600,10 @@ paths:
                         taxable_adjustment_total: '0.0'
                         non_taxable_adjustment_total: '0.0'
                         store_owner_notification_delivered:
+                        display_pre_tax_total: "$10.00"
+                        display_ship_total: "$100.00"
+                        display_shipment_total: "$100.00"
+                        display_total: "$110.00"
                         display_outstanding_balance: "$110.00"
                         display_item_total: "$10.00"
                         display_tax_total: "$0.00"
@@ -6221,19 +5613,15 @@ paths:
                         display_additional_tax_total: "$0.00"
                         display_promo_total: "$0.00"
                         display_included_tax_total: "$0.00"
-                        display_pre_tax_total: "$10.00"
-                        display_ship_total: "$100.00"
-                        display_shipment_total: "$100.00"
-                        display_total: "$110.00"
                         display_total_applicable_store_credit: "-$15.00"
-                        display_total_applied_store_credit: "-$15.00"
                         display_order_total_after_store_credit: "$95.00"
                         display_total_available_store_credit: "$15.00"
+                        display_total_applied_store_credit: "-$15.00"
                         display_store_credit_remaining_after_capture: "$0.00"
                       relationships:
                         user:
                           data:
-                            id: '60'
+                            id: '47'
                             type: user
                         created_by:
                           data:
@@ -6243,15 +5631,15 @@ paths:
                           data:
                         bill_address:
                           data:
-                            id: '88'
+                            id: '75'
                             type: address
                         ship_address:
                           data:
-                            id: '89'
+                            id: '76'
                             type: address
                         line_items:
                           data:
-                          - id: '51'
+                          - id: '38'
                             type: line_item
                         payments:
                           data:
@@ -6334,10 +5722,10 @@ paths:
                 Example:
                   value:
                     data:
-                      id: '63'
+                      id: '50'
                       type: order
                       attributes:
-                        number: R965640253
+                        number: R103958240
                         item_total: '10.0'
                         total: '10.0'
                         state: delivery
@@ -6346,10 +5734,10 @@ paths:
                         payment_total: '0.0'
                         shipment_state:
                         payment_state:
-                        email: olympia@faheyschaden.ca
+                        email: avery.grady@boehmfisher.name
                         special_instructions:
-                        created_at: '2021-10-11T15:47:57.819Z'
-                        updated_at: '2021-10-11T15:47:57.950Z'
+                        created_at: '2021-10-11T17:34:47.813Z'
+                        updated_at: '2021-10-11T17:34:47.938Z'
                         currency: USD
                         last_ip_address:
                         shipment_total: '100.0'
@@ -6365,6 +5753,10 @@ paths:
                         taxable_adjustment_total: '0.0'
                         non_taxable_adjustment_total: '0.0'
                         store_owner_notification_delivered:
+                        display_pre_tax_total: "$10.00"
+                        display_ship_total: "$100.00"
+                        display_shipment_total: "$100.00"
+                        display_total: "$10.00"
                         display_outstanding_balance: "$10.00"
                         display_item_total: "$10.00"
                         display_tax_total: "$0.00"
@@ -6374,19 +5766,15 @@ paths:
                         display_additional_tax_total: "$0.00"
                         display_promo_total: "-$100.00"
                         display_included_tax_total: "$0.00"
-                        display_pre_tax_total: "$10.00"
-                        display_ship_total: "$100.00"
-                        display_shipment_total: "$100.00"
-                        display_total: "$10.00"
                         display_total_applicable_store_credit: "$0.00"
-                        display_total_applied_store_credit: "$0.00"
                         display_order_total_after_store_credit: "$10.00"
                         display_total_available_store_credit: "$0.00"
+                        display_total_applied_store_credit: "$0.00"
                         display_store_credit_remaining_after_capture: "$0.00"
                       relationships:
                         user:
                           data:
-                            id: '64'
+                            id: '51'
                             type: user
                         created_by:
                           data:
@@ -6396,15 +5784,15 @@ paths:
                           data:
                         bill_address:
                           data:
-                            id: '94'
+                            id: '81'
                             type: address
                         ship_address:
                           data:
-                            id: '95'
+                            id: '82'
                             type: address
                         line_items:
                           data:
-                          - id: '54'
+                          - id: '41'
                             type: line_item
                         payments:
                           data: []
@@ -6459,7 +5847,7 @@ paths:
               "$ref": "#/components/schemas/coupon_code_param"
   "/api/v2/platform/shipping_categories":
     get:
-      summary: Returns a list of Shipping Categories
+      summary: Return a list of Shipping Categories
       tags:
       - Shipping Categories
       security:
@@ -6499,18 +5887,18 @@ paths:
                 Example:
                   value:
                     data:
-                    - id: '97'
+                    - id: '72'
                       type: shipping_category
                       attributes:
-                        name: 'ShippingCategory #97'
-                        created_at: '2021-10-11T15:47:58.240Z'
-                        updated_at: '2021-10-11T15:47:58.240Z'
-                    - id: '98'
+                        name: 'ShippingCategory #72'
+                        created_at: '2021-10-11T17:34:48.220Z'
+                        updated_at: '2021-10-11T17:34:48.220Z'
+                    - id: '73'
                       type: shipping_category
                       attributes:
-                        name: 'ShippingCategory #98'
-                        created_at: '2021-10-11T15:47:58.241Z'
-                        updated_at: '2021-10-11T15:47:58.241Z'
+                        name: 'ShippingCategory #73'
+                        created_at: '2021-10-11T17:34:48.221Z'
+                        updated_at: '2021-10-11T17:34:48.221Z'
                     meta:
                       count: 2
                       total_count: 2
@@ -6530,7 +5918,7 @@ paths:
                   value:
                     error: The access token is invalid
     post:
-      summary: Creates a Shipping Category
+      summary: Create a Shipping Category
       tags:
       - Shipping Categories
       security:
@@ -6554,12 +5942,12 @@ paths:
                 Example:
                   value:
                     data:
-                      id: '101'
+                      id: '76'
                       type: shipping_category
                       attributes:
-                        name: 'ShippingCategory #101'
-                        created_at: '2021-10-11T15:47:58.287Z'
-                        updated_at: '2021-10-11T15:47:58.287Z'
+                        name: 'ShippingCategory #76'
+                        created_at: '2021-10-11T17:34:48.265Z'
+                        updated_at: '2021-10-11T17:34:48.265Z'
         '422':
           description: invalid request
           content:
@@ -6578,7 +5966,7 @@ paths:
               "$ref": "#/components/schemas/shipping_category_params"
   "/api/v2/platform/shipping_categories/{id}":
     get:
-      summary: Returns a Shipping Category
+      summary: Return a Shipping Category
       tags:
       - Shipping Categories
       security:
@@ -6607,12 +5995,12 @@ paths:
                 Example:
                   value:
                     data:
-                      id: '102'
+                      id: '77'
                       type: shipping_category
                       attributes:
-                        name: 'ShippingCategory #102'
-                        created_at: '2021-10-11T15:47:58.315Z'
-                        updated_at: '2021-10-11T15:47:58.315Z'
+                        name: 'ShippingCategory #77'
+                        created_at: '2021-10-11T17:34:48.299Z'
+                        updated_at: '2021-10-11T17:34:48.299Z'
         '404':
           description: Record not found
           content:
@@ -6629,8 +6017,8 @@ paths:
                 Example:
                   value:
                     error: The access token is invalid
-    put:
-      summary: Updates a Shipping Category
+    patch:
+      summary: Update a Shipping Category
       tags:
       - Shipping Categories
       security:
@@ -6659,12 +6047,12 @@ paths:
                 Example:
                   value:
                     data:
-                      id: '104'
+                      id: '79'
                       type: shipping_category
                       attributes:
                         name: Default
-                        created_at: '2021-10-11T15:47:58.362Z'
-                        updated_at: '2021-10-11T15:47:58.368Z'
+                        created_at: '2021-10-11T17:34:48.347Z'
+                        updated_at: '2021-10-11T17:34:48.353Z'
         '422':
           description: invalid request
           content:
@@ -6698,7 +6086,7 @@ paths:
             schema:
               "$ref": "#/components/schemas/shipping_category_params"
     delete:
-      summary: Deletes a Shipping Category
+      summary: Delete a Shipping Category
       tags:
       - Shipping Categories
       security:
@@ -6732,7 +6120,7 @@ paths:
                     error: The access token is invalid
   "/api/v2/platform/taxons":
     get:
-      summary: Returns a list of Taxons
+      summary: Return a list of Taxons
       tags:
       - Taxons
       security:
@@ -6781,8 +6169,8 @@ paths:
                         lft: 2
                         rgt: 3
                         description:
-                        created_at: '2021-10-11T15:47:58.533Z'
-                        updated_at: '2021-10-11T15:47:58.537Z'
+                        created_at: '2021-10-11T17:34:48.522Z'
+                        updated_at: '2021-10-11T17:34:48.526Z'
                         meta_title:
                         meta_description:
                         meta_keywords:
@@ -6816,8 +6204,8 @@ paths:
                         lft: 4
                         rgt: 5
                         description:
-                        created_at: '2021-10-11T15:47:58.583Z'
-                        updated_at: '2021-10-11T15:47:58.586Z'
+                        created_at: '2021-10-11T17:34:48.574Z'
+                        updated_at: '2021-10-11T17:34:48.577Z'
                         meta_title:
                         meta_description:
                         meta_keywords:
@@ -6851,8 +6239,8 @@ paths:
                         lft: 1
                         rgt: 6
                         description:
-                        created_at: '2021-10-11T15:47:58.476Z'
-                        updated_at: '2021-10-11T15:47:58.595Z'
+                        created_at: '2021-10-11T17:34:48.464Z'
+                        updated_at: '2021-10-11T17:34:48.586Z'
                         meta_title:
                         meta_description:
                         meta_keywords:
@@ -6896,7 +6284,7 @@ paths:
                   value:
                     error: The access token is invalid
     post:
-      summary: Creates a Taxon
+      summary: Create a Taxon
       tags:
       - Taxons
       security:
@@ -6929,8 +6317,8 @@ paths:
                         lft: 2
                         rgt: 3
                         description:
-                        created_at: '2021-10-11T15:47:58.811Z'
-                        updated_at: '2021-10-11T15:47:58.816Z'
+                        created_at: '2021-10-11T17:34:48.820Z'
+                        updated_at: '2021-10-11T17:34:48.836Z'
                         meta_title:
                         meta_description:
                         meta_keywords:
@@ -6973,7 +6361,7 @@ paths:
               "$ref": "#/components/schemas/taxon_params"
   "/api/v2/platform/taxons/{id}":
     get:
-      summary: Returns a Taxon
+      summary: Return a Taxon
       tags:
       - Taxons
       security:
@@ -7011,8 +6399,8 @@ paths:
                         lft: 2
                         rgt: 3
                         description:
-                        created_at: '2021-10-11T15:47:58.916Z'
-                        updated_at: '2021-10-11T15:47:58.919Z'
+                        created_at: '2021-10-11T17:34:48.972Z'
+                        updated_at: '2021-10-11T17:34:48.975Z'
                         meta_title:
                         meta_description:
                         meta_keywords:
@@ -7055,8 +6443,8 @@ paths:
                 Example:
                   value:
                     error: The access token is invalid
-    put:
-      summary: Updates a Taxon
+    patch:
+      summary: Update a Taxon
       tags:
       - Taxons
       security:
@@ -7094,8 +6482,8 @@ paths:
                         lft: 2
                         rgt: 3
                         description:
-                        created_at: '2021-10-11T15:47:59.115Z'
-                        updated_at: '2021-10-11T15:47:59.137Z'
+                        created_at: '2021-10-11T17:34:49.173Z'
+                        updated_at: '2021-10-11T17:34:49.198Z'
                         meta_title:
                         meta_description:
                         meta_keywords:
@@ -7153,7 +6541,7 @@ paths:
             schema:
               "$ref": "#/components/schemas/taxon_params"
     delete:
-      summary: Deletes a Taxon
+      summary: Delete a Taxon
       tags:
       - Taxons
       security:
@@ -7187,7 +6575,7 @@ paths:
                     error: The access token is invalid
   "/api/v2/platform/users":
     get:
-      summary: Returns a list of Users
+      summary: Return a list of Users
       tags:
       - Users
       security:
@@ -7227,12 +6615,12 @@ paths:
                 Example:
                   value:
                     data:
-                    - id: '67'
+                    - id: '54'
                       type: user
                       attributes:
-                        email: maye@watsica.info
-                        created_at: '2021-10-11T15:47:59.578Z'
-                        updated_at: '2021-10-11T15:47:59.578Z'
+                        email: ardis@bahringer.ca
+                        created_at: '2021-10-11T17:34:49.645Z'
+                        updated_at: '2021-10-11T17:34:49.645Z'
                         average_order_value: []
                         lifetime_value: []
                         store_credits: []
@@ -7241,12 +6629,12 @@ paths:
                           data:
                         ship_address:
                           data:
-                    - id: '68'
+                    - id: '55'
                       type: user
                       attributes:
-                        email: dewey@jacobi.us
-                        created_at: '2021-10-11T15:47:59.583Z'
-                        updated_at: '2021-10-11T15:47:59.583Z'
+                        email: chance@gleasonfadel.co.uk
+                        created_at: '2021-10-11T17:34:49.652Z'
+                        updated_at: '2021-10-11T17:34:49.652Z'
                         average_order_value: []
                         lifetime_value: []
                         store_credits: []
@@ -7255,12 +6643,12 @@ paths:
                           data:
                         ship_address:
                           data:
-                    - id: '69'
+                    - id: '56'
                       type: user
                       attributes:
-                        email: melina.walter@greenholt.name
-                        created_at: '2021-10-11T15:47:59.585Z'
-                        updated_at: '2021-10-11T15:47:59.585Z'
+                        email: ilda_marks@aufderhar.ca
+                        created_at: '2021-10-11T17:34:49.653Z'
+                        updated_at: '2021-10-11T17:34:49.653Z'
                         average_order_value: []
                         lifetime_value: []
                         store_credits: []
@@ -7288,7 +6676,7 @@ paths:
                   value:
                     error: The access token is invalid
     post:
-      summary: Creates an User
+      summary: Create an User
       tags:
       - Users
       security:
@@ -7312,12 +6700,12 @@ paths:
                 Example:
                   value:
                     data:
-                      id: '74'
+                      id: '61'
                       type: user
                       attributes:
-                        email: harriette@runolfsdottirrenner.ca
-                        created_at: '2021-10-11T15:47:59.648Z'
-                        updated_at: '2021-10-11T15:47:59.648Z'
+                        email: maritza@ritchiegoodwin.biz
+                        created_at: '2021-10-11T17:34:49.718Z'
+                        updated_at: '2021-10-11T17:34:49.718Z'
                         average_order_value: []
                         lifetime_value: []
                         store_credits: []
@@ -7344,7 +6732,7 @@ paths:
               "$ref": "#/components/schemas/user_params"
   "/api/v2/platform/users/{id}":
     get:
-      summary: Returns an User
+      summary: Return an User
       tags:
       - Users
       security:
@@ -7373,12 +6761,12 @@ paths:
                 Example:
                   value:
                     data:
-                      id: '77'
+                      id: '64'
                       type: user
                       attributes:
-                        email: tawana_schimmel@walsh.biz
-                        created_at: '2021-10-11T15:47:59.691Z'
-                        updated_at: '2021-10-11T15:47:59.691Z'
+                        email: hung.conn@little.biz
+                        created_at: '2021-10-11T17:34:49.763Z'
+                        updated_at: '2021-10-11T17:34:49.763Z'
                         average_order_value: []
                         lifetime_value: []
                         store_credits: []
@@ -7403,8 +6791,8 @@ paths:
                 Example:
                   value:
                     error: The access token is invalid
-    put:
-      summary: Updates an User
+    patch:
+      summary: Update an User
       tags:
       - Users
       security:
@@ -7433,12 +6821,12 @@ paths:
                 Example:
                   value:
                     data:
-                      id: '82'
+                      id: '69'
                       type: user
                       attributes:
                         email: john@example.com
-                        created_at: '2021-10-11T15:47:59.756Z'
-                        updated_at: '2021-10-11T15:47:59.765Z'
+                        created_at: '2021-10-11T17:34:49.835Z'
+                        updated_at: '2021-10-11T17:34:49.844Z'
                         average_order_value: []
                         lifetime_value: []
                         store_credits: []
@@ -7480,7 +6868,7 @@ paths:
             schema:
               "$ref": "#/components/schemas/user_params"
     delete:
-      summary: Deletes an User
+      summary: Delete an User
       tags:
       - Users
       security:
@@ -7514,7 +6902,7 @@ paths:
                     error: The access token is invalid
   "/api/v2/platform/wished_items":
     get:
-      summary: Returns a list of Wished Items
+      summary: Return a list of Wished Items
       tags:
       - Wished Items
       security:
@@ -7552,61 +6940,61 @@ paths:
                       type: wished_item
                       attributes:
                         quantity: 1
-                        created_at: '2021-10-11T15:48:00.080Z'
-                        updated_at: '2021-10-11T15:48:00.080Z'
-                        display_price: "$19.99"
+                        created_at: '2021-10-11T17:34:50.249Z'
+                        updated_at: '2021-10-11T17:34:50.249Z'
                         display_total: "$19.99"
+                        display_price: "$19.99"
                         price: '19.99'
                         total: '19.99'
                       relationships:
                         variant:
                           data:
-                            id: '232'
+                            id: '87'
                             type: variant
                     - id: '2'
                       type: wished_item
                       attributes:
                         quantity: 1
-                        created_at: '2021-10-11T15:48:00.132Z'
-                        updated_at: '2021-10-11T15:48:00.132Z'
-                        display_price: "$19.99"
+                        created_at: '2021-10-11T17:34:50.304Z'
+                        updated_at: '2021-10-11T17:34:50.304Z'
                         display_total: "$19.99"
+                        display_price: "$19.99"
                         price: '19.99'
                         total: '19.99'
                       relationships:
                         variant:
                           data:
-                            id: '234'
+                            id: '89'
                             type: variant
                     - id: '3'
                       type: wished_item
                       attributes:
                         quantity: 1
-                        created_at: '2021-10-11T15:48:00.181Z'
-                        updated_at: '2021-10-11T15:48:00.181Z'
-                        display_price: "$19.99"
+                        created_at: '2021-10-11T17:34:50.354Z'
+                        updated_at: '2021-10-11T17:34:50.354Z'
                         display_total: "$19.99"
+                        display_price: "$19.99"
                         price: '19.99'
                         total: '19.99'
                       relationships:
                         variant:
                           data:
-                            id: '236'
+                            id: '91'
                             type: variant
                     - id: '4'
                       type: wished_item
                       attributes:
                         quantity: 1
-                        created_at: '2021-10-11T15:48:00.229Z'
-                        updated_at: '2021-10-11T15:48:00.229Z'
-                        display_price: "$19.99"
+                        created_at: '2021-10-11T17:34:50.403Z'
+                        updated_at: '2021-10-11T17:34:50.403Z'
                         display_total: "$19.99"
+                        display_price: "$19.99"
                         price: '19.99'
                         total: '19.99'
                       relationships:
                         variant:
                           data:
-                            id: '238'
+                            id: '93'
                             type: variant
                     meta:
                       count: 4
@@ -7627,7 +7015,7 @@ paths:
                   value:
                     error: The access token is invalid
     post:
-      summary: Creates a Wished Item
+      summary: Create a Wished Item
       tags:
       - Wished Items
       security:
@@ -7655,16 +7043,16 @@ paths:
                       type: wished_item
                       attributes:
                         quantity: 1
-                        created_at: '2021-10-11T15:48:00.610Z'
-                        updated_at: '2021-10-11T15:48:00.610Z'
-                        display_price: "$19.99"
+                        created_at: '2021-10-11T17:34:50.759Z'
+                        updated_at: '2021-10-11T17:34:50.759Z'
                         display_total: "$19.99"
+                        display_price: "$19.99"
                         price: '19.99'
                         total: '19.99'
                       relationships:
                         variant:
                           data:
-                            id: '250'
+                            id: '105'
                             type: variant
         '422':
           description: invalid request
@@ -7689,7 +7077,7 @@ paths:
               "$ref": "#/components/schemas/wished_item_params"
   "/api/v2/platform/wished_items/{id}":
     get:
-      summary: Returns a Wished Item
+      summary: Return a Wished Item
       tags:
       - Wished Items
       security:
@@ -7722,16 +7110,16 @@ paths:
                       type: wished_item
                       attributes:
                         quantity: 1
-                        created_at: '2021-10-11T15:48:00.827Z'
-                        updated_at: '2021-10-11T15:48:00.827Z'
-                        display_price: "$19.99"
+                        created_at: '2021-10-11T17:34:50.971Z'
+                        updated_at: '2021-10-11T17:34:50.971Z'
                         display_total: "$19.99"
+                        display_price: "$19.99"
                         price: '19.99'
                         total: '19.99'
                       relationships:
                         variant:
                           data:
-                            id: '256'
+                            id: '111'
                             type: variant
         '404':
           description: Record not found
@@ -7749,8 +7137,8 @@ paths:
                 Example:
                   value:
                     error: The access token is invalid
-    put:
-      summary: Updates a Wished Item
+    patch:
+      summary: Update a Wished Item
       tags:
       - Wished Items
       security:
@@ -7783,16 +7171,16 @@ paths:
                       type: wished_item
                       attributes:
                         quantity: 3
-                        created_at: '2021-10-11T15:48:01.184Z'
-                        updated_at: '2021-10-11T15:48:01.192Z'
-                        display_price: "$19.99"
+                        created_at: '2021-10-11T17:34:51.311Z'
+                        updated_at: '2021-10-11T17:34:51.319Z'
                         display_total: "$59.97"
+                        display_price: "$19.99"
                         price: '19.99'
                         total: '59.97'
                       relationships:
                         variant:
                           data:
-                            id: '266'
+                            id: '121'
                             type: variant
         '422':
           description: invalid request
@@ -7827,7 +7215,7 @@ paths:
             schema:
               "$ref": "#/components/schemas/wished_item_params"
     delete:
-      summary: Deletes a Wished Item
+      summary: Delete a Wished Item
       tags:
       - Wished Items
       security:
@@ -7861,7 +7249,7 @@ paths:
                     error: The access token is invalid
   "/api/v2/platform/wishlists":
     get:
-      summary: Returns a list of Wishlists
+      summary: Return a list of Wishlists
       tags:
       - Wishlists
       security:
@@ -7907,9 +7295,9 @@ paths:
                         name: Black Friday
                         is_private: true
                         is_default: false
-                        created_at: '2021-10-11T15:48:01.929Z'
-                        updated_at: '2021-10-11T15:48:01.929Z'
-                        token: 6XAD4JiPfCGkYtsB5izdDnRW
+                        created_at: '2021-10-11T17:34:52.015Z'
+                        updated_at: '2021-10-11T17:34:52.015Z'
+                        token: 6XrD5rY7huUNYPdGXnqiScw7
                         variant_included: false
                       relationships:
                         wished_items:
@@ -7924,9 +7312,9 @@ paths:
                         name: Birthday
                         is_private: true
                         is_default: false
-                        created_at: '2021-10-11T15:48:01.931Z'
-                        updated_at: '2021-10-11T15:48:01.931Z'
-                        token: nUoYamXN2Ts4FmKdv8Woypov
+                        created_at: '2021-10-11T17:34:52.017Z'
+                        updated_at: '2021-10-11T17:34:52.017Z'
+                        token: z4XMzBWXiKRTceUZf1cXgdmo
                         variant_included: false
                       relationships:
                         wished_items:
@@ -7954,7 +7342,7 @@ paths:
                   value:
                     error: The access token is invalid
     post:
-      summary: Creates a Wishlist
+      summary: Create a Wishlist
       tags:
       - Wishlists
       security:
@@ -7984,9 +7372,9 @@ paths:
                         name: Wishlist_26
                         is_private: true
                         is_default: false
-                        created_at: '2021-10-11T15:48:02.411Z'
-                        updated_at: '2021-10-11T15:48:02.411Z'
-                        token: JDQH8JBdE2vVnLTJycENzsdp
+                        created_at: '2021-10-11T17:34:52.480Z'
+                        updated_at: '2021-10-11T17:34:52.480Z'
+                        token: D314GH8m1v9jHKvNYnwR1qaQ
                         variant_included: false
                       relationships:
                         wished_items:
@@ -8011,7 +7399,7 @@ paths:
               "$ref": "#/components/schemas/wishlist_params"
   "/api/v2/platform/wishlists/{id}":
     get:
-      summary: Returns a Wishlist
+      summary: Return a Wishlist
       tags:
       - Wishlists
       security:
@@ -8046,9 +7434,9 @@ paths:
                         name: My Wishlist
                         is_private: true
                         is_default: false
-                        created_at: '2021-10-11T15:48:02.449Z'
-                        updated_at: '2021-10-11T15:48:02.449Z'
-                        token: Scm4gz8oK3v2gESoGMfXrrHb
+                        created_at: '2021-10-11T17:34:52.516Z'
+                        updated_at: '2021-10-11T17:34:52.516Z'
+                        token: U2BheUwAQFQsJHeUqLCw5arT
                         variant_included: false
                       relationships:
                         wished_items:
@@ -8069,8 +7457,8 @@ paths:
                 Example:
                   value:
                     error: The access token is invalid
-    put:
-      summary: Updates a Wishlist
+    patch:
+      summary: Update a Wishlist
       tags:
       - Wishlists
       security:
@@ -8105,9 +7493,9 @@ paths:
                         name: My Super Wishlist
                         is_private: true
                         is_default: false
-                        created_at: '2021-10-11T15:48:02.512Z'
-                        updated_at: '2021-10-11T15:48:02.520Z'
-                        token: xMXdYQZWQsyK7XQm7z5WKLe8
+                        created_at: '2021-10-11T17:34:52.573Z'
+                        updated_at: '2021-10-11T17:34:52.581Z'
+                        token: WzAZasZS3sfMmQQ5fXT2ZVZD
                         variant_included: false
                       relationships:
                         wished_items:
@@ -8145,7 +7533,7 @@ paths:
             schema:
               "$ref": "#/components/schemas/wishlist_params"
     delete:
-      summary: Deletes a Wishlist
+      summary: Delete a Wishlist
       tags:
       - Wishlists
       security:
@@ -8189,11 +7577,9 @@ tags:
 - name: Countries
 - name: CMS Pages
 - name: CMS Sections
-- name: Digitals
-- name: Digital Links
 - name: Line Items
-- name: Menus
 - name: Menu Items
+- name: Menus
 - name: Option Types
 - name: Option Values
 - name: Orders
@@ -8297,10 +7683,10 @@ components:
           default: false
         created_at:
           type: string
-          example: 2021-10-11 15:47:34 UTC
+          example: 2021-10-11 17:34:31 UTC
         updated_at:
           type: string
-          example: 2021-10-11 15:47:34 UTC
+          example: 2021-10-11 17:34:31 UTC
       required:
       - order_id
       - label
@@ -8402,7 +7788,7 @@ components:
         completed_at:
           type: string
           format: date_time
-          example: 2021-10-11 15:47:34 UTC
+          example: 2021-10-11 17:34:31 UTC
         bill_address_id:
           type: string
         ship_address_id:
@@ -8454,7 +7840,7 @@ components:
         approved_at:
           type: string
           format: date_time
-          example: 2021-10-11 15:47:34 UTC
+          example: 2021-10-11 17:34:31 UTC
         confirmation_delivered:
           type: boolean
           example: true
@@ -8636,12 +8022,12 @@ components:
           example: Another Category
         created_at:
           type: string
-          example: 2021-10-11 15:47:34 UTC
-          default: 2021-10-11 15:47:34 UTC
+          example: 2021-10-11 17:34:31 UTC
+          default: 2021-10-11 17:34:31 UTC
         updated_at:
           type: string
-          example: 2021-10-11 15:47:34 UTC
-          default: 2021-10-11 15:47:34 UTC
+          example: 2021-10-11 17:34:31 UTC
+          default: 2021-10-11 17:34:31 UTC
       required:
       - name
     wishlist_params:
@@ -8717,23 +8103,6 @@ components:
           type: integer
       required:
       - new_position_idx
-    digital_params:
-      type: object
-      properties:
-        digital[attachment]:
-          type: string
-          format: binary
-        digital[variant_id]:
-          type: string
-          example: '123'
-      required:
-      - digital[attachment]
-      - digital[variant_id]
-    digital_link_params:
-      type: object
-      properties:
-        access_counter:
-          type: integer
     amount_param:
       type: object
       properties:

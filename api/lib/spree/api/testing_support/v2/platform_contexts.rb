@@ -118,7 +118,7 @@ end
 
 # index action
 shared_examples 'GET records list' do |resource_name, include_example, filter_example|
-  get "Returns a list of #{resource_name.pluralize}" do
+  get "Return a list of #{resource_name.pluralize}" do
     tags resource_name.pluralize
     security [ bearer_auth: [] ]
     description "Returns a list of #{resource_name.pluralize}"
@@ -139,7 +139,7 @@ end
 
 # show
 shared_examples 'GET record' do |resource_name, include_example|
-  get "Returns #{resource_name.articleize}" do
+  get "Return #{resource_name.articleize}" do
     tags resource_name.pluralize
     security [ bearer_auth: [] ]
     description "Returns #{resource_name.articleize}"
@@ -163,7 +163,7 @@ shared_examples 'POST create record' do |resource_name, include_example, consume
                         :body
                       end
 
-  post "Creates #{resource_name.articleize}" do
+  post "Create #{resource_name.articleize}" do
     tags resource_name.pluralize
     consumes consumes_kind
     security [ bearer_auth: [] ]
@@ -180,7 +180,7 @@ shared_examples 'POST create record' do |resource_name, include_example, consume
 end
 
 # update
-shared_examples 'PUT update record' do |resource_name, include_example, consumes_kind = 'application/json'|
+shared_examples 'PATCH update record' do |resource_name, include_example, consumes_kind = 'application/json'|
   param_name = resource_name.parameterize(separator: '_').to_sym
   request_data_type = case consumes_kind
                       when 'multipart/form-data'
@@ -189,7 +189,7 @@ shared_examples 'PUT update record' do |resource_name, include_example, consumes
                         :body
                       end
 
-  put "Updates #{resource_name.articleize}" do
+  patch "Update #{resource_name.articleize}" do
     tags resource_name.pluralize
     security [ bearer_auth: [] ]
     description "Updates #{resource_name.articleize}"
@@ -210,7 +210,7 @@ end
 
 # destroy
 shared_examples 'DELETE record' do |resource_name|
-  delete "Deletes #{resource_name.articleize}" do
+  delete "Delete #{resource_name.articleize}" do
     tags resource_name.pluralize
     security [ bearer_auth: [] ]
     description "Deletes #{resource_name.articleize}"
@@ -233,7 +233,7 @@ shared_examples 'CRUD examples' do |resource_name, include_example, filter_examp
 
   path "/api/v2/platform/#{resource_path}/{id}" do
     include_examples 'GET record', resource_name, include_example
-    include_examples 'PUT update record', resource_name, include_example
+    include_examples 'PATCH update record', resource_name, include_example
     include_examples 'DELETE record', resource_name
   end
 end

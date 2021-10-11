@@ -28,7 +28,7 @@ module Spree
 
       user ||= Spree.user_class.new
 
-      if user.respond_to?(:has_spree_role?) && user.has_spree_role?('admin')
+      if user.try(:spree_admin?)
         apply_admin_permissions(user)
       else
         apply_user_permissions(user)

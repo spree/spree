@@ -25,13 +25,23 @@ require 'activerecord-typedstore'
 StateMachines::Machine.ignore_method_conflicts = true
 
 module Spree
-  mattr_accessor :user_class
+  mattr_accessor :user_class, :admin_user_class
 
   def self.user_class(constantize: true)
     if @@user_class.is_a?(Class)
       raise 'Spree.user_class MUST be a String or Symbol object, not a Class object.'
     elsif @@user_class.is_a?(String) || @@user_class.is_a?(Symbol)
       constantize ? @@user_class.to_s.constantize : @@user_class.to_s
+    end
+  end
+
+  def self.admin_user_class(constantize: true)
+    @@admin_user_class ||= @@user_class
+
+    if @@admin_user_class.is_a?(Class)
+      raise 'Spree.admin_user_class MUST be a String or Symbol object, not a Class object.'
+    elsif @@admin_user_class.is_a?(String) || @@admin_user_class.is_a?(Symbol)
+      constantize ? @@admin_user_class.to_s.constantize : @@admin_user_class.to_s
     end
   end
 
