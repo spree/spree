@@ -26,7 +26,7 @@ describe 'Classifications API', swagger: true do
   include_examples 'CRUD examples', resource_name, include_example, filter_example
 
   path '/api/v2/platform/classifications/{id}/reposition' do
-    put 'Reposition a Classification' do
+    patch 'Reposition a Classification' do
       tags resource_name.pluralize
       security [ bearer_auth: [] ]
       operationId 'reposition-classification'
