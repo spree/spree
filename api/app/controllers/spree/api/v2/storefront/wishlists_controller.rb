@@ -43,7 +43,7 @@ module Spree
             authorize! :destroy, resource
 
             if resource.destroy
-              render_serialized_payload { serialize_resource(resource) }
+              head 204
             else
               render_error_payload('Something went wrong')
             end
