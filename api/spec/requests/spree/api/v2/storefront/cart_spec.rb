@@ -220,7 +220,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
     end
 
     context 'as a signed in user' do
-      include_context 'creates order with line item'
+      include_context 'order with a physical line item'
 
       context 'with existing order' do
         it_behaves_like 'adds item'
@@ -271,7 +271,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
     end
 
     context 'as a signed in user' do
-      include_context 'creates order with line item'
+      include_context 'order with a physical line item'
 
       context 'with existing order' do
         it_behaves_like 'removes line item'
@@ -307,7 +307,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
 
     context 'as a signed in user' do
       context 'with existing order with line item' do
-        include_context 'creates order with line item'
+        include_context 'order with a physical line item'
 
         it_behaves_like 'emptying the order'
       end
@@ -343,7 +343,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
 
     context 'as a signed in user' do
       context 'with existing order with line item' do
-        include_context 'creates order with line item'
+        include_context 'order with a physical line item'
 
         it_behaves_like 'destroying order'
         it_behaves_like '204 status returned'
@@ -437,7 +437,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
     end
 
     context 'as a signed in user' do
-      include_context 'creates order with line item'
+      include_context 'order with a physical line item'
 
       it_behaves_like 'set quantity'
     end
@@ -470,7 +470,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
     end
 
     context 'with existing user order with line item' do
-      include_context 'creates order with line item'
+      include_context 'order with a physical line item'
 
       it_behaves_like 'showing the cart'
     end
@@ -513,7 +513,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
 
       context 'as a signed user' do
         context 'with valid currency param' do
-          include_context 'creates order with line item'
+          include_context 'order with a physical line item'
           it_behaves_like 'showing the cart'
 
           it 'includes the requested currency' do
@@ -523,7 +523,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
         end
 
         context 'with invalid currency param' do
-          include_context 'creates order with line item'
+          include_context 'order with a physical line item'
           it_behaves_like 'showing the cart'
 
           it 'includes the requested currency' do
@@ -539,7 +539,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
       let(:bill_addr_params) { { include: 'billing_address' } }
       let(:ship_addr_params) { { include: 'shipping_address' } }
 
-      include_context 'creates order with line item'
+      include_context 'order with a physical line item'
       it_behaves_like 'showing the cart'
 
       it 'will return included bill_address' do
@@ -641,7 +641,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
     end
 
     context 'as a signed in user' do
-      include_context 'creates order with line item'
+      include_context 'order with a physical line item'
 
       context 'with existing order' do
         it_behaves_like 'apply coupon code'
@@ -831,7 +831,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
     end
 
     context 'as a signed in user' do
-      include_context 'creates order with line item'
+      include_context 'order with a physical line item'
 
       it_behaves_like 'remove coupon code'
     end
@@ -887,7 +887,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
     end
 
     context 'as a signed in user' do
-      include_context 'creates order with line item'
+      include_context 'order with a physical line item'
 
       it_behaves_like 'returns a list of shipments with shipping rates'
     end

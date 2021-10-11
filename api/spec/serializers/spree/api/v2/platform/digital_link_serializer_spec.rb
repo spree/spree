@@ -16,6 +16,20 @@ describe Spree::Api::V2::Platform::DigitalLinkSerializer do
           attributes: {
             access_counter: 0,
             token: digital_link.token
+          },
+          relationships: {
+            digital: {
+              data: {
+                id: digital_link.digital.id.to_s,
+                type: :digital
+              }
+            },
+            line_item: {
+              data: {
+                id: digital_link.line_item.id.to_s,
+                type: :line_item
+              }
+            }
           }
         }
       }

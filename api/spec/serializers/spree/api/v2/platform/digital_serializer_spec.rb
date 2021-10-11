@@ -18,6 +18,14 @@ describe Spree::Api::V2::Platform::DigitalSerializer do
             content_type: digital.attachment.content_type.to_s,
             filename: digital.attachment.filename.to_s,
             url: Rails.application.routes.url_helpers.polymorphic_url(digital.attachment, only_path: true)
+          },
+          relationships: {
+            variant: {
+              data: {
+                id: digital.variant.id.to_s,
+                type: :variant
+              }
+            }
           }
         }
       }

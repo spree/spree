@@ -213,7 +213,7 @@ module Spree
       line_items.exists?
     end
 
-    # Does this order require a phisical delivery.
+    # Does this order require a physical delivery.
     def delivery_required?
       !digital?
     end

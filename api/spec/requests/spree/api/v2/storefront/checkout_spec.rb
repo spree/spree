@@ -103,7 +103,7 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
     end
 
     context 'as a signed in user' do
-      include_context 'creates an order with a phisical line item'
+      include_context 'order with a physical line item'
 
       it_behaves_like 'perform next'
     end
@@ -154,7 +154,7 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
     end
 
     context 'as a signed in user' do
-      include_context 'creates an order with a phisical line item'
+      include_context 'order with a physical line item'
 
       it_behaves_like 'perform advance'
     end
@@ -210,15 +210,15 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
     end
 
     context 'as a signed in user' do
-      include_context 'creates an order with a phisical line item'
+      include_context 'order with a physical line item'
 
       it_behaves_like 'perform complete'
     end
   end
 
-  order_contexts = ['creates an order with a phisical line item',
-                    'creates an order with a digital line item',
-                    'creates an order with a phisical and digital line item'].freeze
+  order_contexts = ['order with a physical line item',
+                    'order with a digital line item',
+                    'order with a physical and digital line item'].freeze
 
   order_contexts.each do |order_context|
     describe "checkout#update (#{order_context})" do
@@ -575,7 +575,7 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
     end
 
     context 'as a signed in user' do
-      include_context 'creates an order with a phisical line item'
+      include_context 'order with a physical line item'
 
       it_behaves_like 'returns a list of available payment methods'
     end
@@ -641,16 +641,16 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
     end
 
     context 'as a signed in user' do
-      include_context 'creates an order with a phisical line item'
+      include_context 'order with a physical line item'
 
       it_behaves_like 'returns a list of shipments with shipping rates'
     end
   end
 
-  orders_requiring_delivery = ['creates an order with a phisical line item', 'creates an order with a phisical and digital line item'].freeze
+  orders_requiring_delivery = ['order with a physical line item', 'order with a physical and digital line item'].freeze
 
-  orders_requiring_delivery.each do |phisical_goods_context|
-    describe "full checkout flow (#{phisical_goods_context})" do
+  orders_requiring_delivery.each do |physical_goods_context|
+    describe "full checkout flow (#{physical_goods_context})" do
       let!(:country) { create(:country) }
       let(:state) { create(:state, country: country) }
       let!(:shipping_method) do
@@ -731,7 +731,7 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
       end
 
       context 'as a signed in user' do
-        include_context phisical_goods_context
+        include_context physical_goods_context
 
         it_behaves_like 'transitions through checkout from start to finish'
       end
@@ -811,7 +811,7 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
     end
 
     context 'as a signed in user' do
-      include_context 'creates an order with a digital line item'
+      include_context 'order with a digital line item'
 
       it_behaves_like 'transitions through checkout from start to finish'
     end

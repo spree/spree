@@ -21,6 +21,8 @@ module Spree
           attribute :byte_size do |digital|
             digital.attachment.byte_size.to_i
           end
+
+          belongs_to :variant
         end
       end
     end
