@@ -28,7 +28,26 @@ describe Spree::UserMethods do
     end
   end
 
+  describe '#spree_admin?' do
+    it do
+      expect(create(:admin_user).spree_admin?).to be true
+      expect(create(:user).spree_admin?).to be false
+    end
+  end
+
   describe '.admin_created?' do
+    it 'returns true when admin exists' do
+      create(:admin_user)
+
+      expect(Spree.user_class).to be_admin_created
+    end
+
+    it 'returns false when admin does not exist' do
+      expect(Spree.user_class).to_not be_admin_created
+    end
+  end
+
+  describe '.spree_admin_created?' do
     it 'returns true when admin exists' do
       create(:admin_user)
 
