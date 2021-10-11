@@ -42,7 +42,7 @@ describe 'Digitals API', swagger: true do
 
   path "/api/v2/platform/#{resource_path}/{id}" do
     include_examples 'GET record', resource_name, include_example
-    include_examples 'PUT update record', resource_name, include_example, consumes_kind
+    include_examples 'PATCH update record', resource_name, include_example, consumes_kind
     include_examples 'DELETE record', resource_name
   end
 end
