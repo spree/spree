@@ -165,7 +165,7 @@ RSpec.describe Spree::Api::V2::Storefront::WishlistsController, type: :request d
   describe '#destroy' do
     it 'must permite destroying a wishlist' do
       delete "/api/v2/storefront/wishlists/#{user.wishlists.first.token}", headers: headers_bearer
-      expect(response.status).to      eq (200)
+      expect(response.status).to eq (204)
       expect(user.wishlists.count).to eq (0)
     end
   end
@@ -193,7 +193,7 @@ RSpec.describe Spree::Api::V2::Storefront::WishlistsController, type: :request d
     end
 
     context 'when a variant is already in the wishlist' do
-      let!(:set_variant) { create(:variant)}
+      let!(:set_variant) { create(:variant) }
       let!(:wi) { create(:wished_item, wishlist: user.wishlists.first, variant: set_variant, quantity: 1) }
 
       it 'return the existing wished_item - quantity atribute passed in' do
