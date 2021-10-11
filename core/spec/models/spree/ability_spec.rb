@@ -92,6 +92,8 @@ describe Spree::Ability, type: :model do
 
         before { Spree.admin_user_class = 'Spree::DummyModel' }
 
+        after { Spree.admin_user_class = nil }
+
         it 'is able to admin' do
           allow(user).to receive(:spree_admin?).and_return(true)
           expect(ability).to be_able_to :admin, resource
