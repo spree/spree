@@ -18,7 +18,7 @@ RSpec.configure do |config|
   # the root example_group in your specs, e.g. describe '...', swagger_doc: 'v2/swagger.json'
   config.swagger_docs = {
     'v2/platform/index.yaml' => {
-      openapi: '3.0.1',
+      openapi: '3.0.3',
       info: {
         title: 'Platform API V2',
         contact: {
