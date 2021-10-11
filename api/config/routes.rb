@@ -222,6 +222,8 @@ Spree::Core::Engine.add_routes do
             patch :apply_coupon_code
             patch :complete
             patch :use_store_credit
+            patch :cancel
+            patch :approve
           end
         end
         resources :line_items
