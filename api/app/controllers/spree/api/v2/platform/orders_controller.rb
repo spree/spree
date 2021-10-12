@@ -3,7 +3,8 @@ module Spree
     module V2
       module Platform
         class OrdersController < ResourceController
-          WRITE_ACTIONS.push(:use_store_credit, :remove_store_credit, :apply_coupon_code, :remove_coupon_code, :next, :advance, :complete, :empty)
+          WRITE_ACTIONS.push(:use_store_credit, :remove_store_credit, :apply_coupon_code, :remove_coupon_code, :next, :advance,
+                             :complete, :empty, :approve, :cancel)
 
           include CouponCodesHelper
 
@@ -47,13 +48,25 @@ module Spree
           end
 
           def empty
-            result = empty_order_service.call(order: resource)
+            result = empty_service.call(order: resource)
+
+            render_order(result)
+          end
+
+          def cancel
+            result = cancel_service.call(order: resource, canceler: spree_current_user)
+
+            render_order(result)
+          end
+
+          def approve
+            result = approve_service.call(order: resource, approver: spree_current_user)
 
             render_order(result)
           end
 
           def destroy
-            result = destroy_order_service.call(order: resource)
+            result = destroy_service.call(order: resource)
 
             if result.success?
               head 204
@@ -67,7 +80,7 @@ module Spree
             result = coupon_handler.new(resource).apply
 
             if result.error.blank?
-              render_serialized_payload { serialize_resource(resource) }
+              render_serialized_payload { serialize_resource(resource.reload) }
             else
               render_error_payload(result.error)
             end
@@ -138,12 +151,20 @@ module Spree
             Spree::Api::Dependencies.platform_order_complete_service.constantize
           end
 
-          def empty_order_service
+          def empty_service
             Spree::Api::Dependencies.platform_order_empty_service.constantize
           end
 
-          def destroy_order_service
+          def destroy_service
             Spree::Api::Dependencies.platform_order_destroy_service.constantize
+          end
+
+          def approve_service
+            Spree::Api::Dependencies.platform_order_approve_service.constantize
+          end
+
+          def cancel_service
+            Spree::Api::Dependencies.platform_order_cancel_service.constantize
           end
 
           def coupon_handler

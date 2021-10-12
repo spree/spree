@@ -46,7 +46,7 @@ RSpec.configure do |config|
         { name: 'Countries' },
         { name: 'CMS Pages' },
         { name: 'CMS Sections' },
-        { name: 'Digitals' },
+        { name: 'Digital Assets' },
         { name: 'Digital Links' },
         { name: 'Line Items' },
         { name: 'Menus' },
@@ -102,17 +102,15 @@ RSpec.configure do |config|
               eligible: { type: :boolean },
               state: { type: :string, example: 'closed', default: 'open', enum: ['closed', 'open'] },
               included: { type: :boolean, example: true, default: false },
-              created_at: { type: :string, example: Time.current },
-              updated_at: { type: :string, example: Time.current }
             },
             required: %w[order_id label adjustable_id adjustable_type]
           },
           classification_params: {
             type: :object,
             properties: {
-              product_id: { type: :string },
-              taxon_id: { type: :string },
-              position: { type: :integer }
+              product_id: { type: :string, example: '1' },
+              taxon_id: { type: :string, example: '1' },
+              position: { type: :integer, example: 1 }
             }
           },
           line_item_params: {
@@ -120,56 +118,45 @@ RSpec.configure do |config|
             properties: {
               order_id: { type: :string, example: '1' },
               variant_id: { type: :string, example: '1' },
-              quantity: { type: :integer, example: 2 },
-              price: { type: :number, example: 19.90 },
-              cost_price: { type: :number, example: 10.90 },
-              adjustment_total: { type: :number },
-              additional_tax_total: { type: :number },
-              promo_total: { type: :number },
-              included_tax_total: { type: :number },
-              pre_tax_amount: { type: :number },
-              taxable_adjustment_total: { type: :number },
-              non_taxable_adjustment_total: { type: :number }
+              quantity: { type: :integer, example: 2 }
             },
             required: %w[order_id variant_id quantity]
           },
           option_type_params: {
             type: :object,
             properties: {
-              name: { type: :string },
-              presentation: { type: :string }
+              name: { type: :string, example: 'color' },
+              presentation: { type: :string, example: 'Color' }
             },
             required: %w[name presentation]
           },
           option_value_params: {
             type: :object,
             properties: {
-              name: { type: :string },
-              presentation: { type: :string },
-              option_values_attributes: { type: :string }
+              name: { type: :string, example: 'red' },
+              presentation: { type: :string, example: 'Red' }
             },
             required: %w[name presentation]
           },
           order_params: {
             type: :object,
             properties: {
-              number: { type: :string },
               item_total: { type: :number, example: 170.90 },
               total: { type: :number, example: 190.90 },
-              state: { type: :string, example: 'complete', enum: %w[cart address delivery payment confirm complete] },
+              state: { type: :string, example: 'complete', enum: %w[cart address delivery payment confirm complete canceled] },
               adjustment_total: { type: :number, example: 20.0 },
-              user_id: { type: :string },
+              user_id: { type: :string, example: '1' },
               completed_at: { type: :string, format: :date_time, example: Time.current },
-              bill_address_id: { type: :string },
-              ship_address_id: { type: :string },
+              bill_address_id: { type: :string, example: '1' },
+              ship_address_id: { type: :string, example: '1' },
               payment_total: { type: :number, example: 190.90 },
-              shipment_state: { type: :string, example: 'shipped' },
-              payment_state: { type: :string, example: 'paid' },
+              shipment_state: { type: :string, example: 'shipped', enum: Spree::Order::SHIPMENT_STATES },
+              payment_state: { type: :string, example: 'paid', enum: Spree::Order::PAYMENT_STATES },
               email: { type: :string, format: :email, example: 'hi@getvendo.com' },
               special_instructions: { type: :string, example: 'I need it ASAP!' },
               currency: { type: :string, example: 'USD' },
               last_ip_address: { type: :string, example: '127.0.0.1' },
-              created_by_id: { type: :string },
+              created_by_id: { type: :string, example: '1' },
               shipment_total: { type: :number, example: 10.0 },
               additional_tax_total: { type: :number, example: 10.0 },
               promo_total: { type: :number, example: 0.0 },
@@ -182,7 +169,6 @@ RSpec.configure do |config|
               considered_risky: { type: :boolean, example: true, default: false },
               canceled_at: { type: :string, format: :date_time },
               canceler_id: { type: :string },
-              state_lock_version: { type: :integer, example: 1 },
               taxable_adjustment_total: { type: :number, example: 170.90 },
               non_taxable_adjustment_total: { type: :number, example: 10.0 },
               store_owner_notification_delivered: { type: :boolean, example: true, default: false },
@@ -190,14 +176,7 @@ RSpec.configure do |config|
               ship_address_attributes: { '$ref': '#/components/schemas/address_params' },
               line_items_attributes: {
                 type: :array,
-                items: {
-                  type: :object,
-                  properties: {
-                    variant_id: { type: :string, example: '1' },
-                    quantity: { type: :integer, example: 2 },
-                    price: { type: :number, example: 19.90 }
-                  }
-                }
+                items: { '$ref': '#/components/schemas/line_item_params' }
               }
             }
           },
@@ -286,8 +265,6 @@ RSpec.configure do |config|
             type: :object,
             properties: {
               name: { type: :string, example: 'Another Category' },
-              created_at: { type: :string, example: Time.current, default: Time.current },
-              updated_at: { type: :string, example: Time.current, default: Time.current },
             },
             required: %w[name]
           },
