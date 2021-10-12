@@ -53,9 +53,14 @@ def json_api_include_parameter(example = '')
   parameter name: :include, in: :query, type: :string, description: JSON_API_INCLUDES_DESCRIPTION, example: example
 end
 
-def json_api_filter_parameter(example = '')
-  let(:filter) { nil }
-  parameter name: :filter, in: :query, type: :string, description: JSON_API_FILTER_DESCRIPTION, example: example
+def json_api_filter_parameter(examples = [])
+  examples.each do |api_filter|
+    name = api_filter[:name].to_sym
+    example = api_filter[:example]
+    let(name) { nil }
+
+    parameter name: name, in: :query, type: :string, description: JSON_API_FILTER_DESCRIPTION, example: example
+  end
 end
 
 shared_examples 'authentication failed' do
@@ -117,18 +122,17 @@ shared_examples 'invalid request' do |param_name|
 end
 
 # index action
-shared_examples 'GET records list' do |resource_name, include_example, filter_example|
-  get "Return a list of #{resource_name.pluralize}" do
-    tags resource_name.pluralize
+shared_examples 'GET records list' do |resource_name, **options|
+  endpoint_name = options[:custom_endpoint_name] || resource_name
+
+  get "Return a list of #{endpoint_name.pluralize}" do
+    tags endpoint_name.pluralize
     security [ bearer_auth: [] ]
-    description "Returns a list of #{resource_name.pluralize}"
+    description "Returns a list of #{endpoint_name.pluralize}"
     operationId "#{resource_name.parameterize.pluralize.to_sym}-list"
     include_context 'jsonapi pagination'
-    json_api_include_parameter(include_example)
-
-    if filter_example.present?
-      json_api_filter_parameter(filter_example)
-    end
+    json_api_include_parameter(options[:include_example]) unless options[:include_example].nil?
+    json_api_filter_parameter(options[:filter_examples]) unless options[:filter_examples].nil?
 
     before { records_list }
 
@@ -138,14 +142,16 @@ shared_examples 'GET records list' do |resource_name, include_example, filter_ex
 end
 
 # show
-shared_examples 'GET record' do |resource_name, include_example|
-  get "Return #{resource_name.articleize}" do
-    tags resource_name.pluralize
+shared_examples 'GET record' do |resource_name, **options|
+  endpoint_name = options[:custom_endpoint_name] || resource_name
+
+  get "Return #{endpoint_name.articleize}" do
+    tags endpoint_name.pluralize
     security [ bearer_auth: [] ]
-    description "Returns #{resource_name.articleize}"
+    description "Returns #{endpoint_name.articleize}"
     operationId "show-#{resource_name.parameterize.to_sym}"
     parameter name: :id, in: :path, type: :string
-    json_api_include_parameter(include_example)
+    json_api_include_parameter(options[:include_example]) unless options[:include_example].nil?
 
     it_behaves_like 'record found'
     it_behaves_like 'record not found'
@@ -154,17 +160,25 @@ shared_examples 'GET record' do |resource_name, include_example|
 end
 
 # create
-shared_examples 'POST create record' do |resource_name, include_example|
+shared_examples 'POST create record' do |resource_name, **options|
+  endpoint_name = options[:custom_endpoint_name] || resource_name
   param_name = resource_name.parameterize(separator: '_').to_sym
+  consumes_kind = options[:consumes_kind] || 'application/json'
+  request_data_type = case consumes_kind
+                      when 'multipart/form-data'
+                        :formData
+                      else
+                        :body
+                      end
 
-  post "Create #{resource_name.articleize}" do
-    tags resource_name.pluralize
-    consumes 'application/json'
+  post "Create #{endpoint_name.articleize}" do
+    tags endpoint_name.pluralize
+    consumes consumes_kind
     security [ bearer_auth: [] ]
-    description "Creates #{resource_name.articleize}"
+    description "Creates #{endpoint_name.articleize}"
     operationId "create-#{resource_name.parameterize.to_sym}"
-    parameter name: param_name, in: :body, schema: { '$ref' => "#/components/schemas/#{param_name}_params" }
-    json_api_include_parameter(include_example)
+    parameter name: param_name, in: request_data_type, schema: { '$ref' => "#/components/schemas/#{param_name}_params" }
+    json_api_include_parameter(options[:include_example]) unless options[:include_example].nil?
 
     let(param_name) { valid_create_param_value }
 
@@ -174,18 +188,26 @@ shared_examples 'POST create record' do |resource_name, include_example|
 end
 
 # update
-shared_examples 'PATCH update record' do |resource_name, include_example|
+shared_examples 'PATCH update record' do |resource_name, **options|
+  endpoint_name = options[:custom_endpoint_name] || resource_name
   param_name = resource_name.parameterize(separator: '_').to_sym
+  consumes_kind = options[:consumes_kind] || 'application/json'
+  request_data_type = case consumes_kind
+                      when 'multipart/form-data'
+                        :formData
+                      else
+                        :body
+                      end
 
-  patch "Update #{resource_name.articleize}" do
-    tags resource_name.pluralize
+  patch "Update #{endpoint_name.articleize}" do
+    tags endpoint_name.pluralize
     security [ bearer_auth: [] ]
-    description "Updates #{resource_name.articleize}"
+    description "Updates #{endpoint_name.articleize}"
     operationId "update-#{resource_name.parameterize.to_sym}"
-    consumes 'application/json'
+    consumes consumes_kind
     parameter name: :id, in: :path, type: :string
-    parameter name: param_name, in: :body, schema: { '$ref' => "#/components/schemas/#{param_name}_params" }
-    json_api_include_parameter(include_example)
+    parameter name: param_name, in: request_data_type, schema: { '$ref' => "#/components/schemas/#{param_name}_params" }
+    json_api_include_parameter(options[:include_example]) unless options[:include_example].nil?
 
     let(param_name) { valid_update_param_value }
 
@@ -197,11 +219,13 @@ shared_examples 'PATCH update record' do |resource_name, include_example|
 end
 
 # destroy
-shared_examples 'DELETE record' do |resource_name|
-  delete "Delete #{resource_name.articleize}" do
-    tags resource_name.pluralize
+shared_examples 'DELETE record' do |resource_name, **options|
+  endpoint_name = options[:custom_endpoint_name] || resource_name
+
+  delete "Delete #{endpoint_name.articleize}" do
+    tags endpoint_name.pluralize
     security [ bearer_auth: [] ]
-    description "Deletes #{resource_name.articleize}"
+    description "Deletes #{endpoint_name.articleize}"
     operationId "delete-#{resource_name.parameterize.to_sym}"
     parameter name: :id, in: :path, type: :string
 
@@ -211,17 +235,17 @@ shared_examples 'DELETE record' do |resource_name|
   end
 end
 
-shared_examples 'CRUD examples' do |resource_name, include_example, filter_example|
+shared_examples 'CRUD examples' do |resource_name, **options|
   resource_path = resource_name.parameterize(separator: '_').pluralize
 
   path "/api/v2/platform/#{resource_path}" do
-    include_examples 'GET records list', resource_name, include_example, filter_example
-    include_examples 'POST create record', resource_name, include_example
+    include_examples 'GET records list', resource_name, options
+    include_examples 'POST create record', resource_name, options
   end
 
   path "/api/v2/platform/#{resource_path}/{id}" do
-    include_examples 'GET record', resource_name, include_example
-    include_examples 'PATCH update record', resource_name, include_example
-    include_examples 'DELETE record', resource_name
+    include_examples 'GET record', resource_name, options
+    include_examples 'PATCH update record', resource_name, options
+    include_examples 'DELETE record', resource_name, options
   end
 end

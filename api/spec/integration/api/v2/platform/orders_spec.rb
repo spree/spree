@@ -5,8 +5,10 @@ describe 'Orders API', swagger: true do
 
   resource_name = 'Order'
   resource_path = 'orders'
-  include_example = 'line_items.variants.product'
-  filter_example = 'state_eq=complete'
+  options = {
+    include_example: 'line_items,variants,product',
+    filter_examples: [{ name: 'filter[state_eq]', example: 'complete' }]
+  }
 
   let(:persisted_order) { create(:order_with_line_items, state: :delivery) }
   let(:id) { persisted_order.number }
@@ -54,7 +56,7 @@ describe 'Orders API', swagger: true do
   end
 
   path "/api/v2/platform/#{resource_path}" do
-    include_examples 'GET records list', resource_name, include_example, filter_example
+    include_examples 'GET records list', resource_name, options
 
     param_name = resource_name.parameterize(separator: '_').to_sym
     post "Creates #{resource_name.articleize}" do
@@ -64,7 +66,7 @@ describe 'Orders API', swagger: true do
       description "Creates #{resource_name.articleize}"
       operationId "create-#{resource_name.parameterize.to_sym}"
       parameter name: param_name, in: :body, schema: { '$ref' => "#/components/schemas/#{param_name}_params" }
-      json_api_include_parameter(include_example)
+      json_api_include_parameter(options[:include_example])
 
       let(param_name) { valid_create_param_value }
 
@@ -74,8 +76,8 @@ describe 'Orders API', swagger: true do
   end
 
   path "/api/v2/platform/#{resource_path}/{id}" do
-    include_examples 'GET record', resource_name, include_example
-    include_examples 'PATCH update record', resource_name, include_example
+    include_examples 'GET record', resource_name, options
+    include_examples 'PATCH update record', resource_name, options
     include_examples 'DELETE record', resource_name
   end
 
@@ -87,7 +89,7 @@ describe 'Orders API', swagger: true do
       operationId "advance-#{resource_name.parameterize.to_sym}"
       consumes 'application/json'
       parameter name: :id, in: :path, type: :string
-      json_api_include_parameter(include_example)
+      json_api_include_parameter(options[:include_example])
 
       response '200', 'record updated' do
         run_test!
@@ -105,7 +107,7 @@ describe 'Orders API', swagger: true do
       operationId "next-#{resource_name.parameterize.to_sym}"
       consumes 'application/json'
       parameter name: :id, in: :path, type: :string
-      json_api_include_parameter(include_example)
+      json_api_include_parameter(options[:include_example])
 
       response '200', 'record updated' do
         run_test!
@@ -127,7 +129,7 @@ describe 'Orders API', swagger: true do
       operationId "complete-#{resource_name.parameterize.to_sym}"
       consumes 'application/json'
       parameter name: :id, in: :path, type: :string
-      json_api_include_parameter(include_example)
+      json_api_include_parameter(options[:include_example])
 
       response '200', 'record updated' do
         run_test!
@@ -145,7 +147,7 @@ describe 'Orders API', swagger: true do
       operationId "empty-#{resource_name.parameterize.to_sym}"
       consumes 'application/json'
       parameter name: :id, in: :path, type: :string
-      json_api_include_parameter(include_example)
+      json_api_include_parameter(options[:include_example])
 
       response '200', 'record updated' do
         run_test!
@@ -163,7 +165,7 @@ describe 'Orders API', swagger: true do
       operationId "approve-#{resource_name.parameterize.to_sym}"
       consumes 'application/json'
       parameter name: :id, in: :path, type: :string
-      json_api_include_parameter(include_example)
+      json_api_include_parameter(options[:include_example])
 
       response '200', 'record approved' do
         run_test!
@@ -181,7 +183,7 @@ describe 'Orders API', swagger: true do
       operationId "cancel-#{resource_name.parameterize.to_sym}"
       consumes 'application/json'
       parameter name: :id, in: :path, type: :string
-      json_api_include_parameter(include_example)
+      json_api_include_parameter(options[:include_example])
 
       response '200', 'record cancelled' do
         let(:id) { create(:completed_order_with_totals).id }
@@ -204,7 +206,7 @@ describe 'Orders API', swagger: true do
       consumes 'application/json'
       parameter name: :id, in: :path, type: :string
       parameter name: :amount, in: :body, schema: { '$ref' => '#/components/schemas/amount_param' }
-      json_api_include_parameter(include_example)
+      json_api_include_parameter(options[:include_example])
 
       let!(:store_credit_payment_method) { create(:store_credit_payment_method) }
 
@@ -231,7 +233,7 @@ describe 'Orders API', swagger: true do
       consumes 'application/json'
       parameter name: :id, in: :path, type: :string
       parameter name: :coupon_code, in: :body, schema: { '$ref' => '#/components/schemas/coupon_code_param' }
-      json_api_include_parameter(include_example)
+      json_api_include_parameter(options[:include_example])
 
       let!(:promotion) { create(:promotion, name: 'Free shipping', code: 'freeship', stores: [store]) }
       let(:coupon_code) { { coupon_code: promotion.code } }

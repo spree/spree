@@ -4,8 +4,10 @@ describe 'Wishlists API', swagger: true do
   include_context 'Platform API v2'
 
   resource_name = 'Wishlist'
-  include_example = 'wished_items'
-  filter_example = 'name_cont=Birthday'
+  options = {
+    include_example: 'wished_items',
+    filter_examples: [{ name: 'filter[name_cont]', example: 'Birthday' }]
+  }
 
   let!(:user) { create(:user) }
 
@@ -43,5 +45,5 @@ describe 'Wishlists API', swagger: true do
     }
   end
 
-  include_examples 'CRUD examples', resource_name, include_example, filter_example
+  include_examples 'CRUD examples', resource_name, options
 end

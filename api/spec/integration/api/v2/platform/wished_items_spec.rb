@@ -4,7 +4,9 @@ describe 'Wished Item API', swagger: true do
   include_context 'Platform API v2'
 
   resource_name = 'Wished Item'
-  include_example = 'variant'
+  options = {
+    include_example: 'variant'
+  }
 
   let!(:user) { create(:user) }
   let!(:wishlist) { create(:wishlist) }
@@ -25,5 +27,5 @@ describe 'Wished Item API', swagger: true do
     }
   end
 
-  include_examples 'CRUD examples', resource_name, include_example
+  include_examples 'CRUD examples', resource_name, options
 end

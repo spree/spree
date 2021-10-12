@@ -4,8 +4,10 @@ describe 'Option Types API', swagger: true do
   include_context 'Platform API v2'
 
   resource_name = 'Option Type'
-  include_example = ''
-  filter_example = 'option_type_id_eq=1&name_cont=Size'
+  options = {
+    filter_examples: [{ name: 'filter[option_type_id_eq]', example: '1' },
+                      { name: 'filter[name_cont]', example: 'Size' }]
+  }
 
   let(:id) { create(:option_type).id }
   let(:option_type) { create(:option_type) }
@@ -22,5 +24,5 @@ describe 'Option Types API', swagger: true do
     }
   end
 
-  include_examples 'CRUD examples', resource_name, include_example, filter_example
+  include_examples 'CRUD examples', resource_name, options
 end

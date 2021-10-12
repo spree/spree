@@ -4,8 +4,10 @@ describe 'Line Items API', swagger: true do
   include_context 'Platform API v2'
 
   resource_name = 'Line Item'
-  include_example = 'order,tax_category,variant.product'
-  filter_example = 'order_id_eq=1'
+  options = {
+    include_example: 'order,tax_category,variant.product',
+    filter_examples: [{ name: 'filter[order_id_eq]', example: '123' }]
+  }
 
   let(:product) { create(:product_in_stock, :without_backorder, stores: [store]) }
   let(:variant) { product.master }
@@ -26,5 +28,5 @@ describe 'Line Items API', swagger: true do
     }
   end
 
-  include_examples 'CRUD examples', resource_name, include_example, filter_example
+  include_examples 'CRUD examples', resource_name, options
 end

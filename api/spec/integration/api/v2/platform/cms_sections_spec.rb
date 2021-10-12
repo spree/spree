@@ -4,8 +4,10 @@ describe 'CMS Section API', swagger: true do
   include_context 'Platform API v2'
 
   resource_name = 'CMS Section'
-  include_example = 'product'
-  filter_example = 'name_eq=Hero'
+  options = {
+    include_example: 'product',
+    filter_examples: [{ name: 'filter[name_eq]', example: 'Hero' }]
+  }
 
   let!(:store) { Spree::Store.default }
   let!(:product) { create(:product) }
@@ -34,7 +36,7 @@ describe 'CMS Section API', swagger: true do
     }
   end
 
-  include_examples 'CRUD examples', resource_name, include_example, filter_example
+  include_examples 'CRUD examples', resource_name, options
 
   path '/api/v2/platform/cms_sections/{id}/reposition' do
     patch 'Reposition a CMS Section' do

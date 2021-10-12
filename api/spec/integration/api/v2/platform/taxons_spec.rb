@@ -4,8 +4,11 @@ describe 'Taxons API', swagger: true do
   include_context 'Platform API v2'
 
   resource_name = 'Taxon'
-  include_example = 'taxonomy,parent,children'
-  filter_example = 'taxonomy_id_eq=1&name_cont=Shirts'
+  options = {
+    include_example: 'taxonomy,parent,children',
+    filter_examples: [{ name: 'filter[taxonomy_id_eq]', example: '1' },
+                      { name: 'filter[name_cont]', example: 'Shirts' }]
+  }
 
   let(:id) { create(:taxon).id }
   let(:taxonomy) { create(:taxonomy, store: store) }
@@ -22,5 +25,5 @@ describe 'Taxons API', swagger: true do
     }
   end
 
-  include_examples 'CRUD examples', resource_name, include_example, filter_example
+  include_examples 'CRUD examples', resource_name, options
 end
