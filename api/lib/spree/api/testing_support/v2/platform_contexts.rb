@@ -53,7 +53,7 @@ def json_api_include_parameter(example = '')
   parameter name: :include, in: :query, type: :string, description: JSON_API_INCLUDES_DESCRIPTION, example: example
 end
 
-def json_api_filter_parameter(examples = nil)
+def json_api_filter_parameter(examples = [])
   examples.each do |api_filter|
     name = api_filter[:name].to_sym
     example = api_filter[:example]
