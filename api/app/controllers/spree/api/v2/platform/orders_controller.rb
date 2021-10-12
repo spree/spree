@@ -23,43 +23,43 @@ module Spree
               request_env: request.headers.env
             )
 
-            render_order(result)
+            render_result(result)
           end
 
           def next
             result = next_service.call(order: resource)
 
-            render_order(result)
+            render_result(result)
           end
 
           def advance
             result = advance_service.call(order: resource)
 
-            render_order(result)
+            render_result(result)
           end
 
           def complete
             result = complete_service.call(order: resource)
 
-            render_order(result)
+            render_result(result)
           end
 
           def empty
             result = empty_service.call(order: resource)
 
-            render_order(result)
+            render_result(result)
           end
 
           def cancel
             result = cancel_service.call(order: resource, canceler: spree_current_user)
 
-            render_order(result)
+            render_result(result)
           end
 
           def approve
             result = approve_service.call(order: resource, approver: spree_current_user)
 
-            render_order(result)
+            render_result(result)
           end
 
           def destroy
@@ -89,7 +89,7 @@ module Spree
               amount: params[:amount].try(:to_f)
             )
 
-            render_order(result)
+            render_result(result)
           end
 
           private
@@ -106,14 +106,6 @@ module Spree
             super.push(:available_on, :total, :payment_total, :item_total, :shipment_total,
                        :adjustment_total, :promo_total, :included_tax_total, :additional_tax_total,
                        :item_count, :tax_total, :completed_at)
-          end
-
-          def render_order(result)
-            if result.success?
-              render_serialized_payload { serialize_resource(resource) }
-            else
-              render_error_payload(result.error)
-            end
           end
 
           def update_service
