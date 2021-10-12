@@ -12,7 +12,8 @@ module Spree
         def call
           return if body == ''
 
-          Rails.logger.debug("Making a request to #{url} with body #{body}")
+          Rails.logger.debug("[SPREE WEBHOOKS] #{object_class_name} #{event_name} sending to #{url}")
+          Rails.logger.debug("[SPREE WEBHOOKS] body: #{body}")
 
           if unprocessable_uri?
             Rails.logger.warn(UNPROCESSABLE_MSG)
@@ -31,9 +32,9 @@ module Spree
 
         attr_reader :body, :url
 
-        FAIL_MSG = 'Webhook request finished with errors'
+        FAIL_MSG = '[SPREE WEBHOOKS] #{object_class_name} #{event_name} failed for #{url}'
         HEADERS = { 'Content-Type' => 'application/json' }.freeze
-        SUCCESS_MSG = 'Webhook request completed successfully'
+        SUCCESS_MSG = "[SPREE WEBHOOKS] #{object_class_name} #{event_name} success for URL #{url}"
         UNPROCESSABLE_MSG = 'Can not make a request to the given URL'
         private_constant :FAIL_MSG, :HEADERS, :SUCCESS_MSG, :UNPROCESSABLE_MSG
 
