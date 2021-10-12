@@ -57,8 +57,8 @@ describe Spree::Webhooks::Endpoints::MakeRequest do
 
           shared_examples 'makes the request without setting use_ssl' do
             it 'does not set use_ssl' do
-              expect(Net::HTTP).to receive(:new).with(uri.host, uri.port).and_return(http)
-              expect(http).to_not receive(:use_ssl=)
+              allow(Net::HTTP).to receive(:new).with(uri.host, uri.port).and_return(http)
+              expect(http).not_to receive(:use_ssl=)
               subject
             end
 
@@ -87,7 +87,7 @@ describe Spree::Webhooks::Endpoints::MakeRequest do
             let(:url) { 'http://google.com/' }
 
             it 'does set use_ssl' do
-              expect(Net::HTTP).to receive(:new).and_return(http)
+              allow(Net::HTTP).to receive(:new).and_return(http)
               expect(http).to receive(:use_ssl=).with(true)
               subject
             end
@@ -101,14 +101,14 @@ describe Spree::Webhooks::Endpoints::MakeRequest do
           end
         end
 
-        context 'when request code_type is not 2xx' do
+        context 'when request status code is not 2xx' do
           before do
             http_double = instance_double(Net::HTTP)
             allow(Net::HTTP).to receive(:new).and_return(http_double)
             allow(http_double).to(
               receive(:request).and_return(
                 double(:request).tap do |request|
-                  allow(request).to receive(:code).and_return("304")
+                  allow(request).to receive(:code).and_return('304')
                 end
               )
             )
@@ -124,7 +124,7 @@ describe Spree::Webhooks::Endpoints::MakeRequest do
           it { expect(subject).to eq(nil) }
         end
 
-        context 'when request code_type is 2xx' do
+        context 'when request status code is 2xx' do
           it 'debug logs after the request and returns its value' do
             message = "[SPREE WEBHOOKS] 'order.cancel' success for URL 'http://google.com/'"
             expect(subject).to eq(Rails.logger.debug(message))
