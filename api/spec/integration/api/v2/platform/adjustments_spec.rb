@@ -4,8 +4,10 @@ describe 'Adjustments API', swagger: true do
   include_context 'Platform API v2'
 
   resource_name = 'Adjustment'
-  include_example = 'order,adjustable'
-  filter_example = 'order_id=123456'
+  options = {
+    include_example: 'order,adjustable',
+    filter_examples: [{ name: 'filter[order_id]', example: '1234' }]
+  }
 
   let(:line_item) { create(:line_item, order: order) }
   let(:id) { create(:adjustment, order: order, adjustable: line_item).id }
@@ -24,5 +26,5 @@ describe 'Adjustments API', swagger: true do
     }
   end
 
-  include_examples 'CRUD examples', resource_name, include_example, filter_example
+  include_examples 'CRUD examples', resource_name, options
 end

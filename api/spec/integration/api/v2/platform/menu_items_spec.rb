@@ -4,8 +4,10 @@ describe 'Menu Items API', swagger: true do
   include_context 'Platform API v2'
 
   resource_name = 'Menu Item'
-  include_example = 'linked_resource'
-  filter_example = 'menu_item_name_eq=Women'
+  options = {
+    include_example: 'linked_resource',
+    filter_examples: [{ name: 'filter[menu_item_name_eq]', example: 'Women' }]
+  }
 
   let(:menu) { create(:menu, store: store) }
   let(:id) { create(:menu_item, menu: menu).id }
@@ -32,7 +34,7 @@ describe 'Menu Items API', swagger: true do
     }
   end
 
-  include_examples 'CRUD examples', resource_name, include_example, filter_example
+  include_examples 'CRUD examples', resource_name, options
 
   path '/api/v2/platform/menu_items/{id}/reposition' do
     patch 'Reposition a Menu Item' do
