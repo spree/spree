@@ -4,8 +4,10 @@ describe 'Taxons API', swagger: true do
   include_context 'Platform API v2'
 
   resource_name = 'Shipping Category'
-  include_example = ''
-  filter_example = 'name_i_cont=defa'
+  options = {
+    include_example: 'cms_sections',
+    filter_examples: [{ name: 'filter[name_i_cont]', example: 'default' }]
+  }
 
   let(:id) { create(:shipping_category).id }
   let(:records_list) { create_list(:shipping_category, 2) }
@@ -21,5 +23,5 @@ describe 'Taxons API', swagger: true do
     }
   end
 
-  include_examples 'CRUD examples', resource_name, include_example, filter_example
+  include_examples 'CRUD examples', resource_name, options
 end

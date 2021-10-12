@@ -35,10 +35,16 @@ paths:
         example: user,country,state
         schema:
           type: string
-      - name: filter
+      - name: filter[user_id_eq]
         in: query
         description: ''
-        example: user_id_eq=1&firstname_cont=Joh
+        example: '1'
+        schema:
+          type: string
+      - name: filter[firstname_cont]
+        in: query
+        description: ''
+        example: John
         schema:
           type: string
       responses:
@@ -63,8 +69,8 @@ paths:
                         state_name:
                         alternative_phone: 555-555-0199
                         company: Company
-                        created_at: '2021-10-11T19:00:06.523Z'
-                        updated_at: '2021-10-11T19:00:06.523Z'
+                        created_at: '2021-10-12T00:42:39.612Z'
+                        updated_at: '2021-10-12T00:42:39.612Z'
                         deleted_at:
                         label:
                       relationships:
@@ -91,8 +97,8 @@ paths:
                         state_name:
                         alternative_phone: 555-555-0199
                         company: Company
-                        created_at: '2021-10-11T19:00:06.528Z'
-                        updated_at: '2021-10-11T19:00:06.528Z'
+                        created_at: '2021-10-12T00:42:39.616Z'
+                        updated_at: '2021-10-12T00:42:39.616Z'
                         deleted_at:
                         label:
                       relationships:
@@ -111,11 +117,11 @@ paths:
                       total_count: 2
                       total_pages: 1
                     links:
-                      self: http://www.example.com/api/v2/platform/addresses?page=1&per_page=&include=&filter=
-                      next: http://www.example.com/api/v2/platform/addresses?include=&page=1&per_page=
-                      prev: http://www.example.com/api/v2/platform/addresses?include=&page=1&per_page=
-                      last: http://www.example.com/api/v2/platform/addresses?include=&page=1&per_page=
-                      first: http://www.example.com/api/v2/platform/addresses?include=&page=1&per_page=
+                      self: http://www.example.com/api/v2/platform/addresses?page=1&per_page=&include=&filter[user_id_eq]=&filter[firstname_cont]=
+                      next: http://www.example.com/api/v2/platform/addresses?filter%5Bfirstname_cont%5D=&filter%5Buser_id_eq%5D=&include=&page=1&per_page=
+                      prev: http://www.example.com/api/v2/platform/addresses?filter%5Bfirstname_cont%5D=&filter%5Buser_id_eq%5D=&include=&page=1&per_page=
+                      last: http://www.example.com/api/v2/platform/addresses?filter%5Bfirstname_cont%5D=&filter%5Buser_id_eq%5D=&include=&page=1&per_page=
+                      first: http://www.example.com/api/v2/platform/addresses?filter%5Bfirstname_cont%5D=&filter%5Buser_id_eq%5D=&include=&page=1&per_page=
         '401':
           description: Authentication Failed
           content:
@@ -162,8 +168,8 @@ paths:
                         state_name:
                         alternative_phone: 555-555-0199
                         company: Company
-                        created_at: '2021-10-11T19:00:06.705Z'
-                        updated_at: '2021-10-11T19:00:06.705Z'
+                        created_at: '2021-10-12T00:42:39.767Z'
+                        updated_at: '2021-10-12T00:42:39.767Z'
                         deleted_at:
                         label:
                       relationships:
@@ -253,8 +259,8 @@ paths:
                         state_name:
                         alternative_phone: 555-555-0199
                         company: Company
-                        created_at: '2021-10-11T19:00:06.749Z'
-                        updated_at: '2021-10-11T19:00:06.749Z'
+                        created_at: '2021-10-12T00:42:39.812Z'
+                        updated_at: '2021-10-12T00:42:39.812Z'
                         deleted_at:
                         label:
                       relationships:
@@ -327,8 +333,8 @@ paths:
                         state_name:
                         alternative_phone: 555-555-0199
                         company: Company
-                        created_at: '2021-10-11T19:00:06.801Z'
-                        updated_at: '2021-10-11T19:00:06.809Z'
+                        created_at: '2021-10-12T00:42:39.866Z'
+                        updated_at: '2021-10-12T00:42:39.874Z'
                         deleted_at:
                         label:
                       relationships:
@@ -436,10 +442,10 @@ paths:
         example: order,adjustable
         schema:
           type: string
-      - name: filter
+      - name: filter[order_id]
         in: query
         description: ''
-        example: order_id=123456
+        example: '1234'
         schema:
           type: string
       responses:
@@ -460,8 +466,8 @@ paths:
                         label: Shipping
                         mandatory:
                         eligible: true
-                        created_at: '2021-10-11T19:00:07.027Z'
-                        updated_at: '2021-10-11T19:00:07.027Z'
+                        created_at: '2021-10-12T00:42:40.092Z'
+                        updated_at: '2021-10-12T00:42:40.092Z'
                         state: open
                         included: false
                         display_amount: "$100.00"
@@ -487,8 +493,8 @@ paths:
                         label: Shipping
                         mandatory:
                         eligible: true
-                        created_at: '2021-10-11T19:00:07.051Z'
-                        updated_at: '2021-10-11T19:00:07.051Z'
+                        created_at: '2021-10-12T00:42:40.119Z'
+                        updated_at: '2021-10-12T00:42:40.119Z'
                         state: open
                         included: false
                         display_amount: "$100.00"
@@ -510,11 +516,11 @@ paths:
                       total_count: 2
                       total_pages: 1
                     links:
-                      self: http://www.example.com/api/v2/platform/adjustments?page=1&per_page=&include=&filter=
-                      next: http://www.example.com/api/v2/platform/adjustments?include=&page=1&per_page=
-                      prev: http://www.example.com/api/v2/platform/adjustments?include=&page=1&per_page=
-                      last: http://www.example.com/api/v2/platform/adjustments?include=&page=1&per_page=
-                      first: http://www.example.com/api/v2/platform/adjustments?include=&page=1&per_page=
+                      self: http://www.example.com/api/v2/platform/adjustments?page=1&per_page=&include=&filter[order_id]=
+                      next: http://www.example.com/api/v2/platform/adjustments?filter%5Border_id%5D=&include=&page=1&per_page=
+                      prev: http://www.example.com/api/v2/platform/adjustments?filter%5Border_id%5D=&include=&page=1&per_page=
+                      last: http://www.example.com/api/v2/platform/adjustments?filter%5Border_id%5D=&include=&page=1&per_page=
+                      first: http://www.example.com/api/v2/platform/adjustments?filter%5Border_id%5D=&include=&page=1&per_page=
         '401':
           description: Authentication Failed
           content:
@@ -557,8 +563,8 @@ paths:
                         label: Shipping
                         mandatory:
                         eligible: true
-                        created_at: '2021-10-11T19:00:07.327Z'
-                        updated_at: '2021-10-11T19:00:07.327Z'
+                        created_at: '2021-10-12T00:42:40.390Z'
+                        updated_at: '2021-10-12T00:42:40.390Z'
                         state: open
                         included: false
                         display_amount: "$100.00"
@@ -636,8 +642,8 @@ paths:
                         label: Shipping
                         mandatory:
                         eligible: true
-                        created_at: '2021-10-11T19:00:07.428Z'
-                        updated_at: '2021-10-11T19:00:07.432Z'
+                        created_at: '2021-10-12T00:42:40.492Z'
+                        updated_at: '2021-10-12T00:42:40.496Z'
                         state: open
                         included: false
                         display_amount: "$1.00"
@@ -709,8 +715,8 @@ paths:
                         label: New label
                         mandatory:
                         eligible: true
-                        created_at: '2021-10-11T19:00:07.616Z'
-                        updated_at: '2021-10-11T19:00:07.630Z'
+                        created_at: '2021-10-12T00:42:40.677Z'
+                        updated_at: '2021-10-12T00:42:40.691Z'
                         state: open
                         included: false
                         display_amount: "$15.00"
@@ -819,10 +825,10 @@ paths:
         example: product,taxon
         schema:
           type: string
-      - name: filter
+      - name: filter[taxon_id_eq]
         in: query
         description: ''
-        example: taxon_id_eq=1
+        example: '1'
         schema:
           type: string
       responses:
@@ -838,8 +844,8 @@ paths:
                       type: classification
                       attributes:
                         position: 1
-                        created_at: '2021-10-11T19:00:08.233Z'
-                        updated_at: '2021-10-11T19:00:08.233Z'
+                        created_at: '2021-10-12T00:42:41.277Z'
+                        updated_at: '2021-10-12T00:42:41.277Z'
                       relationships:
                         product:
                           data:
@@ -853,8 +859,8 @@ paths:
                       type: classification
                       attributes:
                         position: 1
-                        created_at: '2021-10-11T19:00:08.336Z'
-                        updated_at: '2021-10-11T19:00:08.336Z'
+                        created_at: '2021-10-12T00:42:41.380Z'
+                        updated_at: '2021-10-12T00:42:41.380Z'
                       relationships:
                         product:
                           data:
@@ -869,11 +875,11 @@ paths:
                       total_count: 2
                       total_pages: 1
                     links:
-                      self: http://www.example.com/api/v2/platform/classifications?page=1&per_page=&include=&filter=
-                      next: http://www.example.com/api/v2/platform/classifications?include=&page=1&per_page=
-                      prev: http://www.example.com/api/v2/platform/classifications?include=&page=1&per_page=
-                      last: http://www.example.com/api/v2/platform/classifications?include=&page=1&per_page=
-                      first: http://www.example.com/api/v2/platform/classifications?include=&page=1&per_page=
+                      self: http://www.example.com/api/v2/platform/classifications?page=1&per_page=&include=&filter[taxon_id_eq]=
+                      next: http://www.example.com/api/v2/platform/classifications?filter%5Btaxon_id_eq%5D=&include=&page=1&per_page=
+                      prev: http://www.example.com/api/v2/platform/classifications?filter%5Btaxon_id_eq%5D=&include=&page=1&per_page=
+                      last: http://www.example.com/api/v2/platform/classifications?filter%5Btaxon_id_eq%5D=&include=&page=1&per_page=
+                      first: http://www.example.com/api/v2/platform/classifications?filter%5Btaxon_id_eq%5D=&include=&page=1&per_page=
         '401':
           description: Authentication Failed
           content:
@@ -911,8 +917,8 @@ paths:
                       type: classification
                       attributes:
                         position: 1
-                        created_at: '2021-10-11T19:00:08.736Z'
-                        updated_at: '2021-10-11T19:00:08.736Z'
+                        created_at: '2021-10-12T00:42:41.783Z'
+                        updated_at: '2021-10-12T00:42:41.783Z'
                       relationships:
                         product:
                           data:
@@ -975,8 +981,8 @@ paths:
                       type: classification
                       attributes:
                         position: 1
-                        created_at: '2021-10-11T19:00:08.893Z'
-                        updated_at: '2021-10-11T19:00:08.893Z'
+                        created_at: '2021-10-12T00:42:41.942Z'
+                        updated_at: '2021-10-12T00:42:41.942Z'
                       relationships:
                         product:
                           data:
@@ -1036,8 +1042,8 @@ paths:
                       type: classification
                       attributes:
                         position: 1
-                        created_at: '2021-10-11T19:00:09.180Z'
-                        updated_at: '2021-10-11T19:00:09.180Z'
+                        created_at: '2021-10-12T00:42:42.231Z'
+                        updated_at: '2021-10-12T00:42:42.231Z'
                       relationships:
                         product:
                           data:
@@ -1147,8 +1153,8 @@ paths:
                       type: classification
                       attributes:
                         position: 2
-                        created_at: '2021-10-11T19:00:09.891Z'
-                        updated_at: '2021-10-11T19:00:09.912Z'
+                        created_at: '2021-10-12T00:42:42.933Z'
+                        updated_at: '2021-10-12T00:42:42.956Z'
                       relationships:
                         product:
                           data:
@@ -1215,10 +1221,16 @@ paths:
         example: cms_sections
         schema:
           type: string
-      - name: filter
+      - name: filter[type]
         in: query
         description: ''
-        example: type=homepage
+        example: homepage
+        schema:
+          type: string
+      - name: filter[title_cont]
+        in: query
+        description: ''
+        example: About Us
         schema:
           type: string
       responses:
@@ -1233,34 +1245,34 @@ paths:
                     - id: '1'
                       type: cms_page
                       attributes:
-                        title: Soluta reprehenderit nihil et necessitatibus.
+                        title: Inventore eos enim architecto doloribus reprehenderit.
                         meta_title:
                         content:
                         meta_description:
                         visible: true
-                        slug: soluta-reprehenderit-nihil-et-necessitatibus
+                        slug: inventore-eos-enim-architecto-doloribus-reprehenderit
                         type: Spree::Cms::Pages::StandardPage
                         locale: en
                         deleted_at:
-                        created_at: '2021-10-11T19:00:10.208Z'
-                        updated_at: '2021-10-11T19:00:10.208Z'
+                        created_at: '2021-10-12T00:42:43.276Z'
+                        updated_at: '2021-10-12T00:42:43.276Z'
                       relationships:
                         cms_sections:
                           data: []
                     - id: '2'
                       type: cms_page
                       attributes:
-                        title: Dolores nisi voluptatibus minima velit sint necessitatibus.
+                        title: Harum ad perferendis numquam magni.
                         meta_title:
                         content:
                         meta_description:
                         visible: true
-                        slug: dolores-nisi-voluptatibus-minima-velit-sint-necessitatibus
+                        slug: harum-ad-perferendis-numquam-magni
                         type: Spree::Cms::Pages::StandardPage
                         locale: en
                         deleted_at:
-                        created_at: '2021-10-11T19:00:10.212Z'
-                        updated_at: '2021-10-11T19:00:10.212Z'
+                        created_at: '2021-10-12T00:42:43.280Z'
+                        updated_at: '2021-10-12T00:42:43.280Z'
                       relationships:
                         cms_sections:
                           data: []
@@ -1269,11 +1281,11 @@ paths:
                       total_count: 2
                       total_pages: 1
                     links:
-                      self: http://www.example.com/api/v2/platform/cms_pages?page=1&per_page=&include=&filter=
-                      next: http://www.example.com/api/v2/platform/cms_pages?include=&page=1&per_page=
-                      prev: http://www.example.com/api/v2/platform/cms_pages?include=&page=1&per_page=
-                      last: http://www.example.com/api/v2/platform/cms_pages?include=&page=1&per_page=
-                      first: http://www.example.com/api/v2/platform/cms_pages?include=&page=1&per_page=
+                      self: http://www.example.com/api/v2/platform/cms_pages?page=1&per_page=&include=&filter[type]=&filter[title_cont]=
+                      next: http://www.example.com/api/v2/platform/cms_pages?filter%5Btitle_cont%5D=&filter%5Btype%5D=&include=&page=1&per_page=
+                      prev: http://www.example.com/api/v2/platform/cms_pages?filter%5Btitle_cont%5D=&filter%5Btype%5D=&include=&page=1&per_page=
+                      last: http://www.example.com/api/v2/platform/cms_pages?filter%5Btitle_cont%5D=&filter%5Btype%5D=&include=&page=1&per_page=
+                      first: http://www.example.com/api/v2/platform/cms_pages?filter%5Btitle_cont%5D=&filter%5Btype%5D=&include=&page=1&per_page=
         '401':
           description: Authentication Failed
           content:
@@ -1310,18 +1322,17 @@ paths:
                       id: '5'
                       type: cms_page
                       attributes:
-                        title: Dolore doloribus accusantium porro expedita ipsam voluptatibus
-                          quo.
+                        title: Quaerat minus maiores tenetur omnis id.
                         meta_title:
                         content:
                         meta_description:
                         visible: true
-                        slug: dolore-doloribus-accusantium-porro-expedita-ipsam-voluptatibus-quo
+                        slug: quaerat-minus-maiores-tenetur-omnis-id
                         type: Spree::Cms::Pages::StandardPage
                         locale: en
                         deleted_at:
-                        created_at: '2021-10-11T19:00:10.283Z'
-                        updated_at: '2021-10-11T19:00:10.283Z'
+                        created_at: '2021-10-12T00:42:43.354Z'
+                        updated_at: '2021-10-12T00:42:43.354Z'
                       relationships:
                         cms_sections:
                           data: []
@@ -1377,17 +1388,17 @@ paths:
                       id: '6'
                       type: cms_page
                       attributes:
-                        title: Minus nesciunt corporis enim iste exercitationem.
+                        title: Ex occaecati enim vero magnam eligendi iste.
                         meta_title:
                         content:
                         meta_description:
                         visible: true
-                        slug: minus-nesciunt-corporis-enim-iste-exercitationem
+                        slug: ex-occaecati-enim-vero-magnam-eligendi-iste
                         type: Spree::Cms::Pages::StandardPage
                         locale: en
                         deleted_at:
-                        created_at: '2021-10-11T19:00:10.319Z'
-                        updated_at: '2021-10-11T19:00:10.319Z'
+                        created_at: '2021-10-12T00:42:43.386Z'
+                        updated_at: '2021-10-12T00:42:43.386Z'
                       relationships:
                         cms_sections:
                           data: []
@@ -1445,12 +1456,12 @@ paths:
                         content:
                         meta_description:
                         visible: true
-                        slug: doloremque-iste-facilis-porro-tenetur-asperiores-quaerat-quod
+                        slug: cupiditate-repellat-praesentium-aliquid-unde-quia-animi-modi-dolores
                         type: Spree::Cms::Pages::StandardPage
                         locale: en
                         deleted_at:
-                        created_at: '2021-10-11T19:00:10.373Z'
-                        updated_at: '2021-10-11T19:00:10.388Z'
+                        created_at: '2021-10-12T00:42:43.446Z'
+                        updated_at: '2021-10-12T00:42:43.456Z'
                       relationships:
                         cms_sections:
                           data: []
@@ -1546,10 +1557,10 @@ paths:
         example: product
         schema:
           type: string
-      - name: filter
+      - name: filter[name_eq]
         in: query
         description: ''
-        example: name_eq=Hero
+        example: Hero
         schema:
           type: string
       responses:
@@ -1564,7 +1575,7 @@ paths:
                     - id: '1'
                       type: cms_section
                       attributes:
-                        name: Distinctio quae et sit expedita.
+                        name: Sequi reiciendis consequatur deleniti a.
                         content: {}
                         settings:
                           gutters: No Gutters
@@ -1573,8 +1584,8 @@ paths:
                         type: Spree::Cms::Sections::HeroImage
                         position: 1
                         linked_resource_type: Spree::Taxon
-                        created_at: '2021-10-11T19:00:10.543Z'
-                        updated_at: '2021-10-11T19:00:10.543Z'
+                        created_at: '2021-10-12T00:42:43.678Z'
+                        updated_at: '2021-10-12T00:42:43.678Z'
                       relationships:
                         cms_page:
                           data:
@@ -1585,7 +1596,7 @@ paths:
                     - id: '2'
                       type: cms_section
                       attributes:
-                        name: Vitae iure sequi fugit qui delectus labore.
+                        name: A vel optio provident amet.
                         content:
                           link_type_one: Spree::Taxon
                           link_type_two: Spree::Taxon
@@ -1597,8 +1608,8 @@ paths:
                         type: Spree::Cms::Sections::ImageGallery
                         position: 2
                         linked_resource_type:
-                        created_at: '2021-10-11T19:00:10.547Z'
-                        updated_at: '2021-10-11T19:00:10.547Z'
+                        created_at: '2021-10-12T00:42:43.682Z'
+                        updated_at: '2021-10-12T00:42:43.682Z'
                       relationships:
                         cms_page:
                           data:
@@ -1609,7 +1620,7 @@ paths:
                     - id: '3'
                       type: cms_section
                       attributes:
-                        name: Repudiandae numquam illo sed nam rem molestiae.
+                        name: Fuga porro odit cum vel dignissimos.
                         content: {}
                         settings:
                           gutters: No Gutters
@@ -1618,8 +1629,8 @@ paths:
                         type: Spree::Cms::Sections::FeaturedArticle
                         position: 3
                         linked_resource_type: Spree::Taxon
-                        created_at: '2021-10-11T19:00:10.555Z'
-                        updated_at: '2021-10-11T19:00:10.555Z'
+                        created_at: '2021-10-12T00:42:43.691Z'
+                        updated_at: '2021-10-12T00:42:43.691Z'
                       relationships:
                         cms_page:
                           data:
@@ -1630,7 +1641,7 @@ paths:
                     - id: '4'
                       type: cms_section
                       attributes:
-                        name: Itaque culpa veritatis rem vel suscipit.
+                        name: Dolor quidem aperiam et repellendus.
                         content: {}
                         settings:
                           gutters: No Gutters
@@ -1639,8 +1650,8 @@ paths:
                         type: Spree::Cms::Sections::HeroImage
                         position: 4
                         linked_resource_type: Spree::Product
-                        created_at: '2021-10-11T19:00:10.568Z'
-                        updated_at: '2021-10-11T19:00:10.568Z'
+                        created_at: '2021-10-12T00:42:43.699Z'
+                        updated_at: '2021-10-12T00:42:43.699Z'
                       relationships:
                         cms_page:
                           data:
@@ -1653,8 +1664,8 @@ paths:
                     - id: '5'
                       type: cms_section
                       attributes:
-                        name: Dignissimos non eaque enim laboriosam repellendus minima
-                          quia.
+                        name: Aliquid quo illo quibusdam laboriosam et ex cupiditate
+                          distinctio.
                         content: {}
                         settings:
                           gutters: No Gutters
@@ -1663,8 +1674,8 @@ paths:
                         type: Spree::Cms::Sections::HeroImage
                         position: 5
                         linked_resource_type: Spree::Product
-                        created_at: '2021-10-11T19:00:10.575Z'
-                        updated_at: '2021-10-11T19:00:10.575Z'
+                        created_at: '2021-10-12T00:42:43.706Z'
+                        updated_at: '2021-10-12T00:42:43.706Z'
                       relationships:
                         cms_page:
                           data:
@@ -1679,11 +1690,11 @@ paths:
                       total_count: 5
                       total_pages: 1
                     links:
-                      self: http://www.example.com/api/v2/platform/cms_sections?page=1&per_page=&include=&filter=
-                      next: http://www.example.com/api/v2/platform/cms_sections?include=&page=1&per_page=
-                      prev: http://www.example.com/api/v2/platform/cms_sections?include=&page=1&per_page=
-                      last: http://www.example.com/api/v2/platform/cms_sections?include=&page=1&per_page=
-                      first: http://www.example.com/api/v2/platform/cms_sections?include=&page=1&per_page=
+                      self: http://www.example.com/api/v2/platform/cms_sections?page=1&per_page=&include=&filter[name_eq]=
+                      next: http://www.example.com/api/v2/platform/cms_sections?filter%5Bname_eq%5D=&include=&page=1&per_page=
+                      prev: http://www.example.com/api/v2/platform/cms_sections?filter%5Bname_eq%5D=&include=&page=1&per_page=
+                      last: http://www.example.com/api/v2/platform/cms_sections?filter%5Bname_eq%5D=&include=&page=1&per_page=
+                      first: http://www.example.com/api/v2/platform/cms_sections?filter%5Bname_eq%5D=&include=&page=1&per_page=
         '401':
           description: Authentication Failed
           content:
@@ -1720,7 +1731,8 @@ paths:
                       id: '14'
                       type: cms_section
                       attributes:
-                        name: Sunt quod eligendi culpa maxime.
+                        name: Corrupti aliquid consequuntur maxime quasi repudiandae
+                          similique.
                         content: {}
                         settings:
                           gutters: No Gutters
@@ -1729,8 +1741,8 @@ paths:
                         type: Spree::Cms::Sections::HeroImage
                         position: 4
                         linked_resource_type: Spree::Product
-                        created_at: '2021-10-11T19:00:10.728Z'
-                        updated_at: '2021-10-11T19:00:10.728Z'
+                        created_at: '2021-10-12T00:42:43.856Z'
+                        updated_at: '2021-10-12T00:42:43.856Z'
                       relationships:
                         cms_page:
                           data:
@@ -1792,8 +1804,7 @@ paths:
                       id: '21'
                       type: cms_section
                       attributes:
-                        name: Voluptatem molestias commodi accusantium quidem eos
-                          iste natus optio.
+                        name: Cumque dolorum laborum cupiditate et dolore libero.
                         content: {}
                         settings:
                           gutters: No Gutters
@@ -1802,8 +1813,8 @@ paths:
                         type: Spree::Cms::Sections::HeroImage
                         position: 4
                         linked_resource_type: Spree::Product
-                        created_at: '2021-10-11T19:00:10.927Z'
-                        updated_at: '2021-10-11T19:00:10.927Z'
+                        created_at: '2021-10-12T00:42:43.999Z'
+                        updated_at: '2021-10-12T00:42:43.999Z'
                       relationships:
                         cms_page:
                           data:
@@ -1871,8 +1882,8 @@ paths:
                         type: Spree::Cms::Sections::HeroImage
                         position: 4
                         linked_resource_type: Spree::Product
-                        created_at: '2021-10-11T19:00:11.139Z'
-                        updated_at: '2021-10-11T19:00:11.151Z'
+                        created_at: '2021-10-12T00:42:44.205Z'
+                        updated_at: '2021-10-12T00:42:44.217Z'
                       relationships:
                         cms_page:
                           data:
@@ -1974,7 +1985,8 @@ paths:
                       id: '58'
                       type: cms_section
                       attributes:
-                        name: Ad tenetur fugit repudiandae error.
+                        name: Ipsum occaecati similique a illo reprehenderit accusamus
+                          consequatur.
                         content: {}
                         settings:
                           gutters: No Gutters
@@ -1983,8 +1995,8 @@ paths:
                         type: Spree::Cms::Sections::HeroImage
                         position: 3
                         linked_resource_type: Spree::Product
-                        created_at: '2021-10-11T19:00:11.599Z'
-                        updated_at: '2021-10-11T19:00:11.610Z'
+                        created_at: '2021-10-12T00:42:44.837Z'
+                        updated_at: '2021-10-12T00:42:44.848Z'
                       relationships:
                         cms_page:
                           data:
@@ -2042,9 +2054,9 @@ paths:
                         name: United States of America
                         numcode: 840
                         states_required: true
-                        updated_at: '2021-10-11T19:00:11.907Z'
+                        updated_at: '2021-10-12T00:42:45.002Z'
                         zipcode_required: true
-                        created_at: '2021-10-11T19:00:11.907Z'
+                        created_at: '2021-10-12T00:42:45.002Z'
                       relationships:
                         states:
                           data: []
@@ -2057,9 +2069,9 @@ paths:
                         name: NAME_2
                         numcode: 840
                         states_required: false
-                        updated_at: '2021-10-11T19:00:11.913Z'
+                        updated_at: '2021-10-12T00:42:45.009Z'
                         zipcode_required: true
-                        created_at: '2021-10-11T19:00:11.913Z'
+                        created_at: '2021-10-12T00:42:45.009Z'
                       relationships:
                         states:
                           data: []
@@ -2072,9 +2084,9 @@ paths:
                         name: NAME_3
                         numcode: 840
                         states_required: false
-                        updated_at: '2021-10-11T19:00:11.915Z'
+                        updated_at: '2021-10-12T00:42:45.011Z'
                         zipcode_required: true
-                        created_at: '2021-10-11T19:00:11.915Z'
+                        created_at: '2021-10-12T00:42:45.011Z'
                       relationships:
                         states:
                           data: []
@@ -2129,9 +2141,9 @@ paths:
                         name: NAME_6
                         numcode: 840
                         states_required: false
-                        updated_at: '2021-10-11T19:00:11.957Z'
+                        updated_at: '2021-10-12T00:42:45.050Z'
                         zipcode_required: true
-                        created_at: '2021-10-11T19:00:11.957Z'
+                        created_at: '2021-10-12T00:42:45.050Z'
                       relationships:
                         states:
                           data: []
@@ -2183,7 +2195,7 @@ paths:
                     - id: '1'
                       type: digital_link
                       attributes:
-                        token: WAvxQKC5cGJsVwVNSYBfGT5m
+                        token: 4hSqMq4q5d6M6ur1qY82qmVM
                         access_counter: 0
                       relationships:
                         digital:
@@ -2197,7 +2209,7 @@ paths:
                     - id: '2'
                       type: digital_link
                       attributes:
-                        token: MRB2Ud2aNyxtibx2mzDd5nux
+                        token: Ngdymd3EZ1gZoC9teG749Hpz
                         access_counter: 0
                       relationships:
                         digital:
@@ -2247,7 +2259,7 @@ paths:
                       id: '5'
                       type: digital_link
                       attributes:
-                        token: mHxhDXzgDQGPndfE3VeggDM6
+                        token: CgTkmNty92tC5vpyDi1iyTcW
                         access_counter: 0
                       relationships:
                         digital:
@@ -2306,7 +2318,7 @@ paths:
                       id: '6'
                       type: digital_link
                       attributes:
-                        token: aHEaTo19m8zQAPvNwbcLJkaS
+                        token: 5jG5v9hH8aDYr5as9srys5HE
                         access_counter: 0
                       relationships:
                         digital:
@@ -2359,7 +2371,7 @@ paths:
                       id: '8'
                       type: digital_link
                       attributes:
-                        token: xXoJtq4BMMTdbrS24FXo4aub
+                        token: xBeYanGmjHYFKvQWTUvPVKMy
                         access_counter: 0
                       relationships:
                         digital:
@@ -2443,7 +2455,7 @@ paths:
       security:
       - bearer_auth: []
       operationId: reset-digital-link
-      description: Resets a digital link, allowing further downloads
+      description: Resets a digital link, allowing further downloads.
       parameters:
       - name: id
         in: path
@@ -2462,7 +2474,7 @@ paths:
                       id: '13'
                       type: digital_link
                       attributes:
-                        token: BPVuDVY1vqirSt4GpiVDC5uE
+                        token: BNgCyGowqw6JchrqmX8Vm77C
                         access_counter: 0
                       relationships:
                         digital:
@@ -2475,12 +2487,12 @@ paths:
                             type: line_item
   "/api/v2/platform/digitals":
     get:
-      summary: Return a list of Digitals
+      summary: Return a list of Digital Assets
       tags:
-      - Digitals
+      - Digital Assets
       security:
       - bearer_auth: []
-      description: Returns a list of Digitals
+      description: Returns a list of Digital Assets
       operationId: digitals-list
       parameters:
       - name: page
@@ -2493,6 +2505,13 @@ paths:
         example: 50
         schema:
           type: integer
+      - name: include
+        in: query
+        description: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: variant
+        schema:
+          type: string
       responses:
         '200':
           description: Records returned
@@ -2543,11 +2562,11 @@ paths:
                       total_count: 3
                       total_pages: 1
                     links:
-                      self: http://www.example.com/api/v2/platform/digitals?page=1&per_page=
-                      next: http://www.example.com/api/v2/platform/digitals?page=1&per_page=
-                      prev: http://www.example.com/api/v2/platform/digitals?page=1&per_page=
-                      last: http://www.example.com/api/v2/platform/digitals?page=1&per_page=
-                      first: http://www.example.com/api/v2/platform/digitals?page=1&per_page=
+                      self: http://www.example.com/api/v2/platform/digitals?page=1&per_page=&include=
+                      next: http://www.example.com/api/v2/platform/digitals?include=&page=1&per_page=
+                      prev: http://www.example.com/api/v2/platform/digitals?include=&page=1&per_page=
+                      last: http://www.example.com/api/v2/platform/digitals?include=&page=1&per_page=
+                      first: http://www.example.com/api/v2/platform/digitals?include=&page=1&per_page=
         '401':
           description: Authentication Failed
           content:
@@ -2557,14 +2576,21 @@ paths:
                   value:
                     error: The access token is invalid
     post:
-      summary: Create a Digital
+      summary: Create a Digital Asset
       tags:
-      - Digitals
+      - Digital Assets
       security:
       - bearer_auth: []
-      description: Creates a Digital
+      description: Creates a Digital Asset
       operationId: create-digital
-      parameters: []
+      parameters:
+      - name: include
+        in: query
+        description: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: variant
+        schema:
+          type: string
       responses:
         '201':
           description: record created
@@ -2606,17 +2632,24 @@ paths:
               "$ref": "#/components/schemas/digital_params"
   "/api/v2/platform/digitals/{id}":
     get:
-      summary: Return a Digital
+      summary: Return a Digital Asset
       tags:
-      - Digitals
+      - Digital Assets
       security:
       - bearer_auth: []
-      description: Returns a Digital
+      description: Returns a Digital Asset
       operationId: show-digital
       parameters:
       - name: id
         in: path
         required: true
+        schema:
+          type: string
+      - name: include
+        in: query
+        description: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: variant
         schema:
           type: string
       responses:
@@ -2657,17 +2690,24 @@ paths:
                   value:
                     error: The access token is invalid
     patch:
-      summary: Update a Digital
+      summary: Update a Digital Asset
       tags:
-      - Digitals
+      - Digital Assets
       security:
       - bearer_auth: []
-      description: Updates a Digital
+      description: Updates a Digital Asset
       operationId: update-digital
       parameters:
       - name: id
         in: path
         required: true
+        schema:
+          type: string
+      - name: include
+        in: query
+        description: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: variant
         schema:
           type: string
       responses:
@@ -2724,12 +2764,12 @@ paths:
             schema:
               "$ref": "#/components/schemas/digital_params"
     delete:
-      summary: Delete a Digital
+      summary: Delete a Digital Asset
       tags:
-      - Digitals
+      - Digital Assets
       security:
       - bearer_auth: []
-      description: Deletes a Digital
+      description: Deletes a Digital Asset
       operationId: delete-digital
       parameters:
       - name: id
@@ -2783,10 +2823,10 @@ paths:
         example: order,tax_category,variant.product
         schema:
           type: string
-      - name: filter
+      - name: filter[order_id_eq]
         in: query
         description: ''
-        example: order_id_eq=1
+        example: '123'
         schema:
           type: string
       responses:
@@ -2803,8 +2843,8 @@ paths:
                       attributes:
                         quantity: 1
                         price: '10.0'
-                        created_at: '2021-10-11T19:00:18.762Z'
-                        updated_at: '2021-10-11T19:00:18.771Z'
+                        created_at: '2021-10-12T00:42:51.983Z'
+                        updated_at: '2021-10-12T00:42:51.996Z'
                         currency: USD
                         cost_price: '17.0'
                         adjustment_total: '0.0'
@@ -2820,11 +2860,11 @@ paths:
                         display_total: "$10.00"
                         display_subtotal: "$10.00"
                         display_final_amount: "$10.00"
-                        display_additional_tax_total: "$0.00"
                         display_adjustment_total: "$0.00"
-                        display_included_tax_total: "$0.00"
                         display_promo_total: "$0.00"
+                        display_additional_tax_total: "$0.00"
                         display_pre_tax_amount: "$10.00"
+                        display_included_tax_total: "$0.00"
                         display_amount: "$10.00"
                       relationships:
                         order:
@@ -2850,8 +2890,8 @@ paths:
                       attributes:
                         quantity: 1
                         price: '10.0'
-                        created_at: '2021-10-11T19:00:18.812Z'
-                        updated_at: '2021-10-11T19:00:18.818Z'
+                        created_at: '2021-10-12T00:42:52.035Z'
+                        updated_at: '2021-10-12T00:42:52.042Z'
                         currency: USD
                         cost_price: '17.0'
                         adjustment_total: '0.0'
@@ -2867,11 +2907,11 @@ paths:
                         display_total: "$10.00"
                         display_subtotal: "$10.00"
                         display_final_amount: "$10.00"
-                        display_additional_tax_total: "$0.00"
                         display_adjustment_total: "$0.00"
-                        display_included_tax_total: "$0.00"
                         display_promo_total: "$0.00"
+                        display_additional_tax_total: "$0.00"
                         display_pre_tax_amount: "$10.00"
+                        display_included_tax_total: "$0.00"
                         display_amount: "$10.00"
                       relationships:
                         order:
@@ -2897,11 +2937,11 @@ paths:
                       total_count: 2
                       total_pages: 1
                     links:
-                      self: http://www.example.com/api/v2/platform/line_items?page=1&per_page=&include=&filter=
-                      next: http://www.example.com/api/v2/platform/line_items?include=&page=1&per_page=
-                      prev: http://www.example.com/api/v2/platform/line_items?include=&page=1&per_page=
-                      last: http://www.example.com/api/v2/platform/line_items?include=&page=1&per_page=
-                      first: http://www.example.com/api/v2/platform/line_items?include=&page=1&per_page=
+                      self: http://www.example.com/api/v2/platform/line_items?page=1&per_page=&include=&filter[order_id_eq]=
+                      next: http://www.example.com/api/v2/platform/line_items?filter%5Border_id_eq%5D=&include=&page=1&per_page=
+                      prev: http://www.example.com/api/v2/platform/line_items?filter%5Border_id_eq%5D=&include=&page=1&per_page=
+                      last: http://www.example.com/api/v2/platform/line_items?filter%5Border_id_eq%5D=&include=&page=1&per_page=
+                      first: http://www.example.com/api/v2/platform/line_items?filter%5Border_id_eq%5D=&include=&page=1&per_page=
         '401':
           description: Authentication Failed
           content:
@@ -2940,8 +2980,8 @@ paths:
                       attributes:
                         quantity: 1
                         price: '10.0'
-                        created_at: '2021-10-11T19:00:19.070Z'
-                        updated_at: '2021-10-11T19:00:19.152Z'
+                        created_at: '2021-10-12T00:42:52.255Z'
+                        updated_at: '2021-10-12T00:42:52.294Z'
                         currency: USD
                         cost_price: '17.0'
                         adjustment_total: '0.0'
@@ -2957,11 +2997,11 @@ paths:
                         display_total: "$10.00"
                         display_subtotal: "$10.00"
                         display_final_amount: "$10.00"
-                        display_additional_tax_total: "$0.00"
                         display_adjustment_total: "$0.00"
-                        display_included_tax_total: "$0.00"
                         display_promo_total: "$0.00"
+                        display_additional_tax_total: "$0.00"
                         display_pre_tax_amount: "$10.00"
+                        display_included_tax_total: "$0.00"
                         display_amount: "$10.00"
                       relationships:
                         order:
@@ -3039,8 +3079,8 @@ paths:
                       attributes:
                         quantity: 1
                         price: '10.0'
-                        created_at: '2021-10-11T19:00:19.291Z'
-                        updated_at: '2021-10-11T19:00:19.298Z'
+                        created_at: '2021-10-12T00:42:52.430Z'
+                        updated_at: '2021-10-12T00:42:52.438Z'
                         currency: USD
                         cost_price: '17.0'
                         adjustment_total: '0.0'
@@ -3056,11 +3096,11 @@ paths:
                         display_total: "$10.00"
                         display_subtotal: "$10.00"
                         display_final_amount: "$10.00"
-                        display_additional_tax_total: "$0.00"
                         display_adjustment_total: "$0.00"
-                        display_included_tax_total: "$0.00"
                         display_promo_total: "$0.00"
+                        display_additional_tax_total: "$0.00"
                         display_pre_tax_amount: "$10.00"
+                        display_included_tax_total: "$0.00"
                         display_amount: "$10.00"
                       relationships:
                         order:
@@ -3132,8 +3172,8 @@ paths:
                       attributes:
                         quantity: 4
                         price: '10.0'
-                        created_at: '2021-10-11T19:00:19.538Z'
-                        updated_at: '2021-10-11T19:00:19.578Z'
+                        created_at: '2021-10-12T00:42:52.668Z'
+                        updated_at: '2021-10-12T00:42:52.712Z'
                         currency: USD
                         cost_price: '17.0'
                         adjustment_total: '0.0'
@@ -3149,11 +3189,11 @@ paths:
                         display_total: "$40.00"
                         display_subtotal: "$40.00"
                         display_final_amount: "$40.00"
-                        display_additional_tax_total: "$0.00"
                         display_adjustment_total: "$0.00"
-                        display_included_tax_total: "$0.00"
                         display_promo_total: "$0.00"
+                        display_additional_tax_total: "$0.00"
                         display_pre_tax_amount: "$40.00"
+                        display_included_tax_total: "$0.00"
                         display_amount: "$40.00"
                       relationships:
                         order:
@@ -3181,10 +3221,10 @@ paths:
               examples:
                 Example:
                   value:
-                    error: 'Quantity selected of "Product #131 - 9666" is not available.'
+                    error: 'Quantity selected of "Product #131 - 8783" is not available.'
                     errors:
                       quantity:
-                      - 'selected of "Product #131 - 9666" is not available.'
+                      - 'selected of "Product #131 - 8783" is not available.'
         '404':
           description: Record not found
           content:
@@ -3266,10 +3306,10 @@ paths:
         example: linked_resource
         schema:
           type: string
-      - name: filter
+      - name: filter[menu_item_name_eq]
         in: query
         description: ''
-        example: menu_item_name_eq=Women
+        example: Women
         schema:
           type: string
       responses:
@@ -3294,8 +3334,8 @@ paths:
                         lft: 2
                         rgt: 3
                         depth: 1
-                        created_at: '2021-10-11T19:00:20.173Z'
-                        updated_at: '2021-10-11T19:00:20.178Z'
+                        created_at: '2021-10-12T00:42:53.336Z'
+                        updated_at: '2021-10-12T00:42:53.340Z'
                         link:
                         is_container: false
                         is_root: false
@@ -3331,8 +3371,8 @@ paths:
                         lft: 4
                         rgt: 5
                         depth: 1
-                        created_at: '2021-10-11T19:00:20.235Z'
-                        updated_at: '2021-10-11T19:00:20.240Z'
+                        created_at: '2021-10-12T00:42:53.387Z'
+                        updated_at: '2021-10-12T00:42:53.391Z'
                         link:
                         is_container: false
                         is_root: false
@@ -3368,8 +3408,8 @@ paths:
                         lft: 6
                         rgt: 7
                         depth: 1
-                        created_at: '2021-10-11T19:00:20.284Z'
-                        updated_at: '2021-10-11T19:00:20.288Z'
+                        created_at: '2021-10-12T00:42:53.437Z'
+                        updated_at: '2021-10-12T00:42:53.441Z'
                         link:
                         is_container: false
                         is_root: false
@@ -3405,8 +3445,8 @@ paths:
                         lft: 8
                         rgt: 9
                         depth: 1
-                        created_at: '2021-10-11T19:00:20.339Z'
-                        updated_at: '2021-10-11T19:00:20.343Z'
+                        created_at: '2021-10-12T00:42:53.488Z'
+                        updated_at: '2021-10-12T00:42:53.493Z'
                         link:
                         is_container: false
                         is_root: false
@@ -3442,8 +3482,8 @@ paths:
                         lft: 10
                         rgt: 11
                         depth: 1
-                        created_at: '2021-10-11T19:00:20.399Z'
-                        updated_at: '2021-10-11T19:00:20.404Z'
+                        created_at: '2021-10-12T00:42:53.539Z'
+                        updated_at: '2021-10-12T00:42:53.544Z'
                         link:
                         is_container: false
                         is_root: false
@@ -3479,8 +3519,8 @@ paths:
                         lft: 12
                         rgt: 13
                         depth: 1
-                        created_at: '2021-10-11T19:00:20.450Z'
-                        updated_at: '2021-10-11T19:00:20.455Z'
+                        created_at: '2021-10-12T00:42:53.589Z'
+                        updated_at: '2021-10-12T00:42:53.594Z'
                         link:
                         is_container: false
                         is_root: false
@@ -3516,8 +3556,8 @@ paths:
                         lft: 14
                         rgt: 15
                         depth: 1
-                        created_at: '2021-10-11T19:00:20.502Z'
-                        updated_at: '2021-10-11T19:00:20.507Z'
+                        created_at: '2021-10-12T00:42:53.641Z'
+                        updated_at: '2021-10-12T00:42:53.646Z'
                         link:
                         is_container: false
                         is_root: false
@@ -3543,7 +3583,7 @@ paths:
                     - id: '1'
                       type: menu_item
                       attributes:
-                        name: Sed tempora dicta culpa quibusdam.
+                        name: Cum architecto officia dicta magni.
                         subtitle:
                         destination:
                         new_window: false
@@ -3553,8 +3593,8 @@ paths:
                         lft: 1
                         rgt: 16
                         depth: 0
-                        created_at: '2021-10-11T19:00:20.113Z'
-                        updated_at: '2021-10-11T19:00:20.518Z'
+                        created_at: '2021-10-12T00:42:53.281Z'
+                        updated_at: '2021-10-12T00:42:53.656Z'
                         link:
                         is_container: true
                         is_root: true
@@ -3592,11 +3632,11 @@ paths:
                       total_count: 8
                       total_pages: 1
                     links:
-                      self: http://www.example.com/api/v2/platform/menu_items?page=1&per_page=&include=&filter=
-                      next: http://www.example.com/api/v2/platform/menu_items?include=&page=1&per_page=
-                      prev: http://www.example.com/api/v2/platform/menu_items?include=&page=1&per_page=
-                      last: http://www.example.com/api/v2/platform/menu_items?include=&page=1&per_page=
-                      first: http://www.example.com/api/v2/platform/menu_items?include=&page=1&per_page=
+                      self: http://www.example.com/api/v2/platform/menu_items?page=1&per_page=&include=&filter[menu_item_name_eq]=
+                      next: http://www.example.com/api/v2/platform/menu_items?filter%5Bmenu_item_name_eq%5D=&include=&page=1&per_page=
+                      prev: http://www.example.com/api/v2/platform/menu_items?filter%5Bmenu_item_name_eq%5D=&include=&page=1&per_page=
+                      last: http://www.example.com/api/v2/platform/menu_items?filter%5Bmenu_item_name_eq%5D=&include=&page=1&per_page=
+                      first: http://www.example.com/api/v2/platform/menu_items?filter%5Bmenu_item_name_eq%5D=&include=&page=1&per_page=
         '401':
           description: Authentication Failed
           content:
@@ -3643,8 +3683,8 @@ paths:
                         lft: 8
                         rgt: 9
                         depth: 1
-                        created_at: '2021-10-11T19:00:21.122Z'
-                        updated_at: '2021-10-11T19:00:21.126Z'
+                        created_at: '2021-10-12T00:42:54.266Z'
+                        updated_at: '2021-10-12T00:42:54.270Z'
                         link:
                         is_container: false
                         is_root: false
@@ -3730,8 +3770,8 @@ paths:
                         lft: 8
                         rgt: 9
                         depth: 1
-                        created_at: '2021-10-11T19:00:21.615Z'
-                        updated_at: '2021-10-11T19:00:21.619Z'
+                        created_at: '2021-10-12T00:42:54.680Z'
+                        updated_at: '2021-10-12T00:42:54.684Z'
                         link:
                         is_container: false
                         is_root: false
@@ -3813,8 +3853,8 @@ paths:
                         lft: 8
                         rgt: 9
                         depth: 1
-                        created_at: '2021-10-11T19:00:22.280Z'
-                        updated_at: '2021-10-11T19:00:22.304Z'
+                        created_at: '2021-10-12T00:42:55.341Z'
+                        updated_at: '2021-10-12T00:42:55.365Z'
                         link:
                         is_container: false
                         is_root: false
@@ -3939,8 +3979,8 @@ paths:
                         lft: 5
                         rgt: 6
                         depth: 2
-                        created_at: '2021-10-11T19:00:23.895Z'
-                        updated_at: '2021-10-11T19:00:23.920Z'
+                        created_at: '2021-10-12T00:42:56.994Z'
+                        updated_at: '2021-10-12T00:42:57.020Z'
                         link:
                         is_container: false
                         is_root: false
@@ -4011,10 +4051,10 @@ paths:
         example: menu_items
         schema:
           type: string
-      - name: filter
+      - name: filter[location_eq]
         in: query
         description: ''
-        example: location_eq=header
+        example: header
         schema:
           type: string
       responses:
@@ -4032,8 +4072,8 @@ paths:
                         name: Main Menu
                         location: header
                         locale: en
-                        created_at: '2021-10-11T19:00:24.367Z'
-                        updated_at: '2021-10-11T19:00:24.493Z'
+                        created_at: '2021-10-12T00:42:57.468Z'
+                        updated_at: '2021-10-12T00:42:57.590Z'
                       relationships:
                         menu_items:
                           data:
@@ -4049,8 +4089,8 @@ paths:
                         name: Footer Menu
                         location: footer
                         locale: en
-                        created_at: '2021-10-11T19:00:24.377Z'
-                        updated_at: '2021-10-11T19:00:24.599Z'
+                        created_at: '2021-10-12T00:42:57.478Z'
+                        updated_at: '2021-10-12T00:42:57.693Z'
                       relationships:
                         menu_items:
                           data:
@@ -4065,11 +4105,11 @@ paths:
                       total_count: 2
                       total_pages: 1
                     links:
-                      self: http://www.example.com/api/v2/platform/menus?page=1&per_page=&include=&filter=
-                      next: http://www.example.com/api/v2/platform/menus?include=&page=1&per_page=
-                      prev: http://www.example.com/api/v2/platform/menus?include=&page=1&per_page=
-                      last: http://www.example.com/api/v2/platform/menus?include=&page=1&per_page=
-                      first: http://www.example.com/api/v2/platform/menus?include=&page=1&per_page=
+                      self: http://www.example.com/api/v2/platform/menus?page=1&per_page=&include=&filter[location_eq]=
+                      next: http://www.example.com/api/v2/platform/menus?filter%5Blocation_eq%5D=&include=&page=1&per_page=
+                      prev: http://www.example.com/api/v2/platform/menus?filter%5Blocation_eq%5D=&include=&page=1&per_page=
+                      last: http://www.example.com/api/v2/platform/menus?filter%5Blocation_eq%5D=&include=&page=1&per_page=
+                      first: http://www.example.com/api/v2/platform/menus?filter%5Blocation_eq%5D=&include=&page=1&per_page=
         '401':
           description: Authentication Failed
           content:
@@ -4109,8 +4149,8 @@ paths:
                         name: Main Menu
                         location: header
                         locale: en
-                        created_at: '2021-10-11T19:00:24.880Z'
-                        updated_at: '2021-10-11T19:00:24.887Z'
+                        created_at: '2021-10-12T00:42:57.973Z'
+                        updated_at: '2021-10-12T00:42:57.980Z'
                       relationships:
                         menu_items:
                           data:
@@ -4174,8 +4214,8 @@ paths:
                         name: Main Menu
                         location: header
                         locale: en
-                        created_at: '2021-10-11T19:00:24.925Z'
-                        updated_at: '2021-10-11T19:00:24.932Z'
+                        created_at: '2021-10-12T00:42:58.016Z'
+                        updated_at: '2021-10-12T00:42:58.023Z'
                       relationships:
                         menu_items:
                           data:
@@ -4233,8 +4273,8 @@ paths:
                         name: Main Menu
                         location: header
                         locale: en
-                        created_at: '2021-10-11T19:00:25.073Z'
-                        updated_at: '2021-10-11T19:00:25.080Z'
+                        created_at: '2021-10-12T00:42:58.090Z'
+                        updated_at: '2021-10-12T00:42:58.097Z'
                       relationships:
                         menu_items:
                           data:
@@ -4330,17 +4370,16 @@ paths:
         example: 50
         schema:
           type: integer
-      - name: include
-        in: query
-        description: 'Select which associated resources you would like to fetch, see:
-          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
-        example: ''
-        schema:
-          type: string
-      - name: filter
+      - name: filter[option_type_id_eq]
         in: query
         description: ''
-        example: option_type_id_eq=1&name_cont=Size
+        example: '1'
+        schema:
+          type: string
+      - name: filter[name_cont]
+        in: query
+        description: ''
+        example: Size
         schema:
           type: string
       responses:
@@ -4358,8 +4397,8 @@ paths:
                         name: foo-size-67
                         presentation: Size
                         position: 1
-                        created_at: '2021-10-11T19:00:25.249Z'
-                        updated_at: '2021-10-11T19:00:25.249Z'
+                        created_at: '2021-10-12T00:42:58.271Z'
+                        updated_at: '2021-10-12T00:42:58.271Z'
                         filterable: true
                       relationships:
                         option_values:
@@ -4370,8 +4409,8 @@ paths:
                         name: foo-size-68
                         presentation: Size
                         position: 2
-                        created_at: '2021-10-11T19:00:25.251Z'
-                        updated_at: '2021-10-11T19:00:25.251Z'
+                        created_at: '2021-10-12T00:42:58.273Z'
+                        updated_at: '2021-10-12T00:42:58.273Z'
                         filterable: true
                       relationships:
                         option_values:
@@ -4381,11 +4420,11 @@ paths:
                       total_count: 2
                       total_pages: 1
                     links:
-                      self: http://www.example.com/api/v2/platform/option_types?page=1&per_page=&include=&filter=
-                      next: http://www.example.com/api/v2/platform/option_types?include=&page=1&per_page=
-                      prev: http://www.example.com/api/v2/platform/option_types?include=&page=1&per_page=
-                      last: http://www.example.com/api/v2/platform/option_types?include=&page=1&per_page=
-                      first: http://www.example.com/api/v2/platform/option_types?include=&page=1&per_page=
+                      self: http://www.example.com/api/v2/platform/option_types?page=1&per_page=&filter[option_type_id_eq]=&filter[name_cont]=
+                      next: http://www.example.com/api/v2/platform/option_types?filter%5Bname_cont%5D=&filter%5Boption_type_id_eq%5D=&page=1&per_page=
+                      prev: http://www.example.com/api/v2/platform/option_types?filter%5Bname_cont%5D=&filter%5Boption_type_id_eq%5D=&page=1&per_page=
+                      last: http://www.example.com/api/v2/platform/option_types?filter%5Bname_cont%5D=&filter%5Boption_type_id_eq%5D=&page=1&per_page=
+                      first: http://www.example.com/api/v2/platform/option_types?filter%5Bname_cont%5D=&filter%5Boption_type_id_eq%5D=&page=1&per_page=
         '401':
           description: Authentication Failed
           content:
@@ -4402,14 +4441,7 @@ paths:
       - bearer_auth: []
       description: Creates an Option Type
       operationId: create-option-type
-      parameters:
-      - name: include
-        in: query
-        description: 'Select which associated resources you would like to fetch, see:
-          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
-        example: ''
-        schema:
-          type: string
+      parameters: []
       responses:
         '201':
           description: record created
@@ -4425,8 +4457,8 @@ paths:
                         name: foo-size-71
                         presentation: Size
                         position: 1
-                        created_at: '2021-10-11T19:00:25.305Z'
-                        updated_at: '2021-10-11T19:00:25.305Z'
+                        created_at: '2021-10-12T00:42:58.320Z'
+                        updated_at: '2021-10-12T00:42:58.320Z'
                         filterable: true
                       relationships:
                         option_values:
@@ -4464,13 +4496,6 @@ paths:
         required: true
         schema:
           type: string
-      - name: include
-        in: query
-        description: 'Select which associated resources you would like to fetch, see:
-          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
-        example: ''
-        schema:
-          type: string
       responses:
         '200':
           description: Record found
@@ -4486,8 +4511,8 @@ paths:
                         name: foo-size-72
                         presentation: Size
                         position: 1
-                        created_at: '2021-10-11T19:00:25.335Z'
-                        updated_at: '2021-10-11T19:00:25.335Z'
+                        created_at: '2021-10-12T00:42:58.355Z'
+                        updated_at: '2021-10-12T00:42:58.355Z'
                         filterable: true
                       relationships:
                         option_values:
@@ -4522,13 +4547,6 @@ paths:
         required: true
         schema:
           type: string
-      - name: include
-        in: query
-        description: 'Select which associated resources you would like to fetch, see:
-          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
-        example: ''
-        schema:
-          type: string
       responses:
         '200':
           description: record updated
@@ -4544,8 +4562,8 @@ paths:
                         name: Size-X
                         presentation: Size
                         position: 1
-                        created_at: '2021-10-11T19:00:25.383Z'
-                        updated_at: '2021-10-11T19:00:25.390Z'
+                        created_at: '2021-10-12T00:42:58.404Z'
+                        updated_at: '2021-10-12T00:42:58.412Z'
                         filterable: true
                       relationships:
                         option_values:
@@ -4642,10 +4660,16 @@ paths:
         example: option_type
         schema:
           type: string
-      - name: filter
+      - name: filter[option_type_id_eq]
         in: query
         description: ''
-        example: option_type_id_eq=1&name_cont=M
+        example: '1'
+        schema:
+          type: string
+      - name: filter[name_cont]
+        in: query
+        description: ''
+        example: Red
         schema:
           type: string
       responses:
@@ -4663,8 +4687,8 @@ paths:
                         position: 1
                         name: Size-67
                         presentation: S
-                        created_at: '2021-10-11T19:00:25.513Z'
-                        updated_at: '2021-10-11T19:00:25.513Z'
+                        created_at: '2021-10-12T00:42:58.537Z'
+                        updated_at: '2021-10-12T00:42:58.537Z'
                       relationships:
                         option_type:
                           data:
@@ -4676,8 +4700,8 @@ paths:
                         position: 1
                         name: Size-68
                         presentation: S
-                        created_at: '2021-10-11T19:00:25.519Z'
-                        updated_at: '2021-10-11T19:00:25.519Z'
+                        created_at: '2021-10-12T00:42:58.543Z'
+                        updated_at: '2021-10-12T00:42:58.543Z'
                       relationships:
                         option_type:
                           data:
@@ -4688,11 +4712,11 @@ paths:
                       total_count: 2
                       total_pages: 1
                     links:
-                      self: http://www.example.com/api/v2/platform/option_values?page=1&per_page=&include=&filter=
-                      next: http://www.example.com/api/v2/platform/option_values?include=&page=1&per_page=
-                      prev: http://www.example.com/api/v2/platform/option_values?include=&page=1&per_page=
-                      last: http://www.example.com/api/v2/platform/option_values?include=&page=1&per_page=
-                      first: http://www.example.com/api/v2/platform/option_values?include=&page=1&per_page=
+                      self: http://www.example.com/api/v2/platform/option_values?page=1&per_page=&include=&filter[option_type_id_eq]=&filter[name_cont]=
+                      next: http://www.example.com/api/v2/platform/option_values?filter%5Bname_cont%5D=&filter%5Boption_type_id_eq%5D=&include=&page=1&per_page=
+                      prev: http://www.example.com/api/v2/platform/option_values?filter%5Bname_cont%5D=&filter%5Boption_type_id_eq%5D=&include=&page=1&per_page=
+                      last: http://www.example.com/api/v2/platform/option_values?filter%5Bname_cont%5D=&filter%5Boption_type_id_eq%5D=&include=&page=1&per_page=
+                      first: http://www.example.com/api/v2/platform/option_values?filter%5Bname_cont%5D=&filter%5Boption_type_id_eq%5D=&include=&page=1&per_page=
         '401':
           description: Authentication Failed
           content:
@@ -4732,8 +4756,8 @@ paths:
                         position: 1
                         name: Size-71
                         presentation: S
-                        created_at: '2021-10-11T19:00:25.575Z'
-                        updated_at: '2021-10-11T19:00:25.575Z'
+                        created_at: '2021-10-12T00:42:58.599Z'
+                        updated_at: '2021-10-12T00:42:58.599Z'
                       relationships:
                         option_type:
                           data:
@@ -4792,8 +4816,8 @@ paths:
                         position: 1
                         name: Size-72
                         presentation: S
-                        created_at: '2021-10-11T19:00:25.607Z'
-                        updated_at: '2021-10-11T19:00:25.607Z'
+                        created_at: '2021-10-12T00:42:58.633Z'
+                        updated_at: '2021-10-12T00:42:58.633Z'
                       relationships:
                         option_type:
                           data:
@@ -4851,8 +4875,8 @@ paths:
                         position: 1
                         name: M
                         presentation: S
-                        created_at: '2021-10-11T19:00:25.671Z'
-                        updated_at: '2021-10-11T19:00:25.680Z'
+                        created_at: '2021-10-12T00:42:58.696Z'
+                        updated_at: '2021-10-12T00:42:58.707Z'
                       relationships:
                         option_type:
                           data:
@@ -4947,13 +4971,13 @@ paths:
         in: query
         description: 'Select which associated resources you would like to fetch, see:
           <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
-        example: line_items.variants.product
+        example: line_items,variants,product
         schema:
           type: string
-      - name: filter
+      - name: filter[state_eq]
         in: query
         description: ''
-        example: state_eq=complete
+        example: complete
         schema:
           type: string
       responses:
@@ -4968,7 +4992,7 @@ paths:
                     - id: '39'
                       type: order
                       attributes:
-                        number: R297898595
+                        number: R087101626
                         item_total: '0.0'
                         total: '0.0'
                         state: cart
@@ -4977,10 +5001,10 @@ paths:
                         payment_total: '0.0'
                         shipment_state:
                         payment_state:
-                        email: dena@denesikdach.name
+                        email: rachelle@huels.name
                         special_instructions:
-                        created_at: '2021-10-11T19:00:25.824Z'
-                        updated_at: '2021-10-11T19:00:25.824Z'
+                        created_at: '2021-10-12T00:42:58.908Z'
+                        updated_at: '2021-10-12T00:42:58.908Z'
                         currency: USD
                         last_ip_address:
                         shipment_total: '0.0'
@@ -5052,7 +5076,7 @@ paths:
                     - id: '40'
                       type: order
                       attributes:
-                        number: R835755839
+                        number: R448425754
                         item_total: '0.0'
                         total: '0.0'
                         state: cart
@@ -5061,10 +5085,10 @@ paths:
                         payment_total: '0.0'
                         shipment_state:
                         payment_state:
-                        email: dorine_dare@hegmann.us
+                        email: cherri@dickirempel.co.uk
                         special_instructions:
-                        created_at: '2021-10-11T19:00:25.832Z'
-                        updated_at: '2021-10-11T19:00:25.832Z'
+                        created_at: '2021-10-12T00:42:58.939Z'
+                        updated_at: '2021-10-12T00:42:58.939Z'
                         currency: USD
                         last_ip_address:
                         shipment_total: '0.0'
@@ -5138,11 +5162,11 @@ paths:
                       total_count: 2
                       total_pages: 1
                     links:
-                      self: http://www.example.com/api/v2/platform/orders?page=1&per_page=&include=&filter=
-                      next: http://www.example.com/api/v2/platform/orders?include=&page=1&per_page=
-                      prev: http://www.example.com/api/v2/platform/orders?include=&page=1&per_page=
-                      last: http://www.example.com/api/v2/platform/orders?include=&page=1&per_page=
-                      first: http://www.example.com/api/v2/platform/orders?include=&page=1&per_page=
+                      self: http://www.example.com/api/v2/platform/orders?page=1&per_page=&include=&filter[state_eq]=
+                      next: http://www.example.com/api/v2/platform/orders?filter%5Bstate_eq%5D=&include=&page=1&per_page=
+                      prev: http://www.example.com/api/v2/platform/orders?filter%5Bstate_eq%5D=&include=&page=1&per_page=
+                      last: http://www.example.com/api/v2/platform/orders?filter%5Bstate_eq%5D=&include=&page=1&per_page=
+                      first: http://www.example.com/api/v2/platform/orders?filter%5Bstate_eq%5D=&include=&page=1&per_page=
         '401':
           description: Authentication Failed
           content:
@@ -5164,7 +5188,7 @@ paths:
         in: query
         description: 'Select which associated resources you would like to fetch, see:
           <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
-        example: line_items.variants.product
+        example: line_items,variants,product
         schema:
           type: string
       responses:
@@ -5179,7 +5203,7 @@ paths:
                       id: '43'
                       type: order
                       attributes:
-                        number: R459854974
+                        number: R776297485
                         item_total: '0.0'
                         total: '0.0'
                         state: cart
@@ -5190,8 +5214,8 @@ paths:
                         payment_state:
                         email:
                         special_instructions:
-                        created_at: '2021-10-11T19:00:26.124Z'
-                        updated_at: '2021-10-11T19:00:26.143Z'
+                        created_at: '2021-10-12T00:42:59.230Z'
+                        updated_at: '2021-10-12T00:42:59.247Z'
                         currency: USD
                         last_ip_address:
                         shipment_total: '0.0'
@@ -5288,7 +5312,7 @@ paths:
         in: query
         description: 'Select which associated resources you would like to fetch, see:
           <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
-        example: line_items.variants.product
+        example: line_items,variants,product
         schema:
           type: string
       responses:
@@ -5303,7 +5327,7 @@ paths:
                       id: '44'
                       type: order
                       attributes:
-                        number: R021146852
+                        number: R676181453
                         item_total: '10.0'
                         total: '110.0'
                         state: delivery
@@ -5312,10 +5336,10 @@ paths:
                         payment_total: '0.0'
                         shipment_state:
                         payment_state:
-                        email: katerine@mraz.us
+                        email: doreen.jacobs@ferry.co.uk
                         special_instructions:
-                        created_at: '2021-10-11T19:00:26.183Z'
-                        updated_at: '2021-10-11T19:00:26.331Z'
+                        created_at: '2021-10-12T00:42:59.288Z'
+                        updated_at: '2021-10-12T00:42:59.437Z'
                         currency: USD
                         last_ip_address:
                         shipment_total: '100.0'
@@ -5424,7 +5448,7 @@ paths:
         in: query
         description: 'Select which associated resources you would like to fetch, see:
           <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
-        example: line_items.variants.product
+        example: line_items,variants,product
         schema:
           type: string
       responses:
@@ -5439,7 +5463,7 @@ paths:
                       id: '46'
                       type: order
                       attributes:
-                        number: R497640901
+                        number: R722063449
                         item_total: '10.0'
                         total: '110.0'
                         state: delivery
@@ -5450,8 +5474,8 @@ paths:
                         payment_state:
                         email: new@example.com
                         special_instructions:
-                        created_at: '2021-10-11T19:00:26.575Z'
-                        updated_at: '2021-10-11T19:00:26.675Z'
+                        created_at: '2021-10-12T00:42:59.620Z'
+                        updated_at: '2021-10-12T00:42:59.713Z'
                         currency: USD
                         last_ip_address:
                         shipment_total: '100.0'
@@ -5610,7 +5634,7 @@ paths:
         in: query
         description: 'Select which associated resources you would like to fetch, see:
           <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
-        example: line_items.variants.product
+        example: line_items,variants,product
         schema:
           type: string
       responses:
@@ -5625,7 +5649,7 @@ paths:
                       id: '51'
                       type: order
                       attributes:
-                        number: R612053036
+                        number: R850216179
                         item_total: '10.0'
                         total: '110.0'
                         state: payment
@@ -5634,10 +5658,10 @@ paths:
                         payment_total: '0.0'
                         shipment_state:
                         payment_state:
-                        email: bruce_johnson@kutch.name
+                        email: lindsay@moen.info
                         special_instructions:
-                        created_at: '2021-10-11T19:00:27.234Z'
-                        updated_at: '2021-10-11T19:00:27.362Z'
+                        created_at: '2021-10-12T00:43:00.277Z'
+                        updated_at: '2021-10-12T00:43:00.407Z'
                         currency: USD
                         last_ip_address:
                         shipment_total: '100.0'
@@ -5749,7 +5773,7 @@ paths:
         in: query
         description: 'Select which associated resources you would like to fetch, see:
           <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
-        example: line_items.variants.product
+        example: line_items,variants,product
         schema:
           type: string
       responses:
@@ -5764,7 +5788,7 @@ paths:
                       id: '53'
                       type: order
                       attributes:
-                        number: R247825558
+                        number: R170830035
                         item_total: '10.0'
                         total: '110.0'
                         state: payment
@@ -5773,10 +5797,10 @@ paths:
                         payment_total: '0.0'
                         shipment_state:
                         payment_state:
-                        email: mariann@grimes.biz
+                        email: roxane@schuppe.ca
                         special_instructions:
-                        created_at: '2021-10-11T19:00:27.536Z'
-                        updated_at: '2021-10-11T19:00:27.669Z'
+                        created_at: '2021-10-12T00:43:00.564Z'
+                        updated_at: '2021-10-12T00:43:00.671Z'
                         currency: USD
                         last_ip_address:
                         shipment_total: '100.0'
@@ -5888,7 +5912,7 @@ paths:
         in: query
         description: 'Select which associated resources you would like to fetch, see:
           <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
-        example: line_items.variants.product
+        example: line_items,variants,product
         schema:
           type: string
       responses:
@@ -5903,19 +5927,19 @@ paths:
                       id: '55'
                       type: order
                       attributes:
-                        number: R548983693
+                        number: R093811798
                         item_total: '10.0'
                         total: '110.0'
                         state: complete
                         adjustment_total: '0.0'
-                        completed_at: '2021-10-11T19:00:28.042Z'
+                        completed_at: '2021-10-12T00:43:01.018Z'
                         payment_total: '0.0'
                         shipment_state: pending
                         payment_state: balance_due
-                        email: olimpia_sanford@prohaskamraz.biz
+                        email: cherelle@schmelermoore.ca
                         special_instructions:
-                        created_at: '2021-10-11T19:00:27.833Z'
-                        updated_at: '2021-10-11T19:00:28.042Z'
+                        created_at: '2021-10-12T00:43:00.834Z'
+                        updated_at: '2021-10-12T00:43:01.018Z'
                         currency: USD
                         last_ip_address:
                         shipment_total: '100.0'
@@ -6038,7 +6062,7 @@ paths:
         in: query
         description: 'Select which associated resources you would like to fetch, see:
           <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
-        example: line_items.variants.product
+        example: line_items,variants,product
         schema:
           type: string
       responses:
@@ -6053,7 +6077,7 @@ paths:
                       id: '58'
                       type: order
                       attributes:
-                        number: R738718334
+                        number: R398021147
                         item_total: '0.0'
                         total: '0.0'
                         state: cart
@@ -6062,10 +6086,10 @@ paths:
                         payment_total: '0.0'
                         shipment_state:
                         payment_state:
-                        email: wally_reynolds@gutkowski.info
+                        email: leigh@macejkovic.us
                         special_instructions:
-                        created_at: '2021-10-11T19:00:28.338Z'
-                        updated_at: '2021-10-11T19:00:28.439Z'
+                        created_at: '2021-10-12T00:43:01.291Z'
+                        updated_at: '2021-10-12T00:43:01.393Z'
                         currency: USD
                         last_ip_address:
                         shipment_total: '0.0'
@@ -6171,7 +6195,7 @@ paths:
         in: query
         description: 'Select which associated resources you would like to fetch, see:
           <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
-        example: line_items.variants.product
+        example: line_items,variants,product
         schema:
           type: string
       responses:
@@ -6186,7 +6210,7 @@ paths:
                       id: '60'
                       type: order
                       attributes:
-                        number: R239390835
+                        number: R589661909
                         item_total: '10.0'
                         total: '110.0'
                         state: delivery
@@ -6195,10 +6219,10 @@ paths:
                         payment_total: '0.0'
                         shipment_state:
                         payment_state:
-                        email: armanda@aufderhardietrich.info
+                        email: waneta.crooks@gerhold.name
                         special_instructions:
-                        created_at: '2021-10-11T19:00:28.601Z'
-                        updated_at: '2021-10-11T19:00:28.744Z'
+                        created_at: '2021-10-12T00:43:01.556Z'
+                        updated_at: '2021-10-12T00:43:01.699Z'
                         currency: USD
                         last_ip_address:
                         shipment_total: '100.0'
@@ -6324,7 +6348,7 @@ paths:
         in: query
         description: 'Select which associated resources you would like to fetch, see:
           <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
-        example: line_items.variants.product
+        example: line_items,variants,product
         schema:
           type: string
       responses:
@@ -6339,7 +6363,7 @@ paths:
                       id: '63'
                       type: order
                       attributes:
-                        number: R348648401
+                        number: R944934777
                         item_total: '10.0'
                         total: '10.0'
                         state: delivery
@@ -6348,10 +6372,10 @@ paths:
                         payment_total: '0.0'
                         shipment_state:
                         payment_state:
-                        email: bernice.jakubowski@ortizchamplin.name
+                        email: christoper@herman.name
                         special_instructions:
-                        created_at: '2021-10-11T19:00:29.075Z'
-                        updated_at: '2021-10-11T19:00:29.200Z'
+                        created_at: '2021-10-12T00:43:02.021Z'
+                        updated_at: '2021-10-12T00:43:02.152Z'
                         currency: USD
                         last_ip_address:
                         shipment_total: '100.0'
@@ -6483,13 +6507,13 @@ paths:
         in: query
         description: 'Select which associated resources you would like to fetch, see:
           <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
-        example: ''
+        example: cms_sections
         schema:
           type: string
-      - name: filter
+      - name: filter[name_i_cont]
         in: query
         description: ''
-        example: name_i_cont=defa
+        example: default
         schema:
           type: string
       responses:
@@ -6505,24 +6529,24 @@ paths:
                       type: shipping_category
                       attributes:
                         name: 'ShippingCategory #97'
-                        created_at: '2021-10-11T19:00:29.490Z'
-                        updated_at: '2021-10-11T19:00:29.490Z'
+                        created_at: '2021-10-12T00:43:02.441Z'
+                        updated_at: '2021-10-12T00:43:02.441Z'
                     - id: '98'
                       type: shipping_category
                       attributes:
                         name: 'ShippingCategory #98'
-                        created_at: '2021-10-11T19:00:29.492Z'
-                        updated_at: '2021-10-11T19:00:29.492Z'
+                        created_at: '2021-10-12T00:43:02.442Z'
+                        updated_at: '2021-10-12T00:43:02.442Z'
                     meta:
                       count: 2
                       total_count: 2
                       total_pages: 1
                     links:
-                      self: http://www.example.com/api/v2/platform/shipping_categories?page=1&per_page=&include=&filter=
-                      next: http://www.example.com/api/v2/platform/shipping_categories?include=&page=1&per_page=
-                      prev: http://www.example.com/api/v2/platform/shipping_categories?include=&page=1&per_page=
-                      last: http://www.example.com/api/v2/platform/shipping_categories?include=&page=1&per_page=
-                      first: http://www.example.com/api/v2/platform/shipping_categories?include=&page=1&per_page=
+                      self: http://www.example.com/api/v2/platform/shipping_categories?page=1&per_page=&include=&filter[name_i_cont]=
+                      next: http://www.example.com/api/v2/platform/shipping_categories?filter%5Bname_i_cont%5D=&include=&page=1&per_page=
+                      prev: http://www.example.com/api/v2/platform/shipping_categories?filter%5Bname_i_cont%5D=&include=&page=1&per_page=
+                      last: http://www.example.com/api/v2/platform/shipping_categories?filter%5Bname_i_cont%5D=&include=&page=1&per_page=
+                      first: http://www.example.com/api/v2/platform/shipping_categories?filter%5Bname_i_cont%5D=&include=&page=1&per_page=
         '401':
           description: Authentication Failed
           content:
@@ -6544,7 +6568,7 @@ paths:
         in: query
         description: 'Select which associated resources you would like to fetch, see:
           <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
-        example: ''
+        example: cms_sections
         schema:
           type: string
       responses:
@@ -6560,8 +6584,8 @@ paths:
                       type: shipping_category
                       attributes:
                         name: 'ShippingCategory #101'
-                        created_at: '2021-10-11T19:00:29.535Z'
-                        updated_at: '2021-10-11T19:00:29.535Z'
+                        created_at: '2021-10-12T00:43:02.485Z'
+                        updated_at: '2021-10-12T00:43:02.485Z'
         '422':
           description: invalid request
           content:
@@ -6597,7 +6621,7 @@ paths:
         in: query
         description: 'Select which associated resources you would like to fetch, see:
           <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
-        example: ''
+        example: cms_sections
         schema:
           type: string
       responses:
@@ -6613,8 +6637,8 @@ paths:
                       type: shipping_category
                       attributes:
                         name: 'ShippingCategory #102'
-                        created_at: '2021-10-11T19:00:29.563Z'
-                        updated_at: '2021-10-11T19:00:29.563Z'
+                        created_at: '2021-10-12T00:43:02.514Z'
+                        updated_at: '2021-10-12T00:43:02.514Z'
         '404':
           description: Record not found
           content:
@@ -6649,7 +6673,7 @@ paths:
         in: query
         description: 'Select which associated resources you would like to fetch, see:
           <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
-        example: ''
+        example: cms_sections
         schema:
           type: string
       responses:
@@ -6665,8 +6689,8 @@ paths:
                       type: shipping_category
                       attributes:
                         name: Default
-                        created_at: '2021-10-11T19:00:29.610Z'
-                        updated_at: '2021-10-11T19:00:29.617Z'
+                        created_at: '2021-10-12T00:43:02.561Z'
+                        updated_at: '2021-10-12T00:43:02.568Z'
         '422':
           description: invalid request
           content:
@@ -6759,10 +6783,16 @@ paths:
         example: taxonomy,parent,children
         schema:
           type: string
-      - name: filter
+      - name: filter[taxonomy_id_eq]
         in: query
         description: ''
-        example: taxonomy_id_eq=1&name_cont=Shirts
+        example: '1'
+        schema:
+          type: string
+      - name: filter[name_cont]
+        in: query
+        description: ''
+        example: Shirts
         schema:
           type: string
       responses:
@@ -6783,8 +6813,8 @@ paths:
                         lft: 2
                         rgt: 3
                         description:
-                        created_at: '2021-10-11T19:00:29.782Z'
-                        updated_at: '2021-10-11T19:00:29.786Z'
+                        created_at: '2021-10-12T00:43:02.737Z'
+                        updated_at: '2021-10-12T00:43:02.741Z'
                         meta_title:
                         meta_description:
                         meta_keywords:
@@ -6818,8 +6848,8 @@ paths:
                         lft: 4
                         rgt: 5
                         description:
-                        created_at: '2021-10-11T19:00:29.832Z'
-                        updated_at: '2021-10-11T19:00:29.835Z'
+                        created_at: '2021-10-12T00:43:02.788Z'
+                        updated_at: '2021-10-12T00:43:02.791Z'
                         meta_title:
                         meta_description:
                         meta_keywords:
@@ -6853,8 +6883,8 @@ paths:
                         lft: 1
                         rgt: 6
                         description:
-                        created_at: '2021-10-11T19:00:29.726Z'
-                        updated_at: '2021-10-11T19:00:29.844Z'
+                        created_at: '2021-10-12T00:43:02.679Z'
+                        updated_at: '2021-10-12T00:43:02.800Z'
                         meta_title:
                         meta_description:
                         meta_keywords:
@@ -6884,11 +6914,11 @@ paths:
                       total_count: 3
                       total_pages: 1
                     links:
-                      self: http://www.example.com/api/v2/platform/taxons?page=1&per_page=&include=&filter=
-                      next: http://www.example.com/api/v2/platform/taxons?include=&page=1&per_page=
-                      prev: http://www.example.com/api/v2/platform/taxons?include=&page=1&per_page=
-                      last: http://www.example.com/api/v2/platform/taxons?include=&page=1&per_page=
-                      first: http://www.example.com/api/v2/platform/taxons?include=&page=1&per_page=
+                      self: http://www.example.com/api/v2/platform/taxons?page=1&per_page=&include=&filter[taxonomy_id_eq]=&filter[name_cont]=
+                      next: http://www.example.com/api/v2/platform/taxons?filter%5Bname_cont%5D=&filter%5Btaxonomy_id_eq%5D=&include=&page=1&per_page=
+                      prev: http://www.example.com/api/v2/platform/taxons?filter%5Bname_cont%5D=&filter%5Btaxonomy_id_eq%5D=&include=&page=1&per_page=
+                      last: http://www.example.com/api/v2/platform/taxons?filter%5Bname_cont%5D=&filter%5Btaxonomy_id_eq%5D=&include=&page=1&per_page=
+                      first: http://www.example.com/api/v2/platform/taxons?filter%5Bname_cont%5D=&filter%5Btaxonomy_id_eq%5D=&include=&page=1&per_page=
         '401':
           description: Authentication Failed
           content:
@@ -6931,8 +6961,8 @@ paths:
                         lft: 2
                         rgt: 3
                         description:
-                        created_at: '2021-10-11T19:00:30.061Z'
-                        updated_at: '2021-10-11T19:00:30.065Z'
+                        created_at: '2021-10-12T00:43:02.999Z'
+                        updated_at: '2021-10-12T00:43:03.004Z'
                         meta_title:
                         meta_description:
                         meta_keywords:
@@ -7013,8 +7043,8 @@ paths:
                         lft: 2
                         rgt: 3
                         description:
-                        created_at: '2021-10-11T19:00:30.164Z'
-                        updated_at: '2021-10-11T19:00:30.167Z'
+                        created_at: '2021-10-12T00:43:03.111Z'
+                        updated_at: '2021-10-12T00:43:03.115Z'
                         meta_title:
                         meta_description:
                         meta_keywords:
@@ -7096,8 +7126,8 @@ paths:
                         lft: 2
                         rgt: 3
                         description:
-                        created_at: '2021-10-11T19:00:30.361Z'
-                        updated_at: '2021-10-11T19:00:30.384Z'
+                        created_at: '2021-10-12T00:43:03.313Z'
+                        updated_at: '2021-10-12T00:43:03.337Z'
                         meta_title:
                         meta_description:
                         meta_keywords:
@@ -7214,10 +7244,16 @@ paths:
         example: ship_address,bill_address
         schema:
           type: string
-      - name: filter
+      - name: filter[user_id_eq]
         in: query
         description: ''
-        example: user_id_eq=1&email_cont=spree@example.com
+        example: '1'
+        schema:
+          type: string
+      - name: filter[email_cont]
+        in: query
+        description: ''
+        example: spree@example.com
         schema:
           type: string
       responses:
@@ -7232,9 +7268,9 @@ paths:
                     - id: '67'
                       type: user
                       attributes:
-                        email: linnie.brakus@daughertybarton.us
-                        created_at: '2021-10-11T19:00:30.825Z'
-                        updated_at: '2021-10-11T19:00:30.825Z'
+                        email: buffy@larkin.biz
+                        created_at: '2021-10-12T00:43:03.770Z'
+                        updated_at: '2021-10-12T00:43:03.770Z'
                         average_order_value: []
                         lifetime_value: []
                         store_credits: []
@@ -7246,9 +7282,9 @@ paths:
                     - id: '68'
                       type: user
                       attributes:
-                        email: marline_kilback@erdman.co.uk
-                        created_at: '2021-10-11T19:00:30.830Z'
-                        updated_at: '2021-10-11T19:00:30.830Z'
+                        email: lena_williamson@miller.com
+                        created_at: '2021-10-12T00:43:03.777Z'
+                        updated_at: '2021-10-12T00:43:03.777Z'
                         average_order_value: []
                         lifetime_value: []
                         store_credits: []
@@ -7260,9 +7296,9 @@ paths:
                     - id: '69'
                       type: user
                       attributes:
-                        email: yajaira.beer@satterfieldluettgen.com
-                        created_at: '2021-10-11T19:00:30.832Z'
-                        updated_at: '2021-10-11T19:00:30.832Z'
+                        email: zachery.purdy@cormier.com
+                        created_at: '2021-10-12T00:43:03.778Z'
+                        updated_at: '2021-10-12T00:43:03.778Z'
                         average_order_value: []
                         lifetime_value: []
                         store_credits: []
@@ -7276,11 +7312,11 @@ paths:
                       total_count: 3
                       total_pages: 1
                     links:
-                      self: http://www.example.com/api/v2/platform/users?page=1&per_page=&include=&filter=
-                      next: http://www.example.com/api/v2/platform/users?include=&page=1&per_page=
-                      prev: http://www.example.com/api/v2/platform/users?include=&page=1&per_page=
-                      last: http://www.example.com/api/v2/platform/users?include=&page=1&per_page=
-                      first: http://www.example.com/api/v2/platform/users?include=&page=1&per_page=
+                      self: http://www.example.com/api/v2/platform/users?page=1&per_page=&include=&filter[user_id_eq]=&filter[email_cont]=
+                      next: http://www.example.com/api/v2/platform/users?filter%5Bemail_cont%5D=&filter%5Buser_id_eq%5D=&include=&page=1&per_page=
+                      prev: http://www.example.com/api/v2/platform/users?filter%5Bemail_cont%5D=&filter%5Buser_id_eq%5D=&include=&page=1&per_page=
+                      last: http://www.example.com/api/v2/platform/users?filter%5Bemail_cont%5D=&filter%5Buser_id_eq%5D=&include=&page=1&per_page=
+                      first: http://www.example.com/api/v2/platform/users?filter%5Bemail_cont%5D=&filter%5Buser_id_eq%5D=&include=&page=1&per_page=
         '401':
           description: Authentication Failed
           content:
@@ -7317,9 +7353,9 @@ paths:
                       id: '74'
                       type: user
                       attributes:
-                        email: gregory@johnson.ca
-                        created_at: '2021-10-11T19:00:30.895Z'
-                        updated_at: '2021-10-11T19:00:30.895Z'
+                        email: ai.flatley@koepp.biz
+                        created_at: '2021-10-12T00:43:03.843Z'
+                        updated_at: '2021-10-12T00:43:03.843Z'
                         average_order_value: []
                         lifetime_value: []
                         store_credits: []
@@ -7378,9 +7414,9 @@ paths:
                       id: '77'
                       type: user
                       attributes:
-                        email: beverlee.ritchie@emard.co.uk
-                        created_at: '2021-10-11T19:00:30.939Z'
-                        updated_at: '2021-10-11T19:00:30.939Z'
+                        email: michaele@lueilwitz.ca
+                        created_at: '2021-10-12T00:43:03.888Z'
+                        updated_at: '2021-10-12T00:43:03.888Z'
                         average_order_value: []
                         lifetime_value: []
                         store_credits: []
@@ -7439,8 +7475,8 @@ paths:
                       type: user
                       attributes:
                         email: john@example.com
-                        created_at: '2021-10-11T19:00:31.005Z'
-                        updated_at: '2021-10-11T19:00:31.014Z'
+                        created_at: '2021-10-12T00:43:03.954Z'
+                        updated_at: '2021-10-12T00:43:03.964Z'
                         average_order_value: []
                         lifetime_value: []
                         store_credits: []
@@ -7554,8 +7590,8 @@ paths:
                       type: wished_item
                       attributes:
                         quantity: 1
-                        created_at: '2021-10-11T19:00:31.335Z'
-                        updated_at: '2021-10-11T19:00:31.335Z'
+                        created_at: '2021-10-12T00:43:04.276Z'
+                        updated_at: '2021-10-12T00:43:04.276Z'
                         display_price: "$19.99"
                         display_total: "$19.99"
                         price: '19.99'
@@ -7569,8 +7605,8 @@ paths:
                       type: wished_item
                       attributes:
                         quantity: 1
-                        created_at: '2021-10-11T19:00:31.386Z'
-                        updated_at: '2021-10-11T19:00:31.386Z'
+                        created_at: '2021-10-12T00:43:04.326Z'
+                        updated_at: '2021-10-12T00:43:04.326Z'
                         display_price: "$19.99"
                         display_total: "$19.99"
                         price: '19.99'
@@ -7584,8 +7620,8 @@ paths:
                       type: wished_item
                       attributes:
                         quantity: 1
-                        created_at: '2021-10-11T19:00:31.437Z'
-                        updated_at: '2021-10-11T19:00:31.437Z'
+                        created_at: '2021-10-12T00:43:04.375Z'
+                        updated_at: '2021-10-12T00:43:04.375Z'
                         display_price: "$19.99"
                         display_total: "$19.99"
                         price: '19.99'
@@ -7599,8 +7635,8 @@ paths:
                       type: wished_item
                       attributes:
                         quantity: 1
-                        created_at: '2021-10-11T19:00:31.485Z'
-                        updated_at: '2021-10-11T19:00:31.485Z'
+                        created_at: '2021-10-12T00:43:04.424Z'
+                        updated_at: '2021-10-12T00:43:04.424Z'
                         display_price: "$19.99"
                         display_total: "$19.99"
                         price: '19.99'
@@ -7657,8 +7693,8 @@ paths:
                       type: wished_item
                       attributes:
                         quantity: 1
-                        created_at: '2021-10-11T19:00:31.862Z'
-                        updated_at: '2021-10-11T19:00:31.862Z'
+                        created_at: '2021-10-12T00:43:04.795Z'
+                        updated_at: '2021-10-12T00:43:04.795Z'
                         display_price: "$19.99"
                         display_total: "$19.99"
                         price: '19.99'
@@ -7724,8 +7760,8 @@ paths:
                       type: wished_item
                       attributes:
                         quantity: 1
-                        created_at: '2021-10-11T19:00:32.073Z'
-                        updated_at: '2021-10-11T19:00:32.073Z'
+                        created_at: '2021-10-12T00:43:05.013Z'
+                        updated_at: '2021-10-12T00:43:05.013Z'
                         display_price: "$19.99"
                         display_total: "$19.99"
                         price: '19.99'
@@ -7785,8 +7821,8 @@ paths:
                       type: wished_item
                       attributes:
                         quantity: 3
-                        created_at: '2021-10-11T19:00:32.428Z'
-                        updated_at: '2021-10-11T19:00:32.435Z'
+                        created_at: '2021-10-12T00:43:05.365Z'
+                        updated_at: '2021-10-12T00:43:05.373Z'
                         display_price: "$19.99"
                         display_total: "$59.97"
                         price: '19.99'
@@ -7888,10 +7924,10 @@ paths:
         example: wished_items
         schema:
           type: string
-      - name: filter
+      - name: filter[name_cont]
         in: query
         description: ''
-        example: name_cont=Birthday
+        example: Birthday
         schema:
           type: string
       responses:
@@ -7909,9 +7945,9 @@ paths:
                         name: Black Friday
                         is_private: true
                         is_default: false
-                        created_at: '2021-10-11T19:00:33.137Z'
-                        updated_at: '2021-10-11T19:00:33.137Z'
-                        token: EoJM95zDQ3mtusPfr1CRByNc
+                        created_at: '2021-10-12T00:43:06.082Z'
+                        updated_at: '2021-10-12T00:43:06.082Z'
+                        token: yqryAdQzQWQc1EEpZpYXa2xB
                         variant_included: false
                       relationships:
                         wished_items:
@@ -7926,9 +7962,9 @@ paths:
                         name: Birthday
                         is_private: true
                         is_default: false
-                        created_at: '2021-10-11T19:00:33.139Z'
-                        updated_at: '2021-10-11T19:00:33.139Z'
-                        token: SFpJqM99QDHBr5BryajsGftn
+                        created_at: '2021-10-12T00:43:06.083Z'
+                        updated_at: '2021-10-12T00:43:06.083Z'
+                        token: tZy3fU5pB77bEvyBUmFHP5y4
                         variant_included: false
                       relationships:
                         wished_items:
@@ -7942,11 +7978,11 @@ paths:
                       total_count: 2
                       total_pages: 1
                     links:
-                      self: http://www.example.com/api/v2/platform/wishlists?page=1&per_page=&include=&filter=
-                      next: http://www.example.com/api/v2/platform/wishlists?include=&page=1&per_page=
-                      prev: http://www.example.com/api/v2/platform/wishlists?include=&page=1&per_page=
-                      last: http://www.example.com/api/v2/platform/wishlists?include=&page=1&per_page=
-                      first: http://www.example.com/api/v2/platform/wishlists?include=&page=1&per_page=
+                      self: http://www.example.com/api/v2/platform/wishlists?page=1&per_page=&include=&filter[name_cont]=
+                      next: http://www.example.com/api/v2/platform/wishlists?filter%5Bname_cont%5D=&include=&page=1&per_page=
+                      prev: http://www.example.com/api/v2/platform/wishlists?filter%5Bname_cont%5D=&include=&page=1&per_page=
+                      last: http://www.example.com/api/v2/platform/wishlists?filter%5Bname_cont%5D=&include=&page=1&per_page=
+                      first: http://www.example.com/api/v2/platform/wishlists?filter%5Bname_cont%5D=&include=&page=1&per_page=
         '401':
           description: Authentication Failed
           content:
@@ -7986,9 +8022,9 @@ paths:
                         name: Wishlist_26
                         is_private: true
                         is_default: false
-                        created_at: '2021-10-11T19:00:33.623Z'
-                        updated_at: '2021-10-11T19:00:33.623Z'
-                        token: ozwzHXNEYRzDGbY6tnmUi3wj
+                        created_at: '2021-10-12T00:43:06.557Z'
+                        updated_at: '2021-10-12T00:43:06.557Z'
+                        token: 8EMktcNpH31a2PMf6DwMpokU
                         variant_included: false
                       relationships:
                         wished_items:
@@ -8048,9 +8084,9 @@ paths:
                         name: My Wishlist
                         is_private: true
                         is_default: false
-                        created_at: '2021-10-11T19:00:33.662Z'
-                        updated_at: '2021-10-11T19:00:33.662Z'
-                        token: NcKfvs1r6qswdErQw91fQ53b
+                        created_at: '2021-10-12T00:43:06.595Z'
+                        updated_at: '2021-10-12T00:43:06.595Z'
+                        token: Cu99VnwqBr3QSHasfTMgXZDd
                         variant_included: false
                       relationships:
                         wished_items:
@@ -8107,9 +8143,9 @@ paths:
                         name: My Super Wishlist
                         is_private: true
                         is_default: false
-                        created_at: '2021-10-11T19:00:33.723Z'
-                        updated_at: '2021-10-11T19:00:33.731Z'
-                        token: niYzAtKaReuqdStWRaaYEbYy
+                        created_at: '2021-10-12T00:43:06.656Z'
+                        updated_at: '2021-10-12T00:43:06.664Z'
+                        token: WiGuufKpHuRZracyYHqtjK2L
                         variant_included: false
                       relationships:
                         wished_items:
@@ -8191,7 +8227,7 @@ tags:
 - name: Countries
 - name: CMS Pages
 - name: CMS Sections
-- name: Digitals
+- name: Digital Assets
 - name: Digital Links
 - name: Line Items
 - name: Menus
@@ -8261,6 +8297,7 @@ components:
       - phone
       - firstname
       - lastname
+      x-internal: true
     adjustment_params:
       type: object
       properties:
@@ -8299,15 +8336,16 @@ components:
           default: false
         created_at:
           type: string
-          example: 2021-10-11 19:00:05 UTC
+          example: 2021-10-12 00:42:39 UTC
         updated_at:
           type: string
-          example: 2021-10-11 19:00:05 UTC
+          example: 2021-10-12 00:42:39 UTC
       required:
       - order_id
       - label
       - adjustable_id
       - adjustable_type
+      x-internal: true
     classification_params:
       type: object
       properties:
@@ -8317,6 +8355,7 @@ components:
           type: string
         position:
           type: integer
+      x-internal: true
     line_item_params:
       type: object
       properties:
@@ -8353,6 +8392,7 @@ components:
       - order_id
       - variant_id
       - quantity
+      x-internal: true
     option_type_params:
       type: object
       properties:
@@ -8363,6 +8403,7 @@ components:
       required:
       - name
       - presentation
+      x-internal: true
     option_value_params:
       type: object
       properties:
@@ -8375,6 +8416,7 @@ components:
       required:
       - name
       - presentation
+      x-internal: true
     order_params:
       type: object
       properties:
@@ -8404,7 +8446,7 @@ components:
         completed_at:
           type: string
           format: date_time
-          example: 2021-10-11 19:00:05 UTC
+          example: 2021-10-12 00:42:39 UTC
         bill_address_id:
           type: string
         ship_address_id:
@@ -8456,7 +8498,7 @@ components:
         approved_at:
           type: string
           format: date_time
-          example: 2021-10-11 19:00:05 UTC
+          example: 2021-10-12 00:42:39 UTC
         confirmation_delivered:
           type: boolean
           example: true
@@ -8501,6 +8543,7 @@ components:
               price:
                 type: number
                 example: 19.9
+      x-internal: true
     product_params:
       type: object
       properties:
@@ -8554,6 +8597,7 @@ components:
       - name
       - price
       - shipping_category_id
+      x-internal: true
     user_params:
       type: object
       properties:
@@ -8571,6 +8615,7 @@ components:
       - email
       - password
       - password_confirmation
+      x-internal: true
     taxon_params:
       type: object
       properties:
@@ -8583,6 +8628,7 @@ components:
       required:
       - name
       - taxonomy_id
+      x-internal: true
     menu_params:
       type: object
       properties:
@@ -8596,6 +8642,7 @@ components:
       - name
       - location
       - locale
+      x-internal: true
     menu_item_params:
       type: object
       properties:
@@ -8620,6 +8667,7 @@ components:
       required:
       - name
       - menu_id
+      x-internal: true
     menu_item_reposition_params:
       type: object
       properties:
@@ -8630,6 +8678,7 @@ components:
       required:
       - new_parent_id
       - new_position_idx
+      x-internal: true
     shipping_category_params:
       type: object
       properties:
@@ -8638,14 +8687,15 @@ components:
           example: Another Category
         created_at:
           type: string
-          example: 2021-10-11 19:00:05 UTC
-          default: 2021-10-11 19:00:05 UTC
+          example: 2021-10-12 00:42:39 UTC
+          default: 2021-10-12 00:42:39 UTC
         updated_at:
           type: string
-          example: 2021-10-11 19:00:05 UTC
-          default: 2021-10-11 19:00:05 UTC
+          example: 2021-10-12 00:42:39 UTC
+          default: 2021-10-12 00:42:39 UTC
       required:
       - name
+      x-internal: true
     wishlist_params:
       type: object
       properties:
@@ -8660,6 +8710,7 @@ components:
       required:
       - name
       - user_id
+      x-internal: true
     wished_item_params:
       type: object
       properties:
@@ -8674,6 +8725,7 @@ components:
       - wishlist_id
       - variant_id
       - quantity
+      x-internal: true
     cms_page_params:
       type: object
       properties:
@@ -8694,6 +8746,7 @@ components:
       required:
       - title
       - locale
+      x-internal: true
     cms_section_params:
       type: object
       properties:
@@ -8712,6 +8765,7 @@ components:
       required:
       - name
       - cms_page_id
+      x-internal: true
     cms_section_reposition_params:
       type: object
       properties:
@@ -8719,6 +8773,7 @@ components:
           type: integer
       required:
       - new_position_idx
+      x-internal: true
     digital_params:
       type: object
       properties:
@@ -8731,21 +8786,25 @@ components:
       required:
       - digital[attachment]
       - digital[variant_id]
+      x-internal: true
     digital_link_params:
       type: object
       properties:
         access_counter:
           type: integer
+      x-internal: true
     amount_param:
       type: object
       properties:
         amount:
           type: number
+      x-internal: true
     coupon_code_param:
       type: object
       properties:
         coupon_code:
           type: string
+      x-internal: true
     resources_list:
       type: object
       properties:
@@ -8790,6 +8849,7 @@ components:
       - data
       - meta
       - links
+      x-internal: true
     resource_properties:
       type: object
       properties:
@@ -8805,6 +8865,7 @@ components:
       - id
       - type
       - attributes
+      x-internal: true
     resource:
       type: object
       properties:
@@ -8812,6 +8873,7 @@ components:
           "$ref": "#/components/schemas/resource_properties"
       required:
       - data
+      x-internal: true
     error:
       type: object
       properties:
@@ -8819,6 +8881,7 @@ components:
           type: string
       required:
       - error
+      x-internal: true
     validation_errors:
       type: object
       properties:
@@ -8829,3 +8892,4 @@ components:
       required:
       - error
       - errors
+      x-internal: true

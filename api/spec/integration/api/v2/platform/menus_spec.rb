@@ -4,8 +4,10 @@ describe 'Menus API', swagger: true do
   include_context 'Platform API v2'
 
   resource_name = 'Menu'
-  include_example = 'menu_items'
-  filter_example = 'location_eq=header'
+  options = {
+    include_example: 'menu_items',
+    filter_examples: [{ name: 'filter[location_eq]', example: 'header' }]
+  }
 
   let(:id) { create(:menu, name: 'Main Menu').id }
   let(:records_list) do
@@ -47,5 +49,5 @@ describe 'Menus API', swagger: true do
     }
   end
 
-  include_examples 'CRUD examples', resource_name, include_example, filter_example
+  include_examples 'CRUD examples', resource_name, options
 end

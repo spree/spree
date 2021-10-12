@@ -4,8 +4,11 @@ describe 'CMS Pages API', swagger: true do
   include_context 'Platform API v2'
 
   resource_name = 'CMS Page'
-  include_example = 'cms_sections'
-  filter_example = 'type=homepage'
+  options = {
+    include_example: 'cms_sections',
+    filter_examples: [{ name: 'filter[type]', example: 'homepage' },
+                      { name: 'filter[title_cont]', example: 'About Us' }]
+  }
 
   let(:store) { Spree::Store.default }
 
@@ -23,5 +26,5 @@ describe 'CMS Pages API', swagger: true do
     }
   end
 
-  include_examples 'CRUD examples', resource_name, include_example, filter_example
+  include_examples 'CRUD examples', resource_name, options
 end
