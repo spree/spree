@@ -6,7 +6,7 @@ module Spree
 
         def call(body:, event:)
           urls_subscribed_to(event).each do |url|
-            Spree::Webhooks::Endpoints::MakeRequestJob.perform_later(body, url)
+            Spree::Webhooks::Endpoints::MakeRequestJob.perform_later(body, event, url)
           end
         end
 

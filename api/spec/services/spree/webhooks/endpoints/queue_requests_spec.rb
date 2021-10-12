@@ -29,7 +29,7 @@ describe Spree::Webhooks::Endpoints::QueueRequests, :job, :spree_webhooks do
 
         it 'queues a job to make a request' do
           expect { subject }.to(
-            have_enqueued_job(make_request_job).with(body, endpoint.url).on_queue(queue)
+            have_enqueued_job(make_request_job).with(body, event, endpoint.url).on_queue(queue)
           )
         end
       end
@@ -47,7 +47,7 @@ describe Spree::Webhooks::Endpoints::QueueRequests, :job, :spree_webhooks do
 
         it 'queues a job to make a request' do
           expect { subject }.to(
-            have_enqueued_job(make_request_job).with(body, endpoint.url).on_queue(queue)
+            have_enqueued_job(make_request_job).with(body, event, endpoint.url).on_queue(queue)
           )
         end
       end
@@ -62,9 +62,7 @@ describe Spree::Webhooks::Endpoints::QueueRequests, :job, :spree_webhooks do
         end
 
         it 'does not queue a job to make a request' do
-          expect { subject }.not_to(
-            have_enqueued_job(make_request_job).with(body, endpoint.url).on_queue(queue)
-          )
+          expect { subject }.not_to have_enqueued_job(make_request_job).on_queue(queue)
         end
       end
 
@@ -78,9 +76,7 @@ describe Spree::Webhooks::Endpoints::QueueRequests, :job, :spree_webhooks do
         end
 
         it 'does not queue a job to make a request' do
-          expect { subject }.not_to(
-            have_enqueued_job(make_request_job).with(body, endpoint.url).on_queue(queue)
-          )
+          expect { subject }.not_to have_enqueued_job(make_request_job).on_queue(queue)
         end
       end
     end

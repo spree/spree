@@ -4,39 +4,37 @@ module Spree
   module Webhooks
     module Endpoints
       class MakeRequest
-        def initialize(body:, url:)
+        def initialize(body:, event:, url:)
           @body = body
+          @event = event
           @url = url
         end
 
         def call
           return if body == ''
 
-          Rails.logger.debug("[SPREE WEBHOOKS] #{object_class_name} #{event_name} sending to #{url}")
-          Rails.logger.debug("[SPREE WEBHOOKS] body: #{body}")
+          Rails.logger.debug(webhooks_log("sending to '#{url}'"))
+          Rails.logger.debug(webhooks_log("body: #{body}"))
 
           if unprocessable_uri?
-            Rails.logger.warn(UNPROCESSABLE_MSG)
+            Rails.logger.warn(webhooks_log("can not make a request to '#{url}'"))
             return
           end
 
           if failed_request?
-            Rails.logger.warn(FAIL_MSG)
+            Rails.logger.warn(webhooks_log("failed for '#{url}'"))
             return
           end
 
-          Rails.logger.debug(SUCCESS_MSG)
+          Rails.logger.debug(webhooks_log("success for URL '#{url}'"))
         end
 
         private
 
-        attr_reader :body, :url
+        attr_reader :body, :event, :url
 
-        FAIL_MSG = '[SPREE WEBHOOKS] #{object_class_name} #{event_name} failed for #{url}'
         HEADERS = { 'Content-Type' => 'application/json' }.freeze
-        SUCCESS_MSG = "[SPREE WEBHOOKS] #{object_class_name} #{event_name} success for URL #{url}"
-        UNPROCESSABLE_MSG = 'Can not make a request to the given URL'
-        private_constant :FAIL_MSG, :HEADERS, :SUCCESS_MSG, :UNPROCESSABLE_MSG
+        private_constant :HEADERS
 
         delegate :host, :path, :port, to: :uri, prefix: true
 
@@ -62,6 +60,10 @@ module Spree
 
         def uri
           URI(url)
+        end
+
+        def webhooks_log(msg)
+          "[SPREE WEBHOOKS] '#{event}' #{msg}"
         end
       end
     end

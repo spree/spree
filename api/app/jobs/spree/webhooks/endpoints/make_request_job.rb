@@ -4,8 +4,8 @@ module Spree
       class MakeRequestJob < Spree::BaseJob
         queue_as :spree_webhooks
 
-        def perform(body, url)
-          Spree::Webhooks::Endpoints::MakeRequest.new(body: body, url: url).call
+        def perform(body, event, url)
+          Spree::Webhooks::Endpoints::MakeRequest.new(body: body, event: event, url: url).call
         end
       end
     end
