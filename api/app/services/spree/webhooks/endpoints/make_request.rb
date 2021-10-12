@@ -43,13 +43,13 @@ module Spree
         end
 
         def failed_request?
-          request_code_type != Net::HTTPOK
+          !(request_code_type.in?(200...300))
         end
 
         def request_code_type
           http = Net::HTTP.new(uri_host, uri_port)
           http.use_ssl = true unless Rails.env.development? || Rails.env.test?
-          http.request(request).code_type
+          http.request(request).code.to_i
         end
 
         def request

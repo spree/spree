@@ -101,14 +101,14 @@ describe Spree::Webhooks::Endpoints::MakeRequest do
           end
         end
 
-        context 'when request code_type is not Net::HTTPOK' do
+        context 'when request code_type is not 2xx' do
           before do
             http_double = instance_double(Net::HTTP)
             allow(Net::HTTP).to receive(:new).and_return(http_double)
             allow(http_double).to(
               receive(:request).and_return(
                 double(:request).tap do |request|
-                  allow(request).to receive(:code_type).and_return(Net::HTTPClientError)
+                  allow(request).to receive(:code).and_return("304")
                 end
               )
             )
@@ -124,7 +124,7 @@ describe Spree::Webhooks::Endpoints::MakeRequest do
           it { expect(subject).to eq(nil) }
         end
 
-        context 'when request code_type is Net::HTTPOK' do
+        context 'when request code_type is 2xx' do
           it 'debug logs after the request and returns its value' do
             message = "[SPREE WEBHOOKS] 'order.cancel' success for URL 'http://google.com/'"
             expect(subject).to eq(Rails.logger.debug(message))
