@@ -13,6 +13,8 @@ describe Spree::Order, type: :model do
 
   before { allow(Spree::LegacyUser).to receive_messages(current: create(:user)) }
 
+  it_behaves_like 'metadata'
+
   describe '.scopes' do
     let!(:user) { FactoryBot.create(:user) }
     let!(:completed_order) { FactoryBot.create(:order, user: user, completed_at: Time.current) }
