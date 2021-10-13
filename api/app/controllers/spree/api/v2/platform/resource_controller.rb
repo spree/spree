@@ -83,12 +83,17 @@ module Spree
           def authorize_spree_user
             return if spree_current_user.nil?
 
-            if action_name == 'create'
+            case action_name
+            when 'create'
               spree_authorize! :create, model_class
-            elsif %w[show index].include?(action_name)
+            when 'destroy'
+              spree_authorize! :destroy, resource
+            when 'index'
               spree_authorize! :read, model_class
+            when 'show'
+              spree_authorize! :read, resource
             else
-              spree_authorize! action_name, resource
+              spree_authorize! :update, resource
             end
           end
 
