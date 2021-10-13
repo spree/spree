@@ -3,15 +3,12 @@ module Spree
     module V2
       module Platform
         class ResourceController < ::Spree::Api::V2::ResourceController
-          READ_ACTIONS = %i[show index]
-          WRITE_ACTIONS = %i[create update destroy]
-
           # doorkeeper scopes usage: https://github.com/doorkeeper-gem/doorkeeper/wiki/Using-Scopes
-          before_action -> { doorkeeper_authorize! :read, :admin }, if: -> { READ_ACTIONS.include?(action_name.to_sym) }
-          before_action -> { doorkeeper_authorize! :write, :admin }, if: -> { WRITE_ACTIONS.include?(action_name.to_sym) }
+          before_action -> { doorkeeper_authorize! :read, :admin }
+          before_action -> { doorkeeper_authorize! :write, :admin }, if: :write_request?
 
           # optional authorization if using a user token instead of app token
-          before_action :authorize_spree_user, if: -> { WRITE_ACTIONS.include?(action_name.to_sym) }
+          before_action :authorize_spree_user
 
           # index and show acrtions are defined in Spree::Api::V2::ResourceController
 
@@ -88,6 +85,8 @@ module Spree
 
             if action_name == 'create'
               spree_authorize! :create, model_class
+            elsif %w[show index].include?(action_name)
+              spree_authorize! :read, model_class
             else
               spree_authorize! action_name, resource
             end
@@ -107,6 +106,10 @@ module Spree
 
           def allowed_sort_attributes
             (super << spree_permitted_attributes).uniq.compact
+          end
+
+          def write_request?
+            %w[put patch post delete].include?(request.request_method.downcase)
           end
         end
       end
