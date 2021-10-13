@@ -51,6 +51,7 @@ RSpec.configure do |config|
         { name: 'Line Items' },
         { name: 'Menus' },
         { name: 'Menu Items' },
+        { name: 'Promotions' },
         { name: 'Option Types' },
         { name: 'Option Values' },
         { name: 'Orders' },
@@ -272,6 +273,14 @@ RSpec.configure do |config|
               new_position_idx: { type: :integer }
             },
             required: %w[new_parent_id new_position_idx],
+            'x-internal': true
+          },
+          promotions_params: {
+            type: :object,
+            properties: {
+              name: { type: :string, example: 'Black Firiday Saver' },
+            },
+            required: %w[name],
             'x-internal': true
           },
           shipping_category_params: {
