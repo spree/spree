@@ -3,9 +3,6 @@ module Spree
     module V2
       module Platform
         class OrdersController < ResourceController
-          WRITE_ACTIONS.push(:use_store_credit, :remove_store_credit, :apply_coupon_code, :remove_coupon_code, :next, :advance,
-                             :complete, :empty, :approve, :cancel)
-
           include CouponCodesHelper
 
           def create
@@ -116,6 +113,8 @@ module Spree
 
             if action_name == 'create'
               spree_authorize! :create, model_class
+            elsif %w[show index].include?(action_name)
+              spree_authorize! :read, model_class
             elsif %w[next cancel complete empty advance add_store_credit remove_store_credit].include?(action_name)
               spree_authorize! :update, resource
             else

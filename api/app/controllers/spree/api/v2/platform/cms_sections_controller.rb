@@ -3,8 +3,6 @@ module Spree
     module V2
       module Platform
         class CmsSectionsController < ResourceController
-          before_action -> { doorkeeper_authorize! :write, :admin }, only: WRITE_ACTIONS << :reposition
-
           def reposition
             spree_authorize! :update, @moved_section if spree_current_user.present?
 
