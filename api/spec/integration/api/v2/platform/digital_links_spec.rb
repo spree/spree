@@ -37,6 +37,8 @@ describe 'Digital Link API', swagger: true do
       parameter name: :id, in: :path, type: :string
 
       it_behaves_like 'record updated'
+      it_behaves_like 'record not found'
+      it_behaves_like 'authentication failed'
     end
   end
 end

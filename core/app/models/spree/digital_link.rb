@@ -14,15 +14,19 @@ module Spree
     end
 
     def expired?
-      return unless line_item.order.store.limit_digital_download_days
-
-      created_at <= line_item.order.store.digital_asset_authorized_days.day.ago
+      if line_item.order.store.limit_digital_download_days
+        created_at <= line_item.order.store.digital_asset_authorized_days.day.ago
+      else
+        false
+      end
     end
 
     def access_limit_exceeded?
-      return unless line_item.order.store.limit_digital_download_count
-
-      access_counter >= line_item.order.store.digital_asset_authorized_clicks
+      if line_item.order.store.limit_digital_download_count
+        access_counter >= line_item.order.store.digital_asset_authorized_clicks
+      else
+        false
+      end
     end
 
     # This method should be called when a download is initiated.
