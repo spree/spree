@@ -43,7 +43,9 @@ describe Spree::Api::V2::Platform::ProductSerializer do
           price: BigDecimal(10),
           display_price: '$10.00',
           compare_at_price: BigDecimal(15),
-          display_compare_at_price: '$15.00'
+          display_compare_at_price: '$15.00',
+          public_metadata: {},
+          private_metadata: {}
         },
         relationships: {
           tax_category: {

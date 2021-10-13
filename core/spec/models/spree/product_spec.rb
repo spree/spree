@@ -8,6 +8,8 @@ module ThirdParty
 end
 
 describe Spree::Product, type: :model do
+  it_behaves_like 'metadata'
+
   let!(:store) { create(:store) }
 
   context 'product instance' do
