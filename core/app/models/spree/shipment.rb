@@ -5,6 +5,7 @@ module Spree
     include Spree::Core::NumberGenerator.new(prefix: 'H', length: 11)
     include NumberIdentifier
     include NumberAsParam
+    include Metadata
 
     with_options inverse_of: :shipments do
       belongs_to :address, class_name: 'Spree::Address'
