@@ -20,7 +20,7 @@ RSpec.configure do |config|
     'v2/platform/index.yaml' => {
       openapi: '3.0.3',
       info: {
-        title: 'Platform API V2',
+        title: 'Platform API v2',
         contact: {
           name: 'Spark Solutions',
           url: 'https://sparksolutions.co',

@@ -33,12 +33,10 @@ describe Spree::DigitalLink, type: :model do
   end
 
   describe '#reset!' do
-    let!(:digital_link_count_check) { create(:digital_link, access_counter: 5) }
-    let!(:digital_link_created_at_check) { create(:digital_link) }
+    let!(:digital_link) { create(:digital_link, access_counter: 5) }
 
-    it 'resets created at and access_counter' do
-      expect { digital_link_created_at_check.reset! }.to change(digital_link_created_at_check, :created_at)
-      expect { digital_link_count_check.reset! }.to change(digital_link_count_check, :access_counter)
+    it 'resets access_counter' do
+      expect { digital_link.reset! }.to change(digital_link, :access_counter)
     end
   end
 
