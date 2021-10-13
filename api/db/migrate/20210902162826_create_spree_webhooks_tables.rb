@@ -4,20 +4,13 @@ class CreateSpreeWebhooksTables < ActiveRecord::Migration[5.2]
       t.string :url, null: false
       t.boolean :enabled, default: false, index: true
 
-      create_subscriptions_column!(t)
+      if t.respond_to? :jsonb
+        t.jsonb :subscriptions
+      else
+        t.json :subscriptions
+      end
 
       t.timestamps
-    end
-  end
-
-  private
-
-  def create_subscriptions_column!(table)
-    case ActiveRecord::Base.connection.adapter_name
-    when 'Mysql2'
-      table.json :subscriptions
-    when 'PostgreSQL'
-      table.jsonb :subscriptions
     end
   end
 end
