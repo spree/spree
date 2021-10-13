@@ -3,8 +3,6 @@ module Spree
     module V2
       module Platform
         class DigitalLinksController < ResourceController
-          before_action -> { doorkeeper_authorize! :write, :admin }, only: WRITE_ACTIONS << :reset
-
           def reset
             spree_authorize! :update, @digital_link if spree_current_user.present?
 
