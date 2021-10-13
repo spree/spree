@@ -43,13 +43,24 @@ module Spree
         end
 
         def failed_request?
-          !(200...300).include?(request_status_code)
+          (200...300).exclude?(request_status_code)
         end
 
         def request_status_code
-          http = Net::HTTP.new(uri_host, uri_port)
-          http.use_ssl = true unless Rails.env.development? || Rails.env.test?
           http.request(request).code.to_i
+        rescue SocketError, Net::ReadTimeout
+          0
+        end
+
+        def http
+          http = Net::HTTP.new(uri_host, uri_port)
+          if (webhooks_timeout = ENV['SPREE_WEBHOOKS_TIMEOUT'])
+            http.read_timeout = webhooks_timeout.to_i
+          end
+          unless Rails.env.development? || Rails.env.test?
+            http.use_ssl = true 
+          end
+          http
         end
 
         def request

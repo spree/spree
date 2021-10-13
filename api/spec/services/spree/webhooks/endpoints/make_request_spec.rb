@@ -7,6 +7,8 @@ describe Spree::Webhooks::Endpoints::MakeRequest do
     let(:event) { 'order.cancel' }
     let(:url) { 'http://google.com/' }
     let(:body) { { foo: :bar }.to_json }
+    let(:uri) { URI(url) }
+    let(:http) { Net::HTTP.new(uri.host, uri.port) }
 
     shared_examples 'returns nil without making a request' do
       it 'does not instantiate Net::HTTP::Post to make a request' do
@@ -52,9 +54,6 @@ describe Spree::Webhooks::Endpoints::MakeRequest do
         end
 
         describe 'ssl usage' do
-          let(:uri) { URI(url) }
-          let(:http) { Net::HTTP.new(uri.host, uri.port) }
-
           shared_examples 'makes the request without setting use_ssl' do
             it 'does not set use_ssl' do
               allow(Net::HTTP).to receive(:new).with(uri.host, uri.port).and_return(http)
@@ -86,7 +85,7 @@ describe Spree::Webhooks::Endpoints::MakeRequest do
 
             let(:url) { 'http://google.com/' }
 
-            it 'does set use_ssl' do
+            it 'sets use_ssl' do
               allow(Net::HTTP).to receive(:new).and_return(http)
               expect(http).to receive(:use_ssl=).with(true)
               subject
@@ -101,33 +100,85 @@ describe Spree::Webhooks::Endpoints::MakeRequest do
           end
         end
 
-        context 'when request status code is not 2xx' do
-          before do
-            http_double = instance_double(Net::HTTP)
-            allow(Net::HTTP).to receive(:new).and_return(http_double)
-            allow(http_double).to(
-              receive(:request).and_return(
-                double(:request).tap do |request|
-                  allow(request).to receive(:code).and_return('304')
-                end
-              )
-            )
+        describe 'setting the read_timeout through the SPREE_WEBHOOKS_TIMEOUT env var' do
+          context 'without a SPREE_WEBHOOKS_TIMEOUT env var' do
+            before { ENV['SPREE_WEBHOOKS_TIMEOUT'] = nil }
+
+            it 'does not set Net::HTTP#read_timeout=' do
+              expect(http).not_to receive(:read_timeout=)
+              subject
+            end
           end
 
-          it 'warn logs after the request' do
-            allow(Rails.logger).to receive(:warn)
-            subject
-            message = "[SPREE WEBHOOKS] 'order.cancel' failed for 'http://google.com/'"
-            expect(Rails.logger).to have_received(:warn).with(message)
-          end
+          context 'with a SPREE_WEBHOOKS_TIMEOUT env var' do
+            before do
+              ENV['SPREE_WEBHOOKS_TIMEOUT'] = spree_webhooks_timeout.to_s
+              allow(Net::HTTP).to receive(:new).with(uri.host, uri.port).and_return(http)
+            end
 
-          it { expect(subject).to eq(nil) }
+            after { ENV['SPREE_WEBHOOKS_TIMEOUT'] = nil }
+
+            let(:spree_webhooks_timeout) { 15 } # time in seconds
+
+            it 'sets Net::HTTP#read_timeout= to the integer value of SPREE_WEBHOOKS_TIMEOUT' do
+              expect(http).to receive(:read_timeout=).with(spree_webhooks_timeout)
+              subject
+            end
+          end
         end
 
-        context 'when request status code is 2xx' do
-          it 'debug logs after the request and returns its value' do
-            message = "[SPREE WEBHOOKS] 'order.cancel' success for URL 'http://google.com/'"
-            expect(subject).to eq(Rails.logger.debug(message))
+        describe 'handling the request response status code' do
+          let(:http_double) { instance_double(Net::HTTP) }
+
+          context 'when the request status code is not 2xx' do
+            before do
+              allow(Net::HTTP).to receive(:new).and_return(http_double)
+              allow(http_double).to(
+                receive(:request).and_return(
+                  double(:request).tap do |request|
+                    allow(request).to receive(:code).and_return('304')
+                  end
+                )
+              )
+            end
+
+            it 'warn logs after the request' do
+              allow(Rails.logger).to receive(:warn)
+              subject
+              message = "[SPREE WEBHOOKS] 'order.cancel' failed for 'http://google.com/'"
+              expect(Rails.logger).to have_received(:warn).with(message)
+            end
+
+            it { expect(subject).to eq(nil) }
+          end
+
+          context 'when the request raises a SocketError exception' do
+            before do
+              allow(Net::HTTP).to receive(:new).and_return(http_double)
+              allow(http_double).to receive(:request) do
+                raise SocketError
+              end
+            end
+
+            it { expect(subject).to eq(nil) }
+          end
+
+          context 'when the request raises a Net::ReadTimeout exception' do
+            before do
+              allow(Net::HTTP).to receive(:new).and_return(http_double)
+              allow(http_double).to receive(:request) do
+                raise Net::ReadTimeout
+              end
+            end
+
+            it { expect(subject).to eq(nil) }
+          end
+
+          context 'when request status code is 2xx' do
+            it 'debug logs after the request and returns its value' do
+              message = "[SPREE WEBHOOKS] 'order.cancel' success for URL 'http://google.com/'"
+              expect(subject).to eq(Rails.logger.debug(message))
+            end
           end
         end
       end
