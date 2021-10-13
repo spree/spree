@@ -2,11 +2,13 @@ module Spree
   module PermittedAttributes
     ATTRIBUTES = [
       :address_attributes,
-      :classification_attributes,
       :checkout_attributes,
+      :classification_attributes,
       :cms_page_attributes,
       :cms_section_attributes,
       :customer_return_attributes,
+      :digital_attributes,
+      :digital_link_attributes,
       :image_attributes,
       :inventory_unit_attributes,
       :line_item_attributes,
@@ -63,6 +65,10 @@ module Spree
                                 :acceptance_status, :exchange_variant_id, :resellable]
     }]
 
+    @@digital_attributes = [:attachment, :variant_id]
+
+    @@digital_link_attributes = [:access_counter]
+
     @@image_attributes = [:alt, :attachment, :position, :viewable_type, :viewable_id]
 
     @@inventory_unit_attributes = [:shipment, :shipment_id, :variant_id]
@@ -93,7 +99,8 @@ module Spree
 
     @@property_attributes = [:name, :presentation]
 
-    @@return_authorization_attributes = [:amount, :memo, :stock_location_id, :inventory_units_attributes, :return_authorization_reason_id]
+    @@return_authorization_attributes = [:amount, :memo, :stock_location_id, :inventory_units_attributes,
+                                         :return_authorization_reason_id]
 
     @@shipment_attributes = [
       :order, :special_instructions, :stock_location_id, :id,
@@ -124,7 +131,9 @@ module Spree
                           :customer_support_email, :facebook, :twitter, :instagram,
                           :description, :address, :contact_phone, :supported_locales,
                           :default_locale, :default_country_id, :supported_currencies,
-                          :new_order_notifications_email, :mailer_logo, :favicon_image, :checkout_zone_id, :seo_robots]
+                          :new_order_notifications_email, :mailer_logo, :favicon_image,
+                          :checkout_zone_id, :seo_robots, :digital_asset_authorized_clicks,
+                          :digital_asset_authorized_days, :limit_digital_download_count, :limit_digital_download_days]
 
     @@store_credit_attributes = %i[amount currency category_id memo]
 

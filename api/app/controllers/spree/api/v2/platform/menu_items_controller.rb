@@ -17,7 +17,7 @@ module Spree
             end
 
             if @moved_item.save
-              render_serialized_payload { serialize_resource(resource) }
+              render_serialized_payload { serialize_resource(@moved_item) }
             end
           end
 

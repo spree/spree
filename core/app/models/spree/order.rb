@@ -1,5 +1,6 @@
 require_dependency 'spree/order/checkout'
 require_dependency 'spree/order/currency_updater'
+require_dependency 'spree/order/digital'
 require_dependency 'spree/order/payments'
 require_dependency 'spree/order/store_credit'
 require_dependency 'spree/order/emails'
@@ -11,6 +12,7 @@ module Spree
 
     include Spree::Order::Checkout
     include Spree::Order::CurrencyUpdater
+    include Spree::Order::Digital
     include Spree::Order::Payments
     include Spree::Order::StoreCredit
     include Spree::Order::AddressBook
@@ -55,7 +57,7 @@ module Spree
 
     checkout_flow do
       go_to_state :address
-      go_to_state :delivery
+      go_to_state :delivery, if: ->(order) { order.delivery_required? }
       go_to_state :payment, if: ->(order) { order.payment? || order.payment_required? }
       go_to_state :confirm, if: ->(order) { order.confirmation_required? }
       go_to_state :complete
@@ -212,6 +214,11 @@ module Spree
     # own application if you require additional steps before allowing a checkout.
     def checkout_allowed?
       line_items.exists?
+    end
+
+    # Does this order require a physical delivery.
+    def delivery_required?
+      !digital?
     end
 
     # Is this a free order in which case the payment step should be skipped

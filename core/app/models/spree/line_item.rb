@@ -12,6 +12,7 @@ module Spree
 
     has_many :adjustments, as: :adjustable, dependent: :destroy
     has_many :inventory_units, inverse_of: :line_item
+    has_many :digital_links, dependent: :destroy
 
     before_validation :copy_price
     before_validation :copy_tax_category
@@ -42,6 +43,7 @@ module Spree
     delegate :name, :description, :sku, :should_track_inventory?, :product, :options_text, :slug, :product_id, to: :variant
     delegate :brand, :category, to: :product
     delegate :tax_zone, to: :order
+    delegate :digital?, to: :variant
 
     attr_accessor :target_shipment
 

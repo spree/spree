@@ -11,6 +11,7 @@ module Spree
 
           has_many :adjustments
           has_many :inventory_units
+          has_many :digital_links
         end
       end
     end

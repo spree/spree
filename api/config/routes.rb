@@ -178,6 +178,8 @@ Spree::Core::Engine.add_routes do
             delete 'remove_item/:item_id', to: 'wishlists#remove_item', as: :remove_item
           end
         end
+
+        get '/digitals/:token', to: 'digitals#download', as: 'digital'
       end
 
       namespace :platform do
@@ -292,14 +294,22 @@ Spree::Core::Engine.add_routes do
           end
         end
 
-        # Wishlists
+        # Wishlists API
         resources :wishlists
         resources :wished_items
+
+        # Digitals API
+        resources :digitals
+        resources :digital_links do
+          member do
+            patch :reset
+          end
+        end
 
         # Store API
         resources :stores
 
-        # Configurations
+        # Configurations API
         resources :shipping_categories
       end
     end

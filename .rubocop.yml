@@ -70,6 +70,10 @@ Layout/SpaceInsideArrayLiteralBrackets:
 Style/FrozenStringLiteralComment:
   Enabled: false
 
+Style/ClassVars:
+  Exclude:
+    - 'core/lib/spree/permitted_attributes.rb'
+
 Style/RegexpLiteral:
   Enabled: false
 

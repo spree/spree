@@ -4,8 +4,8 @@ module Spree
       prepend Spree::ServiceModule::Base
 
       def call
-        # FIXME: we should use translations here
-        Spree::ShippingCategory.find_or_create_by!(name: 'Default')
+        Spree::ShippingCategory.find_or_create_by!(name: I18n.t('spree.seed.shipping.categories.default'))
+        Spree::ShippingCategory.find_or_create_by!(name: I18n.t('spree.seed.shipping.categories.digital'))
       end
     end
   end

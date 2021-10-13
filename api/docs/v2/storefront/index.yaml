@@ -1531,6 +1531,96 @@ paths:
         name: item_id
         in: path
         required: true
+  '/api/v2/storefront/digitals/{token}':
+    get:
+      summary: Download a Digital Asset
+      tags:
+        - Digital Downloads
+      responses:
+        '200':
+          description: 200 Success - Returns the digital asset.
+          content:
+            image/jpeg:
+              schema:
+                type: object
+                format: binary
+            image/gif:
+              schema:
+                type: object
+                format: binary
+            image/svg+xml:
+              schema:
+                type: object
+                format: binary
+            image/bmp:
+              schema:
+                type: object
+                format: binary
+            image/tiff:
+              schema:
+                type: object
+                format: binary
+            image/png:
+              schema:
+                type: object
+                format: binary
+            video/mpeg:
+              schema:
+                type: object
+                format: binary
+            application/gzip:
+              schema:
+                type: object
+                format: binary
+            application/zip:
+              schema:
+                type: object
+                format: binary
+            application/pdf:
+              schema:
+                type: object
+                format: binary
+            font/woff:
+              schema:
+                type: object
+                format: binary
+            font/woff2:
+              schema:
+                type: object
+                format: binary
+            font/otf:
+              schema:
+                type: object
+                format: binary
+            font/ttf:
+              schema:
+                type: object
+                format: binary
+            text/plain:
+              schema:
+                type: object
+                format: binary
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+      operationId: get-digitals
+      description: |-
+        This endpoint allows you to download a digital item using the unique digital_link token.
+
+        The digital_link token value can be found by including `line_items.digital_links` in a completed order lookup.
+
+        Use the **Retrieve an Order Status** endpoint found under the Order Status tab, or the **Retrieve an Order** endpoint found under the Account / Orders tab to perform a completed order lookup.
+
+        Depending on the store that the item was purchased in, downloads may be restricted to a set number of days since the purchase was made. Additionally, the number of times a download link can be used may be restricted.
+
+        If you are not authorized to perform the download due to the download limit restrictions mentioned above, a 403 response will be returned.
+    parameters:
+      - schema:
+          type: string
+          example: 4WaA5vjMbnivskav2rMPGKzt
+        name: token
+        in: path
+        required: true
+        description: Use the token from the digital link.
 components:
   securitySchemes:
     bearerAuth:
@@ -15906,6 +15996,7 @@ tags:
   - name: Checkout / Store Credit
   - name: CMS Pages
   - name: Countries
+  - name: Digital Downloads
   - name: Menus
   - name: Order Status
   - name: Products

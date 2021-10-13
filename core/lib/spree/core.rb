@@ -18,6 +18,7 @@ require 'mini_magick'
 require 'ransack'
 require 'state_machines-activerecord'
 require 'active_storage_validations'
+require 'activerecord-typedstore'
 
 # This is required because ActiveModel::Validations#invalid? conflicts with the
 # invalid state of a Payment. In the future this should be removed.

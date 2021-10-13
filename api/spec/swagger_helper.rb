@@ -20,7 +20,7 @@ RSpec.configure do |config|
     'v2/platform/index.yaml' => {
       openapi: '3.0.3',
       info: {
-        title: 'Platform API V2',
+        title: 'Platform API v2',
         contact: {
           name: 'Spark Solutions',
           url: 'https://sparksolutions.co',
@@ -46,9 +46,11 @@ RSpec.configure do |config|
         { name: 'Countries' },
         { name: 'CMS Pages' },
         { name: 'CMS Sections' },
+        { name: 'Digital Assets' },
+        { name: 'Digital Links' },
         { name: 'Line Items' },
-        { name: 'Menu Items' },
         { name: 'Menus' },
+        { name: 'Menu Items' },
         { name: 'Option Types' },
         { name: 'Option Values' },
         { name: 'Orders' },
@@ -319,6 +321,20 @@ RSpec.configure do |config|
               new_position_idx: { type: :integer }
             },
             required: %w[new_position_idx]
+          },
+          digital_params: {
+            type: :object,
+            properties: {
+              'digital[attachment]': { type: :string, format: :binary },
+              "digital[variant_id]": { type: :string, example: '123' }
+            },
+            required: ['digital[attachment]', 'digital[variant_id]']
+          },
+          digital_link_params: {
+            type: :object,
+            properties: {
+              access_counter: { type: :integer }
+            }
           },
           amount_param: {
             type: :object,

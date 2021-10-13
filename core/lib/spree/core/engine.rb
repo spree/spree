@@ -30,7 +30,8 @@ module Spree
           Spree::Calculator::Shipping::FlatRate,
           Spree::Calculator::Shipping::FlexiRate,
           Spree::Calculator::Shipping::PerItem,
-          Spree::Calculator::Shipping::PriceSack
+          Spree::Calculator::Shipping::PriceSack,
+          Spree::Calculator::Shipping::DigitalDelivery,
         ]
 
         app.config.spree.calculators.tax_rates = [
@@ -41,7 +42,8 @@ module Spree
       initializer 'spree.register.stock_splitters', before: :load_config_initializers do |app|
         app.config.spree.stock_splitters = [
           Spree::Stock::Splitter::ShippingCategory,
-          Spree::Stock::Splitter::Backordered
+          Spree::Stock::Splitter::Backordered,
+          Spree::Stock::Splitter::Digital
         ]
       end
 

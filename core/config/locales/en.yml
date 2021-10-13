@@ -926,6 +926,8 @@ en:
     delete: Delete
     deleted: Deleted
     delete_from_taxon: Delete From Taxon
+    digital:
+      digital_delivery: Digital Delivery
     discontinued_variants_present: Some line items in this order have products that are no longer available.
     delivery: Delivery
     delivery_information: Delivery Information
@@ -1624,6 +1626,11 @@ en:
     say_no: 'No'
     say_yes: 'Yes'
     scope: Scope
+    seed:
+      shipping:
+        categories:
+          default: Default
+          digital: Digital
     search: Search
     search_by: 'Search by:'
     search_order_number: Order Number

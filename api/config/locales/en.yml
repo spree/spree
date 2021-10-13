@@ -40,3 +40,6 @@ en:
           must_be_an_integer: "Sorry, you must pass an integer value, eg. 5"
         cms_sections:
           pass_position_index: "Pass 'new_position_idx' with an interger value in the request body"
+        digitals:
+          unauthorized: "Error, you are not authorized to access this asset"
+          missing_file: "Missing Digital Item: attachment"
