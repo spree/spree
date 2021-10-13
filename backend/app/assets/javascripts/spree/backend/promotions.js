@@ -31,35 +31,39 @@ function initProductActions () {
     var optionValueSelectNameTemplate = Handlebars.compile($('#promo-rule-option-value-option-values-select-name-template').html())
     var optionValueTemplate = Handlebars.compile($('#promo-rule-option-value-template').html())
     var optionValuesList = $('.js-promo-rule-option-values')
+    var count = 0;
 
     var addOptionValue = function (productId, values) {
       var template = optionValueTemplate({
-        productId: productId
+        productId: productId,
+        count: count++
       })
 
       optionValuesList.append(template)
 
-      var optionValueId = '#promo-rule-option-value-'
-      if (productId) {
-        optionValueId += productId.toString()
-      }
-      var optionValue = optionValuesList.find(optionValueId)
+      for (var i = 0; i < count; ++i) {
+        var optionValueId = '#promo-rule-option-value-' + i + '-'
+        if (productId) {
+          optionValueId += productId.toString()
+        }
+        var optionValue = optionValuesList.find(optionValueId)
 
-      var productSelect = optionValue.find('.js-promo-rule-option-value-product-select')
-      var valuesSelect = optionValue.find('.js-promo-rule-option-value-option-values-select')
+        var productSelect = optionValue.find('.js-promo-rule-option-value-product-select')
+        var valuesSelect = optionValue.find('.js-promo-rule-option-value-option-values-select')
 
-      productSelect.productAutocomplete({ multiple: false, values: productId })
-      productSelect.on('select2:select', function(e) {
-        valuesSelect.attr('disabled', false).removeClass('d-none').addClass('d-block')
-        valuesSelect.attr('name', optionValueSelectNameTemplate({ productId: productSelect.val() }).trim())
-        valuesSelect.optionValueAutocomplete({
-          productId: productId,
-          productSelect: productSelect,
-          multiple: true,
-          values: values,
-          clearSelection: productId != productSelect.val()
+        productSelect.productAutocomplete({ multiple: false, values: productId })
+        productSelect.on('select2:select', function(e) {
+          valuesSelect.attr('disabled', false).removeClass('d-none').addClass('d-block')
+          valuesSelect.attr('name', optionValueSelectNameTemplate({ productId: productSelect.val() }).trim())
+          valuesSelect.optionValueAutocomplete({
+            productId: productId,
+            productSelect: productSelect,
+            multiple: true,
+            values: values,
+            clearSelection: productId != productSelect.val()
+          })
         })
-      })
+      }
     }
 
     var originalOptionValues = $('.js-original-promo-rule-option-values').data('original-option-values')
