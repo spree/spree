@@ -108,20 +108,6 @@ module Spree
                        :item_count, :tax_total, :completed_at)
           end
 
-          def authorize_spree_user
-            return if spree_current_user.nil?
-
-            if action_name == 'create'
-              spree_authorize! :create, model_class
-            elsif %w[show index].include?(action_name)
-              spree_authorize! :read, model_class
-            elsif %w[next cancel complete empty advance add_store_credit remove_store_credit].include?(action_name)
-              spree_authorize! :update, resource
-            else
-              spree_authorize! action_name, resource
-            end
-          end
-
           def render_order(result)
             if result.success?
               render_serialized_payload { serialize_resource(resource) }
