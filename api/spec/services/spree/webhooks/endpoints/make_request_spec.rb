@@ -89,22 +89,21 @@ describe Spree::Webhooks::Endpoints::MakeRequest do
       end
     end
 
-    context 'when the request raises a SocketError exception' do
-      before do
-        allow(Net::HTTP).to receive(:new).and_return(http_double)
-        allow(http_double).to receive(:request) { raise SocketError }
+    describe 'rescuing from known exceptions' do
+      shared_examples 'rescues from' do |exception|
+        before do
+          allow(Net::HTTP).to receive(:new).and_return(http_double)
+          allow(http_double).to receive(:request) { raise exception }
+        end
+
+        it "rescues from #{exception} and returns it is a failed request" do
+          expect(subject).to eq(true)
+        end
       end
 
-      it { expect(subject).to eq(true) }
-    end
-
-    context 'when the request raises a Net::ReadTimeout exception' do
-      before do
-        allow(Net::HTTP).to receive(:new).and_return(http_double)
-        allow(http_double).to receive(:request) { raise Net::ReadTimeout }
-      end
-
-      it { expect(subject).to eq(true) }
+      include_examples 'rescues from', Errno::ECONNREFUSED
+      include_examples 'rescues from', Net::ReadTimeout
+      include_examples 'rescues from', SocketError
     end
 
     context 'when the request status code is not 2xx' do

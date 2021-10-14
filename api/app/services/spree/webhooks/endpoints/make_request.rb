@@ -29,7 +29,7 @@ module Spree
 
         def request_status_code
           http.request(request).code.to_i
-        rescue SocketError, Net::ReadTimeout
+        rescue Errno::ECONNREFUSED, Net::ReadTimeout, SocketError
           0
         end
 

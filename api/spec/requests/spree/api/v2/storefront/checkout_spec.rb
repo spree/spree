@@ -709,7 +709,6 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
         # complete the checkout
         patch '/api/v2/storefront/checkout/complete', headers: headers
         expect(response.status).to eq(200)
-        order.reload
         expect(order.reload.completed_at).not_to be_nil
         expect(order.state).to eq('complete')
         expect(order.payments.valid.first.payment_method).to eq(payment_method)
