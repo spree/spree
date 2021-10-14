@@ -1,7 +1,7 @@
 module Spree
   module Webhooks
     class Endpoint < Spree::Webhooks::Base
-      validates :url, url: true
+      validates :url, 'spree/url': true
     end
   end
 end

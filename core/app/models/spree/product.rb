@@ -326,14 +326,8 @@ module Spree
     end
 
     def taxons_for_store(store)
-      if store.present?
-        Rails.cache.fetch("#{cache_key_with_version}/taxons-per-store/#{store.id}") do
-          taxons.for_store(store)
-        end
-      else
-        Rails.cache.fetch("#{cache_key_with_version}/taxons-per-store/#{store_ids.join('/')}") do
-          taxons.for_stores(stores)
-        end
+      Rails.cache.fetch("#{cache_key_with_version}/taxons-per-store/#{store.id}") do
+        taxons.for_store(store)
       end
     end
 

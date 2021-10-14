@@ -808,25 +808,18 @@ describe Spree::Product, type: :model do
   describe '#taxons_for_store' do
     let(:store) { create(:store) }
     let(:store_2) { create(:store) }
-    let(:taxon) { create(:taxon, taxonomy: create(:taxonomy, store: store)) }
-    let(:taxon_2) { create(:taxon, taxonomy: create(:taxonomy, store: store_2)) }
-    let!(:product) { create(:product, stores: [store, store_2], taxons: [taxon, taxon_2]) }
+    let(:product) { create(:product, stores: [store, store_2], taxons: [taxon, taxon_2]) }
+    let(:taxonomy) { create(:taxonomy, store: store) }
+    let(:taxonomy_2) { create(:taxonomy, store: store_2) }
+    let(:taxon) { create(:taxon, taxonomy: taxonomy) }
+    let(:taxon_2) { create(:taxon, taxonomy: taxonomy_2) }
+    let(:taxon_3) { create(:taxon, taxonomy: taxonomy) }
 
-    context 'with a store' do
-      it 'returns product taxons for specified store' do
-        expect(product.taxons_for_store(store)).to eq([taxon])
-        expect(product.taxons_for_store(store_2)).to eq([taxon_2])
-      end
-
-      it { expect(product.taxons_for_store(store)).to be_a(ActiveRecord::Relation) }
+    it 'returns product taxons for specified store' do
+      expect(product.taxons_for_store(store)).to eq([taxon])
+      expect(product.taxons_for_store(store_2)).to eq([taxon_2])
     end
 
-    context 'without a store' do
-      it 'returns the product taxons for all the stores' do
-        expect(product.taxons_for_store(nil)).to eq([taxon, taxon_2])
-      end
-
-      it { expect(product.taxons_for_store(nil)).to be_a(ActiveRecord::Relation) }
-    end
+    it { expect(product.taxons_for_store(store)).to be_a(ActiveRecord::Relation) }
   end
 end
