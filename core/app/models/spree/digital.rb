@@ -3,7 +3,7 @@ module Spree
     belongs_to :variant
     has_many :digital_links, dependent: :destroy
 
-    if Spree::Config[:private_asset_storage_service_name]
+    if Spree::Config[:private_asset_storage_service_name].present?
       has_one_attached :attachment, service: Spree::Config[:private_asset_storage_service_name].to_sym
     else
       has_one_attached :attachment
