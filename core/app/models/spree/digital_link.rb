@@ -36,8 +36,8 @@ module Spree
     end
 
     def reset!
-      update_column :access_counter, 0
-      update_column :created_at, Time.current
+      self.access_counter = 0
+      self.created_at = Time.now
     end
 
     private
