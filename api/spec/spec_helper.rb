@@ -66,6 +66,18 @@ RSpec.configure do |config|
   config.include Spree::TestingSupport::Preferences
   config.include Spree::TestingSupport::ImageHelpers
 
+  DummySerializer = Struct.new(:_) { def serializable_hash; {}; end }
+  Spree::Api::V2::Platform::ShippingCategorySerializer = DummySerializer
+  Spree::Api::V2::Platform::PriceSerializer = DummySerializer
+  Spree::Api::V2::Platform::StoreProductSerializer = DummySerializer
+  Spree::Api::V2::Platform::BogusSerializer = DummySerializer
+  Spree::Api::V2::Platform::FlatRateSerializer = DummySerializer
+  Spree::Api::V2::Platform::LegacyUserSerializer = DummySerializer
+  Spree::Api::V2::Platform::OptionValueVariantSerializer = DummySerializer
+  Spree::Api::V2::Platform::ShippingMethodCategorySerializer = DummySerializer
+  Spree::Api::V2::Platform::ShippingMethodZoneSerializer = DummySerializer
+  Spree::Api::V2::Platform::StockMovementSerializer = DummySerializer
+
   config.before do
     ENV['DISABLE_SPREE_WEBHOOKS'] = 'true'
 

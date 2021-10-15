@@ -31,8 +31,6 @@ module Spree
 
       def body
         resource_serializer.new(self).serializable_hash.to_json
-      rescue NameError
-        ''
       end
 
       def resource_serializer

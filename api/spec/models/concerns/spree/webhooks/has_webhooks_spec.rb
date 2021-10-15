@@ -10,7 +10,13 @@ module Spree
   end
 end
 
-Spree::TestProduct = Spree::Webhooks::TestProduct
+module Spree
+  class TestProduct < ActiveRecord::Base
+    self.table_name = 'test_products'
+
+    include Spree::Webhooks::HasWebhooks
+  end
+end
 
 describe Spree::Webhooks::HasWebhooks do
   before(:all) do
@@ -27,6 +33,8 @@ describe Spree::Webhooks::HasWebhooks do
     allow(Spree::Webhooks::Endpoints::QueueRequests).to receive(:new).and_return(queue_requests)
     allow(queue_requests).to receive(:call).with(any_args)
   end
+
+  after { ENV['DISABLE_SPREE_WEBHOOKS'] = 'true' }
 
   let(:images) { create_list(:image, 2) }
   let(:product) do
@@ -63,14 +71,14 @@ describe Spree::Webhooks::HasWebhooks do
     end
   end
 
-  context 'without DISABLE_SPREE_WEBHOOKS', :spree_webhooks do
-    before do
-      ENV['DISABLE_SPREE_WEBHOOKS'] = nil
-      product.save
-    end
-
+  context 'without DISABLE_SPREE_WEBHOOKS' do
     context 'with a Spree::Webhooks descendant class' do
       let(:product) { Spree::Webhooks::TestProduct.new(name: 'test') }
+
+      before do
+        ENV['DISABLE_SPREE_WEBHOOKS'] = nil
+        product.save
+      end
 
       context 'after_create_commit' do
         it 'does not queue a request' do
@@ -96,6 +104,11 @@ describe Spree::Webhooks::HasWebhooks do
     context 'without a Spree::Webhooks descendant class' do
       context 'with a resource serializer' do
         let(:body) { Spree::Api::V2::Platform::ProductSerializer.new(product).serializable_hash.to_json }
+
+        before do
+          ENV['DISABLE_SPREE_WEBHOOKS'] = nil
+          product.save
+        end
 
         context 'after_create_commit' do
           it 'queues a request through QueueRequests for product.create' do
@@ -130,26 +143,30 @@ describe Spree::Webhooks::HasWebhooks do
         end
       end
 
-      context 'without a resource serializer - blank body' do
+      context 'without a resource serializer' do
         let(:product) { Spree::TestProduct.new(name: 'test') }
 
+        let(:exception_msg) { /uninitialized constant Spree::Api::V2::Platform::TestProductSerializer/ }
+
         context 'after_create_commit' do
-          it 'does not queue a request' do
-            expect(queue_requests).not_to have_received(:call).with(hash_including(event: 'test_product.create'))
-          end
+          before { ENV['DISABLE_SPREE_WEBHOOKS'] = nil }
+
+          it { expect { product.save }.to raise_error(NameError, exception_msg) }
         end
 
-        context 'after_destroy_commit' do
-          it 'does not queue a request' do
-            product.destroy
-            expect(queue_requests).not_to have_received(:call).with(hash_including(event: 'test_product.destroy'))
+        context 'update/destroy' do
+          before do
+            ENV['DISABLE_SPREE_WEBHOOKS'] = 'true'
+            product.save
+            ENV['DISABLE_SPREE_WEBHOOKS'] = nil
           end
-        end
 
-        context 'after_update_commit' do
-          it 'does not queue a request' do
-            product.update(name: 'new name')
-            expect(queue_requests).not_to have_received(:call).with(hash_including(event: 'test_product.update'))
+          context 'after_destroy_commit' do
+            it { expect { product.destroy }.to raise_error(NameError, exception_msg) }
+          end
+
+          context 'after_update_commit' do
+            it { expect { product.update(name: 'new name') }.to raise_error(NameError, exception_msg) }
           end
         end
       end
