@@ -5,10 +5,11 @@ module Spree
         class DigitalLinksController < ResourceController
           def reset
             spree_authorize! :update, resource if spree_current_user.present?
-            resource.reset!
 
-            if resource.save
+            if resource.reset!
               render_serialized_payload { serialize_resource(resource) }
+            else
+              render_error_payload(resource.errors)
             end
           end
 
