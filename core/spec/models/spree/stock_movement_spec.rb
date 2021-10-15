@@ -1,6 +1,12 @@
 require 'spec_helper'
 
 describe Spree::StockMovement, type: :model do
+  describe 'metadata behavior' do
+    before { allow_any_instance_of(Spree::StockMovement).to receive(:readonly?).and_return(false) }
+
+    it_behaves_like 'metadata'
+  end
+
   describe 'Constants' do
     describe 'QUANTITY_LIMITS[:max]' do
       it 'return 2**31 - 1' do

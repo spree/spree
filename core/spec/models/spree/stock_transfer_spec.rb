@@ -9,6 +9,8 @@ module Spree
     let(:stock_item) { source_location.stock_items.order(:id).first }
     let(:variant) { stock_item.variant }
 
+    it_behaves_like 'metadata'
+
     describe '#reference' do
       subject { super().reference }
 

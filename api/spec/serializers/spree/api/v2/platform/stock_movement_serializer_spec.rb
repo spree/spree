@@ -19,7 +19,9 @@ describe Spree::Api::V2::Platform::StockMovementSerializer do
           action: resource.action,
           originator_type: resource.originator_type,
           created_at: resource.created_at,
-          updated_at: resource.updated_at
+          updated_at: resource.updated_at,
+          public_metadata: resource.public_metadata,
+          private_metadata: resource.private_metadata
         },
         type: type
       }
