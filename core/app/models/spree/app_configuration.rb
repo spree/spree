@@ -81,11 +81,6 @@ module Spree
     preference :storefront_taxons_path, :string, default: 't'
     preference :storefront_pages_path, :string, default: 'pages'
 
-    # Set a custom active storage service for storing private digital assets.
-    # Enter the service name as a string value. If set to nil, digital assets will be
-    # uploaded to your standard asset hosting location.
-    preference :private_asset_storage_service_name, :string, default: nil
-
     attr_writer :searcher_class
   end
 end
