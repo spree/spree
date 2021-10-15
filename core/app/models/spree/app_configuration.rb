@@ -81,6 +81,9 @@ module Spree
     preference :storefront_taxons_path, :string, default: 't'
     preference :storefront_pages_path, :string, default: 'pages'
 
+    # Set a custom digital storage bucket for private assets.
+    preference :bucket_name_for_private_assets, :string, default: nil
+
     attr_writer :searcher_class
   end
 end
