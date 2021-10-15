@@ -37,7 +37,7 @@ module Spree
 
     def reset!
       self.access_counter = 0
-      self.created_at = Time.now
+      self.created_at = Time.current
       save!
     end
 
