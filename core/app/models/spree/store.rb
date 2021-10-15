@@ -6,6 +6,7 @@ module Spree
       s.boolean :limit_digital_download_days, default: true, null: false
       s.integer :digital_asset_authorized_clicks, default: 5, null: false # number of times a customer can download a digital file.
       s.integer :digital_asset_authorized_days, default: 7, null: false # number of days after initial purchase the customer can download a file.
+      s.integer :api_v2_digital_link_expire_time, default: 300, null: false # 5 minutes in seconds
     end
 
     MAILER_LOGO_CONTENT_TYPES = ['image/png', 'image/jpg', 'image/jpeg'].freeze
