@@ -84,4 +84,42 @@ describe Spree do
       end
     end
   end
+
+  describe '.private_storage_service_name' do
+    after do
+      described_class.private_storage_service_name = nil
+    end
+
+    context 'when private_storage_service_name is a Symbol instance' do
+      it 'returns the private_storage_service_name as a symbol' do
+        described_class.private_storage_service_name = :my_secret_asset_store
+
+        expect(described_class.private_storage_service_name).to eq(:my_secret_asset_store)
+      end
+    end
+
+    context 'when private_storage_service_name is a String instance' do
+      it 'returns the private_storage_service_name as a symbol' do
+        described_class.private_storage_service_name = 'my_hidden_asset_store'
+
+        expect(described_class.private_storage_service_name).to eq(:my_hidden_asset_store)
+      end
+    end
+
+    context 'when private_storage_service_name is a Integer instance' do
+      it 'raises an error' do
+        described_class.private_storage_service_name = 33
+
+        expect { described_class.private_storage_service_name }.to raise_error(RuntimeError)
+      end
+    end
+
+    context 'when private_storage_service_name is set to nil' do
+      it 'returns the private_storage_service_name as nil value' do
+        described_class.private_storage_service_name = nil
+
+        expect(described_class.private_storage_service_name).to be nil
+      end
+    end
+  end
 end
