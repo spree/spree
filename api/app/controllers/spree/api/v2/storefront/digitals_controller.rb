@@ -20,7 +20,7 @@ module Spree
                   # The asset is hosted on a 3rd party service, use an expiring url with disposition: 'attachment'.
 
                   redirect_to attachment.url(
-                    expires_in: current_store.api_v2_digital_link_expire_time.seconds,
+                    expires_in: current_store.digital_asset_link_expire_time.seconds,
                     disposition: 'attachment',
                     host: current_store.formatted_url
                   ) and return

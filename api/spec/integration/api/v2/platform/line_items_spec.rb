@@ -5,7 +5,7 @@ describe 'Line Items API', swagger: true do
 
   resource_name = 'Line Item'
   options = {
-    include_example: 'order,tax_category,variant.product',
+    include_example: 'order,tax_category,variant.product,digital_links',
     filter_examples: [{ name: 'filter[order_id_eq]', example: '123' }]
   }
 
