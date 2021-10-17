@@ -42,6 +42,8 @@ describe Spree::DigitalLink, type: :model do
 
     it 'resets created_at timestamp' do
       origional_created_at = digital_link.created_at
+      sleep 2
+
       digital_link.reset!
       expect(digital_link.created_at).not_to eq(origional_created_at)
     end
@@ -203,7 +205,7 @@ describe Spree::DigitalLink, type: :model do
 
       digital_link_expired.authorize!
       digital_link_expired.reload
-      expect(digital_link_expired.updated_at).to eq(expired_origional_updated_at)
+      expect(digital_link_expired.updated_at.to_s).to eq(expired_origional_updated_at.to_s)
     end
   end
 end
