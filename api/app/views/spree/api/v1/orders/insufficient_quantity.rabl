@@ -1,2 +1,2 @@
 object false
-node(:error) { Spree.t(:insufficient_quantity, scope: [:api, :order]) }
+node(:error) { I18n.t('spree.api.order.insufficient_quantity') }

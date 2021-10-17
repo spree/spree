@@ -92,14 +92,14 @@ module Spree
           @stock_location = Spree::StockLocation.find(params[:stock_location_id])
 
           unless @quantity > 0
-            unprocessable_entity("#{Spree.t(:shipment_transfer_errors_occurred, scope: 'api')} \n #{Spree.t(:negative_quantity, scope: 'api')}")
+            unprocessable_entity("#{I18n.t('spree.api.shipment_transfer_errors_occurred')} \n #{I18n.t('spree.api.negative_quantity')}")
             return
           end
 
           transfer = @original_shipment.transfer_to_location(@variant, @quantity, @stock_location)
           if transfer.valid?
             transfer.run!
-            render json: { message: Spree.t(:shipment_transfer_success) }, status: 201
+            render json: { message: I18n.t('spree.api.shipment_transfer_success') }, status: 201
           else
             render json: { message: transfer.errors.full_messages.to_sentence }, status: 422
           end
@@ -110,20 +110,20 @@ module Spree
 
           error =
             if @quantity < 0 && @target_shipment == @original_shipment
-              "#{Spree.t(:negative_quantity, scope: 'api')}, \n#{Spree.t('wrong_shipment_target', scope: 'api')}"
+              "#{I18n.t('spree.api.negative_quantity')}, \n#{I18n.t('spree.api.wrong_shipment_target')}"
             elsif @target_shipment == @original_shipment
-              Spree.t(:wrong_shipment_target, scope: 'api')
+              I18n.t('spree.api.wrong_shipment_target')
             elsif @quantity < 0
-              Spree.t(:negative_quantity, scope: 'api')
+              I18n.t('spree.api.negative_quantity')
             end
 
           if error
-            unprocessable_entity("#{Spree.t(:shipment_transfer_errors_occurred, scope: 'api')} \n#{error}")
+            unprocessable_entity("#{I18n.t('spree.api.shipment_transfer_errors_occurred')} \n#{error}")
           else
             transfer = @original_shipment.transfer_to_shipment(@variant, @quantity, @target_shipment)
             if transfer.valid?
               transfer.run!
-              render json: { message: Spree.t(:shipment_transfer_success) }, status: 201
+              render json: { message: I18n.t('spree.api.shipment_transfer_success') }, status: 201
             else
               render json: { message: transfer.errors.full_messages }, status: 422
             end
