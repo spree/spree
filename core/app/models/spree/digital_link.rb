@@ -32,13 +32,7 @@ module Spree
     # This method should be called when a download is initiated.
     # It returns +true+ or +false+ depending on whether the authorization is granted.
     def authorize!
-      if authorizable?
-        increment!(:access_counter)
-        touch
-        true
-      else
-        false
-      end
+      authorizable? && increment!(:access_counter, touch: true) ? true : false
     end
 
     def reset!
