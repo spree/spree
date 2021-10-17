@@ -23,6 +23,7 @@ Gem::Specification.new do |s|
   s.executables   = s.files.grep(%r{^bin/}).map { |f| File.basename(f) }
   s.require_paths = ['lib']
 
+  s.add_development_dependency 'i18n-tasks'
   s.add_development_dependency 'jsonapi-rspec'
   s.add_development_dependency 'multi_json'
   s.add_development_dependency 'rails-i18n'

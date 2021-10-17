@@ -2,19 +2,12 @@
 en:
   spree:
     api:
-      access: API Access
-      clear_key: Clear key
       gateway_error: 'There was a problem with the payment gateway: %{text}'
-      generate_key: Generate API key
       invalid_api_key: Invalid API key (%{key}) specified.
       invalid_resource: Invalid resource. Please fix errors and try again.
       invalid_taxonomy_id: Invalid taxonomy id.
-      key: Key
-      key_cleared: Key cleared
-      key_generated: Key generated
       must_specify_api_key: You must specify an API key.
       negative_quantity: quantity is negative
-      no_key: No key
       order:
         could_not_transition: The order could not be transitioned. Please fix the errors and try again.
         insufficient_quantity: An item in your cart has become unavailable.
@@ -22,7 +15,6 @@ en:
       payment:
         credit_over_limit: This payment can only be credited up to %{limit}. Please specify an amount less than or equal to this number.
         update_forbidden: This payment cannot be updated because it is %{state}.
-      regenerate_key: Regenerate Key
       resource_not_found: The resource you were looking for could not be found.
       shipment:
         cannot_ready: Cannot ready shipment.
@@ -39,7 +31,5 @@ en:
           missing_file: 'Missing Digital Item: attachment'
           unauthorized: Error, you are not authorized to access this asset
         wishlist:
-          must_be_an_integer: Sorry, you must pass an integer value, eg. 5
-          pass_variant_id: 'Pass the variant id that you want to add to this wishlist, eg.{ variant_id: 20 }'
           wrong_quantity: Quantity has to be greater than 0
       wrong_shipment_target: target shipment is the same as original shipment

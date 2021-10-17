@@ -1,5 +1,6 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
-require 'i18n/tasks'
 
 RSpec.describe I18n do
   let(:i18n) { I18n::Tasks::BaseTask.new }
@@ -18,6 +19,11 @@ RSpec.describe I18n do
   end
 
   it 'files are normalized' do
+    # Skip this test if on TRAVIS + MRI.
+    if ENV['TRAVIS'] && RUBY_ENGINE == 'ruby'
+      skip 'Travis CI has an older version of libyaml where the formatting differs.'
+    end
+
     non_normalized = i18n.non_normalized_paths
     error_message = "The following files need to be normalized:\n" \
                     "#{non_normalized.map { |path| "  #{path}" }.join("\n")}\n" \
