@@ -45,7 +45,7 @@ describe Spree::DigitalLink, type: :model do
       sleep 2
 
       digital_link.reset!
-      expect(digital_link.created_at).not_to eq(origional_created_at)
+      expect(digital_link.created_at.to_s).not_to eq(origional_created_at.to_s)
     end
   end
 
@@ -196,7 +196,7 @@ describe Spree::DigitalLink, type: :model do
 
       digital_link.authorize!
       digital_link.reload
-      expect(digital_link.updated_at).not_to eq(origional_updated_at)
+      expect(digital_link.updated_at.to_s).not_to eq(origional_updated_at.to_s)
     end
 
     it 'does not touch the digital_link if not authorized' do
