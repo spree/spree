@@ -6,6 +6,8 @@ module Spree
           def download
             if attachment.present?
               if digital_link.authorize!
+                digital_link.touch # touch the digital_link after authorize!
+
                 if defined?(ActiveStorage::Service::DiskService) && ActiveStorage::Blob.service.instance_of?(ActiveStorage::Service::DiskService)
                   # The asset is hosted on disk, use send_file.
 
