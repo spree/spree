@@ -34,18 +34,22 @@ describe Spree::DigitalLink, type: :model do
 
   describe '#reset!' do
     let!(:digital_link) { create(:digital_link, access_counter: 5) }
+    after do
+      digital_link.update(access_counter: 5)
+      digital_link.save!
+      digital_link.reload
+    end
 
     it 'resets access_counter' do
-      digital_link.reset!
-      expect(digital_link.access_counter).to be(0)
+      expect { digital_link.reset! }.to change(digital_link, :access_counter).from(5).to(0)
     end
 
     it 'resets created_at timestamp' do
-      origional_created_at = digital_link.created_at
-      sleep 2
-
-      digital_link.reset!
-      expect(digital_link.created_at.to_s).not_to eq(origional_created_at.to_s)
+      expect do
+        sleep 1
+        digital_link.reset!
+        digital_link.reload
+      end.to change { digital_link.created_at.to_s }
     end
   end
 
@@ -186,16 +190,23 @@ describe Spree::DigitalLink, type: :model do
     end
 
     it 'increments the access counter' do
-      digital_link.authorize!
-      expect(digital_link.access_counter).to eq(3)
+      expect { digital_link.authorize! }.to change(digital_link, :access_counter).from(2).to(3)
     end
 
     it 'touches the digital_link when autorized' do
-      expect { digital_link.authorize! }.to change(digital_link, :updated_at)
+      expect do
+        sleep 1
+        digital_link.authorize!
+        digital_link.reload
+      end.to change { digital_link.updated_at.to_s }
     end
 
     it 'does not touch the digital_link if not authorized' do
-      expect { digital_link.authorize! }.not_to change(digital_link, :updated_at)
+      expect do
+        sleep 1
+        digital_link_expired.authorize!
+        digital_link_expired.reload
+      end.not_to change { digital_link_expired.updated_at.to_s }
     end
   end
 end
