@@ -36,7 +36,15 @@ describe Spree::DigitalLink, type: :model do
     let!(:digital_link) { create(:digital_link, access_counter: 5) }
 
     it 'resets access_counter' do
-      expect { digital_link.reset! }.to change(digital_link, :access_counter)
+      digital_link.reset!
+      expect(digital_link.access_counter).to be(0)
+    end
+
+    it 'resets created_at timestamp' do
+      expect do
+        digital_link.reset!
+        digital_link.reload
+      end.to change(digital_link, :created_at)
     end
   end
 
@@ -167,13 +175,32 @@ describe Spree::DigitalLink, type: :model do
   end
 
   describe 'authorize!' do
-    let(:digital_link) { create(:digital_link, access_counter: 2) }
+    let!(:digital_link) { create(:digital_link, access_counter: 2) }
+    let!(:digital_link_expired) { create(:digital_link, access_counter: 100) }
 
-    it 'resets the access counter' do
+    after do
+      digital_link.update(access_counter: 2)
+      digital_link.save!
+      digital_link.reload
+    end
+
+    it 'increments the access counter' do
       digital_link.authorize!
       expect(digital_link.access_counter).to eq(3)
-      digital_link.reset!
-      expect(digital_link.access_counter).to eq(0)
+    end
+
+    it 'touches the digital_link when autorized' do
+      expect do
+        digital_link.authorize!
+        digital_link.reload
+      end.to change(digital_link, :updated_at)
+    end
+
+    it 'does not touch the digital_link if not authorized' do
+      expect do
+        digital_link_expired.authorize!
+        digital_link_expired.reload
+      end.not_to change(digital_link_expired, :updated_at)
     end
   end
 end
