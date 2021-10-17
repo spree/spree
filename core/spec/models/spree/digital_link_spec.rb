@@ -190,7 +190,7 @@ describe Spree::DigitalLink, type: :model do
 
     it 'touches the digital_link when autorized' do
       origional_updated_at = digital_link.updated_at
-
+      sleep 2
       digital_link.authorize!
       digital_link.reload
       expect(digital_link.updated_at).not_to eq(origional_updated_at)
