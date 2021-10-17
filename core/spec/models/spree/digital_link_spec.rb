@@ -41,10 +41,9 @@ describe Spree::DigitalLink, type: :model do
     end
 
     it 'resets created_at timestamp' do
-      expect do
-        digital_link.reset!
-        digital_link.reload
-      end.to change(digital_link, :created_at)
+      origional_created_at = digital_link.created_at
+      digital_link.reset!
+      expect(digital_link.created_at).not_to eq(origional_created_at)
     end
   end
 
@@ -190,10 +189,11 @@ describe Spree::DigitalLink, type: :model do
     end
 
     it 'touches the digital_link when autorized' do
-      expect do
-        digital_link.authorize!
-        digital_link.reload
-      end.to change(digital_link, :updated_at)
+      origional_updated_at = digital_link.updated_at
+
+      digital_link.authorize!
+      digital_link.reload
+      expect(digital_link.updated_at).not_to eq(origional_updated_at)
     end
 
     it 'does not touch the digital_link if not authorized' do
