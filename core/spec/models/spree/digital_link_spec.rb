@@ -191,21 +191,11 @@ describe Spree::DigitalLink, type: :model do
     end
 
     it 'touches the digital_link when autorized' do
-      origional_updated_at = digital_link.updated_at
-      sleep 2
-
-      digital_link.authorize!
-      digital_link.reload
-      expect(digital_link.updated_at.to_s).not_to eq(origional_updated_at.to_s)
+      expect { digital_link.authorize! }.to change(digital_link, :updated_at)
     end
 
     it 'does not touch the digital_link if not authorized' do
-      expired_origional_updated_at = digital_link_expired.updated_at
-      sleep 2
-
-      digital_link_expired.authorize!
-      digital_link_expired.reload
-      expect(digital_link_expired.updated_at.to_s).to eq(expired_origional_updated_at.to_s)
+      expect { digital_link.authorize! }.not_to change(digital_link, :updated_at)
     end
   end
 end
