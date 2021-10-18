@@ -4,13 +4,12 @@ module Spree
       module Platform
         class DigitalLinksController < ResourceController
           def reset
-            spree_authorize! :update, @digital_link if spree_current_user.present?
+            spree_authorize! :update, resource if spree_current_user.present?
 
-            @digital_link = scope.find(params[:id])
-            @digital_link.reset!
-
-            if @digital_link.save
-              render_serialized_payload { serialize_resource(@digital_link) }
+            if resource.reset!
+              render_serialized_payload { serialize_resource(resource) }
+            else
+              render_error_payload(resource.errors)
             end
           end
 

@@ -6,12 +6,26 @@ module Spree
           def download
             if attachment.present?
               if digital_link.authorize!
-                send_file(
-                  ActiveStorage::Blob.service.path_for(attachment.key),
-                  filename: attachment.filename.to_s,
-                  type: attachment.content_type.to_s,
-                  status: :ok
-                ) and return
+                if defined?(ActiveStorage::Service::DiskService) && ActiveStorage::Blob.service.instance_of?(ActiveStorage::Service::DiskService)
+                  # The asset is hosted on disk, use send_file.
+
+                  send_file(
+                    ActiveStorage::Blob.service.path_for(attachment.key),
+                    filename: attachment.filename.to_s,
+                    type: attachment.content_type.to_s,
+                    status: :ok
+                  ) and return
+
+                else
+                  # The asset is hosted on a 3rd party service, use an expiring url with disposition: 'attachment'.
+
+                  redirect_to attachment.url(
+                    expires_in: current_store.digital_asset_link_expire_time.seconds,
+                    disposition: 'attachment',
+                    host: current_store.formatted_url
+                  ) and return
+
+                end
               end
             else
               Rails.logger.error I18n.t('spree.api.v2.digitals.missing_file')

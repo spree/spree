@@ -35,8 +35,23 @@ describe Spree::DigitalLink, type: :model do
   describe '#reset!' do
     let!(:digital_link) { create(:digital_link, access_counter: 5) }
 
+    after do
+      digital_link.update(access_counter: 5)
+      digital_link.save!
+      digital_link.reload
+    end
+
     it 'resets access_counter' do
-      expect { digital_link.reset! }.to change(digital_link, :access_counter)
+      expect { digital_link.reset! }.to change(digital_link, :access_counter).from(5).to(0)
+    end
+
+    it 'resets created_at timestamp' do
+      Timecop.travel Time.current + 1.day do
+        expect do
+          digital_link.reset!
+          digital_link.reload
+        end.to change { digital_link.created_at.to_s }
+      end
     end
   end
 
@@ -167,13 +182,35 @@ describe Spree::DigitalLink, type: :model do
   end
 
   describe 'authorize!' do
-    let(:digital_link) { create(:digital_link, access_counter: 2) }
+    let!(:digital_link) { create(:digital_link, access_counter: 2) }
+    let!(:digital_link_expired) { create(:digital_link, access_counter: 100) }
 
-    it 'resets the access counter' do
-      digital_link.authorize!
-      expect(digital_link.access_counter).to eq(3)
-      digital_link.reset!
-      expect(digital_link.access_counter).to eq(0)
+    after do
+      digital_link.update(access_counter: 2)
+      digital_link.save!
+      digital_link.reload
+    end
+
+    it 'increments the access counter' do
+      expect { digital_link.authorize! }.to change(digital_link, :access_counter).from(2).to(3)
+    end
+
+    it 'touches the digital_link when autorized' do
+      Timecop.travel Time.current + 1.day do
+        expect do
+          digital_link.authorize!
+          digital_link.reload
+        end.to change { digital_link.updated_at.to_s }
+      end
+    end
+
+    it 'does not touch the digital_link if not authorized' do
+      Timecop.travel Time.current + 1.day do
+        expect do
+          digital_link_expired.authorize!
+          digital_link_expired.reload
+        end.not_to change { digital_link_expired.updated_at.to_s }
+      end
     end
   end
 end
