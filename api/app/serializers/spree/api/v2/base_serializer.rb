@@ -13,12 +13,19 @@ module Spree
           opts = options.dup
 
           params_cache_key = params.map do |param|
-            next if param.nil? || param.last.nil?
+            value = param.last
+            next if param.nil? || value.nil?
 
-            if param.last.respond_to?(:cache_key_with_version)
-              param.last.cache_key_with_version
+            if value.respond_to?(:cache_key_with_version)
+              value.cache_key_with_version
+            elsif value.is_a?(Hash)
+              # covers the current_price_options cases:
+              #     { price_options: { tax_zone: Spree::Zone... } } or
+              #     { price_options: { tax_zone: nil } }
+              only_key = value.keys.first
+              value[only_key]&.cache_key_with_version
             else
-              param.last.to_s.downcase
+              value.to_s.downcase
             end
           end.compact.reject(&:blank?).join('-')
 

@@ -5,16 +5,12 @@ module Spree
         class PriceSerializer < BaseSerializer
           include ResourceSerializerConcern
 
-          attribute :display_price_including_vat_for do |price|
-            price.display_price_including_vat_for({})
+          attribute :display_price_including_vat_for do |price, params|
+            price.display_price_including_vat_for(params[:price_options].presence || {})
           end
 
-          attribute :display_compare_at_price do |price|
-            price.display_price_including_vat_for({})
-          end
-
-          attribute :display_compare_at_price_including_vat_for do |price|
-            price.display_compare_at_price_including_vat_for({})
+          attribute :display_compare_at_price_including_vat_for do |price, params|
+            price.display_compare_at_price_including_vat_for(params[:price_options].presence || {})
           end
         end
       end
