@@ -1,2 +1,2 @@
 object false
-node(:error) { I18n.t('spree.api.invalid_api_key', key: api_key) }
+node(:error) { I18n.t(:invalid_api_key, key: api_key, scope: 'spree.api') }

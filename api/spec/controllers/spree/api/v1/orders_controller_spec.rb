@@ -812,7 +812,7 @@ module Spree
                                        coupon_code: order_with_discount_promotion.coupon_code
 
           expect(response.status).to eq 200
-          expect(json_response['success']).to eq I18n.t('spree.adjustments_deleted')
+          expect(json_response['success']).to eq Spree.t('adjustments_deleted')
           expect(order_with_discount_promotion.reload.total.to_f).to eq 110.0
         end
       end
@@ -834,7 +834,7 @@ module Spree
                                        coupon_code: order_with_line_item_promotion.coupon_code
 
           expect(response.status).to eq 200
-          expect(json_response['success']).to eq I18n.t('spree.adjustments_deleted')
+          expect(json_response['success']).to eq Spree.t('adjustments_deleted')
           expect(order_with_line_item_promotion.reload.total.to_f).to eq 110.0
         end
 
