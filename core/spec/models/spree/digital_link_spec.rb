@@ -50,7 +50,7 @@ describe Spree::DigitalLink, type: :model do
         expect do
           digital_link.reset!
           digital_link.reload
-        end.to change(digital_link, :created_at)
+        end.to change { digital_link.created_at.to_s }
       end
     end
   end
@@ -200,7 +200,7 @@ describe Spree::DigitalLink, type: :model do
         expect do
           digital_link.authorize!
           digital_link.reload
-        end.to change(digital_link, :updated_at)
+        end.to change { digital_link.updated_at.to_s }
       end
     end
 
@@ -209,7 +209,7 @@ describe Spree::DigitalLink, type: :model do
         expect do
           digital_link_expired.authorize!
           digital_link_expired.reload
-        end.not_to change(digital_link_expired, :updated_at)
+        end.not_to change { digital_link_expired.updated_at.to_s }
       end
     end
   end
