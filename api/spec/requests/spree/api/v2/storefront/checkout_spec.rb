@@ -60,7 +60,7 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
         it_behaves_like 'returns 422 HTTP status'
 
         it 'cannot transition to address without a line item' do
-          expect(json_response['error']).to include(Spree.t(:there_are_no_items_for_this_order))
+          expect(json_response['error']).to include(I18n.t('spree.there_are_no_items_for_this_order'))
         end
       end
 
@@ -85,7 +85,7 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
         it_behaves_like 'returns 422 HTTP status'
 
         it 'returns an error' do
-          expect(json_response['error']).to include(Spree.t(:no_payment_found))
+          expect(json_response['error']).to include(I18n.t('spree.no_payment_found'))
         end
 
         it 'doesnt advance pass payment state' do
@@ -191,7 +191,7 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
         it_behaves_like 'returns 422 HTTP status'
 
         it 'returns an error' do
-          expect(json_response['error']).to include(Spree.t(:no_payment_found))
+          expect(json_response['error']).to include(I18n.t('spree.no_payment_found'))
         end
 
         it 'doesnt completes an order' do
