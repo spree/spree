@@ -32,5 +32,7 @@ en:
           missing_file: 'Missing Digital Item: attachment'
           unauthorized: Error, you are not authorized to access this asset
         wishlist:
+          errors:
+            the_wishlist_could_not_be_destroyed: The wishlist could not be destroyed.
           wrong_quantity: Quantity has to be greater than 0
       wrong_shipment_target: target shipment is the same as original shipment
