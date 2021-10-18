@@ -34,6 +34,7 @@ describe Spree::DigitalLink, type: :model do
 
   describe '#reset!' do
     let!(:digital_link) { create(:digital_link, access_counter: 5) }
+
     after do
       digital_link.update(access_counter: 5)
       digital_link.save!
@@ -45,11 +46,12 @@ describe Spree::DigitalLink, type: :model do
     end
 
     it 'resets created_at timestamp' do
-      expect do
-        sleep 1
-        digital_link.reset!
-        digital_link.reload
-      end.to change { digital_link.created_at.to_s }
+      Timecop.travel Time.current + 1.day do
+        expect do
+          digital_link.reset!
+          digital_link.reload
+        end.to change(digital_link, :created_at)
+      end
     end
   end
 
@@ -194,19 +196,21 @@ describe Spree::DigitalLink, type: :model do
     end
 
     it 'touches the digital_link when autorized' do
-      expect do
-        sleep 1
-        digital_link.authorize!
-        digital_link.reload
-      end.to change { digital_link.updated_at.to_s }
+      Timecop.travel Time.current + 1.day do
+        expect do
+          digital_link.authorize!
+          digital_link.reload
+        end.to change(digital_link, :updated_at)
+      end
     end
 
     it 'does not touch the digital_link if not authorized' do
-      expect do
-        sleep 1
-        digital_link_expired.authorize!
-        digital_link_expired.reload
-      end.not_to change { digital_link_expired.updated_at.to_s }
+      Timecop.travel Time.current + 1.day do
+        expect do
+          digital_link_expired.authorize!
+          digital_link_expired.reload
+        end.not_to change(digital_link_expired, :updated_at)
+      end
     end
   end
 end
