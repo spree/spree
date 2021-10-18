@@ -45,7 +45,7 @@ module Spree
             if resource.destroy
               head 204
             else
-              render_error_payload('Something went wrong')
+              render_error_payload(I18n.t('spree.api.v2.error_could_not_destroy'))
             end
           end
 
