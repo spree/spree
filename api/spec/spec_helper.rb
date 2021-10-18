@@ -66,10 +66,6 @@ RSpec.configure do |config|
   config.include Spree::TestingSupport::Preferences
   config.include Spree::TestingSupport::ImageHelpers
 
-  DummySerializer = Struct.new(:_) { def serializable_hash; {}; end }
-  Spree::Api::V2::Platform::BogusSerializer = DummySerializer    # Gateway::Bogus
-  Spree::Api::V2::Platform::FlatRateSerializer = DummySerializer # Calculator::FlatRate
-
   config.before do
     ENV['DISABLE_SPREE_WEBHOOKS'] = 'true'
 

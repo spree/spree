@@ -2,7 +2,7 @@ module Spree
   module Api
     module V2
       module Platform
-        class BogusSerializer < BaseSerializer
+        class FlatRateSerializer < BaseSerializer
         end
       end
     end
