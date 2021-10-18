@@ -19,6 +19,7 @@ en:
       shipment:
         cannot_ready: Cannot ready shipment.
       shipment_transfer_errors_occurred: 'Following errors occurred while attempting this action:'
+      shipment_transfer_success: Variants successfully transferred
       stock_location_required: A stock_location_id parameter must be provided in order to retrieve stock movements.
       unauthorized: You are not authorized to perform that action.
       v2:
