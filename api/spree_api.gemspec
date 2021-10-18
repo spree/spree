@@ -26,7 +26,6 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'i18n-tasks'
   s.add_development_dependency 'jsonapi-rspec'
   s.add_development_dependency 'multi_json'
-  s.add_development_dependency 'rails-i18n'
   s.add_development_dependency 'rswag-specs'
 
   s.add_dependency 'doorkeeper', '~> 5.3'
