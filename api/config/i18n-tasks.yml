@@ -1,35 +1,5 @@
 base_locale: en
-
-# Read and write translations.
 data:
-  ## Translations are read from the file system. Supported format: YAML, JSON.
-  ## Provide a custom adapter:
-  # adapter: I18n::Tasks::Data::FileSystem
-
-  # Locale files or `File.find` patterns where translations are read from:
-  read:
-    ## Default:
-    # - config/locales/%{locale}.yml
-    ## More files:
-    # - config/locales/**/*.%{locale}.yml
-
-  # Locale files to write new keys to, based on a list of key pattern => file rules. Matched from top to bottom:
-  # `i18n-tasks normalize -p` will force move the keys according to these rules
-  write:
-    ## For example, write devise and simple form keys to their respective files:
-    # - ['{devise, simple_form}.*', 'config/locales/\1.%{locale}.yml']
-    ## Catch-all default:
-    # - config/locales/%{locale}.yml
-
-  # External locale data (e.g. gems).
-  # This data is not considered unused and is never written to.
-  external:
-    ## Example (replace %#= with %=):
-    # - "<%#= %x[bundle info vagrant --path].chomp %>/templates/locales/%{locale}.yml"
-
-  ## Specify the router (see Readme for details). Valid values: conservative_router, pattern_router, or a custom class.
-  # router: conservative_router
-
   yaml:
     write:
       # do not wrap lines at 80 characters
@@ -40,31 +10,6 @@ search:
   paths:
     - '../api/app'
     - '../api/lib'
-
-  exclude:
-    #- '../api/app/assets/images'
-
-## Do not consider these keys missing:
-ignore_missing:
-  - 'spree.not_translated'
-  - 'date.abbr_day_names'
-  - 'bill_address'
-  - 'date.month_names'
-  - 'views.pagination.*' # Kaminari its own i18n translations gem
-  - 'spree.api.*' # Spree API has its own translations set for use independent from front and backend.
-
-  # You dont want to run these through any auto translations
-  - 'spree.at_symbol'
-  - 'number.currency.format.separator'
-  - 'spree.fpr_human_friendly_date_format'
-  - 'spree.fpr_human_friendly_date_time_format'
-
-
-# Do not consider these as unused:
-ignore_unused:
-  # Sorry, will have to manually manage these for added / missing
-  - 'activerecord.*'
-  - 'activemodel.*'
 
 # The PatternMapper for Spree.t
 <% I18n::Tasks.add_scanner 'I18n::Tasks::Scanners::PatternMapper', patterns: [['\bSpree\.t[( ]\s*%{key}', 'spree.%{key}']] %>
