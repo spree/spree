@@ -18,9 +18,9 @@ RSpec.configure do |config|
   # the root example_group in your specs, e.g. describe '...', swagger_doc: 'v2/swagger.json'
   config.swagger_docs = {
     'v2/platform/index.yaml' => {
-      openapi: '3.0.1',
+      openapi: '3.0.3',
       info: {
-        title: 'Platform API V2',
+        title: 'Platform API v2',
         contact: {
           name: 'Spark Solutions',
           url: 'https://sparksolutions.co',
@@ -41,15 +41,20 @@ RSpec.configure do |config|
       ],
       tags: [
         { name: 'Addresses' },
+        { name: 'Adjustments' },
         { name: 'Classifications' },
         { name: 'Countries' },
         { name: 'CMS Pages' },
         { name: 'CMS Sections' },
-        { name: 'Menu Items' },
+        { name: 'Digital Assets' },
+        { name: 'Digital Links' },
+        { name: 'Line Items' },
         { name: 'Menus' },
+        { name: 'Menu Items' },
         { name: 'Option Types' },
         { name: 'Option Values' },
         { name: 'Orders' },
+        { name: 'Shipping Categories' },
         { name: 'Taxons' },
         { name: 'Users' },
         { name: 'Wishlists' },
@@ -66,87 +71,121 @@ RSpec.configure do |config|
           address_params: {
             type: :object,
             properties: {
-              country_id: { type: :string },
-              state_id: { type: :string },
-              state_name: { type: :string },
-              address1: { type: :string },
-              city: { type: :string },
-              zipcode: { type: :string },
-              phone: { type: :string },
+              country_id: { type: :string, example: '224' },
+              state_id: { type: :string, example: '516' },
+              state_name: { type: :string, example: 'New York' },
+              address1: { type: :string, example: '5th ave' },
+              address2: { type: :string, example: '1st suite' },
+              city: { type: :string, example: 'NY' },
+              zipcode: { type: :string, example: '10001' },
+              phone: { type: :string, example: '+1 123 456 789' },
               alternative_phone: { type: :string },
-              firstname: { type: :string },
-              lastname: { type: :string },
-              label: { type: :string },
-              company: { type: :string },
+              firstname: { type: :string, example: 'John' },
+              lastname: { type: :string, example: 'Snow' },
+              label: { type: :string, example: 'My home address' },
+              company: { type: :string, example: 'Vendo Cloud Inc' },
               user_id: { type: :string }
-            }
+            },
+            required: %w[country_id address1 city zipcode phone firstname lastname],
+            'x-internal': true
+          },
+          adjustment_params: {
+            type: :object,
+            properties: {
+              order_id: { type: :string },
+              lebal: { type: :string, example: 'Shipping costs' },
+              adjustable_id: { type: :string },
+              adjustable_type: { type: :string, example: 'Spree::LineItem' },
+              source_id: { type: :string },
+              source_type: { type: :string, example: 'Spree::TaxRate' },
+              amount: { type: :number, example: 10.90 },
+              mandatory: { type: :boolean },
+              eligible: { type: :boolean },
+              state: { type: :string, example: 'closed', default: 'open', enum: ['closed', 'open'] },
+              included: { type: :boolean, example: true, default: false },
+            },
+            required: %w[order_id label adjustable_id adjustable_type],
+            'x-internal': true
           },
           classification_params: {
             type: :object,
             properties: {
-              product_id: { type: :string },
-              taxon_id: { type: :string },
-              position: { type: :integer }
-            }
+              product_id: { type: :string, example: '1' },
+              taxon_id: { type: :string, example: '1' },
+              position: { type: :integer, example: 1 }
+            },
+            'x-internal': true
+          },
+          line_item_params: {
+            type: :object,
+            properties: {
+              order_id: { type: :string, example: '1' },
+              variant_id: { type: :string, example: '1' },
+              quantity: { type: :integer, example: 2 }
+            },
+            required: %w[order_id variant_id quantity],
+            'x-internal': true
           },
           option_type_params: {
             type: :object,
             properties: {
-              name: { type: :string },
-              presentation: { type: :string }
+              name: { type: :string, example: 'color' },
+              presentation: { type: :string, example: 'Color' }
             },
-            required: %w[name presentation]
+            required: %w[name presentation],
+            'x-internal': true
           },
           option_value_params: {
             type: :object,
             properties: {
-              name: { type: :string },
-              presentation: { type: :string },
-              option_values_attributes: { type: :string }
+              name: { type: :string, example: 'red' },
+              presentation: { type: :string, example: 'Red' }
             },
-            required: %w[name presentation]
+            required: %w[name presentation],
+            'x-internal': true
           },
           order_params: {
             type: :object,
             properties: {
-              number: { type: :string },
-              item_total: { type: :number },
-              total: { type: :number },
-              state: { type: :string },
-              adjustment_total: { type: :number },
-              user_id: { type: :string },
-              completed_at: { type: :string, format: :date_time },
-              bill_address_id: { type: :string },
-              ship_address_id: { type: :string },
-              payment_total: { type: :number },
-              shipment_state: { type: :string },
-              payment_state: { type: :string },
-              email: { type: :string, format: :email },
-              special_instructions: { type: :string },
-              created_at: { type: :string, format: :date_time },
-              updated_at: { type: :string, format: :date_time },
-              currency: { type: :string },
-              last_ip_address: { type: :string },
-              created_by_id: { type: :string },
-              shipment_total: { type: :number },
-              additional_tax_total: { type: :number },
-              promo_total: { type: :number },
-              channel: { type: :string },
-              included_tax_total: { type: :number },
-              item_count: { type: :integer },
+              item_total: { type: :number, example: 170.90 },
+              total: { type: :number, example: 190.90 },
+              state: { type: :string, example: 'complete', enum: %w[cart address delivery payment confirm complete canceled] },
+              adjustment_total: { type: :number, example: 20.0 },
+              user_id: { type: :string, example: '1' },
+              completed_at: { type: :string, format: :date_time, example: Time.current },
+              bill_address_id: { type: :string, example: '1' },
+              ship_address_id: { type: :string, example: '1' },
+              payment_total: { type: :number, example: 190.90 },
+              shipment_state: { type: :string, example: 'shipped', enum: Spree::Order::SHIPMENT_STATES },
+              payment_state: { type: :string, example: 'paid', enum: Spree::Order::PAYMENT_STATES },
+              email: { type: :string, format: :email, example: 'hi@getvendo.com' },
+              special_instructions: { type: :string, example: 'I need it ASAP!' },
+              currency: { type: :string, example: 'USD' },
+              last_ip_address: { type: :string, example: '127.0.0.1' },
+              created_by_id: { type: :string, example: '1' },
+              shipment_total: { type: :number, example: 10.0 },
+              additional_tax_total: { type: :number, example: 10.0 },
+              promo_total: { type: :number, example: 0.0 },
+              channel: { type: :string, example: 'online' },
+              included_tax_total: { type: :number, example: 0.0 },
+              item_count: { type: :integer, example: 2 },
               approver_id: { type: :string },
-              approved_at: { type: :string, format: :date_time },
-              confirmation_delivered: { type: :boolean },
-              considered_risky: { type: :boolean },
-              token: { type: :string },
+              approved_at: { type: :string, format: :date_time, example: Time.current },
+              confirmation_delivered: { type: :boolean, example: true, default: false },
+              considered_risky: { type: :boolean, example: true, default: false },
               canceled_at: { type: :string, format: :date_time },
               canceler_id: { type: :string },
-              store_id: { type: :string },
-              state_lock_version: { type: :integer },
-              taxable_adjustment_total: { type: :number },
-              non_taxable_adjustment_total: { type: :number },
-              store_owner_notification_delivered: { type: :boolean }
-            }
+              taxable_adjustment_total: { type: :number, example: 170.90 },
+              non_taxable_adjustment_total: { type: :number, example: 10.0 },
+              store_owner_notification_delivered: { type: :boolean, example: true, default: false },
+              bill_address_attributes: { '$ref': '#/components/schemas/address_params' },
+              ship_address_attributes: { '$ref': '#/components/schemas/address_params' },
+              line_items_attributes: {
+                type: :array,
+                items: { '$ref': '#/components/schemas/line_item_params' }
+              }
+            },
+            'x-internal': true
           },
           product_params: {
             type: :object,
@@ -175,7 +214,8 @@ RSpec.configure do |config|
               option_type_ids: { type: :string },
               taxon_ids: { type: :string }
             },
-            required: %w[name price shipping_category_id]
+            required: %w[name price shipping_category_id],
+            'x-internal': true
           },
           user_params: {
             type: :object,
@@ -186,7 +226,8 @@ RSpec.configure do |config|
               ship_address_id: { type: :string },
               bill_address_id: { type: :string },
             },
-            required: %w[email password password_confirmation]
+            required: %w[email password password_confirmation],
+            'x-internal': true
           },
           taxon_params: {
             type: :object,
@@ -195,7 +236,8 @@ RSpec.configure do |config|
               parent_id: { type: :string },
               name: { type: :string }
             },
-            required: %w[name taxonomy_id]
+            required: %w[name taxonomy_id],
+            'x-internal': true
           },
           menu_params: {
             type: :object,
@@ -204,7 +246,8 @@ RSpec.configure do |config|
               location: { type: :string },
               locale: { type: :string }
             },
-            required: %w[name location locale]
+            required: %w[name location locale],
+            'x-internal': true
           },
           menu_item_params: {
             type: :object,
@@ -219,7 +262,8 @@ RSpec.configure do |config|
               linked_resource_type: { type: :string },
               linked_resource_id: { type: :integer }
             },
-            required: %w[name menu_id]
+            required: %w[name menu_id],
+            'x-internal': true
           },
           menu_item_reposition_params: {
             type: :object,
@@ -227,7 +271,16 @@ RSpec.configure do |config|
               new_parent_id: { type: :integer },
               new_position_idx: { type: :integer }
             },
-            required: %w[new_parent_id new_position_idx]
+            required: %w[new_parent_id new_position_idx],
+            'x-internal': true
+          },
+          shipping_category_params: {
+            type: :object,
+            properties: {
+              name: { type: :string, example: 'Another Category' },
+            },
+            required: %w[name],
+            'x-internal': true
           },
           wishlist_params: {
             type: :object,
@@ -237,7 +290,8 @@ RSpec.configure do |config|
               is_default: { type: :boolean },
               is_private: { type: :boolean }
             },
-            required: %w[name user_id]
+            required: %w[name user_id],
+            'x-internal': true
           },
           wished_item_params: {
             type: :object,
@@ -249,7 +303,8 @@ RSpec.configure do |config|
                 description: 'Must be an integer greater than 0'
               }
             },
-            required: %w[wishlist_id variant_id quantity]
+            required: %w[wishlist_id variant_id quantity],
+            'x-internal': true
           },
           cms_page_params: {
             type: :object,
@@ -262,7 +317,8 @@ RSpec.configure do |config|
               slug: { type: :string },
               locale: { type: :string }
             },
-            required: %w[title locale]
+            required: %w[title locale],
+            'x-internal': true
           },
           cms_section_params: {
             type: :object,
@@ -274,26 +330,49 @@ RSpec.configure do |config|
               fit: { type: :string },
               destination: { type: :string },
             },
-            required: %w[name cms_page_id]
+            required: %w[name cms_page_id],
+            'x-internal': true
           },
           cms_section_reposition_params: {
             type: :object,
             properties: {
               new_position_idx: { type: :integer }
             },
-            required: %w[new_position_idx]
+            required: %w[new_position_idx],
+            'x-internal': true
+          },
+          digital_params: {
+            type: :object,
+            properties: {
+              'digital[attachment]': { type: :string, format: :binary },
+              "digital[variant_id]": { type: :string, example: '123' }
+            },
+            required: ['digital[attachment]', 'digital[variant_id]'],
+            'x-internal': true
+          },
+          digital_link_params: {
+            type: :object,
+            properties: {
+              access_counter: { type: :integer, example: 0 },
+              line_item_id: { type: :string, example: '1' },
+              digital_id: { type: :string, example: '1' }
+            },
+            required: ['line_item_id', 'digital_id'],
+            'x-internal': true
           },
           amount_param: {
             type: :object,
             properties: {
               amount: { type: :number }
-            }
+            },
+            'x-internal': true
           },
           coupon_code_param: {
             type: :object,
             properties: {
               coupon_code: { type: :string }
-            }
+            },
+            'x-internal': true
           },
           resources_list: {
             type: :object,
@@ -327,7 +406,8 @@ RSpec.configure do |config|
                 required: %w[self next prev last first]
               }
             },
-            required: %w[data meta links]
+            required: %w[data meta links],
+            'x-internal': true
           },
           resource_properties: {
             type: :object,
@@ -337,21 +417,24 @@ RSpec.configure do |config|
               attributes: { type: :object },
               relationships: { type: :object }
             },
-            required: %w[id type attributes relationships]
+            required: %w[id type attributes],
+            'x-internal': true
           },
           resource: {
             type: :object,
             properties: {
               data: { '$ref' => '#/components/schemas/resource_properties' },
             },
-            required: %w[data]
+            required: %w[data],
+            'x-internal': true
           },
           error: {
             type: :object,
             properties: {
               error: { type: :string },
             },
-            required: %w[error]
+            required: %w[error],
+            'x-internal': true
           },
           validation_errors: {
             type: :object,
@@ -359,7 +442,8 @@ RSpec.configure do |config|
               error: { type: :string },
               errors: { type: :object }
             },
-            required: %w[error errors]
+            required: %w[error errors],
+            'x-internal': true
           }
         }
       }

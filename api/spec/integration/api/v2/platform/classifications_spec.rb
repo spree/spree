@@ -4,8 +4,10 @@ describe 'Classifications API', swagger: true do
   include_context 'Platform API v2'
 
   resource_name = 'Classification'
-  include_example = 'product,taxon'
-  filter_example = 'taxon_id_eq=1'
+  options = {
+    include_example: 'product,taxon',
+    filter_examples: [{ name: 'filter[taxon_id_eq]', example: '1' }]
+  }
 
   let(:id) { create(:classification).id }
   let(:records_list) { create_list(:classification, 2) }
@@ -23,10 +25,10 @@ describe 'Classifications API', swagger: true do
     }
   end
 
-  include_examples 'CRUD examples', resource_name, include_example, filter_example
+  include_examples 'CRUD examples', resource_name, options
 
   path '/api/v2/platform/classifications/{id}/reposition' do
-    put 'Reposition a Classification' do
+    patch 'Reposition a Classification' do
       tags resource_name.pluralize
       security [ bearer_auth: [] ]
       operationId 'reposition-classification'
@@ -34,7 +36,7 @@ describe 'Classifications API', swagger: true do
       consumes 'application/json'
       parameter name: :id, in: :path, type: :string
       parameter name: :classification, in: :body, schema: { '$ref' => '#/components/schemas/classification_params' }
-      json_api_include_parameter(include_example)
+      json_api_include_parameter(options[:include_example])
 
       let(:classification) { valid_update_param_value }
       let(:invalid_param_value) do

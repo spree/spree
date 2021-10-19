@@ -721,6 +721,7 @@ en:
         this_link_takes_you_to_your_stores_home_page: This link takes you to your stores home page.
     administration: Administration
     add_new_store: Add New Store
+    adjustments_deleted: Adjustments Deleted
     advertise: Advertise
     agree_to_privacy_policy: Agree to Privacy Policy
     agree_to_terms_of_service: Agree to Terms of Service
@@ -926,6 +927,8 @@ en:
     delete: Delete
     deleted: Deleted
     delete_from_taxon: Delete From Taxon
+    digital:
+      digital_delivery: Digital Delivery
     discontinued_variants_present: Some line items in this order have products that are no longer available.
     delivery: Delivery
     delivery_information: Delivery Information
@@ -1624,6 +1627,11 @@ en:
     say_no: 'No'
     say_yes: 'Yes'
     scope: Scope
+    seed:
+      shipping:
+        categories:
+          default: Default
+          digital: Digital
     search: Search
     search_by: 'Search by:'
     search_order_number: Order Number

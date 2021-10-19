@@ -10,6 +10,9 @@ describe Spree::Api::V2::Platform::CmsSectionSerializer do
   it { expect(subject.serializable_hash).to be_kind_of(Hash) }
 
   it do
+    # Reload to get STI in the results.
+    cms_section.reload
+
     expect(subject.serializable_hash).to eq(
       {
         data: {

@@ -3,8 +3,6 @@ module Spree
     module V2
       module Platform
         class OrdersController < ResourceController
-          WRITE_ACTIONS.push(:use_store_credit, :remove_store_credit, :apply_coupon_code, :remove_coupon_code, :next, :advance, :complete, :empty)
-
           include CouponCodesHelper
 
           def create
@@ -47,13 +45,25 @@ module Spree
           end
 
           def empty
-            result = empty_order_service.call(order: resource)
+            result = empty_service.call(order: resource)
+
+            render_order(result)
+          end
+
+          def cancel
+            result = cancel_service.call(order: resource, canceler: spree_current_user)
+
+            render_order(result)
+          end
+
+          def approve
+            result = approve_service.call(order: resource, approver: spree_current_user)
 
             render_order(result)
           end
 
           def destroy
-            result = destroy_order_service.call(order: resource)
+            result = destroy_service.call(order: resource)
 
             if result.success?
               head 204
@@ -67,7 +77,7 @@ module Spree
             result = coupon_handler.new(resource).apply
 
             if result.error.blank?
-              render_serialized_payload { serialize_resource(resource) }
+              render_serialized_payload { serialize_resource(resource.reload) }
             else
               render_error_payload(result.error)
             end
@@ -98,18 +108,6 @@ module Spree
                        :item_count, :tax_total, :completed_at)
           end
 
-          def authorize_spree_user
-            return if spree_current_user.nil?
-
-            if action_name == 'create'
-              spree_authorize! :create, model_class
-            elsif %w[next cancel complete empty advance add_store_credit remove_store_credit].include?(action_name)
-              spree_authorize! :update, resource
-            else
-              spree_authorize! action_name, resource
-            end
-          end
-
           def render_order(result)
             if result.success?
               render_serialized_payload { serialize_resource(resource) }
@@ -138,12 +136,20 @@ module Spree
             Spree::Api::Dependencies.platform_order_complete_service.constantize
           end
 
-          def empty_order_service
+          def empty_service
             Spree::Api::Dependencies.platform_order_empty_service.constantize
           end
 
-          def destroy_order_service
+          def destroy_service
             Spree::Api::Dependencies.platform_order_destroy_service.constantize
+          end
+
+          def approve_service
+            Spree::Api::Dependencies.platform_order_approve_service.constantize
+          end
+
+          def cancel_service
+            Spree::Api::Dependencies.platform_order_cancel_service.constantize
           end
 
           def coupon_handler

@@ -44,6 +44,8 @@ module Spree
 
     has_many :wished_items, dependent: :destroy
 
+    has_many :digitals
+
     before_validation :set_cost_currency
 
     validate :check_price
@@ -300,6 +302,11 @@ module Spree
 
     def backordered?
       @backordered ||= !in_stock? && stock_items.exists?(backorderable: true)
+    end
+
+    # Is this variant to be downloaded by the customer?
+    def digital?
+      digitals.present?
     end
 
     private

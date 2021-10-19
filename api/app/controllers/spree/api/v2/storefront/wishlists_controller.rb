@@ -43,9 +43,9 @@ module Spree
             authorize! :destroy, resource
 
             if resource.destroy
-              render_serialized_payload { serialize_resource(resource) }
+              head 204
             else
-              render_error_payload('Something went wrong')
+              render_error_payload(I18n.t('spree.api.v2.wishlist.errors.the_wishlist_could_not_be_destroyed'))
             end
           end
 

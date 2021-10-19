@@ -13,7 +13,9 @@ module Spree
       :products_finder, :taxon_finder, :line_item_by_variant_finder, :cart_estimate_shipping_rates_service,
       :account_create_address_service, :account_update_address_service, :account_create_service, :account_update_service,
       :address_finder, :collection_sorter, :error_handler, :current_store_finder, :cart_empty_service, :cart_destroy_service,
-      :classification_reposition_service, :credit_cards_destroy_service, :cart_associate_service, :cart_change_currency_service
+      :classification_reposition_service, :credit_cards_destroy_service, :cart_associate_service, :cart_change_currency_service,
+      :line_item_create_service, :line_item_update_service, :line_item_destroy_service,
+      :order_approve_service, :order_cancel_service
     ].freeze
 
     attr_accessor *INJECTION_POINTS
@@ -55,6 +57,10 @@ module Spree
       @checkout_remove_store_credit_service = 'Spree::Checkout::RemoveStoreCredit'
       @checkout_get_shipping_rates_service = 'Spree::Checkout::GetShippingRates'
 
+      # order
+      @order_approve_service = 'Spree::Orders::Approve'
+      @order_cancel_service = 'Spree::Orders::Cancel'
+
       # sorter
       @collection_sorter = 'Spree::BaseSorter'
       @order_sorter = 'Spree::BaseSorter'
@@ -76,8 +82,15 @@ module Spree
       # credit cards
       @credit_cards_destroy_service = 'Spree::CreditCards::Destroy'
 
+      # classifications
       @classification_reposition_service = 'Spree::Classifications::Reposition'
 
+      # line items
+      @line_item_create_service = 'Spree::LineItems::Create'
+      @line_item_update_service = 'Spree::LineItems::Update'
+      @line_item_destroy_service = 'Spree::LineItems::Destroy'
+
+      # errors
       @error_handler = 'Spree::ErrorReporter'
     end
 

@@ -77,12 +77,30 @@ describe Spree::Ability, type: :model do
     let(:fakedispatch_ability) { Spree::Ability.new(fakedispatch_user) }
 
     context 'with admin user' do
-      it 'is able to admin' do
-        allow(user).to receive(:has_spree_role?).with('admin').and_return(true)
-        expect(ability).to be_able_to :admin, resource
-        expect(ability).to be_able_to :index, resource_order
-        expect(ability).to be_able_to :show, resource_product
-        expect(ability).to be_able_to :create, resource_user
+      context 'admin user role' do
+        it 'is able to admin' do
+          allow(user).to receive(:spree_admin?).and_return(true)
+          expect(ability).to be_able_to :admin, resource
+          expect(ability).to be_able_to :index, resource_order
+          expect(ability).to be_able_to :show, resource_product
+          expect(ability).to be_able_to :create, resource_user
+        end
+      end
+
+      context 'admin user class' do
+        let(:user) { Spree::DummyModel.create(name: 'admin') }
+
+        before { Spree.admin_user_class = 'Spree::DummyModel' }
+
+        after { Spree.admin_user_class = nil }
+
+        it 'is able to admin' do
+          allow(user).to receive(:spree_admin?).and_return(true)
+          expect(ability).to be_able_to :admin, resource
+          expect(ability).to be_able_to :index, resource_order
+          expect(ability).to be_able_to :show, resource_product
+          expect(ability).to be_able_to :create, resource_user
+        end
       end
     end
 

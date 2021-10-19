@@ -1,7 +1,0 @@
-**/vendor/**
-**/dummy/**
-**/sandbox/**
-*-min.js
-*.min.js
-jquery*.js
-/cli/lib/spree_cli/templates/**

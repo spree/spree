@@ -178,6 +178,8 @@ Spree::Core::Engine.add_routes do
             delete 'remove_item/:item_id', to: 'wishlists#remove_item', as: :remove_item
           end
         end
+
+        get '/digitals/:token', to: 'digitals#download', as: 'digital'
       end
 
       namespace :platform do
@@ -189,9 +191,9 @@ Spree::Core::Engine.add_routes do
         resources :reimbursements
         resources :return_authorizations do
           member do
-            put :add
-            put :cancel
-            put :receive
+            patch :add
+            patch :cancel
+            patch :receive
           end
         end
 
@@ -201,7 +203,7 @@ Spree::Core::Engine.add_routes do
         resources :taxons
         resources :classifications do
           member do
-            put :reposition
+            patch :reposition
           end
         end
         resources :images
@@ -222,10 +224,14 @@ Spree::Core::Engine.add_routes do
             patch :apply_coupon_code
             patch :complete
             patch :use_store_credit
+            patch :cancel
+            patch :approve
           end
         end
         resources :line_items
         resources :adjustments
+
+        # Payments API
         resources :payments do
           member do
             patch :authorize
@@ -288,12 +294,23 @@ Spree::Core::Engine.add_routes do
           end
         end
 
-        # Wishlists
+        # Wishlists API
         resources :wishlists
         resources :wished_items
 
+        # Digitals API
+        resources :digitals
+        resources :digital_links do
+          member do
+            patch :reset
+          end
+        end
+
         # Store API
         resources :stores
+
+        # Configurations API
+        resources :shipping_categories
       end
     end
   end

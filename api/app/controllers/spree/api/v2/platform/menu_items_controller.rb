@@ -3,8 +3,6 @@ module Spree
     module V2
       module Platform
         class MenuItemsController < ResourceController
-          before_action -> { doorkeeper_authorize! :write, :admin }, only: WRITE_ACTIONS << :reposition
-
           def reposition
             spree_authorize! :update, @moved_item if spree_current_user.present?
 
@@ -19,7 +17,7 @@ module Spree
             end
 
             if @moved_item.save
-              render_serialized_payload { serialize_resource(resource) }
+              render_serialized_payload { serialize_resource(@moved_item) }
             end
           end
 

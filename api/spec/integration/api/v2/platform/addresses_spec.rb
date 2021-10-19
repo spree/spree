@@ -4,8 +4,11 @@ describe 'Addresses API', swagger: true do
   include_context 'Platform API v2'
 
   resource_name = 'Address'
-  include_example = 'user,country,state'
-  filter_example = 'user_id_eq=1&firstname_cont=Joh'
+  options = {
+    include_example: 'user,country,state',
+    filter_examples: [{ name: 'filter[user_id_eq]', example: '1' },
+                      { name: 'filter[firstname_cont]', example: 'John' }]
+  }
 
   let(:id) { create(:address).id }
   let(:records_list) { create_list(:address, 2) }
@@ -25,5 +28,5 @@ describe 'Addresses API', swagger: true do
     }
   end
 
-  include_examples 'CRUD examples', resource_name, include_example, filter_example
+  include_examples 'CRUD examples', resource_name, options
 end

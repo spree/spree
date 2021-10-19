@@ -1,11 +1,12 @@
 require 'spec_helper'
 
 describe Spree::Api::V2::Platform::VariantSerializer do
-  include_context 'API v2 serializers params'
-
   subject { described_class.new(variant, params: serializer_params) }
 
+  include_context 'API v2 serializers params'
+
   let!(:variant) { create(:variant, price: 10, compare_at_price: 15, images: create_list(:image, 2), tax_category: create(:tax_category)) }
+  let!(:digital) { create(:digital, variant: variant) }
 
   it { expect(subject.serializable_hash).to be_kind_of(Hash) }
 
@@ -60,6 +61,14 @@ describe Spree::Api::V2::Platform::VariantSerializer do
                 {
                   id: variant.option_values.first.id.to_s,
                   type: :option_value
+                }
+              ]
+            },
+            digitals: {
+              data: [
+                {
+                  id: variant.digitals.first.id.to_s,
+                  type: :digital
                 }
               ]
             },
