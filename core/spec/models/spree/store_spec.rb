@@ -266,9 +266,11 @@ describe Spree::Store, type: :model do
 
     context 'when a default store is not present' do
       it 'builds a new default store' do
-        expect(Spree::Store.default.class).to eq(Spree::Store)
-        expect(Spree::Store.default.persisted?).to eq(false)
-        expect(Spree::Store.default.default).to be(true)
+        described_class.delete_all
+        Rails.cache.clear
+        expect(described_class.default.class).to eq(described_class)
+        expect(described_class.default.persisted?).to eq(false)
+        expect(described_class.default.default).to be(true)
       end
     end
   end

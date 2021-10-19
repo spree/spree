@@ -70,9 +70,7 @@ RSpec.configure do |config|
     Spree::Api::Config[:requires_authentication] = true
 
     country = create(:country, name: 'United States of America', iso_name: 'UNITED STATES', iso: 'US', states_required: true)
-    Spree::Config[:default_country_id] = country.id
-
-    create(:store, default: true)
+    create(:store, default: true, default_country: country, default_currency: 'USD')
   end
 
   # Force jobs to be executed in a synchronous way (see http://archive.today/xcb1E)

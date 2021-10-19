@@ -180,7 +180,7 @@ use rake db:load_file[/absolute/path/to/sample/filename.rb]}
   task ensure_order_currency_presence: :environment do |_t, _args|
     Spree::Order.where(currency: nil).find_in_batches do |orders|
       orders.each do |order|
-        order.update!(currency: order.store.default_currency || Spree::Config[:currency])
+        order.update!(currency: order.store.default_currency)
       end
     end
   end

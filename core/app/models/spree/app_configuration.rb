@@ -41,7 +41,7 @@ module Spree
     preference :binary_inventory_cache, :boolean, default: false # only invalidate product cache when a stock item changes whether it is in_stock
     preference :checkout_zone, :string, default: nil # replace with the name of a zone if you would like to limit the countries
     preference :company, :boolean, default: false # Request company field for billing and shipping addr
-    preference :currency, :string, default: 'USD'
+    preference :currency, :string, default: 'USD', deprecated: true
     preference :default_country_id, :integer
     preference :disable_sku_validation, :boolean, default: false # when turned off disables the built-in SKU uniqueness validation
     preference :disable_store_presence_validation, :boolean, default: false # when turned off disables Store presence validation for Products and Payment Methods
