@@ -1,4 +1,6 @@
-require: rubocop-rspec
+require:
+  - rubocop-rspec
+  - ./lib/rubo_cop/cop/spree/migration/version.rb
 
 AllCops:
   TargetRubyVersion: 2.5
@@ -14,6 +16,9 @@ AllCops:
     - '**/vendor/**/*'
     - '**/spec_helper.rb'
     - '**/templates/**/*'
+
+Spree/Migration/Version:
+  RailsVersion: 5.2
 
 Layout/MultilineOperationIndentation:
   EnforcedStyle: indented
