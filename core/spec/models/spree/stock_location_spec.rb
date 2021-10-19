@@ -178,6 +178,10 @@ module Spree
     end
 
     context 'fill_status' do
+      let(:zero_stock_item) { subject.stock_items.order(:id).second }
+
+      before { allow(zero_stock_item).to receive_messages(backorderable?: true, count_on_hand: 0) }
+
       it 'all on_hand with no backordered' do
         on_hand, backordered = subject.fill_status(variant, 5)
         expect(on_hand).to eq 5
@@ -191,9 +195,6 @@ module Spree
       end
 
       it 'zero on_hand with all backordered' do
-        zero_stock_item = mock_model(StockItem,
-                                     count_on_hand: 0,
-                                     backorderable?: true)
         expect(subject).to receive(:stock_item).with(variant).and_return(zero_stock_item)
 
         on_hand, backordered = subject.fill_status(variant, 20)
@@ -203,12 +204,12 @@ module Spree
 
       context 'when backordering is not allowed' do
         before do
-          @stock_item = mock_model(StockItem, backorderable?: false)
-          expect(subject).to receive(:stock_item).with(variant).and_return(@stock_item)
+          allow(stock_item).to receive_messages backorderable?: false
+          expect(subject).to receive(:stock_item).with(variant).and_return(stock_item)
         end
 
         it 'all on_hand' do
-          allow(@stock_item).to receive_messages(count_on_hand: 10)
+          allow(stock_item).to receive_messages(count_on_hand: 10)
 
           on_hand, backordered = subject.fill_status(variant, 5)
           expect(on_hand).to eq 5
@@ -216,7 +217,7 @@ module Spree
         end
 
         it 'some on_hand' do
-          allow(@stock_item).to receive_messages(count_on_hand: 10)
+          allow(stock_item).to receive_messages(count_on_hand: 10)
 
           on_hand, backordered = subject.fill_status(variant, 20)
           expect(on_hand).to eq 10
@@ -224,7 +225,7 @@ module Spree
         end
 
         it 'zero on_hand' do
-          allow(@stock_item).to receive_messages(count_on_hand: 0)
+          allow(stock_item).to receive_messages(count_on_hand: 0)
 
           on_hand, backordered = subject.fill_status(variant, 20)
           expect(on_hand).to eq 0

@@ -42,7 +42,7 @@ describe Spree::Calculator::TieredPercent, type: :model do
   describe '#compute' do
     subject { calculator.compute(line_item) }
 
-    let(:line_item) { mock_model Spree::LineItem, amount: amount }
+    let(:line_item) { create(:line_item) }
 
     before do
       calculator.preferred_base_percent = 10
@@ -53,13 +53,13 @@ describe Spree::Calculator::TieredPercent, type: :model do
     end
 
     context 'when amount falls within the first tier' do
-      let(:amount) { 50 }
+      before { allow(line_item).to receive_messages(amount: 50) }
 
       it { is_expected.to eq 5 }
     end
 
     context 'when amount falls within the second tier' do
-      let(:amount) { 150 }
+      before { allow(line_item).to receive_messages(amount: 150) }
 
       it { is_expected.to eq 22 }
     end

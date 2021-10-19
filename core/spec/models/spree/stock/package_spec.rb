@@ -75,11 +75,18 @@ module Spree
         expect(package.shipping_methods).to eq([method1])
       end
 
-      it 'builds an empty list of shipping methods when no categories' do
-        variant  = mock_model(Variant, shipping_category: nil)
-        contents = [ContentItem.new(build(:inventory_unit, variant: variant))]
-        package  = Package.new(stock_location, contents)
-        expect(package.shipping_methods).to be_empty
+      context 'when no categories' do
+        let(:variant) { create(:variant) }
+        let(:contents) { [ContentItem.new(build(:inventory_unit, variant: variant))] }
+        let(:package) { Package.new(stock_location, contents) }
+
+        before do
+          allow(variant).to receive_messages shipping_category: nil
+        end
+
+        it 'builds an empty list of shipping methods' do
+          expect(package.shipping_methods).to be_empty
+        end
       end
 
       it 'can convert to a shipment' do

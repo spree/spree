@@ -1,37 +1,26 @@
 require 'spec_helper'
 
 describe Spree::Shipment, type: :model do
-  let(:order) do
-    mock_model Spree::Order, backordered?: false,
-                             canceled?: false,
-                             can_ship?: true,
-                             currency: 'USD',
-                             number: 'S12345',
-                             paid?: false,
-                             touch_later: false
-  end
+  let!(:order) { create(:order, number: 'S12345') }
   let(:shipping_method) { create(:shipping_method, name: 'UPS') }
   let(:shipment) do
-    shipment = Spree::Shipment.new(cost: 1, state: 'pending', stock_location: create(:stock_location))
-    allow(shipment).to receive_messages order: order
-    allow(shipment).to receive_messages shipping_method: shipping_method
-    shipment.save
-    shipment
+    create(:shipment, cost: 1, state: 'pending', stock_location: create(:stock_location)).tap do |shipment|
+      allow(shipment).to receive_messages order: order
+      allow(shipment).to receive_messages shipping_method: shipping_method
+    end
   end
+  let!(:line_item) { create(:line_item) }
+  let(:variant) { line_item.variant }
+  let(:inventory_units) { create_list(:inventory_unit, 2) }
 
-  let(:variant) { mock_model(Spree::Variant) }
-  let(:line_item) { mock_model(Spree::LineItem, variant: variant) }
-
-  def create_shipment(order, stock_location)
-    order.shipments.create(stock_location_id: stock_location.id).inventory_units.create(
-      order_id: order.id,
-      variant_id: order.line_items.first.variant_id,
-      line_item_id: order.line_items.first.id
-    )
+  before do
+    allow(order).to receive_messages(backordered?: false, canceled?: false, can_ship?: true, paid?: false, touch_later: false)
+    allow(inventory_units.first).to receive_messages backordered?: false
+    allow(inventory_units.first).to receive_messages backordered?: true
   end
 
   describe 'precision of pre_tax_amount' do
-    let(:line_item) { create :line_item, pre_tax_amount: 4.2051 }
+    before { line_item.update(pre_tax_amount: 4.2051) }
 
     it 'keeps four digits of precision even when reloading' do
       # prevent it from updating pre_tax_amount
@@ -54,14 +43,15 @@ describe Spree::Shipment, type: :model do
   end
 
   it 'is backordered if one if its inventory_units is backordered' do
-    allow(shipment).to receive_messages(inventory_units: [
-                                          mock_model(Spree::InventoryUnit, backordered?: false),
-                                          mock_model(Spree::InventoryUnit, backordered?: true)
-                                        ])
+    allow(shipment).to receive_messages(inventory_units: inventory_units)
     expect(shipment).to be_backordered
   end
 
   context '#determine_state' do
+    let(:inventory_units) { create_list(:inventory_unit, 1) }
+
+    before { allow(inventory_units.first).to receive_messages backordered: true }
+
     it 'returns canceled if order is canceled?' do
       allow(order).to receive_messages canceled?: true
       expect(shipment.determine_state(order)).to eq 'canceled'
@@ -73,7 +63,7 @@ describe Spree::Shipment, type: :model do
     end
 
     it 'returns pending if backordered' do
-      allow(shipment).to receive_messages inventory_units: [mock_model(Spree::InventoryUnit, backordered?: true)]
+      allow(shipment).to receive_messages inventory_units: inventory_units
       expect(shipment.determine_state(order)).to eq 'pending'
     end
 
@@ -119,6 +109,14 @@ describe Spree::Shipment, type: :model do
   end
 
   context '#item_cost' do
+    def create_shipment(order, stock_location)
+      order.shipments.create(stock_location_id: stock_location.id).inventory_units.create(
+        order_id: order.id,
+        variant_id: order.line_items.first.variant_id,
+        line_item_id: order.line_items.first.id
+      )
+    end
+
     it 'equals shipment line items amount with tax' do
       order = create(:order_with_line_item_quantity, line_items_quantity: 2)
 
@@ -305,7 +303,7 @@ describe Spree::Shipment, type: :model do
 
     shared_examples_for 'pending if backordered' do
       it 'has a state of pending if backordered' do
-        allow(shipment).to receive_messages(inventory_units: [mock_model(Spree::InventoryUnit, backordered?: true)])
+        allow(shipment).to receive_messages(inventory_units: inventory_units)
         expect(shipment).to receive(:update_columns).with(state: 'pending', updated_at: kind_of(Time))
         shipment.update!(order)
       end
@@ -444,6 +442,8 @@ describe Spree::Shipment, type: :model do
   end
 
   context '#cancel' do
+    let(:inventory_unit) { create(:inventory_unit, state: 'on_hand', line_item: line_item, variant: variant, quantity: 1) }
+
     it 'cancels the shipment' do
       allow(shipment.order).to receive(:update_with_updater!)
 
@@ -454,9 +454,8 @@ describe Spree::Shipment, type: :model do
     end
 
     it 'restocks the items' do
-      inventory_unit = mock_model(Spree::InventoryUnit, state: 'on_hand', line_item: line_item, variant: variant, quantity: 1)
       allow(shipment).to receive(:inventory_units).and_return([inventory_unit])
-      shipment.stock_location = mock_model(Spree::StockLocation)
+      shipment.stock_location = create(:stock_location)
       expect(shipment.stock_location).to receive(:restock).with(variant, 1, shipment)
       shipment.after_cancel
     end
@@ -491,6 +490,8 @@ describe Spree::Shipment, type: :model do
   end
 
   context '#resume' do
+    let(:inventory_unit) { create(:inventory_unit, quantity: 1, line_item: line_item, variant: variant) }
+
     it 'transitions state to ready if the order is ready' do
       allow(shipment.order).to receive(:update_with_updater!)
 
@@ -513,9 +514,8 @@ describe Spree::Shipment, type: :model do
     end
 
     it 'unstocks them items' do
-      inventory_unit = mock_model(Spree::InventoryUnit, quantity: 1, line_item: line_item, variant: variant)
       allow(shipment).to receive(:inventory_units).and_return([inventory_unit])
-      shipment.stock_location = mock_model(Spree::StockLocation)
+      shipment.stock_location = create(:stock_location)
       expect(shipment.stock_location).to receive(:unstock).with(variant, 1, shipment)
       shipment.after_resume
     end
@@ -785,10 +785,7 @@ describe Spree::Shipment, type: :model do
   end
 
   context 'set up new inventory units' do
-    # let(:line_item) { double(
     let(:variant) { double('Variant', id: 9) }
-
-    let(:inventory_units) { double }
 
     let(:params) do
       { variant_id: variant.id, state: 'on_hand', order_id: order.id, line_item_id: line_item.id, quantity: 1 }

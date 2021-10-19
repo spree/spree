@@ -1,6 +1,7 @@
 require 'spec_helper'
 
 describe Spree::CreditCard, type: :model do
+  let(:credit_card) { Spree::CreditCard.new }
   let(:valid_credit_card_attributes) do
     {
       number: '4111111111111111',
@@ -9,28 +10,14 @@ describe Spree::CreditCard, type: :model do
       name: 'Spree Commerce'
     }
   end
-  let(:credit_card) { Spree::CreditCard.new }
+  let(:order) { create(:order) }
+  let(:payment) { create(:payment, amount: 100, order: order) }
+  let(:payment_method) { create(:payment_method) }
+
+  before { allow(payment).to receive_messages payment_method: payment_method }
 
   def self.payment_states
     Spree::Payment.state_machine.states.keys
-  end
-
-  before do
-    @order = create(:order)
-    @payment = Spree::Payment.create(amount: 100, order: @order)
-
-    @success_response = double('gateway_response', success?: true, authorization: '123', avs_result: { 'code' => 'avs-code' })
-    @fail_response = double('gateway_response', success?: false)
-
-    @payment_gateway = mock_model(Spree::PaymentMethod,
-                                  payment_profiles_supported?: true,
-                                  authorize: @success_response,
-                                  purchase: @success_response,
-                                  capture: @success_response,
-                                  void: @success_response,
-                                  credit: @success_response)
-
-    allow(@payment).to receive_messages payment_method: @payment_gateway
   end
 
   it 'responds to track_data' do
@@ -38,33 +25,82 @@ describe Spree::CreditCard, type: :model do
   end
 
   context '#can_capture?' do
-    it 'is true if payment is pending' do
-      payment = mock_model(Spree::Payment, pending?: true, created_at: Time.current)
-      expect(credit_card.can_capture?(payment)).to be true
+    shared_examples 'can be captured' do
+      it 'can be captured' do
+        expect(credit_card.can_capture?(payment)).to be true
+      end
     end
 
-    it 'is true if payment is checkout' do
-      payment = mock_model(Spree::Payment, pending?: false, checkout?: true, created_at: Time.current)
-      expect(credit_card.can_capture?(payment)).to be true
+    context 'when payment is pending' do
+      before { allow(payment).to receive_messages(pending?: true, created_at: Time.current) }
+
+      it_behaves_like 'can be captured'
+    end
+
+    context 'when payment is checkout' do
+      before { allow(payment).to receive_messages(pending?: false, checkout?: true, created_at: Time.current) }
+
+      it_behaves_like 'can be captured'
+    end
+
+    context 'when payment is invalid' do
+      before { allow(payment).to receive_messages(pending?: false, checkout?: false) }
+
+      it 'cannot be captured' do
+        expect(credit_card.can_capture?(payment)).to be false
+      end
     end
   end
 
   context '#can_void?' do
-    it 'is true if payment is not void' do
-      payment = mock_model(Spree::Payment, failed?: false, void?: false)
-      expect(credit_card.can_void?(payment)).to be true
+    context 'when payment is not voided' do
+      before { allow(payment).to receive_messages(failed?: false, void?: false) }
+
+      it 'is true' do
+        expect(credit_card.can_void?(payment)).to be true
+      end
+    end
+
+    context 'when payment is voided' do
+      before { allow(payment).to receive_messages(failed?: false, void?: true) }
+
+      it 'is false' do
+        expect(credit_card.can_void?(payment)).to be false
+      end
     end
   end
 
   context '#can_credit?' do
-    it 'is false if payment is not completed' do
-      payment = mock_model(Spree::Payment, completed?: false)
-      expect(credit_card.can_credit?(payment)).to be false
+    shared_examples 'can not credit' do
+      it 'can not credit' do
+        expect(credit_card.can_credit?(payment)).to be false
+      end
     end
 
-    it 'is false when credit_allowed is zero' do
-      payment = mock_model(Spree::Payment, completed?: true, credit_allowed: 0, order: mock_model(Spree::Order, payment_state: 'credit_owed'))
-      expect(credit_card.can_credit?(payment)).to be false
+    context 'when payment is not completed' do
+      before { allow(payment).to receive_messages(completed?: false) }
+
+      it_behaves_like 'can not credit'
+    end
+
+    context 'when payment is completed' do
+      context 'when credit_allowed is zero' do
+        before do
+          allow(payment).to receive_messages(completed?: true, credit_allowed: 0, payment_state: 'credit_owed')
+        end
+
+        it_behaves_like 'can not credit'
+      end
+
+      context 'when credit_allowed bigger than zero' do
+        before do
+          allow(payment).to receive_messages(completed?: true, credit_allowed: 120.00, payment_state: 'credit_owed')
+        end
+
+        it 'can credit' do
+          expect(credit_card.can_credit?(payment)).to be true
+        end
+      end
     end
   end
 
@@ -371,7 +407,7 @@ describe Spree::CreditCard, type: :model do
   end
 
   context '#display_brand' do
-    let(:credit_card) { create(:credit_card, cc_type: cc_type, user_id: @order.user_id) }
+    let(:credit_card) { create(:credit_card, cc_type: cc_type, user_id: order.user_id) }
 
     context 'when the cc_type does not exist' do
       let(:cc_type) { nil }

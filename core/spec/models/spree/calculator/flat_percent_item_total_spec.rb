@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Spree::Calculator::FlatPercentItemTotal, type: :model do
   let(:calculator) { Spree::Calculator::FlatPercentItemTotal.new }
-  let(:order) { mock_model Spree::Order }
+  let(:order) { create(:order) }
 
   before { allow(calculator).to receive_messages preferred_flat_percent: 10 }
 
