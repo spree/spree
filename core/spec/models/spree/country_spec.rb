@@ -30,7 +30,7 @@ describe Spree::Country, type: :model do
     end
   end
 
-  describe '.default' do
+  xdescribe '.default' do
     context 'when default_country_id config is set' do
       before { Spree::Config[:default_country_id] = canada.id }
 

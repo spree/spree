@@ -333,7 +333,7 @@ describe Spree::Store, type: :model do
     let!(:state3)   { create(:state, country: country3) }
 
     let(:default_zone) do
-      create(:zone, kind: 'country').tap do |zone|
+      Spree::Zone.first || create(:zone, kind: 'country').tap do |zone|
         zone.members.create(zoneable: country3)
       end
     end
@@ -371,8 +371,8 @@ describe Spree::Store, type: :model do
         include_context 'with default checkout zone not set'
 
         it 'returns list of all countries' do
-          checkout_available_countries_ids = subject.countries_available_for_checkout.pluck(:id)
-          all_countries_ids                = Spree::Country.all.pluck(:id)
+          checkout_available_countries_ids = subject.countries_available_for_checkout.ids
+          all_countries_ids                = Spree::Country.all.ids
 
           expect(checkout_available_countries_ids).to eq(all_countries_ids)
         end
@@ -455,11 +455,9 @@ describe Spree::Store, type: :model do
   describe '#ensure_default_country' do
     subject { build(:store) }
 
-    let!(:default_country) { create(:country) }
+    let!(:default_country) { Spree::Country.first || create(:country) }
     let!(:other_country) { create(:country) }
     let!(:other_country_2) { create(:country) }
-
-    before { Spree::Config[:default_country_id] = default_country.id }
 
     context 'checkout zone not set' do
       before { subject.save! }

@@ -64,7 +64,7 @@ RSpec.configure do |config|
       Rails.cache.clear
       reset_spree_preferences
 
-      country = create(:country, name: 'United States of America', iso_name: 'UNITED STATES', iso: 'US', states_required: true)
+      country = create(:country, name: 'United States of America', iso_name: 'UNITED STATES', iso: 'US', iso3: 'USA', states_required: true)
       create(:store, default: true, default_country: country, default_currency: 'USD')
     rescue Errno::ENOTEMPTY
     end
