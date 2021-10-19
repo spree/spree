@@ -311,6 +311,10 @@ Spree::Core::Engine.add_routes do
 
         # Configurations API
         resources :shipping_categories
+
+        namespace :webhooks do
+          resources :subscribers, only: %i[create index show]
+        end
       end
     end
   end

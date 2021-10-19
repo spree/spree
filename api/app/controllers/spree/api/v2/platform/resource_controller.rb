@@ -44,7 +44,12 @@ module Spree
           protected
 
           def resource_serializer
-            "Spree::Api::V2::Platform::#{model_class.to_s.demodulize}Serializer".constantize
+            # [TODO]: quickfix
+            if (x = model_class.to_s.scan(/(?<=:|^)\b.*?\b(?=:|$)/) - %w[Spree]).size > 1
+              "Spree::Api::V2::Platform::#{x.join('::')}Serializer".constantize
+            else
+              "Spree::Api::V2::Platform::#{model_class.to_s.demodulize}Serializer".constantize
+            end
           end
 
           def collection_serializer

@@ -144,6 +144,15 @@ RSpec.configure do |config|
             required: %w[name presentation],
             'x-internal': true
           },
+          webhooks_subscriber_params: {
+            type: :object,
+            properties: {
+              enabled: { type: :boolean, example: true, default: false },
+              subscriptions: { type: :array, example: ['*'], default: [] },
+              url: { type: :string, example: 'https://www.url.com/' }
+            },
+            'x-internal': true
+          },
           order_params: {
             type: :object,
             properties: {
