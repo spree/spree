@@ -22,8 +22,6 @@ paths:
         This endpoint creates a new Bearer Token or refreshes an existing Bearer Token.
 
         The `token` found in the response body is required to authorize API calls.
-      tags:
-        - Token
       operationId: create-or-refresh-token
       responses:
         '200':
@@ -62,6 +60,7 @@ paths:
             schema:
               oneOf:
                 - $ref: '#/components/schemas/CreateTokenBody'
+                - $ref: '#/components/schemas/ClientTokenBody'
                 - $ref: '#/components/schemas/RefreshTokenBody'
             examples:
               Create Storefront User Token:
@@ -75,12 +74,23 @@ paths:
                   username: spree@example.com
                   password: spree123
                   scope: admin
+              Create a Token Using Client Credentials:
+                value:
+                  grant_type: client_credentials
+                  client_id: qJDIwX00fehqHxS6xmb-k
+                  client_secret: z6rgMlsl-mbygJ11vjA
               Refresh a Token:
                 value:
                   grant_type: refresh_token
                   refresh_token: SqJDIwX00fehqHxS6xmb-kzqAlrYe_0EHgekMexVT8k
+          application/xml:
+            schema:
+              type: object
+              properties: {}
         description: ''
       summary: Create or Refresh a Token
+      tags:
+        - Token
 components:
   schemas:
     Token:
@@ -139,13 +149,16 @@ components:
           username: spree@example.com
           password: spree123
           scope: admin
+      x-internal: true
+      title: 'Create a new token (grant_type: password)'
+      description: ''
       properties:
         grant_type:
           type: string
-          description: 'Use `password` to create a new token, or `refresh_token` to refresh an existing token.'
+          description: ''
+          example: password
           enum:
             - password
-            - refresh_token
         username:
           type: string
           description: User email address
@@ -164,13 +177,48 @@ components:
         - grant_type
         - username
         - password
-      x-internal: true
-    RefreshTokenBody:
+    ClientTokenBody:
       type: object
+      x-examples:
+        example-1:
+          grant_type: refresh_token
+          refresh_token: SqJDIwX00fehqHxS6xmb-kzqAlrYe_0EHgekMexVT8k
+      x-internal: true
+      title: 'Create a new token (grant_type: client_credentials)'
+      description: ''
       properties:
         grant_type:
           type: string
-          default: refresh_token
+          example: client_credentials
+          enum:
+            - client_credentials
+        client_id:
+          type: string
+          description: Use the client id
+          example: 27af95fd57a424e5d01aaf5eab
+        client_secret:
+          type: string
+          example: 1324a8d5c0ca57daf384fae39f811a5144330143301'
+          description: Client secret key.
+      required:
+        - grant_type
+        - client_id
+        - client_secret
+    RefreshTokenBody:
+      type: object
+      x-examples:
+        example-1:
+          grant_type: refresh_token
+          refresh_token: SqJDIwX00fehqHxS6xmb-kzqAlrYe_0EHgekMexVT8k
+      x-internal: true
+      title: 'Refresh an existing token (grant_type: refresh_token)'
+      description: ''
+      properties:
+        grant_type:
+          type: string
+          example: refresh_token
+          enum:
+            - refresh_token
         refresh_token:
           type: string
           description: Refresh token obtained from the create token response
@@ -178,10 +226,5 @@ components:
       required:
         - grant_type
         - refresh_token
-      x-examples:
-        example-1:
-          grant_type: refresh_token
-          refresh_token: SqJDIwX00fehqHxS6xmb-kzqAlrYe_0EHgekMexVT8k
-      x-internal: true
 tags:
   - name: Token
