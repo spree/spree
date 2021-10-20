@@ -15,7 +15,7 @@ end
 describe 'WebhooksSubscribers API', swagger: true do
   include_context 'Platform API v2'
 
-  resource_name = 'WebhookSubscriber'
+  resource_name = 'Webhook Subscriber'
   options = {}
   
   let(:id) { subscriber.tap(&:save).id }

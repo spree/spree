@@ -57,6 +57,7 @@ RSpec.configure do |config|
         { name: 'Shipping Categories' },
         { name: 'Taxons' },
         { name: 'Users' },
+        { name: 'Webhooks Subscribers' },
         { name: 'Wishlists' },
         { name: 'Wished Items' }
       ],
