@@ -10,7 +10,7 @@ module Spree
           # optional authorization if using a user token instead of app token
           before_action :authorize_spree_user
 
-          # index and show acrtions are defined in Spree::Api::V2::ResourceController
+          # index and show actions are defined in Spree::Api::V2::ResourceController
 
           def create
             resource = model_class.new(permitted_resource_params)
@@ -44,12 +44,8 @@ module Spree
           protected
 
           def resource_serializer
-            # [TODO]: quickfix
-            if (x = model_class.to_s.scan(/(?<=:|^)\b.*?\b(?=:|$)/) - %w[Spree]).size > 1
-              "Spree::Api::V2::Platform::#{x.join('::')}Serializer".constantize
-            else
-              "Spree::Api::V2::Platform::#{model_class.to_s.demodulize}Serializer".constantize
-            end
+            serializer_base_name = model_class.to_s.sub('Spree::', '')
+            "Spree::Api::V2::Platform::#{serializer_base_name}Serializer".constantize
           end
 
           def collection_serializer
