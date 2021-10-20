@@ -80,9 +80,7 @@ module Spree
         let(:contents) { [ContentItem.new(build(:inventory_unit, variant: variant))] }
         let(:package) { Package.new(stock_location, contents) }
 
-        before do
-          allow(variant).to receive_messages shipping_category: nil
-        end
+        before { allow(variant).to receive_messages shipping_category: nil }
 
         it 'builds an empty list of shipping methods' do
           expect(package.shipping_methods).to be_empty

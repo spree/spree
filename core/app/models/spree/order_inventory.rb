@@ -98,7 +98,7 @@ module Spree
 
       removed_quantity = 0
       removed_backordered = 0
-      # binding.pry
+
       shipment_units.each do |inventory_unit|
         inventory_unit.quantity.times do
           break if removed_quantity == quantity
