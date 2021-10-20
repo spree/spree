@@ -110,8 +110,8 @@ module Spree
       end
     end
 
-    self.whitelisted_ransackable_associations = %w[option_values product prices default_price]
-    self.whitelisted_ransackable_attributes = %w[weight sku]
+    self.whitelisted_ransackable_associations = %w[option_values product tax_category prices default_price]
+    self.whitelisted_ransackable_attributes = %w[weight depth width height sku discontinue_on is_master cost_price cost_currency track_inventory deleted_at]
     self.whitelisted_ransackable_scopes = %i(product_name_or_sku_cont search_by_product_name_or_sku)
 
     def self.product_name_or_sku_cont(query)

@@ -233,13 +233,14 @@ Spree::Core::Engine.add_routes do
 
         # Payments API
         resources :payments do
-          member do
-            patch :authorize
-            patch :capture
-            patch :purchase
-            patch :void
-            patch :credit
-          end
+          # TODO: support custom actions
+          # member do
+          #   patch :authorize
+          #   patch :capture
+          #   patch :purchase
+          #   patch :void
+          #   patch :credit
+          # end
         end
 
         # Geo API

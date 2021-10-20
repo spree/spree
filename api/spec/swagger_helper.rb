@@ -54,12 +54,14 @@ RSpec.configure do |config|
         { name: 'Option Types' },
         { name: 'Option Values' },
         { name: 'Orders' },
+        { name: 'Payments' },
         { name: 'Shipping Categories' },
         { name: 'Taxons' },
         { name: 'Users' },
         { name: 'Webhooks Subscribers' },
         { name: 'Wishlists' },
-        { name: 'Wished Items' }
+        { name: 'Wished Items' },
+        { name: 'Variants' }
       ],
       components: {
         securitySchemes: {
