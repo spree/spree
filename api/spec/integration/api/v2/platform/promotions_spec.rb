@@ -15,12 +15,50 @@ describe 'Promotions API', swagger: true do
 
   let(:id) { create(:promotion_with_item_adjustment, promotion_category: promotion_category, promotion_rules: [promotion_rule]).id }
   let!(:records_list) { create_list(:promotion_with_item_adjustment, 3, promotion_category: promotion_category, promotion_rules: [promotion_rule]) }
-  let(:valid_create_param_value) { build(:promotion_with_item_adjustment, name: 'Black Friday', promotion_category: promotion_category, promotion_rules: [promotion_rule]).attributes }
+
+  let!(:promotion_attibutes) do
+    attributes_for(:promotion, name: 'Black Friday 20% Off',
+                               code: 'BLK-20',
+                               promotion_category_id: promotion_category.id.to_s,
+                               match_policy: 'any',
+                               type: 'Spree::Promotion',
+                               description: 'First 1000 Customers Save 20%',
+                               starts_at: Time.current,
+                               expires_at: Time.current + 4.days,
+                               usage_limit: 1000,
+                               path: '/black-fri/today',
+                               advertise: true)
+  end
+
+  let(:valid_create_param_value) do
+    promotion_attibutes.merge(
+      promotion_rules_attributes: [
+        attributes_for(:promotion_rule, promotion_id: id.to_s,
+                                        code: 'ESJD',
+                                        user_id: '223',
+                                        product_group_id: '3',
+                                        type: 'Spree::Promotion::Rules::User')
+      ],
+      promotion_actions_attributes: [
+        {
+          promotion_id: id.to_s,
+          type: 'Spree::Promotion::Actions::FreeShipping',
+          position: 1
+
+        }
+      ]
+    )
+  end
+
   let(:valid_update_param_value) do
     {
-      name: '10% OFF'
+      name: '10% OFF',
+      code: 'RAND-10',
+      description: 'This is the new updated promo',
+      advertise: false
     }
   end
+
   let(:invalid_param_value) do
     {
       name: ''

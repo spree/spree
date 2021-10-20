@@ -279,8 +279,42 @@ RSpec.configure do |config|
             type: :object,
             properties: {
               name: { type: :string, example: 'Black Firiday Saver' },
+              code: { type: :string, example: 'BLK-FRI-20' },
+              description: { type: :string, example: 'Buy today save 20%' },
+              promotion_category_id: { type: :string, example: '2' },
+              match_policy: { type: :string, example: 'all' },
+              type: { type: :string, example: 'Spree::Promotion' },
+              starts_at: { type: :string, format: :date_time, example: Time.current },
+              expires_at: { type: :string, format: :date_time, example: Time.current + 4.days },
+              usage_limit: { type: :integer, example: 1000 },
+              path: { type: :string, example: '/activate/promotion/now' },
+              advertise: { type: :boolean, example: true },
+              promotion_actions_attributes: { '$ref': '#/components/schemas/promotion_action_params' },
+              promotion_rules_attributes: { '$ref': '#/components/schemas/promotion_rule_params' },
             },
             required: %w[name],
+            'x-internal': true
+          },
+          promotion_action_params: {
+            type: :object,
+            properties: {
+              promotion_id: { type: :string, example: '1' },
+              position: { type: :integer, example: 2 },
+              type: { type: :string, example: 'Spree::Promotion::Actions::FreeShipping' }
+
+            },
+            'x-internal': true
+          },
+          promotion_rule_params: {
+            type: :object,
+            properties: {
+              promotion_id: { type: :string, example: '1' },
+              code: { type: :string, example: 'PEFRW' },
+              user_id: { type: :string, example: '1' },
+              product_group_id: { type: :string, example: '2' },
+              type: { type: :string, example: 'Spree::Promotion::Rules::User' }
+
+            },
             'x-internal': true
           },
           shipping_category_params: {

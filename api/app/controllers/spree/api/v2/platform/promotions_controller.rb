@@ -12,6 +12,13 @@ module Spree
           def scope_includes
             [:promotion_category, :promotion_rules, :promotion_actions]
           end
+
+          def spree_permitted_attributes
+            Spree::Promotion.json_api_permitted_attributes + [
+              promotion_actions_attributes: Spree::PromotionAction.json_api_permitted_attributes,
+              promotion_rules_attributes: Spree::PromotionRule.json_api_permitted_attributes
+            ]
+          end
         end
       end
     end
