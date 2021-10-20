@@ -8,4 +8,5 @@ module Spree
   end
 end
 
+require 'spree/api/api_dependencies'
 require 'spree/api/engine'

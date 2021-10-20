@@ -5,7 +5,7 @@ module Spree
     describe Coupon, type: :model do
       subject { Coupon.new(order) }
 
-      let(:store) { create(:store) }
+      let(:store) { Spree::Store.default }
       let(:order) { double('Order', coupon_code: '10off', store: store).as_null_object }
 
       it 'returns self in apply' do

@@ -66,7 +66,7 @@ module Spree
     private
 
     def ensure_currency
-      self.currency ||= Spree::Config[:currency]
+      self.currency ||= Spree::Store.default.default_currency
     end
   end
 end
