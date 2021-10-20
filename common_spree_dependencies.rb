@@ -21,6 +21,12 @@ platforms :ruby do
   gem 'pg', '~> 1.1'
 end
 
+if ENV['RAILS_VERSION']&.match(/7\.0\.0/)
+  gem 'paranoia', github: 'damianlegawiec/paranoia', branch: 'core'
+  gem 'awesome_nested_set', github: 'damianlegawiec/awesome_nested_set', branch: 'master'
+  gem 'ransack', github: 'activerecord-hackery/ransack', branch: 'master'
+end
+
 group :test do
   gem 'capybara', '~> 3.24'
   gem 'capybara-screenshot', '~> 1.0'
@@ -44,6 +50,7 @@ end
 group :test, :development do
   gem 'awesome_print'
   gem 'gem-release'
+  gem 'i18n-tasks'
   gem 'redis'
   gem 'rubocop', '~> 1.0', require: false
   gem 'rubocop-rspec', require: false
