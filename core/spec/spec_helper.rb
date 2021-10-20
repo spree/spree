@@ -32,7 +32,7 @@ rescue LoadError
 end
 
 require 'rspec/rails'
-require 'database_cleaner'
+require 'database_cleaner/active_record'
 require 'ffaker'
 
 Dir['./spec/support/**/*.rb'].sort.each { |f| require f }
@@ -57,12 +57,29 @@ RSpec.configure do |config|
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, comment the following line or assign false
   # instead of true.
-  config.use_transactional_fixtures = true
+  config.use_transactional_fixtures = false
 
-  config.before do
+  config.before(:suite) do
+    # Clean out the database state before the tests run
+    DatabaseCleaner.strategy = :transaction
+    DatabaseCleaner.clean_with(:truncation)
+    # Force jobs to be executed in a synchronous way
+    ActiveJob::Base.queue_adapter = :inline
+  end
+
+  config.around(:each) do |example|
+    DatabaseCleaner.cleaning do
+      example.run
+    end
+  end
+
+  config.before(:each) do
     begin
       Rails.cache.clear
       reset_spree_preferences
+
+      country = create(:country, name: 'United States of America', iso_name: 'UNITED STATES', iso: 'US', iso3: 'USA', states_required: true)
+      create(:store, default: true, default_country: country, default_currency: 'USD')
     rescue Errno::ENOTEMPTY
     end
   end
@@ -70,13 +87,6 @@ RSpec.configure do |config|
   config.include FactoryBot::Syntax::Methods
   config.include Spree::TestingSupport::Preferences
   config.include Spree::TestingSupport::Kernel
-
-  config.before(:suite) do
-    # Clean out the database state before the tests run
-    DatabaseCleaner.clean_with(:truncation)
-    # Force jobs to be executed in a synchronous way
-    ActiveJob::Base.queue_adapter = :inline
-  end
 
   config.before(:each, :inline_jobs) do
     ActiveJob::Base.queue_adapter = :test

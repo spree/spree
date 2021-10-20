@@ -78,9 +78,7 @@ describe Spree::Money do
 
   context 'JPY' do
     before do
-      configure_spree_preferences do |config|
-        config.currency = 'JPY'
-      end
+      Spree::Store.default.update(default_currency: 'JPY')
     end
 
     it 'formats correctly' do
@@ -91,9 +89,7 @@ describe Spree::Money do
 
   context 'EUR' do
     before do
-      configure_spree_preferences do |config|
-        config.currency = 'EUR'
-      end
+      Spree::Store.default.update(default_currency: 'EUR')
     end
 
     # Regression test for #2634

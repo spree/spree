@@ -55,7 +55,7 @@ describe Spree::Adjustment, type: :model do
   end
 
   context '#save' do
-    let(:order) { Spree::Order.create! }
+    let(:order) { create(:order) }
     let!(:adjustment) { Spree::Adjustment.create(label: 'Adjustment', amount: 5, order: order, adjustable: order) }
 
     it 'touches the adjustable' do

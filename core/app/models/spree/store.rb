@@ -161,10 +161,12 @@ module Spree
     end
 
     def states_available_for_checkout(country)
-      checkout_zone_or_default.try(:state_list_for, country) || country.states
+      checkout_zone.try(:state_list_for, country) || country.states
     end
 
     def checkout_zone_or_default
+      ActiveSupport::Deprecation.warn('Store#checkout_zone_or_default is deprecated and will be removed in Spree 5')
+
       @checkout_zone_or_default ||= checkout_zone || Spree::Zone.default_checkout_zone
     end
 
