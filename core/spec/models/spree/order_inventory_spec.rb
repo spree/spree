@@ -143,9 +143,9 @@ describe Spree::OrderInventory, type: :model do
     end
 
     context '#remove_from_shipment' do
-      let(:shipment) { order.shipments.first }
-      let(:variant) { subject.variant }
-      let(:inventory_units_for_item) do
+      let!(:shipment) { order.shipments.first }
+      let!(:variant) { subject.variant }
+      let!(:inventory_units_for_item) do
         [
           create(:inventory_unit, variant_id: variant.id, quantity: 1, state: 'shipped'),
           create(:inventory_unit, variant_id: variant.id, quantity: 1, state: 'on_hand')
@@ -168,10 +168,15 @@ describe Spree::OrderInventory, type: :model do
         allow(inventory_units_for_item.second).to receive_messages shipped?: false, backordered?: false
         allow(shipment).to receive_messages(inventory_units_for_item: inventory_units_for_item)
 
+        expect(shipment.inventory_units_for_item[0]).to receive(:quantity).and_return(2).twice
+        expect(shipment.inventory_units_for_item[0]).to receive(:decrement)
+        expect(shipment.inventory_units_for_item[0]).to receive(:save!)
+        expect(shipment.inventory_units_for_item[0]).to receive(:quantity).and_return(1)
+        expect(shipment.inventory_units_for_item[0]).to receive(:destroy)
+        expect(shipment.inventory_units_for_item[1]).to receive(:save!)
+        expect(shipment.inventory_units_for_item[1]).not_to receive(:decrement)
+        expect(shipment.inventory_units_for_item[1]).not_to receive(:destroy)
         expect(subject.send(:remove_from_shipment, shipment, 2)).to eq(2)
-        expect(inventory_units_for_item.first.persisted?).to be false
-        expect(inventory_units_for_item.second.persisted?).to be true
-        expect(inventory_units_for_item.second.quantity).to eq 1
       end
 
       it 'destroys unshipped units first' do

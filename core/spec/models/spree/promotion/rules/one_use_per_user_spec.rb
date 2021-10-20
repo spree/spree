@@ -8,10 +8,13 @@ describe Spree::Promotion::Rules::OneUsePerUser, type: :model do
 
     let(:order) { double Spree::Order, user: user }
     let(:user) { double Spree::LegacyUser }
-    let(:promotion) { stub_model Spree::Promotion, used_by?: used_by }
+    let(:promotion) { create(:promotion) }
     let(:used_by) { false }
 
-    before { rule.promotion = promotion }
+    before do
+      rule.promotion = promotion
+      allow(promotion).to receive_messages used_by?: used_by
+    end
 
     context 'when the order is assigned to a user' do
       context 'when the user has used this promotion before' do

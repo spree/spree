@@ -193,7 +193,7 @@ module Spree
     end
 
     it "can not view someone else's order" do
-      allow_any_instance_of(Order).to receive_messages user: stub_model(Spree::LegacyUser)
+      allow_any_instance_of(Order).to receive_messages user: create(:user)
       api_get :show, id: order.to_param
       assert_unauthorized!
     end

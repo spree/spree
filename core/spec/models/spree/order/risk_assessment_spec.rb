@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Spree::Order, type: :model do
-  let(:order) { stub_model('Spree::Order') }
+  let(:order) { create(:order) }
 
   describe '.is_risky?' do
     context 'Not risky order' do
@@ -76,6 +76,7 @@ describe Spree::Order, type: :model do
   end
 
   context 'is considered risky' do
+    let(:user) { create(:user) }
     let(:order) do
       order = FactoryBot.create(:completed_order_with_pending_payment)
       order.considered_risky!
@@ -84,8 +85,8 @@ describe Spree::Order, type: :model do
 
     it 'can be approved by a user' do
       expect(order).to receive(:approve!)
-      order.approved_by(stub_model(Spree::LegacyUser, id: 1))
-      expect(order.approver_id).to eq(1)
+      order.approved_by(user)
+      expect(order.approver_id).to eq user.id
       expect(order.approved_at).to be_present
       expect(order.approved?).to be true
     end

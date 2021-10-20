@@ -60,7 +60,7 @@ describe Spree::Price, type: :model do
   describe 'validations' do
     subject { Spree::Price.new variant: variant, amount: amount }
 
-    let(:variant) { stub_model Spree::Variant }
+    let(:variant) { create(:variant) }
 
     context 'when the amount is nil' do
       let(:amount) { nil }
@@ -102,7 +102,7 @@ describe Spree::Price, type: :model do
   describe '#price_including_vat_for(zone)' do
     subject(:price_with_vat) { price.price_including_vat_for(price_options) }
 
-    let(:variant) { stub_model Spree::Variant }
+    let(:variant) { create(:variant) }
     let(:default_zone) { Spree::Zone.new }
     let(:zone) { Spree::Zone.new }
     let(:amount) { 10 }
@@ -152,7 +152,7 @@ describe Spree::Price, type: :model do
   describe '#compare_at_price_including_vat_for(zone)' do
     subject(:compare_at_price_with_vat) { price.compare_at_price_including_vat_for(price_options) }
 
-    let(:variant) { stub_model Spree::Variant }
+    let(:variant) { create(:variant) }
     let(:default_zone) { Spree::Zone.new }
     let(:zone) { Spree::Zone.new }
     let(:amount) { 10 }

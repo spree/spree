@@ -155,61 +155,61 @@ describe Spree::Promotion, type: :model do
   end
 
   describe '#activate' do
+    let(:action1) { Spree::Promotion::Actions::CreateAdjustment.create! }
+    let(:action2) { Spree::Promotion::Actions::CreateAdjustment.create! }
+    let(:user) { create(:user) }
+    let(:order) { create(:order, user: user) }
+    let(:payload) { { order: order, user: user } }
+    
     before do
-      @action1 = Spree::Promotion::Actions::CreateAdjustment.create!
-      @action2 = Spree::Promotion::Actions::CreateAdjustment.create!
-      allow(@action1).to receive_messages perform: true
-      allow(@action2).to receive_messages perform: true
+      allow(action1).to receive_messages perform: true
+      allow(action2).to receive_messages perform: true
 
-      promotion.promotion_actions = [@action1, @action2]
+      promotion.promotion_actions = [action1, action2]
       promotion.created_at = 2.days.ago
-
-      @user = stub_model(Spree::LegacyUser, email: 'spree@example.com')
-      @order = Spree::Order.create user: @user
-      @payload = { order: @order, user: @user }
     end
 
     it 'checks path if present' do
       promotion.path = 'content/cvv'
-      @payload[:path] = 'content/cvv'
-      expect(@action1).to receive(:perform).with(@payload)
-      expect(@action2).to receive(:perform).with(@payload)
-      promotion.activate(@payload)
+      payload[:path] = 'content/cvv'
+      expect(action1).to receive(:perform).with(payload)
+      expect(action2).to receive(:perform).with(payload)
+      promotion.activate(payload)
     end
 
     it 'does not perform actions against an order in a finalized state' do
-      expect(@action1).not_to receive(:perform).with(@payload)
+      expect(action1).not_to receive(:perform).with(payload)
 
-      @order.state = 'complete'
-      promotion.activate(@payload)
+      order.state = 'complete'
+      promotion.activate(payload)
 
-      @order.state = 'awaiting_return'
-      promotion.activate(@payload)
+      order.state = 'awaiting_return'
+      promotion.activate(payload)
 
-      @order.state = 'returned'
-      promotion.activate(@payload)
+      order.state = 'returned'
+      promotion.activate(payload)
     end
 
     it 'does activate if newer then order' do
-      expect(@action1).to receive(:perform).with(@payload)
+      expect(action1).to receive(:perform).with(payload)
       promotion.created_at = Time.current + 2
-      expect(promotion.activate(@payload)).to be true
+      expect(promotion.activate(payload)).to be true
     end
 
     context 'keeps track of the orders' do
       context 'when activated' do
         it 'assigns the order' do
           expect(promotion.orders).to be_empty
-          expect(promotion.activate(@payload)).to be true
-          expect(promotion.orders.first).to eql @order
+          expect(promotion.activate(payload)).to be true
+          expect(promotion.orders.first).to eql order
         end
       end
 
       context 'when not activated' do
         it 'will not assign the order' do
-          @order.state = 'complete'
+          order.state = 'complete'
           expect(promotion.orders).to be_empty
-          expect(promotion.activate(@payload)).to be_falsey
+          expect(promotion.activate(payload)).to be_falsey
           expect(promotion.orders).to be_empty
         end
       end
@@ -436,14 +436,23 @@ describe Spree::Promotion, type: :model do
   context '#eligible_rules' do
     let(:promotable) { double('Promotable') }
 
-    it 'true if there are no rules' do
-      expect(promotion.eligible_rules(promotable)).to eq []
+    context 'when there are no rules' do
+      it 'returns true' do
+        expect(promotion.eligible_rules(promotable)).to eq []
+      end
     end
 
-    it 'true if there are no applicable rules' do
-      promotion.promotion_rules = [stub_model(Spree::PromotionRule, eligible?: true, applicable?: false)]
-      allow(promotion.promotion_rules).to receive(:for).and_return([])
-      expect(promotion.eligible_rules(promotable)).to eq []
+    context 'when there are no aplicable rules' do
+      let!(:promotion_rule) { create(:promotion_rule, promotion: promotion) }
+
+      before do
+        allow(promotion_rule).to receive_messages eligible?: true, applicable?: false
+        allow(promotion.promotion_rules).to receive(:for).and_return([])
+      end
+
+      it 'returns true' do
+        expect(promotion.eligible_rules(promotable)).to eq []
+      end
     end
 
     context "with 'all' match policy" do

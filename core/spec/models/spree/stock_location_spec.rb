@@ -258,17 +258,17 @@ module Spree
       context 'both name and abbr is present' do
         subject { StockLocation.create(name: 'testing', state: state, state_name: nil) }
 
-        let(:state) { stub_model(Spree::State, name: 'virginia', abbr: 'va') }
+        let(:state) { create(:state, name: 'virginia', abbr: 'va') }
 
-        specify { expect(subject.state_text).to eq('va') }
+        specify { expect(subject.state_text).to eq(state.abbr) }
       end
 
       context 'only name is present' do
         subject { StockLocation.create(name: 'testing', state: state, state_name: nil) }
 
-        let(:state) { stub_model(Spree::State, name: 'virginia', abbr: nil) }
+        let(:state) { create(:state, name: 'virginia', abbr: nil) }
 
-        specify { expect(subject.state_text).to eq('virginia') }
+        specify { expect(subject.state_text).to eq(state.name) }
       end
     end
 

@@ -7,13 +7,11 @@ class FakeCalculator < Spree::Calculator
 end
 
 describe Spree::Order, type: :model do
-  let(:user) { stub_model(Spree::LegacyUser, email: 'spree@example.com') }
+  let(:user) { create(:user) }
   let!(:store) { create(:store, default: true) }
-  let(:order) { stub_model(Spree::Order, user: user, store: store) }
+  let(:order) { create(:order, user: user, store: store) }
 
-  before do
-    allow(Spree::LegacyUser).to receive_messages(current: create(:user))
-  end
+  before { allow(Spree::LegacyUser).to receive_messages(current: create(:user)) }
 
   describe '.scopes' do
     let!(:user) { FactoryBot.create(:user) }
@@ -479,6 +477,7 @@ describe Spree::Order, type: :model do
     let(:no_method) { double :payment_method, available_for_order?: false, available_for_store?: true, stores: [store] }
     let(:methods) { [ok_method, no_method] }
     let(:store_2) { create(:store) }
+    let(:order_from_different_store) { create(:order, user: user, store: store_2) }
 
     it 'includes frontend payment methods' do
       payment_method = Spree::PaymentMethod.create!(name: 'Fake',
@@ -522,8 +521,7 @@ describe Spree::Order, type: :model do
                                                    )
       expect(order.available_payment_methods).not_to include(payment_method)
 
-      order = stub_model(Spree::Order, user: user, store: store_2)
-      expect(order.available_payment_methods).to include(payment_method)
+      expect(order_from_different_store.available_payment_methods).to include(payment_method)
     end
   end
 
@@ -549,8 +547,10 @@ describe Spree::Order, type: :model do
     let!(:variant3) { create(:variant) }
     let(:other_variant) { create(:variant) }
     let!(:line_items) do
-      [create(:line_item, product: variant1.product, variant: variant1, quantity: 1),
-       create(:line_item, product: variant2.product, variant: variant2, quantity: 2)]
+      [
+        create(:line_item, product: variant1.product, variant: variant1, quantity: 1),
+        create(:line_item, product: variant2.product, variant: variant2, quantity: 2)
+      ]
     end
 
     before { allow(order).to receive_messages(line_items: line_items) }

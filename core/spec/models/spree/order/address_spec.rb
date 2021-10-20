@@ -6,7 +6,7 @@ describe Spree::Order, type: :model do
   context 'validation' do
     context 'when @use_billing is populated' do
       before do
-        order.bill_address = stub_model(Spree::Address)
+        order.bill_address = create(:address)
         order.ship_address = nil
       end
 

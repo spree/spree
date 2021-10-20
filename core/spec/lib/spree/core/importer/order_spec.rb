@@ -58,7 +58,7 @@ module Spree
       end
 
       context 'assigning a user to an order' do
-        let(:other_user) { stub_model(LegacyUser, email: 'dana@scully.com') }
+        let(:other_user) { create(:user) }
 
         context 'as an admin' do
           before { allow(user).to receive_messages has_spree_role?: true }
