@@ -74,10 +74,8 @@ RSpec.configure do |config|
 
     Spree::Api::Config[:requires_authentication] = true
 
-    country = create(:country, name: 'United States of America', iso_name: 'UNITED STATES', iso: 'US', states_required: true)
-    Spree::Config[:default_country_id] = country.id
-
-    create(:store, default: true)
+    country = create(:country, name: 'United States of America', iso_name: 'UNITED STATES', iso: 'US', iso3: 'USA', states_required: true)
+    create(:store, default: true, default_country: country, default_currency: 'USD')
   end
 
   config.order = :random
