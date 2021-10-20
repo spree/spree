@@ -1,7 +1,7 @@
 module Spree
   module CurrencyHelper
     def currency_options(selected_value = nil)
-      selected_value ||= Spree::Config[:currency]
+      selected_value ||= Spree::Store.default.default_currency
       currencies = ::Money::Currency.table.map do |_code, details|
         iso = details[:iso_code]
         [iso, "#{details[:name]} (#{iso})"]

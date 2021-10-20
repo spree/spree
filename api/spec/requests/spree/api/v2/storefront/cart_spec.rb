@@ -842,7 +842,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
     let(:params) { { country_iso: 'USA' } }
     let(:execute) { get '/api/v2/storefront/cart/estimate_shipping_rates', params: params, headers: headers }
 
-    let(:country) { create(:country, iso: 'USA') }
+    let(:country) { store.default_country }
     let(:zone) { create(:zone, name: 'US') }
     let(:shipping_method) { create(:shipping_method) }
     let(:shipping_method_2) { create(:shipping_method) }

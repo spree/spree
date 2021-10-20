@@ -65,7 +65,7 @@ describe Spree::Core::Search::Base do
   it 'accepts multiple currencies' do
     pln_price
 
-    Spree::Config[:currency] = 'PLN'
+    Spree::Store.default.update(default_currency: 'PLN')
     params_pln = { per_page: '', search: { 'price_range_any' => ['Under 10.00 zł', '10.00 zł - 15.00 zł'] } }
     searcher_pln = described_class.new(ActionController::Parameters.new(params_pln))
     searcher_pln.current_currency = 'PLN'

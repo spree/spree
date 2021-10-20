@@ -71,7 +71,9 @@ module Spree
     end
 
     def self.default_checkout_zone
-      find_by(name: Spree::Config[:checkout_zone])
+      ActiveSupport::Deprecation.warn('Spree::Zone.default_checkout_zone is deprecated and will be removed in Spree 5')
+
+      first
     end
 
     def kind

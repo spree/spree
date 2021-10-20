@@ -717,7 +717,7 @@ module Spree
     end
 
     def ensure_currency_presence
-      self.currency ||= store.default_currency || Spree::Config[:currency]
+      self.currency ||= store.default_currency
     end
 
     def create_token

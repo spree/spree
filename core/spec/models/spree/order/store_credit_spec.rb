@@ -214,7 +214,7 @@ describe 'Order' do
       context 'the associated user has store credits' do
         subject { order }
 
-        let(:store) { create(:store) }
+        let(:store) { Spree::Store.default }
         let(:store_credit) { create(:store_credit, store: store) }
         let(:order) { create(:order, user: store_credit.user, store: store) }
 
