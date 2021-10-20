@@ -58,7 +58,8 @@ RSpec.configure do |config|
         { name: 'Taxons' },
         { name: 'Users' },
         { name: 'Wishlists' },
-        { name: 'Wished Items' }
+        { name: 'Wished Items' },
+        { name: 'Variants' }
       ],
       components: {
         securitySchemes: {
