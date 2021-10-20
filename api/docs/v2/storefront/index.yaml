@@ -354,6 +354,8 @@ paths:
         Creates a new cart.
 
         **Please be aware**; The `token` value found in the response body is used to authorize all future operations on this cart through the Auth API Key `X-Spree-Order-Token`.
+
+        To associate a user with a cart on creation, pass `request["Authorization"] = 'Bearer undefined'`
       tags:
         - Cart
       operationId: create-cart
