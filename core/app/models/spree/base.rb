@@ -63,3 +63,5 @@ class Spree::Base < ApplicationRecord
     to_s.demodulize.underscore
   end
 end
+
+ActiveSupport.run_load_hooks(:spree_base, Spree::Base)

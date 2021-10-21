@@ -131,6 +131,7 @@ module Spree
           {
             currency: current_currency,
             locale: current_locale,
+            price_options: current_price_options,
             store: current_store,
             user: spree_current_user,
             image_transformation: params[:image_transformation],

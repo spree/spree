@@ -105,12 +105,15 @@ describe 'API v2 Caching spec', type: :request do
     end
   end
 
-  context 'serialiers caching' do
+  context 'serializers caching' do
+    let!(:zone) { create(:zone, default_tax: true) }
     let(:cache_store) { Spree::V2::Storefront::ProductSerializer.cache_store_instance }
     let(:cache_entry) { cache_store.read(product, namespace: cache_namespace) }
 
     context 'auto expiration' do
-      let(:cache_namespace) { "jsonapi-serializer-usd-en-#{store.cache_key_with_version}" }
+      let(:cache_namespace) do
+        "jsonapi-serializer-usd-en-#{zone.cache_key_with_version}-#{store.cache_key_with_version}"
+      end
 
       it 'auto expire cache after record being updated' do
         get "/api/v2/storefront/products/#{product.id}"
@@ -137,7 +140,12 @@ describe 'API v2 Caching spec', type: :request do
       let!(:user) { create(:user) }
       let(:currency) { 'EUR' }
       let(:locale) { 'de' }
-      let(:cache_namespace) { "jsonapi-serializer-eur-de-#{store.cache_key_with_version}-#{user.cache_key_with_version}" }
+      let(:cache_namespace) do
+        "jsonapi-serializer-eur-de" \
+          "-#{zone.cache_key_with_version}" \
+          "-#{store.cache_key_with_version}" \
+          "-#{user.cache_key_with_version}"
+      end
 
       it 'includes currency and signed user in the cache key' do
         get "/api/v2/storefront/products/#{product.id}?currency=#{currency}&locale=#{locale}", headers: headers_bearer

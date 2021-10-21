@@ -126,6 +126,7 @@ describe Spree::Api::V2::BaseController, type: :controller do
     let(:currency) { store.default_currency }
     let(:locale) { store.default_locale }
     let(:user) { nil }
+    let(:price_options) { { tax_zone: Spree::Zone.new } }
 
     shared_examples 'returns proper values' do
       before do
@@ -134,15 +135,21 @@ describe Spree::Api::V2::BaseController, type: :controller do
         allow(dummy_controller).to receive(:current_currency).and_return(currency)
         allow(dummy_controller).to receive(:current_locale).and_return(locale)
         allow(dummy_controller).to receive(:spree_current_user).and_return(user)
+        allow(dummy_controller).to receive(:current_price_options).and_return(price_options)
       end
 
-      it { expect(dummy_controller.send(:serializer_params).keys).to eq(%i[currency locale store user image_transformation taxon_image_transformation]) }
+      let(:serializer_params) { dummy_controller.send(:serializer_params) }
+
+      it 'contains the expected hash serializer keys' do
+        expect(serializer_params.keys).to match_array(%i[currency image_transformation locale price_options store taxon_image_transformation user])
+      end
 
       it do
-        expect(dummy_controller.send(:serializer_params)).to eq(
+        expect(serializer_params).to eq(
           {
             store: store,
             currency: currency,
+            price_options: price_options,
             user: user,
             locale: locale,
             image_transformation: nil,
