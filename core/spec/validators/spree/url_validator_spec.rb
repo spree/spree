@@ -2,8 +2,8 @@ require 'spec_helper'
 
 module Spree
   module Test
-    class Product < ActiveRecord::Base
-      self.table_name = 'test_products'
+    Product = Struct.new(:url) do
+      include ActiveModel::Validations
 
       validates :url, 'spree/url': true
     end
@@ -11,16 +11,6 @@ module Spree
 end
 
 describe Spree::UrlValidator do
-  before(:all) do
-    ActiveRecord::Base.connection.create_table :test_products, force: true do |t|
-      t.string :url
-    end
-  end
-
-  after(:all) do
-    ActiveRecord::Base.connection.drop_table :test_products, if_exists: true
-  end
-
   describe 'validating the given URL' do
     context 'is invalid' do
       it { expect(Spree::Test::Product.new(url: nil).valid?).to eq(false) }
