@@ -8,10 +8,6 @@ module Spree
           def model_class
             Spree::Variant
           end
-
-          def spree_permitted_attributes
-            Spree::Order.json_api_permitted_attributes + [:option_value_ids, :price, :currency]
-          end
         end
       end
     end

@@ -15,7 +15,7 @@ describe 'Variants API', swagger: true do
   let(:option_type) { create(:option_type) }
   let(:option_value) { create(:option_value, option_type: option_type) }
   let(:records_list) { create_list(:variant, 2, product: product) }
-  let(:valid_create_param_value) { build(:variant, product: product).attributes.merge(option_value_ids: [option_value.id]) }
+  let(:valid_create_param_value) { build(:master_variant, product: product).attributes.merge(option_value_ids: [option_value.id]) }
   let(:valid_update_param_value) do
     {
       sku: 'SKU987'
@@ -33,7 +33,7 @@ describe 'Variants API', swagger: true do
 
   path "/api/v2/platform/#{resource_path}" do
     include_examples 'GET records list', resource_name, options
-    # include_examples 'POST create record', resource_name, options
+    include_examples 'POST create record', resource_name, options
   end
 
   path "/api/v2/platform/#{resource_path}/{id}" do
