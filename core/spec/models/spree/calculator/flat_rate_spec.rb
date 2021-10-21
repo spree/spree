@@ -2,12 +2,9 @@ require 'spec_helper'
 
 describe Spree::Calculator::FlatRate, type: :model do
   let(:calculator) { Spree::Calculator::FlatRate.new }
+  let(:order) { create(:order) }
 
-  let(:order) do
-    mock_model(
-      Spree::Order, quantity: 10, currency: 'USD'
-    )
-  end
+  before { allow(order).to receive_messages quantity: 10 }
 
   context 'compute' do
     it "computes the amount as the rate when currency matches the order's currency" do

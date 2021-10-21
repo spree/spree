@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Spree::Price, type: :model do
   describe '#amount=' do
-    let(:price) { Spree::Price.new }
+    let(:price) { build :price }
     let(:amount) { '3,0A0' }
 
     before do
@@ -15,7 +15,7 @@ describe Spree::Price, type: :model do
   end
 
   describe '#compare_at_amount=' do
-    let(:price) { Spree::Price.new }
+    let(:price) { build :price }
     let(:compare_at_amount) { '169.99' }
 
     before do
@@ -28,7 +28,7 @@ describe Spree::Price, type: :model do
   end
 
   describe '#price' do
-    let(:price) { Spree::Price.new }
+    let(:price) { build :price }
     let(:amount) { 3000.00 }
 
     context 'when amount is changed' do
@@ -43,7 +43,7 @@ describe Spree::Price, type: :model do
   end
 
   describe '#compare_at_price' do
-    let(:price) { Spree::Price.new }
+    let(:price) { build :price }
     let(:compare_at_amount) { 3000.00 }
 
     context 'when amount is changed' do
@@ -58,9 +58,9 @@ describe Spree::Price, type: :model do
   end
 
   describe 'validations' do
-    subject { Spree::Price.new variant: variant, amount: amount }
+    subject { build :price, variant: variant, amount: amount }
 
-    let(:variant) { stub_model Spree::Variant }
+    let(:variant) { create(:variant) }
 
     context 'when the amount is nil' do
       let(:amount) { nil }
@@ -102,12 +102,12 @@ describe Spree::Price, type: :model do
   describe '#price_including_vat_for(zone)' do
     subject(:price_with_vat) { price.price_including_vat_for(price_options) }
 
-    let(:variant) { stub_model Spree::Variant }
+    let(:variant) { create(:variant) }
     let(:default_zone) { Spree::Zone.new }
     let(:zone) { Spree::Zone.new }
     let(:amount) { 10 }
     let(:tax_category) { Spree::TaxCategory.new }
-    let(:price) { Spree::Price.new variant: variant, amount: amount }
+    let(:price) { build :price, variant: variant, amount: amount }
     let(:price_options) { { tax_zone: zone } }
 
     context 'when called with a non-default zone' do
@@ -152,13 +152,13 @@ describe Spree::Price, type: :model do
   describe '#compare_at_price_including_vat_for(zone)' do
     subject(:compare_at_price_with_vat) { price.compare_at_price_including_vat_for(price_options) }
 
-    let(:variant) { stub_model Spree::Variant }
+    let(:variant) { create(:variant) }
     let(:default_zone) { Spree::Zone.new }
     let(:zone) { Spree::Zone.new }
     let(:amount) { 10 }
     let(:compare_at_amount) { 100 }
     let(:tax_category) { Spree::TaxCategory.new }
-    let(:price) { Spree::Price.new variant: variant, amount: amount, compare_at_amount: compare_at_amount }
+    let(:price) { build :price, variant: variant, amount: amount, compare_at_amount: compare_at_amount }
     let(:price_options) { { tax_zone: zone } }
 
     context 'when called with a non-default zone' do
@@ -201,7 +201,7 @@ describe Spree::Price, type: :model do
   end
 
   describe '#display_price_including_vat_for(zone)' do
-    subject { Spree::Price.new amount: 10 }
+    subject { build :price, amount: 10 }
 
     it 'calls #price_including_vat_for' do
       expect(subject).to receive(:price_including_vat_for)
@@ -210,7 +210,7 @@ describe Spree::Price, type: :model do
   end
 
   describe '#display_compare_at_price_including_vat_for(zone)' do
-    subject { Spree::Price.new amount: 10, compare_at_amount: 100 }
+    subject { build :price, amount: 10, compare_at_amount: 100 }
 
     it 'calls #price_including_vat_for' do
       expect(subject).to receive(:compare_at_price_including_vat_for)

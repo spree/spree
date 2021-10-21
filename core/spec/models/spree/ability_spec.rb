@@ -7,12 +7,14 @@ require 'spree/testing_support/bar_ability'
 class FooAbility
   include CanCan::Ability
 
+  ORDER_NUMBER = 'N210868'
+
   def initialize(_user)
     # allow anyone to perform index on Order
     can :index, Spree::Order
-    # allow anyone to update an Order with id of 1
+    # allow anyone to update an Order with specific order number
     can :update, Spree::Order do |order|
-      order.id == 1
+      order.number = ORDER_NUMBER
     end
   end
 end
@@ -35,7 +37,7 @@ describe Spree::Ability, type: :model do
 
     it 'applies the registered abilities permissions' do
       Spree::Ability.register_ability(FooAbility)
-      expect(Spree::Ability.new(user).can?(:update, mock_model(Spree::Order, id: 1))).to be true
+      expect(Spree::Ability.new(user).can?(:update, create(:order, number: FooAbility::ORDER_NUMBER))).to be true
     end
   end
 
@@ -47,7 +49,7 @@ describe Spree::Ability, type: :model do
 
     it 'applies the registered abilities permissions' do
       allow_any_instance_of(Spree::Ability).to receive(:abilities_to_register).and_return([FooAbility])
-      expect(Spree::Ability.new(user).can?(:update, mock_model(Spree::Order, id: 1))).to be true
+      expect(Spree::Ability.new(user).can?(:update, create(:order, number: FooAbility::ORDER_NUMBER))).to be true
     end
   end
 

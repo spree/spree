@@ -865,7 +865,7 @@ describe Spree::Variant, type: :model do
       context 'price present and currency nil' do
         before { variant.currency = nil }
 
-        it { expect(variant.send(:check_price)).to be(Spree::Config[:currency]) }
+        it { expect(variant.send(:check_price)).to eq(Spree::Store.default.default_currency) }
       end
 
       context 'price nil and currency present' do
@@ -891,7 +891,7 @@ describe Spree::Variant, type: :model do
       context 'price present and currency nil' do
         before { variant.currency = nil }
 
-        it { expect(variant.send(:check_price)).to be(Spree::Config[:currency]) }
+        it { expect(variant.send(:check_price)).to eq(Spree::Store.default.default_currency) }
       end
 
       context 'product and master_variant present and equal' do

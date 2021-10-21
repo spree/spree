@@ -2,7 +2,7 @@ require 'spec_helper'
 
 module Spree
   describe Spree::Order, type: :model do
-    let(:order) { stub_model(Spree::Order) }
+    let(:order) { create(:order) }
 
     context '#tax_zone' do
       let(:bill_address) { create :address }

@@ -44,7 +44,8 @@ module Spree
     end
 
     def currency
-      order.nil? ? Spree::Config[:currency] : order.currency
+      # FIXME: we should associate ReturnAuthorization with Store
+      order.nil? ? Spree::Store.default.default_currency : order.currency
     end
 
     def refundable_amount

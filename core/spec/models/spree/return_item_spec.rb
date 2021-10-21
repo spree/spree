@@ -407,7 +407,7 @@ describe Spree::ReturnItem, type: :model do
 
   describe '#exchange_requested?' do
     context 'exchange variant exists' do
-      before { allow(subject).to receive(:exchange_variant) { mock_model(Spree::Variant) } }
+      before { allow(subject).to receive(:exchange_variant) { create(:variant) } }
 
       it { expect(subject.exchange_requested?).to eq true }
     end
@@ -421,7 +421,7 @@ describe Spree::ReturnItem, type: :model do
 
   describe '#exchange_processed?' do
     context 'exchange inventory unit exists' do
-      before { allow(subject).to receive(:exchange_inventory_units) { [mock_model(Spree::InventoryUnit)] } }
+      before { allow(subject).to receive(:exchange_inventory_units) { create_list(:inventory_unit, 1) } }
 
       it { expect(subject.exchange_processed?).to eq true }
     end
@@ -504,11 +504,11 @@ describe Spree::ReturnItem, type: :model do
     let(:return_item) { build(:return_item) }
 
     context 'the return item is intended to be exchanged' do
-      before { allow(return_item).to receive(:exchange_variant).and_return(mock_model(Spree::Variant)) }
+      before { allow(return_item).to receive(:exchange_variant).and_return(create(:variant)) }
 
       context 'an exchange inventory unit already exists' do
         before do
-          allow(return_item).to receive(:exchange_inventory_units).and_return([mock_model(Spree::InventoryUnit)])
+          allow(return_item).to receive(:exchange_inventory_units).and_return(create_list(:inventory_unit, 1))
         end
 
         it { expect(subject).to be_nil }

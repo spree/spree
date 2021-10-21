@@ -46,12 +46,12 @@ describe Spree::Address, type: :model do
 
   describe 'delegated method' do
     context 'Country' do
-      let(:country) { create(:country, name: 'United States', iso_name: 'UNITED STATES', iso: 'US', iso3: 'USA') }
+      let(:country) { Spree::Store.default.default_country }
       let(:address) { create(:address, country: country) }
 
       context '#country_name' do
         it 'return proper country_iso_name' do
-          expect(address.country_name).to eq 'United States'
+          expect(address.country_name).to eq 'United States of America'
         end
       end
 
@@ -90,8 +90,8 @@ describe Spree::Address, type: :model do
   end
 
   context 'validation' do
-    let(:country) { stub_model(Spree::Country, states: [state], states_required: true) }
-    let(:state) { stub_model(Spree::State, name: 'maryland', abbr: 'md') }
+    let(:country) { create(:country, states: [state], states_required: true) }
+    let(:state) { create(:state, name: 'maryland', abbr: 'md') }
     let(:address) { build(:address, country: country) }
 
     before do
@@ -132,7 +132,7 @@ describe Spree::Address, type: :model do
 
     it 'state is entered but country does not contain that state' do
       address.state = state
-      address.country = stub_model(Spree::Country, states_required: true)
+      address.country = create(:country, states_required: true)
       address.valid?
       expect(address.errors['state']).to eq(['is invalid'])
     end
@@ -140,7 +140,7 @@ describe Spree::Address, type: :model do
     it 'both state and state_name are entered but country does not contain the state' do
       address.state = state
       address.state_name = 'maryland'
-      address.country = stub_model(Spree::Country, states_required: true)
+      address.country = create(:country, states_required: true)
       expect(address).to be_valid
       expect(address.state_id).to be_nil
     end
@@ -169,6 +169,18 @@ describe Spree::Address, type: :model do
       address.zipcode = ''
       address.valid?
       expect(address.errors['zipcode']).to include("can't be blank")
+    end
+
+    it 'requires firstname' do
+      address.firstname = ''
+      address.valid?
+      expect(address.errors['firstname']).to include("can't be blank")
+    end
+
+    it 'requires lastname' do
+      address.lastname = ''
+      address.valid?
+      expect(address.errors['lastname']).to include("can't be blank")
     end
 
     context 'zipcode validation' do
@@ -246,7 +258,7 @@ describe Spree::Address, type: :model do
     end
   end
 
-  context '.default' do
+  xcontext '.default' do
     context 'no user given' do
       before do
         @default_country_id = Spree::Config[:default_country_id]
@@ -287,47 +299,29 @@ describe Spree::Address, type: :model do
 
   context '#full_name' do
     context 'both first and last names are present' do
-      let(:address) { stub_model(Spree::Address, firstname: 'Michael', lastname: 'Jackson') }
+      let(:address) { create(:address, firstname: 'Michael', lastname: 'Jackson') }
 
       specify { expect(address.full_name).to eq('Michael Jackson') }
-    end
-
-    context 'first name is blank' do
-      let(:address) { stub_model(Spree::Address, firstname: nil, lastname: 'Jackson') }
-
-      specify { expect(address.full_name).to eq('Jackson') }
-    end
-
-    context 'last name is blank' do
-      let(:address) { stub_model(Spree::Address, firstname: 'Michael', lastname: nil) }
-
-      specify { expect(address.full_name).to eq('Michael') }
-    end
-
-    context 'both first and last names are blank' do
-      let(:address) { stub_model(Spree::Address, firstname: nil, lastname: nil) }
-
-      specify { expect(address.full_name).to eq('') }
     end
   end
 
   context '#state_text' do
     context 'state is blank' do
-      let(:address) { stub_model(Spree::Address, state: nil, state_name: 'virginia') }
+      let(:address) { create(:address, state: nil, state_name: 'virginia') }
 
       specify { expect(address.state_text).to eq('virginia') }
     end
 
     context 'both name and abbr is present' do
-      let(:state) { stub_model(Spree::State, name: 'virginia', abbr: 'va') }
-      let(:address) { stub_model(Spree::Address, state: state) }
+      let(:state) { create(:state, name: 'virginia', abbr: 'va') }
+      let(:address) { create(:address, state: state) }
 
       specify { expect(address.state_text).to eq('va') }
     end
 
     context 'only name is present' do
-      let(:state) { stub_model(Spree::State, name: 'virginia', abbr: nil) }
-      let(:address) { stub_model(Spree::Address, state: state) }
+      let(:state) { create(:state, name: 'virginia', abbr: nil) }
+      let(:address) { create(:address, state: state) }
 
       specify { expect(address.state_text).to eq('virginia') }
     end
@@ -356,7 +350,7 @@ describe Spree::Address, type: :model do
   end
 
   context 'defines require_phone? helper method' do
-    let(:address) { stub_model(Spree::Address) }
+    let(:address) { create(:address) }
 
     specify { expect(address.instance_eval { require_phone? }).to be true }
   end

@@ -93,7 +93,7 @@ module Spree
     scope :not_deleted, -> { where("#{Spree::Variant.quoted_table_name}.deleted_at IS NULL") }
 
     scope :for_currency_and_available_price_amount, ->(currency = nil) do
-      currency ||= Spree::Config[:currency]
+      currency ||= Spree::Store.default.default_currency
       joins(:prices).where('spree_prices.currency = ?', currency).where('spree_prices.amount IS NOT NULL').distinct
     end
 
@@ -110,8 +110,8 @@ module Spree
       end
     end
 
-    self.whitelisted_ransackable_associations = %w[option_values product prices default_price]
-    self.whitelisted_ransackable_attributes = %w[weight sku]
+    self.whitelisted_ransackable_associations = %w[option_values product tax_category prices default_price]
+    self.whitelisted_ransackable_attributes = %w[weight depth width height sku discontinue_on is_master cost_price cost_currency track_inventory deleted_at]
     self.whitelisted_ransackable_scopes = %i(product_name_or_sku_cont search_by_product_name_or_sku)
 
     def self.product_name_or_sku_cont(query)
@@ -338,12 +338,12 @@ module Spree
         self.price = product.master.price
       end
       if price.present? && currency.nil?
-        self.currency = Spree::Config[:currency]
+        self.currency = Spree::Store.default.default_currency
       end
     end
 
     def set_cost_currency
-      self.cost_currency = Spree::Config[:currency] if cost_currency.blank?
+      self.cost_currency = Spree::Store.default.default_currency if cost_currency.blank?
     end
 
     def create_stock_items

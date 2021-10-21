@@ -9,12 +9,12 @@ describe Spree::OrderMailer, type: :mailer do
   let(:second_store) { create(:store, name: 'Second Store', url: 'other.example.com') }
 
   let(:order) do
-    order = stub_model(Spree::Order, email: 'test@example.com')
-    product = stub_model(Spree::Product, name: %{The "BEST" product})
-    variant = stub_model(Spree::Variant, product: product)
-    price = stub_model(Spree::Price, variant: variant, amount: 5.00)
+    order = create(:completed_order_with_totals, email: 'test@example.com')
+    product = create(:product, name: %{The "BEST" product})
+    variant = create(:variant, product: product)
+    price = create(:price, variant: variant, amount: 5.00)
     store = first_store
-    line_item = stub_model(Spree::LineItem, variant: variant, order: order, quantity: 1, price: 4.99)
+    line_item = create(:line_item, variant: variant, order: order, quantity: 1, price: 4.99)
     allow(product).to receive_messages(default_variant: variant)
     allow(variant).to receive_messages(default_price: price)
     allow(order).to receive_messages(line_items: [line_item])
@@ -23,12 +23,12 @@ describe Spree::OrderMailer, type: :mailer do
   end
 
   let(:second_order) do
-    order = stub_model(Spree::Order, email: 'test2@example.com')
-    product = stub_model(Spree::Product, name: %{The "BESTEST" product})
-    variant = stub_model(Spree::Variant, product: product)
-    price = stub_model(Spree::Price, variant: variant, amount: 15.00)
+    order = create(:completed_order_with_totals, email: 'test2@example.com')
+    product = create(:product, name: %{The "BESTEST" product})
+    variant = create(:variant, product: product)
+    price = create(:price, variant: variant, amount: 15.00)
     store = second_store
-    line_item = stub_model(Spree::LineItem, variant: variant, order: order, quantity: 1, price: 4.99)
+    line_item = create(:line_item, variant: variant, order: order, quantity: 1, price: 4.99)
     allow(product).to receive_messages(default_variant: variant)
     allow(variant).to receive_messages(default_price: price)
     allow(order).to receive_messages(line_items: [line_item])
@@ -89,14 +89,18 @@ describe Spree::OrderMailer, type: :mailer do
     end
   end
 
-  specify 'shows Dear Customer in confirm_email body' do
-    confirmation_email = described_class.confirm_email(order)
-    expect(confirmation_email).to have_body_text('Dear Customer')
-  end
+  context 'when order does not have customer\'s name' do
+    before { allow(order).to receive(:name).and_return nil }
 
-  specify 'shows Dear Customer in cancel_email body' do
-    confirmation_email = described_class.cancel_email(order)
-    expect(confirmation_email).to have_body_text('Dear Customer')
+    specify 'shows Dear Customer in confirm_email body' do
+      confirmation_email = described_class.confirm_email(order)
+      expect(confirmation_email).to have_body_text('Dear Customer')
+    end
+
+    specify 'shows Dear Customer in cancel_email body' do
+      confirmation_email = described_class.cancel_email(order)
+      expect(confirmation_email).to have_body_text('Dear Customer')
+    end
   end
 
   context 'when order has customer\'s name' do

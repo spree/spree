@@ -2,7 +2,7 @@ module Spree
   class Country < Spree::Base
     # we need to have this callback before any dependent: :destroy associations
     # https://github.com/rails/rails/issues/3458
-    before_destroy :ensure_not_default
+    # before_destroy :ensure_not_default
 
     has_many :addresses, dependent: :restrict_with_error
     has_many :states,
@@ -49,6 +49,8 @@ module Spree
     private
 
     def ensure_not_default
+      ActiveSupport::Deprecation.warn('Country#ensure_not_default is deprecated and will be removed in Spree v5')
+
       if id.eql?(Spree::Config[:default_country_id])
         errors.add(:base, Spree.t(:default_country_cannot_be_deleted))
         throw(:abort)

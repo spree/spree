@@ -138,26 +138,17 @@ describe Spree::TaxRate, type: :model do
   end
 
   describe '.adjust' do
-    let(:order) { stub_model(Spree::Order) }
-    let(:tax_category_1) { stub_model(Spree::TaxCategory) }
-    let(:tax_category_2) { stub_model(Spree::TaxCategory) }
-    let(:rate_1) { stub_model(Spree::TaxRate, tax_category: tax_category_1) }
-    let(:rate_2) { stub_model(Spree::TaxRate, tax_category: tax_category_2) }
+    let!(:order) { create(:order) }
+    let!(:tax_category_1) { create(:tax_category) }
+    let!(:tax_category_2) { create(:tax_category) }
+    let!(:rate_1) { create(:tax_rate, tax_category: tax_category_1) }
+    let!(:rate_2) { create(:tax_rate, tax_category: tax_category_2) }
+    let(:line_items) { [line_item] }
 
     context 'with line items' do
-      let(:line_item) do
-        stub_model(Spree::LineItem,
-                   price: 10.0,
-                   quantity: 1,
-                   tax_category: tax_category_1,
-                   variant: stub_model(Spree::Variant))
-      end
+      let!(:line_item) { create(:line_item, price: 10.0, quantity: 1, tax_category: tax_category_1, order: order) }
 
-      let(:line_items) { [line_item] }
-
-      before do
-        allow(Spree::TaxRate).to receive_messages match: [rate_1, rate_2]
-      end
+      before { allow(Spree::TaxRate).to receive_messages match: [rate_1, rate_2] }
 
       it 'applies adjustments for two tax rates to the order' do
         expect(rate_1).to receive(:adjust)
@@ -167,34 +158,26 @@ describe Spree::TaxRate, type: :model do
     end
 
     context 'without tax rates' do
-      let(:line_item) do
-        stub_model(Spree::LineItem,
-                   price: 10.0,
-                   quantity: 2,
-                   tax_category: nil,
-                   variant: stub_model(Spree::Variant))
-      end
-
-      let(:line_items) { [line_item] }
+      let!(:line_item) { create(:line_item, price: 10.0, quantity: 2, tax_category: nil, order: order) }
 
       it 'updates pre_tax_total to match line item cost if no taxes' do
-        line_item.tax_category = nil
         Spree::TaxRate.adjust(order, line_items)
         expect(line_item.pre_tax_amount).to eq line_item.price * line_item.quantity
       end
     end
 
     context 'with shipments' do
-      let(:shipments) { [stub_model(Spree::Shipment, cost: 10.0, tax_category: tax_category_1)] }
+      let(:shipment) { create(:shipment, order: order) }
 
       before do
         allow(Spree::TaxRate).to receive_messages match: [rate_1, rate_2]
+        allow(shipment).to receive_messages cost: 10.0, tax_category: tax_category_1
       end
 
       it 'applies adjustments for two tax rates to the order' do
         expect(rate_1).to receive(:adjust)
         expect(rate_2).not_to receive(:adjust)
-        Spree::TaxRate.adjust(order, shipments)
+        Spree::TaxRate.adjust(order, [shipment])
       end
     end
 

@@ -1,22 +1,18 @@
 require 'spec_helper'
 
 describe Spree::Shipment, type: :model do
-  let(:order) do
-    mock_model Spree::Order, backordered?: false,
-                             canceled?: false,
-                             can_ship?: true,
-                             currency: 'USD',
-                             number: 'S12345',
-                             paid?: false,
-                             touch_later: false
-  end
+  let(:order) { create(:order) }
   let(:shipping_method) { create(:shipping_method, name: 'UPS') }
-  let(:shipment) do
-    shipment = Spree::Shipment.new(cost: 1, state: 'pending', stock_location: create(:stock_location))
-    allow(shipment).to receive_messages order: order
+  let(:shipment) { create(:shipment, cost: 1, state: 'pending', stock_location: create(:stock_location), order: order) }
+
+  before do
+    allow(order).to receive_messages backordered?: false,
+                                     canceled?: false,
+                                     can_ship?: true,
+                                     paid?: false,
+                                     touch_later: false
+
     allow(shipment).to receive_messages shipping_method: shipping_method
-    shipment.save
-    shipment
   end
 
   ['ready', 'canceled'].each do |state|

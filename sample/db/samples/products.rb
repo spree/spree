@@ -8,8 +8,6 @@ Spree::Sample.load_sample('stores')
 default_shipping_category = Spree::ShippingCategory.find_or_create_by!(name: 'Default')
 clothing_tax_category = Spree::TaxCategory.find_or_create_by!(name: 'Clothing')
 
-Spree::Config[:currency] = 'USD'
-
 color = Spree::OptionType.find_by!(name: 'color')
 length = Spree::OptionType.find_by!(name: 'length')
 size = Spree::OptionType.find_by!(name: 'size')

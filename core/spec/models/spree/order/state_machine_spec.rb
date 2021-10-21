@@ -93,20 +93,14 @@ describe Spree::Order, type: :model do
   end
 
   context '#cancel' do
-    let!(:variant) { stub_model(Spree::Variant) }
-    let!(:inventory_units) do
-      [stub_model(Spree::InventoryUnit, variant: variant),
-       stub_model(Spree::InventoryUnit, variant: variant)]
-    end
-    let!(:shipment) do
-      shipment = stub_model(Spree::Shipment)
-      allow(shipment).to receive_messages inventory_units: inventory_units, order: order
-      allow(order).to receive_messages shipments: [shipment]
-      shipment
-    end
+    let!(:variant) { create(:variant) }
+    let!(:inventory_units) { create_list(:inventory_unit, 2, variant: variant) }
+    let!(:line_items) { create_list(:line_item, 2, order: order, price: 10) }
+    let!(:shipment) { create(:shipment) }
 
     before do
-      create_list(:line_item, 2, order: order, price: 10)
+      allow(shipment).to receive_messages inventory_units: inventory_units, order: order
+      allow(order).to receive_messages shipments: [shipment]
 
       allow(order.line_items).to receive(:find_by).with(hash_including(:variant_id)) { line_items.first }
 

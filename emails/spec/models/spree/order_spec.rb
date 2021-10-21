@@ -1,8 +1,8 @@
 require 'spec_helper'
 
 describe Spree::Order, type: :model do
-  let(:user) { stub_model(Spree::LegacyUser, email: 'spree@example.com') }
-  let(:order) { stub_model(Spree::Order, user: user) }
+  let(:user) { create(:user) }
+  let(:order) { create(:order, user: user) }
   let(:store) { Spree::Store.default }
 
   context '#finalize!' do
@@ -51,20 +51,14 @@ describe Spree::Order, type: :model do
 
   context '#cancel' do
     let(:order) { build(:order) }
-    let!(:variant) { stub_model(Spree::Variant) }
-    let!(:inventory_units) do
-      [stub_model(Spree::InventoryUnit, variant: variant),
-       stub_model(Spree::InventoryUnit, variant: variant)]
-    end
-    let!(:shipment) do
-      shipment = stub_model(Spree::Shipment)
-      allow(shipment).to receive_messages inventory_units: inventory_units, order: order
-      allow(order).to receive_messages shipments: [shipment]
-      shipment
-    end
+    let!(:variant) { create(:variant) }
+    let!(:inventory_units) { create_list(:inventory_unit, 2, variant: variant) }
+    let!(:shipment) { create(:shipment) }
+    let!(:line_items) { create_list(:line_item, 2, order: order, price: 10) }
 
     before do
-      create_list(:line_item, 2, order: order, price: 10)
+      allow(shipment).to receive_messages inventory_units: inventory_units, order: order
+      allow(order).to receive_messages shipments: [shipment]
 
       allow(order.line_items).to receive(:find_by).with(hash_including(:variant_id)) { line_items.first }
 

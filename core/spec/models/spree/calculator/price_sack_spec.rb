@@ -8,9 +8,10 @@ describe Spree::Calculator::PriceSack, type: :model do
     calculator.preferred_discount_amount = 1
     calculator
   end
+  let(:order) { create(:order) }
+  let(:shipment) { create(:shipment) }
 
-  let(:order) { stub_model(Spree::Order) }
-  let(:shipment) { stub_model(Spree::Shipment, amount: 10) }
+  before { allow(shipment).to receive_messages amount: 10 }
 
   # Regression test for #714 and #739
   it 'computes with an order object' do
