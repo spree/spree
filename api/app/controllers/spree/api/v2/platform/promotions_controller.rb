@@ -14,10 +14,17 @@ module Spree
           end
 
           def spree_permitted_attributes
-            Spree::Promotion.json_api_permitted_attributes + [
-              promotion_actions_attributes: Spree::PromotionAction.json_api_permitted_attributes,
-              promotion_rules_attributes: Spree::PromotionRule.json_api_permitted_attributes
-            ]
+            if action_name == 'update'
+              Spree::Promotion.json_api_permitted_attributes + [
+                promotion_actions_attributes: Spree::PromotionAction.json_api_permitted_attributes << :id,
+                promotion_rules_attributes: Spree::PromotionRule.json_api_permitted_attributes << :id
+              ]
+            else
+              Spree::Promotion.json_api_permitted_attributes + [
+                promotion_actions_attributes: Spree::PromotionAction.json_api_permitted_attributes,
+                promotion_rules_attributes: Spree::PromotionRule.json_api_permitted_attributes
+              ]
+            end
           end
         end
       end

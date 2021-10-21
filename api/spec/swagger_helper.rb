@@ -299,7 +299,6 @@ RSpec.configure do |config|
             type: :object,
             properties: {
               promotion_id: { type: :string, example: '1' },
-              position: { type: :integer, example: 2 },
               type: { type: :string, example: 'Spree::Promotion::Actions::FreeShipping' }
 
             },

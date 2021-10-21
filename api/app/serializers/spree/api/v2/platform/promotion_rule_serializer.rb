@@ -5,6 +5,8 @@ module Spree
         class PromotionRuleSerializer < BaseSerializer
           include ResourceSerializerConcern
 
+          attributes :user_id, :product_group_id
+
           belongs_to :promotion
         end
       end
