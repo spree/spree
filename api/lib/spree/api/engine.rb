@@ -22,27 +22,19 @@ module Spree
         end
       end
 
-      initializer 'Spree::Webhooks' do
-        ActiveSupport.on_load(:spree_base) do
-          include Spree::Webhooks::HasWebhooks
-        end
+      def self.activate
+        Spree::Base.include(Spree::Webhooks::HasWebhooks)
 
-        ActiveSupport.on_load(:spree_order) do
-          prepend Spree::Api::Webhooks::Order
-        end
-
-        ActiveSupport.on_load(:spree_payment) do
-          prepend Spree::Api::Webhooks::Payment
-        end
-
-        ActiveSupport.on_load(:spree_shipment) do
-          prepend Spree::Api::Webhooks::Shipment
+        Dir.glob(File.join(File.dirname(__FILE__), '../../../app/models/spree/api/webhooks/*_decorator*.rb')) do |c|
+          Rails.application.config.cache_classes ? require(c) : load(c)
         end
       end
 
       def self.root
         @root ||= Pathname.new(File.expand_path('../../..', __dir__))
       end
+
+      config.to_prepare &method(:activate).to_proc
     end
   end
 end

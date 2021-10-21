@@ -44,3 +44,5 @@ module Spree
     end
   end
 end
+
+Spree::Base.include(Spree::Webhooks::HasWebhooks)

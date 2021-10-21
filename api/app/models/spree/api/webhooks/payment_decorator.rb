@@ -1,7 +1,7 @@
 module Spree
   module Api
     module Webhooks
-      module Payment
+      module PaymentDecorator
         def after_void
           super
           queue_webhooks_requests!('payment.void')
@@ -10,3 +10,5 @@ module Spree
     end
   end
 end
+
+Spree::Payment.prepend(Spree::Api::Webhooks::PaymentDecorator)

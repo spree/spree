@@ -1,7 +1,7 @@
 module Spree
   module Api
     module Webhooks
-      module Order
+      module OrderDecorator
         def after_cancel
           super
           queue_webhooks_requests!('order.cancel')
@@ -15,3 +15,5 @@ module Spree
     end
   end
 end
+
+Spree::Order.prepend(Spree::Api::Webhooks::OrderDecorator)

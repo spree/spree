@@ -1,7 +1,7 @@
 module Spree
   module Api
     module Webhooks
-      module Shipment
+      module ShipmentDecorator
         def after_ship
           super
           queue_webhooks_requests!('shipment.ship')
@@ -10,3 +10,5 @@ module Spree
     end
   end
 end
+
+Spree::Shipment.prepend(Spree::Api::Webhooks::ShipmentDecorator)
