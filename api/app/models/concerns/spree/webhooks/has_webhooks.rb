@@ -9,7 +9,7 @@ module Spree
         after_update_commit(proc { queue_webhooks_requests!(event_name(:update)) })
 
         def queue_webhooks_requests!(event)
-          return if disable_spree_webhooks? || webhooks_descendant? || body.blank?
+          return if disable_spree_webhooks? || body.blank?
 
           Spree::Webhooks::Subscribers::QueueRequests.call(event: event, body: body)
         end
@@ -19,14 +19,6 @@ module Spree
 
       def event_name(operation)
         "#{self.class.name.demodulize.tableize.singularize}.#{operation}"
-      end
-
-      def webhooks_descendant?
-        if Rails::VERSION::MAJOR >= 6
-          self.class.module_parent == Spree::Webhooks
-        else
-          self.class.parent == Spree::Webhooks
-        end
       end
 
       def body
@@ -44,5 +36,3 @@ module Spree
     end
   end
 end
-
-Spree::Base.include(Spree::Webhooks::HasWebhooks)
