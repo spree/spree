@@ -1,24 +1,22 @@
 module Spree
   module Webhooks
-    module Endpoints
+    module Subscribers
       class QueueRequests
         prepend Spree::ServiceModule::Base
 
         def call(body:, event:)
-          urls_subscribed_to(event).each do |url|
-            Spree::Webhooks::Endpoints::MakeRequestJob.perform_later(body, event, url)
+          subscriberd_urls_for(event).each do |url|
+            Spree::Webhooks::Subscribers::MakeRequestJob.perform_later(body, event, url)
           end
         end
 
         private
 
-        def urls_subscribed_to(event)
-          Spree::Webhooks::Endpoint.
-            where(enabled: true).
-            where(subscriptions_where_statement(event)).
-            pluck(:url)
+        def subscriberd_urls_for(event)
+          Spree::Webhooks::Subscriber.active.where(subscriptions_where_statement(event)).pluck(:url)
         end
 
+        # FIXME: this should be written as scope
         def subscriptions_where_statement(event)
           case ActiveRecord::Base.connection.adapter_name
           when 'Mysql2'

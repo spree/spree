@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Spree::Order do
   describe 'sending webhooks after transitioning from states' do
-    let(:queue_requests) { instance_double(Spree::Webhooks::Endpoints::QueueRequests) }
+    let(:queue_requests) { instance_double(Spree::Webhooks::Subscribers::QueueRequests) }
     let(:store) { create(:store, default: true) }
     let(:body) do
       Spree::Api::V2::Platform::OrderSerializer.new(order).serializable_hash.to_json
@@ -10,7 +10,7 @@ describe Spree::Order do
 
     before do
       ENV['DISABLE_SPREE_WEBHOOKS'] = nil
-      allow(Spree::Webhooks::Endpoints::QueueRequests).to receive(:new).and_return(queue_requests)
+      allow(Spree::Webhooks::Subscribers::QueueRequests).to receive(:new).and_return(queue_requests)
       allow(queue_requests).to receive(:call).with(any_args)
     end
 

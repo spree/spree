@@ -30,7 +30,7 @@ describe Spree::Webhooks::HasWebhooks do
   end
 
   before do
-    allow(Spree::Webhooks::Endpoints::QueueRequests).to receive(:new).and_return(queue_requests)
+    allow(Spree::Webhooks::Subscribers::QueueRequests).to receive(:new).and_return(queue_requests)
     allow(queue_requests).to receive(:call).with(any_args)
   end
 
@@ -45,7 +45,7 @@ describe Spree::Webhooks::HasWebhooks do
     )
   end
   let(:store) { create(:store) }
-  let(:queue_requests) { instance_double(Spree::Webhooks::Endpoints::QueueRequests) }
+  let(:queue_requests) { instance_double(Spree::Webhooks::Subscribers::QueueRequests) }
 
   context 'with DISABLE_SPREE_WEBHOOKS equals "true" (set in spec_helper)' do
     before { product.save }

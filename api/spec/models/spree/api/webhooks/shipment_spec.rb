@@ -11,13 +11,13 @@ describe Spree::Shipment do
       # because after_ship queues the HTTP request before finishing the transition, hence
       # the total state changes that are sent in the body is one less.
       allow(shipment).to receive_message_chain(:state_changes, :create!)
-      allow(Spree::Webhooks::Endpoints::QueueRequests).to receive(:new).and_return(queue_requests)
+      allow(Spree::Webhooks::Subscribers::QueueRequests).to receive(:new).and_return(queue_requests)
       allow(queue_requests).to receive(:call).with(any_args)
     end
 
     after { ENV['DISABLE_SPREE_WEBHOOKS'] = 'true' }
 
-    let(:queue_requests) { instance_double(Spree::Webhooks::Endpoints::QueueRequests) }
+    let(:queue_requests) { instance_double(Spree::Webhooks::Subscribers::QueueRequests) }
 
     it 'executes QueueRequests.call with a shipment.ship event and {} body after invoking ship' do
       shipment.cancel # previous state that allows the object be shipped

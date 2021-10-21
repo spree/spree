@@ -1,20 +1,20 @@
 require 'spec_helper'
 
-describe Spree::Webhooks::Endpoints::HandleRequest do
+describe Spree::Webhooks::Subscribers::HandleRequest do
   describe '#call' do
     subject { described_class.new(body: body, event: event, url: url) }
 
     let(:body) { { foo: :bar }.to_json }
     let(:event) { 'order.cancel' }
     let(:headers) { { 'Content-Type' => 'application/json' } }
-    let(:request_double) { instance_double(Spree::Webhooks::Endpoints::MakeRequest) }
+    let(:request_double) { instance_double(Spree::Webhooks::Subscribers::MakeRequest) }
     let(:url) { 'http://google.com/' }
 
     context 'with an unexpected body' do
       let(:body) { '' }
 
       it 'does not instantiate a new request' do
-        expect(Spree::Webhooks::Endpoints::MakeRequest).not_to receive(:new)
+        expect(Spree::Webhooks::Subscribers::MakeRequest).not_to receive(:new)
         subject.call
       end
 

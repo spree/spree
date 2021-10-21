@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::Webhooks::Endpoints::MakeRequest do
+describe Spree::Webhooks::Subscribers::MakeRequest do
   let(:body) { { data: [{}] }.to_json }
   let(:url) { 'google.com' }
 

@@ -11,7 +11,7 @@ module Spree
         def queue_webhooks_requests!(event)
           return if disable_spree_webhooks? || webhooks_descendant? || body.blank?
 
-          Spree::Webhooks::Endpoints::QueueRequests.call(event: event, body: body)
+          Spree::Webhooks::Subscribers::QueueRequests.call(event: event, body: body)
         end
       end
 

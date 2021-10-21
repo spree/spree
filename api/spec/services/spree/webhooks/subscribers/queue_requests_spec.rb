@@ -1,13 +1,13 @@
 require 'spec_helper'
 
-describe Spree::Webhooks::Endpoints::QueueRequests, :job, :spree_webhooks do
+describe Spree::Webhooks::Subscribers::QueueRequests, :job, :spree_webhooks do
   describe '#call' do
     subject { described_class.call(event: event, body: body) }
 
     let(:event) { 'order.finalize' }
     let(:body) { {} }
     let(:queue) { 'spree_webhooks' }
-    let(:make_request_job) { Spree::Webhooks::Endpoints::MakeRequestJob }
+    let(:make_request_job) { Spree::Webhooks::Subscribers::MakeRequestJob }
 
     context 'without subscriptions for the given event' do
       it 'does not queue a job to make a request' do
@@ -20,10 +20,10 @@ describe Spree::Webhooks::Endpoints::QueueRequests, :job, :spree_webhooks do
         before { stub_request(:post, endpoint.url) }
 
         let(:endpoint) do
-          Spree::Webhooks::Endpoint.create(
+          Spree::Webhooks::Subscriber.create(
             url: 'https://url1.com/',
             subscriptions: ['*'],
-            enabled: true
+            active: true
           )
         end
 
@@ -38,10 +38,10 @@ describe Spree::Webhooks::Endpoints::QueueRequests, :job, :spree_webhooks do
         before { stub_request(:post, endpoint.url) }
 
         let(:endpoint) do
-          Spree::Webhooks::Endpoint.create(
+          Spree::Webhooks::Subscriber.create(
             url: 'https://url2.com/',
             subscriptions: [event],
-            enabled: true
+            active: true
           )
         end
 
@@ -54,7 +54,7 @@ describe Spree::Webhooks::Endpoints::QueueRequests, :job, :spree_webhooks do
 
       context 'when endpoint subscriptions are not enabled' do
         let(:endpoint) do
-          Spree::Webhooks::Endpoint.create(
+          Spree::Webhooks::Subscriber.create(
             url: 'https://url3.com/',
             subscriptions: [event],
             enabled: false
@@ -68,10 +68,10 @@ describe Spree::Webhooks::Endpoints::QueueRequests, :job, :spree_webhooks do
 
       context 'when endpoint subscriptions do not include the event or "*"' do
         let(:endpoint) do
-          Spree::Webhooks::Endpoint.create(
+          Spree::Webhooks::Subscriber.create(
             url: 'https://url4.com/',
             subscriptions: ['order.resume'],
-            enabled: true
+            active: true
           )
         end
 

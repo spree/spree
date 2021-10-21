@@ -2,7 +2,7 @@
 
 module Spree
   module Webhooks
-    module Endpoints
+    module Subscribers
       class HandleRequest
         def initialize(body:, event:, url:)
           @body = body
@@ -34,7 +34,7 @@ module Spree
         attr_reader :body, :event, :url
 
         def request
-          @request ||= Spree::Webhooks::Endpoints::MakeRequest.new(body: body, url: url)
+          @request ||= Spree::Webhooks::Subscribers::MakeRequest.new(body: body, url: url)
         end
 
         def webhooks_log(msg)

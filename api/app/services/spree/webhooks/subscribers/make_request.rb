@@ -2,7 +2,7 @@
 
 module Spree
   module Webhooks
-    module Endpoints
+    module Subscribers
       class MakeRequest
         def initialize(body:, url:)
           @body = body

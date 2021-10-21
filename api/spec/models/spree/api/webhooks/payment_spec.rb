@@ -5,7 +5,7 @@ describe Spree::Payment do
 
   describe '#void' do
     let(:body) { Spree::Api::V2::Platform::PaymentSerializer.new(payment).serializable_hash.to_json }
-    let(:queue_requests) { instance_double(Spree::Webhooks::Endpoints::QueueRequests) }
+    let(:queue_requests) { instance_double(Spree::Webhooks::Subscribers::QueueRequests) }
 
     shared_examples 'queues a webhook request' do
       before do
@@ -14,7 +14,7 @@ describe Spree::Payment do
         # because after_void queues the HTTP request before finishing the transition, hence
         # the total state changes that are sent in the body is one less.
         allow(payment).to receive_message_chain(:state_changes, :create!)
-        allow(Spree::Webhooks::Endpoints::QueueRequests).to receive(:new).and_return(queue_requests)
+        allow(Spree::Webhooks::Subscribers::QueueRequests).to receive(:new).and_return(queue_requests)
         allow(queue_requests).to receive(:call).with(any_args)
       end
 
