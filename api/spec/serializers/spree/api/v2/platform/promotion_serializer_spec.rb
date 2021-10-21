@@ -52,6 +52,14 @@ describe Spree::Api::V2::Platform::PromotionSerializer do
                   type: :promotion_action
                 }
               ]
+            },
+            stores: {
+              data: [
+                {
+                  id: resource.stores.first.id.to_s,
+                  type: :store
+                }
+              ]
             }
           }
         }
