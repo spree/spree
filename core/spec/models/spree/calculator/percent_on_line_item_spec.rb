@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Spree::Calculator::PercentOnLineItem, type: :model do
   let(:calculator) { Spree::Calculator::PercentOnLineItem.new }
-  let(:line_item) { mock_model Spree::LineItem }
+  let(:line_item) { create(:line_item) }
 
   before { allow(calculator).to receive_messages preferred_percent: 10 }
 

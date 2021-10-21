@@ -143,8 +143,14 @@ describe Spree::OrderInventory, type: :model do
     end
 
     context '#remove_from_shipment' do
-      let(:shipment) { order.shipments.first }
-      let(:variant) { subject.variant }
+      let!(:shipment) { order.shipments.first }
+      let!(:variant) { subject.variant }
+      let!(:inventory_units_for_item) do
+        [
+          create(:inventory_unit, variant_id: variant.id, quantity: 1, state: 'shipped'),
+          create(:inventory_unit, variant_id: variant.id, quantity: 1, state: 'on_hand')
+        ]
+      end
 
       context 'order is not completed' do
         before { allow(order).to receive_messages completed?: false }
@@ -156,18 +162,13 @@ describe Spree::OrderInventory, type: :model do
       end
 
       it 'destroys backordered units first' do
-        allow(shipment).to receive_messages(
-          inventory_units_for_item: [
-            mock_model(
-              Spree::InventoryUnit, variant_id: variant.id, quantity: 2, state: 'backordered', shipped?: false, backordered?: true
-            ),
-            mock_model(
-              Spree::InventoryUnit, variant_id: variant.id, quantity: 1, state: 'on_hand', shipped?: false, backordered?: false
-            )
-          ]
-        )
+        inventory_units_for_item.first.update!(quantity: 2, state: 'backordered')
 
-        expect(shipment.inventory_units_for_item[0]).to receive(:quantity).and_return(2)
+        allow(inventory_units_for_item.first).to receive_messages shipped?: false, backordered?: true
+        allow(inventory_units_for_item.second).to receive_messages shipped?: false, backordered?: false
+        allow(shipment).to receive_messages(inventory_units_for_item: inventory_units_for_item)
+
+        expect(shipment.inventory_units_for_item[0]).to receive(:quantity).and_return(2).twice
         expect(shipment.inventory_units_for_item[0]).to receive(:decrement)
         expect(shipment.inventory_units_for_item[0]).to receive(:save!)
         expect(shipment.inventory_units_for_item[0]).to receive(:quantity).and_return(1)
@@ -175,18 +176,11 @@ describe Spree::OrderInventory, type: :model do
         expect(shipment.inventory_units_for_item[1]).to receive(:save!)
         expect(shipment.inventory_units_for_item[1]).not_to receive(:decrement)
         expect(shipment.inventory_units_for_item[1]).not_to receive(:destroy)
-        # expect(shipment.inventory_units_for_item[2]).to receive(:destroy)
-
         expect(subject.send(:remove_from_shipment, shipment, 2)).to eq(2)
       end
 
       it 'destroys unshipped units first' do
-        allow(shipment).to receive_messages(
-          inventory_units_for_item: [
-            mock_model(Spree::InventoryUnit, variant_id: variant.id, quantity: 1, state: 'shipped', shipped?: true, backordered?: false),
-            mock_model(Spree::InventoryUnit, variant_id: variant.id, quantity: 1, state: 'on_hand', shipped?: false, backordered?: false)
-          ]
-        )
+        allow(shipment).to receive_messages(inventory_units_for_item: inventory_units_for_item)
 
         allow(shipment.inventory_units_for_item[0]).to receive(:save!)
         allow(shipment.inventory_units_for_item[1]).to receive(:save!)
@@ -197,12 +191,7 @@ describe Spree::OrderInventory, type: :model do
       end
 
       it 'only attempts to destroy as many units as are eligible, and return amount destroyed' do
-        allow(shipment).to receive_messages(
-          inventory_units_for_item: [
-            mock_model(Spree::InventoryUnit, variant_id: variant.id, quantity: 1, state: 'shipped', shipped?: true, backordered?: false),
-            mock_model(Spree::InventoryUnit, variant_id: variant.id, quantity: 1, state: 'on_hand', shipped?: false, backordered?: false)
-          ]
-        )
+        allow(shipment).to receive_messages(inventory_units_for_item: inventory_units_for_item)
 
         expect(shipment.inventory_units_for_item[0]).not_to receive(:destroy)
         expect(shipment.inventory_units_for_item[1]).to receive(:destroy)

@@ -238,9 +238,10 @@ module Spree
       end
 
       describe '#update_shipments' do
+        let(:shipment) { create(:shipment, order: order) }
+        let(:shipments) { [shipment] }
+
         it 'updates each shipment' do
-          shipment = stub_model(Spree::Shipment, order: order)
-          shipments = [shipment]
           allow(order).to receive_messages shipments: shipments
           allow(shipments).to receive_messages states: []
           allow(shipments).to receive_messages ready: []
@@ -252,8 +253,6 @@ module Spree
         end
 
         it 'refreshes shipment rates' do
-          shipment = stub_model(Spree::Shipment, order: order)
-          shipments = [shipment]
           allow(order).to receive_messages shipments: shipments
 
           expect(shipment).to receive(:refresh_rates)
@@ -261,8 +260,6 @@ module Spree
         end
 
         it 'updates the shipment amount' do
-          shipment = stub_model(Spree::Shipment, order: order)
-          shipments = [shipment]
           allow(order).to receive_messages shipments: shipments
 
           expect(shipment).to receive(:update_amounts)
@@ -281,6 +278,9 @@ module Spree
     end
 
     context 'incomplete order' do
+      let(:shipment) { create(:shipment) }
+      let(:shipments) { [shipment] }
+
       it 'doesnt update payment state' do
         expect(updater).not_to receive(:update_payment_state)
         updater.update
@@ -292,8 +292,6 @@ module Spree
       end
 
       it 'doesnt update each shipment' do
-        shipment = stub_model(Spree::Shipment)
-        shipments = [shipment]
         allow(order).to receive_messages shipments: shipments
         allow(shipments).to receive_messages states: []
         allow(shipments).to receive_messages ready: []

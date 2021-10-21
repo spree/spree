@@ -2,12 +2,9 @@ require 'spec_helper'
 
 describe Spree::Calculator::FlexiRate, type: :model do
   let(:calculator) { Spree::Calculator::FlexiRate.new }
+  let(:order) { create(:order) }
 
-  let(:order) do
-    mock_model(
-      Spree::Order, quantity: 10
-    )
-  end
+  before { allow(order).to receive_messages quantity: 10 }
 
   context 'compute' do
     it 'computes amount correctly when all fees are 0' do

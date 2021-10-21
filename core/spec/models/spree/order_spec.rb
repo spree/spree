@@ -7,13 +7,11 @@ class FakeCalculator < Spree::Calculator
 end
 
 describe Spree::Order, type: :model do
-  let(:user) { stub_model(Spree::LegacyUser, email: 'spree@example.com') }
+  let(:user) { create(:user) }
   let!(:store) { create(:store, default: true) }
-  let(:order) { stub_model(Spree::Order, user: user, store: store) }
+  let(:order) { create(:order, user: user, store: store) }
 
-  before do
-    allow(Spree::LegacyUser).to receive_messages(current: mock_model(Spree::LegacyUser, id: 123))
-  end
+  before { allow(Spree::LegacyUser).to receive_messages(current: create(:user)) }
 
   describe '.scopes' do
     let!(:user) { FactoryBot.create(:user) }
@@ -200,9 +198,12 @@ describe Spree::Order, type: :model do
   end
 
   context 'insufficient_stock_lines' do
-    let(:line_item) { mock_model Spree::LineItem, insufficient_stock?: true }
+    let(:line_item) { create(:line_item) }
 
-    before { allow(order).to receive_messages(line_items: [line_item]) }
+    before do
+      allow(line_item).to receive_messages(insufficient_stock?: true)
+      allow(order).to receive_messages(line_items: [line_item])
+    end
 
     it 'returns line_item that has insufficient stock on hand' do
       expect(order.insufficient_stock_lines.size).to eq(1)
@@ -476,6 +477,7 @@ describe Spree::Order, type: :model do
     let(:no_method) { double :payment_method, available_for_order?: false, available_for_store?: true, stores: [store] }
     let(:methods) { [ok_method, no_method] }
     let(:store_2) { create(:store) }
+    let(:order_from_different_store) { create(:order, user: user, store: store_2) }
 
     it 'includes frontend payment methods' do
       payment_method = Spree::PaymentMethod.create!(name: 'Fake',
@@ -519,8 +521,7 @@ describe Spree::Order, type: :model do
                                                    )
       expect(order.available_payment_methods).not_to include(payment_method)
 
-      order = stub_model(Spree::Order, user: user, store: store_2)
-      expect(order.available_payment_methods).to include(payment_method)
+      expect(order_from_different_store.available_payment_methods).to include(payment_method)
     end
   end
 
@@ -541,24 +542,28 @@ describe Spree::Order, type: :model do
   end
 
   context '#products' do
-    before do
-      @variant1 = mock_model(Spree::Variant, product: 'product1')
-      @variant2 = mock_model(Spree::Variant, product: 'product2')
-      @line_items = [mock_model(Spree::LineItem, product: 'product1', variant: @variant1, variant_id: @variant1.id, quantity: 1),
-                     mock_model(Spree::LineItem, product: 'product2', variant: @variant2, variant_id: @variant2.id, quantity: 2)]
-      allow(order).to receive_messages(line_items: @line_items)
+    let(:variant1) { create(:variant) }
+    let(:variant2) { create(:variant) }
+    let!(:variant3) { create(:variant) }
+    let(:other_variant) { create(:variant) }
+    let!(:line_items) do
+      [
+        create(:line_item, product: variant1.product, variant: variant1, quantity: 1),
+        create(:line_item, product: variant2.product, variant: variant2, quantity: 2)
+      ]
     end
 
-    it 'gets the quantity of a given variant' do
-      expect(order.quantity_of(@variant1)).to eq(1)
+    before { allow(order).to receive_messages(line_items: line_items) }
 
-      @variant3 = mock_model(Spree::Variant, product: 'product3')
-      expect(order.quantity_of(@variant3)).to eq(0)
+    it 'gets the quantity of a given variant' do
+      expect(order.quantity_of(variant1)).to eq(1)
+
+      expect(order.quantity_of(variant3)).to eq(0)
     end
 
     it 'can find a line item matching a given variant' do
-      expect(order.find_line_item_by_variant(@variant1)).not_to be_nil
-      expect(order.find_line_item_by_variant(mock_model(Spree::Variant))).to be_nil
+      expect(order.find_line_item_by_variant(variant1)).not_to be_nil
+      expect(order.find_line_item_by_variant(other_variant)).to be_nil
     end
 
     context 'match line item with options' do
@@ -573,12 +578,12 @@ describe Spree::Order, type: :model do
 
       it 'matches line item when options match' do
         allow(order).to receive(:foos_match).and_return(true)
-        expect(Spree::Dependencies.cart_compare_line_items_service.constantize.new.call(order: order, line_item: @line_items.first, options: { foos: { bar: :zoo } }).value).to be true
+        expect(Spree::Dependencies.cart_compare_line_items_service.constantize.new.call(order: order, line_item: line_items.first, options: { foos: { bar: :zoo } }).value).to be true
       end
 
       it 'does not match line item without options' do
         allow(order).to receive(:foos_match).and_return(false)
-        expect(Spree::Dependencies.cart_compare_line_items_service.constantize.new.call(order: order, line_item: @line_items.first).value).to be false
+        expect(Spree::Dependencies.cart_compare_line_items_service.constantize.new.call(order: order, line_item: line_items.first).value).to be false
       end
     end
   end
@@ -831,9 +836,15 @@ describe Spree::Order, type: :model do
   end
 
   context '#backordered?' do
+    let(:shipments) { create_list(:shipment, 2) }
+
+    before do
+      allow(shipments.first).to receive_messages(backordered?: true)
+      allow(shipments.second).to receive_messages(backordered?: false)
+      allow(order).to receive_messages(shipments: shipments)
+    end
+
     it 'is backordered if one of the shipments is backordered' do
-      allow(order).to receive_messages(shipments: [mock_model(Spree::Shipment, backordered?: false),
-                                                   mock_model(Spree::Shipment, backordered?: true)])
       expect(order).to be_backordered
     end
   end

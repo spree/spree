@@ -6,13 +6,12 @@ module Spree
 
     let(:variant1) { build(:variant, price: 10) }
     let(:variant2) { build(:variant, price: 20) }
-
+    let(:shipment) { build(:shipment) }
     let(:package) do
       build(:stock_package, variants_contents: { variant1 => 2, variant2 => 1 })
     end
 
     it 'computes with a shipment' do
-      shipment = mock_model(Spree::Shipment)
       expect(subject).to receive(:compute_shipment).with(shipment)
       subject.compute(shipment)
     end
@@ -25,7 +24,7 @@ module Spree
     it 'compute_shipment must be overridden' do
       expect do
         subject.compute_shipment(shipment)
-      end.to raise_error(NameError)
+      end.to raise_error(NotImplementedError)
     end
 
     it 'compute_package must be overridden' do
