@@ -5,6 +5,10 @@ describe 'Promotion API v2 Digitals spec', type: :request do
   include_context 'Platform API v2'
 
   let(:bearer_token) { { 'Authorization' => valid_authorization } }
+  let!(:store) { Spree::Store.default }
+  let!(:second_store) { create(:store) }
+  let!(:third_store) { create(:store) }
+
   let(:promotion_rule) { create(:promotion_rule) }
   let(:existing_promotion) { create(:promotion_with_item_adjustment, promotion_rules: [promotion_rule]) }
   let(:promotion_category) { create(:promotion_category, code: 'o8ehG', name: 'Super Saver Promotions') }
@@ -23,6 +27,7 @@ describe 'Promotion API v2 Digitals spec', type: :request do
       usage_limit: 100,
       path: '/cyber-monday/today',
       advertise: true,
+      store_ids: [second_store.id.to_s],
       promotion_rules_attributes: [
         {
           code: 'ESJD',
@@ -53,6 +58,7 @@ describe 'Promotion API v2 Digitals spec', type: :request do
       usage_limit: 100,
       path: '/black-fri/today',
       advertise: true,
+      store_ids: [second_store.id.to_s, third_store.id.to_s],
       promotion_rules_attributes: [
         {
           id: existing_promotion.promotion_rules.first.id.to_s,
@@ -73,7 +79,7 @@ describe 'Promotion API v2 Digitals spec', type: :request do
 
   describe 'promotions#create' do
     context 'with valid params' do
-      before { post '/api/v2/platform/promotions?include=promotion_category,promotion_actions,promotion_rules', params: params, headers: bearer_token }
+      before { post '/api/v2/platform/promotions?include=promotion_category,promotion_actions,promotion_rules,stores', params: params, headers: bearer_token }
 
       let(:params) { { promotion: new_promotion_attributes } }
 
@@ -105,12 +111,12 @@ describe 'Promotion API v2 Digitals spec', type: :request do
         expect(json_response['included'][2]).to have_attribute(:user_id).with_value(223)
         expect(json_response['included'][2]).to have_attribute(:product_group_id).with_value(3)
 
-        expect(json_response['included'].size).to eq 3
+        expect(json_response['included'].size).to eq 5
       end
     end
 
     describe 'promotions#update' do
-      before { patch "/api/v2/platform/promotions/#{existing_promotion.id}?include=promotion_category,promotion_actions,promotion_rules", params: params, headers: bearer_token }
+      before { patch "/api/v2/platform/promotions/#{existing_promotion.id}?include=promotion_category,promotion_actions,promotion_rules,stores", params: params, headers: bearer_token }
 
       let(:params) { { promotion: update_promotion_attributes } }
 
@@ -143,7 +149,7 @@ describe 'Promotion API v2 Digitals spec', type: :request do
         expect(json_response['included'][2]).to have_attribute(:code).with_value('PliDp9328')
         expect(json_response['included'][2]).to have_attribute(:user_id).with_value(111)
         expect(json_response['included'][2]).to have_attribute(:product_group_id).with_value(2)
-        expect(json_response['included'].size).to eq 3
+        expect(json_response['included'].size).to eq 6
       end
     end
   end

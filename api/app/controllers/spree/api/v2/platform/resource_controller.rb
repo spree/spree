@@ -102,8 +102,10 @@ module Spree
           end
 
           def assign_stores(resource, params)
-            if resource.class.method_defined?(:stores) && params[:store_ids].present? && params[:store_ids].is_a?(Array)
-              resource.store_ids = params[:store_ids]
+            stores = params[model_param_name][:store_ids]
+
+            if resource.class.method_defined?(:stores) && stores.present? && stores.is_a?(Array)
+              resource.store_ids = stores
             end
 
             # Always call ensure_current_store after assigning the

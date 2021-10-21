@@ -5,6 +5,8 @@ describe 'Platform API v2 Resources spec', type: :request do
   include_context 'Platform API v2'
 
   let!(:store) { Spree::Store.default }
+  let!(:second_store) { create(:store) }
+  let!(:third_store) { create(:store) }
   let(:bearer_token) { { 'Authorization' => valid_authorization } }
   let(:resource_params) { {} }
   let(:params) { { address: resource_params } }
@@ -326,6 +328,27 @@ describe 'Platform API v2 Resources spec', type: :request do
         expect(new_menu.store).to eql(store)
       end
     end
+
+    context '#assign_stores' do
+      let(:execute) { post '/api/v2/platform/promotions', params: promotion_resource_params, headers: bearer_token }
+      let(:promotion_resource_params) do
+        {
+          promotion: {
+            name: 'AssignStore-Test',
+            store_ids: [second_store.id]
+          }
+        }
+      end
+
+      before { execute }
+
+      it_behaves_like 'returns 201 HTTP status'
+
+      it 'adds the current store and the stores passed in via store_ids to the newly created resource' do
+        new_promo = Spree::Promotion.find_by(name: 'AssignStore-Test')
+        expect(new_promo.stores).to match_array([store, second_store])
+      end
+    end
   end
 
   describe '#update' do
@@ -443,6 +466,27 @@ describe 'Platform API v2 Resources spec', type: :request do
 
       it 'will not let you remove the current store from a resource that accepts multiple stores' do
         expect(product.stores).to contain_exactly(store)
+      end
+    end
+
+    context '#assign_stores' do
+      let(:execute) { post '/api/v2/platform/promotions', params: promotion_resource_params, headers: bearer_token }
+      let(:promotion_resource_params) do
+        {
+          promotion: {
+            name: 'AssignStore-Test',
+            store_ids: [second_store.id]
+          }
+        }
+      end
+
+      before { execute }
+
+      it_behaves_like 'returns 201 HTTP status'
+
+      it 'persists the current store and adds the stores passed in via store_ids to the updatedresource' do
+        new_promo = Spree::Promotion.find_by(name: 'AssignStore-Test')
+        expect(new_promo.stores).to match_array([store, second_store])
       end
     end
 
