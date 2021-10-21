@@ -16,11 +16,7 @@ module Spree
             resource = model_class.new(permitted_resource_params)
 
             ensure_current_store(resource)
-
-            # TODO: How should we handle assigning multiple stores through the API
-            if resource.method_defined?(:stores) && params[:store_ids].present? && params[:store_ids].is_a?(Array)
-              resource.store_ids = params[:store_ids]
-            end
+            assign_multiple_stores(resource, params)
 
             if resource.save
               render_serialized_payload(201) { serialize_resource(resource) }
@@ -32,11 +28,7 @@ module Spree
           def update
             if resource.update(permitted_resource_params)
               ensure_current_store(resource)
-
-              # TODO: How should we handle assigning multiple stores through the API
-              if resource.method_defined?(:stores) && params[:store_ids].present? && params[:store_ids].is_a?(Array)
-                resource.store_ids = params[:store_ids]
-              end
+              assign_multiple_stores(resource, params)
 
               render_serialized_payload { serialize_resource(resource) }
             else
@@ -110,6 +102,12 @@ module Spree
 
           def model_param_name
             model_class.to_s.demodulize.underscore
+          end
+
+          def assign_multiple_stores(resource, params)
+            if resource.class.method_defined?(:stores) && params[:store_ids].present? && params[:store_ids].is_a?(Array)
+              resource.store_ids = params[:store_ids]
+            end
           end
 
           def spree_permitted_attributes
