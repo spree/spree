@@ -278,7 +278,7 @@ module Spree
       end
 
       # .search_by_name
-      if defined?(PgSearch)
+      if defined?(PgSearch) && ActiveRecord::Base.connection.adapter_name == 'PostgreSQL'
         include PgSearch::Model
 
         if defined?(SpreeGlobalize)
