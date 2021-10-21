@@ -9,6 +9,7 @@ module Spree
 
           has_many :promotion_rules
           has_many :promotion_actions
+          has_many :stores
         end
       end
     end

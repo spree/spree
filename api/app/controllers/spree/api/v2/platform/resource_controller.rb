@@ -17,6 +17,11 @@ module Spree
 
             ensure_current_store(resource)
 
+            # TODO: How should we handle assigning multiple stores through the API
+            if resource.method_defined?(:stores) && params[:store_ids].present? && params[:store_ids].is_a?(Array)
+              resource.store_ids = params[:store_ids]
+            end
+
             if resource.save
               render_serialized_payload(201) { serialize_resource(resource) }
             else
@@ -27,6 +32,12 @@ module Spree
           def update
             if resource.update(permitted_resource_params)
               ensure_current_store(resource)
+
+              # TODO: How should we handle assigning multiple stores through the API
+              if resource.method_defined?(:stores) && params[:store_ids].present? && params[:store_ids].is_a?(Array)
+                resource.store_ids = params[:store_ids]
+              end
+
               render_serialized_payload { serialize_resource(resource) }
             else
               render_error_payload(resource.errors)
