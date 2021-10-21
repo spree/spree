@@ -193,7 +193,7 @@ module Spree
     end
 
     it "can not view someone else's order" do
-      allow_any_instance_of(Order).to receive_messages user: create(:user)
+      allow_any_instance_of(Order).to receive_messages user: stub_model(Spree::LegacyUser)
       api_get :show, id: order.to_param
       assert_unauthorized!
     end
@@ -210,13 +210,12 @@ module Spree
     end
 
     context 'with BarAbility registered' do
-      let(:user) { create(:user) }
-
       before { Spree::Ability.register_ability(::BarAbility) }
 
       after  { Spree::Ability.remove_ability(::BarAbility) }
 
       it 'can view an order' do
+        user = mock_model(Spree::LegacyUser)
         allow(user).to receive_message_chain(:spree_roles, :pluck).and_return(['bar'])
         allow(user).to receive(:has_spree_role?).with('bar').and_return(true)
         allow(user).to receive(:has_spree_role?).with('admin').and_return(false)

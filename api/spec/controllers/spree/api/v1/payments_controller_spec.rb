@@ -61,7 +61,7 @@ module Spree
 
       context 'when the order does not belong to the user' do
         before do
-          allow_any_instance_of(Order).to receive_messages user: create(:user)
+          allow_any_instance_of(Order).to receive_messages user: stub_model(LegacyUser)
         end
 
         it "cannot view payments for somebody else's order" do
