@@ -237,34 +237,22 @@ describe 'Product scopes', type: :model do
     let!(:second_product) { create(:product, name: 'Second product',stores: [store]) }
     let!(:third_product) { create(:product, name: 'Other second product',stores: [store]) }
 
-    shared_examples 'valid products returned' do
-      it 'shows product whose name contains phrase' do
-        result = Spree::Product.search_by_name('First').to_a
-        expect(result).to include(first_product)
-        expect(result.count).to eq(1)
-      end
-
-      it 'shows multiple products whose names contain phrase' do
-        result = Spree::Product.search_by_name('product').to_a
-        expect(result).to include(product, first_product, second_product, third_product)
-        expect(result.count).to eq(4)
-      end
-
-      it 'is case insensitive for search phrases' do
-        result = Spree::Product.search_by_name('Second').to_a
-        expect(result).to include(second_product, third_product)
-        expect(result.count).to eq(2)
-      end
+    it 'shows product whose name contains phrase' do
+      result = Spree::Product.search_by_name('First').to_a
+      expect(result).to include(first_product)
+      expect(result.count).to eq(1)
     end
 
-    context 'when pg_search gem is installed' do
-      it_behaves_like 'valid products returned'
+    it 'shows multiple products whose names contain phrase' do
+      result = Spree::Product.search_by_name('product').to_a
+      expect(result).to include(product, first_product, second_product, third_product)
+      expect(result.count).to eq(4)
     end
 
-    context 'when pg_search gem is not installed' do
-      before {  }
-
-      it_behaves_like 'valid products returned'
+    it 'is case insensitive for search phrases' do
+      result = Spree::Product.search_by_name('Second').to_a
+      expect(result).to include(second_product, third_product)
+      expect(result.count).to eq(2)
     end
   end
 

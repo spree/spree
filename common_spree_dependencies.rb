@@ -45,7 +45,6 @@ group :test do
   gem 'webmock', '~> 3.7'
   gem 'timecop'
   gem 'rails-controller-testing'
-  gem 'pg_search'
 end
 
 group :test, :development do
