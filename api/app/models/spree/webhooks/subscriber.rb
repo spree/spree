@@ -14,7 +14,7 @@ module Spree
                           when 'PostgreSQL'
                             ["subscriptions @> '[\"*\"]' OR subscriptions @> ?", [event].to_json]
                           end
-        active.where(where_condition).pluck(:url)
+        where(where_condition).pluck(:url)
       end
 
       private

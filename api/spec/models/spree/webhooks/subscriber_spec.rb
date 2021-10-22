@@ -26,10 +26,9 @@ describe Spree::Webhooks::Subscriber do
   describe '.urls_for' do
     subject { described_class.urls_for(event) }
 
-    let(:active) { true }
     let(:event) { 'order.complete' }
     let(:subscriptions) { ['order.complete'] }
-    let!(:subscriber) { described_class.create(url: url, subscriptions: subscriptions, active: active) }
+    let!(:subscriber) { described_class.create(url: url, subscriptions: subscriptions, active: true) }
     let(:url) { 'https://url1.com/' }
 
     context 'with subscriptions for the given event' do
@@ -40,12 +39,6 @@ describe Spree::Webhooks::Subscriber do
       let(:subscriptions) { ['*'] }
 
       it { expect(subject).to eq([url]) }
-    end
-
-    context 'without active subscriptions' do
-      let(:active) { false }
-
-      it { expect(subject).to eq([]) }
     end
   end
 end

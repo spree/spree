@@ -52,12 +52,12 @@ describe Spree::Webhooks::Subscribers::QueueRequests, :job, :spree_webhooks do
         end
       end
 
-      context 'when subscriber subscriptions are not enabled' do
-        let(:subscriber) do
+      context 'when subscriber subscriptions are not active' do
+        let!(:subscriber) do
           Spree::Webhooks::Subscriber.create(
             url: 'https://url3.com/',
             subscriptions: [event],
-            enabled: false
+            active: false
           )
         end
 
@@ -67,7 +67,7 @@ describe Spree::Webhooks::Subscribers::QueueRequests, :job, :spree_webhooks do
       end
 
       context 'when subscriber subscriptions do not include the event or "*"' do
-        let(:subscriber) do
+        let!(:subscriber) do
           Spree::Webhooks::Subscriber.create(
             url: 'https://url4.com/',
             subscriptions: ['order.resume'],
