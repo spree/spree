@@ -1,9 +1,9 @@
 require 'spec_helper'
 
 describe Spree::Api::V2::Platform::StockTransferSerializer do
-  include_context 'API v2 serializers params'
-
   subject { described_class.new(resource, params: serializer_params).serializable_hash }
+
+  include_context 'API v2 serializers params'
 
   let(:destination_location) { create(:stock_location) }
   let(:resource) { create(type, destination_location: destination_location, source_location: source_location) }
@@ -35,13 +35,13 @@ describe Spree::Api::V2::Platform::StockTransferSerializer do
           source_location: {
             data: {
               id: source_location.id.to_s,
-              type: :source_location
+              type: :stock_location
             }
           },
           destination_location: {
             data: {
               id: destination_location.id.to_s,
-              type: :destination_location
+              type: :stock_location
             }
           }
         },
