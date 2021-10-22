@@ -4,6 +4,8 @@ module Spree
       module Platform
         class PromotionCategorySerializer < BaseSerializer
           include ResourceSerializerConcern
+
+          has_many :promotions
         end
       end
     end
