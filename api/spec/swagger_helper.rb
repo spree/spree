@@ -55,8 +55,8 @@ RSpec.configure do |config|
         { name: 'Option Values' },
         { name: 'Orders' },
         { name: 'Payments' },
-        { name: 'Promotion Categories' },
         { name: 'Promotions' },
+        { name: 'Promotion Categories' },
         { name: 'Shipping Categories' },
         { name: 'Taxons' },
         { name: 'Users' },
@@ -221,14 +221,6 @@ RSpec.configure do |config|
             required: %w[name price shipping_category_id],
             'x-internal': true
           },
-          promotion_category_params: {
-            type: :object,
-            properties: {
-              name: { type: :string, example: 'Promotions Used in 2021' },
-              code: { type: :string, example: '2021-PROMOS' }
-            },
-            'x-internal': true
-          },
           user_params: {
             type: :object,
             properties: {
@@ -324,6 +316,14 @@ RSpec.configure do |config|
                 enum: ['Spree::Promotion::Actions::FreeShipping', 'Spree::Promotion::Actions::CreateLineItems', 'Spree::Promotion::Actions::CreateItemAdjustments']
               }
 
+            },
+            'x-internal': true
+          },
+          promotion_category_params: {
+            type: :object,
+            properties: {
+              name: { type: :string, example: 'Promotions Used in 2021' },
+              code: { type: :string, example: '2021-PROMOS' }
             },
             'x-internal': true
           },
