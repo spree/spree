@@ -5,8 +5,6 @@ module Spree
         class StockItemSerializer < BaseSerializer
           include ResourceSerializerConcern
 
-          set_type :stock_item
-
           attribute :is_available do |stock_item|
             stock_item.available?
           end
