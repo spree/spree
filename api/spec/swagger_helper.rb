@@ -291,6 +291,14 @@ RSpec.configure do |config|
               usage_limit: { type: :integer, example: 1000 },
               path: { type: :string, example: '/activate/promotion/now' },
               advertise: { type: :boolean, example: true },
+              store_ids: {
+                type: :array,
+                items: {
+                  allOf: [
+                    { type: :string, example: '2' }
+                  ]
+                }
+              },
               promotion_actions_attributes: { '$ref': '#/components/schemas/promotion_action_params' },
               promotion_rules_attributes: { '$ref': '#/components/schemas/promotion_rule_params' },
             },
