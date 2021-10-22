@@ -309,7 +309,11 @@ RSpec.configure do |config|
             type: :object,
             properties: {
               promotion_id: { type: :string, example: '1' },
-              type: { type: :string, example: 'Spree::Promotion::Actions::FreeShipping' }
+              type: {
+                type: :string,
+                example: 'Spree::Promotion::Actions::FreeShipping',
+                enum: ['Spree::Promotion::Actions::FreeShipping', 'Spree::Promotion::Actions::CreateLineItems', 'Spree::Promotion::Actions::CreateItemAdjustments']
+              }
 
             },
             'x-internal': true
