@@ -3,29 +3,38 @@ require 'spec_helper'
 describe Spree::Api::V2::Platform::AssetSerializer do
   include_context 'API v2 serializers params'
 
-  subject { described_class.new(asset, params: serializer_params).serializable_hash }
+  subject { described_class.new(resource, params: serializer_params).serializable_hash }
 
+  let(:viewable) { create(:variant) }
   let(:type) { :asset }
-  let(:asset) { create(type) }
+  let(:resource) { create(type, viewable: viewable) }
 
   it do
     expect(subject).to eq(
       data: {
-        id: asset.id.to_s,
-        type: type,
+        id: resource.id.to_s,
         attributes: {
-          viewable_type: asset.viewable_type,
-          attachment_height: asset.attachment_height,
-          attachment_file_size: asset.attachment_file_size,
-          position: asset.position,
-          attachment_content_type: asset.attachment_content_type,
-          attachment_file_name: asset.attachment_file_name,
-          type: asset.type,
-          attachment_updated_at: asset.attachment_updated_at,
-          alt: asset.alt,
-          created_at: asset.created_at,
-          updated_at: asset.updated_at
-        }
+          viewable_type: resource.viewable_type,
+          attachment_height: resource.attachment_height,
+          attachment_file_size: resource.attachment_file_size,
+          position: resource.position,
+          attachment_content_type: resource.attachment_content_type,
+          attachment_file_name: resource.attachment_file_name,
+          type: resource.type,
+          attachment_updated_at: resource.attachment_updated_at,
+          alt: resource.alt,
+          created_at: resource.created_at,
+          updated_at: resource.updated_at
+        },
+        relationships: {
+          viewable: {
+            data: {
+              id: viewable.id.to_s,
+              type: :variant
+            }
+          }
+        },
+        type: type
       }
     )
   end

@@ -21,10 +21,10 @@ module Spree
 
       def check_uri_path
         uri = begin
-                URI.parse(url)
-              rescue URI::InvalidURIError
-                return false
-              end
+          URI.parse(url)
+        rescue URI::InvalidURIError
+          return false
+        end
 
         errors.add(:url, 'the URL must have a path') if uri.blank? || uri.path.blank?
       end

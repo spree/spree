@@ -4,6 +4,8 @@ module Spree
       module Platform
         class AssetSerializer < BaseSerializer
           include ResourceSerializerConcern
+
+          belongs_to :viewable, polymorphic: true
         end
       end
     end
