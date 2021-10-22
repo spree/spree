@@ -41,7 +41,7 @@ module Spree
     end
 
     def completed_orders(store)
-      orders.for_store(store).complete
+      orders.for_store(store).complete.order(currency: :desc)
     end
   end
 end

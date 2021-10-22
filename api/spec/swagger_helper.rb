@@ -55,6 +55,7 @@ RSpec.configure do |config|
         { name: 'Option Values' },
         { name: 'Orders' },
         { name: 'Payments' },
+        { name: 'Promotion Categories' },
         { name: 'Promotions' },
         { name: 'Shipping Categories' },
         { name: 'Taxons' },
@@ -218,6 +219,14 @@ RSpec.configure do |config|
               taxon_ids: { type: :string }
             },
             required: %w[name price shipping_category_id],
+            'x-internal': true
+          },
+          promotion_category_params: {
+            type: :object,
+            properties: {
+              name: { type: :string, example: 'Promotions Used in 2021' },
+              code: { type: :string, example: '2021-PROMOS' }
+            },
             'x-internal': true
           },
           user_params: {

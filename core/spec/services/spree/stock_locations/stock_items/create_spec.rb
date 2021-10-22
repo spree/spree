@@ -62,18 +62,18 @@ module Spree
             end
 
             it 'sets the stock location data necessary for the inserted stock items' do
-              Timecop.freeze(time_current)
-              result
-              expect(created_stock_item_attrs).to(
-                eq([
-                  stock_location.id,
-                  unrelated_variant.id,
-                  stock_location.backorderable_default,
-                  time_current,
-                  time_current
-                ])
-              )
-              Timecop.return
+              Timecop.freeze(time_current) do
+                result
+                expect(created_stock_item_attrs).to(
+                  eq([
+                       stock_location.id,
+                       unrelated_variant.id,
+                       stock_location.backorderable_default,
+                       time_current,
+                       time_current
+                     ])
+                )
+              end
             end
 
             it 'invalidates the Variant cache' do

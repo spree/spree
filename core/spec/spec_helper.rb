@@ -40,6 +40,7 @@ Dir['./spec/support/**/*.rb'].sort.each { |f| require f }
 require 'spree/testing_support/i18n' if ENV['CHECK_TRANSLATIONS']
 
 require 'spree/testing_support/factories'
+require 'spree/testing_support/jobs'
 require 'spree/testing_support/preferences'
 require 'spree/testing_support/url_helpers'
 require 'spree/testing_support/kernel'
@@ -88,12 +89,9 @@ RSpec.configure do |config|
   config.include Spree::TestingSupport::Preferences
   config.include Spree::TestingSupport::Kernel
 
-  config.before(:each, :inline_jobs) do
-    ActiveJob::Base.queue_adapter = :test
-  end
-
-  config.after(:each, :inline_jobs) do
-    ActiveJob::Base.queue_adapter = :inline
+  config.before(:suite) do
+    # Clean out the database state before the tests run
+    DatabaseCleaner.clean_with(:truncation)
   end
 
   config.order = :random

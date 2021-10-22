@@ -27,6 +27,7 @@ end
 
 require 'rspec/rails'
 require 'ffaker'
+require 'webmock/rspec'
 require 'i18n/tasks'
 
 # Requires supporting ruby files with custom matchers and macros, etc,
@@ -40,8 +41,10 @@ require 'spree/testing_support/next_instance_of'
 require 'spree/testing_support/rspec_retry_config'
 
 require 'spree/api/testing_support/caching'
+require 'spree/api/testing_support/jobs'
 require 'spree/api/testing_support/helpers'
 require 'spree/api/testing_support/setup'
+require 'spree/api/testing_support/spree_webhooks'
 require 'spree/api/testing_support/v2/base'
 require 'spree/api/testing_support/v2/current_order'
 require 'spree/api/testing_support/v2/platform_contexts'
@@ -65,21 +68,14 @@ RSpec.configure do |config|
   config.include Spree::TestingSupport::ImageHelpers
 
   config.before do
+    ENV['DISABLE_SPREE_WEBHOOKS'] = 'true'
+
     reset_spree_preferences
 
     Spree::Api::Config[:requires_authentication] = true
 
     country = create(:country, name: 'United States of America', iso_name: 'UNITED STATES', iso: 'US', iso3: 'USA', states_required: true)
     create(:store, default: true, default_country: country, default_currency: 'USD')
-  end
-
-  # Force jobs to be executed in a synchronous way (see http://archive.today/xcb1E)
-  config.around do |example|
-    (ActiveJob::Base.descendants << ActiveJob::Base).each(&:disable_test_adapter)
-    ActiveJob::Base.queue_adapter = :inline
-    example.run
-    (ActiveJob::Base.descendants << ActiveJob::Base).each { |a| a.enable_test_adapter(ActiveJob::QueueAdapters::TestAdapter.new) }
-    ActiveJob::Base.queue_adapter = :test
   end
 
   config.order = :random
