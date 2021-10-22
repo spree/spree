@@ -2,7 +2,7 @@ require 'spec_helper'
 
 module Spree
   module Test
-    Product = Struct.new(:url) do
+    Product = Struct.new(:url, keyword_init: true) do
       include ActiveModel::Validations
 
       validates :url, 'spree/url': true

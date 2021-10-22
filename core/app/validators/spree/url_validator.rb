@@ -1,7 +1,6 @@
 module Spree
   class UrlValidator < ActiveModel::EachValidator
     def validate_each(record, attribute, value)
-      value = value[:url] if value.is_a?(Hash)
       unless url_valid?(value)
         record.errors.add(attribute, (options[:message] || ERROR_MESSAGE))
       end

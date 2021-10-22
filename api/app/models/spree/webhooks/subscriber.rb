@@ -7,6 +7,16 @@ module Spree
 
       scope :active, -> { where(active: true) }
 
+      def self.urls_for(event)
+        where_condition = case ActiveRecord::Base.connection.adapter_name
+                          when 'Mysql2'
+                            ["('*' MEMBER OF(subscriptions) OR ? MEMBER OF(subscriptions))", event]
+                          when 'PostgreSQL'
+                            ["subscriptions @> '[\"*\"]' OR subscriptions @> ?", [event].to_json]
+                          end
+        active.where(where_condition).pluck(:url)
+      end
+
       private
 
       def check_uri_path
