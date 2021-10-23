@@ -6,6 +6,7 @@ module Spree
           include ResourceSerializerConcern
 
           belongs_to :promotion
+          has_one :calculator, optional: true
         end
       end
     end
