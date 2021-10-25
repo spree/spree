@@ -264,14 +264,6 @@ module Spree
       where conditions.inject(:or)
     end
 
-    def self.search_by_name(query)
-      if defined?(SpreeGlobalize)
-        joins(:translations).order(:name).where("LOWER(#{Product::Translation.table_name}.name) LIKE LOWER(:query)", query: "%#{query}%").distinct
-      else
-        where("LOWER(#{Product.table_name}.name) LIKE LOWER(:query)", query: "%#{query}%")
-      end
-    end
-
     # Suitable for displaying only variants that has at least one option value.
     # There may be scenarios where an option type is removed and along with it
     # all option values. At that point all variants associated with only those

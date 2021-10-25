@@ -277,6 +277,26 @@ module Spree
         group('spree_products.id').joins(:taxons).where(Taxon.arel_table[:name].eq(name))
       end
 
+      # .search_by_name
+      if defined?(PgSearch)
+        include PgSearch::Model
+
+        if defined?(SpreeGlobalize)
+          pg_search_scope :search_by_name, associated_against: { translations: :name }, using: :tsearch
+        else
+          pg_search_scope :search_by_name, against: :name, using: :tsearch
+        end
+      else
+        def self.search_by_name(query)
+          if defined?(SpreeGlobalize)
+            joins(:translations).order(:name).where("LOWER(#{Product::Translation.table_name}.name) LIKE LOWER(:query)", query: "%#{query}%").distinct
+          else
+            where("LOWER(#{Product.table_name}.name) LIKE LOWER(:query)", query: "%#{query}%")
+          end
+        end
+      end
+      search_scopes << :search_by_name
+
       def self.price_table_name
         Price.quoted_table_name
       end
