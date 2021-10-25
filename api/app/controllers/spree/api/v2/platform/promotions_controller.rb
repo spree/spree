@@ -10,7 +10,7 @@ module Spree
           end
 
           def scope_includes
-            [:promotion_category, :promotion_rules, :promotion_actions, :promotion_action_line_items]
+            [:promotion_category, :promotion_rules, :promotion_actions]
           end
 
           def spree_permitted_attributes
