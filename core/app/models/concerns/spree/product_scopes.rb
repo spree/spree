@@ -34,9 +34,14 @@ module Spree
       def self.property_conditions(property)
         properties = Property.table_name
         case property
-        when String   then { "#{properties}.name" => property }
         when Property then { "#{properties}.id" => property.id }
-        else { "#{properties}.id" => property }
+        when Integer  then { "#{properties}.id" => property }
+        else
+          if Property.column_for_attribute('id').type == :uuid
+            ["#{properties.name} = ? OR #{properties.id} = ?", property, property]
+          else
+            { "#{properties}.name" => property }
+          end
         end
       end
 
@@ -140,21 +145,33 @@ module Spree
 
       add_search_scope :with_option do |option|
         if option.is_a?(OptionType)
-          joins(:option_types).where(option_types: { id: option.id })
+          joins(:option_types).where(spree_option_types: { id: option.id })
+        elsif option.is_a?(Integer)
+          joins(:option_types).where(spree_option_types: { id: option })
+        elsif OptionType.column_for_attribute('id').type == :uuid
+          joins(:option_types).where(spree_option_types: { name: option }).or(Product.joins(:option_types).where(spree_option_types: { id: option }))
         else
-          joins(:option_types).where(option_types: { name: option }).or(Product.joins(:option_types).where(option_types: { id: option }))
+          joins(:option_types).where(spree_option_types: { name: option })
         end
       end
 
       add_search_scope :with_option_value do |option, value|
         option_type_id = case option
                          when OptionType then option.id
-                         else OptionType.where(name: option).or(OptionType.where(id: option))&.first&.id
+                         when Integer then option
+                         else
+                           if OptionType.column_for_attribute('id').type == :uuid
+                             OptionType.where(id: option).or(OptionType.where(name: option))&.first&.id
+                           else 
+                             OptionType.where(name: option)&.first&.id
+                           end
                          end
 
-        return if option_type_id.blank?
+        return Product.group("#{Spree::Product.table_name}.id").none if option_type_id.blank?
 
-        group('spree_products.id').joins(variants_including_master: :option_values).where(Spree::OptionValue.table_name => { name: value, option_type_id: option_type_id })
+        group("#{Spree::Product.table_name}.id").
+          joins(variants_including_master: :option_values).
+          where(Spree::OptionValue.table_name => { name: value, option_type_id: option_type_id })
       end
 
       # Finds all products which have either:
