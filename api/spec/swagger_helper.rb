@@ -151,7 +151,7 @@ RSpec.configure do |config|
           webhooks_subscriber_params: {
             type: :object,
             properties: {
-              enabled: { type: :boolean, example: true, default: false },
+              active: { type: :boolean, example: true, default: false },
               subscriptions: { type: :array, example: ['*'], default: [] },
               url: { type: :string, example: 'https://www.url.com/' }
             },

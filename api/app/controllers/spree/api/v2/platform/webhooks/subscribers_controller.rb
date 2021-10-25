@@ -9,12 +9,6 @@ module Spree
             def model_class
               Spree::Webhooks::Subscriber
             end
-
-            def permitted_resource_params
-              params.
-                require(:subscriber).
-                permit(spree_permitted_attributes.push(*%i[enabled subscriptions url]))
-            end
           end
         end
       end
