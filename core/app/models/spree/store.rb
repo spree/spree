@@ -1,6 +1,6 @@
 module Spree
   class Store < Spree::Base
-    typed_store :settings do |s|
+    typed_store :settings, coder: ActiveRecord::TypedStore::IdentityCoder do |s|
       # Spree Digital Asset Configurations
       s.boolean :limit_digital_download_count, default: true, null: false
       s.boolean :limit_digital_download_days, default: true, null: false
