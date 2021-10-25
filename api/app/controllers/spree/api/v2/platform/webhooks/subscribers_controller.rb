@@ -7,7 +7,7 @@ module Spree
             private
 
             def model_class
-              Spree::Webhooks::Endpoint
+              Spree::Webhooks::Subscriber
             end
 
             def permitted_resource_params

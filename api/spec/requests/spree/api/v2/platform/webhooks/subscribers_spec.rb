@@ -7,7 +7,7 @@ describe 'Platform API v2 Webhooks Subscribers spec', type: :request do
   include_context 'Platform API v2'
 
   let(:bearer_token) { { 'Authorization' => valid_authorization } }
-  let(:params) { { subscriber: { enabled: true, url: 'https://www.url.com/', subscriptions: ['*'] } } }
+  let(:params) { { subscriber: { active: true, url: 'https://www.url.com/', subscriptions: ['*'] } } }
 
   context 'valid request' do
     it 'returns status created' do
@@ -16,7 +16,7 @@ describe 'Platform API v2 Webhooks Subscribers spec', type: :request do
     end
 
     it 'creates a subscriber ' do
-      expect { subject }.to change { Spree::Webhooks::Endpoint.count }.from(0).to(1)
+      expect { subject }.to change { Spree::Webhooks::Subscriber.count }.from(0).to(1)
     end
   end
 end

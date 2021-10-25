@@ -3,9 +3,9 @@ require 'spec_helper'
 
 # [TODO]: move
 FactoryBot.define do
-  factory :webhook_subscriber, aliases: [:subscriber], class: Spree::Webhooks::Endpoint do
-    trait :enabled do
-      enabled { true }
+  factory :webhook_subscriber, aliases: [:subscriber], class: Spree::Webhooks::Subscriber do
+    trait :active do
+      active { true }
       sequence(:url) { |n| "https://www.url#{n}.com/" }
     end
   end
@@ -20,8 +20,8 @@ describe 'WebhooksSubscribers API', swagger: true do
   
   let(:id) { subscriber.tap(&:save).id }
   let(:invalid_param_value) { { url: '' } }
-  let(:records_list) { create_list(:subscriber, 2, :enabled, subscriptions: ['*']) }
-  let(:subscriber) { build(:subscriber, :enabled, subscriptions: ['*']) }
+  let(:records_list) { create_list(:subscriber, 2, :active, subscriptions: ['*']) }
+  let(:subscriber) { build(:subscriber, :active, subscriptions: ['*']) }
   let(:valid_create_param_value) { subscriber.attributes }
 
   path '/api/v2/platform/webhooks/subscribers' do
