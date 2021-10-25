@@ -34,9 +34,14 @@ module Spree
       def self.property_conditions(property)
         properties = Property.table_name
         case property
-        when String   then { "#{properties}.name" => property }
         when Property then { "#{properties}.id" => property.id }
-        else { "#{properties}.id" => property.to_i }
+        when Integer  then { "#{properties}.id" => property }
+        else
+          if Property.column_for_attribute('id').type == :uuid
+            ["#{properties.name} = ? OR #{properties.id} = ?", property, property]
+          else
+            { "#{properties}.name" => property }
+          end
         end
       end
 
@@ -139,26 +144,34 @@ module Spree
       end
 
       add_search_scope :with_option do |option|
-        option_types = OptionType.table_name
-        conditions = case option
-                     when String     then { "#{option_types}.name" => option }
-                     when OptionType then { "#{option_types}.id" => option.id }
-                     else { "#{option_types}.id" => option.to_i }
-                     end
-
-        joins(:option_types).where(conditions)
+        if option.is_a?(OptionType)
+          joins(:option_types).where(spree_option_types: { id: option.id })
+        elsif option.is_a?(Integer)
+          joins(:option_types).where(spree_option_types: { id: option })
+        elsif OptionType.column_for_attribute('id').type == :uuid
+          joins(:option_types).where(spree_option_types: { name: option }).or(Product.joins(:option_types).where(spree_option_types: { id: option }))
+        else
+          joins(:option_types).where(spree_option_types: { name: option })
+        end
       end
 
       add_search_scope :with_option_value do |option, value|
-        option_values = OptionValue.table_name
         option_type_id = case option
-                         when String then OptionType.find_by(name: option) || option.to_i
                          when OptionType then option.id
-                         else option.to_i
+                         when Integer then option
+                         else
+                           if OptionType.column_for_attribute('id').type == :uuid
+                             OptionType.where(id: option).or(OptionType.where(name: option))&.first&.id
+                           else 
+                             OptionType.where(name: option)&.first&.id
+                           end
                          end
 
-        conditions = "#{option_values}.name = ? AND #{option_values}.option_type_id = ?", value, option_type_id
-        group('spree_products.id').joins(variants_including_master: :option_values).where(conditions)
+        return Product.group("#{Spree::Product.table_name}.id").none if option_type_id.blank?
+
+        group("#{Spree::Product.table_name}.id").
+          joins(variants_including_master: :option_values).
+          where(Spree::OptionValue.table_name => { name: value, option_type_id: option_type_id })
       end
 
       # Finds all products which have either:
@@ -320,14 +333,11 @@ module Spree
       private_class_method :prepare_words
 
       def self.get_taxons(*ids_or_records_or_names)
-        taxons = Taxon.table_name
         ids_or_records_or_names.flatten.map do |t|
           case t
-          when Integer then Taxon.find_by(id: t)
           when ApplicationRecord then t
-          when String
-            Taxon.find_by(name: t) ||
-              Taxon.where("#{taxons}.permalink LIKE ? OR #{taxons}.permalink = ?", "%/#{t}/", "#{t}/").first
+          else
+            Taxon.where(name: t).or(Taxon.where(id: t)).or(Taxon.where("permalink LIKE ? OR permalink = ?", "%/#{t}/", "#{t}/")).first
           end
         end.compact.flatten.uniq
       end

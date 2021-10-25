@@ -325,4 +325,63 @@ describe 'Product scopes', type: :model do
       expect { Spree::Product.in_stock.in_stock_or_backorderable.count }.not_to raise_error
     end
   end
+
+  context 'options scopes' do
+    let(:option_type) { create(:option_type) }
+    let(:option_value) { create(:option_value, option_type: option_type) }
+    let!(:product) { create(:product, option_types: [option_type]) }
+    let!(:variant) { create(:variant, product: product, option_values: [option_value]) }
+
+    describe '.with_option' do
+      subject(:with_option) { Spree::Product.method(:with_option) }
+
+      it "finds by a option type's name" do
+        expect(with_option.call(option_type.name).count).to eq(1)
+      end
+
+      it "doesn't find any option types with an unknown name" do
+        expect(with_option.call('fake').count).to eq(0)
+      end
+
+      it 'finds by a option type' do
+        expect(with_option.call(option_type).count).to eq(1)
+      end
+
+      it 'finds by an id' do
+        expect(with_option.call(option_type.id).count).to eq(1)
+      end
+
+      it 'cannot find an option type with an unknown id' do
+        expect(with_option.call(0).count).to eq(0)
+      end
+    end
+
+    describe '.with_option_value' do
+      subject(:with_option) { Spree::Product.method(:with_option_value) }
+
+      it "finds by a option type's name" do
+        expect(with_option.call(option_type.name, option_value.name).count).to eq({ product.id => 1 })
+      end
+
+      it "doesn't find any option types with an unknown name" do
+        expect(with_option.call('fake', 'fake').count).to eq({})
+      end
+
+      it 'finds by a option type' do
+        expect(with_option.call(option_type, option_value.name).count).to eq({ product.id => 1 })
+      end
+
+      it 'finds by an id' do
+        expect(with_option.call(option_type.id, option_value.name).count).to eq({ product.id => 1 })
+      end
+
+      it 'cannot find an option type with an unknown id' do
+        expect(with_option.call(0, 'fake').count).to eq({})
+      end
+
+      it 'can return product ids' do
+        expect(with_option.call(option_type, option_value.name).ids).to match_array([product.id])
+      end
+    end
+  end
 end

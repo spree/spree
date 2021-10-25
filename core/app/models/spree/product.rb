@@ -194,10 +194,7 @@ module Spree
     end
 
     # Adding properties and option types on creation based on a chosen prototype
-    attr_reader :prototype_id
-    def prototype_id=(value)
-      @prototype_id = value.to_i
-    end
+    attr_accessor :prototype_id
 
     # Ensures option_types and product_option_types exist for keys in option_values_hash
     def ensure_option_types_exist_for_values_hash
