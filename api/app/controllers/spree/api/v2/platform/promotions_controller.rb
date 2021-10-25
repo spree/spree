@@ -16,7 +16,7 @@ module Spree
           def spree_permitted_attributes
             promotion_rules = [:preferred_match_policy]
             additional_permitted_attributes = if action_name == 'update'
-                                                [:id, :_destroy]
+                                                [:id]
                                               else
                                                 []
                                               end

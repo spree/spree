@@ -20,7 +20,7 @@ module Spree
 
     has_and_belongs_to_many :stores, class_name: 'Spree::Store', join_table: 'spree_promotions_stores'
 
-    accepts_nested_attributes_for :promotion_actions, :promotion_rules, allow_destroy: true
+    accepts_nested_attributes_for :promotion_actions, :promotion_rules
 
     validates_associated :rules
 
