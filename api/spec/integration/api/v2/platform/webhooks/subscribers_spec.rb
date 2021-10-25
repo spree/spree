@@ -1,17 +1,6 @@
 require 'swagger_helper'
 require 'spec_helper'
 
-# [TODO]: move
-FactoryBot.define do
-  factory :webhook_subscriber, aliases: [:subscriber], class: Spree::Webhooks::Subscriber do
-    trait :active do
-      active { true }
-      sequence(:url) { |n| "https://www.url#{n}.com/" }
-    end
-  end
-end
-
-
 describe 'WebhooksSubscribers API', swagger: true do
   include_context 'Platform API v2'
 

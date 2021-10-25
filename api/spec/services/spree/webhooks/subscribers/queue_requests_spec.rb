@@ -20,11 +20,7 @@ describe Spree::Webhooks::Subscribers::QueueRequests, :job, :spree_webhooks do
         before { stub_request(:post, subscriber.url) }
 
         let(:subscriber) do
-          Spree::Webhooks::Subscriber.create(
-            url: 'https://url1.com/',
-            subscriptions: ['*'],
-            active: true
-          )
+          create(:subscriber, :active, url: 'https://url1.com/', subscriptions: ['*'])
         end
 
         it 'queues a job to make a request' do
@@ -38,11 +34,7 @@ describe Spree::Webhooks::Subscribers::QueueRequests, :job, :spree_webhooks do
         before { stub_request(:post, subscriber.url) }
 
         let(:subscriber) do
-          Spree::Webhooks::Subscriber.create(
-            url: 'https://url2.com/',
-            subscriptions: [event],
-            active: true
-          )
+          create(:subscriber, :active, url: 'https://url2.com/', subscriptions: [event])
         end
 
         it 'queues a job to make a request' do
@@ -54,11 +46,7 @@ describe Spree::Webhooks::Subscribers::QueueRequests, :job, :spree_webhooks do
 
       context 'when subscriber subscriptions are not active' do
         let!(:subscriber) do
-          Spree::Webhooks::Subscriber.create(
-            url: 'https://url3.com/',
-            subscriptions: [event],
-            active: false
-          )
+          create(:subscriber, url: 'https://url3.com/', subscriptions: [event])
         end
 
         it 'does not queue a job to make a request' do
@@ -68,11 +56,7 @@ describe Spree::Webhooks::Subscribers::QueueRequests, :job, :spree_webhooks do
 
       context 'when subscriber subscriptions do not include the event or "*"' do
         let!(:subscriber) do
-          Spree::Webhooks::Subscriber.create(
-            url: 'https://url4.com/',
-            subscriptions: ['order.resume'],
-            active: true
-          )
+          create(:subscriber, :active, url: 'https://url4.com/', subscriptions: ['order.resume'])
         end
 
         it 'does not queue a job to make a request' do
