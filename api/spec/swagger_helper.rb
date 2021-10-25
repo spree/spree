@@ -152,7 +152,7 @@ RSpec.configure do |config|
             type: :object,
             properties: {
               active: { type: :boolean, example: true, default: false },
-              subscriptions: { type: :array, example: ['*'], default: [] },
+              subscriptions: { type: :array, example: ['order.create,order.complete,product.update'], default: [] },
               url: { type: :string, example: 'https://www.url.com/' }
             },
             'x-internal': true
