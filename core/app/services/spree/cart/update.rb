@@ -25,10 +25,10 @@ module Spree
       def filter_order_items(order, params)
         return params if params[:line_items_attributes].nil? || params[:line_items_attributes][:id]
 
-        line_item_ids = order.line_items.pluck(:id)
+        line_item_ids = order.line_item_ids.map(&:to_s)
 
         params[:line_items_attributes].each_pair do |id, value|
-          params[:line_items_attributes].delete(id) unless line_item_ids.include?(value[:id]) || value[:variant_id].present?
+          params[:line_items_attributes].delete(id) unless line_item_ids.include?(value[:id].to_s) || value[:variant_id].present?
         end
         params
       end
