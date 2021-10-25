@@ -127,7 +127,7 @@ module Spree
 
     self.whitelisted_ransackable_associations = %w[taxons stores variants_including_master master variants]
     self.whitelisted_ransackable_attributes = %w[description name slug discontinue_on]
-    self.whitelisted_ransackable_scopes = %w[not_discontinued search_by_name]
+    self.whitelisted_ransackable_scopes = %w[not_discontinued search_by_name in_taxon price_between]
 
     [
       :sku, :price, :currency, :weight, :height, :width, :depth, :is_master,
