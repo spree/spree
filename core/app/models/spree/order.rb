@@ -637,7 +637,7 @@ module Spree
       payment_method_ids = available_payment_methods.map(&:id)
 
       attributes.each do |payment_attributes|
-        payment_method_id = payment_attributes[:payment_method_id].to_i
+        payment_method_id = payment_attributes[:payment_method_id]
 
         raise ActiveRecord::RecordNotFound unless payment_method_ids.include?(payment_method_id)
       end
