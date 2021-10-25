@@ -5,7 +5,6 @@ module Spree
         private
 
         def spree_permitted_attributes
-          # TODO: have these write themselves.
           promotion_rules_permitted_attributes = [:preferred_match_policy, :preferred_country_id, :preferred_amount_min,
                                                   :preferred_operator_min, :preferred_amount_max, :preferred_operator_max,
                                                   :preferred_eligible_values]
