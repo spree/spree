@@ -3,6 +3,8 @@ module Spree
     module V2
       module Platform
         class PromotionsController < ResourceController
+          include ::Spree::Api::V2::PromotionHelper
+
           private
 
           def model_class
@@ -11,36 +13,6 @@ module Spree
 
           def scope_includes
             [:promotion_category, :promotion_rules, :promotion_actions]
-          end
-
-          def spree_permitted_attributes
-            promotion_rules = [:preferred_match_policy, :preferred_country_id, :preferred_amount_min,
-                               :preferred_operator_min, :preferred_amount_max, :preferred_operator_max, :preferred_eligible_values]
-
-            additional_permitted_attributes = if action_name == 'update'
-                                                [:id]
-                                              else
-                                                []
-                                              end
-
-            Spree::Promotion.json_api_permitted_attributes + [
-              { store_ids: [] },
-              {
-                promotion_actions_attributes: Spree::PromotionAction.
-                                                             json_api_permitted_attributes.
-                                                             concat(additional_permitted_attributes) + [
-                                                               {
-                                                                 promotion_action_line_items_attributes: Spree::PromotionActionLineItem.
-                                                                                                       json_api_permitted_attributes.
-                                                                                                       concat(additional_permitted_attributes)
-                                                               }
-                                                             ],
-
-                promotion_rules_attributes: Spree::PromotionRule.
-                                                             json_api_permitted_attributes.
-                                                             concat(additional_permitted_attributes, promotion_rules)
-              }
-            ]
           end
         end
       end
