@@ -14,7 +14,9 @@ module Spree
           end
 
           def spree_permitted_attributes
-            promotion_rules = [:preferred_match_policy, :preferred_country_id]
+            promotion_rules = [:preferred_match_policy, :preferred_country_id, :preferred_amount_min,
+                               :preferred_operator_min, :preferred_amount_max, :preferred_operator_max, :preferred_eligible_values]
+
             additional_permitted_attributes = if action_name == 'update'
                                                 [:id]
                                               else
