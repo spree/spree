@@ -14,21 +14,7 @@ module Spree
           end
 
           def spree_permitted_attributes
-            promotion_actions = []
-            promotion_rules = []
-
-            resource.promotion_actions.each do |promotion_action|
-              promotion_action.defined_preferences.each do |preference|
-                promotion_actions << "preferred_#{preference}".to_sym
-              end
-            end
-
-            resource.promotion_rules.each do |promotion_rule|
-              promotion_rule.defined_preferences.each do |preference|
-                promotion_rules << "preferred_#{preference}".to_sym
-              end
-            end
-
+            promotion_rules = [:preferred_match_policy]
             additional_permitted_attributes = if action_name == 'update'
                                                 [:id, :_destroy]
                                               else
@@ -40,14 +26,13 @@ module Spree
               {
                 promotion_actions_attributes: Spree::PromotionAction.
                                                              json_api_permitted_attributes.
-                                                             concat(additional_permitted_attributes,
-                                                                    promotion_actions) + [
-                                                                      {
-                                                                        promotion_action_line_items_attributes: Spree::PromotionActionLineItem.
-                                                                                         json_api_permitted_attributes.
-                                                                                         concat(additional_permitted_attributes)
-                                                                      }
-                                                                    ],
+                                                             concat(additional_permitted_attributes) + [
+                                                               {
+                                                                 promotion_action_line_items_attributes: Spree::PromotionActionLineItem.
+                                                                                                       json_api_permitted_attributes.
+                                                                                                       concat(additional_permitted_attributes)
+                                                               }
+                                                             ],
 
                 promotion_rules_attributes: Spree::PromotionRule.
                                                              json_api_permitted_attributes.
