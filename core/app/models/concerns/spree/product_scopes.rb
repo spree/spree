@@ -150,15 +150,13 @@ module Spree
       end
 
       add_search_scope :with_option_value do |option, value|
-        option_values = OptionValue.table_name
         option_type_id = case option
                          when String then OptionType.find_by(name: option) || option
                          when OptionType then option.id
                          else option
                          end
 
-        conditions = "#{option_values}.name = ? AND #{option_values}.option_type_id = ?", value, option_type_id
-        group('spree_products.id').joins(variants_including_master: :option_values).where(conditions)
+        group('spree_products.id').joins(variants_including_master: :option_values).where(spree_option_values: { name: value, option_type_id: option_type_id })
       end
 
       # Finds all products which have either:
