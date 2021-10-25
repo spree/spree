@@ -139,24 +139,22 @@ module Spree
       end
 
       add_search_scope :with_option do |option|
-        option_types = OptionType.table_name
-        conditions = case option
-                     when String     then { "#{option_types}.name" => option }
-                     when OptionType then { "#{option_types}.id" => option.id }
-                     else { "#{option_types}.id" => option }
-                     end
-
-        joins(:option_types).where(conditions)
+        if option.is_a?(OptionType)
+          joins(:option_types).where(option_types: { id: option.id })
+        else
+          joins(:option_types).where(option_types: { name: option }).or(Product.joins(:option_types).where(option_types: { id: option }))
+        end
       end
 
       add_search_scope :with_option_value do |option, value|
         option_type_id = case option
-                         when String then OptionType.find_by(name: option) || option
                          when OptionType then option.id
-                         else option
+                         else OptionType.where(name: option).or(OptionType.where(id: option))&.first&.id
                          end
 
-        group('spree_products.id').joins(variants_including_master: :option_values).where(spree_option_values: { name: value, option_type_id: option_type_id })
+        return if option_type_id.blank?
+
+        group('spree_products.id').joins(variants_including_master: :option_values).where(Spree::OptionValue.table_name => { name: value, option_type_id: option_type_id })
       end
 
       # Finds all products which have either:
@@ -318,14 +316,11 @@ module Spree
       private_class_method :prepare_words
 
       def self.get_taxons(*ids_or_records_or_names)
-        taxons = Taxon.table_name
         ids_or_records_or_names.flatten.map do |t|
           case t
-          when Integer then Taxon.find_by(id: t)
           when ApplicationRecord then t
-          when String
-            Taxon.find_by(name: t) ||
-              Taxon.where("#{taxons}.permalink LIKE ? OR #{taxons}.permalink = ?", "%/#{t}/", "#{t}/").first
+          else
+            Taxon.where(name: t).or(Taxon.where(id: t)).or(Taxon.where("permalink LIKE ? OR permalink = ?", "%/#{t}/", "#{t}/")).first
           end
         end.compact.flatten.uniq
       end
