@@ -4,9 +4,7 @@ module Spree
       module Platform
         module Webhooks
           class SubscriberSerializer < BaseSerializer
-            set_type :webhooks_subscriber
-
-            attributes :active, :url, :subscriptions
+            include ResourceSerializerConcern
           end
         end
       end
