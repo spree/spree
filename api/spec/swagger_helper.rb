@@ -96,7 +96,7 @@ RSpec.configure do |config|
             type: :object,
             properties: {
               order_id: { type: :string },
-              lebal: { type: :string, example: 'Shipping costs' },
+              label: { type: :string, example: 'Shipping costs' },
               adjustable_id: { type: :string },
               adjustable_type: { type: :string, example: 'Spree::LineItem' },
               source_id: { type: :string },
