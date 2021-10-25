@@ -185,7 +185,9 @@ Spree::Core::Engine.add_routes do
       namespace :platform do
         # Promotions API
         resources :promotions
+        resources :promotion_actions
         resources :promotion_categories
+        resources :promotion_rules
 
         # Returns API
         resources :customer_returns
