@@ -14,7 +14,7 @@ module Spree
           end
 
           def spree_permitted_attributes
-            promotion_rules = [:preferred_match_policy]
+            promotion_rules = [:preferred_match_policy, :preferred_country_id]
             additional_permitted_attributes = if action_name == 'update'
                                                 [:id]
                                               else
@@ -22,7 +22,7 @@ module Spree
                                               end
 
             Spree::Promotion.json_api_permitted_attributes + [
-              :store_ids,
+              { store_ids: [] },
               {
                 promotion_actions_attributes: Spree::PromotionAction.
                                                              json_api_permitted_attributes.

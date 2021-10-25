@@ -102,7 +102,7 @@ module Spree
           end
 
           def assign_stores(resource, params)
-            stores = params[model_param_name][:store_ids]
+            stores = params[:store_ids]
 
             if resource.class.method_defined?(:stores) && stores.present? && stores.is_a?(Array)
               resource.store_ids = stores
