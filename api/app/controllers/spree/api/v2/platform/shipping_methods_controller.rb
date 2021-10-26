@@ -23,7 +23,7 @@ module Spree
           private
 
           def assign_shipping_categories(resource, params)
-            shipping_category_ids = params[:shipping_category_ids]
+            shipping_category_ids = Spree::ShippingCategory.where(id: params[:shipping_category_ids]).ids
 
             if resource.class.method_defined?(:shipping_categories) && shipping_category_ids.is_a?(Array)
               resource.shipping_category_ids = shipping_category_ids.compact.uniq
