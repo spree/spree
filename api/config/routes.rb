@@ -313,6 +313,7 @@ Spree::Core::Engine.add_routes do
 
         # Configurations API
         resources :shipping_categories
+        resources :shipping_methods
 
         # Webhooks API
         namespace :webhooks do
