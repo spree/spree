@@ -11,7 +11,7 @@ module Spree
             end
 
             def spree_permitted_attributes
-              super + [{subscriptions: []}]
+              super + [{ subscriptions: [] }]
             end
           end
         end

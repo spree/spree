@@ -8,7 +8,7 @@ describe 'Platform API v2 Webhooks Subscribers spec', type: :request do
 
   let(:active) { true }
   let(:bearer_token) { { 'Authorization' => valid_authorization } }
-  let(:events) { ['order.create', 'order.complete', 'product.update'] }
+  let(:events) { ['order.created', 'order.placed', 'product.updated'] }
   let(:params) { { subscriber: { active: true, url: url, subscriptions: events } } }
   let(:url) { 'https://www.url.com/' }
 
