@@ -104,8 +104,8 @@ module Spree
           def assign_stores(resource, params)
             stores = params[:store_ids]
 
-            if resource.class.method_defined?(:stores) && stores.present? && stores.is_a?(Array)
-              resource.store_ids = stores
+            if resource.class.method_defined?(:stores) && stores.is_a?(Array)
+              resource.store_ids = stores.compact.uniq
             end
 
             # Always call ensure_current_store after assigning the
