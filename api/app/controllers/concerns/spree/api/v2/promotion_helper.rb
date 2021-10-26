@@ -15,7 +15,7 @@ module Spree
                                              :preferred_tiers, :preferred_base_percent]
 
           additional_permitted_attributes = if action_name == 'update'
-                                              [:id]
+                                              [:id, :_destroy]
                                             else
                                               []
                                             end
