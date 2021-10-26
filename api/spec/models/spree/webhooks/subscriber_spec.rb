@@ -26,8 +26,8 @@ describe Spree::Webhooks::Subscriber do
   describe '.urls_for' do
     subject { described_class.urls_for(event) }
 
-    let(:event) { 'order.completed' }
-    let(:subscriptions) { ['order.completed'] }
+    let(:event) { 'order.placed' }
+    let(:subscriptions) { ['order.placed'] }
     let!(:subscriber) { described_class.create(url: url, subscriptions: subscriptions, active: true) }
     let(:url) { 'https://url1.com/' }
 
