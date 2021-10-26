@@ -20,9 +20,9 @@ describe Spree::Payment do
 
       after { ENV['DISABLE_SPREE_WEBHOOKS'] = 'true' }
 
-      it 'executes QueueRequests.call with a payment.void event and {} body after invoking void' do
+      it 'executes QueueRequests.call with a payment.voided event and {} body after invoking void' do
         payment.void
-        expect(queue_requests).to have_received(:call).with(event: 'payment.void', body: body).once
+        expect(queue_requests).to have_received(:call).with(event: 'payment.voided', body: body).once
       end
     end
 
