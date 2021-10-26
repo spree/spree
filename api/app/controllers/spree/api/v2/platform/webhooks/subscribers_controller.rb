@@ -9,6 +9,10 @@ module Spree
             def model_class
               Spree::Webhooks::Subscriber
             end
+
+            def spree_permitted_attributes
+              super + [{subscriptions: []}]
+            end
           end
         end
       end
