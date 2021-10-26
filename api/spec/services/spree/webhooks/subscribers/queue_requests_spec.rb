@@ -56,7 +56,7 @@ describe Spree::Webhooks::Subscribers::QueueRequests, :job, :spree_webhooks do
 
       context 'when subscriber subscriptions do not include the event or "*"' do
         let!(:subscriber) do
-          create(:subscriber, :active, url: 'https://url4.com/', subscriptions: ['order.resume'])
+          create(:subscriber, :active, url: 'https://url4.com/', subscriptions: ['order.resumed'])
         end
 
         it 'does not queue a job to make a request' do
