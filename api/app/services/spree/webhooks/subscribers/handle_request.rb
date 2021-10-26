@@ -4,20 +4,28 @@ module Spree
   module Webhooks
     module Subscribers
       class HandleRequest
-        def initialize(body:, event:, url:)
+        def initialize(body:, event:, subscriber_id:, url:)
           @body = body
           @event = event
+          @subscriber_id = subscriber_id
           @url = url
         end
 
         def call
-          return if body == ''
-
           Rails.logger.debug(webhooks_log("sending to '#{url}'"))
           Rails.logger.debug(webhooks_log("body: #{body}"))
 
           if request.unprocessable_uri?
-            Rails.logger.warn(webhooks_log("can not make a request to '#{url}'"))
+            log_msg = webhooks_log("can not make a request to '#{url}'")
+            Rails.logger.warn(log_msg)
+            Spree::Webhooks::Event.create(
+              execution_time: request.execution_time,
+              request_errors: log_msg,
+              response_code: request.response_code,
+              subscriber_id: subscriber_id,
+              success: request.success,
+              url: url
+            )
             return
           end
 
@@ -31,7 +39,7 @@ module Spree
 
         private
 
-        attr_reader :body, :event, :url
+        attr_reader :body, :event, :subscriber_id, :url
 
         def request
           @request ||= Spree::Webhooks::Subscribers::MakeRequest.new(body: body, url: url)

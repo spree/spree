@@ -2,7 +2,38 @@ require 'spec_helper'
 
 describe Spree::Webhooks::Subscribers::MakeRequest do
   let(:body) { { data: [{}] }.to_json }
-  let(:url) { 'google.com' }
+  let(:http_double) { instance_double(Net::HTTP) }
+  let(:url) { 'http://google.com/' }
+
+  describe '#execution_time' do
+    subject { described_class.new(body: body, url: url).execution_time }
+
+    before do
+      stub_request(:post, url)
+      allow(Process).to receive(:clock_gettime).and_call_original
+      allow(Process).to receive(:clock_gettime).with(Process::CLOCK_MONOTONIC).and_return(start_time, end_time)
+    end
+
+    let(:end_time) { start_time + rand_variation } # add a custom rand amount to simulate elapsed time
+    let(:execution_time_in_seconds) { end_time - start_time }
+    let(:rand_variation) { rand(0.1..5.0) }
+    let(:start_time) { Process.clock_gettime(Process::CLOCK_MONOTONIC) }
+
+    it 'returns the POSIX time it took for the request to be finished' do
+      expect(subject).to eq(execution_time_in_seconds)
+    end
+
+    context 'when request raises an exception' do
+      before do
+        allow(Net::HTTP).to receive(:new).and_return(http_double)
+        allow(http_double).to receive(:request) { raise Errno::ECONNREFUSED }
+      end
+
+      it 'returns the @execution_time_in_seconds default value' do
+        expect(subject).to eq(0.0)
+      end
+    end
+  end
 
   describe '#failed_request?' do
     subject { described_class.new(body: body, url: url).failed_request? }
@@ -11,9 +42,7 @@ describe Spree::Webhooks::Subscribers::MakeRequest do
 
     let(:headers) { { 'Content-Type' => 'application/json' } }
     let(:http) { Net::HTTP.new(uri.host, uri.port) }
-    let(:http_double) { instance_double(Net::HTTP) }
     let(:uri) { URI(url) }
-    let(:url) { 'http://google.com/' }
 
     describe 'ssl usage' do
       shared_examples 'makes the request without setting use_ssl' do
@@ -123,6 +152,71 @@ describe Spree::Webhooks::Subscribers::MakeRequest do
     end
   end
 
+  describe '#response_code' do
+    subject { described_class.new(body: body, url: url).response_code }
+
+    context 'when request raises an Errno::ECONNREFUSED exception' do
+      before do
+        allow(Net::HTTP).to receive(:new).and_return(http_double)
+        allow(http_double).to receive(:request) { raise Errno::ECONNREFUSED }
+      end
+
+      it { expect(subject).to eq(0) }
+    end
+
+    context 'when request raises a Net::ReadTimeout exception' do
+      before do
+        allow(Net::HTTP).to receive(:new).and_return(http_double)
+        allow(http_double).to receive(:request) { raise Net::ReadTimeout }
+      end
+
+      it { expect(subject).to eq(0) }
+    end
+
+    context 'when request raises a SocketError exception' do
+      before do
+        allow(Net::HTTP).to receive(:new).and_return(http_double)
+        allow(http_double).to receive(:request) { raise SocketError }
+      end
+
+      it { expect(subject).to eq(0) }
+    end
+
+    context 'when request succeeds' do
+      before { stub_request(:post, url) }
+
+      it { expect(subject).to eq(200) }
+    end
+  end
+
+  describe '#success?' do
+    subject { described_class.new(body: body, url: url) }
+
+    context 'when unprocessable_uri? equals true' do
+      before { allow(subject).to receive(:unprocessable_uri?).and_return(true) }
+
+      it { expect(subject.success?).to eq(false) }
+    end
+
+    context 'when failed_request? equals true' do
+      before do
+        allow(subject).to receive(:unprocessable_uri?).and_return(false)
+        allow(subject).to receive(:failed_request?).and_return(true)
+      end
+
+      it { expect(subject.success?).to eq(false) }
+    end
+
+    context 'when failed_request? equals false' do
+      before do
+        allow(subject).to receive(:unprocessable_uri?).and_return(false)
+        allow(subject).to receive(:failed_request?).and_return(false)
+      end
+
+      it { expect(subject.success?).to eq(true) }
+    end
+  end
+
   describe '#unprocessable_uri?' do
     subject { described_class.new(body: body, url: url) }
 
@@ -133,6 +227,7 @@ describe Spree::Webhooks::Subscribers::MakeRequest do
     end
 
     let(:uri) { URI(url) }
+    let(:url) { 'google.com' }
 
     context 'uri with path ""' do
       before { uri.path = '' }
