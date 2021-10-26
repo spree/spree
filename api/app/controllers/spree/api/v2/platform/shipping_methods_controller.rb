@@ -25,7 +25,7 @@ module Spree
           def assign_shipping_categories(resource, params)
             shipping_category_ids = Spree::ShippingCategory.where(id: params[:shipping_category_ids]).ids
 
-            if resource.class.method_defined?(:shipping_categories) && shipping_category_ids.is_a?(Array)
+            if resource.class.method_defined?(:shipping_categories) && shipping_category_ids.present?
               resource.shipping_category_ids = shipping_category_ids.compact.uniq
             end
           end
@@ -36,8 +36,10 @@ module Spree
 
           def spree_permitted_attributes
             Spree::ShippingMethod.json_api_permitted_attributes + [
-              { shipping_category_ids: [] },
-              { calculator_attributes: {} }
+              {
+                shipping_category_ids: [],
+                calculator_attributes: {}
+              }
             ]
           end
         end
