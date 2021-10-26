@@ -19,10 +19,10 @@ describe Spree::Shipment do
 
     let(:queue_requests) { instance_double(Spree::Webhooks::Subscribers::QueueRequests) }
 
-    it 'executes QueueRequests.call with a shipment.ship event and {} body after invoking ship' do
+    it 'executes QueueRequests.call with a shipment.shipped event and {} body after invoking ship' do
       shipment.cancel # previous state that allows the object be shipped
       shipment.ship
-      expect(queue_requests).to have_received(:call).with(event: 'shipment.ship', body: body).once
+      expect(queue_requests).to have_received(:call).with(event: 'shipment.shipped', body: body).once
     end
   end
 end

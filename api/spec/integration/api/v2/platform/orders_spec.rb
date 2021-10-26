@@ -185,11 +185,11 @@ describe 'Orders API', swagger: true do
       parameter name: :id, in: :path, type: :string
       json_api_include_parameter(options[:include_example])
 
-      response '200', 'record cancelled' do
+      response '200', 'record canceled' do
         let(:id) { create(:completed_order_with_totals).id }
         run_test!
       end
-      response '422', 'cannot be cancelled' do
+      response '422', 'cannot be canceled' do
         run_test!
       end
       it_behaves_like 'record not found'

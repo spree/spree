@@ -4,7 +4,7 @@ module Spree
       module ShipmentDecorator
         def after_ship
           super
-          queue_webhooks_requests!('shipment.ship')
+          queue_webhooks_requests!('shipment.shipped')
         end
       end
     end
