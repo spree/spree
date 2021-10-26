@@ -35,24 +35,9 @@ module Spree
           end
 
           def spree_permitted_attributes
-            # TODO: Where should we store these? Are we using the core_permitted_attributes.rb still?
-            calculator_permitted_attributes = [:preferred_flat_percent, :preferred_amount, :preferred_currency, :preferred_first_item,
-                                               :preferred_additional_item, :preferred_max_items, :preferred_percent, :preferred_minimal_amount,
-                                               :preferred_normal_amount, :preferred_discount_amount, :preferred_currency, :preferred_base_amount,
-                                               :preferred_tiers, :preferred_base_percent]
-
-            additional_permitted_attributes = if action_name == 'update'
-                                                [:id]
-                                              else
-                                                []
-                                              end
-
             Spree::ShippingMethod.json_api_permitted_attributes + [
               { shipping_category_ids: [] },
-              {
-                calculator_attributes: Spree::Calculator.json_api_permitted_attributes.concat(additional_permitted_attributes,
-                                                                                              calculator_permitted_attributes)
-              }
+              { calculator_attributes: {} }
             ]
           end
         end

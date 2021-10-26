@@ -5,7 +5,7 @@ module Spree
         class ShippingMethodSerializer < BaseSerializer
           include ResourceSerializerConcern
 
-          has_many :shipping_categories, through: :shipping_method_categories
+          has_many :shipping_categories
           has_many :shipping_rates
           belongs_to :tax_category
           has_one :calculator
