@@ -6,7 +6,7 @@ module Spree
 
         def perform(body, event, subscriber_id, url)
           Spree::Webhooks::Subscribers::HandleRequest.new(
-            body: body, event: event, subscriber_id: subscriber_id, url: url
+            body: body, event: event, subscriber: subscriber
           ).call
         end
       end
