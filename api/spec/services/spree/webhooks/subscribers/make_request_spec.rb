@@ -15,8 +15,8 @@ describe Spree::Webhooks::Subscribers::MakeRequest do
     end
 
     let(:end_time) { start_time + rand_variation } # add a custom rand amount to simulate elapsed time
-    let(:execution_time_in_seconds) { end_time - start_time }
-    let(:rand_variation) { rand(0.1..5.0) }
+    let(:execution_time_in_seconds) { ((end_time - start_time) * 1000).to_i }
+    let(:rand_variation) { rand(1..10) }
     let(:start_time) { Process.clock_gettime(Process::CLOCK_MONOTONIC) }
 
     it 'returns the POSIX time it took for the request to be finished' do
@@ -30,7 +30,7 @@ describe Spree::Webhooks::Subscribers::MakeRequest do
       end
 
       it 'returns the @execution_time_in_seconds default value' do
-        expect(subject).to eq(0.0)
+        expect(subject).to eq(0)
       end
     end
   end

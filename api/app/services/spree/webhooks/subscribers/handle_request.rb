@@ -4,48 +4,48 @@ module Spree
   module Webhooks
     module Subscribers
       class HandleRequest
-        def initialize(body:, event:, subscriber_id:, url:)
+        def initialize(body:, event:, subscriber:)
           @body = body
           @event = event
-          @subscriber_id = subscriber_id
-          @url = url
+          @subscriber = subscriber
         end
 
         def call
-          Rails.logger.debug(webhooks_log("sending to '#{url}'"))
-          Rails.logger.debug(webhooks_log("body: #{body}"))
+          Rails.logger.debug(msg("sending to '#{url}'"))
+          Rails.logger.debug(msg("body: #{body}"))
 
-          if request.unprocessable_uri?
-            log_msg = webhooks_log("can not make a request to '#{url}'")
-            Rails.logger.warn(log_msg)
-            Spree::Webhooks::Event.create(
-              execution_time: request.execution_time,
-              request_errors: log_msg,
-              response_code: request.response_code,
-              subscriber_id: subscriber_id,
-              success: request.success,
-              url: url
-            )
-            return
-          end
+          return create_event(:warn, msg("can not make a request to '#{url}'")) if unprocessable_uri?
+          return create_event(:warn, msg("failed for '#{url}'")) if failed_request?
 
-          if request.failed_request?
-            Rails.logger.warn(webhooks_log("failed for '#{url}'"))
-            return
-          end
-
-          Rails.logger.debug(webhooks_log("success for URL '#{url}'"))
+          create_event(:debug, msg("success for URL '#{url}'"))
         end
 
         private
 
-        attr_reader :body, :event, :subscriber_id, :url
+        attr_reader :body, :event, :subscriber, :url
+
+        delegate :execution_time, :failed_request?, :response_code, :success?, :unprocessable_uri?,
+          to: :request
+        delegate :id, :url, to: :subscriber
 
         def request
           @request ||= Spree::Webhooks::Subscribers::MakeRequest.new(body: body, url: url)
         end
 
-        def webhooks_log(msg)
+        def create_event(log_level, msg)
+          Rails.logger.public_send(log_level, msg)
+          Spree::Webhooks::Event.create(
+            execution_time: execution_time,
+            request_errors: msg,
+            response_code: response_code,
+            subscriber_id: id,
+            success: success?,
+            url: url
+          )
+          return
+        end
+
+        def msg(msg)
           "[SPREE WEBHOOKS] '#{event}' #{msg}"
         end
       end

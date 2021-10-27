@@ -6,14 +6,14 @@ module Spree
       class MakeRequest
         def initialize(body:, url:)
           @body = body
-          @execution_time_in_seconds = 0.0
+          @execution_time_in_milliseconds = 0
           @url = url
           @webhooks_timeout = ENV['SPREE_WEBHOOKS_TIMEOUT']
         end
 
         def execution_time
           request
-          @execution_time_in_seconds
+          @execution_time_in_milliseconds
         end
 
         def failed_request?
@@ -34,7 +34,7 @@ module Spree
 
         private
 
-        attr_reader :body, :execution_time_in_seconds, :url, :webhooks_timeout
+        attr_reader :body, :execution_time_in_milliseconds, :url, :webhooks_timeout
 
         HEADERS = { 'Content-Type' => 'application/json' }.freeze
         private_constant :HEADERS
@@ -54,7 +54,7 @@ module Spree
           @request ||= begin
             start_time = Process.clock_gettime(Process::CLOCK_MONOTONIC)
             request_result = http.request(req)
-            @execution_time_in_seconds = Process.clock_gettime(Process::CLOCK_MONOTONIC) - start_time
+            @execution_time_in_milliseconds = (Process.clock_gettime(Process::CLOCK_MONOTONIC) - start_time).in_milliseconds
             request_result
           end
         rescue Errno::ECONNREFUSED, Net::ReadTimeout, SocketError
