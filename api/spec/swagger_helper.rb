@@ -56,11 +56,12 @@ RSpec.configure do |config|
         { name: 'Orders' },
         { name: 'Payments' },
         { name: 'Promotion Categories' },
+        { name: 'Shipments' },
         { name: 'Shipping Categories' },
         { name: 'Shipping Methods' },
         { name: 'Taxons' },
         { name: 'Users' },
-        { name: 'Webhooks Subscribers' },
+        { name: 'Webhook Subscribers' },
         { name: 'Wishlists' },
         { name: 'Wished Items' },
         { name: 'Webhook Subscribers'},
@@ -150,7 +151,7 @@ RSpec.configure do |config|
             required: %w[name presentation],
             'x-internal': true
           },
-          webhooks_subscriber_params: {
+          webhook_subscriber_params: {
             type: :object,
             properties: {
               active: { type: :boolean, example: true, default: false },
