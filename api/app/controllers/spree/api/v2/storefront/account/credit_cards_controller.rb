@@ -24,7 +24,7 @@ module Spree
 
             def scope
               super.not_expired.not_removed.where(
-                user: spree_current_user, 
+                user: spree_current_user,
                 payment_method: current_store.payment_methods.available_on_front_end
               )
             end
