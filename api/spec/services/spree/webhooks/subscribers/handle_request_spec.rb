@@ -34,7 +34,7 @@ describe Spree::Webhooks::Subscribers::HandleRequest do
 
       it 'creates a webhooks event with the process info' do
         expect { subject.call }.to change {
-          Spree::Webhooks::Event.all.as_json(except: %i[id preferences]).map(&:values)
+          Spree::Webhooks::Event.all.as_json(except: %i[created_at id preferences updated_at]).map(&:values)
         }.from([]).to([[execution_time, event, log_msg, response_code.to_s, subscriber_id, success, url]])
       end
 

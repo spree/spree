@@ -19,7 +19,7 @@ describe Spree::Webhooks::Event do
       it 'is invalid without a subscriber' do
         event = build(:event, :successful, subscriber_id: nil)
         expect(event.valid?).to be(false)
-        expect(event.errors.messages).to eq(subscriber: ['must exist'])
+        expect(event.errors.messages).to eq(subscriber: ["can't be blank", 'must exist'])
       end
 
       it 'is valid with a subscriber' do
