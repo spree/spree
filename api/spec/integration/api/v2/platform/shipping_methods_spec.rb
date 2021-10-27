@@ -11,6 +11,7 @@ describe 'Shipping Methods API', swagger: true do
   }
 
   let(:shipping_category) { create(:shipping_category) }
+  let(:tax_category) { create(:tax_category) }
   let(:id) { create(:shipping_method).id }
   let(:records_list) { create_list(:shipping_method, 2) }
 
@@ -21,6 +22,7 @@ describe 'Shipping Methods API', swagger: true do
       shipping_category_ids: [shipping_category.id.to_s],
       admin_name: 'DHL Express- Zone A',
       code: 'DDD',
+      tax_category_id: tax_category.id.to_s,
       calculator_attributes: {
         type: 'Spree::Calculator::Shipping::FlatRate'
       }

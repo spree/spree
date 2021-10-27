@@ -64,7 +64,6 @@ RSpec.configure do |config|
         { name: 'Webhook Subscribers' },
         { name: 'Wishlists' },
         { name: 'Wished Items' },
-        { name: 'Webhook Subscribers'},
         { name: 'Variants' }
       ],
       components: {
@@ -314,17 +313,18 @@ RSpec.configure do |config|
               code: { type: :string, example: 'DHL-A-D' },
               tracking_url: { type: :string, example: 'dhlexpress.com?tracking=' },
               display_on: { type: :string, example: 'both', enum: ['both', 'back_end', 'front_end'] },
+              tax_category_id: { type: :string, example: '1' },
               shipping_category_ids: {
-                 type: :array,
-                 items: {
-                   allOf: [
-                     { type: :string, example: '2' }
-                   ]
-                 }
-               },
+                type: :array,
+                items: {
+                  allOf: [
+                    { type: :string, example: '2' }
+                  ]
+                }
+              },
               calculator_attributes: { '$ref': '#/components/schemas/shipping_calculator_params' },
             },
-            required: %w[name display_on calculator_attributes ],
+            required: %w[name display_on calculator_attributes],
             'x-internal': true
           },
           shipping_calculator_params: {
