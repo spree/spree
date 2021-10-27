@@ -5,6 +5,8 @@ describe 'Platform API v2 Resources spec', type: :request do
   include_context 'Platform API v2'
 
   let!(:store) { Spree::Store.default }
+  let!(:second_store) { create(:store) }
+  let!(:third_store) { create(:store) }
   let(:bearer_token) { { 'Authorization' => valid_authorization } }
   let(:resource_params) { {} }
   let(:params) { { address: resource_params } }
@@ -324,6 +326,27 @@ describe 'Platform API v2 Resources spec', type: :request do
       it 'adds the current store to the newly created resource' do
         new_menu = Spree::Menu.find_by(name: 'Ensure-MenuTest')
         expect(new_menu.store).to eql(store)
+      end
+    end
+
+    context '#assign_stores' do
+      let(:execute) { post '/api/v2/platform/payment_methods', params: payment_method_resource_params, headers: bearer_token }
+      let(:payment_method_resource_params) do
+        {
+          payment_method: {
+            name: 'AssignStore-Test',
+            store_ids: [second_store.id.to_s]
+          }
+        }
+      end
+
+      before { execute }
+
+      it_behaves_like 'returns 201 HTTP status'
+
+      it 'adds the current store and the stores passed in via store_ids to the newly created resource' do
+        new_payment_method = Spree::PaymentMethod.find_by(name: 'AssignStore-Test')
+        expect(new_payment_method.stores).to match_array([store, second_store])
       end
     end
   end
