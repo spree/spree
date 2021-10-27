@@ -10,7 +10,7 @@ module Spree
           end
 
           def spree_permitted_attributes
-            Spree::PaymentMethod.json_api_permitted_attributes + [store_ids: []]
+            Spree::PaymentMethod.json_api_permitted_attributes + [{ store_ids: [] }]
           end
         end
       end
