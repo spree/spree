@@ -3,7 +3,7 @@ module Spree
     module V2
       module Platform
         class ShippingMethodSerializer < BaseSerializer
-          include ResourceSerializerConcern
+          attributes :name, :code, :admin_name, :display_on, :tracking_url
 
           has_many :shipping_categories
           has_many :shipping_rates
