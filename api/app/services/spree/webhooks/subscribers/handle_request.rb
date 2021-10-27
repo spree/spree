@@ -25,7 +25,7 @@ module Spree
         attr_reader :body, :event, :subscriber, :url
 
         delegate :execution_time, :failed_request?, :response_code, :success?, :unprocessable_uri?,
-          to: :request
+                 to: :request
         delegate :id, :url, to: :subscriber
 
         def request
@@ -42,7 +42,7 @@ module Spree
             success: success?,
             url: url
           )
-          return
+          nil
         end
 
         def msg(msg)

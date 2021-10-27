@@ -60,7 +60,7 @@ module Spree
         rescue Errno::ECONNREFUSED, Net::ReadTimeout, SocketError
           Class.new do
             def self.code
-              "0"
+              '0'
             end
           end
         end
