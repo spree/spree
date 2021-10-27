@@ -582,7 +582,7 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
     end
   end
 
-  describe 'checkout#create_payment_source' do
+  describe 'checkout#create_payment' do
     let(:params) do
       {
         payment_method_id: payment_method.id,
@@ -594,79 +594,71 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
         year: '2021'
       }
     end
-    let(:execute) { post '/api/v2/storefront/checkout/create_payment_source', headers: headers, params: params }
+    let(:execute) { post '/api/v2/storefront/checkout/create_payment', headers: headers, params: params }
     let!(:payment_method) { create(:credit_card_payment_method, stores: [store]) }
     let(:payment_source) { payment_method.payment_source_class.last }
+    let(:payment) { order.payments.last }
 
-    shared_examples 'creates payment source' do
+    shared_examples 'creates a payment' do
       before { execute }
 
       it_behaves_like 'returns 201 HTTP status'
 
       it 'returns valid payment source JSON' do
         expect(json_response['data']).not_to be_empty
-        expect(json_response['data']).to have_id(payment_source.id.to_s)
-        expect(json_response['data']).to have_type(payment_method.payment_source_class.json_api_type)
-        expect(json_response['data']).to have_attribute(:cc_type).with_value(payment_source.cc_type)
-        expect(json_response['data']).to have_attribute(:last_digits).with_value(payment_source.last_digits)
-        expect(json_response['data']).to have_attribute(:month).with_value(payment_source.month)
-        expect(json_response['data']).to have_attribute(:year).with_value(payment_source.year)
-        expect(json_response['data']).to have_attribute(:name).with_value(payment_source.name)
-        expect(json_response['data']).to have_attribute(:default).with_value(payment_source.default)
+        expect(json_response['data']).to have_id(payment.id.to_s)
+        expect(json_response['data']).to have_type('payment')
+        expect(json_response['data']).to have_relationship(:payment_method)
       end
+
+      it 'creates new payment record' do
+        expect { change(order.payments, :count).by(1) }
+      end
+    end
+
+    shared_examples 'creates a payment source' do
+      before { execute }
 
       it 'creates new payment source record' do
         expect { change(payment_method.payment_source_class, :count).by(1) }
-      end
-
-      context 'handles errors' do
-        context 'payment method missing' do
-          let(:params) do
-            {
-              gateway_payment_profile_id: '12345',
-              cc_type: 'visa',
-              last_digits: '1111',
-              name: 'John',
-              month: '12',
-              year: '2021'
-            }
-          end
-
-          it 'returns error when payment method is missing' do 
-            expect { execute }.to change(payment_method.payment_source_class, :count).by(0)
-            expect(json_response['error']).to eq('payment_method_not_found')
-          end
-        end
-
-        context 'invalid attributes' do
-          let(:params) do
-            {
-              payment_method_id: payment_method.id
-            }
-          end
-
-          it 'returns error when payment method is missing' do
-            expect { execute }.to change(payment_method.payment_source_class, :count).by(0)
-            expect(json_response['errors']).not_to be_empty
-          end
-        end
       end
     end
 
     context 'as a guest user' do
       include_context 'creates guest order with guest token'
 
-      it_behaves_like 'creates payment source'
+      it_behaves_like 'creates a payment'
+      it_behaves_like 'creates a payment source'
     end
 
     context 'as a signed in user' do
       include_context 'order with a physical line item'
 
-      it_behaves_like 'creates payment source'
+      context 'new payment source' do
+        it_behaves_like 'creates a payment'
+        it_behaves_like 'creates a payment source'
 
-      it 'assigns new payment source to the signed in user' do
-        expect { execute }.to change(user.credit_cards, :count).by(1)
-        expect(payment_source.user).to eq(user)
+        it 'assigns new payment source to the signed in user' do
+          expect { execute }.to change(user.credit_cards, :count).by(1)
+          expect(payment_source.user).to eq(user)
+        end
+      end
+
+      context 'existing payment source' do
+        let!(:payment_source) { create(:credit_card, user: user, payment_method: payment_method) }
+
+        let(:params) do
+          {
+            payment_method_id: payment_method.id,
+            source_id: payment_source.id
+          }
+        end
+
+        it_behaves_like 'creates a payment'
+
+        it 'does not create new payment source record' do
+          expect { execute }.not_to change(payment_method.payment_source_class, :count)
+        end
       end
     end
   end

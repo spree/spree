@@ -44,29 +44,15 @@ module Spree
             render_order(result)
           end
 
-          def create_payment_source
-            payment_method = spree_current_order.available_payment_methods.find { |pm| pm.id.to_s == params[:payment_method_id]&.to_s }
-
-            source_attributes = params.permit(
-              :payment_method_id,
-              :gateway_payment_profile_id,
-              :gateway_customer_profile_id,
-              :last_digits,
-              :month,
-              :year,
-              :name
-            )
-
-            result = create_payment_source_service.call(
-              payment_method: payment_method,
-              source_attributes: source_attributes,
+          def create_payment
+            result = create_payment_service.call(
+              order: spree_current_order,
+              params: params,
               user: spree_current_user
             )
 
             if result.success?
-              render_serialized_payload(201) do
-                payment_source_serializer(payment_method).new(result.value).serializable_hash
-              end
+              render_serialized_payload(201) { payment_serializer.new(result.value).serializable_hash }
             else
               render_error_payload(result.error)
             end
@@ -142,12 +128,16 @@ module Spree
             Spree::Api::Dependencies.storefront_checkout_get_shipping_rates_service.constantize
           end
 
-          def create_payment_source_service
-            Spree::Api::Dependencies.storefront_wallet_create_payment_source_service.constantize
-          end
-
           def shipping_rates_serializer
             Spree::Api::Dependencies.storefront_shipment_serializer.constantize
+          end
+
+          def create_payment_service
+            Spree::Api::Dependencies.storefront_payment_create_service.constantize
+          end
+
+          def payment_serializer
+            Spree::Api::Dependencies.storefront_payment_serializer.constantize
           end
 
           def serialize_payment_methods(payment_methods)
@@ -160,11 +150,6 @@ module Spree
               params: serializer_params,
               include: [:shipping_rates, :stock_location]
             ).serializable_hash
-          end
-
-          def payment_source_serializer(payment_method)
-            serializer_base_name = payment_method.payment_source_class.to_s.sub('Spree::', '')
-            "Spree::V2::Storefront::#{serializer_base_name}Serializer".constantize
           end
         end
       end
