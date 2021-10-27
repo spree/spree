@@ -47,10 +47,20 @@ module Spree
           def create_payment_source
             payment_method = spree_current_order.available_payment_methods.find { |pm| pm.id.to_s == params[:payment_method_id]&.to_s }
 
+            source_attributes = params.permit(
+              :payment_method_id,
+              :gateway_payment_profile_id,
+              :gateway_customer_profile_id,
+              :last_digits,
+              :month,
+              :year,
+              :name
+            )
+
             result = create_payment_source_service.call(
               payment_method: payment_method,
-              user: spree_current_user,
-              params: params
+              source_attributes: source_attributes,
+              user: spree_current_user
             )
 
             if result.success?
