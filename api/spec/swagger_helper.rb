@@ -58,6 +58,7 @@ RSpec.configure do |config|
         { name: 'Promotion Categories' },
         { name: 'Shipments' },
         { name: 'Shipping Categories' },
+        { name: 'Shipping Methods' },
         { name: 'Taxons' },
         { name: 'Users' },
         { name: 'Webhook Subscribers' },
@@ -302,6 +303,36 @@ RSpec.configure do |config|
               name: { type: :string, example: 'Another Category' },
             },
             required: %w[name],
+            'x-internal': true
+          },
+          shipping_method_params: {
+            type: :object,
+            properties: {
+              name: { type: :string, example: 'DHL Express' },
+              admin_name: { type: :string, example: 'DHL Area Code D' },
+              code: { type: :string, example: 'DHL-A-D' },
+              tracking_url: { type: :string, example: 'dhlexpress.com?tracking=' },
+              display_on: { type: :string, example: 'both', enum: ['both', 'back_end', 'front_end'] },
+              tax_category_id: { type: :string, example: '1' },
+              shipping_category_ids: {
+                type: :array,
+                items: {
+                  allOf: [
+                    { type: :string, example: '2' }
+                  ]
+                }
+              },
+              calculator_attributes: { '$ref': '#/components/schemas/shipping_calculator_params' },
+            },
+            required: %w[name display_on calculator_attributes],
+            'x-internal': true
+          },
+          shipping_calculator_params: {
+            type: :object,
+            properties: {
+              type: { type: :string, example: 'Spree::Calculator::Shipping::FlatPercentItemTotal', enum: ['Spree::Calculator::Shipping::DigitalDelivery', 'Spree::Calculator::Shipping::FlatPercentItemTotal', 'Spree::Calculator::Shipping::FlatRate', 'Spree::Calculator::Shipping::FlexiRate', 'Spree::Calculator::Shipping::PerItem', 'Spree::Calculator::Shipping::PriceSack'] }
+            },
+            required: %w[type],
             'x-internal': true
           },
           wishlist_params: {
