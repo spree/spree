@@ -1,6 +1,8 @@
 module Spree
   module Webhooks
     class Subscriber < Spree::Webhooks::Base
+      has_many :events, inverse_of: :subscriber
+
       validates :url, 'spree/url': true, presence: true
 
       validate :check_uri_path

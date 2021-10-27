@@ -36,6 +36,7 @@ module Spree
           Rails.logger.public_send(log_level, msg)
           Spree::Webhooks::Event.create(
             execution_time: execution_time,
+            name: event,
             request_errors: msg,
             response_code: response_code,
             subscriber_id: id,
