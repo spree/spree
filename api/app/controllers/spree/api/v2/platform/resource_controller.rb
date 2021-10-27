@@ -14,6 +14,7 @@ module Spree
 
           def create
             resource = model_class.new(permitted_resource_params)
+
             ensure_current_store(resource)
 
             if resource.save
@@ -26,7 +27,6 @@ module Spree
           def update
             if resource.update(permitted_resource_params)
               ensure_current_store(resource)
-
               render_serialized_payload { serialize_resource(resource) }
             else
               render_error_payload(resource.errors)
