@@ -145,6 +145,7 @@ Spree::Core::Engine.add_routes do
           patch :next
           patch :advance
           patch :complete
+          post :create_payment_source
           post :add_store_credit
           post :remove_store_credit
           get :payment_methods

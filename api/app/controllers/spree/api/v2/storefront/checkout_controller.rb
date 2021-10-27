@@ -44,6 +44,31 @@ module Spree
             render_order(result)
           end
 
+          def create_payment_source
+            source_attributes = params.require(:source).permit(
+              :payment_method_id,
+              :gateway_payment_profile_id,
+              :last_digits,
+              :month,
+              :year,
+              :name
+            )
+
+            result = create_payment_source_service.call(
+              order: spree_current_order,
+              user: spree_current_user,
+              source_attributes: source_attributes
+            )
+
+            if result.success?
+              render_serialized_payload do
+                payment_source_serializer.new(result.value).serializable_hash
+              end
+            else
+              render_error(result.error)
+            end
+          end
+
           def add_store_credit
             spree_authorize! :update, spree_current_order, order_token
 
@@ -114,6 +139,10 @@ module Spree
             Spree::Api::Dependencies.storefront_checkout_get_shipping_rates_service.constantize
           end
 
+          def create_payment_source_service
+            Spree::Api::Dependencies.storefront_checkout_create_payment_source_service.constantize
+          end
+
           def shipping_rates_serializer
             Spree::Api::Dependencies.storefront_shipment_serializer.constantize
           end
@@ -128,6 +157,10 @@ module Spree
               params: serializer_params,
               include: [:shipping_rates, :stock_location]
             ).serializable_hash
+          end
+
+          def payment_source_serializer
+            Spree::Api::Dependencies.storefront_payment_source_serializer.constantize
           end
         end
       end

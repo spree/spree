@@ -581,6 +581,56 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
     end
   end
 
+  describe 'checkout#create_payment_source' do
+    let(:params) do
+      {
+        source: {
+          payment_method_id: payment_method.id,
+          gateway_payment_profile_id: '12345',
+          cc_type: 'visa',
+          last_digits: '1111',
+          name: 'John'
+        }
+      }
+    end
+    let(:execute) { post '/api/v2/storefront/checkout/create_payment_source', headers: headers, params: params }
+    let!(:payment_method) { create(:credit_card_payment_method, stores: [store]) }
+    let(:payment_source) { payment_method.source_class.last }
+
+    shared_examples 'creates payment source' do
+      before { execute }
+
+      it_behaves_like 'returns 201 HTTP status'
+
+      it 'returns valid payment source JSON' do
+        ap json_response
+        expect(json_response['data']).not_to be_empty
+        expect(json_response['data'][0]).to have_id(payment_source.id.to_s)
+        expect(json_response['data'][0]).to have_type(payment_method.source_class)
+        expect(json_response['data'][0]).to have_attribute(:cc_type).with_value(payment_source.cc_type)
+        expect(json_response['data'][0]).to have_attribute(:last_digits).with_value(payment_source.last_digits)
+        expect(json_response['data'][0]).to have_attribute(:month).with_value(payment_source.month)
+        expect(json_response['data'][0]).to have_attribute(:year).with_value(payment_source.year)
+        expect(json_response['data'][0]).to have_attribute(:name).with_value(payment_source.name)
+        expect(json_response['data'][0]).to have_attribute(:default).with_value(payment_source.default)
+      end
+
+      # it { expect { change { payment_method.source_class, :count }.by(1) } }
+    end
+
+    context 'as a guest user' do
+      include_context 'creates guest order with guest token'
+
+      it_behaves_like 'creates payment source'
+    end
+
+    context 'as a signed in user' do
+      include_context 'order with a physical line item'
+
+      it_behaves_like 'creates payment source'
+    end
+  end
+
   describe 'checkout#shipping_rates' do
     let(:execute) { get '/api/v2/storefront/checkout/shipping_rates', headers: headers }
 
