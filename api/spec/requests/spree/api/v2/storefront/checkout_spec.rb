@@ -23,11 +23,12 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
 
   let(:payment_source_attributes) do
     {
-      number: '4111111111111111',
+      gateway_payment_profile_id: 'BGS-123',
+      gateway_customer_profile_id: 'BGS-123',
       month: 1.month.from_now.month,
       year: 1.month.from_now.year,
-      verification_value: '123',
-      name: 'Spree Commerce'
+      name: 'Spree Commerce',
+      last_digits: '1111'
     }
   end
   let(:payment_params) do
