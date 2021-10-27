@@ -17,31 +17,37 @@ describe 'Shipping Methods API', swagger: true do
 
   let(:valid_create_param_value) do
     {
-      name: 'DHL Express Domestic',
-      display_on: 'both',
-      shipping_category_ids: [shipping_category.id.to_s],
-      admin_name: 'DHL Express- Zone A',
-      code: 'DDD',
-      tax_category_id: tax_category.id.to_s,
-      calculator_attributes: {
-        type: 'Spree::Calculator::Shipping::FlatRate'
+      shipping_method: {
+        name: 'DHL Express Domestic',
+        display_on: 'both',
+        shipping_category_ids: [shipping_category.id.to_s],
+        admin_name: 'DHL Express- Zone A',
+        code: 'DDD',
+        tax_category_id: tax_category.id.to_s,
+        calculator_attributes: {
+          type: 'Spree::Calculator::Shipping::FlatRate'
+        }
       }
     }
   end
 
   let(:valid_update_param_value) do
     {
-      name: 'FedEx Expedited',
-      calculator_attributes: {
-        type: 'Spree::Calculator::Shipping::FlatPercentItemTotal',
-        preferred_flat_percent: 23
+      shipping_method: {
+        name: 'FedEx Expedited',
+        calculator_attributes: {
+          type: 'Spree::Calculator::Shipping::FlatPercentItemTotal',
+          preferred_flat_percent: 23
+        }
       }
     }
   end
 
   let(:invalid_param_value) do
     {
-      name: ''
+      shipping_method: {
+        name: ''
+      }
     }
   end
 
