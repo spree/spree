@@ -45,27 +45,20 @@ module Spree
           end
 
           def create_payment_source
-            source_attributes = params.require(:source).permit(
-              :payment_method_id,
-              :gateway_payment_profile_id,
-              :last_digits,
-              :month,
-              :year,
-              :name
-            )
+            payment_method = spree_current_order.available_payment_methods.find { |pm| pm.id.to_s == params[:payment_method_id]&.to_s }
 
             result = create_payment_source_service.call(
-              order: spree_current_order,
+              payment_method: payment_method,
               user: spree_current_user,
-              source_attributes: source_attributes
+              params: params
             )
 
             if result.success?
-              render_serialized_payload do
-                payment_source_serializer.new(result.value).serializable_hash
+              render_serialized_payload(201) do
+                payment_source_serializer(payment_method).new(result.value).serializable_hash
               end
             else
-              render_error(result.error)
+              render_error_payload(result.error)
             end
           end
 
@@ -140,7 +133,7 @@ module Spree
           end
 
           def create_payment_source_service
-            Spree::Api::Dependencies.storefront_checkout_create_payment_source_service.constantize
+            Spree::Api::Dependencies.storefront_wallet_create_payment_source_service.constantize
           end
 
           def shipping_rates_serializer
@@ -159,8 +152,9 @@ module Spree
             ).serializable_hash
           end
 
-          def payment_source_serializer
-            Spree::Api::Dependencies.storefront_payment_source_serializer.constantize
+          def payment_source_serializer(payment_method)
+            serializer_base_name = payment_method.payment_source_class.to_s.sub('Spree::', '')
+            "Spree::V2::Storefront::#{serializer_base_name}Serializer".constantize
           end
         end
       end
