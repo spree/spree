@@ -1,20 +1,23 @@
 module Spree
   module Webhooks
     class Subscriber < Spree::Webhooks::Base
+      has_many :events, inverse_of: :subscriber
+
       validates :url, 'spree/url': true, presence: true
 
       validate :check_uri_path
 
       scope :active, -> { where(active: true) }
 
-      def self.urls_for(event)
-        where_condition = case ActiveRecord::Base.connection.adapter_name
-                          when 'Mysql2'
-                            ["('*' MEMBER OF(subscriptions) OR ? MEMBER OF(subscriptions))", event]
-                          when 'PostgreSQL'
-                            ["subscriptions @> '[\"*\"]' OR subscriptions @> ?", [event].to_json]
-                          end
-        where(where_condition).pluck(:url)
+      def self.with_urls_for(event)
+        where(
+          case ActiveRecord::Base.connection.adapter_name
+          when 'Mysql2'
+            ["('*' MEMBER OF(subscriptions) OR ? MEMBER OF(subscriptions))", event]
+          when 'PostgreSQL'
+            ["subscriptions @> '[\"*\"]' OR subscriptions @> ?", [event].to_json]
+          end
+        )
       end
 
       private
