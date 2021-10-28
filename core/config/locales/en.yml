@@ -1178,7 +1178,7 @@ en:
     meta_title: Meta Title
     metadata: Metadata
     mutable: Mutable
-    must_have_one_store: Must have one store
+    must_have_one_store: The resource must belong to a store.
     min: 'Min'
     minimal_amount: Minimal Amount
     missing_return_authorization: ! 'Missing Return Authorization for %{item_name}.'
