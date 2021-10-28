@@ -9,6 +9,10 @@ module Spree
             def model_class
               Spree::Webhooks::Event
             end
+
+            def scope_includes
+              %i[subscriber]
+            end
           end
         end
       end
