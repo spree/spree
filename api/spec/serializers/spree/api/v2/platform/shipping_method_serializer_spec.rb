@@ -24,7 +24,6 @@ describe Spree::Api::V2::Platform::ShippingMethodSerializer do
             admin_name: resource.admin_name,
             display_on: resource.display_on,
             tracking_url: resource.tracking_url,
-            tax_category_id: resource.tax_category_id,
             deleted_at: resource.deleted_at,
             created_at: resource.created_at,
             updated_at: resource.updated_at
