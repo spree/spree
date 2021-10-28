@@ -12,17 +12,17 @@ module Spree
           end
 
           def spree_permitted_attributes
-            preffered_attributes = []
+            preferred_attributes = []
 
             if action_name == 'update'
               resource.defined_preferences.each do |preference|
-                preffered_attributes << "preferred_#{preference}".to_sym
+                preferred_attributes << "preferred_#{preference}".to_sym
               end
             end
 
             Spree::PaymentMethod.json_api_permitted_attributes + [
               { store_ids: [] }
-            ] + preffered_attributes
+            ] + preferred_attributes
           end
         end
       end
