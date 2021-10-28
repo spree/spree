@@ -12,10 +12,6 @@ module Spree
           def scope_includes
             [:order, :adjustable]
           end
-
-          def resource_serializer
-            Spree::Api::V2::Platform::AdjustmentSerializer
-          end
         end
       end
     end
