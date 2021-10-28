@@ -586,12 +586,14 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
     let(:params) do
       {
         payment_method_id: payment_method.id,
-        gateway_payment_profile_id: '12345',
-        cc_type: 'visa',
-        last_digits: '1111',
-        name: 'John',
-        month: '12',
-        year: '2021'
+        source_attributes: {
+          gateway_payment_profile_id: '12345',
+          cc_type: 'visa',
+          last_digits: '1111',
+          name: 'John',
+          month: '12',
+          year: '2021'
+        }
       }
     end
     let(:execute) { post '/api/v2/storefront/checkout/create_payment', headers: headers, params: params }
