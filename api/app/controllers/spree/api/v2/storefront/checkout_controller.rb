@@ -45,11 +45,7 @@ module Spree
           end
 
           def create_payment
-            result = create_payment_service.call(
-              order: spree_current_order,
-              params: params,
-              user: spree_current_user
-            )
+            result = create_payment_service.call(order: spree_current_order, params: params)
 
             if result.success?
               render_serialized_payload(201) { payment_serializer.new(result.value).serializable_hash }
