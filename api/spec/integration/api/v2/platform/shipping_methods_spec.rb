@@ -22,7 +22,7 @@ describe 'Shipping Methods API', swagger: true do
         display_on: 'both',
         shipping_category_ids: [shipping_category.id.to_s],
         admin_name: 'DHL Express- Zone A',
-        code: 'DDD',
+        code: 'DXX',
         tax_category_id: tax_category.id.to_s,
         calculator_attributes: {
           type: 'Spree::Calculator::Shipping::FlatRate'

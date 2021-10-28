@@ -1,34 +1,50 @@
 require 'swagger_helper'
 
-describe 'CMS Section API', swagger: true do
+describe 'Payment Methods API', swagger: true do
   include_context 'Platform API v2'
 
-  resource_name = 'CMS Section'
+  resource_name = 'Payment Method'
   options = {
-    include_example: 'product',
-    filter_examples: [{ name: 'filter[name_eq]', example: 'Hero' }]
+    include_example: 'stores',
+    filter_examples: [{ name: 'filter[name]', example: 'Stripe' }]
   }
 
   let!(:store) { Spree::Store.default }
-  let!(:product) { create(:product) }
-  let!(:cms_page) { create(:cms_feature_page, store: store) }
-  let!(:cms_hero_section) { create(:cms_hero_image_section, cms_page: cms_page) }
-  let!(:cms_image_gallery_section) { create(:cms_image_gallery_section, cms_page: cms_page) }
-  let!(:cms_featured_article_section) { create(:cms_featured_article_section, cms_page: cms_page) }
+  let!(:store_two) { create(:store) }
 
-  let(:id) { create(:cms_hero_image_section, cms_page: cms_page, linked_resource: product).id }
-  let(:records_list) { create_list(:cms_hero_image_section, 2, cms_page: cms_page, linked_resource: product) }
+  let!(:payment_method) { create(:payment_method, stores: [store]) }
+  let!(:payment_method_two) { create(:payment_method, stores: [store]) }
+  let!(:payment_method_three) { create(:payment_method, stores: [store]) }
 
-  let(:valid_create_param_value) { build(:cms_hero_image_section, cms_page: cms_page, linked_resource: product).attributes }
+  let(:id) { create(:credit_card_payment_method, stores: [store]).id }
+  let(:records_list) { create_list(:credit_card_payment_method, 2, stores: [store]) }
+
+  let(:valid_create_param_value) do
+    {
+      payment_method: {
+        name: 'API Bogus',
+        type: 'Spree::Gateway::Bogus',
+        display_on: 'both',
+        store_ids: [store.id.to_s, store_two.id.to_s]
+      }
+    }
+  end
+
   let(:valid_update_param_value) do
     {
-      name: 'Super Hero'
+      payment_method: {
+        preferred_test_mode: false,
+        preferred_dummy_key: 'UPDATED-DUMMY-KEY-123',
+        preferred_server: 'production'
+      }
     }
   end
 
   let(:invalid_param_value) do
     {
-      name: ''
+      payment_method: {
+        name: ''
+      }
     }
   end
 

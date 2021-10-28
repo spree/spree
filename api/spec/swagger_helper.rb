@@ -55,6 +55,7 @@ RSpec.configure do |config|
         { name: 'Option Values' },
         { name: 'Orders' },
         { name: 'Payments' },
+        { name: 'Payment Methods' },
         { name: 'Promotion Categories' },
         { name: 'Shipments' },
         { name: 'Shipping Categories' },
@@ -305,13 +306,39 @@ RSpec.configure do |config|
             required: %w[name],
             'x-internal': true
           },
-
+          payment_method_params: {
+            type: :object,
+            properties: {
+              payment_method: {
+                type: :object,
+                required: %w[name],
+                properties: {
+                  name: { type: :string, example: 'Test Payment Method' },
+                  active: { type: :boolean },
+                  auto_capture: { type: :boolean },
+                  description: { type: :string, example: 'This is a test payment method' },
+                  type: { type: :string, example: 'Spree::Gateway::Bogus', enum: ['Spree::Gateway::Bogus', 'Spree::PaymentMethod::Check'] },
+                  display_on: { type: :string, example: 'both', enum: ['both', 'back_end', 'front_end'] },
+                  store_ids: {
+                    type: :array,
+                    items: {
+                      allOf: [
+                        { type: :string, example: '2' }
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            required: %w[payment_method],
+            'x-internal': true
+          },
           shipping_method_params: {
             type: :object,
             properties: {
               shipping_method: {
                 type: :object,
-                required: %w[name display_on calculator_attributes],
+                required: %w[name display_on shipping_category_ids],
                 properties: {
                   name: { type: :string, example: 'DHL Express' },
                   admin_name: { type: :string, example: 'DHL Area Code D' },
@@ -393,7 +420,7 @@ RSpec.configure do |config|
             required: %w[name cms_page_id],
             'x-internal': true
           },
-          cms_section_reposition_params: {
+          reposition_params: {
             type: :object,
             properties: {
               new_position_idx: { type: :integer }

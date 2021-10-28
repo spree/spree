@@ -31,6 +31,8 @@ en:
         digitals:
           missing_file: 'Missing Digital Item: attachment'
           unauthorized: Error, you are not authorized to access this asset
+        generic_errors:
+          could_not_reposition: Error, could not reposition.
         wishlist:
           errors:
             the_wishlist_could_not_be_destroyed: The wishlist could not be destroyed.
