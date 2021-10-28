@@ -4,7 +4,7 @@ module Spree
       prepend Spree::ServiceModule::Base
 
       def call(payment_method:, params: {}, user: nil)
-        return failure(:missing_attributes) if params.nil?
+        return failure(nil, :missing_attributes) if params.nil?
 
         source_attributes = {
           user_id: user&.id,

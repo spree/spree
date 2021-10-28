@@ -14,10 +14,14 @@ module Spree
       protected
 
       def prepare_payment_attributes(order:, params:)
+        payment_method = order.available_payment_methods.find { |pm| pm.id.to_s == params[:payment_method_id]&.to_s }
+
         payment_attributes = {
           amount: params[:amount] || order.total - order.payment_total,
-          payment_method: order.available_payment_methods.find { |pm| pm.id.to_s == params[:payment_method_id]&.to_s }
+          payment_method: payment_method
         }
+
+        return failure(nil, :payment_method_not_found) if payment_method.blank?
 
         success(order: order, params: params, payment_attributes: payment_attributes)
       end
@@ -27,17 +31,17 @@ module Spree
 
         if payment_method&.source_required?
           if order.user.present? && params[:source_id].present?
-            source = payment_method.payment_source_class.find_by(id: params[:source_id])
+            source = payment_method.payment_source_class.find_by(id: params[:source_id], user: order.user)
 
-            return failure(:source_not_found) if source.nil?
+            return failure(nil, :source_not_found) if source.nil?
           else
-            result = Spree::Wallet::CreatePaymentSource.call(
+            result = Wallet::CreatePaymentSource.call(
               payment_method: payment_method,
               params: params.delete(:source_attributes),
               user: order.user
             )
 
-            return failure(result.error) if result.failure?
+            return failure(nil, result.error.value) if result.failure?
 
             source = result.value
           end
@@ -50,6 +54,7 @@ module Spree
 
       def save_payment(order:, payment_attributes:)
         payment = order.payments.new(payment_attributes)
+
         if payment.save
           success(payment)
         else

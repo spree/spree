@@ -53,5 +53,28 @@ module Spree
         end
       end
     end
+
+    context 'missing attributes' do
+      let(:params) { nil }
+
+      it { expect(execute.success?).to eq(false) }
+      it { expect(execute.error.to_s).to eq('missing_attributes') }
+    end
+
+    context 'invalid attributes' do
+      let(:params) do
+        {
+          gateway_payment_profile_id: '',
+          cc_type: 'visa',
+          last_digits: '',
+          name: '',
+          month: '',
+          year: ''
+        }
+      end
+
+      it { expect(execute.success?).to eq(false) }
+      it { expect(execute.error.value).to be_kind_of(ActiveModel::Errors) }
+    end
   end
 end
