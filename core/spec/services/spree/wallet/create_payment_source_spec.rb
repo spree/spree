@@ -36,7 +36,7 @@ module Spree
         end
 
         it 'assigns payment method' do
-          it { expect(payment_source.payment_method).to eq(payment_method) }
+          expect(payment_source.payment_method).to eq(payment_method)
         end
       end
 
