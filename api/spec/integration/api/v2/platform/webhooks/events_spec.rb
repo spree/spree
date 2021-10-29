@@ -13,7 +13,7 @@ describe 'WebhooksEvents API', swagger: true do
                       { name: 'filter[success_eq]', example: true },
                       { name: 'filter[url_cont]', example: 'mysite' }]
   }
-  
+
   let(:records_list) { create_list(:event, 2, :successful) }
   let(:event) { build(:event, :successful) }
 
