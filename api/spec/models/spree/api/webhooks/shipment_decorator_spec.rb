@@ -19,10 +19,44 @@ describe Spree::Shipment do
 
     let(:queue_requests) { instance_double(Spree::Webhooks::Subscribers::QueueRequests) }
 
-    it 'executes QueueRequests.call with a shipment.shipped event and {} body after invoking ship' do
+    it 'emits a shipment.shipped event' do
       shipment.cancel # previous state that allows the object be shipped
       shipment.ship
       expect(queue_requests).to have_received(:call).with(event: 'shipment.shipped', body: body).once
+    end
+
+    context 'emitting order.shipped' do
+      let(:body) do
+        order.reload
+        Spree::Api::V2::Platform::OrderSerializer.new(order).serializable_hash.to_json
+      end
+      let(:order) { create(:order) }
+      let!(:shipments) do
+        create_list(
+          :shipment, 2,
+          order: order,
+          shipping_methods: [create(:shipping_method)],
+          stock_location: build(:stock_location)
+        )
+      end
+
+      context 'when all order shipments were shipped' do
+        it 'emits an order.shipped event' do
+          shipments[0].cancel
+          shipments[0].ship
+          shipments[1].cancel
+          shipments[1].ship
+          expect(queue_requests).to have_received(:call).with(event: 'order.shipped', body: body).once
+        end
+      end
+
+      context 'when not all order shipments were shipped' do
+        it 'does not emits an order.shipped event' do
+          shipments[0].cancel
+          shipments[0].ship
+          expect(queue_requests).not_to have_received(:call).with(event: 'order.shipped', body: body)
+        end
+      end
     end
   end
 end
