@@ -4,8 +4,10 @@ module Spree
       class MakeRequestJob < Spree::BaseJob
         queue_as :spree_webhooks
 
-        def perform(body, event, url)
-          Spree::Webhooks::Subscribers::HandleRequest.new(body: body, event: event, url: url).call
+        def perform(body, event, subscriber)
+          Spree::Webhooks::Subscribers::HandleRequest.new(
+            body: body, event: event, subscriber: subscriber
+          ).call
         end
       end
     end

@@ -23,8 +23,8 @@ describe Spree::Webhooks::Subscriber do
     end
   end
 
-  describe '.urls_for' do
-    subject { described_class.urls_for(event) }
+  describe '.with_urls_for' do
+    subject { described_class.with_urls_for(event) }
 
     let(:event) { 'order.placed' }
     let(:subscriptions) { ['order.placed'] }
@@ -32,13 +32,19 @@ describe Spree::Webhooks::Subscriber do
     let(:url) { 'https://url1.com/' }
 
     context 'with subscriptions for the given event' do
-      it { expect(subject).to eq([url]) }
+      it { expect(subject).to eq([subscriber]) }
     end
 
     context 'without subscriptions for the given event, but "*"' do
       let(:subscriptions) { ['*'] }
 
-      it { expect(subject).to eq([url]) }
+      it { expect(subject).to eq([subscriber]) }
+    end
+
+    context 'without subscriptions for the given event' do
+      let(:subscriptions) { ['order.updated'] }
+
+      it { expect(subject).to be_empty }
     end
   end
 end

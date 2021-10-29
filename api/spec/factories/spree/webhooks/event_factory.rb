@@ -1,0 +1,15 @@
+FactoryBot.define do
+  factory :webhook_event, aliases: [:event], class: Spree::Webhooks::Event do
+    subscriber
+
+    execution_time { rand(1..99_999) }
+    name { 'order.canceled' }
+    request_errors { '' }
+    sequence(:url) { |n| "https://www.url#{n}.com/" }
+
+    trait :successful do
+      response_code { '200' }
+      success { true }
+    end
+  end
+end
