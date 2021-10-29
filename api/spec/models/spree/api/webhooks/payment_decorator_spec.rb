@@ -56,7 +56,7 @@ describe Spree::Payment do
     let(:body) { Spree::Api::V2::Platform::OrderSerializer.new(order).serializable_hash.to_json }
     let(:order) { payment.order }
     let!(:another_payment) { create(:payment, order: order) }
-    let!(:invalid_payment) { create(:payment, order: order, avs_response: 'Y', cvv_response_code: 'M', cvv_response_message: '', state: 'invalid') }
+    let!(:invalid_payment) { create(:payment, order: order, state: 'invalid') }
 
     context 'when all valid order payments are moved to complete' do
       shared_examples 'emits an order.paid event' do
