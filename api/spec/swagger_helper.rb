@@ -268,13 +268,19 @@ RSpec.configure do |config|
           user_params: {
             type: :object,
             properties: {
-              email: { type: :string },
-              password: { type: :string },
-              password_confirmation: { type: :string },
-              ship_address_id: { type: :string },
-              bill_address_id: { type: :string },
+              user: {
+                type: :object,
+                required: %w[email password password_confirmation],
+                properties: {
+                  email: { type: :string },
+                  password: { type: :string },
+                  password_confirmation: { type: :string },
+                  ship_address_id: { type: :string },
+                  bill_address_id: { type: :string },
+                }
+              }
             },
-            required: %w[email password password_confirmation],
+            required: %w[user],
             'x-internal': true
           },
           taxon_params: {
