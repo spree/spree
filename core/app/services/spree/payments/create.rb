@@ -17,7 +17,7 @@ module Spree
         payment_method = order.available_payment_methods.find { |pm| pm.id.to_s == params[:payment_method_id]&.to_s }
 
         payment_attributes = {
-          amount: params[:amount] || order.total - order.payment_total,
+          amount: params[:amount] || order.order_total_after_store_credit,
           payment_method: payment_method
         }
 
