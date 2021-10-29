@@ -40,6 +40,19 @@ describe 'Platform API v2 Webhooks Events spec', type: :request do
         end
       end
 
+      context 'by request_errors' do
+        let!(:event_1) { create(:event, :failed, request_errors: "[SPREE WEBHOOKS] 'order.canceled' can not make a request to 'http://google.com/'") }
+        let!(:event_2) { create(:event, :successful) }
+
+        before { get "/api/v2/platform/webhooks/events?filter[request_errors_cont]=google", headers: bearer_token }
+
+        it 'returns only the event matching the given name' do
+          expect(json_response['data'].count).to eq(1)
+          expect(data_ids).not_to include(event_2.id)
+          expect(data_ids).to match_array([event_1.id.to_s])
+        end
+      end
+
       context 'by response_code' do
         let!(:event_1) { create(:event, response_code: response_code_filter) }
         let!(:event_2) { create(:event, response_code: '301') }

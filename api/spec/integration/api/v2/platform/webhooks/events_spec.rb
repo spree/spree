@@ -7,12 +7,11 @@ describe 'WebhooksEvents API', swagger: true do
   resource_name = 'Webhook Event'
   options = {
     include_example: 'subscriber',
-    filter_examples: [{ name: 'filter[execution_time]', example: 1_234 },
-                      { name: 'filter[name]', example: 'order.canceled' },
-                      { name: 'filter[request_errors]', example: "[SPREE WEBHOOKS] 'order.canceled' can not make a request to 'http://google.com/'" },
-                      { name: 'filter[response_code]', example: '200' },
-                      { name: 'filter[success]', example: true },
-                      { name: 'filter[url]', example: 'http://google.com/' }]
+    filter_examples: [{ name: 'filter[name_eq]', example: 'order.canceled' },
+                      { name: 'filter[request_errors_cont]', example: 'google' },
+                      { name: 'filter[response_code_eq]', example: '200' },
+                      { name: 'filter[success_eq]', example: true },
+                      { name: 'filter[url_eq]', example: 'http://google.com/' }]
   }
   
   let(:records_list) { create_list(:event, 2, :successful) }
