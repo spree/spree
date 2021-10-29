@@ -11,7 +11,7 @@ describe 'WebhooksEvents API', swagger: true do
                       { name: 'filter[request_errors_cont]', example: 'google' },
                       { name: 'filter[response_code_eq]', example: '200' },
                       { name: 'filter[success_eq]', example: true },
-                      { name: 'filter[url_eq]', example: 'http://google.com/' }]
+                      { name: 'filter[url_cont]', example: 'mysite' }]
   }
   
   let(:records_list) { create_list(:event, 2, :successful) }

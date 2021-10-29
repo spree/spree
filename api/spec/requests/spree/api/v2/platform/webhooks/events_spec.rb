@@ -82,11 +82,11 @@ describe 'Platform API v2 Webhooks Events spec', type: :request do
       end
 
       context 'by url' do
-        let!(:event_1) { create(:event, url: url_filter) }
+        let!(:event_1) { create(:event, url: 'https://mysite.com/spree_webhooks') }
         let!(:event_2) { create(:event, url: 'http://localhost.com/') }
-        let(:url_filter) { 'http://google.com/' }
+        let(:url_filter) { 'mysite' }
 
-        before { get "/api/v2/platform/webhooks/events?filter[url_eq]=#{url_filter}", headers: bearer_token }
+        before { get "/api/v2/platform/webhooks/events?filter[url_cont]=#{url_filter}", headers: bearer_token }
 
         it 'returns only the event matching the given name' do
           expect(json_response['data'].count).to eq(1)
