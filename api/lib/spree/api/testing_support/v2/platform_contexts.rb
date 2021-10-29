@@ -1,6 +1,6 @@
 class String
   def articleize
-    if self.split.first == 'User'
+    if split.first == 'User'
       "a #{self}"
     else
       %w(a e i o u).include?(self[0].downcase) ? "an #{self}" : "a #{self}"
@@ -104,21 +104,21 @@ shared_examples 'records returned' do
 end
 
 shared_examples 'record created' do
-  response '201', 'record created' do
+  response '201', 'Record created' do
     schema '$ref' => '#/components/schemas/resource'
     run_test!
   end
 end
 
 shared_examples 'record updated' do
-  response '200', 'record updated' do
+  response '200', 'Record updated' do
     schema '$ref' => '#/components/schemas/resource'
     run_test!
   end
 end
 
 shared_examples 'invalid request' do |param_name|
-  response '422', 'invalid request' do
+  response '422', 'Invalid request' do
     let(param_name) { invalid_param_value }
     schema '$ref' => '#/components/schemas/validation_errors'
     run_test!
