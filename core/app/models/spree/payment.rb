@@ -98,6 +98,7 @@ module Spree
       event :complete do
         transition from: [:processing, :pending, :checkout], to: :completed
       end
+      after_transition to: :completed, do: :after_completed
       event :void do
         transition from: [:pending, :processing, :completed, :checkout], to: :void
       end
@@ -201,6 +202,10 @@ module Spree
     private
 
     def after_void
+      # this method is prepended in api/ to queue Webhooks requests
+    end
+
+    def after_completed
       # this method is prepended in api/ to queue Webhooks requests
     end
 
