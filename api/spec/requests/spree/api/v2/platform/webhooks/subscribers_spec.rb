@@ -6,7 +6,7 @@ describe 'Platform API v2 Webhooks Subscribers spec', type: :request do
 
   let(:bearer_token) { { 'Authorization' => valid_authorization } }
   let(:type) { 'subscriber' }
-  let(:url) { 'https://www.url.com/' }
+  let(:url) { 'https://www.mysite.com/spree_webhooks' }
 
   describe '#index' do
     context 'filtering' do
@@ -59,15 +59,14 @@ describe 'Platform API v2 Webhooks Subscribers spec', type: :request do
       context 'by url' do
         let!(:subscriber) { create(:subscriber, url: url) }
         let!(:another_subscriber) { create(:subscriber, url: 'http://localhost/') }
-        let(:subscribers_with_given_url) { Spree::Webhooks::Subscriber.where(url: url) }
 
-        before { get "/api/v2/platform/webhooks/subscribers?filter[url_eq]=#{url}", headers: bearer_token }
+        before { get "/api/v2/platform/webhooks/subscribers?filter[url_cont]=spree_webhooks", headers: bearer_token }
 
         context 'matching the given term' do
           it 'returns subscribers only for the given url' do
-            expect(json_response['data'].count).to eq(subscribers_with_given_url.count)
+            expect(json_response['data'].count).to eq(1)
             expect(data_ids).not_to include(another_subscriber.id)
-            expect(data_ids).to match_array(subscribers_with_given_url.ids.map(&:to_s))
+            expect(data_ids).to match_array([subscriber.id.to_s])
           end
         end
       end
