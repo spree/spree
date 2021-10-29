@@ -7,9 +7,9 @@ describe 'WebhooksSubscribers API', swagger: true do
   resource_name = 'Webhooks Subscriber'
   options = {
     include_examples: 'events',
-    filter_examples: [{ name: 'filter[active]', example: true },
-                      { name: 'filter[subscriptions]', example: 'order.canceled' },
-                      { name: 'filter[url]', example: 'http://google.com/' }]
+    filter_examples: [{ name: 'filter[active_eq]', example: true },
+                      { name: 'filter[subscriptions_eq]', example: 'order.canceled' },
+                      { name: 'filter[url_eq]', example: 'http://google.com/' }]
   }
   
   let(:id) { subscriber.tap(&:save).id }
