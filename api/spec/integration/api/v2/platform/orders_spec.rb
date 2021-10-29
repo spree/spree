@@ -159,7 +159,10 @@ describe 'Orders API', swagger: true do
       parameter name: :id, in: :path, type: :string
       json_api_include_parameter(options[:include_example])
 
-      it_behaves_like 'record updated'
+      response '200', 'Record approved' do
+        schema '$ref' => '#/components/schemas/resource'
+        run_test!
+      end
       it_behaves_like 'record not found'
       it_behaves_like 'authentication failed'
     end
