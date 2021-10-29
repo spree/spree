@@ -65,7 +65,7 @@ describe 'Orders API', swagger: true do
       security [ bearer_auth: [] ]
       description "Creates #{resource_name.articleize}"
       operationId "create-#{resource_name.parameterize.to_sym}"
-      parameter name: param_name, in: :body, schema: { '$ref' => "#/components/schemas/#{param_name}_params" }
+      parameter name: param_name, in: :body, schema: { '$ref' => "#/components/schemas/create_#{param_name}_params" }
       json_api_include_parameter(options[:include_example])
 
       let(param_name) { valid_create_param_value }
