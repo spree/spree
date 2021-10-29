@@ -48,7 +48,7 @@ module Spree
             result = create_payment_service.call(order: spree_current_order, params: params)
 
             if result.success?
-              render_serialized_payload(201) { payment_serializer.new(result.value).serializable_hash }
+              render_serialized_payload(201) { serialize_resource(spree_current_order.reload) }
             else
               render_error_payload(result.error)
             end
@@ -130,10 +130,6 @@ module Spree
 
           def create_payment_service
             Spree::Api::Dependencies.storefront_payment_create_service.constantize
-          end
-
-          def payment_serializer
-            Spree::Api::Dependencies.storefront_payment_serializer.constantize
           end
 
           def serialize_payment_methods(payment_methods)

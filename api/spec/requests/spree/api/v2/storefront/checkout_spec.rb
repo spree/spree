@@ -586,6 +586,7 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
     let(:params) do
       {
         payment_method_id: payment_method.id,
+        amount: order.total,
         source_attributes: {
           gateway_payment_profile_id: '12345',
           cc_type: 'visa',
@@ -596,7 +597,7 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
         }
       }
     end
-    let(:execute) { post '/api/v2/storefront/checkout/create_payment', headers: headers, params: params }
+    let(:execute) { post '/api/v2/storefront/checkout/create_payment?include=payments', headers: headers, params: params }
     let!(:payment_method) { create(:credit_card_payment_method, stores: [store]) }
     let(:payment_source) { payment_method.payment_source_class.last }
     let(:payment) { order.payments.last }
@@ -606,11 +607,13 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
 
       it_behaves_like 'returns 201 HTTP status'
 
-      it 'returns valid payment source JSON' do
-        expect(json_response['data']).not_to be_empty
-        expect(json_response['data']).to have_id(payment.id.to_s)
-        expect(json_response['data']).to have_type('payment')
-        expect(json_response['data']).to have_relationship(:payment_method)
+      it 'returns new payment' do
+        expect(json_response['data']).to have_relationship(:payments).with_data([{ 'id' => payment.id.to_s, 'type' => 'payment' }])
+        expect(json_response['included'][0]).to have_id(payment.id.to_s)
+        expect(json_response['included'][0]).to have_type('payment')
+        expect(json_response['included'][0]).to have_attribute(:amount).with_value(order.total.to_s)
+        expect(json_response['included'][0]).to have_jsonapi_attributes(:amount, :response_code, :number, :cvv_response_code, :cvv_response_message, :payment_method_id, :payment_method_name, :state)
+        expect(json_response['included'][0]).to have_relationship(:payment_method).with_data({ 'id' => payment_method.id.to_s, 'type' => 'payment_method' })
       end
 
       it 'creates new payment record' do
@@ -619,7 +622,19 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
     end
 
     shared_examples 'creates a payment source' do
+      let(:execute) { post '/api/v2/storefront/checkout/create_payment?include=payments.source', headers: headers, params: params }
+
       before { execute }
+
+      it 'returns new payment source' do
+        expect(json_response['included'][0]).to have_id(payment_source.id.to_s)
+        expect(json_response['included'][0]).to have_type('credit_card')
+        expect(json_response['included'][0]).to have_relationship(:payment_method).with_data({ 'id' => payment_method.id.to_s, 'type' => 'payment_method' })
+        expect(json_response['included'][0]).to have_attribute(:last_digits).with_value('1111')
+        expect(json_response['included'][0]).to have_attribute(:name).with_value('John')
+        expect(json_response['included'][0]).to have_attribute(:year).with_value(2021)
+        expect(json_response['included'][0]).to have_attribute(:month).with_value(12)
+      end
 
       it 'creates new payment source record' do
         expect { change(payment_method.payment_source_class, :count).by(1) }

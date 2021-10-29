@@ -7,6 +7,7 @@ module Spree
         return failure(nil, :missing_attributes) if params.nil?
 
         source_attributes = {
+          payment_method_id: payment_method.id,
           user_id: user&.id,
           gateway_payment_profile_id: params[:gateway_payment_profile_id],
           gateway_customer_profile_id: params[:gateway_customer_profile_id],

@@ -34,6 +34,10 @@ module Spree
         it 'returns newly created record in .value' do
           expect(execute.value).to be_kind_of(payment_method.payment_source_class)
         end
+
+        it 'assigns payment method' do
+          it { expect(payment_source.payment_method).to eq(payment_method) }
+        end
       end
 
       context 'with source attributes' do
