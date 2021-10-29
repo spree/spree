@@ -8,7 +8,6 @@ describe 'WebhooksSubscribers API', swagger: true do
   options = {
     include_examples: 'events',
     filter_examples: [{ name: 'filter[active_eq]', example: true },
-                      { name: 'filter[subscriptions_eq]', example: 'order.canceled' },
                       { name: 'filter[url_eq]', example: 'http://google.com/' }]
   }
   
