@@ -5,9 +5,10 @@ class CreateSpreeWebhooksEvents < ActiveRecord::Migration[5.2]
       t.string "name", null: false
       t.string "request_errors"
       t.string "response_code", index: true
-      t.belongs_to "subscriber", null: false
+      t.belongs_to "subscriber", null: false, index: true
       t.boolean "success", index: true
       t.string "url", null: false
+      t.timestamps
     end
   end
 end

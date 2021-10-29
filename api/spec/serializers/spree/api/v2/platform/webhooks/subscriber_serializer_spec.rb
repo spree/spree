@@ -5,7 +5,7 @@ describe Spree::Api::V2::Platform::Webhooks::SubscriberSerializer do
 
   subject { described_class.new(resource, params: serializer_params).serializable_hash }
 
-  let(:resource) { create(:subscriber) }
+  let(:resource) { create(type) }
   let(:type) { :subscriber }
 
   it do

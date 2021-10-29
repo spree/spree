@@ -4,8 +4,12 @@ require 'spec_helper'
 describe 'WebhooksSubscribers API', swagger: true do
   include_context 'Platform API v2'
 
-  resource_name = 'Webhook Subscriber'
-  options = {}
+  resource_name = 'Webhooks Subscriber'
+  options = {
+    include_examples: 'events',
+    filter_examples: [{ name: 'filter[active_eq]', example: true },
+                      { name: 'filter[url_cont]', example: 'mysite' }]
+  }
   
   let(:id) { subscriber.tap(&:save).id }
   let(:invalid_param_value) { { url: '' } }

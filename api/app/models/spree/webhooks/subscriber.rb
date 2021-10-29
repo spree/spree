@@ -7,7 +7,11 @@ module Spree
 
       validate :check_uri_path
 
+      self.whitelisted_ransackable_attributes = %w[active subscriptions url]
+      self.whitelisted_ransackable_associations = %w[event]
+
       scope :active, -> { where(active: true) }
+      scope :inactive, -> { where(active: false) }
 
       def self.with_urls_for(event)
         where(

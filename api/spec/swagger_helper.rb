@@ -61,6 +61,7 @@ RSpec.configure do |config|
         { name: 'Shipping Methods' },
         { name: 'Taxons' },
         { name: 'Users' },
+        { name: 'Webhook Events' },
         { name: 'Webhook Subscribers' },
         { name: 'Wishlists' },
         { name: 'Wished Items' },
@@ -150,13 +151,37 @@ RSpec.configure do |config|
             required: %w[name presentation],
             'x-internal': true
           },
-          webhook_subscriber_params: {
+          webhooks_event_params: {
+            type: :object,
+            properties: {
+              execution_time: { type: :integer, example: 1_234 },
+              name: { type: :string, example: 'order.canceled' },
+              request_errors: { type: :string, example: "[SPREE WEBHOOKS] 'order.canceled' can not make a request to 'http://google.com/'" },
+              response_code: { type: :string, example: '200' },
+              subscriber_id: { type: :string },
+              success: { type: :boolean, example: true },
+              url: { type: :string, example: 'https://www.url.com/' }
+            },
+            required: %w[name subscriber_id url],
+            'x-internal': true
+          },
+          webhooks_subscriber_params: {
             type: :object,
             properties: {
               active: { type: :boolean, example: true, default: false },
-              subscriptions: { type: :array, example: ['order.create', 'order.complete', 'product.update'], default: [] },
+              subscriptions: {
+                type: :array,
+                items: {
+                  allOf: [
+                    { type: :string, example: 'order.completed' }
+                  ]
+                },
+                example: ['order.created', 'order.completed', 'product.updated'],
+                default: []
+              },
               url: { type: :string, example: 'https://www.url.com/' }
             },
+            required: %w[url],
             'x-internal': true
           },
           order_params: {
