@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-
 require 'rswag/specs'
 
 RSpec.configure do |config|
@@ -150,6 +149,86 @@ RSpec.configure do |config|
             'x-internal': true
           },
 
+          # CMS Page
+          cms_page_params: {
+            type: :object,
+            properties: {
+              cms_page: {
+                type: :object,
+                required: %w[title locale],
+                properties: {
+                  title: { type: :string },
+                  meta_title: { type: :string },
+                  content: { type: :string, },
+                  meta_description: { type: :string },
+                  visible: { type: :string },
+                  slug: { type: :string },
+                  locale: { type: :string }
+                }
+              }
+            },
+            required: %w[cms_page],
+            'x-internal': true
+          },
+
+          # CMS Section
+          cms_section_params: {
+            type: :object,
+            properties: {
+              cms_section: {
+                type: :object,
+                required: %w[name cms_page_id],
+                properties: {
+                  name: { type: :string },
+                  cms_page_id: { type: :string },
+                  content: { type: :object, },
+                  settings: { type: :object },
+                  fit: { type: :string },
+                  destination: { type: :string }
+                }
+              }
+            },
+            required: %w[cms_section],
+            'x-internal': true
+          },
+          cms_section_reposition_params: {
+            type: :object,
+            properties: {
+              new_position_idx: { type: :integer }
+            },
+            required: %w[new_position_idx],
+            'x-internal': true
+          },
+
+          # Digital
+          digital_params: {
+            type: :object,
+            properties: {
+              'digital[attachment]': { type: :string, format: :binary },
+              "digital[variant_id]": { type: :string, example: '123' }
+            },
+            required: ['digital[attachment]', 'digital[variant_id]'],
+            'x-internal': true
+          },
+
+          # Digital Link
+          digital_link_params: {
+            type: :object,
+            properties: {
+              digital_link: {
+                type: :object,
+                required: %w[line_item_id digital_id],
+                properties: {
+                  access_counter: { type: :integer, example: 0 },
+                  line_item_id: { type: :string, example: '1' },
+                  digital_id: { type: :string, example: '1' }
+                }
+              }
+            },
+            required: %w[digital_link],
+            'x-internal': true
+          },
+
           # Line Item
           line_item_params: {
             type: :object,
@@ -165,6 +244,58 @@ RSpec.configure do |config|
               }
             },
             required: %w[line_item],
+            'x-internal': true
+          },
+
+          # Menu
+          menu_params: {
+            type: :object,
+            properties: {
+              menu: {
+                type: :object,
+                required: %w[name location locale],
+                properties: {
+                  name: { type: :string },
+                  location: { type: :string },
+                  locale: { type: :string }
+                }
+              }
+            },
+            required: %w[menu],
+            'x-internal': true
+          },
+
+          # Menu Item
+          menu_item_params: {
+            type: :object,
+            properties: {
+              menu_item: {
+                type: :object,
+                required: %w[name menu_id],
+                properties: {
+                  name: { type: :string },
+                  code: { type: :string },
+                  subtitle: { type: :string },
+                  destination: { type: :string },
+                  menu_id: { type: :string },
+                  new_window: { type: :boolean },
+                  item_type: { type: :string },
+                  linked_resource_type: { type: :string },
+                  linked_resource_id: { type: :integer }
+                }
+              }
+            },
+            required: %w[menu_item],
+            'x-internal': true
+          },
+
+          menu_item_reposition_params: {
+            type: :object,
+            properties: {
+              new_parent_id: { type: :integer },
+              new_position_idx: { type: :integer }
+            },
+            required: %w[new_parent_id new_position_idx],
             'x-internal': true
           },
 
@@ -199,33 +330,6 @@ RSpec.configure do |config|
               }
             },
             required: %w[option_value],
-            'x-internal': true
-          },
-
-          # Webhook
-          webhook_subscriber_params: {
-            type: :object,
-            properties: {
-              subscriber: {
-                type: :object,
-                required: %w[url],
-                properties: {
-                  active: { type: :boolean, example: true, default: false },
-                  subscriptions: {
-                    type: :array,
-                    items: {
-                      allOf: [
-                        { type: :string, example: 'order.completed' }
-                      ]
-                    },
-                    example: ['order.created', 'order.completed', 'product.updated'],
-                    default: []
-                  },
-                  url: { type: :string, example: 'https://www.url.com/' }
-                }
-              }
-            },
-            required: %w[subscriber],
             'x-internal': true
           },
 
@@ -335,96 +439,6 @@ RSpec.configure do |config|
             'x-internal': true
           },
 
-          # User
-          user_params: {
-            type: :object,
-            properties: {
-              user: {
-                type: :object,
-                required: %w[email password password_confirmation],
-                properties: {
-                  email: { type: :string },
-                  password: { type: :string },
-                  password_confirmation: { type: :string },
-                  ship_address_id: { type: :string },
-                  bill_address_id: { type: :string },
-                }
-              }
-            },
-            required: %w[user],
-            'x-internal': true
-          },
-
-          # Taxon
-          taxon_params: {
-            type: :object,
-            properties: {
-              taxon: {
-                type: :object,
-                required: %w[name taxonomy_id],
-                properties: {
-                  taxonomy_id: { type: :string },
-                  parent_id: { type: :string },
-                  name: { type: :string }
-                }
-              }
-            },
-            required: %w[taxon],
-            'x-internal': true
-          },
-
-          # Menu
-          menu_params: {
-            type: :object,
-            properties: {
-              menu: {
-                type: :object,
-                required: %w[name location locale],
-                properties: {
-                  name: { type: :string },
-                  location: { type: :string },
-                  locale: { type: :string }
-                }
-              }
-            },
-            required: %w[menu],
-            'x-internal': true
-          },
-
-          # Menu Item
-          menu_item_params: {
-            type: :object,
-            properties: {
-              menu_item: {
-                type: :object,
-                required: %w[name menu_id],
-                properties: {
-                  name: { type: :string },
-                  code: { type: :string },
-                  subtitle: { type: :string },
-                  destination: { type: :string },
-                  menu_id: { type: :string },
-                  new_window: { type: :boolean },
-                  item_type: { type: :string },
-                  linked_resource_type: { type: :string },
-                  linked_resource_id: { type: :integer }
-                }
-              }
-            },
-            required: %w[menu_item],
-            'x-internal': true
-          },
-
-          menu_item_reposition_params: {
-            type: :object,
-            properties: {
-              new_parent_id: { type: :integer },
-              new_position_idx: { type: :integer }
-            },
-            required: %w[new_parent_id new_position_idx],
-            'x-internal': true
-          },
-
           # Shipping Category
           shipping_category_params: {
             type: :object,
@@ -479,6 +493,71 @@ RSpec.configure do |config|
             'x-internal': true
           },
 
+          # Taxon
+          taxon_params: {
+            type: :object,
+            properties: {
+              taxon: {
+                type: :object,
+                required: %w[name taxonomy_id],
+                properties: {
+                  taxonomy_id: { type: :string },
+                  parent_id: { type: :string },
+                  name: { type: :string }
+                }
+              }
+            },
+            required: %w[taxon],
+            'x-internal': true
+          },
+
+          # User
+          user_params: {
+            type: :object,
+            properties: {
+              user: {
+                type: :object,
+                required: %w[email password password_confirmation],
+                properties: {
+                  email: { type: :string },
+                  password: { type: :string },
+                  password_confirmation: { type: :string },
+                  ship_address_id: { type: :string },
+                  bill_address_id: { type: :string },
+                }
+              }
+            },
+            required: %w[user],
+            'x-internal': true
+          },
+
+          # Webhook
+          webhook_subscriber_params: {
+            type: :object,
+            properties: {
+              subscriber: {
+                type: :object,
+                required: %w[url],
+                properties: {
+                  active: { type: :boolean, example: true, default: false },
+                  subscriptions: {
+                    type: :array,
+                    items: {
+                      allOf: [
+                        { type: :string, example: 'order.completed' }
+                      ]
+                    },
+                    example: ['order.created', 'order.completed', 'product.updated'],
+                    default: []
+                  },
+                  url: { type: :string, example: 'https://www.url.com/' }
+                }
+              }
+            },
+            required: %w[subscriber],
+            'x-internal': true
+          },
+
           # Wishlist
           wishlist_params: {
             type: :object,
@@ -519,86 +598,7 @@ RSpec.configure do |config|
             'x-internal': true
           },
 
-          # CMS Page
-          cms_page_params: {
-            type: :object,
-            properties: {
-              cms_page: {
-                type: :object,
-                required: %w[title locale],
-                properties: {
-                  title: { type: :string },
-                  meta_title: { type: :string },
-                  content: { type: :string, },
-                  meta_description: { type: :string },
-                  visible: { type: :string },
-                  slug: { type: :string },
-                  locale: { type: :string }
-                }
-              }
-            },
-            required: %w[cms_page],
-            'x-internal': true
-          },
-
-          # CMS Section
-          cms_section_params: {
-            type: :object,
-            properties: {
-              cms_section: {
-                type: :object,
-                required: %w[name cms_page_id],
-                properties: {
-                  name: { type: :string },
-                  cms_page_id: { type: :string },
-                  content: { type: :object, },
-                  settings: { type: :object },
-                  fit: { type: :string },
-                  destination: { type: :string }
-                }
-              }
-            },
-            required: %w[cms_section],
-            'x-internal': true
-          },
-          cms_section_reposition_params: {
-            type: :object,
-            properties: {
-              new_position_idx: { type: :integer }
-            },
-            required: %w[new_position_idx],
-            'x-internal': true
-          },
-
-          # Digital
-          digital_params: {
-            type: :object,
-            properties: {
-              'digital[attachment]': { type: :string, format: :binary },
-              "digital[variant_id]": { type: :string, example: '123' }
-            },
-            required: ['digital[attachment]', 'digital[variant_id]'],
-            'x-internal': true
-          },
-
-          # Digital Link
-          digital_link_params: {
-            type: :object,
-            properties: {
-              digital_link: {
-                type: :object,
-                required: %w[line_item_id digital_id],
-                properties: {
-                  access_counter: { type: :integer, example: 0 },
-                  line_item_id: { type: :string, example: '1' },
-                  digital_id: { type: :string, example: '1' }
-                }
-              }
-            },
-            required: %w[digital_link],
-            'x-internal': true
-          },
-
+          # Nested Parameters
           amount_param: {
             type: :object,
             properties: {
@@ -606,6 +606,7 @@ RSpec.configure do |config|
             },
             'x-internal': true
           },
+
           coupon_code_param: {
             type: :object,
             properties: {
@@ -698,14 +699,17 @@ RSpec.configure do |config|
   # auto generate examples based on response
   config.after do |example|
     next if example.metadata[:swagger].nil?
-    next if response.nil? || response.body.blank?
+    next if response.nil? || response.body.blank? || example.metadata[:response][:schema].nil?
 
     example.metadata[:response][:content] = {
       'application/vnd.api+json' => {
         examples: {
           'Example': {
             value: JSON.parse(response.body, symbolize_names: true)
-          }
+          },
+        },
+        schema: {
+          '$ref': example.metadata[:response][:schema]['$ref']
         }
       }
     }
