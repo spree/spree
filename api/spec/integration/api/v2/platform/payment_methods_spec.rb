@@ -6,7 +6,13 @@ describe 'Payment Methods API', swagger: true do
   resource_name = 'Payment Method'
   options = {
     include_example: 'stores',
-    filter_examples: [{ name: 'filter[name]', example: 'Stripe' }]
+    filter_examples: [{ name: 'filter[name]', example: 'Stripe' }],
+    custom_update_params: {
+      oneOf: [
+        { '$ref' => '#/components/schemas/update_payment_method_params' },
+        { '$ref' => '#/components/schemas/update_payment_method_params_bogus_gateway' }
+      ]
+    }
   }
 
   let!(:store) { Spree::Store.default }

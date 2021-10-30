@@ -681,7 +681,24 @@ RSpec.configure do |config|
               }
             },
             required: %w[payment_method],
-            'x-internal': true
+            'x-internal': true,
+            title: 'Update Payment Method'
+          },
+          update_payment_method_params_bogus_gateway: {
+            type: :object,
+            properties: {
+              payment_method: {
+                type: :object,
+                properties: {
+                  preferred_dummy_key: { type: :string, example: 'UPDATED-DUMMY-KEY-123' },
+                  preferred_server: { type: :string, example: 'production' },
+                  preferred_test_mode: { type: :boolean },
+                }
+              }
+            },
+            required: %w[payment_method],
+            'x-internal': true,
+            title: 'Update Bogus Gateway'
           },
 
           # Product
