@@ -285,11 +285,7 @@ Spree::Core::Engine.add_routes do
         end
 
         # CMS Sections API
-        resources :cms_sections do
-          member do
-            patch :reposition
-          end
-        end
+        resources :cms_sections
 
         # Wishlists API
         resources :wishlists

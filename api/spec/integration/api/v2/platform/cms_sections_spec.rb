@@ -22,7 +22,8 @@ describe 'CMS Section API', swagger: true do
   let(:valid_create_param_value) { build(:cms_hero_image_section, cms_page: cms_page, linked_resource: product).attributes }
   let(:valid_update_param_value) do
     {
-      name: 'Super Hero'
+      name: 'Super Hero',
+      position: 1
     }
   end
   let(:invalid_param_value) do
@@ -30,34 +31,6 @@ describe 'CMS Section API', swagger: true do
       name: ''
     }
   end
-  let(:valid_update_position_param_value) do
-    {
-      new_position_idx: 2
-    }
-  end
 
   include_examples 'CRUD examples', resource_name, options
-
-  path '/api/v2/platform/cms_sections/{id}/reposition' do
-    patch 'Reposition a CMS Section' do
-      tags resource_name.pluralize
-      security [ bearer_auth: [] ]
-      operationId 'reposition-cms-section'
-      description 'Reposition a Menu Item'
-      consumes 'application/json'
-      parameter name: :id, in: :path, type: :string
-      parameter name: :cms_section, in: :body, schema: { '$ref' => '#/components/schemas/cms_section_reposition_params' }
-
-      let(:cms_section) { valid_update_position_param_value }
-      let(:invalid_param_value) do
-        {
-          new_position_idx: 'invalid'
-        }
-      end
-
-      it_behaves_like 'record updated'
-      it_behaves_like 'record not found', :cms_section
-      it_behaves_like 'authentication failed'
-    end
-  end
 end
