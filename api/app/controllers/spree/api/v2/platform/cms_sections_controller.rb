@@ -3,8 +3,6 @@ module Spree
     module V2
       module Platform
         class CmsSectionsController < ResourceController
-          include ::Spree::Api::V2::Platform::ActsAsListReposition
-
           private
 
           def model_class

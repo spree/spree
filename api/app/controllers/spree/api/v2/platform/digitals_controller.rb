@@ -9,8 +9,8 @@ module Spree
             Spree::Digital
           end
 
-          def permitted_resource_params
-            params.require(model_param_name).permit(spree_permitted_attributes << :attachment)
+          def spree_permitted_attributes
+            super + [:attachment]
           end
         end
       end

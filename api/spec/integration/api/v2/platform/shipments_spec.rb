@@ -48,9 +48,7 @@ describe 'Shipments API', swagger: true do
       parameter name: :id, in: :path, type: :string
       json_api_include_parameter(options[:include_example])
 
-      response '200', 'record updated' do
-        run_test!
-      end
+      it_behaves_like 'record updated'
       it_behaves_like 'record not found'
       it_behaves_like 'authentication failed'
     end
@@ -68,9 +66,7 @@ describe 'Shipments API', swagger: true do
       parameter name: :id, in: :path, type: :string
       json_api_include_parameter(options[:include_example])
 
-      response '200', 'record updated' do
-        run_test!
-      end
+      it_behaves_like 'record updated'
       it_behaves_like 'record not found'
       it_behaves_like 'authentication failed'
     end
@@ -86,9 +82,7 @@ describe 'Shipments API', swagger: true do
       parameter name: :id, in: :path, type: :string
       json_api_include_parameter(options[:include_example])
 
-      response '200', 'record updated' do
-        run_test!
-      end
+      it_behaves_like 'record updated'
       it_behaves_like 'record not found'
       it_behaves_like 'authentication failed'
     end
@@ -106,9 +100,7 @@ describe 'Shipments API', swagger: true do
       parameter name: :id, in: :path, type: :string
       json_api_include_parameter(options[:include_example])
 
-      response '200', 'record updated' do
-        run_test!
-      end
+      it_behaves_like 'record updated'
       it_behaves_like 'record not found'
       it_behaves_like 'authentication failed'
     end
@@ -126,9 +118,7 @@ describe 'Shipments API', swagger: true do
       parameter name: :id, in: :path, type: :string
       json_api_include_parameter(options[:include_example])
 
-      response '200', 'record updated' do
-        run_test!
-      end
+      it_behaves_like 'record updated'
       it_behaves_like 'record not found'
       it_behaves_like 'authentication failed'
     end
