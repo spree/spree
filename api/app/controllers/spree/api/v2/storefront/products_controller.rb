@@ -43,6 +43,10 @@ module Spree
             product_list_includes
           end
 
+          def serializer_params
+            super.merge(include_products: params[:include_products] == 'true')
+          end          
+
           def allowed_sort_attributes
             super << :available_on
           end
