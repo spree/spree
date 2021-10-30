@@ -52,7 +52,7 @@ module Spree
             resource_serializer
           end
 
-          # overwiting to utilize ransack gem for filtering
+          # overwriting to utilize ransack gem for filtering
           # https://github.com/activerecord-hackery/ransack#search-matchers
           def collection
             @collection ||= scope.ransack(params[:filter]).result
