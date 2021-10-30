@@ -662,7 +662,6 @@ RSpec.configure do |config|
             properties: {
               payment_method: {
                 type: :object,
-                required: %w[name],
                 properties: {
                   name: { type: :string, example: 'Test Payment Method' },
                   active: { type: :boolean },
