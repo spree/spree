@@ -264,10 +264,10 @@ RSpec.configure do |config|
                 properties: {
                   name: { type: :string },
                   cms_page_id: { type: :string },
-                  content: { type: :object, },
-                  settings: { type: :object },
-                  fit: { type: :string },
-                  destination: { type: :string }
+                  destination: { type: :string, example: 'https://getvendo.com' },
+                  linked_resource_type: { type: :string, example: 'Spree::Taxon', enum: ['Spree::Taxon', 'Spree::Product', 'Spree::CmsPage'] },
+                  fit: { type: :string, example: 'Screen', description: 'This value is used by front end developers to manipulate CSS values to fit the section into the Screen or within the Container element.' },
+                  position: { type: :integer, example: 2, description: 'Pass the new position that you want this section to appear in. (The list is not zero indexed, so the first item is position: 1)' }
                 }
               }
             },
@@ -282,22 +282,14 @@ RSpec.configure do |config|
                 properties: {
                   name: { type: :string },
                   cms_page_id: { type: :string },
-                  content: { type: :object, },
-                  settings: { type: :object },
-                  fit: { type: :string },
-                  destination: { type: :string }
+                  destination: { type: :string, example: 'https://getvendo.com' },
+                  linked_resource_type: { type: :string, example: 'Spree::Taxon', enum: ['Spree::Taxon', 'Spree::Product', 'Spree::CmsPage'] },
+                  fit: { type: :string, example: 'Screen', description: 'This value is used by front end developers to manipulate CSS values to fit the section into the Screen or within the Container element.' },
+                  position: { type: :integer, example: 2, description: 'Pass the new position that you want this section to appear in. (The list is not zero indexed, so the first item is position: 1)' }
                 }
               }
             },
             required: %w[cms_section],
-            'x-internal': true
-          },
-          cms_section_reposition_params: {
-            type: :object,
-            properties: {
-              new_position_idx: { type: :integer }
-            },
-            required: %w[new_position_idx],
             'x-internal': true
           },
 

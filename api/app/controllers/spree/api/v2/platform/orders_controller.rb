@@ -149,7 +149,7 @@ module Spree
           end
 
           def spree_permitted_attributes
-            Spree::Order.json_api_permitted_attributes + [
+            super + [
               bill_address_attributes: Spree::Address.json_api_permitted_attributes,
               ship_address_attributes: Spree::Address.json_api_permitted_attributes,
               line_items_attributes: Spree::LineItem.json_api_permitted_attributes,

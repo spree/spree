@@ -10,7 +10,7 @@ module Spree
           end
 
           def spree_permitted_attributes
-            Spree::ShippingMethod.json_api_permitted_attributes + [
+            super + [
               {
                 shipping_category_ids: [],
                 calculator_attributes: {}
