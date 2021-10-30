@@ -303,11 +303,7 @@ Spree::Core::Engine.add_routes do
         resources :stores
 
         # Configurations API
-        resources :payment_methods do
-          member do
-            patch :reposition
-          end
-        end
+        resources :payment_methods
         resources :shipping_categories
         resources :shipping_methods
 

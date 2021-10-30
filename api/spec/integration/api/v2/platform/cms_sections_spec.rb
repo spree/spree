@@ -26,11 +26,11 @@ describe 'CMS Section API', swagger: true do
       position: 1
     }
   end
-
   let(:invalid_param_value) do
     {
       name: ''
     }
   end
+
   include_examples 'CRUD examples', resource_name, options
 end

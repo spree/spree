@@ -48,29 +48,5 @@ describe 'Payment Methods API', swagger: true do
     }
   end
 
-  let(:valid_update_position_param_value) do
-    {
-      new_position_idx: 2
-    }
-  end
-
-  path "/api/v2/platform/#{resource_name.downcase.parameterize(separator: '_').pluralize}/{id}/reposition" do
-    patch "Reposition a #{resource_name}" do
-      tags resource_name.pluralize
-      security [ bearer_auth: [] ]
-      operationId "reposition-#{resource_name.downcase.parameterize}"
-      description "Reposition a #{resource_name}"
-      consumes 'application/json'
-      parameter name: :id, in: :path, type: :string
-      parameter name: resource_name.downcase.parameterize(separator: '_').to_sym, in: :body, schema: { '$ref' => '#/components/schemas/reposition_params' }
-
-      let(resource_name.downcase.parameterize(separator: '_').to_sym) { valid_update_position_param_value }
-
-      it_behaves_like 'record updated'
-      it_behaves_like 'record not found', resource_name.downcase.parameterize(separator: '_').to_sym
-      it_behaves_like 'authentication failed'
-    end
-  end
-
   include_examples 'CRUD examples', resource_name, options
 end
