@@ -35,7 +35,7 @@ describe 'Classifications API', swagger: true do
       description 'Reposition a Classification'
       consumes 'application/json'
       parameter name: :id, in: :path, type: :string
-      parameter name: :classification, in: :body, schema: { '$ref' => '#/components/schemas/classification_params' }
+      parameter name: :classification, in: :body, schema: { '$ref' => '#/components/schemas/update_classification_params' }
       json_api_include_parameter(options[:include_example])
 
       let(:classification) { valid_update_param_value }

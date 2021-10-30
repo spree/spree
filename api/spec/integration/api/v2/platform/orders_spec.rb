@@ -65,7 +65,7 @@ describe 'Orders API', swagger: true do
       security [ bearer_auth: [] ]
       description "Creates #{resource_name.articleize}"
       operationId "create-#{resource_name.parameterize.to_sym}"
-      parameter name: param_name, in: :body, schema: { '$ref' => "#/components/schemas/#{param_name}_params" }
+      parameter name: param_name, in: :body, schema: { '$ref' => "#/components/schemas/create_#{param_name}_params" }
       json_api_include_parameter(options[:include_example])
 
       let(param_name) { valid_create_param_value }
@@ -91,9 +91,7 @@ describe 'Orders API', swagger: true do
       parameter name: :id, in: :path, type: :string
       json_api_include_parameter(options[:include_example])
 
-      response '200', 'record updated' do
-        run_test!
-      end
+      it_behaves_like 'record updated'
       it_behaves_like 'record not found'
       it_behaves_like 'authentication failed'
     end
@@ -109,9 +107,7 @@ describe 'Orders API', swagger: true do
       parameter name: :id, in: :path, type: :string
       json_api_include_parameter(options[:include_example])
 
-      response '200', 'record updated' do
-        run_test!
-      end
+      it_behaves_like 'record updated'
       it_behaves_like 'record not found'
       it_behaves_like 'authentication failed'
     end
@@ -131,9 +127,7 @@ describe 'Orders API', swagger: true do
       parameter name: :id, in: :path, type: :string
       json_api_include_parameter(options[:include_example])
 
-      response '200', 'record updated' do
-        run_test!
-      end
+      it_behaves_like 'record updated'
       it_behaves_like 'record not found'
       it_behaves_like 'authentication failed'
     end
@@ -149,9 +143,7 @@ describe 'Orders API', swagger: true do
       parameter name: :id, in: :path, type: :string
       json_api_include_parameter(options[:include_example])
 
-      response '200', 'record updated' do
-        run_test!
-      end
+      it_behaves_like 'record updated'
       it_behaves_like 'record not found'
       it_behaves_like 'authentication failed'
     end
@@ -167,7 +159,8 @@ describe 'Orders API', swagger: true do
       parameter name: :id, in: :path, type: :string
       json_api_include_parameter(options[:include_example])
 
-      response '200', 'record approved' do
+      response '200', 'Record approved' do
+        schema '$ref' => '#/components/schemas/resource'
         run_test!
       end
       it_behaves_like 'record not found'

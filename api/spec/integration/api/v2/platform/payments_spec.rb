@@ -7,7 +7,7 @@ describe 'Payments API', swagger: true do
   options = {
     include_example: 'payment_method,order,source',
     filter_examples: [{ name: 'filter[payment_method_id_eq]', example: '1' },
-                      { name: 'filter[amount_gteq]', example: 99.90 }]
+                      { name: 'filter[amount_gteq]', example: '99.90' }]
   }
 
   let(:id) { create(:payment, payment_method: payment_method, order: order).id }
