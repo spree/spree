@@ -41,7 +41,7 @@ module Spree
           end
 
           def serializer_params
-            super.merge(include_products: action_name == 'show')
+            super.merge(include_products: action_name == 'show' || params[:include_products] == 'true')
           end
         end
       end
