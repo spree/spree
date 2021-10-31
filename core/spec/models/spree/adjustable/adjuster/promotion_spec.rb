@@ -124,7 +124,7 @@ describe Spree::Adjustable::Adjuster::Promotion, type: :model do
           msg = "Expected two adjustments (using sequence #{promo_sequence})"
           expect(order.all_adjustments.count).to eq(2), msg
 
-          msg = "Expected one elegible adjustment (using sequence #{promo_sequence})"
+          msg = "Expected one eligible adjustment (using sequence #{promo_sequence})"
           expect(order.all_adjustments.eligible.count).to eq(1), msg
 
           msg = "Expected promo1 to be used (using sequence #{promo_sequence})"
@@ -137,7 +137,7 @@ describe Spree::Adjustable::Adjuster::Promotion, type: :model do
           msg = "Expected two adjustments (using sequence #{promo_sequence})"
           expect(order.all_adjustments.count).to eq(2), msg
 
-          msg = "Expected one elegible adjustment (using sequence #{promo_sequence})"
+          msg = "Expected one eligible adjustment (using sequence #{promo_sequence})"
           expect(order.all_adjustments.eligible.count).to eq(1), msg
 
           msg = "Expected promo2 to be used (using sequence #{promo_sequence})"
@@ -155,7 +155,7 @@ describe Spree::Adjustable::Adjuster::Promotion, type: :model do
           msg = "Expected one adjustment (using sequence #{promo_sequence})"
           expect(order.all_adjustments.count).to eq(1), msg
 
-          msg = "Expected one elegible adjustment (using sequence #{promo_sequence})"
+          msg = "Expected one eligible adjustment (using sequence #{promo_sequence})"
           expect(order.all_adjustments.eligible.count).to eq(1), msg
 
           # line_item_promo1 is the only one that has thus far met the order total threshold,
@@ -170,7 +170,7 @@ describe Spree::Adjustable::Adjuster::Promotion, type: :model do
           msg = "Expected four adjustments (using sequence #{promo_sequence})"
           expect(order.all_adjustments.count).to eq(4), msg
 
-          msg = "Expected two elegible adjustments (using sequence #{promo_sequence})"
+          msg = "Expected two eligible adjustments (using sequence #{promo_sequence})"
           expect(order.all_adjustments.eligible.count).to eq(2), msg
 
           order.all_adjustments.eligible.each do |adjustment|

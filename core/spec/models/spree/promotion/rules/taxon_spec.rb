@@ -5,7 +5,7 @@ describe Spree::Promotion::Rules::Taxon, type: :model do
 
   let(:store) { create(:store) }
 
-  context '#elegible?(order)' do
+  context '#eligible?(order)' do
     let(:taxonomy) { create(:taxonomy, store: store) }
     let(:taxon) { create :taxon, name: 'first', taxonomy: taxonomy }
     let(:taxon2) { create :taxon, name: 'second', taxonomy: taxonomy }

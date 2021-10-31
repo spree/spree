@@ -1447,7 +1447,7 @@ paths:
                   variant_id: '149'
                   quantity: 3
         description: |-
-          Passing a quantity value is optional for those wishlist systems that do not support quantities. In this scenario, the retuned quantity value will always be `1`, allowing the add-to-cart and pricing to reflect the single representation of the wished item accurately.
+          Passing a quantity value is optional for those wishlist systems that do not support quantities. In this scenario, the returned quantity value will always be `1`, allowing the add-to-cart and pricing to reflect the single representation of the wished item accurately.
 
           If the wishlist system you are building allows for setting quantity, add the quantity attribute to the request body with an integer value greater than zero.
       responses:
