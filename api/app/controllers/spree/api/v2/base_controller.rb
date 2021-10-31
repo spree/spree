@@ -95,7 +95,7 @@ module Spree
         end
 
         def request_includes
-          # if API user want's to receive only the bare-minimum
+          # if API user wants to receive only the bare-minimum
           # the API will return only the main resource without any included
           if params[:include]&.blank?
             []

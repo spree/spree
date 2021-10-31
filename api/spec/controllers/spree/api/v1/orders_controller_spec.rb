@@ -558,7 +558,7 @@ module Spree
         end
       end
 
-      it 'responds with orders updated_at with miliseconds precision' do
+      it 'responds with orders updated_at with milliseconds precision' do
         if ApplicationRecord.connection.adapter_name == 'Mysql2'
           skip 'MySQL does not support millisecond timestamps.'
         else

@@ -146,7 +146,7 @@ paths:
                     lastname: Winterburn
                     company: Paper Street Soap Co.
                     address1: 775 Old Georgetown Road
-                    address2: 3nd Floor
+                    address2: 3rd Floor
                     city: Qethesda
                     phone: '3488545445002'
                     zipcode: '90210'
@@ -199,7 +199,7 @@ paths:
                     lastname: Smith
                     company: Woodbank School
                     address1: 234 Old Georgetown Road
-                    address2: 1nd Floor
+                    address2: 1st Floor
                     city: Aethesda
                     phone: '34885493845002'
                     zipcode: '90211'
@@ -848,7 +848,7 @@ paths:
       description: |-
         Completes the checkout by marking the order as complete.
 
-        **Please be aware**; Once a checkout is marked as `complete` it is considered a completed order, the Cart and Checkout endpoints will no longer acces a completed order, and a new cart will need to be created.
+        **Please be aware**; Once a checkout is marked as `complete` it is considered a completed order, the Cart and Checkout endpoints will no longer access a completed order, and a new cart will need to be created.
 
         If you want to access a completed order you will need to use the **Account / Orders** or **Order Status** endpoints.
       operationId: complete-checkout
@@ -1684,7 +1684,7 @@ components:
             state_code:
               type: string
               example: CA
-              description: State abbrevation
+              description: State abbreviation
             country_name:
               type: string
               example: United States of America
@@ -1744,7 +1744,7 @@ components:
           description: 'Valid zipcode, will be validated against the selected Country'
         state_name:
           type: string
-          description: State/region/province 2 letter abbrevation
+          description: State/region/province 2 letter abbreviation
         country_iso:
           type: string
           description: 'Country ISO (2-chars) or ISO3 (3-chars) code. [List of all codes](https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes)'
@@ -2968,7 +2968,7 @@ components:
         abbr:
           type: string
           example: NY
-          description: State abbrevation
+          description: State abbreviation
         name:
           type: string
           example: New York
@@ -4874,7 +4874,7 @@ components:
                       firstname: Emma
                       lastname: Carragher
                       address1: 775645 Old Georgetown Road
-                      address2: 3nd Floor
+                      address2: 3rd Floor
                       city: Qethesda
                       zipcode: '90210'
                       phone: '3488545445002'
@@ -4914,7 +4914,7 @@ components:
                     firstname: Mark
                     lastname: Winterburn
                     address1: 775645 Old Georgetown Road
-                    address2: 3nd Floor
+                    address2: 3rd Floor
                     city: Qethesda
                     zipcode: '90210'
                     phone: '3488545445002'
@@ -6734,14 +6734,14 @@ components:
                   - id: '106'
                     type: product
                     attributes:
-                      name: Leightweight Running Jacket
+                      name: Lightweight Running Jacket
                       description: Ipsum dolorum quo fugit reiciendis quae cupiditate. Quas incidunt adipisci iure quasi quaerat in laborum animi. Quo molestiae aperiam officiis provident voluptates a nesciunt.
                       available_on: '2021-10-02T11:02:30.674Z'
-                      slug: leightweight-running-jacket
+                      slug: Lightweight-running-jacket
                       meta_description: null
                       meta_keywords: null
                       updated_at: '2021-10-02T11:03:14.967Z'
-                      sku: Sweatshirts_leightweightrunningjacket_10.99
+                      sku: Sweatshirts_Lightweightrunningjacket_10.99
                       purchasable: true
                       in_stock: true
                       backorderable: false

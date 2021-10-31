@@ -233,7 +233,7 @@ module Spree
       end
 
       context 'variant was deleted' do
-        it 'raise error as variant shouldnt be found' do
+        it 'raise error as variant shouldn't be found' do
           variant.product.destroy
           hash = { sku: variant.sku }
           expect { Importer::Order.ensure_variant_id_from_params(hash) }.to raise_error("Ensure order import variant: Variant w/SKU #{hash[:sku]} not found.")
@@ -248,7 +248,7 @@ module Spree
         end
       end
 
-      it 'raises with proper message when cant find country' do
+      it 'raises with proper message when can't find country' do
         address = { country: { 'name' => 'NoNoCountry' } }
         expect { Importer::Order.ensure_country_id_from_params(address) }.to raise_error(/NoNoCountry/)
       end
@@ -320,7 +320,7 @@ module Spree
           expect(shipment.stock_location).to eq stock_location
         end
 
-        it 'raises if cant find stock location' do
+        it 'raises if can't find stock location' do
           params[:shipments_attributes][0][:stock_location] = 'doesnt exist'
           expect { Importer::Order.import(user, params) }.to raise_error(StandardError)
         end

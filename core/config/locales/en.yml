@@ -1253,7 +1253,7 @@ en:
     no_pending_payments: No pending payments
     no_product_available:
       for_this_quantity: Sorry, it looks like some products are not available in selected quantity.
-      opps: Oops!
+      oops: Oops!
     no_products_found: No products found
     no_results: No results
     no_rules_added: No rules added
