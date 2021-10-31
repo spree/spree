@@ -253,15 +253,10 @@ Spree::Core::Engine.add_routes do
 
         # Shipment API
         resources :shipments do
-          collection do
-            post 'transfer_to_location'
-            post 'transfer_to_shipment'
-          end
           member do
-            patch :ready
-            patch :ship
-            patch :add
-            patch :remove
+            %w[ready ship cancel resume pend].each do |state|
+              patch state.to_sym
+            end
           end
         end
 
@@ -292,11 +287,7 @@ Spree::Core::Engine.add_routes do
         end
 
         # CMS Sections API
-        resources :cms_sections do
-          member do
-            patch :reposition
-          end
-        end
+        resources :cms_sections
 
         # Wishlists API
         resources :wishlists
@@ -315,6 +306,13 @@ Spree::Core::Engine.add_routes do
 
         # Configurations API
         resources :shipping_categories
+        resources :shipping_methods
+
+        # Webhooks API
+        namespace :webhooks do
+          resources :events, only: :index
+          resources :subscribers
+        end
       end
     end
   end

@@ -22,7 +22,7 @@ describe Spree::Order do
       it 'executes QueueRequests.call with a order.cancel event and {} body after invoking cancel' do
         Timecop.freeze(Time.local(1990)) do
           order.cancel
-          expect(queue_requests).to have_received(:call).with(event: 'order.cancel', body: body).once
+          expect(queue_requests).to have_received(:call).with(event: 'order.canceled', body: body).once
         end
       end
     end
@@ -30,9 +30,9 @@ describe Spree::Order do
     describe '#finalize!' do
       let(:order) { described_class.create(email: 'test@example.com', store: store) }
 
-      it 'executes QueueRequests.call with a order.complete event and {} body after invoking finalize!' do
+      it 'executes QueueRequests.call with a order.placed event and {} body after invoking finalize!' do
         order.finalize!
-        expect(queue_requests).to have_received(:call).with(event: 'order.complete', body: body).once
+        expect(queue_requests).to have_received(:call).with(event: 'order.placed', body: body).once
       end
     end
   end

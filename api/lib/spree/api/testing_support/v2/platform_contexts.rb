@@ -1,6 +1,10 @@
 class String
   def articleize
-    %w(a e i o u).include?(self[0].downcase) ? "an #{self}" : "a #{self}"
+    if split.first == 'User'
+      "a #{self}"
+    else
+      %w(a e i o u).include?(self[0].downcase) ? "an #{self}" : "a #{self}"
+    end
   end
 end
 
@@ -100,21 +104,21 @@ shared_examples 'records returned' do
 end
 
 shared_examples 'record created' do
-  response '201', 'record created' do
+  response '201', 'Record created' do
     schema '$ref' => '#/components/schemas/resource'
     run_test!
   end
 end
 
 shared_examples 'record updated' do
-  response '200', 'record updated' do
+  response '200', 'Record updated' do
     schema '$ref' => '#/components/schemas/resource'
     run_test!
   end
 end
 
 shared_examples 'invalid request' do |param_name|
-  response '422', 'invalid request' do
+  response '422', 'Invalid request' do
     let(param_name) { invalid_param_value }
     schema '$ref' => '#/components/schemas/validation_errors'
     run_test!
@@ -177,7 +181,7 @@ shared_examples 'POST create record' do |resource_name, **options|
     security [ bearer_auth: [] ]
     description "Creates #{endpoint_name.articleize}"
     operationId "create-#{resource_name.parameterize.to_sym}"
-    parameter name: param_name, in: request_data_type, schema: { '$ref' => "#/components/schemas/#{param_name}_params" }
+    parameter name: param_name, in: request_data_type, schema: { '$ref' => "#/components/schemas/create_#{param_name}_params" }
     json_api_include_parameter(options[:include_example]) unless options[:include_example].nil?
 
     let(param_name) { valid_create_param_value }
@@ -206,7 +210,7 @@ shared_examples 'PATCH update record' do |resource_name, **options|
     operationId "update-#{resource_name.parameterize.to_sym}"
     consumes consumes_kind
     parameter name: :id, in: :path, type: :string
-    parameter name: param_name, in: request_data_type, schema: { '$ref' => "#/components/schemas/#{param_name}_params" }
+    parameter name: param_name, in: request_data_type, schema: { '$ref' => "#/components/schemas/update_#{param_name}_params" }
     json_api_include_parameter(options[:include_example]) unless options[:include_example].nil?
 
     let(param_name) { valid_update_param_value }

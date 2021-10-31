@@ -26,8 +26,6 @@ en:
         cart:
           no_coupon_code: No coupon code provided and the Order doesn't have any coupon code promotions applied
           wrong_quantity: Quantity has to be greater than 0
-        cms_sections:
-          pass_position_index: Pass 'new_position_idx' with an interger value in the request body
         digitals:
           missing_file: 'Missing Digital Item: attachment'
           unauthorized: Error, you are not authorized to access this asset

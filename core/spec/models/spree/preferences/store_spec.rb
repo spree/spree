@@ -16,7 +16,7 @@ describe Spree::Preferences::Store, type: :model do
     expect(@store.get(:test)).to be false
   end
 
-  it 'will return db value when cache is emtpy and cache the db value' do
+  it 'will return db value when cache is empty and cache the db value' do
     preference = Spree::Preference.where(key: 'test').first_or_initialize
     preference.value = '123'
     preference.save

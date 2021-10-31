@@ -623,7 +623,7 @@ en:
           square_image: Please use an image with an aspect ratio of 18:13 (1080px x 780px).
           tall_image: Please use an image with an aspect ratio of 27:40 (1080px x 1600px).
       linkable:
-        seach_for_a_page: Search for a page
+        search_for_a_page: Search for a page
       tab:
         configuration: Configuration
         content: Content
@@ -710,8 +710,8 @@ en:
         subtitle: Subtitle
         url_info: 'The URL field can link to an external website using <b>https://example.com</b>, link to an otherwise unreachable internal path using <b>/policies/privacy</b>,
         launch an email client using <b>mailto:sales@example.com</b> or used to create a clickable phone number with <b>tel:123456789</b>'
-        seach_for_a_product: Search for a Product
-        seach_for_a_taxon: Search for a Taxon
+        search_for_a_product: Search for a Product
+        search_for_a_taxon: Search for a Taxon
         settings: Settings
         set_a_code: "Adding a code is optional but can be useful if you need to identify this menu item. When building
         the Spree main menu use the code <b>category</b> or <b>promo</b> to create the containers that organize links and promotions appropriately. To learn more view the documentation by <a href='https://guides.spreecommerce.org/user/navigation/add_menu_items.html' target='_blank' class='alert-link'>clicking here</a>."
@@ -790,7 +790,7 @@ en:
     cannot_set_shipping_method_without_address: Cannot set shipping method until customer details are provided.
     capture: Capture
     capture_events: Capture events
-    card_code: Card Varification Code (CVC)
+    card_code: Card Verification Code (CVC)
     card_number: Card Number
     card_type: Brand
     card_type_is: Card type is
@@ -1253,7 +1253,7 @@ en:
     no_pending_payments: No pending payments
     no_product_available:
       for_this_quantity: Sorry, it looks like some products are not available in selected quantity.
-      opps: Oops!
+      oops: Oops!
     no_products_found: No products found
     no_results: No results
     no_rules_added: No rules added

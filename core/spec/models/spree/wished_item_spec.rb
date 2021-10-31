@@ -30,7 +30,7 @@ RSpec.describe Spree::WishedItem, type: :model do
       expect(described_class.new(quantity: -1, wishlist: wishlist, variant: variant)).not_to be_valid
     end
 
-    describe 'when wished_item is alread associated with the wishlist' do
+    describe 'when wished_item is already associated with the wishlist' do
       let!(:existing_wished_item) { create(:wished_item, quantity: 3, wishlist: wishlist, variant: variant) }
 
       it 'validates uniqueness of variant within scope of wishlist' do

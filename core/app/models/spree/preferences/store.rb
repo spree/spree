@@ -36,7 +36,7 @@ module Spree::Preferences
 
     def get(key)
       # return the retrieved value, if it's in the cache
-      # use unless nil? incase the value is actually boolean false
+      # use unless nil? in case the value is actually boolean false
       #
       unless (val = @cache.read(key)).nil?
         return val

@@ -225,7 +225,7 @@ module Spree
             @updating_params = params
             run_callbacks :updating_from_params do
               # Set existing card after setting permitted parameters because
-              # rails would slice parameters containg ruby objects, apparently
+              # rails would slice parameters containing ruby objects, apparently
               existing_card_id = @updating_params[:order] ? @updating_params[:order].delete(:existing_card) : nil
 
               attributes = if @updating_params[:order]

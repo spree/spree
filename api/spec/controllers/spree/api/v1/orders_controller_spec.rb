@@ -558,7 +558,7 @@ module Spree
         end
       end
 
-      it 'responds with orders updated_at with miliseconds precision' do
+      it 'responds with orders updated_at with milliseconds precision' do
         if ApplicationRecord.connection.adapter_name == 'Mysql2'
           skip 'MySQL does not support millisecond timestamps.'
         else
@@ -566,9 +566,9 @@ module Spree
         end
 
         api_get :index
-        milisecond = order.updated_at.strftime('%L')
+        millisecond = order.updated_at.strftime('%L')
         updated_at = json_response['orders'].first['updated_at']
-        expect(updated_at.split('T').last).to have_content(milisecond)
+        expect(updated_at.split('T').last).to have_content(millisecond)
       end
 
       context 'caching enabled' do

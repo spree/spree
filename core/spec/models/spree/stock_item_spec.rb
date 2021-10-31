@@ -70,7 +70,7 @@ describe Spree::StockItem, type: :model do
     end
 
     context 'item out of stock (by five items)' do
-      context 'when stock received is insufficient to fullfill backorders' do
+      context 'when stock received is insufficient to fulfill backorders' do
         let(:inventory_unit)       { double('InventoryUnit') }
         let(:inventory_unit_2)     { double('InventoryUnit2') }
         let(:split_inventory_unit) { double('SplitInventoryUnit') }
@@ -83,7 +83,7 @@ describe Spree::StockItem, type: :model do
           subject.update_column(:count_on_hand, -5)
         end
 
-        it 'splits inventory to fullfill partial backorder' do
+        it 'splits inventory to fulfill partial backorder' do
           expect(inventory_unit_2).not_to receive(:split_inventory!)
 
           expect(split_inventory_unit).to receive(:fill_backorder)

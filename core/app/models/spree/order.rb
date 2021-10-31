@@ -188,7 +188,7 @@ module Spree
       update_hooks.add(hook)
     end
 
-    # For compatiblity with Calculator::PriceSack
+    # For compatibility with Calculator::PriceSack
     def amount
       line_items.inject(0.0) { |sum, li| sum + li.amount }
     end
@@ -634,10 +634,10 @@ module Spree
       ActiveSupport::Deprecation.warn('`Order#validate_payments_attributes` is deprecated and will be removed in Spree 5')
 
       # Ensure the payment methods specified are allowed for this user
-      payment_method_ids = available_payment_methods.map(&:id)
+      payment_method_ids = available_payment_methods.map(&:id).map(&:to_s)
 
       attributes.each do |payment_attributes|
-        payment_method_id = payment_attributes[:payment_method_id].to_i
+        payment_method_id = payment_attributes[:payment_method_id].to_s
 
         raise ActiveRecord::RecordNotFound unless payment_method_ids.include?(payment_method_id)
       end
@@ -741,5 +741,3 @@ module Spree
     end
   end
 end
-
-ActiveSupport.run_load_hooks(:spree_order, Spree::Order)

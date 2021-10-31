@@ -5,7 +5,8 @@ module Spree
         extend ActiveSupport::Concern
 
         def self.included(base)
-          model_klazz = "Spree::#{base.to_s.demodulize.gsub(/Serializer/, '')}".constantize
+          serializer_base_name = base.to_s.sub(/^Spree::Api::V2::Platform::/, '').sub(/Serializer$/, '')
+          model_klazz = "Spree::#{serializer_base_name}".constantize
 
           base.set_type model_klazz.json_api_type
           # include standard attributes

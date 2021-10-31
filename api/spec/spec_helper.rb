@@ -50,6 +50,11 @@ require 'spree/api/testing_support/v2/current_order'
 require 'spree/api/testing_support/v2/platform_contexts'
 require 'spree/api/testing_support/v2/serializers_params'
 
+# load api only factories
+Dir["#{File.dirname(__FILE__)}/factories/**/*.rb"].each do |f|
+  load File.expand_path(f)
+end
+
 RSpec.configure do |config|
   config.backtrace_exclusion_patterns = [/gems\/activesupport/, /gems\/actionpack/, /gems\/rspec/]
   config.color = true

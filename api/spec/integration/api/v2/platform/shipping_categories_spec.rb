@@ -5,7 +5,6 @@ describe 'Taxons API', swagger: true do
 
   resource_name = 'Shipping Category'
   options = {
-    include_example: 'cms_sections',
     filter_examples: [{ name: 'filter[name_i_cont]', example: 'default' }]
   }
 

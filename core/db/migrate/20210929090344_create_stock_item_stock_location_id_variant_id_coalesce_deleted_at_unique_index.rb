@@ -8,7 +8,7 @@ class CreateStockItemStockLocationIdVariantIdCoalesceDeletedAtUniqueIndex < Acti
           ON spree_stock_items(
             stock_location_id,
             variant_id,
-            (COALESCE(deleted_at, CAST('1970-01-01 00:00:00' AS #{deleted_at_data_type})))
+            (COALESCE(deleted_at, CAST('1970-01-01' AS #{deleted_at_data_type})))
           );
         SQL
       end

@@ -215,7 +215,7 @@ module Spree
       return shipping_rates if shipped?
       return [] unless can_get_rates?
 
-      # StockEstimator.new assigment below will replace the current shipping_method
+      # StockEstimator.new assignment below will replace the current shipping_method
       original_shipping_method_id = shipping_method.try(:id)
 
       self.shipping_rates = Stock::Estimator.new(order).
@@ -302,34 +302,8 @@ module Spree
       end
     end
 
-    # Update Shipment and make sure Order states follow the shipment changes
     def update_attributes_and_order(params = {})
-      if update params
-        if params.key? :selected_shipping_rate_id
-          # Changing the selected Shipping Rate won't update the cost (for now)
-          # so we persist the Shipment#cost before calculating order shipment
-          # total and updating payment state (given a change in shipment cost
-          # might change the Order#payment_state)
-          update_amounts
-
-          order.updater.update_shipment_total
-          order.updater.update_payment_state
-
-          # Update shipment state only after order total is updated because it
-          # (via Order#paid?) affects the shipment state (YAY)
-          update_columns(
-            state: determine_state(order),
-            updated_at: Time.current
-          )
-
-          # And then it's time to update shipment states and finally persist
-          # order changes
-          order.updater.update_shipment_state
-          order.updater.persist_totals
-        end
-
-        true
-      end
+      Shipments::Update.call(shipment: self, shipment_attributes: params).success?
     end
 
     # Updates various aspects of the Shipment while bypassing any callbacks.  Note that this method takes an explicit reference to the
@@ -401,5 +375,3 @@ module Spree
     end
   end
 end
-
-ActiveSupport.run_load_hooks(:spree_shipment, Spree::Shipment)

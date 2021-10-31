@@ -102,7 +102,7 @@ module Spree
         transition from: [:pending, :processing, :completed, :checkout], to: :void
       end
       after_transition to: :void, do: :after_void
-      # when the card brand isnt supported
+      # when the card brand isn't supported
       event :invalidate do
         transition from: [:checkout], to: :invalid
       end
@@ -305,5 +305,3 @@ module Spree
     end
   end
 end
-
-ActiveSupport.run_load_hooks(:spree_payment, Spree::Payment)

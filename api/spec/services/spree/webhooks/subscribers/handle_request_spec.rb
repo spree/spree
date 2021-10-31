@@ -2,84 +2,86 @@ require 'spec_helper'
 
 describe Spree::Webhooks::Subscribers::HandleRequest do
   describe '#call' do
-    subject { described_class.new(body: body, event: event, url: url) }
+    subject { described_class.new(body: body, event: event, subscriber: subscriber) }
 
-    let(:body) { { foo: :bar }.to_json }
-    let(:event) { 'order.cancel' }
-    let(:headers) { { 'Content-Type' => 'application/json' } }
+    let(:body) { { data: {} }.to_json }
+    let(:event) { 'order.canceled' }
     let(:request_double) { instance_double(Spree::Webhooks::Subscribers::MakeRequest) }
+    let(:subscriber) { create(:subscriber, url: url) }
     let(:url) { 'http://google.com/' }
 
-    context 'with an unexpected body' do
-      let(:body) { '' }
+    shared_examples 'logging and creating a webhooks event' do |with_log_level:|
+      before do
+        allow(subject).to receive(:request).and_return(request_double)
+        allow(request_double).to(
+          receive_messages(
+            execution_time: execution_time,
+            failed_request?: failed_request,
+            response_code: response_code,
+            success?: success,
+            unprocessable_uri?: unprocessable_uri
+          )
+        )
+      end
 
-      it 'does not instantiate a new request' do
-        expect(Spree::Webhooks::Subscribers::MakeRequest).not_to receive(:new)
+      it 'debug logs before the request' do
+        allow(Rails.logger).to receive(:debug)
         subject.call
+        message_fst = "[SPREE WEBHOOKS] 'order.canceled' sending to 'http://google.com/'"
+        message_snd = "[SPREE WEBHOOKS] 'order.canceled' body: #{body}"
+        expect(Rails.logger).to have_received(:debug).with(message_fst)
+        expect(Rails.logger).to have_received(:debug).with(message_snd)
+      end
+
+      it "#{with_log_level} logs before the request" do
+        allow(Rails.logger).to receive(with_log_level)
+        subject.call
+        expect(Rails.logger).to have_received(with_log_level).with(log_msg)
+      end
+
+      it 'creates a webhooks event with the process info' do
+        expect { subject.call }.to change {
+          Spree::Webhooks::Event.all.as_json(except: %i[created_at id preferences updated_at]).map(&:values)
+        }.from([]).to([[execution_time, event, log_msg, response_code.to_s, subscriber.id, success, url]])
       end
 
       it { expect(subject.call).to eq(nil) }
     end
 
     context 'with an unprocessable uri' do
-      let(:url) { '' }
+      let(:execution_time) { 0 }
+      let(:failed_request) { true }
+      let(:log_msg) { "[SPREE WEBHOOKS] 'order.canceled' can not make a request to 'http://google.com/'" }
+      let(:response_code) { 0 }
+      let(:success) { false }
+      let(:unprocessable_uri) { true }
 
-      before do
-        allow(subject).to receive(:request).and_return(request_double)
-        allow(request_double).to receive(:unprocessable_uri?).and_return(true)
-      end
-
-      it 'debug logs before the request' do
-        allow(Rails.logger).to receive(:warn)
-        subject.call
-        message = "[SPREE WEBHOOKS] 'order.cancel' can not make a request to ''"
-        expect(Rails.logger).to have_received(:warn).with(message)
-      end
-
-      it { expect(subject.call).to eq(nil) }
+      it_behaves_like 'logging and creating a webhooks event', with_log_level: :warn
     end
 
     context 'with a processable uri' do
+      let(:unprocessable_uri) { false }
+
       before { stub_request(:post, url) }
 
-      it 'debug logs before the request' do
-        allow(Rails.logger).to receive(:debug)
-        subject.call
-        message_fst = "[SPREE WEBHOOKS] 'order.cancel' sending to 'http://google.com/'"
-        message_snd = "[SPREE WEBHOOKS] 'order.cancel' body: #{body}"
-        expect(Rails.logger).to have_received(:debug).with(message_fst)
-        expect(Rails.logger).to have_received(:debug).with(message_snd)
-      end
-
       context 'with a failed request' do
-        before do
-          allow(subject).to receive(:request).and_return(request_double)
-          allow(request_double).to receive(:unprocessable_uri?).and_return(false)
-          allow(request_double).to receive(:failed_request?).and_return(true)
-        end
+        let(:execution_time) { 0 }
+        let(:failed_request) { true }
+        let(:log_msg) { "[SPREE WEBHOOKS] 'order.canceled' failed for 'http://google.com/'" }
+        let(:response_code) { 0 }
+        let(:success) { false }
 
-        it 'warn logs after the request' do
-          allow(Rails.logger).to receive(:warn)
-          subject.call
-          message = "[SPREE WEBHOOKS] 'order.cancel' failed for 'http://google.com/'"
-          expect(Rails.logger).to have_received(:warn).with(message)
-        end
-
-        it { expect(subject.call).to eq(nil) }
+        it_behaves_like 'logging and creating a webhooks event', with_log_level: :warn
       end
 
       context 'without a failed request' do
-        let(:message) { "[SPREE WEBHOOKS] 'order.cancel' success for URL 'http://google.com/'" }
+        let(:execution_time) { rand(1..999999) }
+        let(:failed_request) { false }
+        let(:log_msg) { "[SPREE WEBHOOKS] 'order.canceled' success for URL 'http://google.com/'" }
+        let(:response_code) { 200 }
+        let(:success) { true }
 
-        it 'debug logs after the request' do
-          allow(Rails.logger).to receive(:debug)
-          subject.call
-          expect(Rails.logger).to have_received(:debug).with(message)
-        end
-
-        it 'returns the debug logger' do
-          expect(subject.call).to eq(Rails.logger.debug(message))
-        end
+        it_behaves_like 'logging and creating a webhooks event', with_log_level: :debug
       end
     end
   end

@@ -28,7 +28,7 @@ describe Spree::Calculator, type: :model do
         end
       end
 
-      context 'with a arbitray object' do
+      context 'with a arbitrary object' do
         it 'calls the correct compute' do
           s = 'Calculator can all'
           expect(subject).to receive(:compute_string).with(s)
@@ -56,7 +56,7 @@ describe Spree::Calculator, type: :model do
         end
       end
 
-      context 'with a arbitray object' do
+      context 'with a arbitrary object' do
         it 'raises NotImplementedError' do
           s = 'Calculator can all'
           expect { subject.compute(s) }.to raise_error NotImplementedError, /Please implement \'compute_string\(string\)\' in your calculator/

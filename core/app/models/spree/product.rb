@@ -127,7 +127,7 @@ module Spree
 
     self.whitelisted_ransackable_associations = %w[taxons stores variants_including_master master variants]
     self.whitelisted_ransackable_attributes = %w[description name slug discontinue_on]
-    self.whitelisted_ransackable_scopes = %w[not_discontinued search_by_name]
+    self.whitelisted_ransackable_scopes = %w[not_discontinued search_by_name in_taxon price_between]
 
     [
       :sku, :price, :currency, :weight, :height, :width, :depth, :is_master,
@@ -141,17 +141,17 @@ module Spree
 
     alias master_images images
 
-    # Cant use short form block syntax due to https://github.com/Netflix/fast_jsonapi/issues/259
+    # Can't use short form block syntax due to https://github.com/Netflix/fast_jsonapi/issues/259
     def purchasable?
       default_variant.purchasable? || variants.any?(&:purchasable?)
     end
 
-    # Cant use short form block syntax due to https://github.com/Netflix/fast_jsonapi/issues/259
+    # Can't use short form block syntax due to https://github.com/Netflix/fast_jsonapi/issues/259
     def in_stock?
       default_variant.in_stock? || variants.any?(&:in_stock?)
     end
 
-    # Cant use short form block syntax due to https://github.com/Netflix/fast_jsonapi/issues/259
+    # Can't use short form block syntax due to https://github.com/Netflix/fast_jsonapi/issues/259
     def backorderable?
       default_variant.backorderable? || variants.any?(&:backorderable?)
     end
@@ -194,10 +194,7 @@ module Spree
     end
 
     # Adding properties and option types on creation based on a chosen prototype
-    attr_reader :prototype_id
-    def prototype_id=(value)
-      @prototype_id = value.to_i
-    end
+    attr_accessor :prototype_id
 
     # Ensures option_types and product_option_types exist for keys in option_values_hash
     def ensure_option_types_exist_for_values_hash
@@ -262,14 +259,6 @@ module Spree
         arel_table[field].matches("%#{value}%")
       end
       where conditions.inject(:or)
-    end
-
-    def self.search_by_name(query)
-      if defined?(SpreeGlobalize)
-        joins(:translations).order(:name).where("LOWER(#{Product::Translation.table_name}.name) LIKE LOWER(:query)", query: "%#{query}%").distinct
-      else
-        where("LOWER(#{Product.table_name}.name) LIKE LOWER(:query)", query: "%#{query}%")
-      end
     end
 
     # Suitable for displaying only variants that has at least one option value.

@@ -10,11 +10,11 @@ module Spree
           # optional authorization if using a user token instead of app token
           before_action :authorize_spree_user
 
-          # index and show acrtions are defined in Spree::Api::V2::ResourceController
+          # index and show actions are defined in Spree::Api::V2::ResourceController
 
           def create
             resource = model_class.new(permitted_resource_params)
-            assign_stores(resource, params)
+            ensure_current_store(resource)
 
             if resource.save
               render_serialized_payload(201) { serialize_resource(resource) }
@@ -24,9 +24,10 @@ module Spree
           end
 
           def update
-            if resource.update(permitted_resource_params)
-              assign_stores(resource, params)
+            resource.assign_attributes(permitted_resource_params)
+            ensure_current_store(resource)
 
+            if resource.save
               render_serialized_payload { serialize_resource(resource) }
             else
               render_error_payload(resource.errors)
@@ -44,14 +45,15 @@ module Spree
           protected
 
           def resource_serializer
-            "Spree::Api::V2::Platform::#{model_class.to_s.demodulize}Serializer".constantize
+            serializer_base_name = model_class.to_s.sub('Spree::', '')
+            "Spree::Api::V2::Platform::#{serializer_base_name}Serializer".constantize
           end
 
           def collection_serializer
             resource_serializer
           end
 
-          # overwiting to utilize ransack gem for filtering
+          # overwriting to utilize ransack gem for filtering
           # https://github.com/activerecord-hackery/ransack#search-matchers
           def collection
             @collection ||= scope.ransack(params[:filter]).result
@@ -99,19 +101,6 @@ module Spree
 
           def model_param_name
             model_class.to_s.demodulize.underscore
-          end
-
-          def assign_stores(resource, params)
-            stores = params[:store_ids]
-
-            if resource.class.method_defined?(:stores) && stores.is_a?(Array)
-              resource.store_ids = stores.compact.uniq
-            end
-
-            # Always call ensure_current_store after assigning the
-            # multiple stores this ensures the current_store is not removed from
-            # the recorce.
-            ensure_current_store(resource)
           end
 
           def spree_permitted_attributes

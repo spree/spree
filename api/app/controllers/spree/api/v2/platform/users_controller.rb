@@ -21,6 +21,10 @@ module Spree
           def model_param_name
             'user'
           end
+
+          def spree_permitted_attributes
+            super + [:password, :password_confirmation]
+          end
         end
       end
     end

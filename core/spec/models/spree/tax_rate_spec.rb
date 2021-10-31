@@ -240,7 +240,7 @@ describe Spree::TaxRate, type: :model do
           Spree::Cart::AddItem.call(order: order, variant: download.master)
         end
 
-        it 'without an adress costs 100 euros including tax' do
+        it 'without an address costs 100 euros including tax' do
           Spree::TaxRate.adjust(order, order.line_items)
           order.update_with_updater!
           expect(order.display_total).to eq(Spree::Money.new(100))

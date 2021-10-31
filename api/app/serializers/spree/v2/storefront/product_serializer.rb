@@ -49,7 +49,7 @@ module Spree
         has_many :product_properties
 
         has_many :taxons, serializer: :taxon, record_type: :taxon do |object, params|
-          object.taxons_for_store(params[:store])
+          object.taxons_for_store(params[:store]).order(:id)
         end
 
         # all images from all variants

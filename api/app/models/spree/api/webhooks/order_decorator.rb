@@ -4,12 +4,12 @@ module Spree
       module OrderDecorator
         def after_cancel
           super
-          queue_webhooks_requests!('order.cancel')
+          queue_webhooks_requests!('order.canceled')
         end
 
         def finalize!
           super
-          queue_webhooks_requests!('order.complete')
+          queue_webhooks_requests!('order.placed')
         end
       end
     end

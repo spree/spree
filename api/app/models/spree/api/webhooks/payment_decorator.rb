@@ -4,7 +4,7 @@ module Spree
       module PaymentDecorator
         def after_void
           super
-          queue_webhooks_requests!('payment.void')
+          queue_webhooks_requests!('payment.voided')
         end
       end
     end
