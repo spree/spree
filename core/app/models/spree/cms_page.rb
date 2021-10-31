@@ -38,7 +38,7 @@ module Spree
       end
     end
 
-    # Overide this if your page type uses cms_sections
+    # Override this if your page type uses cms_sections
     def sections?
       false
     end

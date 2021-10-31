@@ -81,7 +81,7 @@ module Spree
         expect(json_response['pages']).to eq(2)
       end
 
-      it 'can query the results through a paramter' do
+      it 'can query the results through a parameter' do
         FactoryBot.create(:return_authorization, order: order)
         expected_result = create(:return_authorization, memo: 'damaged')
         order.return_authorizations << expected_result

@@ -71,7 +71,7 @@ module Spree
         expect(json_response['states'].first).to have_attributes(attributes)
       end
 
-      it 'can query the results through a paramter' do
+      it 'can query the results through a parameter' do
         api_get :index, q: { name_cont: 'Vic' }
         expect(json_response['states'].first['name']).to eq('Victoria')
       end

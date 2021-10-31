@@ -16,7 +16,7 @@ module Spree
       errors.add(:stores, Spree.t(:must_have_one_store))
     end
 
-    # this can be overriden on model basis
+    # this can be overridden on model basis
     def disable_store_presence_validation?
       Spree::Config[:disable_store_presence_validation]
     end

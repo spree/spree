@@ -77,7 +77,7 @@ describe Spree::Cms::Sections::ImageGallery, type: :model do
         section.reload
       end
 
-      it 'link_one, link_two and save the initail values' do
+      it 'link_one, link_two and save the initial values' do
         section = Spree::CmsSection.find(image_gallery_section.id)
 
         expect(section.link_one).to eql 'Shirt 1'

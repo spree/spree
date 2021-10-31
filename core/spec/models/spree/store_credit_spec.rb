@@ -508,7 +508,7 @@ describe 'StoreCredit' do
             @new_store_credit = Spree::StoreCredit.last
           end
 
-          it 'does not set the amount used on hte originating store credit' do
+          it 'does not set the amount used on the originating store credit' do
             expect(store_credit.reload.amount_used).to eq amount_used
           end
 

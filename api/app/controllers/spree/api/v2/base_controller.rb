@@ -89,13 +89,13 @@ module Spree
           raise CanCan::AccessDenied if spree_current_user.nil?
         end
 
-        # Needs to be overriden so that we use Spree's Ability rather than anyone else's.
+        # Needs to be overridden so that we use Spree's Ability rather than anyone else's.
         def current_ability
           @current_ability ||= Spree::Dependencies.ability_class.constantize.new(spree_current_user)
         end
 
         def request_includes
-          # if API user want's to receive only the bare-minimum
+          # if API user wants to receive only the bare-minimum
           # the API will return only the main resource without any included
           if params[:include]&.blank?
             []

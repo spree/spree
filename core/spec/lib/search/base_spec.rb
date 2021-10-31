@@ -18,7 +18,7 @@ describe Spree::Core::Search::Base do
     expect(searcher.retrieve_products.count).to eq(2)
   end
 
-  context 'when include_images is included in the initalization params' do
+  context 'when include_images is included in the initialization params' do
     subject { described_class.new(params).retrieve_products }
 
     let(:params) { { include_images: true, keyword: product1.name, taxon: taxon } }
