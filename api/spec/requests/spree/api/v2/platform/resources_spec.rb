@@ -317,7 +317,7 @@ describe 'Platform API v2 Resources spec', type: :request do
     it_behaves_like 'returns auth token errors'
 
     context '#ensure_current_store' do
-      context 'single store recource' do
+      context 'single store resource' do
         let(:execute) { post '/api/v2/platform/menus', params: menu_resource_params, headers: bearer_token }
         let(:menu_resource_params) { { menu: build(:menu, name: 'Ensure-MenuTest', location: 'Header', locale: 'en').attributes.symbolize_keys } }
 
@@ -331,7 +331,7 @@ describe 'Platform API v2 Resources spec', type: :request do
         end
       end
 
-      context 'multi store recource empty array passed' do
+      context 'multi store resource empty array passed' do
         let(:execute) { post '/api/v2/platform/payment_methods', params: payment_method_resource_params, headers: bearer_token }
         let(:payment_method_resource_params) do
           {
@@ -352,7 +352,7 @@ describe 'Platform API v2 Resources spec', type: :request do
         end
       end
 
-      context 'multi store recource array of stores ids passed' do
+      context 'multi store resource array of stores ids passed' do
         let(:execute) { post '/api/v2/platform/payment_methods', params: payment_method_resource_params, headers: bearer_token }
         let(:payment_method_resource_params) do
           {
