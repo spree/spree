@@ -135,7 +135,7 @@ describe Spree::Ability, type: :model do
         # It can create new users if is has access to the :admin, User!!
         expect(ability).to be_able_to :create, user
 
-        # TODO: change the Ability class so only users and customers get the extra premissions?
+        # TODO: change the Ability class so only users and customers get the extra permissions?
 
         Spree::Ability.remove_ability(BarAbility)
       end
@@ -201,7 +201,7 @@ describe Spree::Ability, type: :model do
         it_behaves_like 'no index allowed'
       end
 
-      context 'requested with inproper token' do
+      context 'requested with improper token' do
         let(:token) { 'FAIL' }
 
         before { allow(resource).to receive_messages token: token }

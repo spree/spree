@@ -188,7 +188,7 @@ module Spree
       update_hooks.add(hook)
     end
 
-    # For compatiblity with Calculator::PriceSack
+    # For compatibility with Calculator::PriceSack
     def amount
       line_items.inject(0.0) { |sum, li| sum + li.amount }
     end

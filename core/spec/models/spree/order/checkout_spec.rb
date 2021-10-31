@@ -642,7 +642,7 @@ describe Spree::Order, type: :model do
     let(:permitted_params) { {} }
     let(:params) { {} }
 
-    it 'calls update_atributes without order params' do
+    it 'calls update_attributes without order params' do
       expect(order).to receive(:update).with({})
       order.update_from_params(params, permitted_params)
     end

@@ -9,7 +9,7 @@ module Spree
       let(:menu) { create :menu }
       let(:menu_b) { create :menu, location: 'footer' }
 
-      it 'allows creation of a new instance, update the store then save witout triggering validation error' do
+      it 'allows creation of a new instance, update the store then save without triggering validation error' do
         object = Spree::CmsPage.new(title: 'Got Name', locale: 'de')
         object.update(store: store)
 

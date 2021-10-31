@@ -68,7 +68,7 @@ module Spree
       cache_key_elements.compact.join('/')
     end
 
-    def limit_descritpion(string)
+    def limit_description(string)
       return string if string.length <= 450
 
       string.slice(0..449) + '...'

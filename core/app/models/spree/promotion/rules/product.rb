@@ -1,6 +1,6 @@
 # A rule to limit a promotion based on products in the order.
 # Can require all or any of the products to be present.
-# Valid products either come from assigned product group or are assingned directly to the rule.
+# Valid products either come from assigned product group or are assigned directly to the rule.
 module Spree
   class Promotion
     module Rules

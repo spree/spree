@@ -141,17 +141,17 @@ module Spree
 
     alias master_images images
 
-    # Cant use short form block syntax due to https://github.com/Netflix/fast_jsonapi/issues/259
+    # Can't use short form block syntax due to https://github.com/Netflix/fast_jsonapi/issues/259
     def purchasable?
       default_variant.purchasable? || variants.any?(&:purchasable?)
     end
 
-    # Cant use short form block syntax due to https://github.com/Netflix/fast_jsonapi/issues/259
+    # Can't use short form block syntax due to https://github.com/Netflix/fast_jsonapi/issues/259
     def in_stock?
       default_variant.in_stock? || variants.any?(&:in_stock?)
     end
 
-    # Cant use short form block syntax due to https://github.com/Netflix/fast_jsonapi/issues/259
+    # Can't use short form block syntax due to https://github.com/Netflix/fast_jsonapi/issues/259
     def backorderable?
       default_variant.backorderable? || variants.any?(&:backorderable?)
     end

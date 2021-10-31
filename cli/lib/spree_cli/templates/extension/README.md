@@ -49,7 +49,7 @@ bundle exec gem bump -p -t
 bundle exec gem release
 ```
 
-For more options please see [gem-release REAMDE](https://github.com/svenfuchs/gem-release)
+For more options please see [gem-release README](https://github.com/svenfuchs/gem-release)
 
 ## Contributing
 

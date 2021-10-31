@@ -3,7 +3,7 @@ module Spree
     extend ActiveSupport::Concern
 
     included do
-      # reset cache on save inside trasaction and transaction commit
+      # reset cache on save inside transaction and transaction commit
       after_save :reset_memoized_data
       after_commit :reset_memoized_data
 

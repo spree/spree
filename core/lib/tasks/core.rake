@@ -22,7 +22,7 @@ use rake db:load_file[/absolute/path/to/sample/filename.rb]}
       ruby_files[File.basename(fixture_file, '.*')] = fixture_file
     end
     ruby_files.sort.each do |fixture, ruby_file|
-      # If file exists within application it takes precendence.
+      # If file exists within application it takes precedence.
       if File.exist?(File.join(Rails.root, 'db/default/spree', "#{fixture}.rb"))
         ruby_file = File.expand_path(File.join(Rails.root, 'db/default/spree', "#{fixture}.rb"))
       end
@@ -55,7 +55,7 @@ use rake db:load_file[/absolute/path/to/sample/filename.rb]}
   task :bootstrap do
     require 'highline/import'
 
-    # remigrate unless production mode (as saftey check)
+    # remigrate unless production mode (as safety check)
     if %w[demo development test].include? Rails.env
       if ENV['AUTO_ACCEPT'] || agree("This task will destroy any data in the database. Are you sure you want to \ncontinue? [y/n] ")
         ENV['SKIP_NAG'] = 'yes'
@@ -109,7 +109,7 @@ use rake db:load_file[/absolute/path/to/sample/filename.rb]}
       end
     end
 
-    puts 'WARNING: This task will re-associate any line_items associated with deleted variants to non-deleted variants with matching SKUs. Because other attributes and product associations may switch during the re-association, this may have unintended side-effects. If this task finishes successfully, line items for old order should no longer be orphaned from their varaints. You should run this task after you have already run the db migratoin AddDiscontinuedToProductsAndVariants. If the db migration did not warn you that it was leaving deleted records in place because of duplicate SKUs, then you do not need to run this rake task.'
+    puts 'WARNING: This task will re-associate any line_items associated with deleted variants to non-deleted variants with matching SKUs. Because other attributes and product associations may switch during the re-association, this may have unintended side-effects. If this task finishes successfully, line items for old order should no longer be orphaned from their variants. You should run this task after you have already run the db migratoin AddDiscontinuedToProductsAndVariants. If the db migration did not warn you that it was leaving deleted records in place because of duplicate SKUs, then you do not need to run this rake task.'
     puts 'Are you sure you want to continue? (Y/n):'
 
     if get_input

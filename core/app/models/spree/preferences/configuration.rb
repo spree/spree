@@ -1,5 +1,5 @@
-# This takes the preferrable methods and adds some
-# syntatic sugar to access the preferences
+# This takes the preferable methods and adds some
+# syntactic sugar to access the preferences
 #
 # class App < Configuration
 #   preference :color, :string

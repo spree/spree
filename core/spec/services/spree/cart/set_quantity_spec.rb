@@ -36,7 +36,7 @@ module Spree
     end
 
     context 'with backorderable item' do
-      it 'returns successfull result', :aggregate_failures do
+      it 'returns successful result', :aggregate_failures do
         result = subject.call(order: order, line_item: line_item, quantity: 5)
 
         expect(result.success).to eq(true)

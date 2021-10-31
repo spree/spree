@@ -8,4 +8,4 @@ To build a new Spree Extension, you can run
 spree extension my_extension
 ```
 
-This wll create a brand new project with all the developer tools and gems needed to developer your extension.
+This will create a brand new project with all the developer tools and gems needed to developer your extension.
