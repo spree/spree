@@ -185,7 +185,7 @@ module Spree
           expect(json_response['users'].size).to eq 0
         end
 
-        it 'existing email paramter' do
+        it 'existing email parameter' do
           api_get :index, q: {
             email_start: 'actor',
             bill_address_firstname_start: 'actor',

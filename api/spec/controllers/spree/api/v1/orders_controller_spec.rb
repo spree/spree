@@ -566,9 +566,9 @@ module Spree
         end
 
         api_get :index
-        milisecond = order.updated_at.strftime('%L')
+        millisecond = order.updated_at.strftime('%L')
         updated_at = json_response['orders'].first['updated_at']
-        expect(updated_at.split('T').last).to have_content(milisecond)
+        expect(updated_at.split('T').last).to have_content(millisecond)
       end
 
       context 'caching enabled' do

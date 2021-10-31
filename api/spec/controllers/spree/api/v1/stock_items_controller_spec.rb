@@ -72,14 +72,14 @@ module Spree
         expect(json_response['current_page']).to eq(1)
       end
 
-      it 'can query the results through a paramter (count_on_hand)' do
+      it 'can query the results through a parameter (count_on_hand)' do
         stock_item.update_column(:count_on_hand, 30)
         api_get :index, stock_location_id: stock_location.to_param, q: { count_on_hand_eq: '30' }
         expect(json_response['count']).to eq(1)
         expect(json_response['stock_items'].first['count_on_hand']).to eq 30
       end
 
-      it 'can query the results through a paramter (variant_id)' do
+      it 'can query the results through a parameter (variant_id)' do
         api_get :index, stock_location_id: stock_location.to_param, q: { variant_id_eq: 999_999 }
         expect(json_response['count']).to eq(0)
         api_get :index, stock_location_id: stock_location.to_param, q: { variant_id_eq: stock_item.variant_id }

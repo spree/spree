@@ -89,7 +89,7 @@ module Spree
           raise CanCan::AccessDenied if spree_current_user.nil?
         end
 
-        # Needs to be overriden so that we use Spree's Ability rather than anyone else's.
+        # Needs to be overridden so that we use Spree's Ability rather than anyone else's.
         def current_ability
           @current_ability ||= Spree::Dependencies.ability_class.constantize.new(spree_current_user)
         end

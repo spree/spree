@@ -74,7 +74,7 @@ module Spree
       @collection_paginator = 'Spree::Shared::Paginate'
 
       # coupons
-      # TODO: we should split this service into 2 seperate - Add and Remove
+      # TODO: we should split this service into 2 separate - Add and Remove
       @coupon_handler = 'Spree::PromotionHandler::Coupon'
 
       # account

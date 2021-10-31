@@ -264,7 +264,7 @@ All notable, unreleased changes to this project will be documented in this file.
 
 ## [4.2.0] - 2021-02-25
 
-- Extract Storefront installer into a seperate Generator [#10802](https://github.com/spree/spree/pull/10802) ([damianlegawiec](https://github.com/damianlegawiec))
+- Extract Storefront installer into a separate Generator [#10802](https://github.com/spree/spree/pull/10802) ([damianlegawiec](https://github.com/damianlegawiec))
 - Improve Spree installer [#10801](https://github.com/spree/spree/pull/10801) ([damianlegawiec](https://github.com/damianlegawiec))
 - Add locales from the SpreeI18n to the routes [#10800](https://github.com/spree/spree/pull/10800) ([Vegann](https://github.com/Vegann))
 - Support localized URLs [#10794](https://github.com/spree/spree/pull/10794) ([damianlegawiec](https://github.com/damianlegawiec))
@@ -589,7 +589,7 @@ All notable, unreleased changes to this project will be documented in this file.
 - Allow to use custom ability classes in testing environment [#10271](https://github.com/spree/spree/pull/10271) ([damianlegawiec](https://github.com/damianlegawiec))
 - [WCAG-24] Add role navigation attribute [#10268](https://github.com/spree/spree/pull/10268) ([kaliszKrzysztof](https://github.com/kaliszKrzysztof))
 - [WCAG-18] Fix main categories structure so user could see outline [#10267](https://github.com/spree/spree/pull/10267) ([kaliszKrzysztof](https://github.com/kaliszKrzysztof))
-- [SDP-343] Fixes multiple occurences of a product on admin products list search [#10265](https://github.com/spree/spree/pull/10265) ([aplegatt](https://github.com/aplegatt))
+- [SDP-343] Fixes multiple occurrences of a product on admin products list search [#10265](https://github.com/spree/spree/pull/10265) ([aplegatt](https://github.com/aplegatt))
 - [SDP-250] Add vendor visibility on PDP with redirect to Vendor PLP [#10263](https://github.com/spree/spree/pull/10263) ([AleksandraKaminska](https://github.com/AleksandraKaminska))
 - :building_construction: (backend) improve customer attribute editor. [#10262](https://github.com/spree/spree/pull/10262) ([imgarylai](https://github.com/imgarylai))
 - [SDP-348] Filters are not highlighted after picking and refreshing modal [#10260](https://github.com/spree/spree/pull/10260) ([AleksandraKaminska](https://github.com/AleksandraKaminska))

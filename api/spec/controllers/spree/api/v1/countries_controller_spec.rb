@@ -25,7 +25,7 @@ module Spree
         expect(json_response['pages']).to eq(1)
       end
 
-      it 'can query the results through a paramter' do
+      it 'can query the results through a parameter' do
         api_get :index, q: { name_cont: 'zam' }
         expect(json_response['count']).to eq(1)
         expect(json_response['countries'].first['name']).to eq @zambia.name
