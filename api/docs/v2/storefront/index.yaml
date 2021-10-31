@@ -3548,7 +3548,7 @@ components:
               properties:
                 data:
                   $ref: '#/components/schemas/Relation'
-      description: Digital links are accessable in the order includes line_items.digital_links
+      description: Digital links are accessible in the order includes line_items.digital_links
   parameters:
     Token:
       name: token

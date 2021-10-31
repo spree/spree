@@ -24,10 +24,10 @@ module Spree
         end
 
         def allowed_sort_attributes
-          default_sort_atributes
+          default_sort_attributes
         end
 
-        def default_sort_atributes
+        def default_sort_attributes
           [:id, :name, :slug, :number, :position, :updated_at, :created_at, :deleted_at]
         end
 

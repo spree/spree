@@ -79,7 +79,7 @@ module Spree
 
         if unit.quantity > number
           # if required quantity is greater than available
-          # split off and fullfill that
+          # split off and fulfill that
           split = unit.split_inventory!(number)
           split.fill_backorder
         else

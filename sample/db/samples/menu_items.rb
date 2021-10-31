@@ -14,7 +14,7 @@ MENUS.each do |menu|
     root_name_b = 'Men'
     root_name_c = 'Sportswear'
 
-    catagories = 'Categories'
+    categories = 'Categories'
 
     skirts = 'Skirts'
     dresses = 'Dresses'
@@ -39,7 +39,7 @@ MENUS.each do |menu|
     root_name_b = 'Hommes'
     root_name_c = 'Tenue de sport'
 
-    catagories = 'Catégories'
+    categories = 'Catégories'
 
     skirts = 'Jupes'
     dresses = 'Robes'
@@ -64,7 +64,7 @@ MENUS.each do |menu|
     root_name_b = 'Männer'
     root_name_c = 'Sportbekleidung'
 
-    catagories = 'Kategorien'
+    categories = 'Kategorien'
 
     skirts = 'die Röcke'
     dresses = 'Kleider'
@@ -89,7 +89,7 @@ MENUS.each do |menu|
     root_name_b = 'Mujeres'
     root_name_c = 'Ropa de deporte'
 
-    catagories = 'Categorías'
+    categories = 'Categorías'
 
     skirts = 'Faldas'
     dresses = 'Vestidos'
@@ -152,7 +152,7 @@ MENUS.each do |menu|
     # Categories #
     ##############
     menu_cat_women = Spree::MenuItem.where(
-      name: catagories,
+      name: categories,
       item_type: 'Container',
       code: 'category',
       menu_id: menu,
@@ -160,7 +160,7 @@ MENUS.each do |menu|
     ).first_or_create!
 
     menu_cat_men = Spree::MenuItem.where(
-      name: catagories,
+      name: categories,
       item_type: 'Container',
       code: 'category',
       menu_id: menu,
@@ -168,7 +168,7 @@ MENUS.each do |menu|
     ).first_or_create!
 
     menu_cat_sw = Spree::MenuItem.where(
-      name: catagories,
+      name: categories,
       item_type: 'Container',
       code: 'category',
       menu_id: menu,
@@ -239,7 +239,7 @@ MENUS.each do |menu|
   end
 
   #################################
-  # Links For: WOMEN / CATAGORIES #
+  # Links For: WOMEN / CATEGORIES #
   #################################
 
   women_link_parent_id = if menu.location == 'header'
@@ -315,7 +315,7 @@ MENUS.each do |menu|
   women_j_c.save!
 
   ###############################
-  # Links For: MEN / CATAGORIES #
+  # Links For: MEN / CATEGORIES #
   ###############################
 
   men_link_parent_id = if menu.location == 'header'
@@ -369,7 +369,7 @@ MENUS.each do |menu|
   men_j_c.save!
 
   ######################################
-  # Links For: SPORTSWARE / CATAGORIES #
+  # Links For: SPORTSWARE / CATEGORIES #
   ######################################
 
   sw_link_parent_id = if menu.location == 'header'
