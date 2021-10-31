@@ -234,7 +234,7 @@ RSpec.describe Spree::Api::V2::Storefront::WishlistsController, type: :request d
       expect(json_response['data']['attributes']['quantity']).to eql (1)
     end
 
-    it 'must not permit the creation of a new wished_item witout the variant_id attribute' do
+    it 'must not permit the creation of a new wished_item without the variant_id attribute' do
       post "/api/v2/storefront/wishlists/#{user.wishlists.first.token}/add_item", headers: headers_bearer,
                                                                                   params: {
                                                                                     bad_variant_id: variant.id.to_s

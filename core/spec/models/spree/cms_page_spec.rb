@@ -43,7 +43,7 @@ describe Spree::CmsPage, type: :model do
       expect(described_class.find_by(id: homepage.id).sections?).to be true
     end
 
-    it 'homepage is visable by default' do
+    it 'homepage is visible by default' do
       expect(homepage.visible?).to be true
     end
 
@@ -71,7 +71,7 @@ describe Spree::CmsPage, type: :model do
       expect(described_class.find_by(id: feature_page.id).sections?).to be true
     end
 
-    it 'feature_page is visable by default' do
+    it 'feature_page is visible by default' do
       expect(feature_page.visible?).to be true
     end
 
@@ -99,7 +99,7 @@ describe Spree::CmsPage, type: :model do
       expect(described_class.find_by(id: standard_page.id).sections?).to be false
     end
 
-    it 'standard_page is visable by default' do
+    it 'standard_page is visible by default' do
       expect(standard_page.visible?).to be true
     end
 

@@ -1,1 +1,3 @@
-skip_these_words
+Cliente
+doesnt
+upto

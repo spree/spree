@@ -201,7 +201,7 @@ describe Spree::Ability, type: :model do
         it_behaves_like 'no index allowed'
       end
 
-      context 'requested with inproper token' do
+      context 'requested with improper token' do
         let(:token) { 'FAIL' }
 
         before { allow(resource).to receive_messages token: token }
