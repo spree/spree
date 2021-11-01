@@ -18,9 +18,7 @@ module Spree
               end
             end
 
-            Spree::PaymentMethod.json_api_permitted_attributes + [
-              { store_ids: [] }
-            ] + preferred_attributes
+            super + preferred_attributes
           end
         end
       end
