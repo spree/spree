@@ -778,8 +778,8 @@ paths:
                     payments_attributes:
                       - payment_method_id: '1'
                         source_attributes:
-                          gateway_payment_profile_id: 'ABC123'
-                          cc_type: 'visa'
+                          gateway_payment_profile_id: ABC123
+                          cc_type: visa
                           last_digits: '1111'
                           month: '10'
                           year: '2022'
@@ -899,21 +899,19 @@ paths:
               properties:
                 payment_method_id:
                   type: string
-                  required: true
                   description: ID of the selected Payment Method
                 source_id:
                   type: string
-                  description: ID of the selected Payment Source (eg. Credit Card, only for signed in users)
+                  description: 'ID of the selected Payment Source (eg. Credit Card, only for signed in users)'
                 amount:
                   type: number
-                  description: Amount for the newly created payment, when left blank will use the entire Order Total (reduced by used Store Credits / Gift Cards)
+                  description: 'Amount for the newly created payment, when left blank will use the entire Order Total (reduced by used Store Credits / Gift Cards)'
                 source_attributes:
                   type: object
                   properties:
                     gateway_payment_profile_id:
                       type: string
-                      description: Payment source authorization token, more details for [Stripe implementation](https://stripe.com/docs/payments/accept-a-payment-charges#web-create-token)
-                      required: true
+                      description: 'Payment source authorization token, more details for [Stripe implementation](https://stripe.com/docs/payments/accept-a-payment-charges#web-create-token)'
                     cc_type:
                       type: string
                       enum:
@@ -932,22 +930,26 @@ paths:
                     name:
                       type: string
                       description: Card holder name
-                      required: true
-              examples:
-                Create new Credit Card:
-                  value:
-                    payment_method_id: '1'
-                    source_attributes:
-                      gateway_payment_profile_id: 'card_1JqvNB2eZvKYlo2C5OlqLV7S'
-                      cc_type: 'visa'
-                      last_digits: '1111'
-                      month: '10'
-                      year: '2026'
-                      name: 'John Snow'
-                Use existing Credit Card:
-                  value:
-                    payment_metod: '1'
-                    source_id: '1'
+                  required:
+                    - gateway_payment_profile_id
+              required:
+                - payment_method_id
+            examples:
+              Create new Credit Card:
+                value:
+                  payment_method_id: '1'
+                  source_attributes:
+                    gateway_payment_profile_id: card_1JqvNB2eZvKYlo2C5OlqLV7S
+                    cc_type: visa
+                    last_digits: '1111'
+                    month: '10'
+                    year: '2026'
+                    name: John Snow
+              Use existing Credit Card:
+                value:
+                  payment_method_id: '1'
+                  source_id: '1'
+        description: ''
       parameters:
         - $ref: '#/components/parameters/CartIncludeParam'
         - $ref: '#/components/parameters/SparseFieldsCart'
