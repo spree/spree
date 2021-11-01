@@ -104,7 +104,12 @@ module Spree
           end
 
           def spree_permitted_attributes
-            model_class.json_api_permitted_attributes
+            preferred_attributes = []
+            resource.defined_preferences.each do |preference|
+              preferred_attributes << "preferred_#{preference}".to_sym
+            end
+
+            model_class.json_api_permitted_attributes + [{ store_ids: [] }] + preferred_attributes
           end
 
           def permitted_resource_params
