@@ -215,43 +215,127 @@ RSpec.configure do |config|
           },
 
           # CMS Page
-          create_cms_page_params: {
+          create_standard_cms_page_params: {
             type: :object,
             properties: {
               cms_page: {
                 type: :object,
                 required: %w[title locale],
                 properties: {
-                  title: { type: :string },
-                  meta_title: { type: :string },
-                  content: { type: :string, },
-                  meta_description: { type: :string },
-                  visible: { type: :string },
-                  slug: { type: :string },
-                  locale: { type: :string }
+                  title: { type: :string, example: 'About Us', description: 'Give your page a title.' },
+                  type: { type: :string, enum: ['Spree::Cms::Pages::StandardPage', 'Spree::Cms::Pages::Homepage', 'Spree::Cms::Pages::FeaturePage'], description: 'Set the type of page, for this example we are using `Spree::Cms::Pages::StandardPage`.' },
+                  meta_title: { type: :string, nullable: true, example: 'Learn More About Super-Shop', description: 'Set the meta title for this page, this appears in the title bar of the browser.' },
+                  content: { type: :string, nullable: true, example: "Lot's of text..", description: 'The text content of a standard page, this can be HTML from a rich text editor.' },
+                  meta_description: { type: :string, nullable: true, example: 'Learn more about us on this page here...', description: 'Set a meta description, used for SEO and displayed in search results.' },
+                  visible: { type: :boolean, enum: ['true', 'false'], description: 'This page is publicly visible when set to `true`.' },
+                  slug: { type: :string, nullable: true, example: 'about-us', description: 'Set a slug for this page.' },
+                  locale: { type: :string, example: 'en-US', description: 'The language this page is written in.' }
                 }
               }
             },
             required: %w[cms_page],
+            title: 'Create a Standard Page',
             'x-internal': true
           },
-          update_cms_page_params: {
+          create_homepage_cms_page_params: {
+            type: :object,
+            properties: {
+              cms_page: {
+                type: :object,
+                required: %w[title locale],
+                properties: {
+                  title: { type: :string, example: 'Our Flash Homepage', description: 'Give your page a title.' },
+                  type: { type: :string, enum: ['Spree::Cms::Pages::StandardPage', 'Spree::Cms::Pages::Homepage', 'Spree::Cms::Pages::FeaturePage'], description: 'Set the type of page, for this example we are using `Spree::Cms::Pages::Homepage`.' },
+                  meta_title: { type: :string, nullable: true, example: 'Visit Our Store - Great Deals', description: 'Set the meta title for this page, this appears in the title bar of the browser.' },
+                  meta_description: { type: :string, nullable: true, example: 'Discover great new products that we sell in this store...', description: 'Set a meta description, used for SEO and displayed in search results.' },
+                  visible: { type: :boolean, enum: ['true', 'false'], description: 'This page is publicly visible when set to `true`.' },
+                  locale: { type: :string, example: 'en-US', description: 'The language this page is written in.' }
+                }
+              }
+            },
+            required: %w[cms_page],
+            title: 'Create a Homepage',
+            'x-internal': true
+          },
+          create_feature_cms_page_params: {
+            type: :object,
+            properties: {
+              cms_page: {
+                type: :object,
+                required: %w[title locale],
+                properties: {
+                  title: { type: :string, example: 'Featured Product', description: 'Give your page a title.' },
+                  type: { type: :string, enum: ['Spree::Cms::Pages::StandardPage', 'Spree::Cms::Pages::Homepage', 'Spree::Cms::Pages::FeaturePage'], description: 'Set the type of page, for this example we are using `Spree::Cms::Pages::FeaturePage`.' },
+                  meta_title: { type: :string, nullable: true, example: 'Learn More About This Featured Product', description: 'Set the meta title for this page, this appears in the title bar of the browser.' },
+                  meta_description: { type: :string, nullable: true, example: 'Learn more about us this amazing product that we sell right here...', description: 'Set a meta description, used for SEO and displayed in search results.' },
+                  visible: { type: :boolean, enum: ['true', 'false'], description: 'This page is publicly visible when set to `true`.' },
+                  slug: { type: :string, nullable: true, example: 'about-us', description: 'Set a slug for this page.' },
+                  locale: { type: :string, example: 'en-US', description: 'The language this page is written in.' }
+                }
+              }
+            },
+            required: %w[cms_page],
+            title: 'Create a Feature Page',
+            'x-internal': true
+          },
+          update_standard_cms_page_params: {
             type: :object,
             properties: {
               cms_page: {
                 type: :object,
                 properties: {
-                  title: { type: :string },
-                  meta_title: { type: :string },
-                  content: { type: :string, },
-                  meta_description: { type: :string },
-                  visible: { type: :string },
-                  slug: { type: :string },
-                  locale: { type: :string }
+                  title: { type: :string, example: 'About Us', description: 'Give your page a title.' },
+                  type: { type: :string, enum: ['Spree::Cms::Pages::StandardPage', 'Spree::Cms::Pages::Homepage', 'Spree::Cms::Pages::FeaturePage'], description: 'Set the type of page, for this example we are using `Spree::Cms::Pages::StandardPage`.' },
+                  meta_title: { type: :string, nullable: true, example: 'Learn More About Super-Shop', description: 'Set the meta title for this page, this appears in the title bar of the browser.' },
+                  content: { type: :string, nullable: true, example: "Lot's of text..", description: 'The text content of a standard page, this can be HTML from a rich text editor.' },
+                  meta_description: { type: :string, nullable: true, example: 'Learn more about us on this page here...', description: 'Set a meta description, used for SEO and displayed in search results.' },
+                  visible: { type: :boolean, enum: ['true', 'false'], description: 'This page is publicly visible when set to `true`.' },
+                  slug: { type: :string, nullable: true, example: 'about-us', description: 'Set a slug for this page.' },
+                  locale: { type: :string, example: 'en-US', description: 'The language this page is written in.' }
                 }
               }
             },
             required: %w[cms_page],
+            title: 'Create a Standard Page',
+            'x-internal': true
+          },
+          update_homepage_cms_page_params: {
+            type: :object,
+            properties: {
+              cms_page: {
+                type: :object,
+                properties: {
+                  title: { type: :string, example: 'Our Flash Homepage', description: 'Give your page a title.' },
+                  type: { type: :string, enum: ['Spree::Cms::Pages::StandardPage', 'Spree::Cms::Pages::Homepage', 'Spree::Cms::Pages::FeaturePage'], description: 'Set the type of page, for this example we are using `Spree::Cms::Pages::Homepage`.' },
+                  meta_title: { type: :string, nullable: true, example: 'Visit Our Store - Great Deals', description: 'Set the meta title for this page, this appears in the title bar of the browser.' },
+                  meta_description: { type: :string, nullable: true, example: 'Discover great new products that we sell in this store...', description: 'Set a meta description, used for SEO and displayed in search results.' },
+                  visible: { type: :boolean, enum: ['true', 'false'], description: 'This page is publicly visible when set to `true`.' },
+                  locale: { type: :string, example: 'en-US', description: 'The language this page is written in.' }
+                }
+              }
+            },
+            required: %w[cms_page],
+            title: 'Create a Homepage',
+            'x-internal': true
+          },
+          update_feature_cms_page_params: {
+            type: :object,
+            properties: {
+              cms_page: {
+                type: :object,
+                properties: {
+                  title: { type: :string, example: 'Featured Product', description: 'Give your page a title.' },
+                  type: { type: :string, enum: ['Spree::Cms::Pages::StandardPage', 'Spree::Cms::Pages::Homepage', 'Spree::Cms::Pages::FeaturePage'], description: 'Set the type of page, for this example we are using `Spree::Cms::Pages::FeaturePage`.' },
+                  meta_title: { type: :string, nullable: true, example: 'Learn More About This Featured Product', description: 'Set the meta title for this page, this appears in the title bar of the browser.' },
+                  meta_description: { type: :string, nullable: true, example: 'Learn more about us this amazing product that we sell right here...', description: 'Set a meta description, used for SEO and displayed in search results.' },
+                  visible: { type: :boolean, enum: ['true', 'false'], description: 'This page is publicly visible when set to `true`.' },
+                  slug: { type: :string, nullable: true, example: 'about-us', description: 'Set a slug for this page.' },
+                  locale: { type: :string, example: 'en-US', description: 'The language this page is written in.' }
+                }
+              }
+            },
+            required: %w[cms_page],
+            title: 'Create a Feature Page',
             'x-internal': true
           },
 

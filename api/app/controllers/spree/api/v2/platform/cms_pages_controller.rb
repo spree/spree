@@ -8,6 +8,10 @@ module Spree
           def model_class
             Spree::CmsPage
           end
+
+          def scope_includes
+            [:cms_sections]
+          end
         end
       end
     end
