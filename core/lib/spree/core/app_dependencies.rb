@@ -15,7 +15,8 @@ module Spree
       :address_finder, :collection_sorter, :error_handler, :current_store_finder, :cart_empty_service, :cart_destroy_service,
       :classification_reposition_service, :credit_cards_destroy_service, :cart_associate_service, :cart_change_currency_service,
       :line_item_create_service, :line_item_update_service, :line_item_destroy_service,
-      :order_approve_service, :order_cancel_service, :shipment_change_state_service, :shipment_update_service
+      :order_approve_service, :order_cancel_service, :shipment_change_state_service, :shipment_update_service,
+      :payment_create_service
     ].freeze
 
     attr_accessor *INJECTION_POINTS
@@ -93,6 +94,8 @@ module Spree
       @line_item_create_service = 'Spree::LineItems::Create'
       @line_item_update_service = 'Spree::LineItems::Update'
       @line_item_destroy_service = 'Spree::LineItems::Destroy'
+
+      @payment_create_service = 'Spree::Payments::Create'
 
       # errors
       @error_handler = 'Spree::ErrorReporter'
