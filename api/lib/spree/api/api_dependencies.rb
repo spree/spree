@@ -21,7 +21,7 @@ module Spree
       :storefront_account_create_service, :storefront_account_update_service, :storefront_collection_sorter, :error_handler,
       :storefront_cart_empty_service, :storefront_cart_destroy_service, :storefront_credit_cards_destroy_service, :platform_products_sorter,
       :storefront_cart_change_currency_service, :storefront_payment_serializer,
-      :storefront_payment_create_service,
+      :storefront_payment_create_service, :storefront_address_create_service, :storefront_address_update_service,
 
       :platform_admin_user_serializer, :platform_coupon_handler, :platform_order_update_service,
       :platform_order_use_store_credit_service, :platform_order_remove_store_credit_service,
@@ -72,8 +72,10 @@ module Spree
       # account services
       @storefront_account_create_service = Spree::Dependencies.account_create_service
       @storefront_account_update_service = Spree::Dependencies.account_update_service
-      @storefront_account_create_address_service = Spree::Dependencies.account_create_address_service
-      @storefront_account_update_address_service = Spree::Dependencies.account_update_address_service
+
+      # address services
+      @storefront_address_create_service = Spree::Dependencies.address_create_service
+      @storefront_address_update_service = Spree::Dependencies.address_update_service
 
       # credit card services
       @storefront_credit_cards_destroy_service = Spree::Dependencies.credit_cards_destroy_service

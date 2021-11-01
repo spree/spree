@@ -59,11 +59,11 @@ module Spree
             end
 
             def create_service
-              Spree::Api::Dependencies.storefront_account_create_address_service.constantize
+              Spree::Api::Dependencies.storefront_address_create_service.constantize
             end
 
             def update_service
-              Spree::Api::Dependencies.storefront_account_update_address_service.constantize
+              Spree::Api::Dependencies.storefront_address_update_service.constantize
             end
 
             def address_params
