@@ -26,16 +26,16 @@ describe Spree::Checkout::Update, type: :service do
           }
         )
       end
-      let(:result) { replace_country.send(:replace_country_iso_with_id, order_params, 'ship') }
+      let(:result) { replace_country.send(:replace_country_iso_with_id, order_params[:order][:ship_address_attributes]) }
 
       before { result }
 
       it 'will return hash contain country_id' do
-        expect(result[:order][:ship_address_attributes][:country_id]).to eq country.id
+        expect(result[:country_id]).to eq country.id
       end
 
       it 'will return hash without country_iso' do
-        expect(result[:order][:ship_address_attributes]).not_to include(:country_iso)
+        expect(result).not_to include(:country_iso)
       end
     end
 
@@ -47,16 +47,16 @@ describe Spree::Checkout::Update, type: :service do
           }
         )
       end
-      let(:result) { replace_country.send(:replace_country_iso_with_id, order_params, 'bill') }
+      let(:result) { replace_country.send(:replace_country_iso_with_id, order_params[:order][:bill_address_attributes]) }
 
       before { result }
 
       it 'will return hash contain country_id' do
-        expect(result[:order][:bill_address_attributes][:country_id]).to eq country.id
+        expect(result[:country_id]).to eq country.id
       end
 
       it 'will return hash without country_iso' do
-        expect(result[:order][:bill_address_attributes]).not_to include(:country_iso)
+        expect(result).not_to include(:country_iso)
       end
     end
   end

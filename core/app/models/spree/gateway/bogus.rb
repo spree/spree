@@ -71,6 +71,10 @@ module Spree
       true
     end
 
+    def payment_source_class
+      CreditCard
+    end
+
     def actions
       %w(capture void credit)
     end

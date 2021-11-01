@@ -730,13 +730,13 @@ paths:
                           source_attributes:
                             type: object
                             properties:
-                              number:
+                              gateway_payment_profile_id:
                                 type: string
                               month:
                                 type: string
                               year:
                                 type: string
-                              verification_value:
+                              cc_type:
                                 type: string
                               name:
                                 type: string
@@ -778,10 +778,11 @@ paths:
                     payments_attributes:
                       - payment_method_id: '1'
                         source_attributes:
-                          number: '4111111111111111'
+                          gateway_payment_profile_id: ABC123
+                          cc_type: visa
+                          last_digits: '1111'
                           month: '10'
                           year: '2022'
-                          verification_value: '123'
                           name: John Doe
         description: |-
           ##### Add Customer Details
@@ -867,6 +868,95 @@ paths:
       summary: Complete Checkout
       tags:
         - Checkout / State
+  /api/v2/storefront/checkout/create_payment:
+    post:
+      description: |-
+        Creates new Payment for the current checkout.
+
+        You can either create new payment source (eg. a Credit Card) or use an existing (for signed in users only).
+
+        Newly created payment source will be associated to the current signed in user.
+
+        System will automatically invalidate previous (non-finalized) payments (excluding store credit / gift card payments).
+
+        [More details on payment system](https://dev-docs.spreecommerce.org/internals/payments)
+      operationId: create-payment
+      responses:
+        '200':
+          $ref: '#/components/responses/Cart'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+        '422':
+          $ref: '#/components/responses/422UnprocessableEntity'
+      security:
+        - orderToken: []
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              type: object
+              properties:
+                payment_method_id:
+                  type: string
+                  description: ID of the selected Payment Method
+                source_id:
+                  type: string
+                  description: 'ID of the selected Payment Source (eg. Credit Card, only for signed in users)'
+                amount:
+                  type: number
+                  description: 'Amount for the newly created payment, when left blank will use the entire Order Total (reduced by used Store Credits / Gift Cards)'
+                source_attributes:
+                  type: object
+                  properties:
+                    gateway_payment_profile_id:
+                      type: string
+                      description: 'Payment source authorization token, more details for [Stripe implementation](https://stripe.com/docs/payments/accept-a-payment-charges#web-create-token)'
+                    cc_type:
+                      type: string
+                      enum:
+                        - visa
+                        - mastercard
+                        - amex
+                    last_digits:
+                      type: string
+                      description: Last 4 digits of CC number
+                    month:
+                      type: string
+                      description: Expiration date month
+                    year:
+                      type: string
+                      description: Expiration date year
+                    name:
+                      type: string
+                      description: Card holder name
+                  required:
+                    - gateway_payment_profile_id
+                    - name
+              required:
+                - payment_method_id
+            examples:
+              Create new Credit Card:
+                value:
+                  payment_method_id: '1'
+                  source_attributes:
+                    gateway_payment_profile_id: card_1JqvNB2eZvKYlo2C5OlqLV7S
+                    cc_type: visa
+                    last_digits: '1111'
+                    month: '10'
+                    year: '2026'
+                    name: John Snow
+              Use existing Credit Card:
+                value:
+                  payment_method_id: '1'
+                  source_id: '1'
+        description: ''
+      parameters:
+        - $ref: '#/components/parameters/CartIncludeParam'
+        - $ref: '#/components/parameters/SparseFieldsCart'
+      summary: Create new Payment
+      tags:
+        - Checkout / Payments
   /api/v2/storefront/checkout/add_store_credit:
     post:
       description: |-
@@ -2230,15 +2320,15 @@ components:
               example: visa
             last_digits:
               type: string
-              example: '1232'
+              example: '1111'
               description: Last 4 digits of CC number
             month:
               type: string
               description: Expiration date month
-              example: '10'
+              example: '12'
             year:
               type: string
-              example: '2019'
+              example: '2026'
               description: Expiration date year
             name:
               type: string
@@ -3022,7 +3112,7 @@ components:
             shipped_at:
               type: string
               format: date-time
-              example: '2019-01-02 13:42:12'
+              example: '2021-01-02 13:42:12'
               description: Date when Shipment was being sent from the warehouse
               nullable: true
         relationships:
@@ -5865,9 +5955,9 @@ components:
                   type: credit_card
                   attributes:
                     cc_type: visa
-                    last_digits: '1232'
-                    month: '10'
-                    year: '2019'
+                    last_digits: '4111'
+                    month: '12'
+                    year: '2026'
                     name: John Doe
                     default: true
                     relationships:
@@ -5914,9 +6004,9 @@ components:
                     type: credit_card
                     attributes:
                       cc_type: visa
-                      last_digits: '1232'
-                      month: '10'
-                      year: '2019'
+                      last_digits: '1111'
+                      month: '12'
+                      year: '2026'
                       name: John Doe
                       default: true
                       relationships:
@@ -15993,6 +16083,7 @@ tags:
   - name: Cart / Other
   - name: Checkout
   - name: Checkout / State
+  - name: Checkout / Payments
   - name: Checkout / Store Credit
   - name: CMS Pages
   - name: Countries
