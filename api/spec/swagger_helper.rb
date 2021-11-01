@@ -388,9 +388,9 @@ RSpec.configure do |config|
                 type: :object,
                 required: %w[name location locale],
                 properties: {
-                  name: { type: :string },
-                  location: { type: :string },
-                  locale: { type: :string }
+                  name: { type: :string, example: 'Main Menu', description: 'Give this Menu a name.' },
+                  location: { type: :string, enum: ['header', 'footer'], description: 'Set the location this menu appears in the website.' },
+                  locale: { type: :string, example: 'en-US', description: 'Set the language of this menu.' }
                 }
               }
             },
@@ -403,9 +403,9 @@ RSpec.configure do |config|
               menu: {
                 type: :object,
                 properties: {
-                  name: { type: :string },
-                  location: { type: :string },
-                  locale: { type: :string }
+                  name: { type: :string, example: 'Main Menu', description: 'Give this Menu a name.' },
+                  location: { type: :string, enum: ['header', 'footer'], description: 'Set the location this menu appears in the website.' },
+                  locale: { type: :string, example: 'en-US', description: 'Set the language of this menu.' }
                 }
               }
             },
