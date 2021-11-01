@@ -471,7 +471,7 @@ RSpec.configure do |config|
                 }
               }
             },
-            required: %w[new_parent_id new_position_idx],
+            required: %w[menu_item],
             title: 'Reposition a Menu Item',
             'x-internal': true
           },
