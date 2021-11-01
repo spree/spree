@@ -5,6 +5,9 @@ describe 'Platform API v2 Resources spec', type: :request do
   include_context 'Platform API v2'
 
   let!(:store) { Spree::Store.default }
+  let!(:store_two) { create(:store) }
+  let!(:store_three) { create(:store) }
+
   let(:bearer_token) { { 'Authorization' => valid_authorization } }
   let(:resource_params) { {} }
   let(:params) { { address: resource_params } }
@@ -314,16 +317,60 @@ describe 'Platform API v2 Resources spec', type: :request do
     it_behaves_like 'returns auth token errors'
 
     context '#ensure_current_store' do
-      let(:execute) { post '/api/v2/platform/menus', params: menu_resource_params, headers: bearer_token }
-      let(:menu_resource_params) { { menu: build(:menu, name: 'Ensure-MenuTest', location: 'Header', locale: 'en').attributes.symbolize_keys } }
+      context 'single store resource' do
+        let(:execute) { post '/api/v2/platform/menus', params: menu_resource_params, headers: bearer_token }
+        let(:menu_resource_params) { { menu: build(:menu, name: 'Ensure-MenuTest', location: 'Header', locale: 'en').attributes.symbolize_keys } }
 
-      before { execute }
+        before { execute }
 
-      it_behaves_like 'returns 201 HTTP status'
+        it_behaves_like 'returns 201 HTTP status'
 
-      it 'adds the current store to the newly created resource' do
-        new_menu = Spree::Menu.find_by(name: 'Ensure-MenuTest')
-        expect(new_menu.store).to eql(store)
+        it 'adds the current store to the newly created resource' do
+          new_menu = Spree::Menu.find_by(name: 'Ensure-MenuTest')
+          expect(new_menu.store).to eql(store)
+        end
+      end
+
+      context 'multi store resource empty array passed' do
+        let(:execute) { post '/api/v2/platform/payment_methods', params: payment_method_resource_params, headers: bearer_token }
+        let(:payment_method_resource_params) do
+          {
+            payment_method: {
+              name: 'Stripe-API-TEST',
+              store_ids: []
+            }
+          }
+        end
+
+        before { execute }
+
+        it_behaves_like 'returns 201 HTTP status'
+
+        it 'adds the current store to the newly created resource' do
+          new_resource = Spree::PaymentMethod.find_by(name: 'Stripe-API-TEST')
+          expect(new_resource.stores).to match_array([store])
+        end
+      end
+
+      context 'multi store resource array of stores ids passed' do
+        let(:execute) { post '/api/v2/platform/payment_methods', params: payment_method_resource_params, headers: bearer_token }
+        let(:payment_method_resource_params) do
+          {
+            payment_method: {
+              name: 'Stripe-API-TEST-2',
+              store_ids: [store_three.id.to_s]
+            }
+          }
+        end
+
+        before { execute }
+
+        it_behaves_like 'returns 201 HTTP status'
+
+        it 'adds the current store and the stores in the array to the newly created resource' do
+          new_resource = Spree::PaymentMethod.find_by(name: 'Stripe-API-TEST-2')
+          expect(new_resource.stores).to match_array([store, store_three])
+        end
       end
     end
   end
@@ -427,27 +474,58 @@ describe 'Platform API v2 Resources spec', type: :request do
     end
 
     context '#ensure_current_store' do
-      let!(:product) { create(:product) }
-      let(:execute_product) { put "/api/v2/platform/products/#{product.id}", params: product_params, headers: bearer_token }
-      let(:product_params) do
-        {
-          product: {
-            stores: []
-          }
-        }
-      end
+      context 'multiple store resource' do
+        context 'when an empty array is passed to a resource that can belong to many stores' do
+          let!(:payment_method) { create(:payment_method, stores: [store, store_three, store_two]) }
+          let(:execute_payment_method) { patch "/api/v2/platform/payment_methods/#{payment_method.id}", params: payment_method_params, headers: bearer_token }
+          let(:payment_method_params) do
+            {
+              payment_method: {
+                store_ids: []
+              }
+            }
+          end
 
-      before { execute_product }
+          before { execute_payment_method }
 
-      it_behaves_like 'returns 200 HTTP status'
+          it_behaves_like 'returns 200 HTTP status'
 
-      it 'will not let you remove the current store from a resource that accepts multiple stores' do
-        expect(product.stores).to contain_exactly(store)
+          it 'will not let you remove the current store from the resource' do
+            payment_method.reload
+            expect(payment_method.stores).to match_array([store])
+            expect(payment_method.stores.count).to eq(1)
+          end
+
+          it_behaves_like 'returns auth token errors'
+          it_behaves_like 'returns error when record does not exist'
+        end
+
+        context 'when an array of store ids are passed to a resource that can belong to many stores' do
+          let!(:payment_method) { create(:payment_method, stores: [store]) }
+          let(:execute_payment_method) { patch "/api/v2/platform/payment_methods/#{payment_method.id}", params: payment_method_params, headers: bearer_token }
+          let(:payment_method_params) do
+            {
+              payment_method: {
+                store_ids: [store_three.id.to_s, store_two.id.to_s]
+              }
+            }
+          end
+
+          before { execute_payment_method }
+
+          it_behaves_like 'returns 200 HTTP status'
+
+          it 'will add the stores passed in' do
+            payment_method.reload
+            expect(payment_method.stores).to match_array([store, store_two, store_three])
+            expect(payment_method.stores.count).to eq(3)
+          end
+
+          it_behaves_like 'returns auth token errors'
+          it_behaves_like 'returns error when record does not exist'
+        end
       end
     end
-
-    it_behaves_like 'returns auth token errors'
-    it_behaves_like 'returns error when record does not exist'
   end
 
   context '#destroy' do

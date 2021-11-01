@@ -55,6 +55,7 @@ RSpec.configure do |config|
         { name: 'Option Values' },
         { name: 'Orders' },
         { name: 'Payments' },
+        { name: 'Payment Methods' },
         { name: 'Promotion Categories' },
         { name: 'Shipments' },
         { name: 'Shipping Categories' },
@@ -626,6 +627,78 @@ RSpec.configure do |config|
             },
             required: %w[order],
             'x-internal': true
+          },
+
+          # Payment Method
+          create_payment_method_params: {
+            type: :object,
+            properties: {
+              payment_method: {
+                type: :object,
+                required: %w[name],
+                properties: {
+                  name: { type: :string, example: 'Test Payment Method' },
+                  active: { type: :boolean },
+                  auto_capture: { type: :boolean },
+                  description: { type: :string, example: 'This is a test payment method' },
+                  type: { type: :string, example: 'Spree::Gateway::Bogus', enum: ['Spree::Gateway::Bogus', 'Spree::PaymentMethod::Check'] },
+                  display_on: { type: :string, example: 'both', enum: ['both', 'back_end', 'front_end'] },
+                  store_ids: {
+                    type: :array,
+                    items: {
+                      allOf: [
+                        { type: :string, example: '2' }
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            required: %w[payment_method],
+            'x-internal': true
+          },
+          update_payment_method_params: {
+            type: :object,
+            properties: {
+              payment_method: {
+                type: :object,
+                properties: {
+                  name: { type: :string, example: 'Test Payment Method' },
+                  active: { type: :boolean },
+                  auto_capture: { type: :boolean },
+                  description: { type: :string, example: 'This is a test payment method' },
+                  type: { type: :string, example: 'Spree::Gateway::Bogus', enum: ['Spree::Gateway::Bogus', 'Spree::PaymentMethod::Check'] },
+                  display_on: { type: :string, example: 'both', enum: ['both', 'back_end', 'front_end'] },
+                  store_ids: {
+                    type: :array,
+                    items: {
+                      allOf: [
+                        { type: :string, example: '2' }
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            required: %w[payment_method],
+            'x-internal': true,
+            title: 'Update Payment Method'
+          },
+          update_payment_method_params_bogus_gateway: {
+            type: :object,
+            properties: {
+              payment_method: {
+                type: :object,
+                properties: {
+                  preferred_dummy_key: { type: :string, example: 'UPDATED-DUMMY-KEY-123' },
+                  preferred_server: { type: :string, example: 'production' },
+                  preferred_test_mode: { type: :boolean },
+                }
+              }
+            },
+            required: %w[payment_method],
+            'x-internal': true,
+            title: 'Update Bogus Gateway'
           },
 
           # Product

@@ -1,30 +1,29 @@
 require 'spec_helper'
 
-describe 'Platform API v2 CmsSections', type: :request do
+describe 'Platform API v2 Payment Methods', type: :request do
   include_context 'API v2 tokens'
   include_context 'Platform API v2'
 
   let!(:store) { Spree::Store.default }
-  let!(:page) { create(:cms_homepage, store: store) }
 
-  let!(:resource_a) { create(:cms_section, cms_page: page) }
-  let!(:resource_b) { create(:cms_section, cms_page: page) }
-  let!(:resource_c) { create(:cms_section, cms_page: page) }
-  let!(:resource_d) { create(:cms_section, cms_page: page) }
-  let!(:resource_e) { create(:cms_section, cms_page: page) }
+  let!(:resource_a) { create(:payment_method, stores: [store]) }
+  let!(:resource_b) { create(:payment_method, stores: [store]) }
+  let!(:resource_c) { create(:payment_method, stores: [store]) }
+  let!(:resource_d) { create(:payment_method, stores: [store]) }
+  let!(:resource_e) { create(:payment_method, stores: [store]) }
 
   let(:bearer_token) { { 'Authorization' => valid_authorization } }
 
-  describe 'cms_sections#update' do
+  describe 'payment_methods#update' do
     context 'move resource_a from position 1 down to position 5' do
       let(:params) do
         {
-          cms_section: { position: 5 }
+          payment_method: { position: 5 }
         }
       end
 
       before do
-        patch "/api/v2/platform/cms_sections/#{resource_a.id}", headers: bearer_token, params: params
+        patch "/api/v2/platform/payment_methods/#{resource_a.id}", headers: bearer_token, params: params
       end
 
       it_behaves_like 'returns 200 HTTP status'
@@ -43,7 +42,7 @@ describe 'Platform API v2 CmsSections', type: :request do
     context 'can move position and update other attribute' do
       let(:params) do
         {
-          cms_section: {
+          payment_method: {
             name: 'Rename resource and update Position!',
             position: 1
           }
@@ -51,7 +50,7 @@ describe 'Platform API v2 CmsSections', type: :request do
       end
 
       before do
-        patch "/api/v2/platform/cms_sections/#{resource_d.id}", headers: bearer_token, params: params
+        patch "/api/v2/platform/payment_methods/#{resource_d.id}", headers: bearer_token, params: params
       end
 
       it_behaves_like 'returns 200 HTTP status'
