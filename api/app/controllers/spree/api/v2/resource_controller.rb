@@ -43,16 +43,11 @@ module Spree
         end
 
         def resource
-          if action_name == 'create'
-            # This is only used for checking permitted params on create.
-            @resource = model_class.new
-          else
-            @resource ||= if defined?(resource_finder)
-                            resource_finder.new(scope: scope, params: finder_params).execute
-                          else
-                            scope.find(params[:id])
-                          end
-          end
+          @resource ||= if defined?(resource_finder)
+                          resource_finder.new(scope: scope, params: finder_params).execute
+                        else
+                          scope.find(params[:id])
+                        end
         end
 
         def collection
