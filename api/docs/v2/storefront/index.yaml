@@ -932,6 +932,7 @@ paths:
                       description: Card holder name
                   required:
                     - gateway_payment_profile_id
+                    - name
               required:
                 - payment_method_id
             examples:
