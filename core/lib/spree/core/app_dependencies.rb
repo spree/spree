@@ -16,7 +16,8 @@ module Spree
       :classification_reposition_service, :credit_cards_destroy_service, :cart_associate_service, :cart_change_currency_service,
       :line_item_create_service, :line_item_update_service, :line_item_destroy_service,
       :order_approve_service, :order_cancel_service, :shipment_change_state_service, :shipment_update_service,
-      :payment_create_service, :address_create_service, :address_update_service
+      :payment_create_service, :address_create_service, :address_update_service,
+      :checkout_select_shipping_method_service
     ].freeze
 
     attr_accessor *INJECTION_POINTS
@@ -57,6 +58,7 @@ module Spree
       @checkout_add_store_credit_service = 'Spree::Checkout::AddStoreCredit'
       @checkout_remove_store_credit_service = 'Spree::Checkout::RemoveStoreCredit'
       @checkout_get_shipping_rates_service = 'Spree::Checkout::GetShippingRates'
+      @checkout_select_shipping_method_service = 'Spree::Checkout::SelectShippingMethod'
 
       # order
       @order_approve_service = 'Spree::Orders::Approve'
