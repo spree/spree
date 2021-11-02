@@ -21,7 +21,11 @@ module Spree
       :storefront_account_create_service, :storefront_account_update_service, :storefront_collection_sorter, :error_handler,
       :storefront_cart_empty_service, :storefront_cart_destroy_service, :storefront_credit_cards_destroy_service, :platform_products_sorter,
       :storefront_cart_change_currency_service, :storefront_payment_serializer,
+<<<<<<< HEAD
       :storefront_payment_create_service, :storefront_address_create_service, :storefront_address_update_service,
+=======
+      :storefront_payment_create_service, :storefront_checkout_select_shipping_method_service,
+>>>>>>> cbd9bd9996 (Update api_dependencies.rb)
 
       :platform_admin_user_serializer, :platform_coupon_handler, :platform_order_update_service,
       :platform_order_use_store_credit_service, :platform_order_remove_store_credit_service,
@@ -68,6 +72,7 @@ module Spree
       @storefront_checkout_add_store_credit_service = Spree::Dependencies.checkout_add_store_credit_service
       @storefront_checkout_remove_store_credit_service = Spree::Dependencies.checkout_remove_store_credit_service
       @storefront_checkout_get_shipping_rates_service = Spree::Dependencies.checkout_get_shipping_rates_service
+      @storefront_checkout_select_shipping_method_service = Spree::Dependencies.checkout_select_shipping_method_service
 
       # account services
       @storefront_account_create_service = Spree::Dependencies.account_create_service
