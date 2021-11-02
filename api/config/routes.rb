@@ -150,6 +150,7 @@ Spree::Core::Engine.add_routes do
           post :remove_store_credit
           get :payment_methods
           get :shipping_rates
+          patch :select_shipping_method
         end
 
         resource :account, controller: :account, only: %i[show create update]
