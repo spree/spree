@@ -14,9 +14,9 @@ describe Spree::Order, type: :model do
   before { allow(Spree::LegacyUser).to receive_messages(current: create(:user)) }
 
   describe '.scopes' do
-    let!(:user) { FactoryBot.create(:user) }
-    let!(:completed_order) { FactoryBot.create(:order, user: user, completed_at: Time.current) }
-    let!(:incompleted_order) { FactoryBot.create(:order, user: user, completed_at: nil) }
+    let!(:user) { create(:user) }
+    let!(:completed_order) { create(:order, user: user, completed_at: Time.current) }
+    let!(:incompleted_order) { create(:order, user: user, completed_at: nil) }
 
     describe '.complete' do
       it { expect(Spree::Order.complete).to include completed_order }
@@ -451,7 +451,7 @@ describe Spree::Order, type: :model do
 
   # Regression tests for #4072
   context '#state_changed' do
-    let(:order) { FactoryBot.create(:order) }
+    let(:order) { create(:order) }
 
     it 'logs state changes' do
       order.update_column(:payment_state, 'balance_due')
@@ -589,14 +589,14 @@ describe Spree::Order, type: :model do
   end
 
   describe '#associate_user!' do
-    let(:user) { FactoryBot.create(:user_with_addreses) }
+    let(:user) { create(:user_with_addreses) }
     let(:email) { user.email }
     let(:created_by) { user }
     let(:bill_address) { user.bill_address }
     let(:ship_address) { user.ship_address }
     let(:override_email) { true }
 
-    let(:order) { FactoryBot.build(:order, order_attributes) }
+    let(:order) { build(:order, order_attributes) }
 
     let(:order_attributes) do
       {
@@ -661,14 +661,14 @@ describe Spree::Order, type: :model do
 
     context 'when bill_address is set' do
       let(:order_attributes) { super().merge(bill_address: bill_address) }
-      let(:bill_address) { FactoryBot.build(:address) }
+      let(:bill_address) { build(:address) }
 
       it_behaves_like '#associate_user!'
     end
 
     context 'when ship_address is set' do
       let(:order_attributes) { super().merge(ship_address: ship_address) }
-      let(:ship_address) { FactoryBot.build(:address) }
+      let(:ship_address) { build(:address) }
 
       it_behaves_like '#associate_user!'
     end
@@ -686,7 +686,7 @@ describe Spree::Order, type: :model do
     end
 
     context 'when the order is persisted' do
-      let(:order) { FactoryBot.create(:order, order_attributes) }
+      let(:order) { create(:order, order_attributes) }
 
       it 'associates a user to a persisted order' do
         order.associate_user!(user)
@@ -702,7 +702,7 @@ describe Spree::Order, type: :model do
       end
 
       it 'does not change any other orders' do
-        other = FactoryBot.create(:order)
+        other = create(:order)
         order.associate_user!(user)
         expect(other.reload.user).not_to eql(user)
       end
@@ -775,7 +775,7 @@ describe Spree::Order, type: :model do
   end
 
   context '#uneditable?' do
-    let(:order) { Spree::Order.create }
+    let(:order) { create(:order) }
 
     it 'returns true when order is completed' do
       allow(order).to receive_messages(complete?: true)
@@ -875,7 +875,7 @@ describe Spree::Order, type: :model do
 
   # Regression test for #4923
   context 'locking' do
-    let(:order) { Spree::Order.create } # need a persisted in order to test locking
+    let(:order) { create(:order) } # need a persisted in order to test locking
 
     it 'can lock' do
       expect { order.with_lock {} }.not_to raise_error
