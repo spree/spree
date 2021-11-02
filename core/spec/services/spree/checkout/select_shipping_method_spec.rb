@@ -97,6 +97,7 @@ module Spree
         it { expect(execute.success?).to eq(true) }
 
         it 'sets selected shipping method for the specified shipment' do
+          expect(order.shipments.count).to eq(2)
           expect(shipment.selected_shipping_rate.shipping_method).to eq(shipping_method)
           expect(shipment_2.selected_shipping_rate.shipping_method).to eq(shipping_method)
           execute
@@ -109,6 +110,7 @@ module Spree
         it { expect(execute.success?).to eq(true) }
 
         it 'sets selected shipping method for all shipments' do
+          expect(order.shipments.count).to eq(2)
           expect(shipment.selected_shipping_rate.shipping_method).to eq(shipping_method)
           expect(shipment_2.selected_shipping_rate.shipping_method).to eq(shipping_method)
           execute
