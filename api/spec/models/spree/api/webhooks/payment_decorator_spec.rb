@@ -15,7 +15,7 @@ describe Spree::Payment do
   describe '#void' do
     let(:body) { Spree::Api::V2::Platform::PaymentSerializer.new(payment).serializable_hash.to_json }
 
-    shared_examples 'queues a webhook request' do
+    shared_examples 'emits payment.voided' do
       before do
         # Avoid creating a new state change after transitioning as is defined in the model
         # because after_void queues the HTTP request before finishing the transition, hence
@@ -23,32 +23,32 @@ describe Spree::Payment do
         allow(payment).to receive_message_chain(:state_changes, :create!)
       end
 
-      it 'executes QueueRequests.call with a payment.voided event and {} body after invoking void' do
+      it do
         payment.void
         expect(queue_requests).to have_received(:call).with(event: 'payment.voided', body: body).once
       end
     end
 
-    context 'when transitioning from pending to void' do
+    context 'pending -> void' do
       before { payment.pend }
 
-      include_examples 'queues a webhook request'
+      include_examples 'emits payment.voided'
     end
 
-    context 'when transitioning from processing to void' do
+    context 'processing -> void' do
       before { payment.started_processing }
 
-      include_examples 'queues a webhook request'
+      include_examples 'emits payment.voided'
     end
 
-    context 'when transitioning from completed to void' do
+    context 'completed -> void' do
       before { payment.complete }
 
-      include_examples 'queues a webhook request'
+      include_examples 'emits payment.voided'
     end
 
-    context 'when transitioning from checkout to void' do
-      include_examples 'queues a webhook request'
+    context 'checkout -> void' do
+      include_examples 'emits payment.voided'
     end
   end
 
@@ -58,11 +58,11 @@ describe Spree::Payment do
     let!(:another_payment) { create(:payment, order: order) }
 
     context 'order.paid? == true' do
-      shared_examples 'emits an order.paid event' do
+      shared_examples 'emits order.paid' do
         it { expect(queue_requests).to have_received(:call).with(event: 'order.paid', body: body).once }
       end
 
-      context 'when transitioning from processing' do
+      context 'processing -> complete' do
         before do
           # order.updated_at doesn't coincide without timecop freezing
           Timecop.freeze do
@@ -73,10 +73,10 @@ describe Spree::Payment do
           end
         end
 
-        include_examples 'emits an order.paid event'
+        include_examples 'emits order.paid'
       end
 
-      context 'when transitioning from pending' do
+      context 'pending -> complete' do
         before do
           Timecop.freeze do
             payment.pend
@@ -86,10 +86,10 @@ describe Spree::Payment do
           end
         end
 
-        include_examples 'emits an order.paid event'
+        include_examples 'emits order.paid'
       end
 
-      context 'when transitioning from checkout' do
+      context 'checkout -> complete' do
         before do
           Timecop.freeze do
             payment.complete
@@ -97,12 +97,12 @@ describe Spree::Payment do
           end
         end
 
-        include_examples 'emits an order.paid event'
+        include_examples 'emits order.paid'
       end
     end
 
     context 'order.paid? == false' do
-      shared_examples 'does not emit an order.paid event' do
+      shared_examples 'does not emit order.paid' do
         it { expect(queue_requests).not_to have_received(:call).with(event: 'order.paid', body: body) }
       end
 
@@ -111,7 +111,7 @@ describe Spree::Payment do
         allow(order).to receive(:paid?).and_return(false)
       end
 
-      context 'when transitioning from processing' do
+      context 'processing -> complete' do
         before do
           Timecop.freeze do
             payment.started_processing
@@ -119,10 +119,10 @@ describe Spree::Payment do
           end
         end
 
-        include_examples 'does not emit an order.paid event'
+        include_examples 'does not emit order.paid'
       end
 
-      context 'when transitioning from pending' do
+      context 'pending -> complete' do
         before do
           Timecop.freeze do
             payment.pend
@@ -130,13 +130,13 @@ describe Spree::Payment do
           end
         end
 
-        include_examples 'does not emit an order.paid event'
+        include_examples 'does not emit order.paid'
       end
 
-      context 'when transitioning from checkout' do
+      context 'checkout -> complete' do
         before { Timecop.freeze { payment.complete } }
 
-        include_examples 'does not emit an order.paid event'
+        include_examples 'does not emit order.paid'
       end
     end
   end
