@@ -6,9 +6,9 @@ servers:
     description: localhost
 info:
   version: 2.0.0
-  title: Storefront API v2
+  title: Storefront API
   description: |-
-    Storefront API v2 is a modern REST API based on the [JSON API spec](https://jsonapi.org/) which provides you with all the necessary endpoints to build amazing user intefaces either in JavaScript frameworks or native mobile libraries.
+    Storefront API is a modern REST API based on the [JSON API spec](https://jsonapi.org/) which provides you with all the necessary endpoints to build amazing user intefaces either in JavaScript frameworks or native mobile libraries.
 
     Download [official JavaScript & TypeScript SDK](https://github.com/spree/spree-storefront-api-v2-js-sdk)
 
@@ -868,6 +868,54 @@ paths:
       summary: Complete Checkout
       tags:
         - Checkout / State
+  /api/v2/storefront/checkout/select_shipping_method:
+    patch:
+      description: |-
+        Selects shipping method for Shipment(s).
+
+        To generate shipments you first need to fetch shipping rates via
+
+        [Get Shipping Rates](https://api.spreecommerce.org/docs/api-v2/b3A6MzE0Mjc2MQ-list-shipping-rates) endpoint
+      operationId: select-shipping-method
+      responses:
+        '200':
+          $ref: '#/components/responses/Cart'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+        '422':
+          $ref: '#/components/responses/422UnprocessableEntity'
+      security:
+        - orderToken: []
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              type: object
+              properties:
+                shipping_method_id:
+                  type: string
+                  description: ID of the selected Shipping Method
+                shipment_id:
+                  type: string
+                  description: 'ID of the selected Shipment. If not supplied it will try to set selected shipping method for all shipments'
+              required:
+                - shipping_method_id
+            examples:
+              Set shippng method for all shipments:
+                value:
+                  shipping_method_id: '1'
+              Set shipping method for specific shipment:
+                value:
+                  shipping_method_id: '1'
+                  shipment_id: '1'
+        description: ''
+      parameters:
+        - $ref: '#/components/parameters/CartIncludeParam'
+        - $ref: '#/components/parameters/SparseFieldsCart'
+      summary: Selects shipping method for shipment(s)
+      tags:
+        - Checkout / Shipments
   /api/v2/storefront/checkout/create_payment:
     post:
       description: |-
@@ -1010,7 +1058,7 @@ paths:
     get:
       description: Returns a list of available payment methods for this checkout.
       tags:
-        - Checkout
+        - Checkout / Payments
       operationId: payment-methods
       responses:
         '200':
@@ -1028,7 +1076,7 @@ paths:
 
         Shipping rates are grouped against shipments. Each checkout can have multiple shipments. Some products are in stock and will be shipped immediately, while others might be back-ordered and sent later.
       tags:
-        - Checkout
+        - Checkout / Shipments
       operationId: shipping-rates
       responses:
         '200':
@@ -16083,6 +16131,7 @@ tags:
   - name: Cart / Other
   - name: Checkout
   - name: Checkout / State
+  - name: Checkout / Shipments
   - name: Checkout / Payments
   - name: Checkout / Store Credit
   - name: CMS Pages
