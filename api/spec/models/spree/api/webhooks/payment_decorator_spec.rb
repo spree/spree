@@ -56,9 +56,8 @@ describe Spree::Payment do
     let(:body) { Spree::Api::V2::Platform::OrderSerializer.new(order).serializable_hash.to_json }
     let(:order) { payment.order }
     let!(:another_payment) { create(:payment, order: order) }
-    let!(:invalid_payment) { create(:payment, order: order, state: 'invalid') }
 
-    context 'when all valid order payments are moved to complete' do
+    context 'order.paid? == true' do
       shared_examples 'emits an order.paid event' do
         it { expect(queue_requests).to have_received(:call).with(event: 'order.paid', body: body).once }
       end
@@ -102,9 +101,14 @@ describe Spree::Payment do
       end
     end
 
-    context 'when not all order valid payments have been moved to complete' do
+    context 'order.paid? == false' do
       shared_examples 'does not emit an order.paid event' do
         it { expect(queue_requests).not_to have_received(:call).with(event: 'order.paid', body: body) }
+      end
+
+      before do
+        allow(payment).to receive(:order).and_return(order)
+        allow(order).to receive(:paid?).and_return(false)
       end
 
       context 'when transitioning from processing' do

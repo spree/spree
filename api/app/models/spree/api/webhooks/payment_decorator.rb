@@ -9,13 +9,7 @@ module Spree
 
         def after_completed
           super
-          order.queue_webhooks_requests!('order.paid') if all_valid_order_payments_completed?
-        end
-
-        private
-
-        def all_valid_order_payments_completed?
-          order.payments.valid.completed.size == order.payments.valid.size
+          order.queue_webhooks_requests!('order.paid') if order.paid?
         end
       end
     end

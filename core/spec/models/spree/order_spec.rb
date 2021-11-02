@@ -1571,4 +1571,34 @@ describe Spree::Order, type: :model do
       end
     end
   end
+
+  describe '#paid?' do
+    subject { order.paid? }
+
+    let!(:payment_1) { create(:payment, order: order, amount: amount) }
+    let!(:payment_2) { create(:payment, order: order, amount: amount) }
+    let(:amount) { 100 }
+    let(:order) { create(:order, total: total) }
+    let(:total) { 200 }
+
+    before { payment_1.complete }
+
+    context 'when all order valid payments were completed' do
+      before { payment_2.complete }
+
+      context 'when the amount of the valid payments >= the order total' do
+        it { expect(subject).to eq(true) }
+      end
+
+      context 'when the amount of the valid payments < the order total' do
+        let(:total) { 201 }
+
+        it { expect(subject).to eq(false) }
+      end
+    end
+
+    context 'when not all order valid payments were completed' do
+      it { expect(subject).to eq(false) }
+    end
+  end
 end

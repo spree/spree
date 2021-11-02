@@ -398,7 +398,7 @@ module Spree
 
     # Helper methods for checkout steps
     def paid?
-      payment_state == 'paid' || payment_state == 'credit_owed'
+      payments.valid.completed.size == payments.valid.size && payments.valid.sum(:amount) >= total
     end
 
     def available_payment_methods(store = nil)
