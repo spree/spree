@@ -388,9 +388,9 @@ RSpec.configure do |config|
                 type: :object,
                 required: %w[name location locale],
                 properties: {
-                  name: { type: :string },
-                  location: { type: :string },
-                  locale: { type: :string }
+                  name: { type: :string, example: 'Main Menu', description: 'Give this Menu a name.' },
+                  location: { type: :string, enum: ['header', 'footer'], description: 'Set the location this menu appears in the website.' },
+                  locale: { type: :string, example: 'en-US', description: 'Set the language of this menu.' }
                 }
               }
             },
@@ -403,9 +403,9 @@ RSpec.configure do |config|
               menu: {
                 type: :object,
                 properties: {
-                  name: { type: :string },
-                  location: { type: :string },
-                  locale: { type: :string }
+                  name: { type: :string, example: 'Main Menu', description: 'Give this Menu a name.' },
+                  location: { type: :string, enum: ['header', 'footer'], description: 'Set the location this menu appears in the website.' },
+                  locale: { type: :string, example: 'en-US', description: 'Set the language of this menu.' }
                 }
               }
             },
@@ -421,19 +421,20 @@ RSpec.configure do |config|
                 type: :object,
                 required: %w[name menu_id],
                 properties: {
-                  name: { type: :string },
-                  code: { type: :string },
-                  subtitle: { type: :string },
-                  destination: { type: :string },
-                  menu_id: { type: :string },
-                  new_window: { type: :boolean },
-                  item_type: { type: :string },
-                  linked_resource_type: { type: :string },
-                  linked_resource_id: { type: :integer }
+                  name: { type: :string, example: 'T-Shirts', description: 'The name of this Menu Item'},
+                  code: { type: :string, nullable: true, example: 'MEN-TS', description: 'Give this Menu Item a code to identify this Menu Item from others. This is especially useful when using Container type Menu Items to group items.' },
+                  subtitle: { type: :string, nullable: true, example: "Shop men's T-Shirts", description: 'Set an optional subtitle for the Menu Item, this is useful if your menu has promotional links that require more than just a link name.' },
+                  destination: { type: :string, nullable: true, example: 'https://getvendo.com', description: 'Used when the linked_resource_type is set to: URL' },
+                  menu_id: { type: :integer, example: 1, description: 'Specify the ID of the Menu this item belongs to.' },
+                  new_window: { type: :boolean, description: 'When set to `true` the link will be opened in a new tab or window.' },
+                  item_type: { type: :string, enum: ['Link', 'Container'], description: 'Links are standard links, where as Containers are used to group links.' },
+                  linked_resource_type: { type: :string, enum: ['URL', 'Spree::Taxon', 'Spree::Product', 'Spree::CmsPage'], description: 'Set the type of resource you want to link to, or set to: URL to use the destination field for an external link.' },
+                  linked_resource_id: { type: :integer, example: 1, nullable: true, description: 'The ID of the resource you are linking to.' }
                 }
               }
             },
             required: %w[menu_item],
+            title: 'Create a Menu Item',
             'x-internal': true
           },
           update_menu_item_params: {
@@ -442,28 +443,36 @@ RSpec.configure do |config|
               menu_item: {
                 type: :object,
                 properties: {
-                  name: { type: :string },
-                  code: { type: :string },
-                  subtitle: { type: :string },
-                  destination: { type: :string },
-                  menu_id: { type: :string },
-                  new_window: { type: :boolean },
-                  item_type: { type: :string },
-                  linked_resource_type: { type: :string },
-                  linked_resource_id: { type: :integer }
+                  name: { type: :string, example: 'T-Shirts', description: 'The name of this Menu Item'},
+                  code: { type: :string, nullable: true, example: 'MEN-TS', description: 'Give this Menu Item a code to identify this Menu Item from others. This is especially useful when using Container type Menu Items to group items.' },
+                  subtitle: { type: :string, nullable: true, example: "Shop men's T-Shirts", description: 'Set an optional subtitle for the Menu Item, this is useful if your menu has promotional links that require more than just a link name.' },
+                  destination: { type: :string, nullable: true, example: 'https://getvendo.com', description: 'Used when the linked_resource_type is set to: URL' },
+                  menu_id: { type: :integer, example: 1, description: 'Specify the ID of the Menu this item belongs to.' },
+                  new_window: { type: :boolean, description: 'When set to `true` the link will be opened in a new tab or window.' },
+                  item_type: { type: :string, enum: ['Link', 'Container'], description: 'Links are standard links, where as Containers are used to group links.' },
+                  linked_resource_type: { type: :string, enum: ['URL', 'Spree::Taxon', 'Spree::Product', 'Spree::CmsPage'], description: 'Set the type of resource you want to link to, or set to: URL to use the destination field for an external link.' },
+                  linked_resource_id: { type: :integer, example: 1, nullable: true, description: 'The ID of the resource you are linking to.' }
                 }
               }
             },
             required: %w[menu_item],
+            title: 'Update a Menu Item',
             'x-internal': true
           },
-          menu_item_reposition_params: {
+          menu_item_reposition: {
             type: :object,
             properties: {
-              new_parent_id: { type: :integer },
-              new_position_idx: { type: :integer }
+              menu_item: {
+                type: :object,
+                required: %w[new_parent_id new_position_idx],
+                properties: {
+                  new_parent_id: { type: :integer, example: 1, description: 'The ID of the new target parent Menu Item.' },
+                  new_position_idx: { type: :integer, example: 1, description: 'The new index position of the Menu Item within its parent' }
+                }
+              }
             },
-            required: %w[new_parent_id new_position_idx],
+            required: %w[menu_item],
+            title: 'Reposition a Menu Item',
             'x-internal': true
           },
 
