@@ -485,6 +485,10 @@ module Spree
     end
 
     def shipped?
+      %w(partial shipped).include?(shipment_state)
+    end
+
+    def fully_shipped?
       shipments.shipped.size == shipments.size
     end
 

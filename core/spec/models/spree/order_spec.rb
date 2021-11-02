@@ -1602,8 +1602,8 @@ describe Spree::Order, type: :model do
     end
   end
 
-  describe '#shipped?' do
-    subject { order.shipped? }
+  describe '#fully_shipped?' do
+    subject { order.fully_shipped? }
 
     let!(:shipments) do
       create_list(
