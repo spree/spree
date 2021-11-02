@@ -19,10 +19,12 @@ describe Spree::Shipment do
 
     let(:queue_requests) { instance_double(Spree::Webhooks::Subscribers::QueueRequests) }
 
-    it 'emits a shipment.shipped event' do
-      shipment.cancel # previous state that allows the object be shipped
-      shipment.ship
-      expect(queue_requests).to have_received(:call).with(event: 'shipment.shipped', body: body).once
+    context 'emitting shipment.shipped' do
+      it 'emits a shipment.shipped event' do
+        shipment.cancel # previous state that allows the object be shipped
+        shipment.ship
+        expect(queue_requests).to have_received(:call).with(event: 'shipment.shipped', body: body).once
+      end
     end
 
     context 'emitting order.shipped' do
@@ -40,10 +42,13 @@ describe Spree::Shipment do
         )
       end
 
+      before do
+        shipments[0].cancel
+        shipments[0].ship
+      end
+
       context 'when all order shipments were shipped' do
         it 'emits an order.shipped event' do
-          shipments[0].cancel
-          shipments[0].ship
           shipments[1].cancel
           shipments[1].ship
           expect(queue_requests).to have_received(:call).with(event: 'order.shipped', body: body).once
@@ -52,8 +57,6 @@ describe Spree::Shipment do
 
       context 'when not all order shipments were shipped' do
         it 'does not emits an order.shipped event' do
-          shipments[0].cancel
-          shipments[0].ship
           expect(queue_requests).not_to have_received(:call).with(event: 'order.shipped', body: body)
         end
       end

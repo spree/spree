@@ -1601,4 +1601,36 @@ describe Spree::Order, type: :model do
       it { expect(subject).to eq(false) }
     end
   end
+
+  describe '#shipped?' do
+    subject { order.shipped? }
+
+    let!(:shipments) do
+      create_list(
+        :shipment, 2,
+        order: order,
+        shipping_methods: [create(:shipping_method)],
+        stock_location: build(:stock_location)
+      )
+    end
+    let(:order) { create(:order) }
+
+    before do
+      shipments[0].cancel
+      shipments[0].ship
+    end
+
+    context 'when all order shipments were shipped' do
+      before do
+        shipments[1].cancel
+        shipments[1].ship
+      end
+
+      it { expect(subject).to eq(true) }
+    end
+
+    context 'when not all order shipments were shipped' do
+      it { expect(subject).to eq(false) }
+    end
+  end
 end

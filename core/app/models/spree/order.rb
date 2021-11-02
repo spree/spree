@@ -485,7 +485,7 @@ module Spree
     end
 
     def shipped?
-      %w(partial shipped).include?(shipment_state)
+      shipments.shipped.size == shipments.size
     end
 
     def create_proposed_shipments
