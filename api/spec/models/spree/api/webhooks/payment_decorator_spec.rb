@@ -1,6 +1,7 @@
 require 'spec_helper'
 
 describe Spree::Payment do
+  let(:body) { Spree::Api::V2::Platform::PaymentSerializer.new(payment).serializable_hash.to_json }
   let(:payment) { create(:payment) }
   let(:queue_requests) { instance_double(Spree::Webhooks::Subscribers::QueueRequests) }
 
@@ -8,25 +9,46 @@ describe Spree::Payment do
     ENV['DISABLE_SPREE_WEBHOOKS'] = nil
     allow(Spree::Webhooks::Subscribers::QueueRequests).to receive(:new).and_return(queue_requests)
     allow(queue_requests).to receive(:call).with(any_args)
+    allow(payment).to receive_message_chain(:state_changes, :create!)
   end
 
   after { ENV['DISABLE_SPREE_WEBHOOKS'] = 'true' }
 
-  describe '#void' do
-    let(:body) { Spree::Api::V2::Platform::PaymentSerializer.new(payment).serializable_hash.to_json }
+  shared_examples 'emitting the event' do |event|
+    it do
+      expect(queue_requests).to have_received(:call).with(event: event, body: body).once
+    end
+  end
 
+  describe 'payment.paid' do
+    shared_examples 'emits payment.paid' do
+      before { payment.complete }
+
+      it_behaves_like 'emitting the event', 'payment.paid'
+    end
+
+    context 'processing -> completed' do
+      before { payment.started_processing }
+
+      include_examples 'emits payment.paid'
+    end
+
+    context 'pending -> completed' do
+      before { payment.pend }
+
+      include_examples 'emits payment.paid'
+    end
+
+    context 'checkout -> completed' do
+      include_examples 'emits payment.paid'
+    end
+  end
+
+  describe 'payment.voided' do
     shared_examples 'emits payment.voided' do
-      before do
-        # Avoid creating a new state change after transitioning as is defined in the model
-        # because after_void queues the HTTP request before finishing the transition, hence
-        # the total state changes that are sent in the body is one less.
-        allow(payment).to receive_message_chain(:state_changes, :create!)
-      end
+      before { payment.void }
 
-      it do
-        payment.void
-        expect(queue_requests).to have_received(:call).with(event: 'payment.voided', body: body).once
-      end
+      it_behaves_like 'emitting the event', 'payment.voided'
     end
 
     context 'pending -> void' do
@@ -58,10 +80,6 @@ describe Spree::Payment do
     let!(:another_payment) { create(:payment, order: order) }
 
     context 'order.paid? == true' do
-      shared_examples 'emits order.paid' do
-        it { expect(queue_requests).to have_received(:call).with(event: 'order.paid', body: body).once }
-      end
-
       context 'processing -> complete' do
         before do
           # order.updated_at doesn't coincide without timecop freezing
@@ -73,7 +91,7 @@ describe Spree::Payment do
           end
         end
 
-        include_examples 'emits order.paid'
+        it_behaves_like 'emitting the event', 'order.paid'
       end
 
       context 'pending -> complete' do
@@ -86,7 +104,7 @@ describe Spree::Payment do
           end
         end
 
-        include_examples 'emits order.paid'
+        it_behaves_like 'emitting the event', 'order.paid'
       end
 
       context 'checkout -> complete' do
@@ -97,7 +115,7 @@ describe Spree::Payment do
           end
         end
 
-        include_examples 'emits order.paid'
+        it_behaves_like 'emitting the event', 'order.paid'
       end
     end
 

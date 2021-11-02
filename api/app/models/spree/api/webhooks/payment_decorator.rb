@@ -9,6 +9,7 @@ module Spree
 
         def after_completed
           super
+          queue_webhooks_requests!('payment.paid')
           order.queue_webhooks_requests!('order.paid') if order.paid?
         end
       end
