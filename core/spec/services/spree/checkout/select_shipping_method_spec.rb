@@ -16,7 +16,7 @@ module Spree
         shipping_method_id: shipping_method_2.id
       }
     end
-    let(:zone) { create(:zone) }
+    let(:zone) { create(:zone_with_country) }
     let(:shipping_category) { order.products.first.shipping_category }
     let!(:shipping_method) do
       create(:shipping_method, zones: [zone], shipping_categories: [shipping_category]) do |shipping_method|
@@ -70,7 +70,7 @@ module Spree
 
         it { expect(execute.success?).to eq(false) }
         it { expect(execute.value).to eq(:selected_shipping_method_not_found) }
-        it { expect(execute.error.to_s).to match(/Couldn't find Spree::ShippingRate/) }
+        it { expect(execute.error.to_s).to match(/Couldn't find shipping rate/) }
       end
     end
 
