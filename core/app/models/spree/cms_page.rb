@@ -16,7 +16,7 @@ module Spree
 
     before_validation :handle_slug
 
-    validates :title, :store, :locale, presence: true
+    validates :title, :store, :locale, :type, presence: true
     validates :slug, uniqueness: { scope: :store_id, allow_nil: true, case_sensitive: true }
     validates :locale, uniqueness: { scope: [:store, :type] }, if: :homepage?
 

@@ -27,7 +27,7 @@ module Spree
 
     default_scope { order(position: :asc) }
 
-    validates :name, :cms_page, presence: true
+    validates :name, :cms_page, :type, presence: true
 
     validates :image_one, :image_two, :image_three, content_type: IMAGE_TYPES
 
