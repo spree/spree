@@ -4,20 +4,15 @@ module Spree
       module Platform
         class MenuItemsController < ResourceController
           def reposition
-            spree_authorize! :update, @moved_item if spree_current_user.present?
+            spree_authorize! :update, resource if spree_current_user.present?
 
-            @moved_item = scope.find(params[:id])
-            @new_parent = scope.find(params[:new_parent_id])
-            new_index = params[:new_position_idx].to_i
+            @new_parent = scope.find(permitted_resource_params[:new_parent_id])
+            new_index = permitted_resource_params[:new_position_idx].to_i
 
-            if @moved_item && @new_parent && new_index
-              @moved_item.move_to_child_with_index(@new_parent, new_index)
+            if resource.move_to_child_with_index(@new_parent, new_index)
+              render_serialized_payload { serialize_resource(resource) }
             else
-              head :bad_request
-            end
-
-            if @moved_item.save
-              render_serialized_payload { serialize_resource(@moved_item) }
+              render_error_payload(resource.errors)
             end
           end
 
@@ -25,6 +20,10 @@ module Spree
 
           def model_class
             Spree::MenuItem
+          end
+
+          def spree_permitted_attributes
+            super + [:new_parent_id, :new_position_idx]
           end
         end
       end

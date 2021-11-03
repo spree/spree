@@ -746,6 +746,77 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
     end
   end
 
+  describe 'checkout#select_shipping_method' do
+    let(:headers) { headers_bearer }
+    let(:params) do
+      {
+        shipping_method_id: shipping_method_2.id
+      }
+    end
+    let(:zone) { create(:zone_with_country) }
+
+    let(:country) { create(:country) }
+    let(:order) { create(:order_with_totals, store: store, user: user, ship_address: create(:address, user: user, country: country)) }
+    let(:shipping_category) { order.products.first.shipping_category }
+    let!(:shipping_method) do
+      create(:shipping_method, zones: [zone], shipping_categories: [shipping_category]) do |shipping_method|
+        shipping_method.calculator.preferred_amount = 10
+        shipping_method.calculator.save
+      end
+    end
+    let!(:shipping_method_2) do
+      create(:shipping_method, zones: [zone], shipping_categories: [shipping_category]) do |shipping_method|
+        shipping_method.calculator.preferred_amount = 15
+        shipping_method.calculator.save
+      end
+    end
+    let!(:shipping_method_3) do
+      create(:shipping_method, zones: [create(:zone)], shipping_categories: [shipping_category]) do |shipping_method|
+        shipping_method.calculator.preferred_amount = 5
+        shipping_method.calculator.save
+      end
+    end
+    let(:shipment) { order.shipments.first }
+    let(:selected_shipping_rate) { shipment.selected_shipping_rate }
+    let(:execute) { patch '/api/v2/storefront/checkout/select_shipping_method?include=shipments', headers: headers, params: params }
+
+    before do
+      zone.countries << country
+      # making sure our store is in the geo zone supported by shipping method
+      store.update(checkout_zone: zone)
+      # generate shipping rates
+      get '/api/v2/storefront/checkout/shipping_rates', headers: headers
+    end
+
+    context 'one shipment' do
+      context 'valid shipping method' do
+        before { execute }
+
+        it_behaves_like 'returns 200 HTTP status'
+
+        it 'sets selected shipping method for shipment' do
+          expect(json_response['included'][0]).to have_id(shipment.id.to_s)
+          expect(json_response['included'][0]).to have_type('shipment')
+          expect(selected_shipping_rate).to be_present
+          expect(json_response['included'][0]).to have_relationship(:selected_shipping_rate).with_data({ 'id' => selected_shipping_rate.id.to_s, 'type' => 'shipping_rate' })
+          expect(selected_shipping_rate.shipping_method).to eq(shipping_method_2)
+        end
+      end
+
+      context 'missing shipping method' do
+        let(:params) do
+          {
+            shipping_method_id: shipping_method_3.id
+          }
+        end
+
+        before { execute }
+
+        it_behaves_like 'returns 422 HTTP status'
+      end
+    end
+  end
+
   orders_requiring_delivery = ['order with a physical line item', 'order with a physical and digital line item'].freeze
 
   orders_requiring_delivery.each do |physical_goods_context|

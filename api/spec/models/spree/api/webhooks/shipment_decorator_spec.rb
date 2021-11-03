@@ -1,8 +1,8 @@
 require 'spec_helper'
 
 describe Spree::Shipment do
+  let(:order) { create(:order) }
   let(:shipment) { create(:shipment) }
-  let(:body) { Spree::Api::V2::Platform::ShipmentSerializer.new(shipment).serializable_hash.to_json }
 
   describe '#after_ship' do
     before do
@@ -19,10 +19,36 @@ describe Spree::Shipment do
 
     let(:queue_requests) { instance_double(Spree::Webhooks::Subscribers::QueueRequests) }
 
-    it 'emits a shipment.shipped event' do
-      shipment.cancel # previous state that allows the object be shipped
-      shipment.ship
-      expect(queue_requests).to have_received(:call).with(event: 'shipment.shipped', body: body).once
+    context 'emitting shipment.shipped' do
+      let(:body) { Spree::Api::V2::Platform::ShipmentSerializer.new(shipment).serializable_hash.to_json }
+
+      shared_examples 'emits shipment.shipped' do
+        it do
+          expect(queue_requests).to have_received(:call).with(event: 'shipment.shipped', body: body).once
+        end
+      end
+
+      context 'ready -> ship' do
+        let(:shipment) { create(:shipment, order: order) }
+
+        before do
+          order.update(state: 'complete', completed_at: Time.current)
+          shipment.reload
+          shipment.ready
+          shipment.ship
+        end
+
+        include_examples 'emits shipment.shipped'
+      end
+
+      context 'canceled -> ship' do
+        before do
+          shipment.cancel
+          shipment.ship
+        end
+
+        include_examples 'emits shipment.shipped'
+      end
     end
 
     context 'emitting order.shipped' do
@@ -30,7 +56,6 @@ describe Spree::Shipment do
         order.reload
         Spree::Api::V2::Platform::OrderSerializer.new(order).serializable_hash.to_json
       end
-      let(:order) { create(:order) }
       let!(:shipments) do
         create_list(
           :shipment, 2,
@@ -40,21 +65,49 @@ describe Spree::Shipment do
         )
       end
 
-      context 'when all order shipments were shipped' do
-        it 'emits an order.shipped event' do
-          shipments[0].cancel
-          shipments[0].ship
-          shipments[1].cancel
-          shipments[1].ship
-          expect(queue_requests).to have_received(:call).with(event: 'order.shipped', body: body).once
+      shared_examples 'does not emit order.shipped' do
+        it do
+          expect(queue_requests).not_to have_received(:call).with(event: 'order.shipped', body: body)
         end
       end
 
-      context 'when not all order shipments were shipped' do
-        it 'does not emits an order.shipped event' do
+      context 'ready -> ship' do
+        before do
+          order.update(state: 'complete', completed_at: Time.current)
+          shipments.each(&:reload) # must reload to make shipments order state see it's complete
+          shipments[0].ready
+          shipments[0].ship
+        end
+
+        context 'with all order shipments shipped' do
+          it 'emits order.shipped' do
+            shipments[1].ready
+            shipments[1].ship
+            expect(queue_requests).to have_received(:call).with(event: 'order.shipped', body: body).once
+          end
+        end
+
+        context 'without all order shipments shipped' do
+          include_examples 'does not emit order.shipped'
+        end
+      end
+
+      context 'canceled -> ship' do
+        before do
           shipments[0].cancel
           shipments[0].ship
-          expect(queue_requests).not_to have_received(:call).with(event: 'order.shipped', body: body)
+        end
+
+        context 'with all order shipments shipped' do
+          it 'emits order.shipped' do
+            shipments[1].cancel
+            shipments[1].ship
+            expect(queue_requests).to have_received(:call).with(event: 'order.shipped', body: body).once
+          end
+        end
+
+        context 'without all order shipments shipped' do
+          include_examples 'does not emit order.shipped'
         end
       end
     end
