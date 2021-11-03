@@ -2,6 +2,7 @@ module Spree
   class CustomerReturn < Spree::Base
     include Spree::Core::NumberGenerator.new(prefix: 'CR', length: 9)
     include NumberIdentifier
+    include Metadata
 
     belongs_to :stock_location
     belongs_to :store, class_name: 'Spree::Store', inverse_of: :customer_returns

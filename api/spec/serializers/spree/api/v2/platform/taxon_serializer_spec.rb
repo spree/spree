@@ -35,7 +35,9 @@ describe Spree::Api::V2::Platform::TaxonSerializer do
               seo_title: taxon.seo_title,
               is_root: taxon.root?,
               is_child: taxon.child?,
-              is_leaf: taxon.leaf?
+              is_leaf: taxon.leaf?,
+              public_metadata: {},
+              private_metadata: {}
             },
             relationships: {
               parent: {
@@ -103,7 +105,9 @@ describe Spree::Api::V2::Platform::TaxonSerializer do
               seo_title: taxon.seo_title,
               is_root: taxon.root?,
               is_child: taxon.child?,
-              is_leaf: taxon.leaf?
+              is_leaf: taxon.leaf?,
+              public_metadata: {},
+              private_metadata: {}
             },
             relationships: {
               parent: {

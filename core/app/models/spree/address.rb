@@ -2,6 +2,8 @@ module Spree
   class Address < Spree::Base
     require 'validates_zipcode'
 
+    include Metadata
+
     if Rails::VERSION::STRING >= '6.1'
       serialize :preferences, Hash, default: {}
     end

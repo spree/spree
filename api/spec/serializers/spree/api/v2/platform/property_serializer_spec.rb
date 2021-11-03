@@ -19,7 +19,9 @@ describe Spree::Api::V2::Platform::PropertySerializer do
           created_at: resource.created_at,
           updated_at: resource.updated_at,
           filterable: resource.filterable,
-          filter_param: resource.filter_param
+          filter_param: resource.filter_param,
+          public_metadata: resource.public_metadata,
+          private_metadata: resource.private_metadata
         }
       }
     )

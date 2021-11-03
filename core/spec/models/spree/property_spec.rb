@@ -3,6 +3,8 @@ require 'spec_helper'
 describe Spree::Property, type: :model do
   let(:store) { create(:store) }
 
+  it_behaves_like 'metadata'
+
   context 'setting filter param' do
     subject { build(:property, name: 'Brand Name') }
 

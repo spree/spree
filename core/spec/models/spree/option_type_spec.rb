@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe Spree::OptionType, type: :model do
+  it_behaves_like 'metadata'
+
   context 'touching' do
     it 'touches a product' do
       product_option_type = create(:product_option_type)

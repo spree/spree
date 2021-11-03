@@ -18,7 +18,9 @@ describe Spree::Api::V2::Platform::PrototypeSerializer do
         attributes: {
           name: resource.name,
           created_at: resource.created_at,
-          updated_at: resource.updated_at
+          updated_at: resource.updated_at,
+          public_metadata: resource.public_metadata,
+          private_metadata: resource.private_metadata
         },
         relationships: {
           properties: {

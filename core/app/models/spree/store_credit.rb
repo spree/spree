@@ -1,6 +1,7 @@
 module Spree
   class StoreCredit < Spree::Base
     include SingleStoreResource
+    include Metadata
 
     acts_as_paranoid
 

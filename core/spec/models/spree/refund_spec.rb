@@ -1,6 +1,14 @@
 require 'spec_helper'
 
 describe Spree::Refund, type: :model do
+  describe 'metadata' do
+    before do
+      allow_any_instance_of(Spree::Refund).to receive(:amount_is_less_than_or_equal_to_allowed_amount)
+    end
+
+    it_behaves_like 'metadata'
+  end
+
   describe 'create' do
     subject { create(:refund, payment: payment, amount: amount, reason: refund_reason, transaction_id: nil) }
 

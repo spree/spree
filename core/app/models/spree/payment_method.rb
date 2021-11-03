@@ -4,6 +4,7 @@ module Spree
     acts_as_list
 
     include MultiStoreResource
+    include Spree::Metadata
 
     DISPLAY = [:both, :front_end, :back_end].freeze
 
