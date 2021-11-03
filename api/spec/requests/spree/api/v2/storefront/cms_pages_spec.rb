@@ -112,14 +112,14 @@ describe 'Storefront API v2 CMS Pages spec', type: :request do
     context 'including cms sections with linked resources' do
       let(:taxonomy) { create(:taxonomy, store: store) }
       let(:taxon) { create(:taxon, taxonomy: taxonomy) }
-      let!(:cms_section) { create(:cms_section, cms_page: home_en, linked_resource: taxon) }
+      let!(:cms_section) { create(:cms_hero_image_section, cms_page: home_en, linked_resource: taxon) }
 
       before { get '/api/v2/storefront/cms_pages?include=cms_sections.linked_resource' }
 
       it_behaves_like 'returns 200 HTTP status'
       it_behaves_like 'returns proper JSON structure'
 
-      it 'returns cms sections and their associations' do
+      it 'returns sections and their associations' do
         expect(json_response['included']).to include(have_type('taxon').and(have_id(taxon.id.to_s)))
         expect(json_response['included']).to include(
           have_type('cms_section').
@@ -142,7 +142,7 @@ describe 'Storefront API v2 CMS Pages spec', type: :request do
       let!(:page) { create(:cms_standard_page, store: store) }
       let(:taxonomy) { create(:taxonomy, store: store) }
       let(:taxon) { create(:taxon, taxonomy: taxonomy) }
-      let!(:page_item) { create(:cms_section, cms_page: page, linked_resource: taxon) }
+      let!(:page_item) { create(:cms_hero_image_section, cms_page: page, linked_resource: taxon) }
 
       before { get "/api/v2/storefront/cms_pages/#{page.id}?include=cms_sections.linked_resource" }
 

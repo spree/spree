@@ -7,11 +7,12 @@ describe 'Platform API v2 CmsSections', type: :request do
   let!(:store) { Spree::Store.default }
   let!(:page) { create(:cms_homepage, store: store) }
 
-  let!(:resource_a) { create(:cms_section, cms_page: page) }
-  let!(:resource_b) { create(:cms_section, cms_page: page) }
-  let!(:resource_c) { create(:cms_section, cms_page: page) }
-  let!(:resource_d) { create(:cms_section, cms_page: page) }
-  let!(:resource_e) { create(:cms_section, cms_page: page) }
+  let!(:resource_a) { create(:cms_hero_image_section, cms_page: page) }
+  let!(:resource_b) { create(:cms_featured_article_section, cms_page: page) }
+  let!(:resource_c) { create(:cms_product_carousel_section, cms_page: page) }
+  let!(:resource_d) { create(:cms_image_gallery_section, cms_page: page) }
+  let!(:resource_e) { create(:cms_side_by_side_images_section, cms_page: page) }
+  let!(:resource_f) { create(:cms_rich_text_content_section, cms_page: page) }
 
   let(:bearer_token) { { 'Authorization' => valid_authorization } }
 
@@ -37,6 +38,7 @@ describe 'Platform API v2 CmsSections', type: :request do
         expect(resource_d.position).to eq(3)
         expect(resource_e.position).to eq(4)
         expect(resource_a.position).to eq(5)
+        expect(resource_f.position).to eq(6)
       end
     end
 
@@ -69,6 +71,7 @@ describe 'Platform API v2 CmsSections', type: :request do
       resource_c.reload
       resource_d.reload
       resource_e.reload
+      resource_f.reload
     end
   end
 end
