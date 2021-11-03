@@ -145,10 +145,12 @@ Spree::Core::Engine.add_routes do
           patch :next
           patch :advance
           patch :complete
+          post :create_payment
           post :add_store_credit
           post :remove_store_credit
           get :payment_methods
           get :shipping_rates
+          patch :select_shipping_method
         end
 
         resource :account, controller: :account, only: %i[show create update]
@@ -305,6 +307,7 @@ Spree::Core::Engine.add_routes do
         resources :stores
 
         # Configurations API
+        resources :payment_methods
         resources :shipping_categories
         resources :shipping_methods
 

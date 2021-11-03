@@ -5,8 +5,8 @@ describe 'Menu Items API', swagger: true do
 
   resource_name = 'Menu Item'
   options = {
-    include_example: 'linked_resource',
-    filter_examples: [{ name: 'filter[menu_item_name_eq]', example: 'Women' }]
+    include_example: 'menu,icon,parent,children,linked_resource',
+    filter_examples: [{ name: 'filter[name_eq]', example: 'T-Shirts' }]
   }
 
   let(:menu) { create(:menu, store: store) }
@@ -19,18 +19,24 @@ describe 'Menu Items API', swagger: true do
   let(:valid_create_param_value) { build(:menu_item, menu: menu).attributes }
   let(:valid_update_param_value) do
     {
-      name: 'Menu Item One'
+      menu_item: {
+        name: 'Menu Item One'
+      }
     }
   end
   let(:invalid_param_value) do
     {
-      name: '',
+      menu_item: {
+        name: ''
+      }
     }
   end
   let(:valid_update_position_param_value) do
     {
-      new_parent_id: menu_item_two.id,
-      new_position_idx: 0
+      menu_item: {
+        new_parent_id: menu_item_two.id,
+        new_position_idx: 0
+      }
     }
   end
 
@@ -44,15 +50,9 @@ describe 'Menu Items API', swagger: true do
       description 'Reposition a Menu Item'
       consumes 'application/json'
       parameter name: :id, in: :path, type: :string
-      parameter name: :menu_item, in: :body, schema: { '$ref' => '#/components/schemas/menu_item_reposition_params' }
+      parameter name: :menu_item, in: :body, schema: { '$ref' => '#/components/schemas/menu_item_reposition' }
 
       let(:menu_item) { valid_update_position_param_value }
-      let(:invalid_param_value) do
-        {
-          new_parent_id: 'invalid',
-          new_position_idx: 'invalid'
-        }
-      end
 
       it_behaves_like 'record updated'
       it_behaves_like 'record not found', :menu_item

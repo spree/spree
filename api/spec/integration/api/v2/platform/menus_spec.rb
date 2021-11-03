@@ -6,7 +6,8 @@ describe 'Menus API', swagger: true do
   resource_name = 'Menu'
   options = {
     include_example: 'menu_items',
-    filter_examples: [{ name: 'filter[location_eq]', example: 'header' }]
+    filter_examples: [{ name: 'filter[name_eq]', example: 'Main Menu' },
+                      { name: 'filter[location_eq]', example: 'header' }]
   }
 
   let(:id) { create(:menu, name: 'Main Menu').id }
@@ -44,8 +45,7 @@ describe 'Menus API', swagger: true do
     {
       name: '',
       locale: '',
-      location: '',
-      store: ''
+      location: ''
     }
   end
 

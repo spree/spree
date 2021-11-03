@@ -23,11 +23,12 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
 
   let(:payment_source_attributes) do
     {
-      number: '4111111111111111',
+      gateway_payment_profile_id: 'BGS-123',
+      gateway_customer_profile_id: 'BGS-123',
       month: 1.month.from_now.month,
       year: 1.month.from_now.year,
-      verification_value: '123',
-      name: 'Spree Commerce'
+      name: 'Spree Commerce',
+      last_digits: '1111'
     }
   end
   let(:payment_params) do
@@ -581,6 +582,104 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
     end
   end
 
+  describe 'checkout#create_payment' do
+    let(:params) do
+      {
+        payment_method_id: payment_method.id,
+        amount: order.total,
+        source_attributes: {
+          gateway_payment_profile_id: '12345',
+          cc_type: 'visa',
+          last_digits: '1111',
+          name: 'John',
+          month: '12',
+          year: '2021'
+        }
+      }
+    end
+    let(:execute) { post '/api/v2/storefront/checkout/create_payment?include=payments', headers: headers, params: params }
+    let!(:payment_method) { create(:credit_card_payment_method, stores: [store]) }
+    let(:payment_source) { payment_method.payment_source_class.last }
+    let(:payment) { order.payments.last }
+
+    shared_examples 'creates a payment' do
+      before { execute }
+
+      it_behaves_like 'returns 201 HTTP status'
+
+      it 'returns new payment' do
+        expect(json_response['data']).to have_relationship(:payments).with_data([{ 'id' => payment.id.to_s, 'type' => 'payment' }])
+        expect(json_response['included'][0]).to have_id(payment.id.to_s)
+        expect(json_response['included'][0]).to have_type('payment')
+        expect(json_response['included'][0]).to have_attribute(:amount).with_value(order.total.to_s)
+        expect(json_response['included'][0]).to have_jsonapi_attributes(:amount, :response_code, :number, :cvv_response_code, :cvv_response_message, :payment_method_id, :payment_method_name, :state)
+        expect(json_response['included'][0]).to have_relationship(:payment_method).with_data({ 'id' => payment_method.id.to_s, 'type' => 'payment_method' })
+      end
+
+      it 'creates new payment record' do
+        expect { change(order.payments, :count).by(1) }
+      end
+    end
+
+    shared_examples 'creates a payment source' do
+      let(:execute) { post '/api/v2/storefront/checkout/create_payment?include=payments.source', headers: headers, params: params }
+
+      before { execute }
+
+      it 'returns new payment source' do
+        expect(json_response['included'][0]).to have_id(payment_source.id.to_s)
+        expect(json_response['included'][0]).to have_type('credit_card')
+        expect(json_response['included'][0]).to have_relationship(:payment_method).with_data({ 'id' => payment_method.id.to_s, 'type' => 'payment_method' })
+        expect(json_response['included'][0]).to have_attribute(:last_digits).with_value('1111')
+        expect(json_response['included'][0]).to have_attribute(:name).with_value('John')
+        expect(json_response['included'][0]).to have_attribute(:year).with_value(2021)
+        expect(json_response['included'][0]).to have_attribute(:month).with_value(12)
+      end
+
+      it 'creates new payment source record' do
+        expect { change(payment_method.payment_source_class, :count).by(1) }
+      end
+    end
+
+    context 'as a guest user' do
+      include_context 'creates guest order with guest token'
+
+      it_behaves_like 'creates a payment'
+      it_behaves_like 'creates a payment source'
+    end
+
+    context 'as a signed in user' do
+      include_context 'order with a physical line item'
+
+      context 'new payment source' do
+        it_behaves_like 'creates a payment'
+        it_behaves_like 'creates a payment source'
+
+        it 'assigns new payment source to the signed in user' do
+          expect { execute }.to change(user.credit_cards, :count).by(1)
+          expect(payment_source.user).to eq(user)
+        end
+      end
+
+      context 'existing payment source' do
+        let!(:payment_source) { create(:credit_card, user: user, payment_method: payment_method) }
+
+        let(:params) do
+          {
+            payment_method_id: payment_method.id,
+            source_id: payment_source.id
+          }
+        end
+
+        it_behaves_like 'creates a payment'
+
+        it 'does not create new payment source record' do
+          expect { execute }.not_to change(payment_method.payment_source_class, :count)
+        end
+      end
+    end
+  end
+
   describe 'checkout#shipping_rates' do
     let(:execute) { get '/api/v2/storefront/checkout/shipping_rates', headers: headers }
 
@@ -644,6 +743,77 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
       include_context 'order with a physical line item'
 
       it_behaves_like 'returns a list of shipments with shipping rates'
+    end
+  end
+
+  describe 'checkout#select_shipping_method' do
+    let(:headers) { headers_bearer }
+    let(:params) do
+      {
+        shipping_method_id: shipping_method_2.id
+      }
+    end
+    let(:zone) { create(:zone_with_country) }
+
+    let(:country) { create(:country) }
+    let(:order) { create(:order_with_totals, store: store, user: user, ship_address: create(:address, user: user, country: country)) }
+    let(:shipping_category) { order.products.first.shipping_category }
+    let!(:shipping_method) do
+      create(:shipping_method, zones: [zone], shipping_categories: [shipping_category]) do |shipping_method|
+        shipping_method.calculator.preferred_amount = 10
+        shipping_method.calculator.save
+      end
+    end
+    let!(:shipping_method_2) do
+      create(:shipping_method, zones: [zone], shipping_categories: [shipping_category]) do |shipping_method|
+        shipping_method.calculator.preferred_amount = 15
+        shipping_method.calculator.save
+      end
+    end
+    let!(:shipping_method_3) do
+      create(:shipping_method, zones: [create(:zone)], shipping_categories: [shipping_category]) do |shipping_method|
+        shipping_method.calculator.preferred_amount = 5
+        shipping_method.calculator.save
+      end
+    end
+    let(:shipment) { order.shipments.first }
+    let(:selected_shipping_rate) { shipment.selected_shipping_rate }
+    let(:execute) { patch '/api/v2/storefront/checkout/select_shipping_method?include=shipments', headers: headers, params: params }
+
+    before do
+      zone.countries << country
+      # making sure our store is in the geo zone supported by shipping method
+      store.update(checkout_zone: zone)
+      # generate shipping rates
+      get '/api/v2/storefront/checkout/shipping_rates', headers: headers
+    end
+
+    context 'one shipment' do
+      context 'valid shipping method' do
+        before { execute }
+
+        it_behaves_like 'returns 200 HTTP status'
+
+        it 'sets selected shipping method for shipment' do
+          expect(json_response['included'][0]).to have_id(shipment.id.to_s)
+          expect(json_response['included'][0]).to have_type('shipment')
+          expect(selected_shipping_rate).to be_present
+          expect(json_response['included'][0]).to have_relationship(:selected_shipping_rate).with_data({ 'id' => selected_shipping_rate.id.to_s, 'type' => 'shipping_rate' })
+          expect(selected_shipping_rate.shipping_method).to eq(shipping_method_2)
+        end
+      end
+
+      context 'missing shipping method' do
+        let(:params) do
+          {
+            shipping_method_id: shipping_method_3.id
+          }
+        end
+
+        before { execute }
+
+        it_behaves_like 'returns 422 HTTP status'
+      end
     end
   end
 

@@ -6,8 +6,23 @@ describe 'CMS Pages API', swagger: true do
   resource_name = 'CMS Page'
   options = {
     include_example: 'cms_sections',
-    filter_examples: [{ name: 'filter[type]', example: 'homepage' },
-                      { name: 'filter[title_cont]', example: 'About Us' }]
+    filter_examples: [{ name: 'filter[type_eq]', example: 'Spree::Cms::Pages::FeaturePage' },
+                      { name: 'filter[locale_eq]', example: 'en' },
+                      { name: 'filter[title_cont]', example: 'About Us' }],
+    custom_create_params: {
+      oneOf: [
+        { '$ref' => '#/components/schemas/create_standard_cms_page_params' },
+        { '$ref' => '#/components/schemas/create_homepage_cms_page_params' },
+        { '$ref' => '#/components/schemas/create_feature_cms_page_params' }
+      ]
+    },
+    custom_update_params: {
+      oneOf: [
+        { '$ref' => '#/components/schemas/update_standard_cms_page_params' },
+        { '$ref' => '#/components/schemas/update_homepage_cms_page_params' },
+        { '$ref' => '#/components/schemas/update_feature_cms_page_params' }
+      ]
+    }
   }
 
   let(:store) { Spree::Store.default }

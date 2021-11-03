@@ -44,6 +44,22 @@ module Spree
             render_order(result)
           end
 
+          def create_payment
+            result = create_payment_service.call(order: spree_current_order, params: params)
+
+            if result.success?
+              render_serialized_payload(201) { serialize_resource(spree_current_order.reload) }
+            else
+              render_error_payload(result.error)
+            end
+          end
+
+          def select_shipping_method
+            result = select_shipping_method_service.call(order: spree_current_order, params: params)
+
+            render_order(result)
+          end
+
           def add_store_credit
             spree_authorize! :update, spree_current_order, order_token
 
@@ -116,6 +132,14 @@ module Spree
 
           def shipping_rates_serializer
             Spree::Api::Dependencies.storefront_shipment_serializer.constantize
+          end
+
+          def create_payment_service
+            Spree::Api::Dependencies.storefront_payment_create_service.constantize
+          end
+
+          def select_shipping_method_service
+            Spree::Api::Dependencies.storefront_checkout_select_shipping_method_service.constantize
           end
 
           def serialize_payment_methods(payment_methods)

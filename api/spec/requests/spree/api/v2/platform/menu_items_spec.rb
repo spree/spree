@@ -12,7 +12,31 @@ describe 'Platform API v2 Menu Items spec', type: :request do
 
   describe 'menu_item#reposition' do
     context 'with no params' do
-      let(:params) { nil }
+      let(:params) do
+        {
+          menu_item: {
+            new_parent_id: nil,
+            new_position_idx: nil
+          }
+        }
+      end
+
+      before do
+        patch "/api/v2/platform/menu_items/#{menu_item_a.id}/reposition", headers: bearer_token, params: params
+      end
+
+      it_behaves_like 'returns 404 HTTP status'
+    end
+
+    context 'with none existing parent ID' do
+      let(:params) do
+        {
+          menu_item: {
+            new_parent_id: 999129192192,
+            new_position_idx: 0
+          }
+        }
+      end
 
       before do
         patch "/api/v2/platform/menu_items/#{menu_item_a.id}/reposition", headers: bearer_token, params: params
@@ -22,7 +46,14 @@ describe 'Platform API v2 Menu Items spec', type: :request do
     end
 
     context 'with correct params' do
-      let(:params) { { new_parent_id: menu_item_b.id, new_position_idx: 0 } }
+      let(:params) do
+        {
+          menu_item: {
+            new_parent_id: menu_item_b.id,
+            new_position_idx: 0
+          }
+        }
+      end
 
       before do
         patch "/api/v2/platform/menu_items/#{menu_item_a.id}/reposition", headers: bearer_token, params: params
@@ -41,8 +72,15 @@ describe 'Platform API v2 Menu Items spec', type: :request do
       end
     end
 
-    context 'with correct params moving within same item' do
-      let(:params) { { new_parent_id: menu_item_b.id, new_position_idx: 1 } }
+    context 'with correct params moving within the same item' do
+      let(:params) do
+        {
+          menu_item: {
+            new_parent_id: menu_item_b.id,
+            new_position_idx: 1
+          }
+        }
+      end
 
       before do
         patch "/api/v2/platform/menu_items/#{menu_item_a.id}/reposition", headers: bearer_token, params: params

@@ -104,7 +104,13 @@ module Spree
           end
 
           def spree_permitted_attributes
-            model_class.json_api_permitted_attributes
+            store_ids = if model_class.method_defined?(:stores)
+                          [{ store_ids: [] }]
+                        else
+                          []
+                        end
+
+            model_class.json_api_permitted_attributes + store_ids
           end
 
           def permitted_resource_params

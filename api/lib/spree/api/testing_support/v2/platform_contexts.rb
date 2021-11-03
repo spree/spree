@@ -165,6 +165,7 @@ end
 
 # create
 shared_examples 'POST create record' do |resource_name, **options|
+  custom_create_params = options[:custom_create_params] || nil
   endpoint_name = options[:custom_endpoint_name] || resource_name
   param_name = resource_name.parameterize(separator: '_').to_sym
   consumes_kind = options[:consumes_kind] || 'application/json'
@@ -181,7 +182,11 @@ shared_examples 'POST create record' do |resource_name, **options|
     security [ bearer_auth: [] ]
     description "Creates #{endpoint_name.articleize}"
     operationId "create-#{resource_name.parameterize.to_sym}"
-    parameter name: param_name, in: request_data_type, schema: { '$ref' => "#/components/schemas/create_#{param_name}_params" }
+    if custom_create_params
+      parameter name: param_name, in: request_data_type, schema: custom_create_params
+    else
+      parameter name: param_name, in: request_data_type, schema: { '$ref' => "#/components/schemas/create_#{param_name}_params" }
+    end
     json_api_include_parameter(options[:include_example]) unless options[:include_example].nil?
 
     let(param_name) { valid_create_param_value }
@@ -193,6 +198,7 @@ end
 
 # update
 shared_examples 'PATCH update record' do |resource_name, **options|
+  custom_update_params = options[:custom_update_params] || nil
   endpoint_name = options[:custom_endpoint_name] || resource_name
   param_name = resource_name.parameterize(separator: '_').to_sym
   consumes_kind = options[:consumes_kind] || 'application/json'
@@ -210,7 +216,11 @@ shared_examples 'PATCH update record' do |resource_name, **options|
     operationId "update-#{resource_name.parameterize.to_sym}"
     consumes consumes_kind
     parameter name: :id, in: :path, type: :string
-    parameter name: param_name, in: request_data_type, schema: { '$ref' => "#/components/schemas/update_#{param_name}_params" }
+    if custom_update_params
+      parameter name: param_name, in: request_data_type, schema: custom_update_params
+    else
+      parameter name: param_name, in: request_data_type, schema: { '$ref' => "#/components/schemas/update_#{param_name}_params" }
+    end
     json_api_include_parameter(options[:include_example]) unless options[:include_example].nil?
 
     let(param_name) { valid_update_param_value }

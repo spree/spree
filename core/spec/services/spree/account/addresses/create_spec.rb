@@ -34,6 +34,10 @@ module Spree
           expect(value.state).to eq(state)
         end
 
+        context 'without user' do
+          it { expect(subject.call(address_params: address_params).success?).to eq(true) }
+        end
+
         context 'user default address' do
           context 'when created address is first user address' do
             before { result }
