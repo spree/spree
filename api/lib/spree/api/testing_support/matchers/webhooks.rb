@@ -1,6 +1,6 @@
 extend RSpec::Matchers::DSL
 
-matcher :emit_webhook_event do |event_to_emit|
+RSpec::Matchers.define :emit_webhook_event do |event_to_emit|
   match do |obj_method|
     ENV['DISABLE_SPREE_WEBHOOKS'] = nil
 
@@ -18,8 +18,15 @@ matcher :emit_webhook_event do |event_to_emit|
   failure_message do |obj_method|
     # positive look-behinds must have a fixed length, using straighforward match instead
     proc_body = obj_method.source.squish[/(expect *({|do) *)(.*?)( *(}|end).to)/, 3]
-    "Expected that executing `#{proc_body}` emits the `#{expected}` Webhook event.\n" \
-      "Check that `#{proc_body}` does implement `queue_webhooks_requests!` passing `#{expected}` as argument."
+    "Expected that executing `#{proc_body}` emits the `#{event_to_emit}` Webhook event.\n" \
+      "Check that `#{proc_body}` does implement `queue_webhooks_requests!` for " \
+      "`#{event_to_emit}` with the following body: #{body}."
+  end
+
+  failure_message_when_negated do |obj_method|
+    proc_body = obj_method.source.squish[/(expect *({|do) *)(.*?)( *(}|end).not_to)/, 3]
+    "Expected that executing `#{proc_body}` does not emit the `#{event_to_emit}` Webhook event " \
+      "with the following body: #{body}."
   end
 
   supports_block_expectations
