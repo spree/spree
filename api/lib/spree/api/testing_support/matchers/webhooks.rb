@@ -10,7 +10,7 @@
 #   end.to emit_webhook_event('order.paid')
 #
 # It can also be negated, resulting in the expectation
-# waiting to not receive a `call` invokation with the 
+# waiting to not receive a `call` method call with the
 # given `event` and `body` (`once` isn't taken into consideration).
 #
 # @example
