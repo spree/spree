@@ -6,7 +6,8 @@ describe 'CMS Pages API', swagger: true do
   resource_name = 'CMS Page'
   options = {
     include_example: 'cms_sections',
-    filter_examples: [{ name: 'filter[type]', example: 'homepage' },
+    filter_examples: [{ name: 'filter[type_eq]', example: 'Spree::Cms::Pages::FeaturePage' },
+                      { name: 'filter[locale_eq]', example: 'en' },
                       { name: 'filter[title_cont]', example: 'About Us' }],
     custom_create_params: {
       oneOf: [

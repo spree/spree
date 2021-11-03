@@ -28,7 +28,7 @@ module Spree
     scope :standard, -> { where(type: 'Spree::Cms::Pages::StandardPage') }
     scope :feature, -> { where(type: 'Spree::Cms::Pages::FeaturePage') }
 
-    self.whitelisted_ransackable_attributes = %w[title type locale store_id]
+    self.whitelisted_ransackable_attributes = %w[title type locale]
 
     def seo_title
       if meta_title.present?
