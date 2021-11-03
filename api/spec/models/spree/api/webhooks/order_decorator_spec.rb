@@ -1,39 +1,24 @@
 require 'spec_helper'
 
 describe Spree::Order do
-  describe 'sending webhooks after transitioning from states' do
-    let(:queue_requests) { instance_double(Spree::Webhooks::Subscribers::QueueRequests) }
-    let(:store) { create(:store, default: true) }
-    let(:body) do
-      Spree::Api::V2::Platform::OrderSerializer.new(order).serializable_hash.to_json
-    end
+  let(:store) { create(:store, default: true) }
+  let(:body) do
+    Spree::Api::V2::Platform::OrderSerializer.new(order).serializable_hash.to_json
+  end
 
-    before do
-      ENV['DISABLE_SPREE_WEBHOOKS'] = nil
-      allow(Spree::Webhooks::Subscribers::QueueRequests).to receive(:new).and_return(queue_requests)
-      allow(queue_requests).to receive(:call).with(any_args)
-    end
-
-    after { ENV['DISABLE_SPREE_WEBHOOKS'] = 'true' }
-
-    describe '#after_cancel' do
+  describe 'order.canceled' do
+    describe 'completed -> canceled' do
       let(:order) { create(:completed_order_with_totals, store: store) }
 
-      it 'executes QueueRequests.call with a order.cancel event and {} body after invoking cancel' do
-        Timecop.freeze(Time.local(1990)) do
-          order.cancel
-          expect(queue_requests).to have_received(:call).with(event: 'order.canceled', body: body).once
-        end
-      end
+      it { expect { Timecop.freeze { order.cancel } }.to emit_webhook_event('order.canceled') }
     end
+  end
 
-    describe '#finalize!' do
+  describe 'order.placed' do
+    describe 'checkout -> completed' do
       let(:order) { described_class.create(email: 'test@example.com', store: store) }
 
-      it 'executes QueueRequests.call with a order.placed event and {} body after invoking finalize!' do
-        order.finalize!
-        expect(queue_requests).to have_received(:call).with(event: 'order.placed', body: body).once
-      end
+      it { expect { Timecop.freeze { order.finalize! } }.to emit_webhook_event('order.placed') }
     end
   end
 end
