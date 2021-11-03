@@ -223,7 +223,7 @@ RSpec.configure do |config|
                 required: %w[title locale type],
                 properties: {
                   title: { type: :string, example: 'About Us', description: 'Give your page a title.' },
-                  type: { type: :string, enum: ['Spree::Cms::Pages::StandardPage', 'Spree::Cms::Pages::Homepage', 'Spree::Cms::Pages::FeaturePage'], description: 'Set the type of page, for this example we are using `Spree::Cms::Pages::StandardPage`.' },
+                  type: { type: :string, enum: ['Spree::Cms::Pages::StandardPage'], description: 'Set the type of page.' },
                   meta_title: { type: :string, nullable: true, example: 'Learn More About Super-Shop', description: 'Set the meta title for this page, this appears in the title bar of the browser.' },
                   content: { type: :string, nullable: true, example: "Lot's of text..", description: 'The text content of a standard page, this can be HTML from a rich text editor.' },
                   meta_description: { type: :string, nullable: true, example: 'Learn more about us on this page here...', description: 'Set a meta description, used for SEO and displayed in search results.' },
@@ -245,7 +245,7 @@ RSpec.configure do |config|
                 required: %w[title locale type],
                 properties: {
                   title: { type: :string, example: 'Our Flash Homepage', description: 'Give your page a title.' },
-                  type: { type: :string, enum: ['Spree::Cms::Pages::StandardPage', 'Spree::Cms::Pages::Homepage', 'Spree::Cms::Pages::FeaturePage'], description: 'Set the type of page, for this example we are using `Spree::Cms::Pages::Homepage`.' },
+                  type: { type: :string, enum: ['Spree::Cms::Pages::Homepage'], description: 'Set the type of page.' },
                   meta_title: { type: :string, nullable: true, example: 'Visit Our Store - Great Deals', description: 'Set the meta title for this page, this appears in the title bar of the browser.' },
                   meta_description: { type: :string, nullable: true, example: 'Discover great new products that we sell in this store...', description: 'Set a meta description, used for SEO and displayed in search results.' },
                   visible: { type: :boolean, enum: [true, false], description: 'This page is publicly visible when set to `true`.' },
@@ -265,7 +265,7 @@ RSpec.configure do |config|
                 required: %w[title locale type],
                 properties: {
                   title: { type: :string, example: 'Featured Product', description: 'Give your page a title.' },
-                  type: { type: :string, enum: ['Spree::Cms::Pages::StandardPage', 'Spree::Cms::Pages::Homepage', 'Spree::Cms::Pages::FeaturePage'], description: 'Set the type of page, for this example we are using `Spree::Cms::Pages::FeaturePage`.' },
+                  type: { type: :string, enum: ['Spree::Cms::Pages::FeaturePage'], description: 'Set the type of page.' },
                   meta_title: { type: :string, nullable: true, example: 'Learn More About This Featured Product', description: 'Set the meta title for this page, this appears in the title bar of the browser.' },
                   meta_description: { type: :string, nullable: true, example: 'Learn more about us this amazing product that we sell right here...', description: 'Set a meta description, used for SEO and displayed in search results.' },
                   visible: { type: :boolean, enum: [true, false], description: 'This page is publicly visible when set to `true`.' },
@@ -284,14 +284,14 @@ RSpec.configure do |config|
               cms_page: {
                 type: :object,
                 properties: {
-                  title: { type: :string, example: 'About Us', description: 'Give your page a title.' },
-                  type: { type: :string, enum: ['Spree::Cms::Pages::StandardPage', 'Spree::Cms::Pages::Homepage', 'Spree::Cms::Pages::FeaturePage'], description: 'Set the type of page, for this example we are using `Spree::Cms::Pages::StandardPage`.' },
-                  meta_title: { type: :string, nullable: true, example: 'Learn More About Super-Shop', description: 'Set the meta title for this page, this appears in the title bar of the browser.' },
-                  content: { type: :string, nullable: true, example: "Lot's of text..", description: 'The text content of a standard page, this can be HTML from a rich text editor.' },
-                  meta_description: { type: :string, nullable: true, example: 'Learn more about us on this page here...', description: 'Set a meta description, used for SEO and displayed in search results.' },
+                  title: { type: :string, example: 'About Us', description: 'Update the page title.' },
+                  type: { type: :string, enum: ['Spree::Cms::Pages::StandardPage', 'Spree::Cms::Pages::Homepage', 'Spree::Cms::Pages::FeaturePage'], description: 'Change the type of page.' },
+                  meta_title: { type: :string, nullable: true, example: 'Learn More About Super-Shop', description: 'Update the meta title for this page, this appears in the title bar of the browser.' },
+                  content: { type: :string, nullable: true, example: "Lot's of text..", description: 'Update the text content of a standard page, this can be HTML from a rich text editor.' },
+                  meta_description: { type: :string, nullable: true, example: 'Learn more about us on this page here...', description: 'Update the meta description, used for SEO and displayed in search results.' },
                   visible: { type: :boolean, enum: [true, false], description: 'This page is publicly visible when set to `true`.' },
-                  slug: { type: :string, nullable: true, example: 'about-us', description: 'Set a slug for this page.' },
-                  locale: { type: :string, example: 'en-US', description: 'The language this page is written in.' }
+                  slug: { type: :string, nullable: true, example: 'about-us', description: 'Update the slug for this page.' },
+                  locale: { type: :string, example: 'en-US', description: 'Update the language of this page.' }
                 }
               }
             },
@@ -305,12 +305,12 @@ RSpec.configure do |config|
               cms_page: {
                 type: :object,
                 properties: {
-                  title: { type: :string, example: 'Our Flash Homepage', description: 'Give your page a title.' },
-                  type: { type: :string, enum: ['Spree::Cms::Pages::StandardPage', 'Spree::Cms::Pages::Homepage', 'Spree::Cms::Pages::FeaturePage'], description: 'Set the type of page, for this example we are using `Spree::Cms::Pages::Homepage`.' },
-                  meta_title: { type: :string, nullable: true, example: 'Visit Our Store - Great Deals', description: 'Set the meta title for this page, this appears in the title bar of the browser.' },
-                  meta_description: { type: :string, nullable: true, example: 'Discover great new products that we sell in this store...', description: 'Set a meta description, used for SEO and displayed in search results.' },
+                  title: { type: :string, example: 'Our Flash Homepage', description: 'Update the page title.' },
+                  type: { type: :string, enum: ['Spree::Cms::Pages::StandardPage', 'Spree::Cms::Pages::Homepage', 'Spree::Cms::Pages::FeaturePage'], description: 'Change the type of page.' },
+                  meta_title: { type: :string, nullable: true, example: 'Visit Our Store - Great Deals', description: 'Update the meta title for this page, this appears in the title bar of the browser.' },
+                  meta_description: { type: :string, nullable: true, example: 'Discover great new products that we sell in this store...', description: 'Update the meta description, used for SEO and displayed in search results.' },
                   visible: { type: :boolean, enum: [true, false], description: 'This page is publicly visible when set to `true`.' },
-                  locale: { type: :string, example: 'en-US', description: 'The language this page is written in.' }
+                  locale: { type: :string, example: 'en-US', description: 'Update the language of this page.' }
                 }
               }
             },
@@ -324,13 +324,13 @@ RSpec.configure do |config|
               cms_page: {
                 type: :object,
                 properties: {
-                  title: { type: :string, example: 'Featured Product', description: 'Give your page a title.' },
-                  type: { type: :string, enum: ['Spree::Cms::Pages::StandardPage', 'Spree::Cms::Pages::Homepage', 'Spree::Cms::Pages::FeaturePage'], description: 'Set the type of page, for this example we are using `Spree::Cms::Pages::FeaturePage`.' },
-                  meta_title: { type: :string, nullable: true, example: 'Learn More About This Featured Product', description: 'Set the meta title for this page, this appears in the title bar of the browser.' },
-                  meta_description: { type: :string, nullable: true, example: 'Learn more about us this amazing product that we sell right here...', description: 'Set a meta description, used for SEO and displayed in search results.' },
+                  title: { type: :string, example: 'Featured Product', description: 'Update the page title.' },
+                  type: { type: :string, enum: ['Spree::Cms::Pages::StandardPage', 'Spree::Cms::Pages::Homepage', 'Spree::Cms::Pages::FeaturePage'], description: 'Change the type of page.' },
+                  meta_title: { type: :string, nullable: true, example: 'Learn More About This Featured Product', description: 'Update the meta title for this page, this appears in the title bar of the browser.' },
+                  meta_description: { type: :string, nullable: true, example: 'Learn more about us this amazing product that we sell right here...', description: 'Update the meta description, used for SEO and displayed in search results.' },
                   visible: { type: :boolean, enum: [true, false], description: 'This page is publicly visible when set to `true`.' },
-                  slug: { type: :string, nullable: true, example: 'about-us', description: 'Set a slug for this page.' },
-                  locale: { type: :string, example: 'en-US', description: 'The language this page is written in.' }
+                  slug: { type: :string, nullable: true, example: 'about-us', description: 'Update the slug for this page.' },
+                  locale: { type: :string, example: 'en-US', description: 'Update the language of this page.' }
                 }
               }
             },
@@ -356,7 +356,8 @@ RSpec.configure do |config|
                   position: { type: :integer, example: 2, description: 'Pass the position that you want this section to appear in. (The list is not zero indexed, so the first item is position: `1`)' },
                   gutters: { type: :string, example: 'No Gutters', enum: ['Gutters', 'No Gutters'], description: 'This value is used by front end developers for styling the section padding.' },
                   button_text: { type: :string, example: 'Click Here', description: 'Set the text value of the button used in this section.' },
-                  title: { type: :string, example: 'Shop Today', description: 'Create a title for the Hero Section.' }
+                  title: { type: :string, example: 'Shop Today', description: 'Create a title for the Hero Section.' },
+                  'digital[image_one]': { type: :string, format: :binary, description: 'Use a `multipart/form-data` request to upload assets.' }
                 }
               }
             },
@@ -403,7 +404,9 @@ RSpec.configure do |config|
                   fit: { type: :string, example: 'Screen', enum: ['Screen', 'Container'], description: 'This value is used by front end developers to set CSS classes for content that fits the screen edge-to-edge, or stays within the boundaries of the central container.' },
                   subtitle_one: { type: :string, example: 'Save 50% today', nullable: true, description: 'Set the subtitle used in image one.' },
                   subtitle_two: { type: :string, example: 'Save 50% today', nullable: true, description: 'Set the subtitle used in image two.' },
-                  gutters: { type: :string, example: 'No Gutters', enum: ['Gutters', 'No Gutters'], description: 'This value is used by front end developers for styling the section padding.' }
+                  gutters: { type: :string, example: 'No Gutters', enum: ['Gutters', 'No Gutters'], description: 'This value is used by front end developers for styling the section padding.' },
+                  'digital[image_one]': { type: :string, format: :binary, description: 'Use a `multipart/form-data` request to upload assets.' },
+                  'digital[image_two]': { type: :string, format: :binary, description: 'Use a `multipart/form-data` request to upload assets.' }
                 }
               }
             },
@@ -433,7 +436,10 @@ RSpec.configure do |config|
                   title_three: { type: :string, example: "Buy This Women's Skirt", nullable: true, description: 'Set the title used in image three.' },
                   fit: { type: :string, example: 'Screen', enum: ['Screen', 'Container'], description: 'This value is used by front end developers to set CSS classes for content that fits the screen edge-to-edge, or stays within the boundaries of the central container.' },
                   layout_style: { type: :string, example: 'Default', enum: ['Default', 'Reversed'], description: 'This value is used by front end developers for styling the order the images appear.' },
-                  display_labels: { type: :string, example: 'Show', enum: ['Show', 'Hide'], description: 'This value is used by front end developers for showing and hiding the label on the images.' }
+                  display_labels: { type: :string, example: 'Show', enum: ['Show', 'Hide'], description: 'This value is used by front end developers for showing and hiding the label on the images.' },
+                  'digital[image_one]': { type: :string, format: :binary, description: 'Use a `multipart/form-data` request to upload assets.' },
+                  'digital[image_two]': { type: :string, format: :binary, description: 'Use a `multipart/form-data` request to upload assets.' },
+                  'digital[image_three]': { type: :string, format: :binary, description: 'Use a `multipart/form-data` request to upload assets.' }
                 }
               }
             },
@@ -494,14 +500,16 @@ RSpec.configure do |config|
                 type: :object,
                 properties: {
                   name: { type: :string, description: 'Update this section name.' },
-                  type: { type: :string, enum: ['Spree::Cms::Sections::HeroImage'], example: 'Spree::Cms::Sections::HeroImage', description: 'Change the section type.' },
+                  type: { type: :string, enum: ['Spree::Cms::Sections::HeroImage', 'Spree::Cms::Sections::FeaturedArticle', 'Spree::Cms::Sections::ProductCarousel', 'Spree::Cms::Sections::ImageGallery', 'Spree::Cms::Sections::SideBySideImages', 'Spree::Cms::Sections::RichTextContent'], example: 'Spree::Cms::Sections::ProductCarousel', description: 'Change the section type.' },
                   linked_resource_type: { type: :string, example: 'Spree::Taxon', nullable: true, enum: ['Spree::Taxon', 'Spree::Product', 'Spree::CmsPage'], description: 'Update the resource type that this section links to.' },
                   linked_resource_id: { type: :string, example: '1', nullable: true, description: 'Set the ID of the resource that you would like this section to link to.' },
                   fit: { type: :string, example: 'Screen', enum: ['Screen', 'Container'], description: 'This value is used by front end developers to set CSS classes for content that fits the screen edge-to-edge, or stays within the boundaries of the central container.' },
                   position: { type: :integer, example: 2, description: 'Pass the position that you want this section to appear in. (The list is not zero indexed, so the first item is position: `1`)' },
                   gutters: { type: :string, example: 'No Gutters', enum: ['Gutters', 'No Gutters'], description: 'This value is used by front end developers for styling the section padding.' },
                   button_text: { type: :string, example: 'Click Here', description: 'Update the text value of the button used in this section.' },
-                  title: { type: :string, example: 'Shop Today', description: 'Update the title for this section.' }
+                  title: { type: :string, example: 'Shop Today', description: 'Update the title for this section.' },
+                  'digital[image_one]': { type: :string, format: :binary, description: 'Use a `multipart/form-data` request to upload assets.' }
+
                 }
               }
             },
@@ -516,7 +524,7 @@ RSpec.configure do |config|
                 type: :object,
                 properties: {
                   name: { type: :string, description: 'Change this section name.' },
-                  type: { type: :string, enum: ['Spree::Cms::Sections::ProductCarousel'], example: 'Spree::Cms::Sections::ProductCarousel', description: 'Change the section type.' },
+                  type: { type: :string, enum: ['Spree::Cms::Sections::HeroImage', 'Spree::Cms::Sections::FeaturedArticle', 'Spree::Cms::Sections::ProductCarousel', 'Spree::Cms::Sections::ImageGallery', 'Spree::Cms::Sections::SideBySideImages', 'Spree::Cms::Sections::RichTextContent'], example: 'Spree::Cms::Sections::ProductCarousel', description: 'Change the section type.' },
                   position: { type: :integer, example: 2, description: 'Pass the position that you want this section to appear in. (The list is not zero indexed, so the first item is position: `1`)' },
                   linked_resource_id: { type: :string, example: '1', nullable: true, description: 'Update the ID of the Taxon that you would like displayed as a Product Carousel.' }
                 }
@@ -533,7 +541,7 @@ RSpec.configure do |config|
                 type: :object,
                 properties: {
                   name: { type: :string, description: 'Update this section name.' },
-                  type: { type: :string, enum: ['Spree::Cms::Sections::SideBySideImages'], example: 'Spree::Cms::Sections::SideBySideImages', description: 'Change the section type.' },
+                  type: { type: :string, enum: ['Spree::Cms::Sections::HeroImage', 'Spree::Cms::Sections::FeaturedArticle', 'Spree::Cms::Sections::ProductCarousel', 'Spree::Cms::Sections::ImageGallery', 'Spree::Cms::Sections::SideBySideImages', 'Spree::Cms::Sections::RichTextContent'], example: 'Spree::Cms::Sections::ProductCarousel', description: 'Change the section type.' },
                   position: { type: :integer, example: 2, description: 'Pass the position that you want this section to appear in. (The list is not zero indexed, so the first item is position: `1`)' },
                   link_type_one: { type: :string, example: 'Spree::Taxon', enum: ['Spree::Taxon', 'Spree::Product'], description: 'Update the resource type that image one links to.' },
                   link_type_two: { type: :string, example: 'Spree::Taxon', enum: ['Spree::Taxon', 'Spree::Product'], description: 'Update the resource type that image two links to.' },
@@ -544,7 +552,9 @@ RSpec.configure do |config|
                   fit: { type: :string, example: 'Screen', enum: ['Screen', 'Container'], description: 'This value is used by front end developers to set CSS classes for content that fits the screen edge-to-edge, or stays within the boundaries of the central container.' },
                   subtitle_one: { type: :string, example: 'Save 50% today', nullable: true, description: 'Update the subtitle used in image one.' },
                   subtitle_two: { type: :string, example: 'Save 50% today', nullable: true, description: 'Update the subtitle used in image two.' },
-                  gutters: { type: :string, example: 'No Gutters', enum: ['Gutters', 'No Gutters'], description: 'This value is used by front end developers for styling the section padding.' }
+                  gutters: { type: :string, example: 'No Gutters', enum: ['Gutters', 'No Gutters'], description: 'This value is used by front end developers for styling the section padding.' },
+                  'digital[image_one]': { type: :string, format: :binary, description: 'Use a `multipart/form-data` request to upload assets.' },
+                  'digital[image_two]': { type: :string, format: :binary, description: 'Use a `multipart/form-data` request to upload assets.' }
                 }
               }
             },
@@ -559,7 +569,7 @@ RSpec.configure do |config|
                 type: :object,
                 properties: {
                   name: { type: :string, description: 'Update this section name.' },
-                  type: { type: :string, enum: ['Spree::Cms::Sections::ImageGallery'], example: 'Spree::Cms::Sections::ImageGallery', description: 'Change the section type.' },
+                  type: { type: :string, enum: ['Spree::Cms::Sections::HeroImage', 'Spree::Cms::Sections::FeaturedArticle', 'Spree::Cms::Sections::ProductCarousel', 'Spree::Cms::Sections::ImageGallery', 'Spree::Cms::Sections::SideBySideImages', 'Spree::Cms::Sections::RichTextContent'], example: 'Spree::Cms::Sections::ProductCarousel', description: 'Change the section type.' },
                   position: { type: :integer, example: 2, description: 'Pass the position that you want this section to appear in. (The list is not zero indexed, so the first item is position: `1`)' },
                   link_type_one: { type: :string, example: 'Spree::Taxon', enum: ['Spree::Taxon', 'Spree::Product'], description: 'Update the resource type that image one links to.' },
                   link_type_two: { type: :string, example: 'Spree::Taxon', enum: ['Spree::Taxon', 'Spree::Product'], description: 'Update the resource type that image two links to.' },
@@ -572,7 +582,10 @@ RSpec.configure do |config|
                   title_three: { type: :string, example: "Buy This Women's Skirt", nullable: true, description: 'Update the title used in image three.' },
                   fit: { type: :string, example: 'Screen', enum: ['Screen', 'Container'], description: 'This value is used by front end developers to set CSS classes for content that fits the screen edge-to-edge, or stays within the boundaries of the central container.' },
                   layout_style: { type: :string, example: 'Default', enum: ['Default', 'Reversed'], description: 'This value is used by front end developers for styling the order the images appear.' },
-                  display_labels: { type: :string, example: 'Show', enum: ['Show', 'Hide'], description: 'This value is used by front end developers for showing and hiding the label on the images.' }
+                  display_labels: { type: :string, example: 'Show', enum: ['Show', 'Hide'], description: 'This value is used by front end developers for showing and hiding the label on the images.' },
+                  'digital[image_one]': { type: :string, format: :binary, description: 'Use a `multipart/form-data` request to upload assets.' },
+                  'digital[image_two]': { type: :string, format: :binary, description: 'Use a `multipart/form-data` request to upload assets.' },
+                  'digital[image_three]': { type: :string, format: :binary, description: 'Use a `multipart/form-data` request to upload assets.' }
                 }
               }
             },
@@ -587,7 +600,7 @@ RSpec.configure do |config|
                 type: :object,
                 properties: {
                   name: { type: :string, description: 'Update this section name.' },
-                  type: { type: :string, enum: ['Spree::Cms::Sections::FeaturedArticle'], example: 'Spree::Cms::Sections::FeaturedArticle', description: 'Change the section type.' },
+                  type: { type: :string, enum: ['Spree::Cms::Sections::HeroImage', 'Spree::Cms::Sections::FeaturedArticle', 'Spree::Cms::Sections::ProductCarousel', 'Spree::Cms::Sections::ImageGallery', 'Spree::Cms::Sections::SideBySideImages', 'Spree::Cms::Sections::RichTextContent'], example: 'Spree::Cms::Sections::ProductCarousel', description: 'Change the section type.' },
                   position: { type: :integer, example: 2, description: 'Pass the position that you want this section to appear in. (The list is not zero indexed, so the first item is position: `1`)' },
                   linked_resource_type: { type: :string, example: 'Spree::Taxon', nullable: true, enum: ['Spree::Taxon', 'Spree::Product', 'Spree::CmsPage'], description: 'Set the resource type that this section links to.' },
                   linked_resource_id: { type: :string, example: '1', nullable: true, description: 'Change the ID of the resource that you would like this section to link to.' },
@@ -611,7 +624,7 @@ RSpec.configure do |config|
                 type: :object,
                 properties: {
                   name: { type: :string, description: 'Update this section name.' },
-                  type: { type: :string, enum: ['Spree::Cms::Sections::RichTextContent'], example: 'Spree::Cms::Sections::RichTextContent', description: 'Change the section type.' },
+                  type: { type: :string, enum: ['Spree::Cms::Sections::HeroImage', 'Spree::Cms::Sections::FeaturedArticle', 'Spree::Cms::Sections::ProductCarousel', 'Spree::Cms::Sections::ImageGallery', 'Spree::Cms::Sections::SideBySideImages', 'Spree::Cms::Sections::RichTextContent'], example: 'Spree::Cms::Sections::ProductCarousel', description: 'Change the section type.' },
                   position: { type: :integer, example: 2, description: 'Pass the position that you want this section to appear in. (The list is not zero indexed, so the first item is position: `1`)' },
                   fit: { type: :string, example: 'Screen', enum: ['Screen', 'Container'], description: 'This value is used by front end developers to set CSS classes for content that fits the screen edge-to-edge, or stays within the boundaries of the central container.' },
                   rte_content: { type: :string, example: 'Lots of text and content goes here.', description: 'Update the content, here, this can be rich text editor content.' }
@@ -732,9 +745,9 @@ RSpec.configure do |config|
               menu: {
                 type: :object,
                 properties: {
-                  name: { type: :string, example: 'Main Menu', description: 'Give this Menu a name.' },
-                  location: { type: :string, enum: ['header', 'footer'], description: 'Set the location this menu appears in the website.' },
-                  locale: { type: :string, example: 'en-US', description: 'Set the language of this menu.' }
+                  name: { type: :string, example: 'Main Menu', description: 'Update this Menu name.' },
+                  location: { type: :string, enum: ['header', 'footer'], description: 'Update the location this menu appears in the website.' },
+                  locale: { type: :string, example: 'en-US', description: 'Change the language of this menu.' }
                 }
               }
             },
@@ -772,14 +785,14 @@ RSpec.configure do |config|
               menu_item: {
                 type: :object,
                 properties: {
-                  name: { type: :string, example: 'T-Shirts', description: 'The name of this Menu Item'},
-                  code: { type: :string, nullable: true, example: 'MEN-TS', description: 'Give this Menu Item a code to identify this Menu Item from others. This is especially useful when using Container type Menu Items to group items.' },
+                  name: { type: :string, example: 'T-Shirts', description: 'Update the name of this Menu Item'},
+                  code: { type: :string, nullable: true, example: 'MEN-TS', description: 'The Menu Item a code to identifies this Menu Item from others. This is especially useful when using Container type Menu Items to group items.' },
                   subtitle: { type: :string, nullable: true, example: "Shop men's T-Shirts", description: 'Set an optional subtitle for the Menu Item, this is useful if your menu has promotional links that require more than just a link name.' },
                   destination: { type: :string, nullable: true, example: 'https://getvendo.com', description: 'Used when the linked_resource_type is set to: URL' },
                   menu_id: { type: :integer, example: 1, description: 'Specify the ID of the Menu this item belongs to.' },
                   new_window: { type: :boolean, description: 'When set to `true` the link will be opened in a new tab or window.' },
                   item_type: { type: :string, enum: ['Link', 'Container'], description: 'Links are standard links, where as Containers are used to group links.' },
-                  linked_resource_type: { type: :string, enum: ['URL', 'Spree::Taxon', 'Spree::Product', 'Spree::CmsPage'], description: 'Set the type of resource you want to link to, or set to: URL to use the destination field for an external link.' },
+                  linked_resource_type: { type: :string, enum: ['URL', 'Spree::Taxon', 'Spree::Product', 'Spree::CmsPage'], description: 'Change the type of resource you want to link to, or set to: URL to use the destination field for an external link.' },
                   linked_resource_id: { type: :integer, example: 1, nullable: true, description: 'The ID of the resource you are linking to.' }
                 }
               }
