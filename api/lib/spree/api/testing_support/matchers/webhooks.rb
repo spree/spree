@@ -1,5 +1,3 @@
-extend RSpec::Matchers::DSL
-
 RSpec::Matchers.define :emit_webhook_event do |event_to_emit|
   match do |obj_method|
     ENV['DISABLE_SPREE_WEBHOOKS'] = nil
