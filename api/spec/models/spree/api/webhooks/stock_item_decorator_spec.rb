@@ -8,7 +8,7 @@ describe Spree::StockItem do
     let(:stock_item) { product.master.stock_items.take }
     let(:body) { Spree::Api::V2::Platform::ProductSerializer.new(product).serializable_hash.to_json }
 
-    describe '#update' do
+    describe '#save' do
       context 'when all product variants are tracked' do
         context 'when product total_on_hand is greater than 0' do
           it 'does not emit the product.out_of_stock event' do
@@ -50,6 +50,14 @@ describe Spree::StockItem do
           it 'does not emit the product.out_of_stock event' do
             expect { stock_item.adjust_count_on_hand(-10) }.not_to emit_webhook_event('product.out_of_stock')
           end
+        end
+      end
+
+      context 'when first stock item is created' do
+        let(:other_product) { build(:product, stores: [store]) }
+
+        it 'does not emit the product.out_of_stock event' do
+          expect { other_product.save }.not_to emit_webhook_event('product.out_of_stock')
         end
       end
     end
