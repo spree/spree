@@ -11,6 +11,11 @@ module Spree
           super
           queue_webhooks_requests!('order.placed')
         end
+
+        def after_resume
+          super
+          queue_webhooks_requests!('order.resumed')
+        end
       end
     end
   end
