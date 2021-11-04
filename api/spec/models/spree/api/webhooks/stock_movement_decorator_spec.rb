@@ -13,7 +13,7 @@ describe Spree::StockMovement do
       let(:quantity) { -stock_item.count_on_hand }
 
       it 'emits the variant.out_of_stock event' do
-        expect { Timecop.freeze { subject } }.to emit_webhook_event('variant.out_of_stock')
+        expect { subject }.to emit_webhook_event('variant.out_of_stock')
       end
     end
 
