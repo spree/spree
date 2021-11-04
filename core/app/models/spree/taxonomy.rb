@@ -1,5 +1,7 @@
 module Spree
   class Taxonomy < Spree::Base
+    include Metadata
+
     acts_as_list
 
     validates :name, presence: true, uniqueness: { case_sensitive: false, allow_blank: true, scope: :store_id }

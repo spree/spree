@@ -19,7 +19,9 @@ describe Spree::Api::V2::Platform::OptionTypeSerializer do
             position: option_type.position,
             created_at: option_type.created_at,
             updated_at: option_type.updated_at,
-            filterable: option_type.filterable
+            filterable: option_type.filterable,
+            public_metadata: {},
+            private_metadata: {}
           },
           relationships: {
             option_values: {

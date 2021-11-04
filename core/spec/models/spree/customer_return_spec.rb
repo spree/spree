@@ -5,6 +5,8 @@ describe Spree::CustomerReturn, type: :model do
     allow_any_instance_of(Spree::Order).to receive_messages(return!: true)
   end
 
+  it_behaves_like 'metadata'
+
   describe '.validation' do
     describe '#must_have_return_authorization' do
       subject { customer_return.valid? }

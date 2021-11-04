@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe Spree::Address, type: :model do
+  it_behaves_like 'metadata'
+
   describe 'clone' do
     it 'creates a copy of the address with the exception of the id, label, user_id, updated_at and created_at attributes' do
       state = create(:state)

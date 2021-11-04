@@ -23,7 +23,9 @@ describe Spree::Api::V2::Platform::StockTransferSerializer do
           reference: resource.reference,
           created_at: resource.created_at,
           updated_at: resource.updated_at,
-          number: resource.number
+          number: resource.number,
+          public_metadata: resource.public_metadata,
+          private_metadata: resource.private_metadata
         },
         relationships: {
           stock_movements: {

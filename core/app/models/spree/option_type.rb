@@ -1,6 +1,7 @@
 module Spree
   class OptionType < Spree::Base
     include UniqueName
+    include Metadata
 
     acts_as_list
 

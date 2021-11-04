@@ -2,6 +2,8 @@ module Spree
   class ShippingMethod < Spree::Base
     acts_as_paranoid
     include Spree::CalculatedAdjustments
+    include Metadata
+
     DISPLAY = [:both, :front_end, :back_end]
 
     # Used for #refresh_rates

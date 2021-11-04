@@ -5,6 +5,8 @@ describe Spree::LineItem, type: :model do
   let(:order) { create :order_with_line_items, line_items_count: 1, store: store }
   let(:line_item) { order.line_items.first }
 
+  it_behaves_like 'metadata'
+
   describe 'Validations' do
     describe 'ensure_proper_currency' do
       context 'order is present' do
