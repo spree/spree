@@ -60,21 +60,29 @@ describe Spree::StockItem do
           expect { other_product.save }.not_to emit_webhook_event('product.out_of_stock')
         end
       end
+
+      context 'when count_on_hand did not change' do
+        before { stock_item.set_count_on_hand(0) }
+
+        it 'does not emit the product.out_of_stock event' do
+          expect { stock_item.update(backorderable: false) }.not_to emit_webhook_event('product.out_of_stock')
+        end
+      end
     end
 
     describe '#destroy' do
-      let!(:second_variant) do
-        variant = create(:variant, product: product)
-        variant.stock_items.take.set_count_on_hand(10)
-        variant
-      end
-
       context 'when all product variants are tracked' do
+        let(:second_variant) do
+          variant = create(:variant, product: product)
+          variant.stock_items.take.set_count_on_hand(10)
+          variant
+        end
+
         context 'when product total_on_hand after deleting some stock item is greater than 0' do
           before { stock_item.adjust_count_on_hand(10) }
 
           it 'does not emit the product.out_of_stock event' do
-            expect { second_variant.stock_items.take.destroy }.not_to emit_webhook_event('product.out_of_stock')
+            expect { Timecop.freeze { second_variant.stock_items.take.destroy } }.not_to emit_webhook_event('product.out_of_stock')
           end
         end
 
@@ -82,7 +90,7 @@ describe Spree::StockItem do
           before { stock_item.set_count_on_hand(0) }
 
           it 'emits the product.out_of_stock event' do
-            expect { second_variant.stock_items.take.destroy }.to emit_webhook_event('product.out_of_stock')
+            expect { Timecop.freeze { Spree::StockItem.find(second_variant.stock_items.take.id).destroy } }.to emit_webhook_event('product.out_of_stock')
           end
         end
 
@@ -99,6 +107,12 @@ describe Spree::StockItem do
       end
 
       context 'when some of product variants is not tracked' do
+        let!(:second_variant) do
+          variant = create(:variant, product: product)
+          variant.stock_items.take.set_count_on_hand(10)
+          variant
+        end
+
         before { product.master.update(track_inventory: false) }
 
         context 'when product total_on_hand after deleting some stock item is greater than 0' do
