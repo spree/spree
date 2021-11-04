@@ -3,9 +3,11 @@ module Spree
     module Webhooks
       module StockMovementDecorator
         def update_stock_item_quantity
-          super
           variant = stock_item.variant
-          variant.queue_webhooks_requests!('variant.out_of_stock') unless variant.in_stock?
+          variant_in_stock_before_update = variant.in_stock?
+          super
+          variant.reload
+          variant.queue_webhooks_requests!('variant.out_of_stock') if variant_in_stock_before_update && !variant.in_stock?
         end
       end
     end
