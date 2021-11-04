@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe Spree::Shipment, type: :model do
+  it_behaves_like 'metadata'
+
   let!(:order) { create(:order, number: 'S12345') }
   let(:shipping_method) { create(:shipping_method, name: 'UPS') }
   let(:shipment) do

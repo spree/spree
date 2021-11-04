@@ -1,12 +1,12 @@
 ---
 openapi: 3.0.3
 info:
-  title: Platform API v2
+  title: Platform API
   contact:
     name: Spark Solutions
     url: https://sparksolutions.co
     email: we@sparksolutions.co
-  description: Spree Platform API v2
+  description: Spree Platform API
   version: v2
 paths:
   "/api/v2/platform/addresses":
@@ -70,8 +70,8 @@ paths:
                         state_name:
                         alternative_phone: 555-555-0199
                         company: Company
-                        created_at: '2021-11-01T22:35:35.844Z'
-                        updated_at: '2021-11-01T22:35:35.844Z'
+                        created_at: '2021-11-03T11:02:29.755Z'
+                        updated_at: '2021-11-03T11:02:29.755Z'
                         deleted_at:
                         label:
                       relationships:
@@ -98,8 +98,8 @@ paths:
                         state_name:
                         alternative_phone: 555-555-0199
                         company: Company
-                        created_at: '2021-11-01T22:35:35.847Z'
-                        updated_at: '2021-11-01T22:35:35.847Z'
+                        created_at: '2021-11-03T11:02:29.758Z'
+                        updated_at: '2021-11-03T11:02:29.758Z'
                         deleted_at:
                         label:
                       relationships:
@@ -173,8 +173,8 @@ paths:
                         state_name:
                         alternative_phone: 555-555-0199
                         company: Company
-                        created_at: '2021-11-01T22:35:36.055Z'
-                        updated_at: '2021-11-01T22:35:36.055Z'
+                        created_at: '2021-11-03T11:02:29.967Z'
+                        updated_at: '2021-11-03T11:02:29.967Z'
                         deleted_at:
                         label:
                       relationships:
@@ -268,8 +268,8 @@ paths:
                         state_name:
                         alternative_phone: 555-555-0199
                         company: Company
-                        created_at: '2021-11-01T22:35:36.093Z'
-                        updated_at: '2021-11-01T22:35:36.093Z'
+                        created_at: '2021-11-03T11:02:30.013Z'
+                        updated_at: '2021-11-03T11:02:30.013Z'
                         deleted_at:
                         label:
                       relationships:
@@ -348,8 +348,8 @@ paths:
                         state_name:
                         alternative_phone: 555-555-0199
                         company: Company
-                        created_at: '2021-11-01T22:35:36.157Z'
-                        updated_at: '2021-11-01T22:35:36.165Z'
+                        created_at: '2021-11-03T11:02:30.086Z'
+                        updated_at: '2021-11-03T11:02:30.095Z'
                         deleted_at:
                         label:
                       relationships:
@@ -493,8 +493,8 @@ paths:
                         label: Shipping
                         mandatory:
                         eligible: true
-                        created_at: '2021-11-01T22:35:36.396Z'
-                        updated_at: '2021-11-01T22:35:36.396Z'
+                        created_at: '2021-11-03T11:02:30.341Z'
+                        updated_at: '2021-11-03T11:02:30.341Z'
                         state: open
                         included: false
                         display_amount: "$100.00"
@@ -520,8 +520,8 @@ paths:
                         label: Shipping
                         mandatory:
                         eligible: true
-                        created_at: '2021-11-01T22:35:36.419Z'
-                        updated_at: '2021-11-01T22:35:36.419Z'
+                        created_at: '2021-11-03T11:02:30.365Z'
+                        updated_at: '2021-11-03T11:02:30.365Z'
                         state: open
                         included: false
                         display_amount: "$100.00"
@@ -594,8 +594,8 @@ paths:
                         label: Shipping
                         mandatory:
                         eligible: true
-                        created_at: '2021-11-01T22:35:36.761Z'
-                        updated_at: '2021-11-01T22:35:36.761Z'
+                        created_at: '2021-11-03T11:02:30.703Z'
+                        updated_at: '2021-11-03T11:02:30.703Z'
                         state: open
                         included: false
                         display_amount: "$100.00"
@@ -677,8 +677,8 @@ paths:
                         label: Shipping
                         mandatory:
                         eligible: true
-                        created_at: '2021-11-01T22:35:36.875Z'
-                        updated_at: '2021-11-01T22:35:36.880Z'
+                        created_at: '2021-11-03T11:02:30.829Z'
+                        updated_at: '2021-11-03T11:02:30.834Z'
                         state: open
                         included: false
                         display_amount: "$1.00"
@@ -756,8 +756,8 @@ paths:
                         label: New label
                         mandatory:
                         eligible: true
-                        created_at: '2021-11-01T22:35:37.076Z'
-                        updated_at: '2021-11-01T22:35:37.089Z'
+                        created_at: '2021-11-03T11:02:31.024Z'
+                        updated_at: '2021-11-03T11:02:31.044Z'
                         state: open
                         included: false
                         display_amount: "$15.00"
@@ -897,8 +897,8 @@ paths:
                       type: classification
                       attributes:
                         position: 1
-                        created_at: '2021-11-01T22:35:37.616Z'
-                        updated_at: '2021-11-01T22:35:37.616Z'
+                        created_at: '2021-11-03T11:02:31.580Z'
+                        updated_at: '2021-11-03T11:02:31.580Z'
                       relationships:
                         product:
                           data:
@@ -912,8 +912,8 @@ paths:
                       type: classification
                       attributes:
                         position: 1
-                        created_at: '2021-11-01T22:35:37.695Z'
-                        updated_at: '2021-11-01T22:35:37.695Z'
+                        created_at: '2021-11-03T11:02:31.660Z'
+                        updated_at: '2021-11-03T11:02:31.660Z'
                       relationships:
                         product:
                           data:
@@ -974,8 +974,8 @@ paths:
                       type: classification
                       attributes:
                         position: 1
-                        created_at: '2021-11-01T22:35:38.155Z'
-                        updated_at: '2021-11-01T22:35:38.155Z'
+                        created_at: '2021-11-03T11:02:32.137Z'
+                        updated_at: '2021-11-03T11:02:32.137Z'
                       relationships:
                         product:
                           data:
@@ -1042,8 +1042,8 @@ paths:
                       type: classification
                       attributes:
                         position: 1
-                        created_at: '2021-11-01T22:35:38.328Z'
-                        updated_at: '2021-11-01T22:35:38.328Z'
+                        created_at: '2021-11-03T11:02:32.315Z'
+                        updated_at: '2021-11-03T11:02:32.315Z'
                       relationships:
                         product:
                           data:
@@ -1109,8 +1109,8 @@ paths:
                       type: classification
                       attributes:
                         position: 1
-                        created_at: '2021-11-01T22:35:38.636Z'
-                        updated_at: '2021-11-01T22:35:38.636Z'
+                        created_at: '2021-11-03T11:02:32.640Z'
+                        updated_at: '2021-11-03T11:02:32.640Z'
                       relationships:
                         product:
                           data:
@@ -1232,8 +1232,8 @@ paths:
                       type: classification
                       attributes:
                         position: 2
-                        created_at: '2021-11-01T22:35:39.423Z'
-                        updated_at: '2021-11-01T22:35:39.448Z'
+                        created_at: '2021-11-03T11:02:33.492Z'
+                        updated_at: '2021-11-03T11:02:33.514Z'
                       relationships:
                         product:
                           data:
@@ -1308,10 +1308,16 @@ paths:
         example: cms_sections
         schema:
           type: string
-      - name: filter[type]
+      - name: filter[type_eq]
         in: query
         description: ''
-        example: homepage
+        example: Spree::Cms::Pages::FeaturePage
+        schema:
+          type: string
+      - name: filter[locale_eq]
+        in: query
+        description: ''
+        example: en
         schema:
           type: string
       - name: filter[title_cont]
@@ -1332,35 +1338,34 @@ paths:
                     - id: '1'
                       type: cms_page
                       attributes:
-                        title: Deserunt eum voluptate facilis minus eveniet facere.
+                        title: Enim ullam pariatur nisi nobis.
                         meta_title:
                         content:
                         meta_description:
                         visible: true
-                        slug: deserunt-eum-voluptate-facilis-minus-eveniet-facere
+                        slug: enim-ullam-pariatur-nisi-nobis
                         type: Spree::Cms::Pages::StandardPage
                         locale: en
                         deleted_at:
-                        created_at: '2021-11-01T22:35:39.804Z'
-                        updated_at: '2021-11-01T22:35:39.804Z'
+                        created_at: '2021-11-03T11:02:33.878Z'
+                        updated_at: '2021-11-03T11:02:33.878Z'
                       relationships:
                         cms_sections:
                           data: []
                     - id: '2'
                       type: cms_page
                       attributes:
-                        title: Beatae dolor illum ea necessitatibus quaerat neque
-                          excepturi.
+                        title: Illo adipisci dolorem quaerat maiores qui odio at.
                         meta_title:
                         content:
                         meta_description:
                         visible: true
-                        slug: beatae-dolor-illum-ea-necessitatibus-quaerat-neque-excepturi
+                        slug: illo-adipisci-dolorem-quaerat-maiores-qui-odio-at
                         type: Spree::Cms::Pages::StandardPage
                         locale: en
                         deleted_at:
-                        created_at: '2021-11-01T22:35:39.808Z'
-                        updated_at: '2021-11-01T22:35:39.808Z'
+                        created_at: '2021-11-03T11:02:33.882Z'
+                        updated_at: '2021-11-03T11:02:33.882Z'
                       relationships:
                         cms_sections:
                           data: []
@@ -1369,11 +1374,11 @@ paths:
                       total_count: 2
                       total_pages: 1
                     links:
-                      self: http://www.example.com/api/v2/platform/cms_pages?page=1&per_page=&include=&filter[type]=&filter[title_cont]=
-                      next: http://www.example.com/api/v2/platform/cms_pages?filter%5Btitle_cont%5D=&filter%5Btype%5D=&include=&page=1&per_page=
-                      prev: http://www.example.com/api/v2/platform/cms_pages?filter%5Btitle_cont%5D=&filter%5Btype%5D=&include=&page=1&per_page=
-                      last: http://www.example.com/api/v2/platform/cms_pages?filter%5Btitle_cont%5D=&filter%5Btype%5D=&include=&page=1&per_page=
-                      first: http://www.example.com/api/v2/platform/cms_pages?filter%5Btitle_cont%5D=&filter%5Btype%5D=&include=&page=1&per_page=
+                      self: http://www.example.com/api/v2/platform/cms_pages?page=1&per_page=&include=&filter[type_eq]=&filter[locale_eq]=&filter[title_cont]=
+                      next: http://www.example.com/api/v2/platform/cms_pages?filter%5Blocale_eq%5D=&filter%5Btitle_cont%5D=&filter%5Btype_eq%5D=&include=&page=1&per_page=
+                      prev: http://www.example.com/api/v2/platform/cms_pages?filter%5Blocale_eq%5D=&filter%5Btitle_cont%5D=&filter%5Btype_eq%5D=&include=&page=1&per_page=
+                      last: http://www.example.com/api/v2/platform/cms_pages?filter%5Blocale_eq%5D=&filter%5Btitle_cont%5D=&filter%5Btype_eq%5D=&include=&page=1&per_page=
+                      first: http://www.example.com/api/v2/platform/cms_pages?filter%5Blocale_eq%5D=&filter%5Btitle_cont%5D=&filter%5Btype_eq%5D=&include=&page=1&per_page=
               schema:
                 "$ref": "#/components/schemas/resources_list"
         '401':
@@ -1414,17 +1419,17 @@ paths:
                       id: '5'
                       type: cms_page
                       attributes:
-                        title: Modi veritatis animi aperiam sint.
+                        title: Consequatur veniam ex natus suscipit.
                         meta_title:
                         content:
                         meta_description:
                         visible: true
-                        slug: modi-veritatis-animi-aperiam-sint
+                        slug: consequatur-veniam-ex-natus-suscipit
                         type: Spree::Cms::Pages::StandardPage
                         locale: en
                         deleted_at:
-                        created_at: '2021-11-01T22:35:39.887Z'
-                        updated_at: '2021-11-01T22:35:39.887Z'
+                        created_at: '2021-11-03T11:02:33.968Z'
+                        updated_at: '2021-11-03T11:02:33.968Z'
                       relationships:
                         cms_sections:
                           data: []
@@ -1437,11 +1442,14 @@ paths:
               examples:
                 Example:
                   value:
-                    error: Title can't be blank and Locale can't be blank
+                    error: Title can't be blank, Locale can't be blank, and Type can't
+                      be blank
                     errors:
                       title:
                       - can't be blank
                       locale:
+                      - can't be blank
+                      type:
                       - can't be blank
               schema:
                 "$ref": "#/components/schemas/validation_errors"
@@ -1449,7 +1457,10 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/create_cms_page_params"
+              oneOf:
+              - "$ref": "#/components/schemas/create_standard_cms_page_params"
+              - "$ref": "#/components/schemas/create_homepage_cms_page_params"
+              - "$ref": "#/components/schemas/create_feature_cms_page_params"
   "/api/v2/platform/cms_pages/{id}":
     get:
       summary: Return a CMS Page
@@ -1484,17 +1495,18 @@ paths:
                       id: '6'
                       type: cms_page
                       attributes:
-                        title: Laudantium perferendis modi non inventore.
+                        title: Beatae eligendi qui totam quis laudantium optio distinctio
+                          cum.
                         meta_title:
                         content:
                         meta_description:
                         visible: true
-                        slug: laudantium-perferendis-modi-non-inventore
+                        slug: beatae-eligendi-qui-totam-quis-laudantium-optio-distinctio-cum
                         type: Spree::Cms::Pages::StandardPage
                         locale: en
                         deleted_at:
-                        created_at: '2021-11-01T22:35:39.930Z'
-                        updated_at: '2021-11-01T22:35:39.930Z'
+                        created_at: '2021-11-03T11:02:34.019Z'
+                        updated_at: '2021-11-03T11:02:34.019Z'
                       relationships:
                         cms_sections:
                           data: []
@@ -1558,12 +1570,12 @@ paths:
                         content:
                         meta_description:
                         visible: true
-                        slug: sed-distinctio-quis-saepe-eligendi-nam-perspiciatis-nulla
+                        slug: sed-neque-voluptas-deleniti-et-inventore-optio
                         type: Spree::Cms::Pages::StandardPage
                         locale: en
                         deleted_at:
-                        created_at: '2021-11-01T22:35:39.992Z'
-                        updated_at: '2021-11-01T22:35:40.000Z'
+                        created_at: '2021-11-03T11:02:34.084Z'
+                        updated_at: '2021-11-03T11:02:34.092Z'
                       relationships:
                         cms_sections:
                           data: []
@@ -1606,7 +1618,10 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/update_cms_page_params"
+              oneOf:
+              - "$ref": "#/components/schemas/update_standard_cms_page_params"
+              - "$ref": "#/components/schemas/update_homepage_cms_page_params"
+              - "$ref": "#/components/schemas/update_feature_cms_page_params"
     delete:
       summary: Delete a CMS Page
       tags:
@@ -1689,7 +1704,7 @@ paths:
                     - id: '1'
                       type: cms_section
                       attributes:
-                        name: Perferendis velit voluptatem corporis saepe.
+                        name: Veniam reprehenderit officiis hic sapiente maxime.
                         content: {}
                         settings:
                           gutters: No Gutters
@@ -1698,8 +1713,8 @@ paths:
                         type: Spree::Cms::Sections::HeroImage
                         position: 1
                         linked_resource_type: Spree::Taxon
-                        created_at: '2021-11-01T22:35:40.168Z'
-                        updated_at: '2021-11-01T22:35:40.168Z'
+                        created_at: '2021-11-03T11:02:34.271Z'
+                        updated_at: '2021-11-03T11:02:34.271Z'
                       relationships:
                         cms_page:
                           data:
@@ -1710,7 +1725,7 @@ paths:
                     - id: '2'
                       type: cms_section
                       attributes:
-                        name: Quos sed impedit tempore sequi eligendi.
+                        name: Commodi nesciunt numquam aliquam voluptates maiores.
                         content:
                           link_type_one: Spree::Taxon
                           link_type_two: Spree::Taxon
@@ -1722,8 +1737,8 @@ paths:
                         type: Spree::Cms::Sections::ImageGallery
                         position: 2
                         linked_resource_type:
-                        created_at: '2021-11-01T22:35:40.172Z'
-                        updated_at: '2021-11-01T22:35:40.172Z'
+                        created_at: '2021-11-03T11:02:34.275Z'
+                        updated_at: '2021-11-03T11:02:34.275Z'
                       relationships:
                         cms_page:
                           data:
@@ -1734,8 +1749,8 @@ paths:
                     - id: '3'
                       type: cms_section
                       attributes:
-                        name: Praesentium assumenda ratione odit est harum suscipit
-                          mollitia eum.
+                        name: Illum deleniti voluptatum iure deserunt quam consectetur
+                          eius.
                         content: {}
                         settings:
                           gutters: No Gutters
@@ -1744,8 +1759,8 @@ paths:
                         type: Spree::Cms::Sections::FeaturedArticle
                         position: 3
                         linked_resource_type: Spree::Taxon
-                        created_at: '2021-11-01T22:35:40.180Z'
-                        updated_at: '2021-11-01T22:35:40.180Z'
+                        created_at: '2021-11-03T11:02:34.283Z'
+                        updated_at: '2021-11-03T11:02:34.283Z'
                       relationships:
                         cms_page:
                           data:
@@ -1756,8 +1771,7 @@ paths:
                     - id: '4'
                       type: cms_section
                       attributes:
-                        name: Similique aliquid vel suscipit modi maiores at earum
-                          ipsam.
+                        name: Illo blanditiis odit maiores incidunt magnam.
                         content: {}
                         settings:
                           gutters: No Gutters
@@ -1766,8 +1780,8 @@ paths:
                         type: Spree::Cms::Sections::HeroImage
                         position: 4
                         linked_resource_type: Spree::Product
-                        created_at: '2021-11-01T22:35:40.187Z'
-                        updated_at: '2021-11-01T22:35:40.187Z'
+                        created_at: '2021-11-03T11:02:34.290Z'
+                        updated_at: '2021-11-03T11:02:34.290Z'
                       relationships:
                         cms_page:
                           data:
@@ -1780,7 +1794,7 @@ paths:
                     - id: '5'
                       type: cms_section
                       attributes:
-                        name: Distinctio officiis quas necessitatibus laudantium incidunt.
+                        name: Eum sint nemo soluta repellendus eligendi accusamus.
                         content: {}
                         settings:
                           gutters: No Gutters
@@ -1789,8 +1803,8 @@ paths:
                         type: Spree::Cms::Sections::HeroImage
                         position: 5
                         linked_resource_type: Spree::Product
-                        created_at: '2021-11-01T22:35:40.193Z'
-                        updated_at: '2021-11-01T22:35:40.193Z'
+                        created_at: '2021-11-03T11:02:34.296Z'
+                        updated_at: '2021-11-03T11:02:34.296Z'
                       relationships:
                         cms_page:
                           data:
@@ -1847,20 +1861,20 @@ paths:
                 Example:
                   value:
                     data:
-                      id: '14'
+                      id: '13'
                       type: cms_section
                       attributes:
-                        name: Facilis quam quibusdam perspiciatis culpa id ullam possimus.
+                        name: Harum illum repellat odit quas itaque.
                         content: {}
                         settings:
                           gutters: No Gutters
                         fit: Screen
                         destination:
                         type: Spree::Cms::Sections::HeroImage
-                        position: 4
+                        position: 3
                         linked_resource_type: Spree::Product
-                        created_at: '2021-11-01T22:35:40.347Z'
-                        updated_at: '2021-11-01T22:35:40.347Z'
+                        created_at: '2021-11-03T11:02:34.461Z'
+                        updated_at: '2021-11-03T11:02:34.461Z'
                       relationships:
                         cms_page:
                           data:
@@ -1879,11 +1893,14 @@ paths:
               examples:
                 Example:
                   value:
-                    error: Name can't be blank and Cms page can't be blank
+                    error: Name can't be blank, Cms page can't be blank, and Type
+                      can't be blank
                     errors:
                       name:
                       - can't be blank
                       cms_page:
+                      - can't be blank
+                      type:
                       - can't be blank
               schema:
                 "$ref": "#/components/schemas/validation_errors"
@@ -1891,7 +1908,13 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/create_cms_section_params"
+              oneOf:
+              - "$ref": "#/components/schemas/create_hero_image_cms_section_params"
+              - "$ref": "#/components/schemas/create_product_carousel_cms_section_params"
+              - "$ref": "#/components/schemas/create_side_by_side_images_cms_section_params"
+              - "$ref": "#/components/schemas/create_featured_article_cms_section_params"
+              - "$ref": "#/components/schemas/create_image_gallery_cms_section_params"
+              - "$ref": "#/components/schemas/create_rich_text_cms_section_params"
   "/api/v2/platform/cms_sections/{id}":
     get:
       summary: Return a CMS Section
@@ -1923,11 +1946,10 @@ paths:
                 Example:
                   value:
                     data:
-                      id: '21'
+                      id: '19'
                       type: cms_section
                       attributes:
-                        name: Sed nostrum eligendi labore tenetur beatae ipsam quibusdam
-                          nesciunt.
+                        name: Vero vel quaerat nemo magni hic ea illo cum.
                         content: {}
                         settings:
                           gutters: No Gutters
@@ -1936,8 +1958,8 @@ paths:
                         type: Spree::Cms::Sections::HeroImage
                         position: 4
                         linked_resource_type: Spree::Product
-                        created_at: '2021-11-01T22:35:40.482Z'
-                        updated_at: '2021-11-01T22:35:40.482Z'
+                        created_at: '2021-11-03T11:02:34.672Z'
+                        updated_at: '2021-11-03T11:02:34.672Z'
                       relationships:
                         cms_page:
                           data:
@@ -1999,7 +2021,7 @@ paths:
                 Example:
                   value:
                     data:
-                      id: '32'
+                      id: '29'
                       type: cms_section
                       attributes:
                         name: Super Hero
@@ -2011,8 +2033,8 @@ paths:
                         type: Spree::Cms::Sections::HeroImage
                         position: 1
                         linked_resource_type: Spree::Product
-                        created_at: '2021-11-01T22:35:40.760Z'
-                        updated_at: '2021-11-01T22:35:40.772Z'
+                        created_at: '2021-11-03T11:02:34.881Z'
+                        updated_at: '2021-11-03T11:02:34.892Z'
                       relationships:
                         cms_page:
                           data:
@@ -2061,7 +2083,13 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/update_cms_section_params"
+              oneOf:
+              - "$ref": "#/components/schemas/update_hero_image_cms_section_params"
+              - "$ref": "#/components/schemas/update_product_carousel_cms_section_params"
+              - "$ref": "#/components/schemas/update_side_by_side_images_cms_section_params"
+              - "$ref": "#/components/schemas/update_featured_article_cms_section_params"
+              - "$ref": "#/components/schemas/update_image_gallery_cms_section_params"
+              - "$ref": "#/components/schemas/update_rich_text_cms_section_params"
     delete:
       summary: Delete a CMS Section
       tags:
@@ -2126,9 +2154,9 @@ paths:
                         name: United States of America
                         numcode: 840
                         states_required: true
-                        updated_at: '2021-11-01T22:35:41.195Z'
+                        updated_at: '2021-11-03T11:02:35.345Z'
                         zipcode_required: true
-                        created_at: '2021-11-01T22:35:41.195Z'
+                        created_at: '2021-11-03T11:02:35.345Z'
                       relationships:
                         states:
                           data: []
@@ -2141,9 +2169,9 @@ paths:
                         name: NAME_2
                         numcode: 840
                         states_required: false
-                        updated_at: '2021-11-01T22:35:41.201Z'
+                        updated_at: '2021-11-03T11:02:35.350Z'
                         zipcode_required: true
-                        created_at: '2021-11-01T22:35:41.201Z'
+                        created_at: '2021-11-03T11:02:35.350Z'
                       relationships:
                         states:
                           data: []
@@ -2156,9 +2184,9 @@ paths:
                         name: NAME_3
                         numcode: 840
                         states_required: false
-                        updated_at: '2021-11-01T22:35:41.203Z'
+                        updated_at: '2021-11-03T11:02:35.352Z'
                         zipcode_required: true
-                        created_at: '2021-11-01T22:35:41.203Z'
+                        created_at: '2021-11-03T11:02:35.352Z'
                       relationships:
                         states:
                           data: []
@@ -2217,9 +2245,9 @@ paths:
                         name: NAME_6
                         numcode: 840
                         states_required: false
-                        updated_at: '2021-11-01T22:35:41.252Z'
+                        updated_at: '2021-11-03T11:02:35.405Z'
                         zipcode_required: true
-                        created_at: '2021-11-01T22:35:41.252Z'
+                        created_at: '2021-11-03T11:02:35.405Z'
                       relationships:
                         states:
                           data: []
@@ -2277,7 +2305,7 @@ paths:
                     - id: '1'
                       type: digital_link
                       attributes:
-                        token: EF8LtnCnhuxAV1wLc2TqfTGD
+                        token: KiBmeGiHmhpPJvt7t2AmTz4s
                         access_counter: 0
                       relationships:
                         digital:
@@ -2291,7 +2319,7 @@ paths:
                     - id: '2'
                       type: digital_link
                       attributes:
-                        token: KyC6KpSscTbrVk95MMRt6oYV
+                        token: yRrbkBH5aVnyWMABzTf6vX9t
                         access_counter: 0
                       relationships:
                         digital:
@@ -2345,7 +2373,7 @@ paths:
                       id: '5'
                       type: digital_link
                       attributes:
-                        token: UVwvrYvEdRipbEgUzii4Bigi
+                        token: jBAmgDnzTMWkVuqpNcC65aDB
                         access_counter: 0
                       relationships:
                         digital:
@@ -2408,7 +2436,7 @@ paths:
                       id: '6'
                       type: digital_link
                       attributes:
-                        token: kvBzSVXF8GAKG7P8MUNRGkp9
+                        token: qgjeVysvgLHGD5pgDNumzCit
                         access_counter: 0
                       relationships:
                         digital:
@@ -2467,7 +2495,7 @@ paths:
                       id: '8'
                       type: digital_link
                       attributes:
-                        token: LU6TfUozEckSE9EL6PtWCYcM
+                        token: wTALoAmmaBoqU3oq1K5iguhJ
                         access_counter: 0
                       relationships:
                         digital:
@@ -2582,7 +2610,7 @@ paths:
                       id: '13'
                       type: digital_link
                       attributes:
-                        token: iPTgeEiEJopEihv1GsZZci1g
+                        token: ZpDEyiEUPhsdioxZPUYtXqRU
                         access_counter: 0
                       relationships:
                         digital:
@@ -2999,8 +3027,8 @@ paths:
                       attributes:
                         quantity: 1
                         price: '10.0'
-                        created_at: '2021-11-01T22:35:48.836Z'
-                        updated_at: '2021-11-01T22:35:48.845Z'
+                        created_at: '2021-11-03T11:02:43.237Z'
+                        updated_at: '2021-11-03T11:02:43.244Z'
                         currency: USD
                         cost_price: '17.0'
                         adjustment_total: '0.0'
@@ -3046,8 +3074,8 @@ paths:
                       attributes:
                         quantity: 1
                         price: '10.0'
-                        created_at: '2021-11-01T22:35:48.878Z'
-                        updated_at: '2021-11-01T22:35:48.883Z'
+                        created_at: '2021-11-03T11:02:43.270Z'
+                        updated_at: '2021-11-03T11:02:43.274Z'
                         currency: USD
                         cost_price: '17.0'
                         adjustment_total: '0.0'
@@ -3140,8 +3168,8 @@ paths:
                       attributes:
                         quantity: 1
                         price: '10.0'
-                        created_at: '2021-11-01T22:35:49.109Z'
-                        updated_at: '2021-11-01T22:35:49.152Z'
+                        created_at: '2021-11-03T11:02:43.534Z'
+                        updated_at: '2021-11-03T11:02:43.628Z'
                         currency: USD
                         cost_price: '17.0'
                         adjustment_total: '0.0'
@@ -3243,8 +3271,8 @@ paths:
                       attributes:
                         quantity: 1
                         price: '10.0'
-                        created_at: '2021-11-01T22:35:49.300Z'
-                        updated_at: '2021-11-01T22:35:49.307Z'
+                        created_at: '2021-11-03T11:02:43.764Z'
+                        updated_at: '2021-11-03T11:02:43.770Z'
                         currency: USD
                         cost_price: '17.0'
                         adjustment_total: '0.0'
@@ -3342,8 +3370,8 @@ paths:
                       attributes:
                         quantity: 4
                         price: '10.0'
-                        created_at: '2021-11-01T22:35:49.537Z'
-                        updated_at: '2021-11-01T22:35:49.574Z'
+                        created_at: '2021-11-03T11:02:44.009Z'
+                        updated_at: '2021-11-03T11:02:44.050Z'
                         currency: USD
                         cost_price: '17.0'
                         adjustment_total: '0.0'
@@ -3393,10 +3421,10 @@ paths:
               examples:
                 Example:
                   value:
-                    error: 'Quantity selected of "Product #130 - 5006" is not available.'
+                    error: 'Quantity selected of "Product #130 - 5681" is not available.'
                     errors:
                       quantity:
-                      - 'selected of "Product #130 - 5006" is not available.'
+                      - 'selected of "Product #130 - 5681" is not available.'
               schema:
                 "$ref": "#/components/schemas/validation_errors"
         '404':
@@ -3516,8 +3544,8 @@ paths:
                         lft: 2
                         rgt: 3
                         depth: 1
-                        created_at: '2021-11-01T22:35:50.347Z'
-                        updated_at: '2021-11-01T22:35:50.352Z'
+                        created_at: '2021-11-03T11:02:44.639Z'
+                        updated_at: '2021-11-03T11:02:44.644Z'
                         link:
                         is_container: false
                         is_root: false
@@ -3553,8 +3581,8 @@ paths:
                         lft: 4
                         rgt: 5
                         depth: 1
-                        created_at: '2021-11-01T22:35:50.412Z'
-                        updated_at: '2021-11-01T22:35:50.417Z'
+                        created_at: '2021-11-03T11:02:44.701Z'
+                        updated_at: '2021-11-03T11:02:44.706Z'
                         link:
                         is_container: false
                         is_root: false
@@ -3590,8 +3618,8 @@ paths:
                         lft: 6
                         rgt: 7
                         depth: 1
-                        created_at: '2021-11-01T22:35:50.484Z'
-                        updated_at: '2021-11-01T22:35:50.488Z'
+                        created_at: '2021-11-03T11:02:44.767Z'
+                        updated_at: '2021-11-03T11:02:44.771Z'
                         link:
                         is_container: false
                         is_root: false
@@ -3627,8 +3655,8 @@ paths:
                         lft: 8
                         rgt: 9
                         depth: 1
-                        created_at: '2021-11-01T22:35:50.547Z'
-                        updated_at: '2021-11-01T22:35:50.551Z'
+                        created_at: '2021-11-03T11:02:44.828Z'
+                        updated_at: '2021-11-03T11:02:44.833Z'
                         link:
                         is_container: false
                         is_root: false
@@ -3664,8 +3692,8 @@ paths:
                         lft: 10
                         rgt: 11
                         depth: 1
-                        created_at: '2021-11-01T22:35:50.613Z'
-                        updated_at: '2021-11-01T22:35:50.618Z'
+                        created_at: '2021-11-03T11:02:44.896Z'
+                        updated_at: '2021-11-03T11:02:44.900Z'
                         link:
                         is_container: false
                         is_root: false
@@ -3701,8 +3729,8 @@ paths:
                         lft: 12
                         rgt: 13
                         depth: 1
-                        created_at: '2021-11-01T22:35:50.678Z'
-                        updated_at: '2021-11-01T22:35:50.682Z'
+                        created_at: '2021-11-03T11:02:44.959Z'
+                        updated_at: '2021-11-03T11:02:44.963Z'
                         link:
                         is_container: false
                         is_root: false
@@ -3738,8 +3766,8 @@ paths:
                         lft: 14
                         rgt: 15
                         depth: 1
-                        created_at: '2021-11-01T22:35:50.741Z'
-                        updated_at: '2021-11-01T22:35:50.745Z'
+                        created_at: '2021-11-03T11:02:45.019Z'
+                        updated_at: '2021-11-03T11:02:45.024Z'
                         link:
                         is_container: false
                         is_root: false
@@ -3765,8 +3793,7 @@ paths:
                     - id: '1'
                       type: menu_item
                       attributes:
-                        name: Quod perferendis tempora doloribus voluptas necessitatibus
-                          mollitia.
+                        name: Amet ad dolorum id nesciunt libero impedit.
                         subtitle:
                         destination:
                         new_window: false
@@ -3776,8 +3803,8 @@ paths:
                         lft: 1
                         rgt: 16
                         depth: 0
-                        created_at: '2021-11-01T22:35:50.280Z'
-                        updated_at: '2021-11-01T22:35:50.752Z'
+                        created_at: '2021-11-03T11:02:44.580Z'
+                        updated_at: '2021-11-03T11:02:45.035Z'
                         link:
                         is_container: true
                         is_root: true
@@ -3870,8 +3897,8 @@ paths:
                         lft: 8
                         rgt: 9
                         depth: 1
-                        created_at: '2021-11-01T22:35:51.480Z'
-                        updated_at: '2021-11-01T22:35:51.484Z'
+                        created_at: '2021-11-03T11:02:45.767Z'
+                        updated_at: '2021-11-03T11:02:45.771Z'
                         link:
                         is_container: false
                         is_root: false
@@ -3961,8 +3988,8 @@ paths:
                         lft: 8
                         rgt: 9
                         depth: 1
-                        created_at: '2021-11-01T22:35:51.976Z'
-                        updated_at: '2021-11-01T22:35:51.981Z'
+                        created_at: '2021-11-03T11:02:46.274Z'
+                        updated_at: '2021-11-03T11:02:46.278Z'
                         link:
                         is_container: false
                         is_root: false
@@ -4050,8 +4077,8 @@ paths:
                         lft: 8
                         rgt: 9
                         depth: 1
-                        created_at: '2021-11-01T22:35:52.759Z'
-                        updated_at: '2021-11-01T22:35:52.784Z'
+                        created_at: '2021-11-03T11:02:47.078Z'
+                        updated_at: '2021-11-03T11:02:47.102Z'
                         link:
                         is_container: false
                         is_root: false
@@ -4188,8 +4215,8 @@ paths:
                         lft: 5
                         rgt: 6
                         depth: 2
-                        created_at: '2021-11-01T22:35:54.607Z'
-                        updated_at: '2021-11-01T22:35:54.634Z'
+                        created_at: '2021-11-03T11:02:48.956Z'
+                        updated_at: '2021-11-03T11:02:48.981Z'
                         link:
                         is_container: false
                         is_root: false
@@ -4293,8 +4320,8 @@ paths:
                         name: Main Menu
                         location: header
                         locale: en
-                        created_at: '2021-11-01T22:35:55.152Z'
-                        updated_at: '2021-11-01T22:35:55.282Z'
+                        created_at: '2021-11-03T11:02:49.500Z'
+                        updated_at: '2021-11-03T11:02:49.636Z'
                       relationships:
                         menu_items:
                           data:
@@ -4310,8 +4337,8 @@ paths:
                         name: Footer Menu
                         location: footer
                         locale: en
-                        created_at: '2021-11-01T22:35:55.161Z'
-                        updated_at: '2021-11-01T22:35:55.406Z'
+                        created_at: '2021-11-03T11:02:49.509Z'
+                        updated_at: '2021-11-03T11:02:49.783Z'
                       relationships:
                         menu_items:
                           data:
@@ -4374,8 +4401,8 @@ paths:
                         name: Main Menu
                         location: header
                         locale: en
-                        created_at: '2021-11-01T22:35:55.745Z'
-                        updated_at: '2021-11-01T22:35:55.751Z'
+                        created_at: '2021-11-03T11:02:50.127Z'
+                        updated_at: '2021-11-03T11:02:50.132Z'
                       relationships:
                         menu_items:
                           data:
@@ -4443,8 +4470,8 @@ paths:
                         name: Main Menu
                         location: header
                         locale: en
-                        created_at: '2021-11-01T22:35:55.795Z'
-                        updated_at: '2021-11-01T22:35:55.801Z'
+                        created_at: '2021-11-03T11:02:50.184Z'
+                        updated_at: '2021-11-03T11:02:50.190Z'
                       relationships:
                         menu_items:
                           data:
@@ -4508,8 +4535,8 @@ paths:
                         name: Main Menu
                         location: header
                         locale: en
-                        created_at: '2021-11-01T22:35:55.867Z'
-                        updated_at: '2021-11-01T22:35:55.873Z'
+                        created_at: '2021-11-03T11:02:50.264Z'
+                        updated_at: '2021-11-03T11:02:50.270Z'
                       relationships:
                         menu_items:
                           data:
@@ -4644,8 +4671,8 @@ paths:
                         name: foo-size-68
                         presentation: Size
                         position: 1
-                        created_at: '2021-11-01T22:35:56.073Z'
-                        updated_at: '2021-11-01T22:35:56.073Z'
+                        created_at: '2021-11-03T11:02:50.463Z'
+                        updated_at: '2021-11-03T11:02:50.463Z'
                         filterable: true
                       relationships:
                         option_values:
@@ -4656,8 +4683,8 @@ paths:
                         name: foo-size-69
                         presentation: Size
                         position: 2
-                        created_at: '2021-11-01T22:35:56.074Z'
-                        updated_at: '2021-11-01T22:35:56.074Z'
+                        created_at: '2021-11-03T11:02:50.465Z'
+                        updated_at: '2021-11-03T11:02:50.465Z'
                         filterable: true
                       relationships:
                         option_values:
@@ -4708,8 +4735,8 @@ paths:
                         name: foo-size-72
                         presentation: Size
                         position: 1
-                        created_at: '2021-11-01T22:35:56.125Z'
-                        updated_at: '2021-11-01T22:35:56.125Z'
+                        created_at: '2021-11-03T11:02:50.523Z'
+                        updated_at: '2021-11-03T11:02:50.523Z'
                         filterable: true
                       relationships:
                         option_values:
@@ -4766,8 +4793,8 @@ paths:
                         name: foo-size-73
                         presentation: Size
                         position: 1
-                        created_at: '2021-11-01T22:35:56.158Z'
-                        updated_at: '2021-11-01T22:35:56.158Z'
+                        created_at: '2021-11-03T11:02:50.566Z'
+                        updated_at: '2021-11-03T11:02:50.566Z'
                         filterable: true
                       relationships:
                         option_values:
@@ -4823,8 +4850,8 @@ paths:
                         name: Size-X
                         presentation: Size
                         position: 1
-                        created_at: '2021-11-01T22:35:56.216Z'
-                        updated_at: '2021-11-01T22:35:56.223Z'
+                        created_at: '2021-11-03T11:02:50.627Z'
+                        updated_at: '2021-11-03T11:02:50.636Z'
                         filterable: true
                       relationships:
                         option_values:
@@ -4960,8 +4987,8 @@ paths:
                         position: 1
                         name: Size-68
                         presentation: S
-                        created_at: '2021-11-01T22:35:56.350Z'
-                        updated_at: '2021-11-01T22:35:56.350Z'
+                        created_at: '2021-11-03T11:02:50.782Z'
+                        updated_at: '2021-11-03T11:02:50.782Z'
                       relationships:
                         option_type:
                           data:
@@ -4973,8 +5000,8 @@ paths:
                         position: 1
                         name: Size-69
                         presentation: S
-                        created_at: '2021-11-01T22:35:56.357Z'
-                        updated_at: '2021-11-01T22:35:56.357Z'
+                        created_at: '2021-11-03T11:02:50.787Z'
+                        updated_at: '2021-11-03T11:02:50.787Z'
                       relationships:
                         option_type:
                           data:
@@ -5033,8 +5060,8 @@ paths:
                         position: 1
                         name: Size-72
                         presentation: S
-                        created_at: '2021-11-01T22:35:56.417Z'
-                        updated_at: '2021-11-01T22:35:56.417Z'
+                        created_at: '2021-11-03T11:02:50.852Z'
+                        updated_at: '2021-11-03T11:02:50.852Z'
                       relationships:
                         option_type:
                           data:
@@ -5097,8 +5124,8 @@ paths:
                         position: 1
                         name: Size-73
                         presentation: S
-                        created_at: '2021-11-01T22:35:56.451Z'
-                        updated_at: '2021-11-01T22:35:56.451Z'
+                        created_at: '2021-11-03T11:02:50.891Z'
+                        updated_at: '2021-11-03T11:02:50.891Z'
                       relationships:
                         option_type:
                           data:
@@ -5162,8 +5189,8 @@ paths:
                         position: 1
                         name: M
                         presentation: S
-                        created_at: '2021-11-01T22:35:56.518Z'
-                        updated_at: '2021-11-01T22:35:56.527Z'
+                        created_at: '2021-11-03T11:02:50.961Z'
+                        updated_at: '2021-11-03T11:02:50.969Z'
                       relationships:
                         option_type:
                           data:
@@ -5291,7 +5318,7 @@ paths:
                     - id: '40'
                       type: order
                       attributes:
-                        number: R164088632
+                        number: R441718787
                         item_total: '0.0'
                         total: '0.0'
                         state: cart
@@ -5300,10 +5327,10 @@ paths:
                         payment_total: '0.0'
                         shipment_state:
                         payment_state:
-                        email: stacie@wintheiserdurgan.co.uk
+                        email: johana_donnelly@gutkowski.us
                         special_instructions:
-                        created_at: '2021-11-01T22:35:56.678Z'
-                        updated_at: '2021-11-01T22:35:56.678Z'
+                        created_at: '2021-11-03T11:02:51.212Z'
+                        updated_at: '2021-11-03T11:02:51.212Z'
                         currency: USD
                         last_ip_address:
                         shipment_total: '0.0'
@@ -5375,7 +5402,7 @@ paths:
                     - id: '41'
                       type: order
                       attributes:
-                        number: R616918637
+                        number: R773561139
                         item_total: '0.0'
                         total: '0.0'
                         state: cart
@@ -5384,10 +5411,10 @@ paths:
                         payment_total: '0.0'
                         shipment_state:
                         payment_state:
-                        email: darla_lehner@nienow.biz
+                        email: ladonna.cole@gutkowski.info
                         special_instructions:
-                        created_at: '2021-11-01T22:35:56.686Z'
-                        updated_at: '2021-11-01T22:35:56.686Z'
+                        created_at: '2021-11-03T11:02:51.220Z'
+                        updated_at: '2021-11-03T11:02:51.220Z'
                         currency: USD
                         last_ip_address:
                         shipment_total: '0.0'
@@ -5506,7 +5533,7 @@ paths:
                       id: '44'
                       type: order
                       attributes:
-                        number: R914206362
+                        number: R903897198
                         item_total: '0.0'
                         total: '0.0'
                         state: cart
@@ -5517,8 +5544,8 @@ paths:
                         payment_state:
                         email:
                         special_instructions:
-                        created_at: '2021-11-01T22:35:56.989Z'
-                        updated_at: '2021-11-01T22:35:57.005Z'
+                        created_at: '2021-11-03T11:02:51.482Z'
+                        updated_at: '2021-11-03T11:02:51.497Z'
                         currency: USD
                         last_ip_address:
                         shipment_total: '0.0'
@@ -5632,7 +5659,7 @@ paths:
                       id: '45'
                       type: order
                       attributes:
-                        number: R577750598
+                        number: R025699839
                         item_total: '10.0'
                         total: '110.0'
                         state: delivery
@@ -5641,10 +5668,10 @@ paths:
                         payment_total: '0.0'
                         shipment_state:
                         payment_state:
-                        email: maria@jacobikovacek.name
+                        email: anette.bailey@schupperippin.us
                         special_instructions:
-                        created_at: '2021-11-01T22:35:57.046Z'
-                        updated_at: '2021-11-01T22:35:57.212Z'
+                        created_at: '2021-11-03T11:02:51.536Z'
+                        updated_at: '2021-11-03T11:02:51.692Z'
                         currency: USD
                         last_ip_address:
                         shipment_total: '100.0'
@@ -5774,7 +5801,7 @@ paths:
                       id: '47'
                       type: order
                       attributes:
-                        number: R491366996
+                        number: R287690890
                         item_total: '10.0'
                         total: '110.0'
                         state: delivery
@@ -5785,8 +5812,8 @@ paths:
                         payment_state:
                         email: new@example.com
                         special_instructions:
-                        created_at: '2021-11-01T22:35:57.392Z'
-                        updated_at: '2021-11-01T22:35:57.565Z'
+                        created_at: '2021-11-03T11:02:51.872Z'
+                        updated_at: '2021-11-03T11:02:51.956Z'
                         currency: USD
                         last_ip_address:
                         shipment_total: '100.0'
@@ -5972,7 +5999,7 @@ paths:
                       id: '52'
                       type: order
                       attributes:
-                        number: R107755103
+                        number: R707222577
                         item_total: '10.0'
                         total: '110.0'
                         state: payment
@@ -5981,10 +6008,10 @@ paths:
                         payment_total: '0.0'
                         shipment_state:
                         payment_state:
-                        email: annita_kling@hahnlittle.ca
+                        email: clarice@zboncakdouglas.us
                         special_instructions:
-                        created_at: '2021-11-01T22:35:58.146Z'
-                        updated_at: '2021-11-01T22:35:58.285Z'
+                        created_at: '2021-11-03T11:02:52.513Z'
+                        updated_at: '2021-11-03T11:02:52.646Z'
                         currency: USD
                         last_ip_address:
                         shipment_total: '100.0'
@@ -6117,7 +6144,7 @@ paths:
                       id: '54'
                       type: order
                       attributes:
-                        number: R488204174
+                        number: R321469258
                         item_total: '10.0'
                         total: '110.0'
                         state: payment
@@ -6126,10 +6153,10 @@ paths:
                         payment_total: '0.0'
                         shipment_state:
                         payment_state:
-                        email: alex@jakubowskihudson.com
+                        email: seth@kling.co.uk
                         special_instructions:
-                        created_at: '2021-11-01T22:35:58.479Z'
-                        updated_at: '2021-11-01T22:35:58.608Z'
+                        created_at: '2021-11-03T11:02:52.838Z'
+                        updated_at: '2021-11-03T11:02:52.958Z'
                         currency: USD
                         last_ip_address:
                         shipment_total: '100.0'
@@ -6262,19 +6289,19 @@ paths:
                       id: '56'
                       type: order
                       attributes:
-                        number: R747446949
+                        number: R949927585
                         item_total: '10.0'
                         total: '110.0'
                         state: complete
                         adjustment_total: '0.0'
-                        completed_at: '2021-11-01T22:35:58.998Z'
+                        completed_at: '2021-11-03T11:02:53.330Z'
                         payment_total: '0.0'
                         shipment_state: pending
                         payment_state: balance_due
-                        email: idell.homenick@predovictremblay.biz
+                        email: sharee@kshlerincarter.biz
                         special_instructions:
-                        created_at: '2021-11-01T22:35:58.779Z'
-                        updated_at: '2021-11-01T22:35:58.998Z'
+                        created_at: '2021-11-03T11:02:53.127Z'
+                        updated_at: '2021-11-03T11:02:53.330Z'
                         currency: USD
                         last_ip_address:
                         shipment_total: '100.0'
@@ -6418,7 +6445,7 @@ paths:
                       id: '59'
                       type: order
                       attributes:
-                        number: R221671065
+                        number: R364308130
                         item_total: '0.0'
                         total: '0.0'
                         state: cart
@@ -6427,10 +6454,10 @@ paths:
                         payment_total: '0.0'
                         shipment_state:
                         payment_state:
-                        email: jamey@williamsonbeier.us
+                        email: michaele@purdyjohns.ca
                         special_instructions:
-                        created_at: '2021-11-01T22:35:59.301Z'
-                        updated_at: '2021-11-01T22:35:59.405Z'
+                        created_at: '2021-11-03T11:02:53.625Z'
+                        updated_at: '2021-11-03T11:02:53.726Z'
                         currency: USD
                         last_ip_address:
                         shipment_total: '0.0'
@@ -6558,7 +6585,7 @@ paths:
                       id: '61'
                       type: order
                       attributes:
-                        number: R656135970
+                        number: R352605383
                         item_total: '10.0'
                         total: '110.0'
                         state: delivery
@@ -6567,10 +6594,10 @@ paths:
                         payment_total: '0.0'
                         shipment_state:
                         payment_state:
-                        email: harris_lowe@barton.info
+                        email: abel@townestokes.com
                         special_instructions:
-                        created_at: '2021-11-01T22:35:59.571Z'
-                        updated_at: '2021-11-01T22:35:59.652Z'
+                        created_at: '2021-11-03T11:02:53.987Z'
+                        updated_at: '2021-11-03T11:02:54.064Z'
                         currency: USD
                         last_ip_address:
                         shipment_total: '100.0'
@@ -6871,8 +6898,8 @@ paths:
                         display_on: both
                         auto_capture:
                         position: 1
-                        created_at: '2021-11-01T22:36:01.301Z'
-                        updated_at: '2021-11-01T22:36:01.301Z'
+                        created_at: '2021-11-03T11:02:55.629Z'
+                        updated_at: '2021-11-03T11:02:55.629Z'
                         deleted_at:
                         preferences: {}
                       relationships:
@@ -6890,8 +6917,8 @@ paths:
                         display_on: both
                         auto_capture:
                         position: 2
-                        created_at: '2021-11-01T22:36:01.308Z'
-                        updated_at: '2021-11-01T22:36:01.308Z'
+                        created_at: '2021-11-03T11:02:55.635Z'
+                        updated_at: '2021-11-03T11:02:55.635Z'
                         deleted_at:
                         preferences: {}
                       relationships:
@@ -6909,8 +6936,8 @@ paths:
                         display_on: both
                         auto_capture:
                         position: 3
-                        created_at: '2021-11-01T22:36:01.311Z'
-                        updated_at: '2021-11-01T22:36:01.311Z'
+                        created_at: '2021-11-03T11:02:55.638Z'
+                        updated_at: '2021-11-03T11:02:55.638Z'
                         deleted_at:
                         preferences: {}
                       relationships:
@@ -6928,8 +6955,8 @@ paths:
                         display_on: both
                         auto_capture:
                         position: 4
-                        created_at: '2021-11-01T22:36:01.315Z'
-                        updated_at: '2021-11-01T22:36:01.315Z'
+                        created_at: '2021-11-03T11:02:55.641Z'
+                        updated_at: '2021-11-03T11:02:55.641Z'
                         deleted_at:
                         preferences:
                           dummy_key: PUBLICKEY123
@@ -6950,8 +6977,8 @@ paths:
                         display_on: both
                         auto_capture:
                         position: 5
-                        created_at: '2021-11-01T22:36:01.318Z'
-                        updated_at: '2021-11-01T22:36:01.318Z'
+                        created_at: '2021-11-03T11:02:55.645Z'
+                        updated_at: '2021-11-03T11:02:55.645Z'
                         deleted_at:
                         preferences:
                           dummy_key: PUBLICKEY123
@@ -7019,8 +7046,8 @@ paths:
                         display_on: both
                         auto_capture:
                         position: 3
-                        created_at: '2021-11-01T22:36:01.428Z'
-                        updated_at: '2021-11-01T22:36:01.428Z'
+                        created_at: '2021-11-03T11:02:55.755Z'
+                        updated_at: '2021-11-03T11:02:55.755Z'
                         deleted_at:
                         preferences:
                           dummy_key: PUBLICKEY123
@@ -7094,8 +7121,8 @@ paths:
                         display_on: both
                         auto_capture:
                         position: 4
-                        created_at: '2021-11-01T22:36:01.503Z'
-                        updated_at: '2021-11-01T22:36:01.503Z'
+                        created_at: '2021-11-03T11:02:55.832Z'
+                        updated_at: '2021-11-03T11:02:55.832Z'
                         deleted_at:
                         preferences:
                           dummy_key: PUBLICKEY123
@@ -7168,8 +7195,8 @@ paths:
                         display_on: both
                         auto_capture:
                         position: 3
-                        created_at: '2021-11-01T22:36:01.617Z'
-                        updated_at: '2021-11-01T22:36:01.628Z'
+                        created_at: '2021-11-03T11:02:56.026Z'
+                        updated_at: '2021-11-03T11:02:56.037Z'
                         deleted_at:
                         preferences:
                           dummy_key: UPDATED-DUMMY-KEY-123
@@ -7315,9 +7342,9 @@ paths:
                         state: invalid
                         response_code: '12345'
                         avs_response:
-                        created_at: '2021-11-01T22:36:01.889Z'
-                        updated_at: '2021-11-01T22:36:01.906Z'
-                        number: PVDU54GB
+                        created_at: '2021-11-03T11:02:56.322Z'
+                        updated_at: '2021-11-03T11:02:56.338Z'
+                        number: PGKBRB4P
                         cvv_response_code:
                         cvv_response_message:
                         display_amount: "$45.75"
@@ -7352,9 +7379,9 @@ paths:
                         state: checkout
                         response_code: '12345'
                         avs_response:
-                        created_at: '2021-11-01T22:36:01.903Z'
-                        updated_at: '2021-11-01T22:36:01.903Z'
-                        number: PHAOAOTZ
+                        created_at: '2021-11-03T11:02:56.335Z'
+                        updated_at: '2021-11-03T11:02:56.335Z'
+                        number: PAX0GJ8S
                         cvv_response_code:
                         cvv_response_message:
                         display_amount: "$45.75"
@@ -7440,9 +7467,9 @@ paths:
                         state: checkout
                         response_code: '12345'
                         avs_response:
-                        created_at: '2021-11-01T22:36:02.069Z'
-                        updated_at: '2021-11-01T22:36:02.069Z'
-                        number: PSD1MXQU
+                        created_at: '2021-11-03T11:02:56.498Z'
+                        updated_at: '2021-11-03T11:02:56.498Z'
+                        number: P3SL80UT
                         cvv_response_code:
                         cvv_response_message:
                         display_amount: "$45.75"
@@ -7578,8 +7605,8 @@ paths:
                       type: promotion_category
                       attributes:
                         name: Promotion Category
-                        created_at: '2021-11-01T22:36:02.281Z'
-                        updated_at: '2021-11-01T22:36:02.281Z'
+                        created_at: '2021-11-03T11:02:56.725Z'
+                        updated_at: '2021-11-03T11:02:56.725Z'
                         code: POP123
                       relationships:
                         promotions:
@@ -7588,8 +7615,8 @@ paths:
                       type: promotion_category
                       attributes:
                         name: Promotion Category
-                        created_at: '2021-11-01T22:36:02.283Z'
-                        updated_at: '2021-11-01T22:36:02.283Z'
+                        created_at: '2021-11-03T11:02:56.727Z'
+                        updated_at: '2021-11-03T11:02:56.727Z'
                         code: POP123
                       relationships:
                         promotions:
@@ -7645,8 +7672,8 @@ paths:
                       type: promotion_category
                       attributes:
                         name: Promotion Category
-                        created_at: '2021-11-01T22:36:02.332Z'
-                        updated_at: '2021-11-01T22:36:02.332Z'
+                        created_at: '2021-11-03T11:02:56.781Z'
+                        updated_at: '2021-11-03T11:02:56.781Z'
                         code: 2021-BFM
                       relationships:
                         promotions:
@@ -7706,8 +7733,8 @@ paths:
                       type: promotion_category
                       attributes:
                         name: Promotion Category
-                        created_at: '2021-11-01T22:36:02.369Z'
-                        updated_at: '2021-11-01T22:36:02.369Z'
+                        created_at: '2021-11-03T11:02:56.822Z'
+                        updated_at: '2021-11-03T11:02:56.822Z'
                         code: MJO
                       relationships:
                         promotions:
@@ -7768,8 +7795,8 @@ paths:
                       type: promotion_category
                       attributes:
                         name: 2021 Promotions
-                        created_at: '2021-11-01T22:36:02.421Z'
-                        updated_at: '2021-11-01T22:36:02.427Z'
+                        created_at: '2021-11-03T11:02:56.879Z'
+                        updated_at: '2021-11-03T11:02:56.885Z'
                         code: 2021-Promos
                       relationships:
                         promotions:
@@ -7897,12 +7924,12 @@ paths:
                       type: shipment
                       attributes:
                         tracking: U10000
-                        number: H55115761949
+                        number: H88441639968
                         cost: '100.0'
                         shipped_at:
                         state: pending
-                        created_at: '2021-11-01T22:36:02.552Z'
-                        updated_at: '2021-11-01T22:36:02.555Z'
+                        created_at: '2021-11-03T11:02:57.020Z'
+                        updated_at: '2021-11-03T11:02:57.023Z'
                         adjustment_total: '0.0'
                         additional_tax_total: '0.0'
                         promo_total: '0.0'
@@ -7910,11 +7937,11 @@ paths:
                         pre_tax_amount: '0.0'
                         taxable_adjustment_total: '0.0'
                         non_taxable_adjustment_total: '0.0'
+                        display_discounted_cost: "$100.00"
+                        display_item_cost: "$0.00"
                         display_final_price: "$100.00"
                         display_amount: "$100.00"
                         display_cost: "$100.00"
-                        display_discounted_cost: "$100.00"
-                        display_item_cost: "$0.00"
                       relationships:
                         order:
                           data:
@@ -7944,12 +7971,12 @@ paths:
                       type: shipment
                       attributes:
                         tracking: U10000
-                        number: H95299716655
+                        number: H79094597173
                         cost: '100.0'
                         shipped_at:
                         state: pending
-                        created_at: '2021-11-01T22:36:02.582Z'
-                        updated_at: '2021-11-01T22:36:02.585Z'
+                        created_at: '2021-11-03T11:02:57.054Z'
+                        updated_at: '2021-11-03T11:02:57.057Z'
                         adjustment_total: '0.0'
                         additional_tax_total: '0.0'
                         promo_total: '0.0'
@@ -7957,11 +7984,11 @@ paths:
                         pre_tax_amount: '0.0'
                         taxable_adjustment_total: '0.0'
                         non_taxable_adjustment_total: '0.0'
+                        display_discounted_cost: "$100.00"
+                        display_item_cost: "$0.00"
                         display_final_price: "$100.00"
                         display_amount: "$100.00"
                         display_cost: "$100.00"
-                        display_discounted_cost: "$100.00"
-                        display_item_cost: "$0.00"
                       relationships:
                         order:
                           data:
@@ -8044,12 +8071,12 @@ paths:
                       type: shipment
                       attributes:
                         tracking: U10000
-                        number: H83811960445
+                        number: H84499342587
                         cost: '100.0'
                         shipped_at:
                         state: pending
-                        created_at: '2021-11-01T22:36:02.880Z'
-                        updated_at: '2021-11-01T22:36:02.898Z'
+                        created_at: '2021-11-03T11:02:57.354Z'
+                        updated_at: '2021-11-03T11:02:57.371Z'
                         adjustment_total: '0.0'
                         additional_tax_total: '0.0'
                         promo_total: '0.0'
@@ -8057,11 +8084,11 @@ paths:
                         pre_tax_amount: '0.0'
                         taxable_adjustment_total: '0.0'
                         non_taxable_adjustment_total: '0.0'
+                        display_discounted_cost: "$100.00"
+                        display_item_cost: "$10.00"
                         display_final_price: "$100.00"
                         display_amount: "$100.00"
                         display_cost: "$100.00"
-                        display_discounted_cost: "$100.00"
-                        display_item_cost: "$10.00"
                       relationships:
                         order:
                           data:
@@ -8183,12 +8210,12 @@ paths:
                       type: shipment
                       attributes:
                         tracking: U10000
-                        number: H44536023359
+                        number: H37402224501
                         cost: '100.0'
                         shipped_at:
                         state: ready
-                        created_at: '2021-11-01T22:36:03.825Z'
-                        updated_at: '2021-11-01T22:36:03.858Z'
+                        created_at: '2021-11-03T11:02:58.286Z'
+                        updated_at: '2021-11-03T11:02:58.317Z'
                         adjustment_total: '0.0'
                         additional_tax_total: '0.0'
                         promo_total: '0.0'
@@ -8196,11 +8223,11 @@ paths:
                         pre_tax_amount: '0.0'
                         taxable_adjustment_total: '0.0'
                         non_taxable_adjustment_total: '0.0'
+                        display_discounted_cost: "$100.00"
+                        display_item_cost: "$10.00"
                         display_final_price: "$100.00"
                         display_amount: "$100.00"
                         display_cost: "$100.00"
-                        display_discounted_cost: "$100.00"
-                        display_item_cost: "$10.00"
                       relationships:
                         order:
                           data:
@@ -8287,12 +8314,12 @@ paths:
                       type: shipment
                       attributes:
                         tracking: U10000
-                        number: H88854215341
+                        number: H66701052891
                         cost: '100.0'
-                        shipped_at: '2021-11-01T22:36:04.288Z'
+                        shipped_at: '2021-11-03T11:02:58.757Z'
                         state: shipped
-                        created_at: '2021-11-01T22:36:04.253Z'
-                        updated_at: '2021-11-01T22:36:04.288Z'
+                        created_at: '2021-11-03T11:02:58.723Z'
+                        updated_at: '2021-11-03T11:02:58.757Z'
                         adjustment_total: '0.0'
                         additional_tax_total: '0.0'
                         promo_total: '0.0'
@@ -8300,11 +8327,11 @@ paths:
                         pre_tax_amount: '0.0'
                         taxable_adjustment_total: '0.0'
                         non_taxable_adjustment_total: '0.0'
+                        display_discounted_cost: "$100.00"
+                        display_item_cost: "$10.00"
                         display_final_price: "$100.00"
                         display_amount: "$100.00"
                         display_cost: "$100.00"
-                        display_discounted_cost: "$100.00"
-                        display_item_cost: "$10.00"
                       relationships:
                         order:
                           data:
@@ -8391,12 +8418,12 @@ paths:
                       type: shipment
                       attributes:
                         tracking: U10000
-                        number: H26080304428
+                        number: H02358142093
                         cost: '100.0'
                         shipped_at:
                         state: canceled
-                        created_at: '2021-11-01T22:36:04.686Z'
-                        updated_at: '2021-11-01T22:36:04.713Z'
+                        created_at: '2021-11-03T11:02:59.162Z'
+                        updated_at: '2021-11-03T11:02:59.189Z'
                         adjustment_total: '0.0'
                         additional_tax_total: '0.0'
                         promo_total: '0.0'
@@ -8404,11 +8431,11 @@ paths:
                         pre_tax_amount: '0.0'
                         taxable_adjustment_total: '0.0'
                         non_taxable_adjustment_total: '0.0'
+                        display_discounted_cost: "$100.00"
+                        display_item_cost: "$10.00"
                         display_final_price: "$100.00"
                         display_amount: "$100.00"
                         display_cost: "$100.00"
-                        display_discounted_cost: "$100.00"
-                        display_item_cost: "$10.00"
                       relationships:
                         order:
                           data:
@@ -8495,12 +8522,12 @@ paths:
                       type: shipment
                       attributes:
                         tracking: U10000
-                        number: H93653327402
+                        number: H77557291835
                         cost: '100.0'
                         shipped_at:
                         state: ready
-                        created_at: '2021-11-01T22:36:05.117Z'
-                        updated_at: '2021-11-01T22:36:05.151Z'
+                        created_at: '2021-11-03T11:02:59.605Z'
+                        updated_at: '2021-11-03T11:02:59.635Z'
                         adjustment_total: '0.0'
                         additional_tax_total: '0.0'
                         promo_total: '0.0'
@@ -8508,11 +8535,11 @@ paths:
                         pre_tax_amount: '0.0'
                         taxable_adjustment_total: '0.0'
                         non_taxable_adjustment_total: '0.0'
+                        display_discounted_cost: "$100.00"
+                        display_item_cost: "$10.00"
                         display_final_price: "$100.00"
                         display_amount: "$100.00"
                         display_cost: "$100.00"
-                        display_discounted_cost: "$100.00"
-                        display_item_cost: "$10.00"
                       relationships:
                         order:
                           data:
@@ -8599,12 +8626,12 @@ paths:
                       type: shipment
                       attributes:
                         tracking: U10000
-                        number: H26635718038
+                        number: H16944195478
                         cost: '100.0'
                         shipped_at:
                         state: pending
-                        created_at: '2021-11-01T22:36:05.552Z'
-                        updated_at: '2021-11-01T22:36:05.580Z'
+                        created_at: '2021-11-03T11:03:00.127Z'
+                        updated_at: '2021-11-03T11:03:00.154Z'
                         adjustment_total: '0.0'
                         additional_tax_total: '0.0'
                         promo_total: '0.0'
@@ -8612,11 +8639,11 @@ paths:
                         pre_tax_amount: '0.0'
                         taxable_adjustment_total: '0.0'
                         non_taxable_adjustment_total: '0.0'
+                        display_discounted_cost: "$100.00"
+                        display_item_cost: "$10.00"
                         display_final_price: "$100.00"
                         display_amount: "$100.00"
                         display_cost: "$100.00"
-                        display_discounted_cost: "$100.00"
-                        display_item_cost: "$10.00"
                       relationships:
                         order:
                           data:
@@ -8707,14 +8734,14 @@ paths:
                       type: shipping_category
                       attributes:
                         name: 'ShippingCategory #116'
-                        created_at: '2021-11-01T22:36:05.889Z'
-                        updated_at: '2021-11-01T22:36:05.889Z'
+                        created_at: '2021-11-03T11:03:00.404Z'
+                        updated_at: '2021-11-03T11:03:00.404Z'
                     - id: '117'
                       type: shipping_category
                       attributes:
                         name: 'ShippingCategory #117'
-                        created_at: '2021-11-01T22:36:05.890Z'
-                        updated_at: '2021-11-01T22:36:05.890Z'
+                        created_at: '2021-11-03T11:03:00.405Z'
+                        updated_at: '2021-11-03T11:03:00.405Z'
                     meta:
                       count: 2
                       total_count: 2
@@ -8759,8 +8786,8 @@ paths:
                       type: shipping_category
                       attributes:
                         name: 'ShippingCategory #120'
-                        created_at: '2021-11-01T22:36:05.944Z'
-                        updated_at: '2021-11-01T22:36:05.944Z'
+                        created_at: '2021-11-03T11:03:00.461Z'
+                        updated_at: '2021-11-03T11:03:00.461Z'
               schema:
                 "$ref": "#/components/schemas/resource"
         '422':
@@ -8809,8 +8836,8 @@ paths:
                       type: shipping_category
                       attributes:
                         name: 'ShippingCategory #121'
-                        created_at: '2021-11-01T22:36:05.977Z'
-                        updated_at: '2021-11-01T22:36:05.977Z'
+                        created_at: '2021-11-03T11:03:00.501Z'
+                        updated_at: '2021-11-03T11:03:00.501Z'
               schema:
                 "$ref": "#/components/schemas/resource"
         '404':
@@ -8860,8 +8887,8 @@ paths:
                       type: shipping_category
                       attributes:
                         name: Default
-                        created_at: '2021-11-01T22:36:06.028Z'
-                        updated_at: '2021-11-01T22:36:06.034Z'
+                        created_at: '2021-11-03T11:03:00.561Z'
+                        updated_at: '2021-11-03T11:03:00.567Z'
               schema:
                 "$ref": "#/components/schemas/resource"
         '422':
@@ -8995,8 +9022,8 @@ paths:
                         admin_name:
                         display_on: both
                         tracking_url:
-                        created_at: '2021-11-01T22:36:06.155Z'
-                        updated_at: '2021-11-01T22:36:06.155Z'
+                        created_at: '2021-11-03T11:03:00.706Z'
+                        updated_at: '2021-11-03T11:03:00.706Z'
                         deleted_at:
                       relationships:
                         shipping_categories:
@@ -9019,8 +9046,8 @@ paths:
                         admin_name:
                         display_on: both
                         tracking_url:
-                        created_at: '2021-11-01T22:36:06.164Z'
-                        updated_at: '2021-11-01T22:36:06.164Z'
+                        created_at: '2021-11-03T11:03:00.715Z'
+                        updated_at: '2021-11-03T11:03:00.715Z'
                         deleted_at:
                       relationships:
                         shipping_categories:
@@ -9090,8 +9117,8 @@ paths:
                         admin_name: DHL Express- Zone A
                         display_on: both
                         tracking_url:
-                        created_at: '2021-11-01T22:36:06.245Z'
-                        updated_at: '2021-11-01T22:36:06.245Z'
+                        created_at: '2021-11-03T11:03:00.796Z'
+                        updated_at: '2021-11-03T11:03:00.796Z'
                         deleted_at:
                       relationships:
                         shipping_categories:
@@ -9175,8 +9202,8 @@ paths:
                         admin_name:
                         display_on: both
                         tracking_url:
-                        created_at: '2021-11-01T22:36:06.289Z'
-                        updated_at: '2021-11-01T22:36:06.289Z'
+                        created_at: '2021-11-03T11:03:00.848Z'
+                        updated_at: '2021-11-03T11:03:00.848Z'
                         deleted_at:
                       relationships:
                         shipping_categories:
@@ -9251,8 +9278,8 @@ paths:
                         admin_name:
                         display_on: both
                         tracking_url:
-                        created_at: '2021-11-01T22:36:06.369Z'
-                        updated_at: '2021-11-01T22:36:06.382Z'
+                        created_at: '2021-11-03T11:03:00.930Z'
+                        updated_at: '2021-11-03T11:03:00.945Z'
                         deleted_at:
                       relationships:
                         shipping_categories:
@@ -9401,8 +9428,8 @@ paths:
                         lft: 2
                         rgt: 3
                         description:
-                        created_at: '2021-11-01T22:36:06.617Z'
-                        updated_at: '2021-11-01T22:36:06.621Z'
+                        created_at: '2021-11-03T11:03:01.204Z'
+                        updated_at: '2021-11-03T11:03:01.207Z'
                         meta_title:
                         meta_description:
                         meta_keywords:
@@ -9436,8 +9463,8 @@ paths:
                         lft: 4
                         rgt: 5
                         description:
-                        created_at: '2021-11-01T22:36:06.676Z'
-                        updated_at: '2021-11-01T22:36:06.679Z'
+                        created_at: '2021-11-03T11:03:01.267Z'
+                        updated_at: '2021-11-03T11:03:01.271Z'
                         meta_title:
                         meta_description:
                         meta_keywords:
@@ -9471,8 +9498,8 @@ paths:
                         lft: 1
                         rgt: 6
                         description:
-                        created_at: '2021-11-01T22:36:06.555Z'
-                        updated_at: '2021-11-01T22:36:06.690Z'
+                        created_at: '2021-11-03T11:03:01.137Z'
+                        updated_at: '2021-11-03T11:03:01.281Z'
                         meta_title:
                         meta_description:
                         meta_keywords:
@@ -9553,8 +9580,8 @@ paths:
                         lft: 2
                         rgt: 3
                         description:
-                        created_at: '2021-11-01T22:36:06.906Z'
-                        updated_at: '2021-11-01T22:36:06.910Z'
+                        created_at: '2021-11-03T11:03:01.528Z'
+                        updated_at: '2021-11-03T11:03:01.533Z'
                         meta_title:
                         meta_description:
                         meta_keywords:
@@ -9639,8 +9666,8 @@ paths:
                         lft: 2
                         rgt: 3
                         description:
-                        created_at: '2021-11-01T22:36:07.024Z'
-                        updated_at: '2021-11-01T22:36:07.028Z'
+                        created_at: '2021-11-03T11:03:01.646Z'
+                        updated_at: '2021-11-03T11:03:01.650Z'
                         meta_title:
                         meta_description:
                         meta_keywords:
@@ -9728,8 +9755,8 @@ paths:
                         lft: 2
                         rgt: 3
                         description:
-                        created_at: '2021-11-01T22:36:07.240Z'
-                        updated_at: '2021-11-01T22:36:07.266Z'
+                        created_at: '2021-11-03T11:03:01.888Z'
+                        updated_at: '2021-11-03T11:03:01.915Z'
                         meta_title:
                         meta_description:
                         meta_keywords:
@@ -9882,9 +9909,9 @@ paths:
                     - id: '97'
                       type: user
                       attributes:
-                        email: eddy_goldner@hartmann.info
-                        created_at: '2021-11-01T22:36:07.752Z'
-                        updated_at: '2021-11-01T22:36:07.752Z'
+                        email: idalia@mckenzie.com
+                        created_at: '2021-11-03T11:03:02.513Z'
+                        updated_at: '2021-11-03T11:03:02.513Z'
                         average_order_value: []
                         lifetime_value: []
                         store_credits: []
@@ -9896,9 +9923,9 @@ paths:
                     - id: '98'
                       type: user
                       attributes:
-                        email: cristy@reinger.biz
-                        created_at: '2021-11-01T22:36:07.758Z'
-                        updated_at: '2021-11-01T22:36:07.758Z'
+                        email: leandra.larson@ziemann.biz
+                        created_at: '2021-11-03T11:03:02.518Z'
+                        updated_at: '2021-11-03T11:03:02.518Z'
                         average_order_value: []
                         lifetime_value: []
                         store_credits: []
@@ -9910,9 +9937,9 @@ paths:
                     - id: '99'
                       type: user
                       attributes:
-                        email: jannet_schmidt@lockman.ca
-                        created_at: '2021-11-01T22:36:07.759Z'
-                        updated_at: '2021-11-01T22:36:07.759Z'
+                        email: tereasa.watsica@gaylord.us
+                        created_at: '2021-11-03T11:03:02.520Z'
+                        updated_at: '2021-11-03T11:03:02.520Z'
                         average_order_value: []
                         lifetime_value: []
                         store_credits: []
@@ -9971,9 +9998,9 @@ paths:
                       id: '104'
                       type: user
                       attributes:
-                        email: griselda@toyschuster.info
-                        created_at: '2021-11-01T22:36:07.826Z'
-                        updated_at: '2021-11-01T22:36:07.826Z'
+                        email: leonel_stehr@russelkrajcik.com
+                        created_at: '2021-11-03T11:03:02.601Z'
+                        updated_at: '2021-11-03T11:03:02.601Z'
                         average_order_value: []
                         lifetime_value: []
                         store_credits: []
@@ -10036,9 +10063,9 @@ paths:
                       id: '107'
                       type: user
                       attributes:
-                        email: margo_gleichner@cartwright.name
-                        created_at: '2021-11-01T22:36:07.878Z'
-                        updated_at: '2021-11-01T22:36:07.878Z'
+                        email: dakota@dicki.name
+                        created_at: '2021-11-03T11:03:02.652Z'
+                        updated_at: '2021-11-03T11:03:02.652Z'
                         average_order_value: []
                         lifetime_value: []
                         store_credits: []
@@ -10103,8 +10130,8 @@ paths:
                       type: user
                       attributes:
                         email: john@example.com
-                        created_at: '2021-11-01T22:36:07.946Z'
-                        updated_at: '2021-11-01T22:36:07.954Z'
+                        created_at: '2021-11-03T11:03:02.732Z'
+                        updated_at: '2021-11-03T11:03:02.741Z'
                         average_order_value: []
                         lifetime_value: []
                         store_credits: []
@@ -10251,12 +10278,12 @@ paths:
                         position: 1
                         cost_currency: USD
                         track_inventory: true
-                        updated_at: '2021-11-01T22:36:08.256Z'
+                        updated_at: '2021-11-03T11:03:02.968Z'
                         discontinue_on:
-                        created_at: '2021-11-01T22:36:08.250Z'
+                        created_at: '2021-11-03T11:03:02.963Z'
                         display_compare_at_price:
                         display_price: "$19.99"
-                        name: 'Product #181 - 4315'
+                        name: 'Product #181 - 4572'
                         options_text: ''
                         total_on_hand: 0
                         purchasable: true
@@ -10291,21 +10318,21 @@ paths:
                       type: variant
                       attributes:
                         sku: SKU-249
-                        weight: '150.2'
-                        height: '7.71'
-                        depth: '162.69'
+                        weight: '185.26'
+                        height: '175.51'
+                        depth: '6.65'
                         deleted_at:
                         is_master: false
                         cost_price: '17.0'
                         position: 2
                         cost_currency: USD
                         track_inventory: true
-                        updated_at: '2021-11-01T22:36:08.285Z'
+                        updated_at: '2021-11-03T11:03:02.997Z'
                         discontinue_on:
-                        created_at: '2021-11-01T22:36:08.279Z'
+                        created_at: '2021-11-03T11:03:02.991Z'
                         display_compare_at_price:
                         display_price: "$19.99"
-                        name: 'Product #181 - 4315'
+                        name: 'Product #181 - 4572'
                         options_text: 'Size: S'
                         total_on_hand: 0
                         purchasable: true
@@ -10342,21 +10369,21 @@ paths:
                       type: variant
                       attributes:
                         sku: SKU-250
-                        weight: '150.54'
-                        height: '89.18'
-                        depth: '47.63'
+                        weight: '197.57'
+                        height: '171.69'
+                        depth: '166.14'
                         deleted_at:
                         is_master: false
                         cost_price: '17.0'
                         position: 3
                         cost_currency: USD
                         track_inventory: true
-                        updated_at: '2021-11-01T22:36:08.304Z'
+                        updated_at: '2021-11-03T11:03:03.016Z'
                         discontinue_on:
-                        created_at: '2021-11-01T22:36:08.298Z'
+                        created_at: '2021-11-03T11:03:03.009Z'
                         display_compare_at_price:
                         display_price: "$19.99"
-                        name: 'Product #181 - 4315'
+                        name: 'Product #181 - 4572'
                         options_text: 'Size: S'
                         total_on_hand: 0
                         purchasable: true
@@ -10446,21 +10473,21 @@ paths:
                       type: variant
                       attributes:
                         sku: SKU-255
-                        weight: '149.44'
-                        height: '129.71'
-                        depth: '166.72'
+                        weight: '37.28'
+                        height: '26.22'
+                        depth: '192.91'
                         deleted_at:
                         is_master: false
                         cost_price: '17.0'
                         position: 2
                         cost_currency: USD
                         track_inventory: true
-                        updated_at: '2021-11-01T22:36:08.519Z'
+                        updated_at: '2021-11-03T11:03:03.234Z'
                         discontinue_on:
-                        created_at: '2021-11-01T22:36:08.508Z'
+                        created_at: '2021-11-03T11:03:03.228Z'
                         display_compare_at_price:
                         display_price: "$19.99"
-                        name: 'Product #183 - 6694'
+                        name: 'Product #183 - 6109'
                         options_text: 'Size: S'
                         total_on_hand: 0
                         purchasable: true
@@ -10621,14 +10648,14 @@ paths:
                     - id: '1'
                       type: event
                       attributes:
-                        execution_time: 30902
+                        execution_time: 37576
                         name: order.canceled
                         request_errors: ''
                         response_code: '200'
                         success: true
                         url: https://www.url1.com/
-                        created_at: '2021-11-01T22:36:08.871Z'
-                        updated_at: '2021-11-01T22:36:08.871Z'
+                        created_at: '2021-11-03T11:03:03.680Z'
+                        updated_at: '2021-11-03T11:03:03.680Z'
                       relationships:
                         subscriber:
                           data:
@@ -10637,14 +10664,14 @@ paths:
                     - id: '2'
                       type: event
                       attributes:
-                        execution_time: 56945
+                        execution_time: 76145
                         name: order.canceled
                         request_errors: ''
                         response_code: '200'
                         success: true
                         url: https://www.url2.com/
-                        created_at: '2021-11-01T22:36:08.875Z'
-                        updated_at: '2021-11-01T22:36:08.875Z'
+                        created_at: '2021-11-03T11:03:03.684Z'
+                        updated_at: '2021-11-03T11:03:03.684Z'
                       relationships:
                         subscriber:
                           data:
@@ -10720,8 +10747,8 @@ paths:
                         active: true
                         subscriptions:
                         - "*"
-                        created_at: '2021-11-01T22:36:08.924Z'
-                        updated_at: '2021-11-01T22:36:08.924Z'
+                        created_at: '2021-11-03T11:03:03.745Z'
+                        updated_at: '2021-11-03T11:03:03.745Z'
                     - id: '6'
                       type: subscriber
                       attributes:
@@ -10729,8 +10756,8 @@ paths:
                         active: true
                         subscriptions:
                         - "*"
-                        created_at: '2021-11-01T22:36:08.925Z'
-                        updated_at: '2021-11-01T22:36:08.925Z'
+                        created_at: '2021-11-03T11:03:03.746Z'
+                        updated_at: '2021-11-03T11:03:03.746Z'
                     meta:
                       count: 2
                       total_count: 2
@@ -10778,8 +10805,8 @@ paths:
                         active: true
                         subscriptions:
                         - "*"
-                        created_at: '2021-11-01T22:36:08.978Z'
-                        updated_at: '2021-11-01T22:36:08.978Z'
+                        created_at: '2021-11-03T11:03:03.798Z'
+                        updated_at: '2021-11-03T11:03:03.798Z'
               schema:
                 "$ref": "#/components/schemas/resource"
         '422':
@@ -10834,8 +10861,8 @@ paths:
                         active: true
                         subscriptions:
                         - "*"
-                        created_at: '2021-11-01T22:36:09.010Z'
-                        updated_at: '2021-11-01T22:36:09.010Z'
+                        created_at: '2021-11-03T11:03:03.835Z'
+                        updated_at: '2021-11-03T11:03:03.835Z'
               schema:
                 "$ref": "#/components/schemas/resource"
         '404':
@@ -10888,8 +10915,8 @@ paths:
                         active: true
                         subscriptions:
                         - "*"
-                        created_at: '2021-11-01T22:36:09.060Z'
-                        updated_at: '2021-11-01T22:36:09.060Z'
+                        created_at: '2021-11-03T11:03:03.897Z'
+                        updated_at: '2021-11-03T11:03:03.897Z'
               schema:
                 "$ref": "#/components/schemas/resource"
         '422':
@@ -11010,8 +11037,8 @@ paths:
                       type: wished_item
                       attributes:
                         quantity: 1
-                        created_at: '2021-11-01T22:36:09.311Z'
-                        updated_at: '2021-11-01T22:36:09.311Z'
+                        created_at: '2021-11-03T11:03:04.163Z'
+                        updated_at: '2021-11-03T11:03:04.163Z'
                         display_price: "$19.99"
                         display_total: "$19.99"
                         price: '19.99'
@@ -11025,8 +11052,8 @@ paths:
                       type: wished_item
                       attributes:
                         quantity: 1
-                        created_at: '2021-11-01T22:36:09.360Z'
-                        updated_at: '2021-11-01T22:36:09.360Z'
+                        created_at: '2021-11-03T11:03:04.212Z'
+                        updated_at: '2021-11-03T11:03:04.212Z'
                         display_price: "$19.99"
                         display_total: "$19.99"
                         price: '19.99'
@@ -11040,8 +11067,8 @@ paths:
                       type: wished_item
                       attributes:
                         quantity: 1
-                        created_at: '2021-11-01T22:36:09.406Z'
-                        updated_at: '2021-11-01T22:36:09.406Z'
+                        created_at: '2021-11-03T11:03:04.258Z'
+                        updated_at: '2021-11-03T11:03:04.258Z'
                         display_price: "$19.99"
                         display_total: "$19.99"
                         price: '19.99'
@@ -11055,8 +11082,8 @@ paths:
                       type: wished_item
                       attributes:
                         quantity: 1
-                        created_at: '2021-11-01T22:36:09.454Z'
-                        updated_at: '2021-11-01T22:36:09.454Z'
+                        created_at: '2021-11-03T11:03:04.304Z'
+                        updated_at: '2021-11-03T11:03:04.304Z'
                         display_price: "$19.99"
                         display_total: "$19.99"
                         price: '19.99'
@@ -11117,8 +11144,8 @@ paths:
                       type: wished_item
                       attributes:
                         quantity: 1
-                        created_at: '2021-11-01T22:36:09.911Z'
-                        updated_at: '2021-11-01T22:36:09.911Z'
+                        created_at: '2021-11-03T11:03:04.770Z'
+                        updated_at: '2021-11-03T11:03:04.770Z'
                         display_price: "$19.99"
                         display_total: "$19.99"
                         price: '19.99'
@@ -11188,8 +11215,8 @@ paths:
                       type: wished_item
                       attributes:
                         quantity: 1
-                        created_at: '2021-11-01T22:36:10.114Z'
-                        updated_at: '2021-11-01T22:36:10.114Z'
+                        created_at: '2021-11-03T11:03:04.983Z'
+                        updated_at: '2021-11-03T11:03:04.983Z'
                         display_price: "$19.99"
                         display_total: "$19.99"
                         price: '19.99'
@@ -11255,8 +11282,8 @@ paths:
                       type: wished_item
                       attributes:
                         quantity: 3
-                        created_at: '2021-11-01T22:36:10.454Z'
-                        updated_at: '2021-11-01T22:36:10.463Z'
+                        created_at: '2021-11-03T11:03:05.320Z'
+                        updated_at: '2021-11-03T11:03:05.329Z'
                         display_price: "$19.99"
                         display_total: "$59.97"
                         price: '19.99'
@@ -11391,9 +11418,9 @@ paths:
                         name: Black Friday
                         is_private: true
                         is_default: false
-                        created_at: '2021-11-01T22:36:11.146Z'
-                        updated_at: '2021-11-01T22:36:11.146Z'
-                        token: EYTETFvJ3BR7pLBcqNhRcHKX
+                        created_at: '2021-11-03T11:03:06.035Z'
+                        updated_at: '2021-11-03T11:03:06.035Z'
+                        token: BveCWJKL5oe3m2NqvJzAsTeG
                         variant_included: false
                       relationships:
                         wished_items:
@@ -11408,9 +11435,9 @@ paths:
                         name: Birthday
                         is_private: true
                         is_default: false
-                        created_at: '2021-11-01T22:36:11.148Z'
-                        updated_at: '2021-11-01T22:36:11.148Z'
-                        token: mB3yhtwWUxUthBtnn8vg89ui
+                        created_at: '2021-11-03T11:03:06.037Z'
+                        updated_at: '2021-11-03T11:03:06.037Z'
+                        token: MRz6sBZJ8ex5erYTFBJNcXcj
                         variant_included: false
                       relationships:
                         wished_items:
@@ -11472,9 +11499,9 @@ paths:
                         name: Wishlist_26
                         is_private: true
                         is_default: false
-                        created_at: '2021-11-01T22:36:11.597Z'
-                        updated_at: '2021-11-01T22:36:11.597Z'
-                        token: XULmdkxnXtU3metp2xanXpEb
+                        created_at: '2021-11-03T11:03:06.486Z'
+                        updated_at: '2021-11-03T11:03:06.486Z'
+                        token: qi7ZtGeDCpqmYGSyUnjBPBz7
                         variant_included: false
                       relationships:
                         wished_items:
@@ -11538,9 +11565,9 @@ paths:
                         name: My Wishlist
                         is_private: true
                         is_default: false
-                        created_at: '2021-11-01T22:36:11.641Z'
-                        updated_at: '2021-11-01T22:36:11.641Z'
-                        token: x1xqg1wUJeX6ftB9RWVJ91wi
+                        created_at: '2021-11-03T11:03:06.535Z'
+                        updated_at: '2021-11-03T11:03:06.535Z'
+                        token: ZG2ihvWyZM2S9h7nsgqQFtuP
                         variant_included: false
                       relationships:
                         wished_items:
@@ -11603,9 +11630,9 @@ paths:
                         name: My Super Wishlist
                         is_private: true
                         is_default: false
-                        created_at: '2021-11-01T22:36:11.703Z'
-                        updated_at: '2021-11-01T22:36:11.711Z'
-                        token: Y8TkkpY33TiKQZD4W7RHcu7Z
+                        created_at: '2021-11-03T11:03:06.605Z'
+                        updated_at: '2021-11-03T11:03:06.613Z'
+                        token: a5HxXePc8Smg57Zv56RYnHZ1
                         variant_included: false
                       relationships:
                         wished_items:
@@ -11961,7 +11988,7 @@ components:
       required:
       - classification
       x-internal: true
-    create_cms_page_params:
+    create_standard_cms_page_params:
       type: object
       properties:
         cms_page:
@@ -11969,25 +11996,151 @@ components:
           required:
           - title
           - locale
+          - type
           properties:
             title:
               type: string
+              example: About Us
+              description: Give your page a title.
+            type:
+              type: string
+              enum:
+              - Spree::Cms::Pages::StandardPage
+              description: Set the type of page.
             meta_title:
               type: string
+              nullable: true
+              example: Learn More About Super-Shop
+              description: Set the meta title for this page, this appears in the title
+                bar of the browser.
             content:
               type: string
+              nullable: true
+              example: Lot's of text..
+              description: The text content of a standard page, this can be HTML from
+                a rich text editor.
             meta_description:
               type: string
+              nullable: true
+              example: Learn more about us on this page here...
+              description: Set a meta description, used for SEO and displayed in search
+                results.
             visible:
-              type: string
+              type: boolean
+              enum:
+              - true
+              - false
+              description: This page is publicly visible when set to `true`.
             slug:
               type: string
+              nullable: true
+              example: about-us
+              description: Set a slug for this page.
             locale:
               type: string
+              example: en-US
+              description: The language this page is written in.
       required:
       - cms_page
+      title: Create a Standard Page
       x-internal: true
-    update_cms_page_params:
+    create_homepage_cms_page_params:
+      type: object
+      properties:
+        cms_page:
+          type: object
+          required:
+          - title
+          - locale
+          - type
+          properties:
+            title:
+              type: string
+              example: Our Flash Homepage
+              description: Give your page a title.
+            type:
+              type: string
+              enum:
+              - Spree::Cms::Pages::Homepage
+              description: Set the type of page.
+            meta_title:
+              type: string
+              nullable: true
+              example: Visit Our Store - Great Deals
+              description: Set the meta title for this page, this appears in the title
+                bar of the browser.
+            meta_description:
+              type: string
+              nullable: true
+              example: Discover great new products that we sell in this store...
+              description: Set a meta description, used for SEO and displayed in search
+                results.
+            visible:
+              type: boolean
+              enum:
+              - true
+              - false
+              description: This page is publicly visible when set to `true`.
+            locale:
+              type: string
+              example: en-US
+              description: The language this page is written in.
+      required:
+      - cms_page
+      title: Create a Homepage
+      x-internal: true
+    create_feature_cms_page_params:
+      type: object
+      properties:
+        cms_page:
+          type: object
+          required:
+          - title
+          - locale
+          - type
+          properties:
+            title:
+              type: string
+              example: Featured Product
+              description: Give your page a title.
+            type:
+              type: string
+              enum:
+              - Spree::Cms::Pages::FeaturePage
+              description: Set the type of page.
+            meta_title:
+              type: string
+              nullable: true
+              example: Learn More About This Featured Product
+              description: Set the meta title for this page, this appears in the title
+                bar of the browser.
+            meta_description:
+              type: string
+              nullable: true
+              example: Learn more about us this amazing product that we sell right
+                here...
+              description: Set a meta description, used for SEO and displayed in search
+                results.
+            visible:
+              type: boolean
+              enum:
+              - true
+              - false
+              description: This page is publicly visible when set to `true`.
+            slug:
+              type: string
+              nullable: true
+              example: about-us
+              description: Set a slug for this page.
+            locale:
+              type: string
+              example: en-US
+              description: The language this page is written in.
+      required:
+      - cms_page
+      title: Create a Feature Page
+      x-internal: true
+    update_standard_cms_page_params:
       type: object
       properties:
         cms_page:
@@ -11995,22 +12148,145 @@ components:
           properties:
             title:
               type: string
+              example: About Us
+              description: Update the page title.
+            type:
+              type: string
+              enum:
+              - Spree::Cms::Pages::StandardPage
+              - Spree::Cms::Pages::Homepage
+              - Spree::Cms::Pages::FeaturePage
+              description: Change the type of page.
             meta_title:
               type: string
+              nullable: true
+              example: Learn More About Super-Shop
+              description: Update the meta title for this page, this appears in the
+                title bar of the browser.
             content:
               type: string
+              nullable: true
+              example: Lot's of text..
+              description: Update the text content of a standard page, this can be
+                HTML from a rich text editor.
             meta_description:
               type: string
+              nullable: true
+              example: Learn more about us on this page here...
+              description: Update the meta description, used for SEO and displayed
+                in search results.
             visible:
-              type: string
+              type: boolean
+              enum:
+              - true
+              - false
+              description: This page is publicly visible when set to `true`.
             slug:
               type: string
+              nullable: true
+              example: about-us
+              description: Update the slug for this page.
             locale:
               type: string
+              example: en-US
+              description: Update the language of this page.
       required:
       - cms_page
+      title: Update a Standard Page
       x-internal: true
-    create_cms_section_params:
+    update_homepage_cms_page_params:
+      type: object
+      properties:
+        cms_page:
+          type: object
+          properties:
+            title:
+              type: string
+              example: Our Flash Homepage
+              description: Update the page title.
+            type:
+              type: string
+              enum:
+              - Spree::Cms::Pages::StandardPage
+              - Spree::Cms::Pages::Homepage
+              - Spree::Cms::Pages::FeaturePage
+              description: Change the type of page.
+            meta_title:
+              type: string
+              nullable: true
+              example: Visit Our Store - Great Deals
+              description: Update the meta title for this page, this appears in the
+                title bar of the browser.
+            meta_description:
+              type: string
+              nullable: true
+              example: Discover great new products that we sell in this store...
+              description: Update the meta description, used for SEO and displayed
+                in search results.
+            visible:
+              type: boolean
+              enum:
+              - true
+              - false
+              description: This page is publicly visible when set to `true`.
+            locale:
+              type: string
+              example: en-US
+              description: Update the language of this page.
+      required:
+      - cms_page
+      title: Update a Homepage
+      x-internal: true
+    update_feature_cms_page_params:
+      type: object
+      properties:
+        cms_page:
+          type: object
+          properties:
+            title:
+              type: string
+              example: Featured Product
+              description: Update the page title.
+            type:
+              type: string
+              enum:
+              - Spree::Cms::Pages::StandardPage
+              - Spree::Cms::Pages::Homepage
+              - Spree::Cms::Pages::FeaturePage
+              description: Change the type of page.
+            meta_title:
+              type: string
+              nullable: true
+              example: Learn More About This Featured Product
+              description: Update the meta title for this page, this appears in the
+                title bar of the browser.
+            meta_description:
+              type: string
+              nullable: true
+              example: Learn more about us this amazing product that we sell right
+                here...
+              description: Update the meta description, used for SEO and displayed
+                in search results.
+            visible:
+              type: boolean
+              enum:
+              - true
+              - false
+              description: This page is publicly visible when set to `true`.
+            slug:
+              type: string
+              nullable: true
+              example: about-us
+              description: Update the slug for this page.
+            locale:
+              type: string
+              example: en-US
+              description: Update the language of this page.
+      required:
+      - cms_page
+      title: Update a Feature Page
+      x-internal: true
+    create_hero_image_cms_section_params:
       type: object
       properties:
         cms_section:
@@ -12018,37 +12294,459 @@ components:
           required:
           - name
           - cms_page_id
+          - type
           properties:
             name:
               type: string
+              description: Give this section a name.
             cms_page_id:
               type: string
-            destination:
+              description: Set the `cms_page` ID that this section belongs to.
+            type:
               type: string
-              example: https://getvendo.com
+              enum:
+              - Spree::Cms::Sections::HeroImage
+              example: Spree::Cms::Sections::HeroImage
+              description: Set the section type.
             linked_resource_type:
+              type: string
+              example: Spree::Taxon
+              nullable: true
+              enum:
+              - Spree::Taxon
+              - Spree::Product
+              - Spree::CmsPage
+              description: Set the resource type that this section links to.
+            linked_resource_id:
+              type: string
+              example: '1'
+              nullable: true
+              description: Set the ID of the resource that you would like this section
+                to link to.
+            fit:
+              type: string
+              example: Screen
+              enum:
+              - Screen
+              - Container
+              description: This value is used by front end developers to set CSS classes
+                for content that fits the screen edge-to-edge, or stays within the
+                boundaries of the central container.
+            position:
+              type: integer
+              example: 2
+              description: 'Pass the position that you want this section to appear
+                in. (The list is not zero indexed, so the first item is position:
+                `1`)'
+            gutters:
+              type: string
+              example: No Gutters
+              enum:
+              - Gutters
+              - No Gutters
+              description: This value is used by front end developers for styling
+                the section padding.
+            button_text:
+              type: string
+              example: Click Here
+              description: Set the text value of the button used in this section.
+            title:
+              type: string
+              example: Shop Today
+              description: Create a title for the Hero Section.
+            digital[image_one]:
+              type: string
+              format: binary
+              description: Use a `multipart/form-data` request to upload assets.
+      required:
+      - cms_section
+      title: Create a Hero Image Section
+      x-internal: true
+    create_product_carousel_cms_section_params:
+      type: object
+      properties:
+        cms_section:
+          type: object
+          required:
+          - name
+          - cms_page_id
+          - type
+          properties:
+            name:
+              type: string
+              description: Give this section a name.
+            cms_page_id:
+              type: string
+              description: Set the `cms_page` ID that this section belongs to.
+            type:
+              type: string
+              enum:
+              - Spree::Cms::Sections::ProductCarousel
+              example: Spree::Cms::Sections::ProductCarousel
+              description: Set the section type.
+            position:
+              type: integer
+              example: 2
+              description: 'Pass the position that you want this section to appear
+                in. (The list is not zero indexed, so the first item is position:
+                `1`)'
+            linked_resource_id:
+              type: string
+              example: '1'
+              nullable: true
+              description: Set the ID of the Taxon that you would like displayed as
+                a Product Carousel.
+      required:
+      - cms_section
+      title: Create a Product Carousel Section
+      x-internal: true
+    create_side_by_side_images_cms_section_params:
+      type: object
+      properties:
+        cms_section:
+          type: object
+          required:
+          - name
+          - cms_page_id
+          - type
+          properties:
+            name:
+              type: string
+              description: Give this section a name.
+            cms_page_id:
+              type: string
+              description: Set the `cms_page` ID that this section belongs to.
+            type:
+              type: string
+              enum:
+              - Spree::Cms::Sections::SideBySideImages
+              example: Spree::Cms::Sections::SideBySideImages
+              description: Set the section type.
+            position:
+              type: integer
+              example: 2
+              description: 'Pass the position that you want this section to appear
+                in. (The list is not zero indexed, so the first item is position:
+                `1`)'
+            link_type_one:
               type: string
               example: Spree::Taxon
               enum:
               - Spree::Taxon
               - Spree::Product
-              - Spree::CmsPage
+              description: Set the resource type that image one links to.
+            link_type_two:
+              type: string
+              example: Spree::Taxon
+              enum:
+              - Spree::Taxon
+              - Spree::Product
+              description: Set the resource type that image two links to.
+            link_one:
+              type: string
+              example: men/shirts
+              nullable: true
+              description: Set the slug or path that image two links to.
+            link_two:
+              type: string
+              example: white-shirt
+              nullable: true
+              description: Set the slug or path that image two links to.
+            title_one:
+              type: string
+              example: Shop Men's Shirts
+              nullable: true
+              description: Set the title used in image one.
+            title_two:
+              type: string
+              example: Buy This Men's Shirt
+              nullable: true
+              description: Set the title used in image two.
             fit:
               type: string
               example: Screen
-              description: This value is used by front end developers to manipulate
-                CSS values to fit the section into the Screen or within the Container
-                element.
+              enum:
+              - Screen
+              - Container
+              description: This value is used by front end developers to set CSS classes
+                for content that fits the screen edge-to-edge, or stays within the
+                boundaries of the central container.
+            subtitle_one:
+              type: string
+              example: Save 50% today
+              nullable: true
+              description: Set the subtitle used in image one.
+            subtitle_two:
+              type: string
+              example: Save 50% today
+              nullable: true
+              description: Set the subtitle used in image two.
+            gutters:
+              type: string
+              example: No Gutters
+              enum:
+              - Gutters
+              - No Gutters
+              description: This value is used by front end developers for styling
+                the section padding.
+            digital[image_one]:
+              type: string
+              format: binary
+              description: Use a `multipart/form-data` request to upload assets.
+            digital[image_two]:
+              type: string
+              format: binary
+              description: Use a `multipart/form-data` request to upload assets.
+      required:
+      - cms_section
+      title: Create a Side-by-Side Image Section
+      x-internal: true
+    create_image_gallery_cms_section_params:
+      type: object
+      properties:
+        cms_section:
+          type: object
+          required:
+          - name
+          - cms_page_id
+          - type
+          properties:
+            name:
+              type: string
+              description: Give this section a name.
+            cms_page_id:
+              type: string
+              description: Set the `cms_page` ID that this section belongs to.
+            type:
+              type: string
+              enum:
+              - Spree::Cms::Sections::ImageGallery
+              example: Spree::Cms::Sections::ImageGallery
+              description: Set the section type.
             position:
               type: integer
               example: 2
-              description: 'Pass the new position that you want this section to appear
+              description: 'Pass the position that you want this section to appear
                 in. (The list is not zero indexed, so the first item is position:
-                1)'
+                `1`)'
+            link_type_one:
+              type: string
+              example: Spree::Taxon
+              enum:
+              - Spree::Taxon
+              - Spree::Product
+              description: Set the resource type that image one links to.
+            link_type_two:
+              type: string
+              example: Spree::Taxon
+              enum:
+              - Spree::Taxon
+              - Spree::Product
+              description: Set the resource type that image two links to.
+            link_type_three:
+              type: string
+              example: Spree::Taxon
+              enum:
+              - Spree::Taxon
+              - Spree::Product
+              description: Set the resource type that image three links to.
+            link_one:
+              type: string
+              example: men/shirts
+              nullable: true
+              description: Set the slug or path that image two links to.
+            link_two:
+              type: string
+              example: white-shirt
+              nullable: true
+              description: Set the slug or path that image two links to.
+            link_three:
+              type: string
+              example: red-shirt
+              nullable: true
+              description: Set the slug or path that image three links to.
+            title_one:
+              type: string
+              example: Shop Men's Shirts
+              nullable: true
+              description: Set the title used in image one.
+            title_two:
+              type: string
+              example: Buy This Men's Shirt
+              nullable: true
+              description: Set the title used in image two.
+            title_three:
+              type: string
+              example: Buy This Women's Skirt
+              nullable: true
+              description: Set the title used in image three.
+            fit:
+              type: string
+              example: Screen
+              enum:
+              - Screen
+              - Container
+              description: This value is used by front end developers to set CSS classes
+                for content that fits the screen edge-to-edge, or stays within the
+                boundaries of the central container.
+            layout_style:
+              type: string
+              example: Default
+              enum:
+              - Default
+              - Reversed
+              description: This value is used by front end developers for styling
+                the order the images appear.
+            display_labels:
+              type: string
+              example: Show
+              enum:
+              - Show
+              - Hide
+              description: This value is used by front end developers for showing
+                and hiding the label on the images.
+            digital[image_one]:
+              type: string
+              format: binary
+              description: Use a `multipart/form-data` request to upload assets.
+            digital[image_two]:
+              type: string
+              format: binary
+              description: Use a `multipart/form-data` request to upload assets.
+            digital[image_three]:
+              type: string
+              format: binary
+              description: Use a `multipart/form-data` request to upload assets.
       required:
       - cms_section
+      title: Create an Image Gallery Section
       x-internal: true
-    update_cms_section_params:
+    create_featured_article_cms_section_params:
+      type: object
+      properties:
+        cms_section:
+          type: object
+          required:
+          - name
+          - cms_page_id
+          - type
+          properties:
+            name:
+              type: string
+              description: Give this section a name.
+            cms_page_id:
+              type: string
+              description: Set the `cms_page` ID that this section belongs to.
+            type:
+              type: string
+              enum:
+              - Spree::Cms::Sections::FeaturedArticle
+              example: Spree::Cms::Sections::FeaturedArticle
+              description: Set the section type.
+            position:
+              type: integer
+              example: 2
+              description: 'Pass the position that you want this section to appear
+                in. (The list is not zero indexed, so the first item is position:
+                `1`)'
+            linked_resource_type:
+              type: string
+              example: Spree::Taxon
+              nullable: true
+              enum:
+              - Spree::Taxon
+              - Spree::Product
+              - Spree::CmsPage
+              description: Set the resource type that this section links to.
+            linked_resource_id:
+              type: string
+              example: '1'
+              nullable: true
+              description: Set the ID of the resource that you would like this section
+                to link to.
+            fit:
+              type: string
+              example: Screen
+              enum:
+              - Screen
+              - Container
+              description: This value is used by front end developers to set CSS classes
+                for content that fits the screen edge-to-edge, or stays within the
+                boundaries of the central container.
+            gutters:
+              type: string
+              example: No Gutters
+              enum:
+              - Gutters
+              - No Gutters
+              description: This value is used by front end developers for styling
+                the section padding.
+            button_text:
+              type: string
+              example: Click Here
+              description: Set the text value of the button used in this section.
+            title:
+              type: string
+              example: Shop Today
+              description: Create a title for the Section.
+            subtitle:
+              type: string
+              example: Save Big!
+              description: Create a subtitle for the Section.
+            rte_content:
+              type: string
+              example: Lots of text and content goes here.
+              description: Set the content, here, this can be rich text editor content.
+      required:
+      - cms_section
+      title: Create a Featured Article Section
+      x-internal: true
+    create_rich_text_cms_section_params:
+      type: object
+      properties:
+        cms_section:
+          type: object
+          required:
+          - name
+          - cms_page_id
+          - type
+          properties:
+            name:
+              type: string
+              description: Give this section a name.
+            cms_page_id:
+              type: string
+              description: Set the `cms_page` ID that this section belongs to.
+            type:
+              type: string
+              enum:
+              - Spree::Cms::Sections::RichTextContent
+              example: Spree::Cms::Sections::RichTextContent
+              description: Set the section type.
+            position:
+              type: integer
+              example: 2
+              description: 'Pass the position that you want this section to appear
+                in. (The list is not zero indexed, so the first item is position:
+                `1`)'
+            fit:
+              type: string
+              example: Screen
+              enum:
+              - Screen
+              - Container
+              description: This value is used by front end developers to set CSS classes
+                for content that fits the screen edge-to-edge, or stays within the
+                boundaries of the central container.
+            rte_content:
+              type: string
+              example: Lots of text and content goes here.
+              description: Set the content, here, this can be rich text editor content.
+      required:
+      - cms_section
+      title: Create a Rich Text Section
+      x-internal: true
+    update_hero_image_cms_section_params:
       type: object
       properties:
         cms_section:
@@ -12056,32 +12754,446 @@ components:
           properties:
             name:
               type: string
-            cms_page_id:
+              description: Update this section name.
+            type:
               type: string
-            destination:
-              type: string
-              example: https://getvendo.com
+              enum:
+              - Spree::Cms::Sections::HeroImage
+              - Spree::Cms::Sections::FeaturedArticle
+              - Spree::Cms::Sections::ProductCarousel
+              - Spree::Cms::Sections::ImageGallery
+              - Spree::Cms::Sections::SideBySideImages
+              - Spree::Cms::Sections::RichTextContent
+              example: Spree::Cms::Sections::ProductCarousel
+              description: Change the section type.
             linked_resource_type:
+              type: string
+              example: Spree::Taxon
+              nullable: true
+              enum:
+              - Spree::Taxon
+              - Spree::Product
+              - Spree::CmsPage
+              description: Update the resource type that this section links to.
+            linked_resource_id:
+              type: string
+              example: '1'
+              nullable: true
+              description: Set the ID of the resource that you would like this section
+                to link to.
+            fit:
+              type: string
+              example: Screen
+              enum:
+              - Screen
+              - Container
+              description: This value is used by front end developers to set CSS classes
+                for content that fits the screen edge-to-edge, or stays within the
+                boundaries of the central container.
+            position:
+              type: integer
+              example: 2
+              description: 'Pass the position that you want this section to appear
+                in. (The list is not zero indexed, so the first item is position:
+                `1`)'
+            gutters:
+              type: string
+              example: No Gutters
+              enum:
+              - Gutters
+              - No Gutters
+              description: This value is used by front end developers for styling
+                the section padding.
+            button_text:
+              type: string
+              example: Click Here
+              description: Update the text value of the button used in this section.
+            title:
+              type: string
+              example: Shop Today
+              description: Update the title for this section.
+            digital[image_one]:
+              type: string
+              format: binary
+              description: Use a `multipart/form-data` request to upload assets.
+      required:
+      - cms_section
+      title: Update a Hero Image Section
+      x-internal: true
+    update_product_carousel_cms_section_params:
+      type: object
+      properties:
+        cms_section:
+          type: object
+          properties:
+            name:
+              type: string
+              description: Change this section name.
+            type:
+              type: string
+              enum:
+              - Spree::Cms::Sections::HeroImage
+              - Spree::Cms::Sections::FeaturedArticle
+              - Spree::Cms::Sections::ProductCarousel
+              - Spree::Cms::Sections::ImageGallery
+              - Spree::Cms::Sections::SideBySideImages
+              - Spree::Cms::Sections::RichTextContent
+              example: Spree::Cms::Sections::ProductCarousel
+              description: Change the section type.
+            position:
+              type: integer
+              example: 2
+              description: 'Pass the position that you want this section to appear
+                in. (The list is not zero indexed, so the first item is position:
+                `1`)'
+            linked_resource_id:
+              type: string
+              example: '1'
+              nullable: true
+              description: Update the ID of the Taxon that you would like displayed
+                as a Product Carousel.
+      required:
+      - cms_section
+      title: Update a Product Carousel Section
+      x-internal: true
+    update_side_by_side_images_cms_section_params:
+      type: object
+      properties:
+        cms_section:
+          type: object
+          properties:
+            name:
+              type: string
+              description: Update this section name.
+            type:
+              type: string
+              enum:
+              - Spree::Cms::Sections::HeroImage
+              - Spree::Cms::Sections::FeaturedArticle
+              - Spree::Cms::Sections::ProductCarousel
+              - Spree::Cms::Sections::ImageGallery
+              - Spree::Cms::Sections::SideBySideImages
+              - Spree::Cms::Sections::RichTextContent
+              example: Spree::Cms::Sections::ProductCarousel
+              description: Change the section type.
+            position:
+              type: integer
+              example: 2
+              description: 'Pass the position that you want this section to appear
+                in. (The list is not zero indexed, so the first item is position:
+                `1`)'
+            link_type_one:
               type: string
               example: Spree::Taxon
               enum:
               - Spree::Taxon
               - Spree::Product
-              - Spree::CmsPage
+              description: Update the resource type that image one links to.
+            link_type_two:
+              type: string
+              example: Spree::Taxon
+              enum:
+              - Spree::Taxon
+              - Spree::Product
+              description: Update the resource type that image two links to.
+            link_one:
+              type: string
+              example: men/shirts
+              nullable: true
+              description: Update the slug or path that image two links to.
+            link_two:
+              type: string
+              example: white-shirt
+              nullable: true
+              description: Update the slug or path that image two links to.
+            title_one:
+              type: string
+              example: Shop Men's Shirts
+              nullable: true
+              description: Update the title used in image one.
+            title_two:
+              type: string
+              example: Buy This Men's Shirt
+              nullable: true
+              description: Update the title used in image two.
             fit:
               type: string
               example: Screen
-              description: This value is used by front end developers to manipulate
-                CSS values to fit the section into the Screen or within the Container
-                element.
+              enum:
+              - Screen
+              - Container
+              description: This value is used by front end developers to set CSS classes
+                for content that fits the screen edge-to-edge, or stays within the
+                boundaries of the central container.
+            subtitle_one:
+              type: string
+              example: Save 50% today
+              nullable: true
+              description: Update the subtitle used in image one.
+            subtitle_two:
+              type: string
+              example: Save 50% today
+              nullable: true
+              description: Update the subtitle used in image two.
+            gutters:
+              type: string
+              example: No Gutters
+              enum:
+              - Gutters
+              - No Gutters
+              description: This value is used by front end developers for styling
+                the section padding.
+            digital[image_one]:
+              type: string
+              format: binary
+              description: Use a `multipart/form-data` request to upload assets.
+            digital[image_two]:
+              type: string
+              format: binary
+              description: Use a `multipart/form-data` request to upload assets.
+      required:
+      - cms_section
+      title: Update a Side-by-Side Image Section
+      x-internal: true
+    update_image_gallery_cms_section_params:
+      type: object
+      properties:
+        cms_section:
+          type: object
+          properties:
+            name:
+              type: string
+              description: Update this section name.
+            type:
+              type: string
+              enum:
+              - Spree::Cms::Sections::HeroImage
+              - Spree::Cms::Sections::FeaturedArticle
+              - Spree::Cms::Sections::ProductCarousel
+              - Spree::Cms::Sections::ImageGallery
+              - Spree::Cms::Sections::SideBySideImages
+              - Spree::Cms::Sections::RichTextContent
+              example: Spree::Cms::Sections::ProductCarousel
+              description: Change the section type.
             position:
               type: integer
               example: 2
-              description: 'Pass the new position that you want this section to appear
+              description: 'Pass the position that you want this section to appear
                 in. (The list is not zero indexed, so the first item is position:
-                1)'
+                `1`)'
+            link_type_one:
+              type: string
+              example: Spree::Taxon
+              enum:
+              - Spree::Taxon
+              - Spree::Product
+              description: Update the resource type that image one links to.
+            link_type_two:
+              type: string
+              example: Spree::Taxon
+              enum:
+              - Spree::Taxon
+              - Spree::Product
+              description: Update the resource type that image two links to.
+            link_type_three:
+              type: string
+              example: Spree::Taxon
+              enum:
+              - Spree::Taxon
+              - Spree::Product
+              description: Update the resource type that image three links to.
+            link_one:
+              type: string
+              example: men/shirts
+              nullable: true
+              description: Update the slug or path that image two links to.
+            link_two:
+              type: string
+              example: white-shirt
+              nullable: true
+              description: Update the slug or path that image two links to.
+            link_three:
+              type: string
+              example: red-shirt
+              nullable: true
+              description: Update the slug or path that image three links to.
+            title_one:
+              type: string
+              example: Shop Men's Shirts
+              nullable: true
+              description: Update the title used in image one.
+            title_two:
+              type: string
+              example: Buy This Men's Shirt
+              nullable: true
+              description: Update the title used in image two.
+            title_three:
+              type: string
+              example: Buy This Women's Skirt
+              nullable: true
+              description: Update the title used in image three.
+            fit:
+              type: string
+              example: Screen
+              enum:
+              - Screen
+              - Container
+              description: This value is used by front end developers to set CSS classes
+                for content that fits the screen edge-to-edge, or stays within the
+                boundaries of the central container.
+            layout_style:
+              type: string
+              example: Default
+              enum:
+              - Default
+              - Reversed
+              description: This value is used by front end developers for styling
+                the order the images appear.
+            display_labels:
+              type: string
+              example: Show
+              enum:
+              - Show
+              - Hide
+              description: This value is used by front end developers for showing
+                and hiding the label on the images.
+            digital[image_one]:
+              type: string
+              format: binary
+              description: Use a `multipart/form-data` request to upload assets.
+            digital[image_two]:
+              type: string
+              format: binary
+              description: Use a `multipart/form-data` request to upload assets.
+            digital[image_three]:
+              type: string
+              format: binary
+              description: Use a `multipart/form-data` request to upload assets.
       required:
       - cms_section
+      title: Update an Image Gallery Section
+      x-internal: true
+    update_featured_article_cms_section_params:
+      type: object
+      properties:
+        cms_section:
+          type: object
+          properties:
+            name:
+              type: string
+              description: Update this section name.
+            type:
+              type: string
+              enum:
+              - Spree::Cms::Sections::HeroImage
+              - Spree::Cms::Sections::FeaturedArticle
+              - Spree::Cms::Sections::ProductCarousel
+              - Spree::Cms::Sections::ImageGallery
+              - Spree::Cms::Sections::SideBySideImages
+              - Spree::Cms::Sections::RichTextContent
+              example: Spree::Cms::Sections::ProductCarousel
+              description: Change the section type.
+            position:
+              type: integer
+              example: 2
+              description: 'Pass the position that you want this section to appear
+                in. (The list is not zero indexed, so the first item is position:
+                `1`)'
+            linked_resource_type:
+              type: string
+              example: Spree::Taxon
+              nullable: true
+              enum:
+              - Spree::Taxon
+              - Spree::Product
+              - Spree::CmsPage
+              description: Set the resource type that this section links to.
+            linked_resource_id:
+              type: string
+              example: '1'
+              nullable: true
+              description: Change the ID of the resource that you would like this
+                section to link to.
+            fit:
+              type: string
+              example: Screen
+              enum:
+              - Screen
+              - Container
+              description: This value is used by front end developers to set CSS classes
+                for content that fits the screen edge-to-edge, or stays within the
+                boundaries of the central container.
+            gutters:
+              type: string
+              example: No Gutters
+              enum:
+              - Gutters
+              - No Gutters
+              description: This value is used by front end developers for styling
+                the section padding.
+            button_text:
+              type: string
+              example: Click Here
+              description: Update the text value of the button used in this section.
+            title:
+              type: string
+              example: Shop Today
+              description: Update the title for the Section.
+            subtitle:
+              type: string
+              example: Save Big!
+              description: Update the subtitle for the Section.
+            rte_content:
+              type: string
+              example: Lots of text and content goes here.
+              description: Update the content here, this can be rich text editor content.
+      required:
+      - cms_section
+      title: Update a Featured Article Section
+      x-internal: true
+    update_rich_text_cms_section_params:
+      type: object
+      properties:
+        cms_section:
+          type: object
+          properties:
+            name:
+              type: string
+              description: Update this section name.
+            type:
+              type: string
+              enum:
+              - Spree::Cms::Sections::HeroImage
+              - Spree::Cms::Sections::FeaturedArticle
+              - Spree::Cms::Sections::ProductCarousel
+              - Spree::Cms::Sections::ImageGallery
+              - Spree::Cms::Sections::SideBySideImages
+              - Spree::Cms::Sections::RichTextContent
+              example: Spree::Cms::Sections::ProductCarousel
+              description: Change the section type.
+            position:
+              type: integer
+              example: 2
+              description: 'Pass the position that you want this section to appear
+                in. (The list is not zero indexed, so the first item is position:
+                `1`)'
+            fit:
+              type: string
+              example: Screen
+              enum:
+              - Screen
+              - Container
+              description: This value is used by front end developers to set CSS classes
+                for content that fits the screen edge-to-edge, or stays within the
+                boundaries of the central container.
+            rte_content:
+              type: string
+              example: Lots of text and content goes here.
+              description: Update the content, here, this can be rich text editor
+                content.
+      required:
+      - cms_section
+      title: Update a Rich Text Section
       x-internal: true
     create_digital_params:
       type: object
@@ -12221,17 +13333,17 @@ components:
             name:
               type: string
               example: Main Menu
-              description: Give this Menu a name.
+              description: Update this Menu name.
             location:
               type: string
               enum:
               - header
               - footer
-              description: Set the location this menu appears in the website.
+              description: Update the location this menu appears in the website.
             locale:
               type: string
               example: en-US
-              description: Set the language of this menu.
+              description: Change the language of this menu.
       required:
       - menu
       x-internal: true
@@ -12309,12 +13421,12 @@ components:
             name:
               type: string
               example: T-Shirts
-              description: The name of this Menu Item
+              description: Update the name of this Menu Item
             code:
               type: string
               nullable: true
               example: MEN-TS
-              description: Give this Menu Item a code to identify this Menu Item from
+              description: The Menu Item a code to identifies this Menu Item from
                 others. This is especially useful when using Container type Menu Items
                 to group items.
             subtitle:
@@ -12351,8 +13463,8 @@ components:
               - Spree::Taxon
               - Spree::Product
               - Spree::CmsPage
-              description: 'Set the type of resource you want to link to, or set to:
-                URL to use the destination field for an external link.'
+              description: 'Change the type of resource you want to link to, or set
+                to: URL to use the destination field for an external link.'
             linked_resource_id:
               type: integer
               example: 1
@@ -12481,7 +13593,7 @@ components:
             completed_at:
               type: string
               format: date_time
-              example: 2021-11-01 22:35:35 UTC
+              example: 2021-11-03 11:02:29 UTC
             bill_address_id:
               type: string
               example: '1'
@@ -12549,7 +13661,7 @@ components:
             approved_at:
               type: string
               format: date_time
-              example: 2021-11-01 22:35:35 UTC
+              example: 2021-11-03 11:02:29 UTC
             confirmation_delivered:
               type: boolean
               example: true
@@ -12616,7 +13728,7 @@ components:
             completed_at:
               type: string
               format: date_time
-              example: 2021-11-01 22:35:35 UTC
+              example: 2021-11-03 11:02:29 UTC
             bill_address_id:
               type: string
               example: '1'
@@ -12684,7 +13796,7 @@ components:
             approved_at:
               type: string
               format: date_time
-              example: 2021-11-01 22:35:35 UTC
+              example: 2021-11-03 11:02:29 UTC
             confirmation_delivered:
               type: boolean
               example: true

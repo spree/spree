@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe Spree::Promotion, type: :model do
+  it_behaves_like 'metadata'
+
   let(:store) { create(:store) }
   let(:promotion) { create(:promotion) }
 

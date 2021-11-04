@@ -28,6 +28,8 @@ describe Spree::Api::V2::Platform::AddressSerializer do
             updated_at: address.updated_at,
             deleted_at: address.deleted_at,
             label: address.label,
+            public_metadata: {},
+            private_metadata: {}
           },
           relationships: {
             country: {

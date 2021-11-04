@@ -10,7 +10,7 @@ module Spree
       let(:menu_b) { create :menu, location: 'footer' }
 
       it 'allows creation of a new instance, update the store then save without triggering validation error' do
-        object = Spree::CmsPage.new(title: 'Got Name', locale: 'de')
+        object = Spree::CmsPage.new(title: 'Got Name', locale: 'de', type: 'Spree::Cms::Pages::StandardPage')
         object.update(store: store)
 
         expect(object.save!).to be true

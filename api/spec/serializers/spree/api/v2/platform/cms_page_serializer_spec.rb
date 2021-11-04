@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Spree::Api::V2::Platform::CmsPageSerializer do
   subject { described_class.new(cms_page) }
 
-  let(:cms_page) { create(:base_cms_page, cms_sections: create_list(:cms_section, 2)) }
+  let(:cms_page) { create(:cms_feature_page, cms_sections: create_list(:cms_hero_image_section, 2)) }
 
   it { expect(subject.serializable_hash).to be_kind_of(Hash) }
 

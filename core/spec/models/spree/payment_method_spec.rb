@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe Spree::PaymentMethod, type: :model do
+  it_behaves_like 'metadata'
+
   let(:store) { create(:store) }
 
   context 'visibility scopes' do

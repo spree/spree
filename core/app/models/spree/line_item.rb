@@ -1,5 +1,7 @@
 module Spree
   class LineItem < Spree::Base
+    include Metadata
+
     before_validation :ensure_valid_quantity
 
     with_options inverse_of: :line_items do

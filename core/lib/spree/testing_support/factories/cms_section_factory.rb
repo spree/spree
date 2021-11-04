@@ -1,8 +1,8 @@
 FactoryBot.define do
-  factory :cms_section, class: Spree::CmsSection do
+  factory :base_cms_section, class: Spree::CmsSection do
     name { generate(:random_string) }
 
-    association :cms_page, factory: :base_cms_page
+    association :cms_page, factory: :cms_feature_page
 
     factory :cms_hero_image_section do
       type { 'Spree::Cms::Sections::HeroImage' }

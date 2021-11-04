@@ -1,9 +1,11 @@
 require 'spec_helper'
 
-describe 'StoreCredit' do
+describe Spree::StoreCredit, type: :model do
   let(:currency) { 'TEST' }
   let(:store_credit) { build(:store_credit, store_credit_attrs) }
   let(:store_credit_attrs) { {} }
+
+  it_behaves_like 'metadata'
 
   describe 'callbacks' do
     subject { store_credit.save }
