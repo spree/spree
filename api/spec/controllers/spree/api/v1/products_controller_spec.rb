@@ -183,7 +183,7 @@ module Spree
           product.update_column(:slug, "#{other_product.id}-and-1-ways")
         end
 
-        xit do
+        it do
           api_get :show, id: product.to_param
           expect(json_response['slug']).to match(/and-1-ways/)
           product.destroy
@@ -399,7 +399,7 @@ module Spree
         end
       end
 
-      xit 'can delete a product' do
+      it 'can delete a product' do
         expect(product.deleted_at).to be_nil
         api_delete :destroy, id: product.to_param
         expect(response.status).to eq(204)
