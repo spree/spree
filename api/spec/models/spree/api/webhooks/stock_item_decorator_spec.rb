@@ -55,7 +55,7 @@ describe Spree::StockItem do
     end
 
     describe '#destroy' do
-      let(:second_variant) do
+      let!(:second_variant) do
         variant = create(:variant, product: product)
         variant.stock_items.take.set_count_on_hand(10)
         variant
@@ -63,6 +63,8 @@ describe Spree::StockItem do
 
       context 'when all product variants are tracked' do
         context 'when product total_on_hand after deleting some stock item is greater than 0' do
+          before { stock_item.adjust_count_on_hand(10) }
+
           it 'does not emit the product.out_of_stock event' do
             expect { second_variant.stock_items.take.destroy }.not_to emit_webhook_event('product.out_of_stock')
           end
@@ -106,7 +108,10 @@ describe Spree::StockItem do
         end
 
         context 'when product total_on_hand after deleting some stock item is less than 0' do
-          before { stock_item.set_count_on_hand(-5) }
+          before do
+            stock_item.update(backorderable: true)
+            stock_item.set_count_on_hand(-5)
+          end
 
           it 'does not emit the product.out_of_stock event' do
             expect { second_variant.stock_items.take.destroy }.not_to emit_webhook_event('product.out_of_stock')
