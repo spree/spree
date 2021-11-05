@@ -831,7 +831,9 @@ RSpec.configure do |config|
                 required: %w[name presentation],
                 properties: {
                   name: { type: :string, example: 'color' },
-                  presentation: { type: :string, example: 'Color' }
+                  presentation: { type: :string, example: 'Color' },
+                  public_metadata: { type: :object },
+                  private_metadata: { type: :object }
                 }
               }
             },
@@ -845,7 +847,9 @@ RSpec.configure do |config|
                 type: :object,
                 properties: {
                   name: { type: :string, example: 'color' },
-                  presentation: { type: :string, example: 'Color' }
+                  presentation: { type: :string, example: 'Color' },
+                  public_metadata: { type: :object },
+                  private_metadata: { type: :object }
                 }
               }
             },
@@ -862,7 +866,9 @@ RSpec.configure do |config|
                 required: %w[name presentation],
                 properties: {
                   name: { type: :string, example: 'red' },
-                  presentation: { type: :string, example: 'Red' }
+                  presentation: { type: :string, example: 'Red' },
+                  public_metadata: { type: :object },
+                  private_metadata: { type: :object }
                 }
               }
             },
@@ -876,7 +882,9 @@ RSpec.configure do |config|
                 type: :object,
                 properties: {
                   name: { type: :string, example: 'red' },
-                  presentation: { type: :string, example: 'Red' }
+                  presentation: { type: :string, example: 'Red' },
+                  public_metadata: { type: :object },
+                  private_metadata: { type: :object }
                 }
               }
             },
@@ -1005,7 +1013,9 @@ RSpec.configure do |config|
                         { type: :string, example: '2' }
                       ]
                     }
-                  }
+                  },
+                  public_metadata: { type: :object },
+                  private_metadata: { type: :object }
                 }
               }
             },
@@ -1031,7 +1041,9 @@ RSpec.configure do |config|
                         { type: :string, example: '2' }
                       ]
                     }
-                  }
+                  },
+                  public_metadata: { type: :object },
+                  private_metadata: { type: :object }
                 }
               }
             },
