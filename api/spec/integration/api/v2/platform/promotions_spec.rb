@@ -3,11 +3,22 @@ require 'swagger_helper'
 describe 'Promotions API', swagger: true do
   include_context 'Platform API v2'
 
-  resource_name = 'Promotions'
+  resource_name = 'Promotion'
   options = {
     include_example: 'promotion_category,promotion_rules,promotion_actions,stores',
     filter_examples: [{ name: 'filter[code_eq]', example: 'BLK-FRI' },
-                      { name: 'filter[name_cont]', example: 'New Customer' }]
+                      { name: 'filter[name_cont]', example: 'New Customer' }],
+    custom_update_params: {
+      oneOf: [
+        { '$ref' => '#/components/schemas/update_promotion_params' },
+        { '$ref' => '#/components/schemas/update_promotion_add_rule_params' },
+        { '$ref' => '#/components/schemas/update_promotion_update_rule_params' },
+
+        { '$ref' => '#/components/schemas/update_promotion_add_action_params' },
+        { '$ref' => '#/components/schemas/update_promotion_action_calculator_params' },
+        { '$ref' => '#/components/schemas/update_promotion_change_calculator_params' }
+      ]
+    }
   }
 
   let!(:store) { Spree::Store.default }

@@ -56,7 +56,10 @@ RSpec.configure do |config|
         { name: 'Orders' },
         { name: 'Payments' },
         { name: 'Payment Methods' },
+        { name: 'Promotions' },
+        { name: 'Promotion Actions' },
         { name: 'Promotion Categories' },
+        { name: 'Promotion Rules' },
         { name: 'Shipments' },
         { name: 'Shipping Categories' },
         { name: 'Shipping Methods' },
@@ -357,7 +360,7 @@ RSpec.configure do |config|
                   gutters: { type: :string, example: 'No Gutters', enum: ['Gutters', 'No Gutters'], description: 'This value is used by front end developers for styling the section padding.' },
                   button_text: { type: :string, example: 'Click Here', description: 'Set the text value of the button used in this section.' },
                   title: { type: :string, example: 'Shop Today', description: 'Create a title for the Hero Section.' },
-                  'digital[image_one]': { type: :string, format: :binary, description: 'Use a `multipart/form-data` request to upload assets.' }
+                  'cms_section[image_one]': { type: :string, format: :binary, description: 'Use a `multipart/form-data` request to upload assets.' }
                 }
               }
             },
@@ -405,8 +408,8 @@ RSpec.configure do |config|
                   subtitle_one: { type: :string, example: 'Save 50% today', nullable: true, description: 'Set the subtitle used in image one.' },
                   subtitle_two: { type: :string, example: 'Save 50% today', nullable: true, description: 'Set the subtitle used in image two.' },
                   gutters: { type: :string, example: 'No Gutters', enum: ['Gutters', 'No Gutters'], description: 'This value is used by front end developers for styling the section padding.' },
-                  'digital[image_one]': { type: :string, format: :binary, description: 'Use a `multipart/form-data` request to upload assets.' },
-                  'digital[image_two]': { type: :string, format: :binary, description: 'Use a `multipart/form-data` request to upload assets.' }
+                  'cms_section[image_one]': { type: :string, format: :binary, description: 'Use a `multipart/form-data` request to upload assets.' },
+                  'cms_section[image_two]': { type: :string, format: :binary, description: 'Use a `multipart/form-data` request to upload assets.' }
                 }
               }
             },
@@ -437,9 +440,9 @@ RSpec.configure do |config|
                   fit: { type: :string, example: 'Screen', enum: ['Screen', 'Container'], description: 'This value is used by front end developers to set CSS classes for content that fits the screen edge-to-edge, or stays within the boundaries of the central container.' },
                   layout_style: { type: :string, example: 'Default', enum: ['Default', 'Reversed'], description: 'This value is used by front end developers for styling the order the images appear.' },
                   display_labels: { type: :string, example: 'Show', enum: ['Show', 'Hide'], description: 'This value is used by front end developers for showing and hiding the label on the images.' },
-                  'digital[image_one]': { type: :string, format: :binary, description: 'Use a `multipart/form-data` request to upload assets.' },
-                  'digital[image_two]': { type: :string, format: :binary, description: 'Use a `multipart/form-data` request to upload assets.' },
-                  'digital[image_three]': { type: :string, format: :binary, description: 'Use a `multipart/form-data` request to upload assets.' }
+                  'cms_section[image_one]': { type: :string, format: :binary, description: 'Use a `multipart/form-data` request to upload assets.' },
+                  'cms_section[image_two]': { type: :string, format: :binary, description: 'Use a `multipart/form-data` request to upload assets.' },
+                  'cms_section[image_three]': { type: :string, format: :binary, description: 'Use a `multipart/form-data` request to upload assets.' }
                 }
               }
             },
@@ -508,7 +511,7 @@ RSpec.configure do |config|
                   gutters: { type: :string, example: 'No Gutters', enum: ['Gutters', 'No Gutters'], description: 'This value is used by front end developers for styling the section padding.' },
                   button_text: { type: :string, example: 'Click Here', description: 'Update the text value of the button used in this section.' },
                   title: { type: :string, example: 'Shop Today', description: 'Update the title for this section.' },
-                  'digital[image_one]': { type: :string, format: :binary, description: 'Use a `multipart/form-data` request to upload assets.' }
+                  'cms_section[image_one]': { type: :string, format: :binary, description: 'Use a `multipart/form-data` request to upload assets.' }
 
                 }
               }
@@ -553,8 +556,8 @@ RSpec.configure do |config|
                   subtitle_one: { type: :string, example: 'Save 50% today', nullable: true, description: 'Update the subtitle used in image one.' },
                   subtitle_two: { type: :string, example: 'Save 50% today', nullable: true, description: 'Update the subtitle used in image two.' },
                   gutters: { type: :string, example: 'No Gutters', enum: ['Gutters', 'No Gutters'], description: 'This value is used by front end developers for styling the section padding.' },
-                  'digital[image_one]': { type: :string, format: :binary, description: 'Use a `multipart/form-data` request to upload assets.' },
-                  'digital[image_two]': { type: :string, format: :binary, description: 'Use a `multipart/form-data` request to upload assets.' }
+                  'cms_section[image_one]': { type: :string, format: :binary, description: 'Use a `multipart/form-data` request to upload assets.' },
+                  'cms_section[image_two]': { type: :string, format: :binary, description: 'Use a `multipart/form-data` request to upload assets.' }
                 }
               }
             },
@@ -583,9 +586,9 @@ RSpec.configure do |config|
                   fit: { type: :string, example: 'Screen', enum: ['Screen', 'Container'], description: 'This value is used by front end developers to set CSS classes for content that fits the screen edge-to-edge, or stays within the boundaries of the central container.' },
                   layout_style: { type: :string, example: 'Default', enum: ['Default', 'Reversed'], description: 'This value is used by front end developers for styling the order the images appear.' },
                   display_labels: { type: :string, example: 'Show', enum: ['Show', 'Hide'], description: 'This value is used by front end developers for showing and hiding the label on the images.' },
-                  'digital[image_one]': { type: :string, format: :binary, description: 'Use a `multipart/form-data` request to upload assets.' },
-                  'digital[image_two]': { type: :string, format: :binary, description: 'Use a `multipart/form-data` request to upload assets.' },
-                  'digital[image_three]': { type: :string, format: :binary, description: 'Use a `multipart/form-data` request to upload assets.' }
+                  'cms_section[image_one]': { type: :string, format: :binary, description: 'Use a `multipart/form-data` request to upload assets.' },
+                  'cms_section[image_two]': { type: :string, format: :binary, description: 'Use a `multipart/form-data` request to upload assets.' },
+                  'cms_section[image_three]': { type: :string, format: :binary, description: 'Use a `multipart/form-data` request to upload assets.' }
                 }
               }
             },
@@ -763,7 +766,7 @@ RSpec.configure do |config|
                 type: :object,
                 required: %w[name menu_id],
                 properties: {
-                  name: { type: :string, example: 'T-Shirts', description: 'The name of this Menu Item'},
+                  name: { type: :string, example: 'T-Shirts', description: 'The name of this Menu Item' },
                   code: { type: :string, nullable: true, example: 'MEN-TS', description: 'Give this Menu Item a code to identify this Menu Item from others. This is especially useful when using Container type Menu Items to group items.' },
                   subtitle: { type: :string, nullable: true, example: "Shop men's T-Shirts", description: 'Set an optional subtitle for the Menu Item, this is useful if your menu has promotional links that require more than just a link name.' },
                   destination: { type: :string, nullable: true, example: 'https://getvendo.com', description: 'Used when the linked_resource_type is set to: URL' },
@@ -785,7 +788,7 @@ RSpec.configure do |config|
               menu_item: {
                 type: :object,
                 properties: {
-                  name: { type: :string, example: 'T-Shirts', description: 'Update the name of this Menu Item'},
+                  name: { type: :string, example: 'T-Shirts', description: 'Update the name of this Menu Item' },
                   code: { type: :string, nullable: true, example: 'MEN-TS', description: 'The Menu Item a code to identifies this Menu Item from others. This is especially useful when using Container type Menu Items to group items.' },
                   subtitle: { type: :string, nullable: true, example: "Shop men's T-Shirts", description: 'Set an optional subtitle for the Menu Item, this is useful if your menu has promotional links that require more than just a link name.' },
                   destination: { type: :string, nullable: true, example: 'https://getvendo.com', description: 'Used when the linked_resource_type is set to: URL' },
@@ -1122,6 +1125,194 @@ RSpec.configure do |config|
               }
             },
             required: %w[product],
+            'x-internal': true
+          },
+
+          # Promotion
+          create_promotion_params: {
+            type: :object,
+            properties: {
+              promotion: {
+                type: :object,
+                required: %w[name],
+                properties: {
+                  name: { type: :string, example: 'Promotions Used in 2021' },
+                  code: { type: :string, example: '2021-PROMOS' },
+                  description: { type: :string, example: 'Save today with discount code XYZ at checkout.' },
+                  usage_limit: { type: :integer, example: 100 },
+                  advertise: { type: :boolean },
+                  starts_at: { type: :string, format: :date_time },
+                  ends_at: { type: :string, format: :date_time },
+                  store_ids: {
+                    type: :array,
+                    items: {
+                      allOf: [
+                        { type: :string, example: '2' }
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            required: %w[promotion],
+            title: 'Create a Promotion',
+            'x-internal': true
+          },
+          update_promotion_params: {
+            type: :object,
+            properties: {
+              promotion: {
+                type: :object,
+                properties: {
+                  name: { type: :string, example: 'Promotions Used in 2021' },
+                  code: { type: :string, example: '2021-PROMOS' },
+                  description: { type: :string, example: 'Save today with discount code XYZ at checkout.' },
+                  usage_limit: { type: :integer, example: 100 },
+                  advertise: { type: :boolean },
+                  starts_at: { type: :string, format: :date_time },
+                  ends_at: { type: :string, format: :date_time },
+                  store_ids: {
+                    type: :array,
+                    items: {
+                      allOf: [
+                        { type: :string, example: '2' }
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            required: %w[promotion],
+            title: 'Update a Promotion',
+            'x-internal': true
+          },
+          update_promotion_add_rule_params: {
+            type: :object,
+            properties: {
+              promotion: {
+                type: :object,
+                properties: {
+                  promotion_rules_attributes: {
+                    type: :array,
+                    items: {
+                      allOf: [
+                        properties: {
+                          type: { type: :string, example: 'Spree::Promotion::Rules::Country' },
+                          preferred_country_id: { type: :boolean, example: 122 },
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            required: %w[promotion],
+            title: 'Add a Rule to a Promotion',
+            'x-internal': true
+          },
+          update_promotion_update_rule_params: {
+            type: :object,
+            properties: {
+              promotion: {
+                type: :object,
+                properties: {
+                  promotion_rules_attributes: {
+                    type: :array,
+                    items: {
+                      allOf: [
+                        properties: {
+                          id: { type: :string, example: '22', description: 'To update an existing Promotion Rule, you are required to pass the ID.' },
+                          type: { type: :string, example: 'Spree::Promotion::Rules::Country' },
+                          preferred_country_id: { type: :boolean, example: 143 },
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            required: %w[promotion],
+            title: 'Update an existing Rule',
+            'x-internal': true
+          },
+          update_promotion_add_action_params: {
+            type: :object,
+            properties: {
+              promotion: {
+                type: :object,
+                properties: {
+                  promotion_actions_attributes: {
+                    type: :array,
+                    items: {
+                      allOf: [
+                        properties: {
+                          type: { type: :string, example: 'Spree::Promotion::Actions::CreateAdjustment', enum: ['Spree::Promotion::Actions::CreateAdjustment', 'Spree::Promotion::Actions::CreateItemAdjustments', 'Spree::Promotion::Actions::FreeShipping', 'Spree::Promotion::Actions::CreateLineItems'] },
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            required: %w[promotion],
+            title: 'Add an Action to a Promotion',
+            'x-internal': true
+          },
+          update_promotion_action_calculator_params: {
+            type: :object,
+            properties: {
+              promotion: {
+                type: :object,
+                properties: {
+                  promotion_actions_attributes: {
+                    type: :array,
+                    items: {
+                      allOf: [
+                        properties: {
+                          id: { type: :string, example: '22', description: 'To update an existing Promotion Action, you are required to pass the ID.' },
+                          calculator_attributes: {
+                            properties: {
+                              id: { type: :string, example: '19', description: 'To update an existing Action Calculator, you are required to pass the ID.' },
+                              preferred_flat_percent: { type: :integer, example: 10 }
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            required: %w[promotion],
+            title: 'Update an Action Calculator',
+            'x-internal': true
+          },
+          update_promotion_change_calculator_params: {
+            type: :object,
+            properties: {
+              promotion: {
+                type: :object,
+                properties: {
+                  promotion_actions_attributes: {
+                    type: :array,
+                    items: {
+                      allOf: [
+                        properties: {
+                          id: { type: :string, example: '22', description: 'To update an existing Promotion Action, you are required to pass the ID.' },
+                          calculator_attributes: {
+                            properties: {
+                              type: { type: :string, example: 'Spree::Promotion::Actions::CreateAdjustment', enum: ['Spree::Promotion::Actions::CreateAdjustment', 'Spree::Promotion::Actions::CreateItemAdjustments', 'Spree::Promotion::Actions::FreeShipping', 'Spree::Promotion::Actions::CreateLineItems'], description: 'Set the calculator type.' },
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            required: %w[promotion],
+            title: 'Change an Action Calculator',
             'x-internal': true
           },
 

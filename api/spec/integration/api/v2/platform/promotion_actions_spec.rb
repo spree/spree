@@ -3,11 +3,11 @@ require 'swagger_helper'
 describe 'Promotion Actions API', swagger: true do
   include_context 'Platform API v2'
 
-  resource_name = 'Promotion Actions'
+  resource_name = 'Promotion Action'
   options = {
     skip_invalid_params: true,
     include_example: 'calculator',
-    filter_examples: [{ name: 'filter[type]', example: 'Spree::Promotion::Actions::CreateAdjustment' }]
+    filter_examples: [{ name: 'filter[type_eq]', example: 'Spree::Promotion::Actions::CreateAdjustment' }]
   }
 
   let(:promotion) { create(:promotion) }
