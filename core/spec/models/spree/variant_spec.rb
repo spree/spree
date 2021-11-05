@@ -98,12 +98,14 @@ describe Spree::Variant, type: :model do
 
       context 'when product is created without variants but with stock' do
         it { expect(product.master).to be_in_stock }
+        it { expect(product.master).not_to be_out_of_stock }
       end
 
       context 'when a variant is created' do
         let!(:new_variant) { create(:variant, product: product) }
 
         it { expect(product.master).not_to be_in_stock }
+        it { expect(product.master).to be_out_of_stock }
       end
     end
   end
@@ -534,6 +536,7 @@ describe Spree::Variant, type: :model do
 
         it 'returns true if stock_items in stock' do
           expect(variant.in_stock?).to be true
+          expect(variant.out_of_stock?).to be false
         end
       end
 
@@ -545,6 +548,7 @@ describe Spree::Variant, type: :model do
 
         it 'return false if stock_items out of stock' do
           expect(variant.in_stock?).to be false
+          expect(variant.out_of_stock?).to be true
         end
       end
     end
@@ -569,6 +573,7 @@ describe Spree::Variant, type: :model do
 
         it 'in_stock? returns false' do
           expect(variant.in_stock?).to be false
+          expect(variant.out_of_stock?).to be true
         end
 
         it 'can_supply? return true' do
