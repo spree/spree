@@ -2239,11 +2239,11 @@ paths:
                       id: '83'
                       type: country
                       attributes:
-                        iso_name: ISO_NAME_6
-                        iso: I6
-                        iso3: IS6
-                        name: NAME_6
-                        numcode: 840
+                        iso_name: NETHERLANDS
+                        iso: NL
+                        iso3: NLD
+                        name: Netherlands
+                        numcode: 528
                         states_required: false
                         updated_at: '2021-11-03T11:02:35.405Z'
                         zipcode_required: true
