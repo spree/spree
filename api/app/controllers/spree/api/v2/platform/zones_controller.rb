@@ -3,7 +3,6 @@ module Spree
     module V2
       module Platform
         class ZonesController < ResourceController
-
           private
 
           def model_class
