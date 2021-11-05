@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Spree::Api::Webhooks::StockItemDecorator do
   describe 'emitting variant.backorderable' do
-    let(:body) { Spree::Api::V2::Platform::VariantSerializer.new(variant).serializable_hash.to_json }
+    let(:body) { Spree::Api::V2::Platform::VariantSerializer.new(variant.reload).serializable_hash.to_json }
     let(:variant) { create(:variant) }
 
     before do
