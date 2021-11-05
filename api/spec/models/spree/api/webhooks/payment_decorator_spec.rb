@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::Payment do
+describe Spree::Api::Webhooks::PaymentDecorator do
   let(:body) { Spree::Api::V2::Platform::PaymentSerializer.new(payment).serializable_hash.to_json }
   let(:payment) { create(:payment) }
 

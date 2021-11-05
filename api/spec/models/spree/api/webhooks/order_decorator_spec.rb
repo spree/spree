@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::Order do
+describe Spree::Api::Webhooks::OrderDecorator do
   let(:store) { create(:store, default: true) }
   let(:body) do
     Spree::Api::V2::Platform::OrderSerializer.new(order).serializable_hash.to_json
