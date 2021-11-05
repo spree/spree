@@ -98,7 +98,9 @@ RSpec.configure do |config|
                   lastname: { type: :string, example: 'Snow' },
                   label: { type: :string, example: 'My home address' },
                   company: { type: :string, example: 'Vendo Cloud Inc' },
-                  user_id: { type: :string }
+                  user_id: { type: :string },
+                  public_metadata: { type: :object, example: { 'distance_from_nearest_city_in_km' => 10, 'location_type' => 'building' } },
+                  private_metadata: { type: :object, example: { 'close_to_shop' => true } }
                 }
               }
             },
@@ -124,7 +126,9 @@ RSpec.configure do |config|
                   lastname: { type: :string, example: 'Snow' },
                   label: { type: :string, example: 'My home address' },
                   company: { type: :string, example: 'Vendo Cloud Inc' },
-                  user_id: { type: :string }
+                  user_id: { type: :string },
+                  public_metadata: { type: :object, example: { 'distance_from_city_in_km' => 10, 'location_type' => 'building' } },
+                  private_metadata: { type: :object, example: { 'close_to_shop' => true } }
                 }
               }
             },
@@ -1262,7 +1266,9 @@ RSpec.configure do |config|
                 properties: {
                   taxonomy_id: { type: :string },
                   parent_id: { type: :string },
-                  name: { type: :string }
+                  name: { type: :string },
+                  public_metadata: { type: :object, example: { 'ability_to_recycle' => '90%' } },
+                  private_metadata: { type: :object, example: { 'profitability' => 2 } }
                 }
               }
             },
@@ -1277,7 +1283,9 @@ RSpec.configure do |config|
                 properties: {
                   taxonomy_id: { type: :string },
                   parent_id: { type: :string },
-                  name: { type: :string }
+                  name: { type: :string },
+                  public_metadata: { type: :object },
+                  private_metadata: { type: :object }
                 }
               }
             },

@@ -80,4 +80,18 @@ describe 'Platform API v2 Taxons API' do
       end
     end
   end
+
+  describe 'taxons#update' do
+    let!(:taxon) { create(:taxon, name: 'T-Shirts', taxonomy: taxonomy) }
+
+    before { patch "/api/v2/platform/taxons/#{taxon.id}", headers: bearer_token, params: { 'taxon' => params } }
+
+    describe 'public metadata' do
+      describe 'add a string entry' do
+        let(:params) { { public_metadata: { ability_to_recycle: '60%' } } }
+
+        it { expect(json_response['data']['attributes']['public_metadata']['ability_to_recycle']).to eq('60%') }
+      end
+    end
+  end
 end
