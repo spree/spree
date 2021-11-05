@@ -9,9 +9,9 @@ module Spree
         after_update_commit(proc { queue_webhooks_requests!(event_name(:update)) })
 
         def queue_webhooks_requests!(event)
-          return if disable_spree_webhooks? || body(event: event).blank?
+          return if disable_spree_webhooks? || (event_body = body(event: event)).blank?
 
-          Spree::Webhooks::Subscribers::QueueRequests.call(event: event, body: body(event: event))
+          Spree::Webhooks::Subscribers::QueueRequests.call(event: event, body: event_body)
         end
       end
 

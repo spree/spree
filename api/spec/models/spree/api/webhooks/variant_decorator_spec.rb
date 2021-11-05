@@ -7,9 +7,10 @@ describe Spree::Variant do
     context 'emitting variant.discontinued' do
       subject { variant.discontinue! }
 
-      let(:body) { Spree::Api::V2::Platform::VariantSerializer.new(variant).serializable_hash.to_json }
+      let(:params) { 'variant.discontinued' }
+      let(:body) { Spree::Api::V2::Platform::VariantSerializer.new(variant, serializer_params(event: params)).serializable_hash.to_json }
 
-      it { expect { subject }.to emit_webhook_event('variant.discontinued') }
+      it { expect { subject }.to emit_webhook_event(params) }
     end
   end
 end

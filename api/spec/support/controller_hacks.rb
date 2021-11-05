@@ -33,6 +33,15 @@ module ControllerHacks
       format: :json
     )
   end
+
+  def serializer_params(event:)
+    {
+      params: {
+        webhook_metadata: true,
+        event: event
+      }
+    }
+  end
 end
 
 RSpec.configure do |config|

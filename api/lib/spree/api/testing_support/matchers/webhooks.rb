@@ -60,3 +60,12 @@ RSpec::Matchers.define :emit_webhook_event do |event_to_emit|
 
   supports_block_expectations
 end
+
+def serializer_params(event:)
+  {
+    params: {
+      webhook_metadata: true,
+      event: event
+    }
+  }
+end

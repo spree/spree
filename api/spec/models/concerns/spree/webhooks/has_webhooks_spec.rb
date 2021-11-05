@@ -42,26 +42,32 @@ describe Spree::Webhooks::HasWebhooks do
   end
 
   context 'without DISABLE_SPREE_WEBHOOKS' do
-    let(:body) { Spree::Api::V2::Platform::ProductSerializer.new(product).serializable_hash.to_json }
+    let(:body) { Spree::Api::V2::Platform::ProductSerializer.new(product, serializer_params(event: params)).serializable_hash.to_json }
 
     context 'after_create_commit' do
-      it { expect { product.save }.to emit_webhook_event('product.create') }
+      let(:params) { 'product.create' }
+
+      it { expect { product.save }.to emit_webhook_event(params) }
     end
 
     context 'after_destroy_commit' do
+      let(:params) { 'product.destroy' }
+
       before { product.save }
 
-      it { expect { product.destroy }.to emit_webhook_event('product.destroy') }
+      it { expect { product.destroy }.to emit_webhook_event(params) }
     end
 
     context 'after_update_commit' do
+      let(:params) { 'product.update' }
+
       before { product.save }
 
-      it { expect { product.update(name: 'updated') }.to emit_webhook_event('product.update') }
+      it { expect { product.update(name: 'updated') }.to emit_webhook_event(params) }
     end
 
     context 'with a class name with multiple words' do
-      let(:body) { Spree::Api::V2::Platform::CmsPageSerializer.new(cms_page).serializable_hash.to_json }
+      let(:body) { Spree::Api::V2::Platform::CmsPageSerializer.new(cms_page, serializer_params(event: 'cms_page.create')).serializable_hash.to_json }
       let(:cms_page) { create(:cms_homepage, store: store, locale: 'en') }
 
       it 'underscorize the event name' do
