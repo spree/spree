@@ -261,6 +261,10 @@ module Spree
       end
     end
 
+    def out_of_stock?
+      !in_stock?
+    end
+
     def backorderable?
       @backorderable ||= Rails.cache.fetch(['variant-backorderable', cache_key_with_version]) do
         quantifier.backorderable?

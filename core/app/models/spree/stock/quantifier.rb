@@ -31,7 +31,7 @@ module Spree
       private
 
       def scope_to_location(collection)
-        return collection.with_active_stock_location unless stock_location.present?
+        return collection.with_active_stock_location if stock_location.blank?
 
         collection.where(stock_location: stock_location)
       end
