@@ -703,7 +703,9 @@ RSpec.configure do |config|
                 properties: {
                   order_id: { type: :string, example: '1' },
                   variant_id: { type: :string, example: '1' },
-                  quantity: { type: :integer, example: 2 }
+                  quantity: { type: :integer, example: 2 },
+                  public_metadata: { type: :object },
+                  private_metadata: { type: :object }
                 }
               }
             },
@@ -935,7 +937,9 @@ RSpec.configure do |config|
                   line_items_attributes: {
                     type: :array,
                     items: { '$ref': '#/components/schemas/update_line_item_params' }
-                  }
+                  },
+                  public_metadata: { type: :object },
+                  private_metadata: { type: :object }
                 }
               }
             },
@@ -984,7 +988,9 @@ RSpec.configure do |config|
                   line_items_attributes: {
                     type: :array,
                     items: { '$ref': '#/components/schemas/update_line_item_params' }
-                  }
+                  },
+                  public_metadata: { type: :object },
+                  private_metadata: { type: :object }
                 }
               }
             },
@@ -1230,6 +1236,8 @@ RSpec.configure do |config|
                     }
                   },
                   calculator_attributes: { '$ref': '#/components/schemas/shipping_calculator_params' },
+                  public_metadata: { type: :object },
+                  private_metadata: { type: :object }
                 }
               }
             },
@@ -1257,6 +1265,8 @@ RSpec.configure do |config|
                     }
                   },
                   calculator_attributes: { '$ref': '#/components/schemas/shipping_calculator_params' },
+                  public_metadata: { type: :object },
+                  private_metadata: { type: :object }
                 }
               }
             },
@@ -1322,6 +1332,8 @@ RSpec.configure do |config|
                   password_confirmation: { type: :string },
                   ship_address_id: { type: :string },
                   bill_address_id: { type: :string },
+                  public_metadata: { type: :object },
+                  private_metadata: { type: :object }
                 }
               }
             },
@@ -1339,6 +1351,8 @@ RSpec.configure do |config|
                   password_confirmation: { type: :string },
                   ship_address_id: { type: :string },
                   bill_address_id: { type: :string },
+                  public_metadata: { type: :object },
+                  private_metadata: { type: :object }
                 }
               }
             },
