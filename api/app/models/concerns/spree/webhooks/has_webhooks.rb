@@ -9,9 +9,9 @@ module Spree
         after_update_commit(proc { queue_webhooks_requests!(event_name(:update)) })
 
         def queue_webhooks_requests!(event)
-          return if disable_spree_webhooks? || body(event).blank?
+          return if disable_spree_webhooks? || body(event: event).blank?
 
-          Spree::Webhooks::Subscribers::QueueRequests.call(event: event, body: body(event))
+          Spree::Webhooks::Subscribers::QueueRequests.call(event: event, body: body(event: event))
         end
       end
 
@@ -21,8 +21,8 @@ module Spree
         "#{self.class.name.demodulize.tableize.singularize}.#{operation}"
       end
 
-      def body(event)
-        resource_serializer.new(self, serializer_params(event)).serializable_hash.to_json
+      def body(event:)
+        resource_serializer.new(self, serializer_params(event: event)).serializable_hash.to_json
       end
 
       def resource_serializer
@@ -30,10 +30,11 @@ module Spree
         "Spree::Api::V2::Platform::#{demodulized_class_name}Serializer".constantize
       end
 
-      def serializer_params(operation)
+      def serializer_params(event:)
         {
           params: {
-            webhook_action: operation
+            webhook_metadata: true,
+            event: event
           }
         }
       end
