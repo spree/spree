@@ -66,7 +66,8 @@ RSpec.configure do |config|
         { name: 'Webhook Subscribers' },
         { name: 'Wishlists' },
         { name: 'Wished Items' },
-        { name: 'Variants' }
+        { name: 'Variants' },
+        { name: 'Zones' }
       ],
       components: {
         securitySchemes: {
@@ -1446,6 +1447,41 @@ RSpec.configure do |config|
               }
             },
             required: %w[wished_item],
+            'x-internal': true
+          },
+
+          # Zones
+          create_zone_params: {
+            type: :object,
+            properties: {
+              zone: {
+                type: :object,
+                required: %w[name],
+                properties: {
+                  name: { type: :string, example: 'EU' },
+                  description: { type: :string, example: 'All countries in the EU' },
+                  default_tax: { type: :boolean },
+                  kind: { type: :string, example: 'state', enum: %w[state country] }
+                }
+              }
+            },
+            required: %w[zone],
+            'x-internal': true
+          },
+          update_zone_params: {
+            type: :object,
+            properties: {
+              address: {
+                type: :object,
+                properties: {
+                  name: { type: :string, example: 'EU' },
+                  description: { type: :string, example: 'All countries in the EU' },
+                  default_tax: { type: :boolean },
+                  kind: { type: :string, example: 'state', enum: %w[state country] }
+                }
+              }
+            },
+            required: %w[zone],
             'x-internal': true
           },
 
