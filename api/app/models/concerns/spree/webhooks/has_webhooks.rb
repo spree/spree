@@ -5,7 +5,7 @@ module Spree
 
       included do
         after_create_commit(proc { queue_webhooks_requests!(event_name(:create)) })
-        after_destroy_commit(proc { queue_webhooks_requests!(event_name(:destroy)) })
+        after_destroy_commit(proc { queue_webhooks_requests!(event_name(:delete)) })
         after_update_commit(proc { queue_webhooks_requests!(event_name(:update)) })
 
         def queue_webhooks_requests!(event)

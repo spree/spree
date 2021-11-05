@@ -16,7 +16,7 @@ describe Spree::Api::Webhooks::OrderDecorator do
 
   describe 'order.placed' do
     describe 'checkout -> completed' do
-      let(:order) { described_class.create(email: 'test@example.com', store: store) }
+      let(:order) { create(:order, email: 'test@example.com', store: store) }
 
       it { expect { Timecop.freeze { order.finalize! } }.to emit_webhook_event('order.placed') }
     end
