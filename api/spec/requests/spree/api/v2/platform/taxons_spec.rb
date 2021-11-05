@@ -81,16 +81,66 @@ describe 'Platform API v2 Taxons API' do
     end
   end
 
-  describe 'taxons#update' do
+  describe 'taxons#update for metadata' do
     let!(:taxon) { create(:taxon, name: 'T-Shirts', taxonomy: taxonomy) }
 
-    before { patch "/api/v2/platform/taxons/#{taxon.id}", headers: bearer_token, params: { 'taxon' => params } }
+    before { patch "/api/v2/platform/taxons/#{taxon.id}", headers: bearer_token, params: { 'taxon' => taxon_params } }
 
     describe 'public metadata' do
-      describe 'add a string entry' do
-        let(:params) { { public_metadata: { ability_to_recycle: '60%' } } }
+      let(:taxon_params) { { public_metadata: metadata_params } }
 
-        it { expect(json_response['data']['attributes']['public_metadata']['ability_to_recycle']).to eq('60%') }
+      describe 'string entry' do
+        let(:metadata_params) { { ability_to_recycle: '60%' } }
+
+        it 'adds the metadata property' do
+          expect(json_response['data']['attributes']['public_metadata']['ability_to_recycle']).to eq('60%')
+        end
+      end
+
+      describe 'number entry' do
+        let(:metadata_params) { { profitability: 3.4 } }
+
+        it { expect(json_response['data']['attributes']['public_metadata']['profitability']).to eq('3.4') }
+      end
+
+      describe 'boolean entry' do
+        let(:metadata_params) { { in_foreign_country: true } }
+
+        it { expect(json_response['data']['attributes']['public_metadata']['in_foreign_country']).to eq('true') }
+      end
+
+      describe 'array entry' do
+        let(:metadata_params) { { top_years: %w[2011 2016 2020] } }
+
+        it { expect(json_response['data']['attributes']['public_metadata']['top_years']).to eq(%w[2011 2016 2020]) }
+      end
+    end
+
+    describe 'private metadata' do
+      let(:taxon_params) { { private_metadata: metadata_params } }
+
+      describe 'string entry' do
+        let(:metadata_params) { { ability_to_recycle: '60%' } }
+
+        it { expect(json_response['data']['attributes']['private_metadata']['ability_to_recycle']).to eq('60%') }
+      end
+
+      describe 'number entry' do
+        let(:metadata_params) { { profitability: 3.4 } }
+
+        it { expect(json_response['data']['attributes']['private_metadata']['profitability']).to eq('3.4') }
+      end
+
+      describe 'boolean entry' do
+        let(:metadata_params) { { in_foreign_country: false } }
+
+        it { expect(json_response['data']['attributes']['private_metadata']['in_foreign_country']).to eq('false') }
+      end
+
+      describe 'array entry' do
+        let(:metadata_params) { { top_years: %w[2011 2016 2020] } }
+
+        it { expect(json_response['data']['attributes']['private_metadata']['top_years']).to eq(%w[2011 2016 2020]) }
       end
     end
   end

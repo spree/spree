@@ -1086,7 +1086,9 @@ RSpec.configure do |config|
                   cost_price: { type: :string },
                   compare_at_price: { type: :string },
                   option_type_ids: { type: :string },
-                  taxon_ids: { type: :string }
+                  taxon_ids: { type: :string },
+                  public_metadata: { type: :object },
+                  private_metadata: { type: :object }
                 }
               }
             },
@@ -1121,7 +1123,9 @@ RSpec.configure do |config|
                   cost_price: { type: :string },
                   compare_at_price: { type: :string },
                   option_type_ids: { type: :string },
-                  taxon_ids: { type: :string }
+                  taxon_ids: { type: :string },
+                  public_metadata: { type: :object },
+                  private_metadata: { type: :object }
                 }
               }
             },
