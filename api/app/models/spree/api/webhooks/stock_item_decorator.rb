@@ -20,7 +20,7 @@ module Spree
 
         def emits_webhook_event_on_create?(variant, was_out_of_stock)
           was_out_of_stock && variant.in_stock? &&
-            # rewritting `variant.backorderable?` as is currently being cached
+            # rewriting `variant.backorderable?` as is currently being cached
             variant.stock_items.with_active_stock_location.any?(&:backorderable)
         end
 
