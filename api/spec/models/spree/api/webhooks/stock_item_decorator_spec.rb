@@ -4,13 +4,12 @@ describe Spree::Api::Webhooks::StockItemDecorator do
   describe 'emitting variant.backorderable' do
     let(:body) { Spree::Api::V2::Platform::VariantSerializer.new(variant.reload).serializable_hash.to_json }
     let(:variant) { create(:variant) }
+    let(:stock_item) { variant.stock_items.first }
 
     before do
       # makes sure variant.backorderable == false
       stock_item.update(backorderable: false)
     end
-
-    let(:stock_item) { variant.stock_items.first }
 
     context 'when creating a variant stock item' do
       context 'when variant has no stock items' do
@@ -20,6 +19,7 @@ describe Spree::Api::Webhooks::StockItemDecorator do
           context 'when variant changes to be backorderable' do
             it do
               expect do
+                variant.reload
                 Timecop.freeze do
                   create(:stock_item, variant: variant, backorderable: true, count_on_hand: 1)
                 end

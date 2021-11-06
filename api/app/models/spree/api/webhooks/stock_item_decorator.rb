@@ -3,39 +3,37 @@ module Spree
     module Webhooks
       module StockItemDecorator
         def self.prepended(base)
-          base.around_create :queue_webhooks_requests_for_variant_backorderable_on_create!
-          base.around_update :queue_webhooks_requests_for_variant_backorderable_on_update!
+          base.around_save :queue_webhooks_requests_for_variant_backorderable!
         end
 
         private
 
-        def queue_webhooks_requests_for_variant_backorderable_on_create!
-          was_out_of_stock = variant.out_of_stock?
-          yield
-          reload
-          return unless emits_webhook_event_on_create?(variant.reload, was_out_of_stock)
-
-          variant.queue_webhooks_requests!('variant.backorderable') 
-        end
-
-        def emits_webhook_event_on_create?(variant, was_out_of_stock)
-          was_out_of_stock && variant.in_stock? &&
-            # rewriting `variant.backorderable?` as is currently being cached
-            variant.stock_items.with_active_stock_location.any?(&:backorderable)
-        end
-
-        def queue_webhooks_requests_for_variant_backorderable_on_update!
-          was_out_of_stock = variant.out_of_stock?
-          was_not_orderable = !variant.backorderable?
+        def queue_webhooks_requests_for_variant_backorderable!
+          was_out_of_stock = !variant_in_stock?
+          was_not_backorderable = !variant_backorderable?
           yield
           touch # changes must be reflected before instantiating the serializer
-          return unless emits_webhook_event_on_update?(variant, was_out_of_stock, was_not_orderable)
+          return unless emits_webhook_event?(was_not_backorderable, was_out_of_stock)
 
           variant.queue_webhooks_requests!('variant.backorderable')
         end
 
-        def emits_webhook_event_on_update?(variant, was_out_of_stock, was_not_orderable)
-          was_out_of_stock && was_not_orderable && variant.in_stock? && variant.backorderable?
+        def emits_webhook_event?(was_not_backorderable, was_out_of_stock)
+          was_out_of_stock && was_not_backorderable && variant_in_stock? && variant_backorderable?
+        end
+
+        # rewriting `variant.in_stock?` as is currently being cached
+        def variant_in_stock?
+          stock_items.sum(:count_on_hand) > 0
+        end
+
+        # rewriting `variant.backorderable?` as is currently being cached
+        def variant_backorderable?
+          stock_items.any?(&:backorderable)
+        end
+
+        def stock_items
+          variant.stock_items.with_active_stock_location
         end
       end
     end
