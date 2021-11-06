@@ -78,6 +78,8 @@ gem 'sassc', github: 'sass/sassc-ruby', branch: 'master'
 
 gem 'rack-cache'
 gem 'oj'
+
+gem 'jsbundling-rails'
 RUBY
 
 cat <<RUBY >> config/environments/development.rb
@@ -103,10 +105,15 @@ end
 RUBY
 
 bundle install --gemfile Gemfile
-bundle exec rails db:drop || true
-bundle exec rails db:create
-bundle exec rails g spree:install --auto-accept --user_class=Spree::User --sample=true
-bundle exec rails g spree:backend:install
-bundle exec rails g spree:emails:install
-bundle exec rails g spree:auth:install
-bundle exec rails g spree_gateway:install
+
+bin/rails javascript:install:esbuild
+yarn link @spree/dashboard
+yarn install
+
+bin/rails db:drop || true
+bin/rails db:create
+bin/rails g spree:install --auto-accept --user_class=Spree::User --sample=true
+bin/rails g spree:backend:install
+bin/rails g spree:emails:install
+bin/rails g spree:auth:install
+bin/rails g spree_gateway:install
