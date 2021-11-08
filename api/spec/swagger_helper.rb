@@ -1164,13 +1164,13 @@ RSpec.configure do |config|
                 type: :object,
                 required: %w[name],
                 properties: {
-                  name: { type: :string, example: 'Promotions Used in 2021' },
-                  code: { type: :string, example: '2021-PROMOS' },
-                  description: { type: :string, example: 'Save today with discount code XYZ at checkout.' },
-                  usage_limit: { type: :integer, example: 100 },
+                  name: { type: :string, example: 'Promotions Used in 2021', description: 'Give the promotion a name.' },
+                  code: { type: :string, example: 'BLK-FRI', nullable: true, description: 'Set the promotion code. Promotions without a code are automatically applied if the order meets the Promotion Rule requirements.' },
+                  description: { type: :string, example: 'Save today with discount code XYZ at checkout.', nullable: true, description: 'Give the promotion a description.' },
+                  usage_limit: { type: :integer, example: 100, nullable: true, description: 'If you wish you can set a usage limit for this promotion.' },
                   advertise: { type: :boolean },
-                  starts_at: { type: :string, format: :date_time },
-                  ends_at: { type: :string, format: :date_time },
+                  starts_at: { type: :string, format: :date_time, nullable: true, description: 'Set a date and time that this promotion begins.' },
+                  ends_at: { type: :string, format: :date_time, nullable: true, description: 'Set a date and time that this promotion ends.' },
                   store_ids: {
                     type: :array,
                     items: {
@@ -1192,13 +1192,13 @@ RSpec.configure do |config|
               promotion: {
                 type: :object,
                 properties: {
-                  name: { type: :string, example: 'Promotions Used in 2021' },
-                  code: { type: :string, example: '2021-PROMOS' },
-                  description: { type: :string, example: 'Save today with discount code XYZ at checkout.' },
-                  usage_limit: { type: :integer, example: 100 },
+                  name: { type: :string, example: 'Promotions Used in 2021', description: 'Change the promotion a name.' },
+                  code: { type: :string, example: 'CYB-MON', nullable: true, description: 'Change or remove the promotion code. Promotions without a code are automatically applied if the order meets the Promotion Rule requirements.' },
+                  description: { type: :string, example: 'Save today with discount code XYZ at checkout.', nullable: true, description: 'Update the promotion a description.' },
+                  usage_limit: { type: :integer, example: 100, nullable: true, description: 'If you wish you can set a usage limit for this promotion.' },
                   advertise: { type: :boolean },
-                  starts_at: { type: :string, format: :date_time },
-                  ends_at: { type: :string, format: :date_time },
+                  starts_at: { type: :string, format: :date_time, nullable: true, description: 'Set a date and time that this promotion begins.' },
+                  ends_at: { type: :string, format: :date_time, nullable: true, description: 'Set a date and time that this promotion ends.' },
                   store_ids: {
                     type: :array,
                     items: {
@@ -1225,8 +1225,8 @@ RSpec.configure do |config|
                     items: {
                       allOf: [
                         properties: {
-                          type: { type: :string, example: 'Spree::Promotion::Rules::Country' },
-                          preferred_country_id: { type: :boolean, example: 122 },
+                          type: { type: :string, example: 'Spree::Promotion::Rules::Country', description: 'Set the Promotion Rule type.' },
+                          preferred_country_id: { type: :boolean, example: 122, description: 'Set the ID of the Country this rule applies to.' },
                         }
                       ]
                     }
@@ -1250,8 +1250,8 @@ RSpec.configure do |config|
                       allOf: [
                         properties: {
                           id: { type: :string, example: '22', description: 'To update an existing Promotion Rule, you are required to pass the ID.' },
-                          type: { type: :string, example: 'Spree::Promotion::Rules::Country' },
-                          preferred_country_id: { type: :boolean, example: 143 },
+                          type: { type: :string, example: 'Spree::Promotion::Rules::Country', enum: ['Spree::Promotion::Rules::Country', 'Spree::Promotion::Rules::ItemTotal', 'Spree::Promotion::Rules::Product', 'Spree::Promotion::Rules::User', 'Spree::Promotion::Rules::FirstOrder', 'Spree::Promotion::Rules::UserLoggedIn', 'Spree::Promotion::Rules::OneUsePerUser', 'Spree::Promotion::Rules::Taxon', 'Spree::Promotion::Rules::OptionValue'], description: 'Set the Promotion Rule type.' },
+                          preferred_country_id: { type: :boolean, example: 143, description: 'Change the ID of the Country this rule applies to.' }
                         }
                       ]
                     }
