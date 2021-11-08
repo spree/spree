@@ -14,11 +14,7 @@ module Spree
                                              :preferred_normal_amount, :preferred_discount_amount, :preferred_currency, :preferred_base_amount,
                                              :preferred_tiers, :preferred_base_percent]
 
-          additional_permitted_attributes = if action_name == 'update'
-                                              [:id, :_destroy]
-                                            else
-                                              []
-                                            end
+          additional_permitted_attributes = action_name == 'update' ? [:id] : []
 
           super + [
             {
