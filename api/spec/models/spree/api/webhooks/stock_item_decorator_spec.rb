@@ -5,49 +5,6 @@ describe Spree::Api::Webhooks::StockItemDecorator do
   let(:variant) { create(:variant) }
   let(:stock_item) { variant.stock_items.first }
 
-  describe 'emitting variant.back_in_stock' do
-    context 'when variant was out of stock' do
-      before do
-        variant.stock_items.each do |stock_item|
-          stock_item.set_count_on_hand(0)
-        end
-      end
-
-      context 'when variant changes to be in stock' do
-        it do
-          expect do
-            variant.stock_items.first.update(backorderable: true)
-            Timecop.freeze { variant.stock_items.first.set_count_on_hand(1) }
-          end.to emit_webhook_event('variant.back_in_stock')
-        end
-      end
-
-      context 'when variant does not change to be in stock' do
-        it do
-          expect do
-            Timecop.freeze { variant.stock_items.first.update(backorderable: true) }
-          end.not_to emit_webhook_event('variant.back_in_stock')
-        end
-      end
-    end
-
-    context 'when variant was in stock' do
-      before do
-        variant.stock_items.each do |stock_item|
-          stock_item.set_count_on_hand(1)
-        end
-      end
-
-      it do
-        expect do
-          Timecop.freeze do
-            variant.stock_items.first.update(backorderable: true)
-          end
-        end.not_to emit_webhook_event('variant.back_in_stock')
-      end
-    end
-  end
-
   describe 'emitting variant.backorderable' do
     before do
       # makes sure variant.backorderable == false
