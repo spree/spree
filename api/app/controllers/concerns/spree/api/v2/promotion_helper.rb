@@ -23,22 +23,22 @@ module Spree
           super + [
             {
               promotion_actions_attributes: Spree::PromotionAction.
-                                                           json_api_permitted_attributes.
-                                                           concat(additional_permitted_attributes) + [
-                                                             {
-                                                               promotion_action_line_items_attributes: Spree::PromotionActionLineItem.
-                                                                                                     json_api_permitted_attributes.
-                                                                                                     concat(additional_permitted_attributes),
-                                                               calculator_attributes: Spree::Calculator.
-                                                                                                     json_api_permitted_attributes.
-                                                                                                     concat(additional_permitted_attributes,
-                                                                                                            calculator_permitted_attributes)
-                                                             }
-                                                           ],
+                  json_api_permitted_attributes.
+                  concat(additional_permitted_attributes) + [
+                    {
+                      promotion_action_line_items_attributes: Spree::PromotionActionLineItem.
+                                                            json_api_permitted_attributes.
+                                                            concat(additional_permitted_attributes),
+                      calculator_attributes: Spree::Calculator.
+                                                            json_api_permitted_attributes.
+                                                            concat(additional_permitted_attributes,
+                                                                   calculator_permitted_attributes)
+                    }
+                  ],
 
               promotion_rules_attributes: Spree::PromotionRule.
-                                                           json_api_permitted_attributes.
-                                                           concat(additional_permitted_attributes, promotion_rules_permitted_attributes)
+                  json_api_permitted_attributes.
+                  concat(additional_permitted_attributes, promotion_rules_permitted_attributes)
             }
           ]
         end
