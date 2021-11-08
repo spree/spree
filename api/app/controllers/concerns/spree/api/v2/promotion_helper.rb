@@ -20,7 +20,7 @@ module Spree
                                               []
                                             end
 
-          Spree::Promotion.json_api_permitted_attributes + [
+          super + [
             {
               promotion_actions_attributes: Spree::PromotionAction.
                                                            json_api_permitted_attributes.

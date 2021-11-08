@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'Promotion API v2 Digitals spec', type: :request do
+describe 'Promotion API v2 spec', type: :request do
   include_context 'API v2 tokens'
   include_context 'Platform API v2'
 
@@ -21,7 +21,7 @@ describe 'Promotion API v2 Digitals spec', type: :request do
       promotion_category_id: promotion_category.id.to_s,
       match_policy: 'all',
       type: 'Spree::Promotion',
-      description: 'Save big this Cyber Monday - First 100 Custmers save 20%',
+      description: 'Save big this Cyber Monday - First 100 Customers save 20%',
       starts_at: '2021-10-20 13:09:00 UTC',
       expires_at: '2021-10-25 13:09:00 UTC',
       usage_limit: 100,
@@ -52,7 +52,7 @@ describe 'Promotion API v2 Digitals spec', type: :request do
       promotion_category_id: promotion_category.id.to_s,
       match_policy: 'any',
       type: 'Spree::Promotion',
-      description: 'Black Friday Saver - First 100 Custmers save 20%',
+      description: 'Black Friday Saver - First 100 Customers save 20%',
       starts_at: '2021-10-20 13:09:00 UTC',
       expires_at: '2021-10-25 13:09:00 UTC',
       usage_limit: 100,
