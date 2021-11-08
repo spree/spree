@@ -25,9 +25,7 @@ module Spree
 
             additional_permitted_attributes = action_name == 'update' ? [:id] : []
 
-            super + [
-              {
-                promotion_actions_attributes: Spree::PromotionAction.
+            super + [{ promotion_actions_attributes: Spree::PromotionAction.
                     json_api_permitted_attributes.
                     concat(additional_permitted_attributes) + [
                       {
@@ -41,11 +39,9 @@ module Spree
                       }
                     ],
 
-                promotion_rules_attributes: Spree::PromotionRule.
+                       promotion_rules_attributes: Spree::PromotionRule.
                     json_api_permitted_attributes.
-                    concat(additional_permitted_attributes, promotion_rules_permitted_attributes)
-              }
-            ]
+                    concat(additional_permitted_attributes, promotion_rules_permitted_attributes) }]
           end
         end
       end
