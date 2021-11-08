@@ -271,6 +271,8 @@ Spree::Core::Engine.add_routes do
         resources :credit_cards
         resources :addresses
 
+        resources :roles
+
         # Menu API
         resources :menus
         resources :menu_items do
