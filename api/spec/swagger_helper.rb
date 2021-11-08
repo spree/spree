@@ -57,6 +57,7 @@ RSpec.configure do |config|
         { name: 'Payments' },
         { name: 'Payment Methods' },
         { name: 'Promotion Categories' },
+        { name: 'Roles' },
         { name: 'Shipments' },
         { name: 'Shipping Categories' },
         { name: 'Shipping Methods' },
@@ -1181,6 +1182,35 @@ RSpec.configure do |config|
               }
             },
             required: %w[promotion_category],
+            'x-internal': true
+          },
+
+          # Role
+          create_role_params: {
+            type: :object,
+            properties: {
+              role: {
+                type: :object,
+                required: %w[name],
+                properties: {
+                  name: { type: :string, example: 'vendor' }
+                }
+              }
+            },
+            required: %w[zone],
+            'x-internal': true
+          },
+          update_role_params: {
+            type: :object,
+            properties: {
+              role: {
+                type: :object,
+                properties: {
+                  name: { type: :string, example: 'vendor' },
+                }
+              }
+            },
+            required: %w[zone],
             'x-internal': true
           },
 
