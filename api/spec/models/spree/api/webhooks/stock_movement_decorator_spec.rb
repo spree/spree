@@ -12,8 +12,19 @@ describe Spree::StockMovement do
     describe 'when the variant goes out of stock' do
       let(:movement_quantity) { -stock_item.count_on_hand }
 
-      it 'emits the variant.out_of_stock event' do
-        expect { subject }.to emit_webhook_event('variant.out_of_stock')
+      context 'when it is backorderable' do
+
+        it 'does not emit the variant.out_of_stock event' do
+          expect { subject }.not_to emit_webhook_event('variant.out_of_stock')
+        end
+      end
+
+      context 'when it is not backorderable' do
+        before { stock_item.update(backorderable: false) }
+
+        it 'emits the variant.out_of_stock event' do
+          expect { subject }.to emit_webhook_event('variant.out_of_stock')
+        end
       end
     end
 
@@ -34,6 +45,21 @@ describe Spree::StockMovement do
 
       it 'does not emit the variant.out_of_stock event' do
         expect { subject }.not_to emit_webhook_event('variant.out_of_stock')
+      end
+    end
+
+    describe 'when the inventory is not tracked' do
+      before do
+        variant.update(track_inventory: false)
+        stock_item.update(backorderable: false)
+      end
+
+      let(:movement_quantity) { -stock_item.count_on_hand }
+
+      context 'when it goes out of stock and is not backorderable' do
+        it 'does not emit the variant.out_of_stock event (the count on hand is not adjusted)' do
+          expect { subject }.not_to emit_webhook_event('variant.out_of_stock')
+        end
       end
     end
   end

@@ -5,14 +5,15 @@ module Spree
         def update_stock_item_quantity
           variant_in_stock_before_update = variant_in_stock?
           super
-          variant = stock_item.variant
-          variant.queue_webhooks_requests!('variant.out_of_stock') if variant_in_stock_before_update && !variant_in_stock?
+          return if !variant_in_stock_before_update || variant_in_stock?
+
+          stock_item.variant.queue_webhooks_requests!('variant.out_of_stock')
         end
 
         private
 
         def variant_in_stock?
-          stock_item.variant.in_stock?
+          stock_item.variant.stock_items.where('count_on_hand > 0 OR backorderable = TRUE').exists?
         end
       end
     end
