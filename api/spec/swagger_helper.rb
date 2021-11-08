@@ -1226,7 +1226,7 @@ RSpec.configure do |config|
                       allOf: [
                         properties: {
                           type: { type: :string, example: 'Spree::Promotion::Rules::Country', enum: ['Spree::Promotion::Rules::Country', 'Spree::Promotion::Rules::ItemTotal', 'Spree::Promotion::Rules::Product', 'Spree::Promotion::Rules::User', 'Spree::Promotion::Rules::FirstOrder', 'Spree::Promotion::Rules::UserLoggedIn', 'Spree::Promotion::Rules::OneUsePerUser', 'Spree::Promotion::Rules::Taxon', 'Spree::Promotion::Rules::OptionValue'], description: 'Set the Promotion Rule type.' },
-                          preferred_country_id: { type: :boolean, example: 122, description: 'Set the ID of the Country this rule applies to.' },
+                          preferred_country_id: { type: :integer, example: 122, description: 'Each rule type has its own preferred attributes. In this example we are setting the ID of the Country this rule applies to. To learn more about Spree preferences visit TODO: [LINK].' },
                         }
                       ]
                     }
@@ -1249,9 +1249,9 @@ RSpec.configure do |config|
                     items: {
                       allOf: [
                         properties: {
-                          id: { type: :string, example: '22', description: 'To update an existing Promotion Rule, you are required to pass the ID.' },
+                          id: { type: :string, example: '22', description: 'To update an existing Promotion Rule, you are required to pass the ID of the rule you are updating.' },
                           type: { type: :string, example: 'Spree::Promotion::Rules::Country', enum: ['Spree::Promotion::Rules::Country', 'Spree::Promotion::Rules::ItemTotal', 'Spree::Promotion::Rules::Product', 'Spree::Promotion::Rules::User', 'Spree::Promotion::Rules::FirstOrder', 'Spree::Promotion::Rules::UserLoggedIn', 'Spree::Promotion::Rules::OneUsePerUser', 'Spree::Promotion::Rules::Taxon', 'Spree::Promotion::Rules::OptionValue'], description: 'Set the Promotion Rule type.' },
-                          preferred_country_id: { type: :boolean, example: 143, description: 'Change the ID of the Country this rule applies to.' }
+                          preferred_country_id: { type: :integer, example: 143, description: 'Each rule type has its own preferred attributes. In this example we are changing the ID of the Country this rule applies to. To learn more about Spree preferences visit TODO: [LINK].' }
                         }
                       ]
                     }
@@ -1297,11 +1297,12 @@ RSpec.configure do |config|
                     items: {
                       allOf: [
                         properties: {
-                          id: { type: :string, example: '22', description: 'To update an existing Promotion Action, you are required to pass the ID.' },
+                          id: { type: :string, example: '22', description: 'To update an existing Promotion Action, you are required to pass the ID of the action you wish to update.' },
                           calculator_attributes: {
                             properties: {
-                              id: { type: :string, example: '19', description: 'To update an existing Action Calculator, you are required to pass the ID.' },
-                              preferred_flat_percent: { type: :integer, example: 10 }
+                              id: { type: :string, example: '19', description: 'To update an existing Action Calculator, you are required to pass the ID of the calculator.' },
+                              type: { type: :string, example: 'Promotion::Actions::CreateAdjustment', enum: ['Promotion::Actions::CreateAdjustment', 'Promotion::Actions::CreateItemAdjustments', 'Promotion::Actions::CreateLineItems', 'Promotion::Actions::FreeShipping'], description: 'Set the Type of Promotion Action you wish to use.' },
+                              preferred_flat_percent: { type: :integer, example: 10, description: 'In this example we are setting the preferred flat percentage to `10`.' }
                             }
                           }
                         }
@@ -1326,10 +1327,10 @@ RSpec.configure do |config|
                     items: {
                       allOf: [
                         properties: {
-                          id: { type: :string, example: '22', description: 'To update an existing Promotion Action, you are required to pass the ID.' },
+                          id: { type: :string, example: '22', description: 'To update an existing Promotion Action, you are required to pass the ID of the Promotion Action.' },
                           calculator_attributes: {
                             properties: {
-                              type: { type: :string, example: 'Spree::Promotion::Actions::CreateAdjustment', enum: ['Spree::Promotion::Actions::CreateAdjustment', 'Spree::Promotion::Actions::CreateItemAdjustments', 'Spree::Promotion::Actions::FreeShipping', 'Spree::Promotion::Actions::CreateLineItems'], description: 'Set the calculator type.' },
+                              type: { type: :string, example: 'Spree::Calculator::FlatPercentItemTotal', enum: ['Spree::Calculator::FlatPercentItemTotal', 'Spree::Calculator::FlatRate', 'Spree::Calculator::FlexiRate', 'Spree::Calculator::TieredPercent', 'Spree::Calculator::TieredFlatRate', 'Spree::Calculator::PercentOnLineItem'], description: 'To set the Promotion Action Calculator pass the calculator type. Each Promotion action has certain Calculators available, to learn more visit TODO: [LINK]' },
                             }
                           }
                         }
@@ -1341,6 +1342,62 @@ RSpec.configure do |config|
             },
             required: %w[promotion],
             title: 'Change an Action Calculator',
+            'x-internal': true
+          },
+          update_promotion_change_action_params: {
+            type: :object,
+            properties: {
+              promotion: {
+                type: :object,
+                properties: {
+                  promotion_actions_attributes: {
+                    type: :array,
+                    items: {
+                      allOf: [
+                        properties: {
+                          id: { type: :string, example: '22', description: 'To update an existing Promotion Action, you are required to pass the ID of the Promotion Action.' },
+                          type: { type: :string, example: 'Promotion::Actions::CreateAdjustment', enum: ['Promotion::Actions::CreateAdjustment', 'Promotion::Actions::CreateItemAdjustments', 'Promotion::Actions::CreateLineItems', 'Promotion::Actions::FreeShipping'], description: 'Set the Type of Promotion Action you wish to use.' },
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            required: %w[promotion],
+            title: 'Change an Action Type',
+            'x-internal': true
+          },
+
+          # Promotion Action
+          create_promotion_action_params: {
+            type: :object,
+            properties: {
+              promotion_action: {
+                type: :object,
+                required: %w[type promotion_id],
+                properties: {
+                  type: { type: :string, example: 'Promotion::Actions::CreateAdjustment', enum: ['Promotion::Actions::CreateAdjustment', 'Promotion::Actions::CreateItemAdjustments', 'Promotion::Actions::CreateLineItems', 'Promotion::Actions::FreeShipping'], description: 'Set the Type of Promotion Action you wish to use.' },
+                  promotion_id: {type: :string, example: '22', description: 'Set the ID of the promotion this action belongs to.'}
+                }
+              }
+            },
+            required: %w[promotion_action],
+            title: 'Create a Promotion Action',
+            'x-internal': true
+          },
+          update_promotion_action_params: {
+            type: :object,
+            properties: {
+              promotion_action: {
+                type: :object,
+                properties: {
+                  type: { type: :string, example: 'Promotion::Actions::CreateAdjustment', enum: ['Promotion::Actions::CreateAdjustment', 'Promotion::Actions::CreateItemAdjustments', 'Promotion::Actions::CreateLineItems', 'Promotion::Actions::FreeShipping'], description: 'Set the Type of Promotion Action you wish to use.' }
+                }
+              }
+            },
+            required: %w[promotion_action],
+            title: 'Create a Promotion Action',
             'x-internal': true
           },
 

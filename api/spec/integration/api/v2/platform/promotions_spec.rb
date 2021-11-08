@@ -15,6 +15,8 @@ describe 'Promotions API', swagger: true do
         { '$ref' => '#/components/schemas/update_promotion_update_rule_params' },
 
         { '$ref' => '#/components/schemas/update_promotion_add_action_params' },
+        { '$ref' => '#/components/schemas/update_promotion_change_action_params' },
+
         { '$ref' => '#/components/schemas/update_promotion_action_calculator_params' },
         { '$ref' => '#/components/schemas/update_promotion_change_calculator_params' }
       ]
