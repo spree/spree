@@ -15,7 +15,7 @@ module Spree
 
           def spree_permitted_attributes
             rule_params = [:preferred_match_policy, :preferred_country_id, :preferred_amount_min, :preferred_operator_min, :preferred_amount_max,
-                           :preferred_operator_max, :preferred_eligible_values, { taxon_ids: [], user_ids: [] }]
+                           :preferred_operator_max, { taxon_ids: [], user_ids: [], product_ids: [], preferred_eligible_values: {} }]
 
             calculator_params = [:preferred_flat_percent, :preferred_amount, :preferred_currency, :preferred_first_item, :preferred_additional_item,
                                  :preferred_max_items, :preferred_percent, :preferred_minimal_amount, :preferred_normal_amount,
