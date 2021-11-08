@@ -27,6 +27,8 @@ describe Spree::Api::V2::Platform::PromotionSerializer do
             code: resource.code,
             advertise: resource.advertise,
             path: resource.path,
+            public_metadata: {},
+            private_metadata: {},
             created_at: resource.created_at,
             updated_at: resource.updated_at
           },
