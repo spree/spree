@@ -60,6 +60,7 @@ RSpec.configure do |config|
         { name: 'Shipments' },
         { name: 'Shipping Categories' },
         { name: 'Shipping Methods' },
+        { name: 'Store Credits' },
         { name: 'Taxons' },
         { name: 'Users' },
         { name: 'Webhook Events' },
@@ -1280,6 +1281,62 @@ RSpec.configure do |config|
               type: { type: :string, example: 'Spree::Calculator::Shipping::FlatPercentItemTotal', enum: ['Spree::Calculator::Shipping::DigitalDelivery', 'Spree::Calculator::Shipping::FlatPercentItemTotal', 'Spree::Calculator::Shipping::FlatRate', 'Spree::Calculator::Shipping::FlexiRate', 'Spree::Calculator::Shipping::PerItem', 'Spree::Calculator::Shipping::PriceSack'] }
             },
             required: %w[type],
+            'x-internal': true
+          },
+
+          # Store Credit
+          create_store_credit_params: {
+            type: :object,
+            properties: {
+              store_credit: {
+                type: :object,
+                required: %w[user_id category_id type_id created_by_id currency store_id amount],
+                properties: {
+                  user_id: { type: :string, example: '2' },
+                  category_id: { type: :string, example: '4' },
+                  created_by_id: { type: :string, example: '5' },
+                  amount: { type: :number, example: 25.0 },
+                  amount_used: { type: :number, example: 10.0 },
+                  memo: { type: :string, example: 'This credit was given as a refund' },
+                  currency: { type: :string, example: 'USD' },
+                  amount_authorized: { type: :number, example: 15.5 },
+                  originator_id: { type: :string, example: '3' },
+                  originator_type: { type: :string, example: 'Refund' },
+                  type_id: { type: :string, example: '1' },
+                  store_id: { type: :string, example: '2' },
+                  public_metadata: { type: :object },
+                  private_metadata: { type: :object }
+                }
+              }
+            },
+            required: %w[store_credit],
+            'x-internal': true
+          },
+          update_store_credit_params: {
+            type: :object,
+            properties: {
+              store_credit: {
+                type: :object,
+                required: %w[user_id category_id type_id created_by_id currency store_id amount],
+                properties: {
+                  user_id: { type: :string, example: '2' },
+                  category_id: { type: :string, example: '4' },
+                  created_by_id: { type: :string, example: '5' },
+                  amount: { type: :number, example: 25.0 },
+                  amount_used: { type: :number, example: 10.0 },
+                  memo: { type: :string, example: 'This credit was given as a refund' },
+                  currency: { type: :string, example: 'USD' },
+                  amount_authorized: { type: :number, example: 15.5 },
+                  originator_id: { type: :string, example: '3' },
+                  originator_type: { type: :string, example: 'Refund' },
+                  type_id: { type: :string, example: '1' },
+                  store_id: { type: :string, example: '2' },
+                  public_metadata: { type: :object },
+                  private_metadata: { type: :object }
+                }
+              }
+            },
+            required: %w[store_credit],
             'x-internal': true
           },
 

@@ -246,6 +246,9 @@ Spree::Core::Engine.add_routes do
           # end
         end
 
+        # Store Credit API
+        resources :store_credits
+
         # Geo API
         resources :zones
         resources :countries, only: [:index, :show]
