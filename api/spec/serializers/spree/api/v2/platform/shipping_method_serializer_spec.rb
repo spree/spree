@@ -26,7 +26,9 @@ describe Spree::Api::V2::Platform::ShippingMethodSerializer do
             tracking_url: resource.tracking_url,
             deleted_at: resource.deleted_at,
             created_at: resource.created_at,
-            updated_at: resource.updated_at
+            updated_at: resource.updated_at,
+            public_metadata: {},
+            private_metadata: {}
           },
           relationships: {
             calculator: {

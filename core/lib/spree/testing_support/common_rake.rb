@@ -14,6 +14,13 @@ namespace :common do
     ENV['RAILS_ENV'] = 'test'
     Rails.env = 'test'
 
+    if ENV['LIB_NAME'] == 'spree/backend'
+      puts 'Preparing NPM package...'
+      system('yarn install')
+      system('yarn build')
+      system('yarn link')
+    end
+
     Spree::DummyGenerator.start ["--lib_name=#{ENV['LIB_NAME']}", '--quiet']
     Spree::InstallGenerator.start [
       "--lib_name=#{ENV['LIB_NAME']}",
@@ -42,6 +49,12 @@ namespace :common do
     end
 
     unless ['spree/api', 'spree/core', 'spree/sample'].include?(ENV['LIB_NAME'])
+      if ENV['LIB_NAME'] == 'spree/backend'
+        puts 'Installing node dependencies...'
+        system('bin/rails javascript:install:esbuild')
+        system('yarn link @spree/dashboard')
+        system('yarn install')
+      end
       puts 'Precompiling assets...'
       system('bundle exec rake assets:precompile')
     end
