@@ -8,7 +8,7 @@ describe Spree::Variant do
       subject { variant.discontinue! }
 
       let(:params) { 'variant.discontinued' }
-      let(:body) { Spree::Api::V2::Platform::VariantSerializer.new(variant, serializer_params(event: params)).serializable_hash.to_json }
+      let(:body) { Spree::Api::V2::Platform::VariantSerializer.new(variant, mock_serializer_params(event: params)).serializable_hash.to_json }
 
       it { expect { subject }.to emit_webhook_event(params) }
     end

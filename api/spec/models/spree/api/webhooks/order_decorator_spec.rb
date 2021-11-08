@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Spree::Order do
   let(:store) { create(:store, default: true) }
   let(:body) do
-    Spree::Api::V2::Platform::OrderSerializer.new(order, serializer_params(event: params)).serializable_hash.to_json
+    Spree::Api::V2::Platform::OrderSerializer.new(order, mock_serializer_params(event: params)).serializable_hash.to_json
   end
 
   describe 'order.canceled' do

@@ -42,7 +42,7 @@ describe Spree::Webhooks::HasWebhooks do
   end
 
   context 'without DISABLE_SPREE_WEBHOOKS' do
-    let(:body) { Spree::Api::V2::Platform::ProductSerializer.new(product, serializer_params(event: params)).serializable_hash.to_json }
+    let(:body) { Spree::Api::V2::Platform::ProductSerializer.new(product, mock_mock_serializer_params(event: params)).serializable_hash.to_json }
 
     context 'after_create_commit' do
       let(:params) { 'product.create' }
@@ -67,7 +67,7 @@ describe Spree::Webhooks::HasWebhooks do
     end
 
     context 'with a class name with multiple words' do
-      let(:body) { Spree::Api::V2::Platform::CmsPageSerializer.new(cms_page, serializer_params(event: 'cms_page.create')).serializable_hash.to_json }
+      let(:body) { Spree::Api::V2::Platform::CmsPageSerializer.new(cms_page, mock_serializer_params(event: 'cms_page.create')).serializable_hash.to_json }
       let(:cms_page) { create(:cms_homepage, store: store, locale: 'en') }
 
       it 'underscorize the event name' do

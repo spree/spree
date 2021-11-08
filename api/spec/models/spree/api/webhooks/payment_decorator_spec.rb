@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Spree::Payment do
-  let(:body) { Spree::Api::V2::Platform::PaymentSerializer.new(payment, serializer_params(event: params)).serializable_hash.to_json }
+  let(:body) { Spree::Api::V2::Platform::PaymentSerializer.new(payment, mock_serializer_params(event: params)).serializable_hash.to_json }
   let(:payment) { create(:payment) }
 
   before { allow(payment).to receive_message_chain(:state_changes, :create!) }
@@ -56,7 +56,7 @@ describe Spree::Payment do
     subject { Timecop.freeze { another_payment.complete } }
 
     let(:params) { 'order.paid' }
-    let(:body) { Spree::Api::V2::Platform::OrderSerializer.new(order, serializer_params(event: params)).serializable_hash.to_json }
+    let(:body) { Spree::Api::V2::Platform::OrderSerializer.new(order, mock_serializer_params(event: params)).serializable_hash.to_json }
     let(:order) { payment.order }
     let!(:another_payment) { create(:payment, order: order) }
 

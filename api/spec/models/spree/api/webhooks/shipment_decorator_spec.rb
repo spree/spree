@@ -14,7 +14,7 @@ describe Spree::Shipment do
 
     context 'emitting shipment.shipped' do
       let(:params) { 'shipment.shipped' }
-      let(:body) { Spree::Api::V2::Platform::ShipmentSerializer.new(shipment, serializer_params(event: params)).serializable_hash.to_json }
+      let(:body) { Spree::Api::V2::Platform::ShipmentSerializer.new(shipment, mock_serializer_params(event: params)).serializable_hash.to_json }
 
       context 'ready -> ship' do
         let(:shipment) { create(:shipment, order: order) }
@@ -39,7 +39,7 @@ describe Spree::Shipment do
       let(:params) { 'order.shipped' }
       let(:body) do
         order.reload
-        Spree::Api::V2::Platform::OrderSerializer.new(order, serializer_params(event: params)).serializable_hash.to_json
+        Spree::Api::V2::Platform::OrderSerializer.new(order, mock_serializer_params(event: params)).serializable_hash.to_json
       end
       let!(:shipments) do
         create_list(
