@@ -1,6 +1,7 @@
 module Spree
   class Promotion < Spree::Base
     include MultiStoreResource
+    include Metadata
 
     MATCH_POLICIES = %w(all any)
     UNACTIVATABLE_ORDER_STATES = ['complete', 'awaiting_return', 'returned']

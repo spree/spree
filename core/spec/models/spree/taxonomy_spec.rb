@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe Spree::Taxonomy, type: :model do
+  it_behaves_like 'metadata'
+
   context '#destroy' do
     before do
       @taxonomy = create(:taxonomy)

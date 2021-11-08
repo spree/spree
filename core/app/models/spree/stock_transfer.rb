@@ -3,6 +3,7 @@ module Spree
     include Spree::Core::NumberGenerator.new(prefix: 'T')
     include NumberIdentifier
     include NumberAsParam
+    include Metadata
 
     has_many :stock_movements, as: :originator
 

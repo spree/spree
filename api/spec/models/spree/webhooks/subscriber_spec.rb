@@ -1,24 +1,42 @@
 require 'spec_helper'
 
 describe Spree::Webhooks::Subscriber do
+  describe 'before_save' do
+    context 'with subscriptions' do
+      let(:subscriptions) { ['order.placed', 'order.shipped'] }
+
+      it 'json parses the subscriptions' do
+        subscriber = create(:subscriber, subscriptions: subscriptions.to_json)
+        expect(subscriber.subscriptions).to eq(subscriptions)
+      end
+    end
+
+    context 'without subscriptions' do
+      it 'json parses the subscriptions' do
+        subscriber = create(:subscriber, subscriptions: nil)
+        expect(subscriber.subscriptions).to eq(nil)
+      end
+    end
+  end
+
   describe 'validations' do
     context 'url format (UrlValidator)' do
       it 'is invalid with an invalid url' do
-        endpoint = described_class.new(url: 'google.com')
-        expect(endpoint.valid?).to be(false)
+        subscriber = described_class.new(url: 'google.com')
+        expect(subscriber.valid?).to be(false)
       end
 
       it 'is valid with a valid url' do
-        endpoint = described_class.new(url: 'http://google.com/')
-        expect(endpoint.valid?).to be(true)
+        subscriber = described_class.new(url: 'http://google.com/')
+        expect(subscriber.valid?).to be(true)
       end
     end
 
     context 'url path' do
       it 'is invalid a url without path' do
-        endpoint = described_class.new(url: 'http://google.com')
-        expect(endpoint.valid?).to be(false)
-        expect(endpoint.errors.messages).to eq(url: ['the URL must have a path'])
+        subscriber = described_class.new(url: 'http://google.com')
+        expect(subscriber.valid?).to be(false)
+        expect(subscriber.errors.messages).to eq(url: ['the URL must have a path'])
       end
     end
   end

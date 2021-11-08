@@ -18,7 +18,9 @@ describe Spree::Api::V2::Platform::OptionValueSerializer do
             name: option_value.name,
             presentation: option_value.presentation,
             created_at: option_value.created_at,
-            updated_at: option_value.updated_at
+            updated_at: option_value.updated_at,
+            public_metadata: {},
+            private_metadata: {}
           },
           relationships: {
             option_type: {

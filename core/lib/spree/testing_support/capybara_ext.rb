@@ -59,13 +59,8 @@ def wait_for(options = {})
   default_options = { error: nil, seconds: 5 }.merge(options)
 
   Selenium::WebDriver::Wait.new(timeout: default_options[:seconds]).until { yield }
-rescue Selenium::WebDriver::Error::TimeOutError
+rescue Selenium::WebDriver::Error::TimeoutError
   default_options[:error].nil? ? false : raise(default_options[:error])
-end
-
-Capybara.configure do |config|
-  config.match = :smart
-  config.ignore_hidden_elements = true
 end
 
 RSpec::Matchers.define :have_meta do |name, expected|

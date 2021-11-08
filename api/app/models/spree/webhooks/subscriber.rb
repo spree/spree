@@ -13,6 +13,8 @@ module Spree
       scope :active, -> { where(active: true) }
       scope :inactive, -> { where(active: false) }
 
+      before_save :parse_subscriptions
+
       def self.with_urls_for(event)
         where(
           case ActiveRecord::Base.connection.adapter_name
@@ -34,6 +36,12 @@ module Spree
         end
 
         errors.add(:url, 'the URL must have a path') if uri.blank? || uri.path.blank?
+      end
+
+      def parse_subscriptions
+        return if subscriptions.blank? || subscriptions.is_a?(Array)
+
+        self.subscriptions = JSON.parse(subscriptions)
       end
     end
   end

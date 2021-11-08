@@ -24,6 +24,7 @@ module Spree
     include ProductScopes
     include MultiStoreResource
     include MemoizedData
+    include Metadata
 
     MEMOIZED_METHODS = %w(total_on_hand taxonomy_ids taxon_and_ancestors category
                           default_variant_id tax_category default_variant

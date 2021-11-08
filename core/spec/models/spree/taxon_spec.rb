@@ -4,6 +4,8 @@ describe Spree::Taxon, type: :model do
   let(:taxonomy) { create(:taxonomy) }
   let(:taxon) { build(:taxon, name: 'Ruby on Rails', parent: nil) }
 
+  it_behaves_like 'metadata'
+
   describe '#to_param' do
     subject { super().to_param }
 

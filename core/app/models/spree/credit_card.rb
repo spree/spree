@@ -1,6 +1,7 @@
 module Spree
   class CreditCard < Spree::Base
     include ActiveMerchant::Billing::CreditCardMethods
+    include Metadata
 
     acts_as_paranoid
 
