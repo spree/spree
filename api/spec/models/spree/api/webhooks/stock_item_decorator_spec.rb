@@ -2,37 +2,65 @@ require 'spec_helper'
 
 describe Spree::StockItem do
   describe 'sending webhooks' do
-    let(:queue_requests) { instance_double(Spree::Webhooks::Subscribers::QueueRequests) }
     let(:store) { create(:store, default: true) }
-    let!(:product) { create(:product_in_stock) }
+    let!(:product) do
+      product = create(:product)
+      product.master.stock_items.first.update_columns(count_on_hand: 10)
+      product
+    end
     let(:stock_item) { product.master.stock_items.take }
     let(:body) { Spree::Api::V2::Platform::ProductSerializer.new(product).serializable_hash.to_json }
 
     describe '#save' do
       context 'when all product variants are tracked' do
         context 'when product total_on_hand is greater than 0' do
-          it 'does not emit the product.out_of_stock event' do
-            expect { stock_item.adjust_count_on_hand(10) }.not_to emit_webhook_event('product.out_of_stock')
+          context 'when product is backorderable' do
+            before { stock_item.update_column(:backorderable, true) }
+
+            it 'does not emit the product.out_of_stock event' do
+              expect { stock_item.adjust_count_on_hand(10) }.not_to emit_webhook_event('product.out_of_stock')
+            end
+          end
+
+          context 'when product is not backorderable' do
+            before { stock_item.update_column(:backorderable, false) }
+
+            it 'does not emit the product.out_of_stock event' do
+              expect { stock_item.adjust_count_on_hand(10) }.not_to emit_webhook_event('product.out_of_stock')
+            end
           end
         end
 
         context 'when product total_on_hand is equal to 0' do
-          it 'emits the product.out_of_stock event' do
-            expect { stock_item.set_count_on_hand(0) }.to emit_webhook_event('product.out_of_stock')
+          context 'when it is backorderable' do
+            it 'does not emit the product.out_of_stock event' do
+              expect { stock_item.set_count_on_hand(0) }.not_to emit_webhook_event('product.out_of_stock')
+            end
+          end
+
+          context 'when it is not backorderable' do
+            before { stock_item.update_column(:backorderable, false) }
+
+            it 'emits the product.out_of_stock event' do
+              expect { stock_item.set_count_on_hand(0) }.to emit_webhook_event('product.out_of_stock')
+            end
           end
         end
 
-        context 'when product total_on_hand is less than 0' do
-          before { stock_item.update(backorderable: true) }
+        context 'when product total_on_hand is less than 0 and is backorderable' do
+          before { stock_item.update_column(:backorderable, true) }
 
-          it 'emits the product.out_of_stock event' do
-            expect { stock_item.set_count_on_hand(-2) }.to emit_webhook_event('product.out_of_stock')
+          it 'does not emit the product.out_of_stock event' do
+            expect { stock_item.set_count_on_hand(-2) }.not_to emit_webhook_event('product.out_of_stock')
           end
         end
       end
 
       context 'when some of product variants is not tracked' do
-        before { product.master.update(track_inventory: false) }
+        before do
+          stock_item.update_column(:backorderable, false)
+          product.master.update(track_inventory: false)
+        end
 
         context 'when product total_on_hand is greater than 0' do
           it 'does not emit the product.out_of_stock event' do
@@ -72,9 +100,9 @@ describe Spree::StockItem do
 
     describe '#destroy' do
       context 'when all product variants are tracked' do
-        let(:second_variant) do
+        let!(:second_variant) do
           variant = create(:variant, product: product)
-          variant.stock_items.take.set_count_on_hand(10)
+          variant.stock_items.take.update_column(:count_on_hand, 10)
           variant
         end
 
@@ -87,21 +115,22 @@ describe Spree::StockItem do
         end
 
         context 'when product total_on_hand after deleting some stock item is equal to 0' do
-          before { stock_item.set_count_on_hand(0) }
+          before do
+            stock_item.update_columns(count_on_hand: 0, backorderable: false)
+          end
 
           it 'emits the product.out_of_stock event' do
-            expect { Timecop.freeze { Spree::StockItem.find(second_variant.stock_items.take.id).destroy } }.to emit_webhook_event('product.out_of_stock')
+            expect { Timecop.freeze { second_variant.stock_items.take.destroy } }.to emit_webhook_event('product.out_of_stock')
           end
         end
 
         context 'when product total_on_hand after deleting some stock item is less than 0' do
           before do
-            stock_item.update(backorderable: true)
-            stock_item.set_count_on_hand(-5)
+            stock_item.update_columns(count_on_hand: -5, backorderable: false)
           end
 
           it 'emits the product.out_of_stock event' do
-            expect { second_variant.stock_items.take.destroy }.to emit_webhook_event('product.out_of_stock')
+            expect { Timecop.freeze { second_variant.stock_items.take.destroy } }.to emit_webhook_event('product.out_of_stock')
           end
         end
       end
@@ -109,11 +138,11 @@ describe Spree::StockItem do
       context 'when some of product variants is not tracked' do
         let!(:second_variant) do
           variant = create(:variant, product: product)
-          variant.stock_items.take.set_count_on_hand(10)
+          variant.stock_items.take.update_column(:count_on_hand, 10)
           variant
         end
 
-        before { product.master.update(track_inventory: false) }
+        before { product.master.update_column(:track_inventory, false) }
 
         context 'when product total_on_hand after deleting some stock item is greater than 0' do
           it 'does not emit the product.out_of_stock event' do
@@ -131,7 +160,7 @@ describe Spree::StockItem do
 
         context 'when product total_on_hand after deleting some stock item is less than 0' do
           before do
-            stock_item.update(backorderable: true)
+            stock_item.update_column(:backorderable, true)
             stock_item.set_count_on_hand(-5)
           end
 
