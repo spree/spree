@@ -33,15 +33,6 @@ module ControllerHacks
       format: :json
     )
   end
-
-  def mock_serializer_params(event:)
-    {
-      params: {
-        webhook_metadata: true,
-        event: event
-      }
-    }
-  end
 end
 
 RSpec.configure do |config|
