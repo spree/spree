@@ -5,8 +5,6 @@ describe Spree::Api::Webhooks::StockItemDecorator do
   let(:variant) { create(:variant) }
   let(:stock_item) { variant.stock_items.first }
 
-  let!(:images) { create_list(:image, 2) }
-
   describe 'emitting variant.back_in_stock' do
     context 'when variant was out of stock' do
       before do
