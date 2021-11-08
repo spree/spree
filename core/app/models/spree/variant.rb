@@ -91,6 +91,20 @@ module Spree
       )
     end
 
+    # [TODO]: test
+    scope :full_in_stock, -> do
+      joins(:stock_items).where(<<~SQL)
+        #{Spree::StockItem.table_name}.count_on_hand > 0 OR
+        #{Spree::Variant.table_name}.track_inventory = FALSE OR
+        #{Spree::StockItem.table_name}.backorderable = TRUE
+      SQL
+    end
+
+    # [TODO]: test
+    def full_in_stock?
+      Spree::Variant.full_in_stock.exists?(id: id)
+    end
+
     scope :not_deleted, -> { where("#{Spree::Variant.quoted_table_name}.deleted_at IS NULL") }
 
     scope :for_currency_and_available_price_amount, ->(currency = nil) do

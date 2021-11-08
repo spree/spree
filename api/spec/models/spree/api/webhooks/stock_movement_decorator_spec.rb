@@ -18,7 +18,7 @@ describe Spree::Api::Webhooks::StockMovementDecorator do
             Timecop.freeze do
               variant.stock_items.update_all(backorderable: false)
               stock_location.stock_movements.new.tap do |stock_movement|
-                stock_movement.quantity = 1
+                stock_movement.quantity = 1 # does make it to be in stock
                 stock_movement.stock_item = stock_location.set_up_stock_item(variant)
                 stock_movement.save
               end
@@ -33,7 +33,7 @@ describe Spree::Api::Webhooks::StockMovementDecorator do
             Timecop.freeze do
               variant.stock_items.update_all(backorderable: false)
               stock_location.stock_movements.new.tap do |stock_movement|
-                stock_movement.quantity = 0
+                stock_movement.quantity = 0 # does not make it to be in stock
                 stock_movement.stock_item = stock_location.set_up_stock_item(variant)
                 stock_movement.save
               end

@@ -9,25 +9,15 @@ module Spree
         private
 
         def queue_webhooks_requests_for_variant_backorderable!
-          was_out_of_stock = !variant_in_stock?
+          was_out_of_stock = !variant.full_in_stock?
           was_not_backorderable = !variant_backorderable?
           yield
           touch # changes must be reflected before instantiating the serializer
-          return unless emits_webhook_event?(was_not_backorderable, was_out_of_stock)
-
-          variant.queue_webhooks_requests!('variant.backorderable')
+          if was_out_of_stock && was_not_backorderable && variant_backorderable?
+            variant.queue_webhooks_requests!('variant.backorderable')
+          end
         end
 
-        def emits_webhook_event?(was_not_backorderable, was_out_of_stock)
-          was_out_of_stock && was_not_backorderable && variant_in_stock? && variant_backorderable?
-        end
-
-        # rewriting `variant.in_stock?` as is currently being cached
-        def variant_in_stock?
-          Spree::Variant.in_stock.exists?(id: variant.id)
-        end
-
-        # rewriting `variant.backorderable?` as is currently being cached
         def variant_backorderable?
           Spree::Variant.backorderable.exists?(id: variant.id)
         end
