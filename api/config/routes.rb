@@ -260,6 +260,9 @@ Spree::Core::Engine.add_routes do
           end
         end
 
+        # Tax API
+        resources :tax_rates
+
         # Inventory API
         resources :inventory_units
         resources :stock_items
