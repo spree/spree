@@ -70,8 +70,8 @@ paths:
                         state_name:
                         alternative_phone: 555-555-0199
                         company: Company
-                        created_at: '2021-11-08T11:37:44.795Z'
-                        updated_at: '2021-11-08T11:37:44.795Z'
+                        created_at: '2021-11-08T15:17:40.804Z'
+                        updated_at: '2021-11-08T15:17:40.804Z'
                         deleted_at:
                         label:
                         public_metadata: {}
@@ -100,8 +100,8 @@ paths:
                         state_name:
                         alternative_phone: 555-555-0199
                         company: Company
-                        created_at: '2021-11-08T11:37:44.802Z'
-                        updated_at: '2021-11-08T11:37:44.802Z'
+                        created_at: '2021-11-08T15:17:40.813Z'
+                        updated_at: '2021-11-08T15:17:40.813Z'
                         deleted_at:
                         label:
                         public_metadata: {}
@@ -177,8 +177,8 @@ paths:
                         state_name:
                         alternative_phone: 555-555-0199
                         company: Company
-                        created_at: '2021-11-08T11:37:45.173Z'
-                        updated_at: '2021-11-08T11:37:45.173Z'
+                        created_at: '2021-11-08T15:17:41.149Z'
+                        updated_at: '2021-11-08T15:17:41.149Z'
                         deleted_at:
                         label:
                         public_metadata: {}
@@ -274,8 +274,8 @@ paths:
                         state_name:
                         alternative_phone: 555-555-0199
                         company: Company
-                        created_at: '2021-11-08T11:37:45.271Z'
-                        updated_at: '2021-11-08T11:37:45.271Z'
+                        created_at: '2021-11-08T15:17:41.229Z'
+                        updated_at: '2021-11-08T15:17:41.229Z'
                         deleted_at:
                         label:
                         public_metadata: {}
@@ -356,8 +356,8 @@ paths:
                         state_name:
                         alternative_phone: 555-555-0199
                         company: Company
-                        created_at: '2021-11-08T11:37:45.415Z'
-                        updated_at: '2021-11-08T11:37:45.434Z'
+                        created_at: '2021-11-08T15:17:41.474Z'
+                        updated_at: '2021-11-08T15:17:41.486Z'
                         deleted_at:
                         label:
                         public_metadata: {}
@@ -503,8 +503,8 @@ paths:
                         label: Shipping
                         mandatory:
                         eligible: true
-                        created_at: '2021-11-08T11:37:45.809Z'
-                        updated_at: '2021-11-08T11:37:45.809Z'
+                        created_at: '2021-11-08T15:17:41.831Z'
+                        updated_at: '2021-11-08T15:17:41.831Z'
                         state: open
                         included: false
                         display_amount: "$100.00"
@@ -530,8 +530,8 @@ paths:
                         label: Shipping
                         mandatory:
                         eligible: true
-                        created_at: '2021-11-08T11:37:45.847Z'
-                        updated_at: '2021-11-08T11:37:45.847Z'
+                        created_at: '2021-11-08T15:17:41.864Z'
+                        updated_at: '2021-11-08T15:17:41.864Z'
                         state: open
                         included: false
                         display_amount: "$100.00"
@@ -604,8 +604,8 @@ paths:
                         label: Shipping
                         mandatory:
                         eligible: true
-                        created_at: '2021-11-08T11:37:46.288Z'
-                        updated_at: '2021-11-08T11:37:46.288Z'
+                        created_at: '2021-11-08T15:17:42.266Z'
+                        updated_at: '2021-11-08T15:17:42.266Z'
                         state: open
                         included: false
                         display_amount: "$100.00"
@@ -687,8 +687,8 @@ paths:
                         label: Shipping
                         mandatory:
                         eligible: true
-                        created_at: '2021-11-08T11:37:46.471Z'
-                        updated_at: '2021-11-08T11:37:46.478Z'
+                        created_at: '2021-11-08T15:17:42.454Z'
+                        updated_at: '2021-11-08T15:17:42.462Z'
                         state: open
                         included: false
                         display_amount: "$1.00"
@@ -766,8 +766,8 @@ paths:
                         label: New label
                         mandatory:
                         eligible: true
-                        created_at: '2021-11-08T11:37:46.796Z'
-                        updated_at: '2021-11-08T11:37:46.817Z'
+                        created_at: '2021-11-08T15:17:42.768Z'
+                        updated_at: '2021-11-08T15:17:42.787Z'
                         state: open
                         included: false
                         display_amount: "$15.00"
@@ -907,8 +907,8 @@ paths:
                       type: classification
                       attributes:
                         position: 1
-                        created_at: '2021-11-08T11:37:47.844Z'
-                        updated_at: '2021-11-08T11:37:47.844Z'
+                        created_at: '2021-11-08T15:17:43.617Z'
+                        updated_at: '2021-11-08T15:17:43.617Z'
                       relationships:
                         product:
                           data:
@@ -922,8 +922,8 @@ paths:
                       type: classification
                       attributes:
                         position: 1
-                        created_at: '2021-11-08T11:37:47.966Z'
-                        updated_at: '2021-11-08T11:37:47.966Z'
+                        created_at: '2021-11-08T15:17:43.733Z'
+                        updated_at: '2021-11-08T15:17:43.733Z'
                       relationships:
                         product:
                           data:
@@ -984,8 +984,8 @@ paths:
                       type: classification
                       attributes:
                         position: 1
-                        created_at: '2021-11-08T11:37:48.806Z'
-                        updated_at: '2021-11-08T11:37:48.806Z'
+                        created_at: '2021-11-08T15:17:44.448Z'
+                        updated_at: '2021-11-08T15:17:44.448Z'
                       relationships:
                         product:
                           data:
@@ -1052,8 +1052,8 @@ paths:
                       type: classification
                       attributes:
                         position: 1
-                        created_at: '2021-11-08T11:37:49.503Z'
-                        updated_at: '2021-11-08T11:37:49.503Z'
+                        created_at: '2021-11-08T15:17:44.716Z'
+                        updated_at: '2021-11-08T15:17:44.716Z'
                       relationships:
                         product:
                           data:
@@ -1119,8 +1119,8 @@ paths:
                       type: classification
                       attributes:
                         position: 1
-                        created_at: '2021-11-08T11:37:50.054Z'
-                        updated_at: '2021-11-08T11:37:50.054Z'
+                        created_at: '2021-11-08T15:17:45.234Z'
+                        updated_at: '2021-11-08T15:17:45.234Z'
                       relationships:
                         product:
                           data:
@@ -1242,8 +1242,8 @@ paths:
                       type: classification
                       attributes:
                         position: 2
-                        created_at: '2021-11-08T11:37:51.543Z'
-                        updated_at: '2021-11-08T11:37:51.571Z'
+                        created_at: '2021-11-08T15:17:46.500Z'
+                        updated_at: '2021-11-08T15:17:46.528Z'
                       relationships:
                         product:
                           data:
@@ -1348,35 +1348,34 @@ paths:
                     - id: '1'
                       type: cms_page
                       attributes:
-                        title: Necessitatibus cupiditate labore vitae vel laudantium.
+                        title: Nemo cumque cum hic nulla modi beatae esse.
                         meta_title:
                         content:
                         meta_description:
                         visible: true
-                        slug: necessitatibus-cupiditate-labore-vitae-vel-laudantium
+                        slug: nemo-cumque-cum-hic-nulla-modi-beatae-esse
                         type: Spree::Cms::Pages::StandardPage
                         locale: en
                         deleted_at:
-                        created_at: '2021-11-08T11:37:52.182Z'
-                        updated_at: '2021-11-08T11:37:52.182Z'
+                        created_at: '2021-11-08T15:17:47.088Z'
+                        updated_at: '2021-11-08T15:17:47.088Z'
                       relationships:
                         cms_sections:
                           data: []
                     - id: '2'
                       type: cms_page
                       attributes:
-                        title: Delectus quibusdam facere tempore corporis dolores
-                          dignissimos.
+                        title: Inventore fugit totam voluptatem quo voluptatibus aspernatur.
                         meta_title:
                         content:
                         meta_description:
                         visible: true
-                        slug: delectus-quibusdam-facere-tempore-corporis-dolores-dignissimos
+                        slug: inventore-fugit-totam-voluptatem-quo-voluptatibus-aspernatur
                         type: Spree::Cms::Pages::StandardPage
                         locale: en
                         deleted_at:
-                        created_at: '2021-11-08T11:37:52.187Z'
-                        updated_at: '2021-11-08T11:37:52.187Z'
+                        created_at: '2021-11-08T15:17:47.094Z'
+                        updated_at: '2021-11-08T15:17:47.094Z'
                       relationships:
                         cms_sections:
                           data: []
@@ -1430,18 +1429,18 @@ paths:
                       id: '5'
                       type: cms_page
                       attributes:
-                        title: Eius ea rerum officiis possimus expedita velit dolores
-                          illo.
+                        title: Eum id pariatur quia vero voluptatum facere dolorem
+                          provident.
                         meta_title:
                         content:
                         meta_description:
                         visible: true
-                        slug: eius-ea-rerum-officiis-possimus-expedita-velit-dolores-illo
+                        slug: eum-id-pariatur-quia-vero-voluptatum-facere-dolorem-provident
                         type: Spree::Cms::Pages::StandardPage
                         locale: en
                         deleted_at:
-                        created_at: '2021-11-08T11:37:52.333Z'
-                        updated_at: '2021-11-08T11:37:52.333Z'
+                        created_at: '2021-11-08T15:17:47.230Z'
+                        updated_at: '2021-11-08T15:17:47.230Z'
                       relationships:
                         cms_sections:
                           data: []
@@ -1507,17 +1506,18 @@ paths:
                       id: '6'
                       type: cms_page
                       attributes:
-                        title: Reiciendis magni impedit nulla architecto occaecati.
+                        title: In harum consequatur distinctio occaecati sint dicta
+                          cupiditate nesciunt.
                         meta_title:
                         content:
                         meta_description:
                         visible: true
-                        slug: reiciendis-magni-impedit-nulla-architecto-occaecati
+                        slug: in-harum-consequatur-distinctio-occaecati-sint-dicta-cupiditate-nesciunt
                         type: Spree::Cms::Pages::StandardPage
                         locale: en
                         deleted_at:
-                        created_at: '2021-11-08T11:37:52.414Z'
-                        updated_at: '2021-11-08T11:37:52.414Z'
+                        created_at: '2021-11-08T15:17:47.301Z'
+                        updated_at: '2021-11-08T15:17:47.301Z'
                       relationships:
                         cms_sections:
                           data: []
@@ -1581,12 +1581,12 @@ paths:
                         content:
                         meta_description:
                         visible: true
-                        slug: libero-fugit-cum-modi-a
+                        slug: exercitationem-rem-amet-animi-dolor-quos-temporibus-quaerat-minima
                         type: Spree::Cms::Pages::StandardPage
                         locale: en
                         deleted_at:
-                        created_at: '2021-11-08T11:37:52.614Z'
-                        updated_at: '2021-11-08T11:37:52.687Z'
+                        created_at: '2021-11-08T15:17:47.428Z'
+                        updated_at: '2021-11-08T15:17:47.443Z'
                       relationships:
                         cms_sections:
                           data: []
@@ -1715,8 +1715,7 @@ paths:
                     - id: '1'
                       type: cms_section
                       attributes:
-                        name: Corrupti facere mollitia voluptate esse voluptas repellat
-                          eligendi.
+                        name: Commodi illo minus natus nihil quaerat ad.
                         content: {}
                         settings:
                           gutters: No Gutters
@@ -1725,8 +1724,8 @@ paths:
                         type: Spree::Cms::Sections::HeroImage
                         position: 1
                         linked_resource_type: Spree::Taxon
-                        created_at: '2021-11-08T11:37:53.005Z'
-                        updated_at: '2021-11-08T11:37:53.005Z'
+                        created_at: '2021-11-08T15:17:47.755Z'
+                        updated_at: '2021-11-08T15:17:47.755Z'
                       relationships:
                         cms_page:
                           data:
@@ -1737,7 +1736,7 @@ paths:
                     - id: '2'
                       type: cms_section
                       attributes:
-                        name: Quos adipisci ea explicabo consequatur inventore voluptatem.
+                        name: Quaerat dolor placeat pariatur explicabo.
                         content:
                           link_type_one: Spree::Taxon
                           link_type_two: Spree::Taxon
@@ -1749,8 +1748,8 @@ paths:
                         type: Spree::Cms::Sections::ImageGallery
                         position: 2
                         linked_resource_type:
-                        created_at: '2021-11-08T11:37:53.011Z'
-                        updated_at: '2021-11-08T11:37:53.011Z'
+                        created_at: '2021-11-08T15:17:47.760Z'
+                        updated_at: '2021-11-08T15:17:47.760Z'
                       relationships:
                         cms_page:
                           data:
@@ -1761,8 +1760,8 @@ paths:
                     - id: '3'
                       type: cms_section
                       attributes:
-                        name: Aspernatur temporibus id placeat necessitatibus cum
-                          debitis.
+                        name: Quas fugit accusamus fugiat asperiores molestiae illo
+                          aut.
                         content: {}
                         settings:
                           gutters: No Gutters
@@ -1771,8 +1770,8 @@ paths:
                         type: Spree::Cms::Sections::FeaturedArticle
                         position: 3
                         linked_resource_type: Spree::Taxon
-                        created_at: '2021-11-08T11:37:53.023Z'
-                        updated_at: '2021-11-08T11:37:53.023Z'
+                        created_at: '2021-11-08T15:17:47.772Z'
+                        updated_at: '2021-11-08T15:17:47.772Z'
                       relationships:
                         cms_page:
                           data:
@@ -1783,7 +1782,8 @@ paths:
                     - id: '4'
                       type: cms_section
                       attributes:
-                        name: Perferendis ducimus ut temporibus molestias pariatur.
+                        name: Necessitatibus aperiam consequatur nihil nemo perspiciatis
+                          fugiat officiis.
                         content: {}
                         settings:
                           gutters: No Gutters
@@ -1792,8 +1792,8 @@ paths:
                         type: Spree::Cms::Sections::HeroImage
                         position: 4
                         linked_resource_type: Spree::Product
-                        created_at: '2021-11-08T11:37:53.044Z'
-                        updated_at: '2021-11-08T11:37:53.044Z'
+                        created_at: '2021-11-08T15:17:47.793Z'
+                        updated_at: '2021-11-08T15:17:47.793Z'
                       relationships:
                         cms_page:
                           data:
@@ -1806,7 +1806,8 @@ paths:
                     - id: '5'
                       type: cms_section
                       attributes:
-                        name: Ea repellat ex quos corporis aliquam unde eaque.
+                        name: Deserunt soluta amet itaque iure alias nam molestiae
+                          provident.
                         content: {}
                         settings:
                           gutters: No Gutters
@@ -1815,8 +1816,8 @@ paths:
                         type: Spree::Cms::Sections::HeroImage
                         position: 5
                         linked_resource_type: Spree::Product
-                        created_at: '2021-11-08T11:37:53.057Z'
-                        updated_at: '2021-11-08T11:37:53.057Z'
+                        created_at: '2021-11-08T15:17:47.805Z'
+                        updated_at: '2021-11-08T15:17:47.805Z'
                       relationships:
                         cms_page:
                           data:
@@ -1876,8 +1877,8 @@ paths:
                       id: '13'
                       type: cms_section
                       attributes:
-                        name: Accusantium dicta voluptates ipsum quis fugit voluptatem
-                          neque.
+                        name: Cupiditate culpa asperiores quam quisquam molestiae
+                          deserunt.
                         content: {}
                         settings:
                           gutters: No Gutters
@@ -1886,8 +1887,8 @@ paths:
                         type: Spree::Cms::Sections::HeroImage
                         position: 3
                         linked_resource_type: Spree::Product
-                        created_at: '2021-11-08T11:37:53.336Z'
-                        updated_at: '2021-11-08T11:37:53.336Z'
+                        created_at: '2021-11-08T15:17:48.078Z'
+                        updated_at: '2021-11-08T15:17:48.078Z'
                       relationships:
                         cms_page:
                           data:
@@ -1962,8 +1963,7 @@ paths:
                       id: '19'
                       type: cms_section
                       attributes:
-                        name: Explicabo hic architecto ratione in minima aliquam debitis
-                          impedit.
+                        name: Enim ipsa earum cum unde libero.
                         content: {}
                         settings:
                           gutters: No Gutters
@@ -1972,8 +1972,8 @@ paths:
                         type: Spree::Cms::Sections::HeroImage
                         position: 4
                         linked_resource_type: Spree::Product
-                        created_at: '2021-11-08T11:37:53.731Z'
-                        updated_at: '2021-11-08T11:37:53.731Z'
+                        created_at: '2021-11-08T15:17:48.319Z'
+                        updated_at: '2021-11-08T15:17:48.319Z'
                       relationships:
                         cms_page:
                           data:
@@ -2047,8 +2047,8 @@ paths:
                         type: Spree::Cms::Sections::HeroImage
                         position: 1
                         linked_resource_type: Spree::Product
-                        created_at: '2021-11-08T11:37:54.078Z'
-                        updated_at: '2021-11-08T11:37:54.095Z'
+                        created_at: '2021-11-08T15:17:48.676Z'
+                        updated_at: '2021-11-08T15:17:48.697Z'
                       relationships:
                         cms_page:
                           data:
@@ -2168,9 +2168,9 @@ paths:
                         name: United States of America
                         numcode: 840
                         states_required: true
-                        updated_at: '2021-11-08T11:37:54.826Z'
+                        updated_at: '2021-11-08T15:17:49.415Z'
                         zipcode_required: true
-                        created_at: '2021-11-08T11:37:54.826Z'
+                        created_at: '2021-11-08T15:17:49.415Z'
                       relationships:
                         states:
                           data: []
@@ -2183,9 +2183,9 @@ paths:
                         name: NAME_2
                         numcode: 840
                         states_required: false
-                        updated_at: '2021-11-08T11:37:54.834Z'
+                        updated_at: '2021-11-08T15:17:49.423Z'
                         zipcode_required: true
-                        created_at: '2021-11-08T11:37:54.834Z'
+                        created_at: '2021-11-08T15:17:49.423Z'
                       relationships:
                         states:
                           data: []
@@ -2198,9 +2198,9 @@ paths:
                         name: NAME_3
                         numcode: 840
                         states_required: false
-                        updated_at: '2021-11-08T11:37:54.837Z'
+                        updated_at: '2021-11-08T15:17:49.426Z'
                         zipcode_required: true
-                        created_at: '2021-11-08T11:37:54.837Z'
+                        created_at: '2021-11-08T15:17:49.426Z'
                       relationships:
                         states:
                           data: []
@@ -2259,9 +2259,9 @@ paths:
                         name: NAME_6
                         numcode: 840
                         states_required: false
-                        updated_at: '2021-11-08T11:37:54.931Z'
+                        updated_at: '2021-11-08T15:17:49.516Z'
                         zipcode_required: true
-                        created_at: '2021-11-08T11:37:54.931Z'
+                        created_at: '2021-11-08T15:17:49.516Z'
                       relationships:
                         states:
                           data: []
@@ -2319,7 +2319,7 @@ paths:
                     - id: '1'
                       type: digital_link
                       attributes:
-                        token: wHQaLPdPYmN8daVpTWoZvmDm
+                        token: d9pqxPRg2spQXH5zJDJVsSXL
                         access_counter: 0
                       relationships:
                         digital:
@@ -2333,7 +2333,7 @@ paths:
                     - id: '2'
                       type: digital_link
                       attributes:
-                        token: Duw7Lw5EYU3XMsz8qnVXJg1p
+                        token: emZLoGa6SNd8Z2wmH62P3mvi
                         access_counter: 0
                       relationships:
                         digital:
@@ -2387,7 +2387,7 @@ paths:
                       id: '5'
                       type: digital_link
                       attributes:
-                        token: vtWonGho2jCEZzsiveZeUvAp
+                        token: hBSMnSbqvkVZP14AfvPUydRR
                         access_counter: 0
                       relationships:
                         digital:
@@ -2450,7 +2450,7 @@ paths:
                       id: '6'
                       type: digital_link
                       attributes:
-                        token: 95MtSADWrVfb5z9MwPEkt7Um
+                        token: Ppud9NNAKa9dqvxewNubwGNZ
                         access_counter: 0
                       relationships:
                         digital:
@@ -2509,7 +2509,7 @@ paths:
                       id: '8'
                       type: digital_link
                       attributes:
-                        token: AL7RAsUpGjwpjfbTeFooEY8s
+                        token: L79Y2AFK1w8oN1xPyXdhhpyx
                         access_counter: 0
                       relationships:
                         digital:
@@ -2624,7 +2624,7 @@ paths:
                       id: '13'
                       type: digital_link
                       attributes:
-                        token: b3ssLHZ8aBfMyekx6AvzDSzo
+                        token: et9Fn6FqkGyZztUyMkpRZdsc
                         access_counter: 0
                       relationships:
                         digital:
@@ -3041,8 +3041,8 @@ paths:
                       attributes:
                         quantity: 1
                         price: '10.0'
-                        created_at: '2021-11-08T11:38:08.248Z'
-                        updated_at: '2021-11-08T11:38:08.261Z'
+                        created_at: '2021-11-08T15:18:03.356Z'
+                        updated_at: '2021-11-08T15:18:03.368Z'
                         currency: USD
                         cost_price: '17.0'
                         adjustment_total: '0.0'
@@ -3063,8 +3063,8 @@ paths:
                         display_final_amount: "$10.00"
                         display_adjustment_total: "$0.00"
                         display_additional_tax_total: "$0.00"
-                        display_included_tax_total: "$0.00"
                         display_promo_total: "$0.00"
+                        display_included_tax_total: "$0.00"
                         display_pre_tax_amount: "$10.00"
                       relationships:
                         order:
@@ -3090,8 +3090,8 @@ paths:
                       attributes:
                         quantity: 1
                         price: '10.0'
-                        created_at: '2021-11-08T11:38:08.315Z'
-                        updated_at: '2021-11-08T11:38:08.324Z'
+                        created_at: '2021-11-08T15:18:03.416Z'
+                        updated_at: '2021-11-08T15:18:03.425Z'
                         currency: USD
                         cost_price: '17.0'
                         adjustment_total: '0.0'
@@ -3112,8 +3112,8 @@ paths:
                         display_final_amount: "$10.00"
                         display_adjustment_total: "$0.00"
                         display_additional_tax_total: "$0.00"
-                        display_included_tax_total: "$0.00"
                         display_promo_total: "$0.00"
+                        display_included_tax_total: "$0.00"
                         display_pre_tax_amount: "$10.00"
                       relationships:
                         order:
@@ -3186,8 +3186,8 @@ paths:
                       attributes:
                         quantity: 1
                         price: '10.0'
-                        created_at: '2021-11-08T11:38:08.732Z'
-                        updated_at: '2021-11-08T11:38:08.781Z'
+                        created_at: '2021-11-08T15:18:03.805Z'
+                        updated_at: '2021-11-08T15:18:03.849Z'
                         currency: USD
                         cost_price: '17.0'
                         adjustment_total: '0.0'
@@ -3208,8 +3208,8 @@ paths:
                         display_final_amount: "$10.00"
                         display_adjustment_total: "$0.00"
                         display_additional_tax_total: "$0.00"
-                        display_included_tax_total: "$0.00"
                         display_promo_total: "$0.00"
+                        display_included_tax_total: "$0.00"
                         display_pre_tax_amount: "$10.00"
                       relationships:
                         order:
@@ -3291,8 +3291,8 @@ paths:
                       attributes:
                         quantity: 1
                         price: '10.0'
-                        created_at: '2021-11-08T11:38:09.022Z'
-                        updated_at: '2021-11-08T11:38:09.033Z'
+                        created_at: '2021-11-08T15:18:04.080Z'
+                        updated_at: '2021-11-08T15:18:04.092Z'
                         currency: USD
                         cost_price: '17.0'
                         adjustment_total: '0.0'
@@ -3313,8 +3313,8 @@ paths:
                         display_final_amount: "$10.00"
                         display_adjustment_total: "$0.00"
                         display_additional_tax_total: "$0.00"
-                        display_included_tax_total: "$0.00"
                         display_promo_total: "$0.00"
+                        display_included_tax_total: "$0.00"
                         display_pre_tax_amount: "$10.00"
                       relationships:
                         order:
@@ -3392,8 +3392,8 @@ paths:
                       attributes:
                         quantity: 4
                         price: '10.0'
-                        created_at: '2021-11-08T11:38:09.458Z'
-                        updated_at: '2021-11-08T11:38:09.522Z'
+                        created_at: '2021-11-08T15:18:04.456Z'
+                        updated_at: '2021-11-08T15:18:04.523Z'
                         currency: USD
                         cost_price: '17.0'
                         adjustment_total: '0.0'
@@ -3414,8 +3414,8 @@ paths:
                         display_final_amount: "$40.00"
                         display_adjustment_total: "$0.00"
                         display_additional_tax_total: "$0.00"
-                        display_included_tax_total: "$0.00"
                         display_promo_total: "$0.00"
+                        display_included_tax_total: "$0.00"
                         display_pre_tax_amount: "$40.00"
                       relationships:
                         order:
@@ -3445,10 +3445,10 @@ paths:
               examples:
                 Example:
                   value:
-                    error: 'Quantity selected of "Product #130 - 2124" is not available.'
+                    error: 'Quantity selected of "Product #130 - 8562" is not available.'
                     errors:
                       quantity:
-                      - 'selected of "Product #130 - 2124" is not available.'
+                      - 'selected of "Product #130 - 8562" is not available.'
               schema:
                 "$ref": "#/components/schemas/validation_errors"
         '404':
@@ -3568,8 +3568,8 @@ paths:
                         lft: 2
                         rgt: 3
                         depth: 1
-                        created_at: '2021-11-08T11:38:10.562Z'
-                        updated_at: '2021-11-08T11:38:10.568Z'
+                        created_at: '2021-11-08T15:18:05.483Z'
+                        updated_at: '2021-11-08T15:18:05.490Z'
                         link:
                         is_container: false
                         is_root: false
@@ -3605,8 +3605,8 @@ paths:
                         lft: 4
                         rgt: 5
                         depth: 1
-                        created_at: '2021-11-08T11:38:10.655Z'
-                        updated_at: '2021-11-08T11:38:10.662Z'
+                        created_at: '2021-11-08T15:18:05.591Z'
+                        updated_at: '2021-11-08T15:18:05.598Z'
                         link:
                         is_container: false
                         is_root: false
@@ -3642,8 +3642,8 @@ paths:
                         lft: 6
                         rgt: 7
                         depth: 1
-                        created_at: '2021-11-08T11:38:10.768Z'
-                        updated_at: '2021-11-08T11:38:10.776Z'
+                        created_at: '2021-11-08T15:18:05.685Z'
+                        updated_at: '2021-11-08T15:18:05.691Z'
                         link:
                         is_container: false
                         is_root: false
@@ -3679,8 +3679,8 @@ paths:
                         lft: 8
                         rgt: 9
                         depth: 1
-                        created_at: '2021-11-08T11:38:10.868Z'
-                        updated_at: '2021-11-08T11:38:10.875Z'
+                        created_at: '2021-11-08T15:18:05.781Z'
+                        updated_at: '2021-11-08T15:18:05.788Z'
                         link:
                         is_container: false
                         is_root: false
@@ -3716,8 +3716,8 @@ paths:
                         lft: 10
                         rgt: 11
                         depth: 1
-                        created_at: '2021-11-08T11:38:10.966Z'
-                        updated_at: '2021-11-08T11:38:10.972Z'
+                        created_at: '2021-11-08T15:18:05.874Z'
+                        updated_at: '2021-11-08T15:18:05.882Z'
                         link:
                         is_container: false
                         is_root: false
@@ -3753,8 +3753,8 @@ paths:
                         lft: 12
                         rgt: 13
                         depth: 1
-                        created_at: '2021-11-08T11:38:11.067Z'
-                        updated_at: '2021-11-08T11:38:11.074Z'
+                        created_at: '2021-11-08T15:18:05.971Z'
+                        updated_at: '2021-11-08T15:18:05.979Z'
                         link:
                         is_container: false
                         is_root: false
@@ -3790,8 +3790,8 @@ paths:
                         lft: 14
                         rgt: 15
                         depth: 1
-                        created_at: '2021-11-08T11:38:11.160Z'
-                        updated_at: '2021-11-08T11:38:11.169Z'
+                        created_at: '2021-11-08T15:18:06.068Z'
+                        updated_at: '2021-11-08T15:18:06.074Z'
                         link:
                         is_container: false
                         is_root: false
@@ -3817,8 +3817,7 @@ paths:
                     - id: '1'
                       type: menu_item
                       attributes:
-                        name: Quia in maiores asperiores tempora earum quas facilis
-                          accusamus.
+                        name: Dolorem voluptatum eius rem aspernatur.
                         subtitle:
                         destination:
                         new_window: false
@@ -3828,8 +3827,8 @@ paths:
                         lft: 1
                         rgt: 16
                         depth: 0
-                        created_at: '2021-11-08T11:38:10.470Z'
-                        updated_at: '2021-11-08T11:38:11.184Z'
+                        created_at: '2021-11-08T15:18:05.395Z'
+                        updated_at: '2021-11-08T15:18:06.090Z'
                         link:
                         is_container: true
                         is_root: true
@@ -3922,8 +3921,8 @@ paths:
                         lft: 8
                         rgt: 9
                         depth: 1
-                        created_at: '2021-11-08T11:38:12.401Z'
-                        updated_at: '2021-11-08T11:38:12.408Z'
+                        created_at: '2021-11-08T15:18:07.219Z'
+                        updated_at: '2021-11-08T15:18:07.226Z'
                         link:
                         is_container: false
                         is_root: false
@@ -4013,8 +4012,8 @@ paths:
                         lft: 8
                         rgt: 9
                         depth: 1
-                        created_at: '2021-11-08T11:38:13.222Z'
-                        updated_at: '2021-11-08T11:38:13.228Z'
+                        created_at: '2021-11-08T15:18:07.983Z'
+                        updated_at: '2021-11-08T15:18:07.990Z'
                         link:
                         is_container: false
                         is_root: false
@@ -4102,8 +4101,8 @@ paths:
                         lft: 8
                         rgt: 9
                         depth: 1
-                        created_at: '2021-11-08T11:38:14.585Z'
-                        updated_at: '2021-11-08T11:38:14.624Z'
+                        created_at: '2021-11-08T15:18:09.260Z'
+                        updated_at: '2021-11-08T15:18:09.297Z'
                         link:
                         is_container: false
                         is_root: false
@@ -4240,8 +4239,8 @@ paths:
                         lft: 5
                         rgt: 6
                         depth: 2
-                        created_at: '2021-11-08T11:38:17.550Z'
-                        updated_at: '2021-11-08T11:38:17.606Z'
+                        created_at: '2021-11-08T15:18:12.199Z'
+                        updated_at: '2021-11-08T15:18:12.240Z'
                         link:
                         is_container: false
                         is_root: false
@@ -4345,8 +4344,8 @@ paths:
                         name: Main Menu
                         location: header
                         locale: en
-                        created_at: '2021-11-08T11:38:18.434Z'
-                        updated_at: '2021-11-08T11:38:18.649Z'
+                        created_at: '2021-11-08T15:18:13.061Z'
+                        updated_at: '2021-11-08T15:18:13.263Z'
                       relationships:
                         menu_items:
                           data:
@@ -4362,8 +4361,8 @@ paths:
                         name: Footer Menu
                         location: footer
                         locale: en
-                        created_at: '2021-11-08T11:38:18.452Z'
-                        updated_at: '2021-11-08T11:38:18.847Z'
+                        created_at: '2021-11-08T15:18:13.075Z'
+                        updated_at: '2021-11-08T15:18:13.460Z'
                       relationships:
                         menu_items:
                           data:
@@ -4426,8 +4425,8 @@ paths:
                         name: Main Menu
                         location: header
                         locale: en
-                        created_at: '2021-11-08T11:38:19.474Z'
-                        updated_at: '2021-11-08T11:38:19.483Z'
+                        created_at: '2021-11-08T15:18:14.007Z'
+                        updated_at: '2021-11-08T15:18:14.016Z'
                       relationships:
                         menu_items:
                           data:
@@ -4495,8 +4494,8 @@ paths:
                         name: Main Menu
                         location: header
                         locale: en
-                        created_at: '2021-11-08T11:38:19.562Z'
-                        updated_at: '2021-11-08T11:38:19.572Z'
+                        created_at: '2021-11-08T15:18:14.098Z'
+                        updated_at: '2021-11-08T15:18:14.108Z'
                       relationships:
                         menu_items:
                           data:
@@ -4560,8 +4559,8 @@ paths:
                         name: Main Menu
                         location: header
                         locale: en
-                        created_at: '2021-11-08T11:38:19.710Z'
-                        updated_at: '2021-11-08T11:38:19.719Z'
+                        created_at: '2021-11-08T15:18:14.237Z'
+                        updated_at: '2021-11-08T15:18:14.250Z'
                       relationships:
                         menu_items:
                           data:
@@ -4696,8 +4695,8 @@ paths:
                         name: foo-size-68
                         presentation: Size
                         position: 1
-                        created_at: '2021-11-08T11:38:20.045Z'
-                        updated_at: '2021-11-08T11:38:20.045Z'
+                        created_at: '2021-11-08T15:18:14.575Z'
+                        updated_at: '2021-11-08T15:18:14.575Z'
                         filterable: true
                         public_metadata: {}
                         private_metadata: {}
@@ -4710,8 +4709,8 @@ paths:
                         name: foo-size-69
                         presentation: Size
                         position: 2
-                        created_at: '2021-11-08T11:38:20.048Z'
-                        updated_at: '2021-11-08T11:38:20.048Z'
+                        created_at: '2021-11-08T15:18:14.577Z'
+                        updated_at: '2021-11-08T15:18:14.577Z'
                         filterable: true
                         public_metadata: {}
                         private_metadata: {}
@@ -4764,8 +4763,8 @@ paths:
                         name: foo-size-72
                         presentation: Size
                         position: 1
-                        created_at: '2021-11-08T11:38:20.148Z'
-                        updated_at: '2021-11-08T11:38:20.148Z'
+                        created_at: '2021-11-08T15:18:14.676Z'
+                        updated_at: '2021-11-08T15:18:14.676Z'
                         filterable: true
                         public_metadata: {}
                         private_metadata: {}
@@ -4824,8 +4823,8 @@ paths:
                         name: foo-size-73
                         presentation: Size
                         position: 1
-                        created_at: '2021-11-08T11:38:20.215Z'
-                        updated_at: '2021-11-08T11:38:20.215Z'
+                        created_at: '2021-11-08T15:18:14.744Z'
+                        updated_at: '2021-11-08T15:18:14.744Z'
                         filterable: true
                         public_metadata: {}
                         private_metadata: {}
@@ -4883,8 +4882,8 @@ paths:
                         name: Size-X
                         presentation: Size
                         position: 1
-                        created_at: '2021-11-08T11:38:20.321Z'
-                        updated_at: '2021-11-08T11:38:20.331Z'
+                        created_at: '2021-11-08T15:18:14.856Z'
+                        updated_at: '2021-11-08T15:18:14.867Z'
                         filterable: true
                         public_metadata: {}
                         private_metadata: {}
@@ -5022,8 +5021,8 @@ paths:
                         position: 1
                         name: Size-68
                         presentation: S
-                        created_at: '2021-11-08T11:38:20.574Z'
-                        updated_at: '2021-11-08T11:38:20.574Z'
+                        created_at: '2021-11-08T15:18:15.105Z'
+                        updated_at: '2021-11-08T15:18:15.105Z'
                         public_metadata: {}
                         private_metadata: {}
                       relationships:
@@ -5037,8 +5036,8 @@ paths:
                         position: 1
                         name: Size-69
                         presentation: S
-                        created_at: '2021-11-08T11:38:20.583Z'
-                        updated_at: '2021-11-08T11:38:20.583Z'
+                        created_at: '2021-11-08T15:18:15.113Z'
+                        updated_at: '2021-11-08T15:18:15.113Z'
                         public_metadata: {}
                         private_metadata: {}
                       relationships:
@@ -5099,8 +5098,8 @@ paths:
                         position: 1
                         name: Size-72
                         presentation: S
-                        created_at: '2021-11-08T11:38:20.695Z'
-                        updated_at: '2021-11-08T11:38:20.695Z'
+                        created_at: '2021-11-08T15:18:15.217Z'
+                        updated_at: '2021-11-08T15:18:15.217Z'
                         public_metadata: {}
                         private_metadata: {}
                       relationships:
@@ -5165,8 +5164,8 @@ paths:
                         position: 1
                         name: Size-73
                         presentation: S
-                        created_at: '2021-11-08T11:38:20.773Z'
-                        updated_at: '2021-11-08T11:38:20.773Z'
+                        created_at: '2021-11-08T15:18:15.297Z'
+                        updated_at: '2021-11-08T15:18:15.297Z'
                         public_metadata: {}
                         private_metadata: {}
                       relationships:
@@ -5232,8 +5231,8 @@ paths:
                         position: 1
                         name: M
                         presentation: S
-                        created_at: '2021-11-08T11:38:20.887Z'
-                        updated_at: '2021-11-08T11:38:20.900Z'
+                        created_at: '2021-11-08T15:18:15.410Z'
+                        updated_at: '2021-11-08T15:18:15.422Z'
                         public_metadata: {}
                         private_metadata: {}
                       relationships:
@@ -5363,7 +5362,7 @@ paths:
                     - id: '40'
                       type: order
                       attributes:
-                        number: R812080497
+                        number: R741041176
                         item_total: '0.0'
                         total: '0.0'
                         state: cart
@@ -5372,10 +5371,10 @@ paths:
                         payment_total: '0.0'
                         shipment_state:
                         payment_state:
-                        email: whitney@ledner.ca
+                        email: pei_stanton@gibsonkuhlman.name
                         special_instructions:
-                        created_at: '2021-11-08T11:38:21.182Z'
-                        updated_at: '2021-11-08T11:38:21.182Z'
+                        created_at: '2021-11-08T15:18:15.686Z'
+                        updated_at: '2021-11-08T15:18:15.686Z'
                         currency: USD
                         last_ip_address:
                         shipment_total: '0.0'
@@ -5406,11 +5405,11 @@ paths:
                         display_ship_total: "$0.00"
                         display_shipment_total: "$0.00"
                         display_total: "$0.00"
+                        display_total_available_store_credit: "$0.00"
+                        display_store_credit_remaining_after_capture: "$0.00"
                         display_total_applicable_store_credit: "$0.00"
                         display_total_applied_store_credit: "$0.00"
                         display_order_total_after_store_credit: "$0.00"
-                        display_total_available_store_credit: "$0.00"
-                        display_store_credit_remaining_after_capture: "$0.00"
                       relationships:
                         user:
                           data:
@@ -5449,7 +5448,7 @@ paths:
                     - id: '41'
                       type: order
                       attributes:
-                        number: R730654822
+                        number: R133945741
                         item_total: '0.0'
                         total: '0.0'
                         state: cart
@@ -5458,10 +5457,10 @@ paths:
                         payment_total: '0.0'
                         shipment_state:
                         payment_state:
-                        email: kris@lakin.co.uk
+                        email: stan_williamson@fahey.info
                         special_instructions:
-                        created_at: '2021-11-08T11:38:21.198Z'
-                        updated_at: '2021-11-08T11:38:21.198Z'
+                        created_at: '2021-11-08T15:18:15.702Z'
+                        updated_at: '2021-11-08T15:18:15.702Z'
                         currency: USD
                         last_ip_address:
                         shipment_total: '0.0'
@@ -5492,11 +5491,11 @@ paths:
                         display_ship_total: "$0.00"
                         display_shipment_total: "$0.00"
                         display_total: "$0.00"
+                        display_total_available_store_credit: "$0.00"
+                        display_store_credit_remaining_after_capture: "$0.00"
                         display_total_applicable_store_credit: "$0.00"
                         display_total_applied_store_credit: "$0.00"
                         display_order_total_after_store_credit: "$0.00"
-                        display_total_available_store_credit: "$0.00"
-                        display_store_credit_remaining_after_capture: "$0.00"
                       relationships:
                         user:
                           data:
@@ -5582,7 +5581,7 @@ paths:
                       id: '44'
                       type: order
                       attributes:
-                        number: R900860461
+                        number: R142516546
                         item_total: '0.0'
                         total: '0.0'
                         state: cart
@@ -5593,8 +5592,8 @@ paths:
                         payment_state:
                         email:
                         special_instructions:
-                        created_at: '2021-11-08T11:38:21.663Z'
-                        updated_at: '2021-11-08T11:38:21.684Z'
+                        created_at: '2021-11-08T15:18:16.131Z'
+                        updated_at: '2021-11-08T15:18:16.154Z'
                         currency: USD
                         last_ip_address:
                         shipment_total: '0.0'
@@ -5625,11 +5624,11 @@ paths:
                         display_ship_total: "$0.00"
                         display_shipment_total: "$0.00"
                         display_total: "$0.00"
+                        display_total_available_store_credit: "$0.00"
+                        display_store_credit_remaining_after_capture: "$0.00"
                         display_total_applicable_store_credit: "$0.00"
                         display_total_applied_store_credit: "$0.00"
                         display_order_total_after_store_credit: "$0.00"
-                        display_total_available_store_credit: "$0.00"
-                        display_store_credit_remaining_after_capture: "$0.00"
                       relationships:
                         user:
                           data:
@@ -5710,7 +5709,7 @@ paths:
                       id: '45'
                       type: order
                       attributes:
-                        number: R331539389
+                        number: R797008104
                         item_total: '10.0'
                         total: '110.0'
                         state: delivery
@@ -5719,10 +5718,10 @@ paths:
                         payment_total: '0.0'
                         shipment_state:
                         payment_state:
-                        email: jackeline@thielschroeder.ca
+                        email: ahmed@lowe.name
                         special_instructions:
-                        created_at: '2021-11-08T11:38:21.760Z'
-                        updated_at: '2021-11-08T11:38:21.955Z'
+                        created_at: '2021-11-08T15:18:16.226Z'
+                        updated_at: '2021-11-08T15:18:16.411Z'
                         currency: USD
                         last_ip_address:
                         shipment_total: '100.0'
@@ -5753,11 +5752,11 @@ paths:
                         display_ship_total: "$100.00"
                         display_shipment_total: "$100.00"
                         display_total: "$110.00"
+                        display_total_available_store_credit: "$0.00"
+                        display_store_credit_remaining_after_capture: "$0.00"
                         display_total_applicable_store_credit: "$0.00"
                         display_total_applied_store_credit: "$0.00"
                         display_order_total_after_store_credit: "$110.00"
-                        display_total_available_store_credit: "$0.00"
-                        display_store_credit_remaining_after_capture: "$0.00"
                       relationships:
                         user:
                           data:
@@ -5854,7 +5853,7 @@ paths:
                       id: '47'
                       type: order
                       attributes:
-                        number: R592841388
+                        number: R197706282
                         item_total: '10.0'
                         total: '110.0'
                         state: delivery
@@ -5865,8 +5864,8 @@ paths:
                         payment_state:
                         email: new@example.com
                         special_instructions:
-                        created_at: '2021-11-08T11:38:22.308Z'
-                        updated_at: '2021-11-08T11:38:22.461Z'
+                        created_at: '2021-11-08T15:18:16.733Z'
+                        updated_at: '2021-11-08T15:18:16.886Z'
                         currency: USD
                         last_ip_address:
                         shipment_total: '100.0'
@@ -5897,11 +5896,11 @@ paths:
                         display_ship_total: "$100.00"
                         display_shipment_total: "$100.00"
                         display_total: "$110.00"
+                        display_total_available_store_credit: "$0.00"
+                        display_store_credit_remaining_after_capture: "$0.00"
                         display_total_applicable_store_credit: "$0.00"
                         display_total_applied_store_credit: "$0.00"
                         display_order_total_after_store_credit: "$110.00"
-                        display_total_available_store_credit: "$0.00"
-                        display_store_credit_remaining_after_capture: "$0.00"
                       relationships:
                         user:
                           data:
@@ -6054,7 +6053,7 @@ paths:
                       id: '52'
                       type: order
                       attributes:
-                        number: R637598955
+                        number: R899326450
                         item_total: '10.0'
                         total: '110.0'
                         state: payment
@@ -6063,10 +6062,10 @@ paths:
                         payment_total: '0.0'
                         shipment_state:
                         payment_state:
-                        email: ginny@fadel.info
+                        email: shyla.ondricka@kilback.us
                         special_instructions:
-                        created_at: '2021-11-08T11:38:23.438Z'
-                        updated_at: '2021-11-08T11:38:23.654Z'
+                        created_at: '2021-11-08T15:18:18.001Z'
+                        updated_at: '2021-11-08T15:18:18.216Z'
                         currency: USD
                         last_ip_address:
                         shipment_total: '100.0'
@@ -6097,11 +6096,11 @@ paths:
                         display_ship_total: "$100.00"
                         display_shipment_total: "$100.00"
                         display_total: "$110.00"
+                        display_total_available_store_credit: "$0.00"
+                        display_store_credit_remaining_after_capture: "$0.00"
                         display_total_applicable_store_credit: "$0.00"
                         display_total_applied_store_credit: "$0.00"
                         display_order_total_after_store_credit: "$110.00"
-                        display_total_available_store_credit: "$0.00"
-                        display_store_credit_remaining_after_capture: "$0.00"
                       relationships:
                         user:
                           data:
@@ -6201,7 +6200,7 @@ paths:
                       id: '54'
                       type: order
                       attributes:
-                        number: R930292425
+                        number: R936016062
                         item_total: '10.0'
                         total: '110.0'
                         state: payment
@@ -6210,10 +6209,10 @@ paths:
                         payment_total: '0.0'
                         shipment_state:
                         payment_state:
-                        email: douglas_trantow@borer.biz
+                        email: ellen@gibson.ca
                         special_instructions:
-                        created_at: '2021-11-08T11:38:23.982Z'
-                        updated_at: '2021-11-08T11:38:24.424Z'
+                        created_at: '2021-11-08T15:18:18.547Z'
+                        updated_at: '2021-11-08T15:18:18.772Z'
                         currency: USD
                         last_ip_address:
                         shipment_total: '100.0'
@@ -6244,11 +6243,11 @@ paths:
                         display_ship_total: "$100.00"
                         display_shipment_total: "$100.00"
                         display_total: "$110.00"
+                        display_total_available_store_credit: "$0.00"
+                        display_store_credit_remaining_after_capture: "$0.00"
                         display_total_applicable_store_credit: "$0.00"
                         display_total_applied_store_credit: "$0.00"
                         display_order_total_after_store_credit: "$110.00"
-                        display_total_available_store_credit: "$0.00"
-                        display_store_credit_remaining_after_capture: "$0.00"
                       relationships:
                         user:
                           data:
@@ -6348,19 +6347,19 @@ paths:
                       id: '56'
                       type: order
                       attributes:
-                        number: R989439017
+                        number: R291271768
                         item_total: '10.0'
                         total: '110.0'
                         state: complete
                         adjustment_total: '0.0'
-                        completed_at: '2021-11-08T11:38:25.061Z'
+                        completed_at: '2021-11-08T15:18:19.362Z'
                         payment_total: '0.0'
                         shipment_state: pending
                         payment_state: balance_due
-                        email: jordan@runolfsdottirdibbert.co.uk
+                        email: carry@stammgaylord.info
                         special_instructions:
-                        created_at: '2021-11-08T11:38:24.718Z'
-                        updated_at: '2021-11-08T11:38:25.061Z'
+                        created_at: '2021-11-08T15:18:19.045Z'
+                        updated_at: '2021-11-08T15:18:19.362Z'
                         currency: USD
                         last_ip_address:
                         shipment_total: '100.0'
@@ -6391,11 +6390,11 @@ paths:
                         display_ship_total: "$100.00"
                         display_shipment_total: "$100.00"
                         display_total: "$110.00"
+                        display_total_available_store_credit: "$0.00"
+                        display_store_credit_remaining_after_capture: "$0.00"
                         display_total_applicable_store_credit: "$0.00"
                         display_total_applied_store_credit: "$0.00"
                         display_order_total_after_store_credit: "$110.00"
-                        display_total_available_store_credit: "$0.00"
-                        display_store_credit_remaining_after_capture: "$0.00"
                       relationships:
                         user:
                           data:
@@ -6506,7 +6505,7 @@ paths:
                       id: '59'
                       type: order
                       attributes:
-                        number: R101290975
+                        number: R647280035
                         item_total: '0.0'
                         total: '0.0'
                         state: cart
@@ -6515,10 +6514,10 @@ paths:
                         payment_total: '0.0'
                         shipment_state:
                         payment_state:
-                        email: sadie@hermann.ca
+                        email: dwana.stark@millerboyer.name
                         special_instructions:
-                        created_at: '2021-11-08T11:38:25.633Z'
-                        updated_at: '2021-11-08T11:38:25.804Z'
+                        created_at: '2021-11-08T15:18:19.865Z'
+                        updated_at: '2021-11-08T15:18:20.019Z'
                         currency: USD
                         last_ip_address:
                         shipment_total: '0.0'
@@ -6549,11 +6548,11 @@ paths:
                         display_ship_total: "$0.00"
                         display_shipment_total: "$0.00"
                         display_total: "$0.00"
+                        display_total_available_store_credit: "$0.00"
+                        display_store_credit_remaining_after_capture: "$0.00"
                         display_total_applicable_store_credit: "$0.00"
                         display_total_applied_store_credit: "$0.00"
                         display_order_total_after_store_credit: "$0.00"
-                        display_total_available_store_credit: "$0.00"
-                        display_store_credit_remaining_after_capture: "$0.00"
                       relationships:
                         user:
                           data:
@@ -6648,7 +6647,7 @@ paths:
                       id: '61'
                       type: order
                       attributes:
-                        number: R239945982
+                        number: R196770148
                         item_total: '10.0'
                         total: '110.0'
                         state: delivery
@@ -6657,10 +6656,10 @@ paths:
                         payment_total: '0.0'
                         shipment_state:
                         payment_state:
-                        email: freida.hayes@yostcremin.biz
+                        email: jenna.walsh@johnston.com
                         special_instructions:
-                        created_at: '2021-11-08T11:38:26.099Z'
-                        updated_at: '2021-11-08T11:38:26.226Z'
+                        created_at: '2021-11-08T15:18:20.308Z'
+                        updated_at: '2021-11-08T15:18:20.438Z'
                         currency: USD
                         last_ip_address:
                         shipment_total: '100.0'
@@ -6691,11 +6690,11 @@ paths:
                         display_ship_total: "$100.00"
                         display_shipment_total: "$100.00"
                         display_total: "$110.00"
+                        display_total_available_store_credit: "$0.00"
+                        display_store_credit_remaining_after_capture: "$0.00"
                         display_total_applicable_store_credit: "$0.00"
                         display_total_applied_store_credit: "$0.00"
                         display_order_total_after_store_credit: "$110.00"
-                        display_total_available_store_credit: "$0.00"
-                        display_store_credit_remaining_after_capture: "$0.00"
                       relationships:
                         user:
                           data:
@@ -6963,8 +6962,8 @@ paths:
                         display_on: both
                         auto_capture:
                         position: 1
-                        created_at: '2021-11-08T11:38:29.158Z'
-                        updated_at: '2021-11-08T11:38:29.158Z'
+                        created_at: '2021-11-08T15:18:22.890Z'
+                        updated_at: '2021-11-08T15:18:22.890Z'
                         deleted_at:
                         public_metadata: {}
                         private_metadata: {}
@@ -6984,8 +6983,8 @@ paths:
                         display_on: both
                         auto_capture:
                         position: 2
-                        created_at: '2021-11-08T11:38:29.170Z'
-                        updated_at: '2021-11-08T11:38:29.170Z'
+                        created_at: '2021-11-08T15:18:22.900Z'
+                        updated_at: '2021-11-08T15:18:22.900Z'
                         deleted_at:
                         public_metadata: {}
                         private_metadata: {}
@@ -7005,8 +7004,8 @@ paths:
                         display_on: both
                         auto_capture:
                         position: 3
-                        created_at: '2021-11-08T11:38:29.176Z'
-                        updated_at: '2021-11-08T11:38:29.176Z'
+                        created_at: '2021-11-08T15:18:22.907Z'
+                        updated_at: '2021-11-08T15:18:22.907Z'
                         deleted_at:
                         public_metadata: {}
                         private_metadata: {}
@@ -7026,8 +7025,8 @@ paths:
                         display_on: both
                         auto_capture:
                         position: 4
-                        created_at: '2021-11-08T11:38:29.183Z'
-                        updated_at: '2021-11-08T11:38:29.183Z'
+                        created_at: '2021-11-08T15:18:22.913Z'
+                        updated_at: '2021-11-08T15:18:22.913Z'
                         deleted_at:
                         public_metadata: {}
                         private_metadata: {}
@@ -7050,8 +7049,8 @@ paths:
                         display_on: both
                         auto_capture:
                         position: 5
-                        created_at: '2021-11-08T11:38:29.192Z'
-                        updated_at: '2021-11-08T11:38:29.192Z'
+                        created_at: '2021-11-08T15:18:22.920Z'
+                        updated_at: '2021-11-08T15:18:22.920Z'
                         deleted_at:
                         public_metadata: {}
                         private_metadata: {}
@@ -7121,8 +7120,8 @@ paths:
                         display_on: both
                         auto_capture:
                         position: 3
-                        created_at: '2021-11-08T11:38:29.387Z'
-                        updated_at: '2021-11-08T11:38:29.387Z'
+                        created_at: '2021-11-08T15:18:23.135Z'
+                        updated_at: '2021-11-08T15:18:23.135Z'
                         deleted_at:
                         public_metadata: {}
                         private_metadata: {}
@@ -7198,8 +7197,8 @@ paths:
                         display_on: both
                         auto_capture:
                         position: 4
-                        created_at: '2021-11-08T11:38:29.546Z'
-                        updated_at: '2021-11-08T11:38:29.546Z'
+                        created_at: '2021-11-08T15:18:23.276Z'
+                        updated_at: '2021-11-08T15:18:23.276Z'
                         deleted_at:
                         public_metadata: {}
                         private_metadata: {}
@@ -7274,8 +7273,8 @@ paths:
                         display_on: both
                         auto_capture:
                         position: 3
-                        created_at: '2021-11-08T11:38:29.766Z'
-                        updated_at: '2021-11-08T11:38:29.787Z'
+                        created_at: '2021-11-08T15:18:23.472Z'
+                        updated_at: '2021-11-08T15:18:23.488Z'
                         deleted_at:
                         public_metadata: {}
                         private_metadata: {}
@@ -7423,9 +7422,9 @@ paths:
                         state: invalid
                         response_code: '12345'
                         avs_response:
-                        created_at: '2021-11-08T11:38:30.304Z'
-                        updated_at: '2021-11-08T11:38:30.336Z'
-                        number: P4T6FY2M
+                        created_at: '2021-11-08T15:18:23.977Z'
+                        updated_at: '2021-11-08T15:18:24.007Z'
+                        number: PS7WMFE0
                         cvv_response_code:
                         cvv_response_message:
                         public_metadata: {}
@@ -7462,9 +7461,9 @@ paths:
                         state: checkout
                         response_code: '12345'
                         avs_response:
-                        created_at: '2021-11-08T11:38:30.331Z'
-                        updated_at: '2021-11-08T11:38:30.331Z'
-                        number: P3KFYT1Q
+                        created_at: '2021-11-08T15:18:24.002Z'
+                        updated_at: '2021-11-08T15:18:24.002Z'
+                        number: PS2D9K0O
                         cvv_response_code:
                         cvv_response_message:
                         public_metadata: {}
@@ -7552,9 +7551,9 @@ paths:
                         state: checkout
                         response_code: '12345'
                         avs_response:
-                        created_at: '2021-11-08T11:38:30.615Z'
-                        updated_at: '2021-11-08T11:38:30.615Z'
-                        number: PBN8RS27
+                        created_at: '2021-11-08T15:18:24.268Z'
+                        updated_at: '2021-11-08T15:18:24.268Z'
+                        number: PW8TW80F
                         cvv_response_code:
                         cvv_response_message:
                         public_metadata: {}
@@ -7692,8 +7691,8 @@ paths:
                       type: promotion_category
                       attributes:
                         name: Promotion Category
-                        created_at: '2021-11-08T11:38:30.998Z'
-                        updated_at: '2021-11-08T11:38:30.998Z'
+                        created_at: '2021-11-08T15:18:24.645Z'
+                        updated_at: '2021-11-08T15:18:24.645Z'
                         code: POP123
                       relationships:
                         promotions:
@@ -7702,8 +7701,8 @@ paths:
                       type: promotion_category
                       attributes:
                         name: Promotion Category
-                        created_at: '2021-11-08T11:38:31.000Z'
-                        updated_at: '2021-11-08T11:38:31.000Z'
+                        created_at: '2021-11-08T15:18:24.647Z'
+                        updated_at: '2021-11-08T15:18:24.647Z'
                         code: POP123
                       relationships:
                         promotions:
@@ -7759,8 +7758,8 @@ paths:
                       type: promotion_category
                       attributes:
                         name: Promotion Category
-                        created_at: '2021-11-08T11:38:31.089Z'
-                        updated_at: '2021-11-08T11:38:31.089Z'
+                        created_at: '2021-11-08T15:18:24.734Z'
+                        updated_at: '2021-11-08T15:18:24.734Z'
                         code: 2021-BFM
                       relationships:
                         promotions:
@@ -7820,8 +7819,8 @@ paths:
                       type: promotion_category
                       attributes:
                         name: Promotion Category
-                        created_at: '2021-11-08T11:38:31.152Z'
-                        updated_at: '2021-11-08T11:38:31.152Z'
+                        created_at: '2021-11-08T15:18:24.806Z'
+                        updated_at: '2021-11-08T15:18:24.806Z'
                         code: MJO
                       relationships:
                         promotions:
@@ -7882,8 +7881,8 @@ paths:
                       type: promotion_category
                       attributes:
                         name: 2021 Promotions
-                        created_at: '2021-11-08T11:38:31.268Z'
-                        updated_at: '2021-11-08T11:38:31.278Z'
+                        created_at: '2021-11-08T15:18:24.919Z'
+                        updated_at: '2021-11-08T15:18:24.928Z'
                         code: 2021-Promos
                       relationships:
                         promotions:
@@ -8004,14 +8003,14 @@ paths:
                       type: role
                       attributes:
                         name: 'Role #1'
-                        created_at: '2021-11-08T11:38:31.523Z'
-                        updated_at: '2021-11-08T11:38:31.523Z'
+                        created_at: '2021-11-08T15:18:25.297Z'
+                        updated_at: '2021-11-08T15:18:25.297Z'
                     - id: '2'
                       type: role
                       attributes:
                         name: 'Role #2'
-                        created_at: '2021-11-08T11:38:31.525Z'
-                        updated_at: '2021-11-08T11:38:31.525Z'
+                        created_at: '2021-11-08T15:18:25.299Z'
+                        updated_at: '2021-11-08T15:18:25.299Z'
                     meta:
                       count: 2
                       total_count: 2
@@ -8056,8 +8055,8 @@ paths:
                       type: role
                       attributes:
                         name: 'Role #5'
-                        created_at: '2021-11-08T11:38:31.624Z'
-                        updated_at: '2021-11-08T11:38:31.624Z'
+                        created_at: '2021-11-08T15:18:25.397Z'
+                        updated_at: '2021-11-08T15:18:25.397Z'
               schema:
                 "$ref": "#/components/schemas/resource"
         '422':
@@ -8106,8 +8105,8 @@ paths:
                       type: role
                       attributes:
                         name: 'Role #6'
-                        created_at: '2021-11-08T11:38:31.689Z'
-                        updated_at: '2021-11-08T11:38:31.689Z'
+                        created_at: '2021-11-08T15:18:25.459Z'
+                        updated_at: '2021-11-08T15:18:25.459Z'
               schema:
                 "$ref": "#/components/schemas/resource"
         '404':
@@ -8157,8 +8156,8 @@ paths:
                       type: role
                       attributes:
                         name: administrator
-                        created_at: '2021-11-08T11:38:31.789Z'
-                        updated_at: '2021-11-08T11:38:31.799Z'
+                        created_at: '2021-11-08T15:18:25.555Z'
+                        updated_at: '2021-11-08T15:18:25.564Z'
               schema:
                 "$ref": "#/components/schemas/resource"
         '422':
@@ -8282,12 +8281,12 @@ paths:
                       type: shipment
                       attributes:
                         tracking: U10000
-                        number: H78997837551
+                        number: H78041163696
                         cost: '100.0'
                         shipped_at:
                         state: pending
-                        created_at: '2021-11-08T11:38:32.056Z'
-                        updated_at: '2021-11-08T11:38:32.062Z'
+                        created_at: '2021-11-08T15:18:25.806Z'
+                        updated_at: '2021-11-08T15:18:25.810Z'
                         adjustment_total: '0.0'
                         additional_tax_total: '0.0'
                         promo_total: '0.0'
@@ -8297,11 +8296,11 @@ paths:
                         non_taxable_adjustment_total: '0.0'
                         public_metadata: {}
                         private_metadata: {}
+                        display_cost: "$100.00"
                         display_discounted_cost: "$100.00"
                         display_item_cost: "$0.00"
                         display_final_price: "$100.00"
                         display_amount: "$100.00"
-                        display_cost: "$100.00"
                       relationships:
                         order:
                           data:
@@ -8331,12 +8330,12 @@ paths:
                       type: shipment
                       attributes:
                         tracking: U10000
-                        number: H46523481682
+                        number: H27823566859
                         cost: '100.0'
                         shipped_at:
                         state: pending
-                        created_at: '2021-11-08T11:38:32.113Z'
-                        updated_at: '2021-11-08T11:38:32.118Z'
+                        created_at: '2021-11-08T15:18:25.855Z'
+                        updated_at: '2021-11-08T15:18:25.860Z'
                         adjustment_total: '0.0'
                         additional_tax_total: '0.0'
                         promo_total: '0.0'
@@ -8346,11 +8345,11 @@ paths:
                         non_taxable_adjustment_total: '0.0'
                         public_metadata: {}
                         private_metadata: {}
+                        display_cost: "$100.00"
                         display_discounted_cost: "$100.00"
                         display_item_cost: "$0.00"
                         display_final_price: "$100.00"
                         display_amount: "$100.00"
-                        display_cost: "$100.00"
                       relationships:
                         order:
                           data:
@@ -8433,12 +8432,12 @@ paths:
                       type: shipment
                       attributes:
                         tracking: U10000
-                        number: H21237280739
+                        number: H20858024056
                         cost: '100.0'
                         shipped_at:
                         state: pending
-                        created_at: '2021-11-08T11:38:32.688Z'
-                        updated_at: '2021-11-08T11:38:32.720Z'
+                        created_at: '2021-11-08T15:18:26.338Z'
+                        updated_at: '2021-11-08T15:18:26.376Z'
                         adjustment_total: '0.0'
                         additional_tax_total: '0.0'
                         promo_total: '0.0'
@@ -8448,11 +8447,11 @@ paths:
                         non_taxable_adjustment_total: '0.0'
                         public_metadata: {}
                         private_metadata: {}
+                        display_cost: "$100.00"
                         display_discounted_cost: "$100.00"
                         display_item_cost: "$10.00"
                         display_final_price: "$100.00"
                         display_amount: "$100.00"
-                        display_cost: "$100.00"
                       relationships:
                         order:
                           data:
@@ -8574,12 +8573,12 @@ paths:
                       type: shipment
                       attributes:
                         tracking: U10000
-                        number: H48427496107
+                        number: H02485827676
                         cost: '100.0'
                         shipped_at:
                         state: ready
-                        created_at: '2021-11-08T11:38:34.334Z'
-                        updated_at: '2021-11-08T11:38:34.388Z'
+                        created_at: '2021-11-08T15:18:27.809Z'
+                        updated_at: '2021-11-08T15:18:27.867Z'
                         adjustment_total: '0.0'
                         additional_tax_total: '0.0'
                         promo_total: '0.0'
@@ -8589,11 +8588,11 @@ paths:
                         non_taxable_adjustment_total: '0.0'
                         public_metadata: {}
                         private_metadata: {}
+                        display_cost: "$100.00"
                         display_discounted_cost: "$100.00"
                         display_item_cost: "$10.00"
                         display_final_price: "$100.00"
                         display_amount: "$100.00"
-                        display_cost: "$100.00"
                       relationships:
                         order:
                           data:
@@ -8680,12 +8679,12 @@ paths:
                       type: shipment
                       attributes:
                         tracking: U10000
-                        number: H51918225930
+                        number: H71236205853
                         cost: '100.0'
-                        shipped_at: '2021-11-08T11:38:35.156Z'
+                        shipped_at: '2021-11-08T15:18:28.576Z'
                         state: shipped
-                        created_at: '2021-11-08T11:38:35.097Z'
-                        updated_at: '2021-11-08T11:38:35.156Z'
+                        created_at: '2021-11-08T15:18:28.524Z'
+                        updated_at: '2021-11-08T15:18:28.576Z'
                         adjustment_total: '0.0'
                         additional_tax_total: '0.0'
                         promo_total: '0.0'
@@ -8695,11 +8694,11 @@ paths:
                         non_taxable_adjustment_total: '0.0'
                         public_metadata: {}
                         private_metadata: {}
+                        display_cost: "$100.00"
                         display_discounted_cost: "$100.00"
                         display_item_cost: "$10.00"
                         display_final_price: "$100.00"
                         display_amount: "$100.00"
-                        display_cost: "$100.00"
                       relationships:
                         order:
                           data:
@@ -8786,12 +8785,12 @@ paths:
                       type: shipment
                       attributes:
                         tracking: U10000
-                        number: H21269247050
+                        number: H83042622495
                         cost: '100.0'
                         shipped_at:
                         state: canceled
-                        created_at: '2021-11-08T11:38:35.873Z'
-                        updated_at: '2021-11-08T11:38:35.916Z'
+                        created_at: '2021-11-08T15:18:29.234Z'
+                        updated_at: '2021-11-08T15:18:29.274Z'
                         adjustment_total: '0.0'
                         additional_tax_total: '0.0'
                         promo_total: '0.0'
@@ -8801,11 +8800,11 @@ paths:
                         non_taxable_adjustment_total: '0.0'
                         public_metadata: {}
                         private_metadata: {}
+                        display_cost: "$100.00"
                         display_discounted_cost: "$100.00"
                         display_item_cost: "$10.00"
                         display_final_price: "$100.00"
                         display_amount: "$100.00"
-                        display_cost: "$100.00"
                       relationships:
                         order:
                           data:
@@ -8892,12 +8891,12 @@ paths:
                       type: shipment
                       attributes:
                         tracking: U10000
-                        number: H83992271967
+                        number: H36395903719
                         cost: '100.0'
                         shipped_at:
                         state: ready
-                        created_at: '2021-11-08T11:38:36.655Z'
-                        updated_at: '2021-11-08T11:38:36.703Z'
+                        created_at: '2021-11-08T15:18:29.941Z'
+                        updated_at: '2021-11-08T15:18:29.985Z'
                         adjustment_total: '0.0'
                         additional_tax_total: '0.0'
                         promo_total: '0.0'
@@ -8907,11 +8906,11 @@ paths:
                         non_taxable_adjustment_total: '0.0'
                         public_metadata: {}
                         private_metadata: {}
+                        display_cost: "$100.00"
                         display_discounted_cost: "$100.00"
                         display_item_cost: "$10.00"
                         display_final_price: "$100.00"
                         display_amount: "$100.00"
-                        display_cost: "$100.00"
                       relationships:
                         order:
                           data:
@@ -8998,12 +8997,12 @@ paths:
                       type: shipment
                       attributes:
                         tracking: U10000
-                        number: H75920559018
+                        number: H71956341575
                         cost: '100.0'
                         shipped_at:
                         state: pending
-                        created_at: '2021-11-08T11:38:37.424Z'
-                        updated_at: '2021-11-08T11:38:37.474Z'
+                        created_at: '2021-11-08T15:18:30.667Z'
+                        updated_at: '2021-11-08T15:18:30.714Z'
                         adjustment_total: '0.0'
                         additional_tax_total: '0.0'
                         promo_total: '0.0'
@@ -9013,11 +9012,11 @@ paths:
                         non_taxable_adjustment_total: '0.0'
                         public_metadata: {}
                         private_metadata: {}
+                        display_cost: "$100.00"
                         display_discounted_cost: "$100.00"
                         display_item_cost: "$10.00"
                         display_final_price: "$100.00"
                         display_amount: "$100.00"
-                        display_cost: "$100.00"
                       relationships:
                         order:
                           data:
@@ -9108,14 +9107,14 @@ paths:
                       type: shipping_category
                       attributes:
                         name: 'ShippingCategory #116'
-                        created_at: '2021-11-08T11:38:37.897Z'
-                        updated_at: '2021-11-08T11:38:37.897Z'
+                        created_at: '2021-11-08T15:18:31.118Z'
+                        updated_at: '2021-11-08T15:18:31.118Z'
                     - id: '117'
                       type: shipping_category
                       attributes:
                         name: 'ShippingCategory #117'
-                        created_at: '2021-11-08T11:38:37.899Z'
-                        updated_at: '2021-11-08T11:38:37.899Z'
+                        created_at: '2021-11-08T15:18:31.120Z'
+                        updated_at: '2021-11-08T15:18:31.120Z'
                     meta:
                       count: 2
                       total_count: 2
@@ -9160,8 +9159,8 @@ paths:
                       type: shipping_category
                       attributes:
                         name: 'ShippingCategory #120'
-                        created_at: '2021-11-08T11:38:38.024Z'
-                        updated_at: '2021-11-08T11:38:38.024Z'
+                        created_at: '2021-11-08T15:18:31.208Z'
+                        updated_at: '2021-11-08T15:18:31.208Z'
               schema:
                 "$ref": "#/components/schemas/resource"
         '422':
@@ -9210,8 +9209,8 @@ paths:
                       type: shipping_category
                       attributes:
                         name: 'ShippingCategory #121'
-                        created_at: '2021-11-08T11:38:38.093Z'
-                        updated_at: '2021-11-08T11:38:38.093Z'
+                        created_at: '2021-11-08T15:18:31.285Z'
+                        updated_at: '2021-11-08T15:18:31.285Z'
               schema:
                 "$ref": "#/components/schemas/resource"
         '404':
@@ -9261,8 +9260,8 @@ paths:
                       type: shipping_category
                       attributes:
                         name: Default
-                        created_at: '2021-11-08T11:38:38.198Z'
-                        updated_at: '2021-11-08T11:38:38.208Z'
+                        created_at: '2021-11-08T15:18:31.383Z'
+                        updated_at: '2021-11-08T15:18:31.393Z'
               schema:
                 "$ref": "#/components/schemas/resource"
         '422':
@@ -9396,8 +9395,8 @@ paths:
                         admin_name:
                         display_on: both
                         tracking_url:
-                        created_at: '2021-11-08T11:38:38.438Z'
-                        updated_at: '2021-11-08T11:38:38.438Z'
+                        created_at: '2021-11-08T15:18:31.627Z'
+                        updated_at: '2021-11-08T15:18:31.627Z'
                         deleted_at:
                         public_metadata: {}
                         private_metadata: {}
@@ -9422,8 +9421,8 @@ paths:
                         admin_name:
                         display_on: both
                         tracking_url:
-                        created_at: '2021-11-08T11:38:38.455Z'
-                        updated_at: '2021-11-08T11:38:38.455Z'
+                        created_at: '2021-11-08T15:18:31.648Z'
+                        updated_at: '2021-11-08T15:18:31.648Z'
                         deleted_at:
                         public_metadata: {}
                         private_metadata: {}
@@ -9495,8 +9494,8 @@ paths:
                         admin_name: DHL Express- Zone A
                         display_on: both
                         tracking_url:
-                        created_at: '2021-11-08T11:38:38.614Z'
-                        updated_at: '2021-11-08T11:38:38.614Z'
+                        created_at: '2021-11-08T15:18:31.788Z'
+                        updated_at: '2021-11-08T15:18:31.788Z'
                         deleted_at:
                         public_metadata: {}
                         private_metadata: {}
@@ -9582,8 +9581,8 @@ paths:
                         admin_name:
                         display_on: both
                         tracking_url:
-                        created_at: '2021-11-08T11:38:38.695Z'
-                        updated_at: '2021-11-08T11:38:38.695Z'
+                        created_at: '2021-11-08T15:18:31.875Z'
+                        updated_at: '2021-11-08T15:18:31.875Z'
                         deleted_at:
                         public_metadata: {}
                         private_metadata: {}
@@ -9660,8 +9659,8 @@ paths:
                         admin_name:
                         display_on: both
                         tracking_url:
-                        created_at: '2021-11-08T11:38:38.874Z'
-                        updated_at: '2021-11-08T11:38:38.896Z'
+                        created_at: '2021-11-08T15:18:32.012Z'
+                        updated_at: '2021-11-08T15:18:32.036Z'
                         deleted_at:
                         public_metadata: {}
                         private_metadata: {}
@@ -9755,6 +9754,733 @@ paths:
                     error: The access token is invalid
               schema:
                 "$ref": "#/components/schemas/error"
+  "/api/v2/platform/tax_categories":
+    get:
+      summary: Return a list of Tax Categories
+      tags:
+      - Tax Categories
+      security:
+      - bearer_auth: []
+      description: Returns a list of Tax Categories
+      operationId: tax-categories-list
+      parameters:
+      - name: page
+        in: query
+        example: 1
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        example: 50
+        schema:
+          type: integer
+      - name: include
+        in: query
+        description: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: tax_rates
+        schema:
+          type: string
+      - name: filter[name_eq]
+        in: query
+        description: ''
+        example: Clothing
+        schema:
+          type: string
+      - name: filter[is_default_true]
+        in: query
+        description: ''
+        example: 1
+        schema:
+          type: string
+      - name: filter[tax_code_eq]
+        in: query
+        description: ''
+        example: 1257L
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Records returned
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    data:
+                    - id: '126'
+                      type: tax_category
+                      attributes:
+                        name: TaxCategory - 647345
+                        description: Quidem esse quibusdam non officiis ducimus hic
+                          nisi rem.
+                        is_default: false
+                        deleted_at:
+                        created_at: '2021-11-08T15:18:32.484Z'
+                        updated_at: '2021-11-08T15:18:32.484Z'
+                        tax_code:
+                      relationships:
+                        tax_rates:
+                          data: []
+                    - id: '127'
+                      type: tax_category
+                      attributes:
+                        name: TaxCategory - 284386
+                        description: Sint autem velit cupiditate reiciendis officia
+                          inventore atque.
+                        is_default: false
+                        deleted_at:
+                        created_at: '2021-11-08T15:18:32.487Z'
+                        updated_at: '2021-11-08T15:18:32.487Z'
+                        tax_code:
+                      relationships:
+                        tax_rates:
+                          data: []
+                    meta:
+                      count: 2
+                      total_count: 2
+                      total_pages: 1
+                    links:
+                      self: http://www.example.com/api/v2/platform/tax_categories?page=1&per_page=&include=&filter[name_eq]=&filter[is_default_true]=&filter[tax_code_eq]=
+                      next: http://www.example.com/api/v2/platform/tax_categories?filter%5Bis_default_true%5D=&filter%5Bname_eq%5D=&filter%5Btax_code_eq%5D=&include=&page=1&per_page=
+                      prev: http://www.example.com/api/v2/platform/tax_categories?filter%5Bis_default_true%5D=&filter%5Bname_eq%5D=&filter%5Btax_code_eq%5D=&include=&page=1&per_page=
+                      last: http://www.example.com/api/v2/platform/tax_categories?filter%5Bis_default_true%5D=&filter%5Bname_eq%5D=&filter%5Btax_code_eq%5D=&include=&page=1&per_page=
+                      first: http://www.example.com/api/v2/platform/tax_categories?filter%5Bis_default_true%5D=&filter%5Bname_eq%5D=&filter%5Btax_code_eq%5D=&include=&page=1&per_page=
+              schema:
+                "$ref": "#/components/schemas/resources_list"
+        '401':
+          description: Authentication Failed
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The access token is invalid
+              schema:
+                "$ref": "#/components/schemas/error"
+    post:
+      summary: Create a Tax Category
+      tags:
+      - Tax Categories
+      security:
+      - bearer_auth: []
+      description: Creates a Tax Category
+      operationId: create-tax-category
+      parameters:
+      - name: include
+        in: query
+        description: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: tax_rates
+        schema:
+          type: string
+      responses:
+        '201':
+          description: Record created
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    data:
+                      id: '130'
+                      type: tax_category
+                      attributes:
+                        name: TaxCategory - 344693
+                        description: A alias qui quasi molestiae id rem praesentium.
+                        is_default: false
+                        deleted_at:
+                        created_at: '2021-11-08T15:18:32.583Z'
+                        updated_at: '2021-11-08T15:18:32.583Z'
+                        tax_code:
+                      relationships:
+                        tax_rates:
+                          data: []
+              schema:
+                "$ref": "#/components/schemas/resource"
+        '422':
+          description: Invalid request
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: Name can't be blank
+                    errors:
+                      name:
+                      - can't be blank
+              schema:
+                "$ref": "#/components/schemas/validation_errors"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/create_tax_category_params"
+  "/api/v2/platform/tax_categories/{id}":
+    get:
+      summary: Return a Tax Category
+      tags:
+      - Tax Categories
+      security:
+      - bearer_auth: []
+      description: Returns a Tax Category
+      operationId: show-tax-category
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: include
+        in: query
+        description: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: tax_rates
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Record found
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    data:
+                      id: '131'
+                      type: tax_category
+                      attributes:
+                        name: TaxCategory - 705374
+                        description: Velit quibusdam aspernatur eligendi facere.
+                        is_default: false
+                        deleted_at:
+                        created_at: '2021-11-08T15:18:32.654Z'
+                        updated_at: '2021-11-08T15:18:32.654Z'
+                        tax_code:
+                      relationships:
+                        tax_rates:
+                          data: []
+              schema:
+                "$ref": "#/components/schemas/resource"
+        '404':
+          description: Record not found
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The resource you were looking for could not be found.
+              schema:
+                "$ref": "#/components/schemas/error"
+        '401':
+          description: Authentication Failed
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The access token is invalid
+              schema:
+                "$ref": "#/components/schemas/error"
+    patch:
+      summary: Update a Tax Category
+      tags:
+      - Tax Categories
+      security:
+      - bearer_auth: []
+      description: Updates a Tax Category
+      operationId: update-tax-category
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: include
+        in: query
+        description: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: tax_rates
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Record updated
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    data:
+                      id: '133'
+                      type: tax_category
+                      attributes:
+                        name: Clothing
+                        description: Men's, women's and children's clothing
+                        is_default: true
+                        deleted_at:
+                        created_at: '2021-11-08T15:18:32.770Z'
+                        updated_at: '2021-11-08T15:18:32.780Z'
+                        tax_code: 1233K
+                      relationships:
+                        tax_rates:
+                          data: []
+              schema:
+                "$ref": "#/components/schemas/resource"
+        '422':
+          description: Invalid request
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: Name can't be blank
+                    errors:
+                      name:
+                      - can't be blank
+              schema:
+                "$ref": "#/components/schemas/validation_errors"
+        '404':
+          description: Record not found
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The resource you were looking for could not be found.
+              schema:
+                "$ref": "#/components/schemas/error"
+        '401':
+          description: Authentication Failed
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The access token is invalid
+              schema:
+                "$ref": "#/components/schemas/error"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/update_tax_category_params"
+    delete:
+      summary: Delete a Tax Category
+      tags:
+      - Tax Categories
+      security:
+      - bearer_auth: []
+      description: Deletes a Tax Category
+      operationId: delete-tax-category
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Record deleted
+        '404':
+          description: Record not found
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The resource you were looking for could not be found.
+              schema:
+                "$ref": "#/components/schemas/error"
+        '401':
+          description: Authentication Failed
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The access token is invalid
+              schema:
+                "$ref": "#/components/schemas/error"
+  "/api/v2/platform/tax_rates":
+    get:
+      summary: Return a list of Tax Rates
+      tags:
+      - Tax Rates
+      security:
+      - bearer_auth: []
+      description: Returns a list of Tax Rates
+      operationId: tax-rates-list
+      parameters:
+      - name: page
+        in: query
+        example: 1
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        example: 50
+        schema:
+          type: integer
+      - name: include
+        in: query
+        description: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: zone,tax_category
+        schema:
+          type: string
+      - name: filter[zone_id_eq]
+        in: query
+        description: ''
+        example: '3'
+        schema:
+          type: string
+      - name: filter[amount_gt]
+        in: query
+        description: ''
+        example: '0.05'
+        schema:
+          type: string
+      - name: filter[tax_category_id_eq]
+        in: query
+        description: ''
+        example: '1'
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Records returned
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    data:
+                    - id: '12'
+                      type: tax_rate
+                      attributes:
+                        amount: '0.1'
+                        included_in_price: false
+                        created_at: '2021-11-08T15:18:33.002Z'
+                        updated_at: '2021-11-08T15:18:33.002Z'
+                        name:
+                        show_rate_in_label: true
+                        deleted_at:
+                      relationships:
+                        zone:
+                          data:
+                            id: '82'
+                            type: zone
+                        tax_category:
+                          data:
+                            id: '138'
+                            type: tax_category
+                    - id: '13'
+                      type: tax_rate
+                      attributes:
+                        amount: '0.1'
+                        included_in_price: false
+                        created_at: '2021-11-08T15:18:33.007Z'
+                        updated_at: '2021-11-08T15:18:33.007Z'
+                        name:
+                        show_rate_in_label: true
+                        deleted_at:
+                      relationships:
+                        zone:
+                          data:
+                            id: '83'
+                            type: zone
+                        tax_category:
+                          data:
+                            id: '138'
+                            type: tax_category
+                    meta:
+                      count: 2
+                      total_count: 2
+                      total_pages: 1
+                    links:
+                      self: http://www.example.com/api/v2/platform/tax_rates?page=1&per_page=&include=&filter[zone_id_eq]=&filter[amount_gt]=&filter[tax_category_id_eq]=
+                      next: http://www.example.com/api/v2/platform/tax_rates?filter%5Bamount_gt%5D=&filter%5Btax_category_id_eq%5D=&filter%5Bzone_id_eq%5D=&include=&page=1&per_page=
+                      prev: http://www.example.com/api/v2/platform/tax_rates?filter%5Bamount_gt%5D=&filter%5Btax_category_id_eq%5D=&filter%5Bzone_id_eq%5D=&include=&page=1&per_page=
+                      last: http://www.example.com/api/v2/platform/tax_rates?filter%5Bamount_gt%5D=&filter%5Btax_category_id_eq%5D=&filter%5Bzone_id_eq%5D=&include=&page=1&per_page=
+                      first: http://www.example.com/api/v2/platform/tax_rates?filter%5Bamount_gt%5D=&filter%5Btax_category_id_eq%5D=&filter%5Bzone_id_eq%5D=&include=&page=1&per_page=
+              schema:
+                "$ref": "#/components/schemas/resources_list"
+        '401':
+          description: Authentication Failed
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The access token is invalid
+              schema:
+                "$ref": "#/components/schemas/error"
+    post:
+      summary: Create a Tax Rate
+      tags:
+      - Tax Rates
+      security:
+      - bearer_auth: []
+      description: Creates a Tax Rate
+      operationId: create-tax-rate
+      parameters:
+      - name: include
+        in: query
+        description: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: zone,tax_category
+        schema:
+          type: string
+      responses:
+        '201':
+          description: Record created
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    data:
+                      id: '16'
+                      type: tax_rate
+                      attributes:
+                        amount: '0.1'
+                        included_in_price: false
+                        created_at: '2021-11-08T15:18:33.120Z'
+                        updated_at: '2021-11-08T15:18:33.120Z'
+                        name:
+                        show_rate_in_label: true
+                        deleted_at:
+                      relationships:
+                        zone:
+                          data:
+                        tax_category:
+                          data:
+                            id: '140'
+                            type: tax_category
+              schema:
+                "$ref": "#/components/schemas/resource"
+        '422':
+          description: Invalid request
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: Calculator can't be blank, Rate can't be blank, and Tax
+                      category can't be blank
+                    errors:
+                      calculator:
+                      - can't be blank
+                      amount:
+                      - can't be blank
+                      tax_category:
+                      - can't be blank
+              schema:
+                "$ref": "#/components/schemas/validation_errors"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/create_tax_rate_params"
+  "/api/v2/platform/tax_rates/{id}":
+    get:
+      summary: Return a Tax Rate
+      tags:
+      - Tax Rates
+      security:
+      - bearer_auth: []
+      description: Returns a Tax Rate
+      operationId: show-tax-rate
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: include
+        in: query
+        description: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: zone,tax_category
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Record found
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    data:
+                      id: '17'
+                      type: tax_rate
+                      attributes:
+                        amount: '0.1'
+                        included_in_price: false
+                        created_at: '2021-11-08T15:18:33.195Z'
+                        updated_at: '2021-11-08T15:18:33.195Z'
+                        name:
+                        show_rate_in_label: true
+                        deleted_at:
+                      relationships:
+                        zone:
+                          data:
+                            id: '86'
+                            type: zone
+                        tax_category:
+                          data:
+                            id: '141'
+                            type: tax_category
+              schema:
+                "$ref": "#/components/schemas/resource"
+        '404':
+          description: Record not found
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The resource you were looking for could not be found.
+              schema:
+                "$ref": "#/components/schemas/error"
+        '401':
+          description: Authentication Failed
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The access token is invalid
+              schema:
+                "$ref": "#/components/schemas/error"
+    patch:
+      summary: Update a Tax Rate
+      tags:
+      - Tax Rates
+      security:
+      - bearer_auth: []
+      description: Updates a Tax Rate
+      operationId: update-tax-rate
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: include
+        in: query
+        description: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: zone,tax_category
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Record updated
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    data:
+                      id: '19'
+                      type: tax_rate
+                      attributes:
+                        amount: '25.9'
+                        included_in_price: true
+                        created_at: '2021-11-08T15:18:33.311Z'
+                        updated_at: '2021-11-08T15:18:33.325Z'
+                        name:
+                        show_rate_in_label: true
+                        deleted_at:
+                      relationships:
+                        zone:
+                          data:
+                            id: '89'
+                            type: zone
+                        tax_category:
+                          data:
+                            id: '143'
+                            type: tax_category
+              schema:
+                "$ref": "#/components/schemas/resource"
+        '422':
+          description: Invalid request
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: Rate can't be blank
+                    errors:
+                      amount:
+                      - can't be blank
+              schema:
+                "$ref": "#/components/schemas/validation_errors"
+        '404':
+          description: Record not found
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The resource you were looking for could not be found.
+              schema:
+                "$ref": "#/components/schemas/error"
+        '401':
+          description: Authentication Failed
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The access token is invalid
+              schema:
+                "$ref": "#/components/schemas/error"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/update_tax_rate_params"
+    delete:
+      summary: Delete a Tax Rate
+      tags:
+      - Tax Rates
+      security:
+      - bearer_auth: []
+      description: Deletes a Tax Rate
+      operationId: delete-tax-rate
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Record deleted
+        '404':
+          description: Record not found
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The resource you were looking for could not be found.
+              schema:
+                "$ref": "#/components/schemas/error"
+        '401':
+          description: Authentication Failed
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The access token is invalid
+              schema:
+                "$ref": "#/components/schemas/error"
   "/api/v2/platform/taxons":
     get:
       summary: Return a list of Taxons
@@ -9812,8 +10538,8 @@ paths:
                         lft: 2
                         rgt: 3
                         description:
-                        created_at: '2021-11-08T11:38:39.320Z'
-                        updated_at: '2021-11-08T11:38:39.326Z'
+                        created_at: '2021-11-08T15:18:33.676Z'
+                        updated_at: '2021-11-08T15:18:33.681Z'
                         meta_title:
                         meta_description:
                         meta_keywords:
@@ -9849,8 +10575,8 @@ paths:
                         lft: 4
                         rgt: 5
                         description:
-                        created_at: '2021-11-08T11:38:39.415Z'
-                        updated_at: '2021-11-08T11:38:39.420Z'
+                        created_at: '2021-11-08T15:18:33.767Z'
+                        updated_at: '2021-11-08T15:18:33.773Z'
                         meta_title:
                         meta_description:
                         meta_keywords:
@@ -9886,8 +10612,8 @@ paths:
                         lft: 1
                         rgt: 6
                         description:
-                        created_at: '2021-11-08T11:38:39.222Z'
-                        updated_at: '2021-11-08T11:38:39.433Z'
+                        created_at: '2021-11-08T15:18:33.591Z'
+                        updated_at: '2021-11-08T15:18:33.786Z'
                         meta_title:
                         meta_description:
                         meta_keywords:
@@ -9970,8 +10696,8 @@ paths:
                         lft: 2
                         rgt: 3
                         description:
-                        created_at: '2021-11-08T11:38:39.846Z'
-                        updated_at: '2021-11-08T11:38:39.852Z'
+                        created_at: '2021-11-08T15:18:34.164Z'
+                        updated_at: '2021-11-08T15:18:34.170Z'
                         meta_title:
                         meta_description:
                         meta_keywords:
@@ -10058,8 +10784,8 @@ paths:
                         lft: 2
                         rgt: 3
                         description:
-                        created_at: '2021-11-08T11:38:40.060Z'
-                        updated_at: '2021-11-08T11:38:40.065Z'
+                        created_at: '2021-11-08T15:18:34.355Z'
+                        updated_at: '2021-11-08T15:18:34.361Z'
                         meta_title:
                         meta_description:
                         meta_keywords:
@@ -10149,8 +10875,8 @@ paths:
                         lft: 2
                         rgt: 3
                         description:
-                        created_at: '2021-11-08T11:38:40.454Z'
-                        updated_at: '2021-11-08T11:38:40.497Z'
+                        created_at: '2021-11-08T15:18:34.724Z'
+                        updated_at: '2021-11-08T15:18:34.761Z'
                         meta_title:
                         meta_description:
                         meta_keywords:
@@ -10306,9 +11032,9 @@ paths:
                     - id: '97'
                       type: user
                       attributes:
-                        email: bruna_rau@bechtelar.name
-                        created_at: '2021-11-08T11:38:41.281Z'
-                        updated_at: '2021-11-08T11:38:41.281Z'
+                        email: dania@reynoldsnitzsche.com
+                        created_at: '2021-11-08T15:18:35.535Z'
+                        updated_at: '2021-11-08T15:18:35.535Z'
                         public_metadata: {}
                         private_metadata: {}
                         average_order_value: []
@@ -10322,9 +11048,9 @@ paths:
                     - id: '98'
                       type: user
                       attributes:
-                        email: micha_mckenzie@steuberkub.biz
-                        created_at: '2021-11-08T11:38:41.291Z'
-                        updated_at: '2021-11-08T11:38:41.291Z'
+                        email: lianne@cassindurgan.co.uk
+                        created_at: '2021-11-08T15:18:35.547Z'
+                        updated_at: '2021-11-08T15:18:35.547Z'
                         public_metadata: {}
                         private_metadata: {}
                         average_order_value: []
@@ -10338,9 +11064,9 @@ paths:
                     - id: '99'
                       type: user
                       attributes:
-                        email: cristopher.cartwright@brakus.name
-                        created_at: '2021-11-08T11:38:41.293Z'
-                        updated_at: '2021-11-08T11:38:41.293Z'
+                        email: caitlin@hammes.us
+                        created_at: '2021-11-08T15:18:35.551Z'
+                        updated_at: '2021-11-08T15:18:35.551Z'
                         public_metadata: {}
                         private_metadata: {}
                         average_order_value: []
@@ -10401,9 +11127,9 @@ paths:
                       id: '104'
                       type: user
                       attributes:
-                        email: wynell@hackett.biz
-                        created_at: '2021-11-08T11:38:41.423Z'
-                        updated_at: '2021-11-08T11:38:41.423Z'
+                        email: lynwood_schamberger@reilly.ca
+                        created_at: '2021-11-08T15:18:35.686Z'
+                        updated_at: '2021-11-08T15:18:35.686Z'
                         public_metadata: {}
                         private_metadata: {}
                         average_order_value: []
@@ -10468,9 +11194,9 @@ paths:
                       id: '107'
                       type: user
                       attributes:
-                        email: ferne@nienowbuckridge.ca
-                        created_at: '2021-11-08T11:38:41.556Z'
-                        updated_at: '2021-11-08T11:38:41.556Z'
+                        email: mammie@crooks.com
+                        created_at: '2021-11-08T15:18:35.774Z'
+                        updated_at: '2021-11-08T15:18:35.774Z'
                         public_metadata: {}
                         private_metadata: {}
                         average_order_value: []
@@ -10537,8 +11263,8 @@ paths:
                       type: user
                       attributes:
                         email: john@example.com
-                        created_at: '2021-11-08T11:38:41.690Z'
-                        updated_at: '2021-11-08T11:38:41.704Z'
+                        created_at: '2021-11-08T15:18:35.915Z'
+                        updated_at: '2021-11-08T15:18:35.926Z'
                         public_metadata: {}
                         private_metadata: {}
                         average_order_value: []
@@ -10687,14 +11413,14 @@ paths:
                         position: 1
                         cost_currency: USD
                         track_inventory: true
-                        updated_at: '2021-11-08T11:38:42.065Z'
+                        updated_at: '2021-11-08T15:18:36.265Z'
                         discontinue_on:
-                        created_at: '2021-11-08T11:38:42.054Z'
+                        created_at: '2021-11-08T15:18:36.257Z'
                         public_metadata: {}
                         private_metadata: {}
                         display_compare_at_price:
                         display_price: "$19.99"
-                        name: 'Product #181 - 1509'
+                        name: 'Product #181 - 9728'
                         options_text: ''
                         total_on_hand: 0
                         purchasable: true
@@ -10729,23 +11455,23 @@ paths:
                       type: variant
                       attributes:
                         sku: SKU-249
-                        weight: '131.93'
-                        height: '173.98'
-                        depth: '177.43'
+                        weight: '159.57'
+                        height: '182.38'
+                        depth: '136.17'
                         deleted_at:
                         is_master: false
                         cost_price: '17.0'
                         position: 2
                         cost_currency: USD
                         track_inventory: true
-                        updated_at: '2021-11-08T11:38:42.108Z'
+                        updated_at: '2021-11-08T15:18:36.307Z'
                         discontinue_on:
-                        created_at: '2021-11-08T11:38:42.098Z'
+                        created_at: '2021-11-08T15:18:36.297Z'
                         public_metadata: {}
                         private_metadata: {}
                         display_compare_at_price:
                         display_price: "$19.99"
-                        name: 'Product #181 - 1509'
+                        name: 'Product #181 - 9728'
                         options_text: 'Size: S'
                         total_on_hand: 0
                         purchasable: true
@@ -10782,23 +11508,23 @@ paths:
                       type: variant
                       attributes:
                         sku: SKU-250
-                        weight: '92.2'
-                        height: '77.84'
-                        depth: '36.57'
+                        weight: '112.78'
+                        height: '165.94'
+                        depth: '14.61'
                         deleted_at:
                         is_master: false
                         cost_price: '17.0'
                         position: 3
                         cost_currency: USD
                         track_inventory: true
-                        updated_at: '2021-11-08T11:38:42.139Z'
+                        updated_at: '2021-11-08T15:18:36.339Z'
                         discontinue_on:
-                        created_at: '2021-11-08T11:38:42.130Z'
+                        created_at: '2021-11-08T15:18:36.329Z'
                         public_metadata: {}
                         private_metadata: {}
                         display_compare_at_price:
                         display_price: "$19.99"
-                        name: 'Product #181 - 1509'
+                        name: 'Product #181 - 9728'
                         options_text: 'Size: S'
                         total_on_hand: 0
                         purchasable: true
@@ -10888,23 +11614,23 @@ paths:
                       type: variant
                       attributes:
                         sku: SKU-255
-                        weight: '199.37'
-                        height: '182.47'
-                        depth: '152.29'
+                        weight: '33.0'
+                        height: '98.3'
+                        depth: '170.71'
                         deleted_at:
                         is_master: false
                         cost_price: '17.0'
                         position: 2
                         cost_currency: USD
                         track_inventory: true
-                        updated_at: '2021-11-08T11:38:42.519Z'
+                        updated_at: '2021-11-08T15:18:36.698Z'
                         discontinue_on:
-                        created_at: '2021-11-08T11:38:42.509Z'
+                        created_at: '2021-11-08T15:18:36.689Z'
                         public_metadata: {}
                         private_metadata: {}
                         display_compare_at_price:
                         display_price: "$19.99"
-                        name: 'Product #183 - 9023'
+                        name: 'Product #183 - 2883'
                         options_text: 'Size: S'
                         total_on_hand: 0
                         purchasable: true
@@ -11065,14 +11791,14 @@ paths:
                     - id: '1'
                       type: event
                       attributes:
-                        execution_time: 90217
+                        execution_time: 94066
                         name: order.canceled
                         request_errors: ''
                         response_code: '200'
                         success: true
                         url: https://www.url1.com/
-                        created_at: '2021-11-08T11:38:43.123Z'
-                        updated_at: '2021-11-08T11:38:43.123Z'
+                        created_at: '2021-11-08T15:18:37.256Z'
+                        updated_at: '2021-11-08T15:18:37.256Z'
                       relationships:
                         subscriber:
                           data:
@@ -11081,14 +11807,14 @@ paths:
                     - id: '2'
                       type: event
                       attributes:
-                        execution_time: 84282
+                        execution_time: 19815
                         name: order.canceled
                         request_errors: ''
                         response_code: '200'
                         success: true
                         url: https://www.url2.com/
-                        created_at: '2021-11-08T11:38:43.126Z'
-                        updated_at: '2021-11-08T11:38:43.126Z'
+                        created_at: '2021-11-08T15:18:37.260Z'
+                        updated_at: '2021-11-08T15:18:37.260Z'
                       relationships:
                         subscriber:
                           data:
@@ -11164,8 +11890,8 @@ paths:
                         active: true
                         subscriptions:
                         - "*"
-                        created_at: '2021-11-08T11:38:43.223Z'
-                        updated_at: '2021-11-08T11:38:43.223Z'
+                        created_at: '2021-11-08T15:18:37.359Z'
+                        updated_at: '2021-11-08T15:18:37.359Z'
                     - id: '6'
                       type: subscriber
                       attributes:
@@ -11173,8 +11899,8 @@ paths:
                         active: true
                         subscriptions:
                         - "*"
-                        created_at: '2021-11-08T11:38:43.225Z'
-                        updated_at: '2021-11-08T11:38:43.225Z'
+                        created_at: '2021-11-08T15:18:37.360Z'
+                        updated_at: '2021-11-08T15:18:37.360Z'
                     meta:
                       count: 2
                       total_count: 2
@@ -11222,8 +11948,8 @@ paths:
                         active: true
                         subscriptions:
                         - "*"
-                        created_at: '2021-11-08T11:38:43.310Z'
-                        updated_at: '2021-11-08T11:38:43.310Z'
+                        created_at: '2021-11-08T15:18:37.448Z'
+                        updated_at: '2021-11-08T15:18:37.448Z'
               schema:
                 "$ref": "#/components/schemas/resource"
         '422':
@@ -11278,8 +12004,8 @@ paths:
                         active: true
                         subscriptions:
                         - "*"
-                        created_at: '2021-11-08T11:38:43.399Z'
-                        updated_at: '2021-11-08T11:38:43.399Z'
+                        created_at: '2021-11-08T15:18:37.512Z'
+                        updated_at: '2021-11-08T15:18:37.512Z'
               schema:
                 "$ref": "#/components/schemas/resource"
         '404':
@@ -11332,8 +12058,8 @@ paths:
                         active: true
                         subscriptions:
                         - "*"
-                        created_at: '2021-11-08T11:38:43.500Z'
-                        updated_at: '2021-11-08T11:38:43.500Z'
+                        created_at: '2021-11-08T15:18:37.622Z'
+                        updated_at: '2021-11-08T15:18:37.622Z'
               schema:
                 "$ref": "#/components/schemas/resource"
         '422':
@@ -11454,8 +12180,8 @@ paths:
                       type: wished_item
                       attributes:
                         quantity: 1
-                        created_at: '2021-11-08T11:38:43.930Z'
-                        updated_at: '2021-11-08T11:38:43.930Z'
+                        created_at: '2021-11-08T15:18:38.036Z'
+                        updated_at: '2021-11-08T15:18:38.036Z'
                         display_price: "$19.99"
                         display_total: "$19.99"
                         price: '19.99'
@@ -11469,8 +12195,8 @@ paths:
                       type: wished_item
                       attributes:
                         quantity: 1
-                        created_at: '2021-11-08T11:38:44.028Z'
-                        updated_at: '2021-11-08T11:38:44.028Z'
+                        created_at: '2021-11-08T15:18:38.113Z'
+                        updated_at: '2021-11-08T15:18:38.113Z'
                         display_price: "$19.99"
                         display_total: "$19.99"
                         price: '19.99'
@@ -11484,8 +12210,8 @@ paths:
                       type: wished_item
                       attributes:
                         quantity: 1
-                        created_at: '2021-11-08T11:38:44.103Z'
-                        updated_at: '2021-11-08T11:38:44.103Z'
+                        created_at: '2021-11-08T15:18:38.194Z'
+                        updated_at: '2021-11-08T15:18:38.194Z'
                         display_price: "$19.99"
                         display_total: "$19.99"
                         price: '19.99'
@@ -11499,8 +12225,8 @@ paths:
                       type: wished_item
                       attributes:
                         quantity: 1
-                        created_at: '2021-11-08T11:38:44.180Z'
-                        updated_at: '2021-11-08T11:38:44.180Z'
+                        created_at: '2021-11-08T15:18:38.269Z'
+                        updated_at: '2021-11-08T15:18:38.269Z'
                         display_price: "$19.99"
                         display_total: "$19.99"
                         price: '19.99'
@@ -11561,8 +12287,8 @@ paths:
                       type: wished_item
                       attributes:
                         quantity: 1
-                        created_at: '2021-11-08T11:38:45.044Z'
-                        updated_at: '2021-11-08T11:38:45.044Z'
+                        created_at: '2021-11-08T15:18:39.073Z'
+                        updated_at: '2021-11-08T15:18:39.073Z'
                         display_price: "$19.99"
                         display_total: "$19.99"
                         price: '19.99'
@@ -11632,8 +12358,8 @@ paths:
                       type: wished_item
                       attributes:
                         quantity: 1
-                        created_at: '2021-11-08T11:38:45.426Z'
-                        updated_at: '2021-11-08T11:38:45.426Z'
+                        created_at: '2021-11-08T15:18:39.486Z'
+                        updated_at: '2021-11-08T15:18:39.486Z'
                         display_price: "$19.99"
                         display_total: "$19.99"
                         price: '19.99'
@@ -11699,8 +12425,8 @@ paths:
                       type: wished_item
                       attributes:
                         quantity: 3
-                        created_at: '2021-11-08T11:38:46.033Z'
-                        updated_at: '2021-11-08T11:38:46.048Z'
+                        created_at: '2021-11-08T15:18:40.065Z'
+                        updated_at: '2021-11-08T15:18:40.076Z'
                         display_price: "$19.99"
                         display_total: "$59.97"
                         price: '19.99'
@@ -11835,9 +12561,9 @@ paths:
                         name: Black Friday
                         is_private: true
                         is_default: false
-                        created_at: '2021-11-08T11:38:47.294Z'
-                        updated_at: '2021-11-08T11:38:47.294Z'
-                        token: JWgdanBbBQx87PwWqNqjbPWU
+                        created_at: '2021-11-08T15:18:41.268Z'
+                        updated_at: '2021-11-08T15:18:41.268Z'
+                        token: EmZp9faqzV5xBqRHcrcXt4Ex
                         variant_included: false
                       relationships:
                         wished_items:
@@ -11852,9 +12578,9 @@ paths:
                         name: Birthday
                         is_private: true
                         is_default: false
-                        created_at: '2021-11-08T11:38:47.296Z'
-                        updated_at: '2021-11-08T11:38:47.296Z'
-                        token: wUEDu7aiv1jpy2yEeY3PaGr3
+                        created_at: '2021-11-08T15:18:41.270Z'
+                        updated_at: '2021-11-08T15:18:41.270Z'
+                        token: mV37HuqBrj9C1WL5SZbuvoop
                         variant_included: false
                       relationships:
                         wished_items:
@@ -11916,9 +12642,9 @@ paths:
                         name: Wishlist_26
                         is_private: true
                         is_default: false
-                        created_at: '2021-11-08T11:38:48.155Z'
-                        updated_at: '2021-11-08T11:38:48.155Z'
-                        token: c4Dvoy5mMQuDWEqwaC2r4cq5
+                        created_at: '2021-11-08T15:18:42.076Z'
+                        updated_at: '2021-11-08T15:18:42.076Z'
+                        token: dwyVxx1A8ozThKKAxabGYi4R
                         variant_included: false
                       relationships:
                         wished_items:
@@ -11982,9 +12708,9 @@ paths:
                         name: My Wishlist
                         is_private: true
                         is_default: false
-                        created_at: '2021-11-08T11:38:48.231Z'
-                        updated_at: '2021-11-08T11:38:48.231Z'
-                        token: n5tynhFbeK9HGRquH4oKNsJw
+                        created_at: '2021-11-08T15:18:42.160Z'
+                        updated_at: '2021-11-08T15:18:42.160Z'
+                        token: XfnTFx2vsbk7CoGDehsKzMwT
                         variant_included: false
                       relationships:
                         wished_items:
@@ -12047,9 +12773,9 @@ paths:
                         name: My Super Wishlist
                         is_private: true
                         is_default: false
-                        created_at: '2021-11-08T11:38:48.363Z'
-                        updated_at: '2021-11-08T11:38:48.376Z'
-                        token: PJ8xtYgbqJqnn4D3WgfQdKm4
+                        created_at: '2021-11-08T15:18:42.284Z'
+                        updated_at: '2021-11-08T15:18:42.296Z'
+                        token: KAn8YXMHYPdc9vorrmwWRJZZ
                         variant_included: false
                       relationships:
                         wished_items:
@@ -12173,29 +12899,31 @@ paths:
                 Example:
                   value:
                     data:
-                    - id: '82'
+                    - id: '96'
                       type: zone
                       attributes:
-                        name: Officia quod quam corrupti necessitatibus.
-                        description: Assumenda blanditiis rem nihil cupiditate.
+                        name: Mollitia temporibus quam quas repudiandae.
+                        description: Quibusdam illo ipsum neque rem laborum voluptates
+                          debitis repellat.
                         default_tax: false
                         zone_members_count: 0
-                        created_at: '2021-11-08T11:38:48.652Z'
-                        updated_at: '2021-11-08T11:38:48.652Z'
+                        created_at: '2021-11-08T15:18:42.725Z'
+                        updated_at: '2021-11-08T15:18:42.725Z'
                         kind: state
                       relationships:
                         zone_members:
                           data: []
-                    - id: '83'
+                    - id: '97'
                       type: zone
                       attributes:
-                        name: Alias distinctio cupiditate adipisci ipsa.
-                        description: Consectetur culpa nihil similique illo suscipit
-                          animi maxime eligendi.
+                        name: Nostrum quas sed reprehenderit suscipit voluptatem repudiandae
+                          minima.
+                        description: Deleniti nobis modi placeat molestias unde quasi
+                          alias natus.
                         default_tax: false
                         zone_members_count: 0
-                        created_at: '2021-11-08T11:38:48.655Z'
-                        updated_at: '2021-11-08T11:38:48.655Z'
+                        created_at: '2021-11-08T15:18:42.727Z'
+                        updated_at: '2021-11-08T15:18:42.727Z'
                         kind: state
                       relationships:
                         zone_members:
@@ -12247,16 +12975,16 @@ paths:
                 Example:
                   value:
                     data:
-                      id: '86'
+                      id: '100'
                       type: zone
                       attributes:
-                        name: Dolore iste asperiores possimus culpa velit vitae suscipit
-                          maiores.
-                        description: Sequi soluta beatae harum aspernatur.
+                        name: Perferendis tenetur saepe possimus consequatur voluptatem
+                          alias.
+                        description: Dolorem cupiditate reprehenderit omnis quas earum.
                         default_tax: false
                         zone_members_count: 0
-                        created_at: '2021-11-08T11:38:48.760Z'
-                        updated_at: '2021-11-08T11:38:48.760Z'
+                        created_at: '2021-11-08T15:18:42.821Z'
+                        updated_at: '2021-11-08T15:18:42.821Z'
                         kind: state
                       relationships:
                         zone_members:
@@ -12312,16 +13040,15 @@ paths:
                 Example:
                   value:
                     data:
-                      id: '87'
+                      id: '101'
                       type: zone
                       attributes:
-                        name: Vitae aperiam cupiditate quam et omnis consequuntur
-                          consequatur qui.
-                        description: Distinctio quo voluptatem at non doloribus minus.
+                        name: Labore reiciendis soluta eligendi recusandae ea alias.
+                        description: Cupiditate aperiam sit deserunt a.
                         default_tax: false
                         zone_members_count: 0
-                        created_at: '2021-11-08T11:38:48.828Z'
-                        updated_at: '2021-11-08T11:38:48.828Z'
+                        created_at: '2021-11-08T15:18:42.883Z'
+                        updated_at: '2021-11-08T15:18:42.883Z'
                         kind: state
                       relationships:
                         zone_members:
@@ -12378,15 +13105,15 @@ paths:
                 Example:
                   value:
                     data:
-                      id: '89'
+                      id: '103'
                       type: zone
                       attributes:
                         name: EU
                         description: The zone containing all EU countries
                         default_tax: false
                         zone_members_count: 0
-                        created_at: '2021-11-08T11:38:48.943Z'
-                        updated_at: '2021-11-08T11:38:48.952Z'
+                        created_at: '2021-11-08T15:18:42.989Z'
+                        updated_at: '2021-11-08T15:18:42.999Z'
                         kind: state
                       relationships:
                         zone_members:
@@ -12495,6 +13222,8 @@ tags:
 - name: Shipments
 - name: Shipping Categories
 - name: Shipping Methods
+- name: Tax Categories
+- name: Tax Rates
 - name: Taxons
 - name: Users
 - name: Webhook Events
@@ -14387,7 +15116,7 @@ components:
             completed_at:
               type: string
               format: date_time
-              example: 2021-11-08 11:37:43 UTC
+              example: 2021-11-08 15:17:39 UTC
             bill_address_id:
               type: string
               example: '1'
@@ -14455,7 +15184,7 @@ components:
             approved_at:
               type: string
               format: date_time
-              example: 2021-11-08 11:37:43 UTC
+              example: 2021-11-08 15:17:39 UTC
             confirmation_delivered:
               type: boolean
               example: true
@@ -14526,7 +15255,7 @@ components:
             completed_at:
               type: string
               format: date_time
-              example: 2021-11-08 11:37:43 UTC
+              example: 2021-11-08 15:17:39 UTC
             bill_address_id:
               type: string
               example: '1'
@@ -14594,7 +15323,7 @@ components:
             approved_at:
               type: string
               format: date_time
-              example: 2021-11-08 11:37:43 UTC
+              example: 2021-11-08 15:17:39 UTC
             confirmation_delivered:
               type: boolean
               example: true
@@ -15053,6 +15782,136 @@ components:
           - Spree::Calculator::Shipping::PriceSack
       required:
       - type
+      x-internal: true
+    create_tax_category_params:
+      type: object
+      properties:
+        tax_category:
+          type: object
+          required:
+          - name
+          properties:
+            name:
+              type: string
+              example: Clothing
+            is_default:
+              type: boolean
+              example: true
+            tax_code:
+              type: string
+              example: 1257L
+            description:
+              type: string
+              example: Men's, women's and children's branded clothing
+      required:
+      - tax_category
+      x-internal: true
+    update_tax_category_params:
+      type: object
+      properties:
+        tax_category:
+          type: object
+          required:
+          - name
+          properties:
+            name:
+              type: string
+              example: Clothing
+            is_default:
+              type: boolean
+              example: true
+            tax_code:
+              type: string
+              example: 1257L
+            description:
+              type: string
+              example: Men's, women's and children's branded clothing
+      required:
+      - tax_category
+      x-internal: true
+    create_tax_rate_params:
+      type: object
+      properties:
+        tax_rate:
+          type: object
+          required:
+          - amount
+          - calculator_attributes
+          - tax_category_id
+          properties:
+            amount:
+              type: number
+              example: 0.05
+            zone_id:
+              type: string
+              example: '2'
+            tax_category_id:
+              type: string
+              example: '1'
+            included_in_price:
+              type: boolean
+              example: true
+            name:
+              type: string
+              example: California
+            show_rate_in_label:
+              type: boolean
+              example: false
+            calculator_attributes:
+              type: object
+              properties:
+                type:
+                  type: string
+                  example: Spree::Calculator::FlatRate
+                preferences:
+                  type: object
+                  example:
+                    amount: 0
+                    currency: USD
+      required:
+      - tax_rate
+      x-internal: true
+    update_tax_rate_params:
+      type: object
+      properties:
+        tax_rate:
+          type: object
+          required:
+          - amount
+          - calculator_attributes
+          - tax_category_id
+          properties:
+            amount:
+              type: number
+              example: 0.05
+            zone_id:
+              type: string
+              example: '2'
+            tax_category_id:
+              type: string
+              example: '1'
+            included_in_price:
+              type: boolean
+              example: true
+            name:
+              type: string
+              example: California
+            show_rate_in_label:
+              type: boolean
+              example: false
+            calculator_attributes:
+              type: object
+              properties:
+                type:
+                  type: string
+                  example: Spree::Calculator::FlatRate
+                preferences:
+                  type: object
+                  example:
+                    amount: 0
+                    currency: USD
+      required:
+      - tax_rate
       x-internal: true
     create_taxon_params:
       type: object
