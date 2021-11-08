@@ -1225,7 +1225,7 @@ RSpec.configure do |config|
                     items: {
                       allOf: [
                         properties: {
-                          type: { type: :string, example: 'Spree::Promotion::Rules::Country', description: 'Set the Promotion Rule type.' },
+                          type: { type: :string, example: 'Spree::Promotion::Rules::Country', enum: ['Spree::Promotion::Rules::Country', 'Spree::Promotion::Rules::ItemTotal', 'Spree::Promotion::Rules::Product', 'Spree::Promotion::Rules::User', 'Spree::Promotion::Rules::FirstOrder', 'Spree::Promotion::Rules::UserLoggedIn', 'Spree::Promotion::Rules::OneUsePerUser', 'Spree::Promotion::Rules::Taxon', 'Spree::Promotion::Rules::OptionValue'], description: 'Set the Promotion Rule type.' },
                           preferred_country_id: { type: :boolean, example: 122, description: 'Set the ID of the Country this rule applies to.' },
                         }
                       ]
@@ -1274,7 +1274,7 @@ RSpec.configure do |config|
                     items: {
                       allOf: [
                         properties: {
-                          type: { type: :string, example: 'Spree::Promotion::Actions::CreateAdjustment', enum: ['Spree::Promotion::Actions::CreateAdjustment', 'Spree::Promotion::Actions::CreateItemAdjustments', 'Spree::Promotion::Actions::FreeShipping', 'Spree::Promotion::Actions::CreateLineItems'] },
+                          type: { type: :string, example: 'Spree::Promotion::Actions::CreateAdjustment', enum: ['Spree::Promotion::Actions::CreateAdjustment', 'Spree::Promotion::Actions::CreateItemAdjustments', 'Spree::Promotion::Actions::FreeShipping', 'Spree::Promotion::Actions::CreateLineItems'], description: 'Set the Promotion Action Type.' },
                         }
                       ]
                     }
@@ -1352,8 +1352,8 @@ RSpec.configure do |config|
                 type: :object,
                 required: %w[name],
                 properties: {
-                  name: { type: :string, example: 'Promotions Used in 2021' },
-                  code: { type: :string, example: '2021-PROMOS' }
+                  name: { type: :string, example: 'Promotions Used in 2021', description: 'Give this Promotion Category a name.' },
+                  code: { type: :string, example: '2021-PROMOS', nullable: true, description: 'Give this promotion category a code.' }
                 }
               }
             },
@@ -1367,8 +1367,8 @@ RSpec.configure do |config|
                 type: :object,
                 required: %w[name],
                 properties: {
-                  name: { type: :string, example: 'Promotions Used in 2021' },
-                  code: { type: :string, example: '2021-PROMOS' }
+                  name: { type: :string, example: 'Promotions Used in 2021', description: 'Update the name of this Promotion Category.' },
+                  code: { type: :string, example: '2021-PROMOS', nullable: true, description: 'Change or remove the code for this Promotion Category.' }
                 }
               }
             },
