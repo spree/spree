@@ -1433,6 +1433,38 @@ RSpec.configure do |config|
             'x-internal': true
           },
 
+          # Promotion Rule
+          create_promotion_rule_params: {
+            type: :object,
+            properties: {
+              promotion_rule: {
+                type: :object,
+                required: %w[type promotion_id],
+                properties: {
+                  promotion_id: {type: :string, example: '22', description: 'Set the ID of the promotion this Promotion Rule belongs to.'},
+                  type: { type: :string, example: 'Spree::Promotion::Rules::Country', enum: ['Spree::Promotion::Rules::Country', 'Spree::Promotion::Rules::ItemTotal', 'Spree::Promotion::Rules::Product', 'Spree::Promotion::Rules::User', 'Spree::Promotion::Rules::FirstOrder', 'Spree::Promotion::Rules::UserLoggedIn', 'Spree::Promotion::Rules::OneUsePerUser', 'Spree::Promotion::Rules::Taxon', 'Spree::Promotion::Rules::OptionValue'], description: 'Set the Promotion Rule type.' },
+                }
+              }
+            },
+            required: %w[promotion_rule],
+            title: 'Create a Promotion Rule',
+            'x-internal': true
+          },
+          update_promotion_rule_params: {
+            type: :object,
+            properties: {
+              promotion_rule: {
+                type: :object,
+                properties: {
+                  type: { type: :string, example: 'Spree::Promotion::Rules::Country', enum: ['Spree::Promotion::Rules::Country', 'Spree::Promotion::Rules::ItemTotal', 'Spree::Promotion::Rules::Product', 'Spree::Promotion::Rules::User', 'Spree::Promotion::Rules::FirstOrder', 'Spree::Promotion::Rules::UserLoggedIn', 'Spree::Promotion::Rules::OneUsePerUser', 'Spree::Promotion::Rules::Taxon', 'Spree::Promotion::Rules::OptionValue'], description: 'Set the Promotion Rule type.' },
+                }
+              }
+            },
+            required: %w[promotion_rule],
+            title: 'Create a Promotion Rule',
+            'x-internal': true
+          },
+
           # Role
           create_role_params: {
             type: :object,
