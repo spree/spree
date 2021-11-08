@@ -3,10 +3,19 @@ module Spree
     module Webhooks
       module StockItemDecorator
         def self.prepended(base)
+          base.around_save :queue_webhooks_requests_for_variant_back_in_stock!
           base.around_save :queue_webhooks_requests_for_variant_backorderable!
         end
 
         private
+
+        def queue_webhooks_requests_for_variant_back_in_stock!
+          was_out_of_stock = !variant_in_stock?
+          yield
+          if was_out_of_stock && variant_in_stock?
+            variant.queue_webhooks_requests!('variant.back_in_stock')
+          end
+        end
 
         def queue_webhooks_requests_for_variant_backorderable!
           was_out_of_stock = !variant_in_stock?
@@ -24,16 +33,12 @@ module Spree
 
         # rewriting `variant.in_stock?` as is currently being cached
         def variant_in_stock?
-          stock_items.sum(:count_on_hand) > 0
+          Spree::Variant.in_stock.exists?(id: variant.id)
         end
 
         # rewriting `variant.backorderable?` as is currently being cached
         def variant_backorderable?
-          stock_items.any?(&:backorderable)
-        end
-
-        def stock_items
-          variant.stock_items.with_active_stock_location
+          Spree::Variant.backorderable.exists?(id: variant.id)
         end
       end
     end
