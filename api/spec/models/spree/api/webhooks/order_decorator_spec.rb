@@ -21,4 +21,12 @@ describe Spree::Order do
       it { expect { Timecop.freeze { order.finalize! } }.to emit_webhook_event('order.placed') }
     end
   end
+
+  describe 'order.resumed' do
+    describe 'canceled -> resumed' do
+      let(:order) { create(:order, store: store, state: :canceled) }
+
+      it { expect { Timecop.freeze { order.resume! } }.to emit_webhook_event('order.resumed') }
+    end
+  end
 end
