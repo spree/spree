@@ -61,6 +61,7 @@ RSpec.configure do |config|
         { name: 'Shipments' },
         { name: 'Shipping Categories' },
         { name: 'Shipping Methods' },
+        { name: 'Tax Categories' },
         { name: 'Tax Rates' },
         { name: 'Taxons' },
         { name: 'Users' },
@@ -1311,6 +1312,42 @@ RSpec.configure do |config|
               type: { type: :string, example: 'Spree::Calculator::Shipping::FlatPercentItemTotal', enum: ['Spree::Calculator::Shipping::DigitalDelivery', 'Spree::Calculator::Shipping::FlatPercentItemTotal', 'Spree::Calculator::Shipping::FlatRate', 'Spree::Calculator::Shipping::FlexiRate', 'Spree::Calculator::Shipping::PerItem', 'Spree::Calculator::Shipping::PriceSack'] }
             },
             required: %w[type],
+            'x-internal': true
+          },
+
+          # Tax Category
+          create_tax_category_params: {
+            type: :object,
+            properties: {
+              tax_category: {
+                type: :object,
+                required: %w[name],
+                properties: {
+                  name: { type: :string, example: 'Clothing' },
+                  is_default: { type: :boolean, example: true },
+                  tax_code: { type: :string, example: '1257L' },
+                  description: { type: :string, example: "Men's, women's and children's branded clothing" }
+                }
+              }
+            },
+            required: %w[tax_category],
+            'x-internal': true
+          },
+          update_tax_category_params: {
+            type: :object,
+            properties: {
+              tax_category: {
+                type: :object,
+                required: %w[name],
+                properties: {
+                  name: { type: :string, example: 'Clothing' },
+                  is_default: { type: :boolean, example: true },
+                  tax_code: { type: :string, example: '1257L' },
+                  description: { type: :string, example: "Men's, women's and children's branded clothing" }
+                }
+              }
+            },
+            required: %w[tax_category],
             'x-internal': true
           },
 

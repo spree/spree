@@ -8,7 +8,7 @@ describe 'Tax Rates API', swagger: true do
     include_example: 'zone,tax_category',
     filter_examples: [{ name: 'filter[zone_id_eq]', example: '3' },
                       { name: 'filter[amount_gt]', example: '0.05' },
-                      { name: 'filter[tax_category_id]', example: '1' }]
+                      { name: 'filter[tax_category_id_eq]', example: '1' }]
   }
 
   let(:tax_category) { create(:tax_category) }

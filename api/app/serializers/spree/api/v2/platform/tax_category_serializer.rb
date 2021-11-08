@@ -5,7 +5,7 @@ module Spree
         class TaxCategorySerializer < BaseSerializer
           include ResourceSerializerConcern
 
-          # TODO: add tax_rates
+          has_many :tax_rates
         end
       end
     end
