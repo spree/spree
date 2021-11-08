@@ -110,7 +110,15 @@ module Spree
                           []
                         end
 
-            model_class.json_api_permitted_attributes + store_ids
+            model_class.json_api_permitted_attributes + store_ids + metadata_params
+          end
+
+          def metadata_params
+            if model_class.include?(Metadata)
+              [{ public_metadata: {}, private_metadata: {} }]
+            else
+              []
+            end
           end
 
           def permitted_resource_params

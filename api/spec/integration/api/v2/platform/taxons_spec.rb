@@ -16,7 +16,8 @@ describe 'Taxons API', swagger: true do
   let(:valid_create_param_value) { build(:taxon, taxonomy: taxonomy).attributes }
   let(:valid_update_param_value) do
     {
-      name: 'T-Shirts'
+      name: 'T-Shirts',
+      public_metadata: { 'profitability' => 3 }
     }
   end
   let(:invalid_param_value) do

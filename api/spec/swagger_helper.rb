@@ -99,7 +99,9 @@ RSpec.configure do |config|
                   lastname: { type: :string, example: 'Snow' },
                   label: { type: :string, example: 'My home address' },
                   company: { type: :string, example: 'Vendo Cloud Inc' },
-                  user_id: { type: :string }
+                  user_id: { type: :string },
+                  public_metadata: { type: :object, example: { 'distance_from_nearest_city_in_km' => 10, 'location_type' => 'building' } },
+                  private_metadata: { type: :object, example: { 'close_to_shop' => true } }
                 }
               }
             },
@@ -125,7 +127,9 @@ RSpec.configure do |config|
                   lastname: { type: :string, example: 'Snow' },
                   label: { type: :string, example: 'My home address' },
                   company: { type: :string, example: 'Vendo Cloud Inc' },
-                  user_id: { type: :string }
+                  user_id: { type: :string },
+                  public_metadata: { type: :object, example: { 'distance_from_city_in_km' => 10, 'location_type' => 'building' } },
+                  private_metadata: { type: :object, example: { 'close_to_shop' => true } }
                 }
               }
             },
@@ -700,7 +704,9 @@ RSpec.configure do |config|
                 properties: {
                   order_id: { type: :string, example: '1' },
                   variant_id: { type: :string, example: '1' },
-                  quantity: { type: :integer, example: 2 }
+                  quantity: { type: :integer, example: 2 },
+                  public_metadata: { type: :object },
+                  private_metadata: { type: :object }
                 }
               }
             },
@@ -828,7 +834,9 @@ RSpec.configure do |config|
                 required: %w[name presentation],
                 properties: {
                   name: { type: :string, example: 'color' },
-                  presentation: { type: :string, example: 'Color' }
+                  presentation: { type: :string, example: 'Color' },
+                  public_metadata: { type: :object },
+                  private_metadata: { type: :object }
                 }
               }
             },
@@ -842,7 +850,9 @@ RSpec.configure do |config|
                 type: :object,
                 properties: {
                   name: { type: :string, example: 'color' },
-                  presentation: { type: :string, example: 'Color' }
+                  presentation: { type: :string, example: 'Color' },
+                  public_metadata: { type: :object },
+                  private_metadata: { type: :object }
                 }
               }
             },
@@ -859,7 +869,9 @@ RSpec.configure do |config|
                 required: %w[name presentation],
                 properties: {
                   name: { type: :string, example: 'red' },
-                  presentation: { type: :string, example: 'Red' }
+                  presentation: { type: :string, example: 'Red' },
+                  public_metadata: { type: :object },
+                  private_metadata: { type: :object }
                 }
               }
             },
@@ -873,7 +885,9 @@ RSpec.configure do |config|
                 type: :object,
                 properties: {
                   name: { type: :string, example: 'red' },
-                  presentation: { type: :string, example: 'Red' }
+                  presentation: { type: :string, example: 'Red' },
+                  public_metadata: { type: :object },
+                  private_metadata: { type: :object }
                 }
               }
             },
@@ -924,7 +938,9 @@ RSpec.configure do |config|
                   line_items_attributes: {
                     type: :array,
                     items: { '$ref': '#/components/schemas/update_line_item_params' }
-                  }
+                  },
+                  public_metadata: { type: :object },
+                  private_metadata: { type: :object }
                 }
               }
             },
@@ -973,7 +989,9 @@ RSpec.configure do |config|
                   line_items_attributes: {
                     type: :array,
                     items: { '$ref': '#/components/schemas/update_line_item_params' }
-                  }
+                  },
+                  public_metadata: { type: :object },
+                  private_metadata: { type: :object }
                 }
               }
             },
@@ -1002,7 +1020,9 @@ RSpec.configure do |config|
                         { type: :string, example: '2' }
                       ]
                     }
-                  }
+                  },
+                  public_metadata: { type: :object },
+                  private_metadata: { type: :object }
                 }
               }
             },
@@ -1028,7 +1048,9 @@ RSpec.configure do |config|
                         { type: :string, example: '2' }
                       ]
                     }
-                  }
+                  },
+                  public_metadata: { type: :object },
+                  private_metadata: { type: :object }
                 }
               }
             },
@@ -1083,7 +1105,9 @@ RSpec.configure do |config|
                   cost_price: { type: :string },
                   compare_at_price: { type: :string },
                   option_type_ids: { type: :string },
-                  taxon_ids: { type: :string }
+                  taxon_ids: { type: :string },
+                  public_metadata: { type: :object },
+                  private_metadata: { type: :object }
                 }
               }
             },
@@ -1118,7 +1142,9 @@ RSpec.configure do |config|
                   cost_price: { type: :string },
                   compare_at_price: { type: :string },
                   option_type_ids: { type: :string },
-                  taxon_ids: { type: :string }
+                  taxon_ids: { type: :string },
+                  public_metadata: { type: :object },
+                  private_metadata: { type: :object }
                 }
               }
             },
@@ -1211,6 +1237,8 @@ RSpec.configure do |config|
                     }
                   },
                   calculator_attributes: { '$ref': '#/components/schemas/shipping_calculator_params' },
+                  public_metadata: { type: :object },
+                  private_metadata: { type: :object }
                 }
               }
             },
@@ -1238,6 +1266,8 @@ RSpec.configure do |config|
                     }
                   },
                   calculator_attributes: { '$ref': '#/components/schemas/shipping_calculator_params' },
+                  public_metadata: { type: :object },
+                  private_metadata: { type: :object }
                 }
               }
             },
@@ -1263,7 +1293,9 @@ RSpec.configure do |config|
                 properties: {
                   taxonomy_id: { type: :string },
                   parent_id: { type: :string },
-                  name: { type: :string }
+                  name: { type: :string },
+                  public_metadata: { type: :object, example: { 'ability_to_recycle' => '90%' } },
+                  private_metadata: { type: :object, example: { 'profitability' => 2 } }
                 }
               }
             },
@@ -1278,7 +1310,9 @@ RSpec.configure do |config|
                 properties: {
                   taxonomy_id: { type: :string },
                   parent_id: { type: :string },
-                  name: { type: :string }
+                  name: { type: :string },
+                  public_metadata: { type: :object },
+                  private_metadata: { type: :object }
                 }
               }
             },
@@ -1299,6 +1333,8 @@ RSpec.configure do |config|
                   password_confirmation: { type: :string },
                   ship_address_id: { type: :string },
                   bill_address_id: { type: :string },
+                  public_metadata: { type: :object },
+                  private_metadata: { type: :object }
                 }
               }
             },
@@ -1316,6 +1352,8 @@ RSpec.configure do |config|
                   password_confirmation: { type: :string },
                   ship_address_id: { type: :string },
                   bill_address_id: { type: :string },
+                  public_metadata: { type: :object },
+                  private_metadata: { type: :object }
                 }
               }
             },
