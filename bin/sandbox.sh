@@ -107,7 +107,6 @@ RUBY
 bundle install --gemfile Gemfile
 
 bin/rails javascript:install:esbuild
-yarn link @spree/dashboard
 yarn install
 
 bin/rails db:drop || true
