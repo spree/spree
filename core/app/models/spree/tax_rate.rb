@@ -27,6 +27,8 @@ module Spree
           ->(category) { where(tax_category_id: category.try(:id)) }
     scope :included_in_price, -> { where(included_in_price: true) }
 
+    self.whitelisted_ransackable_attributes = %w[amount zone_id tax_category_id included_in_price name]
+
     # Gets the array of TaxRates appropriate for the specified tax zone
     def self.match(order_tax_zone)
       return [] unless order_tax_zone

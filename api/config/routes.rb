@@ -248,6 +248,9 @@ Spree::Core::Engine.add_routes do
           # end
         end
 
+        # Store Credit API
+        resources :store_credits
+
         # Geo API
         resources :zones
         resources :countries, only: [:index, :show]
@@ -261,6 +264,10 @@ Spree::Core::Engine.add_routes do
             end
           end
         end
+
+        # Tax API
+        resources :tax_rates
+        resources :tax_categories
 
         # Inventory API
         resources :inventory_units
