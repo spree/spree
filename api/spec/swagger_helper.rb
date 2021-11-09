@@ -64,6 +64,7 @@ RSpec.configure do |config|
         { name: 'Store Credits' },
         { name: 'Tax Categories' },
         { name: 'Tax Rates' },
+        { name: 'Taxonomies' },
         { name: 'Taxons' },
         { name: 'Users' },
         { name: 'Webhook Events' },
@@ -1466,6 +1467,44 @@ RSpec.configure do |config|
               }
             },
             required: %w[tax_rate],
+            'x-internal': true
+          },
+
+          # Taxonomy
+          create_taxonomy_params: {
+            type: :object,
+            properties: {
+              taxonomy: {
+                type: :object,
+                required: %w[name store_id],
+                properties: {
+                  name: { type: :string, example: 'Categories' },
+                  store_id: { type: :string, example: '2' },
+                  position: { type: :integer, example: 0 },
+                  public_metadata: { type: :object },
+                  private_metadata: { type: :object }
+                }
+              }
+            },
+            required: %w[taxonomy],
+            'x-internal': true
+          },
+          update_taxonomy_params: {
+            type: :object,
+            properties: {
+              taxonomy: {
+                type: :object,
+                required: %w[name store_id],
+                properties: {
+                  name: { type: :string, example: 'Categories' },
+                  store_id: { type: :string, example: '2' },
+                  position: { type: :integer, example: 0 },
+                  public_metadata: { type: :object },
+                  private_metadata: { type: :object }
+                }
+              }
+            },
+            required: %w[taxonomy],
             'x-internal': true
           },
 
