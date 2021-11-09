@@ -62,6 +62,8 @@ RSpec.configure do |config|
         { name: 'Shipping Categories' },
         { name: 'Shipping Methods' },
         { name: 'Store Credits' },
+        { name: 'Tax Categories' },
+        { name: 'Tax Rates' },
         { name: 'Taxons' },
         { name: 'Users' },
         { name: 'Webhook Events' },
@@ -1314,6 +1316,7 @@ RSpec.configure do |config|
             'x-internal': true
           },
 
+
           # Store Credit
           create_store_credit_params: {
             type: :object,
@@ -1367,6 +1370,102 @@ RSpec.configure do |config|
               }
             },
             required: %w[store_credit],
+            'x-internal': true
+          },
+
+          # Tax Category
+          create_tax_category_params: {
+            type: :object,
+            properties: {
+              tax_category: {
+                type: :object,
+                required: %w[name],
+                properties: {
+                  name: { type: :string, example: 'Clothing' },
+                  is_default: { type: :boolean, example: true },
+                  tax_code: { type: :string, example: '1257L' },
+                  description: { type: :string, example: "Men's, women's and children's branded clothing" }
+                }
+              }
+            },
+            required: %w[tax_category],
+            'x-internal': true
+          },
+          update_tax_category_params: {
+            type: :object,
+            properties: {
+              tax_category: {
+                type: :object,
+                required: %w[name],
+                properties: {
+                  name: { type: :string, example: 'Clothing' },
+                  is_default: { type: :boolean, example: true },
+                  tax_code: { type: :string, example: '1257L' },
+                  description: { type: :string, example: "Men's, women's and children's branded clothing" }
+                }
+              }
+            },
+            required: %w[tax_category],
+            'x-internal': true
+          },
+
+          # Tax Rate
+          create_tax_rate_params: {
+            type: :object,
+            properties: {
+              tax_rate: {
+                type: :object,
+                required: %w[amount calculator_attributes tax_category_id],
+                properties: {
+                  amount: { type: :number, example: 0.05 },
+                  zone_id: { type: :string, example: '2' },
+                  tax_category_id: { type: :string, example: '1' },
+                  included_in_price: { type: :boolean, example: true },
+                  name: { type: :string, example: 'California' },
+                  show_rate_in_label: { type: :boolean, example: false },
+                  calculator_attributes: {
+                    type: :object,
+                    properties: {
+                      type: { type: :string, example: 'Spree::Calculator::FlatRate' },
+                      preferences: {
+                        type: :object,
+                        example: { amount: 0, currency: 'USD' }
+                      },
+                    }
+                  }
+                }
+              }
+            },
+            required: %w[tax_rate],
+            'x-internal': true
+          },
+          update_tax_rate_params: {
+            type: :object,
+            properties: {
+              tax_rate: {
+                type: :object,
+                required: %w[amount calculator_attributes tax_category_id],
+                properties: {
+                  amount: { type: :number, example: 0.05 },
+                  zone_id: { type: :string, example: '2' },
+                  tax_category_id: { type: :string, example: '1' },
+                  included_in_price: { type: :boolean, example: true },
+                  name: { type: :string, example: 'California' },
+                  show_rate_in_label: { type: :boolean, example: false },
+                  calculator_attributes: {
+                    type: :object,
+                    properties: {
+                      type: { type: :string, example: 'Spree::Calculator::FlatRate' },
+                      preferences: {
+                        type: :object,
+                        example: { amount: 0, currency: 'USD' }
+                      },
+                    }
+                  }
+                }
+              }
+            },
+            required: %w[tax_rate],
             'x-internal': true
           },
 
