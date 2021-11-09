@@ -19,7 +19,7 @@ module Spree
         end
 
         def variant_backorderable?
-          Spree::Variant.backorderable.exists?(id: variant.id)
+          variant.stock_items.exists?(backorderable: true)
         end
       end
     end
