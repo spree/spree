@@ -42,6 +42,9 @@ module Spree
     extend Spree::DisplayMoney
     money_methods :amount, :amount_used
 
+    self.whitelisted_ransackable_attributes = %w[user_id created_by_id amount currency type_id]
+    self.whitelisted_ransackable_associations = %w[type user created_by]
+
     def amount_remaining
       amount - amount_used - amount_authorized
     end
