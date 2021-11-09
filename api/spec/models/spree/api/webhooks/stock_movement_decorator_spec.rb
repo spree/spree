@@ -6,13 +6,11 @@ describe Spree::Api::Webhooks::StockMovementDecorator do
   let(:stock_movement) { create(:stock_movement, stock_item: stock_item, quantity: movement_quantity) }
   let(:body) { Spree::Api::V2::Platform::VariantSerializer.new(variant).serializable_hash.to_json }
 
-  let!(:images) { create_list(:image, 2) }
-
   describe 'emitting variant.back_in_stock' do
     let(:variant) { create(:variant, track_inventory: true) }
 
     context 'when stock item was out of stock' do
-      context 'when variant changes to be in stock' do
+      context 'when stock item changes to be in stock' do
         it do
           expect do
             Timecop.freeze do
@@ -27,7 +25,7 @@ describe Spree::Api::Webhooks::StockMovementDecorator do
         end
       end
 
-      context 'when variant does not change to be in stock' do
+      context 'when stock item does not change to be in stock' do
         it do
           expect do
             Timecop.freeze do
@@ -43,7 +41,7 @@ describe Spree::Api::Webhooks::StockMovementDecorator do
       end
     end
 
-    context 'when variant was in stock' do
+    context 'when stock item was in stock' do
       it do
         expect do
           Timecop.freeze do
