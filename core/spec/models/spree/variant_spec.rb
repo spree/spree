@@ -98,14 +98,12 @@ describe Spree::Variant, type: :model do
 
       context 'when product is created without variants but with stock' do
         it { expect(product.master).to be_in_stock }
-        it { expect(product.master).not_to be_out_of_stock }
       end
 
       context 'when a variant is created' do
         let!(:new_variant) { create(:variant, product: product) }
 
         it { expect(product.master).not_to be_in_stock }
-        it { expect(product.master).to be_out_of_stock }
       end
     end
   end
@@ -129,6 +127,54 @@ describe Spree::Variant, type: :model do
         it 'filters master variant out' do
           expect(Spree::Variant.eligible).to include(variant)
           expect(Spree::Variant.eligible).not_to include(product.master)
+        end
+      end
+    end
+
+    describe '.full_in_stock' do
+      let!(:variant) { create(:variant) }
+
+      context 'when variant has no stock items' do
+        before { Spree::StockItem.delete_all }
+
+        it { expect(described_class.full_in_stock).to eq([]) }
+      end
+
+      context 'when variant has stock items' do
+        let!(:variant2) { create(:variant) }
+        
+        before { Spree::StockItem.update_all(backorderable: false) }
+
+        context 'when variant stock items count_on_hand > 0' do
+          before do
+            variant.stock_items.first.set_count_on_hand(1)
+            variant2.stock_items.first.set_count_on_hand(0)
+          end
+
+          it { expect(described_class.full_in_stock).to include(variant) }
+          it { expect(described_class.full_in_stock).not_to include(variant2) }
+        end
+
+        context 'when variant stock items count_on_hand <= 0' do
+          before { variant.stock_items.first.set_count_on_hand(0) }
+
+          it { expect(described_class.full_in_stock).not_to include(variant) }
+
+          context 'when variant track_inventory = false' do
+            before { variant.update(track_inventory: false) }
+
+            it { expect(described_class.full_in_stock).to include(variant) }
+          end
+
+          context 'when variant track_inventory = true' do
+            it { expect(described_class.full_in_stock).not_to include(variant) }
+
+            context 'with some variant stock item having backorderable = true' do
+              before { variant.stock_items.first.update(backorderable: true) }
+
+              it { expect(described_class.full_in_stock).to include(variant) }
+            end
+          end
         end
       end
     end
@@ -317,6 +363,54 @@ describe Spree::Variant, type: :model do
     it 'uses LocalizedNumber.parse' do
       expect(Spree::LocalizedNumber).to receive(:parse).with('1,599.99')
       subject.cost_price = '1,599.99'
+    end
+  end
+
+  context '#full_in_stock?' do
+    let!(:variant) { create(:variant) }
+
+    context 'when variant has no stock items' do
+      before { Spree::StockItem.delete_all }
+
+      it { expect(variant.full_in_stock?).to eq(false) }
+    end
+
+    context 'when variant has stock items' do
+      let!(:variant2) { create(:variant) }
+
+      before { Spree::StockItem.update_all(backorderable: false) }
+
+      context 'when variant stock items count_on_hand > 0' do
+        before do
+          variant.stock_items.first.set_count_on_hand(1)
+          variant2.stock_items.first.set_count_on_hand(0)
+        end
+
+        it { expect(variant.full_in_stock?).to eq(true) }
+        it { expect(variant2.full_in_stock?).to eq(false) }
+      end
+
+      context 'when variant stock items count_on_hand <= 0' do
+        before { variant.stock_items.first.set_count_on_hand(0) }
+
+        it { expect(variant.full_in_stock?).to eq(false) }
+
+        context 'when variant track_inventory = false' do
+          before { variant.update(track_inventory: false) }
+
+          it { expect(variant.full_in_stock?).to eq(true) }
+        end
+
+        context 'when variant track_inventory = true' do
+          it { expect(variant.full_in_stock?).to eq(false) }
+
+          context 'with some variant stock item having backorderable = true' do
+            before { variant.stock_items.first.update(backorderable: true) }
+
+            it { expect(variant.full_in_stock?).to eq(true) }
+          end
+        end
+      end
     end
   end
 
@@ -536,7 +630,6 @@ describe Spree::Variant, type: :model do
 
         it 'returns true if stock_items in stock' do
           expect(variant.in_stock?).to be true
-          expect(variant.out_of_stock?).to be false
         end
       end
 
@@ -548,7 +641,6 @@ describe Spree::Variant, type: :model do
 
         it 'return false if stock_items out of stock' do
           expect(variant.in_stock?).to be false
-          expect(variant.out_of_stock?).to be true
         end
       end
     end
@@ -573,7 +665,6 @@ describe Spree::Variant, type: :model do
 
         it 'in_stock? returns false' do
           expect(variant.in_stock?).to be false
-          expect(variant.out_of_stock?).to be true
         end
 
         it 'can_supply? return true' do

@@ -83,15 +83,6 @@ module Spree
       )
     }
 
-    scope :not_discontinued, -> do
-      where(
-        arel_table[:discontinue_on].eq(nil).or(
-          arel_table[:discontinue_on].gteq(Time.current)
-        )
-      )
-    end
-
-    # [TODO]: test
     scope :full_in_stock, -> do
       joins(:stock_items).where(<<~SQL)
         #{Spree::StockItem.table_name}.count_on_hand > 0 OR
@@ -100,9 +91,12 @@ module Spree
       SQL
     end
 
-    # [TODO]: test
-    def full_in_stock?
-      Spree::Variant.full_in_stock.exists?(id: id)
+    scope :not_discontinued, -> do
+      where(
+        arel_table[:discontinue_on].eq(nil).or(
+          arel_table[:discontinue_on].gteq(Time.current)
+        )
+      )
     end
 
     scope :not_deleted, -> { where("#{Spree::Variant.quoted_table_name}.deleted_at IS NULL") }
@@ -144,6 +138,10 @@ module Spree
 
     def available?
       !discontinued? && product.available?
+    end
+
+    def full_in_stock?
+      Spree::Variant.full_in_stock.exists?(id: id)
     end
 
     def tax_category
@@ -273,10 +271,6 @@ module Spree
       @in_stock ||= Rails.cache.fetch(in_stock_cache_key, version: version) do
         total_on_hand > 0
       end
-    end
-
-    def out_of_stock?
-      !in_stock?
     end
 
     def backorderable?
