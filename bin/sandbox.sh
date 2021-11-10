@@ -47,8 +47,8 @@ else
   SPREE_GATEWAY_GEM="gem 'spree_gateway', github: 'spree/spree_gateway', branch: 'main'"
 fi
 
-if [ "$SPREE_BACKEND_PATH" != "" ]; then
-  SPREE_BACKEND_GEM="gem 'spree_backend', path: '$SPREE_BACKEND_PATH'"
+if [ "$SPREE_DASHBOARD_PATH" != "" ]; then
+  SPREE_BACKEND_GEM="gem 'spree_backend', path: '$SPREE_DASHBOARD_PATH'"
 else
   SPREE_BACKEND_GEM="gem 'spree_backend', github: 'spree/spree_backend', branch: 'main'"
 fi
