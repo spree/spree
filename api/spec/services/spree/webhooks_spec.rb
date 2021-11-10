@@ -13,12 +13,6 @@ describe Spree::Webhooks do
 
     after { ENV['DISABLE_SPREE_WEBHOOKS'] = 'true' }
 
-    describe 'when block is not passed' do
-      it 'raises an error' do
-        expect { described_class.disable_webhooks }.to raise_error(NoMethodError)
-      end
-    end
-
     describe 'the value of DISABLE_SPREE_WEBHOOKS environment variable' do
       before { ENV['DISABLE_SPREE_WEBHOOKS'] = 'some_value' }
 
