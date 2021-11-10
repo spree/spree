@@ -286,10 +286,8 @@ Spree::Core::Engine.add_routes do
           end
         end
 
-        # CMS Pages API
+        # CMS
         resources :cms_pages
-
-        # CMS Sections API
         resources :cms_sections
 
         # Wishlists API
