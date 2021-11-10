@@ -2,6 +2,10 @@ module Spree
   module Api
     module Webhooks
       module OrderDecorator
+        def self.prepended(base)
+          base.after_update_commit :queue_webhooks_requests_for_order_resumed!
+        end
+
         def after_cancel
           super
           queue_webhooks_requests!('order.canceled')
@@ -14,6 +18,17 @@ module Spree
 
         def after_resume
           super
+          queue_webhooks_requests!('order.resumed')
+          self.state_machine_resumed = false
+        end
+
+        private
+
+        def queue_webhooks_requests_for_order_resumed!
+          return if state_machine_resumed?
+          return unless state_previously_changed?
+          return unless state_previous_change&.last == 'resumed'
+
           queue_webhooks_requests!('order.resumed')
         end
       end
