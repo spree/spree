@@ -204,11 +204,7 @@ Spree::Core::Engine.add_routes do
         resources :products
         resources :taxonomies
         resources :taxons
-        resources :classifications do
-          member do
-            patch :reposition
-          end
-        end
+        resources :classifications
         resources :images
         resources :variants
         resources :properties
@@ -291,11 +287,7 @@ Spree::Core::Engine.add_routes do
         end
 
         # CMS Pages API
-        resources :cms_pages do
-          member do
-            patch :toggle_visibility
-          end
-        end
+        resources :cms_pages
 
         # CMS Sections API
         resources :cms_sections
