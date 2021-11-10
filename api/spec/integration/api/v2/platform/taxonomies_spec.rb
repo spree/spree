@@ -15,7 +15,6 @@ describe 'Taxonomies API', swagger: true do
   let(:valid_update_param_value) do
     {
       name: 'Categories',
-      store_id: '2',
       public_metadata: { balanced: true }
     }
   end

@@ -1476,10 +1476,9 @@ RSpec.configure do |config|
             properties: {
               taxonomy: {
                 type: :object,
-                required: %w[name store_id],
+                required: %w[name],
                 properties: {
                   name: { type: :string, example: 'Categories' },
-                  store_id: { type: :string, example: '2' },
                   position: { type: :integer, example: 0 },
                   public_metadata: { type: :object },
                   private_metadata: { type: :object }
@@ -1494,10 +1493,9 @@ RSpec.configure do |config|
             properties: {
               taxonomy: {
                 type: :object,
-                required: %w[name store_id],
+                required: %w[name],
                 properties: {
                   name: { type: :string, example: 'Categories' },
-                  store_id: { type: :string, example: '2' },
                   position: { type: :integer, example: 0 },
                   public_metadata: { type: :object },
                   private_metadata: { type: :object }
