@@ -61,6 +61,8 @@ RSpec.configure do |config|
         { name: 'Shipments' },
         { name: 'Shipping Categories' },
         { name: 'Shipping Methods' },
+        { name: 'Store Credit Categories' },
+        { name: 'Store Credit Types' },
         { name: 'Store Credits' },
         { name: 'Tax Categories' },
         { name: 'Tax Rates' },
@@ -1316,6 +1318,67 @@ RSpec.configure do |config|
             'x-internal': true
           },
 
+          # Store Credit Category
+          create_store_credit_category_params: {
+            type: :object,
+            properties: {
+              store_credit_category: {
+                type: :object,
+                required: %w[name],
+                properties: {
+                  name: { type: :string, example: 'refunded' },
+                }
+              }
+            },
+            required: %w[store_credit_category],
+            'x-internal': true
+          },
+          update_store_credit_category_params: {
+            type: :object,
+            properties: {
+              store_credit_category: {
+                type: :object,
+                required: %w[name],
+                properties: {
+                  name: { type: :string, example: 'refunded' },
+                }
+              }
+            },
+            required: %w[store_credit_category],
+            'x-internal': true
+          },
+
+          # Store Credit Type
+          create_store_credit_type_params: {
+            type: :object,
+            properties: {
+              store_credit_type: {
+                type: :object,
+                required: %w[name],
+                properties: {
+                  name: { type: :string, example: 'refunded' },
+                  priority: { type: :integer, example: 1 }
+                }
+              }
+            },
+            required: %w[store_credit_type],
+            'x-internal': true
+          },
+          create_store_credit_type_params: {
+            type: :object,
+            properties: {
+              store_credit_type: {
+                type: :object,
+                required: %w[name],
+                properties: {
+                  name: { type: :string, example: 'refunded' },
+                  priority: { type: :integer, example: 1 }
+                }
+              }
+            },
+            required: %w[store_credit_type],
+            'x-internal': true
+          },
 
           # Store Credit
           create_store_credit_params: {
