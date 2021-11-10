@@ -31,8 +31,6 @@ describe 'Promotion API v2 spec', type: :request do
       promotion_rules_attributes: [
         {
           code: 'ESJD',
-          user_id: '223',
-          product_group_id: '3',
           type: 'Spree::Promotion::Rules::User'
         }
       ],
@@ -63,8 +61,6 @@ describe 'Promotion API v2 spec', type: :request do
         {
           id: existing_promotion.promotion_rules.first.id.to_s,
           code: 'PliDp9328',
-          user_id: '111',
-          product_group_id: '2',
           type: 'Spree::Promotion::Rules::User'
         }
       ],
@@ -108,8 +104,6 @@ describe 'Promotion API v2 spec', type: :request do
         expect(json_response['included']).to include(have_type('promotion_rule'))
         expect(json_response['included'][2]).to have_attribute(:type).with_value('Spree::Promotion::Rules::User')
         expect(json_response['included'][2]).to have_attribute(:code).with_value('ESJD')
-        expect(json_response['included'][2]).to have_attribute(:user_id).with_value(223)
-        expect(json_response['included'][2]).to have_attribute(:product_group_id).with_value(3)
 
         expect(json_response['included'].size).to eq 5
       end
@@ -147,8 +141,6 @@ describe 'Promotion API v2 spec', type: :request do
         expect(json_response['included']).to include(have_type('promotion_rule'))
         expect(json_response['included'][2]).to have_attribute(:type).with_value('Spree::Promotion::Rules::User')
         expect(json_response['included'][2]).to have_attribute(:code).with_value('PliDp9328')
-        expect(json_response['included'][2]).to have_attribute(:user_id).with_value(111)
-        expect(json_response['included'][2]).to have_attribute(:product_group_id).with_value(2)
         expect(json_response['included'].size).to eq 6
       end
     end
