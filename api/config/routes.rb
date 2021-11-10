@@ -249,6 +249,7 @@ Spree::Core::Engine.add_routes do
         # Store Credit API
         resources :store_credits
         resources :store_credit_categories
+        resources :store_credit_types
 
         # Geo API
         resources :zones
