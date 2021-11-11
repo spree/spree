@@ -68,5 +68,41 @@ describe Spree::Webhooks::HasWebhooks do
         expect { cms_page }.to emit_webhook_event('cms_page.create')
       end
     end
+
+    context 'when only timestamps change' do
+      before { product.save }
+
+      context 'on created_at change' do
+        it do
+          expect do
+            product.update(created_at: Date.yesterday)
+          end.not_to emit_webhook_event('product.update')
+        end
+      end
+
+      context 'on updated_at change' do
+        it do
+          expect do
+            product.update(updated_at: Date.yesterday)
+          end.not_to emit_webhook_event('product.update')
+        end
+      end
+
+      context 'when using touch without arguments' do
+        it do
+          expect do
+            product.touch
+          end.not_to emit_webhook_event('product.update')
+        end
+      end
+
+      context 'when using touch with an argument other than created_at/updated_at' do
+        it do
+          expect do
+            product.touch(:deleted_at)
+          end.to emit_webhook_event('product.update')
+        end
+      end
+    end
   end
 end
