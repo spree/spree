@@ -21,7 +21,7 @@ module Spree
 
         def queue_webhooks_requests_for_product_backorderable!
           product_was_out_of_stock = !product.full_in_stock?
-          product_was_not_backorderable = !product.backorderable?
+          product_was_not_backorderable = !product_backorderable?
           yield
           if product_was_out_of_stock && product_was_not_backorderable && product_backorderable?
             touch
