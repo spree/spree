@@ -4,9 +4,9 @@ module Spree
       module Platform
         class PromotionActionLineItemSerializer < BaseSerializer
           include ResourceSerializerConcern
-          attribute :variant_id
 
           belongs_to :promotion_action
+          belongs_to :variant
         end
       end
     end
