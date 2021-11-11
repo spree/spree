@@ -13,35 +13,50 @@ describe Spree::Api::Webhooks::StockItemDecorator do
     let(:product) { variant.product }
     let!(:variant2) { create(:variant, product: product) }
 
-    context 'when none of the product variants is backorderable' do
-      before { Spree::StockItem.update_all(backorderable: false) }
+    before { Spree::StockItem.update_all(backorderable: false) }
 
-      context 'when one of the variants is made backorderable' do
-        let(:backorderable) { true }
+    context 'when product was out of stock' do
+      context 'when none of the product variants is backorderable' do
+        context 'when one of the variants is made backorderable' do
+          let(:backorderable) { true }
 
-        it { expect { subject }.to emit_webhook_event('product.backorderable') }
+          it { expect { subject }.to emit_webhook_event('product.backorderable') }
+        end
+
+        context 'when none of the variants is made backorderable' do
+          let(:backorderable) { false }
+
+          it { expect { subject }.not_to emit_webhook_event('product.backorderable') }
+        end
       end
 
-      context 'when none of the variants is made backorderable' do
-        let(:backorderable) { false }
+      context 'when other variant is already backorderable' do
+        let(:another_stock_item) { variant2.stock_items.first }
 
-        it { expect { subject }.not_to emit_webhook_event('product.backorderable') }
+        context 'when other variant is made backorderable' do
+          let(:backorderable) { true }
+
+          before do
+            another_stock_item.update(backorderable: true)
+          end
+
+          it { expect { subject }.not_to emit_webhook_event('product.backorderable') }
+        end
       end
     end
 
-    context 'when other variant is already backorderable' do
-      let(:another_stock_item) { variant2.stock_items.first }
+    context 'when product was in stock' do
+      let(:backorderable) { true }
 
-      context 'when other variants is made backorderable' do
-        let(:backorderable) { true }
-
-        before do
-          Spree::StockItem.update_all(backorderable: false)
-          another_stock_item.update(backorderable: true)
+      before do
+        stock_location.stock_movements.new.tap do |stock_movement|
+          stock_movement.quantity = 1
+          stock_movement.stock_item = stock_location.set_up_stock_item(variant)
+          stock_movement.save
         end
-
-        it { expect { subject }.not_to emit_webhook_event('product.backorderable') }
       end
+
+      it { expect { subject }.not_to emit_webhook_event('product.backorderable') }
     end
   end
 
