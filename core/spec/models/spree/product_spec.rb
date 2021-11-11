@@ -824,4 +824,52 @@ describe Spree::Product, type: :model do
 
     it { expect(product.taxons_for_store(store)).to be_a(ActiveRecord::Relation) }
   end
+
+  describe '#full_in_stock?' do
+    subject { product.full_in_stock? }
+
+    let!(:product) { create(:product, stores: [store]) }
+    let(:stock_item) { variant.stock_items.first }
+
+    context 'when product has no variants' do
+      it do
+        expect(product.variants).to eq([])
+        expect(subject).to eq(false)
+      end
+    end
+
+    context 'when product has variants' do
+      let!(:variant) { create(:variant, product: product) }
+
+      before { Spree::StockItem.update_all(backorderable: false) }
+
+      context 'when product variant stock items count_on_hand > 0' do
+        before { stock_item.set_count_on_hand(1) }
+
+        it { expect(subject).to eq(true) }
+      end
+
+      context 'when variant stock items count_on_hand <= 0' do
+        before { stock_item.set_count_on_hand(0) }
+
+        it { expect(subject).to eq(false) }
+
+        context 'when variant track_inventory = false' do
+          before { variant.update(track_inventory: false) }
+
+          it { expect(subject).to eq(true) }
+        end
+
+        context 'when variant track_inventory = true' do
+          it { expect(subject).to eq(false) }
+
+          context 'with some variant stock item having backorderable = true' do
+            before { stock_item.update(backorderable: true) }
+
+            it { expect(subject).to eq(true) }
+          end
+        end
+      end
+    end
+  end
 end

@@ -20,8 +20,8 @@ module Spree
         end
 
         def queue_webhooks_requests_for_product_backorderable!
-          product_was_out_of_stock = !product_full_in_stock?
-          product_was_not_backorderable = !product_backorderable?
+          product_was_out_of_stock = !product.full_in_stock?
+          product_was_not_backorderable = !product.backorderable?
           yield
           if product_was_out_of_stock && product_was_not_backorderable && product_backorderable?
             touch
@@ -31,11 +31,6 @@ module Spree
 
         def product_backorderable?
           Spree::StockItem.exists?(backorderable: true, variant_id: variant.product.variants.ids)
-        end
-
-        def product_full_in_stock?
-          Spree::Product.joins(:variants).merge(Spree::Variant.full_in_stock).
-            exists?(id: product.id)
         end
 
         def variant_backorderable?
