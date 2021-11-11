@@ -4,6 +4,7 @@ module Spree
       module StockMovementDecorator
         def self.prepended(base)
           base.around_save :queue_webhooks_requests_for_variant_back_in_stock!
+          base.around_save :queue_webhooks_requests_for_product_back_in_stock!
         end
 
         # [TODO]: update, this remains as it was
@@ -16,6 +17,9 @@ module Spree
 
         private
 
+        delegate :variant, to: :stock_item
+        delegate :product, to: :variant
+
         def queue_webhooks_requests_for_variant_back_in_stock!
           variant_was_out_of_stock = !variant.full_in_stock?
           yield
@@ -24,8 +28,17 @@ module Spree
           end
         end
 
-        def variant
-          stock_item.variant
+        def queue_webhooks_requests_for_product_back_in_stock!
+          product_was_out_of_stock = !product_full_in_stock?
+          yield
+          if product_was_out_of_stock && product_full_in_stock?
+            product.queue_webhooks_requests!('product.back_in_stock')
+          end
+        end
+
+        def product_full_in_stock?
+          Spree::Product.joins(:variants).merge(Spree::Variant.full_in_stock).
+            exists?(id: product.id)
         end
       end
     end

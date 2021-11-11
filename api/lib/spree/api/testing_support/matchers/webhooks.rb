@@ -50,7 +50,7 @@ RSpec::Matchers.define :emit_webhook_event do |event_to_emit|
     block_body_def = block_body_definition(obj_method)
     "Expected that executing `#{block_body_def}` emits the `#{event_to_emit}` Webhook event.\n" \
       "Check that `#{block_body_def}` does implement `queue_webhooks_requests!` for " \
-      "`#{event_to_emit}` with the following body: #{body}."
+      "`#{event_to_emit}` with the following body: \n\n#{body}."
   end
 
   failure_message_when_negated do |obj_method|
