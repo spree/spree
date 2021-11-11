@@ -9,7 +9,7 @@ module Spree
         after_update_commit(proc { queue_webhooks_requests!(event_name(:update)) })
 
         def queue_webhooks_requests!(event)
-          return if disable_spree_webhooks? || body.blank?
+          return if disable_spree_webhooks? || updating_only_timestamps? || body.blank?
 
           Spree::Webhooks::Subscribers::QueueRequests.call(event: event, body: body)
         end
@@ -28,6 +28,10 @@ module Spree
       def resource_serializer
         demodulized_class_name = self.class.to_s.demodulize
         "Spree::Api::V2::Platform::#{demodulized_class_name}Serializer".constantize
+      end
+
+      def updating_only_timestamps?
+        (saved_changes.keys - %w[created_at updated_at]).empty?
       end
 
       def disable_spree_webhooks?
