@@ -6,6 +6,45 @@ describe Spree::Api::Webhooks::StockItemDecorator do
   let(:stock_item) { variant.stock_items.first }
   let(:stock_location) { variant.stock_locations.first }
 
+  describe 'emitting product.backorderable' do
+    subject { Timecop.freeze { stock_item.update(backorderable: backorderable) } }
+
+    let(:body) { Spree::Api::V2::Platform::ProductSerializer.new(product.reload).serializable_hash.to_json }
+    let(:product) { variant.product }
+    let!(:variant2) { create(:variant, product: product) }
+
+    context 'when none of the product variants is backorderable' do
+      before { Spree::StockItem.update_all(backorderable: false) }
+
+      context 'when one of the variants is made backorderable' do
+        let(:backorderable) { true }
+
+        it { expect { subject }.to emit_webhook_event('product.backorderable') }
+      end
+
+      context 'when none of the variants is made backorderable' do
+        let(:backorderable) { false }
+
+        it { expect { subject }.not_to emit_webhook_event('product.backorderable') }
+      end
+    end
+
+    context 'when other variant is already backorderable' do
+      let(:another_stock_item) { variant2.stock_items.first }
+
+      context 'when other variants is made backorderable' do
+        let(:backorderable) { true }
+
+        before do
+          Spree::StockItem.update_all(backorderable: false)
+          another_stock_item.update(backorderable: true)
+        end
+
+        it { expect { subject }.not_to emit_webhook_event('product.backorderable') }
+      end
+    end
+  end
+
   describe 'emitting variant.backorderable' do
     context 'when variant was out of stock' do
       before do
