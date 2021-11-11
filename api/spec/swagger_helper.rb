@@ -70,6 +70,7 @@ RSpec.configure do |config|
         { name: 'Tax Categories' },
         { name: 'Tax Rates' },
         { name: 'Taxons' },
+        { name: 'Taxonomies' },
         { name: 'Users' },
         { name: 'Webhook Events' },
         { name: 'Webhook Subscribers' },
@@ -1644,12 +1645,11 @@ RSpec.configure do |config|
             required: %w[store_credit_type],
             'x-internal': true
           },
-          create_store_credit_type_params: {
+          update_store_credit_type_params: {
             type: :object,
             properties: {
               store_credit_type: {
                 type: :object,
-                required: %w[name],
                 properties: {
                   name: { type: :string, example: 'refunded' },
                   priority: { type: :integer, example: 1 }
@@ -1846,6 +1846,57 @@ RSpec.configure do |config|
               }
             },
             required: %w[taxon],
+            'x-internal': true
+          },
+          taxon_reposition: {
+            type: :object,
+            properties: {
+              taxon: {
+                type: :object,
+                required: %w[new_parent_id new_position_idx],
+                properties: {
+                  new_parent_id: { type: :integer, example: 1, description: 'The ID of the new target parent Taxon.' },
+                  new_position_idx: { type: :integer, example: 1, description: 'The new index position of the Taxon within the parent Taxon.' }
+                }
+              }
+            },
+            required: %w[taxon],
+            title: 'Reposition a Taxon',
+            'x-internal': true
+          },
+
+          # Taxonomies
+          create_taxonomy_params: {
+            type: :object,
+            properties: {
+              taxonomy: {
+                type: :object,
+                required: %w[name],
+                properties: {
+                  name: { type: :string },
+                  position: { type: :integer, example: 2, description: 'Pass the position that you want this Taxonomy to appear in. (The list is not zero indexed, so the first item is position: `1`)' },
+                  public_metadata: { type: :object, example: { 'ability_to_recycle' => '90%' } },
+                  private_metadata: { type: :object, example: { 'profitability' => 2 } }
+                }
+              }
+            },
+            required: %w[taxonomy],
+            'x-internal': true
+          },
+          update_taxonomy_params: {
+            type: :object,
+            properties: {
+              taxonomy: {
+                type: :object,
+                properties: {
+                  name: { type: :string },
+                  position: { type: :integer, example: 2, description: 'Pass the position that you want this Taxonomy to appear in. (The list is not zero indexed, so the first item is position: `1`)' },
+                  public_metadata: { type: :object, example: { 'ability_to_recycle' => '90%' } },
+                  private_metadata: { type: :object, example: { 'profitability' => 2 } }
+                }
+              }
+            },
+            required: %w[taxonomy],
             'x-internal': true
           },
 

@@ -7,7 +7,7 @@ describe 'Tax Categories API', swagger: true do
   options = {
     include_example: 'tax_rates',
     filter_examples: [{ name: 'filter[name_eq]', example: 'Clothing' },
-                      { name: 'filter[is_default_true]', example: 1 },
+                      { name: 'filter[is_default_true]', example: '1' },
                       { name: 'filter[tax_code_eq]', example: '1257L' }]
   }
 
