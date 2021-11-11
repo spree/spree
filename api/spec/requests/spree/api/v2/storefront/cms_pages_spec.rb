@@ -120,6 +120,8 @@ describe 'Storefront API v2 CMS Pages spec', type: :request do
       it_behaves_like 'returns proper JSON structure'
 
       it 'returns sections and their associations' do
+        page.reload
+
         expect(json_response['included']).to include(have_type('taxon').and(have_id(taxon.id.to_s)))
         expect(json_response['included']).to include(
           have_type('cms_section').
@@ -127,10 +129,10 @@ describe 'Storefront API v2 CMS Pages spec', type: :request do
               have_id(cms_section.id.to_s).
               and(have_relationship(:linked_resource)).
               and(have_jsonapi_attributes(
-                :name, :content, :settings, :link, :fit, :type, :position, :is_fullscreen,
-                :img_one_sm, :img_one_md, :img_one_lg, :img_two_sm, :img_two_md, :img_two_lg,
-                :img_three_sm, :img_three_md, :img_three_lg
-              ))
+                    :name, :content, :settings, :link, :fit, :type, :position, :is_fullscreen,
+                    :img_one_sm, :img_one_md, :img_one_lg, :img_two_sm, :img_two_md, :img_two_lg,
+                    :img_three_sm, :img_three_md, :img_three_lg
+                  ))
             )
         )
       end

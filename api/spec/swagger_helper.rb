@@ -56,7 +56,10 @@ RSpec.configure do |config|
         { name: 'Orders' },
         { name: 'Payments' },
         { name: 'Payment Methods' },
+        { name: 'Promotions' },
+        { name: 'Promotion Actions' },
         { name: 'Promotion Categories' },
+        { name: 'Promotion Rules' },
         { name: 'Roles' },
         { name: 'Shipments' },
         { name: 'Shipping Categories' },
@@ -368,7 +371,7 @@ RSpec.configure do |config|
                   gutters: { type: :string, example: 'No Gutters', enum: ['Gutters', 'No Gutters'], description: 'This value is used by front end developers for styling the section padding.' },
                   button_text: { type: :string, example: 'Click Here', description: 'Set the text value of the button used in this section.' },
                   title: { type: :string, example: 'Shop Today', description: 'Create a title for the Hero Section.' },
-                  'digital[image_one]': { type: :string, format: :binary, description: 'Use a `multipart/form-data` request to upload assets.' }
+                  'cms_section[image_one]': { type: :string, format: :binary, description: 'Use a `multipart/form-data` request to upload assets.' }
                 }
               }
             },
@@ -416,8 +419,8 @@ RSpec.configure do |config|
                   subtitle_one: { type: :string, example: 'Save 50% today', nullable: true, description: 'Set the subtitle used in image one.' },
                   subtitle_two: { type: :string, example: 'Save 50% today', nullable: true, description: 'Set the subtitle used in image two.' },
                   gutters: { type: :string, example: 'No Gutters', enum: ['Gutters', 'No Gutters'], description: 'This value is used by front end developers for styling the section padding.' },
-                  'digital[image_one]': { type: :string, format: :binary, description: 'Use a `multipart/form-data` request to upload assets.' },
-                  'digital[image_two]': { type: :string, format: :binary, description: 'Use a `multipart/form-data` request to upload assets.' }
+                  'cms_section[image_one]': { type: :string, format: :binary, description: 'Use a `multipart/form-data` request to upload assets.' },
+                  'cms_section[image_two]': { type: :string, format: :binary, description: 'Use a `multipart/form-data` request to upload assets.' }
                 }
               }
             },
@@ -448,9 +451,9 @@ RSpec.configure do |config|
                   fit: { type: :string, example: 'Screen', enum: ['Screen', 'Container'], description: 'This value is used by front end developers to set CSS classes for content that fits the screen edge-to-edge, or stays within the boundaries of the central container.' },
                   layout_style: { type: :string, example: 'Default', enum: ['Default', 'Reversed'], description: 'This value is used by front end developers for styling the order the images appear.' },
                   display_labels: { type: :string, example: 'Show', enum: ['Show', 'Hide'], description: 'This value is used by front end developers for showing and hiding the label on the images.' },
-                  'digital[image_one]': { type: :string, format: :binary, description: 'Use a `multipart/form-data` request to upload assets.' },
-                  'digital[image_two]': { type: :string, format: :binary, description: 'Use a `multipart/form-data` request to upload assets.' },
-                  'digital[image_three]': { type: :string, format: :binary, description: 'Use a `multipart/form-data` request to upload assets.' }
+                  'cms_section[image_one]': { type: :string, format: :binary, description: 'Use a `multipart/form-data` request to upload assets.' },
+                  'cms_section[image_two]': { type: :string, format: :binary, description: 'Use a `multipart/form-data` request to upload assets.' },
+                  'cms_section[image_three]': { type: :string, format: :binary, description: 'Use a `multipart/form-data` request to upload assets.' }
                 }
               }
             },
@@ -519,7 +522,7 @@ RSpec.configure do |config|
                   gutters: { type: :string, example: 'No Gutters', enum: ['Gutters', 'No Gutters'], description: 'This value is used by front end developers for styling the section padding.' },
                   button_text: { type: :string, example: 'Click Here', description: 'Update the text value of the button used in this section.' },
                   title: { type: :string, example: 'Shop Today', description: 'Update the title for this section.' },
-                  'digital[image_one]': { type: :string, format: :binary, description: 'Use a `multipart/form-data` request to upload assets.' }
+                  'cms_section[image_one]': { type: :string, format: :binary, description: 'Use a `multipart/form-data` request to upload assets.' }
 
                 }
               }
@@ -564,8 +567,8 @@ RSpec.configure do |config|
                   subtitle_one: { type: :string, example: 'Save 50% today', nullable: true, description: 'Update the subtitle used in image one.' },
                   subtitle_two: { type: :string, example: 'Save 50% today', nullable: true, description: 'Update the subtitle used in image two.' },
                   gutters: { type: :string, example: 'No Gutters', enum: ['Gutters', 'No Gutters'], description: 'This value is used by front end developers for styling the section padding.' },
-                  'digital[image_one]': { type: :string, format: :binary, description: 'Use a `multipart/form-data` request to upload assets.' },
-                  'digital[image_two]': { type: :string, format: :binary, description: 'Use a `multipart/form-data` request to upload assets.' }
+                  'cms_section[image_one]': { type: :string, format: :binary, description: 'Use a `multipart/form-data` request to upload assets.' },
+                  'cms_section[image_two]': { type: :string, format: :binary, description: 'Use a `multipart/form-data` request to upload assets.' }
                 }
               }
             },
@@ -594,9 +597,9 @@ RSpec.configure do |config|
                   fit: { type: :string, example: 'Screen', enum: ['Screen', 'Container'], description: 'This value is used by front end developers to set CSS classes for content that fits the screen edge-to-edge, or stays within the boundaries of the central container.' },
                   layout_style: { type: :string, example: 'Default', enum: ['Default', 'Reversed'], description: 'This value is used by front end developers for styling the order the images appear.' },
                   display_labels: { type: :string, example: 'Show', enum: ['Show', 'Hide'], description: 'This value is used by front end developers for showing and hiding the label on the images.' },
-                  'digital[image_one]': { type: :string, format: :binary, description: 'Use a `multipart/form-data` request to upload assets.' },
-                  'digital[image_two]': { type: :string, format: :binary, description: 'Use a `multipart/form-data` request to upload assets.' },
-                  'digital[image_three]': { type: :string, format: :binary, description: 'Use a `multipart/form-data` request to upload assets.' }
+                  'cms_section[image_one]': { type: :string, format: :binary, description: 'Use a `multipart/form-data` request to upload assets.' },
+                  'cms_section[image_two]': { type: :string, format: :binary, description: 'Use a `multipart/form-data` request to upload assets.' },
+                  'cms_section[image_three]': { type: :string, format: :binary, description: 'Use a `multipart/form-data` request to upload assets.' }
                 }
               }
             },
@@ -776,7 +779,7 @@ RSpec.configure do |config|
                 type: :object,
                 required: %w[name menu_id],
                 properties: {
-                  name: { type: :string, example: 'T-Shirts', description: 'The name of this Menu Item'},
+                  name: { type: :string, example: 'T-Shirts', description: 'The name of this Menu Item' },
                   code: { type: :string, nullable: true, example: 'MEN-TS', description: 'Give this Menu Item a code to identify this Menu Item from others. This is especially useful when using Container type Menu Items to group items.' },
                   subtitle: { type: :string, nullable: true, example: "Shop men's T-Shirts", description: 'Set an optional subtitle for the Menu Item, this is useful if your menu has promotional links that require more than just a link name.' },
                   destination: { type: :string, nullable: true, example: 'https://getvendo.com', description: 'Used when the linked_resource_type is set to: URL' },
@@ -798,7 +801,7 @@ RSpec.configure do |config|
               menu_item: {
                 type: :object,
                 properties: {
-                  name: { type: :string, example: 'T-Shirts', description: 'Update the name of this Menu Item'},
+                  name: { type: :string, example: 'T-Shirts', description: 'Update the name of this Menu Item' },
                   code: { type: :string, nullable: true, example: 'MEN-TS', description: 'The Menu Item a code to identifies this Menu Item from others. This is especially useful when using Container type Menu Items to group items.' },
                   subtitle: { type: :string, nullable: true, example: "Shop men's T-Shirts", description: 'Set an optional subtitle for the Menu Item, this is useful if your menu has promotional links that require more than just a link name.' },
                   destination: { type: :string, nullable: true, example: 'https://getvendo.com', description: 'Used when the linked_resource_type is set to: URL' },
@@ -1158,6 +1161,251 @@ RSpec.configure do |config|
             'x-internal': true
           },
 
+          # Promotion
+          create_promotion_params: {
+            type: :object,
+            properties: {
+              promotion: {
+                type: :object,
+                required: %w[name],
+                properties: {
+                  name: { type: :string, example: 'Promotions Used in 2021', description: 'Give the promotion a name.' },
+                  code: { type: :string, example: 'BLK-FRI', nullable: true, description: 'Set the promotion code. Promotions without a code are automatically applied if the order meets the Promotion Rule requirements.' },
+                  description: { type: :string, example: 'Save today with discount code XYZ at checkout.', nullable: true, description: 'Give the promotion a description.' },
+                  usage_limit: { type: :integer, example: 100, nullable: true, description: 'If you wish you can set a usage limit for this promotion.' },
+                  advertise: { type: :boolean },
+                  starts_at: { type: :string, format: :date_time, nullable: true, description: 'Set a date and time that this promotion begins.' },
+                  ends_at: { type: :string, format: :date_time, nullable: true, description: 'Set a date and time that this promotion ends.' },
+                  store_ids: {
+                    type: :array,
+                    items: {
+                      allOf: [
+                        { type: :string, example: '2' }
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            required: %w[promotion],
+            title: 'Create a Promotion',
+            'x-internal': true
+          },
+          update_promotion_params: {
+            type: :object,
+            properties: {
+              promotion: {
+                type: :object,
+                properties: {
+                  name: { type: :string, example: 'Promotions Used in 2021', description: 'Change the promotion a name.' },
+                  code: { type: :string, example: 'CYB-MON', nullable: true, description: 'Change or remove the promotion code. Promotions without a code are automatically applied if the order meets the Promotion Rule requirements.' },
+                  description: { type: :string, example: 'Save today with discount code XYZ at checkout.', nullable: true, description: 'Update the promotion a description.' },
+                  usage_limit: { type: :integer, example: 100, nullable: true, description: 'If you wish you can set a usage limit for this promotion.' },
+                  advertise: { type: :boolean },
+                  starts_at: { type: :string, format: :date_time, nullable: true, description: 'Set a date and time that this promotion begins.' },
+                  ends_at: { type: :string, format: :date_time, nullable: true, description: 'Set a date and time that this promotion ends.' },
+                  store_ids: {
+                    type: :array,
+                    items: {
+                      allOf: [
+                        { type: :string, example: '2' }
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            required: %w[promotion],
+            title: 'Update a Promotion',
+            'x-internal': true
+          },
+          update_promotion_add_rule_params: {
+            type: :object,
+            properties: {
+              promotion: {
+                type: :object,
+                properties: {
+                  promotion_rules_attributes: {
+                    type: :array,
+                    items: {
+                      allOf: [
+                        properties: {
+                          type: { type: :string, example: 'Spree::Promotion::Rules::Country', enum: ['Spree::Promotion::Rules::Country', 'Spree::Promotion::Rules::ItemTotal', 'Spree::Promotion::Rules::Product', 'Spree::Promotion::Rules::User', 'Spree::Promotion::Rules::FirstOrder', 'Spree::Promotion::Rules::UserLoggedIn', 'Spree::Promotion::Rules::OneUsePerUser', 'Spree::Promotion::Rules::Taxon', 'Spree::Promotion::Rules::OptionValue'], description: 'Set the Promotion Rule type.' },
+                          preferred_country_id: { type: :integer, example: 122, description: 'Each rule type has its own preferred attributes. In this example we are setting the ID of the Country this rule applies to. To learn more about Spree preferences visit TODO: [LINK].' },
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            required: %w[promotion],
+            title: 'Add a Rule to a Promotion',
+            'x-internal': true
+          },
+          update_promotion_update_rule_params: {
+            type: :object,
+            properties: {
+              promotion: {
+                type: :object,
+                properties: {
+                  promotion_rules_attributes: {
+                    type: :array,
+                    items: {
+                      allOf: [
+                        properties: {
+                          id: { type: :string, example: '22', description: 'To update an existing Promotion Rule, you are required to pass the ID of the rule you are updating.' },
+                          type: { type: :string, example: 'Spree::Promotion::Rules::Country', enum: ['Spree::Promotion::Rules::Country', 'Spree::Promotion::Rules::ItemTotal', 'Spree::Promotion::Rules::Product', 'Spree::Promotion::Rules::User', 'Spree::Promotion::Rules::FirstOrder', 'Spree::Promotion::Rules::UserLoggedIn', 'Spree::Promotion::Rules::OneUsePerUser', 'Spree::Promotion::Rules::Taxon', 'Spree::Promotion::Rules::OptionValue'], description: 'Set the Promotion Rule type.' },
+                          preferred_country_id: { type: :integer, example: 143, description: 'Each rule type has its own preferred attributes. In this example we are changing the ID of the Country this rule applies to. To learn more about Spree preferences visit TODO: [LINK].' }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            required: %w[promotion],
+            title: 'Update an existing Rule',
+            'x-internal': true
+          },
+          update_promotion_add_action_params: {
+            type: :object,
+            properties: {
+              promotion: {
+                type: :object,
+                properties: {
+                  promotion_actions_attributes: {
+                    type: :array,
+                    items: {
+                      allOf: [
+                        properties: {
+                          type: { type: :string, example: 'Spree::Promotion::Actions::CreateAdjustment', enum: ['Spree::Promotion::Actions::CreateAdjustment', 'Spree::Promotion::Actions::CreateItemAdjustments', 'Spree::Promotion::Actions::FreeShipping', 'Spree::Promotion::Actions::CreateLineItems'], description: 'Set the Promotion Action Type.' },
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            required: %w[promotion],
+            title: 'Add an Action to a Promotion',
+            'x-internal': true
+          },
+          update_promotion_action_calculator_params: {
+            type: :object,
+            properties: {
+              promotion: {
+                type: :object,
+                properties: {
+                  promotion_actions_attributes: {
+                    type: :array,
+                    items: {
+                      allOf: [
+                        properties: {
+                          id: { type: :string, example: '22', description: 'To update an existing Promotion Action, you are required to pass the ID of the action you wish to update.' },
+                          calculator_attributes: {
+                            properties: {
+                              id: { type: :string, example: '19', description: 'To update an existing Action Calculator, you are required to pass the ID of the calculator.' },
+                              type: { type: :string, example: 'Promotion::Actions::CreateAdjustment', enum: ['Promotion::Actions::CreateAdjustment', 'Promotion::Actions::CreateItemAdjustments', 'Promotion::Actions::CreateLineItems', 'Promotion::Actions::FreeShipping'], description: 'Set the Type of Promotion Action you wish to use.' },
+                              preferred_flat_percent: { type: :integer, example: 10, description: 'In this example we are setting the preferred flat percentage to `10`.' }
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            required: %w[promotion],
+            title: 'Update an Action Calculator',
+            'x-internal': true
+          },
+          update_promotion_change_calculator_params: {
+            type: :object,
+            properties: {
+              promotion: {
+                type: :object,
+                properties: {
+                  promotion_actions_attributes: {
+                    type: :array,
+                    items: {
+                      allOf: [
+                        properties: {
+                          id: { type: :string, example: '22', description: 'To update an existing Promotion Action, you are required to pass the ID of the Promotion Action.' },
+                          calculator_attributes: {
+                            properties: {
+                              type: { type: :string, example: 'Spree::Calculator::FlatPercentItemTotal', enum: ['Spree::Calculator::FlatPercentItemTotal', 'Spree::Calculator::FlatRate', 'Spree::Calculator::FlexiRate', 'Spree::Calculator::TieredPercent', 'Spree::Calculator::TieredFlatRate', 'Spree::Calculator::PercentOnLineItem'], description: 'To set the Promotion Action Calculator pass the calculator type. Each Promotion action has certain Calculators available, to learn more visit TODO: [LINK]' },
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            required: %w[promotion],
+            title: 'Change an Action Calculator',
+            'x-internal': true
+          },
+          update_promotion_change_action_params: {
+            type: :object,
+            properties: {
+              promotion: {
+                type: :object,
+                properties: {
+                  promotion_actions_attributes: {
+                    type: :array,
+                    items: {
+                      allOf: [
+                        properties: {
+                          id: { type: :string, example: '22', description: 'To update an existing Promotion Action, you are required to pass the ID of the Promotion Action.' },
+                          type: { type: :string, example: 'Promotion::Actions::CreateAdjustment', enum: ['Promotion::Actions::CreateAdjustment', 'Promotion::Actions::CreateItemAdjustments', 'Promotion::Actions::CreateLineItems', 'Promotion::Actions::FreeShipping'], description: 'Set the Type of Promotion Action you wish to use.' },
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            required: %w[promotion],
+            title: 'Change an Action Type',
+            'x-internal': true
+          },
+
+          # Promotion Action
+          create_promotion_action_params: {
+            type: :object,
+            properties: {
+              promotion_action: {
+                type: :object,
+                required: %w[type promotion_id],
+                properties: {
+                  type: { type: :string, example: 'Promotion::Actions::CreateAdjustment', enum: ['Promotion::Actions::CreateAdjustment', 'Promotion::Actions::CreateItemAdjustments', 'Promotion::Actions::CreateLineItems', 'Promotion::Actions::FreeShipping'], description: 'Set the Type of Promotion Action you wish to use.' },
+                  promotion_id: {type: :string, example: '22', description: 'Set the ID of the promotion this action belongs to.'}
+                }
+              }
+            },
+            required: %w[promotion_action],
+            title: 'Create a Promotion Action',
+            'x-internal': true
+          },
+          update_promotion_action_params: {
+            type: :object,
+            properties: {
+              promotion_action: {
+                type: :object,
+                properties: {
+                  type: { type: :string, example: 'Promotion::Actions::CreateAdjustment', enum: ['Promotion::Actions::CreateAdjustment', 'Promotion::Actions::CreateItemAdjustments', 'Promotion::Actions::CreateLineItems', 'Promotion::Actions::FreeShipping'], description: 'Set the Type of Promotion Action you wish to use.' }
+                }
+              }
+            },
+            required: %w[promotion_action],
+            title: 'Create a Promotion Action',
+            'x-internal': true
+          },
+
           # Promotion Category
           create_promotion_category_params: {
             type: :object,
@@ -1166,8 +1414,8 @@ RSpec.configure do |config|
                 type: :object,
                 required: %w[name],
                 properties: {
-                  name: { type: :string, example: 'Promotions Used in 2021' },
-                  code: { type: :string, example: '2021-PROMOS' }
+                  name: { type: :string, example: 'Promotions Used in 2021', description: 'Give this Promotion Category a name.' },
+                  code: { type: :string, example: '2021-PROMOS', nullable: true, description: 'Give this promotion category a code.' }
                 }
               }
             },
@@ -1181,12 +1429,44 @@ RSpec.configure do |config|
                 type: :object,
                 required: %w[name],
                 properties: {
-                  name: { type: :string, example: 'Promotions Used in 2021' },
-                  code: { type: :string, example: '2021-PROMOS' }
+                  name: { type: :string, example: 'Promotions Used in 2021', description: 'Update the name of this Promotion Category.' },
+                  code: { type: :string, example: '2021-PROMOS', nullable: true, description: 'Change or remove the code for this Promotion Category.' }
                 }
               }
             },
             required: %w[promotion_category],
+            'x-internal': true
+          },
+
+          # Promotion Rule
+          create_promotion_rule_params: {
+            type: :object,
+            properties: {
+              promotion_rule: {
+                type: :object,
+                required: %w[type promotion_id],
+                properties: {
+                  promotion_id: {type: :string, example: '22', description: 'Set the ID of the promotion this Promotion Rule belongs to.'},
+                  type: { type: :string, example: 'Spree::Promotion::Rules::Country', enum: ['Spree::Promotion::Rules::Country', 'Spree::Promotion::Rules::ItemTotal', 'Spree::Promotion::Rules::Product', 'Spree::Promotion::Rules::User', 'Spree::Promotion::Rules::FirstOrder', 'Spree::Promotion::Rules::UserLoggedIn', 'Spree::Promotion::Rules::OneUsePerUser', 'Spree::Promotion::Rules::Taxon', 'Spree::Promotion::Rules::OptionValue'], description: 'Set the Promotion Rule type.' },
+                }
+              }
+            },
+            required: %w[promotion_rule],
+            title: 'Create a Promotion Rule',
+            'x-internal': true
+          },
+          update_promotion_rule_params: {
+            type: :object,
+            properties: {
+              promotion_rule: {
+                type: :object,
+                properties: {
+                  type: { type: :string, example: 'Spree::Promotion::Rules::Country', enum: ['Spree::Promotion::Rules::Country', 'Spree::Promotion::Rules::ItemTotal', 'Spree::Promotion::Rules::Product', 'Spree::Promotion::Rules::User', 'Spree::Promotion::Rules::FirstOrder', 'Spree::Promotion::Rules::UserLoggedIn', 'Spree::Promotion::Rules::OneUsePerUser', 'Spree::Promotion::Rules::Taxon', 'Spree::Promotion::Rules::OptionValue'], description: 'Set the Promotion Rule type.' },
+                }
+              }
+            },
+            required: %w[promotion_rule],
+            title: 'Create a Promotion Rule',
             'x-internal': true
           },
 

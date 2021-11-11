@@ -187,7 +187,9 @@ Spree::Core::Engine.add_routes do
       namespace :platform do
         # Promotions API
         resources :promotions
+        resources :promotion_actions
         resources :promotion_categories
+        resources :promotion_rules
 
         # Returns API
         resources :customer_returns
@@ -286,10 +288,8 @@ Spree::Core::Engine.add_routes do
           end
         end
 
-        # CMS Pages API
+        # CMS
         resources :cms_pages
-
-        # CMS Sections API
         resources :cms_sections
 
         # Wishlists API
