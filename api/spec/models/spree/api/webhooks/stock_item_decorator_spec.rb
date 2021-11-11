@@ -7,7 +7,10 @@ describe Spree::Api::Webhooks::StockItemDecorator do
   let(:stock_location) { variant.stock_locations.first }
 
   describe 'emitting product.backorderable' do
-    subject { Timecop.freeze { stock_item.update(backorderable: backorderable) } }
+    subject do
+      product.reload
+      Timecop.freeze { stock_item.update(backorderable: backorderable) }
+    end
 
     let(:body) { Spree::Api::V2::Platform::ProductSerializer.new(product.reload).serializable_hash.to_json }
     let(:product) { variant.product }

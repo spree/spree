@@ -322,6 +322,10 @@ module Spree
       end
     end
 
+    def full_in_stock?
+      variants.full_in_stock.exists?
+    end
+
     private
 
     def add_associations_from_prototype
