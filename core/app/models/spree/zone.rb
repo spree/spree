@@ -111,10 +111,10 @@ module Spree
     def country_list
       @countries ||= case kind
                      when 'country' then
-                       zoneables
+                       Country.where(id: country_ids)
                      when 'state' then
-                       zoneables.collect(&:country)
-                     end.flatten.compact.uniq
+                       Country.where(id: zoneables.collect(&:country_id))
+                     end
     end
 
     def <=>(other)
