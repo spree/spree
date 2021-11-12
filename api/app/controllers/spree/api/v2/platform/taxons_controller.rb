@@ -3,7 +3,7 @@ module Spree
     module V2
       module Platform
         class TaxonsController < ResourceController
-          include ::Spree::Api::V2::Platform::NestedSetRepositionHelper
+          include ::Spree::Api::V2::Platform::NestedSetRepositionConcern
 
           private
 

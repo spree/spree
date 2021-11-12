@@ -2,7 +2,7 @@ module Spree
   module Api
     module V2
       module Platform
-        module NestedSetRepositionHelper
+        module NestedSetRepositionConcern
           def reposition
             spree_authorize! :update, resource if spree_current_user.present?
 
