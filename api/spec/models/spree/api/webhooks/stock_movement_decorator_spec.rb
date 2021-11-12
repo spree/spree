@@ -3,8 +3,7 @@ require 'spec_helper'
 describe Spree::Api::Webhooks::StockMovementDecorator do
   let(:stock_item) { create(:stock_item) }
   let(:stock_location) { variant.stock_locations.first }
-  let(:body) { Spree::Api::V2::Platform::VariantSerializer.new(variant).serializable_hash.to_json }
-  let!(:f) { create_list(:image, 2) }
+  let(:body) { Spree::Api::V2::Platform::VariantSerializer.new(variant.reload).serializable_hash.to_json }
 
   describe 'emitting product.back_in_stock' do
     let!(:store) { create(:store) }
@@ -124,7 +123,9 @@ describe Spree::Api::Webhooks::StockMovementDecorator do
     subject { stock_movement }
 
     let(:stock_movement) { create(:stock_movement, stock_item: stock_item, quantity: movement_quantity) }
-    let(:variant) { stock_item.variant }
+    let!(:variant) { stock_item.variant }
+
+    before { Spree::StockItem.update_all(backorderable: false) }
 
     describe 'when the variant goes out of stock' do
       let(:movement_quantity) { -stock_item.count_on_hand }

@@ -31,7 +31,7 @@ module Spree
       end
 
       def updating_only_timestamps?
-        (saved_changes.keys - %w[created_at updated_at]).empty?
+        saved_changes.present? && (saved_changes.keys - %w[created_at updated_at]).empty?
       end
 
       def disable_spree_webhooks?

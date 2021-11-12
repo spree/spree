@@ -14,7 +14,6 @@ module Spree
           was_not_backorderable = !variant_backorderable?
           yield
           if was_out_of_stock && was_not_backorderable && variant_backorderable?
-            touch # changes must be reflected before instantiating the serializer
             variant.queue_webhooks_requests!('variant.backorderable')
           end
         end
@@ -24,7 +23,7 @@ module Spree
           product_was_not_backorderable = !product_backorderable?
           yield
           if product_was_out_of_stock && product_was_not_backorderable && product_backorderable?
-            touch
+            reload
             variant.product.queue_webhooks_requests!('product.backorderable')
           end
         end
