@@ -5,9 +5,9 @@ describe Spree::Api::V2::Platform::StockLocationSerializer do
 
   subject { described_class.new(resource, params: serializer_params).serializable_hash }
 
-  let(:resource) { create(:stock_location_with_items, shipments: [shipment]) }
+  let(:resource) { create(:stock_location, country: country) }
   let(:type) { :stock_location }
-  let(:shipment) { create(:shipment) }
+  let(:country) { create(:country) }
 
   it do
     expect(subject).to eq(
@@ -31,20 +31,11 @@ describe Spree::Api::V2::Platform::StockLocationSerializer do
           zipcode: resource.zipcode
         },
         relationships: {
-          shipments: {
-            data: [{
-              id: shipment.id.to_s,
-              type: :shipment
-            }]
-          },
-          stock_items: {
-            data: [{
-              id: resource.stock_items[0].id.to_s,
-              type: :stock_item
-            }, {
-              id: resource.stock_items[1].id.to_s,
-              type: :stock_item
-            }]
+          country: {
+            data: {
+              id: country.id.to_s,
+              type: :country
+            }
           }
         }
       }
