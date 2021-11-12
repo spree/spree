@@ -13,7 +13,7 @@ describe 'Platform API v2 Taxons API' do
     let!(:taxon_3) { create(:taxon, name: 'T-Shirts', taxonomy: create(:taxonomy, store: store_2)) }
 
     context 'filtering' do
-      before { get "/api/v2/platform/taxons?filter[name_i_cont]=shirt", headers: bearer_token }
+      before { get '/api/v2/platform/taxons?filter[name_i_cont]=shirt', headers: bearer_token }
 
       it 'returns taxons with matching name' do
         expect(json_response['data'].count).to eq 1
@@ -23,7 +23,7 @@ describe 'Platform API v2 Taxons API' do
     end
 
     context 'sorting' do
-      before { get "/api/v2/platform/taxons?sort=name", headers: bearer_token }
+      before { get '/api/v2/platform/taxons?sort=name', headers: bearer_token }
 
       it 'returns taxons sorted by name' do
         expect(json_response['data'].count).to eq taxonomy.taxons.count
@@ -167,5 +167,99 @@ describe 'Platform API v2 Taxons API' do
     end
 
     it_behaves_like 'a resource containing metadata'
+  end
+
+  describe 'taxons#reposition' do
+    let!(:taxon_a) { create(:taxon, name: 'T-Shirts', taxonomy: taxonomy) }
+    let!(:taxon_b) { create(:taxon, name: 'Shorts', taxonomy: taxonomy) }
+    let!(:taxon_c) { create(:taxon, name: 'Pants', taxonomy: taxonomy) }
+
+    context 'with no params' do
+      let(:params) do
+        {
+          taxon: {
+            new_parent_id: nil,
+            new_position_idx: nil
+          }
+        }
+      end
+
+      before do
+        patch "/api/v2/platform/taxons/#{taxon_a.id}/reposition", headers: bearer_token, params: params
+      end
+
+      it_behaves_like 'returns 404 HTTP status'
+    end
+
+    context 'with none existing parent ID' do
+      let(:params) do
+        {
+          taxon: {
+            new_parent_id: 999129192192,
+            new_position_idx: 0
+          }
+        }
+      end
+
+      before do
+        patch "/api/v2/platform/taxons/#{taxon_a.id}/reposition", headers: bearer_token, params: params
+      end
+
+      it_behaves_like 'returns 404 HTTP status'
+    end
+
+    context 'with correct params' do
+      let(:params) do
+        {
+          taxon: {
+            new_parent_id: taxon_c.id,
+            new_position_idx: 0
+          }
+        }
+      end
+
+      before do
+        patch "/api/v2/platform/taxons/#{taxon_a.id}/reposition", headers: bearer_token, params: params
+      end
+
+      it_behaves_like 'returns 200 HTTP status'
+
+      it 'taxon_a can be nested inside another taxon_c' do
+        reload_taxons
+
+        expect(taxon_a.parent_id).to eq(taxon_c.id)
+        expect(taxon_a.depth).to eq(2)
+      end
+    end
+
+    context 'with correct params moving within the same taxon' do
+      let(:params) do
+        {
+          taxon: {
+            new_parent_id: taxon_b.id,
+            new_position_idx: 0
+          }
+        }
+      end
+
+      before do
+        patch "/api/v2/platform/taxons/#{taxon_a.id}/reposition", headers: bearer_token, params: params
+      end
+
+      it_behaves_like 'returns 200 HTTP status'
+
+      it 're-indexes the taxon' do
+        reload_taxons
+
+        expect(taxon_a.parent_id).to eq(taxon_b.id)
+        expect(taxon_a.lft).to eq(taxon_b.lft + 1)
+      end
+    end
+
+    def reload_taxons
+      taxon_a.reload
+      taxon_b.reload
+      taxon_c.reload
+    end
   end
 end

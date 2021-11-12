@@ -8,7 +8,7 @@ describe 'Store Credits API', swagger: true do
     include_example: 'user,created_by,category,credit_type',
     filter_examples: [{ name: 'filter[user_id_eq]', example: '5' },
                       { name: 'filter[created_by_id_eq]', example: '2' },
-                      { name: 'filter[amount_gteq]', example: 50.0 },
+                      { name: 'filter[amount_gteq]', example: '50.0' },
                       { name: 'filter[currency_eq]', example: 'USD' }]
   }
 

@@ -187,7 +187,9 @@ Spree::Core::Engine.add_routes do
       namespace :platform do
         # Promotions API
         resources :promotions
+        resources :promotion_actions
         resources :promotion_categories
+        resources :promotion_rules
 
         # Returns API
         resources :customer_returns
@@ -203,12 +205,12 @@ Spree::Core::Engine.add_routes do
         # Product Catalog API
         resources :products
         resources :taxonomies
-        resources :taxons
-        resources :classifications do
+        resources :taxons do
           member do
             patch :reposition
           end
         end
+        resources :classifications
         resources :images
         resources :variants
         resources :properties
@@ -248,6 +250,8 @@ Spree::Core::Engine.add_routes do
 
         # Store Credit API
         resources :store_credits
+        resources :store_credit_categories
+        resources :store_credit_types
 
         # Geo API
         resources :zones
@@ -288,14 +292,8 @@ Spree::Core::Engine.add_routes do
           end
         end
 
-        # CMS Pages API
-        resources :cms_pages do
-          member do
-            patch :toggle_visibility
-          end
-        end
-
-        # CMS Sections API
+        # CMS
+        resources :cms_pages
         resources :cms_sections
 
         # Wishlists API

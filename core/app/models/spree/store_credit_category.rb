@@ -7,6 +7,8 @@ module Spree
     GIFT_CARD_CATEGORY_NAME = 'Gift Card'.freeze
     DEFAULT_NON_EXPIRING_TYPES = [GIFT_CARD_CATEGORY_NAME]
 
+    self.whitelisted_ransackable_attributes = %w[name]
+
     def non_expiring?
       non_expiring_category_types.include? name
     end
