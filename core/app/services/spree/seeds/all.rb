@@ -4,14 +4,22 @@ module Spree
       prepend Spree::ServiceModule::Base
 
       def call
+        # GEO
         Countries.call
-        DefaultReimbursementType.call
-        Roles.call
         States.call
+        Zones.call
+
+        # user roles
+        Roles.call
+
+        # additional data
+        DefaultReimbursementTypes.call
         ShippingCategories.call
         StoreCreditCategories.call
+
+        # store & stock location
         Stores.call
-        Zones.call
+        StockLocations.call
       end
     end
   end
