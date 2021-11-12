@@ -359,23 +359,11 @@ describe Spree::Store, type: :model do
     context do
       include_context 'with checkout zone not set'
 
-      context do
-        include_context 'with default checkout zone set'
+      it 'returns list of all countries' do
+        checkout_available_countries_ids = subject.countries_available_for_checkout.ids
+        all_countries_ids                = Spree::Country.all.ids
 
-        it 'returns country list for default checkout zone' do
-          expect(subject.countries_available_for_checkout).to eq [country3]
-        end
-      end
-
-      context do
-        include_context 'with default checkout zone not set'
-
-        it 'returns list of all countries' do
-          checkout_available_countries_ids = subject.countries_available_for_checkout.ids
-          all_countries_ids                = Spree::Country.all.ids
-
-          expect(checkout_available_countries_ids).to eq(all_countries_ids)
-        end
+        expect(checkout_available_countries_ids).to eq(all_countries_ids)
       end
     end
   end

@@ -157,7 +157,7 @@ module Spree
     end
 
     def countries_available_for_checkout
-      @countries_available_for_checkout ||= checkout_zone_or_default.try(:country_list) || Spree::Country.all
+      @countries_available_for_checkout ||= checkout_zone.try(:country_list) || Spree::Country.all
     end
 
     def states_available_for_checkout(country)
