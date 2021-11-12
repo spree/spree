@@ -8,6 +8,10 @@ module Spree
           def model_class
             Spree::Taxonomy
           end
+
+          def scope_includes
+            [:taxons, :root]
+          end
         end
       end
     end
