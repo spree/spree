@@ -83,14 +83,6 @@ module Spree
       )
     }
 
-    scope :full_in_stock, -> do
-      joins(:stock_items).where(<<~SQL)
-        #{Spree::StockItem.table_name}.count_on_hand > 0 OR
-        #{Spree::Variant.table_name}.track_inventory = FALSE OR
-        #{Spree::StockItem.table_name}.backorderable = TRUE
-      SQL
-    end
-
     scope :not_discontinued, -> do
       where(
         arel_table[:discontinue_on].eq(nil).or(
@@ -140,8 +132,8 @@ module Spree
       !discontinued? && product.available?
     end
 
-    def full_in_stock?
-      Spree::Variant.full_in_stock.exists?(id: id)
+    def in_stock_or_backorderable?
+      self.class.in_stock_or_backorderable.exists?(id: id)
     end
 
     def tax_category

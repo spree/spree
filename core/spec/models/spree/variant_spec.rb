@@ -131,54 +131,6 @@ describe Spree::Variant, type: :model do
       end
     end
 
-    describe '.full_in_stock' do
-      let!(:variant) { create(:variant) }
-
-      context 'when variant has no stock items' do
-        before { Spree::StockItem.delete_all }
-
-        it { expect(described_class.full_in_stock).to eq([]) }
-      end
-
-      context 'when variant has stock items' do
-        let!(:variant2) { create(:variant) }
-        
-        before { Spree::StockItem.update_all(backorderable: false) }
-
-        context 'when variant stock items count_on_hand > 0' do
-          before do
-            variant.stock_items.first.set_count_on_hand(1)
-            variant2.stock_items.first.set_count_on_hand(0)
-          end
-
-          it { expect(described_class.full_in_stock).to include(variant) }
-          it { expect(described_class.full_in_stock).not_to include(variant2) }
-        end
-
-        context 'when variant stock items count_on_hand <= 0' do
-          before { variant.stock_items.first.set_count_on_hand(0) }
-
-          it { expect(described_class.full_in_stock).not_to include(variant) }
-
-          context 'when variant track_inventory = false' do
-            before { variant.update(track_inventory: false) }
-
-            it { expect(described_class.full_in_stock).to include(variant) }
-          end
-
-          context 'when variant track_inventory = true' do
-            it { expect(described_class.full_in_stock).not_to include(variant) }
-
-            context 'with some variant stock item having backorderable = true' do
-              before { variant.stock_items.first.update(backorderable: true) }
-
-              it { expect(described_class.full_in_stock).to include(variant) }
-            end
-          end
-        end
-      end
-    end
-
     describe '.not_discontinued' do
       context 'when discontinued' do
         let!(:discontinued_variant) { create(:variant, discontinue_on: Time.current - 1.day) }
@@ -366,13 +318,15 @@ describe Spree::Variant, type: :model do
     end
   end
 
-  context '#full_in_stock?' do
+  context '#in_stock_or_backorderable?' do
+    subject { variant.in_stock_or_backorderable? }
+
     let!(:variant) { create(:variant) }
 
     context 'when variant has no stock items' do
       before { Spree::StockItem.delete_all }
 
-      it { expect(variant.full_in_stock?).to eq(false) }
+      it { expect(subject).to eq(false) }
     end
 
     context 'when variant has stock items' do
@@ -381,33 +335,29 @@ describe Spree::Variant, type: :model do
       before { Spree::StockItem.update_all(backorderable: false) }
 
       context 'when variant stock items count_on_hand > 0' do
-        before do
-          variant.stock_items.first.set_count_on_hand(1)
-          variant2.stock_items.first.set_count_on_hand(0)
-        end
+        before { variant.stock_items.first.set_count_on_hand(1) }
 
-        it { expect(variant.full_in_stock?).to eq(true) }
-        it { expect(variant2.full_in_stock?).to eq(false) }
+        it { expect(subject).to eq(true) }
       end
 
       context 'when variant stock items count_on_hand <= 0' do
         before { variant.stock_items.first.set_count_on_hand(0) }
 
-        it { expect(variant.full_in_stock?).to eq(false) }
+        it { expect(subject).to eq(false) }
 
         context 'when variant track_inventory = false' do
           before { variant.update(track_inventory: false) }
 
-          it { expect(variant.full_in_stock?).to eq(true) }
+          it { expect(subject).to eq(true) }
         end
 
         context 'when variant track_inventory = true' do
-          it { expect(variant.full_in_stock?).to eq(false) }
+          it { expect(variant.in_stock_or_backorderable?).to eq(false) }
 
           context 'with some variant stock item having backorderable = true' do
             before { variant.stock_items.first.update(backorderable: true) }
 
-            it { expect(variant.full_in_stock?).to eq(true) }
+            it { expect(subject).to eq(true) }
           end
         end
       end

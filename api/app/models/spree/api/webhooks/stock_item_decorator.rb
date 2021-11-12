@@ -9,7 +9,7 @@ module Spree
         private
 
         def queue_webhooks_requests_for_variant_backorderable!
-          was_out_of_stock = !variant.full_in_stock?
+          was_out_of_stock = !variant.in_stock_or_backorderable?
           was_not_backorderable = !variant_backorderable?
           yield
           touch # changes must be reflected before instantiating the serializer

@@ -17,9 +17,9 @@ module Spree
         private
 
         def queue_webhooks_requests_for_variant_back_in_stock!
-          variant_was_out_of_stock = !variant.full_in_stock?
+          variant_was_out_of_stock = !variant.in_stock_or_backorderable?
           yield
-          if variant_was_out_of_stock && variant.full_in_stock?
+          if variant_was_out_of_stock && variant.in_stock_or_backorderable?
             variant.queue_webhooks_requests!('variant.back_in_stock')
           end
         end
