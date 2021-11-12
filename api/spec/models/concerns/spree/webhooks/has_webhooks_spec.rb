@@ -91,7 +91,9 @@ describe Spree::Webhooks::HasWebhooks do
       context 'when using touch without arguments' do
         it do
           expect do
-            product.touch
+            # Doing product.touch in Rails 5.2 doesn't work at the first time.
+            # It must be done twice in order to update the updated_at column.
+            Spree::Product.find(product.id).touch
           end.not_to emit_webhook_event('product.update')
         end
       end
