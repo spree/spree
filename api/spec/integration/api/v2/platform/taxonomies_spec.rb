@@ -5,8 +5,8 @@ describe 'Taxonomies API', swagger: true do
 
   resource_name = 'Taxonomy'
   options = {
-    include_example: 'taxon',
-    filter_examples: [{ name: 'filter[name_eq]', example: 'Category' }]
+    include_example: 'taxons,root',
+    filter_examples: [{ name: 'filter[name_eq]', example: 'Categories' }]
   }
 
   let(:id) { create(:taxonomy, store: store).id }
@@ -14,8 +14,9 @@ describe 'Taxonomies API', swagger: true do
   let(:valid_create_param_value) { build(:taxonomy).attributes }
   let(:valid_update_param_value) do
     {
-      name: 'Category',
-      position: 1
+      name: 'Categories',
+      position: 1,
+      public_metadata: { balanced: true }
     }
   end
   let(:invalid_param_value) do
