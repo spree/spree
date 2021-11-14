@@ -5,6 +5,8 @@ module Spree
         class ShipmentSerializer < BaseSerializer
           include ResourceSerializerConcern
 
+          attribute :tracking_url
+
           belongs_to :order
           belongs_to :address
           belongs_to :stock_location
