@@ -10,33 +10,46 @@ describe 'Shipments API', swagger: true do
     filter_examples: [{ name: 'filter[state_eq]', example: 'complete' }]
   }
 
-  let(:order) { create(:order_ready_to_ship) }
+  let(:order) { create(:order_ready_to_ship, store: store) }
+  let(:product) { create(:product_in_stock, stores: [store]) }
   let(:id) { create(:shipment, order: order).id }
   let(:records_list) { create_list(:shipment, 2) }
   let(:store) { Spree::Store.default }
   let(:valid_create_param_value) do
     {
-
+      shipment: {
+        stock_location_id: create(:stock_location).id,
+        order_id: create(:order_with_totals, store: store).id,
+        variant_id: product.master.id,
+        quantity: 1
+      }
+    }
+  end
+  let(:invalid_create_param_value) do
+    {
+      shipment: {
+        stock_location_id: 1412431243,
+        order_id: create(:order_with_totals, store: store).id,
+        variant_id: product.master.id
+      }
     }
   end
   let(:valid_update_param_value) do
     {
+      shipment: {
+        tracking: 'MY-TRACKING-NUMBER-1234'
+      }
     }
   end
   let(:invalid_param_value) do
     {
+      shipment: {
+        stock_location_id: 'invalid'
+      }
     }
   end
 
-  path "/api/v2/platform/#{resource_path}" do
-    include_examples 'GET records list', resource_name, options
-  end
-
-  path "/api/v2/platform/#{resource_path}/{id}" do
-    include_examples 'GET record', resource_name, options
-    # include_examples 'PATCH update record', resource_name, options
-    include_examples 'DELETE record', resource_name
-  end
+  include_examples 'CRUD examples', resource_name, options
 
   path "/api/v2/platform/#{resource_path}/{id}/ready" do
     patch "Mark Shipment as ready to be shipped" do
@@ -90,6 +103,11 @@ describe 'Shipments API', swagger: true do
 
   path "/api/v2/platform/#{resource_path}/{id}/resume" do
     let(:id) { create(:shipment, order: order, state: :canceled).id }
+
+    # we need to ensure that the item is in stock before resuming
+    before do
+      order.line_items.first.variant.stock_items.update_all(count_on_hand: 10)
+    end
 
     patch "Resumes the Shipment" do
       tags resource_name.pluralize
