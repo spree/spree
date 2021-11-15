@@ -25,6 +25,8 @@ module Spree
 
     context 'valid attributes' do
       shared_context 'creates a line item' do
+        it { expect(execute.success?).to eq(true) }
+
         it 'creates new line item record' do
           expect { execute }.to change(order.line_items, :count).by(1)
           expect(line_item.variant).to eq(variant)
@@ -34,6 +36,23 @@ module Spree
 
       context 'without pre-existing line item' do
         it_behaves_like 'creates a line item'
+      end
+
+      context 'without quantity passed' do
+        let(:params) do
+          {
+            shipment: shipment,
+            variant_id: variant.id
+          }
+        end
+
+        it { expect(execute.success?).to eq(true) }
+
+        it 'creates new line item record' do
+          expect { execute }.to change(order.line_items, :count).by(1)
+          expect(line_item.variant).to eq(variant)
+          expect(line_item.quantity).to eq(1)
+        end
       end
 
       context 'with existing line item' do

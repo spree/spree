@@ -7,7 +7,7 @@ module Spree
       prepend Spree::ServiceModule::Base
       include Helper
 
-      def call(shipment:, variant_id:, quantity:)
+      def call(shipment:, variant_id:, quantity: nil)
         ActiveRecord::Base.transaction do
           run :prepare_arguments
           run :add_or_update_line_item
@@ -16,7 +16,7 @@ module Spree
 
       protected
 
-      def prepare_arguments(shipment:, variant_id:, quantity:)
+      def prepare_arguments(shipment:, variant_id:, quantity: nil)
         order = shipment.order
         store = order.store
 
