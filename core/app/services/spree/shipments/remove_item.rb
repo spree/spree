@@ -38,7 +38,7 @@ module Spree
           line_item = result.value
           line_item.destroy if line_item.quantity.zero?
 
-          # OrderInventory#remove_from_shipment is caleed in `remove_item_service`
+          # `OrderInventory#remove_from_shipment` is called in `remove_item_service`
           # which will delete the shipment if all inventory units were removed
           if shipment.inventory_units.any?
             success(shipment)

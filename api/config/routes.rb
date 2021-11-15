@@ -266,6 +266,8 @@ Spree::Core::Engine.add_routes do
             end
             patch :add_item
             patch :remove_item
+            patch :transfer_to_location
+            patch :transfer_to_shipment
           end
         end
 
