@@ -5,12 +5,13 @@ module Spree
         class ShipmentsController < ResourceController
           include NumberResource
 
-          before_action :load_variant, only: %i[add_item remove_item transfer_to_location transfer_to_shipment]
+          before_action :load_variant, only: %i[remove_item transfer_to_location transfer_to_shipment]
           before_action :load_stock_location, only: %i[transfer_to_location]
 
           SHIPMENT_STATES = %w[ready ship cancel resume pend]
 
           def create
+            # FIXME: support saving metadata
             result = create_service.call(
               store: current_store,
               shipment_attributes: params.require(:shipment).permit(
@@ -32,19 +33,14 @@ module Spree
             end
           end
 
-          # adds item to an existing shipment
-          # if this variant is already added to the cart it will increase the quantity
-          # if not it will create new line item
-          # def add_item
-          #   quantity = params.dig(:shipment, :quantity)&.to_i || 1
-
-          #   Spree::Dependencies.cart_add_item_service.constantize.call(order: resource.order,
-          #                                                              variant: @variant,
-          #                                                              quantity: quantity,
-          #                                                              options: { shipment: resource })
-
-          #   render_serialized_payload { serialize_resource(resource) }
-          # end
+          def add_item
+            result = add_item_service.call(
+              shipment: resource,
+              variant_id: params.dig(:shipment, :variant_id),
+              quantity: params.dig(:shipment, :quantity)
+            )
+            render_result(result)
+          end
 
           # removes an item (variant) from shipment
           # quantity can be passed
@@ -143,6 +139,10 @@ module Spree
 
           def change_state_service
             Spree::Api::Dependencies.platform_shipment_change_state_service.constantize
+          end
+
+          def add_item_service
+            Spree::Api::Dependencies.platform_shipment_add_item_service.constantize
           end
         end
       end

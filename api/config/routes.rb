@@ -264,6 +264,7 @@ Spree::Core::Engine.add_routes do
             %w[ready ship cancel resume pend].each do |state|
               patch state.to_sym
             end
+            patch :add_item
           end
         end
 
