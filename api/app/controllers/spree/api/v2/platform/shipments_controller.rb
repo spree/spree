@@ -42,45 +42,37 @@ module Spree
             render_result(result)
           end
 
-          # removes an item (variant) from shipment
-          # quantity can be passed
-          # if there is no quantity left for this item for this shipent, shipment itself will be removed
-          # TODO: move this code
-          # def remove_item
-          #   quantity = params.dig(:shipment, :quantity)&.to_i || resource.inventory_units_for(variant).sum(:quantity)
+          def remove_item
+            result = remove_item_service.call(
+              shipment: resource,
+              variant_id: params.dig(:shipment, :variant_id),
+              quantity: params.dig(:shipment, :quantity)
+            )
 
-          #   result = Spree::Dependencies.cart_remove_item_service.constantize.call(order: resource.order,
-          #                                                                          variant: @variant,
-          #                                                                          quantity: quantity,
-          #                                                                          options: { shipment: resource })
-
-          #   if result.success?
-          #     if resource.inventory_units.any?
-          #       render_serialized_payload { serialize_resource(resource.reload) }
-          #     elsif resource.detroy!
-          #       head 204
-          #     else
-          #       render_error_payload(resource)
-          #     end
-          #   else
-          #     render_error_payload(result.error)
-          #   end
-          # end
+            if result.success?
+              if result.value == :shipment_deleted
+                head 204
+              else
+                render_serialized_payload { serialize_resource(result.value) }
+              end
+            else
+              render_error_payload(result.error)
+            end
+          end
 
           # def transfer_to_location
           #   quantity = params.dig(:shipment, :quantity)&.to_i || 1
 
           #   unless quantity > 0
-          #     unprocessable_entity("#{Spree.t(:shipment_transfer_errors_occurred, scope: 'api')} \n #{Spree.t(:negative_quantity, scope: 'api')}")
+          #     render_error_payload("#{Spree.t(:shipment_transfer_errors_occurred, scope: 'api')} \n #{Spree.t(:negative_quantity, scope: 'api')}")
           #     return
           #   end
 
           #   transfer = resource.transfer_to_location(@variant, quantity, stock_location)
-          #   if transfer.valid?
-          #     transfer.run!
+          #   if transfer.valid? && transfer.run!
           #     render json: { message: Spree.t(:shipment_transfer_success) }, status: 201
           #   else
-          #     render json: { message: transfer.errors.full_messages.to_sentence }, status: 422
+          #     render_error_payload(transfer.errors)
           #   end
           # end
 
@@ -97,14 +89,13 @@ module Spree
           #     end
 
           #   if error
-          #     unprocessable_entity("#{Spree.t(:shipment_transfer_errors_occurred, scope: 'api')} \n#{error}")
+          #     render_error_payload("#{Spree.t(:shipment_transfer_errors_occurred, scope: 'api')} \n#{error}")
           #   else
           #     transfer = @original_shipment.transfer_to_shipment(@variant, @quantity, @target_shipment)
-          #     if transfer.valid?
-          #       transfer.run!
+          #     if transfer.valid? && transfer.run!
           #       render json: { message: Spree.t(:shipment_transfer_success) }, status: 201
           #     else
-          #       render json: { message: transfer.errors.full_messages }, status: 422
+#                  render_error_payload(transfer.errors)
           #     end
           #   end
           # end
@@ -143,6 +134,10 @@ module Spree
 
           def add_item_service
             Spree::Api::Dependencies.platform_shipment_add_item_service.constantize
+          end
+
+          def remove_item_service
+            Spree::Api::Dependencies.platform_shipment_remove_item_service.constantize
           end
         end
       end

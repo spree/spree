@@ -265,6 +265,7 @@ Spree::Core::Engine.add_routes do
               patch state.to_sym
             end
             patch :add_item
+            patch :remove_item
           end
         end
 

@@ -36,7 +36,7 @@ module Spree
       end
 
       context 'part of the line item qty removed' do
-        before { line_item.update(quantity: 2) }
+        before { line_item.update!(quantity: 2) }
 
         let(:params) do
           {
