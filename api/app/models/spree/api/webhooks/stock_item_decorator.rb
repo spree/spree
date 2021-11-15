@@ -24,7 +24,6 @@ module Spree
           product_was_not_backorderable = !product_backorderable?
           yield
           if product_was_out_of_stock && product_was_not_backorderable && product_backorderable?
-            touch
             variant.product.queue_webhooks_requests!('product.backorderable')
           end
         end
