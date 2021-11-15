@@ -132,6 +132,7 @@ module Spree
       !discontinued? && product.available?
     end
 
+    # [TODO]: test
     def in_stock_or_backorderable?
       self.class.in_stock_or_backorderable.exists?(id: id)
     end

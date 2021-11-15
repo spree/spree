@@ -323,7 +323,7 @@ module Spree
     end
 
     def full_in_stock?
-      variants.full_in_stock.exists?
+      variants.in_stock_or_backorderable.exists?(product_id: id)
     end
 
     private
