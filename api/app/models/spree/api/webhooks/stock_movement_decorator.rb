@@ -10,9 +10,6 @@ module Spree
 
         private
 
-        delegate :variant, to: :stock_item
-        delegate :product, to: :variant
-
         def queue_webhooks_requests_for_variant_out_of_stock!
           variant_in_stock_before_update = variant.in_stock_or_backorderable?
           yield

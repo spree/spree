@@ -831,6 +831,12 @@ describe Spree::Product, type: :model do
     let!(:product) { create(:product, stores: [store]) }
     let(:stock_item) { variant.stock_items.first }
 
+    context 'when in stock or backorderable variants belong to another product' do
+      let!(:another_product_variant) { create(:variant, product: create(:product, stores: [store])) }
+
+      it { expect(subject).to eq(false) }
+    end
+
     context 'when product has no variants' do
       it do
         expect(product.variants).to eq([])
