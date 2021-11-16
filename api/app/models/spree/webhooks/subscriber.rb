@@ -6,6 +6,7 @@ module Spree
         payment: %w[payment.paid payment.voided],
         product: %w[product.back_in_stock product.backorderable product.discontinued product.out_of_stock],
         variant: %w[variant.back_in_stock variant.backorderable variant.discontinued variant.out_of_stock],
+        shipment: %w[shipment.shipped],
       }
 
       has_many :events, inverse_of: :subscriber
