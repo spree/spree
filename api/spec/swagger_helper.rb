@@ -64,6 +64,7 @@ RSpec.configure do |config|
         { name: 'Shipments' },
         { name: 'Shipping Categories' },
         { name: 'Shipping Methods' },
+        { name: 'Stock Locations' },
         { name: 'Store Credit Categories' },
         { name: 'Store Credit Types' },
         { name: 'Store Credits' },
@@ -1596,6 +1597,58 @@ RSpec.configure do |config|
               type: { type: :string, example: 'Spree::Calculator::Shipping::FlatPercentItemTotal', enum: ['Spree::Calculator::Shipping::DigitalDelivery', 'Spree::Calculator::Shipping::FlatPercentItemTotal', 'Spree::Calculator::Shipping::FlatRate', 'Spree::Calculator::Shipping::FlexiRate', 'Spree::Calculator::Shipping::PerItem', 'Spree::Calculator::Shipping::PriceSack'] }
             },
             required: %w[type],
+            'x-internal': true
+          },
+
+          # Stock Location
+          create_stock_location_params: {
+            type: :object,
+            properties: {
+              stock_location: {
+                type: :object,
+                required: %w[name],
+                properties: {
+                  name: { type: :string, example: 'Warehouse 3' },
+                  default: { type: :boolean },
+                  address1: { type: :string, example: 'South St. 8' },
+                  address2: { type: :string, example: 'South St. 109' },
+                  city: { type: :string, example: 'Los Angeles' },
+                  state_name: { type: :string, example: 'California' },
+                  zipcode: { type: :string, example: '90005' },
+                  phone: { type: :string, example: '23333456' },
+                  active: { type: :boolean },
+                  backorderable_default: { type: :boolean },
+                  propagate_all_variants: { type: :boolean },
+                  admin_name: { type: :string },
+                }
+              }
+            },
+            required: %w[stock_location],
+            'x-internal': true
+          },
+          update_stock_location_params: {
+            type: :object,
+            properties: {
+              stock_location: {
+                type: :object,
+                required: %w[name],
+                properties: {
+                  name: { type: :string, example: 'Warehouse 3' },
+                  default: { type: :boolean },
+                  address1: { type: :string, example: 'South St. 8' },
+                  address2: { type: :string, example: 'South St. 109' },
+                  city: { type: :string, example: 'Los Angeles' },
+                  state_name: { type: :string, example: 'California' },
+                  zipcode: { type: :string, example: '90005' },
+                  phone: { type: :string, example: '23333456' },
+                  active: { type: :boolean },
+                  backorderable_default: { type: :boolean },
+                  propagate_all_variants: { type: :boolean },
+                  admin_name: { type: :string },
+                }
+              }
+            },
+            required: %w[stock_location],
             'x-internal': true
           },
 
