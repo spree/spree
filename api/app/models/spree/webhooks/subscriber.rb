@@ -39,11 +39,11 @@ module Spree
         result
       end
 
-      private
-
       def self.default_events(model)
         %W[#{model}.create #{model}.update #{model}.delete]
       end
+
+      private
 
       def check_uri_path
         uri = begin
