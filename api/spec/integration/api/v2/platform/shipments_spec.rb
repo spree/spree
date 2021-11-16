@@ -68,7 +68,7 @@ describe 'Shipments API', swagger: true do
       operationId "add-item-shipment"
       consumes 'application/json'
       parameter name: :id, in: :path, type: :string
-      parameter name: :shipment, in: :body#, schema: custom_update_params
+      parameter name: :shipment, in: :body, schema: { '$ref' => '#/components/schemas/add_item_shipment_params' }
       json_api_include_parameter(options[:include_example])
 
       it_behaves_like 'record updated'
@@ -96,7 +96,7 @@ describe 'Shipments API', swagger: true do
       operationId "remove-item-shipment"
       consumes 'application/json'
       parameter name: :id, in: :path, type: :string
-      parameter name: :shipment, in: :body#, schema: custom_update_params
+      parameter name: :shipment, in: :body, schema: { '$ref' => '#/components/schemas/remove_item_shipment_params' }
       json_api_include_parameter(options[:include_example])
 
       context 'removes all the quantity' do
