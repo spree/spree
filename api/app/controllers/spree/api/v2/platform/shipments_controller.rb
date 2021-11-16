@@ -5,8 +5,7 @@ module Spree
         class ShipmentsController < ResourceController
           include NumberResource
 
-          before_action :load_variant, only: %i[remove_item transfer_to_location transfer_to_shipment]
-          before_action :load_stock_location, only: %i[transfer_to_location]
+          before_action :load_variant, only: %i[transfer_to_location transfer_to_shipment]
 
           SHIPMENT_STATES = %w[ready ship cancel resume pend]
 
@@ -61,6 +60,7 @@ module Spree
           end
 
           def transfer_to_location
+            stock_location = Spree::StockLocation.find(params.dig(:shipment, :stock_location_id))
             quantity = params.dig(:shipment, :quantity)&.to_i || 1
 
             unless quantity > 0
@@ -68,7 +68,7 @@ module Spree
               return
             end
 
-            transfer = resource.transfer_to_location(@variant, quantity, @stock_location)
+            transfer = resource.transfer_to_location(@variant, quantity, stock_location)
             if transfer.valid? && transfer.run!
               render json: { message: I18n.t('spree.api.shipment_transfer_success') }, status: 201
             else
@@ -109,10 +109,6 @@ module Spree
 
           def load_variant
             @variant = current_store.variants.find_by(id: params.dig(:shipment, :variant_id))
-          end
-
-          def load_stock_location
-            @stock_location = Spree::StockLocation.find(params.dig(:shipment, :stock_location_id))
           end
 
           def spree_permitted_attributes
