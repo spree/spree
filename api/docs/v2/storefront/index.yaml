@@ -3485,11 +3485,6 @@ components:
               example:
                 number_of_orders: 0
               description: The public metadata for this User
-            private_metadata:
-              type: object
-              example:
-                has_abandoned_cart: false
-              description: The private metadata for this User
         relationships:
           type: object
           properties:
@@ -4911,8 +4906,6 @@ components:
                     completed_orders: 0
                     public_metadata:
                       number_of_orders: 0
-                    private_metadata:
-                      has_abandoned_cart: false
                   relationships:
                     default_billing_address:
                       data:

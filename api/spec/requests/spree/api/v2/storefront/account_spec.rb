@@ -3,7 +3,7 @@ require 'spec_helper'
 describe 'Storefront API v2 Account spec', type: :request do
   include_context 'API v2 tokens'
 
-  let!(:user)  { create(:user_with_addresses) }
+  let!(:user) { create(:user_with_addresses) }
   let(:headers) { headers_bearer }
 
   shared_examples 'mock tests for failed user saving' do
@@ -44,7 +44,6 @@ describe 'Storefront API v2 Account spec', type: :request do
       expect(json_response['data']).to have_attribute(:store_credits).with_value(user.total_available_store_credit)
       expect(json_response['data']).to have_attribute(:completed_orders).with_value(user.orders.complete.count)
       expect(json_response['data']).to have_attribute(:public_metadata).with_value(user.public_metadata)
-      expect(json_response['data']).to have_attribute(:private_metadata).with_value(user.private_metadata)
     end
 
     context 'with params "include=default_billing_address"' do
@@ -104,10 +103,11 @@ describe 'Storefront API v2 Account spec', type: :request do
       it_behaves_like 'returns 200 HTTP status'
 
       it 'creates and returns user' do
-        expect(json_response['data']['id'].to_i).to eq Spree.user_class.last.id
+        created_user = Spree.user_class.last
+        expect(json_response['data']['id'].to_i).to eq created_user.id
         expect(json_response['data']).to have_attribute(:email).with_value(new_attributes[:email])
         expect(json_response['data']).to have_attribute(:public_metadata).with_value(new_attributes[:public_metadata])
-        expect(json_response['data']).to have_attribute(:private_metadata).with_value(new_attributes[:private_metadata])
+        expect(created_user.private_metadata).to eq(new_attributes[:private_metadata])
         expect(json_response.size).to eq(1)
       end
 
