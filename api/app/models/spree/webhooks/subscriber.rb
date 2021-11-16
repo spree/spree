@@ -1,6 +1,13 @@
 module Spree
   module Webhooks
     class Subscriber < Spree::Webhooks::Base
+      LIST_OF_ALL_EVENTS = {
+        order: %w[order.canceled order.paid order.placed order.resumed order.shipped],
+        payment: %w[payment.paid payment.voided],
+        product: %w[product.back_in_stock product.backorderable product.discontinued product.out_of_stock],
+        variant: %w[variant.back_in_stock variant.backorderable variant.discontinued variant.out_of_stock],
+      }
+
       has_many :events, inverse_of: :subscriber
 
       validates :url, 'spree/url': true, presence: true
