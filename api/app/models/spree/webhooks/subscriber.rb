@@ -1,7 +1,7 @@
 module Spree
   module Webhooks
     class Subscriber < Spree::Webhooks::Base
-      LIST_OF_ALL_EVENTS = {
+      SUPPORTED_CUSTOM_EVENTS = {
         order: %w[order.canceled order.paid order.placed order.resumed order.shipped],
         payment: %w[payment.paid payment.voided],
         product: %w[product.back_in_stock product.backorderable product.discontinued product.out_of_stock],
@@ -33,7 +33,17 @@ module Spree
         )
       end
 
+      def self.supported_events(model)
+        result = default_events(model)
+        result += SUPPORTED_CUSTOM_EVENTS[model] if SUPPORTED_CUSTOM_EVENTS.include?(model)
+        result
+      end
+
       private
+
+      def self.default_events(model)
+        %W[#{model}.create #{model}.update #{model}.delete]
+      end
 
       def check_uri_path
         uri = begin

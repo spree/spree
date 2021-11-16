@@ -65,4 +65,31 @@ describe Spree::Webhooks::Subscriber do
       it { expect(subject).to be_empty }
     end
   end
+
+  describe '.supported_events' do
+    subject { described_class.supported_events(model_name) }
+
+    context 'when only default events' do
+      let(:model_name) { :address }
+
+      it 'returns the resource.create, resource.update and resource.delete events' do
+        expect(subject).to eq(%w[address.create address.update address.delete])
+      end
+    end
+
+    context 'when it has additional events' do
+      before do
+        allow(Spree::Webhooks::Subscriber::SUPPORTED_CUSTOM_EVENTS).to receive(:include?).with(model_name).and_return(true)
+        allow(Spree::Webhooks::Subscriber::SUPPORTED_CUSTOM_EVENTS).to receive(:[]).with(model_name).and_return(additional_events)
+      end
+
+      let(:additional_events) { %W[#{model_name}.event1 #{model_name}.event2] }
+      let(:default_events) { %W[#{model_name}.create #{model_name}.update #{model_name}.delete] }
+      let(:model_name) { :product }
+
+      it 'returns the default events and the additional events' do
+        expect(subject).to eq(default_events + additional_events)
+      end
+    end
+  end
 end
