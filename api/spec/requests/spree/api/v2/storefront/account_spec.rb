@@ -43,6 +43,8 @@ describe 'Storefront API v2 Account spec', type: :request do
       expect(json_response['data']).to have_attribute(:email).with_value(user.email)
       expect(json_response['data']).to have_attribute(:store_credits).with_value(user.total_available_store_credit)
       expect(json_response['data']).to have_attribute(:completed_orders).with_value(user.orders.complete.count)
+      expect(json_response['data']).to have_attribute(:public_metadata).with_value(user.public_metadata)
+      expect(json_response['data']).to have_attribute(:private_metadata).with_value(user.private_metadata)
     end
 
     context 'with params "include=default_billing_address"' do
@@ -89,7 +91,9 @@ describe 'Storefront API v2 Account spec', type: :request do
         password: 'newpassword123',
         password_confirmation: 'newpassword123',
         bill_address_id: default_bill_address.id.to_s,
-        ship_address_id: default_ship_address.id.to_s
+        ship_address_id: default_ship_address.id.to_s,
+        public_metadata: { 'has_other_account' => 'true' },
+        private_metadata: { 'shops_in_other_stores' => 'false' }
       }
     end
     let(:params) { { user: new_attributes } }
@@ -102,6 +106,8 @@ describe 'Storefront API v2 Account spec', type: :request do
       it 'creates and returns user' do
         expect(json_response['data']['id'].to_i).to eq Spree.user_class.last.id
         expect(json_response['data']).to have_attribute(:email).with_value(new_attributes[:email])
+        expect(json_response['data']).to have_attribute(:public_metadata).with_value(new_attributes[:public_metadata])
+        expect(json_response['data']).to have_attribute(:private_metadata).with_value(new_attributes[:private_metadata])
         expect(json_response.size).to eq(1)
       end
 
