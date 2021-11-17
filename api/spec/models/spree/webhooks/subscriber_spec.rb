@@ -66,8 +66,8 @@ describe Spree::Webhooks::Subscriber do
     end
   end
 
-  describe '.supported_events' do
-    subject { described_class.supported_events(model_name) }
+  describe '.events_list_for' do
+    subject { described_class.events_list_for(model_name) }
 
     context 'when only default events' do
       let(:model_name) { :address }
@@ -90,6 +90,18 @@ describe Spree::Webhooks::Subscriber do
       it 'returns the default events and the additional events' do
         expect(subject).to eq(default_events + additional_events)
       end
+    end
+  end
+
+  describe '.supported_events' do
+    subject { described_class.supported_events }
+
+    it 'includes the webhookable model in supported events list' do
+      class WebhookableDummy < Spree::Base
+        include Spree::Webhooks::HasWebhooks
+      end
+
+      expect(subject[:webhookable_dummy]).to eq(%w[webhookable_dummy.create webhookable_dummy.update webhookable_dummy.delete])
     end
   end
 end

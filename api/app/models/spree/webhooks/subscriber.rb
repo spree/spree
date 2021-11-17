@@ -34,14 +34,25 @@ module Spree
         )
       end
 
-      def self.supported_events(model)
-        result = default_events(model)
-        result += SUPPORTED_CUSTOM_EVENTS[model] if SUPPORTED_CUSTOM_EVENTS.include?(model)
-        result
-      end
+      class << self
+        def supported_events
+          Spree::Base.descendants.
+            select { |model| model.includes Spree::Webhooks::HasWebhooks }.
+            to_h do |model|
+            model_name = model.name.demodulize.underscore.to_sym
+            [model_name, events_list_for(model_name)]
+          end
+        end
 
-      def self.default_events(model)
-        %W[#{model}.create #{model}.update #{model}.delete]
+        def events_list_for(model)
+          result = default_events(model)
+          result += SUPPORTED_CUSTOM_EVENTS[model] if SUPPORTED_CUSTOM_EVENTS.include?(model)
+          result
+        end
+
+        def default_events(model)
+          %W[#{model}.create #{model}.update #{model}.delete]
+        end
       end
 
       private
