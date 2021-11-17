@@ -66,7 +66,7 @@ paths:
                     public_metadata:
                       type: object
                       example:
-                        number_of_orders: 0
+                        user_segment: 'supplier'
                       description: The public metadata for this User
                     private_metadata:
                       type: object
@@ -3483,7 +3483,7 @@ components:
             public_metadata:
               type: object
               example:
-                number_of_orders: 0
+                user_segment: 'supplier'
               description: The public metadata for this User
         relationships:
           type: object
@@ -4905,7 +4905,7 @@ components:
                     store_credits: 0
                     completed_orders: 0
                     public_metadata:
-                      number_of_orders: 0
+                      user_segment: 'supplier'
                   relationships:
                     default_billing_address:
                       data:
