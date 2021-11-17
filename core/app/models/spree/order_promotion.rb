@@ -4,7 +4,7 @@ module Spree
     belongs_to :promotion, class_name: 'Spree::Promotion'
 
     delegate :name, :description, :code, to: :promotion
-    delegate :currency, to: :order
+    delegate :currency, :public_metadata, to: :order
 
     extend Spree::DisplayMoney
     money_methods :amount
