@@ -373,6 +373,24 @@ paths:
       parameters:
         - $ref: '#/components/parameters/CartIncludeParam'
         - $ref: '#/components/parameters/SparseFieldsCart'
+      requestBody:
+        required: false
+        content:
+          application/vnd.api+json:
+            schema:
+              type: object
+              example:
+                public_metadata:
+                  total_weight: 3250
+                private_metadata:
+                  had_same_cart_items: true
+              properties:
+                public_metadata:
+                  type: object
+                  description: 'The public metadata for the cart.'
+                private_metadata:
+                  type: object
+                  description: 'The private metadata for the cart.'
       summary: Create a Cart
     delete:
       description: |-
