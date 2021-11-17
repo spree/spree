@@ -14,14 +14,18 @@ module Spree
           def create
             spree_authorize! :create, Spree::Order
 
-            order_params = {
+            create_cart_params = {
               user: spree_current_user,
               store: current_store,
-              currency: current_currency
+              currency: current_currency,
+              order_params: {
+                public_metadata: metadata_params[:public_metadata].to_h,
+                private_metadata: metadata_params[:private_metadata].to_h,
+              }
             }
 
             order   = spree_current_order if spree_current_order.present?
-            order ||= create_service.call(order_params).value
+            order ||= create_service.call(create_cart_params).value
 
             render_serialized_payload(201) { serialize_resource(order) }
           end
@@ -227,6 +231,10 @@ module Spree
               shipping_rates,
               params: serializer_params
             ).serializable_hash
+          end
+
+          def metadata_params
+            params.permit(public_metadata: {}, private_metadata: {})
           end
         end
       end
