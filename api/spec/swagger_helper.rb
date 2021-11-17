@@ -1501,6 +1501,67 @@ RSpec.configure do |config|
             'x-internal': true
           },
 
+          # Shopment
+          create_shipment_params: {
+            type: :object,
+            properties: {
+              shipment: {
+                type: :object,
+                required: %w[stock_location_id order_id variant_id],
+                properties: {
+                  stock_location_id: { type: :string, example: '101' },
+                  order_id: { type: :string, example: '101' },
+                  variant_id: { type: :string, example: '101' },
+                  quantity: { type: :integer, example: 2 }
+                }
+              }
+            },
+            required: %w[shipping_category],
+            'x-internal': true
+          },
+          update_shipment_params: {
+            type: :object,
+            properties: {
+              shipment: {
+                type: :object,
+                properties: {
+                  tracking: { type: :string, example: 'MY-TRACKING-REF-12324' }
+                }
+              }
+            },
+            required: %w[shipping_category],
+            'x-internal': true
+          },
+          add_item_shipment_params: {
+            type: :object,
+            properties: {
+              shipment: {
+                type: :object,
+                required: %w[variant_id],
+                properties: {
+                  variant_id: { type: :string, example: '101' },
+                  quantity: { type: :integer, example: 2 }
+                }
+              }
+            },
+            required: %w[shipping_category],
+            'x-internal': true
+          },
+          remove_item_shipment_params: {
+            type: :object,
+            properties: {
+              shipment: {
+                type: :object,
+                required: %w[variant_id],
+                properties: {
+                  variant_id: { type: :string, example: '101' },
+                  quantity: { type: :integer, example: 2 }
+                }
+              }
+            },
+            required: %w[shipping_category],
+            'x-internal': true
+          },
           # Shipping Category
           create_shipping_category_params: {
             type: :object,
