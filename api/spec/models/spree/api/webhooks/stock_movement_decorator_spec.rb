@@ -17,14 +17,12 @@ describe Spree::Api::Webhooks::StockMovementDecorator do
     context 'when all product variants are out of stock' do
       context 'when one of the variants is back in stock' do
         subject do
-          Timecop.freeze do
-            stock_location.stock_movements.new.tap do |stock_movement|
-              stock_movement.quantity = 1
-              stock_movement.stock_item = stock_location.set_up_stock_item(variant)
-              stock_movement.save
-            end
-            product.reload
+          stock_location.stock_movements.new.tap do |stock_movement|
+            stock_movement.quantity = 1
+            stock_movement.stock_item = stock_location.set_up_stock_item(variant)
+            stock_movement.save
           end
+          product.reload
         end
 
         it { expect { subject }.to emit_webhook_event('product.back_in_stock') }
@@ -32,14 +30,12 @@ describe Spree::Api::Webhooks::StockMovementDecorator do
 
       context 'when none of the variants is back in stock' do
         subject do
-          Timecop.freeze do
-            stock_location.stock_movements.new.tap do |stock_movement|
-              stock_movement.quantity = 0
-              stock_movement.stock_item = stock_location.set_up_stock_item(variant)
-              stock_movement.save
-            end
-            product.reload
+          stock_location.stock_movements.new.tap do |stock_movement|
+            stock_movement.quantity = 0
+            stock_movement.stock_item = stock_location.set_up_stock_item(variant)
+            stock_movement.save
           end
+          product.reload
         end
 
         it { expect { subject }.not_to emit_webhook_event('product.back_in_stock') }
@@ -74,13 +70,11 @@ describe Spree::Api::Webhooks::StockMovementDecorator do
       context 'when stock item changes to be in stock' do
         it do
           expect do
-            Timecop.freeze do
-              variant.stock_items.update_all(backorderable: false)
-              stock_location.stock_movements.new.tap do |stock_movement|
-                stock_movement.quantity = 1 # does make it to be in stock
-                stock_movement.stock_item = stock_location.set_up_stock_item(variant)
-                stock_movement.save
-              end
+            variant.stock_items.update_all(backorderable: false)
+            stock_location.stock_movements.new.tap do |stock_movement|
+              stock_movement.quantity = 1 # does make it to be in stock
+              stock_movement.stock_item = stock_location.set_up_stock_item(variant)
+              stock_movement.save
             end
           end.to emit_webhook_event('variant.back_in_stock')
         end
@@ -89,13 +83,11 @@ describe Spree::Api::Webhooks::StockMovementDecorator do
       context 'when stock item does not change to be in stock' do
         it do
           expect do
-            Timecop.freeze do
-              variant.stock_items.update_all(backorderable: false)
-              stock_location.stock_movements.new.tap do |stock_movement|
-                stock_movement.quantity = 0 # does not make it to be in stock
-                stock_movement.stock_item = stock_location.set_up_stock_item(variant)
-                stock_movement.save
-              end
+            variant.stock_items.update_all(backorderable: false)
+            stock_location.stock_movements.new.tap do |stock_movement|
+              stock_movement.quantity = 0 # does not make it to be in stock
+              stock_movement.stock_item = stock_location.set_up_stock_item(variant)
+              stock_movement.save
             end
           end.not_to emit_webhook_event('variant.back_in_stock')
         end
@@ -105,14 +97,12 @@ describe Spree::Api::Webhooks::StockMovementDecorator do
     context 'when stock item was in stock' do
       it do
         expect do
-          Timecop.freeze do
-            # make in_stock? return false based on track_inventory, the easiest case
-            variant.update(track_inventory: false)
-            stock_location.stock_movements.new.tap do |stock_movement|
-              stock_movement.quantity = 2
-              stock_movement.stock_item = stock_location.set_up_stock_item(variant)
-              stock_movement.save
-            end
+          # make in_stock? return false based on track_inventory, the easiest case
+          variant.update(track_inventory: false)
+          stock_location.stock_movements.new.tap do |stock_movement|
+            stock_movement.quantity = 2
+            stock_movement.stock_item = stock_location.set_up_stock_item(variant)
+            stock_movement.save
           end
         end.not_to emit_webhook_event('variant.back_in_stock')
       end
@@ -144,9 +134,7 @@ describe Spree::Api::Webhooks::StockMovementDecorator do
     end
 
     describe 'when the variant was out of stock before the update and after the update' do
-      before do
-        stock_item.set_count_on_hand(0)
-      end
+      before { stock_item.set_count_on_hand(0) }
 
       let(:movement_quantity) { 0 }
 
