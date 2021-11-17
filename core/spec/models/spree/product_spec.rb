@@ -825,51 +825,46 @@ describe Spree::Product, type: :model do
     it { expect(product.taxons_for_store(store)).to be_a(ActiveRecord::Relation) }
   end
 
-  describe '#full_in_stock?' do
-    subject { product.full_in_stock? }
+  describe '#any_variant_in_stock_or_backorderable?' do
+    subject { product.any_variant_in_stock_or_backorderable? }
 
     let!(:product) { create(:product, stores: [store]) }
     let(:stock_item) { variant.stock_items.first }
 
-    context 'when in stock or backorderable variants belong to another product' do
-      let!(:another_product_variant) { create(:variant, product: create(:product, stores: [store])) }
-
-      it { expect(subject).to eq(false) }
+    context 'when only master variant is in stock or backorderable' do
+      it { expect(subject).to eq(true) }
     end
 
-    context 'when product has no variants' do
-      it do
-        expect(product.variants).to eq([])
-        expect(subject).to eq(false)
-      end
-    end
-
-    context 'when product has variants' do
+    context 'with more variants aside from the master variant' do
+      # makes the stock items available for the before hook
       let!(:variant) { create(:variant, product: product) }
 
       before { Spree::StockItem.update_all(backorderable: false) }
 
-      context 'when product variant stock items count_on_hand > 0' do
-        before { stock_item.set_count_on_hand(1) }
+      context 'with at least one non-master variant stock items count_on_hand > 0' do
+        before do
+          # make all stock items in stock, also for the master variant
+          Spree::StockItem.all.each { |stock_item| stock_item.set_count_on_hand(1) }
+        end
 
         it { expect(subject).to eq(true) }
       end
 
-      context 'when variant stock items count_on_hand <= 0' do
+      context 'when all non-master variant stock items have count_on_hand <= 0' do
         before { stock_item.set_count_on_hand(0) }
 
         it { expect(subject).to eq(false) }
 
-        context 'when variant track_inventory = false' do
+        context 'when all non-master variant stock items have track_inventory = false' do
           before { variant.update(track_inventory: false) }
 
           it { expect(subject).to eq(true) }
         end
 
-        context 'when variant track_inventory = true' do
+        context 'when all non-master variant stock items have track_inventory = true' do
           it { expect(subject).to eq(false) }
 
-          context 'with some variant stock item having backorderable = true' do
+          context 'when all non-master variant stock items have backorderable = true' do
             before { stock_item.update(backorderable: true) }
 
             it { expect(subject).to eq(true) }

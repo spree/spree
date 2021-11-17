@@ -73,6 +73,7 @@ module Spree
 
     attr_reader :coupon_code
     attr_accessor :temporary_address, :temporary_credit_card
+
     attribute :state_machine_resumed, :boolean
 
     if Spree.user_class

@@ -322,8 +322,12 @@ module Spree
       end
     end
 
-    def full_in_stock?
-      variants_including_master.in_stock_or_backorderable.exists?
+    def any_variant_in_stock_or_backorderable?
+      if variants.any?
+        variants_including_master.in_stock_or_backorderable.exists?
+      else 
+        master.in_stock_or_backorderable?
+      end
     end
 
     private
