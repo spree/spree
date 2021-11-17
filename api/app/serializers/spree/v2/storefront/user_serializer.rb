@@ -4,7 +4,7 @@ module Spree
       class UserSerializer < BaseSerializer
         set_type :user
 
-        attributes :email
+        attributes :email, :public_metadata
 
         attribute :store_credits do |user|
           user.total_available_store_credit
