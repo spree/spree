@@ -4,7 +4,7 @@ module Spree
       class TaxonomySerializer < BaseSerializer
         set_type   :taxonomy
 
-        attributes :name, :position
+        attributes :name, :position, :public_metadata
       end
     end
   end
