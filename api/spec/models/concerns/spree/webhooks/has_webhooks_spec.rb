@@ -31,13 +31,13 @@ describe Spree::Webhooks::HasWebhooks do
     context 'after_destroy_commit' do
       before { product.destroy }
 
-      it_behaves_like 'not queueing an event request', 'product.create'
+      it_behaves_like 'not queueing an event request', 'product.delete'
     end
 
     context 'after_update_commit' do
       before { product.update(name: 'updated') }
 
-      it_behaves_like 'not queueing an event request', 'product.create'
+      it_behaves_like 'not queueing an event request', 'product.update'
     end
   end
 
@@ -51,7 +51,7 @@ describe Spree::Webhooks::HasWebhooks do
     context 'after_destroy_commit' do
       before { product.save }
 
-      it { expect { product.destroy }.to emit_webhook_event('product.destroy') }
+      it { expect { product.destroy }.to emit_webhook_event('product.delete') }
     end
 
     context 'after_update_commit' do

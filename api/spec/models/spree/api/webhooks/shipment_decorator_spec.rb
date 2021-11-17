@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::Shipment do
+describe Spree::Api::Webhooks::ShipmentDecorator do
   let(:order) { create(:order) }
   let(:shipment) { create(:shipment) }
 
