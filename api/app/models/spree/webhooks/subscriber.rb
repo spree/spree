@@ -37,7 +37,7 @@ module Spree
       class << self
         def supported_events
           Spree::Base.descendants.
-            select { |model| model.includes Spree::Webhooks::HasWebhooks }.
+            select { |model| model.included_modules.include? Spree::Webhooks::HasWebhooks }.
             to_h do |model|
             model_name = model.name.demodulize.underscore.to_sym
             [model_name, events_list_for(model_name)]
