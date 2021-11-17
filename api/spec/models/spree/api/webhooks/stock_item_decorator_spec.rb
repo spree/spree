@@ -64,6 +64,8 @@ describe Spree::Api::Webhooks::StockItemDecorator do
   end
 
   describe 'emitting variant.backorderable' do
+    subject { stock_item.save }
+
     context 'when variant was out of stock' do
       before do
         stock_location.stock_movements.new.tap do |stock_movement|
@@ -74,48 +76,24 @@ describe Spree::Api::Webhooks::StockItemDecorator do
       end
 
       context 'when variant was backorderable' do
-        before do
-          stock_item.backorderable = true
-        end
+        before { stock_item.backorderable = true }
 
-        it do
-          expect do
-            Timecop.freeze do
-              stock_item.save
-            end
-          end.not_to emit_webhook_event('variant.backorderable')
-        end
+        it { expect { subject }.not_to emit_webhook_event('variant.backorderable') }
       end
 
       context 'when variant was not backorderable' do
         before { variant.stock_items.update_all(backorderable: false) }
 
         context 'when variant is not set as backorderable' do
-          before do
-            stock_item.backorderable = false
-          end
+          before { stock_item.backorderable = false }
 
-          it do
-            expect do
-              Timecop.freeze do
-                stock_item.save
-              end
-            end.not_to emit_webhook_event('variant.backorderable')
-          end
+          it { expect { subject }.not_to emit_webhook_event('variant.backorderable') }
         end
 
         context 'when variant is set as backorderable' do
-          before do
-            stock_item.backorderable = true
-          end
+          before { stock_item.backorderable = true }
 
-          it do
-            expect do
-              Timecop.freeze do
-                stock_item.save
-              end
-            end.to emit_webhook_event('variant.backorderable')
-          end
+          it { expect { subject }.to emit_webhook_event('variant.backorderable') }
         end
       end
     end
@@ -131,13 +109,7 @@ describe Spree::Api::Webhooks::StockItemDecorator do
         stock_item.backorderable = true
       end
 
-      it do
-        expect do
-          Timecop.freeze do
-            stock_item.save
-          end
-        end.not_to emit_webhook_event('variant.backorderable')
-      end
+      it { expect { subject }.not_to emit_webhook_event('variant.backorderable') }
     end
   end
 end
