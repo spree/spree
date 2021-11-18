@@ -47,15 +47,13 @@ module Spree
     end
 
     # Attempts to look up StockItem for the variant, and creates one if not found.
-    # This method accepts an instance of the variant.
-    # Other methods in this model attempt to pass a variant,
-    # but controller actions can pass just the variant id as a parameter.
     #
-    # @param variant [Variant] Variant instance.
+    # @param variant Variant instance or Variant ID
     #
     # @return [StockItem] Corresponding StockItem for the StockLocation's variant.
     def stock_item_or_create(variant)
-      stock_item(variant) || stock_items.create(variant_id: variant.id)
+      variant_id = variant.is_a?(Spree::Variant) ? variant.id : variant
+      stock_item(variant_id) || stock_items.create(variant_id: variant_id)
     end
 
     def count_on_hand(variant)
