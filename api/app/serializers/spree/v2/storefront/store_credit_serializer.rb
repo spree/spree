@@ -10,7 +10,7 @@ module Spree
                    id_method_name: :type_id,
                    serializer: :store_credit_type
 
-        attributes :amount, :amount_used, :created_at
+        attributes :amount, :amount_used, :created_at, :public_metadata
       end
     end
   end
