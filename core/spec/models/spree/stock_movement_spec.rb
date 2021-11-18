@@ -30,9 +30,18 @@ describe Spree::StockMovement, type: :model do
     end
   end
 
-  describe 'Insatance Methods' do
+  describe 'Instance Methods' do
     let(:stock_location) { create(:stock_location_with_items) }
     let(:stock_item) { stock_location.stock_items.order(:id).first }
+    let(:stock_movement) { build(:stock_movement, stock_item: stock_item) }
+
+    describe '.product' do
+      it { expect(stock_movement.product).to eq(stock_item.variant.product) }
+    end
+
+    describe '.variant' do
+      it { expect(stock_movement.variant).to eq(stock_item.variant) }
+    end
 
     describe '#readonly?' do
       let(:stock_movement) { create(:stock_movement, stock_item: stock_item) }
@@ -43,8 +52,6 @@ describe Spree::StockMovement, type: :model do
     end
 
     describe '#update_stock_item_quantity' do
-      let(:stock_movement) { build(:stock_movement, stock_item: stock_item) }
-
       context 'when track inventory levels is false' do
         before do
           Spree::Config[:track_inventory_levels] = false

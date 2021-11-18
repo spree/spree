@@ -145,7 +145,7 @@ module Spree
     ]
 
     # TODO: Should probably use something like Spree.user_class.attributes
-    @@user_attributes = [:email, :bill_address_id, :ship_address_id, :password, :password_confirmation]
+    @@user_attributes = [:email, :bill_address_id, :ship_address_id, :password, :password_confirmation, { public_metadata: {}, private_metadata: {} }]
 
     @@variant_attributes = [
       :name, :presentation, :cost_price, :discontinue_on, :lock_version,

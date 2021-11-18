@@ -5,7 +5,7 @@ module Spree
         set_type   :taxon
 
         attributes :name, :pretty_name, :permalink, :seo_title, :description, :meta_title, :meta_description,
-                   :meta_keywords, :left, :right, :position, :depth, :updated_at
+                   :meta_keywords, :left, :right, :position, :depth, :updated_at, :public_metadata
 
         attribute :is_root do |taxon|
           taxon.root?

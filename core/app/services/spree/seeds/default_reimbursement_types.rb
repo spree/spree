@@ -1,6 +1,6 @@
 module Spree
   module Seeds
-    class DefaultReimbursementType
+    class DefaultReimbursementTypes
       prepend Spree::ServiceModule::Base
 
       def call

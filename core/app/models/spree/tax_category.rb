@@ -7,6 +7,8 @@ module Spree
 
     before_save :set_default_category
 
+    self.whitelisted_ransackable_attributes = %w[name is_default tax_code]
+
     def set_default_category
       # set existing default tax category to false if this one has been marked as default
 

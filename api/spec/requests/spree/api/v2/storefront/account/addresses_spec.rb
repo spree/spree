@@ -26,6 +26,7 @@ describe 'Storefront API v2 Addresses spec', type: :request do
       expect(json_response['data'][0]).to have_attribute(:country_iso3)
       expect(json_response['data'][0]).to have_attribute(:country_iso)
       expect(json_response['data'][0]).to have_attribute(:state_code)
+      expect(json_response['data'][0]).to have_attribute(:public_metadata)
     end
   end
 

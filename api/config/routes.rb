@@ -187,7 +187,9 @@ Spree::Core::Engine.add_routes do
       namespace :platform do
         # Promotions API
         resources :promotions
+        resources :promotion_actions
         resources :promotion_categories
+        resources :promotion_rules
 
         # Returns API
         resources :customer_returns
@@ -203,12 +205,12 @@ Spree::Core::Engine.add_routes do
         # Product Catalog API
         resources :products
         resources :taxonomies
-        resources :taxons
-        resources :classifications do
+        resources :taxons do
           member do
             patch :reposition
           end
         end
+        resources :classifications
         resources :images
         resources :variants
         resources :properties
@@ -246,6 +248,11 @@ Spree::Core::Engine.add_routes do
           # end
         end
 
+        # Store Credit API
+        resources :store_credits
+        resources :store_credit_categories
+        resources :store_credit_types
+
         # Geo API
         resources :zones
         resources :countries, only: [:index, :show]
@@ -257,8 +264,16 @@ Spree::Core::Engine.add_routes do
             %w[ready ship cancel resume pend].each do |state|
               patch state.to_sym
             end
+            patch :add_item
+            patch :remove_item
+            patch :transfer_to_location
+            patch :transfer_to_shipment
           end
         end
+
+        # Tax API
+        resources :tax_rates
+        resources :tax_categories
 
         # Inventory API
         resources :inventory_units
@@ -271,6 +286,8 @@ Spree::Core::Engine.add_routes do
         resources :credit_cards
         resources :addresses
 
+        resources :roles
+
         # Menu API
         resources :menus
         resources :menu_items do
@@ -279,14 +296,8 @@ Spree::Core::Engine.add_routes do
           end
         end
 
-        # CMS Pages API
-        resources :cms_pages do
-          member do
-            patch :toggle_visibility
-          end
-        end
-
-        # CMS Sections API
+        # CMS
+        resources :cms_pages
         resources :cms_sections
 
         # Wishlists API

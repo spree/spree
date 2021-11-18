@@ -21,7 +21,9 @@ describe Spree::Api::V2::Platform::UserSerializer do
             lifetime_value: [],
             store_credits: [],
             created_at: user.created_at,
-            updated_at: user.updated_at
+            updated_at: user.updated_at,
+            public_metadata: {},
+            private_metadata: {}
           },
           relationships: {
             bill_address: {
@@ -57,7 +59,9 @@ describe Spree::Api::V2::Platform::UserSerializer do
         lifetime_value: [{ amount: '110.00', currency: 'USD' }, { amount: '110.00', currency: 'EUR' }],
         store_credits: [{ amount: '100.00', currency: 'USD' }, { amount: '90.00', currency: 'EUR' }],
         created_at: user.created_at,
-        updated_at: user.updated_at
+        updated_at: user.updated_at,
+        public_metadata: {},
+        private_metadata: {}
       })
     end
   end

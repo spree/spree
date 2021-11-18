@@ -31,7 +31,9 @@ describe Spree::Api::V2::Platform::PaymentMethodSerializer do
               dummy_key: 'PUBLICKEY123',
               server: 'test',
               test_mode: true
-            }
+            },
+            public_metadata: {},
+            private_metadata: {}
           },
           relationships: {
             stores: {

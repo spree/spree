@@ -47,8 +47,8 @@ else
   SPREE_GATEWAY_GEM="gem 'spree_gateway', github: 'spree/spree_gateway', branch: 'main'"
 fi
 
-if [ "$SPREE_BACKEND_PATH" != "" ]; then
-  SPREE_BACKEND_GEM="gem 'spree_backend', path: '$SPREE_BACKEND_PATH'"
+if [ "$SPREE_DASHBOARD_PATH" != "" ]; then
+  SPREE_BACKEND_GEM="gem 'spree_backend', path: '$SPREE_DASHBOARD_PATH'"
 else
   SPREE_BACKEND_GEM="gem 'spree_backend', github: 'spree/spree_backend', branch: 'main'"
 fi
@@ -78,6 +78,8 @@ gem 'sassc', github: 'sass/sassc-ruby', branch: 'master'
 
 gem 'rack-cache'
 gem 'oj'
+
+gem 'jsbundling-rails'
 RUBY
 
 cat <<RUBY >> config/environments/development.rb
@@ -103,10 +105,14 @@ end
 RUBY
 
 bundle install --gemfile Gemfile
-bundle exec rails db:drop || true
-bundle exec rails db:create
-bundle exec rails g spree:install --auto-accept --user_class=Spree::User --sample=true
-bundle exec rails g spree:backend:install
-bundle exec rails g spree:emails:install
-bundle exec rails g spree:auth:install
-bundle exec rails g spree_gateway:install
+
+bin/rails javascript:install:esbuild
+yarn install
+
+bin/rails db:drop || true
+bin/rails db:create
+bin/rails g spree:install --auto-accept --user_class=Spree::User --sample=true
+bin/rails g spree:backend:install
+bin/rails g spree:emails:install
+bin/rails g spree:auth:install
+bin/rails g spree_gateway:install

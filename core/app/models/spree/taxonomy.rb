@@ -16,6 +16,8 @@ module Spree
 
     default_scope { order("#{table_name}.position, #{table_name}.created_at") }
 
+    self.whitelisted_ransackable_associations = %w[root]
+
     private
 
     def set_root
