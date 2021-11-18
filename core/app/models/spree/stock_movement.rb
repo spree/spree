@@ -21,6 +21,9 @@ module Spree
 
     scope :recent, -> { order(created_at: :desc) }
 
+    delegate :variant, to: :stock_item
+    delegate :product, to: :variant
+
     self.whitelisted_ransackable_attributes = ['quantity']
 
     def readonly?

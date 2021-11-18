@@ -3,6 +3,8 @@ module Spree
     module V2
       module Platform
         class TaxonsController < ResourceController
+          include ::Spree::Api::V2::Platform::NestedSetRepositionConcern
+
           private
 
           def model_class
@@ -22,6 +24,10 @@ module Spree
 
           def serializer_params
             super.merge(include_products: action_name == 'show')
+          end
+
+          def spree_permitted_attributes
+            super + [:new_parent_id, :new_position_idx]
           end
         end
       end

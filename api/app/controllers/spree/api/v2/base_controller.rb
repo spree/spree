@@ -64,9 +64,9 @@ module Spree
           render json: json, status: status, content_type: content_type
         end
 
-        def render_result(result)
+        def render_result(result, ok_status = 200)
           if result.success?
-            render_serialized_payload { serialize_resource(result.value) }
+            render_serialized_payload(ok_status) { serialize_resource(result.value) }
           else
             render_error_payload(result.error)
           end

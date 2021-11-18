@@ -132,6 +132,10 @@ module Spree
       !discontinued? && product.available?
     end
 
+    def in_stock_or_backorderable?
+      self.class.in_stock_or_backorderable.exists?(id: id)
+    end
+
     def tax_category
       @tax_category ||= if self[:tax_category_id].nil?
                           product.tax_category

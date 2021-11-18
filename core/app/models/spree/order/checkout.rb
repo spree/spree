@@ -112,6 +112,7 @@ module Spree
 
               before_transition to: :resumed, do: :ensure_line_item_variants_are_not_discontinued
               before_transition to: :resumed, do: :ensure_line_items_are_in_stock
+              before_transition to: :resumed, do: proc { |order| order.state_machine_resumed = true }
 
               after_transition to: :complete, do: :finalize!
               after_transition to: :resumed, do: :after_resume

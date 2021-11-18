@@ -62,7 +62,8 @@ describe 'Platform API v2 Menu Items spec', type: :request do
       it_behaves_like 'returns 200 HTTP status'
 
       it 'can be nested inside another item' do
-        menu_item_a.reload
+        reload_items
+
         expect(menu_item_a.parent_id).to eq(menu_item_b.id)
 
         # Root depth = 0
@@ -89,10 +90,17 @@ describe 'Platform API v2 Menu Items spec', type: :request do
       it_behaves_like 'returns 200 HTTP status'
 
       it 're-indexes the item' do
-        menu_item_a.reload
+        reload_items
+
         expect(menu_item_a.parent_id).to eq(menu_item_b.id)
-        expect(menu_item_a.lft).to eq(menu_item_c.lft)
+        expect(menu_item_a.lft).to eq(menu_item_c.rgt + 1)
       end
+    end
+
+    def reload_items
+      menu_item_a.reload
+      menu_item_b.reload
+      menu_item_c.reload
     end
   end
 end

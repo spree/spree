@@ -192,7 +192,7 @@ shared_examples 'POST create record' do |resource_name, **options|
     let(param_name) { valid_create_param_value }
 
     it_behaves_like 'record created'
-    it_behaves_like 'invalid request', param_name
+    it_behaves_like 'invalid request', param_name unless options[:skip_invalid_params] == true
   end
 end
 
@@ -226,7 +226,7 @@ shared_examples 'PATCH update record' do |resource_name, **options|
     let(param_name) { valid_update_param_value }
 
     it_behaves_like 'record updated'
-    it_behaves_like 'invalid request', param_name
+    it_behaves_like 'invalid request', param_name unless options[:skip_invalid_params] == true
     it_behaves_like 'record not found'
     it_behaves_like 'authentication failed'
   end

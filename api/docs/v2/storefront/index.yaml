@@ -63,6 +63,16 @@ paths:
                     password_confirmation:
                       type: string
                       example: spree123
+                    public_metadata:
+                      type: object
+                      example:
+                        user_segment: 'supplier'
+                      description: The public metadata for this User
+                    private_metadata:
+                      type: object
+                      example:
+                        has_abandoned_cart: false
+                      description: The private metadata for this User
         description: ''
       responses:
         '200':
@@ -3470,6 +3480,11 @@ components:
               type: number
               example: 3
               description: Number of placed Orders by this User
+            public_metadata:
+              type: object
+              example:
+                user_segment: 'supplier'
+              description: The public metadata for this User
         relationships:
           type: object
           properties:
@@ -4889,6 +4904,8 @@ components:
                     email: spree@example.com
                     store_credits: 0
                     completed_orders: 0
+                    public_metadata:
+                      user_segment: 'supplier'
                   relationships:
                     default_billing_address:
                       data:

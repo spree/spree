@@ -6,8 +6,8 @@ describe 'Promotion Categories API', swagger: true do
   resource_name = 'Promotion Category'
   options = {
     include_example: 'promotions',
-    filter_examples: [{ name: 'filter[code]', example: 'BLK-FRI' },
-                      { name: 'filter[name]', example: '2020 Promotions' }]
+    filter_examples: [{ name: 'filter[code_eq]', example: 'BLK-FRI' },
+                      { name: 'filter[name_eq]', example: '2020 Promotions' }]
   }
 
   let(:id) { create(:promotion_category, code: 'MJO').id }
