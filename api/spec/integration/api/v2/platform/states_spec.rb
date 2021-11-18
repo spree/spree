@@ -11,6 +11,10 @@ describe 'States API', swagger: true do
       description 'Returns a list of States'
       before { create_list(:state, 2) }
 
+      include_context 'jsonapi pagination'
+      json_api_include_parameter('country')
+      json_api_filter_parameter([{ name: 'filter[country_id_eq]', example: '4' }])
+
       it_behaves_like 'records returned'
       it_behaves_like 'authentication failed'
     end

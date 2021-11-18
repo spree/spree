@@ -14,7 +14,7 @@ module Spree
     validates :country, :name, presence: true
     validates :name, :abbr, uniqueness: { case_sensitive: false, scope: :country_id }, allow_blank: true
 
-    self.whitelisted_ransackable_attributes = %w(abbr)
+    self.whitelisted_ransackable_attributes = %w(abbr country_id)
 
     def self.find_all_by_name_or_abbr(name_or_abbr)
       where('name = ? OR abbr = ?', name_or_abbr, name_or_abbr)
