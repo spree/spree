@@ -11,6 +11,7 @@ describe Spree::Api::V2::Platform::ReimbursementCreditSerializer do
   it do
     expect(subject).to eq(
       data: {
+        attributes: {},
         id: resource.id.to_s,
         type: type
       }

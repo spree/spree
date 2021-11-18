@@ -13,7 +13,8 @@ describe Spree::Api::Webhooks::ShipmentDecorator do
     end
 
     context 'emitting shipment.shipped' do
-      let(:body) { Spree::Api::V2::Platform::ShipmentSerializer.new(shipment).serializable_hash.to_json }
+      let(:body) { Spree::Api::V2::Platform::ShipmentSerializer.new(shipment, mock_serializer_params(event: params)).serializable_hash.to_json }
+      let(:params) { 'shipment.shipped' }
 
       context 'ready -> ship' do
         let(:shipment) { create(:shipment, order: order) }
@@ -24,21 +25,22 @@ describe Spree::Api::Webhooks::ShipmentDecorator do
           shipment.ready
         end
 
-        it { expect { shipment.ship }.to emit_webhook_event('shipment.shipped') }
+        it { expect { shipment.ship }.to emit_webhook_event(params) }
       end
 
       context 'canceled -> ship' do
         before { shipment.cancel }
 
-        it { expect { shipment.ship }.to emit_webhook_event('shipment.shipped') }
+        it { expect { shipment.ship }.to emit_webhook_event(params) }
       end
     end
 
     context 'emitting order.shipped' do
       let(:body) do
         order.reload
-        Spree::Api::V2::Platform::OrderSerializer.new(order).serializable_hash.to_json
+        Spree::Api::V2::Platform::OrderSerializer.new(order, mock_serializer_params(event: params)).serializable_hash.to_json
       end
+      let(:params) { 'order.shipped' }
       let!(:shipments) do
         create_list(
           :shipment, 2,
@@ -61,11 +63,11 @@ describe Spree::Api::Webhooks::ShipmentDecorator do
             shipments[1].ready
           end
 
-          it { expect { shipments[1].ship }.to emit_webhook_event('order.shipped') }
+          it { expect { shipments[1].ship }.to emit_webhook_event(params) }
         end
 
         context 'without all order shipments shipped' do
-          it { expect { shipments[0].ship }.not_to emit_webhook_event('order.shipped') }
+          it { expect { shipments[0].ship }.not_to emit_webhook_event(params) }
         end
       end
 
@@ -78,11 +80,11 @@ describe Spree::Api::Webhooks::ShipmentDecorator do
             shipments[1].cancel
           end
 
-          it { expect { shipments[1].ship }.to emit_webhook_event('order.shipped') }
+          it { expect { shipments[1].ship }.to emit_webhook_event(params) }
         end
 
         context 'without all order shipments shipped' do
-          it { expect { shipments[0].ship }.not_to emit_webhook_event('order.shipped') }
+          it { expect { shipments[0].ship }.not_to emit_webhook_event(params) }
         end
       end
     end

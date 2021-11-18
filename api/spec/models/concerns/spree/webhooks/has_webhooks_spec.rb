@@ -42,26 +42,32 @@ describe Spree::Webhooks::HasWebhooks do
   end
 
   context 'without DISABLE_SPREE_WEBHOOKS' do
-    let(:body) { Spree::Api::V2::Platform::ProductSerializer.new(product).serializable_hash.to_json }
+    let(:body) { Spree::Api::V2::Platform::ProductSerializer.new(product, mock_serializer_params(event: params)).serializable_hash.to_json }
 
     context 'after_create_commit' do
-      it { expect { product.save }.to emit_webhook_event('product.create') }
+      let(:params) { 'product.create' }
+
+      it { expect { product.save }.to emit_webhook_event(params) }
     end
 
     context 'after_destroy_commit' do
+      let(:params) { 'product.delete' }
+
       before { product.save }
 
-      it { expect { product.destroy }.to emit_webhook_event('product.delete') }
+      it { expect { product.destroy }.to emit_webhook_event(params) }
     end
 
     context 'after_update_commit' do
+      let(:params) { 'product.update' }
+
       before { product.save }
 
-      it { expect { product.update(name: 'updated') }.to emit_webhook_event('product.update') }
+      it { expect { product.update(name: 'updated') }.to emit_webhook_event(params) }
     end
 
     context 'with a class name with multiple words' do
-      let(:body) { Spree::Api::V2::Platform::CmsPageSerializer.new(cms_page).serializable_hash.to_json }
+      let(:body) { Spree::Api::V2::Platform::CmsPageSerializer.new(cms_page, mock_serializer_params(event: 'cms_page.create')).serializable_hash.to_json }
       let(:cms_page) { create(:cms_homepage, store: store, locale: 'en') }
 
       it 'underscorize the event name' do
@@ -70,13 +76,15 @@ describe Spree::Webhooks::HasWebhooks do
     end
 
     context 'when only timestamps change' do
+      let(:params) { 'product.update' }
+
       before { product.save }
 
       context 'on created_at change' do
         it do
           expect do
             product.update(created_at: Date.yesterday)
-          end.not_to emit_webhook_event('product.update')
+          end.not_to emit_webhook_event(params)
         end
       end
 
@@ -84,7 +92,7 @@ describe Spree::Webhooks::HasWebhooks do
         it do
           expect do
             product.update(updated_at: Date.yesterday)
-          end.not_to emit_webhook_event('product.update')
+          end.not_to emit_webhook_event(params)
         end
       end
 
@@ -94,7 +102,7 @@ describe Spree::Webhooks::HasWebhooks do
             # Doing product.touch in Rails 5.2 doesn't work at the first time.
             # It must be done twice in order to update the updated_at column.
             Spree::Product.find(product.id).touch
-          end.not_to emit_webhook_event('product.update')
+          end.not_to emit_webhook_event(params)
         end
       end
 
@@ -102,7 +110,7 @@ describe Spree::Webhooks::HasWebhooks do
         it do
           expect do
             product.touch(:deleted_at)
-          end.to emit_webhook_event('product.update')
+          end.to emit_webhook_event(params)
         end
       end
     end
