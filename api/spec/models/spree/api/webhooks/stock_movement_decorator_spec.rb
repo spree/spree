@@ -115,13 +115,10 @@ describe Spree::Api::Webhooks::StockMovementDecorator do
     let(:stock_movement) { create(:stock_movement, stock_item: stock_item, quantity: movement_quantity) }
     let!(:variant) { stock_item.variant }
 
-    before { Spree::StockItem.update_all(backorderable: false) }
-
     describe 'when the variant goes out of stock' do
       let(:movement_quantity) { -stock_item.count_on_hand }
 
       context 'when it is backorderable' do
-
         it 'does not emit the variant.out_of_stock event' do
           expect { subject }.not_to emit_webhook_event('variant.out_of_stock')
         end
