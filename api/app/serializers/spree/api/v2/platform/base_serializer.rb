@@ -7,7 +7,9 @@ module Spree
             params.present? && params[:webhook_metadata] == true
           } do |_object, params|
             {
-              event: params[:event]
+              event_created_at: params[:event_created_at],
+              event_id: params[:event_id],
+              event_type: params[:event_type]
             }
           end
         end

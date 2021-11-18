@@ -36,7 +36,20 @@ RSpec::Matchers.define :emit_webhook_event do |event_to_emit|
     allow(queue_requests).to receive(:call).with(any_args)
 
     obj_method.call
-    expect(queue_requests).to have_received(:call).with(event: event_to_emit, body: body).once
+
+    Spree::Webhooks::Event.find_by(name: params).tap do |event|
+      if event.present?
+        # The webhook metadata must be added after the body is built
+        # to get access to the event created on queue_webhooks_requests!.
+        body[:data][:attributes][:webhook_metadata].merge!(
+          event_created_at: event.created_at, event_id: event.id, event_type: event.name
+        )
+      end
+    end
+
+    expect(queue_requests).to(
+      have_received(:call).with(event: event_to_emit, body: body.to_json).once
+    )
 
     ENV['DISABLE_SPREE_WEBHOOKS'] = 'true'
   end
@@ -68,4 +81,10 @@ def mock_serializer_params(event:)
       event: event
     }
   }
+end
+
+def with_webhooks_enabled
+  ENV['DISABLE_SPREE_WEBHOOKS'] = nil
+  yield
+  ENV['DISABLE_SPREE_WEBHOOKS'] = 'true'
 end

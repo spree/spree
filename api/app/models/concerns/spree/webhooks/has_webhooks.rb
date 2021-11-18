@@ -11,11 +11,16 @@ module Spree
         def queue_webhooks_requests!(event)
           return if disable_spree_webhooks? || updating_only_timestamps? || (event_body = body(event: event)).blank?
 
+          # Spree::Webhooks::Subscribers::QueueRequests.call(event: event, body: event_body.tap{|x| puts x if event == 'product.create'})
           Spree::Webhooks::Subscribers::QueueRequests.call(event: event, body: event_body)
         end
       end
 
       private
+
+      def event_record(event)
+        Spree::Webhooks::Event.create(name: event)
+      end
 
       def event_name(operation)
         "#{self.class.name.demodulize.tableize.singularize}.#{operation}"
@@ -31,10 +36,13 @@ module Spree
       end
 
       def serializer_params(event:)
+        created_event = event_record(event)
         {
           params: {
-            webhook_metadata: true,
-            event: event
+            event_created_at: created_event.created_at,
+            event_id: created_event.id,
+            event_type: event,
+            webhook_metadata: true
           }
         }
       end

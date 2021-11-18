@@ -2,10 +2,13 @@ require 'spec_helper'
 
 describe Spree::Webhooks::HasWebhooks do
   let(:images) { create_list(:image, 2) }
+  let(:store) { create(:store) }
+  let(:variant_with_images) { create(:variant, images: images) }
+  let(:variant) { build(:variant) }
   let(:product) do
     build(
       :product_in_stock,
-      variants_including_master: [create(:variant, images: images), build(:variant)],
+      variants_including_master: [variant_with_images, variant],
       stores: [store]
     )
   end
@@ -42,10 +45,29 @@ describe Spree::Webhooks::HasWebhooks do
   end
 
   context 'without DISABLE_SPREE_WEBHOOKS' do
-    let(:body) { Spree::Api::V2::Platform::ProductSerializer.new(product, mock_serializer_params(event: params)).serializable_hash.to_json }
+    let(:body) { Spree::Api::V2::Platform::ProductSerializer.new(product, mock_serializer_params(event: params)).serializable_hash }
 
     context 'after_create_commit' do
       let(:params) { 'product.create' }
+
+      before { variant_with_images }
+
+      it 'creates the corresponding Spree::Webhooks::Event record' do
+        expect(Spree::Webhooks::Event.where(name: params).count).to eq(0)
+        with_webhooks_enabled { product.save }
+        # check the event was created with the expected values
+        expect(
+          Spree::Webhooks::Event.where(name: params).pluck(
+            :execution_time,
+            :name,
+            :request_errors,
+            :response_code,
+            :subscriber_id,
+            :success,
+            :url
+          )
+        ).to eq([[nil, params, nil, nil, nil, nil, nil]])
+      end
 
       it { expect { product.save }.to emit_webhook_event(params) }
     end
@@ -67,11 +89,12 @@ describe Spree::Webhooks::HasWebhooks do
     end
 
     context 'with a class name with multiple words' do
-      let(:body) { Spree::Api::V2::Platform::CmsPageSerializer.new(cms_page, mock_serializer_params(event: 'cms_page.create')).serializable_hash.to_json }
+      let(:body) { Spree::Api::V2::Platform::CmsPageSerializer.new(cms_page, mock_serializer_params(event: 'cms_page.create')).serializable_hash }
       let(:cms_page) { create(:cms_homepage, store: store, locale: 'en') }
+      let(:params) { 'cms_page.create' }
 
       it 'underscorize the event name' do
-        expect { cms_page }.to emit_webhook_event('cms_page.create')
+        expect { cms_page }.to emit_webhook_event(params)
       end
     end
 
