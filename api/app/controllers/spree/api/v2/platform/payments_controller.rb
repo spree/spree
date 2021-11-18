@@ -3,6 +3,8 @@ module Spree
     module V2
       module Platform
         class PaymentsController < ResourceController
+          include NumberResource
+
           private
 
           def model_class

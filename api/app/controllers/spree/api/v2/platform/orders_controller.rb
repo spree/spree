@@ -4,6 +4,7 @@ module Spree
       module Platform
         class OrdersController < ResourceController
           include CouponCodesHelper
+          include NumberResource
 
           def create
             resource = current_store.orders.new(permitted_resource_params)
@@ -96,10 +97,6 @@ module Spree
 
           def model_class
             Spree::Order
-          end
-
-          def resource
-            @resource ||= scope.find_by(number: params[:id]) || scope.find(params[:id])
           end
 
           def allowed_sort_attributes
