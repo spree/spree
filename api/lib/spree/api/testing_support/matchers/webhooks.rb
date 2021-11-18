@@ -26,32 +26,34 @@
 # isn't added to the matcher definition, because it acts in a different
 # way depending on what's the resource being tested.
 #
+# The `body` webhook metadata is added right after executing the
+# block provided, because it needs to have access to the event
+# created after passing the conditions in `queue_webhooks_requests!`
+# and before the requests are enqueued.
+#
 RSpec::Matchers.define :emit_webhook_event do |event_to_emit|
-  match do |obj_method|
-    ENV['DISABLE_SPREE_WEBHOOKS'] = nil
-
+  match do |block|
     queue_requests = instance_double(Spree::Webhooks::Subscribers::QueueRequests)
 
     allow(Spree::Webhooks::Subscribers::QueueRequests).to receive(:new).and_return(queue_requests)
     allow(queue_requests).to receive(:call).with(any_args)
 
-    obj_method.call
+    with_webhooks_enabled { block.call }
 
-    Spree::Webhooks::Event.find_by(name: params).tap do |event|
+    Spree::Webhooks::Event.find_by(name: event_to_emit).tap do |event|
+      # condition to avoid adding metadata when not emitting webhooks
       if event.present?
         # The webhook metadata must be added after the body is built
         # to get access to the event created on queue_webhooks_requests!.
-        body[:data][:attributes][:webhook_metadata].merge!(
+        body.merge!(
           event_created_at: event.created_at, event_id: event.id, event_type: event.name
         )
       end
     end
 
     expect(queue_requests).to(
-      have_received(:call).with(event: event_to_emit, body: body.to_json).once
+      have_received(:call).with(event: event_to_emit, body: body).once
     )
-
-    ENV['DISABLE_SPREE_WEBHOOKS'] = 'true'
   end
 
   def block_body_definition(obj_method)
@@ -72,15 +74,6 @@ RSpec::Matchers.define :emit_webhook_event do |event_to_emit|
   end
 
   supports_block_expectations
-end
-
-def mock_serializer_params(event:)
-  {
-    params: {
-      webhook_metadata: true,
-      event: event
-    }
-  }
 end
 
 def with_webhooks_enabled

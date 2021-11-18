@@ -23,8 +23,8 @@ describe Spree::Webhooks::HasWebhooks do
       product.save
     end
 
-    shared_examples 'not queueing an event request' do |event_to_emit|
-      it { expect(queue_requests).not_to have_received(:call).with(hash_including(event: event_to_emit)) }
+    shared_examples 'not queueing an event request' do |event_name|
+      it { expect(queue_requests).not_to have_received(:call).with(hash_including(event: event_name)) }
     end
 
     context 'after_create_commit' do
@@ -45,19 +45,19 @@ describe Spree::Webhooks::HasWebhooks do
   end
 
   context 'without DISABLE_SPREE_WEBHOOKS' do
-    let(:body) { Spree::Api::V2::Platform::ProductSerializer.new(product, mock_serializer_params(event: params)).serializable_hash }
+    let(:body) { Spree::Api::V2::Platform::ProductSerializer.new(product).serializable_hash }
 
     context 'after_create_commit' do
-      let(:params) { 'product.create' }
+      let(:event_name) { 'product.create' }
 
       before { variant_with_images }
 
       it 'creates the corresponding Spree::Webhooks::Event record' do
-        expect(Spree::Webhooks::Event.where(name: params).count).to eq(0)
+        expect(Spree::Webhooks::Event.where(name: event_name).count).to eq(0)
         with_webhooks_enabled { product.save }
         # check the event was created with the expected values
         expect(
-          Spree::Webhooks::Event.where(name: params).pluck(
+          Spree::Webhooks::Event.where(name: event_name).pluck(
             :execution_time,
             :name,
             :request_errors,
@@ -66,40 +66,35 @@ describe Spree::Webhooks::HasWebhooks do
             :success,
             :url
           )
-        ).to eq([[nil, params, nil, nil, nil, nil, nil]])
+        ).to eq([[nil, event_name, nil, nil, nil, nil, nil]])
       end
 
-      it { expect { product.save }.to emit_webhook_event(params) }
+      it { expect { product.save }.to emit_webhook_event(event_name) }
     end
 
     context 'after_destroy_commit' do
-      let(:params) { 'product.delete' }
-
       before { product.save }
 
-      it { expect { product.destroy }.to emit_webhook_event(params) }
+      it { expect { product.destroy }.to emit_webhook_event('product.delete') }
     end
 
     context 'after_update_commit' do
-      let(:params) { 'product.update' }
-
       before { product.save }
 
-      it { expect { product.update(name: 'updated') }.to emit_webhook_event(params) }
+      it { expect { product.update(name: 'updated') }.to emit_webhook_event('product.update') }
     end
 
     context 'with a class name with multiple words' do
-      let(:body) { Spree::Api::V2::Platform::CmsPageSerializer.new(cms_page, mock_serializer_params(event: 'cms_page.create')).serializable_hash }
+      let(:body) { Spree::Api::V2::Platform::CmsPageSerializer.new(cms_page).serializable_hash }
       let(:cms_page) { create(:cms_homepage, store: store, locale: 'en') }
-      let(:params) { 'cms_page.create' }
 
       it 'underscorize the event name' do
-        expect { cms_page }.to emit_webhook_event(params)
+        expect { cms_page }.to emit_webhook_event('cms_page.create')
       end
     end
 
     context 'when only timestamps change' do
-      let(:params) { 'product.update' }
+      let(:event_name) { 'product.update' }
 
       before { product.save }
 
@@ -107,7 +102,7 @@ describe Spree::Webhooks::HasWebhooks do
         it do
           expect do
             product.update(created_at: Date.yesterday)
-          end.not_to emit_webhook_event(params)
+          end.not_to emit_webhook_event(event_name)
         end
       end
 
@@ -115,7 +110,7 @@ describe Spree::Webhooks::HasWebhooks do
         it do
           expect do
             product.update(updated_at: Date.yesterday)
-          end.not_to emit_webhook_event(params)
+          end.not_to emit_webhook_event(event_name)
         end
       end
 
@@ -125,7 +120,7 @@ describe Spree::Webhooks::HasWebhooks do
             # Doing product.touch in Rails 5.2 doesn't work at the first time.
             # It must be done twice in order to update the updated_at column.
             Spree::Product.find(product.id).touch
-          end.not_to emit_webhook_event(params)
+          end.not_to emit_webhook_event(event_name)
         end
       end
 
@@ -133,7 +128,7 @@ describe Spree::Webhooks::HasWebhooks do
         it do
           expect do
             product.touch(:deleted_at)
-          end.to emit_webhook_event(params)
+          end.to emit_webhook_event(event_name)
         end
       end
     end
