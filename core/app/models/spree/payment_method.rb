@@ -15,7 +15,8 @@ module Spree
 
     validates :name, presence: true
 
-    has_and_belongs_to_many :stores
+    has_many :store_payment_methods, class_name: 'Spree::StorePaymentMethod'
+    has_many :stores, class_name: 'Spree::Store', through: :store_payment_methods
 
     with_options dependent: :restrict_with_error do
       has_many :payments, class_name: 'Spree::Payment', inverse_of: :payment_method
