@@ -13,6 +13,6 @@ describe Spree::State, type: :model do
   end
 
   describe 'whitelisted_ransackable_attributes' do
-    it { expect(Spree::State.whitelisted_ransackable_attributes).to eq(%w(abbr)) }
+    it { expect(Spree::State.whitelisted_ransackable_attributes).to eq(%w(abbr country_id)) }
   end
 end
