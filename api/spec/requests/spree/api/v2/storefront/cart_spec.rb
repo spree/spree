@@ -122,6 +122,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
             expect(json_response['data']).to have_attribute(:display_pre_tax_item_amount).with_value(new_order.display_pre_tax_item_amount.to_s)
             expect(json_response['data']).to have_attribute(:pre_tax_total).with_value(new_order.pre_tax_total.to_s)
             expect(json_response['data']).to have_attribute(:display_pre_tax_total).with_value(new_order.display_pre_tax_total.to_s)
+            expect(json_response['data']).to have_attribute(:public_metadata).with_value(new_order.public_metadata)
             expect(json_response['data']).to have_relationships(:user, :line_items, :variants, :billing_address, :shipping_address, :payments, :shipments, :promotions)
           end
 
@@ -558,6 +559,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
         expect(json_response[:included][0]).to have_attribute(:country_name).with_value(order.bill_address.country_name)
         expect(json_response[:included][0]).to have_attribute(:country_iso3).with_value(order.bill_address.country_iso3)
         expect(json_response[:included][0]).to have_attribute(:state_code).with_value(order.bill_address.state_abbr)
+        expect(json_response[:included][0]).to have_attribute(:public_metadata).with_value(order.bill_address.public_metadata)
       end
 
       it 'will return included ship_address' do
@@ -580,6 +582,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
         expect(json_response[:included][0]).to have_attribute(:country_name).with_value(order.ship_address.country_name)
         expect(json_response[:included][0]).to have_attribute(:country_iso3).with_value(order.ship_address.country_iso3)
         expect(json_response[:included][0]).to have_attribute(:state_code).with_value(order.ship_address.state_abbr)
+        expect(json_response[:included][0]).to have_attribute(:public_metadata).with_value(order.ship_address.public_metadata)
       end
     end
   end

@@ -119,15 +119,43 @@ module Spree
     end
 
     describe '#stock_item_or_create' do
-      before do
-        variant = create(:variant)
-        variant.stock_items.destroy_all
-        variant.save
+      context 'without stock item' do
+        let!(:variant) { create(:variant) }
+
+        before { variant.stock_items.destroy_all }
+
+        context 'variant instance passed' do
+          it 'creates a stock_item if not found for a variant' do
+            stock_item = subject.stock_item_or_create(variant)
+            expect(stock_item.variant).to eq variant
+          end
+
+          it { expect { subject.stock_item_or_create(variant) }.to change(Spree::StockItem, :count) }
+        end
+
+        context 'variant ID passed' do
+          it 'creates a stock_item if not found for a variant' do
+            stock_item = subject.stock_item_or_create(variant.id)
+            expect(stock_item.variant).to eq variant
+          end
+
+          it { expect { subject.stock_item_or_create(variant.id) }.to change(Spree::StockItem, :count) }
+        end
       end
 
-      it 'creates a stock_item if not found for a variant' do
-        stock_item = subject.stock_item_or_create(variant)
-        expect(stock_item.variant).to eq variant
+      context 'with stock item' do
+        let!(:variant) { create(:variant) }
+        let!(:stock_item) { create(:stock_item, variant: variant, stock_location: subject) }
+
+        context 'variant instance passed' do
+          it { expect { subject.stock_item_or_create(variant) }.not_to change(Spree::StockItem, :count) }
+          it { expect(subject.stock_item_or_create(variant)).to eq(stock_item) }
+        end
+
+        context 'variant ID passed' do
+          it { expect { subject.stock_item_or_create(variant.id) }.not_to change(Spree::StockItem, :count) }
+          it { expect(subject.stock_item_or_create(variant.id)).to eq(stock_item) }
+        end
       end
     end
 

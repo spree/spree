@@ -64,6 +64,7 @@ RSpec.configure do |config|
         { name: 'Shipments' },
         { name: 'Shipping Categories' },
         { name: 'Shipping Methods' },
+        { name: 'Stock Items' },
         { name: 'Stock Locations' },
         { name: 'Store Credit Categories' },
         { name: 'Store Credit Types' },
@@ -1658,6 +1659,42 @@ RSpec.configure do |config|
               type: { type: :string, example: 'Spree::Calculator::Shipping::FlatPercentItemTotal', enum: ['Spree::Calculator::Shipping::DigitalDelivery', 'Spree::Calculator::Shipping::FlatPercentItemTotal', 'Spree::Calculator::Shipping::FlatRate', 'Spree::Calculator::Shipping::FlexiRate', 'Spree::Calculator::Shipping::PerItem', 'Spree::Calculator::Shipping::PriceSack'] }
             },
             required: %w[type],
+            'x-internal': true
+          },
+
+          # Stock Item
+          create_stock_item_params: {
+            type: :object,
+            properties: {
+              stock_item: {
+                type: :object,
+                required: %w[variant_id stock_location_id count_on_hand],
+                properties: {
+                  variant_id: { type: :string, example: '2' },
+                  stock_location_id: { type: :string, example: '2' },
+                  count_on_hand: { type: :number, example: 200 },
+                  backorderable: { type: :boolean, example: true, default: false }
+                }
+              }
+            },
+            required: %w[stock_item],
+            'x-internal': true
+          },
+          update_stock_item_params: {
+            type: :object,
+            properties: {
+              stock_item: {
+                type: :object,
+                required: %w[variant_id stock_location_id count_on_hand],
+                properties: {
+                  variant_id: { type: :string, example: '2' },
+                  stock_location_id: { type: :string, example: '2' },
+                  count_on_hand: { type: :number, example: 200 },
+                  backorderable: { type: :boolean, example: true, default: false }
+                }
+              }
+            },
+            required: %w[stock_item],
             'x-internal': true
           },
 

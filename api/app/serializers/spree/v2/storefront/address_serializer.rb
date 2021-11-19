@@ -5,7 +5,7 @@ module Spree
         set_type :address
 
         attributes :firstname, :lastname, :address1, :address2, :city, :zipcode, :phone, :state_name,
-                   :company, :country_name, :country_iso3, :country_iso, :label
+                   :company, :country_name, :country_iso3, :country_iso, :label, :public_metadata
 
         attribute :state_code do |address|
           address.state_abbr

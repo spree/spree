@@ -10,7 +10,7 @@ module Spree
                    :discounted_amount, :display_discounted_amount,
                    :display_additional_tax_total, :promo_total, :display_promo_total,
                    :included_tax_total, :display_included_tax_total,
-                   :pre_tax_amount, :display_pre_tax_amount
+                   :pre_tax_amount, :display_pre_tax_amount, :public_metadata
 
         belongs_to :variant
         has_many :digital_links
