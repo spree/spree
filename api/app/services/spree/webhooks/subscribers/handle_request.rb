@@ -7,6 +7,7 @@ module Spree
         def initialize(body:, event:, subscriber:)
           @body = body
           @event = event
+          @event_id = body[:event_id]
           @subscriber = subscriber
         end
 
@@ -22,7 +23,7 @@ module Spree
 
         private
 
-        attr_reader :body, :event, :subscriber, :url
+        attr_reader :body, :event, :event_id, :subscriber, :url
 
         delegate :execution_time, :failed_request?, :response_code, :success?, :unprocessable_uri?,
                  to: :request
@@ -34,16 +35,21 @@ module Spree
 
         def create_event(log_level, msg)
           Rails.logger.public_send(log_level, msg)
-          Spree::Webhooks::Event.create(
-            execution_time: execution_time,
-            name: event,
-            request_errors: msg,
-            response_code: response_code,
-            subscriber_id: id,
-            success: success?,
-            url: url
-          )
+          update_event(msg)
           nil
+        end
+
+        def update_event(msg)
+          Spree::Webhooks::Event.
+            find(event_id).
+            update(
+              execution_time: execution_time,
+              request_errors: msg,
+              response_code: response_code,
+              subscriber_id: id,
+              success: success?,
+              url: url
+            )
         end
 
         def msg(msg)

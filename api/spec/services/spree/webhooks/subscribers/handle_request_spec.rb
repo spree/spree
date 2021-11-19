@@ -2,13 +2,14 @@ require 'spec_helper'
 
 describe Spree::Webhooks::Subscribers::HandleRequest do
   describe '#call' do
-    subject { described_class.new(body: body, event: event, subscriber: subscriber) }
+    subject { described_class.new(body: body, event: event_name, subscriber: subscriber) }
 
-    let(:body) { { data: {} }.to_json }
-    let(:event) { 'order.canceled' }
+    let(:body) { resource.webhooks_body(event: event_name) }
+    let(:event_name) { 'order.canceled' }
     let(:request_double) { instance_double(Spree::Webhooks::Subscribers::MakeRequest) }
     let(:subscriber) { create(:subscriber, url: url) }
     let(:url) { 'http://google.com/' }
+    let(:resource) { create(:address) }
 
     shared_examples 'logging and creating a webhooks event' do |with_log_level:|
       before do
@@ -39,10 +40,17 @@ describe Spree::Webhooks::Subscribers::HandleRequest do
         expect(Rails.logger).to have_received(with_log_level).with(log_msg)
       end
 
-      it 'creates a webhooks event with the process info' do
+      it 'updates the event record created previously with the missing data' do
         expect { subject.call }.to change {
-          Spree::Webhooks::Event.all.as_json(except: %i[created_at id preferences updated_at]).map(&:values)
-        }.from([]).to([[execution_time, event, log_msg, response_code.to_s, subscriber.id, success, url]])
+          Spree::Webhooks::Event.
+            find(body[:event_id]).
+            as_json(except: %i[created_at id preferences updated_at]).
+            values
+        }.from(
+          [nil, event_name, nil, nil, nil, nil, nil]
+        ).to(
+          [execution_time, event_name, log_msg, response_code.to_s, subscriber.id, success, url]
+        )
       end
 
       it { expect(subject.call).to eq(nil) }
