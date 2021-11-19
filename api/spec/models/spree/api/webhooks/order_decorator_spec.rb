@@ -2,28 +2,28 @@ require 'spec_helper'
 
 describe Spree::Api::Webhooks::OrderDecorator do
   let(:store) { create(:store, default: true) }
-  let(:body) { Spree::Api::V2::Platform::OrderSerializer.new(order, mock_serializer_params(event: params)).serializable_hash.to_json }
+  let(:body) { order.send(:webhooks_body_for, event: event_name) }
 
   describe 'order.canceled' do
     describe 'completed -> canceled' do
-      let(:params) { 'order.canceled' }
+      let(:event_name) { 'order.canceled' }
       let(:order) { create(:completed_order_with_totals, store: store) }
 
-      it { expect { Timecop.freeze { order.cancel } }.to emit_webhook_event(params) }
+      it { expect { Timecop.freeze { order.cancel } }.to emit_webhook_event(event_name) }
     end
   end
 
   describe 'order.placed' do
     describe 'checkout -> completed' do
-      let(:params) { 'order.placed' }
+      let(:event_name) { 'order.placed' }
       let(:order) { create(:order, email: 'test@example.com', store: store) }
 
-      it { expect { Timecop.freeze { order.finalize! } }.to emit_webhook_event(params) }
+      it { expect { order.finalize! }.to emit_webhook_event(event_name) }
     end
   end
 
   describe 'order.resumed' do
-    let(:params) { 'order.resumed' }
+    let(:event_name) { 'order.resumed' }
     let(:order) { create(:order, store: store, state: :canceled) }
 
     context 'when order state changes' do
@@ -32,17 +32,13 @@ describe Spree::Api::Webhooks::OrderDecorator do
           # this case does not create a state change record
           subject { Timecop.freeze { order.update(state: 'resumed') } }
 
-          it { expect { subject }.to emit_webhook_event(params) }
+          it { expect { subject }.to emit_webhook_event(event_name) }
         end
 
         context 'when doing it through resume!' do
-          it do
-            expect do
-              Timecop.freeze do
-                order.resume!
-              end
-            end.to emit_webhook_event(params)
-          end
+          subject { order.resume! }
+
+          it { expect { subject }.to emit_webhook_event(event_name) }
 
           context 'after emitting the webhook' do
             it 'correctly sets state_machine_resumed used to avoid emitting the same event twice' do
@@ -50,7 +46,7 @@ describe Spree::Api::Webhooks::OrderDecorator do
               # and another one is for setting the order state_changes
               order.state_machine_resumed = true
               expect(order.state_machine_resumed).to eq(true)
-              order.resume!
+              subject
               expect(order.state_machine_resumed).to eq(false)
             end
           end
@@ -61,7 +57,7 @@ describe Spree::Api::Webhooks::OrderDecorator do
         it do
           expect do
             order.update(email: 'me@spreecommerce.org')
-          end.not_to emit_webhook_event(params)
+          end.not_to emit_webhook_event(event_name)
         end
       end
     end

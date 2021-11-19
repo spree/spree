@@ -41,7 +41,7 @@ RSpec::Matchers.define :emit_webhook_event do |event_to_emit|
     with_webhooks_enabled { block.call }
 
     Spree::Webhooks::Event.find_by(name: event_to_emit).tap do |event|
-      # condition to avoid adding metadata when not emitting webhooks
+      # avoid adding metadata when not emitting webhooks
       if event.present?
         # The webhook metadata must be added after the body is built
         # to get access to the event created on queue_webhooks_requests!.

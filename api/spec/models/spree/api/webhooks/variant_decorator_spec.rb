@@ -4,15 +4,15 @@ describe Spree::Api::Webhooks::VariantDecorator do
   let(:variant) { create(:variant) }
 
   context 'emitting variant.discontinued' do
-    let(:body) { Spree::Api::V2::Platform::VariantSerializer.new(variant, mock_serializer_params(event: params)).serializable_hash.to_json }
-    let(:params) { 'variant.discontinued' }
+    let(:body) { variant.send(:webhooks_body_for, event: event_name) }
+    let(:event_name) { 'variant.discontinued' }
 
     context 'when variant discontinued_on changes' do
       context 'when the new value is "present"' do
         it do
           expect do
             variant.discontinue!
-          end.to emit_webhook_event(params)
+          end.to emit_webhook_event(event_name)
         end
       end
 
@@ -22,7 +22,7 @@ describe Spree::Api::Webhooks::VariantDecorator do
         it do
           expect do
             variant.update(discontinue_on: nil)
-          end.not_to emit_webhook_event(params)
+          end.not_to emit_webhook_event(event_name)
         end
       end
     end
@@ -31,7 +31,7 @@ describe Spree::Api::Webhooks::VariantDecorator do
       it do
         expect do
           variant.update(width: 180)
-        end.not_to emit_webhook_event(params)
+        end.not_to emit_webhook_event(event_name)
       end
     end
   end

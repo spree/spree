@@ -10,7 +10,7 @@ module Spree
 
         def queue_webhooks_requests!(event)
           return if disable_spree_webhooks? || updating_only_timestamps?
-          return if (event_body = webhooks_body(event: event)).blank?
+          return if (event_body = webhooks_body_for(event: event)).blank?
 
           Spree::Webhooks::Subscribers::QueueRequests.call(event: event, body: event_body)
         end
@@ -18,7 +18,7 @@ module Spree
 
       private
 
-      def webhooks_body(event:)
+      def webhooks_body_for(event:)
         created_event = event_record(event)
         created_event.reload
         resource_serializer.

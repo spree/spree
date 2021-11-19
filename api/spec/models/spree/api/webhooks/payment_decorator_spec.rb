@@ -1,63 +1,63 @@
 require 'spec_helper'
 
 describe Spree::Api::Webhooks::PaymentDecorator do
-  let(:body) { Spree::Api::V2::Platform::PaymentSerializer.new(payment, mock_serializer_params(event: params)).serializable_hash.to_json }
+  let(:body) { payment.send(:webhooks_body_for, event: event_name) }
   let(:payment) { create(:payment) }
 
   before { allow(payment).to receive_message_chain(:state_changes, :create!) }
 
   describe 'payment.paid' do
-    let(:params) { 'payment.paid' }
+    let(:event_name) { 'payment.paid' }
 
     context 'processing -> completed' do
       before { payment.started_processing }
 
-      it { expect { payment.complete }.to emit_webhook_event(params) }
+      it { expect { payment.complete }.to emit_webhook_event(event_name) }
     end
 
     context 'pending -> completed' do
       before { payment.pend }
 
-      it { expect { payment.complete }.to emit_webhook_event(params) }
+      it { expect { payment.complete }.to emit_webhook_event(event_name) }
     end
 
     context 'checkout -> completed' do
-      it { expect { payment.complete }.to emit_webhook_event(params) }
+      it { expect { payment.complete }.to emit_webhook_event(event_name) }
     end
   end
 
   describe 'payment.voided' do
-    let(:params) { 'payment.voided' }
+    let(:event_name) { 'payment.voided' }
 
     context 'pending -> void' do
       before { payment.pend }
 
-      it { expect { payment.void }.to emit_webhook_event(params) }
+      it { expect { payment.void }.to emit_webhook_event(event_name) }
     end
 
     context 'processing -> void' do
       before { payment.started_processing }
 
-      it { expect { payment.void }.to emit_webhook_event(params) }
+      it { expect { payment.void }.to emit_webhook_event(event_name) }
     end
 
     context 'completed -> void' do
       before { payment.complete }
 
-      it { expect { payment.void }.to emit_webhook_event(params) }
+      it { expect { payment.void }.to emit_webhook_event(event_name) }
     end
 
     context 'checkout -> void' do
-      it { expect { payment.void }.to emit_webhook_event(params) }
+      it { expect { payment.void }.to emit_webhook_event(event_name) }
     end
   end
 
   describe 'order.paid' do
     subject { Timecop.freeze { another_payment.complete } }
 
-    let(:body) { Spree::Api::V2::Platform::OrderSerializer.new(order, mock_serializer_params(event: params)).serializable_hash.to_json }
+    let(:body) { order.send(:webhooks_body_for, event: event_name) }
     let(:order) { payment.order }
-    let(:params) { 'order.paid' }
+    let(:event_name) { 'order.paid' }
     let!(:another_payment) { create(:payment, order: order) }
 
     context 'order.paid? == true' do
@@ -68,7 +68,7 @@ describe Spree::Api::Webhooks::PaymentDecorator do
           another_payment.started_processing
         end
 
-        it { expect { subject }.to emit_webhook_event(params) }
+        it { expect { subject }.to emit_webhook_event(event_name) }
       end
 
       context 'pending -> complete' do
@@ -78,13 +78,13 @@ describe Spree::Api::Webhooks::PaymentDecorator do
           another_payment.pend
         end
 
-        it { expect { subject }.to emit_webhook_event(params) }
+        it { expect { subject }.to emit_webhook_event(event_name) }
       end
 
       context 'checkout -> complete' do
         before { payment.complete }
 
-        it { expect { subject }.to emit_webhook_event(params) }
+        it { expect { subject }.to emit_webhook_event(event_name) }
       end
     end
 
@@ -97,17 +97,17 @@ describe Spree::Api::Webhooks::PaymentDecorator do
       context 'processing -> complete' do
         before { payment.started_processing }
 
-        it { expect { subject }.not_to emit_webhook_event(params) }
+        it { expect { subject }.not_to emit_webhook_event(event_name) }
       end
 
       context 'pending -> complete' do
         before { payment.pend }
 
-        it { expect { subject }.not_to emit_webhook_event(params) }
+        it { expect { subject }.not_to emit_webhook_event(event_name) }
       end
 
       context 'checkout -> complete' do
-        it { expect { subject }.not_to emit_webhook_event(params) }
+        it { expect { subject }.not_to emit_webhook_event(event_name) }
       end
     end
   end

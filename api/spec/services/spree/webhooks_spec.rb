@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Spree::Webhooks do
   describe '#disable_webhooks' do
-    let(:body) { Spree::Api::V2::Platform::VariantSerializer.new(variant, mock_serializer_params(event: event_name)).serializable_hash.to_json }
+    let(:body) { variant.send(:webhooks_body_for, event: event_name) }
     let(:event_name) { 'variant.discontinued' }
     let(:queue_requests) { instance_double(Spree::Webhooks::Subscribers::QueueRequests) }
     let(:variant) { create(:variant) }
@@ -45,12 +45,11 @@ describe Spree::Webhooks do
     end
 
     describe 'when webhooks are enabled' do
-      before { ENV['DISABLE_SPREE_WEBHOOKS'] = nil }
-
       describe 'when not using #disable_webhooks' do
         it 'emits the event' do
-          variant.discontinue!
-          expect(queue_requests).to have_received(:call).with(event: event_name, body: body).once
+          expect do
+            variant.discontinue!
+          end.to emit_webhook_event(event_name)
         end
       end
 

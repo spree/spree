@@ -4,7 +4,7 @@ describe Spree::Webhooks::Subscribers::HandleRequest do
   describe '#call' do
     subject { described_class.new(body: body, event: event_name, subscriber: subscriber) }
 
-    let(:body) { resource.webhooks_body(event: event_name) }
+    let(:body) { resource.send(:webhooks_body_for, event: event_name) }
     let(:event_name) { 'order.canceled' }
     let(:request_double) { instance_double(Spree::Webhooks::Subscribers::MakeRequest) }
     let(:subscriber) { create(:subscriber, url: url) }
