@@ -30,7 +30,7 @@ module Spree
         delegate :id, :url, to: :subscriber
 
         def request
-          @request ||= Spree::Webhooks::Subscribers::MakeRequest.new(body: body, url: url)
+          @request ||= Spree::Webhooks::Subscribers::MakeRequest.new(body: body.to_json, url: url)
         end
 
         def create_event(log_level, msg)

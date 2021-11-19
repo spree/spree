@@ -6,25 +6,12 @@ describe Spree::Webhooks::Subscribers::HandleRequest do
 
     let(:body) { resource.send(:webhooks_body_for, event: event_name) }
     let(:event_name) { 'order.canceled' }
-    let(:request_double) { instance_double(Spree::Webhooks::Subscribers::MakeRequest) }
+    let(:make_request_double) { instance_double(Spree::Webhooks::Subscribers::MakeRequest) }
     let(:subscriber) { create(:subscriber, url: url) }
     let(:url) { 'http://google.com/' }
     let(:resource) { create(:address) }
 
     shared_examples 'logging and creating a webhooks event' do |with_log_level:|
-      before do
-        allow(subject).to receive(:request).and_return(request_double)
-        allow(request_double).to(
-          receive_messages(
-            execution_time: execution_time,
-            failed_request?: failed_request,
-            response_code: response_code,
-            success?: success,
-            unprocessable_uri?: unprocessable_uri
-          )
-        )
-      end
-
       it 'debug logs before the request' do
         allow(Rails.logger).to receive(:debug)
         subject.call
@@ -54,6 +41,21 @@ describe Spree::Webhooks::Subscribers::HandleRequest do
       end
 
       it { expect(subject.call).to eq(nil) }
+    end
+
+    before do
+      allow(Spree::Webhooks::Subscribers::MakeRequest).to(
+        receive(:new).with(body: body.to_json, url: url).and_return(make_request_double)
+      )
+      allow(make_request_double).to(
+        receive_messages(
+          execution_time: execution_time,
+          failed_request?: failed_request,
+          response_code: response_code,
+          success?: success,
+          unprocessable_uri?: unprocessable_uri
+        )
+      )
     end
 
     context 'with an unprocessable uri' do
