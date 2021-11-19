@@ -473,7 +473,7 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
       shared_examples 'valid payload' do |amount|
         it 'returns StoreCredit payment' do
           expect(json_response['data']).to have_relationship(:payments)
-          payment = Spree::Payment.find(json_response['data']['relationships']['payments']['data'][0]['id'].to_i)
+          payment = Spree::Payment.find(json_response['data']['relationships']['payments']['data'][0]['id'])
           expect(payment.amount).to eq amount
           expect(payment.payment_method.class).to eq Spree::PaymentMethod::StoreCredit
         end

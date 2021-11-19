@@ -104,7 +104,7 @@ describe 'Storefront API v2 Account spec', type: :request do
 
       it 'creates and returns user' do
         created_user = Spree.user_class.last
-        expect(json_response['data']['id'].to_i).to eq created_user.id
+        expect(json_response['data']['id']).to eq created_user.id.to_s
         expect(json_response['data']).to have_attribute(:email).with_value(new_attributes[:email])
         expect(json_response['data']).to have_attribute(:public_metadata).with_value(new_attributes[:public_metadata])
         expect(created_user.private_metadata).to eq(new_attributes[:private_metadata])
