@@ -76,6 +76,7 @@ RSpec.configure do |config|
   config.before do
     ENV['DISABLE_SPREE_WEBHOOKS'] = 'true'
 
+    Rails.cache.clear
     reset_spree_preferences
 
     Spree::Api::Config[:requires_authentication] = true
