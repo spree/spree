@@ -50,7 +50,7 @@ module Spree
 
         def request
           req = Net::HTTP::Post.new(uri_path, HEADERS)
-          req.body = body
+          req.body = body.to_json
           @request ||= begin
             start_time = Process.clock_gettime(Process::CLOCK_MONOTONIC)
             request_result = http.request(req)
