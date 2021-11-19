@@ -87,9 +87,10 @@ describe Spree::Webhooks::HasWebhooks do
     context 'with a class name with multiple words' do
       let(:body) { Spree::Api::V2::Platform::CmsPageSerializer.new(cms_page).serializable_hash }
       let(:cms_page) { create(:cms_homepage, store: store, locale: 'en') }
+      let(:event_name) { 'cms_page.create' }
 
-      it 'underscorize the event name' do
-        expect { cms_page }.to emit_webhook_event('cms_page.create')
+      it 'underscorizes the event name' do
+        expect { cms_page }.to emit_webhook_event(event_name)
       end
     end
 

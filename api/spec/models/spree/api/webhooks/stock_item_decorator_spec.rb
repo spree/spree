@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Spree::Api::Webhooks::StockItemDecorator do
-  let(:body) { variant.send(:webhooks_body_for, event: event_name) }
+  let(:body) { Spree::Api::V2::Platform::VariantSerializer.new(variant).serializable_hash }
   let(:variant) { create(:variant) }
   let(:stock_item) { variant.stock_items.first }
   let(:stock_location) { variant.stock_locations.first }
@@ -9,7 +9,7 @@ describe Spree::Api::Webhooks::StockItemDecorator do
   describe 'emitting product.backorderable' do
     subject { stock_item.update(backorderable: backorderable) }
 
-    let(:body) { product.send(:webhooks_body_for, event: event_name) }
+    let(:body) { Spree::Api::V2::Platform::ProductSerializer.new(product).serializable_hash }
     let(:product) { variant.product }
     let(:event_name) { 'product.backorderable' }
     let!(:variant2) { create(:variant, product: product) }

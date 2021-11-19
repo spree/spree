@@ -1,16 +1,16 @@
 require 'spec_helper'
 
 describe Spree::Api::Webhooks::StockMovementDecorator do
+  let(:body) { Spree::Api::V2::Platform::VariantSerializer.new(variant.reload).serializable_hash }
   let(:stock_item) { create(:stock_item) }
   let(:stock_location) { variant.stock_locations.first }
-  let(:body) { variant.tap(&:reload).send(:webhooks_body_for, event: params) }
 
   describe 'emitting product.back_in_stock' do
     let!(:store) { create(:store) }
     let!(:product) { create(:product, stores: [store]) }
     let!(:variant) { create(:variant, product: product) }
     let!(:variant2) { create(:variant, product: product) }
-    let(:body) { product.send(:webhooks_body_for, event: params) }
+    let(:body) { Spree::Api::V2::Platform::ProductSerializer.new(product).serializable_hash }
     let(:params) { 'product.back_in_stock' }
 
     before { Spree::StockItem.update_all(backorderable: false) }

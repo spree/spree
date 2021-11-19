@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Spree::Webhooks do
   describe '#disable_webhooks' do
-    let(:body) { variant.send(:webhooks_body_for, event: event_name) }
+    let(:body) { Spree::Api::V2::Platform::VariantSerializer.new(variant).serializable_hash }
     let(:event_name) { 'variant.discontinued' }
     let(:queue_requests) { instance_double(Spree::Webhooks::Subscribers::QueueRequests) }
     let(:variant) { create(:variant) }

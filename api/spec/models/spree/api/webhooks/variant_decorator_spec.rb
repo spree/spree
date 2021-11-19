@@ -4,7 +4,7 @@ describe Spree::Api::Webhooks::VariantDecorator do
   let(:variant) { create(:variant) }
 
   context 'emitting variant.discontinued' do
-    let(:body) { variant.send(:webhooks_body_for, event: event_name) }
+    let(:body) { Spree::Api::V2::Platform::VariantSerializer.new(variant).serializable_hash }
     let(:event_name) { 'variant.discontinued' }
 
     context 'when variant discontinued_on changes' do

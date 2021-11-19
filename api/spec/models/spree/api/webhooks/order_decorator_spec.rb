@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Spree::Api::Webhooks::OrderDecorator do
   let(:store) { create(:store, default: true) }
-  let(:body) { order.send(:webhooks_body_for, event: event_name) }
+  let(:body) { Spree::Api::V2::Platform::OrderSerializer.new(order).serializable_hash }
 
   describe 'order.canceled' do
     describe 'completed -> canceled' do
