@@ -7,6 +7,14 @@ module Spree
 
           private
 
+          def successful_reposition_actions
+            resource.reload
+            resource.set_permalink
+            resource.save!
+
+            render_serialized_payload { serialize_resource(resource) }
+          end
+
           def model_class
             Spree::Taxon
           end

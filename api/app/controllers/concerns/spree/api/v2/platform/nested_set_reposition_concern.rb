@@ -10,10 +10,16 @@ module Spree
             new_index = permitted_resource_params[:new_position_idx].to_i
 
             if resource.move_to_child_with_index(@new_parent, new_index)
-              render_serialized_payload { serialize_resource(resource) }
+              successful_reposition_actions
             else
               render_error_payload(resource.errors)
             end
+          end
+
+          private
+
+          def successful_reposition_actions
+            render_serialized_payload { serialize_resource(resource) }
           end
         end
       end
