@@ -18,7 +18,7 @@ module Spree
             else
               # If the user drops the re-positioned item in the same location it came from
               # we just render the serialized payload, nothing has changed, we don't need to
-              # render an errors, or fire any custom success methods.
+              # render any errors, or fire any custom success methods.
               render_serialized_payload { serialize_resource(resource) }
             end
           end

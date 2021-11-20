@@ -10,8 +10,9 @@ describe 'Taxons API', swagger: true do
                       { name: 'filter[name_cont]', example: 'Shirts' }]
   }
 
-  let(:id) { create(:taxon).id }
   let(:taxonomy) { create(:taxonomy, store: store) }
+  let(:id) { create(:taxon, taxonomy: taxonomy).id }
+
   let!(:taxon_b) { create(:taxon, name: 'Shorts', taxonomy: taxonomy) }
 
   let(:records_list) { create_list(:taxon, 2, taxonomy: taxonomy) }
