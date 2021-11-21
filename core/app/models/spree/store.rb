@@ -60,6 +60,7 @@ module Spree
     validates :digital_asset_authorized_days, numericality: { only_integer: true, greater_than: 0 }
     validates :code, uniqueness: { conditions: -> { with_deleted } }
 
+    # FIXME: we should remove this condition in v5
     if !ENV['SPREE_DISABLE_DB_CONNECTION'] &&
         connected? &&
         table_exists? &&
@@ -81,7 +82,8 @@ module Spree
 
     before_save :ensure_default_exists_and_is_unique
     before_save :ensure_supported_currencies, :ensure_supported_locales, :ensure_default_country
-    before_destroy :validate_not_default
+    before_destroy :validate_not_last
+    before_destroy :pass_default_flag_to_other_store
 
     scope :by_url, ->(url) { where('url like ?', "%#{url}%") }
 
@@ -97,6 +99,8 @@ module Spree
       Stores::FindCurrent.new(url: url).execute
     end
 
+    # FIXME: we need to drop `or_initialize` in v5
+    # this behaviour is very buggy and unpredictable
     def self.default
       Rails.cache.fetch('default_store') do
         where(default: true).first_or_initialize
@@ -176,6 +180,10 @@ module Spree
       favicon_image.variant(resize: '32x32')
     end
 
+    def can_be_deleted?
+      self.class.where.not(id: id).any?
+    end
+
     private
 
     def ensure_default_exists_and_is_unique
@@ -202,10 +210,17 @@ module Spree
       self.supported_currencies = default_currency
     end
 
-    def validate_not_default
-      if default
-        errors.add(:base, :cannot_destroy_default_store)
+    def validate_not_last
+      unless can_be_deleted?
+        errors.add(:base, :cannot_destroy_only_store)
         throw(:abort)
+      end
+    end
+
+    def pass_default_flag_to_other_store
+      if default? && can_be_deleted?
+        self.class.where.not(id: id).first.update!(default: true)
+        self.default = false
       end
     end
 
