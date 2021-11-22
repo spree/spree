@@ -9,30 +9,16 @@ module Spree
         after_update_commit(proc { queue_webhooks_requests!(event_name(:update)) })
 
         def queue_webhooks_requests!(event)
-          return if disable_spree_webhooks? || updating_only_timestamps?
-          return if (event_body = webhooks_body_for(event: event)).blank?
+          return if disable_spree_webhooks? || updating_only_timestamps? || body.blank?
 
-          Spree::Webhooks::Subscribers::QueueRequests.call(event: event, body: event_body)
+          Spree::Webhooks::Subscribers::QueueRequests.call(event: event, body: body)
         end
       end
 
       private
 
-      def webhooks_body_for(event:)
-        created_event = event_record(event)
-        created_event.reload
-        resource_serializer.
-          new(self).
-          serializable_hash.
-          merge(
-            event_created_at: created_event.created_at,
-            event_id: created_event.id,
-            event_type: created_event.name
-          )
-      end
-
-      def event_record(event)
-        Spree::Webhooks::Event.create(name: event)
+      def body
+        resource_serializer.new(self).serializable_hash
       end
 
       def event_name(operation)

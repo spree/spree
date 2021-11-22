@@ -16,28 +16,15 @@ describe Spree::Webhooks::Event do
     end
 
     context 'susbcriber' do
-      let(:event) { build(:event, :successful, subscriber_id: nil) }
-
-      context 'on create' do
-        it 'is valid without a subscriber' do
-          expect(event.valid?).to eq(true)
-        end
+      it 'is invalid without a subscriber' do
+        event = build(:event, :successful, subscriber_id: nil)
+        expect(event.valid?).to be(false)
+        expect(event.errors.messages).to eq(subscriber: ["can't be blank", 'must exist'])
       end
 
-      context 'on update' do
-        before { event.save }
-
-        it 'is invalid without a subscriber' do
-          event.name = 'order.paid'
-          expect(event.valid?).to be(false)
-          expect(event.errors.messages).to eq(subscriber: ["can't be blank"])
-        end
-
-        it 'is valid with a subscriber' do
-          event.name = 'order.paid'
-          event.subscriber_id = create(:subscriber).id
-          expect(event.valid?).to be(true)
-        end
+      it 'is valid with a subscriber' do
+        event = build(:event, :successful, subscriber: create(:subscriber))
+        expect(event.valid?).to be(true)
       end
     end
   end

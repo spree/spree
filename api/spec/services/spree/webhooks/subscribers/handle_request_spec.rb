@@ -2,10 +2,17 @@ require 'spec_helper'
 
 describe Spree::Webhooks::Subscribers::HandleRequest do
   describe '#call' do
-    subject { described_class.new(body: body, event: event_name, subscriber: subscriber) }
+    subject { described_class.new(body: body, event_name: event_name, subscriber: subscriber) }
 
-    let(:body) { resource.send(:webhooks_body_for, event: event_name) }
+    let(:body) do
+      Spree::Api::V2::Platform::AddressSerializer.new(resource).serializable_hash.merge(
+        event_created_at: event.created_at,
+        event_id: event.id,
+        event_type: event.name
+      )
+    end
     let(:event_name) { 'order.canceled' }
+    let(:event) { create(:event, :blank, name: event_name, subscriber_id: subscriber.id, url: url) }
     let(:make_request_double) { instance_double(Spree::Webhooks::Subscribers::MakeRequest) }
     let(:subscriber) { create(:subscriber, url: url) }
     let(:url) { 'http://google.com/' }
@@ -30,11 +37,11 @@ describe Spree::Webhooks::Subscribers::HandleRequest do
       it 'updates the event record created previously with the missing data' do
         expect { subject.call }.to change {
           Spree::Webhooks::Event.
-            find(body[:event_id]).
+            find(event.id).
             as_json(except: %i[created_at id preferences updated_at]).
             values
         }.from(
-          [nil, event_name, nil, nil, nil, nil, nil]
+          [nil, event_name, nil, nil, subscriber.id, nil, url]
         ).to(
           [execution_time, event_name, log_msg, response_code.to_s, subscriber.id, success, url]
         )
@@ -44,7 +51,12 @@ describe Spree::Webhooks::Subscribers::HandleRequest do
     end
 
     before do
-      allow(Spree::Webhooks::Subscribers::MakeRequest).to(
+      expect(Spree::Webhooks::Event).to(
+        receive(:create).
+          with(name: event_name, subscriber_id: subscriber.id, url: url).
+          and_return(event)
+      )
+      expect(Spree::Webhooks::Subscribers::MakeRequest).to(
         receive(:new).with(body: body.to_json, url: url).and_return(make_request_double)
       )
       allow(make_request_double).to(

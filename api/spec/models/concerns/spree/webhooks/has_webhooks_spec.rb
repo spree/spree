@@ -48,28 +48,7 @@ describe Spree::Webhooks::HasWebhooks do
     let(:body) { Spree::Api::V2::Platform::ProductSerializer.new(product).serializable_hash }
 
     context 'after_create_commit' do
-      let(:event_name) { 'product.create' }
-
-      before { variant_with_images }
-
-      it 'creates the corresponding Spree::Webhooks::Event record' do
-        expect(Spree::Webhooks::Event.where(name: event_name).count).to eq(0)
-        with_webhooks_enabled { product.save }
-        # check the event was created with the expected values
-        expect(
-          Spree::Webhooks::Event.where(name: event_name).pluck(
-            :execution_time,
-            :name,
-            :request_errors,
-            :response_code,
-            :subscriber_id,
-            :success,
-            :url
-          )
-        ).to eq([[nil, event_name, nil, nil, nil, nil, nil]])
-      end
-
-      it { expect { product.save }.to emit_webhook_event(event_name) }
+      it { expect { product.save }.to emit_webhook_event('product.create') }
     end
 
     context 'after_destroy_commit' do
