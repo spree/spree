@@ -7,10 +7,12 @@ module Spree
     let(:user) { create :user }
     let(:store) { create :store, default_currency: 'EUR' }
     let(:currency) { 'USD' }
+    let(:public_metadata) { { prop1: 2 } }
+    let(:private_metadata) { { prop2: 'val2' } }
     let(:expected) { Order.first }
 
     context 'create an order' do
-      let(:execute) { subject.call user: user, store: store, currency: currency }
+      let(:execute) { subject.call user: user, store: store, currency: currency, public_metadata: public_metadata, private_metadata: private_metadata }
       let(:value) { execute.value }
 
       it do
