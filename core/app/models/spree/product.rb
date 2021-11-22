@@ -120,7 +120,7 @@ module Spree
     validates :slug, presence: true, uniqueness: { allow_blank: true, case_sensitive: true, scope: spree_base_uniqueness_scope }
     validate :discontinue_on_must_be_later_than_available_on, if: -> { available_on && discontinue_on }
 
-    scope :for_store, ->(store) { joins(:store_products).where(store_products: { store_id: store.id }) }
+    scope :for_store, ->(store) { joins(:store_products).where(StoreProduct.table_name => { store_id: store.id }) }
 
     attr_accessor :option_values_hash
 
