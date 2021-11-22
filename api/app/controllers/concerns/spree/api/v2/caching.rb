@@ -8,7 +8,7 @@ module Spree
           ids_and_timestamps = collection.unscope(:includes).unscope(:order).pluck(:id, :updated_at)
 
           ids = ids_and_timestamps.map(&:first)
-          max_updated_at = ids_and_timestamps.max(&:last)
+          max_updated_at = ids_and_timestamps.map(&:last).max
 
           cache_key_parts = [
             self.class.to_s,
