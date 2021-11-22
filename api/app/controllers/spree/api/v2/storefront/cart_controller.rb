@@ -18,10 +18,8 @@ module Spree
               user: spree_current_user,
               store: current_store,
               currency: current_currency,
-              order_params: {
-                public_metadata: metadata_params[:public_metadata].to_h,
-                private_metadata: metadata_params[:private_metadata].to_h,
-              }
+              public_metadata: metadata_params[:public_metadata].to_h,
+              private_metadata: metadata_params[:private_metadata].to_h,
             }
 
             order   = spree_current_order if spree_current_order.present?
