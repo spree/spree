@@ -45,6 +45,7 @@ describe Spree::Taxonomy, type: :model do
         @taxonomy.reload
 
         expect(@taxonomy.root.name).to eq('Clothing')
+        expect(@taxonomy.position).to eq(2)
       end
     end
   end
