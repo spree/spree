@@ -20,6 +20,7 @@ describe Spree::Taxonomy, type: :model do
   describe '#set_root_taxon_name' do
     before do
       @taxonomy = create(:taxonomy, name: 'Clothing')
+      @taxonomy.reload
     end
 
     context 'when Taxonomy is created' do
