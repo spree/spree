@@ -142,7 +142,7 @@ describe Spree::Taxon, type: :model do
 
     context 'when root taxon name is updated' do
       it 'updates the taxonomy name' do
-        root_taxon = Spree::Taxon.find_by(name: 'Soft Goods')
+        root_taxon = described_class.find_by(name: 'Soft Goods')
 
         root_taxon.update(name: 'Hard Goods')
         root_taxon.save!
@@ -155,7 +155,7 @@ describe Spree::Taxon, type: :model do
 
     context 'when root taxon attribute other than name is updated' do
       it 'does not update the taxonomy' do
-        root_taxon = Spree::Taxon.find_by(name: 'Soft Goods')
+        root_taxon = described_class.find_by(name: 'Soft Goods')
         taxonomy_updated_at = taxonomy.updated_at.to_s
 
         expect {
