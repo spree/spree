@@ -28,7 +28,7 @@ module Spree
 
       user ||= Spree.user_class.new
 
-      if user.persisted? && user.spree_admin?
+      if user.persisted? && user.try(:spree_admin?)
         apply_admin_permissions(user)
       else
         apply_user_permissions(user)
