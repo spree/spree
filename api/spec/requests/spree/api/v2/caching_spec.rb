@@ -76,7 +76,7 @@ describe 'API v2 Caching spec', type: :request do
       expect(cache_entries.size).to eq(1)
 
       # expire all cache when store is updates
-      store.update_column(:updated_at, 1.day.ago)
+      store.touch
 
       get '/api/v2/storefront/products'
       expect(cache_entries.size).to eq(2)
