@@ -164,6 +164,8 @@ describe Spree::Taxon, type: :model do
           root_taxon.reload
           taxonomy.reload
         }.not_to change { taxonomy.updated_at.to_s }.from(taxonomy_updated_at)
+
+        expect(root_taxon.permalink).to eql 'something-else'
       end
     end
   end
