@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Spree::Webhooks::Subscribers::QueueRequests, :job, :spree_webhooks do
   describe '#call' do
-    subject { described_class.call(event: event, body: body) }
+    subject { described_class.call(body: body, event: event) }
 
     let(:event) { 'order.finalize' }
     let(:body) { {} }
@@ -16,7 +16,7 @@ describe Spree::Webhooks::Subscribers::QueueRequests, :job, :spree_webhooks do
 
       it do
         expect { subject }.to(
-          have_enqueued_job(make_request_job).with(body, event, subscriber).on_queue(queue)
+          have_enqueued_job(make_request_job).with(body.to_json, event, subscriber).on_queue(queue)
         )
       end
     end

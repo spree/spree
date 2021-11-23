@@ -5,7 +5,7 @@ module Spree
     module Subscribers
       class HandleRequest
         def initialize(body:, event_name:, subscriber:)
-          @body = body
+          @body = JSON.parse(body)
           @event_name = event_name
           @subscriber = subscriber
         end

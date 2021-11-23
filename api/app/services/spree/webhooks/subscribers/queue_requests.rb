@@ -6,7 +6,7 @@ module Spree
 
         def call(body:, event:)
           Spree::Webhooks::Subscriber.active.with_urls_for(event).each do |subscriber|
-            Spree::Webhooks::Subscribers::MakeRequestJob.perform_later(body, event, subscriber)
+            Spree::Webhooks::Subscribers::MakeRequestJob.perform_later(body.to_json, event, subscriber)
           end
         end
       end
