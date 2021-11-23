@@ -57,7 +57,10 @@ describe Spree::Ability, type: :model do
     let(:resource) { Object.new }
 
     context 'with admin user' do
-      before { allow(user).to receive(:has_spree_role?).and_return(true) }
+      before do
+        allow(user).to receive(:persisted?).and_return(true)
+        allow(user).to receive(:has_spree_role?).and_return(true)
+      end
 
       it_behaves_like 'access granted'
       it_behaves_like 'index allowed'
@@ -81,6 +84,7 @@ describe Spree::Ability, type: :model do
     context 'with admin user' do
       context 'admin user role' do
         it 'is able to admin' do
+          allow(user).to receive(:persisted?).and_return(true)
           allow(user).to receive(:spree_admin?).and_return(true)
           expect(ability).to be_able_to :admin, resource
           expect(ability).to be_able_to :index, resource_order
@@ -97,6 +101,7 @@ describe Spree::Ability, type: :model do
         after { Spree.admin_user_class = nil }
 
         it 'is able to admin' do
+          allow(user).to receive(:persisted?).and_return(true)
           allow(user).to receive(:spree_admin?).and_return(true)
           expect(ability).to be_able_to :admin, resource
           expect(ability).to be_able_to :index, resource_order
