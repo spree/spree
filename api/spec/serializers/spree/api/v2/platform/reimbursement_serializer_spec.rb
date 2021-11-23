@@ -21,7 +21,7 @@ describe Spree::Api::V2::Platform::ReimbursementSerializer do
           total: resource.total,
           created_at: resource.created_at,
           updated_at: resource.updated_at,
-          display_total: resource.display_total,
+          display_total: resource.display_total.to_s,
         },
         relationships: {
           order: {
