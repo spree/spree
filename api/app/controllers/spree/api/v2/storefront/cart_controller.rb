@@ -5,9 +5,9 @@ module Spree
         class CartController < ::Spree::Api::V2::BaseController
           include OrderConcern
           include CouponCodesHelper
-          include Metadata
+          # include Metadata
 
-          before_action :ensure_valid_metadata, only: %i[create add_item]
+          before_action :ensure_valid_metadata, only: %i[add_item]
           before_action :ensure_order, except: %i[create associate]
           before_action :load_variant, only: :add_item
           before_action :require_spree_current_user, only: :associate
@@ -235,6 +235,13 @@ module Spree
 
           def metadata_params
             params.permit(public_metadata: {}, private_metadata: {})
+          end
+
+          def ensure_valid_metadata
+            if (params[:public_metadata].present? && !params[:public_metadata].is_a?(ActionController::Parameters)) ||
+                (params[:private_metadata].present? && !params[:private_metadata].is_a?(ActionController::Parameters))
+              render_error_payload(I18n.t(:invalid_params, scope: 'spree.api.v2.metadata'))
+            end
           end
         end
       end
