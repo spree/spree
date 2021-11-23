@@ -239,7 +239,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
       it_behaves_like 'returns 422 HTTP status'
 
       it 'return an error' do
-        expect(json_response[:error]).to eq('Public and private metadata parameters should be an object')
+        expect(json_response[:error]).to eq(I18n.t(:invalid_params, scope: 'spree.api.v2.metadata'))
       end
     end
 
