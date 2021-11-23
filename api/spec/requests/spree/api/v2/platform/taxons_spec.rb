@@ -227,6 +227,7 @@ describe 'Platform API v2 Taxons API' do
       it 'taxon_a can be nested inside another taxon_c' do
         reload_taxons
 
+        expect(taxon_a.permalink).to eq("#{taxonomy.root.permalink}/pants/t-shirts")
         expect(taxon_a.parent_id).to eq(taxon_c.id)
         expect(taxon_a.depth).to eq(2)
       end

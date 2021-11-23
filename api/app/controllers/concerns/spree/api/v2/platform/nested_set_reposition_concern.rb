@@ -26,6 +26,8 @@ module Spree
           private
 
           def successful_reposition_actions
+            # Call a separate method for a successful reposition so this can be easily overridden
+            # if a more complex set of events need to occur after a successful reposition.
             render_serialized_payload { serialize_resource(resource) }
           end
         end
