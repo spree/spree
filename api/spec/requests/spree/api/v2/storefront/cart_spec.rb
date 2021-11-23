@@ -231,6 +231,19 @@ describe 'API V2 Storefront Cart Spec', type: :request do
       end
     end
 
+    shared_examples 'doesnt add item if metadata is not a hash' do
+      before do
+        params[:public_metadata] = [1, 2, 3]
+        execute
+      end
+
+      it_behaves_like 'returns 422 HTTP status'
+
+      it 'return an error' do
+        expect(json_response[:error]).to eq('Public and private metadata parameters should be an object')
+      end
+    end
+
     context 'as a signed in user' do
       include_context 'order with a physical line item'
 
@@ -239,6 +252,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
         it_behaves_like 'doesnt add item with quantity unnavailble'
         it_behaves_like 'doesnt add item from different store'
         it_behaves_like 'doesnt add non-existing item'
+        it_behaves_like 'doesnt add item if metadata is not a hash'
       end
 
       it_behaves_like 'no current order'
@@ -252,6 +266,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
         it_behaves_like 'doesnt add item with quantity unnavailble'
         it_behaves_like 'doesnt add item from different store'
         it_behaves_like 'doesnt add non-existing item'
+        it_behaves_like 'doesnt add item if metadata is not a hash'
       end
 
       it_behaves_like 'no current order'
