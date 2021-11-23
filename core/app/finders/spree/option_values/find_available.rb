@@ -3,7 +3,7 @@ module Spree
     class FindAvailable
       include ProductFilterable
 
-      def initialize(scope: OptionValue.spree_base_scopes, products_scope: Product.spree_base_scopes)
+      def initialize(scope: OptionValue.spree_base_scopes.order(position: :asc), products_scope: Product.spree_base_scopes)
         @scope = scope
         @products_scope = products_scope
       end

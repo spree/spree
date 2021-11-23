@@ -16,7 +16,6 @@ module Spree
     scope :filterable, lambda {
       joins(:option_type).
         where(OptionType.table_name => { filterable: true }).
-        order(position: :asc).
         distinct
     }
 
