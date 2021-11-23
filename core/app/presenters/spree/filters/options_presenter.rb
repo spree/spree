@@ -9,7 +9,7 @@ module Spree
             id: option_type.id,
             name: option_type.name,
             presentation: option_type.presentation,
-            option_values: option_values.map { |e| option_value_hash(e) }.sort_by { |e| e[:position] }
+            option_values: option_values.map { |e| option_value_hash(e) }
           }
         end
 
