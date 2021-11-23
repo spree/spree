@@ -68,6 +68,21 @@ module Spree
           )
         end
       end
+
+      context 'ordering' do
+        let!(:white_color) { create(:option_value, option_type: color, name: 'white') }
+        let!(:black_color) { create(:option_value, option_type: color, name: 'black') }
+
+        before do
+          white_color.update_column(:position, 0)
+          black_color.update_column(:position, 10)
+        end
+
+        it 'orders OptionValues by position' do
+          positions = available_options.pluck(:position)
+          expect(positions).to eq(positions.sort)
+        end
+      end
     end
   end
 end
