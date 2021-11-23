@@ -153,6 +153,19 @@ describe Spree::Taxon, type: :model do
       end
     end
 
+    context 'when root taxon name is updated with special characters' do
+      it 'updates the taxonomy name' do
+        root_taxon = described_class.find_by(name: 'Soft Goods')
+
+        root_taxon.update(name: 'spÉcial Numérique ƒ ˙ ¨ πø∆©')
+        root_taxon.save!
+        taxonomy.reload
+
+        expect(taxonomy.name).not_to eql 'Soft Goods'
+        expect(taxonomy.name).to eql root_taxon.name
+      end
+    end
+
     context 'when root taxon attribute other than name is updated' do
       it 'does not update the taxonomy' do
         root_taxon = described_class.find_by(name: 'Soft Goods')

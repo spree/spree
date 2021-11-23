@@ -108,7 +108,7 @@ module Spree
 
     def sync_taxonomy_name
       if saved_change_to_name? && root?
-        return if taxonomy.name == name
+        return if taxonomy.name.to_s == name.to_s
 
         taxonomy.update(name: name)
       end
