@@ -34,8 +34,8 @@ module Spree
               order: spree_current_order,
               variant: @variant,
               quantity: params[:quantity],
-              public_metadata: metadata_params[:public_metadata].to_h,
-              private_metadata: metadata_params[:private_metadata].to_h,
+              public_metadata: metadata_params[:public_metadata],
+              private_metadata: metadata_params[:private_metadata],
               options: params[:options]
             )
 

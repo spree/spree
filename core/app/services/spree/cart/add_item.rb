@@ -32,8 +32,8 @@ module Spree
         end
 
         line_item.target_shipment = options[:shipment] if options.key? :shipment
-        line_item.public_metadata = public_metadata if public_metadata
-        line_item.private_metadata = private_metadata if private_metadata
+        line_item.public_metadata = public_metadata.to_h if public_metadata
+        line_item.private_metadata = private_metadata.to_h if private_metadata
 
         return failure(line_item) unless line_item.save
 
