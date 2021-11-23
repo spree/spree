@@ -5,11 +5,15 @@ module Spree
         extend ActiveSupport::Concern
 
         def collection_cache_key(collection)
-          unscoped_collection = collection.unscope(:includes).unscope(:order)
+          ids_and_timestamps = collection.unscope(:includes).unscope(:order).pluck(:id, :updated_at)
+
+          ids = ids_and_timestamps.map(&:first)
+          max_updated_at = ids_and_timestamps.map(&:last).max
+
           cache_key_parts = [
             self.class.to_s,
-            unscoped_collection.maximum(:updated_at),
-            unscoped_collection.ids,
+            max_updated_at,
+            ids,
             resource_includes,
             sparse_fields,
             serializer_params,
