@@ -3,8 +3,7 @@ module Spree
     class Create
       prepend Spree::ServiceModule::Base
 
-      def call(user:, store:, currency:, public_metadata: {}, private_metadata: {}, order_params: nil)
-        order_params ||= {}
+      def call(user:, store:, currency:, public_metadata: {}, private_metadata: {}, order_params: {})
 
         # we cannot create an order without store
         return failure(:store_is_required) if store.nil?
