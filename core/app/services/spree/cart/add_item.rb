@@ -12,7 +12,7 @@ module Spree
 
       private
 
-      def add_to_line_item(order:, variant:, quantity: nil, public_metadata: nil, private_metadata: nil, options: {})
+      def add_to_line_item(order:, variant:, quantity: nil, public_metadata: {}, private_metadata: {}, options: {})
         options ||= {}
         quantity ||= 1
 
@@ -32,8 +32,8 @@ module Spree
         end
 
         line_item.target_shipment = options[:shipment] if options.key? :shipment
-        line_item.public_metadata = public_metadata.to_h if public_metadata
-        line_item.private_metadata = private_metadata.to_h if private_metadata
+        line_item.public_metadata = public_metadata if public_metadata
+        line_item.private_metadata = private_metadata if private_metadata
 
         return failure(line_item) unless line_item.save
 
