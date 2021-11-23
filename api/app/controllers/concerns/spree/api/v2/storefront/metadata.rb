@@ -9,7 +9,6 @@ module Spree
             if (params[:public_metadata].present? && !params[:public_metadata].is_a?(ActionController::Parameters)) ||
                 (params[:private_metadata].present? && !params[:private_metadata].is_a?(ActionController::Parameters))
               render_error_payload(I18n.t(:invalid_params, scope: 'spree.api.v2.metadata'))
-              return
             end
           end
         end
