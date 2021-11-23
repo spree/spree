@@ -2,9 +2,9 @@ require 'spec_helper'
 
 describe Spree::Webhooks::Subscribers::QueueRequests, :job, :spree_webhooks do
   describe '#call' do
-    subject { described_class.call(body: body, event: event) }
+    subject { described_class.call(body: body, event_name: event_name) }
 
-    let(:event) { 'order.finalize' }
+    let(:event_name) { 'order.finalize' }
     let(:body) { {} }
     let(:queue) { 'spree_webhooks' }
     let(:make_request_job) { Spree::Webhooks::Subscribers::MakeRequestJob }
@@ -16,7 +16,7 @@ describe Spree::Webhooks::Subscribers::QueueRequests, :job, :spree_webhooks do
 
       it do
         expect { subject }.to(
-          have_enqueued_job(make_request_job).with(body.to_json, event, subscriber).on_queue(queue)
+          have_enqueued_job(make_request_job).with(body, event_name, subscriber).on_queue(queue)
         )
       end
     end
@@ -39,14 +39,14 @@ describe Spree::Webhooks::Subscribers::QueueRequests, :job, :spree_webhooks do
       end
 
       context 'when subscriber subscriptions includes the specific event being used' do
-        let(:subscriptions) { [event] }
+        let(:subscriptions) { [event_name] }
 
         include_examples 'queues a job to make a request', 'https://url2.com/'
       end
 
       context 'when subscriber subscriptions are not active' do
         let!(:subscriber) do
-          create(:subscriber, url: 'https://url3.com/', subscriptions: [event])
+          create(:subscriber, url: 'https://url3.com/', subscriptions: [event_name])
         end
 
         include_examples 'does not queue a job to make a request'
