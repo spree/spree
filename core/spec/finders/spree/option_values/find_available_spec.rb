@@ -76,6 +76,8 @@ module Spree
         before do
           white_color.update_column(:position, 0)
           black_color.update_column(:position, 10)
+          product_4 = create(:product, option_types: [color])
+          create(:variant, option_values: [white_color, black_color], product: product_4)
         end
 
         it 'orders OptionValues by position' do
