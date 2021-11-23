@@ -3,7 +3,7 @@ module Spree
     class AddItem
       prepend Spree::ServiceModule::Base
 
-      def call(order:, variant:, quantity: nil, public_metadata: nil, private_metadata: nil, options: {})
+      def call(order:, variant:, quantity: nil, public_metadata: {}, private_metadata: {}, options: {})
         ApplicationRecord.transaction do
           run :add_to_line_item
           run Spree::Dependencies.cart_recalculate_service.constantize
