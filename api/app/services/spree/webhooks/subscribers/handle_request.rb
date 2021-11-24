@@ -41,7 +41,7 @@ module Spree
               execution_time: execution_time,
               request_errors: msg,
               response_code: response_code,
-              success: success?,
+              success: success?
             )
         end
 

@@ -1,7 +1,6 @@
 module Spree
   class TestArgumentsJob < Spree::BaseJob
-    def perform(serializer)
-    end
+    def perform(serializer); end
   end
 end
 
