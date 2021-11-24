@@ -17,11 +17,11 @@ module Spree
       attr_reader :scope, :products_scope
 
       def select_args
-        "#{OptionValue.table_name}.*, #{OptionType.table_name}.position"
+        "#{OptionValue.table_name}.*, #{OptionType.table_name}.position AS option_type_position"
       end
 
       def order_args
-        "#{OptionType.table_name}.position, #{OptionValue.table_name}.position"
+        "option_type_position, #{OptionValue.table_name}.position"
       end
     end
   end
