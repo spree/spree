@@ -16,5 +16,12 @@ FactoryBot.define do
       response_code { '200' }
       success { true }
     end
+
+    trait :blank do
+      execution_time { nil }
+      request_errors { nil }
+      subscriber_id { nil }
+      url { nil }
+    end
   end
 end

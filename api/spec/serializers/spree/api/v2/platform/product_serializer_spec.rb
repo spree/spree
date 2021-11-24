@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Spree::Api::V2::Platform::ProductSerializer do
   include_context 'API v2 serializers params'
 
-  subject { described_class.new(product, params: serializer_params) }
+  subject { described_class.new(product, params: serializer_params).serializable_hash }
 
   let!(:images) { create_list(:image, 2) }
   let(:product) do
@@ -132,16 +132,16 @@ describe Spree::Api::V2::Platform::ProductSerializer do
   end
 
   context 'without a store in the params' do
-    subject { described_class.new(product, params: serializer_params.merge(store: nil)) }
+    subject { described_class.new(product, params: serializer_params.merge(store: nil)).serializable_hash }
 
     it 'returns all the product taxons' do
-      expect(subject.serializable_hash).to eq(serializable_hash)
+      expect(subject).to eq(serializable_hash)
     end
   end
 
-  it { expect(subject.serializable_hash).to be_kind_of(Hash) }
+  it { expect(subject).to be_kind_of(Hash) }
 
-  it do
-    expect(subject.serializable_hash).to eq(serializable_hash)
-  end
+  it { expect(subject).to eq(serializable_hash) }
+
+  it_behaves_like 'an ActiveJob serializable hash'
 end

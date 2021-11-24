@@ -4,25 +4,25 @@ module Spree
       extend ActiveSupport::Concern
 
       included do
-        after_create_commit(proc { queue_webhooks_requests!(event_name(:create)) })
-        after_destroy_commit(proc { queue_webhooks_requests!(event_name(:delete)) })
-        after_update_commit(proc { queue_webhooks_requests!(event_name(:update)) })
+        after_create_commit(proc { queue_webhooks_requests!(inferred_event_name(:create)) })
+        after_destroy_commit(proc { queue_webhooks_requests!(inferred_event_name(:delete)) })
+        after_update_commit(proc { queue_webhooks_requests!(inferred_event_name(:update)) })
 
-        def queue_webhooks_requests!(event)
+        def queue_webhooks_requests!(event_name)
           return if disable_spree_webhooks? || updating_only_timestamps? || body.blank?
 
-          Spree::Webhooks::Subscribers::QueueRequests.call(event: event, body: body)
+          Spree::Webhooks::Subscribers::QueueRequests.call(body: body, event_name: event_name)
         end
       end
 
       private
 
-      def event_name(operation)
-        "#{self.class.name.demodulize.tableize.singularize}.#{operation}"
-      end
-
       def body
         resource_serializer.new(self).serializable_hash.to_json
+      end
+
+      def inferred_event_name(operation)
+        "#{self.class.name.demodulize.tableize.singularize}.#{operation}"
       end
 
       def resource_serializer

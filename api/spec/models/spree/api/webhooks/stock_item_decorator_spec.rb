@@ -1,19 +1,17 @@
 require 'spec_helper'
 
 describe Spree::Api::Webhooks::StockItemDecorator do
-  let(:body) { Spree::Api::V2::Platform::VariantSerializer.new(variant.reload).serializable_hash.to_json }
+  let(:body) { Spree::Api::V2::Platform::VariantSerializer.new(variant).serializable_hash }
   let(:variant) { create(:variant) }
   let(:stock_item) { variant.stock_items.first }
   let(:stock_location) { variant.stock_locations.first }
 
   describe 'emitting product.backorderable' do
-    subject do
-      product.reload
-      Timecop.freeze { stock_item.update(backorderable: backorderable) }
-    end
+    subject { stock_item.update(backorderable: backorderable) }
 
-    let(:body) { Spree::Api::V2::Platform::ProductSerializer.new(product.reload).serializable_hash.to_json }
+    let(:body) { Spree::Api::V2::Platform::ProductSerializer.new(product).serializable_hash }
     let(:product) { variant.product }
+    let(:event_name) { 'product.backorderable' }
     let!(:variant2) { create(:variant, product: product) }
 
     before { Spree::StockItem.update_all(backorderable: false) }
@@ -23,13 +21,13 @@ describe Spree::Api::Webhooks::StockItemDecorator do
         context 'when one of the variants is made backorderable' do
           let(:backorderable) { true }
 
-          it { expect { subject }.to emit_webhook_event('product.backorderable') }
+          it { expect { subject }.to emit_webhook_event(event_name) }
         end
 
         context 'when none of the variants is made backorderable' do
           let(:backorderable) { false }
 
-          it { expect { subject }.not_to emit_webhook_event('product.backorderable') }
+          it { expect { subject }.not_to emit_webhook_event(event_name) }
         end
       end
 
@@ -43,7 +41,7 @@ describe Spree::Api::Webhooks::StockItemDecorator do
             another_stock_item.update(backorderable: true)
           end
 
-          it { expect { subject }.not_to emit_webhook_event('product.backorderable') }
+          it { expect { subject }.not_to emit_webhook_event(event_name) }
         end
       end
     end
@@ -59,12 +57,14 @@ describe Spree::Api::Webhooks::StockItemDecorator do
         end
       end
 
-      it { expect { subject }.not_to emit_webhook_event('product.backorderable') }
+      it { expect { subject }.not_to emit_webhook_event(event_name) }
     end
   end
 
   describe 'emitting variant.backorderable' do
     subject { stock_item.save }
+
+    let(:event_name) { 'variant.backorderable' }
 
     context 'when variant was out of stock' do
       before do
@@ -78,7 +78,7 @@ describe Spree::Api::Webhooks::StockItemDecorator do
       context 'when variant was backorderable' do
         before { stock_item.backorderable = true }
 
-        it { expect { subject }.not_to emit_webhook_event('variant.backorderable') }
+        it { expect { subject }.not_to emit_webhook_event(event_name) }
       end
 
       context 'when variant was not backorderable' do
@@ -87,13 +87,13 @@ describe Spree::Api::Webhooks::StockItemDecorator do
         context 'when variant is not set as backorderable' do
           before { stock_item.backorderable = false }
 
-          it { expect { subject }.not_to emit_webhook_event('variant.backorderable') }
+          it { expect { subject }.not_to emit_webhook_event(event_name) }
         end
 
         context 'when variant is set as backorderable' do
           before { stock_item.backorderable = true }
 
-          it { expect { subject }.to emit_webhook_event('variant.backorderable') }
+          it { expect { subject }.to emit_webhook_event(event_name) }
         end
       end
     end
@@ -109,7 +109,7 @@ describe Spree::Api::Webhooks::StockItemDecorator do
         stock_item.backorderable = true
       end
 
-      it { expect { subject }.not_to emit_webhook_event('variant.backorderable') }
+      it { expect { subject }.not_to emit_webhook_event(event_name) }
     end
   end
 end

@@ -5,7 +5,9 @@ module Spree
         class CartController < ::Spree::Api::V2::BaseController
           include OrderConcern
           include CouponCodesHelper
+          include Spree::Api::V2::Storefront::MetadataControllerConcern
 
+          before_action :ensure_valid_metadata, only: %i[create add_item]
           before_action :ensure_order, except: %i[create associate]
           before_action :load_variant, only: :add_item
           before_action :require_spree_current_user, only: :associate
@@ -33,8 +35,10 @@ module Spree
             result = add_item_service.call(
               order: spree_current_order,
               variant: @variant,
-              quantity: params[:quantity],
-              options: params[:options]
+              quantity: add_item_params[:quantity],
+              public_metadata: add_item_params[:public_metadata],
+              private_metadata: add_item_params[:private_metadata],
+              options: add_item_params[:options]
             )
 
             render_order(result)
@@ -227,6 +231,10 @@ module Spree
               shipping_rates,
               params: serializer_params
             ).serializable_hash
+          end
+
+          def add_item_params
+            params.permit(:quantity, :variant_id, public_metadata: {}, private_metadata: {}, options: {})
           end
         end
       end

@@ -1,15 +1,15 @@
 require 'spec_helper'
 
 describe Spree::V2::Storefront::WishedItemSerializer do
-  subject { described_class.new(wished_item, params: { currency: 'USD' }) }
+  subject { described_class.new(wished_item, params: { currency: 'USD' }).serializable_hash }
 
   let!(:wishlist) { create(:wishlist) }
   let!(:wished_item) { create(:wished_item, wishlist: wishlist, variant: create(:variant), quantity: 5) }
 
-  it { expect(subject.serializable_hash).to be_kind_of(Hash) }
+  it { expect(subject).to be_kind_of(Hash) }
 
   it do
-    expect(subject.serializable_hash).to eq(
+    expect(subject).to eq(
       {
         data: {
           id: wished_item.id.to_s,
@@ -33,4 +33,6 @@ describe Spree::V2::Storefront::WishedItemSerializer do
       }
     )
   end
+
+  it_behaves_like 'an ActiveJob serializable hash'
 end

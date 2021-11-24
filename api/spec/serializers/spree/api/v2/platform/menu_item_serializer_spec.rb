@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Spree::Api::V2::Platform::MenuItemSerializer do
-  subject { described_class.new(menu_item) }
+  subject { described_class.new(menu_item).serializable_hash }
 
   let(:menu) { create(:menu) }
   let(:menu_item) { create(:menu_item, menu: menu, linked_resource: create(:taxon)) }
@@ -12,10 +12,10 @@ describe Spree::Api::V2::Platform::MenuItemSerializer do
     ]
   end
 
-  it { expect(subject.serializable_hash).to be_kind_of(Hash) }
+  it { expect(subject).to be_kind_of(Hash) }
 
   it do
-    expect(subject.serializable_hash).to eq(
+    expect(subject).to eq(
       {
         data: {
           id: menu_item.id.to_s,
@@ -81,4 +81,6 @@ describe Spree::Api::V2::Platform::MenuItemSerializer do
       }
     )
   end
+
+  it_behaves_like 'an ActiveJob serializable hash'
 end

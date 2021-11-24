@@ -1,14 +1,14 @@
 require 'spec_helper'
 
 describe Spree::Api::V2::Platform::CmsPageSerializer do
-  subject { described_class.new(cms_page) }
+  subject { described_class.new(cms_page).serializable_hash }
 
   let(:cms_page) { create(:cms_feature_page, cms_sections: create_list(:cms_hero_image_section, 2)) }
 
-  it { expect(subject.serializable_hash).to be_kind_of(Hash) }
+  it { expect(subject).to be_kind_of(Hash) }
 
   it do
-    expect(subject.serializable_hash).to eq(
+    expect(subject).to eq(
       {
         data: {
           id: cms_page.id.to_s,
@@ -44,4 +44,6 @@ describe Spree::Api::V2::Platform::CmsPageSerializer do
       }
     )
   end
+
+  it_behaves_like 'an ActiveJob serializable hash'
 end

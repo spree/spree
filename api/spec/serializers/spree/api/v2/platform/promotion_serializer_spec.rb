@@ -1,17 +1,17 @@
 require 'spec_helper'
 
 describe Spree::Api::V2::Platform::PromotionSerializer do
-  subject { described_class.new(resource, params: serializer_params) }
+  subject { described_class.new(resource, params: serializer_params).serializable_hash }
   include_context 'API v2 serializers params'
 
   let(:promotion_category) { create(:promotion_category) }
   let(:promotion_rule) { create(:promotion_rule) }
   let(:resource) { create(:promotion_with_item_adjustment, promotion_category: promotion_category, promotion_rules: [promotion_rule]) }
 
-  it { expect(subject.serializable_hash).to be_kind_of(Hash) }
+  it { expect(subject).to be_kind_of(Hash) }
 
   it do
-    expect(subject.serializable_hash).to eq(
+    expect(subject).to eq(
       {
         data: {
           id: resource.id.to_s,
@@ -68,4 +68,6 @@ describe Spree::Api::V2::Platform::PromotionSerializer do
       }
     )
   end
+
+  it_behaves_like 'an ActiveJob serializable hash'
 end
