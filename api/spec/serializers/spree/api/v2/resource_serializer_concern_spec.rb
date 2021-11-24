@@ -72,7 +72,7 @@ describe Spree::Api::V2::ResourceSerializerConcern do
       expect(serializable_hash[:data][:type]).to eq(:test_order)
     end
 
-    it 'adds the model clas json_api_columns as attributes' do
+    it 'adds the model class json_api_columns as attributes' do
       expect(serializable_hash[:data][:attributes][:created_at]).to eq(created_at)
       expect(serializable_hash[:data][:attributes][:updated_at]).to eq(updated_at)
     end
