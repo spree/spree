@@ -80,9 +80,9 @@ module Spree
           create(:variant, option_values: [white_color, black_color], product: product_4)
         end
 
-        it 'orders OptionValues by position' do
-          positions = available_options.pluck(:position)
-          expect(positions).to eq(positions.sort)
+        it 'orders the option values by option type position and option value position' do
+          positions = available_options.map { |ov| [ov.option_type.position, ov.position] }
+          expect(positions).to eq(positions.sort_by { |e| [e.first, e.second] })
         end
       end
     end
