@@ -13,11 +13,11 @@ module Spree
         end
 
         attributes :display_cost, :display_final_price do |object, params|
-          Spree::Money.new(object.cost, currency: params[:currency])
+          Spree::Money.new(object.cost, currency: params[:currency]).to_s
         end
 
         attribute :display_tax_amount do |object, params|
-          Spree::Money.new(object.tax_amount, currency: params[:currency])
+          Spree::Money.new(object.tax_amount, currency: params[:currency]).to_s
         end
 
         attribute :free do |object|

@@ -382,7 +382,7 @@ en:
         spree/store:
           attributes:
             base:
-              cannot_destroy_default_store: Cannot destroy the default Store.
+              cannot_destroy_only_store: Cannot destroy the only Store.
         spree/store_credit:
           attributes:
             amount_used:

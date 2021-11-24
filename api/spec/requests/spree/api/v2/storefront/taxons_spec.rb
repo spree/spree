@@ -35,7 +35,7 @@ describe 'Taxons Spec', type: :request do
       end
 
       it 'should return only default store taxons' do
-        expect(json_response['data'].map{ |t| t['id'].to_i }).to match_array(default_store_taxons.pluck(:id))
+        expect(json_response['data'].map{ |t| t['id'] }).to match_array(default_store_taxons.pluck(:id).map(&:to_s))
       end
     end
 

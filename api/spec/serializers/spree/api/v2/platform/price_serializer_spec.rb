@@ -3,29 +3,33 @@ require 'spec_helper'
 describe Spree::Api::V2::Platform::PriceSerializer do
   include_context 'API v2 serializers params'
 
-  subject { described_class.new(price, params: serializer_params) }
+  subject { described_class.new(resource, params: serializer_params) }
 
-  let(:price) { create(:price) }
+  let(:resource) { create(:price) }
+  let(:type) { :price }
 
-  it { expect(subject.serializable_hash).to be_kind_of(Hash) }
-
-  # serializable_hash is returned with a different key order,
-  # making the tests fail if is compared to a pre-defined hash
   it do
-    serializable_hash = subject.serializable_hash
-    expect(serializable_hash[:data][:id]).to eq(price.id.to_s)
-    expect(serializable_hash[:data][:type]).to eq(:price)
-    expect(serializable_hash[:data][:attributes][:amount]).to eq(price.amount)
-    expect(serializable_hash[:data][:attributes][:currency]).to eq(price.currency)
-    expect(serializable_hash[:data][:attributes][:deleted_at]).to eq(price.deleted_at)
-    expect(serializable_hash[:data][:attributes][:created_at]).to eq(price.created_at)
-    expect(serializable_hash[:data][:attributes][:updated_at]).to eq(price.updated_at)
-    expect(serializable_hash[:data][:attributes][:compare_at_amount]).to eq(price.compare_at_amount)
-    expect(serializable_hash[:data][:attributes][:display_compare_at_price]).to eq(Spree::Money.new(0, currency: price.currency))
-    expect(serializable_hash[:data][:attributes][:display_amount]).to eq(price.display_amount)
-    expect(serializable_hash[:data][:attributes][:display_price]).to eq(price.display_price)
-    expect(serializable_hash[:data][:attributes][:display_compare_at_price_including_vat_for]).to eq(Spree::Money.new(price.compare_at_amount, currency: price.currency))
-    expect(serializable_hash[:data][:attributes][:display_compare_at_amount]).to eq(Spree::Money.new(0, currency: price.currency))
-    expect(serializable_hash[:data][:attributes][:display_price_including_vat_for]).to eq(Spree::Money.new(price.amount, currency: price.currency))
+    expect(subject.serializable_hash).to(
+      eq(
+        data: {
+          id: resource.id.to_s,
+          type: type,
+          attributes: {
+            amount: resource.amount,
+            currency: resource.currency,
+            deleted_at: resource.deleted_at,
+            created_at: resource.created_at,
+            updated_at: resource.updated_at,
+            compare_at_amount: resource.compare_at_amount,
+            display_compare_at_price: resource.display_compare_at_price.to_s,
+            display_amount: resource.display_amount.to_s,
+            display_price: resource.display_price.to_s,
+            display_compare_at_amount: resource.display_compare_at_amount.to_s,
+            display_compare_at_price_including_vat_for: resource.display_compare_at_price_including_vat_for({}).to_s,
+            display_price_including_vat_for: resource.display_price_including_vat_for({}).to_s
+          }
+        }
+      )
+    )
   end
 end

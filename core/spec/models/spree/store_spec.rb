@@ -621,19 +621,60 @@ describe Spree::Store, type: :model do
     end
   end
 
+  describe '#can_be_deleted?' do
+    let(:default_store) { Spree::Store.default }
+
+    it 'cannot delete the only store' do
+      expect(default_store.can_be_deleted?).to eq(false)
+    end
+
+    it 'can delete when there are more than 1 stores' do
+      create(:store)
+      expect(default_store.can_be_deleted?).to eq(true)
+    end
+  end
+
   describe 'soft deletion' do
-    let!(:default_store) { create(:store) }
+    let!(:default_store) { described_class.default }
+    let(:another_store) { create(:store) }
 
-    let(:store) { create(:store) }
+    context 'default store' do
+      context 'with multiple stores' do
+        before { another_store }
 
-    it 'soft-deletes when destroy is called' do
-      store.destroy!
-      expect(store.deleted_at).not_to be_nil
+        it 'can be deleted' do
+          expect(default_store.deleted?).to eq(false)
+          expect { default_store.destroy }.to change(default_store, :deleted_at)
+          expect(default_store.deleted?).to eq(true)
+        end
+
+        it 'passes default flag to other store' do
+          expect(another_store.default?).to eq(false)
+          default_store.destroy
+          expect(default_store.default?).to eq(false)
+          expect(another_store.reload.default?).to eq(true)
+          expect(described_class.default).to eq(another_store)
+        end
+      end
+
+      context 'single store' do
+        it 'cannot be deleted' do
+          expect { default_store.destroy! }.to raise_error(ActiveRecord::RecordNotDestroyed)
+          expect(default_store.errors.full_messages.to_sentence).to eq('Cannot destroy the only Store.')
+        end
+      end
+    end
+
+    context 'another store' do
+      it 'soft-deletes when destroy is called' do
+        another_store.destroy!
+        expect(another_store.deleted_at).not_to be_nil
+      end
     end
 
     context 'with associations' do
       before do
-        store.products << create(:product)
+        another_store.products << create(:product)
       end
 
       it "doesn't destroy associations" do
