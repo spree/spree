@@ -39,6 +39,7 @@ module Spree
 
     before_validation :copy_taxonomy_from_parent
     after_save :touch_ancestors_and_taxonomy
+    after_save :sync_taxonomy_name
     after_touch :touch_ancestors_and_taxonomy
 
     has_one :icon, as: :viewable, dependent: :destroy, class_name: 'Spree::TaxonImage'
@@ -104,6 +105,14 @@ module Spree
     end
 
     private
+
+    def sync_taxonomy_name
+      if saved_change_to_name? && root?
+        return if taxonomy.name.to_s == name.to_s
+
+        taxonomy.update(name: name)
+      end
+    end
 
     def touch_ancestors_and_taxonomy
       # Touches all ancestors at once to avoid recursive taxonomy touch, and reduce queries.

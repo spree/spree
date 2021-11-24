@@ -26,6 +26,7 @@ module Spree
 
     def set_root_taxon_name
       return unless saved_change_to_name?
+      return if name.to_s == root.name.to_s
 
       root.update(name: name)
     end

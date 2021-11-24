@@ -124,4 +124,62 @@ describe Spree::Taxon, type: :model do
     it { expect(taxon.valid?).to eq(true) }
     it { expect { taxon.save }.to change(taxon, :taxonomy).to(taxonomy) }
   end
+
+  describe '#sync_taxonomy_name' do
+    let!(:taxonomy) { create(:taxonomy, name: 'Soft Goods') }
+    let!(:taxon) { create(:taxon, taxonomy: taxonomy, name: 'Socks' ) }
+
+    context 'when none root taxon name is updated' do
+      it 'does not update the taxonomy name' do
+        taxon.update(name: 'Shoes')
+        taxon.save!
+        taxonomy.reload
+
+        expect(taxonomy.name).not_to eql taxon.name
+        expect(taxonomy.name).to eql 'Soft Goods'
+      end
+    end
+
+    context 'when root taxon name is updated' do
+      it 'updates the taxonomy name' do
+        root_taxon = described_class.find_by(name: 'Soft Goods')
+
+        root_taxon.update(name: 'Hard Goods')
+        root_taxon.save!
+        taxonomy.reload
+
+        expect(taxonomy.name).not_to eql 'Soft Goods'
+        expect(taxonomy.name).to eql root_taxon.name
+      end
+    end
+
+    context 'when root taxon name is updated with special characters' do
+      it 'updates the taxonomy name' do
+        root_taxon = described_class.find_by(name: 'Soft Goods')
+
+        root_taxon.update(name: 'spÉcial Numérique ƒ ˙ ¨ πø∆©')
+        root_taxon.save!
+        taxonomy.reload
+
+        expect(taxonomy.name).not_to eql 'Soft Goods'
+        expect(taxonomy.name).to eql root_taxon.name
+      end
+    end
+
+    context 'when root taxon attribute other than name is updated' do
+      it 'does not update the taxonomy' do
+        root_taxon = described_class.find_by(name: 'Soft Goods')
+        taxonomy_updated_at = taxonomy.updated_at.to_s
+
+        expect {
+          root_taxon.update(permalink: 'something-else')
+          root_taxon.save!
+          root_taxon.reload
+          taxonomy.reload
+        }.not_to change { taxonomy.updated_at.to_s }.from(taxonomy_updated_at)
+
+        expect(root_taxon.permalink).to eql 'something-else'
+      end
+    end
+  end
 end
