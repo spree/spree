@@ -15,7 +15,7 @@ module Spree
     end
 
     def self.json_api_columns
-      []
+      %w[created_at updated_at]
     end
   end
 
@@ -33,6 +33,7 @@ end
 describe Spree::Api::V2::ResourceSerializerConcern do
   describe '.included' do
     let(:adjustment_total) { 100.0 }
+    let(:created_at) { 1.day.ago }
     let(:id) { 1 }
     let(:item_total) { 110.0 }
     let(:outstanding_balance) { 10.0 }
@@ -45,6 +46,9 @@ describe Spree::Api::V2::ResourceSerializerConcern do
         outstanding_balance: outstanding_balance
       )
     end
+    let(:updated_at) { Time.now }
+
+    before { allow(test_order).to receive_messages(created_at: created_at, updated_at: updated_at) }
 
     it do
       expect(serializable_hash).to(
@@ -53,13 +57,30 @@ describe Spree::Api::V2::ResourceSerializerConcern do
             id: test_order.id.to_s,
             type: :test_order,
             attributes: {
-              display_outstanding_balance: test_order.display_outstanding_balance.to_s,
+              created_at: created_at,
               display_adjustment_total: test_order.display_adjustment_total.to_s,
-              display_item_total: test_order.display_item_total.to_s
+              display_item_total: test_order.display_item_total.to_s,
+              display_outstanding_balance: test_order.display_outstanding_balance.to_s,
+              updated_at: updated_at
             }
           }
         )
       )
+    end
+
+    it 'sets the base type' do
+      expect(serializable_hash[:data][:type]).to eq(:test_order)
+    end
+
+    it 'adds the model clas json_api_columns as attributes' do
+      expect(serializable_hash[:data][:attributes][:created_at]).to eq(created_at)
+      expect(serializable_hash[:data][:attributes][:updated_at]).to eq(updated_at)
+    end
+
+    it 'adds all the display instance methods the class has' do
+      expect(serializable_hash[:data][:attributes].key?(:display_adjustment_total)).to eq(true)
+      expect(serializable_hash[:data][:attributes].key?(:display_item_total)).to eq(true)
+      expect(serializable_hash[:data][:attributes].key?(:display_outstanding_balance)).to eq(true)
     end
 
     it 'converts to string the display money attributes' do
@@ -72,12 +93,6 @@ describe Spree::Api::V2::ResourceSerializerConcern do
       expect(serializable_hash[:data][:attributes][:display_item_total]).to(
         eq(test_order.display_item_total.to_s)
       )
-    end
-
-    it 'adds all the display instance methods the class has' do
-      expect(serializable_hash[:data][:attributes].key?(:display_adjustment_total)).to eq(true)
-      expect(serializable_hash[:data][:attributes].key?(:display_item_total)).to eq(true)
-      expect(serializable_hash[:data][:attributes].key?(:display_outstanding_balance)).to eq(true)
     end
 
     it 'does not add display setter methods - ending with "="' do

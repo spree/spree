@@ -21,10 +21,11 @@ module Spree
 
         def self.display_getter_methods(model_klazz)
           model_klazz.new.methods.find_all do |method_name|
-            method_name.to_s.match(/display_/) && # if it's a display_ prefixed method, but
-              !method_name.to_s.match(/\=/)    && # is not a setter method, and
-              # display_amount but not for Spree::Product or Spree::Variants
-              !([Spree::Product, Spree::Variant].include?(model_klazz) && method_name == :display_amount)
+            next unless method_name.to_s.start_with?('display_')
+            next if method_name.to_s.end_with?('=')
+            next if [Spree::Product, Spree::Variant].include?(model_klazz) && method_name == :display_amount
+
+            method_name
           end
         end
       end
