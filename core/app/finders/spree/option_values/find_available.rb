@@ -4,7 +4,7 @@ module Spree
       include ProductFilterable
 
       def initialize(scope: OptionValue.spree_base_scopes, products_scope: Product.spree_base_scopes)
-        @scope = scope.order(position: :asc)
+        @scope = scope
         @products_scope = products_scope
       end
 
