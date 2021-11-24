@@ -12,7 +12,7 @@ module Spree
 
       private
 
-      def add_to_line_item(order:, variant:, quantity: nil, public_metadata: nil, private_metadata: nil, options: {})
+      def add_to_line_item(order:, variant:, quantity: nil, public_metadata: {}, private_metadata: {}, options: {})
         options ||= {}
         quantity ||= 1
 
