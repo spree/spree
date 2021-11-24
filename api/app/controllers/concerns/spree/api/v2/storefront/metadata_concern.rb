@@ -2,7 +2,7 @@ module Spree
   module Api
     module V2
       module Storefront
-        module MetadataConcern
+        module MetadataControllerConcern
           protected
 
           def ensure_valid_metadata
