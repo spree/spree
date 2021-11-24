@@ -31,11 +31,26 @@ describe 'API V2 Storefront Cart Spec', type: :request do
     let(:params) { {} }
     let(:execute) { post '/api/v2/storefront/cart', headers: headers, params: params }
 
+    shared_examples 'sets public and private metadata' do
+      let(:params) do
+        {
+          public_metadata: { 'property1' => 'value1' },
+          private_metadata: { 'property2' => 'value2' }
+        }
+      end
+
+      it do
+        expect(order.public_metadata).to eq(params[:public_metadata])
+        expect(order.private_metadata).to eq(params[:private_metadata])
+      end
+    end
+
     shared_examples 'creates an order' do
       before { execute }
 
       it_behaves_like 'returns valid cart JSON'
       it_behaves_like 'returns 201 HTTP status'
+      it_behaves_like 'sets public and private metadata'
     end
 
     shared_examples 'creates an order with different currency' do
