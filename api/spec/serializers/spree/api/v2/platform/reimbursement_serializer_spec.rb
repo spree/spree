@@ -59,4 +59,6 @@ describe Spree::Api::V2::Platform::ReimbursementSerializer do
       }
     )
   end
+
+  it_behaves_like 'an ActiveJob serializable hash'
 end

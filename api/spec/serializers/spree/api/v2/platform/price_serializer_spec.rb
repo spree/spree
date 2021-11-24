@@ -3,13 +3,13 @@ require 'spec_helper'
 describe Spree::Api::V2::Platform::PriceSerializer do
   include_context 'API v2 serializers params'
 
-  subject { described_class.new(resource, params: serializer_params) }
+  subject { described_class.new(resource, params: serializer_params).serializable_hash }
 
   let(:resource) { create(:price) }
   let(:type) { :price }
 
   it do
-    expect(subject.serializable_hash).to(
+    expect(subject).to(
       eq(
         data: {
           id: resource.id.to_s,
@@ -32,4 +32,6 @@ describe Spree::Api::V2::Platform::PriceSerializer do
       )
     )
   end
+
+  it_behaves_like 'an ActiveJob serializable hash'
 end

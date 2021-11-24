@@ -3,17 +3,17 @@ require 'spec_helper'
 describe Spree::Api::V2::Platform::TaxonSerializer do
   include_context 'API v2 serializers params'
 
-  subject { described_class.new(taxon, params: serializer_params) }
+  subject { described_class.new(taxon, params: serializer_params).serializable_hash }
 
   let(:taxonomy) { create(:taxonomy, store: store) }
   let(:taxon) { create(:taxon, products: create_list(:product, 2, stores: [store]), taxonomy: taxonomy) }
   let!(:children) { [create(:taxon, parent: taxon, taxonomy: taxonomy), create(:taxon, parent: taxon, taxonomy: taxonomy)] }
 
-  it { expect(subject.serializable_hash).to be_kind_of(Hash) }
+  it { expect(subject).to be_kind_of(Hash) }
 
   context 'without products' do
     it do
-      expect(subject.serializable_hash).to eq(
+      expect(subject).to eq(
         {
           data: {
             id: taxon.id.to_s,
@@ -83,7 +83,7 @@ describe Spree::Api::V2::Platform::TaxonSerializer do
     end
 
     it do
-      expect(subject.serializable_hash).to eq(
+      expect(subject).to eq(
         {
           data: {
             id: taxon.id.to_s,
@@ -157,6 +157,7 @@ describe Spree::Api::V2::Platform::TaxonSerializer do
         }
       )
     end
-
   end
+
+  it_behaves_like 'an ActiveJob serializable hash'
 end
