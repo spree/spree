@@ -2,8 +2,8 @@ module Spree
   module Api
     module V2
       module Storefront
-        module Metadata
-          private
+        module MetadataControllerConcern
+          protected
 
           def ensure_valid_metadata
             if params[:public_metadata].present? && !params[:public_metadata].is_a?(ActionController::Parameters) ||

@@ -5,7 +5,7 @@ module Spree
         class CartController < ::Spree::Api::V2::BaseController
           include OrderConcern
           include CouponCodesHelper
-          include Metadata
+          include Spree::Api::V2::Storefront::MetadataControllerConcern
 
           before_action :ensure_valid_metadata, only: %i[create add_item]
           before_action :ensure_order, except: %i[create associate]

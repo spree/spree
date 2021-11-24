@@ -29,10 +29,10 @@ en:
         digitals:
           missing_file: 'Missing Digital Item: attachment'
           unauthorized: Error, you are not authorized to access this asset
+        metadata:
+          invalid_params: Public and private metadata parameters should be objects
         wishlist:
           errors:
             the_wishlist_could_not_be_destroyed: The wishlist could not be destroyed.
           wrong_quantity: Quantity has to be greater than 0
-        metadata:
-          invalid_params: Public and private metadata parameters should be objects
       wrong_shipment_target: target shipment is the same as original shipment
