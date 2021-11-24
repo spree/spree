@@ -6,11 +6,11 @@ module Spree
           include ResourceSerializerConcern
 
           attribute :display_price_including_vat_for do |price, params|
-            price.display_price_including_vat_for(params[:price_options].presence || {})
+            price.display_price_including_vat_for(params[:price_options].presence || {}).to_s
           end
 
           attribute :display_compare_at_price_including_vat_for do |price, params|
-            price.display_compare_at_price_including_vat_for(params[:price_options].presence || {})
+            price.display_compare_at_price_including_vat_for(params[:price_options].presence || {}).to_s
           end
         end
       end
