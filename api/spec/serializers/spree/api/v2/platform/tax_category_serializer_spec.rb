@@ -1,12 +1,12 @@
 require 'spec_helper'
 
-describe Spree::Api::V2::Platform::RoleSerializer do
+describe Spree::Api::V2::Platform::TaxCategorySerializer do
   include_context 'API v2 serializers params'
 
   subject { described_class.new(resource, params: serializer_params).serializable_hash }
 
-  let(:type) { :role }
-  let(:resource) { create(type) }
+  let(:resource) { create(:tax_category) }
+  let(:type) { :tax_category }
 
   it do
     expect(subject).to eq(
@@ -15,8 +15,17 @@ describe Spree::Api::V2::Platform::RoleSerializer do
         type: type,
         attributes: {
           name: resource.name,
+          description: resource.description,
+          is_default: resource.is_default,
+          deleted_at: resource.deleted_at,
           created_at: resource.created_at,
-          updated_at: resource.updated_at
+          updated_at: resource.updated_at,
+          tax_code: nil
+        },
+        relationships: {
+          tax_rates: {
+            data: []
+          }
         }
       }
     )
