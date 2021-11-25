@@ -116,7 +116,7 @@ describe Spree::Webhooks::HasWebhooks do
 
   describe '.default_webhook_events' do
     it 'return the default events' do
-      expect(Spree::Order.default_webhook_events).to eq(%w[order.create order.destroy order.update])
+      expect(Spree::Order.default_webhook_events).to eq(%w[order.create order.delete order.update])
     end
   end
 
