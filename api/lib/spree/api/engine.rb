@@ -31,7 +31,7 @@ module Spree
           Spree::Refund, Spree::Reimbursement, Spree::ReturnAuthorization, Spree::ReturnItem, Spree::Role,
           Spree::Shipment, Spree::ShippingCategory, Spree::ShippingMethod, Spree::ShippingRate,
           Spree::StockItem, Spree::StockLocation, Spree::StockMovement, Spree::StockTransfer,
-          Spree::StoreCredit, Spree::Store, Spree::TaxCategory, Spree::TaxRate, Spree::Taxonomy,
+          Spree::StoreCredit, Spree::TaxCategory, Spree::TaxRate, Spree::Taxonomy,
           Spree::Taxon, Spree::Variant, Spree::WishedItem, Spree::Wishlist, Spree::Zone
         ].each do |webhookable_class|
           webhookable_class.include(Spree::Webhooks::HasWebhooks)
