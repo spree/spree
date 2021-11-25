@@ -10,8 +10,6 @@ module Spree
           base.after_update_commit :queue_webhooks_requests_for_product_discontinued!
         end
 
-        end
-
         private
 
         def queue_webhooks_requests_for_product_discontinued!
