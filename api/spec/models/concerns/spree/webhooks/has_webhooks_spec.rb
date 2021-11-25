@@ -123,8 +123,8 @@ describe Spree::Webhooks::HasWebhooks do
   describe '.supported_webhook_events' do
     context 'when there are custom supported events' do
       it 'returns the default and custom events' do
-        all_webhook_events = Spree::Order.default_webhook_events + Spree::Order.custom_webhook_events
-        expect(Spree::Order.supported_webhook_events).to contain_exactly(*all_webhook_events)
+        expected_webhook_events = %w[order.create order.delete order.update order.canceled order.placed order.resumed order.shipped]
+        expect(Spree::Order.supported_webhook_events).to contain_exactly(*expected_webhook_events)
       end
     end
 
