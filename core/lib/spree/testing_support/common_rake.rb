@@ -36,9 +36,15 @@ namespace :common do
     ]
 
     puts 'Setting up dummy database...'
+    system('bin/rails db:environment:set RAILS_ENV=test')
     system('bundle exec rake db:drop db:create')
     Spree::DummyModelGenerator.start
     system('bundle exec rake db:migrate')
+
+    unless ['spree/api', 'spree/core', 'spree/sample', 'spree/emails'].include?(ENV['LIB_NAME'])
+      puts 'Setting up node environment'
+      system('bin/rails javascript:install:esbuild')
+    end
 
     begin
       require "generators/#{ENV['LIB_NAME']}/install/install_generator"
@@ -51,7 +57,6 @@ namespace :common do
     unless ['spree/api', 'spree/core', 'spree/sample'].include?(ENV['LIB_NAME'])
       if ENV['LIB_NAME'] == 'spree/backend'
         puts 'Installing node dependencies...'
-        system('bin/rails javascript:install:esbuild')
         system('yarn link @spree/dashboard')
         system('yarn install')
       end

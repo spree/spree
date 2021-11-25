@@ -120,6 +120,8 @@ module Spree
     validates :slug, presence: true, uniqueness: { allow_blank: true, case_sensitive: true, scope: spree_base_uniqueness_scope }
     validate :discontinue_on_must_be_later_than_available_on, if: -> { available_on && discontinue_on }
 
+    scope :for_store, ->(store) { joins(:store_products).where(StoreProduct.table_name => { store_id: store.id }) }
+
     attr_accessor :option_values_hash
 
     accepts_nested_attributes_for :product_properties, allow_destroy: true, reject_if: ->(pp) { pp[:property_name].blank? }
@@ -319,6 +321,14 @@ module Spree
     def taxons_for_store(store)
       Rails.cache.fetch("#{cache_key_with_version}/taxons-per-store/#{store.id}") do
         taxons.for_store(store)
+      end
+    end
+
+    def any_variant_in_stock_or_backorderable?
+      if variants.any?
+        variants_including_master.in_stock_or_backorderable.exists?
+      else 
+        master.in_stock_or_backorderable?
       end
     end
 

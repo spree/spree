@@ -5,7 +5,7 @@ module Spree
         set_id     :promotion_id
         set_type   :promotion
 
-        attributes :name, :description, :amount, :display_amount, :code
+        attributes :name, :description, :amount, :display_amount, :code, :public_metadata
       end
     end
   end

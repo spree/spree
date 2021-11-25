@@ -930,6 +930,7 @@ describe 'API V2 Storefront Products Spec', type: :request do
         expect(json_response['data']).to have_attribute(:in_stock).with_value(product.in_stock?)
         expect(json_response['data']).to have_attribute(:backorderable).with_value(product.backorderable?)
         expect(json_response['data']).to have_attribute(:sku).with_value(product.sku)
+        expect(json_response['data']).to have_attribute(:public_metadata).with_value(product.public_metadata)
 
         expect(json_response['data']).to have_relationships(
           :variants, :option_types, :product_properties, :default_variant

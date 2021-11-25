@@ -120,7 +120,7 @@ module Spree
       if order.completed?
         current_on_hand = shipment.stock_location.count_on_hand(variant)
 
-        if current_on_hand.negative? && current_on_hand.abs < removed_backordered
+        if current_on_hand&.negative? && current_on_hand.abs < removed_backordered
           shipment.stock_location.restock_backordered variant, current_on_hand.abs, shipment
         else
           shipment.stock_location.restock_backordered variant, removed_backordered, shipment

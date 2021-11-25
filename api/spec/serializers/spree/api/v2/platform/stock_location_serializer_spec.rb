@@ -41,4 +41,6 @@ describe Spree::Api::V2::Platform::StockLocationSerializer do
       }
     )
   end
+
+  it_behaves_like 'an ActiveJob serializable hash'
 end

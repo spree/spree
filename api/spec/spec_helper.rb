@@ -43,6 +43,7 @@ require 'spree/testing_support/rspec_retry_config'
 require 'spree/api/testing_support/caching'
 require 'spree/api/testing_support/jobs'
 require 'spree/api/testing_support/helpers'
+require 'spree/api/testing_support/serializers'
 require 'spree/api/testing_support/setup'
 require 'spree/api/testing_support/spree_webhooks'
 require 'spree/api/testing_support/matchers/webhooks'
@@ -76,6 +77,7 @@ RSpec.configure do |config|
   config.before do
     ENV['DISABLE_SPREE_WEBHOOKS'] = 'true'
 
+    Rails.cache.clear
     reset_spree_preferences
 
     Spree::Api::Config[:requires_authentication] = true

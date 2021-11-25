@@ -208,5 +208,27 @@ module Spree
         end
       end
     end
+
+    context 'setting metadata' do
+      let(:public_metadata) { {'prop1' => 'value1'} }
+      let(:private_metadata) { {'prop2' => 'value2'} }
+      let(:execute) { subject.call(order: order, variant: variant, quantity: qty, public_metadata: public_metadata, private_metadata: private_metadata) }
+
+      context 'private metadata' do
+        it do
+          expect(execute).to be_success
+          order.reload
+          expect(order.line_items.first.private_metadata).to eq private_metadata
+        end
+      end
+
+      context 'public metadata' do
+        it do
+          expect(execute).to be_success
+          order.reload
+          expect(order.line_items.first.public_metadata).to eq public_metadata
+        end
+      end
+    end
   end
 end

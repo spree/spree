@@ -1,14 +1,14 @@
 require 'spec_helper'
 
 describe Spree::Api::V2::Platform::OptionValueSerializer do
-  subject { described_class.new(option_value) }
+  subject { described_class.new(option_value).serializable_hash }
 
   let(:option_value) { create(:option_value) }
 
-  it { expect(subject.serializable_hash).to be_kind_of(Hash) }
+  it { expect(subject).to be_kind_of(Hash) }
 
   it do
-    expect(subject.serializable_hash).to eq(
+    expect(subject).to eq(
       {
         data: {
           id: option_value.id.to_s,
@@ -34,4 +34,6 @@ describe Spree::Api::V2::Platform::OptionValueSerializer do
       }
     )
   end
+
+  it_behaves_like 'an ActiveJob serializable hash'
 end

@@ -7,6 +7,25 @@ module Spree
 
           private
 
+          def successful_reposition_actions
+            reload_taxon_and_set_new_permalink(resource)
+            update_permalinks_on_child_taxons
+
+            render_serialized_payload { serialize_resource(resource) }
+          end
+
+          def reload_taxon_and_set_new_permalink(taxon)
+            taxon.reload
+            taxon.set_permalink
+            taxon.save!
+          end
+
+          def update_permalinks_on_child_taxons
+            resource.descendants.each do |taxon|
+              reload_taxon_and_set_new_permalink(taxon)
+            end
+          end
+
           def model_class
             Spree::Taxon
           end

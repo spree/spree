@@ -1,14 +1,14 @@
 require 'spec_helper'
 
 describe Spree::Api::V2::Platform::DigitalLinkSerializer do
-  subject { described_class.new(digital_link) }
+  subject { described_class.new(digital_link).serializable_hash }
 
   let(:digital_link) { create(:digital_link) }
 
-  it { expect(subject.serializable_hash).to be_kind_of(Hash) }
+  it { expect(subject).to be_kind_of(Hash) }
 
   it do
-    expect(subject.serializable_hash).to eq(
+    expect(subject).to eq(
       {
         data: {
           id: digital_link.id.to_s,
@@ -36,6 +36,8 @@ describe Spree::Api::V2::Platform::DigitalLinkSerializer do
     )
   end
 
-  it { expect(subject.serializable_hash[:data][:id]).to be_kind_of(String) }
-  it { expect(subject.serializable_hash[:data][:type]).to be(:digital_link) }
+  it { expect(subject[:data][:id]).to be_kind_of(String) }
+  it { expect(subject[:data][:type]).to be(:digital_link) }
+
+  it_behaves_like 'an ActiveJob serializable hash'
 end

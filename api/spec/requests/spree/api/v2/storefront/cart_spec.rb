@@ -122,6 +122,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
             expect(json_response['data']).to have_attribute(:display_pre_tax_item_amount).with_value(new_order.display_pre_tax_item_amount.to_s)
             expect(json_response['data']).to have_attribute(:pre_tax_total).with_value(new_order.pre_tax_total.to_s)
             expect(json_response['data']).to have_attribute(:display_pre_tax_total).with_value(new_order.display_pre_tax_total.to_s)
+            expect(json_response['data']).to have_attribute(:public_metadata).with_value(new_order.public_metadata)
             expect(json_response['data']).to have_relationships(:user, :line_items, :variants, :billing_address, :shipping_address, :payments, :shipments, :promotions)
           end
 
@@ -146,7 +147,16 @@ describe 'API V2 Storefront Cart Spec', type: :request do
 
   describe 'cart#add_item' do
     let(:options) { {} }
-    let(:params) { { variant_id: variant.id, quantity: 5, options: options, include: 'variants' } }
+    let(:params) do
+      {
+        variant_id: variant.id,
+        quantity: 5,
+        public_metadata: { 'prop1' => 'value1' },
+        private_metadata: { 'prop2' => 'value2' },
+        options: options,
+        include: 'variants'
+      }
+    end
     let(:execute) { post '/api/v2/storefront/cart/add_item', params: params, headers: headers }
 
     before do
@@ -165,6 +175,8 @@ describe 'API V2 Storefront Cart Spec', type: :request do
         expect(order.line_items.count).to eq(2)
         expect(order.line_items.last.variant).to eq(variant)
         expect(order.line_items.last.quantity).to eq(5)
+        expect(order.line_items.last.public_metadata).to eq(params[:public_metadata])
+        expect(order.line_items.last.private_metadata).to eq(params[:private_metadata])
         expect(json_response['included']).to include(have_type('variant').and(have_id(variant.id.to_s)))
       end
 
@@ -219,6 +231,19 @@ describe 'API V2 Storefront Cart Spec', type: :request do
       end
     end
 
+    shared_examples 'doesnt add item if metadata is not a hash' do
+      before do
+        params[:public_metadata] = [1, 2, 3]
+        execute
+      end
+
+      it_behaves_like 'returns 422 HTTP status'
+
+      it 'return an error' do
+        expect(json_response[:error]).to eq(I18n.t(:invalid_params, scope: 'spree.api.v2.metadata'))
+      end
+    end
+
     context 'as a signed in user' do
       include_context 'order with a physical line item'
 
@@ -227,6 +252,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
         it_behaves_like 'doesnt add item with quantity unnavailble'
         it_behaves_like 'doesnt add item from different store'
         it_behaves_like 'doesnt add non-existing item'
+        it_behaves_like 'doesnt add item if metadata is not a hash'
       end
 
       it_behaves_like 'no current order'
@@ -240,6 +266,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
         it_behaves_like 'doesnt add item with quantity unnavailble'
         it_behaves_like 'doesnt add item from different store'
         it_behaves_like 'doesnt add non-existing item'
+        it_behaves_like 'doesnt add item if metadata is not a hash'
       end
 
       it_behaves_like 'no current order'
@@ -558,6 +585,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
         expect(json_response[:included][0]).to have_attribute(:country_name).with_value(order.bill_address.country_name)
         expect(json_response[:included][0]).to have_attribute(:country_iso3).with_value(order.bill_address.country_iso3)
         expect(json_response[:included][0]).to have_attribute(:state_code).with_value(order.bill_address.state_abbr)
+        expect(json_response[:included][0]).to have_attribute(:public_metadata).with_value(order.bill_address.public_metadata)
       end
 
       it 'will return included ship_address' do
@@ -580,6 +608,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
         expect(json_response[:included][0]).to have_attribute(:country_name).with_value(order.ship_address.country_name)
         expect(json_response[:included][0]).to have_attribute(:country_iso3).with_value(order.ship_address.country_iso3)
         expect(json_response[:included][0]).to have_attribute(:state_code).with_value(order.ship_address.state_abbr)
+        expect(json_response[:included][0]).to have_attribute(:public_metadata).with_value(order.ship_address.public_metadata)
       end
     end
   end

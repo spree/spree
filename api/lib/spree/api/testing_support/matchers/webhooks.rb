@@ -27,18 +27,17 @@
 # way depending on what's the resource being tested.
 #
 RSpec::Matchers.define :emit_webhook_event do |event_to_emit|
-  match do |obj_method|
-    ENV['DISABLE_SPREE_WEBHOOKS'] = nil
-
+  match do |block|
     queue_requests = instance_double(Spree::Webhooks::Subscribers::QueueRequests)
 
     allow(Spree::Webhooks::Subscribers::QueueRequests).to receive(:new).and_return(queue_requests)
     allow(queue_requests).to receive(:call).with(any_args)
 
-    obj_method.call
-    expect(queue_requests).to have_received(:call).with(event: event_to_emit, body: body).once
+    with_webhooks_enabled { Timecop.freeze { block.call } }
 
-    ENV['DISABLE_SPREE_WEBHOOKS'] = 'true'
+    expect(queue_requests).to(
+      have_received(:call).with(body: body.to_json, event_name: event_to_emit).once
+    )
   end
 
   def block_body_definition(obj_method)
@@ -50,7 +49,7 @@ RSpec::Matchers.define :emit_webhook_event do |event_to_emit|
     block_body_def = block_body_definition(obj_method)
     "Expected that executing `#{block_body_def}` emits the `#{event_to_emit}` Webhook event.\n" \
       "Check that `#{block_body_def}` does implement `queue_webhooks_requests!` for " \
-      "`#{event_to_emit}` with the following body: #{body}."
+      "`#{event_to_emit}` with the following body: \n\n#{body}."
   end
 
   failure_message_when_negated do |obj_method|
@@ -59,4 +58,10 @@ RSpec::Matchers.define :emit_webhook_event do |event_to_emit|
   end
 
   supports_block_expectations
+end
+
+def with_webhooks_enabled
+  ENV['DISABLE_SPREE_WEBHOOKS'] = nil
+  yield
+  ENV['DISABLE_SPREE_WEBHOOKS'] = 'true'
 end

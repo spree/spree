@@ -21,7 +21,6 @@ describe 'API v2 JSON API Resource Includes Spec', type: :request do
   shared_examples 'nested requested resources' do
     it 'are returned' do
       expect(json_response['included']).to be_present
-      expect(json_response['included']).not_to include(have_type('variant').and have_id(default_variant.id.to_s))
       expect(json_response['included']).to include(have_type('variant').and have_id(primary_variant.id.to_s))
       expect(json_response['included']).to include(have_type('option_type'))
       expect(json_response['included']).to include(have_type('option_value'))

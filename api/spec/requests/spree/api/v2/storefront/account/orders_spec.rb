@@ -43,6 +43,7 @@ describe 'Storefront API v2 Orders spec', type: :request do
         expect(json_response['data'][0]).to have_attribute(:promo_total).with_value(order.promo_total.to_s)
         expect(json_response['data'][0]).to have_attribute(:display_promo_total).with_value(order.display_promo_total.to_s)
         expect(json_response['data'][0]).to have_attribute(:display_total).with_value(order.display_total.to_s)
+        expect(json_response['data'][0]).to have_attribute(:public_metadata).with_value(order.public_metadata)
         expect(json_response['data'][0]).to have_relationships(:user, :line_items, :variants, :billing_address, :shipping_address, :payments, :shipments, :promotions)
       end
 

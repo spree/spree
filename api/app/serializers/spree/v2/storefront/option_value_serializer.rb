@@ -4,7 +4,7 @@ module Spree
       class OptionValueSerializer < BaseSerializer
         set_type   :option_value
 
-        attributes :name, :presentation, :position
+        attributes :name, :presentation, :position, :public_metadata
 
         belongs_to :option_type
       end

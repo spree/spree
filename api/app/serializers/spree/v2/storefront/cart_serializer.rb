@@ -10,7 +10,7 @@ module Spree
                    :display_item_total, :display_ship_total, :display_adjustment_total, :display_tax_total,
                    :promo_total, :display_promo_total, :item_count, :special_instructions, :display_total,
                    :pre_tax_item_amount, :display_pre_tax_item_amount, :pre_tax_total, :display_pre_tax_total,
-                   :shipment_state, :payment_state
+                   :shipment_state, :payment_state, :public_metadata
 
         has_many   :line_items
         has_many   :variants
