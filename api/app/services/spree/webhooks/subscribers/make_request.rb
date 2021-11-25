@@ -4,10 +4,10 @@ module Spree
   module Webhooks
     module Subscribers
       class MakeRequest
-        def initialize(body:, url:)
-          @body = body
+        def initialize(url:, webhook_payload_body:)
           @execution_time_in_milliseconds = 0
           @url = url
+          @webhook_payload_body = webhook_payload_body
           @webhooks_timeout = ENV['SPREE_WEBHOOKS_TIMEOUT']
         end
 
@@ -34,7 +34,7 @@ module Spree
 
         private
 
-        attr_reader :body, :execution_time_in_milliseconds, :url, :webhooks_timeout
+        attr_reader :execution_time_in_milliseconds, :url, :webhook_payload_body, :webhooks_timeout
 
         HEADERS = { 'Content-Type' => 'application/json' }.freeze
         private_constant :HEADERS
@@ -50,7 +50,7 @@ module Spree
 
         def request
           req = Net::HTTP::Post.new(uri_path, HEADERS)
-          req.body = body
+          req.body = webhook_payload_body
           @request ||= begin
             start_time = Process.clock_gettime(Process::CLOCK_MONOTONIC)
             request_result = http.request(req)

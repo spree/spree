@@ -2,9 +2,15 @@ require 'spec_helper'
 
 describe Spree::Webhooks::Subscribers::HandleRequest do
   describe '#call' do
-    subject { described_class.new(body: body, event_name: event_name, subscriber: subscriber) }
+    subject do
+      described_class.new(
+        event_name: event_name,
+        subscriber: subscriber,
+        webhook_payload_body: webhook_payload_body
+      )
+    end
 
-    let(:body) do
+    let(:webhook_payload_body) do
       Spree::Api::V2::Platform::AddressSerializer.new(resource).serializable_hash.merge(
         event_created_at: event.created_at,
         event_id: event.id,
@@ -26,7 +32,7 @@ describe Spree::Webhooks::Subscribers::HandleRequest do
           and_return(event)
         )
         expect(Spree::Webhooks::Subscribers::MakeRequest).to(
-          receive(:new).with(body: body, url: url).and_return(make_request_double)
+          receive(:new).with(webhook_payload_body: webhook_payload_body, url: url).and_return(make_request_double)
         )
         allow(make_request_double).to(
           receive_messages(
@@ -43,7 +49,7 @@ describe Spree::Webhooks::Subscribers::HandleRequest do
         allow(Rails.logger).to receive(:debug)
         subject.call
         message_fst = "[SPREE WEBHOOKS] 'order.canceled' sending to 'http://google.com/'"
-        message_snd = "[SPREE WEBHOOKS] 'order.canceled' body: #{JSON.parse(body)}"
+        message_snd = "[SPREE WEBHOOKS] 'order.canceled' webhook_payload_body: #{JSON.parse(webhook_payload_body)}"
         expect(Rails.logger).to have_received(:debug).with(message_fst)
         expect(Rails.logger).to have_received(:debug).with(message_snd)
       end
@@ -108,8 +114,8 @@ describe Spree::Webhooks::Subscribers::HandleRequest do
     end
 
     context 'full flow' do
-      let(:body) { Spree::Api::V2::Platform::OrderSerializer.new(order.reload).serializable_hash }
-      let(:body_with_event_metadata) { body.merge(event_created_at: event.created_at, event_id: event.id, event_type: event.name).to_json }
+      let(:webhook_payload_body) { Spree::Api::V2::Platform::OrderSerializer.new(order.reload).serializable_hash }
+      let(:body_with_event_metadata) { webhook_payload_body.merge(event_created_at: event.created_at, event_id: event.id, event_type: event.name).to_json }
       let(:event) { Spree::Webhooks::Event.find_by(name: event_name, subscriber_id: subscriber.id) }
       let(:event_name) { 'order.placed' }
       let(:order) { create(:order, email: 'test@example.com') }
@@ -119,23 +125,23 @@ describe Spree::Webhooks::Subscribers::HandleRequest do
         subscriber
       end
 
-      it 'queues a job without event data on the webhook body right after the event is executed', :job do
+      it 'queues a job without event data on the webhook_payload_body right after the event is executed', :job do
         with_webhooks_enabled do
           order.finalize!
           expect(Spree::Webhooks::Subscribers::MakeRequestJob).to(
             have_been_enqueued.
             on_queue('spree_webhooks').
-            with(body.to_json, event_name, subscriber).
+            with(webhook_payload_body.to_json, event_name, subscriber).
             once
           )
         end
       end
 
-      it 'adds the event data to the body after executing the job' do
+      it 'adds the event data to the webhook_payload_body after executing the job' do
         with_webhooks_enabled do
           allow(Spree::Webhooks::Subscribers::MakeRequest).to receive(:new).and_call_original
           order.finalize!
-          expect(Spree::Webhooks::Subscribers::MakeRequest).to have_received(:new).with(body: body_with_event_metadata, url: url)
+          expect(Spree::Webhooks::Subscribers::MakeRequest).to have_received(:new).with(webhook_payload_body: body_with_event_metadata, url: url)
         end
       end
     end

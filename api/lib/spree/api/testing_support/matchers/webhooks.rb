@@ -1,6 +1,6 @@
 # Passes if executing the code in the block there is a
 # `Spree::Webhooks::Subscribers::QueueRequests.call` method
-# call with the given `event` and `body` arguments just once.
+# call with the given `event` and `webhook_payload_body` arguments just once.
 #
 # @example
 #   expect { order.complete }.to emit_webhook_event('order.paid')
@@ -11,7 +11,7 @@
 #
 # It can also be negated, resulting in the expectation
 # waiting to not receive a `call` method call with the
-# given `event` and `body` (`once` isn't taken into consideration).
+# given `event` and `webhook_payload_body` (`once` isn't taken into consideration).
 #
 # @example
 #   expect { order.complete }.not_to emit_webhook_event('order.paid')
@@ -22,7 +22,7 @@
 #
 # == Notes
 #
-# The matcher relies on a `body` method previously defined which
+# The matcher relies on a `webhook_payload_body` method previously defined which
 # isn't added to the matcher definition, because it acts in a different
 # way depending on what's the resource being tested.
 #
@@ -36,25 +36,25 @@ RSpec::Matchers.define :emit_webhook_event do |event_to_emit|
     with_webhooks_enabled { Timecop.freeze { block.call } }
 
     expect(queue_requests).to(
-      have_received(:call).with(body: body.to_json, event_name: event_to_emit).once
+      have_received(:call).with(event_name: event_to_emit, webhook_payload_body: webhook_payload_body.to_json).once
     )
   end
 
-  def block_body_definition(obj_method)
+  def block_definition(obj_method)
     # positive look-behinds must have a fixed length, using a straightforward match instead
     obj_method.source.squish[/(expect *({|do) *)(.*?)( *(}|end).(not_)*to)/, 3]
   end
 
   failure_message do |obj_method|
-    block_body_def = block_body_definition(obj_method)
-    "Expected that executing `#{block_body_def}` emits the `#{event_to_emit}` Webhook event.\n" \
-      "Check that `#{block_body_def}` does implement `queue_webhooks_requests!` for " \
-      "`#{event_to_emit}` with the following body: \n\n#{body}."
+    block_def = block_definition(obj_method)
+    "Expected that executing `#{block_def}` emits the `#{event_to_emit}` Webhook event.\n" \
+      "Check that `#{block_def}` does implement `queue_webhooks_requests!` for " \
+      "`#{event_to_emit}` with the following webhook_payload_body: \n\n#{webhook_payload_body}."
   end
 
   failure_message_when_negated do |obj_method|
-    "Expected that executing `#{block_body_definition(obj_method)}` does not " \
-      "emit the `#{event_to_emit}` Webhook event with the following body: #{body}."
+    "Expected that executing `#{block_definition(obj_method)}` does not " \
+      "emit the `#{event_to_emit}` Webhook event with the following webhook_payload_body: #{webhook_payload_body}."
   end
 
   supports_block_expectations

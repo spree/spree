@@ -4,7 +4,7 @@ describe Spree::Api::Webhooks::ProductDecorator do
   let(:product) { create(:product) }
 
   context 'emitting product.discontinued' do
-    let(:body) { Spree::Api::V2::Platform::ProductSerializer.new(product).serializable_hash }
+    let(:webhook_payload_body) { Spree::Api::V2::Platform::ProductSerializer.new(product).serializable_hash }
     let(:event_name) { 'product.discontinued' }
 
     context 'when product discontinued_on changes' do
