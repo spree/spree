@@ -3,7 +3,7 @@ module Spree
     module Webhooks
       module VariantDecorator
         def self.prepended(base)
-          def base.custom_supported_events
+          def base.custom_webhook_events
             %w[variant.back_in_stock variant.backorderable variant.discontinued variant.out_of_stock]
           end
         end

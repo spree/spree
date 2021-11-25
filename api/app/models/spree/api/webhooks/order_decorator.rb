@@ -3,7 +3,7 @@ module Spree
     module Webhooks
       module OrderDecorator
         def self.prepended(base)
-          def base.custom_supported_events
+          def base.custom_webhook_events
             %w[order.canceled order.placed order.resumed order.shipped]
           end
         end

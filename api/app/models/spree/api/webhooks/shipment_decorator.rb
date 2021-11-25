@@ -3,7 +3,7 @@ module Spree
     module Webhooks
       module ShipmentDecorator
         def self.prepended(base)
-          def base.custom_supported_events
+          def base.custom_webhook_events
             %w[shipment.shipped]
           end
         end

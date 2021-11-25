@@ -21,7 +21,7 @@ module Spree
 
         def self.supported_webhook_events
           events = default_webhook_events
-          events += custom_supported_events if respond_to?(:custom_supported_events)
+          events += custom_webhook_events if respond_to?(:custom_webhook_events)
           events
         end
       end
