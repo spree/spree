@@ -1,14 +1,6 @@
 module Spree
   module Webhooks
     class Subscriber < Spree::Webhooks::Base
-      SUPPORTED_CUSTOM_EVENTS = {
-        order: %w[order.canceled order.paid order.placed order.resumed order.shipped],
-        payment: %w[payment.paid payment.voided],
-        product: %w[product.back_in_stock product.backorderable product.discontinued product.out_of_stock],
-        variant: %w[variant.back_in_stock variant.backorderable variant.discontinued variant.out_of_stock],
-        shipment: %w[shipment.shipped],
-      }
-
       has_many :events, inverse_of: :subscriber
 
       validates :url, 'spree/url': true, presence: true
@@ -34,24 +26,12 @@ module Spree
         )
       end
 
-      class << self
-        def supported_events
-          Spree::Base.descendants.
-            select { |model| model.included_modules.include? Spree::Webhooks::HasWebhooks }.
-            to_h do |model|
-            model_name = model.name.demodulize.underscore.to_sym
-            [model_name, events_list_for(model_name)]
-          end
-        end
-
-        def events_list_for(model)
-          result = default_events(model)
-          result += SUPPORTED_CUSTOM_EVENTS[model] if SUPPORTED_CUSTOM_EVENTS.include?(model)
-          result
-        end
-
-        def default_events(model)
-          %W[#{model}.create #{model}.update #{model}.delete]
+      def self.supported_events
+        Spree::Base.descendants.
+          select { |model| model.included_modules.include? Spree::Webhooks::HasWebhooks }.
+          to_h do |model|
+          model_name = model.name.demodulize.underscore.to_sym
+          [model_name, model.supported_webhook_events]
         end
       end
 

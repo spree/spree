@@ -13,6 +13,17 @@ module Spree
 
           Spree::Webhooks::Subscribers::QueueRequests.call(event: event, body: body)
         end
+
+        def self.default_webhook_events
+          model_name = name.demodulize.tableize.singularize
+          %W[#{model_name}.create #{model_name}.delete #{model_name}.update]
+        end
+
+        def self.supported_webhook_events
+          events = default_webhook_events
+          events += custom_supported_events if respond_to?(:custom_supported_events)
+          events
+        end
       end
 
       private

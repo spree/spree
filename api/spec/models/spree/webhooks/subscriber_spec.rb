@@ -101,7 +101,7 @@ describe Spree::Webhooks::Subscriber do
         include Spree::Webhooks::HasWebhooks
       end
 
-      expect(subject[:webhookable_dummy]).to eq(%w[webhookable_dummy.create webhookable_dummy.update webhookable_dummy.delete])
+      expect(subject[:webhookable_dummy]).to contain_exactly('webhookable_dummy.create', 'webhookable_dummy.update', 'webhookable_dummy.delete')
     end
   end
 end

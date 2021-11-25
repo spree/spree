@@ -2,6 +2,12 @@ module Spree
   module Api
     module Webhooks
       module OrderDecorator
+        def self.prepended(base)
+          def base.custom_supported_events
+            %w[order.canceled order.placed order.resumed order.shipped]
+          end
+        end
+
         def after_cancel
           super
           queue_webhooks_requests!('order.canceled')
