@@ -5,6 +5,7 @@ module Spree
         def self.prepended(base)
           base.around_save :queue_webhooks_requests_for_variant_out_of_stock!
           base.around_save :queue_webhooks_requests_for_variant_back_in_stock!
+          base.around_save :queue_webhooks_requests_for_product_out_of_stock!
           base.around_save :queue_webhooks_requests_for_product_back_in_stock!
         end
 
@@ -33,6 +34,14 @@ module Spree
           yield
           if product_was_out_of_stock && product.any_variant_in_stock_or_backorderable?
             product.queue_webhooks_requests!('product.back_in_stock')
+          end
+        end
+
+        def queue_webhooks_requests_for_product_out_of_stock!
+          product_was_in_stock = product.any_variant_in_stock_or_backorderable?
+          yield
+          if product_was_in_stock && !product.any_variant_in_stock_or_backorderable?
+            product.queue_webhooks_requests!('product.out_of_stock')
           end
         end
       end

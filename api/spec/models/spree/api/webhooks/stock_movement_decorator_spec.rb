@@ -5,62 +5,152 @@ describe Spree::Api::Webhooks::StockMovementDecorator do
   let(:stock_item) { create(:stock_item) }
   let(:stock_location) { variant.stock_locations.first }
 
-  describe 'emitting product.back_in_stock' do
+  describe 'emitting product events' do
     let!(:store) { create(:store) }
     let!(:product) { create(:product, stores: [store]) }
     let!(:variant) { create(:variant, product: product) }
     let!(:variant2) { create(:variant, product: product) }
     let(:body) { Spree::Api::V2::Platform::ProductSerializer.new(product).serializable_hash }
-    let(:params) { 'product.back_in_stock' }
 
-    before { Spree::StockItem.update_all(backorderable: false) }
+    describe 'emitting product.out_of_stock' do
+      let(:event_name) { 'product.out_of_stock' }
 
-    context 'when all product variants are out of stock' do
-      context 'when one of the variants is back in stock' do
+      before { Spree::StockItem.update_all(backorderable: false) }
+
+      context 'when all product variants are in stock' do
+        before do
+          product.variants.each do |variant|
+            variant.stock_items.each do |stock_item|
+              stock_item.set_count_on_hand(1)
+            end
+          end
+        end
+
+        context 'when one of the variants goes out of stock' do
+          subject do
+            stock_location.stock_movements.new.tap do |stock_movement|
+              stock_movement.quantity = -1
+              stock_movement.stock_item = stock_location.set_up_stock_item(variant)
+              stock_movement.save
+            end
+            product.reload
+          end
+
+          it { expect { subject }.not_to emit_webhook_event(event_name) }
+        end
+
+        context 'when all the variants go out of stock' do
+          subject do
+            stock_location.stock_movements.new.tap do |stock_movement|
+              stock_movement.quantity = -1
+              stock_movement.stock_item = stock_location.set_up_stock_item(product.variants[1])
+              stock_movement.save
+            end
+            product.reload
+          end
+
+          before do
+            # Set one of the two product variants as out of stock
+            stock_location.stock_movements.new.tap do |stock_movement|
+              stock_movement.quantity = -1
+              stock_movement.stock_item = stock_location.set_up_stock_item(product.variants[0])
+              stock_movement.save
+            end
+          end
+
+          it { expect { subject }.to emit_webhook_event(event_name) }
+        end
+      end
+
+      context 'when only one product variant is in stock' do
         subject do
           stock_location.stock_movements.new.tap do |stock_movement|
-            stock_movement.quantity = 1
-            stock_movement.stock_item = stock_location.set_up_stock_item(variant)
+            stock_movement.quantity = -1
+            stock_movement.stock_item = stock_location.set_up_stock_item(product.variants[0])
             stock_movement.save
           end
           product.reload
         end
 
-        it { expect { subject }.to emit_webhook_event(params) }
+        before { product.variants[0].stock_items[0].set_count_on_hand(1) }
+
+        it { expect { subject }.to emit_webhook_event(event_name) }
       end
 
-      context 'when none of the variants is back in stock' do
+      context 'when no product variant is in stock' do
         subject do
           stock_location.stock_movements.new.tap do |stock_movement|
             stock_movement.quantity = 0
-            stock_movement.stock_item = stock_location.set_up_stock_item(variant)
+            stock_movement.stock_item = stock_location.set_up_stock_item(product.variants[0])
             stock_movement.save
           end
           product.reload
+        end
+
+        before do
+          product.variants.each do |variant|
+            variant.stock_items.each do |stock_item|
+              stock_item.set_count_on_hand(0)
+            end
+          end
+        end
+
+        it { expect { subject }.not_to emit_webhook_event(event_name) }
+      end
+    end
+
+    describe 'emitting product.back_in_stock' do
+      let(:params) { 'product.back_in_stock' }
+
+      before { Spree::StockItem.update_all(backorderable: false) }
+
+      context 'when all product variants are out of stock' do
+        context 'when one of the variants is back in stock' do
+          subject do
+            stock_location.stock_movements.new.tap do |stock_movement|
+              stock_movement.quantity = 1
+              stock_movement.stock_item = stock_location.set_up_stock_item(variant)
+              stock_movement.save
+            end
+            product.reload
+          end
+
+          it { expect { subject }.to emit_webhook_event(params) }
+        end
+
+        context 'when none of the variants is back in stock' do
+          subject do
+            stock_location.stock_movements.new.tap do |stock_movement|
+              stock_movement.quantity = 0
+              stock_movement.stock_item = stock_location.set_up_stock_item(variant)
+              stock_movement.save
+            end
+            product.reload
+          end
+
+          it { expect { subject }.not_to emit_webhook_event(params) }
+        end
+      end
+
+      context 'when other variant is already in stock' do
+        subject do
+          stock_location.stock_movements.new.tap do |stock_movement|
+            stock_movement.quantity = 100
+            stock_movement.stock_item = stock_location.set_up_stock_item(variant)
+            stock_movement.save
+          end
+        end
+
+        before do
+          stock_location.stock_movements.new.tap do |stock_movement|
+            stock_movement.quantity = 1
+            stock_movement.stock_item = stock_location.set_up_stock_item(variant2)
+            stock_movement.save
+          end
         end
 
         it { expect { subject }.not_to emit_webhook_event(params) }
       end
-    end
-
-    context 'when other variant is already in stock' do
-      subject do
-        stock_location.stock_movements.new.tap do |stock_movement|
-          stock_movement.quantity = 100
-          stock_movement.stock_item = stock_location.set_up_stock_item(variant)
-          stock_movement.save
-        end
-      end
-
-      before do
-        stock_location.stock_movements.new.tap do |stock_movement|
-          stock_movement.quantity = 1
-          stock_movement.stock_item = stock_location.set_up_stock_item(variant2)
-          stock_movement.save
-        end
-      end
-
-      it { expect { subject }.not_to emit_webhook_event(params) }
     end
   end
 
