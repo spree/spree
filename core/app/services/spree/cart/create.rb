@@ -13,8 +13,8 @@ module Spree
           user: user,
           currency: currency || store.default_currency,
           token: Spree::GenerateToken.new.call(Spree::Order),
-          public_metadata: public_metadata,
-          private_metadata: private_metadata
+          public_metadata: public_metadata.to_h,
+          private_metadata: private_metadata.to_h
         }
 
         order = store.orders.create!(default_params.merge(order_params))
