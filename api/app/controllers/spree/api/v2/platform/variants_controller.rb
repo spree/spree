@@ -12,6 +12,10 @@ module Spree
           def spree_permitted_attributes
             super + [:option_value_ids, :price, :currency]
           end
+
+          def scope
+            super.eligible
+          end
         end
       end
     end
