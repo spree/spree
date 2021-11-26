@@ -37,10 +37,10 @@ module Spree
             result = add_item_service.call(
               order: spree_current_order,
               variant: @variant,
-              quantity: params[:quantity],
+              quantity: add_item_params[:quantity],
               public_metadata: metadata_params[:public_metadata],
               private_metadata: metadata_params[:private_metadata],
-              options: params[:options]
+              options: add_item_params[:options]
             )
 
             render_order(result)
@@ -217,7 +217,7 @@ module Spree
           end
 
           def load_variant
-            @variant = current_store.variants.find(params[:variant_id])
+            @variant = current_store.variants.find(add_item_params[:variant_id])
           end
 
           def render_error_item_quantity
@@ -237,6 +237,10 @@ module Spree
 
           def metadata_params
             params.permit(public_metadata: {}, private_metadata: {})
+          end
+
+          def add_item_params
+            params.permit(:quantity, :variant_id, :options)
           end
         end
       end
