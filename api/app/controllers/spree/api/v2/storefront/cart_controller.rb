@@ -240,7 +240,7 @@ module Spree
           end
 
           def add_item_params
-            params.permit(:quantity, :variant_id, :options)
+            params.permit(:quantity, :variant_id, options: {})
           end
         end
       end
