@@ -7,7 +7,7 @@ describe 'API V2 Platform Variants Spec' do
 
   let(:product) { create(:product, stores: [store]) }
   let!(:variants) { create_list(:variant, 5, product: product) }
-  
+
   describe 'variants#index' do
     context 'with no params' do
       before { get '/api/v2/platform/variants', headers: bearer_token }
@@ -15,7 +15,7 @@ describe 'API V2 Platform Variants Spec' do
       it_behaves_like 'returns 200 HTTP status'
 
       it 'returns all variants' do
-        expect(json_response['data'].count).to eq store.variants.count
+        expect(json_response['data'].count).to eq 5
         expect(json_response['data'].first).to have_type('variant')
       end
     end
@@ -28,11 +28,28 @@ describe 'API V2 Platform Variants Spec' do
       before { get '/api/v2/platform/variants', headers: bearer_token }
 
       it 'returns variants from this store only' do
-        expect(json_response['data'].count).to eq store.variants.count
+        expect(json_response['data'].count).to eq 5
         variant_ids = json_response['data'].pluck(:id)
 
+        expect(variant_ids).not_to include(variant_from_another_store.id.to_s)
+        expect(variant_ids).to match_array(store.variants.eligible.map(&:id).map(&:to_s))
         expect(variant_ids).not_to include(variant_from_another_store.id)
-        expect(variant_ids).to match_array(store.variants.ids.map(&:to_s))
+        expect(variant_ids).not_to include(product.master_id.to_s)
+      end
+    end
+
+    context 'product with no options' do
+      let!(:product_with_no_options) { create(:product, stores: [store]) }
+
+      before { get '/api/v2/platform/variants', headers: bearer_token }
+
+      it 'returns all variants and the master variant' do
+        expect(json_response['data'].count).to eq 6
+        variant_ids = json_response['data'].pluck(:id)
+
+        expect(variant_ids).to include(product_with_no_options.master_id.to_s)
+        expect(variant_ids).to match_array(store.variants.eligible.map(&:id).map(&:to_s))
+        expect(variant_ids).not_to include(product.master_id.to_s)
       end
     end
 
@@ -41,7 +58,7 @@ describe 'API V2 Platform Variants Spec' do
         let(:product_2) { create(:product, stores: [store], name: 'Vendo T-shirt') }
         let!(:variant) { create(:variant, product: product_2) }
 
-        before { get "/api/v2/platform/variants?filter[product_name_cont]=vendo&filter[is_master_eq]=false", headers: bearer_token }
+        before { get '/api/v2/platform/variants?filter[product_name_cont]=vendo&filter[is_master_eq]=false', headers: bearer_token }
 
         it 'returns variant with a specified name' do
           expect(json_response['data'].count).to eq 1
@@ -52,7 +69,7 @@ describe 'API V2 Platform Variants Spec' do
       xcontext 'by price' do
         let!(:variant) { create(:variant, price: 100) }
 
-        before { get "/api/v2/platform/variants?filter[product_price_between]=100,200", headers: bearer_token }
+        before { get '/api/v2/platform/variants?filter[product_price_between]=100,200', headers: bearer_token }
 
         it 'returns variants with price greater than or equal to the given price' do
           expect(json_response['data'].count).to eq 1
@@ -69,8 +86,8 @@ describe 'API V2 Platform Variants Spec' do
           it_behaves_like 'returns 200 HTTP status'
 
           it 'returns variants sorted by updated_at' do
-            expect(json_response['data'].count).to      eq store.variants.count
-            expect(json_response['data'].pluck(:id)).to eq store.variants.order(:updated_at).map(&:id).map(&:to_s)
+            expect(json_response['data'].count).to      eq 5
+            expect(json_response['data'].pluck(:id)).to match_array(store.variants.eligible.map(&:id).map(&:to_s))
           end
         end
 
@@ -80,8 +97,8 @@ describe 'API V2 Platform Variants Spec' do
           it_behaves_like 'returns 200 HTTP status'
 
           it 'returns variants sorted by updated_at with descending order' do
-            expect(json_response['data'].count).to      eq store.variants.count
-            expect(json_response['data'].pluck(:id)).to eq store.variants.order(updated_at: :desc).map(&:id).map(&:to_s)
+            expect(json_response['data'].count).to      eq 5
+            expect(json_response['data'].pluck(:id)).to match_array(store.variants.eligible.map(&:id).map(&:to_s))
           end
         end
       end
@@ -93,8 +110,8 @@ describe 'API V2 Platform Variants Spec' do
           it_behaves_like 'returns 200 HTTP status'
 
           it 'returns variants sorted by created_at' do
-            expect(json_response['data'].count).to      eq store.variants.count
-            expect(json_response['data'].pluck(:id)).to eq store.variants.order(:created_at).map(&:id).map(&:to_s)
+            expect(json_response['data'].count).to      eq 5
+            expect(json_response['data'].pluck(:id)).to match_array(store.variants.eligible.map(&:id).map(&:to_s))
           end
         end
 
@@ -104,8 +121,8 @@ describe 'API V2 Platform Variants Spec' do
           it_behaves_like 'returns 200 HTTP status'
 
           it 'returns variants sorted by created_at with descending order' do
-            expect(json_response['data'].count).to      eq store.variants.count
-            expect(json_response['data'].pluck(:id)).to eq store.variants.order(created_at: :desc).map(&:id).map(&:to_s)
+            expect(json_response['data'].count).to      eq 5
+            expect(json_response['data'].pluck(:id)).to match_array(store.variants.eligible.map(&:id).map(&:to_s))
           end
         end
       end
@@ -124,7 +141,7 @@ describe 'API V2 Platform Variants Spec' do
 
           it 'returns proper meta data' do
             expect(json_response['meta']['count']).to       eq 2
-            expect(json_response['meta']['total_count']).to eq store.variants.count
+            expect(json_response['meta']['total_count']).to eq 5
           end
 
           it 'returns proper links data' do
@@ -141,12 +158,12 @@ describe 'API V2 Platform Variants Spec' do
         it_behaves_like 'returns 200 HTTP status'
 
         it 'returns specified amount variants' do
-          expect(json_response['data'].count).to eq store.variants.count
+          expect(json_response['data'].count).to eq 5
         end
 
         it 'returns proper meta data' do
           expect(json_response['meta']['count']).to       eq json_response['data'].count
-          expect(json_response['meta']['total_count']).to eq store.variants.count
+          expect(json_response['meta']['total_count']).to eq 5
         end
 
         it 'returns proper links data' do
