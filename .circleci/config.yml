@@ -206,6 +206,11 @@ jobs:
             - spree-bundle-v10-ruby-3-0-{{ .Branch }}
             - spree-bundle-v10-ruby-3-0
       - run:
+          name: Ensure Bundle Install
+          command: |
+            bundle install
+            ./bin/build-ci.rb install
+      - run:
           name: Run rspec in parallel
           command: ./bin/build-ci.rb test
       - store_artifacts:
