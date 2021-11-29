@@ -20,8 +20,8 @@ module Spree
               user: spree_current_user,
               store: current_store,
               currency: current_currency,
-              public_metadata: metadata_params[:public_metadata],
-              private_metadata: metadata_params[:private_metadata],
+              public_metadata: add_item_params[:public_metadata],
+              private_metadata: add_item_params[:private_metadata],
             }
 
             order   = spree_current_order if spree_current_order.present?
@@ -38,8 +38,8 @@ module Spree
               order: spree_current_order,
               variant: @variant,
               quantity: add_item_params[:quantity],
-              public_metadata: metadata_params[:public_metadata],
-              private_metadata: metadata_params[:private_metadata],
+              public_metadata: add_item_params[:public_metadata],
+              private_metadata: add_item_params[:private_metadata],
               options: add_item_params[:options]
             )
 
@@ -235,12 +235,8 @@ module Spree
             ).serializable_hash
           end
 
-          def metadata_params
-            params.permit(public_metadata: {}, private_metadata: {})
-          end
-
           def add_item_params
-            params.permit(:quantity, :variant_id, options: {})
+            params.permit(:quantity, :variant_id, public_metadata: {}, private_metadata: {}, options: {})
           end
         end
       end
