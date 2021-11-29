@@ -28,6 +28,11 @@ run_tests: &run_tests
           - spree-bundle-v10-ruby-2-7-{{ .Branch }}
           - spree-bundle-v10-ruby-2-7
     - run:
+        name: Ensure Bundle Install
+        command: |
+          bundle install
+          ./bin/build-ci.rb install
+    - run:
         name: Run rspec in parallel
         command: ./bin/build-ci.rb test
     - store_artifacts:
@@ -48,6 +53,11 @@ run_tests_3_0: &run_tests_3_0
         keys:
           - spree-bundle-v10-ruby-3-0-{{ .Branch }}
           - spree-bundle-v10-ruby-3-0
+    - run:
+        name: Ensure Bundle Install
+        command: |
+          bundle install
+          ./bin/build-ci.rb install
     - run:
         name: Run rspec in parallel
         command: ./bin/build-ci.rb test
@@ -125,56 +135,12 @@ jobs:
     environment:
       <<: *postgres_environment
       RAILS_VERSION: '~> 6.0.0'
-    steps:
-    - checkout
-    - restore_cache:
-        keys:
-          - spree-bundle-v10-ruby-2-7-{{ .Branch }}
-          - spree-bundle-v10-ruby-2-7
-    - run:
-        name: Ensure Bundle Install
-        command: |
-          bundle install
-          ./bin/build-ci.rb install
-    - run:
-        name: Run rspec in parallel
-        command: ./bin/build-ci.rb test
-    - store_artifacts:
-        path: /tmp/test-artifacts
-        destination: test-artifacts
-    - store_artifacts:
-        path: /tmp/test-results
-        destination: raw-test-output
-    - store_test_results:
-        path: /tmp/test-results
 
-  tests_postgres_rails_5_2:
+  tests_postgres_rails_6_1:
     <<: *tests_postgres
     environment:
       <<: *postgres_environment
-      RAILS_VERSION: '~> 5.2.0'
-    steps:
-    - checkout
-    - restore_cache:
-        keys:
-          - spree-bundle-v10-ruby-2-7-{{ .Branch }}
-          - spree-bundle-v10-ruby-2-7
-    - run:
-        name: Ensure Bundle Install
-        command: |
-          bundle install
-          ./bin/build-ci.rb install
-    - run:
-        name: Run rspec in parallel
-        command: ./bin/build-ci.rb test
-    - store_artifacts:
-        path: /tmp/test-artifacts
-        destination: test-artifacts
-    - store_artifacts:
-        path: /tmp/test-results
-        destination: raw-test-output
-    - store_test_results:
-        path: /tmp/test-results
+      RAILS_VERSION: '~> 6.1.0'
 
   tests_mysql: &tests_mysql
     <<: *run_tests
@@ -271,7 +237,7 @@ workflows:
       - tests_postgres_rails_6_0:
           requires:
             - bundle
-      - tests_postgres_rails_5_2:
+      - tests_postgres_rails_6_1:
           requires:
             - bundle
       - tests_mysql_ruby_3_0:
