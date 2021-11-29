@@ -111,6 +111,15 @@ describe Spree::Webhooks::HasWebhooks do
           end.to emit_webhook_event(event_name)
         end
       end
+
+      context 'on touch events from callbacks' do
+        let(:cms_page) { create(:cms_homepage, store: store, locale: 'en') }
+        let(:body) { Spree::Api::V2::Platform::StoreSerializer.new(store).serializable_hash }
+
+        it 'does not emit the touched model\'s update event' do
+          expect { cms_page.update(title: 'Homepage #1') }.not_to emit_webhook_event('store.update')
+        end
+      end
     end
   end
 
