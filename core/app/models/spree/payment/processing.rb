@@ -152,6 +152,7 @@ module Spree
       def protect_from_connection_error
         yield
       rescue ActiveMerchant::ConnectionError => e
+        failure!
         gateway_error(e)
       end
 
