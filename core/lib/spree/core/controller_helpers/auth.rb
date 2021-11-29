@@ -7,7 +7,9 @@ module Spree
 
         included do
           before_action :set_token
-          helper_method :try_spree_current_user
+          if defined?(helper_method)
+            helper_method :try_spree_current_user
+          end
 
           rescue_from CanCan::AccessDenied do |_exception|
             redirect_unauthorized_access

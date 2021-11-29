@@ -7,12 +7,14 @@ module Spree
         included do
           before_action :set_locale
 
-          helper_method :supported_locales
-          helper_method :supported_locales_for_all_stores
-          helper_method :current_locale
-          helper_method :supported_locale?
-          helper_method :available_locales
-          helper_method :locale_param
+          if defined?(helper_method)
+            helper_method :supported_locales
+            helper_method :supported_locales_for_all_stores
+            helper_method :current_locale
+            helper_method :supported_locale?
+            helper_method :available_locales
+            helper_method :locale_param
+          end
         end
 
         def set_locale

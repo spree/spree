@@ -5,11 +5,13 @@ module Spree
         extend ActiveSupport::Concern
 
         included do
-          helper_method :supported_currencies
-          helper_method :supported_currencies_for_all_stores
-          helper_method :current_currency
-          helper_method :supported_currency?
-          helper_method :currency_param
+          if defined?(helper_method)
+            helper_method :supported_currencies
+            helper_method :supported_currencies_for_all_stores
+            helper_method :current_currency
+            helper_method :supported_currency?
+            helper_method :currency_param
+          end
         end
 
         def current_currency
