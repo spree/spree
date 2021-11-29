@@ -3,7 +3,7 @@ plugins:
   brakeman:
     enabled: true
     config:
-      force_scan: true
+      file: .brakeman.yml
   rubocop:
     enabled: true
     checks:
