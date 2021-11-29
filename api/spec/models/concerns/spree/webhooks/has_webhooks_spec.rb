@@ -113,4 +113,25 @@ describe Spree::Webhooks::HasWebhooks do
       end
     end
   end
+
+  describe '.default_webhook_events' do
+    it 'return the default events' do
+      expect(Spree::Order.default_webhook_events).to eq(%w[order.create order.delete order.update])
+    end
+  end
+
+  describe '.supported_webhook_events' do
+    context 'when there are custom supported events' do
+      it 'returns the default and custom events' do
+        expected_webhook_events = %w[order.create order.delete order.update order.canceled order.placed order.resumed order.shipped]
+        expect(Spree::Order.supported_webhook_events).to contain_exactly(*expected_webhook_events)
+      end
+    end
+
+    context 'when there are no custom supported events' do
+      it 'return the default events' do
+        expect(Spree::Zone.supported_webhook_events).to eq(Spree::Zone.default_webhook_events)
+      end
+    end
+  end
 end

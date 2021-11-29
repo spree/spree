@@ -65,4 +65,16 @@ describe Spree::Webhooks::Subscriber do
       it { expect(subject).to be_empty }
     end
   end
+
+  describe '.supported_events' do
+    subject { described_class.supported_events }
+
+    it 'includes the webhookable model in supported events list' do
+      class WebhookableDummy < Spree::Base
+        include Spree::Webhooks::HasWebhooks
+      end
+
+      expect(subject[:webhookable_dummy]).to contain_exactly('webhookable_dummy.create', 'webhookable_dummy.update', 'webhookable_dummy.delete')
+    end
+  end
 end
