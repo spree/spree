@@ -30,7 +30,7 @@ Gem::Specification.new do |s|
     actionpack actionview activejob activemodel activerecord
     activestorage activesupport railties
   ].each do |rails_gem|
-    s.add_dependency rails_gem, '>= 5.2'
+    s.add_dependency rails_gem, '>= 6.0'
   end
 
   s.add_dependency 'activemerchant', '~> 1.67'
