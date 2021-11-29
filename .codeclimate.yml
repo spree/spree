@@ -3,10 +3,7 @@ plugins:
   brakeman:
     enabled: true
     config:
-      app_path:
-        - "api/"
-        - "core/"
-        - "emails/"
+      force_scan: true
       skip_files: "api/app/controllers/spree/api/v1"
   rubocop:
     enabled: true
