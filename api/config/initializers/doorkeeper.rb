@@ -2,7 +2,8 @@ Doorkeeper.configure do
   orm :active_record
   use_refresh_token
   api_only
-  base_controller 'ActionController::API'
+  base_controller 'Spree::Api::V2::BaseController'
+  base_metal_controller 'Spree::Api::V2::BaseController'
 
   # FIXME: we should only skip this for Storefront API until v5
   # we should not skip this for Platform API
