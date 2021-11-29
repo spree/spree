@@ -20,6 +20,9 @@
 # a.preferred_color
 #
 #
+
+require 'spree/core/preferences/preferable'
+
 module Spree::Preferences
   class Configuration
     include Spree::Preferences::Preferable
