@@ -5,9 +5,11 @@ module Spree
         extend ActiveSupport::Concern
 
         included do
-          helper_method :current_store
-          helper_method :current_price_options
-          helper_method :available_menus
+          if defined?(helper_method)
+            helper_method :current_store
+            helper_method :current_price_options
+            helper_method :available_menus
+          end
         end
 
         def current_store
