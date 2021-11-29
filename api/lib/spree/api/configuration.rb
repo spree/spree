@@ -1,7 +1,6 @@
 module Spree
   module Api
     class Configuration < Preferences::Configuration
-      preference :requires_authentication, :boolean, default: true
       preference :api_v2_serializers_cache_ttl, :integer, default: 3600 # 1 hour in seconds
       preference :api_v2_collection_cache_ttl, :integer, default: 3600 # 1 hour in seconds
       preference :api_v2_collection_cache_namespace, :string, default: 'api_v2_collection_cache'

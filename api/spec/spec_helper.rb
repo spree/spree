@@ -42,9 +42,7 @@ require 'spree/testing_support/rspec_retry_config'
 
 require 'spree/api/testing_support/caching'
 require 'spree/api/testing_support/jobs'
-require 'spree/api/testing_support/helpers'
 require 'spree/api/testing_support/serializers'
-require 'spree/api/testing_support/setup'
 require 'spree/api/testing_support/spree_webhooks'
 require 'spree/api/testing_support/matchers/webhooks'
 require 'spree/api/testing_support/v2/base'
@@ -52,6 +50,15 @@ require 'spree/api/testing_support/v2/current_order'
 require 'spree/api/testing_support/v2/platform_contexts'
 require 'spree/api/testing_support/v2/serializers_params'
 require 'spree/api/testing_support/factories'
+
+def json_response
+  case body = JSON.parse(response.body)
+  when Hash
+    body.with_indifferent_access
+  when Array
+    body
+  end
+end
 
 RSpec.configure do |config|
   config.backtrace_exclusion_patterns = [/gems\/activesupport/, /gems\/actionpack/, /gems\/rspec/]
@@ -64,9 +71,6 @@ RSpec.configure do |config|
 
   config.include JSONAPI::RSpec
   config.include FactoryBot::Syntax::Methods
-  config.include Spree::Api::TestingSupport::Helpers, type: :controller
-  config.include Spree::Api::TestingSupport::Helpers, type: :request
-  config.extend Spree::Api::TestingSupport::Setup, type: :controller
   config.include Spree::TestingSupport::Preferences
   config.include Spree::TestingSupport::ImageHelpers
 
@@ -75,8 +79,6 @@ RSpec.configure do |config|
 
     Rails.cache.clear
     reset_spree_preferences
-
-    Spree::Api::Config[:requires_authentication] = true
 
     country = create(:country, name: 'United States of America', iso_name: 'UNITED STATES', iso: 'US', iso3: 'USA', states_required: true)
     create(:store, default: true, default_country: country, default_currency: 'USD')
