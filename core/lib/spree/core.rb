@@ -105,9 +105,6 @@ require 'spree/permitted_attributes'
 require 'spree/service_module'
 require 'spree/database_type_utilities'
 
-require 'spree/core/dependencies_helper'
-require 'spree/core/app_dependencies'
-
 require 'spree/core/importer'
 require 'spree/core/query_filters'
 require 'spree/core/product_duplicator'
@@ -119,3 +116,6 @@ require 'spree/core/controller_helpers/store'
 require 'spree/core/controller_helpers/strong_parameters'
 require 'spree/core/controller_helpers/locale'
 require 'spree/core/controller_helpers/currency'
+
+require 'spree/core/preferences/store'
+require 'spree/core/preferences/scoped_store'

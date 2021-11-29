@@ -31,6 +31,9 @@
 #
 #   # Save the changes. All handled by activerecord
 #   s.save!
+
+require 'spree/core/preferences/preferable_class_methods'
+
 module Spree::Preferences::Preferable
   extend ActiveSupport::Concern
 

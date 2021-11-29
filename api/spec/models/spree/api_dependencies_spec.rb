@@ -9,8 +9,8 @@ end
 class MyCustomCreateService
 end
 
-describe Spree::ApiDependencies, type: :model do
-  let (:deps) { Spree::ApiDependencies.new }
+describe Spree::Api::ApiDependencies, type: :model do
+  let (:deps) { described_class.new }
 
   it 'returns the default value' do
     expect(deps.storefront_cart_serializer).to eq('Spree::V2::Storefront::CartSerializer')
