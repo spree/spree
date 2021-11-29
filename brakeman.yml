@@ -1,0 +1,2 @@
+:force_scan: true
+:output_format: :to_codeclimate
