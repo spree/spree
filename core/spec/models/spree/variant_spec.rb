@@ -129,6 +129,21 @@ describe Spree::Variant, type: :model do
           expect(Spree::Variant.eligible).not_to include(product.master)
         end
       end
+
+      context 'when product had variant(s) but variant(s) were deleted' do
+        let!(:product_had_variant) { create(:product, stores: [store]) }
+        let!(:variant) { create(:variant, product: product_had_variant) }
+
+        before do
+          variant.destroy!
+          product_had_variant.reload
+        end
+
+        it 'reverts back to displaying master variant' do
+          expect(Spree::Variant.eligible).not_to include(variant)
+          expect(Spree::Variant.eligible).to include(product_had_variant.master)
+        end
+      end
     end
 
     describe '.not_discontinued' do

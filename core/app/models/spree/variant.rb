@@ -73,10 +73,10 @@ module Spree
       where(is_master: false).or(
         where(
           <<-SQL
-            #{Variant.quoted_table_name}.id IN (
-              SELECT MIN(#{Variant.quoted_table_name}.id) FROM #{Variant.quoted_table_name}
-              GROUP BY #{Variant.quoted_table_name}.product_id
-              HAVING COUNT(*) = 1
+            #{Variant.quoted_table_name}.created_at IN (
+              SELECT MIN(#{Variant.quoted_table_name}.created_at) FROM #{Variant.quoted_table_name}
+              WHERE #{Variant.quoted_table_name}.deleted_at IS NULL
+              GROUP BY #{Variant.quoted_table_name}.product_id HAVING COUNT(*) = 1
             )
           SQL
         )
