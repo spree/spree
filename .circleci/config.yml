@@ -108,7 +108,7 @@ jobs:
       - run:
           name: Ensure Brakeman Installed
           command: |
-            gem install brakeman -v 4.3.1
+            gem install brakeman -v 4.3.1 && bundle install
             ./bin/build-ci.rb install
       - run:
           name: Brakeman Spree API
