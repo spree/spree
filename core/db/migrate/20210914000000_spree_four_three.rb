@@ -256,7 +256,7 @@ class SpreeFourThree < ActiveRecord::Migration[5.2]
       t.string "destination"
       t.boolean "new_window", default: false
       t.string "item_type"
-      t.string "linked_resource_type", default: "URL"
+      t.string "linked_resource_type", default: "Spree::Linkable::Uri"
       t.bigint "linked_resource_id"
       t.string "code"
       t.bigint "parent_id"

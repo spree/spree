@@ -77,7 +77,7 @@ describe Spree::MenuItem, type: :model do
   describe '#reset_link_attributes from URL to Home Page' do
     let(:i_b) do
       create(:menu_item, name: 'Home', item_type: 'Link', menu: menu,
-                         parent: menu.root, linked_resource_type: 'URL', destination: 'http://somewhere.com', new_window: true, linked_resource_id: 5)
+                         parent: menu.root, linked_resource_type: 'Spree::Linkable::Uri', destination: 'http://somewhere.com', new_window: true, linked_resource_id: 5)
     end
 
     before do
@@ -92,7 +92,7 @@ describe Spree::MenuItem, type: :model do
   describe '#reset_link_attributes from Link to Container' do
     let(:i_c) do
       create(:menu_item, name: 'Home', item_type: 'Link', menu: menu,
-                         parent: menu.root, linked_resource_type: 'URL', destination: 'http://somewhere.com', new_window: true, linked_resource_id: 5)
+                         parent: menu.root, linked_resource_type: 'Spree::Linkable::Uri', destination: 'http://somewhere.com', new_window: true, linked_resource_id: 5)
     end
 
     before do
@@ -110,8 +110,8 @@ describe Spree::MenuItem, type: :model do
     let(:cms_page) { create(:cms_standard_page) }
     let(:cms_page_with_no_slug) { create(:cms_homepage) }
 
-    let(:item_url) { create(:menu_item, name: 'URL To Random Site', item_type: 'Link', menu: menu, linked_resource_type: 'URL', destination: 'https://some-other-website.com') }
-    let(:item_empty_url) { create(:menu_item, name: 'URL To Random Site', item_type: 'Link', menu: menu, linked_resource_type: 'URL', destination: nil) }
+    let(:item_url) { create(:menu_item, name: 'URL To Random Site', item_type: 'Link', menu: menu, linked_resource_type: 'Spree::Linkable::Uri', destination: 'https://some-other-website.com') }
+    let(:item_empty_url) { create(:menu_item, name: 'URL To Random Site', item_type: 'Link', menu: menu, linked_resource_type: 'Spree::Linkable::Uri', destination: nil) }
     let(:item_home) { create(:menu_item, name: 'Home', item_type: 'Link', menu: menu, linked_resource_type: 'Home Page') }
     let(:item_product) { create(:menu_item, name: product.name, item_type: 'Link', menu: menu, linked_resource_type: 'Spree::Product') }
     let(:item_taxon) { create(:menu_item, name: taxon.name, item_type: 'Link', menu: menu, linked_resource_type: 'Spree::Taxon') }
@@ -170,7 +170,7 @@ describe Spree::MenuItem, type: :model do
   end
 
   describe '#paremeterize_code' do
-    let(:item) { create(:menu_item, name: 'URL', item_type: 'Link', menu: menu, parent: menu.root, linked_resource_type: 'URL', code: 'My Fantastic Code') }
+    let(:item) { create(:menu_item, name: 'URL', item_type: 'Link', menu: menu, parent: menu.root, linked_resource_type: 'Spree::Linkable::Uri', code: 'My Fantastic Code') }
 
     it 'paramatizes a code when one is given' do
       expect(item.code).to eql 'my-fantastic-code'
@@ -178,7 +178,7 @@ describe Spree::MenuItem, type: :model do
   end
 
   describe '#ensure_item_belongs_to_root' do
-    let(:item_x) { create(:menu_item, name: 'URL', item_type: 'Link', menu: menu, linked_resource_type: 'URL', code: 'My Fantastic Code') }
+    let(:item_x) { create(:menu_item, name: 'URL', item_type: 'Link', menu: menu, linked_resource_type: 'Spree::Linkable::Uri', code: 'My Fantastic Code') }
 
     it 'Sets new items parent_id to root.id' do
       expect(item_x.parent_id).to eql menu.root.id

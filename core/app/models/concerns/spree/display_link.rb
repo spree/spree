@@ -26,9 +26,9 @@ module Spree
         else
           "/#{Spree::Config[:storefront_pages_path]}/#{linked_resource.slug}"
         end
-      when 'Home Page'
+      when 'Spree::Linkable::HomePage'
         '/'
-      when 'URL'
+      when 'Spree::Linkable::Uri'
         destination
       end
     end
