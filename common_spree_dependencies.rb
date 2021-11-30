@@ -52,7 +52,7 @@ end
 
 group :test, :development do
   gem 'awesome_print'
-  gem 'brakeman', '4.3.1'
+  gem 'brakeman'
   gem 'gem-release'
   gem 'i18n-tasks'
   gem 'redis'
