@@ -16,7 +16,7 @@ module Spree
 
     ITEM_TYPE = %w[Link Container]
 
-    LINKED_RESOURCE_TYPE = ['Spree::Linkable::Uri','Spree::Product', 'Spree::Taxon', 'Spree::CmsPage']
+    LINKED_RESOURCE_TYPE = ['Spree::Linkable::Uri', 'Spree::Linkable::HomePage', 'Spree::Product', 'Spree::Taxon', 'Spree::CmsPage']
 
     validates :name, :menu, presence: true
     validates :item_type, inclusion: { in: ITEM_TYPE }
