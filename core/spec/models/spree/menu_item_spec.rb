@@ -81,7 +81,7 @@ describe Spree::MenuItem, type: :model do
     end
 
     before do
-      i_b.update!(linked_resource_type: 'Home Page')
+      i_b.update!(linked_resource_type: 'Spree::Linkable::HomePage')
     end
 
     it 'sets destination to /' do
@@ -112,7 +112,7 @@ describe Spree::MenuItem, type: :model do
 
     let(:item_url) { create(:menu_item, name: 'URL To Random Site', item_type: 'Link', menu: menu, linked_resource_type: 'Spree::Linkable::Uri', destination: 'https://some-other-website.com') }
     let(:item_empty_url) { create(:menu_item, name: 'URL To Random Site', item_type: 'Link', menu: menu, linked_resource_type: 'Spree::Linkable::Uri', destination: nil) }
-    let(:item_home) { create(:menu_item, name: 'Home', item_type: 'Link', menu: menu, linked_resource_type: 'Home Page') }
+    let(:item_home) { create(:menu_item, name: 'Home', item_type: 'Link', menu: menu, linked_resource_type: 'Spree::Linkable::HomePage') }
     let(:item_product) { create(:menu_item, name: product.name, item_type: 'Link', menu: menu, linked_resource_type: 'Spree::Product') }
     let(:item_taxon) { create(:menu_item, name: taxon.name, item_type: 'Link', menu: menu, linked_resource_type: 'Spree::Taxon') }
     let(:item_cms_page) { create(:menu_item, name: cms_page.title, item_type: 'Link', menu: menu, linked_resource_type: 'Spree::CmsPage') }

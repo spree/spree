@@ -1,3 +1,3 @@
 module Spree::Linkable::Uri
-  # Placeholder
+  # Placeholder for polymorphic lookup
 end
