@@ -27,7 +27,7 @@ module Spree
           next if name.to_s.include?('master_price')
 
           parts = name.to_s.match(/(.*)_by_(.*)/)
-          scope(name.to_s, -> { order(Arel.sql("#{Product.quoted_table_name}.#{parts[2]} #{parts[1] == 'ascend' ? 'ASC' : 'DESC'}")) })
+          scope(name.to_s, -> { order(Arel.sql(sanitize_sql("#{Product.quoted_table_name}.#{parts[2]} #{parts[1] == 'ascend' ? 'ASC' : 'DESC'}"))) })
         end
       end
 
@@ -60,11 +60,11 @@ module Spree
       end
 
       add_search_scope :master_price_lte do |price|
-        where("#{price_table_name}.amount <= ?", price)
+        where("?.amount <= ?", Price.table_name, price)
       end
 
       add_search_scope :master_price_gte do |price|
-        where("#{price_table_name}.amount >= ?", price)
+        where("?.amount >= ?", Price.table_name, price)
       end
 
       add_search_scope :in_stock do
@@ -162,7 +162,7 @@ module Spree
                          else
                            if OptionType.column_for_attribute('id').type == :uuid
                              OptionType.where(id: option).or(OptionType.where(name: option))&.first&.id
-                           else 
+                           else
                              OptionType.where(name: option)&.first&.id
                            end
                          end
