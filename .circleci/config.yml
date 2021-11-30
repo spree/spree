@@ -97,6 +97,23 @@ jobs:
           paths:
             - ~/spree/vendor/bundle
 
+  brakeman:
+    <<: *defaults_3_0
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - spree-brakeman-{{ .Branch }}
+            - spree-brakeman
+      - run:
+          name: Brakeman Spree API
+          command: |
+            bundle exec brakeman -p api/ --skip-files app/controllers/spree/api/v1/
+      - save_cache:
+          key: spree-brakeman-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+          paths:
+            - ~/spree/vendor/bundle
+
   tests_postgres: &tests_postgres
     <<: *run_tests
     environment: &postgres_environment
