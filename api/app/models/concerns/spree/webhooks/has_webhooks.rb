@@ -9,7 +9,8 @@ module Spree
         after_update_commit(proc { queue_webhooks_requests!(inferred_event_name(:update)) })
 
         def queue_webhooks_requests!(event_name)
-          return if disable_spree_webhooks? || updating_only_timestamps? || body.blank?
+          return if disable_spree_webhooks? || body.blank?
+          return if default_event?(event_name) && updating_only_timestamps?
 
           Spree::Webhooks::Subscribers::QueueRequests.call(body: body, event_name: event_name)
         end
@@ -42,7 +43,11 @@ module Spree
       end
 
       def updating_only_timestamps?
-        saved_changes && (saved_changes.keys - %w[created_at updated_at]).empty?
+        (saved_changes.keys - %w[created_at updated_at deleted_at]).empty?
+      end
+
+      def default_event?(event_name)
+        self.class.default_webhook_events.include?(event_name)
       end
 
       def disable_spree_webhooks?
