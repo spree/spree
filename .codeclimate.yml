@@ -1,9 +1,5 @@
 version: "2"
 plugins:
-  brakeman:
-    enabled: true
-    config:
-      force_scan: true
   rubocop:
     enabled: true
     checks:
