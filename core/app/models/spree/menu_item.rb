@@ -5,7 +5,6 @@ module Spree
     acts_as_nested_set dependent: :destroy
 
     belongs_to :menu, touch: true
-    belongs_to :linked_resource, polymorphic: true, optional: true
 
     before_create :ensure_item_belongs_to_root
     before_update :reset_link_attributes

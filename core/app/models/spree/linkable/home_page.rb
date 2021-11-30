@@ -1,3 +1,3 @@
-module Spree::Linkable::Spree::Linkable::HomePage
+module Spree::Linkable::HomePage
   # Placeholder for polymorphic lookup
 end
