@@ -279,6 +279,9 @@ workflows:
     jobs:
       - bundle
       - bundle_ruby_3_0
+      - brakeman
+        requires:
+          - bundle_ruby_3_0
       - tests_postgres:
           requires:
             - bundle
