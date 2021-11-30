@@ -111,9 +111,13 @@ jobs:
             bundle install
             ./bin/build-ci.rb install
       - run:
-          name: Brakeman Spree API
+          name: Run Brakeman spree/api
           command: |
             bundle exec brakeman -p api/ --skip-files app/controllers/spree/api/v1/ --no-exit-on-warn --no-exit-on-error
+      - run:
+          name: Run Brakeman spree/core
+          command: |
+            bundle exec brakeman -p core/ --no-exit-on-warn --no-exit-on-error
       - save_cache:
           key: spree-brakeman-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
           paths:
