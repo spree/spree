@@ -34,6 +34,14 @@ describe 'Platform API v2 Resources spec', type: :request do
 
       it_behaves_like 'returns 401 HTTP status'
     end
+
+    context 'with token not associated with an client application' do
+      let(:bearer_token) { { 'Authorization' => valid_user_authorization_without_app } }
+
+      before { execute }
+
+      it_behaves_like 'returns 401 HTTP status'
+    end
   end
 
   shared_examples 'returns error when record does not exist' do
