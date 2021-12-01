@@ -23,8 +23,6 @@ module Spree
       end
     end
 
-    belongs_to :linked_resource, polymorphic: true
-
     default_scope { order(position: :asc) }
 
     validates :name, :cms_page, :type, presence: true
