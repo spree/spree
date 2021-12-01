@@ -10,7 +10,7 @@ module Spree
 
         def queue_webhooks_requests!(event_name)
           return if disable_spree_webhooks? || body.blank?
-          return if default_event?(event_name) && updating_only_timestamps?
+          return if update_event?(event_name) && updating_only_timestamps?
 
           Spree::Webhooks::Subscribers::QueueRequests.call(body: body, event_name: event_name)
         end
@@ -46,8 +46,8 @@ module Spree
         (saved_changes.keys - %w[created_at updated_at deleted_at]).empty?
       end
 
-      def default_event?(event_name)
-        self.class.default_webhook_events.include?(event_name)
+      def update_event?(event_name)
+        event_name.end_with?('.update')
       end
 
       def disable_spree_webhooks?
