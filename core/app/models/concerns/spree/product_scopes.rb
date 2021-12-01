@@ -60,11 +60,11 @@ module Spree
       end
 
       add_search_scope :master_price_lte do |price|
-        where("?.amount <= ?", Price.table_name, price)
+        where("#{price_table_name}.amount <= ?", price)
       end
 
       add_search_scope :master_price_gte do |price|
-        where("?.amount >= ?", Price.table_name, price)
+        where("#{price_table_name}.amount >= ?", price)
       end
 
       add_search_scope :in_stock do
