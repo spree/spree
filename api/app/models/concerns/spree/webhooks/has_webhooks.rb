@@ -43,7 +43,7 @@ module Spree
       end
 
       def updating_only_timestamps?
-        (saved_changes.keys - %w[created_at updated_at destroyed_at]).empty?
+        (saved_changes.keys - %w[created_at updated_at deleted_at]).empty?
       end
 
       def update_event?(event_name)
