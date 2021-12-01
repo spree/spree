@@ -35,7 +35,8 @@ describe 'Spree OAuth', type: :request do
           {
             client_id: client.uid,
             client_secret: client_secret,
-            grant_type: 'client_credentials'
+            grant_type: 'client_credentials',
+            scope: 'admin'
           }
         end
 
@@ -47,20 +48,80 @@ describe 'Spree OAuth', type: :request do
           expect(token.resource_owner_id).to be_nil
           expect(token.resource_owner_type).to be_nil
           expect(token.application).to eq(client)
+          expect(token.scopes).to eq(['admin'])
         end
+      end
+
+      context 'without client secret' do
+        let(:params) do
+          {
+            client_id: client.uid,
+            grant_type: 'client_credentials'
+          }
+        end
+
+        before { post '/spree_oauth/token', params: params }
+
+        it { expect(response.status).to eq(401) }
       end
     end
 
     context 'by password' do
-      context 'with client id & secret passed' do
+      context 'with client' do
+        before do
+          allow(Spree.user_class).to receive(:find_for_database_authentication).with(hash_including(:email)) { user }
+          allow(user).to receive(:valid_for_authentication?).and_return(true)
+          allow(user).to receive(:active_for_authentication?).and_return(true)
+        end
+
+        context 'with valid credentials' do
+          let(:params) do
+            {
+              client_id: client.uid,
+              client_secret: client_secret,
+              grant_type: 'password',
+              username: user.email,
+              password: 'secret',
+              scope: 'admin'
+            }
+          end
+
+          before { post '/spree_oauth/token', params: params }
+
+          it_behaves_like 'returns a token'
+
+          it 'creates new user token tied to application' do
+            expect(token.resource_owner_id).to eq(user.id)
+            expect(token.resource_owner_type).to eq('Spree::LegacyUser')
+            expect(token.application).to eq(client)
+            expect(token.scopes).to eq(['admin'])
+          end
+        end
+
+        context 'with invalid client credentials' do
+          let(:params) do
+            {
+              client_id: client.uid,
+              grant_type: 'password',
+              username: user.email,
+              password: 'secret',
+              scope: 'admin'
+            }
+          end
+
+          before { post '/spree_oauth/token', params: params }
+
+          it { expect(response.status).to eq(401) }
+        end
+      end
+
+      context 'without client, with scopes' do
         let(:params) do
           {
-            client_id: client.uid,
-            client_secret: client_secret,
             grant_type: 'password',
             username: user.email,
             password: 'secret',
-            scopes: 'admin'
+            scope: 'admin'
           }
         end
 
@@ -73,10 +134,10 @@ describe 'Spree OAuth', type: :request do
 
         it_behaves_like 'returns a token'
 
-        it 'creates new user token tied to application' do
+        it 'creates new user token' do
           expect(token.resource_owner_id).to eq(user.id)
           expect(token.resource_owner_type).to eq('Spree::LegacyUser')
-          expect(token.application).to eq(client)
+          expect(token.scopes).to eq(['admin'])
         end
       end
 
