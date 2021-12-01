@@ -47,7 +47,7 @@ module Spree
       end
 
       def update_event?(event_name)
-        event_name.include?('.update')
+        event_name.end_with?('.update')
       end
 
       def disable_spree_webhooks?
