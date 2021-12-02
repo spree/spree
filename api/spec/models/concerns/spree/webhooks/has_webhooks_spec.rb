@@ -45,9 +45,10 @@ describe Spree::Webhooks::HasWebhooks do
   end
 
   context 'without DISABLE_SPREE_WEBHOOKS' do
-    let(:body) { Spree::Api::V2::Platform::ProductSerializer.new(product).serializable_hash }
+    let(:webhook_payload_body) { Spree::Api::V2::Platform::ProductSerializer.new(product).serializable_hash }
 
     context 'after_create_commit' do
+      let(:event_name) { 'product.create' }
       it { expect { product.save }.to emit_webhook_event('product.create') }
     end
 
@@ -64,7 +65,7 @@ describe Spree::Webhooks::HasWebhooks do
     end
 
     context 'with a class name with multiple words' do
-      let(:body) { Spree::Api::V2::Platform::CmsPageSerializer.new(cms_page).serializable_hash }
+      let(:webhook_payload_body) { Spree::Api::V2::Platform::CmsPageSerializer.new(cms_page).serializable_hash }
       let(:cms_page) { create(:cms_homepage, store: store, locale: 'en') }
       let(:event_name) { 'cms_page.create' }
 

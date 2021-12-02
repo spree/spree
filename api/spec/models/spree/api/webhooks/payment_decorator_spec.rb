@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Spree::Api::Webhooks::PaymentDecorator do
-  let(:body) { Spree::Api::V2::Platform::PaymentSerializer.new(payment).serializable_hash }
+  let(:webhook_payload_body) { Spree::Api::V2::Platform::PaymentSerializer.new(payment).serializable_hash }
   let(:payment) { create(:payment) }
 
   before { allow(payment).to receive_message_chain(:state_changes, :create!) }
@@ -55,7 +55,7 @@ describe Spree::Api::Webhooks::PaymentDecorator do
   describe 'order.paid' do
     subject { Timecop.freeze { another_payment.complete } }
 
-    let(:body) { Spree::Api::V2::Platform::OrderSerializer.new(order).serializable_hash }
+    let(:webhook_payload_body) { Spree::Api::V2::Platform::OrderSerializer.new(order).serializable_hash }
     let(:order) { payment.order }
     let(:event_name) { 'order.paid' }
     let!(:another_payment) { create(:payment, order: order) }

@@ -13,7 +13,7 @@ describe Spree::Api::Webhooks::ShipmentDecorator do
     end
 
     context 'emitting shipment.shipped' do
-      let(:body) { Spree::Api::V2::Platform::ShipmentSerializer.new(shipment).serializable_hash }
+      let(:webhook_payload_body) { Spree::Api::V2::Platform::ShipmentSerializer.new(shipment).serializable_hash }
       let(:event_name) { 'shipment.shipped' }
 
       context 'ready -> ship' do
@@ -36,7 +36,7 @@ describe Spree::Api::Webhooks::ShipmentDecorator do
     end
 
     context 'emitting order.shipped' do
-      let(:body) { Spree::Api::V2::Platform::OrderSerializer.new(order.reload).serializable_hash }
+      let(:webhook_payload_body) { Spree::Api::V2::Platform::OrderSerializer.new(order.reload).serializable_hash }
       let(:event_name) { 'order.shipped' }
       let!(:shipments) do
         create_list(

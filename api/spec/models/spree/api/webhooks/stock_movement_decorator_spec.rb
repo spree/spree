@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Spree::Api::Webhooks::StockMovementDecorator do
-  let(:body) { Spree::Api::V2::Platform::VariantSerializer.new(variant.reload).serializable_hash }
+  let(:webhook_payload_body) { Spree::Api::V2::Platform::VariantSerializer.new(variant.reload).serializable_hash }
   let(:stock_item) { create(:stock_item) }
   let(:stock_location) { variant.stock_locations.first }
 
@@ -10,7 +10,7 @@ describe Spree::Api::Webhooks::StockMovementDecorator do
     let!(:product) { create(:product, stores: [store]) }
     let!(:variant) { create(:variant, product: product) }
     let!(:variant2) { create(:variant, product: product) }
-    let(:body) { Spree::Api::V2::Platform::ProductSerializer.new(product).serializable_hash }
+    let(:webhook_payload_body) { Spree::Api::V2::Platform::ProductSerializer.new(product).serializable_hash }
 
     describe 'emitting product.out_of_stock' do
       let(:event_name) { 'product.out_of_stock' }
