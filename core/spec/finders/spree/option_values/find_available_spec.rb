@@ -93,7 +93,6 @@ module Spree
         end
 
         it 'orders the option values by option type position and option value position' do
-          pp available_options.map { |ov| [ov.option_type.name, ov.option_type.position, ov.name, ov.position] }
           positions = available_options.map { |ov| [ov.option_type.position, ov.position] }
           expect(positions).to eq(positions.sort_by { |e| [e.first, e.second] })
         end
