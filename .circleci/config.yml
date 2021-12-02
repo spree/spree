@@ -114,11 +114,11 @@ jobs:
           name: Run Brakeman spree/api
           command: |
             mkdir /tmp/brakeman
-            bundle exec brakeman -p api/ --skip-files app/controllers/spree/api/v1/ -o /tmp/brakeman/api_output.json --no-exit-on-warn
+            bundle exec brakeman -p api/ --skip-files app/controllers/spree/api/v1/ -o /tmp/brakeman/api_output.json --exit-on-warn --exit-on-error
       - run:
           name: Run Brakeman spree/core
           command: |
-            bundle exec brakeman -p core/ -o /tmp/brakeman/core_output.json --no-exit-on-warn
+            bundle exec brakeman -p core/ -o /tmp/brakeman/core_output.json --exit-on-warn --exit-on-error
       - store_artifacts:
           path: /tmp/brakeman
       - save_cache:
