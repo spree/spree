@@ -97,6 +97,32 @@ jobs:
           paths:
             - ~/spree/vendor/bundle
 
+  brakeman:
+    <<: *defaults_3_0
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - spree-brakeman-{{ .Branch }}
+            - spree-brakeman
+      - run:
+          name: Ensure Bundle Install
+          command: |
+            bundle install
+            ./bin/build-ci.rb install
+      - run:
+          name: Run Brakeman spree/api
+          command: |
+            bundle exec brakeman -p api/ --skip-files app/controllers/spree/api/v1/ --exit-on-warn --exit-on-error
+      - run:
+          name: Run Brakeman spree/core
+          command: |
+            bundle exec brakeman -p core/ --ignore-config core/brakeman.ignore --exit-on-warn --exit-on-error
+      - save_cache:
+          key: spree-brakeman-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+          paths:
+            - ~/spree/vendor/bundle
+
   tests_postgres: &tests_postgres
     <<: *run_tests
     environment: &postgres_environment
@@ -262,6 +288,9 @@ workflows:
     jobs:
       - bundle
       - bundle_ruby_3_0
+      - brakeman:
+          requires:
+            - bundle_ruby_3_0
       - tests_postgres:
           requires:
             - bundle
