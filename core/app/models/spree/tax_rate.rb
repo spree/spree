@@ -13,7 +13,7 @@ module Spree
 
     with_options presence: true do
       validates :amount, numericality: { allow_nil: true }
-      validates :tax_category
+      validates :tax_category, :name
     end
 
     scope :by_zone, ->(zone) { where(zone_id: zone.id) }
