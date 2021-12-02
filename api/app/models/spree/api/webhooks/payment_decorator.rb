@@ -2,6 +2,12 @@ module Spree
   module Api
     module Webhooks
       module PaymentDecorator
+        def self.prepended(base)
+          def base.custom_webhook_events
+            %w[payment.paid payment.voided]
+          end
+        end
+
         def after_void
           super
           queue_webhooks_requests!('payment.voided')

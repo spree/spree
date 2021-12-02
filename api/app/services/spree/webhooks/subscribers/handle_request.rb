@@ -12,10 +12,12 @@ module Spree
 
         def call
           Rails.logger.debug(msg("sending to '#{url}'"))
-          Rails.logger.debug(msg("webhook_payload_body: #{webhook_payload_body}"))
+          Rails.logger.debug(msg("webhook_payload_body: #{body_with_event_metadata}"))
 
-          return process(:warn, msg("can not make a request to '#{url}'")) if unprocessable_uri?
-          return process(:warn, msg("failed for '#{url}'")) if failed_request?
+          if request.unprocessable_uri?
+            return process(:warn, msg("can not make a request to '#{url}'"))
+          end
+          return process(:warn, msg("failed for '#{url}'")) if request.failed_request?
 
           process(:debug, msg("success for URL '#{url}'"))
         end
@@ -30,25 +32,16 @@ module Spree
 
         def process(log_level, msg)
           Rails.logger.public_send(log_level, msg)
+          make_request
           update_event(msg)
           nil
-        end
-
-        def update_event(msg)
-          Spree::Webhooks::Event.
-            find(event_id).
-            update(
-              execution_time: execution_time,
-              request_errors: msg,
-              response_code: response_code,
-              success: success?
-            )
         end
 
         def request
           @request ||=
             Spree::Webhooks::Subscribers::MakeRequest.new(webhook_payload_body: body_with_event_metadata, url: url)
         end
+        alias make_request request
 
         def body_with_event_metadata
           webhook_payload_body.
@@ -57,7 +50,18 @@ module Spree
         end
 
         def event
-          @event ||= Spree::Webhooks::Event.create(name: event_name, subscriber_id: id, url: url)
+          @event ||= Spree::Webhooks::Event.create!(
+            name: event_name, subscriber_id: subscriber.id, url: url
+          )
+        end
+
+        def update_event(msg)
+          event.update(
+            execution_time: execution_time,
+            request_errors: msg,
+            response_code: response_code,
+            success: success?
+          )
         end
 
         def msg(msg)

@@ -17,8 +17,11 @@ platforms :jruby do
 end
 
 platforms :ruby do
-  gem 'mysql2'
-  gem 'pg', '~> 1.1'
+  if ENV['DB'] == 'mysql'
+    gem 'mysql2'
+  else
+    gem 'pg', '~> 1.1'
+  end
 end
 
 if ENV['RAILS_VERSION']&.match(/7\.0\.0/)

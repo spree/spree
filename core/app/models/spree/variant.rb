@@ -285,10 +285,6 @@ module Spree
       track_inventory? && Spree::Config.track_inventory_levels
     end
 
-    def track_inventory
-      should_track_inventory?
-    end
-
     def volume
       (width || 0) * (height || 0) * (depth || 0)
     end

@@ -26,6 +26,15 @@ module Spree
         )
       end
 
+      def self.supported_events
+        Spree::Base.descendants.
+          select { |model| model.included_modules.include? Spree::Webhooks::HasWebhooks }.
+          to_h do |model|
+          model_name = model.name.demodulize.underscore.to_sym
+          [model_name, model.supported_webhook_events]
+        end
+      end
+
       private
 
       def check_uri_path

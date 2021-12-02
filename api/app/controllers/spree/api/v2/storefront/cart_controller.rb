@@ -16,14 +16,16 @@ module Spree
           def create
             spree_authorize! :create, Spree::Order
 
-            order_params = {
+            create_cart_params = {
               user: spree_current_user,
               store: current_store,
-              currency: current_currency
+              currency: current_currency,
+              public_metadata: add_item_params[:public_metadata],
+              private_metadata: add_item_params[:private_metadata],
             }
 
             order   = spree_current_order if spree_current_order.present?
-            order ||= create_service.call(order_params).value
+            order ||= create_service.call(create_cart_params).value
 
             render_serialized_payload(201) { serialize_resource(order) }
           end
@@ -215,7 +217,7 @@ module Spree
           end
 
           def load_variant
-            @variant = current_store.variants.find(params[:variant_id])
+            @variant = current_store.variants.find(add_item_params[:variant_id])
           end
 
           def render_error_item_quantity

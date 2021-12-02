@@ -3,6 +3,10 @@ module Spree
     module Webhooks
       module OrderDecorator
         def self.prepended(base)
+          def base.custom_webhook_events
+            %w[order.canceled order.placed order.resumed order.shipped]
+          end
+
           base.after_update_commit :queue_webhooks_requests_for_order_resumed!
         end
 

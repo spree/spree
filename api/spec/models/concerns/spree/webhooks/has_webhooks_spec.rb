@@ -108,9 +108,42 @@ describe Spree::Webhooks::HasWebhooks do
       context 'when using touch with an argument other than created_at/updated_at' do
         it do
           expect do
-            product.touch(:deleted_at)
+            product.touch(:available_on)
           end.to emit_webhook_event(event_name)
         end
+      end
+    end
+
+    context 'on touch events from callbacks' do
+      let!(:store2) { create(:store) }
+      let!(:cms_page) { create(:cms_homepage, store: store2, locale: 'en') }
+      let(:body) { Spree::Api::V2::Platform::StoreSerializer.new(store2).serializable_hash }
+
+      before { store2.changes_applied }
+
+      it 'does not emit the touched model\'s update event' do
+        expect { cms_page.update(title: 'Homepage #1') }.not_to emit_webhook_event('store.update')
+      end
+    end
+  end
+
+  describe '.default_webhook_events' do
+    it 'return the default events' do
+      expect(Spree::Order.default_webhook_events).to eq(%w[order.create order.delete order.update])
+    end
+  end
+
+  describe '.supported_webhook_events' do
+    context 'when there are custom supported events' do
+      it 'returns the default and custom events' do
+        expected_webhook_events = %w[order.create order.delete order.update order.canceled order.placed order.resumed order.shipped]
+        expect(Spree::Order.supported_webhook_events).to contain_exactly(*expected_webhook_events)
+      end
+    end
+
+    context 'when there are no custom supported events' do
+      it 'return the default events' do
+        expect(Spree::Zone.supported_webhook_events).to eq(Spree::Zone.default_webhook_events)
       end
     end
   end

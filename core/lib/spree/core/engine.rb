@@ -123,7 +123,10 @@ module Spree
           :password,
           :password_confirmation,
           :number,
-          :verification_value
+          :verification_value,
+          :client_id,
+          :client_secret,
+          :refresh_token
         ]
       end
 

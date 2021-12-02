@@ -9,9 +9,21 @@ module Spree
         after_update_commit(proc { queue_webhooks_requests!(inferred_event_name(:update)) })
 
         def queue_webhooks_requests!(event_name)
-          return if disable_spree_webhooks? || updating_only_timestamps? || webhook_payload_body.blank?
+          return if disable_spree_webhooks? || webhook_payload_body.blank?
+          return if update_event?(event_name) && updating_only_timestamps?
 
           Spree::Webhooks::Subscribers::QueueRequests.call(event_name: event_name, webhook_payload_body: webhook_payload_body)
+        end
+
+        def self.default_webhook_events
+          model_name = name.demodulize.tableize.singularize
+          %W[#{model_name}.create #{model_name}.delete #{model_name}.update]
+        end
+
+        def self.supported_webhook_events
+          events = default_webhook_events
+          events += custom_webhook_events if respond_to?(:custom_webhook_events)
+          events
         end
       end
 
@@ -31,7 +43,11 @@ module Spree
       end
 
       def updating_only_timestamps?
-        saved_changes.present? && (saved_changes.keys - %w[created_at updated_at]).empty?
+        (saved_changes.keys - %w[created_at updated_at deleted_at]).empty?
+      end
+
+      def update_event?(event_name)
+        event_name.end_with?('.update')
       end
 
       def disable_spree_webhooks?
