@@ -113,14 +113,11 @@ jobs:
       - run:
           name: Run Brakeman spree/api
           command: |
-            mkdir /tmp/brakeman
-            bundle exec brakeman -p api/ --skip-files app/controllers/spree/api/v1/ -o /tmp/brakeman/api_output.json --exit-on-warn --exit-on-error
+            bundle exec brakeman -p api/ --format junit --skip-files app/controllers/spree/api/v1/ --exit-on-warn --exit-on-error
       - run:
           name: Run Brakeman spree/core
           command: |
-            bundle exec brakeman -p core/ -o /tmp/brakeman/core_output.json --exit-on-warn --exit-on-error
-      - store_artifacts:
-          path: /tmp/brakeman
+            bundle exec brakeman -p core/ --format junit --ignore-config brakeman.ignore --exit-on-warn --exit-on-error
       - save_cache:
           key: spree-brakeman-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
           paths:
