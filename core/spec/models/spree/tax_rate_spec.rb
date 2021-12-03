@@ -14,7 +14,7 @@ describe Spree::TaxRate, type: :model do
 
     context 'when no rate zones match the tax zone' do
       before do
-        Spree::TaxRate.create(amount: 1, zone: create(:zone))
+        Spree::TaxRate.create(name: 'Tax Rate #1', amount: 1, zone: create(:zone))
       end
 
       context 'when there is no default tax zone' do
@@ -30,6 +30,7 @@ describe Spree::TaxRate, type: :model do
 
         it 'returns the rate that matches the rate zone' do
           rate = Spree::TaxRate.create(
+            name: 'Tax Rate #1',
             amount: 1,
             zone: @zone,
             tax_category: tax_category,
@@ -42,6 +43,7 @@ describe Spree::TaxRate, type: :model do
 
         it 'returns all rates that match the rate zone' do
           rate1 = Spree::TaxRate.create(
+            name: 'Tax Rate #1',
             amount: 1,
             zone: @zone,
             tax_category: tax_category,
@@ -49,6 +51,7 @@ describe Spree::TaxRate, type: :model do
           )
 
           rate2 = Spree::TaxRate.create(
+            name: 'Tax Rate #2',
             amount: 2,
             zone: @zone,
             tax_category: tax_category,
@@ -65,6 +68,7 @@ describe Spree::TaxRate, type: :model do
             sub_zone.zone_members.create(zoneable: create(:state, country: country))
             allow(order).to receive_messages tax_zone: sub_zone
             @rate = Spree::TaxRate.create(
+              name: 'Tax Rate #1',
               amount: 1,
               zone: @zone,
               tax_category: tax_category,
@@ -88,7 +92,8 @@ describe Spree::TaxRate, type: :model do
 
         let(:included_in_price) { false }
         let!(:rate) do
-          Spree::TaxRate.create(amount: 1,
+          Spree::TaxRate.create(name: 'Tax Rate #1',
+                                amount: 1,
                                 zone: @zone,
                                 tax_category: tax_category,
                                 calculator: calculator,
@@ -367,12 +372,14 @@ describe Spree::TaxRate, type: :model do
       @category    = Spree::TaxCategory.create name: 'Taxable Foo'
       @category2   = Spree::TaxCategory.create(name: 'Non Taxable')
       @rate1 = Spree::TaxRate.create(
+        name: 'Tax Rate #1',
         amount: 0.10,
         calculator: Spree::Calculator::DefaultTax.create,
         tax_category: @category,
         zone: @zone
       )
       @rate2 = Spree::TaxRate.create(
+        name: 'Tax Rate #2',
         amount: 0.05,
         calculator: Spree::Calculator::DefaultTax.create,
         tax_category: @category,
@@ -422,6 +429,7 @@ describe Spree::TaxRate, type: :model do
         context "when order's zone is neither the default zone, or included in the default zone, but matches the rate's zone" do
           before do
             new_rate = Spree::TaxRate.create(
+              name: 'New Tax Rate',
               amount: 0.2,
               included_in_price: true,
               calculator: Spree::Calculator::DefaultTax.create,
@@ -501,7 +509,7 @@ describe Spree::TaxRate, type: :model do
             it 'applies adjustments when a tax zone is present' do
               expect(line_item.adjustments.count).to eq(2)
               line_item.adjustments.each do |adjustment|
-                expect(adjustment.label).to eq("#{adjustment.source.tax_category.name} #{adjustment.source.amount * 100}%")
+                expect(adjustment.label).to eq("#{adjustment.source.name} #{adjustment.source.amount * 100}%")
               end
             end
 
