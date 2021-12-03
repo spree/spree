@@ -100,6 +100,7 @@ module Spree
         let!(:category) { Spree::TaxCategory.create name: 'Taxable Foo' }
         let!(:rate) do
           Spree::TaxRate.create(
+            name: 'Tax Rate 1',
             amount: 0.25,
             included_in_price: true,
             calculator: Spree::Calculator::DefaultTax.create,
