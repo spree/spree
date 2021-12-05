@@ -18,12 +18,10 @@ module Spree
         define_method("img_#{count}_#{size}") do |dimensions = nil|
           return if !send("image_#{count}").attached? || dimensions.nil?
 
-          send("image_#{count}").variant(resize: dimensions)
+          send("image_#{count}").variant(resize_to_limit: dimensions.split('x').map(&:to_i))
         end
       end
     end
-
-    belongs_to :linked_resource, polymorphic: true
 
     default_scope { order(position: :asc) }
 

@@ -1,5 +1,9 @@
 require 'spec_helper'
 
+class CustomPromotionAction < Spree::PromotionAction
+  include Spree::AdjustmentSource
+end
+
 describe Spree::Adjustable::Adjuster::Promotion, type: :model do
   let(:order) { create :order_with_line_items, line_items_count: 1 }
   let(:line_item) { order.line_items.first }
@@ -22,13 +26,13 @@ describe Spree::Adjustable::Adjuster::Promotion, type: :model do
     end
 
     describe 'competing promos' do
-      before { Spree::Adjustment.competing_promos_source_types = ['Spree::PromotionAction', 'Custom'] }
+      before { Spree::Adjustment.competing_promos_source_types = ['Spree::PromotionAction', 'CustomPromotionAction'] }
 
       it 'do not update promo_total' do
         create(:adjustment,
                order: order,
                adjustable: line_item,
-               source_type: 'Custom',
+               source_type: 'CustomPromotionAction',
                source_id: nil,
                amount: -3.50,
                label: 'Other',
