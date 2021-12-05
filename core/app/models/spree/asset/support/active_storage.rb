@@ -8,7 +8,7 @@ module Spree
           def url(style)
             return placeholder(style) unless attachment.attached?
 
-            attachment.variant(resize: dimensions_for_style(style))
+            attachment.variant(resize_to_limit: dimensions_for_style(style))
           end
 
           def placeholder(style)
@@ -16,7 +16,8 @@ module Spree
           end
 
           def dimensions_for_style(style)
-            self.class.styles.with_indifferent_access[style] || self.class.styles.with_indifferent_access[default_style]
+            dimensions = self.class.styles.with_indifferent_access[style] || self.class.styles.with_indifferent_access[default_style]
+            dimensions.split('x').map(&:to_i)
           end
         end
       end

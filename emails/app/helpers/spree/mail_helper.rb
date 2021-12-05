@@ -26,7 +26,7 @@ module Spree
 
     def logo_path
       return default_logo unless store_logo.attached?
-      return main_app.url_for(store_logo.variant(resize: '244x104>')) if store_logo.variable?
+      return main_app.url_for(store_logo.variant(resize_to_limit: [244, 104])) if store_logo.variable?
 
       return main_app.url_for(store_logo) if store_logo.image?
     end

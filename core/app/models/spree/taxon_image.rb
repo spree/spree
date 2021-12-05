@@ -6,10 +6,10 @@ module Spree
 
     def styles
       self.class.styles.map do |_, size|
-        width, height = size[/(\d+)x(\d+)/].split('x')
+        width, height = size[/(\d+)x(\d+)/].split('x').map(&:to_i)
 
         {
-          url: polymorphic_path(attachment.variant(resize: size), only_path: true),
+          url: polymorphic_path(attachment.variant(resize_to_limit: [width, height]), only_path: true),
           width: width,
           height: height
         }
