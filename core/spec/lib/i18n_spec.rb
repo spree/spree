@@ -29,6 +29,7 @@ describe 'i18n' do
       it 'returns all locales from the SpreeI18n' do
         locales = Spree.available_locales
         expected_locales = [:en, :de, :nl, :ar, :az, :bg, :ca, :cs, :da, :el, :es, :fa, :fi, :fr, :hu, :id, :it, :ja, :"pt-BR", :ro, :ru, :sk, :tr, :"zh-CN", :"zh-TW", :pl, :uk, :vi]
+        expected_locales << :sv if Rails::VERSION::STRING >= '7.0'
 
         expect(locales).to match_array(expected_locales)
       end
@@ -45,6 +46,7 @@ describe 'i18n' do
         locales = Spree.available_locales
 
         expected_locales = [:en, :ar, :az, :bg, :ca, :cs, :da, :de, :el, :es, :fa, :fi, :fr, :hu, :id, :it, :ja, :nl, :"pt-BR", :ro, :ru, :sk, :tr, :"zh-CN", :"zh-TW", :pl, :uk, :vi]
+        expected_locales << :sv if Rails::VERSION::STRING >= '7.0'
 
         expect(locales).to match_array(expected_locales)
       end
