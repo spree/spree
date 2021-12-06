@@ -61,11 +61,11 @@ module Spree
       DEPRECATION
 
       image_path ||= if current_store.logo.attached? && current_store.logo.variable?
-                       main_app.url_for(current_store.logo.variant(resize_to_limit: [244, 104]))
+                       main_app.url_for(current_store.logo.variant(resize: '244x104>'))
                      elsif current_store.logo.attached? && current_store.logo.image?
                        main_app.url_for(current_store.logo)
                      else
-                       'logo/spree_50.png'
+                      'logo/spree_50.png'
                      end
 
       path = spree.respond_to?(:root_path) ? spree.root_path : main_app.root_path
