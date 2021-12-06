@@ -18,7 +18,7 @@ module Spree
         define_method("img_#{count}_#{size}") do |dimensions = nil|
           return if !send("image_#{count}").attached? || dimensions.nil?
 
-          send("image_#{count}").variant(resize_to_limit: dimensions.split('x').map(&:to_i))
+          send("image_#{count}").variant(resize: dimensions)
         end
       end
     end
