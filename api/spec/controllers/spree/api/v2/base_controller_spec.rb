@@ -103,21 +103,36 @@ describe Spree::Api::V2::BaseController, type: :controller do
     end
 
     let!(:user) { create :user }
-    let(:exception) { ArgumentError.new('foo') }
     let(:result_class) { Struct.new(:value) }
     let(:result) { result_class.new({message: 'foo'}) }
 
-    it 'handles ArgumentError exceptions' do
-      expect(subject).to receive(:index).and_raise(exception)
-      expect(subject).to receive(:spree_current_user).and_return(user)
-      expect_next_instance_of(::Spree::Api::ErrorHandler) do |instance|
-        expect(instance).to receive(:call).with(
-          exception: exception,
-          opts: { user: user }
-        ).and_return(result)
+    shared_examples 'rescues from error' do
+      it do
+        expect(subject).to receive(:index).and_raise(exception)
+        expect(subject).to receive(:spree_current_user).and_return(user)
+        expect_next_instance_of(::Spree::Api::ErrorHandler) do |instance|
+          expect(instance).to receive(:call).with(
+            exception: exception,
+            opts: { user: user }
+          ).and_return(result)
+        end
+        get :index, params: { token: 'exception-message' }
+        expect(json_response).to eql('error' => 'foo')
       end
-      get :index, params: { token: 'exception-message' }
-      expect(json_response).to eql('error' => 'foo')
+    end
+
+    context 'ArgumentError' do
+      let(:exception) { ArgumentError.new('foo') }
+
+      it_behaves_like 'rescues from error'
+    end
+
+    context 'ActionDispatch::Http::Parameters::ParseError' do
+      let(:exception) { ActionDispatch::Http::Parameters::ParseError.new }
+
+      before { expect($!).to receive(:message).and_return('foo') }
+
+      it_behaves_like 'rescues from error'
     end
   end
 

@@ -17,6 +17,7 @@ module Spree
           rescue_from JSONAPI::Serializer::UnsupportedIncludeError, with: :error_during_processing
         end
         rescue_from ArgumentError, with: :error_during_processing
+        rescue_from ActionDispatch::Http::Parameters::ParseError, with: :error_during_processing
 
         def content_type
           Spree::Api::Config[:api_v2_content_type]
