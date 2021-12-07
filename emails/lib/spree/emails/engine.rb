@@ -12,6 +12,10 @@ module Spree
         end
       end
 
+      initializer 'spree_emails.assets.precompile' do |app|
+        app.config.assets.precompile += %w(config/spree_emails_manifest.js)
+      end
+
       config.to_prepare &method(:activate).to_proc
     end
   end
