@@ -9,7 +9,7 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw]
   actionmailer actionpack actionview activejob activemodel activerecord
   activestorage activesupport railties
 ].each do |rails_gem|
-  gem rails_gem, ENV.fetch('RAILS_VERSION', '~> 7.0.0.alpha2'), require: false
+  gem rails_gem, ENV.fetch('RAILS_VERSION', '~> 7.0.0.rc1'), require: false
 end
 
 platforms :jruby do
@@ -23,6 +23,8 @@ platforms :ruby do
     gem 'pg', '~> 1.1'
   end
 end
+
+gem 'sprockets-rails', '>= 2.0.0'
 
 if ENV['RAILS_VERSION']&.match(/7\.0\.0/) || !ENV['RAILS_VERSION']
   gem 'paranoia', github: 'payrollhero/paranoia', branch: 'rails7'

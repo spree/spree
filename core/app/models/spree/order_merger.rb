@@ -54,7 +54,7 @@ module Spree
 
     # Change the error messages as you choose.
     def handle_error(line_item)
-      order.errors[:base] << line_item.errors.full_messages
+      order.errors.add(:base, line_item.errors.full_messages)
     end
 
     def persist_merge
