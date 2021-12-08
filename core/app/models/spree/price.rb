@@ -1,6 +1,9 @@
 module Spree
   class Price < Spree::Base
     include VatPriceCalculation
+    if defined?(Spree::Webhooks)
+      include Spree::Webhooks::HasWebhooks
+    end
 
     acts_as_paranoid
 

@@ -4,6 +4,10 @@ module Spree
 
     include Metadata
 
+    if defined?(Spree::Webhooks)
+      include Spree::Webhooks::HasWebhooks
+    end
+
     if Rails::VERSION::STRING >= '6.1'
       serialize :preferences, Hash, default: {}
     end

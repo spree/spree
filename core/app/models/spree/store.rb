@@ -1,5 +1,9 @@
 module Spree
   class Store < Spree::Base
+    if defined?(Spree::Webhooks)
+      include Spree::Webhooks::HasWebhooks
+    end
+
     typed_store :settings, coder: ActiveRecord::TypedStore::IdentityCoder do |s|
       # Spree Digital Asset Configurations
       s.boolean :limit_digital_download_count, default: true, null: false

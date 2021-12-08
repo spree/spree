@@ -2,6 +2,9 @@ module Spree
   class StoreCredit < Spree::Base
     include SingleStoreResource
     include Metadata
+    if defined?(Spree::Webhooks)
+      include Spree::Webhooks::HasWebhooks
+    end
 
     acts_as_paranoid
 

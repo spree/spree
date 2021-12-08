@@ -2,6 +2,9 @@ module Spree
   class OptionType < Spree::Base
     include UniqueName
     include Metadata
+    if defined?(Spree::Webhooks)
+      include Spree::Webhooks::HasWebhooks
+    end
 
     acts_as_list
 

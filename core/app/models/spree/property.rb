@@ -2,6 +2,9 @@ module Spree
   class Property < Spree::Base
     include Spree::FilterParam
     include Metadata
+    if defined?(Spree::Webhooks)
+      include Spree::Webhooks::HasWebhooks
+    end
 
     auto_strip_attributes :name, :presentation
 

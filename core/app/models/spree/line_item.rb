@@ -1,6 +1,9 @@
 module Spree
   class LineItem < Spree::Base
     include Metadata
+    if defined?(Spree::Webhooks)
+      include Spree::Webhooks::HasWebhooks
+    end
 
     before_validation :ensure_valid_quantity
 

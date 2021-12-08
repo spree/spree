@@ -1,5 +1,9 @@
 module Spree
   class InventoryUnit < Spree::Base
+    if defined?(Spree::Webhooks)
+      include Spree::Webhooks::HasWebhooks
+    end
+
     with_options inverse_of: :inventory_units do
       belongs_to :variant, -> { with_deleted }, class_name: 'Spree::Variant'
       belongs_to :order, class_name: 'Spree::Order'

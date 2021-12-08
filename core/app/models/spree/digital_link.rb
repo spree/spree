@@ -2,6 +2,10 @@ module Spree
   class DigitalLink < Spree::Base
     has_secure_token
 
+    if defined?(Spree::Webhooks)
+      include Spree::Webhooks::HasWebhooks
+    end
+
     belongs_to :digital
     belongs_to :line_item
 
