@@ -1311,7 +1311,7 @@ describe Spree::Order, type: :model do
       end
 
       it 'expect return valid order promotions' do
-        expect(order.valid_promotions).to eq(order.order_promotions.where(promotion_id: [2, 3]))
+        expect(order.valid_promotions).to eq(order.order_promotions.where(promotion_id: [order_promo.id, line_item_promo.id]))
       end
     end
   end
