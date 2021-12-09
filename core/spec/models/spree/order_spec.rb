@@ -971,7 +971,8 @@ describe Spree::Order, type: :model do
 
     context 'a reimbursement related refund exists' do
       let(:order) { refund.payment.order }
-      let(:refund) { create(:refund, reimbursement_id: 123, amount: 5) }
+      let(:reimbursement) { create(:reimbursement) }
+      let(:refund) { create(:refund, reimbursement_id: reimbursement.id, amount: 5) }
 
       it { is_expected.to eq false }
     end
