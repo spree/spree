@@ -4,6 +4,9 @@ require 'stringex'
 module Spree
   class Taxon < Spree::Base
     include Metadata
+    if defined?(Spree::Webhooks)
+      include Spree::Webhooks::HasWebhooks
+    end
 
     extend FriendlyId
     friendly_id :permalink, slug_column: :permalink, use: :history

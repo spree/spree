@@ -1,6 +1,9 @@
 module Spree
   class Refund < Spree::Base
     include Metadata
+    if defined?(Spree::Webhooks)
+      include Spree::Webhooks::HasWebhooks
+    end
 
     with_options inverse_of: :refunds do
       belongs_to :payment

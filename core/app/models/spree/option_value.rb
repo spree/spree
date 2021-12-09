@@ -1,6 +1,9 @@
 module Spree
   class OptionValue < Spree::Base
     include Metadata
+    if defined?(Spree::Webhooks)
+      include Spree::Webhooks::HasWebhooks
+    end
 
     belongs_to :option_type, class_name: 'Spree::OptionType', touch: true, inverse_of: :option_values
     acts_as_list scope: :option_type

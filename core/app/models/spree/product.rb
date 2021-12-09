@@ -25,6 +25,9 @@ module Spree
     include MultiStoreResource
     include MemoizedData
     include Metadata
+    if defined?(Spree::Webhooks)
+      include Spree::Webhooks::HasWebhooks
+    end
 
     MEMOIZED_METHODS = %w(total_on_hand taxonomy_ids taxon_and_ancestors category
                           default_variant_id tax_category default_variant
@@ -327,7 +330,7 @@ module Spree
     def any_variant_in_stock_or_backorderable?
       if variants.any?
         variants_including_master.in_stock_or_backorderable.exists?
-      else 
+      else
         master.in_stock_or_backorderable?
       end
     end

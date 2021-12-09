@@ -1,6 +1,9 @@
 module Spree
   class MenuItem < Spree::Base
     include Spree::DisplayLink
+    if defined?(Spree::Webhooks)
+      include Spree::Webhooks::HasWebhooks
+    end
 
     acts_as_nested_set dependent: :destroy
 

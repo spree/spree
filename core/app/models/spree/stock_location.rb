@@ -1,6 +1,9 @@
 module Spree
   class StockLocation < Spree::Base
     include UniqueName
+    if defined?(Spree::Webhooks)
+      include Spree::Webhooks::HasWebhooks
+    end
 
     has_many :shipments
     has_many :stock_items, dependent: :delete_all, inverse_of: :stock_location
