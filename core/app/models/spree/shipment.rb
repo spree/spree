@@ -9,6 +9,9 @@ module Spree
     if defined?(Spree::Webhooks)
       include Spree::Webhooks::HasWebhooks
     end
+    if defined?(Spree::Security::Shipments)
+      include Spree::Security::Shipments
+    end
 
     with_options inverse_of: :shipments do
       belongs_to :address, class_name: 'Spree::Address'

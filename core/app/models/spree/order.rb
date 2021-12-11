@@ -28,6 +28,9 @@ module Spree
     if defined?(Spree::Webhooks)
       include Spree::Webhooks::HasWebhooks
     end
+    if defined?(Spree::Security::Orders)
+      include Spree::Security::Orders
+    end
 
     MEMOIZED_METHODS = %w(tax_zone)
 

@@ -4,6 +4,9 @@ module Spree
     if defined?(Spree::Webhooks)
       include Spree::Webhooks::HasWebhooks
     end
+    if defined?(Spree::Security::StockLocations)
+      include Spree::Security::StockLocations
+    end
 
     has_many :shipments
     has_many :stock_items, dependent: :delete_all, inverse_of: :stock_location

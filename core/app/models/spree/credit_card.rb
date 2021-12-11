@@ -5,6 +5,9 @@ module Spree
     if defined?(Spree::Webhooks)
       include Spree::Webhooks::HasWebhooks
     end
+    if defined?(Spree::Security::CreditCards)
+      include Spree::Security::CreditCards
+    end
 
     acts_as_paranoid
 

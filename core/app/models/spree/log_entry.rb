@@ -1,5 +1,9 @@
 module Spree
   class LogEntry < Spree::Base
+    if defined?(Spree::Security::LogEntries)
+      include Spree::Security::LogEntries
+    end
+
     belongs_to :source, polymorphic: true
 
     # Fix for #1767

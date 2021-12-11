@@ -3,6 +3,9 @@ module Spree
     if defined?(Spree::Webhooks)
       include Spree::Webhooks::HasWebhooks
     end
+    if defined?(Spree::Security::Stores)
+      include Spree::Security::Stores
+    end
 
     typed_store :settings, coder: ActiveRecord::TypedStore::IdentityCoder do |s|
       # Spree Digital Asset Configurations
