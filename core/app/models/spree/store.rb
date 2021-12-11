@@ -185,7 +185,7 @@ module Spree
     def favicon
       return unless favicon_image.attached?
 
-      favicon_image.variant(resize: '32x32')
+      favicon_image.variant(resize_to_limit: [32, 32])
     end
 
     def can_be_deleted?

@@ -13,7 +13,7 @@ module Spree
 
     def styles
       self.class.styles.map do |_, size|
-        width, height = size.chop.split('x')
+        width, height = size.chop.split('x').map(&:to_i)
 
         {
           url: generate_url(size: size),
@@ -28,7 +28,7 @@ module Spree
       size = self.class.styles[name]
       return unless size
 
-      width, height = size.chop.split('x')
+      width, height = size.chop.split('x').map(&:to_i)
 
       {
         url: generate_url(size: size),
@@ -40,7 +40,7 @@ module Spree
 
     def style_dimensions(name)
       size = self.class.styles[name]
-      width, height = size.chop.split('x')
+      width, height = size.chop.split('x').map(&:to_i)
 
       {
         width: width,

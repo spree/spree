@@ -51,7 +51,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'state_machines-activemodel', '~> 0.7'
   s.add_dependency 'stringex'
   s.add_dependency 'validates_zipcode'
-  s.add_dependency 'mini_magick', '~> 4.9', '>= 4.9.4'
   s.add_dependency 'image_processing', '~> 1.2'
   s.add_dependency 'active_storage_validations', '~> 0.9', '<= 0.9.5'
   s.add_dependency 'activerecord-typedstore'
