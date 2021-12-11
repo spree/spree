@@ -9,7 +9,8 @@ module Spree
         width, height = size[/(\d+)x(\d+)/].split('x').map(&:to_i)
 
         {
-          url: polymorphic_path(attachment.variant(resize_to_limit: [width, height]), only_path: true),
+          url: generate_url(size: size),
+          size: size,
           width: width,
           height: height
         }

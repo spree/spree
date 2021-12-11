@@ -25,7 +25,7 @@ require 'activerecord-typedstore'
 StateMachines::Machine.ignore_method_conflicts = true
 
 module Spree
-  mattr_accessor :user_class, :admin_user_class, :private_storage_service_name
+  mattr_accessor :user_class, :admin_user_class, :private_storage_service_name, :cdn_host
 
   def self.user_class(constantize: true)
     if @@user_class.is_a?(Class)
