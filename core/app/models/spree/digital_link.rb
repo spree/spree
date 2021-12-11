@@ -5,6 +5,9 @@ module Spree
     if defined?(Spree::Webhooks)
       include Spree::Webhooks::HasWebhooks
     end
+    if defined?(Spree::Security::DigitalLinks)
+      include Spree::Security::DigitalLinks
+    end
 
     belongs_to :digital
     belongs_to :line_item

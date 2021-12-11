@@ -4,6 +4,9 @@ module Spree
     if defined?(Spree::Webhooks)
       include Spree::Webhooks::HasWebhooks
     end
+    if defined?(Spree::Security::Refunds)
+      include Spree::Security::Refunds
+    end
 
     with_options inverse_of: :refunds do
       belongs_to :payment
