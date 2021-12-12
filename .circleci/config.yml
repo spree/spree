@@ -168,12 +168,6 @@ jobs:
       - image: *postgres_image
       - image: *redis_image
 
-  tests_postgres_rails_6_0:
-    <<: *tests_postgres
-    environment:
-      <<: *postgres_environment
-      RAILS_VERSION: '~> 6.0.0'
-
   tests_postgres_rails_6_1:
     <<: *tests_postgres
     environment:
@@ -278,9 +272,6 @@ workflows:
       - tests_postgres_ruby_3_0:
           requires:
             - bundle_ruby_3_0
-      - tests_postgres_rails_6_0:
-          requires:
-            - bundle
       - tests_postgres_rails_6_1:
           requires:
             - bundle
