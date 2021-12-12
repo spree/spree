@@ -7,7 +7,10 @@ Rails.application.routes.draw do
         :rails_service_blob_proxy,
         model.signed_id,
         model.filename,
-        options.merge(host: Spree.cdn_host || Rails.application.config.default_url_options[:host])
+        options.merge(
+          host: Spree.cdn_host || Rails.application.config.default_url_options[:host],
+          port: Rails.application.config.default_url_options[:port]
+        )
       )
     else
       signed_blob_id = model.blob.signed_id
@@ -19,7 +22,10 @@ Rails.application.routes.draw do
         signed_blob_id,
         variation_key,
         filename,
-        options.merge(host: Spree.cdn_host || Rails.application.config.default_url_options[:host])
+        options.merge(
+          host: Spree.cdn_host || Rails.application.config.default_url_options[:host],
+          port: Rails.application.config.default_url_options[:port]
+        )
       )
     end
   end

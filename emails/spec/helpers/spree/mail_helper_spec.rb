@@ -20,7 +20,7 @@ module Spree
         let(:image) { create(:image) }
 
         specify 'returns proper image path' do
-          expect(subject).to eq main_app.url_for(image.url(:small))
+          expect(subject).to eq main_app.cdn_image_url(image.url(:small))
         end
       end
     end

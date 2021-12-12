@@ -61,9 +61,9 @@ module Spree
       DEPRECATION
 
       image_path ||= if current_store.logo.attached? && current_store.logo.variable?
-                       main_app.url_for(current_store.logo.variant(resize_to_limit: [244, 104]))
+                       main_app.cdn_image_url(current_store.logo.variant(resize_to_limit: [244, 104]))
                      elsif current_store.logo.attached? && current_store.logo.image?
-                       main_app.url_for(current_store.logo)
+                       main_app.cdn_image_url(current_store.logo)
                      else
                        'logo/spree_50.png'
                      end
@@ -76,7 +76,11 @@ module Spree
     end
 
     def spree_favicon_path
-      main_app.url_for(current_store.favicon || 'favicon.ico')
+      if current_store.favicon.present?
+        main_app.cdn_image_url(current_store.favicon)
+      else
+        url_for('favicon.ico')
+      end
     end
 
     def object
@@ -88,7 +92,7 @@ module Spree
 
       if object.is_a? Spree::Product
         image                             = default_image_for_product_or_variant(object)
-        og_meta['og:image']               = main_app.url_for(image.attachment) if image&.attachment
+        og_meta['og:image']               = main_app.cdn_image_url(image.attachment) if image&.attachment
 
         og_meta['og:url']                 = spree.url_for(object) if frontend_available? # url_for product needed
         og_meta['og:type']                = object.class.name.demodulize.downcase
@@ -238,7 +242,7 @@ module Spree
 
     def create_product_image_tag(image, product, options, style)
       options[:alt] = image.alt.blank? ? product.name : image.alt
-      image_tag main_app.url_for(image.url(style)), options
+      image_tag main_app.cdn_image_url(image.url(style)), options
     end
 
     def define_image_method(style)
@@ -249,7 +253,7 @@ module Spree
         img = if image_path.present?
                 create_product_image_tag image_path, product, options, style
               else
-               inline_svg_tag "noimage/backend-missing-image.svg", class: "noimage", size: "60%*60%"
+                inline_svg_tag 'noimage/backend-missing-image.svg', class: 'noimage', size: '60%*60%'
               end
 
         content_tag(:div, img, class: "admin-product-image-container #{style}-img")
