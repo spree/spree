@@ -76,7 +76,11 @@ module Spree
     end
 
     def spree_favicon_path
-      main_app.cdn_image_url(current_store.favicon || 'favicon.ico')
+      if current_store.favicon.present?
+        main_app.cdn_image_url(current_store.favicon)
+      else
+        url_for('favicon.ico')
+      end
     end
 
     def object
