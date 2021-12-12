@@ -12,7 +12,11 @@ module Spree
     IMAGE_SIZE = ['sm', 'md', 'lg', 'xl']
 
     IMAGE_COUNT.each do |count|
-      send(:has_one_attached, "image_#{count}".to_sym)
+      if Spree.public_storage_service_name
+        send(:has_one_attached, "image_#{count}".to_sym, service: Spree.public_storage_service_name)
+      else
+        send(:has_one_attached, "image_#{count}".to_sym)
+      end
 
       IMAGE_SIZE.each do |size|
         define_method("img_#{count}_#{size}") do |dimensions = nil|

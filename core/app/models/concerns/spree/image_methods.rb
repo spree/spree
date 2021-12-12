@@ -13,14 +13,11 @@ module Spree
 
       # FIXME: bring back support for background color
 
-      polymorphic_path(
-        attachment.variant(resize_and_pad: [width, height, { gravity: gravity }], saver: { quality: quality }),
-        only_path: true
-      )
+      cdn_image_url(attachment.variant(resize_and_pad: [width, height, { gravity: gravity }], saver: { quality: quality }))
     end
 
     def original_url
-      polymorphic_path(attachment, only_path: true)
+      cdn_image_url(attachment)
     end
   end
 end
