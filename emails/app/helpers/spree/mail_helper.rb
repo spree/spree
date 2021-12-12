@@ -4,7 +4,7 @@ module Spree
 
     def variant_image_url(variant)
       image = default_image_for_product_or_variant(variant)
-      image ? main_app.url_for(image.url(:small)) : 'noimage/small.png'
+      image ? main_app.cdn_image_url(image.url(:small)) : 'noimage/small.png'
     end
 
     def name_for(order)
@@ -26,9 +26,9 @@ module Spree
 
     def logo_path
       return default_logo unless store_logo.attached?
-      return main_app.url_for(store_logo.variant(resize_to_limit: [244, 104])) if store_logo.variable?
+      return main_app.cdn_image_url(store_logo.variant(resize_to_limit: [244, 104])) if store_logo.variable?
 
-      return main_app.url_for(store_logo) if store_logo.image?
+      return main_app.cdn_image_url(store_logo) if store_logo.image?
     end
   end
 end
