@@ -78,9 +78,22 @@ module Spree
 
     default_scope { order(created_at: :asc) }
 
-    has_one_attached :logo
-    has_one_attached :mailer_logo
-    has_one_attached :favicon_image
+    if Spree.public_storage_service_name
+      has_one_attached :logo, service: Spree.public_storage_service_name
+    else
+      has_one_attached :logo
+    end
+    if Spree.public_storage_service_name
+      has_one_attached :mailer_logo, service: Spree.public_storage_service_name
+    else
+      has_one_attached :mailer_logo
+    end
+    if Spree.public_storage_service_name
+      has_one_attached :favicon_image, service: Spree.public_storage_service_name
+    else
+      has_one_attached :favicon_image
+    end
+
 
     validates :mailer_logo, content_type: MAILER_LOGO_CONTENT_TYPES
     validates :favicon_image, content_type: FAVICON_CONTENT_TYPES,
