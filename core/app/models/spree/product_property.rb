@@ -13,6 +13,7 @@ module Spree
 
     validates :property, presence: true
     validates :property_id, uniqueness: { scope: :product_id }
+    validates :value, presence: true
 
     default_scope { order(:position) }
 

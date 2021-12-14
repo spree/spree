@@ -340,7 +340,7 @@ module Spree
     def add_associations_from_prototype
       if prototype_id && prototype = Spree::Prototype.find_by(id: prototype_id)
         prototype.properties.each do |property|
-          product_properties.create(property: property)
+          product_properties.create(property: property, value: 'Placeholder')
         end
         self.option_types = prototype.option_types
         self.taxons = prototype.taxons

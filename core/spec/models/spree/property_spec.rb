@@ -83,7 +83,10 @@ describe Spree::Property, type: :model do
     let(:product_property) { create(:product_property, property: property, product: product) }
     let(:product_property_2) { create(:product_property, property: property, product: product_2, value: 'Test Test') }
 
-    before { product_property.update_column(:value, 'some value') }
+    before do
+      product_property.update_column(:filter_param, nil)
+      product_property.update_column(:value, 'some value')
+    end
 
     context 'filterable property' do
       it { expect { property.update(filterable: true) }.to change { product_property.reload.filter_param }.from(nil) }
