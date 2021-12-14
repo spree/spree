@@ -48,7 +48,7 @@ module Spree
     def ensure_product_properties_have_filter_params
       return unless filterable?
 
-      product_properties.where(filter_param: [nil, '']).find_each(&:save)
+      product_properties.where(filter_param: [nil, '']).where.not(value: [nil, '']).find_each(&:save)
     end
   end
 end
