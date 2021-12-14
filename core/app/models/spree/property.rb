@@ -20,7 +20,6 @@ module Spree
     scope :filterable, -> { where(filterable: true) }
 
     after_touch :touch_all_products
-    after_save :ensure_product_properties_have_filter_params
 
     self.whitelisted_ransackable_attributes = ['presentation', 'filterable']
 
@@ -43,12 +42,6 @@ module Spree
 
       uniq_values_cache_key = ['property-uniq-values', cache_key_with_version]
       Rails.cache.fetch(uniq_values_cache_key) { block.call }
-    end
-
-    def ensure_product_properties_have_filter_params
-      return unless filterable?
-
-      product_properties.where(filter_param: [nil, '']).where.not(value: [nil, '']).find_each(&:save)
     end
   end
 end

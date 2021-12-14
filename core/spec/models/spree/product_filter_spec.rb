@@ -20,10 +20,5 @@ describe 'product filters', type: :model do
     it "can find products in the 'Nike' brand" do
       expect(Spree::Product.brand_any('Nike')).to include(product)
     end
-    it 'sorts products without brand specified' do
-      product.set_property('brand', 'Nike')
-      create(:product, stores: [store]).set_property('brand', nil)
-      expect { Spree::Core::ProductFilters.brand_filter[:labels] }.not_to raise_error
-    end
   end
 end

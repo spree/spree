@@ -23,8 +23,9 @@ describe 'API V2 Platform Products Spec' do
   let!(:not_backorderable_product) { create(:product_in_stock, :without_backorder, stores: [store]) }
   let!(:property)                  { create(:property) }
   let!(:new_property)              { create(:property) }
-  let!(:product_with_property)     { create(:product, properties: [property], stores: [store]) }
+  let!(:product_with_property)     { create(:product, stores: [store]) }
   let!(:product_property)          { create(:product_property, property: new_property, product: product_with_property, value: 'Some Value') }
+  let!(:product_property2)          { create(:product_property, property: property, product: product_with_property, value: 'Some Value 2') }
 
   describe 'products#index' do
     context 'with no params' do
