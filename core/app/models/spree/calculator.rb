@@ -2,7 +2,7 @@ module Spree
   class Calculator < Spree::Base
     acts_as_paranoid
 
-    belongs_to :calculable, polymorphic: true, optional: true
+    belongs_to :calculable, polymorphic: true, optional: true, inverse_of: :calculator
 
     # This method calls a compute_<computable> method. must be overridden in concrete calculator.
     #
