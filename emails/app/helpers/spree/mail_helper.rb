@@ -4,7 +4,7 @@ module Spree
 
     def variant_image_url(variant)
       image = default_image_for_product_or_variant(variant)
-      image ? main_app.cdn_image_url(image.url(:small)) : 'noimage/small.png'
+      image ? main_app.cdn_image_url(image.url(:small)) : full_asset_url('noimage/small.png')
     end
 
     def name_for(order)
@@ -21,7 +21,7 @@ module Spree
         Please upload a Store logo instead
       DEPRECATION
 
-      'logo/spree_50.png'
+      full_asset_url('logo/spree_50.png')
     end
 
     def logo_path
@@ -29,6 +29,10 @@ module Spree
       return main_app.cdn_image_url(store_logo.variant(resize_to_limit: [244, 104])) if store_logo.variable?
 
       return main_app.cdn_image_url(store_logo) if store_logo.image?
+    end
+
+    def full_asset_url(path)
+      "#{ActionMailer::Base.default_url_options[:host]}#{asset_url(path)}"
     end
   end
 end
