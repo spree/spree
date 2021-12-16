@@ -3470,7 +3470,7 @@ paths:
                         destination:
                         new_window: false
                         item_type: Link
-                        linked_resource_type: Spree::Linkable::Uri
+                        linked_resource_type: URL
                         code:
                         lft: 2
                         rgt: 3
@@ -3507,7 +3507,7 @@ paths:
                         destination:
                         new_window: false
                         item_type: Link
-                        linked_resource_type: Spree::Linkable::Uri
+                        linked_resource_type: URL
                         code:
                         lft: 4
                         rgt: 5
@@ -3544,7 +3544,7 @@ paths:
                         destination:
                         new_window: false
                         item_type: Link
-                        linked_resource_type: Spree::Linkable::Uri
+                        linked_resource_type: URL
                         code:
                         lft: 6
                         rgt: 7
@@ -3581,7 +3581,7 @@ paths:
                         destination:
                         new_window: false
                         item_type: Link
-                        linked_resource_type: Spree::Linkable::Uri
+                        linked_resource_type: URL
                         code:
                         lft: 8
                         rgt: 9
@@ -3618,7 +3618,7 @@ paths:
                         destination:
                         new_window: false
                         item_type: Link
-                        linked_resource_type: Spree::Linkable::Uri
+                        linked_resource_type: URL
                         code:
                         lft: 10
                         rgt: 11
@@ -3655,7 +3655,7 @@ paths:
                         destination:
                         new_window: false
                         item_type: Link
-                        linked_resource_type: Spree::Linkable::Uri
+                        linked_resource_type: URL
                         code:
                         lft: 12
                         rgt: 13
@@ -3692,7 +3692,7 @@ paths:
                         destination:
                         new_window: false
                         item_type: Link
-                        linked_resource_type: Spree::Linkable::Uri
+                        linked_resource_type: URL
                         code:
                         lft: 14
                         rgt: 15
@@ -3729,7 +3729,7 @@ paths:
                         destination:
                         new_window: false
                         item_type: Container
-                        linked_resource_type: Spree::Linkable::Uri
+                        linked_resource_type: URL
                         code:
                         lft: 1
                         rgt: 16
@@ -3823,7 +3823,7 @@ paths:
                         destination:
                         new_window: false
                         item_type: Link
-                        linked_resource_type: Spree::Linkable::Uri
+                        linked_resource_type: URL
                         code:
                         lft: 8
                         rgt: 9
@@ -3914,7 +3914,7 @@ paths:
                         destination:
                         new_window: false
                         item_type: Link
-                        linked_resource_type: Spree::Linkable::Uri
+                        linked_resource_type: URL
                         code:
                         lft: 8
                         rgt: 9
@@ -4003,7 +4003,7 @@ paths:
                         destination:
                         new_window: false
                         item_type: Link
-                        linked_resource_type: Spree::Linkable::Uri
+                        linked_resource_type: URL
                         code:
                         lft: 8
                         rgt: 9
@@ -4141,7 +4141,7 @@ paths:
                         destination:
                         new_window: false
                         item_type: Link
-                        linked_resource_type: Spree::Linkable::Uri
+                        linked_resource_type: URL
                         code:
                         lft: 5
                         rgt: 6
