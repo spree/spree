@@ -44,7 +44,7 @@ group :test do
   gem 'rspec-rails', '~> 4.0'
   gem 'rspec-retry'
   gem 'rspec_junit_formatter'
-  gem 'rswag-specs'
+  gem 'rswag-specs', github: 'rswag/rswag'
   gem 'jsonapi-rspec'
   gem 'simplecov', '0.17.1'
   gem 'webmock', '~> 3.7'
