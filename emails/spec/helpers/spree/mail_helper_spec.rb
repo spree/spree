@@ -2,6 +2,7 @@ require 'spec_helper'
 
 module Spree
   describe MailHelper, type: :helper do
+
     describe '#variant_image_url' do
       subject { helper.variant_image_url(variant) }
 
@@ -11,7 +12,7 @@ module Spree
         let(:images) { [] }
 
         specify 'returns placeholder path' do
-          expect(subject).to eq 'noimage/small.png'
+          expect(subject).to match Regexp.new('assets/noimage/small-[0-9a-z]*\.png')
         end
       end
 
