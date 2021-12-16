@@ -1309,7 +1309,7 @@ RSpec.configure do |config|
                           calculator_attributes: {
                             properties: {
                               id: { type: :string, example: '19', description: 'To update an existing Action Calculator, you are required to pass the ID of the calculator.' },
-                              type: { type: :string, example: 'Promotion::Actions::CreateAdjustment', enum: ['Promotion::Actions::CreateAdjustment', 'Promotion::Actions::CreateItemAdjustments', 'Promotion::Actions::CreateLineItems', 'Promotion::Actions::FreeShipping'], description: 'Set the Type of Promotion Action you wish to use.' },
+                              type: { type: :string, example: 'Spree::Promotion::Actions::CreateAdjustment', enum: ['Spree::Promotion::Actions::CreateAdjustment', 'Spree::Promotion::Actions::CreateItemAdjustments', 'Spree::Promotion::Actions::CreateLineItems', 'Spree::Promotion::Actions::FreeShipping'], description: 'Set the Type of Promotion Action you wish to use.' },
                               preferred_flat_percent: { type: :integer, example: 10, description: 'In this example we are setting the preferred flat percentage to `10`.' }
                             }
                           }
@@ -1364,7 +1364,7 @@ RSpec.configure do |config|
                       allOf: [
                         properties: {
                           id: { type: :string, example: '22', description: 'To update an existing Promotion Action, you are required to pass the ID of the Promotion Action.' },
-                          type: { type: :string, example: 'Promotion::Actions::CreateAdjustment', enum: ['Promotion::Actions::CreateAdjustment', 'Promotion::Actions::CreateItemAdjustments', 'Promotion::Actions::CreateLineItems', 'Promotion::Actions::FreeShipping'], description: 'Set the Type of Promotion Action you wish to use.' },
+                          type: { type: :string, example: 'Spree::Promotion::Actions::CreateAdjustment', enum: ['Spree::Promotion::Actions::CreateAdjustment', 'Spree::Promotion::Actions::CreateItemAdjustments', 'Spree::Promotion::Actions::CreateLineItems', 'Spree::Promotion::Actions::FreeShipping'], description: 'Set the Type of Promotion Action you wish to use.' },
                         }
                       ]
                     }
@@ -1385,7 +1385,7 @@ RSpec.configure do |config|
                 type: :object,
                 required: %w[type promotion_id],
                 properties: {
-                  type: { type: :string, example: 'Promotion::Actions::CreateAdjustment', enum: ['Promotion::Actions::CreateAdjustment', 'Promotion::Actions::CreateItemAdjustments', 'Promotion::Actions::CreateLineItems', 'Promotion::Actions::FreeShipping'], description: 'Set the Type of Promotion Action you wish to use.' },
+                  type: { type: :string, example: 'Spree::Promotion::Actions::CreateAdjustment', enum: ['Spree::Promotion::Actions::CreateAdjustment', 'Spree::Promotion::Actions::CreateItemAdjustments', 'Spree::Promotion::Actions::CreateLineItems', 'Spree::Promotion::Actions::FreeShipping'], description: 'Set the Type of Promotion Action you wish to use.' },
                   promotion_id: {type: :string, example: '22', description: 'Set the ID of the promotion this action belongs to.'}
                 }
               }
@@ -1400,7 +1400,7 @@ RSpec.configure do |config|
               promotion_action: {
                 type: :object,
                 properties: {
-                  type: { type: :string, example: 'Promotion::Actions::CreateAdjustment', enum: ['Promotion::Actions::CreateAdjustment', 'Promotion::Actions::CreateItemAdjustments', 'Promotion::Actions::CreateLineItems', 'Promotion::Actions::FreeShipping'], description: 'Set the Type of Promotion Action you wish to use.' }
+                  type: { type: :string, example: 'Spree::Promotion::Actions::CreateAdjustment', enum: ['Spree::Promotion::Actions::CreateAdjustment', 'Spree::Promotion::Actions::CreateItemAdjustments', 'Spree::Promotion::Actions::CreateLineItems', 'Spree::Promotion::Actions::FreeShipping'], description: 'Set the Type of Promotion Action you wish to use.' }
                 }
               }
             },
