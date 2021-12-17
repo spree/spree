@@ -4,7 +4,7 @@ module Spree
 
     def variant_image_url(variant)
       image = default_image_for_product_or_variant(variant)
-      image ? main_app.cdn_image_url(image.url(:small)) : 'noimage/small.png'
+      image ? main_app.cdn_image_url(image.url(:small)) : image_url('noimage/small.png')
     end
 
     def name_for(order)
@@ -21,7 +21,7 @@ module Spree
         Please upload a Store logo instead
       DEPRECATION
 
-      'logo/spree_50.png'
+      image_url('logo/spree_50.png')
     end
 
     def logo_path
