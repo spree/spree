@@ -2472,34 +2472,29 @@ components:
     Image:
       type: object
       properties:
-        data:
+        id:
+          type: string
+          example: '1'
+        type:
+          type: string
+          default: image
+        attributes:
           type: object
-          required:
-            - id
-            - type
-            - attributes
           properties:
-            id:
-              type: string
-              example: '1'
-            type:
-              type: string
-              default: image
-            attributes:
-              type: object
-              properties:
-                position:
-                  type: integer
-                  description: Sort order of images set in the Admin Panel
-                  example: 0
-                  minimum: 0
-                styles:
-                  type: array
-                  description: An array of pre-scaled image styles
-                  items:
-                    $ref: '#/components/schemas/ImageStyle'
+            position:
+              type: integer
+              description: Sort order of images set in the Admin Panel
+              example: 0
+              minimum: 0
+            styles:
+              type: array
+              description: An array of pre-scaled image styles
+              items:
+                $ref: '#/components/schemas/ImageStyle'
       required:
-        - data
+        - id
+        - type
+        - attributes
       title: Image
       x-internal: true
     ImageStyle:
