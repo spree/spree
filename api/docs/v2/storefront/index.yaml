@@ -3059,36 +3059,31 @@ components:
       title: Product Property
       type: object
       properties:
-        data:
+        id:
+          type: string
+          example: '1'
+        type:
+          type: string
+          default: product_property
+        attributes:
           type: object
-          required:
-            - id
-            - type
-            - attributes
           properties:
-            id:
+            value:
               type: string
-              example: '1'
-            type:
+              example: Wilson
+            filter_param:
               type: string
-              default: product_property
-            attributes:
-              type: object
-              properties:
-                value:
-                  type: string
-                  example: Wilson
-                filter_param:
-                  type: string
-                  example: wilson
-                name:
-                  type: string
-                  example: manufacturer
-                description:
-                  type: string
-                  example: Manufacturer
+              example: wilson
+            name:
+              type: string
+              example: manufacturer
+            description:
+              type: string
+              example: Manufacturer
       required:
-        - data
+        - id
+        - type
+        - attributes
       x-internal: true
     Promotion:
       type: object
