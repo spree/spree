@@ -2806,33 +2806,28 @@ components:
       type: object
       x-internal: true
       properties:
-        data:
+        id:
+          type: string
+          example: '1'
+        type:
+          type: string
+          default: option_type
+        attributes:
           type: object
-          required:
-            - id
-            - type
-            - attributes
           properties:
-            id:
+            name:
               type: string
-              example: '1'
-            type:
+              example: color
+            presentation:
               type: string
-              default: option_type
-            attributes:
-              type: object
-              properties:
-                name:
-                  type: string
-                  example: color
-                presentation:
-                  type: string
-                  example: Color
-                position:
-                  type: integer
-                  example: 1
+              example: Color
+            position:
+              type: integer
+              example: 1
       required:
-        - data
+        - id
+        - type
+        - attributes
     Payment:
       title: Payment
       type: object
