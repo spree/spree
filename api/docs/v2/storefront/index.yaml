@@ -2394,8 +2394,6 @@ components:
           default: credit_card
         attributes:
           type: object
-          required:
-            - relationships
           properties:
             cc_type:
               type: string
@@ -2424,18 +2422,19 @@ components:
               type: boolean
               example: true
               description: Defines if this is the default CC for a signed in user
-            relationships:
-              type: object
-              properties:
-                payment_method:
-                  type: object
-                  properties:
-                    data:
-                      $ref: '#/components/schemas/Relation'
+          relationships:
+            type: object
+            properties:
+              payment_method:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Relation'
       required:
         - id
         - type
         - attributes
+        - relationships
     CreditCardIncludes:
       x-internal: true
       title: Credit Card Includes
