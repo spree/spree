@@ -1861,6 +1861,7 @@ components:
               type: string
               example: CA
               description: State abbreviation
+              nullable: true
             country_name:
               type: string
               example: United States of America
