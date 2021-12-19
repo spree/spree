@@ -2944,21 +2944,25 @@ components:
             description:
               type: string
               example: Example description
+              nullable: true
             available_on:
               type: string
               example: '2012-10-17T03:43:57Z'
+              nullable: true
             slug:
               type: string
               example: example-product
             price:
               type: string
               example: '15.99'
+              nullable: true
             currency:
               type: string
               example: USD
             display_price:
               type: string
               example: $15.99
+              nullable: true
             purchasable:
               type: boolean
               description: Indicates if any of Variants are in stock or backorderable
