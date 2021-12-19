@@ -771,9 +771,9 @@ paths:
                               gateway_payment_profile_id:
                                 type: string
                               month:
-                                type: string
+                                type: number
                               year:
-                                type: string
+                                type: number
                               cc_type:
                                 type: string
                               name:
@@ -819,8 +819,8 @@ paths:
                           gateway_payment_profile_id: ABC123
                           cc_type: visa
                           last_digits: '1111'
-                          month: '10'
-                          year: '2022'
+                          month: 10
+                          year: 2022
                           name: John Doe
         description: |-
           ##### Add Customer Details
@@ -1008,10 +1008,10 @@ paths:
                       type: string
                       description: Last 4 digits of CC number
                     month:
-                      type: string
+                      type: number
                       description: Expiration date month
                     year:
-                      type: string
+                      type: number
                       description: Expiration date year
                     name:
                       type: string
@@ -1029,8 +1029,8 @@ paths:
                     gateway_payment_profile_id: card_1JqvNB2eZvKYlo2C5OlqLV7S
                     cc_type: visa
                     last_digits: '1111'
-                    month: '10'
-                    year: '2026'
+                    month: 10
+                    year: 2026
                     name: John Snow
               Use existing Credit Card:
                 value:
@@ -2409,12 +2409,12 @@ components:
               example: '1111'
               description: Last 4 digits of CC number
             month:
-              type: string
+              type: number
               description: Expiration date month
-              example: '12'
+              example: 12
             year:
-              type: string
-              example: '2026'
+              type: number
+              example: 2026
               description: Expiration date year
             name:
               type: string
@@ -6058,8 +6058,8 @@ components:
                   attributes:
                     cc_type: visa
                     last_digits: '4111'
-                    month: '12'
-                    year: '2026'
+                    month: 12
+                    year: 2026
                     name: John Doe
                     default: true
                     relationships:
@@ -6107,8 +6107,8 @@ components:
                     attributes:
                       cc_type: visa
                       last_digits: '1111'
-                      month: '12'
-                      year: '2026'
+                      month: 12
+                      year: 2026
                       name: John Doe
                       default: true
                       relationships:
@@ -6121,8 +6121,8 @@ components:
                     attributes:
                       cc_type: mastercard
                       last_digits: '6695'
-                      month: '12'
-                      year: '2030'
+                      month: 12
+                      year: 2030
                       name: John Doe
                       default: false
                       relationships:
