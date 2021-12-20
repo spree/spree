@@ -8,8 +8,8 @@ Rails.application.routes.draw do
         model.signed_id,
         model.filename,
         options.merge(
-          host: Spree.cdn_host || Rails.application.config.default_url_options[:host],
-          port: Rails.application.config.default_url_options[:port]
+          host: Spree.cdn_host || Rails.application.routes.default_url_options[:host],
+          port: Rails.application.routes.default_url_options[:port]
         )
       )
     else
@@ -23,8 +23,8 @@ Rails.application.routes.draw do
         variation_key,
         filename,
         options.merge(
-          host: Spree.cdn_host || Rails.application.config.default_url_options[:host],
-          port: Rails.application.config.default_url_options[:port]
+          host: Spree.cdn_host || Rails.application.routes.default_url_options[:host],
+          port: Rails.application.routes.default_url_options[:port]
         )
       )
     end

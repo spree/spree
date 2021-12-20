@@ -38,5 +38,5 @@ Dummy::Application.configure do
 
   config.cache_store = :redis_cache_store
 
-  config.default_url_options = { host: 'localhost', port: 3000 }
+  routes.default_url_options = { host: 'localhost', port: 3000 }
 end
