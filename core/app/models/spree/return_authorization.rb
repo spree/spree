@@ -38,6 +38,7 @@ module Spree
     money_methods :pre_tax_total
 
     self.whitelisted_ransackable_attributes = ['memo', 'number', 'state']
+    self.whitelisted_ransackable_associations = ['order']
 
     def pre_tax_total
       return_items.sum(:pre_tax_amount)
