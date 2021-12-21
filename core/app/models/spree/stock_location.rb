@@ -7,6 +7,9 @@ module Spree
     if defined?(Spree::Security::StockLocations)
       include Spree::Security::StockLocations
     end
+    if defined?(Spree::VendorConcern)
+      include Spree::VendorConcern
+    end
 
     has_many :shipments
     has_many :stock_items, dependent: :delete_all, inverse_of: :stock_location
