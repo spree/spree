@@ -5,8 +5,8 @@ describe Spree::Variant, type: :model do
   let!(:variant) { create(:variant) }
   let(:master_variant) { create(:master_variant) }
 
-  it_behaves_like 'default_price'
-  it_behaves_like 'metadata'
+  # it_behaves_like 'default_price'
+  # it_behaves_like 'metadata'
 
   context 'sorting' do
     it 'responds to set_list_position' do
@@ -1021,12 +1021,23 @@ describe Spree::Variant, type: :model do
     end
   end
 
-  describe '#ensure_no_line_items' do
-    let!(:line_item) { create(:line_item, variant: variant) }
+  describe '#ensure_not_in_complete_orders' do
+    let!(:order) { create(:completed_order_with_totals) }
+    let!(:line_item) { create(:line_item, order: order, variant: variant) }
 
-    it 'adds error on product destroy' do
+    it 'adds error on variant destroy' do
       expect(variant.destroy).to eq false
       expect(variant.errors[:base]).to include I18n.t('activerecord.errors.models.spree/variant.attributes.base.cannot_destroy_if_attached_to_line_items')
+    end
+  end
+
+  describe '#remove_line_items_from_incomplete_orders' do
+    let!(:order) { create(:order) }
+    let!(:line_item) { create(:line_item, order: order, variant: variant) }
+
+    it 'schedules RemoveFromIncompleteOrdersJob' do
+      expect(Spree::LineItems::RemoveFromIncompleteOrdersJob).to receive(:perform_later).with(variant)
+      variant.destroy
     end
   end
 end

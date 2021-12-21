@@ -6,7 +6,7 @@ module Spree
     let!(:orders) { [create(:order_with_line_items)] }
 
     it 'enqueues the removal of variants line items' do
-      expect { described_class.perform_later(variant, orders.pluck(:id)) }.to(
+      expect { described_class.perform_later(variant) }.to(
         have_enqueued_job.on_queue('default')
       )
     end

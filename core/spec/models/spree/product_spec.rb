@@ -661,9 +661,10 @@ describe Spree::Product, type: :model do
     end
   end
 
-  describe '#ensure_no_line_items' do
+  describe '#ensure_not_in_complete_orders' do
+    let!(:order) { create(:completed_order_with_totals) }
     let(:product) { create(:product, stores: [store]) }
-    let!(:line_item) { create(:line_item, variant: product.master, product: product) }
+    let!(:line_item) { create(:line_item, order: order, variant: product.master, product: product) }
 
     it 'adds error on product destroy' do
       expect(product.destroy).to eq false

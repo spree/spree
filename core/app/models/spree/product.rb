@@ -39,7 +39,7 @@ module Spree
 
     # we need to have this callback before any dependent: :destroy associations
     # https://github.com/rails/rails/issues/3458
-    before_destroy :ensure_no_line_items
+    before_destroy :ensure_not_in_complete_orders
 
     has_many :product_option_types, dependent: :destroy, inverse_of: :product
     has_many :option_types, through: :product_option_types
@@ -476,8 +476,8 @@ module Spree
       Spree::Taxonomy.where(id: taxonomy_ids).update_all(updated_at: Time.current)
     end
 
-    def ensure_no_line_items
-      if line_items.any?
+    def ensure_not_in_complete_orders
+      if orders.where(state: 'complete').any?
         errors.add(:base, :cannot_destroy_if_attached_to_line_items)
         throw(:abort)
       end

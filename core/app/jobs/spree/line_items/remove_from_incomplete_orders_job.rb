@@ -1,8 +1,8 @@
 module Spree
   module LineItems
     class RemoveFromIncompleteOrdersJob < Spree::BaseJob
-      def perform(variant, order_ids)
-        Spree::Variants::RemoveLineItems.call(variant: variant, order_ids: order_ids)
+      def perform(variant)
+        Spree::Variants::RemoveLineItems.call(variant: variant)
       end
     end
   end
