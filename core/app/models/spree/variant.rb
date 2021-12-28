@@ -20,7 +20,7 @@ module Spree
     # we need to have this callback before any dependent: :destroy associations
     # https://github.com/rails/rails/issues/3458
     before_destroy :ensure_not_in_complete_orders
-    before_destroy :remove_line_items_from_incomplete_orders
+    after_destroy :remove_line_items_from_incomplete_orders
 
     # must include this after ensure_not_in_complete_orders to make sure price won't be deleted before validation
     include Spree::DefaultPrice
@@ -317,14 +317,14 @@ module Spree
     private
 
     def ensure_not_in_complete_orders
-      if orders.where(state: 'complete').any?
+      if orders.complete.any?
         errors.add(:base, :cannot_destroy_if_attached_to_line_items)
         throw(:abort)
       end
     end
 
     def remove_line_items_from_incomplete_orders
-      Spree::LineItems::RemoveFromIncompleteOrdersJob.perform_later(self)
+      Spree::Variants::RemoveFromIncompleteOrdersJob.perform_later(self)
     end
 
     def quantifier

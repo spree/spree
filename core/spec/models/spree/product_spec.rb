@@ -319,7 +319,7 @@ describe Spree::Product, type: :model do
 
     context 'hard deletion' do
       it 'doesnt raise ActiveRecordError error' do
-        expect { product.really_destroy! }.not_to raise_error
+        expect { product.really_destroy! }.not_to raise_error(ActiveRecord::ActiveRecordError)
       end
     end
 

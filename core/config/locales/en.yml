@@ -360,7 +360,7 @@ en:
             discontinue_on:
               invalid_date_range: must be later than available date
             base:
-              cannot_destroy_if_attached_to_line_items: Cannot delete products once they are attached to line items of complete orders.
+              cannot_destroy_if_attached_to_line_items: Cannot delete Products that are added to placed Orders. In such cases, please discontinue them.
         spree/refund:
           attributes:
             amount:
@@ -397,7 +397,7 @@ en:
         spree/variant:
           attributes:
             base:
-              cannot_destroy_if_attached_to_line_items: Cannot delete variants once they are attached to line items of complete orders.
+              cannot_destroy_if_attached_to_line_items: Cannot delete Variants that are added to placed Orders. In such cases, please discontinue them.
               no_master_variant_found_to_infer_price: No master variant found to infer price
               must_supply_price_for_variant_or_master: Must supply price for variant or master price for product.
         spree/image:

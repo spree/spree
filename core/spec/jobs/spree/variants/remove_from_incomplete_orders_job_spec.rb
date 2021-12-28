@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Spree
-  describe LineItems::RemoveFromIncompleteOrdersJob, :job do
+  describe Variants::RemoveFromIncompleteOrdersJob, :job do
     let!(:variant) { orders.first.line_items.first.variant }
     let!(:orders) { [create(:order_with_line_items)] }
 

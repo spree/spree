@@ -5,8 +5,8 @@ describe Spree::Variant, type: :model do
   let!(:variant) { create(:variant) }
   let(:master_variant) { create(:master_variant) }
 
-  # it_behaves_like 'default_price'
-  # it_behaves_like 'metadata'
+  it_behaves_like 'default_price'
+  it_behaves_like 'metadata'
 
   context 'sorting' do
     it 'responds to set_list_position' do
@@ -1033,11 +1033,20 @@ describe Spree::Variant, type: :model do
 
   describe '#remove_line_items_from_incomplete_orders' do
     let!(:order) { create(:order) }
-    let!(:line_item) { create(:line_item, order: order, variant: variant) }
+    let!(:line_item) { create(:line_item, order: order, variant: variant, quantity: 2) }
+    let!(:line_item_2) { create(:line_item, order: order, variant: variant, quantity: 3) }
+
+    before { variant.update(track_inventory: false) }
 
     it 'schedules RemoveFromIncompleteOrdersJob' do
-      expect(Spree::LineItems::RemoveFromIncompleteOrdersJob).to receive(:perform_later).with(variant)
+      expect(Spree::Variants::RemoveFromIncompleteOrdersJob).to receive(:perform_later).with(variant)
       variant.destroy
+    end
+
+    it 'deletes the line items from the order' do
+      variant.destroy
+      expect(order.reload.line_items).to be_empty
+      expect(order.total).to eq(0)
     end
   end
 end

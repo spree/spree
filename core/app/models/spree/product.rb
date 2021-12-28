@@ -477,7 +477,7 @@ module Spree
     end
 
     def ensure_not_in_complete_orders
-      if orders.where(state: 'complete').any?
+      if orders.complete.any?
         errors.add(:base, :cannot_destroy_if_attached_to_line_items)
         throw(:abort)
       end
