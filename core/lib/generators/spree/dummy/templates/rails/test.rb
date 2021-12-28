@@ -41,11 +41,13 @@ Dummy::Application.configure do
   routes.default_url_options = { host: 'localhost', port: 3000 }
 
   # Validation based on Storefront API OpenAPI document
-  config.middleware.use(
-    Committee::Middleware::ResponseValidation,
-    parse_response_by_content_type: false,
-    query_hash_key: 'rack.request.query_hash',
-    raise: true,
-    schema_path: Rails.root.join('../../../api/docs/v2/storefront/index.yaml')
-  )
+  if defined?(Spree::Api)
+    config.middleware.use(
+      Committee::Middleware::ResponseValidation,
+      parse_response_by_content_type: false,
+      query_hash_key: 'rack.request.query_hash',
+      raise: true,
+      schema_path: Rails.root.join('../../../api/docs/v2/storefront/index.yaml')
+    )
+  end
 end
