@@ -77,7 +77,7 @@ module Spree
     self.whitelisted_ransackable_associations = %w[shipments user created_by approver canceler promotions bill_address ship_address line_items store]
     self.whitelisted_ransackable_attributes = %w[
       completed_at email number state payment_state shipment_state
-      total item_total considered_risky channel
+      total item_total considered_risky channel_id
     ]
 
     attr_reader :coupon_code
@@ -109,6 +109,8 @@ module Spree
     alias_attribute :shipping_address, :ship_address
 
     belongs_to :store, class_name: 'Spree::Store'
+
+    belongs_to :channel, foreign_key: :channel_id, class_name: 'Spree::StoreChannel'
 
     with_options dependent: :destroy do
       has_many :state_changes, as: :stateful, class_name: 'Spree::StateChange'
