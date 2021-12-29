@@ -96,8 +96,7 @@ module Spree
     end
 
     def fill_status(variant, quantity)
-      if item = stock_item(variant)
-
+      if item = stock_item_or_create(variant)
         if item.count_on_hand >= quantity
           on_hand = quantity
           backordered = 0

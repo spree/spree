@@ -76,8 +76,8 @@ module Spree
       end
 
       context 'with multiple stock locations/items' do
-        let!(:stock_location_2) { create :stock_location }
-        let!(:stock_location_3) { create :stock_location, active: false }
+        let!(:stock_location_2) { create :stock_location, propagate_all_variants: true }
+        let!(:stock_location_3) { create :stock_location, active: false, propagate_all_variants: true }
 
         before do
           stock_location_2.stock_items.where(variant_id: stock_item.variant).update_all(count_on_hand: 5, backorderable: false)
