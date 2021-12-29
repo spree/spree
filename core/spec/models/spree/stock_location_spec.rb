@@ -10,14 +10,14 @@ module Spree
     context 'handling the stock items creation after create' do
       let!(:variant) { create(:variant) }
 
-      before { StockLocation.destroy_all }
+      before { described_class.destroy_all }
 
       it 'creates stock_items for all variants' do
         expect do
-          create(:stock_location)
+          create(:stock_location, propagate_all_variants: true)
         end.to(
           change { Variant.count }.by(0).and(
-            change { StockLocation.count }.from(0).to(1).and(
+            change { described_class.count }.from(0).to(1).and(
               change { StockItem.count }.from(0).to(2)
             )
           )
@@ -26,15 +26,15 @@ module Spree
     end
 
     it 'validates uniqueness' do
-      StockLocation.create(name: 'Test')
-      expect(StockLocation.new(name: 'Test')).not_to be_valid
+      described_class.create(name: 'Test')
+      expect(described_class.new(name: 'Test')).not_to be_valid
     end
 
     context 'handling stock items' do
       let!(:variant) { create(:variant) }
 
       context 'given a variant' do
-        subject { StockLocation.create(name: 'testing', propagate_all_variants: false) }
+        subject { described_class.create(name: 'testing', propagate_all_variants: false) }
 
         context 'set up' do
           it 'creates stock item' do
@@ -76,7 +76,7 @@ module Spree
         end
 
         context 'propagate all variants' do
-          subject { StockLocation.new(name: 'testing') }
+          subject { described_class.new(name: 'testing') }
 
           context 'true' do
             before { subject.propagate_all_variants = true }
@@ -188,7 +188,7 @@ module Spree
     it 'can be deactivated' do
       create(:stock_location, active: true)
       create(:stock_location, active: false)
-      expect(Spree::StockLocation.active.count).to eq 1
+      expect(described_class.active.count).to eq 1
     end
 
     it 'ensures only one stock location is default at a time' do
@@ -278,13 +278,13 @@ module Spree
 
     context '#state_text' do
       context 'state is blank' do
-        subject { StockLocation.create(name: 'testing', state: nil, state_name: 'virginia') }
+        subject { described_class.create(name: 'testing', state: nil, state_name: 'virginia') }
 
         specify { expect(subject.state_text).to eq('virginia') }
       end
 
       context 'both name and abbr is present' do
-        subject { StockLocation.create(name: 'testing', state: state, state_name: nil) }
+        subject { described_class.create(name: 'testing', state: state, state_name: nil) }
 
         let(:state) { create(:state, name: 'virginia', abbr: 'va') }
 
@@ -292,7 +292,7 @@ module Spree
       end
 
       context 'only name is present' do
-        subject { StockLocation.create(name: 'testing', state: state, state_name: nil) }
+        subject { described_class.create(name: 'testing', state: state, state_name: nil) }
 
         let(:state) { create(:state, name: 'virginia', abbr: nil) }
 
