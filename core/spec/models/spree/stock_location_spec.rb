@@ -223,7 +223,7 @@ module Spree
       end
 
       it 'zero on_hand with all backordered' do
-        expect(subject).to receive(:stock_item).with(variant).and_return(zero_stock_item)
+        expect(subject).to receive(:stock_item_or_create).with(variant).and_return(zero_stock_item)
 
         on_hand, backordered = subject.fill_status(variant, 20)
         expect(on_hand).to eq 0
@@ -233,7 +233,7 @@ module Spree
       context 'when backordering is not allowed' do
         before do
           allow(stock_item).to receive_messages backorderable?: false
-          expect(subject).to receive(:stock_item).with(variant).and_return(stock_item)
+          expect(subject).to receive(:stock_item_or_create).with(variant).and_return(stock_item)
         end
 
         it 'all on_hand' do
@@ -266,12 +266,12 @@ module Spree
 
         let(:variant) { create(:base_variant) }
 
-        it 'zero on_hand and backordered' do
+        it 'zero on_hand and one backordered' do
           subject
           variant.stock_items.destroy_all
           on_hand, backordered = subject.fill_status(variant, 1)
           expect(on_hand).to eq 0
-          expect(backordered).to eq 0
+          expect(backordered).to eq 1
         end
       end
     end

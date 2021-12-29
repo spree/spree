@@ -32,7 +32,6 @@ module Spree
 
     # Wrapper for creating a new stock item respecting the backorderable config
     def propagate_variant(variant)
-      variant = variant.is_a?(Spree::Variant) ? variant : Variant.find(variant)
       stock_items.create!(variant: variant, backorderable: backorderable_default)
     end
 
@@ -61,9 +60,15 @@ module Spree
     # @param variant Variant instance or Variant ID
     #
     # @return [StockItem] Corresponding StockItem for the StockLocation's variant.
-    def stock_item_or_create(variant)
-      variant_id = variant.is_a?(Spree::Variant) ? variant.id : variant
-      stock_item(variant_id) || propagate_variant(variant_id)
+    def stock_item_or_create(variant_or_variant_id)
+      if variant_or_variant_id.is_a?(Spree::Variant)
+        variant_id = variant_or_variant_id.id
+        variant = variant_or_variant_id
+      else
+        variant_id = variant_or_variant_id
+        variant = Spree::Variant.find(variant_or_variant_id)
+      end
+      stock_item(variant_id) || propagate_variant(variant)
     end
 
     def count_on_hand(variant)
