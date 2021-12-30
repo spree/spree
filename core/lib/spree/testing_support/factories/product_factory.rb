@@ -22,7 +22,7 @@ FactoryBot.define do
       end
     end
     after(:create) do |product|
-      Spree::StockLocation.all.each { |stock_location| stock_location.propagate_variant(product.master) }
+      Spree::StockLocation.all.each { |stock_location| stock_location.propagate_variant(product.master) unless stock_location.stock_items.exists?(variant: product.master) }
     end
 
     factory :custom_product do

@@ -61,7 +61,7 @@ describe Spree::OrderInventory, type: :model do
     context 'variant doesnt track inventory' do
       let(:variant) { create(:variant) }
 
-      before { variant.track_inventory = false }
+      before { variant.update(track_inventory: false) }
 
       it 'creates only on hand inventory units' do
         variant.stock_items.destroy_all
