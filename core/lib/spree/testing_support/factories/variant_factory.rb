@@ -18,6 +18,10 @@ FactoryBot.define do
     # ensure stock item will be created for this variant
     before(:create) { create(:stock_location) unless Spree::StockLocation.any? }
 
+    after(:create) do |variant|
+      Spree::StockLocation.all.each { |stock_location| stock_location.propagate_variant(variant) }
+    end
+
     factory :variant do
       # on_hand 5
       product { |p| p.association(:product, stores: [create(:store)]) }
