@@ -257,7 +257,7 @@ module Spree
 
       def map_prices(prices)
         prices.map do |price|
-          price == 'Infinity' ? Float::INFINITY : price.to_f
+          price == 'Infinity' ? BigDecimal::INFINITY : price.to_f
         end
       end
 
