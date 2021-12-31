@@ -16,6 +16,8 @@ module Spree
       s.integer :digital_asset_link_expire_time, default: 300, null: false # 5 minutes in seconds
     end
 
+    attr_accessor :skip_validate_not_last
+
     MAILER_LOGO_CONTENT_TYPES = ['image/png', 'image/jpg', 'image/jpeg'].freeze
     FAVICON_CONTENT_TYPES = ['image/png', 'image/x-icon', 'image/vnd.microsoft.icon'].freeze
 
@@ -103,7 +105,7 @@ module Spree
 
     before_save :ensure_default_exists_and_is_unique
     before_save :ensure_supported_currencies, :ensure_supported_locales, :ensure_default_country
-    before_destroy :validate_not_last
+    before_destroy :validate_not_last, unless: :skip_validate_not_last
     before_destroy :pass_default_flag_to_other_store
 
     scope :by_url, ->(url) { where('url like ?', "%#{url}%") }
