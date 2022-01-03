@@ -6,9 +6,9 @@ FactoryBot.define do
     currency { order.currency }
     product do
       if order&.store&.present?
-        create(:product, stores: [order.store])
+        create(:product_in_stock, stores: [order.store])
       else
-        create(:product)
+        create(:product_in_stock)
       end
     end
     variant { product.master }
