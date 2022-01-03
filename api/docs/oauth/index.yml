@@ -63,22 +63,25 @@ paths:
                 - $ref: '#/components/schemas/ClientTokenBody'
                 - $ref: '#/components/schemas/RefreshTokenBody'
             examples:
-              Create Storefront User Token:
+              Create Storefront API User Token:
                 value:
                   grant_type: password
                   username: spree@example.com
                   password: spree123
-              Create Platform User Token:
+              Create Platform API User Token:
                 value:
+                  client_id: 7ZY15L7crVZul8i3PZPrnpOkEURK7xnXEWRZdE6K39M
+                  client_secret: cxMZ0tbe604qj_13hibNmc3GDsXUQfpzHt9PvweihFc
                   grant_type: password
                   username: spree@example.com
                   password: spree123
                   scope: admin
-              Create a Token Using Client Credentials:
+              Create Platform API Application Token:
                 value:
                   grant_type: client_credentials
-                  client_id: qJDIwX00fehqHxS6xmb-k
-                  client_secret: z6rgMlsl-mbygJ11vjA
+                  client_id: 7ZY15L7crVZul8i3PZPrnpOkEURK7xnXEWRZdE6K39M
+                  client_secret: cxMZ0tbe604qj_13hibNmc3GDsXUQfpzHt9PvweihFc
+                  scope: admin
               Refresh a Token:
                 value:
                   grant_type: refresh_token

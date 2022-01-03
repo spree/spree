@@ -10,6 +10,15 @@ describe Spree::ProductProperty, type: :model do
       expect(duplicated_property.save).to be_falsy
       expect(duplicated_property.errors.messages).to have_key(:property_id)
     end
+
+    context 'value field' do
+      let(:product_property) { build(:product_property, value: nil) }
+
+      it 'validates presence' do
+        expect(product_property.save).to be_falsy
+        expect(product_property.errors.messages).to have_key(:value)
+      end
+    end
   end
 
   context 'touching' do

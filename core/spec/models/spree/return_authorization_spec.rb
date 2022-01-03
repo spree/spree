@@ -88,6 +88,10 @@ describe Spree::ReturnAuthorization, type: :model do
     it { expect(Spree::ReturnAuthorization.whitelisted_ransackable_attributes).to eq(%w(memo number state)) }
   end
 
+  describe 'whitelisted_ransackable_associations' do
+    it { expect(Spree::ReturnAuthorization.whitelisted_ransackable_associations).to eq(%w(order)) }
+  end
+
   context '#currency' do
     before { allow(order).to receive(:currency).and_return('ABC') }
 

@@ -1,6 +1,9 @@
 module Spree
   class Zone < Spree::Base
     include UniqueName
+    if defined?(Spree::Webhooks)
+      include Spree::Webhooks::HasWebhooks
+    end
 
     with_options dependent: :destroy, inverse_of: :zone do
       has_many :zone_members, class_name: 'Spree::ZoneMember'

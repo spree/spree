@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Spree::Webhooks do
   describe '#disable_webhooks' do
-    let(:body) { Spree::Api::V2::Platform::VariantSerializer.new(variant).serializable_hash }
+    let(:webhook_payload_body) { Spree::Api::V2::Platform::VariantSerializer.new(variant).serializable_hash }
     let(:event_name) { 'variant.discontinued' }
     let(:queue_requests) { instance_double(Spree::Webhooks::Subscribers::QueueRequests) }
     let(:variant) { create(:variant) }
@@ -40,7 +40,7 @@ describe Spree::Webhooks do
 
       it 'does not emit the event' do
         described_class.disable_webhooks { variant.discontinue! }
-        expect(queue_requests).not_to have_received(:call).with(event: event_name, body: body)
+        expect(queue_requests).not_to have_received(:call).with(event: event_name, webhook_payload_body: webhook_payload_body)
       end
     end
 
@@ -56,7 +56,7 @@ describe Spree::Webhooks do
       describe 'when using #disable_webhooks' do
         it 'does not emit the event' do
           described_class.disable_webhooks { variant.discontinue! }
-          expect(queue_requests).not_to have_received(:call).with(event: event_name, body: body)
+          expect(queue_requests).not_to have_received(:call).with(event: event_name, webhook_payload_body: webhook_payload_body)
         end
       end
     end

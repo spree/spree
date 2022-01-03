@@ -5,6 +5,9 @@ module Spree
 
     include MemoizedData
     include Metadata
+    if defined?(Spree::Webhooks)
+      include Spree::Webhooks::HasWebhooks
+    end
 
     MEMOIZED_METHODS = %w(purchasable in_stock backorderable tax_category options_text compare_at_price)
 

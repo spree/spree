@@ -8,9 +8,16 @@ describe Spree::ReimbursementMailer, type: :mailer do
   let(:reimbursement) { create(:reimbursement) }
 
   context ':from not set explicitly' do
-    it 'falls back to spree config' do
+    it 'uses store mail from address' do
       message = Spree::ReimbursementMailer.reimbursement_email(reimbursement)
       expect(message.from).to eq [Spree::Store.default.mail_from_address]
+    end
+  end
+
+  context ':reply_to not set explicitly' do
+    it 'uses store mail from address' do
+      message = Spree::ReimbursementMailer.reimbursement_email(reimbursement)
+      expect(message.reply_to).to eq [Spree::Store.default.mail_from_address]
     end
   end
 

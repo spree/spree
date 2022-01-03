@@ -971,7 +971,8 @@ describe Spree::Order, type: :model do
 
     context 'a reimbursement related refund exists' do
       let(:order) { refund.payment.order }
-      let(:refund) { create(:refund, reimbursement_id: 123, amount: 5) }
+      let(:reimbursement) { create(:reimbursement) }
+      let(:refund) { create(:refund, reimbursement_id: reimbursement.id, amount: 5) }
 
       it { is_expected.to eq false }
     end
@@ -1311,7 +1312,7 @@ describe Spree::Order, type: :model do
       end
 
       it 'expect return valid order promotions' do
-        expect(order.valid_promotions).to eq(order.order_promotions.where(promotion_id: [2, 3]))
+        expect(order.valid_promotions).to eq(order.order_promotions.where(promotion_id: [order_promo.id, line_item_promo.id]))
       end
     end
   end

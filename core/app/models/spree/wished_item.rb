@@ -1,5 +1,9 @@
 module Spree
   class WishedItem < Spree::Base
+    if defined?(Spree::Webhooks)
+      include Spree::Webhooks::HasWebhooks
+    end
+
     extend DisplayMoney
     money_methods :total, :price
 

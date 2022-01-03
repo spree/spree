@@ -1,5 +1,8 @@
 require 'rails/engine'
 
+require_relative 'dependencies'
+require_relative 'configuration'
+
 module Spree
   module Api
     class Engine < Rails::Engine
@@ -7,8 +10,8 @@ module Spree
       engine_name 'spree_api'
 
       initializer 'spree.api.environment', before: :load_config_initializers do |_app|
-        Spree::Api::Config = Spree::ApiConfiguration.new
-        Spree::Api::Dependencies = Spree::ApiDependencies.new
+        Spree::Api::Config = Spree::Api::Configuration.new
+        Spree::Api::Dependencies = Spree::Api::ApiDependencies.new
       end
 
       initializer 'spree.api.checking_migrations' do
@@ -23,20 +26,6 @@ module Spree
       end
 
       def self.activate
-        [
-          Spree::Address, Spree::Asset, Spree::CmsPage, Spree::CreditCard, Spree::CustomerReturn,
-          Spree::DigitalLink, Spree::Digital, Spree::InventoryUnit, Spree::LineItem, Spree::MenuItem,
-          Spree::Menu, Spree::OptionType, Spree::OptionValue, Spree::Order, Spree::PaymentCaptureEvent,
-          Spree::Payment, Spree::Price, Spree::Product, Spree::Promotion, Spree::Property, Spree::Prototype,
-          Spree::Refund, Spree::Reimbursement, Spree::ReturnAuthorization, Spree::ReturnItem, Spree::Role,
-          Spree::Shipment, Spree::ShippingCategory, Spree::ShippingMethod, Spree::ShippingRate,
-          Spree::StockItem, Spree::StockLocation, Spree::StockMovement, Spree::StockTransfer,
-          Spree::StoreCredit, Spree::Store, Spree::TaxCategory, Spree::TaxRate, Spree::Taxonomy,
-          Spree::Taxon, Spree::Variant, Spree::WishedItem, Spree::Wishlist, Spree::Zone
-        ].each do |webhookable_class|
-          webhookable_class.include(Spree::Webhooks::HasWebhooks)
-        end
-
         Dir.glob(File.join(File.dirname(__FILE__), '../../../app/models/spree/api/webhooks/*_decorator*.rb')) do |c|
           Rails.application.config.cache_classes ? require(c) : load(c)
         end

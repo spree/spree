@@ -9,6 +9,37 @@ describe 'Storefront API v2 Orders spec', type: :request do
 
   include_context 'API v2 tokens'
 
+  def expect_order_json(json)
+    expect(json).to be_present
+    expect(json).to have_id(order.id.to_s)
+    expect(json).to have_type('order')
+    expect(json).to have_attribute(:number).with_value(order.number)
+    expect(json).to have_attribute(:state).with_value(order.state)
+    expect(json).to have_attribute(:token).with_value(order.token)
+    expect(json).to have_attribute(:total).with_value(order.total.to_s)
+    expect(json).to have_attribute(:item_total).with_value(order.item_total.to_s)
+    expect(json).to have_attribute(:ship_total).with_value(order.ship_total.to_s)
+    expect(json).to have_attribute(:adjustment_total).with_value(order.adjustment_total.to_s)
+    expect(json).to have_attribute(:included_tax_total).with_value(order.included_tax_total.to_s)
+    expect(json).to have_attribute(:additional_tax_total).with_value(order.additional_tax_total.to_s)
+    expect(json).to have_attribute(:display_additional_tax_total).with_value(order.display_additional_tax_total.to_s)
+    expect(json).to have_attribute(:display_included_tax_total).with_value(order.display_included_tax_total.to_s)
+    expect(json).to have_attribute(:tax_total).with_value(order.tax_total.to_s)
+    expect(json).to have_attribute(:currency).with_value(order.currency.to_s)
+    expect(json).to have_attribute(:email).with_value(order.email)
+    expect(json).to have_attribute(:display_item_total).with_value(order.display_item_total.to_s)
+    expect(json).to have_attribute(:display_ship_total).with_value(order.display_ship_total.to_s)
+    expect(json).to have_attribute(:display_adjustment_total).with_value(order.display_adjustment_total.to_s)
+    expect(json).to have_attribute(:display_tax_total).with_value(order.display_tax_total.to_s)
+    expect(json).to have_attribute(:item_count).with_value(order.item_count)
+    expect(json).to have_attribute(:special_instructions).with_value(order.special_instructions)
+    expect(json).to have_attribute(:promo_total).with_value(order.promo_total.to_s)
+    expect(json).to have_attribute(:display_promo_total).with_value(order.display_promo_total.to_s)
+    expect(json).to have_attribute(:display_total).with_value(order.display_total.to_s)
+    expect(json).to have_attribute(:public_metadata).with_value(order.public_metadata)
+    expect(json).to have_relationships(:user, :line_items, :variants, :billing_address, :shipping_address, :payments, :shipments, :promotions)
+  end
+
   describe 'orders#index' do
     context 'with option: include' do
       before { get '/api/v2/storefront/account/orders?include=billing_address', headers: headers_bearer }
@@ -17,34 +48,7 @@ describe 'Storefront API v2 Orders spec', type: :request do
         expect(json_response['data'].size).to eq 1
         expect(json_response['data']).to be_kind_of(Array)
 
-        expect(json_response['data'][0]).to be_present
-        expect(json_response['data'][0]).to have_id(order.id.to_s)
-        expect(json_response['data'][0]).to have_type('cart')
-        expect(json_response['data'][0]).to have_attribute(:number).with_value(order.number)
-        expect(json_response['data'][0]).to have_attribute(:state).with_value(order.state)
-        expect(json_response['data'][0]).to have_attribute(:token).with_value(order.token)
-        expect(json_response['data'][0]).to have_attribute(:total).with_value(order.total.to_s)
-        expect(json_response['data'][0]).to have_attribute(:item_total).with_value(order.item_total.to_s)
-        expect(json_response['data'][0]).to have_attribute(:ship_total).with_value(order.ship_total.to_s)
-        expect(json_response['data'][0]).to have_attribute(:adjustment_total).with_value(order.adjustment_total.to_s)
-        expect(json_response['data'][0]).to have_attribute(:included_tax_total).with_value(order.included_tax_total.to_s)
-        expect(json_response['data'][0]).to have_attribute(:additional_tax_total).with_value(order.additional_tax_total.to_s)
-        expect(json_response['data'][0]).to have_attribute(:display_additional_tax_total).with_value(order.display_additional_tax_total.to_s)
-        expect(json_response['data'][0]).to have_attribute(:display_included_tax_total).with_value(order.display_included_tax_total.to_s)
-        expect(json_response['data'][0]).to have_attribute(:tax_total).with_value(order.tax_total.to_s)
-        expect(json_response['data'][0]).to have_attribute(:currency).with_value(order.currency.to_s)
-        expect(json_response['data'][0]).to have_attribute(:email).with_value(order.email)
-        expect(json_response['data'][0]).to have_attribute(:display_item_total).with_value(order.display_item_total.to_s)
-        expect(json_response['data'][0]).to have_attribute(:display_ship_total).with_value(order.display_ship_total.to_s)
-        expect(json_response['data'][0]).to have_attribute(:display_adjustment_total).with_value(order.display_adjustment_total.to_s)
-        expect(json_response['data'][0]).to have_attribute(:display_tax_total).with_value(order.display_tax_total.to_s)
-        expect(json_response['data'][0]).to have_attribute(:item_count).with_value(order.item_count)
-        expect(json_response['data'][0]).to have_attribute(:special_instructions).with_value(order.special_instructions)
-        expect(json_response['data'][0]).to have_attribute(:promo_total).with_value(order.promo_total.to_s)
-        expect(json_response['data'][0]).to have_attribute(:display_promo_total).with_value(order.display_promo_total.to_s)
-        expect(json_response['data'][0]).to have_attribute(:display_total).with_value(order.display_total.to_s)
-        expect(json_response['data'][0]).to have_attribute(:public_metadata).with_value(order.public_metadata)
-        expect(json_response['data'][0]).to have_relationships(:user, :line_items, :variants, :billing_address, :shipping_address, :payments, :shipments, :promotions)
+        expect_order_json(json_response['data'].first)
       end
 
       it 'returns included resource' do
@@ -184,13 +188,17 @@ describe 'Storefront API v2 Orders spec', type: :request do
     context 'without option: include' do
       before { get "/api/v2/storefront/account/orders/#{order.number}", headers: headers_bearer }
 
-      it_behaves_like 'returns valid cart JSON'
+      it 'returns valid order JSON' do
+        expect_order_json(json_response['data'])
+      end
     end
 
     context 'with option: include' do
       before { get "/api/v2/storefront/account/orders/#{order.number}?include=billing_address", headers: headers_bearer }
 
-      it_behaves_like 'returns valid cart JSON'
+      it 'returns valid order JSON' do
+        expect_order_json(json_response['data'])
+      end
 
       it 'return hash with included' do
         expect(json_response['included']).to be_present

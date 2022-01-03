@@ -199,7 +199,7 @@ describe Spree::CustomerReturn, type: :model do
     end
 
     context 'to a different stock location' do
-      let(:new_stock_location) { create(:stock_location, name: 'other') }
+      let(:new_stock_location) { create(:stock_location, name: 'other', propagate_all_variants: true) }
 
       it 'updates the stock item counts in new stock location' do
         expect do

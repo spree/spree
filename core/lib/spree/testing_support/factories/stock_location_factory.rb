@@ -7,6 +7,7 @@ FactoryBot.define do
     phone                 { '(202) 456-1111' }
     active                { true }
     backorderable_default { true }
+    propagate_all_variants { false }
 
     country  { |stock_location| Spree::Country.first || stock_location.association(:country) }
     state do |stock_location|
@@ -21,8 +22,8 @@ FactoryBot.define do
         product_1 = create(:product, stores: [store])
         product_2 = create(:product, stores: [store])
 
-        stock_location.stock_items.where(variant_id: product_1.master.id).first.adjust_count_on_hand(10)
-        stock_location.stock_items.where(variant_id: product_2.master.id).first.adjust_count_on_hand(20)
+        stock_location.stock_item_or_create(product_1.master).adjust_count_on_hand(10)
+        stock_location.stock_item_or_create(product_2.master).adjust_count_on_hand(20)
       end
     end
   end

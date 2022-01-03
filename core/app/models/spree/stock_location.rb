@@ -1,6 +1,15 @@
 module Spree
   class StockLocation < Spree::Base
     include UniqueName
+    if defined?(Spree::Webhooks)
+      include Spree::Webhooks::HasWebhooks
+    end
+    if defined?(Spree::Security::StockLocations)
+      include Spree::Security::StockLocations
+    end
+    if defined?(Spree::VendorConcern)
+      include Spree::VendorConcern
+    end
 
     has_many :shipments
     has_many :stock_items, dependent: :delete_all, inverse_of: :stock_location
@@ -51,9 +60,15 @@ module Spree
     # @param variant Variant instance or Variant ID
     #
     # @return [StockItem] Corresponding StockItem for the StockLocation's variant.
-    def stock_item_or_create(variant)
-      variant_id = variant.is_a?(Spree::Variant) ? variant.id : variant
-      stock_item(variant_id) || stock_items.create(variant_id: variant_id)
+    def stock_item_or_create(variant_or_variant_id)
+      if variant_or_variant_id.is_a?(Spree::Variant)
+        variant_id = variant_or_variant_id.id
+        variant = variant_or_variant_id
+      else
+        variant_id = variant_or_variant_id
+        variant = Spree::Variant.find(variant_or_variant_id)
+      end
+      stock_item(variant_id) || propagate_variant(variant)
     end
 
     def count_on_hand(variant)
@@ -86,8 +101,7 @@ module Spree
     end
 
     def fill_status(variant, quantity)
-      if item = stock_item(variant)
-
+      if item = stock_item_or_create(variant)
         if item.count_on_hand >= quantity
           on_hand = quantity
           backordered = 0

@@ -439,7 +439,8 @@ module Spree
           line_items_attributes: line_items,
           adjustments_attributes: [
             { label: 'Order Discount', amount: -5.99 }
-          ]
+          ],
+          additional_tax_total: 0
         }
 
         order = Importer::Order.import(user, params)

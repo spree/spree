@@ -2,6 +2,10 @@ module Spree
   class StockItem < Spree::Base
     acts_as_paranoid
 
+    if defined?(Spree::Webhooks)
+      include Spree::Webhooks::HasWebhooks
+    end
+
     with_options inverse_of: :stock_items do
       belongs_to :stock_location, class_name: 'Spree::StockLocation'
       belongs_to :variant, -> { with_deleted }, class_name: 'Spree::Variant'

@@ -3,6 +3,12 @@ module Spree
     acts_as_paranoid
     include Spree::CalculatedAdjustments
     include Metadata
+    if defined?(Spree::Webhooks)
+      include Spree::Webhooks::HasWebhooks
+    end
+    if defined?(Spree::VendorConcern)
+      include Spree::VendorConcern
+    end
 
     DISPLAY = [:both, :front_end, :back_end]
 

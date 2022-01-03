@@ -25,6 +25,15 @@ module Spree
     include SingleStoreResource
     include MemoizedData
     include Metadata
+    if defined?(Spree::Webhooks)
+      include Spree::Webhooks::HasWebhooks
+    end
+    if defined?(Spree::Security::Orders)
+      include Spree::Security::Orders
+    end
+    if defined?(Spree::VendorConcern)
+      include Spree::VendorConcern
+    end
 
     MEMOIZED_METHODS = %w(tax_zone)
 

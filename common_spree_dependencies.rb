@@ -9,7 +9,7 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw]
   actionmailer actionpack actionview activejob activemodel activerecord
   activestorage activesupport railties
 ].each do |rails_gem|
-  gem rails_gem, ENV.fetch('RAILS_VERSION', '~> 6.1.0'), require: false
+  gem rails_gem, ENV.fetch('RAILS_VERSION', '~> 7.0.0'), require: false
 end
 
 platforms :jruby do
@@ -24,10 +24,10 @@ platforms :ruby do
   end
 end
 
-if ENV['RAILS_VERSION']&.match(/7\.0\.0/)
-  gem 'paranoia', github: 'damianlegawiec/paranoia', branch: 'core'
+gem 'sprockets-rails', '>= 2.0.0'
+
+if ENV['RAILS_VERSION']&.match(/7\.0\.0/) || !ENV['RAILS_VERSION']
   gem 'awesome_nested_set', github: 'damianlegawiec/awesome_nested_set', branch: 'master'
-  gem 'ransack', github: 'activerecord-hackery/ransack', branch: 'master'
 end
 
 group :test do
@@ -42,7 +42,7 @@ group :test do
   gem 'rspec-rails', '~> 4.0'
   gem 'rspec-retry'
   gem 'rspec_junit_formatter'
-  gem 'rswag-specs'
+  gem 'rswag-specs', github: 'rswag/rswag'
   gem 'jsonapi-rspec'
   gem 'simplecov', '0.17.1'
   gem 'webmock', '~> 3.7'
@@ -52,6 +52,7 @@ end
 
 group :test, :development do
   gem 'awesome_print'
+  gem 'brakeman'
   gem 'gem-release'
   gem 'i18n-tasks'
   gem 'redis'
@@ -64,6 +65,6 @@ group :test, :development do
 end
 
 group :development do
-  gem 'github_fast_changelog'
+  # gem 'github_fast_changelog'
   gem 'solargraph'
 end

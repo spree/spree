@@ -68,6 +68,35 @@ module Spree
           )
         end
       end
+
+      context 'ordering' do
+        let!(:white_color) { create(:option_value, option_type: color, name: 'white') }
+        let!(:black_color) { create(:option_value, option_type: color, name: 'black') }
+        let!(:material) { create(:option_type, name: 'material', presentation: 'Material') }
+        let!(:wool) { create(:option_value, option_type: material, name: 'wool') }
+        let!(:silk) { create(:option_value, option_type: material, name: 'silk') }
+
+        before do
+          material.update_column(:position, 0)
+          silk.update_column(:position, 1)
+          wool.update_column(:position, 2)
+
+          color.update_column(:position, 1)
+          white_color.update_column(:position, 0)
+          black_color.update_column(:position, 10)
+          green_color.update_column(:position, 20)
+
+          size.update_column(:position, 2)
+
+          product_4 = create(:product, option_types: [color, material, size])
+          create(:variant, option_values: [white_color, black_color, wool, silk], product: product_4)
+        end
+
+        it 'orders the option values by option type position and option value position' do
+          positions = available_options.map { |ov| [ov.option_type.position, ov.position] }
+          expect(positions).to eq(positions.sort_by { |e| [e.first, e.second] })
+        end
+      end
     end
   end
 end

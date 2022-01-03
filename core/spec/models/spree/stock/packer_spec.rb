@@ -26,11 +26,17 @@ module Spree
         let!(:inventory_units) { Array.new(2) { InventoryUnit.new variant: create(:variant) } }
 
         it 'contains all the items' do
+          inventory_units.each do |inventory_unit|
+            stock_location.propagate_variant(inventory_unit.variant)
+          end
           package = subject.default_package
           expect(package.contents.size).to eq 2
         end
 
         it 'variants are added as backordered without enough on_hand' do
+          inventory_units.each do |inventory_unit|
+            stock_location.propagate_variant(inventory_unit.variant)
+          end
           expect(stock_location).to receive(:fill_status).twice.and_return(
             *(Array.new(1, [1, 0]) + Array.new(1, [0, 1]))
           )

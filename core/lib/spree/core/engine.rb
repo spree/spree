@@ -1,3 +1,6 @@
+require_relative 'dependencies'
+require_relative 'configuration'
+
 module Spree
   module Core
     class Engine < ::Rails::Engine
@@ -19,32 +22,15 @@ module Spree
       end
 
       initializer 'spree.environment', before: :load_config_initializers do |app|
-        app.config.spree = Environment.new(SpreeCalculators.new, Spree::AppConfiguration.new, Spree::AppDependencies.new)
+        app.config.spree = Environment.new(SpreeCalculators.new, Spree::Core::Configuration.new, Spree::Core::Dependencies.new)
         Spree::Config = app.config.spree.preferences
         Spree::Dependencies = app.config.spree.dependencies
       end
 
-      initializer 'spree.register.calculators' do |app|
-        app.config.spree.calculators.shipping_methods = [
-          Spree::Calculator::Shipping::FlatPercentItemTotal,
-          Spree::Calculator::Shipping::FlatRate,
-          Spree::Calculator::Shipping::FlexiRate,
-          Spree::Calculator::Shipping::PerItem,
-          Spree::Calculator::Shipping::PriceSack,
-          Spree::Calculator::Shipping::DigitalDelivery,
-        ]
-
-        app.config.spree.calculators.tax_rates = [
-          Spree::Calculator::DefaultTax
-        ]
+      initializer 'spree.register.calculators', before: :after_initialize do |app|
       end
 
       initializer 'spree.register.stock_splitters', before: :load_config_initializers do |app|
-        app.config.spree.stock_splitters = [
-          Spree::Stock::Splitter::ShippingCategory,
-          Spree::Stock::Splitter::Backordered,
-          Spree::Stock::Splitter::Digital
-        ]
       end
 
       initializer 'spree.register.line_item_comparison_hooks', before: :load_config_initializers do |app|
@@ -52,19 +38,9 @@ module Spree
       end
 
       initializer 'spree.register.payment_methods', after: 'acts_as_list.insert_into_active_record' do |app|
-        app.config.spree.payment_methods = [
-          Spree::Gateway::Bogus,
-          Spree::Gateway::BogusSimple,
-          Spree::PaymentMethod::Check,
-          Spree::PaymentMethod::StoreCredit
-        ]
       end
 
       initializer 'spree.register.adjustable_adjusters' do |app|
-        app.config.spree.adjusters = [
-          Spree::Adjustable::Adjuster::Promotion,
-          Spree::Adjustable::Adjuster::Tax
-        ]
       end
 
       # We need to define promotions rules here so extensions and existing apps
@@ -75,19 +51,6 @@ module Spree
       end
 
       initializer 'spree.promo.register.promotion.calculators' do |app|
-        app.config.spree.calculators.promotion_actions_create_adjustments = [
-          Spree::Calculator::FlatPercentItemTotal,
-          Spree::Calculator::FlatRate,
-          Spree::Calculator::FlexiRate,
-          Spree::Calculator::TieredPercent,
-          Spree::Calculator::TieredFlatRate
-        ]
-
-        app.config.spree.calculators.promotion_actions_create_item_adjustments = [
-          Spree::Calculator::PercentOnLineItem,
-          Spree::Calculator::FlatRate,
-          Spree::Calculator::FlexiRate
-        ]
       end
 
       # Promotion rules need to be evaluated on after initialize otherwise
@@ -95,6 +58,51 @@ module Spree
       # to malformed model associations (Spree.user_class is only defined on
       # the app initializer)
       config.after_initialize do
+        Rails.application.config.spree.calculators.shipping_methods = [
+          Spree::Calculator::Shipping::FlatPercentItemTotal,
+          Spree::Calculator::Shipping::FlatRate,
+          Spree::Calculator::Shipping::FlexiRate,
+          Spree::Calculator::Shipping::PerItem,
+          Spree::Calculator::Shipping::PriceSack,
+          Spree::Calculator::Shipping::DigitalDelivery,
+        ]
+
+        Rails.application.config.spree.calculators.tax_rates = [
+          Spree::Calculator::DefaultTax
+        ]
+
+        Rails.application.config.spree.stock_splitters = [
+          Spree::Stock::Splitter::ShippingCategory,
+          Spree::Stock::Splitter::Backordered,
+          Spree::Stock::Splitter::Digital
+        ]
+
+        Rails.application.config.spree.payment_methods = [
+          Spree::Gateway::Bogus,
+          Spree::Gateway::BogusSimple,
+          Spree::PaymentMethod::Check,
+          Spree::PaymentMethod::StoreCredit
+        ]
+
+        Rails.application.config.spree.adjusters = [
+          Spree::Adjustable::Adjuster::Promotion,
+          Spree::Adjustable::Adjuster::Tax
+        ]
+
+        Rails.application.config.spree.calculators.promotion_actions_create_adjustments = [
+          Spree::Calculator::FlatPercentItemTotal,
+          Spree::Calculator::FlatRate,
+          Spree::Calculator::FlexiRate,
+          Spree::Calculator::TieredPercent,
+          Spree::Calculator::TieredFlatRate
+        ]
+
+        Rails.application.config.spree.calculators.promotion_actions_create_item_adjustments = [
+          Spree::Calculator::PercentOnLineItem,
+          Spree::Calculator::FlatRate,
+          Spree::Calculator::FlexiRate
+        ]
+
         Rails.application.config.spree.promotions.rules.concat [
           Spree::Promotion::Rules::ItemTotal,
           Spree::Promotion::Rules::Product,
@@ -106,15 +114,16 @@ module Spree
           Spree::Promotion::Rules::OptionValue,
           Spree::Promotion::Rules::Country
         ]
-      end
 
-      initializer 'spree.promo.register.promotions.actions' do |app|
-        app.config.spree.promotions.actions = [
+        Rails.application.config.spree.promotions.actions = [
           Promotion::Actions::CreateAdjustment,
           Promotion::Actions::CreateItemAdjustments,
           Promotion::Actions::CreateLineItems,
           Promotion::Actions::FreeShipping
         ]
+      end
+
+      initializer 'spree.promo.register.promotions.actions' do |app|
       end
 
       # filter sensitive information during logging
@@ -123,7 +132,10 @@ module Spree
           :password,
           :password_confirmation,
           :number,
-          :verification_value
+          :verification_value,
+          :client_id,
+          :client_secret,
+          :refresh_token
         ]
       end
 

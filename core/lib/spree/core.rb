@@ -14,7 +14,7 @@ require 'friendly_id'
 require 'kaminari'
 require 'monetize'
 require 'paranoia'
-require 'mini_magick'
+require 'ruby-vips'
 require 'ransack'
 require 'state_machines-activerecord'
 require 'active_storage_validations'
@@ -25,7 +25,8 @@ require 'activerecord-typedstore'
 StateMachines::Machine.ignore_method_conflicts = true
 
 module Spree
-  mattr_accessor :user_class, :admin_user_class, :private_storage_service_name
+  mattr_accessor :user_class, :admin_user_class, :private_storage_service_name,
+                 :public_storage_service_name, :cdn_host
 
   def self.user_class(constantize: true)
     if @@user_class.is_a?(Class)
@@ -51,6 +52,16 @@ module Spree
         @@private_storage_service_name.to_sym
       else
         raise 'Spree.private_storage_service_name MUST be a String or Symbol object.'
+      end
+    end
+  end
+
+  def self.public_storage_service_name
+    if @@public_storage_service_name
+      if @@public_storage_service_name.is_a?(String) || @@public_storage_service_name.is_a?(Symbol)
+        @@public_storage_service_name.to_sym
+      else
+        raise 'Spree.public_storage_service_name MUST be a String or Symbol object.'
       end
     end
   end
@@ -105,9 +116,6 @@ require 'spree/permitted_attributes'
 require 'spree/service_module'
 require 'spree/database_type_utilities'
 
-require 'spree/core/dependencies_helper'
-require 'spree/core/app_dependencies'
-
 require 'spree/core/importer'
 require 'spree/core/query_filters'
 require 'spree/core/product_duplicator'
@@ -119,3 +127,6 @@ require 'spree/core/controller_helpers/store'
 require 'spree/core/controller_helpers/strong_parameters'
 require 'spree/core/controller_helpers/locale'
 require 'spree/core/controller_helpers/currency'
+
+require 'spree/core/preferences/store'
+require 'spree/core/preferences/scoped_store'

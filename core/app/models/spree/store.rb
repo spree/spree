@@ -1,5 +1,12 @@
 module Spree
   class Store < Spree::Base
+    if defined?(Spree::Webhooks)
+      include Spree::Webhooks::HasWebhooks
+    end
+    if defined?(Spree::Security::Stores)
+      include Spree::Security::Stores
+    end
+
     typed_store :settings, coder: ActiveRecord::TypedStore::IdentityCoder do |s|
       # Spree Digital Asset Configurations
       s.boolean :limit_digital_download_count, default: true, null: false
@@ -8,6 +15,8 @@ module Spree
       s.integer :digital_asset_authorized_days, default: 7, null: false # number of days after initial purchase the customer can download a file.
       s.integer :digital_asset_link_expire_time, default: 300, null: false # 5 minutes in seconds
     end
+
+    attr_accessor :skip_validate_not_last
 
     MAILER_LOGO_CONTENT_TYPES = ['image/png', 'image/jpg', 'image/jpeg'].freeze
     FAVICON_CONTENT_TYPES = ['image/png', 'image/x-icon', 'image/vnd.microsoft.icon'].freeze
@@ -59,6 +68,7 @@ module Spree
     validates :digital_asset_authorized_clicks, numericality: { only_integer: true, greater_than: 0 }
     validates :digital_asset_authorized_days, numericality: { only_integer: true, greater_than: 0 }
     validates :code, uniqueness: { conditions: -> { with_deleted } }
+    validates :mail_from_address, email: { allow_blank: false }
 
     # FIXME: we should remove this condition in v5
     if !ENV['SPREE_DISABLE_DB_CONNECTION'] &&
@@ -70,9 +80,22 @@ module Spree
 
     default_scope { order(created_at: :asc) }
 
-    has_one_attached :logo
-    has_one_attached :mailer_logo
-    has_one_attached :favicon_image
+    if Spree.public_storage_service_name
+      has_one_attached :logo, service: Spree.public_storage_service_name
+    else
+      has_one_attached :logo
+    end
+    if Spree.public_storage_service_name
+      has_one_attached :mailer_logo, service: Spree.public_storage_service_name
+    else
+      has_one_attached :mailer_logo
+    end
+    if Spree.public_storage_service_name
+      has_one_attached :favicon_image, service: Spree.public_storage_service_name
+    else
+      has_one_attached :favicon_image
+    end
+
 
     validates :mailer_logo, content_type: MAILER_LOGO_CONTENT_TYPES
     validates :favicon_image, content_type: FAVICON_CONTENT_TYPES,
@@ -82,7 +105,7 @@ module Spree
 
     before_save :ensure_default_exists_and_is_unique
     before_save :ensure_supported_currencies, :ensure_supported_locales, :ensure_default_country
-    before_destroy :validate_not_last
+    before_destroy :validate_not_last, unless: :skip_validate_not_last
     before_destroy :pass_default_flag_to_other_store
 
     scope :by_url, ->(url) { where('url like ?', "%#{url}%") }
@@ -177,7 +200,7 @@ module Spree
     def favicon
       return unless favicon_image.attached?
 
-      favicon_image.variant(resize: '32x32')
+      favicon_image.variant(resize_to_limit: [32, 32])
     end
 
     def can_be_deleted?

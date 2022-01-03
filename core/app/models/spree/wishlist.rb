@@ -1,6 +1,9 @@
 module Spree
   class Wishlist < Spree::Base
     include SingleStoreResource
+    if defined?(Spree::Webhooks)
+      include Spree::Webhooks::HasWebhooks
+    end
 
     has_secure_token
 

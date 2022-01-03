@@ -5,8 +5,10 @@ module Spree
         extend ActiveSupport::Concern
 
         included do
-          helper_method :current_order
-          helper_method :simple_current_order
+          if defined?(helper_method)
+            helper_method :current_order
+            helper_method :simple_current_order
+          end
         end
 
         # Used in the link_to_cart helper.

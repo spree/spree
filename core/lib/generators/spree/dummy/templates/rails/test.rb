@@ -37,4 +37,6 @@ Dummy::Application.configure do
   config.active_job.queue_adapter = :test
 
   config.cache_store = :redis_cache_store
+
+  routes.default_url_options = { host: 'localhost', port: 3000 }
 end

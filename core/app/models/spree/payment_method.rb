@@ -5,6 +5,9 @@ module Spree
 
     include MultiStoreResource
     include Spree::Metadata
+    if defined?(Spree::Security::PaymentMethods)
+      include Spree::Security::PaymentMethods
+    end
 
     DISPLAY = [:both, :front_end, :back_end].freeze
 

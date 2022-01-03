@@ -1,11 +1,16 @@
 module Spree
   class MenuItem < Spree::Base
     include Spree::DisplayLink
+    if defined?(Spree::Webhooks)
+      include Spree::Webhooks::HasWebhooks
+    end
 
     acts_as_nested_set dependent: :destroy
 
+    ITEM_TYPE = %w[Link Container]
+    LINKED_RESOURCE_TYPE = ['Spree::Linkable::Uri', 'Spree::Linkable::Homepage', 'Spree::Product', 'Spree::Taxon', 'Spree::CmsPage']
+
     belongs_to :menu, touch: true
-    belongs_to :linked_resource, polymorphic: true
 
     before_create :ensure_item_belongs_to_root
     before_update :reset_link_attributes
@@ -13,15 +18,6 @@ module Spree
 
     after_save :touch_ancestors_and_menu
     after_touch :touch_ancestors_and_menu
-
-    ITEM_TYPE = %w[Link Container]
-
-    LINKED_RESOURCE_TYPE = ['URL']
-    STATIC_RESOURCE_TYPE = ['Home Page']
-    DYNAMIC_RESOURCE_TYPE = ['Spree::Product', 'Spree::Taxon', 'Spree::CmsPage']
-
-    LINKED_RESOURCE_TYPE.unshift(*STATIC_RESOURCE_TYPE)
-    LINKED_RESOURCE_TYPE.push(*DYNAMIC_RESOURCE_TYPE)
 
     validates :name, :menu, presence: true
     validates :item_type, inclusion: { in: ITEM_TYPE }
@@ -50,7 +46,7 @@ module Spree
         self.destination = nil
         self.new_window = false
 
-        self.linked_resource_type = 'URL' if item_type == 'Container'
+        self.linked_resource_type = 'Spree::Linkable::Uri' if item_type == 'Container'
       end
     end
 

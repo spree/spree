@@ -25,6 +25,12 @@ module Spree
     include MultiStoreResource
     include MemoizedData
     include Metadata
+    if defined?(Spree::Webhooks)
+      include Spree::Webhooks::HasWebhooks
+    end
+    if defined?(Spree::VendorConcern)
+      include Spree::VendorConcern
+    end
 
     MEMOIZED_METHODS = %w(total_on_hand taxonomy_ids taxon_and_ancestors category
                           default_variant_id tax_category default_variant
@@ -296,7 +302,7 @@ module Spree
     def total_on_hand
       @total_on_hand ||= Rails.cache.fetch(['product-total-on-hand', cache_key_with_version]) do
         if any_variants_not_track_inventory?
-          Float::INFINITY
+          BigDecimal::INFINITY
         else
           stock_items.sum(:count_on_hand)
         end
@@ -327,9 +333,13 @@ module Spree
     def any_variant_in_stock_or_backorderable?
       if variants.any?
         variants_including_master.in_stock_or_backorderable.exists?
-      else 
+      else
         master.in_stock_or_backorderable?
       end
+    end
+
+    def digital?
+      shipping_category == I18n.t('spree.seed.shipping.categories.digital')
     end
 
     private
@@ -337,7 +347,7 @@ module Spree
     def add_associations_from_prototype
       if prototype_id && prototype = Spree::Prototype.find_by(id: prototype_id)
         prototype.properties.each do |property|
-          product_properties.create(property: property)
+          product_properties.create(property: property, value: 'Placeholder')
         end
         self.option_types = prototype.option_types
         self.taxons = prototype.taxons

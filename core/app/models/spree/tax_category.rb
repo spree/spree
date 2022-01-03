@@ -1,5 +1,9 @@
 module Spree
   class TaxCategory < Spree::Base
+    if defined?(Spree::Webhooks)
+      include Spree::Webhooks::HasWebhooks
+    end
+
     acts_as_paranoid
     validates :name, presence: true, uniqueness: { case_sensitive: false, scope: spree_base_uniqueness_scope.push(:deleted_at) }
 

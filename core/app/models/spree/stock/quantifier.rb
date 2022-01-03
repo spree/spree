@@ -12,7 +12,7 @@ module Spree
         @total_on_hand ||= if variant.should_track_inventory?
                              stock_items.sum(:count_on_hand)
                            else
-                             Float::INFINITY
+                             BigDecimal::INFINITY
                            end
       end
 

@@ -3,6 +3,10 @@ module Spree
     include SingleStoreResource
     include DisplayLink
 
+    if defined?(Spree::Webhooks)
+      include Spree::Webhooks::HasWebhooks
+    end
+
     acts_as_paranoid
 
     TYPES = ['Spree::Cms::Pages::StandardPage',

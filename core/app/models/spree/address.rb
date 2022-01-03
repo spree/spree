@@ -3,6 +3,12 @@ module Spree
     require 'validates_zipcode'
 
     include Metadata
+    if defined?(Spree::Webhooks)
+      include Spree::Webhooks::HasWebhooks
+    end
+    if defined?(Spree::Security::Addresses)
+      include Spree::Security::Addresses
+    end
 
     if Rails::VERSION::STRING >= '6.1'
       serialize :preferences, Hash, default: {}

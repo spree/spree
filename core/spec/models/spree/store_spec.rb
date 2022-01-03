@@ -608,7 +608,7 @@ describe Spree::Store, type: :model do
 
       it 'returns a resized favicon' do
         expect(favicon_variation).to be_present
-        expect(favicon_variation.transformations.fetch(:resize)).to eq('32x32')
+        expect(favicon_variation.transformations.fetch(:resize_to_limit)).to eq([32, 32])
       end
     end
 

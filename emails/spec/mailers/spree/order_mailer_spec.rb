@@ -37,28 +37,39 @@ describe Spree::OrderMailer, type: :mailer do
   end
 
   context ':from not set explicitly' do
-    it 'falls back to spree config' do
-      message = Spree::OrderMailer.confirm_email(order)
+    it 'uses store mail from address' do
+      message = described_class.confirm_email(order)
+      expect(message.from).to eq([Spree::Store.default.mail_from_address])
+      message = described_class.cancel_email(order)
       expect(message.from).to eq([Spree::Store.default.mail_from_address])
     end
   end
 
+  context ':reply_to not set explicitly' do
+    it 'uses store mail from address' do
+      message = described_class.confirm_email(order)
+      expect(message.reply_to).to eq([Spree::Store.default.mail_from_address])
+      message = described_class.cancel_email(order)
+      expect(message.reply_to).to eq([Spree::Store.default.mail_from_address])
+    end
+  end
+
   it "doesn't aggressively escape double quotes in confirmation body" do
-    confirmation_email = Spree::OrderMailer.confirm_email(order)
+    confirmation_email = described_class.confirm_email(order)
     expect(confirmation_email.body).not_to include('&quot;')
   end
 
   it 'confirm_email accepts an order id as an alternative to an Order object' do
     expect(Spree::Order).to receive(:find).with(order.id).and_return(order)
     expect do
-      Spree::OrderMailer.confirm_email(order.id).body
+      described_class.confirm_email(order.id).body
     end.not_to raise_error
   end
 
   it 'cancel_email accepts an order id as an alternative to an Order object' do
     expect(Spree::Order).to receive(:find).with(order.id).and_return(order)
     expect do
-      Spree::OrderMailer.cancel_email(order.id).body
+      described_class.cancel_email(order.id).body
     end.not_to raise_error
   end
 
@@ -68,7 +79,7 @@ describe Spree::OrderMailer, type: :mailer do
     it 'accepts an order id as an alternative to an Order object' do
       expect(Spree::Order).to receive(:find).with(order.id).and_return(order)
       expect do
-        Spree::OrderMailer.store_owner_notification_email(order.id).body
+        described_class.store_owner_notification_email(order.id).body
       end.not_to raise_error
     end
 
@@ -123,8 +134,8 @@ describe Spree::OrderMailer, type: :mailer do
       create(:adjustment, order: order, eligible: false, label: 'Ineligible Adjustment')
     end
 
-    let!(:confirmation_email) { Spree::OrderMailer.confirm_email(order) }
-    let!(:cancel_email) { Spree::OrderMailer.cancel_email(order) }
+    let!(:confirmation_email) { described_class.confirm_email(order) }
+    let!(:cancel_email) { described_class.cancel_email(order) }
 
     specify do
       expect(confirmation_email.body).not_to include('Ineligible Adjustment')
@@ -140,14 +151,14 @@ describe Spree::OrderMailer, type: :mailer do
 
     # Tests mailer view spree/order_mailer/confirm_email.text.erb
     specify do
-      confirmation_email = Spree::OrderMailer.confirm_email(order)
+      confirmation_email = described_class.confirm_email(order)
       expect(confirmation_email).to have_body_text('4.99')
       expect(confirmation_email).not_to have_body_text('5.00')
     end
 
     # Tests mailer view spree/order_mailer/cancel_email.text.erb
     specify do
-      cancel_email = Spree::OrderMailer.cancel_email(order)
+      cancel_email = described_class.cancel_email(order)
       expect(cancel_email).to have_body_text('4.99')
       expect(cancel_email).not_to have_body_text('5.00')
     end
@@ -171,14 +182,14 @@ describe Spree::OrderMailer, type: :mailer do
       shared_examples 'translates emails' do
         context 'confirm_email' do
           specify do
-            confirmation_email = Spree::OrderMailer.confirm_email(order)
+            confirmation_email = described_class.confirm_email(order)
             expect(confirmation_email).to have_body_text('Caro Cliente,')
           end
         end
 
         context 'cancel_email' do
           specify do
-            cancel_email = Spree::OrderMailer.cancel_email(order)
+            cancel_email = described_class.cancel_email(order)
             expect(cancel_email).to have_body_text('Resumo da Pedido [CANCELADA]')
           end
         end
@@ -201,20 +212,20 @@ describe Spree::OrderMailer, type: :mailer do
   context 'with preference :send_core_emails set to false' do
     it 'sends no email' do
       Spree::Config.set(:send_core_emails, false)
-      message = Spree::OrderMailer.confirm_email(order)
+      message = described_class.confirm_email(order)
       expect(message.body).to be_blank
     end
   end
 
   context 'confirm_email comes with data of the store where order was made' do
     it 'shows order store data' do
-      confirmation_email = Spree::OrderMailer.confirm_email(order)
+      confirmation_email = described_class.confirm_email(order)
       expect(confirmation_email.from).to include(first_store.mail_from_address)
       expect(confirmation_email.subject).to include(first_store.name)
     end
 
     it 'shows order store data #2' do
-      confirmation_email = Spree::OrderMailer.confirm_email(second_order)
+      confirmation_email = described_class.confirm_email(second_order)
       expect(confirmation_email.from).to include(second_store.mail_from_address)
       expect(confirmation_email.subject).to include(second_store.name)
     end

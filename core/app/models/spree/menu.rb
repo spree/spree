@@ -1,6 +1,9 @@
 module Spree
   class Menu < Spree::Base
     include SingleStoreResource
+    if defined?(Spree::Webhooks)
+      include Spree::Webhooks::HasWebhooks
+    end
 
     MENU_LOCATIONS = ['Header', 'Footer']
     MENU_LOCATIONS_PARAMETERIZED = []

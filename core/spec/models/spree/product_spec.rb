@@ -560,12 +560,12 @@ describe Spree::Product, type: :model do
     let(:product) { create(:product, stores: [store]) }
 
     it 'is infinite if track_inventory_levels is false' do
-      Spree::Config[:track_inventory_levels] = false
+      allow(Spree::Config).to receive(:track_inventory_levels).and_return(false)
       expect(build(:product, variants_including_master: [build(:master_variant)]).total_on_hand).to eql(Float::INFINITY)
     end
 
     it 'is infinite if variant is on demand' do
-      Spree::Config[:track_inventory_levels] = true
+      allow(Spree::Config).to receive(:track_inventory_levels).and_return(true)
       expect(build(:product, variants_including_master: [build(:on_demand_master_variant)]).total_on_hand).to eql(Float::INFINITY)
     end
 

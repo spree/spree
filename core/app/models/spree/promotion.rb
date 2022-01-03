@@ -2,6 +2,12 @@ module Spree
   class Promotion < Spree::Base
     include MultiStoreResource
     include Metadata
+    if defined?(Spree::Webhooks)
+      include Spree::Webhooks::HasWebhooks
+    end
+    if defined?(Spree::Security::Promotions)
+      include Spree::Security::Promotions
+    end
 
     MATCH_POLICIES = %w(all any)
     UNACTIVATABLE_ORDER_STATES = ['complete', 'awaiting_return', 'returned']

@@ -16,9 +16,16 @@ describe Spree::ShipmentMailer, type: :mailer do
   end
 
   context ':from not set explicitly' do
-    it 'falls back to spree config' do
+    it 'falls back to store mail from address' do
       message = described_class.shipped_email(shipment)
       expect(message.from).to eq([store.mail_from_address])
+    end
+  end
+
+  context ':reply_to not set explicitly' do
+    it 'falls back to store mail from address' do
+      message = described_class.shipped_email(shipment)
+      expect(message.reply_to).to eq([store.mail_from_address])
     end
   end
 

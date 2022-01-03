@@ -55,7 +55,8 @@ FactoryBot.define do
           order.line_items.reload
         end
 
-        create(:shipment, order: order, cost: evaluator.shipment_cost)
+        stock_location = order.line_items&.first&.variant&.stock_items&.first&.stock_location || create(:stock_location)
+        create(:shipment, order: order, cost: evaluator.shipment_cost, stock_location: stock_location)
         order.shipments.reload
 
         order.update_with_updater!

@@ -6,6 +6,12 @@ module Spree
     include NumberIdentifier
     include NumberAsParam
     include Metadata
+    if defined?(Spree::Webhooks)
+      include Spree::Webhooks::HasWebhooks
+    end
+    if defined?(Spree::Security::Payments)
+      include Spree::Security::Payments
+    end
 
     include Spree::Payment::Processing
 

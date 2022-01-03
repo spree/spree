@@ -4,6 +4,7 @@ module Spree
       module Platform
         class ResourceController < ::Spree::Api::V2::ResourceController
           # doorkeeper scopes usage: https://github.com/doorkeeper-gem/doorkeeper/wiki/Using-Scopes
+          before_action :validate_token_client
           before_action -> { doorkeeper_authorize! :read, :admin }
           before_action -> { doorkeeper_authorize! :write, :admin }, if: :write_request?
 
@@ -78,6 +79,12 @@ module Spree
 
           def access_denied(exception)
             access_denied_401(exception)
+          end
+
+          def validate_token_client
+            return if doorkeeper_token.nil?
+
+            raise Doorkeeper::Errors::DoorkeeperError if doorkeeper_token.application.nil?
           end
 
           # if using a user oAuth token we need to check CanCanCan abilities

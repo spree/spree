@@ -4,6 +4,9 @@ module Spree
     include NumberIdentifier
     include NumberAsParam
     include Metadata
+    if defined?(Spree::Webhooks)
+      include Spree::Webhooks::HasWebhooks
+    end
 
     has_many :stock_movements, as: :originator
 

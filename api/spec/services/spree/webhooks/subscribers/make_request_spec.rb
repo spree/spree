@@ -1,12 +1,12 @@
 require 'spec_helper'
 
 describe Spree::Webhooks::Subscribers::MakeRequest do
-  let(:body) { { data: [{}] }.to_json }
   let(:http_double) { instance_double(Net::HTTP) }
   let(:url) { 'http://google.com/' }
+  let(:webhook_payload_body) { { data: [{}] }.to_json }
 
   describe '#execution_time' do
-    subject { described_class.new(body: body, url: url).execution_time }
+    subject { described_class.new(webhook_payload_body: webhook_payload_body, url: url).execution_time }
 
     before do
       stub_request(:post, url)
@@ -36,7 +36,7 @@ describe Spree::Webhooks::Subscribers::MakeRequest do
   end
 
   describe '#failed_request?' do
-    subject { described_class.new(body: body, url: url).failed_request? }
+    subject { described_class.new(webhook_payload_body: webhook_payload_body, url: url).failed_request? }
 
     before { stub_request(:post, url) }
 
@@ -52,9 +52,9 @@ describe Spree::Webhooks::Subscribers::MakeRequest do
           subject
         end
 
-        it 'makes a post HTTP request to the given url and body' do
+        it 'makes a post HTTP request to the given url and webhook_payload_body' do
           subject
-          expect(WebMock).to have_requested(:post, url).with(body: body, headers: headers).once
+          expect(WebMock).to have_requested(:post, url).with(body: webhook_payload_body, headers: headers).once
         end
       end
 
@@ -82,11 +82,11 @@ describe Spree::Webhooks::Subscribers::MakeRequest do
           subject
         end
 
-        it 'makes a post HTTP request to the given url and body' do
+        it 'makes a post HTTP request to the given url and webhook_payload_body' do
           allow(Net::HTTP).to receive(:new).and_return(http)
           allow(http).to receive(:use_ssl=).with(true)
           subject
-          expect(WebMock).to have_requested(:post, url).with(body: body, headers: headers).once
+          expect(WebMock).to have_requested(:post, url).with(body: webhook_payload_body, headers: headers).once
         end
       end
     end
@@ -153,7 +153,7 @@ describe Spree::Webhooks::Subscribers::MakeRequest do
   end
 
   describe '#response_code' do
-    subject { described_class.new(body: body, url: url).response_code }
+    subject { described_class.new(webhook_payload_body: webhook_payload_body, url: url).response_code }
 
     context 'when request raises an Errno::ECONNREFUSED exception' do
       before do
@@ -190,7 +190,7 @@ describe Spree::Webhooks::Subscribers::MakeRequest do
   end
 
   describe '#success?' do
-    subject { described_class.new(body: body, url: url) }
+    subject { described_class.new(webhook_payload_body: webhook_payload_body, url: url) }
 
     context 'when unprocessable_uri? equals true' do
       before { allow(subject).to receive(:unprocessable_uri?).and_return(true) }
@@ -218,7 +218,7 @@ describe Spree::Webhooks::Subscribers::MakeRequest do
   end
 
   describe '#unprocessable_uri?' do
-    subject { described_class.new(body: body, url: url) }
+    subject { described_class.new(webhook_payload_body: webhook_payload_body, url: url) }
 
     before { allow(subject).to receive(:URI).with(url).and_return(uri) }
 

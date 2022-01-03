@@ -1,6 +1,9 @@
 module Spree
   class Prototype < Spree::Base
     include Metadata
+    if defined?(Spree::Webhooks)
+      include Spree::Webhooks::HasWebhooks
+    end
 
     has_many :property_prototypes, class_name: 'Spree::PropertyPrototype'
     has_many :properties, through: :property_prototypes, class_name: 'Spree::Property'

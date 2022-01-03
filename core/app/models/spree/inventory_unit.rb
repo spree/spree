@@ -1,5 +1,9 @@
 module Spree
   class InventoryUnit < Spree::Base
+    if defined?(Spree::Webhooks)
+      include Spree::Webhooks::HasWebhooks
+    end
+
     with_options inverse_of: :inventory_units do
       belongs_to :variant, -> { with_deleted }, class_name: 'Spree::Variant'
       belongs_to :order, class_name: 'Spree::Order'
@@ -59,8 +63,7 @@ module Spree
     end
 
     def find_stock_item
-      Spree::StockItem.where(stock_location_id: shipment.stock_location_id,
-                             variant_id: variant_id).first
+      shipment.stock_location.stock_item_or_create(variant)
     end
 
     def self.split(original_inventory_unit, extract_quantity)

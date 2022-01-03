@@ -4,6 +4,9 @@ module Spree
 
     include Spree::CalculatedAdjustments
     include Spree::AdjustmentSource
+    if defined?(Spree::Webhooks)
+      include Spree::Webhooks::HasWebhooks
+    end
 
     with_options inverse_of: :tax_rates do
       belongs_to :zone, class_name: 'Spree::Zone', optional: true
@@ -13,7 +16,7 @@ module Spree
 
     with_options presence: true do
       validates :amount, numericality: { allow_nil: true }
-      validates :tax_category
+      validates :tax_category, :name
     end
 
     scope :by_zone, ->(zone) { where(zone_id: zone.id) }

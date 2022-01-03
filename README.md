@@ -18,7 +18,7 @@
    <img src="https://raw.githubusercontent.com/spree/spree-dev-docs/master/.gitbook/assets/spree_commerce_spree_api_3-2x.png" alt="Spree Commerce - a headless open-source ecommerce platform for multi-store, marketplace, or B2B global brands" />
 </a>
 
-## Sponsored by
+## Maintained by
 
 [![Spark Solutions](http://sparksolutions.co/wp-content/uploads/2015/01/logo-ss-tr-221x100.png)][spark]
 
@@ -46,10 +46,16 @@
 
 ## Storefronts
 
-* [Next.js Commerce online demo](https://spree.vercel.app/) - [Setup instructions](https://dev-docs.spreecommerce.org/storefronts/next.js-commerce)
-* [Vue Storefront 2 online demo](https://vuestorefront-spree.upsidelab.io/) - [Setup instructions](https://dev-docs.spreecommerce.org/storefronts/vue-storefront)
+We have 2 pre-built storefront starters you can download and start using right away!
 
-## Admin Dashboard
+* [Vue Storefront 2 online demo](https://vuestorefront-spree.upsidelab.io/) - [Setup instructions](https://github.com/vuestorefront/spree)
+* [Next.js Commerce online demo](https://spree.vercel.store/) - [Setup instructions](https://github.com/vercel/commerce/tree/main/framework/spree)
+
+## Getting Started
+
+* [Please follow **Getting Started** guide](https://dev-docs.spreecommerce.org/getting-started/installation)
+
+## Admin Dashboard demo
 
 Fire up your own instance in the cloud:
 
@@ -62,18 +68,17 @@ Admin panel credentials for your own Heroku/Render demo:
 * login: `spree@example.com`
 * password: `spree123`
 
-## Getting Started
-
-* [Please follow **Getting Started** guide](https://dev-docs.spreecommerce.org/getting-started/installation)
-
 ## Documentation
 
 * [Developer Documentation](https://dev-docs.spreecommerce.org/)
 
+## SDK
+
+If you want to build your own storefront you can use our official [JavaScript / TypeScript SDK](https://github.com/spree/spree-storefront-api-v2-js-sdk). Both Next.js and Vue Storefront use our SDK behind the scenes.
+
 ## API
 
 * [API Reference](https://api.spreecommerce.org/)
-* [Javascript / TypeScript SDK](https://github.com/spree/spree-storefront-api-v2-js-sdk)
 
 ## Extensions
 

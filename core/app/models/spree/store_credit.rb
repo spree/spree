@@ -2,6 +2,9 @@ module Spree
   class StoreCredit < Spree::Base
     include SingleStoreResource
     include Metadata
+    if defined?(Spree::Webhooks)
+      include Spree::Webhooks::HasWebhooks
+    end
 
     acts_as_paranoid
 
@@ -250,7 +253,7 @@ module Spree
     def associate_credit_type
       unless type_id
         credit_type_name = category.try(:non_expiring?) ? 'Non-expiring' : 'Expiring'
-        self.credit_type = Spree::StoreCreditType.find_by(name: credit_type_name)
+        self.credit_type = Spree::StoreCreditType.find_or_create_by(name: credit_type_name)
       end
     end
   end

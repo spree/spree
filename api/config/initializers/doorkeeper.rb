@@ -41,4 +41,8 @@ Doorkeeper.configure do
   access_token_class 'Spree::OauthAccessToken'
   access_grant_class 'Spree::OauthAccessGrant'
   application_class 'Spree::OauthApplication'
+
+  # using Bcrupt for token secrets is currently not supported by Doorkeeper
+  hash_token_secrets fallback: :plain
+  hash_application_secrets fallback: :plain, using: '::Doorkeeper::SecretStoring::BCrypt'
 end
