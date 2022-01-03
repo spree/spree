@@ -284,7 +284,7 @@ module Spree
         if user.try(:has_spree_role?, 'admin')
           with_deleted
         else
-          not_deleted.not_discontinued.where("#{Product.quoted_table_name}.available_on <= ?", Time.current)
+          not_deleted.where(status: 'active')
         end
       end
 

@@ -275,10 +275,10 @@ describe Spree::Product, type: :model do
       end
     end
 
-    describe '#discontinue_on_must_be_later_than_available_on' do
-      before { product.available_on = Date.today }
+    describe '#discontinue_on_must_be_later_than_make_active_at' do
+      before { product.make_active_at = Date.today }
 
-      context 'available_on is a date earlier than discontinue_on' do
+      context 'make_active_at is a date earlier than discontinue_on' do
         before { product.discontinue_on = 5.days.from_now }
 
         it 'is valid' do
@@ -286,7 +286,7 @@ describe Spree::Product, type: :model do
         end
       end
 
-      context 'available_on is a date earlier than discontinue_on' do
+      context 'make_active_at is a date earlier than discontinue_on' do
         before { product.discontinue_on = 5.days.ago }
 
         context 'is not valid' do
@@ -297,10 +297,10 @@ describe Spree::Product, type: :model do
         end
       end
 
-      context 'available_on and discontinue_on are nil' do
+      context 'make_active_at and discontinue_on are nil' do
         before do
           product.discontinue_on = nil
-          product.available_on = nil
+          product.make_active_at = nil
         end
 
         it 'is valid' do

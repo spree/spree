@@ -124,7 +124,7 @@ module Spree
     end
 
     validates :slug, presence: true, uniqueness: { allow_blank: true, case_sensitive: true, scope: spree_base_uniqueness_scope }
-    validate :discontinue_on_must_be_later_than_available_on, if: -> { available_on && discontinue_on }
+    validate :discontinue_on_must_be_later_than_make_active_at, if: -> { make_active_at && discontinue_on }
 
     scope :for_store, ->(store) { joins(:store_products).where(StoreProduct.table_name => { store_id: store.id }) }
 
@@ -497,8 +497,8 @@ module Spree
       removed_classifications.each &:remove_from_list
     end
 
-    def discontinue_on_must_be_later_than_available_on
-      if discontinue_on < available_on
+    def discontinue_on_must_be_later_than_make_active_at
+      if discontinue_on < make_active_at
         errors.add(:discontinue_on, :invalid_date_range)
       end
     end
