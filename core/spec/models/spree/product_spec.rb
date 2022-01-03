@@ -169,17 +169,9 @@ describe Spree::Product, type: :model do
     end
 
     context '#available?' do
-      it 'is available if date is in the past' do
-        product.available_on = 1.day.ago
+      it 'is available if status is set to active' do
+        product.status = 'active'
         expect(product).to be_available
-      end
-
-      it 'is not available if date is nil or in the future' do
-        product.available_on = nil
-        expect(product).not_to be_available
-
-        product.available_on = 1.day.from_now
-        expect(product).not_to be_available
       end
 
       it 'is not available if destroyed' do
@@ -603,6 +595,12 @@ describe Spree::Product, type: :model do
       product.discontinue!
       product.reload
       expect(product.discontinued?).to be(true)
+    end
+
+    it 'sets the status to archived' do
+      product.discontinue!
+      product.reload
+      expect(product.status).to eq('archived')
     end
 
     it 'changes updated_at' do

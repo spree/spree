@@ -185,3 +185,15 @@ use rake db:load_file[/absolute/path/to/sample/filename.rb]}
     end
   end
 end
+
+namespace :core do
+  desc 'Set "active" status on draft products where available_on is in the past'
+  task activate_products: :environment do |_t, _args|
+    Spree::Product.where('available_on <= ?', Time.current).where(status: 'draft').update_all(status: 'active', updated_at: Time.current)
+  end
+
+  desc 'Set "archived" status on active products where discontinue_on is in the past'
+  task archive_products: :environment do |_t, _args|
+    Spree::Product.where('discontinue_on <= ?', Time.current).where.not(status: 'archived').update_all(status: 'archived', updated_at: Time.current)
+  end
+end
