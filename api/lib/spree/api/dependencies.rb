@@ -102,7 +102,7 @@ module Spree
         @storefront_product_serializer = 'Spree::V2::Storefront::ProductSerializer'
         @storefront_estimated_shipment_serializer = 'Spree::V2::Storefront::EstimatedShippingRateSerializer'
         @storefront_store_serializer = 'Spree::V2::Storefront::StoreSerializer'
-        @storefront_order_serializer = 'Spree::V2::Storefront::CartSerializer'
+        @storefront_order_serializer = 'Spree::V2::Storefront::OrderSerializer'
 
         # sorters
         @storefront_collection_sorter = Spree::Dependencies.collection_sorter
