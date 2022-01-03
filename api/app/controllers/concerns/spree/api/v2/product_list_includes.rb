@@ -7,12 +7,12 @@ module Spree
             product_properties: [],
             option_types: [],
             variant_images: [],
-            master: variant_includes,
-            variants: variant_includes
+            master: product_variant_includes,
+            variants: product_variant_includes
           }
         end
 
-        def variant_includes
+        def product_variant_includes
           {
             prices: [],
             option_values: :option_type,
