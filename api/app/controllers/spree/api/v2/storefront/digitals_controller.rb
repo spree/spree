@@ -22,7 +22,7 @@ module Spree
                   redirect_to attachment.url(
                     expires_in: current_store.digital_asset_link_expire_time.seconds,
                     disposition: 'attachment',
-                    host: current_store.formatted_url
+                    host: digital_attachment_host
                   ) and return
 
                 end
@@ -46,6 +46,10 @@ module Spree
 
           def attachment
             @attachment ||= digital_link.digital.try(:attachment) if digital_link.present?
+          end
+
+          def digital_attachment_host
+            current_store.formatted_url
           end
         end
       end
