@@ -11,7 +11,7 @@ class CreateSpreeProductsStores < ActiveRecord::Migration[5.2]
       create_table :spree_products_stores do |t|
         t.references :product, index: true
         t.references :store,  index: true
-        t.timestamps
+        t.timestamps default: Time.current
 
         t.index [:product_id, :store_id], unique: true
       end
