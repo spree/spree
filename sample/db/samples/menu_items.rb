@@ -207,7 +207,7 @@ MENUS.each do |menu|
     promos = []
   end
 
-  summer = Spree::Taxon.find_by!(permalink: 'categories/new-collection/summer-2021')
+  summer = Spree::Taxon.find_by!(permalink: "categories/new-collection/summer-#{Date.today.year}")
   offers = Spree::Taxon.find_by!(permalink: 'categories/special-offers/30-percent-off')
 
   #####################
