@@ -210,7 +210,7 @@ module Spree
 
     def price_in(currency)
       Rails.cache.fetch("spree/prices/#{cache_key_with_version}/price_in/#{currency}") do
-        prices.find_by(currency: currency.upcase) || prices.build(currency: currency&.upcase)
+        prices.find_by(currency: currency&.upcase) || prices.build(currency: currency&.upcase)
       end
     end
 
