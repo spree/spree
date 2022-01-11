@@ -14,6 +14,7 @@ module Spree
 
         def product_variant_includes
           {
+            prices: [],
             option_values: :option_type,
             images: []
           }
