@@ -212,6 +212,8 @@ module Spree
       Rails.cache.fetch("spree/prices/#{cache_key_with_version}/price_in/#{currency}") do
         prices.find_by(currency: currency&.upcase) || prices.build(currency: currency&.upcase)
       end
+    rescue TypeError
+      prices.find_by(currency: currency&.upcase) || prices.build(currency: currency&.upcase)
     end
 
     def amount_in(currency)
