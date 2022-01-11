@@ -209,7 +209,9 @@ module Spree
     end
 
     def price_in(currency)
-      prices.detect { |price| price.currency == currency&.upcase } || prices.build(currency: currency&.upcase)
+      Rails.cache.fetch("spree/prices/#{cache_key_with_version}/price_in/#{currency}") do
+        prices.find_by(currency: currency.upcase) || prices.build(currency: currency&.upcase)
+      end
     end
 
     def amount_in(currency)
