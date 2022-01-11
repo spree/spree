@@ -2,7 +2,11 @@
 <tr>
   <td class="email-masthead">
     <%= link_to current_store.url, class: 'template-label' do %>
-      <%= image_tag logo_path, class: 'logo', alt: current_store.name, title: current_store.name %>
+      <% if logo_path.present? %>
+        <%= image_tag logo_path, class: 'logo', alt: current_store.name, title: current_store.name %>
+      <% else %>
+        <%= current_store.name %>
+      <% end %>
     <% end %>
   </td>
 </tr>

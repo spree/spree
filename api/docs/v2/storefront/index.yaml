@@ -771,9 +771,9 @@ paths:
                               gateway_payment_profile_id:
                                 type: string
                               month:
-                                type: string
+                                type: number
                               year:
-                                type: string
+                                type: number
                               cc_type:
                                 type: string
                               name:
@@ -819,8 +819,8 @@ paths:
                           gateway_payment_profile_id: ABC123
                           cc_type: visa
                           last_digits: '1111'
-                          month: '10'
-                          year: '2022'
+                          month: 10
+                          year: 2022
                           name: John Doe
         description: |-
           ##### Add Customer Details
@@ -1008,10 +1008,10 @@ paths:
                       type: string
                       description: Last 4 digits of CC number
                     month:
-                      type: string
+                      type: number
                       description: Expiration date month
                     year:
-                      type: string
+                      type: number
                       description: Expiration date year
                     name:
                       type: string
@@ -1029,8 +1029,8 @@ paths:
                     gateway_payment_profile_id: card_1JqvNB2eZvKYlo2C5OlqLV7S
                     cc_type: visa
                     last_digits: '1111'
-                    month: '10'
-                    year: '2026'
+                    month: 10
+                    year: 2026
                     name: John Snow
               Use existing Credit Card:
                 value:
@@ -1861,6 +1861,7 @@ components:
               type: string
               example: CA
               description: State abbreviation
+              nullable: true
             country_name:
               type: string
               example: United States of America
@@ -2394,8 +2395,6 @@ components:
           default: credit_card
         attributes:
           type: object
-          required:
-            - relationships
           properties:
             cc_type:
               type: string
@@ -2409,12 +2408,12 @@ components:
               example: '1111'
               description: Last 4 digits of CC number
             month:
-              type: string
+              type: number
               description: Expiration date month
-              example: '12'
+              example: 12
             year:
-              type: string
-              example: '2026'
+              type: number
+              example: 2026
               description: Expiration date year
             name:
               type: string
@@ -2424,18 +2423,19 @@ components:
               type: boolean
               example: true
               description: Defines if this is the default CC for a signed in user
-            relationships:
-              type: object
-              properties:
-                payment_method:
-                  type: object
-                  properties:
-                    data:
-                      $ref: '#/components/schemas/Relation'
+          relationships:
+            type: object
+            properties:
+              payment_method:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Relation'
       required:
         - id
         - type
         - attributes
+        - relationships
     CreditCardIncludes:
       x-internal: true
       title: Credit Card Includes
@@ -2472,34 +2472,29 @@ components:
     Image:
       type: object
       properties:
-        data:
+        id:
+          type: string
+          example: '1'
+        type:
+          type: string
+          default: image
+        attributes:
           type: object
-          required:
-            - id
-            - type
-            - attributes
           properties:
-            id:
-              type: string
-              example: '1'
-            type:
-              type: string
-              default: image
-            attributes:
-              type: object
-              properties:
-                position:
-                  type: integer
-                  description: Sort order of images set in the Admin Panel
-                  example: 0
-                  minimum: 0
-                styles:
-                  type: array
-                  description: An array of pre-scaled image styles
-                  items:
-                    $ref: '#/components/schemas/ImageStyle'
+            position:
+              type: integer
+              description: Sort order of images set in the Admin Panel
+              example: 0
+              minimum: 0
+            styles:
+              type: array
+              description: An array of pre-scaled image styles
+              items:
+                $ref: '#/components/schemas/ImageStyle'
       required:
-        - data
+        - id
+        - type
+        - attributes
       title: Image
       x-internal: true
     ImageStyle:
@@ -2811,33 +2806,28 @@ components:
       type: object
       x-internal: true
       properties:
-        data:
+        id:
+          type: string
+          example: '1'
+        type:
+          type: string
+          default: option_type
+        attributes:
           type: object
-          required:
-            - id
-            - type
-            - attributes
           properties:
-            id:
+            name:
               type: string
-              example: '1'
-            type:
+              example: color
+            presentation:
               type: string
-              default: option_type
-            attributes:
-              type: object
-              properties:
-                name:
-                  type: string
-                  example: color
-                presentation:
-                  type: string
-                  example: Color
-                position:
-                  type: integer
-                  example: 1
+              example: Color
+            position:
+              type: integer
+              example: 1
       required:
-        - data
+        - id
+        - type
+        - attributes
     Payment:
       title: Payment
       type: object
@@ -2918,6 +2908,7 @@ components:
             description:
               type: string
               example: Stripe Payments
+              nullable: true
             preferences:
               type: object
       required:
@@ -2944,21 +2935,25 @@ components:
             description:
               type: string
               example: Example description
+              nullable: true
             available_on:
               type: string
               example: '2012-10-17T03:43:57Z'
+              nullable: true
             slug:
               type: string
               example: example-product
             price:
               type: string
               example: '15.99'
+              nullable: true
             currency:
               type: string
               example: USD
             display_price:
               type: string
               example: $15.99
+              nullable: true
             purchasable:
               type: boolean
               description: Indicates if any of Variants are in stock or backorderable
@@ -3064,36 +3059,31 @@ components:
       title: Product Property
       type: object
       properties:
-        data:
+        id:
+          type: string
+          example: '1'
+        type:
+          type: string
+          default: product_property
+        attributes:
           type: object
-          required:
-            - id
-            - type
-            - attributes
           properties:
-            id:
+            value:
               type: string
-              example: '1'
-            type:
+              example: Wilson
+            filter_param:
               type: string
-              default: product_property
-            attributes:
-              type: object
-              properties:
-                value:
-                  type: string
-                  example: Wilson
-                filter_param:
-                  type: string
-                  example: wilson
-                name:
-                  type: string
-                  example: manufacturer
-                description:
-                  type: string
-                  example: Manufacturer
+              example: wilson
+            name:
+              type: string
+              example: manufacturer
+            description:
+              type: string
+              example: Manufacturer
       required:
-        - data
+        - id
+        - type
+        - attributes
       x-internal: true
     Promotion:
       type: object
@@ -3420,33 +3410,28 @@ components:
     TaxonImage:
       type: object
       properties:
-        data:
+        id:
+          type: string
+          example: '1'
+        type:
+          type: string
+          default: taxon_image
+        attributes:
           type: object
-          required:
-            - id
-            - type
-            - attributes
           properties:
-            id:
-              type: string
-              example: '1'
-            type:
-              type: string
-              default: taxon_image
-            attributes:
-              type: object
-              properties:
-                position:
-                  type: integer
-                  example: 0
-                  description: Sort order of images set in the Admin Panel
-                styles:
-                  type: array
-                  description: An array of pre-scaled image styles
-                  items:
-                    $ref: '#/components/schemas/ImageStyle'
+            position:
+              type: integer
+              example: 0
+              description: Sort order of images set in the Admin Panel
+            styles:
+              type: array
+              description: An array of pre-scaled image styles
+              items:
+                $ref: '#/components/schemas/ImageStyle'
       required:
-        - data
+        - id
+        - type
+        - attributes
       title: Taxon Image
       x-internal: true
     TaxonIncludes:
@@ -6054,8 +6039,8 @@ components:
                   attributes:
                     cc_type: visa
                     last_digits: '4111'
-                    month: '12'
-                    year: '2026'
+                    month: 12
+                    year: 2026
                     name: John Doe
                     default: true
                     relationships:
@@ -6103,8 +6088,8 @@ components:
                     attributes:
                       cc_type: visa
                       last_digits: '1111'
-                      month: '12'
-                      year: '2026'
+                      month: 12
+                      year: 2026
                       name: John Doe
                       default: true
                       relationships:
@@ -6117,8 +6102,8 @@ components:
                     attributes:
                       cc_type: mastercard
                       last_digits: '6695'
-                      month: '12'
-                      year: '2030'
+                      month: 12
+                      year: 2030
                       name: John Doe
                       default: false
                       relationships:

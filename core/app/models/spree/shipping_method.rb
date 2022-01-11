@@ -6,6 +6,9 @@ module Spree
     if defined?(Spree::Webhooks)
       include Spree::Webhooks::HasWebhooks
     end
+    if defined?(Spree::VendorConcern)
+      include Spree::VendorConcern
+    end
 
     DISPLAY = [:both, :front_end, :back_end]
 

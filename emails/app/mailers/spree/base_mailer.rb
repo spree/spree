@@ -11,6 +11,10 @@ module Spree
       current_store.mail_from_address
     end
 
+    def reply_to_address
+      current_store.mail_from_address
+    end
+
     def money(amount, currency = nil)
       currency ||= current_store.default_currency
       Spree::Money.new(amount, currency: currency).to_s

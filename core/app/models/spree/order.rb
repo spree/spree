@@ -31,6 +31,9 @@ module Spree
     if defined?(Spree::Security::Orders)
       include Spree::Security::Orders
     end
+    if defined?(Spree::VendorConcern)
+      include Spree::VendorConcern
+    end
 
     MEMOIZED_METHODS = %w(tax_zone)
 

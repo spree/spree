@@ -28,6 +28,9 @@ module Spree
     if defined?(Spree::Webhooks)
       include Spree::Webhooks::HasWebhooks
     end
+    if defined?(Spree::VendorConcern)
+      include Spree::VendorConcern
+    end
 
     MEMOIZED_METHODS = %w(total_on_hand taxonomy_ids taxon_and_ancestors category
                           default_variant_id tax_category default_variant
@@ -299,7 +302,7 @@ module Spree
     def total_on_hand
       @total_on_hand ||= Rails.cache.fetch(['product-total-on-hand', cache_key_with_version]) do
         if any_variants_not_track_inventory?
-          Float::INFINITY
+          BigDecimal::INFINITY
         else
           stock_items.sum(:count_on_hand)
         end
@@ -333,6 +336,10 @@ module Spree
       else
         master.in_stock_or_backorderable?
       end
+    end
+
+    def digital?
+      shipping_category == I18n.t('spree.seed.shipping.categories.digital')
     end
 
     private
