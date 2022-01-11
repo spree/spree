@@ -214,7 +214,7 @@ module Spree
         if prices.loaded?
           prices.detect { |price| price.currency == currency } || prices.build(currency: currency)
         else
-          prices.find_by(currency: currency) || prices.build(currency: currency)
+          prices.find_or_initialize_by(currency: currency)
         end
       end
 
