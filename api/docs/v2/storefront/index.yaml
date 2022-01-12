@@ -3243,31 +3243,6 @@ components:
               type: string
               example: '+123456789'
               description: Contact phone number of the Store which is visible in the Footer
-            settings:
-              type: object
-              title: Store Settings
-              x-internal: true
-              properties:
-                limit_digital_download_count:
-                  type: boolean
-                  example: true
-                  description: Indicates whether the number of times a download link can be clicked is limited
-                digital_asset_authorized_clicks:
-                  type: integer
-                  example: 5
-                  description: The number of times a download link can be clicked
-                limit_digital_download_days:
-                  type: boolean
-                  example: true
-                  description: Indicates whether the number of days a purchase can be downloaded after purchase is limited
-                digital_asset_authorized_days:
-                  type: integer
-                  example: 7
-                  description: The number of days a purchase can be downloaded after purchase
-                digital_asset_link_expire_time:
-                  type: integer
-                  example: 300
-                  description: The expire time of each download link in seconds
             favicon_path:
               type: string
               example: '/assets/favicon.ico'
@@ -8578,12 +8553,6 @@ components:
                     address: '813 Howard Street, Oswego NY 13126, USA'
                     contact_phone: '+123456789'
                     supported_locales: en
-                    settings:
-                      limit_digital_download_count: true
-                      limit_digital_download_days: true
-                      digital_asset_authorized_clicks: 5
-                      digital_asset_authorized_days: 7
-                      digital_asset_link_expire_time: 300
                     favicon_path: '/assets/favicon.ico'
                   relationships:
                     menus:
@@ -8623,12 +8592,6 @@ components:
                     address: '813 Howard Street, Oswego NY 13126, USA'
                     contact_phone: '+123456789'
                     supported_locales: en
-                    settings:
-                      limit_digital_download_count: true
-                      limit_digital_download_days: true
-                      digital_asset_authorized_clicks: 5
-                      digital_asset_authorized_days: 7
-                      digital_asset_link_expire_time: 300
                     favicon_path: '/assets/favicon.ico'
                   relationships:
                     menus:
