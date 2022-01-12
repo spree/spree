@@ -6,7 +6,7 @@ describe 'Product scopes', type: :model do
 
   describe '#available' do
     context 'when discontinued' do
-      let!(:discontinued_product) { create(:product, discontinue_on: Time.current - 1.day, stores:[store]) }
+      let!(:discontinued_product) { create(:product, status: 'archived', stores:[store]) }
 
       it { expect(Spree::Product.available).not_to include(discontinued_product) }
     end
@@ -24,7 +24,7 @@ describe 'Product scopes', type: :model do
     end
 
     context 'when not available' do
-      let!(:unavailable_product) { create(:product, available_on: Time.current + 1.day,stores: [store]) }
+      let!(:unavailable_product) { create(:product, status: 'draft', stores: [store]) }
 
       it { expect(Spree::Product.available).not_to include(unavailable_product) }
     end

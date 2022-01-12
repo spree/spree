@@ -7,7 +7,7 @@ module Spree
     let!(:product_3)                 { create(:variant, price: 19.99).product }
     let!(:option_value)              { create(:option_value) }
     let!(:deleted_product)           { create(:product, deleted_at: Time.current - 1.day) }
-    let!(:discontinued_product)      { create(:product, discontinue_on: Time.current - 1.day) }
+    let!(:discontinued_product)      { create(:product, status: 'archived') }
     let!(:in_stock_product)          { create(:product_in_stock) }
     let!(:not_backorderable_product) { create(:product_in_stock, :without_backorder) }
     let(:store)                      { product.stores.first }

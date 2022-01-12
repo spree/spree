@@ -320,6 +320,7 @@ module Spree
 
       context 'product will be available soon' do
         before do
+          product.status = 'draft'
           product.available_on = 1.month.from_now
         end
 

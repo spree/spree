@@ -231,14 +231,16 @@ module Spree
     end
 
     # determine if product is available.
-    # deleted products and products with nil or future available_on date
+    # deleted products and products with status different than active
     # are not available
     def available?
-      !(available_on.nil? || available_on.future?) && !deleted? && !discontinued?
+      status == 'active' && !deleted?
     end
 
     def discontinue!
-      update_attribute(:discontinue_on, Time.current)
+      self.discontinue_on = Time.current
+      self.status = 'archived'
+      save(validate: false)
     end
 
     def discontinued?
