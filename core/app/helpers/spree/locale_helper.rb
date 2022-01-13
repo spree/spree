@@ -15,7 +15,7 @@ module Spree
     end
 
     def locale_presentation(locale)
-      if I18n.exists?('spree.i18n.this_file_language', locale: locale)
+      if I18n.exists?('spree.i18n.this_file_language', locale: locale, fallback: false)
         [locale_full_name(locale), locale.to_s]
       else
         locale.to_s == 'en' ? ['English (US)', 'en'] : [locale, locale.to_s]
