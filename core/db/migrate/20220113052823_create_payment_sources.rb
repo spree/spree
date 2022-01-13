@@ -1,7 +1,7 @@
 class CreatePaymentSources < ActiveRecord::Migration[5.2]
   def change
     create_table :spree_payment_sources do |t|
-      t.string :gateway_payment_profile_id, index: { unique: true }
+      t.string :gateway_payment_profile_id
       t.string :type, index: true
 
       t.references :payment_method, index: true, foreign_key: { to_table: :spree_payment_methods }
@@ -15,6 +15,7 @@ class CreatePaymentSources < ActiveRecord::Migration[5.2]
         t.json :private_metadata
       end
 
+      t.index [:type, :gateway_payment_profile_id], unique: true, name: 'index_payment_sources_on_type_and_gateway_payment_profile_id'
       t.timestamps
     end
   end
