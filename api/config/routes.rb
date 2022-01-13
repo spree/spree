@@ -47,6 +47,7 @@ Spree::Core::Engine.add_routes do
         resources :products, only: %i[index show]
         resources :taxons,   only: %i[index show], id: /.+/
         get '/stores/:code', to: 'stores#show', as: :store
+        get '/store', to: 'stores#current', as: :current_store
 
         resources :menus, only: %i[index show]
         resources :cms_pages, only: %i[index show]

@@ -1249,6 +1249,22 @@ paths:
         '404':
           $ref: '#/components/responses/404NotFound'
       summary: Retrieve a Product
+  /api/v2/storefront/store:
+    get:
+      description: 'Returns the current Store. [Read more about Stores](https://dev-docs.spreecommerce.org/internals/stores)'
+      tags:
+        - Stores
+      operationId: show-store
+      parameters:
+        - $ref: '#/components/parameters/StoreIncludeParam'
+        - $ref: '#/components/parameters/SparseFieldsStore'
+      responses:
+        '200':
+          $ref: '#/components/responses/Store'
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+      security:
+        - bearerAuth: []
   /api/v2/storefront/taxons:
     get:
       description: 'Returns a list of Taxons. [Read more about Taxons](https://dev-docs.spreecommerce.org/internals/products#taxons-and-taxonomies)'
@@ -3055,6 +3071,13 @@ components:
         - $ref: '#/components/schemas/Variant'
         - $ref: '#/components/schemas/Image'
         - $ref: '#/components/schemas/Taxon'
+    StoreIncludes:
+      x-internal: true
+      title: Store Includes
+      anyOf:
+        - $ref: '#/components/schemas/Country'
+        - $ref: '#/components/schemas/Menu'
+        - $ref: '#/components/schemas/CmsPage'
     ProductProperty:
       title: Product Property
       type: object
@@ -3145,6 +3168,122 @@ components:
           example: New York
           description: State name
       x-internal: true
+    Store:
+      type: object
+      description: 'Stores are the center of the Spree ecosystem. Each Spree installation can have multiple Stores. Each Store operates on a different domain or subdomain.'
+      title: Store
+      x-internal: true
+      properties:
+        id:
+          type: string
+          example: '1'
+        type:
+          type: string
+          default: store
+        attributes:
+          type: object
+          properties:
+            name:
+              type: string
+              example: Spree Demo
+              description: Name of the Store
+            url:
+              type: string
+              example: spree-demo.com
+              description: Store Url
+            meta_description:
+              type: string
+              example: Luxury clothing store for men and women.
+              description: Meta description for SEO
+            meta_keywords:
+              type: string
+              example: luxury clothing men women
+              description: Meta keywords for SEO
+            seo_title:
+              type: string
+              example: Buy Luxury Clothing With Ease
+              description: The title for SEO
+            default_currency:
+              type: string
+              example: EUR
+              description: Default currency of the store
+            default:
+              type: boolean
+              example: true
+              description: Indicates if the Store is the default one
+            supported_currencies:
+              type: string
+              example: EUR,USD,GBP
+              description: All currencies supported by store
+            facebook:
+              type: string
+              example: https://www.facebook.com/mystorename
+              description: URL of Facebook page
+            twitter:
+              type: string
+              example: https://twitter.com/mystorename
+              description: URL of Twitter page
+            instagram:
+              type: string
+              example: https://instagram.com/mystorename
+              description: URL of Instagram page
+            default_locale:
+              type: string
+              example: en
+              description: Default locale of the Store
+            supported_locales:
+              type: string
+              example: en,es,de
+              description: Supported locales of the Store
+            customer_support_email:
+              type: string
+              example: support@mystore.com
+              description: This email is visible to your Store visitors in the Footer section
+            description:
+              type: string
+              example: Mystore has been selling luxury clothing for more than 20 years and has 15 stores currently.
+              description: Description of the Store which is visible in the Footer
+            address:
+              type: string
+              example: 813 Howard Street, Oswego NY 13126, USA
+              description: Address of the Store which is visible in the Footer
+            contact_phone:
+              type: string
+              example: '+123456789'
+              description: Contact phone number of the Store which is visible in the Footer
+            favicon_path:
+              type: string
+              example: '/assets/favicon.ico'
+        relationships:
+          type: object
+          properties:
+            menus:
+              type: object
+              description: Menus
+              properties:
+                data:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Relation'
+            cms_pages:
+              type: object
+              description: CMS Pages
+              properties:
+                data:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Relation'
+            default_country:
+              type: object
+              description: Default Country of the Store
+              properties:
+                data:
+                  $ref: '#/components/schemas/Relation'
+      required:
+        - id
+        - type
+        - attributes
+        - relationships
     Shipment:
       type: object
       title: Shipment
@@ -3834,6 +3973,20 @@ components:
 
         [More information](https://jsonapi.org/format/#fetching-includes)
       example: 'default_variant,variants,option_types,product_properties,taxons,images,primary_variant'
+    StoreIncludeParam:
+      name: include
+      in: query
+      schema:
+        type: string
+      description: |-
+        Specify what related resources (relationships) you would like to receive in the response body. Eg.
+
+        ```
+        default_country,menus,cms_pages
+        ```
+
+        [More information](https://jsonapi.org/format/#fetching-includes)
+      example: 'default_country,menus,cms_pages'
     ProductImageTransformationSizeParam:
       in: query
       name: 'image_transformation[size]'
@@ -3975,6 +4128,13 @@ components:
       schema:
         type: string
       example: 'price,description,name'
+    SparseFieldsStore:
+      name: 'fields[store]'
+      in: query
+      description: 'Specify the fields you would like returned in the response body. [More information](https://jsonapi.org/format/#fetching-sparse-fieldsets).'
+      schema:
+        type: string
+      example: 'name,url,supported_locales'
     SparseFieldsShippingRate:
       in: query
       name: 'fields[shipping_rate]'
@@ -8362,6 +8522,140 @@ components:
                   prev: 'http://localhost:3000/api/v2/storefront/products?page=1'
                   last: 'http://localhost:3000/api/v2/storefront/products?page=5'
                   first: 'http://localhost:3000/api/v2/storefront/products?page=1'
+    Store:
+      description: 200 Success - Returns the `store` object.
+      content:
+        application/vnd.api+json:
+          schema:
+            type: object
+            properties:
+              data:
+                $ref: '#/components/schemas/Store'
+              included:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StoreIncludes'
+            required:
+              - data
+          examples:
+            Store without includes:
+              value:
+                data:
+                  id: '3'
+                  type: store
+                  attributes:
+                    name: Mystore
+                    url: spree-demo.com
+                    meta_description: Luxury clothing store for men and women.
+                    meta_keywords: luxury clothing men women
+                    seo_title: ''
+                    default_currency: USD
+                    default: true
+                    supported_currencies: EUR,GBP,USD
+                    facebook: 'https://www.facebook.com/mystorename'
+                    twitter: 'https://twitter.com/mystorename'
+                    instagram: 'https://instagram.com/mystorename'
+                    default_locale: en
+                    customer_support_email: 'support@mystore.com'
+                    description: 'Mystore has been selling luxury clothing for more than 20 years and has 15 stores currently.'
+                    address: '813 Howard Street, Oswego NY 13126, USA'
+                    contact_phone: '+123456789'
+                    supported_locales: en
+                    favicon_path: '/assets/favicon.ico'
+                  relationships:
+                    menus:
+                      data:
+                      - id: '10'
+                        type: menu
+                      - id: '11'
+                        type: menu
+                    cms_pages:
+                      data:
+                      - id: '5'
+                        type: cms_page
+                    default_country:
+                      data:
+                        id: '2'
+                        type: country
+            Store with Includes:
+              value:
+                data:
+                  id: '3'
+                  type: store
+                  attributes:
+                    name: Mystore
+                    url: spree-demo.com
+                    meta_description: Luxury clothing store for men and women.
+                    meta_keywords: luxury clothing men women
+                    seo_title: ''
+                    default_currency: USD
+                    default: true
+                    supported_currencies: EUR,GBP,USD
+                    facebook: 'https://www.facebook.com/mystorename'
+                    twitter: 'https://twitter.com/mystorename'
+                    instagram: 'https://instagram.com/mystorename'
+                    default_locale: en
+                    customer_support_email: 'support@mystore.com'
+                    description: 'Mystore has been selling luxury clothing for more than 20 years and has 15 stores currently.'
+                    address: '813 Howard Street, Oswego NY 13126, USA'
+                    contact_phone: '+123456789'
+                    supported_locales: en
+                    favicon_path: '/assets/favicon.ico'
+                  relationships:
+                    menus:
+                      data:
+                      - id: '10'
+                        type: menu
+                      - id: '11'
+                        type: menu
+                    cms_pages:
+                      data:
+                      - id: '5'
+                        type: cms_page
+                    default_country:
+                      data:
+                        id: '2'
+                        type: country
+                included:
+                  - id: '2'
+                    type: country
+                    attributes:
+                      iso: US
+                      iso3: USA
+                      iso_name: UNITED STATES
+                      name: United States
+                      states_required: true
+                      zipcode_required: true
+                      default: true
+                    relationships:
+                      checkout_zone_applicable_states:
+                        data: []
+                  - id: '10'
+                    type: cms_page
+                    attributes:
+                      title: Returns Policy
+                      content:
+                      locale: en
+                      meta_description: ''
+                      meta_title: ''
+                      slug: returns-policy
+                      type: Spree::Cms::Pages::StandardPage
+                    relationships:
+                      cms_sections:
+                        data: []
+                  - id: '12'
+                    type: menu
+                    attributes:
+                      name: Company
+                      location: header
+                      locale: en
+                    relationships:
+                      menu_items:
+                        data:
+                        - id: '1'
+                          type: menu_item
+                        - id: '2'
+                          type: menu_item
     Taxon:
       description: 200 Success - Returns the `taxon` object.
       content:
