@@ -18,7 +18,7 @@ describe 'API V2 Platform Products Spec' do
   let(:product)                    { create(:product, stores: [store]) }
   let!(:deleted_product)           { create(:product, deleted_at: Time.current - 1.day, stores: [store]) }
   let!(:discontinued_product)      { create(:product, discontinue_on: Time.current - 1.day, stores: [store]) }
-  let!(:not_available_product)     { create(:product, available_on: nil, stores: [store]) }
+  let!(:not_available_product)     { create(:product, status: 'draft', stores: [store]) }
   let!(:in_stock_product)          { create(:product_in_stock, stores: [store]) }
   let!(:not_backorderable_product) { create(:product_in_stock, :without_backorder, stores: [store]) }
   let!(:property)                  { create(:property) }

@@ -3199,10 +3199,18 @@ components:
               type: string
               example: luxury clothing men women
               description: Meta keywords for SEO
+            seo_title:
+              type: string
+              example: Buy Luxury Clothing With Ease
+              description: The title for SEO
             default_currency:
               type: string
               example: EUR
               description: Default currency of the store
+            default:
+              type: boolean
+              example: true
+              description: Indicates if the Store is the default one
             supported_currencies:
               type: string
               example: EUR,USD,GBP
