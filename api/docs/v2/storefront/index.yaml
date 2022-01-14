@@ -1251,10 +1251,11 @@ paths:
       summary: Retrieve a Product
   /api/v2/storefront/store:
     get:
+      summary: Return the current Store
       description: 'Returns the current Store. [Read more about Stores](https://dev-docs.spreecommerce.org/internals/stores)'
       tags:
         - Stores
-      operationId: show-store
+      operationId: show-current-store
       parameters:
         - $ref: '#/components/parameters/StoreIncludeParam'
         - $ref: '#/components/parameters/SparseFieldsStore'
