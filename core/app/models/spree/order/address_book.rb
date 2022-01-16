@@ -30,7 +30,7 @@ module Spree
 
       def bill_address_attributes=(attributes)
         self.bill_address = update_or_create_address(attributes)
-        user.bill_address = bill_address if user && user.bill_address.nil?
+        user.update(bill_address: bill_address) if user && user.bill_address.nil?
       end
 
       def ship_address_id=(id)
@@ -45,7 +45,7 @@ module Spree
 
       def ship_address_attributes=(attributes)
         self.ship_address = update_or_create_address(attributes)
-        user.ship_address = ship_address if user && user.ship_address.nil?
+        user.update(ship_address: bill_address) if user && user.bill_address.nil?
       end
 
       private
@@ -55,16 +55,17 @@ module Spree
 
         attributes.transform_values! { |v| v == '' ? nil : v }
 
-        default_address_scope = user ? user.addresses : ::Spree::Address
-        default_address = default_address_scope.find_by(id: attributes[:id])
+        address_scope = user ? user.addresses : ::Spree::Address
+        address = address_scope.find_by(id: attributes[:id])
 
-        if default_address&.editable?
-          default_address.update(attributes)
+        if address
+          address.update(attributes) if address.editable?
 
-          return default_address
+          temp_address = address_scope.new(attributes)
+          return address if address == temp_address
         end
 
-        ::Spree::Address.find_or_create_by(attributes.except(:id, :updated_at, :created_at))
+        address_scope.find_or_create_by(attributes.except(:id, :updated_at, :created_at))
       end
     end
   end
