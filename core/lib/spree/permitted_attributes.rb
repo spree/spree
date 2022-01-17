@@ -89,7 +89,7 @@ module Spree
     @@product_properties_attributes = [:property_name, :value, :position]
 
     @@product_attributes = [
-      :name, :description, :available_on, :discontinue_on, :permalink, :meta_description,
+      :name, :description, :available_on, :make_active_at, :discontinue_on, :permalink, :meta_description,
       :meta_keywords, :price, :sku, :deleted_at, :prototype_id,
       :option_values_hash, :weight, :height, :width, :depth,
       :shipping_category_id, :tax_category_id,

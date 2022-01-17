@@ -9,26 +9,26 @@ describe 'core:activate_products' do
     it { expect(subject.prerequisites).to include('environment') }
   end
 
-  it 'draft, available_on in the past -> active' do
-    product.update(status: 'draft', available_on: 1.day.ago)
+  it 'draft, make_active_at in the past -> active' do
+    product.update(status: 'draft', make_active_at: 1.day.ago)
     subject.invoke
     expect(product.reload.status).to eq('active')
   end
 
-  it 'draft, available_on in the future -> draft' do
-    product.update(status: 'draft', available_on: 1.day.from_now)
+  it 'draft, make_active_at in the future -> draft' do
+    product.update(status: 'draft', make_active_at: 1.day.from_now)
     subject.invoke
     expect(product.reload.status).to eq('draft')
   end
 
-  it 'archived, available_on in the past -> archived' do
-    product.update(status: 'archived', available_on: 1.day.ago)
+  it 'archived, make_active_at in the past -> archived' do
+    product.update(status: 'archived', make_active_at: 1.day.ago)
     subject.invoke
     expect(product.reload.status).to eq('archived')
   end
 
-  it 'archived, available_on in the future -> archived' do
-    product.update(status: 'archived', available_on: 1.day.from_now)
+  it 'archived, make_active_at in the future -> archived' do
+    product.update(status: 'archived', make_active_at: 1.day.from_now)
     subject.invoke
     expect(product.reload.status).to eq('archived')
   end

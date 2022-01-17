@@ -18,7 +18,7 @@ describe 'Product scopes', type: :model do
     end
 
     context 'when available' do
-      let!(:product_2) { create(:product, available_on: Time.current - 1.day,stores: [store]) }
+      let!(:product_2) { create(:product, status: 'active', stores: [store]) }
 
       it { expect(Spree::Product.available).to include(product_2) }
     end

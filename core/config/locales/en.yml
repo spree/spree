@@ -91,6 +91,7 @@ en:
         name: Name
       spree/product:
         available_on: Available On
+        make_active_at: Make Active At
         discontinue_on: Discontinue On
         cost_currency: Cost Currency
         cost_price: Cost Price
@@ -583,6 +584,7 @@ en:
     auto_capture: Auto Capture
     availability: availability
     available_on: Available On
+    make_active_at: Make Active At
     available: Available
     average_order_value: Average Order Value
     avs_response: AVS Response

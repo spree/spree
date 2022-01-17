@@ -196,6 +196,32 @@ describe 'API V2 Platform Products Spec' do
           end
         end
       end
+
+      context 'sorting by make_active_at' do
+        before { store.products.each_with_index { |p, i| p.update(make_active_at: Time.current - i.days) } }
+
+        context 'ascending order' do
+          before { get '/api/v2/platform/products?sort=make_active_at', headers: bearer_token }
+
+          it_behaves_like 'returns 200 HTTP status'
+
+          it 'returns products sorted by make_active_at' do
+            expect(json_response['data'].count).to      eq store.products.count
+            expect(json_response['data'].pluck(:id)).to eq store.products.order(:make_active_at).map(&:id).map(&:to_s)
+          end
+        end
+
+        context 'descending order' do
+          before { get '/api/v2/platform/products?sort=-make_active_at', headers: bearer_token }
+
+          it_behaves_like 'returns 200 HTTP status'
+
+          it 'returns products sorted by make_active_at with descending order' do
+            expect(json_response['data'].count).to      eq store.products.count
+            expect(json_response['data'].pluck(:id)).to eq store.products.order(make_active_at: :desc).map(&:id).map(&:to_s)
+          end
+        end
+      end
     end
 
     context 'paginate products' do

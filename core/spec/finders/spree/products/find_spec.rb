@@ -507,7 +507,7 @@ module Spree
           params: params
         ).execute.map(&:id)
 
-        expect(product_ids).to eq Spree::Product.available.order(available_on: :desc).map(&:id)
+        expect(product_ids).to eq Spree::Product.available.order(make_active_at: :desc).map(&:id)
       end
 
       it 'returns products in price-high-to-low order' do
