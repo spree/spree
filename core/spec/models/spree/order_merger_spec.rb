@@ -124,9 +124,7 @@ module Spree
       end
 
       it 'creates errors with invalid line items' do
-        # we cannot use .destroy here as it will be halted by
-        # :ensure_no_line_items callback
-        variant_2.really_destroy!
+        variant_2.destroy!
         subject.merge!(order_2)
         expect(order_1.errors.full_messages).not_to be_empty
       end
