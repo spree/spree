@@ -45,7 +45,7 @@ module Spree
 
       def ship_address_attributes=(attributes)
         self.ship_address = update_or_create_address(attributes)
-        user.update(ship_address: bill_address) if user && user.bill_address.nil?
+        user.update(ship_address: ship_address) if user && user.ship_address.nil?
       end
 
       private
