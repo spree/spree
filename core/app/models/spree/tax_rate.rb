@@ -4,6 +4,7 @@ module Spree
 
     include Spree::CalculatedAdjustments
     include Spree::AdjustmentSource
+    include Spree::Metadata
     if defined?(Spree::Webhooks)
       include Spree::Webhooks::HasWebhooks
     end
