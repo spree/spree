@@ -19,6 +19,8 @@ module Spree::Preferences
         value = convert_preference_value(value, type)
         preferences[name] = value
 
+        ActiveSupport::Deprecation.warn("`#{name}` is deprecated. #{deprecated}") if deprecated
+
         # If this is an activerecord object, we need to inform
         # ActiveRecord::Dirty that this value has changed, since this is an
         # in-place update to the preferences hash.

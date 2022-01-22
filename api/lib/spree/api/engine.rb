@@ -15,13 +15,6 @@ module Spree
         Migrations.new(config, engine_name).check
       end
 
-      initializer 'spree.api.checking_deprecated_preferences' do
-        Spree::Api::Config.deprecated_preferences.each do |pref|
-          # FIXME: we should only notify about deprecated preferences that are in use, not all of them
-          # warn "[DEPRECATION] Spree::Api::Config[:#{pref[:name]}] is deprecated. #{pref[:message]}"
-        end
-      end
-
       def self.activate
         [
           Spree::Address, Spree::Asset, Spree::CmsPage, Spree::CreditCard, Spree::CustomerReturn,
