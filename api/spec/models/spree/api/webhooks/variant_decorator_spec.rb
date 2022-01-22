@@ -6,6 +6,7 @@ describe Spree::Api::Webhooks::VariantDecorator do
   context 'emitting variant.discontinued' do
     let(:webhook_payload_body) { Spree::Api::V2::Platform::VariantSerializer.new(variant).serializable_hash }
     let(:event_name) { 'variant.discontinued' }
+    let!(:webhook_subscriber) { create(:webhook_subscriber, :active, subscriptions: [event_name]) }
 
     context 'when variant discontinued_on changes' do
       context 'when the new value is "present"' do

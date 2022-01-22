@@ -7,6 +7,7 @@ describe Spree::Api::Webhooks::OrderDecorator do
   describe 'order.canceled' do
     describe 'completed -> canceled' do
       let(:event_name) { 'order.canceled' }
+      let!(:webhook_subscriber) { create(:webhook_subscriber, :active, subscriptions: [event_name]) }
       let(:order) { create(:completed_order_with_totals, store: store) }
 
       it { expect { Timecop.freeze { order.cancel } }.to emit_webhook_event(event_name) }
@@ -16,6 +17,7 @@ describe Spree::Api::Webhooks::OrderDecorator do
   describe 'order.placed' do
     describe 'checkout -> completed' do
       let(:event_name) { 'order.placed' }
+      let!(:webhook_subscriber) { create(:webhook_subscriber, :active, subscriptions: [event_name]) }
       let(:order) { create(:order, email: 'test@example.com', store: store) }
 
       it { expect { order.finalize! }.to emit_webhook_event(event_name) }
@@ -24,6 +26,7 @@ describe Spree::Api::Webhooks::OrderDecorator do
 
   describe 'order.resumed' do
     let(:event_name) { 'order.resumed' }
+    let!(:webhook_subscriber) { create(:webhook_subscriber, :active, subscriptions: [event_name]) }
     let(:order) { create(:order, store: store, state: :canceled) }
 
     context 'when order state changes' do

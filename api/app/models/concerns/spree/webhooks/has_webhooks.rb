@@ -9,8 +9,10 @@ module Spree
         after_update_commit(proc { queue_webhooks_requests!(inferred_event_name(:update)) })
 
         def queue_webhooks_requests!(event_name)
-          return if disable_spree_webhooks? || webhook_payload_body.blank?
+          return if disable_spree_webhooks?
+          return if Spree::Webhooks::Subscriber.active.with_urls_for(event_name).none?
           return if update_event?(event_name) && updating_only_timestamps?
+          return if webhook_payload_body.blank?
 
           Spree::Webhooks::Subscribers::QueueRequests.call(event_name: event_name, webhook_payload_body: webhook_payload_body)
         end
