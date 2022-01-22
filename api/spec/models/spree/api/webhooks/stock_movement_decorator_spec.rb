@@ -14,6 +14,7 @@ describe Spree::Api::Webhooks::StockMovementDecorator do
 
     describe 'emitting product.out_of_stock' do
       let(:event_name) { 'product.out_of_stock' }
+      let!(:webhook_subscriber) { create(:webhook_subscriber, :active, subscriptions: [event_name]) }
 
       before { Spree::StockItem.update_all(backorderable: false) }
 
@@ -100,7 +101,8 @@ describe Spree::Api::Webhooks::StockMovementDecorator do
     end
 
     describe 'emitting product.back_in_stock' do
-      let(:params) { 'product.back_in_stock' }
+      let(:event_name) { 'product.back_in_stock' }
+      let!(:webhook_subscriber) { create(:webhook_subscriber, :active, subscriptions: [event_name]) }
 
       before { Spree::StockItem.update_all(backorderable: false) }
 
@@ -115,7 +117,7 @@ describe Spree::Api::Webhooks::StockMovementDecorator do
             product.reload
           end
 
-          it { expect { subject }.to emit_webhook_event(params) }
+          it { expect { subject }.to emit_webhook_event(event_name) }
         end
 
         context 'when none of the variants is back in stock' do
@@ -128,7 +130,7 @@ describe Spree::Api::Webhooks::StockMovementDecorator do
             product.reload
           end
 
-          it { expect { subject }.not_to emit_webhook_event(params) }
+          it { expect { subject }.not_to emit_webhook_event(event_name) }
         end
       end
 
@@ -149,14 +151,15 @@ describe Spree::Api::Webhooks::StockMovementDecorator do
           end
         end
 
-        it { expect { subject }.not_to emit_webhook_event(params) }
+        it { expect { subject }.not_to emit_webhook_event(event_name) }
       end
     end
   end
 
   describe 'emitting variant.back_in_stock' do
     let(:variant) { create(:variant, track_inventory: true) }
-    let(:params) { 'variant.back_in_stock' }
+    let(:event_name) { 'variant.back_in_stock' }
+    let!(:webhook_subscriber) { create(:webhook_subscriber, :active, subscriptions: [event_name]) }
 
     context 'when stock item was out of stock' do
       context 'when stock item changes to be in stock' do
@@ -168,7 +171,7 @@ describe Spree::Api::Webhooks::StockMovementDecorator do
               stock_movement.stock_item = stock_location.set_up_stock_item(variant)
               stock_movement.save
             end
-          end.to emit_webhook_event(params)
+          end.to emit_webhook_event(event_name)
         end
       end
 
@@ -181,7 +184,7 @@ describe Spree::Api::Webhooks::StockMovementDecorator do
               stock_movement.stock_item = stock_location.set_up_stock_item(variant)
               stock_movement.save
             end
-          end.not_to emit_webhook_event(params)
+          end.not_to emit_webhook_event(event_name)
         end
       end
     end
@@ -196,7 +199,7 @@ describe Spree::Api::Webhooks::StockMovementDecorator do
             stock_movement.stock_item = stock_location.set_up_stock_item(variant)
             stock_movement.save
           end
-        end.not_to emit_webhook_event(params)
+        end.not_to emit_webhook_event(event_name)
       end
     end
   end
@@ -205,7 +208,8 @@ describe Spree::Api::Webhooks::StockMovementDecorator do
     subject { stock_movement }
 
     let(:stock_movement) { create(:stock_movement, stock_item: stock_item, quantity: movement_quantity) }
-    let(:params) { 'variant.out_of_stock' }
+    let(:event_name) { 'variant.out_of_stock' }
+    let!(:webhook_subscriber) { create(:webhook_subscriber, :active, subscriptions: [event_name]) }
     let!(:variant) { stock_item.variant }
 
     before { Spree::StockItem.update_all(backorderable: false) }
@@ -214,7 +218,7 @@ describe Spree::Api::Webhooks::StockMovementDecorator do
       let(:movement_quantity) { -stock_item.count_on_hand }
 
       it 'emits the variant.out_of_stock event' do
-        expect { subject }.to emit_webhook_event(params)
+        expect { subject }.to emit_webhook_event(event_name)
       end
     end
 
@@ -222,7 +226,7 @@ describe Spree::Api::Webhooks::StockMovementDecorator do
       let(:movement_quantity) { -stock_item.count_on_hand + 1 }
 
       it 'does not emit the variant.out_of_stock event' do
-        expect { subject }.not_to emit_webhook_event(params)
+        expect { subject }.not_to emit_webhook_event(event_name)
       end
     end
 
@@ -232,7 +236,7 @@ describe Spree::Api::Webhooks::StockMovementDecorator do
       let(:movement_quantity) { 0 }
 
       it 'does not emit the variant.out_of_stock event' do
-        expect { subject }.not_to emit_webhook_event(params)
+        expect { subject }.not_to emit_webhook_event(event_name)
       end
     end
   end

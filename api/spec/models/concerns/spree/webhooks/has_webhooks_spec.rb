@@ -13,6 +13,7 @@ describe Spree::Webhooks::HasWebhooks do
     )
   end
   let(:store) { create(:store) }
+  let!(:webhook_subscriber) { create(:webhook_subscriber, :active, subscriptions: ['*']) }
 
   context 'with DISABLE_SPREE_WEBHOOKS equals "true" (set in spec_helper)' do
     let(:queue_requests) { instance_double(Spree::Webhooks::Subscribers::QueueRequests) }
@@ -123,6 +124,14 @@ describe Spree::Webhooks::HasWebhooks do
 
       it 'does not emit the touched model\'s update event' do
         expect { cms_page.update(title: 'Homepage #1') }.not_to emit_webhook_event('store.update')
+      end
+    end
+
+    context 'when no subscribers are active' do
+      before { webhook_subscriber.update(active: false) }
+
+      it 'does not emit the event' do
+        expect { product.save }.not_to emit_webhook_event('product.create')
       end
     end
   end
