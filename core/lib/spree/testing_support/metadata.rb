@@ -38,9 +38,7 @@ shared_examples_for 'metadata' do |factory: described_class.name.demodulize.unde
     expect(subject.public_metadata['additional_data']).to eq(hash.stringify_keys)
   end
 
-  it 'can query records by metadata properties' do
-    skip if ENV['DB'] == 'mysql'
-
+  it 'can query records by metadata properties', skip: ENV['DB'] == 'mysql' do
     subject.public_metadata[:color] = 'red'
     subject.public_metadata[:priority] = 1
     subject.public_metadata[:keywords] = ['k1', 'k2']
