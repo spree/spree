@@ -3,8 +3,8 @@ module Spree
     extend ActiveSupport::Concern
 
     included do
-      attribute :public_metadata, default: {}
-      attribute :private_metadata, default: {}
+      attribute :public_metadata, default: {} if Rails.version.to_f >= 6.1
+      attribute :private_metadata, default: {} if Rails.version.to_f >= 6.1
       serialize :public_metadata, HashSerializer
       serialize :private_metadata, HashSerializer
     end
