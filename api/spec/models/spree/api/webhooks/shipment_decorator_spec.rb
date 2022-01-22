@@ -15,6 +15,7 @@ describe Spree::Api::Webhooks::ShipmentDecorator do
     context 'emitting shipment.shipped' do
       let(:webhook_payload_body) { Spree::Api::V2::Platform::ShipmentSerializer.new(shipment).serializable_hash }
       let(:event_name) { 'shipment.shipped' }
+      let!(:webhook_subscriber) { create(:webhook_subscriber, :active, subscriptions: [event_name]) }
 
       context 'ready -> ship' do
         let(:shipment) { create(:shipment, order: order) }
@@ -38,6 +39,7 @@ describe Spree::Api::Webhooks::ShipmentDecorator do
     context 'emitting order.shipped' do
       let(:webhook_payload_body) { Spree::Api::V2::Platform::OrderSerializer.new(order.reload).serializable_hash }
       let(:event_name) { 'order.shipped' }
+      let!(:webhook_subscriber) { create(:webhook_subscriber, :active, subscriptions: [event_name]) }
       let!(:shipments) do
         create_list(
           :shipment, 2,

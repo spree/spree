@@ -8,6 +8,7 @@ describe Spree::Api::Webhooks::PaymentDecorator do
 
   describe 'payment.paid' do
     let(:event_name) { 'payment.paid' }
+    let!(:webhook_subscriber) { create(:webhook_subscriber, :active, subscriptions: [event_name]) }
 
     context 'processing -> completed' do
       before { payment.started_processing }
@@ -28,6 +29,7 @@ describe Spree::Api::Webhooks::PaymentDecorator do
 
   describe 'payment.voided' do
     let(:event_name) { 'payment.voided' }
+    let!(:webhook_subscriber) { create(:webhook_subscriber, :active, subscriptions: [event_name]) }
 
     context 'pending -> void' do
       before { payment.pend }
@@ -59,6 +61,7 @@ describe Spree::Api::Webhooks::PaymentDecorator do
     let(:order) { payment.order }
     let(:event_name) { 'order.paid' }
     let!(:another_payment) { create(:payment, order: order) }
+    let!(:webhook_subscriber) { create(:webhook_subscriber, :active, subscriptions: [event_name]) }
 
     context 'order.paid? == true' do
       context 'processing -> complete' do

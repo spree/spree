@@ -12,6 +12,7 @@ describe Spree::Api::Webhooks::StockItemDecorator do
     let(:webhook_payload_body) { Spree::Api::V2::Platform::ProductSerializer.new(product).serializable_hash }
     let(:product) { variant.product }
     let(:event_name) { 'product.backorderable' }
+    let!(:webhook_subscriber) { create(:webhook_subscriber, :active, subscriptions: [event_name]) }
     let!(:variant2) { create(:variant, product: product) }
 
     before { Spree::StockItem.update_all(backorderable: false) }
@@ -65,6 +66,7 @@ describe Spree::Api::Webhooks::StockItemDecorator do
     subject { stock_item.save }
 
     let(:event_name) { 'variant.backorderable' }
+    let!(:webhook_subscriber) { create(:webhook_subscriber, :active, subscriptions: [event_name]) }
 
     context 'when variant was out of stock' do
       before do
