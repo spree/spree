@@ -11,7 +11,10 @@ describe Spree::Webhooks::Subscribers::HandleRequest do
     end
 
     let(:webhook_payload_body) do
-      Spree::Api::V2::Platform::AddressSerializer.new(resource, include: Spree::Api::V2::Platform::AddressSerializer.relationships_to_serialize.keys).serializable_hash.to_json
+      Spree::Api::V2::Platform::AddressSerializer.new(
+        resource,
+        include: Spree::Api::V2::Platform::AddressSerializer.relationships_to_serialize.keys
+      ).serializable_hash.to_json
     end
     let(:event_name) { 'order.canceled' }
     let(:event) { Spree::Webhooks::Event.find_by(name: event_name, subscriber_id: subscriber.id, url: url) }
@@ -76,7 +79,6 @@ describe Spree::Webhooks::Subscribers::HandleRequest do
             unprocessable_uri?: unprocessable_uri
           )
         )
-        subject.call
         expect { subject.call }.to change {
           Spree::Webhooks::Event.
           all.
