@@ -32,16 +32,27 @@ module Spree
       private
 
       def webhook_payload_body
-        resource_serializer.new(self).serializable_hash.to_json
+        resource_serializer.new(self, include: included_relationships).serializable_hash.to_json
       end
 
       def inferred_event_name(operation)
         "#{self.class.name.demodulize.tableize.singularize}.#{operation}"
       end
 
+      def included_relationships
+        if resource_serializer.relationships_to_serialize
+          resource_serializer.relationships_to_serialize.keys
+        else
+          []
+        end
+      end
+
       def resource_serializer
-        demodulized_class_name = self.class.to_s.demodulize
-        "Spree::Api::V2::Platform::#{demodulized_class_name}Serializer".constantize
+        @resource_serializer ||=
+          begin
+            demodulized_class_name = self.class.to_s.demodulize
+            "Spree::Api::V2::Platform::#{demodulized_class_name}Serializer".constantize
+          end
       end
 
       def updating_only_ignored_attributes?

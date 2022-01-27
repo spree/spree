@@ -1,7 +1,12 @@
 require 'spec_helper'
 
 describe Spree::Api::Webhooks::StockMovementDecorator do
-  let(:webhook_payload_body) { Spree::Api::V2::Platform::VariantSerializer.new(variant.reload).serializable_hash }
+  let(:webhook_payload_body) do
+    Spree::Api::V2::Platform::VariantSerializer.new(
+      variant.reload,
+      include: Spree::Api::V2::Platform::VariantSerializer.relationships_to_serialize.keys
+    ).serializable_hash
+  end
   let(:stock_item) { create(:stock_item) }
   let(:stock_location) { variant.stock_locations.first }
 
@@ -10,7 +15,12 @@ describe Spree::Api::Webhooks::StockMovementDecorator do
     let!(:product) { create(:product, stores: [store]) }
     let!(:variant) { create(:variant, product: product) }
     let!(:variant2) { create(:variant, product: product) }
-    let(:webhook_payload_body) { Spree::Api::V2::Platform::ProductSerializer.new(product).serializable_hash }
+    let(:webhook_payload_body) do
+      Spree::Api::V2::Platform::ProductSerializer.new(
+        product,
+        include: Spree::Api::V2::Platform::ProductSerializer.relationships_to_serialize.keys
+      ).serializable_hash
+    end
 
     describe 'emitting product.out_of_stock' do
       let(:event_name) { 'product.out_of_stock' }
@@ -212,13 +222,17 @@ describe Spree::Api::Webhooks::StockMovementDecorator do
     let!(:webhook_subscriber) { create(:webhook_subscriber, :active, subscriptions: [event_name]) }
     let!(:variant) { stock_item.variant }
 
-    before { Spree::StockItem.update_all(backorderable: false) }
+    before do
+      Spree::StockItem.update_all(backorderable: false)
+    end
 
     describe 'when the variant goes out of stock' do
       let(:movement_quantity) { -stock_item.count_on_hand }
 
       it 'emits the variant.out_of_stock event' do
-        expect { subject }.to emit_webhook_event(event_name)
+        ActiveRecord::Base.no_touching do
+          expect { subject }.to emit_webhook_event(event_name)
+        end
       end
     end
 

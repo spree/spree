@@ -1,10 +1,19 @@
 require 'spec_helper'
 
 describe Spree::Api::Webhooks::PaymentDecorator do
-  let(:webhook_payload_body) { Spree::Api::V2::Platform::PaymentSerializer.new(payment).serializable_hash }
+  let(:webhook_payload_body) do
+    Spree::Api::V2::Platform::PaymentSerializer.new(
+      payment,
+      include: Spree::Api::V2::Platform::PaymentSerializer.relationships_to_serialize.keys - [:state_changes]
+      ).serializable_hash
+  end
   let(:payment) { create(:payment) }
 
-  before { allow(payment).to receive_message_chain(:state_changes, :create!) }
+  before do
+    allow(payment).to receive_message_chain(:state_changes, :create!)
+    # because it state_changes is an instance of Double and can not be serialized
+    allow(payment).to receive(:included_relationships).and_return(Spree::Api::V2::Platform::PaymentSerializer.relationships_to_serialize.keys - [:state_changes])
+  end
 
   describe 'payment.paid' do
     let(:event_name) { 'payment.paid' }
@@ -57,7 +66,12 @@ describe Spree::Api::Webhooks::PaymentDecorator do
   describe 'order.paid' do
     subject { Timecop.freeze { another_payment.complete } }
 
-    let(:webhook_payload_body) { Spree::Api::V2::Platform::OrderSerializer.new(order).serializable_hash }
+    let(:webhook_payload_body) do
+      Spree::Api::V2::Platform::OrderSerializer.new(
+        order,
+        include: Spree::Api::V2::Platform::OrderSerializer.relationships_to_serialize.keys
+      ).serializable_hash
+    end
     let(:order) { payment.order }
     let(:event_name) { 'order.paid' }
     let!(:another_payment) { create(:payment, order: order) }
