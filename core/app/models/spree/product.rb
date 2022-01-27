@@ -150,6 +150,23 @@ module Spree
 
     alias master_images images
 
+    state_machine :status, initial: :draft do
+      event :activate do
+        transition to: :active
+      end
+      after_transition to: :active, do: :after_activate
+
+      event :archive do
+        transition to: :archived
+      end
+      after_transition to: :archived, do: :after_archive
+
+      event :draft do
+        transition to: :draft
+      end
+      after_transition to: :draft, do: :after_draft
+    end
+
     # Can't use short form block syntax due to https://github.com/Netflix/fast_jsonapi/issues/259
     def purchasable?
       default_variant.purchasable? || variants.any?(&:purchasable?)
@@ -234,7 +251,7 @@ module Spree
     # deleted products and products with status different than active
     # are not available
     def available?
-      status == 'active' && !deleted?
+      active? && !deleted?
     end
 
     def discontinue!
@@ -513,6 +530,18 @@ module Spree
 
     def downcase_slug
       slug&.downcase!
+    end
+
+    def after_activate
+      # this method is prepended in api/ to queue Webhooks requests
+    end
+
+    def after_archive
+      # this method is prepended in api/ to queue Webhooks requests
+    end
+
+    def after_draft
+      # this method is prepended in api/ to queue Webhooks requests
     end
   end
 end

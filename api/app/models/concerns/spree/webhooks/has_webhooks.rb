@@ -11,7 +11,7 @@ module Spree
         def queue_webhooks_requests!(event_name)
           return if disable_spree_webhooks?
           return if Spree::Webhooks::Subscriber.active.with_urls_for(event_name).none?
-          return if update_event?(event_name) && updating_only_timestamps?
+          return if update_event?(event_name) && updating_only_ignored_attributes?
           return if webhook_payload_body.blank?
 
           Spree::Webhooks::Subscribers::QueueRequests.call(event_name: event_name, webhook_payload_body: webhook_payload_body)
@@ -55,8 +55,15 @@ module Spree
           end
       end
 
-      def updating_only_timestamps?
-        (saved_changes.keys - %w[created_at updated_at deleted_at]).empty?
+      def updating_only_ignored_attributes?
+        (saved_changes.keys - ignored_attributes).empty?
+      end
+
+      def ignored_attributes
+        timestamps = %w[created_at updated_at deleted_at]
+        return timestamps unless self.class.respond_to?(:ignored_attributes_for_update_webhook_event)
+
+        timestamps + self.class.ignored_attributes_for_update_webhook_event
       end
 
       def update_event?(event_name)
