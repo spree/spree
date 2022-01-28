@@ -1,6 +1,10 @@
 module Spree
   module Webhooks
     class Subscriber < Spree::Webhooks::Base
+      if defined?(Spree::VendorConcern)
+        include Spree::VendorConcern
+      end
+
       has_many :events, inverse_of: :subscriber
 
       validates :url, 'spree/url': true, presence: true
