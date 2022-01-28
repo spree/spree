@@ -46,10 +46,14 @@ describe Spree::Api::Webhooks::ProductDecorator do
     context 'to active' do
       let(:event_name) { 'product.activated' }
 
-      before { product.update_column(:status, :draft) }
+      before do
+        product.update_column(:status, :draft)
+      end
 
       it do
-        expect { product.activate }.to emit_webhook_event(event_name)
+        ActiveRecord::Base.no_touching do
+          expect { product.activate }.to emit_webhook_event(event_name)
+        end
       end
     end
 

@@ -908,7 +908,10 @@ describe 'API V2 Storefront Products Spec', type: :request do
     end
 
     context 'with existing product' do
-      before { get "/api/v2/storefront/products/#{product.slug}" }
+      before do
+        product.reload
+        get "/api/v2/storefront/products/#{product.slug}"
+      end
 
       it_behaves_like 'returns 200 HTTP status'
 

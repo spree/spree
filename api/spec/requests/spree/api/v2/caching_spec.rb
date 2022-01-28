@@ -116,6 +116,7 @@ describe 'API v2 Caching spec', type: :request do
       end
 
       it 'auto expire cache after record being updated' do
+        product.reload
         get "/api/v2/storefront/products/#{product.id}"
 
         expect(json_response['data']).to have_attribute('name').with_value('Some name')
@@ -148,6 +149,7 @@ describe 'API v2 Caching spec', type: :request do
       end
 
       it 'includes currency and signed user in the cache key' do
+        product.reload
         get "/api/v2/storefront/products/#{product.id}?currency=#{currency}&locale=#{locale}", headers: headers_bearer
 
         expect(cache_entry).not_to be_nil
