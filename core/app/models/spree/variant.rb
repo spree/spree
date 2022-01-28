@@ -170,6 +170,8 @@ module Spree
 
     def options=(options = {})
       options.each do |option|
+        skip if option[:name].blank? || option[:value].blank?
+
         set_option_value(option[:name], option[:value])
       end
     end
@@ -178,12 +180,12 @@ module Spree
       # no option values on master
       return if is_master
 
-      option_type = Spree::OptionType.where(name: opt_name).first_or_initialize do |o|
-        o.presentation = opt_name
+      option_type = Spree::OptionType.where(['LOWER(name) = ?', opt_name.downcase.strip]).first_or_initialize do |o|
+        o.name = o.presentation = opt_name
         o.save!
       end
 
-      current_value = option_values.detect { |o| o.option_type.name == opt_name }
+      current_value = find_option_value(opt_name)
 
       if current_value.nil?
         # then we have to check to make sure that the product has the option type
@@ -191,13 +193,13 @@ module Spree
           product.option_types << option_type
         end
       else
-        return if current_value.name == opt_value
+        return if current_value.name.downcase.strip == opt_value.downcase.strip
 
         option_values.delete(current_value)
       end
 
-      option_value = Spree::OptionValue.where(option_type_id: option_type.id, name: opt_value).first_or_initialize do |o|
-        o.presentation = opt_value
+      option_value = option_type.option_values.where(['LOWER(name) = ?', opt_value.downcase.strip]).first_or_initialize do |o|
+        o.name = o.presentation = opt_value
         o.save!
       end
 
@@ -205,8 +207,12 @@ module Spree
       save
     end
 
+    def find_option_value(opt_name)
+      option_values.detect { |o| o.option_type.name.downcase.strip == opt_name.downcase.strip }
+    end
+
     def option_value(opt_name)
-      option_values.detect { |o| o.option_type.name == opt_name }.try(:presentation)
+      find_option_value(opt_name).try(:presentation)
     end
 
     def price_in(currency)
