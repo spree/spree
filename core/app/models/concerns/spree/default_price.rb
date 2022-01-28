@@ -6,6 +6,7 @@ module Spree
       has_one :default_price,
               -> { with_deleted.where(currency: Spree::Store.default.default_currency) },
               class_name: 'Spree::Price',
+              inverse_of: name.demodulize.tableize.singularize.to_sym,
               dependent: :destroy
 
       delegate :display_price, :display_amount, :price, :currency, :price=,

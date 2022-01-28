@@ -1049,4 +1049,25 @@ describe Spree::Variant, type: :model do
       expect(order.total).to eq(0)
     end
   end
+
+  # for VEN-351 bug
+  context 'touching by associated prices' do
+    subject { variant.update(price: 50) }
+
+    it 'updated_at changes when updating price' do
+      expect { subject }.to change(variant, :updated_at)
+    end
+
+    context 'cache is updated' do
+      it do
+        expect { subject }.to change(variant, :cache_key_with_version)
+      end
+
+      it 'updates price_in' do
+        previous_price_in = variant.price_in('USD')
+        subject
+        expect(variant.price_in('USD').amount).not_to eq previous_price_in.amount
+      end
+    end
+  end
 end
