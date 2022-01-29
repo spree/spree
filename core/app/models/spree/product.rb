@@ -39,6 +39,7 @@ module Spree
     friendly_id :slug_candidates, use: :history
 
     acts_as_paranoid
+    auto_strip_attributes :name
 
     # we need to have this callback before any dependent: :destroy associations
     # https://github.com/rails/rails/issues/3458

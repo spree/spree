@@ -17,6 +17,8 @@ module Spree
     delegate :name, :name=, :description, :slug, :available_on, :make_active_at, :shipping_category_id,
              :meta_description, :meta_keywords, :shipping_category, to: :product
 
+    auto_strip_attributes :sku, nullify: false
+
     # we need to have this callback before any dependent: :destroy associations
     # https://github.com/rails/rails/issues/3458
     before_destroy :ensure_not_in_complete_orders
@@ -170,7 +172,7 @@ module Spree
 
     def options=(options = {})
       options.each do |option|
-        skip if option[:name].blank? || option[:value].blank?
+        next if option[:name].blank? || option[:value].blank?
 
         set_option_value(option[:name], option[:value])
       end
