@@ -14,6 +14,7 @@ module Spree
                :compare_at_price, :compare_at_price=, to: :find_or_build_default_price
 
       after_save :save_default_price
+      after_save :touch_variant
 
       def has_default_price?
         !default_price.nil?
@@ -31,6 +32,10 @@ module Spree
 
       def save_default_price
         default_price.save if default_price_changed?
+      end
+
+      def touch_variant
+        touch if default_price_changed?
       end
     end
   end

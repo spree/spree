@@ -174,7 +174,7 @@ describe Spree::Adjustment, type: :model do
       before { expect(adjustment).to receive(:closed?).and_return(true) }
 
       it 'does not update the adjustment' do
-        expect(adjustment).not_to receive(:update_column)
+        expect(adjustment).not_to receive(:update_columns)
         adjustment.update!
       end
     end

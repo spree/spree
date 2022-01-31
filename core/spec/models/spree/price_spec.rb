@@ -106,7 +106,7 @@ describe Spree::Price, type: :model do
     let(:default_zone) { create(:zone) }
     let(:zone) { create(:zone) }
     let(:amount) { 10 }
-    let(:tax_category) { Spree::TaxCategory.new }
+    let(:tax_category) { create(:tax_category) }
     let(:price) { build :price, variant: variant, amount: amount }
     let(:price_options) { { tax_zone: zone } }
 
@@ -157,7 +157,7 @@ describe Spree::Price, type: :model do
     let(:zone) { create(:zone) }
     let(:amount) { 10 }
     let(:compare_at_amount) { 100 }
-    let(:tax_category) { Spree::TaxCategory.new }
+    let(:tax_category) { create(:tax_category) }
     let(:price) { build :price, variant: variant, amount: amount, compare_at_amount: compare_at_amount }
     let(:price_options) { { tax_zone: zone } }
 
