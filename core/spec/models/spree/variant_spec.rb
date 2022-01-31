@@ -1064,9 +1064,9 @@ describe Spree::Variant, type: :model do
       end
 
       it 'updates price_in' do
-        previous_price_in = variant.price_in('USD')
+        previous_price_in_usd = variant.price_in('USD')
         subject
-        expect(variant.price_in('USD').amount).not_to eq previous_price_in.amount
+        expect(variant.price_in('USD').amount).not_to eq previous_price_in_usd.amount
       end
     end
   end

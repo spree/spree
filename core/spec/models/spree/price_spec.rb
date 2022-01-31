@@ -103,8 +103,8 @@ describe Spree::Price, type: :model do
     subject(:price_with_vat) { price.price_including_vat_for(price_options) }
 
     let(:variant) { create(:variant) }
-    let(:default_zone) { Spree::Zone.new }
-    let(:zone) { Spree::Zone.new }
+    let(:default_zone) { create(:zone) }
+    let(:zone) { create(:zone) }
     let(:amount) { 10 }
     let(:tax_category) { Spree::TaxCategory.new }
     let(:price) { build :price, variant: variant, amount: amount }
@@ -153,8 +153,8 @@ describe Spree::Price, type: :model do
     subject(:compare_at_price_with_vat) { price.compare_at_price_including_vat_for(price_options) }
 
     let(:variant) { create(:variant) }
-    let(:default_zone) { Spree::Zone.new }
-    let(:zone) { Spree::Zone.new }
+    let(:default_zone) { create(:zone) }
+    let(:zone) { create(:zone) }
     let(:amount) { 10 }
     let(:compare_at_amount) { 100 }
     let(:tax_category) { Spree::TaxCategory.new }
