@@ -18,9 +18,6 @@ module Spree
 
     attr_accessor :skip_validate_not_last
 
-    MAILER_LOGO_CONTENT_TYPES = ['image/png', 'image/jpg', 'image/jpeg'].freeze
-    FAVICON_CONTENT_TYPES = ['image/png', 'image/x-icon', 'image/vnd.microsoft.icon'].freeze
-
     acts_as_paranoid
 
     has_many :orders, class_name: 'Spree::Order'
@@ -80,28 +77,14 @@ module Spree
 
     default_scope { order(created_at: :asc) }
 
-    if Spree.public_storage_service_name
-      has_one_attached :logo, service: Spree.public_storage_service_name
-    else
-      has_one_attached :logo
-    end
-    if Spree.public_storage_service_name
-      has_one_attached :mailer_logo, service: Spree.public_storage_service_name
-    else
-      has_one_attached :mailer_logo
-    end
-    if Spree.public_storage_service_name
-      has_one_attached :favicon_image, service: Spree.public_storage_service_name
-    else
-      has_one_attached :favicon_image
-    end
+    has_one :logo, class_name: 'Spree::StoreLogo', dependent: :destroy, as: :viewable
+    accepts_nested_attributes_for :logo, reject_if: :all_blank
 
+    has_one :mailer_logo, class_name: 'Spree::StoreMailerLogo', dependent: :destroy, as: :viewable
+    accepts_nested_attributes_for :mailer_logo, reject_if: :all_blank
 
-    validates :mailer_logo, content_type: MAILER_LOGO_CONTENT_TYPES
-    validates :favicon_image, content_type: FAVICON_CONTENT_TYPES,
-                              dimension: { max: 256..256 },
-                              aspect_ratio: :square,
-                              size: { less_than_or_equal_to: 1.megabyte }
+    has_one :favicon_image, class_name: 'Spree::StoreFaviconImage', dependent: :destroy, as: :viewable
+    accepts_nested_attributes_for :favicon_image, reject_if: :all_blank
 
     before_save :ensure_default_exists_and_is_unique
     before_save :ensure_supported_currencies, :ensure_supported_locales, :ensure_default_country
@@ -198,9 +181,9 @@ module Spree
     end
 
     def favicon
-      return unless favicon_image.attached?
+      return unless favicon_image.attachment.attached?
 
-      favicon_image.variant(resize_to_limit: [32, 32])
+      favicon_image.attachment.variant(resize_to_limit: [32, 32])
     end
 
     def can_be_deleted?

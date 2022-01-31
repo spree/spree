@@ -126,14 +126,15 @@ module Spree
       :quantity, :stock_item, :stock_item_id, :originator, :action
     ]
 
-    @@store_attributes = [:name, :url, :seo_title, :code, :meta_keywords, :logo,
+    @@store_attributes = [:name, :url, :seo_title, :code, :meta_keywords,
                           :meta_description, :default_currency, :mail_from_address,
                           :customer_support_email, :facebook, :twitter, :instagram,
                           :description, :address, :contact_phone, :supported_locales,
                           :default_locale, :default_country_id, :supported_currencies,
-                          :new_order_notifications_email, :mailer_logo, :favicon_image,
-                          :checkout_zone_id, :seo_robots, :digital_asset_authorized_clicks,
-                          :digital_asset_authorized_days, :limit_digital_download_count, :limit_digital_download_days]
+                          :new_order_notifications_email, :checkout_zone_id, :seo_robots,
+                          :digital_asset_authorized_clicks, :digital_asset_authorized_days,
+                          :limit_digital_download_count, :limit_digital_download_days, :digital_asset_link_expire_time,
+                          { mailer_logo_attributes: {}, favicon_image_attributes: {}, logo_attributes: {} }]
 
     @@store_credit_attributes = %i[amount currency category_id memo]
 
