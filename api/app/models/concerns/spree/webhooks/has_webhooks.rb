@@ -14,7 +14,9 @@ module Spree
           return if update_event?(event_name) && updating_only_ignored_attributes?
           return if webhook_payload_body.blank?
 
-          Spree::Webhooks::Subscribers::QueueRequests.call(event_name: event_name, webhook_payload_body: webhook_payload_body)
+          Spree::Webhooks::Subscribers::QueueRequests.call(
+            event_name: event_name, webhook_payload_body: webhook_payload_body, **webhooks_request_options
+          )
         end
 
         def self.default_webhook_events
@@ -72,6 +74,10 @@ module Spree
 
       def disable_spree_webhooks?
         ENV['DISABLE_SPREE_WEBHOOKS'] == 'true'
+      end
+
+      def webhooks_request_options
+        {}
       end
     end
   end
