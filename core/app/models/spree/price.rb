@@ -12,6 +12,7 @@ module Spree
     belongs_to :variant, -> { with_deleted }, class_name: 'Spree::Variant', inverse_of: :prices, touch: true
 
     before_validation :ensure_currency
+    after_update :touch_variant
 
     validates :amount, allow_nil: true, numericality: {
       greater_than_or_equal_to: 0,
@@ -70,6 +71,10 @@ module Spree
 
     def ensure_currency
       self.currency ||= Spree::Store.default.default_currency
+    end
+
+    def touch_variant
+      variant.touch
     end
   end
 end

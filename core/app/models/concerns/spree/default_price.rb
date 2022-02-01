@@ -12,7 +12,6 @@ module Spree
                :price_including_vat_for, :currency=, :display_compare_at_price,
                :compare_at_price, :compare_at_price=, to: :find_or_build_default_price
 
-      before_save :touch_self_if_price_changed
       after_save :save_default_price
 
       def has_default_price?
@@ -30,11 +29,7 @@ module Spree
       end
 
       def save_default_price
-        default_price.save if default_price_changed?
-      end
-
-      def touch_self_if_price_changed
-        touch if persisted? && default_price_changed?
+        default_price.save
       end
     end
   end
