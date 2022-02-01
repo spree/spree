@@ -6,15 +6,14 @@ module Spree
       has_one :default_price,
               -> { with_deleted.where(currency: Spree::Store.default.default_currency) },
               class_name: 'Spree::Price',
-              inverse_of: :variant,
               dependent: :destroy
 
       delegate :display_price, :display_amount, :price, :currency, :price=,
                :price_including_vat_for, :currency=, :display_compare_at_price,
                :compare_at_price, :compare_at_price=, to: :find_or_build_default_price
 
+      before_save :touch_self_if_price_changed
       after_save :save_default_price
-      after_save :touch_variant
 
       def has_default_price?
         !default_price.nil?
@@ -34,8 +33,8 @@ module Spree
         default_price.save if default_price_changed?
       end
 
-      def touch_variant
-        touch if default_price_changed?
+      def touch_self_if_price_changed
+        touch if persisted? && default_price_changed?
       end
     end
   end

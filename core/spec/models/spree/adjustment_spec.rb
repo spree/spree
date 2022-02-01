@@ -180,19 +180,18 @@ describe Spree::Adjustment, type: :model do
     end
 
     context 'when adjustment is open' do
-      let(:current_time) { Time.current }
-
       before do
         expect(adjustment).to receive(:closed?).and_return(false)
-        expect(Time).to receive(:current).and_return(current_time)
       end
 
       it 'updates the amount' do
         expect(adjustment).to receive(:adjustable).and_return(double('Adjustable')).at_least(:once)
         expect(adjustment).to receive(:source).and_return(double('Source')).at_least(:once)
         expect(adjustment.source).to receive('compute_amount').with(adjustment.adjustable).and_return(5)
-        expect(adjustment).to receive(:update_columns).with(amount: 5, updated_at: current_time)
-        adjustment.update!
+        Timecop.freeze do
+          expect(adjustment).to receive(:update_columns).with(amount: 5, updated_at: Time.current)
+          adjustment.update!
+        end
       end
     end
   end
