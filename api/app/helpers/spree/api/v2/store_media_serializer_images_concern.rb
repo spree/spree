@@ -13,7 +13,7 @@ module Spree
             if Spree.public_storage_service_name
               url_helpers.cdn_image_url(attachment)
             else
-              url_helpers.rails_representation_path(attachment, only_path: true)
+              url_helpers.rails_blob_path(attachment)
             end
           end
 

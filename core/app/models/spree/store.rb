@@ -181,7 +181,7 @@ module Spree
     end
 
     def favicon
-      return unless favicon_image.attachment.attached?
+      return unless favicon_image&.attachment&.attached?
 
       favicon_image.attachment.variant(resize_to_limit: [32, 32])
     end

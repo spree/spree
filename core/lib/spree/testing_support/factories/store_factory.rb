@@ -20,7 +20,7 @@ FactoryBot.define do
       end
 
       favicon_image do
-        Rack::Test::UploadedFile.new(filepath, image_type)
+        create(:favicon_image, attachment: Rack::Test::UploadedFile.new(filepath, image_type))
       end
     end
   end
