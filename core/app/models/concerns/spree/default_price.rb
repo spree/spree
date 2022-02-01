@@ -29,7 +29,7 @@ module Spree
       end
 
       def save_default_price
-        default_price.save
+        default_price.save if default_price_changed?
       end
     end
   end
