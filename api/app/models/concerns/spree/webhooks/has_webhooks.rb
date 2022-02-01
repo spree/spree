@@ -52,8 +52,12 @@ module Spree
       def resource_serializer
         @resource_serializer ||=
           begin
-            demodulized_class_name = self.class.to_s.demodulize
-            "Spree::Api::V2::Platform::#{demodulized_class_name}Serializer".constantize
+            if self.class.respond_to? :platform_resource_serializer
+              self.class.platform_resource_serializer
+            else
+              demodulized_class_name = self.class.to_s.demodulize
+              "Spree::Api::V2::Platform::#{demodulized_class_name}Serializer".constantize
+            end
           end
       end
 
