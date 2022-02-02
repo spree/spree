@@ -359,7 +359,7 @@ module Spree
     end
 
     def digital?
-      shipping_category == I18n.t('spree.seed.shipping.categories.digital')
+      shipping_category.name == I18n.t('spree.seed.shipping.categories.digital')
     end
 
     private

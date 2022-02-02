@@ -871,5 +871,19 @@ describe Spree::Product, type: :model do
         end
       end
     end
+
+    describe '#digital?' do
+      context 'when product is not digital' do
+        let(:product) { create(:product, stores: [store]) }
+
+        it { expect(product.digital?).to eq(false) }
+      end
+
+      context 'when product is digital' do
+        let(:product) { create(:product, stores: [store], shipping_category: create(:shipping_category, name: 'Digital')) }
+
+        it { expect(product.digital?).to eq(true) }
+      end
+    end
   end
 end
