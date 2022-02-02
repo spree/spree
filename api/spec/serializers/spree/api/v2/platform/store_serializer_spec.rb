@@ -47,7 +47,7 @@ describe Spree::Api::V2::Platform::StoreSerializer do
             supported_locales: store.supported_locales,
             deleted_at: store.deleted_at,
             settings: store.settings,
-            logo: url_helpers.rails_representation_path(logo.attachment, only_path: true),
+            logo: url_helpers.rails_blob_path(logo.attachment),
             mailer_logo: nil,
             favicon_path: nil
           },
