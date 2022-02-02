@@ -11,9 +11,5 @@ module Spree
     IMAGE_SIZE = ['sm', 'md', 'lg', 'xl']
 
     validates :attachment, attached: true, content_type: IMAGE_TYPES
-
-    def self.platform_resource_serializer
-      Spree::Api::V2::Platform::AssetSerializer
-    end
   end
 end
