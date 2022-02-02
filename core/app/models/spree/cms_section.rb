@@ -19,8 +19,8 @@ module Spree
     Spree::CmsSectionImage::IMAGE_COUNT.each do |count|
       Spree::CmsSectionImage::IMAGE_SIZE.each do |size|
         define_method("img_#{count}_#{size}") do |dimensions = nil|
-          image = send("image_#{count}").attachment
-          return if !image.attached? || dimensions.nil?
+          image = send("image_#{count}")&.attachment
+          return if !image&.attached? || dimensions.nil?
 
           image.variant(resize_to_limit: dimensions.split('x').map(&:to_i))
         end

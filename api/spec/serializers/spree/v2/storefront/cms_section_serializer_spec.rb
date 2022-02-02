@@ -52,7 +52,8 @@ describe Spree::V2::Storefront::CmsSectionSerializer do
      let!(:homepage) { create(:cms_homepage, store: store) }
      let!(:cms_section) do
        section = create(:cms_hero_image_section, cms_page: homepage)
-       section.image_one.attach(io: file, filename: 't-shirt.png')
+       section.build_image_one
+       section.image_one.attachment.attach(io: file, filename: 't-shirt.png')
        section
      end
      let(:file) { File.open(file_fixture('icon_256x256.jpg')) }
@@ -72,7 +73,8 @@ describe Spree::V2::Storefront::CmsSectionSerializer do
     let!(:homepage) { create(:cms_homepage, store: store) }
     let!(:cms_section) do
       section = create(:cms_side_by_side_images_section, cms_page: homepage)
-      section.image_one.attach(io: file, filename: 't-shirt.png')
+      section.build_image_one
+      section.image_one.attachment.attach(io: file, filename: 't-shirt.png')
       section
     end
     let(:file) { File.open(file_fixture('icon_256x256.jpg')) }
@@ -85,7 +87,8 @@ describe Spree::V2::Storefront::CmsSectionSerializer do
     let!(:homepage) { create(:cms_homepage, store: store) }
     let!(:cms_section) do
       section = create(:cms_image_gallery_section, cms_page: homepage)
-      section.image_one.attach(io: file, filename: 't-shirt.png')
+      section.build_image_one
+      section.image_one.attachment.attach(io: file, filename: 't-shirt.png')
       section
     end
     let(:file) { File.open(file_fixture('icon_256x256.jpg')) }
