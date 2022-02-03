@@ -2,15 +2,14 @@
 # see: https://github.com/rails/rails/issues/34872
 Rails.application.routes.draw do
   direct :cdn_image do |model, options|
-    if model.blob.service_name == 'cloudinary' && defined?(Cloudinary)
+    if defined?(Cloudinary) && (model.attachment_file_name || (model = model.record)&.attachment_file_name)
       if model.class.method_defined?(:has_mvariation)
-        Cloudinary::Utils.cloudinary_url(model.blob.key,
-          width: model.variation.transformations[:resize_to_limit].first,
-          height: model.variation.transformations[:resize_to_limit].last,
-          crop: :fill
-        )
+        Cloudinary::Utils.cloudinary_url(model.attachment_file_name,
+                                         width: model.variation.transformations[:resize_to_limit].first,
+                                         height: model.variation.transformations[:resize_to_limit].last,
+                                         crop: :fill)
       else
-        Cloudinary::Utils.cloudinary_url(model.blob.key)
+        Cloudinary::Utils.cloudinary_url(model.attachment_file_name)
       end
     elsif model.respond_to?(:signed_id)
       route_for(
