@@ -93,8 +93,8 @@ describe 'Storefront API v2 Account spec', type: :request do
         password_confirmation: 'newpassword123',
         bill_address_id: default_bill_address.id.to_s,
         ship_address_id: default_ship_address.id.to_s,
-        first_name: 'Joe',
-        last_name: 'Rogan',
+        first_name: 'Peter',
+        last_name: 'Parker',
         public_metadata: { 'has_other_account' => 'true' },
         private_metadata: { 'shops_in_other_stores' => 'false' }
       }
