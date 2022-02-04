@@ -10,5 +10,6 @@ module Spree
 
     attr_accessor :password
     attr_accessor :password_confirmation
+    attr_accessor :first_name, :last_name
   end
 end
