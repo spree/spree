@@ -1055,20 +1055,23 @@ describe Spree::Variant, type: :model do
     subject { variant.update(price: 50) }
 
     it 'updated_at changes when updating price' do
-      previous_updated_at = variant.updated_at
+      previous_updated_at = variant.updated_at.to_i
+      sleep 0.5
       subject
-      expect(variant.reload.updated_at).not_to eq(previous_updated_at)
+      expect(variant.reload.updated_at.to_i).not_to eq(previous_updated_at)
     end
 
     context 'cache is updated' do
       it do
         previous_cache_key_with_version = variant.cache_key_with_version
+        sleep 0.5
         subject
         expect(variant.reload.cache_key_with_version).not_to eq(previous_cache_key_with_version)
       end
 
       it 'updates price_in' do
         previous_price_in_usd = variant.price_in('USD')
+        sleep 0.5
         subject
         expect(variant.reload.price_in('USD').amount).not_to eq previous_price_in_usd.amount
       end
