@@ -25,7 +25,7 @@ module Spree
       private
 
       def default_price_changed?
-        default_price && (default_price.changed? || default_price.new_record?)
+        default_price && (default_price.has_changes_to_save? || default_price.new_record?)
       end
 
       def save_default_price

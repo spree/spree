@@ -74,6 +74,7 @@ module Spree
     end
 
     def touch_variant
+      puts 'It gets to here 5552'
       variant.touch
     end
   end
