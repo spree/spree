@@ -31,7 +31,10 @@ describe 'Storefront API v2 Account spec', type: :request do
   end
 
   describe 'account#show' do
-    before { get '/api/v2/storefront/account', headers: headers }
+    before do
+      user.reload
+      get '/api/v2/storefront/account', headers: headers
+    end
 
     it_behaves_like 'returns 200 HTTP status'
 

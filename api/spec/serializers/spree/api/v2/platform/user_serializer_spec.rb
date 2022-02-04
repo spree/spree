@@ -17,6 +17,8 @@ describe Spree::Api::V2::Platform::UserSerializer do
           type: :user,
           attributes: {
             email: user.email,
+            first_name: user.first_name,
+            last_name: user.last_name,
             average_order_value: [],
             lifetime_value: [],
             store_credits: [],
@@ -55,6 +57,8 @@ describe Spree::Api::V2::Platform::UserSerializer do
     it do
       expect(subject.serializable_hash[:data][:attributes]).to eq({
         email: user.email,
+        first_name: user.first_name,
+        last_name: user.last_name,
         average_order_value: [{ amount: '110.00', currency: 'USD' }, { amount: '110.00', currency: 'EUR' }],
         lifetime_value: [{ amount: '110.00', currency: 'USD' }, { amount: '110.00', currency: 'EUR' }],
         store_credits: [{ amount: '100.00', currency: 'USD' }, { amount: '90.00', currency: 'EUR' }],
