@@ -2452,14 +2452,14 @@ components:
               type: boolean
               example: true
               description: Defines if this is the default CC for a signed in user
-          relationships:
-            type: object
-            properties:
-              payment_method:
-                type: object
-                properties:
-                  data:
-                    $ref: '#/components/schemas/Relation'
+        relationships:
+          type: object
+          properties:
+            payment_method:
+              type: object
+              properties:
+                data:
+                  $ref: '#/components/schemas/Relation'
       required:
         - id
         - type
