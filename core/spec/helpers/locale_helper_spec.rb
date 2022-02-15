@@ -46,6 +46,12 @@ describe Spree::LocaleHelper, type: :helper do
     it 'returns the locale when no translation exists' do
       expect(locale_presentation(:klingon)).to eq([:klingon, 'klingon'])
     end
+
+    context 'when we do not have a translation file' do
+      it 'returns the locale from the mapping' do
+        expect(locale_presentation(:es)).to eq(['Español (es)', 'es'])
+      end
+    end
   end
 
   describe '#should_render_locale_dropdown?' do
