@@ -44,6 +44,7 @@ namespace :common do
     unless ['spree/api', 'spree/core', 'spree/sample', 'spree/emails'].include?(ENV['LIB_NAME'])
       puts 'Setting up node environment'
       system('bin/rails javascript:install:esbuild')
+      system('bin/rails turbo:install')
     end
 
     begin
