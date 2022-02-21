@@ -49,7 +49,7 @@
 We have 2 pre-built storefront starters you can download and start using right away!
 
 * [Vue Storefront 2 online demo](https://vuestorefront-spree.upsidelab.io/) - [Setup instructions](https://github.com/vuestorefront/spree)
-* [Next.js Commerce online demo](https://spree.vercel.store/) - [Setup instructions](https://github.com/vercel/commerce/tree/main/framework/spree)
+* [Next.js Commerce online demo](https://spree.vercel.store/) - [Setup instructions](https://github.com/vercel/commerce/tree/main/packages/spree)
 
 ## Getting Started
 
