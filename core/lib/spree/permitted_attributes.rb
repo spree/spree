@@ -153,7 +153,7 @@ module Spree
       :name, :presentation, :cost_price, :discontinue_on, :lock_version,
       :position, :track_inventory,
       :product_id, :product, :option_values_attributes, :price, :compare_at_price,
-      :weight, :height, :width, :depth, :sku, :cost_currency,
+      :weight, :height, :width, :depth, :sku, :barcode, :cost_currency,
       { options: [:name, :value], option_value_ids: [] }
     ]
 

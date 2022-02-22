@@ -140,7 +140,7 @@ module Spree
     self.whitelisted_ransackable_scopes = %w[not_discontinued search_by_name in_taxon price_between]
 
     [
-      :sku, :price, :currency, :weight, :height, :width, :depth, :is_master,
+      :sku, :barcode, :price, :currency, :weight, :height, :width, :depth, :is_master,
       :cost_currency, :price_in, :amount_in, :cost_price, :compare_at_price, :compare_at_amount_in
     ].each do |method_name|
       delegate method_name, :"#{method_name}=", to: :find_or_build_master

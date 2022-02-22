@@ -18,7 +18,8 @@ describe 'Variants API', swagger: true do
   let(:valid_create_param_value) { build(:variant, product: product).attributes.merge(option_value_ids: [option_value.id]) }
   let(:valid_update_param_value) do
     {
-      sku: 'SKU987'
+      sku: 'SKU987',
+      barcode: '978-3-16-148410-0'
     }
   end
   let(:invalid_param_value) do
