@@ -11,7 +11,10 @@ describe Spree::Webhooks::Subscribers::HandleRequest do
     end
 
     let(:webhook_payload_body) do
-      Spree::Api::V2::Platform::AddressSerializer.new(resource).serializable_hash.to_json
+      Spree::Api::V2::Platform::AddressSerializer.new(
+        resource,
+        include: Spree::Api::V2::Platform::AddressSerializer.relationships_to_serialize.keys
+      ).serializable_hash.to_json
     end
     let(:event_name) { 'order.canceled' }
     let(:event) { Spree::Webhooks::Event.find_by(name: event_name, subscriber_id: subscriber.id, url: url) }
@@ -134,7 +137,12 @@ describe Spree::Webhooks::Subscribers::HandleRequest do
     end
 
     context 'full flow' do
-      let(:webhook_payload_body) { Spree::Api::V2::Platform::OrderSerializer.new(order.reload).serializable_hash }
+      let(:webhook_payload_body) do
+        Spree::Api::V2::Platform::OrderSerializer.new(
+          order.reload,
+          include: Spree::Api::V2::Platform::OrderSerializer.relationships_to_serialize.keys
+        ).serializable_hash
+      end
       let(:event) { Spree::Webhooks::Event.find_by(name: event_name, subscriber_id: subscriber.id, url: url) }
       let(:event_name) { 'order.placed' }
       let(:order) { create(:order, email: 'test@example.com') }

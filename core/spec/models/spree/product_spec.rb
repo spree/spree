@@ -169,17 +169,9 @@ describe Spree::Product, type: :model do
     end
 
     context '#available?' do
-      it 'is available if date is in the past' do
-        product.available_on = 1.day.ago
+      it 'is available if status is set to active' do
+        product.status = 'active'
         expect(product).to be_available
-      end
-
-      it 'is not available if date is nil or in the future' do
-        product.available_on = nil
-        expect(product).not_to be_available
-
-        product.available_on = 1.day.from_now
-        expect(product).not_to be_available
       end
 
       it 'is not available if destroyed' do
@@ -283,10 +275,10 @@ describe Spree::Product, type: :model do
       end
     end
 
-    describe '#discontinue_on_must_be_later_than_available_on' do
-      before { product.available_on = Date.today }
+    describe '#discontinue_on_must_be_later_than_make_active_at' do
+      before { product.make_active_at = Date.today }
 
-      context 'available_on is a date earlier than discontinue_on' do
+      context 'make_active_at is a date earlier than discontinue_on' do
         before { product.discontinue_on = 5.days.from_now }
 
         it 'is valid' do
@@ -294,7 +286,7 @@ describe Spree::Product, type: :model do
         end
       end
 
-      context 'available_on is a date earlier than discontinue_on' do
+      context 'make_active_at is a date earlier than discontinue_on' do
         before { product.discontinue_on = 5.days.ago }
 
         context 'is not valid' do
@@ -305,10 +297,10 @@ describe Spree::Product, type: :model do
         end
       end
 
-      context 'available_on and discontinue_on are nil' do
+      context 'make_active_at and discontinue_on are nil' do
         before do
           product.discontinue_on = nil
-          product.available_on = nil
+          product.make_active_at = nil
         end
 
         it 'is valid' do
@@ -319,7 +311,7 @@ describe Spree::Product, type: :model do
 
     context 'hard deletion' do
       it 'doesnt raise ActiveRecordError error' do
-        expect { product.really_destroy! }.not_to raise_error
+        expect { product.really_destroy! }.not_to raise_error(ActiveRecord::ActiveRecordError)
       end
     end
 
@@ -605,6 +597,12 @@ describe Spree::Product, type: :model do
       expect(product.discontinued?).to be(true)
     end
 
+    it 'sets the status to archived' do
+      product.discontinue!
+      product.reload
+      expect(product.status).to eq('archived')
+    end
+
     it 'changes updated_at' do
       Timecop.scale(1000) do
         expect { product.discontinue! }.to change(product, :updated_at)
@@ -661,9 +659,10 @@ describe Spree::Product, type: :model do
     end
   end
 
-  describe '#ensure_no_line_items' do
+  describe '#ensure_not_in_complete_orders' do
+    let!(:order) { create(:completed_order_with_totals) }
     let(:product) { create(:product, stores: [store]) }
-    let!(:line_item) { create(:line_item, variant: product.master, product: product) }
+    let!(:line_item) { create(:line_item, order: order, variant: product.master, product: product) }
 
     it 'adds error on product destroy' do
       expect(product.destroy).to eq false
@@ -870,6 +869,20 @@ describe Spree::Product, type: :model do
             it { expect(subject).to eq(true) }
           end
         end
+      end
+    end
+
+    describe '#digital?' do
+      context 'when product is not digital' do
+        let(:product) { create(:product, stores: [store]) }
+
+        it { expect(product.digital?).to eq(false) }
+      end
+
+      context 'when product is digital' do
+        let(:product) { create(:product, stores: [store], shipping_category: create(:shipping_category, name: 'Digital')) }
+
+        it { expect(product.digital?).to eq(true) }
       end
     end
   end

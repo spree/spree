@@ -2064,6 +2064,8 @@ RSpec.configure do |config|
                 required: %w[email password password_confirmation],
                 properties: {
                   email: { type: :string },
+                  first_name: { type: :string },
+                  last_name: { type: :string },
                   password: { type: :string },
                   password_confirmation: { type: :string },
                   ship_address_id: { type: :string },
@@ -2083,6 +2085,8 @@ RSpec.configure do |config|
                 type: :object,
                 properties: {
                   email: { type: :string },
+                  first_name: { type: :string },
+                  last_name: { type: :string },
                   password: { type: :string },
                   password_confirmation: { type: :string },
                   ship_address_id: { type: :string },

@@ -6,8 +6,10 @@ FactoryBot.define do
     cost_price        { 17.00 }
     sku               { generate(:sku) }
     available_on      { 1.year.ago }
+    make_active_at    { 1.year.ago }
     deleted_at        { nil }
     shipping_category { |r| Spree::ShippingCategory.first || r.association(:shipping_category) }
+    status            { 'active' }
 
     # ensure stock item will be created for this products master
     # also attach this product to the default store if no stores are passed in

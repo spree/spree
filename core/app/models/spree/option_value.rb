@@ -6,7 +6,9 @@ module Spree
     end
 
     belongs_to :option_type, class_name: 'Spree::OptionType', touch: true, inverse_of: :option_values
+
     acts_as_list scope: :option_type
+    auto_strip_attributes :name, :presentation
 
     has_many :option_value_variants, class_name: 'Spree::OptionValueVariant'
     has_many :variants, through: :option_value_variants, class_name: 'Spree::Variant'

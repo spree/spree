@@ -15,6 +15,9 @@ module Spree
         has_one :selected_shipping_rate, serializer: :shipping_rate
 
         belongs_to :stock_location
+        has_many :line_items do |shipment|
+          shipment.line_items
+        end
       end
     end
   end

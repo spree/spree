@@ -13,6 +13,7 @@ describe Spree::Webhooks::HasWebhooks do
     )
   end
   let(:store) { create(:store) }
+  let!(:webhook_subscriber) { create(:webhook_subscriber, :active, subscriptions: ['*']) }
 
   context 'with DISABLE_SPREE_WEBHOOKS equals "true" (set in spec_helper)' do
     let(:queue_requests) { instance_double(Spree::Webhooks::Subscribers::QueueRequests) }
@@ -45,7 +46,12 @@ describe Spree::Webhooks::HasWebhooks do
   end
 
   context 'without DISABLE_SPREE_WEBHOOKS' do
-    let(:webhook_payload_body) { Spree::Api::V2::Platform::ProductSerializer.new(product).serializable_hash }
+    let(:webhook_payload_body) do
+      Spree::Api::V2::Platform::ProductSerializer.new(
+        product,
+        include: Spree::Api::V2::Platform::ProductSerializer.relationships_to_serialize.keys
+      ).serializable_hash
+    end
 
     context 'after_create_commit' do
       let(:event_name) { 'product.create' }
@@ -65,7 +71,12 @@ describe Spree::Webhooks::HasWebhooks do
     end
 
     context 'with a class name with multiple words' do
-      let(:webhook_payload_body) { Spree::Api::V2::Platform::CmsPageSerializer.new(cms_page).serializable_hash }
+      let(:webhook_payload_body) do
+        Spree::Api::V2::Platform::CmsPageSerializer.new(
+          cms_page,
+          include: Spree::Api::V2::Platform::CmsPageSerializer.relationships_to_serialize.keys
+          ).serializable_hash
+      end
       let(:cms_page) { create(:cms_homepage, store: store, locale: 'en') }
       let(:event_name) { 'cms_page.create' }
 
@@ -117,12 +128,25 @@ describe Spree::Webhooks::HasWebhooks do
     context 'on touch events from callbacks' do
       let!(:store2) { create(:store) }
       let!(:cms_page) { create(:cms_homepage, store: store2, locale: 'en') }
-      let(:body) { Spree::Api::V2::Platform::StoreSerializer.new(store2).serializable_hash }
+      let(:body) do
+        Spree::Api::V2::Platform::StoreSerializer.new(
+          store2,
+          include: Spree::Api::V2::Platform::StoreSerializer.relationships_to_serialize.keys
+        ).serializable_hash
+      end
 
       before { store2.changes_applied }
 
       it 'does not emit the touched model\'s update event' do
         expect { cms_page.update(title: 'Homepage #1') }.not_to emit_webhook_event('store.update')
+      end
+    end
+
+    context 'when no subscribers are active' do
+      before { webhook_subscriber.update(active: false) }
+
+      it 'does not emit the event' do
+        expect { product.save }.not_to emit_webhook_event('product.create')
       end
     end
   end

@@ -42,6 +42,10 @@ describe Spree::LocaleHelper, type: :helper do
 
   describe '#locale_presentation' do
     it { expect(locale_presentation(:fr)).to eq( ['Français (FR)', 'fr']) }
+
+    it 'returns the locale when no translation exists' do
+      expect(locale_presentation(:klingon)).to eq([:klingon, 'klingon'])
+    end
   end
 
   describe '#should_render_locale_dropdown?' do

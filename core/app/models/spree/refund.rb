@@ -29,6 +29,8 @@ module Spree
 
     scope :non_reimbursement, -> { where(reimbursement_id: nil) }
 
+    attr_reader :response
+
     def money
       Spree::Money.new(amount, currency: payment.currency)
     end

@@ -300,7 +300,8 @@ describe Spree::Variant, type: :model do
           multi_variant.set_option_value('media_type', 'CD')
 
           expect do
-            multi_variant.set_option_value('media_type', 'DVD')
+            multi_variant.set_option_value('media_type ', ' DVD ')
+            multi_variant.set_option_value('Media_Type  ', ' dvd ')
           end.not_to change(multi_variant.option_values, :count)
 
           expect do
@@ -1021,12 +1022,32 @@ describe Spree::Variant, type: :model do
     end
   end
 
-  describe '#ensure_no_line_items' do
-    let!(:line_item) { create(:line_item, variant: variant) }
+  describe '#ensure_not_in_complete_orders' do
+    let!(:order) { create(:completed_order_with_totals) }
+    let!(:line_item) { create(:line_item, order: order, variant: variant) }
 
-    it 'adds error on product destroy' do
+    it 'adds error on variant destroy' do
       expect(variant.destroy).to eq false
       expect(variant.errors[:base]).to include I18n.t('activerecord.errors.models.spree/variant.attributes.base.cannot_destroy_if_attached_to_line_items')
+    end
+  end
+
+  describe '#remove_line_items_from_incomplete_orders' do
+    let!(:order) { create(:order) }
+    let!(:line_item) { create(:line_item, order: order, variant: variant, quantity: 2) }
+    let!(:line_item_2) { create(:line_item, order: order, variant: variant, quantity: 3) }
+
+    before { variant.update(track_inventory: false) }
+
+    it 'schedules RemoveFromIncompleteOrdersJob' do
+      expect(Spree::Variants::RemoveFromIncompleteOrdersJob).to receive(:perform_later).with(variant)
+      variant.destroy
+    end
+
+    it 'deletes the line items from the order' do
+      variant.destroy
+      expect(order.reload.line_items).to be_empty
+      expect(order.total).to eq(0)
     end
   end
 end

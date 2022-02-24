@@ -23,6 +23,8 @@ PRODUCTS.each do |(parent_name, taxon_name, product_name)|
     product.price = rand(10...100) + 0.99
     product.description = FFaker::Lorem.paragraph
     product.available_on = Time.zone.now
+    product.make_active_at = Time.zone.now
+    product.status = 'active'
     if parent_name == 'Women' and %w[Dresses Skirts].include?(taxon_name)
       product.option_types = [color, length, size]
     else
