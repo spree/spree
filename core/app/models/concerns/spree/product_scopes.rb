@@ -297,9 +297,9 @@ module Spree
         include PgSearch::Model
 
         if defined?(SpreeGlobalize)
-          pg_search_scope :search_by_name, associated_against: { translations: :name }, using: :tsearch
+          pg_search_scope :search_by_name, associated_against: { translations: :name }, using: { tsearch: { any_word: true, prefix: true } }
         else
-          pg_search_scope :search_by_name, against: :name, using: :tsearch
+          pg_search_scope :search_by_name, against: :name, using: { tsearch: { any_word: true, prefix: true } }
         end
       else
         def self.search_by_name(query)
