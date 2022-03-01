@@ -4,9 +4,6 @@ module Spree
     if defined?(Spree::Webhooks)
       include Spree::Webhooks::HasWebhooks
     end
-    if defined?(Spree::Security::StockLocations)
-      include Spree::Security::StockLocations
-    end
     if defined?(Spree::VendorConcern)
       include Spree::VendorConcern
     end
