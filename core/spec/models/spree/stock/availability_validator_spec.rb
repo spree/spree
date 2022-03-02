@@ -15,7 +15,7 @@ module Spree
         allow(inventory_unit).to receive_messages(quantity: 5)
       end
 
-      it 'is valid when supply is sufficient' do
+      it 'is valid when supply is sufficient and product is active' do
         allow_any_instance_of(Stock::Quantifier).to receive_messages(can_supply?: true)
         expect(line_item).not_to receive(:errors)
         subject.validate(line_item)
@@ -39,6 +39,20 @@ module Spree
         expect(line_item).to receive(:quantity).and_return(0)
         expect(line_item.errors).not_to receive(:[]).with(:quantity)
         subject.validate(line_item)
+      end
+
+      context 'when supply is sufficient but product is not active' do
+        before do
+          line_item.product.draft!
+        end
+
+        it 'shows a message about product status and not quantity' do
+          allow_any_instance_of(Stock::Quantifier).to receive_messages(can_supply?: false)
+          expect(line_item.errors[:base]).to eq []
+          subject.validate(line_item)
+          expect(line_item.errors[:base].to_s).to match(/mark the product as active/)
+          expect(line_item.errors[:quantity]).to eq []
+        end
       end
     end
   end
