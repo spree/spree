@@ -14,9 +14,15 @@ module Spree
         display_name = variant.name.to_s
         display_name += " (#{variant.options_text})" unless variant.options_text.blank?
 
-        line_item.errors.add(:quantity,
-                             :selected_quantity_not_available,
-                             message: Spree.t(:selected_quantity_not_available, item: display_name.inspect))
+        if variant.available?
+          line_item.errors.add(:quantity,
+                               :selected_quantity_not_available,
+                               message: Spree.t(:selected_quantity_not_available, item: display_name.inspect))
+        else
+          line_item.errors.add(:base,
+                               :only_active_products_can_be_added_to_cart,
+                               message: Spree.t(:only_active_products_can_be_added_to_cart))
+        end
       end
 
       private

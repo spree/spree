@@ -1122,6 +1122,7 @@ en:
     number: Number
     ok: OK
     on_hand: On Hand
+    only_active_products_can_be_added_to_cart: Draft and archived products cannot be added to cart, please mark the product as active before.
     open: Open
     open_all_adjustments: Open All Adjustments
     option_type: Option Type
