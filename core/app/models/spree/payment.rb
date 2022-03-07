@@ -112,7 +112,7 @@ module Spree
       after_transition to: :void, do: :after_void
       # when the card brand isn't supported
       event :invalidate do
-        transition from: [:checkout], to: :invalid
+        transition from: [:checkout, :processing], to: :invalid
       end
 
       after_transition do |payment, transition|

@@ -170,6 +170,12 @@ describe Spree::Payment, type: :model do
       payment.invalidate
       expect(payment.state).to eq('invalid')
     end
+
+    it 'transitions from processing to invalid' do
+      payment.state = 'processing'
+      payment.invalidate
+      expect(payment.state).to eq('invalid')
+    end
   end
 
   context 'processing' do
