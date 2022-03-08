@@ -11,7 +11,7 @@ module Spree
       belongs_to :order, class_name: 'Spree::Order', touch: true
       belongs_to :variant, -> { with_deleted }, class_name: 'Spree::Variant'
     end
-    belongs_to :tax_category, class_name: 'Spree::TaxCategory'
+    belongs_to :tax_category, -> { with_deleted }, class_name: 'Spree::TaxCategory'
 
     has_one :product, through: :variant
 
