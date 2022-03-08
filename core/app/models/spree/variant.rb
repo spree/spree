@@ -146,7 +146,7 @@ module Spree
       @tax_category ||= if self[:tax_category_id].nil?
                           product.tax_category
                         else
-                          Spree::TaxCategory.find(self[:tax_category_id])
+                          Spree::TaxCategory.find_by(id: self[:tax_category_id]) || product.tax_category
                         end
     end
 

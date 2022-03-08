@@ -8,6 +8,8 @@ module Spree
     validates :name, presence: true, uniqueness: { case_sensitive: false, scope: spree_base_uniqueness_scope.push(:deleted_at) }
 
     has_many :tax_rates, dependent: :destroy, inverse_of: :tax_category
+    has_many :products, dependent: :nullify
+    has_many :variants, dependent: :nullify
 
     before_save :set_default_category
 
