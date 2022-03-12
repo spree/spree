@@ -8,7 +8,7 @@ describe Spree::Promotion::Rules::OptionValue do
 
     it 'assigns a nicely formatted hash' do
       rule.preferred_eligible_values = Hash['5' => '1,2', '6' => '1']
-      expect(subject).to eq Hash[5 => [1, 2], 6 => [1]]
+      expect(subject).to eq Hash['5' => ['1', '2'], '6' => ['1']]
     end
   end
 
