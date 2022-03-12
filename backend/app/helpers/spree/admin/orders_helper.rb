@@ -10,7 +10,7 @@ module Spree
           label = Spree.t(event, scope: 'admin.order.events', default: Spree.t(event))
           links << button_link_to(
             label.capitalize,
-            [event, :admin, order],
+            [event.to_sym, :admin, order],
             method: :put,
             icon: event.to_s + '.svg',
             data: { confirm: Spree.t(:order_sure_want_to, event: label) }
