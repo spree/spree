@@ -64,7 +64,7 @@ module Spree
           return default_address
         end
 
-        ::Spree::Address.find_or_create_by(attributes.except(:id, :updated_at, :created_at))
+        default_address_scope.find_or_create_by(attributes.except(:id, :updated_at, :created_at))
       end
     end
   end
