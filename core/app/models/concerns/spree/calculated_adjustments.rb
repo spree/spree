@@ -18,7 +18,7 @@ module Spree
 
       def calculator_type=(calculator_type)
         klass = calculator_type.constantize if calculator_type
-        self.calculator = klass.new if klass && !calculator.is_a?(klass)
+        self.calculator = klass.new if klass && !calculator.instance_of?(klass)
       end
 
       private
