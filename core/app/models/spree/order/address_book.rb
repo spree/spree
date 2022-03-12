@@ -30,7 +30,7 @@ module Spree
 
       def bill_address_attributes=(attributes)
         self.bill_address = update_or_create_address(attributes)
-        user.update(bill_address: bill_address) if user && user.bill_address.nil?
+        user.class.unscoped.where(id: user).update_all(bill_address_id: bill_address.id) if user && user.bill_address.nil?
       end
 
       def ship_address_id=(id)
@@ -45,7 +45,7 @@ module Spree
 
       def ship_address_attributes=(attributes)
         self.ship_address = update_or_create_address(attributes)
-        user.update(ship_address: ship_address) if user && user.ship_address.nil?
+        user.class.unscoped.where(id: user).update_all(ship_address_id: ship_address.id) if user && user.ship_address.nil?
       end
 
       private
@@ -58,7 +58,7 @@ module Spree
         address_scope = user ? user.addresses : ::Spree::Address.where(user: nil)
         existing_address = address_scope.find_by(id: attributes[:id])
         new_address = address_scope.new(attributes)
-        
+
         if existing_address && new_address == existing_address
           existing_address
         elsif existing_address&.editable?
