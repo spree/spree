@@ -53,12 +53,12 @@ module Spree
       def update_or_create_address(attributes = {})
         return if attributes.blank?
 
-        attributes.transform_values!{ |v| v == "" ? nil : v }
+        attributes.transform_values!(&:presence)
 
         address_scope = user ? user.addresses : ::Spree::Address.where(user: nil)
         existing_address = address_scope.find_by(id: attributes[:id])
         new_address = address_scope.new(attributes)
-
+        
         if existing_address && new_address == existing_address
           existing_address
         elsif existing_address&.editable?
