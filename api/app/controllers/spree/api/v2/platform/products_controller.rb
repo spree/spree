@@ -16,7 +16,7 @@ module Spree
           end
 
           def allowed_sort_attributes
-            super << :available_on
+            super.push(:available_on, :make_active_at)
           end
 
           def sorted_collection

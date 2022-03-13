@@ -7,6 +7,7 @@ module Spree
     end
 
     acts_as_list
+    auto_strip_attributes :name, :presentation
 
     with_options dependent: :destroy, inverse_of: :option_type do
       has_many :option_values, -> { order(:position) }

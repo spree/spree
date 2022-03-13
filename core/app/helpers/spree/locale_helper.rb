@@ -17,8 +17,12 @@ module Spree
     def locale_presentation(locale)
       if I18n.exists?('spree.i18n.this_file_language', locale: locale, fallback: false)
         [locale_full_name(locale), locale.to_s]
+      elsif defined?(SpreeI18n::Locale) && (language_name = SpreeI18n::Locale.local_language_name(locale))
+        ["#{language_name} (#{locale})", locale.to_s]
+      elsif locale.to_s == 'en'
+        ['English (US)', 'en']
       else
-        locale.to_s == 'en' ? ['English (US)', 'en'] : [locale, locale.to_s]
+        [locale, locale.to_s]
       end
     end
 

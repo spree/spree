@@ -26,6 +26,7 @@ describe Spree::Api::V2::Platform::ProductSerializer do
           name: product.name,
           description: product.description,
           available_on: product.available_on,
+          make_active_at: product.make_active_at,
           status: product.status,
           deleted_at: product.deleted_at,
           slug: product.slug,

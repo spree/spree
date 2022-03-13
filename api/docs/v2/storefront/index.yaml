@@ -57,6 +57,12 @@ paths:
                     email:
                       type: string
                       example: john@snow.org
+                    first_name:
+                      type: string
+                      example: John
+                    last_name:
+                      type: string
+                      example: Snow
                     password:
                       type: string
                       example: spree123
@@ -98,6 +104,12 @@ paths:
                     email:
                       type: string
                       example: john@snow.org
+                    first_name:
+                      type: string
+                      example: John
+                    last_name:
+                      type: string
+                      example: Snow
                     bill_address_id:
                       type: string
                       example: '1'
@@ -1251,10 +1263,11 @@ paths:
       summary: Retrieve a Product
   /api/v2/storefront/store:
     get:
+      summary: Return the current Store
       description: 'Returns the current Store. [Read more about Stores](https://dev-docs.spreecommerce.org/internals/stores)'
       tags:
         - Stores
-      operationId: show-store
+      operationId: show-current-store
       parameters:
         - $ref: '#/components/parameters/StoreIncludeParam'
         - $ref: '#/components/parameters/SparseFieldsStore'
@@ -2439,14 +2452,14 @@ components:
               type: boolean
               example: true
               description: Defines if this is the default CC for a signed in user
-          relationships:
-            type: object
-            properties:
-              payment_method:
-                type: object
-                properties:
-                  data:
-                    $ref: '#/components/schemas/Relation'
+        relationships:
+          type: object
+          properties:
+            payment_method:
+              type: object
+              properties:
+                data:
+                  $ref: '#/components/schemas/Relation'
       required:
         - id
         - type
@@ -3630,6 +3643,12 @@ components:
             email:
               type: string
               example: spree@example.com
+            first_name:
+              type: string
+              example: John
+            last_name:
+              type: string
+              example: Doe
             store_credits:
               type: number
               example: 150.75
@@ -5080,6 +5099,8 @@ components:
                   type: user
                   attributes:
                     email: spree@example.com
+                    first_name: John
+                    last_name: Snow
                     store_credits: 0
                     completed_orders: 0
                     public_metadata:

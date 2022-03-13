@@ -39,10 +39,11 @@ module Spree
     friendly_id :slug_candidates, use: :history
 
     acts_as_paranoid
+    auto_strip_attributes :name
 
     # we need to have this callback before any dependent: :destroy associations
     # https://github.com/rails/rails/issues/3458
-    before_destroy :ensure_no_line_items
+    before_destroy :ensure_not_in_complete_orders
 
     has_many :product_option_types, dependent: :destroy, inverse_of: :product
     has_many :option_types, through: :product_option_types
@@ -124,7 +125,7 @@ module Spree
     end
 
     validates :slug, presence: true, uniqueness: { allow_blank: true, case_sensitive: true, scope: spree_base_uniqueness_scope }
-    validate :discontinue_on_must_be_later_than_available_on, if: -> { available_on && discontinue_on }
+    validate :discontinue_on_must_be_later_than_make_active_at, if: -> { make_active_at && discontinue_on }
 
     scope :for_store, ->(store) { joins(:store_products).where(StoreProduct.table_name => { store_id: store.id }) }
 
@@ -135,11 +136,11 @@ module Spree
     alias options product_option_types
 
     self.whitelisted_ransackable_associations = %w[taxons stores variants_including_master master variants]
-    self.whitelisted_ransackable_attributes = %w[description name slug discontinue_on]
+    self.whitelisted_ransackable_attributes = %w[description name slug discontinue_on status]
     self.whitelisted_ransackable_scopes = %w[not_discontinued search_by_name in_taxon price_between]
 
     [
-      :sku, :price, :currency, :weight, :height, :width, :depth, :is_master,
+      :sku, :barcode, :price, :currency, :weight, :height, :width, :depth, :is_master,
       :cost_currency, :price_in, :amount_in, :cost_price, :compare_at_price, :compare_at_amount_in
     ].each do |method_name|
       delegate method_name, :"#{method_name}=", to: :find_or_build_master
@@ -149,6 +150,23 @@ module Spree
              :display_compare_at_price, :images, to: :find_or_build_master
 
     alias master_images images
+
+    state_machine :status, initial: :draft do
+      event :activate do
+        transition to: :active
+      end
+      after_transition to: :active, do: :after_activate
+
+      event :archive do
+        transition to: :archived
+      end
+      after_transition to: :archived, do: :after_archive
+
+      event :draft do
+        transition to: :draft
+      end
+      after_transition to: :draft, do: :after_draft
+    end
 
     # Can't use short form block syntax due to https://github.com/Netflix/fast_jsonapi/issues/259
     def purchasable?
@@ -234,7 +252,7 @@ module Spree
     # deleted products and products with status different than active
     # are not available
     def available?
-      status == 'active' && !deleted?
+      active? && !deleted?
     end
 
     def discontinue!
@@ -341,7 +359,7 @@ module Spree
     end
 
     def digital?
-      shipping_category == I18n.t('spree.seed.shipping.categories.digital')
+      shipping_category&.name == I18n.t('spree.seed.shipping.categories.digital')
     end
 
     private
@@ -485,8 +503,8 @@ module Spree
       Spree::Taxonomy.where(id: taxonomy_ids).update_all(updated_at: Time.current)
     end
 
-    def ensure_no_line_items
-      if line_items.any?
+    def ensure_not_in_complete_orders
+      if orders.complete.any?
         errors.add(:base, :cannot_destroy_if_attached_to_line_items)
         throw(:abort)
       end
@@ -497,8 +515,8 @@ module Spree
       removed_classifications.each &:remove_from_list
     end
 
-    def discontinue_on_must_be_later_than_available_on
-      if discontinue_on < available_on
+    def discontinue_on_must_be_later_than_make_active_at
+      if discontinue_on < make_active_at
         errors.add(:discontinue_on, :invalid_date_range)
       end
     end
@@ -513,6 +531,18 @@ module Spree
 
     def downcase_slug
       slug&.downcase!
+    end
+
+    def after_activate
+      # this method is prepended in api/ to queue Webhooks requests
+    end
+
+    def after_archive
+      # this method is prepended in api/ to queue Webhooks requests
+    end
+
+    def after_draft
+      # this method is prepended in api/ to queue Webhooks requests
     end
   end
 end

@@ -150,7 +150,7 @@ module Spree
             shipping_rates_serializer.new(
               shipments,
               params: serializer_params,
-              include: [:shipping_rates, :stock_location]
+              include: [:shipping_rates, :stock_location, :line_items]
             ).serializable_hash
           end
         end

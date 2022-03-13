@@ -72,7 +72,7 @@ module Spree
       end
 
       def cancel!
-        response = payment_method.cancel(response_code)
+        response = payment_method.cancel(response_code, self)
         handle_response(response, :void, :failure)
       end
 

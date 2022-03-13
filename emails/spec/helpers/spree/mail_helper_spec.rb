@@ -62,7 +62,8 @@ module Spree
         let(:logo_image) { File.open(File.expand_path('../../../app/assets/images/logo/spree_50.png', __dir__)) }
 
         before do
-          store.mailer_logo.attach(io: logo_image, filename: 'spree_50.png', content_type: 'image/png')
+          store.build_mailer_logo
+          store.mailer_logo.attachment.attach(io: logo_image, filename: 'spree_50.png', content_type: 'image/png')
           @order = create(:order, store: store)
         end
 
@@ -75,7 +76,8 @@ module Spree
         let(:logo_image) { File.open(File.expand_path('../../../app/assets/images/noimage/mini.png', __dir__)) }
 
         before do
-          store.mailer_logo.attach(io: logo_image, filename: 'mini.png', content_type: 'image/png')
+          store.build_mailer_logo
+          store.mailer_logo.attachment.attach(io: logo_image, filename: 'mini.png', content_type: 'image/png')
         end
 
         it 'shows logo attached to current store' do

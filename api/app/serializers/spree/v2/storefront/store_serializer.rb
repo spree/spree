@@ -2,6 +2,8 @@ module Spree
   module V2
     module Storefront
       class StoreSerializer < BaseSerializer
+        include Spree::Api::V2::StoreMediaSerializerImagesConcern
+
         set_type :store
 
         attributes :name, :url, :meta_description, :meta_keywords, :seo_title, :default_currency,
@@ -12,13 +14,6 @@ module Spree
         has_many :cms_pages
 
         has_one :default_country, serializer: :country, record_type: :country, id_method_name: :default_country_id
-
-        attribute :favicon_path do |store|
-          if store.favicon_image.attached?
-            url_helpers = Rails.application.routes.url_helpers
-            url_helpers.rails_representation_path(store.favicon, only_path: true)
-          end
-        end
       end
     end
   end

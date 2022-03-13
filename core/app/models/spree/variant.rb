@@ -14,14 +14,17 @@ module Spree
     belongs_to :product, -> { with_deleted }, touch: true, class_name: 'Spree::Product', inverse_of: :variants
     belongs_to :tax_category, class_name: 'Spree::TaxCategory', optional: true
 
-    delegate :name, :name=, :description, :slug, :available_on, :shipping_category_id,
+    delegate :name, :name=, :description, :slug, :available_on, :make_active_at, :shipping_category_id,
              :meta_description, :meta_keywords, :shipping_category, to: :product
+
+    auto_strip_attributes :sku, nullify: false
 
     # we need to have this callback before any dependent: :destroy associations
     # https://github.com/rails/rails/issues/3458
-    before_destroy :ensure_no_line_items
+    before_destroy :ensure_not_in_complete_orders
+    after_destroy :remove_line_items_from_incomplete_orders
 
-    # must include this after ensure_no_line_items to make sure price won't be deleted before validation
+    # must include this after ensure_not_in_complete_orders to make sure price won't be deleted before validation
     include Spree::DefaultPrice
 
     with_options inverse_of: :variant do
@@ -143,7 +146,7 @@ module Spree
       @tax_category ||= if self[:tax_category_id].nil?
                           product.tax_category
                         else
-                          Spree::TaxCategory.find(self[:tax_category_id])
+                          Spree::TaxCategory.find_by(id: self[:tax_category_id]) || product.tax_category
                         end
     end
 
@@ -169,6 +172,8 @@ module Spree
 
     def options=(options = {})
       options.each do |option|
+        next if option[:name].blank? || option[:value].blank?
+
         set_option_value(option[:name], option[:value])
       end
     end
@@ -177,12 +182,12 @@ module Spree
       # no option values on master
       return if is_master
 
-      option_type = Spree::OptionType.where(name: opt_name).first_or_initialize do |o|
-        o.presentation = opt_name
+      option_type = Spree::OptionType.where(['LOWER(name) = ?', opt_name.downcase.strip]).first_or_initialize do |o|
+        o.name = o.presentation = opt_name
         o.save!
       end
 
-      current_value = option_values.detect { |o| o.option_type.name == opt_name }
+      current_value = find_option_value(opt_name)
 
       if current_value.nil?
         # then we have to check to make sure that the product has the option type
@@ -190,13 +195,13 @@ module Spree
           product.option_types << option_type
         end
       else
-        return if current_value.name == opt_value
+        return if current_value.name.downcase.strip == opt_value.downcase.strip
 
         option_values.delete(current_value)
       end
 
-      option_value = Spree::OptionValue.where(option_type_id: option_type.id, name: opt_value).first_or_initialize do |o|
-        o.presentation = opt_value
+      option_value = option_type.option_values.where(['LOWER(name) = ?', opt_value.downcase.strip]).first_or_initialize do |o|
+        o.name = o.presentation = opt_value
         o.save!
       end
 
@@ -204,8 +209,12 @@ module Spree
       save
     end
 
+    def find_option_value(opt_name)
+      option_values.detect { |o| o.option_type.name.downcase.strip == opt_name.downcase.strip }
+    end
+
     def option_value(opt_name)
-      option_values.detect { |o| o.option_type.name == opt_name }.try(:presentation)
+      find_option_value(opt_name).try(:presentation)
     end
 
     def price_in(currency)
@@ -328,11 +337,15 @@ module Spree
 
     private
 
-    def ensure_no_line_items
-      if line_items.any?
+    def ensure_not_in_complete_orders
+      if orders.complete.any?
         errors.add(:base, :cannot_destroy_if_attached_to_line_items)
         throw(:abort)
       end
+    end
+
+    def remove_line_items_from_incomplete_orders
+      Spree::Variants::RemoveFromIncompleteOrdersJob.perform_later(self)
     end
 
     def quantifier

@@ -107,6 +107,7 @@ RUBY
 bundle install --gemfile Gemfile
 
 bin/rails javascript:install:esbuild
+bin/rails turbo:install
 yarn install
 
 bin/rails db:drop || true
