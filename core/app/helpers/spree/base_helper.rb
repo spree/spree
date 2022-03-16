@@ -167,8 +167,7 @@ module Spree
     end
 
     def seo_url(taxon, options = {})
-      options.merge(locale: locale_param)
-      spree.nested_taxons_path(taxon.permalink, options)
+      spree.nested_taxons_path(taxon.permalink, options.merge(locale: locale_param))
     end
 
     def frontend_available?
