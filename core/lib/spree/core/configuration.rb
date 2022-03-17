@@ -75,7 +75,8 @@ module Spree
 
       # searcher_class allows spree extension writers to provide their own Search class
       def searcher_class
-        @searcher_class ||= Spree::Core::Search::Base
+        ActiveSupport::Deprecation.warn('`Spree::Config.searcher_class` is deprecated and will be removed in Spree v5, please use `Spree.searcher_class` instead.')
+        @searcher_class ||= Spree.searcher_class
       end
 
       # Sets the path used for products, taxons and pages.
