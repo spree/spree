@@ -56,6 +56,7 @@ RSpec.configure do |config|
         { name: 'Orders' },
         { name: 'Payments' },
         { name: 'Payment Methods' },
+        { name: 'Products' },
         { name: 'Promotions' },
         { name: 'Promotion Actions' },
         { name: 'Promotion Categories' },
