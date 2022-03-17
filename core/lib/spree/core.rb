@@ -26,7 +26,7 @@ StateMachines::Machine.ignore_method_conflicts = true
 
 module Spree
   mattr_accessor :user_class, :admin_user_class, :private_storage_service_name,
-                 :public_storage_service_name, :cdn_host
+                 :public_storage_service_name, :cdn_host, :searcher_class
 
   def self.user_class(constantize: true)
     if @@user_class.is_a?(Class)
@@ -63,6 +63,16 @@ module Spree
       else
         raise 'Spree.public_storage_service_name MUST be a String or Symbol object.'
       end
+    end
+  end
+
+  def self.searcher_class(constantize: true)
+    @@searcher_class ||= 'Spree::Core::Search::Base'
+
+    if @@searcher_class.is_a?(Class)
+      raise 'Spree.searcher_class MUST be a String or Symbol object, not a Class object.'
+    elsif @@searcher_class.is_a?(String) || @@searcher_class.is_a?(Symbol)
+      constantize ? @@searcher_class.to_s.constantize : @@searcher_class.to_s
     end
   end
 
