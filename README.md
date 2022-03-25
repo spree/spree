@@ -14,15 +14,13 @@
 
 **Spree** is a headless open source e-commerce platform for global brands. It was started by Sean Schofield and is now developed by [Spark Solutions][spark]. We're open to [contributions](https://dev-docs.spreecommerce.org/contributing).
 
-<a href="https://dev-docs.spreecommerce.org/getting-started/headless-commerce">
-   <img src="https://raw.githubusercontent.com/spree/spree-dev-docs/master/.gitbook/assets/spree_commerce_spree_api_3-2x.png" alt="Spree Commerce - a headless open-source ecommerce platform for multi-store, marketplace, or B2B global brands" />
+## Developed by
+
+<a href="https://getvendo.com?utm_source=spree_github">
+  <img src="https://uploads-ssl.webflow.com/6230c485f2c32ea1b0daa438/62386b96518cdcbe111f134a_OG%20Image%20(2).png" />
 </a>
 
-## Maintained by
-
-[![Spark Solutions](http://sparksolutions.co/wp-content/uploads/2015/01/logo-ss-tr-221x100.png)][spark]
-
-[Spark Solutions][spark] is a full stack eCommerce agency. Our project teams consist of Designers, Software Engineers, Testers and Project Managers practicing agile project delivery. We’ll integrate our team with yours to jointly architect, deliver, maintain and scale the software products you need. You drive the project with requirements and acceptance testing and we help you deliver faster using industry-standard project management and comms best practices. [Contact us to launch your new eCommerce project](https://sparksolutions.co/contact/).
+[Vendo][vendo] - Vendo is a great fit for marketplaces of all sizes - either with own fulfillment and multiple warehouses or in a dropshipping model. Vendo automates everything from vendor onboarding, accepting buyer payments in over 135 currencies, to supplier payouts in 50 countries. Vendo ensures excellent buyer experience with smooth product discovery and search, a multitude of payment methods and optimal shipping cost calculation. Vendo keeps suppliers happy with easy onboarding, automated products sync using their preferred method and easy payouts.
 
 ## Key Features
 
@@ -96,4 +94,4 @@ Please review the [Contributing Guide](https://dev-docs.spreecommerce.org/contri
 
 Spree is released under the [New BSD License](https://github.com/spree/spree/blob/main/license.md).
 
-[spark]:https://sparksolutions.co?utm_source=github
+[vendo]:https://getvendo.com?utm_source=spree_github
