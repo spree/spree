@@ -4,6 +4,8 @@
 
 # [Spree Commerce](https://spreecommerce.org) [![Gem Version](https://badge.fury.io/rb/spree.svg)](https://badge.fury.io/rb/spree) [![Circle CI](https://circleci.com/gh/spree/spree.svg?style=shield)](https://circleci.com/gh/spree/spree/tree/main) [![Test Coverage](https://api.codeclimate.com/v1/badges/8277fc2bb0b1f777084f/test_coverage)](https://codeclimate.com/github/spree/spree/test_coverage)
 
+**Spree** is a headless open source e-commerce platform for global brands.
+
 * [Success Stories](https://spreecommerce.org/stories/)
 * [Documentation](https://dev-docs.spreecommerce.org/)
 * [API Reference](https://api.spreecommerce.org)
@@ -12,19 +14,7 @@
 * [Join our Slack community](http://slack.spreecommerce.org/)
 * [Support](https://spreecommerce.org/contact/)
 
-**Spree** is a headless open source e-commerce platform for global brands. It was started by Sean Schofield and is now developed by [Spark Solutions][spark]. We're open to [contributions](https://dev-docs.spreecommerce.org/contributing).
-
-## Developed by
-
-<a href="https://getvendo.com?utm_source=spree_github">
-  <img src="https://uploads-ssl.webflow.com/6230c485f2c32ea1b0daa438/62386b96518cdcbe111f134a_OG%20Image%20(2).png" />
-</a>
-
-[Vendo][vendo] - Vendo is a great fit for marketplaces of all sizes - either with own fulfillment and multiple warehouses or in a dropshipping model. Vendo automates everything from vendor onboarding, accepting buyer payments in over 135 currencies, to supplier payouts in 50 countries. Vendo ensures excellent buyer experience with smooth product discovery and search, a multitude of payment methods and optimal shipping cost calculation. Vendo keeps suppliers happy with easy onboarding, automated products sync using their preferred method and easy payouts.
-
 ## Key Features
-
-![admin panel](https://raw.githubusercontent.com/spree/spree-dev-docs/master/.gitbook/assets/spree_commerce_home_header_2-2x-1-.png)
 
 * **[Headless Commerce](https://spreecommerce.org/use-cases/headless-ecommerce-api/)** - build mobile apps or custom storefronts in any technology, [JS/TS SDK available](https://github.com/spree/spree-storefront-api-v2-js-sdk)
 * **[PWA](https://spreecommerce.org/use-cases/spree-pwa-progressive-web-application/)** - offline shopping experiences like native mobile apps
@@ -40,7 +30,17 @@
 * **Fully customizable** - pick and choose parts you want to use and customize everything else (storefront, order processing, API, etc) to create unique solutions that your business requires
 * **More features available via extensions** - dozens of extensions built by community, ready for use for free!
 
-![multi store](https://raw.githubusercontent.com/spree/spree-dev-docs/master/.gitbook/assets/mulit_store_978x2.png)
+## Developed by
+
+<a href="https://getvendo.com?utm_source=spree_github">
+  <img src="https://uploads-ssl.webflow.com/6230c485f2c32ea1b0daa438/62386b96518cdcbe111f134a_OG%20Image%20(2).png" style="max-height:400px" />
+</a>
+
+[Vendo][vendo] - Vendo is a great fit for marketplaces of all sizes - either with own fulfillment and multiple warehouses or in a dropshipping model. Vendo automates everything from vendor onboarding, accepting buyer payments in over 135 currencies, to supplier payouts in 50 countries. Vendo ensures excellent buyer experience with smooth product discovery and search, a multitude of payment methods and optimal shipping cost calculation. Vendo keeps suppliers happy with easy onboarding, automated products sync using their preferred method and easy payouts.
+
+## Getting Started
+
+* [Please follow **Getting Started** guide](https://dev-docs.spreecommerce.org/getting-started/installation)
 
 ## Storefronts
 
@@ -48,10 +48,6 @@ We have 2 pre-built storefront starters you can download and start using right a
 
 * [Vue Storefront 2 online demo](https://vuestorefront-spree.upsidelab.io/) - [Setup instructions](https://github.com/vuestorefront/spree)
 * [Next.js Commerce online demo](https://spree.vercel.store/) - [Setup instructions](https://github.com/vercel/commerce/tree/main/packages/spree)
-
-## Getting Started
-
-* [Please follow **Getting Started** guide](https://dev-docs.spreecommerce.org/getting-started/installation)
 
 ## Admin Dashboard demo
 
