@@ -170,24 +170,53 @@ describe Spree::Adjustment, type: :model do
   end
 
   context '#update!' do
-    context 'when adjustment is closed' do
-      before { expect(adjustment).to receive(:closed?).and_return(true) }
+    let(:adjustment) { Spree::Adjustment.create!(label: 'Adjustment', order: order, adjustable: order, amount: 5, state: state, source: source) }
+    let(:source) { mock_model(Spree::TaxRate, compute_amount: 10) }
 
-      it 'does not update the adjustment' do
-        expect(adjustment).not_to receive(:update_column)
-        adjustment.update!
+    subject { adjustment.update! }
+
+    context "when adjustment is closed" do
+      let(:state) { 'closed' }
+
+      it "does not update the adjustment" do
+        expect(adjustment).to_not receive(:update_column)
+        subject
       end
     end
 
-    context 'when adjustment is open' do
-      before { expect(adjustment).to receive(:closed?).and_return(false) }
+    context "when adjustment is open" do
+      let(:state) { 'open' }
 
-      it 'updates the amount' do
-        expect(adjustment).to receive(:adjustable).and_return(double('Adjustable')).at_least(:once)
-        expect(adjustment).to receive(:source).and_return(double('Source')).at_least(:once)
-        expect(adjustment.source).to receive('compute_amount').with(adjustment.adjustable).and_return(5)
-        expect(adjustment).to receive(:update_columns).with(amount: 5, updated_at: kind_of(Time))
-        adjustment.update!
+      it "updates the amount" do
+        expect { subject }.to change { adjustment.amount }.to(10)
+      end
+
+      context "it is a promotion adjustment" do
+        let(:promotion) { create(:promotion, :with_order_adjustment, code: promotion_code) }
+        let(:promotion_code) { 'somecode' }
+        let(:order1) { create(:order_with_line_items, line_items_count: 1) }
+
+        let!(:adjustment) do
+          promotion.activate(order: order1, promotion_code: promotion_code)
+          expect(order1.adjustments.size).to eq 1
+          order1.adjustments.first
+        end
+
+        context "the promotion is eligible" do
+          it "sets the adjustment elgiible to true" do
+            subject
+            expect(adjustment.eligible).to eq true
+          end
+        end
+
+        context "the promotion is not eligible" do
+          before { promotion.update!(starts_at: 1.day.from_now) }
+
+          it "sets the adjustment elgiible to false" do
+            subject
+            expect(adjustment.eligible).to eq false
+          end
+        end
       end
     end
   end

@@ -2,7 +2,7 @@
    <img src="https://raw.githubusercontent.com/spree/spree-dev-docs/master/.gitbook/assets/linkedin_cover_profile-2x.png" alt="Spree Commerce - a headless open-source ecommerce platform for multi-store, marketplace, or B2B global brands" />
 </a>
 
-# [Spree Commerce](https://spreecommerce.org) [![Gem Version](https://badge.fury.io/rb/spree.svg)](https://badge.fury.io/rb/spree) [![Circle CI](https://circleci.com/gh/spree/spree.svg?style=shield)](https://circleci.com/gh/spree/spree/tree/master) [![Test Coverage](https://api.codeclimate.com/v1/badges/8277fc2bb0b1f777084f/test_coverage)](https://codeclimate.com/github/spree/spree/test_coverage)
+# [Spree Commerce](https://spreecommerce.org) [![Gem Version](https://badge.fury.io/rb/spree.svg)](https://badge.fury.io/rb/spree) [![Circle CI](https://circleci.com/gh/spree/spree.svg?style=shield)](https://circleci.com/gh/spree/spree/tree/main) [![Test Coverage](https://api.codeclimate.com/v1/badges/8277fc2bb0b1f777084f/test_coverage)](https://codeclimate.com/github/spree/spree/test_coverage)
 
 * [Success Stories](https://spreecommerce.org/stories/)
 * [Documentation](https://dev-docs.spreecommerce.org/)
@@ -94,6 +94,6 @@ Please review the [Contributing Guide](https://dev-docs.spreecommerce.org/contri
 
 ## License
 
-Spree is released under the [New BSD License](https://github.com/spree/spree/blob/master/license.md).
+Spree is released under the [New BSD License](https://github.com/spree/spree/blob/main/license.md).
 
 [spark]:https://sparksolutions.co?utm_source=github
