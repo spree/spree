@@ -1,5 +1,5 @@
-<a href="https://spreecommerce.org">
-   <img src="https://raw.githubusercontent.com/spree/spree-dev-docs/master/.gitbook/assets/linkedin_cover_profile-2x.png" alt="Spree Commerce - a headless open-source ecommerce platform for multi-store, marketplace, or B2B global brands" />
+<a href="https://getvendo.com?utm_source=spree_github">
+   <img src="https://raw.githubusercontent.com/spree/spree-dev-docs/54abf615c5280eda8f2308de96d6290f72c1fb1b/spree_vendo_user_doc.png" alt="Spree Commerce - a headless open-source ecommerce platform for multi-store, marketplace, or B2B global brands" />
 </a>
 
 # [Spree Commerce](https://spreecommerce.org) [![Gem Version](https://badge.fury.io/rb/spree.svg)](https://badge.fury.io/rb/spree) [![Test Coverage](https://api.codeclimate.com/v1/badges/8277fc2bb0b1f777084f/test_coverage)](https://codeclimate.com/github/spree/spree/test_coverage)
@@ -30,7 +30,7 @@
 ## Sponsored by
 
 <a href="https://getvendo.com?utm_source=spree_github">
-  <img src="https://uploads-ssl.webflow.com/6230c485f2c32ea1b0daa438/62386b96518cdcbe111f134a_OG%20Image%20(2).png" style="max-height:400px" />
+  <img src="https://raw.githubusercontent.com/spree/spree-dev-docs/master/.gitbook/assets/vendo_twitter_cover.png" style="max-height:400px" />
 </a>
 
 > [Vendo][vendo] is a great fit for marketplaces of all sizes - either with own fulfillment and multiple warehouses or in a dropshipping model. Vendo **automates everything** from **vendor onboarding**, accepting buyer **payments in over 135 currencies**, to supplier **payouts in 50 countries**. 
