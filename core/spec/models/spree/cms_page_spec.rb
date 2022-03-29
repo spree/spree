@@ -24,6 +24,29 @@ describe Spree::CmsPage, type: :model do
     end
   end
 
+  describe 'validates uniqueness of slug' do
+    context 'valid' do
+      let!(:page) { create(:cms_standard_page, store: store_a, slug: 'got-name', locale: 'en') }
+
+      it 'valid' do
+        expect(described_class.new(title: 'Another Name', store: store_a, locale: 'en', type: 'Spree::Cms::Pages::StandardPage')).to be_valid
+      end
+
+      it 'omits previously deleted page' do
+        expect { page.destroy }.to change(page, :deleted_at).from(nil).to(Time)
+        expect(described_class.new(title: 'Got Name', store: store_a, slug: 'got-name', locale: 'en', type: 'Spree::Cms::Pages::StandardPage')).to be_valid
+      end
+    end
+
+    context 'invalid' do
+      let!(:page) { create(:cms_standard_page, store: store_a, slug: 'got-name', locale: 'en') }
+
+      it 'invalid' do
+        expect(described_class.new(title: 'Got Name', store: store_a, slug: 'got-name', locale: 'en', type: 'Spree::Cms::Pages::StandardPage')).not_to be_valid
+      end
+    end
+  end
+
   describe 'Spree::Cms::Pages::Homepage' do
     let(:homepage) { create(:cms_homepage, store: store_a, locale: 'en') }
 
