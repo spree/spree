@@ -31,6 +31,11 @@ describe Spree::CmsPage, type: :model do
       it 'valid' do
         expect(described_class.new(title: 'Another Name', store: store_a, locale: 'en', type: 'Spree::Cms::Pages::StandardPage')).to be_valid
       end
+
+      it 'omits previously deleted page' do
+        expect { page.destroy }.to change(page, :deleted_at).from(nil).to(Time)
+        expect(described_class.new(title: 'Got Name', store: store_a, slug: 'got-name', locale: 'en', type: 'Spree::Cms::Pages::StandardPage')).to be_valid
+      end
     end
 
     context 'invalid' do
@@ -38,11 +43,6 @@ describe Spree::CmsPage, type: :model do
 
       it 'invalid' do
         expect(described_class.new(title: 'Got Name', store: store_a, slug: 'got-name', locale: 'en', type: 'Spree::Cms::Pages::StandardPage')).not_to be_valid
-      end
-
-      it 'omits previosly deleted page' do
-        expect { page.destroy }.to change(page, :deleted_at).from(nil).to(Time)
-        expect(described_class.new(title: 'Got Name', store: store_a, slug: 'got-name', locale: 'en', type: 'Spree::Cms::Pages::StandardPage')).to be_valid
       end
     end
   end
