@@ -7,22 +7,22 @@ module Spree
 
     validate :reset_link_attributes
 
-    IMAGE_COUNT = ['one', 'two', 'three']
-    IMAGE_TYPES = ['image/png', 'image/jpg', 'image/jpeg', 'image/gif'].freeze
-    IMAGE_SIZE = ['sm', 'md', 'lg', 'xl']
+    has_one :image_one, class_name: 'Spree::CmsSectionImageOne', dependent: :destroy, as: :viewable
+    accepts_nested_attributes_for :image_one, reject_if: :all_blank
 
-    IMAGE_COUNT.each do |count|
-      if Spree.public_storage_service_name
-        send(:has_one_attached, "image_#{count}".to_sym, service: Spree.public_storage_service_name)
-      else
-        send(:has_one_attached, "image_#{count}".to_sym)
-      end
+    has_one :image_two, class_name: 'Spree::CmsSectionImageTwo', dependent: :destroy, as: :viewable
+    accepts_nested_attributes_for :image_two, reject_if: :all_blank
 
-      IMAGE_SIZE.each do |size|
+    has_one :image_three, class_name: 'Spree::CmsSectionImageThree', dependent: :destroy, as: :viewable
+    accepts_nested_attributes_for :image_three, reject_if: :all_blank
+
+    Spree::CmsSectionImage::IMAGE_COUNT.each do |count|
+      Spree::CmsSectionImage::IMAGE_SIZE.each do |size|
         define_method("img_#{count}_#{size}") do |dimensions = nil|
-          return if !send("image_#{count}").attached? || dimensions.nil?
+          image = send("image_#{count}")&.attachment
+          return if !image&.attached? || dimensions.nil?
 
-          send("image_#{count}").variant(resize_to_limit: dimensions.split('x').map(&:to_i))
+          image.variant(resize_to_limit: dimensions.split('x').map(&:to_i))
         end
       end
     end
@@ -30,8 +30,6 @@ module Spree
     default_scope { order(position: :asc) }
 
     validates :name, :cms_page, :type, presence: true
-
-    validates :image_one, :image_two, :image_three, content_type: IMAGE_TYPES
 
     LINKED_RESOURCE_TYPE = []
 
