@@ -4,8 +4,6 @@ module Spree
       def initialize(scope:, params:, current_currency: nil)
         @scope = scope
 
-        ActiveSupport::Deprecation.warn('`current_currency` param is deprecated and will be removed in Spree 5') if current_currency
-
         if current_currency.present?
           ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
             `current_currency` param is deprecated and will be removed in Spree 5.
