@@ -12,7 +12,7 @@ describe 'Digitals API', swagger: true do
     include_example: 'variant'
   }
 
-  let(:file_upload) { fixture_file_upload(file_fixture('icon_256x256.jpg'), 'image/jpg') }
+  let(:file_upload) { fixture_file_upload(file_fixture('icon_256x256.jpg'), 'image/jpeg') }
   let!(:variant) { create(:variant) }
   let!(:id) { create(:digital).id }
   let!(:records_list) { create_list(:digital, 2) }
