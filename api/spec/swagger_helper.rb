@@ -64,6 +64,7 @@ RSpec.configure do |config|
         { name: 'Shipments' },
         { name: 'Shipping Categories' },
         { name: 'Shipping Methods' },
+        { name: 'States' },
         { name: 'Stock Items' },
         { name: 'Stock Locations' },
         { name: 'Store Credit Categories' },
@@ -1502,7 +1503,7 @@ RSpec.configure do |config|
             'x-internal': true
           },
 
-          # Shopment
+          # Shipment
           create_shipment_params: {
             type: :object,
             properties: {
