@@ -45,7 +45,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'money', '~> 6.13'
   s.add_dependency 'monetize', '~> 1.9'
   s.add_dependency 'paranoia', '~> 2.4'
-  s.add_dependency 'ransack', '>= 2.3', '< 3.0'
+  s.add_dependency 'ransack', '>= 2.3', '< 4.0'
   s.add_dependency 'rexml'
   s.add_dependency 'state_machines-activerecord', '~> 0.6'
   s.add_dependency 'state_machines-activemodel', '~> 0.7'
