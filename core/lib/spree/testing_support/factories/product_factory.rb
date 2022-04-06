@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :base_product, class: Spree::Product do
-    sequence(:name)   { |n| "Product ##{n} - #{Kernel.rand(9999)}" }
+    sequence(:name)   { |n| "Product #{n}#{Kernel.rand(9999)}" }
     description       { generate(:random_description) }
     price             { 19.99 }
     cost_price        { 17.00 }
