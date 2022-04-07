@@ -25,7 +25,7 @@ module Spree
         :storefront_payment_create_service, :storefront_address_create_service, :storefront_address_update_service,
         :storefront_checkout_select_shipping_method_service,
 
-        :platform_admin_user_serializer, :platform_coupon_handler, :platform_order_update_service,
+        :platform_admin_user_serializer, :platform_coupon_handler, :platform_order_recalculate_service, :platform_order_update_service,
         :platform_order_use_store_credit_service, :platform_order_remove_store_credit_service,
         :platform_order_complete_service, :platform_order_empty_service, :platform_order_destroy_service,
         :platform_order_next_service, :platform_order_advance_service,
