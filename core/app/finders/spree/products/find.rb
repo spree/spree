@@ -181,7 +181,7 @@ module Spree
 
           values = product_properties_values
           values = values.split(',') unless values.kind_of?(Array)
-          values = values.reject(&:empty?).uniq.map(&:parameterize)
+          values = values.flatten.reject(&:empty?).uniq.map(&:parameterize)
 
           next if values.empty?
 
