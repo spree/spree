@@ -437,6 +437,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/CartIncludeParam'
         - $ref: '#/components/parameters/SparseFieldsCart'
+        - $ref: '#/components/parameters/CartCurrencyParam'
       summary: Retrieve a Cart
   /api/v2/storefront/cart/add_item:
     post:
@@ -3978,6 +3979,13 @@ components:
         type: string
       description: 'Specify the related resources you would like to receive in the response body. [More Information](https://jsonapi.org/format/#fetching-includes).'
       example: 'line_items,variants,variants.images,billing_address,shipping_address,user,payments,shipments,promotions'
+    CartCurrencyParam:
+      name: currency
+      in: query
+      schema:
+        type: string
+      description: 'Must be specified when is different than current store default currency.'
+      example: 'USD'
     ProductIncludeParam:
       name: include
       in: query

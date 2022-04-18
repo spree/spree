@@ -15,7 +15,7 @@ FactoryBot.define do
   end
 
   factory :refund_reason, class: Spree::RefundReason do
-    sequence(:name) { |n| "Refund for return ##{n}" }
+    sequence(:name) { |n| "Refund for return #{n}" }
     active  { true }
     mutable { false }
   end

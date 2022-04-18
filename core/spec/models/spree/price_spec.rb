@@ -115,8 +115,8 @@ describe Spree::Price, type: :model do
         allow(variant).to receive(:tax_category).and_return(tax_category)
         expect(price).to receive(:default_zone).at_least(:once).and_return(default_zone)
         allow(price).to receive(:apply_foreign_vat?).and_return(true)
-        allow(price).to receive(:included_tax_amount).with(tax_zone: default_zone, tax_category: tax_category).and_return(0.19)
-        allow(price).to receive(:included_tax_amount).with(tax_zone: zone, tax_category: tax_category).and_return(0.25)
+        allow(price).to receive(:included_tax_amount).with({ tax_zone: default_zone, tax_category: tax_category }).and_return(0.19)
+        allow(price).to receive(:included_tax_amount).with({ tax_zone: zone, tax_category: tax_category }).and_return(0.25)
       end
 
       it 'returns the correct price including another VAT to two digits' do
@@ -166,8 +166,8 @@ describe Spree::Price, type: :model do
         allow(variant).to receive(:tax_category).and_return(tax_category)
         expect(price).to receive(:default_zone).at_least(:once).and_return(default_zone)
         allow(price).to receive(:apply_foreign_vat?).and_return(true)
-        allow(price).to receive(:included_tax_amount).with(tax_zone: default_zone, tax_category: tax_category).and_return(0.19)
-        allow(price).to receive(:included_tax_amount).with(tax_zone: zone, tax_category: tax_category).and_return(0.25)
+        allow(price).to receive(:included_tax_amount).with({ tax_zone: default_zone, tax_category: tax_category }).and_return(0.19)
+        allow(price).to receive(:included_tax_amount).with({ tax_zone: zone, tax_category: tax_category }).and_return(0.25)
       end
 
       it 'returns the correct price including another VAT to two digits' do
