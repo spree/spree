@@ -4,7 +4,7 @@ Spree::Sample.load_sample('taxonomies')
 
 ADDITIONAL_TAXONS = ['Bestsellers', 'Trending', 'Streetstyle', 'Summer Sale'].freeze
 
-SPECIAL_TAXONS = { 'New Collection': 'Summer 2021', 'Special Offers': '30% Off' }.freeze
+SPECIAL_TAXONS = { 'New Collection': "Summer #{Date.today.year}", 'Special Offers': '30% Off' }.freeze
 
 CHILDREN_TAXON_NAMES = CSV.read(File.join(__dir__, 'variants.csv')).map do |(parent_name, taxon_name, _product_name, _color_name)|
   [parent_name, taxon_name]
