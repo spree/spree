@@ -216,14 +216,14 @@ module Spree
           products.order(available_on: :desc)
         when 'price-high-to-low'
           products.
-            select("#{Product.table_name}.*, #{Spree::Price.table_name}.amount").
-            reorder('').
-            send(:descend_by_master_price)
+            group(:id).
+            select("#{Product.table_name}.*, MIN(#{Spree::Price.table_name}.amount)").
+            reorder("MIN(#{Spree::Price.table_name}.amount) DESC")
         when 'price-low-to-high'
           products.
-            select("#{Product.table_name}.*, #{Spree::Price.table_name}.amount").
-            reorder('').
-            send(:ascend_by_master_price)
+            group(:id).
+            select("#{Product.table_name}.*, MIN(#{Spree::Price.table_name}.amount)").
+            reorder("MIN(#{Spree::Price.table_name}.amount)")
         end
       end
 
