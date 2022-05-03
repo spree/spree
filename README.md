@@ -57,6 +57,22 @@ Spree is an open source project and we love contributions in any form - pull req
 
 Please review the [Contributing Guide](https://dev-docs.spreecommerce.org/contributing/index)
 
+## Guidelines for issue labeling
+
+* admin panel -- has to do with the admin panel for spree customers
+* API - fixing the api endpoint
+* Bug - bug found in any area
+* Documentation - adding documentation to the project
+* Good first issue - something you think would be good for a beginner
+* Improvement - improvement to existing feature
+* International - affects international aspect of project
+* Multi-Store - affects multi store feature
+* New Feature - request for a new feature
+* Question - post a question to the developers
+* Security - issues with site security
+* StoreFront - issues with storefront
+* Verified - verified issue from Spree devs
+
 ## License
 
 Spree is released under the [New BSD License](https://github.com/spree/spree/blob/main/license.md).
