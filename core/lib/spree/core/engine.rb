@@ -11,9 +11,11 @@ module Spree
                                :adjusters,
                                :stock_splitters,
                                :promotions,
+                               :cms,
                                :line_item_comparison_hooks)
       SpreeCalculators = Struct.new(:shipping_methods, :tax_rates, :promotion_actions_create_adjustments, :promotion_actions_create_item_adjustments)
       PromoEnvironment = Struct.new(:rules, :actions)
+      CmsEnvironment   = Struct.new(:sections)
       isolate_namespace Spree
       engine_name 'spree'
 
@@ -120,6 +122,16 @@ module Spree
           Promotion::Actions::CreateItemAdjustments,
           Promotion::Actions::CreateLineItems,
           Promotion::Actions::FreeShipping
+        ]
+
+        Rails.application.config.spree.cms = CmsEnvironment.new
+        Rails.application.config.spree.cms.sections = [
+          Spree::Cms::Sections::HeroImage,
+          Spree::Cms::Sections::FeaturedArticle,
+          Spree::Cms::Sections::ProductCarousel,
+          Spree::Cms::Sections::ImageGallery,
+          Spree::Cms::Sections::SideBySideImages,
+          Spree::Cms::Sections::RichTextContent
         ]
       end
 
