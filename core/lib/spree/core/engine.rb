@@ -121,6 +121,15 @@ module Spree
           Promotion::Actions::CreateLineItems,
           Promotion::Actions::FreeShipping
         ]
+
+        Rails.application.config.spree.cms.section_types = [
+          Spree::Cms::Sections::HeroImage,
+          Spree::Cms::Sections::FeaturedArticle,
+          Spree::Cms::Sections::ProductCarousel,
+          Spree::Cms::Sections::ImageGallery,
+          Spree::Cms::Sections::SideBySideImages,
+          Spree::Cms::Sections::RichTextContent
+        ]
       end
 
       initializer 'spree.promo.register.promotions.actions' do |app|

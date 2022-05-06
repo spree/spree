@@ -12,7 +12,7 @@ module Spree
           def spree_permitted_attributes
             stored_attributes = []
 
-            Spree::CmsSection::TYPES.each do |type|
+            Rails.application.config.spree.cms.section_types.map(&:to_s).each do |type|
               type.constantize.stored_attributes.each do |_name, values|
                 values.each do |value|
                   stored_attributes << value
