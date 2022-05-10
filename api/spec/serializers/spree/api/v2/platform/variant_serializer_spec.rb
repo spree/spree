@@ -18,6 +18,7 @@ describe Spree::Api::V2::Platform::VariantSerializer do
           type: :variant,
           attributes: {
             sku: variant.sku,
+            barcode: variant.barcode,
             weight: variant.weight,
             height: variant.height,
             depth: variant.depth,

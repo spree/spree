@@ -26,10 +26,6 @@ end
 
 gem 'sprockets-rails', '>= 2.0.0'
 
-if ENV['RAILS_VERSION']&.match(/7\.0\.0/) || !ENV['RAILS_VERSION']
-  gem 'awesome_nested_set', github: 'damianlegawiec/awesome_nested_set', branch: 'master'
-end
-
 group :test do
   gem 'capybara', '~> 3.24'
   gem 'capybara-screenshot', '~> 1.0'

@@ -31,7 +31,10 @@ describe 'Storefront API v2 Account spec', type: :request do
   end
 
   describe 'account#show' do
-    before { get '/api/v2/storefront/account', headers: headers }
+    before do
+      user.reload
+      get '/api/v2/storefront/account', headers: headers
+    end
 
     it_behaves_like 'returns 200 HTTP status'
 
@@ -42,6 +45,8 @@ describe 'Storefront API v2 Account spec', type: :request do
 
       expect(json_response['data']).to have_attribute(:email).with_value(user.email)
       expect(json_response['data']).to have_attribute(:store_credits).with_value(user.total_available_store_credit)
+      expect(json_response['data']).to have_attribute(:first_name).with_value(user.first_name)
+      expect(json_response['data']).to have_attribute(:last_name).with_value(user.last_name)
       expect(json_response['data']).to have_attribute(:completed_orders).with_value(user.orders.complete.count)
       expect(json_response['data']).to have_attribute(:public_metadata).with_value(user.public_metadata)
     end
@@ -91,6 +96,8 @@ describe 'Storefront API v2 Account spec', type: :request do
         password_confirmation: 'newpassword123',
         bill_address_id: default_bill_address.id.to_s,
         ship_address_id: default_ship_address.id.to_s,
+        first_name: 'Peter',
+        last_name: 'Parker',
         public_metadata: { 'has_other_account' => 'true' },
         private_metadata: { 'shops_in_other_stores' => 'false' }
       }
@@ -106,6 +113,8 @@ describe 'Storefront API v2 Account spec', type: :request do
         created_user = Spree.user_class.last
         expect(json_response['data']['id']).to eq created_user.id.to_s
         expect(json_response['data']).to have_attribute(:email).with_value(new_attributes[:email])
+        expect(json_response['data']).to have_attribute(:first_name).with_value(new_attributes[:first_name])
+        expect(json_response['data']).to have_attribute(:last_name).with_value(new_attributes[:last_name])
         expect(json_response['data']).to have_attribute(:public_metadata).with_value(new_attributes[:public_metadata])
         expect(created_user.private_metadata).to eq(new_attributes[:private_metadata])
         expect(json_response.size).to eq(1)
@@ -156,6 +165,8 @@ describe 'Storefront API v2 Account spec', type: :request do
     let(:new_attributes) do
       {
         email: 'new@email.com',
+        first_name: 'Michael',
+        last_name: 'Scott',
         password: 'newpassword123',
         password_confirmation: 'newpassword123',
         bill_address_id: new_default_bill_address.id.to_s,
@@ -176,6 +187,8 @@ describe 'Storefront API v2 Account spec', type: :request do
         it 'updates and returns user' do
           expect(json_response['data']).to have_id(user.id.to_s)
           expect(json_response['data']).to have_attribute(:email).with_value(new_attributes[:email])
+          expect(json_response['data']).to have_attribute(:first_name).with_value(new_attributes[:first_name])
+          expect(json_response['data']).to have_attribute(:last_name).with_value(new_attributes[:last_name])
           expect(json_response['data']).to have_relationship(:default_billing_address)
                                              .with_data({ 'id' => new_default_bill_address.id.to_s, 'type' => 'address' })
           expect(json_response['data']).to have_relationship(:default_shipping_address)

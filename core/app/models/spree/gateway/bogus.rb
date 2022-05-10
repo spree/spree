@@ -58,7 +58,7 @@ module Spree
       ActiveMerchant::Billing::Response.new(true, 'Bogus Gateway: Forced success', {}, test: true, authorization: '12345')
     end
 
-    def cancel(_response_code)
+    def cancel(_response_code, _payment = nil)
       ActiveMerchant::Billing::Response.new(true, 'Bogus Gateway: Forced success', {}, test: true, authorization: '12345')
     end
 

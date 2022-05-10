@@ -294,7 +294,7 @@ module Spree
 
       context 'product is available' do
         it 'has available status' do
-          expect(status).to eq(Spree.t(:available))
+          expect(status).to eq(Spree.t(:active))
         end
       end
 
@@ -314,17 +314,28 @@ module Spree
         end
 
         it 'has discontinued status' do
-          expect(status).to eq(Spree.t(:discontinued))
+          expect(status).to eq(Spree.t(:archived))
         end
       end
 
       context 'product will be available soon' do
         before do
-          product.available_on = 1.month.from_now
+          product.status = 'draft'
+          product.make_active_at = 1.month.from_now
         end
 
         it 'has pending sale status' do
           expect(status).to eq(Spree.t(:pending_sale))
+        end
+      end
+
+      context 'draft product' do
+        before do
+          product.status = 'draft'
+        end
+
+        it 'has draft status' do
+          expect(status).to eq(Spree.t(:draft))
         end
       end
     end

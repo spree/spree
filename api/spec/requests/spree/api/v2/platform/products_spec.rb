@@ -18,7 +18,7 @@ describe 'API V2 Platform Products Spec' do
   let(:product)                    { create(:product, stores: [store]) }
   let!(:deleted_product)           { create(:product, deleted_at: Time.current - 1.day, stores: [store]) }
   let!(:discontinued_product)      { create(:product, discontinue_on: Time.current - 1.day, stores: [store]) }
-  let!(:not_available_product)     { create(:product, available_on: nil, stores: [store]) }
+  let!(:not_available_product)     { create(:product, status: 'draft', stores: [store]) }
   let!(:in_stock_product)          { create(:product_in_stock, stores: [store]) }
   let!(:not_backorderable_product) { create(:product_in_stock, :without_backorder, stores: [store]) }
   let!(:property)                  { create(:property) }
@@ -193,6 +193,32 @@ describe 'API V2 Platform Products Spec' do
           it 'returns products sorted by available_on with descending order' do
             expect(json_response['data'].count).to      eq store.products.count
             expect(json_response['data'].pluck(:id)).to eq store.products.order(available_on: :desc).map(&:id).map(&:to_s)
+          end
+        end
+      end
+
+      context 'sorting by make_active_at' do
+        before { store.products.each_with_index { |p, i| p.update(make_active_at: Time.current - i.days) } }
+
+        context 'ascending order' do
+          before { get '/api/v2/platform/products?sort=make_active_at', headers: bearer_token }
+
+          it_behaves_like 'returns 200 HTTP status'
+
+          it 'returns products sorted by make_active_at' do
+            expect(json_response['data'].count).to      eq store.products.count
+            expect(json_response['data'].pluck(:id)).to eq store.products.order(:make_active_at).map(&:id).map(&:to_s)
+          end
+        end
+
+        context 'descending order' do
+          before { get '/api/v2/platform/products?sort=-make_active_at', headers: bearer_token }
+
+          it_behaves_like 'returns 200 HTTP status'
+
+          it 'returns products sorted by make_active_at with descending order' do
+            expect(json_response['data'].count).to      eq store.products.count
+            expect(json_response['data'].pluck(:id)).to eq store.products.order(make_active_at: :desc).map(&:id).map(&:to_s)
           end
         end
       end

@@ -315,7 +315,8 @@ describe Spree::Variant, type: :model do
           multi_variant.set_option_value('media_type', 'CD')
 
           expect do
-            multi_variant.set_option_value('media_type', 'DVD')
+            multi_variant.set_option_value('media_type ', ' DVD ')
+            multi_variant.set_option_value('Media_Type  ', ' dvd ')
           end.not_to change(multi_variant.option_values, :count)
 
           expect do
@@ -734,6 +735,47 @@ describe Spree::Variant, type: :model do
         expect(variant.tax_category).to eq(tax_category)
       end
     end
+
+    context 'when tax category is deleted' do
+      let(:tax_category) { create(:tax_category) }
+      let(:variant) { build(:variant, tax_category: tax_category) }
+
+      before do
+        tax_category.destroy
+      end
+
+      it 'returns the parent products tax_category' do
+        expect(variant.tax_category).to eq(variant.product.tax_category)
+      end
+    end
+
+    context 'when tax category is deleted also in product' do
+      let(:tax_category) { create(:tax_category) }
+      let!(:default_tax_category) { create(:tax_category, is_default: true) }
+      let(:product) { create(:product, tax_category: tax_category) }
+      let(:variant) { build(:variant, product: product, tax_category: tax_category) }
+
+      before do
+        tax_category.destroy
+        product.reload
+      end
+
+      context 'with default tax category' do
+        it 'returns the default tax category' do
+          expect(variant.tax_category).to eq(default_tax_category)
+        end
+      end
+
+      context 'without default tax category' do
+        before do
+          default_tax_category.destroy
+        end
+
+        it 'returns nil' do
+          expect(variant.tax_category).to eq(nil)
+        end
+      end
+    end
   end
 
   describe 'touching' do
@@ -1036,12 +1078,32 @@ describe Spree::Variant, type: :model do
     end
   end
 
-  describe '#ensure_no_line_items' do
-    let!(:line_item) { create(:line_item, variant: variant) }
+  describe '#ensure_not_in_complete_orders' do
+    let!(:order) { create(:completed_order_with_totals) }
+    let!(:line_item) { create(:line_item, order: order, variant: variant) }
 
-    it 'adds error on product destroy' do
+    it 'adds error on variant destroy' do
       expect(variant.destroy).to eq false
       expect(variant.errors[:base]).to include I18n.t('activerecord.errors.models.spree/variant.attributes.base.cannot_destroy_if_attached_to_line_items')
+    end
+  end
+
+  describe '#remove_line_items_from_incomplete_orders' do
+    let!(:order) { create(:order) }
+    let!(:line_item) { create(:line_item, order: order, variant: variant, quantity: 2) }
+    let!(:line_item_2) { create(:line_item, order: order, variant: variant, quantity: 3) }
+
+    before { variant.update(track_inventory: false) }
+
+    it 'schedules RemoveFromIncompleteOrdersJob' do
+      expect(Spree::Variants::RemoveFromIncompleteOrdersJob).to receive(:perform_later).with(variant)
+      variant.destroy
+    end
+
+    it 'deletes the line items from the order' do
+      variant.destroy
+      expect(order.reload.line_items).to be_empty
+      expect(order.total).to eq(0)
     end
   end
 end

@@ -6,10 +6,10 @@ module Spree
 
         attributes :name, :content, :settings, :link, :fit, :type, :position
 
-        Spree::CmsSection::IMAGE_COUNT.each do |count|
-          Spree::CmsSection::IMAGE_SIZE.each do |size|
+        Spree::CmsSectionImage::IMAGE_COUNT.each do |count|
+          Spree::CmsSectionImage::IMAGE_SIZE.each do |size|
             attribute "img_#{count}_#{size}".to_sym do |section|
-              if section.send("image_#{count}").attached? && section.send("img_#{count}_#{size}").present?
+              if section.send("image_#{count}")&.attachment&.attached? && section.send("img_#{count}_#{size}").present?
                 url_helpers = Rails.application.routes.url_helpers
                 url_helpers.rails_representation_path(section.send("img_#{count}_#{size}"), only_path: true)
               end

@@ -9,6 +9,10 @@ FactoryBot.define do
     password              { 'secret' }
     password_confirmation { password }
     authentication_token  { generate(:user_authentication_token) } if Spree.user_class.attribute_method? :authentication_token
+
+    first_name { FFaker::Name.first_name }
+    last_name  { FFaker::Name.last_name }
+
     public_metadata { {} }
     private_metadata { {} }
 

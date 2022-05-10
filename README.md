@@ -1,32 +1,17 @@
-<a href="https://spreecommerce.org">
-   <img src="https://raw.githubusercontent.com/spree/spree-dev-docs/master/.gitbook/assets/linkedin_cover_profile-2x.png" alt="Spree Commerce - a headless open-source ecommerce platform for multi-store, marketplace, or B2B global brands" />
+<a href="https://getvendo.com?utm_source=spree_github">
+   <img src="https://raw.githubusercontent.com/spree/spree-dev-docs/54abf615c5280eda8f2308de96d6290f72c1fb1b/spree_vendo_user_doc.png" alt="Spree Commerce - a headless open-source ecommerce platform for multi-store, marketplace, or B2B global brands" />
 </a>
 
-# [Spree Commerce](https://spreecommerce.org) [![Gem Version](https://badge.fury.io/rb/spree.svg)](https://badge.fury.io/rb/spree) [![Circle CI](https://circleci.com/gh/spree/spree.svg?style=shield)](https://circleci.com/gh/spree/spree/tree/master) [![Test Coverage](https://api.codeclimate.com/v1/badges/8277fc2bb0b1f777084f/test_coverage)](https://codeclimate.com/github/spree/spree/test_coverage)
+# [Spree Commerce](https://spreecommerce.org) [![Gem Version](https://badge.fury.io/rb/spree.svg)](https://badge.fury.io/rb/spree) [![Test Coverage](https://api.codeclimate.com/v1/badges/8277fc2bb0b1f777084f/test_coverage)](https://codeclimate.com/github/spree/spree/test_coverage)
+
+**Spree** is a headless open source e-commerce platform for global brands.
 
 * [Success Stories](https://spreecommerce.org/stories/)
-* [Documentation](https://dev-docs.spreecommerce.org/)
-* [API Reference](https://api.spreecommerce.org)
 * [Integrations](https://spreecommerce.org/integrations/)
 * [Roadmap](https://github.com/spree/spree/milestones?direction=asc&sort=due_date&state=open)
 * [Join our Slack community](http://slack.spreecommerce.org/)
-* [Support](https://spreecommerce.org/contact/)
-
-**Spree** is a headless open source e-commerce platform for global brands. It was started by Sean Schofield and is now developed by [Spark Solutions][spark]. We're open to [contributions](https://dev-docs.spreecommerce.org/contributing).
-
-<a href="https://dev-docs.spreecommerce.org/getting-started/headless-commerce">
-   <img src="https://raw.githubusercontent.com/spree/spree-dev-docs/master/.gitbook/assets/spree_commerce_spree_api_3-2x.png" alt="Spree Commerce - a headless open-source ecommerce platform for multi-store, marketplace, or B2B global brands" />
-</a>
-
-## Maintained by
-
-[![Spark Solutions](http://sparksolutions.co/wp-content/uploads/2015/01/logo-ss-tr-221x100.png)][spark]
-
-[Spark Solutions][spark] is a full stack eCommerce agency. Our project teams consist of Designers, Software Engineers, Testers and Project Managers practicing agile project delivery. We’ll integrate our team with yours to jointly architect, deliver, maintain and scale the software products you need. You drive the project with requirements and acceptance testing and we help you deliver faster using industry-standard project management and comms best practices. [Contact us to launch your new eCommerce project](https://sparksolutions.co/contact/).
 
 ## Key Features
-
-![admin panel](https://raw.githubusercontent.com/spree/spree-dev-docs/master/.gitbook/assets/spree_commerce_home_header_2-2x-1-.png)
 
 * **[Headless Commerce](https://spreecommerce.org/use-cases/headless-ecommerce-api/)** - build mobile apps or custom storefronts in any technology, [JS/TS SDK available](https://github.com/spree/spree-storefront-api-v2-js-sdk)
 * **[PWA](https://spreecommerce.org/use-cases/spree-pwa-progressive-web-application/)** - offline shopping experiences like native mobile apps
@@ -42,49 +27,29 @@
 * **Fully customizable** - pick and choose parts you want to use and customize everything else (storefront, order processing, API, etc) to create unique solutions that your business requires
 * **More features available via extensions** - dozens of extensions built by community, ready for use for free!
 
-![multi store](https://raw.githubusercontent.com/spree/spree-dev-docs/master/.gitbook/assets/mulit_store_978x2.png)
+## Sponsored by
 
-## Storefronts
-
-We have 2 pre-built storefront starters you can download and start using right away!
-
-* [Vue Storefront 2 online demo](https://vuestorefront-spree.upsidelab.io/) - [Setup instructions](https://github.com/vuestorefront/spree)
-* [Next.js Commerce online demo](https://spree.vercel.store/) - [Setup instructions](https://github.com/vercel/commerce/tree/main/framework/spree)
-
-## Getting Started
-
-* [Please follow **Getting Started** guide](https://dev-docs.spreecommerce.org/getting-started/installation)
-
-## Admin Dashboard demo
-
-Fire up your own instance in the cloud:
-
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/spree/spree_starter) <a href="https://render.com/deploy?repo=https://github.com/spree/spree_starter/tree/main">
-  <img src="https://render.com/images/deploy-to-render-button.svg" alt="Deploy to Render" height=32>
+<a href="https://getvendo.com?utm_source=spree_github">
+  <img src="https://raw.githubusercontent.com/spree/spree-dev-docs/master/.gitbook/assets/spree_vendo_user_doc_2.png"a />
 </a>
 
-Admin panel credentials for your own Heroku/Render demo:
+> [Vendo][vendo] is a great fit for marketplaces of all sizes - either with own fulfillment and multiple warehouses or in a dropshipping model. Vendo **automates everything** from **vendor onboarding**, accepting buyer **payments in over 135 currencies**, to supplier **payouts in 50 countries**. 
 
-* login: `spree@example.com`
-* password: `spree123`
+> Vendo ensures excellent buyer experience with smooth product discovery and search, a multitude of payment methods and optimal shipping cost calculation. Vendo keeps suppliers happy with easy onboarding, automated products sync using their preferred method and easy payouts.
+
+> [Start your 30-day free trial](https://e98esoirr8c.typeform.com/contactvendo?typeform-source=spree_github)
+
+---
 
 ## Documentation
 
+* [Getting Started](https://dev-docs.spreecommerce.org/getting-started/installation)
 * [Developer Documentation](https://dev-docs.spreecommerce.org/)
-
-## SDK
-
-If you want to build your own storefront you can use our official [JavaScript / TypeScript SDK](https://github.com/spree/spree-storefront-api-v2-js-sdk). Both Next.js and Vue Storefront use our SDK behind the scenes.
 
 ## API
 
 * [API Reference](https://api.spreecommerce.org/)
-
-## Extensions
-
-Extensions provide additional features and integrations for your Spree application
-
-[Go to Extensions Directory](https://dev-docs.spreecommerce.org/extensions/extensions)
+* [JavaScript / TypeScript SDK](https://github.com/spree/spree-storefront-api-v2-js-sdk)
 
 ## Contributing
 
@@ -94,6 +59,6 @@ Please review the [Contributing Guide](https://dev-docs.spreecommerce.org/contri
 
 ## License
 
-Spree is released under the [New BSD License](https://github.com/spree/spree/blob/master/license.md).
+Spree is released under the [New BSD License](https://github.com/spree/spree/blob/main/license.md).
 
-[spark]:https://sparksolutions.co?utm_source=github
+[vendo]:https://getvendo.com?utm_source=spree_github

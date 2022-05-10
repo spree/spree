@@ -5,6 +5,13 @@ describe Spree::Api::V2::Platform::StoreSerializer do
 
   let!(:store) { Spree::Store.default }
   let!(:menus) { [create(:menu, store: store), create(:menu, location: 'Footer', store: store)] }
+  let!(:logo) do
+    store.build_logo
+    store.logo.attachment.attach(io: File.new(Spree::Core::Engine.root + 'spec/fixtures' + 'thinking-cat.jpg'), filename: 'thinking-cat.jpg')
+    store.save
+    store.logo
+  end
+  let(:url_helpers) { Rails.application.routes.url_helpers }
 
   it { expect(subject).to be_kind_of(Hash) }
 
@@ -39,7 +46,10 @@ describe Spree::Api::V2::Platform::StoreSerializer do
             seo_robots: store.seo_robots,
             supported_locales: store.supported_locales,
             deleted_at: store.deleted_at,
-            settings: store.settings
+            settings: store.settings,
+            logo: url_helpers.rails_blob_path(logo.attachment),
+            mailer_logo: nil,
+            favicon_path: nil
           },
           relationships: {
             default_country: {

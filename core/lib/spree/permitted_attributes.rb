@@ -89,7 +89,7 @@ module Spree
     @@product_properties_attributes = [:property_name, :value, :position]
 
     @@product_attributes = [
-      :name, :description, :available_on, :discontinue_on, :permalink, :meta_description,
+      :name, :description, :available_on, :make_active_at, :discontinue_on, :permalink, :meta_description,
       :meta_keywords, :price, :sku, :deleted_at, :prototype_id,
       :option_values_hash, :weight, :height, :width, :depth,
       :shipping_category_id, :tax_category_id,
@@ -126,14 +126,15 @@ module Spree
       :quantity, :stock_item, :stock_item_id, :originator, :action
     ]
 
-    @@store_attributes = [:name, :url, :seo_title, :code, :meta_keywords, :logo,
+    @@store_attributes = [:name, :url, :seo_title, :code, :meta_keywords,
                           :meta_description, :default_currency, :mail_from_address,
                           :customer_support_email, :facebook, :twitter, :instagram,
                           :description, :address, :contact_phone, :supported_locales,
                           :default_locale, :default_country_id, :supported_currencies,
-                          :new_order_notifications_email, :mailer_logo, :favicon_image,
-                          :checkout_zone_id, :seo_robots, :digital_asset_authorized_clicks,
-                          :digital_asset_authorized_days, :limit_digital_download_count, :limit_digital_download_days]
+                          :new_order_notifications_email, :checkout_zone_id, :seo_robots,
+                          :digital_asset_authorized_clicks, :digital_asset_authorized_days,
+                          :limit_digital_download_count, :limit_digital_download_days, :digital_asset_link_expire_time,
+                          { mailer_logo_attributes: {}, favicon_image_attributes: {}, logo_attributes: {} }]
 
     @@store_credit_attributes = %i[amount currency category_id memo]
 
@@ -145,13 +146,14 @@ module Spree
     ]
 
     # TODO: Should probably use something like Spree.user_class.attributes
-    @@user_attributes = [:email, :bill_address_id, :ship_address_id, :password, :password_confirmation, { public_metadata: {}, private_metadata: {} }]
+    @@user_attributes = [:email, :bill_address_id, :ship_address_id, :password, :first_name, :last_name,
+                         :password_confirmation, { public_metadata: {}, private_metadata: {} }]
 
     @@variant_attributes = [
       :name, :presentation, :cost_price, :discontinue_on, :lock_version,
       :position, :track_inventory,
       :product_id, :product, :option_values_attributes, :price, :compare_at_price,
-      :weight, :height, :width, :depth, :sku, :cost_currency,
+      :weight, :height, :width, :depth, :sku, :barcode, :cost_currency,
       { options: [:name, :value], option_value_ids: [] }
     ]
 

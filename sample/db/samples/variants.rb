@@ -6,7 +6,7 @@ Spree::Sample.load_sample('tax_categories')
 
 VARIANTS = CSV.read(File.join(__dir__, 'variants.csv'))
 
-clothing_tax_category = Spree::TaxCategory.find_by!(name: 'Clothing')
+clothing_tax_category = Spree::TaxCategory.find_or_create_by!(name: 'Clothing')
 color_option_values = Spree::OptionType.find_by!(name: 'color').option_values
 length_option_values = Spree::OptionType.find_by!(name: 'length').option_values
 size_option_values = Spree::OptionType.find_by!(name: 'size').option_values

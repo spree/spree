@@ -19,7 +19,7 @@ module Spree
         taxons = by_roots(taxons)
         taxons = by_name(taxons)
 
-        taxons
+        taxons.distinct
       end
 
       private

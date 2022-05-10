@@ -4,6 +4,7 @@ module Spree
 
     include Spree::CalculatedAdjustments
     include Spree::AdjustmentSource
+    include Spree::Metadata
     if defined?(Spree::Webhooks)
       include Spree::Webhooks::HasWebhooks
     end
@@ -117,7 +118,8 @@ module Spree
 
       ' ' + ActiveSupport::NumberHelper::NumberToPercentageConverter.convert(
         amount * 100,
-        locale: I18n.locale
+        locale: I18n.locale,
+        strip_insignificant_zeros: true
       )
     end
   end

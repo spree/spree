@@ -8,7 +8,6 @@ module Spree
 
     self.table_name = 'spree_users'
 
-    attr_accessor :password
-    attr_accessor :password_confirmation
+    attr_accessor :password, :password_confirmation
   end
 end

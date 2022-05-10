@@ -4,9 +4,9 @@ module Spree
       module OptionValueWithNumerificationSupport
         def preferred_eligible_values
           values = super || {}
-          Hash[values.keys.map(&:to_i).zip(
+          Hash[values.keys.zip(
             values.values.map do |v|
-              (v.is_a?(Array) ? v : v.split(',')).map(&:to_i)
+              (v.is_a?(Array) ? v : v.split(','))
             end
           )]
         end

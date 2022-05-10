@@ -509,7 +509,7 @@ describe Spree::TaxRate, type: :model do
             it 'applies adjustments when a tax zone is present' do
               expect(line_item.adjustments.count).to eq(2)
               line_item.adjustments.each do |adjustment|
-                expect(adjustment.label).to eq("#{adjustment.source.name} #{adjustment.source.amount * 100}%")
+                expect(adjustment.label).to eq("#{adjustment.source.name} #{(adjustment.source.amount * 100).to_i}%")
               end
             end
 
