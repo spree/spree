@@ -37,7 +37,7 @@
 
 > Vendo ensures excellent buyer experience with smooth product discovery and search, a multitude of payment methods and optimal shipping cost calculation. Vendo keeps suppliers happy with easy onboarding, automated products sync using their preferred method and easy payouts.
 
-> [Start your 30-day free trial](https://e98esoirr8c.typeform.com/contactvendo?typeform-source=spree_github)
+> [Start your 14-day free trial](https://app.getvendo.com/users/new?typeform-source=spree_github)
 
 ---
 
