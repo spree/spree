@@ -167,7 +167,7 @@ module Spree
     end
 
     def countries_available_for_checkout
-      @countries_available_for_checkout ||= checkout_zone.try(:country_list) || Spree::Country.all
+      @countries_available_for_checkout ||= checkout_zone.try(:country_list) || all_available_countries
     end
 
     def states_available_for_checkout(country)
@@ -191,6 +191,17 @@ module Spree
     end
 
     private
+
+    def all_available_countries
+      zones = Spree::Zone.all.to_a
+      if zones.empty?
+        Spree::Country.all
+      else
+        zones.each_with_object([]) do |zone, a|
+          a.concat(zone.country_list)
+        end
+      end
+    end
 
     def ensure_default_exists_and_is_unique
       if default
