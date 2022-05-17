@@ -44,8 +44,13 @@ module Spree
       end
 
       def ship_address_attributes=(attributes)
-        self.ship_address = update_or_create_address(attributes)
-        user.class.unscoped.where(id: user).update_all(ship_address_id: ship_address.id) if user && user.ship_address.nil?
+        self.ship_address =
+          if use_billing_form_choice
+            nil
+          else
+            update_or_create_address(attributes)
+          end
+        user.class.unscoped.where(id: user).update_all(ship_address_id: ship_address&.id) if user && user.ship_address.nil?
       end
 
       private

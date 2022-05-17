@@ -689,12 +689,16 @@ module Spree
     end
 
     def use_billing
-      @use_billing.in?([true, 'true', '1']) ||
+      use_billing_form_choice ||
         ship_address.nil? || ship_address.empty? ||
         ship_address == bill_address
     end
 
     private
+
+    def use_billing_form_choice
+      @use_billing.in?([true, 'true', '1'])
+    end
 
     def link_by_email
       self.email = user.email if user
