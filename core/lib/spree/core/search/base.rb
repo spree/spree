@@ -30,7 +30,13 @@ module Spree
         def extended_base_scope
           base_scope = current_store.products.spree_base_scopes
           base_scope = get_products_conditions_for(base_scope, keywords)
-          base_scope = Spree::Dependencies.products_finder.constantize.new(
+          base_scope = Spree::Dependencies.products_finder.constantize.new(**product_finder_params(base_scope)).execute
+          base_scope = add_search_scopes(base_scope)
+          add_eagerload_scopes(base_scope)
+        end
+
+        def product_finder_params(base_scope)
+          {
             scope: base_scope,
             params: {
               store: current_store,
@@ -43,9 +49,7 @@ module Spree
               },
               sort_by: sort_by
             }
-          ).execute
-          base_scope = add_search_scopes(base_scope)
-          add_eagerload_scopes(base_scope)
+          }
         end
 
         def add_eagerload_scopes(scope)
