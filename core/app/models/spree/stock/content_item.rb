@@ -12,7 +12,7 @@ module Spree
         delegate :line_item,
                  :quantity,
                  :variant, to: :inventory_unit
-        delegate :price, to: :variant
+        delegate :price, to: :line_item
         delegate :dimension,
                  :volume,
                  :weight, to: :variant, prefix: true

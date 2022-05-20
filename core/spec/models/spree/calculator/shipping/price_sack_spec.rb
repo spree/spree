@@ -11,14 +11,19 @@ module Spree
         calculator
       end
 
+      let(:line_item) { build(:line_item, variant: variant, price: variant.price) }
       let(:variant) { build(:variant, price: 2) }
 
+      let(:inventory_unit1) {  }
+
       let(:normal_package) do
-        build(:stock_package, variants_contents: { variant => 2 })
+        iu = build(:inventory_unit, quantity: 2, variant: variant, line_item: line_item)
+        build(:stock_package, contents: [::Spree::Stock::ContentItem.new(iu)])
       end
 
       let(:discount_package) do
-        build(:stock_package, variants_contents: { variant => 4 })
+        iu = build(:inventory_unit, quantity: 4, variant: variant, line_item: line_item)
+        build(:stock_package, contents: [::Spree::Stock::ContentItem.new(iu)])
       end
 
       it 'computes the correct amount' do

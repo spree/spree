@@ -7,8 +7,16 @@ module Spree
     let(:variant1) { build(:variant, price: 10) }
     let(:variant2) { build(:variant, price: 20) }
     let(:shipment) { build(:shipment) }
+
+    let(:inventory_unit1) { build(:inventory_unit, quantity: 2, variant: variant1, line_item: line_item1) }
+    let(:inventory_unit2) { build(:inventory_unit, quantity: 1, variant: variant2, line_item: line_item2) }
+    let(:inventory_units) { [inventory_unit1, inventory_unit2] }
+
+    let(:line_item1) { build(:line_item, variant: variant1, price: variant1.price) }
+    let(:line_item2) { build(:line_item, variant: variant2, price: variant2.price) }
+
     let(:package) do
-      build(:stock_package, variants_contents: { variant1 => 2, variant2 => 1 })
+      build(:stock_package, contents: inventory_units.map { |iu| ::Spree::Stock::ContentItem.new(iu) })
     end
 
     it 'computes with a shipment' do
