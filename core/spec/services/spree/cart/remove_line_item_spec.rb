@@ -11,13 +11,28 @@ module Spree
     let(:value) { execute.value }
 
     context 'remove line item' do
-      it 'with any quantity' do
-        expect(order.amount).to eq 200
-        expect { execute }.to change { order.line_items.count }.by(-1)
-        expect(execute).to be_success
-        expect(value).to eq line_item
-        order.reload
-        expect(order.amount).to eq 0
+      context 'with any quantity' do
+        it 'with any quantity' do
+          expect(order.amount).to eq 200
+          expect { execute }.to change { order.line_items.count }.by(-1)
+          expect(execute).to be_success
+          expect(value).to eq line_item
+          expect(order.amount).to eq 0
+        end
+      end
+
+      context 'with many unique items' do
+        let(:order) { create(:order_with_line_items, line_items_count: 2) }
+        let(:line_item) {order.line_items.first}
+
+        it 'from order with many unique items' do
+          expect(order.amount).to eq 20
+          expect(order.line_items.count).to eq 2
+          expect { execute }.to change { order.line_items.count }.by(-1)
+          expect(execute).to be_success
+          expect(value).to eq line_item
+          expect(order.amount).to eq 10
+        end
       end
     end
 

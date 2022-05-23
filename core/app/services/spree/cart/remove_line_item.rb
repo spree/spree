@@ -11,6 +11,7 @@ module Spree
                                                                             line_item: line_item,
                                                                             options: options)
         end
+        order.reload
         success(line_item)
       end
     end
