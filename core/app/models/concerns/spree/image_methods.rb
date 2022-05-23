@@ -2,7 +2,7 @@ module Spree
   module ImageMethods
     extend ActiveSupport::Concern
 
-    def generate_url(size:, gravity: 'centre', quality: 80, background: [0, 0, 0])
+    def generate_url(size:, gravity: 'center', quality: 80, background: [0, 0, 0])
       return if size.blank?
 
       size = size.gsub(/\s+/, '')
