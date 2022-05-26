@@ -250,6 +250,7 @@ module Spree
 
     def selected_shipping_rate_id=(id)
       shipping_rates.update_all(selected: false)
+      shipping_rates.touch_all # Bust cache dependent on "updated_at" timestamp
       shipping_rates.update(id, selected: true)
       save!
     end
