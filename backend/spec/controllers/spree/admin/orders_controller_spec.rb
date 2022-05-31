@@ -293,11 +293,11 @@ describe Spree::Admin::OrdersController, type: :controller do
       it 'changes all the closed adjustments to open' do
         expect(adjustments).to receive(:finalized).and_return(closed)
         expect(closed).to receive(:update_all).with(state: 'open')
-        post :open_adjustments, params: { id: order.number }
+        put :open_adjustments, params: { id: order.number }
       end
 
       it 'sets the flash success message' do
-        post :open_adjustments, params: { id: order.number }
+        put :open_adjustments, params: { id: order.number }
         expect(flash[:success]).to eql('All adjustments successfully opened!')
       end
 
@@ -307,7 +307,7 @@ describe Spree::Admin::OrdersController, type: :controller do
         end
 
         it 'redirects back' do
-          post :open_adjustments, params: { id: order.number }
+          put :open_adjustments, params: { id: order.number }
           expect(response).to redirect_to('/')
         end
       end
@@ -318,7 +318,7 @@ describe Spree::Admin::OrdersController, type: :controller do
         end
 
         it 'refirects to fallback location' do
-          post :open_adjustments, params: { id: order.number }
+          put :open_adjustments, params: { id: order.number }
           expect(response).to redirect_to(admin_order_adjustments_url(order))
         end
       end
@@ -335,11 +335,11 @@ describe Spree::Admin::OrdersController, type: :controller do
       it 'changes all the open adjustments to closed' do
         expect(adjustments).to receive(:not_finalized).and_return(open)
         expect(open).to receive(:update_all).with(state: 'closed')
-        post :close_adjustments, params: { id: order.number }
+        put :close_adjustments, params: { id: order.number }
       end
 
       it 'sets the flash success message' do
-        post :close_adjustments, params: { id: order.number }
+        put :close_adjustments, params: { id: order.number }
         expect(flash[:success]).to eql('All adjustments successfully closed!')
       end
 
@@ -349,7 +349,7 @@ describe Spree::Admin::OrdersController, type: :controller do
         end
 
         it 'redirects back' do
-          post :close_adjustments, params: { id: order.number }
+          put :close_adjustments, params: { id: order.number }
           expect(response).to redirect_to('/')
         end
       end
@@ -360,7 +360,7 @@ describe Spree::Admin::OrdersController, type: :controller do
         end
 
         it 'refirects to fallback location' do
-          post :close_adjustments, params: { id: order.number }
+          put :close_adjustments, params: { id: order.number }
           expect(response).to redirect_to(admin_order_adjustments_url(order))
         end
       end
