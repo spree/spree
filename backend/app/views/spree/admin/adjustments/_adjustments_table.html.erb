@@ -21,10 +21,10 @@
   <div class="card-footer">
     <div class="row text-center pb-0">
       <div class="col-12 col-lg-6">
-        <%= button_to Spree.t(:open_all_adjustments), open_adjustments_admin_order_path(@order), method: :get, class: "btn btn-success" %>
+        <%= button_to Spree.t(:open_all_adjustments), open_adjustments_admin_order_path(@order), method: :put, class: "btn btn-success" %>
       </div>
       <div class="col-12 col-lg-6">
-        <%= button_to Spree.t(:close_all_adjustments), close_adjustments_admin_order_path(@order), method: :get, class: "btn btn-danger" %>
+        <%= button_to Spree.t(:close_all_adjustments), close_adjustments_admin_order_path(@order), method: :put, class: "btn btn-danger" %>
       </div>
     </div>
   </div>
