@@ -3,7 +3,7 @@ module Spree
     include Discard::Model
     self.discard_column = :deleted_at
     default_scope -> { kept }
-    
+
     include Spree::CalculatedAdjustments
     include Metadata
     if defined?(Spree::Webhooks)

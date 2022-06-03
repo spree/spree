@@ -3,7 +3,7 @@ module Spree
     include Discard::Model
     self.discard_column = :deleted_at
     default_scope -> { kept }
-    
+
     if defined?(Spree::Webhooks)
       include Spree::Webhooks::HasWebhooks
     end
