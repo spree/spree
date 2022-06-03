@@ -1,7 +1,7 @@
 module FriendlyId
   module SlugDecorator
     def self.prepended(base)
-      base.discard_column = :deleted_at
+      base
     end
   end
 end
