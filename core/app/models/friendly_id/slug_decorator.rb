@@ -1,7 +1,9 @@
 module FriendlyId
   module SlugDecorator
     def self.prepended(base)
-      base.acts_as_paranoid
+      include Discard::Model
+      base.discard_column = :deleted_at
+      default_scope -> { kept }
     end
   end
 end
