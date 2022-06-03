@@ -1,5 +1,9 @@
 module Spree
   class Store < Spree::Base
+    include Discard::Model
+    self.discard_column = :deleted_at
+    default_scope -> { kept }
+    
     if defined?(Spree::Webhooks)
       include Spree::Webhooks::HasWebhooks
     end
@@ -17,8 +21,6 @@ module Spree
     end
 
     attr_accessor :skip_validate_not_last
-
-    acts_as_paranoid
 
     has_many :orders, class_name: 'Spree::Order'
     has_many :line_items, through: :orders, class_name: 'Spree::LineItem'

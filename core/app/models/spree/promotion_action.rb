@@ -2,7 +2,9 @@
 # PromotionActions perform the necessary tasks when a promotion is activated by an event and determined to be eligible.
 module Spree
   class PromotionAction < Spree::Base
-    acts_as_paranoid
+    include Discard::Model
+    self.discard_column = :deleted_at
+    default_scope -> { kept }
 
     belongs_to :promotion, class_name: 'Spree::Promotion'
 

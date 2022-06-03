@@ -2,12 +2,13 @@ module Spree
   class CmsPage < Base
     include SingleStoreResource
     include DisplayLink
+    include Discard::Model
+    self.discard_column = :deleted_at
+    default_scope -> { kept }
 
     if defined?(Spree::Webhooks)
       include Spree::Webhooks::HasWebhooks
     end
-
-    acts_as_paranoid
 
     TYPES = ['Spree::Cms::Pages::StandardPage',
              'Spree::Cms::Pages::FeaturePage',

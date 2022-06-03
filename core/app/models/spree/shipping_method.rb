@@ -1,6 +1,9 @@
 module Spree
   class ShippingMethod < Spree::Base
-    acts_as_paranoid
+    include Discard::Model
+    self.discard_column = :deleted_at
+    default_scope -> { kept }
+    
     include Spree::CalculatedAdjustments
     include Metadata
     if defined?(Spree::Webhooks)

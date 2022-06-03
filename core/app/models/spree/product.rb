@@ -25,6 +25,10 @@ module Spree
     include MultiStoreResource
     include MemoizedData
     include Metadata
+    include Discard::Model
+    self.discard_column = :deleted_at
+    default_scope -> { kept }
+
     if defined?(Spree::Webhooks)
       include Spree::Webhooks::HasWebhooks
     end
@@ -38,7 +42,6 @@ module Spree
 
     friendly_id :slug_candidates, use: :history
 
-    acts_as_paranoid
     auto_strip_attributes :name
 
     # we need to have this callback before any dependent: :destroy associations

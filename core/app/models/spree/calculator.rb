@@ -1,6 +1,8 @@
 module Spree
   class Calculator < Spree::Base
-    acts_as_paranoid
+    include Discard::Model
+    self.discard_column = :deleted_at
+    default_scope -> { kept }
 
     belongs_to :calculable, polymorphic: true, optional: true, inverse_of: :calculator
 

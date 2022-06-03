@@ -1,6 +1,9 @@
 module Spree
   class Variant < Spree::Base
-    acts_as_paranoid
+    include Discard::Model
+    self.discard_column = :deleted_at
+    default_scope -> { kept }
+    
     acts_as_list scope: :product
 
     include MemoizedData

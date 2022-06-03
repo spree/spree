@@ -2,14 +2,16 @@ module Spree
   class CreditCard < Spree::Base
     include ActiveMerchant::Billing::CreditCardMethods
     include Metadata
+    include Discard::Model
+    self.discard_column = :deleted_at
+    default_scope -> { kept }
+
     if defined?(Spree::Webhooks)
       include Spree::Webhooks::HasWebhooks
     end
     if defined?(Spree::Security::CreditCards)
       include Spree::Security::CreditCards
     end
-
-    acts_as_paranoid
 
     belongs_to :payment_method
     belongs_to :user, class_name: Spree.user_class.to_s, foreign_key: 'user_id',

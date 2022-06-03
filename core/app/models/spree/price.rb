@@ -5,7 +5,9 @@ module Spree
       include Spree::Webhooks::HasWebhooks
     end
 
-    acts_as_paranoid
+    include Discard::Model
+    self.discard_column = :deleted_at
+    default_scope -> { kept }
 
     MAXIMUM_AMOUNT = BigDecimal('99_999_999.99')
 

@@ -1,6 +1,8 @@
 module Spree
   class StockItem < Spree::Base
-    acts_as_paranoid
+    include Discard::Model
+    self.discard_column = :deleted_at
+    default_scope -> { kept }
 
     if defined?(Spree::Webhooks)
       include Spree::Webhooks::HasWebhooks

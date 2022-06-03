@@ -1,6 +1,8 @@
 module Spree
   class StoreCreditEvent < Spree::Base
-    acts_as_paranoid
+    include Discard::Model
+    self.discard_column = :deleted_at
+    default_scope -> { kept }
 
     belongs_to :store_credit
     belongs_to :originator, polymorphic: true

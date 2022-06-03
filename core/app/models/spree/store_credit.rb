@@ -6,7 +6,9 @@ module Spree
       include Spree::Webhooks::HasWebhooks
     end
 
-    acts_as_paranoid
+    include Discard::Model
+    self.discard_column = :deleted_at
+    default_scope -> { kept }
 
     VOID_ACTION       = 'void'.freeze
     CANCEL_ACTION     = 'cancel'.freeze

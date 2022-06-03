@@ -4,7 +4,10 @@ module Spree
       include Spree::Webhooks::HasWebhooks
     end
 
-    acts_as_paranoid
+    include Discard::Model
+    self.discard_column = :deleted_at
+    default_scope -> { kept }
+    
     validates :name, presence: true, uniqueness: { case_sensitive: false, scope: spree_base_uniqueness_scope.push(:deleted_at) }
 
     has_many :tax_rates, dependent: :destroy, inverse_of: :tax_category
