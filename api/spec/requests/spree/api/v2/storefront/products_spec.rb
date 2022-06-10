@@ -231,6 +231,8 @@ describe 'API V2 Storefront Products Spec', type: :request do
           expect(json_response['included']).to include(have_type('product_property').and(have_attribute(:name).with_value(property.name)))
           expect(json_response['included']).to include(have_type('product_property').and(have_attribute(:value).with_value(product_property.value)))
           expect(json_response['included']).to include(have_type('product_property').and(have_attribute(:filter_param).with_value(product_property.filter_param)))
+          expect(json_response['included']).to include(have_type('product_property').and(have_attribute(:show_property).with_value(product_property.show_property)))
+          expect(json_response['included']).to include(have_type('product_property').and(have_attribute(:position).with_value(product_property.position)))
         end
       end
 
