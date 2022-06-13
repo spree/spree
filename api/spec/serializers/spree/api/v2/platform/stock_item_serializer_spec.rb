@@ -19,7 +19,9 @@ describe Spree::Api::V2::Platform::StockItemSerializer do
           created_at: resource.created_at,
           deleted_at: resource.deleted_at,
           is_available: resource.available?,
-          updated_at: resource.updated_at
+          updated_at: resource.updated_at,
+          public_metadata: {},
+          private_metadata: {}
         },
         relationships: {
           stock_location: {
