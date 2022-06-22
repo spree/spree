@@ -38,8 +38,8 @@
 <% content_for :head do %>
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      updateAddressState('<%= s_or_b %>');
-      $('#<%= s_or_b %>country select').on('change', function() { updateAddressState('<%= s_or_b %>'); });
+      updateAddressState('<%= s_or_b %>', '<%= f.object.state_id %>');
+      $('#<%= s_or_b %>country select').on('change', function() { updateAddressState('<%= s_or_b %>', '<%= f.object.state_id %>'); });
     })
   </script>
 <% end %>

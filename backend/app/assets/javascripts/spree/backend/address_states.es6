@@ -1,4 +1,4 @@
-function updateAddressState(region, successCallback) {
+function updateAddressState(region, currentSelection, successCallback) {
   const countryId = $('#' + region + 'country select').val()
   const stateContainer = $('#' + region + 'state').parent()
   const stateSelect = $('#' + region + 'state select')
@@ -20,6 +20,7 @@ function updateAddressState(region, successCallback) {
                 .html(state.attributes.name)
               stateSelect.append(opt).trigger('change')
             })
+            stateSelect.val(currentSelection).trigger('change')
             stateSelect.prop('disabled', false).show()
             stateSelect.select2()
             stateInput.hide().prop('disabled', true)
