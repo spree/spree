@@ -59,6 +59,7 @@ Spree.ready(function($) {
 
       Spree.fillStates = function(data, region) {
         var selected
+        var emptyOpt
         var statesRequired = data.states_required
         var states = data.states
         var statePara = $('#' + region + 'state')
@@ -70,7 +71,10 @@ Spree.ready(function($) {
 
         if (states.length > 0) {
           selected = parseInt(stateSelect.val())
+          emptyOpt = stateSelect.find('option')[0]
+
           stateSelect.html('')
+          stateSelect.append(emptyOpt)
           $.each(states, function(idx, state) {
             var opt = $(document.createElement('option')).attr('value', state.id).html(state.name)
             if (selected.toString(10) === state.id.toString(10)) {
