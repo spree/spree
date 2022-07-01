@@ -6,6 +6,7 @@ module Spree
     if defined?(Spree::Webhooks)
       include Spree::Webhooks::HasWebhooks
     end
+    include Spree::Metadata
 
     with_options inverse_of: :stock_items do
       belongs_to :stock_location, class_name: 'Spree::StockLocation'
