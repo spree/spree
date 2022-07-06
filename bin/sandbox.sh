@@ -57,9 +57,9 @@ cat <<RUBY >> Gemfile
 gem 'spree', path: '..'
 gem 'spree_emails', path: '../emails'
 gem 'spree_sample', path: '../sample'
+$SPREE_GATEWAY_GEM
 $SPREE_BACKEND_GEM
 $SPREE_AUTH_DEVISE_GEM
-$SPREE_GATEWAY_GEM
 gem 'spree_i18n', github: 'spree-contrib/spree_i18n', branch: 'main'
 
 group :test, :development do
@@ -104,11 +104,27 @@ if Rails.env.development? && defined?(Bullet)
 end
 RUBY
 
+bundle update
 bundle install --gemfile Gemfile
 
 bin/rails javascript:install:esbuild
 bin/rails turbo:install
 yarn install
+
+cat <<RUBY > package.json
+{
+  "name": "app",
+  "private": "true",
+  "dependencies": {
+    "@hotwired/turbo-rails": "^7.1.3",
+    "@spree/dashboard": "^0.2.0",
+    "esbuild": "^0.14.47"
+  },
+    "scripts": {
+      "build": "esbuild app/javascript/*.* --bundle --sourcemap --outdir=app/assets/builds"
+    }
+}
+RUBY
 
 bin/rails db:drop || true
 bin/rails db:create
@@ -117,3 +133,4 @@ bin/rails g spree:backend:install
 bin/rails g spree:emails:install
 bin/rails g spree:auth:install
 bin/rails g spree_gateway:install
+yarn build
