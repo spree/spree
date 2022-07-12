@@ -1578,6 +1578,7 @@ describe Spree::Order, type: :model do
   describe '#paid?' do
     subject { order.paid? }
 
+    let!(:payment_0) { create(:payment, order: order, amount: amount) }
     let!(:payment_1) { create(:payment, order: order, amount: amount) }
     let!(:payment_2) { create(:payment, order: order, amount: amount) }
     let(:amount) { 100 }
@@ -1586,11 +1587,10 @@ describe Spree::Order, type: :model do
 
     before { payment_1.complete }
 
-    context 'when all order valid payments were completed' do
-      before { payment_2.complete }
-
-      context 'when the amount of the valid payments >= the order total' do
-        it { expect(subject).to eq(true) }
+    context 'when all order valid payments are completed' do
+      before do
+        payment_1.complete
+        payment_2.complete
       end
 
       context 'when the amount of the valid payments < the order total' do
@@ -1598,10 +1598,44 @@ describe Spree::Order, type: :model do
 
         it { expect(subject).to eq(false) }
       end
+
+      context 'when the amount of the valid payments == the order total' do
+        let(:total) { 200 }
+
+        it { expect(subject).to eq(true) }
+      end
+
+      context 'when the amount of the valid payments > the order total' do
+        let(:total) { 199 }
+
+        it { expect(subject).to eq(true) }
+      end
     end
 
-    context 'when not all order valid payments were completed' do
-      it { expect(subject).to eq(false) }
+    context 'when not all order payments are valid and completed' do
+      before do
+        payment_0.void
+        payment_1.complete
+        payment_2.complete
+      end
+
+      context 'when the amount of the valid payments < the order total' do
+        let(:total) { 201 }
+
+        it { expect(subject).to eq(false) }
+      end
+
+      context 'when the amount of the valid payments == the order total' do
+        let(:total) { 200 }
+
+        it { expect(subject).to eq(true) }
+      end
+
+      context 'when the amount of the valid payments > the order total' do
+        let(:total) { 199 }
+
+        it { expect(subject).to eq(true) }
+      end
     end
   end
 
