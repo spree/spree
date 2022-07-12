@@ -1612,9 +1612,65 @@ describe Spree::Order, type: :model do
       end
     end
 
-    context 'when not all order payments are valid and completed' do
+    context 'when not all order payments are completed one is void' do
       before do
         payment_0.void
+        payment_1.complete
+        payment_2.complete
+      end
+
+      context 'when the amount of the valid payments < the order total' do
+        let(:total) { 201 }
+
+        it { expect(subject).to eq(false) }
+      end
+
+      context 'when the amount of the valid payments == the order total' do
+        let(:total) { 200 }
+
+        it { expect(subject).to eq(true) }
+      end
+
+      context 'when the amount of the valid payments > the order total' do
+        let(:total) { 199 }
+
+        it { expect(subject).to eq(true) }
+      end
+    end
+
+    context 'when not all order payments are completed one is failed' do
+      before do
+        payment_0.state = 'failed'
+        payment_0.save!
+
+        payment_1.complete
+        payment_2.complete
+      end
+
+      context 'when the amount of the valid payments < the order total' do
+        let(:total) { 201 }
+
+        it { expect(subject).to eq(false) }
+      end
+
+      context 'when the amount of the valid payments == the order total' do
+        let(:total) { 200 }
+
+        it { expect(subject).to eq(true) }
+      end
+
+      context 'when the amount of the valid payments > the order total' do
+        let(:total) { 199 }
+
+        it { expect(subject).to eq(true) }
+      end
+    end
+
+    context 'when not all order payments are completed one is invalid' do
+      before do
+        payment_0.state = 'invalid'
+        payment_0.save!
+
         payment_1.complete
         payment_2.complete
       end
