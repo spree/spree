@@ -1112,6 +1112,7 @@ en:
     notice_messages:
       icon_removed: Image has been successfully removed
       prices_saved: Prices successfully saved
+      translations_saved: Translations successfully saved
       product_cloned: Product has been cloned
       product_deleted: Product has been deleted
       product_not_cloned: "Product could not be cloned. Reason: %{error}"
