@@ -14,7 +14,7 @@ size_option_values = Spree::OptionType.find_by!(name: 'size').option_values
 VARIANTS.each do |(parent_name, taxon_name, product_name, color_name)|
   parent = Spree::Taxon.find_by!(name: parent_name)
   taxon = parent.children.find_by!(name: taxon_name)
-  product = Spree::Product.find_by!(name: product_name.titleize)
+  product = Spree::Product.i18n.find_by!(name: product_name.titleize)
   color = color_option_values.find_by!(name: color_name)
 
   size_option_values.each do |size|
