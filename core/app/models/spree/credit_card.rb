@@ -12,7 +12,7 @@ module Spree
     acts_as_paranoid
 
     belongs_to :payment_method
-    belongs_to :user, class_name: Spree.user_class.to_s, foreign_key: 'user_id',
+    belongs_to :user, class_name: "::#{Spree.user_class}", foreign_key: 'user_id',
                       optional: true
     has_many :payments, as: :source
 
