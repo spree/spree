@@ -1,8 +1,8 @@
 Spree::Sample.load_sample('addresses')
 Spree::Sample.load_sample('products')
 
-product_1 = Spree::Product.find_by!(name: 'Denim Shirt')
-product_2 = Spree::Product.find_by!(name: 'Checked Shirt')
+product_1 = Spree::Product.i18n.find_by!(name: 'Denim Shirt')
+product_2 = Spree::Product.i18n.find_by!(name: 'Checked Shirt')
 
 orders = []
 orders << Spree::Order.where(
