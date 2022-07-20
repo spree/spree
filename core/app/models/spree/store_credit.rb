@@ -18,7 +18,7 @@ module Spree
 
     DEFAULT_CREATED_BY_EMAIL = 'spree@example.com'.freeze
 
-    belongs_to :user, class_name: Spree.user_class.to_s, foreign_key: 'user_id'
+    belongs_to :user, class_name: "::#{Spree.user_class}", foreign_key: 'user_id'
     belongs_to :category, class_name: 'Spree::StoreCreditCategory'
     belongs_to :created_by, class_name: Spree.admin_user_class.to_s, foreign_key: 'created_by_id'
     belongs_to :credit_type, class_name: 'Spree::StoreCreditType', foreign_key: 'type_id'
