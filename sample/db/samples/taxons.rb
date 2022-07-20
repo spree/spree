@@ -13,16 +13,20 @@ end.uniq
 TAXON_NAMES = CHILDREN_TAXON_NAMES.map { |(parent_name, taxon_name)| parent_name }
 
 categories = Spree::Taxonomy.find_by!(name: I18n.t('spree.taxonomy_categories_name'))
-categories_taxon = Spree::Taxon.where(name: I18n.t('spree.taxonomy_categories_name')).first_or_create!
+categories_taxon = Spree::Taxon.i18n.where(name: I18n.t('spree.taxonomy_categories_name')).first_or_create!
 
 TAXON_NAMES.each do |taxon_name|
-  taxon = categories_taxon.children.where(name: taxon_name).first_or_create!
+  if not categories_taxon.children.i18n.where(name: taxon_name).exists?
+    taxon = categories_taxon.children.where(name: taxon_name).create!
+  else
+    taxon = categories_taxon.children.i18n.where(name: taxon_name).first
+  end
   taxon.taxonomy = categories
   taxon.save!
 end
 
 CHILDREN_TAXON_NAMES.each do |(parent_name, taxon_name)|
-  parent = Spree::Taxon.where(name: parent_name).first
+  parent = Spree::Taxon.i18n.where(name: parent_name).first
   taxon = parent.children.where(name: taxon_name).first_or_create!
   taxon.taxonomy = categories
   taxon.save!
