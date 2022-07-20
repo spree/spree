@@ -3,6 +3,7 @@ require 'stringex'
 
 module Spree
   class Taxon < Spree::Base
+    extend Mobility
     include Metadata
     if defined?(Spree::Webhooks)
       include Spree::Webhooks::HasWebhooks
@@ -13,6 +14,8 @@ module Spree
     before_validation :set_permalink, on: :create, if: :name
 
     acts_as_nested_set dependent: :destroy
+
+    translates :name, :description, backend: :table
 
     belongs_to :taxonomy, class_name: 'Spree::Taxonomy', inverse_of: :taxons
     has_many :classifications, -> { order(:position) }, dependent: :delete_all, inverse_of: :taxon
@@ -27,7 +30,7 @@ module Spree
     has_many :promotion_rule_taxons, class_name: 'Spree::PromotionRuleTaxon', dependent: :destroy
     has_many :promotion_rules, through: :promotion_rule_taxons, class_name: 'Spree::PromotionRule'
 
-    validates :name, presence: true, uniqueness: { scope: [:parent_id, :taxonomy_id], allow_blank: true, case_sensitive: false }
+    validates :name, presence: false, uniqueness: { scope: [:parent_id, :taxonomy_id], allow_blank: true, case_sensitive: false }
     validates :taxonomy, presence: true
     validates :permalink, uniqueness: { case_sensitive: false, scope: [:parent_id, :taxonomy_id] }
     validates :hide_from_nav, inclusion: { in: [true, false] }
@@ -53,6 +56,17 @@ module Spree
     self.whitelisted_ransackable_attributes = %w[name permalink]
 
     scope :for_stores, ->(stores) { joins(:taxonomy).where(spree_taxonomies: { store_id: stores.ids }) }
+
+    def translatable_fields
+      %w[name description]
+    end
+
+    def get_field_with_locale(locale, field_name)
+      I18n.with_locale(locale) do
+        #Remove fallback: false if you want to see fallbacks at the table
+        public_send(field_name, fallback: false)
+      end
+    end
 
     # indicate which filters should be used for a taxon
     # this method should be customized to your own site
