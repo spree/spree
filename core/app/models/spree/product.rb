@@ -42,7 +42,7 @@ module Spree
     acts_as_paranoid
     auto_strip_attributes :name
 
-    translates :name, :description, :meta_description, :meta_keywords, :meta_title,  backend: :table
+    translates :name, :description, :meta_description, :meta_keywords, :meta_title, backend: :table
 
     # we need to have this callback before any dependent: :destroy associations
     # https://github.com/rails/rails/issues/3458

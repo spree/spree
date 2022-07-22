@@ -2,7 +2,7 @@ module Spree
   module Api
     module V2
       module Platform
-        class TaxonsController < ResourceController
+        class TaxonsController < TranslatableResourceController
           include ::Spree::Api::V2::Platform::NestedSetRepositionConcern
 
           private
