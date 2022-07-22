@@ -86,7 +86,7 @@ module Spree
     attribute :state_machine_resumed, :boolean
 
     if Spree.user_class
-      belongs_to :user, class_name: "::#{Spree.user_class}", optional: true
+      belongs_to :user, class_name: Spree.user_class.to_s, optional: true
     else
       belongs_to :user, optional: true
     end
