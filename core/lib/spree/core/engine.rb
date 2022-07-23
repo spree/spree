@@ -11,11 +11,9 @@ module Spree
                                :adjusters,
                                :stock_splitters,
                                :promotions,
-                               :cms,
                                :line_item_comparison_hooks)
       SpreeCalculators = Struct.new(:shipping_methods, :tax_rates, :promotion_actions_create_adjustments, :promotion_actions_create_item_adjustments)
       PromoEnvironment = Struct.new(:rules, :actions)
-      CmsEnvironment   = Struct.new(:sections)
       isolate_namespace Spree
       engine_name 'spree'
 
@@ -25,6 +23,7 @@ module Spree
 
       initializer 'spree.environment', before: :load_config_initializers do |app|
         app.config.spree = Environment.new(SpreeCalculators.new, Spree::Core::Configuration.new, Spree::Core::Dependencies.new)
+        app.config.active_record.yaml_column_permitted_classes = [Symbol, BigDecimal]
         Spree::Config = app.config.spree.preferences
         Spree::Dependencies = app.config.spree.dependencies
       end
@@ -122,16 +121,6 @@ module Spree
           Promotion::Actions::CreateItemAdjustments,
           Promotion::Actions::CreateLineItems,
           Promotion::Actions::FreeShipping
-        ]
-
-        Rails.application.config.spree.cms = CmsEnvironment.new
-        Rails.application.config.spree.cms.sections = [
-          Spree::Cms::Sections::HeroImage,
-          Spree::Cms::Sections::FeaturedArticle,
-          Spree::Cms::Sections::ProductCarousel,
-          Spree::Cms::Sections::ImageGallery,
-          Spree::Cms::Sections::SideBySideImages,
-          Spree::Cms::Sections::RichTextContent
         ]
       end
 

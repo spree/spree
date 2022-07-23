@@ -7,7 +7,7 @@ module Spree
 
     has_secure_token
 
-    belongs_to :user, class_name: Spree.user_class.name, touch: true
+    belongs_to :user, class_name: "::#{Spree.user_class}", touch: true
     belongs_to :store, class_name: 'Spree::Store'
 
     has_many :wished_items, class_name: 'Spree::WishedItem', dependent: :destroy
