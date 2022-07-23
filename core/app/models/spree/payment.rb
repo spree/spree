@@ -17,7 +17,7 @@ module Spree
 
     NON_RISKY_AVS_CODES = ['B', 'D', 'H', 'J', 'M', 'Q', 'T', 'V', 'X', 'Y'].freeze
     RISKY_AVS_CODES     = ['A', 'C', 'E', 'F', 'G', 'I', 'K', 'L', 'N', 'O', 'P', 'R', 'S', 'U', 'W', 'Z'].freeze
-    INVALID_STATES      = %w(failed invalid).freeze
+    INVALID_STATES      = %w(failed invalid void).freeze
 
     with_options inverse_of: :payments do
       belongs_to :order, class_name: 'Spree::Order', touch: true

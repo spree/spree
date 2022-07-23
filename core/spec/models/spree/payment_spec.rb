@@ -50,7 +50,7 @@ describe Spree::Payment, type: :model do
   it_behaves_like 'metadata'
 
   describe 'Constants' do
-    it { expect(Spree::Payment::INVALID_STATES).to eq(%w(failed invalid)) }
+    it { expect(Spree::Payment::INVALID_STATES).to eq(%w(failed invalid void)) }
   end
 
   describe 'scopes' do
