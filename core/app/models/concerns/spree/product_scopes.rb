@@ -306,7 +306,7 @@ module Spree
           if defined?(SpreeGlobalize)
             joins(:translations).order(:name).where("LOWER(#{Product::Translation.table_name}.name) LIKE LOWER(:query)", query: "%#{query}%").distinct
           elsif defined?(Mobility)
-            i18n.order(name: :asc).where("LOWER(#{Product::Translation.table_name}.name) LIKE LOWER(:query)", query: "%#{query}%")
+            where("LOWER(#{Product::Translation.table_name}.name) LIKE LOWER(:query)", query: "%#{query}%")
           else
             where("LOWER(#{Product.table_name}.name) LIKE LOWER(:query)", query: "%#{query}%")
           end
