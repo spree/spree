@@ -35,22 +35,28 @@ fi
 
 cd ./sandbox
 
+# Gems listed below were tagged on 1 August 2022
 if [ "$SPREE_AUTH_DEVISE_PATH" != "" ]; then
   SPREE_AUTH_DEVISE_GEM="gem 'spree_auth_devise', path: '$SPREE_AUTH_DEVISE_PATH'"
 else
-  SPREE_AUTH_DEVISE_GEM="gem 'spree_auth_devise', github: 'spree/spree_auth_devise', branch: 'main'"
+  # For now tag on branch main will be used,
+  # in the future replace it with 4.5-stable release
+  SPREE_AUTH_DEVISE_GEM="gem 'spree_auth_devise', github: 'spree/spree_auth_devise', tag: 'v4.5.0-development'"
 fi
 
 if [ "$SPREE_GATEWAY_PATH" != "" ]; then
   SPREE_GATEWAY_GEM="gem 'spree_gateway', path: '$SPREE_GATEWAY_PATH'"
 else
-  SPREE_GATEWAY_GEM="gem 'spree_gateway', github: 'spree/spree_gateway', branch: 'main'"
+  # spree_gateway 'main' branch has latest needed changes - this tag needs to be replaced after release of 4.5-stable
+  SPREE_GATEWAY_GEM="gem 'spree_gateway', github: 'spree/spree_gateway', tag: 'v4.5.0-development'"
 fi
 
 if [ "$SPREE_DASHBOARD_PATH" != "" ]; then
   SPREE_BACKEND_GEM="gem 'spree_backend', path: '$SPREE_DASHBOARD_PATH'"
 else
-  SPREE_BACKEND_GEM="gem 'spree_backend', github: 'spree/spree_backend', branch: 'main'"
+  # For now tag on branch main will be used to provide compatibility with Rails 7,
+  # in the future replace it with 4.5-stable release
+  SPREE_BACKEND_GEM="gem 'spree_backend', github: 'spree/spree_backend', tag: 'v4.5.0-development'"
 fi
 
 cat <<RUBY >> Gemfile
@@ -60,7 +66,7 @@ gem 'spree_sample', path: '../sample'
 $SPREE_BACKEND_GEM
 $SPREE_AUTH_DEVISE_GEM
 $SPREE_GATEWAY_GEM
-gem 'spree_i18n', github: 'spree-contrib/spree_i18n', branch: 'main'
+gem 'spree_i18n', github: 'spree-contrib/spree_i18n', ref: '3c3e5954888232153a78fa4168f40b3255586b3b'
 
 group :test, :development do
   gem 'bullet'
