@@ -111,6 +111,8 @@ bin/rails javascript:install:esbuild
 bin/rails turbo:install
 yarn install
 
+# for npm versions lower than 7.1 we need to add "build" script manually
+# so below is added to ensure compatibility
 cat <<RUBY > package.json
 {
   "name": "app",
@@ -121,7 +123,7 @@ cat <<RUBY > package.json
     "esbuild": "^0.14.47"
   },
     "scripts": {
-      "build": "esbuild app/javascript/*.* --bundle --sourcemap --outdir=app/assets/builds"
+      "build": "esbuild app/javascript/*.* --bundle --sourcemap --outdir=app/assets/builds --public-path=assets"
     }
 }
 RUBY
