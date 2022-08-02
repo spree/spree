@@ -64,7 +64,7 @@ module Spree
 
     validates :digital_asset_authorized_clicks, numericality: { only_integer: true, greater_than: 0 }
     validates :digital_asset_authorized_days, numericality: { only_integer: true, greater_than: 0 }
-    validates :code, uniqueness: { case_sensitive: true, conditions: -> { with_deleted } }
+    validates :code, uniqueness: { case_sensitive: false, conditions: -> { with_deleted } }
     validates :mail_from_address, email: { allow_blank: false }
 
     # FIXME: we should remove this condition in v5
