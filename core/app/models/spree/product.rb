@@ -37,12 +37,12 @@ module Spree
                           default_variant_id tax_category default_variant
                           purchasable? in_stock? backorderable?)
 
-    friendly_id :slug_candidates, use: :history
+    friendly_id :slug_candidates, use: [:history, :mobility]
 
     acts_as_paranoid
     auto_strip_attributes :name
 
-    translates :name, :description, :meta_description, :meta_keywords, :meta_title, backend: :table
+    translates :name, :description, :slug, :meta_description, :meta_keywords, :meta_title, backend: :table
 
     # we need to have this callback before any dependent: :destroy associations
     # https://github.com/rails/rails/issues/3458
@@ -173,7 +173,7 @@ module Spree
 
     def translatable_fields
       #TODO I think better solution is to implement get_translatable_fields in mobility gem(?)
-      %w[name description meta_description meta_keywords meta_title]
+      %w[name description slug meta_description meta_keywords meta_title]
     end
 
     def get_field_with_locale(locale, field_name)
