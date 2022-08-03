@@ -3,11 +3,8 @@ module Spree
     module V2
       module Platform
         class TranslatableResourceController < ResourceController
-
           def scope
-            base_scope = super
-            base_scope = base_scope.joins(:translations)
-            base_scope
+            super.joins(:translations)
           end
         end
       end
