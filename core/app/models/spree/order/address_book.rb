@@ -54,6 +54,7 @@ module Spree
         return if attributes.blank?
 
         attributes.transform_values! { |v| v == '' ? nil : v }
+        attributes = attributes.to_h.symbolize_keys
 
         default_address_scope = user ? user.addresses : ::Spree::Address
         default_address = default_address_scope.find_by(id: attributes[:id])

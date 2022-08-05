@@ -33,6 +33,13 @@ module Spree
 
     LINKED_RESOURCE_TYPE = []
 
+    TYPES = ['Spree::Cms::Sections::HeroImage',
+             'Spree::Cms::Sections::FeaturedArticle',
+             'Spree::Cms::Sections::ProductCarousel',
+             'Spree::Cms::Sections::ImageGallery',
+             'Spree::Cms::Sections::SideBySideImages',
+             'Spree::Cms::Sections::RichTextContent']
+
     def boundaries
       ['Container', 'Screen']
     end
