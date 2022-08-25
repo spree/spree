@@ -7,7 +7,7 @@ module Spree
       attr_accessor :country
 
       def call(address_params: {}, user: nil)
-        fill_country_and_state_ids(address_params)
+        address_params = fill_country_and_state_ids(address_params)
 
         address = Spree::Address.new(address_params)
         address.user = user if user.present?
