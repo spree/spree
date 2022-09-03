@@ -48,7 +48,11 @@ module Spree
           end
 
           def collection_meta(collection)
-            super(collection).merge(filters: filters_meta)
+            if params[:skip_filters]
+              super(collection)
+            else
+              super(collection).merge(filters: filters_meta)
+            end
           end
 
           def filters_meta

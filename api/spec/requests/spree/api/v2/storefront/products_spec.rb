@@ -774,6 +774,13 @@ describe 'API V2 Storefront Products Spec', type: :request do
           expect(json_response['meta']['filters']['product_properties']).to contain_exactly(property3_response)
         end
       end
+
+      context 'skipping filters' do
+        it 'does not show filter information when skip_filters is provided' do
+          get "/api/v2/storefront/products", params: { skip_filters: true }
+          expect(json_response['meta']).not_to have_key(:filters)
+        end
+      end
     end
 
     context 'fetch products by curency param' do
