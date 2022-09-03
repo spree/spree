@@ -1221,6 +1221,12 @@ paths:
               <li>updated_at (ascending/descending)</li>
               <li>sku (ascending/descending)</li>
             </ul> Use <q>-</q> sign to set descending sort, eg. <q>-updated_at</q>
+        - in: query
+            name: 'skip_filters'
+            schema:
+              type: boolean
+            example: true
+            description: Skips returning product filter metadata in response.
         - $ref: '#/components/parameters/PageParam'
         - $ref: '#/components/parameters/PerPageParam'
         - $ref: '#/components/parameters/ProductIncludeParam'
