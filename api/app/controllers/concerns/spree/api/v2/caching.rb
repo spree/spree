@@ -20,7 +20,9 @@ module Spree
             params[:sort]&.strip,
             params[:page]&.to_s&.strip,
             params[:per_page]&.to_s&.strip,
-          ].flatten.join('-')
+          ]
+          cache_key_parts += additional_cache_key_parts
+          cache_key_parts = cache_key_parts.flatten.join('-')
 
           Digest::MD5.hexdigest(cache_key_parts)
         end
@@ -30,6 +32,10 @@ module Spree
             namespace: Spree::Api::Config[:api_v2_collection_cache_namespace],
             expires_in: Spree::Api::Config[:api_v2_collection_cache_ttl],
           }
+        end
+
+        def additional_cache_key_parts
+          []
         end
       end
     end
