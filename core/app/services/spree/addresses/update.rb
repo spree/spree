@@ -13,7 +13,12 @@ module Spree
         if address&.editable?
           address.update(address_params) ? success(address) : failure(address)
         else
-          new_address(address_params).valid? ? address.destroy && success(new_address) : failure(new_address)
+          if new_address(address_params).valid?
+            address.destroy
+            success(new_address)
+          else
+            failure(new_address)
+          end
         end
       end
 
