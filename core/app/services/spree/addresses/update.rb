@@ -9,6 +9,7 @@ module Spree
       def call(address:, address_params:)
         address_params[:country_id] ||= address.country_id
         address_params = fill_country_and_state_ids(address_params)
+        address_params[:user_id] = address.user_id if address.user_id.present?
 
         if address&.editable?
           address.update(address_params) ? success(address) : failure(address)
