@@ -11,12 +11,11 @@ module Spree
       end
 
       def replace_country_iso_with_id(params)
-        iso = params[:country_iso]
-        return params unless iso.present?
+        if (iso = params.delete(:country_iso))
+          country = Spree::Country.by_iso(iso)
+          params[:country_id] = country&.id
+        end
 
-        country = Spree::Country.by_iso(iso)
-        params[:country_id] = country&.id
-        params.delete(:country_iso)
         params
       end
 
