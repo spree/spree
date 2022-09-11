@@ -407,7 +407,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
   describe 'cart#set_quantity' do
     let(:line_item) { create(:line_item, order: order) }
     let(:params) { { order: order, line_item_id: line_item.id, quantity: 5 } }
-    let(:execute) { patch '/api/v2/storefront/cart/set_quantity', params: params, headers: headers }
+    let(:execute) { patch '/api/v2/storefront/cart/set_quantity', params: params, headers: headers, as: :json }
 
     shared_examples 'wrong quantity parameter' do
       it_behaves_like 'returns 422 HTTP status'
@@ -463,6 +463,24 @@ describe 'API V2 Storefront Cart Spec', type: :request do
       context 'quantity not passed' do
         before do
           params[:quantity] = nil
+          execute
+        end
+
+        it_behaves_like 'wrong quantity parameter'
+      end
+
+      context 'quantity is a string' do
+        before do
+          params[:quantity] = 'string'
+          execute
+        end
+
+        it_behaves_like 'wrong quantity parameter'
+      end
+
+      context 'quantity is a boolean' do
+        before do
+          params[:quantity] = true
           execute
         end
 

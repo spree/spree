@@ -61,7 +61,7 @@ module Spree
 
           def transfer_to_location
             stock_location = Spree::StockLocation.find(params.dig(:shipment, :stock_location_id))
-            quantity = params.dig(:shipment, :quantity)&.to_i || 1
+            quantity = params.dig(:shipment, :quantity)&.to_s&.to_i || 1
 
             unless quantity > 0
               render_error_payload("#{I18n.t('spree.api.shipment_transfer_errors_occurred')} \n #{I18n.t('spree.api.negative_quantity')}")
@@ -78,7 +78,7 @@ module Spree
 
           def transfer_to_shipment
             target_shipment = Spree::Shipment.find_by!(number: params.dig(:shipment, :target_shipment_number))
-            quantity = params.dig(:shipment, :quantity)&.to_i || 1
+            quantity = params.dig(:shipment, :quantity)&.to_s&.to_i || 1
 
             error =
               if quantity < 0 && target_shipment == resource

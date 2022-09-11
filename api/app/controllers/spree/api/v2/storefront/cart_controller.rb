@@ -82,7 +82,7 @@ module Spree
           end
 
           def set_quantity
-            return render_error_item_quantity unless params[:quantity].to_i > 0
+            return render_error_item_quantity unless params[:quantity].to_s.to_i > 0
 
             spree_authorize! :update, spree_current_order, order_token
 

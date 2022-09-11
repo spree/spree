@@ -156,10 +156,10 @@ module Spree
           end
 
           def ensure_valid_quantity
-            return render_error_item_quantity if params[:quantity].present? && params[:quantity].to_i <= 0
+            return render_error_item_quantity if params[:quantity].present? && params[:quantity].to_s.to_i <= 0
 
             params[:quantity] = if params[:quantity].present?
-                                  params[:quantity].to_i
+                                  params[:quantity].to_s.to_i
                                 else
                                   1
                                 end
