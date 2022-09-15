@@ -20,6 +20,7 @@ module Spree
 
       initializer 'spree.environment', before: :load_config_initializers do |app|
         app.config.spree = Environment.new(SpreeCalculators.new, Spree::AppConfiguration.new, Spree::AppDependencies.new)
+        app.config.active_record.yaml_column_permitted_classes = [Symbol, BigDecimal]
         Spree::Config = app.config.spree.preferences
         Spree::Dependencies = app.config.spree.dependencies
       end
