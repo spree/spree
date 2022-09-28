@@ -43,6 +43,7 @@ module Spree
       puts 'Generating dummy Rails application...'
       invoke Rails::Generators::AppGenerator,
         [File.expand_path(dummy_path, destination_root)], opts
+      inject_yaml_permitted_classes
     end
 
     def test_dummy_config
@@ -110,6 +111,14 @@ rescue LoadError
   # #{requirement} is not available.
 end
       ], before: /require '#{@lib_name}'/, verbose: true
+    end
+
+    def inject_yaml_permitted_classes
+      inside dummy_path do
+        inject_into_file 'config/application.rb', %Q[
+    config.active_record.yaml_column_permitted_classes = [Symbol, BigDecimal]
+        ], after: /config\.load_defaults.*$/, verbose: true
+      end
     end
 
     def dummy_path
