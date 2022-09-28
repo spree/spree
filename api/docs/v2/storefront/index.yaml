@@ -15218,7 +15218,7 @@ components:
                   last: 'http://localhost:3000/api/v2/storefront/countries?page=1&per_page=240'
                   first: 'http://localhost:3000/api/v2/storefront/countries?page=1&per_page=240'
     Shipment:
-      description: '200 Success - Returns an array containing sevral `shipment` objects, along with the included array containing all available `shipping_rate` and `stock_location` objects. '
+      description: '200 Success - Returns an array containing several `shipment` objects, along with the included array containing all available `shipping_rate` and `stock_location` objects. '
       content:
         application/vnd.api+json:
           schema:

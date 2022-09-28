@@ -16,4 +16,6 @@ invertions
 reenable
 xdescribe
 ot
+ro
+nam
 sur
