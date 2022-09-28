@@ -487,7 +487,7 @@ All notable, unreleased changes to this project will be documented in this file.
 - [SD-1073] change product meta description to text area. [#10654](https://github.com/spree/spree/pull/10654) ([KacperMekarski](https://github.com/KacperMekarski))
 - Guides design fixes [#10653](https://github.com/spree/spree/pull/10653) ([damianlegawiec](https://github.com/damianlegawiec))
 - Fix current order finder [#10652](https://github.com/spree/spree/pull/10652) ([pmilewski](https://github.com/pmilewski))
-- Better API v2 code standarisation practices [#10650](https://github.com/spree/spree/pull/10650) ([damianlegawiec](https://github.com/damianlegawiec))
+- Better API v2 code standardisation practices [#10650](https://github.com/spree/spree/pull/10650) ([damianlegawiec](https://github.com/damianlegawiec))
 - Replace webrick with puma for capybara tests [#10649](https://github.com/spree/spree/pull/10649) ([damianlegawiec](https://github.com/damianlegawiec))
 - Ruby 3.0 support [#10648](https://github.com/spree/spree/pull/10648) ([damianlegawiec](https://github.com/damianlegawiec))
 - [SD-1065] Add remove icon button to admin edit taxon page [#10646](https://github.com/spree/spree/pull/10646) ([aplegatt](https://github.com/aplegatt))
