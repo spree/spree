@@ -18,7 +18,7 @@ defaults_3_0: &defaults_3_0
     - image: &ruby_3_0_image circleci/ruby:3.0-node-browsers
     - image: *redis_image
 
-run_tests: &run_tests
+run_tests_2_7: &run_tests_2_7
   <<: *defaults
   parallelism: 3
   steps:
@@ -77,7 +77,7 @@ run_tests_3_0: &run_tests_3_0
         path: /tmp/test-results
 
 jobs:
-  bundle:
+  bundle_ruby_2_7:
     <<: *defaults
     steps:
       - checkout
@@ -145,8 +145,8 @@ jobs:
           paths:
             - ~/spree/vendor/bundle
 
-  tests_postgres: &tests_postgres
-    <<: *run_tests
+  tests_ruby_2_7_rails_7_0_postgres: &tests_ruby_2_7_rails_7_0_postgres
+    <<: *run_tests_2_7
     environment: &postgres_environment
       <<: *environment
       DB: postgres
@@ -159,7 +159,7 @@ jobs:
         environment:
           POSTGRES_USER: postgres
 
-  tests_postgres_ruby_3_0: &tests_postgres_ruby_3_0
+  tests_ruby_3_0_rails_7_0_postgres:
     <<: *run_tests_3_0
     environment:
       <<: *postgres_environment
@@ -168,15 +168,15 @@ jobs:
       - image: *postgres_image
       - image: *redis_image
 
-  tests_postgres_rails_6_1:
-    <<: *tests_postgres
+  tests_ruby_2_7_rails_6_1_postgres:
+    <<: *tests_ruby_2_7_rails_7_0_postgres
     environment:
       <<: *postgres_environment
       RAILS_VERSION: '~> 6.1.0'
 
-  tests_mysql: &tests_mysql
-    <<: *run_tests
-    environment: &mysql_environment
+  tests_ruby_3_0_rails_7_0_mysql:
+    <<: *run_tests_3_0
+    environment:
       <<: *environment
       DB: mysql
       DB_HOST: 127.0.0.1
@@ -184,18 +184,9 @@ jobs:
       COVERAGE: true
       COVERAGE_DIR: /tmp/workspace/simplecov
     docker:
-      - image: *ruby_image
-      - image: *redis_image
-      - image: &mysql_image circleci/mysql:8-ram
-
-  tests_mysql_ruby_3_0:
-    <<: *run_tests_3_0
-    environment:
-      <<: *mysql_environment
-    docker:
       - image: *ruby_3_0_image
       - image: *redis_image
-      - image: *mysql_image
+      - image: circleci/mysql:8-ram
         command: [--default-authentication-plugin=mysql_native_password]
     steps:
       - checkout
@@ -261,23 +252,23 @@ workflows:
   version: 2
   main:
     jobs:
-      - bundle
+      - bundle_ruby_2_7
       - bundle_ruby_3_0
       - brakeman:
           requires:
             - bundle_ruby_3_0
-      - tests_postgres:
-          requires:
-            - bundle
-      - tests_postgres_ruby_3_0:
+      - tests_ruby_3_0_rails_7_0_postgres:
           requires:
             - bundle_ruby_3_0
-      - tests_postgres_rails_6_1:
+      - tests_ruby_2_7_rails_7_0_postgres:
           requires:
-            - bundle
-      - tests_mysql_ruby_3_0:
+            - bundle_ruby_2_7
+      - tests_ruby_2_7_rails_6_1_postgres:
+          requires:
+            - bundle_ruby_2_7
+      - tests_ruby_3_0_rails_7_0_mysql:
           requires:
             - bundle_ruby_3_0
       - send_test_coverage:
           requires:
-            - tests_mysql_ruby_3_0
+            - tests_ruby_3_0_rails_7_0_mysql
