@@ -10,7 +10,7 @@ defaults: &defaults
     RAILS_VERSION: '~> 7.0'
   working_directory: ~/spree
   docker:
-    - image: &ruby_image circleci/ruby:2.7-node-browsers
+    - image: &ruby_2_7_image circleci/ruby:2.7-node-browsers
     - image: &redis_image circleci/redis:6.2-alpine
 
 defaults_3_0: &defaults_3_0
@@ -154,7 +154,7 @@ jobs:
       DB_HOST: localhost
       DB_USERNAME: postgres
     docker:
-      - image: *ruby_image
+      - image: *ruby_2_7_image
       - image: *redis_image
       - image: &postgres_image circleci/postgres:12-alpine
         environment:
