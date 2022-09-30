@@ -57,6 +57,10 @@ module Spree
       template 'rails/test.rb', "#{dummy_path}/config/environments/test.rb", force: true
       template 'rails/script/rails', "#{dummy_path}/spec/dummy/script/rails", force: true
       template 'initializers/devise.rb', "#{dummy_path}/config/initializers/devise.rb", force: true
+
+      if lib_name == 'spree/backend'
+        template 'package.json', "#{dummy_path}/package.json", force: true
+      end
     end
 
     def test_dummy_inject_extension_requirements
