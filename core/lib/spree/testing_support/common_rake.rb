@@ -41,7 +41,7 @@ namespace :common do
     Spree::DummyModelGenerator.start
     system('bundle exec rake db:migrate')
 
-    unless ['spree/api', 'spree/core', 'spree/sample', 'spree/emails'].include?(ENV['LIB_NAME'])
+    unless ['spree/api', 'spree/api_v1', 'spree/core', 'spree/sample', 'spree/emails'].include?(ENV['LIB_NAME'])
       puts 'Setting up node environment'
       system('bin/rails javascript:install:esbuild')
       system('bin/rails turbo:install')
@@ -55,7 +55,7 @@ namespace :common do
       puts 'Skipping installation no generator to run...'
     end
 
-    unless ['spree/api', 'spree/core', 'spree/sample'].include?(ENV['LIB_NAME'])
+    unless ['spree/api', 'spree/api_v1', 'spree/core', 'spree/sample'].include?(ENV['LIB_NAME'])
       if ENV['LIB_NAME'] == 'spree/backend'
         puts 'Installing node dependencies...'
         system('yarn link @spree/dashboard')
