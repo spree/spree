@@ -19,6 +19,7 @@ module Spree
     class_option :admin_password, type: :string
     class_option :lib_name, type: :string, default: 'spree'
     class_option :enforce_available_locales, type: :boolean, default: nil
+    class_option :install_event_store, type: :boolean, default: false # for workaround reason
 
     def self.source_paths
       paths = superclass.source_paths
@@ -35,6 +36,7 @@ module Spree
       @install_storefront = options[:install_storefront]
       @install_admin = options[:install_admin]
       @copy_storefront = options[:copy_storefront]
+      @install_event_store = options[:install_event_store]
 
       unless @run_migrations
         @load_seed_data = false
@@ -44,6 +46,7 @@ module Spree
 
     def add_files
       template 'config/initializers/spree.rb', 'config/initializers/spree.rb'
+      template 'config/initializers/rails_event_store.rb', 'config/initializers/rails_event_store.rb' if @install_event_store
     end
 
     def additional_tweaks
