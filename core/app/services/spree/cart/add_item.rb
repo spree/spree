@@ -6,18 +6,20 @@ module Spree
       def call(order:, variant:, quantity: nil, public_metadata: {}, private_metadata: {}, options: {})
         ApplicationRecord.transaction do
           run :add_to_line_item
+          # run :notify_order_stream
           run Spree::Dependencies.cart_recalculate_service.constantize
-          run :notify_order_stream
         end
       end
 
       private
 
-      def notify_order_stream(order:, variant:, quantity:, public_metadata: {}, private_metadata: {}, options: {})
-        event_store.publish(
-          EventStore::Publish::Cart::Add.new(data: { order: order.as_json, variant: variant.as_json, quantity: quantity }),
-          stream_name: "order_#{order.number}_customer_#{order.user.id}" # check if usable with _customer
-        )
+      def notify_order_stream(order:, line_item:, line_item_created:, options: nil)
+        # event_store.publish(
+        #   EventStore::Publish::Cart::Add.new(data: { order: order, variant: line_item.variant, quantity: line_item.quantity }),
+        #   stream_name: "order_#{line_item.order.number}_customer_#{line_item.order.user.id}" # check if usable with _customer
+        # )
+
+        success(order: order, line_item: line_item, line_item_created: line_item_created, options: options)
       end
 
       def add_to_line_item(order:, variant:, quantity: nil, public_metadata: {}, private_metadata: {}, options: {})
