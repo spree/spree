@@ -18,7 +18,17 @@ module Spree
         }
 
         order = store.orders.create!(default_params.merge(order_params))
+        notify_order_stream(user: user, store: store, order: order, public_metadata: public_metadata, private_metadata: private_metadata, order_params: {})
         success(order)
+      end
+
+      private
+
+      def notify_order_stream(user:, store:, order:, public_metadata: {}, private_metadata: {}, order_params: {})
+        event_store.publish(
+          EventStore::Publish::Cart::Create.new(data: { store: store, order: order.as_json, user: user.as_json }),
+          stream_name: "order_#{order.number}_customer_#{order.user.id}" # check if usable with _customer
+        )
       end
     end
   end

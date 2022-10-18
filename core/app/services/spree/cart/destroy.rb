@@ -8,9 +8,17 @@ module Spree
         run :cancel_shipments
         run :void_payments
         run :destroy_order
+        run :notify_order_stream # or should be moved one stage up ?
       end
 
       private
+
+      def notify_order_stream(order:)
+        event_store.publish(
+          EventStore::Publish::Cart::Destroy.new(data: { order: order.as_json }),
+          stream_name: "order_#{order.number}_customer_#{order.user.id}" # check if usable with _customer
+        )
+      end
 
       def check_if_can_be_destroyed(order:)
         return failure(Spree.t(:cannot_be_destroyed)) unless order&.can_be_destroyed?

@@ -12,11 +12,19 @@ module Spree
           Spree::Dependencies.cart_recalculate_service.constantize.call(line_item: line_item,
                                                                         order: order,
                                                                         options: options)
+          notify_order_stream(order: order, line_item: line_item, variant: variant, quantity: quantity)
           success(line_item)
         end
       end
 
       private
+
+      def notify_order_stream(order:, line_item:, variant:, quantity:, options: nil)
+        event_store.publish(
+          EventStore::Publish::Cart::Update.new(data: { order: order.as_json, line_item: line_item, variant: variant, quantity: quantity }),
+          stream_name: "order_#{order.number}_customer_#{order.user.id}" # check if usable with _customer
+        )
+      end
 
       def remove_from_line_item(order:, variant:, quantity:, options:)
         line_item = Spree::Dependencies.line_item_by_variant_finder.constantize.new.execute(order: order, variant: variant, options: options)
