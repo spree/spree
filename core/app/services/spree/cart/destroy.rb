@@ -14,10 +14,12 @@ module Spree
       private
 
       def notify_order_stream(order:)
-        event_store.publish(
-          EventStore::Publish::Cart::Destroy.new(data: { order: order.as_json }),
+        Rails.configuration.event_store.publish(
+          Checkout::Checkout::DestroyCart.new(data: { order: order.as_json }),
           stream_name: "order_#{order.number}_customer_#{order.user.id}" # check if usable with _customer
         )
+
+        success(order)
       end
 
       def check_if_can_be_destroyed(order:)
@@ -41,7 +43,7 @@ module Spree
       def destroy_order(order:)
         order.destroy
 
-        success(order)
+        success(order: order)
       end
     end
   end

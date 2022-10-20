@@ -9,10 +9,10 @@ module Spree
 
         ActiveRecord::Base.transaction do
           line_item = remove_from_line_item(order: order, variant: variant, quantity: quantity, options: options)
+          notify_order_stream(order: order, line_item: line_item, variant: variant, quantity: quantity)
           Spree::Dependencies.cart_recalculate_service.constantize.call(line_item: line_item,
                                                                         order: order,
                                                                         options: options)
-          notify_order_stream(order: order, line_item: line_item, variant: variant, quantity: quantity)
           success(line_item)
         end
       end
@@ -20,10 +20,12 @@ module Spree
       private
 
       def notify_order_stream(order:, line_item:, variant:, quantity:, options: nil)
-        event_store.publish(
-          EventStore::Publish::Cart::Update.new(data: { order: order.as_json, line_item: line_item, variant: variant, quantity: quantity }),
-          stream_name: "order_#{order.number}_customer_#{order.user.id}" # check if usable with _customer
+        Rails.configuration.event_store.publish(
+          Checkout::Event::UpdateCart.new(data: { order: order.as_json, line_item: line_item, variant: variant, quantity: quantity }),
+          stream_name: "order_#{order.number}"
         )
+
+        success(true)
       end
 
       def remove_from_line_item(order:, variant:, quantity:, options:)

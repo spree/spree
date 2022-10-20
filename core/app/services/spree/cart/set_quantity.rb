@@ -13,11 +13,13 @@ module Spree
 
       private
 
-      def notify_order_stream(order:, line_item:, quantity:)
-        event_store.publish(
-          EventStore::Publish::Cart::Update.new(data: { order: order.as_json, line_item: line_item, variant: line_item.variant, quantity: quantity }),
+      def notify_order_stream(order:, line_item:)
+        Rails.configuration.event_store.publish(
+          Checkout::Event::UpdateCart.new(data: { order: order.as_json, line_item: line_item, variant: line_item.variant }),
           stream_name: "order_#{order.number}_customer_#{order.user.id}" # check if usable with _customer
         )
+
+        success(order: order, line_item: line_item)
       end
 
       def change_item_quantity(order:, line_item:, quantity: nil)

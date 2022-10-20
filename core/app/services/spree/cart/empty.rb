@@ -12,10 +12,12 @@ module Spree
       private
 
       def notify_order_stream(order:)
-        event_store.publish(
-          EventStore::Publish::Cart::Empty.new(data: { order: order.as_json }),
-          stream_name: "order_#{order.number}_customer_#{order.user.id}" # check if usable with _customer
+        Rails.configuration.event_store.publish(
+          Checkout::Checkout::EmptyCart.new(data: { order: order.as_json }),
+          stream_name: "order_#{order.number}"
         )
+
+        success(order)
       end
 
       def check_if_can_be_empty(order:)
@@ -36,7 +38,7 @@ module Spree
           order.persist_totals
           order.restart_checkout_flow
 
-          success(order)
+          success(order: order)
         end
       end
     end
