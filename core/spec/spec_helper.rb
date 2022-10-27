@@ -9,6 +9,7 @@ if ENV['COVERAGE']
     add_group 'Sorters', 'app/sorters'
     add_group 'Validators', 'app/validators'
     add_group 'Libraries', 'lib/spree'
+    add_group 'Event Store', 'app/event_store'
 
     add_filter '/bin/'
     add_filter '/db/'

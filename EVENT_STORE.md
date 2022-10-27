@@ -2,12 +2,18 @@
 
 ### Scope
 
-##### CART ACTIONS:
+##### CHECKOUT ACTIONS:
+* CreateCart —> Order
 * AddToCart —> LineItem
-* RemoveFromCart —> LineItem
+* DestroyCart 
+* RemoveCartItem —> LineItem
 * EmptyCart —> EmptyOrder
+* UpdateCart
+
+
+### TODO
+
 * ApplyCouponCode —> Promotion
-##### ADDRESS ACTIONS:
 * AddBillingAddress —> Address ( type: billing )
 * RemoveBillingAddress —> Address ( type: billing )
 * AddShippingAddress —> Address ( type: shipping )

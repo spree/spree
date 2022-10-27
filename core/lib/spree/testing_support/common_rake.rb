@@ -32,7 +32,8 @@ namespace :common do
       '--copy_storefront=false',
       "--install_storefront=#{args[:install_storefront]}",
       "--install_admin=#{args[:install_admin]}",
-      "--user_class=#{args[:user_class]}"
+      "--user_class=#{args[:user_class]}",
+      "--install_event_store=true"
     ]
 
     puts 'Setting up dummy database...'
