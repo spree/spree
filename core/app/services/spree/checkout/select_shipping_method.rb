@@ -29,6 +29,16 @@ module Spree
         success(order)
       end
 
+      private
+
+      def notify_order_stream(order:)
+        Rails.configuration.event_store.publish(
+          ::Checkout::Event::SelectShipping.new(data: { order: order.as_json }), stream_name: "order_#{order.number}"
+        )
+
+        success(order)
+      end
+
       def set_shipping_rate_based_on_method(shipment:, shipping_method:)
         selected_shipping_rate = shipment.shipping_rates.find_by(shipping_method: shipping_method)
 

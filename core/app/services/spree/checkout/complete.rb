@@ -7,6 +7,7 @@ module Spree
         Spree::Dependencies.checkout_next_service.constantize.call(order: order) until cannot_make_transition?(order)
 
         if order.reload.complete?
+          notify_order_stream(order: order)
           success(order)
         else
           failure(order)
@@ -14,6 +15,13 @@ module Spree
       end
 
       private
+
+      def notify_order_stream(order:)
+        Rails.configuration.event_store.publish(
+          ::Checkout::Event::CompleteOrder.new(data: { order: order.as_json }), stream_name: "order_#{order.number}"
+        )
+
+      end
 
       def cannot_make_transition?(order)
         order.complete? || order.errors.present?
