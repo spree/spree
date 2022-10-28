@@ -11,4 +11,8 @@ Rails.configuration.to_prepare do
       ::Checkout::Event::UpdateOrder, ::Checkout::Event::SelectShipping
     ]
   )
+
+  event_store.subscribe(
+    Customer::Subscribe::PdpObserver.new, to: [::Customer::Event::PdpVisit]
+  )
 end

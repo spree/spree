@@ -4,9 +4,13 @@ module Spree
       module Storefront
         class ProductsController < ::Spree::Api::V2::ResourceController
           include ::Spree::Api::V2::ProductListIncludes
+          after_action :notify_pdp_stream, only: :show
 
           protected
-
+          # move into module
+          def notify_pdp_stream
+            Rails.configuration.event_store.publish(::Customer::Event::PdpVisit.new(data: {product_id: params[:id]}), stream_name: "pdp_visit_customer_id")
+          end
           def sorted_collection
             collection_sorter.new(collection, current_currency, params, allowed_sort_attributes).call
           end
