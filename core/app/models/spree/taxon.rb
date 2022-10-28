@@ -42,7 +42,7 @@ module Spree
 
     before_validation :copy_taxonomy_from_parent
     after_save :touch_ancestors_and_taxonomy
-    after_save :sync_taxonomy_name
+    after_update :sync_taxonomy_name
     after_touch :touch_ancestors_and_taxonomy
 
     has_one :icon, as: :viewable, dependent: :destroy, class_name: 'Spree::TaxonImage'
