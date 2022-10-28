@@ -13,6 +13,6 @@ Rails.configuration.to_prepare do
   )
 
   event_store.subscribe(
-    Customer::Subscribe::PdpObserver.new, to: [::Customer::Event::PdpVisit]
+    Customer::Subscribe::PdpNotifier.new, to: [::Customer::Event::PdpVisit]
   )
 end

@@ -1,6 +1,6 @@
 module Customer
   module Subscribe
-    class PdpObserver
+    class PdpNotifier
       def call(event)
       end
     end
