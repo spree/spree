@@ -38,6 +38,57 @@ describe Spree::FulfilmentChanger do
     variant.stock_items.first.update_column(:count_on_hand, 100)
   end
 
+  context 'when the order has multiple line items' do
+    let(:current_shipment_inventory_unit_count) { 3 }
+    let(:second_variant) { create(:variant)}
+    let(:third_variant) { create(:variant)}
+    let(:quantity) { 3 }
+
+
+    let(:order) do
+      create(
+        :completed_order_with_totals,
+        without_line_items: true,
+        line_items_attributes: [
+          {
+            quantity: current_shipment_inventory_unit_count,
+            variant: variant
+          },
+          {
+            quantity: current_shipment_inventory_unit_count,
+            variant: second_variant
+          },
+          {
+            quantity: current_shipment_inventory_unit_count,
+            variant: third_variant
+          }
+        ]
+      )
+    end
+
+    it 'can move more than one variant to the desired shipment' do
+      described_class.new(
+        current_stock_location: current_shipment.stock_location,
+        desired_stock_location: desired_shipment.stock_location,
+        current_shipment: current_shipment,
+        desired_shipment: desired_shipment,
+        variant: variant,
+        quantity: quantity
+      ).run!
+      expect(desired_shipment.inventory_units.count).to eq 1
+      described_class.new(
+        current_stock_location: current_shipment.stock_location,
+        desired_stock_location: desired_shipment.stock_location,
+        current_shipment: current_shipment,
+        desired_shipment: desired_shipment,
+        variant: second_variant,
+        quantity: quantity
+      ).run!
+      expect(current_shipment.inventory_units.count).to eq 1
+      expect(desired_shipment.inventory_units.count).to eq 2
+    end
+  end
+
   context 'when the current shipment has enough inventory units' do
     let(:current_shipment_inventory_unit_count) { 3 }
     let(:quantity) { 1 }
