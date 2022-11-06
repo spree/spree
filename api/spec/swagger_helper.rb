@@ -118,7 +118,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[address],
-            'x-internal': true
+            'x-internal': false
           },
           update_address_params: {
             type: :object,
@@ -146,7 +146,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[address],
-            'x-internal': true
+            'x-internal': false
           },
 
           # Adjustment
@@ -172,7 +172,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[adjustment],
-            'x-internal': true
+            'x-internal': false
           },
           update_adjustment_params: {
             type: :object,
@@ -195,7 +195,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[adjustment],
-            'x-internal': true
+            'x-internal': false
           },
 
           # Classification
@@ -213,7 +213,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[classification],
-            'x-internal': true
+            'x-internal': false
           },
           update_classification_params: {
             type: :object,
@@ -228,7 +228,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[classification],
-            'x-internal': true
+            'x-internal': false
           },
 
           # CMS Page
@@ -252,7 +252,7 @@ RSpec.configure do |config|
             },
             required: %w[cms_page],
             title: 'Create a Standard Page',
-            'x-internal': true
+            'x-internal': false
           },
           create_homepage_cms_page_params: {
             type: :object,
@@ -272,7 +272,7 @@ RSpec.configure do |config|
             },
             required: %w[cms_page],
             title: 'Create a Homepage',
-            'x-internal': true
+            'x-internal': false
           },
           create_feature_cms_page_params: {
             type: :object,
@@ -293,7 +293,7 @@ RSpec.configure do |config|
             },
             required: %w[cms_page],
             title: 'Create a Feature Page',
-            'x-internal': true
+            'x-internal': false
           },
           update_standard_cms_page_params: {
             type: :object,
@@ -314,7 +314,7 @@ RSpec.configure do |config|
             },
             required: %w[cms_page],
             title: 'Update a Standard Page',
-            'x-internal': true
+            'x-internal': false
           },
           update_homepage_cms_page_params: {
             type: :object,
@@ -333,7 +333,7 @@ RSpec.configure do |config|
             },
             required: %w[cms_page],
             title: 'Update a Homepage',
-            'x-internal': true
+            'x-internal': false
           },
           update_feature_cms_page_params: {
             type: :object,
@@ -353,7 +353,7 @@ RSpec.configure do |config|
             },
             required: %w[cms_page],
             title: 'Update a Feature Page',
-            'x-internal': true
+            'x-internal': false
           },
 
           # CMS Section
@@ -380,7 +380,7 @@ RSpec.configure do |config|
             },
             required: %w[cms_section],
             title: 'Create a Hero Image Section',
-            'x-internal': true
+            'x-internal': false
           },
           create_product_carousel_cms_section_params: {
             type: :object,
@@ -399,7 +399,7 @@ RSpec.configure do |config|
             },
             required: %w[cms_section],
             title: 'Create a Product Carousel Section',
-            'x-internal': true
+            'x-internal': false
           },
           create_side_by_side_images_cms_section_params: {
             type: :object,
@@ -429,7 +429,7 @@ RSpec.configure do |config|
             },
             required: %w[cms_section],
             title: 'Create a Side-by-Side Image Section',
-            'x-internal': true
+            'x-internal': false
           },
           create_image_gallery_cms_section_params: {
             type: :object,
@@ -462,7 +462,7 @@ RSpec.configure do |config|
             },
             required: %w[cms_section],
             title: 'Create an Image Gallery Section',
-            'x-internal': true
+            'x-internal': false
           },
           create_featured_article_cms_section_params: {
             type: :object,
@@ -488,7 +488,7 @@ RSpec.configure do |config|
             },
             required: %w[cms_section],
             title: 'Create a Featured Article Section',
-            'x-internal': true
+            'x-internal': false
           },
           create_rich_text_cms_section_params: {
             type: :object,
@@ -508,7 +508,7 @@ RSpec.configure do |config|
             },
             required: %w[cms_section],
             title: 'Create a Rich Text Section',
-            'x-internal': true
+            'x-internal': false
           },
           update_hero_image_cms_section_params: {
             type: :object,
@@ -532,7 +532,7 @@ RSpec.configure do |config|
             },
             required: %w[cms_section],
             title: 'Update a Hero Image Section',
-            'x-internal': true
+            'x-internal': false
           },
           update_product_carousel_cms_section_params: {
             type: :object,
@@ -549,7 +549,7 @@ RSpec.configure do |config|
             },
             required: %w[cms_section],
             title: 'Update a Product Carousel Section',
-            'x-internal': true
+            'x-internal': false
           },
           update_side_by_side_images_cms_section_params: {
             type: :object,
@@ -577,7 +577,7 @@ RSpec.configure do |config|
             },
             required: %w[cms_section],
             title: 'Update a Side-by-Side Image Section',
-            'x-internal': true
+            'x-internal': false
           },
           update_image_gallery_cms_section_params: {
             type: :object,
@@ -608,7 +608,7 @@ RSpec.configure do |config|
             },
             required: %w[cms_section],
             title: 'Update an Image Gallery Section',
-            'x-internal': true
+            'x-internal': false
           },
           update_featured_article_cms_section_params: {
             type: :object,
@@ -632,7 +632,7 @@ RSpec.configure do |config|
             },
             required: %w[cms_section],
             title: 'Update a Featured Article Section',
-            'x-internal': true
+            'x-internal': false
           },
           update_rich_text_cms_section_params: {
             type: :object,
@@ -650,7 +650,7 @@ RSpec.configure do |config|
             },
             required: %w[cms_section],
             title: 'Update a Rich Text Section',
-            'x-internal': true
+            'x-internal': false
           },
 
           # Digital
@@ -661,7 +661,7 @@ RSpec.configure do |config|
               "digital[variant_id]": { type: :string, example: '123' }
             },
             required: ['digital[attachment]', 'digital[variant_id]'],
-            'x-internal': true
+            'x-internal': false
           },
           update_digital_params: {
             type: :object,
@@ -670,7 +670,7 @@ RSpec.configure do |config|
               "digital[variant_id]": { type: :string, example: '123' }
             },
             required: ['digital[attachment]', 'digital[variant_id]'],
-            'x-internal': true
+            'x-internal': false
           },
 
           # Digital Link
@@ -688,7 +688,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[digital_link],
-            'x-internal': true
+            'x-internal': false
           },
           update_digital_link_params: {
             type: :object,
@@ -703,7 +703,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[digital_link],
-            'x-internal': true
+            'x-internal': false
           },
 
           # Line Item
@@ -723,7 +723,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[line_item],
-            'x-internal': true
+            'x-internal': false
           },
           # TODO: Check these are correct.
           update_line_item_params: {
@@ -738,7 +738,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[line_item],
-            'x-internal': true
+            'x-internal': false
           },
 
           # Menu
@@ -756,7 +756,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[menu],
-            'x-internal': true
+            'x-internal': false
           },
           update_menu_params: {
             type: :object,
@@ -771,7 +771,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[menu],
-            'x-internal': true
+            'x-internal': false
           },
 
           # Menu Item
@@ -796,7 +796,7 @@ RSpec.configure do |config|
             },
             required: %w[menu_item],
             title: 'Create a Menu Item',
-            'x-internal': true
+            'x-internal': false
           },
           update_menu_item_params: {
             type: :object,
@@ -818,7 +818,7 @@ RSpec.configure do |config|
             },
             required: %w[menu_item],
             title: 'Update a Menu Item',
-            'x-internal': true
+            'x-internal': false
           },
           menu_item_reposition: {
             type: :object,
@@ -834,7 +834,7 @@ RSpec.configure do |config|
             },
             required: %w[menu_item],
             title: 'Reposition a Menu Item',
-            'x-internal': true
+            'x-internal': false
           },
 
           # Option Type
@@ -853,7 +853,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[option_type],
-            'x-internal': true
+            'x-internal': false
           },
           update_option_type_params: {
             type: :object,
@@ -869,7 +869,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[option_type],
-            'x-internal': true
+            'x-internal': false
           },
 
           # Option Value
@@ -888,7 +888,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[option_value],
-            'x-internal': true
+            'x-internal': false
           },
           update_option_value_params: {
             type: :object,
@@ -904,7 +904,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[option_value],
-            'x-internal': true
+            'x-internal': false
           },
 
           # Order
@@ -957,7 +957,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[order],
-            'x-internal': true
+            'x-internal': false
           },
           update_order_params: {
             type: :object,
@@ -1008,7 +1008,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[order],
-            'x-internal': true
+            'x-internal': false
           },
 
           # Payment Method
@@ -1039,7 +1039,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[payment_method],
-            'x-internal': true
+            'x-internal': false
           },
           update_payment_method_params: {
             type: :object,
@@ -1067,7 +1067,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[payment_method],
-            'x-internal': true,
+            'x-internal': false,
             title: 'Update Payment Method'
           },
           update_payment_method_params_bogus_gateway: {
@@ -1083,7 +1083,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[payment_method],
-            'x-internal': true,
+            'x-internal': false,
             title: 'Update Bogus Gateway'
           },
 
@@ -1124,7 +1124,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[product],
-            'x-internal': true
+            'x-internal': false
           },
           update_product_params: {
             type: :object,
@@ -1161,7 +1161,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[product],
-            'x-internal': true
+            'x-internal': false
           },
 
           # Promotion
@@ -1192,7 +1192,7 @@ RSpec.configure do |config|
             },
             required: %w[promotion],
             title: 'Create a Promotion',
-            'x-internal': true
+            'x-internal': false
           },
           update_promotion_params: {
             type: :object,
@@ -1220,7 +1220,7 @@ RSpec.configure do |config|
             },
             required: %w[promotion],
             title: 'Update a Promotion',
-            'x-internal': true
+            'x-internal': false
           },
           update_promotion_add_rule_params: {
             type: :object,
@@ -1244,7 +1244,7 @@ RSpec.configure do |config|
             },
             required: %w[promotion],
             title: 'Add a Rule to a Promotion',
-            'x-internal': true
+            'x-internal': false
           },
           update_promotion_update_rule_params: {
             type: :object,
@@ -1269,7 +1269,7 @@ RSpec.configure do |config|
             },
             required: %w[promotion],
             title: 'Update an existing Rule',
-            'x-internal': true
+            'x-internal': false
           },
           update_promotion_add_action_params: {
             type: :object,
@@ -1292,7 +1292,7 @@ RSpec.configure do |config|
             },
             required: %w[promotion],
             title: 'Add an Action to a Promotion',
-            'x-internal': true
+            'x-internal': false
           },
           update_promotion_action_calculator_params: {
             type: :object,
@@ -1322,7 +1322,7 @@ RSpec.configure do |config|
             },
             required: %w[promotion],
             title: 'Update an Action Calculator',
-            'x-internal': true
+            'x-internal': false
           },
           update_promotion_change_calculator_params: {
             type: :object,
@@ -1350,7 +1350,7 @@ RSpec.configure do |config|
             },
             required: %w[promotion],
             title: 'Change an Action Calculator',
-            'x-internal': true
+            'x-internal': false
           },
           update_promotion_change_action_params: {
             type: :object,
@@ -1374,7 +1374,7 @@ RSpec.configure do |config|
             },
             required: %w[promotion],
             title: 'Change an Action Type',
-            'x-internal': true
+            'x-internal': false
           },
 
           # Promotion Action
@@ -1392,7 +1392,7 @@ RSpec.configure do |config|
             },
             required: %w[promotion_action],
             title: 'Create a Promotion Action',
-            'x-internal': true
+            'x-internal': false
           },
           update_promotion_action_params: {
             type: :object,
@@ -1406,7 +1406,7 @@ RSpec.configure do |config|
             },
             required: %w[promotion_action],
             title: 'Create a Promotion Action',
-            'x-internal': true
+            'x-internal': false
           },
 
           # Promotion Category
@@ -1423,7 +1423,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[promotion_category],
-            'x-internal': true
+            'x-internal': false
           },
           update_promotion_category_params: {
             type: :object,
@@ -1438,7 +1438,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[promotion_category],
-            'x-internal': true
+            'x-internal': false
           },
 
           # Promotion Rule
@@ -1456,7 +1456,7 @@ RSpec.configure do |config|
             },
             required: %w[promotion_rule],
             title: 'Create a Promotion Rule',
-            'x-internal': true
+            'x-internal': false
           },
           update_promotion_rule_params: {
             type: :object,
@@ -1470,7 +1470,7 @@ RSpec.configure do |config|
             },
             required: %w[promotion_rule],
             title: 'Create a Promotion Rule',
-            'x-internal': true
+            'x-internal': false
           },
 
           # Role
@@ -1486,7 +1486,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[zone],
-            'x-internal': true
+            'x-internal': false
           },
           update_role_params: {
             type: :object,
@@ -1499,7 +1499,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[zone],
-            'x-internal': true
+            'x-internal': false
           },
 
           # Shopment
@@ -1518,7 +1518,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[shipping_category],
-            'x-internal': true
+            'x-internal': false
           },
           update_shipment_params: {
             type: :object,
@@ -1531,7 +1531,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[shipping_category],
-            'x-internal': true
+            'x-internal': false
           },
           add_item_shipment_params: {
             type: :object,
@@ -1546,7 +1546,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[shipping_category],
-            'x-internal': true
+            'x-internal': false
           },
           remove_item_shipment_params: {
             type: :object,
@@ -1561,7 +1561,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[shipping_category],
-            'x-internal': true
+            'x-internal': false
           },
           # Shipping Category
           create_shipping_category_params: {
@@ -1576,7 +1576,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[shipping_category],
-            'x-internal': true
+            'x-internal': false
           },
           update_shipping_category_params: {
             type: :object,
@@ -1590,7 +1590,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[shipping_category],
-            'x-internal': true
+            'x-internal': false
           },
 
           # Shipping Method
@@ -1622,7 +1622,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[shipping_method],
-            'x-internal': true
+            'x-internal': false
           },
           update_shipping_method_params: {
             type: :object,
@@ -1651,7 +1651,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[shipping_method],
-            'x-internal': true
+            'x-internal': false
           },
           shipping_calculator_params: {
             type: :object,
@@ -1659,7 +1659,7 @@ RSpec.configure do |config|
               type: { type: :string, example: 'Spree::Calculator::Shipping::FlatPercentItemTotal', enum: ['Spree::Calculator::Shipping::DigitalDelivery', 'Spree::Calculator::Shipping::FlatPercentItemTotal', 'Spree::Calculator::Shipping::FlatRate', 'Spree::Calculator::Shipping::FlexiRate', 'Spree::Calculator::Shipping::PerItem', 'Spree::Calculator::Shipping::PriceSack'] }
             },
             required: %w[type],
-            'x-internal': true
+            'x-internal': false
           },
 
           # Stock Item
@@ -1678,7 +1678,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[stock_item],
-            'x-internal': true
+            'x-internal': false
           },
           update_stock_item_params: {
             type: :object,
@@ -1695,7 +1695,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[stock_item],
-            'x-internal': true
+            'x-internal': false
           },
 
           # Stock Location
@@ -1724,7 +1724,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[stock_location],
-            'x-internal': true
+            'x-internal': false
           },
           update_stock_location_params: {
             type: :object,
@@ -1751,7 +1751,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[stock_location],
-            'x-internal': true
+            'x-internal': false
           },
 
           # Store Credit Category
@@ -1767,7 +1767,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[store_credit_category],
-            'x-internal': true
+            'x-internal': false
           },
           update_store_credit_category_params: {
             type: :object,
@@ -1781,7 +1781,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[store_credit_category],
-            'x-internal': true
+            'x-internal': false
           },
 
           # Store Credit Type
@@ -1798,7 +1798,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[store_credit_type],
-            'x-internal': true
+            'x-internal': false
           },
           update_store_credit_type_params: {
             type: :object,
@@ -1812,7 +1812,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[store_credit_type],
-            'x-internal': true
+            'x-internal': false
           },
 
           # Store Credit
@@ -1841,7 +1841,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[store_credit],
-            'x-internal': true
+            'x-internal': false
           },
           update_store_credit_params: {
             type: :object,
@@ -1868,7 +1868,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[store_credit],
-            'x-internal': true
+            'x-internal': false
           },
 
           # Tax Category
@@ -1887,7 +1887,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[tax_category],
-            'x-internal': true
+            'x-internal': false
           },
           update_tax_category_params: {
             type: :object,
@@ -1904,7 +1904,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[tax_category],
-            'x-internal': true
+            'x-internal': false
           },
 
           # Tax Rate
@@ -1935,7 +1935,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[tax_rate],
-            'x-internal': true
+            'x-internal': false
           },
           update_tax_rate_params: {
             type: :object,
@@ -1964,7 +1964,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[tax_rate],
-            'x-internal': true
+            'x-internal': false
           },
 
           # Taxon
@@ -1984,7 +1984,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[taxon],
-            'x-internal': true
+            'x-internal': false
           },
           update_taxon_params: {
             type: :object,
@@ -2001,7 +2001,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[taxon],
-            'x-internal': true
+            'x-internal': false
           },
           taxon_reposition: {
             type: :object,
@@ -2017,7 +2017,7 @@ RSpec.configure do |config|
             },
             required: %w[taxon],
             title: 'Reposition a Taxon',
-            'x-internal': true
+            'x-internal': false
           },
 
           # Taxonomies
@@ -2036,7 +2036,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[taxonomy],
-            'x-internal': true
+            'x-internal': false
           },
           update_taxonomy_params: {
             type: :object,
@@ -2052,7 +2052,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[taxonomy],
-            'x-internal': true
+            'x-internal': false
           },
 
           # User
@@ -2076,7 +2076,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[user],
-            'x-internal': true
+            'x-internal': false
           },
           update_user_params: {
             type: :object,
@@ -2097,7 +2097,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[user],
-            'x-internal': true
+            'x-internal': false
           },
 
           # Webhook
@@ -2124,7 +2124,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[subscriber],
-            'x-internal': true
+            'x-internal': false
           },
           update_webhook_subscriber_params: {
             type: :object,
@@ -2149,7 +2149,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[subscriber],
-            'x-internal': true
+            'x-internal': false
           },
 
           # Wishlist
@@ -2168,7 +2168,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[wishlist],
-            'x-internal': true
+            'x-internal': false
           },
           update_wishlist_params: {
             type: :object,
@@ -2184,7 +2184,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[wishlist],
-            'x-internal': true
+            'x-internal': false
           },
 
           # Wished Item
@@ -2205,7 +2205,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[wished_item],
-            'x-internal': true
+            'x-internal': false
           },
           update_wished_item_params: {
             type: :object,
@@ -2224,7 +2224,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[wished_item],
-            'x-internal': true
+            'x-internal': false
           },
 
           # Zones
@@ -2243,7 +2243,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[zone],
-            'x-internal': true
+            'x-internal': false
           },
           update_zone_params: {
             type: :object,
@@ -2259,7 +2259,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[zone],
-            'x-internal': true
+            'x-internal': false
           },
 
           # Nested Parameters
@@ -2268,7 +2268,7 @@ RSpec.configure do |config|
             properties: {
               amount: { type: :number }
             },
-            'x-internal': true
+            'x-internal': false
           },
 
           coupon_code_param: {
@@ -2276,7 +2276,7 @@ RSpec.configure do |config|
             properties: {
               coupon_code: { type: :string }
             },
-            'x-internal': true
+            'x-internal': false
           },
           resources_list: {
             type: :object,
@@ -2311,7 +2311,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[data meta links],
-            'x-internal': true
+            'x-internal': false
           },
           resource_properties: {
             type: :object,
@@ -2322,7 +2322,7 @@ RSpec.configure do |config|
               relationships: { type: :object }
             },
             required: %w[id type attributes],
-            'x-internal': true
+            'x-internal': false
           },
           resource: {
             type: :object,
@@ -2330,7 +2330,7 @@ RSpec.configure do |config|
               data: { '$ref' => '#/components/schemas/resource_properties' },
             },
             required: %w[data],
-            'x-internal': true
+            'x-internal': false
           },
           error: {
             type: :object,
@@ -2338,7 +2338,7 @@ RSpec.configure do |config|
               error: { type: :string },
             },
             required: %w[error],
-            'x-internal': true
+            'x-internal': false
           },
           validation_errors: {
             type: :object,
@@ -2347,7 +2347,7 @@ RSpec.configure do |config|
               errors: { type: :object }
             },
             required: %w[error errors],
-            'x-internal': true
+            'x-internal': false
           }
         }
       }
