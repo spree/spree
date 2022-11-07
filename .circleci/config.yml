@@ -29,9 +29,6 @@ run_tests_2_7: &run_tests_2_7
           - spree-bundle-v10-ruby-2-7-{{ .Branch }}
           - spree-bundle-v10-ruby-2-7
     - run:
-        name: Install libvips
-        command: sudo apt-get install libvips
-    - run:
         name: Ensure Bundle Install
         command: |
           bundle install
@@ -57,9 +54,6 @@ run_tests_3_0: &run_tests_3_0
         keys:
           - spree-bundle-v10-ruby-3-0-{{ .Branch }}
           - spree-bundle-v10-ruby-3-0
-    - run:
-        name: Install libvips
-        command: sudo apt-get install libvips
     - run:
         name: Ensure Bundle Install
         command: |
@@ -87,9 +81,6 @@ jobs:
             - spree-bundle-v10-ruby-2-7-{{ .Branch }}
             - spree-bundle-v10-ruby-2-7
       - run:
-          name: Install libvips
-          command: sudo apt-get install libvips
-      - run:
           name: Bundle Install
           command: |
             bundle check || bundle install
@@ -107,9 +98,6 @@ jobs:
           keys:
             - spree-bundle-v10-ruby-3-0-{{ .Branch }}
             - spree-bundle-v10-ruby-3-0
-      - run:
-          name: Install libvips
-          command: sudo apt-get install libvips
       - run:
           name: Bundle Install
           command: |
@@ -195,9 +183,6 @@ jobs:
           keys:
             - spree-bundle-v10-ruby-3-0-{{ .Branch }}
             - spree-bundle-v10-ruby-3-0
-      - run:
-          name: Install libvips
-          command: sudo apt-get install libvips
       - run:
           name: Ensure Bundle Install
           command: |
