@@ -13,7 +13,7 @@ module Spree
       gravity = translate_gravity_for_mini_magick(gravity)
 
       # FIXME: bring back support for background color
-      
+
       cdn_image_url(attachment.variant(resize_and_pad: [width, height, { gravity: gravity }], saver: { quality: quality }))
     end
 
@@ -26,7 +26,7 @@ module Spree
     def translate_gravity_for_mini_magick(gravity)
       variant_processor = Rails.application.config.active_storage.variant_processor
 
-      if gravity.downcase == 'centre' && (variant_processor == nil || variant_processor == :mini_magick)
+      if gravity.downcase == 'centre' && [:mini_magick, nil].include?(variant_processor)
         'center'
       else
         gravity
