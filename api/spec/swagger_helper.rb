@@ -76,11 +76,11 @@ RSpec.configure do |config|
         { name: 'Taxons' },
         { name: 'Taxonomies' },
         { name: 'Users' },
+        { name: 'Variants' },
         { name: 'Webhook Events' },
         { name: 'Webhook Subscribers' },
         { name: 'Wishlists' },
         { name: 'Wished Items' },
-        { name: 'Variants' },
         { name: 'Zones' }
       ],
       components: {
