@@ -15,6 +15,10 @@ module Spree
             product_list_includes
           end
 
+          def spree_permitted_attributes
+            super.push(:price)
+          end
+
           def allowed_sort_attributes
             super.push(:available_on, :make_active_at)
           end
