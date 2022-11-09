@@ -10,6 +10,7 @@ module Spree
       return unless size.match(/(\d+)x(\d+)/)
 
       width, height = size.split('x').map(&:to_i)
+      gravity = translate_gravity_for_mini_magick(gravity)
 
       # FIXME: bring back support for background color
 
@@ -18,6 +19,18 @@ module Spree
 
     def original_url
       cdn_image_url(attachment)
+    end
+
+    private
+
+    def translate_gravity_for_mini_magick(gravity)
+      variant_processor = Rails.application.config.active_storage.variant_processor
+
+      if gravity.downcase == 'centre' && [:mini_magick, nil].include?(variant_processor)
+        'center'
+      else
+        gravity
+      end
     end
   end
 end
