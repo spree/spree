@@ -16,7 +16,7 @@ module Spree
       def notify_order_stream(order:)
         Rails.configuration.event_store.publish(
           ::Checkout::Event::DestroyCart.new(data: { order: order.as_json }),
-          stream_name: "order_#{order.number}_customer_#{order.user.id}" # check if usable with _customer
+          stream_name: "customer_#{order.email}"
         )
 
         success(order)

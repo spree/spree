@@ -27,7 +27,7 @@ module Spree
       def notify_order_stream(user:, store:, order:, public_metadata: {}, private_metadata: {}, order_params: {})
         Rails.configuration.event_store.publish(
           ::Checkout::Event::CreateOrder.new(data: { store: store, order: order.as_json, user: user.as_json }),
-          stream_name: "order_#{order.number}"
+          stream_name: "customer_#{order.email}"
         )
       end
     end

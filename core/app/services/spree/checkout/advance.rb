@@ -13,7 +13,7 @@ module Spree
 
       def notify_order_stream(order:)
         Rails.configuration.event_store.publish(
-          ::Checkout::Event::AdvanceOrder.new(data: { order: order.as_json }), stream_name: "order_#{order.number}"
+          ::Checkout::Event::AdvanceOrder.new(data: { order: order.as_json }), stream_name: "customer_#{order.email}"
         )
 
         success(order)

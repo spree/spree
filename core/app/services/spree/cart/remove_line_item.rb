@@ -21,7 +21,7 @@ module Spree
       def notify_order_stream(order:, line_item:)
         Rails.configuration.event_store.publish(
           ::Checkout::Event::RemoveCartItem.new(data: { order: order.as_json, line_item: line_item.as_json }),
-          stream_name: "order_#{order.number}"
+          stream_name: "customer_#{order.email}"
         )
       end
     end

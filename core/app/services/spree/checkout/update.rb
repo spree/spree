@@ -24,7 +24,7 @@ module Spree
       def notify_order_stream(order:, params:, permitted_attributes:)
         # retrieve proper states
         Rails.configuration.event_store.publish(
-          ::Checkout::Event::UpdateOrder.new(data: { order: order.as_json, prev_state: order.state, next_state: order.state, payload: params }), stream_name: "order_#{order.number}"
+          ::Checkout::Event::UpdateOrder.new(data: { order: order.as_json, prev_state: order.state, next_state: order.state, payload: params }), stream_name: "customer_#{order.email}"
         )
 
         success(order)

@@ -22,7 +22,7 @@ module Spree
       def notify_order_stream(order:, line_item:, variant:, quantity:, options: nil)
         Rails.configuration.event_store.publish(
           ::Checkout::Event::UpdateCart.new(data: { order: order.as_json, line_item: line_item, variant: variant, quantity: quantity }),
-          stream_name: "order_#{order.number}"
+          stream_name: "customer_#{order.email}"
         )
 
         success(true)
