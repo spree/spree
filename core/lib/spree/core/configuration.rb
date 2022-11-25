@@ -60,6 +60,11 @@ module Spree
       preference :title_site_name_separator, :string, deprecated: true
       preference :track_inventory_levels, :boolean, default: true # Determines whether to track on_hand values for variants / products.
 
+      # Sets the path used for products, taxons and pages.
+      preference :storefront_products_path, :string, default: 'products'
+      preference :storefront_taxons_path, :string, default: 't'
+      preference :storefront_pages_path, :string, default: 'pages'
+
       # searcher_class allows spree extension writers to provide their own Search class
       def searcher_class
         ActiveSupport::Deprecation.warn('`Spree::Config.searcher_class` is deprecated and will be removed in Spree v5, please use `Spree.searcher_class` instead.')
