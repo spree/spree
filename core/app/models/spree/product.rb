@@ -19,9 +19,8 @@
 #
 
 module Spree
-  class Product < Spree::Base
+  class Product < TranslatableResource
     extend FriendlyId
-    extend Mobility
     include ProductScopes
     include MultiStoreResource
     include MemoizedData
@@ -33,18 +32,17 @@ module Spree
       include Spree::VendorConcern
     end
 
-    MEMOIZED_METHODS = %w(total_on_hand taxonomy_ids taxon_and_ancestors category
+    MEMOIZED_METHODS = %w[total_on_hand taxonomy_ids taxon_and_ancestors category
                           default_variant_id tax_category default_variant
-                          purchasable? in_stock? backorderable?)
+                          purchasable? in_stock? backorderable?]
 
     TRANSLATABLE_FIELDS = %i[name description slug meta_description meta_keywords meta_title]
+    translates *TRANSLATABLE_FIELDS
 
     friendly_id :slug_candidates, use: [:history, :mobility]
-
     acts_as_paranoid
     auto_strip_attributes :name
 
-    translates *TRANSLATABLE_FIELDS, backend: :table
     # we need to have this callback before any dependent: :destroy associations
     # https://github.com/rails/rails/issues/3458
     before_destroy :ensure_not_in_complete_orders
@@ -170,18 +168,6 @@ module Spree
         transition to: :draft
       end
       after_transition to: :draft, do: :after_draft
-    end
-
-    def translatable_fields
-      #TODO I think better solution is to implement get_translatable_fields in mobility gem(?)
-      TRANSLATABLE_FIELDS
-    end
-
-    def get_field_with_locale(locale, field_name)
-      Mobility.with_locale(locale) do
-        #Remove fallback: false if you want to see fallbacks at the table
-        public_send(field_name, fallback: false)
-      end
     end
 
     # Can't use short form block syntax due to https://github.com/Netflix/fast_jsonapi/issues/259
