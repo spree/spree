@@ -2,8 +2,7 @@
 require 'stringex'
 
 module Spree
-  class Taxon < Spree::Base
-    extend Mobility
+  class Taxon < TranslatableResource
     include Metadata
     if defined?(Spree::Webhooks)
       include Spree::Webhooks::HasWebhooks
@@ -57,16 +56,8 @@ module Spree
 
     scope :for_stores, ->(stores) { joins(:taxonomy).where(spree_taxonomies: { store_id: stores.ids }) }
 
-    def translatable_fields
-      %w[name description]
-    end
-
-    def get_field_with_locale(locale, field_name)
-      I18n.with_locale(locale) do
-        #Remove fallback: false if you want to see fallbacks at the table
-        public_send(field_name, fallback: false)
-      end
-    end
+    TRANSLATABLE_FIELDS = %i[name description]
+    translates *TRANSLATABLE_FIELDS
 
     # indicate which filters should be used for a taxon
     # this method should be customized to your own site
