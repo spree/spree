@@ -19,10 +19,11 @@
 #
 
 module Spree
-  class Product < TranslatableResource
+  class Product < Spree::Base
     extend FriendlyId
     include ProductScopes
     include MultiStoreResource
+    include TranslatableResource
     include MemoizedData
     include Metadata
     if defined?(Spree::Webhooks)

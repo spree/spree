@@ -2,7 +2,8 @@
 require 'stringex'
 
 module Spree
-  class Taxon < TranslatableResource
+  class Taxon < Spree::Base
+    include TranslatableResource
     include Metadata
     if defined?(Spree::Webhooks)
       include Spree::Webhooks::HasWebhooks
@@ -13,8 +14,6 @@ module Spree
     before_validation :set_permalink, on: :create, if: :name
 
     acts_as_nested_set dependent: :destroy
-
-    translates :name, :description, backend: :table
 
     belongs_to :taxonomy, class_name: 'Spree::Taxonomy', inverse_of: :taxons
     has_many :classifications, -> { order(:position) }, dependent: :delete_all, inverse_of: :taxon
