@@ -145,8 +145,12 @@ module Spree
 
       def by_name(products)
         return products unless name?
+        product_name = name
 
-        products.like_any([:name], [name])
+        # i18n scope doesn't automatically get set here (mobility gem bug?) set it explicitly
+        products.i18n do
+          name.matches("%#{product_name}%")
+        end
       end
 
       def by_options(products)
