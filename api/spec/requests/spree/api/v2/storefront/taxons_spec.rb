@@ -109,7 +109,7 @@ describe 'Taxons Spec', type: :request do
 
       it_behaves_like 'returns 200 HTTP status'
 
-      it 'returns taxonx by name' do
+      it 'returns taxons by name' do
         expect(json_response['data'].size).to eq(1)
         expect(json_response['data'].last['attributes']['name']).to eq(taxons.last.name)
       end

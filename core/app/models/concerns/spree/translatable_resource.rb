@@ -4,6 +4,7 @@ module Spree
 
     included do
       extend Mobility
+      default_scope { i18n }
 
       def translatable_fields
         self.class.const_get(:TRANSLATABLE_FIELDS)

@@ -17,8 +17,8 @@ PRODUCTS = CSV.read(File.join(__dir__, 'variants.csv')).map do |(parent_name, ta
 end.uniq
 
 PRODUCTS.each do |(parent_name, taxon_name, product_name)|
-  parent = Spree::Taxon.i18n.find_by!(name: parent_name)
-  taxon = parent.children.i18n.find_by!(name: taxon_name)
+  parent = Spree::Taxon.find_by!(name: parent_name)
+  taxon = parent.children.find_by!(name: taxon_name)
   Spree::Product.where(name: product_name.titleize).first_or_create! do |product|
     product.price = rand(10...100) + 0.99
     product.description = FFaker::Lorem.paragraph
@@ -39,7 +39,7 @@ PRODUCTS.each do |(parent_name, taxon_name, product_name)|
   end
 end
 
-Spree::Taxon.i18n.where(name: ['Bestsellers', 'New', 'Trending', 'Streetstyle', 'Summer Sale', "Summer #{Date.today.year}", '30% Off']).each do |taxon|
+Spree::Taxon.where(name: ['Bestsellers', 'New', 'Trending', 'Streetstyle', 'Summer Sale', "Summer #{Date.today.year}", '30% Off']).each do |taxon|
   next if taxon.products.any?
 
   taxon.products << Spree::Product.all.sample(30)

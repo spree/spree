@@ -43,7 +43,7 @@ men_tshirts_properties = [
     'gender' => 'Men\'s'
   }
 ]
-Spree::Taxon.i18n.find_by!(name: 'Men').children.i18n.find_by!(name: 'T-shirts').products.each do |product|
+Spree::Taxon.find_by!(name: 'Men').children.find_by!(name: 'T-shirts').products.each do |product|
   men_tshirts_properties.sample.each do |prop_name, prop_value|
     product.set_property(prop_name, prop_value, prop_name.gsub('_', ' ').capitalize)
   end
@@ -72,7 +72,7 @@ women_tshirts_properties = [
   }
 ]
 
-Spree::Taxon.i18n.find_by!(name: 'Women').children.i18n.find_by!(name: 'Tops and T-shirts').products.each do |product|
+Spree::Taxon.find_by!(name: 'Women').children.find_by!(name: 'Tops and T-shirts').products.each do |product|
   women_tshirts_properties.sample.each do |prop_name, prop_value|
     product.set_property(prop_name, prop_value, prop_name.gsub('_', ' ').capitalize)
   end
@@ -85,7 +85,7 @@ properties = {
   fits: %w[Form Lose]
 }
 
-t_shirts_taxon = Spree::Taxon.i18n.where(name: ['T-shirts', 'Tops and T-shirts'])
+t_shirts_taxon = Spree::Taxon.where(name: ['T-shirts', 'Tops and T-shirts'])
 
 Spree::Product.all.each do |product|
   product.set_property(:type, product.taxons.first.name)

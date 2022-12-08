@@ -2,7 +2,7 @@ Spree::Sample.load_sample('stores')
 Spree::Sample.load_sample('option_values')
 Spree::Sample.load_sample('products')
 
-product = Spree::Product.i18n.find_by!(name: 'Denim Shirt')
+product = Spree::Product.find_by!(name: 'Denim Shirt')
 size = Spree::OptionValue.find_by!(name: 'xs')
 color = Spree::OptionValue.find_by!(name: 'red')
 eligible_values = "#{size.id},#{color.id}"
