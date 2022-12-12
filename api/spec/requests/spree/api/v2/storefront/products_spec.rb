@@ -365,7 +365,9 @@ describe 'API V2 Storefront Products Spec', type: :request do
 
           it 'returns products sorted by name' do
             expect(json_response['data'].count).to      eq store.products.available.count
-            expect(json_response['data'].pluck(:id)).to eq store.products.available.order(:name).map(&:id).map(&:to_s)
+            expect(json_response['data'].pluck(:id)).to eq store.products.i18n.available
+                                                                              .select("#{Spree::Product.table_name}.*, #{Spree::Product::Translation.table_name}_en.name")
+                                                                              .order(:name).map(&:id).map(&:to_s)
           end
         end
 
@@ -376,7 +378,9 @@ describe 'API V2 Storefront Products Spec', type: :request do
 
           it 'returns products sorted by name with descending order' do
             expect(json_response['data'].count).to      eq store.products.available.count
-            expect(json_response['data'].pluck(:id)).to eq store.products.available.order(name: :desc).map(&:id).map(&:to_s)
+            expect(json_response['data'].pluck(:id)).to eq store.products.available
+                                                                         .select("#{Spree::Product.table_name}.*, #{Spree::Product::Translation.table_name}_en.name")
+                                                                         .order(name: :desc).map(&:id).map(&:to_s)
           end
         end
       end
@@ -727,7 +731,9 @@ describe 'API V2 Storefront Products Spec', type: :request do
       end
 
       context 'when filter by product property is applied' do
-        before { get "/api/v2/storefront/products?filter[properties][#{property.filter_param}]=#{product_property.filter_param}" }
+        before {
+          get "/api/v2/storefront/products?filter[properties][#{property.filter_param}]=#{product_property.filter_param}"
+        }
 
         it 'returns list of all available filters for products' do
           expect(json_response['meta']['filters']['option_types'].count).to eq 2
