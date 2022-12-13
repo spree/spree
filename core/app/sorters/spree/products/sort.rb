@@ -49,17 +49,16 @@ module Spree
         sort.detect { |s| s[0] == field }
       end
 
-      # Add translatable fields to SELECT statement to avoid InvalidColumnReference error
+      # Add translatable fields to SELECT statement to avoid InvalidColumnReference error (Mobility bug workaround)
       def select_translatable_fields(scope)
         translatable_sortable_fields = []
-        Spree::Product.translatable_fields.each do |field|
+        Product.translatable_fields.each do |field|
           translatable_sortable_fields << field if sort_by?(field.to_s)
         end
 
         return scope unless translatable_sortable_fields.any?
 
-        translation_table_alias = "#{Product::Translation.table_name}_#{Mobility.locale.to_s}"
-        sql_fields = translatable_sortable_fields.map {|field| "#{translation_table_alias}.#{field}" }
+        sql_fields = translatable_sortable_fields.map {|field| "#{Product.translation_table_alias}.#{field}" }
                                                  .join(', ')
         scope.i18n.select("#{Product.table_name}.*, #{sql_fields}")
       end

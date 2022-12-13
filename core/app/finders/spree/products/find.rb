@@ -213,9 +213,13 @@ module Spree
             products
           end
         when 'name-a-z'
-          products.order(name: :asc)
+          products.i18n.
+            select("#{Product.table_name}.*, #{Product.translation_table_alias}.name").
+            order(name: :asc)
         when 'name-z-a'
-          products.order(name: :desc)
+          products.i18n.
+            select("#{Product.table_name}.*, #{Product.translation_table_alias}.name").
+            order(name: :desc)
         when 'newest-first'
           products.order(available_on: :desc)
         when 'price-high-to-low'

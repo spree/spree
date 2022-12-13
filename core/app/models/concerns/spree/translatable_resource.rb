@@ -16,6 +16,10 @@ module Spree
       def translatable_fields
         self.const_get(:TRANSLATABLE_FIELDS)
       end
+
+      def translation_table_alias
+        "#{Product::Translation.table_name}_#{Mobility.locale.to_s}"
+      end
     end
   end
 end
