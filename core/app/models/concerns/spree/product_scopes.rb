@@ -341,7 +341,10 @@ module Spree
           case t
           when ApplicationRecord then t
           else
-            Taxon.where(Taxon.arel_table[:name].eq(t)).or(Taxon.where(Taxon.arel_table[:id].eq(t))).or(Taxon.where(Taxon.arel_table[:permalink].matches("%/#{t}/"))).or(Taxon.where(Taxon.arel_table[:permalink].matches("#{t}/"))).first
+            Taxon.where(name: t).
+              or(Taxon.where(Taxon.arel_table[:id].eq(t))).
+              or(Taxon.where(Taxon.arel_table[:permalink].matches("%/#{t}/"))).
+              or(Taxon.where(Taxon.arel_table[:permalink].matches("#{t}/"))).first
           end
         end.compact.flatten.uniq
       end
