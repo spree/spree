@@ -122,7 +122,10 @@ module Spree
     self.whitelisted_ransackable_scopes = %i(product_name_or_sku_cont search_by_product_name_or_sku)
 
     def self.product_name_or_sku_cont(query)
-      joins(:product).where("LOWER(#{Product.table_name}.name) LIKE LOWER(:query) OR LOWER(sku) LIKE LOWER(:query)", query: "%#{query}%")
+      joins(:product).joins("LEFT OUTER JOIN #{Product::Translation.table_name} #{Product.translation_table_alias}
+                             ON #{Product.translation_table_alias}.spree_product_id = #{Product.table_name}.id
+                             AND #{Product.translation_table_alias}.locale = '#{Mobility.locale.to_s}'").
+                      where("LOWER(#{Product.translation_table_alias}.name) LIKE LOWER(:query) OR LOWER(sku) LIKE LOWER(:query)", query: "%#{query}%")
     end
 
     def self.search_by_product_name_or_sku(query)
