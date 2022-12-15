@@ -18,7 +18,7 @@ module Spree
       end
 
       def translation_table_alias
-        "#{Product::Translation.table_name}_#{Mobility.locale.to_s}"
+        "#{self::Translation.table_name}_#{Mobility.locale.to_s}"
       end
     end
   end
