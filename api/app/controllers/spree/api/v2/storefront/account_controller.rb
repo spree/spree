@@ -43,7 +43,7 @@ module Spree
           end
 
           def user_update_params
-            params.require(:user).permit(permitted_user_attributes, :saved_locale)
+            params.require(:user).permit(permitted_user_attributes)
           end
         end
       end
