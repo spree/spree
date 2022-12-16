@@ -24,7 +24,7 @@ module Spree
     include NumberAsParam
     include SingleStoreResource
     include MemoizedData
-    include Metadata
+    include Spree::Metadata
     if defined?(Spree::Webhooks)
       include Spree::Webhooks::HasWebhooks
     end
