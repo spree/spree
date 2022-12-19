@@ -19,17 +19,20 @@ end.uniq
 PRODUCTS.each do |(parent_name, taxon_name, product_name)|
   parent = Spree::Taxon.find_by!(name: parent_name)
   taxon = parent.children.find_by!(name: taxon_name)
-  Spree::Product.where(name: product_name.titleize).first_or_create! do |product|
+  next if Spree::Product.where(name: product_name.titleize).any?
+
+  Spree::Product.create!(name: product_name.titleize) do |product|
     product.price = rand(10...100) + 0.99
     product.description = FFaker::Lorem.paragraph
     product.available_on = Time.zone.now
     product.make_active_at = Time.zone.now
     product.status = 'active'
-    if parent_name == 'Women' and %w[Dresses Skirts].include?(taxon_name)
-      product.option_types = [color, length, size]
-    else
-      product.option_types = [color, size]
-    end
+    product.option_types =
+      if parent_name == 'Women' && %w[Dresses Skirts].include?(taxon_name)
+        [color, length, size]
+      else
+        [color, size]
+      end
     product.shipping_category = default_shipping_category
     product.tax_category = clothing_tax_category
     product.sku = [taxon_name.delete(' '), product_name.delete(' '), product.price].join('_')
