@@ -1,4 +1,4 @@
-class CreateTaxonomiesTranslationsTableForMobility < ActiveRecord::Migration[6.1]
+class CreateTaxonomiesTranslationsTableForMobility < ActiveRecord::Migration[7.0]
   def change
     create_table :spree_taxonomy_translations do |t|
       # Translated attribute(s)
