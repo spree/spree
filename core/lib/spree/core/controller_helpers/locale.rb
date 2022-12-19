@@ -22,7 +22,7 @@ module Spree
         end
 
         def current_locale
-          @current_locale ||= if spree_current_user && supported_locale?(spree_current_user.selected_locale)
+          @current_locale ||= if Spree::Config.use_user_locale && spree_current_user && supported_locale?(spree_current_user.selected_locale)
                                 spree_current_user.selected_locale
                               elsif params[:locale].present? && supported_locale?(params[:locale])
                                 params[:locale]

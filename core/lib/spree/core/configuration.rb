@@ -65,6 +65,7 @@ module Spree
       preference :show_raw_product_description, :boolean, deprecated: true
       preference :tax_using_ship_address, :boolean, default: true
       preference :track_inventory_levels, :boolean, default: true # Determines whether to track on_hand values for variants / products.
+      preference :use_user_locale, :boolean, default: true
 
       # Store credits configurations
       preference :non_expiring_credit_types, :array, default: []
