@@ -58,7 +58,11 @@ module Spree
       end
 
       def updating_only_ignored_attributes?
-        (saved_changes.keys - ignored_attributes).empty?
+        if defined?(translations) && translations.any?(&:saved_changes)
+          false
+        else
+          (saved_changes.keys - ignored_attributes).empty?
+        end
       end
 
       def ignored_attributes
