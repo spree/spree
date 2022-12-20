@@ -55,7 +55,7 @@ module Spree
 
     scope :for_stores, ->(stores) { joins(:taxonomy).where(spree_taxonomies: { store_id: stores.ids }) }
 
-    TRANSLATABLE_FIELDS = %i[name description]
+    TRANSLATABLE_FIELDS = %i[name description].freeze
     translates *TRANSLATABLE_FIELDS
 
     # indicate which filters should be used for a taxon

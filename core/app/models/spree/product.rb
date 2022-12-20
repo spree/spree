@@ -37,7 +37,7 @@ module Spree
                           default_variant_id tax_category default_variant
                           purchasable? in_stock? backorderable?]
 
-    TRANSLATABLE_FIELDS = %i[name description slug meta_description meta_keywords meta_title]
+    TRANSLATABLE_FIELDS = %i[name description slug meta_description meta_keywords meta_title].freeze
     translates *TRANSLATABLE_FIELDS
     Product::Translation.class_eval { acts_as_paranoid }
 
