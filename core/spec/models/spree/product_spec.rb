@@ -236,7 +236,20 @@ describe Spree::Product, type: :model do
 
       context 'when product destroyed' do
         it 'renames slug' do
-          expect { product.destroy }.to change(product, :slug)
+          product.destroy
+          expect(product.translations.with_deleted.where(locale: :en).first.slug).to match(/[0-9]+_product-[0-9]+/)
+        end
+
+        context 'when more than one translation exists' do
+          before {
+            product.send(:slug=, "french_slug", locale: :fr)
+            product.save!
+          }
+          it 'renames slug for all translations' do
+            product.destroy
+            expect(product.translations.with_deleted.where(locale: :en).first.slug).to match(/[0-9]+_product-[0-9]+/)
+            expect(product.translations.with_deleted.where(locale: :fr).first.slug).to match(/[0-9]+_french_slug/)
+          end
         end
 
         context 'when slug is already at or near max length' do

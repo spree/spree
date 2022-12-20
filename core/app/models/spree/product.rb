@@ -419,8 +419,11 @@ module Spree
 
     def punch_slug
       # punch slug with date prefix to allow reuse of original
-      self.slug = "#{Time.current.to_i}_#{slug}"[0..254] unless frozen?
-      save!
+      return if frozen?
+
+      translations.with_deleted.each do |t|
+        t.update_column :slug, "#{Time.current.to_i}_#{t.slug}"[0..254]
+      end
     end
 
     def update_slug_history
