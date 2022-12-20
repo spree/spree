@@ -88,7 +88,10 @@ describe Spree::Webhooks::HasWebhooks do
     context 'when only timestamps change' do
       let(:event_name) { 'product.update' }
 
-      before { product.save }
+      before {
+        product.save
+        product.translations.first.save
+      }
 
       context 'on created_at change' do
         it do
