@@ -1,4 +1,4 @@
-class TransferDataToTranslatableTables < ActiveRecord::Migration[7.0]
+class TransferDataToTranslatableTables < ActiveRecord::Migration[6.1]
   DEFAULT_LOCALE = 'en'
   PRODUCTS_TABLE = 'spree_products'
   PRODUCT_TRANSLATIONS_TABLE = 'spree_product_translations'

@@ -1,4 +1,4 @@
-class CreateSpreeProductSlugTranslationsForMobilityTableBackend < ActiveRecord::Migration[7.0]
+class CreateSpreeProductSlugTranslationsForMobilityTableBackend < ActiveRecord::Migration[6.1]
   def change
     add_column :spree_product_translations, :slug, :string
   end

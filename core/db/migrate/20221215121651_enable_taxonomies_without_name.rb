@@ -1,4 +1,4 @@
-class EnableTaxonomiesWithoutName < ActiveRecord::Migration[7.0]
+class EnableTaxonomiesWithoutName < ActiveRecord::Migration[6.1]
   def change
     change_column_null :spree_taxonomies, :name, true
   end
