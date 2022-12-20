@@ -39,6 +39,7 @@ module Spree
 
     TRANSLATABLE_FIELDS = %i[name description slug meta_description meta_keywords meta_title]
     translates *TRANSLATABLE_FIELDS
+    Product::Translation.class_eval { acts_as_paranoid }
 
     friendly_id :slug_candidates, use: [:history, :mobility]
     acts_as_paranoid
@@ -418,7 +419,8 @@ module Spree
 
     def punch_slug
       # punch slug with date prefix to allow reuse of original
-      update_column :slug, "#{Time.current.to_i}_#{slug}"[0..254] unless frozen?
+      self.slug = "#{Time.current.to_i}_#{slug}"[0..254] unless frozen?
+      save!
     end
 
     def update_slug_history
