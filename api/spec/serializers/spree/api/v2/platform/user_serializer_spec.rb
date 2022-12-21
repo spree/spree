@@ -75,7 +75,7 @@ describe Spree::Api::V2::Platform::UserSerializer do
   context 'when user has selected non default locale' do
     let(:user) { create(:user_with_addresses, selected_locale: 'fr') }
 
-    it do
+    it 'returns the selected locale in the serialized hash' do
       expect(subject.serializable_hash[:data][:attributes][:selected_locale]).to eq('fr')
     end
   end
