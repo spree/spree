@@ -25,7 +25,7 @@ describe Spree::Core::ControllerHelpers::Auth, type: :controller do
       end
     end
 
-    let(:user) { build(:user, selected_locale: 'pl') }
+    let(:user) { build(:user) }
 
     before { allow(controller).to receive(:spree_current_user).and_return(user) }
 
@@ -53,7 +53,7 @@ describe Spree::Core::ControllerHelpers::Auth, type: :controller do
       end
     end
 
-    let(:user) { build(:user, selected_locale: 'pl') }
+    let(:user) { build(:user) }
 
     before { allow(controller).to receive(:spree_current_user).and_return(user) }
 
