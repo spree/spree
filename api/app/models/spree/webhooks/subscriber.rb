@@ -18,6 +18,7 @@ module Spree
       scope :active, -> { where(active: true) }
       scope :inactive, -> { where(active: false) }
 
+      before_validation :generate_secret_key, unless: :secret_key?
       before_save :parse_subscriptions
 
       def self.with_urls_for(event)
@@ -50,6 +51,10 @@ module Spree
         end
 
         errors.add(:url, 'the URL must have a path') if uri.blank? || uri.path.blank?
+      end
+
+      def generate_secret_key
+        assign_attributes(secret_key: SecureRandom.urlsafe_base64(32))
       end
 
       def parse_subscriptions
