@@ -8,6 +8,7 @@ module Spree
       has_many :events, inverse_of: :subscriber
 
       validates :url, 'spree/url': true, presence: true
+      validates :secret_key, presence: true
 
       validate :check_uri_path
 
