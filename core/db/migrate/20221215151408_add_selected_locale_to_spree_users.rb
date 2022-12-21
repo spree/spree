@@ -1,4 +1,4 @@
-class AddSelectedLocaleToSpreeUsers < ActiveRecord::Migration[7.0]
+class AddSelectedLocaleToSpreeUsers < ActiveRecord::Migration[6.1]
   def change
     if Spree.user_class.present?
       users_table_name = Spree.user_class.table_name
