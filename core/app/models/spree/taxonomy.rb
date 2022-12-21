@@ -1,13 +1,9 @@
 module Spree
   class Taxonomy < Spree::Base
     include Metadata
-    include TranslatableResource
     if defined?(Spree::Webhooks)
       include Spree::Webhooks::HasWebhooks
     end
-
-    TRANSLATABLE_FIELDS = %i[name].freeze
-    translates *TRANSLATABLE_FIELDS
 
     acts_as_list
 
