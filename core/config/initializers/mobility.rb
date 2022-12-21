@@ -11,6 +11,7 @@ Mobility.configure do |config|
     fallbacks
     locale_accessors
     presence
+    dirty
   end
 
   config.defaults[:fallbacks] = true
