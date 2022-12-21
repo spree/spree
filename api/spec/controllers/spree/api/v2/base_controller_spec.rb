@@ -109,7 +109,7 @@ describe Spree::Api::V2::BaseController, type: :controller do
     shared_examples 'rescues from error' do
       it do
         expect(subject).to receive(:index).and_raise(exception)
-        expect(subject).to receive(:spree_current_user).and_return(user)
+        expect(subject).to receive(:spree_current_user).at_least(:once).and_return(user)
         expect_next_instance_of(::Spree::Api::ErrorHandler) do |instance|
           expect(instance).to receive(:call).with(
             exception: exception,
